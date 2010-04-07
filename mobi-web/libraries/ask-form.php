@@ -49,7 +49,7 @@ if ($_REQUEST['ask_type']) { // user submitted a question
 
   $additional_headers = "From: $fullname <$username@$server>";
   $additional_headers .= "\r\n" . "Reply-To: $email";
-  $additional_headers .= "\r\n" . 'Cc: nobody@mit.edu';
+  $additional_headers .= "\r\n" . 'Cc: lisah@mit.edu';
 
   $topic = $_REQUEST['topic'] or missing_input('topic', $missing_fields);
   $status = $_REQUEST['status'] or missing_input('status', $missing_fields);

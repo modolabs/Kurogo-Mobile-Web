@@ -2,6 +2,16 @@
 
 class AllowedUsers {
   public static $list = array(
+    'alchow',
+    'andrewyu',
+    'blpatt',
+    'sonya',
+    'lxs',
+    'jander',
+    'lwatts',
+    'huafi',
+    'irishman',
+    'taeminn'
   );
 }
   

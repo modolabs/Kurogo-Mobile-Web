@@ -1,7 +1,20 @@
-MIT Mobile Web 2.1
+# Requirements
+* A LAMP(Linux Apache MySQL PHP) server.
+* PHP 5.2 or greater (including the command line interface to PHP)
+* MySQL 5 or greater
+* mit-mobile-browser-detection installed on a server
 
-This is the MIT Mobile Web 2.1 code running on http://m.mit.edu/ as of February 2010, minus the mobile device detection server. That will have its own repository on GitHub.
+## Required PHP dependencies
+* MySQL module
+* PEAR
 
-The MIT Mobile Web is an open source project released under the MIT License, detailed in the file named LICENSE.
+## Installation Process
+Install the source code such that DOCUMENT\_ROOT points to mobi-web directory. In mobi-config directory copy the three configuration files.  
+``$ cd mobi-config  
+$ cp mobi_lib_config.php.init mobi_lib_config.php  
+$ cp mobi_web_config.php.init mobi_web_config.php  
+$ cp mobi_web_constants.php.init mobi_web_constats.php  
+``
 
-A better README is forthcoming.
+Create a MySQL database, and configure the username, database name, and password in
+mobi\-config/mobi\_lib\_config.php. Next, populate the MySQL database, this can be done by running the SQL script found at mobi-sql/source\_all.sql
