@@ -1,11 +1,13 @@
 <?php
 $docRoot = getenv("DOCUMENT_ROOT");
 
+define("WHATS_NEW_PATH", "$docRoot/mobile-about/whatsnew.xml");
+
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once LIBDIR . 'rss_services.php';
 
 class WhatsNew extends RSS {
-  protected $rss_url = "http://localhost/drupal/whats_new/rss.xml";
+  protected $rss_url = WHATS_NEW_PATH;
 
   protected $custom_tags = array('body', 'shortName');
   protected $custom_html_tags = array('<a><b><br><del><em><i><ins><strong>', '');
