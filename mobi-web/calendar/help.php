@@ -15,6 +15,6 @@ $help = array(
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-WEBROOT . "page_builder/help.php";
+require WEBROOT . "page_builder/help.php";
 
 ?>
