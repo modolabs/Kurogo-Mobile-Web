@@ -6,7 +6,6 @@
 
 ## Required PHP dependencies
 * MySQL module
-* PHP Command Line Interface
 * LDAP module
 
 ## Installation Process
