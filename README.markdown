@@ -25,7 +25,7 @@ Next configure mobi-config/mobi\_lib\_config.php with the database settings you 
 
 Next in mobi-config/mobi\_web\_constants.php configure LIBDIR to point the mobi-lib directory, and WEBROOT to point the mobi-web directory (This should be the same as DOCUMENT\_ROOT).
 
-Next in mobi-config/mobi\_web\_constants.php configure MOBI\_SERVICE\_URL to point to your instance, of the mit browser detection software, it by default points to an MIT development server, which make work for testing purposes.
+Next in mobi-config/mobi\_web\_constants.php configure MOBI\_SERVICE\_URL to point to your instance, of the mit browser detection software, it by default points to an MIT development server, which may work for testing purposes.
 
 In mobi-confi/mobi\_lib\_constants.php on lines 88 and 89 configure the path for CACHE_DIR and LIB\_DIR
 
