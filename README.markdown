@@ -13,6 +13,17 @@
 * paer libary Log
 ``pear install Log``
 
+## Notes about the directory structure
+* mobi-web/  
+Contains the outside facing web scripts.
+* mobi-lib/
+Contains libraries that mobi-web uses, to talk to various services at MIT
+* mobi-config/
+Contains configuration files, each file needs to be copied and stripped of .init extension.
+* mobi-push/
+Contains the script which starts the background processes with send push notifications to the iPhone, sometimes called Apple Push Notifications or (APNS) for short.
+* iPhone-app/
+Contains the XCode project and all the objective-C and other resources used to build the MIT iPhone application
 
 ## Installation Process
 Install the source code such that DOCUMENT\_ROOT points to mobi-web directory. In mobi-config directory copy the three configuration files.  
