@@ -1,5 +1,4 @@
 <?
-require_once("nusoap/nusoap.php");
 
 class SoapClientWrapper {
   /* 

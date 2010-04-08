@@ -1,5 +1,10 @@
 <?
 /*
+ * An external directory to store various temporary and log files.
+ */
+define(AUX_PATH, "/etc/mit_mobile");
+
+/*
  * the prodction error handler has a pretty html page dispalying a brief error message
  * it also emails detailed information to the developer email address
  */
@@ -15,10 +20,10 @@ define("DEVELOPER_EMAIL", "nobody@example.edu");
 /** log file locations
  *
  */
-define("API_LOG_FILE", "/usr/local/etc/was/logs/mobi_api_log");
-define("API_CURRENT_LOG_FILE", "/usr/local/etc/was/tmp/mobi_api_log");
-define("WEB_LOG_FILE", "/usr/local/etc/was/logs/mobi_web_log");
-define("WEB_CURRENT_LOG_FILE", "/usr/local/etc/was/tmp/mobi_web_log");
+define("API_LOG_FILE", AUX_PATH . "/logs/mobi_api_log");
+define("API_CURRENT_LOG_FILE", AUX_PATH . "/tmp/mobi_api_log");
+define("WEB_LOG_FILE", AUX_PATH . "/logs/mobi_web_log");
+define("WEB_CURRENT_LOG_FILE", AUX_PATH . "/tmp/mobi_web_log");
 define("LOG_DATE_FORMAT", '[D m d H:i:s Y]');
 define("LOG_DATE_PATTERN", '/^.{5}(\d{2}) (\d{2}).{10}(\d{4})/');
 
@@ -29,7 +34,7 @@ define("API_STATS_TABLE", 'mobi_api_requests');
 /*************** LDAP server, filters and mappings **************
  *
  */
-define("LDAP_SERVER", "ldap-staging.mit.edu");
+define("LDAP_SERVER", "ldap.mit.edu");
 define("SEARCH_TIMELIMIT", 30);
 define("READ_TIMELIMIT", 30);
 define("TELEPHONE_FILTER", "(telephonenumber=*%s*)");
@@ -74,7 +79,7 @@ $personDisplayMapping = array(array("surname", "sn", null, null, FALSE, FALSE, F
  */
 define("LOG_ALL_ERRORS", FALSE);
 define("LOG_PEOPLE_DIRECTORY_ERRORS", TRUE);
-define("ERROR_LOGFILE", "/usr/local/etc/was/logs/mobile_error_log");
+define("ERROR_LOGFILE", AUX_PATH . "/logs/mobile_error_log");
 
 /*************** directory locations **************
  *
@@ -131,9 +136,9 @@ define("SHOW_DEVICE_DETECTION", False);
 /* Apple Push Notifications Service */
 // are these sensitive? (not sure)
 // Judged them as being non-sensitive since they can't be used without a valid certificate
-define("APNS_CERTIFICATE_DEV", '/usr/local/etc/was/certs/apns_dev.pem');
+define("APNS_CERTIFICATE_DEV", AUX_PATH . '/certs/apns_dev.pem');
 define("APNS_CERTIFICATE_DEV_PASSWORD", '');
-define("APNS_CERTIFICATE_PROD", '/usr/local/etc/was/certs/apns_prod.pem');
+define("APNS_CERTIFICATE_PROD", AUX_PATH . '/certs/apns_prod.pem');
 define("APNS_CERTIFICATE_PROD_PASSWORD", '');
 define("APNS_SANDBOX", False);
 define("APPLE_RELEASE_APP_ID", "edu.example.mitmobile");
