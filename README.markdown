@@ -52,7 +52,7 @@ Next in mobi-config/mobi\_web\_constants.php configure MOBI\_SERVICE\_URL to poi
 In mobi-confi/mobi\_lib\_constants.php on lines 88 and 89 configure the path for CACHE_DIR and LIB\_DIR
 
 Some files and log are stored outside of the main path, you will need to create an auxillary path, with the same permissions as the web server.  Then configure the variable AUX_PATH in mobi-config/mobi_web_constants.php to point to this path.  To set up the directory structure inside this path run:  
-``$ php setup.php``
+``$ php setup_aux_dirs.php``
 
 ## Running Apple Push Notification Daemon Scripts
 Need to save the push certificates as .pem files somewhere on the server, and configure the following variables in mobi-config/mobi\_web\_constants.php: ``APNS_CERTIFICATE_DEV``, ``APNS_CERTIFICATE_DEV_PASSWORD``, ``APNS_CERTIFICATE_PROD``, ``APNS_CERTIFICATE_PROD_PASSWORD``, ``APNS_SANDBOX``, ``APPLE_RELEASE_APP_ID``.
