@@ -6,7 +6,8 @@
 
 ## Required PHP dependencies
 * MySQL module
-* PEAR
+* PHP Command Line Interface
+* LDAP module
 
 ## Installation Process
 Install the source code such that DOCUMENT\_ROOT points to mobi-web directory. In mobi-config directory copy the three configuration files.  
@@ -29,4 +30,8 @@ Next in mobi-config/mobi\_web\_constants.php configure MOBI\_SERVICE\_URL to poi
 
 In mobi-confi/mobi\_lib\_constants.php on lines 88 and 89 configure the path for CACHE_DIR and LIB\_DIR
 
-The MIT Mobile web uses the drupal CMS to manage announcements about what is new.  Drupal will need to be installed on a LAMP server follow the instructions at (http://drupal.org)[http://drupal.org] , we used drupal 6.16.  
+Some files and log are stored outside of the main path, you will need to create an auxillary path, with the same permissions as the web server.  Then configure the variable AUX_PATH in mobi-config/mobi_web_constants.php to point to this path.  To set up the directory structure inside this path run:  
+``$ php setup.php``
+
+## Notes
+* php magic quotes must be disabled
