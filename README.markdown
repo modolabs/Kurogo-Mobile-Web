@@ -24,6 +24,11 @@ Contains configuration files, each file needs to be copied and stripped of .init
 Contains the script which starts the background processes with send push notifications to the iPhone, sometimes called Apple Push Notifications or (APNS) for short.
 * iPhone-app/  
 Contains the XCode project and all the objective-C and other resources used to build the MIT iPhone application
+* mobi-web/api/
+Contains the front facing scripts that the iPhone application calls.
+* mobi-web/api/push/
+Contains the scripts that run in the background processing notifications
+
 
 ## Installation Process
 Install the source code such that DOCUMENT\_ROOT points to mobi-web directory. In mobi-config directory copy the three configuration files.  
