@@ -41,7 +41,7 @@ Some files and log are stored outside of the main path, you will need to create 
 ## Running Apple Push Notification Daemon Scripts
 Need to save the push certificates as .pem files somewhere on the server, and configure the following variables in mobi-config/mobi\_web\_constants.php: ``APNS_CERTIFICATE_DEV``, ``APNS_CERTIFICATE_DEV_PASSWORD``, ``APNS_CERTIFICATE_PROD``, ``APNS_CERTIFICATE_PROD_PASSWORD``, ``APNS_SANDBOX``, ``APPLE_RELEASE_APP_ID``.
 
-Also need to configure the start-up script, (as the web user)
+Also need to configure the start-up script, (as the web user)  
 ``cd mobi-push``  
 ``cp configure_paths.sh.init configure_paths.sh``    
 The AUX\_PATH should be the same path used in mobi-config/mobi\_web\_constants.php, and DOCUMENT\_ROOT should be the web servers DOCUMENT\_ROOT    
