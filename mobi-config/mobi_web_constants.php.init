@@ -34,7 +34,7 @@ define("API_STATS_TABLE", 'mobi_api_requests');
 /*************** LDAP server, filters and mappings **************
  *
  */
-define("LDAP_SERVER", "ldap-staging.mit.edu");
+define("LDAP_SERVER", "ldap.mit.edu");
 define("SEARCH_TIMELIMIT", 30);
 define("READ_TIMELIMIT", 30);
 define("TELEPHONE_FILTER", "(telephonenumber=*%s*)");
