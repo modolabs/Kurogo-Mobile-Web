@@ -1,8 +1,6 @@
 <?php
-
-/* this file assumes env $WSETCDIR is already defined */
-
 require_once "System/Daemon.php";
+require_once dirname(__FILE__) . "/../../mobi-config/mobi_web_constants.php";
 
 class DaemonWrapper {
   private $appName = "";
@@ -22,8 +20,8 @@ class DaemonWrapper {
       System_Daemon::setOption("appName", $appName);
       System_Daemon::setOption("appRunAsUID", posix_getuid());
       System_Daemon::setOption("appRunAsGID", posix_getgid());
-      System_Daemon::setOption("logLocation", getenv('WSETCDIR') . "/logs/$appName");
-      System_Daemon::setOption("appPidLocation", getenv('WSETCDIR') . "/pushd/$appName/$appName.pid");
+      System_Daemon::setOption("logLocation", AUX_PATH . "/logs/$appName");
+      System_Daemon::setOption("appPidLocation", AUX_PATH . "/pushd/$appName/$appName.pid");
 
       System_Daemon::setOption('logPhpErrors', true);
       System_Daemon::setOption('logFilePosition', true);
@@ -64,7 +62,7 @@ class DaemonWrapper {
   }
 
   function command_file() {
-    return getenv('WSETCDIR') . "/pushd/{$this->appName}/command.txt";
+    return AUX_PATH . "/pushd/{$this->appName}/command.txt";
   }
 
   function oneLoop($pause=True) {

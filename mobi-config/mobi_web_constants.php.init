@@ -136,11 +136,11 @@ define("SHOW_DEVICE_DETECTION", False);
 /* Apple Push Notifications Service */
 // are these sensitive? (not sure)
 // Judged them as being non-sensitive since they can't be used without a valid certificate
-define("APNS_CERTIFICATE_DEV", AUX_PATH . '/certs/apns_dev.pem');
+define("APNS_CERTIFICATE_DEV", '/etc//certs/apns_dev.pem');
 define("APNS_CERTIFICATE_DEV_PASSWORD", '');
-define("APNS_CERTIFICATE_PROD", AUX_PATH . '/certs/apns_prod.pem');
+define("APNS_CERTIFICATE_PROD", '/etc//certs/apns_prod.pem');
 define("APNS_CERTIFICATE_PROD_PASSWORD", '');
-define("APNS_SANDBOX", False);
+define("APNS_SANDBOX", True);
 define("APPLE_RELEASE_APP_ID", "edu.example.mitmobile");
 define("APNS_CONNECTIONS_LIMIT", 100);
 
