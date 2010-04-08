@@ -48,5 +48,8 @@ The AUX\_PATH should be the same path used in mobi-config/mobi\_web\_constants.p
 Now you can start the daemon processes with  
 ``$ ./mobi-daemons.sh start``
 
+## Building the iPhone application
+You can build the iPhone application on a Mac by opening ``"iPhone-app/MIT Mobile.xcodeproj"`` in XCode.  By default the iPhone app connects to MIT mobile servers, either development, staging or production.  If you would like it to connect to the webserver you have installed and configure, then edit the domain names and URLs at the top of iPhone-app/Common/MITConstants.m
+
 ## Notes
 * php magic quotes must be disabled
