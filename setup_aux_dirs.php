@@ -2,17 +2,16 @@
 require_once ('mobi-config/mobi_web_constants.php');
 
 if(is_dir(AUX_PATH)) {
-  create_dir(AUX_PATH . '/logs');
-  create_dir(AUX_PATH . '/tmp');
-  
-  $pushd = AUX_PATH . '/pushd';
-  create_dir($pushd);
-  create_dir($pushd . '/apns_feedback');
-  create_dir($pushd . '/apns_push');
-  create_dir($pushd . '/emergency');
-  create_dir($pushd . '/my_stellar');
-  create_dir($pushd . '/shuttle');
-  
+  create_dirs(AUX_PATH, array('logs', 'tmp', 'pushd', 'maptiles'));
+  create_dirs(AUX_PATH.'/pushd', array('apns_feedback', 'apns_push', 'emergency', 'my_stellar', 'shuttle'));
+  create_dirs(AUX_PATH.'/maptiles', array('raw', 'crushed'));
+
+  // create the symlink that exposes maptiles to outside http requests
+  if(is_link('mobi-web/api/map/tile')) {
+    unlink('mobi-web/api/map/tile');
+  }
+  symlink(AUX_PATH . '/maptiles/crushed', 'mobi-web/api/map/tile');
+   
 } else {
   echo AUX_PATH . " does not yet exist, this directory needs to be created with the same permissions as webserver";
 }
@@ -27,4 +26,11 @@ function create_dir($path) {
   }
 }
 
+function create_dirs($base, $dirs) {
+  foreach($dirs as $dir) {
+    create_dir("$base/$dir");
+  }
+}
+
+ 
 ?>
