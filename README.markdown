@@ -66,7 +66,8 @@ Now you can start the daemon processes with
 ``$ cd scripts``  
 ``$ ./mobi-daemons.sh start``
 
-The map module of iPhone application requires the web server to download all the maptiles from the maps.mit.edu server, after they are downloaded they are processed by pngcrush (this needs to be installed on the server). As with the mobi-daemons.sh, you need to make sure configure\_paths.sh is configured correctly, the maptiles are saved in the auxillary path.  To download and process all the maptiles run:  
+## Downloading iPhone map tiles
+The map module of iPhone application requires the web server to download all the map tiles from the maps.mit.edu server, after they are downloaded they are processed by pngcrush (this needs to be installed on the server). As with the mobi-daemons.sh, you need to make sure configure\_paths.sh is configured correctly, the map tiles are saved in the auxillary path.  To download and process all the map tiles run:  
 ``$ cd scripts``  
 ``$ ./mobi-maptiles.sh``  
 (This can take quite a long time, ran locally from MIT it takes about 3-4 hours)
