@@ -2,7 +2,7 @@
 
 source configure_paths.sh
 NOW=`date +%s`
-DATADIR=$AUX_DIR/maptiles # where "tile" directory should go
+DATADIR=$AUX_PATH/maptiles # where "tile" directory should go
 PHPSCRIPT=bin/mobi-maptiles-download.php
 CHECKSUM=$DATADIR/export.md5
 
@@ -66,7 +66,7 @@ for LEVEL in `ls $RAW_DATADIR`; do
         fi
 
         # suppress errors from using `*` on empty directories
-	bin/pngcrush -q -d $DATADIR/crushed/$LEVEL/$Y $RAW_DATADIR/$LEVEL/$Y/* > /dev/null 2>&1 
+	pngcrush -q -d $DATADIR/crushed/$LEVEL/$Y $RAW_DATADIR/$LEVEL/$Y/* > /dev/null 2>&1 
     done
 done
 

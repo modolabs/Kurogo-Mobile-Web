@@ -3,6 +3,7 @@
 * PHP 5.2 or greater (including the command line interface to PHP)
 * MySQL 5 or greater
 * mit-mobile-browser-detection installed on a server
+* pngcrush
 
 ## Required PHP dependencies
 * MySQL module
@@ -62,10 +63,18 @@ Also need to configure the start-up script, (as the web user)
 ``$ cp configure_paths.sh.init configure_paths.sh``    
 The AUX\_PATH should be the same path used in mobi-config/mobi\_web\_constants.php, and DOCUMENT\_ROOT should be the web servers DOCUMENT\_ROOT    
 Now you can start the daemon processes with  
+``$ cd scripts``  
 ``$ ./mobi-daemons.sh start``
+
+The map module of iPhone application requires the web server to download all the maptiles from the maps.mit.edu server, after they are downloaded they are processed by pngcrush (this needs to be installed on the server). As with the mobi-daemons.sh, you need to make sure configure\_paths.sh is configured correctly, the maptiles are saved in the auxillary path.  To download and process all the maptiles run:  
+``$ cd scripts``  
+``$ ./mobi-maptiles.sh``  
+(This can take quite a long time, ran locally from MIT it takes about 3-4 hours)
 
 ## Building the iPhone application
 You can build the iPhone application on a Mac by opening ``"iPhone-app/MIT Mobile.xcodeproj"`` in XCode.  By default the iPhone app connects to MIT mobile servers, either development, staging or production.  If you would like it to connect to the webserver you have installed and configure, then edit the domain names and URLs at the top of iPhone-app/Common/MITConstants.m
+
+In order to compile the application for a device you will need to change the APP ID saved in iPhone-app/MIT_Mobile-Info.plist from edu.example.mitmobile to the APP ID you configured in your apple developers portal.
 
 ## Notes
 * php magic quotes must be disabled
