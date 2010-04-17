@@ -40,8 +40,8 @@ Install the source code such that DOCUMENT\_ROOT points to mobi-web directory. I
 
 Create a MySQL database, and configure the username, database name, and password in
 mobi\-config/mobi\_lib\_config.php. Next, populate the MySQL database, this can be done by running the SQL script found at mobi-mysql/source\_all.sql  
-``mysql> create database some_tablename;``  
-``mysql> use some_tablename;``  
+``mysql> create database database_name;``  
+``mysql> use database_name;``  
 ``mysql> source source_all.sql;``  
 
 Next configure mobi-config/mobi\_lib\_config.php with the database settings you just set up.
