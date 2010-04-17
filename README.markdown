@@ -50,7 +50,7 @@ Next in mobi-config/mobi\_web\_constants.php configure LIBDIR to point the mobi-
 
 Next in mobi-config/mobi\_web\_constants.php configure MOBI\_SERVICE\_URL to point to your instance, of the mit browser detection software, it by default points to an MIT development server, which may work for testing purposes.
 
-In mobi-confi/mobi\_lib\_constants.php on lines 88 and 89 configure the path for CACHE_DIR and LIB\_DIR
+In mobi-config/mobi\_lib\_constants.php on lines 15 and 16 configure the path for CACHE_DIR and LIB\_DIR
 
 Some files and log are stored outside of the main path, you will need to create an auxillary path, with the same permissions as the web server.  Then configure the variable AUX_PATH in mobi-config/mobi_web_constants.php to point to this path.  To set up the directory structure inside this path run:  
 ``$ php setup_aux_dirs.php``
