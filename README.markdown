@@ -39,7 +39,7 @@ Install the source code such that DOCUMENT\_ROOT points to mobi-web directory. I
 ``$ cp mobi_web_constants.php.init mobi_web_constants.php``  
 
 Create a MySQL database, and configure the username, database name, and password in
-mobi\-config/mobi\_lib\_config.php. Next, populate the MySQL database, this can be done by running the SQL script found at mobi-sql/source\_all.sql  
+mobi\-config/mobi\_lib\_config.php. Next, populate the MySQL database, this can be done by running the SQL script found at mobi-mysql/source\_all.sql  
 ``mysql> create database some_tablename;``  
 ``mysql> use some_tablename;``  
 ``mysql> source source_all.sql;``  
