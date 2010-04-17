@@ -2,7 +2,7 @@
 /*
  * An external directory to store various temporary and log files.
  */
-define(AUX_PATH, "/etc/mit_mobile");
+define("AUX_PATH", "/etc/mit_mobile");
 
 /*
  * the prodction error handler has a pretty html page dispalying a brief error message
