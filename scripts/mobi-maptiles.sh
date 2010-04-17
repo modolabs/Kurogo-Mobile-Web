@@ -4,7 +4,8 @@ source configure_paths.sh
 NOW=`date +%s`
 DATADIR=$AUX_PATH/maptiles # where "tile" directory should go
 PHPSCRIPT=bin/mobi-maptiles-download.php
-CHECKSUM=$DATADIR/export.md5
+CHECKSUM_FINAL=$DATADIR/export.md5
+CHECKSUM_TEMP=$DATADIR/temp-export.md5
 
 if [ "$1" = "--force" ]; then
     php $PHPSCRIPT --force
@@ -13,27 +14,26 @@ else
 fi
 
 if [ "$?" -ne 0 ]; then
-    if [ -f "$CHECKSUM" ]; then
-	echo "removing $CHECKSUM"
-	rm $CHECKSUM
+    if [ -f "$CHECKSUM_TEMP" ]; then
+	echo "removing $CHECKSUM_TEMP"
+	rm $CHECKSUM_TEMP
     fi
     echo "$PHPSCRIPT failed, exiting"
     exit $?
 fi
 
-if [ ! -f "$CHECKSUM" ]; then 
+if [ ! -f "$CHECKSUM_TEMP" ]; then 
     echo "$PHPSCRIPT failed to create checksum file, exiting"
     exit 1
 else
     CACHETIME=`stat -c %Y $CHECKSUM 2>/dev/null`
-    if [ $CACHETIME -lt $NOW ]; then 
-	echo "checksum file not modified, our job is done"
+    if [ `cat $CHECKSUM_FINAL` == `cat $CHECKSUM_TEMP` ]; then 
+	echo "checksum not modified, our job is done"
+        rm $CHECKSUM_TEMP
 	exit 0
     fi
 fi
 
-# from here on we create a temporary copy of the entire tile directory
-# and overwrites the original tiles after they have been optimized
 
 # benchmark stats per level... 
 #
@@ -48,7 +48,7 @@ fi
 #
 
 # assume we're in the same directory that contains the directory `tile`\
-# and the executable pngcrush binary is also here
+# and the executable pngcrush is in the path
 
 RAW_DATADIR=$DATADIR/raw
 
@@ -70,4 +70,5 @@ for LEVEL in `ls $RAW_DATADIR`; do
     done
 done
 
+mv $CHECKSUM_TEMP $CHECKSUM_FINAL
 echo "`date +%H:%M:%S` complete"

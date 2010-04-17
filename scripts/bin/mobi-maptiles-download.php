@@ -13,6 +13,7 @@ define("MAP_SEARCH_URL", 'http://whereis.mit.edu/search');
 define('MAP_SERVER_URL', 'http://maps.mit.edu/ArcGIS/rest/services/Mobile/WhereIs_MobileAll/MapServer');
 define("MAP_TILE_CACHE_DIR", $aux_path . '/maptiles/raw/');
 define("MAP_TILE_CHECKSUM_FILE", $aux_path . '/maptiles/export.md5');
+define("MAP_TILE_CHECKSUM_FILE_TEMP", $aux_path . '/maptiles/temp-export.md5');
 
 echo "retrieving service capabilities\n";
 
@@ -59,12 +60,13 @@ if (!$image) {
 
 
 $new_md5 = md5($image);
+
+// save the temporary checksum
+$fh = fopen(MAP_TILE_CHECKSUM_FILE_TEMP, 'w');
+fwrite($fh, $new_md5);
+fclose($fh);
+
 if ($new_md5 != $md5 || $argv[1] == '--force') {
-
-  $fh = fopen(MAP_TILE_CHECKSUM_FILE, 'w');
-  fwrite($fh, $new_md5);
-  fclose($fh);
-
   // figure out what all the tile filenames are and download
 
   $origin = $service['tileInfo']['origin'];
