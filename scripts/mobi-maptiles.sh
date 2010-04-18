@@ -26,11 +26,12 @@ if [ ! -f "$CHECKSUM_TEMP" ]; then
     echo "$PHPSCRIPT failed to create checksum file, exiting"
     exit 1
 else
-    CACHETIME=`stat -c %Y $CHECKSUM 2>/dev/null`
-    if [ `cat $CHECKSUM_FINAL` == `cat $CHECKSUM_TEMP` ]; then 
-	echo "checksum not modified, our job is done"
-        rm $CHECKSUM_TEMP
-	exit 0
+    if [[ -f $CHECKSUM_FINAL && "$1" != "--force" ]]; then
+        if [ `cat $CHECKSUM_FINAL` == `cat $CHECKSUM_TEMP` ]; then 
+	    echo "checksum not modified, our job is done"
+            rm $CHECKSUM_TEMP
+	    exit 0
+        fi
     fi
 fi
 

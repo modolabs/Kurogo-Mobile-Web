@@ -65,8 +65,7 @@ $new_md5 = md5($image);
 $fh = fopen(MAP_TILE_CHECKSUM_FILE_TEMP, 'w');
 fwrite($fh, $new_md5);
 fclose($fh);
-
-if ($new_md5 != $md5 || $argv[1] == '--force') {
+if ($new_md5 != $md5 || sizeof($argv) >= 2 && $argv[1] == '--force') {
   // figure out what all the tile filenames are and download
 
   $origin = $service['tileInfo']['origin'];
