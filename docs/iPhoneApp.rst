@@ -62,6 +62,11 @@ students can bookmark classes for quick access.  Announcments for bookmarked cla
 in real time to the users iPhone.  
 
 
+.. toctree::
+   :hidden:
+
+   Stellar Module <iPhone-modules/stellar>
+
 
 
   

@@ -63,3 +63,41 @@ User Interface Classes
    they load it populates the news tab.  If it fails to contact the server, it shows an an error 
    message, and the displays the old news items.
    
+
+.. class:: StellarAnnouncementViewController
+
+   ViewController for the screen that shows individual news items from a class, it is displayed
+   when a user selects a row in the news table on the ``StellarDetailViewController`` screen.  
+   It uses a view a ``UITextView`` to display the textual content of the announcement to allow
+   the user to select embedded URLs which will then be loaded into the iPhone's mobile safari app.
+   This object needs to be sent a ``StellarAnnouncement`` object when constructed, which is used
+   to populate all the content of this screen.
+
+----------------
+Core Data Models
+----------------
+Every Course at MIT is saved for 30 days to disk, and every class that is 
+bookmarked is saved
+until the module detects a semester change.
+
+.. class:: StellarCourse
+   
+   Represents an MIT Course, which at other schools is more often referred to as a department.
+
+.. class:: StellarClass
+
+   Represents an MIT Class, each class can belong to several courses, though currently the code
+   does not actually keep track of the relationship between a ``StellarCourse`` and a ``StellarClass``
+
+.. class:: StellarAnnouncement
+
+   Represent an announcement for a class, belongs to a ``StellarClass``
+
+.. class:: StellarStaffMember
+
+   Represents a staff member for a class, belongs to a ``StellarClass``
+
+.. class:: StellarClassTime
+
+   Represent a time(s) of the week and a place where the class meets, belongs to a ``StellarClass``
+
