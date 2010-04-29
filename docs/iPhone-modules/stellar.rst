@@ -101,3 +101,40 @@ until the module detects a semester change.
 
    Represent a time(s) of the week and a place where the class meets, belongs to a ``StellarClass``
 
+
+------------
+StellarModel
+------------
+The ``StellarModel`` is a singleton class, that is a factory for all the Stellar Model Classes.
+It populates the data in the Stellar Model Classes from either calling out to the network 
+and retreiving it or from retreiving it from Core Data storage or the in memory cache of
+``StellarCache``.  Since many of its methods need to be  asynchronous, it defines
+several protocols that are used as callback
+
+.. class:: StellarModel
+   
+   The following methods are used by the User Interface layer.
+
+   .. objcmethod:: + (void) loadCoursesFromServerAndNotify: (id<CoursesLoadedDelegate>)delegate
+
+       This is used by ``StellarMainTableController`` to determine all the courses that need to be displayed
+
+   .. objcmethod:: + (void) loadClassesForCourse: (StellarCourse *)stellarCourse delegate: (NSObject<ClassesLoadedDelegate> *)delegate
+
+       This is used by ``StellarClassesTableController`` to list all the classes for a given course
+
+   .. objcmethod:: + (void) loadAllClassInfo: (StellarClass *)stellarClass delegate: (id<ClassInfoLoadedDelegate>)delegate
+
+       This is used by ``StellarDetailViewController`` to get all the data for any specific class to display
+
+   .. objcmethod:: + (void) executeStellarSearch: (NSString *)searchTerms delegate: (id<ClassesSearchDelegate>)delegate
+
+      This is used by ``StellarSearch`` to retrieve search results, which is an ``NSArray`` of ``StellarClasses``
+
+   .. objcmethod:: + (void) saveClassToFavorites: (StellarClass *)class
+
+      This is used by ``StellarDetailViewController`` when a user bookmarks a class
+
+   .. objcmethod:: + (void) removeClassFromFavorites: (StellarClass *)class
+
+      This is used by ``StellarDetailViewController`` when a user removes a class from his bookmarks
