@@ -11,7 +11,7 @@
 * PEAR
 * pear library System_Daemon-0.9.2 (only for daemon processes that send notifications to iPhones)  
 ``pear install System_Daemon-0.9.2``
-* paer libary Log  
+* pear library Log  
 ``pear install Log``
 
 ## Notes about the directory structure
