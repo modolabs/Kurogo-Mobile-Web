@@ -2,8 +2,8 @@
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "home/Home.php";
-require_once WEBROOT . "home/Modules.php";
+require_once "Home.php";
+require_once "Modules.php";
 require_once WEBROOT . "page_builder/Page.php";
 //require WEBROOT . "page_builder/counter.php";
 require WEBROOT . "page_builder/page_tools.php";
