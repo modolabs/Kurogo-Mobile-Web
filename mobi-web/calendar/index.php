@@ -5,7 +5,7 @@ require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require WEBROOT . "page_builder/page_header.php";
 
 //defines all the variables related to being today
-require WEBROOT . "calendar/calendar_lib.php";
+require "calendar_lib.php";
 
 $today = day_info(time());
 

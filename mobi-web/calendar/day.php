@@ -6,7 +6,7 @@ require WEBROOT . "page_builder/page_header.php";
 require LIBDIR . "mit_calendar.php";
 
 //defines all the variables related to being today
-require WEBROOT . "calendar/calendar_lib.php";
+require "calendar_lib.php";
 
 $time = $_REQUEST['time'];
 $current = day_info($time);

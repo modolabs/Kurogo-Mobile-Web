@@ -4,7 +4,7 @@ $docRoot = getenv("DOCUMENT_ROOT");
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require WEBROOT . "page_builder/page_header.php";
 require_once LIBDIR . "mit_calendar.php";
-require WEBROOT . "calendar/calendar_lib.php";
+require "calendar_lib.php";
 
 $event = MIT_Calendar::getEvent($_REQUEST['id']);
 $time_of_day = MIT_Calendar::timeText($event);
