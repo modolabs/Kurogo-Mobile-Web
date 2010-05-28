@@ -4,7 +4,7 @@ $docRoot = getenv("DOCUMENT_ROOT");
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "page_builder/page_header.php";
 require_once WEBROOT . "home/Modules.php";
-require_once WEBROOT . "customize/customize_lib.php";
+require_once "customize_lib.php";
 
 if ($page->branch == 'Webkit') {
   $template = $page->delta_file('index', 'html');

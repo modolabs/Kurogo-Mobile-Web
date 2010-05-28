@@ -2,7 +2,7 @@
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "map/buildings_lib.php";
+require_once "buildings_lib.php";
 
 $xmlfile = WEBROOT . 'map/xml/bldg_data.xml';
 $bldg_data = loadXML($xmlfile);

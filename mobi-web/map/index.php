@@ -57,7 +57,7 @@ $page->output();
 function places() {
   $docRoot = getenv("DOCUMENT_ROOT");
   require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-  require WEBROOT . "map/buildings.php";
+  require "buildings.php";
 
   if($_REQUEST['category'] == 'buildings') {
     // array needs to be converted to a hash

@@ -3,7 +3,7 @@ $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require WEBROOT . "/page_builder/page_header.php";
-require WEBROOT . "/mobile-about/WhatsNew.php";
+require "WhatsNew.php";
 
 $whats_new = new WhatsNew();
 $new_items = $whats_new->get_items();

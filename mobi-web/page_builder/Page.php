@@ -11,11 +11,11 @@ require_once $docRoot . '/mobi-config/mobi_web_constants.php';
 
 require_once WEBROOT . 'home/Modules.php';
 
-require_once WEBROOT . 'page_builder/WebkitPage.php';
-require_once WEBROOT . 'page_builder/TouchPage.php';
-require_once WEBROOT . 'page_builder/BasicPage.php';
+require_once 'WebkitPage.php';
+require_once 'TouchPage.php';
+require_once 'BasicPage.php';
 
-require_once WEBROOT . 'page_builder/counter.php';
+require_once 'counter.php';
 
 class Page {
   // sections of the HTML page

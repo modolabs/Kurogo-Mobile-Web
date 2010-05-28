@@ -353,7 +353,7 @@ class Data {
   public static $values;
 
   public static function init() {
-    require WEBROOT . "map/buildings.php";
+    require "buildings.php";
     self::$values = $building_data[select_value()];
   }
 }
