@@ -75,3 +75,7 @@ In order to compile the application for a device you will need to change the APP
 
 ## Notes
 * php magic quotes must be disabled
+* error_reporting is set as follows:  
+``error_reporting = E_ALL & ~E_NOTICE``
+
+
