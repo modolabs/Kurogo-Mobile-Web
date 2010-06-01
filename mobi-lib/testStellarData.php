@@ -1,8 +1,8 @@
 <?
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
-require_once(LIBDIR . "StellarData.php");
+
+require_once "mobi_lib_constants.php";
+require_once(LIB_ROOT . "StellarData.php");
 
 StellarData::init();
 

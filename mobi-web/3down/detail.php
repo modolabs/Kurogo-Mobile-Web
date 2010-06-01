@@ -1,8 +1,8 @@
 <?php
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "page_builder/page_header.php";
+
+require_once "../mobi-config/mobi_web_constants.php";
+require_once PAGE_HEADER;
 require_once LIBDIR . "rss_services.php";
 
 $ThreeDown = new ThreeDown();

@@ -91,14 +91,7 @@ define("ERROR_LOGFILE", AUX_PATH . "/logs/mobile_error_log");
  * that are shared between the Mobile Web and
  * SMS services.
  */
-define("LIBDIR", '/var/www/html/mobi-lib/');
-
-/* 
- * WEBROOT specifies the root directory of the Mobile Web
- * in relation to THIS COMPUTER.
- * on red hat machines this is usually somewhere in /var/www/
- */
-define("WEBROOT", '/var/www/html/mobi-web/');
+define("LIBDIR", WEBROOT . '../mobi-lib/');
 
 /*
  * HTTPROOT specifies the root directory of the Mobile Web

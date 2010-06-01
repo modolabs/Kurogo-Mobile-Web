@@ -1,8 +1,7 @@
 <?php
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require WEBROOT . "page_builder/Page.php";
+require_once "mobi-config/mobi_web_constants.php";
+require "page_builder/Page.php";
 
 $page = Page::factory();
 

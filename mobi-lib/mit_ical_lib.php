@@ -4,10 +4,10 @@
  * The ICal* classes in this file together partially implement RFC 2445.
  *
  */
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
-require_once(LIBDIR . 'TimeRange.php');
+
+require_once "mobi_lib_constants.php";
+require_once(LIB_ROOT . 'TimeRange.php');
 
 class ICalendarException extends Exception {
 }

@@ -10,10 +10,10 @@
  * or implementations of the same interface
  *
  */
-$docRoot = getenv("DOCUMENT_ROOT");
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
 
-define("SHUTTLE_SCHEDULE_SOURCE", LIBDIR . 'shuttle_schedule.json');
+require_once "mobi_lib_constants.php";
+
+define("SHUTTLE_SCHEDULE_SOURCE", LIB_ROOT . 'shuttle_schedule.json');
 
 /* constants used in constants.php: TIMEZONE */
 require_once 'TimeRange.php';

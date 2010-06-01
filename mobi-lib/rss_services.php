@@ -1,6 +1,6 @@
 <?php
-$docRoot = getenv("DOCUMENT_ROOT");
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
+
+require_once "mobi_lib_constants.php";
 
 class Emergency extends RSS {
   protected $rss_url = EMERGENCY_RSS_URL;

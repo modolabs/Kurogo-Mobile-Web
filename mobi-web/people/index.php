@@ -1,8 +1,8 @@
 <?php
-    $docRoot = getenv("DOCUMENT_ROOT");
+    
 
-    require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-    require WEBROOT . "page_builder/page_header.php";
+    require_once "../mobi-config/mobi_web_constants.php";
+    require PAGE_HEADER;
     require LIBDIR . "error_logging.php";
     require LIBDIR . "mit_ldap.php";
 

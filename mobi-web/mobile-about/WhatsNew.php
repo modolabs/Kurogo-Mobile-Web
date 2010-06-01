@@ -1,9 +1,8 @@
 <?php
-$docRoot = getenv("DOCUMENT_ROOT");
+require_once "../mobi-config/mobi_web_constants.php";
+define("WHATS_NEW_PATH", WEBROOT . "mobile-about/whatsnew.xml");
 
-define("WHATS_NEW_PATH", "$docRoot/mobile-about/whatsnew.xml");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once LIBDIR . 'rss_services.php';
 
 class WhatsNew extends RSS {

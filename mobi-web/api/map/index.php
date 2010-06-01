@@ -1,7 +1,6 @@
 <?
 
-$docRoot = getenv("DOCUMENT_ROOT");
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+require_once "../../mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "api/api_header.php";
 
 PageViews::log_api('map', 'iphone');
@@ -10,8 +9,8 @@ $json = '';
 
 switch ($_REQUEST['command']) {
  case 'categories':
-   $docRoot = getenv("DOCUMENT_ROOT");
-   require_once $docRoot . '/mobi-config/mobi_web_constants.php';
+   
+   require_once WEBROOT . 'mobi-config/mobi_web_constants.php';
    require_once WEBROOT . 'map/buildings_lib.php';
    $bldg_data = loadXML(WEBROOT . 'map/xml/bldg_data.xml');
    $building_nodes = $bldg_data->documentElement->getELementsByTagName('object');

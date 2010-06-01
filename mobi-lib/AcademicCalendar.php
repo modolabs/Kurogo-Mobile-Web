@@ -1,8 +1,8 @@
 <?
 
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
+
+require_once "mobi_lib_constants.php";
 require_once "mit_ical_lib.php";
 
 define("ACADEMIC_CALENDAR_ICS", 'http://web.mit.edu/registrar/calendar/AcademicCalendar.ics');

@@ -1,8 +1,8 @@
 <?php
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "page_builder/page_header.php";
+
+require_once "../mobi-config/mobi_web_constants.php";
+require_once PAGE_HEADER;
 
 if ($page->branch == 'Webkit') {
   $location_img = $page->img_tag('location', 'gif', 'Map', 280, 238);

@@ -1,7 +1,7 @@
 <?
-$docRoot = getenv("DOCUMENT_ROOT");
+$thisDir = dirname(__FILE__);
 
-require_once($docRoot . '/mobi-config/mobi_lib_config.php');
+require_once('mobi_lib_config.php');
 
 /*
  * use this file for storing constants that are used in multiple files
@@ -11,13 +11,8 @@ require_once($docRoot . '/mobi-config/mobi_lib_config.php');
  */
 
 // file/directory locations
-if (version_compare(phpversion(), '5.3') == -1) {
-  define("CACHE_DIR", '/var/www/html/mobi-lib/cache/');
-  define("LIBDIR", '/var/www/html/mobi-lib/');
-} else {
-  define("CACHE_DIR", __DIR__ . '/cache/');
-  define("LIBDIR", __DIR__);
-}
+define("CACHE_DIR", $thisDir . "/../mobi-lib/cache");
+define("LIB_ROOT", $thisDir . "/../mobi-lib/");
 
 /* debug preferences
  * not really all constants but whatever

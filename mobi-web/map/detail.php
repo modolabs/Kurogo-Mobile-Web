@@ -1,9 +1,9 @@
 <?
 define("WMS_URL", "http://ims.mit.edu/WMS_MS/WMS.asp");
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "page_builder/page_header.php";
+
+require_once "../mobi-config/mobi_web_constants.php";
+require_once PAGE_HEADER;
 
 //set zoom scale
 define('ZOOM_FACTOR', 2);

@@ -15,9 +15,9 @@ $help = array(
 
   'If you run into difficulty, please try calling 617-253-1000 for voice-assisted directory search.',
 );
-$docRoot = getenv("DOCUMENT_ROOT");
 
-  require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require WEBROOT . "page_builder/help.php";
+
+  require_once "../mobi-config/mobi_web_constants.php";
+require HELP_HEADER;
 
 ?>

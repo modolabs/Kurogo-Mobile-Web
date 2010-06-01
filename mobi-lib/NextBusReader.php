@@ -10,9 +10,9 @@
  * NEXTBUS_PREDICTION_CACHE_TIMEOUT -- max age of predictions cache
  * NEXTBUS_CACHE_MAX_TOLERANCE -- max age before reverting to published schedule
  */
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once($docRoot . '/mobi-config/mobi_lib_constants.php');
+
+require_once('mobi_lib_constants.php');
 require_once("ShuttleSchedule.php");
 
 

@@ -1,5 +1,5 @@
 <?php
-require_once ('mobi-config/mobi_web_constants.php');
+require_once ('mobi-config/web_constants.php');
 
 if(is_dir(AUX_PATH)) {
   create_dirs(AUX_PATH, array('logs', 'tmp', 'pushd', 'maptiles'));

@@ -1,8 +1,5 @@
 <?
-
-$docRoot = getenv("DOCUMENT_ROOT");
-
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+require_once dirname(__FILE__) . "/../mobi-config/mobi_web_constants.php";
 require_once LIBDIR . "ShuttleSchedule.php";
 require_once LIBDIR . "NextBusReader.php";
 

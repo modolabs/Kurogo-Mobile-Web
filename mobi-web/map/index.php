@@ -1,8 +1,8 @@
 <?php
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "page_builder/page_header.php";
+
+require_once "../mobi-config/mobi_web_constants.php";
+require_once PAGE_HEADER;
 
 class Categorys {
   public static $info = array(
@@ -55,8 +55,8 @@ if(!isset($_REQUEST['category'])) {
 $page->output();
 
 function places() {
-  $docRoot = getenv("DOCUMENT_ROOT");
-  require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+  
+  require_once "../mobi-config/mobi_web_constants.php";
   require "buildings.php";
 
   if($_REQUEST['category'] == 'buildings') {

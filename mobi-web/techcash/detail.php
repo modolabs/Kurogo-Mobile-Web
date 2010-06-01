@@ -1,9 +1,9 @@
 <?
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+
+require_once "../mobi-config/mobi_web_constants.php";
 require WEBROOT . "page_builder/security.php";
-require WEBROOT . "page_builder/page_header.php";
+require PAGE_HEADER;
 require LIBDIR . "tech_cash.php";
 
 ssl_required();

@@ -5,9 +5,9 @@ require_once "DaemonWrapper.php";
 $daemon = new DaemonWrapper("emergency");
 $daemon->start($argv);
 
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
+
+require_once "mobi-config/mobi_lib_constants.php";
 require_once LIBDIR . "rss_services.php";
 require_once LIBDIR . "db.php";
 require_once "apns_lib.php";

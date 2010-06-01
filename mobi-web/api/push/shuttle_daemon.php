@@ -16,9 +16,9 @@ require_once("DaemonWrapper.php");
 $daemon = new DaemonWrapper("shuttle");
 $daemon->start($argv);
 
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
+
+require_once "mobi-config/mobi_lib_constants.php";
 require_once LIBDIR . "ShuttleSchedule.php";
 require_once LIBDIR . "NextBusReader.php";
 require_once LIBDIR . "db.php";

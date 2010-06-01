@@ -1,7 +1,7 @@
 <?php
 
-$docRoot = getenv("DOCUMENT_ROOT");
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+
+require_once "../mobi-config/mobi_web_constants.php";
 require_once LIBDIR . "rss_services.php";
 
 $contacts = json_decode(file_get_contents(LIBDIR . "EmergencyContacts.json"), TRUE);
@@ -17,7 +17,7 @@ if($emergency === False) {
 }
 
 // the logic to implement the page begins here
-require WEBROOT . "page_builder/page_header.php";
+require PAGE_HEADER;
 
 if(isset($_REQUEST['contacts'])) {
   require "$page->branch/contacts.html";

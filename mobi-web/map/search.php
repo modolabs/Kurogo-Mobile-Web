@@ -1,8 +1,8 @@
 <?php
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "page_builder/page_header.php";
+
+require_once "../mobi-config/mobi_web_constants.php";
+require_once PAGE_HEADER;
 if($search_terms = $_REQUEST['filter']) {
   $results = map_search($search_terms);
   $total = count($results);

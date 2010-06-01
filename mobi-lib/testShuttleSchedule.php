@@ -1,8 +1,8 @@
 <?
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
-require_once(LIBDIR . 'ShuttleSchedule.php');
+
+require_once "mobi_lib_constants.php";
+require_once(LIB_ROOT . 'ShuttleSchedule.php');
 
 //print_r(ShuttleSchedule::get_route_list());
 $routes = ShuttleSchedule::get_active_routes();

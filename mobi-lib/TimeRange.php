@@ -4,10 +4,10 @@
  * TimeRange: class describing a time interval.
  * DayRange: child class of TimeRange describing a full day
  */
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
-require_once(LIBDIR . 'datetime_lib.php');
+
+require_once "mobi_lib_constants.php";
+require_once(LIB_ROOT . 'datetime_lib.php');
 
 class TimeRange {
 

@@ -4,10 +4,10 @@
  * CACHE_DIR
  * ICS_CACHE_LIFESPAN
  */
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
-require_once LIBDIR . "DrupalDB.php";
+
+require_once "mobi_lib_constants.php";
+require_once LIB_ROOT . "DrupalDB.php";
 
 class LibraryInfo {
 

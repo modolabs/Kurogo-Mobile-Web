@@ -19,9 +19,9 @@ $help = array(
 
   'The Campus Map is provided by the MIT Facilities Department and IS&amp;T.',
 );
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require WEBROOT . "page_builder/help.php";
+
+require_once "../mobi-config/mobi_web_constants.php";
+require HELP_HEADER;
 
 ?>

@@ -2,8 +2,8 @@
 <?php
 define("APNS_PUSH_REST_TIME", 15);
 
-$docRoot = getenv("DOCUMENT_ROOT");
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+
+require_once "../mobi-config/mobi_web_constants.php";
 
 require_once "DaemonWrapper.php";
 

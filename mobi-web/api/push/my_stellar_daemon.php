@@ -1,13 +1,13 @@
 #!/usr/bin/php
 <?php
 
-$docRoot = getenv("DOCUMENT_ROOT");
+
 
 require_once "DaemonWrapper.php";
 $daemon = new DaemonWrapper("my_stellar");
 $daemon->start($argv);
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
+require_once "mobi-config/mobi_lib_constants.php";
 require_once LIBDIR . "db.php";
 require_once LIBDIR . "StellarData.php";
 require_once "apns_lib.php";
