@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require PAGE_HEADER;
 require LIBDIR . "/mit_calendar.php";
 require "calendar_lib.php";

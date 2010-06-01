@@ -7,9 +7,9 @@ require_once "DaemonWrapper.php";
 $daemon = new DaemonWrapper("my_stellar");
 $daemon->start($argv);
 
-require_once "mobi-config/mobi_lib_constants.php";
-require_once LIBDIR . "db.php";
-require_once LIBDIR . "StellarData.php";
+require_once dirname(__FILE__) . "/../../../mobi-config/mobi_lib_constants.php";
+require_once LIB_ROOT . "db.php";
+require_once LIB_ROOT . "StellarData.php";
 require_once "apns_lib.php";
 
 while($daemon->sleep(STELLAR_FEED_CACHE_TIMEOUT)) {

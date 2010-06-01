@@ -1,6 +1,6 @@
 <?php
 
-require_once "mobi-config/mobi_web_constants.php";
+require_once "config/mobi_web_constants.php";
 require "page_builder/Page.php";
 
 $page = Page::factory();

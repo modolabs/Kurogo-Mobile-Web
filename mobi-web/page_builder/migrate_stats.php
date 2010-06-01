@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once LIBDIR . "db.php";
 
 $old_sql = file_get_contents("page_views.SQL");

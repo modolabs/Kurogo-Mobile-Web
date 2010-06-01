@@ -17,11 +17,10 @@ $daemon = new DaemonWrapper("shuttle");
 $daemon->start($argv);
 
 
-
-require_once "mobi-config/mobi_lib_constants.php";
-require_once LIBDIR . "ShuttleSchedule.php";
-require_once LIBDIR . "NextBusReader.php";
-require_once LIBDIR . "db.php";
+require_once dirname(__FILE__) . "/../../../mobi-config/mobi_lib_constants.php";
+require_once LIB_ROOT . "ShuttleSchedule.php";
+require_once LIB_ROOT . "NextBusReader.php";
+require_once LIB_ROOT . "db.php";
 require_once "apns_lib.php";
 
 ShuttleSchedule::init();

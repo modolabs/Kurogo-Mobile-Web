@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once WEBROOT . "home/Modules.php";
 define("SMS_STATS_URL", 'http://sms1.mit.edu/~blpatt/trunk/mangotext/api/statistics.php');
 

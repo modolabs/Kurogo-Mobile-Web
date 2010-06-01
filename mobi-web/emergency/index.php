@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once LIBDIR . "rss_services.php";
 
 $contacts = json_decode(file_get_contents(LIBDIR . "EmergencyContacts.json"), TRUE);

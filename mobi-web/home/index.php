@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once "Home.php";
 require_once "Modules.php";
 require_once WEBROOT . "page_builder/Page.php";

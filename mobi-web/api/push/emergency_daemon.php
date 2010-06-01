@@ -7,9 +7,9 @@ $daemon->start($argv);
 
 
 
-require_once "mobi-config/mobi_lib_constants.php";
-require_once LIBDIR . "rss_services.php";
-require_once LIBDIR . "db.php";
+require_once dirname(__FILE__) . "/../../../mobi-config/mobi_lib_constants.php";
+require_once LIB_ROOT . "rss_services.php";
+require_once LIB_ROOT . "db.php";
 require_once "apns_lib.php";
 
 $date = NULL;

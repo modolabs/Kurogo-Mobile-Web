@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once PAGE_HEADER;
 if($search_terms = $_REQUEST['filter']) {
   $results = map_search($search_terms);

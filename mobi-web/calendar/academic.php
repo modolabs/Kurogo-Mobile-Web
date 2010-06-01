@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once PAGE_HEADER;
 require_once LIBDIR . "AcademicCalendar.php";
 require_once "calendar_lib.php";

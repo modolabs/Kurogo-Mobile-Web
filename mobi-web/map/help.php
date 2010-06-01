@@ -21,7 +21,7 @@ $help = array(
 );
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require HELP_HEADER;
 
 ?>

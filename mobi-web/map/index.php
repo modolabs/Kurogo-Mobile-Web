@@ -1,7 +1,7 @@
 <?php
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once PAGE_HEADER;
 
 class Categorys {
@@ -56,7 +56,7 @@ $page->output();
 
 function places() {
   
-  require_once "../mobi-config/mobi_web_constants.php";
+  require_once "../config/mobi_web_constants.php";
   require "buildings.php";
 
   if($_REQUEST['category'] == 'buildings') {

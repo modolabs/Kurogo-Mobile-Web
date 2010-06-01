@@ -2,7 +2,7 @@
 define("WMS_URL", "http://ims.mit.edu/WMS_MS/WMS.asp");
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once PAGE_HEADER;
 
 //set zoom scale

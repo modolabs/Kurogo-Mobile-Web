@@ -1,5 +1,5 @@
 <?php
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 define("WHATS_NEW_PATH", WEBROOT . "mobile-about/whatsnew.xml");
 
 

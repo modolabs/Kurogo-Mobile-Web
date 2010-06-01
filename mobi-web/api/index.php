@@ -1,5 +1,5 @@
 <?
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once("api_header.php");
 
 $module = $_REQUEST['module'];

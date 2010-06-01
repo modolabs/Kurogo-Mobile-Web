@@ -1,6 +1,6 @@
 <?
 
-require_once "../../mobi-config/mobi_web_constants.php";
+require_once "../../config/mobi_web_constants.php";
 require_once WEBROOT . "shuttleschedule/shuttle_lib.php";
 $APIROOT = WEBROOT . "/api";
 require_once $APIROOT . "/api_header.php";

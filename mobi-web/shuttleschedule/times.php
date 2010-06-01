@@ -2,7 +2,7 @@
 
 
 
-require_once "../mobi-config/mobi_web_constants.php";
+require_once "../config/mobi_web_constants.php";
 require_once PAGE_HEADER;
 require_once("shuttle_lib.php");
 

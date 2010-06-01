@@ -1,6 +1,6 @@
 <?php
 
-require_once "../../mobi-config/mobi_web_constants.php";
+require_once "../../config/mobi_web_constants.php";
 require_once WEBROOT . "api/api_header.php";
 
 PageViews::log_api('newsoffice', 'iphone');

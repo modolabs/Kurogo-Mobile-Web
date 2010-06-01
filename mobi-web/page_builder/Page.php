@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '../mobi-config/mobi_web_constants.php';
+require_once dirname(__FILE__) . '/../config/mobi_web_constants.php';
 
 //if (file_exists('constants.php')) {
 //  require_once 'constants.php';
