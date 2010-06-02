@@ -213,7 +213,6 @@ class Modules {
   }
   // end of restricted modules section
 
-  /*
   // new apps will be highlighted on the iphone
   private static $new = array();
 
@@ -225,7 +224,6 @@ class Modules {
     return count(self::$new);
   }
   // end of new apps section
-  */
 
   public static function title($module) {
     return self::$module_data[$module]['title'];
