@@ -11,7 +11,7 @@ require_once('mobi_lib_config.php');
  */
 
 // file/directory locations
-define("CACHE_DIR", $thisDir . "/../mobi-lib/cache");
+define("CACHE_DIR", $thisDir . "/../mobi-lib/cache/");
 define("LIB_ROOT", $thisDir . "/../mobi-lib/");
 
 /* debug preferences
