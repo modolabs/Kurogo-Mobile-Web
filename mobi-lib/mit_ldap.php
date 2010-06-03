@@ -1,4 +1,6 @@
 <?php
+require_once "ldap_config.php";
+
 define("DIRECTORY_UNAVAILABLE", "Your request cannot be processed at this time.\nPlease try again later....");
 define("INVALID_TELEPHONE_NUMBER", "Invalid telephone number....");
 define("INVALID_EMAIL_ADDRESS","Invalid email address....");
@@ -145,7 +147,7 @@ function do_query($query, $search_results=array())
         $error_reporting = ini_get('error_reporting');
         error_reporting($error_reporting & ~E_WARNING);
         // set a 10 second timelimit
-        $sr = ldap_search($ds, "dc=mit, dc=edu", $query, array(), 0, 0, SEARCH_TIMELIMIT);
+        $sr = ldap_search($ds, LDAP_PATH, $query, array(), 0, 0, SEARCH_TIMELIMIT);
         if ($sr == FALSE)
         {
             throw new Exception("");

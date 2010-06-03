@@ -1,8 +1,6 @@
 #!/usr/bin/php
 <?php
 
-
-
 require_once "DaemonWrapper.php";
 $daemon = new DaemonWrapper("my_stellar");
 $daemon->start($argv);

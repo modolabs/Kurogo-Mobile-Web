@@ -71,13 +71,4 @@ if(EMERGENCY_USE_PRODUCTION) {
 // 3DOWN
 define("THREEDOWN_RSS_URL", 'http://3down.mit.edu/3down/index.php?rss=1');
 
-/* 
-// these aren't being used, just keeping a record of what may
-
-// PEOPLE DIRECTORY
-define("LDAP_SERVER", 'ldap.mit.edu');
-
-*/
-
-
 ?>

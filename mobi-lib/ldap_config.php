@@ -1,0 +1,1 @@
+../mobi-config/ldap_config.php

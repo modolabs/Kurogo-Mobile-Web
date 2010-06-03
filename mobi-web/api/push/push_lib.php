@@ -1,7 +1,7 @@
 <?
 
 
-require_once "../config/mobi_web_constants.php";
+require_once dirname(__FILE__) . "/../../config/mobi_web_constants.php";
 require_once LIBDIR . 'db.php';
 
 class NotificationSubscriber {

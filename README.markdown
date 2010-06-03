@@ -34,8 +34,10 @@ Contains the scripts that run in the background processing notifications
 ## Installation Process
 Install the source code such that the mobi-web directory is in a web readable directory, this is where the web facing scripts live.  
 ``$ cd mobi-config``  
+``$ cp mobi_constants.php.init mobi_constants.php``  
 ``$ cp mobi_lib_config.php.init mobi_lib_config.php``  
-``$ cp mobi_lib_constants.php.init mobi_lib_constants.php``  
+``$ cp mobi_lib_constants.php.init mobi_lib_constants.php``
+``$ cp ldap_config.php.init ldap_config.php``
 ``$ cp web_constants.php.init web_constants.php``  
 
 Create a MySQL database, and configure the username, database name, and password in
@@ -48,7 +50,7 @@ Next configure mobi-config/mobi\_lib\_config.php with the database settings you 
 
 Next in mobi-config/mobi\_web\_constants.php configure MOBI\_SERVICE\_URL to point to your instance, of the mit browser detection software, it by default points to an MIT development server, which may work for testing purposes.
 
-Some files and log are stored outside of the main path, you will need to create an auxillary path, with the same permissions as the web server.  Then configure the variable AUX_PATH in mobi-config/mobi_web_constants.php to point to this path.  To set up the directory structure inside this path run:  
+Some files and log are stored outside of the main path, you will need to create an auxillary path, with the same permissions as the web server.  Then configure the variable AUX_PATH in mobi-config/mobi_constants.php to point to this path.  To set up the directory structure inside this path run:  
 ``$ php setup_aux_dirs.php``
 
 ## Running Apple Push Notification Daemon Scripts

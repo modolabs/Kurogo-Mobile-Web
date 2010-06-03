@@ -1,0 +1,6 @@
+<?php
+/*
+ * An external directory to store various temporary and log files.
+ */
+define("AUX_PATH", "/etc/mit_mobile");
+?>

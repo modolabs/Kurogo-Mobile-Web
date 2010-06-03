@@ -3,7 +3,7 @@
 define("APNS_PUSH_REST_TIME", 15);
 
 
-require_once "../config/mobi_web_constants.php";
+require_once dirname(__FILE__) . "/../../config/mobi_web_constants.php";
 
 require_once "DaemonWrapper.php";
 
