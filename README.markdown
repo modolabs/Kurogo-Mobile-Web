@@ -36,9 +36,9 @@ Install the source code such that the mobi-web directory is in a web readable di
 ``$ cd mobi-config``  
 ``$ cp mobi_constants.php.init mobi_constants.php``  
 ``$ cp mobi_lib_config.php.init mobi_lib_config.php``  
-``$ cp mobi_lib_constants.php.init mobi_lib_constants.php``
-``$ cp ldap_config.php.init ldap_config.php``
-``$ cp web_constants.php.init web_constants.php``  
+``$ cp mobi_lib_constants.php.init mobi_lib_constants.php``  
+``$ cp ldap_config.php.init ldap_config.php``  
+``$ cp web_constants.php.init web_constants.php``    
 
 Create a MySQL database, and configure the username, database name, and password in
 mobi\-config/mobi\_lib\_config.php. Next, populate the MySQL database, this can be done by running the SQL script found at mobi-mysql/source\_all.sql  
