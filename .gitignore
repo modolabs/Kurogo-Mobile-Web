@@ -1,6 +1,3 @@
-mobi-config/mobi_lib_config.php
-mobi-config/mobi_lib_constants.php
-mobi-config/web_constants.php
 mobi-web/Basic/attribs-*.php
 mobi-web/Webkit/attribs-*.php
 mobi-web/Touch/attribs-*.php
