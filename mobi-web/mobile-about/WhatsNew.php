@@ -1,8 +1,6 @@
 <?php
 require_once "../config/mobi_web_constants.php";
 define("WHATS_NEW_PATH", WEBROOT . "mobile-about/whatsnew.xml");
-
-
 require_once LIBDIR . 'rss_services.php';
 
 class WhatsNew extends RSS {

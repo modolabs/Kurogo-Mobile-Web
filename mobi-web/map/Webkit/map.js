@@ -200,35 +200,39 @@ function zoomin() {
 	checkIfMoved();		
 }
 
-
 function rotateMap() {
 // Load a rotated map image
 	var objMap = document.getElementById("mapimage");
-	
-	// insert some code here to calculate the full URL w/ arguments for the map graphic in both tall (tallMapURL) and wide (wideMapURL) versions
-	
+	var objContainer = document.getElementById("container");
+	var objScrollers = document.getElementById("mapscrollers");
 	if(objMap) {
 		show("loadingimage");
+		mapW = window.innerWidth;
+		mapH = window.innerHeight;
+		loadImage(getMapURL(mapBaseURL),'mapimage'); 
+	}
+	if(objContainer) {
+		objContainer.style.width=mapW+"px";
+		objContainer.style.height=mapH+"px";
+		objMap.style.width=mapW+"px";
+		objMap.style.height=mapH+"px";
+	}
+	if(objScrollers) {
 		switch(window.orientation)
 		{
 			case 0:
 			case 180:
-				mapW = 320;
-				mapH = 416;
+				objScrollers.style.height=(mapH-42)+"px";
 			break;
 	
 			case -90:
 			case 90:
-				mapW = 480;
-				mapH = 268;
+				objScrollers.style.height=mapH+"px";
 			break;
 	
 		}
-		loadImage(getMapURL(mapBaseURL),'mapimage'); 
 	}
 }
-
-
 
 function rotateMapAlternate() {
 // Load a rotated map image - needs work to get innerWidth and innerHeight working correctly -- will be required once firmware 2.0 is released enabling full-screen chromeless browsing

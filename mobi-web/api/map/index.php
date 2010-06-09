@@ -1,31 +1,35 @@
 <?
-
-require_once "../../config/mobi_web_constants.php";
+require_once dirname(__FILE__) . "/../config/mobi_web_constants.php";
 require_once WEBROOT . "api/api_header.php";
 
 PageViews::log_api('map', 'iphone');
 
-$json = '';
-
 switch ($_REQUEST['command']) {
  case 'categories':
-   
-   require_once WEBROOT . 'map/buildings_lib.php';
-   $bldg_data = loadXML(WEBROOT . 'map/xml/bldg_data.xml');
-   $building_nodes = $bldg_data->documentElement->getELementsByTagName('object');
+   require_once LIBDIR . "campus_map.php";
+   $categories = Buildings::category_titles();
+   $result = array();
+   foreach ($categories as $category => $category_text) {
+     $result[] = array(
+       'categoryName' => $category_text,
+       'categoryId' => $category,
+       'categoryItems' => get_category($category),
+       );
+   }
 
-   $data = Array(
-     make_category('Selected Rooms', find_contents_ll('room', $building_nodes)),
-     make_category('Food Services', find_contents_ll('food', $building_nodes)),
-     make_category('Libraries', find_contents_ll('library', $building_nodes)),
-
-     make_category('Residences', find_objects_ll('residence', $building_nodes)),
-     make_category('Parking', find_objects_ll('parking', $building_nodes)),
-     make_category('Streets and Landmarks', find_objects_ll('landmark', $building_nodes)),
-     make_category('Courts and Green Spaces', find_objects_ll('green', $building_nodes)),
-     make_category('Museums and Galleries', find_objects_ll('museum_gallery', $building_nodes)),
-     );
-   $json = json_encode($data);
+   echo json_encode($result);
+   break;
+ case 'category':
+   require_once LIBDIR . "campus_map.php";
+   if ($category = $_REQUEST['id']) {
+     $places = get_category($category);
+     echo json_encode($places);
+   }
+   break;
+ case 'categorytitles':
+   require_once LIBDIR . "campus_map.php";
+   $categories = category_titles_wrapper();
+   echo json_encode($categories);
    break;
  case 'search':
    if (isset($_REQUEST['q'])) {
@@ -33,25 +37,114 @@ switch ($_REQUEST['command']) {
 				     'q' => $_REQUEST['q'], 
 				     'output' => 'json'));
      $json = file_get_contents(MAP_SEARCH_URL . '?' . $query);
-   }			     
+   }
+
+   echo $json;
+   break;
+ case 'tilesupdated':
+   $date = file_get_contents(MAP_TILE_CACHE_DATE);
+   $data = array("last_updated" => trim($date));
+   echo json_encode($data);
    break;
 }
 
-echo $json;
+function category_titles_wrapper() {
+  $result = array(
+    array('categoryName' => 'Building Number',
+	  'categoryId' => 'building_number',
+	  'subcategories' => generate_building_number_categories()),
+    array('categoryName' => 'Building Name',
+	  'categoryId' => 'building_name',
+	  'subcategories' => generate_building_name_categories()),
+    );
 
-
-function make_category($name, $items) {
-  return Array('categoryName' => $name, 'categoryItems' => $items);
-  /*
-  foreach ($items as $item => $bldg) {
-    $category['categoryItems'][] = Array(
-      'name' => $item,
-      'building' => $bldg,
+  $categories = Buildings::category_titles(); 
+  foreach ($categories as $category => $category_text) {
+    $result[] = array(
+      'categoryName' => $category_text,
+      'categoryId' => $category,
       );
   }
-  return $category;
-  */
+ 
+  return $result;
 }
+
+function generate_building_names($category) {
+  $limits = explode('_', strtoupper($category));
+  $result = array();
+  foreach (Buildings::$bldg_data as $id => $data) {
+    $firstchar = strtoupper(substr($data['name'], 0, 1));
+    if ($firstchar >= $limits[0] && $firstchar <= $limits[1]) {
+      $data['displayName'] = $data['name'];
+      $result[$id] = $data;
+    }
+  }
+
+  usort($result, 'building_name_cmp');
+
+  return array_values($result);
+}
+
+function building_name_cmp($a, $b) {
+  return strnatcasecmp($a['name'], $b['name']);
+}
+
+function generate_building_number_categories() {
+  return array(
+    array('categoryId' => 'm','categoryName' => 'Main Campus (1-76)'),
+    array('categoryId' => 'e','categoryName' => 'East Campus (E1-E70)'),
+    array('categoryId' => 'n','categoryName' => 'North Campus (N4-N57)'),
+    array('categoryId' => 'ne','categoryName' => 'Northeast Campus (NE18-NE125)'),
+    array('categoryId' => 'nw','categoryName' => 'Northwest Campus (NW10-NW95)'),
+    array('categoryId' => 'w','categoryName' => 'West Campus (W1-WW15)'),
+    );
+}
+
+function generate_building_numbers($category) {
+  $area = ($category == 'm') ? '' : strtoupper($category);
+  $result = array();
+  foreach (Buildings::$bldg_data as $id => $data) {
+    if (preg_match('/([A-Z]*)\d+\w?/', $id, $matches) && $matches[1] == $area) {
+      $data['displayName'] = $data['bldgnum'];
+      $result[$id] = $data;
+    }
+  }
+
+  uksort($result, 'strnatcmp');
+
+  return array_values($result);
+}
+
+function generate_building_name_categories() {
+  return array(
+    array('categoryId' => '1_999', 'categoryName' => '1-999'),
+    array('categoryId' => 'a_c', 'categoryName' => 'A-C'),
+    array('categoryId' => 'd_f', 'categoryName' => 'D-F'),
+    array('categoryId' => 'g_l', 'categoryName' => 'G-L'),
+    array('categoryId' => 'm_q', 'categoryName' => 'M-Q'),
+    array('categoryId' => 'r_u', 'categoryName' => 'R-U'),
+    array('categoryId' => 'v_z', 'categoryName' => 'V-Z'),
+    );
+}
+
+function get_category($category) {
+  if (preg_match('/^[enmw]{1,2}$/', $category)) {
+    return generate_building_numbers($category);
+  } elseif (preg_match('/^\w_\w+$/', $category)) {
+    return generate_building_names($category);
+  }
+
+  $places = Buildings::category_items($category);
+  $result = array();
+
+  foreach ($places as $title => $building) {
+    $bldg_info = Buildings::bldg_info($building);
+    $bldg_info['displayName'] = $title;
+    $result[] = $bldg_info;
+  }
+  return $result;
+}
+
 
 
 ?>

@@ -1,0 +1,88 @@
+<?php
+$page->title('MIT Libraries - Request a Consulation Appointment')
+    ->navbar_image('libraries')
+    ->breadcrumbs('Ask', 'Appointment')
+    ->breadcrumb_links('ask.php');
+
+$page->inline_css_begin(); ?>
+.hilite_required {
+  font-weight: bold;
+  color: #600;
+}
+<?
+$page->inline_css_end();
+
+$page->content_begin();
+?>
+	<div class="nonfocal">
+		<p>Use this form to request in-person, in-depth help with your research.</p>
+		<?=$required_text?>
+		<p><span class="required">*</span> Required fields</p>
+                <p><strong>MIT Username:</strong> <?=$username?></p>
+	</div>
+
+	<form id="queryform" name="queryform" action="" method="get">
+		<fieldset class="focal"> 
+		  	<h3><label for="subject"<?=hilite('subject', $missing_fields)?>>Topic of your research: <span class="required">*</span></label></h3>
+            <p>
+				<input type="text" name="subject" id="subject" style="width:94%"<?=input_value('subject')?>>
+            </p>
+		  	<h3><label for="timeframe">Timeframe for your research:</label></h3>
+            <p>
+				<input type="text" name="timeframe" id="timeframe" style="width:94%"<?=input_value('timeframe')?>>
+            </p>
+            <h3><label for="description"<?=hilite('description', $missing_fields)?>>How can we help you? <span class="required">*</span><br/><span class="smallprint">Describe the information you're looking for and the research you've already done.</span></label></h3>
+			<textarea name="description" id="description" rows="8" style="width:97%"><?=$_REQUEST['description']?></textarea>
+		  	<h3><label for="why">Purpose of research:</label></h3>
+			<p>
+				<select id="why" name="why">
+				<option value=""></option>
+				<?=option_value('why', 'Course')?>Course</option>
+				<?=option_value('why', 'Thesis')?>Thesis</option>
+				<?=option_value('why', 'Research')?>Research</option>
+				</select>
+			</p>
+		  	<h3><label for="course">Which course?</label></h3>
+            <p>
+				<input type="text" name="course" id="course" style="width:94%">
+            </p>
+		  	<h3><label for="topic"<?=hilite('topic', $missing_fields)?>>I would like to discuss: <span class="required">*</span></label></h3>
+		  	<p>
+		  		<select id="topic" name="topic">
+		  			<option value="">Select a subject</option>
+					<? foreach ($consultation_lists as $topic => $list) { ?>
+					<?=option_value('topic', $topic)?><?=$topic?></option>
+					<? } ?>
+				</select>
+		  	</p>
+			
+		</fieldset>
+		<fieldset class="focal">
+		  	<h3><label for="status"<?=hilite('status', $missing_fields)?>>Your status: <span class="required">*</span></label></h3>
+			<p>
+				<select id="status" name="status">
+				<option value="">Your status</option>
+				<?=option_value('status', 'UG')?>MIT Undergrad Student</option>
+				<?=option_value('status', 'GRAD')?>MIT Grad Student</option>
+				<?=option_value('status', 'FAC')?>MIT Faculty</option>
+				<?=option_value('status', 'RS')?>MIT Research Staff</option>
+				<?=option_value('status', 'STAFF')?>MIT Staff</option>
+				<?=option_value('status', 'VS')?>MIT Visitor</option>
+				</select>
+			</p>
+			<h3><label for="department"<?=hilite('department', $missing_fields)?>∑>Your department: <span class="required">*</span></label></h3>
+			<input type="text" name="department" id="department" style="width:94%"<?=input_value('department')?>>
+			<h3><label for="phone">Phone number:</label></h3>
+			<input type="text" name="phone" id="phone" style="width:94%"<?=input_value('phone')?>>
+		</fieldset>
+		<input type="hidden" name="ask_type" value="consultation" />	
+	
+		<div class="formbuttons">
+			<a class="formbutton" href="" onclick="document.queryform.submit();return false"><div>Submit</div></a>
+		</div>
+	</form>
+	
+<? 
+$page->custom_footer($libraries_custom_footer);
+$page->content_end();
+?>

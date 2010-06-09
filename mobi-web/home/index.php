@@ -12,7 +12,7 @@ require WEBROOT . "customize/customize_lib.php";
 $page = Page::factory();
 $page->module('home');
 
-//PageViews::increment('home', $page->platform);
+PageViews::increment('home', $page->platform);
 
 $whats_new_count = Home::$whats_new_count;
 $top_item = Home::$whats_new->getTopItemName();

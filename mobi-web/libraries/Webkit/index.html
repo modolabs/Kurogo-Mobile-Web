@@ -1,0 +1,51 @@
+<?php
+
+$page->title('MIT Libraries')
+     ->navbar_image('libraries')
+     ->add_javascript('Webkit/libraries')
+     ->breadcrumbs('MIT Libraries')
+     ->breadcrumb_home()
+     ->extra_onload("androidPlaceholderFix()");
+
+$page->content_begin();
+?>
+	<div class="nonfocal">
+		Coming Soon: Search Collections
+<!--
+		<form method="get" action="results.html" onsubmit="parseform(this); return false">
+			<fieldset class="inputcombo emphasized">
+				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search" />
+				<input id="type" name="type" type="hidden" value="name" />
+				<input id="group" name="group" type="hidden" value="*" />
+				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
+			</fieldset>	
+			<p class="searchlegend">
+			<img src="images/worldcat.png" alt="WorldCat" width="65" height="20" align="absmiddle" /> search results will open in a new window.</p>
+		</form>
+-->
+	</div>
+	
+	<ul class="nav">
+		<li>
+			<a href="locations.php">Locations &amp; Hours</a>
+		</li>
+		<li>
+			<a href="ask.php">Ask Us!</a>
+		</li>
+<!--
+		<li>
+			<a href="account.php" class="secure">Your Account</a>
+		</li>
+-->
+		<li>
+			<a href="http://news-libraries.mit.edu/blog" class="external">MIT Libraries News</a>
+		</li>
+		<li>
+			<a href="http://libraries.mit.edu" class="external">Full MIT Libraries website</a>
+		</li>
+	</ul>
+	
+<? 
+$page->custom_footer($custom_footer);
+$page->content_end();
+?>

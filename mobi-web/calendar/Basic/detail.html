@@ -35,7 +35,7 @@ $page->content_begin();
 		<p class="legend">Categorized as: 
                    <? $size = count($event->categories);
                       foreach($event->categories as $index => $category) { $last = ($size-1 == $index); ?>
-                        <a href="<?=categoryURL($category)?>"><?=$category->name?></a><? if(!$last) { echo ","; } ?>
+                        <a href="<?=categoryURL($category)?>"><?=ucname($category->name)?></a><? if(!$last) { echo ","; } ?>
                    <? } ?>
                 </p>
 	</div>

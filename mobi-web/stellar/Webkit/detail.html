@@ -34,7 +34,7 @@ $page->content_begin();
 
 	<div class="focal shaded">
 	<a id="mystellar" class="<?=$toggle?>" onclick="toggleMyStellar(this, '<?=$class_data?>')"></a>
-		<h2><?=longerID($class)?>: <?=className($class)?></h2>
+		<h2><?=notPhoneNumber(longerID($class))?>: <?=className($class)?></h2>
 		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Stellar site</a><? } ?></p>
 
 		<ul id="tabs">

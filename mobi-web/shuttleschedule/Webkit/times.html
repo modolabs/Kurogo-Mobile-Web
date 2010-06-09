@@ -4,10 +4,11 @@ $page->title('Shuttles: ' . $routeName)
      ->not_scalable()
      ->fixed()
      ->add_stylesheet('Webkit/shuttletrack')
+     ->add_stylesheet(array('media' => 'all and (min-device-width: 481px) and (min-device-height: 961px)', 'href'=>'Webkit/shuttletrack-tablet.css'))
      ->add_javascript('../Webkit/uiscripts')
-     ->breadcrumbs('Route Info')
      ->extra_onload("rotateScreen()")
-     ->onorientationchange("rotateScreen()");
+     ->onorientationchange("rotateScreen()")
+     ->breadcrumbs('Route Info');
 
 $page->content_begin();
 ?>

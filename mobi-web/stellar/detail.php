@@ -111,6 +111,7 @@ $page->output();
 
 function personURL($name) {
   $name = preg_replace('/\s+/', ' ', $name);
+  $name = str_replace('.', '', $name);
   return "../people/?filter=" . urlencode($name);
 }
 

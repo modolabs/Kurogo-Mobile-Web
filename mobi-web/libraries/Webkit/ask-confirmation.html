@@ -1,0 +1,26 @@
+<?php
+$page->title('MIT Libraries - Confirmation')
+     ->navbar_image('libraries')
+     ->breadcrumbs('Ask', 'Confirmation')
+     ->breadcrumb_links('ask.php');
+
+$page->content_begin();
+?>
+
+	<div class="focal">
+		<?=$thank_you_text?>
+	</div>
+
+	<div class="focal">
+		<em>The following email was sent:<br/>
+		<?=$contents?></em>
+	</div>
+	
+	<ul class="secondary">
+		<li><a href="index.php">Return to the Libraries main page</a></li>
+	</ul>
+	
+<? 
+$page->custom_footer($libraries_custom_footer);
+$page->content_end();
+?>

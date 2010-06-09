@@ -21,13 +21,8 @@ $field = $_REQUEST['selectfield'];
 $layer = $_REQUEST['selectlayer'];
 $layers = $_REQUEST['layers'];
 
-if ($page->delta == 'iphone') {
-  $extra_onload = 'rotateScreen(); rotateMap(); scrollTo(0,1)';
-  $extra_body_tag = 'id="body" onorientationchange="rotateScreen(); rotateMap();"';
-} else {
-  $extra_onload = "loadImage(getMapURL(mapBaseURL),'mapimage')";
-  $extra_body_tag = 'class="portrait"';
-}
+$onorientationchange = "scrollTo(0,1); rotateScreen(); setTimeout('rotateMap()',500)";
+$extra_onload = $onorientationchange;
 
 require "$page->branch/detail-fullscreen.html";
 

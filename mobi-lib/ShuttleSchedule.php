@@ -106,7 +106,11 @@ class ShuttleSchedule {
     // test whether the first run after now
     // is more than $interval seconds in the future
 
-    $next_start = min(self::get_next_scheduled_loop_start($routeName, $time));
+    $next_starts = self::get_next_scheduled_loop_start($routeName, $time);
+    if (count($next_starts) == 0) {
+      return FALSE;
+    }
+    $next_start = min($next_starts);
     return ($next_start - $time <= self::get_interval($routeName));
   }
 
@@ -283,6 +287,7 @@ class ShuttleSchedule {
       $stopInfo = Array(
         'title' => $stop['title'],
 	'nextBusId' => $stop['nextBusId'],
+        'smsTitle' => $stop['smsTitle'],
 	);
       $nextTimes = Array();
       foreach ($nextStarts as $nextStart) {
@@ -293,7 +298,7 @@ class ShuttleSchedule {
 	  $nextTime -= $interval;
 	$nextTimes[] = $nextTime;
       }
-      $nextTime = min($nextTimes);
+      $nextTime = (count($nextTimes)) ? min($nextTimes) : 0;
       $stopInfo['nextScheduled'] = ($nextTime < $time) ? 0 : $nextTime;
       $loopInfo[] = $stopInfo;
     }

@@ -45,6 +45,11 @@ class StellarData {
   );
 
   private static $not_courses = array("SP");
+  
+  // general course info is cached in the $courses array (since some long living processes) use this data
+  // we need to make sure the data does not get too old
+  private static $course_last_cache_times = array();
+  private static $course_last_cache_terms = array();
 
   private static $base_url = STELLAR_BASE_URL;
 
@@ -151,6 +156,11 @@ class StellarData {
     if (!file_exists($fname))
       throw new Exception("file $fname does not exist");
     self::$courses[$course] = json_decode(file_get_contents($fname), TRUE);
+
+    // record time/term when course cached into memory
+    self::$course_last_cache_times[$course] = time();
+    self::$course_last_cache_terms[$course] = $term;
+
     return self::$courses[$course];
   }
 
@@ -326,11 +336,14 @@ class StellarData {
       throw new Exception("$course not a valid course ID-number");
     }
 
-    if (count(self::$courses[$course]['subjects']) > 0) {
-      return self::$courses[$course]['subjects'];
+    // checking to see if the data cached in local memory is valid (it is invalid if it was never populated, or old, or the term has changed)
+    $term = self::get_term();
+    if ( (array_key_exists($course, self::$course_last_cache_times)) &&
+         (time()-self::$course_last_cache_times[$course] < STELLAR_COURSE_CACHE_TIMEOUT) &&
+         (self::$course_last_cache_terms[$course] == $term)) {
+            return self::$courses[$course]['subjects'];
     }
 
-    $term = self::get_term();
     if (self::course_cache_is_fresh($course, $term)) {
       $courseData = self::read_course_cache($course, $term);
       return $courseData['subjects'];
@@ -433,6 +446,11 @@ class StellarData {
     }
 
     self::write_course_cache($course, $term);
+
+    // record time/term when course cached into memory
+    self::$course_last_cache_times[$course] = time();
+    self::$course_last_cache_terms[$course] = $term;    
+
     return self::$courses[$course]['subjects'];
   }
 

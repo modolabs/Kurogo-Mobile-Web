@@ -1,9 +1,9 @@
 <?
 define("WMS_URL", "http://ims.mit.edu/WMS_MS/WMS.asp");
 
-
 require_once "../config/mobi_web_constants.php";
 require_once PAGE_HEADER;
+require_once LIBDIR . "campus_map.php";
 
 //set zoom scale
 define('ZOOM_FACTOR', 2);
@@ -17,8 +17,108 @@ switch ($page->branch) {
    break;
 }
 
+CacheIMS::init(); // set bbox extent
+
 //set the offset parameter
 define('MOVE_FACTOR', 0.40);
+
+$selectvalue = $_REQUEST['selectvalues'];
+
+$tabs = new Tabs(selfURL(), "tab", array("Map", "Photo", "What's Here"));
+
+if(!photoURL()) {
+    $tabs->hide("Photo");
+}
+
+$data = Buildings::bldg_info($selectvalue);
+$whats_here = whats_here($data);
+$anything_here = (count($whats_here) > 0);
+$snippets = snippets($data);
+
+if(!$anything_here) {
+  $tabs->hide("What's Here");
+}
+
+$tabs_html = $tabs->html($page->branch);
+$tab = $tabs->active(); 
+
+$photoURL = photoURL();
+$tab = tab();
+
+switch ($page->branch) {
+ case 'Touch':
+   $width = 200;
+   $height = 200;
+   break;
+ case 'Basic':
+   $width = 160;
+   $height = 160;
+   break;
+}
+$fontsize = 10;
+
+$types = determine_type();
+$layers = layers($fontsize);
+
+if($num = trim($data['bldgnum'])) {
+  $building_title = "Building $num";
+  if( ($name = trim($data['name'])) && ($name !== $building_title) ) {
+    $building_title .= " ($name)";
+  }
+} else {
+  $building_title = $data['name'];
+}
+
+if(getServerBBox()) {
+  require "$page->branch/detail.html";
+} else {
+  require "$page->branch/not_found.html";
+}
+
+$page->output();
+
+class CacheIMS {
+  public static $server_BBox;
+
+  public function init() {
+
+    $type = determine_type();
+
+    $query1 = array(
+      "request" => "getselection",
+      "type"    => "query",
+      "layer"   => $type["type"],
+      "idfield" => $type["field"],
+      "query"   => $type["field"] ." in ('" . select_value() . "')"
+    );
+
+    $url = WMS_URL . '?' . http_build_query($query1);
+    $error_reporting = intval(ini_get('error_reporting'));
+    error_reporting($error_reporting & ~E_WARNING);
+      $xml = file_get_contents($url);
+    error_reporting($error_reporting);
+    if($xml == "") {
+      // if failed to grab xml feed, then run the generic error handler
+      throw new DataServerException("$url is experiencing problems");
+    }
+
+    $xml_obj = new DOMDocument();
+    $xml_obj->loadXML($xml);
+    $extent = $xml_obj->firstChild->firstChild;
+
+    if(!$extent) {
+      //IMS server does not seem to be able to find anything
+      return;
+    }
+
+    $bbox = array();
+    foreach(array('minx','miny','maxx','maxy') as $key) {
+      $bbox[$key] = (int) $extent->getAttribute($key);
+    }
+
+    self::$server_BBox = $bbox;
+  }
+}
 
 function determine_type() {
   $types = array(
@@ -76,60 +176,9 @@ function isID($id) {
   return $match[0];
 }
 
-/*
-function mapURL() {
-  return "http://ims.mit.edu/WMS_MS/WMS.asp";
-}
-*/
-
 function getServerBBox() {
   return CacheIMS::$server_BBox;
 }
-
-class CacheIMS {
-  public static $server_BBox;
-
-  public function init() {
-
-    $type = determine_type();
-
-    $query1 = array(
-      "request" => "getselection",
-      "type"    => "query",
-      "layer"   => $type["type"],
-      "idfield" => $type["field"],
-      "query"   => $type["field"] ." in ('" . select_value() . "')"
-    );
-
-    $error_reporting = intval(ini_get('error_reporting'));
-    error_reporting($error_reporting & ~E_WARNING);
-      $xml = file_get_contents(WMS_URL . '?' . http_build_query($query1));
-    error_reporting($error_reporting);
-    if($xml == "") {
-      // if failed to grab xml feed, then run the generic error handler
-      throw new DataServerException(WMS_URL . '?' . http_build_query($query1) . " is experiencing problems");
-    }
-
-
-
-    $xml_obj = new DOMDocument();
-    $xml_obj->loadXML($xml);
-    $extent = $xml_obj->firstChild->firstChild;
-
-    if(!$extent) {
-      //IMS server does not seem to be able to find anything
-      return;
-    }
-
-    $bbox = array();
-    foreach(array('minx','miny','maxx','maxy') as $key) {
-      $bbox[$key] = (int) $extent->getAttribute($key);
-    }
-
-    self::$server_BBox = $bbox;
-  }
-}
-CacheIMS::init();
 
 function iPhoneBBox() {
   if(isset($_REQUEST['bbox'])) {
@@ -253,8 +302,7 @@ function select_value() {
   return $_REQUEST['selectvalues'];
 }
 
-function snippets() {
-  $data = Data::$values;
+function snippets($data) {
   $snippets = $_REQUEST['snippets'];
 
   // we do not want to display snippets
@@ -269,6 +317,16 @@ function snippets() {
   } 
 
   return $snippets;
+}
+
+function whats_here($data) {
+  $result = array();
+  if (array_key_exists('contents', $data)) {
+    foreach ($data['contents'] as $content) {
+      $result[] = $content['name'];
+    }
+  }
+  return $result;
 }
 
 function scrollURL($dir) {
@@ -290,92 +348,21 @@ function zoomOutURL() {
   return moveURL(x_off()/ZOOM_FACTOR, y_off()/ZOOM_FACTOR, zoom()+1);
 }
 
-Data::init();
-$data = Data::$values;
-function anything_here() {
-  $data = Data::$values;
-  return (count($data['whats_here']) > 0);
-}
-
-
-$tabs = new Tabs(selfURL(), "tab", array("Map", "Photo", "What's Here"));
-
-if(!photoURL()) {
-    $tabs->hide("Photo");
-}
-
-if(!anything_here()) {
-    $tabs->hide("What's Here");
-}
-
-$tabs_html = $tabs->html($page->branch);
-$tab = $tabs->active(); 
-
 function selfURL() {
   return moveURL(x_off(), y_off(), zoom());
 }
 
 function moveURL($xoff, $yoff, $zoom) {
+  global $snippets;
+
   $params = array(
     "selectvalues" => select_value(),
     "zoom" => $zoom,
     "xoff" => $xoff,
     "yoff" => $yoff,
-    "snippets" => snippets()
+    "snippets" => $snippets
   );
   return "detail.php?" . http_build_query($params);
-}
-
-$selectvalue = select_value();
-$photoURL = photoURL();
-$tab = tab();
-/*
-$width = $page->centered_image_width;
-$height = $page->centered_image_height;
-$fontsize = $page->centered_image_font_size;
-*/
-switch ($page->branch) {
- case 'Touch':
-   $width = 200;
-   $height = 200;
-   break;
- case 'Basic':
-   $width = 160;
-   $height = 160;
-   break;
-}
-$fontsize = 10;
-$snippets = snippets();
-$types = determine_type();
-$layers = layers($fontsize);
-
-class Data {
-  public static $values;
-
-  public static function init() {
-    require "buildings.php";
-    self::$values = $building_data[select_value()];
-  }
-}
-
-if(isset($data['whats_here'])) {
-  $whats_here = array_keys($data['whats_here']);
-} else {
-  $whats_here = array();
-}
-
-$anything_here = anything_here();
-if($anything_here) {
-  sort($whats_here);
-}
-
-if($num = trim($data['bldgnum'])) {
-  $building_title = "Building $num";
-  if( ($name = trim($data['name'])) && ($name !== $building_title) ) {
-    $building_title .= " ($name)";
-  }
-} else {
-  $building_title = $data['name'];
 }
 
 /**
@@ -389,15 +376,5 @@ function cleanStreet($data) {
   //remove 'Access Via' that appears at the begginning of some addresses
   return preg_replace('/^access\s+via\s+/i', '', $street);
 } 
-
-if(getServerBBox()) {
-  require "$page->branch/detail.html";
-} else {
-  require "$page->branch/not_found.html";
-}
-
-
-
-$page->output();
 
 ?>

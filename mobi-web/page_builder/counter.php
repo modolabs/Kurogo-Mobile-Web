@@ -101,7 +101,9 @@ class PageViews {
       preg_match('/^.{' . $date_length . '} (\w+) (\w+):/', $line, $matches);
       $platform = $matches[1];
       $module = $matches[2];
-      self::increment_array($stats, $day, $platform, $module);
+      if ($module) {
+        self::increment_array($stats, $day, $platform, $module);
+      }
     }
     fclose($outfile);
     fclose($infile);
@@ -124,6 +126,13 @@ class PageViews {
     }
 
     unlink($logfilecopy);
+  }
+
+  public static function quarter_of($timestamp) {
+    $m = date('n', $timestamp) - 1; // need zero-based counting
+    $m = $m - ($m % 3) + 1;
+    $y = date('Y', $timestamp);
+    return mktime(0, 0, 0, $m, 1, $y);
   }
 
   /* get total viewcount for platform $platform (default all platforms),
@@ -191,45 +200,65 @@ class PageViews {
   }
 
   public static function view_past($system, $time_unit, $duration) {
-    $increments = Array(0); // the first element never gets used
-
-    // figure out value to use for $begin in sql query
+    $increments = Array();
+     // figure out value to use for $begin in sql query
     // and number of seconds for each $increment
     $time = time();
     switch ($time_unit) {
     case 'day':
       $begin = $time - $duration * 86400;
-      $increments = array_pad($increments, $duration + 1, 86400);
+      $increments = array_pad($increments, $duration, 86400);
       break;
     case 'week':
       $begin = $time - $duration * 86400 * 7;
-      $increments = array_pad($increments, $duration + 1, 86400 * 7);
+      $increments = array_pad($increments, $duration, 86400 * 7);
       break;
     case 'month':
-      $month = date('n', $time) + 1; // start from 11 months ago
-      $year = date('Y', $time);
-      if ($month == 13) {
-	$begin = mktime(0, 0, 0, 1, 1, $year);
-      } else {
-	$begin = mktime(0, 0, 0, $month, 1, $year - 1);
+      $month = date('n', $time) + 1;
+      $year = date('Y', $time) - 1;
+      if ($month > 12) {
+	$month = 1;
+	$year += 1;
       }
+      $begin = mktime(0, 0, 0, $month, 1, $year);
       $last_begin = $begin;
-      for ($i = 1; $i <= $duration; $i++) {
-	if ($month + $i > 12) {
-	  $next_begin = mktime(0, 0, 0, $month + $i - 12, 1, $year);
-	} else {
-	  $next_begin = mktime(0, 0, 0, $month + $i, 1, $year - 1);
+      for ($i = 0; $i < $duration; $i++) {
+	$month += 1;
+	if ($month > 12) {
+	  $month = 1;
+	  $year += 1;
 	}
+	$next_begin = mktime(0, 0, 0, $month, 1, $year);
+	$increments[] = $next_begin - $last_begin;
+	$last_begin = $next_begin;
+      }
+      break;
+    case 'quarter':
+      $current_quarter = PageViews::quarter_of($time);
+      $month = date('n', $current_quarter) + 3;
+      $year = date('Y', $current_quarter) - 3;
+      if ($month > 12) {
+	$month -= 12;
+	$year += 1;
+      }
+      $begin = mktime(0, 0, 0, $month, 1, $year);
+      $last_begin = $begin;
+      for ($i = 0; $i <= $duration; $i++) {
+	$month += 3;
+	if ($month > 12) {
+	  $month -= 12;
+	  $year += 1;
+	}
+	$next_begin = mktime(0, 0, 0, $month, 1, $year);
 	$increments[] = $next_begin - $last_begin;
 	$last_begin = $next_begin;
       }
       break;
     }
-
     $views = Array();
     for ($i = 0; $i < $duration; $i++) {
       $sql_start_date = date('Y-m-d', $begin);
-      $end = $begin + $increments[$i + 1];
+      $end = $begin + $increments[$i];
       $sql_end_date = date('Y-m-d', $end);
 
       $new_view = Array('date' => $begin, 'total' => 0);
@@ -254,6 +283,13 @@ class PageViews {
       $begin = $end;
     }
     return $views;
+  }
+
+  public static function count_iphone_tokens() {
+    $sql = "SELECT count(*) FROM AppleDevice WHERE device_token IS NOT NULL and active = 1";
+    $result = db::$connection->query($sql);
+    $row = $result->fetch_assoc();
+    return $row;
   }
 
 }

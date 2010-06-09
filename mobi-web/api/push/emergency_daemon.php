@@ -26,6 +26,8 @@ while($daemon->sleep(15)) {
 
   if($version && ($new_version > $version)) {
     // there is emergency unfortunately we now have to notify ALL devices
+
+    db::ping();
     $emergency_apns = array('aps' => 
       array('alert' => substr($data[0]['text'], 0, 100), 'sound' => 'default')
     );

@@ -16,7 +16,8 @@ while($daemon->sleep(APNS_FEEDBACK_REST_TIME)) {
   // this is a daemon so loop forever
   $apns_server->open_feedback_connection();
   $messages = $apns_server->get_feedback_messages();
-  
+
+  db::ping();  
   foreach($messages as $message) {
     d_echo("received a deactivate message from apple for:{$message['device_token']}");
     APNS_DB::record_device_uninstalled_app($message['device_token'], $message['unixtime']);

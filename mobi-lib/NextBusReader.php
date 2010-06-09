@@ -51,14 +51,13 @@ class NextBusReader {
     $url = NEXTBUS_FEED_URL . http_build_query(self::$query_params);
     // replace q[0]=foo&q[1]=bar with q=foo&q=bar
     $url = preg_replace('/%5B(?:[0-9]|[1-9][0-9]+)%5D=/', '=', $url);
-
     // suppress warnings
     $error_reporting = intval(ini_get('error_reporting'));
     error_reporting($error_reporting & ~E_WARNING);
       $xml = file_get_contents($url);
     error_reporting($error_reporting);
-
     self::reset_query();
+
     if ($xml) {
       $xml_obj = new DOMDocument();
       $xml_obj->loadXML($xml);
@@ -189,7 +188,6 @@ class NextBusReader {
       // query nextbus to see what routes are available
       self::set_command('routeList');
       $xml = self::query();
-
       if ($xml) {
 	self::$unmodifiedRouteList = Array();
 
@@ -199,8 +197,10 @@ class NextBusReader {
 
 	  // if nextbus' route list is not consistent with the published schedule
 	  // use the published route list
+
 	  if (!ShuttleSchedule::is_running_today($routeName)
-	      && ShuttleSchedule::is_running_today($combined_routes[$routeName])) {
+	      && array_key_exists($routeName, $combined_routes)
+              && ShuttleSchedule::is_running_today($combined_routes[$routeName])) {
 	    $routeName = $combined_routes[$routeName];
 	  }
 

@@ -32,6 +32,7 @@ switch($_REQUEST['code']) {
 }
 
 $url = $_REQUEST['url'];
+$page->module('error-page');
 require "$page->branch/index.html";
 
 $page->help_off();

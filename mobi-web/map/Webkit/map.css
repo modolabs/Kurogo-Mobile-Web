@@ -13,19 +13,36 @@ h2 {
 	margin-bottom: 8px
 }
 
+#maptab {
+	margin: -7px -7px -5px -7px;
+}
+
 #mapimage {
-	margin: -7px -7px 5px -7px;
+	position: relative;
+	left: 50%;
+	top: 0;
+	margin-left: -146px;
+	width: 292px;
+	height: 190px
+	margin-bottom: 5px;
 	border: 1px solid #999;
 	background-color: #fff;
 }
 
 #mapscrollers {
 	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
 	z-index: 10;
-	width: 292px;
+}
+
+#maptab #mapscrollers {
+	left: 50%;
+	margin-left: -146px;
+	width: 294px;
 	height: 192px;
-	top: -7px;
-	left: -7px;
+	bottom: 44px;
 }
 
 #mapscrollers div {
@@ -94,7 +111,6 @@ h2 {
 #mapzoom {
 	position: relative;
 	height: 34px;
-	margin: -3px;
 }
 
 #mapzoom a {
@@ -156,11 +172,12 @@ h2 {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 200;
+	z-index: 10000;
 }
 
 #scrim {
 	position: absolute;
+	z-index: 10;
 	top: 0;
 	bottom: 0;
 	left: 0;
@@ -256,8 +273,9 @@ h2 {
 /* Fullscreen in portrait (tall) orientation */
 
 body.portrait {
-	width: 320px!important;
-	height: 416px!important;
+	width: 100%;
+	height: 100%;
+	min-height: 500px;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
@@ -268,24 +286,26 @@ body.portrait #container {
 	overflow: hidden;
 	top: 0;
 	left: 0;
-	width: 320px!important;
-	height: 416px!important;
+	bottom: 0;
+	right: 0;
 	margin: 0;
 	padding: 0;
 }
 
 body.portrait #mapscrollers {
-	width: 320px;
-	height: 374px;
+	margin: 0;
 	top: 42px;
 	left: 0;
+	bottom: 0;
+	right: 0;
 }
 
 body.portrait #mapzoom {
 	position: absolute;
+	z-index:2000;
 	top: 0;
 	left: 0;
-	width: 320px;
+	width: 100%;
 	height: 42px;
 	padding: 0;
 	background-color: #69819e;
@@ -345,9 +365,12 @@ body.portrait #smallscreen {
 }
 
 body.portrait #mapimage {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	margin: 0;
-	width: 320px;
-	height: 416px;
 }
 
 body.portrait #formbuttons {
@@ -362,8 +385,8 @@ body.portrait #formbuttons {
 /* Fullscreen mode in wide (landscape) orientation */
 
 body.landscape {
-	width: 480px!important;
-	height: 269px!important;
+	width: 100%;
+	height: 100%;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
@@ -373,27 +396,27 @@ body.landscape #container {
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 480px!important;
-	height: 269px!important;
-	min-height: 0px!important;
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
 }
 
 body.landscape #mapscrollers {
-	width: 436px;
-	height: 269px;
+	margin: 0;
 	top: 0;
-	left: 0;
+	left: 42px;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
 }
 
 body.landscape #mapzoom {
-	position: absolute;
+	position: relative;
 	top: 0;
-	right: 0;
+	left: 0;
+	z-index: 2000;
 	width: 42px;
-	height: 269px;
+	height: 100%;
 	padding: 0;
 	margin: 0;
 	background-color: #69819e;
@@ -447,9 +470,12 @@ body.landscape #smallscreen {
 }
 
 body.landscape #mapimage {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	margin: 0;
-	width: 480px;
-	height: 268px;
 }
 
 body.landscape #formbuttons {

@@ -1,0 +1,19 @@
+<?php
+$page->title('MIT Libraries Locations &amp; Hours')
+     ->navbar_image('libraries')
+     ->breadcrumbs('Locations &amp; Hours');
+
+$page->content_begin();
+?>
+	<ul class="nav">
+            <? foreach ($libraries as $library) { ?>
+                <li><a href="location-detail.php?library=<?=urlencode($library)?>"><?=$library?><br /><span class="smallprint"><?=$hours_today[$library]?> today</span></a></li>
+            <? } ?>
+
+	</ul>
+	
+<? 
+$page->custom_footer($libraries_custom_footer);
+$page->content_end();
+?>
+

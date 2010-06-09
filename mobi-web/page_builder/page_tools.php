@@ -344,6 +344,14 @@ function pre_hack($text) {
   return preg_replace('/([\d\-\. ]{4})([\d\-\. ]+)/', '${1}&shy;${2}', $text);
 }
 
+function notPhoneNumber($text) {
+  $output = '';
+  for($i = 0; $i < strlen($text); $i++) {
+    $output .= '<span>'. substr($text,$i, 1) . '</span>';
+  }
+  return $output;
+}
+
 // create a URL to the campus map if given a building number
 // or a search term
 function mapURL($location) {

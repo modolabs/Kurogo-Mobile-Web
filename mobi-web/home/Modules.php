@@ -36,6 +36,10 @@ class Modules {
       'restricted' => Array('iphone', 'computer'),
       'certs_required' => TRUE,
       ),
+    'libraries' => Array(
+      'title' => 'Libraries (BETA)',
+      'restricted' => Array('iphone'),
+      ),
     'links' => Array(
       'title' => 'Useful Links',
       ),
@@ -86,6 +90,7 @@ class Modules {
     "emergency"       => "Emergency Info",
     "3down"           => array("3DOWN", "service status"),
     "techcash"        => "TechCASH (BETA)",
+    "libraries"       => "Libraries (BETA)",
     "links"           => "Useful Links",
   );
 
@@ -193,6 +198,7 @@ class Modules {
     'certificates' => Array('iphone'),
     'techcash' => Array('iphone', 'computer'), // should be shown for all platforms that support certs, but winmo/blackberry support not enough yet
     'download' => Array('blackberry'),
+    'libraries' => Array('iphone'),
     'webmitedu' => Array('iphone', 'android', 'webos', 'winmo', 'blackberry', 'palm', 'symbian', 'computer'),
     );
   */
