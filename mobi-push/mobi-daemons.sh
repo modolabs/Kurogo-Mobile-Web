@@ -17,7 +17,7 @@ start() {
     # name of php script must be in format ${DAEMON_PROG}_daemon.php
     for DAEMON_PROG in $DAEMON_LIST; do
 	echo "starting $DAEMON_PROG"
-	$SCRIPT_DIR/${DAEMON_PROG}_daemon.php --background > /dev/null 2>&1
+	$SCRIPT_DIR/${DAEMON_PROG}_daemon.php --background > /dev/null 2>>$AUX_PATH/logs/$DAEMON_PROG\_error.log
     done
 }
 
