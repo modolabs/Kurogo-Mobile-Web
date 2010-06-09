@@ -7,9 +7,7 @@
         <title><?=$title?></title>
         <link rel="stylesheet" type="text/css" href="../Webkit/core.css" />
         <link rel="apple-touch-icon" href="../Webkit/images/icon-<?=$navbar_image?>.png" />
-        <? foreach($stylesheets as $stylesheet) { ?>
-              <link rel="stylesheet" type="text/css" href="<?=$stylesheet?>.css" />
-        <? } ?>
+        <? echo $this->stylesheet_links() ?>
 
         <? if($inline_css) { ?>
            <style type="text/css" media="screen">
@@ -26,9 +24,16 @@
         <? foreach($javascripts as $script) { ?>
               <script src="<?=$script?>.js" type="text/javascript"> </script>
         <? } ?>
+
+        <? if($onorientationchange) { ?>
+           <script type="text/javascript">
+               window.addEventListener("orientationchange", function() { <?=$onorientationchange?>}, false);
+               window.addEventListener("resize", function() { <?=$onorientationchange?>}, false);
+           </script>
+        <? } ?>
 </head>
 
-<body onload="<?=$extra_onload?>" <? if($onorientationchange) { ?> onorientationchange="<?=$onorientationchange?>" <? } ?> >
+<body onload="<?=$extra_onload?>">
 <div id="navbar">
        <? if(!$home) { ?>
 

@@ -1,0 +1,39 @@
+<?php
+
+$prev_next_html = implode(' | ', $prev_next_links);
+
+$page->title('MIT Libraries Hours &amp; Locations')
+     ->navbar_image('libraries')
+     ->breadcrumbs('Locations', 'Detail')
+     ->breadcrumb_links('locations.php');
+
+$page->content_begin();
+?>
+
+	<div class="focal ">
+		<h2><?=$library ?></h2>
+	
+		<ul class="nav topline">
+			<li><a href="tel:+1<?=str_replace('.', '', $attribs['tel'])?>" class="phone"><?=$attribs['tel']?></a></li>
+			<li>
+<a href="<?=mapURL($attribs['location']) ?>" class="map">Room <?=$attribs['location']?></a></li>
+		</ul>
+		
+		<p><strong>Today's hours:</strong> <?=$hours_today?></p>
+		
+		<p><strong><?=$term_today['name']?> Hours (<?=$term_today['range']->format('M j, Y')?>):</strong>
+		<? foreach ($term_today['hours'] as $title => $hourstr) { ?>
+		  <br /><?=$title?> <?=$hourstr?>
+		<? } ?>
+		</p>
+		<? if ($prev_next_html) { ?>
+		<p><?=$prev_next_html?></p>
+		<? } ?>
+	</div>
+	
+<? 
+$page->custom_footer($custom_footer);
+$page->content_end();
+?>
+	
+

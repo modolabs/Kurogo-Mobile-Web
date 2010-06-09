@@ -1,5 +1,18 @@
 <?
 
+//$docRoot = getenv("DOCUMENT_ROOT");
+//require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
+
+// TODO: move to constants file
+define('TMP_DIR', '/tmp/'); // cache files that we'll allow the OS to clean out
+define('EVENTS_CALENDAR_API', 'http://events.mit.edu/MITEventsFull.wsdl');
+
+MIT_Calendar::init();
+
+// TODO: custom Exception types should be defined somewhere accessible
+// to classes that throw them (i.e. in mobi-lib), instead we are
+// depending on them to be defined downstream in mobi-web (mobi-sms
+// doesn't even define them)
 class SoapClientWrapper {
   /* 
     This Wrapper automatically invokes ther generic error handler
@@ -15,28 +28,69 @@ class SoapClientWrapper {
     try {
       return call_user_func_array(array($this->php_client, $method), $args);  
     } catch(SoapFault $error) {
-      throw new DataServerException("MIT Calendar SOAP server problem");
+      $msg = $error->getMessage();
+      if (!$msg) $msg = "";
+      throw new DataServerException("MIT Calendar SOAP server problem: $msg");
     }
   }
 
 }
 
 class MIT_Calendar {
-  private static $url;
-  private static $php_client;
+  private static $php_client = NULL;
 
-  public static function init($url) {
-    if(self::$url) {
-      throw new Exception("MIT_Calendar already initialized");
-    } else {
-      self::$url = $url;
-      self::$php_client = new SoapClientWrapper($url);
+  private static $common_words = Array(
+    "", "a", "the", "in", "of", "at", "i", // words we actually received in queries
+    "and", "or", // some other obvious words
+    );
+
+  // this is the most requested query, so we make a cache both in
+  // memory and on disk; all other days will be cached on disk
+  private static $today_events;
+
+  public static function init() {
+    if(!self::$php_client) {
+      self::$php_client = new SoapClientWrapper(EVENTS_CALENDAR_API);
     }
+  }
+
+  private static function write_cache($event_type, $data, $tmp=FALSE) {
+    if ($tmp)
+      $filename = TMP_DIR . $event_type;
+    else
+      $filename = CACHE_DIR . 'EVENTS_CALENDAR/' . $event_type;
+
+    $fh = fopen($filename, 'w');
+    fwrite($fh, serialize($data));
+    fclose($fh);
+  }
+
+  private static function write_temp_cache($event_type, $data) {
+    self::write_cache($event_type, $data, TRUE);
+  }
+
+  private static function read_cache($event_type, $tmp=FALSE) {
+    // TODO: move timeout value to constants file
+    $timeout = 86400;
+
+    if ($tmp)
+      $filename = TMP_DIR . $event_type;
+    else
+      $filename = CACHE_DIR . 'EVENTS_CALENDAR/' . $event_type;
+
+    if (file_exists($filename) && filemtime($filename) < time() + $timeout) {
+      return unserialize(file_get_contents($filename));
+    }
+    return FALSE;
+  }
+
+  private static function read_temp_cache($event_type) {
+    return self::read_cache($event_type, TRUE);
   }
 
   public static function Categorys() {
     return self::$php_client->getCategoryList();
-  }  
+  }
 
   public static function Category($id) {
     return self::$php_client->getCategory($id);
@@ -50,13 +104,38 @@ class MIT_Calendar {
     return self::HeadersByCatID(5, $date, $date);
   }
 
+  public static function ThisWeeksExhibitsHeaders($date) {
+    $end = date('Y/m/d', strtotime($date) + 86400 * 7);
+    $result = array();
+    $events = self::HeadersByCatID(5, $date, $end);
+    // for multi-day exhibits, the SOAP API returns a separate event
+    // for each day with an incrementing event ID.
+    $unique_titles = array(); // id => title
+    foreach ($events as $event) {
+      $id = $event->id;
+      $unique_titles[$id] = $event->title;
+      while (array_key_exists($id - 1, $unique_titles)
+	     && $unique_titles[$id - 1] == $event->title) {
+	$id -= 1;
+      }
+
+      if ($id == $event->id) {
+	$result[$id] = $event;
+      } else {
+	$result[$id]->end = $event->end;
+      }
+    }
+
+    return $result;
+  }
+
   public static function CategoryEventsHeaders($category, $start, $end=NULL) {
     if(!$end) {
       $end = $start;
     }
     return self::HeadersByCatID($category->catid, $start, $end);
   }
-    
+
   public static function HeadersByCatID($catID, $start, $end) {
     $criteria = array(
       new SearchCriterion('start', $start),
@@ -79,26 +158,82 @@ class MIT_Calendar {
     return self::$php_client->findEventsHeaders(SearchCriterion::forSOAP($criteria));
   }
 
-  public static function fullTextSearch($text, $start, $end, $category=NULL) {
+  private static function wordSearch($word, $start, $end, $category) {
+    $cachename = 'calsearch_' . $word . '_' 
+      . str_replace('/', '', $start) . '_' . str_replace('/', '', $end);
+
+    if ($category) {
+      $cachename .= '_' . $category->catid;
+    }
+
+    if ($results = self::read_temp_cache($cachename)) {
+      return $results;
+    }
+
     $criteria = array(
       new SearchCriterion('start', $start),
       new SearchCriterion('end', $end),
-      new SearchCriterion('fulltext')
+      new SearchCriterion('fulltext', $word)
     );
-    
-    foreach(explode(' ', $text) as $word) {
-      if($word) {
-        $criteria[2]->addValue($word);
-      }
-    }
 
     if($category) {
       $criteria[] = new SearchCriterion('catid', $category->catid);
     }
-    return self::$php_client->findEventsHeaders(SearchCriterion::forSOAP($criteria));
+
+    $results = self::$php_client->findEventsHeaders(SearchCriterion::forSOAP($criteria));
+
+    self::write_temp_cache($cachename, $results);
+    return $results;
   }
 
-  public static function TodaysEventsHeaders($date) {
+  public static function fullTextSearch($text, $start, $end, $category=NULL) {
+    // the soap api interprets each string argument as a quoted string
+    // search.  multiple arguments are interpreted as an OR query
+    // instead of AND query.  so we employ some heuristics here to
+    // narrow down search results
+
+    // search in decreasing token size
+    $tokens = split(' ', $text);
+    usort($tokens, array(self, 'compare_strlen'));
+    $longest_token = array_shift($tokens);
+
+    // if all tokens are very short, use the full string
+    if (strlen($longest_token) < 4) {
+      $results = self::wordSearch($text, $start, $end, $category);
+      return $results;
+    }
+
+    $results = self::wordSearch($longest_token, $start, $end, $category);
+
+    foreach ($tokens as $token) {
+      if (in_array($token, self::$common_words)) continue;
+      $new_results = self::wordSearch($token, $start, $end, $category);
+      $results = array_uintersect($results, $new_results, array(self, "compare_events"));
+
+      // ignore the rest of the tokens if we're down to a few results
+      if (count($results) < 5) {
+	break;
+      }
+    }
+
+    return $results;
+  }
+
+  public static function TodaysEventsHeaders($date=NULL) {
+    $today_date = date('Y/m/d');
+    if ($date === NULL)
+      $date = $today_date;
+
+    if (($events = self::$today_events) !== NULL
+	&& ($today_date == $date)) {
+      return $events;
+    }
+
+    $hard_cache = 'day_' . str_replace('/', '', $date);
+    if ($events = self::read_cache($hard_cache)) {
+      return $events;
+    }
+
     // Get all today's events including exhibits
     $all_events = self::$php_client->getDayEventsHeaders($date);
     
@@ -124,12 +259,41 @@ class MIT_Calendar {
         $without_exhibitions[] = $event;
       }
     }
+
+    if (count($without_exhibitions)) {
+      if ($today_date == $date) {
+	self::$today_events = $without_exhibitions;
+      }
+
+      self::write_cache($hard_cache, $without_exhibitions);
+    }
+
     return $without_exhibitions;
   }     
 
   public static function getEvent($id) {
-    return self::$php_client->getEvent($id);
-  }    
+    try {
+      return self::$php_client->getEvent($id);
+    } catch (Exception $e) {
+      // see if this event is in our "today" cache, if so return that
+      // instead.  log the error instead of showing "Internal Server
+      // Error" page.  this will cover the majority of detail pages
+      // requested.
+      foreach (self::TodaysEventsHeaders() as $event) {
+	// fields we use in detail screen: title, shortloc | location,
+	// infophone, description, infourl, categories.
+	// fields NOT included in headers:
+	// infophone, description, infourl, categories
+	if ($event->id == $id) {
+	  $event->description = "Problem retrieving details from data server.  Please try again later.";
+	  $event->categories = array();
+	  error_log("Failed to get event details for event id $id: " . $e->getMessage());
+	  return $event;
+	}
+      }
+      throw $e;
+    }
+  }
 
   public static function standard_time($hour, $minute) {
     $end = ($hour < 12) ? 'am' : 'pm';
@@ -144,21 +308,18 @@ class MIT_Calendar {
   }
 
   public static function timeText($event) {
-    if(self::compare($event->start, $event->end) == 1) {
-      //the end can not be before the begginning
-      $event['end'] = NULL;
-    }
+    $out = '';
 
     if($event->start->hour === '00' &&
        $event->start->minute === '00' && (
         ($event->end->hour === '00' && $event->end->minute === '00')  ||
         ($event->end->hour === '23' && $event->end->minute === '59')) )  {
-          $out .= 'All day';
+          $out = 'All day';
     } else {
        if($event->start) {
-         $out .= self::standard_time($event->start->hour, $event->start->minute);
+         $out = self::standard_time($event->start->hour, $event->start->minute);
        }
-       if($event->end) {
+       if($event->end && self::compare($event->start, $event->end) == -1) {
          $out .= '-';
          $out .= self::standard_time($event->end->hour, $event->end->minute);
        }
@@ -169,7 +330,7 @@ class MIT_Calendar {
   public static function compare($day1, $day2) {
     //compare the two different times
     foreach(array("year", "month", "day", "hour", "minute") as $key) {
-      if($day->$key > $day2->$key) {
+      if($day1->$key > $day2->$key) {
         return 1;
       }
 
@@ -178,6 +339,22 @@ class MIT_Calendar {
       }
     }
     return 0;
+  }
+
+  public static function compare_events($event1, $event2) {
+    $id1 = $event1->id;
+    $id2 = $event2->id;
+
+    if ($id1 == $id2) {
+      return 0;
+    }
+    return ($id1 < $id2) ? -1 : 1;
+  }
+
+  /* sort an array of strings in DESCENDING order. */
+  public static function compare_strlen($str1, $str2) {
+    if (strlen($str1) == strlen($str2)) return 0;
+    return (strlen($str1) < strlen($str2)) ? 1 : -1;
   }
 
 }
@@ -214,7 +391,5 @@ class SearchCriterion {
     return $new_obj;
   }
 }
-
-MIT_Calendar::init("http://events.mit.edu/MITEventsFull.wsdl");
 
 ?>

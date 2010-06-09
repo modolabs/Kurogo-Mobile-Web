@@ -1,0 +1,1 @@
+/var/local/maptiles/tiles_last_updated.txt

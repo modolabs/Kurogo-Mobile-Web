@@ -9,7 +9,7 @@ $page->content_begin();
 
 	<div class="nonfocal">
 		<h2>Site statistics for the past:</h2>
-		<ul id="tabstrip" class="threetabs">
+		<ul id="tabstrip" class="fourtabs">
 		   <? foreach ($statclasses as $stclass) { ?>
 		        <li<?=$stclass['active'] ?>><a href="?page=statistics&amp;service=<?=$url_params['service'] ?>&amp;interval=<?=$stclass['interval'] ?>"><?=$stclass['title'] ?></a></li>
                    <? } ?>

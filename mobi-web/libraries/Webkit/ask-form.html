@@ -1,0 +1,106 @@
+<?php
+$page->title('MIT Libraries - Ask Us!')
+     ->navbar_image('libraries')
+     ->breadcrumbs('Ask', 'Ask Us!')
+     ->breadcrumb_links('ask.php');
+
+$page->inline_css_begin(); ?>
+.hilite_required {
+  font-weight: bold;
+  color: #600;
+}
+<?
+$page->inline_css_end();
+
+$page->inline_js_begin(); ?>
+function showTechForm() {
+  var techHelpForm = document.getElementById("techhelp");
+  techHelpForm.className = "focal";
+}
+function hideTechForm() {
+  var techHelpForm = document.getElementById("techhelp");
+  techHelpForm.className = "invisible";
+}
+function showHideTechForm() {
+  var topicMenu = document.getElementById("techHelpOption");
+  if (topicMenu.selected) {
+    showTechForm();
+  } else {
+    hideTechForm();
+  }
+}
+<?
+$page->inline_js_end();
+$page->extra_onload('showHideTechForm()');
+
+$page->content_begin();
+?>
+
+	<div class="nonfocal">
+		<p>Use this form for help with research, quick facts, and library services, collections and  tools. Requests are checked Mon-Fri 10am-5pm except Institute holidays, and answered by 5pm the next business day.</p>
+		<?=$required_text?>
+		<p><span class="required">*</span> Required fields</p>
+                <p><strong>MIT Username:</strong> <?=$username?></p>
+	</div>
+
+	<form id="queryform" name="queryform" action="" method="get">
+		<fieldset class="focal"> 
+		  	<h3><label for="topic"<?=hilite('topic', $missing_fields)?>>Topic area: <span class="required">*</span></label></h3>
+		  	<p>
+		  		<select id="topic" name="topic" onchange="showHideTechForm()">
+		  			<option value="">Select a topic area</option>
+					<? foreach ($ask_us_lists as $topic => $list) { ?>
+					  <? if ($topic != 'Technical Help') { ?>
+					  <?=option_value('topic', $topic)?><?=$topic?></option>
+					  <? } ?>
+					<? } ?>
+					<?=option_value('topic', 'Technical Help', ' id="techHelpOption" ')?>Technical Help</option>
+				</select>
+		  	</p>
+			<h3><label for="subject"<?=hilite('subject', $missing_fields)?>>Subject line: <span class="required">*</span></label></h3>
+			<p>
+			<input type="text" name="subject" id="subject" style="width:94%"<?=input_value('subject')?>>
+			</p>
+			<h3><label for="question"<?=hilite('question', $missing_fields)?>>Detailed question: <span class="required">*</span></label></h3>
+			<textarea name="question" id="question" rows="10" style="width:97%"><?=$_REQUEST['question']?></textarea>
+		</fieldset>
+		<fieldset class="invisible" id="techhelp">
+			<h3><label for="on_campus"<?=hilite('on_campus', $missing_fields)?>>Is the problem happening on or off campus? <span class="required">*</span></label></h3>
+			<p>
+				<?=radio_button('on_campus', 'on campus')?>On campus
+				<?=radio_button('on_campus', 'off campus')?>Off campus
+			</p>
+			<h3><label for="vpn"<?=hilite('vpn', $missing_fields)?>>Are you using VPN? <span class="required">*</span></label></h3>
+			<p>
+				<?=radio_button('vpn', 'yes')?>Yes
+				<?=radio_button('vpn', 'no')?>No
+			</p>
+		</fieldset>
+		<fieldset class="focal">
+		  	<h3><label for="status"<?=hilite('status', $missing_fields)?>>Your status: <span class="required">*</span></label></h3>
+			<p>
+				<select id="status" name="status">
+				<option value="">Your status</option>
+				<?=option_value('status', 'UG')?>MIT Undergrad Student</option>
+				<?=option_value('status', 'GRAD')?>MIT Grad Student</option>
+				<?=option_value('status', 'FAC')?>MIT Faculty</option>
+				<?=option_value('status', 'RS')?>MIT Research Staff</option>
+				<?=option_value('status', 'STAFF')?>MIT Staff</option>
+				<?=option_value('status', 'VS')?>MIT Visitor</option>
+				</select>
+			</p>
+			<h3><label for="department"<?=hilite('department', $missing_fields)?>>Your department: <span class="required">*</span></label></h3>
+			<input type="text" name="department" id="department" style="width:94%"<?=input_value('department')?>>
+			<h3><label for="phone">Phone number:</label></h3>
+			<input type="text" name="phone" id="phone" style="width:94%"<?=input_value('phone')?>>
+		</fieldset>
+		<input type="hidden" name="ask_type" value="form" />	
+		<div class="formbuttons">
+			<a class="formbutton" href="" onclick="document.queryform.submit();return false"><div>Submit</div></a>
+		</div>
+	</form>
+	
+<? 
+$page->custom_footer($libraries_custom_footer);
+$page->content_end();
+?>

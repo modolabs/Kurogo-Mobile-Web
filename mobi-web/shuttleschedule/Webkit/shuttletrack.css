@@ -68,7 +68,7 @@
 /* Tall (portrait) orientation */
 
 body.portrait {
-	width: 320px;
+	width: 100%;
 }
 
 body.portrait #timestamp {
@@ -106,7 +106,7 @@ body.portrait #rotatemsg2 {
 /* Wide (landscape) orientation */
 
 body.landscape {
-	width: 480px;
+	width: 100%;
 }
 
 body.landscape #timestamp {
@@ -129,11 +129,11 @@ body.landscape .tabbody {
 }
 
 body.landscape #scheduletab {
-	width: 205px;
+	width: 47%;
 }
 
 body.landscape #maptab {
-	width: 225px;
+	width: 53%;
 }
 
 body.landscape #map {

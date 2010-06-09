@@ -5,16 +5,16 @@ $page->title('Map: Directions to MIT')
 
 $page->content_begin();
 ?>
-	<ul class="focal">
+	<div class="focal">
             <h2><?=$info->header?></h2>
 
             <?=$info->html?>
-	</ul>
+	</div>
 
         <? if($info->google_html) { ?>
-            <ul class="nav">
+            <div class="nav">
 	        <?=$info->google_html?>
-	    </ul>
+	    </div>
         <? } ?>
 	
 <? $page->content_end(); ?>

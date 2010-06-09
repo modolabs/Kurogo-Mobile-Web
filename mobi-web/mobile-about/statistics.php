@@ -3,7 +3,7 @@ $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "home/Modules.php";
-define("SMS_STATS_URL", 'http://sms1.mit.edu/~blpatt/trunk/mangotext/api/statistics.php');
+define("SMS_STATS_URL", 'http://sms1.mit.edu/mobi-sms/mangotext/api/statistics.php');
 
 $platforms = Array(
     'iphone' => 'iPhone',
@@ -22,6 +22,7 @@ $interval_types = Array(
   'day' => Array('duration' => 7, 'title' => 'Week', 'numdays' => 7),
   'week' => Array('duration' => 12, 'title' => '12 Weeks', 'numdays' => 84),
   'month' => Array('duration' => 12, 'title' => 'Year', 'numdays' => 365),
+  'quarter' => Array('duration' => 12, 'title' => '3 Years', 'numdays' => 1095),
   );
 
 // default params
@@ -70,6 +71,7 @@ if ($url_params['service'] == 'sms') {
       );
   } else { // api
     $graphs = array(
+      summary_total(PageViews::count_iphone_tokens(), "total", "active users"),
       summary_total($all_data, "total", "total API requests"),
       trend($all_data, "total", 
 	    'API Requests by ' . ucfirst($url_params['interval']), 
@@ -109,9 +111,18 @@ function aggregate_days($days, $interval_type, $duration) {
   $last_day = $days[count($days) - 1]['date'];
   $year = substr($last_day, 0, 4);
   $month = substr($last_day, 5, 7);
-  if ($interval_type == 'month') {
+  switch ($interval_type) {
+  case 'quarter':
+    $month = (int)$month - 1;
+    $month = $month - ($month % 3) + 1;
     $utime = mktime(0, 0, 0, $month, 1, $year);
-  } else {
+    break;
+  case 'month':
+    $utime = mktime(0, 0, 0, $month, 1, $year);
+    break;
+  case 'day':
+  case 'week':
+  default:
     $utime = strtotime($last_day);
   }
 
@@ -124,13 +135,23 @@ function aggregate_days($days, $interval_type, $duration) {
       $utime -= 86400;
       break;
     case 'week':
+      $is_dst = date('I', $utime);
       $utime -= 86400 * 7;
+      $was_dst = date('I', $utime); // this is further in the past
+      $utime -= ($was_dst - $is_dst) * 3600;
       break;
     case 'month':
       if ($month <= $i) {
 	$utime = mktime(0, 0, 0, $month - $i + 12, 1, $year - 1);
       } else {
 	$utime = mktime(0, 0, 0, $month - $i, 1, $year);
+      }
+      break;
+    case 'quarter':
+      if ($month - ($month % 3) <= $i) {
+	$utime = mktime(0, 0, 0, $month - 3*$i + 12, 1, $year - 1);
+      } else {
+	$utime = mktime(0, 0, 0, $month - 3*$i, 1, $year);
       }
       break;
     }
@@ -145,20 +166,30 @@ function aggregate_days($days, $interval_type, $duration) {
     case 'week': // week starting on specified date
       $interval = $utime;
       while (date('w', $interval) != $dayofweek) {
+	$was_dst = date('I', $interval);
 	$interval += 86400;
+	$is_dst = date('I', $interval);
+	$interval += ($was_dst - $is_dst) * 3600;
       }
       break;
     case 'month':
       $interval = mktime(0, 0, 0, date('n', $utime), 1, date('Y', $utime));
       break;
+    case 'quarter':
+      $interval = PageViews::quarter_of($utime);
+      break;
     }
 
     $counter[$interval] += $day['count'];
   }
+
+  ksort($counter);
+
   foreach ($counter as $interval => $count) {
     $intervals[] = array('date' => $interval, 'count' => $count);
   }
-  return array_reverse($intervals);
+
+  return $intervals;
 }
 
 function generate_sms_content($data) {
@@ -278,9 +309,9 @@ function format_intervals($data, $max_scale, $field, $interval_type) {
     $new_interval = Array();
     $new_interval['day'] = date('D', $datum['date']);
     if (($interval_type != 'day') && ($max_scale > 1000)) {
-      $num_digits = min(3, max(0, 6 - strlen($datum[$field])));
-      $new_interval['count'] = number_format($datum[$field]/1000, $num_digits);
-    } else {
+      $num_digits = min(2, max(0, 6 - strlen($datum[$field])));
+     $new_interval['count'] = number_format($datum[$field]/1000, $num_digits);
+     } else {
       $new_interval['count'] = $datum[$field];
     }
     $new_interval['percent'] = per_cent($datum[$field], $max_scale);
@@ -294,6 +325,9 @@ function format_intervals($data, $max_scale, $field, $interval_type) {
     case 'month':
       $new_interval['date'] = date('M', $datum['date']);
       break;
+    case 'quarter':
+      $new_interval['date'] = 'Q' . ((date('n', $datum['date']) + 2) / 3) . date("\ny", $datum['date']);
+      break;
     }
 
     $intervals[] = $new_interval;
@@ -304,7 +338,11 @@ function format_intervals($data, $max_scale, $field, $interval_type) {
 function summary_total($data, $field, $title) { 
   $total = 0;
   foreach($data as $datum) {
-    $total += $datum[$field];
+    if (is_array($datum)) {
+      $total += $datum[$field];
+    } else {
+      $total += (int)$datum;
+    }
   }
   return array("type"=>"TOTAL", "title"=>$title, "total"=>$total);
 }

@@ -133,8 +133,13 @@ class Page {
     return $this;
   }
 
-  public function add_stylesheet($stylesheet_name) {
-    $this->stylesheets[] = $stylesheet_name;
+  public function add_stylesheet($stylesheet) {
+    if(gettype($stylesheet) == 'string') {
+      $this->stylesheets[] = array('href' => "$stylesheet.css");
+    } else {
+      // $stylesheet needs to an array that defines attributes
+      $this->stylesheets[] = $stylesheet;
+    }
     return $this;
   }
 
@@ -307,6 +312,19 @@ class Page {
       $img_str .= '/>';
       return $img_str;
     }
+  }
+
+  /* generate the html for the extra style sheet links */
+  public function stylesheet_links() {
+    $output = "";
+    foreach($this->stylesheets as $stylesheet) {
+      $output .= '<link rel="stylesheet" type="text/css"';
+      foreach($stylesheet as $attribute => $value) {
+        $output .= " $attribute=\"$value\"";
+      }
+      $output .= " />\n";
+    }
+    return $output;
   }
 }
 

@@ -44,13 +44,11 @@ switch ($command) {
    foreach ($route_ids as $route) {
      $routeInfo = get_route_metadata($route);
 
-     if ($_REQUEST['compact'] == 'true') {
-       unset($routeInfo['summary']);
-     } else {
+     if (!$_REQUEST['compact']) {
        $routeInfo['stops'] = Array();
        if ($stops = NextBusReader::get_route_info($route)) {
 	 foreach ($stops as $stop_id => $stopInfo) {
-	   $stopInfo['stop_id'] = $stop_id;
+	   $stopInfo['id'] = $stop_id;
 	   $routeInfo['stops'][] = $stopInfo;
 	 }
        }

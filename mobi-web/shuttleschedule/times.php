@@ -69,10 +69,11 @@ if (!in_array($route, ShuttleSchedule::get_active_routes())) {
   require "$page->branch/times.html";
 }
 
+$page->prevent_caching($pagetype);
 $page->output();
 
 function selfURL() {
-  return "times.php?route={$_REQUEST['route']}";
+  return "times.php?route={$_REQUEST['route']}&now=" . time() . "&rand=" . rand();
 }
 
 function image_tag($size, $route, $upcoming_stops) {
