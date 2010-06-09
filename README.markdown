@@ -76,7 +76,7 @@ You can build the iPhone application on a Mac by opening ``"iPhone-app/MIT Mobil
 In order to compile the application for a device you will need to change the APP ID saved in iPhone-app/MIT_Mobile-Info.plist from edu.example.mitmobile to the APP ID you configured in your apple developers portal.
 
 ## Further Documentation
-We will be adding more technical [documentation](http://imobile.webfactional.com) using Sphinx and doxygen.
+We will be adding more technical [documentation](http://imobileu.webfactional.com) using Sphinx and doxygen.
 The Sphinx documentation is containted in ``docs/`` directory and is intended for higher level information, the doxygen documentation is code comments embedded in the code.
 
 ## Notes
