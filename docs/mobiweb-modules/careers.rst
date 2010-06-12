@@ -1,3 +1,5 @@
+.. _section-mobiweb-careers:
+
 =======================
 Student Career Services
 =======================
@@ -8,4 +10,4 @@ workshops and company presentations.
 
 Currently it provides a link to Building 12 (where the Careers Office
 is located) on the Campus Map. These links are hard-coded into the
-HTML templates ip/index.html and sp/index.html.
+HTML templates \*/index.html.

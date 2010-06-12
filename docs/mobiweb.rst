@@ -99,32 +99,73 @@ have the CA root certificate installed.
 Contents of the MIT Mobile Web Source
 =====================================
 
-* ``web/`` -- main directory of Mobile Web files.
+* ``mobi-config/`` -- configuration files.  Change extension from
+  ``.php.init`` to ``.php`` to enable.
+* ``mobi-lib/`` -- library files that interact with data sources, also used
+  by the SMS system.
+* ``mobi-mysql/`` -- SQL scripts to create the database tables
+  required by the mobile web system.
+* ``mobi-web/`` -- main directory of Mobile Web files.
 
   * ``3down/`` -- Services Status module
+  * ``a/`` -- URL shortener for inbound links from SMS
+  * ``api/`` -- files for the REST API used to communicate with native
+    app clients.
   * ``about/`` -- desktop About site.
+  * ``Basic/`` -- HTML templates, CSS, and image files for
+    non-touchscreen devices (including computers).
   * ``calendar/`` -- Events Calendar module.
   * ``careers/`` -- Careers module.
+  * ``customize/`` -- Customize Home Screen module.
+  * ``e/`` -- URL shortener for calendar events.
   * ``emergency/`` -- Emergency Info module.
   * ``error-page/`` -- Error page to show user when something goes
     wrong.
   * ``home/`` -- Home Screen.
-  * ``ip/`` -- HTML templates, CSS, JS, and image files for
-    iPhone-like devices.
+  * ``libraries/`` -- Libraries module.
   * ``links/`` -- Useful Links module.
   * ``map/`` -- Campus Map module.
   * ``mobile-about/`` -- mobile About module.
+  * ``n/`` -- URL shortener for news stories.
   * ``page_builder/`` -- Page Builder package.
   * ``people/`` -- People Directory module.
   * ``shuttleschedule/`` -- Shuttles module.
   * ``sms/`` -- SMS overview module.
-  * ``sp/`` -- HTML templates, CSS, and image files for smartphones
-    and featurephones.
   * ``stellar/`` -- Course Info module.
   * ``techcash/`` -- TechCASH module.
+  * ``Touch/`` -- HTML templates, CSS, and image files for
+    touch-screen phones with less advanced browsers.
+  * ``Webkit/`` -- HTML templates, CSS, JS, and image files for Webkit
+    browsers on touch-screen devices.
 
-* ``lib/`` -- library files that interact with data sources, also used
-  by the SMS system.
+* ``scripts/`` -- setup and daemon scripts
+
+The following directories under ``mobi-web`` are device bucket
+directories, i.e. they hold static files for each device bucket:
+``Webkit`` (:ref:`section-mobiweb-Webkit`), ``Touch``
+(:ref:`section-mobiweb-Touch`), ``Basic``
+(:ref:`section-mobiweb-Basic`).
+
+The following dirctories under ``mobi-web`` are module directories:
+``3down`` (:ref:`section-mobiweb-3down`), ``calendar``
+(:ref:`section-mobiweb-calendar`), ``customize``
+(:ref:`section-mobiweb-customize`), ``careers``
+(:ref:`section-mobiweb-careers`), ``emergency``
+(:ref:`section-mobiweb-emergency`), ``libraries``
+(:ref:`section-mobiweb-libraries`), ``links``
+(:ref:`section-mobiweb-links`), ``map`` (:ref:`section-mobiweb-map`),
+``mobile-about`` (:ref:`section-mobiweb-mobile-about`), ``people``
+(:ref:`section-mobiweb-people`), ``shuttleschedule``
+(:ref:`section-mobiweb-shuttleschedule`), ``sms``
+(:ref:`section-mobiweb-sms`), ``stellar``
+(:ref:`section-mobiweb-stellar`), ``techcash``
+(:ref:`section-mobiweb-techcash`).
+
+The directory ``mobi-web/page_builder`` contains
+:ref:`section-content-generator` files, and ``mobi-web/home`` contains
+files for the home screen.
+
+.. _section-content-generator:
 
 *****************
 Content Generator
@@ -140,32 +181,35 @@ Overall Look-and-Feel
 =====================
 
 HTML elements common to all modules (such as background, header, and
-footer) are defined in top-level template files ``ip/base.html`` and
-``sp/base.html``.
+footer) are defined in top-level template files ``Webkit/base.html``,
+``Touch/base.html``, and ``Basic/base.html``.
 
 -----------
 Home Screen
 -----------
 
 The Home Screen displays a grid of icons or linear list of links to
-all modules the user has access to based on their device.  The grid
-view is shown on the iPhone and Android; all other devices (including
-computers) are shown the list view.  We also use the home screen to
-inform user about new features on the site.
+all modules the user has access to based on their device.  Webkit
+devices are shown a grid view of icons; Touch devices are shown a
+similar, but slightly smaller grid; Basic devices are shown a linear
+list of text links.
 
-The main request handler (``home/index.php``) is required to perform
-three sequential tasks:
+Additionally, we use red badges or text to inform the users about new
+features on the Mobile Web.
+
+The main page, ``mobi-web/home/index.php``, performs three sequential
+tasks:
 
 #. Check if there have been new announcements since the user last
 visited the site.  This is handled by the ``WhatsNew`` class in the
-About This Site (``mobile-about``) module, which reads the user's
-``whatsnewtime`` cookie.  If the latest announcement is less than 2
-weeks old, all users are shown a red badge or other indication on the
-home screen.
+:ref:``section-mobiweb-mobile-about`` module, which reads the user's
+:ref:``subsubsection-mobiweb-cookies-whatsnewtime`` cookie.  If the
+latest announcement is less than 2 weeks old, all users are shown a
+red badge or text on the home screen.
 
 #. Figure out which module links to display, and in what order.  This
-is done in the class ``Modules`` in ``modules.php``.  ``Modules``
-provides the following:
+is done in the class ``Modules`` (see :ref:`section-mobiweb-modules`).
+``Modules`` provides the following:
 
   * List of device-independent modules and device-dependent modules
   * Default list of modules for a given device type
@@ -174,7 +218,7 @@ provides the following:
     the certificates interstitial page, this is handled by
     ``home/index.php``.
   * Method to reorder/hide/show modules based on the list given in
-    the user’s cookies.
+    the user's cookies.
 
 #. Display the module links in a grid or linear layout using the
 appropriate template for the device.
@@ -183,7 +227,8 @@ appropriate template for the device.
 Web Certificates interstitial page
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If a user does not have the ``mitcertificate`` cookie, links to
+If a user does not have the
+:ref:`subsubsection-mobiweb-cookies-mitcertificate` cookie, links to
 modules that require certificates are replaced by the URL linking to
 ``certcheck.php``.  This file presents a screen that shows the user a
 link to the MIT Certificate server and a link to proceed directly to
@@ -206,35 +251,43 @@ Cookies
 We use cookies for determining which modules to show the user and in
 what order.
 
+.. _subsubsection-mobiweb-cookies-activemodules:
+
 ^^^^^^^^^^^^^
 activemodules
 ^^^^^^^^^^^^^
 
 This cookie is a list of all the modules that should be shown on the
-user’s home screen. If the user is visiting our website for the first
+user's home screen. If the user is visiting our website for the first
 time, this cookie is automatically populated with the default list of
 modules.  Users can change the contents of this cookie by going to
 Customize Home Screen, which rewrites the cookie as the user checks
 and unchecks desired modules.
+
+.. _subsubsection-mobiweb-cookies-moduleorder:
 
 ^^^^^^^^^^^
 moduleorder
 ^^^^^^^^^^^
 
 This cookie is a list of modules in the order they should be shown on
-the user’s home screen. As with activemodules, it is populated with
-the default module order upon the user’s first visit, and can be
+the user's home screen. As with activemodules, it is populated with
+the default module order upon the user's first visit, and can be
 changed via the Customize module.
+
+.. _subsubsection-mobiweb-cookies-whatsnewtime:
 
 ^^^^^^^^^^^^
 whatsnewtime
 ^^^^^^^^^^^^
 
-This cookie is populated when the user access the "What’s New" section
-of About this Site (or clicking directly on the "What’s New" link on
+This cookie is populated when the user access the "What's New" section
+of About this Site (or clicking directly on the "What's New" link on
 smartphones/featurephones.  It stores the current timestamp and is
 read by the Home Screen to determine whether new announcements should
 be highlighted for the user.
+
+.. _subsubsection-mobiweb-cookies-mitcertificate:
 
 ^^^^^^^^^^^^^^
 mitcertificate
@@ -256,11 +309,11 @@ already has a certificate and thus successfully proceeds.
 The Page Builder Package
 ========================
 
-The directory ``web/trunk/page_builder`` contains the logic to build
+The directory ``mobi-web/page_builder`` contains the logic to build
 pages.  The page builder looks for files in the directories
-``web/trunk/ip``, ``web/trunk/sp``, and ``web/trunk/fp``, which
+``mobi-web/Webkit``, ``mobi-web/Touch``, and ``mobi-web/Basic``, which
 respectively contain static media required to assemble pages for
-iPhones, smartphones, and featurephones.
+Webkit, Touch, and Basic devices.
 
 -----------
 Page Header
@@ -311,14 +364,14 @@ it to ``page_tools.php``.  The following elements are provided:
   field) that displays the current search term if there is one.  If
   there are too many search results, this class also generates a
   message below the search bar.  The appearance of the search bar can
-  be customized in ``ip/form.html`` and ``sp/form.html``.
+  be customized in ``Webkit/form.html``, ``Touch/form.html``, etc.
 
 * ``ResultsContent`` -- used in conjunction with the search bar.  To
   use ResultsContent, do the following:
 
   #. Create a short HTML template to display individual list items
-  (look for examples such as ``calendar/ip/items.html``,
-  ``calendar/sp/items.html``).
+  (look for examples such as ``calendar/Webkit/items.html``,
+  ``calendar/Basic/items.html``).
 
   #. Create an HTML template to display the output of the
   ``ResultsContent`` within the page.  See an example below.
@@ -334,8 +387,8 @@ For an example of the HTML template for ``ResultsContent`` output,
 here is ``people/ip/results.html``::
 
   <?php
-    $page->title(’People: Details’) ->navbar_image(’people’)
-         ->breadcrumbs(’Search Results’);
+    $page->title('People: Details') ->navbar_image('people')
+         ->breadcrumbs('Search Results');
        
     $page->content_begin(); 
        
@@ -363,12 +416,12 @@ Some important functions in Page:
   ``content_begin()`` and ``content_end()``) are used in HTML
   templates of all regular modules.
 
-* ``output()``: this function must be called after all of the page’s
+* ``output()``: this function must be called after all of the page's
   private variables have been populated. This function grabs
-  ``base.html`` from either the ``ip`` or ``sp`` directory and
-  populates the PHP variables in ``base.html`` with values set in any
-  module logic.  The populated HTML is then echoed to the user’s
-  screen.
+  ``base.html`` from either ``Webkit``, ``Touch``, or ``Basic``
+  directory and populates the PHP variables in ``base.html`` with
+  values set in any module logic.  The populated HTML is then echoed
+  to the user's screen.
 
 ``WebkitPage`` creates pages for the iPhone and Android.  These are
 almost identical, but we also take advantage of iPhone-only features
@@ -409,19 +462,21 @@ Content Restriction
 
 If a module needs to be restricted to users via personal certificates,
 security.php provides the functions to require HTTPS, and extract
-parameters from the user’s personal certificate.
+parameters from the user's personal certificate.
 
 Calling the function ``ssl_required()`` will change the transmission
-protocol to HTTPS (if it isn’t already).  This function also sets the
-``mitcertificate`` cookie in the user’s browser.
+protocol to HTTPS (if it isn't already).  This function also sets the
+``mitcertificate`` cookie in the user's browser.
 
 The functions ``get_username()`` and ``get_fullname()`` extract the
-user’s username and fullname respectively, by searching HTTP headers
+user's username and fullname respectively, by searching HTTP headers
 generated by the certificate.
 
 For testing and other internal purposes, pages may be restricted to a
 specific set of users. This is accomplished with the
 ``users_restricted()`` function.
+
+.. _section-mobiweb-modules:
 
 ================
 How Modules Work
@@ -432,11 +487,11 @@ The full list of modules is controlled by the file
 for each module:
 
 * Module ID, e.g. ``people``. This is the name of the subdirectory
-  holding most of the module’s files, as well as the name of images
+  holding most of the module's files, as well as the name of images
   (e.g. people.gif for the homescreen icon) used by other parts of the
   site.
 * Title, e.g. “People Directory”. This is the name of the module that
-  will be shown on the user’s homescreen.
+  will be shown on the user's homescreen.
 * Whether this module is required (cannot be hidden from home screen
   through customization).
 * Whether this module is restricted to a subset of devices.
@@ -498,7 +553,7 @@ very simple page::
  
   require "../page_builder/page_header.php"; 
  
-  $dynamic_text = ’you requested ’ . $_REQUEST[’query’]; 
+  $dynamic_text = 'you requested ' . $_REQUEST['query']; 
  
   require "$prefix/index.html"; 
   $page->output(); 
@@ -512,12 +567,14 @@ index.html
 These files under the ``ip`` and ``sp`` directories are HTML template
 files with fields expected to be populated with PHP variable values.
 Here is an example of a very simple ``ip/index.html`` page that would
-work with the example ``index.php`` page above::
+work with the example ``index.php`` page above:
+
+.. code-block:: php
  
   <?php 
-  $page->title(’Sample Module’) 
-     ->navbar_image(’samplemodule’) 
-     ->breadcrumbs(’Sample Module’) 
+  $page->title('Sample Module') 
+     ->navbar_image('samplemodule') 
+     ->breadcrumbs('Sample Module') 
      ->breadcrumb_home(); 
  
   $page->content_begin(); 
@@ -537,8 +594,8 @@ In the above example, the values of PHP variables ``$page`` and
 Similarly, the ``sp/index.html`` page would look like::
  
   <?php 
-  $page->title(’My Sample Module’) 
-     ->header(’Sample Module’); 
+  $page->title('My Sample Module') 
+     ->header('Sample Module'); 
  
   $page->content_begin(); 
   ?> 
@@ -559,17 +616,29 @@ page, based on our ongoing example, would look like::
  
   <?php 
  
-  $header = ’Sample Module’; 
-  $module = ’samplemodule’; 
+  $header = 'Sample Module'; 
+  $module = 'samplemodule'; 
  
   $help = array( 
-    ’Sample Module shows you the value of a query you requested.’, 
-    ’If you did not request anything, it will not show up.’, 
+    'Sample Module shows you the value of a query you requested.', 
+    'If you did not request anything, it will not show up.', 
     );
  
   require "../page_builder/help.php"; 
  
   ?>
+
+
+
+******************
+Mobile Web Buckets
+******************
+
+.. toctree::
+
+   Webkit <mobiweb-buckets/Webkit>
+   Touch <mobiweb-buckets/Touch>
+   Basic <mobiweb-buckets/Basic>
 
 ******************
 Mobile Web Modules
