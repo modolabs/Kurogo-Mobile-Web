@@ -95,17 +95,107 @@ MIT makes use of a local Certificate Authority (CA) for authenticating
 users.  Servers running the MIT Mobile Web that use such a system must
 have the CA root certificate installed.
 
-=====================================
-Contents of the MIT Mobile Web Source
-=====================================
+.. _subsection-mobiweb-mobi-config:
 
-* ``mobi-config/`` -- configuration files.  Change extension from
-  ``.php.init`` to ``.php`` to enable.
-* ``mobi-lib/`` -- library files that interact with data sources, also used
-  by the SMS system.
-* ``mobi-mysql/`` -- SQL scripts to create the database tables
-  required by the mobile web system.
-* ``mobi-web/`` -- main directory of Mobile Web files.
+------------------------------------
+PHP Configuration and File Locations
+------------------------------------
+
+The directories mentioned in this section all refer to top-level
+directories in the source tree.
+
+.. _subsubsection-mobiweb-mobi-web-directory:
+
+^^^^^^^^
+mobi-web
+^^^^^^^^
+
+The contents of the directory ``mobi-web`` can be placed anywhere on
+the system, but to serve the Mobile Web, Apache must be aware of the
+directory.  For instance, the ``mobi-web`` directory can be entirely
+copied under ``/var/www/htdocs``.  Then if ``httpd.conf`` (or
+equivalent file) contains the following line::
+
+  DocumentRoot "/var/www/htdocs/mobi-web"
+
+Then when people access http://yourserver.yourextension they will
+reach the Mobile Web.  If ``httpd.conf`` contains not the line above
+but the line below::
+
+  DocumentRoot "/var/www/htdocs"
+
+Then people can reach the Mobile Web by accessing
+http://yourserver.yourextension/mobi-web.
+
+This distinction is important as it affects the constant ``HTTPROOT``,
+which is important for saving cookies.
+
+If your server is hosting the Mobile Web exclusively, you may consider
+copying the contents of ``mobi-web`` into the default DocumentRoot,
+instead of copying the directory itself.
+
+.. _subsubsection-mobiweb-mobi-lib-directory:
+
+^^^^^^^^
+mobi-lib
+^^^^^^^^
+
+.. _subsubsection-mobiweb-mobi-config-directory:
+
+^^^^^^^^^^^
+mobi-config
+^^^^^^^^^^^
+
+what to do with config and constants files
+
+device detection
+
+service locations
+
+.. _subsubsection-mobiweb-mobi-mysql-directory:
+
+^^^^^^^^^^
+mobi-mysql
+^^^^^^^^^^
+
+which tables are needed
+
+----------------
+File Permissions
+----------------
+
+
+^^^^^^^^^^^
+Cache Files
+^^^^^^^^^^^
+
+Frequently used files from external data sources are stored as cache
+files in ``mobi-lib/cache``.  ``mobi-lib/cache`` also contains the
+following directories:
+
+* ACADEMIC_CALENDAR
+* EVENTS_CALENDAR
+* NEWS_OFFICE
+* STELLAR_COURSE
+* STELLAR_FEEDS
+
+Cache files must be readable and writeable by the system's user that
+hosts files on the web, generally the ``apache`` user.
+
+==========================================
+Contents of the MIT Mobile Web Source Tree
+==========================================
+
+* :ref:`subsubsection-mobiweb-mobi-config-directory` -- Location of config
+  and constants files.  Change extension from ``.php.init`` to
+  ``.php`` to enable.
+* :ref:`subsubsection-mobiweb-mobi-lib-directory` -- library of
+  :ref:`section-mobiweb-mobi-lib` to interact with data sources,
+  also used by the SMS system.
+* :ref:`subsubsection-mobiweb-mobi-mysql-directory` -- SQL scripts to
+  create the database tables required by the mobile web system.
+* :ref:`subsubsection-mobiweb-mobi-web-directory` -- main directory of
+  Mobile Web files.
 
   * ``3down/`` -- Services Status module
   * ``a/`` -- URL shortener for inbound links from SMS
@@ -116,6 +206,7 @@ Contents of the MIT Mobile Web Source
     non-touchscreen devices (including computers).
   * ``calendar/`` -- Events Calendar module.
   * ``careers/`` -- Careers module.
+  * ``config/`` -- Constants for Mobile Web code.
   * ``customize/`` -- Customize Home Screen module.
   * ``e/`` -- URL shortener for calendar events.
   * ``emergency/`` -- Emergency Info module.
@@ -138,7 +229,7 @@ Contents of the MIT Mobile Web Source
   * ``Webkit/`` -- HTML templates, CSS, JS, and image files for Webkit
     browsers on touch-screen devices.
 
-* ``scripts/`` -- setup and daemon scripts
+* ``scripts/`` -- setup and daemon scripts (not used by the Mobile Web)
 
 The following directories under ``mobi-web`` are device bucket
 directories, i.e. they hold static files for each device bucket:
@@ -528,17 +619,18 @@ How to Add a Module
 
 #. Create a module directory, e.g. ``mymodule``.
 
-#. Under ``mymodule/``, create the directories ``ip`` and ``sp``.
+#. Under ``mymodule/``, create the directories ``Webkit``, ``Touch``, and ``Basic``.
 
 #. Add the module ID and title to the list of modules in ``home/modules.php``.
 
 #. Add any module restrictions to the appropriate lists in ``home/modules.php``.
 
-#. Create the files ``indes.php``, ``help.php``, ``ip/index.html`` and
-``sp/index.html`` as shown below.
+#. Create the files ``index.php``, ``help.php``, ``Webkit/index.html``, ``Touch/index.html``, and ``Basic/index.html`` as shown below.
+
+#. If any external data sources are used, a file to interact with that data source should be created in ``mobi-lib``.
 
 ^^^^^^^^^
-index.php 
+index.php
 ^^^^^^^^^
 
 This file implements the logic for content to show on the module's
@@ -547,7 +639,9 @@ statement for the Page Builder header.  At the end of the file there
 must be a ``require`` statement for the HTML template to be populated,
 and a call to ``$page->output()`` at the very end.  Any code after
 this function call will not have any effect.  Here is an example of a
-very simple page::
+very simple page:
+
+.. code-block:: php
 
   <?php 
  
@@ -591,7 +685,9 @@ In the above example, the values of PHP variables ``$page`` and
 ``$dynamic_text`` are determined in ``index.php`` and
 ``../page_builder/page_header.php``.
 
-Similarly, the ``sp/index.html`` page would look like::
+Similarly, the ``sp/index.html`` page would look like:
+
+.. code-block:: php
  
   <?php 
   $page->title('My Sample Module') 
@@ -612,7 +708,9 @@ help.php
 
 This file contains the help text that will be displayed when the user
 clicks on the "Help" link from any module.  The contents of this help
-page, based on our ongoing example, would look like::
+page, based on our ongoing example, would look like:
+
+.. code-block:: php
  
   <?php 
  
@@ -627,6 +725,252 @@ page, based on our ongoing example, would look like::
   require "../page_builder/help.php"; 
  
   ?>
+
+
+.. _section-mobiweb-mobi-lib:
+
+====================
+Data Connector Files
+====================
+
+Files in the ``mobi-lib`` directory of the source tree provide
+interfaces to communicate with original data sources.
+
+.. _subsection-mobiweb-AcademicCalendar:
+
+-----------------------------
+mobi-lib/AcademicCalendar.php
+-----------------------------
+
+Depends on :ref:`subsection-mobiweb-mit-calendar`
+
+.. class:: AcademicCalendar
+
+Singleton class that reads .ics files (via
+``mobi-lib/mit_ical_lib.php``) and provides methods for retrieving
+arrays of events by month and year, dates of terms (semesters), and
+student holidays.
+
+---------------------
+mobi-lib/DrupalDB.php
+---------------------
+
+.. _subsection-mobiweb-EmergencyContacts:
+
+-------------------------------
+mobi-lib/EmergencyContacts.json
+-------------------------------
+
+
+-----------------------
+mobi-lib/GTFSReader.php
+-----------------------
+
+.. _subsection-mobiweb-LibraryInfo:
+
+------------------------
+mobi-lib/LibraryInfo.php
+------------------------
+
+-----------------------
+mobi-lib/NewsOffice.php
+-----------------------
+
+.. _subsection-mobiweb-NextBusReader:
+
+--------------------------
+mobi-lib/NextBusReader.php
+--------------------------
+
+.. _subsection-mobiweb-ShuttleSchedule:
+
+----------------------------
+mobi-lib/ShuttleSchedule.php
+----------------------------
+
+.. _subsection-mobiweb-StellarData:
+
+------------------------
+mobi-lib/StellarData.php
+------------------------
+
+.. class:: StellarData
+
+Singleton class providing interface to Stellar XML and RSS feeds,
+reads and caches data from the Stellar server (see
+:ref:`subsubsection-mobiweb-stellar-xml` for details on feed format).
+Provides methods to get a list of Courses, subjects under a Course,
+and details about a subject.
+
+Additionally provides methods linked to the subscription system for
+native app notifications.
+
+Contains a list of hard-coded Course numbers and titles.  We do not
+currently know of an external source that provides all these data in
+one place.
+
+.. method:: StellarData::get_courses()
+
+Returns a list of all Courses with titles.  For general programs that
+are not Courses, the flag ``is_course`` is set to a false value.
+
+.. method:: StellarData::get_others()
+
+Returns a list of Courses whose ID's are not numerical.
+
+.. method:: StellarData::get_subjects($course)
+
+Returns a list of all subjects in the Course ``$course``.  No extra work
+is done for subjects that are cross-listed.
+
+.. method:: StellarData::get_subjects_with_xref($course)
+
+Returns a list of all subjects in the Course ``$course``.  For subjects
+that are cross-listed, subject details are retrieved for the subject's
+master ID.
+
+.. method:: StellarData::get_subject_id($id)
+
+Returns the masterID of the subject listed as ``$id``.
+
+.. method:: StellarData::get_subject_info($id)
+
+Returns detail information about the subject listed as ``$id``.  If
+this is not the master ID, detail information is retrieved from the
+subject that is this subject's master ID.
+
+.. method:: StellarData::get_announcements($id)
+
+Returns latest public announcements for the subject ``$id``.
+
+.. method:: StellarData::search_subjects($terms)
+
+Searches by Course number if the search term matches a Course ID,
+otherwise searches subject titles such that all search tokens are
+included.
+
+
+The following methods are not used by the Mobile Web:
+
+.. method:: StellarData::check_subscriptions($term)
+
+.. method:: StellarData::subjects_with_subscriptions($term)
+
+.. method:: StellarData::subscriptions_for_subject($subject, $term)
+
+.. method:: StellarData::push_subscribe($subject, $term, $device_id, $device_type)
+
+.. method:: StellarData::push_unsubscribe($subject, $term, $device_id, $device_type)
+
+----------------------
+mobi-lib/TimeRange.php
+----------------------
+
+.. _subsection-mobiweb-campus-map:
+
+-----------------------
+mobi-lib/campus_map.php
+-----------------------
+
+-------------------------
+mobi-lib/datetime_lib.php
+-------------------------
+
+---------------
+mobi-lib/db.php
+---------------
+
+
+.. _subsection-mobiweb-mit-calendar:
+
+-------------------------
+mobi-lib/mit_calendar.php
+-------------------------
+
+.. class:: SoapClientWrapper
+
+Wrapper around NuSOAP’s SoapClient class.  Throws DataServerException
+when the something fails during communication with the MIT Events SOAP
+server.
+
+.. class:: MIT_Calendar
+
+Binds to the WSDL specification for the MIT Events Calendar. The
+specification includes the definition of ``EventManager``, ``Event``,
+and ``Category`` objects, among other things.
+
+.. method:: MIT_Calendar::Categorys()
+
+Wrapper around EventManager::getCategoryList()
+
+.. method:: MIT_Calendar::Category($id)
+
+Wrapper around EventManager::getCategory($id)
+
+.. method:: MIT_Calendar::subCategorys(Category $category)
+
+Wrapper around EventManager::getCategoryList($cateory->catid)
+
+.. method:: MIT_Calendar::TodaysExhibitsHeaders($date)
+
+Creates search parameters for EventManager to find exhibits (cateogry ID 5).
+
+.. method:: MIT_Calendar::TodaysEventsHeaders($date)
+
+Uses EventManager::getDayEventsHeaders($date) to get a list of events,
+then removes events that also appear in a search for
+MIT_Calendar::TodaysExhibitsHeaders($date).
+
+.. method:: MIT_Calendar::getEvent($id)
+
+Wrapper around EventManager::getEvent($id) and returns an Event
+object.
+
+.. method:: MIT_Calendar::fullTextSearch($text)
+
+Creates search parameters for EventManager to find events with the
+fulltext criterion.
+
+.. _subsection-mobiweb-mit-ical-lib:
+
+-------------------------
+mobi-lib/mit_ical_lib.php
+-------------------------
+
+.. _subsection-mobiweb-mit-ldap:
+
+---------------------
+mobi-lib/mit_ldap.php
+---------------------
+
+Provides functions to communicate with LDAP server.
+
+.. method:: email_query($search)
+
+Finds the person whose email address matches the username entered.
+
+.. method:: standard_query($search)
+
+Finds all people whose surname or given name matches all the search
+tokens entered.
+
+.. _subsection-mobiweb-rss-services:
+
+-------------------------
+mobi-lib/rss_services.php
+-------------------------
+
+RSS helper library.  Provides basic read functionality for a given RSS
+feed, as well as the ThreeDown feed defined in the constants.
+
+.. _subsection-mobiweb-tech-cash:
+
+----------------------
+mobi-lib/tech_cash.php
+----------------------
+
+
+
 
 
 
@@ -646,15 +990,17 @@ Mobile Web Modules
 
 .. toctree::
 
-   3DOWN <mobiweb-modules/3down>
-   Events Calendar <mobiweb-modules/calendar>
-   Student Career Services <mobiweb-modules/careers>
-   Customize Home Screen <mobiweb-modules/customize>
-   Emergency Info <mobiweb-modules/emergency>
-   Useful Links <mobiweb-modules/links>
-   Campus Map <mobiweb-modules/map>
-   About This Site <mobiweb-modules/mobile-about>
-   People Directory <mobiweb-modules/people>
-   Shuttle Schedule <mobiweb-modules/shuttleschedule>
-   SMS <mobiweb-modules/sms>
-   Stellar <mobiweb-modules/stellar>
+   mobiweb-modules/3down
+   mobiweb-modules/calendar
+   mobiweb-modules/careers
+   mobiweb-modules/customize
+   mobiweb-modules/emergency
+   mobiweb-modules/libraries
+   mobiweb-modules/links
+   mobiweb-modules/map
+   mobiweb-modules/mobile-about
+   mobiweb-modules/people
+   mobiweb-modules/shuttleschedule
+   mobiweb-modules/sms
+   mobiweb-modules/stellar
+   mobiweb-modules/techcash

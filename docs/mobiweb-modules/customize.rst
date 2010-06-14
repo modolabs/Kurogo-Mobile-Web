@@ -4,10 +4,6 @@
 Customize Home Screen
 =====================
 
------------
-Description
------------
-
 Customize Home Screen gives users the ability to control which modules
 to show/hide from the homescreen, and in what order. These preferences
 are set in the two cookies
@@ -39,6 +35,8 @@ below.
 For the iPhone, functions for toggle on/off and move up/down are in
 JavaScript.
 
+
+
 --------------
 Template Files
 --------------
@@ -58,7 +56,7 @@ modules.  The JavaScript Touch class is available on iPhone OS 2.0 and
 above.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/customize/Webkit/index-iphone.\*
+mobi-web/customize/Webkit/index.\*
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Files for Android and webOS customize screen.
@@ -74,4 +72,25 @@ arrays. Each checkbox is given the onclick property
 ``toggle(this)``. Up arrows listen for ``moveUp(this)``, and down
 arrows the listen for ``moveDown(this)``.  ``initializeHomeArray()``
 is then called at the end to fetch the list of modules from the HTML.
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/customize/Basic/images
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/customize/Webkit/images
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/customize/Touch/index.html
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/customize/Basic/index.html
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

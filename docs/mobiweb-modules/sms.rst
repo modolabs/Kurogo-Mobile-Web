@@ -1,16 +1,57 @@
+.. _section-mobiweb-sms:
+
 ===
 SMS
 ===
 
-The SMS module provides an overview of the interactive SMS service and
-a cheat sheet for all general and module commands.
+Provides an overview of the interactive SMS service and a cheat sheet
+for all general and module commands.
 
-In index.php, the class Module provides a wrapper for storing the
-module name, description, keywords (i.e. the command to enter in the
-text message), and examples. The class SMSInstructions provides a
-wrapper around a list of Module objects.
+----------------------------
+Data Sources / Configuration
+----------------------------
 
-An SMSInstructions object is populated with instructions to use the
-People Directory, Shuttle Schedule, and Stellar. ip/index.html and
-sp/index.html both contain the general overview, and sections where
-each module’s instructions are rendered.
+The SMS server is at http://sms1.mit.edu
+
+It does not currently expose an API for SMS commands, thus manual
+hard-coding is done on the Mobile Web.
+
+-----------
+Logic Files
+-----------
+
+
+
+^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/sms/index.php
+^^^^^^^^^^^^^^^^^^^^^^
+
+--------------
+Template Files
+--------------
+
+.. class:: Module
+
+Wrapper for storing module name, description, and keywords (command to
+enter in the text message), and examples.
+
+.. class:: SMSInstructions
+
+Wrapper around a list of Module objects
+
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/sms/Basic/module.html
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/sms/Webkit/images
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/sms/\*/index.html
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+

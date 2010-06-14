@@ -4,10 +4,6 @@
 3DOWN
 =====
 
------------
-Description
------------
-
 3DOWN is MIT's dashboard page for the status of various services on campus
 (email, network, library, etc.), based on http://3down.mit.edu
 
@@ -23,16 +19,9 @@ http://3down.mit.edu/3down/index.php?rss=1.  This is defined as the
 value of the variable ``THREEDOWN_RSS_URL`` in
 ``mobi-config/mobi_lib_constants.php``.
 
------------
-Logic Files
------------
+A sample snippet of the 3DOWN RSS feed follows:
 
-.. describe:: mobi-lib/rss_services.php
-
-RSS helper library.  Provides basic read functionality for a given RSS
-feed, as well as the ThreeDown feed defined in the constants.
-
-A sample snippet of the 3DOWN RSS feed follows::
+.. code-block:: xml
 
   <rss version="2.0"> 
     <channel> 
@@ -72,22 +61,42 @@ There are seven <item> tags within the feed, corresponding to the services:
 * Network Services
 * Telephone Services
 
-.. describe:: mobi-web/3down/index.php
+^^^^^^^^^^^^^^^^^^^^^
+mobi-lib dependencies
+^^^^^^^^^^^^^^^^^^^^^
+
+* :ref:`subsection-mobiweb-rss-services`
+
+-----------
+Logic Files
+-----------
+
+
+^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/3down/index.php
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 Main page.  Provides convenience functions to extract needed parts
 from each item of the processed RSS feed.
 
-.. describe:: mobi-web/3down/detail.php
+^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/3down/detail.php
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Detail page.  Extracts the RSS <item> of interest and populates
 strings from the item's <description> and <pubDate> to be inserted in
 the template for the detail page.
 
+
+
+
 --------------
 Template Files
 --------------
 
-.. describe:: mobi-web/3down/\*/index.html
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/3down/\*/index.html
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Displays the current status (contents of the RSS <description> tag)
 for each of the services.  Text is truncated at a predefined maximum
@@ -95,8 +104,13 @@ length, currently defined as a constant in
 ``mobi-web/page_builder/page_tools.php``.  Truncated cells provide a
 link to full text in the detail screen.
 
-.. describe:: mobi-web/3down/\*/detail.html
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mobi-web/3down/\*/detail.html
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Displays cleaned-up full text from the RSS item's description and
 published date/time.
+
+
+
 

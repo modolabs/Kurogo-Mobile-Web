@@ -2,6 +2,9 @@
 API for Native Mobile Apps
 ##########################
 
+This extension of the Mobile Web enables it to publish an API to use
+with native apps.
+
 ************
 Installation
 ************

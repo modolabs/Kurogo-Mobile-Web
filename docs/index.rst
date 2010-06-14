@@ -9,7 +9,7 @@ Welcome to MIT-Mobile-Framework's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
     
    mobiweb
    mobi-api
