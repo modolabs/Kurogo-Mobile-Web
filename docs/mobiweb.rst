@@ -291,16 +291,9 @@ features on the Mobile Web.
 The main page, ``mobi-web/home/index.php``, performs three sequential
 tasks:
 
-#. Check if there have been new announcements since the user last
-visited the site.  This is handled by the ``WhatsNew`` class in the
-:ref:``section-mobiweb-mobile-about`` module, which reads the user's
-:ref:``subsubsection-mobiweb-cookies-whatsnewtime`` cookie.  If the
-latest announcement is less than 2 weeks old, all users are shown a
-red badge or text on the home screen.
+#. Check if there have been new announcements since the user last visited the site.  This is handled by the ``WhatsNew`` class in the :ref:`section-mobiweb-mobile-about` module, which reads the user's :ref:`subsubsection-mobiweb-cookies-whatsnewtime` cookie.  If the latest announcement is less than 2 weeks old, all users are shown a red badge or text on the home screen.
 
-#. Figure out which module links to display, and in what order.  This
-is done in the class ``Modules`` (see :ref:`section-mobiweb-modules`).
-``Modules`` provides the following:
+#. Figure out which module links to display, and in what order.  This is done in the class ``Modules`` (see :ref:`section-mobiweb-modules`). ``Modules`` provides the following:
 
   * List of device-independent modules and device-dependent modules
   * Default list of modules for a given device type
@@ -311,8 +304,7 @@ is done in the class ``Modules`` (see :ref:`section-mobiweb-modules`).
   * Method to reorder/hide/show modules based on the list given in
     the user's cookies.
 
-#. Display the module links in a grid or linear layout using the
-appropriate template for the device.
+#. Display the module links in a grid or linear layout using the appropriate template for the device.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Web Certificates interstitial page
@@ -738,9 +730,11 @@ interfaces to communicate with original data sources.
 
 .. _subsection-mobiweb-AcademicCalendar:
 
------------------------------
-mobi-lib/AcademicCalendar.php
------------------------------
+----------------
+AcademicCalendar
+----------------
+
+File: ``mobi-lib/AcademicCalendar.php``
 
 Depends on :ref:`subsection-mobiweb-mit-calendar`
 
@@ -751,48 +745,69 @@ Singleton class that reads .ics files (via
 arrays of events by month and year, dates of terms (semesters), and
 student holidays.
 
----------------------
-mobi-lib/DrupalDB.php
----------------------
+--------
+DrupalDB
+--------
+
+File: ``mobi-lib/DrupalDB.php``
+
+.. class:: DrupalDB
+
+Singleton class for accessing Drupal database.
 
 .. _subsection-mobiweb-EmergencyContacts:
 
--------------------------------
-mobi-lib/EmergencyContacts.json
--------------------------------
+-----------------
+EmergencyContacts
+-----------------
 
+File: ``mobi-lib/EmergencyContacts.json``
 
------------------------
-mobi-lib/GTFSReader.php
------------------------
+Data file containing list of emergency contact names and numbers.
+
+----------
+GTFSReader
+----------
+
+File: ``mobi-lib/GTFSReader.php``
 
 .. _subsection-mobiweb-LibraryInfo:
 
-------------------------
-mobi-lib/LibraryInfo.php
-------------------------
+-----------
+LibraryInfo
+-----------
 
------------------------
-mobi-lib/NewsOffice.php
------------------------
+File: ``mobi-lib/LibraryInfo.php``
+
+----------
+NewsOffice
+----------
+
+File: ``mobi-lib/NewsOffice.php``
 
 .. _subsection-mobiweb-NextBusReader:
 
---------------------------
-mobi-lib/NextBusReader.php
---------------------------
+-------------
+NextBusReader
+-------------
+
+File: ``mobi-lib/NextBusReader.php``
 
 .. _subsection-mobiweb-ShuttleSchedule:
 
-----------------------------
-mobi-lib/ShuttleSchedule.php
-----------------------------
+---------------
+ShuttleSchedule
+---------------
+
+File: ``mobi-lib/ShuttleSchedule.php``
 
 .. _subsection-mobiweb-StellarData:
 
-------------------------
-mobi-lib/StellarData.php
-------------------------
+-----------
+StellarData
+-----------
+
+File: ``mobi-lib/StellarData.php``
 
 .. class:: StellarData
 
@@ -862,30 +877,42 @@ The following methods are not used by the Mobile Web:
 
 .. method:: StellarData::push_unsubscribe($subject, $term, $device_id, $device_type)
 
-----------------------
-mobi-lib/TimeRange.php
-----------------------
+.. _subsection-mobiweb-TimeRange:
+
+---------
+TimeRange
+---------
+
+File: ``mobi-lib/TimeRange.php``
 
 .. _subsection-mobiweb-campus-map:
 
------------------------
-mobi-lib/campus_map.php
------------------------
+----------
+campus_map
+----------
 
--------------------------
-mobi-lib/datetime_lib.php
--------------------------
+File: ``mobi-lib/campus_map.php``
 
----------------
-mobi-lib/db.php
----------------
+------------
+datetime_lib
+------------
+
+File: ``mobi-lib/datetime_lib.php``
+
+--
+db
+--
+
+File: ``mobi-lib/db.php``
 
 
 .. _subsection-mobiweb-mit-calendar:
 
--------------------------
-mobi-lib/mit_calendar.php
--------------------------
+------------
+mit_calendar
+------------
+
+File: ``mobi-lib/mit_calendar.php``
 
 .. class:: SoapClientWrapper
 
@@ -933,15 +960,19 @@ fulltext criterion.
 
 .. _subsection-mobiweb-mit-ical-lib:
 
--------------------------
-mobi-lib/mit_ical_lib.php
--------------------------
+------------
+mit_ical_lib
+------------
+
+File: ``mobi-lib/mit_ical_lib.php``
 
 .. _subsection-mobiweb-mit-ldap:
 
----------------------
-mobi-lib/mit_ldap.php
----------------------
+--------
+mit_ldap
+--------
+
+File: ``mobi-lib/mit_ldap.php``
 
 Provides functions to communicate with LDAP server.
 
@@ -956,18 +987,22 @@ tokens entered.
 
 .. _subsection-mobiweb-rss-services:
 
--------------------------
-mobi-lib/rss_services.php
--------------------------
+------------
+rss_services
+------------
+
+File: ``mobi-lib/rss_services.php``
 
 RSS helper library.  Provides basic read functionality for a given RSS
 feed, as well as the ThreeDown feed defined in the constants.
 
 .. _subsection-mobiweb-tech-cash:
 
-----------------------
-mobi-lib/tech_cash.php
-----------------------
+---------
+tech_cash
+---------
+
+File: ``mobi-lib/tech_cash.php``
 
 
 
