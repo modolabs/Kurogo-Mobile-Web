@@ -67,30 +67,49 @@ Talk about where to put all the files, what scripts to run, installing
 the PEAR modules, file permissions, getting the right certificates,
 and using the actual daemon script.
 
-**********
-Module API
-**********
+*******************
+REST APIs by Module
+*******************
 
-Describe the general structure of an API call.
+All MIT Mobile Web APIs follow the following specification (in terms
+of `RFC 1808 <http://www.ietf.org/rfc/rfc1808.txt>`):
 
-=======
-Stellar
-=======
+**host**: m.mit.edu
+**path**: api OR module/api
+**query**: *param1*=*value1*&*param2*=*value2*&...
 
-Discuss pull-based features provided by Stellar.
+In other words, requests to the mobile server mostly take the form
 
--------------
-API Interface
--------------
+http://m.mit.edu/api?module=*module*&*param*=*value*...
 
-List queries and samples of JSON returned.
+with the majority of those taking the form
 
----------
-PHP Files
----------
+http://m.mit.edu/api?module=*module*&command=*command*&*param*=*value*...
 
-mobi-lib/StellarData.php
-mobi-web/api/
+Some modules, such as news, campus map, and shuttles, have their own
+API directories on the server, and thus have request URLs like
+
+http://m.mit.edu/api/map?command=*command*&*param*=*value*...
+http://m.mit.edu/api/news?*param*=*value*...
+http://m.mit.edu/api/shuttles?command=*command*&*param*=*value*...
+
+All modules return responses in JSON except for News, which returns
+XML (or a very loose and not validated implementation of RSS).
+
+The rest of this chapter will describe each individual module's API.
+Each section will provide the base URL (everything up to the "?") of
+the requests, parameters to pass to the query portion of the URL, and
+possible values.
+
+.. toctree::
+
+  mobiweb-api-modules/emergency
+  mobiweb-api-modules/events
+  mobiweb-api-modules/map
+  mobiweb-api-modules/news
+  mobiweb-api-modules/people
+  mobiweb-api-modules/shuttles
+  mobiweb-api-modules/stellar
 
 *********************
 Push Notification API
