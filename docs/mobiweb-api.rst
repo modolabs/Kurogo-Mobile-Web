@@ -74,9 +74,9 @@ REST APIs by Module
 All MIT Mobile Web APIs follow the following specification (in terms
 of `RFC 1808 <http://www.ietf.org/rfc/rfc1808.txt>`):
 
-**host**: m.mit.edu
-**path**: api OR module/api
-**query**: *param1*=*value1*&*param2*=*value2*&...
+* **host**: m.mit.edu
+* **path**: api OR module/api
+* **query**: <param1>=<value1>&<param2>=<value2>&...
 
 In other words, requests to the mobile server mostly take the form
 
@@ -90,7 +90,9 @@ Some modules, such as news, campus map, and shuttles, have their own
 API directories on the server, and thus have request URLs like
 
 http://m.mit.edu/api/map?command=*command*&*param*=*value*...
+
 http://m.mit.edu/api/news?*param*=*value*...
+
 http://m.mit.edu/api/shuttles?command=*command*&*param*=*value*...
 
 All modules return responses in JSON except for News, which returns

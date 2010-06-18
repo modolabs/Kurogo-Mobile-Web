@@ -12,7 +12,7 @@ Contents:
    :maxdepth: 3
     
    mobiweb
-   mobi-api
+   mobiweb-api
    iPhoneApp
 
 Indices and tables
