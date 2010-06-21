@@ -467,7 +467,7 @@ it to ``page_tools.php``.  The following elements are provided:
   with the rest of the script.
 
 For an example of the HTML template for ``ResultsContent`` output,
-here is ``people/ip/results.html``::
+here is ``people/Webkit/results.html``::
 
   <?php
     $page->title('People: Details') ->navbar_image('people')
@@ -489,8 +489,8 @@ Some important functions in Page:
 * ``classify_phone()``: figures out the type of device accessing the page
   by making a web call to the device detection server.
 
-* ``factory($phone_type)``: constructs an object of ``WebkitPage`` or
-  ``notIPhonePage``, depending on the ``$phone_type`` given.
+* ``factory($phone_type)``: constructs an object of ``WebkitPage``, 
+  ``TouchPage``, or ``BasicPage``, depending on the ``$phone_type`` given.
 
 * ``acquire_begin($name)`` and ``acquire_end($name)``: functions that
   indicate to the page builder to (a) start an output buffer, and (b)
@@ -506,16 +506,21 @@ Some important functions in Page:
   values set in any module logic.  The populated HTML is then echoed
   to the user's screen.
 
-``WebkitPage`` creates pages for the iPhone and Android.  These are
-almost identical, but we also take advantage of iPhone-only features
-such as certificates, rotation, and drag+drop.  ``WebkitPage``
-produces breadcrumbs for navigation at the top of the screen, and the
-ability to include inline and external JavaScript.
+``WebkitPage`` creates pages for smartphones which Webkit browsers such as 
+iPhone, Android and webOS.  ``WebkitPage`` produces breadcrumbs for 
+navigation at the top of the screen, and the ability to include 
+inline and external JavaScript.
 
-``notIPhonePage`` creates pages for smartphones and featurephones,
-which differ from each other by font size, line height, image size,
-image type, and number of items shown in paged lists.  Navigation
-links are shown at the bottom.
+``TouchPage`` creates pages for phones with touch screens that do 
+not have Webkit browsers, the pages look similar to the Webkit 
+pages.  The pages do not have breadcrumbs, however you can 
+tap on the modules icon to go to the modules "home"
+
+``BasicPage`` creates pages for all other phones.  These pages 
+have navigation links that can be accessed using access keys
+on the bottom of the page.  A font 
+selector to allow the user to enlarge or shrink the font
+is displayed at the bottom.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Statistics Logging (counter.php)
@@ -595,12 +600,17 @@ Each module has a directory structure like the following:
   * other-pages.php
   * supporting_functions.php
   * help.php
-  * ip/
+  * Webkit/
 
     * index.html
     * other-pages.html
 
-  * sp/
+  * Touch/
+
+    * index.html
+    * other-pages.html
+
+  * Basic/
 
     * index.html
     * other-pages.html
@@ -650,9 +660,9 @@ very simple page:
 index.html
 ^^^^^^^^^^
 
-These files under the ``ip`` and ``sp`` directories are HTML template
+These files under the ``Webkit``, ``Touch`` and ``Basic`` directories are HTML template
 files with fields expected to be populated with PHP variable values.
-Here is an example of a very simple ``ip/index.html`` page that would
+Here is an example of a very simple ``Webkit/index.html`` page that would
 work with the example ``index.php`` page above:
 
 .. code-block:: php
@@ -677,7 +687,26 @@ In the above example, the values of PHP variables ``$page`` and
 ``$dynamic_text`` are determined in ``index.php`` and
 ``../page_builder/page_header.php``.
 
-Similarly, the ``sp/index.html`` page would look like:
+The ``Touch/index.html`` page would look like:
+
+.. code-block:: php
+ 
+  <?php 
+  $page->title('My Sample Module') 
+     ->navbar_image('samplemodule')
+     ->breadcrumb_home()
+     ->header('Sample Module'); 
+ 
+  $page->content_begin(); 
+  ?> 
+        <div class="nonfocal"> 
+        <strong>Here is some static text.</strong><br/> 
+                <?=$dynamic_text?> 
+        </div> 
+ 
+  <? $page->content_end(); ?>
+
+The ``Basic/index.html`` page would look like:
 
 .. code-block:: php
  
