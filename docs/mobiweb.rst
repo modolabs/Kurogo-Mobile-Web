@@ -408,8 +408,8 @@ in every module other than the home screen.  It does the following:
 
 #. Load commonly used functions (from ``page_tools.php``).
 
-#. Create a ``Page`` object (actually ``WebkitPage`` or
-``notIPhonePage``), which controls the rest of page construction.
+#. Create a ``Page`` object (actually ``WebkitPage``,
+``TouchPage``, or ``BasicPage``), which controls the rest of page construction.
 
 #. Tell the statistics counter what device is accessing what module,
 so it can be recorded.
