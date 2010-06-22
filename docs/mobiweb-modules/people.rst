@@ -39,7 +39,9 @@ Data Sources / Configuration
 ----------------------------
 
 An LDAP server.
-Enter configuration in ``mobi-config/ldap_config.php``.
+Enter configuration in ``mobi-config/ldap_config.php``, configurations include details 
+such as the domain name, path of the LDAP server.  Also can configure which fields,
+should be displayed for an individual.
 
 The MIT LDAP server returns a limit of up to 100 results per query.
 There is no way to know how many matches exist above 100.
