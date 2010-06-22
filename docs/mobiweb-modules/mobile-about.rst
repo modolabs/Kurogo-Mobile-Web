@@ -102,20 +102,27 @@ mobi-web/mobile-about/new.php
 mobi-web/page_builder/counter.php
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. method:: PageViews::view_past($interval_type, $duration)
+.. method:: PageViews::view_past($system, $interval_type, $duration)
+   
+   :param $system:  "web" or "api", web versus native app
+   :param $interval_type: "day", "week", "month", or "quarter"
+   :param $duration: length of interval in days
 
-Queries the MySQL table PageViews and returns an array similar to the
-following:
+   Queries the MySQL table PageViews and returns an array similar to the following:
+ 
 
-.. code-block:: php
+   .. code-block:: php
 
       Array(  
         [0] => Array(  
           "people" => 10,  
           "shuttleschedule" => 90,  
-          "ip" => 70,  
-          "sp" => 20,  
-          "fp" => 10,  
+          "iphone" => 70,  
+          "android" => 20,  
+          "webos" => 10,
+          "blackberry" => 5,
+          "featurephone" => 10,
+          "computer" => 13,  
           "date" => 1234567890,  
           "name" => "Fri",  
           "total" => 100,  
@@ -128,48 +135,48 @@ mobi-web/mobile-about/statistics.php
 
 .. function:: summary_total($data, $field, $title)
 
-Generates the parameters for the total counts.
+   Generates the parameters for the total counts.
 
 .. function:: bar_percentage()
 
-Generates parameters to create a horizontal bar graph for
-iPhone/Android pages, or a list of counts for other devices.
+   Generates parameters to create a horizontal bar graph for
+   iPhone/Android pages, or a list of counts for other devices.
 
 .. function:: trend($data, $field, $title, $interval_type)
 
-Generates parameters to create a vertical bar graph of usage per
-day/week/month for iPhone/Android pages, or a list of counts and
-percentages for other devices.
+   Generates parameters to create a vertical bar graph of usage per
+   day/week/month for iPhone/Android pages, or a list of counts and
+   percentages for other devices.
 
 For web statistics:
 
 .. function:: generate_popular_web_content($data)
 
-Reads the module counts from the array (people, shuttleschedule etc.)
-and associates them with their display names (People Directory,
-Shuttle Schedule etc.).
+   Reads the module counts from the array (people, shuttleschedule etc.)
+   and associates them with their display names (People Directory,
+   Shuttle Schedule etc.).
 
 .. function:: platform_data()
 
-Reads the platform counts and associates them with their display name
-(iPhone, Android etc.).
+   Reads the platform counts and associates them with their display name
+   (iPhone, Android etc.).
 
 For SMS statistics:
 
 .. function:: aggregate_days($days, $interval_type, $duration)
 
-This function is given either the days or sent array from the SMS JSON
-string to tally the data into day-, week-, and month-long intervals.
+   This function is given either the days or sent array from the SMS JSON
+   string to tally the data into day-, week-, and month-long intervals.
 
 .. function:: generate_sms_content($data)
 
-This function is given the modules array from the the JSON string to
-generate a list of usage counts per module.
+   This function is given the modules array from the the JSON string to
+   generate a list of usage counts per module.
 
 .. function:: carriers_data($data)
 
-This function is given the carriers array from the JSON string to
-produce carrier counts.
+   This function is given the carriers array from the JSON string to
+   produce carrier counts.
 
 .. _subsubsection-mobiweb-whatsnew:
 
@@ -179,22 +186,22 @@ mobi-web/mobile-about/WhatsNew.php
 
 .. class:: WhatsNew
 
-Populates a list of announcements that were input via Drupal.
-Extends of the class RSS from ``mobi-lib/rss_services.php``.
+   Populates a list of announcements that were input via Drupal.
+   Extends of the class RSS from ``mobi-lib/rss_services.php``.
 
 .. method:: get_items()
 
-Gets the contents of the RSS feed, but in reverse order so the most
-recent item is first.
+   Gets the contents of the RSS feed, but in reverse order so the most
+   recent item is first.
 
 .. method:: getLastTime()
 
-Reads the user’s whatsnewtime cookie to determine whether the user has
-unread items.
+   Reads the user’s whatsnewtime cookie to determine whether the user has
+   unread items.
 
 .. method:: getTopItemName()
 
-Determines whether the most recent item is more than 2 weeks old.
+   Determines whether the most recent item is more than 2 weeks old.
 
 --------------
 Template Files
