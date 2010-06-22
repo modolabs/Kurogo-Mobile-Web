@@ -61,17 +61,29 @@ mobi-web/calendar/calendar_lib.php
 
 Convenience methods for creating the URL string of for data sources.
 
-.. method:: day_info($time, $offset)
+.. function:: briefLocation($event)
+
+   Attempts to returns a short string indicating the building location,
+   if no brief description is available, then fallback to the long description.
+    
+.. function:: day_info($time, $offset)
 
    Gets an array of time formats for the current time (abstracts away
    formatting functions in PHP’s own date formatting functions)
+
+.. function:: formatDayTitle(ICalEvent $event)
+
+   Returns the date in a nicely formatted string, for events that
+   have been retrieved from an iCal file.  Usefull for events in
+   the acadamic calender, and holidays, because the date is used
+   as their title.
 
 .. class:: SearchOptions
 
    Populates menu options for searching by various ranges (next 7 days,
    next 15 days, etc.).  Search ranges are statically defined.
 
-.. class:: CalednarForm
+.. class:: CalendarForm
 
    Constructs search forms on all pages except the index page.
 
@@ -81,7 +93,7 @@ mobi-web/calendar/category.php
 
 Outputs a list of events within a selected category
 (chosen from the drill down category list). The list of events in the
-category is found by MIT_Calendar::CategoryEventsHeaders(). If the
+category is found by ``MIT_Calendar::CategoryEventsHeaders($category, $date)``. If the
 user types a search term into the search box, the MIT_Calendar
 performs a full text within the category using the search term.
 
@@ -114,10 +126,9 @@ category.
 Event data are provided by ``MIT_Calendar::getEvent($id)``, where
 ``$id`` is defined in the URL from the previous list screen.
 
-.. function:: mapURL($event)
-
-   Creates a link to the Campus Map module if it encounters a building
-   name in the event location.
+This page uses the ``mapURL($location)`` function which can be found in 
+``page_builder/page_tools.php`` to create map links for the location
+of an event.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 mobi-web/calendar/holidays.php
@@ -135,7 +146,7 @@ mobi-web/calendar/search.php
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Outputs a list of events found by
-``MIT_Calendar::fullTextSearch($text)``.
+``MIT_Calendar::fullTextSearch($text, $start_date, $end_date)``.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 mobi-web/calendar/sub-categorys.php
