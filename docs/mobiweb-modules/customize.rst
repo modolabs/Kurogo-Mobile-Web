@@ -27,13 +27,14 @@ mobi-web/customize/index.php
 
 Creates the array of modules to populate the HTML templates.
 
-For non-iPhone platforms, the array includes for each module whether
+For non-Webkit platforms, the array includes for each module whether
 it is turned off, a query URL that toggles it on/off, and query URLs
-that will move switch its position with the module above or
+that will move its position with the module above or
 below.
 
-For the iPhone, functions for toggle on/off and move up/down are in
-JavaScript.
+For the Webkit phones, functions that toggle on/off and move up/down are in
+JavaScript.  The iPhone uses JavaScript that allows the user to drag
+a module up and down, where as the other Webkit phones use up/down arrows.
 
 
 
