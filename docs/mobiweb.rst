@@ -161,6 +161,41 @@ mobi-mysql
 which tables are needed
 
 ----------------
+Device Detection
+----------------
+
+The device detection is done with the code at http://github.com/modolabs/MIT-Mobile-Device-Classification.
+
+* Classify the device connecting to the server
+
+  http://mobile-service-dev.mit.edu/mobi-service/?ua=iPhone&action=classify
+
+  .. code-block:: javascript
+
+     {
+       "pagetype":"Webkit",
+       "platform":"iphone",
+       "certs":"1"
+     } 
+
+* CSS attributes specific to a device
+
+  http://mobile-service-dev.mit.edu/mobi-service/?action=attributes&pagetype=Webkit&platform=iphone
+
+  .. code-block:: javascript
+
+     {
+       "platform":"iphone",
+       "home_css":"#homegrid div {width:79px;height:90px} h1 {margin-top: 14px; margin-bottom:9px}",
+       "extra_css":null,
+       "last_modified":"2010-04-22 14:12:08"
+     }
+
+  ``home_css`` is device specific css for the home page, which shows all the modules. 
+  ``extra_css`` is for regular pages which are constructed from the generic page
+  templates.
+
+----------------
 File Permissions
 ----------------
 
