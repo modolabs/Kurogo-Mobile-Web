@@ -162,19 +162,25 @@ mobi-lib/NextBusReader.php
 mobi-web/shuttleschedule/times.php
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* timeSTR($stop) returns a string displaying the next time the shuttle
-  will arrive at the given $stop. If the shuttle is done running, the
+.. function:: timeSTR($stop) 
+  
+  returns a string displaying the next time the shuttle
+  will arrive at the given ``$stop``. If the shuttle is done running, the
   string “Finished” is returned.
 
-* imageURL($phone, $encodedName, $stops): For the route identified by
+.. function:: imageURL($phone, $encodedName, $stops)
+
+  For the route identified by
   $encodedName and image size identified by $phone, this function
   looks for the route map image that has the upcoming stop(s)
   highlighted.
 
-* getNextStops($stops) returns a list of the stop(s) that are coming
-  up next. The array $stops is created by
-  ShuttleSchedule()::getRoute($routeName)::getCurrentStops($day,
-  $hour, $minute) from lib/trunk/ShuttleSchedule.php.
+.. function:: getNextStops($stops) 
+  
+  returns a list of the stop(s) that are coming
+  up next. The array ``$stops`` is created by
+  ``ShuttleSchedule()::getRoute($routeName)::getCurrentStops($day,$hour,$minute)``
+  from lib/trunk/ShuttleSchedule.php.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 mobi-web/shuttleschedule/Basic/images
