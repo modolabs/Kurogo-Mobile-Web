@@ -25,7 +25,7 @@ options to browse events in addition to a search box. The options are
 Data Sources / Configuration
 ----------------------------
 
-fThe MIT Events Calendar is queried via a SOAP API.  Documentation for
+The MIT Events Calendar is queried via a SOAP API.  Documentation for
 the SOAP interface is at http://events.mit.edu/help/soap/index.html.
 The WSDL file specifying the SOAP interface is available at
 http://events.mit.edu/MITEventsFull.wsdl
