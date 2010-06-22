@@ -200,32 +200,51 @@ tabs in ip/detail.html.
 
 Some key functions in javascripts/map-ip.js:
 
-* loadImage(imageURL, imageID) populates the map image holder with the
+.. function:: loadImage(imageURL, imageID)
+
+  populates the map image holder with the
   image from imageURL (or a blank image if the request image has not
   been loaded yet).
 
-* getMapURL(strBaseURL, includeSelect) constructs a query to the WMS
+.. function:: getMapURL(strBaseURL, includeSelect) 
+  
+  constructs a query to the WMS
   server given initial or updated values for the bounding box.
 
-* scroll(dir) translates the bounding box boundaries based on the
+.. function:: scroll(dir) 
+  
+  translates the bounding box boundaries based on the
   direction that was selected and reloads the map image.
 
-* recenter() resets the bounding box boundaries to their initial
+.. function:: recenter() 
+  
+  resets the bounding box boundaries to their initial
   values and reloads the map image.
 
-* zoomout() increases the distance between the bounding box boundaries
+.. function:: zoomout() 
+
+  increases the distance between the bounding box boundaries
   and reloads the map image.
 
-* zoomin() decreases the distance between bounding box boundaries and
+.. function:: zoomin() 
+
+  decreases the distance between bounding box boundaries and
   reloads the map image.
 
-* checkIfMoved() checks a hasMoved variable which is set to true when
+.. function:: checkIfMoved() 
+  
+  checks a hasMoved variable which is set to true when
   the user scrolls or zooms the map.
 
-* saveOptions(strFormID) checks the status of every checkbox; if they
+.. function:: saveOptions(strFormID) 
+  
+  checks the status of every checkbox; if they
   are inconsistent with the map shown, the map image is reloaded.
 
-The function jumpbrowse(objSelect) doesn’t seem to be used anywhere?
+.. function:: jumpbrowse(objSelect) 
+  
+   This function is no longer used and should be removed at some point.
+
 
 ^^^^^^^^^^^^^^^^^^^^^^^
 mobi-web/map/detail.php
@@ -266,35 +285,53 @@ the map to request.
 
 #. Figure out the URLs of the controllers for panning and zooming the map
 
-Key classes and functions
+Key classes and functions:
 
-* CacheIMS: when initialized, this class makes a query to the WMS
-  server for the lon/lat coordinates of the map image bounding box.
+  .. class:: CacheIMS
 
-* getServerBBox(): a wrapper around the bounding box value stored in CacheIMS.
+    when initialized, this class makes a query to the WMS
+    server for the lon/lat coordinates of the map image bounding box.
 
-* photoURL() returns the URL to get the photo from
-  , temporarily turning off warnings in
-  case the request photo is not available.
+  .. function:: getServerBBox()
 
-* iPhoneBBox(): increases the size of the bounding box (by a factor of
-  2.6) selected by the WMS server, unless parameters for the bounding
-  box are explicitly requested in the URL.
+    a wrapper around the bounding box value stored in CacheIMS.
 
-* bbox(): increases the width and height of the bounding box selected
-  by the WMS server by factors that depend on whether the phoen is a
-  smartphone or featurephone. If x and y offsets are specified in the
-  URL, the bounding box is shifted accordingly.
+  .. function:: photoURL() 
 
-* imageURL() constructs the URL query to the WMS server requesting a map image.
+    returns the URL to get the photo from
+    , temporarily turning off warnings in
+    case the request photo is not available.
 
-* moveURL() returns a URL with x and y offset parameters.
+  .. function:: iPhoneBBox()
 
-* scrollURL(): a wrapper around moveURL() for north, east, south, and
-  west directions.
+    increases the size of the bounding box (by a factor of
+    2.6) selected by the WMS server, unless parameters for the bounding
+    box are explicitly requested in the URL.
 
-* zoomInURL() and zoomOutURL return URLs that change the zoom level of
-  the map image.
+  .. function:: bbox()
+
+    increases the width and height of the bounding box selected
+    by the WMS server by factors that depend on whether the phoen is a
+    smartphone or featurephone. If x and y offsets are specified in the
+    URL, the bounding box is shifted accordingly.
+
+  .. function:: imageURL()
+
+    constructs the URL query to the WMS server requesting a map image.
+
+  .. function:: moveURL() 
+
+    returns a URL with x and y offset parameters.
+
+  .. function:: scrollURL()
+
+    a wrapper around moveURL() for north, east, south, and
+    west directions.
+
+  .. function:: zoomInURL() 
+
+    and zoomOutURL return URLs that change the zoom level of
+    the map image.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 mobi-web/map/directions.php
