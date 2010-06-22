@@ -150,7 +150,7 @@ mobi-web/mobile-about/statistics.php
 
 For web statistics:
 
-.. function:: generate_popular_web_content($data)
+.. function:: generate_popular_web_content($system, $data)
 
    Reads the module counts from the array (people, shuttleschedule etc.)
    and associates them with their display names (People Directory,

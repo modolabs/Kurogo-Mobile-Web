@@ -63,17 +63,17 @@ Convenience methods for creating the URL string of for data sources.
 
 .. method:: day_info($time, $offset)
 
-Gets an array of time formats for the current time (abstracts away
-formatting functions in PHP’s own date formatting functions)
+   Gets an array of time formats for the current time (abstracts away
+   formatting functions in PHP’s own date formatting functions)
 
 .. class:: SearchOptions
 
-Populates menu options for searching by various ranges (next 7 days,
-next 15 days, etc.).  Search ranges are statically defined.
+   Populates menu options for searching by various ranges (next 7 days,
+   next 15 days, etc.).  Search ranges are statically defined.
 
 .. class:: CalednarForm
 
-Constructs search forms on all pages except the index page.
+   Constructs search forms on all pages except the index page.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 mobi-web/calendar/category.php
@@ -116,8 +116,8 @@ Event data are provided by ``MIT_Calendar::getEvent($id)``, where
 
 .. function:: mapURL($event)
 
-Creates a link to the Campus Map module if it encounters a building
-name in the event location.
+   Creates a link to the Campus Map module if it encounters a building
+   name in the event location.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 mobi-web/calendar/holidays.php

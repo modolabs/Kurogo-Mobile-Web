@@ -769,10 +769,10 @@ Depends on :ref:`subsection-mobiweb-mit-calendar`
 
 .. class:: AcademicCalendar
 
-Singleton class that reads .ics files (via
-``mobi-lib/mit_ical_lib.php``) and provides methods for retrieving
-arrays of events by month and year, dates of terms (semesters), and
-student holidays.
+   Singleton class that reads .ics files (via
+   ``mobi-lib/mit_ical_lib.php``) and provides methods for retrieving
+   arrays of events by month and year, dates of terms (semesters), and
+   student holidays.
 
 --------
 DrupalDB
@@ -782,7 +782,7 @@ File: ``mobi-lib/DrupalDB.php``
 
 .. class:: DrupalDB
 
-Singleton class for accessing Drupal database.
+   Singleton class for accessing Drupal database.
 
 .. _subsection-mobiweb-EmergencyContacts:
 
@@ -827,6 +827,7 @@ File: ``mobi-lib/NewsOffice.php``
 Reads XML feeds from the News office. Returns either XML Document objects 
 or PHP arrays with the data from the XML packed into the arrays.
 Two types of feeds exist: 
+
  * The most recent news in various categories (i.e. 
    Top News, Campus, Engineering, Science, Management, Architecture, 
    and Humanities)
@@ -866,58 +867,58 @@ File: ``mobi-lib/StellarData.php``
 
 .. class:: StellarData
 
-Singleton class providing interface to Stellar XML and RSS feeds,
-reads and caches data from the Stellar server (see
-:ref:`subsubsection-mobiweb-stellar-xml` for details on feed format).
-Provides methods to get a list of Courses, subjects under a Course,
-and details about a subject.
+   Singleton class providing interface to Stellar XML and RSS feeds,
+   reads and caches data from the Stellar server (see
+   :ref:`subsubsection-mobiweb-stellar-xml` for details on feed format).
+   Provides methods to get a list of Courses, subjects under a Course,
+   and details about a subject.
 
-Additionally provides methods linked to the subscription system for
-native app notifications.
+   Additionally provides methods linked to the subscription system for
+   native app notifications.
 
-Contains a list of hard-coded Course numbers and titles.  We do not
-currently know of an external source that provides all these data in
-one place.
+   Contains a list of hard-coded Course numbers and titles.  We do not
+   currently know of an external source that provides all these data in
+   one place.
 
 .. method:: StellarData::get_courses()
 
-Returns a list of all Courses with titles.  For general programs that
-are not Courses, the flag ``is_course`` is set to a false value.
+   Returns a list of all Courses with titles.  For general programs that
+   are not Courses, the flag ``is_course`` is set to a false value.
 
 .. method:: StellarData::get_others()
 
-Returns a list of Courses whose ID's are not numerical.
+   Returns a list of Courses whose ID's are not numerical.
 
 .. method:: StellarData::get_subjects($course)
 
-Returns a list of all subjects in the Course ``$course``.  No extra work
-is done for subjects that are cross-listed.
+   Returns a list of all subjects in the Course ``$course``.  No extra work
+   is done for subjects that are cross-listed.
 
 .. method:: StellarData::get_subjects_with_xref($course)
 
-Returns a list of all subjects in the Course ``$course``.  For subjects
-that are cross-listed, subject details are retrieved for the subject's
-master ID.
+   Returns a list of all subjects in the Course ``$course``.  For subjects
+   that are cross-listed, subject details are retrieved for the subject's
+   master ID.
 
 .. method:: StellarData::get_subject_id($id)
 
-Returns the masterID of the subject listed as ``$id``.
+   Returns the masterID of the subject listed as ``$id``.
 
 .. method:: StellarData::get_subject_info($id)
 
-Returns detail information about the subject listed as ``$id``.  If
-this is not the master ID, detail information is retrieved from the
-subject that is this subject's master ID.
+   Returns detail information about the subject listed as ``$id``.  If
+   this is not the master ID, detail information is retrieved from the
+   subject that is this subject's master ID.
 
 .. method:: StellarData::get_announcements($id)
 
-Returns latest public announcements for the subject ``$id``.
+   Returns latest public announcements for the subject ``$id``.
 
 .. method:: StellarData::search_subjects($terms)
 
-Searches by Course number if the search term matches a Course ID,
-otherwise searches subject titles such that all search tokens are
-included.
+   Searches by Course number if the search term matches a Course ID,
+   otherwise searches subject titles such that all search tokens are
+   included.
 
 
 The following methods are not used by the Mobile Web:
@@ -977,47 +978,47 @@ File: ``mobi-lib/mit_calendar.php``
 
 .. class:: SoapClientWrapper
 
-Wrapper around NuSOAP’s SoapClient class.  Throws DataServerException
-when the something fails during communication with the MIT Events SOAP
-server.
+   Wrapper around NuSOAP’s SoapClient class.  Throws DataServerException
+   when the something fails during communication with the MIT Events SOAP
+   server.
 
 .. class:: MIT_Calendar
 
-Binds to the WSDL specification for the MIT Events Calendar. The
-specification includes the definition of ``EventManager``, ``Event``,
-and ``Category`` objects, among other things.
+   Binds to the WSDL specification for the MIT Events Calendar. The
+   specification includes the definition of ``EventManager``, ``Event``,
+   and ``Category`` objects, among other things.
 
 .. method:: MIT_Calendar::Categorys()
 
-Wrapper around EventManager::getCategoryList()
+   Wrapper around EventManager::getCategoryList()
 
 .. method:: MIT_Calendar::Category($id)
 
-Wrapper around EventManager::getCategory($id)
+   Wrapper around EventManager::getCategory($id)
 
 .. method:: MIT_Calendar::subCategorys(Category $category)
 
-Wrapper around EventManager::getCategoryList($cateory->catid)
+   Wrapper around EventManager::getCategoryList($cateory->catid)
 
 .. method:: MIT_Calendar::TodaysExhibitsHeaders($date)
 
-Creates search parameters for EventManager to find exhibits (cateogry ID 5).
+   Creates search parameters for EventManager to find exhibits (cateogry ID 5).
 
 .. method:: MIT_Calendar::TodaysEventsHeaders($date)
 
-Uses EventManager::getDayEventsHeaders($date) to get a list of events,
-then removes events that also appear in a search for
-MIT_Calendar::TodaysExhibitsHeaders($date).
+   Uses EventManager::getDayEventsHeaders($date) to get a list of events,
+   then removes events that also appear in a search for
+   MIT_Calendar::TodaysExhibitsHeaders($date).
 
 .. method:: MIT_Calendar::getEvent($id)
 
-Wrapper around EventManager::getEvent($id) and returns an Event
-object.
+   Wrapper around EventManager::getEvent($id) and returns an Event
+   object.
 
 .. method:: MIT_Calendar::fullTextSearch($text)
 
-Creates search parameters for EventManager to find events with the
-fulltext criterion.
+   Creates search parameters for EventManager to find events with the
+   fulltext criterion.
 
 .. _subsection-mobiweb-mit-ical-lib:
 
@@ -1041,12 +1042,12 @@ Provides functions to communicate with LDAP server.
 
 .. method:: email_query($search)
 
-Finds the person whose email address matches the username entered.
+   Finds the person whose email address matches the username entered.
 
 .. method:: standard_query($search)
 
-Finds all people whose surname or given name matches all the search
-tokens entered.
+   Finds all people whose surname or given name matches all the search
+   tokens entered.
 
 .. _subsection-mobiweb-rss-services:
 

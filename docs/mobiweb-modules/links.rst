@@ -17,8 +17,8 @@ mobi-web/links/index.php
 
 .. class:: Links
 
-Stores name and URL of selected links, and converts contents into an
-array for rendering.
+   Stores name and URL of selected links, and converts contents into an
+   array for rendering.
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^
