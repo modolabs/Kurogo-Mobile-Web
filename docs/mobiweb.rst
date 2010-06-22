@@ -802,17 +802,36 @@ File: ``mobi-lib/GTFSReader.php``
 
 .. _subsection-mobiweb-LibraryInfo:
 
+Google Transit File System reader, reads and parses the shuttle 
+schedule which is formatted as a GTFS file.
+
 -----------
 LibraryInfo
 -----------
 
 File: ``mobi-lib/LibraryInfo.php``
 
+Reads information about the Library system, information about each 
+library is stored in a database administered with Drupal, and 
+the schedule of when the Libraries are open is available as an ical
+file from Google Calendar
+
+.. _subsection-mobiweb-NewsOffice:
+
 ----------
 NewsOffice
 ----------
 
 File: ``mobi-lib/NewsOffice.php``
+
+Reads XML feeds from the News office. Returns either XML Document objects 
+or PHP arrays with the data from the XML packed into the arrays.
+Two types of feeds exist: 
+ * The most recent news in various categories (i.e. 
+   Top News, Campus, Engineering, Science, Management, Architecture, 
+   and Humanities)
+
+ * Search results feed on any search given search terms
 
 .. _subsection-mobiweb-NextBusReader:
 
@@ -822,6 +841,10 @@ NextBusReader
 
 File: ``mobi-lib/NextBusReader.php``
 
+This is used by the shuttle schedule to read live feeds
+from nextbus.com. The feeds give locations and stop prediction times
+for currently running shuttles.
+
 .. _subsection-mobiweb-ShuttleSchedule:
 
 ---------------
@@ -829,6 +852,11 @@ ShuttleSchedule
 ---------------
 
 File: ``mobi-lib/ShuttleSchedule.php``
+
+Aggregates data from NextBusReader, GTSFReader, and data 
+hard coded from the published shuttle schedules.  This class
+is the class that is accessed directly from the shuttle schedule
+module
 
 .. _subsection-mobiweb-StellarData:
 
@@ -922,6 +950,9 @@ campus_map
 
 File: ``mobi-lib/campus_map.php``
 
+Retrieves information about every building on campus, the
+information is retreived from a static XML file.
+
 ------------
 datetime_lib
 ------------
@@ -934,6 +965,9 @@ db
 
 File: ``mobi-lib/db.php``
 
+Minimal wrapper class for accessing the database, takes care
+of connecting to the database with the proper username and
+password.
 
 .. _subsection-mobiweb-mit-calendar:
 
@@ -992,6 +1026,8 @@ fulltext criterion.
 ------------
 mit_ical_lib
 ------------
+
+This class parses and reads ical files.
 
 File: ``mobi-lib/mit_ical_lib.php``
 
