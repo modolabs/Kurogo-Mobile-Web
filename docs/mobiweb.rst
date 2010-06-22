@@ -853,10 +853,8 @@ ShuttleSchedule
 
 File: ``mobi-lib/ShuttleSchedule.php``
 
-Aggregates data from NextBusReader, GTSFReader, and data 
-hard coded from the published shuttle schedules.  This class
-is the class that is accessed directly from the shuttle schedule
-module
+This class is used by the shuttle schedule module to read a json file
+which has the shuttles schedule route and times.
 
 .. _subsection-mobiweb-StellarData:
 
