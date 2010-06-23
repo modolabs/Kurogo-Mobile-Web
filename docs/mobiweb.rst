@@ -541,19 +541,21 @@ it to ``page_tools.php``.  The following elements are provided:
 
   #. ``include`` the second template in the script, and proceed as usual with the rest of the script.
 
-For an example of the HTML template for ``ResultsContent`` output,
-here is ``people/Webkit/results.html``::
+  For an example of the HTML template for ``ResultsContent`` output,
+  here is ``people/Webkit/results.html``: 
 
-  <?php
-    $page->title('People: Details') ->navbar_image('people')
-         ->breadcrumbs('Search Results');
+  .. code-block:: php
+
+    <?php
+      $page->title('People: Details') ->navbar_image('people')
+           ->breadcrumbs('Search Results');
        
-    $page->content_begin(); 
+      $page->content_begin(); 
        
-    $content->output($people); 
+      $content->output($people); 
        
-    $page->content_end(); 
-  ?>
+      $page->content_end(); 
+    ?>
 
 ^^^^^^^^^^^^^^
 The Page class
