@@ -57,6 +57,7 @@ Common Classes
 ==============
 There are several Common classes used by various modules in the ``Common/`` directory. 
 The following `classes <UIClasses.html>`_ are used to unify the user interface through out the application:
+
   * ``MITUIContstants``
   * ``UIKit+MITAdditions``
   * ``MITLoadingActivityView``
@@ -67,6 +68,7 @@ The following `classes <UIClasses.html>`_ are used to unify the user interface t
 
 The class ``MITConstants`` stores constants which need to be coordinated through the whole application.  For example,
 the domain names of the servers are defined in this file.  
+
   * Define domain names for development, staging, and production server.  
   * Define all the keys used in ``NSUserDefaults`` settings dictionary.
   * Define all the module tags, each is a unique ``NSString`` used identify a module
@@ -85,9 +87,30 @@ method ``-[CoreDataManager managedObjectModel]`` as shown in the following line 
    NSArray *allModels = [NSArray arrayWithObjects:@"Stellar", @"PeopleDataModel", @"News", @"Emergency", nil];
 
 
+==========================
+Customizing User Interface
+==========================
+
+Colors and fonts can be customized by modifying the values 
+in `MITUIConstants.h <iPhoneUIConstants.html>`_ .  All the icons 
+and images can be found in ``Resources`` path, and can be replaced
+with images of the same dimensions.  
+
+* ``Resources/global/body-background.png`` -- The universal background image.
+* ``Resources/Default.png`` --  The splash screen image, which displays 
+  when the application first loads.
+* ``Resources/icons/`` -- The icons which represent each individual module.
+  Each module requires 2 icons with transparent backgrounds. An 
+  icon for the tab bar on the bottom with a name of the form ``tab-people.png``.
+  And icon to display in the More list of modules with a name of the form
+  ``module-people.png``. In this case ``people`` is the tag for the People
+  Directory module.
+
+
 ====
 News
 ====
+
 The `news <modules/news.html>`_ module's purpose is to display content from the MIT news office.  The 
 news articles are divided into several categories and the "top news" category. 
 Navigation between categories is controlled by a tab strip towards the top of 
