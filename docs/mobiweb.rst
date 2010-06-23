@@ -246,6 +246,7 @@ Contents of the MIT Mobile Web Source Tree
   * ``map/`` -- Campus Map module.
   * ``mobile-about/`` -- mobile About module.
   * ``n/`` -- URL shortener for news stories.
+  * ``news/`` -- News Office module.
   * ``page_builder/`` -- Page Builder package.
   * ``people/`` -- People Directory module.
   * ``shuttleschedule/`` -- Shuttles module.
@@ -266,19 +267,21 @@ directories, i.e. they hold static files for each device bucket:
 (:ref:`section-mobiweb-Basic`).
 
 The following dirctories under ``mobi-web`` are module directories:
-``3down`` (:ref:`section-mobiweb-3down`), ``calendar``
-(:ref:`section-mobiweb-calendar`), ``customize``
-(:ref:`section-mobiweb-customize`), ``careers``
-(:ref:`section-mobiweb-careers`), ``emergency``
-(:ref:`section-mobiweb-emergency`), ``libraries``
-(:ref:`section-mobiweb-libraries`), ``links``
-(:ref:`section-mobiweb-links`), ``map`` (:ref:`section-mobiweb-map`),
-``mobile-about`` (:ref:`section-mobiweb-mobile-about`), ``people``
-(:ref:`section-mobiweb-people`), ``shuttleschedule``
-(:ref:`section-mobiweb-shuttleschedule`), ``sms``
-(:ref:`section-mobiweb-sms`), ``stellar``
-(:ref:`section-mobiweb-stellar`), ``techcash``
-(:ref:`section-mobiweb-techcash`).
+``3down`` (:ref:`section-mobiweb-3down`), 
+``calendar`` (:ref:`section-mobiweb-calendar`), 
+``customize`` (:ref:`section-mobiweb-customize`), 
+``careers`` (:ref:`section-mobiweb-careers`), 
+``emergency`` (:ref:`section-mobiweb-emergency`), 
+``libraries`` (:ref:`section-mobiweb-libraries`), 
+``links`` (:ref:`section-mobiweb-links`), 
+``map`` (:ref:`section-mobiweb-map`),
+``mobile-about`` (:ref:`section-mobiweb-mobile-about`), 
+``news`` (:ref:`section-mobiweb-news`),
+``people`` (:ref:`section-mobiweb-people`), 
+``shuttleschedule`` (:ref:`section-mobiweb-shuttleschedule`), 
+``sms`` (:ref:`section-mobiweb-sms`), 
+``stellar`` (:ref:`section-mobiweb-stellar`), 
+``techcash`` (:ref:`section-mobiweb-techcash`).
 
 The directory ``mobi-web/page_builder`` contains
 :ref:`section-content-generator` files, and ``mobi-web/home`` contains
@@ -1168,6 +1171,7 @@ Mobile Web Modules
    mobiweb-modules/links
    mobiweb-modules/map
    mobiweb-modules/mobile-about
+   mobiweb-modules/news
    mobiweb-modules/people
    mobiweb-modules/shuttleschedule
    mobiweb-modules/sms
