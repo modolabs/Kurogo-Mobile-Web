@@ -438,6 +438,21 @@ smartphones/featurephones.  It stores the current timestamp and is
 read by the Home Screen to determine whether new announcements should
 be highlighted for the user.
 
+.. _subsection-mobiweb-cookies-layout:
+
+^^^^^^
+layout
+^^^^^^
+
+This cookie is populated with the result of the device 
+detection service.  Caching the result of the device detection 
+service in the cookie removes the external network call required 
+to classify a user agent string.  The format of the cookie is 
+``pagetype,platform,certs``.  For example an Android phone would 
+have ``Webkit,android,0``.  The certs value is 0 or 1 indicating 
+if the phone supports web certificates.
+
+
 .. _subsubsection-mobiweb-cookies-mitcertificate:
 
 ^^^^^^^^^^^^^^
