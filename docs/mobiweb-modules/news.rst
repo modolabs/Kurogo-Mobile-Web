@@ -147,6 +147,16 @@ Functions to construct URLs for news article categories,
 search results, or specific story.  The URLs are constructed
 from the data in the HTTP Request.
 
+.. function:: newsHomeQuery()
+
+   Returns the query string needed to get back to the most
+   recent state of news "home" page.
+
+.. function:: searchQuery()
+
+   Returns the query string needed to get back to the most
+   recent state of the news search results page.
+   
 --------------
 Template Files
 --------------
