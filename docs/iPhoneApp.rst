@@ -95,6 +95,12 @@ The default list of modules can be configured by modifying
 `MITModuleList <iPhoneModuleList.html>`_. New modules can be
 included by extending `MITModule <iPhoneModuleExtension.html>`_.
 
+.. toctree::
+   :hidden:
+
+   Extending MITModule <iPhoneModuleExtension>
+   Configure Modules <iPhoneModuleList>
+
 ==========================
 Customizing User Interface
 ==========================
@@ -142,8 +148,6 @@ in real time to the users iPhone.
 .. toctree::
    :hidden:
 
-   Extending MITModule <iPhoneModuleExtension>
-   Configure Modules <iPhoneModuleList>
    Stellar Module <iPhone-modules/stellar>
 
 
