@@ -551,8 +551,12 @@ The Page class
 
 Some important functions in Page:
 
-* ``factory($phone_type)``: constructs an object of ``WebkitPage``, 
-  ``TouchPage``, or ``BasicPage``, depending on the ``$phone_type`` given.
+* ``factory()``: constructs an object of ``WebkitPage``, 
+  ``TouchPage``, or ``BasicPage``.  It checks the cookies
+  to determine the pagetype and platform, if no cookie is
+  set it uses the device detection service.  This function
+  also caches the CSS attributes returned by the device
+  detection service.
 
 * ``acquire_begin($name)`` and ``acquire_end($name)``: functions that
   indicate to the page builder to (a) start an output buffer, and (b)
@@ -583,6 +587,10 @@ have navigation links that can be accessed using access keys
 on the bottom of the page.  A font 
 selector to allow the user to enlarge or shrink the font
 is displayed at the bottom.
+
+These pages also use CSS attributes returned by the device detection
+server, to customize the page to specific platforms.
+
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Statistics Logging (counter.php)
