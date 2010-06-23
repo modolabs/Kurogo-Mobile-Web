@@ -491,11 +491,9 @@ in every module other than the home screen.  It does the following:
 
 #. Load commonly used functions (from ``page_tools.php``).
 
-#. Create a ``Page`` object (actually ``WebkitPage``,
-``TouchPage``, or ``BasicPage``), which controls the rest of page construction.
+#. Create a ``Page`` object (actually ``WebkitPage``, ``TouchPage``, or ``BasicPage``), which controls the rest of page construction.
 
-#. Tell the statistics counter what device is accessing what module,
-so it can be recorded.
+#. Tell the statistics counter what device is accessing what module, so it can be recorded.
 
 #. Provide error handling.
 
@@ -535,19 +533,13 @@ it to ``page_tools.php``.  The following elements are provided:
 * ``ResultsContent`` -- used in conjunction with the search bar.  To
   use ResultsContent, do the following:
 
-  #. Create a short HTML template to display individual list items
-  (look for examples such as ``calendar/Webkit/items.html``,
-  ``calendar/Basic/items.html``).
+  #. Create a short HTML template to display individual list items (look for examples such as ``calendar/Webkit/items.html``, ``calendar/Basic/items.html``).
 
-  #. Create an HTML template to display the output of the
-  ``ResultsContent`` within the page.  See an example below.
+  #. Create an HTML template to display the output of the ``ResultsContent`` within the page.  See an example below.
 
-  #. Construct a new ``ResultsContent($template, $module, ...)``
-  object using the name of the first HTML template as the $template
-  argument.
+  #. Construct a new ``ResultsContent($template, $module, ...)`` object using the name of the first HTML template as the $template argument.
 
-  #. ``include`` the second template in the script, and proceed as usual
-  with the rest of the script.
+  #. ``include`` the second template in the script, and proceed as usual with the rest of the script.
 
 For an example of the HTML template for ``ResultsContent`` output,
 here is ``people/Webkit/results.html``::
