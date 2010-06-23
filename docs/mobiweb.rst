@@ -158,7 +158,35 @@ service locations
 mobi-mysql
 ^^^^^^^^^^
 
-which tables are needed
+The following mysql database tables are used:
+
+  * ``mobi_web_page_views`` 
+      Keep track of how many times a module is viewed from a 
+      particular platform, on a daily basis
+
+  * ``mobi_api_requests``
+      Keep track of how many times a REST api for any given 
+      module is used on a daily basis.  These api's are used
+      by the native phone applications.
+
+  * ``AppleDevices``
+      Records every apple device that has install the native
+      iPhone application (the includes device token information
+      required to send devices push notifications).
+
+  * ``ApplePushNotification``
+      A queue used to schedule out going push notifications
+      to apple devices.
+
+  * ``MyStellarSubscription``
+      Save the stellar preferences for any particular apple device.
+      Specifically, which classes should send stellar notifications 
+      to tha device.
+
+  * ``ShuttleSubscription``
+      Records when an apple device, wants to be notified
+      of a shuttle arriving at a particular stop.
+  
 
 ----------------
 File Permissions
