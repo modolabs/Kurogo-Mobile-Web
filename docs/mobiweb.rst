@@ -161,41 +161,6 @@ mobi-mysql
 which tables are needed
 
 ----------------
-Device Detection
-----------------
-
-The device detection is done with the code at http://github.com/modolabs/MIT-Mobile-Device-Classification.
-
-* Classify the device connecting to the server
-
-  http://mobile-service-dev.mit.edu/mobi-service/?ua=iPhone&action=classify
-
-  .. code-block:: javascript
-
-     {
-       "pagetype":"Webkit",
-       "platform":"iphone",
-       "certs":"1"
-     } 
-
-* CSS attributes specific to a device
-
-  http://mobile-service-dev.mit.edu/mobi-service/?action=attributes&pagetype=Webkit&platform=iphone
-
-  .. code-block:: javascript
-
-     {
-       "platform":"iphone",
-       "home_css":"#homegrid div {width:79px;height:90px} h1 {margin-top: 14px; margin-bottom:9px}",
-       "extra_css":null,
-       "last_modified":"2010-04-22 14:12:08"
-     }
-
-  ``home_css`` is device specific css for the home page, which shows all the modules. 
-  ``extra_css`` is for regular pages which are constructed from the generic page
-  templates.
-
-----------------
 File Permissions
 ----------------
 
@@ -359,8 +324,45 @@ Device Detection
 Whenever a user visits the mobile website, their browser ID (aka
 user-agent string) is first forwarded to a device detection service
 that determines what type of interface and which selection of modules
-should be shown to the user.  See separate documentation for more
-details on device detection.
+should be shown to the user.  The device detection is done with 
+the code at http://github.com/modolabs/MIT-Mobile-Device-Classification.
+
+* Classify the device connecting to the server
+
+  http://mobile-service-dev.mit.edu/mobi-service/?action=classify&ua=iPhone
+  
+  ``action`` is the service being request, in this case
+  to classify a user agent string
+
+  ``ua`` is the user agent string
+
+
+  .. code-block:: javascript
+
+     {
+       "pagetype":"Webkit",
+       "platform":"iphone",
+       "certs":"1"
+     } 
+
+* CSS attributes specific to a device
+
+  http://mobile-service-dev.mit.edu/mobi-service/?action=attributes&pagetype=Webkit&platform=iphone
+
+  .. code-block:: javascript
+
+     {
+       "platform":"iphone",
+       "home_css":"#homegrid div {width:79px;height:90px} h1 {margin-top: 14px; margin-bottom:9px}",
+       "extra_css":null,
+       "last_modified":"2010-04-22 14:12:08"
+     }
+
+  ``home_css`` is device specific css for the home page, which shows all the modules. 
+
+  ``extra_css`` is for regular pages which are constructed from the generic page
+  templates.
+
 
 -------
 Cookies
@@ -520,9 +522,6 @@ The Page class
 ^^^^^^^^^^^^^^
 
 Some important functions in Page:
-
-* ``classify_phone()``: figures out the type of device accessing the page
-  by making a web call to the device detection server.
 
 * ``factory($phone_type)``: constructs an object of ``WebkitPage``, 
   ``TouchPage``, or ``BasicPage``, depending on the ``$phone_type`` given.
