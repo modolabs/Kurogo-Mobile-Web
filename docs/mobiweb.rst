@@ -614,8 +614,10 @@ server, to customize the page to specific platforms.
 Statistics Logging (counter.php)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-``page_builder/counter.php`` records page views by device and module
-in MySQL, and is used to tally page views from MySQL when the
+``page_builder/counter.php`` records various statistics (saves them
+in MySQL). Records page views of the mobile web by device and module.
+Additionally records the use of the API for Native Mobile Apps. Furthermore,
+this file is used to tally statistics from MySQL when the
 Statistics sub-module is viewed.
 
 This file includes a class called ``PageViews`` which queries a
