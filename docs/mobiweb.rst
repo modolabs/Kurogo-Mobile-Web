@@ -557,6 +557,12 @@ it to ``page_tools.php``.  The following elements are provided:
       $page->content_end(); 
     ?>
 
+* ``HTMLFragment`` -- This class is used to page a fragment of HTML 
+  into several sub fragments, useful for content that needs to be paged.
+  It counts the number of linebreaks and paragraphs, as the criteria
+  for paging, so that a pagebreak is not in the middle of paragraph.
+  For an example of it's use see the news module.
+
 ^^^^^^^^^^^^^^
 The Page class
 ^^^^^^^^^^^^^^
