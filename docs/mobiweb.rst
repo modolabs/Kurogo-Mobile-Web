@@ -448,9 +448,11 @@ This cookie is populated with the result of the device
 detection service.  Caching the result of the device detection 
 service in the cookie removes the external network call required 
 to classify a user agent string.  The format of the cookie is 
-``pagetype,platform,certs``.  For example an Android phone would 
+``pagetype,platform,certs[,font-size]``.  For example an Android phone would 
 have ``Webkit,android,0``.  The certs value is 0 or 1 indicating 
-if the phone supports web certificates.
+if the phone supports web certificates.  The Basic pages can
+optionally include a font size parameter with possiblie values:
+``small``, ``medium``, ``large``, and  ``xlarge``
 
 
 .. _subsubsection-mobiweb-cookies-mitcertificate:
