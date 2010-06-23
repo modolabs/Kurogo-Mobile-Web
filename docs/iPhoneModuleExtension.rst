@@ -43,7 +43,7 @@ like object, the module can set the properties
    @property (nonatomic, retain) NSString *currentQuery;
 
 If a module supports push notification it should set the following
-propert
+property
 
 .. code-block:: objective-c
 
