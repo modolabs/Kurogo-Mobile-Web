@@ -87,6 +87,14 @@ method ``-[CoreDataManager managedObjectModel]`` as shown in the following line 
    NSArray *allModels = [NSArray arrayWithObjects:@"Stellar", @"PeopleDataModel", @"News", @"Emergency", nil];
 
 
+=================
+Configure Modules
+=================
+
+The default list of modules can be configured by modifying 
+`MITModuleList <iPhoneModuleList.html>`_. New modules can be
+included by extending `MITModule <iPhoneModuleExtension.html>`_.
+
 ==========================
 Customizing User Interface
 ==========================
@@ -103,7 +111,7 @@ with images of the same dimensions.
   Each module requires 2 icons with transparent backgrounds. An 
   icon for the tab bar on the bottom with a name of the form ``tab-people.png``.
   And icon to display in the More list of modules with a name of the form
-  ``module-people.png``. In this case ``people`` is the tag for the People
+  ``module-people.png``. In this case ``people`` is the icon name for the People
   Directory module.
 
 
@@ -134,6 +142,8 @@ in real time to the users iPhone.
 .. toctree::
    :hidden:
 
+   Extending MITModule <iPhoneModuleExtension>
+   Configure Modules <iPhoneModuleList>
    Stellar Module <iPhone-modules/stellar>
 
 
