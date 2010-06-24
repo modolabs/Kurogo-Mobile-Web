@@ -56,7 +56,7 @@ during compile time by a perl script builtin into the XCode project file.
 Common Classes
 ==============
 There are several Common classes used by various modules in the ``Common/`` directory. 
-The following `classes <UIClasses.html>`_ are used to unify the user interface through out the application:
+The following `classes <iPhoneUIClasses.html>`_ are used to unify the user interface through out the application:
 
   * ``MITUIContstants``
   * ``UIKit+MITAdditions``
@@ -86,6 +86,10 @@ method ``-[CoreDataManager managedObjectModel]`` as shown in the following line 
    
    NSArray *allModels = [NSArray arrayWithObjects:@"Stellar", @"PeopleDataModel", @"News", @"Emergency", nil];
 
+.. toctree::
+   :hidden:
+
+   UIClasses <iPhoneUIClasses>
 
 =================
 Configure Modules
@@ -119,6 +123,11 @@ with images of the same dimensions.
   And icon to display in the More list of modules with a name of the form
   ``module-people.png``. In this case ``people`` is the icon name for the People
   Directory module.
+
+.. toctree::
+   :hidden:
+
+   Customizing iPhone Look and Feel <iPhoneUIConstants>
 
 
 ====
