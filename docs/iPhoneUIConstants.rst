@@ -18,6 +18,10 @@ edit the following constants:
    #define BOLD_FONT @"Helvetica-Bold"
 
 
+**************
+Tableview Rows
+**************
+
 Tableviews cells have two types of text, with corresponding constants:
 
 * CELL_STANDARD -- A large bold text for the row title
@@ -29,12 +33,9 @@ Tableviews cells have two types of text, with corresponding constants:
   * CELL_DETAIL_FONT_SIZE -- Font size.
   * CELL_DETAIL_FONT_COLOR -- Font color.
 
-
-There is also a STANTARD_CONTENT font used outside of table views
-with the following constants:
-
-* STANDARD_CONTENT_FONT_SIZE -- Font size.
-* STANDARD_CONTENT_FONT_COLOR -- Font color.
+*****************
+Tableview Headers
+*****************
 
 The fonts in tableview section headers is customizable with 
 the constants:
@@ -48,6 +49,15 @@ lists.
 Examples of a grouped tableviews can be seen on the initial
 screen of the People Directory and Stellar modules.
 
+****************
+Standard Content
+****************
+
+There is also a STANTARD_CONTENT font used outside of table views
+with the following constants:
+
+* STANDARD_CONTENT_FONT_SIZE -- Font size.
+* STANDARD_CONTENT_FONT_COLOR -- Font color.
 
 ^^^^^^
 Colors
