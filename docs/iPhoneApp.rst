@@ -114,6 +114,11 @@ with images of the same dimensions.
   ``module-people.png``. In this case ``people`` is the icon name for the People
   Directory module.
 
+.. toctree::
+   :hidden:
+
+   Customizing iPhone Look and Feel <iPhoneUIConstants>
+
 
 ====
 News
