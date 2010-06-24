@@ -156,6 +156,26 @@ from the data in the HTTP Request.
 
    Returns the query string needed to get back to the most
    recent state of the news search results page.
+
+The state of the news module is kept in the parameters of the URL,
+the state can contain 2 parts, It always contains a "home" state,
+which determines how the news "home page" is rendered. It contains
+up the following 3 three variables:
+
+* ``channel_id`` -- an id indicating the category to retreive stories from
+* ``seek_story_id`` -- by default retreive only stories older than this story id
+  , if this variable is NULL retreive the most recent stories.  If
+  ``next`` variable is defined and set to 0 only retreive stories newer
+  than this story_id
+* ``next`` -- whether to retrieve stories older or newer than the ``seek_story_id``
+
+Optionally, the search state can also be set, which contains the following variables:
+
+* ``query`` -- search terms
+* ``seek_search_id`` -- The number of stories to seek forward 
+  into the search results, if this variable is undefined display the
+  first 10 search results
+
    
 --------------
 Template Files
