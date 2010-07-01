@@ -1,6 +1,5 @@
 <?
-require_once "../config/mobi_web_constants.php";
-require_once("api_header.php");
+require_once("api_header.inc");
 
 $module = $_REQUEST['module'];
 PageViews::log_api($module, 'iphone');

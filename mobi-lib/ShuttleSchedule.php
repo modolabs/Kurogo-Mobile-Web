@@ -11,9 +11,9 @@
  *
  */
 
-require_once "mobi_lib_constants.php";
+require_once "lib_constants.inc";
 
-define("SHUTTLE_SCHEDULE_SOURCE", LIB_ROOT . 'shuttle_schedule.json');
+define("SHUTTLE_SCHEDULE_SOURCE", DATADIR . '/shuttle_schedule.json');
 
 /* constants used in constants.php: TIMEZONE */
 require_once 'TimeRange.php';

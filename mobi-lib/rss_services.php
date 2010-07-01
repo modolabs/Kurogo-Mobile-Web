@@ -1,6 +1,6 @@
 <?php
 
-require_once "mobi_lib_constants.php";
+require_once "lib_constants.inc";
 
 class Emergency extends RSS {
   protected $rss_url = EMERGENCY_RSS_URL;
@@ -16,6 +16,7 @@ class RSS {
 
   protected $custom_tags = array();
   protected $custom_html_tags = array();
+  protected $index_by_title = False;
 
   private $cache = NULL;
 

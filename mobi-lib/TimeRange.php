@@ -5,9 +5,7 @@
  * DayRange: child class of TimeRange describing a full day
  */
 
-
-require_once "mobi_lib_constants.php";
-require_once(LIB_ROOT . 'datetime_lib.php');
+require_once('datetime_lib.php');
 
 class TimeRange {
 

@@ -9,7 +9,7 @@ define('TIMEZONE', 'America/New_York');
 
 // paths
 define('CACHE_DIR', '/opt/mitmobile/cache');
-define('DATADIR', '/opt/mitmobile/moduledata');
+define('DATADIR', '/opt/mitmobile/static');
 define('TMP_DIR', '/tmp/'); // cache files that we'll allow OS to clean out
 
 // database parameters
@@ -19,8 +19,8 @@ define('MYSQL_DBNAME', 'mysql_db');
 define('MYSQL_HOST', 'localhost');
 
 // directory
-define('LDAP_SERVER', 'ldap.mit.edu');
-define('LDAP_PATH', 'dc=mit, dc=edu');
+//define('LDAP_SERVER', 'ldap.mit.edu');
+//define('LDAP_PATH', 'dc=mit, dc=edu');
 define('LDAP_SEARCH_TIMELIMIT', 30);
 define('LDAP_READ_TIMELIMIT', 30);
 
@@ -38,27 +38,27 @@ define('EVENTS_CALENDAR_API', 'http://events.mit.edu/MITEventsFull.wsdl');
 define("WHATS_NEW_PATH", DATADIR . "/whatsnew.xml");
 
 // shuttles
-define('SHUTTLE_GTFS_FEED', DATADIR . '//gtfs.zip');
+define('SHUTTLE_GTFS_FEED', DATADIR . '/gtfs.zip');
 define('NEXTBUS_FEED_URL', 'http://www.nextbus.com/s/xmlFeed?');
 define('NEXTBUS_AGENCY', 'mit');
 define('NEXTBUS_ROUTE_CACHE_TIMEOUT', 86400); // max age, routeConfig data
 define('NEXTBUS_PREDICTION_CACHE_TIMEOUT', 20); // max age, predictions
 define('NEXTBUS_VEHICLE_CACHE_TIMEOUT', 10); // max age, vehicle locations
 define('NEXTBUS_CACHE_MAX_TOLERANCE', 90); // when to revert to pub schedule
-define('NEXTBUS_CACHE_DIR', 'NEXTBUS/');
-define('NEXTBUS_DAEMON_PID_FILE', CACHE_DIR . 'NEXTBUS_DAEMON_PID');
+define('NEXTBUS_CACHE', CACHE_DIR . '/NEXTBUS/');
+define('NEXTBUS_DAEMON_PID_FILE', CACHE_DIR . '/NEXTBUS_DAEMON_PID');
 
 // stellar
 define('STELLAR_BASE_URL', 'http://stellar.mit.edu/courseguide/course/');
 define('STELLAR_RSS_URL', 'http://stellar.mit.edu/SRSS/rss');
 // dir for subject listing files
-define('STELLAR_COURSE_DIR', CACHE_DIR . 'STELLAR_COURSE/');
+define('STELLAR_COURSE_DIR', CACHE_DIR . '/STELLAR_COURSE/');
 // how long to keep cached subject files
 define('STELLAR_COURSE_CACHE_TIMEOUT', 86400);
 // dir for cached rss data
-define('STELLAR_FEED_DIR', CACHE_DIR . 'STELLAR_FEEDS/');
+define('STELLAR_FEED_DIR', CACHE_DIR . '/STELLAR_FEEDS/');
 define('STELLAR_FEED_CACHE_TIMEOUT', 10); // how long to keep cached rss files
-define('STELLAR_SUBSCRIPTIONS_FILE', CACHE_DIR . 'STELLAR_SUBSCRIPTIONS');
+define('STELLAR_SUBSCRIPTIONS_FILE', CACHE_DIR . '/STELLAR_SUBSCRIPTIONS');
 
 // libraries
 define('LIBRARY_OFFICE_RSS', DATADIR . '/library_office.xml');

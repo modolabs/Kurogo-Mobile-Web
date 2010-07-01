@@ -15,7 +15,8 @@ $page->content_begin();
 </div>  
 
 <?
-    require WEBROOT . "/Basic/arrows.html"; ?>
+    require_once "../config/mobi_web_constants.php";
+    require WEBROOT . "Basic/arrows.html"; ?>
 <? 
 $page->content_end(); 
 $page->help_off();

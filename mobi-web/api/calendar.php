@@ -2,8 +2,8 @@
 
 $data = Array();
 
-require_once LIBDIR . "mit_calendar.php";
-require_once LIBDIR . "campus_map.php";
+require_once LIBDIR . "/mit_calendar.php";
+require_once LIBDIR . "/campus_map.php";
 
 function ucwordswrapper($words) {
   $separated = str_replace('/', '/ ', $words);
@@ -128,7 +128,7 @@ switch ($_REQUEST['command']) {
   * as using search with an additional category parameter
   */
  case 'search':
-   require_once LIBDIR . "AcademicCalendar.php";
+   require_once LIBDIR . "/AcademicCalendar.php";
    $searchTerms = isset($_REQUEST['q']) ? $_REQUEST['q'] : '';
    /*
    $category = isset($_REQUEST['category']) ? 
@@ -180,7 +180,7 @@ switch ($_REQUEST['command']) {
  case 'holidays': case 'academic':
    // TODO: see whether any of this code can be consolidated with
    // mobi-web/calendar/academic.php and mobi-web/calendar/holidays.php
-   require_once LIBDIR . "AcademicCalendar.php";
+   require_once LIBDIR . "/AcademicCalendar.php";
    $month = isset($_REQUEST['month']) ? $_REQUEST['month'] : date('n');
    $year = isset($_REQUEST['year']) ? $_REQUEST['year'] : date('Y');
 

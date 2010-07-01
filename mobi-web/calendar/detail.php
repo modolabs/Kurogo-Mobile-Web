@@ -1,10 +1,7 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require PAGE_HEADER;
-require_once LIBDIR . "mit_calendar.php";
-require "calendar_lib.php";
+require_once LIBDIR . "/mit_calendar.php";
+require "calendar_lib.inc";
 
 $event = MIT_Calendar::getEvent($_REQUEST['id']);
 $time_of_day = MIT_Calendar::timeText($event);

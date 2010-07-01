@@ -1,10 +1,8 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require PAGE_HEADER;
-require LIBDIR . "mit_calendar.php";
-require "calendar_lib.php";
+require LIBDIR . "/mit_calendar.php";
+require "calendar_lib.inc";
 
 $category = MIT_Calendar::Category($_REQUEST['id']);
 $categorys = MIT_Calendar::subCategorys($category);

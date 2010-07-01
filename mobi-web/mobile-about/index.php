@@ -1,9 +1,6 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require PAGE_HEADER;
-require "WhatsNew.php";
+require "WhatsNew.inc";
 
 // dynamic pages need to include dynamics scripts
 switch($_REQUEST['page']) {

@@ -1,9 +1,6 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-
 $sms_instructions = new SMSInstructions(
   module("People Directory",
    "Search all or part of a name, email address, or phone number.",

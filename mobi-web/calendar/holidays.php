@@ -1,15 +1,13 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-require_once LIBDIR . "AcademicCalendar.php";
-require_once "calendar_lib.php";
+require_once LIBDIR . "/AcademicCalendar.php";
+require_once "calendar_lib.inc";
 
 /*
 // this defines the text that will appear in the academica
 // calendar
-require LIBDIR . "holiday_data.php";
+require LIBDIR . "/holiday_data.php";
 
 $year = (int) $_REQUEST['year'];
 $next = $year + 1;

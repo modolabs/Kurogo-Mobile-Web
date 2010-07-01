@@ -38,7 +38,7 @@ function datetime2unix(DateTime $dtime) {
       $dtime->format('Y')
       );
   } else {
-    return $dtime->getTimestamp();
+    return DateTime::getTimestamp($time);
   }
 }
 

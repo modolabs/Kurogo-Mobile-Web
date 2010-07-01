@@ -1,6 +1,6 @@
 <?
 
-define("BLDG_DATA_XML", dirname(__FILE__) . "/../mobi-web/map/xml/bldg_data.xml");
+require_once "lib_constants.inc";
 
 Buildings::init();
 
@@ -22,7 +22,7 @@ class Buildings {
 
   public static function category_items($category) {
     $finder = self::$categories[$category]['finder'];
-    return call_user_func(array(self, $finder), $category);
+    return call_user_func(array('self', $finder), $category);
   }
 
   public static $categories = array(

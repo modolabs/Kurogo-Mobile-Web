@@ -1,10 +1,7 @@
 <?php
     
-
-    require_once "../config/mobi_web_constants.php";
-    require PAGE_HEADER;
-    require LIBDIR . "error_logging.php";
-    require LIBDIR . "mit_ldap.php";
+    require LIBDIR . "/error_logging.php";
+    require LIBDIR . "/mit_ldap.php";
 
     $errorMessage = null;
     $failed_search = FALSE;

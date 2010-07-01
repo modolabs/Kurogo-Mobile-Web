@@ -1,9 +1,6 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-
 if ($page->branch == 'Webkit') {
   $location_img = $page->img_tag('location', 'gif', 'Map', array('width' => 280, 'height' => 238));
 } else {

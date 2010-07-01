@@ -1,4 +1,5 @@
 <?php
+require_once "lib_constants.inc";
 require_once "ldap_config.php";
 
 define("DIRECTORY_UNAVAILABLE", "Your request cannot be processed at this time.\nPlease try again later....");

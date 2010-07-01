@@ -1,13 +1,8 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require_once "Home.php";
-require_once "Modules.php";
-require_once WEBROOT . "page_builder/Page.php";
-//require WEBROOT . "page_builder/counter.php";
-require WEBROOT . "page_builder/page_tools.php";
-require WEBROOT . "customize/customize_lib.php";
+require_once "Home.inc";
+require_once "Modules.inc";
+require WEBROOT . "/customize/customize_lib.inc";
 
 $page = Page::factory();
 $page->module('home');

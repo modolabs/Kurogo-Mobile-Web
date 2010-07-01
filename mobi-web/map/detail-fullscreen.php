@@ -1,9 +1,5 @@
 <?
 
-
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-
 $selectvalue = $_REQUEST['selectvalues'];
 $bbox = split(',', $_REQUEST['bbox']);
 $minx = $bbox[0];

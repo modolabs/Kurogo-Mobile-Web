@@ -1,10 +1,7 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-require_once LIBDIR . "StellarData.php";
-require_once "stellar_lib.php";
+require_once LIBDIR . "/StellarData.php";
+require_once "stellar_lib.inc";
 
 function selfURL() {
   return "course.php?id=" . $_REQUEST['id'] . '&back=' . $_REQUEST['back'];

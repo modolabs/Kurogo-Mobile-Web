@@ -1,15 +1,13 @@
 #!/bin/bash
 
 PREFIX0=/opt          # directory to install third party apps
-PREFIX1=/Users/sonya/htdocs # apache document root
-
-#PREFIX1=/var/www/html # apache document root
+PREFIX1=/var/www/html # apache document root
 
 # if mysql is installed outside of $PATH (e.g. on MAMP),
 # enter the path to the command line program
-#MYSQL_BIN=`which mysql`
+MYSQL_BIN=`which mysql`
 # MAMP users can just uncomment the line below
-MYSQL_BIN=/Applications/MAMP/Library/bin/mysql
+#MYSQL_BIN=/Applications/MAMP/Library/bin/mysql
 
 # mysql info for this program (if using)
 MYSQL_USER=mysql_user

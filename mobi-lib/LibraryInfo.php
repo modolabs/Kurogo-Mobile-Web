@@ -4,9 +4,9 @@
  * CACHE_DIR
  * ICS_CACHE_LIFESPAN
  */
-require_once "mobi_lib_constants.php";
-require_once LIB_ROOT . "DrupalDB.php";
-require_once LIB_ROOT . "mit_ical_lib.php";
+require_once "lib_constants.inc";
+require_once "DrupalDB.php";
+require_once "mit_ical_lib.php";
 
 class LibraryInfo {
 

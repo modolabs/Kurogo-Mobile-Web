@@ -1,9 +1,6 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-
 if(!isset($_REQUEST['ref'])) {
   $destination = "/home/";
 } else {
