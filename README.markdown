@@ -16,7 +16,6 @@
 ``pear install Log``
 
 ## Notes about the directory structure
-Directory names that start with "mobi" are server-side components.
 * mobi-web/  
 Contains the outside facing web scripts.
 * mobi-lib/  
@@ -36,6 +35,8 @@ Contains the scripts that run in the background processing notifications
 Non-apache files that will be copied to the system.  Apache will write to some directories, so be careful of permissions.
 * setup/
 Files used for installation.  install-mobiweb.sh and uninstall-mobiweb.sh are the only ones that work so far.
+
+Directory names that start with "mobi" are server-side components.
 
 ## Installation Process
 Clone this repository:
