@@ -22,7 +22,7 @@ Contains the outside facing web scripts.
 Contains libraries that mobi-web uses, to talk to various services at MIT
 * mobi-config/  
 Contains configuration files, each file needs to be copied and stripped of .init extension.
-* mobi-scripts/
+* mobi-scripts/  
 Contains scripts to start iPhone push notification processes, and scripts to download map tiles from an ArcGIS server.
 For convenience, these will be copied to the system's /path/to/mitmobile/bin directory.
 * iPhone-app/  
@@ -31,9 +31,9 @@ Contains the XCode project and all the objective-C and other resources used to b
 Contains the front facing scripts that the iPhone application calls.
 * mobi-web/api/push/  
 Contains the scripts that run in the background processing notifications
-* opt/
+* opt/  
 Non-apache files that will be copied to the system.  Apache will write to some directories, so be careful of permissions.
-* setup/
+* setup/  
 Files used for installation.  install-mobiweb.sh and uninstall-mobiweb.sh are the only ones that work so far.
 
 Directory names that start with "mobi" are server-side components.
@@ -46,20 +46,20 @@ For Red Hat systems, it is recommended to use the RPM script (forthcoming) becau
 
 For other systems (tested on MAMP):
 
-* Edit ``setup/install-mobiweb.sh``.  You MUST ensure that $PREFIX0 and $PREFIX1 point to legitimate directories on the system.  If MySQL is installed, you SHOULD edit the MYSQL.
+* Edit ``setup/install-mobiweb.sh``.  You MUST ensure that $PREFIX0 and $PREFIX1 point to legitimate directories on the system.  If MySQL is installed, you SHOULD edit the MYSQL variables.
 
-``cd setup``
-``vi install-mobiweb.sh``
+``cd setup``  
+``vi install-mobiweb.sh``  
 ``sudo ./install-mobiweb.sh``
 
 * To uninstall:
 
-``cd /path/to/modo-university/setup``
+``cd /path/to/modo-university/setup``  
 ``sudo ./uninstall-mobiweb.sh``
 
 * To make changes, you can edit any files in the directories mobi-* and run the install script to update them on your system.  After saving changes:
 
-``cd /path/to/modo-university/setup``
+``cd /path/to/modo-university/setup``  
 ``sudo ./install-mobiweb.sh --update``
 
 The ``--update`` option will copy all the files, but skip MySQL setup.
