@@ -1,9 +1,8 @@
 #!/bin/bash
 
-source configure_paths.sh
 NOW=`date +%s`
-DATADIR=$AUX_PATH/maptiles # where "tile" directory should go
-PHPSCRIPT=bin/mobi-maptiles-download.php
+DATADIR=/opt/mitmobile/maptiles # where "tile" directory should go
+PHPSCRIPT=/opt/mitmobile/bin/mobi-maptiles-download.php
 CHECKSUM_FINAL=$DATADIR/export.md5
 CHECKSUM_TEMP=$DATADIR/temp-export.md5
 
@@ -72,4 +71,8 @@ for LEVEL in `ls $RAW_DATADIR`; do
 done
 
 mv $CHECKSUM_TEMP $CHECKSUM_FINAL
+
+# cleanup
+rm -r $RAW_DATADIR/*
+
 echo "`date +%H:%M:%S` complete"

@@ -7,13 +7,7 @@
  * --force: download regardless of whether their image changed
  */
 
-$aux_path = getenv("AUX_PATH");
-
-define("MAP_SEARCH_URL", 'http://whereis.mit.edu/search');
-define('MAP_SERVER_URL', 'http://maps.mit.edu/ArcGIS/rest/services/Mobile/WhereIs_MobileAll/MapServer');
-define("MAP_TILE_CACHE_DIR", $aux_path . '/maptiles/raw/');
-define("MAP_TILE_CHECKSUM_FILE", $aux_path . '/maptiles/export.md5');
-define("MAP_TILE_CHECKSUM_FILE_TEMP", $aux_path . '/maptiles/temp-export.md5');
+require_once('../mobi-config/lib_constants.inc');
 
 echo "retrieving service capabilities\n";
 

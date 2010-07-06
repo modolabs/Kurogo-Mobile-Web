@@ -1,7 +1,14 @@
 #!/bin/bash
 
-PREFIX0=/opt          # directory to install third party apps
-PREFIX1=/var/www/html # apache document root
+PREFIX0=/opt                # directory to install third party apps
+### Apache document root...
+PREFIX1=/usr/local/apache2/htdocs
+# Debian users uncomment the following
+#PREFIX1=/var/www
+# Red Hat users uncomment the following
+#PREFIX1=/var/www/html
+# MAMP users uncomment the following
+#PREFIX1=/Applications/MAMP/htdocs 
 
 # if mysql is installed outside of $PATH (e.g. on MAMP),
 # enter the path to the command line program
@@ -107,13 +114,6 @@ else
     cp -rp opt/mitmobile $PREFIX0
 fi
 
-# create empty directories
-[ -d $PREFIX0/mitmobile/bin ] || mkdir $PREFIX0/mitmobile/bin
-[ -d $PREFIX0/mitmobile/certs ] || mkdir $PREFIX0/mitmobile/certs
-[ -d $PREFIX0/mitmobile/logs ] || mkdir $PREFIX0/mitmobile/logs
-[ -d $PREFIX0/mitmobile/maptiles ] || mkdir $PREFIX0/mitmobile/maptiles
-[ -d $PREFIX0/mitmobile/pushd ] || mkdir $PREFIX0/mitmobile/pushd
-
 cp -rp mobi-config $PREFIX0/mitmobile
 cp -rp mobi-lib $PREFIX0/mitmobile
 cp -rp mobi-scripts/* $PREFIX0/mitmobile/bin
@@ -126,7 +126,7 @@ cp -p mobi-web/.htaccess $PREFIX1
 
 # create symlinks
 
-ln -sf $PREFIX0/mitmobile/mobi-config/lib_constants_prod.inc $PREFIX0/mitmobile/mobi-lib/lib_constants.inc
+ln -sf $PREFIX0/mitmobile/mobi-config/lib_constants.inc $PREFIX0/mitmobile/mobi-lib/lib_constants.inc
 ln -sf $PREFIX0/mitmobile/maptiles/crushed $PREFIX1/api/map/tile2
 ln -sf $PREFIX0/mitmobile/maptiles/tiles_last_updated.txt $PREFIX1/api/map/tiles_last_updated.txt
 
@@ -138,6 +138,7 @@ sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX0/mitmobil
 sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX0/mitmobile/mobi-config/*.ini
 sed -i .bak 's/\/var\/www\/html/'${PREFIX1_esc}'/g' $PREFIX0/mitmobile/mobi-config/*.inc
 sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX1/.htaccess
+sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX0/mobi-maptiles.sh
 
 if [ "$USE_MYSQL" = "1" ]; then
    echo "configuring MySQL parameters..."
