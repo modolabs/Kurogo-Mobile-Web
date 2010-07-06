@@ -110,7 +110,7 @@ fi
 cp -rp mobi-config $PREFIX0/mitmobile
 cp -rp mobi-lib $PREFIX0/mitmobile
 cp -rp mobi-scripts $PREFIX0/mitmobile
-mv $PREFIX0/mitmobile/mobi-scripts $PREFIX/mitmobile/bin
+mv $PREFIX0/mitmobile/mobi-scripts $PREFIX0/mitmobile/bin
 cp -rp mobi-web $PREFIX0/mitmobile # we're doing this to help uninstallation
 
 # copy web files
