@@ -1,10 +1,29 @@
 <?
-require_once dirname(__FILE__) . "/../config/mobi_web_constants.php";
-require_once WEBROOT . "api/api_header.php";
+require_once WEBROOT . "/api/api_header.inc";
 
 PageViews::log_api('map', 'iphone');
 
 switch ($_REQUEST['command']) {
+
+ case 'capabilities':
+   require_once LIBDIR . '/ArcGISTileServer.php';
+   $json = ArcGISTileServer::getCapabilities();
+   echo json_encode($json);
+   break;
+
+ case 'proj4specs':
+   require_once LIBDIR . '/ArcGISTileServer.php';
+   $wkid = $_REQUEST['wkid'];
+   $json = ArcGISTileServer::getWkidProperties($wkid);
+   echo json_encode($json);
+   break;
+
+ case 'tilesupdated':
+   $date = file_get_contents(MAP_TILE_CACHE_DATE);
+   $data = array("last_updated" => trim($date));
+   echo json_encode($data);
+   break;
+
  case 'categories':
    require_once LIBDIR . "campus_map.php";
    $categories = Buildings::category_titles();
@@ -19,6 +38,7 @@ switch ($_REQUEST['command']) {
 
    echo json_encode($result);
    break;
+
  case 'category':
    require_once LIBDIR . "campus_map.php";
    if ($category = $_REQUEST['id']) {
@@ -26,11 +46,13 @@ switch ($_REQUEST['command']) {
      echo json_encode($places);
    }
    break;
+
  case 'categorytitles':
    require_once LIBDIR . "campus_map.php";
    $categories = category_titles_wrapper();
    echo json_encode($categories);
    break;
+
  case 'search':
    if (isset($_REQUEST['q'])) {
      $query = http_build_query(Array('type' => 'query', 
@@ -40,11 +62,6 @@ switch ($_REQUEST['command']) {
    }
 
    echo $json;
-   break;
- case 'tilesupdated':
-   $date = file_get_contents(MAP_TILE_CACHE_DATE);
-   $data = array("last_updated" => trim($date));
-   echo json_encode($data);
    break;
 }
 

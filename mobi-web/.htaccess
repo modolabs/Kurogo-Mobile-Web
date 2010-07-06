@@ -1,0 +1,4 @@
+<FilesMatch "\.php$">
+php_value auto_prepend_file /opt/mitmobile/mobi-config/web_header.inc
+php_value audo_prepend_file /opt/mitmobile/mobi-config/lib_constants.inc
+</FilesMatch>

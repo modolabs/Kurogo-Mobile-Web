@@ -1,0 +1,41 @@
+#!/bin/bash
+
+PREFIX0=
+PREFIX1=
+
+USE_MYSQL=
+MYSQL_BIN=
+
+MYSQL_USER=
+MYSQL_PASS=
+MYSQL_DB=
+
+# delete mysql tables
+
+if [ "$USE_MYSQL" = "1" ]; then
+    echo "deleting MySQL tables..."
+    ${MYSQL_BIN}admin --user=${MYSQL_USER} --password=${MYSQL_PASS} drop $MYSQL_DB
+fi
+
+# delete files
+
+echo "removing files..."
+
+# remove everything from DOCUMENT_ROOT
+# look at files in mobi-web source to decide if it should go
+DIRS=`ls $PREFIX0/mitmobile/mobi-web`
+for FILEORDIR in $DIRS; do
+    echo "rm $PREFIX1/$FILEORDIR"
+    if [ -d "$PREFIX1/$FILEORDIR" ]; then
+        rm -rf $PREFIX1/$FILEORDIR
+    else
+        rm -f $PREFIX1/$FILEORDIR
+    fi
+done
+
+# remove mitmobile directory and contents
+echo "rm -rf $PREFIX0/mitmobile"
+rm -rf $PREFIX0/mitmobile
+
+
+

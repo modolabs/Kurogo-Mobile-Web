@@ -1,9 +1,6 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-
 class Links {
   public static $links = array(
     'MBTA ("The T": Bus & Subway)' => 'www.mbta.com',

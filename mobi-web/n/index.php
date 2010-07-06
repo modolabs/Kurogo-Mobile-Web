@@ -1,8 +1,6 @@
 <?php
 
-$docRoot = getenv("DOCUMENT_ROOT");
-require_once $docRoot . '/mobi-config/mobi_web_constants.php';
-require_once '../page_builder/url_decoder.php';
+require_once '../page_builder/url_decoder.inc';
 
 $decimal_id = expand_id($_REQUEST['short_id']);
 

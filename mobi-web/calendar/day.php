@@ -1,12 +1,9 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require PAGE_HEADER;
-require LIBDIR . "mit_calendar.php";
+require LIBDIR . "/mit_calendar.php";
 
 //defines all the variables related to being today
-require "calendar_lib.php";
+require "calendar_lib.inc";
 
 $time = $_REQUEST['time'];
 $current = day_info($time);
