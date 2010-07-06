@@ -131,6 +131,7 @@ echo "configuring copied files..."
 sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX0/mitmobile/mobi-config/*.inc
 sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX0/mitmobile/mobi-config/*.ini
 sed -i .bak 's/\/var\/www\/html/'${PREFIX1_esc}'/g' $PREFIX0/mitmobile/mobi-config/*.inc
+sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX1/.htaccess
 
 if [ "$USE_MYSQL" = "1" ]; then
    echo "configuring MySQL parameters..."
