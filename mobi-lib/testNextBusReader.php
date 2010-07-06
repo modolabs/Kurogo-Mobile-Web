@@ -1,8 +1,6 @@
 <?
 
-
-require_once "mobi_lib_constants.php";
-require_once(LIB_ROOT . "NextBusReader.php");
+require_once("NextBusReader.php");
 
 NextBusReader::init();
 

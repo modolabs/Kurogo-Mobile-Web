@@ -1,11 +1,6 @@
 <?
 
-//$docRoot = getenv("DOCUMENT_ROOT");
-//require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
-
-// TODO: move to constants file
-define('TMP_DIR', '/tmp/'); // cache files that we'll allow the OS to clean out
-define('EVENTS_CALENDAR_API', 'http://events.mit.edu/MITEventsFull.wsdl');
+require_once "lib_constants.inc";
 
 MIT_Calendar::init();
 

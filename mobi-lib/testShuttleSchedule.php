@@ -1,8 +1,7 @@
 <?
 
 
-require_once "mobi_lib_constants.php";
-require_once(LIB_ROOT . 'ShuttleSchedule.php');
+require_once('ShuttleSchedule.php');
 
 //print_r(ShuttleSchedule::get_route_list());
 $routes = ShuttleSchedule::get_active_routes();

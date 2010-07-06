@@ -2,19 +2,8 @@
 
 /* this file interacts with nextbus' xml feed */
 
-/* this uses the constants:
- * CACHE_DIR -- location of cache files
- * NEXTBUS_FEED_URL -- base location of nextbus feed
- * NEXTBUS_AGENCY -- id of the agency that's querying nextbus
- * NEXTBUS_ROUTE_CACHE_TIMEOUT -- max age of route info cache
- * NEXTBUS_PREDICTION_CACHE_TIMEOUT -- max age of predictions cache
- * NEXTBUS_CACHE_MAX_TOLERANCE -- max age before reverting to published schedule
- */
-
-
-require_once('mobi_lib_constants.php');
+require_once "lib_constants.inc";
 require_once("ShuttleSchedule.php");
-
 
 class NextBusReader {
   private static $query_params = Array();
@@ -22,10 +11,10 @@ class NextBusReader {
   private static $predictionCache = Array(); // results of predictions command
   private static $vehicleCache = Array(); // results of vehicleLocatiosn command
   private static $unmodifiedRouteList = Array(); // results of routeList command
-  private static $routeCachePrefix = 'NEXTBUS_ROUTE_';
-  private static $predictionCachePrefix = 'NEXTBUS_PREDICTION_';
-  private static $vehicleCacheFile = 'NEXTBUS_VEHICLE_LOCATIONS';
-  private static $stopsCacheFile = 'NEXTBUS_STOPS';
+  private static $routeCachePrefix = 'ROUTE_';
+  private static $predictionCachePrefix = 'PREDICTION_';
+  private static $vehicleCacheFile = 'VEHICLE_LOCATIONS';
+  private static $stopsCacheFile = 'STOPS';
 
   /* private query methods */
 
@@ -96,15 +85,15 @@ class NextBusReader {
   /* private cache methods */
 
   private static function write_cache($filename, $data) {
-    $fhandle = fopen(CACHE_DIR . $filename, 'w');
+    $fhandle = fopen(NEXTBUS_CACHE . '/' . $filename, 'w');
     fwrite($fhandle, json_encode($data));
     fclose($fhandle);
   }
 
   private static function read_cache($filename) {
-    if (file_exists(CACHE_DIR . $filename))
-      return json_decode(file_get_contents(CACHE_DIR . $filename), TRUE);
-    error_log('could not find cache file: ' . CACHE_DIR . $filename);
+    if (file_exists(NEXTBUS_CACHE . '/' . $filename))
+      return json_decode(file_get_contents(NEXTBUS_CACHE . $filename), TRUE);
+    error_log('could not find cache file: ' . NEXTBUS_CACHE . $filename);
     return FALSE;
   }
 
@@ -135,7 +124,7 @@ class NextBusReader {
   }
 
   private static function get_route_age($routeName) {
-    $filename = CACHE_DIR . self::$routeCachePrefix . $routeName;
+    $filename = NEXTBUS_CACHE . self::$routeCachePrefix . $routeName;
     if (file_exists($filename))
       return time() - filemtime($filename);
     return FALSE;
@@ -147,7 +136,7 @@ class NextBusReader {
   }
 
   private static function get_vehicle_age() {
-    $filename = CACHE_DIR . self::$vehicleCacheFile;
+    $filename = NEXTBUS_CACHE . self::$vehicleCacheFile;
     if (file_exists($filename))
       return time() - filemtime($filename);
     return FALSE;
@@ -158,7 +147,7 @@ class NextBusReader {
 	&& array_key_exists('updated', self::$predictionCache[$routeName])) {
       return (time() - self::$predictionCache[$routeName]['updated']);
     } else {
-      $filename = CACHE_DIR . self::$predictionCachePrefix . $routeName;
+      $filename = NEXTBUS_CACHE . self::$predictionCachePrefix . $routeName;
       if (file_exists($filename))
 	return time() - filemtime($filename);
     }
@@ -211,7 +200,7 @@ class NextBusReader {
 
       } else {
 	// query failed; get {routeName}s from cached filenames
-	foreach (scandir(CACHE_DIR) as $filename) {
+	foreach (scandir(NEXTBUS_CACHE) as $filename) {
 	  if (strpos($filename, self::$routeCachePrefix) == 0) {
 	    $routeName = substr($filename, 0, strlen(self::$routeCachePrefix));
 	    self::$routeCache[$routeName] = self::read_route_cache($routeName);
@@ -228,7 +217,7 @@ class NextBusReader {
   }
 
   public static function get_all_stops() {
-    $stopsCache = CACHE_DIR . self::$stopsCacheFile;
+    $stopsCache = NEXTBUS_CACHE . self::$stopsCacheFile;
 
     if (file_exists($stopsCache) && time() - filemtime($stopsCache) <= NEXTBUS_ROUTE_CACHE_TIMEOUT) {
       $json = file_get_contents($stopsCache);

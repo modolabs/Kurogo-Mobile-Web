@@ -1,7 +1,6 @@
 <?php
 
-
-require_once "mobi_lib_constants.php";
+require_once "lib_constants.inc";
 
 class OracleInterface {
   protected $use_transaction=False;

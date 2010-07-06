@@ -1,10 +1,12 @@
 <?
-require_once "mobi_lib_constants.php";
+
+require_once "lib_constants.inc";
 require_once "mit_ical_lib.php";
 require_once "rss_services.php";
 
-define("ACADEMIC_CALENDAR_CACHE_DIR", CACHE_DIR . "ACADEMIC_CALENDAR/");
-define("ACADEMIC_CALENDAR_RSS", dirname(__FILE__) . "/academic_location.rss");
+// TODO: move stuff to constants file
+define("ACADEMIC_CALENDAR_CACHE_DIR", CACHE_DIR . "/ACADEMIC_CALENDAR/");
+define("ACADEMIC_CALENDAR_RSS", "/academic_locations.rss");
 define("ACADEMIC_CALENDAR_CACHE_LIFESPAN", 86400 * 30);
 
 class AcademicCalendarRSS extends RSS {
@@ -110,17 +112,22 @@ class AcademicCalendar {
       $year = (date('n', $time) < 7) ? date('Y', $time) : date('Y', $time) + 1;
 
       // start with crude lower-bound guesses for ranges
+      $last_summer_start = mktime(0, 0, 0, 6, 1, $year-1);
       $fall_start = mktime(0, 0, 0, 8, 15, $year-1);
       $iap_start = mktime(0, 0, 0, 1, 1, $year);
       $spring_start = mktime(0, 0, 0, 2, 1, $year);
       $summer_start = mktime(0, 0, 0, 6, 1, $year);
       $summer_end = mktime(0, 0, 0, 8, 15, $year);
 
+      // academic calendars cover the second half of the summer after 
+      // july 1 of the previous year and the first half before july 1
+      // of the current fiscal year
       self::$terms = Array(
+	'su2' => new TimeRange($last_summer_start, $fall_start),
 	'fa' => new TimeRange($fall_start, $iap_start),
 	'ia' => new TimeRange($iap_start, $spring_start),
 	'sp' => new TimeRange($spring_start, $summer_start),
-	'su' => new TimeRange($summer_start, $summer_end),
+	'su1' => new TimeRange($summer_start, $summer_end),
 	);
 
       if (array_key_exists($year, self::$icals)) {
@@ -133,13 +140,16 @@ class AcademicCalendar {
 	    if ($range->contains_point($event_start)) {
 	      self::$terms[$term]->set_start($event_start);
 	      switch ($term) {
+	      case 'fa':
+		self::$terms['su2']->set_end($event_start);
+		break;
 	      case 'ia':
 		self::$terms['fa']->set_end($event_start);
 		break;
 	      case 'sp':
 		self::$terms['ia']->set_end($event_start);
 		break;
-	      case 'su':
+	      case 'su1':
 		self::$terms['sp']->set_end($event_start);
 		break;
 	      } // switch
@@ -153,8 +163,10 @@ class AcademicCalendar {
 
     foreach (self::$terms as $term => $range) {
       if ($range->contains_point($time)) {
+	if ($term == 'su1' || $term == 'su2') {
+	  return 'su';
+	}
 	return $term;
-	break;
       }
     }
 

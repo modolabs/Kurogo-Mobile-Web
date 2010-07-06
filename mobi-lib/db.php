@@ -1,7 +1,8 @@
 <?php
 
+require_once "lib_constants.inc";
 
-require_once("mobi_lib_constants.php");
+define('MYSQL_NOT_SUPPORTED', 1);
 
 class db {
   public static $connection = NULL;
@@ -13,7 +14,11 @@ class db {
 
   public static function init() {
     if(!self::$connection) {
-      self::$connection = new mysqli(self::$host, self::$username, self::$passwd, self::$db);
+      if (extension_loaded('mysql')) {
+	self::$connection = new mysqli(self::$host, self::$username, self::$passwd, self::$db);
+      } else {
+	self::$connection = MYSQL_NOT_SUPPORTED;
+      }
     }
   }
 

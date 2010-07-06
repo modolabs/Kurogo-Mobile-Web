@@ -5,14 +5,8 @@
  *
  * php must be compiled with support for Zip files.
  */
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-
-define("SHUTTLE_GTFS_FEED", WEBROOT . "shuttleschedule/gtfs/gtfs.zip");
-
-/* constants used in constants.php: TIMEZONE */
+require_once "lib_constants.inc";
 require_once 'TimeRange.php';
 require_once 'datetime_lib.php';
 

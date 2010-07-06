@@ -5,9 +5,7 @@
  *
  */
 
-
-require_once "mobi_lib_constants.php";
-require_once(LIB_ROOT . 'TimeRange.php');
+require_once('TimeRange.php');
 
 class ICalendarException extends Exception {
 }
