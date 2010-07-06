@@ -1,6 +1,5 @@
 <?
-require_once "../config/mobi_web_constants.php";
-require_once("api_header.php");
+require_once("api_header.inc");
 
 $module = $_REQUEST['module'];
 PageViews::log_api($module, 'iphone');
@@ -24,6 +23,10 @@ switch ($module) {
 
  case 'push':
    require('apns_push.php');
+   break;
+
+ case 'dining':
+   require('dining.php');
    break;
 
  default:
