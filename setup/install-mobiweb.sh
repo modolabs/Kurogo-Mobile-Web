@@ -107,10 +107,16 @@ else
     cp -rp opt/mitmobile $PREFIX0
 fi
 
+# create empty directories
+[ -d $PREFIX0/mitmobile/bin ] || mkdir $PREFIX0/mitmobile/bin
+[ -d $PREFIX0/mitmobile/certs ] || mkdir $PREFIX0/mitmobile/certs
+[ -d $PREFIX0/mitmobile/logs ] || mkdir $PREFIX0/mitmobile/logs
+[ -d $PREFIX0/mitmobile/maptiles ] || mkdir $PREFIX0/mitmobile/maptiles
+[ -d $PREFIX0/mitmobile/pushd ] || mkdir $PREFIX0/mitmobile/pushd
+
 cp -rp mobi-config $PREFIX0/mitmobile
 cp -rp mobi-lib $PREFIX0/mitmobile
-cp -rp mobi-scripts $PREFIX0/mitmobile
-mv $PREFIX0/mitmobile/mobi-scripts $PREFIX0/mitmobile/bin
+cp -rp mobi-scripts/* $PREFIX0/mitmobile/bin
 cp -rp mobi-web $PREFIX0/mitmobile # we're doing this to help uninstallation
 
 # copy web files
