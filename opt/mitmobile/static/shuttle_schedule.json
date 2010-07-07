@@ -1,0 +1,252 @@
+{
+  "saferidecamball":{
+    "title": "Cambridge All",
+    "smsTitle": "Camb All",
+    "isSafeRide": 1,
+    "summary": "Runs 6pm-2am Sun-Wed, 6pm-3am Thu-Sat, during summer and holiday breaks.",
+    "interval": 60,
+    "stops": [
+      {"title":"84 Mass Ave", "nextBusId":"mass84_d", "smsTitle": "84Mass", "offset": 0},
+      {"title":"W4 \/ McCormick", "nextBusId":"mccrmk", "smsTitle": "McCrmck", "offset": 1},
+      {"title":"W51 \/ Burton", "nextBusId":"burtho", "smsTitle": "Burtn", "offset": 2},
+      {"title":"W70 \/ New House", "nextBusId":"newho", "smsTitle": "NewHse", "offset":3},
+      {"title":"W85 \/ Tang \/ Westgate", "nextBusId":"tangwest", "smsTitle": "Tang", "offset":4},
+      {"title":"W79 \/ Simmons", "nextBusId":"simmhl", "smsTitle": "Simmns", "offset":6},
+      {"title":"WW15", "nextBusId":"ww15", "smsTitle": "WW15", "offset":8},
+      {"title":"Brookline @ Chestnut", "nextBusId":"brookchest", "smsTitle": "Brookln@Chest", "offset":9},
+      {"title":"Putnam @ Magazine", "nextBusId":"putmag", "smsTitle": "Putnm@Mag", "offset":10},
+      {"title":"River @ Fairmont", "nextBusId":"rivfair", "smsTitle": "Rivr@Fairmt", "offset":12},
+      {"title":"River @ Upton", "nextBusId":"rivpleas", "smsTitle": "Rvr@Uptn", "offset":13},
+      {"title":"River @ Franklin", "nextBusId":"rivfrank", "smsTitle": "Rvr@Frnkln", "offset":14},
+      {"title":"Sydney @ Green", "nextBusId":"sydgreen", "smsTitle": "Sid@Green", "offset":16},
+      {"title":"NW86 \/ 70 Pacific", "nextBusId":"paci70", "smsTitle": "SidPac", "offset":18},
+      {"title":"NW30 \/ Warehouse", "nextBusId":"whou", "smsTitle": "Warehse", "offset":19},
+      {"title":"NW10 \/ Edgerton", "nextBusId":"edge", "smsTitle": "Edgerton", "offset":20},
+      {"title":"84 Mass Ave", "nextBusId":"mass84", "smsTitle": "84Mass", "offset":30},
+      {"title":"NW10 \/ Edgerton", "nextBusId":"nw10", "smsTitle": "Edgrtn", "offset":33},
+      {"title":"NW30 \/ Warehouse", "nextBusId":"nw30", "smsTitle": "Warehse", "offset":34},
+      {"title":"NW86 \/ 70 Pacific", "nextBusId":"nw86", "smsTitle": "Sidpac", "offset":35},
+      {"title":"NW61 \/ Random Hall", "nextBusId":"randhl", "smsTitle": "RandmHll", "offset":36},
+      {"title":"Main @ Windsor", "nextBusId":"mainwinds", "smsTitle": "Main@Windsr", "offset":39},
+      {"title":"Portland @ Hampshire", "nextBusId":"porthamp", "smsTitle": "Prtlnd@Hmpshr", "offset":40},
+      {"title":"638 Cambridge St", "nextBusId":"camb638", "smsTitle": "638Camb", "offset":43},
+      {"title":"Cambridge @ Fifth", "nextBusId":"camb5th", "smsTitle": "Camb@5th", "offset":44},
+      {"title":"Sixth @ Charles St", "nextBusId":"6thcharl", "smsTitle": "6th@Charles", "offset":45},
+      {"title":"East Lot on Main St", "nextBusId":"elotmain", "smsTitle": "EastLot", "offset":47},
+      {"title":"Bld 66 (Ames St)", "nextBusId":"amesbld66", "smsTitle": "Bld66", "offset":48},
+      {"title":"MIT Medical", "nextBusId":"mitmed", "smsTitle": "MITMed", "offset":50},
+      {"title":"Kendall T", "nextBusId":"kendsq", "smsTitle": "KendallT", "offset":52},
+      {"title":"E40 \/ Wadsworth", "nextBusId":"wadse40", "smsTitle": "E40", "offset":53},
+      {"title":"77 Mass. Ave", "nextBusId":"mass77", "smsTitle": "77Mass", "offset":56}
+    ],
+    "runs": [
+      {"days": ["Sun", "Mon", "Tue", "Wed"], "first": "6:00pm", "last": "1:00am"},
+      {"days": ["Thu", "Fri", "Sat"], "first": "6:00pm", "last": "2:00am"}
+    ],
+    "dates": ["20090606-20090813", "20091125-20091128", "20091218-20100114", "20100319-20100325", "20100605-20100816"]
+  },
+  "saferidebostonall": {
+    "title": "Boston All",
+    "isSafeRide": 1,
+    "summary": "Runs 6pm-2am Sun-Wed, 6pm-3am Thu-Sat, during summer and holiday breaks.",
+    "interval": 60,
+    "stops": [
+      {"title": "84 Mass Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAv", "offset": 0},
+      {"title":"Mass Ave @ Beacon", "nextBusId":"massbeac", "smsTitle": "MassAv@Beacon", "offset": 2},
+      {"title":"MBTA stop at Newbury", "nextBusId":"massnewb", "smsTitle": "NewburyT", "offset": 4},
+      {"title":"487 Comm Ave", "nextBusId":"comm487", "smsTitle": "487CommAv", "offset": 6},
+      {"title":"478 Comm Ave", "nextBusId":"comm478", "smsTitle": "478CommAv", "offset": 9},
+      {"title":"Mass Ave @ Beacon ", "nextBusId":"beacmass",  "smsTitle": "MassAv@Beacon", "offset": 12},
+      {"title":"77 Mass Ave", "nextBusId":"mass77", "smsTitle": "77MassAv", "offset": 14},
+      {"title": "84 Mass Ave ", "nextBusId":"mass84", "smsTitle": "84MassAv", "offset": 15},
+      {"title":"Mass Ave @ Beacon  ", "nextBusId":"massbeac_b",  "smsTitle": "MassAv@Beacon", "offset": 18},
+      {"title":"528 Beacon St", "nextBusId":"beac528", "smsTitle": "528Beacon", "offset": 22},
+      {"title":"487 Comm Ave ", "nextBusId":"487comm", "smsTitle": "487CommAv", "offset": 28},
+      {"title":"111 Baystate", "nextBusId":"bays111", "smsTitle": "111Baystate", "offset": 37},
+      {"title":"155 Baystate", "nextBusId":"bays155", "smsTitle": "155Baystate", "offset": 39},
+      {"title":"58 Manchester (ZBT)", "nextBusId":"manc58",  "smsTitle": "58Manchester(ZBT)", "offset": 43},
+      {"title":"259 St Paul St (ET)", "nextBusId":"stpaul259",  "smsTitle": "259StPaul(ET)", "offset": 46},
+      {"title":"Mass Ave @ Beacon   ", "nextBusId":"beacmass_a",  "smsTitle": "MassAv@Beacon", "offset": 58}
+    ],
+    "runs": [
+      {"days": ["Sun", "Mon", "Tue", "Wed"], "first": "6:00pm", "last": "1:00am"},
+      {"days": ["Thu", "Fri", "Sat"], "first": "6:00pm", "last": "2:00am"}
+    ],
+    "dates": ["20090606-20090813", "20091125-20091128", "20091218-20100114", "20100319-20100325", "20100605-20100816"]
+  },
+  "saferidecambeast": {
+    "title": "Cambridge East",
+    "smsTitle": "Camb East",
+    "isSafeRide": 1,
+    "summary": "Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",
+    "interval": 30,
+    "stops": [
+      {"title":"84 Mass. Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAve", "offset":0},
+      {"title":"NW10 \/ Edgerton", "nextBusId":"nw10", "smsTitle": "Edgerton", "offset":3},
+      {"title":"NW30 \/ Warehouse", "nextBusId":"nw30", "smsTitle": "Warehouse", "offset":4},
+      {"title":"NW86 \/ 70 Pacific", "nextBusId":"nw86", "smsTitle": "70Pacific", "offset":5},
+      {"title":"NW61 \/ Random Hall", "nextBusId":"nw61", "smsTitle": "RandomHall", "offset":6},
+      {"title":"Main St @ Windsor St", "nextBusId":"mainwinds", "smsTitle": "Main@Windsor", "offset":9},
+      {"title":"Portland @ Hampshire", "nextBusId":"porthamp", "smsTitle": "Portland@Hampshire", "offset":10},
+      {"title":"638 Cambridge St", "nextBusId":"camb638", "smsTitle": "638CambridgeSt", "offset":13},
+      {"title":"Cambridge St @ Fifth St", "nextBusId":"camb5th", "smsTitle": "Cambridge@Fifth", "offset":14},
+      {"title":"Sixth @ Charles St", "nextBusId":"6thcharl", "smsTitle": "Sixth@CharlesSt", "offset":15},
+      {"title":"East Lot on Main St", "nextBusId":"elotmain", "smsTitle": "EastLot", "offset":17},
+      {"title":"Bld 66 (Ames St)", "nextBusId":"amesbld66", "smsTitle": "Bldg66", "offset":18},
+      {"title":"MIT Medical \/ 34 Carleton", "nextBusId":"mitmed", "smsTitle": "MIT Medical", "offset":20},
+      {"title":"Kendall Square T", "nextBusId":"kendsq", "smsTitle": "KendallT", "offset":22},
+      {"title":"E40 \/ Wadsworth", "nextBusId":"wadse40", "smsTitle": "E40", "offset":23},
+      {"title":"77 Mass. Ave", "nextBusId":"mass77", "smsTitle": "77MassAve", "offset":26}
+    ],
+    "runs": [
+      {"days": ["Sun", "Mon", "Wed", "Tue"], "first": "6:00pm", "last": "10:30pm"},
+      {"days": ["Sun", "Mon", "Wed", "Tue"], "first": "11:05pm", "last": "2:05am"},
+      {"days": ["Thu", "Fri", "Sat"], "first": "6:00pm", "last": "10:30pm"},
+      {"days": ["Thu", "Fri", "Sat"], "first": "11:05pm", "last": "3:05am"}
+    ],
+    "dates": ["20090814-20091124", "20091129-20091217", "20100115-20100320", "20100326-20100604"]
+  },
+  "saferidecambwest": {
+    "title": "Cambridge West", 
+    "smsTitle": "Camb West",
+    "isSafeRide": 1,
+    "summary": "Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",
+    "interval": 30,
+    "stops": [
+      {"title":"84 Mass. Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAve", "offset":0},
+      {"title":"W4 \/ McCormick", "nextBusId":"mccrmk", "smsTitle": "McCormick", "offset":1},
+      {"title":"W51 \/ Burton", "nextBusId":"burtho", "smsTitle": "Burton", "offset":2},
+      {"title":"W70 \/ New House", "nextBusId":"newho", "smsTitle": "NewHouse", "offset":3},
+      {"title":"W85 \/ Tang \/ Westgate", "nextBusId":"tangwest", "smsTitle": "Tang\/Westgate", "offset":4},
+      {"title":"W79 \/ Simmons", "nextBusId":"simmhl", "smsTitle": "Simmons", "offset":6},
+      {"title":"WW15 (Request)", "nextBusId":"ww15", "smsTitle": "WW15(Request)", "offset": 7},
+      {"title":"Brookline @ Chestnut", "nextBusId":"brookchest", "smsTitle": "Brookline@Chestnut", "offset":9},
+      {"title":"Putnam Ave @ Magazine", "nextBusId":"putmag", "smsTitle": "Putnam@Magazine", "offset":10},
+      {"title":"River St @ Fairmont", "nextBusId":"rivfair", "smsTitle": "River@Fairmont", "offset":12},
+      {"title":"River St @ Upton", "nextBusId":"rivpleas", "smsTitle": "River@Upton", "offset":13},
+      {"title":"River St @ Franklin", "nextBusId":"rivfrank", "smsTitle": "River@Franklin", "offset":14},
+      {"title":"Sidney @ Green St", "nextBusId":"sydgreen", "smsTitle": "Sidney@Green", "offset":16},
+      {"title":"NW86 \/ 70 Pacific St", "nextBusId":"paci70", "smsTitle": "70Pacific", "offset":18},
+      {"title":"NW30 \/ Warehouse", "nextBusId":"whou", "smsTitle": "Warehouse", "offset":19},
+      {"title":"NW10 \/ Edgerton", "nextBusId":"edge", "smsTitle": "Edgerton", "offset":20}
+    ],
+    "runs": [
+      {"days": ["Sun", "Mon", "Wed", "Tue"], "first": "6:00pm", "last": "10:30pm"},
+      {"days": ["Sun", "Mon", "Wed", "Tue"], "first": "11:05pm", "last": "2:05am"},
+      {"days": ["Thu", "Fri", "Sat"], "first": "6:00pm", "last": "11:30pm"},
+      {"days": ["Thu", "Fri", "Sat"], "first": "11:05pm", "last": "3:05am"}
+    ],
+    "dates": ["20090814-20091124", "20091129-20091217", "20100115-20100320", "20100326-20100604"]
+  },
+  "saferidebostonw": {
+    "title": "Boston West",
+    "isSafeRide": 1,
+    "summary": "Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",
+    "interval": 30,
+    "stops": [
+      {"title":"84 Mass Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAve", "offset": 0},
+      {"title":"Mass Ave @ Beacon St", "nextBusId":"massbeac", "smsTitle": "MassAve@Beacon", "offset": 3},
+      {"title":"528 Beacon St", "nextBusId":"beac528", "smsTitle": "528BeaconSt", "offset": 4},
+      {"title":"487 Comm Ave", "nextBusId":"comm487", "smsTitle": "487CommAve", "offset": 6},
+      {"title":"111 Baystate", "nextBusId":"bays111", "smsTitle": "111BayState", "offset": 8},
+      {"title":"155 Baystate", "nextBusId":"bays155", "smsTitle": "155BayState", "offset": 9},
+      {"title":"259 St Paul St (ET)", "nextBusId":"stpaul259", "smsTitle": "259StPaulSt(ET)", "offset": 14},
+      {"title":"58 Manchester (ZBT)", "nextBusId":"manc58", "smsTitle": "58Manchester(ZBT)", "offset": 16},
+      {"title":"32 Hereford St", "nextBusId":"here32", "smsTitle": "32HerefordSt", "offset": 23},
+      {"title":"77 Mass Ave", "nextBusId":"mass77", "smsTitle": "77MassAve", "offset": 26}
+    ],
+    "runs": [
+      {"days": ["Sun", "Mon", "Wed", "Tue"], "first": "6:05pm", "last": "2:05am"},
+      {"days": ["Thu", "Fri", "Sat"], "first": "6:05pm", "last": "3:05am"}
+    ],
+    "dates": ["20090814-20091124", "20091129-20091217", "20100115-20100320", "20100326-20100604"]
+  },
+  "saferidebostone": {
+    "title": "Boston East",
+    "isSafeRide": 1,
+    "summary": "Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",
+    "interval": 20,
+    "stops": [
+      {"title":"84 Mass Ave", "nextBusId":"mass84_d","smsTitle": "84MassAve", "offset": 0},
+      {"title":"Mass Ave @ Beacon St", "nextBusId":"massbeac","smsTitle": "MassAv@Beacon", "offset": 3},
+      {"title":"MBTA Stop at Newbury", "nextBusId":"massnewb","smsTitle": "NewburyT", "offset": 6},
+      {"title":"487 Comm Ave", "nextBusId": "comm487", "smsTitle": "487CommAve", "offset": 10},
+      {"title":"478 Comm Ave", "nextBusId":"comm478","smsTitle": "478CommAve", "offset": 13},
+      {"title":"Mass Ave @ Beacon St", "nextBusId":"beacmass", "smsTitle": "MassAv@Beacon", "offset": 14},
+      {"title":"77 Mass Ave", "nextBusId":"mass77","smsTitle": "77MassAve", "offset": 17}
+    ],
+    "runs": [
+      {"days": ["Sun", "Mon", "Wed", "Tue"], "first": "6:00pm", "last": "2:20am"},
+      {"days": ["Thu", "Fri", "Sat"], "first": "6:00pm", "last": "3:00am"}
+    ],
+    "dates": ["20090814-20091124", "20091129-20091217", "20100115-20100320", "20100326-20100604"]
+  },
+  "tech": {
+    "title": "Tech Shuttle",
+    "summary": "Runs weekdays 7:15am-7:15pm, all year round.",
+    "interval": 20,
+    "stops": [
+      {"title":"Kendall Square T", "nextBusId":"kendsq_d", "smsTitle": "KendallSqT", "offset": 0},
+      {"title":"Amherst\/Wadsworth", "nextBusId":"amhewads", "smsTitle": "Amherst@Wadsworth", "offset": 2},
+      {"title":"Media Lab", "nextBusId":"medilb", "smsTitle": "MediaLab", "offset": 3},
+      {"title":"Building 39", "nextBusId":"build39", "smsTitle": "Bldg39", "offset": 5},
+      {"title":"84 Mass Avenue", "nextBusId":"mass84", "smsTitle": "84MassAve", "offset": 7},
+      {"title":"Burton House", "nextBusId":"burtho", "smsTitle": "BurtonHouse", "offset": 9},
+      {"title":"Tang\/Westgate", "nextBusId":"tangwest", "smsTitle": "Tang\/Westgate", "offset": 10},
+      {"title":"W92 @ Amesbury Street", "nextBusId":"w92ames",  "smsTitle": "W92\/AmesburySt", "offset": 11},
+      {"title":"Simmons Hall", "nextBusId":"simmhl", "smsTitle": "SimmonsHall", "offset": 12},
+      {"title":"Vassar\/Mass Ave", "nextBusId":"vassmass", "smsTitle": "Vassar\/MassAve", "offset": 14},
+      {"title":"Stata", "nextBusId":"statct", "smsTitle": "Stata", "offset": 15}
+    ],
+    "runs": [
+      {"days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "first": "7:15am", "last": "6:55pm"},
+      {"days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "first": "7:45am", "last": "10:25am"},
+      {"days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "first": "4:05pm", "last": "5:45pm"}
+    ],
+    "dates": [],
+    "excludeHolidays": 1
+  },
+  "northwest": {
+    "title": "Northwest Shuttle",
+    "smsTitle": "NW Shuttle",
+    "summary": "Runs weekdays 7:25am-6:42pm, all year round.",
+    "interval": 20,
+    "stops": [
+      {"title":"Kendall Square T", "nextBusId":"kendsq_d", "smsTitle": "KendallSqT", "offset": 0},
+      {"title":"Amherst\/Wadsworth", "nextBusId":"amhewads", "smsTitle": "Amherst@Wadsworth", "offset": 2},
+      {"title":"77 Mass Avenue", "nextBusId":"mass77", "smsTitle": "77MassAve", "offset": 5},
+      {"title":"MIT Museum (N52)", "nextBusId":"mitmus", "smsTitle": "MITMuseum", "offset": 7},
+      {"title":"70 Pacific Street (NW86)", "nextBusId":"paci70", "smsTitle": "70Pacific", "offset": 9},
+      {"title":"The Warehouse (NW30)", "nextBusId":"whou", "smsTitle": "Warehouse", "offset": 10},
+      {"title":"Edgerton (NW10)", "nextBusId":"edge", "smsTitle": "Edgerton", "offset": 11},
+      {"title":"Vassar\/Mass Ave", "nextBusId":"vassmass", "smsTitle": "Vassar@MassAve", "offset": 14},
+      {"title":"Stata", "nextBusId":"statct", "smsTitle": "Stata", "offset": 16}
+    ],
+    "runs": [
+      {"days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "first": "7:25am", "last": "6:25pm"},
+      {"days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "first": "7:35am", "last": "10:15am"}
+    ],
+    "dates": [],
+    "excludeHolidays": 1
+  },
+  "boston": {
+    "title": "Boston Daytime",
+    "summary": "Runs weekdays 8am-6pm, Sep-May.",
+    "interval": 20,
+    "stops": [      
+      {"title":"84 Mass Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAve", "offset": 0},
+      {"title":"Mass Ave @ Beacon", "nextBusId":"massbeac", "smsTitle": "MassAve@Beacon", "offset": 3},
+      {"title":"487 Comm Ave (PSK)", "nextBusId":"comm487", "smsTitle": "487CommAve", "offset": 6},
+      {"title":"Comm Ave @ Sherborn", "nextBusId":"commsher", "smsTitle": "Comm@Sherborn", "offset": 8},
+      {"title":"478 Comm. Ave.", "nextBusId":"comm478", "smsTitle": "478CommAve", "offset": 11},
+      {"title":"Mass Ave @ Beacon", "nextBusId":"beacmass", "smsTitle": "450Beacon", "offset": 16},
+      {"title":"77 Mass Ave", "nextBusId":"mass77", "smsTitle": "77MassAve", "offset": 18},
+      {"title":"Edgerton (NW10)", "nextBusId":"edge", "smsTitle": "Edgerton", "offset": 19}
+    ],
+    "runs": [
+      {"days": ["Mon", "Tue", "Wed", "Thu", "Fri"], "first": "8:00am", "last": "5:35pm"}
+    ],
+    "dates": ["20080901-20090531", "20090901-20100531"],
+    "excludeHolidays": 1
+  }
+}

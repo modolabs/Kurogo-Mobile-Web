@@ -1,10 +1,7 @@
 <?
 
-
-require_once "../config/mobi_web_constants.php";
-require WEBROOT . "page_builder/security.php";
-require PAGE_HEADER;
-require LIBDIR . "tech_cash.php";
+require WEBROOT . "/page_builder/security.inc";
+require LIBDIR . "/tech_cash.php";
 
 ssl_required();
 if(!$page->certs) {

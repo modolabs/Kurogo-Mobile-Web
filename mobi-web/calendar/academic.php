@@ -1,10 +1,7 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-require_once LIBDIR . "AcademicCalendar.php";
-require_once "calendar_lib.php";
+require_once LIBDIR . "/AcademicCalendar.php";
+require_once "calendar_lib.inc";
 
 $month = $_REQUEST['month'];
 $year = $_REQUEST['year'];

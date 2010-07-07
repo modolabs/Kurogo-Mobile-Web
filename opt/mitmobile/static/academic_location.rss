@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?><rss version="2.0" xml:base="http://localhost/drupal/academic_calendar/rss.xml" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title></title>
+    <link>http://localhost/drupal/academic_calendar/rss.xml</link>
+    <description></description>
+    <language>en</language>
+          <item>
+    <title>Academic Calendar 2008 - 2009</title>
+    <link>http://localhost/drupal/node/26</link>
+    <description></description>
+     <comments>http://localhost/drupal/node/26#comments</comments>
+ <fiscal_year>2009</fiscal_year>
+ <ics_url>http://web.mit.edu/registrar/calendar/AcademicCalendar0809_ForGoogle.ics</ics_url>
+ <pubDate>Thu, 27 May 2010 23:08:36 +0000</pubDate>
+ <dc:creator>sonya</dc:creator>
+ <guid isPermaLink="false">26 at http://localhost/drupal</guid>
+  </item>
+  <item>
+    <title>Academic Calendar 2009 - 2010</title>
+    <link>http://localhost/drupal/node/27</link>
+    <description></description>
+     <comments>http://localhost/drupal/node/27#comments</comments>
+ <fiscal_year>2010</fiscal_year>
+ <ics_url>http://web.mit.edu/registrar/calendar/AcademicCalendar0910_ForGoogle.ics</ics_url>
+ <pubDate>Thu, 27 May 2010 23:09:10 +0000</pubDate>
+ <dc:creator>sonya</dc:creator>
+ <guid isPermaLink="false">27 at http://localhost/drupal</guid>
+  </item>
+  <item>
+    <title>Academic Calendar 2010 - 2011</title>
+    <link>http://localhost/drupal/node/28</link>
+    <description></description>
+     <comments>http://localhost/drupal/node/28#comments</comments>
+ <fiscal_year>2011</fiscal_year>
+ <ics_url>http://web.mit.edu/registrar/calendar/AcademicCalendar1011_ForGoogle.ics</ics_url>
+ <pubDate>Thu, 27 May 2010 23:09:48 +0000</pubDate>
+ <dc:creator>sonya</dc:creator>
+ <guid isPermaLink="false">28 at http://localhost/drupal</guid>
+  </item>
+  </channel>
+</rss>

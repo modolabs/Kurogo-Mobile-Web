@@ -1,5 +1,5 @@
 <?
-require LIBDIR . 'mit_ldap.php';
+require LIBDIR . '/mit_ldap.php';
 $raw_people = mit_search($_REQUEST['q']);
 $people = Array();
 foreach ($raw_people as $raw_person) {

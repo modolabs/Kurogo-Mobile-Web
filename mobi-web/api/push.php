@@ -1,8 +1,7 @@
 <?
 
 
-require_once "../config/mobi_web_constants.php";
-require_once(LIBDIR . 'StellarData.php');
+require_once(LIBDIR . '/StellarData.php');
 StellarData::init();
 
 $uid = $_REQUEST['uid'];

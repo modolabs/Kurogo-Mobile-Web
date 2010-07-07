@@ -1,10 +1,8 @@
 <?php
 
+require_once LIBDIR . "/rss_services.php";
 
-require_once "../config/mobi_web_constants.php";
-require_once LIBDIR . "rss_services.php";
-
-$contacts = json_decode(file_get_contents(LIBDIR . "EmergencyContacts.json"), TRUE);
+$contacts = json_decode(file_get_contents(LIBDIR . "/EmergencyContacts.json"), TRUE);
 
 $emergency_message = "Coming Soon: Emergency Updates"; 
 $Emergency = new Emergency();
@@ -17,7 +15,6 @@ if($emergency === False) {
 }
 
 // the logic to implement the page begins here
-require PAGE_HEADER;
 
 if(isset($_REQUEST['contacts'])) {
   require "$page->branch/contacts.html";

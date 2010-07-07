@@ -1,8 +1,7 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require WEBROOT . 'mobile-about/WhatsNew.php';
+require WEBROOT . '/mobile-about/WhatsNew.inc';
 $whats_new = new WhatsNew();
 $new_items = $whats_new->get_items();
 WhatsNew::setLastTime();

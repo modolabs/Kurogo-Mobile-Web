@@ -1,10 +1,6 @@
 <?php
 
-
-
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-require_once("shuttle_lib.php");
+require_once "shuttle_lib.inc";
 
 $route = $_REQUEST['route'];
 if (!in_array($route, ShuttleSchedule::get_active_routes())) {
