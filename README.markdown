@@ -76,10 +76,19 @@ Now you can start the daemon processes with
 ``$ ./mobi-daemons.sh start``
 
 ## Downloading iPhone map tiles
-The map module of iPhone application requires the web server to download all the map tiles from the maps.mit.edu server, after they are downloaded they are processed by pngcrush (this needs to be installed on the server). As with the mobi-daemons.sh, you need to make sure configure\_paths.sh is configured correctly, the map tiles are saved in the auxillary path.  To download and process all the map tiles run:  
-``$ cd scripts``  
-``$ ./mobi-maptiles.sh``  
-(This can take quite a long time, ran locally from MIT it takes about 3-4 hours)
+If you are running an ArcGIS tile server, there is a script that can downloads all tiles to a local directory (and compress if pngcrush is installed).  After installation, run (assuming you chose ``/opt`` as your primary installation folder):  
+``/opt/mitmobile/bin/mobi-maptiles.sh``
+Depending on how many tiles you have, this script may take several hours to download.
+
+pngcrush can be downloaded from http://sourceforge.net/projects/pmt/files/
+
+To build pngcrush (using the pngcrush-1.7.11.tar.gz as an example):
+``tar -zxf pngcrush-1.7.11.tar.gz``  
+``cd pngcrush-1.7.11``  
+``make``  
+``cp pngcrush /usr/local/bin``
+
+(instead of /usr/local/bin you may choose any directory in your $PATH, or edit mobi-maptiles so that it says ``/path/to/pngcrush`` instead of ``pngcrush``)
 
 ## Building the iPhone application
 You can build the iPhone application on a Mac by opening ``"iPhone-app/MIT Mobile.xcodeproj"`` in XCode.  By default the iPhone app connects to MIT mobile servers, either development, staging or production.  If you would like it to connect to the webserver you have installed and configure, then edit the domain names and URLs at the top of iPhone-app/Common/MITConstants.m
