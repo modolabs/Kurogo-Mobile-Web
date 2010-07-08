@@ -5,8 +5,13 @@
  * ICS_CACHE_LIFESPAN
  */
 require_once "lib_constants.inc";
-require_once "DrupalDB.php";
 require_once "mit_ical_lib.php";
+require_once "rss_services.php";
+
+class LibraryRSS extends RSS {
+  protected $rss_url = LIBRARY_OFFICE_RSS;
+  protected $custom_tags = array('url', 'room', 'phone', 'calendar_url');
+}
 
 class LibraryInfo {
 
@@ -20,7 +25,7 @@ class LibraryInfo {
 
   // returns cached location
   public static function ical_filename($library) {
-    return str_replace(' ', '_', CACHE_DIR . "LIBRARIES_$library.ics");
+    return str_replace(' ', '_', CACHE_DIR . "/LIBRARIES_$library.ics");
   }
 
   public static function get_calendar($library) {
@@ -36,55 +41,26 @@ class LibraryInfo {
   public static function get_libraries() {
     if (self::$libraries === NULL) {
       $libraries = Array();
-      $drupalDB = DrupalDB::$connection;
-      $stmt = $drupalDB->stmt_init();
-      $stmt->prepare("SELECT title FROM node WHERE type = 'library_office' ORDER BY title");
-      $stmt->execute();
-      $stmt->store_result();
-      $stmt->bind_result($library);
-      while ($stmt->fetch()) {
-	// hide closed libraries; eventually need a way to delete
-	if ($library != 'Aeronautics and Astronautics Library'
-	    && $library != 'Lindgren Library') {
-	  $libraries[] = $library;
-	}
+      $rss = new LibraryRSS;
+      $feed = $rss->get_feed();
+      foreach ($feed as $item) {
+        $libraries[ $item['title'] ] = array(
+          'url' => $item['url'],
+          'tel' => $item['phone'],
+          'location' => $item['room'],
+          'gcal' => $item['calendar_url'],
+          );
       }
-      $stmt->close();
       self::$libraries = $libraries;
     }
-    return self::$libraries;
+    return array_keys(self::$libraries);
   }
 
   public static function get_library_info($library) {
-    $drupalDB = DrupalDB::$connection;
-
-    $nid = NULL;
-
-    $stmt = $drupalDB->stmt_init();
-    $stmt->prepare("SELECT nid FROM node WHERE type = 'library_office' and title LIKE ?");
-    $stmt->bind_param('s', $library);
-    $stmt->execute();
-    $stmt->bind_result($nid);
-    $stmt->fetch();
-    $stmt->free_result();
-
-    if ($nid) {
-      $stmt->prepare("SELECT field_office_url_value, field_room_value, field_phone_value, field_calendar_url_value FROM content_type_library_office WHERE nid = ?");
-      $result = $stmt->result_metadata();
-      $stmt->bind_param('i', $nid);
-      $stmt->execute();
-      $stmt->store_result();
-      $stmt->bind_result($url, $location, $tel, $gcal);
-      $stmt->fetch();
-      $stmt->close();
-
-      return Array(
-        'url' => $url,
-	'location' => $location,
-	'tel' => $tel,
-	'gcal' => $gcal
-	);
+    if (self::$libraries === NULL) {
+      self::get_libraries();
     }
+    return self::$libraries[$library];
   }
 
   public static function cache_ical($library) {
