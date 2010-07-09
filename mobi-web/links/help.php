@@ -7,7 +7,4 @@ $help = array(
   'Get quick access to mobile-optimized websites of organizations providing affiliated services to the MIT community.',
 );
 
-
-require HELP_HEADER;
-
 ?>

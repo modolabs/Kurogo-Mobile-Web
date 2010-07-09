@@ -9,7 +9,4 @@ $help = array(
   'You can open a TechCASH account by visiting <a href="http://techcash.mit.edu/">http://techcash.mit.edu</a> from your computer and clicking on "Open Account"',
 );
 
-
-require HELP_HEADER;
-
 ?>

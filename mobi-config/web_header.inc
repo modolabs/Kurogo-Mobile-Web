@@ -5,9 +5,6 @@
 define('WEBROOT', '/var/www/html');
 define('LIBDIR', '/opt/mitmobile/mobi-lib');
 
-// TODO: make this into an auto include
-define('HELP_HEADER', '/var/www/html/page_builder/help.php');
-
 /* path where cookies should be stored on the users' browser. */
 define('HTTPROOT', '/');
 

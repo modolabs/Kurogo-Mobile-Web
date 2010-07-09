@@ -122,7 +122,7 @@ cp -rp mobi-web $PREFIX0/mitmobile # we're doing this to help uninstallation
 # copy web files
 
 cp -rp mobi-web/* $PREFIX1
-cp -p mobi-web/.htaccess $PREFIX1
+cp -p setup/.htaccess $PREFIX1
 
 # create symlinks
 

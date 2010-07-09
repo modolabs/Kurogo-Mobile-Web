@@ -13,7 +13,4 @@ $help = array(
   'Each class detail screen includes the latest news and announcements as published by the class faculty and staff on the class Stellar page. You can also view the class description and faculty and staff listings by using the tabs at the top of the page. Click on the name of any faculty or staff member to look them up in the People Directory.',
 );
 
-
-require HELP_HEADER;
-
 ?>
