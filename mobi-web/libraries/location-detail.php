@@ -1,11 +1,8 @@
 <?
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . 'page_builder/page_header.php';
-require_once LIBDIR . 'mit_ical_lib.php';
-require_once LIBDIR . 'LibraryInfo.php';
-require WEBROOT . "libraries/libraries_lib.php";
+require_once LIBDIR . '/mit_ical_lib.php';
+require_once LIBDIR . '/LibraryInfo.php';
+require "libraries_lib.inc";
 
 $library = urldecode($_GET['library']);
 LibraryInfo::cache_ical($library);

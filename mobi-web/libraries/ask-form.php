@@ -1,10 +1,7 @@
 <?php
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require WEBROOT . "page_builder/security.php";
-require WEBROOT . "page_builder/page_header.php";
-require WEBROOT . "libraries/libraries_lib.php";
+require WEBROOT . "/page_builder/security.inc";
+require WEBROOT . "/libraries/libraries_lib.inc";
 
 ssl_required();
 

@@ -1,11 +1,9 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require PAGE_HEADER;
-require LIBDIR . "mit_calendar.php";
+require LIBDIR . "/mit_calendar.php";
 
-require "calendar_lib.php";
+require "calendar_lib.inc";
 
 $search_terms = $_REQUEST['filter'];
 

@@ -1,10 +1,7 @@
 <?
-$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . 'page_builder/page_header.php';
-require_once WEBROOT . "libraries/libraries_lib.php";
-require_once LIBDIR . "LibraryInfo.php";
+require_once WEBROOT . "/libraries/libraries_lib.inc";
+require_once LIBDIR . "/LibraryInfo.php";
 
 if ($_COOKIE['mitcertificate'] === 'yes') {
 

@@ -1,9 +1,6 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-require_once LIBDIR . "rss_services.php";
+require_once LIBDIR . "/rss_services.php";
 
 $ThreeDown = new ThreeDown();
 $states = $ThreeDown->get_feed();

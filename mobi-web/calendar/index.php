@@ -1,11 +1,8 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require PAGE_HEADER;
-
 //defines all the variables related to being today
-require "calendar_lib.php";
+require "calendar_lib.inc";
 
 $today = day_info(time());
 

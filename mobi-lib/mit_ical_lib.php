@@ -492,7 +492,9 @@ class ICalendar extends ICalObject {
 
   protected function read_from_url($url) {
     $nesting = Array();
-    $lines = explode("\n", $this->unfold(file_get_contents($url)));
+    $contents = file_get_contents($url);
+    $contents = str_replace("\r\n", "\n", $contents);
+    $lines = explode("\n", $this->unfold($contents));
     foreach ($lines as $line) {
       $contentline = $this->contentline($line);
       $contentname = $contentline['name'];
@@ -581,7 +583,7 @@ class ICalendar extends ICalObject {
   }
 
   protected function unfold($text) {
-    return str_replace('\n ', '', $text);
+    return str_replace("\n ", "", $text);
   }
 
 }

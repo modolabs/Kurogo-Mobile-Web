@@ -1,6 +1,6 @@
 <?
 
-require LIBDIR . 'StellarData.php';
+require LIBDIR . '/StellarData.php';
 if (isset($_REQUEST['command'])) {
 
   $data = Array();

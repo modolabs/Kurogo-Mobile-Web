@@ -1,10 +1,7 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-require_once LIBDIR . "StellarData.php";
-require_once "stellar_lib.php";
+require_once LIBDIR . "/StellarData.php";
+require_once "stellar_lib.inc";
 
 //start session (used to save class details)
 session_id($_REQUEST['sess']);

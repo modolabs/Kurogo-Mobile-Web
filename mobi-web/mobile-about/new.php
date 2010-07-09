@@ -1,9 +1,6 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require WEBROOT . "/page_builder/page_header.php";
-require "WhatsNew.php";
+require "WhatsNew.inc";
 
 $whats_new = new WhatsNew();
 $new_items = $whats_new->get_items();

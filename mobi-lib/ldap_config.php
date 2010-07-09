@@ -2,8 +2,8 @@
 /*************** LDAP server, filters and mappings **************
  *
  */
-define("LDAP_SERVER", "ldap.mit.edu");
-define("LDAP_PATH", 'dc=mit, dc=edu');
+define("LDAP_SERVER", "phonebook.harvard.edu");
+define("LDAP_PATH", 'o=Harvard University,c=US'); 
 define("SEARCH_TIMELIMIT", 30);
 define("READ_TIMELIMIT", 30);
 define("TELEPHONE_FILTER", "(telephonenumber=*%s*)");

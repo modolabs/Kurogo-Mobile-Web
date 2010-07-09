@@ -1,9 +1,6 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require PAGE_HEADER;
-
 switch($_REQUEST['code']) {
   case "data":
     header("Status: 504 Gateway Timeout");

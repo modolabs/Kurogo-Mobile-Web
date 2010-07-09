@@ -1,10 +1,8 @@
 <?php
 
 
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-require_once WEBROOT . "home/Modules.php";
-require_once "customize_lib.php";
+require_once WEBROOT . "/home/Modules.inc";
+require_once "customize_lib.inc";
 
 if ($page->branch == 'Webkit') {
   $template = $page->delta_file('index', 'html');

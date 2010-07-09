@@ -1,7 +1,5 @@
 <?php
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-require_once LIBDIR . "campus_map.php";
+require_once LIBDIR . "/campus_map.php";
 
 if ($page->branch == 'Webkit') {
   $categories = array(

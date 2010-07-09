@@ -1,8 +1,6 @@
 <?php
 
-
-require_once "../config/mobi_web_constants.php";
-require_once WEBROOT . "home/Modules.php";
+require_once WEBROOT . "/home/Modules.inc";
 define("SMS_STATS_URL", 'http://sms1.mit.edu/mobi-sms/mangotext/api/statistics.php');
 
 $platforms = Array(

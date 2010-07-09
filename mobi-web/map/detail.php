@@ -1,9 +1,7 @@
 <?
 define("WMS_URL", "http://ims.mit.edu/WMS_MS/WMS.asp");
 
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-require_once LIBDIR . "campus_map.php";
+require_once LIBDIR . "/campus_map.php";
 
 //set zoom scale
 define('ZOOM_FACTOR', 2);
