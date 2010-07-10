@@ -23,10 +23,10 @@ sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' mobi-config/*.ini
 sed -i .bak 's/\/var\/www\/html/'${PREFIX1_esc}'/g' mobi-config/*.inc
 
 ln -sf ../../mobi-lib
-cd mobi-lib
-ln -sf ../mobi-config/lib_constants.inc
+cd ../../mobi-lib
+ln -sf ../opt/mitmobile/mobi-config/lib_constants.inc
 
-cd ../bin
+cd ../opt/mitmobile/bin
 for aFile in `ls ../../../mobi-scripts`; do ln -sf $aFile; done
 
 

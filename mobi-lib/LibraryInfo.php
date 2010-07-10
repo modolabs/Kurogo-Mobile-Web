@@ -7,6 +7,7 @@
 require_once "lib_constants.inc";
 require_once "mit_ical_lib.php";
 require_once "rss_services.php";
+require_once "DiskCache.inc";
 
 class LibraryRSS extends RSS {
   protected $rss_url = LIBRARY_OFFICE_RSS;
@@ -16,16 +17,12 @@ class LibraryRSS extends RSS {
 class LibraryInfo {
 
   public static $libraries = NULL;
+  private static $cache = NULL;
 
   // returns google calendar url
   public static function ical_url($library) {
     $attribs = self::get_library_info($library);
     return $attribs['gcal'];
-  }
-
-  // returns cached location
-  public static function ical_filename($library) {
-    return str_replace(' ', '_', CACHE_DIR . "/LIBRARIES_$library.ics");
   }
 
   public static function get_calendar($library) {
@@ -64,20 +61,18 @@ class LibraryInfo {
   }
 
   public static function cache_ical($library) {
-    $ical_file_location = self::ical_filename($library);
-    $time = time();
-    if (!file_exists($ical_file_location) 
-	|| ($time - filemtime($ical_file_location)) > ICS_CACHE_LIFESPAN 
-	|| !filesize($ical_file_location)) {
-      
+    if (self::$cache === NULL) {
+      self::$cache = new DiskCache(CACHE_DIR . "/LIBRARIES", ICS_CACHE_LIFESPAN, TRUE);
+      self::$cache->setSuffix('.ics');
+    }
+
+    if (!self::$cache->isFresh($library)) {
       $google_cal_url = self::ical_url($library);
-      $fhandle = fopen($ical_file_location, 'w');
 
       $error_reporting = intval(ini_get('error_reporting'));
       error_reporting($error_reporting & ~E_WARNING);
       if ($contents = file_get_contents($google_cal_url)) {
-	fwrite($fhandle, $contents);
-	fclose($fhandle);
+        self::$cache->write($contents);
       }
       error_reporting($error_reporting);
     }

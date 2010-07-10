@@ -1,9 +1,12 @@
-<?
+<?php
 
 /* this file interacts with nextbus' xml feed */
 
 require_once "lib_constants.inc";
+require_once "DiskCache.inc";
 require_once("ShuttleSchedule.php");
+
+NextBusReader::init();
 
 class NextBusReader {
   private static $query_params = Array();
@@ -11,10 +14,11 @@ class NextBusReader {
   private static $predictionCache = Array(); // results of predictions command
   private static $vehicleCache = Array(); // results of vehicleLocatiosn command
   private static $unmodifiedRouteList = Array(); // results of routeList command
-  private static $routeCachePrefix = 'ROUTE_';
-  private static $predictionCachePrefix = 'PREDICTION_';
-  private static $vehicleCacheFile = 'VEHICLE_LOCATIONS';
-  private static $stopsCacheFile = 'STOPS';
+
+  private static $routeDiskCache;
+  private static $predDiskCache;
+  private static $vehicleDiskCache;
+  private static $stopDiskCache;
 
   /* private query methods */
 
@@ -75,93 +79,38 @@ class NextBusReader {
   }
 
   private static function is_nextbus_route($routeName) {
-    self::init();
     if (!in_array($routeName, self::$unmodifiedRouteList)) {
       return FALSE;
     }
     return TRUE;
   }
 
-  /* private cache methods */
-
-  private static function write_cache($filename, $data) {
-    $fhandle = fopen(NEXTBUS_CACHE . '/' . $filename, 'w');
-    fwrite($fhandle, json_encode($data));
-    fclose($fhandle);
-  }
-
-  private static function read_cache($filename) {
-    if (file_exists(NEXTBUS_CACHE . '/' . $filename))
-      return json_decode(file_get_contents(NEXTBUS_CACHE . $filename), TRUE);
-    error_log('could not find cache file: ' . NEXTBUS_CACHE . $filename);
-    return FALSE;
-  }
-
-  private static function write_route_cache($routeName) {
-    self::write_cache(self::$routeCachePrefix 
-		      . $routeName, self::$routeCache[$routeName]);
-  }
-
-  private static function read_route_cache($routeName) {
-    return self::read_cache(self::$routeCachePrefix . $routeName);
-  }
-
-  private static function write_prediction_cache($routeName) {
-    self::write_cache(self::$predictionCachePrefix 
-		      . $routeName, self::$predictionCache[$routeName]);
-  }
-
-  private static function read_prediction_cache($routeName) {
-    return self::read_cache(self::$predictionCachePrefix . $routeName);
-  }
-
-  private static function write_vehicle_cache() {
-    self::write_cache(self::$vehicleCacheFile, self::$vehicleCache);
-  }
-
-  private static function read_vehicle_cache() {
-    return self::read_cache(self::$vehicleCacheFile);
-  }
-
-  private static function get_route_age($routeName) {
-    $filename = NEXTBUS_CACHE . self::$routeCachePrefix . $routeName;
-    if (file_exists($filename))
-      return time() - filemtime($filename);
-    return FALSE;
-  }
-
-  private static function route_is_fresh($routeName) {
-    $age = self::get_route_age($routeName);
-    return ($age && $age <= NEXTBUS_ROUTE_CACHE_TIMEOUT);
-  }
-
-  private static function get_vehicle_age() {
-    $filename = NEXTBUS_CACHE . self::$vehicleCacheFile;
-    if (file_exists($filename))
-      return time() - filemtime($filename);
-    return FALSE;
-  }
+  /* private cache wrapper methods */
 
   private static function get_prediction_age($routeName) {
     if (self::$predictionCache[$routeName]
 	&& array_key_exists('updated', self::$predictionCache[$routeName])) {
       return (time() - self::$predictionCache[$routeName]['updated']);
     } else {
-      $filename = NEXTBUS_CACHE . self::$predictionCachePrefix . $routeName;
-      if (file_exists($filename))
-	return time() - filemtime($filename);
+      return self::$predDiskCache->getAge($routeName);
     }
-    return FALSE;
   }
 
   private static function prediction_is_fresh($routeName) {
     $age = self::get_prediction_age($routeName);
-    return ($age && $age <= NEXTBUS_PREDICTION_CACHE_TIMEOUT);
+    return ($age <= NEXTBUS_PREDICTION_CACHE_TIMEOUT);
   }
 
   /* public top-level methods */
 
   public static function init() {
+
+    self::$routeDiskCache = new DiskCache(NEXTBUS_CACHE, NEXTBUS_ROUTE_CACHE_TIMEOUT, TRUE);
+    self::$routeDiskCache->setPrefix('route_');
+    self::$predDiskCache = new DiskCache(NEXTBUS_CACHE, NULL, TRUE);
+    self::$predDiskCache->setPrefix('prediction_');
+    self::$vehicleDiskCache = new DiskCache(NEXTBUS_CACHE . '/' . 'vehicle_locations');
+    self::$stopDiskCache = new DiskCache(NEXTBUS_CACHE . '/' . 'stops', NEXTBUS_ROUTE_CACHE_TIMEOUT);
     self::reset_query();
     if (!self::$routeCache) {
       ShuttleSchedule::init();
@@ -193,17 +142,18 @@ class NextBusReader {
 	    $routeName = $combined_routes[$routeName];
 	  }
 
-	  if (!self::$routeCache[$routeName] = self::read_route_cache($routeName)) {
+	  if (!self::$routeCache[$routeName] = self::$routeDiskCache->read($routeName)) {
 	    self::$routeCache[$routeName] = Array();
 	  }
 	}
 
       } else {
 	// query failed; get {routeName}s from cached filenames
+        $prefix = self::$routeDiskCache->getPrefix()
 	foreach (scandir(NEXTBUS_CACHE) as $filename) {
-	  if (strpos($filename, self::$routeCachePrefix) == 0) {
-	    $routeName = substr($filename, 0, strlen(self::$routeCachePrefix));
-	    self::$routeCache[$routeName] = self::read_route_cache($routeName);
+	  if (strpos($filename, $prefix) == 0) {
+	    $routeName = substr($filename, 0, $prefix);
+	    self::$routeCache[$routeName] = self::$routeDiskCache->read($routeName);
 	  }
 	}
       }
@@ -212,17 +162,12 @@ class NextBusReader {
   }
 
   public static function get_route_list() {
-    self::init();
     return array_keys(self::$routeCache);
   }
 
   public static function get_all_stops() {
-    $stopsCache = NEXTBUS_CACHE . self::$stopsCacheFile;
-
-    if (file_exists($stopsCache) && time() - filemtime($stopsCache) <= NEXTBUS_ROUTE_CACHE_TIMEOUT) {
-      $json = file_get_contents($stopsCache);
-      return json_decode($json, TRUE);
-    }
+    if (self::$stopDiskCache->isFresh())
+      return self::$stopDiskCache->read(self::$stopsCacheFile);
 
     $stops = Array();
     foreach (self::$routeCache as $route => $routeInfo) {
@@ -241,10 +186,7 @@ class NextBusReader {
       }
     }
 
-    if (!$fh = fopen($stopsCache, 'w'))
-      die("could not open $stopsCache");
-    fwrite($fh, json_encode($stops));
-    fclose($fh);
+    self::$stopDiskCache->write($stops);
 
     return $stops;
   }
@@ -256,17 +198,18 @@ class NextBusReader {
   }
 
   public static function get_route_info($routeName) {
-    $age = self::get_route_age($routeName);
-    if (!$age && !self::is_nextbus_route($routeName)) {
+    if (!self::$routeDiskCache->exists(self::$routeCachePrefix . $routeName)
+        && !self::is_nextbus_route($routeName)) {
       // we have nothing cached and NextBus doesn't know about $routeName
       return FALSE;
     }
 
     if (!self::$routeCache[$routeName]) {
-      self::$routeCache[$routeName] = self::read_route_cache($routeName);
+      self::$routeCache[$routeName] = self::$routeDiskCache->read($routeName);
     }
 
-    if (self::route_is_fresh($routeName) || !self::is_nextbus_route($routeName)) {
+    if (self::$routeDiskCache->isFresh($routeName)
+        || !self::is_nextbus_route($routeName)) {
       return self::$routeCache[$routeName];
     }
 
@@ -274,7 +217,7 @@ class NextBusReader {
     self::set_query_route($routeName);
     $xml = self::query();
     if (!$xml) { // either we got errors or couldn't read the url
-      self::$routeCache[$routeName] = self::read_route_cache($routeName);
+      self::$routeCache[$routeName] = self::$routeDiskCache->read($routeName);
     } else {
       $routeInfo = Array();
 
@@ -364,7 +307,8 @@ class NextBusReader {
 	} // closes foreach($path...
       } // closes foreach($xml...
       self::$routeCache[$routeName] = $routeInfo;
-      self::write_route_cache($routeName);
+      self::$routeDiskCache->write(self::$routeCache[$routeName],
+                                   self::$routeCachePrefix . $routeName);
     }
     return self::$routeCache[$routeName];
   }
@@ -376,18 +320,18 @@ class NextBusReader {
   public static function gps_active($routeName) {
     self::get_predictions($routeName);
     $age = self::get_prediction_age($routeName);
-    return ($age !== FALSE && $age <= NEXTBUS_CACHE_MAX_TOLERANCE);
+    return ($age <= NEXTBUS_CACHE_MAX_TOLERANCE);
   }
 
   // coordinates of current position of vehicle(s)
   // nextbus api returns all vehicles at once
   public static function get_coordinates($routeName) {
-    $age = self::get_vehicle_age();
+    $age = self::$vehicleDiskCache->getAge();
 
     $coordinates = Array();
     // if cache is fresh, return cached values
-    if ($age && $age <= NEXTBUS_VEHICLE_CACHE_TIMEOUT) {
-      self::$vehicleCache = self::read_vehicle_cache();
+    if ($age <= NEXTBUS_VEHICLE_CACHE_TIMEOUT) {
+      self::$vehicleCache = self::$vehicleDiskCache->read();
 
       if (array_key_exists($routeName, self::$vehicleCache)) { 
 	foreach (self::$vehicleCache[$routeName] as $coords) {
@@ -398,7 +342,7 @@ class NextBusReader {
       return $coordinates;
     }
 
-    $age = ($age === FALSE) ? 0 : $age;
+    $age = ($age == PHP_INT_MAX) ? 0 : $age;
 
     // get all vehicle locations
     self::set_command('vehicleLocations');
@@ -444,7 +388,7 @@ class NextBusReader {
       foreach ($results as $route => $data) {
 	self::$vehicleCache[$route] = $data;
       }
-      self::write_vehicle_cache();
+      self::$vehicleDiskCache->write(self::$vehicleCache);
       if (self::$vehicleCache[$routeName])
 	$coordinates = self::$vehicleCache[$routeName];
     }
@@ -458,7 +402,7 @@ class NextBusReader {
     if (!self::is_nextbus_route($routeName))
       return FALSE;
     if (self::prediction_is_fresh($routeName)) {
-      self::$predictionCache[$routeName] = self::read_prediction_cache($routeName);
+      self::$predictionCache[$routeName] = self::$predDiskCache->read($routeName);
       return self::$predictionCache[$routeName];
     }
 
@@ -474,9 +418,9 @@ class NextBusReader {
     $xml = self::query();
     if (!$xml) {
       $age = self::get_prediction_age($routeName);
-      if (!$age || $age > NEXTBUS_CACHE_MAX_TOLERANCE)
+      if ($age > NEXTBUS_CACHE_MAX_TOLERANCE)
 	return FALSE;
-      self::$predictionCache[$routeName] = self::read_prediction_cache($routeName);
+      self::$predictionCache[$routeName] = self::$predDiskCache->read($routeName);
     } else {
       $results = Array();
       foreach ($xml->getElementsByTagName('predictions') as $predictions) {
@@ -493,7 +437,8 @@ class NextBusReader {
       if (count($results)) {
 	self::$predictionCache[$routeName] = $results;
 	self::$predictionCache[$routeName]['updated'] = time();
-	self::write_prediction_cache($routeName);
+        self::$predDiskCache->write(self::$predictionCache[$routeName],
+                                    self::$predictionCachePrefix . $routeName);
       }
     }
     return self::$predictionCache[$routeName];
