@@ -12,7 +12,7 @@ date_default_timezone_set('America/New_York');
 
 // fetch per-server settings.
 
-$ini = parse_ini_file("web_constants_prod.ini");
+$ini = parse_ini_file("web_constants_dev.ini");
 
 require WEBROOT . '/page_builder/Page.inc';
 require WEBROOT . '/page_builder/page_tools.inc';
@@ -26,7 +26,24 @@ class DeviceNotSupported extends Exception {
 }
 
 if($ini['USE_PRODUCTION_ERROR_HANDLER']) {
-  set_exception_handler('exception_handler');
+  set_exception_handler("exception_handler");
+} else {
+  set_exception_handler("dev_exception_handler");
+}
+
+function dev_exception_handler($exception) {
+
+  if(is_a($exception, "DataServerException")) {
+    $error_query = "code=data&url=" . urlencode($_SERVER['REQUEST_URI']);
+  } else if(is_a($exception, "DeviceNotSupported")) {
+    $error_query = "code=device_notsupported";
+  } else {
+    $error_query = "code=internal";
+  }
+  $error_url = HTTPROOT . "error-page/?{$error_query}";
+
+  error_log(print_r($exception, TRUE));
+  header("Location: {$error_url}");
 }
 
 function exception_handler($exception) {
