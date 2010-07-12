@@ -5,7 +5,7 @@
  * ICS_CACHE_LIFESPAN
  */
 require_once "lib_constants.inc";
-require_once "mit_ical_lib.php";
+require_once "ICalendar.php";
 require_once "rss_services.php";
 require_once "DiskCache.inc";
 
@@ -26,12 +26,8 @@ class LibraryInfo {
   }
 
   public static function get_calendar($library) {
-    $ical_file = self::ical_filename($library);
-    if (!file_exists($ical_file)) {
-      self::cache_ical($library);
-    }
-
-    $cal = new ICalendar($ical_file);
+    self::cache_ical($library);
+    $cal = new ICalendar(self::$cache->getFullPath($library));
     return $cal;
   }
 
@@ -64,17 +60,15 @@ class LibraryInfo {
     if (self::$cache === NULL) {
       self::$cache = new DiskCache(CACHE_DIR . "/LIBRARIES", ICS_CACHE_LIFESPAN, TRUE);
       self::$cache->setSuffix('.ics');
+      self::$cache->preserveFormat();
     }
 
     if (!self::$cache->isFresh($library)) {
       $google_cal_url = self::ical_url($library);
 
-      $error_reporting = intval(ini_get('error_reporting'));
-      error_reporting($error_reporting & ~E_WARNING);
       if ($contents = file_get_contents($google_cal_url)) {
-        self::$cache->write($contents);
+        self::$cache->write($contents, $library);
       }
-      error_reporting($error_reporting);
     }
   }
 

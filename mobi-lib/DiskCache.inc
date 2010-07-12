@@ -6,6 +6,7 @@ class DiskCache {
   private $timeout = PHP_INT_MAX;
   private $prefix = "";
   private $suffix = "";
+  private $serialize = TRUE;
 
   public function __construct($path, $timeout=NULL, $mkdir=FALSE) {
     $this->path = $path;
@@ -19,6 +20,10 @@ class DiskCache {
 
     if ($timeout !== NULL)
       $this->timeout = $timeout;
+  }
+
+  public function preserveFormat() {
+    $this->serialize = FALSE;
   }
 
   public function setTimeout($timeout) {
@@ -41,7 +46,7 @@ class DiskCache {
     $this->suffix = $suffix;
   }
 
-  private function getFullPath($filename) {
+  public function getFullPath($filename=NULL) {
     if ($filename === NULL) {
       return $this->path;
     } else {
@@ -51,8 +56,13 @@ class DiskCache {
 
   public function write($object, $filename=NULL) {
     $path = $this->getFullPath($filename);
-    if ($fh = fopen($path, 'w')) {
-      fwrite($fh, serialize($object));
+    $fh = fopen($path, 'w');
+    if ($fh !== FALSE) {
+      if ($this->serialize) {
+        fwrite($fh, serialize($object));
+      } else {
+        fwrite($fh, $object);
+      }
       fclose($fh);
     } else {
       die("could not open $path for writing");
@@ -62,8 +72,13 @@ class DiskCache {
   public function read($filename=NULL) {
     $path = $this->getFullPath($filename);
     if (file_exists($path) && $this->isFresh($filename)) {
-      if ($contents = file_get_contents($path))
-        return unserialize($contents);
+      if ($contents = file_get_contents($path)) {
+        if ($this->serialize) {
+          return unserialize($contents);
+        } else {
+          return $contents;
+        }
+      }
       error_log("could not get contents of $path");
     }
     return FALSE;
@@ -78,7 +93,7 @@ class DiskCache {
     $path = $this->getFullPath($filename);
     if ($timeout === NULL)
       $timeout = $this->timeout;
-    return (filesize($path) > 0 && $this->getAge($path) < $timeout);
+    return ($this->getAge($filename) < $timeout);
   }
 
   public function getAge($filename=NULL) {
