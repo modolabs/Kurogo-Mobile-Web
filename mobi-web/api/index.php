@@ -18,7 +18,8 @@ switch ($module) {
    break;
 
  case 'calendar':
-   require('calendar.php');
+   //require('calendar.php');
+   require('HarvardCalendar.php');
    break;
 
  case 'push':

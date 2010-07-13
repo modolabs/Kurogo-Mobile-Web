@@ -52,11 +52,11 @@ define('NEXTBUS_DAEMON_PID_FILE', CACHE_DIR . '/NEXTBUS_DAEMON_PID');
 // stellar -- see dev/stage/prod for base url
 
 // dir for subject listing files
-define('STELLAR_COURSE_DIR', CACHE_DIR . '/STELLAR_COURSE/');
+define('STELLAR_COURSE_DIR', CACHE_DIR . '/STELLAR_COURSE');
 // how long to keep cached subject files
 define('STELLAR_COURSE_CACHE_TIMEOUT', 86400);
 // dir for cached rss data
-define('STELLAR_FEED_DIR', CACHE_DIR . '/STELLAR_FEEDS/');
+define('STELLAR_FEED_DIR', CACHE_DIR . '/STELLAR_FEEDS');
 define('STELLAR_FEED_CACHE_TIMEOUT', 10); // how long to keep cached rss files
 define('STELLAR_SUBSCRIPTIONS_FILE', CACHE_DIR . '/STELLAR_SUBSCRIPTIONS');
 

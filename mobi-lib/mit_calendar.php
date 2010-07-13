@@ -1,6 +1,7 @@
-<?
+<?php
 
 require_once "lib_constants.inc";
+require_once "DiskCache.inc";
 
 MIT_Calendar::init();
 
@@ -33,6 +34,8 @@ class SoapClientWrapper {
 
 class MIT_Calendar {
   private static $php_client = NULL;
+  private static $tempDiskCache = NULL;
+  private static $diskCache = NULL;
 
   private static $common_words = Array(
     "", "a", "the", "in", "of", "at", "i", // words we actually received in queries
@@ -46,41 +49,11 @@ class MIT_Calendar {
   public static function init() {
     if(!self::$php_client) {
       self::$php_client = new SoapClientWrapper(EVENTS_CALENDAR_API);
+
+      // TODO: move timeout value to constants file
+      self::$tempDiskCache = new DiskCache(TMP_DIR, 86400);
+      self::$diskCache = new DiskCache(CACHE_DIR . '/EVENTS_CALENDAR', 86400, TRUE);
     }
-  }
-
-  private static function write_cache($event_type, $data, $tmp=FALSE) {
-    if ($tmp)
-      $filename = TMP_DIR . $event_type;
-    else
-      $filename = CACHE_DIR . 'EVENTS_CALENDAR/' . $event_type;
-
-    $fh = fopen($filename, 'w');
-    fwrite($fh, serialize($data));
-    fclose($fh);
-  }
-
-  private static function write_temp_cache($event_type, $data) {
-    self::write_cache($event_type, $data, TRUE);
-  }
-
-  private static function read_cache($event_type, $tmp=FALSE) {
-    // TODO: move timeout value to constants file
-    $timeout = 86400;
-
-    if ($tmp)
-      $filename = TMP_DIR . $event_type;
-    else
-      $filename = CACHE_DIR . 'EVENTS_CALENDAR/' . $event_type;
-
-    if (file_exists($filename) && filemtime($filename) < time() + $timeout) {
-      return unserialize(file_get_contents($filename));
-    }
-    return FALSE;
-  }
-
-  private static function read_temp_cache($event_type) {
-    return self::read_cache($event_type, TRUE);
   }
 
   public static function Categorys() {
@@ -161,7 +134,7 @@ class MIT_Calendar {
       $cachename .= '_' . $category->catid;
     }
 
-    if ($results = self::read_temp_cache($cachename)) {
+    if ($results = self::$tempDiskCache->read($cachename)) {
       return $results;
     }
 
@@ -177,7 +150,7 @@ class MIT_Calendar {
 
     $results = self::$php_client->findEventsHeaders(SearchCriterion::forSOAP($criteria));
 
-    self::write_temp_cache($cachename, $results);
+    self::$tempDiskCache->write($results, $cachename);
     return $results;
   }
 
@@ -225,7 +198,7 @@ class MIT_Calendar {
     }
 
     $hard_cache = 'day_' . str_replace('/', '', $date);
-    if ($events = self::read_cache($hard_cache)) {
+    if ($events = self::$diskCache->read($hard_cache)) {
       return $events;
     }
 
@@ -260,7 +233,7 @@ class MIT_Calendar {
 	self::$today_events = $without_exhibitions;
       }
 
-      self::write_cache($hard_cache, $without_exhibitions);
+      self::$diskCache->write($without_exhibitions, $hard_cache);
     }
 
     return $without_exhibitions;

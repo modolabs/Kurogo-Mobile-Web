@@ -20,7 +20,4 @@ $help = array(
   'The Campus Map is provided by the MIT Facilities Department and IS&amp;T.',
 );
 
-
-require HELP_HEADER;
-
 ?>

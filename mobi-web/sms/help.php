@@ -8,7 +8,4 @@ $help = array(
   'For suggestions and questions, send email to <a href="mailto:mobiwebt@mit.edu">mobiweb@mit.edu.</a>',
 );
 
-
-require HELP_HEADER;
-
 ?>
