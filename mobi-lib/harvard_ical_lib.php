@@ -85,6 +85,8 @@ class ICalEvent extends ICalObject {
   private $description;
   private $location;
   private $tzid;
+  private $categories;
+  private $customFields = array();
 
   // attributes that will be populated only if recurring
   private $recur = FALSE;
@@ -133,6 +135,15 @@ class ICalEvent extends ICalObject {
   public function get_location() {
     return $this->location;
   }
+
+  public function get_customFields() {
+    return $this->customFields;
+  }
+  
+
+  public function get_categories() {
+    return $this->categories;
+    }
 
   public function is_recurring() {
     return $this->recur;
@@ -202,12 +213,22 @@ class ICalEvent extends ICalObject {
     case 'LOCATION':
       $this->location = $value;
       break;
+
+    case 'CATEGORIES':
+      $this->categories = $value;
+      break;
+
+    case 'X-TRUMBA-CUSTOMFIELD':
+      $this->customFields[$param_value] = $value;
+      break;
+
     case 'SUMMARY':
       $this->summary = str_replace('\\', '', $value);
       break;
     case 'DTSTART':
       // for dtstart and dtend the param is always time zone id
-      $start = ICalendar::ical2unix($value, $param_value);
+       $start = ICalendar::ical2unix($value, NULL);
+     // $start = ICalendar::ical2unix($value, $param_value);
       if (!$this->range) {
 	$this->range = new TimeRange($start);
       } else {
@@ -215,7 +236,8 @@ class ICalEvent extends ICalObject {
       }
       break;
     case 'DTEND':
-      $end = ICalendar::ical2unix($value, $param_value);
+      //$end = ICalendar::ical2unix($value, $param_value);
+      $end = ICalendar::ical2unix($value, NULL);
       if (!$this->range) {
 	$this->range = new TimeRange($end);
       } else {
@@ -400,7 +422,7 @@ class ICalendar extends ICalObject {
 
   public static function ical2unix($icaltime, $tzid=NULL) {
     if ($tzid === NULL) {
-      $time = new DateTime($icaltime);
+      $time = new DateTime($icaltime, new DateTimeZone('America/New_York'));
     } else {
       $tz = new DateTimeZone($tzid);
       $time = new DateTime($icaltime, $tz);
@@ -455,6 +477,7 @@ class ICalendar extends ICalObject {
     if ($time === NULL) {
       $time = time();
     }
+  
     $day = new DayRange($time, $this->timezone->tzid);
 
     $events = Array();
@@ -467,6 +490,10 @@ class ICalendar extends ICalObject {
       } elseif ($event->overlaps($day)) {
 	$events[] = $event;
       }
+      /* Making sure the events that start at 0000hrs GMT
+      	 are still correctly captured as today's events */
+	 else if ($event->get_start() - $day->get_start() == (24*60*60))
+	      $events[] = $event;     
     }
     return $events;
   }
@@ -492,12 +519,14 @@ class ICalendar extends ICalObject {
 
   protected function read_from_url($url) {
     $nesting = Array();
-    $contents = file_get_contents($url);
-    $contents = str_replace("\r\n", "\n", $contents);
-    $lines = explode("\n", $this->unfold($contents));
+    $lines = explode("\n", $this->unfold(file_get_contents($url)));
+
     foreach ($lines as $line) {
+
       $contentline = $this->contentline($line);
+
       $contentname = $contentline['name'];
+
       $value = $contentline['value'];
       switch($contentname) {
       case 'BEGIN':
@@ -558,6 +587,8 @@ class ICalendar extends ICalObject {
 	break;
       default:
 	if (array_key_exists('param_name', $contentline)) {
+	 $param_name = $contentline['param_name'];
+	 $param_value = $contentline['param_value'];
 	  end($nesting)->set_attribute($contentname, $value, $param_name, $param_value);
 	}
 	else {
@@ -583,7 +614,7 @@ class ICalendar extends ICalObject {
   }
 
   protected function unfold($text) {
-    return str_replace("\n ", "", $text);
+    return str_replace("\r\n ","",$text);  
   }
 
 }

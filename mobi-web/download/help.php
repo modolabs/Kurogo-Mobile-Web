@@ -8,7 +8,4 @@ $help = array(
 );
 
 
-require_once "../config/mobi_web_constants.php";
-require HELP_HEADER;
-
 ?>

@@ -64,22 +64,30 @@ For other systems (tested on MAMP):
 
 The ``--update`` option will copy all the files, but skip MySQL setup.
 
-## Running Apple Push Notification Daemon Scripts
-Need to save the push certificates as .pem files somewhere on the server, and configure the following variables in mobi-config/mobi\_web\_constants.php: ``APNS_CERTIFICATE_DEV``, ``APNS_CERTIFICATE_DEV_PASSWORD``, ``APNS_CERTIFICATE_PROD``, ``APNS_CERTIFICATE_PROD_PASSWORD``, ``APNS_SANDBOX``, ``APPLE_RELEASE_APP_ID``.
+## Running Apple Push Notification Daemon Scripts (optional)
+* Obtain push certificates for the app from your Apple Developer portal.  
+* Download the certs to your keychain.  
+* Export the certificates from your keychain use openssl to create .pem files from the exported .p12 files.  
+* save the .pem files in /opt/mitmobile/certs (replacing /opt with your installation directory).
+* configure the following constants in /opt/mitmobile/mobi-config/web_constants_dev.ini, _stage.ini, _prod.ini:  ``APNS_CERTIFICATE_DEV``, ``APNS_CERTIFICATE_DEV_PASSWORD``, ``APNS_CERTIFICATE_PROD``, ``APNS_CERTIFICATE_PROD_PASSWORD``, ``APNS_SANDBOX``, ``APPLE_RELEASE_APP_ID``.
 
-Also need to configure the start-up script, (as the web user)  
-``$ cd mobi-push``  
-``$ cp configure_paths.sh.init configure_paths.sh``    
-The AUX\_PATH should be the same path used in mobi-config/mobi\_web\_constants.php, and DOCUMENT\_ROOT should be the web servers DOCUMENT\_ROOT    
-Now you can start the daemon processes with  
-``$ cd scripts``  
-``$ ./mobi-daemons.sh start``
+To start the daemons:  
+``/opt/mitmobile/bin/mobi-daemons.sh start``
 
 ## Downloading iPhone map tiles
-The map module of iPhone application requires the web server to download all the map tiles from the maps.mit.edu server, after they are downloaded they are processed by pngcrush (this needs to be installed on the server). As with the mobi-daemons.sh, you need to make sure configure\_paths.sh is configured correctly, the map tiles are saved in the auxillary path.  To download and process all the map tiles run:  
-``$ cd scripts``  
-``$ ./mobi-maptiles.sh``  
-(This can take quite a long time, ran locally from MIT it takes about 3-4 hours)
+If you are running an ArcGIS tile server, there is a script that can downloads all tiles to a local directory (and compress if pngcrush is installed).  After installation, run (assuming you chose ``/opt`` as your primary installation folder):  
+``/opt/mitmobile/bin/mobi-maptiles.sh``  
+Depending on how many tiles you have, this script may take several hours to download.
+
+pngcrush can be downloaded from http://sourceforge.net/projects/pmt/files/
+
+To build pngcrush (using the pngcrush-1.7.11.tar.gz as an example):  
+``tar -zxf pngcrush-1.7.11.tar.gz``  
+``cd pngcrush-1.7.11``  
+``make``  
+``cp pngcrush /usr/local/bin``
+
+(instead of /usr/local/bin you may choose any directory in your $PATH, or edit mobi-maptiles so that it says ``/path/to/pngcrush`` instead of ``pngcrush``)
 
 ## Building the iPhone application
 You can build the iPhone application on a Mac by opening ``"iPhone-app/MIT Mobile.xcodeproj"`` in XCode.  By default the iPhone app connects to MIT mobile servers, either development, staging or production.  If you would like it to connect to the webserver you have installed and configure, then edit the domain names and URLs at the top of iPhone-app/Common/MITConstants.m

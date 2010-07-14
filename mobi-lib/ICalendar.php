@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
  * The ICal* classes in this file together partially implement RFC 2445.
@@ -78,21 +78,21 @@ class ICalAlarm extends ICalObject {
 
 class ICalEvent extends ICalObject {
 
-  private $uid;
-  private $recurid = NULL;
-  private $range;
-  private $summary;
-  private $description;
-  private $location;
-  private $tzid;
+  protected $uid;
+  protected $recurid = NULL;
+  protected $range;
+  protected $summary;
+  protected $description;
+  protected $location;
+  protected $tzid;
 
   // attributes that will be populated only if recurring
-  private $recur = FALSE;
-  private $occurrences; // start times only
-  private $until;
-  private $exdates = Array();
-  private $incrementor;
-  private $interval = 1;
+  protected $recur = FALSE;
+  protected $occurrences; // start times only
+  protected $until;
+  protected $exdates = Array();
+  protected $incrementor;
+  protected $interval = 1;
 
   public function get_uid() {
     return $this->uid;
@@ -142,7 +142,7 @@ class ICalEvent extends ICalObject {
     return $this->occurrences;
   }
 
-  private function compare_ranges(TimeRange $range, $compare_type) {
+  protected function compare_ranges(TimeRange $range, $compare_type) {
     if ($this->recur) {
       // check if $range is within this series at all
       $event_range = new TimeRange($this->get_start(), $this->get_end());
@@ -206,18 +206,35 @@ class ICalEvent extends ICalObject {
       $this->summary = str_replace('\\', '', $value);
       break;
     case 'DTSTART':
-      // for dtstart and dtend the param is always time zone id
-      $start = ICalendar::ical2unix($value, $param_value);
+      if ($param_name == 'TZID') {
+        $start = ICalendar::ical2unix($value, $param_value);
+      } else {
+        $start = ICalendar::ical2unix($value);
+      }
+
       if (!$this->range) {
-	$this->range = new TimeRange($start);
+        if ($param_name == 'TZID') {
+          $this->range = new TimeRange($start);
+        } else {
+          $this->range = new DayRange($start);
+        }
       } else {
 	$this->range->set_start($start);
       }
       break;
     case 'DTEND':
-      $end = ICalendar::ical2unix($value, $param_value);
+      if ($param_name == 'TZID') {
+        $end = ICalendar::ical2unix($value, $param_value);
+      } else {
+        $end = ICalendar::ical2unix($value);
+      }
+
       if (!$this->range) {
-	$this->range = new TimeRange($end);
+        if ($param_name == 'TZID') {
+          $this->range = new TimeRange($end);
+        } else {
+          $this->range = new DayRange($end);
+        }
       } else {
 	if (($end - $this->get_start()) % 86400 == 0) {
 	  // make all day events end at 11:59:59 so they don't overlap next day
@@ -226,6 +243,7 @@ class ICalEvent extends ICalObject {
 	$this->range->set_end($end);
       }
       break;
+
     case 'DURATION':
       // todo:
       // if this tag comes before DTSTART we will break
@@ -235,7 +253,11 @@ class ICalEvent extends ICalObject {
       $this->add_rrule($value);
       break;
     case 'EXDATE':
-      $this->exdates[] = ICalendar::ical2unix($value, $param_value);
+      if ($param_name == 'TZID') {
+        $this->exdates[] = ICalendar::ical2unix($value, $param_value);
+      } else {
+        $this->exdates[] = ICalendar::ical2unix($value);
+      }
       break;
     case 'TZID': // this only gets called by ICalendar::__construct
       $this->tzid = $value;
@@ -245,7 +267,7 @@ class ICalEvent extends ICalObject {
     }
   }
 
-  private function increment_set($set) {
+  protected function increment_set($set) {
     return array_map(
       $this->incrementor,
       $set,
@@ -253,7 +275,7 @@ class ICalEvent extends ICalObject {
       );
   }
 
-  private function add_rrule($rrule_string) {
+  protected function add_rrule($rrule_string) {
     $rules = explode(';', $rrule_string);
     $this->recur = TRUE;
     if ($this->occurrences === NULL) {
@@ -391,6 +413,7 @@ class ICalEvent extends ICalObject {
 }
 
 class ICalendar extends ICalObject {
+  protected $eventClass = 'ICalEvent';
   protected $properties;
   public $timezone = NULL;
   protected $events;
@@ -503,7 +526,7 @@ class ICalendar extends ICalObject {
       case 'BEGIN':
 	switch ($value) {
 	case 'VEVENT':
-	  $nesting[] = new ICalEvent();
+	  $nesting[] = new $this->eventClass();
 	  break;
 	case 'VCALENDAR':
 	  $nesting[] = $this;
@@ -558,6 +581,8 @@ class ICalendar extends ICalObject {
 	break;
       default:
 	if (array_key_exists('param_name', $contentline)) {
+	 $param_name = $contentline['param_name'];
+	 $param_value = $contentline['param_value'];
 	  end($nesting)->set_attribute($contentname, $value, $param_name, $param_value);
 	}
 	else {

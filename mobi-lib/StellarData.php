@@ -1,7 +1,8 @@
 <?php
 
 require_once "lib_constants.inc";
-require_once("AcademicCalendar.php");
+require_once "AcademicCalendar.php";
+require_once "DiskCache.inc";
 
 class StellarData {
   // is there really not a data source for this?
@@ -56,6 +57,9 @@ class StellarData {
 
   //private static $subscriptions = Array();
   public static $subscriptions = Array();
+
+  private static $courseDiskCache = NULL;
+  private static $feedDiskCache = NULL;
 
   private static function clean_text($text) {
     $text = str_replace(chr(194), '', $text);
@@ -144,53 +148,14 @@ class StellarData {
     return $out;
   }
 
-  private static function write_course_cache($course, $term) {
-    $fh = fopen(STELLAR_COURSE_DIR . 'course' . $course . '-' . $term, 'w');
-    fwrite($fh, json_encode(self::$courses[$course]));
-    fclose($fh);
-  }
-
   private static function read_course_cache($course, $term) {
-    $fname = STELLAR_COURSE_DIR . 'course' . $course . '-' . $term;
-    if (!file_exists($fname))
-      throw new Exception("file $fname does not exist");
-    self::$courses[$course] = json_decode(file_get_contents($fname), TRUE);
+    self::$courses[$course] = self::$courseDiskCache->read($course . '-' . $term);
 
     // record time/term when course cached into memory
     self::$course_last_cache_times[$course] = time();
     self::$course_last_cache_terms[$course] = $term;
 
     return self::$courses[$course];
-  }
-
-  private static function course_cache_is_fresh($course, $term) {
-    $fname = STELLAR_COURSE_DIR . 'course' . $course . '-' . $term;
-    if (!file_exists($fname))
-      return FALSE;
-    return (time() - filemtime($fname) < STELLAR_COURSE_CACHE_TIMEOUT);
-  }
-
-  private static function write_feed_cache($subject, $xml) {
-    $xml = preg_replace('/>\s+</', '><', trim($xml));
-    $fh = fopen(STELLAR_FEED_DIR . $subject, 'w');
-    fwrite($fh, $xml);
-    fclose($fh);
-  }
-
-  private static function read_feed_cache($subject) {
-    $fname = STELLAR_FEED_DIR . $subject;
-    if(file_exists($fname)) {
-      return file_get_contents($fname);
-    } else {
-      return False;
-    }
-  }
-
-  private static function feed_cache_is_fresh($subject) {
-    $fname = STELLAR_FEED_DIR . $subject;
-    if (!file_exists($fname))
-      return FALSE;
-    return (time() - filemtime($fname) < STELLAR_FEED_CACHE_TIMEOUT);
   }
 
   private static function announcements_is_changed($subject) {
@@ -343,7 +308,12 @@ class StellarData {
             return self::$courses[$course]['subjects'];
     }
 
-    if (self::course_cache_is_fresh($course, $term)) {
+    if (self::$courseDiskCache === NULL) {
+      self::$courseDiskCache = new DiskCache(STELLAR_COURSE_DIR, STELLAR_COURSE_CACHE_TIMEOUT, TRUE);
+      self::$courseDiskCache->setPrefix('course');
+    }
+
+    if (self::$courseDiskCache->isFresh($course . '-' . $term)) {
       $courseData = self::read_course_cache($course, $term);
       return $courseData['subjects'];
     }
@@ -444,7 +414,7 @@ class StellarData {
       }
     }
 
-    self::write_course_cache($course, $term);
+    self::$courseDiskCache->write(self::$courses[$course], $course . '-' . $term);
 
     // record time/term when course cached into memory
     self::$course_last_cache_times[$course] = time();
@@ -485,14 +455,18 @@ class StellarData {
   }
 
   private static function get_announcements_xml($subjectId) {
-    if (self::feed_cache_is_fresh($subjectId))
-      return self::read_feed_cache($subjectId);
+    if (self::$feedDiskCache === NULL) {
+      self::$feedDiskCache = new DiskCache(STELLAR_FEED_DIR, STELLAR_FEED_CACHE_TIMEOUT, TRUE);
+    }
+
+    if (self::$feedDiskCache->isFresh($subjectId))
+      return self::$feedDiskCache->read($subjectId);
     
     $subjectData = self::get_subject_info($subjectId);
     if (array_key_exists('stellarUrl', $subjectData)) {
       $rss_id = $subjectData['stellarUrl'];
       $rss = file_get_contents(self::$rss_url . $rss_id);
-      self::write_feed_cache($subjectId, $rss);
+      self::$feedDiskCache->write($rss, $subjectId);
       return $rss;
     } else { // no feed because no stellarUrl
       return FALSE;

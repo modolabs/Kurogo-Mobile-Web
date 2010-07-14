@@ -122,7 +122,7 @@ cp -rp mobi-web $PREFIX0/mitmobile # we're doing this to help uninstallation
 # copy web files
 
 cp -rp mobi-web/* $PREFIX1
-cp -p mobi-web/.htaccess $PREFIX1
+cp -p setup/.htaccess $PREFIX1
 
 # create symlinks
 
@@ -138,7 +138,7 @@ sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX0/mitmobil
 sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX0/mitmobile/mobi-config/*.ini
 sed -i .bak 's/\/var\/www\/html/'${PREFIX1_esc}'/g' $PREFIX0/mitmobile/mobi-config/*.inc
 sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX1/.htaccess
-sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX0/mobi-maptiles.sh
+sed -i .bak 's/\/opt\/mitmobile/'${PREFIX0_esc}'\/mitmobile/g' $PREFIX0/mitmobile/bin/mobi-maptiles.sh
 
 if [ "$USE_MYSQL" = "1" ]; then
    echo "configuring MySQL parameters..."

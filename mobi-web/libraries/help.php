@@ -10,6 +10,4 @@ $help = array(
 );
 $docRoot = getenv("DOCUMENT_ROOT");
 
-require HELP_HEADER;
-
 ?>

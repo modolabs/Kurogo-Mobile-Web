@@ -1,7 +1,6 @@
 <?
 
-require_once LIBDIR . 'mit_ical_lib.php';
-require_once LIBDIR . 'LibraryInfo.php';
+require_once LIBDIR . '/LibraryInfo.php';
 require "libraries_lib.inc";
 
 $library = urldecode($_GET['library']);

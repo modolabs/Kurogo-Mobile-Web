@@ -1,10 +1,10 @@
 <?
 
-require_once LIBDIR . 'mit_ical_lib.php';
-require_once LIBDIR . 'LibraryInfo.php';
+require_once LIBDIR . '/LibraryInfo.php';
 require "libraries_lib.inc";
 
 $libraries = LibraryInfo::get_libraries();
+
 $hours_today = Array();
 
 foreach ($libraries as $library) {

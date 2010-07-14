@@ -17,6 +17,4 @@ $help = array(
 );
 
 
-require HELP_HEADER;
-
 ?>

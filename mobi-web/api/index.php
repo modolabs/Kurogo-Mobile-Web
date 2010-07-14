@@ -18,11 +18,16 @@ switch ($module) {
    break;
 
  case 'calendar':
-   require('calendar.php');
+   //require('calendar.php');
+   require('HarvardCalendar.php');
    break;
 
  case 'push':
    require('apns_push.php');
+   break;
+
+ case 'dining':
+   require('dining.php');
    break;
 
  default:
