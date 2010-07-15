@@ -5,6 +5,7 @@ DATADIR=/opt/mitmobile/maptiles # where "tile" directory should go
 PHPSCRIPT=/opt/mitmobile/bin/mobi-maptiles-download.php
 CHECKSUM_FINAL=$DATADIR/export.md5
 CHECKSUM_TEMP=$DATADIR/temp-export.md5
+PNGCRUSH=/opt/mitmobile/bin/pngcrush
 
 if [ "$1" = "--force" ]; then
     php $PHPSCRIPT --force
@@ -66,13 +67,17 @@ for LEVEL in `ls $RAW_DATADIR`; do
         fi
 
         # suppress errors from using `*` on empty directories
-	pngcrush -q -d $DATADIR/crushed/$LEVEL/$Y $RAW_DATADIR/$LEVEL/$Y/* > /dev/null 2>&1 
+	$PNGCRUSH -q -d $DATADIR/crushed/$LEVEL/$Y $RAW_DATADIR/$LEVEL/$Y/* > /dev/null 2>&1 
     done
 done
 
 mv $CHECKSUM_TEMP $CHECKSUM_FINAL
 
 # cleanup
-rm -r $RAW_DATADIR/*
+if [ -f $PNGCRUSH ]; then
+   rm -r $RAW_DATADIR/*
+else
+   cp -r $RAW_DATADIR/* $DATADIR/crushed
+fi
 
 echo "`date +%H:%M:%S` complete"

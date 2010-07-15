@@ -34,6 +34,9 @@ define('NEWSOFFICE_FEED_URL', 'http://web.mit.edu/newsoffice/feeds/iphone.php');
 
 // events_calendar
 define('EVENTS_CALENDAR_API', 'http://events.mit.edu/MITEventsFull.wsdl');
+define("ACADEMIC_CALENDAR_CACHE_DIR", CACHE_DIR . "/ACADEMIC_CALENDAR/");
+define("ACADEMIC_CALENDAR_RSS", "/opt/mitmobile/static/academic_location.rss");
+define("ACADEMIC_CALENDAR_CACHE_LIFESPAN", 86400 * 30);
 
 // mobile about
 define("WHATS_NEW_PATH", DATADIR . "/whatsnew.xml");
