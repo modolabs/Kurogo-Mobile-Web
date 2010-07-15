@@ -54,7 +54,7 @@ function retrieveData($urlLink, $dateString) {
 }
 
 
-function makeICAL($icsURL, $dateString)
+function makeIcalDayEvents($icsURL, $dateString)
 {
 	//retrieveData($icsURL, $dateString);
 	$ical = new ICalendar($icsURL);
@@ -68,6 +68,15 @@ function makeICAL($icsURL, $dateString)
 	return  $ical->get_day_events($time);
 
 	
+}
+
+
+function makeIcalSearchEvents($icsURL, $terms)
+{
+	//retrieveData($icsURL, $dateString);
+	$ical = new ICalendar($icsURL);
+
+	return  $ical->search_events($terms, NULL);
 }
 
 
@@ -85,16 +94,28 @@ switch ($_REQUEST['command']) {
    $url = HARVARD_EVENTS_ICS_BASE_URL ."?startdate=" .$date;
 
    if ($type == 'Events') {
-     $events = makeICAL($url, $date);
+     $events = makeIcalDayEvents($url, $date);
    }
 
-    elseif ($type == 'Exhibits') {
-    // $events = MIT_Calendar::TodaysExhibitsHeaders($date);
-    }
 
    foreach ($events as $event) {
      $data[] = clean_up_ical_event($event);
    }
+   break;
+
+
+   case 'search':
+     $searchString = isset($_REQUEST['q']) ? $_REQUEST['q'] : '';
+
+       $url = HARVARD_EVENTS_ICS_BASE_URL ."?days=7" ."&search=" .$id ."&filterfield1=15202";
+     
+       $events = makeIcalSearchEvents($url, $searchString);
+
+       foreach ($events as $event) {
+            $event_data[] = clean_up_ical_event($event);
+        }
+
+         $data['events'] = $event_data;
    break;
 
    case 'category':
@@ -106,10 +127,7 @@ switch ($_REQUEST['command']) {
 
      $url = HARVARD_EVENTS_ICS_BASE_URL ."?startdate=" .$start ."&filter1=" .$id ."&filterfield1=15202";
 
-     //$events = MIT_Calendar::HeadersByCatID($id, $start, $end);
-   
-
-   $events = makeICAL($url, $start);
+   $events = makeIcalDayEvents($url, $start);
 
     foreach ($events as $event) {
         $data[] = clean_up_ical_event($event);
