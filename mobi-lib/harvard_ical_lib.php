@@ -208,10 +208,10 @@ class ICalEvent extends ICalObject {
       $this->recurid = $value;
       break;
     case 'DESCRIPTION':
-      $this->description = $value;
+      $this->description = str_replace('\\',"", str_replace('\n', "", $value));
       break;
     case 'LOCATION':
-      $this->location = $value;
+      $this->location = str_replace('\\', "", $value);
       break;
 
     case 'CATEGORIES':
@@ -223,7 +223,7 @@ class ICalEvent extends ICalObject {
       break;
 
     case 'SUMMARY':
-      $this->summary = str_replace('\\', '', $value);
+      $this->summary = str_replace('\\', "", $value);
       break;
     case 'DTSTART':
       // for dtstart and dtend the param is always time zone id
@@ -490,9 +490,9 @@ class ICalendar extends ICalObject {
       } elseif ($event->overlaps($day)) {
 	$events[] = $event;
       }
-      /* Making sure the events that start at 0000hrs GMT
+      /* Making sure the events that start at 0000-0400hrs GMT
       	 are still correctly captured as today's events */
-	 else if ($event->get_start() - $day->get_start() == (24*60*60))
+	 else if ($event->get_start() - $day->get_start() <= (28*60*60))
 	      $events[] = $event;     
     }
     return $events;

@@ -1,6 +1,10 @@
 <?php
 
 require_once LIBDIR ."/harvard_ical_lib.php";
+require_once LIBDIR ."/harvard_calendar.php";
+
+define('PATH_TO_EVENTS_CAT', '../../mobi-lib/event_cat');
+
 
 define('HARVARD_EVENTS_ICS_BASE_URL', 'http://www.trumba.com/calendars/gazette.ics');
 
@@ -50,7 +54,7 @@ function retrieveData($urlLink, $dateString) {
 }
 
 
-function makeICAL($icsURL, $dateString)
+function makeIcalDayEvents($icsURL, $dateString)
 {
 	//retrieveData($icsURL, $dateString);
 	$ical = new ICalendar($icsURL);
@@ -66,6 +70,19 @@ function makeICAL($icsURL, $dateString)
 	
 }
 
+
+function makeIcalSearchEvents($icsURL, $terms)
+{
+	//retrieveData($icsURL, $dateString);
+	$ical = new ICalendar($icsURL);
+
+	return  $ical->search_events($terms, NULL);
+}
+
+
+
+
+
 switch ($_REQUEST['command']) {
   case 'day':
    $type = $_REQUEST['type'];
@@ -77,22 +94,68 @@ switch ($_REQUEST['command']) {
    $url = HARVARD_EVENTS_ICS_BASE_URL ."?startdate=" .$date;
 
    if ($type == 'Events') {
-     $events = makeICAL($url, $date);
+     $events = makeIcalDayEvents($url, $date);
    }
 
-    elseif ($type == 'Exhibits') {
-     $events = MIT_Calendar::TodaysExhibitsHeaders($date);
-    }
-
-  // $events = makeICAL($url, $date);
 
    foreach ($events as $event) {
      $data[] = clean_up_ical_event($event);
    }
    break;
 
-  default:
+
+   case 'search':
+     $searchString = isset($_REQUEST['q']) ? $_REQUEST['q'] : '';
+
+       $url = HARVARD_EVENTS_ICS_BASE_URL ."?days=7" ."&search=" .$id ."&filterfield1=15202";
+     
+       $events = makeIcalSearchEvents($url, $searchString);
+
+       foreach ($events as $event) {
+            $event_data[] = clean_up_ical_event($event);
+        }
+
+         $data['events'] = $event_data;
    break;
+
+   case 'category':
+    if ($id = $_REQUEST['id']) {
+     $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : time();
+     $end = isset($_REQUEST['end']) ? $_REQUEST['end'] : $start + 86400;
+     $start = date('Ymd', $start);
+     $end = date('Ymd', $end);
+
+     $url = HARVARD_EVENTS_ICS_BASE_URL ."?startdate=" .$start ."&filter1=" .$id ."&filterfield1=15202";
+
+   $events = makeIcalDayEvents($url, $start);
+
+    foreach ($events as $event) {
+        $data[] = clean_up_ical_event($event);
+        }
+    }
+   break;
+
+   case 'categories':
+    $categories = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
+
+       foreach ($categories as $categoryObject) {
+     
+           $name = ucwords($categoryObject->get_name());
+           $catid = $categoryObject->get_cat_id();
+           $url = $categoryObject->get_url();
+
+           $catData = array('name' => $name,
+		      'catid' => $catid,
+                      'url' => $url);
+
+           $data[] = $catData;
+           }
+   break;
+
+   default:
+       break;
+
+ 
 }
 
 echo json_encode($data);
