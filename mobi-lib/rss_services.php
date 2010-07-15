@@ -65,10 +65,7 @@ class RSS {
     $rss_obj = new DOMDocument();
 
     //turn off warnings
-    $error_reporting = ini_get('error_reporting');
-    error_reporting($error_reporting & ~E_WARNING);
     $rss = file_get_contents($this->rss_url);
-    error_reporting($error_reporting);
 
     //if the rss feed fails to open return false
     if($rss === FALSE) {

@@ -1,13 +1,9 @@
-<?
+<?php
 
 require_once "lib_constants.inc";
 require_once "mit_ical_lib.php";
 require_once "rss_services.php";
-
-// TODO: move stuff to constants file
-define("ACADEMIC_CALENDAR_CACHE_DIR", CACHE_DIR . "/ACADEMIC_CALENDAR/");
-define("ACADEMIC_CALENDAR_RSS", "/academic_locations.rss");
-define("ACADEMIC_CALENDAR_CACHE_LIFESPAN", 86400 * 30);
+require_once "DiskCache.inc";
 
 class AcademicCalendarRSS extends RSS {
   protected $rss_url = ACADEMIC_CALENDAR_RSS;
@@ -18,8 +14,9 @@ AcademicCalendar::init();
 
 class AcademicCalendar {
   private static $icals = array();
-  //private static $ical;
+  private static $icalUrls = array();
   private static $terms = NULL;
+  private static $cache = NULL;
 
   public static function is_holiday($time) {
     self::init();
@@ -27,9 +24,8 @@ class AcademicCalendar {
     $year = date('Y', $time);
     $month = date('n', $time);
     $fiscal_year = ($month <= 6) ? $year : $year + 1;
-    if (array_key_exists($fiscal_year, self::$icals)) {
-      $ical = self::$icals[$fiscal_year];
-
+    $ical = self::getIcal($fiscal_year);
+    if ($ical !== FALSE) {
       $events = $ical->get_day_events($time);
       foreach ($events as $event) {
 	$summary = $event->get_summary();
@@ -46,9 +42,8 @@ class AcademicCalendar {
   public static function get_holidays($year) {
     $data = Array();
 
-    if (array_key_exists($year, self::$icals)) {
-      $ical = self::$icals[$year];
-
+    $ical = self::getIcal($fiscal_year);
+    if ($ical !== FALSE) {
       $holidays = $ical->search_by_title('holiday');
       $vacation = $ical->search_by_title('vacation');
 
@@ -79,9 +74,9 @@ class AcademicCalendar {
     }
 
     $fiscal_year = ($month <= 6) ? $year : $year + 1;
-    if (array_key_exists($fiscal_year, self::$icals)) {
-      $ical = self::$icals[$fiscal_year];
-    } else {
+
+    $ical = self::getIcal($fiscal_year);
+    if ($ical === FALSE) {
       return array();
     }
 
@@ -91,10 +86,6 @@ class AcademicCalendar {
     $month_end = increment_month($month_start);
 
     $monthRange = new TimeRange($month_start, $month_end);
-    //$result = array();
-    //foreach (self::$icals as $ical) {
-    //  $result = array_merge($result, $ical->search_events($searchTerms, $monthRange));
-    //}
     $result = $ical->search_events($searchTerms, $monthRange);
     return $result;
   }
@@ -130,8 +121,8 @@ class AcademicCalendar {
 	'su1' => new TimeRange($summer_start, $summer_end),
 	);
 
-      if (array_key_exists($year, self::$icals)) {
-	$ical = self::$icals[$year];
+      $ical = self::getIcal($year);
+      if ($ical !== FALSE) {
 	$events = $ical->search_by_title("first day of");
 
 	foreach ($events as $event) {
@@ -175,21 +166,36 @@ class AcademicCalendar {
 
   public static function init() {
     if (!self::$icals) {
+      self::$cache = new DiskCache(ACADEMIC_CALENDAR_CACHE_DIR, ACADEMIC_CALENDAR_CACHE_LIFESPAN, TRUE);
+      self::$cache->setSuffix('.ics');
+      self::$cache->preserveFormat();
+
       $rss = new AcademicCalendarRSS();
       $items = $rss->get_feed();
       foreach ($items as $item) {
 	$fy = $item['fiscal_year'];
 	$ics_url = $item['ics_url'];
-
-	$filename = ACADEMIC_CALENDAR_CACHE_DIR . $fy . '.ics';
-	if (!file_exists($filename) || filemtime($filename) < time() - ACADEMIC_CALENDAR_CACHE_LIFESPAN) {
-	  $fh = fopen($filename, 'w');
-	  fwrite($fh, file_get_contents($ics_url));
-	  fclose($fh);
-	}
-	self::$icals[$fy] = new ICalendar($filename);
+	self::$icalUrls[$fy] = $ics_url;
       }
     }
+  }
+
+  private static function getIcal($year) {
+    if (!array_key_exists($year, self::$icalUrls)) {
+      return FALSE;
+    }
+
+    if (!array_key_exists($year, self::$icals)) {
+
+      if (!self::$cache->isFresh($year)) {
+        $contents = file_get_contents(self::$icalUrls[$year]);
+        self::$cache->write($contents, $year);
+      }
+
+      $filename = self::$cache->getFullPath($year);
+      self::$icals[$year] = new ICalendar($filename);
+    }
+    return self::$icals[$year];
   }
 
 }

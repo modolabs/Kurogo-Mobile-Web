@@ -55,6 +55,11 @@ class DiskCache {
   }
 
   public function write($object, $filename=NULL) {
+    if (!$object) {
+      error_log("tried to cache a non-object, bailing", 0);
+      return;
+    }
+
     $path = $this->getFullPath($filename);
     $fh = fopen($path, 'w');
     if ($fh !== FALSE) {
@@ -65,8 +70,9 @@ class DiskCache {
       }
       fclose($fh);
     } else {
-      die("could not open $path for writing");
+      error_log("could not open $path for writing", 0);
     }
+
   }
 
   public function read($filename=NULL) {
