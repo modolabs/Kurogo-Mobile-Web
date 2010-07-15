@@ -26,7 +26,7 @@ class WebkitPage extends Page {
       'extra_onload', 'onorientationchange', 'raw_js', 'scalable', 'fixed',
     );
 
-    include WEBROOT . "/$this->branch/attribs-$this->platform.php";
+    include WEBROOT . "/$this->branch/attribs-$this->platform.inc";
     $this->inline_css = $extra_css;
     $this->home_css = $home_css;
 

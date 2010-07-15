@@ -81,6 +81,7 @@ class ICalEvent extends ICalObject {
   private $uid;
   private $recurid = NULL;
   private $range;
+  private $url;
   private $summary;
   private $description;
   private $location;
@@ -122,6 +123,10 @@ class ICalEvent extends ICalObject {
     } else {
       return $this->range->get_end();
     }
+  }
+
+  public function get_url() {
+      return $this->url;
   }
 
   public function get_summary() {
@@ -221,6 +226,9 @@ class ICalEvent extends ICalObject {
     case 'X-TRUMBA-CUSTOMFIELD':
       $this->customFields[$param_value] = $value;
       break;
+
+    case 'URL':
+        $this->url = $value;
 
     case 'SUMMARY':
       $this->summary = str_replace('\\', "", $value);
@@ -482,18 +490,32 @@ class ICalendar extends ICalObject {
 
     $events = Array();
     foreach ($this->events as $id => $event) {
-      if ($event->is_recurring()) {
+      /*if ($event->is_recurring()) {
 	$day_events = $event->overlaps($day);
 	foreach ($day_events as $day_event) {
 	  $events[] = $day_event;
 	}
       } elseif ($event->overlaps($day)) {
 	$events[] = $event;
-      }
+      }*/
+
+        if  ((($event->get_start() - 4*60*60 >= $day->get_start()) &&
+                ($event->get_start() - 4*60*60 <= $day->get_end())) ||
+
+               (($event->get_end() - 4*60*60 >= $day->get_start()) &&
+                ($event->get_end() - 4*60*60 <= $day->get_end())) ||
+
+                (($event->get_start() - 4*60*60 <= $day->get_start()) &&
+                ($event->get_start()  - 4*60*60 >= $day->get_end()))) {
+            
+            $events[] = $event;
+            
+        }
+
       /* Making sure the events that start at 0000-0400hrs GMT
       	 are still correctly captured as today's events */
-	 else if ($event->get_start() - $day->get_start() <= (28*60*60))
-	      $events[] = $event;     
+	// else if ($event->get_start() - $day->get_start() <= (28*60*60))
+	  //    $events[] = $event;
     }
     return $events;
   }
@@ -522,7 +544,6 @@ class ICalendar extends ICalObject {
     $lines = explode("\n", $this->unfold(file_get_contents($url)));
 
     foreach ($lines as $line) {
-
       $contentline = $this->contentline($line);
 
       $contentname = $contentline['name'];
@@ -592,7 +613,8 @@ class ICalendar extends ICalObject {
 	  end($nesting)->set_attribute($contentname, $value, $param_name, $param_value);
 	}
 	else {
-	  end($nesting)->set_attribute($contentname, $value);
+            if ($contentname !== 'RRULE')
+                end($nesting)->set_attribute($contentname, $value);
 	}
 	break;
       }
