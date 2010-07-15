@@ -22,6 +22,14 @@ switch ($module) {
    require('HarvardCalendar.php');
    break;
 
+ case 'map':
+   require('map.php');
+   break;
+
+ case 'news':
+   require('news.php');
+   break;
+
  case 'push':
    require('apns_push.php');
    break;
