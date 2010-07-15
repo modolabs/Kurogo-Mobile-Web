@@ -20,7 +20,7 @@ class TouchPage extends Page {
      'home', 'navbar_image', 'breadcrumb', 'footer', 'standard_footer',
     );
 
-    $attribs_file = WEBROOT . "/$this->branch/attribs-$this->platform.php";
+    $attribs_file = WEBROOT . "/$this->branch/attribs-$this->platform.inc";
     if (!file_exists($attribs_file)) {
       $attribs_file = WEBROOT . "/$this->branch/attribs-generic.php";
     }
