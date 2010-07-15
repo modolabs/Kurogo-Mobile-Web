@@ -15,6 +15,11 @@ class NextBusReader {
   private static $vehicleCache = Array(); // results of vehicleLocatiosn command
   private static $unmodifiedRouteList = Array(); // results of routeList command
 
+  private static $routeCachePrefix = 'ROUTE_';
+  private static $predictionCachePrefix = 'PREDICTION_';
+  private static $stopsCacheFile = 'STOPS';
+  private static $vehicleCacheFile = 'vechicle_locations';
+
   private static $routeDiskCache;
   private static $predDiskCache;
   private static $vehicleDiskCache;
@@ -109,8 +114,8 @@ class NextBusReader {
     self::$routeDiskCache->setPrefix('route_');
     self::$predDiskCache = new DiskCache(NEXTBUS_CACHE, NULL, TRUE);
     self::$predDiskCache->setPrefix('prediction_');
-    self::$vehicleDiskCache = new DiskCache(NEXTBUS_CACHE . '/' . 'vehicle_locations');
-    self::$stopDiskCache = new DiskCache(NEXTBUS_CACHE . '/' . 'stops', NEXTBUS_ROUTE_CACHE_TIMEOUT);
+    self::$vehicleDiskCache = new DiskCache(NEXTBUS_CACHE . '/' . self::$vehicleCacheFile);
+    self::$stopDiskCache = new DiskCache(NEXTBUS_CACHE . '/' . self::$stopsCacheFile, NEXTBUS_ROUTE_CACHE_TIMEOUT);
     self::reset_query();
     if (!self::$routeCache) {
       ShuttleSchedule::init();
@@ -149,7 +154,7 @@ class NextBusReader {
 
       } else {
 	// query failed; get {routeName}s from cached filenames
-        $prefix = self::$routeDiskCache->getPrefix()
+        $prefix = self::$routeDiskCache->getPrefix();
 	foreach (scandir(NEXTBUS_CACHE) as $filename) {
 	  if (strpos($filename, $prefix) == 0) {
 	    $routeName = substr($filename, 0, $prefix);
