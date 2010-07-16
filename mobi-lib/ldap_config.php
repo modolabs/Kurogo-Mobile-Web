@@ -16,7 +16,7 @@ define("NAME_SEARCH_FILTER", "(&(objectClass=person)%s)");
 define("UID_FILTER", "(uid=%s)");
 define("UID_SEARCH_FILTER", "(&(objectClass=person)%s)");
 /*  for the $personDisplayMapping array:
- *  index 0: display title,
+ *  index 0: display name,
  *  index 1: ldap attribute,
  *  index 2: href,
  *  index 3: class,
@@ -30,17 +30,18 @@ $personDisplayMapping = array(array("surname", "sn", null, null, FALSE, FALSE, F
                      array("givenname", "givenname", null, null, FALSE, FALSE, FALSE, TRUE),
                      array("name", "cn", null, null, TRUE, TRUE, FALSE, FALSE),
                      array("title", "title", null, null, TRUE, TRUE, FALSE, FALSE),
-                     array("dept", "ou", null, null, TRUE, TRUE, FALSE, FALSE),
-                     array("affiliation", "edupersonaffiliation", null, null, FALSE, FALSE, FALSE, FALSE),
-                     array("address", "street", null, null, FALSE, FALSE, FALSE, FALSE),
-                     array("homephone", "homephone", "phoneHREF", "phone", FALSE, TRUE, TRUE, FALSE),
-                     array("room", "roomnumber", "mapURL", "map", FALSE, FALSE, TRUE, TRUE),
-                     array("initials", "initials", null, null, FALSE, FALSE, TRUE, TRUE),
+                     array("unit", "ou", null, null, TRUE, TRUE, FALSE, FALSE),
+                     array("description", "description", null, null, TRUE, TRUE, FALSE, FALSE),
+//                     array("affiliation", "edupersonaffiliation", null, null, FALSE, FALSE, FALSE, FALSE),
+//                     array("address", "street", null, null, FALSE, FALSE, FALSE, FALSE),
+//                     array("homephone", "homephone", "phoneHREF", "phone", FALSE, TRUE, TRUE, FALSE),
+//                     array("room", "roomnumber", "mapURL", "map", FALSE, FALSE, TRUE, TRUE),
+//                     array("initials", "initials", null, null, FALSE, FALSE, TRUE, TRUE),
                      array("id", "uid", null, null, FALSE, FALSE, FALSE, TRUE),
-                     array("phone", "telephonenumber", "phoneHREF", "phone", TRUE, TRUE, TRUE, FALSE),
-                     array("fax", "facsimiletelephonenumber", "phoneHREF", "phone", TRUE, TRUE, TRUE, FALSE),
+                     array("phone", "telephoneNumber", "phoneHREF", "phone", TRUE, TRUE, TRUE, FALSE),
+                     array("fax", "facsimileTelephoneNumber", "phoneHREF", "phone", TRUE, TRUE, TRUE, FALSE),
                      array("email", "mail", "mailHREF", "email", TRUE, FALSE, TRUE, FALSE),
-                     array("office", "physicaldeliveryofficename", "mapURL", "map", TRUE, FALSE, TRUE, FALSE),
+                     array("office", "postalAddress", "mapURL", "map", TRUE, FALSE, TRUE, FALSE),
                  );
 
 /*************** exception loggin **************
