@@ -5,73 +5,58 @@ $page->title('People Directory')
 
 
 class Item {
-    private $person;
 
-    public function __construct($person) {
-        $this->person = $person;
+  private $person;
+
+  public function __construct($person) {
+    $this->person = $person;
+  }
+
+  public function display($label, $field, $href=NULL, $class=NULL, $group=False, $hasLink=FALSE) {
+    $displayString = "";
+    foreach($this->person->getField($field) as $value) {
+      $innerContents = "
+      <span class=\"label\">$label</span>
+      <span class=\"value\">$value</span>";
+      if ($href !== NULL) {
+        $innerContents = '<a href="' . $href($value) . '" class="' . $class . '">'
+                       . $innerContents . '</a>';
+      }
+
+      $li = $hasLink ? '<li>' : '<li class="nolink">';
+      $innerContents = $li . $innerContents . '</li>';
+
+      if (!$group) {
+        $innerContents = '<ul class="nav">' . $innerContents . '</ul>';
+      }
+      $displayString .= $innerContents;
     }
+    echo $displayString;
+  }
+}
 
-    public function display($label, $field, $href=NULL, $class=NULL, $group=False, $has_link=False) {
-        foreach($this->person[$field] as $value) { ?>
-<?          if(!$group) { ?>
-            <ul class="nav">
-<?          } ?>
-              <li<? if (!$has_link) {?> class="nolink"<? } ?>>
-<?          if($href != NULL) {                   
-                     echo '<a href="' . $href($value) . '" class="' . $class . '">';
-            } ?>
-
-                 <span class="label"><?=$label?></span>
-                 <span class="value"><?=$value?></span>
-
-                 <? if($href != NULL) {                   
-                       echo "</a>";
-                 } ?>
-              </li>
-            <? if (!$group) { ?>  </ul>  <? } ?>   
-          <?
-        }
-    }
-}             
+             
 $item = new Item($person);
 
 $page->content_begin();
 ?>
 	<ul class="nav">
-            <?
-            foreach($personDisplayMapping as $attribute)
-            {
-                if (($attribute[4] == TRUE) && (($attribute[5] == TRUE) && ($attribute[6] == FALSE)))
-                {
-                    $item->display($attribute[0], $attribute[0], $attribute[2], $attribute[3], $attribute[5], $attribute[6]);
-                }
-            }
-            ?>
+        <? $item->display('name', 'cn', NULL, NULL, TRUE, FALSE); ?>
+        <? $item->display('title', 'title', NULL, NULL, TRUE, FALSE); ?>
+        <? $item->display('dept', 'ou', NULL, NULL, TRUE, FALSE); ?>
 	</ul>
 	
         <? if(has_phone($person)) { ?>
-           <ul class="nav">
-            <?
-            foreach($personDisplayMapping as $attribute)
-            {
-                if (($attribute[4] == TRUE) && (($attribute[5] == TRUE) && ($attribute[6] == TRUE)))
-                {
-                    $item->display($attribute[0], $attribute[0], $attribute[2], $attribute[3], $attribute[5], $attribute[6]);
-                }
-            }
-            ?>
-           </ul>
+          <ul class="nav">
+          <? $item->display('home', 'homephone', 'phoneHREF', 'phone', TRUE, TRUE); ?>
+          <? $item->display('phone', 'telephonenumber', 'phoneHREF', 'phone', TRUE, TRUE); ?>
+          <? $item->display('fax', 'facsimiletelephonenumber', 'phoneHREF', 'phone', TRUE, TRUE); ?>
+          </ul>
         <? } ?>
 
-        <?
-            foreach($personDisplayMapping as $attribute)
-            {
-                if (($attribute[4] == TRUE) && (($attribute[5] == FALSE) && ($attribute[6] == TRUE)))
-                {
-                    $item->display($attribute[0], $attribute[0], $attribute[2], $attribute[3], $attribute[5], $attribute[6]);
-                }
-            }
-        ?>
+        <? $item->display('address', 'street', NULL, NULL, FALSE, FALSE); ?>
+        <? $item->display('email', 'mail', 'mailHREF', 'email', FALSE, TRUE); ?>
+        <? $item->display('office', 'physicaldeliveryofficename', 'mapURL', 'map', FALSE, TRUE); ?>
 
 <? $page->content_end(); ?>
 
