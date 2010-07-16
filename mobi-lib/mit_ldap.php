@@ -299,13 +299,23 @@ function make_person($info)
     {
         if (($personDisplay[4] == TRUE) || ($personDisplay[7] == TRUE))
         {
-            if (strcasecmp($personDisplay[0], "id") == 0)
+            if (strcasecmp($personDisplay[1], "uid") == 0)
             {
-                $person[$personDisplay[0]] = id_key($info);
+                $person[$personDisplay[1]] = array(
+					"displayName" => $personDisplay[0], 
+					"value" => array(id_key($info))
+					);
             }
             else
             {
-                $person[$personDisplay[0]] = lkey($info, $personDisplay[1]);
+				// The key for each person should be $personDisplay[1], the ldap key.
+				// The value for each person should be a dictionary containing:
+				// displayName
+				// the value (which is usually a list of strings)
+                $person[$personDisplay[1]] = array(
+					"displayName" => $personDisplay[0], 
+					"value" => lkey($info, $personDisplay[1])
+					);
             }
         }
     }
