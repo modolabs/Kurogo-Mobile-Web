@@ -18,5 +18,15 @@
 
  echo(HARVARD_DINING::getMealData($urlBase, $_REQUEST['date'], $mealTime)); 
 
+/*
+switch ($_REQEUST['command']) {
 
+    // Only one case in the switch
+    case 'dining':
+        $day = isset($_REQUEST['date']) ? $_REQUEST['date'] : date('Y-m-d', time());
+        $diningData = DINING_DATA::getDiningData($day);
+
+        echo json_encode($diningData);
+}*/
+ 
 ?>
