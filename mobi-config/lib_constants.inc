@@ -1,5 +1,8 @@
 <?php
 
+define('MOBILE_DEV_SERVER', TRUE);
+define('MOBILE_STAGE_SERVER', FALSE);
+
 define('TIMEZONE', 'America/New_York');
 
 // paths
@@ -14,8 +17,8 @@ define('MYSQL_DBNAME', 'mysql_db');
 define('MYSQL_HOST', 'localhost');
 
 // directory
-//define('LDAP_SERVER', 'ldap.mit.edu');
-//define('LDAP_PATH', 'dc=mit, dc=edu');
+define("LDAP_SERVER", "phonebook.harvard.edu");
+define("LDAP_PATH", 'o=Harvard University,c=US');
 define('LDAP_SEARCH_TIMELIMIT', 30);
 define('LDAP_READ_TIMELIMIT', 30);
 
@@ -81,6 +84,12 @@ define('WAREHOUSE_ORACLE_USER', 'warehouse_oracle_user');
 define('WAREHOUSE_ORACLE_PASS', 'warehouse_oracle_pass');
 define('WAREHOUSE_ORACLE_DB', 'warehouse_oracle_db');
 
-require_once('lib_constants_prod.inc');
+if (MOBILE_DEV_SERVER) {
+  require_once('lib_constants_dev.inc');
+} elseif (MOBILE_STAGE_SERVER) {
+  require_once('lib_constants_stage.inc');
+} else {
+  require_once('lib_constants_prod.inc');
+}
 
 ?>

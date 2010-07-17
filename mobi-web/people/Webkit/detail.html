@@ -4,74 +4,62 @@ $page->title('People: Details')
      ->breadcrumbs('Search', 'Details');
 
 class Item {
-    private $person;
+  private $person;
 
-    public function __construct($person) {
-        $this->person = $person;
+  public function __construct($person) {
+    $this->person = $person;
+  }
+
+  public function display($label, $field, $href=NULL, $class=NULL, $group=False) {
+    $displayString = "";
+
+    foreach($this->person->getField($field) as $value) {
+      // prevent phones from creating links from things that look like phone/email
+      $value = str_replace('@', '@&shy;', $value);
+      $value = str_replace('-', '-&shy;', $value);
+
+      $innerContents = "
+                 <div class=\"label\">$label</div>
+                 <div class=\"value\">$value</div>";
+
+      if ($href !== NULL) {
+        $innerContents = '<a href="' . $href($value) . '" class="' . $class . '">'
+                       . $innerContents . '</a>';
+      }
+
+      $innerContents = '<li>' . $innerContents . '</li>';
+
+      if (!$group) {
+        $innerContents = '<ul class="nav">' . $innerContents . '</ul>';
+      }
+
+      $displayString .= $innerContents;
     }
+    echo $displayString;
+  }
+}
 
-    public function display($label, $field, $href=NULL, $class=NULL, $group=False) {
-        foreach($this->person[$field] as $value) {
-          ?>
-            <? if(!$group) { ?>  <ul class="nav">    <? } ?>
-              <li>
-                 <? if($href != NULL) {                   
-                     echo '<a href="' . $href($value) . '" class="' . $class . '">';
-                 } ?>
-
-		 <? // temporary palm pre hack
-		 $value = str_replace('@', '@&shy;', $value);
-		 $value = str_replace('-', '-&shy;', $value);
-		 ?>
-                 <div class="label"><?=$label?></div>
-                 <div class="value"><?=$value?></div>
-
-                 <? if($href != NULL) {                   
-                       echo "</a>";
-                 } ?>
-              </li>
-            <? if (!$group) { ?>  </ul>  <? } ?>   
-          <?
-        }
-    }
-}             
 $item = new Item($person);
 
 $page->content_begin();
 ?>
 	<ul class="nav">
-            <?
-            foreach($personDisplayMapping as $attribute)
-            {
-                if (($attribute[4] == TRUE) && (($attribute[5] == TRUE) && ($attribute[6] == FALSE)))
-                {
-                    $item->display($attribute[0], $attribute[0], $attribute[2], $attribute[3], $attribute[5]);
-                }
-            }
-            ?>
+        <? $item->display('name', 'cn', NULL, NULL, TRUE); ?>
+        <? $item->display('title', 'title', NULL, NULL, TRUE); ?>
+        <? $item->display('dept', 'ou', NULL, NULL, TRUE); ?>
 	</ul>
 	
         <? if(has_phone($person)) { ?>
-           <ul class="nav">
-            <?
-            foreach($personDisplayMapping as $attribute)
-            {
-                if (($attribute[4] == TRUE) && (($attribute[5] == TRUE) && ($attribute[6] == TRUE)))
-                {
-                    $item->display($attribute[0], $attribute[0], $attribute[2], $attribute[3], $attribute[5]);
-                }
-            }
-            ?>
-           </ul>
+          <ul class="nav">
+          <? $item->display('home', 'homephone', 'phoneHREF', 'phone', TRUE); ?>
+          <? $item->display('phone', 'telephonenumber', 'phoneHREF', 'phone', TRUE); ?>
+          <? $item->display('fax', 'facsimiletelephonenumber', 'phoneHREF', 'phone', TRUE); ?>
+          </ul>
         <? } ?>
-        <?
-            foreach($personDisplayMapping as $attribute)
-            {
-                if (($attribute[4] == TRUE) && (($attribute[5] == FALSE) && ($attribute[6] == TRUE)))
-                {
-                    $item->display($attribute[0], $attribute[0], $attribute[2], $attribute[3], $attribute[5]);
-                }
-            }
-        ?>
+
+        <? $item->display('address', 'street', NULL, NULL, FALSE); ?>
+        <? $item->display('email', 'mail', 'mailHREF', 'email', FALSE); ?>
+        <? $item->display('office', 'physicaldeliveryofficename', 'mapURL', 'map', FALSE); ?>
+
 <? $page->content_end(); ?>
 

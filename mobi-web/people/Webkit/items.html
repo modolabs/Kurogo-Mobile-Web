@@ -3,7 +3,7 @@
               <? foreach($results as $person) { ?>
 		     <li>
                         <a href="<?=detail_url($person)?>">
-                           <?=$person['surname'][0]?>, <?=$person['givenname'][0]?>
+                           <?=$person->getFieldSingle('sn')?>, <?=$person->getFieldSingle('givenname')?>
                         </a>
                      </li>
 	      <? } ?>
