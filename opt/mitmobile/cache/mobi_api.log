@@ -426,3 +426,7 @@
 [Mon 07 19 16:19:51 2010] iphone people: a:2:{s:6:"module";s:6:"people";s:1:"q";s:7:"mercure";}
 [Mon 07 19 16:22:14 2010] iphone people: a:2:{s:6:"module";s:6:"people";s:1:"q";s:7:"mercure";}
 [Mon 07 19 16:22:14 2010] iphone people: a:2:{s:6:"module";s:6:"people";s:1:"q";s:7:"mercure";}
+[Mon 07 19 16:25:31 2010] iphone emergency: a:2:{s:6:"module";s:9:"emergency";s:7:"command";s:8:"contacts";}
+[Mon 07 19 16:25:31 2010] iphone emergency: a:1:{s:6:"module";s:9:"emergency";}
+[Mon 07 19 16:25:31 2010] iphone push: a:5:{s:9:"device_id";s:1:"5";s:11:"device_type";s:5:"apple";s:6:"module";s:4:"push";s:8:"pass_key";s:10:"4888146109";s:7:"command";s:22:"getUnreadNotifications";}
+[Mon 07 19 16:25:44 2010] iphone people: a:2:{s:6:"module";s:6:"people";s:1:"q";s:7:"mercure";}
