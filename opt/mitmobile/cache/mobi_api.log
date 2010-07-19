@@ -422,6 +422,7 @@
 [Mon 07 19 15:45:30 2010] iphone calendar: a:2:{s:6:"module";s:8:"calendar";s:7:"command";s:10:"categories";}
 [Mon 07 19 15:45:31 2010] iphone calendar: a:2:{s:6:"module";s:8:"calendar";s:7:"command";s:10:"categories";}
 [Mon 07 19 15:45:31 2010] iphone calendar: a:4:{s:7:"command";s:8:"category";s:2:"id";s:5:"41139";s:6:"module";s:8:"calendar";s:5:"start";s:10:"1279568730";}
+<<<<<<< HEAD
 [Mon 07 19 16:11:13 2010] iphone push: a:5:{s:9:"device_id";s:1:"2";s:11:"device_type";s:5:"apple";s:6:"module";s:4:"push";s:8:"pass_key";s:10:"1524408138";s:7:"command";s:22:"getUnreadNotifications";}
 [Mon 07 19 16:11:13 2010] iphone emergency: a:1:{s:6:"module";s:9:"emergency";}
 [Mon 07 19 16:11:13 2010] iphone emergency: a:2:{s:6:"module";s:9:"emergency";s:7:"command";s:8:"contacts";}
@@ -567,3 +568,13 @@
 [Mon 07 19 16:15:35 2010] iphone calendar: a:4:{s:4:"type";s:6:"Events";s:4:"time";s:10:"1279397664";s:6:"module";s:8:"calendar";s:7:"command";s:3:"day";}
 [Mon 07 19 16:15:35 2010] iphone calendar: a:4:{s:4:"type";s:6:"Events";s:4:"time";s:10:"1279484064";s:6:"module";s:8:"calendar";s:7:"command";s:3:"day";}
 [Mon 07 19 16:15:36 2010] iphone calendar: a:4:{s:4:"type";s:6:"Events";s:4:"time";s:10:"1279570464";s:6:"module";s:8:"calendar";s:7:"command";s:3:"day";}
+=======
+[Mon 07 19 16:19:51 2010] iphone people: a:2:{s:6:"module";s:6:"people";s:1:"q";s:7:"mercure";}
+[Mon 07 19 16:19:51 2010] iphone people: a:2:{s:6:"module";s:6:"people";s:1:"q";s:7:"mercure";}
+[Mon 07 19 16:22:14 2010] iphone people: a:2:{s:6:"module";s:6:"people";s:1:"q";s:7:"mercure";}
+[Mon 07 19 16:22:14 2010] iphone people: a:2:{s:6:"module";s:6:"people";s:1:"q";s:7:"mercure";}
+[Mon 07 19 16:25:31 2010] iphone emergency: a:2:{s:6:"module";s:9:"emergency";s:7:"command";s:8:"contacts";}
+[Mon 07 19 16:25:31 2010] iphone emergency: a:1:{s:6:"module";s:9:"emergency";}
+[Mon 07 19 16:25:31 2010] iphone push: a:5:{s:9:"device_id";s:1:"5";s:11:"device_type";s:5:"apple";s:6:"module";s:4:"push";s:8:"pass_key";s:10:"4888146109";s:7:"command";s:22:"getUnreadNotifications";}
+[Mon 07 19 16:25:44 2010] iphone people: a:2:{s:6:"module";s:6:"people";s:1:"q";s:7:"mercure";}
+>>>>>>> 25022d100925bdf0b6f334371a1a0f16a91165fd

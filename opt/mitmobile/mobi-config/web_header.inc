@@ -2,8 +2,8 @@
 
 // per-installation constants.
 
-define('WEBROOT', '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/mobi-web');
-define('LIBDIR', '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/mobi-lib');
+define('WEBROOT', '/code/modo/Harvard-Mobile/mobi-web');
+define('LIBDIR', '/code/modo/Harvard-Mobile/opt/mitmobile/mobi-lib');
 
 /* path where cookies should be stored on the users' browser. */
 define('HTTPROOT', '/');
@@ -12,21 +12,12 @@ date_default_timezone_set('America/New_York');
 
 // fetch per-server settings.
 
-require_once LIBDIR . '/lib_constants.inc';
-if (MOBILE_DEV_SERVER) {
-  $ini = parse_ini_file("web_constants_dev.ini");
-} elseif (MOBILE_STAGE_SERVER) {
-  $ini = parse_ini_file("web_constants_stage.ini");
-} else {
-  $ini = parse_ini_file("web_constants_prod.ini");
-}
+$ini = parse_ini_file("web_constants_dev.ini");
 
 require WEBROOT . '/page_builder/Page.inc';
 require WEBROOT . '/page_builder/page_tools.inc';
 
-if (strpos($_SERVER['SCRIPT_NAME'], 'api/') === FALSE) {
-  $page = Page::factory();
-} 
+$page = Page::factory();
 
 class DataServerException extends Exception {
 }
