@@ -26,6 +26,9 @@ define("UID_SEARCH_FILTER", "(&(objectClass=person)%s)");
  *  index 7: set to TRUE if needed for processing (non display), otherwise FALSE
 */
 $appError = 0;
+
+// All of LDAP attributes will come to mit_ldap as all lowercase, even if that is not the case when 
+// querying the LDAP service directly, so make them all lowercase here.
 $personDisplayMapping = array(array("surname", "sn", null, null, FALSE, FALSE, FALSE, TRUE),
                      array("givenname", "givenname", null, null, FALSE, FALSE, FALSE, TRUE),
                      array("name", "cn", null, null, TRUE, TRUE, FALSE, FALSE),
@@ -38,10 +41,10 @@ $personDisplayMapping = array(array("surname", "sn", null, null, FALSE, FALSE, F
 //                     array("room", "roomnumber", "mapURL", "map", FALSE, FALSE, TRUE, TRUE),
 //                     array("initials", "initials", null, null, FALSE, FALSE, TRUE, TRUE),
                      array("id", "uid", null, null, FALSE, FALSE, FALSE, TRUE),
-                     array("phone", "telephoneNumber", "phoneHREF", "phone", TRUE, TRUE, TRUE, FALSE),
-                     array("fax", "facsimileTelephoneNumber", "phoneHREF", "phone", TRUE, TRUE, TRUE, FALSE),
+                     array("phone", "telephonenumber", "phoneHREF", "phone", TRUE, TRUE, TRUE, FALSE),
+                     array("fax", "facsimiletelephonenumber", "phoneHREF", "phone", TRUE, TRUE, TRUE, FALSE),
                      array("email", "mail", "mailHREF", "email", TRUE, FALSE, TRUE, FALSE),
-                     array("office", "postalAddress", "mapURL", "map", TRUE, FALSE, TRUE, FALSE),
+                     array("office", "postaladdress", "mapURL", "map", TRUE, FALSE, TRUE, FALSE),
                  );
 
 /*************** exception loggin **************
