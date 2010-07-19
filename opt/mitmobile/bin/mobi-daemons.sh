@@ -1,1 +1,0 @@
-mobi-daemons.sh
