@@ -3,59 +3,51 @@ $page->title('MIT People Directory: Detail')
      ->header('People Directory');
 
 class Item {
-    private $person;
-    private $first = True;
+  private $person;
+  private $first = True;
 
-    public function __construct($person, $personDisplayMapping)
-    {
-        $this->person = $person;
-    }
+  public function __construct($person)
+  {
+    $this->person = $person;
+  }
 
-    public function normal($label, $field, $href=NULL, $class=NULL)
-    {
-        foreach($this->person[$field] as $value)
-        {
-            if($this->first)
-            {
-                $this->first = False;
-            }
-            else
-            {
-             echo '<br />';
-            }
-            ?>
-            <span class="label"><?=$label?></span>
-	    <span class="value">
-                <?
-                if($href != NULL)
-                {
-                    echo '<a href="' . $href($value) . '" class="' . $class . '">';
-                }
-                echo $value;
-                if($href != NULL)
-                {
-                    echo "</a>";
-                }
-                ?>
-            </span>
-            <?
-        }
+  public function display($label, $field, $href=NULL, $class=NULL)
+  {
+    foreach($this->person->getField($field) as $value) {
+      if ($this->first) {
+        $this->first = False;
+      } else {
+        echo '<br />';
+      }
+
+      if ($href !== NULL) {
+        $value = '<a href="' . $href($value) . '" class="' . $class . '">'
+               . $value . '</a>';
+      }
+      ?>
+      <span class="label"><?=$label?></span>
+      <span class="value"><?=$value?></span>
+      <?
     }
+  }
 }
-$item = new Item($person, $personDisplayMapping);
+
+$item = new Item($person);
 
 $page->content_begin();
 ?>
 	<p class="nav">
-            <?
-            foreach($personDisplayMapping as $attribute)
-            {
-                if ($attribute[4] == TRUE)
-                {
-                    $item->normal($attribute[0], $attribute[0], $attribute[2], $attribute[3]);
-                }
-            }
-            ?>
+        <?
+          $item->display('name', 'cn', NULL, NULL);
+          $item->display('title', 'title', NULL, NULL);
+          $item->display('dept', 'ou', NULL, NULL);
+          $item->display('home', 'homephone', "phoneHREF", 'phone');
+          $item->display('phone', 'telephonenumber', "phoneHREF", 'phone');
+          $item->display('fax', 'facsimiletelephonenumber', "phoneHREF", 'phone');
+          $item->display('address', 'address');
+          $item->display('email', 'mail', "mailHREF");
+          $item->display('office', 'physicaldeliveryofficename', "mapURL");
+        ?>
 	</p>
 
 <? 
