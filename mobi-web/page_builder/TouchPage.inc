@@ -21,10 +21,6 @@ class TouchPage extends Page {
     );
 
     $attribs_file = WEBROOT . "/$this->branch/attribs-$this->platform.inc";
-    if (!file_exists($attribs_file)) {
-      $attribs_file = WEBROOT . "/$this->branch/attribs-generic.php";
-    }
-    include($attribs_file);
     $this->viewport_device_width = $viewport_device_width;
   }
 

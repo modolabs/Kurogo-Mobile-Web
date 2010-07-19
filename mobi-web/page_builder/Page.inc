@@ -31,43 +31,59 @@ class Page {
   public $platform;
   public $certs = FALSE;
 
-  public static function factory() {
+  private static function getDeviceClass() {
     global $ini;
-    if (!isset($_COOKIE['layout'])) {
-      // get properties and specific device type from mobi-service
-      $request = Array(
-	'ua' => $_SERVER['HTTP_USER_AGENT'],
-	'action' => 'classify',
-	);
-      
-      $params = json_decode(
-        file_get_contents(
-          $ini['MOBI_SERVICE_URL'] . '?' . http_build_query($request)), TRUE);
-      $branch = $params['pagetype'];
-      $platform = $params['platform'];
-      $certs = $params['certs'];
-      setcookie('layout', "$branch,$platform,$certs", time() + $ini['LAYOUT_COOKIE_LIFESPAN'], '/');
-    } else {
+
+    // get properties and specific device type from mobi-service
+    $request = Array(
+      'user-agent' => $_SERVER['HTTP_USER_AGENT'],
+      );
+
+    $url = $ini['MOBI_SERVICE_URL'] . '?' . http_build_query($request);
+    $response = file_get_contents(
+      $ini['MOBI_SERVICE_URL'] . '?' . http_build_query($request));
+
+    $params = json_decode($response, TRUE);
+
+    return array(
+      $params['pagetype'],
+      $params['platform'],
+      $params['supports_certificate']
+      );
+  }
+
+  public static function factory() {
+
+    if (isset($_COOKIE['layout'])) {
       $params = explode(',', $_COOKIE['layout']);
-      if (sizeof($params) != 3) {
-        $request = Array(
-          'ua' => $_SERVER['HTTP_USER_AGENT'],
-          'action' => 'classify',
-          );
-        $params = json_decode(
-           file_get_contents(
-               $ini['MOBI_SERVICE_URL'] . '?' . http_build_query($request)), TRUE);
-        $branch = $params['pagetype'];
-        $platform = $params['platform'];
-        $certs = $params['certs'];
-        setcookie('layout', "$branch,$platform,$certs", time() + $ini['LAYOUT_COOKIE_LIFESPAN'], '/');
-      } else {
-        $branch = $params[0];
-        $platform = $params[1];
-        $certs = $params[2];
-      }
+
+      $branch = $params[0];
+      $platform = $params[1];
+      $certs = $params[2];
     }
 
+    if (!isset($params) || sizeof($params) != 3 || !$params[0]) {
+      global $ini;
+
+      // get properties and specific device type from mobi-service
+      $request = Array(
+        'user-agent' => $_SERVER['HTTP_USER_AGENT'],
+        );
+
+      $url = $ini['MOBI_SERVICE_URL'] . '?' . http_build_query($request);
+      $response = file_get_contents(
+        $ini['MOBI_SERVICE_URL'] . '?' . http_build_query($request));
+
+      $params = json_decode($response, TRUE);
+
+      $branch = $params['pagetype'];
+      $platform = $params['platform'];
+      $certs = $params['supports_certificate'];
+
+      setcookie('layout', "$branch,$platform,$certs", time() + $ini['LAYOUT_COOKIE_LIFESPAN'], '/');
+    }
+
+    /*
     $attribs_file = WEBROOT . "/$branch/attribs-$platform.inc";
     $attribs_known = file_exists($attribs_file);
     $last_modified = ($attribs_known) ? filemtime($attribs_file) : 0;
@@ -93,6 +109,7 @@ class Page {
 	fclose($fhandle);
       }
     }
+    */
 
     $page = $branch . "Page";
 
