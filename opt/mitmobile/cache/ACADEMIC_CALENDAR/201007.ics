@@ -1761,6 +1761,26 @@ X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$10
 UID:http://uid.trumba.com/event/90270483
 END:VEVENT
 BEGIN:VEVENT
+SUMMARY:Harvard Allston Farmers' Market
+LOCATION:Corner of North Harvard Street and Western Avenue in Allston. P
+ arking available at 219 Western Avenue\, Allston.
+DTSTART:20100723T190000Z
+DTEND:20100723T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Get fresh\, Massachusetts produce all summer and fall — berr
+ ies\, heirloom tomatoes\, corn\, vegetables\, and more! Come to the mark
+ et to mingle with colleagues and Allston neighbors\, enjoy the outdoors
+ \, and learn more about local foods. Live music is on the first Friday of
+  every month\, as well as children's activities and special events throu
+ ghout the season.
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100719T161001Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Special Events\, Support/Social\, Wellness/Work Life
+UID:http://uid.trumba.com/event/90332692
+END:VEVENT
+BEGIN:VEVENT
 SUMMARY:Finally Fridays: Small Plates in the Conservatory
 LOCATION:Harvard Faculty Club
 DTSTART:20100723T200000Z
@@ -2326,6 +2346,26 @@ X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
  :Oberon
 X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$10
 UID:http://uid.trumba.com/event/90270530
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Harvard Allston Farmers' Market
+LOCATION:Corner of North Harvard Street and Western Avenue in Allston. P
+ arking available at 219 Western Avenue\, Allston.
+DTSTART:20100730T190000Z
+DTEND:20100730T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Get fresh\, Massachusetts produce all summer and fall — berr
+ ies\, heirloom tomatoes\, corn\, vegetables\, and more! Come to the mark
+ et to mingle with colleagues and Allston neighbors\, enjoy the outdoors
+ \, and learn more about local foods. Live music is on the first Friday of
+  every month\, as well as children's activities and special events throu
+ ghout the season.
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100719T161001Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Special Events\, Support/Social\, Wellness/Work Life
+UID:http://uid.trumba.com/event/90332693
 END:VEVENT
 BEGIN:VEVENT
 SUMMARY:Finally Fridays: Small Plates in the Conservatory
