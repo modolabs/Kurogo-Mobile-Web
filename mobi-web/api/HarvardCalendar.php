@@ -3,7 +3,7 @@
 require_once LIBDIR ."/harvard_ical_lib.php";
 require_once LIBDIR ."/harvard_calendar.php";
 
-define('PATH_TO_EVENTS_CAT', '../../opt/mitmobile/static/event_cat');
+define('PATH_TO_EVENTS_CAT', DATADIR . '/event_cat');
 
 
 define('HARVARD_EVENTS_ICS_BASE_URL', 'http://www.trumba.com/calendars/gazette.ics');
