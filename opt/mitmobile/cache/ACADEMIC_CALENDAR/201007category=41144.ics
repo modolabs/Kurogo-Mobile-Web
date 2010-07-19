@@ -1,0 +1,582 @@
+BEGIN:VCALENDAR
+PRODID:-//Trumba Corporation//Trumba Calendar Services 0.11.6713//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Harvard University Gazette
+X-WR-TIMEZONE:America/New_York
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:Groundhog Day
+LOCATION:Carpenter Center\, 24 Quincy St.\, Cambridge MA
+DTSTART:20100713T223000Z
+DTEND:20100713T223000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Introduction and Q&A with screenwriter Danny Rubin. Seating 
+ is first-come\, first-served. Free and open to the Harvard community.
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100709T134717Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>Carpenter Center\n24 Quincy
+  St\nCambridge\, MA 02138-3804</MapPointDisplay><MapLinkType><Value>3</V
+ alue></MapLinkType><LocationType>AddressAndLabel</LocationType><MapHeigh
+ t>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Film\, Special Events
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Danny Rub
+ in\, Harvard University
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Summer School Writing Program
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free and open 
+ to the Harvard community
+UID:http://uid.trumba.com/event/90217663
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Rebel Without a Cause (1955)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100716T230000Z
+DTEND:20100716T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T113904Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+UID:http://uid.trumba.com/event/90309342
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Run for Cover (1955)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100717T011500Z
+DTEND:20100717T011500Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T113958Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309345
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Party Girl (1958)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100717T230000Z
+DTEND:20100717T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114032Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309350
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Hot Blood (1956)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100718T010000Z
+DTEND:20100718T010000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114058Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309353
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Eccentricities of a Blond Haired Girl (2009)\; Douro\, Working R
+ iver (1931)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.\, 02138
+DTSTART:20100718T230000Z
+DTEND:20100718T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T115434Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Manoel 
+ de Oliveira
+UID:http://uid.trumba.com/event/90309479
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Eccentricities of a Blond Haired Girl (2009)\; Douro\, Working R
+ iver (1931)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.\, 02138
+DTSTART:20100719T230000Z
+DTEND:20100719T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T115453Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Manoel 
+ de Oliveira
+UID:http://uid.trumba.com/event/90309482
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Free film screening: "Fresh"
+LOCATION:Harvard Allston Education Portal\, 175 North Harvard St\, Allsto
+ n
+DTSTART:20100723T230000Z
+DTEND:20100723T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Join us immediately following the Harvard Allston Farmers' M
+ arket for a free film screening. "Fresh" celebrates the farmers\, thinke
+ rs\, and business people across America who are re-inventing our food sy
+ stem. Each has witnessed the rapid transformation of our agriculture int
+ o an industrial model\, and confronted the consequences: food contaminat
+ ion\, environmental pollution\, depletion of natural resources\, and mor
+ bid obesity. Forging healthier\, sustainable alternatives\, they offer a
+  practical vision for a future of our food and our planet.
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T130914Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>175 N Harvard St</StreetAddress1><City>Allston</City>
+ <StateProvince>MA</StateProvince><PostalCode>02134</PostalCode><Latitude
+ >42.3637941194243</Latitude><Longitude>-71.1289343183525</Longitude><Map
+ PointRegionCode>US</MapPointRegionCode><MapPointDisplay>Harvard Allston 
+ Education Portal\n175 N Harvard St\nAllston\, MA 02134</MapPointDisplay>
+ <MapLinkType><Value>3</Value></MapLinkType><LocationType>AddressAndLabel
+ </LocationType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</Ma
+ pWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film\, Special Events\, Wellness/Work Life
+UID:http://uid.trumba.com/event/90297414
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Johnny Guitar (1954)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100723T230000Z
+DTEND:20100723T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114139Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309358
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Born to be Bad (1950)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100724T011500Z
+DTEND:20100724T011500Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114237Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309361
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:The Lusty Men (1952)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100724T230000Z
+DTEND:20100724T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114314Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309364
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Flying Leathernecks (1951)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100725T010000Z
+DTEND:20100725T010000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114349Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309369
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:King of Kings (1961)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100725T230000Z
+DTEND:20100725T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114427Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309374
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Johnny Guitar (1954)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100726T230000Z
+DTEND:20100726T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114201Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309359
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:On Dangerous Ground (1952)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100730T230000Z
+DTEND:20100730T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114503Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309377
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:The Savage Innocents (1960)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100731T010000Z
+DTEND:20100731T010000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114559Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309387
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Wind Across the Everglades (1958)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100731T230000Z
+DTEND:20100731T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114636Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309418
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:I'm A Stranger Here Myself
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100801T010000Z
+DTEND:20100801T010000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114701Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309422
+END:VEVENT
+END:VCALENDAR

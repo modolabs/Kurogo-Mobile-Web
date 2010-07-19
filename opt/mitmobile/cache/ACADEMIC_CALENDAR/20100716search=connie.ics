@@ -1,0 +1,819 @@
+BEGIN:VCALENDAR
+PRODID:-//Trumba Corporation//Trumba Calendar Services 0.11.6713//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Harvard University Gazette
+X-WR-TIMEZONE:America/New_York
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:Fourth Annual New England TB Symposium
+LOCATION:Broad Institute\, 7 Cambridge Center\, Cambridge Ma
+DTSTART:20100716T120000Z
+DTEND:20100716T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:TB/HIV coinfection plays a dominant role in the worldwide di
+ stribution and pathogenesis of both diseases. Despite this\, the molecul
+ ar mechanisms underlying pathogenesis of coinfection remain largely unex
+ plored. Therefore\, there is an urgent need for a better understanding o
+ f the biology of HIV/TB coinfection in order to develop more effective t
+ herapies and vaccines.\n\nThe focus of this year’s one-day symposium is 
+ to gain deeper insight into immunopathology\, molecular pathogenesis\, a
+ nd clinical biology of TB/HIV coinfection. Our goal is to bring together
+  leaders and those working and/or interested in TB and HIV research from
+  all over New England in order to discuss ongoing HIV/TB work and to jum
+ pstart new pathways of investigation related to HIV/TB co-infection. Thi
+ s year’s symposium offers stakeholders (e.g. established scientists\, me
+ dical and public health professionals\, research and clinical fellows an
+ d graduate students) a setting in which to brainstorm how they might bui
+ ld upon current projects and infrastructure in order to facilitate novel
+  HIV/TB-related research.
+CATEGORIES:Harvard Event,Health Sciences
+DTSTAMP:20100510T165117Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Brigham and Women's Hospital\, Broad Institute\, Dana-Farber Cancer Ins
+ titute\, the Global Infectious Diseases Program at the Harvard Initiativ
+ e for Global Health\, Harvard School of Public Health\, and the IID Depa
+ rtment at HSPH
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:See sympo
+ sium Web site: http://gid.globalhealth.harvard.edu/icb/icb.do?keyword=k5
+ 4064&pageid=icb.page243768
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Registration f
+ ee of $50 includes breakfast\, lunch\, light refreshments\, and a recept
+ ion
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ p://gid.globalhealth.harvard.edu/icb/icb.do?keyword=k54064&pageid=icb.pa
+ ge243768
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:http://
+ gid.globalhealth.harvard.edu/icb/icb.do?keyword=k54064&pageid=icb.page24
+ 3766
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.496
+ .4768\, eric_goodwin@harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>7 Cambridge Center</StreetAddress1><City>Cambridge</C
+ ity><StateProvince>MA</StateProvince><PostalCode>02142</PostalCode><Lati
+ tude>42.3628959495484</Latitude><Longitude>-71.0849274095301</Longitude>
+ <MapPointRegionCode>US</MapPointRegionCode><MapPointDisplay>Broad Instit
+ ute\n7 Cambridge Center\nCambridge\, MA 02142</MapPointDisplay><MapLinkT
+ ype><Value>3</Value></MapLinkType><LocationType>AddressAndLabel</Locatio
+ nType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></
+ RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Conferences\, Health Sciences\, Lecture
+UID:http://uid.trumba.com/event/89471387
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Finally Fridays: Small Plates in the Conservatory
+LOCATION:Harvard Faculty Club
+DTSTART:20100716T200000Z
+DTEND:20100716T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Welcome the end of the work week in the conservatory with a 
+ selection of seasonal small plates\, paired with a special beverage.
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100713T170124Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Special Events\, Support/Social\, Wellness/Work Life
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Faculty Club
+UID:http://uid.trumba.com/event/90272967
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Harvard Course in Reading and Study Strategies
+LOCATION:Bureau of Study Counsel\, 5 Linden St.
+DTSTART:20100716T200000Z
+DTEND:20100716T200000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Through readings\, films\, and classroom exercises\, student
+ s learn to read more purposefully\, selectively\, and with greater speed
+  and comprehension.
+CATEGORIES:Harvard Event,Classes-Current
+DTSTAMP:20100415T142543Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>5 Linden St</StreetAddress1><City>Cambridge</City><St
+ ateProvince>MA</StateProvince><PostalCode>02138-5004</PostalCode><Latitu
+ de>42.372829</Latitude><Longitude>-71.117144</Longitude><MapPointRegionC
+ ode>US</MapPointRegionCode><MapPointDisplay>Bureau of Study Counsel\n5 L
+ inden St\nCambridge\, MA 02138-5004</MapPointDisplay><MapLinkType><Value
+ >3</Value></MapLinkType><LocationType>AddressAndLabel</LocationType><Map
+ Height>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLocat
+ ion>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Classes/Workshops\, Humanities
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.495
+ .2581
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Bureau of Study Counsel
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$150
+UID:http://uid.trumba.com/event/89167975
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Rebel Without a Cause (1955)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100716T230000Z
+DTEND:20100716T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T113904Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+UID:http://uid.trumba.com/event/90309342
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:The Donkey Show
+LOCATION:OBERON\, 2 Arrow St.\, Cambridge\, MA
+DTSTART:20100717T000000Z
+DTEND:20100717T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:The ultimate disco experience — a crazy circus of mirror bal
+ ls and feathered divas\, roller skates\, and hustle queens. Come party o
+ n the floor to ’70s hits as the show unfolds around you. “The Donkey Sho
+ w” tells the story of “A Midsummer Night’s Dream” through great ’70s ant
+ hems. Part of the “Shakespeare Exploded!” festival. \n\nTicket prices an
+ d times vary.
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100701T152835Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=25;TYPE=SingleLine:Diane Paul
+ us and Randy Weiner
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=30;TYPE=Url:http://www.am
+ rep.org
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>OBERON\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+UID:http://uid.trumba.com/event/86766013
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Run for Cover (1955)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100717T011500Z
+DTEND:20100717T011500Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T113958Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309345
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:TraniWreck: Gold
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100717T023000Z
+DTEND:20100717T023000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:TraniWreck is an all gender\, all genre variety cabaret mess
+ . A rawkus rabble rousing exhibition of genderbending irreverence\; drag
+ \, burlesque\, aerial and performance Art. Since 2004 TraniWreck has bee
+ n bringing the best over-the-top\, boundary-busting talent to the stage.
+  Enjoy the show and then dance until 2 a.m. to Boston's best established
+  and up and coming DJs.
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100713T105430Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Comedy\, Dance\, Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8289975
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Oberon
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$30/$20/$15
+UID:http://uid.trumba.com/event/90270411
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Collecting Modernism
+LOCATION:Arthur M. Sackler Museum @ 485 Broadway\, Cambridge\, MA 02138
+DTSTART:20100717T150000Z
+DTEND:20100717T160000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Over the years\, the Harvard Art Museum has received several
+  important donations of late 19th and early 20th century European art. T
+ his talk will consider the complex interactions among stylistic developm
+ ents\, taste\, historical events\, and the art market in the creation of
+  collections.\n\nGallery talks are informal and include discussion.
+CATEGORIES:Harvard Event,Art/Design
+DTSTAMP:20100708T154016Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Art Museum
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Sarah Kia
+ novsky\, assistant curator\, Department of Paintings\, Sculpture and Dec
+ orative Arts\, Harvard Art Museum/Fogg Museum
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free with the 
+ price of admission. Open to the public.
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Limited
+  to 25 participants\; please arrive early.
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.496
+ .8576\, susannah_hutchison@harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>Cambridge St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138</PostalCode><Latitude>4
+ 2.3754361768646</Latitude><Longitude>-71.1184431477873</Longitude><MapPo
+ intRegionCode>US</MapPointRegionCode><MapPointDisplay>Arthur M. Sackler 
+ Museum @ 485 Broadway\nCambridge St\nCambridge\, MA 02138</MapPointDispl
+ ay><MapLinkType><Value>3</Value></MapLinkType><LocationType>AddressAndLa
+ bel</LocationType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667<
+ /MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Humanities\, Lecture
+UID:http://uid.trumba.com/event/89167698
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Party Girl (1958)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100717T230000Z
+DTEND:20100717T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114032Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309350
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:The Donkey Show
+LOCATION:OBERON\, 2 Arrow St.\, Cambridge\, MA
+DTSTART:20100718T000000Z
+DTEND:20100718T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:The ultimate disco experience — a crazy circus of mirror bal
+ ls and feathered divas\, roller skates\, and hustle queens. Come party o
+ n the floor to ’70s hits as the show unfolds around you. “The Donkey Sho
+ w” tells the story of “A Midsummer Night’s Dream” through great ’70s ant
+ hems. Part of the “Shakespeare Exploded!” festival. \n\nTicket prices an
+ d times vary.
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100701T153137Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=25;TYPE=SingleLine:Diane Paul
+ us and Randy Weiner
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=30;TYPE=Url:http://www.am
+ rep.org
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>OBERON\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+UID:http://uid.trumba.com/event/86765977
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Hot Blood (1956)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.
+DTSTART:20100718T010000Z
+DTEND:20100718T010000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T114058Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Nichola
+ s Ray
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+UID:http://uid.trumba.com/event/90309353
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:The Donkey Show
+LOCATION:OBERON\, 2 Arrow St.\, Cambridge\, MA
+DTSTART:20100718T023000Z
+DTEND:20100718T023000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:The ultimate disco experience — a crazy circus of mirror bal
+ ls and feathered divas\, roller skates\, and hustle queens. Come party o
+ n the floor to ’70s hits as the show unfolds around you. “The Donkey Sho
+ w” tells the story of “A Midsummer Night’s Dream” through great ’70s ant
+ hems. Part of the “Shakespeare Exploded!” festival. \n\nTicket prices an
+ d times vary.
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100701T153218Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=25;TYPE=SingleLine:Diane Paul
+ us and Randy Weiner
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=30;TYPE=Url:http://www.am
+ rep.org
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :American Repertory Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>OBERON\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+UID:http://uid.trumba.com/event/86765939
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Conni’s Avant Garde Restaurant
+LOCATION:OBERON\, 2 Arrow St.\, Cambridge MA
+DTSTART:20100718T223000Z
+DTEND:20100718T223000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Doors open at 6 p.m.\; curtain is promptly at 6:30 p.m.\n\nT
+ he audience follows the story of the company’s aging diva\, Muffin Chara
+ cter Hanshake\, played by Rachel Murdy in this "devilish dinner theatre.
+ " Eighty guests are treated to a five-course\, locally-sourced\, seasona
+ l dining experience\, with food carefully prepared by the performers the
+ mselves and served with charismatic flourish by self-proclaimed geniuses
+  of the avant-garde theater.\n\nFor complete seasonal menu\, visit http:
+ //www.avantgarderestaurant.com/
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100623T150254Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Special Events\, Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:http://
+ www.cluboberon.com
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :American Repertory Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$65\, includes
+  meal and complimentary table wine
+UID:http://uid.trumba.com/event/90037879
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Eccentricities of a Blond Haired Girl (2009)\; Douro\, Working R
+ iver (1931)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.\, 02138
+DTSTART:20100718T230000Z
+DTEND:20100718T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T115434Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Manoel 
+ de Oliveira
+UID:http://uid.trumba.com/event/90309479
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:David Zweig: The Role of Overseas Educated Chinese in China's Mo
+ dernization
+LOCATION:CGIS South\, Room S153\, 1730 Cambridge Street\, Cambridge
+DTSTART:20100719T201500Z
+DTEND:20100719T214500Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Social Sciences
+DTSTAMP:20100528T115945Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Fairbank Center for Chinese Studies: Special Guest Presentation
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:David Zwe
+ ig\, Hong Kong University of Science and Technology
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free and open 
+ to the public
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:lkluz@f
+ as.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>1730 Cambridge St</StreetAddress1><City>Cambridge</Ci
+ ty><StateProvince>MA</StateProvince><PostalCode>02138</PostalCode><Latit
+ ude>42.3753849504458</Latitude><Longitude>-71.1133341662882</Longitude><
+ MapPointRegionCode>US</MapPointRegionCode><MapPointDisplay>CGIS South\n1
+ 730 Cambridge St\nCambridge\, MA 02138</MapPointDisplay><MapLinkType><Va
+ lue>3</Value></MapLinkType><LocationType>AddressAndLabel</LocationType><
+ MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLo
+ cation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/89669589
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Eccentricities of a Blond Haired Girl (2009)\; Douro\, Working R
+ iver (1931)
+LOCATION:Harvard Film Archive\, Carpenter Center\, 24 Quincy St.\, 02138
+DTSTART:20100719T230000Z
+DTEND:20100719T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100715T115453Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Film
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Tickets
+  for all regular screenings are available 45 minutes before show time at
+  the Cinematheque on the lower level of the Carpenter Center.
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Film Archive
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 - Regular A
+ dmission\; $7 - Non-Harvard Students\, Harvard Faculty and Staff\, and S
+ enior Citizens Regular HFA screenings are free for all Harvard students 
+ with a valid photo ID.
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>24 Quincy St\nCambridge\, M
+ A 02138-3804</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkType
+ ><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Radar
+ Location>
+X-TRUMBA-CUSTOMFIELD;NAME="Directed By";ID=15224;TYPE=SingleLine:Manoel 
+ de Oliveira
+UID:http://uid.trumba.com/event/90309482
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Chat online about Harvard Child Care Scholarships
+DTSTART:20100720T160000Z
+DTEND:20100720T170000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Beginning Tuesday\, July 20\, benefits-eligible administrati
+ ve & professional\, non-HUCTW support staff\, post-docs and faculty may 
+ apply online via PeopleSoft for Child Care Scholarships. Chat online wit
+ h staff from Harvard's Office of Work/Life and get answers to your quest
+ ions about this important program! \n\nTo join the discussion\, go to ht
+ tp://harvie.harvard.edu at noon and select the "Chat Now" button on the 
+ lower left.
+CATEGORIES:Harvard Event,Classes-Current
+DTSTAMP:20100618T100946Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:paul_ma
+ ssari@harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Union of Clerical & Technical Workers
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Classes/Workshops\, Working@Harvard
+UID:http://uid.trumba.com/event/89992318
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Nation I. Birth of a Nation
+LOCATION:26 Trowbridge Street\, Cambridge\, MA 02138
+DTSTART:20100720T210000Z
+DTEND:20100721T003000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Note - This is a two day event on Tuesday\, July 20\, and Th
+ ursday\, July 22\, from 5 to 8:30 p.m.
+CATEGORIES:Harvard Event,Humanities
+DTSTAMP:20100713T160726Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:www.rea
+ lcolegiocomplutense.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>26 Trowbridge St</StreetAddress1><City>Cambridge</Cit
+ y><StateProvince>MA</StateProvince><PostalCode>02138-5307</PostalCode><L
+ atitude>42.371407</Latitude><Longitude>-71.112055</Longitude><MapPointRe
+ gionCode>US</MapPointRegionCode><MapPointDisplay>26 Trowbridge St\nCambr
+ idge\, MA 02138-5307</MapPointDisplay><MapLinkType><Value>3</Value></Map
+ LinkType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth
+ ></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/90264426
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:The Other Network: The Best Un-Aired TV Pilots Ever Made Introdu
+ ced by Their Creators
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100721T000000Z
+DTEND:20100721T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Previously unseen TV shows by Conan O'Brien\, Ben Stiller an
+ d Judd Apatow starring Jack Black\, Adam West\, Amy Poehler\, Owen Wilso
+ n\, Ron Silver\, Jason Segal and others.
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100713T115012Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8211085
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$10
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Comedy\, Special Events\, Theater
+UID:http://uid.trumba.com/event/90270441
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Midsummer Nights' Science: "Unlocking the Mysteries of Diabetes"
+LOCATION:The Broad Institute
+DTSTART:20100721T220000Z
+DTEND:20100721T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Health Sciences
+DTSTAMP:20100712T160535Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Bridget W
+ agner
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:rokop@b
+ roadinstitute.org
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.714
+ .7992
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Education\, Health Sciences\, Lecture\, Science
+UID:http://uid.trumba.com/event/90112078
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:The Annie Darcy Band
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100722T000000Z
+DTEND:20100722T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:You may have seen the Annie Darcy Band in "Sleep No More" or
+  on the OBERON stage this spring. They are back\, bringing their unique 
+ vintage sound and sassy sultry ways for your listening pleasure.
+CATEGORIES:Harvard Event,Concerts
+DTSTAMP:20100713T105829Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Concerts
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8343845
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Oberon
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$6
+UID:http://uid.trumba.com/event/90270462
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Wyss Technology Symposium: Fundamentals of Signal Processing and
+  Filtering
+LOCATION:Wyss Institute\, Room 521\, Center for Life Science Boston\, 5t
+ h floor\, 3 Blackfan Circle\, Boston\, MA 02115
+DTSTART;VALUE=DATE:20100722
+DTEND;VALUE=DATE:20100723
+X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
+DESCRIPTION:Registration is required for this event. Space is limited. 
+ \n\nMarc Weinberg from the Charles Stark Draper Laboratory in Cambridge\,
+  Mass.\, will lead a symposium on the fundamentals of signal processing 
+ and filtering. Weinberg received his B.S.\, M.S. (1971)\, and Ph.D. (197
+ 4) from the Massachusetts Institute of Technology in mechanical engineer
+ ing. He has been with Draper Labs since 1975.\n\nIn this symposium\, Wei
+ nberg will discuss the basics of linear systems\, analysis and sources o
+ f circuit noise\, as well as filter design and applications. He will pre
+ sent a study he was involved with using Kalman filters to develop a bala
+ nce prosthesis and will show real-time demonstrations using analog accel
+ erometers.
+CATEGORIES:Harvard Event,Health Sciences
+DTSTAMP:20100630T145301Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Wyss Institute for Biologically Inspired Engineering and National Scien
+ ce Foundation
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Marc Wein
+ berg
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>3 Blackfan Cir</StreetAddress1><City>Boston</City><St
+ ateProvince>MA</StateProvince><PostalCode>02115-5713</PostalCode><Latitu
+ de>42.338071</Latitude><Longitude>-71.10477</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Wyss Institute\n3 Blackfan Ci
+ r\nBoston\, MA 02115-5713</MapPointDisplay><MapLinkType><Value>3</Value>
+ </MapLinkType><LocationType>AddressAndLabel</LocationType><MapHeight>2.1
+ 5</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Classes/Workshops\, Conferences\, Health Sciences\, Science
+UID:http://uid.trumba.com/event/90117613
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Nation I. Birth of a Nation
+LOCATION:26 Trowbridge Street\, Cambridge\, MA 02138
+DTSTART:20100722T210000Z
+DTEND:20100723T003000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Note - This is a two day event on Tuesday\, July 20\, and Th
+ ursday\, July 22\, from 5 to 8:30 p.m.
+CATEGORIES:Harvard Event,Humanities
+DTSTAMP:20100713T160631Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:www.rea
+ lcolegiocomplutense.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>26 Trowbridge St</StreetAddress1><City>Cambridge</Cit
+ y><StateProvince>MA</StateProvince><PostalCode>02138-5307</PostalCode><L
+ atitude>42.371407</Latitude><Longitude>-71.112055</Longitude><MapPointRe
+ gionCode>US</MapPointRegionCode><MapPointDisplay>26 Trowbridge St\nCambr
+ idge\, MA 02138-5307</MapPointDisplay><MapLinkType><Value>3</Value></Map
+ LinkType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth
+ ></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/90289132
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Conferencia extraordinaria
+DTSTART:20100722T210000Z
+DTEND:20100723T003000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Conferences
+DTSTAMP:20100713T160852Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:José Vare
+ la Ortega
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:www.rea
+ lcolegiocomplutense.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Conferences\, Humanities\, Lecture
+UID:http://uid.trumba.com/event/90264655
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:"Imagine It Thick In Your Own Hair": An Emergency Benefit Exhibi
+ tion by Heide Hatry
+LOCATION:Pierre Menard Gallery\, 10 Arrow Street\, Cambridge\, MA 02138
+DTSTART:20100722T220000Z
+DTEND:20100723T010000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:A benefit for victims of the oil spill\, by Heide Hatry in c
+ onjunction with a silent auction of work by numerous emerging and well-k
+ nown artists from the Boston area\, New York\, and abroad. Reception and
+  silent auction on Thursday\, July 22\, 6-9 p.m. (bidding ends at 8 p.m.
+ ). Proceeds from sales to benefit the Audubon Action Center.\n\nExhibit 
+ on view through Aug. 1.
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100702T113138Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Pierre Menard Gallery
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free and open 
+ to the public
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617-868
+ -2033\, pierre@pierremenardgallery.com
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>10 Arrow St</StreetAddress1><City>Cambridge</City><St
+ ateProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitu
+ de>42.3711</Latitude><Longitude>-71.114561</Longitude><MapPointRegionCod
+ e>US</MapPointRegionCode><MapPointDisplay>Pierre Menard Gallery\n10 Arro
+ w St\nCambridge\, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</
+ Value></MapLinkType><LocationType>AddressAndLabel</LocationType><MapHeig
+ ht>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+ 
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Exhibitions\, Special Events
+UID:http://uid.trumba.com/event/90150177
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Three-Course Thursdays
+LOCATION:Harvard Faculty Club
+DTSTART:20100722T220000Z
+DTEND:20100723T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Every Thursday evening in the main dining room\, enjoy a spe
+ cial three-course dinner menu paired with wine.
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100713T145334Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Special Events\, Support/Social\, Wellness/Work Life
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Faculty Club
+UID:http://uid.trumba.com/event/90272946
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:100% Happy 88% of the Time
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100723T000000Z
+DTEND:20100723T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Evolutionary entertainment of the third kind when alt comedy
+  high priestess Beth Lapides combines stories\, stand-up\, science\, mus
+ ic\, metaphysics\, and multi-media.\n\nA turned-on tour-de-force of othe
+ rworldly comedy from Beth Lapides. Take the 'ow' out of Now with her kal
+ eidoscopic vision of where we're all heading in this harmonic convergenc
+ e of story\, science and silliness\, multi-media\, music and metaphysics
+ . Featuring... Eviction! Back pain! Hollywood humiliation! Psychic dagge
+ r removal! Love advice! Edge science! Cosmic insights! New Age Adventure
+ s! Galactic girls gone wild! Clingy Jewish parents! 2012! And more!
+CATEGORIES:Harvard Event,Comedy
+DTSTAMP:20100713T110017Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Comedy\, Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8211095
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$10
+UID:http://uid.trumba.com/event/90270483
+END:VEVENT
+END:VCALENDAR

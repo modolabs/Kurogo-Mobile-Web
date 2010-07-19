@@ -1,0 +1,199 @@
+BEGIN:VCALENDAR
+PRODID:-//Trumba Corporation//Trumba Calendar Services 0.11.6713//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Harvard University Gazette
+X-WR-TIMEZONE:America/New_York
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:The Erin Murray Variety Hour
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100716T000000Z
+DTEND:20100716T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:An evening of sketch comedy and musical numbers that will th
+ rill and entertain dozens!\n\nThe Erin Murray Variety Hour is an evening
+  of sketches\, comedy\, songs\, and dances that answer such universal qu
+ estions as 'what happened to the nuclear family?'\, 'How do bees communi
+ cate?'\, and 'Why did they let these people have their own show?!'
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100713T114921Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8241395
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Oberon
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$15
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Comedy\, Special Events\, Theater
+UID:http://uid.trumba.com/event/90270401
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:TraniWreck: Gold
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100717T023000Z
+DTEND:20100717T023000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:TraniWreck is an all gender\, all genre variety cabaret mess
+ . A rawkus rabble rousing exhibition of genderbending irreverence\; drag
+ \, burlesque\, aerial and performance Art. Since 2004 TraniWreck has bee
+ n bringing the best over-the-top\, boundary-busting talent to the stage.
+  Enjoy the show and then dance until 2 a.m. to Boston's best established
+  and up and coming DJs.
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100713T105430Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Comedy\, Dance\, Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8289975
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Oberon
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$30/$20/$15
+UID:http://uid.trumba.com/event/90270411
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:The Other Network: The Best Un-Aired TV Pilots Ever Made Introdu
+ ced by Their Creators
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100721T000000Z
+DTEND:20100721T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Previously unseen TV shows by Conan O'Brien\, Ben Stiller an
+ d Judd Apatow starring Jack Black\, Adam West\, Amy Poehler\, Owen Wilso
+ n\, Ron Silver\, Jason Segal and others.
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100713T115012Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8211085
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$10
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Comedy\, Special Events\, Theater
+UID:http://uid.trumba.com/event/90270441
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:100% Happy 88% of the Time
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100723T000000Z
+DTEND:20100723T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Evolutionary entertainment of the third kind when alt comedy
+  high priestess Beth Lapides combines stories\, stand-up\, science\, mus
+ ic\, metaphysics\, and multi-media.\n\nA turned-on tour-de-force of othe
+ rworldly comedy from Beth Lapides. Take the 'ow' out of Now with her kal
+ eidoscopic vision of where we're all heading in this harmonic convergenc
+ e of story\, science and silliness\, multi-media\, music and metaphysics
+ . Featuring... Eviction! Back pain! Hollywood humiliation! Psychic dagge
+ r removal! Love advice! Edge science! Cosmic insights! New Age Adventure
+ s! Galactic girls gone wild! Clingy Jewish parents! 2012! And more!
+CATEGORIES:Harvard Event,Comedy
+DTSTAMP:20100713T110017Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Comedy\, Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8211095
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$10
+UID:http://uid.trumba.com/event/90270483
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Midnight Vultures
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100724T023000Z
+DTEND:20100724T023000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:All bets are off in this one-night-only exploration of the w
+ eird\, brought to life by the twisted deliciousness of the Bitches of De
+ stiny and Black Cat Burlesque. Midnite Vultures is an entirely new kind 
+ of burlesque show\, featuring high-femme gender performance\, girl-on-gi
+ rl food wrestling\, go-go dancing\, $20 million fantasies\, nicotine-lac
+ ed housewives\, the most bizarre version of Family Feud you've ever expe
+ rienced\, and more balloons than you can shake a stick at - all set to t
+ he dulcet tones of Beck. Come see if your eyes can open wide enough to t
+ ake in the mesmerizing drama that occurs when freaks flock together.
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100713T114945Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8105695
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Oberon
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$20
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Comedy\, Concerts\, Special Events\, Theater
+UID:http://uid.trumba.com/event/90270500
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Abbey Road: A Sugar Coated Production
+LOCATION:Oberon\, 2 Arrow St.\, 02138
+DTSTART:20100731T023000Z
+DTEND:20100731T023000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Babes in Boinkland and Sugar Coated Productions present a ni
+ ght of murder\, mayhem\, and debauchery with their erotic interpretation
+  of the classic Beatles' album\, "Abbey Road". A torrid love-triangle tr
+ agedy\, this dance-theater production is riddled with striptease\, puppe
+ try\, prison sex\, marine animals\, and various head injuries. Wear a he
+ lmet. And bring a change of panties.
+CATEGORIES:Harvard Event,Theater
+DTSTAMP:20100713T111231Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>2 Arrow St</StreetAddress1><City>Cambridge</City><Sta
+ teProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitud
+ e>42.370927</Latitude><Longitude>-71.114038</Longitude><MapPointRegionCo
+ de>US</MapPointRegionCode><MapPointDisplay>Oberon\n2 Arrow St\nCambridge
+ \, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</Value></MapLink
+ Type><LocationType>AddressAndLabel</LocationType><MapHeight>2.15</MapHei
+ ght><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Comedy\, Concerts\, Theater
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ ps://www.ovationtix.com/trs/pe/8332945
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Oberon
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$25/$40
+UID:http://uid.trumba.com/event/90272023
+END:VEVENT
+END:VCALENDAR

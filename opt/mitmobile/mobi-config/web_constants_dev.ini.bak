@@ -1,0 +1,57 @@
+; mobi-config/web_constants_dev.ini
+; Per-server constants required for Mobile Web frontend.
+; Development version.
+
+[error_handling_and_debugging]
+
+; the prodction error handler has a pretty html page dispalying a
+; brief error message.  it also emails detailed information to the
+; developer email address
+USE_PRODUCTION_ERROR_HANDLER = 0
+DEVELOPER_EMAIL = "nobody@mit.edu"
+
+; show device detection info (for debugging purposes)
+SHOW_DEVICE_DETECTION = 1
+
+[log_file_locations]
+
+API_LOG_FILE = "/opt/mitmobile/logs/mobi_api.log"
+API_CURRENT_LOG_FILE = "/opt/mitmobile/cache/mobi_api.log"
+WEB_LOG_FILE = "/opt/mitmobile/logs/mobi_web.log"
+WEB_CURRENT_LOG_FILE = "/opt/mitmobile/cache/mobi_web.log"
+LOG_DATE_FORMAT = "[D m d H:i:s Y]"
+LOG_DATE_PATTERN = "/^.{5}(\d{2}) (\d{2}).{10}(\d{4})"
+
+[mysql_table_names]
+
+PAGE_VIEWS_TABLE = "mobi_web_page_views"
+API_STATS_TABLE = "mobi_api_requests"
+
+[url_locations]
+
+; MOBI_SERVICE_URL is the URL that can be called via HTTP with a user
+; agent string to get information about device characteristics
+MOBI_SERVICE_URL = "http://mobile-service-dev.mit.edu/mobi-service/"
+
+; map search server
+MAP_SEARCH_URL = "http://map.harvard.edu/mapserver/mapsearch_test.cfm"
+
+; news office
+NEWSOFFICE_FEED_URL = "http://web.mit.edu/newsoffice/feeds/iphone.php"
+
+[apple_push_notification_service]
+
+APNS_CERTIFICATE = "/opt/mitmobile/certs/apns_dev.pem"
+APNS_CERTIFICATE_PASSWORD = ""
+APNS_SANDBOX = 1
+APPLE_RELEASE_APP_ID = "edu.mit.mitmobile"
+APNS_CONNECTIONS_LIMIT = 100
+
+[cookies]
+
+; 15552000 seconds == 180 days
+MODULE_ORDER_COOKIE_LIFESPAN = 15552000
+
+; 1209600 seconds == 14 days
+LAYOUT_COOKIE_LIFESPAN = 1209600
+CERTS_COOKIE_LIFESPAN = 1209600

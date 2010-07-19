@@ -1,0 +1,459 @@
+BEGIN:VCALENDAR
+PRODID:-//Trumba Corporation//Trumba Calendar Services 0.11.6713//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Harvard University Gazette
+X-WR-TIMEZONE:America/New_York
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:Midsummer Nights' Science: "Meet Your Microbes"
+LOCATION:The Broad Institute
+DTSTART:20100707T220000Z
+DTEND:20100707T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Health Sciences
+DTSTAMP:20100629T162439Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Bruce Bir
+ ren
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:rokop@b
+ roadinstitute.org
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.714
+ .7992
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Education\, Health Sciences\, Lecture\, Science
+UID:http://uid.trumba.com/event/90112076
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Modeling Influenza Virus Antigenic Evolution
+LOCATION:Room 907\, EPI Library\, HSPH Kresge Bldg.\, 677 Huntington Ave
+ .
+DTSTART:20100714T163000Z
+DTEND:20100714T173000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Science
+DTSTAMP:20100629T121011Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Center for Communicable Disease Dynamics
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Taijiao J
+ iang\, principal investigator\, Center for Computational and Systems Bio
+ logy\, Institute of Biophysics\, Chinese Academy of Sciences
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:malarse
+ n@hsph.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>677 Huntington Ave</StreetAddress1><City>Boston</City
+ ><StateProvince>MA</StateProvince><PostalCode>02115-6028</PostalCode><La
+ titude>42.335295</Latitude><Longitude>-71.102005</Longitude><MapPointReg
+ ionCode>US</MapPointRegionCode><MapPointDisplay>Room 907\n677 Huntington
+  Ave\nBoston\, MA 02115-6028</MapPointDisplay><MapLinkType><Value>3</Val
+ ue></MapLinkType><LocationType>AddressAndLabel</LocationType><MapHeight>
+ 2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Health Sciences\, Lecture\, Science
+UID:http://uid.trumba.com/event/89944802
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Empire: A Global Perspective on the Western Ecumenical Expansion
+LOCATION:26 Trowbridge Street
+DTSTART:20100714T210000Z
+DTEND:20100715T002500Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Note: This is a two day event: Wednesday\, July 14\, and Thu
+ rsday\, July 15\, from 5 to 8:30 p.m.
+CATEGORIES:Harvard Event,Social Sciences
+DTSTAMP:20100713T134832Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Real Colegio Complutense
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Josep Mar
+ ía Fradera\, José Antonio Sánchez Román\, Florentino Roadao\, Antonio Te
+ rrasa Lozano\, Eva Botella Ordinas
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:www.rea
+ lcolegiocomplutense.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/90264400
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Examining China's New Policy Climate
+LOCATION:124 Mt. Auburn Street\, Suite 200-North
+DTSTART:20100715T160000Z
+DTEND:20100715T160000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:A light lunch will be served.
+CATEGORIES:Harvard Event,Social Sciences
+DTSTAMP:20100625T155626Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Ash Center for Democratic Governance and Innovation and Harvard Univers
+ ity Asia Center
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Jing Ulri
+ ch\, one of Fortune's "50 Most Powerful Business Women\," and managing d
+ irector\, chairman\, China Equities and Commodities\, J.P. Morgan
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:RSVP to
+  melissa_danello@hks.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Classes/Workshops\, Environmental Sciences\, Lecture\, Social Scien
+ ces
+UID:http://uid.trumba.com/event/90059504
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Empire: A Global Perspective on the Western Ecumenical Expansion
+LOCATION:26 Trowbridge Street
+DTSTART:20100715T210000Z
+DTEND:20100716T002500Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Note: This is a two day event: Wednesday\, July 14\, and Thu
+ rsday\, July 15\, from 5 to 8:30 p.m.
+CATEGORIES:Harvard Event,Social Sciences
+DTSTAMP:20100713T133542Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Real Colegio Complutense
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Josep Mar
+ ía Fradera\, José Antonio Sánchez Román\, Florentino Roadao\, Antonio Te
+ rrasa Lozano\, Eva Botella Ordinas
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:www.rea
+ lcolegiocomplutense.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/90274590
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Summer Night at the Harvard Museum of Natural History
+LOCATION:26 Oxford Street\, Cambridge
+DTSTART:20100715T210000Z
+DTEND:20100716T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Harvard Museum of Natural History hosts extended hours on th
+ e third Thursday of each summer month. Explore the museum and the new "H
+ eadgear" exhibition. Join Peter Hedman\, 2010 graduate of Harvard Colleg
+ e with a concentration in earth & planetary sciences\, for a 6 p.m. gall
+ ery talk on “Rock of Ages: The Evolution of Minerals through Earth Histo
+ ry\," and  Vera Domingues\, a researcher in Harvard’s Department of Mamm
+ alogy\, for a 7 p.m. gallery tour on “Natural Selection at Work: Color a
+ nd Patterns in the Wild” in the "Language of Color" exhibition. \n \nDet
+ ails on the Harvard Museum of Natural History website\, http://www.hmnh.
+ harvard.edu/lectures_and_special_events/index.php#summer
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100715T164445Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Museum of Natural History
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Peter Hed
+ man '10\, Vera Dominques
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Museum admissi
+ on $9-6\, free for Harvard ID holders & one guest
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:www
+ .hmnh.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:tickets
+  at the door
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:hmnh@oe
+ b.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>26 Oxford St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138</PostalCode><Latitude>4
+ 2.3782741204647</Latitude><Longitude>-71.116421411793</Longitude><MapPoi
+ ntRegionCode>US</MapPointRegionCode><MapPointDisplay>26 Oxford St\nCambr
+ idge\, MA 02138</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkT
+ ype><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Ra
+ darLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Classes/Workshops\, Exhibitions\, Lecture\, Science\, 
+ Special Events
+UID:http://uid.trumba.com/event/90118033
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Fourth Annual New England TB Symposium
+LOCATION:Broad Institute\, 7 Cambridge Center\, Cambridge Ma
+DTSTART:20100716T120000Z
+DTEND:20100716T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:TB/HIV coinfection plays a dominant role in the worldwide di
+ stribution and pathogenesis of both diseases. Despite this\, the molecul
+ ar mechanisms underlying pathogenesis of coinfection remain largely unex
+ plored. Therefore\, there is an urgent need for a better understanding o
+ f the biology of HIV/TB coinfection in order to develop more effective t
+ herapies and vaccines.\n\nThe focus of this year’s one-day symposium is 
+ to gain deeper insight into immunopathology\, molecular pathogenesis\, a
+ nd clinical biology of TB/HIV coinfection. Our goal is to bring together
+  leaders and those working and/or interested in TB and HIV research from
+  all over New England in order to discuss ongoing HIV/TB work and to jum
+ pstart new pathways of investigation related to HIV/TB co-infection. Thi
+ s year’s symposium offers stakeholders (e.g. established scientists\, me
+ dical and public health professionals\, research and clinical fellows an
+ d graduate students) a setting in which to brainstorm how they might bui
+ ld upon current projects and infrastructure in order to facilitate novel
+  HIV/TB-related research.
+CATEGORIES:Harvard Event,Health Sciences
+DTSTAMP:20100510T165117Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Brigham and Women's Hospital\, Broad Institute\, Dana-Farber Cancer Ins
+ titute\, the Global Infectious Diseases Program at the Harvard Initiativ
+ e for Global Health\, Harvard School of Public Health\, and the IID Depa
+ rtment at HSPH
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:See sympo
+ sium Web site: http://gid.globalhealth.harvard.edu/icb/icb.do?keyword=k5
+ 4064&pageid=icb.page243768
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Registration f
+ ee of $50 includes breakfast\, lunch\, light refreshments\, and a recept
+ ion
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ p://gid.globalhealth.harvard.edu/icb/icb.do?keyword=k54064&pageid=icb.pa
+ ge243768
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:http://
+ gid.globalhealth.harvard.edu/icb/icb.do?keyword=k54064&pageid=icb.page24
+ 3766
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.496
+ .4768\, eric_goodwin@harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>7 Cambridge Center</StreetAddress1><City>Cambridge</C
+ ity><StateProvince>MA</StateProvince><PostalCode>02142</PostalCode><Lati
+ tude>42.3628959495484</Latitude><Longitude>-71.0849274095301</Longitude>
+ <MapPointRegionCode>US</MapPointRegionCode><MapPointDisplay>Broad Instit
+ ute\n7 Cambridge Center\nCambridge\, MA 02142</MapPointDisplay><MapLinkT
+ ype><Value>3</Value></MapLinkType><LocationType>AddressAndLabel</Locatio
+ nType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></
+ RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Conferences\, Health Sciences\, Lecture
+UID:http://uid.trumba.com/event/89471387
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Collecting Modernism
+LOCATION:Arthur M. Sackler Museum @ 485 Broadway\, Cambridge\, MA 02138
+DTSTART:20100717T150000Z
+DTEND:20100717T160000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Over the years\, the Harvard Art Museum has received several
+  important donations of late 19th and early 20th century European art. T
+ his talk will consider the complex interactions among stylistic developm
+ ents\, taste\, historical events\, and the art market in the creation of
+  collections.\n\nGallery talks are informal and include discussion.
+CATEGORIES:Harvard Event,Art/Design
+DTSTAMP:20100708T154016Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Art Museum
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Sarah Kia
+ novsky\, assistant curator\, Department of Paintings\, Sculpture and Dec
+ orative Arts\, Harvard Art Museum/Fogg Museum
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free with the 
+ price of admission. Open to the public.
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Limited
+  to 25 participants\; please arrive early.
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.496
+ .8576\, susannah_hutchison@harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>Cambridge St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138</PostalCode><Latitude>4
+ 2.3754361768646</Latitude><Longitude>-71.1184431477873</Longitude><MapPo
+ intRegionCode>US</MapPointRegionCode><MapPointDisplay>Arthur M. Sackler 
+ Museum @ 485 Broadway\nCambridge St\nCambridge\, MA 02138</MapPointDispl
+ ay><MapLinkType><Value>3</Value></MapLinkType><LocationType>AddressAndLa
+ bel</LocationType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667<
+ /MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Humanities\, Lecture
+UID:http://uid.trumba.com/event/89167698
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:David Zweig: The Role of Overseas Educated Chinese in China's Mo
+ dernization
+LOCATION:CGIS South\, Room S153\, 1730 Cambridge Street\, Cambridge
+DTSTART:20100719T201500Z
+DTEND:20100719T214500Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Social Sciences
+DTSTAMP:20100528T115945Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Fairbank Center for Chinese Studies: Special Guest Presentation
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:David Zwe
+ ig\, Hong Kong University of Science and Technology
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free and open 
+ to the public
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:lkluz@f
+ as.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>1730 Cambridge St</StreetAddress1><City>Cambridge</Ci
+ ty><StateProvince>MA</StateProvince><PostalCode>02138</PostalCode><Latit
+ ude>42.3753849504458</Latitude><Longitude>-71.1133341662882</Longitude><
+ MapPointRegionCode>US</MapPointRegionCode><MapPointDisplay>CGIS South\n1
+ 730 Cambridge St\nCambridge\, MA 02138</MapPointDisplay><MapLinkType><Va
+ lue>3</Value></MapLinkType><LocationType>AddressAndLabel</LocationType><
+ MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLo
+ cation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/89669589
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Nation I. Birth of a Nation
+LOCATION:26 Trowbridge Street\, Cambridge\, MA 02138
+DTSTART:20100720T210000Z
+DTEND:20100721T003000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Note - This is a two day event on Tuesday\, July 20\, and Th
+ ursday\, July 22\, from 5 to 8:30 p.m.
+CATEGORIES:Harvard Event,Humanities
+DTSTAMP:20100713T160726Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:www.rea
+ lcolegiocomplutense.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>26 Trowbridge St</StreetAddress1><City>Cambridge</Cit
+ y><StateProvince>MA</StateProvince><PostalCode>02138-5307</PostalCode><L
+ atitude>42.371407</Latitude><Longitude>-71.112055</Longitude><MapPointRe
+ gionCode>US</MapPointRegionCode><MapPointDisplay>26 Trowbridge St\nCambr
+ idge\, MA 02138-5307</MapPointDisplay><MapLinkType><Value>3</Value></Map
+ LinkType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth
+ ></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/90264426
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Midsummer Nights' Science: "Unlocking the Mysteries of Diabetes"
+LOCATION:The Broad Institute
+DTSTART:20100721T220000Z
+DTEND:20100721T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Health Sciences
+DTSTAMP:20100712T160535Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Bridget W
+ agner
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:rokop@b
+ roadinstitute.org
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.714
+ .7992
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Education\, Health Sciences\, Lecture\, Science
+UID:http://uid.trumba.com/event/90112078
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Nation I. Birth of a Nation
+LOCATION:26 Trowbridge Street\, Cambridge\, MA 02138
+DTSTART:20100722T210000Z
+DTEND:20100723T003000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Note - This is a two day event on Tuesday\, July 20\, and Th
+ ursday\, July 22\, from 5 to 8:30 p.m.
+CATEGORIES:Harvard Event,Humanities
+DTSTAMP:20100713T160631Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:www.rea
+ lcolegiocomplutense.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>26 Trowbridge St</StreetAddress1><City>Cambridge</Cit
+ y><StateProvince>MA</StateProvince><PostalCode>02138-5307</PostalCode><L
+ atitude>42.371407</Latitude><Longitude>-71.112055</Longitude><MapPointRe
+ gionCode>US</MapPointRegionCode><MapPointDisplay>26 Trowbridge St\nCambr
+ idge\, MA 02138-5307</MapPointDisplay><MapLinkType><Value>3</Value></Map
+ LinkType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth
+ ></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/90289132
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Conferencia extraordinaria
+DTSTART:20100722T210000Z
+DTEND:20100723T003000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Conferences
+DTSTAMP:20100713T160852Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:José Vare
+ la Ortega
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:www.rea
+ lcolegiocomplutense.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Conferences\, Humanities\, Lecture
+UID:http://uid.trumba.com/event/90264655
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:The Chinese and Indian Economies: A Comparative Perspective
+LOCATION:CGIS South\, Room S153\, 1730 Cambridge Street\, Cambridge
+DTSTART:20100726T161500Z
+DTEND:20100726T174500Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Social Sciences
+DTSTAMP:20100623T135123Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Fairbank Center for Chinese Studies: China Lunchtime Seminar
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Subramani
+ an Swamy\, Harvard Summer School faculty\; formerly cabinet minister for
+  commerce\, government of India
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free and open 
+ to the public
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:lkluz@f
+ as.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>1730 Cambridge St</StreetAddress1><City>Cambridge</Ci
+ ty><StateProvince>MA</StateProvince><PostalCode>02138</PostalCode><Latit
+ ude>42.3753849504458</Latitude><Longitude>-71.1133341662882</Longitude><
+ MapPointRegionCode>US</MapPointRegionCode><MapPointDisplay>CGIS South\n1
+ 730 Cambridge St\nCambridge\, MA 02138</MapPointDisplay><MapLinkType><Va
+ lue>3</Value></MapLinkType><LocationType>AddressAndLabel</LocationType><
+ MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLo
+ cation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/90035043
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Midsummer Nights' Science: "The Genetic Roots of Heart Disease"
+LOCATION:The Broad Institute
+DTSTART:20100728T220000Z
+DTEND:20100728T230000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Health Sciences
+DTSTAMP:20100712T160535Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Sek Kathi
+ resan
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:rokop@b
+ roadinstitute.org
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.714
+ .7992
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Education\, Health Sciences\, Lecture\, Science
+UID:http://uid.trumba.com/event/90112079
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Nation II: Cultural Representations
+LOCATION:26 Trowbridge Street\, Cambridge\, MA 02138
+DTSTART:20100729T210000Z
+DTEND:20100730T003000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+CATEGORIES:Harvard Event,Humanities
+DTSTAMP:20100713T161409Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Real Colegio Complutense
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Regina Ma
+ rtínez\, Margarita Márquez Padorno
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:www.rea
+ lcolegiocomplutense.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>26 Trowbridge St</StreetAddress1><City>Cambridge</Cit
+ y><StateProvince>MA</StateProvince><PostalCode>02138-5307</PostalCode><L
+ atitude>42.371407</Latitude><Longitude>-71.112055</Longitude><MapPointRe
+ gionCode>US</MapPointRegionCode><MapPointDisplay>26 Trowbridge St\nCambr
+ idge\, MA 02138-5307</MapPointDisplay><MapLinkType><Value>3</Value></Map
+ LinkType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth
+ ></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Humanities\, Lecture\, Social Sciences
+UID:http://uid.trumba.com/event/90264703
+END:VEVENT
+END:VCALENDAR

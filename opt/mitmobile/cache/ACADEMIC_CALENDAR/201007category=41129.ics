@@ -1,0 +1,313 @@
+BEGIN:VCALENDAR
+PRODID:-//Trumba Corporation//Trumba Calendar Services 0.11.6713//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Harvard University Gazette
+X-WR-TIMEZONE:America/New_York
+METHOD:PUBLISH
+BEGIN:VEVENT
+SUMMARY:Calling All Artists: Artists in the Arboretum
+LOCATION:Hunnewell Building\, Arnold Arboretum\, 125 Arborway\, 02130
+DTSTART;VALUE=DATE:20100527
+DTEND;VALUE=DATE:20100715
+X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
+DESCRIPTION:The Arnold Arboretum and Jamaica Plain Open Studios are host
+ ing a juried group exhibition devoted to art inspired by the plants\, la
+ ndscape\, and collections of the Arnold Arboretum. Artists do not have t
+ o have a studio in Jamaica Plain. Art does not have to depict the Arbore
+ tum\, but should \nreflect the mission or aesthetic of the institution o
+ r the place.    \n\nFor more information on rules and how to submit\, vi
+ sit the Web site.
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100527T143333Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>125 Arborway</StreetAddress1><City>Jamaica Plain</Cit
+ y><StateProvince>MA</StateProvince><PostalCode>02130-3500</PostalCode><L
+ atitude>42.308383</Latitude><Longitude>-71.119936</Longitude><MapPointRe
+ gionCode>US</MapPointRegionCode><MapPointDisplay>125 Arborway\nJamaica P
+ lain\, MA 02130-3500</MapPointDisplay><MapLinkType><Value>3</Value></Map
+ LinkType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth
+ ></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Exhibitions\, Volunteer Opportunities
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:htt
+ p://www.arboretum.harvard.edu/visitors/art_shows.html
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Arnold Arboretum
+UID:http://uid.trumba.com/event/89663735
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Between Manuscripts and Printing: Illustrated Lithographs of Fir
+ dawsi's Shahnama
+LOCATION:Amy Lowell Room\, Houghton Library
+DTSTART;VALUE=DATE:20100706
+DTEND;VALUE=DATE:20100707
+X-MICROSOFT-CDO-ALLDAYEVENT:TRUE
+DESCRIPTION:Exhibit on view through Nov. 24\, 2010\n\nThe Shahnama\, or 
+ Book of Kings\, an epic composed by the Persian poet Abu’l Qasim Firdaws
+ i and completed in 1010 CE\, tells the story of the Persian people from 
+ the creation of the world down to the Muslim conquest of Iran in the mid
+ -seventh century. A perennially popular and influential work in Persian-
+ speaking lands and beyond\, the text was preserved not only in sumptuous
+ ly illuminated manuscripts\, intended for the libraries of kings\, but a
+ lso in less expensive and more accessible lithographed versions produced
+  in Iran and India between 1846 and the mid-twentieth century. The Hough
+ ton Library exhibition presents five illustrated lithographed editions o
+ f the Shahnama as part of a Boston-area celebration of the millennium of
+  Firdawsi’s epic. Related exhibitions may be seen at the Harvard Art Mus
+ eum: "Heroic Gestes: Epic Tales from Firdawsi's Shahnama"\, and the Muse
+ um of Fine Arts: "Romantic Interludes: Women in Firdawsi's Shahnama."
+CATEGORIES:Harvard Event,Exhibitions-Current
+DTSTAMP:20100628T162841Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard College Library
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.495
+ .2444
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Exhibitions\, Poetry/Prose
+UID:http://uid.trumba.com/event/90097849
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Opening of "Imagine It Thick In Your Own Hair": An Emergency Ben
+ efit Exhibition by Heide Hatry
+LOCATION:Pierre Menard Gallery\, 10 Arrow Street\, Cambridge\, MA 02138
+DTSTART:20100706T160000Z
+DTEND:20100706T220000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:A benefit for victims of the oil spill\, by Heide Hatry in c
+ onjunction with a silent auction of work by numerous emerging and well-k
+ nown artists from the Boston area\, New York\, and abroad. Reception and
+  silent auction on Thursday\, July 22\, 6-9 p.m. (bidding ends at 8 p.m.
+ ). Proceeds from sales to benefit the Audubon Action Center.\n\nExhibit 
+ on view through Aug. 1.
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100702T112848Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Pierre Menard Gallery
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free and open 
+ to the public
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617-868
+ -2033\, pierre@pierremenardgallery.com
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>10 Arrow St</StreetAddress1><City>Cambridge</City><St
+ ateProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitu
+ de>42.3711</Latitude><Longitude>-71.114561</Longitude><MapPointRegionCod
+ e>US</MapPointRegionCode><MapPointDisplay>Pierre Menard Gallery\n10 Arro
+ w St\nCambridge\, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</
+ Value></MapLinkType><LocationType>AddressAndLabel</LocationType><MapHeig
+ ht>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+ 
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Exhibitions\, Special Events
+UID:http://uid.trumba.com/event/90150130
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Summer Day Trip to Hartford\, CT
+LOCATION:Hartford\, CT
+DTSTART:20100708T123000Z
+DTEND:20100708T220000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Join us on a tour of notable art collections in Connecticut.
+  We will begin with a visit to the Wadsworth Atheneum\, the nation’s old
+ est public art museum and home to one of its best American art collectio
+ ns. After lunch we will tour the renowned French impressionist painting 
+ collection at the Hill-Stead Museum in Farmington. Participants will als
+ o enjoy a glimpse of the Chick Austin House\, home of the Atheneum’s leg
+ endary director\, A. Everett Austin Jr.\, who received much of his museu
+ m training at the Fogg.
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100625T154405Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Art Museum
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Alice DeL
+ ana\, Harvard Art Museum docent
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$160 (members 
+ $130). Fee includes bus transportation\, admission\, lunch\, and all gra
+ tuities. Open to the public.
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Space i
+ s limited\, and advance registration is required.
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.495
+ .4544\, artmuseum_membership@harvard.edu to register
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Special Events
+UID:http://uid.trumba.com/event/89167652
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Exhibit Opening. Wiyohpiyata: Lakota Images of the Contested Wes
+ t
+LOCATION:Peabody Museum\, 11 Divinity Avenue\, Cambridge
+DTSTART:20100713T220000Z
+DTEND:20100713T220000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Ongoing exhibit through Dec. 30\, 2011
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100713T162057Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Peabody Museum
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:$9 adults\; $7
+  senior citizens and students\; $6 children 3-18
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>11 Divinity Ave</StreetAddress1><City>Cambridge</City
+ ><StateProvince>MA</StateProvince><PostalCode>02138</PostalCode><Latitud
+ e>42.3769080826307</Latitude><Longitude>-71.1139079021784</Longitude><Ma
+ pPointRegionCode>US</MapPointRegionCode><MapPointDisplay>Peabody Museum
+ \n11 Divinity Ave\nCambridge\, MA 02138</MapPointDisplay><MapLinkType><Va
+ lue>3</Value></MapLinkType><LocationType>AddressAndLabel</LocationType><
+ MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLo
+ cation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Exhibitions\, Special Events
+UID:http://uid.trumba.com/event/90280027
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Groundhog Day
+LOCATION:Carpenter Center\, 24 Quincy St.\, Cambridge MA
+DTSTART:20100713T223000Z
+DTEND:20100713T223000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Introduction and Q&A with screenwriter Danny Rubin. Seating 
+ is first-come\, first-served. Free and open to the Harvard community.
+CATEGORIES:Harvard Event,Film
+DTSTAMP:20100709T134717Z
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>24 Quincy St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138-3804</PostalCode><Latit
+ ude>42.374096</Latitude><Longitude>-71.114616</Longitude><MapPointRegion
+ Code>US</MapPointRegionCode><MapPointDisplay>Carpenter Center\n24 Quincy
+  St\nCambridge\, MA 02138-3804</MapPointDisplay><MapLinkType><Value>3</V
+ alue></MapLinkType><LocationType>AddressAndLabel</LocationType><MapHeigh
+ t>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Film\, Special Events
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Danny Rub
+ in\, Harvard University
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Summer School Writing Program
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free and open 
+ to the Harvard community
+UID:http://uid.trumba.com/event/90217663
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Summer Night at the Harvard Museum of Natural History
+LOCATION:26 Oxford Street\, Cambridge
+DTSTART:20100715T210000Z
+DTEND:20100716T000000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Harvard Museum of Natural History hosts extended hours on th
+ e third Thursday of each summer month. Explore the museum and the new "H
+ eadgear" exhibition. Join Peter Hedman\, 2010 graduate of Harvard Colleg
+ e with a concentration in earth & planetary sciences\, for a 6 p.m. gall
+ ery talk on “Rock of Ages: The Evolution of Minerals through Earth Histo
+ ry\," and  Vera Domingues\, a researcher in Harvard’s Department of Mamm
+ alogy\, for a 7 p.m. gallery tour on “Natural Selection at Work: Color a
+ nd Patterns in the Wild” in the "Language of Color" exhibition. \n \nDet
+ ails on the Harvard Museum of Natural History website\, http://www.hmnh.
+ harvard.edu/lectures_and_special_events/index.php#summer
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100715T164445Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Museum of Natural History
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Peter Hed
+ man '10\, Vera Dominques
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Museum admissi
+ on $9-6\, free for Harvard ID holders & one guest
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Web Link";ID=15221;TYPE=SingleLine:www
+ .hmnh.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:tickets
+  at the door
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:hmnh@oe
+ b.harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>26 Oxford St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138</PostalCode><Latitude>4
+ 2.3782741204647</Latitude><Longitude>-71.116421411793</Longitude><MapPoi
+ ntRegionCode>US</MapPointRegionCode><MapPointDisplay>26 Oxford St\nCambr
+ idge\, MA 02138</MapPointDisplay><MapLinkType><Value>3</Value></MapLinkT
+ ype><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></Ra
+ darLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Classes/Workshops\, Exhibitions\, Lecture\, Science\, 
+ Special Events
+UID:http://uid.trumba.com/event/90118033
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:Collecting Modernism
+LOCATION:Arthur M. Sackler Museum @ 485 Broadway\, Cambridge\, MA 02138
+DTSTART:20100717T150000Z
+DTEND:20100717T160000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:Over the years\, the Harvard Art Museum has received several
+  important donations of late 19th and early 20th century European art. T
+ his talk will consider the complex interactions among stylistic developm
+ ents\, taste\, historical events\, and the art market in the creation of
+  collections.\n\nGallery talks are informal and include discussion.
+CATEGORIES:Harvard Event,Art/Design
+DTSTAMP:20100708T154016Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Harvard Art Museum
+X-TRUMBA-CUSTOMFIELD;NAME="Speaker(s)";ID=15223;TYPE=MultiLine:Sarah Kia
+ novsky\, assistant curator\, Department of Paintings\, Sculpture and Dec
+ orative Arts\, Harvard Art Museum/Fogg Museum
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free with the 
+ price of admission. Open to the public.
+X-TRUMBA-CUSTOMFIELD;NAME="Ticket Info";ID=15226;TYPE=SingleLine:Limited
+  to 25 participants\; please arrive early.
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617.496
+ .8576\, susannah_hutchison@harvard.edu
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>Cambridge St</StreetAddress1><City>Cambridge</City><S
+ tateProvince>MA</StateProvince><PostalCode>02138</PostalCode><Latitude>4
+ 2.3754361768646</Latitude><Longitude>-71.1184431477873</Longitude><MapPo
+ intRegionCode>US</MapPointRegionCode><MapPointDisplay>Arthur M. Sackler 
+ Museum @ 485 Broadway\nCambridge St\nCambridge\, MA 02138</MapPointDispl
+ ay><MapLinkType><Value>3</Value></MapLinkType><LocationType>AddressAndLa
+ bel</LocationType><MapHeight>2.15</MapHeight><MapWidth>2.86666666666667<
+ /MapWidth></RadarLocation>
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Humanities\, Lecture
+UID:http://uid.trumba.com/event/89167698
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:"Imagine It Thick In Your Own Hair": An Emergency Benefit Exhibi
+ tion by Heide Hatry
+LOCATION:Pierre Menard Gallery\, 10 Arrow Street\, Cambridge\, MA 02138
+DTSTART:20100722T220000Z
+DTEND:20100723T010000Z
+X-MICROSOFT-CDO-ALLDAYEVENT:FALSE
+DESCRIPTION:A benefit for victims of the oil spill\, by Heide Hatry in c
+ onjunction with a silent auction of work by numerous emerging and well-k
+ nown artists from the Boston area\, New York\, and abroad. Reception and
+  silent auction on Thursday\, July 22\, 6-9 p.m. (bidding ends at 8 p.m.
+ ). Proceeds from sales to benefit the Audubon Action Center.\n\nExhibit 
+ on view through Aug. 1.
+CATEGORIES:Harvard Event,Special Events
+DTSTAMP:20100702T113138Z
+X-TRUMBA-CUSTOMFIELD;NAME="Event Type";ID=21;TYPE=Number:Harvard Event
+X-TRUMBA-CUSTOMFIELD;NAME="Organization/Sponsor";ID=15227;TYPE=MultiLine
+ :Pierre Menard Gallery
+X-TRUMBA-CUSTOMFIELD;NAME="Cost";ID=15228;TYPE=SingleLine:Free and open 
+ to the public
+X-TRUMBA-CUSTOMFIELD;NAME="Contact Info";ID=15225;TYPE=MultiLine:617-868
+ -2033\, pierre@pierremenardgallery.com
+X-TRUMBA-CUSTOMFIELD;NAME="Location";ID=9;TYPE=RichLocation:<RadarLocati
+ on><StreetAddress1>10 Arrow St</StreetAddress1><City>Cambridge</City><St
+ ateProvince>MA</StateProvince><PostalCode>02138-5102</PostalCode><Latitu
+ de>42.3711</Latitude><Longitude>-71.114561</Longitude><MapPointRegionCod
+ e>US</MapPointRegionCode><MapPointDisplay>Pierre Menard Gallery\n10 Arro
+ w St\nCambridge\, MA 02138-5102</MapPointDisplay><MapLinkType><Value>3</
+ Value></MapLinkType><LocationType>AddressAndLabel</LocationType><MapHeig
+ ht>2.15</MapHeight><MapWidth>2.86666666666667</MapWidth></RadarLocation>
+ 
+X-TRUMBA-CUSTOMFIELD;NAME="Gazette Classification";ID=15202;TYPE=CustomA
+ sset:Art/Design\, Exhibitions\, Special Events
+UID:http://uid.trumba.com/event/90150177
+END:VEVENT
+END:VCALENDAR
