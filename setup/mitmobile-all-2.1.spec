@@ -1,7 +1,7 @@
 Summary:	MIT Mobile Web
 Name:		mitmobile-all
 Version:	2.1
-Release:	1fc12
+Release:	3.fc12
 License:	MIT License
 Group:		Applications/Web
 Source:		mitmobile-all-%{version}-%{release}.tar.gz
@@ -20,6 +20,11 @@ MIT Mobile Web plus API extensions
 %prep
 %setup
 
+%pre
+if [ "$1" = "2" ]; then # user is upgrading
+   cp $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/lib_constants.inc /tmp
+fi
+
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir $RPM_BUILD_ROOT
@@ -29,7 +34,7 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 
 %files
 
-%defattr(-,root,root,-)
+%defattr(-,apache,apache,-)
 /opt/mitmobile/bin
 /opt/mitmobile/certs
 /opt/mitmobile/maptiles
@@ -61,8 +66,6 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /var/www/html/sms
 /var/www/html/stellar
 /var/www/html/techcash
-
-%defattr(-,apache,apache,-)
 /opt/mitmobile/cache
 /opt/mitmobile/logs
 /opt/mitmobile/pushd
@@ -72,17 +75,42 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /var/www/html/Webkit
 
 %post
-# required httpd settings:
-# in directory, AllowOverride All (/etc/httpd/conf/httpd.conf)
-# make sure short_open_tag is enabled (/etc/php.ini)
+if [ "$1" = "1" ]; then # user is installing
+   # set selinux permissions on cache file directories
+   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/cache
+   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/logs
+   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/static
+   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/pushd
 
-# set selinux permissions on cache file directories
-chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/cache
-chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/logs
-chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/static
-chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/pushd
+   ln -sf $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/lib_constants.inc $RPM_INSTALL_PREFIX0/mitmobile/mobi-lib/lib_constants.inc
+   ln -sf $RPM_INSTALL_PREFIX0/mitmobile/maptiles/crushed $RPM_INSTALL_PREFIX1/api/maptile
+
+   # TODO: the following apache/php settings are required
+   # in directory, AllowOverride All (/etc/httpd/conf/httpd.conf)
+   # make sure short_open_tag is enabled (/etc/php.ini)
+fi
+
+if [ "$1" = "2" ]; then # user is upgrading
+   # get mysql username from old config file
+   mysql_user=`grep MYSQL_USER /tmp/lib_constants.inc`
+   mysql_user=${mysql_user%\');}
+   mysql_user=${mysql_user##*\'}
+
+   mysql_pass=`grep MYSQL_PASS /tmp/lib_constants.inc`
+   mysql_pass=${mysql_pass%\');}
+   mysql_pass=${mysql_pass##*\'}
+
+   mysql_db=`grep MYSQL_DBNAME /tmp/lib_constants.inc`
+   mysql_db=${mysql_db%\');}
+   mysql_db=${mysql_db##*\'}
+
+   sed -i 's/mysql_user/'${mysql_user}'/g' $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/lib_constants.inc
+   sed -i 's/mysql_pass/'${mysql_pass}'/g' $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/lib_constants.inc
+   sed -i 's/mysql_db/'${mysql_db}'/g' $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/lib_constants.inc
+fi
 
 # edit config files for changed prefixes
+# (do this every time since config files can change in the repo)
 if [ "$RPM_INSTALL_PREFIX0" != "/opt" ]; then
    PREFIX0=${RPM_INSTALL_PREFIX0//\//\\\/}
    sed -i 's/\/opt\/mitmobile/'${PREFIX0}'/g' $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/*
@@ -94,17 +122,14 @@ if [ "RPM_INSTALL_PREFIX1" != "/var/www/html" ]; then
    sed -i 's/\/var\/www\/html/'${PREFIX1}'/g' $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/web_constants_*.ini
 fi
 
-ln -sf $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/lib_constants.inc $RPM_INSTALL_PREFIX0/mitmobile/mobi-lib/lib_constants.inc
-ln -sf $RPM_INSTALL_PREFIX0/mitmobile/maptiles/crushed $RPM_INSTALL_PREFIX1/api/maptile
-
 %preun
-if [ "$1" = "0" ]; then
+if [ "$1" = "0" ]; then # user is uninstalling
    rm $RPM_INSTALL_PREFIX1/api/maptile
    rm $RPM_INSTALL_PREFIX0/mitmobile/mobi-lib/lib_constants.inc
 fi
 
 %postun
-if [ "$1" = "0" ]; then
+if [ "$1" = "0" ]; then # user is uninstalling
    rm -r $RPM_INSTALL_PREFIX0/mitmobile
 fi
 

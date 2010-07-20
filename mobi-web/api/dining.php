@@ -23,7 +23,7 @@
             $hours_indicator = 0;
             break;
 
-        case 'hours':          
+        case 'hours':
             $hours_indicator = 1;
             echo json_encode(DINING_HOURS::getDiningHours());
             break;

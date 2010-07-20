@@ -2,12 +2,9 @@
 
 RPMBUILDDIR=~/rpmbuild
 VERSION=2.1
-RPMVERSION=1
+RPMVERSION=3
 OS=fc12
-ORIGPWD=$PWD
 PACKAGE=mitmobile-all
-
-# todo: parse parameters for version, rpmversion, os
 
 cd `dirname $0`
 cd ..
@@ -32,7 +29,7 @@ fi
 
 echo "creating rpms for version $VERSION"
 
-TARBALL=${PACKAGE}-${VERSION}-${RPMVERSION}${OS}.tar.gz
+TARBALL=${PACKAGE}-${VERSION}-${RPMVERSION}.${OS}.tar.gz
 SRCROOT=${PACKAGE}-${VERSION}
 mkdir $SRCROOT
 mkdir -p $SRCROOT/var/www/
@@ -51,7 +48,7 @@ fi
 tar -zcf ${TARBALL} ${SRCROOT} --exclude=.git*
 mv ${TARBALL} ${RPMBUILDDIR}/SOURCES
 
-SPEC=${PACKAGE}-${VERSION}-${RPMVERSION}${OS}.spec
+SPEC=${PACKAGE}-${VERSION}.spec
 
 cp setup/${SPEC} ${RPMBUILDDIR}/SPECS
 
