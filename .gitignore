@@ -1,6 +1,3 @@
-mobi-web/Basic/attribs-*.inc
-mobi-web/Webkit/attribs-*.inc
-mobi-web/Touch/attribs-*.inc
 *~
 
 opt/mitmobile/bin/*mobi-*
