@@ -976,3 +976,10 @@
 [Tue 07 20 11:54:02 2010] iphone dining: a:3:{s:6:"module";s:6:"dining";s:7:"command";s:6:"dinner";s:4:"date";s:10:"2010-07-21";}
 [Tue 07 20 11:54:04 2010] iphone dining: a:3:{s:6:"module";s:6:"dining";s:7:"command";s:9:"breakfast";s:4:"date";s:10:"2010-07-21";}
 [Tue 07 20 11:56:46 2010] iphone push: a:5:{s:9:"device_id";s:2:"13";s:11:"device_type";s:5:"apple";s:6:"module";s:4:"push";s:8:"pass_key";s:10:"1201590341";s:7:"command";s:22:"getUnreadNotifications";}
+[Tue 07 20 13:45:21 2010] iphone push: a:3:{s:6:"module";s:4:"push";s:11:"device_type";s:5:"apple";s:7:"command";s:8:"register";}
+[Tue 07 20 13:45:23 2010] iphone dining: a:3:{s:6:"module";s:6:"dining";s:7:"command";s:5:"lunch";s:4:"date";s:10:"2010-07-20";}
+[Tue 07 20 13:45:24 2010] iphone dining: a:3:{s:6:"module";s:6:"dining";s:7:"command";s:6:"dinner";s:4:"date";s:10:"2010-07-20";}
+[Tue 07 20 13:45:26 2010] iphone dining: a:3:{s:6:"module";s:6:"dining";s:7:"command";s:5:"lunch";s:4:"date";s:10:"2010-07-20";}
+[Tue 07 20 13:45:26 2010] iphone dining: a:3:{s:6:"module";s:6:"dining";s:7:"command";s:9:"breakfast";s:4:"date";s:10:"2010-07-20";}
+[Tue 07 20 13:58:35 2010] iphone push: a:3:{s:6:"module";s:4:"push";s:11:"device_type";s:5:"apple";s:7:"command";s:8:"register";}
+[Tue 07 20 13:58:37 2010] iphone dining: a:3:{s:6:"module";s:6:"dining";s:7:"command";s:5:"lunch";s:4:"date";s:10:"2010-07-20";}
