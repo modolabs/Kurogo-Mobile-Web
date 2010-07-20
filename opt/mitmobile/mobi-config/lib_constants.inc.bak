@@ -1,10 +1,13 @@
 <?php
 
+define('MOBILE_DEV_SERVER', TRUE);
+define('MOBILE_STAGE_SERVER', FALSE);
+
 define('TIMEZONE', 'America/New_York');
 
 // paths
-define('CACHE_DIR', '/code/modo/Harvard-Mobile/opt/mitmobile/cache');
-define('DATADIR', '/code/modo/Harvard-Mobile/opt/mitmobile/static');
+define('CACHE_DIR', '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/cache');
+define('DATADIR', '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/static');
 define('TMP_DIR', '/tmp/'); // cache files that we'll allow OS to clean out
 
 // database parameters
@@ -14,20 +17,20 @@ define('MYSQL_DBNAME', 'mysql_db');
 define('MYSQL_HOST', 'localhost');
 
 // directory
-//define('LDAP_SERVER', 'ldap.mit.edu');
-//define('LDAP_PATH', 'dc=mit, dc=edu');
+define("LDAP_SERVER", "phonebook.harvard.edu");
+define("LDAP_PATH", 'o=Harvard University,c=US');
 define('LDAP_SEARCH_TIMELIMIT', 30);
 define('LDAP_READ_TIMELIMIT', 30);
 
 // campus_map
 define('MAP_SEARCH_URL', 'http://whereis.mit.edu/search');
 define('BLDG_DATA_XML', DATADIR . '/bldg_data.xml');
-define('ARCGIS_SERVICE_JSON_FILE', '/code/modo/Harvard-Mobile/opt/mitmobile/maptiles/service.json');
+define('ARCGIS_SERVICE_JSON_FILE', '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/maptiles/service.json');
 define('ARCGIS_SERVER_URL', 'http://upo-srv2.cadm.harvard.edu/ArcGIS/rest/services/CampusMap/MapServer');
 define('ARCGIS_CACHE', CACHE_DIR . '/ARCGIS');
-define("MAP_TILE_CACHE_DIR", '/code/modo/Harvard-Mobile/opt/mitmobile/maptiles/raw/');
-define("MAP_TILE_CHECKSUM_FILE", '/code/modo/Harvard-Mobile/opt/mitmobile/maptiles/export.md5');
-define("MAP_TILE_CHECKSUM_FILE_TEMP", '/code/modo/Harvard-Mobile/opt/mitmobile/maptiles/temp-export.md5');
+define("MAP_TILE_CACHE_DIR", '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/maptiles/raw/');
+define("MAP_TILE_CHECKSUM_FILE", '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/maptiles/export.md5');
+define("MAP_TILE_CHECKSUM_FILE_TEMP", '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/maptiles/temp-export.md5');
 
 // news_office
 define('NEWSOFFICE_FEED_URL', 'http://web.mit.edu/newsoffice/feeds/iphone.php');
@@ -35,7 +38,7 @@ define('NEWSOFFICE_FEED_URL', 'http://web.mit.edu/newsoffice/feeds/iphone.php');
 // events_calendar
 define('EVENTS_CALENDAR_API', 'http://events.mit.edu/MITEventsFull.wsdl');
 define("ACADEMIC_CALENDAR_CACHE_DIR", CACHE_DIR . "/ACADEMIC_CALENDAR/");
-define("ACADEMIC_CALENDAR_RSS", "/code/modo/Harvard-Mobile/opt/mitmobile/static/academic_location.rss");
+define("ACADEMIC_CALENDAR_RSS", "/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/static/academic_location.rss");
 define("ACADEMIC_CALENDAR_CACHE_LIFESPAN", 86400 * 30);
 
 // mobile about
@@ -81,6 +84,12 @@ define('WAREHOUSE_ORACLE_USER', 'warehouse_oracle_user');
 define('WAREHOUSE_ORACLE_PASS', 'warehouse_oracle_pass');
 define('WAREHOUSE_ORACLE_DB', 'warehouse_oracle_db');
 
-require_once('lib_constants_prod.inc');
+if (MOBILE_DEV_SERVER) {
+  require_once('lib_constants_dev.inc');
+} elseif (MOBILE_STAGE_SERVER) {
+  require_once('lib_constants_stage.inc');
+} else {
+  require_once('lib_constants_prod.inc');
+}
 
 ?>

@@ -6,12 +6,344 @@
 	
 	<link>http://news.harvard.edu/gazette</link>
 	<description>Gazette Online</description>
-	<lastBuildDate>Thu, 15 Jul 2010 19:31:22 +0000</lastBuildDate>
+	<lastBuildDate>Mon, 19 Jul 2010 20:39:41 +0000</lastBuildDate>
 	<language>en</language>
 	<sy:updatePeriod>hourly</sy:updatePeriod>
 	<sy:updateFrequency>1</sy:updateFrequency>
 	<generator>http://wordpress.org/?v=3.0</generator>
 		<atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="self" type="application/rss+xml" href="http://feeds.feedburner.com/HarvardGazetteOnline" /><feedburner:info uri="harvardgazetteonline" /><atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="hub" href="http://pubsubhubbub.appspot.com/" /><item>
+		<title>Better odds</title>
+		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/08n96qbsuLU/</link>
+		<comments>http://news.harvard.edu/gazette/story/2010/07/better-odds/#comments</comments>
+		<pubDate>Mon, 19 Jul 2010 20:00:25 +0000</pubDate>
+		<dc:creator />
+				<category><![CDATA[Health & Medicine]]></category>
+		<category><![CDATA[Science & Health]]></category>
+		<category><![CDATA[A. Thomas Look]]></category>
+		<category><![CDATA[Alejandro Gutierrez]]></category>
+		<category><![CDATA[American Cancer Society]]></category>
+		<category><![CDATA[Chemotherapy]]></category>
+		<category><![CDATA[Children]]></category>
+		<category><![CDATA[Community Foundation of the National Capital Region]]></category>
+		<category><![CDATA[Dana-Farber Cancer Institute]]></category>
+		<category><![CDATA[Harvard Medical School]]></category>
+		<category><![CDATA[Harvard Medical School Department of Pediatrics]]></category>
+		<category><![CDATA[Leukemia Cells]]></category>
+		<category><![CDATA[Long-term Survivors]]></category>
+		<category><![CDATA[Lymph Cells]]></category>
+		<category><![CDATA[National Institutes of Health]]></category>
+		<category><![CDATA[Pediatric]]></category>
+		<category><![CDATA[T cells]]></category>
+		<category><![CDATA[T-ALL]]></category>
+		<category><![CDATA[T-cell Acute Lymphoblastic Leukemia]]></category>
+		<category><![CDATA[TCR-Gamma Gene]]></category>
+		<category><![CDATA[Tumor]]></category>
+		<category><![CDATA[William Lawrence Foundation]]></category>
+
+		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=50728</guid>
+		<description><![CDATA[Test could predict which children with T-cell acute lymphoblastic leukemia are best candidates for clinical trials of new therapies, research finds.]]></description>
+			<content:encoded><![CDATA[<p>A genetic clue uncovered by Harvard researchers at <a href="http://www.dana-farber.org/">Dana-Farber Cancer Institute</a> enables doctors to predict, for the first time, which children with T-cell acute lymphoblastic leukemia (T-ALL) are unlikely to benefit from standard chemotherapy for the disease and should therefore be among the first to receive new treatments in future clinical trials.</p>
+<p>In a study in the<a href="http://jco.ascopubs.org/"> Journal of Clinical Oncology</a>, which was published online today  (July 19), the investigators report that young people with T-ALL whose leukemia cells harbor an intact TCR-gamma gene generally have a poor response to &#8220;induction&#8221; chemotherapy — the first course of drugs given at the time of diagnosis to spur cancer remission. Patients with this high-risk marker will be prime candidates for clinical trials in which therapies currently in development are tested.</p>
+<p>&#8220;Even though we can cure a large subset of children with T-ALL, about 25 percent of pediatric patients with the disease die of it, either because first-line chemotherapy fails, or because they relapse after being in remission for a year or two,&#8221; said the study&#8217;s lead author, <a href="http://connects.catalyst.harvard.edu/PROFILES/ProfileDetails.aspx?Person=AG73">Alejandro Gutierrez</a>, a <a href="http://harvardscience.harvard.edu/directory/programs/harvard-medical-school">Harvard Medical School</a> (HMS) instructor in pediatrics at Dana-Farber. &#8220;Until now, there has been no way of determining ahead of time whether a patient is likely to be helped by the standard regimen of front-line drugs.&#8221;</p>
+<p>ALL, a cancer of the white blood cells, is the <a href="http://physicians.dana-farber.org/directory/profile.asp?dbase=main&amp;setsize=10&amp;display=Y&amp;nxtfmt=r&amp;gs=r&amp;picture_id=0000172&amp;lookup=Y&amp;pict_id=0000172">most common malignancy</a> in children. T-ALL, which affects lymphocytes (lymph cells) known as T cells, accounts for about 15 percent of all pediatric ALL cases, or about 1,500 new diagnoses annually in the United States, according to the <a href="http://www.cancer.org/index">American Cancer Society</a>.</p>
+<p>To see if T-ALL cells contain any hints of their likelihood to resist traditional chemotherapy, investigators performed genomic tests on leukemia cells from 47 children with T-ALL, 25 of whom were long-term survivors, nine of whom failed to achieve complete remission after induction chemotherapy, and 13 who relapsed after going into remission.  The molecular test, known as comparative genomic hybridization, probes thousands of genes to see if any are present in unusual quantities in the cells.</p>
+<p>&#8220;We found that patients whose cells did not have rearranged DNA in the TCR-gamma gene were the most likely to fail induction therapy. Of the 47 samples studied, eight had this particular high-risk marker. Six of those patients did not respond to first-line chemotherapy,&#8221; said Gutierrez<a href="http://hms.harvard.edu/hms/home.asp"></a>.</p>
+<p>Tumor samples from patients whose disease relapsed after going into remission were found to have TCR-gamma rearrangements at the time of diagnosis.  In some of these patients, however, rearrangements were not found after relapse.  Researchers believe that such patients almost certainly had a small number of leukemia-initiating cells without rearrangements at diagnosis, but in quantities too small for detection, said the study’s senior author, <a href="http://www.dfhcc.harvard.edu/membership/profile/member/734/0/">A. Thomas Look, </a>an HMS pediatrics professor at Dana-Farber. After the DNA-rearranged cells died in response to chemotherapy, the remaining chemo-resistant cells came to predominate.</p>
+<p>Other molecular studies are giving scientists leads as to which genes and gene pathways are responsible for the ability of some T-ALL cells to defy conventional chemotherapy, said Gutierrez. Some of these genes are known to be targeted by drugs currently being studied in clinical trials for other diseases, raising the possibility that they might be effective for certain T-ALL patients as well.</p>
+<p>&#8220;Given the relatively high failure rate of conventional induction therapy for this disease, there is an urgent need to test alternative chemotherapy agents in patients,&#8221; Gutierrez remarked.  &#8220;Routine testing for rearrangements in TCR-gamma,&#8221; which could be accomplished fairly inexpensively with a standardized test, &#8220;would enable us to identify which patients could gain the most benefit from these agents.&#8221;</p>
+<p>The research was supported by grants from the <a href="http://www.nih.gov/">National Institutes of Health,</a> the William Lawrence Foundation, and the <a href="http://www.cfncr.org/site/c.ihLSJ5PLKuG/b.4310557/k.1A22/CFNCR_Home.htm">Community Foundation of the National Capital Region</a>.</p>
+<p><a href="http://www.dana-farber.org/">Dana-Farber Cancer Institute</a> is a principal teaching affiliate of the Harvard Medical School.</p>
+<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/08n96qbsuLU" height="1" width="1"/>]]></content:encoded>
+	    <image>
+        <title>Better odds</title>
+        <link>http://news.harvard.edu/gazette/story/2010/07/better-odds/</link>
+        <url>http://news.harvard.edu/gazette/wp-content/uploads/2010/07/Tcell140.jpg</url>
+        <width>140</width>
+        <height>140</height>
+    </image>
+    <harvard:WPID>50728</harvard:WPID>
+    <harvard:featured>homepage</harvard:featured>
+		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/07/better-odds/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/07/better-odds/</feedburner:origLink></item>
+		<item>
+		<title>Bunk or boon?</title>
+		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/883CDRmsehI/</link>
+		<comments>http://news.harvard.edu/gazette/story/2010/07/bunk-or-boon/#comments</comments>
+		<pubDate>Fri, 16 Jul 2010 20:13:39 +0000</pubDate>
+		<dc:creator />
+				<category><![CDATA[Government & Politics]]></category>
+		<category><![CDATA[National & World Affairs]]></category>
+		<category><![CDATA[Barney Frank]]></category>
+		<category><![CDATA[Bill]]></category>
+		<category><![CDATA[Business]]></category>
+		<category><![CDATA[Christopher Dodd]]></category>
+		<category><![CDATA[Clayton Rose]]></category>
+		<category><![CDATA[Council of Economic Advisers]]></category>
+		<category><![CDATA[David Moss]]></category>
+		<category><![CDATA[Dodd-Frank Wall Street Reform and Consumer Protection Act]]></category>
+		<category><![CDATA[Elizabeth Warren]]></category>
+		<category><![CDATA[Financial Reform]]></category>
+		<category><![CDATA[Harvard Business Review]]></category>
+		<category><![CDATA[Harvard Business School]]></category>
+		<category><![CDATA[Harvard Kennedy School]]></category>
+		<category><![CDATA[Harvard Law School]]></category>
+		<category><![CDATA[J.P. Morgan & Co.]]></category>
+		<category><![CDATA[Jeffrey Frankel]]></category>
+		<category><![CDATA[Robert Pozen]]></category>
+		<category><![CDATA[Scott Brown]]></category>
+		<category><![CDATA[Volcker Rule]]></category>
+
+		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=50679</guid>
+		<description><![CDATA[Harvard experts weigh in on a massive finance reform bill that draws praise, skepticism — and ire. ]]></description>
+			<content:encoded><![CDATA[<p>A year in the making, the new financial reform bill passed its final congressional hurdle last week, and may be signed as early as Wednesday (July 21).</p>
+<p>But is the <a href="http://www.house.gov/apps/list/press/financialsvcs_dem/prfinal_062610.shtml">Dodd-Frank Wall Street Reform and Consumer Protection Act</a> a boon, a bust — or just a bore?</p>
+<p>Some critics say the bill goes too far — that it will drive banking business overseas and stifle financial innovation.</p>
+<p>Others say the bill (dubbed “Dud-Frank”) does not go far enough, that the bill opens regulatory loopholes for — among others — community banks, auto dealers, and commercial banks that want to make risky investments.</p>
+<p>The controversy may be a function of scale. Dodd-Frank weighs in at around 2,300 pages, and proposes sweeping arcs of reform: a new agency to protect consumers, new government powers to dismantle failing banks, and new layers of oversight and regulation.</p>
+<p>“If the goal of the bill is to prevent another crisis or substantially blunt its effects then it is a disappointment,” said <a href="http://drfd.hbs.edu/fit/public/facultyInfo.do?facInfo=ovr&amp;facId=438648">Clayton S. Rose</a>, a professor of management practice at <a href="http://www.hbs.edu/">Harvard Business School</a> (HBS) and a onetime global investment and equities executive with J.P. Morgan &amp; Co.</p>
+<p>Parts of the bill address finance reform in meaningful ways, he said — like significantly enhancing transparency in the derivative markets. But the bill neglects two issues “at the center of the crisis,” said Rose: the idea that some firms are “too big to fail” and short-term funding by financial firms.</p>
+<p>These deficits in the bill, he said, will increase — not reduce — risk to the U.S. financial sector. “There was too much focus on proprietary trading and hedge funds, which had limited involvement in the crisis,” said Rose — a misplaced focus that he called “political theater.”</p>
+<p>Meanwhile, “the same regulatory agencies and individuals responsible for oversight going into the crisis are responsible now,” said Rose.</p>
+<p>“There are lots of good things in the financial reform bill,” countered economist <a href="http://www.hks.harvard.edu/about/faculty-staff-directory/jeffrey-frankel">Jeffrey A. Frankel</a>, who is the James W. Harpel Professor of Capital Formation and Growth at the <a href="http://www.hks.harvard.edu/">Harvard Kennedy School</a>. He called the legislation “a major breakthrough.”</p>
+<p>But there were also disappointments, said Frankel, who served on the Clinton-era <a href="http://www.whitehouse.gov/administration/eop/cea/">Council of Economic Advisers</a> from 1996 to 1999. For one, the bill lacks a tax on banks, coordinated with foreign countries.</p>
+<p>Dodd-Frank would also have been better “if some Republicans had joined in to try to make the bill better, instead of fighting every step of the way,” he said.</p>
+<p>Then there was the sting of compromise, said Frankel. “Some good aspects had to be watered down to win passage, just like the 2009 fiscal stimulus and the health insurance bill.”</p>
+<p>Other parts of Dodd-Frank are worse than disappointing, he said. “That the auto dealers are exempt from the consumer protection agency is an astounding travesty. It shows that big banks aren’t the only ones with lobbying clout.”</p>
+<p>Historian and economist <a href="http://drfd.hbs.edu/fit/public/facultyInfo.do?facInfo=bio&amp;facEmId=dmoss">David A. Moss</a>, the John G. McLean Professor of Business Administration at HBS, had a basically hopeful view of the Dodd-Frank bill, too, though it was tinged with caution.</p>
+<p>“The financial reform bill represents a major step forward,” he said, but nothing is perfect. “Like virtually every product of American democracy, it is a creature of compromise, and therefore will fully satisfy no one, including me.”</p>
+<p>Still, Dodd-Frank “authorizes regulators to tighten regulatory standards for the biggest and most systematically dangerous financial institutions,” said Moss, “and to liquidate these institutions in an orderly way if they get into serious trouble.”</p>
+<p>If tighter standards had been in place a decade ago, or in the 1990s, he said, “we might have avoided the worst aspects of the recent financial crisis.”</p>
+<p>One question remains, said Moss: How will regulators use their new authority? Will they be tough and tighten standards, but then loosen standards as the crisis fades?</p>
+<p>“Continued vigilance — both now and over the long term — is absolutely essential to prevent another crisis,” he said. “The financial reform legislation gives regulators the necessary tools, but it will be up to the regulators themselves to use them.”</p>
+<p>Dodd-Frank leaves defining the rules up to the regulators, “for hundreds and hundreds of issues,” said Rose. “It will be literally years before we actually understand how the new law will be put into practice.”</p>
+<p>Does Dodd-Frank represent what a better financial system would look like?</p>
+<p>That question was the subject of a monthlong online debate sponsored by the <a href="http://hbr.org/magazine">Harvard Business Review</a>. Throughout June, “Finance: The Way Forward” drew <a href="http://blogs.hbr.org/finance-the-way-forward/">commentary</a> from 19 scholars, executives, writers, and investors.</p>
+<p>Among the list of high-level bloggers was <a href="http://drfd.hbs.edu/fit/public/facultyInfo.do?facInfo=ovr&amp;facId=220890">Robert C. Pozen</a>, senior lecturer of business administration at Harvard Business School. He is also chairman of a company (MFS Investment Management) that manages more than $200 billion in assets for 5 million investors worldwide.</p>
+<p>“The bill takes several steps in the right direction,” said Pozen. It sets up a council for systemic risk, for one, and a clearing corporation that will track derivatives and register hedge fund managers.</p>
+<p>But the bill also “reaches some confusing compromises in areas like the Volker Rule and consumer protection,” he said. (The Volcker Rule, endorsed by the White House in January, would prevent commercial banks from engaging in risky trading.)</p>
+<p>Dodd-Frank also fails to address certain big problems, said Pozen, including <a href="http://drfd.hbs.edu/fit/public/facultyInfo.do?facInfo=ovr&amp;facId=220890">Fannie Mae</a>. (That’s the Federal National Mortgage Association, which was implicated in the subprime mortgage crisis that began in 2007.)</p>
+<p>Of all the reform bill’s provisions, the new Consumer Financial Protection Bureau remains one of the most visible. It would oversee small-scale transactions involving ATM fees, checking accounts, credit cards, and mortgages.</p>
+<p>The bureau was the brainchild of <a href="http://www.law.harvard.edu/faculty/directory/index.html?id=82">Elizabeth Warren</a>, the Leo Gottlieb Professor of Law at <a href="http://www.law.harvard.edu/index.html">Harvard Law School</a>. She is on leave while she directs the <a href="http://cop.senate.gov/">Congressional Oversight Panel</a> on bank bailout funds.</p>
+<p>Warren is one of several Massachusetts connections to the reform bill. For one, it is named after <a href="http://www.house.gov/frank/">Barney Frank</a>, the Newton, Mass., Democrat who chairs the <a href="http://financialservices.house.gov/">House Financial Services Committee</a>. (It is also named after Sen. <a href="http://dodd.senate.gov/">Christopher Dodd</a>, a Connecticut Democrat.)</p>
+<p>Another Massachusetts connection: Only three Republican senators voted for Dodd-Frank. One of them was Sen. <a href="http://scottbrown.senate.gov/public/">Scott Brown</a>.</p>
+<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/883CDRmsehI" height="1" width="1"/>]]></content:encoded>
+	    <image>
+        <title>Bunk or boon?</title>
+        <link>http://news.harvard.edu/gazette/story/2010/07/bunk-or-boon/</link>
+        <url>http://news.harvard.edu/gazette/wp-content/uploads/2010/07/Bankbill140.jpg</url>
+        <width>140</width>
+        <height>140</height>
+    </image>
+    <harvard:WPID>50679</harvard:WPID>
+    <harvard:featured>homepage</harvard:featured>
+		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/07/bunk-or-boon/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/07/bunk-or-boon/</feedburner:origLink></item>
+		<item>
+		<title>Academy of Management awards Noam T. Wasserman</title>
+		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/_aRJ45rc4lA/</link>
+		<comments>http://news.harvard.edu/gazette/story/2010/07/academy-of-management-awards-noam-t-wasserman/#comments</comments>
+		<pubDate>Fri, 16 Jul 2010 19:07:28 +0000</pubDate>
+		<dc:creator />
+				<category><![CDATA[Awards]]></category>
+		<category><![CDATA[Campus & Community]]></category>
+		<category><![CDATA[Academy of Management]]></category>
+		<category><![CDATA[Curriculum]]></category>
+		<category><![CDATA[Harvard Business School]]></category>
+		<category><![CDATA[Noam T. Wasserman]]></category>
+		<category><![CDATA[“Founders’ Dilemmas”]]></category>
+
+		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=50667</guid>
+		<description><![CDATA[Noam T. Wasserman, associate professor at Harvard Business School (HBS), has won the Innovation in Entrepreneurship Pedagogy Award from the Academy of Management in recognition of his second-year M.B.A. elective course “Founders’ Dilemmas.” ]]></description>
+			<content:encoded><![CDATA[<p><a href="http://drfd.hbs.edu/fit/public/facultyInfo.do?facInfo=ovr&amp;facId=2978">Noam T. Wasserman</a>, associate professor at <a href="http://www.hbs.edu/">Harvard Business School</a> (HBS), has won the Innovation in Entrepreneurship Pedagogy Award from the <a href="http://www.aomonline.org/">Academy of Management</a> in recognition of his second-year M.B.A. elective course “Founders’ Dilemmas.”</p>
+<p>Based on his research during the past decade, the popular course examines the early founding decisions that have important and often unexpected long-term consequences for both founders and their enterprises.</p>
+<p>He will formally receive the award at the academy’s annual meeting in Montreal in August. Wasserman earned a Ph.D. in organizational behavior from Harvard in 2002 and an M.B.A. (with high distinction as a Baker Scholar) from HBS in 1999.</p>
+<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/_aRJ45rc4lA" height="1" width="1"/>]]></content:encoded>
+	    <image>
+        <title>Academy of Management awards Noam T. Wasserman</title>
+        <link>http://news.harvard.edu/gazette/story/2010/07/academy-of-management-awards-noam-t-wasserman/</link>
+        <url>http://news.harvard.edu/gazette/wp-content/themes/gazette/images/photo-placeholder.gif</url>
+        <width>140</width>
+        <height>140</height>
+    </image>
+    <harvard:WPID>50667</harvard:WPID>
+    <harvard:featured>no</harvard:featured>
+		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/07/academy-of-management-awards-noam-t-wasserman/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/07/academy-of-management-awards-noam-t-wasserman/</feedburner:origLink></item>
+		<item>
+		<title>Six Harvard affiliates receive Damon Runyon fellowships</title>
+		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/x0wVrqTqZVg/</link>
+		<comments>http://news.harvard.edu/gazette/story/2010/07/six-harvard-affiliates-receive-damon-runyon-fellowships/#comments</comments>
+		<pubDate>Fri, 16 Jul 2010 19:03:32 +0000</pubDate>
+		<dc:creator />
+				<category><![CDATA[Awards]]></category>
+		<category><![CDATA[Campus & Community]]></category>
+		<category><![CDATA[Cancer]]></category>
+		<category><![CDATA[Damon Runyon Cancer Research Foundation]]></category>
+		<category><![CDATA[Dana-Farber Cancer Institute]]></category>
+		<category><![CDATA[Dong Yan]]></category>
+		<category><![CDATA[Fellowships]]></category>
+		<category><![CDATA[Harvard Medical School]]></category>
+		<category><![CDATA[Ian Y. Wong]]></category>
+		<category><![CDATA[John R. Lydeard]]></category>
+		<category><![CDATA[Kristin A. Krukenberg]]></category>
+		<category><![CDATA[Massachusetts General Hospital]]></category>
+		<category><![CDATA[Medicine]]></category>
+		<category><![CDATA[Niels Bradshaw]]></category>
+		<category><![CDATA[Science]]></category>
+		<category><![CDATA[Sujun Hua]]></category>
+
+		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=50662</guid>
+		<description><![CDATA[Six Harvard affiliates have been named recipients of fellowships by the Damon Runyon Cancer Research Foundation, a nonprofit organization focused on supporting exceptional early-career researchers and innovative cancer research.]]></description>
+			<content:encoded><![CDATA[<p>The <a href="http://www.damonrunyon.org/">Damon Runyon Cancer Research Foundation</a>, a nonprofit organization focused on supporting exceptional early-career researchers and innovative cancer research, has selected six Harvard affiliates to receive Damon Runyon fellowships.</p>
+<p>The 18 total recipients of this prestigious three-year award are outstanding postdoctoral scientists conducting basic and translational cancer research in the laboratories of leading senior investigators across the country. The fellowship encourages the nation’s most promising young scientists to pursue careers in cancer research by providing them with independent funding ($156,000 each) to work on innovative projects. The recipients were announced at the Damon Runyon Cancer Research Foundation’s spring Fellowship Award Committee review.</p>
+<p>The fellows and their areas of studies are listed below:</p>
+<p>Niels Bradshaw, with his sponsor Richard M. Losick, at Harvard University, is studying the regulation of an enzyme called protein phosphatase that acts in specific cells to promote cellular differentiation. Protein phosphatases are required for many processes, including cell growth, division, differentiation, and stress adaptation. Bradshaw hopes that understanding phosphatase regulation will clarify the role of these enzymes in cancer and potentially aid in the development of anti-cancer therapies that target phosphatases.</p>
+<p>Sujun Hua, with his sponsor Ronald A. DePinho, at Harvard-affiliated <a href="http://www.dana-farber.org/">Dana-Farber Cancer Institute</a>, aims to complete a comprehensive, genomewide assessment of regulatory networks governing self-renewal and fate-determination programs in normal and malignant neural stem cells. Tumor progression of certain tumor types, including glioblastoma, depends on a subpopulation of cells within the tumor called tumor stem cells. Understanding the shared and distinct features of normal and malignant stem cells is critical to develop novel therapies that selectively target tumor stem cells but spare their normal counterparts.</p>
+<p>Kristin A. Krukenberg, with her sponsor Timothy J. Mitchison, at <a href="http://hms.harvard.edu/hms/home.asp">Harvard Medical School</a> (HMS), is studying the role of a molecule called poly(ADP-ribose) in cell division and mitotic spindle formation. By understanding poly(ADP-ribose) function and regulation in both cancer and noncancer cells, she will investigate new avenues for the design of more effective and selective cancer therapeutics.</p>
+<p>John R. Lydeard, with his sponsor Jeffrey W. Harper, at HMS, is interested in studying how proteins are targeted for destruction. Defects in maintaining the balance between newly made proteins and those to be destroyed are often linked with cancer progression. Better understanding of how these processes are regulated will help to develop more effective anticancer therapeutics.</p>
+<p>Ian Y. Wong, with his sponsors Mehmet Toner and Daniel Irimia, at Harvard-affiliated <a href="http://www.mgh.harvard.edu/">Massachusetts General Hospital</a>, is developing a new experimental platform for characterizing how cancer cells migrate in response to biochemical signals and 3-D structural architectures. This approach may yield novel insights into how malignant cancer cells invade, which would aid the development of anti-metastatic therapies.</p>
+<p>Dong Yan, with his sponsor Norbert Perrimon, at HMS, is aiming to generate profiles of phosphorylation for each kinase and phosphatase enzyme in the genome, and to relate these profiles to their in vivo functions during development. Given the large number of kinase mutations associated with various cancers, understanding the phosphorylation network could prompt treatment tailored to aberrant signaling of specific pathways.</p>
+<p>To read the full <a href="http://www.eurekalert.org/pub_releases/2010-07/drcr-drc070810.php">release</a>.</p>
+<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/x0wVrqTqZVg" height="1" width="1"/>]]></content:encoded>
+	    <image>
+        <title>Six Harvard affiliates receive Damon Runyon fellowships</title>
+        <link>http://news.harvard.edu/gazette/story/2010/07/six-harvard-affiliates-receive-damon-runyon-fellowships/</link>
+        <url>http://news.harvard.edu/gazette/wp-content/themes/gazette/images/photo-placeholder.gif</url>
+        <width>140</width>
+        <height>140</height>
+    </image>
+    <harvard:WPID>50662</harvard:WPID>
+    <harvard:featured>no</harvard:featured>
+		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/07/six-harvard-affiliates-receive-damon-runyon-fellowships/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/07/six-harvard-affiliates-receive-damon-runyon-fellowships/</feedburner:origLink></item>
+		<item>
+		<title>HLS Professor Jonathan Zittrain appointed to SEAS faculty</title>
+		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/qpkEoEvW0ZQ/</link>
+		<comments>http://news.harvard.edu/gazette/story/2010/07/hls-professor-jonathan-zittrain-appointed-to-seas-faculty/#comments</comments>
+		<pubDate>Fri, 16 Jul 2010 18:57:50 +0000</pubDate>
+		<dc:creator />
+				<category><![CDATA[Campus & Community]]></category>
+		<category><![CDATA[Faculty & Administration]]></category>
+		<category><![CDATA[Appointments]]></category>
+		<category><![CDATA[Berkman Center for Internet & Society]]></category>
+		<category><![CDATA[Cherry A. Murray]]></category>
+		<category><![CDATA[Computer Science]]></category>
+		<category><![CDATA[Faculty]]></category>
+		<category><![CDATA[Harvard Law School]]></category>
+		<category><![CDATA[Internet]]></category>
+		<category><![CDATA[Jonathan Zittrain]]></category>
+		<category><![CDATA[Law]]></category>
+		<category><![CDATA[Martha Minow]]></category>
+		<category><![CDATA[School of Engineering and Applied Sciences]]></category>
+		<category><![CDATA[Technology]]></category>
+
+		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=50658</guid>
+		<description><![CDATA[Harvard Law School Professor Jonathan Zittrain ’95 has been appointed to the faculty of the Harvard School of Engineering and Applied Sciences as professor of computer science. ]]></description>
+			<content:encoded><![CDATA[<p><a href="http://www.law.harvard.edu/">Harvard Law School</a> (HLS) Professor <a href="http://www.law.harvard.edu/faculty/directory/index.html?id=106">Jonathan Zittrain</a> ’95, a leading scholar on the legal and policy issues surrounding the Internet, has been appointed to the faculty of the Harvard <a href="http://www.seas.harvard.edu/">School of Engineering and Applied Sciences</a> (SEAS) as professor of computer science. Zittrain is a co-founder of the University’s <a href="http://cyber.law.harvard.edu/">Berkman Center for Internet &amp; Society</a>.</p>
+<p>“Jonathan’s appointment is a critical step in fostering stronger ties between HLS and SEAS,” said SEAS Dean <a href="http://www.seas.harvard.edu/directory/camurray">Cherry A. Murray</a>, the John A. and Elizabeth S. Armstrong Professor of Engineering and Applied Sciences and professor of physics. “Given the complexities of issues such as the security and privacy of data and medical records, open access scholarship, and the changing nature of digital identities — from social networks to gaming avatars — understanding the connections between law and technology is increasingly important. We believe that by leveraging the strengths of both our Schools, Harvard will become a leading player in this exciting interface.”</p>
+<p>The author of “<a href="http://futureoftheinternet.org/">The Future of the Internet — And How to Stop It</a>,” Zittrain’s scholarly work bridges theory and experiment, prototyping tools for and on the Internet. His concept of the shifting roles of public and private institutions is the intellectual underpinning for <a href="http://www.stopbadware.org/">StopBadware</a>, a large-scale empirical study of the flow of Internet malware online.</p>
+<p>“I am delighted that through Jonathan’s work, we are able to foster strengthened ties to the Engineering School,” said HLS Dean <a href="http://www.law.harvard.edu/faculty/directory/index.html?id=45">Martha Minow</a>. “Jonathan’s work has long drawn upon his background in computer science, and his groundbreaking analysis combines legal, political, and technological analyses in helping to shape and reassess the quickly changing field of cyberlaw. His new appointment to SEAS strengthens his work, offers new opportunities for collaborations between our Schools, and deepens Harvard’s commitments to creative and comprehensive thinking about the challenges and opportunities of this digital age.”</p>
+<p>To read the full <a href="http://www.seas.harvard.edu/news-events/press-releases/zittrain">story</a>.</p>
+<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/qpkEoEvW0ZQ" height="1" width="1"/>]]></content:encoded>
+	    <image>
+        <title>HLS Professor Jonathan Zittrain appointed to SEAS faculty</title>
+        <link>http://news.harvard.edu/gazette/story/2010/07/hls-professor-jonathan-zittrain-appointed-to-seas-faculty/</link>
+        <url>http://news.harvard.edu/gazette/wp-content/themes/gazette/images/photo-placeholder.gif</url>
+        <width>140</width>
+        <height>140</height>
+    </image>
+    <harvard:WPID>50658</harvard:WPID>
+    <harvard:featured>no</harvard:featured>
+		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/07/hls-professor-jonathan-zittrain-appointed-to-seas-faculty/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/07/hls-professor-jonathan-zittrain-appointed-to-seas-faculty/</feedburner:origLink></item>
+		<item>
+		<title>Business School boost</title>
+		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/Zp7yKItRAfE/</link>
+		<comments>http://news.harvard.edu/gazette/story/2010/07/business-school-boost/#comments</comments>
+		<pubDate>Fri, 16 Jul 2010 14:55:06 +0000</pubDate>
+		<dc:creator />
+				<category><![CDATA[Business]]></category>
+		<category><![CDATA[National & World Affairs]]></category>
+		<category><![CDATA[Accounting]]></category>
+		<category><![CDATA[Aleksey Chernobelskiy]]></category>
+		<category><![CDATA[Assumption College]]></category>
+		<category><![CDATA[Ben Esty]]></category>
+		<category><![CDATA[Business Careers]]></category>
+		<category><![CDATA[Case Study]]></category>
+		<category><![CDATA[Cerlienne Menéndez Mendoza]]></category>
+		<category><![CDATA[Coca-Cola]]></category>
+		<category><![CDATA[Corporations]]></category>
+		<category><![CDATA[Economics]]></category>
+		<category><![CDATA[Eller College of Management]]></category>
+		<category><![CDATA[Facebook]]></category>
+		<category><![CDATA[Finance]]></category>
+		<category><![CDATA[Harvard Business School]]></category>
+		<category><![CDATA[Ikea]]></category>
+		<category><![CDATA[Interactive]]></category>
+		<category><![CDATA[M.B.A.]]></category>
+		<category><![CDATA[management]]></category>
+		<category><![CDATA[Math]]></category>
+		<category><![CDATA[Michigan State]]></category>
+		<category><![CDATA[Pauline Jennett]]></category>
+		<category><![CDATA[Russia]]></category>
+		<category><![CDATA[Summer Venture Management Program]]></category>
+		<category><![CDATA[SVMP]]></category>
+		<category><![CDATA[Twitter]]></category>
+		<category><![CDATA[Undergraduates]]></category>
+		<category><![CDATA[Underrepresented]]></category>
+		<category><![CDATA[University of Arizona]]></category>
+
+		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=50624</guid>
+		<description><![CDATA[A group of college undergraduates from around the country took part in a weeklong summer program at Harvard Business School in June designed to help them explore the business school environment through the HBS case method.]]></description>
+			<content:encoded><![CDATA[<p>They are talented, driven, dedicated, and largely underrepresented in corporate America.</p>
+<p>Many are the first in their families to go to college, some come from single-parent households, others are thousands of miles from their homelands. For some, English is not their first language. Together they represent the changing face of the traditional executive in the United States.</p>
+<p>The business stars of tomorrow were at <a href="http://www.hbs.edu/">Harvard Business School</a> (HBS) last month exploring what many hope is the next stop on the road to a business career through the help of a weeklong summer program that lets them try on the role of an HBS M.B.A. candidate.</p>
+<p>Launched in 1983, the HBS <a href="http://www.hbs.edu/svmp/">Summer Venture in Management Program</a> (SVMP) is a management-training program for rising college seniors designed to increase diversity and opportunity in business education. Students are nominated for the program by sponsoring organizations where they have secured summer internships. Those recommendations, as well as the students’ academic records, leadership ability, and personal characteristics, are all factored into the admissions process.</p>
+<p>Associate Director of M.B.A. Admissions Pauline Jennett, who helps oversee the program, explained, &#8220;Through SVMP, HBS has long been a leader in introducing talented students from a wide range of backgrounds to a business school environment. Our goal is to broaden their range of experience. As a result, they may add an option to their future plans — applying to business school here or elsewhere.”</p>
+<p>Tradell Hawkins, who recently completed his junior year at <a href="http://www.msu.edu/">Michigan State</a>, where he majors in social relations and policy with a business minor, smiled broadly as he captured shots of the verdant HBS campus on his HD recorder and camera. A product of the high-tech-savvy generation, Hawkins, who loves to network on Facebook and Twitter, hopes to work with a company that uses social media to market to consumers.</p>
+<p>After only one day of exposure to case studies, the Business School’s famed method of instruction, the young Chicago native was in awe. Previously unfamiliar with the interactive classroom format, Hawkins was reeling from the heady discussions examining corporate giants like <a href="http://www.thecoca-colacompany.com/">Coca-Cola</a> and<a href="http://www.ikea.com/us/en/"> Ikea</a>, and the close interaction he had in class with HBS professors.</p>
+<p>“It was great to read those cases and experience the thought process. I hadn’t thought about [those companies’] brand management styles and contracts with different suppliers,” he said, adding, “the professors are so passionate, and they are so knowledgeable about everything — it really inspires you.”</p>
+<p>When the program was over, Hawkins said his SVMP experience had both solidified his decision to work in the corporate world and expanded his outlook on a business career.</p>
+<p>“It allowed me to think beyond moving up the corporate ladder in a Fortune 500 company, to consider more broadly the contribution I want to make in the world. The cases reminded me of the impact business decisions can have on developing countries and individual human lives, which inspired me to think more in depth about what kind of company I want to work for.”</p>
+<p>Asked if he hopes to attend HBS, he replied simply, “Yes, indeed.”</p>
+<p>From Puerto Rico, Cerlienne Menéndez Mendoza cried uncontrollably when she received the e-mail confirming her acceptance to the program. She said she thought she was dreaming as she walked through the School’s impressive Baker Library/Bloomberg Center on a sunny summer afternoon.</p>
+<p>“I still can’t believe I am here; I am in shock. I am still waiting to get an e-mail saying it was all a joke.”</p>
+<p>But she was well aware that the demanding schedule is no laughing matter.</p>
+<p>For five days students take part in intense interactive, debate-and-dialogue classes where arriving unprepared and unfamiliar with the day’s material is not an option. They explore actual business dilemmas and take on the role of executives dealing with critical decisions.</p>
+<p>When not in class, they spend their time reading cases and participating in small study groups to prepare for the fast-paced discussions, acting every bit the part of an actual M.B.A. candidate with a full load of HBS cases to read during the week.</p>
+<p>Led by the program’s faculty chair, <a href="http://www.people.hbs.edu/besty/">Ben Esty</a>, the School’s Roy and Elizabeth Simmons Professor of Business Administration, nine HBS faculty members representing a wide range of fields — from marketing to technology and operations management — taught the 69 SVMP students in an Aldrich Hall classroom.</p>
+<p>The challenging pace came with big payoffs for Mendoza, who has dreams of starting a nonprofit that will help underserved children finish high school and prepare for college.</p>
+<p>A junior at <a href="http://www.assumption.edu/">Assumption College</a>, where she is pursuing a triple major in accounting, political science, and Latin American studies, Mendoza attended the SVMP program to determine if applying to HBS would be a good option for her post-college. After completing the intense SVMP week at HBS, she had her answer. She will begin the application process this fall.</p>
+<p>Calling the experience “life-changing,” Mendoza said the HBS program, with its varied cases on topics like China, basketball superstar LeBron James, and the Chad-Cameroon oil pipeline, helped her consider other career sectors and to hone her critical thinking skills.</p>
+<p>“It made me think about the repercussions of every decision we make while trying to help someone. It made me think about the fact that in life, as well as in business, there will not always be a ‘right answer’ but the ‘best answer.’”</p>
+<p>Additionally, Mendoza, like many of the program’s participants, said the chance to network with such an ambitious and intelligent group of peers was a vital part of the program.</p>
+<p>“We all worked together &#8230; to get the best out of this experience. In the process we have made friendships that I know will last us a lifetime.”</p>
+<p>Aleksey Chernobelskiy came to the United States from Russia with his parents, who were hoping for a better life for their two young sons. They moved, he said, “to be part of the American dream.”</p>
+<p>Teased as a boy for his poor English skills, the Moscow native was determined to prove his tormentors wrong and make it to the very top.</p>
+<p>Last month he did — by winning a spot in the weeklong program at HBS, where he studied cases in the same way business students do.</p>
+<p>With a double major in finance and accounting and a minor in math and economics at the <a href="http://www.arizona.edu/">University of Arizona</a>’s <a href="http://www.eller.arizona.edu/">Eller College of Management</a>, Chernobelskiy arrived at HBS interested in a slightly different track from most of his counterparts. Instead of working in corporate America, he hopes to teach future executives about finance, at HBS, to be exact.</p>
+<p>“I really wanted to experience the teaching style at Harvard Business School, which was really important to me. To say that I was impressed is an understatement,” he said early in the week, adding, “This was literally my biggest dream. … I can’t even sleep at night.”</p>
+<p>At the conclusion of the program, Chernobelskiy said the experience had confirmed his lifelong desire to pursue an advanced degree at the School.</p>
+<p>“Harvard Business School,” he said, “is my number one choice.”</p>
+<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/Zp7yKItRAfE" height="1" width="1"/>]]></content:encoded>
+	    <image>
+        <title>Business School boost</title>
+        <link>http://news.harvard.edu/gazette/story/2010/07/business-school-boost/</link>
+        <url>http://news.harvard.edu/gazette/wp-content/uploads/2010/07/062510_SVMP_087.jpg</url>
+        <width>140</width>
+        <height>140</height>
+    </image>
+    <harvard:WPID>50624</harvard:WPID>
+    <harvard:featured>homepage</harvard:featured>
+		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/07/business-school-boost/feed/</wfw:commentRss>
+		<slash:comments>0</slash:comments>
+		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/07/business-school-boost/</feedburner:origLink></item>
+		<item>
 		<title>Female Academics Less Satisfied Than Male Counterparts</title>
 		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/70Equv1xHPs/</link>
 		<comments>http://news.harvard.edu/gazette/story/2010/07/female-academics-less-satisfied-than-male-counterparts/#comments</comments>
@@ -287,7 +619,7 @@
         <height>140</height>
     </image>
     <harvard:WPID>50514</harvard:WPID>
-    <harvard:featured>homepage</harvard:featured>
+    <harvard:featured>category</harvard:featured>
 		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/07/oberon-is-so-on/feed/</wfw:commentRss>
 		<slash:comments>0</slash:comments>
 		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/07/oberon-is-so-on/</feedburner:origLink></item>
@@ -333,7 +665,7 @@
         <height>140</height>
     </image>
     <harvard:WPID>50416</harvard:WPID>
-    <harvard:featured>homepage</harvard:featured>
+    <harvard:featured>category</harvard:featured>
 		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/07/cio/feed/</wfw:commentRss>
 		<slash:comments>0</slash:comments>
 		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/07/cio/</feedburner:origLink></item>
@@ -588,7 +920,7 @@
 
 		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=50375</guid>
 		<description><![CDATA[About 20 children participated in an interactive session at the Honan-Allston Branch Library that outlined the creation of Library Park, which is slated to open next year. Construction is to begin next week.]]></description>
-			<content:encoded><![CDATA[<p>It’s an exclusive club. Membership is hard to come by. Besides, it’s a lot of work.</p>
+			<content:encoded><![CDATA[<p><span class="initial-cap">I</span>t’s an exclusive club. Membership is hard to come by. Besides, it’s a lot of work.</p>
 <p>Make that fun.</p>
 <p>The Library Park Construction Club, an enthusiastic group of 7- to 10-year-olds, is taking the hands-on approach to watching its beloved <a href="http://www.bpl.org/branches/allston.htm">Honan-Allston Branch Library</a> get a facelift.</p>
 <p>About 20 kids braved the afternoon’s heat yesterday (July 7) to visit their neighborhood library and take part in an interactive session that took them beyond the storied stacks of the library and into a vacant field behind it.</p>
@@ -615,7 +947,7 @@
         <height>140</height>
     </image>
     <harvard:WPID>50375</harvard:WPID>
-    <harvard:featured>homepage</harvard:featured>
+    <harvard:featured>category</harvard:featured>
 		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/07/from-scorched-lot-to-library-park/feed/</wfw:commentRss>
 		<slash:comments>0</slash:comments>
 		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/07/from-scorched-lot-to-library-park/</feedburner:origLink></item>
@@ -1955,288 +2287,5 @@ The research team demonstrated how a single thin sheet composed of interconnecte
 		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/06/insights-on-quantum-mechanics/feed/</wfw:commentRss>
 		<slash:comments>0</slash:comments>
 		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/06/insights-on-quantum-mechanics/</feedburner:origLink></item>
-		<item>
-		<title>To market, to market</title>
-		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/iwADpSCSAu0/</link>
-		<comments>http://news.harvard.edu/gazette/story/2010/06/to-market-to-market/#comments</comments>
-		<pubDate>Wed, 16 Jun 2010 21:03:52 +0000</pubDate>
-		<dc:creator />
-				<category><![CDATA[Campus & Community]]></category>
-		<category><![CDATA[On Campus]]></category>
-		<category><![CDATA[Farmers’ Market at Harvard]]></category>
-		<category><![CDATA[Harvard Allston Farmers’ Market]]></category>
-		<category><![CDATA[Harvard University Hospitality & Dining Services]]></category>
-
-		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=49544</guid>
-		<description><![CDATA[Harvard reopens its seasonal farmers’ markets with a bounty of fresh produce and local, handmade products.]]></description>
-			<content:encoded><![CDATA[<p>The sights, smells, and tastes of summer were again on full display outside Harvard’s Science Center.</p>
-<p>Baskets full of bright red strawberries and raspberries and overflowing with sugar snap peas, baby carrots, radishes, jars of amber honey, flavored chocolate, fresh-baked goods, and homemade ice cream were all part of the tantalizing mix that marked the beginning of the four-month <a href="http://www.facebook.com/pages/Cambridge-Allston-MA/Harvard-Farmers-Markets/94345893921?__a=10">farmers’ market</a> season at Harvard on Tuesday (June 15).</p>
-<p>Each year Harvard hosts the Farmers’ Market at Harvard and the Harvard Allston Farmer’s Market.</p>
-<p>“Harvard’s farmers’ markets are two fresh examples of a wide variety of Harvard programs that serve our University community and our neighbors and enliven and enrich the communities around us,” said Christine Heenan, vice president for public affairs and communications.</p>
-<p>The popular weekly events, managed by <a href="http://www.dining.harvard.edu/">Harvard University Hospitality &amp; Dining Services,</a> serve Harvard and its neighbors with a range of products from nearby farms, bakeries and specialty vendors. The setups include music, cooking demonstrations with chefs from Cambridge and Boston restaurants, and special activities for children.</p>
-<p>Thanks to some early help from Mother Nature, this year the farmers’ stalls are bursting with produce. A dry late spring and absence of frost has meant an abundance of crops.</p>
-<p>“We’ve had delightful [growing] weather,” said Alex Pollock, owner of <a href="http://www.silverbrookdartmouth.com/">Silverbrook Farms</a> in Dartmouth, Mass., whose stall was filled with produce such as lettuce, tomato plants and sugar snap peas. Pollock was one of the first farmers to sign up for the Harvard-run market five years ago and said that of the 12 farmers’ markets he now takes part in, Harvard’s ranks at the top.</p>
-<p>“The Harvard community really supports the market, and they really enjoy it.”</p>
-<p>For Cambridge resident Alex Loud, the chance to have a local farmers’ market in his backyard means summer is just a walk down the street.</p>
-<p>“I feel emotionally the world very much through my mouth,” said Loud, who loves summer corn and tomatoes and heads <a href="http://www.slowfoodboston.com/">Slow Food Boston,</a> a group that supports locally grown and sustainable food. “The fresh produce available here just makes me feel attached to season. The market is a great for the community.”</p>
-<p>The Harvard market is located outside the Science Center near the corner of Oxford and Kirkland streets. Recently voted one of the top five farmers’ markets in Boston in the current issue of the Improper Bostonian magazine, the market runs every Tuesday from 12:30 to 6 p.m. through October.</p>
-<p>Special events at the Allston market include live music on the first Friday of every month, cooking demonstrations and free tastings, and screenings of food films<strong> </strong>at the <a href="http://www.communityservice.harvard.edu/programs/harvard-allston-education-portal">Harvard Allston Education Portal</a> at 175 North Harvard St.</p>
-<p>This year, visitors to the Harvard market also can enjoy handmade cheeses from Narragansett Creamery of Providence, R.I. Stow Greenhouses of Stow, Mass., is another new addition in Cambridge and will sell its special variety of hybrid lilies biweekly.</p>
-<p>Homemade pastas and fresh cheeses are now part of the weekly offerings at the Allston market, provided by its new pasta vendor Fior d’Italia Pasta &amp; Cheese from Manchester Center, Vt.</p>
-<p>The Allston market begins this Friday, June 18, and will run every Friday from 3 to 7 p.m. until Oct. 29. Located at the intersection of North Harvard Street and Western Avenue, the market is co-managed by the <a href="http://allston.harvard.edu/vision/vision.htm">Allston Development Group</a>. Parking is available at 219 Western Ave.</p>
-<p>“I hear people talk about how much they appreciate that we bring local produce to their area,” said Katie Newton, who works for <a href="http://www.lanniorchards.net/">Lanni Orchards </a>of Lunenburg, Mass., and likes to share produce information and cooking tips with her customers at the Cambridge market.</p>
-<p>“I love telling people about a certain product, how to cook it, what it tastes like, what it’s called, and giving them recipes. … It’s awesome.”</p>
-<p>For more information visit: <span style="text-decoration: underline;"><a href="http://www.facebook.com/#!/pages/Cambridge-Allston-MA/Harvard-Farmers-Markets/94345893921?ajaxpipe=1&amp;__a=10">http://www.facebook.com/#!/pages/Cambridge-Allston-MA/Harvard-Farmers-Markets/94345893921?ajaxpipe=1&amp;__a=10</a></span></p>
-<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/iwADpSCSAu0" height="1" width="1"/>]]></content:encoded>
-	    <image>
-        <title>To market, to market</title>
-        <link>http://news.harvard.edu/gazette/story/2010/06/to-market-to-market/</link>
-        <url>http://news.harvard.edu/gazette/wp-content/uploads/2010/06/061510_Farmers_Market_140.jpg</url>
-        <width>140</width>
-        <height>140</height>
-    </image>
-    <harvard:WPID>49544</harvard:WPID>
-    <harvard:featured>category</harvard:featured>
-		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/06/to-market-to-market/feed/</wfw:commentRss>
-		<slash:comments>0</slash:comments>
-		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/06/to-market-to-market/</feedburner:origLink></item>
-		<item>
-		<title>Where art and advertising collide</title>
-		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/MJIFscG4wiI/</link>
-		<comments>http://news.harvard.edu/gazette/story/2010/06/where-art-and-advertising-collide/#comments</comments>
-		<pubDate>Tue, 15 Jun 2010 19:54:06 +0000</pubDate>
-		<dc:creator />
-				<category><![CDATA[Art & Photography]]></category>
-		<category><![CDATA[Arts & Culture]]></category>
-		<category><![CDATA[Advertising]]></category>
-		<category><![CDATA[Alfred Stieglitz]]></category>
-		<category><![CDATA[Arts]]></category>
-		<category><![CDATA[Baker Library|Bloomberg Center]]></category>
-		<category><![CDATA[Business]]></category>
-		<category><![CDATA[Harvard Business School]]></category>
-		<category><![CDATA[History]]></category>
-		<category><![CDATA[Margaret Bourke-White]]></category>
-		<category><![CDATA[Marketing]]></category>
-		<category><![CDATA[Photography]]></category>
-
-		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=49523</guid>
-		<description><![CDATA[A new exhibition at Harvard Business School explores the intersection of fine photography with product marketing in the 1930s.]]></description>
-			<content:encoded><![CDATA[<p>In one arresting image, a woman in a floor-length, lace dress poses on the arm of a chair. With its dramatic composition and use of light, the 1930s-era black and white photograph doubles as both a stunning artwork and an effective promotion for one of the country’s early advertising agencies, N.W. Ayer.</p>
-<p>The print is one of many in a new exhibition at <a href="http://www.hbs.edu/">Harvard Business School</a> (HBS) that explores the intersection of art, culture, history, and clever manipulation.</p>
-<p>Culled from a collection of original prints in the School’s permanent collection, the show, “<a href="http://www.hbs.edu/news/releases/naaiexhibit2010.html">The High Art of Photographic Advertising: The 1934 National Alliance of Art and Industry Exhibition</a>,” on view at the HBS <a href="http://www.library.hbs.edu/">Baker Library | Bloomberg Center</a>, looks at the interplay between photography as highly successful marketing and as fine art.</p>
-<p>The show’s roots date to 1934 when the National Alliance of Art and Industry and the Photographic Illustrators Inc. sponsored an exhibition of 250 works by the leading photographers of the day. Displayed in the gallery of New York City’s 30 Rockefeller Plaza, the 1934 show focused largely on advertising and industrial images. The following year HBS obtained more than 100 of the works for its collection to aid in teaching and study.</p>
-<p>While legendary photographer <a href="http://en.wikipedia.org/wiki/Alfred_Stieglitz">Alfred Steiglitz</a> sought to advance his craft as art, the subsequent generation of photographers who took part in the 1934 show embraced the chance to bring their talents to a mass market. Employing creative techniques such as the use of shadow, portraiture, oblique angles, composite images, closeups, and negative exposures, the photographers combined their art with a commercial setting.</p>
-<p>“It was an era of modernist sensibility in photography and product design, when all kinds of boundaries were being crossed,” said Melissa Banta, program officer for photographs at the <a href="http://preserve.harvard.edu/">Weissman Preservation Center</a> in the Harvard University Library and guest curator of the HBS show, who has worked with and written about Harvard’s photograph collections for many years. “Photographers were interested in exploring how they could apply artistic techniques to their commercial work, and they did it very successfully and in highly inventive ways,” Banta added of the works in the show by artists such as <a href="http://en.wikipedia.org/wiki/Margaret_Bourke-White">Margaret Bourke-White</a>.</p>
-<p>By the early 1920s the photograph had begun to replace the hand-illustrated drawing as the dominant advertising image in print media. By the ’30s the transformation was complete. It was sparked in large part, said Banta, by the need to differentiate products from a vast array of standardized goods being manufactured and by the photograph’s ability to exert a strong emotional pull on consumers — a fact that businessmen quickly understood.</p>
-<p>Photographers worked “to craft a narrative that buying the featured object meant you could achieve a greater level of happiness as well as identify with members of an elite, sophisticated class,” said Banta.</p>
-<p>Many of the exhibition’s works capture that emotive appeal. In one of the show’s eight display cases, a vivid ad for Lady Esther Face Powder catches the viewer’s attention with the use of a novel before-and-after approach. On the left side of the frame, half of a woman’s face appears without the miraculous powder. She appears worn and wrinkled, and gazes at the camera with a look of despair. In the right side of the image, her skin is smooth and wrinkle free after an application of the powder, and she is visibly younger and happier.</p>
-<p>But the images aren’t confined to ads for fancy creams and cars. Many of them are documentary in nature, created as part of an industrial relations marketing campaign designed to convey a strong cultural message about the force and power of the nation’s burgeoning Machine Age. Some photos depict an assembly line or a gleaming factory, boosting the vision of America as a thriving producer of goods and at the forefront of industry, despite struggling through the Great Depression.</p>
-<p>In one image by William M. Rittase, a masked metal worker labors with a blowtorch amid flying sparks and swirling smoke. A striking picture of New York’s George Washington Bridge by Bourke-White conveys the depth of the massive steel expanse from an upper deck vantage point, offering the viewer a dizzying perspective on American innovation.</p>
-<p>“There was a sense in the 1930s that advertising could help inspire faith in the economy,” said Banta, “and companies used photography as an effective means to project confidence in both the production and sale of consumer goods.”</p>
-<p><em>The show is on view at Baker Library | Bloomberg Center through Oct. 9. For more <a href="http://www.library.hbs.edu/hc/naai">information</a>.<br />
-</em></p>
-<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/MJIFscG4wiI" height="1" width="1"/>]]></content:encoded>
-	    <image>
-        <title>Where art and advertising collide</title>
-        <link>http://news.harvard.edu/gazette/story/2010/06/where-art-and-advertising-collide/</link>
-        <url>http://news.harvard.edu/gazette/wp-content/uploads/2010/06/060210_Baker_140.jpg</url>
-        <width>140</width>
-        <height>140</height>
-    </image>
-    <harvard:WPID>49523</harvard:WPID>
-    <harvard:featured>category</harvard:featured>
-		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/06/where-art-and-advertising-collide/feed/</wfw:commentRss>
-		<slash:comments>0</slash:comments>
-		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/06/where-art-and-advertising-collide/</feedburner:origLink></item>
-		<item>
-		<title>Panel ponders digital divide</title>
-		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/zbo3DnXlhBs/</link>
-		<comments>http://news.harvard.edu/gazette/story/2010/06/panel-ponders-digital-divide/#comments</comments>
-		<pubDate>Mon, 14 Jun 2010 18:31:41 +0000</pubDate>
-		<dc:creator />
-				<category><![CDATA[Campus & Community]]></category>
-		<category><![CDATA[On Campus]]></category>
-		<category><![CDATA[Arts]]></category>
-		<category><![CDATA[Berkman Center for Internet and Society]]></category>
-		<category><![CDATA[Charles Rosenberg]]></category>
-		<category><![CDATA[Digitization]]></category>
-		<category><![CDATA[Harvard Business School]]></category>
-		<category><![CDATA[Humanities]]></category>
-		<category><![CDATA[Internet]]></category>
-		<category><![CDATA[Jeffrey Schnapp]]></category>
-		<category><![CDATA[Mary Lee Kennedy]]></category>
-		<category><![CDATA[Research]]></category>
-		<category><![CDATA[Technology]]></category>
-
-		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=49504</guid>
-		<description><![CDATA[University administrators gather to explore the issues surrounding the expansion of digital scholarship.]]></description>
-			<content:encoded><![CDATA[<p>The simple but bell-clear message for professors planning their future research seems to be: Change is coming.</p>
-<p>Critical minds from across the University gathered at <a href="http://www.hbs.edu/">Harvard Business School</a> (HBS) to explore a critical but often cloudy area of academia: digital scholarship.</p>
-<p>In a seminar last Wednesday (June 9) aimed at better understanding the use and production of digital forms of research in creating scholarly knowledge, representatives from Harvard’s various Schools and departments met to discuss how to move forward amid an ever-changing technological environment, one that makes information accessible instantly and sometimes overwhelmingly.</p>
-<p><a href="http://en.wikipedia.org/wiki/Jeffrey_Schnapp">Jeffrey Schnapp</a>, founder of the <a href="http://www.stanford.edu/group/shl/cgi-bin/drupal/">Stanford Humanities Lab</a>, a research effort that explores “innovative scenarios for the future of knowledge production and reproduction in the arts and humanities,” examined several benefits of scholarship in the media age. The event’s keynote speaker and a visiting professor at the <a href="http://www.gsd.harvard.edu">Harvard School of Design</a>, Schnapp noted that the digital revolution has led to new collaborations and exploration of subjects in the humanities that were until recently unimaginable.</p>
-<p>Once “an individualized model of scholarly production” that applied to even the undergraduate and graduate levels, humanities research and scholarship has been transformed by technology and now includes experiments, collaborations, and “new models for how scholarship might even be redesigned,” he said.</p>
-<p>Printed work is undergoing a “radical transformation” in the digital age, said Schnapp, who noted that such documents, when reproduced electronically, can be easily and perpetually updated, benefiting researchers. Where traditional scholarship emphasized developing a final product, digital advances allow for a process and product that is “potentially infinite.”</p>
-<p>“The boundary lines between the finalized scholarship and what comes after are now more porous, are more fluid.”</p>
-<p>In addition, said Schnapp, who is also a fellow at the <a href="http://cyber.law.harvard.edu/">Berkman Center for Internet and Society</a>, the very nature of the objects studied in the humanities is being “fundamentally transformed” by new forms of media. A field such as music, which could typically only be cited using print conventions, can with new technology be captured in dynamic, innovative, and “transformative ways.”</p>
-<p>But the technological shift also raises many questions, such as how librarians fit into the puzzle, or what their role in digitally archiving and preserving material should be. Another issue concerns how to pay for new means of digitally organizing material. Many observers questioned what the role of a university press should be in a digitized world, and how best to ensure quality control for the mass of electronic information being compiled in scholarly form.</p>
-<p>“University presses have copy editors … Who is going to do that job [with] e-printing?” wondered <a href="http://www.fas.harvard.edu/~hsdept/bios/rosenberg.html">Charles Rosenberg</a>, Ernest E. Monrad Professor of the Social Sciences and lecturer on social medicine at <a href="http://hms.harvard.edu/hms/home.asp">Harvard Medical School</a>. Rosenberg also worried about how to incorporate “these activities into the research university.”</p>
-<p>“Who is going to pay for it; how is it going to be organized; how are these decisions going to be managed,” asked Rosenberg, who took part in an afternoon panel discussion.  “How do we plan in an indeterminate world when we don’t know where we are going?”</p>
-<p>Organizer Mary Lee Kennedy, executive director of knowledge and library services at HBS, acknowledged that the session generated more questions than answers, but added that simply coming together to discuss the issue with peers was an important first step forward.</p>
-<p>“We needed to bring people together,” said Kennedy, “to be part of the conversation.”</p>
-<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/zbo3DnXlhBs" height="1" width="1"/>]]></content:encoded>
-	    <image>
-        <title>Panel ponders digital divide</title>
-        <link>http://news.harvard.edu/gazette/story/2010/06/panel-ponders-digital-divide/</link>
-        <url>http://news.harvard.edu/gazette/wp-content/uploads/2010/06/060910_Digital_Scholar_013_140.jpg</url>
-        <width>140</width>
-        <height>140</height>
-    </image>
-    <harvard:WPID>49504</harvard:WPID>
-    <harvard:featured>category</harvard:featured>
-		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/06/panel-ponders-digital-divide/feed/</wfw:commentRss>
-		<slash:comments>0</slash:comments>
-		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/06/panel-ponders-digital-divide/</feedburner:origLink></item>
-		<item>
-		<title>Food for thought</title>
-		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/UQYq84aqnnA/</link>
-		<comments>http://news.harvard.edu/gazette/story/2010/06/food-for-thought/#comments</comments>
-		<pubDate>Mon, 14 Jun 2010 16:48:28 +0000</pubDate>
-		<dc:creator />
-				<category><![CDATA[Arts & Culture]]></category>
-		<category><![CDATA[History, Language & Culture]]></category>
-		<category><![CDATA[Barbara Ketcham Wheaton]]></category>
-		<category><![CDATA[Cooking]]></category>
-		<category><![CDATA[Food]]></category>
-		<category><![CDATA[History]]></category>
-		<category><![CDATA[Radcliffe Institute]]></category>
-		<category><![CDATA[Reading Historic Cookbooks: A Structured Approach]]></category>
-		<category><![CDATA[Recipes]]></category>
-		<category><![CDATA[Schlesinger Library]]></category>
-		<category><![CDATA[Seminar]]></category>
-
-		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=49475</guid>
-		<description><![CDATA[A weeklong seminar at the Radcliffe Institute examines cookbooks through the centuries, and what they say about the practices, resources, and cultures of their times.]]></description>
-			<content:encoded><![CDATA[<p>What can we learn about the Industrial Revolution from a 19th century recipe? What can we discern about culture from a 17th century banquet menu? What can a Reconstruction-era cookbook tell us about architecture? Quite a bit, actually.</p>
-<p>Seventeen scholars, academics, and foodies from across the globe gathered in the <a href="http://www.radcliffe.edu/schlesinger_library.aspx">Schlesinger Library</a> at the <a href="http://www.radcliffe.edu/">Radcliffe Institute</a> for “<a href="http://www.radcliffe.edu/events/calendar_2009wheaton.aspx">Reading Historic Cookbooks: A Structured Approach</a>,” a weeklong seminar designed to teach researchers and scholars how to discern valuable data from recipes, menus, and cookbooks.</p>
-<p>Led by <a href="http://www.radcliffe.edu/print/about/quarterly/w07_wheaton.htm">Barbara Ketcham Wheaton</a>, the honorary curator of the culinary collection at the Schlesinger Library, students spent last week examining British and American texts from three centuries and learning how to approach such texts systematically in order to discern information from various fields of study.</p>
-<p>“This kind of analysis is very helpful when trying to get information out of cookbooks,” said William Rubel, a writer and cook who focuses on traditional cooking methods. “This focuses one’s attention on the details, and the devil very often is in the details. The seminar helps us learn how to see between the lines to derive information from what’s implicitly said and also what’s missing.”</p>
-<p>During one morning session, a participant talked about a 17th century recipe that called for pushing food through a colander using an apple. A fellow scholar asked whether the recipe intended the cook to use a piece of fruit or a round object that might have been dubbed “an apple.” As debate ensued and doubt was expressed, a smile broke on Wheaton’s face.</p>
-<p>“I told you when we started that we would know less at the end of the week than we did at the beginning,” she said.</p>
-<p>Wheaton, a renowned culinary scholar, got the idea for the seminar while researching her book, “<a href="http://www.amazon.com/Savoring-Past-French-Kitchen-Table/dp/0684818574">Savoring the Past: The French Kitchen and Table from 1300 to 1789</a>,” which entailed reading cookbooks spanning that period.</p>
-<p>“I had to figure out for myself how to read them,” she said. “You cannot read three cookbooks and see how they’re different. You need to be systematic.”</p>
-<p>Wheaton distributed several cookbook readings for the week that span various centuries in Britain and America. At first, students are asked simply to look at the obvious: what is being cooked. By the end of the week, she challenges them to examine the language, ingredients, and tools used to discern how these books fit into the lives of people in their time and place.</p>
-<p>“The Closet of Sir Kenelme Digby,” written in 1669, gives hints of the introduction of science to the kitchen. A book from 1825 reveals the beginnings of temperance sentiments that would lead to Prohibition nearly a century later. And in a nod to industrialization, a “Mrs. Putnam’s” cookbook from the mid-19th century references brand-name, machine-made kettles and griddles.</p>
-<p>Wheaton began offering her seminar in the early ’90s, and has held it in Los Angeles, New York, and Toronto. This was the second time she has taught it at Radcliffe. In recent years, Wheaton said she has seen a proliferation of academics attending, as the field of culinary history has grown and scholars in other areas realize the value of cookbooks as a primary source for research.</p>
-<p>“Food is one of the basic life things that humans have used to make an identity for themselves,” she said. “Yes, we need it. But we have used it also to create a system of beliefs, nationality, and culture.”</p>
-<p>The course has long attracted “an interesting variety of people.” In addition to several scholars and authors, a number of food and book enthusiasts were present: <a href="http://nymag.com/shopping/askaclerk/33504/">Nach Waxman</a>, who owns the noted culinary bookshop Kitchen Arts &amp; Letters in New York; Suzi Sheffield, a restaurant owner from Columbia, S.C.; and Kathleen Wall, the colonial foodways culinarian at <a href="http://plimoth.org/">Plimoth Plantation</a>.</p>
-<p>As participants discussed their readings, expertise emerged. One knew all about the virtues of glass butter churns over wooden ones (the wooden ones rot easily and can make butter spoil), while another chimed in on regional barbecue techniques, and another explained how pressure cookers changed the socioeconomic status of families in India by freeing women from the kitchen and allowing them to work.</p>
-<p>“You’re getting a bunch of like-minded people together in one space,” said Regina Sexton, an author who teaches at University College Cork in Ireland. “That’s invaluable in its own right.”</p>
-<p>A special treat for participants was when Wheaton brought out treasures from the Schlesinger Library vault. Home to 15,000 culinary works, the Schlesinger’s culinary collection is one of the largest and oldest of its type, attracting academics and researchers from around the world. Begun as a collection intended to document the domestic focus and contributions of women, it has expanded to become an international collection covering culinary history, the cooking professions, gastronomy, the history of domestic life and management, and the role of food in history and culture.</p>
-<p>Cookbooks, Wheaton explained, are somewhat harder to collect than other kinds of antiquarian works. Because they’re intended for frequent use, they’re kept in kitchens, not libraries, and are often soiled, written in, stained, and generally battered.</p>
-<p>“Here, we have a genuine, authentic 19th century splotch,” she told her class as she walked around with a tattered volume.</p>
-<p>Students exclaimed over a handwritten cookbook put together by a group of British women (as a precursor to the Junior League and church cookbooks that would become popular in the following centuries) and took photographs as Wheaton walked around with obscure volumes by the likes of Gervase Markham, Miss Leslie, and Richard Bradley.</p>
-<p>Back when she picked up her first old cookbook in the ’60s, Wheaton remembers being the only person she knew who was interested in such things.</p>
-<p>“Fifty years later, I’m still reading, still trying to make sense of them,” she said, as her cohorts chatted around her. “But I’m not alone anymore.”</p>
-<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/UQYq84aqnnA" height="1" width="1"/>]]></content:encoded>
-	    <image>
-        <title>Food for thought</title>
-        <link>http://news.harvard.edu/gazette/story/2010/06/food-for-thought/</link>
-        <url>http://news.harvard.edu/gazette/wp-content/uploads/2010/06/061010_Cookbooks_028_140.jpg</url>
-        <width>140</width>
-        <height>140</height>
-    </image>
-    <harvard:WPID>49475</harvard:WPID>
-    <harvard:featured>category</harvard:featured>
-		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/06/food-for-thought/feed/</wfw:commentRss>
-		<slash:comments>0</slash:comments>
-		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/06/food-for-thought/</feedburner:origLink></item>
-		<item>
-		<title>When China’s doors reopened</title>
-		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/Bhd5Lm8oKCo/</link>
-		<comments>http://news.harvard.edu/gazette/story/2010/06/when-china%e2%80%99s-doors-reopened/#comments</comments>
-		<pubDate>Fri, 11 Jun 2010 21:57:02 +0000</pubDate>
-		<dc:creator />
-				<category><![CDATA[International]]></category>
-		<category><![CDATA[National & World Affairs]]></category>
-		<category><![CDATA[Asia Society]]></category>
-		<category><![CDATA[Center for Government and International Studies]]></category>
-		<category><![CDATA[Fairbank Center for Chinese Studies]]></category>
-		<category><![CDATA[Harvard University]]></category>
-		<category><![CDATA[Nicholas Platt]]></category>
-		<category><![CDATA[Oliver Platt]]></category>
-
-		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=49436</guid>
-		<description><![CDATA[Retired diplomat Nicholas Platt ’57 weighs in on China then and now, and on the durability of U.S. ties to that nation.]]></description>
-			<content:encoded><![CDATA[<p>Retired diplomat Nicholas Platt ’57, U.S. ambassador to three countries and president <em>emeritus </em>of the <a href="http://www.asiasociety.org/">Asia Society</a>, was one of the wise men whom President Richard Nixon called his “China boys” — staffers who smoothed the way to opening relations with China four decades ago.</p>
-<p>Platt led a recent lunchtime seminar last Friday (June 4) called “China Then and Now,” sponsored by Harvard’s <a href="http://www.fas.harvard.edu/~fairbank/">Fairbank Center for Chinese Studies</a>. A small room in the Center for Government and International Studies-South was jammed with a standing-room-only crowd, and some onlookers peered into the open door.</p>
-<p>Part of the draw might have been the home movies that Platt took during 1972 and 1973, just after China opened its doors to the West for the first time since 1949. The movies show “what China was like when we all started out there, at a time that for many of us was quite magic,” said Platt, who later served as ambassador to the Philippines, Zambia, and Pakistan. “It was the other side of the moon for us.”</p>
-<p>Those early views included what he called the first new glimpses into the private lives of the Chinese under Mao’s rule. “We hadn’t seen what was going on in people’s backyards,” said Platt, who took film from his hotel window in Beijing: a woman hanging wash, and another brushing her teeth in an alleyway. “For us, everything was really interesting.”</p>
-<p>His movies show began with the arrival of Air Force One, a Chinese honor guard standing at attention on a frigid February morning in 1972, and Nixon’s first greeting of Zhou Enlai, the first premier of the People’s Republic of China. He had been famously insulted at the 1954 Geneva Conference by U.S. Secretary of State John Foster Dulles, a Cold Warrior who refused to shake his hand.</p>
-<p>“Nixon wanted to make sure he was seen shaking his hand,” said Platt, who filmed the scene of the president and Enlai behind one of the plane’s engines. “So he shook it, and he shook it, and he shook it some more.”</p>
-<p>Said the amiable diplomat of his movies, “It’s a worms-eye view, and I’m the worm.”</p>
-<p>That view from the bottom shows a 1970s China far different from the modern version. The movies — jittery and in faded color — showed Beijing under a pall of smoke from ubiquitous charcoal fires and from factories built with Soviet aid.</p>
-<p>There were views of the Great Wall empty of tourists, a shabby but grand Forbidden City, the nearly deserted Ming tombs (where the Platt family — diplomat, three sons, and wife Sheila — would picnic), the bare Western Hills outside Beijing (which offered views of countryside now filled in by ring roads and buildings), and amateur political festivals dominated by stage gymnasts (in contrast, he said, to today’s “huge, very well rehearsed, perfectly synchronized big marching shows”).</p>
-<p>In those days, transport in urban China was still a matter of heaping, two-wheeled carts pulled by skinny men, along with donkey carts and rivers of bicycles — 2 million registered in Beijing alone in 1973.</p>
-<p>“On bikes, people were … out of the purview of public security, and they would come up and chat,” said Platt, who was eager to circumvent China’s strictures on contact with foreigners. “So, as a result, we were the first and only diplomatic office in the history of the United States that had regular bicycling hours. … It eased our sense of isolation.”</p>
-<p>Later, Platt and his family followed visiting U.S. athletes around, getting more views of life in China, though they were “carefully chosen ordinary life.” The movies show rice farmers, villagers crowded along canals, the school where Mao once taught (“Even the spittoons are well preserved,” said Platt), and a Shanghai commune that made bricks. “They sped up their work rate when we came near,” he said.</p>
-<p>The athletes and the Platt family, exotic Westerners all, drew crowds wherever they went. “All it took to get a crowd was to stop,” said Platt. His son Oliver, now an actor, got his first audiences in China, the diplomat said, and did his first acting — a staged hockey fight with his brother for a crowd in rural China.</p>
-<p>“That’s the end of China then,” said Platt as the lights went back up. But the China of now is marked by “generations of friendship,” he said, from the groundwork laid during those visits in the ’70s.</p>
-<p>Platt, who in 1973 set up the first resident diplomatic office in the People’s Republic of China, called his new book, “China Boys” (Vellum, 2010) a first glimpse of opening relations with China by a U.S. staffer. “It’s a chance for the staff level to weigh in,” he said.</p>
-<p><a href="http://www.henryakissinger.com/">Henry Kissinger</a>, then Nixon’s national security adviser, asked Platt to see the book, and later promised to steal its main theme: that the “nuts and bolts” of the U.S.-China relationship staffers created in the early ’70s became the fundament of what is still a resilient strategic partnership.</p>
-<p>At a conference earlier this year, Platt said Kissinger was still curious about the new book, which appeared in March. He whispered to Platt in an elevator: “Did you savage me?”</p>
-<p>“No,” replied the diplomat, diplomatically. “Just a scratch or two.”</p>
-<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/Bhd5Lm8oKCo" height="1" width="1"/>]]></content:encoded>
-	    <image>
-        <title>When China’s doors reopened</title>
-        <link>http://news.harvard.edu/gazette/story/2010/06/when-china%e2%80%99s-doors-reopened/</link>
-        <url>http://news.harvard.edu/gazette/wp-content/uploads/2010/06/060410_Platt_052_140.jpg</url>
-        <width>140</width>
-        <height>140</height>
-    </image>
-    <harvard:WPID>49436</harvard:WPID>
-    <harvard:featured>category</harvard:featured>
-		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/06/when-china%e2%80%99s-doors-reopened/feed/</wfw:commentRss>
-		<slash:comments>0</slash:comments>
-		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/06/when-china%e2%80%99s-doors-reopened/</feedburner:origLink></item>
-		<item>
-		<title>A park by the river</title>
-		<link>http://feedproxy.google.com/~r/HarvardGazetteOnline/~3/ANIJ3TbHFtQ/</link>
-		<comments>http://news.harvard.edu/gazette/story/2010/06/a-park-by-the-river/#comments</comments>
-		<pubDate>Fri, 11 Jun 2010 20:51:44 +0000</pubDate>
-		<dc:creator />
-				<category><![CDATA[Campus & Community]]></category>
-		<category><![CDATA[In the Community]]></category>
-		<category><![CDATA[Cambridge]]></category>
-		<category><![CDATA[Christine Heenan]]></category>
-		<category><![CDATA[David P. Maher]]></category>
-		<category><![CDATA[Harvard]]></category>
-		<category><![CDATA[Riverside Community Park]]></category>
-
-		<guid isPermaLink="false">http://news.harvard.edu/gazette/?p=49418</guid>
-		<description><![CDATA[Cambridge and Harvard officials dedicate Riverside Community Park, the city’s newest open space, and the result of years of cooperative effort.]]></description>
-			<content:encoded><![CDATA[<p>More than 100 people gathered at <a href="http://www.cambridgema.gov/cdd/cp/parks/riverside/index.html">Riverside Community Park</a> on Thursday (June 10) to officially dedicate Cambridge’s newest green space, the result of a partnership between Harvard University and the city.</p>
-<p>“This is a significant win for the city and a significant win for this community,” Cambridge Mayor David P. Maher said at the event. “We could not have done it without Harvard. This is a good example of town-gown relations working for the better of a community.”</p>
-<p>Situated on three quarters of an acre at the corner of Memorial Drive and Western Avenue near the Charles River, the park boasts a shade structure with picnic tables, a broad lawn, and fountains to frolic in on hot days. Designed by <a href="http://www.halvorsondesign.com/">Halvorson Design Partnership,</a> the park is intended to reflect community desires for a peaceful, reflective, inviting open space.</p>
-<p>After the event, families lingered to enjoy barbecue and to socialize. As cloudy skies threatened rain, children played in a fountain, splashing and laughing as if the sun were bright. Nearby, a family tossed a Frisbee on a broad green lawn, while a group of older women chatted on a bench.</p>
-<p>“To see the park being enjoyed by the residents is a great thing,” said Christine Heenan, Harvard’s vice president of public affairs and communications.</p>
-<p>Kevin Bonanno, a graphics associate in the University’s planning office, was on hand with his wife and two children. The family lives nearby in one of the affordable housing units built by Harvard as part of the agreement. Family members enjoy walking to the park on weekends and after dinner on weekdays.</p>
-<p>“It’s really great,” he said. “It brings a ton of people from the neighborhood out, so we’ve been able to meet a lot of other families with kids.”</p>
-<p>Since the park opened, Zainab Himmat, who lives across the street, said she’s had trouble keeping her four children inside. “When they come home from school, they want to go out and play there,” she said. “They love it.”</p>
-<p>That sentiment was precisely the goal when Harvard and Cambridge reached an agreement in 2003 that enabled the University to construct graduate student housing on several sites in the area. Harvard provided an open-space easement for the park as part of the accord. Residents presented their ideas through an expansive community planning process led by the city. Significant funding to create the park was provided by the city and by Harvard.</p>
-<p>As part of the 2003 agreement, the University created bed space for 500 graduate students in the new environmentally friendly dormitories and apartments at Cowperthwaite, Grant, Akron, and Banks streets, an effort that supported the city’s longstanding goal for local universities to house more students to alleviate pressure on the local housing market. Harvard also built the 39 affordable units for working families, including six in wood-frame houses adjacent to the park and 33 in the renovated historic Switch House nearby. All of those units are occupied by Cambridge families.<br />
-“Developers often pit the desire for open space against affordable housing,” Cambridge City Manager Robert W. Healy said. “This is a tribute to the fact that one can do both.”</p>
-<img src="http://feeds.feedburner.com/~r/HarvardGazetteOnline/~4/ANIJ3TbHFtQ" height="1" width="1"/>]]></content:encoded>
-	    <image>
-        <title>A park by the river</title>
-        <link>http://news.harvard.edu/gazette/story/2010/06/a-park-by-the-river/</link>
-        <url>http://news.harvard.edu/gazette/wp-content/uploads/2010/06/061010_Riverside_140.jpg</url>
-        <width>140</width>
-        <height>140</height>
-    </image>
-    <harvard:WPID>49418</harvard:WPID>
-    <harvard:featured>category</harvard:featured>
-		<wfw:commentRss>http://news.harvard.edu/gazette/story/2010/06/a-park-by-the-river/feed/</wfw:commentRss>
-		<slash:comments>0</slash:comments>
-		<feedburner:origLink>http://news.harvard.edu/gazette/story/2010/06/a-park-by-the-river/</feedburner:origLink></item>
 	</channel>
 </rss>
