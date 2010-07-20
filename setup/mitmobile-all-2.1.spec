@@ -1,7 +1,7 @@
 Summary:	MIT Mobile Web
 Name:		mitmobile-all
 Version:	2.1
-Release:	1fc12
+Release:	2.fc12
 License:	MIT License
 Group:		Applications/Web
 Source:		mitmobile-all-%{version}-%{release}.tar.gz
@@ -29,7 +29,7 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 
 %files
 
-%defattr(-,root,root,-)
+%defattr(-,apache,apache,-)
 /opt/mitmobile/bin
 /opt/mitmobile/certs
 /opt/mitmobile/maptiles
@@ -61,8 +61,6 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /var/www/html/sms
 /var/www/html/stellar
 /var/www/html/techcash
-
-%defattr(-,apache,apache,-)
 /opt/mitmobile/cache
 /opt/mitmobile/logs
 /opt/mitmobile/pushd
