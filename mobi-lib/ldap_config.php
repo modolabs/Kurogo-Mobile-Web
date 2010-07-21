@@ -50,7 +50,7 @@ define("LOG_ALL_ERRORS", FALSE);
 define("LOG_PEOPLE_DIRECTORY_ERRORS", TRUE);
 
 // Error messages.
-define("LDAP_SEARCH_ERROR", "The server could not perform your search. There may be too many results. You may consider narrowing your search.");
+define("LDAP_SEARCH_ERROR", "Too many results to display. Please refine your search.");
 define("DIRECTORY_UNAVAILABLE", "Your request cannot be processed at this time.\nPlease try again later....");
 define("INVALID_TELEPHONE_NUMBER", "Invalid telephone number....");
 define("INVALID_EMAIL_ADDRESS","Invalid email address....");
