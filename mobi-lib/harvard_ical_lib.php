@@ -264,7 +264,7 @@ class ICalEvent extends ICalObject {
 
      case 'DTEND;VALUE=DATE':
         $value = $value .'T180000';
-        $end = ICalendar::ical2unix($value, NULL);
+               $end = ICalendar::ical2unix($value, NULL);
       if (!$this->range) {
 	$this->range = new TimeRange($end);
       } else {
@@ -275,6 +275,7 @@ class ICalEvent extends ICalObject {
 	$this->range->set_end($end);
       }
       break;
+
 
 
     case 'DTEND':
