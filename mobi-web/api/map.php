@@ -22,16 +22,23 @@ switch ($_REQUEST['command']) {
    break;
 
  case 'search':
-   if (isset($_REQUEST['loc']) && isset($_REQUEST['q'])) {
+   if (isset($_REQUEST['q'])) {
 
-     $params = array(
-       'loc' => $_REQUEST['loc'],
-       'str' => $_REQUEST['q'],
-       );
+     if (isset($_REQUEST['loc'])) {
+  
+       $params = array(
+         'loc' => $_REQUEST['loc'],
+         'str' => $_REQUEST['q'],
+         );
+  
+       $query = http_build_query($params);
+       $json = file_get_contents(MAP_SEARCH_URL . '?' . $query);
+  
+     } else {
+       require_once LIBDIR . '/ArcGISTileServer.php';
 
-     $query = http_build_query($params);
-     $json = file_get_contents(MAP_SEARCH_URL . '?' . $query);
-
+       $json = ArcGISTileServer::search($_REQUEST['q']);
+     }
      echo $json;
    }
    break;
