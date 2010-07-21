@@ -6,6 +6,7 @@
  */
 
 require_once('TimeRange.php');
+require_once('HarvardContactInfoParser.php');
 
 class ICalendarException extends Exception {
 }
@@ -224,7 +225,13 @@ class ICalEvent extends ICalObject {
       break;
 
     case 'X-TRUMBA-CUSTOMFIELD':
-      $this->customFields[$param_value] = $value;
+        if ($param_value == "\"Contact Info\"") {
+               $contact = new ContactInfo($value);
+                $this->customFields[$param_value] = $contact;
+        }
+        else {
+             $this->customFields[$param_value] = $value;
+        }
       break;
 
     case 'URL':
@@ -243,6 +250,33 @@ class ICalEvent extends ICalObject {
 	$this->range->set_start($start);
       }
       break;
+
+    case 'DTSTART;VALUE=DATE':
+        $value = $value .'T180000';
+          $start = ICalendar::ical2unix($value, NULL);
+     // $start = ICalendar::ical2unix($value, $param_value);
+      if (!$this->range) {
+	$this->range = new TimeRange($start);
+      } else {
+	$this->range->set_start($start);
+      }
+      break;
+
+     case 'DTEND;VALUE=DATE':
+        $value = $value .'T180000';
+        $end = ICalendar::ical2unix($value, NULL);
+      if (!$this->range) {
+	$this->range = new TimeRange($end);
+      } else {
+	if (($end - $this->get_start()) % 86400 == 0) {
+	  // make all day events end at 11:59:59 so they don't overlap next day
+	  $end -= 1;
+	}
+	$this->range->set_end($end);
+      }
+      break;
+
+
     case 'DTEND':
       //$end = ICalendar::ical2unix($value, $param_value);
       $end = ICalendar::ical2unix($value, NULL);
@@ -262,7 +296,7 @@ class ICalEvent extends ICalObject {
       $this->range->set_end($this->get_start() + $value);
       break;
     case 'RRULE':
-      $this->add_rrule($value);
+      //$this->add_rrule($value);
       break;
     case 'EXDATE':
       $this->exdates[] = ICalendar::ical2unix($value, $param_value);
