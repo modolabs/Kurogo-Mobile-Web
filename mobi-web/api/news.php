@@ -6,9 +6,18 @@ if (isset($_REQUEST['command'])) {
 
   switch($_REQUEST['command']) {
    case 'channels':
-    $result = GazetteRSS::getChannels();
-    echo json_encode($result);
-    break;
+     $result = GazetteRSS::getChannels();
+     echo json_encode($result);
+     break;
+
+   case 'search':
+     if (isset($_REQUEST['q']) && ($searchTerms = $_REQUEST['q'])) {
+       $lastStoryId = isset($_REQUEST['storyId']) ? $_REQUEST['storyId'] : NULL;
+       $stories = GazetteRSS::searchArticles($searchTerms, $lastStoryId);
+       echo $stories;
+     }
+     break;
+
    default:
      break;
   }
