@@ -116,6 +116,13 @@ class GazetteRSS extends RSS {
     $channelRoot = $newdoc->createElement('channel');
     $rssRoot->appendChild($channelRoot);
 
+    if ($lastStoryId === NULL) {
+      // provide a flag to the native app so it knows how many stories
+      // are in this feed, since we only return up to 10
+      $numItems = $doc->getElementsByTagName('item')->length;
+      self::appendDOMAttribute($newdoc, $channelRoot, 'items', $numItems);
+    }
+
     $count = 0;
     foreach ($doc->getElementsByTagName('item') as $item) {
       if ($count >= 10) {
