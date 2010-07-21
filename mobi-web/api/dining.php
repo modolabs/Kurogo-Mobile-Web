@@ -1,6 +1,7 @@
 <?php
 
  require_once LIBDIR . "/harvard_dining.php";
+ require_once LIBDIR ."/diningHrs.php";
 
  $urlBase = 'http://food.cs50.net/api/1.1/items?date=';
 

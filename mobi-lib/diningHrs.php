@@ -49,18 +49,18 @@ class DiningHall {
 
     public function process_restrictions($line) {
 
-        $restrictions = split(";", $line);
+        $restrictions = preg_split("/;/", $line);
 
         $meal_restrictions = array();
 
         foreach ($restrictions as $rest) {
 
-            $components = split(",", $rest);
+            $components = preg_split('/,/', $rest);
 
-            $days = split("/", $components[0]);
+            $days = preg_split("/\//", $components[0]);
 
             $time = $components[1];
-            $msg = $components[2];
+            $msg = str_replace("$", ",", $components[2]);
 
             $meal_rest = new MealRestrictions();
             $meal_rest->days = $days;
@@ -73,10 +73,10 @@ class DiningHall {
 
         foreach($meal_restrictions as $lr){
 
-            print_r($lr->get_days());
-            printf("%s\n", $lr->get_time());
-            printf("%s\n", $lr->get_message());
-            printf("\n");
+            //print_r($lr->get_days());
+            //printf("%s\n", $lr->get_time());
+            //printf("%s\n", $lr->get_message());
+            //printf("\n");
         }
 
         return $meal_restrictions;
@@ -102,13 +102,13 @@ class DINING_HOURS {
             $line6 = str_replace("\n", "", fgets($handle)); // nrunch hrs
 
             $hall = new DiningHall($line1, $line2, $line3, $line4, $line5, $line6);
-            printf("%s\n", $line1);
-            printf("%s\n", $line2);
-            printf("%s\n", $line3);
-            printf("%s\n", $line4);
-            printf("%s\n", $line5);
-            printf("%s\n", $line6);
-            printf("\n");
+            //printf("%s\n", $line1);
+            //printf("%s\n", $line2);
+            //printf("%s\n", $line3);
+            //printf("%s\n", $line4);
+            //printf("%s\n", $line5);
+            //printf("%s\n", $line6);
+            //printf("\n");
 
 
             $line7 = str_replace("\n", "", fgets($handle));
