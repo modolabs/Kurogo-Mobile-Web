@@ -35,7 +35,7 @@ define("MAP_TILE_CHECKSUM_FILE_TEMP", '/opt/mitmobile/maptiles/temp-export.md5')
 define("MAP_TILE_CACHE_DATE", '/opt/mitmobile/maptiles/tiles_updated.txt');
 
 // news_office
-define('NEWSOFFICE_FEED_URL', 'http://web.mit.edu/newsoffice/feeds/iphone.php');
+define('NEWS_SEARCH_URL', 'http://news.harvard.edu/gazette/');
 
 // events_calendar
 define('EVENTS_CALENDAR_API', 'http://events.mit.edu/MITEventsFull.wsdl');
