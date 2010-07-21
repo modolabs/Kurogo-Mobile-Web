@@ -5,6 +5,11 @@
  * but not a WMS server
  */
 
+// TODO: make these into configurable parameters
+define('ARCGIS_SEARCH_FIELDS', 'Address,Building Name');
+// TODO: figure out the difference between different building layers
+define('ARCGIS_SEARCH_LAYERS', '0');
+
 class ArcGISTileServer {
 
   public static function getCapabilities() {
@@ -44,7 +49,20 @@ class ArcGISTileServer {
     return array('properties' => $data);
   }
 
-  
+  public static function search($searchText) {
+    $queryBase = ARCGIS_SERVER_URL . '/find?';
+    $query = http_build_query(array(
+      'searchText' => strtoupper($searchText),
+      'searchFields' => ARCGIS_SEARCH_FIELDS,
+      'sr' => '', // i hope this means use the default
+      'layers' => ARCGIS_SEARCH_LAYERS,
+      'returnGeometry' => 'true',
+      'f' => 'json',
+      ));
+
+    $json = file_get_contents($queryBase . $query);
+    return $json;
+  }
 
 }
 

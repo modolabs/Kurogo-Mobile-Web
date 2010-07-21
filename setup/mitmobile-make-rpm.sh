@@ -2,12 +2,9 @@
 
 RPMBUILDDIR=~/rpmbuild
 VERSION=2.1
-RPMVERSION=2
+RPMVERSION=3
 OS=fc12
-ORIGPWD=$PWD
 PACKAGE=mitmobile-all
-
-# todo: parse parameters for version, rpmversion, os
 
 cd `dirname $0`
 cd ..

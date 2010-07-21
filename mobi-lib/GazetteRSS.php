@@ -3,10 +3,18 @@
 require_once "rss_services.php";
 require_once "DiskCache.inc";
 
+define('IMAGE_CACHE_EXTENSION', '/api/newsimages');
+
 class GazetteRSS extends RSS {
 
   private static $diskCache;
   private static $feeds = NULL;
+  private static $imageWriter;
+
+  // when we resize images, store width/height in
+  // a state variable
+  private static $lastWidth;
+  private static $lastHeight;
 
   private static $channels = array(
     array('title' => 'All News', 
@@ -25,8 +33,8 @@ class GazetteRSS extends RSS {
           'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineNationalWorldAffairs'),
     array('title' => 'Athletics',
           'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineAthletics'),
-    //array('title' => 'Multimedia',
-    //      'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineMultimedia'),
+    array('title' => 'Multimedia',
+          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineMultimedia'),
     );
   
   public static function init() {
@@ -36,6 +44,8 @@ class GazetteRSS extends RSS {
       self::$diskCache = new DiskCache(CACHE_DIR . '/GAZETTE', 300, TRUE);
       self::$diskCache->setSuffix('.xml');
       self::$diskCache->preserveFormat();
+
+      self::$imageWriter = new DiskCache(WEBROOT . IMAGE_CACHE_EXTENSION, PHP_INT_MAX, TRUE);
     }
   }
 
@@ -87,11 +97,85 @@ class GazetteRSS extends RSS {
 	  if ($storyId == $lastStoryId) {
             $lastStoryId = NULL;
           }
+
         } else {
+          // download and resize thumbnail image
+          $thumb = $item->getElementsByTagName('image')->item(0);
+          $thumbUrl = $item->getElementsByTagName('url')->item(0);
+          $newThumbUrlString = self::imageUrl(self::cacheImage($thumbUrl->nodeValue, 76));
+
+          // replace url in rss feed
+          $newThumbUrl = $newdoc->createElement('url', $newThumbUrlString);
+          $thumb->replaceChild($newThumbUrl, $thumbUrl);
+
+          // remove images from main <content> tag
+
+          $contentNode = $item->getElementsByTagName('encoded')->item(0);
+          $content = $contentNode->nodeValue;
+          $contentHTML = new DOMDocument();
+          $contentHTML->loadHTML($content);
+
+          //$otherImages = $newdoc->createElement('otherImages');
+          //$numImages = 0;
+
+          foreach ($contentHTML->getElementsByTagName('img') as $imgTag) {
+            // skip 1px tracking images
+            if ($imgTag->getAttribute('width') == '1') {
+              $imgTag->parentNode->removeChild($imgTag);
+              continue;
+            }
+
+            // 300px for inline images
+            $src = $imgTag->getAttribute('src');
+            $cachedImageFile = self::cacheImage($src, 300);
+            if ($cachedImageFile) {
+              $newSrcUrlString = self::imageUrl($cachedImageFile);
+              $otherImage = $newdoc->createElement('image');
+
+              //$fullUrl = $contentHTML->createElement('fullURL', $newSrcUrlString);
+            
+              $fullUrl = $contentHTML->createElement('img');
+  
+              // TODO: make a function to add an attribute to a DOMNode
+              $fullUrlSrc = $contentHTML->createAttribute('src');
+              $fullUrlSrcText = $contentHTML->createTextNode($newSrcUrlString);
+              $fullUrlSrc->appendChild($fullUrlSrcText);
+              $fullUrl->appendChild($fullUrlSrc);
+  
+              $fullUrlWidth = $contentHTML->createAttribute('width');
+              $fullUrlWidthText = $contentHTML->createTextNode(self::$lastWidth);
+              $fullUrlWidth->appendChild($fullUrlWidthText);
+              $fullUrl->appendChild($fullUrlWidth);
+  
+              $fullUrlHeight = $contentHTML->createAttribute('height');
+              $fullUrlHeightText = $contentHTML->createTextNode(self::$lastHeight);
+              $fullUrlHeight->appendChild($fullUrlHeightText);
+              $fullUrl->appendChild($fullUrlHeight);
+  
+              //$otherImage->appendChild($fullUrl);
+              //$node = $newdoc->importNode($otherImage, TRUE);
+              //$otherImages->appendChild($node);
+  
+              $imgTag->parentNode->replaceChild($fullUrl, $imgTag);
+              //$numImages++;
+
+            } else {
+              $imgTag->parentNode->removeChild($imgTag);
+            }
+
+          } // foreach
+
+          //if ($numImages) {
+          //  $item->appendChild($otherImages);
+          //}
+
+          $cdata = $newdoc->createCDATASection($contentHTML->saveHTML());
+          $contentNode->replaceChild($cdata, $contentNode->firstChild);
+
           $channelRoot->appendChild($item);
           $count++;
-        }
-      }
+        } // else
+      } // foeach
 
       $result = $newdoc->saveXML();
       self::$feeds[$cacheId] = $result;
@@ -103,6 +187,115 @@ class GazetteRSS extends RSS {
 
   private static function cacheName($url) {
     return end(explode('/', $url));
+  }
+
+  /** image caching and manipulation **/
+
+  private static function cacheImage($imgUrl, $newWidth=NULL, $newHeight=NULL) {
+
+    $imageName = self::imageName($imgUrl, $newWidth, $newHeight);
+    if (self::$imageWriter->isFresh($imageName)) {
+      return $imageName;
+    } else {
+      $imageStr = file_get_contents($imgUrl);
+      $bytes = strlen($imageStr);
+
+      // if the image is too large, php will run out of memory
+      // i haven't found the threshold so we will set a limit that
+      // includes most images from the gazette feed.
+      if ($bytes > 500000) {
+        return FALSE;
+      }
+
+      // do this temporarily to keep track of how long it takes us
+      // to create resized images
+      error_log("$imgUrl is $bytes bytes", 0);
+
+      if ($imageStr) {
+         $image = imagecreatefromstring($imageStr);
+         if ($image) {
+   
+           if ($newWidth === NULL && $newHeight === NULL) {
+             if (self::$imageWriter->writeImage($image, $imageName)) {
+               // save state
+               self::$lastWidth = $newWidth;
+               self::$lastHeight = $newHeight;
+
+               return $imageName;
+             } else {
+               return FALSE;
+             }
+           }
+
+           $oldOriginX = 0;
+           $oldOriginY = 0;
+     
+           $oldWidth = imagesx($image);
+           $oldHeight = imagesy($image);
+           // if both newWidth and newHeight are specified,
+           // decide whether we need to truncate in one dimension
+           if ($newWidth !== NULL && $newHeight !== NULL) {
+             $xScale = $maxWidth / $oldWidth;
+             $yScale = $maxHeight / $oldHeight;
+     
+             // we might not get round numbers above, so use percent difference
+             if (abs($xScale / $yScale - 1) > 0.05) {
+               if ($yScale < $xScale) { // truncate height from center
+                 $oldHeightIfSameRatio = $maxHeight * $oldWidth / $maxWidth;
+                 $oldOriginY = ($oldHeight - $oldHeightIfSameRatio) / 2;
+                 $oldHeight = $oldHeightIfSameRatio;
+               } else { // truncate width from center
+                 $oldWidthIfSameRatio = $maxWidth * $oldHeight / $maxHeight;
+                 $oldOriginX = ($oldWidth - $oldWidthIfSameRatio) / 2;
+                 $oldWidth = $oldWidthIfSameRatio;
+               }
+             }
+           }
+
+           // if only one of maxWidth or maxHeight is specified,
+           // populate the other based on original image ratio
+           elseif ($newWidth !== NULL && $newHeight === NULL) {     
+             $newHeight = $oldHeight * $newWidth / $oldWidth;
+           }
+
+           elseif ($newWidth === NULL && $newHeight !== NULL) {
+             $newWidth = $oldWidth * $newHeight / $oldHeight;
+           }
+
+           $newImage = imagecreatetruecolor($newWidth, $newHeight);
+           imagecopyresized($newImage, $image, 0, 0, $oldOriginX, $oldOriginY, $newWidth, $newHeight, $oldWidth, $oldHeight);
+
+
+           if (self::$imageWriter->writeImage($newImage, $imageName)) {
+             // save state
+             self::$lastWidth = $newWidth;
+             self::$lastHeight = $newHeight;
+
+             return $imageName;
+           }
+
+        } // if $image
+      } // if $imageStr
+    } // else
+  }
+
+  private static function imageName($imgUrl, $width=NULL, $height=NULL) {
+    $extension = substr($imgUrl, -4);
+    $hash = crc32($imgUrl);
+
+    return sprintf("%u", $hash) 
+      . ($width === NULL ? '' : '_' . $width)
+      . ($height === NULL ? '' : 'x' . $height)
+      . $extension;
+  }
+
+  private static function imageUrl($filename) {
+    $port = $_SERVER['SERVER_PORT'] == 80 
+      ? '' 
+      : ':' . $_SERVER['SERVER_PORT'];
+
+    return 'http://' . $_SERVER['SERVER_NAME'] . $port
+      . IMAGE_CACHE_EXTENSION . '/' . $filename;
   }
 
 }

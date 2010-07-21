@@ -4,6 +4,7 @@ class DiskCache {
 
   private $path;
   private $timeout = PHP_INT_MAX;
+  private $error;
   private $prefix = "";
   private $suffix = "";
   private $serialize = TRUE;
@@ -46,6 +47,10 @@ class DiskCache {
     $this->suffix = $suffix;
   }
 
+  public function getError() {
+    return $this->error;
+  }
+
   public function getFullPath($filename=NULL) {
     if ($filename === NULL) {
       return $this->path;
@@ -54,10 +59,43 @@ class DiskCache {
     }
   }
 
+  public function writeImage($image, $filename) {
+    $success = FALSE;
+    $path = $this->getFullPath($filename);
+    $suffix = $this->suffix ? $this->suffix : substr($filename, -4);
+    switch ($suffix) {
+     case '.png':
+       $success = imagepng($image, $path);
+       break;
+     case '.jpg':
+       $success = imagejpeg($image, $path);
+       break;
+     case '.gif':
+       $success = imagegif($image, $path);
+       break;
+    }
+    return $success;
+  }
+
+  public function readImage($filename) {
+    $path = $this->getFullPath($filename);
+    $suffix = $this->suffix ? $this->suffix : substr($filename, -4);
+    switch ($suffix) {
+     case '.png':
+       $success = imagecreatefrompng($image, $path);
+       break;
+     case '.jpg':
+       $success = imagecreatefromjpeg($image, $path);
+       break;
+     case '.gif':
+       $success = imagecreatefromgif($image, $path);
+       break;
+    }
+  }
+
   public function write($object, $filename=NULL) {
     if (!$object) {
-      error_log("tried to cache a non-object, bailing", 0);
-      return;
+      $this->error = "tried to cache a non-object";
     }
 
     $path = $this->getFullPath($filename);
@@ -69,10 +107,17 @@ class DiskCache {
         fwrite($fh, $object);
       }
       fclose($fh);
+      return TRUE;
+
     } else {
-      error_log("could not open $path for writing", 0);
+      $this->error = "could not open $path for writing";
     }
 
+    // stop doing this here after users handle error on their own
+    if ($this->error)
+      error_log($this->error);
+
+    return FALSE;
   }
 
   public function read($filename=NULL) {
@@ -85,7 +130,8 @@ class DiskCache {
           return $contents;
         }
       }
-      error_log("could not get contents of $path");
+      $this->error = "could not get contents of $path";
+      error_log($this->error, 0);
     }
     return FALSE;
   }
