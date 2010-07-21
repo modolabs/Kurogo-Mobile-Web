@@ -2,21 +2,28 @@
 require_once "lib_constants.inc";
 require_once "ldap_config.php";
 
-define("DIRECTORY_UNAVAILABLE", "Your request cannot be processed at this time.\nPlease try again later....");
-define("INVALID_TELEPHONE_NUMBER", "Invalid telephone number....");
-define("INVALID_EMAIL_ADDRESS","Invalid email address....");
-
 function mit_search($search)
 {
     global $appError;
+    global $appErrorMessage;
 
     $query = standard_query($search);
     if ($appError == 1)
         return($query);
     $results = do_query($query);
+
     if ($appError == 1)
-        return($results);
+	{
+		return wrap_error_for_JSON($results);
+	}
+	
     return(order_results($results, $search));
+}
+
+
+function wrap_error_for_JSON($errorMessage)
+{
+	return array(array("error" => $errorMessage));
 }
 
 function order_results($results, $search)
@@ -163,8 +170,7 @@ function do_query($query, $search_results=array())
     catch (Exception $e)
     {
         $appError = 1;
-        log_error($php_errormsg);
-        return(DIRECTORY_UNAVAILABLE);
+		return LDAP_SEARCH_ERROR;
     }
     for ($i = 0; $i < $entries["count"]; $i++)
     {
