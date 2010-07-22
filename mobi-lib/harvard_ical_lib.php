@@ -242,6 +242,11 @@ class ICalEvent extends ICalObject {
       break;
     case 'DTSTART':
       // for dtstart and dtend the param is always time zone id
+
+        if ($param_value == 'DATE') {
+            $value = $value .'T000000';
+        }
+        
        $start = ICalendar::ical2unix($value, NULL);
      // $start = ICalendar::ical2unix($value, $param_value);
       if (!$this->range) {
@@ -249,37 +254,17 @@ class ICalEvent extends ICalObject {
       } else {
 	$this->range->set_start($start);
       }
+
       break;
-
-    case 'DTSTART;VALUE=DATE':
-        $value = $value .'T180000';
-          $start = ICalendar::ical2unix($value, NULL);
-     // $start = ICalendar::ical2unix($value, $param_value);
-      if (!$this->range) {
-	$this->range = new TimeRange($start);
-      } else {
-	$this->range->set_start($start);
-      }
-      break;
-
-     case 'DTEND;VALUE=DATE':
-        $value = $value .'T180000';
-               $end = ICalendar::ical2unix($value, NULL);
-      if (!$this->range) {
-	$this->range = new TimeRange($end);
-      } else {
-	if (($end - $this->get_start()) % 86400 == 0) {
-	  // make all day events end at 11:59:59 so they don't overlap next day
-	  $end -= 1;
-	}
-	$this->range->set_end($end);
-      }
-      break;
-
-
 
     case 'DTEND':
       //$end = ICalendar::ical2unix($value, $param_value);
+
+      if ($param_value == 'DATE'){
+            $value = $value .'T000000';
+        }
+           
+                
       $end = ICalendar::ical2unix($value, NULL);
       if (!$this->range) {
 	$this->range = new TimeRange($end);
@@ -532,8 +517,15 @@ class ICalendar extends ICalObject {
 	}
       } elseif ($event->overlaps($day)) {
 	$events[] = $event;
-      }*/
+      }
+       
+         else if ($event->get_start() - $day->get_start() <= (28*60*60))
+	     $events[] = $event;
+       */
 
+
+      /* Making sure the events that start at 0000-0400hrs GMT
+      	 are still correctly captured as today's events */
         if  ((($event->get_start() - 4*60*60 >= $day->get_start()) &&
                 ($event->get_start() - 4*60*60 <= $day->get_end())) ||
 
@@ -541,16 +533,12 @@ class ICalendar extends ICalObject {
                 ($event->get_end() - 4*60*60 <= $day->get_end())) ||
 
                 (($event->get_start() - 4*60*60 <= $day->get_start()) &&
-                ($event->get_start()  - 4*60*60 >= $day->get_end()))) {
-            
-            $events[] = $event;
+                ($event->get_end()  - 4*60*60 >= $day->get_end()))) {
+
+           $events[] = $event;
             
         }
 
-      /* Making sure the events that start at 0000-0400hrs GMT
-      	 are still correctly captured as today's events */
-	// else if ($event->get_start() - $day->get_start() <= (28*60*60))
-	  //    $events[] = $event;
     }
     return $events;
   }
