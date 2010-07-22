@@ -510,20 +510,6 @@ class ICalendar extends ICalObject {
 
     $events = Array();
     foreach ($this->events as $id => $event) {
-      /*if ($event->is_recurring()) {
-	$day_events = $event->overlaps($day);
-	foreach ($day_events as $day_event) {
-	  $events[] = $day_event;
-	}
-      } elseif ($event->overlaps($day)) {
-	$events[] = $event;
-      }
-       
-         else if ($event->get_start() - $day->get_start() <= (28*60*60))
-	     $events[] = $event;
-       */
-
-
       /* Making sure the events that start at 0000-0400hrs GMT
       	 are still correctly captured as today's events */
         if  ((($event->get_start() - 4*60*60 >= $day->get_start()) &&
