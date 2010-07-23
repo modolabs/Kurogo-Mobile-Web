@@ -236,6 +236,7 @@ class ICalEvent extends ICalObject {
 
     case 'URL':
         $this->url = $value;
+        break;
 
     case 'SUMMARY':
       $this->summary = str_replace('\\', "", $value);

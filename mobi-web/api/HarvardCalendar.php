@@ -25,7 +25,7 @@ function clean_up_ical_event($event) {
      $event_dict['end'] = $event->get_end();
 
      if ($urlLink = $event->get_url()) {
-         $event_dict['infourl'] = $urlLink;
+         $event_dict['url'] = $urlLink;
      }
      if ($location = $event->get_location()) {
        $event_dict['location'] = $location;
