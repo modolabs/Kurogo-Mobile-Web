@@ -7,9 +7,9 @@ html, body {
 }
 
 body {
-	background-color: #b9c6d6;
-	font: 17px/1.33em Helvetica, Arial, sans-serif;
-	color: #202629;
+	background: #e8e3d8 url(../Webkit/images/background-tile.jpg) repeat-y;
+	font: 17px/1.33em 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	color: #404040;
 	-webkit-text-size-adjust: none; 
 }
 
@@ -20,12 +20,14 @@ h1, h2, h3 {
 }
 
 h1 {
+	font-family: Georgia, serif;
 	font-size: 29px;
 	font-weight: normal;
 	color: #fff;
 }
 
 h2 {
+	font-family: Georgia, serif;
 	font-size: 21px;
 	font-weight: normal;
 }
@@ -287,9 +289,7 @@ a.formbutton div {
 /* Top navigation/titlebar */
 
 #navbar {
-	height: 36px;
-	border-top: 1px solid #3c597f;
-	border-bottom: 1px solid #a3b2c5;
+	height: 45px;
 	margin: 0 0 12px 0;
 	background: #869db3;
 	background-image: url(../Webkit/images/navback.png);
@@ -302,7 +302,7 @@ a.formbutton div {
 .breadcrumbs a {
 	float: left;
 	margin-left: -15px;
-	padding: 10px 0px 12px 0;
+	padding: 14px 0px 16px 0;
 	background-image: url(../Webkit/images/drillup-r.png);
 	background-repeat: no-repeat;
 	background-position: top right;
@@ -322,8 +322,8 @@ a.homelink {
 	padding: 0;
 	margin-left: 0;
 	position: absolute;
-	top: 1px;
-	left: -2px;
+	top: 0;
+	left: 0;
 	background-image: none;
 }
 
