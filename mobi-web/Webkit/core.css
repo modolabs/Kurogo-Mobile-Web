@@ -7,7 +7,7 @@ html, body {
 }
 
 body {
-	background: #e8e3d8 url(../Webkit/images/background-tile.jpg) repeat-y;
+	background: #e3ddd1 url(../Webkit/images/background-tile.jpg) repeat-x;
 	font: 17px/1.33em 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	color: #404040;
 	-webkit-text-size-adjust: none; 
@@ -191,12 +191,12 @@ select {
 }
 
 .inputcombo {
-	height: 36px;
+	height: 38px;
 	position: relative;
 }
 
 .inputcombo .forminput {
-	height: 22px;
+	height: 24px;
 	padding: 4px 4px 8px 7px;
 	line-height: 24px;
 	border: 1px 0 1px 1px solid #666;
@@ -212,7 +212,7 @@ select {
 	top: 0;
 	right: 0;
 	width: 38px;
-	height: 36px;
+	height: 38px;
 }
 
 .emphasized {
@@ -294,7 +294,7 @@ a.formbutton div {
 	background-image: url(../Webkit/images/navback.png);
 	background-repeat: repeat-x;
 	font-size: 17px;
-	line-height: 17px;
+	line-height: 18px;
 	padding-left: 62px;
 } 
 
@@ -372,6 +372,7 @@ a.module img {
 	font-weight: normal;
 	color: #333;
 	background-color: #fff; 	
+	border: 1px solid #ccc;
 	border-bottom: 1px solid #bbb;
 	-webkit-border-radius: 9px;	
 	border-radius: 9px;	
@@ -379,7 +380,7 @@ a.module img {
 
 .nav li {	
 	list-style-type: none;	
-	border-top: 1px solid #bbb;
+	border-top: 1px solid #ccc;
 	padding: 12px;
 	position: relative;
 }
@@ -433,7 +434,7 @@ ul.focal {
 
 ul.focal li {
 	list-style-type: none;
-	border-top: 1px solid #bbb;
+	border-top: 1px solid #ccc;
 	padding: 12px;
 	position: relative;
 }
@@ -443,7 +444,7 @@ ul.focal li:first-child {
 }
 
 .topline {
-	border-top: 1px solid #bbb;
+	border-top: 1px solid #ccc;
 }
 
 .tabbody .nav {
@@ -460,7 +461,7 @@ ul.focal li:first-child {
 
 .results li {	
 	list-style-type: none;		
-	border-top: 1px solid #bbb;
+	border-top: 1px solid #ccc;
 	padding: 10px;
 }
 
@@ -504,7 +505,7 @@ ul.focal li:first-child {
 	margin: 10px; 
 	padding: 0;	   
 	background-color: #f9f6ef;
-	border: 1px solid #bbb;
+	border: 1px solid #ccc;
 	-webkit-border-radius: 9px;	
 	border-radius: 9px;	
 	font-size: 16px;
@@ -514,7 +515,7 @@ ul.focal li:first-child {
 
 .secondary li {
 	list-style-type: none;		
-	border-top: 1px solid #bbb;
+	border-top: 1px solid #ccc;
 	position: relative;
 	padding: 9px 10px;
 }
@@ -554,7 +555,7 @@ ul.focal li:first-child {
 
 .tertiary li {
 	list-style-type: none;		
-	border-top: 1px solid #bbb;
+	border-top: 1px solid #ccc;
 	position: relative;
 	padding: 6px 10px;
 }

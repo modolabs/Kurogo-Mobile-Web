@@ -1,5 +1,5 @@
 		body {
-			background: #cabea7 url("Webkit/images/home-back.jpg") fixed no-repeat;
+			background: #e3ddd1 url("Webkit/images/home-back.jpg") no-repeat center center;
 		}
 		#homegrid {
 			margin: 0 auto;
@@ -45,7 +45,7 @@
 		h1 {
 			font-size: 36px;
 			line-height: 36px;
-			margin: 14px 15px 6px 15px;
+			margin: 12px 9px 8px 9px;
 			color: #112;
 			text-align: center;
 		}
