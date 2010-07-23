@@ -456,18 +456,24 @@ class ICalendar extends ICalObject {
       $tz = new DateTimeZone($tzid);
       $time = new DateTime($icaltime, $tz);
     }
+    $time = new DateTime($icaltime, new DateTimeZone('America/New_York'));
     return datetime2unix($time);
   }
 
   public function search_events($title=NULL, TimeRange $range=NULL) {
     $events = Array();
     foreach ($this->events as $id => $event){
-      if ($event->get_recurid() !== NULL) // event is a duplicate
-	continue;
-      if (($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
+      /*if ($event->get_recurid() !== NULL) // event is a duplicate
+	continue;*/
+     /* if (($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
 	  && ($range === NULL || $event->overlaps($range))) {
 	$events[] = $event;
-      }
+      }*/
+
+      /*if ($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
+              $events[] = $event;*/
+
+        $events[] = $event;
     }
     return $events;
   }
