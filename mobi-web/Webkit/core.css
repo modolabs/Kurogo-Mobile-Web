@@ -300,7 +300,7 @@ a.formbutton div {
 
 .breadcrumbs a {
 	float: left;
-	padding: 14px 0px 16px 0;
+	padding: 13px 0px 16px 0;
 	background-image: url(../Webkit/images/drillup-r.png);
 	background-repeat: no-repeat;
 	background-position: top right;
@@ -342,7 +342,7 @@ a.module img {
 
 .pagetitle {
 	float: left;
-	padding: 12px 0;
+	padding: 13px 0;
 	color: #fff;
 	max-width: 168px;
 	white-space:nowrap;
@@ -368,7 +368,7 @@ a.module img {
 
 .nav {	   
 	padding: 0;	   
-	margin: 10px; 
+	margin: 9px; 
 	font-weight: normal;
 	color: #333;
 	background-color: #fff; 	
@@ -423,7 +423,7 @@ a.module img {
 }
 
 .focal .nav {
-	margin: 10px -11px;
+	margin: 10px -13px;
 	-webkit-border-radius: 0px;	
 }
 
@@ -449,7 +449,7 @@ ul.focal li:first-child {
 
 .tabbody .nav {
 	margin: -4px -10px;
-	border-bottom: none;
+	border: none;
 }
 
 .results {	   
@@ -457,6 +457,7 @@ ul.focal li:first-child {
 	margin: 10px 0; 
 	color: #333;
 	background-color: #fff; 	
+	border-top: 1px solid #ccc;
 }
 
 .results li {	
@@ -640,6 +641,7 @@ ul.focal li:first-child {
 	line-height: 1.33em;
 	color: #222;
 	background-color: #fff;
+	border: 1px solid #ccc;
 	-webkit-border-radius: 9px;	
 }
 
@@ -660,6 +662,7 @@ ul.focal li:first-child {
 
 .shaded {
 	background-color: #f9f6ef;
+	border: 1px solid #d9d6cf;
 }
 
 .legend {
