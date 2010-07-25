@@ -4,7 +4,7 @@
 <head>
 	<meta http-equiv="content-type" content="application/xhtml+xml" />
 	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=yes,initial-scale=1.0,maximum-scale=1.0">		
-	<title>MIT Mobile Web</title>
+	<title>Harvard Mobile</title>
 	<link rel="stylesheet" type="text/css" href="../Webkit/core.css" />
  	<link rel="apple-touch-icon" href="../Webkit/images/icon.png" />
 
@@ -92,7 +92,7 @@ if (file_exists($cssfile)) { ?>
 
 <body onload="setTimeout('scrollTo(0,1)', 100); init(); <?=$extra_onload?>" onunload="">
 
-<h1 <? if($top_item) {?>class="roomfornew"<? } ?> ><img src="Webkit/images/mit-logo-home.gif" width="56" height="28" alt="" id="logo" />Mobile Web</h1>
+<h1 <? if($top_item) {?>class="roomfornew"<? } ?> ><img src="Webkit/images/harvard-logo-home.gif" width="300" height="64" alt="Harvard Mobile Web" /></h1>
 
 <? if($top_item) { ?>
       <div id="new"><a href="../mobile-about/new.php"><span class="newlabel">NEW:</span><?=$top_item?></a></div>
@@ -119,7 +119,7 @@ if (file_exists($cssfile)) { ?>
 </div>
 
 <div id="footer">
-	<a href="http://web.mit.edu/ist/"><img src="../Webkit/images/ist-logo.png" width="35" height="21" alt="IST" /></a>Information Services &amp; Technology
+	&copy;2010 Harvard University
 <? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 </div>
 </body>
