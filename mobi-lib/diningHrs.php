@@ -4,8 +4,6 @@
  * and open the template in the editor.
  */
 
-define('PATH_TO_DINING_HRS', '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/static/DiningHours');
-
 class MealRestrictions {
     
     public $days = array();

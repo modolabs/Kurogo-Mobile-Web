@@ -34,6 +34,9 @@ define("MAP_TILE_CHECKSUM_FILE", '/opt/mitmobile/maptiles/export.md5');
 define("MAP_TILE_CHECKSUM_FILE_TEMP", '/opt/mitmobile/maptiles/temp-export.md5');
 define("MAP_TILE_CACHE_DATE", '/opt/mitmobile/maptiles/tiles_updated.txt');
 
+// dining
+define('PATH_TO_DINING_HRS', '/opt/mitmobile/static/DiningHours');
+
 // news_office
 define('NEWS_SEARCH_URL', 'http://news.harvard.edu/gazette/');
 
