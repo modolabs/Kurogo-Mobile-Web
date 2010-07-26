@@ -24,8 +24,8 @@ class Modules {
     //  'title' => 'Emergency Info',
     //  ),
     'links' => Array(
-      'title' => 'Links',
-      'subtitle' => 'school webpages',
+      'title' => 'Schools',
+      'subtitle' => 'webpage links',
       ),
     'mobile-about' => Array(
       'title' => 'About this site',
