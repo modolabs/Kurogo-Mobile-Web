@@ -457,7 +457,7 @@ class ICalendar extends ICalObject {
       $time = new DateTime($icaltime, $tz);
     }
     $time = new DateTime($icaltime, new DateTimeZone('America/New_York'));
-    return datetime2unix($time);
+    return (datetime2unix($time) - (4*60*60));
   }
 
   public function search_events($title=NULL, TimeRange $range=NULL) {
