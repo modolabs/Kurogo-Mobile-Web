@@ -11,53 +11,21 @@ class Modules {
     'map' => Array(
       'title' => 'Campus Map',
       ),
-    'shuttleschedule' => Array(
-      'title' => 'Shuttle Schedule',
-      ),
+    //'shuttleschedule' => Array(
+    //  'title' => 'Shuttle Schedule',
+    //  ),
     'calendar' => Array(
       'title' => 'Calendar',
       ),
     'stellar' => Array(
-      'title' => 'Stellar',
-      'subtitle' => 'class info',
+      'title' => 'Courses',
       ),
-    'careers' => Array(
-      'title' => 'Student Careers',
-      ),
-    'emergency' => Array(
-      'title' => 'Emergency Info',
-      ),
-    '3down' => Array(
-      'title' => '3DOWN',
-      'subtitle' => 'service status',
-      ),
-    'techcash' => Array(
-      'title' => 'TechCASH (BETA)',
-      'restricted' => Array('iphone', 'computer'),
-      'certs_required' => TRUE,
-      ),
-    'libraries' => Array(
-      'title' => 'Libraries (BETA)',
-      'restricted' => Array('iphone'),
-      ),
+    //'emergency' => Array(
+    //  'title' => 'Emergency Info',
+    //  ),
     'links' => Array(
-      'title' => 'Useful Links',
-      ),
-    'sms' => Array(
-      'title' => 'MIT SMS (BETA)',
-      'extra' => TRUE,
-      ),
-    'certificates' => Array(
-      'title' => 'MIT Certificates',
-      'restricted' => Array('iphone'),
-      'extra' => TRUE,
-      'url' => 'http://ca.mit.edu',
-     ),
-    'webmitedu' => Array(
-      'title' => 'Full MIT Website',
-      'extra' => TRUE,
-      'url' => 'http://web.mit.edu',
-      'restricted' => Array('iphone', 'android', 'webos', 'winmo', 'blackberry', 'palm', 'symbian', 'computer'),
+      'title' => 'Schools',
+      'subtitle' => 'webpage links',
       ),
     'mobile-about' => Array(
       'title' => 'About this site',
@@ -69,54 +37,12 @@ class Modules {
       'extra' => TRUE,
       'required' => TRUE,
       ),
-    'download' => Array(
-      'title' => 'Download',
-      'extra' => TRUE,
-      'restricted' => Array('blackberry'),
-      ),
-);
-
-  /*
-   // for modules with no subtitle, just enter the name of the module
-   // for mobules with a subtitle, provide Array("MODULE_NAME", "SUBITTLE")
-   
-  private static $regular_modules = array(
-    "people"          => "People Directory",
-    "map"             => "Campus Map",
-    "shuttleschedule" => "Shuttle Schedule",
-    "calendar"        => "Events Calendar",
-    "stellar"         => array("Stellar", "class info"),
-    "careers"         => "Student Careers",
-    "emergency"       => "Emergency Info",
-    "3down"           => array("3DOWN", "service status"),
-    "techcash"        => "TechCASH (BETA)",
-    "libraries"       => "Libraries (BETA)",
-    "links"           => "Useful Links",
+    //'download' => Array(
+    //  'title' => 'Download',
+    //  'extra' => TRUE,
+    //  'restricted' => Array('blackberry'),
+    //  ),
   );
-
-   // these modules are to be shown in the extras sections 
-   // for touch and basic pages
-   // they will be treated like ordinary modules for webkit phones
-   
-  private static $extras = array(
-    "sms"             => "MIT SMS (BETA)",
-    "certificates"    => "MIT Cerfiticates",
-    "webmitedu"       => "Full MIT Website",
-    "mobile-about"    => "About this Site",
-    "customize"       => "Customize Home",
-    "download"        => "Download",
-  );
-
-  
-   // default urls are the folder by the same name as the module
-   
-  private static $non_default_urls = array(
-    "certificates"    => "http://ca.mit.edu/",
-    "webmitedu"       => "http://web.mit.edu/",
-    //"about"           => "../mobile-about/",
-    ///"preferences"     => "../customize/",
-  );
-  */
 
   // main function that initializes the module list for the phone
   public static function init($branch, $certs, $platform=NULL) {
@@ -133,44 +59,12 @@ class Modules {
 	  self::$default_order[] = $module;
 	}
       }
-
-      /*
-      foreach(self::full_list($branch) as $module => $name) {
-	// modules are shown by default, turned off if 1/2 conditions fail
-	$show_module = TRUE;
-
-	// condition 1: platform dependent modules require platform
-	if (!self::is_right_platform($platform, $module)) {
-	  $show_module = FALSE;
-	}
-
-	// condition 2: restricted modules require certs
-	if (in_array($module, self::$restricted)) {
-	  if (!$certs) {
-	    $show_module = FALSE;
-	  }
-	}
-
-	if ($show_module) {
-	  self::$default_order[] = $module;
-	}
-      }
-      */
     }
     return self::$default_order;
   }
 
-  /* required modules
-  // these cannot be turned on/off in preferences
-  // however, according to this code nothing is required
-  // even though 'mobile-about' and 'customize' should be required
-  // they are hard coded instead
-  private static $required = array('mobile-about', 'customize'); 
-  */
-
   public static function required($module) {
     return array_key_exists('required', self::$module_data[$module]);
-    //return in_array($module, self::$required);
   }
   
   public static function add_required($modules) {
@@ -181,43 +75,12 @@ class Modules {
     }
     return $modules;
   }
-  // end of required modules section
-
-  /*
-  // restricted modules
-  // restricted by phone's certificate support
-  private static $restricted = array("certificates", "techcash");
-  private static $certificate_required = array("techcash");
-
-  public static function certificate_required($module) {
-    return in_array($module, self::$certificate_required);
-  }
-
-  // restricted by platform
-  private static $platform_dependent = Array(
-    'certificates' => Array('iphone'),
-    'techcash' => Array('iphone', 'computer'), // should be shown for all platforms that support certs, but winmo/blackberry support not enough yet
-    'download' => Array('blackberry'),
-    'libraries' => Array('iphone'),
-    'webmitedu' => Array('iphone', 'android', 'webos', 'winmo', 'blackberry', 'palm', 'symbian', 'computer'),
-    );
-  */
 
   public static function is_right_platform($platform, $module) {
     $data = self::$module_data[$module];
 
     return (!$data['restricted'] || in_array($platform, $data['restricted']));
-
-    /*
-    if (array_key_exists($module, self::$platform_dependent)) {
-      if (!in_array($platform, self::$platform_dependent[$module])) {
-	return FALSE;
-      }
-    }
-    return TRUE;
-    */
   }
-  // end of restricted modules section
 
   // new apps will be highlighted on the iphone
   private static $new = array();
@@ -233,11 +96,6 @@ class Modules {
 
   public static function title($module) {
     return self::$module_data[$module]['title'];
-    /*
-    $regular_modules = self::full_list();
-    $name = $regular_modules[$module];
-    return self::make_title($name, True);
-    */
   }
 
   // for touch homescreen, make long titles appear on two lines
