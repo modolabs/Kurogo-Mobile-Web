@@ -460,6 +460,14 @@ class ICalendar extends ICalObject {
     return datetime2unix($time);
   }
 
+  public function get_event($uid) {
+    foreach ($this->events as $event) {
+      if ($event->get_uid() == $uid) {
+        return $event;
+      }
+    }
+  }
+
   public function search_events($title=NULL, TimeRange $range=NULL) {
     $events = Array();
     foreach ($this->events as $id => $event){

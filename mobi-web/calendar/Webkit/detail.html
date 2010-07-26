@@ -6,7 +6,7 @@ $page->title("Events: Event Details")
 $page->content_begin();
 ?>
 	<div class="focal ">
-		<h2><?=$event->title?></h2>
+		<h2><?=$event->get_summary()?></h2>
 	
 		<ul class="nav">
 			<li><?=$date_str?><br/><?=$time_of_day?></li>
@@ -15,7 +15,7 @@ $page->content_begin();
  			   <li><a href="<?=mapURL(briefLocation($event))?>" class="map"><?=briefLocation($event)?></a></li>
                         <? } ?>
 
-			<li class="description"><?=$event->description?></li>
+			<li class="description"><?=$event->get_description()?></li>
  
                         <? if($event->infophone) { ?>
  			   <li><a href="<?=phoneURL($event->infophone)?>" class="phone"><?=str_replace('-', '-&shy;', $event->infophone)?></a></li>
@@ -27,9 +27,9 @@ $page->content_begin();
 		</ul>
 	
 		<p class="legend">Categorized as: 
-                   <? $size = count($event->categories);
-                      foreach($event->categories as $index => $category) { $last = ($size-1 == $index); ?>
-                        <a href="<?=categoryURL($category)?>"><?=ucname($category->name)?></a><? if(!$last) { echo ","; } ?>
+                   <? $size = count($categories);
+                      foreach($categories as $index => $category) { $last = ($size-1 == $index); ?>
+                        <a href="<?=categoryURL($category)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
                    <? } ?>
                 </p>
 	</div>

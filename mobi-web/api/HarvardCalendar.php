@@ -1,15 +1,7 @@
 <?php
 
-require_once LIBDIR .'/harvard_ical_lib.php';
 require_once LIBDIR .'/harvard_calendar.php';
 
-define('PATH_TO_EVENTS_CAT', DATADIR . '/event_cat');
-
-
-define('HARVARD_EVENTS_ICS_BASE_URL', 'http://www.trumba.com/calendars/gazette.ics');
-
-define('ACADEMIC_CALENDAR_CACHE_DIR', CACHE_DIR . '/ACADEMIC_CALENDAR/');
-define('ACADEMIC_CALENDAR_CACHE_LIFESPAN', 60*15); //retrieve info from Trumba if the data is more than 15 mins old
 
 $data = array();
 
@@ -40,67 +32,6 @@ function clean_up_ical_event($event) {
 
      return $event_dict;
 }
-
-
-
-function retrieveData($urlLink, $dateString, $searchField=NULL, $category=NULL) {
-
-     $yr = substr($dateString, 0, 4);
-     $mth = substr($dateString, 4, 2);
-
-     if (($searchField == NULL) &&($category == NULL))
-        $filename = ACADEMIC_CALENDAR_CACHE_DIR . $yr . $mth . '.ics';
-
-     else if (($searchField != NULL) && ($category == NULL))
-         $filename = ACADEMIC_CALENDAR_CACHE_DIR . $dateString .'search=' .$searchField .'.ics';
-
-     else if (($searchField == NULL) && ($category != NULL))
-         $filename = ACADEMIC_CALENDAR_CACHE_DIR . $yr . $mth .'category=' .$category .'.ics';
-
-
-     if (!file_exists($filename) ||
-                filemtime($filename) < time() - ACADEMIC_CALENDAR_CACHE_LIFESPAN) {
-          $fh = fopen($filename, 'w');
-          fwrite($fh, file_get_contents($urlLink));
-          fclose($fh);
-        }
-
-        return $filename;
-}
-
-
-function makeIcalDayEvents($icsURL, $dateString, $category=NULL)
-{
-	$fileN = retrieveData($icsURL, $dateString, NULL, $category);
-        $ical = new ICalendar($fileN);
-	
-	$yr = (int)substr($dateString, 0, 4);
-	$mth = (int)substr($dateString, 4, 2);
-	$day = (int)substr($dateString, 6, 2);
-
-	$time = mktime(0,0,0, $mth,$day,$yr); 
-
-	return  $ical->get_day_events($time);
-
-	
-}
-
-
-function makeIcalSearchEvents($icsURL, $terms)
-{
-	$time = time();
-        $date = date('Ymd', $time);
-        
-        $fileN = retrieveData($icsURL, $date, $terms, NULL);
-        $ical = new ICalendar($fileN);
-	//$ical = new ICalendar($icsURL);
-
-	return  $ical->search_events($terms, NULL);
-}
-
-
-
-
 
 switch ($_REQUEST['command']) {
   case 'day':

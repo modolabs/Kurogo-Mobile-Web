@@ -6,7 +6,7 @@ $page->content_begin();
 ?>
 
 	<div class="focal">
-		<h2><?=$event->title?></h2>
+		<h2><?=$event->get_summary()?></h2>
 		<p>
 			<?=$date_str?><br/>
 			<?=$time_of_day?>
@@ -17,7 +17,7 @@ $page->content_begin();
                     <? } ?>
 		</p>
 		<p>
-                        <?=$event->description?>
+                        <?=$event->get_description()?>
 		</p>
 
                 <? if($event->infophone) { ?>
@@ -33,9 +33,9 @@ $page->content_begin();
                 <? } ?>
 
 		<p class="legend">Categorized as: 
-                   <? $size = count($event->categories);
-                      foreach($event->categories as $index => $category) { $last = ($size-1 == $index); ?>
-                        <a href="<?=categoryURL($category)?>"><?=ucname($category->name)?></a><? if(!$last) { echo ","; } ?>
+                   <? $size = count($categories);
+                      foreach($categories as $index => $category) { $last = ($size-1 == $index); ?>
+                        <a href="<?=categoryURL($category)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
                    <? } ?>
                 </p>
 	</div>

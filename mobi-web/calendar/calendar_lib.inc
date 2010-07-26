@@ -107,7 +107,7 @@ function subCategorysURL($category) {
 }
 
 function detailURL($event) {
-  return "detail.php?id={$event->id}";
+  return "detail.php?id={$event->get_uid()}";
 }
 
 // convenience functions
@@ -128,20 +128,27 @@ function formatDayTitle(ICalEvent $event) {
 }
 
 function timeText($event) {
+  if ($event->get_end() - $event->get_start() == -1) {
+    return $event->get_range()->format('D M j');
+  }
+  return $event->get_range()->format('D M j g:i a');
+
+  /*
   $out = substr($event->start->weekday, 0, 3) . ' ';
   $out .= substr($event->start->monthname, 0, 3) . ' ';
   $out .= (int)$event->start->day . ' ';
 
   $out .= MIT_Calendar::timeText($event);
   return $out;
+  */
 }
   
 function briefLocation($event) {
-  if($loc = $event->shortloc) {
-    return $loc;
-  } else {
-    return $event->location;
-  }
+  //if($loc = $event->shortloc) {
+  //  return $loc;
+  //} else {
+    return $event->get_location();
+  //}
 }
 
 function ucname($name) {
