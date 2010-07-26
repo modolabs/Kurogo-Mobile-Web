@@ -1,15 +1,32 @@
 <?php
 
-require_once LIBDIR . "/mit_calendar.php";
+require_once LIBDIR . "/harvard_calendar.php";
 require "calendar_lib.inc";
 
-$event = MIT_Calendar::getEvent($_REQUEST['id']);
-$time_of_day = MIT_Calendar::timeText($event);
+//$event = MIT_Calendar::getEvent($_REQUEST['id']);
+//$time_of_day = MIT_Calendar::timeText($event);
 
-$day_num = (string)(int)$event->start->day;
-$date_str = "{$event->start->weekday}, {$event->start->monthname} {$day_num}, {$event->start->year}"; 
+//$day_num = (string)(int)$event->start->day;
+//$date_str = "{$event->start->weekday}, {$event->start->monthname} {$day_num}, {$event->start->year}"; 
 
-$event->urlize = URLize($event->infourl);
+//$event->urlize = URLize($event->infourl);
+
+// copied from api/HarvardCalendar.php
+$time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
+$date1 = date('Ym', $time);
+$month = "?startdate=" .$date1 ."01&months=1";
+$date = date('Ymd', $time);
+$url = HARVARD_EVENTS_ICS_BASE_URL .$month;
+error_log($_REQUEST['id']);
+$event = getIcalEvent($url, $date, $_REQUEST['id']);
+$date_str = $event->get_range()->format('D M j, Y');
+if ($event->get_end() - $event->get_start() == -1) {
+  $time_of_day = date('g:i a', $event->get_start());
+} else {
+  $time_of_day = $event->get_range()->format('g:i a');
+}
+
+$categories = explode(',', $event->get_categories());
 
 function phoneURL($number) {
   if($number) {

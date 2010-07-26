@@ -13,7 +13,7 @@ $page->content_begin();
 	
 	<div class="focal">
             <? foreach($events as $event) { ?>
-		<p><a href="<?=detailURL($event)?>"><?=$event->title?></a><br/><span class="smallprint"><?=timeText($event)?><? if(briefLocation($event)) { ?>&nbsp;|&nbsp;<?=briefLocation($event)?><? } ?></span></a></p>
+		<p><a href="<?=detailURL($event)?>"><?=$event->get_location()?></a><br/><span class="smallprint"><?=timeText($event)?><? if(briefLocation($event)) { ?>&nbsp;|&nbsp;<?=briefLocation($event)?><? } ?></span></a></p>
             <? } ?>
 	</div>
 	

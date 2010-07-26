@@ -1,6 +1,6 @@
 <?php
 
-require LIBDIR . "/mit_calendar.php";
+require LIBDIR . "/harvard_calendar.php";
 
 //defines all the variables related to being today
 require "calendar_lib.inc";
@@ -12,8 +12,13 @@ $prev = day_info($time, -1);
 $type = $_REQUEST['type'];
 $Type = ucwords($type);
 
-$methodName = "Todays{$Type}Headers";
-$events = MIT_Calendar::$methodName($current['date']);
+// copied from api/HarvardCalendar.php
+$time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
+$date1 = date('Ym', $time);
+$month = "?startdate=" .$date1 ."01&months=1";
+$date = date('Ymd', $time);
+$url = HARVARD_EVENTS_ICS_BASE_URL .$month; 
+$events = makeIcalDayEvents($url, $date, NULL);
 
 require "$page->branch/day.html";
 $page->output();

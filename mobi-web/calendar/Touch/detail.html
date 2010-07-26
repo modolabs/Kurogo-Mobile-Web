@@ -8,7 +8,7 @@ $page->content_begin();
 
 	<ul class="nav">
 		<li class="nolink">
-			<h2><?=$event->title?></h2>
+			<h2><?=$event->get_summary()?></h2>
 			<br/>
 			<?=$date_str?><br/><?=$time_of_day?>
 		</li>
@@ -17,7 +17,7 @@ $page->content_begin();
 		<li><a href="<?=mapURL(briefLocation($event))?>" class="map"><?=briefLocation($event)?></a></li>
 <? } ?>
 
-		<li class="nolink"><?=$event->description?></li>
+		<li class="nolink"><?=$event->get_description()?></li>
 <? if($event->infophone) { ?>
 
 		<li><a href="<?=phoneURL($event->infophone)?>" class="phone"><?=$event->infophone?></a></li>
@@ -32,10 +32,10 @@ $page->content_begin();
 	
 	<div class="focal">Categorized as: 
 <? 
-  $size = count($event->categories);
-  foreach($event->categories as $index => $category) {
+  $size = count($categories);
+  foreach($categories as $index => $category) {
     $last = ($size-1 == $index); ?>
-		<a href="<?=categoryURL($category)?>"><?=ucname($category->name)?></a>
+		<a href="<?=categoryURL($category)?>"><?=ucname($category)?></a>
 <? 
     if(!$last) echo ",";
   }
