@@ -223,8 +223,8 @@ class LdapWrapper {
         return FALSE;
       }
 
-      // get all attributes of the person identified by $dn
-      $sr = ldap_read($ds, $dn, "(objectclass=*)", array(), 0, 0, READ_TIMELIMIT);
+      // get all attributes of the person identified by $id
+      $sr = ldap_read($ds, $id, "(objectclass=*)", array(), 0, 0, READ_TIMELIMIT);
       if (!$sr) {
         $this->errorMsg = "Search timed out";
         return FALSE;
