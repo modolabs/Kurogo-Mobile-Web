@@ -175,8 +175,7 @@ textarea {
 
 select {
 	width: 100%;
-	border: 1px solid #666;
-	-webkit-border-radius: 9px;
+	padding: 4px 2px;
 }
 
 .forminput {
@@ -301,7 +300,7 @@ a.formbutton div {
 .breadcrumbs a {
 	float: left;
 	padding: 13px 0px 16px 0;
-	margin-right: ;
+	margin-right: 0;
 	background-image: url(../Webkit/images/drillup-r.png);
 	background-repeat: no-repeat;
 	background-position: top right;
