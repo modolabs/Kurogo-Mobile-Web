@@ -72,6 +72,7 @@ class GazetteRSS extends RSS {
       $query = http_build_query(array('s' => $searchTerms, 'feed' => 'rss2'));
       $url = NEWS_SEARCH_URL . '?' . $query;
       $contents = file_get_contents($url);
+      $contents = str_replace(' & ', ' &amp; ', $contents);
       self::$searchCache->write($contents, $searchTerms);
     }
 

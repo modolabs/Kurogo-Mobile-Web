@@ -1,75 +1,22 @@
 <?php
-require_once LIBDIR . "/campus_map.php";
 
-if ($page->branch == 'Webkit') {
-  $categories = array(
-    'buildings' => 'Building Number',
-    'names' => 'Building Name',
-    );
-} else {
-  $categories = array(
-    'buildings' => 'Buildings by Number',
-    'names' => 'Buildings by Name',
-    );
-}
+require_once LIBDIR . '/ArcGISServer.php';
 
-$category_info = Buildings::category_titles();
-
-if(!isset($_REQUEST['category'])) {
-
-  $categories = array_merge($categories, $category_info);
-  $page->cache();
+if (!isset($_REQUEST['category'])) {
+  $categories = ArcGISServer::getCollections();
   require "$page->branch/index.html";
-
 } else {
-
   $category = $_REQUEST['category'];
+  $collection = ArcGISServer::getCollection($category);
+  $title = $collection->getMapName();
+  $places = $collection->getFeatureList();
 
-  switch ($category) {
-  case 'buildings':
-  case 'names':
-    if (isset($_REQUEST['drilldown'])) {
-      $title = $categories[$category];
-      $drilldown = $_REQUEST['drilldown'];
-      $drilldown_title = $_REQUEST['desc'];
-      $places = places_sublist($drilldown);
-      require "$page->branch/drilldown.html";
-    } else {
-      require "$page->branch/$category.html";
-    }
-    break;
-
-  default:
-    $title = Buildings::category_title($category);
-    $places = Buildings::category_items($category);
-    require "$page->branch/places.html";
-    break;
-  }
-} 
+  //session_start();
+  //$_SESSION['places'] = $places;
+  require "$page->branch/drilldown.html";
+}
 
 $page->output();
-
-function places_sublist($listName) {
-  $places = array();
-
-  if($_REQUEST['category'] == 'buildings') {
-    $drill = new DrillNumeralAlpha($listName, "key");
-
-    $keys = array_keys(Buildings::$bldg_data);
-    natsort($keys);
-    $places = array_combine($keys, $keys);
-    
-  } else {
-    $drill = new DrillAlphabeta($listName, "key");
-
-    foreach (Buildings::$bldg_data as $id => $info) {
-      $places[$info['name']] = $id;
-    }
-    uksort($places, 'strnatcasecmp');
-  }
-  return $drill->get_list($places);
-}
-
 
 function drillURL($drilldown, $name=NULL) {
   $url = categoryURL() . "&drilldown=$drilldown";
@@ -84,8 +31,13 @@ function categoryURL($category=NULL) {
   return "?category=$category";
 }
 
-function detailURL($number, $snippet) {
-  return "detail.php?selectvalues=$number&snippets=" . urlencode($snippet);
+function detailURL($name, $info) {
+  $params = array(
+    'selectvalues' => $name,
+    'info' => $info,
+    //'sess' => session_id(),
+    );
+  return 'detail.php?' . http_build_query($params);
 }
 
 function searchURL() {
