@@ -41,7 +41,7 @@ switch ($_REQUEST['command']) {
 
        $json = ArcGISServer::search($_REQUEST['q']);
      }
-     echo $json;
+     echo json_encode($json);
    }
    break;
 }
