@@ -3,15 +3,15 @@
 switch ($_REQUEST['command']) {
 
  case 'capabilities':
-   require_once LIBDIR . '/ArcGISTileServer.php';
-   $json = ArcGISTileServer::getCapabilities();
+   require_once LIBDIR . '/ArcGISServer.php';
+   $json = ArcGISServer::getCapabilities();
    echo json_encode($json);
    break;
 
  case 'proj4specs':
-   require_once LIBDIR . '/ArcGISTileServer.php';
+   require_once LIBDIR . '/ArcGISServer.php';
    $wkid = $_REQUEST['wkid'];
-   $json = ArcGISTileServer::getWkidProperties($wkid);
+   $json = ArcGISServer::getWkidProperties($wkid);
    echo json_encode($json);
    break;
 
@@ -20,6 +20,8 @@ switch ($_REQUEST['command']) {
    $data = array("last_updated" => trim($date));
    echo json_encode($data);
    break;
+
+ // insert categories API
 
  case 'search':
    if (isset($_REQUEST['q'])) {
@@ -35,9 +37,9 @@ switch ($_REQUEST['command']) {
        $json = file_get_contents(MAP_SEARCH_URL . '?' . $query);
   
      } else {
-       require_once LIBDIR . '/ArcGISTileServer.php';
+       require_once LIBDIR . '/ArcGISServer.php';
 
-       $json = ArcGISTileServer::search($_REQUEST['q']);
+       $json = ArcGISServer::search($_REQUEST['q']);
      }
      echo $json;
    }
