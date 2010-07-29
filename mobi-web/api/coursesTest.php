@@ -3,7 +3,7 @@
 require '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/mobi-lib/testCourses.php';
 
 
-$data = CourseData::get_schoolsAndCourses();
+/*$data = CourseData::get_schoolsAndCourses();
 
 //echo(json_encode($data));
 //printf("\nCount = %d\n", count($data));
@@ -19,10 +19,21 @@ foreach($data as $schools) {
        // $courseSubj[$subj] = $subj;
         printf(count($subj));
     }
-}
+}*/
 
 //$data = CourseData::get_subjectsForCourse('Physics');
 
 //echo json_encode($data);
 //printf(count($data));
+
+
+
+
+ switch ($_REQUEST['command']) {
+  case 'courses':
+    $data = CourseData::get_schoolsAndCourses();
+    break;
+ }
+
+ echo json_encode($data);
 ?>

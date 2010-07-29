@@ -137,12 +137,12 @@ class CourseData {
   }
 
 
-  public static function get_subjectsForCourse($subject) {
+  public static function get_subjectsForCourse($course) {
 
-      $queryAddition = 'fq_dept_area_category=dept_area_category:"' . str_replace(' ', '+', str_replace('&', '%26',$subject)) .'"&';
+      $queryAddition = 'fq_dept_area_category=dept_area_category:"' . str_replace(' ', '+', str_replace('&', '%26',$course)) .'"&';
       $term = '&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to+Dec+2010+(Fall+Term)"&';
       $urlString = 'http://services.isites.harvard.edu/course_catalog/api/v1/search?' .$term .$queryAddition;
-        //printf("Number of Courses (%s)= ",$subject);
+        //printf("Number of Courses (%s)= ",$course);
 
       $xml = file_get_contents($urlString);
 
@@ -186,10 +186,12 @@ class CourseData {
      }
   }
 
-  $mapping['course'] = $subject;
+  $mapping['course'] = $course;
   $mapping['subjects'] = $subject_array;
   $courseToSubject[] = $mapping;
-    //$courseToSubject[$subject] = $subject_array;
+    //$courseToSubject[$course] = $subject_array;
+
+  $coursesToSubjectsMap[] = $courseToSubject; // store it in a global array containing courses to subjects
   return $courseToSubject;
  }
 
@@ -230,13 +232,16 @@ class CourseData {
                             $map = array();
                             $course_array = array();
                              foreach($fcm->field as $fieldMap) {
-                                 $course_array[] = $fieldMap['name'];
+                                 $crs = explode(':', $fieldMap['name']);
+                                 $crsMap['name'] = $crs[0];
+                                 $crsMap['short'] = '1';
+                                 $course_array[] = $crsMap;
                              }
                        }
                       }
 
-
-                             $map['school_name'] = $field['name'];
+                            $str = explode(':', $field['name']);
+                             $map['school_name'] = $str[0];
                              $map['courses'] = $course_array;
 
                              $self->schoolsToCoursesMap[] = $map;
