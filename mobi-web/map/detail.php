@@ -18,7 +18,7 @@ $tab = $_REQUEST['tab'];
 if ($tab == 'Map') {
   require_once LIBDIR . '/WMSServer.php';
   $wms = new WMSServer(WMS_SERVER);
-  $bbox = isset($_REQUEST['bbox']) ? $_REQUEST['bbox'] : NULL;
+  $bbox = isset($_REQUEST['bbox']) ? bboxStr2Arr($_REQUEST['bbox']) : NULL;
 
   switch ($page->branch) {
    case 'Webkit':
@@ -72,20 +72,27 @@ if ($tab == 'Map') {
     // build urls for panning/zooming
     $params = $_GET;
 
-    $params['bbox'] = shiftBBox($bbox, 0, -1, 0);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 0, -1, 0));
     $scrollNorth = 'detail.php?' . http_build_query($params);
-    $params['bbox'] = shiftBBox($bbox, 0, 1, 0);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 0, 1, 0));
     $scrollSouth = 'detail.php?' . http_build_query($params);
-    $params['bbox'] = shiftBBox($bbox, 1, 0, 0);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 1, 0, 0));
     $scrollEast = 'detail.php?' . http_build_query($params);
-    $params['bbox'] = shiftBBox($bbox, -1, 0, 0);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, -1, 0, 0));
     $scrollWest = 'detail.php?' . http_build_query($params);
-    $params['bbox'] = shiftBBox($bbox, 0, 0, 1);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 0, 0, 1));
     $zoomInUrl = 'detail.php?' . http_build_query($params);
-    $params['bbox'] = shiftBBox($bbox, 0, 0, -1);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 0, 0, -1));
     $zoomOutUrl = 'detail.php?' . http_build_query($params);
   }
 
+  // the following are only used by webkit version
+  $mapBaseURL = $wms->getMapBaseUrl();
+  $mapOptions = '&' . http_build_query(array(
+    'crs' => 'EPSG:2249',
+    'info' => $_REQUEST['info'],
+    'selectvalues' => $_REQUEST['selectvalues'],
+    ));
 }
 
 $selectvalue = $_REQUEST['selectvalues'];
@@ -102,10 +109,26 @@ require "$page->branch/detail.html";
 
 $page->output();
 
+
+
 function selfURL() {
   $params = $_GET;
   unset($params['tab']);
   return 'detail.php?' . http_build_query($params);
+}
+
+function bboxArr2Str($bbox) {
+  return implode(',', array_values($bbox));
+}
+
+function bboxStr2Arr($bboxStr) {
+  $values = explode(',', $bboxStr);
+  return array(
+    'xmin' => $values[0],
+    'ymin' => $values[1],
+    'xmax' => $values[2],
+    'ymax' => $values[3],
+    );
 }
 
 // all args can be -1, 0, or 1

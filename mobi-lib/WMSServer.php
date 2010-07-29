@@ -70,6 +70,7 @@ class WMSServer {
       'bbox' => $bboxStr,
       'width' => $imageWidth,
       'height' => $imageHeight,
+      'crs' => $crs,
       );
 
     $url = $baseUrl . '&' . http_build_query($params);
@@ -92,7 +93,6 @@ class WMSServer {
       'layers' => implode(',', $layerNames),
       'styles' => implode(',', $styleNames),
       'format' => 'png',
-      'crs' => $crs,
       );
 
     $url = WMS_SERVER . '?' . http_build_query($params);

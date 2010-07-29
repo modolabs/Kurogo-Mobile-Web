@@ -13,8 +13,8 @@ $bbox_script =<<<JS
      var selectMapBoxS = {$select_bbox["ymin"]};
      var selectMapBoxE = {$select_bbox["xmax"]};
      var photoURL = '$photoURL';	// If there's no photo, set to ""
-     //var mapOptions = "&selectfield={$types['field']}&selectlayer={$types['type']}";
-     //var mapLayers = "$layers";
+     var mapBaseURL = '{$mapBaseURL}';
+     var mapOptions = '{$mapOptions}';
 JS;
 
 $page->title('Campus Map: Details')
@@ -35,16 +35,16 @@ $page->content_begin();
                    <p class="foundat"><?=$snippets?> found in:</p>
                 <? } ?>
 
-		<h2><?=$building_title?></h2>
+		<h2><?=$name?></h2>
 		<p class="address"><?=$data['street']?></p>
 		<ul id="tabs">
 			<li class="active"><a href="#scrolldown" onclick="showTab('maptab',this); hide('loadingimage')">Map</a></li>
-			<? if($photoURL) { ?>
+			<? if ($photoURL) { ?>
                            <li><a href="#scrolldown" onclick="showTab('phototab',this),loadImage(photoURL,'photo')">Photo</a></li>
                         <? } ?>
                         
-                        <? if($anything_here) { ?>
-			   <li><a href="#scrolldown" onclick="showTab('heretab',this)">What's Here</a></li>
+                        <? if ($details) { ?>
+			   <li><a href="#scrolldown" onclick="showTab('detailstab',this)">Details</a></li>
                         <? } ?>
 		</ul>
 		
@@ -79,13 +79,13 @@ $page->content_begin();
 
 
 
-			<div class="tabbody" id="heretab" style="display:none">
+			<div class="tabbody" id="detailstab" style="display:none">
 				<ul>
-                                     <? foreach($whats_here as $item) { ?>
-					  <li><?=$item?></li>
+                                     <? foreach($details as $field => $value) { ?>
+					  <li><?=$field?>: <?=$value?></li>
                                      <? } ?>
 				</ul>
-			</div> <!-- id="heretab" -->
+			</div> <!-- id="detailstab" -->
 
 
 
