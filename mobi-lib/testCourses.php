@@ -233,18 +233,23 @@ class CourseData {
                             $course_array = array();
                              foreach($fcm->field as $fieldMap) {
                                  $crs = explode(':', $fieldMap['name']);
-                                 $crsMap['name'] = $crs[0];
-                                 $crsMap['short'] = '1';
-                                 $course_array[] = $crsMap;
+
+                                 if ($crs != '') {
+                                    $crsMap['name'] = $crs[0];
+                                    $crsMap['short'] = '1';
+                                    $course_array[] = $crsMap;
+                                 }
                              }
                        }
                       }
 
-                            $str = explode(':', $field['name']);
+                      if (count($course_array) >= 1) {
+                             $str = explode(':', $field['name']);
                              $map['school_name'] = $str[0];
                              $map['courses'] = $course_array;
 
                              $self->schoolsToCoursesMap[] = $map;
+                      }
                 }
 
     }
