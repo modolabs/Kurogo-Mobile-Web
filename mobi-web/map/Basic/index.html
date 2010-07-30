@@ -19,8 +19,7 @@ $page->content_begin();
 	</p>
 
 	<p class="nav">
-             1. Campus Map Home<br/>
-             <? $cnt = 2; foreach($categories as $category => $title) { ?>
+             <? $cnt = 1; foreach($categories as $category => $title) { ?>
 	        <a href="<?=categoryURL($category)?>" accesskey="<?=$cnt?>"><?=$cnt?>. <?=$title?></a><br/>
              <? $cnt++; } ?>
 	</p>

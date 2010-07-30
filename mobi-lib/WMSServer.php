@@ -2,13 +2,13 @@
 
 require_once 'DiskCache.inc';
 
-// partial implementation of ISO/DIS 19128
+// client to server that implements of ISO/DIS 19128
 
 define('WMS_VERSION', '1.3.0');
 define('WMS_CACHE', CACHE_DIR . '/WMSCapabilities.xml');
 define('WMS_SERVER', 'http://upo-srv2.cadm.harvard.edu/ArcGIS/services/CampusMapWithText/MapServer/WMSServer');
-//define('WMS_SERVER', 'http://upo-srv2.cadm.harvard.edu/ArcGIS/services/CampusMap/MapServer/WMSServer');
 define('WMS_METERS_PER_PIXEL', 0.00028); // WMS standard definition
+define('WMS_OBJECT_PADDING', 1.0); // how much context to provide around a building relative to its size
 
 // for all methods below, mandatory means the WMS server must implement
 // the corresponding service; optional means the server might impelemnt
@@ -119,11 +119,11 @@ class WMSServer {
       $bboxRatio = $xrange / $yrange;
 
       if ($imageRatio > $bboxRatio) { // need more horizontal padding
-        $ypadding = $yrange * 0.6;
-        $xpadding = ($yrange * 1.6) * $imageRatio - $xrange;
+        $ypadding = $yrange * WMS_OBJECT_PADDING;
+        $xpadding = ($yrange * (1 + WMS_OBJECT_PADDING)) * $imageRatio - $xrange;
       } else { // need more vertical padding
-        $xpadding = $xrange * 0.6;
-        $ypadding = ($xrange * 1.6) / $imageRatio - $yrange;
+        $xpadding = $xrange * WMS_OBJECT_PADDING;
+        $ypadding = ($xrange * (1 + WMS_OBJECT_PADDING)) / $imageRatio - $yrange;
       }
       
       $bbox['ymin'] -= $ypadding / 2;

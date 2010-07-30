@@ -33,9 +33,9 @@ class ArcGISServer {
   public static function getCollections() {
     $result = array();
     foreach (self::$collections as $id => $collection) {
-      if ($id != self::$defaultCollection) {
+      //if ($id != self::$defaultCollection) {
         $result[$id] = $collection->getMapName();
-      }
+      //}
     }
     return $result;
   }
@@ -78,7 +78,6 @@ class ArcGISServer {
 
     $url = str_replace('+', '%20', $queryBase . $query);
     $json = file_get_contents($url);
-
     $jsonObj = json_decode($json);
 
     // title case things that return as all caps
@@ -103,9 +102,19 @@ class ArcGISServer {
 
       // TODO: make this an external data source
       $names = array(
-        'Accessibility', 'AlternativeEnergy', 'BikeFacilities',
-        'CampusMap', 'Dining', 'GreenCampus', 'Housing', 'LEED', 'Libraries',
-        'MapText', 'Museums', 'NetComm', 'PublicSafety', 'WirelessLAN'
+        'CampusMap',
+        'Libraries',
+        'Museums',
+        'Housing',
+        'Dining',
+        'LEED',
+        'PublicSafety',
+        'WirelessLAN',
+        //'Accessibility',
+        //'AlternativeEnergy', 
+        //'BikeFacilities',
+        //'GreenCampus',
+        //'NetComm', 
         );
 
       self::$collections = array();
@@ -154,6 +163,9 @@ class ArcGISCollection {
   }
 
   public function getDefaultSearchFields() {
+    if (!$this->layers) {
+      $this->getCapabilities();
+    }
     return $this->getLayer(0)->getDisplayField();
   }
 
