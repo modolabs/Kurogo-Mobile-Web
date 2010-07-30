@@ -57,8 +57,8 @@ if ($tab == 'Map') {
     
       $minBBox = array(
         'xmin' => $xmin,
-        'xmax' => $xmax,
         'ymin' => $ymin,
+        'xmax' => $xmax,
         'ymax' => $ymax,
         );
   

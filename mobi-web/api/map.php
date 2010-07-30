@@ -38,7 +38,6 @@ switch ($_REQUEST['command']) {
   
      } else {
        require_once LIBDIR . '/ArcGISServer.php';
-
        $json = ArcGISServer::search($_REQUEST['q']);
      }
      echo json_encode($json);

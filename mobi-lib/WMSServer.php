@@ -6,7 +6,8 @@ require_once 'DiskCache.inc';
 
 define('WMS_VERSION', '1.3.0');
 define('WMS_CACHE', CACHE_DIR . '/WMSCapabilities.xml');
-define('WMS_SERVER', 'http://upo-srv2.cadm.harvard.edu/ArcGIS/services/CampusMap/MapServer/WMSServer');
+define('WMS_SERVER', 'http://upo-srv2.cadm.harvard.edu/ArcGIS/services/CampusMapWithText/MapServer/WMSServer');
+//define('WMS_SERVER', 'http://upo-srv2.cadm.harvard.edu/ArcGIS/services/CampusMap/MapServer/WMSServer');
 define('WMS_METERS_PER_PIXEL', 0.00028); // WMS standard definition
 
 // for all methods below, mandatory means the WMS server must implement
@@ -42,6 +43,7 @@ class WMSServer {
 
     $xml = new DOMDocument();
     $xml->load($this->diskCache->getFullPath());
+
     foreach ($xml->getElementsByTagName('Layer') as $layerXml) {
       $aLayer = new WMSLayer($layerXml);
       $this->layers[$aLayer->name] = $aLayer;
