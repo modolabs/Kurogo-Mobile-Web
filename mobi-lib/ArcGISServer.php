@@ -79,7 +79,18 @@ class ArcGISServer {
     $url = str_replace('+', '%20', $queryBase . $query);
     $json = file_get_contents($url);
 
-    return json_decode($json);
+    $jsonObj = json_decode($json);
+
+    // title case things that return as all caps
+    foreach ($jsonObj->results as $result) {
+      foreach ($result->attributes as $name => $value) {
+        if ($value == strtoupper($value)) {
+          $result->attributes->{$name} = ucwords(strtolower($value));
+        }
+      }
+    }
+
+    return $jsonObj;
   }
 
   public static function init() {
@@ -93,7 +104,7 @@ class ArcGISServer {
       // TODO: make this an external data source
       $names = array(
         'Accessibility', 'AlternativeEnergy', 'BikeFacilities',
-        'CampusMap', 'GreenCampus', 'Housing', 'LEED', 'Libraries',
+        'CampusMap', 'Dining', 'GreenCampus', 'Housing', 'LEED', 'Libraries',
         'MapText', 'Museums', 'NetComm', 'PublicSafety', 'WirelessLAN'
         );
 
@@ -239,11 +250,15 @@ class ArcGISLayer {
     $result = array();
     foreach ($metaData->features as $featureInfo) {
       $attributes = $featureInfo->attributes;
-      $featureId = $attributes->{$displayField};
       $displayAttribs = array();
       foreach ($attributes as $attrName => $attrValue) {
+        // replace all caps with title case
+        if ($attrValue == strtoupper($attrValue)) {
+          $attrValue = ucwords(strtolower($attrValue));
+        }
         $displayAttribs[$this->fields[$attrName]] = $attrValue;
       }
+      $featureId = ucwords(strtolower($attributes->{$displayField}));
       $result[$featureId] = $displayAttribs;
     }
 

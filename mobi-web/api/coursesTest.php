@@ -1,6 +1,6 @@
 <?php
 
-require '/Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/mobi-lib/testCourses.php';
+require_once LIBDIR . '/testCourses.php';
 
 
 /*$data = CourseData::get_schoolsAndCourses();

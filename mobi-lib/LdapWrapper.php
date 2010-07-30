@@ -20,28 +20,25 @@ class LdapPerson {
   private $uid;
   private $attributes = array();
 
-  // set values to TRUE for fields that should be returned.
-  // the uid field is mandatory and not listed here.
-  private static $ldapFields = array(
-    'sn'                         => TRUE,
-    'givenname'                  => TRUE,
-    'cn'                         => TRUE,
-    'title'                      => TRUE,
-    'ou'                         => TRUE,
-    'edupersonaffiliation'       => FALSE,
-    'street'                     => FALSE,
-    'homephone'                  => FALSE,
-    'roomnumber'                 => TRUE,
-    'initials'                   => TRUE,
-    'telephonenumber'            => TRUE,
-    'facsimiletelephonenumber'   => TRUE,
-    'mail'                       => TRUE,
-    'physicaldeliveryofficename' => TRUE,
+  // TODO: put this whitelist in static or config
+  // on a per-institution basis
+  private static $ldapWhitelist = array(
+    'sn',
+    'givenname',
+    'cn',
+    'title',
+    'ou',
+    'roomnumber',
+    'initials',
+    'telephonenumber',
+    'facsimiletelephonenumber',
+    'mail',
+    'postaladdress',
+    //'physicaldeliveryofficename',
+    //'edupersonaffiliation',
+    //'street',
+    //'homephone',
     );
-
-  public static function setLdapField($field, $shouldReturn) {
-    self::$ldapFields[$field] = $shouldReturn;
-  }
 
   public function getId() {
     return $this->uid;
@@ -76,10 +73,8 @@ class LdapPerson {
     }
 
     // get remaining attributes
-    foreach (self::$ldapFields as $field => $shouldReturn) {
-      if ($shouldReturn && $values = self::getValues($field, $ldapEntry)) {
-        $this->attributes[$field] = $values;
-      }
+    foreach (self::$ldapWhitelist as $field) {
+      $this->attributes[$field] = self::getValues($field, $ldapEntry);
     }
 
     return $this;
