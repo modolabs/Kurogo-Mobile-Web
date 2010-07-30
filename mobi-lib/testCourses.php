@@ -4,6 +4,11 @@ require_once "lib_constants.inc";
 require_once "AcademicCalendar.php";
 require_once "DiskCache.inc";
 
+define('CATEGORY_QUERY_BASE', 'fq_dept_area_category=dept_area_category:"');
+define('TERM_QUERY','&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to+Dec+2010+(Fall+Term)"&');
+define('SCHOOL_QUERY_BASE', '&fq_school_nm=school_nm:"');
+
+
 class CourseData {
   // is there really not a data source for this?
   /*private static $courses = array(
@@ -140,8 +145,8 @@ class CourseData {
   public static function get_subjectsForCourse($course) {
 
       $queryAddition = 'fq_dept_area_category=dept_area_category:"' . str_replace(' ', '+', str_replace('&', '%26',$course)) .'"&';
-      $term = '&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to+Dec+2010+(Fall+Term)"&';
-      $urlString = 'http://services.isites.harvard.edu/course_catalog/api/v1/search?' .$term .$queryAddition;
+      $term = TERM_QUERY;
+      $urlString = STELLAR_BASE_URL .$term .$queryAddition;
         //printf("Number of Courses (%s)= ",$course);
 
       $xml = file_get_contents($urlString);
@@ -161,12 +166,12 @@ class CourseData {
     
     $subject_array = array();
     for ($index=0; $index < $iterations; $index=$index+1) {
-        printf(" Current = %d\n",$index*25);
+        //printf(" Current = %d\n",$index*25);
         $number = $index * 25;
         $queryString = $queryAddition .'&start=' .$number;
 
 
-      $urlString = 'http://services.isites.harvard.edu/course_catalog/api/v1/search?' .$term .$queryString;
+      $urlString = STELLAR_BASE_URL .$term .$queryString;
       $xml = file_get_contents($urlString);
 
       if($xml == "") {
@@ -180,15 +185,43 @@ class CourseData {
      
      foreach($xml_obj->courses->course as $single_course) {
          $subject_fields = array();
-         $subject_fields['id'] = $single_course['id'];
-         $subject_fields['title'] = $single_course->title;
+         $nm = explode(':',$single_course['id']);
+         $subject_fields['name'] = $nm[0];
+         $subject_fields['masterId'] = $nm[0];
+         $titl = explode(':', $single_course->title);
+         $subject_fields['title'] = $titl[0];
+         $desc = explode(':', $single_course->description);
+         $subject_fields['description'] = $desc[0];
+         $trm = explode(':',$single_course->term_description);
+         $subject_fields['term'] = $trm[0];
+         $ur = explode(':',$single_course->url);
+         if (count($ur) > 1)
+            $subject_fields['stellarUrl'] = $ur[0].':'.$ur[1];
+
+         $classtime['title'] = 'Random';
+         $classtime['location'] = 'Library';
+         $classtime['time'] = 'Tuesday at 3pm';
+         $classtime_array[] = $classtime;
+         $subject_fields['times'] = $classtime_array;
+
+
+         $prof_array = array('Prof Test', 'Prof Testing');
+         $ta_array = array('Ilya', 'Ehmet');
+         $staff['instructors'] = $prof_array;
+         $staff['tas'] = $ta_array;
+         $subject_fields['staff'] = $staff;
+
+         $announ['unixtime'] = time();
+         $announ['title'] = 'Announcement1';
+         $announ['text'] = 'Details of Announcement1';
+         $announ_array[] = $announ;
+         $subject_fields['announcements'] = $announ_array;
+
          $subject_array[] = $subject_fields;
      }
   }
 
-  $mapping['course'] = $course;
-  $mapping['subjects'] = $subject_array;
-  $courseToSubject[] = $mapping;
+  $courseToSubject = $subject_array;
     //$courseToSubject[$course] = $subject_array;
 
   $coursesToSubjectsMap[] = $courseToSubject; // store it in a global array containing courses to subjects
@@ -201,7 +234,7 @@ class CourseData {
   // returns the Schools (Course-Group) to Departmetns (Courses) map
   public static function get_schoolsAndCourses() {
 
-    $xml = file_get_contents('http://services.isites.harvard.edu/course_catalog/api/v1/search?');
+    $xml = file_get_contents(STELLAR_BASE_URL);
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
@@ -215,8 +248,8 @@ class CourseData {
             foreach($fc->field as $field) {
                 $self->schools[] = $field['name'];
 
-                $school_string = '&fq_school_nm=school_nm:"' .str_replace(' ', '+', $field['name']) .'"&';
-                $urlString = 'http://services.isites.harvard.edu/course_catalog/api/v1/search?' . $school_string;
+                $school_string = SCHOOL_QUERY_BASE .str_replace(' ', '+', $field['name']) .'"&';
+                $urlString = STELLAR_BASE_URL . $school_string;
                 $courses_map_xml = file_get_contents($urlString);
 
                     if($courses_map_xml == "") {
