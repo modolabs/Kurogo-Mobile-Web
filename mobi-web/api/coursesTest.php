@@ -33,6 +33,20 @@ foreach($data as $schools) {
   case 'courses':
     $data = CourseData::get_schoolsAndCourses();
     break;
+
+case 'subjectList':
+    $courseId = urldecode($_REQUEST['id']);
+    $data = CourseData::get_subjectsForCourse($courseId);
+
+    if(isset($_REQUEST['checksum'])) {
+      $checksum = md5(json_encode($data));
+      if(isset($_REQUEST['full'])) {
+        $data = array('checksum' => $checksum, 'classes' => $data);
+      } else {
+        $data = array('checksum' => $checksum);
+      }
+    }
+    break;
  }
 
  echo json_encode($data);

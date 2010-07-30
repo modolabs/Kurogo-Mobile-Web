@@ -6,7 +6,7 @@
  */
 
 // stellar
-define('STELLAR_BASE_URL', 'http://stellar-dev.mit.edu/courseguide/course/');
+define('STELLAR_BASE_URL', 'http://services.isites.harvard.edu/course_catalog/api/v1/search?');
 define('STELLAR_RSS_URL', 'http://stellar-dev.mit.edu/SRSS/rss');
 
 // emergency
