@@ -17,6 +17,7 @@ class Item {
       // prevent phones from creating links from things that look like phone/email
       $value = str_replace('@', '@&shy;', $value);
       $value = str_replace('-', '-&shy;', $value);
+      $value = str_replace('$', '<br />', $value);
 
       $innerContents = "
                  <div class=\"label\">$label</div>
@@ -59,7 +60,7 @@ $page->content_begin();
 
         <? $item->display('address', 'street', NULL, NULL, FALSE); ?>
         <? $item->display('email', 'mail', 'mailHREF', 'email', FALSE); ?>
-        <? $item->display('office', 'physicaldeliveryofficename', 'mapURL', 'map', FALSE); ?>
+        <? $item->display('office', 'postaladdress', 'mapURL', 'map', FALSE); ?>
 
 <? $page->content_end(); ?>
 
