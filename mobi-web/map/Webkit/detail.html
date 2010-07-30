@@ -74,14 +74,14 @@ $page->content_begin();
 			<div class="tabbody" id="phototab" style="display:none">
 				<img id="loadingimage2" src="../Webkit/images/loading2.gif" width="40" height="40" alt="Loading" />
 				<img id="photo" src="" width="" height="" alt="Photo" onload="hide('loadingimage2')" />
-				<p class="legend">View from <?=$data['viewangle']?><? if($data['architect']) {?><br/>Architect: <?=$data['architect']?><? } ?></p>	 
+
 			</div> <!-- id="phototab" -->
 
 
 
 			<div class="tabbody" id="detailstab" style="display:none">
 				<ul>
-                                     <? foreach($details as $field => $value) { ?>
+                                     <? foreach($displayDetails as $field => $value) { ?>
 					  <li><?=$field?>: <?=$value?></li>
                                      <? } ?>
 				</ul>

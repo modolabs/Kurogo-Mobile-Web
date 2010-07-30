@@ -21,7 +21,32 @@ switch ($_REQUEST['command']) {
    echo json_encode($data);
    break;
 
- // insert categories API
+ case 'categorytitles':
+   require_once LIBDIR . '/ArcGISServer.php';
+   $collections = ArcGISServer::getCollections();
+   $result = array();
+   foreach ($collections as $id => $name) {
+     $result[] = array(
+       'categoryName' => $name, 
+       'categoryId' => $id,
+       );
+   }
+   echo json_encode($result);
+   break;
+
+ case 'category':
+   require_once LIBDIR . '/ArcGISServer.php';
+   if ($category = $_REQUEST['id']) {
+     $collection = ArcGISServer::getCollection($category);
+     $featurelist = $collection->getFeatureList();
+     $results = array();
+     foreach ($featurelist as $featureId => $attributes) {
+       $results[] = array_merge($attributes,
+                                array('displayName' => $featureId));
+     }
+     echo json_encode($results);
+   }
+   break;
 
  case 'search':
    if (isset($_REQUEST['q'])) {

@@ -33,9 +33,7 @@ class ArcGISServer {
   public static function getCollections() {
     $result = array();
     foreach (self::$collections as $id => $collection) {
-      //if ($id != self::$defaultCollection) {
-        $result[$id] = $collection->getMapName();
-      //}
+      $result[$id] = $collection->getMapName();
     }
     return $result;
   }
