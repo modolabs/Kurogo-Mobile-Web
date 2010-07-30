@@ -72,7 +72,6 @@ class GazetteRSS extends RSS {
       $query = http_build_query(array('s' => $searchTerms, 'feed' => 'rss2'));
       $url = NEWS_SEARCH_URL . '?' . $query;
       $contents = file_get_contents($url);
-      $contents = str_replace(' & ', ' &amp; ', $contents);
       self::$searchCache->write($contents, $searchTerms);
     }
 
@@ -90,7 +89,6 @@ class GazetteRSS extends RSS {
       $filename = self::cacheName($channelUrl);
       if (!self::$diskCache->isFresh($filename)) {
         $contents = file_get_contents($channelUrl);
-        $contents = str_replace(' & ', ' &amp; ', $contents);
         self::$diskCache->write($contents, $filename);
       } else {
         if (array_key_exists($cacheId, self::$feeds)) {
