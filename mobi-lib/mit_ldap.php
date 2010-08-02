@@ -8,6 +8,7 @@ function mit_search($search)
     global $appErrorMessage;
 
     $query = standard_query($search);
+
     if ($appError == 1)
         return($query);
     $results = do_query($query);
@@ -18,6 +19,7 @@ function mit_search($search)
 	}
 	
     return(order_results($results, $search));
+
 }
 
 
@@ -101,25 +103,32 @@ function standard_query($search)
     }
     if (strpbrk(strtolower($search), "abcdefghijklmnopqrstuvwxyz") != FALSE)
     {
-        $nameFilter = "";
+		// Build a query clause like this: (|(&(cn=*firstword*)(cn=*secondword*))(&(mail=*firstword*)(mail=*secondword*)))
+		// Should match both words, either in the cn or the mail.
+		$cnClauses = array();
+		$mailClauses = array();
+
+		# Gather cn and mail search clauses for each word.
         foreach(preg_split("/\s+/", $search) as $word)
         {
             if($word != "")
             {
                 if(strlen($word) == 1)
                 {
-                    $Filter = NAME_SINGLE_CHARACTER_FILTER;
-                    $nameFilter = $nameFilter . str_replace("%s", $word, $Filter);
+					array_push($cnClauses, str_replace("%s", $word, NAME_SINGLE_CHARACTER_FILTER));
                 }
                 else
                 {
-                    $Filter = NAME_MULTI_CHARACTER_FILTER;
-                    $nameFilter = $nameFilter . str_replace("%s", $word, $Filter);
+					array_push($cnClauses, str_replace("%s", $word, "(cn=*%s*)"));
+					array_push($mailClauses, str_replace("%s", $word, "(mail=*%s*)"));
                 }
             }
         }
-        $searchFilter = NAME_SEARCH_FILTER;
-        $searchFilter = str_replace("%s", $nameFilter, $searchFilter);
+
+		// Assemble the gathered clauses.
+		$joinedClauses = "(|(&" . implode($cnClauses) . ")(&" . implode($mailClauses) . "))";
+		// Put the gathered clauses in the person search template.
+        $searchFilter = str_replace("%s", $joinedClauses, NAME_SEARCH_FILTER);
         return($searchFilter);
     }
     $search = str_replace("(", "", $search);
