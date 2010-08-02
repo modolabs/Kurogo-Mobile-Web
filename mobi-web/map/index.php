@@ -10,9 +10,6 @@ if (!isset($_REQUEST['category'])) {
   $collection = ArcGISServer::getCollection($category);
   $title = $collection->getMapName();
   $places = $collection->getFeatureList();
-
-  //session_start();
-  //$_SESSION['places'] = $places;
   require "$page->branch/drilldown.html";
 }
 
@@ -35,7 +32,6 @@ function detailURL($name, $info) {
   $params = array(
     'selectvalues' => $name,
     'info' => $info,
-    //'sess' => session_id(),
     );
   return 'detail.php?' . http_build_query($params);
 }

@@ -33,9 +33,7 @@ class ArcGISServer {
   public static function getCollections() {
     $result = array();
     foreach (self::$collections as $id => $collection) {
-      if ($id != self::$defaultCollection) {
-        $result[$id] = $collection->getMapName();
-      }
+      $result[$id] = $collection->getMapName();
     }
     return $result;
   }
@@ -78,8 +76,18 @@ class ArcGISServer {
 
     $url = str_replace('+', '%20', $queryBase . $query);
     $json = file_get_contents($url);
+    $jsonObj = json_decode($json);
 
-    return json_decode($json);
+    // title case things that return as all caps
+    foreach ($jsonObj->results as $result) {
+      foreach ($result->attributes as $name => $value) {
+        if ($value == strtoupper($value)) {
+          $result->attributes->{$name} = ucwords(strtolower($value));
+        }
+      }
+    }
+
+    return $jsonObj;
   }
 
   public static function init() {
@@ -92,9 +100,19 @@ class ArcGISServer {
 
       // TODO: make this an external data source
       $names = array(
-        'Accessibility', 'AlternativeEnergy', 'BikeFacilities',
-        'CampusMap', 'GreenCampus', 'Housing', 'LEED', 'Libraries',
-        'MapText', 'Museums', 'NetComm', 'PublicSafety', 'WirelessLAN'
+        'CampusMap',
+        'Libraries',
+        'Museums',
+        'Housing',
+        'Dining',
+        'LEED',
+        'PublicSafety',
+        'WirelessLAN',
+        //'Accessibility',
+        //'AlternativeEnergy', 
+        //'BikeFacilities',
+        //'GreenCampus',
+        //'NetComm', 
         );
 
       self::$collections = array();
@@ -143,6 +161,9 @@ class ArcGISCollection {
   }
 
   public function getDefaultSearchFields() {
+    if (!$this->layers) {
+      $this->getCapabilities();
+    }
     return $this->getLayer(0)->getDisplayField();
   }
 
@@ -239,11 +260,15 @@ class ArcGISLayer {
     $result = array();
     foreach ($metaData->features as $featureInfo) {
       $attributes = $featureInfo->attributes;
-      $featureId = $attributes->{$displayField};
       $displayAttribs = array();
       foreach ($attributes as $attrName => $attrValue) {
+        // replace all caps with title case
+        if ($attrValue == strtoupper($attrValue)) {
+          $attrValue = ucwords(strtolower($attrValue));
+        }
         $displayAttribs[$this->fields[$attrName]] = $attrValue;
       }
+      $featureId = ucwords(strtolower($attributes->{$displayField}));
       $result[$featureId] = $displayAttribs;
     }
 

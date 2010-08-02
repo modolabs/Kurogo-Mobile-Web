@@ -6,15 +6,11 @@ $page->content_begin();
 ?>
 
 	<div class="focal">
-                <? if($snippets) { ?>
-                   <p><?=$snippets?> found at:</p>
-                <? } ?>
-
 		<h2><?=$name?></h2>
 		
                 <? if($tab == "Map") { ?>
   		   <p>
-			<?=$data['street']?>
+			<?=$details['Address']?>
 		   </p>
                 <? } ?>
 
@@ -26,7 +22,7 @@ $page->content_begin();
                      case "Map": ?>
     		       <p class="image">
 			  <a name="map"> </a>
-			  <img src="<?=$imageUrl?>" width="<?=$width?>" height="<?=$height?>" alt="Map" />
+			  <img src="<?=$imageUrl?>" width="<?=$imageWidth?>" height="<?=$imageHeight?>" alt="Map" />
 		       </p>
 		       <p>
 			  Scroll: <a href="<?=$scrollNorth?>">N</a>&nbsp;|&nbsp;<a href="<?=$scrollSouth?>">S</a>&nbsp;|&nbsp;<a href="<?=$scrollEast?>">E</a>&nbsp;|&nbsp;<a href="<?=$scrollWest?>">W</a><br/>
@@ -35,12 +31,11 @@ $page->content_begin();
                    <? break; case "Photo": ?>
 
 		      <p class="image"><img src="<?=$photoURL?>" alt="Photo" /></p>
-		      <p class="legend">View from <?=$data['viewangle']?><? if($data['architect']) { ?><br/>Architect: <?=$data['architect']?><? } ?></p>
                  
                    <? break; case "Details": ?>
 		      <p>
-                         <? foreach($details as $field => $value) { ?>
-		              <?=$field?>: <?=$value?><br/>
+                         <? foreach ($displayDetails as $field => $value) { ?>
+		              <b><?=$field?></b>: <?=$value?><br/>
                          <? } ?>
 		      </p>
 

@@ -22,7 +22,7 @@ class Item {
 
       if ($href !== NULL) {
         $value = '<a href="' . $href($value) . '" class="' . $class . '">'
-               . $value . '</a>';
+               . str_replace('$', '<br/>', $value) . '</a>';
       }
       ?>
       <span class="label"><?=$label?></span>
@@ -46,7 +46,7 @@ $page->content_begin();
           $item->display('fax', 'facsimiletelephonenumber', "phoneHREF", 'phone');
           $item->display('address', 'address');
           $item->display('email', 'mail', "mailHREF");
-          $item->display('office', 'physicaldeliveryofficename', "mapURL");
+          $item->display('office', 'postaladdress', "mapURL");
         ?>
 	</p>
 
