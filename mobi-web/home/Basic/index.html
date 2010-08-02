@@ -5,8 +5,8 @@
 <head>
 	<meta http-equiv="content-type" content="application/xhtml+xml" />
         <meta name = "viewport" content = "width = device-width, height = device-height" />
-	<title>MIT Mobile Web</title>
-	<link rel="stylesheet" type="text/css" href="../<?=$page->branch?>/core.css" />	
+	<title>Harvard Mobile</title>
+	<link rel="stylesheet" type="text/css" href="../<?=$page->branch?>/<? if ($page->platform == 'bbplus') { ?>core-bbplus.css<? } else { ?>core.css<? } ?>" />	
 
 	<? if ($page->get_inline_css()) { ?>
 	<style type="text/css">
@@ -24,9 +24,8 @@
 <p class="bb"> </p>
 
 <p class="nav">
-        <a href="../sms/"><?=$page->img_tag('sms','gif', 'SMS', array('border' => 0))?></a><br/>
         <? foreach($modules as $index => $module) { ?>
-	    <a href="<?=Modules::url($module, $page->certs)?>" <? if($index < 9) { ?>accesskey="<?=$index+1?>"><?=$index+1?>: <? } else { ?> ><? }?><?=Modules::title($module)?></a> 
+	    <a href="<?=Modules::url($module, $page->certs)?>" <? if($index < 9 && $page->platform != 'bbplus') { ?>accesskey="<?=$index+1?>"><?=$index+1?>: <? } else { ?> ><? }?><?=Modules::title($module)?></a> 
             <? if(Modules::subtitle($module)) { ?>
                  <span class="smallprint">(<?=Modules::subtitle($module)?>)</span>
             <? } ?>
