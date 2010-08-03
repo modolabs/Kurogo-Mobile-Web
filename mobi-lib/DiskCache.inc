@@ -55,7 +55,13 @@ class DiskCache {
     if ($filename === NULL) {
       return $this->path;
     } else {
-      return $this->path . '/' . $this->prefix . $filename . $this->suffix;
+      // this replaces %20 with + signs
+      $filename = urlencode(urldecode($filename));
+
+      return $this->path . '/' 
+           . $this->prefix 
+           . $filename 
+           . $this->suffix;
     }
   }
 

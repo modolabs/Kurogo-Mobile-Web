@@ -236,6 +236,7 @@ class ICalEvent extends ICalObject {
 
     case 'URL':
         $this->url = $value;
+        break;
 
     case 'SUMMARY':
       $this->summary = str_replace('\\', "", $value);
@@ -455,18 +456,32 @@ class ICalendar extends ICalObject {
       $tz = new DateTimeZone($tzid);
       $time = new DateTime($icaltime, $tz);
     }
-    return datetime2unix($time);
+    $time = new DateTime($icaltime, new DateTimeZone('America/New_York'));
+    return (datetime2unix($time) - (4*60*60));
+  }
+
+  public function get_event($uid) {
+    foreach ($this->events as $event) {
+      if ($event->get_uid() == $uid) {
+        return $event;
+      }
+    }
   }
 
   public function search_events($title=NULL, TimeRange $range=NULL) {
     $events = Array();
     foreach ($this->events as $id => $event){
-      if ($event->get_recurid() !== NULL) // event is a duplicate
-	continue;
-      if (($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
+      /*if ($event->get_recurid() !== NULL) // event is a duplicate
+	continue;*/
+     /* if (($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
 	  && ($range === NULL || $event->overlaps($range))) {
 	$events[] = $event;
-      }
+      }*/
+
+      /*if ($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
+              $events[] = $event;*/
+
+        $events[] = $event;
     }
     return $events;
   }

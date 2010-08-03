@@ -1,21 +1,20 @@
-<?
-$bbox = iPhoneBBox();
-$select_bbox = iPhoneSelectBBox();
-$mapLayers = layers();
+<?php
+//$select_bbox = iPhoneSelectBBox();
+$select_bbox = shiftBBox($bbox, 0, 0, 1);
 
 $bbox_script =<<<JS
      var mapSelect = '$selectvalue';
-     var initMapBoxW = {$bbox["minx"]};
-     var initMapBoxN = {$bbox["maxy"]};
-     var initMapBoxS = {$bbox["miny"]};
-     var initMapBoxE = {$bbox["maxx"]};
-     var selectMapBoxW = {$select_bbox["minx"]};
-     var selectMapBoxN = {$select_bbox["maxy"]};
-     var selectMapBoxS = {$select_bbox["miny"]};
-     var selectMapBoxE = {$select_bbox["maxx"]};
+     var initMapBoxW = {$bbox["xmin"]};
+     var initMapBoxN = {$bbox["ymax"]};
+     var initMapBoxS = {$bbox["ymin"]};
+     var initMapBoxE = {$bbox["xmax"]};
+     var selectMapBoxW = {$select_bbox["xmin"]};
+     var selectMapBoxN = {$select_bbox["ymax"]};
+     var selectMapBoxS = {$select_bbox["ymin"]};
+     var selectMapBoxE = {$select_bbox["xmax"]};
      var photoURL = '$photoURL';	// If there's no photo, set to ""
-     var mapOptions = "&selectfield={$types['field']}&selectlayer={$types['type']}";
-     var mapLayers = "$layers";
+     var mapBaseURL = '{$mapBaseURL}';
+     var mapOptions = '{$mapOptions}';
 JS;
 
 $page->title('Campus Map: Details')
@@ -36,16 +35,16 @@ $page->content_begin();
                    <p class="foundat"><?=$snippets?> found in:</p>
                 <? } ?>
 
-		<h2><?=$building_title?></h2>
+		<h2><?=$name?></h2>
 		<p class="address"><?=$data['street']?></p>
 		<ul id="tabs">
 			<li class="active"><a href="#scrolldown" onclick="showTab('maptab',this); hide('loadingimage')">Map</a></li>
-			<? if($photoURL) { ?>
+			<? if ($photoURL) { ?>
                            <li><a href="#scrolldown" onclick="showTab('phototab',this),loadImage(photoURL,'photo')">Photo</a></li>
                         <? } ?>
                         
-                        <? if($anything_here) { ?>
-			   <li><a href="#scrolldown" onclick="showTab('heretab',this)">What's Here</a></li>
+                        <? if ($details) { ?>
+			   <li><a href="#scrolldown" onclick="showTab('detailstab',this)">Details</a></li>
                         <? } ?>
 		</ul>
 		
@@ -75,18 +74,18 @@ $page->content_begin();
 			<div class="tabbody" id="phototab" style="display:none">
 				<img id="loadingimage2" src="../Webkit/images/loading2.gif" width="40" height="40" alt="Loading" />
 				<img id="photo" src="" width="" height="" alt="Photo" onload="hide('loadingimage2')" />
-				<p class="legend">View from <?=$data['viewangle']?><? if($data['architect']) {?><br/>Architect: <?=$data['architect']?><? } ?></p>	 
+
 			</div> <!-- id="phototab" -->
 
 
 
-			<div class="tabbody" id="heretab" style="display:none">
+			<div class="tabbody" id="detailstab" style="display:none">
 				<ul>
-                                     <? foreach($whats_here as $item) { ?>
-					  <li><?=$item?></li>
+                                     <? foreach($displayDetails as $field => $value) { ?>
+					  <li><?=$field?>: <?=$value?></li>
                                      <? } ?>
 				</ul>
-			</div> <!-- id="heretab" -->
+			</div> <!-- id="detailstab" -->
 
 
 
@@ -95,10 +94,10 @@ $page->content_begin();
 
 	</div> <!-- class="focal shaded" -->
 	
-        <? if(cleanStreet($data)) {?>
+        <? if (FALSE) { /* put equivalent of cleanStreet($data) here when we have it */  ?>
 	   <ul class="secondary">
 		<li>
-			<a href="http://maps.google.com/maps?q=<?=cleanStreet($data)?>, <?=$data['city']?>" class="external">Google Map <span class="smallprint">(<?=cleanStreet($data)?>)</span></a>
+			<a href="http://maps.google.com/maps?q=<?='100 cambridgepark drive'?>, <?='cambridge, ma'?>" class="external">Google Map <span class="smallprint">(<?='100 Cambridgepark Drive'?>)</span></a>
 		</li>
 	  </ul>
 	<? } ?>

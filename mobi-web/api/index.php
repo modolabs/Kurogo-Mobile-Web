@@ -14,7 +14,8 @@ switch ($module) {
    break;
 
  case 'stellar':
-   require('stellar.php');
+ require('coursesTest.php');
+//require('stellar.php');
    break;
 
  case 'calendar':

@@ -1,21 +1,4 @@
-<?
-switch ($category) {
-  case "buildings":
-    $shortcuts = array(
-      "Main" => "Main",
-      "Northwest" => "NW",
-      "Northeast" => "NE",
-      "West" => "West",
-      "East" => "East",
-      "North" => "North"
-    );
-    $heading = $drilldown_title . " Campus";
-    break;
-  case "names":
-    $heading = $drilldown;
-    break;
-}
-
+<?php
 $page->title("Map: Browse $title")
      ->navbar_image('map')
      ->header($heading);

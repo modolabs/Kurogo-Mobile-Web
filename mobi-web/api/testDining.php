@@ -5,7 +5,8 @@
  *    menus for each day.
  */
 define('DINING_MENU_DIRECTORY', '/Users/muhammadamjad/Desktop/dining_example/');
-define('DINING_MENU_FLAT_FILE', '/Users/muhammadamjad/Desktop/dining_example/sample_dining_menu/');
+//define('DINING_MENU_FLAT_FILE', '/Users/muhammadamjad/Desktop/dining_example/sample_dining_menu');
+define('DINING_MENU_FLAT_FILE', '/Users/muhammadamjad/Desktop/dining_example/sample_dining_menu');
 define('DINING_LIFESPAN', 60*60*24);
 
 class MenuItem {
@@ -235,9 +236,10 @@ $local_file = DINING_MENU_FLAT_FILE;
 //echo "Parsing main menu CSV file\n";
 $menus = array();
 // only read if this is the first time or if the file is more than a day old
- if (!file_exists($localFile) ||
-                filemtime($localFile) < time() - DINING_LIFESPAN) {
+// if (!file_exists($localFile) ||
+  //              filemtime($localFile) < time() - DINING_LIFESPAN) {
 
+ if (file_exists($local_file)) {
      $handle = fopen($local_file, "r");
 
      while (($data = fgetcsv($handle)) !== FALSE) {
@@ -273,7 +275,8 @@ $menus = array();
 
 
   $menu = array();
-  $day = isset($_REQUEST['date']) ? $_REQUEST['date'] : date('Y-m-d', time());  
+ // $day = isset($_REQUEST['date']) ? $_REQUEST['date'] : date('Y-m-d', time());
+  $day = '2010-07-13';
   $filename = DINING_MENU_DIRECTORY .$day .".csv";
   $handle = fopen($filename, "r");
 

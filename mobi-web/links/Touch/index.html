@@ -1,17 +1,17 @@
 <?php
-$page->title('Useful Links')
+$page->title('Schools')
      ->navbar_image('links')
-     ->header('Useful Links')
+     ->header('Schools')
      ->breadcrumb_home();
 
 $page->content_begin();
 ?>
 
-	<p class="nonfocal">These links launch third-party websites unaffiliated with the MIT Mobile Web.</p>
+	<p class="nonfocal">These are links to each school's desktop homepage.</p>
 
 	<ul class="nav">
             <? foreach($links as $item) { ?>
-		<li><a class="external" href="http://<?=$item['link']?>"><?=$item['name']?></a></li>
+		<li><a class="external" href="<?=$item['link']?>"><?=$item['name']?></a></li>
             <? } ?>
 	</ul>
 	

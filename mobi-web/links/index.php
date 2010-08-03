@@ -3,10 +3,21 @@
 
 class Links {
   public static $links = array(
-    'MBTA ("The T": Bus & Subway)' => 'www.mbta.com',
-    'Zipcar' => 'www.zipcar.com',
-    'MIT Technology Review' => 'mobile.technologyreview.com',
-    'Fidelity NetBenefits - Staff & Faculty 401(k)' => 'www.fi-w.com/fiw/NBLogin',
+    'Harvard Business School' => 'http://www.hbs.edu/',
+    'Harvard College' => 'http://www.college.harvard.edu/',
+    'Harvard University Division of Continuing Education' => 'http://www.dce.harvard.edu/',
+    'Harvard School of Dental Medicine' => 'http://www.hsdm.harvard.edu/asp-html/',
+    'Graduate School of Design' => 'http://www.gsd.harvard.edu/',
+    'Harvard Divinity School' => 'http://www.hds.harvard.edu/',
+    'Harvard Graduate School of Education' => 'http://www.gse.harvard.edu/',	
+    'Harvard School of Engineering and Applied Sciences' => 'http://www.seas.harvard.edu/',
+    'Harvard Kennedy School' => 'http://www.ksg.harvard.edu',
+    'Graduate School of Arts and Sciences' => 'http://www.gsas.harvard.edu',
+    'Harvard Law School' => 'http://www.law.harvard.edu',
+    'Harvard Medical School' => 'http://www.hms.harvard.edu/',
+    'Harvard School of Public Health' => 'http://www.hsph.harvard.edu',
+    'Radcliffe Institute for Advanced Study' => 'http://www.radcliffe.edu',
+    'Faculty of Arts and Sciences' => 'http://www.fas.harvard.edu/home/',
   );
 }
 

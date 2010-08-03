@@ -11,7 +11,7 @@ define("TELEPHONE_SEARCH_FILTER", "(&(objectClass=person)%s)");
 define("EMAIL_FILTER", "(mail=*%s*)");
 define("EMAIL_SEARCH_FILTER", "(&(objectClass=person)%s)");
 define("NAME_SINGLE_CHARACTER_FILTER", "(|(cn=%s*)(cn=* %s*)(cn=*-%s*))");
-define("NAME_MULTI_CHARACTER_FILTER", "(|(cn=*%s*)(mail=*%s*))");
+#define("NAME_MULTI_CHARACTER_FILTER", "(|(cn=*%s*)(mail=*%s*))"); // Not currently used.
 define("NAME_SEARCH_FILTER", "(&(objectClass=person)%s)");
 define("UID_FILTER", "(uid=%s)");
 define("UID_SEARCH_FILTER", "(&(objectClass=person)%s)");
