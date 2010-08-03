@@ -15,7 +15,11 @@ class Item {
 
     foreach($this->person->getField($field) as $value) {
       // prevent phones from creating links from things that look like phone/email
-      $value = str_replace('@', '@&shy;', $value);
+	  if (strcmp($field, 'mail') != 0)
+	  {
+		// We now don't want hyphens to display in an email address, but it's OK elsewhere.
+      	$value = str_replace('@', '@&shy;', $value); 
+	  }
       $value = str_replace('-', '-&shy;', $value);
       $value = str_replace('$', '<br />', $value);
 	  if (strcmp($field, 'ou') == 0)
