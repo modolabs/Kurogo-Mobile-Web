@@ -731,6 +731,11 @@ ul.focal li:first-child {
 	padding-top: 1px;
 }
 
+.email .value {
+	width: 190px;
+}
+
+
 .value a {
 	background-position: 8px right;
 }

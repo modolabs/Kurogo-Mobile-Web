@@ -18,6 +18,10 @@ class Item {
       $value = str_replace('@', '@&shy;', $value);
       $value = str_replace('-', '-&shy;', $value);
       $value = str_replace('$', '<br />', $value);
+	  if (strcmp($field, 'ou') == 0)
+	  {
+	  	$value = str_replace('^', ' / ', $value);
+	  }
 
       $innerContents = "
                  <div class=\"label\">$label</div>
@@ -47,7 +51,7 @@ $page->content_begin();
 	<ul class="nav">
         <? $item->display('name', 'cn', NULL, NULL, TRUE); ?>
         <? $item->display('title', 'title', NULL, NULL, TRUE); ?>
-        <? $item->display('dept', 'ou', NULL, NULL, TRUE); ?>
+        <? $item->display('unit', 'ou', NULL, NULL, TRUE); ?>
 	</ul>
 	
         <? if(has_phone($person)) { ?>
