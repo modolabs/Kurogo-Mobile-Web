@@ -470,6 +470,7 @@ class ICalendar extends ICalObject {
 
   public function search_events($title=NULL, TimeRange $range=NULL) {
     $events = Array();
+    
     foreach ($this->events as $id => $event){
       /*if ($event->get_recurid() !== NULL) // event is a duplicate
 	continue;*/
@@ -483,6 +484,7 @@ class ICalendar extends ICalObject {
 
         $events[] = $event;
     }
+ 
     return $events;
   }
 
@@ -557,7 +559,7 @@ class ICalendar extends ICalObject {
     $this->properties = Array();
     $this->events = Array();
     $this->classname = 'VCALENDAR';
-
+    
     if ($url !== FALSE) {
       $this->read_from_url($url);
     }
@@ -566,7 +568,7 @@ class ICalendar extends ICalObject {
   protected function read_from_url($url) {
     $nesting = Array();
     $lines = explode("\n", $this->unfold(file_get_contents($url)));
-
+    
     foreach ($lines as $line) {
       $contentline = $this->contentline($line);
 
