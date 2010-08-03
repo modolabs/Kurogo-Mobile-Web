@@ -1,6 +1,7 @@
 <?php
 
 require_once "lib_constants.inc";
+require_once "LdapUtilities.php";
 
 // search string templates
 define("SEARCH_TIMELIMIT", 30);
@@ -118,25 +119,16 @@ class LdapWrapper {
       }
 
     } elseif (preg_match('/[A-Za-z]/', $searchString)) { // assume search by name
+	  // This function is defined in LdapUtilities.	  
+      $nameFilter = buildNameAndEmailLDAPQuery($searchString);
 
-      $nameFilter = "";
-      foreach(preg_split("/\s+/", $searchString) as $word) {
-        if ($word != "") {
-          if (strlen($word) == 1) {
-            $filter = NAME_SINGLE_CHARACTER_FILTER;
-          } else {
-            $filter = NAME_MULTI_CHARACTER_FILTER;
-          }
-          $nameFilter .= str_replace("%s", $word, $filter);
-        }
-      }
-
-      if ($nameFilter != "") {
-        $this->query = str_replace("%s", $nameFilter, NAME_SEARCH_FILTER);
-        $success = TRUE;
-      } else {
+      if ($nameFilter == "") {
         $this->errorMsg = "Invalid name query";
-      }
+      } else
+	  {
+		$this->query = $nameFilter;
+		$success = TRUE;
+	  }
 
     } elseif (preg_match('/[0-9]+/', $searchString)) { // assume search by telephone number
 
