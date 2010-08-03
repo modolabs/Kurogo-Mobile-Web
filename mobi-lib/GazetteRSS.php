@@ -21,10 +21,6 @@ class GazetteRSS extends RSS {
   private static $channels = array(
     array('title' => 'All News', 
           'url' => 'http://feeds.feedburner.com/HarvardGazetteOnline'),
-    array('title' => 'Harvard News',
-          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineHarvardNews'),
-    array('title' => 'In the Media',
-          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineInTheMedia'),
     array('title' => 'Campus & Community',
           'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineCampusCommunity'),
     array('title' => 'Arts & Culture',
@@ -35,8 +31,8 @@ class GazetteRSS extends RSS {
           'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineNationalWorldAffairs'),
     array('title' => 'Athletics',
           'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineAthletics'),
-    array('title' => 'Multimedia',
-          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineMultimedia'),
+    //array('title' => 'Multimedia',
+    //      'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineMultimedia'),
     );
   
   public static function init() {
