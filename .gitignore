@@ -9,3 +9,4 @@ mobi-web/.htaccess
 mobi-lib/lib_constants.inc
 .com.apple.timemachine.supported
 mobi-web/api/newsimages
+mobi-web/api/maptile
