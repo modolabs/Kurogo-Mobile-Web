@@ -43,6 +43,7 @@ define('NEWS_SEARCH_URL', 'http://news.harvard.edu/gazette/');
 // events_calendar
 define('PATH_TO_EVENTS_CAT', DATADIR . '/event_cat');
 define('HARVARD_EVENTS_ICS_BASE_URL', 'http://www.trumba.com/calendars/gazette.ics');
+define('HARVARD_ACADEMIC_ICS_BASE_URL', 'http://www.trumba.com/calendars/harvard_academic_calendar.ics');
 define('TRUMBA_CALENDAR_CACHE_DIR', CACHE_DIR . '/TRUMBA_CALENDAR/');
 define('TRUMBA_CALENDAR_CACHE_LIFESPAN', 60*15); //retrieve info from Trumba if the data is more than 15 mins old
 
