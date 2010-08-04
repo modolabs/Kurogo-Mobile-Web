@@ -2,41 +2,83 @@
 
 require_once "ldap_config.php";
 
-// Build a query clause like this: (|(cn=*firstword*secondword*)(cn=*secondword*firstword*)(mail=*firstword*secondword*)(mail=*secondword*firstword*))
-// Match should contain both words, either in the cn or the mail.
-// $search should contain the search string, which is assumed to contain one or more words.
+// Scenarios:
+// 
+// A: 1 search term. Could be given name, surname, or email. Query:
+//
+//  (|
+//	  (|(givenName=hewitt*)(sn=hewitt*))
+//    (mail=hewitt*)
+//  )
+//
+// B: 2 search terms. Names could be in either order. Query:
+//
+//	(|
+//	  (&(givenName=doug*)(sn=hall*))
+//	  (&(givenName=hall*)(sn=doug*))
+//	  (mail=doug*hall*)
+//	)
+//
+// C: 3 or more search terms. Assume name order matches common name (cn). Query:
+//
+//  (|
+//    (cn=susan*chan*tack*)
+//    (mail=susan*chan*tack*)
+//  )
+//
+// We've been having problems having too many matches returned, so we're 
+// intentionally making this a little less forgiving:
+//
+// 1. It's assumed that anything you write comes at the beginning of a name or
+//    email address.  So "ith" will not match against "Smith".
+// 2. If there are more than two names written, we fall back to the common name,
+//    which means it's assuming an ordering of first, middle, then last name, 
+//    and not trying out every possible combination.
+
+function sanitizeSearch($search)
+{
+	// We allow letters, numbers, underscores, spaces, and single quotes (for
+	// names like "O'Reilly").  Everything else gets axed into a space.
+	return preg_replace('/[^\w\'@.]/', " ", $search);
+}
+
+function queryForNames($names)
+{
+	$nameCount = count($names);
+
+	if ($nameCount == 1) {
+		// Just one name -- could be given or surname.
+		return "(|(givenName=$names[0]*)(sn=$names[0]*))";
+	}
+	elseif ($nameCount == 2) {
+		// Two names, assume one is given, one is surname.  Assume that they 
+		// start the names correctly, but we wildcard the end.
+		return "(&(givenName=$names[0]*)(sn=$names[1]*))" . \
+			   "(&(givenName=$names[1]*)(sn=$names[0]*))";
+	}
+	elseif ($nameCount > 2) {
+		// Three or more names -- just string them all together with wildcards
+		// and hope that it's a match on the common name.
+		return "(cn=" . implode("*", $names) . "*)";
+	}
+}
+
+function queryForEmail($words)
+{
+	return "(mail=" . implode("*", $words) . "*)";
+}
 
 function buildNameAndEmailLDAPQuery($search)
 {
-	$cnTargets = array();
-	$mailTargets = array();
+	$safeSearch = sanitizeSearch($search);
+	$words = preg_split("/\s+/", $safeSearch);
+	$query = "(|" . queryForNames($words) . queryForEmail($words) . ")";
 
-	# Gather cn and mail search clauses for each word.
-    foreach(preg_split("/\s+/", $search) as $word)
-    {
-        if($word != "")
-        {
-            if(strlen($word) == 1)
-            {
-				array_push($cnTargets, str_replace("%s", $word, NAME_SINGLE_CHARACTER_FILTER));
-            }
-            else
-            {
-				array_push($cnTargets, $word);
-				array_push($mailTargets, $word);
-            }
-        }
-    }
+	// error_log("SAFE SEARCH: " . $safeSearch);
+	// error_log("QUERY: " . $query);
 
-	// Assemble the gathered targets into the search clauses.
-	$joinedClauses = 
-		// Make two cn search clauses using $cnTargets: one in normal order, one backward.
-		"(|(cn=*" . implode("*", $cnTargets) . "*)(cn=*" . implode("*", array_reverse($cnTargets)) . 
-		// Make two mail search clauses using $mailTargets: one in normal order, one backward.
-		"*)(mail=*" . implode("*", $mailTargets) . "*)(mail=*" . implode("*", array_reverse($mailTargets)) . "*))";
-		
 	// Put the gathered clauses in the person search template.
-    $searchFilter = str_replace("%s", $joinedClauses, NAME_SEARCH_FILTER);
+    $searchFilter = str_replace("%s", $query, NAME_SEARCH_FILTER);
     return($searchFilter);	
 }
 
