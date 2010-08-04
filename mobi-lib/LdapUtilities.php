@@ -53,8 +53,7 @@ function queryForNames($names)
 	elseif ($nameCount == 2) {
 		// Two names, assume one is given, one is surname.  Assume that they 
 		// start the names correctly, but we wildcard the end.
-		return "(&(givenName=$names[0]*)(sn=$names[1]*))" . \
-			   "(&(givenName=$names[1]*)(sn=$names[0]*))";
+		return "(&(givenName=$names[0]*)(sn=$names[1]*))" . "(&(givenName=$names[1]*)(sn=$names[0]*))";
 	}
 	elseif ($nameCount > 2) {
 		// Three or more names -- just string them all together with wildcards
