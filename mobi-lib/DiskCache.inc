@@ -151,6 +151,10 @@ class DiskCache {
     $path = $this->getFullPath($filename);
     if ($timeout === NULL)
       $timeout = $this->timeout;
+
+    // this has to be strictly less than, otherwise
+    // for files with null timeout that don't yet exist
+    // both will return PHP_INT_MAX and evaluate to true
     return ($this->getAge($filename) < $timeout);
   }
 
