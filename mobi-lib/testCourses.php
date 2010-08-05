@@ -185,7 +185,8 @@ class CourseData {
      
      foreach($xml_obj->courses->course as $single_course) {
          $subject_fields = array();
-         $nm = explode(':',$single_course['id']);
+         //$nm = explode(':',$single_course['id']);
+         $nm = explode(':', $single_course->course_number);
          $subject_fields['name'] = $nm[0];
          $subject_fields['masterId'] = $nm[0];
          $titl = explode(':', $single_course->title);
