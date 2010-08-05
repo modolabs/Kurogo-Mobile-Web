@@ -82,7 +82,7 @@ class GazetteRSS extends RSS {
       $channelInfo = self::$channels[$channel];
       $channelUrl = $channelInfo['url'] . '?format=xml';
 
-      $filename = self::cacheName($channelUrl);
+      $filename = self::cacheName($channelInfo['url']);
       if (!self::$diskCache->isFresh($filename)) {
         $contents = file_get_contents($channelUrl);
         self::$diskCache->write($contents, $filename);
