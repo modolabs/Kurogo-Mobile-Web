@@ -208,6 +208,10 @@ class CourseData {
       $gueryAdditionForCourseGroup = 'fq_school_nm=school_nm:"' .str_replace(' ', '+', $courseGroup) .'"&';
       $queryAddition = 'fq_dept_area_category=dept_area_category:"' . str_replace(' ', '+', str_replace('&', '%26',$course)) .'"&';
       $term = TERM_QUERY;
+
+      if ( $course == $courseGroup)
+           $queryAddition = 'fq_dept_area_category=dept_area_category:[*+TO+""]';
+
       $urlString = STELLAR_BASE_URL .$term .$gueryAdditionForCourseGroup .$queryAddition;
 
       $xml = file_get_contents($urlString);
