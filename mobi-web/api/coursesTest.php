@@ -36,7 +36,8 @@ foreach($data as $schools) {
 
 case 'subjectList':
     $courseId = urldecode($_REQUEST['id']);
-    $data = CourseData::get_subjectsForCourse($courseId);
+    $courseGroup = urldecode($_REQUEST['coursegroup']);
+    $data = CourseData::get_subjectsForCourse($courseId, $courseGroup);
 
     if(isset($_REQUEST['checksum'])) {
       $checksum = md5(json_encode($data));
@@ -47,6 +48,28 @@ case 'subjectList':
       }
     }
     break;
+ 
+ case 'term':
+        $data = array('term' => CourseData::get_term());
+     break;
+
+ case 'subjectInfo':
+    $subjectId = urldecode($_REQUEST['id']);
+    $data = CourseData::get_subject_details($subjectId);
+    if($data) {
+      //$data['announcements'] = StellarData::get_announcements($subjectId);
+
+      // some classes dont have stellar announcements
+      //if($data['announcements'] === False) {
+	//unset($data['announcements']);
+     // }
+
+     // $data['term'] = StellarData::get_term();
+    } else {
+      $data = array('error' => 'SubjectNotFound', 'message' => 'Stellar could not find this subject');
+    }
+    break;
+
  }
 
  echo json_encode($data);
