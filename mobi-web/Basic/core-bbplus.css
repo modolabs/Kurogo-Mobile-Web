@@ -6,9 +6,9 @@ html, body {
 }
 
 body {
-	background: #e3ddd1 url(../Webkit/images/background-tile.jpg) repeat-x;
+	background: #e3ddd1 url(../Basic/images/background-tile.jpg);
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 15px;
+	font-size: 14px;
 	line-height: 1.28em;
 	color: #333;
 	padding: 0.2em;
@@ -32,13 +32,15 @@ h1, h2, h3 {
 }
 
 h1 {
-	font-size: 171%;
+	font-family: Georgia, serif;
+	font-size: 142%; 
 	font-weight: normal;
 	margin: 10px 0;
 	padding: 0;
 }
 
 h2 { 
+	font-family: Georgia, serif;
 	font-size: 142%; 
 	font-weight: normal;
 	margin: 0 0 6px 0;
@@ -85,8 +87,14 @@ ul li {
 
 #header {
 	margin: 0;
-	padding: 8px;
+	padding: 8px 4px;
 	font-size: 142%;
+	line-height: 32px;
+}
+
+#header img {
+	float: left;
+	margin-right: 7px;
 }
 
 #header a {
@@ -148,7 +156,7 @@ fieldset {
 .secondary {
 	margin: 1em 0;
 	padding: .4em;
-	background-color: #edf1f7;
+	background-color: #F9F6EF;
 	font-size: 93%;
 	line-height: 1.6em;
 }
@@ -163,7 +171,7 @@ fieldset {
 .bottomnav {
 	margin: 1.5em 0 0.75em 0;
 	padding: .4em;
-	background-color: #909eac;	
+	background-color: #4d4a47;	
 	font-size: 93%;
 	line-height: 1.5em;
 }
