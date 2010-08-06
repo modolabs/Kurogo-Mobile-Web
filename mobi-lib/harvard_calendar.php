@@ -112,6 +112,19 @@ function makeIcalSearchEvents($icsURL, $terms)
 }
 
 
+function makeIcalAcademicEvents($academic_ics_url, $month, $year)
+{
+        $date = $year .$month .'01';
+        $academic = 'academic';
+        $fileN = TrumbaCache::retrieveData($academic_ics_url, $date, NULL, $academic);
+        
+        $ical = new ICalendar($fileN);
+
+	return  $ical->search_events(NULL, NULL);
+       
+}
+
+
 
 require_once "DiskCache.inc";
 
@@ -134,16 +147,21 @@ class TrumbaCache {
      $yr = substr($dateString, 0, 4);
      $mth = substr($dateString, 4, 2);
 
+
      if (($searchField == NULL) &&($category == NULL))
         $filename = $yr . $mth . '.ics';
 
      else if (($searchField != NULL) && ($category == NULL))
          $filename = $dateString .'search=' .$searchField .'.ics';
 
+     else if (($searchField == NULL) && ($category = 'academic'))
+         $filename = $dateString . 'ACADEMIC.ics';
+
      else if (($searchField == NULL) && ($category != NULL))
          $filename = $yr . $mth .'category=' .$category .'.ics';
 
      if (!self::$diskCache->isFresh($filename)) {
+
        self::$diskCache->write(file_get_contents($urlLink), $filename);
      }
 

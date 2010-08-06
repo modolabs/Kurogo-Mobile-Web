@@ -15,16 +15,33 @@ class Item {
 
     foreach($this->person->getField($field) as $value) {
       // prevent phones from creating links from things that look like phone/email
-      $value = str_replace('@', '@&shy;', $value);
+	  if (strcmp($field, 'mail') != 0) {
+		// We now don't want hyphens to display in an email address, but it's OK elsewhere.
+      	$value = str_replace('@', '@&shy;', $value); 
+	  }
       $value = str_replace('-', '-&shy;', $value);
       $value = str_replace('$', '<br />', $value);
+	  if (strcmp($field, 'ou') == 0) {
+	  	$value = str_replace('^', ' / ', $value);
+	  }
 
       $innerContents = "
                  <div class=\"label\">$label</div>
                  <div class=\"value\">$value</div>";
 
       if ($href !== NULL) {
-        $innerContents = '<a href="' . $href($value) . '" class="' . $class . '">'
+		  $linkAddress = $value;
+		
+		  if (strcmp($field, 'postaladdress') == 0) {
+			// Only send the next-to-last line of the address to the map search.
+			$addressLines = explode("<br />", $value);
+			$lineCount = count($addressLines);
+			if ($lineCount > 1) {
+				$linkAddress = $addressLines[$lineCount - 2];	
+			}
+		  }
+	
+        $innerContents = '<a href="' . $href($linkAddress) . '" class="' . $class . '">'
                        . $innerContents . '</a>';
       }
 
@@ -47,7 +64,7 @@ $page->content_begin();
 	<ul class="nav">
         <? $item->display('name', 'cn', NULL, NULL, TRUE); ?>
         <? $item->display('title', 'title', NULL, NULL, TRUE); ?>
-        <? $item->display('dept', 'ou', NULL, NULL, TRUE); ?>
+        <? $item->display('unit', 'ou', NULL, NULL, TRUE); ?>
 	</ul>
 	
         <? if(has_phone($person)) { ?>

@@ -1,24 +1,26 @@
 <?php
 
+$content = "";
+
 switch ($_REQUEST['command']) {
 
  case 'capabilities':
    require_once LIBDIR . '/ArcGISServer.php';
    $json = ArcGISServer::getCapabilities();
-   echo json_encode($json);
+   $content = json_encode($json);
    break;
 
  case 'proj4specs':
    require_once LIBDIR . '/ArcGISServer.php';
    $wkid = $_REQUEST['wkid'];
    $json = ArcGISServer::getWkidProperties($wkid);
-   echo json_encode($json);
+   $content = json_encode($json);
    break;
 
  case 'tilesupdated':
    $date = file_get_contents(MAP_TILE_CACHE_DATE);
    $data = array("last_updated" => trim($date));
-   echo json_encode($data);
+   $content = json_encode($data);
    break;
 
  case 'categorytitles':
@@ -31,7 +33,7 @@ switch ($_REQUEST['command']) {
        'categoryId' => $id,
        );
    }
-   echo json_encode($result);
+   $content = json_encode($result);
    break;
 
  case 'category':
@@ -44,7 +46,7 @@ switch ($_REQUEST['command']) {
        $results[] = array_merge($attributes,
                                 array('displayName' => $featureId));
      }
-     echo json_encode($results);
+     $content = json_encode($results);
    }
    break;
 
@@ -65,8 +67,10 @@ switch ($_REQUEST['command']) {
        require_once LIBDIR . '/ArcGISServer.php';
        $json = ArcGISServer::search($_REQUEST['q']);
      }
-     echo json_encode($json);
+     $content = json_encode($json);
    }
    break;
 }
 
+header('Content-Length: ' . strlen($content));
+echo $content;

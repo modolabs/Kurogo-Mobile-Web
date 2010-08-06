@@ -110,6 +110,33 @@ switch ($_REQUEST['command']) {
            }
    break;
 
+   case 'academic':
+       $month = $_REQUEST['month'];
+       $year = $_REQUEST['year'];
+
+       if (strlen($month) == 1)
+           $month = '0' .$month;
+
+       $url = HARVARD_ACADEMIC_ICS_BASE_URL .'?startdate=' . $year .$month .'01&months=1';
+       $academic_events = makeIcalAcademicEvents($url, $month, $year);
+
+       foreach ($academic_events as $event) {
+        $cleaned_ical_event = clean_up_ical_event($event);
+
+
+        /* Need to correct for the start and end date discrepencies in the Trumba
+         * feed we are getting from Gazette for the academic calendar.*/
+        $start = $event->get_start() + 24*60*60;
+        $end = $event->get_end() + 24*60*60;
+
+        $cleaned_ical_event['start'] = $start;
+        $cleaned_ical_event['end'] = $end;
+
+        $data[] = $cleaned_ical_event;
+        }
+
+       break;
+
    default:
        break;
 
