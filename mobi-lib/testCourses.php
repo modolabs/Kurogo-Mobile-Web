@@ -6,7 +6,9 @@ require_once "DiskCache.inc";
 
 define('CATEGORY_QUERY_BASE', 'fq_dept_area_category=dept_area_category:"');
 define('TERM_QUERY','&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to+Dec+2010+(Fall+Term)"&');
+define('TERM', 'Fall2010');
 define('SCHOOL_QUERY_BASE', '&fq_school_nm=school_nm:"');
+
 
 
 class CourseData {
@@ -126,8 +128,9 @@ class CourseData {
   }
 
   public static function get_term() {
-    $data = self::get_term_data();
-    return $data["season"] . $data["year"];
+    //$data = self::get_term_data();
+    //return $data["season"] . $data["year"];
+      return TERM;
   }
 
   public static function get_term_text() {
@@ -141,13 +144,71 @@ class CourseData {
     return $seasons[ $data["season"] ] . " 20" . $data["year"];
   }
 
+  public static function get_subject_details($subjectId) {
 
-  public static function get_subjectsForCourse($course) {
+      $urlString = STELLAR_BASE_URL .'q=id:'.$subjectId;
 
+      $xml = file_get_contents($urlString);
+
+      if($xml == "") {
+      // if failed to grab xml feed, then run the generic error handler
+      throw new DataServerException('COULD NOT GET XML');
+    }
+
+     $xml_obj = simplexml_load_string($xml);
+
+     $subject_array = array();
+        $single_course = $xml_obj->courses->course;
+         $subject_fields = array();
+         $id = explode(':',$single_course['id']);
+         $nm = explode(':', $single_course->course_number);
+         $subject_fields['name'] = $nm[0];
+         $subject_fields['masterId'] = $id[0];
+         $titl = explode(':', $single_course->title);
+         $subject_fields['title'] = $titl[0];
+         $desc = explode(':', $single_course->description);
+         $subject_fields['description'] = $desc[0];
+         //$trm = explode(':',$single_course->term_description);
+         //$subject_fields['term'] = $trm[0];
+         $subject_fields['term'] = TERM;
+         $ur = explode(':',$single_course->url);
+         if (count($ur) > 1)
+            $subject_fields['stellarUrl'] = $ur[0].':'.$ur[1];
+
+         $classtime['title'] = 'Lecture';
+         $loc = explode(':',$single_course->location);
+         $classtime['location'] = $loc[0];
+
+         $m_time = explode(':', $single_course->meeting_time);
+         $classtime['time'] = $m_time[0];
+         $classtime_array[] = $classtime;
+         $subject_fields['times'] = $classtime_array;
+
+         $ta_array = array();
+         $prof = explode(':', $single_course->faculty_description);
+         $staff['instructors'] = array($prof[0]);
+         $staff['tas'] = $ta_array;
+         $subject_fields['staff'] = $staff;
+
+         $announ['unixtime'] = time();
+         $announ['title'] = 'Announcement1';
+         $announ['text'] = 'Details of Announcement1';
+         $announ_array[] = $announ;
+         $subject_fields['announcements'] = $announ_array;
+
+         $subject_array = $subject_fields;
+
+  $subjectDetails = $subject_array;
+    //$courseToSubject[$course] = $subject_array;// store it in a global array containing courses to subjects
+  return $subjectDetails;
+ }
+
+
+  public static function get_subjectsForCourse($course, $courseGroup) {
+      $gueryAdditionForCourseGroup = 'fq_school_nm=school_nm:"' .str_replace(' ', '+', $courseGroup) .'"&';
       $queryAddition = 'fq_dept_area_category=dept_area_category:"' . str_replace(' ', '+', str_replace('&', '%26',$course)) .'"&';
       $term = TERM_QUERY;
-      $urlString = STELLAR_BASE_URL .$term .$queryAddition;
-        //printf("Number of Courses (%s)= ",$course);
+      $urlString = STELLAR_BASE_URL .$term .$gueryAdditionForCourseGroup .$queryAddition;
 
       $xml = file_get_contents($urlString);
 
@@ -171,7 +232,7 @@ class CourseData {
         $queryString = $queryAddition .'&start=' .$number;
 
 
-      $urlString = STELLAR_BASE_URL .$term .$queryString;
+      $urlString = STELLAR_BASE_URL .$term .$gueryAdditionForCourseGroup .$queryString;
       $xml = file_get_contents($urlString);
 
       if($xml == "") {
@@ -185,45 +246,19 @@ class CourseData {
      
      foreach($xml_obj->courses->course as $single_course) {
          $subject_fields = array();
-         //$nm = explode(':',$single_course['id']);
+         $id = explode(':',$single_course['id']);
          $nm = explode(':', $single_course->course_number);
          $subject_fields['name'] = $nm[0];
-         $subject_fields['masterId'] = $nm[0];
+         $subject_fields['masterId'] = $id[0];
          $titl = explode(':', $single_course->title);
          $subject_fields['title'] = $titl[0];
-         $desc = explode(':', $single_course->description);
-         $subject_fields['description'] = $desc[0];
-         $trm = explode(':',$single_course->term_description);
-         $subject_fields['term'] = $trm[0];
-         $ur = explode(':',$single_course->url);
-         if (count($ur) > 1)
-            $subject_fields['stellarUrl'] = $ur[0].':'.$ur[1];
-
-         $classtime['title'] = 'Random';
-         $classtime['location'] = 'Library';
-         $classtime['time'] = 'Tuesday at 3pm';
-         $classtime_array[] = $classtime;
-         $subject_fields['times'] = $classtime_array;
-
-
-         $prof_array = array('Prof Test', 'Prof Testing');
-         $ta_array = array('Ilya', 'Ehmet');
-         $staff['instructors'] = $prof_array;
-         $staff['tas'] = $ta_array;
-         $subject_fields['staff'] = $staff;
-
-         $announ['unixtime'] = time();
-         $announ['title'] = 'Announcement1';
-         $announ['text'] = 'Details of Announcement1';
-         $announ_array[] = $announ;
-         $subject_fields['announcements'] = $announ_array;
+         $subject_fields['term'] = TERM;
 
          $subject_array[] = $subject_fields;
      }
   }
 
   $courseToSubject = $subject_array;
-    //$courseToSubject[$course] = $subject_array;
 
   $coursesToSubjectsMap[] = $courseToSubject; // store it in a global array containing courses to subjects
   return $courseToSubject;
