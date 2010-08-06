@@ -28,7 +28,6 @@ foreach($data as $schools) {
 
 
 
-
  switch ($_REQUEST['command']) {
   case 'courses':
     $data = CourseData::get_schoolsAndCourses();
@@ -37,7 +36,7 @@ foreach($data as $schools) {
 case 'subjectList':
     $courseId = urldecode($_REQUEST['id']);
     $courseGroup = urldecode($_REQUEST['coursegroup']);
-    $data = CourseData::get_subjectsForCourse($courseId, $courseGroup);
+    $data = CourseData::get_subjectsForCourse(str_replace('-other', '', $courseId), $courseGroup);
 
     if(isset($_REQUEST['checksum'])) {
       $checksum = md5(json_encode($data));
