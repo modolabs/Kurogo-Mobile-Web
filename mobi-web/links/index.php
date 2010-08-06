@@ -3,6 +3,7 @@
 
 class Links {
   public static $links = array(
+    'Faculty of Arts and Sciences' => 'http://www.fas.harvard.edu/home/',
     'Harvard Business School' => 'http://www.hbs.edu/',
     'Harvard College' => 'http://www.college.harvard.edu/',
     'Harvard University Division of Continuing Education' => 'http://www.dce.harvard.edu/',
@@ -17,7 +18,6 @@ class Links {
     'Harvard Medical School' => 'http://www.hms.harvard.edu/',
     'Harvard School of Public Health' => 'http://www.hsph.harvard.edu',
     'Radcliffe Institute for Advanced Study' => 'http://www.radcliffe.edu',
-    'Faculty of Arts and Sciences' => 'http://www.fas.harvard.edu/home/',
   );
 }
 

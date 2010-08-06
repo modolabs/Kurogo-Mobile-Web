@@ -6,7 +6,12 @@
         <meta name="MobileOptimized" content="240" />
         <meta name = "viewport" content = "width=device-width, height=device-height" />
 	<title><?=$title?></title>
-	<link rel="stylesheet" type="text/css" href="../Basic/core.css" />
+	<link rel="stylesheet" type="text/css" href="<?
+        if ($this->platform == 'bbplus') {
+          echo "../Basic/core-bbplus.css";
+        } else {
+          echo "../Basic/core.css";
+        } ?>" />
         <? echo $this->stylesheet_links() ?>
 
 	<? if ($inline_css) { ?>
@@ -18,10 +23,10 @@
 
 <body>
 
-<h2 id="header">
-<? echo $this->img_tag('mit-logo', 'gif'); ?>
+<h1 id="header">
+<? echo $this->img_tag('harvard-logo', 'gif'); ?>
 <?=$header?>
-</h2>
+</h1>
 
 <div id="container">
 
@@ -51,7 +56,7 @@
        <a href="../home/" accesskey="0">0: MIT Mobile Web Home</a><br/>
        <? foreach($bottom_nav_links as $index => $link) {
             $number = $index + 1; ?>
-            <a href="<?=$link['url']?>" accesskey="<?=$number?>"><?=$number?>: <?=$link['text']?></a><br/>
+            <a href="<?=$link['url']?>" <? if ($this->platform != 'bbplus') { ?> accesskey="<?=$number?>"><?=$number?>: <? } ?><?=$link['text']?></a><br/>
        <? } ?>
     </p>
 </div>
@@ -62,8 +67,7 @@ Font size: <?=$this->font_selector()?>
 
 <p class="bb"> </p>
 <p id="footer">
-<? echo $this->img_tag('ist-logo', 'gif', 'IST'); ?>
-Information Services &amp; Technology
+&copy;2010 Harvard University
 </p>
 
 <?=google_analytics("Basic")?>
