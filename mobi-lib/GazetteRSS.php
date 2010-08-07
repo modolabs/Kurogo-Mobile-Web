@@ -4,6 +4,9 @@ require_once "rss_services.php";
 require_once "DiskCache.inc";
 
 define('IMAGE_CACHE_EXTENSION', '/api/newsimages');
+define('IMAGE_THUMBNAIL_SIZE', 76);
+define('IMAGE_MAX_WIDTH', 600);
+define('IMAGE_MAX_HEIGHT', 800);
 
 class GazetteRSS extends RSS {
 
@@ -135,22 +138,30 @@ class GazetteRSS extends RSS {
       } else {
         // download and resize thumbnail image
         $thumb = $item->getElementsByTagName('image')->item(0);
-        $thumbUrl = $item->getElementsByTagName('url')->item(0);
-        $newThumbUrlString = self::imageUrl(self::cacheImage($thumbUrl->nodeValue, 76));
+        $thumbUrl = $thumb->getElementsByTagName('url')->item(0);
+        $newThumbUrlString = self::imageUrl(self::cacheImage($thumbUrl->nodeValue, NULL)); // IMAGE_THUMBNAIL_SIZE));
 
         // replace url in rss feed
-        $newThumbUrl = $newdoc->createElement('url', $newThumbUrlString);
-        $thumb->replaceChild($newThumbUrl, $thumbUrl);
+        if ($newThumbUrlString) {
+          //$newThumbUrl = $newdoc->createElement('url', $newThumbUrlString);
+          //$thumb->replaceChild($newThumbUrl, $thumbUrl);
+        } else { // image creation bailed (perhaps from a 1px image)
+          $thumb->removeChild($thumbUrl);
+        }
+
+        // since we altered the width and height, what they have there is no longer applicable
+        if ($widthTag = $thumb->getElementsByTagName('width')->item(0))
+          $thumb->removeChild($widthTag);
+        if ($heightTag = $thumb->getElementsByTagName('height')->item(0))
+          $thumb->removeChild($heightTag);
 
         // remove images from main <content> tag
 
         $contentNode = $item->getElementsByTagName('encoded')->item(0);
         $content = $contentNode->nodeValue;
         $contentHTML = new DOMDocument();
-        $contentHTML->loadHTML($content);
-
-        //$otherImages = $newdoc->createElement('otherImages');
-        //$numImages = 0;
+        // make sure the parser picks up encoded characters
+        $contentHTML->loadHTML('<?xml encoding="UTF-8">' . $content);
 
         foreach ($contentHTML->getElementsByTagName('img') as $imgTag) {
           // skip 1px tracking images
@@ -159,53 +170,26 @@ class GazetteRSS extends RSS {
             continue;
           }
 
-          // 300px for inline images
+          // 300x400 max for inline images
           $src = $imgTag->getAttribute('src');
-          $cachedImageFile = self::cacheImage($src, 300);
+          $cachedImageFile = self::cacheImage($src, IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT);
           if ($cachedImageFile) {
             $newSrcUrlString = self::imageUrl($cachedImageFile);
             $otherImage = $newdoc->createElement('image');
 
-            //$fullUrl = $contentHTML->createElement('fullURL', $newSrcUrlString);
-          
             $fullUrl = $contentHTML->createElement('img');
 
             self::appendDOMAttribute($contentHTML, $fullUrl, 'src', $newSrcUrlString);
-            self::appendDOMAttribute($contentHTML, $fullUrl, 'width', self::$lastWidth);
-            self::appendDOMAttribute($contentHTML, $fullUrl, 'height', self::$lastHeight);
-            /*
-            // TODO: make a function to add an attribute to a DOMNode
-            $fullUrlSrc = $contentHTML->createAttribute('src');
-            $fullUrlSrcText = $contentHTML->createTextNode($newSrcUrlString);
-            $fullUrlSrc->appendChild($fullUrlSrcText);
-            $fullUrl->appendChild($fullUrlSrc);
-
-            $fullUrlWidth = $contentHTML->createAttribute('width');
-            $fullUrlWidthText = $contentHTML->createTextNode(self::$lastWidth);
-            $fullUrlWidth->appendChild($fullUrlWidthText);
-            $fullUrl->appendChild($fullUrlWidth);
-
-            $fullUrlHeight = $contentHTML->createAttribute('height');
-            $fullUrlHeightText = $contentHTML->createTextNode(self::$lastHeight);
-            $fullUrlHeight->appendChild($fullUrlHeightText);
-            $fullUrl->appendChild($fullUrlHeight);
-            */
-            //$otherImage->appendChild($fullUrl);
-            //$node = $newdoc->importNode($otherImage, TRUE);
-            //$otherImages->appendChild($node);
+            self::appendDOMAttribute($contentHTML, $fullUrl, 'width', intval(self::$lastWidth / 2));
+            self::appendDOMAttribute($contentHTML, $fullUrl, 'height', intval(self::$lastHeight / 2));
 
             $imgTag->parentNode->replaceChild($fullUrl, $imgTag);
-            //$numImages++;
 
           } else {
             $imgTag->parentNode->removeChild($imgTag);
           }
 
         } // foreach
-
-        //if ($numImages) {
-        //  $item->appendChild($otherImages);
-        //}
 
         $cdata = $newdoc->createCDATASection($contentHTML->saveHTML());
         $contentNode->replaceChild($cdata, $contentNode->firstChild);
@@ -226,10 +210,14 @@ class GazetteRSS extends RSS {
 
   /** image caching and manipulation **/
 
+  // returns filename of the new image created
   private static function cacheImage($imgUrl, $newWidth=NULL, $newHeight=NULL) {
 
     $imageName = self::imageName($imgUrl, $newWidth, $newHeight);
     if (self::$imageWriter->isFresh($imageName)) {
+      if (self::$imageWriter->isEmpty($imageName))
+        return FALSE;
+      list(self::$lastWidth, self::$lastHeight) = self::$imageWriter->getImageSize($imageName);
       return $imageName;
     } else {
       $imageStr = file_get_contents($imgUrl);
@@ -251,6 +239,7 @@ class GazetteRSS extends RSS {
          if ($image) {
    
            if ($newWidth === NULL && $newHeight === NULL) {
+             // we don't know the image size so we just return it as unknown
              if (self::$imageWriter->writeImage($image, $imageName)) {
                // save state
                self::$lastWidth = $newWidth;
@@ -261,26 +250,41 @@ class GazetteRSS extends RSS {
                return FALSE;
              }
            }
+     
+           $oldWidth = imagesx($image);
+           $oldHeight = imagesy($image);
+
+           // don't waste time resizing 1 pixel images
+           // we need a signal so we know it's invalid the next time we
+           // try to access this image -- write a blank file
+           if ($oldWidth <= 1 && $oldHeight <= 1) {
+             $path = self::$imageWriter->getFullPath($imageName);
+             touch($path);
+             return FALSE;
+           }
 
            $oldOriginX = 0;
            $oldOriginY = 0;
      
-           $oldWidth = imagesx($image);
-           $oldHeight = imagesy($image);
+           // if images are smaller than our max dimensions,
+           // make sure they don't increase
+           if ($newWidth > $oldWidth) $newWidth = $oldWidth;
+           if ($newHeight > $oldHeight) $newHeight = $oldHeight;
+
            // if both newWidth and newHeight are specified,
            // decide whether we need to truncate in one dimension
            if ($newWidth !== NULL && $newHeight !== NULL) {
-             $xScale = $maxWidth / $oldWidth;
-             $yScale = $maxHeight / $oldHeight;
+             $xScale = $newWidth / $oldWidth;
+             $yScale = $newHeight / $oldHeight;
      
              // we might not get round numbers above, so use percent difference
              if (abs($xScale / $yScale - 1) > 0.05) {
                if ($yScale < $xScale) { // truncate height from center
-                 $oldHeightIfSameRatio = $maxHeight * $oldWidth / $maxWidth;
+                 $oldHeightIfSameRatio = $newHeight * $oldWidth / $newWidth;
                  $oldOriginY = ($oldHeight - $oldHeightIfSameRatio) / 2;
                  $oldHeight = $oldHeightIfSameRatio;
                } else { // truncate width from center
-                 $oldWidthIfSameRatio = $maxWidth * $oldHeight / $maxHeight;
+                 $oldWidthIfSameRatio = $newWidth * $oldHeight / $newHeight;
                  $oldOriginX = ($oldWidth - $oldWidthIfSameRatio) / 2;
                  $oldWidth = $oldWidthIfSameRatio;
                }
@@ -297,9 +301,13 @@ class GazetteRSS extends RSS {
              $newWidth = $oldWidth * $newHeight / $oldHeight;
            }
 
-           $newImage = imagecreatetruecolor($newWidth, $newHeight);
-           imagecopyresized($newImage, $image, 0, 0, $oldOriginX, $oldOriginY, $newWidth, $newHeight, $oldWidth, $oldHeight);
-
+           // don't resize the image if the dimensions haven't changed
+           if ($oldWidth != $newWidth || $oldHeight != $newHeight) {
+             $newImage = imagecreatetruecolor($newWidth, $newHeight);
+             imagecopyresized($newImage, $image, 0, 0, $oldOriginX, $oldOriginY, $newWidth, $newHeight, $oldWidth, $oldHeight);
+           } else {
+             $newImage = $image;
+           }
 
            if (self::$imageWriter->writeImage($newImage, $imageName)) {
              // save state
@@ -325,6 +333,8 @@ class GazetteRSS extends RSS {
   }
 
   private static function imageUrl($filename) {
+    if (!$filename) return FALSE;
+
     $port = $_SERVER['SERVER_PORT'] == 80 
       ? '' 
       : ':' . $_SERVER['SERVER_PORT'];
