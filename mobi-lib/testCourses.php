@@ -9,7 +9,10 @@ define('TERM_QUERY','&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to
 define('TERM', 'Fall2010');
 define('SCHOOL_QUERY_BASE', '&fq_school_nm=school_nm:"');
 
-
+  function compare_courseNumber($a, $b)
+{
+  return strnatcmp($a['name'], $b['name']);
+}
 
 class CourseData {
   // is there really not a data source for this?
@@ -144,6 +147,8 @@ class CourseData {
     return $seasons[ $data["season"] ] . " 20" . $data["year"];
   }
 
+
+
   public static function get_subject_details($subjectId) {
 
       $urlString = STELLAR_BASE_URL .'q=id:'.$subjectId;
@@ -165,9 +170,36 @@ class CourseData {
          $subject_fields['name'] = $nm[0];
          $subject_fields['masterId'] = $id[0];
          $titl = explode(':', $single_course->title);
-         $subject_fields['title'] = $titl[0];
+         $len = count($titl);
+          for ($ind = 0; $ind < $len; $ind++) {
+             if ($ind == $len-1)
+                 $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
+             else
+                $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
+         }
+
+         //$subject_fields['title'] = $titl[0];
          $desc = explode(':', $single_course->description);
-         $subject_fields['description'] = $desc[0];
+         $len = count($desc);
+         for ($ind = 0; $ind < $len; $ind++) {
+             if ($ind == $len-1)
+                 $subject_fields['description'] = $subject_fields['description'] .$desc[$ind];
+             else
+                $subject_fields['description'] = $subject_fields['description'] .$desc[$ind] .':';
+         }
+        // $subject_fields['description'] = $desc[0];
+         $pre_req = explode(':', $single_course->prereq);
+         $subject_fields['preReq'] = $pre_req[0];
+         $credits = explode(':', $single_course->credits);
+         $subject_fields['credits'] = $credits[0];
+         $cross_reg = explode(':', $single_course->crossreg);
+         $subject_fields['cross_reg'] = $cross_reg[0];
+         $exam_group = explode(':', $single_course->exam_group);
+         $subject_fields['exam_group'] = $exam_group[0];
+         $dept = explode(':', $single_course->department);
+         $subject_fields['department'] = $dept[0];
+         $school = explode(':', $single_course->school_name);
+         $subject_fields['school'] = $school[0];
          //$trm = explode(':',$single_course->term_description);
          //$subject_fields['term'] = $trm[0];
          $subject_fields['term'] = TERM;
@@ -180,7 +212,14 @@ class CourseData {
          $classtime['location'] = $loc[0];
 
          $m_time = explode(':', $single_course->meeting_time);
-         $classtime['time'] = $m_time[0];
+         $len = count($m_time);
+         for ($ind = 0; $ind < $len; $ind++) {
+             if ($ind == $len-1)
+                 $classtime['time'] = $classtime['time'] .$m_time[$ind];
+             else
+                $classtime['time'] = $classtime['time'] .$m_time[$ind] .':';
+         }
+         
          $classtime_array[] = $classtime;
          $subject_fields['times'] = $classtime_array;
 
@@ -246,7 +285,7 @@ class CourseData {
    
      $xml_obj = simplexml_load_string($xml);
     // $nbr = 1;
-     
+
      
      foreach($xml_obj->courses->course as $single_course) {
          $subject_fields = array();
@@ -255,26 +294,31 @@ class CourseData {
          $subject_fields['name'] = $nm[0];
          $subject_fields['masterId'] = $id[0];
          $titl = explode(':', $single_course->title);
-         $subject_fields['title'] = $titl[0];
+                  $len = count($titl);
+          for ($ind = 0; $ind < $len; $ind++) {
+             if ($ind == $len-1)
+                 $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
+             else
+                $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
+         }
+         //$subject_fields['title'] = $titl[0];
          $subject_fields['term'] = TERM;
 
          $subject_array[] = $subject_fields;
      }
   }
 
+  usort($subject_array, 'compare_courseNumber');
   $courseToSubject = $subject_array;
-
   $coursesToSubjectsMap[] = $courseToSubject; // store it in a global array containing courses to subjects
   return $courseToSubject;
  }
 
 
-
-
   // returns the Schools (Course-Group) to Departmetns (Courses) map
   public static function get_schoolsAndCourses() {
 
-    $xml = file_get_contents(STELLAR_BASE_URL);
+    $xml = file_get_contents(STELLAR_BASE_URL .TERM_QUERY);
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
@@ -289,7 +333,7 @@ class CourseData {
                 $self->schools[] = $field['name'];
 
                 $school_string = SCHOOL_QUERY_BASE .str_replace(' ', '+', $field['name']) .'"&';
-                $urlString = STELLAR_BASE_URL . $school_string;
+                $urlString = STELLAR_BASE_URL .TERM_QUERY . $school_string;
                 $courses_map_xml = file_get_contents($urlString);
 
                     if($courses_map_xml == "") {
