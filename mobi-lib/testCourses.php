@@ -170,9 +170,24 @@ class CourseData {
          $subject_fields['name'] = $nm[0];
          $subject_fields['masterId'] = $id[0];
          $titl = explode(':', $single_course->title);
-         $subject_fields['title'] = $titl[0];
+         $len = count($titl);
+          for ($ind = 0; $ind < $len; $ind++) {
+             if ($ind == $len-1)
+                 $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
+             else
+                $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
+         }
+
+         //$subject_fields['title'] = $titl[0];
          $desc = explode(':', $single_course->description);
-         $subject_fields['description'] = $desc[0];
+         $len = count($desc);
+         for ($ind = 0; $ind < $len; $ind++) {
+             if ($ind == $len-1)
+                 $subject_fields['description'] = $subject_fields['description'] .$desc[$ind];
+             else
+                $subject_fields['description'] = $subject_fields['description'] .$desc[$ind] .':';
+         }
+        // $subject_fields['description'] = $desc[0];
          $pre_req = explode(':', $single_course->prereq);
          $subject_fields['preReq'] = $pre_req[0];
          $credits = explode(':', $single_course->credits);
@@ -279,7 +294,14 @@ class CourseData {
          $subject_fields['name'] = $nm[0];
          $subject_fields['masterId'] = $id[0];
          $titl = explode(':', $single_course->title);
-         $subject_fields['title'] = $titl[0];
+                  $len = count($titl);
+          for ($ind = 0; $ind < $len; $ind++) {
+             if ($ind == $len-1)
+                 $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
+             else
+                $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
+         }
+         //$subject_fields['title'] = $titl[0];
          $subject_fields['term'] = TERM;
 
          $subject_array[] = $subject_fields;
@@ -293,13 +315,10 @@ class CourseData {
  }
 
 
-
-
-
   // returns the Schools (Course-Group) to Departmetns (Courses) map
   public static function get_schoolsAndCourses() {
 
-    $xml = file_get_contents(STELLAR_BASE_URL);
+    $xml = file_get_contents(STELLAR_BASE_URL .TERM_QUERY);
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
@@ -314,7 +333,7 @@ class CourseData {
                 $self->schools[] = $field['name'];
 
                 $school_string = SCHOOL_QUERY_BASE .str_replace(' ', '+', $field['name']) .'"&';
-                $urlString = STELLAR_BASE_URL . $school_string;
+                $urlString = STELLAR_BASE_URL .TERM_QUERY . $school_string;
                 $courses_map_xml = file_get_contents($urlString);
 
                     if($courses_map_xml == "") {
