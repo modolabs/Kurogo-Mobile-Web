@@ -755,7 +755,7 @@ class CourseData {
   }
 
   public static function search_subjects($terms) {
-    $terms = trim($terms);
+  /*  $terms = trim($terms);
     $subjects_found = Array();
 
     $terms_uc = strtoupper($terms);
@@ -795,7 +795,76 @@ class CourseData {
       }
     }
 
-    return $subjects_found;
+    return $subjects_found;*/
+
+      $term = TERM_QUERY;
+      $search_terms = $terms;
+
+      $urlString = STELLAR_BASE_URL .$term . 'q=' .$terms .'&';
+
+      $xml = file_get_contents($urlString);
+
+      if($xml == "") {
+      // if failed to grab xml feed, then run the generic error handler
+      throw new DataServerException('COULD NOT GET XML');
+    }
+
+    $xml_obj = simplexml_load_string($xml);
+    $count = $xml_obj->courses['numFound']; // Number of Courses Found
+
+    if ($count > 100) {
+        $too_many_results = array('count' => $count);
+    }
+
+
+    $iterations = ($count/25);
+
+   // printf("Total: %d\n",$count);
+   // printf("Iterations: %d\n",$iterations);
+
+    $subject_array = array();
+    for ($index=0; $index < $iterations; $index=$index+1) {
+        //printf(" Current = %d\n",$index*25);
+        $number = $index * 25;
+        $queryAddition = '&start=' .$number;
+
+
+      $urlString = STELLAR_BASE_URL .$term . 'q=' .$terms .'&' .$queryAddition;
+      $xml = file_get_contents($urlString);
+
+      if($xml == "") {
+      // if failed to grab xml feed, then run the generic error handler
+      throw new DataServerException('COULD NOT GET XML');
+    }
+
+     $xml_obj = simplexml_load_string($xml);
+
+     foreach($xml_obj->courses->course as $single_course) {
+         $subject_fields = array();
+         $id = explode(':',$single_course['id']);
+         $nm = explode(':', $single_course->course_number);
+         $subject_fields['name'] = $nm[0];
+         $subject_fields['masterId'] = $id[0];
+         $titl = explode(':', $single_course->title);
+                  $len = count($titl);
+          for ($ind = 0; $ind < $len; $ind++) {
+             if ($ind == $len-1)
+                 $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
+             else
+                $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
+         }
+         //$subject_fields['title'] = $titl[0];
+         $subject_fields['term'] = TERM;
+
+         $subject_array[] = $subject_fields;
+     }
+  }
+
+  usort($subject_array, 'compare_courseNumber');
+  $courseToSubject = array('count'=>$count, 'classes'=> $subject_array);
+  return $courseToSubject;
+
+
   }
 
 }

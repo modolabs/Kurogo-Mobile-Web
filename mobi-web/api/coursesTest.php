@@ -69,6 +69,15 @@ case 'subjectList':
     }
     break;
 
+    case 'search':
+    $query = urldecode($_REQUEST['query']);
+    $data = CourseData::search_subjects($query);
+   /* $term = CourseData::get_term();
+    foreach($data as $index => $value) {
+      $data[$index]['term'] = $term;
+    }*/
+    break;
+
  }
 
  echo json_encode($data);
