@@ -831,7 +831,7 @@ class CourseData {
         $queryAddition = '&start=' .$number;
 
 
-      $urlString = STELLAR_BASE_URL .$term . 'q=' .$terms .'&' .$queryAddition;
+      $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&' .$queryAddition;
       $xml = file_get_contents($urlString);
 
       if($xml == "") {
