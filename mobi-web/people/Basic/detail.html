@@ -38,15 +38,15 @@ $page->content_begin();
 ?>
 	<p class="nav">
         <?
-          $item->display('name', 'cn', NULL, NULL);
-          $item->display('title', 'title', NULL, NULL);
-          $item->display('dept', 'ou', NULL, NULL);
-          $item->display('home', 'homephone', "phoneHREF", 'phone');
-          $item->display('phone', 'telephonenumber', "phoneHREF", 'phone');
-          $item->display('fax', 'facsimiletelephonenumber', "phoneHREF", 'phone');
-          $item->display('address', 'address');
-          $item->display('email', 'mail', "mailHREF");
-          $item->display('office', 'postaladdress', "mapURL");
+          $item->display('name: ', 'cn', NULL, NULL);
+          $item->display('title: ', 'title', NULL, NULL);
+          $item->display('dept: ', 'ou', NULL, NULL);
+          $item->display('home: ', 'homephone', "phoneHREF", 'phone');
+          $item->display('phone: ', 'telephonenumber', "phoneHREF", 'phone');
+          $item->display('fax: ', 'facsimiletelephonenumber', "phoneHREF", 'phone');
+          $item->display('address: ', 'address');
+          $item->display('email: ', 'mail', "mailHREF");
+          $item->display('office: ', 'postaladdress', "mapURL");
         ?>
 	</p>
 

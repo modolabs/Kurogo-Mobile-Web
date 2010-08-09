@@ -4,7 +4,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 	<meta http-equiv="content-type" content="application/xhtml+xml" />
-        <meta name = "viewport" content = "width = device-width, height = device-height" />
+    <meta name = "viewport" content = "width = device-width, height = device-height" />
+	<meta name="HandheldFriendly" content="True" />
+<? if($page->platform=='bbplus'){ ?>
+	<meta name="MobileOptimized" content="480" />
+<? } ?>
 	<title>Harvard Mobile</title>
 	<link rel="stylesheet" type="text/css" href="../<?=$page->branch?>/<? if ($page->platform == 'bbplus') { ?>core-bbplus.css<? } else { ?>core.css<? } ?>" />	
 
@@ -17,9 +21,14 @@
 
 <body>
 
-<h2 id="header">
-<?=$page->img_tag('harvard-logo','gif')?>Harvard Mobile
-</h2>
+<? if($page->platform=='bbplus'){ ?>
+	BB+
+<? } else {?>
+	<h2 id="header">
+	<?=$page->img_tag('harvard-logo','gif')?>Harvard Mobile
+	</h2>	
+<? } ?>
+
 
 <p class="bb"> </p>
 
