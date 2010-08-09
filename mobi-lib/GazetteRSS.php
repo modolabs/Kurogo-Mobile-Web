@@ -61,15 +61,14 @@ class GazetteRSS extends RSS {
     return $result;
   }
 
-  public static function searchArticlesArray($searchTerms, $lastStoryId=NULL) {
-    $xml_text = self::searchArticles($searchTerms, $lastStoryId);
+  public static function searchArticlesArray($searchTerms, $lastStoryId=NULL, $direction="forward") {
+    $xml_text = self::searchArticles($searchTerms, $lastStoryId, $direction);
     $doc = new DOMDocument();
     $doc->loadXML($xml_text);
     return self::xml2Array($doc);
   }
 
-  public static function searchArticles($searchTerms, $lastStoryId=NULL) {
-
+  public static function searchArticles($searchTerms, $lastStoryId=NULL, $direction="forward") {
     // we will just store filenames by search terms
     if (!self::$searchCache->isFresh($searchTerms)) {
       $query = http_build_query(array('s' => $searchTerms, 'feed' => 'rss2'));
@@ -79,18 +78,19 @@ class GazetteRSS extends RSS {
     }
 
     $cacheFile = self::$searchCache->getFullPath($searchTerms);
-    return self::loadArticlesFromCache($cacheFile, $lastStoryId);
+    return self::loadArticlesFromCache($cacheFile, $lastStoryId, $direction);
   }
 
-  public static function getMoreArticlesArray($channel=0, $lastStoryId=NULL) {
-    $xml_text = self::getMoreArticles($channel, $lastStoryId);
+
+  public static function getMoreArticlesArray($channel=0, $lastStoryId=NULL, $direction="forward") {
+    $xml_text = self::getMoreArticles($channel, $lastStoryId, $direction);
     $doc = new DOMDocument();
     $doc->loadXML($xml_text);
     return self::xml2Array($doc);
   }
 
-  public static function getMoreArticles($channel=0, $lastStoryId=NULL) {
-    $cacheId = ($lastStoryId === NULL) ? $channel : $channel . ':' . $lastStoryId;
+  public static function getMoreArticles($channel=0, $lastStoryId=NULL, $direction="forward") {
+    $cacheId = ($lastStoryId === NULL) ? $channel : $channel . ':' . $lastStoryId . ':' . $direction;
 
     if ($channel < count(self::$channels)) {
       $channelInfo = self::$channels[$channel];
@@ -108,13 +108,13 @@ class GazetteRSS extends RSS {
 
       $cacheFile = self::$diskCache->getFullPath($filename);
 
-      $result = self::loadArticlesFromCache($cacheFile, $lastStoryId);
+      $result = self::loadArticlesFromCache($cacheFile, $lastStoryId, $direction);
       self::$feeds[$cacheId] = $result;
       return $result;
     }
   }
 
-  private static function loadArticlesFromCache($path, $lastStoryId=NULL) {
+  private static function loadArticlesFromCache($path, $lastStoryId=NULL, $direction) {
 
     $doc = new DOMDocument();
     $doc->load($path);
@@ -126,15 +126,23 @@ class GazetteRSS extends RSS {
     $channelRoot = $newdoc->createElement('channel');
     $rssRoot->appendChild($channelRoot);
 
+    $numItems = $doc->getElementsByTagName('item')->length;
     if ($lastStoryId === NULL) {
       // provide a flag to the native app so it knows how many stories
       // are in this feed, since we only return up to 10
-      $numItems = $doc->getElementsByTagName('item')->length;
       self::appendDOMAttribute($newdoc, $channelRoot, 'items', $numItems);
     }
 
     $count = 0;
-    foreach ($doc->getElementsByTagName('item') as $item) {
+    $itemNodes = $doc->getElementsByTagName('item');
+    
+    for($index = 0; $index < $numItems; $index++) {
+      if($direction == "forward") {
+          $item = $itemNodes->item($index);
+      } else {
+          $item = $itemNodes->item($numItems-1-$index);
+      }
+
       if ($count >= 10) {
         break;
       }
