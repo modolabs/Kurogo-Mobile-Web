@@ -249,22 +249,22 @@ a.formbutton div {
 /* Top navigation/titlebar */
 
 #navbar {
-	border-bottom: 1px solid #a3b2c5;
 	margin: 0 0 10px 0;
 	background-color:  #6f8fae;
-	background-image: url(../Webkit/images/navback.png);
+	background-image: url(../Touch/images/navback.jpg);
+	border-bottom: 1px solid #8d867d;
 	background-repeat: repeat-x;
 	font-size: 100%;
 	line-height: 1.4em;
 	font-weight: bold;
 	color: #ffffff;
-	height: 2.5em;
-	padding: 1px 2px 2px 4px;
+	height: 36px;
+	padding: 0 2px 0 0;
 	text-overflow:ellipsis;
 } 
 
 html>body #navbar {
-	height: 2.4em;
+	height: 36px;
 	line-height: 2em;
 }
 
