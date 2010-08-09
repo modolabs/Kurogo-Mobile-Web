@@ -71,8 +71,7 @@ case 'subjectList':
 
     case 'search':
     $query = urldecode($_REQUEST['query']);
-        $data[] = $query;
-    //$data = CourseData::search_subjects($query);
+    $data = CourseData::search_subjects($query);
    /* $term = CourseData::get_term();
     foreach($data as $index => $value) {
       $data[$index]['term'] = $term;
