@@ -156,7 +156,7 @@ fieldset {
 .secondary {
 	margin: 1em 0;
 	padding: .4em;
-	background-color: #F9F6EF;
+	background-color: #f9f6ef;
 	font-size: 93%;
 	line-height: 1.6em;
 }
@@ -238,7 +238,8 @@ fieldset {
 
 .label {
 	width: 3.5em;
-	color: #627ba1;
+	color: #554c41;
+	padding-right: 3px;
 }
 
 .value {

@@ -6,9 +6,9 @@ html, body {
 }
 
 body {
-	background-color: #b9c6d6;
+	background-color: #e3ddd1;
 	font: 12px/1.33em Helvetica, Arial, sans-serif;
-	color: #202629;
+	color: #333;
 }
 
 h1, h2, h3 {
@@ -24,6 +24,7 @@ h1 {
 }
 
 h2 {
+	font-family: Georgia, serif;
 	font-size: 133%;
 	font-weight: normal;
 }
@@ -38,15 +39,15 @@ h4 {
 	font-weight: normal;
 	margin: 0 0 0.43em 0;
 	padding: 0;
-	color: #627ba1;
+	color: #333;
 }
 
 a {
-	color: #933;
+	color: #900;
 }
 
 a:visited {
-	color: #933;
+	color: #900;
 }
 
 a img {
@@ -114,7 +115,7 @@ dd {
 	font-size: 78%;
 	line-height: 1.25em;
 	font-weight: normal;
-	color: #303639;
+	color: #333;
 }
 
 #footerlinks {
@@ -126,7 +127,7 @@ dd {
 
 #footerlinks a {
 	text-decoration: none;
-	color: #123;
+	color: #333;
 	padding: 4px;
 }
 
@@ -167,12 +168,12 @@ textarea {
 
 select {
 	width: 100%;
-	border: 1px solid #6585a9;
+	border: 1px solid #aca79f;
 	padding: 3px 2px;
 }
 
 .forminput {
-	border: 2px solid #758ea6;
+	border: 2px solid #62615e;
 	margin: 0;
 	padding: 3px 2px;
 	width: 98%
@@ -182,7 +183,7 @@ select {
 	font-size: 100%;
 	line-height: 1em;
 	padding: 0.2em 0.3em;
-	background-color: #6585a9;
+	background-color: #62615e;
 	color: #fff;
 	border: none;
 	margin-left: 2px
@@ -248,20 +249,22 @@ a.formbutton div {
 /* Top navigation/titlebar */
 
 #navbar {
-	border-bottom: 1px solid #a3b2c5;
 	margin: 0 0 10px 0;
 	background-color:  #6f8fae;
+	background-image: url(../Touch/images/navback.jpg);
+	border-bottom: 1px solid #8d867d;
+	background-repeat: repeat-x;
 	font-size: 100%;
 	line-height: 1.4em;
 	font-weight: bold;
 	color: #ffffff;
-	height: 2.5em;
-	padding: 1px 2px 2px 4px;
+	height: 36px;
+	padding: 0 2px 0 0;
 	text-overflow:ellipsis;
 } 
 
 html>body #navbar {
-	height: 2.4em;
+	height: 36px;
 	line-height: 2em;
 }
 
@@ -291,13 +294,12 @@ html>body #navbar {
 	font-weight: normal;
 	color: #000;
 	background-color: #fff; 	
-	border-bottom: 1px solid #c3cfd9;
 	text-align: left;
 }
 
 .nav li {	
 	list-style-type: none;	
-	border-top: 1px solid #c3cfd9;
+	border-top: 1px solid #aca79f;
 	padding: 0;
 	position: relative;
 }
@@ -339,7 +341,7 @@ html>body #navbar {
 }
 
 .topline {
-	border-top: 1px solid #c3cfd9;
+	border-top: 1px solid #aca79f;
 }
 
 .tabbody .nav {
@@ -372,7 +374,7 @@ html>body #navbar {
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
-	color: #000;
+	color: #333;
 	padding: 12px 32px 12px 8px;
 }
 
@@ -398,7 +400,7 @@ html>body #navbar {
 .secondary {
 	margin: 8px; 
 	padding: 0;	   
-	background-color: #edf1f7;
+	background-color: #f9f6ef;
 	font-size: 100%;
 	font-weight: normal;
 	color: #000;
@@ -423,22 +425,22 @@ html>body #navbar {
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
-	color: #101619;
+	color: #333;
 	padding: 10px 32px 10px 8px;
 }
 
 .secondary a:visited {
-	color: #101619;
+	color: #333;
 }
 
 
 .tertiary {
 	margin: 8px; 
 	padding: 0;	   
-	background-color: #d3dbe6;
+	background-color: #f9f6ef;
 	font-size: 93%;
 	font-weight: normal;
-	color: #000;
+	color: #333;
 	text-align: left;
 }
 
@@ -460,12 +462,12 @@ html>body #navbar {
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
-	color: #202629;
+	color: #333;
 	padding: 9px 32px 9px 8px;
 }
 
 .tertiary a:visited {
-	color: #202629;
+	color: #333;
 }
 
 .bottomnav {
@@ -600,7 +602,7 @@ ul.nolinks li {
 	padding-right: 0.33em;
 	line-height: 1.2em;
 	text-align: left;
-	color: #627ba1;
+	color: #888;
 }
 
 .value {
