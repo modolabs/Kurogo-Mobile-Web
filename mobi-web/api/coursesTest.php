@@ -70,7 +70,10 @@ case 'subjectList':
     break;
 
     case 'search':
+        $query1 = $_REQEUST['query'];
+        echo $query1;
     $query = urldecode($_REQUEST['query']);
+        echo $query;
     $data = CourseData::search_subjects($query);
    /* $term = CourseData::get_term();
     foreach($data as $index => $value) {

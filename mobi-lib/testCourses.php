@@ -804,6 +804,8 @@ class CourseData {
 
       $xml = file_get_contents($urlString);
 
+      echo $urlString;
+
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
       throw new DataServerException('COULD NOT GET XML');
