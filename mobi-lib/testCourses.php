@@ -863,7 +863,7 @@ class CourseData {
   }
 
   usort($subject_array, 'compare_courseNumber');
-  $courseToSubject = array('count'=>$count, 'classes'=> $subject_array);
+  $courseToSubject = array('count' => $count, 'classes' => $subject_array);
   return $courseToSubject;
 
 
