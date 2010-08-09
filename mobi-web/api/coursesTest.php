@@ -65,13 +65,14 @@ case 'subjectList':
 
      // $data['term'] = StellarData::get_term();
     } else {
-      $data = array('error' => 'SubjectNotFound', 'message' => 'Stellar could not find this subject');
+      $data = array('error' => 'SubjectNotFound', 'me ssage' => 'Stellar could not find this subject');
     }
     break;
 
     case 'search':
     $query = urldecode($_REQUEST['query']);
-    $data = CourseData::search_subjects($query);
+        $data[] = $query;
+    //$data = CourseData::search_subjects($query);
    /* $term = CourseData::get_term();
     foreach($data as $index => $value) {
       $data[$index]['term'] = $term;
