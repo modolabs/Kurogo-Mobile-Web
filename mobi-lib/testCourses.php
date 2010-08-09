@@ -804,9 +804,6 @@ class CourseData {
 
       $xml = file_get_contents($urlString);
 
-      echo $urlString; //$urlString;
-      echo $xml;
-      
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
       throw new DataServerException('COULD NOT GET XML');
@@ -816,14 +813,13 @@ class CourseData {
     $count = $xml_obj->courses['numFound']; // Number of Courses Found
 
     if ($count > 100) {
-        $too_many_results = array('count' => $count);
+        $too_many_results = array('count' => $count, 'classes' => array());
+        return $too_many_results;
+
     }
 
 
     $iterations = ($count/25);
-
-    echo $count;
-    echo $iterations;
 
    // printf("Total: %d\n",$count);
    // printf("Iterations: %d\n",$iterations);
@@ -837,9 +833,6 @@ class CourseData {
 
       $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&' .$queryAddition;
       $xml = file_get_contents($urlString);
-
-      echo $urlString;
-      echo "=-----";
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
