@@ -800,11 +800,11 @@ class CourseData {
       $term = TERM_QUERY;
       $search_terms = $terms;
 
-      $urlString = STELLAR_BASE_URL .$term . 'q=' .$terms .'&';
+      $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&';
 
       $xml = file_get_contents($urlString);
 
-      return $urlString;
+      //return $urlString;
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
