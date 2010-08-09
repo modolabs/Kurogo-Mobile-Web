@@ -61,6 +61,13 @@ class GazetteRSS extends RSS {
     return $result;
   }
 
+  public static function searchArticlesArray($searchTerms, $lastStoryId=NULL) {
+    $xml_text = self::searchArticles($searchTerms, $lastStoryId);
+    $doc = new DOMDocument();
+    $doc->loadXML($xml_text);
+    return self::xml2Array($doc);
+  }
+
   public static function searchArticles($searchTerms, $lastStoryId=NULL) {
 
     // we will just store filenames by search terms
@@ -73,6 +80,13 @@ class GazetteRSS extends RSS {
 
     $cacheFile = self::$searchCache->getFullPath($searchTerms);
     return self::loadArticlesFromCache($cacheFile, $lastStoryId);
+  }
+
+  public static function getMoreArticlesArray($channel=0, $lastStoryId=NULL) {
+    $xml_text = self::getMoreArticles($channel, $lastStoryId);
+    $doc = new DOMDocument();
+    $doc->loadXML($xml_text);
+    return self::xml2Array($doc);
   }
 
   public static function getMoreArticles($channel=0, $lastStoryId=NULL) {
@@ -340,6 +354,79 @@ class GazetteRSS extends RSS {
     $parent->appendChild($attributeNode);
   }
 
+  private static function xml2Array(DOMDocument $xml) {
+      $items = array();
+
+      foreach($xml->getElementsByTagName("item") as $xml_item) {
+          $item = array(
+             "title" => self::getChildValue($xml_item, "title"),
+             "link" => self::getChildValue($xml_item, "link"),
+             "story_id" => self::getChildValue($xml_item, "harvard:WPID"),
+             "author" => self::getChildValue($xml_item, "harvard:author"),
+             "description" => self::getChildValue($xml_item, "description"),
+             "unixtime" => strtotime(self::getChildValue($xml_item, "pubDate")),
+             "featured" => self::isFeatured($xml_item),
+             "body" => self::getChildValue($xml_item, "content:encoded"),
+             "image" => self::getImage($xml_item),
+           );
+
+
+          $items[] = $item;
+      }
+
+      return $items;
+  }
+
+  private static function getChildrenWithTag(DOMElement $xml, $tag) {
+      $items = array();
+      foreach($xml->childNodes as $item) {
+          if($item->tagName == $tag) {
+              $items[] = $item;
+          }
+      }
+      return $items;
+  }
+
+  private static function getChildByTagName(DOMElement $xml, $tag) {
+      $items = self::getChildrenWithTag($xml, $tag);
+      if(count($items) == 1) {
+          return $items[0];
+      } else if(count($item) == 0) {
+          throw new Exception("No elements with $tag found");
+      } else {
+          throw new Exception(count($items) . "with $tag found");
+      }
+  }
+
+  private static function getChildValue(DOMElement $xml, $tag) {
+      return self::getChildByTagName($xml, $tag)->nodeValue;
+  }
+
+  private static function isFeatured(DOMElement $xml) {
+      $nodeValue = self::getChildValue($xml, "harvard:featured");
+
+      if($nodeValue == "homepage" || $nodeValue == "category") {
+          return true;
+      }
+
+      if($nodeValue == "no") {
+          return false;
+      }
+
+      return false;
+  }
+
+  private static function getImage($xml_item) {
+      $image_xml = self::getChildByTagName($xml_item, "image");
+
+      return array(
+          "title" => self::getChildValue($image_xml,  "title"),
+          "link"  => self::getChildValue($image_xml,  "link"),
+          "url"   => self::getChildValue($image_xml,  "url"),
+          "width" => self::getChildValue($image_xml,  "width"),
+          "height" => self::getChildValue($image_xml, "height"),
+      );
+  }
 }
 
 GazetteRSS::init();
