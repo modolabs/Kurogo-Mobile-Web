@@ -102,15 +102,6 @@ class WebkitPage extends Page {
     $this->acquire_end("inline_js");
     $this->raw_js[] = $this->inline_js;
   }
-
-  public function delta_file($name, $extension) {
-    $delta_file = $this->branch . '/' . $name . '-' . $this->platform . '.' . $extension;
-    if (file_exists($delta_file)) {
-      return $delta_file;
-    } else {
-      return $this->branch . '/' . $name . '.' . $extension;
-    }
-  }
 }
 
 ?>

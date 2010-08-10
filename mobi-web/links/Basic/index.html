@@ -9,7 +9,8 @@ $page->content_begin();
 
       <p class="nav">
            <? foreach($links as $index => $item) { ?>
-                  <a href="<?=$item['link']?>" accesskey="<?=$index+1?>"><?=$index+1?>. <?=$item['name']?></a><br/>
+	   <?=$page->link_access_key($item['link'], $item['name'])?>
+	   <br />
            <? } ?>
       </p>
 

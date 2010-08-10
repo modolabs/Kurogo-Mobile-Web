@@ -19,9 +19,10 @@ $page->content_begin();
 	</p>
 
 	<p class="nav">
-             <? $cnt = 1; foreach($categories as $category => $title) { ?>
-	        <a href="<?=categoryURL($category)?>" accesskey="<?=$cnt?>"><?=$cnt?>. <?=$title?></a><br/>
-             <? $cnt++; } ?>
+             <? foreach ($categories as $category => $title) { ?>
+                <?=$page->link_access_key(categoryURL($category), $title)?>
+                <br/>
+             <? } ?>
 	</p>
 <?
 $page->content_end();

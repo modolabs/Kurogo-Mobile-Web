@@ -34,11 +34,9 @@ $page->content_begin();
 	<h3>Browse by course:</h3>
 
 	<p class="nav">
-		1. Stellar Home<br/>
-		<a href="<?=coursesURL("1-10")?>" accesskey="2">2. Courses 1-10</a><br/>
-		<a href="<?=coursesURL("11-20")?>" accesskey="3">3. Courses 11-20</a><br/>
-		<a href="<?=coursesURL("21-24")?>" accesskey="4">4. Courses 21-24</a><br/>
-		<a href="<?=coursesURL("other")?>" accesskey="5">5. Other Courses</a><br/>
+
+		<?=$page->link_access_key('', 'Courses Home')?><br/>
+		<?=$page->link_access_key(coursesURL("1-10"), 'Courses 1-10')?><br/>
 	</p>
 	
 	<p>

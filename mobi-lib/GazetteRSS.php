@@ -161,7 +161,7 @@ class GazetteRSS extends RSS {
         $content = $contentNode->nodeValue;
         $contentHTML = new DOMDocument();
         // make sure the parser picks up encoded characters
-        $contentHTML->loadHTML('<?xml encoding="UTF-8">' . $content);
+        $contentHTML->loadHTML('<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/></head>' . $content);
 
         foreach ($contentHTML->getElementsByTagName('img') as $imgTag) {
           // skip 1px tracking images

@@ -9,11 +9,10 @@ $page->content_begin();
 	<h2><?=$today['weekday']?>, <?=$today['month_3Let']?> <?=$today['day_num']?>, <?=$today['year']?></h2>
 
 	<p class="nav">
-		1. Events Calendar Home<br/>
-		<a href="<?=dayURL($today, 'events')?>" accesskey="2">2. Today's events</a><br/>
-		<a href="<?=categorysURL()?>" accesskey="2">2. Browse events by category</a>
-		<!--<a href="<?=academicURL($today['year'], $today['month_num'])?>" accesskey="4">4. Academic calendar</a><br/>
-		<a href="<?=holidaysURL($today['year'])?>" accesskey="5">5. Holidays</a><br/>-->
+		<?=$page->link_access_key('', 'Events Calendar Home')?><br/>
+		<?=$page->link_access_key(dayURL($today, 'events'), "Today's Events")?><br/>
+		<?=$page->link_access_key(categorysURL(), 'Browse Events by Category')?><br/>
+		<?=$page->link_access_key(academicURL($today['year'], $today['month_num']), 'Academic Calendar')?><br/>
 	</p>
 	
 	
