@@ -1,0 +1,64 @@
+<?php
+$page->title("Gazette")
+     ->navbar_image("news")
+     ->generate_navigation($newsURL->breadCrumbs("News", "Search"))
+     ->add_stylesheet("Webkit/list")
+     ->add_javascript("Webkit/home");
+
+$page->content_begin();
+?>
+
+<div class="header">
+    <div id="category-switcher">
+        Section:
+        <form method="get" id="category-form">
+             <select name="category_id" onchange="loadCategory(this);">
+                    <? foreach($categories as $id => $title) { ?>
+                        <? if($newsURL->categoryId() == $id) { ?>
+                            <option value="<?=$id?>" selected="true"><?=$title?></option>
+                        <? } else { ?>
+                            <option value="<?=$id?>"><?=$title?></option>
+                        <? } ?>
+                    <? } ?>
+             </select>
+         </form>
+
+         <form id="search-form" style="display:none;">
+            <input type="text" name="search_terms" />
+            <?=$newsURL->hiddenHomeStateForm()?>
+         </form>
+        
+         <button id="toggle-search-button" onclick="toggleSearch();">Search</button>
+    </div>
+</div>
+
+    <ul class="results">
+
+        <? if($previous_url) { ?>
+            <li class="non-story">
+                <a href="<?=$previous_url?>">Previous stories</a>
+            </li>
+        <? } ?>
+
+        <? foreach($stories as $story) { ?>
+            <li class="story">
+                <img src="<?=$story["image"]["url"]?>" />
+                     <a href="<?=$newsURL->storyURL($story)?>">
+                        <?=$story["title"]?><br />
+                        <span class="smallprint"><?=deck($story)?></span>
+                     </a>
+            </li>
+        <? } ?>
+
+        <? if($next_url) { ?>
+            <li class="non-story">
+                <a href="<?=$next_url?>">More stories</a>
+            </li>
+        <? } ?>
+    </ul>
+
+
+
+<?
+$page->content_end();
+?>

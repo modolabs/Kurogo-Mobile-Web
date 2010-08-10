@@ -56,6 +56,16 @@ class GazetteRSS extends RSS {
     return $result;
   }
 
+  public static function getSearchFirstId($searchTerms) {
+      $dom = self::getSearchXML($searchTerms);
+      return self::getFirstId($dom);
+  }
+
+  public static function getSearchLastId($searchTerms) {
+      $dom = self::getSearchXML($searchTerms);
+      return self::getLastId($dom);
+  }
+
   public static function searchArticlesArray($searchTerms, $lastStoryId=NULL, $direction="forward") {
     $xml_text = self::searchArticles($searchTerms, $lastStoryId, $direction);
     $doc = new DOMDocument();
@@ -81,7 +91,18 @@ class GazetteRSS extends RSS {
 
     $doc = new DOMDocument();
     $doc->load($cacheFile);
+    $items = $doc->getElementsByTagName("item");
     return $doc;
+  }
+
+  public static function getArticlesFirstId($channel) {
+      $dom = self::getChannelXML($channel);
+      return self::getFirstId($dom);
+  }
+
+  public static function getArticlesLastId($channel) {
+      $dom = self::getChannelXML($channel);
+      return self::getLastId($dom);
   }
 
   public static function getMoreArticlesArray($channel=0, $lastStoryId=NULL, $direction="forward") {
@@ -383,6 +404,20 @@ class GazetteRSS extends RSS {
       }
 
       return $items;
+  }
+
+  private static function getFirstId(DOMDocument $xml) {
+      $itemNodes = $xml->getElementsByTagName('item');
+      if($itemNodes->length > 0) {
+          return self::getChildValue($itemNodes->item(0), "harvard:WPID");
+      }
+  }
+
+  private static function getLastId(DOMDocument $xml) {
+      $itemNodes = $xml->getElementsByTagName('item');
+      if($itemNodes->length > 0) {
+          return self::getChildValue($itemNodes->item($itemNodes->length-1), "harvard:WPID");
+      }
   }
 
   private static function getChildrenWithTag(DOMElement $xml, $tag) {
