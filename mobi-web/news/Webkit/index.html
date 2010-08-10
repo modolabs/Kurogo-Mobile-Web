@@ -10,25 +10,33 @@ $page->content_begin();
 
 <div class="header">
     <div id="category-switcher">
-        Section:
-        <form method="get" id="category-form">
-             <select name="category_id" onchange="loadCategory(this);">
-                    <? foreach($categories as $id => $title) { ?>
-                        <? if($newsURL->categoryId() == $id) { ?>
-                            <option value="<?=$id?>" selected="true"><?=$title?></option>
-                        <? } else { ?>
-                            <option value="<?=$id?>"><?=$title?></option>
+         <? if($newsURL->isHome()) {?>
+            Section:
+            <form method="get" id="category-form">
+                <select name="category_id" onchange="loadCategory(this);">
+                        <? foreach($categories as $id => $title) { ?>
+                            <? if($newsURL->categoryId() == $id) { ?>
+                                <option value="<?=$id?>" selected="true"><?=$title?></option>
+                            <? } else { ?>
+                                <option value="<?=$id?>"><?=$title?></option>
+                            <? } ?>
                         <? } ?>
-                    <? } ?>
-             </select>
+                </select>
+            </form>
+
+         <? } ?>
+
+         <form id="search-form" <? if($newsURL->isHome()) {?>style="display:none;"<? } ?> >
+               <input type="text" name="search_terms" value="<?=$newsURL->searchTerms()?>"/>
+               <?=$newsURL->hiddenHomeStateForm()?>
+               <? if($newsURL->isSearchResults()) { ?>
+                    <input type="submit" value="Search" />
+               <? } ?>
          </form>
 
-         <form id="search-form" style="display:none;">
-            <input type="text" name="search_terms" />
-            <?=$newsURL->hiddenHomeStateForm()?>
-         </form>
-        
-         <button id="toggle-search-button" onclick="toggleSearch();">Search</button>
+         <? if($newsURL->isHome()) { ?>
+            <button id="toggle-search-button" onclick="toggleSearch();">Search</button>
+         <? } ?>
     </div>
 </div>
 
