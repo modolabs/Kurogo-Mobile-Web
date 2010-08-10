@@ -115,20 +115,27 @@ class BasicPage extends Page {
   }
 
   public function link_access_key($href, $text) {
-    $result = '<a href="' . $href . '"';
-    if ($this->platform != 'bbplus' && self::$access_key < 10) {
-      $result .= ' accesskey="' . self::$access_key . '">'
-              . self::$access_key . ': ';
-      self::$access_key++;
+    $needsKey = ($this->platform != 'bbplus' && self::$access_key < 10);
+    if ($needsKey) {
+      $innerText = self::$access_key . ': ' . $text;
     } else {
-      $result .= '">';
+      $innerText = $text;
     }
-    $result .= $text . '</a>';
+
+    if ($href) {
+      $result = '<a href="' . $href . '"'
+              . ($needsKey ? ' accesskey="' . self::$access_key . '"' : '')
+              . '>' . $innerText . '</a>';
+    } else {
+      $result = $innerText;
+    }
+
+    self::$access_key++;
     return $result;
   }
 
-  public function reset_access_key() {
-    self::$access_key = 0;
+  public function reset_access_key($index=0) {
+    self::$access_key = $index;
   }
 
   public function meta_tags() {
