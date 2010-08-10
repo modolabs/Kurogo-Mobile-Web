@@ -2,31 +2,38 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<meta http-equiv="content-type" content="application/xhtml+xml" />
-        <meta name="MobileOptimized" content="240" />
-        <meta name = "viewport" content = "width=device-width, height=device-height" />
-	<title><?=$title?></title>
-	<link rel="stylesheet" type="text/css" href="<?
-        if ($this->platform == 'bbplus') {
-          echo "../Basic/core-bbplus.css";
-        } else {
-          echo "../Basic/core.css";
-        } ?>" />
-        <? echo $this->stylesheet_links() ?>
+<meta http-equiv="content-type" content="application/xhtml+xml" />
+<?=$meta_mobile_optimized?>
+<meta name="viewport" content="<?=$viewport_content?>"/>
+<title><?=$this->module->title?></title>
+<link rel="stylesheet" type="text/css" href="<?=$this->delta_file('core', 'css')?>" />
+<? echo $this->stylesheet_links() ?>
 
-	<? if ($inline_css) { ?>
-	<style type="text/css">
-	<?=$inline_css?>
-	</style>
-	<? } ?>
+<? if ($inline_css) { ?>
+<style type="text/css">
+<?=$inline_css?>
+</style>
+<? } ?>
 </head>
 
 <body>
 
+<? // conditional header for bbplus -- need to clean this up
+
+if ($this->platform == 'bbplus') { ?>
+
+<div id="header">
+<?=$this->img_tag('harvard-logo', 'png', '', array('class' => 'headercrest'))?>
+<div class="headertext"><?=$this->module->header?></div>
+
+<? } else { ?>
+
 <h1 id="header">
-<? echo $this->img_tag('harvard-logo', 'gif'); ?>
-<?=$header?>
+<?=$this->img_tag('harvard-logo', 'gif')?>
+<?=$this->module->header?>
 </h1>
+
+<? } ?>
 
 <div id="container">
 
@@ -48,15 +55,15 @@
                $extra = $link['phone'] ? " <span class=\"smallprint\">({$link['phone']})</span>" : ""; ?>
                <a href="<?=$link['url']?>" <?=$class_text?>><?=$link['text']?></a><?=$extra?><br/>
           <? } ?>
-             <a href="help.php"><?=$header?> Help</a>
+             <a href="help.php"><?=$this->module->header?> Help</a>
           </p>
      <? } ?>
 
     <p class="bottomnav">
        <a href="../home/" accesskey="0">0: Harvard Mobile Web Home</a><br/>
-       <? foreach($bottom_nav_links as $index => $link) {
-            $number = $index + 1; ?>
-            <a href="<?=$link['url']?>" <? if ($this->platform != 'bbplus') { ?> accesskey="<?=$number?>"><?=$number?>: <? } ?><?=$link['text']?></a><br/>
+       <? foreach($bottom_nav_links as $index => $link) { ?>
+            <?=$this->link_access_key($link['url'], $link['text'])?>
+            <br />
        <? } ?>
     </p>
 </div>
