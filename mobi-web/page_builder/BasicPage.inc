@@ -120,8 +120,27 @@ class BasicPage extends Page {
       $result .= ' accesskey="' . self::$access_key . '">'
               . self::$access_key . ': ';
       self::$access_key++;
+    } else {
+      $result .= '">';
     }
     $result .= $text . '</a>';
+    return $result;
+  }
+
+  public function reset_access_key() {
+    self::$access_key = 0;
+  }
+
+  public function meta_tags() {
+    $result = '';
+    foreach (array('viewport' => $this->viewport_content,
+                   'MobileOptimized' => $meta_mobile_optimized,
+		   'HandheldFriendly' => 'True') as $name => $content)
+    {
+      if ($content) {
+        $result .= '<meta name="' . $name . '" content="' . $content . '">' . "\n";
+      }
+    }
     return $result;
   }
 

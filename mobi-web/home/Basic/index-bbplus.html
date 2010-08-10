@@ -4,18 +4,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
-<meta name="viewport" content="<?=$viewport_content?>" />
-<meta name="HandheldFriendly" content="True" />
-<?=$meta_mobile_optimized?>
+<?=$page->meta_tags()?>
 <title>Harvard Mobile</title>
-<link rel="stylesheet" type="text/css" href="home-bbplus.css" />
-<style type="text/css">
-</style>
+<link rel="stylesheet" type="text/css" href="<?=$page->delta_file('index', 'css') ?>" />
 </head>
 <body>
 
 <div id="container">
-<h1><?=$page->img_tag('harvard-logo-home', 'png', '',Harvard Mobile array('id' => 'logo'))?></h1>
+<h1><?=$page->img_tag('harvard-logo-home', 'png', '', array('id' => 'logo'))?></h1>
 
 <div id="homegrid">
 <? foreach ($modules as $index => $module) { ?>

@@ -3,10 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="content-type" content="application/xhtml+xml" />
-<?=$meta_mobile_optimized?>
-<meta name="viewport" content="<?=$viewport_content?>"/>
-<title><?=$this->module->title?></title>
-<link rel="stylesheet" type="text/css" href="<?=$this->delta_file('core', 'css')?>" />
+<?=$this->meta_tags()?>
+<title><?=$title?></title>
+<link rel="stylesheet" type="text/css" href="../<?=$this->delta_file('core', 'css')?>" />
 <? echo $this->stylesheet_links() ?>
 
 <? if ($inline_css) { ?>
@@ -24,13 +23,13 @@ if ($this->platform == 'bbplus') { ?>
 
 <div id="header">
 <?=$this->img_tag('harvard-logo', 'png', '', array('class' => 'headercrest'))?>
-<div class="headertext"><?=$this->module->header?></div>
+<div class="headertext"><?=$header?></div>
 
 <? } else { ?>
 
 <h1 id="header">
 <?=$this->img_tag('harvard-logo', 'gif')?>
-<?=$this->module->header?>
+<?=$header?>
 </h1>
 
 <? } ?>
@@ -55,12 +54,14 @@ if ($this->platform == 'bbplus') { ?>
                $extra = $link['phone'] ? " <span class=\"smallprint\">({$link['phone']})</span>" : ""; ?>
                <a href="<?=$link['url']?>" <?=$class_text?>><?=$link['text']?></a><?=$extra?><br/>
           <? } ?>
-             <a href="help.php"><?=$this->module->header?> Help</a>
+             <a href="help.php"><?=$header?> Help</a>
           </p>
      <? } ?>
 
     <p class="bottomnav">
-       <a href="../home/" accesskey="0">0: Harvard Mobile Web Home</a><br/>
+       <? $this->reset_access_key();
+          echo $this->link_access_key('../home', 'Harvard Mobile Web Home'); ?>
+       <br />
        <? foreach($bottom_nav_links as $index => $link) { ?>
             <?=$this->link_access_key($link['url'], $link['text'])?>
             <br />

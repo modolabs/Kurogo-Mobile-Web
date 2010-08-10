@@ -4,11 +4,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="content-type" content="application/xhtml+xml" />
-<meta name="viewport" content="<?=$viewport_content?>" />
-<meta name="HandheldFriendly" content="True" />
-<?=$meta_mobile_optimized?>
+<?=$page->meta_tags()?>
 <title>Harvard Mobile</title>
-<link rel="stylesheet" type="text/css" href="../<?=$page->branch?>/<? $page->delta_file('home', 'css') ?>" />	
+<link rel="stylesheet" type="text/css" href="<?=$page->delta_file('index', 'css') ?>" />	
 <? if ($page->get_inline_css()) { ?>
 <style type="text/css">
 <?=$page->get_inline_css()?>
@@ -36,7 +34,6 @@
 
 <p class="nav secondary">
 	<a href="../mobile-about/">About Harvard Mobile</a><br/>
-        <a href="../mobile-about/new.php">What's New</a><? if($whats_new_count) { ?> (<?=$whats_new_count?> items)<? } ?><br/> 
         <a href="../customize/">Customize this Homescreen</a><br/>
         <? if (Modules::is_right_platform($page->platform, 'download')) { ?>
                 <a href="../download/">Download</a><br />

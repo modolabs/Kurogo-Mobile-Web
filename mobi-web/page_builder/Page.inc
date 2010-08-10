@@ -199,7 +199,7 @@ class Page {
     if (!$this->module) {
       // here is a stricter version of the overly permissive regex
       // that used to be in page_header
-      $module_list = implode('|', array_keys(Modules::$moduleList));
+      $module_list = implode('|', array_keys(Modules::$module_data));
       preg_match('/\/(' . $module_list . ')\/[^\/]*?$/', $_SERVER['REQUEST_URI'], $match);
       $this->module = $match[1];
     }
