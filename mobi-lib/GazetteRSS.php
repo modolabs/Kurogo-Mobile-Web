@@ -92,33 +92,28 @@ class GazetteRSS extends RSS {
   }
 
   public static function getMoreArticles($channel=0, $lastStoryId=NULL, $direction="forward") {
-    $cacheId = ($lastStoryId === NULL) ? $channel : $channel . ':' . $lastStoryId . ':' . $direction;
-
-    if ($channel < count(self::$channels)) {
-      $dom_document = self::getChannelXML($channel);
-
-      return self::loadArticlesFromCache($dom_document, $lastStoryId, $direction);
-    } else {
-        throw new Exception("$channel channel number is illegal");
-    }
+    $dom_document = self::getChannelXML($channel);
+    return self::loadArticlesFromCache($dom_document, $lastStoryId, $direction);
   }
 
   private static function getChannelXML($channel) {
     if ($channel < count(self::$channels)) {
-    $channelInfo = self::$channels[$channel];
-    $channelUrl = $channelInfo['url'] . '?format=xml';
+        $channelInfo = self::$channels[$channel];
+        $channelUrl = $channelInfo['url'] . '?format=xml';
 
-    $filename = self::cacheName($channelInfo['url']);
-    if (!self::$diskCache->isFresh($filename)) {
-        $contents = file_get_contents($channelUrl);
-        self::$diskCache->write($contents, $filename);
-    }
+        $filename = self::cacheName($channelInfo['url']);
+        if (!self::$diskCache->isFresh($filename)) {
+            $contents = file_get_contents($channelUrl);
+            self::$diskCache->write($contents, $filename);
+        }
 
-    $cacheFile = self::$diskCache->getFullPath($filename);
+        $cacheFile = self::$diskCache->getFullPath($filename);
 
-    $doc = new DOMDocument();
-    $doc->load($cacheFile);
-    return $doc;
+        $doc = new DOMDocument();
+        $doc->load($cacheFile);
+        return $doc;
+    } else {
+        throw new Exception("$channel channel number is illegal");
     }
   }
 
