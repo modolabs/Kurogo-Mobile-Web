@@ -798,10 +798,10 @@ class CourseData {
     return $subjects_found;*/
       $words = split(' ', $terms);
 
-      $terms = '';
+      $terms = '"';
       for ($ind=0; $ind< count($words); $ind++) {
           if ($ind == count($words)-1)
-            $terms = $terms .$words[$ind];
+            $terms = $terms .$words[$ind]. '"';
           else
             $terms = $terms .$words[$ind] .'+';
       }
