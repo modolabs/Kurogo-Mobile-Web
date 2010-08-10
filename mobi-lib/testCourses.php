@@ -796,6 +796,15 @@ class CourseData {
     }
 
     return $subjects_found;*/
+      $words = split(' ', $terms);
+
+      $terms = '';
+      for ($ind=0; $ind< count($words); $ind++) {
+          if ($ind == count($words)-1)
+            $terms = $terms .$words[$ind];
+          else
+            $terms = $terms .$words[$ind] .'+';
+      }
 
       $term = TERM_QUERY;
       $search_terms = $terms;
@@ -804,7 +813,7 @@ class CourseData {
 
       $xml = file_get_contents($urlString);
 
-     // echo $urlString;
+      echo $urlString;
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
