@@ -796,6 +796,15 @@ class CourseData {
     }
 
     return $subjects_found;*/
+      $words = split(' ', $terms);
+
+      $terms = '"';
+      for ($ind=0; $ind< count($words); $ind++) {
+          if ($ind == count($words)-1)
+            $terms = $terms .$words[$ind]. '"';
+          else
+            $terms = $terms .$words[$ind] .'+';
+      }
 
       $term = TERM_QUERY;
       $search_terms = $terms;
@@ -804,7 +813,7 @@ class CourseData {
 
       $xml = file_get_contents($urlString);
 
-      echo $urlString;
+     // echo $urlString;
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
@@ -815,7 +824,10 @@ class CourseData {
     $count = $xml_obj->courses['numFound']; // Number of Courses Found
 
     if ($count > 100) {
-        $too_many_results = array('count' => $count, 'classes' => array());
+       // $too_many_results = array('count' => $count, 'classes' => array());
+        $count_array = explode(':', $count);
+        $too_many_results['count'] =$count_array[0];
+        $too_many_results['classes'] = array();
         return $too_many_results;
 
     }
@@ -865,7 +877,10 @@ class CourseData {
   }
 
   usort($subject_array, 'compare_courseNumber');
-  $courseToSubject = array('count' => $count, 'classes' => $subject_array);
+  //$courseToSubject = array('count' => $count, 'classes' => $subject_array);
+        $count_array = explode(':', $count);
+        $courseToSubject ['count'] = $count_array[0];
+        $courseToSubject ['classes'] = $subject_array;
   return $courseToSubject;
 
 
