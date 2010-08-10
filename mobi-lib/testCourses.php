@@ -808,7 +808,7 @@ class CourseData {
 
       $term = TERM_QUERY;
       $search_terms = $terms;
-      $sorting_params = 'sort=score+desc';
+      $sorting_params = 'sort=score+desc,course_title+asc';
 
       $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&' . $sorting_params;
 
@@ -876,7 +876,7 @@ class CourseData {
      }
   }
 
-  usort($subject_array, 'compare_courseNumber');
+  //usort($subject_array, 'compare_courseNumber');
   //$courseToSubject = array('count' => $count, 'classes' => $subject_array);
         $count_array = explode(':', $count);
         $courseToSubject ['count'] = $count_array[0];
