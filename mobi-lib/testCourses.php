@@ -816,7 +816,7 @@ class CourseData {
 
     if ($count > 100) {
        // $too_many_results = array('count' => $count, 'classes' => array());
-        $too_many_results['count'] = $count;
+        $too_many_results['count'] = array($count);
         $too_many_results['classes'] = array();
         return $too_many_results;
 
@@ -868,8 +868,8 @@ class CourseData {
 
   usort($subject_array, 'compare_courseNumber');
   //$courseToSubject = array('count' => $count, 'classes' => $subject_array);
-        $too_many_results['count'] = $count;
-        $too_many_results['classes'] = $subject_array;
+        $courseToSubject ['count'] = array($count);
+        $courseToSubject ['classes'] = $subject_array;
   return $courseToSubject;
 
 
