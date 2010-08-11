@@ -1,6 +1,5 @@
 <?php
 
-
 require LIBDIR . "/mit_calendar.php";
 
 require "calendar_lib.inc";

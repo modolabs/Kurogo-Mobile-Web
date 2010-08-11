@@ -1,10 +1,9 @@
 <?php
 
-require LIBDIR . "/mit_calendar.php";
+require LIBDIR . "/harvard_calendar.php";
 require "calendar_lib.inc";
 
-$categorys = MIT_Calendar::Categorys();
-
+$categories = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
 require "$page->branch/categorys.html";
 $page->output();
 

@@ -237,13 +237,15 @@ class ResultsContent {
   // extra parameters needed for the next and previous arrows
   private $extra_params;
 
-  public function __construct($template, $module, $page, $extra_params = array()) {
+  public function __construct($template, $module, $page, $extra_params = array(), $showForm = TRUE) {
     $this->template = $template;
     $this->module = $module;
     $this->extra_params = $extra_params;
     $this->max_list_items = $page->max_list_items;
     $this->branch = $page->branch;
-    $this->form = new StandardForm($this->branch);
+	if ($showForm) {	
+		$this->form = new StandardForm($this->branch);
+	}
   }
    
   public function set_form(Form $form) {
@@ -256,11 +258,11 @@ class ResultsContent {
     $total = count($results);
 
     //truncate results and determine if a next page is needed
-    $start = $_REQUEST["start"] ? (int)$_REQUEST["start"] : 0;
+    $start = isset($_REQUEST["start"]) ? (int)$_REQUEST["start"] : 0;
     $pager = new Pager($this->max_list_items, $results, $start);
     $results = $pager->items();
 
-    $search_terms = $_REQUEST['filter'];
+    $search_terms = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : "";
     $params = array_merge(array("filter" => $search_terms), $this->extra_params);
     $arrows = $pager->prev_next_html($_SERVER['SCRIPT_NAME'], $params, "start");
 

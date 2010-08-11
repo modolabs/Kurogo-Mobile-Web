@@ -74,6 +74,10 @@ function dayURL($day, $type) {
   return "day.php?time={$day['time']}&type=$type";
 }
 
+function categoryDayURL($day, $categoryID, $name) {
+  return "category.php?time={$day['time']}&id=$categoryID&name=$name";
+}
+
 function academicURL($year, $month) {
   return "academic.php?year=$year&month=$month";
 }
@@ -97,12 +101,13 @@ function categorysURL() {
 }
 
 function categoryURL($category) {
-  $id = is_array($category) ? $category['catid'] : $category->catid;
-  return "category.php?id=$id";
+  $id = is_array($category) ? $category['catid'] : $category->get_cat_id();
+  $name = is_array($category) ? $category['name'] : ucname($category->get_name());
+  return "category.php?id=$id&name=$name";
 }
 
 function subCategorysURL($category) {
-  $id = is_array($category) ? $category['catid'] : $category->catid;
+  $id = is_array($category) ? $category['catid'] : $category->get_cat_id();
   return "sub-categorys.php?id=$id";
 }
 
