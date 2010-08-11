@@ -1,0 +1,73 @@
+<?php
+$page->title("News")
+     ->navbar_image("news")
+     ->header("Story")
+     ->module_home_link($newsURL->homeURL())
+     ->add_stylesheet("Touch/story");
+
+$page->content_begin();
+?>
+
+<div class="news">
+    <h1 class="slugline"><?=$story["title"]?></h1>
+
+    <? if($is_first_page) { ?>
+        <p class="byline">
+            <a href="<?=$share_url?>"><img src="Touch/share.png" class="share" /></a>
+
+            <? if($story["author"]) { ?>
+                <span class="credit">by <span class="author"><?=$story["author"]?></span><br /></span>
+            <? } ?>
+         
+            <span class="postdate"><?=$date?></span>
+        </p>
+    <? } else { ?>
+        Page <?=$newsURL->storyPage()+1?> of <?=$total_page_count?>
+    <? } ?>
+
+    <p class="dek"><?=$story['description']?></p>
+
+
+    <? if($is_first_page) { ?>
+        <? if($story['image']) { ?>
+            <div id="image">
+                <img class="thumbnail" src="<?=$story['image']['url']?>">
+            </div>
+        <? } ?>
+    <? } ?>
+
+    <?=$story_page->getText()?>
+
+    Page:
+    <? if($previous_page_url) { ?>
+        <a href="<?=$previous_page_url?>" class="page-button">&lt;</a>
+    <? } ?>
+
+    <? for($i = 0; $i < $total_page_count; $i++) { ?>
+        <a
+            href="<?=$newsURL->storyURL($story, $i)?>"
+            <? if($page_number == $i) { ?>
+                class="page-button selected"
+            <? } else { ?>
+                class="page-button"
+            <? } ?>
+
+            >
+                <?=$i+1?>
+        </a>
+    <? } ?>
+
+    <? if($next_page_url) { ?>
+        <a href="<?=$next_page_url?>" class="page-button">&gt;</a>
+    <? } ?>
+    
+</div>
+
+
+
+
+
+
+<?
+$page->content_end();
+?>

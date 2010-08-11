@@ -119,7 +119,7 @@ class NewsURL {
     }
 
     public function storyPage() {
-        return $this->storyState["page"];
+        return $this->storyState["story_page"];
     }
 
     public function storyURL($story=NULL, $page=0) {
