@@ -73,8 +73,10 @@ case 'subjectList':
         //$query1 = $_REQEUST['query'];
         //echo $query1;
     $query = urldecode($_REQUEST['query']);
-       // echo $query;
-    $data = CourseData::search_subjects($query);
+    $school = urldecode($_REQUEST['courseGroup']);
+    $course = urldecode($_REQUEST['courseName']);
+       //echo $course;
+    $data = CourseData::search_subjects($query, str_replace('-other', '', $school), str_replace(' ', '+', $course));
    /* $term = CourseData::get_term();
     foreach($data as $index => $value) {
       $data[$index]['term'] = $term;
