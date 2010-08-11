@@ -53,7 +53,7 @@ $page->content_begin();
                 <img src="<?=$story["image"]["url"]?>" />
                      <a href="<?=$newsURL->storyURL($story)?>">
                         <?=$story["title"]?><br />
-                        <span class="smallprint"><?=deck($story)?></span>
+                        <span class="smallprint"><?=webkit_deck($story)?></span>
                      </a>
             </li>
         <? } ?>

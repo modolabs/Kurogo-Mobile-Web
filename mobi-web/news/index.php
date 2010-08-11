@@ -52,10 +52,20 @@ if(sizeof($stories)) {
 require "$page->branch/index.html";
 
 
-function deck($story) {
+function webkit_deck($story) {
+    if(strlen($story["title"]) >= 30) {
+        // title is too large to show deck
+        return "";
+    }
+
+    // set the truncation limit based on the size of title
+    // smaller titles allow for longer deck text.
+
+    $limit = (strlen($story["title"]) < 20) ? 40 : 25;
+
     $deck = $story["description"];
-    if(strlen($deck) > 30) {
-        $deck = substr($deck, 0, 30);
+    if(strlen($deck) > $limit) {
+        $deck = substr($deck, 0, $limit);
         return trim($deck) . "...";
     } else {
         return $deck;
