@@ -1,13 +1,14 @@
 <?php
 $page->title('News')
-     ->header('News')
      ->navbar_image('news')
      ->add_stylesheet('Touch/list');
 
 if($newsURL->isHome()) {
-    $page->breadcrumb_home();
+    $page->header('News')
+         ->breadcrumb_home();
 } else {
-    $page->module_home_link($newsURL->homeURL());
+    $page->header('Search Results')
+         ->module_home_link($newsURL->homeURL());
 }
 
 $page->content_begin();
