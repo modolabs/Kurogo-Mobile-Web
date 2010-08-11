@@ -4,10 +4,12 @@ li.story {
     padding-right: 10px;
 }
 
-ul.results img {
+.thumbnail {
     float:left;
     padding:0px;
     padding-right: 7px;
+    width: 70pt;
+    height: 70pt;
 }
 
 .header form {
@@ -36,9 +38,4 @@ ul.results img {
 
 select, .submit-search {
     font-size: 9px;
-}
-
-.thumbnail {
-    width: 70pt;
-    height: 70pt;
 }
