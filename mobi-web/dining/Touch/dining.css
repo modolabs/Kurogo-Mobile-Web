@@ -1,0 +1,25 @@
+.nav li.dininghall {
+	background-position: 6px 9px;
+	background-repeat: no-repeat;
+}
+
+.nav li.dininghall a {
+	padding-left: 31px;
+}
+
+.nav li.open {
+	background-image: url(images/dining-status-open.png);
+}
+
+.nav li.openrestrictions {
+	background-image: url(images/dining-status-open-w-restrictions.png);
+}
+
+.nav li.closed {
+	background-image: url(images/dining-status-closed.png);
+}
+
+.nav li.closedrestrictions {
+	background-image: url(images/dining-status-closed-w-restrictions.png);
+}
+
