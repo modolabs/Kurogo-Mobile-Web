@@ -72,6 +72,16 @@ function webkit_deck($story) {
     }
 }
 
+function basic_deck($story) {
+    $deck = $story["description"];
+    if(strlen($deck) > $limit) {
+        $deck = mb_substr($deck, 0, 40, 'UTF-8');
+        return trim($deck) . "...";
+    } else {
+        return $deck;
+    }
+}
+
 $page->output();
 
 ?>
