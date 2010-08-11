@@ -2,6 +2,7 @@
 	background-position: 6px 9px;
 	background-repeat: no-repeat;
 	background-size: 20px;
+	-webkit-background-size: 20px;
 }
 
 .nav li.dininghall a {
