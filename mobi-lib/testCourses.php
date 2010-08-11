@@ -291,6 +291,11 @@ class CourseData {
          $subject_fields = array();
          $id = explode(':',$single_course['id']);
          $nm = explode(':', $single_course->course_number);
+
+         if (ctype_alpha(str_replace(' ', '', $nm[0]))) {
+             $nm[0] = '0' .$nm[0];
+         }
+         
          $subject_fields['name'] = $nm[0];
          $subject_fields['masterId'] = $id[0];
          $titl = explode(':', $single_course->title);
@@ -754,7 +759,7 @@ class CourseData {
     return $announcements;
   }
 
-  public static function search_subjects($terms) {
+  public static function search_subjects($terms, $school, $courseTitle) {
   /*  $terms = trim($terms);
     $subjects_found = Array();
 
@@ -806,16 +811,38 @@ class CourseData {
             $terms = $terms .$words[$ind] .'+';
       }
 
+      $schoolWords = split(' ', $school);
+
+      $schoolNm = '';
+      for ($ind=0; $ind< count($schoolWords); $ind++) {
+          if ($ind == count($schoolWords)-1)
+            $schoolNm = $schoolNm .$schoolWords[$ind];
+          else
+            $schoolNm = $schoolNm .$schoolWords[$ind] .'+';
+      }
+
+
       $term = TERM_QUERY;
       $search_terms = $terms;
       $sorting_params = 'sort=score+desc,course_title+asc';
+      $schoolName = SCHOOL_QUERY_BASE . $schoolNm . '"';
 
-      $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&' . $sorting_params;
+      if ($school == '') {
+        $schoolName = '';
+      }
+
+      $courseName = '&' .CATEGORY_QUERY_BASE .$courseTitle .'"';
+
+      if ($courseTitle == '') {
+          $courseName = '';
+      }
+      $urlString = STELLAR_BASE_URL .$courseName .$schoolName .$term . 'q="' .$terms .'"&' . $sorting_params;
 
       $xml = file_get_contents($urlString);
 
      // echo $urlString;
-
+      //echo $xml;
+      
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
       throw new DataServerException('COULD NOT GET XML');
@@ -845,7 +872,7 @@ class CourseData {
         $queryAddition = '&start=' .$number;
 
 
-      $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&'  . $sorting_params .$queryAddition;
+      $urlString = STELLAR_BASE_URL .$courseName .$schoolName .$term .'q="' .$terms .'"&'  . $sorting_params .$queryAddition;
       $xml = file_get_contents($urlString);
 
       if($xml == "") {

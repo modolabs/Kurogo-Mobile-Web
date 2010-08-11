@@ -32,6 +32,7 @@ h2 {
 h3 {
 	font-size: 100%;
 	font-weight: bold;
+	color: #554c41;
 }
 
 h4 {
@@ -314,6 +315,7 @@ html>body #navbar {
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
+	padding: 12px 8px;
 	color: #000;
 }
 
@@ -347,6 +349,12 @@ html>body #navbar {
 .tabbody .nav {
 	margin: 4px 10px;
 	border-bottom: none;
+}
+
+.tabbody .nested {
+	margin: 0px;
+	border: 1px solid #c0c0bf;
+	background-color: #f9f6ef;
 }
 
 .results {	   
@@ -517,7 +525,7 @@ ul.nolinks li {
 
 .sidenav {
 	margin: 1.2em 8px;
-	color: #fff;
+	color: #a0a09f;
 }
 
 .sidenav a {
@@ -880,14 +888,15 @@ h2.icon {
 	height: 28px;
 	padding: 8px .4em 10px .4em;
 	text-decoration: none;
-	color: #445;
-	border: 1px solid #c0c0bf;
-	background-color: #f9f6ef;
+	color: #ebe7e3;
+	border: 1px solid #736f6b;
+	background-color: #736f6b;
 }
 
 #tabs a.active {
 	background-color: #fff;
 	color: #000;
+	border: 1px solid #bbb;
 	border-bottom: 1px solid #fff;
 }
 
@@ -914,9 +923,25 @@ h2.icon {
 	border-bottom: 1px solid #acb8c2;
 }
 
+.tabbody h3 {
+	margin: 1.25em 0 0.5em 0;
+}
+
 .tabbody .results h3 {
 	margin: 0
 }
+
+#tabs.smalltabs {
+	margin: 1.5em 7px 0 7px;
+}
+
+#tabs.smalltabs a {
+	font-size: 90%;
+	margin-right: 0px;
+	padding-right: .3em;
+	padding-left: .3em;
+}
+
 
 /* Preferences */
 
@@ -927,3 +952,35 @@ h2.icon {
 #homepageList a img { 
 	width: 30px; height: 30px; padding: 0.3em;
 }
+
+
+
+.columns2 {
+	margin-bottom: 0.5em;
+}
+
+.columns2 .col {
+	float: left;
+	width: 49%;
+}
+
+.iconlegend {
+	list-style-type: none;
+	padding: 0;
+	font-size: 70%;
+}
+
+.iconlegend img {
+	position: relative;
+	top: 4px;
+	margin-right: 3px;
+}
+
+.iconlabel {
+	display: block;
+	float: right;
+	white-space: nowrap;
+	margin-top: -1px;
+}
+
+

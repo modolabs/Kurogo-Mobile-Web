@@ -1,6 +1,6 @@
 <?php
 
-define('ZOOM_FACTOR', 2);
+define('ZOOM_FACTOR', 3);
 define('MOVE_FACTOR', 0.40);
 
 define('MAP_PHOTO_SERVER', 'http://map.harvard.edu/mapserver/images/bldg_photos/');

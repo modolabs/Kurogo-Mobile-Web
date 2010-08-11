@@ -46,6 +46,7 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /var/www/html/calendar
 /var/www/html/careers
 /var/www/html/customize
+/var/www/html/dining
 /var/www/html/download
 /var/www/html/e
 /var/www/html/emergency
@@ -58,6 +59,7 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /var/www/html/map
 /var/www/html/mobile-about
 /var/www/html/n
+/var/www/html/news
 /var/www/html/page_builder
 /var/www/html/people
 /var/www/html/robots.txt
