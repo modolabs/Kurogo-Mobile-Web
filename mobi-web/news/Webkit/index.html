@@ -11,8 +11,8 @@ $page->content_begin();
 <div class="header">
     <div id="category-switcher">
          <? if($newsURL->isHome()) {?>
-            Section:
             <form method="get" id="category-form">
+                Section:
                 <select name="category_id" onchange="loadCategory(this);">
                         <? foreach($categories as $id => $title) { ?>
                             <? if($newsURL->categoryId() == $id) { ?>
@@ -27,10 +27,11 @@ $page->content_begin();
          <? } ?>
 
          <form id="search-form" <? if($newsURL->isHome()) {?>style="display:none;"<? } ?> >
-               <input type="text" name="search_terms" value="<?=$newsURL->searchTerms()?>"/>
+               Search:
+               <input class="search-field" type="text" name="search_terms" value="<?=$newsURL->searchTerms()?>"/>
                <?=$newsURL->hiddenHomeStateForm()?>
                <? if($newsURL->isSearchResults()) { ?>
-                    <input type="submit" value="Search" />
+                    <input class="submit-search" "type="submit" value="Search" />
                <? } ?>
          </form>
 
