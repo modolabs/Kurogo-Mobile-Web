@@ -2,17 +2,31 @@
 $page->title('News')
      ->header('News')
      ->navbar_image('news')
-     ->add_stylesheet('Touch/list')
-     ->breadcrumb_home();
+     ->add_stylesheet('Touch/list');
+
+if($newsURL->isHome()) {
+    $page->breadcrumb_home();
+} else {
+    $page->module_home_link($newsURL->homeURL());
+}
 
 $page->content_begin();
 ?>
 
-    <div class="nonfocal">
-        <h2 id="category-title"><?=$category?></h2>
+    <? if($newsURL->isHome()) {?>
+        <div class="nonfocal">
+            <h2 id="category-title"><?=$category?></h2>
 
-        <a href="<?=$newsURL->categoriesURL()?>" id="section-link">Change Section</a>
-    </div>
+            <a href="<?=$newsURL->categoriesURL()?>" id="section-link">Change Section</a>
+        </div>
+    <? } else if($newsURL->isSearchResults()) { ?>
+        <div class="nonfocal">
+            <form method="get">
+                <table cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr ><td width="70%"><input type="text" id="query" name="search_terms" size="14" class="forminput" value="<?=$newsURL->searchTerms()?>"/></td><td width="30%"><input type="submit" value="Search" class="submitbutton" /></td></tr></table>
+                <?=$newsURL->hiddenHomeStateForm()?>
+            </form>
+        </div>
+    <? } ?>
 
     <ul class="results">
         <? if($previous_url) { ?>
@@ -42,5 +56,12 @@ $page->content_begin();
             </li>
         <? } ?>        
     </ul>
+
+    <div class="nonfocal">
+        <form method="get">
+            <table cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr ><td width="70%"><input type="text" id="query" name="search_terms" size="14" class="forminput" value="<?=$newsURL->searchTerms()?>"/></td><td width="30%"><input type="submit" value="Search" class="submitbutton" /></td></tr></table>
+            <?=$newsURL->hiddenHomeStateForm()?>
+        </form>
+    </div>
 
 <? $page->content_end(); ?>
