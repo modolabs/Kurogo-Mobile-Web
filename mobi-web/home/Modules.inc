@@ -27,6 +27,9 @@ class Modules {
       'title' => 'Schools',
       'subtitle' => 'webpage links',
       ),
+  	'dining' => Array(
+      'title' => 'Student Dining',
+      ),
     'mobile-about' => Array(
       'title' => 'About this site',
       'extra' => TRUE,

@@ -126,6 +126,12 @@ class DiskCache {
     return FALSE;
   }
 
+  public function getImageSize($filename=NULL) {
+    $path = $this->getFullPath($filename);
+    list($width, $height, $type, $attr) = getimagesize($path);
+    return array($width, $height);
+  }
+
   public function read($filename=NULL) {
     $path = $this->getFullPath($filename);
     if (file_exists($path) && $this->isFresh($filename)) {
@@ -156,6 +162,11 @@ class DiskCache {
     // for files with null timeout that don't yet exist
     // both will return PHP_INT_MAX and evaluate to true
     return ($this->getAge($filename) < $timeout);
+  }
+
+  public function isEmpty($filename=NULL) {
+    $path = $this->getFullPath($filename);
+    return (filesize($path) == 0);
   }
 
   public function getAge($filename=NULL) {

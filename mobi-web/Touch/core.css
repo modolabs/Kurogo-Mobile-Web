@@ -558,7 +558,7 @@ ul.nolinks li {
 	font-weight:normal;
 	line-height: 1.33em;
 	color: #222;
-	background-color: #edf1f7;
+	background-color: #f9f6ef;
 }
 
 .legend {
@@ -881,8 +881,8 @@ h2.icon {
 	padding: 8px .4em 10px .4em;
 	text-decoration: none;
 	color: #445;
-	border: 1px solid #b9c6d6;
-	background-color: #cfd7e3
+	border: 1px solid #c0c0bf;
+	background-color: #f9f6ef;
 }
 
 #tabs a.active {
@@ -897,7 +897,7 @@ h2.icon {
 	margin: 0 8px 8px 8px;
 	padding: 8px;
 	background-color: #fff;
-	border-top: 1px solid #b9c6d6;
+	border-top: 1px solid #c0c0bf;
 }
 
 .tabbody.nopad {

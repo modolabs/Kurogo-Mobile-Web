@@ -35,6 +35,7 @@ h2 {
 h3 {
 	font-size: 1em;
 	font-weight: bold;
+	color: #554c41;
 }
 
 h4 {
@@ -452,6 +453,16 @@ ul.focal li:first-child {
 	border: none;
 }
 
+.tabbody .nested {
+	margin: 0px;
+	border: 1px solid #c0c0bf;
+	background-color: #f9f6ef;
+}
+
+.tabbody .nested li {
+	padding: 10px;
+}
+
 .results {	   
 	padding: 0;	   
 	margin: 10px 0; 
@@ -621,12 +632,13 @@ ul.focal li:first-child {
 
 .sidenav {
 	margin: 1.2em 8px;
-	color: #fff;
+	color: #a0a09f;
 }
 
 .sidenav a {
-	color: #000;
+	color: #1a1611;
 	padding: 6px 2px;
+	text-decoration: none;
 }
 
 
@@ -697,36 +709,39 @@ ul.focal li:first-child {
 	font-size: 14px;
 	line-height: 17px;
 	font-weight: normal;
-	color: #404649;
+	color: #444;
 }
 
 .fineprint {
 	font-size: 12px;
 	line-height: 14px;
 	font-weight: normal;
-	color: #505659;
+	color: #555;
 }
 
 .label {	
 	display: block;
 	height: 21px;
-	width: 55px;
+	width: 61px;
+	margin-left: -2px;
+	top: 4px;
+	position: relative;
 	padding-right: 10px;
 	font-size: 13px;
-	line-height: 24px;
+	line-height: 15px;
 	font-weight: bold;
 	text-align: right;
-	color: #627ba1;
+	color: #554c41;
 }
 
 .value {
 	display: block;
 	margin-top: -21px;
-	margin-left: 65px;
+	margin-left: 67px;
 	font-size: 17px;
 	min-height: 20px;
 	line-height: 20px;
-	width: 206px;
+	width: 204px;
 	word-wrap: break-word;
 	padding-top: 1px;
 }
@@ -787,7 +802,7 @@ ul.focal li:first-child {
 	font-size: 14px;
 	line-height: 17px;
 	font-weight: normal;
-	color: #404649;
+	color: #444;
 }
 
 p.foundat {
@@ -798,7 +813,7 @@ p.foundat {
 	font-size: 14px;
 	line-height: 17px;
 	font-weight: normal;
-	color: #404649;
+	color: #444;
 }
 
 .nowrap {
@@ -995,12 +1010,20 @@ h2.icon {
 #tabs li.active a {
 	color: #000;
 }
+
 #tabs li.greyedout {
   	color: #666;
 }
 
+#tabs.smalltabs li {
+	font-size: 12pt;
+	margin-right: 2px;
+	padding-right: 6px;
+	padding-left: 6px;
+}
+
 #tabbodies {
-	margin: 0 -12px -12px -12px;
+	margin: 0 -12px 0 -12px;
 	padding: 11px;
 	clear: both;
 	border-top: 1px solid #bbb;
@@ -1080,6 +1103,35 @@ h2.icon {
 .fivetabs li {
 	width: 20%;
 }
+
+.columns2 {
+	margin-bottom: 0.5em;
+}
+
+.columns2 .col {
+	float: left;
+	width: 49%;
+}
+
+.iconlegend {
+	list-style-type: none;
+	padding: 0;
+	font-size: 70%;
+}
+
+.iconlegend img {
+	position: relative;
+	top: 4px;
+	margin-right: 3px;
+}
+
+.iconlabel {
+	display: block;
+	float: right;
+	white-space: nowrap;
+	margin-top: 3px;
+}
+
 
 /* "Loading content" (for AJAX data pulls) */
 

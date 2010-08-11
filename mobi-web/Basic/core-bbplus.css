@@ -6,20 +6,25 @@ html, body {
 }
 
 body {
-	background: #e3ddd1 url(../Basic/images/background-tile.jpg);
+	background-color: #ebe7dd; 
+	background-image: url(images/background-tile.png);
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 14px;
-	line-height: 1.28em;
+	font-size: 15pt;
+	line-height: 1.33em;
 	color: #333;
-	padding: 0.2em;
+	padding: 0em;
 }
 
 a {
-	color: #900;
+	color: #a00;
+}
+
+a:hover {
+	text-decoration: underline;
 }
 
 a:visited {
-	color: #900;
+	color: #a00;
 }
 
 a img {
@@ -32,15 +37,13 @@ h1, h2, h3 {
 }
 
 h1 {
-	font-family: Georgia, serif;
-	font-size: 142%; 
+	font-size: 171%;
 	font-weight: normal;
 	margin: 10px 0;
 	padding: 0;
 }
 
 h2 { 
-	font-family: Georgia, serif;
 	font-size: 142%; 
 	font-weight: normal;
 	margin: 0 0 6px 0;
@@ -82,19 +85,27 @@ ul li {
 /* Major layout blocks */
 
 #container {
-	padding: 5px;
+	padding: 16px;
 }
 
 #header {
 	margin: 0;
-	padding: 8px 4px;
-	font-size: 142%;
-	line-height: 32px;
+	padding: 0; 
+	background: url('images/navback.jpg') repeat-x;
+	font-size: 22px;
+	line-height: 25px;
+	height: 44px;
 }
 
-#header img {
+.headertext {
+	float: none;
+	padding-top: 9px;
+	color: #fff;
+}
+
+.headercrest {
 	float: left;
-	margin-right: 7px;
+	margin: 0 6px;
 }
 
 #header a {
@@ -124,23 +135,27 @@ fieldset {
 	padding: 0;
 }
 
+.forminput {
+	width: 100%;
+	border: 2px solid #554c41;
+	font-size: 120%;
+	padding: 4px;
+}
+
+.inputlabel {
+	margin-bottom: 4px;
+}
+
 .combobutton {
-	background-color: #933;
-	color: #fff;
+	display: none;
 }
 
-.inputcombo .forminput {
-	font-size: 100%;
-	float: left;
-	width: 60%;
-	padding: .2em;
+
+#search_form_section {
+	display: block;
+	width: 80%;
 }
 
-.inputcombo .combobutton {
-	font-size: 100%;
-	padding: 0 .2em;
-	margin-left: .3em
-}
 
 /* Navigation and results listings */
 /* Many smartphones don't correctly interpret "display:block" for inline elements like <a> */
@@ -155,10 +170,30 @@ fieldset {
 
 .secondary {
 	margin: 1em 0;
-	padding: .4em;
-	background-color: #F9F6EF;
-	font-size: 93%;
+	padding: .4em 0;
 	line-height: 1.6em;
+}
+
+.secondary a {
+	text-decoration: none;
+}
+
+.secondary a:hover {
+	text-decoration: underline;
+}
+
+.phonelabel {
+	color: #a00;
+	font-size: 100%;
+	background-image: url('http://184.106.197.212/~jkang/mockup/people_files/phone_icon.png');
+	background-repeat: no-repeat;
+	background-position: left;
+	padding-left: 20px;
+}
+
+.phonenumber {
+	color: #666;
+	font-size: 85%;
 }
 
 .paging {
@@ -169,19 +204,18 @@ fieldset {
 }
 
 .bottomnav {
-	margin: 1.5em 0 0.75em 0;
-	padding: .4em;
-	background-color: #4d4a47;	
-	font-size: 93%;
-	line-height: 1.5em;
+	margin: 1em 0;
+	padding: .4em 0;
+	font-size: 83%;
+	color: #999;
 }
 
 .bottomnav a {
-	color: #fff!important; 
+	text-decoration: none;
 }
 
-.bottomnav a:visited {
-	color: #fff!important; 
+.bottomnav a:hover {
+	text-decoration: underline;
 }
 
 .results {
@@ -213,21 +247,21 @@ fieldset {
 }
 
 .legend {
-	margin-top: 0.5em;
-	font-size: 79%;
+	margin-top: 1em;
+	font-size: 88%;
 	line-height: 1.36em;
 	color: #666;
 }
 
 .smallprint {
-	font-size: 86%;
+	font-size: 88%;
 	font-weight: normal;
 	line-height: 1.36em;
 	color: #666;
 }
 
 .fineprint {
-	font-size: 71%;
+	font-size: 83%;
 	line-height: 1.1em;
 	color: #666;
 }
@@ -284,6 +318,13 @@ hr {
 
 .fontsize {
 	padding: 0.5em;
+	font-size: 83%;
+	color: #999;
+}
+
+.fontsize a {
+	color: #333;
+	text-decoration: none;
 }
 
 .fontsmall {
