@@ -112,7 +112,7 @@ function makeIcalSearchEvents($icsURL, $terms)
 }
 
 
-function makeIcalAcademicEvents($academic_ics_url, $month, $year)
+/*function makeIcalAcademicEvents($academic_ics_url, $month, $year)
 {
         $date = $year .$month .'01';
         $academic = 'academic';
@@ -122,6 +122,18 @@ function makeIcalAcademicEvents($academic_ics_url, $month, $year)
 
 	return  $ical->search_events(NULL, NULL);
        
+}*/
+
+function makeIcalAcademicEvents($academic_ics_url, $startDate, $endDate)
+{
+        $date = $startDate . $endDate;
+        $academic = 'academic';
+        $fileN = TrumbaCache::retrieveData($academic_ics_url, $date, NULL, $academic);
+
+        $ical = new ICalendar($fileN);
+
+	return  $ical->search_events(NULL, NULL);
+
 }
 
 

@@ -114,11 +114,18 @@ switch ($_REQUEST['command']) {
        $month = $_REQUEST['month'];
        $year = $_REQUEST['year'];
 
-       if (strlen($month) == 1)
-           $month = '0' .$month;
+       $startDate = $year .'0901'; // september 1st of that year
+       $endYear = $year + 1;
+       $endDate = $endYear .'0831'; // august 31st of next year
 
-       $url = HARVARD_ACADEMIC_ICS_BASE_URL .'?startdate=' . $year .$month .'01&months=1';
-       $academic_events = makeIcalAcademicEvents($url, $month, $year);
+      /* if (strlen($month) == 1)
+           $month = '0' .$month;
+        */
+       //$url = HARVARD_ACADEMIC_ICS_BASE_URL .'?startdate=' . $year .$month .'01&months=1';
+       //$academic_events = makeIcalAcademicEvents($url, $month, $year);
+
+       $url = HARVARD_ACADEMIC_ICS_BASE_URL . '?startdate=' .$startDate .'&enddate=' .$endDate;
+       $academic_events =  makeIcalAcademicEvents($url, $startDate, $endDate);
 
        foreach ($academic_events as $event) {
         $cleaned_ical_event = clean_up_ical_event($event);

@@ -808,8 +808,9 @@ class CourseData {
 
       $term = TERM_QUERY;
       $search_terms = $terms;
+      $sorting_params = 'sort=score+desc,course_title+asc';
 
-      $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&';
+      $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&' . $sorting_params;
 
       $xml = file_get_contents($urlString);
 
@@ -832,7 +833,6 @@ class CourseData {
 
     }
 
-
     $iterations = ($count/25);
 
    // printf("Total: %d\n",$count);
@@ -845,7 +845,7 @@ class CourseData {
         $queryAddition = '&start=' .$number;
 
 
-      $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&' .$queryAddition;
+      $urlString = STELLAR_BASE_URL .$term . 'q="' .$terms .'"&'  . $sorting_params .$queryAddition;
       $xml = file_get_contents($urlString);
 
       if($xml == "") {
@@ -876,7 +876,7 @@ class CourseData {
      }
   }
 
-  usort($subject_array, 'compare_courseNumber');
+  //usort($subject_array, 'compare_courseNumber');
   //$courseToSubject = array('count' => $count, 'classes' => $subject_array);
         $count_array = explode(':', $count);
         $courseToSubject ['count'] = $count_array[0];
