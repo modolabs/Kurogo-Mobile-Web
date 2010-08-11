@@ -1,9 +1,10 @@
 <?php
 
-class NewsURL {
+class NewsURL {   
 
     private static $home = "index.php";
     private static $story = "story.php";
+    private static $categories = "categories.php";
 
     // the state of the news home page
     // such as the category, how far down the list of stories
@@ -68,6 +69,14 @@ class NewsURL {
         return $this->homeState["category_seek_direction"];
     }
 
+    public function categoryURL($categoryId) {
+        return self::$home . '?category_id=' . $categoryId;
+    }
+
+    public function categoriesURL() {
+        return self::$categories . '?' . $this->homeStateQuery();
+    }
+
     public function searchTerms() {
         return $this->searchState["search_terms"];
     }
@@ -110,7 +119,7 @@ class NewsURL {
     }
 
     public function storyPage() {
-        return $this->storyState["page"];
+        return $this->storyState["story_page"];
     }
 
     public function storyURL($story=NULL, $page=0) {
@@ -150,8 +159,12 @@ class NewsURL {
         return http_build_query($query);
     }
 
+    public function homeURL() {
+        return self::$home . "?" . $this->homeStateQuery();
+    }
+
     public function breadCrumbs($newsLabel, $searchLabel, $storyLabel=NULL) {
-        $breadCrumbs = array($newsLabel => self::$home . "?" . $this->homeStateQuery());
+        $breadCrumbs = array($newsLabel => $this->homeURL());
 
         if($this->searchState) {
             $breadCrumbs[$searchLabel] = self::$home . "?" . $this->searchStateQuery();

@@ -38,6 +38,11 @@ foreach($story_pages as $story_page) {
     $all_pages .= $story_page->getText();
 }
 
+$page_number = $newsURL->storyPage();
+$story_page = $story_pages[$page_number];
+$total_page_count = count($story_pages);
+$is_first_page = ($newsURL->storyPage() == 0);
+
 $date = date("M d, Y", $story["unixtime"]);
 
 $share_url = "mailto:?" .
@@ -51,8 +56,17 @@ $share_url = "mailto:?" .
 //mailto url's do nor respect '+' (as space) so we convert to %20
 $share_url = str_replace('+', '%20', $share_url);
 
+$previous_page_url = NULL;
+if($page_number > 0) {
+    $previous_page_url = $newsURL->storyURL($story, $page_number-1);
+}
 
-require "Webkit/story.html";
+$next_page_url = NULL;
+if( $page_number+1 < $total_page_count ) {
+    $next_page_url = $newsURL->storyURL($story, $page_number+1);
+}
+
+require "$page->branch/story.html";
 
 
 

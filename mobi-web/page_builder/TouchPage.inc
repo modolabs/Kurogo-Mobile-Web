@@ -6,6 +6,7 @@ class TouchPage extends Page {
   protected $navbar_image;
   protected $home;
   protected $breadcrumb;
+  protected $module_home_link = "./";
   protected $viewport_device_width;
 
   public function __construct($platform, $certs) {
@@ -17,7 +18,8 @@ class TouchPage extends Page {
     $this->varnames= Array(
      'header', 'title', 'viewport_device_width', 
      'stylesheets', 'help_on',
-     'home', 'navbar_image', 'breadcrumb', 'footer', 'standard_footer',
+     'home', 'navbar_image', 'breadcrumb', 'module_home_link',
+     'footer', 'standard_footer',
     );
 
     $attribs_file = WEBROOT . "/$this->branch/attribs-$this->platform.inc";
@@ -45,6 +47,11 @@ class TouchPage extends Page {
   public function breadcrumb_home() {
     $this->home = True;
     return $this;
+  }
+
+  public function module_home_link($link) {
+      $this->module_home_link = $link;
+      return $this;
   }
 
   public function viewport() {

@@ -1,0 +1,16 @@
+<?php
+$page->title('News')
+     ->header('News')
+     ->navbar_image('news')
+     ->module_home_link($newsURL->homeURL());
+
+$page->content_begin();
+?>
+
+<ul class="nav">
+    <? foreach($categories as $index => $category) { ?>
+        <li><a href="<?=$newsURL->categoryURL($index)?>"><?=$category?></a>
+    <? } ?>
+</ul>
+
+<? $page->content_end(); ?>
