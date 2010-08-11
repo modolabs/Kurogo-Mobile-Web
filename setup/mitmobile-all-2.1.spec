@@ -78,10 +78,10 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 %post
 if [ "$1" = "1" ]; then # user is installing
    # set selinux permissions on cache file directories
-   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/cache
-   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/logs
-   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/static
-   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/pushd
+   chcon -t system_u:object_r:httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/cache
+   chcon -t system_u:object_r:httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/logs
+   chcon -t system_u:object_r:httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/static
+   chcon -t system_u:object_r:httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/pushd
 
    ln -sf $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/lib_constants.inc $RPM_INSTALL_PREFIX0/mitmobile/mobi-lib/lib_constants.inc
    ln -sf $RPM_INSTALL_PREFIX0/mitmobile/maptiles/crushed $RPM_INSTALL_PREFIX1/api/maptile
