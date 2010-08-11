@@ -127,35 +127,48 @@ class Pager {
     }
   }
 
-  public function next_html($url, $params, $id_name) {
+  private function next_url($url, $params, $id_name) {
     if($this->next_id() === NULL) {
       return '';
     }
 
     $params[$id_name] = $this->next_id();
     $url .= '?' . http_build_query($params);
-    
-    return '<a href="' . $url . '">Next &gt;</a>';
+    return $url;
   }
 
-  public function prev_html($url, $params, $id_name) {
+  private function prev_url($url, $params, $id_name) {
     if($this->prev_id() === NULL) {
       return '';
     }
 
     $params[$id_name] = $this->prev_id();
     $url .= '?' . http_build_query($params);
-    
-    return '<a href="' . $url . '">&lt; Prev</a>';
+    return $url;
   }
 
   public function prev_next_html($url, $params, $id_name) {
-    $next = $this->next_html($url, $params, $id_name);
-    $prev = $this->prev_html($url, $params, $id_name);
-    $middle = ($next && $prev) ? "&nbsp;|&nbsp;" : "";
-    return $prev . $middle . $next;
+    $next_url = $this->next_url($url, $params, $id_name);
+    $prev_url = $this->prev_url($url, $params, $id_name);
+    return html_arrows($prev_url, "Prev", $next_url, "Next");
   }
 }  
+
+function html_arrows($previous_url, $previous_label, $next_url, $next_label) {
+   $previous_link = NULL;
+   if($previous_url) {
+        $previous_link =  '<a href="' . $previous_url . '">&lt; ' . $previous_label . '</a>';
+   }
+
+   $next_link = NULL;
+   if($next_url) {
+        $next_link =  '<a href="' . $next_url . '">' . $next_label . ' &gt;</a>';
+   }
+
+   $middle = ($next_url && $previous_url) ? "&nbsp;|&nbsp;" : "";
+
+   return $previous_link . $middle . $next_link;
+}
 
 class Tabs {
   
