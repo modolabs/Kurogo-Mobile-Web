@@ -20,9 +20,11 @@ $page->content_begin();
          <span class="postdate"><?=$date?></span>
     </p>
 
-    <div id="image">
-        <img class="thumbnail" src="<?=$story['image']['url']?>" width="<?=$story['image']['width']?>" height="<?=$story['image']['height']?>">
-    </div>
+    <? if($story['image']) { ?>
+        <div id="image">
+            <img class="thumbnail" src="<?=$story['image']['url']?>" width="<?=$story['image']['width']?>" height="<?=$story['image']['height']?>">
+        </div>
+    <? } ?>
     <p class="dek"><?=$story['description']?></p>
 
     <?=$all_pages?>

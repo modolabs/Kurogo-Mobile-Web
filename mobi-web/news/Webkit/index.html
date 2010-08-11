@@ -51,7 +51,11 @@ $page->content_begin();
 
         <? foreach($stories as $story) { ?>
             <li class="story">
-                <img src="<?=$story["image"]["url"]?>" />
+                <? if($story['image']) { ?>
+                    <img class="thumbnail" src="<?=$story['image']['url']?>" />
+                <? } else { ?>
+                    <img class="thumbnail" src="news-placeholder.png" />
+                <? } ?>
                      <a href="<?=$newsURL->storyURL($story)?>">
                         <?=$story["title"]?><br />
                         <span class="smallprint"><?=webkit_deck($story)?></span>

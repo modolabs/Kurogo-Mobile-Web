@@ -469,15 +469,21 @@ class GazetteRSS extends RSS {
       return false;
   }
 
+  private static $gazette_placeholder = "http://news.harvard.edu/gazette/wp-content/themes/gazette/images/photo-placeholder.gif";
+
   private static function getImage($xml_item) {
       $image_xml = self::getChildByTagName($xml_item, "image");
+
+      $url = self::getChildValue($image_xml,  "url");
+      if($url == self::$gazette_placeholder) {
+          // story has no thumbnail
+          return NULL;
+      }
 
       return array(
           "title" => self::getChildValue($image_xml,  "title"),
           "link"  => self::getChildValue($image_xml,  "link"),
-          "url"   => self::getChildValue($image_xml,  "url"),
-          "width" => self::getChildValue($image_xml,  "width"),
-          "height" => self::getChildValue($image_xml, "height"),
+          "url"   => $url,
       );
   }
 }

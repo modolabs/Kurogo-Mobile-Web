@@ -1,5 +1,5 @@
 li.story {
-    height: 75px;
+    height: 70pt;
     padding: 1px;
     padding-right: 10px;
 }
@@ -36,4 +36,9 @@ ul.results img {
 
 select, .submit-search {
     font-size: 9px;
+}
+
+.thumbnail {
+    width: 70pt;
+    height: 70pt;
 }
