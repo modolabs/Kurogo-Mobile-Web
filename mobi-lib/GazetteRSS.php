@@ -12,7 +12,6 @@ class GazetteRSS extends RSS {
 
   private static $diskCache;
   private static $searchCache;
-  private static $feeds = NULL;
   private static $imageWriter;
 
   // when we resize images, store width/height in
@@ -39,21 +38,17 @@ class GazetteRSS extends RSS {
     );
   
   public static function init() {
-    if (self::$feeds === NULL) {
-      self::$feeds = array();
+    // news articles get updated continuously, so make the timeout short
+    self::$diskCache = new DiskCache(CACHE_DIR . '/GAZETTE', 300, TRUE);
+    self::$diskCache->setSuffix('.xml');
+    self::$diskCache->preserveFormat();
 
-      // news articles get updated continuously, so make the timeout short
-      self::$diskCache = new DiskCache(CACHE_DIR . '/GAZETTE', 300, TRUE);
-      self::$diskCache->setSuffix('.xml');
-      self::$diskCache->preserveFormat();
+    // allow cached search results to stick around longer
+    self::$searchCache = new DiskCache(CACHE_DIR . '/GAZETTE_SEARCH', 3600, TRUE);
+    self::$searchCache->setSuffix('.xml');
+    self::$searchCache->preserveFormat();
 
-      // allow cached search results to stick around longer
-      self::$searchCache = new DiskCache(CACHE_DIR . '/GAZETTE_SEARCH', 3600, TRUE);
-      self::$searchCache->setSuffix('.xml');
-      self::$searchCache->preserveFormat();
-
-      self::$imageWriter = new DiskCache(WEBROOT . IMAGE_CACHE_EXTENSION, PHP_INT_MAX, TRUE);
-    }
+    self::$imageWriter = new DiskCache(WEBROOT . IMAGE_CACHE_EXTENSION, PHP_INT_MAX, TRUE);
   }
 
   public static function getChannels() {
@@ -64,15 +59,29 @@ class GazetteRSS extends RSS {
     return $result;
   }
 
-  public static function searchArticlesArray($searchTerms, $lastStoryId=NULL) {
-    $xml_text = self::searchArticles($searchTerms, $lastStoryId);
+  public static function getSearchFirstId($searchTerms) {
+      $dom = self::getSearchXML($searchTerms);
+      return self::getFirstId($dom);
+  }
+
+  public static function getSearchLastId($searchTerms) {
+      $dom = self::getSearchXML($searchTerms);
+      return self::getLastId($dom);
+  }
+
+  public static function searchArticlesArray($searchTerms, $lastStoryId=NULL, $direction="forward") {
+    $xml_text = self::searchArticles($searchTerms, $lastStoryId, $direction);
     $doc = new DOMDocument();
     $doc->loadXML($xml_text);
     return self::xml2Array($doc);
   }
 
-  public static function searchArticles($searchTerms, $lastStoryId=NULL) {
+  public static function searchArticles($searchTerms, $lastStoryId=NULL, $direction="forward") {
+    $dom_document = self::getSearchXML($searchTerms);
+    return self::loadArticlesFromCache($dom_document, $lastStoryId, $direction);
+  }
 
+  private static function getSearchXML($searchTerms) {
     // we will just store filenames by search terms
     if (!self::$searchCache->isFresh($searchTerms)) {
       $query = http_build_query(array('s' => $searchTerms, 'feed' => 'rss2'));
@@ -82,62 +91,82 @@ class GazetteRSS extends RSS {
     }
 
     $cacheFile = self::$searchCache->getFullPath($searchTerms);
-    return self::loadArticlesFromCache($cacheFile, $lastStoryId);
+
+    $doc = new DOMDocument();
+    $doc->load($cacheFile);
+    $items = $doc->getElementsByTagName("item");
+    return $doc;
   }
 
-  public static function getMoreArticlesArray($channel=0, $lastStoryId=NULL) {
-    $xml_text = self::getMoreArticles($channel, $lastStoryId);
+  public static function getArticlesFirstId($channel) {
+      $dom = self::getChannelXML($channel);
+      return self::getFirstId($dom);
+  }
+
+  public static function getArticlesLastId($channel) {
+      $dom = self::getChannelXML($channel);
+      return self::getLastId($dom);
+  }
+
+  public static function getMoreArticlesArray($channel=0, $lastStoryId=NULL, $direction="forward") {
+    $xml_text = self::getMoreArticles($channel, $lastStoryId, $direction);
     $doc = new DOMDocument();
     $doc->loadXML($xml_text);
     return self::xml2Array($doc);
   }
 
-  public static function getMoreArticles($channel=0, $lastStoryId=NULL) {
-    $cacheId = ($lastStoryId === NULL) ? $channel : $channel . ':' . $lastStoryId;
+  public static function getMoreArticles($channel=0, $lastStoryId=NULL, $direction="forward") {
+    $dom_document = self::getChannelXML($channel);
+    return self::loadArticlesFromCache($dom_document, $lastStoryId, $direction);
+  }
 
+  private static function getChannelXML($channel) {
     if ($channel < count(self::$channels)) {
-      $channelInfo = self::$channels[$channel];
-      $channelUrl = $channelInfo['url'] . '?format=xml';
+        $channelInfo = self::$channels[$channel];
+        $channelUrl = $channelInfo['url'] . '?format=xml';
 
-      $filename = self::cacheName($channelInfo['url']);
-      if (!self::$diskCache->isFresh($filename)) {
-        $contents = file_get_contents($channelUrl);
-        self::$diskCache->write($contents, $filename);
-      } else {
-        if (array_key_exists($cacheId, self::$feeds)) {
-          return self::$feeds[$cacheId];
+        $filename = self::cacheName($channelInfo['url']);
+        if (!self::$diskCache->isFresh($filename)) {
+            $contents = file_get_contents($channelUrl);
+            self::$diskCache->write($contents, $filename);
         }
-      }
 
-      $cacheFile = self::$diskCache->getFullPath($filename);
+        $cacheFile = self::$diskCache->getFullPath($filename);
 
-      $result = self::loadArticlesFromCache($cacheFile, $lastStoryId);
-      self::$feeds[$cacheId] = $result;
-      return $result;
+        $doc = new DOMDocument();
+        $doc->load($cacheFile);
+        return $doc;
+    } else {
+        throw new Exception("$channel channel number is illegal");
     }
   }
 
-  private static function loadArticlesFromCache($path, $lastStoryId=NULL) {
+  private static function loadArticlesFromCache($dom, $lastStoryId=NULL, $direction="forward") {
 
-    $doc = new DOMDocument();
-    $doc->load($path);
-
-    $newdoc = new DOMDocument($doc->xmlVersion, $doc->encoding);
-    $rssRoot = $newdoc->importNode($doc->documentElement);
+    $newdoc = new DOMDocument($dom->xmlVersion, $dom->encoding);
+    $rssRoot = $newdoc->importNode($dom->documentElement);
     $newdoc->appendChild($rssRoot);
 
     $channelRoot = $newdoc->createElement('channel');
     $rssRoot->appendChild($channelRoot);
 
+    $numItems = $dom->getElementsByTagName('item')->length;
     if ($lastStoryId === NULL) {
       // provide a flag to the native app so it knows how many stories
       // are in this feed, since we only return up to 10
-      $numItems = $doc->getElementsByTagName('item')->length;
       self::appendDOMAttribute($newdoc, $channelRoot, 'items', $numItems);
     }
 
     $count = 0;
-    foreach ($doc->getElementsByTagName('item') as $item) {
+    $itemNodes = $dom->getElementsByTagName('item');
+    
+    for($index = 0; $index < $numItems; $index++) {
+      if($direction == "forward") {
+          $item = $itemNodes->item($index);
+      } else {
+          $item = $itemNodes->item($numItems-1-$index);
+      }
+
       if ($count >= 10) {
         break;
       }
@@ -385,6 +414,20 @@ class GazetteRSS extends RSS {
       }
 
       return $items;
+  }
+
+  private static function getFirstId(DOMDocument $xml) {
+      $itemNodes = $xml->getElementsByTagName('item');
+      if($itemNodes->length > 0) {
+          return self::getChildValue($itemNodes->item(0), "harvard:WPID");
+      }
+  }
+
+  private static function getLastId(DOMDocument $xml) {
+      $itemNodes = $xml->getElementsByTagName('item');
+      if($itemNodes->length > 0) {
+          return self::getChildValue($itemNodes->item($itemNodes->length-1), "harvard:WPID");
+      }
   }
 
   private static function getChildrenWithTag(DOMElement $xml, $tag) {

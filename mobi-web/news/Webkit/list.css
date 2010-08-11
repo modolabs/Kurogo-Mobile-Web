@@ -1,0 +1,39 @@
+li.story {
+    height: 75px;
+    padding: 1px;
+    padding-right: 10px;
+}
+
+ul.results img {
+    float:left;
+    padding:0px;
+    padding-right: 7px;
+}
+
+.header form {
+    display: inline-block;
+}
+
+.header {
+    padding-top: 0px;
+    padding: 5px;
+}
+
+.header button {
+    display: inline;
+}
+.non-story a {
+    background-image: none;
+}
+
+#search-form {
+    display: inline;
+}
+
+.search-field, select {
+    width: 150px;
+}
+
+select, .submit-search {
+    font-size: 9px;
+}
