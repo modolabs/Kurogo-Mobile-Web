@@ -30,7 +30,7 @@ class NewsURL {
             $this->searchState["search_seek_direction"] = self::get($request, "search_seek_direction", "forward");
         }
 
-        if(isset($request[$story_id])) {
+        if(isset($request["story_id"])) {
             $this->storyState["story_id"] = $request["story_id"];
             $this->storyState["story_page"] = self::get($request, "story_page", 0);
         }
@@ -105,6 +105,14 @@ class NewsURL {
         return $this->homeStateQuery . "&" . http_build_query($this->searchState);
     }
 
+    public function storyId() {
+        return $this->storyState["story_id"];
+    }
+
+    public function storyPage() {
+        return $this->storyState["page"];
+    }
+
     public function storyURL($story=NULL, $page=0) {
         if($this->searchState) {
             $query = $this->searchStateQuery();
@@ -164,19 +172,14 @@ class NewsURL {
     }
 
     private static function hiddenInputForm($values, $field, $default) {
-//var_dump($values);
-//var_dump($field);
         if(isset($values[$field])) {
             $value = $values[$field];
-//var_dump('a');
         } else if ($default != NULL) {
             $value = $default;
-//var_dump('b');
         } else {
             return "";
         }
 
         return "<input type=\"hidden\" name=\"$field\" value=\"$value\" />";
-
     }
 }

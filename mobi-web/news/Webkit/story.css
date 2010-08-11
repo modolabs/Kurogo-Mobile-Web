@@ -1,0 +1,93 @@
+.news {
+    background-color: #fff;
+    margin-top: -12px;
+    padding: 10px;
+}
+
+.slugline {
+    font-family: Georgia;
+    color:#1A1611;
+    font-size:22px;
+    line-height: 30px;
+    margin: 0;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.byline {
+    font-size: 11px;
+    color: #666666;
+    min-height:40px;
+    line-height: 14px;
+    border-bottom-style: dotted;
+    border-bottom-width: 1px;
+}
+
+.share {
+    float: right;
+}
+
+.dek {font-family: Georgia; font-size: 16px;line-height: 20px;margin: 14px 0;color: #666666;}
+.dek:empty { margin: 0; } /* CSS 3: shrink if no content */
+            
+.inlineControls {
+    float: right;
+    -webkit-user-select: none;
+    position: relative;
+    top: 6px;
+}
+
+.inlineControls a {
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.inlineControls span {
+    display: inline-block;
+    width: 44px;
+    height: 38px;
+    -webkit-user-select: none;
+}
+
+#bookmarkButton {
+    background: url('global/bookmark_button.png') no-repeat 0 -38px;
+}
+
+#bookmarkButton.pressed {
+    background-position: 0 1px;
+}
+
+#bookmarkButton.on {
+    background-position: -44px -38px;
+}
+
+#bookmarkButton.pressed.on {
+    background-position: -44px 1px;
+}
+
+#shareButton {
+    background-image: url('global/share.png');
+}
+
+#shareButton.pressed {
+    background-image: url('global/share_pressed.png');
+}
+
+
+
+.inline-separator {margin: 0 3px;}
+
+#content {}
+
+.credential {font-size:8pt;}
+
+#image {float:right;margin: 16px 0 -1px 8px;}
+
+#image img.thumbnail {float:right; border: 1px solid #505050; /* scale to width respecting aspect */}
+
+#image img.enlarge { float:right; margin-left: 4px; }
+
+#image div { float:right; margin-top: 2px; margin-right:-2px; }
+
+#image a { text-align:right; font-size:11px; line-height: 30px; text-decoration:none; color:#777;}
+
+#image a div { margin-top: -4px; }

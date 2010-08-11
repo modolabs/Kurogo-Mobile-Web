@@ -138,7 +138,7 @@ class GazetteRSS extends RSS {
     }
   }
 
-  private static function loadArticlesFromCache($dom, $lastStoryId=NULL, $direction) {
+  private static function loadArticlesFromCache($dom, $lastStoryId=NULL, $direction="forward") {
 
     $newdoc = new DOMDocument($dom->xmlVersion, $dom->encoding);
     $rssRoot = $newdoc->importNode($dom->documentElement);
