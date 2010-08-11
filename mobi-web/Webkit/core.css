@@ -722,10 +722,13 @@ ul.focal li:first-child {
 .label {	
 	display: block;
 	height: 21px;
-	width: 55px;
+	width: 61px;
+	margin-left: -2px;
+	top: 4px;
+	position: relative;
 	padding-right: 10px;
 	font-size: 13px;
-	line-height: 24px;
+	line-height: 15px;
 	font-weight: bold;
 	text-align: right;
 	color: #554c41;
@@ -734,11 +737,11 @@ ul.focal li:first-child {
 .value {
 	display: block;
 	margin-top: -21px;
-	margin-left: 65px;
+	margin-left: 67px;
 	font-size: 17px;
 	min-height: 20px;
 	line-height: 20px;
-	width: 206px;
+	width: 204px;
 	word-wrap: break-word;
 	padding-top: 1px;
 }
@@ -1102,7 +1105,7 @@ h2.icon {
 }
 
 .columns2 {
-	margin-bottom: 0.67em;
+	margin-bottom: 0.5em;
 }
 
 .columns2 .col {
