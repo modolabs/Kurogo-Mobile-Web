@@ -632,11 +632,11 @@ ul.focal li:first-child {
 
 .sidenav {
 	margin: 1.2em 8px;
-	color: #fff;
+	color: #a0a09f;
 }
 
 .sidenav a {
-	color: #333;
+	color: #1a1611;
 	padding: 6px 2px;
 	text-decoration: none;
 }
@@ -709,14 +709,14 @@ ul.focal li:first-child {
 	font-size: 14px;
 	line-height: 17px;
 	font-weight: normal;
-	color: #404649;
+	color: #444;
 }
 
 .fineprint {
 	font-size: 12px;
 	line-height: 14px;
 	font-weight: normal;
-	color: #505659;
+	color: #555;
 }
 
 .label {	
@@ -799,7 +799,7 @@ ul.focal li:first-child {
 	font-size: 14px;
 	line-height: 17px;
 	font-weight: normal;
-	color: #404649;
+	color: #444;
 }
 
 p.foundat {
@@ -810,7 +810,7 @@ p.foundat {
 	font-size: 14px;
 	line-height: 17px;
 	font-weight: normal;
-	color: #404649;
+	color: #444;
 }
 
 .nowrap {
@@ -1101,6 +1101,10 @@ h2.icon {
 	width: 20%;
 }
 
+.columns2 {
+	margin-bottom: 0.67em;
+}
+
 .columns2 .col {
 	float: left;
 	width: 49%;
@@ -1108,9 +1112,8 @@ h2.icon {
 
 .iconlegend {
 	list-style-type: none;
-	margin: 0;
 	padding: 0;
-	font-size: 80%;
+	font-size: 70%;
 }
 
 .iconlegend img {
