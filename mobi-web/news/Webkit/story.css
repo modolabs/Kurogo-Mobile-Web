@@ -29,56 +29,6 @@
 
 .dek {font-family: Georgia; font-size: 16px;line-height: 20px;margin: 14px 0;color: #666666;}
 .dek:empty { margin: 0; } /* CSS 3: shrink if no content */
-            
-.inlineControls {
-    float: right;
-    -webkit-user-select: none;
-    position: relative;
-    top: 6px;
-}
-
-.inlineControls a {
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-}
-
-.inlineControls span {
-    display: inline-block;
-    width: 44px;
-    height: 38px;
-    -webkit-user-select: none;
-}
-
-#bookmarkButton {
-    background: url('global/bookmark_button.png') no-repeat 0 -38px;
-}
-
-#bookmarkButton.pressed {
-    background-position: 0 1px;
-}
-
-#bookmarkButton.on {
-    background-position: -44px -38px;
-}
-
-#bookmarkButton.pressed.on {
-    background-position: -44px 1px;
-}
-
-#shareButton {
-    background-image: url('global/share.png');
-}
-
-#shareButton.pressed {
-    background-image: url('global/share_pressed.png');
-}
-
-
-
-.inline-separator {margin: 0 3px;}
-
-#content {}
-
-.credential {font-size:8pt;}
 
 #image {float:right;margin: 16px 0 -1px 8px;}
 

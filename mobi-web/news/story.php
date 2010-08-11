@@ -39,7 +39,22 @@ foreach($story_pages as $story_page) {
 }
 
 $date = date("M d, Y", $story["unixtime"]);
+
+$share_url = "mailto:?" .
+    http_build_query(
+        array (
+            "subject" => $story["title"],
+            "body" => $story["description"] . "\n\n" . $story["link"]
+        )
+    );
+
+//mailto url's do nor respect '+' (as space) so we convert to %20
+$share_url = str_replace('+', '%20', $share_url);
+
+
 require "Webkit/story.html";
+
+
 
 $page->output();
 

@@ -11,7 +11,7 @@ $page->content_begin();
     <h1 class="slugline"><?=$story["title"]?></h1>
 
     <p class="byline">
-         <img src="Webkit/share.png" class="share" />
+        <a href="<?=$share_url?>"><img src="Webkit/share.png" class="share" /></a>
 
          <? if($story["author"]) { ?>
             <span class="credit">by <span class="author"><?=$story["author"]?></span><br /></span>
@@ -19,6 +19,11 @@ $page->content_begin();
          
          <span class="postdate"><?=$date?></span>
     </p>
+
+    <div id="image">
+        <img class="thumbnail" src="<?=$story['image']['url']?>" width="<?=$story['image']['width']?>" height="<?=$story['image']['height']?>">
+    </div>
+    <p class="dek"><?=$story['description']?></p>
 
     <?=$all_pages?>
 
