@@ -1,8 +1,11 @@
 .nav li.dininghall {
-	padding-left: 30px;
 	background-position: 6px 9px;
 	background-repeat: no-repeat;
-	-webkit-background-size: 20px;
+	background-size: 20px;
+}
+
+.nav li.dininghall a {
+	padding-left: 31px;
 }
 
 .nav li.open {
