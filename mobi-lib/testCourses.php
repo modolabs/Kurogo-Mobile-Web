@@ -887,6 +887,8 @@ class CourseData {
          $id = explode(':',$single_course['id']);
          $nm = explode(':', $single_course->course_number);
          $subject_fields['name'] = $nm[0];
+         $school = explode(':', $single_course->school_name);
+         $subject_fields['school'] = $school[0];
          $subject_fields['masterId'] = $id[0];
          $titl = explode(':', $single_course->title);
                   $len = count($titl);
