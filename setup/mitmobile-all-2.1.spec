@@ -9,7 +9,7 @@ Vendor:		Modo Labs, Inc.
 URL:		http://imobileu.webfactional.com
 Packager:	Sonya Huang <sonya.huang@modolabs.com>
 Provides:	mitmobile-web, mitmobile-api
-Requires:	httpd, php >= 5.2, php-gd, php-ldap, php-mysql, php-pear-Log, php-xml
+Requires:	httpd, php >= 5.2, php-gd, php-ldap, php-mysql, php-xml
 Prefix:		/opt /var/www/html
 
 %description
