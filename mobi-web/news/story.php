@@ -31,6 +31,8 @@ for($i = 0; $i < count($stories); $i++) {
     }
 }
 
+$categories = GazetteRSS::getChannels();
+
 $story_pages = HTMLPager($story["body"], PARAGRAPH_LIMIT);
 
 $all_pages = "";
