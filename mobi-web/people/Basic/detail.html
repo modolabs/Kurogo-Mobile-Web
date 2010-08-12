@@ -20,13 +20,14 @@ class Item {
         echo '<br />';
       }
 
+      $formatted_value = $value;
       if ($href !== NULL) {
-        $value = '<a href="' . $href($value) . '" class="' . $class . '">'
+        $formatted_value = '<a href="' . $href($value) . '" class="' . $class . '">'
                . str_replace('$', '<br/>', $value) . '</a>';
       }
       ?>
       <span class="label"><?=$label?></span>
-      <span class="value"><?=$value?></span>
+      <span class="value"><?=$formatted_value?></span>
       <?
     }
   }
@@ -46,7 +47,7 @@ $page->content_begin();
           $item->display('fax: ', 'facsimiletelephonenumber', "phoneHREF", 'phone');
           $item->display('address: ', 'address');
           $item->display('email: ', 'mail', "mailHREF");
-          $item->display('office: ', 'postaladdress', "mapURL");
+          $item->display('office: ', 'postaladdress', "officeURL");
         ?>
 	</p>
 

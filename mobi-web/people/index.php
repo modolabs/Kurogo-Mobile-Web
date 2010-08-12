@@ -59,7 +59,11 @@ function detail_url($person)
 
 function phoneHREF($number)
 {
-    return 'tel:1' . str_replace('-', '', $number);
+    // check if number already starts with "+1"
+    if(strpos($number, "+1") != 0) {
+        $number = "+1" . $number;
+    }
+    return 'tel:' . str_replace('-', '', $number);
 }
 
 function mailHREF($email)
@@ -70,8 +74,21 @@ function mailHREF($email)
 function has_phone($person)
 {
   return ($person->getField('homephone')
-    || $person->getField('facsimiletelephoneNumber')
-    || $person->getField('telephoneNumber'));
+    || $person->getField('facsimiletelephonenumber')
+    || $person->getField('telephonenumber'));
+}
+
+function officeURL($address) {
+    // Only send the next-to-last line of the address to the map search.
+    $addressLines = explode("$", $address);
+    $lineCount = count($addressLines);
+    if ($lineCount > 1) {
+	$linkAddress = $addressLines[$lineCount - 2];
+    } else {
+        $linkAddress = $address;
+    }
+
+    return mapURL($linkAddress);
 }
 
 ?>
