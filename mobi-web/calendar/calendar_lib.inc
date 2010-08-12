@@ -78,8 +78,8 @@ function categoryDayURL($day, $categoryID, $name) {
   return "category.php?time={$day['time']}&id=$categoryID&name=$name";
 }
 
-function academicURL($year, $month) {
-  return "academic.php?year=$year&month=$month";
+function academicURL($year) {
+  return "academic.php?year=$year";
 }
 
 function holidaysURL($year=NULL) {
