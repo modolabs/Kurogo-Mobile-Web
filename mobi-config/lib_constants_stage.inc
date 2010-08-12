@@ -7,9 +7,9 @@
 
 // stellar
 define('STELLAR_BASE_URL', 'http://stellar.mit.edu/courseguide/course/');
-define('STELLAR_RSS_URL', 'http://stellar.mit.edu/SRSS/rss');
+define('STELLAR_RSS_URL', '');
 
 // emergency
-define('EMERGENCY_RSS_URL', 'http://emergency.mit.net/emergency/mobirss');
+define('EMERGENCY_RSS_URL', '');
 
 ?>

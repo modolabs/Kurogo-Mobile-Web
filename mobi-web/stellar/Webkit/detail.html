@@ -1,5 +1,5 @@
 <?php
-$page->title("Stellar: " . longID($class))
+$page->title("Courses: " . longID($class))
      ->navbar_image('stellar')
      ->add_javascript('../Webkit/uiscripts');
 
@@ -15,7 +15,7 @@ if($url_data['path'] == "course.php") {
   $page->breadcrumbs("Search", "Detail")
        ->breadcrumb_links($back);
 } elseif($url_data['path'] == "index.php") {
-  $page->breadcrumbs("My Stellar", "Detail")
+  $page->breadcrumbs("My Courses", "Detail")
        ->breadcrumb_links($back);
 }
 
@@ -35,7 +35,7 @@ $page->content_begin();
 	<div class="focal shaded">
 	<a id="mystellar" class="<?=$toggle?>" onclick="toggleMyStellar(this, '<?=$class_data?>')"></a>
 		<h2><?=notPhoneNumber(longerID($class))?>: <?=className($class)?></h2>
-		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Stellar site</a><? } ?></p>
+		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Courses site</a><? } ?></p>
 
 		<ul id="tabs">
 		<? if (!$no_stellar_site) { ?>

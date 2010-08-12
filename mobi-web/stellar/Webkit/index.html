@@ -1,5 +1,5 @@
 <?php
-$page->title('Stellar')
+$page->title('Courses')
      ->navbar_image('stellar')
      ->breadcrumbs('Stellar')
      ->breadcrumb_home()
@@ -16,7 +16,7 @@ $page->content_begin();
 
 	<? if (count(getMyStellar()->allTags) > 0) { ?>
             <div class="nonfocal">        
-                <h3>My Stellar</h3>
+                <h3>My Courses</h3>
             </div> 
 
 
@@ -31,7 +31,7 @@ $page->content_begin();
 		
     
             <? if (count(getMyStellar()->oldIds)) { ?>
-               <div class="nonfocal legend">The following old classes have been removed from your My Stellar Settings:
+               <div class="nonfocal legend">The following old classes have been removed from your My Courses Settings:
                  <?=implode(", ", getMyStellar()->oldIds)?>
                </div>
             <? } ?>
