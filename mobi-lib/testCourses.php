@@ -16,44 +16,7 @@ define('SCHOOL_QUERY_BASE', '&fq_school_nm=school_nm:"');
 }
 
 class CourseData {
-  // is there really not a data source for this?
-  /*private static $courses = array(
-    '1'    => Array('subjects' => Array(), 'name' => 'Civil and Environmental Engineering'),
-    '2'    => Array('subjects' => Array(), 'name' => 'Mechanical Engineering'),
-    '3'    => Array('subjects' => Array(), 'name' => 'Materials Science and Engineering'),
-    '4'    => Array('subjects' => Array(), 'name' => 'Architecture'),
-    '5'    => Array('subjects' => Array(), 'name' => 'Chemistry'),
-    '6'    => Array('subjects' => Array(), 'name' => 'Electrical Engineering and Computer Science'),
-    '7'    => Array('subjects' => Array(), 'name' => 'Biology'),
-    '8'    => Array('subjects' => Array(), 'name' => 'Physics'),
-    '9'    => Array('subjects' => Array(), 'name' => 'Brain and Cognitive Sciences'),
-    '10'   => Array('subjects' => Array(), 'name' => 'Chemical Engineering'),
-    '11'   => Array('subjects' => Array(), 'name' => 'Urban Studies and Planning'),
-    '12'   => Array('subjects' => Array(), 'name' => 'Earth, Atmospheric, and Planetary Sciences'),
-    //'13'   => Array('subjects' => Array(), 'name' => 'Ocean Engineering'),
-    '14'   => Array('subjects' => Array(), 'name' => 'Economics'),
-    '15'   => Array('subjects' => Array(), 'name' => 'Management'),
-    '16'   => Array('subjects' => Array(), 'name' => 'Aeronautics and Astronautics'),
-    '17'   => Array('subjects' => Array(), 'name' => 'Political Science'),
-    '18'   => Array('subjects' => Array(), 'name' => 'Mathematics'),
-    '20'   => Array('subjects' => Array(), 'name' => 'Biological Engineering'),
-    '21'   => Array('subjects' => Array(), 'name' => 'Humanities'),
-    '21A'  => Array('subjects' => Array(), 'name' => 'Anthropology'),
-    '21F'  => Array('subjects' => Array(), 'name' => 'Foreign Languages and Literatures'),
-    '21H'  => Array('subjects' => Array(), 'name' => 'History'),
-    '21L'  => Array('subjects' => Array(), 'name' => 'Literature'),
-    '21M'  => Array('subjects' => Array(), 'name' => 'Music and Theater Arts'),
-    '21W'  => Array('subjects' => Array(), 'name' => 'Writing and Humanistic Studies'),
-    '22'   => Array('subjects' => Array(), 'name' => 'Nuclear Science and Engineering'),
-    '24'   => Array('subjects' => Array(), 'name' => 'Linguistics and Philosophy'),
-    'CMS'  => Array('subjects' => Array(), 'name' => 'Comparative Media Studies'),
-    'CSB'  => Array('subjects' => Array(), 'name' => 'Computational and Systems Biology'),
-    'ESD'  => Array('subjects' => Array(), 'name' => 'Engineering Systems Division'),
-    'HST'  => Array('subjects' => Array(), 'name' => 'Health Sciences and Technology'),
-    'MAS'  => Array('subjects' => Array(), 'name' => 'Media Arts and Sciences'),
-    'SP'   => Array('subjects' => Array(), 'name' => 'Special Programs'),
-    'STS'  => Array('subjects' => Array(), 'name' => 'Science, Technology, and Society'),
-  );*/
+
 
   private static $courses = array();
 
@@ -154,7 +117,19 @@ class CourseData {
 
       $urlString = STELLAR_BASE_URL .'q=id:'.$subjectId;
 
-      $xml = file_get_contents($urlString);
+      $filenm = STELLAR_COURSE_DIR. '/Course-' .$subjectId . '.xml';
+
+      if (file_exists($filenm)) {
+          $urlString = $filenm; //file_get_contents($filenm);
+      }
+      else {
+          $handle = fopen($filenm, "w");
+          fwrite($handle, file_get_contents($urlString));
+          $urlString = $filenm;
+      }
+          $xml = file_get_contents($urlString);
+
+      
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
