@@ -3,6 +3,8 @@
 define('INSTITUTION_NAME', "Harvard");
 define('FEEDBACK_EMAIL', "digitalcomms@harvard.edu");
 define('APP_NAME', "Harvard Mobile");
+define('SITE_NAME', "Harvard Mobile Web");
+define('SITE_URL', "http://m.harvard.edu"); // This should be env. specific
 
 // per-installation constants.
 
