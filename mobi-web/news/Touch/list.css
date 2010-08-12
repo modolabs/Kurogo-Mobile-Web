@@ -22,6 +22,6 @@ li.story {
 }
 
 
-.non-story {
+.non-story a {
     background-image: none;
 }
