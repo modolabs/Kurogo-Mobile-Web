@@ -1,5 +1,4 @@
 <?php
-
 require_once "Home.inc";
 require_once "Modules.inc";
 require WEBROOT . "/customize/customize_lib.inc";

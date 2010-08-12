@@ -1,4 +1,7 @@
 <?php
+// Template related
+define('INSTITUTION_NAME', "Harvard");
+define('FEEDBACK_EMAIL', "digitalcomms@harvard.edu");
 
 // per-installation constants.
 
