@@ -1,20 +1,17 @@
 <?php
 
-require_once LIBDIR . "/AcademicCalendar.php";
+require_once LIBDIR . "/harvard_calendar.php";
 require_once "calendar_lib.inc";
 
-$month = $_REQUEST['month'];
-$year = $_REQUEST['year'];
 $time = time();
-if(!$month) {
-  $month = date('n', $time);
-}
-if(!$year) {
-  $year = date('Y', $time);
-}
-$time = mktime(0, 0, 0, $month, 1, $year);
+$year = date('Y', $time);
 
-$events = AcademicCalendar::get_events($month, $year);
+if (isset($_REQUEST['year'])) {
+	$year = $_REQUEST['year'];	
+}
+
+// Passing false as the last param to get ICalEvents instead of cleaned dict representations of them.
+$events = get_academic_events($year, FALSE); 
 $days = Array();
 
 foreach ($events as $event) {
@@ -30,29 +27,21 @@ foreach ($events as $event) {
   $days[$dateTitle][] = $summary;
 }
 
-$prev = increment_month($time, -1);
-$next = increment_month($time, 1);
-
-$prev_month = date('n', $prev);
-$prev_yr = date('Y', $prev);
-
-$next_month = date('n', $next);
-$next_yr = date('Y', $next);
+$prev_yr = $year - 1;
+$next_yr = $year + 1;
 
 // expensive way to see if there are past/future events
 $nav_links = Array();
-$prev_events = AcademicCalendar::get_events($prev_month, $prev_yr);
+$prev_events = get_academic_events($prev_yr, FALSE);
 if (count($prev_events) > 0) {
-  $prev_title = date('F Y', $prev);
-  $prev_url = academicURL($prev_yr, $prev_month);
-  $nav_links[] = "<a href=\"$prev_url\">&lt; $prev_title</a>";  
+  $prev_url = academicURL($prev_yr);
+  $nav_links[] = "<a href=\"$prev_url\">&lt; $prev_yr</a>";  
 }
 
-$next_events = AcademicCalendar::get_events($next_month, $next_yr);
+$next_events = get_academic_events($next_yr, FALSE);
 if (count($next_events) > 0) {
-  $next_title = date('F Y', $next);
-  $next_url = academicURL($next_yr, $next_month);
-  $nav_links[] = "<a href=\"$next_url\">$next_title &gt;</a>";
+  $next_url = academicURL($next_yr);
+  $nav_links[] = "<a href=\"$next_url\">$next_yr &gt;</a>";
 }
 
 require "$page->branch/academic.html";

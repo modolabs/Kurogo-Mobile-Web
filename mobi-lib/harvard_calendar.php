@@ -182,4 +182,69 @@ class TrumbaCache {
 
 }
 
+
+function clean_up_ical_event($event) {
+
+     $event_dict = Array();
+     // we'll give the event a random unique ID since there's nothing
+     // useful we can do with it on the backend
+
+     $event_dict['id'] = crc32($event->get_uid()) >> 1; // 32 bit unsigned before shift
+     $event_dict['title'] = $event->get_summary();
+     $event_dict['start'] = $event->get_start();
+     $event_dict['end'] = $event->get_end();
+
+     if ($urlLink = $event->get_url()) {
+         $event_dict['url'] = $urlLink;
+     }
+     if ($location = $event->get_location()) {
+       $event_dict['location'] = $location;
+     }
+     if ($description = $event->get_description()) {
+       $event_dict['description'] = $description;
+     }
+
+     if ($custom = $event->get_customFields()) {
+     	$event_dict['custom'] = $custom;
+     }
+
+     return $event_dict;
+}
+
+function get_academic_events($year, $returnCleanedDictsOfEvents = TRUE) {
+	
+	$startDate = $year .'0901'; // september 1st of that year
+	$endYear = $year + 1;
+	$endDate = $endYear .'0831'; // august 31st of next year
+
+	/* if (strlen($month) == 1)
+	   $month = '0' .$month;
+*/
+	//$url = HARVARD_ACADEMIC_ICS_BASE_URL .'?startdate=' . $year .$month .'01&months=1';
+	//$academic_events = makeIcalAcademicEvents($url, $month, $year);
+
+	$url = HARVARD_ACADEMIC_ICS_BASE_URL . '?startdate=' .$startDate .'&enddate=' .$endDate;
+	$academic_events =  makeIcalAcademicEvents($url, $startDate, $endDate);
+	
+	if (!$returnCleanedDictsOfEvents) {
+		return $academic_events;
+	}
+	else {
+		foreach ($academic_events as $event) {
+			$cleaned_ical_event = clean_up_ical_event($event);
+
+			/* Need to correct for the start and end date discrepencies in the Trumba
+			 * feed we are getting from Gazette for the academic calendar.*/
+			$start = $event->get_start() + 24*60*60;
+			$end = $event->get_end() + 24*60*60;
+
+			$cleaned_ical_event['start'] = $start;
+			$cleaned_ical_event['end'] = $end;
+
+			$data[] = $cleaned_ical_event;
+		}
+		return $data;		
+	}
+}
+
 ?>
