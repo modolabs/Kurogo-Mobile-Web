@@ -111,7 +111,7 @@ class NewsURL {
     }
 
     private function searchStateQuery() {
-        return $this->homeStateQuery . "&" . http_build_query($this->searchState);
+        return $this->homeStateQuery() . "&" . http_build_query($this->searchState);
     }
 
     public function storyId() {
