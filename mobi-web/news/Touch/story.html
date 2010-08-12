@@ -37,28 +37,30 @@ $page->content_begin();
 
     <?=$story_page->getText()?>
 
-    Page:
-    <? if($previous_page_url) { ?>
-        <a href="<?=$previous_page_url?>" class="page-button">&lt;</a>
-    <? } ?>
+    <? if($total_page_count > 1) { ?>
+        Page:
+        <? if($previous_page_url) { ?>
+            <a href="<?=$previous_page_url?>" class="page-button">&lt;</a>
+        <? } ?>
 
-    <? for($i = 0; $i < $total_page_count; $i++) { ?>
-        <a
-            href="<?=$newsURL->storyURL($story, $i)?>"
-            <? if($page_number == $i) { ?>
-                class="page-button selected"
-            <? } else { ?>
-                class="page-button"
-            <? } ?>
+        <? for($i = 0; $i < $total_page_count; $i++) { ?>
+            <a
+                href="<?=$newsURL->storyURL($story, $i)?>"
+                <? if($page_number == $i) { ?>
+                    class="page-button selected"
+                <? } else { ?>
+                    class="page-button"
+                <? } ?>
 
-            >
-                <?=$i+1?>
-        </a>
-    <? } ?>
+                >
+                    <?=$i+1?>
+            </a>
+        <? } ?>
 
-    <? if($next_page_url) { ?>
-        <a href="<?=$next_page_url?>" class="page-button">&gt;</a>
-    <? } ?>
+        <? if($next_page_url) { ?>
+            <a href="<?=$next_page_url?>" class="page-button">&gt;</a>
+        <? } ?>
+     <? } ?>
     
 </div>
 
