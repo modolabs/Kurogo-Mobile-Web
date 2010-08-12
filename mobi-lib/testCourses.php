@@ -119,7 +119,7 @@ class CourseData {
 
       $filenm = STELLAR_COURSE_DIR. '/Course-' .$subjectId . '.xml';
 
-      if (file_exists($filenm)) {
+      if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
           $urlString = $filenm; //file_get_contents($filenm);
       }
       else {
@@ -230,7 +230,16 @@ class CourseData {
 
       $urlString = STELLAR_BASE_URL .$term .$gueryAdditionForCourseGroup .$queryAddition;
 
-      $xml = file_get_contents($urlString);
+      $filenm = STELLAR_COURSE_DIR .'/' .$course .'-' . $courseGroup .'.xml';
+      if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
+      }
+      else {
+          $handle = fopen($filenm, "w");
+          fwrite($handle, file_get_contents($urlString));
+          //$urlString = $filenm;
+      }
+
+      $xml = file_get_contents($filenm);
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
@@ -253,7 +262,17 @@ class CourseData {
 
 
       $urlString = STELLAR_BASE_URL .$term .$gueryAdditionForCourseGroup .$queryString;
-      $xml = file_get_contents($urlString);
+
+      $filenm1 = STELLAR_COURSE_DIR .'/' .$course .'-' . $courseGroup.'-' .$index.'.xml';
+      if (file_exists($filenm1) && ((time() - filemtime($filenm1)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
+
+      }
+      else {
+          $handle = fopen($filenm1, "w");
+          fwrite($handle, file_get_contents($urlString));
+      }
+
+      $xml = file_get_contents($filenm1);
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
@@ -300,7 +319,20 @@ class CourseData {
   // returns the Schools (Course-Group) to Departmetns (Courses) map
   public static function get_schoolsAndCourses() {
 
-    $xml = file_get_contents(STELLAR_BASE_URL .TERM_QUERY);
+      $filenm = STELLAR_COURSE_DIR. '/SchoolsAndCourses' .'.xml';
+
+      if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
+          //$urlString = $filenm; //file_get_contents($filenm);
+      }
+      else {
+          $handle = fopen($filenm, "w");
+          fwrite($handle, file_get_contents(STELLAR_BASE_URL .TERM_QUERY));
+          //$urlString = $filenm;
+      }
+          $xml = file_get_contents($filenm);
+
+
+   // $xml = file_get_contents(STELLAR_BASE_URL .TERM_QUERY);
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
