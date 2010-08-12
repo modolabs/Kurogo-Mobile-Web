@@ -84,6 +84,9 @@ switch ($_REQUEST['command']) {
 
    case 'academic':
 		$data = get_academic_events($_REQUEST['year']);
+
+                if ($data == null)
+                    $data = array();
        	break;
 
    default:
