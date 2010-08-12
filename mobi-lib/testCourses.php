@@ -3,6 +3,7 @@
 require_once "lib_constants.inc";
 require_once "AcademicCalendar.php";
 require_once "DiskCache.inc";
+require_once 'html2text.php';
 
 define('CATEGORY_QUERY_BASE', 'fq_dept_area_category=dept_area_category:"');
 define('TERM_QUERY','&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to+Dec+2010+(Fall+Term)"&');
@@ -187,6 +188,7 @@ class CourseData {
              else
                 $subject_fields['description'] = $subject_fields['description'] .$desc[$ind] .':';
          }
+         $subject_fields['description'] = HTML2TEXT($subject_fields['description']);
         // $subject_fields['description'] = $desc[0];
          $pre_req = explode(':', $single_course->prereq);
          $subject_fields['preReq'] = $pre_req[0];
