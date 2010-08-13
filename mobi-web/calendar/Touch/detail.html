@@ -3,6 +3,9 @@ $page->title('Events Calendar: Event Details')
      ->navbar_image('calendar')
      ->header('Event Details');
 
+// get a list of the category mappings first
+$harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
+
 $page->content_begin();
 ?>
 
@@ -34,8 +37,14 @@ $page->content_begin();
 <? 
   $size = count($categories);
   foreach($categories as $index => $category) {
-    $last = ($size-1 == $index); ?>
-		<a href="<?=categoryURL($category)?>"><?=ucname($category)?></a>
+    $last = ($size-1 == $index);
+
+    foreach($harvard_cat as $cat) {
+       if ($cat->get_name() == $category)
+             $categoryFound = $cat;
+      }
+    ?>
+		<a href="<?=categoryURL($categoryFound)?>"><?=ucname($categoryFound->get_name())?></a>
 <? 
     if(!$last) echo ",";
   }

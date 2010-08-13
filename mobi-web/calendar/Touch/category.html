@@ -1,7 +1,7 @@
 <?php
 $title_end = !$is_search ? " for Today" : "";
 
-$page->title("Events: " . ucname($category->name) . $title_end)
+$page->title("Events: " . ucname($name) . $title_end)
      ->navbar_image('calendar')
      ->header("Browse");
 
@@ -9,7 +9,7 @@ $page->content_begin();
 ?>
 
 <div class="nonfocal">
-   <h2><?=ucname($category->name)?></h2>
+   <h2><?=ucname($name)?></h2>
 </div>
 
 <?
