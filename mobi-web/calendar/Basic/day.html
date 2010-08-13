@@ -3,6 +3,7 @@ $page->title("Events Calendar: $Type for {$current['day_3Let']} {$current['month
      ->header('Events Calendar');
 
 $page->content_begin();
+
 ?>
 
 	<h2><?=$Type?> for <?=$current['day_3Let']?> <?=$current['month_3Let']?> <?=$current['day_num']?>, <?=$current['year']?></h2>
@@ -13,7 +14,7 @@ $page->content_begin();
 	
 	<div class="focal">
             <? foreach($events as $event) { ?>
-		<p><a href="<?=detailURL($event)?>"><?=$event->get_location()?></a><br/><span class="smallprint"><?=timeText($event)?><? if(briefLocation($event)) { ?>&nbsp;|&nbsp;<?=briefLocation($event)?><? } ?></span></a></p>
+		<p><a href="<?=detailURL($event)?>"><?=$event->get_summary()?></a><br/><span class="smallprint"><?=timeText($event)?><? if(briefLocation($event)) { ?>&nbsp;|&nbsp;<?=briefLocation($event)?><? } ?></span></a></p>
             <? } ?>
 	</div>
 	

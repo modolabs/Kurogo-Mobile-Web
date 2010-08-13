@@ -15,7 +15,7 @@ $events = get_academic_events($year, FALSE);
 $days = Array();
 
 foreach ($events as $event) {
-  $dateTitle = formatDayTitle($event);
+  $dateTitle = formatDayTitleForAcademicEvents($event);
 
   if (!array_key_exists($dateTitle, $days)) {
     $days[$dateTitle] = Array();

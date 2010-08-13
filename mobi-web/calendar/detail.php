@@ -26,9 +26,14 @@ if ($event->get_end() - $event->get_start() == -1) {
   $time_of_day = $event->get_range()->format('g:i a');
 }
 
-$categories = explode(',', $event->get_categories());
+//$categories = explode(',', $event->get_categories());
+/*print_r($event->get_customFields());
 
-function phoneURL($number) {
+print_r(explode('\,',$arr['"Gazette Classification"']));*/
+$arr = $event->get_customFields();
+$categories = explode('\,',$arr['"Gazette Classification"']);
+
+ function phoneURL($number) {
   if($number) {
 
     // add the local area code if missing

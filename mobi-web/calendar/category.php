@@ -26,9 +26,10 @@ if (strlen($id) > 0) {
 	$start = date('Ymd', $time);
 	$startdate = "?startdate=" . $start ."&days=1";
 	$url = HARVARD_EVENTS_ICS_BASE_URL . $startdate ."&filter1=" .$id ."&filterfield1=15202";
-
+        
 	// We're setting up $events because it will be picked up in the html file and printed.
-	$events = makeIcalDayEvents($url, $start, $id);	
+	$events = array();
+        $events = makeIcalDayEvents($url, $start, $id);
 }
 
 // Content is used by the html file to print the events.
@@ -46,6 +47,7 @@ $content = new ResultsContent(
 require "$page->branch/category.html";
 $page->output();
 
+Results
 
 
 ?>
