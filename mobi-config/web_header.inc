@@ -1,6 +1,6 @@
 <?php
 // Template related
-define('INSTITUTION_NAME', "Harvard");
+define('INSTITUTION_NAME', "Harvard University");
 define('FEEDBACK_EMAIL', "digitalcomms@harvard.edu");
 define('APP_NAME', "Harvard Mobile");
 define('SITE_NAME', "Harvard Mobile Web");

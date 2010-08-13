@@ -106,7 +106,7 @@ class BasicPage extends Page {
     if ($this->platform == 'bbplus') {
       return '<h2 id="header">'
            . $this->img_tag('harvard-logo', 'gif')
-           . 'Harvard Mobile</h2>';
+           . SITE_NAME . '</h2>';
     } else {
       return '<h1>'
            . $this->img_tag('harvard-logo-home-3', 'png', '', array('id' => 'logo'))
