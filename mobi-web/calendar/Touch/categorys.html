@@ -7,8 +7,8 @@ $page->content_begin();
 ?>
 			
 	<ul class="nav">
-            <? foreach($categorys as $category) { ?>
-		<li><a href="<?=subCategorysURL($category)?>"><?=ucname($category->get_name())?></a></li>
+            <? foreach($categories as $category) { ?>
+		<li><a href="<?=categoryURL($category)?>"><?=ucname($category->get_name())?></a></li>
             <? } ?>
 	</ul>
 <? $page->content_end(); ?>

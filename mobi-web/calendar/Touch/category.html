@@ -1,21 +1,31 @@
 <?php
-$title_end = !$is_search ? " for Today" : "";
+$title = ucname($name) . ": " . ($isToday ?
+	"Today" : $current['day_3Let'] . " " . $current['month'] . " " . $current['day_num']);
 
-$page->title("Events: " . ucname($name) . $title_end)
+$page->title($title)
      ->navbar_image('calendar')
      ->header("Browse");
 
 $page->content_begin(); 
 ?>
 
-<div class="nonfocal">
-   <h2><?=ucname($name)?></h2>
-</div>
+<ul class="nonfocal">
+   <h2><?=$title ?></h2>
+</ul>
+
+<ul class="sidenav">
+<li <a href="<?=categoryDayURL($prev, $id, $name)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month']?> <?=$prev['day_num']?></a> </li> | <li <a href="<?=categoryDayURL($next, $id, $name)?>"><?=$next['day_3Let']?> <?=$next['month']?> <?=$next['day_num']?> &gt;</a></li>
+</ul>
 
 <?
-
 $content->output($events);
+?>
 
+<ul class="sidenav">
+<li <a href="<?=categoryDayURL($prev, $id, $name)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month']?> <?=$prev['day_num']?></a> </li>| <li <a href="<?=categoryDayURL($next, $id, $name)?>"><?=$next['day_3Let']?> <?=$next['month']?> <?=$next['day_num']?> &gt;</a> </li>
+</ul>
+
+<?
 $page->content_end(); 
 ?>
 

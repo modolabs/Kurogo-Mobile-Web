@@ -44,7 +44,7 @@ $page->content_begin();
              $categoryFound = $cat;
       }
     ?>
-		<a href="<?=categoryURL($categoryFound)?>"><?=ucname($categoryFound->get_name())?></a>
+		<a href="<?=categoryURL($categoryFound)?>"><?=ucname($category)?></a>
 <? 
     if(!$last) echo ",";
   }

@@ -47,7 +47,7 @@ $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
                             $categoryFound = $cat;
                         }
                       ?>
-                        <a href="<?=categoryURL($categoryFound)?>"><?=ucname($categoryFound->get_name())?></a><? if(!$last) { echo ","; } ?>
+                        <a href="<?=categoryURL($categoryFound)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
                    <? } ?>
                 </p>
 	</div>
