@@ -74,7 +74,7 @@ WhatsNew::setLastTime();
 
 				<div class="module">
 					<img class="thumbnail" src="images/modules/stellar-thumb.gif" width="160" height="160" alt="Stellar" />
-					<h3>Stellar</h3>
+					<h3>Courses</h3>
 					<p>Get the latest news and announcements for any class with a Stellar site. You can also find faculty and staff contact info (and instantly look them up in the people directory).</p>
 				</div>
 

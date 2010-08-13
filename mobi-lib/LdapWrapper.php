@@ -202,7 +202,6 @@ class LdapWrapper {
 
     if (strstr($id, '=')) { 
       // assume we're looking up person by "dn" (distinct ldap name)
-      // TODO: find out if this string pattern was MIT-specific
 
       $ds = ldap_connect(LDAP_SERVER);
       if (!$ds) {

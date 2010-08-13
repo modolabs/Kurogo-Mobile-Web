@@ -26,7 +26,7 @@ class SoapClientWrapper {
     } catch(SoapFault $error) {
       $msg = $error->getMessage();
       if (!$msg) $msg = "";
-      throw new DataServerException("MIT Calendar SOAP server problem: $msg");
+      throw new DataServerException("Calendar SOAP server problem: $msg");
     }
   }
 

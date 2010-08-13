@@ -12,7 +12,7 @@ $page->content_begin();
     
     <? if (count(getMyStellar()->allTags) > 0 ) { ?>
         
-        <h3>My Stellar:</h3> 
+        <h3>My Courses:</h3> 
     
         <? if (count(getMyStellar()->currentIds)) { ?>
 	   <p class="nav">
@@ -24,7 +24,7 @@ $page->content_begin();
         <? } ?>
 
         <? if (count(getMyStellar()->oldIds)) { ?>
-           <div class="nonfocal legend">The following old classes have been removed from your My Stellar settings:
+           <div class="nonfocal legend">The following old classes have been removed from your My Courses settings:
              <?=implode(", ", getMyStellar()->oldIds)?>
            </div>
         <? } ?>

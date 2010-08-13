@@ -4,93 +4,14 @@
     <link>http://localhost/drupal/whats_new/rss.xml</link>
     <description></description>
     <language>en</language>
-          <item>
-    <title>What&#039;s New</title>
-    <link>http://localhost/drupal/node/2</link>
-    <description></description>
-     <shortName>whats new</shortName>
- <body>&lt;p&gt;This page will be used to alert users about new features and modules for MIT mobile services.&lt;/p&gt;
-</body>
- <pubDate>Fri, 17 Apr 2009 21:53:03 +0000</pubDate>
- <dc:creator>mobi</dc:creator>
- <guid isPermaLink="false">2 at http://localhost/drupal</guid>
-  </item>
-  <item>
-    <title>Customize Home</title>
-    <link>http://localhost/drupal/node/4</link>
-    <description></description>
-     <shortName>Settings</shortName>
- <body>&lt;p&gt;Users can now select which items they want to show up on the MIT Mobile Homepage.  Simply click on Customize Home.  Select which modules you want to be active, and reorder them as you wish them to appear.&lt;/p&gt;
-</body>
- <pubDate>Fri, 17 Apr 2009 22:07:17 +0000</pubDate>
- <dc:creator>mobi</dc:creator>
- <guid isPermaLink="false">4 at http://localhost/drupal</guid>
-  </item>
-  <item>
-    <title>MIT SMS (Beta) Services</title>
-    <link>http://localhost/drupal/node/3</link>
-    <description></description>
-     <shortName>SMS</shortName>
- <body>&lt;p&gt;MIT now has a text messaging service, which allows users to query information from the People Directory, Shuttle Schedule, or Stellar.&lt;/p&gt;
-</body>
- <pubDate>Fri, 17 Apr 2009 22:00:26 +0000</pubDate>
- <dc:creator>mobi</dc:creator>
- <guid isPermaLink="false">3 at http://localhost/drupal</guid>
-  </item>
-  <item>
-    <title>TechCASH (Beta)</title>
-    <link>http://localhost/drupal/node/6</link>
-    <description></description>
-     <shortName>Tech- CASH</shortName>
- <body>&lt;p&gt;TechCASH users with an iPhone may now view their accounts on the MIT Mobile Web.  Note: viewing your TechCASH account requires MIT Certificates.&lt;/p&gt;
-</body>
- <pubDate>Wed, 17 Jun 2009 16:53:45 +0000</pubDate>
- <dc:creator>sonya</dc:creator>
- <guid isPermaLink="false">6 at http://localhost/drupal</guid>
-  </item>
-  <item>
-    <title>Summer Shuttle Schedule</title>
-    <link>http://localhost/drupal/node/7</link>
-    <description></description>
-     <shortName>Shuttle</shortName>
- <body>&lt;p&gt;The Shuttle Schedule has been updated to include the summer routes: Boston All and Cambridge All.&lt;/p&gt;
-</body>
- <pubDate>Thu, 25 Jun 2009 17:37:47 +0000</pubDate>
- <dc:creator>sonya</dc:creator>
- <guid isPermaLink="false">7 at http://localhost/drupal</guid>
-  </item>
-  <item>
-    <title>Fall Shuttle Schedule</title>
-    <link>http://localhost/drupal/node/8</link>
-    <description></description>
-     <shortName>Shuttle</shortName>
- <body>&lt;p&gt;The Shuttle Schedule has been updated for the Fall 2009 schedule.&lt;/p&gt;
-</body>
- <pubDate>Thu, 03 Sep 2009 18:41:10 +0000</pubDate>
- <dc:creator>andrewyu</dc:creator>
- <guid isPermaLink="false">8 at http://localhost/drupal</guid>
-  </item>
-  <item>
-    <title>My Stellar</title>
-    <link>http://localhost/drupal/node/22</link>
-    <description></description>
-     <shortName>My Stellar</shortName>
- <body>&lt;p&gt;Users may now save a list of favorite classes in the MIT Mobile Web Stellar module.  To save a class, navigate to the class detail screen and click the &quot;My Stellar&quot; link.  Click the link again to remove the class.&lt;/p&gt;
-</body>
- <pubDate>Tue, 15 Sep 2009 19:36:11 +0000</pubDate>
- <dc:creator>sonya</dc:creator>
- <guid isPermaLink="false">22 at http://localhost/drupal</guid>
-  </item>
-  <item>
-    <title>MIT Mobile iPhone App</title>
-    <link>http://localhost/drupal/node/23</link>
-    <description></description>
-     <shortName>iPhone App</shortName>
- <body>&lt;p&gt;The MIT Mobile iPhone App is now available. &lt;a href=&quot;http://itunes.apple.com/us/app/mit-mobile/id353590319&quot;&gt; Download the iPhone app from the App Store.&lt;/a&gt;&lt;/p&gt;
-</body>
- <pubDate>Tue, 09 Feb 2010 19:46:49 +0000</pubDate>
- <dc:creator>andrewyu</dc:creator>
- <guid isPermaLink="false">23 at http://localhost/drupal</guid>
-  </item>
+   	<item>
+		<title>What&#039;s New</title>
+    	<link>http://localhost/drupal/node/2</link>
+    	<description></description>
+     	<shortName>whats new</shortName>
+ 		<body>This page will be used to alert users about new features and modules.</body>
+ 		<pubDate>Mon, 16 Aug 2010 21:53:03 +0000</pubDate>
+ 		<dc:creator>mobi</dc:creator>
+  	</item>
   </channel>
 </rss>

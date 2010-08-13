@@ -60,7 +60,7 @@ if ($this->platform == 'bbplus') { ?>
 
     <p class="bottomnav">
        <? $this->reset_access_key();
-          echo $this->link_access_key('../home', 'Harvard Mobile Web Home'); ?>
+          echo $this->link_access_key('../home', SITE_NAME . ' Home'); ?>
        <br />
        <? foreach($bottom_nav_links as $index => $link) { ?>
             <?=$this->link_access_key($link['url'], $link['text'])?>
