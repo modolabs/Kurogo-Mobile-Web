@@ -65,6 +65,10 @@ class Page {
       else {
           $branch = $params[0];
       }
+      // A little paranoia, since we use it to build paths...
+      if ($branch != "Webkit" && $branch != "Touch" && $branch != "Basic") {
+          $branch = "Basic";
+      }
 
       $platform = $params[1];
       $certs = $params[2];
