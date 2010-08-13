@@ -237,7 +237,7 @@ class DINING_DATA {
     public function createDiningFlatFile($local_file) {
 
         $handle = fopen($local_file, "r");
-
+     
         while (($data = fgetcsv($handle)) !== FALSE) {
             $menu_item = new MenuItem($data);
             $menu_key = $menu_item->mealDate;
@@ -278,6 +278,7 @@ class DINING_DATA {
         $filename = DINING_MENU_DIRECTORY .$day .".csv";
 
         self::createDiningFLatFile(DINING_MENU_FLAT_FILE);
+
         if (file_exists($filename))
             $handle = fopen($filename, "r");
 
