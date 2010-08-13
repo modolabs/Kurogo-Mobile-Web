@@ -92,7 +92,7 @@ if (file_exists($cssfile)) { ?>
 
 <body onload="setTimeout('scrollTo(0,1)', 100); init(); <?=$extra_onload?>" onunload="">
 
-<h1 <? if($top_item) {?>class="roomfornew"<? } ?> ><img src="Webkit/images/harvard-logo-home.gif" width="300" height="31" alt="Harvard Mobile Web" /></h1>
+<h1 <? if($top_item) {?>class="roomfornew"<? } ?> ><img src="Webkit/images/harvard-logo-home.png" width="265" height="44" alt="Harvard Mobile Web" /></h1>
 
 <? if($top_item) { ?>
       <div id="new"><a href="../mobile-about/new.php"><span class="newlabel">NEW:</span><?=$top_item?></a></div>
@@ -101,6 +101,23 @@ if (file_exists($cssfile)) { ?>
 
 <div id="container">
 
+	<div class="nonfocal">
+		<form method="get" action="">
+			<fieldset class="inputcombo emphasized">
+				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search Harvard Mobile" value="<?=$searchTerms?>" />
+				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
+			</fieldset>	
+
+                <? if (($errorMessage != null)) { ?>
+                    <p><?= $errorMessage ?></p>
+                <? } ?>
+                <? if($failed_search) { ?>
+                      <p>No matches found</p>
+                <? } ?>
+		</form>
+	</div>
+
+	
 	<div id="homegrid">
                <? foreach($all_modules as $module) { ?>
                      <div id="<?=$module?>">
