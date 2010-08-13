@@ -12,7 +12,7 @@ $tabs = new Tabs(selfURL(), 'tab', array('News', 'Info', 'Staff'));
 
 $back = $_REQUEST['back'];
 
-/* My Stellar actions */
+/* My Courses actions */
 $mystellar = getMyStellar()->allTags;
 $class_data = $class_id . " " . $term_id;
 

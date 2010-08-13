@@ -28,12 +28,12 @@
 </div> <!-- id="container" -->
 
 <div id="footerlinks">
-	<a href="#top">Back to top</a> <? if ($help_on) { ?>| <a href="help.php">Help</a><? } ?> | <a href="../home/">Harvard Mobile Home</a>
+	<a href="#top">Back to top</a> <? if ($help_on) { ?>| <a href="help.php">Help</a><? } ?> | <a href="../home/"><?=SITE_NAME?> Home</a>
 </div>
 
 <div id="footer">
 <? if ($standard_footer) { ?>
-	&copy;2010 Harvard University
+	&copy;2010 <?=INSTITUTION_NAME?>
 <? } else { ?>
 <?=$footer?>
 <? } ?>

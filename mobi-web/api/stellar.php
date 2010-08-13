@@ -48,7 +48,7 @@ if (isset($_REQUEST['command'])) {
 
       $data['term'] = StellarData::get_term();
     } else {
-      $data = array('error' => 'SubjectNotFound', 'message' => 'Stellar could not find this subject'); 
+      $data = array('error' => 'SubjectNotFound', 'message' => 'Courses could not find this subject'); 
     }
     break;
 

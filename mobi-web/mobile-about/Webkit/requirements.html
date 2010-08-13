@@ -1,5 +1,5 @@
 <?php
-$page->title('About the MIT Mobile Web')
+$page->title('About the ' . SITE_NAME)
      ->navbar_image('about')
      ->breadcrumbs('System Requirements');
 
@@ -8,7 +8,7 @@ $page->content_begin();
 
 <div class="focal">
     <p>
-        To use the MIT Mobile Web, you'll need two things:
+        To use the <?=SITE_NAME?>, you'll need two things:
     </p>
 
     <ol>
@@ -25,11 +25,11 @@ $page->content_begin();
 
     <br/>
 
-    <p>To get to the MIT Mobile Web: On your mobile device, launch your web browser and go to <strong><a href="http://m.mit.edu/">http://m.mit.edu</a></strong>.</p>
+    <p>To get to the <?=SITE_NAME?>: On your mobile device, launch your web browser and go to <strong><a href="<?=SITE_URL?>"><?=SITE_URL?></a></strong>.</p>
     <p>Note: do <em>not</em> use 'www' in the web address.</p>
     <p>Your device's browser may be found under 'MediaNET' (AT&amp;T), 'Get It Now &gt; News &amp; Info' (Verizon Wireless), 'Power Vision' (Sprint), 'Safari' (iPhone/iPod Touch), 'Internet Explorer' (Windows Mobile), 'Opera' (some feature phones and smartphones), or just 'Web' or 'Browser'.</p>
-    <p>The MIT Mobile Web will automatically detect your device type and deliver an experience optimized for it.</p>
-    <p>* Important note: The MIT Web is a free service. Extra data charges may apply when using any website on your mobile device depending on your service plan.</p>
+    <p>The <?=SITE_NAME?> will automatically detect your device type and deliver an experience optimized for it.</p>
+    <p>* Important note: The <?=SITE_NAME?> is a free service. Extra data charges may apply when using any website on your mobile device depending on your service plan.</p>
     <p>** On devices without phone service (e.g., iPod Touch, WiFi-connected PDA, internet tablet), links that are meant to dial a phone number will not work properly.</p>
 </div>
 

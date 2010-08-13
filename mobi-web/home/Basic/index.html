@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="content-type" content="application/xhtml+xml" />
 <?=$page->meta_tags()?>
-<title>Harvard Mobile</title>
+<title><?=SITE_NAME?></title>
 <link rel="stylesheet" type="text/css" href="<?=$page->delta_file('index', 'css') ?>" />	
 <? if ($page->get_inline_css()) { ?>
 <style type="text/css">
@@ -33,7 +33,7 @@
 </p>
 
 <p class="nav secondary">
-	<a href="../mobile-about/">About Harvard Mobile</a><br/>
+	<a href="../mobile-about/">About the <?=SITE_NAME?></a><br/>
         <a href="../customize/">Customize this Homescreen</a><br/>
         <? if (Modules::is_right_platform($page->platform, 'download')) { ?>
                 <a href="../download/">Download</a><br />
@@ -51,7 +51,7 @@ Font size: <?=$page->font_selector()?>
 
 <?=$page->bbhack()?>
 
-<p id="footer">&copy;2010 Harvard University</p>
+<p id="footer">&copy;2010 <?=INSTITUTION_NAME?></p>
 <? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 </body>
 </html>

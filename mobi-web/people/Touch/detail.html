@@ -15,11 +15,11 @@ class Item {
   public function display($label, $field, $href=NULL, $class=NULL, $group=False, $hasLink=FALSE) {
     $displayString = "";
     foreach($this->person->getField($field) as $value) {
-      $value = str_replace('$', '<br />', $value);
+      $formatted_value = str_replace('$', '<br />', $value);
 
       $innerContents = "
       <span class=\"label\">$label</span>
-      <span class=\"value\">$value</span>";
+      <span class=\"value\">$formatted_value</span>";
       if ($href !== NULL) {
         $innerContents = '<a href="' . $href($value) . '" class="' . $class . '">'
                        . $innerContents . '</a>';
@@ -58,7 +58,7 @@ $page->content_begin();
 
         <? $item->display('address', 'street', NULL, NULL, FALSE, FALSE); ?>
         <? $item->display('email', 'mail', 'mailHREF', 'email', FALSE, TRUE); ?>
-        <? $item->display('office', 'postaladdress', 'mapURL', 'map', FALSE, TRUE); ?>
+        <? $item->display('office', 'postaladdress', 'officeURL', 'map', FALSE, TRUE); ?>
 
 <? $page->content_end(); ?>
 

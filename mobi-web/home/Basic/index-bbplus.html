@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
 <?=$page->meta_tags()?>
-<title>Harvard Mobile</title>
+<title><?=SITE_NAME?></title>
 <link rel="stylesheet" type="text/css" href="<?=$page->delta_file('index', 'css') ?>" />
 </head>
 <body>
@@ -21,7 +21,7 @@
 <? } ?>
 </div>
 
-<div id="footer">&copy;2010 Harvard University
+<div id="footer">&copy;2010 <?=INSTITUTION_NAME?>
 </div>
 <? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 </div>
