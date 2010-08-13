@@ -7,7 +7,7 @@
     <meta name = "viewport" content = "width = device-width, height = device-height" />
 	<meta name="HandheldFriendly" content="True" />
 <? if($page->platform=='bbplus'){ ?>
-	<meta name="MobileOptimized" content="480" />
+	<meta name="MobileOptimized" content="240" />
 <? } ?>
 	<title>Harvard Mobile</title>
 	<link rel="stylesheet" type="text/css" href="../<?=$page->branch?>/<? if ($page->platform == 'bbplus') { ?>core-bbplus.css<? } else { ?>core.css<? } ?>" />	
@@ -21,14 +21,9 @@
 
 <body>
 
-<? if($page->platform=='bbplus'){ ?>
-	BB+
-<? } else {?>
-	<h2 id="header">
-	<?=$page->img_tag('harvard-logo','gif')?>Harvard Mobile
-	</h2>	
-<? } ?>
-
+<h1 id="header" class="homehead">
+<?=$page->img_tag('harvard-logo-home','gif')?>
+</h1>	
 
 <p class="bb"> </p>
 
