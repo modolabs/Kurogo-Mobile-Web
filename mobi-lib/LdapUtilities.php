@@ -96,4 +96,21 @@ function buildNameAndEmailLDAPQuery($search)
     return($searchFilter);	
 }
 
+// common ldap error codes
+define("LDAP_INSUFFICIENT_ACCESS", 0x32);
+define("LDAP_PARTIAL_RESULTS", 0x09);
+define("LDAP_TIMELIME_EXCEEDED", 0x03);
+
+function generateErrorMessage($ldap_resource) {
+   $error_code = ldap_errno($ldap_resource);
+   $error_codes = array(
+       LDAP_PARTIAL_RESULTS => "Partial result only available",
+       LDAP_INSUFFICIENT_ACCESS => "Insufficient access",
+       LDAP_TIMELIMIT_EXCEEDED => "Search timed out",
+    );
+    if(isset($error_codes[$error_code])) {
+        return $error_codes[$error_code];
+    }
+}
+
 ?>

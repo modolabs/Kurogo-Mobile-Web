@@ -132,6 +132,15 @@ function formatDayTitle(ICalEvent $event) {
   return $dateTitle;
 }
 
+function formatDayTitleForAcademicEvents(ICalEvent $event) {
+  //$start = $event->get_start();
+  $end = $event->get_end();
+  $dateTitle = date('l F j', $end);
+
+  return $dateTitle;
+}
+
+
 function timeText($event) {
   if ($event->get_end() - $event->get_start() == -1) {
     return $event->get_range()->format('D M j');

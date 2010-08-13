@@ -52,6 +52,7 @@ h3 {
 	font-weight: bold;
 	margin: 0 0 5px 0;
 	padding: 0;
+	color: #554c41;
 }
 
 h4 {
@@ -94,7 +95,16 @@ ul li {
 
 #header img {
 	float: left;
-	margin-right: 7px;
+	margin-right: 6px;
+}
+
+#header.homehead {
+	padding-bottom: 0;
+}
+
+#header.homehead img {
+	float: none;
+	margin: 0;
 }
 
 #header a {
@@ -356,6 +366,10 @@ span.icon {
 	margin: 1.5em 0 1em 0;
 }
 
+.tabs.top {
+	margin-top: 0.25em;
+}
+
 .tabs .active {
 	font-weight: bold;
 	color: #000;
@@ -363,4 +377,26 @@ span.icon {
 
 .tabs a {
 	font-weight: normal;
+}
+
+
+.iconlegend {
+	font-size: 80%;
+	color: #555;
+	margin-bottom: 1.5em;
+}
+
+.iconlegend img {
+	margin-right: 3px;
+	position: relative;
+	top: 2px;
+}
+
+.iconlabel {
+	float: right;
+	margin-left: 10px;
+}
+
+.dininghall {
+	margin-left: 4px;
 }

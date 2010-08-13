@@ -32,12 +32,22 @@ $page->content_begin();
 		     </p>
                 <? } ?>
 
-		<p class="legend">Categorized as: 
+                <p class="legend">Categorized as:
                    <? $size = count($categories);
-                      foreach($categories as $index => $category) { $last = ($size-1 == $index); ?>
-                        <a href="<?=categoryURL($category)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
+                      foreach($categories as $index => $category) {?>
+                          <p><?=$category?></p>
+                       <!-- <a href="<?=categoryURL($category)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?> -->
+                       
                    <? } ?>
                 </p>
+                
+		<!--<p class="legend">Categorized as:
+                   <? $size = count($categories);
+                      foreach($categories as $index => $category) { $last = ($size-1 == $index); ?>
+                      <h5><?=$category?></h5>
+                        <a href="<?=categoryURL($category)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
+                   <? } ?>
+                </p>-->
 	</div>
 <?
 
