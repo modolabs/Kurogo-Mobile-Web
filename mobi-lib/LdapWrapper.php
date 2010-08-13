@@ -171,7 +171,13 @@ class LdapWrapper {
 
     $sr = ldap_search($ds, LDAP_PATH, $this->query, array(), 0, 0, SEARCH_TIMELIMIT);
     if (!$sr) {
-      $this->errorMsg = "Search timed out";
+        if($ds) {
+            $this->errorMsg = generateErrorMessage($ds);
+            if(!$this->errorMsg) {
+                // failed to generate message (use a generic error message)
+                $this->errorMsg = LDAP_SEARCH_ERROR;
+            }
+        }
       return FALSE;
     }
 
