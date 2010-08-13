@@ -2,6 +2,8 @@
 $page->title('Student Dining')
      ->navbar_image('dining')
      ->breadcrumbs('Student Dining')
+     ->add_stylesheet('Webkit/dining')
+     ->add_javascript('../Webkit/uiscripts')
      ->breadcrumb_home();
 
 $page->content_begin();
@@ -15,10 +17,70 @@ $page->content_begin();
 <a href="<?=dayURL($prev, $type)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month']?> <?=$prev['day_num']?></a> | <a href="<?=dayURL($next, $type)?>"><?=$next['day_3Let']?> <?=$next['month']?> <?=$next['day_num']?> &gt;</a>
 </div>
 
+<a name="scrolldown"> </a>
+<div class="nonfocal">
+    <ul id="tabs" class="smalltabs">
+        <? foreach($food_items as $meal => $food_types) { ?>
+            <li <? if($meal==$current_meal) { ?>class="active"<? } ?> >
+                <a href="#scrolldown" onclick="showTab('<?=$meal?>tab',this)">
+                    <?=ucwords($meal)?>
+                </a>
+           </li>
+        <? } ?>
 
+        <li><a href="#scrolldown" onclick="showTab('locationstab',this)">Locations</a></li>
+    </ul>
+    
+
+    <div id="tabbodies">
+        <? foreach($food_items as $meal => $food_types) { ?>
+            <div class="tabbody" id="<?=$meal?>tab" style="display:none">
+                    <div class="columns2">
+			<ul class="iconlegend col">
+				<li><img src="Webkit/images/dining-vegetarian@2x.png" width="23" height="17" alt="Vegetarian">Vegetarian</li>
+				<li><img src="Webkit/images/dining-vegan@2x.png" width="23" height="17" alt="Vegan">Vegan</li>
+			</ul>
+			<ul class="iconlegend col">
+				<li><img src="Webkit/images/dining-organic@2x.png" width="23" height="17" alt="Organic">Organic</li>
+				<li><img src="Webkit/images/dining-local@2x.png" width="23" height="17" alt="Local">Local</li>
+			</ul>
+			<div class="clear"></div>
+                    </div> <!-- class="columns" -->
+		
+                    <? if(count($food_types) > 0) { ?>
+                
+                        <? foreach($food_types as $food_type => $foods) { ?>
+                            <h3><?=$food_type?></h3>
+                            <ul class="nav nested">
+                                <? foreach($foods as $food) { ?>
+                                    <li>
+                                        <span class="iconlabel">
+                                            <? foreach($food['properties'] as $property) { ?>
+                                                <img src="Webkit/images/dining-<?=$property?>-crop@2x.png" width="17" height="17" alt="<?=ucwords($property)?>" />
+                                            <? } ?>
+                                        </span>
+                                        <?=$food['item']?>
+                                    </li>
+                                <? } ?>
+                            </ul>
+                        <? } ?>
+                    <? } else { ?>
+                        <p><?=ucwords($meal)?></p>
+                    <? } ?>
+            </div>
+        <? } ?>
+    </div>
+</div>
 
 <div class="sidenav">
 <a href="<?=dayURL($prev, $type)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month']?> <?=$prev['day_num']?></a> | <a href="<?=dayURL($next, $type)?>"><?=$next['day_3Let']?> <?=$next['month']?> <?=$next['day_num']?> &gt;</a>
 </div>
 
-<? $page->content_end(); ?>
+<?
+
+$page->content_end();
+
+$script = "showTab('{$current_meal}tab');";
+$page->footer_script($script);
+
+?>
