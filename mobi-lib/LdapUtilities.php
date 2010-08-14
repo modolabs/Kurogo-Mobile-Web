@@ -46,7 +46,7 @@ function sanitizeSearch($search)
 {
 	// We allow letters, numbers, underscores, spaces, and single quotes (for
 	// names like "O'Reilly").  Everything else gets axed into a space.
-	return preg_replace('/[^\w\'@.]/', " ", $search);
+	return trim(preg_replace('/[^\w\'@.]/', " ", $search));
 }
 
 function queryForFirstLastName($firstName, $lastName) {
