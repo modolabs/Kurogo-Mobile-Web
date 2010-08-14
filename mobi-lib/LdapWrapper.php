@@ -75,7 +75,7 @@ class LdapPerson {
     // Harvard: if full name shows up at beginning of office address, remove
     $address = $this->attributes['postaladdress'][0];
     $nameParts = explode(' ', $this->fullname);
-    if ($nameParts) {
+    if ($address && $nameParts) {
       // lines in office address are literally delimited by a $ symbol
       $namePattern = '/^' . $nameParts[0] . '[\w\s\.]*' . end($nameParts) . '\$/';
       $address = preg_replace($namePattern, '', $address);
