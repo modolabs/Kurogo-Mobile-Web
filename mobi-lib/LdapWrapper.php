@@ -3,22 +3,10 @@
 require_once "lib_constants.inc";
 require_once "LdapUtilities.php";
 
-// search string templates
-define("SEARCH_TIMELIMIT", 30);
-define("READ_TIMELIMIT", 30);
-define("TELEPHONE_FILTER", "(telephonenumber=*%s*)");
-define("TELEPHONE_SEARCH_FILTER", "(&(objectClass=person)%s)");
-define("EMAIL_FILTER", "(mail=*%s*)");
-define("EMAIL_SEARCH_FILTER", "(&(objectClass=person)%s)");
-define("NAME_SINGLE_CHARACTER_FILTER", "(|(cn=%s*)(cn=* %s*)(cn=*-%s*))");
-define("NAME_MULTI_CHARACTER_FILTER", "(|(cn=*%s*)(mail=*%s*))");
-define("NAME_SEARCH_FILTER", "(&(objectClass=person)%s)");
-define("UID_FILTER", "(uid=%s)");
-define("UID_SEARCH_FILTER", "(&(objectClass=person)%s)");
-
 class LdapPerson {
 
   private $uid;
+  private $fullname = '';
   private $attributes = array();
 
   // TODO: put this whitelist in static or config
@@ -75,7 +63,23 @@ class LdapPerson {
 
     // get remaining attributes
     foreach (self::$ldapWhitelist as $field) {
-      $this->attributes[$field] = self::getValues($field, $ldapEntry);
+
+
+      $value = self::getValues($field, $ldapEntry);
+      if ($field == 'cn')
+	$this->fullname = $value[0];
+
+      $this->attributes[$field] = $value;
+    }
+
+    // Harvard: if full name shows up at beginning of office address, remove
+    $address = $this->attributes['postaladdress'][0];
+    $nameParts = explode(' ', $this->fullname);
+    if ($nameParts) {
+      // lines in office address are literally delimited by a $ symbol
+      $namePattern = '/^' . $nameParts[0] . '[\w\s\.]*' . end($nameParts) . '\$/';
+      $address = preg_replace($namePattern, '', $address);
+      $this->attributes['postaladdress'] = array($address);
     }
 
     return $this;

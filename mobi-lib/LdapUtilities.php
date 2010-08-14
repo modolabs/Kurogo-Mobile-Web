@@ -2,6 +2,19 @@
 
 require_once "ldap_config.php";
 
+// search string templates
+define("SEARCH_TIMELIMIT", 30);
+define("READ_TIMELIMIT", 30);
+define("TELEPHONE_FILTER", "(telephonenumber=*%s*)");
+define("TELEPHONE_SEARCH_FILTER", "(&(objectClass=person)%s)");
+define("EMAIL_FILTER", "(mail=*%s*)");
+define("EMAIL_SEARCH_FILTER", "(&(objectClass=person)%s)");
+define("NAME_SINGLE_CHARACTER_FILTER", "(|(cn=%s*)(cn=* %s*)(cn=*-%s*))");
+define("NAME_MULTI_CHARACTER_FILTER", "(|(cn=*%s*)(mail=*%s*))");
+define("NAME_SEARCH_FILTER", "(&(objectClass=person)%s)");
+define("UID_FILTER", "(uid=%s)");
+define("UID_SEARCH_FILTER", "(&(objectClass=person)%s)");
+
 // Scenarios:
 // 
 // A: 1 search term. Could be given name, surname, or email. Query for "hewitt":
