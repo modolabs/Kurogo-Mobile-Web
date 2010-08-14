@@ -1,13 +1,18 @@
 <?php
-$page->title("Events Calendar: Academic Calendar")
+$page->title("Events: Academic Calendar")
      ->header('Events Calendar');
+     
 
 $page->content_begin();
 ?>
 
-   <h2>Academic Calendar <strong><?=date('F Y', $time)?></strong></h2>
+  <div class="nonfocal">
+   <h2>Academic Calendar for <?=$year?></h2>
+</div>
 
-   <p class="nonfocal"><?=implode('&nbsp;|&nbsp;', $nav_links)?></p>
+<div class="sidenav">
+<?=implode(' | ', $nav_links)?>
+</div>
 
 <div class="focal">
    <? foreach($days as $day => $items) { ?>
@@ -19,6 +24,11 @@ $page->content_begin();
       </ul>
    <? } ?>
 </div>
+
+<div class="sidenav">
+<?=implode(' | ', $nav_links)?>
+</div>
+
 <?
 
 $page->content_end();

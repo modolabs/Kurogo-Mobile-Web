@@ -100,14 +100,14 @@ class ArcGISServer {
 
       // TODO: make this an external data source
       $names = array(
-        'CampusMap',
+        //'CampusMap',
         'Libraries',
         'Museums',
         'Housing',
         'Dining',
         'LEED',
         'PublicSafety',
-        'WirelessLAN',
+        //'WirelessLAN',
         //'Accessibility',
         //'AlternativeEnergy', 
         //'BikeFacilities',

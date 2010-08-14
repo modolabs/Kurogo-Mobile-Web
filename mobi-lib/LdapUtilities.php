@@ -19,15 +19,18 @@ require_once "ldap_config.php";
 //	  (mail=doug*hall*)
 //	)
 //
-// C: 3 or more search terms. Query for "prof susan chan tack": 
+// C: 3 or more search terms. Query for "Prof Maria R. Garcia Castillo" (queries
+//     this long can come from Courses, where names are entered freeform): 
 //
 //  (|
 //    (|
-//  	(&(givenName=prof*)(sn=tack*))
-//  	(&(givenName=susan*)(sn=tack*))
-//  	(cn=prof*susan*chan*tack*)
+//      (&(givenName=Prof*)(sn=Castillo*)) # First {...} Last
+//      (&(givenName=Prof*)(sn=Garcia Castillo*)) # First {...} Last1 Last2
+//      (&(givenName=Maria*)(sn=Castillo*)) # Title First {...} Last
+//      (&(givenName=Maria*)(sn=Garcia Castillo*)) # Title First {...} Last1 Last2
+//      (cn=Prof*Maria*R.*Garcia*Castillo*) # Try everything, sometimes gets nicknames
 //    )
-//    (mail=prof*susan*chan*tack)
+//    (mail=Prof*Maria*R.*Garcia*Castillo*)
 //  )
 //
 // We've been having problems having too many matches returned, so we're 
@@ -43,7 +46,11 @@ function sanitizeSearch($search)
 {
 	// We allow letters, numbers, underscores, spaces, and single quotes (for
 	// names like "O'Reilly").  Everything else gets axed into a space.
-	return preg_replace('/[^\w\'@.]/', " ", $search);
+	return trim(preg_replace('/[^\w\'@.]/', " ", $search));
+}
+
+function queryForFirstLastName($firstName, $lastName) {
+    return "(&(givenName=$firstName*)(sn=$lastName*))";
 }
 
 function queryForNames($names)
@@ -57,23 +64,32 @@ function queryForNames($names)
 	elseif ($nameCount == 2) {
 		// Two names, assume one is given, one is surname.  Assume that they 
 		// start the names correctly, but we wildcard the end.
-		return "(&(givenName=$names[0]*)(sn=$names[1]*))" . "(&(givenName=$names[1]*)(sn=$names[0]*))";
+		return queryForFirstLastName($names[0], $names[1]) . 
+		       queryForFirstLastName($names[1], $names[0]);
 	}
 	elseif ($nameCount > 2) {
-		$lastName = $names[$nameCount - 1];
+	    $queries = array();
+	    
+	    // Either the first word is the first name, or it's a title and the 
+	    // second word is the first name.
+	    $possibleFirstNames = array($names[0], $names[1]);
+	    
+	    // Either the last word is the last name, or the last two words taken
+	    // together are the last name.
+	    $possibleLastNames = array($names[$nameCount - 1],
+	                               $names[$nameCount - 2] . " " . $names[$nameCount - 1]);
 
-		// Maybe they're listed in the directory as First Last, but being 
-		// searched as First Middle Last
-		$firstLastQuery = "(&(givenName=$names[0]*)(sn=$lastName*))";
-		
-		// Maybe we're seeing Title First [...] Last, ignore the title
-		$omitTitleQuery = "(&(givenName=$names[1]*)(sn=$lastName*))";
+	    foreach ($possibleFirstNames as $i => $firstName) {
+	        foreach ($possibleLastNames as $j => $lastName) {
+	            $queries[] = queryForFirstLastName($firstName, $lastName);
+	        }
+	    }
 
 		// Kitchen sink -- just string them all together with wildcards
 		// and hope that it's a match on the common name.
-		$allPartsQuery = "(cn=" . implode("*", $names) . "*)";
+		$queries[] = "(cn=" . implode("*", $names) . "*)";
 		
-		return "(|" . $firstLastQuery . $omitTitleQuery . $allPartsQuery . ")";
+		return "(|" . implode($queries) . ")";
 	}
 }
 
@@ -94,6 +110,23 @@ function buildNameAndEmailLDAPQuery($search)
 	// Put the gathered clauses in the person search template.
     $searchFilter = str_replace("%s", $query, NAME_SEARCH_FILTER);
     return($searchFilter);	
+}
+
+// common ldap error codes
+define("LDAP_INSUFFICIENT_ACCESS", 0x32);
+define("LDAP_PARTIAL_RESULTS", 0x09);
+define("LDAP_TIMELIME_EXCEEDED", 0x03);
+
+function generateErrorMessage($ldap_resource) {
+   $error_code = ldap_errno($ldap_resource);
+   $error_codes = array(
+       LDAP_PARTIAL_RESULTS => "Partial result only available",
+       LDAP_INSUFFICIENT_ACCESS => "Insufficient access",
+       LDAP_TIMELIMIT_EXCEEDED => "Search timed out",
+    );
+    if(isset($error_codes[$error_code])) {
+        return $error_codes[$error_code];
+    }
 }
 
 ?>

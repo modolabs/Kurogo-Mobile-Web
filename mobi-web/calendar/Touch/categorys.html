@@ -1,4 +1,4 @@
-<?php
+<?php 
 $page->title("Events: Browse by Category")
      ->navbar_image('calendar')
      ->header('Browse By Category');
@@ -7,8 +7,8 @@ $page->content_begin();
 ?>
 			
 	<ul class="nav">
-            <? foreach($categorys as $category) { ?>
-		<li><a href="<?=subCategorysURL($category)?>"><?=ucname($category->name)?></a></li>
+            <? foreach($categories as $category) { ?>
+		<li><a href="<?=categoryURL($category)?>"><?=ucname($category->get_name())?></a></li>
             <? } ?>
 	</ul>
 <? $page->content_end(); ?>

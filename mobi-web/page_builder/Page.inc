@@ -57,7 +57,19 @@ class Page {
     if (isset($_COOKIE['layout'])) {
       $params = explode(',', $_COOKIE['layout']);
 
-      $branch = $params[0];
+      // If we set an explicit branch= as a querystring param, override the 
+      // cookie value.  For debugging.
+      if (isset($_GET['branch'])) {
+          $branch = $_GET['branch'];
+      }
+      else {
+          $branch = $params[0];
+      }
+      // A little paranoia, since we use it to build paths...
+      if ($branch != "Webkit" && $branch != "Touch" && $branch != "Basic") {
+          $branch = "Basic";
+      }
+
       $platform = $params[1];
       $certs = $params[2];
     }

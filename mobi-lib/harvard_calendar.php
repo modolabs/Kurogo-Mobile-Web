@@ -105,6 +105,8 @@ function makeIcalSearchEvents($icsURL, $terms)
         $date = date('Ymd', $time);
         
         $fileN = TrumbaCache::retrieveData($icsURL, $date, $terms, NULL);
+
+         
         $ical = new ICalendar($fileN);
 	//$ical = new ICalendar($icsURL);
 
@@ -166,7 +168,7 @@ class TrumbaCache {
      else if (($searchField != NULL) && ($category == NULL))
          $filename = $dateString .'search=' .$searchField .'.ics';
 
-     else if (($searchField == NULL) && ($category = 'academic'))
+     else if (($searchField == NULL) && ($category == 'academic'))
          $filename = $dateString . 'ACADEMIC.ics';
 
      else if (($searchField == NULL) && ($category != NULL))

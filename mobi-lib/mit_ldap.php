@@ -155,7 +155,13 @@ function do_query($query, $search_results=array())
     catch (Exception $e)
     {
         $appError = 1;
-		return LDAP_SEARCH_ERROR;
+        if($ds) {
+            $error_message = generateErrorMessage($ds);
+            if($error_message) {
+                return $error_message;
+            }
+        }
+        return LDAP_SEARCH_ERROR;
     }
     for ($i = 0; $i < $entries["count"]; $i++)
     {

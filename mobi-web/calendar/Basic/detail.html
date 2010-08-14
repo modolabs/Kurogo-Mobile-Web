@@ -3,9 +3,15 @@ $page->title("Events Calendar: Event Details")
      ->header('Events Calendar');
 
 $page->content_begin();
+
+// get a list of the category mappings first
+$harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
+
 ?>
 
-	<div class="focal">
+
+
+<div class="focal">
 		<h2><?=$event->get_summary()?></h2>
 		<p>
 			<?=$date_str?><br/>
@@ -32,10 +38,16 @@ $page->content_begin();
 		     </p>
                 <? } ?>
 
-		<p class="legend">Categorized as: 
+		<p class="legend">Categorized as1:
                    <? $size = count($categories);
-                      foreach($categories as $index => $category) { $last = ($size-1 == $index); ?>
-                        <a href="<?=categoryURL($category)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
+                      foreach($categories as $index => $category) { $last = ($size-1 == $index);
+
+                      foreach($harvard_cat as $cat) {
+                        if ($cat->get_name() == $category)
+                            $categoryFound = $cat;
+                        }
+                      ?>
+                        <a href="<?=categoryURL($categoryFound)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
                    <? } ?>
                 </p>
 	</div>

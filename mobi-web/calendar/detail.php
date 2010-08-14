@@ -3,14 +3,6 @@
 require_once LIBDIR . "/harvard_calendar.php";
 require "calendar_lib.inc";
 
-//$event = MIT_Calendar::getEvent($_REQUEST['id']);
-//$time_of_day = MIT_Calendar::timeText($event);
-
-//$day_num = (string)(int)$event->start->day;
-//$date_str = "{$event->start->weekday}, {$event->start->monthname} {$day_num}, {$event->start->year}"; 
-
-//$event->urlize = URLize($event->infourl);
-
 // copied from api/HarvardCalendar.php
 $time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
 $date1 = date('Ym', $time);
@@ -26,9 +18,11 @@ if ($event->get_end() - $event->get_start() == -1) {
   $time_of_day = $event->get_range()->format('g:i a');
 }
 
-$categories = explode(',', $event->get_categories());
 
-function phoneURL($number) {
+$arr = $event->get_customFields();
+$categories = explode('\,',$arr['"Gazette Classification"']);
+
+ function phoneURL($number) {
   if($number) {
 
     // add the local area code if missing
