@@ -105,7 +105,7 @@ function buildNameAndEmailLDAPQuery($search)
 	$query = "(|" . queryForNames($words) . queryForEmail($words) . ")";
 
 	// error_log("SAFE SEARCH: " . $safeSearch);
-	error_log("QUERY: " . $query);
+	// error_log("QUERY: " . $query);
 
 	// Put the gathered clauses in the person search template.
     $searchFilter = str_replace("%s", $query, NAME_SEARCH_FILTER);
