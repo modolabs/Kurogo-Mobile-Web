@@ -1,6 +1,7 @@
 <?php
 require_once "lib_constants.inc";
 require_once "ldap_config.php";
+require_once "LdapUtilities.php";
 
 function mit_search($search)
 {
@@ -8,6 +9,7 @@ function mit_search($search)
     global $appErrorMessage;
 
     $query = standard_query($search);
+
     if ($appError == 1)
         return($query);
     $results = do_query($query);
@@ -18,6 +20,7 @@ function mit_search($search)
 	}
 	
     return(order_results($results, $search));
+
 }
 
 
@@ -101,26 +104,8 @@ function standard_query($search)
     }
     if (strpbrk(strtolower($search), "abcdefghijklmnopqrstuvwxyz") != FALSE)
     {
-        $nameFilter = "";
-        foreach(preg_split("/\s+/", $search) as $word)
-        {
-            if($word != "")
-            {
-                if(strlen($word) == 1)
-                {
-                    $Filter = NAME_SINGLE_CHARACTER_FILTER;
-                    $nameFilter = $nameFilter . str_replace("%s", $word, $Filter);
-                }
-                else
-                {
-                    $Filter = NAME_MULTI_CHARACTER_FILTER;
-                    $nameFilter = $nameFilter . str_replace("%s", $word, $Filter);
-                }
-            }
-        }
-        $searchFilter = NAME_SEARCH_FILTER;
-        $searchFilter = str_replace("%s", $nameFilter, $searchFilter);
-        return($searchFilter);
+		// This function is defined in LdapUtilities.
+        return(buildNameAndEmailLDAPQuery($search));
     }
     $search = str_replace("(", "", $search);
     $search = str_replace(")", "", $search);
@@ -170,7 +155,13 @@ function do_query($query, $search_results=array())
     catch (Exception $e)
     {
         $appError = 1;
-		return LDAP_SEARCH_ERROR;
+        if($ds) {
+            $error_message = generateErrorMessage($ds);
+            if($error_message) {
+                return $error_message;
+            }
+        }
+        return LDAP_SEARCH_ERROR;
     }
     for ($i = 0; $i < $entries["count"]; $i++)
     {

@@ -1,6 +1,7 @@
 <FilesMatch "\.php$">
 php_value auto_prepend_file /opt/mitmobile/mobi-config/web_header.inc
 php_value audo_prepend_file /opt/mitmobile/mobi-config/lib_constants.inc
+php_value audo_prepend_file /opt/mitmobile/mobi-config/template_text.inc
 </FilesMatch>
 <FilesMatch "help.php">
 php_value auto_append_file /var/www/html/page_builder/help.php

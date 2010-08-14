@@ -14,16 +14,26 @@ class Item {
     $displayString = "";
 
     foreach($this->person->getField($field) as $value) {
+      $formatted_value = $value;
       // prevent phones from creating links from things that look like phone/email
-      $value = str_replace('@', '@&shy;', $value);
-      $value = str_replace('-', '-&shy;', $value);
+	  if (strcmp($field, 'mail') != 0) {
+		// We now don't want hyphens to display in an email address, but it's OK elsewhere.
+      	$formatted_value = str_replace('@', '@&shy;', $formatted_value);
+	  }
+      $formatted_value = str_replace('-', '-&shy;', $formatted_value);
+      $formatted_value = str_replace('$', '<br />', $formatted_value);
+	  if (strcmp($field, 'ou') == 0) {
+	  	$formatted_value = str_replace('^', ' / ', $formatted_value);
+	  }
 
       $innerContents = "
                  <div class=\"label\">$label</div>
-                 <div class=\"value\">$value</div>";
+                 <div class=\"value\">$formatted_value</div>";
 
       if ($href !== NULL) {
-        $innerContents = '<a href="' . $href($value) . '" class="' . $class . '">'
+		  $linkAddress = $value;
+	
+        $innerContents = '<a href="' . $href($linkAddress) . '" class="' . $class . '">'
                        . $innerContents . '</a>';
       }
 
@@ -46,9 +56,9 @@ $page->content_begin();
 	<ul class="nav">
         <? $item->display('name', 'cn', NULL, NULL, TRUE); ?>
         <? $item->display('title', 'title', NULL, NULL, TRUE); ?>
-        <? $item->display('dept', 'ou', NULL, NULL, TRUE); ?>
+        <? $item->display('unit', 'ou', NULL, NULL, TRUE); ?>
 	</ul>
-	
+
         <? if(has_phone($person)) { ?>
           <ul class="nav">
           <? $item->display('home', 'homephone', 'phoneHREF', 'phone', TRUE); ?>
@@ -59,7 +69,7 @@ $page->content_begin();
 
         <? $item->display('address', 'street', NULL, NULL, FALSE); ?>
         <? $item->display('email', 'mail', 'mailHREF', 'email', FALSE); ?>
-        <? $item->display('office', 'physicaldeliveryofficename', 'mapURL', 'map', FALSE); ?>
+        <? $item->display('office', 'postaladdress', 'officeURL', 'map', FALSE); ?>
 
 <? $page->content_end(); ?>
 

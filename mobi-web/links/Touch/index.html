@@ -7,11 +7,11 @@ $page->title('Schools')
 $page->content_begin();
 ?>
 
-	<p class="nonfocal">These are links to each school's desktop homepage.</p>
+<p class="nonfocal">Links to websites for each Harvard school. Note: many of these sites are <em>not</em> mobile-optimized.</p>
 
 	<ul class="nav">
             <? foreach($links as $item) { ?>
-		<li><a class="external" href="http://<?=$item['link']?>"><?=$item['name']?></a></li>
+		<li><a class="external" href="<?=$item['link']?>"><?=$item['name']?></a></li>
             <? } ?>
 	</ul>
 	

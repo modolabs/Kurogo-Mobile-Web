@@ -5,6 +5,9 @@ class Modules {
   public static $default_order = array();
 
   public static $module_data = Array(
+    'news' => Array(
+      'title' => 'News',
+      ),
     'people' => Array(
       'title' => 'People Directory',
       ),
@@ -26,6 +29,9 @@ class Modules {
     'links' => Array(
       'title' => 'Schools',
       'subtitle' => 'webpage links',
+      ),
+  	'dining' => Array(
+      'title' => 'Student Dining',
       ),
     'mobile-about' => Array(
       'title' => 'About this site',

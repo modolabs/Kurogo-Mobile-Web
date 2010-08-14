@@ -1,0 +1,42 @@
+<?php
+$page->title("Gazette")
+     ->navbar_image("news")
+     ->generate_navigation($newsURL->breadCrumbs("News", "Search", "Story"))
+     ->add_stylesheet("Webkit/story");
+
+$page->content_begin();
+?>
+
+<div class="news">
+    <h1 class="slugline"><?=$story["title"]?></h1>
+
+    <p class="byline">
+        <a href="<?=$share_url?>"><img src="Webkit/share.png" class="share" /></a>
+
+         <? if($story["author"]) { ?>
+            <span class="credit">by <span class="author"><?=$story["author"]?></span><br /></span>
+         <? } ?>
+         
+         <span class="postdate"><?=$date?></span>
+    </p>
+
+    <? if($story['image']) { ?>
+        <div id="image">
+            <img class="thumbnail" src="<?=$story['image']['url']?>" width="<?=$story['image']['width']?>" height="<?=$story['image']['height']?>">
+        </div>
+    <? } ?>
+    <p class="dek"><?=$story['description']?></p>
+
+    <?=$all_pages?>
+
+
+</div>
+
+
+
+
+
+
+<?
+$page->content_end();
+?>

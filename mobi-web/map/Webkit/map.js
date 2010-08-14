@@ -8,7 +8,6 @@ var mapBoxE = initMapBoxE;	// integer: eastern bound of map image (per IMS map A
 var hasMoved = false;	// boolean: has the map been scrolled or zoomed?
 var maxZoom = 2;	// integer: max zoom-in level
 var minZoom = -8;	// integer: max zoom-out level
-var mapBaseURL = "http://ims.mit.edu/WMS_MS/WMS.asp?request=getmap&version=1.1.1";	// base URL for an image served by the mapping engine
 var detailBaseURL = "detail.php?";	// base URL for the normal map detail screen
 var fullscreenBaseURL = "detail-fullscreen.php?";	// base URL for the fullscreen map detail screen
 
@@ -71,7 +70,7 @@ function loadImage(imageURL,imageID) {
 
 function getMapURL(strBaseURL, includeSelect) {
 	// Returns a full URL for a map page or map image, using strBaseURL as the base
-	var newURL = strBaseURL + "&width=" + mapW + "&height=" + mapH + "&selectvalues=" + mapSelect + "&bbox=" + mapBoxW + "," + mapBoxS + "," + mapBoxE + "," + mapBoxN + "&layers=" + mapLayers + mapOptions;
+	var newURL = strBaseURL + "&width=" + mapW + "&height=" + mapH + "&bbox=" + mapBoxW + "," + mapBoxS + "," + mapBoxE + "," + mapBoxN + mapOptions;
 
         // Add parameters for the original bounding box, so Image can be recentered
         if(includeSelect) {
@@ -242,7 +241,6 @@ function rotateMapAlternate() {
 		mapW = window.innerWidth;
 		mapH = window.innerHeight;
 		loadImage(getMapURL(mapBaseURL),'mapimage'); 
-		alert(mapW + " x " + mapH);
 	}
 }
 

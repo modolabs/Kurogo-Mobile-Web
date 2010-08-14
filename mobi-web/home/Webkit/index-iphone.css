@@ -1,5 +1,5 @@
 		body {
-			background: #e3ddd1 url("Webkit/images/home-back.jpg") no-repeat center center;
+			background: #e3ddd1 url("/Webkit/images/background-tile.jpg") repeat-x;
 		}
 		#homegrid {
 			margin: 0 auto;
@@ -45,51 +45,51 @@
 		h1 {
 			font-size: 36px;
 			line-height: 36px;
-			margin: 10px 9px 0 9px;
+			margin: 18px 12px -6px 12px;
 			color: #112;
 			text-align: center;
 		}
 		h1.roomfornew {
-			font-size: 33px;
 			text-align: left;
 		}
 		#logo {
 			padding-right: 14px;
 		}
-		h1.roomfornew #logo {
-			width: 48px;
-			height: 24px;
-		}
 		#new {
 			position: absolute;
-			top: -14px;
+			top: -13px;
 			right: -9px;
 			width: 80px;
 			height: 80px;
-			background-image: url(Webkit/images/newbig.png);
+			background-image: url("Webkit/images/newbig.png");
 			background-repeat: no-repeat;
 			color: #fff;
 			font-size: 12px;
-			line-height: 12px;
+			line-height: 13px;
 			text-align: center;
 			overflow: hidden;
 		}
 		#new a {
 			display: block;
-			width: 56px;
+			width: 50px;
 			height: 50px;
 			padding: 0;
 			text-decoration: none;
 			color: #fff;
 			position: absolute;
-			top: 16px;
-			right: 7px;
+			top: 19px;
+			right: 10px;
 		}
 		#new a .newlabel {
 			display: block;
-			font-size: 10px;
-			line-height: 13px;
+			font-size: 9px;
+			line-height: 9px;
 			color: #ffcece;
+		}
+		#beta {
+			position: absolute;
+			top: 0;
+			right: 0;
 		}
 		#footer {
 			margin-top: 0;

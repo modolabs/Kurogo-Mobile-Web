@@ -1,6 +1,6 @@
 <?php
-$page->title('MIT Stellar')
-     ->header('Stellar');
+$page->title('Harvard Course Info')
+     ->header('Course Info');
 
 $page->content_begin();
 
@@ -8,11 +8,11 @@ $page->content_begin();
 
 	<form method="get" action="search.php">
 	
-	<p>Descriptions, announcements and other information for MIT classes.</p>	
+	<p>Descriptions, announcements and other information for <?=INSTITUTION_NAME?> classes.</p>	
     
     <? if (count(getMyStellar()->allTags) > 0 ) { ?>
         
-        <h3>My Stellar:</h3> 
+        <h3>My Courses:</h3> 
     
         <? if (count(getMyStellar()->currentIds)) { ?>
 	   <p class="nav">
@@ -24,7 +24,7 @@ $page->content_begin();
         <? } ?>
 
         <? if (count(getMyStellar()->oldIds)) { ?>
-           <div class="nonfocal legend">The following old classes have been removed from your My Stellar settings:
+           <div class="nonfocal legend">The following old classes have been removed from your My Courses settings:
              <?=implode(", ", getMyStellar()->oldIds)?>
            </div>
         <? } ?>
@@ -34,11 +34,9 @@ $page->content_begin();
 	<h3>Browse by course:</h3>
 
 	<p class="nav">
-		1. Stellar Home<br/>
-		<a href="<?=coursesURL("1-10")?>" accesskey="2">2. Courses 1-10</a><br/>
-		<a href="<?=coursesURL("11-20")?>" accesskey="3">3. Courses 11-20</a><br/>
-		<a href="<?=coursesURL("21-24")?>" accesskey="4">4. Courses 21-24</a><br/>
-		<a href="<?=coursesURL("other")?>" accesskey="5">5. Other Courses</a><br/>
+
+		<?=$page->link_access_key('', 'Courses Home')?><br/>
+		<?=$page->link_access_key(coursesURL("1-10"), 'Courses 1-10')?><br/>
 	</p>
 	
 	<p>

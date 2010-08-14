@@ -1,32 +1,53 @@
 <?php
 
-require LIBDIR . "//mit_calendar.php";
+require LIBDIR . "/harvard_calendar.php";
 require "calendar_lib.inc";
 
-$category = MIT_Calendar::Category($_REQUEST['id']);
-$timeframe = isset($_REQUEST['timeframe']) ? $_REQUEST['timeframe'] : 0;
-$search_terms = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : "";
-
-if(isset($_REQUEST['filter'])) {
-  $dates = SearchOptions::search_dates($timeframe);
-  $events = MIT_Calendar::fullTextSearch($search_terms, $dates['start'], $dates['end'], $category);
-} else {
-  $today = day_info(time());
-  $events = MIT_Calendar::CategoryEventsHeaders($category, $today['date']);
+function requestString($paramName, $defaultValue = "")
+{
+	return isset($_REQUEST[$paramName]) ? $_REQUEST[$paramName] : $defaultValue;
 }
 
-$content = new ResultsContent(
-  "items", "calendar", $page,
-  array(
-    "id" => $category->catid,
-    "timeframe" => $timeframe
-  )
-);
+$id = requestString('id');
+$name = requestString('name');
 
-$form = new CalendarForm($page, SearchOptions::get_options($timeframe), $category->catid);
-$content->set_form($form);
+if (strlen($id) > 0) {
+	
+	// These variables are used for the next day/previous day links in the html.
+	$time = requestString('time', time());
+	$dayRange = new DayRange(time());
+	$isToday = $dayRange->contains(new TimeRange($time));
+	
+	$current = day_info($time);
+	$next = day_info($time, 1);
+	$prev = day_info($time, -1);	
+
+	// Construct events query.
+	$start = date('Ymd', $time);
+	$startdate = "?startdate=" . $start ."&days=1";
+	$url = HARVARD_EVENTS_ICS_BASE_URL . $startdate ."&filter1=" .$id ."&filterfield1=15202";
+        
+	// We're setting up $events because it will be picked up in the html file and printed.
+	$events = array();
+        $events = makeIcalDayEvents($url, $start, $id);
+}
+
+// Content is used by the html file to print the events.
+$content = new ResultsContent(
+  	"items", 
+	"calendar", 
+	$page,
+	array(
+	  "id"        => $id,
+	  "timeframe" => 0
+	),
+	FALSE // Do not include the search form.
+);
 
 require "$page->branch/category.html";
 $page->output();
+
+Results
+
 
 ?>

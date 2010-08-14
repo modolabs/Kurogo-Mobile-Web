@@ -5,10 +5,12 @@ $page->title('Schools')
 $page->content_begin();
 ?>
 
+	<p>Links to websites for each Harvard school. Note: many of these sites are <em>not</em> mobile-optimized.</p>
+
       <p class="nav">
-           1. Schools Home<br/>
            <? foreach($links as $index => $item) { ?>
-                  <a href="http://<?=$item['link']?>" accesskey="<?=$index+2?>"><?=$index+2?>. <?=$item['name']?></a><br/>
+	   <?=$page->link_access_key($item['link'], $item['name'])?>
+	   <br />
            <? } ?>
       </p>
 

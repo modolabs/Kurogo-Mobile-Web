@@ -3,47 +3,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<meta http-equiv="content-type" content="application/xhtml+xml" />
-        <meta name = "viewport" content = "width = device-width, height = device-height" />
-	<title>MIT Mobile Web</title>
-	<link rel="stylesheet" type="text/css" href="../<?=$page->branch?>/core.css" />	
-
-	<? if ($page->get_inline_css()) { ?>
-	<style type="text/css">
-	<?=$page->get_inline_css()?>
-	</style>
-	<? } ?>
+<meta http-equiv="content-type" content="application/xhtml+xml" />
+<?=$page->meta_tags()?>
+<title><?=SITE_NAME?></title>
+<link rel="stylesheet" type="text/css" href="<?=$page->delta_file('index', 'css') ?>" />	
+<? if ($page->get_inline_css()) { ?>
+<style type="text/css">
+<?=$page->get_inline_css()?>
+</style>
+<? } ?>
 </head>
 
 <body>
+<?=$page->home_header()?>
 
-<h2 id="header">
-<?=$page->img_tag('mit-logo','gif')?>Mobile Web
-</h2>
-
-<p class="bb"> </p>
+<?=$page->bbhack() ?>
 
 <p class="nav">
-        <a href="../sms/"><?=$page->img_tag('sms','gif', 'SMS', array('border' => 0))?></a><br/>
-        <? foreach($modules as $index => $module) { ?>
-	    <a href="<?=Modules::url($module, $page->certs)?>" <? if($index < 9) { ?>accesskey="<?=$index+1?>"><?=$index+1?>: <? } else { ?> ><? }?><?=Modules::title($module)?></a> 
-            <? if(Modules::subtitle($module)) { ?>
-                 <span class="smallprint">(<?=Modules::subtitle($module)?>)</span>
-            <? } ?>
-            <br/>
-        <? } ?>
+<? foreach($modules as $index => $module) { 
+  $href = Modules::url($module, $page->certs);
+  $text = Modules::title($module);
+  echo $page->link_access_key($href, $text);
+?>
+<? if(Modules::subtitle($module)) { ?>
+ <span class="smallprint">(<?=Modules::subtitle($module)?>)</span>
+<? } ?>
+<br/>
+<? } ?>
 </p>
 
 <p class="nav secondary">
-	<a href="../mobile-about/">About the MIT Mobile Web</a><br/>
-        <a href="../mobile-about/new.php">What's New</a><? if($whats_new_count) { ?> (<?=$whats_new_count?> items)<? } ?><br/> 
-        <a href="../sms/">MIT SMS (BETA)</a><br />
+	<a href="../mobile-about/">About the <?=SITE_NAME?></a><br/>
         <a href="../customize/">Customize this Homescreen</a><br/>
         <? if (Modules::is_right_platform($page->platform, 'download')) { ?>
                 <a href="../download/">Download</a><br />
 	<? } ?>
 	<? if (Modules::is_right_platform($page->platform, 'webmitedu')) { ?>
-		<a href="http://web.mit.edu">Go to web.mit.edu</a><br/>
+		<a href="http://www.harvard.edu">Go to www.harvard.edu</a><br/>
 	<? } ?>
 </p>
 
@@ -53,11 +49,9 @@
 Font size: <?=$page->font_selector()?>
 </p>
 
-<p class="bb"> </p>
+<?=$page->bbhack()?>
 
-<p id="footer">
-	<img src="../Basic/images/ist-logo.gif" width="26" height="18" alt="IST" />Information Services &amp; Technology
-</p>
+<p id="footer">&copy;2010 <?=INSTITUTION_NAME?></p>
 <? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 </body>
 </html>

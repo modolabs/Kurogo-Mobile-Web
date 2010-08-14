@@ -1,0 +1,51 @@
+<?php
+$page->title('News')
+     ->header('News')
+     ->add_stylesheet('Basic/list');
+
+$page->content_begin();
+?>
+
+    <? if($newsURL->isHome()) { ?>
+        <h2><?=$category?></h2>
+    <? } else if($newsURL->isSearchResults()) { ?>
+        <form>
+            <p>
+                <span class="inputcombo emphasized">
+                    <input class="forminput" type="search" id="filter" name="search_terms" value="<?=$newsURL->searchTerms()?>" />
+                    <input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+                </span> 
+            </p>
+            <?=$newsURL->hiddenHomeStateForm()?>
+        </form>
+    <? } ?>
+
+    <div class="focal">
+        <? foreach($stories as $index => $story) { ?>
+            <p>
+                <? if(($index==0) && $story['image']) { ?>
+                    <img class="thumbnail" src="<?=$story['image']['url']?>" />
+                <? } ?>
+
+                <a class="story-link" href="<?=$newsURL->storyURL($story)?>"><?=$story["title"]?></a><br />
+                <span class="smallprint"><?=basic_deck($story)?></span>
+            </p>
+        <? } ?>
+    </div>
+
+    <div class="nonfocal">
+        <?=html_arrows($previous_url, 'Previous stories', $next_url, 'More stories')?>
+    </div>
+
+    <form>
+            <p>
+                <span class="inputcombo emphasized">
+                    <input class="forminput" type="search" id="filter" name="search_terms" value="<?=$newsURL->searchTerms()?>" />
+                    <input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+                </span>
+            </p>
+            <?=$newsURL->hiddenHomeStateForm()?>
+    </form>
+
+<? $page->content_end(); ?>
+<? require "categories_footer.html"; ?>

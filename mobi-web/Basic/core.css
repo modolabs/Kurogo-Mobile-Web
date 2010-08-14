@@ -6,20 +6,20 @@ html, body {
 }
 
 body {
-	background-color: #d9e0e8;
+	background: #e3ddd1 url(../Basic/images/background-tile.jpg);
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 15px;
+	font-size: 14px;
 	line-height: 1.28em;
-	color: #202629;
+	color: #333;
 	padding: 0.2em;
 }
 
 a {
-	color: #a33;
+	color: #900;
 }
 
 a:visited {
-	color: #a33;
+	color: #900;
 }
 
 a img {
@@ -32,13 +32,15 @@ h1, h2, h3 {
 }
 
 h1 {
-	font-size: 171%;
+	font-family: Georgia, serif;
+	font-size: 142%; 
 	font-weight: normal;
 	margin: 10px 0;
 	padding: 0;
 }
 
 h2 { 
+	font-family: Georgia, serif;
 	font-size: 142%; 
 	font-weight: normal;
 	margin: 0 0 6px 0;
@@ -50,6 +52,7 @@ h3 {
 	font-weight: bold;
 	margin: 0 0 5px 0;
 	padding: 0;
+	color: #554c41;
 }
 
 h4 {
@@ -85,8 +88,23 @@ ul li {
 
 #header {
 	margin: 0;
-	padding: 8px;
+	padding: 8px 4px;
 	font-size: 142%;
+	line-height: 32px;
+}
+
+#header img {
+	float: left;
+	margin-right: 6px;
+}
+
+#header.homehead {
+	padding-bottom: 0;
+}
+
+#header.homehead img {
+	float: none;
+	margin: 0;
 }
 
 #header a {
@@ -148,7 +166,7 @@ fieldset {
 .secondary {
 	margin: 1em 0;
 	padding: .4em;
-	background-color: #edf1f7;
+	background-color: #f9f6ef;
 	font-size: 93%;
 	line-height: 1.6em;
 }
@@ -163,7 +181,7 @@ fieldset {
 .bottomnav {
 	margin: 1.5em 0 0.75em 0;
 	padding: .4em;
-	background-color: #909eac;	
+	background-color: #4d4a47;	
 	font-size: 93%;
 	line-height: 1.5em;
 }
@@ -230,7 +248,8 @@ fieldset {
 
 .label {
 	width: 3.5em;
-	color: #627ba1;
+	color: #554c41;
+	padding-right: 3px;
 }
 
 .value {
@@ -347,6 +366,10 @@ span.icon {
 	margin: 1.5em 0 1em 0;
 }
 
+.tabs.top {
+	margin-top: 0.25em;
+}
+
 .tabs .active {
 	font-weight: bold;
 	color: #000;
@@ -354,4 +377,26 @@ span.icon {
 
 .tabs a {
 	font-weight: normal;
+}
+
+
+.iconlegend {
+	font-size: 80%;
+	color: #555;
+	margin-bottom: 1.5em;
+}
+
+.iconlegend img {
+	margin-right: 3px;
+	position: relative;
+	top: 2px;
+}
+
+.iconlabel {
+	float: right;
+	margin-left: 10px;
+}
+
+.dininghall {
+	margin-left: 4px;
 }

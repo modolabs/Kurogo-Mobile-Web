@@ -222,7 +222,7 @@ function generate_popular_content($system, $data) {
     }
   } else { // api
     $modules = array(
-      "stellar" => "Stellar", 
+      "stellar" => "Courses", 
       "shuttles" => "ShuttleTrack", 
       "map" => "Campus Map", 
       "people" => "Campus Directory",

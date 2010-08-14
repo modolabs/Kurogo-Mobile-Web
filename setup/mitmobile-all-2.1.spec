@@ -10,7 +10,7 @@ Vendor:		Modo Labs, Inc.
 URL:		http://imobileu.webfactional.com
 Packager:	Sonya Huang <sonya.huang@modolabs.com>
 Provides:	mitmobile-web, mitmobile-api
-Requires:	httpd, php >= 5.2, php-gd, php-ldap, php-mysql, php-pear-Log, php-xml
+Requires:	httpd, php >= 5.2, php-gd, php-ldap, php-mysql, php-xml
 Prefix:		/opt /var/www/html
 
 %description
@@ -40,32 +40,27 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /opt/mitmobile/maptiles
 /opt/mitmobile/mobi-config
 /opt/mitmobile/mobi-lib
-/var/www/html/3down
 /var/www/html/a
 /var/www/html/about
 /var/www/html/api
 /var/www/html/calendar
-/var/www/html/careers
 /var/www/html/customize
+/var/www/html/dining
 /var/www/html/download
 /var/www/html/e
-/var/www/html/emergency
 /var/www/html/error-page
 /var/www/html/home
 /var/www/html/.htaccess
 /var/www/html/index.php
-/var/www/html/libraries
 /var/www/html/links
 /var/www/html/map
 /var/www/html/mobile-about
 /var/www/html/n
+/var/www/html/news
 /var/www/html/page_builder
 /var/www/html/people
 /var/www/html/robots.txt
-/var/www/html/shuttleschedule
-/var/www/html/sms
 /var/www/html/stellar
-/var/www/html/techcash
 /opt/mitmobile/cache
 /opt/mitmobile/logs
 /opt/mitmobile/pushd
@@ -77,10 +72,10 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 %post
 if [ "$1" = "1" ]; then # user is installing
    # set selinux permissions on cache file directories
-   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/cache
-   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/logs
-   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/static
-   chcon -t httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/pushd
+   chcon -t system_u:object_r:httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/cache
+   chcon -t system_u:object_r:httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/logs
+   chcon -t system_u:object_r:httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/static
+   chcon -t system_u:object_r:httpd_sys_content_t $RPM_INSTALL_PREFIX0/mitmobile/pushd
 
    ln -sf $RPM_INSTALL_PREFIX0/mitmobile/mobi-config/lib_constants.inc $RPM_INSTALL_PREFIX0/mitmobile/mobi-lib/lib_constants.inc
    ln -sf $RPM_INSTALL_PREFIX0/mitmobile/maptiles/crushed $RPM_INSTALL_PREFIX1/api/maptile

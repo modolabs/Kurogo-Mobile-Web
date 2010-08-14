@@ -1,0 +1,52 @@
+.news {
+    background-color: #fff;
+    margin-top: -12px;
+    padding: 10px;
+}
+
+.slugline {
+    font-family: Georgia;
+    color:#1A1611;
+    font-size:22px;
+    line-height: 30px;
+    margin: 0;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.byline {
+    font-size: 11px;
+    color: #666666;
+    min-height:40px;
+    line-height: 14px;
+    border-bottom-style: dotted;
+    border-bottom-width: 1px;
+}
+
+.share {
+    float: right;
+}
+
+.dek {font-family: Georgia; font-size: 16px;line-height: 20px;margin: 14px 0;color: #666666;}
+.dek:empty { margin: 0; } /* CSS 3: shrink if no content */
+
+
+#image {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.page-button {
+    display: inline-block;
+    border: 1px solid black;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+    padding-top: 5px;
+    text-decoration: none;
+}
+
+.selected {
+    background-color: #CECECE;
+}
+

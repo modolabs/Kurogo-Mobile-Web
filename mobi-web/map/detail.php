@@ -1,378 +1,198 @@
-<?
-define("WMS_URL", "http://ims.mit.edu/WMS_MS/WMS.asp");
+<?php
 
-require_once LIBDIR . "/campus_map.php";
-
-//set zoom scale
-define('ZOOM_FACTOR', 2);
-
-switch ($page->branch) {
- case 'Touch':
-   define('INIT_FACTOR', 3);
-   break;
- case 'Basic':
-   define('INIT_FACTOR', 2);
-   break;
-}
-
-CacheIMS::init(); // set bbox extent
-
-//set the offset parameter
+define('ZOOM_FACTOR', 3);
 define('MOVE_FACTOR', 0.40);
+
+define('MAP_PHOTO_SERVER', 'http://map.harvard.edu/mapserver/images/bldg_photos/');
+
+// don't show these fields in detail page
+$detailBlacklist = array('Root', 'Shape', 'PHOTO_FILE', 'OBJECTID', 'FID', 'BL_ID');
+
+$name = $_REQUEST['selectvalues'];
+
+$details = $_REQUEST['info'];
+if (!isset($_REQUEST['tab']))
+  $_REQUEST['tab'] = 'Map';
+
+$tab = $_REQUEST['tab'];
+
+if ($tab == 'Map') {
+  require_once LIBDIR . '/WMSServer.php';
+  $wms = new WMSServer(WMS_SERVER);
+  $bbox = isset($_REQUEST['bbox']) ? bboxStr2Arr($_REQUEST['bbox']) : NULL;
+
+  switch ($page->branch) {
+   case 'Webkit':
+     $imageWidth = 270; $imageHeight = 270;
+     break;
+   case 'Touch':
+     $imageWidth = 200; $imageHeight = 200;
+     break;
+   case 'Basic':
+     $imageWidth = 200; $imageHeight = 200;
+     break;
+  }
+
+  if (!$bbox) {
+    require_once LIBDIR . '/ArcGISServer.php';
+    if (strpos($name, ',') !== FALSE) {
+        $nameparts = explode(',', $name);
+	$name = $nameparts[0];
+    }
+    $name = str_replace('.', '', $name);
+
+    // if we're looking at Dining, search the Dining collection not default
+    if (array_key_exists('Dine_Name', $details)) {
+      $searchResults = ArcGISServer::search($name, 'Dining');
+    } else {
+      $searchResults = ArcGISServer::search($name);
+    }
+
+    if ($searchResults && $searchResults->results) {
+      $result = $searchResults->results[0];
+      foreach ($result->attributes as $field => $value) {
+        $details[$field] = $value;
+      }
+
+      switch ($result->geometryType) {
+       case 'esriGeometryPolygon':
+         $rings = $result->geometry->rings;
+         $xmin = PHP_INT_MAX;
+         $xmax = 0;
+         $ymin = PHP_INT_MAX;
+         $ymax = 0;
+         foreach ($rings[0] as $point) {
+           if ($xmin > $point[0]) $xmin = $point[0];
+           if ($xmax < $point[0]) $xmax = $point[0];
+           if ($ymin > $point[1]) $ymin = $point[1];
+           if ($ymax < $point[1]) $ymax = $point[1];
+         }
+         break;
+       case 'esriGeometryPoint':
+       default:
+         // their units are in feet
+         // TODO: get values somewhere from WMS instead of hard coding
+         $xmin = $result->geometry->x - 200;
+         $xmax = $result->geometry->x + 200;
+         $ymin = $result->geometry->y - 200;
+         $ymax = $result->geometry->y + 200;
+         break;
+      }
+    
+      $minBBox = array(
+        'xmin' => $xmin,
+        'ymin' => $ymin,
+        'xmax' => $xmax,
+        'ymax' => $ymax,
+        );
+  
+      $bbox = $wms->calculateBBox($imageWidth, $imageHeight, $minBBox);
+
+    } else { // no search results
+      $imageUrl = 'images/map_not_found_placeholder.jpg';
+    }
+
+  }
+
+  if ($bbox) {
+    $imageUrl = $wms->getMap($imageWidth, $imageHeight, 'EPSG:2249', $bbox);
+
+    // build urls for panning/zooming
+    $params = $_GET;
+
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 0, -1, 0));
+    $scrollNorth = 'detail.php?' . http_build_query($params);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 0, 1, 0));
+    $scrollSouth = 'detail.php?' . http_build_query($params);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 1, 0, 0));
+    $scrollEast = 'detail.php?' . http_build_query($params);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, -1, 0, 0));
+    $scrollWest = 'detail.php?' . http_build_query($params);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 0, 0, 1));
+    $zoomInUrl = 'detail.php?' . http_build_query($params);
+    $params['bbox'] = bboxArr2Str(shiftBBox($bbox, 0, 0, -1));
+    $zoomOutUrl = 'detail.php?' . http_build_query($params);
+  }
+
+  // the following are only used by webkit version
+  $mapBaseURL = $wms->getMapBaseUrl();
+  $mapOptions = '&' . http_build_query(array(
+    'crs' => 'EPSG:2249',
+    'info' => $_REQUEST['info'],
+    'selectvalues' => $_REQUEST['selectvalues'],
+    ));
+}
 
 $selectvalue = $_REQUEST['selectvalues'];
 
-$tabs = new Tabs(selfURL(), "tab", array("Map", "Photo", "What's Here"));
+$tabs = new Tabs(selfURL($details), "tab", array("Map", "Photo", "Details"));
 
-if(!photoURL()) {
-    $tabs->hide("Photo");
+if (array_key_exists('PHOTO_FILE', $details)) {
+  $photoURL = MAP_PHOTO_SERVER . $details['PHOTO_FILE'];
+} else {
+  $tabs->hide("Photo");
 }
 
-$data = Buildings::bldg_info($selectvalue);
-$whats_here = whats_here($data);
-$anything_here = (count($whats_here) > 0);
-$snippets = snippets($data);
-
-if(!$anything_here) {
-  $tabs->hide("What's Here");
+$displayDetails = array();
+foreach ($details as $field => $value) {
+  if (!in_array($field, $detailBlacklist))
+    $displayDetails[$field] = $value;
 }
 
 $tabs_html = $tabs->html($page->branch);
-$tab = $tabs->active(); 
 
-$photoURL = photoURL();
-$tab = tab();
-
-switch ($page->branch) {
- case 'Touch':
-   $width = 200;
-   $height = 200;
-   break;
- case 'Basic':
-   $width = 160;
-   $height = 160;
-   break;
-}
-$fontsize = 10;
-
-$types = determine_type();
-$layers = layers($fontsize);
-
-if($num = trim($data['bldgnum'])) {
-  $building_title = "Building $num";
-  if( ($name = trim($data['name'])) && ($name !== $building_title) ) {
-    $building_title .= " ($name)";
-  }
-} else {
-  $building_title = $data['name'];
-}
-
-if(getServerBBox()) {
-  require "$page->branch/detail.html";
-} else {
-  require "$page->branch/not_found.html";
-}
+require "$page->branch/detail.html";
 
 $page->output();
 
-class CacheIMS {
-  public static $server_BBox;
 
-  public function init() {
 
-    $type = determine_type();
-
-    $query1 = array(
-      "request" => "getselection",
-      "type"    => "query",
-      "layer"   => $type["type"],
-      "idfield" => $type["field"],
-      "query"   => $type["field"] ." in ('" . select_value() . "')"
-    );
-
-    $url = WMS_URL . '?' . http_build_query($query1);
-    $error_reporting = intval(ini_get('error_reporting'));
-    error_reporting($error_reporting & ~E_WARNING);
-      $xml = file_get_contents($url);
-    error_reporting($error_reporting);
-    if($xml == "") {
-      // if failed to grab xml feed, then run the generic error handler
-      throw new DataServerException("$url is experiencing problems");
-    }
-
-    $xml_obj = new DOMDocument();
-    $xml_obj->loadXML($xml);
-    $extent = $xml_obj->firstChild->firstChild;
-
-    if(!$extent) {
-      //IMS server does not seem to be able to find anything
-      return;
-    }
-
-    $bbox = array();
-    foreach(array('minx','miny','maxx','maxy') as $key) {
-      $bbox[$key] = (int) $extent->getAttribute($key);
-    }
-
-    self::$server_BBox = $bbox;
-  }
+function selfURL($details) {
+  $params = $_GET;
+  $params['info'] = array_merge($params['info'], $details);
+  unset($params['tab']);
+  return 'detail.php?' . http_build_query($params);
 }
 
-function determine_type() {
-  $types = array(
-    "G"  => "Courtyards",
-    "P"  => "Parking",
-    "L"  => "Landmarks"
-  );
-
-  if(preg_match("/^(P|G|L)\d+/", select_value(), $match)) {
-    return array("type" => $types[ $match[1] ], "field" => "Loc_ID");
-  } else {
-    return array("type" => "Buildings", "field" => "facility");
-  }
+function bboxArr2Str($bbox) {
+  return implode(',', array_values($bbox));
 }
 
-function layers($fontsize=NULL) {
-  $layers = array(
-    'Towns', 'Hydro', 'Greenspace', 'Sport', 'Roads', 
-    'Rail', 'Parking' ,'Other Buildings', 'Landmarks', 
-    'Buildings', 'Courtyards'
-  ); 
-
-  $fsizes = Array(
-    'bldg' => 12,
-    'road' => 10,
-    'greens' => 10,
-    'landmarks' => 10
-    );
-
-  $type = determine_type();
-  $layer = $type['type'];  
-  $layer_index = array_search($layer, $layers);
-
-  $iden_layers = Array();
-  foreach ($fsizes as $iden => $fsize) {
-    if ($fontsize === NULL) {
-      $iden_layers[] = $iden . '-iden-' . $fsize;
-    } else {
-      $iden_layers[] = $iden . '-iden-' . $fontsize;
-    }
-  }
-
-  $new_layers = array_merge( 
-    array_slice($layers, 0, $layer_index), 
-    array_slice($layers, $layer_index + 1),
-    array($layer),
-    $iden_layers
-  );
-
-  return implode(",", $new_layers); 
-}
-
-function isID($id) {
-  preg_match("/^([A-Z]*)/", $id, $match);
-  return $match[0];
-}
-
-function getServerBBox() {
-  return CacheIMS::$server_BBox;
-}
-
-function iPhoneBBox() {
-  if(isset($_REQUEST['bbox'])) {
-    $values = explode(",", $_REQUEST['bbox']);
-    return array(
-      "minx" => $values[0],
-      "miny" => $values[1],
-      "maxx" => $values[2],
-      "maxy" => $values[3]
-    );
-  } else {
-    return iPhoneSelectBBox();
-  }
-}
- 
-function iPhoneSelectBBox() {
-  return zoom_box(getServerBBox(), 2.6);
-}
-
-function zoom_box(array $box, $zoom) {
-  $width = $zoom * ($box["maxx"] - $box["minx"]);
-  $height = $zoom * ($box["maxy"] - $box["miny"]);
-  $x_center = ($box["maxx"] + $box["minx"])/2;
-  $y_center = ($box["maxy"] + $box["miny"])/2;
+function bboxStr2Arr($bboxStr) {
+  $values = explode(',', $bboxStr);
   return array(
-    "minx" => (int) ($x_center - $width/2),
-    "miny" => (int) ($y_center - $height/2),
-    "maxx" => (int) ($x_center + $width/2),
-    "maxy" => (int) ($y_center + $height/2)
-  );
+    'xmin' => $values[0],
+    'ymin' => $values[1],
+    'xmax' => $values[2],
+    'ymax' => $values[3],
+    );
 }
 
-function photoURL() {
-  $url = "http://web.mit.edu/campus-map/objimgs/object-" . select_value() . ".jpg";
-
-  //need to turn off warnings temporialy  (want to suppress url not found warning)
-  $error_reporting = ini_get('error_reporting');
-  error_reporting($error_reporting & ~E_WARNING);
-     $result = file_get_contents($url, FILE_BINARY, NULL, 0, 100);
-  error_reporting($error_reporting);
-
-  if($result) {
-    return $url;
-  } else {
-    return "";
+// all args can be -1, 0, or 1
+function shiftBBox($bbox, $east, $south, $in) {
+  $xrange = $bbox['xmax'] - $bbox['xmin'];
+  $yrange = $bbox['ymax'] - $bbox['ymin'];
+  if ($east != 0) {
+    $bbox['xmin'] += $east * $xrange * MOVE_FACTOR;
+    $bbox['xmax'] += $east * $xrange * MOVE_FACTOR;
   }
-}
-   
-function bbox($x_pix, $y_pix) {
-  $bbox = getServerBBox();
-  
-  //calculate center, width and height
-  $x_center = ($bbox["maxx"]+$bbox["minx"])/2;
-  $y_center = ($bbox["maxy"]+$bbox["miny"])/2;
-  $width    = ($bbox["maxx"]-$bbox["minx"]);
-  $height   = ($bbox["maxy"]-$bbox["miny"]);
-
-  //need to determine if we need to add 
-  //vertically or horizontally to the bounding box
-  $image_ratio = $y_pix/$x_pix;
-  $bbox_ratio  = $height/$width;
-  if($bbox_ratio >= $image_ratio) {
-    $width = $height/$image_ratio;
-  } else {
-    $height = $width*$image_ratio;
-  } 
-
-  //calculate width, height and the bounding box to use
-  $width = $width * INIT_FACTOR * pow(ZOOM_FACTOR, zoom());
-  $height = $height * INIT_FACTOR * pow(ZOOM_FACTOR, zoom());
-  
-  //move center by offsets
-  $x_center += x_off() * MOVE_FACTOR * $width;
-  $y_center += y_off() * MOVE_FACTOR * $height;
-
-  return array(
-    "minx" => (int) ($x_center - $width/2),
-    "maxx" => (int) ($x_center + $width/2),
-    "miny" => (int) ($y_center - $height/2),
-    "maxy" => (int) ($y_center + $height/2)
-  );
-}
-
-function imageURL($x_pix, $y_pix, $fontsize=10) {
-  $bbox = bbox($x_pix, $y_pix);
-  $type = determine_type();
-
-  $query2 = array(
-    "request"      => "getmap",
-    "version"      => "1.1.1", 
-    "width"        => $x_pix,
-    "height"       => $y_pix,
-    "selectvalues" => select_value(),
-    "bbox"         => $bbox["minx"].','.$bbox["miny"].','.$bbox["maxx"].','.$bbox["maxy"],
-    "layers"       => layers($fontsize),
-    "selectfield"  => $type['field'],
-    "selectlayer"  => $type['type']
-  );
-
-  return WMS_URL . '?' . http_build_query($query2);
-}
-
-function zoom() {
-  return isset($_REQUEST['zoom']) ? $_REQUEST['zoom'] : 0;
-}
-
-
-function x_off() {
-  return isset($_REQUEST['xoff']) ? $_REQUEST['xoff'] : 0;
-}
-
-function y_off() {
-  return isset($_REQUEST['yoff']) ? $_REQUEST['yoff'] : 0;
-}
-
-function tab() {
-  return isset($_REQUEST['tab']) ? $_REQUEST['tab'] : "Map";
-}
-
-function select_value() {
-  return $_REQUEST['selectvalues'];
-}
-
-function snippets($data) {
-  $snippets = $_REQUEST['snippets'];
-
-  // we do not want to display snippets
-  // if snippets just repeats the building number
-  // or building name
-  if($snippets == trim($data['bldgnum'])) {
-    return NULL;
-  } 
-
-  if($snippets == trim($data['name'])) {
-    return NULL;
-  } 
-
-  return $snippets;
-}
-
-function whats_here($data) {
-  $result = array();
-  if (array_key_exists('contents', $data)) {
-    foreach ($data['contents'] as $content) {
-      $result[] = $content['name'];
-    }
+  if ($south != 0) {
+    $bbox['ymin'] += $south * $yrange * MOVE_FACTOR;
+    $bbox['ymax'] += $south * $yrange * MOVE_FACTOR;
   }
-  return $result;
+  if ($in != 0) {
+    if ($in == 1)
+      $inset = (ZOOM_FACTOR - 1) / ZOOM_FACTOR;
+    else
+      $inset = -2 / ZOOM_FACTOR;
+
+    $bbox['xmin'] += ($xrange / 2) * $inset;
+    $bbox['xmax'] -= ($xrange / 2) * $inset;
+    $bbox['ymin'] += ($yrange / 2) * $inset;
+    $bbox['ymax'] -= ($yrange / 2) * $inset;
+  }
+
+  return $bbox;
 }
-
-function scrollURL($dir) {
-  $dir_arr = array(
-    "E" => array(1,0),
-    "W" => array(-1,0),
-    "N" => array(0,1),
-    "S" => array(0,-1)
-  );
-  $dir_vector = $dir_arr[$dir];
-  return moveURL(x_off()+$dir_vector[0], y_off()+$dir_vector[1], zoom());
-}
-
-function zoomInURL() {
-  return moveURL(x_off()*ZOOM_FACTOR, y_off()*ZOOM_FACTOR, zoom()-1);
-}
-
-function zoomOutURL() {
-  return moveURL(x_off()/ZOOM_FACTOR, y_off()/ZOOM_FACTOR, zoom()+1);
-}
-
-function selfURL() {
-  return moveURL(x_off(), y_off(), zoom());
-}
-
-function moveURL($xoff, $yoff, $zoom) {
-  global $snippets;
-
-  $params = array(
-    "selectvalues" => select_value(),
-    "zoom" => $zoom,
-    "xoff" => $xoff,
-    "yoff" => $yoff,
-    "snippets" => $snippets
-  );
-  return "detail.php?" . http_build_query($params);
-}
-
-/**
- * this function makes the street address
- * more readable by google maps
- */
-function cleanStreet($data) {    
-  // remove things such as '(rear)' at the end of an address
-  $street = preg_replace('/\(.*?\)$/', '', $data['street']);
-
-  //remove 'Access Via' that appears at the begginning of some addresses
-  return preg_replace('/^access\s+via\s+/i', '', $street);
-} 
 
 ?>

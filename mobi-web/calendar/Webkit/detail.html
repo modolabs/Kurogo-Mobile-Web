@@ -3,6 +3,9 @@ $page->title("Events: Event Details")
      ->navbar_image('calendar')
      ->breadcrumbs("Events", "Details");
 
+// get a list of the category mappings first
+$harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
+
 $page->content_begin();
 ?>
 	<div class="focal ">
@@ -28,8 +31,16 @@ $page->content_begin();
 	
 		<p class="legend">Categorized as: 
                    <? $size = count($categories);
-                      foreach($categories as $index => $category) { $last = ($size-1 == $index); ?>
-                        <a href="<?=categoryURL($category)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
+                      foreach($categories as $index => $category) { $last = ($size-1 == $index);
+                          foreach($harvard_cat as $cat) {
+
+                                if (strcmp($cat->get_name(),$category) == 0) {
+                                     $categoryFound = $cat;
+                                     break;
+                              }
+                             }
+        ?>
+                        <a href="<?=categoryURL($categoryFound)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
                    <? } ?>
                 </p>
 	</div>

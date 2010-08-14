@@ -1,6 +1,7 @@
 <?php
 
 require_once "lib_constants.inc";
+require_once "LdapUtilities.php";
 
 // search string templates
 define("SEARCH_TIMELIMIT", 30);
@@ -20,28 +21,25 @@ class LdapPerson {
   private $uid;
   private $attributes = array();
 
-  // set values to TRUE for fields that should be returned.
-  // the uid field is mandatory and not listed here.
-  private static $ldapFields = array(
-    'sn'                         => TRUE,
-    'givenname'                  => TRUE,
-    'cn'                         => TRUE,
-    'title'                      => TRUE,
-    'ou'                         => TRUE,
-    'edupersonaffiliation'       => FALSE,
-    'street'                     => FALSE,
-    'homephone'                  => FALSE,
-    'roomnumber'                 => TRUE,
-    'initials'                   => TRUE,
-    'telephonenumber'            => TRUE,
-    'facsimiletelephonenumber'   => TRUE,
-    'mail'                       => TRUE,
-    'physicaldeliveryofficename' => TRUE,
+  // TODO: put this whitelist in static or config
+  // on a per-institution basis
+  private static $ldapWhitelist = array(
+    'sn',
+    'givenname',
+    'cn',
+    'title',
+    'ou',
+    'roomnumber',
+    'initials',
+    'telephonenumber',
+    'facsimiletelephonenumber',
+    'mail',
+    'postaladdress',
+    //'physicaldeliveryofficename',
+    //'edupersonaffiliation',
+    //'street',
+    //'homephone',
     );
-
-  public static function setLdapField($field, $shouldReturn) {
-    self::$ldapFields[$field] = $shouldReturn;
-  }
 
   public function getId() {
     return $this->uid;
@@ -76,10 +74,8 @@ class LdapPerson {
     }
 
     // get remaining attributes
-    foreach (self::$ldapFields as $field => $shouldReturn) {
-      if ($shouldReturn && $values = self::getValues($field, $ldapEntry)) {
-        $this->attributes[$field] = $values;
-      }
+    foreach (self::$ldapWhitelist as $field) {
+      $this->attributes[$field] = self::getValues($field, $ldapEntry);
     }
 
     return $this;
@@ -123,25 +119,16 @@ class LdapWrapper {
       }
 
     } elseif (preg_match('/[A-Za-z]/', $searchString)) { // assume search by name
+	  // This function is defined in LdapUtilities.	  
+      $nameFilter = buildNameAndEmailLDAPQuery($searchString);
 
-      $nameFilter = "";
-      foreach(preg_split("/\s+/", $searchString) as $word) {
-        if ($word != "") {
-          if (strlen($word) == 1) {
-            $filter = NAME_SINGLE_CHARACTER_FILTER;
-          } else {
-            $filter = NAME_MULTI_CHARACTER_FILTER;
-          }
-          $nameFilter .= str_replace("%s", $word, $filter);
-        }
-      }
-
-      if ($nameFilter != "") {
-        $this->query = str_replace("%s", $nameFilter, NAME_SEARCH_FILTER);
-        $success = TRUE;
-      } else {
+      if ($nameFilter == "") {
         $this->errorMsg = "Invalid name query";
-      }
+      } else
+	  {
+		$this->query = $nameFilter;
+		$success = TRUE;
+	  }
 
     } elseif (preg_match('/[0-9]+/', $searchString)) { // assume search by telephone number
 
@@ -184,7 +171,13 @@ class LdapWrapper {
 
     $sr = ldap_search($ds, LDAP_PATH, $this->query, array(), 0, 0, SEARCH_TIMELIMIT);
     if (!$sr) {
-      $this->errorMsg = "Search timed out";
+        if($ds) {
+            $this->errorMsg = generateErrorMessage($ds);
+            if(!$this->errorMsg) {
+                // failed to generate message (use a generic error message)
+                $this->errorMsg = LDAP_SEARCH_ERROR;
+            }
+        }
       return FALSE;
     }
 
@@ -215,7 +208,6 @@ class LdapWrapper {
 
     if (strstr($id, '=')) { 
       // assume we're looking up person by "dn" (distinct ldap name)
-      // TODO: find out if this string pattern was MIT-specific
 
       $ds = ldap_connect(LDAP_SERVER);
       if (!$ds) {

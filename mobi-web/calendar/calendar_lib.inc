@@ -74,8 +74,12 @@ function dayURL($day, $type) {
   return "day.php?time={$day['time']}&type=$type";
 }
 
-function academicURL($year, $month) {
-  return "academic.php?year=$year&month=$month";
+function categoryDayURL($day, $categoryID, $name) {
+  return "category.php?time={$day['time']}&id=$categoryID&name=$name";
+}
+
+function academicURL($year) {
+  return "academic.php?year=$year";
 }
 
 function holidaysURL($year=NULL) {
@@ -97,12 +101,13 @@ function categorysURL() {
 }
 
 function categoryURL($category) {
-  $id = is_array($category) ? $category['catid'] : $category->catid;
-  return "category.php?id=$id";
+  $id = is_array($category) ? $category['catid'] : $category->get_cat_id();
+  $name = is_array($category) ? $category['name'] : ucname($category->get_name());
+  return "category.php?id=$id&name=$name";
 }
 
 function subCategorysURL($category) {
-  $id = is_array($category) ? $category['catid'] : $category->catid;
+  $id = is_array($category) ? $category['catid'] : $category->get_cat_id();
   return "sub-categorys.php?id=$id";
 }
 
@@ -126,6 +131,15 @@ function formatDayTitle(ICalEvent $event) {
   }
   return $dateTitle;
 }
+
+function formatDayTitleForAcademicEvents(ICalEvent $event) {
+  //$start = $event->get_start();
+  $end = $event->get_end();
+  $dateTitle = date('l F j', $end);
+
+  return $dateTitle;
+}
+
 
 function timeText($event) {
   if ($event->get_end() - $event->get_start() == -1) {

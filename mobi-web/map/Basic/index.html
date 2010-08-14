@@ -1,5 +1,5 @@
 <?php
-$page->title('MIT Campus Map')
+$page->title('Campus Map')
      ->header('Campus Map');
 
 $page->content_begin();
@@ -19,12 +19,12 @@ $page->content_begin();
 	</p>
 
 	<p class="nav">
-             1. Campus Map Home<br/>
-             <? $cnt = 2; foreach($categories as $category => $title) { ?>
-	        <a href="<?=categoryURL($category)?>" accesskey="<?=$cnt?>"><?=$cnt?>. <?=$title?></a><br/>
-             <? $cnt++; } ?>
+             <? foreach ($categories as $category => $title) { ?>
+                <?=$page->link_access_key(categoryURL($category), $title)?>
+                <br/>
+             <? } ?>
 	</p>
 <?
 $page->content_end();
-$page->extra_link("directions.php", "Directions to MIT");
+// $page->extra_link("directions.php", "Directions to " . INSTITUTION_NAME);
 ?>

@@ -1,7 +1,7 @@
 <?php
-$page->title("MIT Stellar: Search Results")
+$page->title("Harvard Course Info: Search Results")
      ->navbar_image('stellar')
-     ->header("Stellar");
+     ->header("Courses");
 
 $page->add_stylesheet('Touch/mystellar');
 
@@ -9,10 +9,10 @@ $page->content_begin();
 ?>
 
 	<div class="shaded">
-		<a id="mystellar" href="<?= selfURL() ?>&action=<?=$action?>"><?=$page->img_tag($mystellar_img, 'gif', 'My Stellar', array('border', '0'))?></a>
+		<a id="mystellar" href="<?= selfURL() ?>&action=<?=$action?>"><?=$page->img_tag($mystellar_img, 'gif', 'My Courses', array('border', '0'))?></a>
 
 		<h2><?=longerID($class)?>: <?=className($class)?></h2>
-		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Stellar site</a><? } ?></p>
+		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Courses site</a><? } ?></p>
 
 		<div id="tabs">
 		<?=$tabs_html?>

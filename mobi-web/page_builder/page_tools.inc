@@ -127,35 +127,48 @@ class Pager {
     }
   }
 
-  public function next_html($url, $params, $id_name) {
+  private function next_url($url, $params, $id_name) {
     if($this->next_id() === NULL) {
       return '';
     }
 
     $params[$id_name] = $this->next_id();
     $url .= '?' . http_build_query($params);
-    
-    return '<a href="' . $url . '">Next &gt;</a>';
+    return $url;
   }
 
-  public function prev_html($url, $params, $id_name) {
+  private function prev_url($url, $params, $id_name) {
     if($this->prev_id() === NULL) {
       return '';
     }
 
     $params[$id_name] = $this->prev_id();
     $url .= '?' . http_build_query($params);
-    
-    return '<a href="' . $url . '">&lt; Prev</a>';
+    return $url;
   }
 
   public function prev_next_html($url, $params, $id_name) {
-    $next = $this->next_html($url, $params, $id_name);
-    $prev = $this->prev_html($url, $params, $id_name);
-    $middle = ($next && $prev) ? "&nbsp;|&nbsp;" : "";
-    return $prev . $middle . $next;
+    $next_url = $this->next_url($url, $params, $id_name);
+    $prev_url = $this->prev_url($url, $params, $id_name);
+    return html_arrows($prev_url, "Prev", $next_url, "Next");
   }
 }  
+
+function html_arrows($previous_url, $previous_label, $next_url, $next_label) {
+   $previous_link = NULL;
+   if($previous_url) {
+        $previous_link =  '<a href="' . $previous_url . '">&lt; ' . $previous_label . '</a>';
+   }
+
+   $next_link = NULL;
+   if($next_url) {
+        $next_link =  '<a href="' . $next_url . '">' . $next_label . ' &gt;</a>';
+   }
+
+   $middle = ($next_url && $previous_url) ? "&nbsp;|&nbsp;" : "";
+
+   return $previous_link . $middle . $next_link;
+}
 
 class Tabs {
   
@@ -224,13 +237,15 @@ class ResultsContent {
   // extra parameters needed for the next and previous arrows
   private $extra_params;
 
-  public function __construct($template, $module, $page, $extra_params = array()) {
+  public function __construct($template, $module, $page, $extra_params = array(), $showForm = TRUE) {
     $this->template = $template;
     $this->module = $module;
     $this->extra_params = $extra_params;
     $this->max_list_items = $page->max_list_items;
     $this->branch = $page->branch;
-    $this->form = new StandardForm($this->branch);
+	if ($showForm) {	
+		$this->form = new StandardForm($this->branch);
+	}
   }
    
   public function set_form(Form $form) {
@@ -243,11 +258,11 @@ class ResultsContent {
     $total = count($results);
 
     //truncate results and determine if a next page is needed
-    $start = $_REQUEST["start"] ? (int)$_REQUEST["start"] : 0;
+    $start = isset($_REQUEST["start"]) ? (int)$_REQUEST["start"] : 0;
     $pager = new Pager($this->max_list_items, $results, $start);
     $results = $pager->items();
 
-    $search_terms = $_REQUEST['filter'];
+    $search_terms = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : "";
     $params = array_merge(array("filter" => $search_terms), $this->extra_params);
     $arrows = $pager->prev_next_html($_SERVER['SCRIPT_NAME'], $params, "start");
 
@@ -361,6 +376,77 @@ function mapURL($location) {
   } else {
     return "../map/search.php?filter=" . urlencode($location);
   }
+}
+
+
+class HTMLPage {
+    private $document;
+    private $body;
+    private static $header = "<html><body>";
+    private static $footer = "</body></html>";
+
+
+    public function __construct() {
+        $this->document = new DOMDocument();
+        $this->document->loadHTML(self::$header . self::$footer);
+        $root = $this->document;
+        $this->body = $root->getElementsByTagName("body")->item(0);
+    }
+
+    public function addNode(DOMNode $node) {
+        $nodeCopy = $this->document->importNode($node, true);
+        $this->body->appendChild($nodeCopy);
+    }
+
+    public function getText() {
+        $text = $this->document->saveHTML();
+
+        // removes header
+        $content_position = strpos($text, self::$header) + strlen(self::$header);
+        $text = substr($text, $content_position);
+
+        // removes footer
+        $text = substr($text, 0, strlen($text) - strlen(self::$footer)-1);
+
+        return trim($text);
+    }
+
+}
+
+function HTMLPager($html, $paragraph_limit) {
+    $dom = new DOMDocument();
+    $dom->loadHTML($html);
+    $body = $dom->getElementsByTagName("body")->item(0);
+
+    $current_page = NULL;
+    $pages = array();
+    $current_paragraph_count = 0;
+
+    foreach($body->childNodes as $node) {
+        if($current_page == NULL) {
+            // need to start a new page
+            if(($node->nodeName == "#text") && (trim($node->nodeValue) == "")) {
+                // this node is blank so do not start a new page yet
+                continue;
+            }
+
+            $current_page = new HTMLPage();
+            $pages[] = $current_page;
+        }
+
+        $current_page->addNode($node);
+
+        if($node->nodeName == "p") {
+            $current_paragraph_count++;
+        }
+
+        if($current_paragraph_count == $paragraph_limit) {
+            $current_page = NULL;
+            $current_paragraph_count = 0;
+        }
+    }
+
+    return $pages;
 }
 
 ?>
