@@ -141,7 +141,7 @@ class BasicPage extends Page {
   public function meta_tags() {
     $result = '';
     foreach (array('viewport' => $this->viewport_content,
-                   'MobileOptimized' => $meta_mobile_optimized,
+                   'MobileOptimized' => $this->meta_mobile_optimized,
 		   'HandheldFriendly' => 'True') as $name => $content)
     {
       if ($content) {

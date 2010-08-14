@@ -10,22 +10,18 @@ ArcGISServer::init();
 
 class ArcGISServer {
 
-  private static $defaultCollection = 'CampusMap';
+  private static $defaultCollection = NULL;
   private static $defaultSearchFields = 'Address,Building Name';
 
   private static $diskCache = NULL;
   private static $wkidCache = NULL;
   private static $collections = array();
 
-  public static function getDefaultCollection() {
-    return self::$collections[self::$defaultCollection];
-  }
-
   public static function getCollection($name=NULL) {
     if ($name === NULL)
-      $name = self::$defaultCollection;
+      return self::$defaultCollection;
 
-    if (array_key_exists($name, self::$collections)) {
+    elseif (array_key_exists($name, self::$collections)) {
       return self::$collections[$name];
     }
   }
@@ -57,7 +53,7 @@ class ArcGISServer {
 
   public static function search($searchText, $collectionName=NULL) {
     if (!$collectionName) {
-      $collection = self::getDefaultCollection();
+      $collection = self::getCollection();
       $searchFields = self::$defaultSearchFields;
     } else {
       $collection = self::getCollection($collectionName);
@@ -98,9 +94,12 @@ class ArcGISServer {
       self::$wkidCache->setSuffix('.wkid');
       self::$wkidCache->preserveFormat();
 
-      // TODO: make this an external data source
+      // TODO: make service names an external data source
+
+      $url = ARCGIS_REST_SERVER . '/CampusMap/MapServer';
+      self::$defaultCollection = new ArcGISCollection('CampusMap', $url);
+
       $names = array(
-        //'CampusMap',
         'Libraries',
         'Museums',
         'Housing',
