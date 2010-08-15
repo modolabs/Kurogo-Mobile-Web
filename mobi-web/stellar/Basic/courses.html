@@ -4,14 +4,28 @@ $page->title("Harvard Course Info: $title")
 
 $page->content_begin();
 ?>
-
+	<form method="get" action="search.php">
+            
 	<h2><?=$title?></h2>
 
 	<p class="nav">
-             <? foreach($courses as $id => $course) { ?>        
-		<a href="<?=courseURL($id, $which)?>"><?=name($course)?> (<?=idName($id, $course)?>)</a><br/>
+             <? foreach($courses as $course) { $courseName = $course["name"];
+             if ($courseName == '')
+                    $courseName = $title . '-other'; ?>
+		<a href="<?=courseURL($courseName, $which, $title)?>"><?=$courseName?></a><br/>
              <? } ?>
 	</p>
+
+        <p>
+		<strong>Search in <?=$title?>:</strong><br/>
+		<span class="inputcombo">
+			<input class="forminput" type="search" id="filter" name="filter" />
+                        <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=\<?=$title?>>
+                        <input class="forminput" type="hidden" id="courseName" name="courseName" value=""/>
+			<input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+		</span>
+	</p>
+
 <?
 $page->content_end();
 $page->nav_link("./", "Course Info Home");
