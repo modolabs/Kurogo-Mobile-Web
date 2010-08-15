@@ -46,6 +46,8 @@ if($hour < 12) {
 }
 
 $hours = DINING_HOURS::getDiningHours();
+//var_dump(diningHallStatuses($hours));
+
 
 require "$page->branch/index.html";
 
@@ -71,11 +73,11 @@ function collectFoodByCategory($items) {
 
 class DINING_CONSTANTS {
     public static $MEALS = array(
-        "breakfast" => array("days" => "Mon,Tue,Wed,Thu,Fri,Sat"),
-        "brunch" => array("days" => "Sun"),
-        "lunch" => array("days" => "Mon,Tue,Wed,Thu,Fri,Sat"),
+        "breakfast" => array("days" => "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"),
+        "brunch" => array("days" => "Sunday"),
+        "lunch" => array("days" => "Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"),
         "dinner" => array(),
-        "bb" => array("name" => "brain break", "days" => "Sun,Mon,Tue,Wed,Thu"),
+        "bb" => array("name" => "brain break", "days" => "Sunday,Monday,Tuesday,Wednesday,Thursday"),
     );
 }
 
@@ -95,7 +97,7 @@ function todaysMealsHours($dining_hall, $day) {
 function diningHallStatuses($dining_halls) {
     $statuses = array();
     $minute_of_the_day = minuteOfTheDay(time());
-    $day = date("D");
+    $day = date("l");
     foreach ($dining_halls as $dining_hall) {
 
         // first search for currently open meal
@@ -118,16 +120,31 @@ function diningHallStatuses($dining_halls) {
 
 
         $status = array("name" => $dining_hall->name);
+
+
         if($open_meal) {
-            $status['status'] = "open";
+            if(isMealRestricted($dining_hall, $open_meal, $day)) {
+                $status['status'] = "open-restricted";
+            } else {
+                $status['status'] = "open";
+            }
             $status['open_meal'] = $open_meal;
         } else {
-            $status['status'] = "closed";
+            if($next_meal) {
+                if(isMealRestricted($dining_hall, $next_meal, $day)) {
+                    $status['status'] = "upcoming-restricted";
+                }
+            }
+
+            if(!isset($status['status'])) {
+                $status['status'] = "closed";
+            }
         }
+
         if($next_meal) {
             $status['next_meal'] = $next_meal;
         }
-        
+
         $statuses[] = $status;
     }
 
@@ -219,5 +236,25 @@ function stringToMinutes($time_string, $before_minute=NULL) {
 
 function minuteOfTheDay($time) {
     return intval(date("G", $time)) * 60 + intval(date("i", $time));
+}
+
+function isMealRestricted($dining_hall, $meal, $day) {
+    // only some type of meals have restrictions
+    $restricted_meals = array("brunch", "lunch", "dinner");
+    if(array_search($meal, $restricted_meals) === false) {
+        // this is not a restricted meal
+        return false;
+    }
+
+    $restricted_array = $dining_hall->{$meal . '_restrictions'};
+    $restricted_days = $restricted_array[0]->days;
+
+    foreach ($restricted_days as $restricted_day) {
+        if($restricted_day == $day) {
+            return true;
+        }
+    }
+
+    return false;
 }
 ?>
