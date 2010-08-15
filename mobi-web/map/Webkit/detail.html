@@ -1,5 +1,4 @@
 <?php
-//$select_bbox = iPhoneSelectBBox();
 $select_bbox = shiftBBox($bbox, 0, 0, 1);
 
 $bbox_script =<<<JS
@@ -31,12 +30,9 @@ $page->content_begin();
 ?>
 	<a name="scrolldown"></a>		
 	<div class="focal shaded">
-                <? if($snippets) { ?>
-                   <p class="foundat"><?=$snippets?> found in:</p>
-                <? } ?>
 
 		<h2><?=$name?></h2>
-		<p class="address"><?=$data['street']?></p>
+		<p class="address"><?=$displayDetails['Address']?></p>
 		<ul id="tabs">
 			<li class="active"><a href="#scrolldown" onclick="showTab('maptab',this); hide('loadingimage')">Map</a></li>
 			<? if ($photoURL) { ?>
@@ -73,7 +69,7 @@ $page->content_begin();
 
 			<div class="tabbody" id="phototab" style="display:none">
 				<img id="loadingimage2" src="../Webkit/images/loading2.gif" width="40" height="40" alt="Loading" />
-				<img id="photo" src="" width="" height="" alt="Photo" onload="hide('loadingimage2')" />
+				<img id="photo" src="" width="<?=$photoWidth?>" height="" alt="Photo" onload="hide('loadingimage2')" />
 
 			</div> <!-- id="phototab" -->
 
@@ -82,7 +78,7 @@ $page->content_begin();
 			<div class="tabbody" id="detailstab" style="display:none">
 				<ul>
                                      <? foreach($displayDetails as $field => $value) { ?>
-					  <li><?=$field?>: <?=$value?></li>
+					  <li><b><?=$field?>:</b> <?=$value?></li>
                                      <? } ?>
 				</ul>
 			</div> <!-- id="detailstab" -->
@@ -94,10 +90,10 @@ $page->content_begin();
 
 	</div> <!-- class="focal shaded" -->
 	
-        <? if (FALSE) { /* put equivalent of cleanStreet($data) here when we have it */  ?>
+        <? if (array_key_exists('Address', $displayDetails)) { ?>
 	   <ul class="secondary">
 		<li>
-			<a href="http://maps.google.com/maps?q=<?='100 cambridgepark drive'?>, <?='cambridge, ma'?>" class="external">Google Map <span class="smallprint">(<?='100 Cambridgepark Drive'?>)</span></a>
+			<a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>, <?=$displayDetails['City']?> <?=$displayDetails['State']?>" class="external">Google Map <span class="smallprint">(<?=$displayDetails['Address']?>)</span></a>
 		</li>
 	  </ul>
 	<? } ?>

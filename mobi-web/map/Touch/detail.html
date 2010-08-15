@@ -54,7 +54,7 @@ case 'Map': ?>
 case "Photo": ?>
 
 	<div class="tabbody centered">
-		<p><img src="<?=$photoURL?>" alt="Photo" class="photo" lowsrc="../Touch/images/loading3.gif"<? if ($width < 250) { ?> width="<?=$width?>"<? } ?> /></p>
+		<p><img src="<?=$photoURL?>" alt="Photo" width="<?=$photoWidth?>" class="photo" lowsrc="../Touch/images/loading3.gif"<? if ($width < 250) { ?> width="<?=$width?>"<? } ?> /></p>
 		<p class="legend">View from <?=$data['viewangle']?><? if ($data['architect']) { ?><br/>Architect: <?=$data['architect']?><? } ?></p>
 
 <?
