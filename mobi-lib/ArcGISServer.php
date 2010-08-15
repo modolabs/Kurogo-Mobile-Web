@@ -74,12 +74,12 @@ class ArcGISServer {
     $json = file_get_contents($url);
     $jsonObj = json_decode($json);
 
-    // title case things that return as all caps
     foreach ($jsonObj->results as $result) {
       foreach ($result->attributes as $name => $value) {
-        if ($value == strtoupper($value)) {
-          $result->attributes->{$name} = ucwords(strtolower($value));
-        }
+        $result->attributes->{$name} = $value;
+        //if ($value == strtoupper($value)) {
+        //  $result->attributes->{$name} = ucwords(strtolower($value));
+        //}
       }
     }
 
@@ -262,12 +262,13 @@ class ArcGISLayer {
       $displayAttribs = array();
       foreach ($attributes as $attrName => $attrValue) {
         // replace all caps with title case
-        if ($attrValue == strtoupper($attrValue)) {
-          $attrValue = ucwords(strtolower($attrValue));
-        }
+        //if ($attrValue == strtoupper($attrValue)) {
+        //  $attrValue = ucwords(strtolower($attrValue));
+        //}
         $displayAttribs[$this->fields[$attrName]] = $attrValue;
       }
-      $featureId = ucwords(strtolower($attributes->{$displayField}));
+      //$featureId = ucwords(strtolower($attributes->{$displayField}));
+      $featureId = $attributes->{$displayField};
       $result[$featureId] = $displayAttribs;
     }
 
