@@ -1,7 +1,6 @@
 Summary:	MIT Mobile Web
 Name:		mitmobile-all
 Version:	2.1
-Release:	__RELEASE__
 License:	MIT License
 Group:		Applications/Web
 Source:		mitmobile-all-%{version}-%{release}.tar.gz
