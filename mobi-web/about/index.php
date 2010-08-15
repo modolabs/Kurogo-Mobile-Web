@@ -13,7 +13,7 @@ WhatsNew::setLastTime();
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta http-equiv="content-script-type" content="text/javascript" />
-	<title>MIT Mobile Web</title>
+	<title><?= SITE_NAME ?></title>
 	
 	<link rel="stylesheet" rev="stylesheet" href="helpsite.css" type="text/css" />
 	<script type="text/javascript">
