@@ -223,6 +223,14 @@ class ArcGISCollection {
 
 }
 
+// sort addresses using natsort
+// but move numbers to the end first
+function addresscmp($addr1, $addr2) {
+  $addr1 = preg_replace('/^([\d\-\.]+)(\s*)(.+)/', '${3}${2}${1}', $addr1);
+  $addr2 = preg_replace('/^([\d\-\.]+)(\s*)(.+)/', '${3}${2}${1}', $addr2);
+  return strnatcmp($addr1, $addr2);
+}
+
 class ArcGISLayer {
   public $id;
   public $name;
@@ -271,6 +279,8 @@ class ArcGISLayer {
       $featureId = $attributes->{$displayField};
       $result[$featureId] = $displayAttribs;
     }
+
+    uksort($result, 'addresscmp');
 
     return $result;
   }
