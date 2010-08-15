@@ -13,13 +13,13 @@ WhatsNew::setLastTime();
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta http-equiv="content-script-type" content="text/javascript" />
-	<title>MIT Mobile Web</title>
+	<title><?= SITE_NAME ?></title>
 	
 	<link rel="stylesheet" rev="stylesheet" href="helpsite.css" type="text/css" />
 	<script type="text/javascript">
 	<!--
 		function preview() {
-		// Launches a new, small browser window containing the MIT Mobile Web in preview mode for desktop and laptop computers
+		// Launches a new, small browser window containing the <?= SITE_NAME ?> in preview mode for desktop and laptop computers
 			var popup = window.open('preview.html','popwin',
 'left=20,top=20,innerwidth=260,innerheight=320,toolbar=0,menubar=0,location=0,status=1,resizable=1,scrollbars=yes');
 		}	

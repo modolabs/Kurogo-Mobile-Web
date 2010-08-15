@@ -174,7 +174,7 @@ htmlhelp_basename = 'MIT-Mobile-Frameworkdoc'
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'MIT-Mobile-Framework.tex', u'MIT-Mobile-Framework Documentation',
-   u'MIT Mobile', 'manual'),
+   u'Mobile', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
