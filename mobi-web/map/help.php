@@ -4,7 +4,7 @@ $header = "Campus Map";
 $module = "map";
 
 $help = array(
-  'Find places on the MIT campus in two ways:',
+  'Find places on campus in two ways:',
 
   '1. <strong>Search</strong> by building number or name, or for specific facilities by name or keyword<br />' .
   'Examples: &quot;W20&quot;, &quot;hayden&quot;, &quot;kresge&quot;, &quot;la verdes&quot;, &quot;tennis&quot;, etc.',
@@ -16,8 +16,6 @@ $help = array(
   'Note that some buildings are located away from streets; for those buildings, the street address shown is usually the main pedestrian access from the street.',
 
   'On the iPhone and iPod Touch, you can also enter full-screen mode using the right-most button below the map image. Once in full-screen mode, you can rotate your device to switch to horizontal (landscape) orientation. The iPhone and iPod Touch also give you one-button access to locate the building on the device&apos;s native Map application. This button is located below the map zoom and scroll buttons.',
-
-  'The Campus Map is provided by the MIT Facilities Department and IS&amp;T.',
 );
 
 ?>
