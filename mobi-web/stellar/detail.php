@@ -52,7 +52,7 @@ setMyStellar($mystellar);
 if (!$class) {
   // no such class or none entered
   $not_found_text = "Sorry, class '$class_id' not found for the $term term";
-  $page->prepare_error_page('Stellar', 'stellar', $not_found_text);
+  $page->prepare_error_page('Courses', 'stellar', $not_found_text);
 
 } elseif (!has_stellar_site($class)) {
   // no stellarSite; show page with tabs disabled except Info

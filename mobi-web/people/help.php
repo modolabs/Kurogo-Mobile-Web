@@ -4,7 +4,7 @@ $header = "People Directory";
 $module = "people";
 
 $help = array(
-  'Search for MIT students, faculty, staff, and affiliates by part or all of their name, email address, or phone number.',
+  'Search for students, faculty, staff, and affiliates by part or all of their name, email address, or phone number.',
 
   'Example: To find William Barton Rogers, you could search by:<br />' .
   '- <strong>Name</strong> (full or partial): e.g., &quot;William Rogers,&quot; &quot;will rog&quot;, &quot;w rogers&quot;, &quot;will&quot;, etc.<br />' .

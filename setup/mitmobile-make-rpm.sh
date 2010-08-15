@@ -2,7 +2,7 @@
 
 RPMBUILDDIR=~/rpmbuild
 VERSION=2.1
-RPMVERSION=3
+RPMVERSION=4
 OS=fc12
 PACKAGE=mitmobile-all
 
@@ -27,7 +27,7 @@ fi
 
 # rpm proper
 
-echo "creating rpms for version $VERSION"
+echo "creating rpms for version $VERSION, release $RPMVERSION"
 
 TARBALL=${PACKAGE}-${VERSION}-${RPMVERSION}.${OS}.tar.gz
 SRCROOT=${PACKAGE}-${VERSION}
@@ -51,6 +51,7 @@ mv ${TARBALL} ${RPMBUILDDIR}/SOURCES
 SPEC=${PACKAGE}-${VERSION}.spec
 
 cp setup/${SPEC} ${RPMBUILDDIR}/SPECS
+sed -i 's/__RELEASE__/'${RPMVERSION}.${OS}'/g' ${RPMBUILDDIR}/SPECS/${SPEC}
 
 rpmbuild -ba ${RPMBUILDDIR}/SPECS/${SPEC}
 

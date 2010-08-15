@@ -18,7 +18,7 @@
     }
     {
       "id": "stellar",
-      "title": "Stellar",
+      "title": "Courses",
       "subtitle": "class info"
     },
     {
