@@ -16,6 +16,7 @@ class Page {
   protected $stylesheets = array();
   protected $javascripts = array();
   protected $container;
+  protected $header;
   protected $footer="";
   protected $footer_script = NULL;
   protected $standard_footer = True;

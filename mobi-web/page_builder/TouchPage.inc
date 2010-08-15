@@ -2,7 +2,6 @@
 
 class TouchPage extends Page {
 
-  protected $header; // displayed on nav bar
   protected $navbar_image;
   protected $home;
   protected $breadcrumb;
