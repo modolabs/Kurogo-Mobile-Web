@@ -69,6 +69,35 @@ $page->content_begin();
                     <? } ?>
             </div>
         <? } ?>
+
+        	<div class="tabbody" id="locationstab" style="display:none">
+		<div class="columns2">
+			<ul class="iconlegend col">
+				<li><img src="Webkit/images/dining-status-open@2x.png" width="20" height="20" alt="Open">Open now</li>
+				<li><img src="Webkit/images/dining-status-open-w-restrictions@2x.png" width="20" height="20" alt="Open with Restrictions">Open w/ restrictions</li>
+			</ul>
+			<ul class="iconlegend col">
+				<li><img src="Webkit/images/dining-status-closed@2x.png" width="20" height="20" alt="Closed">Closed</li>
+				<li><img src="Webkit/images/dining-status-closed-w-restrictions@2x.png" width="20" height="20" alt="Closed with Upcoming Restrictions">Upcoming restrictions</li>
+			</ul>
+			<div class="clear"></div>
+		</div> <!-- class="columns" -->
+
+		<p class="smallprint"><strong>Note:</strong> The times shown are general schedules only and do not account for holidays and other closures. Please check with your dining hall for closure information.</p>
+
+		<ul class="nav nested">
+                        <? foreach($dining_statuses as $dining_status) { ?>
+                            <li class="dininghall <?=$dining_status['status']?>">
+                                <a href="mockup-webkit-detail.html"><?=$dining_status['name']?><br/>
+                                    <span class="smallprint"><?=statusSummary($dining_status)?></span>
+                                </a>
+                            </li>
+                        <? } ?>
+		</ul>
+	</div> <!-- id="locationstab" -->
+
+	<div class="clear"></div>
+
     </div>
 </div>
 

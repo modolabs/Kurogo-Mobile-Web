@@ -46,8 +46,8 @@ if($hour < 12) {
 }
 
 $hours = DINING_HOURS::getDiningHours();
-//var_dump(diningHallStatuses($hours));
 
+$dining_statuses = diningHallStatuses($hours);
 
 require "$page->branch/index.html";
 
@@ -79,6 +79,14 @@ class DINING_CONSTANTS {
         "dinner" => array(),
         "bb" => array("name" => "brain break", "days" => "Sunday,Monday,Tuesday,Wednesday,Thursday"),
     );
+
+    public static function mealName($meal) {
+        if(isset(self::$MEALS[$meal]['name'])) {
+            return self::$MEALS[$meal]['name'];
+        } else {
+            return $meal;
+        }
+    }
 }
 
 function todaysMealsHours($dining_hall, $day) {
@@ -102,18 +110,22 @@ function diningHallStatuses($dining_halls) {
 
         // first search for currently open meal
         $open_meal = NULL;
+        $open_meal_hours = NULL;
         foreach(todaysMealsHours($dining_hall, $day) as $meal => $meal_hours) {
             if(isMinuteDuringHours($minute_of_the_day, $meal_hours)) {
                 $open_meal = $meal;
+                $open_meal_hours = $meal_hours;
                 break;
             }
         }
 
         // first search for currently open meal
         $next_meal = NULL;
+        $next_meal_hours = NULL;
         foreach(todaysMealsHours($dining_hall, $day) as $meal => $meal_hours) {
             if(isMinuteBeforeHours($minute_of_the_day, $meal_hours)) {
                 $next_meal = $meal;
+                $next_meal_hours = $meal_hours;
                 break;
             }
         }
@@ -124,15 +136,17 @@ function diningHallStatuses($dining_halls) {
 
         if($open_meal) {
             if(isMealRestricted($dining_hall, $open_meal, $day)) {
-                $status['status'] = "open-restricted";
+                $status['status'] = "openrestrictions";
             } else {
                 $status['status'] = "open";
             }
             $status['open_meal'] = $open_meal;
+            $status['open_meal_hours'] = $open_meal_hours;
+
         } else {
             if($next_meal) {
                 if(isMealRestricted($dining_hall, $next_meal, $day)) {
-                    $status['status'] = "upcoming-restricted";
+                    $status['status'] = "closedrestrictions";
                 }
             }
 
@@ -143,6 +157,7 @@ function diningHallStatuses($dining_halls) {
 
         if($next_meal) {
             $status['next_meal'] = $next_meal;
+            $status['next_meal_hours'] = $next_meal_hours;
         }
 
         $statuses[] = $status;
@@ -256,5 +271,46 @@ function isMealRestricted($dining_hall, $meal, $day) {
     }
 
     return false;
+}
+
+function statusSummary($status_details) {
+    
+    $status = $status_details['status'];
+    $summary = "";
+
+    if($status == 'open' || $status == 'openrestrictions') {
+        // determine meal name
+        $meal = $status_details['open_meal'];
+        $meal_hours = $status_details['open_meal_hours'];
+        $meal_name = DINING_CONSTANTS::mealName($meal);
+
+        $summary = "Open for {$meal_name}";
+        if($status = 'openrestrictions') {
+            $summary .= " with interhouse restrictions";
+        }
+        $summary .= " ";
+    } else {
+        $summary = "Closed.";
+        if(isset($status_details['next_meal'])) {
+            $meal = $status_details['next_meal'];
+            $meal_hours = $status_details['next_meal_hours'];
+            $meal_name = DINING_CONSTANTS::mealName($meal);
+            $summary .= " Next meal: " . ucwords($meal_name) .", ";
+        } else {
+            $meal_hours = NULL;
+        }
+    }
+
+    if($meal_hours) {
+        $parts = explode(" ", $meal_hours);
+        if($parts[0] == "starting") {
+            $hours_summary = $parts[1];
+        } else {
+            $hours_summary = $meal_hours;
+        }
+
+        $summary .= $hours_summary;
+    }
+    return $summary;
 }
 ?>
