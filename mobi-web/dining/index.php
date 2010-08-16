@@ -293,7 +293,7 @@ function statusSummary($status_details) {
         $meal_name = DINING_CONSTANTS::mealName($meal);
 
         $summary = "Open for {$meal_name}";
-        if($status = 'openrestrictions') {
+        if($status == 'openrestrictions') {
             $summary .= " with interhouse restrictions";
         }
         $summary .= " ";
