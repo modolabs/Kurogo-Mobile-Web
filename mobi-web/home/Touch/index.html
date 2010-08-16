@@ -20,6 +20,15 @@
 
 	<h1><img src="Touch/images/harvard-logo-home.gif" width="210" height="35" alt="" id="logo" /></h1> 
 
+	<div class="nonfocal">
+	<form method="get" action="/people/index.php">
+	<h3>Search Harvard Mobile:</h3>
+	<table cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr ><td width="70%"><input type="text" id="query" name="filter" size="14" class="forminput" value=""/></td><td width="30%"><input type="submit" value="Search" class="submitbutton" /></td></tr></table>
+	<input id="type" name="type" type="hidden" value="name" />
+	<input id="group" name="group" type="hidden" value="*" />
+	</form>
+	</div>
+
 	<div id="homegrid">
 <? foreach ($modules as $index => $module) { ?>
 		<div><a href="<?=Modules::url($module, $page->certs)?>"><img src="Touch/images/<?=$module?>.gif" width="44" height="44" alt="<?=Modules::title($module)?>" /><br/><?=Modules::wrap_title($module)?>
@@ -32,7 +41,7 @@
 	</div>
 
 	<div id="footer">
-		&copy;2010 Harvard University
+		&copy;2010 <?=INSTITUTION_NAME?>
 	<? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 	</div>
 </div>
