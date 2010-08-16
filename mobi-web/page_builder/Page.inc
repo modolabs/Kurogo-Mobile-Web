@@ -324,12 +324,12 @@ class Page {
   // for platforms under this branch that need differential treatment,
   // search for a file that looks like "filename-platform.ext"
   // otherwise use "filename.ext" as default
-  public function delta_file($name, $extension) {
-    $delta_file = $this->branch . '/' . $name . '-' . $this->platform . '.' . $extension;
+  public function delta_file($name, $extension, $path='') {
+    $delta_file = $path . $this->branch . '/' . $name . '-' . $this->platform . '.' . $extension;
     if (file_exists($delta_file)) {
       return $delta_file;
     } else {
-      return $this->branch . '/' . $name . '.' . $extension;
+      return $path . $this->branch . '/' . $name . '.' . $extension;
     }
   }
 }
