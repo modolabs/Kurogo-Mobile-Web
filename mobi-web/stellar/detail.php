@@ -8,10 +8,50 @@ $class_id = $_REQUEST['id'];
 $subjectId = urldecode($_REQUEST['id']);
 $class = CourseData::get_subject_details($subjectId);
 $term = CourseData::get_term();
+$term_id = '1';
 
 $tabs = new Tabs(selfURL(), 'tab', array('Info', 'Instructor(s)'));
 
 $back = $_REQUEST['back'];
+
+
+/* My Stellar actions */
+$mystellar = getMyStellar()->allTags;
+$class_data = $class_id . " " . $term_id;
+
+if(in_array($class_data, $mystellar)) {
+  $toggle = "ms_on";
+  $mystellar_img = 'mystellar-on';
+  $action = 'remove';
+} elseif (!in_array($class_data, $mystellar)) {
+  $toggle = "ms_off";
+  $mystellar_img = 'mystellar-off';
+  $action = 'add';
+}
+
+if($_REQUEST['action'] == 'add') {
+  if (!in_array($class_data, $mystellar)) {
+    $mystellar[] = $class_data;
+    header("Location: " . selfURL());
+  }
+}
+
+if($_REQUEST['action'] == 'remove') {
+  if (in_array($class_data, $mystellar)) {
+    array_splice($mystellar, array_search($class_data, $mystellar), 1);
+    header("Location: " . selfURL());
+  } else {
+    foreach ($mystellar as $item) {
+      if (strpos($item,$class_id) !== false) {
+	array_splice($mystellar, array_search($item, $mystellar), 1);
+	header("Location: index.php");
+      }
+    }
+  }
+}
+
+setMyStellar($mystellar);
+
 
 if (!$class) {
   // no such class or none entered
@@ -66,13 +106,21 @@ function personURL($name) {
 }
 
 function selfURL($all=NULL) {
-  $all = $all ? $all : $_REQUEST['all'];
+ /* $all = $all ? $all : $_REQUEST['all'];
   $query = http_build_query(array(
     "id"   => $_REQUEST['id'],
     "all"  => $all,
     "back" => $_REQUEST['back']
   ));
+  return "detail.php?$query";*/
+    
+  $query = http_build_query(array(
+    "id"   => $_REQUEST['id'],
+    "back" => $_REQUEST['back']
+  ));
   return "detail.php?$query";
+
+
 }
 
 function announceURL($index) {

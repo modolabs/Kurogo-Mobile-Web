@@ -192,6 +192,16 @@ class Tabs {
     );
   }
 
+  /*
+   * This method allows the initial "open" tab to 
+   * be different than the first tab
+   */
+  public function setDefaultActive($tab) {
+    if(!$this->active) {
+        $this->active = $tab;
+    }
+  }
+
   public function active() {
     if($this->active) {
       return $this->active;
@@ -206,10 +216,10 @@ class Tabs {
       $url = $this->url . "&" . $this->param . "=" .urlencode($tab);
       if($tab == $this->active()) {
 	$html[] = ($branch == 'Basic') ? 
-	  '<span class="active">' . $tab . '</span>' :
-	  '<a class="active">' . $tab . '</a>';
+	  '<span class="active">' . ucwords($tab) . '</span>' :
+	  '<a class="active">' . ucwords($tab) . '</a>';
       } else {
-	  $html[] = "<a href=\"$url\">$tab</a>";
+	  $html[] = "<a href=\"$url\">" . ucwords($tab) . "</a>";
       }
     }
     if ($branch == 'Basic') {
