@@ -6,7 +6,7 @@ html, body {
 }
 
 body {
-	background-color: #ded8c9 url(../Touch/images/background-tile.jpg) repeat-x;
+	background: #ded8c9 url(../Touch/images/background-tile.jpg) repeat-x;
 	font: 12px/1.33em Helvetica, Arial, sans-serif;
 	color: #333;
 }
