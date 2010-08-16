@@ -375,6 +375,8 @@ class CourseData {
                       if (count($course_array) >= 1) {
                              $str = explode(':', $field['name']);
                              $map['school_name'] = $str[0];
+                             $strShort = explode(':', $field['short_name']);
+                             $map['school_name_short'] = $strShort[0];
                              $map['courses'] = $course_array;
 
                              $self->schoolsToCoursesMap[] = $map;
