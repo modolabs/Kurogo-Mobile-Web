@@ -50,6 +50,16 @@ foreach($restrictions as $meal => $restriction) {
     }
 }
 
+// super special cases
+if($dining_hall == "Hillel") {
+    $hours['lunch'] = 'Saturday only';
+    $hours['dinner'] .= ' (Sunday-Thursday)';
+}
+
+if($dining_hall == "Fly-By") {
+    $hours['lunch'] .= " (Monday-Friday)";
+}
+
 require "$page->branch/detail.html";
 
 $page->output();

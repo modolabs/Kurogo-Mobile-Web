@@ -129,3 +129,9 @@ h1 {
 	margin: 14px 0;
 	font-size: 13px;
 }
+
+form, fieldset {
+	border: none;
+	margin: 0;
+	padding: 0;
+}

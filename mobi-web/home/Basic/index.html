@@ -19,6 +19,16 @@
 
 <?=$page->bbhack() ?>
 
+<form method="get" action="">
+<p id="search">
+	Search Harvard Mobile:<br/>
+	<span class="inputcombo emphasized">
+		<input class="forminput" type="search" id="filter" name="filter" value="<?=$searchTerms?>" />
+		<input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+	</span>	
+</p>
+</form>
+
 <p class="nav">
 <? foreach($modules as $index => $module) { 
   $href = Modules::url($module, $page->certs);
@@ -51,7 +61,9 @@ Font size: <?=$page->font_selector()?>
 
 <?=$page->bbhack()?>
 
-<p id="footer">&copy;2010 <?=INSTITUTION_NAME?></p>
+<p id="footer">
+	&copy;2010 <?=INSTITUTION_NAME?>
+</p>
 <? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 </body>
 </html>
