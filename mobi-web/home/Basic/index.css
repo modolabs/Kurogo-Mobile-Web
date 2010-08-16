@@ -6,7 +6,7 @@ html, body {
 }
 
 body {
-	background: #e3ddd1 url(../Basic/images/background-tile.jpg);
+	background: #e3ddd1 url(/Basic/images/background-tile.jpg) repeat-x fixed;
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 14px;
 	line-height: 1.28em;
