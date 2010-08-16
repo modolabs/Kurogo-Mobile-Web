@@ -28,15 +28,13 @@ class MeetingTime {
   private $days;
   private $startTime;
   private $endTime;
-  private $location;
+  private $location = null;
 
-  function __construct($daysArr, $startTime, $endTime) {
+  function __construct($daysArr, $startTime, $endTime, $location) {
     $this->days = $daysArr;
     $this->startTime = $startTime;
     $this->endTime = $endTime;
-    
-    error_log("DAYS ARR" . $daysArr);
-    error_log("LENGTH: " . count($daysArr));
+    $this->location = $location;
   }
 
   public function hasNoLocation() {
@@ -106,10 +104,6 @@ class MeetingTimes {
   function __construct($timesText, $locationsText) {
     $this->rawTimesText = $timesText;
     $this->rawLocationsText = $locationsText;
-    
-    error_log("COURSE DEBUG (MeetingTimes):" . $this->rawTimesText);
-    error_log("COURSE DEBUG (MeetingTimes):" . $this->rawLocationsText);
-    
     $this->parse();
   }
   
@@ -167,30 +161,7 @@ class MeetingTimes {
     return $this->parseTimeFromStr($timeStr, 1);
   }
 
-
-  // Temporary, just while we debug this.
-  public function fullText() {
-    $fullText = "";
-
-    if ($this->parseSucceeded) {
-      foreach ($this->meetingTimes as $meetingTime) {
-        $fullText .= $meetingTime->daysText(); // replace with arr join
-      }
-    }
-    else {
-      $fullText = "Parse failed";
-    }
-    //return $this->rawTimesText . "(" . $this->rawLocationsText . ")";
-    
-    return $fullText;
-  }
 }
-/*
-
-for meetingTime in meetingTimes:
-  print meetingTime.dateText() + meetingTime.time() + meetingTime.location()
-
-*/
 
 
 class CourseData {
