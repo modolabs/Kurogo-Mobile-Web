@@ -78,7 +78,6 @@ class Harvard_Calendar {
 function getIcalEvent($icsURL, $dateString, $eventId) {
 	$fileN = TrumbaCache::retrieveData($icsURL, $dateString, NULL, NULL);
         $ical = new ICalendar($fileN);
-error_log($eventId, 0);
 	return $ical->get_event($eventId);
 }
 

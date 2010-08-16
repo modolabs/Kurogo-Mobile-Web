@@ -462,7 +462,7 @@ class ICalendar extends ICalObject {
 
   public function get_event($uid) {
     foreach ($this->events as $event) {
-      if ($event->get_uid() == $uid) {
+      if ($event->get_uid() == $uid || (crc32($event->get_uid()) >> 1) == $uid) {
         return $event;
       }
     }
