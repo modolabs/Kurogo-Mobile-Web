@@ -45,6 +45,9 @@ if($hour < 12) {
     $current_meal = "dinner";
 }
 
+$tabs = new Tabs(dayURL($current), "tab", array("breakfast", "lunch", "dinner", "locations"));
+$tabs->setDefaultActive($current_meal);
+
 $hours = DINING_HOURS::getDiningHours();
 
 $dining_statuses = diningHallStatuses($hours);

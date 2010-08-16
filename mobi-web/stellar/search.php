@@ -8,14 +8,16 @@ function selfURL() {
   return "search.php?$query";
 }
 
+
     $queryTerms = urldecode($_REQUEST['filter']);
     $school = urldecode($_REQUEST['courseGroup']);
     $course = urldecode($_REQUEST['courseName']);
-print $school;
+    //print $_REQUEST['courseGroup'];
     $course = str_replace("\\", "", $course);
     $school = str_replace("\\", "", $school);
 
-    
+    //print "Here!";
+    //print ($school);
     
     $data = CourseData::search_subjects($queryTerms, str_replace('-other', '', $school), str_replace(' ', '+', $course));
 
