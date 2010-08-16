@@ -237,7 +237,8 @@ class DINING_DATA {
     public function createDiningFlatFile($local_file) {
 
         $handle = fopen($local_file, "r");
-     
+
+        $menus = array();
         while (($data = fgetcsv($handle)) !== FALSE) {
             $menu_item = new MenuItem($data);
             $menu_key = $menu_item->mealDate;

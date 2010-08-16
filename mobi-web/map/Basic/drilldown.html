@@ -8,7 +8,7 @@ $page->content_begin();
 	
 	<p class="nav">
             <? foreach($places as $name => $info) { ?>            
-		<a href="<?=detailURL($name, $info)?>"><?=$name?></a><br/>
+		<a href="<?=detailURL($name, $category, $info)?>"><?=$name?></a><br/>
             <? } ?>
 	</p>
 	

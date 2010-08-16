@@ -2,23 +2,114 @@
 $page->title('Student Dining')
      ->navbar_image('dining')
      ->breadcrumbs('Student Dining')
+     ->add_stylesheet('Webkit/dining')
+     ->add_javascript('../Webkit/uiscripts')
      ->breadcrumb_home();
 
 $page->content_begin();
 ?>
 
 <div class="nonfocal">
-	<h2>Menu for <strong>Tuesday Aug 10</strong></h2>
+	<h2>Menu for <strong><?=$current['pretty']?></strong></h2>
 </div>
 
 <div class="sidenav">
-<a href="<?=dayURL($prev, $type)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month']?> <?=$prev['day_num']?></a> | <a href="<?=dayURL($next, $type)?>"><?=$next['day_3Let']?> <?=$next['month']?> <?=$next['day_num']?> &gt;</a>
+<a href="<?=dayURL($prev)?>">&lt; <?=$prev['arrows_format']?></a> | <a href="<?=dayURL($next)?>"><?=$next['arrows_format']?> &gt;</a>
 </div>
 
+<a name="scrolldown"> </a>
+<div class="nonfocal">
+    <ul id="tabs" class="smalltabs">
+        <? foreach($food_items as $meal => $food_types) { ?>
+            <li <? if($meal==$current_meal) { ?>class="active"<? } ?> >
+                <a href="#scrolldown" onclick="showTab('<?=$meal?>tab',this)">
+                    <?=ucwords($meal)?>
+                </a>
+           </li>
+        <? } ?>
 
+        <li><a href="#scrolldown" onclick="showTab('locationstab',this)">Locations</a></li>
+    </ul>
+    
+
+    <div id="tabbodies">
+        <? foreach($food_items as $meal => $food_types) { ?>
+            <div class="tabbody" id="<?=$meal?>tab" style="display:none">
+                    <div class="columns2">
+			<ul class="iconlegend col">
+				<li><img src="Webkit/images/dining-vegetarian@2x.png" width="23" height="17" alt="Vegetarian">Vegetarian</li>
+				<li><img src="Webkit/images/dining-vegan@2x.png" width="23" height="17" alt="Vegan">Vegan</li>
+			</ul>
+			<ul class="iconlegend col">
+				<li><img src="Webkit/images/dining-organic@2x.png" width="23" height="17" alt="Organic">Organic</li>
+				<li><img src="Webkit/images/dining-local@2x.png" width="23" height="17" alt="Local">Local</li>
+			</ul>
+			<div class="clear"></div>
+                    </div> <!-- class="columns" -->
+		
+                    <? if(count($food_types) > 0) { ?>
+                
+                        <? foreach($food_types as $food_type => $foods) { ?>
+                            <h3><?=$food_type?></h3>
+                            <ul class="nav nested">
+                                <? foreach($foods as $food) { ?>
+                                    <li>
+                                        <span class="iconlabel">
+                                            <? foreach($food['properties'] as $property) { ?>
+                                                <img src="Webkit/images/dining-<?=$property?>-crop@2x.png" width="17" height="17" alt="<?=ucwords($property)?>" />
+                                            <? } ?>
+                                        </span>
+                                        <?=$food['item']?>
+                                    </li>
+                                <? } ?>
+                            </ul>
+                        <? } ?>
+                    <? } else { ?>
+                        <p><?=ucwords($meal)?></p>
+                    <? } ?>
+            </div>
+        <? } ?>
+
+        	<div class="tabbody" id="locationstab" style="display:none">
+		<div class="columns2">
+			<ul class="iconlegend col">
+				<li><img src="Webkit/images/dining-status-open@2x.png" width="20" height="20" alt="Open">Open now</li>
+				<li><img src="Webkit/images/dining-status-open-w-restrictions@2x.png" width="20" height="20" alt="Open with Restrictions">Open w/ restrictions</li>
+			</ul>
+			<ul class="iconlegend col">
+				<li><img src="Webkit/images/dining-status-closed@2x.png" width="20" height="20" alt="Closed">Closed</li>
+				<li><img src="Webkit/images/dining-status-closed-w-restrictions@2x.png" width="20" height="20" alt="Closed with Upcoming Restrictions">Upcoming restrictions</li>
+			</ul>
+			<div class="clear"></div>
+		</div> <!-- class="columns" -->
+
+		<p class="smallprint"><strong>Note:</strong> The times shown are general schedules only and do not account for holidays and other closures. Please check with your dining hall for closure information.</p>
+
+		<ul class="nav nested">
+                        <? foreach($dining_statuses as $dining_status) { ?>
+                            <li class="dininghall <?=$dining_status['status']?>">
+                                <a href="<?=detailURL($dining_status)?>"><?=$dining_status['name']?><br/>
+                                    <span class="smallprint"><?=statusSummary($dining_status)?></span>
+                                </a>
+                            </li>
+                        <? } ?>
+		</ul>
+	</div> <!-- id="locationstab" -->
+
+	<div class="clear"></div>
+
+    </div>
+</div>
 
 <div class="sidenav">
-<a href="<?=dayURL($prev, $type)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month']?> <?=$prev['day_num']?></a> | <a href="<?=dayURL($next, $type)?>"><?=$next['day_3Let']?> <?=$next['month']?> <?=$next['day_num']?> &gt;</a>
+<a href="<?=dayURL($prev)?>">&lt; <?=$prev['arrows_format']?></a> | <a href="<?=dayURL($next)?>"><?=$next['arrows_format']?> &gt;</a>
 </div>
 
-<? $page->content_end(); ?>
+<?
+
+$page->content_end();
+
+$script = "showTab('{$current_meal}tab');";
+$page->footer_script($script);
+
+?>

@@ -4,14 +4,5 @@
     <link>http://localhost/drupal/whats_new/rss.xml</link>
     <description></description>
     <language>en</language>
-   	<item>
-		<title>What&#039;s New</title>
-    	<link>http://localhost/drupal/node/2</link>
-    	<description></description>
-     	<shortName>whats new</shortName>
- 		<body>This page will be used to alert users about new features and modules.</body>
- 		<pubDate>Mon, 16 Aug 2010 21:53:03 +0000</pubDate>
- 		<dc:creator>mobi</dc:creator>
-  	</item>
   </channel>
 </rss>

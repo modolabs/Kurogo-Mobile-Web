@@ -3,7 +3,6 @@
 class BasicPage extends Page {
 
   protected static $access_key = 1; // feature phone access key
-  protected $header; // html header
   protected $extra_links = array();
   protected $help_links = array();
   protected $bottom_nav_links = array();

@@ -1,7 +1,10 @@
 <?php
 
-define('ZOOM_FACTOR', 3);
+define('ZOOM_FACTOR', 2);
 define('MOVE_FACTOR', 0.40);
+
+// enforce a minimum range in feet (their units) for map context
+define('MIN_MAP_CONTEXT', 250);
 
 define('MAP_PHOTO_SERVER', 'http://map.harvard.edu/mapserver/images/bldg_photos/');
 
@@ -23,13 +26,17 @@ if ($tab == 'Map') {
 
   switch ($page->branch) {
    case 'Webkit':
-     $imageWidth = 270; $imageHeight = 270;
+     $imageWidth = 290; $imageHeight = 190;
      break;
    case 'Touch':
      $imageWidth = 200; $imageHeight = 200;
      break;
    case 'Basic':
-     $imageWidth = 200; $imageHeight = 200;
+     if ($page->platform == 'bbplus') {
+       $imageWidth = 300; $imageHeight = 300;
+     } else {
+       $imageWidth = 200; $imageHeight = 200;
+     }
      break;
   }
 
@@ -42,7 +49,7 @@ if ($tab == 'Map') {
     $name = str_replace('.', '', $name);
 
     // if we're looking at Dining, search the Dining collection not default
-    if (array_key_exists('Dine_Name', $details)) {
+    if ($_REQUEST['category'] == 'Dining') {
       $searchResults = ArcGISServer::search($name, 'Dining');
     } else {
       $searchResults = ArcGISServer::search($name);
@@ -67,15 +74,26 @@ if ($tab == 'Map') {
            if ($ymin > $point[1]) $ymin = $point[1];
            if ($ymax < $point[1]) $ymax = $point[1];
          }
+
+	 $xrange = $xmax - $xmin;
+	 if ($xrange < MIN_MAP_CONTEXT) {
+	   $xmax += (MIN_MAP_CONTEXT - $xrange) / 2;
+	   $xmin -= (MIN_MAP_CONTEXT - $xrange) / 2;
+         }
+	 $yrange = $ymax - $ymin;
+	 if ($yrange < 200) {
+	   $ymax += (MIN_MAP_CONTEXT - $yrange) / 2;
+	   $ymin -= (MIN_MAP_CONTEXT - $yrange) / 2;
+         }
+
          break;
        case 'esriGeometryPoint':
        default:
-         // their units are in feet
-         // TODO: get values somewhere from WMS instead of hard coding
-         $xmin = $result->geometry->x - 200;
-         $xmax = $result->geometry->x + 200;
-         $ymin = $result->geometry->y - 200;
-         $ymax = $result->geometry->y + 200;
+         $pointBuffer = MIN_MAP_CONTEXT / 2;
+         $xmin = $result->geometry->x - $pointBuffer;
+         $xmax = $result->geometry->x + $pointBuffer;
+         $ymin = $result->geometry->y - $pointBuffer;
+         $ymax = $result->geometry->y + $pointBuffer;
          break;
       }
     
@@ -118,8 +136,6 @@ if ($tab == 'Map') {
   $mapBaseURL = $wms->getMapBaseUrl();
   $mapOptions = '&' . http_build_query(array(
     'crs' => 'EPSG:2249',
-    'info' => $_REQUEST['info'],
-    'selectvalues' => $_REQUEST['selectvalues'],
     ));
 }
 
@@ -129,6 +145,22 @@ $tabs = new Tabs(selfURL($details), "tab", array("Map", "Photo", "Details"));
 
 if (array_key_exists('PHOTO_FILE', $details)) {
   $photoURL = MAP_PHOTO_SERVER . $details['PHOTO_FILE'];
+
+  // all photos returned are 300px wide but variable height
+  switch($page->branch) {
+  case 'Webkit':
+    $photoWidth = '95%';
+    break;
+  case 'Basic':
+    if ($page->platform == 'bbplus')
+      $photoWidth = '300';
+    else
+      $photoWidth = '70%';
+    break;
+  default:
+    $photoWidth = '70%';
+    break;
+  }
 } else {
   $tabs->hide("Photo");
 }
@@ -184,11 +216,11 @@ function shiftBBox($bbox, $east, $south, $in) {
     if ($in == 1)
       $inset = (ZOOM_FACTOR - 1) / ZOOM_FACTOR;
     else
-      $inset = -2 / ZOOM_FACTOR;
+      $inset = -(ZOOM_FACTOR - 1);
 
     $bbox['xmin'] += ($xrange / 2) * $inset;
-    $bbox['xmax'] -= ($xrange / 2) * $inset;
     $bbox['ymin'] += ($yrange / 2) * $inset;
+    $bbox['xmax'] -= ($xrange / 2) * $inset;
     $bbox['ymax'] -= ($yrange / 2) * $inset;
   }
 

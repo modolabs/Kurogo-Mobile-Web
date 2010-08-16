@@ -11,8 +11,8 @@ $page->content_begin();
 	</div>
 	
 	<ul class="nav">
-             <? foreach($places as $name => $number) { ?>
-		<li><a href="<?=detailURL($number, $name)?>"><?=$name?></a></li>
+             <? foreach($places as $name => $info) { ?>
+		<li><a href="<?=detailURL($name, $category, $info)?>"><?=$name?></a></li>
              <? } ?>
 	</ul>
 
