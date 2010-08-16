@@ -313,4 +313,8 @@ function statusSummary($status_details) {
     }
     return $summary;
 }
+
+function detailURL($status_details) {
+    return "./detail.php?location={$status_details['name']}";
+}
 ?>
