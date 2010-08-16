@@ -7,12 +7,53 @@ $page->title('Schools')
 $page->content_begin();
 ?>
 
-<p class="nonfocal">Links to websites for each Harvard school. Note: many of these sites are <em>not</em> mobile-optimized.</p>
+<style type="text/css">
+#springboard {
+	margin: 0 auto;
+	padding: 0;
+	margin-left: 1px;
+	clear: both;
+}
+#springboard div {
+	position: relative;
+	width: 79px;
+	height: 85px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	float: left;
+	font-size: 11px;
+	line-height: 12px;
+	text-align: center;		
+	vertical-align: top;
+}
+#springboard a {
+	display: block;
+	color: #404346;
+	text-decoration: none;
+	-webkit-border-radius: 5px;
+	padding: 8px 6px;
+}
+#springboard a img {
+	margin-bottom: 1px
+}
+</style>
 
-	<ul class="nav">
-            <? foreach($links as $item) { ?>
-		<li><a class="external" href="<?=$item['link']?>"><?=$item['name']?></a></li>
-            <? } ?>
-	</ul>
-	
+<p class="nonfocal smallprint">Click on a shield to see each School's website. Please note that these websites may not be optimized for mobile.</p>
+
+<div id="springboard">
+<? foreach($links as $item) { ?>
+
+   <div id="<?=$item['name']?>">
+       <a href="<?=$item['link']?>">
+            <img src="Webkit/images/<?=$item['name']?>.png" width="50" height="50" alt="<?=$item['name']?>" />
+            <br/><?=$item['name']?>
+		</a>
+   </div>
+   <? } ?>
+
+</div>
+
+<p class="clear"> </p>
+
 <? $page->content_end(); ?>
