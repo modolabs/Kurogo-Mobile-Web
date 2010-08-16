@@ -9,7 +9,7 @@ a img {
 }
 
 body {
-	background-color: #e3ddd1;
+	background: #ded8c9 url(/Touch/images/background-tile.jpg) repeat-x fixed;
 	font: 14px/1.33em Helvetica, Arial, sans-serif;
 	color: #333;
 }
@@ -58,7 +58,7 @@ h1 {
 }
 #homegrid a {	
 	display: block;
-	color: #202326;
+	color: #333;
 	text-decoration: none;
 	border: none;
 	padding: 8px 5px;
