@@ -6,7 +6,7 @@ require_once LIBDIR . "/diningHrs.php";
 function day_info($time, $offset=0) {
   $time += $offset * 24 * 60 * 60;
   return array(
-    "pretty"            => date("D M j", $time),
+    "short"            => date("D M j", $time),
     "arrows_format"     => date("D F j", $time),
     "time"              => strtotime(date("Y-m-d 12:00:00", $time)),
   );
