@@ -33,8 +33,8 @@ $page->content_begin();
                    <? $size = count($categories);
                       foreach($categories as $index => $category) { $last = ($size-1 == $index);
                           foreach($harvard_cat as $cat) {
-
-                                if (strcmp($cat->get_name(),$category) == 0) {
+								// The strings from $harvard_cat may be null-terminated, unlike the usual PHP strings, so trim before comparing.
+                                if (strcmp(trim($cat->get_name()), trim($category)) == 0) {
                                      $categoryFound = $cat;
                                      break;
                               }

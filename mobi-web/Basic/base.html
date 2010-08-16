@@ -5,8 +5,8 @@
 <meta http-equiv="content-type" content="application/xhtml+xml" />
 <?=$this->meta_tags()?>
 <title><?=$title?></title>
-<link rel="stylesheet" type="text/css" href="../<?=$this->delta_file('core', 'css')?>" />
-<? echo $this->stylesheet_links() ?>
+<link rel="stylesheet" type="text/css" href="<?=$this->delta_file('core', 'css', '../') ?>" />
+<? echo $this->stylesheet_links(); ?>
 
 <? if ($inline_css) { ?>
 <style type="text/css">
@@ -75,7 +75,7 @@ Font size: <?=$this->font_selector()?>
 
 <p class="bb"> </p>
 <p id="footer">
-&copy;2010 Harvard University
+	&copy;2010 <?=INSTITUTION_NAME?>
 </p>
 
 <?=google_analytics("Basic")?>

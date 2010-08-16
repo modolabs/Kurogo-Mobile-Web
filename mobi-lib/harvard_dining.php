@@ -2,6 +2,7 @@
 
 define('DINING_MENU_DIRECTORY', CACHE_DIR .'/DINING/');
 define('DINING_MENU_FLAT_FILE', DATADIR .'/MENU');
+define('DINING_MENU_RAW_FILE', DATADIR .'/menu.csv');
 define('DINING_LIFESPAN', 60*60*24);
 
 class HARVARD_DINING {
@@ -27,9 +28,10 @@ class MenuItem {
     public $foodType;
     public $servingSize;
     public $servingUnit;
+    public $type;
 
 public function __construct($data) {
-
+    
         date_default_timezone_set('America/New_York');
         $this->mealDate = strtotime($data[0]);
         $this->id = $data[1];
@@ -39,6 +41,7 @@ public function __construct($data) {
         $this->foodType = $data[5];
         $this->servingSize = $data[6];
         $this->servingUnit = $data[7];
+        $this->type = $data[8];
 }
 
 /* * **
@@ -187,6 +190,7 @@ public function toArray() {
     $values[] = $this->getFoodTypeAsName();
     $values[] = $this->servingSize;
     $values[] = $this->servingUnit;
+    $values[] = $this->type;
 
     return $values;
 }
@@ -236,6 +240,11 @@ class DINING_DATA {
 
     public function createDiningFlatFile($local_file) {
 
+        $handle1 = fopen($local_file, 'w');
+        $contents = file_get_contents(DINING_MENU_RAW_FILE);
+        fwrite($handle1, $contents);
+        fclose($handle1);
+        
         $handle = fopen($local_file, "r");
 
         $menus = array();
@@ -297,6 +306,7 @@ class DINING_DATA {
             $menu_item_array['category'] = $menu_item->foodType;
             $menu_item_array['servingSize'] = $menu_item->servingSize;
             $menu_item_array['servingUnit'] = $menu_item->servingUnit;
+            $menu_item_array['type'] = $menu_item->type;
 
             if ($mealTime == $menu_item->meal)
                 $menu[] = $menu_item_array;

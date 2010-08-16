@@ -1,0 +1,110 @@
+<?php
+if($tabs->active() == "locations") {
+    $page->title('Student Dining: Locations');
+} else {
+    $page->title('Student Dining: Menu for ' . $current['shortest']);
+}
+
+$page->add_stylesheet('Basice/dining')
+     ->header('Student Dining');
+
+$page->content_begin();
+?>
+
+
+<? if($tabs->active() == "locations") { ?>
+    <h2><?=$current['long']?></h2>
+<? } else { ?>
+    <h2>Menu for <?=$current['short']?></h2>
+<? } ?>
+
+<div class="nonfocal">
+    <p><?=html_arrows(dayURL($prev, $tabs), $prev['short'], dayURL($next, $tabs), $next['short'])?></p>
+</div>
+
+<div class="focal">
+    <p class="tabs top">
+        <?=$tabs->html('Basic')?>
+    </p>
+
+
+    <? if($tabs->active() == "locations") { ?>
+
+        <p class="iconlegend"></p>
+	<p><img src="Basic/images/dining-status-open.gif" width="13" height="13">Open
+            &nbsp;</p>
+	<p><img src="Basic/images/dining-status-open-w-restrictions.gif" width="13" height="13">Open w/ restrictions
+		</p>
+	<p><img src="Basic/images/dining-status-closed.gif" width="13" height="13">Closed
+            &nbsp;</p>
+	<p><img src="Basic/images/dining-status-closed-w-restrictions.gif" width="13" height="13">Closed w/ restrictions
+	</p>
+
+        <p class="fineprint"><strong>Note:</strong> The times shown are general schedules only and do not account for holidays and other closures. Please check with your dining hall for closure information.</p>
+
+        <? foreach($dining_statuses as $dining_status) { ?>
+            <?
+                    $status = $dining_status['status'];
+
+                    if($status == 'open') {
+                        $status_img_name = 'dining-status-open.gif';
+                        $status_class = 'open';
+                    } else if($status == 'openrestrictions') {
+                        $status_img_name = 'dining-status-open-w-restrictions.gif';
+                        $status_class = 'open';
+                    } else if($status == 'closed') {
+                        $status_img_name = 'dining-status-closed.gif';
+                        $status_class = 'closed';
+                    } else if($status == 'closedrestrictions') {
+                        $status_img_name = 'dining-status-closed-w-restrictions.gif';
+                        $status_class = 'closed';
+                    }
+            ?>
+
+            <p>
+                <img src="Basic/images/<?=$status_img_name?>" width="13" height="13" alt="Open with Restrictions" />
+                <a class="dininghall <?=$status_class?>" href="<?=detailURL($dining_status)?>"><?=$dining_status['name']?></a><span class="smallprint">: <?=statusSummary($dining_status)?></span>
+            </p>
+        <? } ?>
+
+    <? } else { ?>
+
+        <p class="iconlegend">
+                    <img src="Basic/images/dining-vegetarian-crop.gif" width="13" height="13" alt="Vegetarian">Vegetarian
+                    &nbsp;
+                    <img src="Basic/images/dining-vegan.gif" width="18" height="13" alt="Vegan">Vegan
+                    &nbsp;
+                    <img src="Basic/images/dining-organic-crop.gif" width="13" height="13" alt="Organic">Organic
+                    &nbsp;
+                    <img src="Basic/images/dining-local-crop.gif" width="13" height="13" alt="Local">Local
+       </p>
+
+
+       <? if(count($food_items[$tabs->active()]) > 0) { ?>
+            <? foreach($food_items[$tabs->active()] as $food_type => $foods) { ?>
+                <h3><?=$food_type?></h3>
+                    <p class="results">
+                        <span class="iconlabel">
+                            <? foreach($foods as $food) { ?>
+                                <? foreach($food['properties'] as $property) { ?>
+                                    <img src="Basic/images/dining-<?=$property?>-crop.gif" width="13" height="13" alt="<?=ucwords($property)?>">
+                                <? } ?>
+                            <? } ?>
+                        </span>
+                        <?=$food['item']?><br />
+                    </p>
+            <? } ?>
+
+        <? } else { ?>
+             <p><?=ucwords($tabs->active())?></p>
+        <? } ?>
+
+
+    <? } ?>
+</div>
+
+<div class="nonfocal">
+    <?=html_arrows(dayURL($prev, $tabs), $prev['short'], dayURL($next, $tabs), $next['short'])?>
+</div>
+
+<? $page->content_end(); ?>

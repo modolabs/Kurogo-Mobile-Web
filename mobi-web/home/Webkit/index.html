@@ -107,13 +107,6 @@ if (file_exists($cssfile)) { ?>
 				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search Harvard Mobile" value="<?=htmlspecialchars($searchTerms)?>" />
 				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
 			</fieldset>	
-
-                <? if (($errorMessage != null)) { ?>
-                    <p><?= $errorMessage ?></p>
-                <? } ?>
-                <? if($failed_search) { ?>
-                      <p>No matches found</p>
-                <? } ?>
 		</form>
 	</div>
 
@@ -136,7 +129,7 @@ if (file_exists($cssfile)) { ?>
 </div>
 
 <div id="footer">
-	&copy;2010 Harvard University
+	&copy;2010 <?=INSTITUTION_NAME?>
 <? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 
 </div>

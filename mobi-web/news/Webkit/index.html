@@ -12,7 +12,7 @@ $page->content_begin();
     <div id="category-switcher">
          <? if($newsURL->isHome()) {?>
             <form method="get" id="category-form">
-                Section:
+                <span class="formlabel">Section:</span><br/>
                 <select name="category_id" onchange="loadCategory(this);">
                         <? foreach($categories as $id => $title) { ?>
                             <? if($newsURL->categoryId() == $id) { ?>
