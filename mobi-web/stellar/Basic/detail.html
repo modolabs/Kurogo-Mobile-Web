@@ -8,9 +8,9 @@ $page->content_begin();
 ?>
 	<div class="focal">
 
-		<h2><?=longerID($class)?>: <?=className($class)?></h2>
-		<p> <?=$term?> |
-		<span class="<?=$toggle?>"><?=$page->img_tag($mystellar_img, 'gif', 'My Courses', array('class', 'ms_star'))?>My Courses <span class="fineprint">(<a id="mystellar" href="<?= selfURL() ?>&action=<?=$action?>"><?=$action?></a>)</span></span>
+		<h2><?=$class['name']?>: <?=className($class)?></h2>
+		<p> <?=$term?>
+                <span class="<?=$toggle?>"><?=$page->img_tag($mystellar_img, 'gif', 'My Courses', array('class', 'ms_star'))?>My Courses <span class="fineprint">(<a id="mystellar" href="<?= selfURL() ?>&action=<?=$action?>"><?=$action?></a>)</span></span>
 		</p>
 
 		<p class="tabs"> <!-- No extra whitespace in code below; non-breaking spaces required -->
@@ -49,16 +49,58 @@ $page->content_begin();
                    <? foreach($class['times'] as $time) { ?>
                        <h4><?=$time['title']?>:</h4>
                        <p>
-                           <?=$time['time']?> (<a href="<?=mapURL($time['location'])?>"><?=$time['location']?></a>)
+                           <?=$time['time']?>
+                           <? if (($time['location'] != 'TBA') && ($time['location'] != 'TBD') &&
+                                  ($time['location'] != 'tba') && ($time['location'] != 'tbd') &&
+                                  ($time['location'] != 'Tba') && ($time['location'] != 'Tbd')
+                                   && ($time['location'] != '')) {?>
+                           (<a href="<?=mapURL($time['location'])?>"><?=$time['location']?></a>)
+                           <? } ?>
                        </p>
                    <? } ?>
 
                    <p class="divider"> </p>
+                   <h3> Description </h3>
 		   <p><?=htmlentities($class['description'])?></p>
 
-                <? break; case "Staff": ?>
+                   <? if (strlen($class['preReq']) > 0) { ?>
+                   <p class="divider"> </p>
+                   <h3> Pre-Requisites </h3>
+		   <p><?=htmlentities($class['preReq'])?></p>
+                   <? } ?>
 
-		   <h4>Instructors:</h4>
+                   <? if (strlen($class['credits']) > 0) { ?>
+                   <p class="divider"> </p>
+                   <h3> Credits </h3>
+		   <p><?=htmlentities($class['credits'])?></p>
+                   <? } ?>
+
+                   <? if (strlen($class['cross_reg']) > 0) { ?>
+                   <p class="divider"> </p>
+                   <h3> Cross-Registration </h3>
+		   <p><?=htmlentities($class['cross_reg'])?></p>
+                   <? } ?>
+
+                   <? if (strlen($class['exam_group']) > 0) { ?>
+                   <p class="divider"> </p>
+                   <h3> Exam Group </h3>
+		   <p><?=htmlentities($class['exam_group'])?></p>
+                   <? } ?>
+
+                   <? if (strlen($class['department']) > 0) { ?>
+                   <p class="divider"> </p>
+                   <h3> Department </h3>
+		   <p><?=htmlentities($class['department'])?></p>
+                   <? } ?>
+
+                   <? if (strlen($class['school']) > 0) { ?>
+                   <p class="divider"> </p>
+                   <h3> School </h3>
+		   <p><?=htmlentities($class['school'])?></p>
+                   <? } ?>
+
+                <? break; case "Instructor(s)": ?>
+
 		   <p>
                       <? foreach($class['staff']['instructors'] as $instruct) { ?>
 		          <a href="<?=personURL($instruct)?>" class="people"><?=$instruct?></a><br/>
