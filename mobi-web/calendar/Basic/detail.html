@@ -38,14 +38,16 @@ $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
 		     </p>
                 <? } ?>
 
-		<p class="legend">Categorized as1:
+		<p class="legend">Categorized as:
                    <? $size = count($categories);
                       foreach($categories as $index => $category) { $last = ($size-1 == $index);
 
                       foreach($harvard_cat as $cat) {
-                        if ($cat->get_name() == $category)
-                            $categoryFound = $cat;
-                        }
+						// The strings from $harvard_cat may be null-terminated, unlike the usual PHP strings, so trim before comparing.
+				        	if (strcmp(trim($cat->get_name()), trim($category)) == 0) {
+                            	$categoryFound = $cat;
+                        	}
+						}
                       ?>
                         <a href="<?=categoryURL($categoryFound)?>"><?=ucname($category)?></a><? if(!$last) { echo ","; } ?>
                    <? } ?>
