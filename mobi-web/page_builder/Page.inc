@@ -60,18 +60,14 @@ class Page {
 
       // If we set an explicit branch= as a querystring param, override the 
       // cookie value.  For debugging.
-      if (isset($_GET['branch'])) {
-          $branch = $_GET['branch'];
-      }
-      else {
-          $branch = $params[0];
-      }
-      // A little paranoia, since we use it to build paths...
+      $branch = isset($_GET['branch']) ? $_GET['branch'] : $params[0];
+      $platform = isset($_GET['platform']) ? $_GET['platform'] : $params[1];
+
+      // A little paranoia, since we branch to build paths...
       if ($branch != "Webkit" && $branch != "Touch" && $branch != "Basic") {
           $branch = "Basic";
       }
 
-      $platform = $params[1];
       $certs = $params[2];
     }
 
@@ -324,12 +320,12 @@ class Page {
   // for platforms under this branch that need differential treatment,
   // search for a file that looks like "filename-platform.ext"
   // otherwise use "filename.ext" as default
-  public function delta_file($name, $extension) {
-    $delta_file = $this->branch . '/' . $name . '-' . $this->platform . '.' . $extension;
+  public function delta_file($name, $extension, $path='') {
+    $delta_file = $path . $this->branch . '/' . $name . '-' . $this->platform . '.' . $extension;
     if (file_exists($delta_file)) {
       return $delta_file;
     } else {
-      return $this->branch . '/' . $name . '.' . $extension;
+      return $path . $this->branch . '/' . $name . '.' . $extension;
     }
   }
 }
