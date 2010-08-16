@@ -8,6 +8,11 @@ function courseURL($id, $which, $courseGroup) {
   return "course.php?id=$id&back=$which&courseGroup=$courseGroup";
 }
 
+function searchURL($filter, $courseGroup, $courseName) {
+
+    return "search.php?filter=$filter&courseGroup=$courseGroup&courseName=$courseName";
+}
+
 function longID($class) {
   if (strlen($class['masterId']) > strlen($class['name']))
     return $class['masterId'];

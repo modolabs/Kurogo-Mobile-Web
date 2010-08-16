@@ -1,0 +1,25 @@
+<?php
+$page->title("Harvard Course Info: Search Results")
+     ->header("Course Info");
+
+$page->content_begin();
+
+$filter = urlencode($queryTerms);
+ $courseGroup = urlencode($school);
+ $courseName = urlencode($course);
+ 
+?>
+
+
+<h2>Search Results by School:</h2>
+
+	<p class="nav">
+             <? foreach($school_name_count_map as $school) {?>
+		<a href="<?=searchURL($filter, $school['name'], $courseName)?>"><?=$school['name']?></a><br/>
+             <? } ?>
+	</p>
+
+<?
+$page->content_end();
+$page->nav_link("./", "Course Info Home");
+?>
