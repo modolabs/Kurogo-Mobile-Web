@@ -30,10 +30,10 @@ class MeetingTime {
   private $endTime;
   private $location;
 
-  function __construct($daysArr, $time) {
+  function __construct($daysArr, $startTime, $endTime) {
     $this->days = $daysArr;
-    $this->startTime = strtotime("1:00 p.m.");
-    $this->endTime = strtotime("2:00 pm");
+    $this->startTime = $startTime;
+    $this->endTime = $endTime;
     
     error_log("DAYS ARR" . $daysArr);
     error_log("LENGTH: " . count($daysArr));
@@ -64,9 +64,22 @@ class MeetingTime {
     return implode(" ", $daysTextArr);
   }
   
-  // public function timeText() {
-  //   return strftime("%l:%M%P", $this->)
-  // }
+  public function timeText() {
+    // If they're both AM or PM, the start time doesn't need it's own "am"/"pm"
+    if (strftime("%p", $this->startTime) == strftime("%p", $this->endTime)) {
+      $startTimeFormat = "%l:%M";
+    }
+    else {
+      $startTimeFormat = "%l:%M%p";
+    }
+
+    // strftime is adding a trailing space.  I have no idea why.  But we trim.
+    $text = trim(strftime($startTimeFormat, $this->startTime)) . "-" .
+            trim(strftime("%l:%M%p", $this->endTime));
+
+    // I know, %P should return lowercase... but it's returning "A" or "P"
+    return strtolower($text);
+  }
 }
 
 
@@ -107,13 +120,12 @@ class MeetingTimes {
   private function parse() {
 
     foreach (explode(";", $this->rawTimesText) as $timesText) {
-      error_log("PARSE:" . $timesText);
       $days = $this->parseDaysFromStr($timesText);
-      error_log("PARSE _days_" . count($days));
-      $time = "12:00am";
+      $startTime = $this->parseStartTimeFromStr($timesText);
+      $endTime = $this->parseEndTimeFromStr($timesText);
       $location = "Science Center C";
       
-      $this->meetingTimes[] = new MeetingTime($days);
+      $this->meetingTimes[] = new MeetingTime($days, $startTime, $endTime);
     }
     $this->parseSucceeded = true;
   }
@@ -142,6 +154,19 @@ class MeetingTimes {
     return $days;
   }
   
+  private function parseTimeFromStr($timeStr, $index) {
+    $timeParts = explode("-", $timeStr);
+    return strtotime($timeParts[$index]);
+  }
+  
+  private function parseStartTimeFromStr($timeStr) {
+    return $this->parseTimeFromStr($timeStr, 0);
+  }
+  
+  private function parseEndTimeFromStr($timeStr) {
+    return $this->parseTimeFromStr($timeStr, 1);
+  }
+
 
   // Temporary, just while we debug this.
   public function fullText() {
@@ -149,7 +174,6 @@ class MeetingTimes {
 
     if ($this->parseSucceeded) {
       foreach ($this->meetingTimes as $meetingTime) {
-        error_log("PARSE: " . $meetingTime->daysText());
         $fullText .= $meetingTime->daysText(); // replace with arr join
       }
     }
