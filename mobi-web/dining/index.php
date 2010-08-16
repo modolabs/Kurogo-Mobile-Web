@@ -12,8 +12,12 @@ function day_info($time, $offset=0) {
   );
 }
 
-function dayURL($day) {
-  return "index.php?time={$day['time']}";
+function dayURL($day, $tabs=NULL) {
+  $url = "index.php?time={$day['time']}";
+  if($tabs) {
+      $url .= "&tab=" . $tabs->active();
+  }
+  return $url;
 }
 
 $time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
