@@ -13,7 +13,7 @@ $page->content_begin();
 </div>
 
 <div class="sidenav">
-    <a href="<?=dayURL($prev, $tabs)?>">&lt; <?=$prev['arrows_format']?></a> | <a href="<?=dayURL($next, $tabs)?>"><?=$next['arrows_format']?> &gt;</a>
+    <?=html_arrows(dayURL($prev, $tabs), $prev['arrows_format'], dayURL($next, $tabs), $next['arrows_format'])?>
 </div>
 
 <a name="scrolldown"> </a>
@@ -87,7 +87,7 @@ $page->content_begin();
 </div>
 
 <div class="sidenav">
-    <a href="<?=dayURL($prev, $tabs)?>">&lt; <?=$prev['arrows_format']?></a> | <a href="<?=dayURL($next, $tabs)?>"><?=$next['arrows_format']?> &gt;</a>
+    <?=html_arrows(dayURL($prev, $tabs), $prev['arrows_format'], dayURL($next, $tabs), $next['arrows_format'])?>
 </div>
 
 <? $page->content_end(); ?>
