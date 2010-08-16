@@ -103,12 +103,12 @@ class BasicPage extends Page {
 
   public function home_header() {
     if ($this->platform == 'bbplus') {
-      return '<h2 id="header">'
-           . $this->img_tag('harvard-logo', 'gif')
-           . SITE_NAME . '</h2>';
+      return '<h1 id="header">'
+           . $this->img_tag('harvard-logo-home', 'png')
+           . SITE_NAME . '</h1>';
     } else {
       return '<h1>'
-           . $this->img_tag('harvard-logo-home-3', 'png', '', array('id' => 'logo'))
+           . $this->img_tag('harvard-logo-home', 'gif', '', array('id' => 'logo'))
            . '</h1>';
     }
   }

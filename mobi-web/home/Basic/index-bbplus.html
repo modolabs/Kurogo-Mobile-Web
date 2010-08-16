@@ -13,6 +13,17 @@
 <div id="container">
 <h1><?=$page->img_tag('harvard-logo-home', 'png', '', array('id' => 'logo'))?></h1>
 
+<form method="get" action="">
+<div id="homesearch">
+	Search Harvard Mobile:
+	<span class="inputcombo emphasized">
+		<input class="forminput" type="search" id="filter" name="filter" value="<?=$searchTerms?>" />
+		<input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+	</span>	
+</div>
+</form>
+
+
 <div id="homegrid">
 <? foreach ($modules as $index => $module) { ?>
 <div><a href="<?=Modules::url($module, $page->certs)?>"><?=$page->img_tag($module, 'png', Modules::title($module))?>
@@ -21,7 +32,8 @@
 <? } ?>
 </div>
 
-<div id="footer">&copy;2010 <?=INSTITUTION_NAME?>
+<div id="footer">
+	&copy;2010 <?=INSTITUTION_NAME?>
 </div>
 <? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 </div>
