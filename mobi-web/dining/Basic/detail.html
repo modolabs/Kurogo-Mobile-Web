@@ -1,0 +1,30 @@
+<?php
+
+$page->title('Student Dining: Locations')
+     ->add_stylesheet('Basice/dining')
+     ->header('Student Dining');
+
+$page->content_begin();
+?>
+
+<div class="focal">
+	<h2><?=$dining_hall?></h2>
+	<p class="fineprint"><strong>Note:</strong> The times shown are general schedules only and do not account for holidays and other closures. Please check with your dining hall for closure information.</p>
+
+        <? foreach($hours as $meal => $times) {?>
+            <p><?=ucfirst($meal)?>: <?=$times?></p>
+        <? } ?>
+
+	<br/>
+
+	<h3>Interhouse Restrictions</h3>
+        <? foreach($restrictions as $meal => $restriction) { ?>
+            <p><?=ucwords($meal)?>: <?=$restriction?></p>
+        <? } ?>
+
+</div>
+
+<?
+$page->content_end(); 
+$page->nav_link("./", "Student Dining");
+?>
