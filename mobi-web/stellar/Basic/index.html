@@ -34,9 +34,9 @@ $page->content_begin();
 		<?=$page->link_access_key('', 'Courses Home')?><br/>
                 <? foreach($schools as $school) { ?>
                 <? if ((count($school["courses"]) == 1) && ($school["courses"][0]["name"] == "")){ $school_name = $school["school_name"];?>
-                    <?=$page->link_access_key(courseURL($school_name, $which, $school_name), $school["school_name"])?><br/>
+                    <?=$page->link_access_key(courseURL($school_name, $which, $school_name), $school["school_name_short"])?><br/>
                  <? }  else { ?>
-		<?=$page->link_access_key(coursesURL($school["school_name"]), $school["school_name"])?><br/>
+		<?=$page->link_access_key(coursesURL($school["school_name"]), $school["school_name_short"])?><br/>
                     <? } ?>
                 <?} ?>
 	</p>
