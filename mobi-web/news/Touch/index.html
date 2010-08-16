@@ -1,0 +1,68 @@
+<?php
+$page->title('News')
+     ->navbar_image('news')
+     ->add_stylesheet('Touch/list');
+
+if($newsURL->isHome()) {
+    $page->header('News')
+         ->breadcrumb_home();
+} else {
+    $page->header('Search Results')
+         ->module_home_link($newsURL->homeURL());
+}
+
+$page->content_begin();
+?>
+
+    <? if($newsURL->isHome()) {?>
+        <div class="nonfocal">
+            <h2 id="category-title"><?=$category?></h2>
+
+            <a href="<?=$newsURL->categoriesURL()?>" id="section-link">Change Section</a>
+        </div>
+    <? } else if($newsURL->isSearchResults()) { ?>
+        <div class="nonfocal">
+            <form method="get">
+                <table cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr ><td width="70%"><input type="text" id="query" name="search_terms" size="14" class="forminput" value="<?=$newsURL->searchTerms()?>"/></td><td width="30%"><input type="submit" value="Search" class="submitbutton" /></td></tr></table>
+                <?=$newsURL->hiddenHomeStateForm()?>
+            </form>
+        </div>
+    <? } ?>
+
+    <ul class="results">
+        <? if($previous_url) { ?>
+            <li class="non-story">
+                <a href="<?=$previous_url?>">Previous stories</a>
+            </li>
+        <? } ?>
+
+        <? foreach($stories as $story) { ?>
+            <li class="story">
+                <? if($story['image']) { ?>
+                    <img class="thumbnail" src="<?=$story['image']['url']?>" />
+                <? } else { ?>
+                    <img class="thumbnail" src="news-placeholder.png" />
+                <? } ?>
+
+                <a href="<?=$newsURL->storyURL($story)?>">
+                    <?=$story["title"]?><br />
+                    <span class="smallprint"><?=webkit_deck($story)?></span>
+                </a>
+            </li>
+        <? } ?>
+
+        <? if($next_url) { ?>
+            <li class="non-story">
+                <a href="<?=$next_url?>">More stories</a>
+            </li>
+        <? } ?>        
+    </ul>
+
+    <div class="nonfocal">
+        <form method="get">
+            <table cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr ><td width="70%"><input type="text" id="query" name="search_terms" size="14" class="forminput" value="<?=$newsURL->searchTerms()?>"/></td><td width="30%"><input type="submit" value="Search" class="submitbutton" /></td></tr></table>
+            <?=$newsURL->hiddenHomeStateForm()?>
+        </form>
+    </div>
+
+<? $page->content_end(); ?>

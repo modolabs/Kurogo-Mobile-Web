@@ -1,0 +1,27 @@
+li.story {
+    height: 70pt;
+    padding: 1px;
+    padding-right: 10px;
+}
+
+.thumbnail {
+    float:left;
+    padding:0px;
+    padding-right: 7px;
+    width: 70pt;
+    height: 70pt;
+}
+
+#category-title {
+    display: inline;
+}
+
+#section-link {
+    position: absolute;
+    right: 10px;
+}
+
+
+.non-story a {
+    background-image: none;
+}

@@ -16,6 +16,7 @@ class Page {
   protected $stylesheets = array();
   protected $javascripts = array();
   protected $container;
+  protected $header;
   protected $footer="";
   protected $footer_script = NULL;
   protected $standard_footer = True;
@@ -57,8 +58,16 @@ class Page {
     if (isset($_COOKIE['layout'])) {
       $params = explode(',', $_COOKIE['layout']);
 
-      $branch = $params[0];
-      $platform = $params[1];
+      // If we set an explicit branch= as a querystring param, override the 
+      // cookie value.  For debugging.
+      $branch = isset($_GET['branch']) ? $_GET['branch'] : $params[0];
+      $platform = isset($_GET['platform']) ? $_GET['platform'] : $params[1];
+
+      // A little paranoia, since we branch to build paths...
+      if ($branch != "Webkit" && $branch != "Touch" && $branch != "Basic") {
+          $branch = "Basic";
+      }
+
       $certs = $params[2];
     }
 
@@ -82,34 +91,6 @@ class Page {
 
       setcookie('layout', "$branch,$platform,$certs", time() + $ini['LAYOUT_COOKIE_LIFESPAN'], '/');
     }
-
-    /*
-    $attribs_file = WEBROOT . "/$branch/attribs-$platform.inc";
-    $attribs_known = file_exists($attribs_file);
-    $last_modified = ($attribs_known) ? filemtime($attribs_file) : 0;
-    // let's just cache attributes files 24 hours for now
-    if (time() - $last_modified > 86400) {
-      $request = Array('action' => 'attributes', 'pagetype' => $branch, 'platform' => $platform);
-      $properties = json_decode(
-        file_get_contents(
-          $ini['MOBI_SERVICE_URL'] . '?' . http_build_query($request)), TRUE);
-
-      // if mobi-service hasn't changed don't do anything
-      if ($last_modified < $properties['last_modified']) {
-	$fhandle = fopen($attribs_file, 'w');
-	fwrite($fhandle, "<?php\n");
-	foreach ($properties as $property => $value) {
-	  if ($property == 'platform' || $property == 'last_modified') {
-	    continue;
-	  } elseif ($value !== NULL) {
-	    fwrite($fhandle, '$' . $property . " = '$value';\n");
-	  }
-	}
-	fwrite($fhandle, "?>\n");
-	fclose($fhandle);
-      }
-    }
-    */
 
     $page = $branch . "Page";
 
@@ -334,6 +315,18 @@ class Page {
       $output .= " />\n";
     }
     return $output;
+  }
+
+  // for platforms under this branch that need differential treatment,
+  // search for a file that looks like "filename-platform.ext"
+  // otherwise use "filename.ext" as default
+  public function delta_file($name, $extension) {
+    $delta_file = $this->branch . '/' . $name . '-' . $this->platform . '.' . $extension;
+    if (file_exists($delta_file)) {
+      return $delta_file;
+    } else {
+      return $this->branch . '/' . $name . '.' . $extension;
+    }
   }
 }
 

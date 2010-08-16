@@ -47,7 +47,6 @@ define('HARVARD_ACADEMIC_ICS_BASE_URL', 'http://www.trumba.com/calendars/harvard
 define('TRUMBA_CALENDAR_CACHE_DIR', CACHE_DIR . '/TRUMBA_CALENDAR/');
 define('TRUMBA_CALENDAR_CACHE_LIFESPAN', 60*15); //retrieve info from Trumba if the data is more than 15 mins old
 
-define('EVENTS_CALENDAR_API', 'http://events.mit.edu/MITEventsFull.wsdl');
 define("ACADEMIC_CALENDAR_CACHE_DIR", CACHE_DIR . "/ACADEMIC_CALENDAR/");
 define("ACADEMIC_CALENDAR_RSS", "/opt/mitmobile/static/academic_location.rss");
 define("ACADEMIC_CALENDAR_CACHE_LIFESPAN", 86400 * 30);
@@ -56,15 +55,15 @@ define("ACADEMIC_CALENDAR_CACHE_LIFESPAN", 86400 * 30);
 define("WHATS_NEW_PATH", DATADIR . "/whatsnew.xml");
 
 // shuttles
-define('SHUTTLE_GTFS_FEED', DATADIR . '/gtfs.zip');
-define('NEXTBUS_FEED_URL', 'http://www.nextbus.com/s/xmlFeed?');
-define('NEXTBUS_AGENCY', 'mit');
-define('NEXTBUS_ROUTE_CACHE_TIMEOUT', 86400); // max age, routeConfig data
-define('NEXTBUS_PREDICTION_CACHE_TIMEOUT', 20); // max age, predictions
-define('NEXTBUS_VEHICLE_CACHE_TIMEOUT', 10); // max age, vehicle locations
-define('NEXTBUS_CACHE_MAX_TOLERANCE', 90); // when to revert to pub schedule
-define('NEXTBUS_CACHE', CACHE_DIR . '/NEXTBUS/');
-define('NEXTBUS_DAEMON_PID_FILE', CACHE_DIR . '/NEXTBUS_DAEMON_PID');
+// define('SHUTTLE_GTFS_FEED', DATADIR . '/gtfs.zip');
+// define('NEXTBUS_FEED_URL', 'http://www.nextbus.com/s/xmlFeed?');
+// define('NEXTBUS_AGENCY', 'mit');
+// define('NEXTBUS_ROUTE_CACHE_TIMEOUT', 86400); // max age, routeConfig data
+// define('NEXTBUS_PREDICTION_CACHE_TIMEOUT', 20); // max age, predictions
+// define('NEXTBUS_VEHICLE_CACHE_TIMEOUT', 10); // max age, vehicle locations
+// define('NEXTBUS_CACHE_MAX_TOLERANCE', 90); // when to revert to pub schedule
+// define('NEXTBUS_CACHE', CACHE_DIR . '/NEXTBUS/');
+// define('NEXTBUS_DAEMON_PID_FILE', CACHE_DIR . '/NEXTBUS_DAEMON_PID');
 
 // stellar -- see dev/stage/prod for base url
 
@@ -82,18 +81,6 @@ define('LIBRARY_OFFICE_RSS', DATADIR . '/library_office.xml');
 define('ICS_CACHE_LIFESPAN', 900);
 
 // emergency -- see dev/stage/prod files
-
-// 3down
-define('THREEDOWN_RSS_URL', 'http://3down.mit.edu/3down/index.php?rss=1');
-
-// TECHCASH
-define('ORACLE_HOME', '/oracle/product/10.2.0/client');
-define('TECHCASH_ORACLE_USER', 'techcash_oracle_user');
-define('TECHCASH_ORACLE_PASS', 'techcash_oracle_pass');
-define('TECHCASH_ORACLE_DB', 'techcash_oracle_db');
-define('WAREHOUSE_ORACLE_USER', 'warehouse_oracle_user');
-define('WAREHOUSE_ORACLE_PASS', 'warehouse_oracle_pass');
-define('WAREHOUSE_ORACLE_DB', 'warehouse_oracle_db');
 
 if (MOBILE_DEV_SERVER) {
   require_once('lib_constants_dev.inc');

@@ -28,9 +28,10 @@ function categoryURL($category=NULL) {
   return "?category=$category";
 }
 
-function detailURL($name, $info) {
+function detailURL($name, $category, $info) {
   $params = array(
     'selectvalues' => $name,
+    'category' => $category,
     'info' => $info,
     );
   return 'detail.php?' . http_build_query($params);

@@ -10,22 +10,18 @@ ArcGISServer::init();
 
 class ArcGISServer {
 
-  private static $defaultCollection = 'CampusMap';
+  private static $defaultCollection = NULL;
   private static $defaultSearchFields = 'Address,Building Name';
 
   private static $diskCache = NULL;
   private static $wkidCache = NULL;
   private static $collections = array();
 
-  public static function getDefaultCollection() {
-    return self::$collections[self::$defaultCollection];
-  }
-
   public static function getCollection($name=NULL) {
     if ($name === NULL)
-      $name = self::$defaultCollection;
+      return self::$defaultCollection;
 
-    if (array_key_exists($name, self::$collections)) {
+    elseif (array_key_exists($name, self::$collections)) {
       return self::$collections[$name];
     }
   }
@@ -57,7 +53,7 @@ class ArcGISServer {
 
   public static function search($searchText, $collectionName=NULL) {
     if (!$collectionName) {
-      $collection = self::getDefaultCollection();
+      $collection = self::getCollection();
       $searchFields = self::$defaultSearchFields;
     } else {
       $collection = self::getCollection($collectionName);
@@ -78,12 +74,12 @@ class ArcGISServer {
     $json = file_get_contents($url);
     $jsonObj = json_decode($json);
 
-    // title case things that return as all caps
     foreach ($jsonObj->results as $result) {
       foreach ($result->attributes as $name => $value) {
-        if ($value == strtoupper($value)) {
-          $result->attributes->{$name} = ucwords(strtolower($value));
-        }
+        $result->attributes->{$name} = $value;
+        //if ($value == strtoupper($value)) {
+        //  $result->attributes->{$name} = ucwords(strtolower($value));
+        //}
       }
     }
 
@@ -98,16 +94,19 @@ class ArcGISServer {
       self::$wkidCache->setSuffix('.wkid');
       self::$wkidCache->preserveFormat();
 
-      // TODO: make this an external data source
+      // TODO: make service names an external data source
+
+      $url = ARCGIS_REST_SERVER . '/CampusMap/MapServer';
+      self::$defaultCollection = new ArcGISCollection('CampusMap', $url);
+
       $names = array(
-        'CampusMap',
         'Libraries',
         'Museums',
         'Housing',
         'Dining',
         'LEED',
         'PublicSafety',
-        'WirelessLAN',
+        //'WirelessLAN',
         //'Accessibility',
         //'AlternativeEnergy', 
         //'BikeFacilities',
@@ -224,6 +223,14 @@ class ArcGISCollection {
 
 }
 
+// sort addresses using natsort
+// but move numbers to the end first
+function addresscmp($addr1, $addr2) {
+  $addr1 = preg_replace('/^([\d\-\.]+)(\s*)(.+)/', '${3}${2}${1}', $addr1);
+  $addr2 = preg_replace('/^([\d\-\.]+)(\s*)(.+)/', '${3}${2}${1}', $addr2);
+  return strnatcmp($addr1, $addr2);
+}
+
 class ArcGISLayer {
   public $id;
   public $name;
@@ -263,14 +270,17 @@ class ArcGISLayer {
       $displayAttribs = array();
       foreach ($attributes as $attrName => $attrValue) {
         // replace all caps with title case
-        if ($attrValue == strtoupper($attrValue)) {
-          $attrValue = ucwords(strtolower($attrValue));
-        }
+        //if ($attrValue == strtoupper($attrValue)) {
+        //  $attrValue = ucwords(strtolower($attrValue));
+        //}
         $displayAttribs[$this->fields[$attrName]] = $attrValue;
       }
-      $featureId = ucwords(strtolower($attributes->{$displayField}));
+      //$featureId = ucwords(strtolower($attributes->{$displayField}));
+      $featureId = $attributes->{$displayField};
       $result[$featureId] = $displayAttribs;
     }
+
+    uksort($result, 'addresscmp');
 
     return $result;
   }

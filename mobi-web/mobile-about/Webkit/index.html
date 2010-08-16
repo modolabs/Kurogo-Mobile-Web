@@ -1,19 +1,14 @@
 <?php
-$page->title('About the MIT Mobile Web')
+$page->title('About the ' . SITE_NAME)
      ->navbar_image('about')
      ->breadcrumbs('About this Site')
      ->breadcrumb_home();
 
+error_log(LIBDIR);
+
 $page->content_begin();
 ?>
 	<ul class="nav"> 
-		<li> 
-                        <a href="new.php">What's New
-                              <? if($whats_new_count) { ?>
-                                   <span class="badge"><strong><?=$whats_new_count?></strong> unread</span>
-                              <? } ?>
-                        </a>
-		</li> 
 		<li> 
 			<a href="./?page=background">Background Information</a> 
 		</li> 
@@ -21,10 +16,7 @@ $page->content_begin();
 			<a href="./?page=requirements">System Requirements</a> 
 		</li> 
 		<li> 
-			<a href="./?page=credits">Credits</a> 
-		</li> 
-		<li> 
-			<a class="email" href="mailto:mobiweb@mit.edu">Send us Feedback!</a> 
+			<a class="email" href="mailto:<?=FEEDBACK_EMAIL?>">Send us Feedback!</a>
 		</li> 
 	</ul> 
 <? 

@@ -18,7 +18,7 @@
     }
     {
       "id": "stellar",
-      "title": "Stellar",
+      "title": "Courses",
       "subtitle": "class info"
     },
     {
@@ -30,19 +30,8 @@
       "title": "Emergency Info"
     },
     {
-      "id": "3down",
-      "title": "3DOWN",
-      "subtitle": "service status"
-    },
-    {
-      "id": "techcash",
-      "title": "TechCASH (BETA)",
-      "platforms": ["iphone", "computer"],
-      "auth": ["x509"]
-    },
-    {
       "id": "libraries",
-      "title": "Libraries (BETA)",
+      "title": "Libraries",
       "platforms": ["iphone"]
     },
     {
@@ -51,16 +40,16 @@
     },
     {
       "id": "certificates",
-      "title": "MIT Certificates",
+      "title": "Certificates",
       "platforms": ["iphone"],
       "extra": true,
-      "url": "http://ca.mit.edu"
+      "url": ""
     },
     {
-      "id": "webmitedu",
-      "title": "Full MIT Website",
+      "id": "webharvardedu",
+      "title": "Full Website",
       "extra": true,
-      "url": "http://web.mit.edu",
+      "url": "http://www.harvard.edu",
       "platforms": ["iphone", "android", "webos", "winmo", "blackberry", "palm", "symbian", "computer"]
     },
     {

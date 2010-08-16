@@ -1,20 +1,20 @@
 <?php
-$page->title('Harvard Course Info')
+$page->title('Course Info')
      ->navbar_image('stellar')
-     ->header('Stellar')
+     ->header('Courses')
      ->breadcrumb_home();
 
 $page->content_begin();
 ?>
 
 	<div class="nonfocal">
-	    <p>Descriptions, announcements and other information for MIT classes.</p>
+	    <p>Descriptions, announcements and other information for <?=INSTITUTION_NAME?> classes.</p>
         </div>
     
     <? if (count(getMyStellar()->allTags) > 0 ) { ?>
         
         <div class="nonfocal">
-            <h3>My Stellar</h3> 
+            <h3>My Courses</h3> 
         </div>
     
         <? if (count(getMyStellar()->currentIds)) { ?>
@@ -27,7 +27,7 @@ $page->content_begin();
 	<? } ?>
 
         <? if (count(getMyStellar()->oldIds)) { ?>
-           <div class="nonfocal legend">The following old classes have been removed from your My Stellar settings:
+           <div class="nonfocal legend">The following old classes have been removed from your My Courses settings:
               <?=implode(", ", getMyStellar()->oldIds)?>
            </div>
         <? } ?>

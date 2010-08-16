@@ -7,6 +7,7 @@ class WebkitPage extends Page {
   protected $breadcrumbs = array();
   protected $last_breadcrumb;
   protected $breadcrumb_links;
+  protected $module_home_link = "./";
   protected $extra_onload = "scrollTo(0,1);";
   protected $onorientationchange;
   protected $raw_js = array();
@@ -21,7 +22,7 @@ class WebkitPage extends Page {
     $this->varnames = Array(
       'header', 'title', 'stylesheets', 'help_on',
       'navbar_image', 'inline_css', 'javascripts',
-      'breadcrumb_links', 'home', 'breadcrumbs', 'last_breadcrumb',
+      'breadcrumb_links', 'home', 'breadcrumbs', 'last_breadcrumb', 'module_home_link',
       'footer', 'footer_script', 'standard_footer',
       'extra_onload', 'onorientationchange', 'raw_js', 'scalable', 'fixed',
     );
@@ -74,6 +75,41 @@ class WebkitPage extends Page {
     return $this;
   }
 
+  public function module_home_link($link) {
+      $this->module_home_link = $link;
+      return $this;
+  }
+
+  /*
+   * An alternative method for defining the breadcrumbs
+   * from a navigation array
+   */
+  public function generate_navigation($navigation_array) {
+      $navigation_depth = sizeof($navigation_array);
+      $navigation_links = array_values($navigation_array);
+
+      if($navigation_depth <= 1) {
+          $this->breadcrumb_home();
+      }
+
+      if($navigation_depth >= 1) {
+          $this->module_home_link = $navigation_links[0];
+      }
+
+      $this->breadcrumb_links = array();
+      if($navigation_array > 1) {
+          $this->breadcrumb_links = array_slice($navigation_links, 1, -1);
+      }
+
+      $navigation_labels = array_keys($navigation_array);
+      if(sizeof($navigation_labels) > 1) {
+          $navigation_labels = array_slice($navigation_labels, 1);
+      }
+      call_user_func_array(array($this, breadcrumbs), $navigation_labels);
+
+      return $this;
+  }
+
   public function extra_onload($js) {
     $this->extra_onload .= " $js";
     return $this;
@@ -101,15 +137,6 @@ class WebkitPage extends Page {
   public function inline_js_end() {
     $this->acquire_end("inline_js");
     $this->raw_js[] = $this->inline_js;
-  }
-
-  public function delta_file($name, $extension) {
-    $delta_file = $this->branch . '/' . $name . '-' . $this->platform . '.' . $extension;
-    if (file_exists($delta_file)) {
-      return $delta_file;
-    } else {
-      return $this->branch . '/' . $name . '.' . $extension;
-    }
   }
 }
 

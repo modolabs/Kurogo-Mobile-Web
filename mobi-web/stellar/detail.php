@@ -1,22 +1,25 @@
 <?php
 
-require_once LIBDIR . "/StellarData.php";
+require_once LIBDIR . '/testCourses.php';
 require_once "stellar_lib.inc";
 
 $class_id = $_REQUEST['id'];
-$class = StellarData::get_subject_info($class_id);
-$term = StellarData::get_term_text();
-$term_id = StellarData::get_term();
 
-$tabs = new Tabs(selfURL(), 'tab', array('News', 'Info', 'Staff'));
+$subjectId = urldecode($_REQUEST['id']);
+$class = CourseData::get_subject_details($subjectId);
+$term = CourseData::get_term();
+$term_id = '1';
+
+$tabs = new Tabs(selfURL(), 'tab', array('Info', 'Instructor(s)'));
 
 $back = $_REQUEST['back'];
+
 
 /* My Stellar actions */
 $mystellar = getMyStellar()->allTags;
 $class_data = $class_id . " " . $term_id;
 
-if(in_array($class_data, $mystellar)) { 
+if(in_array($class_data, $mystellar)) {
   $toggle = "ms_on";
   $mystellar_img = 'mystellar-on';
   $action = 'remove';
@@ -49,31 +52,21 @@ if($_REQUEST['action'] == 'remove') {
 
 setMyStellar($mystellar);
 
+
 if (!$class) {
   // no such class or none entered
   $not_found_text = "Sorry, class '$class_id' not found for the $term term";
-  $page->prepare_error_page('Stellar', 'stellar', $not_found_text);
+  $page->prepare_error_page('Courses', 'stellar', $not_found_text);
 
-} elseif (!has_stellar_site($class)) {
-  // no stellarSite; show page with tabs disabled except Info
-  $no_stellar_site = TRUE;
-  $class['times'] = Array(); // empty array so foreach doesn't complain
+}
 
-  // tab options for Touch/Basic pages
-  $tabs->hide('News');
-  $tabs->hide('Staff');
-  $tabs_html = $tabs->html($page->branch);
-  $tab = $tabs->active();
-
-  require "$page->branch/detail.html";
-
-} else {
+else {
   // tab options for Touch/Basic pages
   $tabs_html = $tabs->html($page->branch);
   $tab = $tabs->active();
 
   $stellar_url = stellarURL($class);
-  $announcements = StellarData::get_announcements($class_id);
+  $announcements = Array();
   $has_news = count($announcements) > 0;
   $has_old_news = count($announcements) > 5;
 
@@ -113,13 +106,21 @@ function personURL($name) {
 }
 
 function selfURL($all=NULL) {
-  $all = $all ? $all : $_REQUEST['all'];
+ /* $all = $all ? $all : $_REQUEST['all'];
   $query = http_build_query(array(
     "id"   => $_REQUEST['id'],
     "all"  => $all,
     "back" => $_REQUEST['back']
   ));
+  return "detail.php?$query";*/
+    
+  $query = http_build_query(array(
+    "id"   => $_REQUEST['id'],
+    "back" => $_REQUEST['back']
+  ));
   return "detail.php?$query";
+
+
 }
 
 function announceURL($index) {
@@ -143,7 +144,7 @@ function sDate($item) {
 }
 
 function stellarURL($class) {
-  return 'http://stellar.mit.edu/' . $class['stellarUrl'];
+  $class['stellarUrl'];
 }
 
 ?>

@@ -4,8 +4,8 @@ function coursesURL($which) {
   return "courses.php?which=$which";
 }
 
-function courseURL($id, $which) {
-  return "course.php?id=$id&back=$which";
+function courseURL($id, $which, $courseGroup) {
+  return "course.php?id=$id&back=$which&courseGroup=$courseGroup";
 }
 
 function longID($class) {
@@ -55,7 +55,7 @@ function getMyStellar() {
   if(!isset($_COOKIE["mystellar"])) {
     $allTags = array();
   } else {
-    $term = StellarData::get_term();
+    $term = CourseData::get_term();
     $allTags = explode(",", $_COOKIE["mystellar"]);
     natsort($allTags);
   }

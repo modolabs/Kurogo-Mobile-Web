@@ -1,0 +1,18 @@
+.news {
+    background-color: #fff;
+    padding: 4px;
+}
+
+#image {
+    text-align: center;
+}
+
+.byline {
+    font-size: 12px;
+    color: #666;
+}
+
+.dek {
+    color: #666;
+    font-size: 14px;
+}

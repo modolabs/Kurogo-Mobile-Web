@@ -1,19 +1,18 @@
 <?php
 
-require_once LIBDIR . "/StellarData.php";
+require_once LIBDIR . '/testCourses.php';
 require_once "stellar_lib.inc";
 
-$which = $_REQUEST['which'];
+$selected_school_name = $_REQUEST['which'];
 
-if($which == "other") {
-  $courses = StellarData::get_others();
-  $title = "Other Courses";
-} else {
-  $all_courses = StellarData::get_courses();
-  $drill = new DrillNumeralAlpha($which, "key");
-  $courses = $drill->get_list($all_courses);
-  $title = "Courses $which";
+$schools = CourseData::get_schoolsAndCourses();
+
+foreach($schools as $school) {
+    if ($school["school_name"] == $selected_school_name)
+        $courses = $school["courses"];
 }
+
+$title = $selected_school_name;
 
 require "$page->branch/courses.html";
 

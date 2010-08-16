@@ -1,24 +1,35 @@
 <?php
 
-require_once LIBDIR . "/StellarData.php";
+require_once LIBDIR . '/testCourses.php';
 require_once "stellar_lib.inc";
 
 function selfURL() {
-  $start = $_REQUEST["start"] ? (int)$_REQUEST["start"] : 0;
-  $query = http_build_query(array("filter" => $_REQUEST['filter'], "start" => $start));
+  $query = http_build_query(array("filter" => $_REQUEST['filter'], "courseGroup" => $_REQUEST['courseGroup'], "courseName" => $_REQUEST['courseName']));
   return "search.php?$query";
 }
 
-$classes = StellarData::search_subjects($_REQUEST['filter']);
 
+    $queryTerms = urldecode($_REQUEST['filter']);
+    $school = urldecode($_REQUEST['courseGroup']);
+    $course = urldecode($_REQUEST['courseName']);
+    //print $_REQUEST['courseGroup'];
+    $course = str_replace("\\", "", $course);
+    $school = str_replace("\\", "", $school);
+
+    //print "Here!";
+    //print ($school);
+    
+    $data = CourseData::search_subjects($queryTerms, str_replace('-other', '', $school), str_replace(' ', '+', $course));
+
+    $classes = $data["classes"];
 // if exactly one class is found redirect to that
 // classes detail page
-if(count($classes) == 1) {
+/*if(count($classes) == 1) {
   header("Location: " . detailURL($classes[0], selfURL()));
   die();
-}
+}*/
 
-$content = new ResultsContent("items", "stellar", $page);
+$content = new ResultsContent("items", "stellar", $page, NULL, FALSE);
 
 require "$page->branch/search.html";
 

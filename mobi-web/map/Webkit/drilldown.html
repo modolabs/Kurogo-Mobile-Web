@@ -12,7 +12,7 @@ $page->content_begin();
 	
 	<ul class="results">
              <? foreach($places as $name => $info) { ?>
-		<li><a href="<?=detailURL($name)?>"><?=$name?></a></li>
+		<li><a href="<?=detailURL($name, $category, $info)?>"><?=$name?></a></li>
              <? } ?>
 	</ul>
 	

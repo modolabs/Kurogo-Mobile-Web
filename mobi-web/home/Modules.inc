@@ -5,6 +5,9 @@ class Modules {
   public static $default_order = array();
 
   public static $module_data = Array(
+    'news' => Array(
+      'title' => 'News',
+      ),
     'people' => Array(
       'title' => 'People Directory',
       ),

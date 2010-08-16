@@ -8,7 +8,7 @@ if(!isset($_REQUEST['ref'])) {
 }
 
 if(!isset($_REQUEST['name'])) {
-  $destination_name = "MIT Mobile Web";
+  $destination_name = SITE_NAME;
 } else {
   $destination_name = $_REQUEST['name'];
 }
