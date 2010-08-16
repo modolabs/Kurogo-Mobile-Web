@@ -9,7 +9,7 @@ $page->content_begin();
 	<p>
 		<strong>Search campus map:</strong><br/>
 		<span class="inputcombo emphasized">
-			<input class="forminput" type="text" id="filter" name="filter" value="<?=$query?>"/>
+			<input class="forminput" type="text" id="filter" name="filter" value="<?=htmlspecialchars($query)?>"/>
 			<input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
 		</span>	
 	</p>

@@ -1,7 +1,7 @@
 	  <form method="get" action="">
 	    <p>
 		<span class="inputcombo">
-			<input class="forminput" type="search" id="filter" name="filter" value="<?=$_REQUEST['filter']?>" />
+			<input class="forminput" type="search" id="filter" name="filter" value="<?=htmlspecialchars(stripslashes($_REQUEST['filter'])?>" />
 			<input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
                         <? if($catid) { ?>
                              <input type="hidden" name="id" value="<?=$catid?>" />
