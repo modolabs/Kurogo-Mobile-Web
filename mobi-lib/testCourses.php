@@ -10,10 +10,62 @@ define('TERM_QUERY','&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to
 define('TERM', 'Fall2010');
 define('SCHOOL_QUERY_BASE', '&fq_school_nm=school_nm:"');
 
-  function compare_courseNumber($a, $b)
+function compare_courseNumber($a, $b)
 {
   return strnatcmp($a['name'], $b['name']);
 }
+
+//  // TODO: Why is this static at all?  Shouldn't a course be an object with 
+//  //       internal state and accessor methods?
+//  public static function getMeetingTimes($timesStr, $locStr) {
+//    
+//    // Return an array of MeetingTime objects.
+//  }
+
+class MeetingTime {
+  private $days;
+  private $time;
+  private $location;
+
+  public function hasNoLocation() {
+    return false;
+  }
+}
+
+class MeetingTimes {
+  // If we run into errors while parsing, we'll fall back to just echoing this.
+  private $rawTimesText;
+  private $rawLocationsText;
+
+  private $parseSucceeded = false;
+  private $meetingTimes = array();
+  
+  function __construct($timesText, $locationsText) {
+    $this->rawTimesText = $timesText;
+    $this->rawLocationsText = $locationsText;
+    
+    error_log("COURSE DEBUG (MeetingTimes):" . $this->rawTimesText);
+    error_log("COURSE DEBUG (MeetingTimes):" . $this->rawLocationsText);
+  }
+  
+  private function parse() {
+    
+  }
+  
+
+
+  // Temporary, just while we debug this.
+  public function fullText() {
+    return $this->rawTimesText . "(" . $this->rawLocationsText . ")";
+  }
+}
+/*
+
+for meetingTime in meetingTimes:
+  print meetingTime.dateText() + meetingTime.time() + meetingTime.location()
+
+*/
+
 
 class CourseData {
 
@@ -110,8 +162,6 @@ class CourseData {
     return $seasons[ $data["season"] ] . " 20" . $data["year"];
   }
 
-
-
   public static function get_subject_details($subjectId) {
 
     $urlString = STELLAR_BASE_URL .'q=id:'.$subjectId;
@@ -201,6 +251,10 @@ class CourseData {
     $classtime_array[] = $classtime;
 
     $subject_fields['times'] = $classtime_array;
+
+    // Reimplementation using crazier parsing
+    $subject_fields['meeting_times'] = new MeetingTimes($single_course->meeting_time,
+                                                        $single_course->location);
 
     $ta_array = array();
     $prof = explode(':', $single_course->faculty_description);

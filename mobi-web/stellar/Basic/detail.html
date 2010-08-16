@@ -59,6 +59,12 @@ $page->content_begin();
                        </p>
                    <? } ?>
 
+                   <? $meetingTimes = $class['meeting_times']; ?>
+                       <h4>Lecture new:</h4>
+                       <p>
+                           <?=$meetingTimes->fullText() ?>
+                       </p>
+
                    <p class="divider"> </p>
                    <h3> Description </h3>
 		   <p><?=htmlentities($class['description'])?></p>
