@@ -8,7 +8,7 @@ $class_id = $_REQUEST['id'];
 $subjectId = urldecode($_REQUEST['id']);
 $class = CourseData::get_subject_details($subjectId);
 $term = CourseData::get_term();
-$term_id = '1';
+$term_id = $term;
 
 $tabs = new Tabs(selfURL(), 'tab', array('Info', 'Instructor(s)'));
 

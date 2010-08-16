@@ -15,7 +15,7 @@ $page->content_begin();
 	   <p class="nav">
     	     <? foreach (getMyStellar()->currentIds as $id) {
                 $class = CourseData::get_subject_details($id);?>
-		    <a href="detail.php?id=<?= $id ?>&back=index.php"><?= longerID($class) ?></a><br />
+		    <a href="detail.php?id=<?= $id ?>&back=index.php"><?= name($class)?>: <?=$class['title']?></a><br />
              <? } ?>
 	   </p>
         <? } ?>
