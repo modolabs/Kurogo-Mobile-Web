@@ -1,19 +1,29 @@
 <?php
-$page->title("Courses: " . idName($id, $course))
+$page->title("Harvard Course Info: " . courseId)
      ->navbar_image('stellar')
-     ->breadcrumbs($Back, idName($id, $course));
+     ->breadcrumbs($Back, "Course Info");
 
 $page->content_begin();
 ?>
 	
 	<div class="nonfocal">
-		<h2><?=name($course)?> (<?=idName($id, $course)?>)</h2>
+		<h2><?=$course?> <?=idName($courseId, $course)?></h2>
 	</div>
 	
 	<ul class="results">
-                <? foreach($classes as $class) { ?>
-                    <li><a href="<?=detailURL($class, selfURL())?>"><strong><?=longID($class)?></strong>: <?=className($class)?></a></li>
-                <? } ?>
+         <? foreach($classes as $class) {
+
+            if (substr($class["name"], 0, 1) == "0") {
+                 $className = substr($class["name"], 1);
+			}
+            else {
+            	$className = $class["name"]; 
+			}
+		?>				
+            <li><a href="<?=detailURL($class, selfURL())?>"><strong><?= $className ?></strong>: <?=$class["title"]?></a></li>
+
+         <? } ?>
+
 	</ul>
 
 <? $page->content_end(); ?>

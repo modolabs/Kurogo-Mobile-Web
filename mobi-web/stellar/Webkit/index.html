@@ -43,12 +43,19 @@ $page->content_begin();
 	</div>
 
 	<ul class="nav">
-		<li><a href="<?=coursesURL('1-10')?>">Courses 1-10</a></li>
-		<li><a href="<?=coursesURL('11-20')?>">Courses 11-20</a></li>
-		<li><a href="<?=coursesURL('21-24')?>">Courses 21-24</a></li>
-		<li><a href="<?=coursesURL('other')?>">Other Courses</a></li>
-	</ul>
+
+	<? foreach($schools as $school) { ?>
+		<li>
+		<? if ((count($school["courses"]) == 1) && ($school["courses"][0]["name"] == "")){ $school_name = $school["school_name"];?>
+			<a href="<?= courseURL($school_name, $which, $school_name)?>"><?= $school["school_name"] ?></a>
+		 <? }  else { ?>
+			<a href="<?= courseURL($school["school_name"]) ?>"><?= $school["school_name"] ?></a>
+	    <? } ?>
+		</li>
+	<?} ?>
 	
+	</ul>
+		
 	<div class="nonfocal">
 		<form method="get" action="search.php">
 			<fieldset class="inputcombo">
