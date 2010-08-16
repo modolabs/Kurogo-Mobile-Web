@@ -251,8 +251,6 @@ class CourseData {
 
     $iterations = ($count/25);
 
-   // printf("Total: %d\n",$count);
-   // printf("Iterations: %d\n",$iterations);
     
     $subject_array = array();
     for ($index=0; $index < $iterations; $index=$index+1) {
@@ -439,16 +437,41 @@ class CourseData {
     $xml_obj = simplexml_load_string($xml);
     $count = $xml_obj->courses['numFound']; // Number of Courses Found
 
-    if ($count > 200) {
+    /*if ($count > 200) {
        // $too_many_results = array('count' => $count, 'classes' => array());
         $count_array = explode(':', $count);
         $too_many_results['count'] =$count_array[0];
         $too_many_results['classes'] = array();
         return $too_many_results;
 
+    }*/
+
+
+    if (($count > 100)  && ($school == '')){
+
+        foreach($xml_obj->facets->facet as $fc) {
+
+        if ($fc['name'] == 'school_nm')
+            foreach($fc->field as $field) {
+            $nm = explode(':', $field['name']);
+            $nm_count = explode(':', $field['count']);
+                $schools[] = array('name'=> $nm[0], 'count' => $nm_count[0]);
+            }
+        }
+        $count_array = explode(':', $count);
+        $too_many_results['count'] =$count_array[0];
+        $too_many_results['schools'] = $schools;
+        return $too_many_results;
     }
 
     $iterations = ($count/25);
+
+    $actual_count = $count;
+    if ($iterations > 4) {
+        $iterations = 4;
+        $count = 100;
+    }
+
 
    // printf("Total: %d\n",$count);
    // printf("Iterations: %d\n",$iterations);
@@ -497,6 +520,8 @@ class CourseData {
   //$courseToSubject = array('count' => $count, 'classes' => $subject_array);
         $count_array = explode(':', $count);
         $courseToSubject ['count'] = $count_array[0];
+        $actual_count_array = explode(':', $actual_count);
+        $courseToSubject['actual_count'] = $actual_count_array[0];
         $courseToSubject ['classes'] = $subject_array;
   return $courseToSubject;
 
