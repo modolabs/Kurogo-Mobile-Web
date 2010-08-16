@@ -60,18 +60,14 @@ class Page {
 
       // If we set an explicit branch= as a querystring param, override the 
       // cookie value.  For debugging.
-      if (isset($_GET['branch'])) {
-          $branch = $_GET['branch'];
-      }
-      else {
-          $branch = $params[0];
-      }
-      // A little paranoia, since we use it to build paths...
+      $branch = isset($_GET['branch']) ? $_GET['branch'] : $params[0];
+      $platform = isset($_GET['platform']) ? $_GET['platform'] : $params[1];
+
+      // A little paranoia, since we branch to build paths...
       if ($branch != "Webkit" && $branch != "Touch" && $branch != "Basic") {
           $branch = "Basic";
       }
 
-      $platform = $params[1];
       $certs = $params[2];
     }
 
