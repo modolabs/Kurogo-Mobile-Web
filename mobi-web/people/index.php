@@ -17,11 +17,11 @@ if (isset($_REQUEST['username']) && $username = $_REQUEST['username']) {
   }
 
 } elseif (isset($_REQUEST['filter'])
-    && $searchTerms = trim($_REQUEST['filter'])) {
+    && $searchTerms = stripslashes(trim($_REQUEST['filter']))) {
 
   $ldapWrapper = new LdapWrapper();
   if ($ldapWrapper->buildQuery($searchTerms)
-      && $people = $ldapWrapper->doQuery()) {
+      && ($people = $ldapWrapper->doQuery()) !== FALSE) {
 
     $total = count($people);
     switch ($total) {
