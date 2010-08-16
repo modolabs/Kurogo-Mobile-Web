@@ -1,6 +1,10 @@
 <?php
 
-$this->form->out($total);
+if (!is_null($this->form))
+{
+	$this->form->out($total);	
+}
+
 require WEBROOT . "/{$this->module}/Touch/{$this->template}.html"; 
 
 ?>
