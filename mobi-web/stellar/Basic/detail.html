@@ -62,9 +62,16 @@ $page->content_begin();
                    <? $meetingTimes = $class['meeting_times']; ?>
                        <h4>Lecture new:</h4>
                        <p>
-                           <?=$meetingTimes->fullText() ?>
+                       <?
+                       foreach ($meetingTimes->all() as $meetingTime) {
+                         echo($meetingTime->daysText() . "<br/>");
+                       } ?>
                        </p>
-
+                       <p>
+                         <pre>
+                         <?= var_dump($meetingTimes) ?>
+                         </pre>
+                       </p>
                    <p class="divider"> </p>
                    <h3> Description </h3>
 		   <p><?=htmlentities($class['description'])?></p>

@@ -15,22 +15,72 @@ function compare_courseNumber($a, $b)
   return strnatcmp($a['name'], $b['name']);
 }
 
-//  // TODO: Why is this static at all?  Shouldn't a course be an object with 
-//  //       internal state and accessor methods?
-//  public static function getMeetingTimes($timesStr, $locStr) {
-//    
-//    // Return an array of MeetingTime objects.
-//  }
 
 class MeetingTime {
+  const SUN = 1;
+  const MON = 2;
+  const TUES = 3;
+  const WED = 4;
+  const THURS = 5;
+  const FRI = 6;
+  const SAT = 7;
+  
   private $days;
-  private $time;
+  private $startTime;
+  private $endTime;
   private $location;
+
+  function __construct($daysArr, $time) {
+    $this->days = $daysArr;
+    $this->startTime = strtotime("1:00 p.m.");
+    $this->endTime = strtotime("2:00 pm");
+    
+    error_log("DAYS ARR" . $daysArr);
+    error_log("LENGTH: " . count($daysArr));
+  }
 
   public function hasNoLocation() {
     return false;
   }
+  
+  public function daysText() {
+    // For use when we have multiple days for the same lecture
+    $shortVersions = array(MeetingTime::SUN => "Su", MeetingTime::MON => "M",
+                           MeetingTime::TUES => "Tu", MeetingTime::WED => "W",
+                           MeetingTime::THURS => "Th", MeetingTime::FRI => "F",
+                           MeetingTime::SAT => "Sa");
+    // For use when we have one day for a given lecture
+    $longerVersions = array(MeetingTime::SUN => "Sun", MeetingTime::MON => "Mon",
+                            MeetingTime::TUES => "Tue", MeetingTime::WED => "Wed",
+                            MeetingTime::THURS => "Thu", MeetingTime::FRI => "Fri",
+                            MeetingTime::SAT => "Sat");
+
+    $textMapping = (count($this->days) > 1) ? $shortVersions : $longerVersions;
+    $daysTextArr = array();
+    foreach ($this->days as $day) {
+      $daysTextArr[] = $textMapping[$day];
+    }
+    
+    return implode(" ", $daysTextArr);
+  }
+  
+  // public function timeText() {
+  //   return strftime("%l:%M%P", $this->)
+  // }
 }
+
+
+/* Scenarios we've seen:
+ * 
+ * 1. Single time and location.  Days often come as one concatanated word...
+ *    Ex: MondayWednesday 1:00 p.m. - 2:30 p.m.
+ *
+ * 2. Multiple times and locations:
+ *    MondayTuesdayWednesdayThursday Monday Tuesday Wednesday Thursday 9:00 
+ *    a.m. -10:00 a.m.; Monday Tuesday Wednesday Thursday 11:00 a.m. -12:00 
+ *    p.m.; Monday Tuesday Wednesday Thursday 10:00 a.m. -11:00 a.m.
+ * 
+ */
 
 class MeetingTimes {
   // If we run into errors while parsing, we'll fall back to just echoing this.
@@ -46,17 +96,69 @@ class MeetingTimes {
     
     error_log("COURSE DEBUG (MeetingTimes):" . $this->rawTimesText);
     error_log("COURSE DEBUG (MeetingTimes):" . $this->rawLocationsText);
+    
+    $this->parse();
+  }
+  
+  public function all() {
+    return $this->meetingTimes;
   }
   
   private function parse() {
+
+    foreach (explode(";", $this->rawTimesText) as $timesText) {
+      error_log("PARSE:" . $timesText);
+      $days = $this->parseDaysFromStr($timesText);
+      error_log("PARSE _days_" . count($days));
+      $time = "12:00am";
+      $location = "Science Center C";
+      
+      $this->meetingTimes[] = new MeetingTime($days);
+    }
+    $this->parseSucceeded = true;
+  }
+  
+  /*
+   * Accepts: String like: MondayTuesdayWednesdayThursday Monday Tuesday 
+   *                       Wednesday Thursday 9:00 a.m. - 10:00 a.m.;
+   *          Or: MondayTuesdayWednesdayThursday 9:00 a.m. - 10:00 a.m.
+   *
+   * Returns: Sorted array of MeetingTime date constants like MeetingTime::MON. 
+   *          Strips duplicates.
+   */
+  private function parseDaysFromStr($timeStr) {
+    $abbrevs = array("Sun" => MeetingTime::SUN, "Mon" => MeetingTime::MON,
+                     "Tues" => MeetingTime::TUES, "Wed" => MeetingTime::WED,
+                     "Thurs" => MeetingTime::THURS, "Fri" => MeetingTime::FRI,
+                     "Sat" => MeetingTime::SAT);
+    $days = array();
+    foreach ($abbrevs as $abbrev => $day) {
+      if (stristr($timeStr, $abbrev)) {
+        $days[] = $day;
+      }
+    }
+    sort($days);
     
+    return $days;
   }
   
 
-
   // Temporary, just while we debug this.
   public function fullText() {
-    return $this->rawTimesText . "(" . $this->rawLocationsText . ")";
+    $fullText = "";
+
+    if ($this->parseSucceeded) {
+      foreach ($this->meetingTimes as $meetingTime) {
+        error_log("PARSE: " . $meetingTime->daysText());
+        $fullText .= $meetingTime->daysText(); // replace with arr join
+      }
+    }
+    else {
+      $fullText = "Parse failed";
+    }
+    //return $this->rawTimesText . "(" . $this->rawLocationsText . ")";
+    
+    return $fullText;
   }
 }
 /*
