@@ -129,11 +129,12 @@ switch ($_REQUEST['command']) {
   */
  case 'search':
    require_once LIBDIR . "/AcademicCalendar.php";
-   $searchTerms = isset($_REQUEST['q']) ? $_REQUEST['q'] : '';
+   $searchTerms = isset(urldecode($_REQUEST['q'])) ? urldecode($_REQUEST['q']) : '';
    /*
    $category = isset($_REQUEST['category']) ? 
      MIT_Calendar($_REQUEST['category']) : NULL;
    */
+
    $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 7;
    $data['span'] = "$offset days";
 
