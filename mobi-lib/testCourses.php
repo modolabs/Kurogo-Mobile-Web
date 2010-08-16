@@ -437,16 +437,8 @@ class CourseData {
     $xml_obj = simplexml_load_string($xml);
     $count = $xml_obj->courses['numFound']; // Number of Courses Found
 
-    /*if ($count > 200) {
-       // $too_many_results = array('count' => $count, 'classes' => array());
-        $count_array = explode(':', $count);
-        $too_many_results['count'] =$count_array[0];
-        $too_many_results['classes'] = array();
-        return $too_many_results;
 
-    }*/
-
-
+    /* ONLY IF search results from the MAIN courses page are greater than 100 */
     if (($count > 100)  && ($school == '')){
 
         foreach($xml_obj->facets->facet as $fc) {
