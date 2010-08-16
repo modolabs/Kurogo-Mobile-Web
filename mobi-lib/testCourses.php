@@ -17,7 +17,6 @@ define('SCHOOL_QUERY_BASE', '&fq_school_nm=school_nm:"');
 
 class CourseData {
 
-
   private static $courses = array();
 
   private static $schools = array();
@@ -115,109 +114,111 @@ class CourseData {
 
   public static function get_subject_details($subjectId) {
 
-      $urlString = STELLAR_BASE_URL .'q=id:'.$subjectId;
+    $urlString = STELLAR_BASE_URL .'q=id:'.$subjectId;
 
-      $filenm = STELLAR_COURSE_DIR. '/Course-' .$subjectId . '.xml';
+    error_log("COURSE DEBUG: " . $urlString);
 
-      if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
-          $urlString = $filenm; //file_get_contents($filenm);
-      }
-      else {
-          $handle = fopen($filenm, "w");
-          fwrite($handle, file_get_contents($urlString));
-          $urlString = $filenm;
-      }
-          $xml = file_get_contents($urlString);
+    $filenm = STELLAR_COURSE_DIR. '/Course-' .$subjectId . '.xml';
 
-      
+    if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
+      $urlString = $filenm; //file_get_contents($filenm);
+    }
+    else {
+      $handle = fopen($filenm, "w");
+      fwrite($handle, file_get_contents($urlString));
+      $urlString = $filenm;
+    }
+    $xml = file_get_contents($urlString);
 
-      if($xml == "") {
+    if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
       throw new DataServerException('COULD NOT GET XML');
     }
 
-     $xml_obj = simplexml_load_string($xml);
+    $xml_obj = simplexml_load_string($xml);
 
-     $subject_array = array();
-        $single_course = $xml_obj->courses->course;
-         $subject_fields = array();
-         $id = explode(':',$single_course['id']);
-         $nm = explode(':', $single_course->course_number);
-         $subject_fields['name'] = $nm[0];
-         $subject_fields['masterId'] = $id[0];
-         $titl = explode(':', $single_course->title);
-         $len = count($titl);
-          for ($ind = 0; $ind < $len; $ind++) {
-             if ($ind == $len-1)
-                 $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
-             else
-                $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
-         }
+    $subject_array = array();
+    $single_course = $xml_obj->courses->course;
+    $subject_fields = array();
+    $id = explode(':',$single_course['id']);
+    $nm = explode(':', $single_course->course_number);
+    $subject_fields['name'] = $nm[0];
+    $subject_fields['masterId'] = $id[0];
+    $titl = explode(':', $single_course->title);
+    $len = count($titl);
+    for ($ind = 0; $ind < $len; $ind++) {
+      if ($ind == $len-1)
+        $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
+      else
+        $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
+    }
 
-         //$subject_fields['title'] = $titl[0];
-         $desc = explode(':', $single_course->description);
-         $len = count($desc);
-         for ($ind = 0; $ind < $len; $ind++) {
-             if ($ind == $len-1)
-                 $subject_fields['description'] = $subject_fields['description'] .$desc[$ind];
-             else
-                $subject_fields['description'] = $subject_fields['description'] .$desc[$ind] .':';
-         }
-         $subject_fields['description'] = HTML2TEXT($subject_fields['description']);
-        // $subject_fields['description'] = $desc[0];
-         $pre_req = explode(':', $single_course->prereq);
-         $subject_fields['preReq'] = $pre_req[0];
-         $credits = explode(':', $single_course->credits);
-         $subject_fields['credits'] = $credits[0];
-         $cross_reg = explode(':', $single_course->crossreg);
-         $subject_fields['cross_reg'] = $cross_reg[0];
-         $exam_group = explode(':', $single_course->exam_group);
-         $subject_fields['exam_group'] = $exam_group[0];
-         $dept = explode(':', $single_course->department);
-         $subject_fields['department'] = $dept[0];
-         $school = explode(':', $single_course->school_name);
-         $subject_fields['school'] = $school[0];
-         //$trm = explode(':',$single_course->term_description);
-         //$subject_fields['term'] = $trm[0];
-         $subject_fields['term'] = TERM;
-         $ur = explode(':',$single_course->url);
-         if (count($ur) > 1)
-            $subject_fields['stellarUrl'] = $ur[0].':'.$ur[1];
+    //$subject_fields['title'] = $titl[0];
+    $desc = explode(':', $single_course->description);
+    $len = count($desc);
+    for ($ind = 0; $ind < $len; $ind++) {
+      if ($ind == $len-1)
+        $subject_fields['description'] = $subject_fields['description'] .$desc[$ind];
+      else
+        $subject_fields['description'] = $subject_fields['description'] .$desc[$ind] .':';
+    }
+    $subject_fields['description'] = HTML2TEXT($subject_fields['description']);
+    // $subject_fields['description'] = $desc[0];
+    $pre_req = explode(':', $single_course->prereq);
+    $subject_fields['preReq'] = $pre_req[0];
+    $credits = explode(':', $single_course->credits);
+    $subject_fields['credits'] = $credits[0];
+    $cross_reg = explode(':', $single_course->crossreg);
+    $subject_fields['cross_reg'] = $cross_reg[0];
+    $exam_group = explode(':', $single_course->exam_group);
+    $subject_fields['exam_group'] = $exam_group[0];
+    $dept = explode(':', $single_course->department);
+    $subject_fields['department'] = $dept[0];
+    $school = explode(':', $single_course->school_name);
+    $subject_fields['school'] = $school[0];
+    //$trm = explode(':',$single_course->term_description);
+    //$subject_fields['term'] = $trm[0];
+    $subject_fields['term'] = TERM;
+    $ur = explode(':',$single_course->url);
+    if (count($ur) > 1)
+      $subject_fields['stellarUrl'] = $ur[0].':'.$ur[1];
 
-         $classtime['title'] = 'Lecture';
-         $loc = explode(':',$single_course->location);
-         $classtime['location'] = $loc[0];
+    $classtime['title'] = 'Lecture';
+    $loc = explode(':',$single_course->location);
+    $classtime['location'] = $loc[0];
 
-         $m_time = explode(':', $single_course->meeting_time);
-         $len = count($m_time);
-         for ($ind = 0; $ind < $len; $ind++) {
-             if ($ind == $len-1)
-                 $classtime['time'] = $classtime['time'] .$m_time[$ind];
-             else
-                $classtime['time'] = $classtime['time'] .$m_time[$ind] .':';
-         }
-         
-         $classtime_array[] = $classtime;
-         $subject_fields['times'] = $classtime_array;
+    error_log("COURSE DEBUG: " . $single_course->meeting_time);
 
-         $ta_array = array();
-         $prof = explode(':', $single_course->faculty_description);
-         $staff['instructors'] = array($prof[0]);
-         $staff['tas'] = $ta_array;
-         $subject_fields['staff'] = $staff;
+    $m_time = explode(':', $single_course->meeting_time);
+    $len = count($m_time);
+    for ($ind = 0; $ind < $len; $ind++) {
+      if ($ind == $len-1)
+        $classtime['time'] = $classtime['time'] .$m_time[$ind];
+      else
+        $classtime['time'] = $classtime['time'] .$m_time[$ind] .':';
+    }
 
-         $announ['unixtime'] = time();
-         $announ['title'] = 'Announcement1';
-         $announ['text'] = 'Details of Announcement1';
-         $announ_array[] = $announ;
-         $subject_fields['announcements'] = $announ_array;
+    $classtime_array[] = $classtime;
 
-         $subject_array = $subject_fields;
+    $subject_fields['times'] = $classtime_array;
 
-  $subjectDetails = $subject_array;
+    $ta_array = array();
+    $prof = explode(':', $single_course->faculty_description);
+    $staff['instructors'] = array($prof[0]);
+    $staff['tas'] = $ta_array;
+    $subject_fields['staff'] = $staff;
+
+    $announ['unixtime'] = time();
+    $announ['title'] = 'Announcement1';
+    $announ['text'] = 'Details of Announcement1';
+    $announ_array[] = $announ;
+    $subject_fields['announcements'] = $announ_array;
+
+    $subject_array = $subject_fields;
+    $subjectDetails = $subject_array;
     //$courseToSubject[$course] = $subject_array;// store it in a global array containing courses to subjects
-  return $subjectDetails;
- }
+    return $subjectDetails;
+  }
 
 
   public static function get_subjectsForCourse($course, $courseGroup) {
