@@ -103,9 +103,8 @@ function makeIcalSearchEvents($icsURL, $terms)
 {
 	$time = time();
         $date = date('Ymd', $time);
-        
-        $fileN = TrumbaCache::retrieveData($icsURL, $date, $terms, NULL);
 
+        $fileN = TrumbaCache::retrieveData($icsURL, $date, $terms, NULL);
          
         $ical = new ICalendar($fileN);
 	//$ical = new ICalendar($icsURL);
@@ -160,7 +159,6 @@ class TrumbaCache {
 
      $yr = substr($dateString, 0, 4);
      $mth = substr($dateString, 4, 2);
-
 
      if (($searchField == NULL) &&($category == NULL))
         $filename = $yr . $mth . '.ics';

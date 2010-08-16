@@ -17,12 +17,17 @@ function selfURL() {
     $school = str_replace("\\", "", $school);
 
     $data = CourseData::search_subjects($queryTerms, str_replace('-other', '', $school), str_replace(' ', '+', $course));
-
+    $count = $data['count'];
     $classes = $data["classes"];
+
+    /* SchoolsAsResults will only be available for searches from the top-level view where search results are > 100*/
+    $schoolsAsResults = $data['schools'];
 
     $school_array = array();
     $school_count_map = array();
     $school_name_count_map = array();
+
+    if ($count <= 100) {
     foreach($classes as $class_current) {
 
         if (!in_array($class_current['school'], $school_array)) {
@@ -34,7 +39,14 @@ function selfURL() {
              $school_name_count_map[$class_current['school']] = array('name'=> $class_current['school'], 'count' => $school_count_map[$class_current['school']]);
         }
     }
+    }
 
+    else {
+        foreach($schoolsAsResults as $school) {
+             $school_count_map[$school['name']] = $school['count'];
+             $school_name_count_map[$school['name']] = array('name'=> $school['name'], 'count' => $school['count']);
+        }
+    }
 
 
 // if exactly one class is found redirect to that

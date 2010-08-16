@@ -9,7 +9,7 @@ a img {
 }
 
 body {
-	background: #ebe7dd url(images/home-background.jpg) no-repeat center center;
+	background: #ded8c9 url(/Basic/images/background-tile.jpg) repeat-x fixed;
 	font: 17px/1.33em Helvetica, Arial, sans-serif;
 	color: #202629;
 }
@@ -141,4 +141,11 @@ h1 {
 	text-align: center;
 	margin: 14px 0;
 	font-size: 13px;
+}
+#homesearch {
+	margin: 8px 0 18px 0;
+	text-align: center;
+}
+.forminput {
+	width: 35%;
 }

@@ -6,14 +6,19 @@ require_once LIBDIR . "/diningHrs.php";
 function day_info($time, $offset=0) {
   $time += $offset * 24 * 60 * 60;
   return array(
-    "pretty"            => date("D M j", $time),
-    "arrows_format"     => date("D F j", $time),
+    "short"             => date("D M j", $time),
+    "shortest"          => date("M j", $time),
+    "long"              => date("D F j", $time),
     "time"              => strtotime(date("Y-m-d 12:00:00", $time)),
   );
 }
 
-function dayURL($day) {
-  return "index.php?time={$day['time']}";
+function dayURL($day, $tabs=NULL) {
+  $url = "index.php?time={$day['time']}";
+  if($tabs) {
+      $url .= "&tab=" . $tabs->active();
+  }
+  return $url;
 }
 
 $time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
@@ -288,7 +293,7 @@ function statusSummary($status_details) {
         $meal_name = DINING_CONSTANTS::mealName($meal);
 
         $summary = "Open for {$meal_name}";
-        if($status = 'openrestrictions') {
+        if($status == 'openrestrictions') {
             $summary .= " with interhouse restrictions";
         }
         $summary .= " ";
