@@ -116,39 +116,41 @@ class LdapWrapper {
       if (strpos($searchString, " ") != FALSE) {
         $this->errorMsg = "Invalid email address";
       } else {
-        // populate placeholders in search template strings
-        $emailFilter = str_replace("%s", $searchString, EMAIL_FILTER);
-        $this->query = str_replace("%s", $emailFilter, EMAIL_SEARCH_FILTER);
-        $success = TRUE;
+	    // This function is defined in LdapUtilities.	  
+        $emailFilter = buildEmailLDAPQuery($searchString);
+
+        if ($emailFilter == "") {
+          $this->errorMsg = "Invalid email query";
+        } else {
+		  $this->query = $emailFilter;
+		  $success = TRUE;
+	    }
       }
 
-    } elseif (preg_match('/[A-Za-z]/', $searchString)) { // assume search by name
+    } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
 	  // This function is defined in LdapUtilities.	  
       $nameFilter = buildNameAndEmailLDAPQuery($searchString);
 
       if ($nameFilter == "") {
         $this->errorMsg = "Invalid name query";
-      } else
-	  {
+      } else {
 		$this->query = $nameFilter;
 		$success = TRUE;
 	  }
 
     } elseif (preg_match('/[0-9]+/', $searchString)) { // assume search by telephone number
+      $telephoneFilter = buildTelephoneQuery($search);
 
-      $search = str_replace(array('(', ')', ' ', '.', '-'), '', $search);
-      if ($search) {
-        $telephoneFilter = str_replace("%s", $searchString, TELEPHONE_FILTER);
-        $this->query = str_replace("%s", $telephoneFilter, TELEPHONE_SEARCH_FILTER);
-        $success = TRUE;
+      if ($telephoneFilter == "") {
+        $this->errorMsg = "Invalid name query";
       } else {
-        $this->errorMsg = "Invalid telephone number";
-      }
+		$this->query = $telephoneFilter;
+		$success = TRUE;
+	  }
 
     } else {
       $this->errorMsg = "Invalid query";
     }
-
     return $success;
   }
 
