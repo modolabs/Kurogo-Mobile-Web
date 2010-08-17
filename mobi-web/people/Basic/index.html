@@ -8,14 +8,6 @@ $page->content_begin();
 		name="search_form" 
 		method="get" 
 		action="<?=$_SERVER['SCRIPT_NAME']?>"	
-		<?
-			if ($page->platform == 'bbplus') {
-				// There's an expectation on the BlackBerry that when you tap the trackball, it will submit the form.
-				?>
-		onclick="javascript:if (document.search_form.filter.value.length > 0) { document.search_form.submit(); }"
-				<?
-			}
-		?>		
 	> 
 
 	<p>
