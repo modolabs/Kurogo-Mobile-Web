@@ -35,7 +35,10 @@ $page->content_begin();
                 <? foreach($schools as $school) { ?>
                 <? if ((count($school["courses"]) == 1) && ($school["courses"][0]["name"] == "")){ $school_name = $school["school_name"];?>
                     <?=$page->link_access_key(courseURL($school_name, $which, $school_name), $school["school_name_short"])?><br/>
-                 <? }  else { ?>
+                 <? }  else if (count($school["courses"]) == 1) {  $school_name = $school["school_name"]; ?>
+                 <?=$page->link_access_key(courseURL($school["school_name_short"], $which, $school_name), $school["school_name_short"])?><br/>
+               <? }
+                  else { ?>
 		<?=$page->link_access_key(coursesURL($school["school_name"]), $school["school_name_short"])?><br/>
                     <? } ?>
                 <?} ?>

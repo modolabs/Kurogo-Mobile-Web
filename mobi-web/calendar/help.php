@@ -4,13 +4,15 @@ $header = "Events Calendar";
 $module = "calendar";
 
 $help = array(
-  'Find out what&apos;s going around campus. You can find events and exhibits in two ways:',
+    'The events home screen features today’s upcoming events from the ' .
+    'Harvard Gazette calendar. Click on &ldquo;Categories&rdquo; in the gray ' .
+    'bar at the top to see different types of events. ' .
+    '&ldquo;Academic Calendar&rdquo; provides basic University-wide calendar ' .
+    'information',
 
-  '1. <strong>Browse</strong> by any category shown on the Events Calendar homepage',
-
-  '2. <strong>Search</strong> by keyword and timeframe',
-
-  'Once you&apos;ve found an event, get one-click access to find its location on the Campus Map. You can also search easily for similar events by clicking on one of the links under &lsquo;Categorized as:&rsquo; at the bottom of the event-detail screen.',
+    'Click on an individual event result for more detail on location and ' .
+    'contact information. Event results may have a link to a website with ' .
+    'more information, and clicking this link will launch your browser.',
 );
 
 ?>

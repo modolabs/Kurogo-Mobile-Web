@@ -17,6 +17,9 @@ $page->content_begin();
             <? foreach($events as $event) { ?>
 		<li><a href="<?=detailURL($event)?>"><?=$event->get_summary()?><br/><span class="smallprint"><?=timeText($event)?><? if(briefLocation($event)) { ?> | <?=briefLocation($event)?><? } ?></span></a></li>
             <? } ?>
+            <? if (count($events) == 0) { ?>
+            <li> No Events Found </li>
+            <? } ?>
 	</ul>
 	<div class="sidenav">
 		<a href="<?=dayURL($prev, $type)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month']?> <?=$prev['day_num']?></a> | <a href="<?=dayURL($next, $type)?>"><?=$next['day_3Let']?> <?=$next['month']?> <?=$next['day_num']?> &gt;</a>
