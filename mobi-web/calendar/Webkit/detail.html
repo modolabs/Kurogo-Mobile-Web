@@ -20,11 +20,11 @@ $page->content_begin();
 
 			<li class="description"><?=$event->get_description()?></li>
  
-                        <? if($event->infophone) { ?>
+                        <? if(isset($event->infophone)) { ?>
  			   <li><a href="<?=phoneURL($event->infophone)?>" class="phone"><?=str_replace('-', '-&shy;', $event->infophone)?></a></li>
                         <? } ?>
                        
-                        <? if($event->infourl) { ?>
+                        <? if(isset($event->infourl)) { ?>
                            <li><a href="<?=$event->urlize?>" class="external" target="_new"><?=$event->infourl?></a></li>
                         <? } ?>
 		</ul>
