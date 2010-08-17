@@ -1,0 +1,36 @@
+<?php
+$page->title('Search')
+     ->navbar_image('about')
+     ->header('Search');
+
+$page->content_begin();
+?>
+
+
+<? foreach($federated_results as $module => $module_results) { ?>
+    <h3 class="nonfocal">
+        <?=Modules::title($module)?>
+    </h3>
+
+    <ul class="nav">
+                <? if(count($module_results['results']) > 0) { ?>
+                    <? for($i = 0 ; $i < count($module_results['results']) && $i < MAX_ITEMS; $i++) { ?>
+                        <? $result = $module_results['results'][$i]; ?>
+                        <li><a href="..<?=$result['link']?>"><?=htmlentities($result['title'])?>
+                            <? if($result['subtitle']) { ?>
+                                <br /><span class="smallprint"><?=htmlentities($result['subtitle'])?></span>
+                            <? } ?>
+                            </a>
+                        </li>
+                     <? } ?>
+                     <? if(count($module_results['results']) > MAX_ITEMS) { ?>
+                        <li><a href="..<?=$module_results['search-link']?>">More results</a></li>
+                     <? } ?>
+                <? } else { ?>
+                    <li class="nolink">No results</li>
+                <? } ?>
+    </ul>
+<? } ?>
+
+	
+<? $page->content_end(); ?>

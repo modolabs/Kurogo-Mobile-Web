@@ -1,7 +1,6 @@
 <?php
 $page->title("Harvard Course Info: Search Results")
-     ->navbar_image('stellar')
-     ->header("Courses");
+     ->header("Course Info");
 
 $page->add_stylesheet('Touch/mystellar');
 
@@ -11,7 +10,7 @@ $page->content_begin();
 	<div class="shaded">
 		<a id="mystellar" href="<?= selfURL() ?>&action=<?=$action?>"><?=$page->img_tag($mystellar_img, 'gif', 'My Courses', array('border', '0'))?></a>
 
-		<h2><?=longerID($class)?>: <?=className($class)?></h2>
+		<h2><?=$class['name']?>: <?=className($class)?></h2>
 		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Courses site</a><? } ?></p>
 
 		<div id="tabs">
@@ -52,9 +51,27 @@ $page->content_begin();
     <? break; // case 'News'
 
    case 'Info':
-     foreach ($class['times'] as $time) { ?>
-			<li><a href="<?=mapURL($time['location'])?>" class="map"><strong><?=$time['title']?></strong>: <?=$time['time']?> (<?=$time['location']?>)</a></li>
-    <? } ?>
+     $meetingTimes = $class['meeting_times'];
+     if ($meetingTimes->parseSucceeded()) {
+       foreach ($meetingTimes->all() as $meetingTime) {
+         echo("<li>");
+         if ($meetingTime->isLocationKnown()) {
+           echo("<a class=\"map\" href=\"" . mapURL($meetingTime->locationText()) . "\">" . 
+                $meetingTime->daysText() . " " . $meetingTime->timeText() .
+                " (" . $meetingTime->locationText() . ")</a>");
+         }
+         else {
+           echo($meetingTime->daysText() . " " . $meetingTime->timeText() .
+                " (" . $meetingTime->locationText() . ")");
+         }
+         echo("</li>");
+       }
+    }
+    else {
+      echo("<li>" . $meetingTimes->rawTimesText() . " " . $meetingTimes->rawLocationsText() . "</li>");
+    }
+    ?>
+
 
 			<li class="nolink">
 				<h3>Description:</h3>

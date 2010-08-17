@@ -217,6 +217,12 @@ fieldset {
 	padding: .4em;
 }
 
+h3.nonfocal {
+	margin: 1em 0 -0.5em 0;
+	padding: 0;
+	margin-top: 1em;
+}
+
 .paging {
 	text-align: left;
 	margin: 1em 0;
