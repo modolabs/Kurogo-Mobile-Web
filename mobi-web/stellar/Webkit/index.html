@@ -48,9 +48,11 @@ $page->content_begin();
 	<? foreach($schools as $school) { ?>
 		<li>
 		<? if ((count($school["courses"]) == 1) && ($school["courses"][0]["name"] == "")){ $school_name = $school["school_name"];?>
-			<a href="<?= courseURL($school_name, $which, $school_name)?>"><?= $school["school_name"] ?></a>
-		 <? }  else { ?>
-			<a href="<?= coursesURL($school["school_name"]) ?>"><?= $school["school_name"] ?></a>
+			<a href="<?= courseURL($school_name, $which, $school_name)?>"><?= $school["school_name_short"] ?></a>
+		  <? }  else if (count($school["courses"]) == 1) {  $school_name = $school["school_name"]; ?>
+                 <a href="<?= courseURL($school['school_name_short'], $which, $school_name)?>"><?=$school["school_name_short"] ?></a>
+                 <? } else { ?>
+			<a href="<?= coursesURL($school["school_name"]) ?>"><?= $school["school_name_short"] ?></a>
 	    <? } ?>
 		</li>
 	<?} ?>
