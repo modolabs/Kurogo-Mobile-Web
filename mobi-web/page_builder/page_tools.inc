@@ -180,7 +180,7 @@ class Tabs {
   public function __construct($url, $param, $tabs) {
     $this->url = $url;
     $this->tabs = $tabs;
-    $this->active = $_REQUEST[$param];
+    $this->active = isset($_REQUEST[$param]) ? $_REQUEST[$param] : null;
     $this->param = $param;
   }
 
