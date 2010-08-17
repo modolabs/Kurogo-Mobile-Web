@@ -100,9 +100,5 @@ $federated_results = array(
 require "$page->branch/search.html";
 $page->output();
 
-//var_dump($federated_results);
 
 ?>
-
-
-
