@@ -82,12 +82,11 @@ define('ICS_CACHE_LIFESPAN', 900);
 
 // emergency -- see dev/stage/prod files
 
-if (MOBILE_DEV_SERVER) {
-  require_once('lib_constants_dev.inc');
-} elseif (MOBILE_STAGE_SERVER) {
-  require_once('lib_constants_stage.inc');
-} else {
-  require_once('lib_constants_prod.inc');
-}
+// stellar
+define('STELLAR_BASE_URL', 'http://services.isites.harvard.edu/course_catalog/api/v1/search?');
+define('STELLAR_RSS_URL', '');
+
+// emergency
+define('EMERGENCY_RSS_URL', '');
 
 ?>

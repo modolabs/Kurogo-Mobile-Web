@@ -1,7 +1,7 @@
 <ul class="results">
 
-          <? foreach($results as $place) { ?>
-              <li><a href="<?=detailURL($place)?>"><?=$place->name?></a></li>
+          <? foreach($results as $resultObj) { ?>
+              <li><a href="<?=detailURL($resultObj)?>"><?=$resultObj->value?></a></li>
           <? } ?>
 
 </ul>

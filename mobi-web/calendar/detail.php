@@ -9,7 +9,6 @@ $date1 = date('Ym', $time);
 $month = "?startdate=" .$date1 ."01&months=1";
 $date = date('Ymd', $time);
 $url = HARVARD_EVENTS_ICS_BASE_URL .$month;
-error_log($_REQUEST['id']);
 $event = getIcalEvent($url, $date, $_REQUEST['id']);
 $date_str = $event->get_range()->format('D M j, Y');
 if ($event->get_end() - $event->get_start() == -1) {

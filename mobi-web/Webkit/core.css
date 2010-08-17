@@ -38,6 +38,10 @@ h3 {
 	color: #554c41;
 }
 
+h3.nonfocal {
+	margin-bottom: -0.25em;
+}
+
 h4 {
 	font-size: 1em;
 	font-weight: normal;
@@ -660,7 +664,7 @@ ul.focal li:first-child {
 .focal .divider {
 	margin: 12px -12px;
 	height: 3px;
-	background-color: #b9c6d6;
+	background-color: #ccc;
 }
 
 .nonfocal {
@@ -681,13 +685,13 @@ ul.focal li:first-child {
 	margin: 7px 0;
 	font-size: 14px;
 	line-height: 17px;
-	color: #303639;
+	color: #333;
 }
 
 .legend.nonfocal {
 	margin: 0 0 24px 0;
 	padding: 0 12px;
-	color: #202629;
+	color: #333;
 }
 
 .legend div {
@@ -702,21 +706,21 @@ ul.focal li:first-child {
 }
 
 .legend h2, .legend h3 {
-	color: #4a4f54;
+	color: #554c41;
 }
 
 .smallprint {
 	font-size: 14px;
 	line-height: 17px;
 	font-weight: normal;
-	color: #444;
+	color: #554c41;
 }
 
 .fineprint {
 	font-size: 12px;
 	line-height: 14px;
 	font-weight: normal;
-	color: #555;
+	color: #666;
 }
 
 .label {	

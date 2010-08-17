@@ -7,9 +7,14 @@ $page->content_begin();
 ?>
 		
 	<ul class="nav">
-            <? foreach($courses as $id => $course) { ?>
-		<li><a href="<?=courseURL($id, $which)?>"><?=name($course)?> (<?=idName($id, $course)?>)</a></li>
-            <? } ?>
+        <? foreach($courses as $course) { 
+			$courseName = $course["name"];
+           	if ($courseName == '')
+                  $courseName = $title . '-other'; 
+		?>
+			
+				<li><a href="<?=courseURL($courseName, $which, $title)?>"><?=$courseName?></a></li>
+        <? } ?>
 
 	</ul>
 
