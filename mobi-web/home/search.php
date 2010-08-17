@@ -1,6 +1,6 @@
 <?php
 
-define("MAX_ITEMS", 5);
+define("MAX_ITEMS", 2);
 require_once 'Modules.inc';
 
 $search_terms = $_REQUEST['search_terms'];
