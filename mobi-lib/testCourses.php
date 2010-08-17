@@ -103,6 +103,8 @@ class MeetingTime {
  * 
  */
 
+class MeetingTimesParseException extends Exception { }
+
 class MeetingTimes {
   // If we run into errors while parsing, we'll fall back to just echoing this.
   private $rawTimesText;
@@ -115,31 +117,47 @@ class MeetingTimes {
     $this->rawTimesText = $timesText;
     $this->rawLocationsText = $locationsText;
     $this->parse();
-    usort($this->meetingTimes, array("MeetingTime", "cmp"));
   }
   
   public function all() {
     return $this->meetingTimes;
   }
+
+  public function rawTimesText() { return $this->rawTimesText; }
+  public function rawLocationsText() { return $this->rawLocationsText; }
+  public function parseSucceeded() { return $this->parseSucceeded; }
   
   private function parse() {
     $rawTimesArr = explode(";", $this->rawTimesText);
     $rawLocationsArr = explode(",", $this->rawLocationsText);
 
-    //if (true || count($rawTimesArr) != count($rawLocationsArr)) {
-    //  return; // Something's gone south here, handle it semi-gracefully.
-    //}
-
-    $i = 0;
-    foreach ($rawTimesArr as $timesText) {
-      $days = $this->parseDaysFromStr($timesText);
-      $startTime = $this->parseStartTimeFromStr($timesText);
-      $endTime = $this->parseEndTimeFromStr($timesText);
-      $location = $this->parseLocationFromStr($rawLocationsArr[$i]);
-      
-      $this->meetingTimes[] = new MeetingTime($days, $startTime, $endTime, $location);
+    // Sometimes a comma is really one location, like "HBS, Cumnock Hall 230",
+    // so if there's only one time and two locations, assume that it really 
+    // meant one location.
+    if (count($rawTimesArr) == 1 && count($rawLocationsArr) == 2) {
+      $rawLocationsArr = array($this->rawLocationsText);
     }
-    $this->parseSucceeded = true;
+
+    if (count($rawTimesArr) != count($rawLocationsArr)) {
+      return; // Something's gone south here, handle it semi-gracefully.
+    }
+
+    try {
+      $i = 0;
+      foreach ($rawTimesArr as $timesText) {
+        $days = $this->parseDaysFromStr($timesText);
+        $startTime = $this->parseStartTimeFromStr($timesText);
+        $endTime = $this->parseEndTimeFromStr($timesText);
+        $location = $this->parseLocationFromStr($rawLocationsArr[$i]);
+      
+        $this->meetingTimes[] = new MeetingTime($days, $startTime, $endTime, $location);
+      }
+      usort($this->meetingTimes, array("MeetingTime", "cmp"));
+      $this->parseSucceeded = true;
+    }
+    catch (MeetingTimesParseException $e) {
+      error_log($e->getMessage());
+    }
   }
   
   /*
@@ -161,13 +179,19 @@ class MeetingTimes {
         $days[] = $day;
       }
     }
+    if (count($days) == 0) {
+      throw new MeetingTimesParseException("No days found.");
+    }
     sort($days);
-    
+
     return $days;
   }
   
   private function parseTimeFromStr($timeStr, $index) {
     $timeParts = explode("-", $timeStr);
+    if (count($timeParts) != 2) {
+      throw new MeetingTimesParseException("Time format unrecognized");
+    }
     return strtotime($timeParts[$index]);
   }
   

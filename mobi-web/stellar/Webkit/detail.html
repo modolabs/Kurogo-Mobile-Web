@@ -1,5 +1,5 @@
 <?php
-$page->title("Courses: " . longID($class))
+$page->title("Courses: " . $class['name'])
      ->navbar_image('stellar')
      ->add_javascript('../Webkit/uiscripts');
 
@@ -34,7 +34,7 @@ $page->content_begin();
 
 	<div class="focal shaded">
 	<a id="mystellar" class="<?=$toggle?>" onclick="toggleMyStellar(this, '<?=$class_data?>')"></a>
-		<h2><?=notPhoneNumber(longerID($class))?>: <?=className($class)?></h2>
+		<h2><?=notPhoneNumber($class['name'])?>: <?=className($class)?></h2>
 		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Courses site</a><? } ?></p>
 
 		<ul id="tabs">
@@ -98,6 +98,28 @@ $page->content_begin();
                                         <? foreach($class['times'] as $time) { ?>
                                             <li><a href="<?=mapURL($time['location'])?>" class="map"><strong><?=$time['title']?></strong>: <?=$time['time']?>&shy; (<?=$time['location']?>&shy;)</a></li>
                                         <? } ?>
+                                        
+                       <? $meetingTimes = $class['meeting_times'];
+                       if ($meetingTimes->parseSucceeded()) {
+                         foreach ($meetingTimes->all() as $meetingTime) {
+                           echo("<li>");
+                           if ($meetingTime->isLocationKnown()) {
+                             echo("<a class=\"map\" href=\"" . mapURL($meetingTime->locationText()) . "\">" . 
+                                  $meetingTime->daysText() . " " . $meetingTime->timeText() .
+                                  " (" . $meetingTime->locationText() . ")</a>");
+                           }
+                           else {
+                             echo($meetingTime->daysText() . " " . $meetingTime->timeText() .
+                                  " (" . $meetingTime->locationText() . ")");
+                           }
+                           echo("</li>");
+                         }
+                      }
+                      else {
+                        echo("<li>" . $meetingTimes->rawTimesText() . " " . $meetingTimes->rawLocationsText() . "</li>");
+                      }
+                      ?>
+                                        
 					<li>
 						<h3>Description:</h3>
 						<p><?=htmlentities($class['description'])?></p>
