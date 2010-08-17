@@ -61,7 +61,7 @@ switch ($_REQUEST['command']) {
          );
   
        $query = http_build_query($params);
-       $json = file_get_contents(MAP_SEARCH_URL . '?' . $query);
+       $content = file_get_contents(MAP_SEARCH_URL . '?' . $query);
   
      } else {
        require_once LIBDIR . '/ArcGISServer.php';
@@ -72,8 +72,8 @@ switch ($_REQUEST['command']) {
        } else {
          $json = ArcGISServer::search($_REQUEST['q']);
        }
+       $content = json_encode($json);
      }
-     $content = json_encode($json);
    }
    break;
 }
