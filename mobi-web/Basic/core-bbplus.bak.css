@@ -90,6 +90,7 @@ ul li {
 #header {
 	margin: 0;
 	padding: 0; 
+	background-color: #ad111e;
 	background: url('images/navback.jpg') repeat-x;
 	font-size: 22px;
 	line-height: 25px;
