@@ -147,20 +147,12 @@ if (array_key_exists('PHOTO_FILE', $details)) {
   $photoURL = MAP_PHOTO_SERVER . $details['PHOTO_FILE'];
 
   // all photos returned are 300px wide but variable height
-  switch($page->branch) {
-  case 'Webkit':
-    $photoWidth = '95%';
-    break;
-  case 'Basic':
-    if ($page->platform == 'bbplus')
-      $photoWidth = '300';
-    else
-      $photoWidth = '70%';
-    break;
-  default:
-    $photoWidth = '70%';
-    break;
+  if ($page->platform == 'bbplus') {
+    $photoWidth = '300';
+  } else {
+    $photoWidth = '90%';
   }
+
 } else {
   $tabs->hide("Photo");
 }
