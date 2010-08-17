@@ -142,19 +142,8 @@ fieldset {
 	padding: 0;
 }
 
-.forminput {
-	width: 100%;
-	border: 2px solid #554c41;
-	font-size: 120%;
-	padding: 4px;
-}
-
 .inputlabel {
 	margin-bottom: 4px;
-}
-
-.combobutton {
-	display: none;
 }
 
 
@@ -558,11 +547,6 @@ fieldset {
 .inputlabel {
 	margin-bottom: 4px;
 }
-
-.combobutton {
-	display: none;
-}
-
 
 #search_form_section {
 	display: block;
