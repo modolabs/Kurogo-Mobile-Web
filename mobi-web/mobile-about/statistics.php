@@ -8,6 +8,7 @@ $platforms = Array(
     'webos' => 'webOS',
     'winmo' => 'Windows Mobile',
     'blackberry' => 'BlackBerry',
+    'bbplus' => 'Advanced BlackBerry',
     'symbian' => 'Symbian',
     'palmos' => 'Palm OS',
     'featurephone' => 'Other Phone',
