@@ -523,7 +523,7 @@ class ICalendar extends ICalObject {
       $time = time();
     }
   
-    $day = new DayRange($time, $this->timezone->tzid);
+    $day = new DayRange($time, isset($this->timezone) ? $this->timezone->tzid : NULL);
 
     $events = Array();
     foreach ($this->events as $id => $event) {
@@ -619,7 +619,7 @@ class ICalendar extends ICalObject {
 	switch ($value) {
 	case 'VEVENT':
 	  $id = $last_object->get_start();
-	  $last_object->set_attribute('TZID', $this->timezone->tzid);
+	  $last_object->set_attribute('TZID', isset($this->timezone) ? $this->timezone->tzid : NULL);
 	  while (array_key_exists($id, $this->events)) {
 	    $id += 1;
 	  }
