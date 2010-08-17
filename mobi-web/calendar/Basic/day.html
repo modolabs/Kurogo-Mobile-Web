@@ -17,6 +17,9 @@ $page->content_begin();
             <? foreach($events as $event) { ?>
 		<p><a href="<?=detailURL($event)?>"><?=$event->get_summary()?></a><br/><span class="smallprint"><?=timeText($event)?><? if(briefLocation($event)) { ?>&nbsp;|&nbsp;<?=briefLocation($event)?><? } ?></span></a></p>
             <? } ?>
+            <? if (count($events) == 0) { ?>
+            <p> No Events Found </p>
+            <? } ?>
 	</div>
 	
 	<p class="nonfocal">
