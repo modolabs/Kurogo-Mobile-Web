@@ -187,7 +187,6 @@ var_dump($day);
 	$groupby = $sql_fields;
 	$sql_fields[] = 'SUM(viewcount) AS viewcount';
       }
-var_dump($sql_fields);
 
       $sql = "SELECT " . implode(', ', $sql_fields);
       $sql .= ' FROM ' . $table . ' WHERE ' . implode(' AND ', $sql_criteria);
