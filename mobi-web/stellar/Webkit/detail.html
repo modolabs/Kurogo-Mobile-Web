@@ -34,9 +34,8 @@ $page->content_begin();
 
 	<div class="focal shaded">
 	<a id="mystellar" class="<?=$toggle?>" onclick="toggleMyStellar(this, '<?=$class_data?>')"></a>
-		<h2><?=notPhoneNumber(longerID($class))?>: <?=className($class)?></h2>
-		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Courses site</a><? } ?></p>
-
+		<h2><?=$class['name']?>: <?=className($class)?></h2>
+		
 		<ul id="tabs">
 		<? if (!$no_stellar_site) { ?>
 			<li class="active"><a href="#scrolldown" onclick="showTab('announcetab',this)">News</a></li>
