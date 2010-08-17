@@ -433,7 +433,7 @@ class GazetteRSS extends RSS {
   private static function getChildrenWithTag(DOMElement $xml, $tag) {
       $items = array();
       foreach($xml->childNodes as $item) {
-          if($item->tagName == $tag) {
+          if(isset($item->tagName) && $item->tagName == $tag) {
               $items[] = $item;
           }
       }
