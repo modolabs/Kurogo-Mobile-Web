@@ -131,9 +131,9 @@ class MeetingTimes {
     $rawLocationsArr = explode(",", $this->rawLocationsText);
 
     // Sometimes a comma is really one location, like "HBS, Cumnock Hall 230",
-    // so if there's only one time and two locations, assume that it really 
-    // meant one location.
-    if (count($rawTimesArr) == 1 && count($rawLocationsArr) == 2) {
+    // so if there's only one time and multiple locations, that it's really
+    // one location that has a bunch of commas in it.  (Sometimes 2 or 3).
+    if (count($rawTimesArr) == 1) {
       $rawLocationsArr = array($this->rawLocationsText);
     }
 
