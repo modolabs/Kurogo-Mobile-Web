@@ -443,12 +443,13 @@ class GazetteRSS extends RSS {
   private static function getChildByTagName(DOMElement $xml, $tag) {
       $items = self::getChildrenWithTag($xml, $tag);
       if(count($items) == 1) {
-          return $items[0];
+          $result = $items[0];
       } else if(count($item) == 0) {
-          throw new Exception("No elements with $tag found");
+          $result = NULL;
       } else {
-          throw new Exception(count($items) . "with $tag found");
+          error_log("multiple nodes with tag $tag found", 0);
       }
+      return $result;
   }
 
   private static function getChildValue(DOMElement $xml, $tag) {
@@ -469,16 +470,12 @@ class GazetteRSS extends RSS {
       return false;
   }
 
-  private static $gazette_placeholder = "http://news.harvard.edu/gazette/wp-content/themes/gazette/images/photo-placeholder.gif";
-
   private static function getImage($xml_item) {
       $image_xml = self::getChildByTagName($xml_item, "image");
 
       $url = self::getChildValue($image_xml,  "url");
-      if($url == self::$gazette_placeholder) {
-          // story has no thumbnail
-          return NULL;
-      }
+      if (!$url)
+        return NULL;
 
       return array(
           "title" => self::getChildValue($image_xml,  "title"),
