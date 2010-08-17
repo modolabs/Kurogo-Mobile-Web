@@ -3,7 +3,9 @@
 require "WhatsNew.inc";
 
 // dynamic pages need to include dynamics scripts
-switch($_REQUEST['page']) {
+$pageParam = isset($_REQUEST['page']) ? $_REQUEST['page'] : 'about';
+
+switch($pageParam) {
 
   // dynamic cases
   case "statistics":
