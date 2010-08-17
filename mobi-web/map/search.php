@@ -15,12 +15,23 @@ if ($search_terms = $_REQUEST['filter']) {
 }
 
 function detailURL($resultObj) {
+  $attributes = $resultObj->attributes;
+
   $params = array(
-    'selectvalues' => $resultObj->value,
-    'info' => $resultObj->attributes,
+    'selectvalues' => titleFromResult($resultObj),
+    'info' => $attributes,
     );
 
   return 'detail.php?' . http_build_query($params);
+}
+
+function titleFromResult($resultObj) {
+  $attributes = $resultObj->attributes;
+  $itemTitle = $attributes->{'Building Name'};
+  if (!$itemTitle)
+    $itemTitle = $resultObj->value;
+
+  return $itemTitle;
 }
 
 function map_search($terms) {
@@ -32,15 +43,3 @@ function map_search($terms) {
   }
   return $results;
 }
-
-function exact_match($terms, $snippets) {
-  $terms = strtolower(trim($terms));
-  foreach($snippets as $snippet) {
-    if(strtolower($snippet) == $terms) {
-      return True;
-    }
-  }
-  return False;
-}
-    
-?>
