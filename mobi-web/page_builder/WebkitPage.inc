@@ -28,7 +28,7 @@ class WebkitPage extends Page {
     );
 
     include WEBROOT . "/$this->branch/attribs-$this->platform.inc";
-    $this->inline_css = $extra_css;
+    $this->inline_css = isset($extra_css) ? $extra_css : '';
     $this->home_css = $home_css;
 
   }
@@ -105,7 +105,7 @@ class WebkitPage extends Page {
       if(sizeof($navigation_labels) > 1) {
           $navigation_labels = array_slice($navigation_labels, 1);
       }
-      call_user_func_array(array($this, breadcrumbs), $navigation_labels);
+      call_user_func_array(array($this, 'breadcrumbs'), $navigation_labels);
 
       return $this;
   }
