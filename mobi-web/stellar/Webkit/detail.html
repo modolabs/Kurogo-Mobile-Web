@@ -93,10 +93,6 @@ $page->content_begin();
 
 			<div class="tabbody" id="infotab"<? if (!$no_stellar_site) { ?> style="display:none"<? } ?>>
 				<ul class="nav">
-                                        <? foreach($class['times'] as $time) { ?>
-                                            <li><a href="<?=mapURL($time['location'])?>" class="map"><strong><?=$time['title']?></strong>: <?=$time['time']?>&shy; (<?=$time['location']?>&shy;)</a></li>
-                                        <? } ?>
-                                        
                        <? $meetingTimes = $class['meeting_times'];
                        if ($meetingTimes->parseSucceeded()) {
                          foreach ($meetingTimes->all() as $meetingTime) {

@@ -385,8 +385,6 @@ class CourseData {
     $loc = explode(':',$single_course->location);
     $classtime['location'] = $loc[0];
 
-    error_log("COURSE DEBUG: " . $single_course->meeting_time);
-
     $m_time = explode(':', $single_course->meeting_time);
     $len = count($m_time);
     for ($ind = 0; $ind < $len; $ind++) {
