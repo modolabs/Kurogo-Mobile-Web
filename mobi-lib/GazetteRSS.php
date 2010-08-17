@@ -281,6 +281,18 @@ class GazetteRSS extends RSS {
          $image = imagecreatefromstring($imageStr);
          if ($image) {
    
+           $oldWidth = imagesx($image);
+           $oldHeight = imagesy($image);
+
+           // don't waste time resizing 1 pixel images
+           // we need a signal so we know it's invalid the next time we
+           // try to access this image -- write a blank file
+           if ($oldWidth <= 1 && $oldHeight <= 1) {
+             $path = self::$imageWriter->getFullPath($imageName);
+             touch($path);
+             return FALSE;
+           }
+
            if ($newWidth === NULL && $newHeight === NULL) {
              // we don't know the image size so we just return it as unknown
              if (self::$imageWriter->writeImage($image, $imageName)) {
@@ -294,18 +306,6 @@ class GazetteRSS extends RSS {
              }
            }
      
-           $oldWidth = imagesx($image);
-           $oldHeight = imagesy($image);
-
-           // don't waste time resizing 1 pixel images
-           // we need a signal so we know it's invalid the next time we
-           // try to access this image -- write a blank file
-           if ($oldWidth <= 1 && $oldHeight <= 1) {
-             $path = self::$imageWriter->getFullPath($imageName);
-             touch($path);
-             return FALSE;
-           }
-
            $oldOriginX = 0;
            $oldOriginY = 0;
      
