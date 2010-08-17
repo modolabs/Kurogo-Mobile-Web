@@ -1,7 +1,7 @@
 <?php
 
 require_once "lib_constants.inc";
-require_once "AcademicCalendar.php";
+//require_once "AcademicCalendar.php";
 require_once "DiskCache.inc";
 require_once 'html2text.php';
 
