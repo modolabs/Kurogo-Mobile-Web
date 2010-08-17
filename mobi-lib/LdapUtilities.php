@@ -133,9 +133,9 @@ define("LDAP_TIMELIME_EXCEEDED", 0x03);
 function generateErrorMessage($ldap_resource) {
    $error_code = ldap_errno($ldap_resource);
    $error_codes = array(
-       LDAP_PARTIAL_RESULTS => "Partial result only available",
-       LDAP_INSUFFICIENT_ACCESS => "Insufficient access",
-       LDAP_TIMELIMIT_EXCEEDED => "Search timed out",
+       LDAP_PARTIAL_RESULTS => "More results than can be displayed. Showing the first 50.",
+       LDAP_INSUFFICIENT_ACCESS => "Too many results to display (more than 50). Please refine your search.",
+       LDAP_TIMELIMIT_EXCEEDED => "The directory service is not responding. Please try again later.",
     );
     if(isset($error_codes[$error_code])) {
         return $error_codes[$error_code];

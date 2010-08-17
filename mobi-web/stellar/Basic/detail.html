@@ -59,6 +59,35 @@ $page->content_begin();
                        </p>
                    <? } ?>
 
+                   <? $meetingTimes = $class['meeting_times']; ?>
+                       <h4>Lecture new:</h4>
+                       <p>
+                       <?
+                       if ($meetingTimes->parseSucceeded()) {
+                         foreach ($meetingTimes->all() as $meetingTime) {
+                           echo($meetingTime->daysText() . " " . $meetingTime->timeText());
+                           echo(" (");
+                           if ($meetingTime->isLocationKnown()) {
+                             echo("<a href=\"" . mapURL($meetingTime->locationText()) . 
+                                  "\">" . $meetingTime->locationText() . "</a>");
+                           }
+                           else {
+                             echo($meetingTime->locationText());
+                           }
+                           echo(")");
+                           echo("<br/>");
+                         }
+                      }
+                      else {
+                        echo($meetingTimes->rawTimesText() . " " . $meetingTimes->rawLocationsText());
+                      }
+                      ?>
+                       </p>
+                       <p>
+                         <pre>
+                         <? // var_dump($meetingTimes) ?>
+                         </pre>
+                       </p>
                    <p class="divider"> </p>
                    <h3> Description </h3>
 		   <p><?=htmlentities($class['description'])?></p>
