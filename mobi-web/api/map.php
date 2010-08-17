@@ -65,7 +65,13 @@ switch ($_REQUEST['command']) {
   
      } else {
        require_once LIBDIR . '/ArcGISServer.php';
-       $json = ArcGISServer::search($_REQUEST['q']);
+       if (isset($_REQUEST['category'])) {
+         $category = $_REQUEST['category'];
+         $json = ArcGISServer::search($_REQUEST['q'], $category);
+
+       } else {
+         $json = ArcGISServer::search($_REQUEST['q']);
+       }
      }
      $content = json_encode($json);
    }
