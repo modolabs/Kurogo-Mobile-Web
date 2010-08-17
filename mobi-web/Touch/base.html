@@ -10,9 +10,11 @@
 	<link rel="stylesheet" type="text/css" href="../Touch/core.css" />
         <? echo $this->stylesheet_links() ?>
 
-        <style type="text/css" media="screen">
-           <?=$inline_css?>
-        </style>
+		<? if (isset($inline_css) && $inline_css) { ?>
+			<style type="text/css">
+			<?=$inline_css?>
+			</style>
+		<? } ?>
 
 </head>
 

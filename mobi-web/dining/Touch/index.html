@@ -1,0 +1,93 @@
+<?php
+$page->title('Student Dining')
+     ->navbar_image('dining')
+     ->add_stylesheet('Touch/dining')
+     ->header('Student Dining')
+     ->breadcrumb_home();
+
+$page->content_begin();
+?>
+
+<div class="nonfocal">
+	<h2>Menu for <strong><?=$current['short']?></strong></h2>
+</div>
+
+<div class="sidenav">
+    <?=html_arrows(dayURL($prev, $tabs), $prev['long'], dayURL($next, $tabs), $next['long'])?>
+</div>
+
+<a name="scrolldown"> </a>
+
+<div id="tabs" class="smalltabs">
+     <?=$tabs->html('Touch')?>
+</div>
+
+<div class="tabbody" id="<?=$tabs->active()?>tab">
+
+    <? if($tabs->active() == "locations") { ?>
+
+    	<div class="columns2">
+		<ul class="iconlegend col">
+			<li><img src="Touch/images/dining-status-open.png" width="20" height="20" alt="Open">Open now</li>
+			<li><img src="Touch/images/dining-status-open-w-restrictions.png" width="20" height="20" alt="Open with Restrictions">Open w/ restrictions</li>
+		</ul>
+		<ul class="iconlegend col">
+			<li><img src="Touch/images/dining-status-closed.png" width="20" height="20" alt="Closed">Closed</li>
+			<li><img src="Touch/images/dining-status-closed-w-restrictions.png" width="20" height="20" alt="Closed with Upcoming Restrictions">Upcoming restrictions</li>
+		</ul>
+		<div class="clear"></div>
+	</div> <!-- class="columns" -->
+
+        <p class="fineprint"><strong>Note:</strong> The times shown are general schedules only and do not account for holidays and other closures. Please check with your dining hall for closure information.</p>
+
+        <ul class="nav nested">
+            <? foreach($dining_statuses as $dining_status) { ?>
+                <li class="dininghall <?=$dining_status['status']?>">
+                    <a href="<?=detailURL($dining_status)?>"><?=$dining_status['name']?><br/>
+                        <span class="smallprint"><?=statusSummary($dining_status)?></span>
+                    </a>
+                </li>
+            <? } ?>
+        </ul>
+
+    <? } else { ?>
+
+	<div class="columns2">
+		<ul class="iconlegend col">
+			<li><img src="Touch/images/dining-vegetarian.png" width="23" height="17" alt="Vegetarian">Vegetarian</li>
+			<li><img src="Touch/images/dining-vegan.png" width="23" height="17" alt="Vegan">Vegan</li>
+		</ul>
+		<ul class="iconlegend col">
+			<li><img src="Touch/images/dining-organic.png" width="23" height="17" alt="Organic">Organic</li>
+			<li><img src="Touch/images/dining-local.png" width="23" height="17" alt="Local">Local</li>
+		</ul>
+		<div class="clear"></div>
+	</div> <!-- class="columns" -->
+
+
+        <? if(count($food_items[$tabs->active()]) > 0) { ?>
+            <? foreach($food_items[$tabs->active()] as $food_type => $foods) { ?>
+                <h3><?=$food_type?></h3>
+                    <ul class="nav nested">
+                        <? foreach($foods as $food) { ?>
+                            <li  class="nolink">
+                                <? foreach($food['properties'] as $property) { ?>
+                                    <span class="iconlabel"><img src="Touch/images/dining-<?=$property?>-crop.png" width="17" height="17" alt="<?=ucwords($property)?>"></span>
+                                <? } ?>
+                                    <?=$food['item']?>
+                            </li>
+                        <? } ?>
+                    </ul>
+            <? } ?>
+
+        <? } else { ?>
+             <p><?=ucwords($tabs->active())?></p>
+        <? } ?>
+    <? } ?>
+</div>
+
+<div class="sidenav">
+    <?=html_arrows(dayURL($prev, $tabs), $prev['long'], dayURL($next, $tabs), $next['long'])?>
+</div>
+
+<? $page->content_end(); ?>

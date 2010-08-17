@@ -192,6 +192,16 @@ class Tabs {
     );
   }
 
+  /*
+   * This method allows the initial "open" tab to 
+   * be different than the first tab
+   */
+  public function setDefaultActive($tab) {
+    if(!$this->active) {
+        $this->active = $tab;
+    }
+  }
+
   public function active() {
     if($this->active) {
       return $this->active;
@@ -206,10 +216,10 @@ class Tabs {
       $url = $this->url . "&" . $this->param . "=" .urlencode($tab);
       if($tab == $this->active()) {
 	$html[] = ($branch == 'Basic') ? 
-	  '<span class="active">' . $tab . '</span>' :
-	  '<a class="active">' . $tab . '</a>';
+	  '<span class="active">' . ucwords($tab) . '</span>' :
+	  '<a class="active">' . ucwords($tab) . '</a>';
       } else {
-	  $html[] = "<a href=\"$url\">$tab</a>";
+	  $html[] = "<a href=\"$url\">" . ucwords($tab) . "</a>";
       }
     }
     if ($branch == 'Basic') {
@@ -323,36 +333,6 @@ function is_long_string($text) {
   return strlen($temp) > MAX_TEXT;
 }
 
-
-function google_analytics($bucket) {
-  switch($bucket) {
-  case "Webkit":
-    $id = "UA-381327-6";
-    break;
-
-  default:
-    $id = "UA-381327-5";
-    break;
-  }
-  
-  if(!$id) {
-    return "";
-  }
-  
-  $javascript =<<<JS
-   <script type="text/javascript">
-     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-     document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-   </script>
-   <script type="text/javascript">
-    try {
-      var pageTracker = _gat._getTracker("$id");
-      pageTracker._trackPageview();
-    } catch(err) {}</script>
-JS;
-  return $javascript;
-}
-
 // function that inserts silent hyphens for chunks of text that 
 // old Palm Pre firmware thinks are phone numbers
 function pre_hack($text) {
@@ -370,12 +350,7 @@ function notPhoneNumber($text) {
 // create a URL to the campus map if given a building number
 // or a search term
 function mapURL($location) {
-  preg_match('/^((|W|N|E|NW|NE)\-?(\d+))/', $location, $matches);
-  if($matches[3]) {
-    return "../map/detail.php?selectvalues={$matches[2]}{$matches[3]}&snippets=$location";
-  } else {
-    return "../map/search.php?filter=" . urlencode($location);
-  }
+  return "../map/search.php?filter=" . urlencode($location);
 }
 
 

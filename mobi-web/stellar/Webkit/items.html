@@ -1,5 +1,5 @@
 <ul class="results">
             <? foreach($results as $class) { ?>
-                <li><a href="<?=detailURL($class, selfURL())?>"><strong><?=longID($class)?></strong>: <?=className($class)?></a></li>
+                <li><a href="<?=detailURL($class, selfURL())?>"><strong><?=$class["name"]?></strong>: <?=$class["title"]?></a></li>
             <? } ?>
 </ul>

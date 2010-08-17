@@ -7,7 +7,7 @@ html, body {
 
 body {
 	background-color: #ebe7dd; 
-	background-image: url(images/background-tile.png);
+	background-image: url('../Basic/images/background-tile.png');
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 15pt;
 	line-height: 1.33em;
@@ -91,7 +91,7 @@ ul li {
 #header {
 	margin: 0;
 	padding: 0; 
-	background: url('images/navback.jpg') repeat-x;
+	background: url('../Basic/images/navback.jpg') repeat-x;
 	font-size: 22px;
 	line-height: 25px;
 	height: 44px;
@@ -185,7 +185,7 @@ fieldset {
 .phonelabel {
 	color: #a00;
 	font-size: 100%;
-	background-image: url('http://184.106.197.212/~jkang/mockup/people_files/phone_icon.png');
+	background-image: url('../Basic/images/phone_icon.png');
 	background-repeat: no-repeat;
 	background-position: left;
 	padding-left: 20px;
@@ -362,31 +362,31 @@ span.icon {
 }
 
 .gps {
-	background-image: url(../images/basic/gps.gif);
+	background-image: url(../Basic/images/gps.gif);
 }
 
 .sch {
-	background-image: url(../images/basic/schedule.gif);
+	background-image: url(../Basic/images/schedule.gif);
 }
 
 .ok {
-	background-image: url(../images/basic/ok.gif);
+	background-image: url(../Basic/images/ok.gif);
 }
 
 .alert {
-	background-image: url(../images/basic/alert.gif);
+	background-image: url(../Basic/images/alert.gif);
 }
 
 .warning {
-	background-image: url(../images/basic/warning.gif);
+	background-image: url(../Basic/images/warning.gif);
 }
 
 .critical {
-	background-image: url(../images/basic/critical.gif);
+	background-image: url(../Basic/images/critical.gif);
 }
 
 .running {
-	background-image: url(../images/basic/shuttle.gif);
+	background-image: url(../Basic/images/shuttle.gif);
 }
 
 /* Tabs */

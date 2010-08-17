@@ -10,11 +10,11 @@ $page->content_begin();
 ?>
 
 <div class="nonfocal">
-	<h2>Menu for <strong><?=$current['pretty']?></strong></h2>
+	<h2>Menu for <strong><?=$current['short']?></strong></h2>
 </div>
 
 <div class="sidenav">
-<a href="<?=dayURL($prev)?>">&lt; <?=$prev['arrows_format']?></a> | <a href="<?=dayURL($next)?>"><?=$next['arrows_format']?> &gt;</a>
+    <?=html_arrows(dayURL($prev), $prev['long'], dayURL($next), $next['long'])?>
 </div>
 
 <a name="scrolldown"> </a>
@@ -102,7 +102,7 @@ $page->content_begin();
 </div>
 
 <div class="sidenav">
-<a href="<?=dayURL($prev)?>">&lt; <?=$prev['arrows_format']?></a> | <a href="<?=dayURL($next)?>"><?=$next['arrows_format']?> &gt;</a>
+    <?=html_arrows(dayURL($prev), $prev['long'], dayURL($next), $next['long'])?>
 </div>
 
 <?

@@ -4,7 +4,7 @@ $page->title('Harvard Course Info')
 
 $page->content_begin();
 ?>
-	<form method="get" action="search.php">
+	<form method="get" action="searchMain.php">
 	
 	<p>Descriptions, announcements and other information for Harvard classes.</p>
            <? if (count(getMyStellar()->allTags) > 0 ) { ?>
@@ -15,7 +15,7 @@ $page->content_begin();
 	   <p class="nav">
     	     <? foreach (getMyStellar()->currentIds as $id) {
                 $class = CourseData::get_subject_details($id);?>
-		    <a href="detail.php?id=<?= $id ?>&back=index.php"><?= longerID($class) ?></a><br />
+		    <a href="detail.php?id=<?= $id ?>&back=index.php"><?= name($class)?>: <?=$class['title']?></a><br />
              <? } ?>
 	   </p>
         <? } ?>
@@ -34,15 +34,15 @@ $page->content_begin();
 		<?=$page->link_access_key('', 'Courses Home')?><br/>
                 <? foreach($schools as $school) { ?>
                 <? if ((count($school["courses"]) == 1) && ($school["courses"][0]["name"] == "")){ $school_name = $school["school_name"];?>
-                    <?=$page->link_access_key(courseURL($school_name, $which, $school_name), $school["school_name"])?><br/>
+                    <?=$page->link_access_key(courseURL($school_name, $which, $school_name), $school["school_name_short"])?><br/>
                  <? }  else { ?>
-		<?=$page->link_access_key(coursesURL($school["school_name"]), $school["school_name"])?><br/>
+		<?=$page->link_access_key(coursesURL($school["school_name"]), $school["school_name_short"])?><br/>
                     <? } ?>
                 <?} ?>
 	</p>
 	
 	<p>
-		<strong>Search by course/subject #:</strong><br/>
+		<strong>Search in all Schools:</strong><br/>
 		<span class="inputcombo">
 			<input class="forminput" type="search" id="filter" name="filter" />
                         <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=""/>
