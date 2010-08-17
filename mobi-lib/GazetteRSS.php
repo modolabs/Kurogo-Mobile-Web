@@ -447,6 +447,7 @@ class GazetteRSS extends RSS {
       } else if(count($item) == 0) {
           $result = NULL;
       } else {
+          $result = $items[0];
           error_log("multiple nodes with tag $tag found", 0);
       }
       return $result;
