@@ -47,7 +47,4 @@ $content = new ResultsContent(
 require "$page->branch/category.html";
 $page->output();
 
-Results
-
-
 ?>
