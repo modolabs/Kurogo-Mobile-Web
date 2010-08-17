@@ -46,21 +46,8 @@ $page->content_begin();
 
 		<? break; case "Info": ?>
 
-                   <? foreach($class['times'] as $time) { ?>
-                       <h4><?=$time['title']?>:</h4>
-                       <p>
-                           <?=$time['time']?>
-                           <? if (($time['location'] != 'TBA') && ($time['location'] != 'TBD') &&
-                                  ($time['location'] != 'tba') && ($time['location'] != 'tbd') &&
-                                  ($time['location'] != 'Tba') && ($time['location'] != 'Tbd')
-                                   && ($time['location'] != '')) {?>
-                           (<a href="<?=mapURL($time['location'])?>"><?=$time['location']?></a>)
-                           <? } ?>
-                       </p>
-                   <? } ?>
-
                    <? $meetingTimes = $class['meeting_times']; ?>
-                       <h4>Lecture new:</h4>
+                       <h4>Lecture:</h4>
                        <p>
                        <?
                        if ($meetingTimes->parseSucceeded()) {
