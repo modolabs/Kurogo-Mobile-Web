@@ -93,7 +93,6 @@ function makeIcalDayEvents($icsURL, $dateString, $category=NULL)
 	$time = mktime(0,0,0, $mth,$day,$yr); 
 
 	return  $ical->get_day_events($time);
-
 	
 }
 
@@ -190,8 +189,16 @@ function clean_up_ical_event($event) {
 
      $event_dict['id'] = crc32($event->get_uid()) >> 1; // 32 bit unsigned before shift
      $event_dict['title'] = $event->get_summary();
-     $event_dict['start'] = $event->get_start();
-     $event_dict['end'] = $event->get_end();
+     
+     if (($time != NULL) && (($event->get_end() - $event->get_start()) > 24*60*60)) {
+         
+        $event_dict['start'] = $time;
+        $event_dict['end'] = $time + 24*60*60;
+     }
+     else {
+        $event_dict['start'] = $event->get_start();
+        $event_dict['end'] = $event->get_end();
+     }
 
      if ($urlLink = $event->get_url()) {
          $event_dict['url'] = $urlLink;

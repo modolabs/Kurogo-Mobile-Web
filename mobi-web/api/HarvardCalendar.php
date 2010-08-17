@@ -23,7 +23,6 @@ switch ($_REQUEST['command']) {
        $events = makeIcalDayEvents($url, $date, NULL);
    }
 
-
    foreach ($events as $event) {
      $data[] = clean_up_ical_event($event);
    }
