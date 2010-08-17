@@ -1,6 +1,6 @@
 <?php
 $page->title("Harvard Course Info: " . $courseId)
-     ->header("Course Info");
+     ->header("Courses");
 
 $page->content_begin();
 $courseIdEncoded = urlencode($courseId);
@@ -38,5 +38,5 @@ $courseIdEncoded = urlencode($courseId);
 	</p>
 <?
 $page->content_end();
-$page->nav_link("./", "Course Info Home");
+$page->nav_link("./", "Courses Home");
 ?>
