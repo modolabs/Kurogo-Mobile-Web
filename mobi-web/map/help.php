@@ -4,18 +4,19 @@ $header = "Campus Map";
 $module = "map";
 
 $help = array(
-  'Find places on campus in two ways:',
+    'Search for buildings by short or long name, e.g., &ldquo;Sever&rdquo; ' .
+    'or  &ldquo;Sever Hall&rdquo;.  Results appear as a red pin dropped onto ' .
+    'the map.',
 
-  '1. <strong>Search</strong> by building number or name, or for specific facilities by name or keyword<br />' .
-  'Examples: &quot;W20&quot;, &quot;hayden&quot;, &quot;kresge&quot;, &quot;la verdes&quot;, &quot;tennis&quot;, etc.',
+    'Click on &ldquo;List&rdquo; on the red bar upper right to view map ' .
+    'results as a list. Click on an individual list result for more ' .
+    'information about the building, including a photo if available.',
 
-  '2. <strong>Browse</strong> by any of the categories on the Campus Map homepage',
+    'From map home, click on &ldquo;Browse&rdquo; on the red bar upper right ' .
+    'to see specific types of locations, e.g., libraries, museums.',
 
-  'For each building, you&apos;ll be shown its name, street address and map. This map can be scrolled and zoomed using the links or buttons just below the map image. For most buildings, you can also view a photo of the building and a list of what&apos;s in the building using the tabs above the map image.', 
-
-  'Note that some buildings are located away from streets; for those buildings, the street address shown is usually the main pedestrian access from the street.',
-
-  'On the iPhone and iPod Touch, you can also enter full-screen mode using the right-most button below the map image. Once in full-screen mode, you can rotate your device to switch to horizontal (landscape) orientation. The iPhone and iPod Touch also give you one-button access to locate the building on the device&apos;s native Map application. This button is located below the map zoom and scroll buttons.',
+    'The map defaults to a normal map view, but Settings allows you to ' .
+    'select satellite or hybrid views. ',
 );
 
 ?>

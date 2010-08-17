@@ -23,7 +23,7 @@ class PageViews {
       $logfile = $ini['WEB_CURRENT_LOG_FILE'];
     else // assume 'api'
       $logfile = $ini['API_CURRENT_LOG_FILE'];
-    
+
     $fh = fopen($logfile, 'a');
     fwrite($fh, sprintf("%s %s %s: %s\n",
 			date($ini['LOG_DATE_FORMAT'], $time),
@@ -32,6 +32,8 @@ class PageViews {
   }
 
   private function increment_array(&$array, $day, $platform, $module) {
+var_dump($day);
+
     if (!array_key_exists($day, $array))
       $array[$day] = array();
     if (!array_key_exists($platform, $array[$day]))
@@ -46,7 +48,7 @@ class PageViews {
     $db = db::$connection;
 
     // TODO: make a version of this that supports non-mysql clients
-    if ($db == MYSQL_NOT_SUPPORTED)
+    if ($db === MYSQL_NOT_SUPPORTED)
       return;
 
     global $ini;
@@ -62,7 +64,7 @@ class PageViews {
     }
     
     $today = date('Ymd', time());
-    
+
     if (file_exists($target) && date('Ymd', filemtime($target)) == $today)
       return; // we have already exported today
     $logfilecopy = "/tmp/mobi_log_copy.$today";
@@ -71,7 +73,7 @@ class PageViews {
       error_log("could not open $target for writing");
       return;
     }
-    
+
     if (!rename($logfile, $logfilecopy)) {
       error_log("failed to rename $logfile to $logfilecopy");
       return; 
@@ -81,7 +83,7 @@ class PageViews {
       error_log("failed to create empty $logfile");
       return; 
     }
-    
+
     $result = $db->query(
       "SELECT day, platform, module, viewcount FROM $table
         WHERE day=(SELECT MAX(day) FROM $table)");
@@ -148,7 +150,7 @@ class PageViews {
     $output = Array();
 
     $db = db::$connection;
-    if ($db != MYSQL_NOT_SUPPORTED) {
+    if ($db !== MYSQL_NOT_SUPPORTED) {
       global $ini;
       self::export_stats($system);
 

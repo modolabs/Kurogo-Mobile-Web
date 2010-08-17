@@ -1,7 +1,6 @@
 <?php
 
 require_once WEBROOT . "/home/Modules.inc";
-define("SMS_STATS_URL", 'http://sms1.mit.edu/mobi-sms/mangotext/api/statistics.php');
 
 $platforms = Array(
     'iphone' => 'iPhone',
@@ -9,13 +8,14 @@ $platforms = Array(
     'webos' => 'webOS',
     'winmo' => 'Windows Mobile',
     'blackberry' => 'BlackBerry',
+    'bbplus' => 'Advanced BlackBerry',
     'symbian' => 'Symbian',
     'palmos' => 'Palm OS',
     'featurephone' => 'Other Phone',
     'computer' => 'Computer',
   );
 
-$service_types = Array('web' => 'Website', 'sms' => 'SMS', 'api' => 'Native App');
+$service_types = Array('web' => 'Website', 'api' => 'Native App');
 $interval_types = Array(
   'day' => Array('duration' => 7, 'title' => 'Week', 'numdays' => 7),
   'week' => Array('duration' => 12, 'title' => '12 Weeks', 'numdays' => 84),
@@ -34,50 +34,26 @@ foreach ($url_params as $param => $value) {
 
 $duration = $interval_types[$url_params['interval']]['duration'];
 
-if ($url_params['service'] == 'sms') {
-  $stats_url = SMS_STATS_URL . "?days=" . $interval_types[$url_params['interval']]['numdays'];
-  $stats_data = json_decode(file_get_contents($stats_url), TRUE);
-
-  $days = aggregate_days($stats_data['days'], $url_params['interval'], $duration);
-  $sent = aggregate_days($stats_data['sent'], $url_params['interval'], $duration);
-  $modules = $stats_data['modules'];
-  $carriers = $stats_data['carriers'];
-
+$all_data = PageViews::view_past($url_params['service'], $url_params['interval'], $duration);
+if ($url_params['service'] == 'web') {
   $graphs = array(
-    summary_total($days, "count", "total incoming messages"),
-    trend($days, "count", 
-	  "Incoming Messages by " . ucfirst($url_params['interval']), 
-	  $url_params['interval']),
-    summary_total($sent, "count", "total outgoing messages"),
-    trend($sent, "count", 
-	  "Outgoing Messages by " . ucfirst($url_params['interval']), 
-	  $url_params['interval']),
-    bar_percentage( carriers_data($carriers), "Queries by Carrier"),
-    list_items( generate_sms_content($modules), "Popular SMS Queries", "queries"),
-  );
-
-} else {
-  $all_data = PageViews::view_past($url_params['service'], $url_params['interval'], $duration);
-  if ($url_params['service'] == 'web') {
-    $graphs = array(
-      summary_total($all_data, "total", "total page views"),
-      trend($all_data, "total", 
+    summary_total($all_data, "total", "total page views"),
+    trend($all_data, "total", 
 	    'Page Views by ' . ucfirst($url_params['interval']), 
 	    $url_params['interval']),
-      bar_percentage( platform_data($all_data), "Traffic by Platform"),
-      list_items(generate_popular_content('web', $all_data), "Most Popular Content", "page views"),
-      );
-  } else { // api
-    $graphs = array(
-      summary_total(PageViews::count_iphone_tokens(), "total", "active users"),
-      summary_total($all_data, "total", "total API requests"),
-      trend($all_data, "total", 
+    bar_percentage( platform_data($all_data), "Traffic by Platform"),
+    list_items(generate_popular_content('web', $all_data), "Most Popular Content", "page views"),
+    );
+} else { // api
+  $graphs = array(
+    summary_total(PageViews::count_iphone_tokens(), "total", "active users"),
+    summary_total($all_data, "total", "total API requests"),
+    trend($all_data, "total", 
 	    'API Requests by ' . ucfirst($url_params['interval']), 
 	    $url_params['interval']),
-      list_items(generate_popular_content('api', $all_data), "Most Popular Modules", "requests"),
-      );
-  }
-} 
+    list_items(generate_popular_content('api', $all_data), "Most Popular Modules", "requests"),
+    );
+}
 
 $name = $service_types[$url_params['service']];
 
@@ -97,119 +73,6 @@ foreach ($interval_types as $type => $attrs) {
 
 require "$page->branch/statistics.html";
 $page->output();
-
-/* sms functions */
-
-function aggregate_days($days, $interval_type, $duration) {
-  $intervals = Array();
-  $counter = Array();
-
-  // get all intervals, fill in 0 if missing
-
-  $last_day = $days[count($days) - 1]['date'];
-  $year = substr($last_day, 0, 4);
-  $month = substr($last_day, 5, 7);
-  switch ($interval_type) {
-  case 'quarter':
-    $month = (int)$month - 1;
-    $month = $month - ($month % 3) + 1;
-    $utime = mktime(0, 0, 0, $month, 1, $year);
-    break;
-  case 'month':
-    $utime = mktime(0, 0, 0, $month, 1, $year);
-    break;
-  case 'day':
-  case 'week':
-  default:
-    $utime = strtotime($last_day);
-  }
-
-  $dayofweek = date('w', $utime);
-
-  for ($i = 1; $i <= $duration; $i++) {
-    $counter[$utime] = 0;
-    switch ($interval_type) {
-    case 'day':
-      $utime -= 86400;
-      break;
-    case 'week':
-      $is_dst = date('I', $utime);
-      $utime -= 86400 * 7;
-      $was_dst = date('I', $utime); // this is further in the past
-      $utime -= ($was_dst - $is_dst) * 3600;
-      break;
-    case 'month':
-      if ($month <= $i) {
-	$utime = mktime(0, 0, 0, $month - $i + 12, 1, $year - 1);
-      } else {
-	$utime = mktime(0, 0, 0, $month - $i, 1, $year);
-      }
-      break;
-    case 'quarter':
-      if ($month - ($month % 3) <= $i) {
-	$utime = mktime(0, 0, 0, $month - 3*$i + 12, 1, $year - 1);
-      } else {
-	$utime = mktime(0, 0, 0, $month - 3*$i, 1, $year);
-      }
-      break;
-    }
-  }
-
-  foreach ($days as $day) {
-    $utime = strtotime($day['date']);
-    switch ($interval_type) {
-    case 'day':
-      $interval = $utime;
-      break;
-    case 'week': // week starting on specified date
-      $interval = $utime;
-      while (date('w', $interval) != $dayofweek) {
-	$was_dst = date('I', $interval);
-	$interval += 86400;
-	$is_dst = date('I', $interval);
-	$interval += ($was_dst - $is_dst) * 3600;
-      }
-      break;
-    case 'month':
-      $interval = mktime(0, 0, 0, date('n', $utime), 1, date('Y', $utime));
-      break;
-    case 'quarter':
-      $interval = PageViews::quarter_of($utime);
-      break;
-    }
-
-    $counter[$interval] += $day['count'];
-  }
-
-  ksort($counter);
-
-  foreach ($counter as $interval => $count) {
-    $intervals[] = array('date' => $interval, 'count' => $count);
-  }
-
-  return $intervals;
-}
-
-function generate_sms_content($data) {
-  foreach($data as $index => $module_row) {
-    $module = $module_row['module'];
-    if(Modules::title($module)) {
-      $name = Modules::title($module);
-    } else {
-      $name = ucwords($module);
-    }
-    $data[$index]['name'] = $name;
-  }
-  return $data;
-}
-
-function carriers_data($data) {
-  $output = array();
-  foreach($data as $row) {
-    $output[$row['carrier']] = $row['count'];
-  }
-  return $output;
-}
 
 /* web functions */
 
