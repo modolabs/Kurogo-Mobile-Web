@@ -2,8 +2,9 @@
 
 require_once LIBDIR . '/ArcGISServer.php';
 
+$categories = ArcGISServer::getCollections();
+
 if (!isset($_REQUEST['category'])) {
-  $categories = ArcGISServer::getCollections();
   require "$page->branch/index.html";
 } else {
   $category = $_REQUEST['category'];
