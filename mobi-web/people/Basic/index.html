@@ -8,20 +8,12 @@ $page->content_begin();
 		name="search_form" 
 		method="get" 
 		action="<?=$_SERVER['SCRIPT_NAME']?>"	
-		<?
-			if ($page->platform == 'bbplus') {
-				// There's an expectation on the BlackBerry that when you tap the trackball, it will submit the form.
-				?>
-		onclick="javascript:if (document.search_form.filter.value.length > 0) { document.search_form.submit(); }"
-				<?
-			}
-		?>		
 	> 
 
 	<p>
 		<strong>Search:</strong><br/>
 		<span class="inputcombo emphasized">
-			<input class="forminput" type="search" id="filter" name="filter" value="<?=$searchTerms?>" />
+			<input class="forminput" type="text" id="filter" name="filter" value="<?=$searchTerms?>" />
 			<input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
 		</span>	
 	</p>
@@ -33,13 +25,11 @@ $page->content_begin();
                 <p>No matches found</p>
         <? } ?>
 
-
 	<p class="legend">
   	        <strong>Search tips:</strong> You can search by part or all of a person's name, email address or phone number.
 	</p>		
 
 	</form>
-
 <? 
 
 $page->content_end(); 
