@@ -1,9 +1,9 @@
 <?php
 
-if($search_terms = $_REQUEST['filter']) {
+if ($search_terms = $_REQUEST['filter']) {
   $results = map_search($search_terms);
   $total = count($results);
-  if(count($results) == 1) {
+  if ($total == 1) {
     header("Location: " . detailURL($results[0]));
   } else {
     $content = new ResultsContent("items", "map", $page);
@@ -14,35 +14,23 @@ if($search_terms = $_REQUEST['filter']) {
   header("Location: ./");
 }
 
-function detailURL($place) {
-  $id = substr($place->id, 7);
-  return "detail.php?selectvalues=$id&snippets=" . urlencode(implode(", ", $place->snippets));
+function detailURL($resultObj) {
+  $params = array(
+    'selectvalues' => $resultObj->value,
+    'info' => $resultObj->attributes,
+    );
+
+  return 'detail.php?' . http_build_query($params);
 }
 
 function map_search($terms) {
-  
-  $query = array(
-    "type"   => "query",
-    "q"      => $terms, 
-    "output" => "json" 
-  );
-
-  $json = file_get_contents("http://map-dev.mit.edu/search?" . http_build_query($query));
-
-  $data = json_decode($json);
-
-  //sort data by priority
-  $high = array();
-  $low = array();
-  foreach($data as $place) {
-    if(exact_match($terms, $place->snippets)) {
-      $high[] = $place;
-    } else {
-      $low[] = $place;
-    }
+  require_once LIBDIR . '/ArcGISServer.php';
+  $resultObj = ArcGISServer::search($terms);
+  $results = array();
+  foreach ($resultObj->results as $result) {
+    $results[] = $result;
   }
-   
-  return array_merge($high, $low);
+  return $results;
 }
 
 function exact_match($terms, $snippets) {
