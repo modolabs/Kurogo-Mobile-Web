@@ -42,6 +42,10 @@ case 'subjectList':
     $school = urldecode($_REQUEST['courseGroup']);
     $course = urldecode($_REQUEST['courseName']);
 
+    $course = urlencode(str_replace('-other', '', $course));
+    $school = urlencode(str_replace('-other', '', $school));
+    $query = urlencode($query);
+
     $data = CourseData::search_subjects($query, str_replace('-other', '', $school), str_replace(' ', '+', $course));
 
     break;
