@@ -26,8 +26,8 @@ class TouchPage extends Page {
   }
 
   public function module($module) {
-    $this->title = Modules::$module_data['title'];
-    $this->header = Modules::$module_data['title'];
+    $this->title = Modules::$module_data[$module]['title'];
+    $this->header = Modules::$module_data[$module]['title'];
     $this->navbar_image = $module;
     $this->module = $module;
     return $this;

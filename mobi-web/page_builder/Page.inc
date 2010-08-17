@@ -108,7 +108,7 @@ class Page {
   }
 
   public function module($module) {
-    $this->title = Modules::$module_data['title'];
+    $this->title = Modules::$module_data[$module]['title'];
     $this->module = $module;
     return $this;
   }
