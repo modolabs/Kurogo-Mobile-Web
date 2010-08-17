@@ -1,36 +1,30 @@
 <?php
 $page->title('Search')
-     ->header('Search');
+     ->header('Search Results');
 
 $page->content_begin();
 ?>
 
 
 <? foreach($federated_results as $module => $module_results) { ?>
-    <div class="nonfocal">
+    <h3 class="nonfocal">
         <?=Modules::title($module)?>
-    </div>
+    </h3>
 
-    <div class="nav">
-        <ul>
+    <p class="nav">
                 <? if(count($module_results['results']) > 0) { ?>
-                    <? for($i = 0 ; $i < count($module_results) && $i < MAX_ITEMS; $i++) { ?>
+                    <? for($i = 0 ; $i < count($module_results['results']) && $i < MAX_ITEMS; $i++) { ?>
                         <? $result = $module_results['results'][$i]; ?>
-                        <li><a href="..<?=$result['link']?>"><?=htmlentities($result['title'])?>
-                            <? if($result['subtitle']) { ?>
-                                <br /><span class="smallprint"><?=htmlentities($result['subtitle'])?></span>
-                            <? } ?>
-                            </a>
-                        </li>
-                     <? } ?>
-                     <? if(count($module_results['results']) > MAX_ITEMS) { ?>
-                        <li><a href="..<?=$module_results['search-link']?>">More results</a></li>
-                     <? } ?>
+                           <a href="..<?=$result['link']?>"><?=htmlentities($result['title'])?></a><br />
+
+                    <? } ?>
+                    <? if(count($module_results['results']) > MAX_ITEMS) { ?>
+                        <a href="..<?=$module_results['search-link']?>">More results</a>
+                    <? } ?>
                 <? } else { ?>
-                    <li>No results</li>
+                    No results
                 <? } ?>
-        </ul>
-    </div>
+    </p>
 <? } ?>
 
 	
