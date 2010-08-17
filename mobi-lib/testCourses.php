@@ -28,7 +28,7 @@ class MeetingTime {
   private $days;
   private $startTime;
   private $endTime;
-  private $location = null;
+  private $location = NULL;
 
   function __construct($daysArr, $startTime, $endTime, $location) {
     $this->days = $daysArr;
@@ -37,8 +37,8 @@ class MeetingTime {
     $this->location = $location;
   }
 
-  public function hasNoLocation() {
-    return false;
+  public function isLocationKnown() {
+    return !is_null($this->location);
   }
   
   public function daysText() {
@@ -78,6 +78,10 @@ class MeetingTime {
     // I know, %P should return lowercase... but it's returning "A" or "P"
     return strtolower($text);
   }
+  
+  public function locationText() {
+    return ($this->location == null) ? "TBA" : $this->location;
+  }
 }
 
 
@@ -112,14 +116,21 @@ class MeetingTimes {
   }
   
   private function parse() {
+    $rawTimesArr = explode(";", $this->rawTimesText);
+    $rawLocationsArr = explode(",", $this->rawLocationsText);
 
-    foreach (explode(";", $this->rawTimesText) as $timesText) {
+    //if (true || count($rawTimesArr) != count($rawLocationsArr)) {
+    //  return; // Something's gone south here, handle it semi-gracefully.
+    //}
+
+    $i = 0;
+    foreach ($rawTimesArr as $timesText) {
       $days = $this->parseDaysFromStr($timesText);
       $startTime = $this->parseStartTimeFromStr($timesText);
       $endTime = $this->parseEndTimeFromStr($timesText);
-      $location = "Science Center C";
+      $location = $this->parseLocationFromStr($rawLocationsArr[$i]);
       
-      $this->meetingTimes[] = new MeetingTime($days, $startTime, $endTime);
+      $this->meetingTimes[] = new MeetingTime($days, $startTime, $endTime, $location);
     }
     $this->parseSucceeded = true;
   }
@@ -161,6 +172,16 @@ class MeetingTimes {
     return $this->parseTimeFromStr($timeStr, 1);
   }
 
+  private function parseLocationFromStr($locationStr) {
+    if (is_null($locationStr) || 
+        trim($locationStr) == "" ||
+        strcasecmp("TBD", $locationStr) == 0 || 
+        strcasecmp("TBA", $locationStr) == 0) {
+      return NULL;
+    }
+
+    return trim($locationStr);
+  }
 }
 
 

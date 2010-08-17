@@ -64,8 +64,11 @@ $page->content_begin();
                        <p>
                        <?
                        foreach ($meetingTimes->all() as $meetingTime) {
-                         echo($meetingTime->daysText() . " " . 
-                              $meetingTime->timeText() . "<br/>");
+                         echo($meetingTime->daysText() . " " . $meetingTime->timeText());
+                         // if ($meetingTime->isLocationKnown()) {
+                           echo(" (" . $meetingTime->locationText() . ")");
+                         // }
+                         echo("<br/>");
                        } ?>
                        </p>
                        <p>
