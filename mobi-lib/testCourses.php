@@ -15,7 +15,6 @@ function compare_courseNumber($a, $b)
   return strnatcmp($a['name'], $b['name']);
 }
 
-
 class MeetingTime {
   const SUN = 1;
   const MON = 2;
@@ -35,6 +34,13 @@ class MeetingTime {
     $this->startTime = $startTime;
     $this->endTime = $endTime;
     $this->location = $location;
+  }
+
+  static function cmp($a, $b) {
+    if ($a->startTime == $b->startTime) {
+      return 0;
+    }
+    return ($a > $b) ? 1 : -1;
   }
 
   public function isLocationKnown() {
@@ -109,6 +115,7 @@ class MeetingTimes {
     $this->rawTimesText = $timesText;
     $this->rawLocationsText = $locationsText;
     $this->parse();
+    usort($this->meetingTimes, array("MeetingTime", "cmp"));
   }
   
   public function all() {
