@@ -22,7 +22,11 @@ $page->content_begin();
 
     <? if($story['image']) { ?>
         <div id="image">
-            <img class="thumbnail" src="<?=$story['image']['url']?>" width="<?=$story['image']['width']?>" height="<?=$story['image']['height']?>">
+            <img class="thumbnail" src="<?=$story['image']['url']?>" <? 
+            	if (isset($story['image']['width'])) { 
+            		?> width="<?=$story['image']['width']?>" <? } ?> <? 
+            	if (isset($story['image']['height'])) { 
+            		?> height="<?=$story['image']['height']?>"> <? } ?>
         </div>
     <? } ?>
     <p class="dek"><?=$story['description']?></p>
