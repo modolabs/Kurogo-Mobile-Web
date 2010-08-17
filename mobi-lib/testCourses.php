@@ -589,7 +589,7 @@ class CourseData {
   }
 
   public static function search_subjects($terms, $school, $courseTitle) {
-
+      
       $words = split(' ', $terms);
 
       $terms = '"';
@@ -624,6 +624,10 @@ class CourseData {
 
       if ($courseTitle == '') {
           $courseName = '';
+      }
+
+      else if ($courseTitle == $school) {
+          $courseName = '&' .'fq_dept_area_category=dept_area_category:[*+TO+""]';
       }
       $urlString = STELLAR_BASE_URL .$courseName .$schoolName .$term . 'q="' .$terms .'"&' . $sorting_params;
 
