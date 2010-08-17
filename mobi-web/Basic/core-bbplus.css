@@ -51,10 +51,17 @@ h2 {
 }
 
 h3 {
+	color: #554c41;
 	font-size: 100%; 
 	font-weight: bold;
 	margin: 0 0 5px 0;
 	padding: 0;
+}
+
+h3.subheading {
+	color:#554c41;
+	padding: 0;
+	margin: 1.25em 0 -0.5em 0;
 }
 
 h4 {
@@ -664,6 +671,10 @@ fieldset {
 	font-weight: normal;
 	line-height: 1.36em;
 	color: #666;
+}
+
+a .smallprint {
+	text-decoration: none;
 }
 
 .fineprint {
