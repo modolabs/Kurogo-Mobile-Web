@@ -271,12 +271,14 @@ class DINING_DATA {
             $handle = fopen($filename, "w");
             usort($menuItemList, array("MenuItem", "compare"));
 
-            foreach ($menuItemList as $menuItem) {
+            if ($handle !== FALSE) {
+              foreach ($menuItemList as $menuItem) {
 
                 fputcsv($handle, $menuItem->toArray());
+              }
+              
+              fclose($handle);
             }
-
-            fclose($handle);
        }
   }
 
