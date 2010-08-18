@@ -17,9 +17,6 @@ class Modules {
     'map' => Array(
       'title' => 'Map',
       ),
-    //'shuttleschedule' => Array(
-    //  'title' => 'Shuttle Schedule',
-    //  ),
     'calendar' => Array(
       'title' => 'Events',
       ),
@@ -29,19 +26,17 @@ class Modules {
     'news' => Array(
       'title' => 'News',
       ),
-  	'dining' => Array(
+    'dining' => Array(
       'title' => 'Student Dining',
       ),
-    //'emergency' => Array(
-    //  'title' => 'Emergency Info',
-    //  ),
     'links' => Array(
       'title' => 'Schools',
-      // 'subtitle' => 'webpage links',
+      'extra' => TRUE,
       ),
-    //'link' => Array(
-    //  'title' => 'harvard.edu'
-    // ),
+    'fullweb' => Array(
+      'title' => 'harvard.edu',
+      'extra' => TRUE,
+     ),
     'customize' => Array(
       'title' => 'Customize Home',
       'extra' => TRUE,
@@ -50,11 +45,6 @@ class Modules {
       'title' => 'About',
       'extra' => TRUE,
       ),
-    //'download' => Array(
-    //  'title' => 'Download',
-    //  'extra' => TRUE,
-    //  'restricted' => Array('blackberry'),
-    //  ),
   );
 
   // main function that initializes the module list for the phone
