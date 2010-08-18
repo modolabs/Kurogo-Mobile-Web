@@ -141,7 +141,7 @@ class MeetingTimes {
   public function toArray()
   {
     if (!$this->parseSucceeded())
-      return NULL;
+      return array();
     
     $serialized = array();
     foreach ($this->all() as $meetingTime) {
