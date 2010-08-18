@@ -521,7 +521,7 @@ class CourseData {
          $id = explode(':',$single_course['id']);
          $nm = explode(':', $single_course->course_number);
 
-         if (ctype_alpha(str_replace(' ', '', $nm[0]))) {
+         if (ctype_alpha(str_replace(' ', '', $nm[0])) || (substr($nm[0], 0, 1) == '0')) {
              $nm[0] = '0' .$nm[0];
          }
          
