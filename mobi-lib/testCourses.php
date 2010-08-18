@@ -552,17 +552,24 @@ class CourseData {
   // returns the Schools (Course-Group) to Departmetns (Courses) map
   public static function get_schoolsAndCourses() {
 
-      $filenm = STELLAR_COURSE_DIR. '/SchoolsAndCourses' .'.xml';
+     // $filenm = STELLAR_COURSE_DIR. '/SchoolsAndCourses' .'.xml';
+      $filenm = STELLAR_COURSE_DIR. '/SchoolsAndCourses' .'.txt';
 
       if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
           //$urlString = $filenm; //file_get_contents($filenm);
       }
       else {
-          $handle = fopen($filenm, "w");
-          fwrite($handle, file_get_contents(STELLAR_BASE_URL .TERM_QUERY));
-          //$urlString = $filenm;
+          self::condenseXMLFileForCoursesAndWrite(STELLAR_BASE_URL .TERM_QUERY, $filenm);
       }
-          $xml = file_get_contents($filenm);
+      return json_decode(file_get_contents($filenm));
+  }
+
+
+  public static function condenseXMLFileForCoursesAndWrite($xmlURLPath, $fileToWrite) {
+
+      $handle = fopen($fileToWrite, "w");
+
+      $xml = file_get_contents($xmlURLPath);
 
 
    // $xml = file_get_contents(STELLAR_BASE_URL .TERM_QUERY);
@@ -573,6 +580,7 @@ class CourseData {
     }
 
     $xml_obj = simplexml_load_string($xml);
+
     foreach($xml_obj->facets->facet as $fc) {
 
         if ($fc['name'] == 'school_nm')
@@ -619,9 +627,67 @@ class CourseData {
                 }
 
     }
-    //print_r($self->schoolsToCoursesMap);
-    usort($self->schoolsToCoursesMap, 'compare_schoolName');
-    return $self->schoolsToCoursesMap;
+
+    $stringToWrite = '';
+    foreach($self->schoolsToCoursesMap as $schoolsMapping) {
+        if ($schoolsMapping['school_name'] != '') {
+        $stringToWrite = $stringToWrite . $schoolsMapping['school_name'] .',,,' .$schoolsMapping['school_name_short'] . ':::';
+            foreach($schoolsMapping['courses'] as $course) {
+                $stringToWrite = $stringToWrite . $course['name'] . ',,,';
+            }
+
+            $stringToWrite = substr($stringToWrite, 0, -1) . '...';
+        }
+    }
+
+    fwrite($handle, $stringToWrite);
+    fclose($handle);
+
+    self::getXMLSchoolsMapJSONEncoded($fileToWrite);
+
+    return;
+  }
+
+
+  public static function getXMLSchoolsMapJSONEncoded($filenm) {
+
+      $dummySchoolsToCoursesMap = array();
+       $str = file_get_contents($filenm);
+
+      $schoolLayerArray = explode('...', $str);
+
+      foreach($schoolLayerArray as $schoolLayer) {
+          $mappingArray = explode(':::',$schoolLayer);
+
+          $nameLayerArray = explode(',,,', $mappingArray[0]);
+          $groupLayerArray = explode(',,,', $mappingArray[1]);
+
+          $courseArray = Array();
+          foreach($groupLayerArray as $dept) {
+              $crsMap['name'] = str_replace(',,', '', $dept);
+              $crsMap['short'] = '1';
+              $courseArray[] = $crsMap;
+          }
+
+          if (count($courseArray) >= 1) {
+
+              if (strlen($nameLayerArray[0]) > 0) {
+                             $map['school_name'] = $nameLayerArray[0];
+                             $map['school_name_short'] = $nameLayerArray[1];
+                             $map['courses'] = $courseArray;
+
+                             $dummySchoolsToCoursesMap[] = $map;
+                      }
+          }
+      }
+
+      $handle = fopen($filenm, "w");
+      fwrite($handle, json_encode($dummySchoolsToCoursesMap));
+      fclose($handle);
+
+      return;
+
+        //return schoolsToCoursesMap;
   }
 
   public static function search_subjects($terms, $school, $courseTitle) {
