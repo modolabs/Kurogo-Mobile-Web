@@ -5,9 +5,6 @@ class Modules {
   public static $default_order = array();
 
   public static $module_data = Array(
-    'news' => Array(
-      'title' => 'News',
-      ),
     'people' => Array(
       'title' => 'People Directory',
       ),
@@ -23,6 +20,12 @@ class Modules {
     'stellar' => Array(
       'title' => 'Courses',
       ),
+    'news' => Array(
+      'title' => 'News',
+      ),
+  	'dining' => Array(
+      'title' => 'Student Dining',
+      ),
     //'emergency' => Array(
     //  'title' => 'Emergency Info',
     //  ),
@@ -30,16 +33,13 @@ class Modules {
       'title' => 'Schools',
       'subtitle' => 'webpage links',
       ),
-  	'dining' => Array(
-      'title' => 'Student Dining',
-      ),
-    'mobile-about' => Array(
-      'title' => 'About this site',
+    'customize' => Array(
+      'title' => 'Customize Home',
       'extra' => TRUE,
       'required' => TRUE,
       ),
-    'customize' => Array(
-      'title' => 'Customize Home',
+    'mobile-about' => Array(
+      'title' => 'About this site',
       'extra' => TRUE,
       'required' => TRUE,
       ),
