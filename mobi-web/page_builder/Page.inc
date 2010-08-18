@@ -108,7 +108,7 @@ class Page {
   }
 
   public function module($module) {
-    $this->title = Modules::$module_data['title'];
+    $this->title = Modules::$module_data[$module]['title'];
     $this->module = $module;
     return $this;
   }
@@ -209,8 +209,9 @@ class Page {
       // here is a stricter version of the overly permissive regex
       // that used to be in page_header
       $module_list = implode('|', array_keys(Modules::$module_data));
-      preg_match('/\/(' . $module_list . ')\/[^\/]*?$/', $_SERVER['REQUEST_URI'], $match);
-      $this->module = $match[1];
+      if (preg_match('/\/(' . $module_list . ')\/[^\/]*?$/', $_SERVER['REQUEST_URI'], $match)) {
+        $this->module = $match[1];
+      }
     }
 
     PageViews::increment($this->module, $this->platform);

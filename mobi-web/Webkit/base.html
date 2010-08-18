@@ -46,7 +46,7 @@
                     </a>
                       <?
                        foreach($breadcrumbs as $index => $breadcrumb) {
-                          if($breadcrumb_links[$index]) {
+                          if(isset($breadcrumb_links[$index])) {
                             echo '<a href="' . $breadcrumb_links[$index] . '"><span>' . $breadcrumb . '</span></a>';
                           } else {
                             echo '<a href="#" onclick="history.back(); return false"><span>' . $breadcrumb . '</span></a>';

@@ -1,7 +1,11 @@
 <?php
 
 function getModuleOrder() {
-  return explode(",", $_COOKIE["moduleorder"]);
+  if(!isset($_COOKIE["moduleorder"])) {
+    return Modules::$default_order;
+  } else {
+    return explode(",", $_COOKIE["moduleorder"]);
+  }
 }
 
 function getActiveModules() {

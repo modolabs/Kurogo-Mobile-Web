@@ -20,7 +20,7 @@ $page->content_begin();
                 <form action="" method="get">
                         <select name="category" onchange="this.parentNode.submit();">
                                 <option value="" selected="selected">Browse map by:</option>
-                                <? foreach($category_info as $id => $title) { ?>
+                                <? foreach($categories as $id => $title) { ?>
                                     <option value="<?=$id?>"><?=$title?></option>
                                 <? } ?>
                         </select>

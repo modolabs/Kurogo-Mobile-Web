@@ -26,13 +26,13 @@ $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
                         <?=$event->get_description()?>
 		</p>
 
-                <? if($event->infophone) { ?>
+                <? if(isset($event->infophone)) { ?>
 		    <p>
   			For info call: <a href="<?=phoneURL($event->infophone)?>" class="phone"><?=$event->infophone?></a>
 		    </p>
                 <? } ?>
 
-                <? if($event->infourl) { ?>
+                <? if(isset($event->infourl)) { ?>
 		     <p>
 			Website: <a href="<?=$event->urlize?>" class="external" target="_new"><?=$event->infourl?></a>
 		     </p>

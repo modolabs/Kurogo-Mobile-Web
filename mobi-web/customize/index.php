@@ -21,7 +21,7 @@ if($page->delta == 'iphone') {
   $activemodules = getActiveModules();
 
   // Process the various possible actions
-  if($_REQUEST['action'] == 'swap') {
+  if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'swap') {
     $module_1 = $_REQUEST['module1'];
     $module_2 = $_REQUEST['module2'];
     $position_1 = intval($_REQUEST['position1']);
@@ -35,11 +35,11 @@ if($page->delta == 'iphone') {
     }
   }
 
-  if($_REQUEST['action'] == 'on') {
+  if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'on') {
     $activemodules[] = $_REQUEST['module'];
   }
 
-  if($_REQUEST['action'] == 'off') {
+  if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'off') {
     $module = $_REQUEST['module'];
     if(in_array($module, $activemodules)) {
       array_splice($activemodules, array_search($module, $activemodules), 1);
@@ -66,6 +66,7 @@ if($page->delta == 'iphone') {
   setActiveModules($activemodules);
 
   $menu = array();
+  $lastindex = count($modules)-1;
   foreach($modules as $index => $module) {
     
     $status = in_array($module, $activemodules) ? "on" : "off";
@@ -81,8 +82,10 @@ if($page->delta == 'iphone') {
       "status" => $status,
       "toggle_action" => $toggle_action,
       "toggle_url" => toggle_url($module, $toggle_action),
-      "swap_up_url" => swap_url($module, $index, $modules[$index-1], $index-1),
-      "swap_down_url" => swap_url($module, $index, $modules[$index+1], $index+1)
+      "swap_up_url" => ($index > 0) ? 
+      	swap_url($module, $index, $modules[$index-1], $index-1) : null,
+      "swap_down_url" => ($index < $lastindex) ? 
+      	swap_url($module, $index, $modules[$index+1], $index+1) : null
     );
   }
 
