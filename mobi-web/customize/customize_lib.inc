@@ -2,7 +2,7 @@
 
 function getModuleOrder() {
   if(!isset($_COOKIE["moduleorder"])) {
-    return Modules::$default_order;
+    return Modules::$primaryModules;
   } else {
     return explode(",", $_COOKIE["moduleorder"]);
   }
@@ -10,7 +10,7 @@ function getModuleOrder() {
 
 function getActiveModules() {
   if(!isset($_COOKIE["activemodules"])) {
-    return Modules::$default_order;
+    return Modules::$primaryModules;
   } elseif($_COOKIE["activemodules"]=="NONE") {
     return array();
   } else {

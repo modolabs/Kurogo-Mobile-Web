@@ -43,6 +43,17 @@
 </p>
 
 <p class="nav secondary">
+<? foreach(Modules::$secondaryModules as $index => $module) { 
+  $href = Modules::url($module, $page->certs);
+  $text = Modules::title($module);
+?>
+<a href="<?=$href?>"><?=$text?></a>
+<? if(Modules::subtitle($module)) { ?>
+  <span class="smallprint">(<?=Modules::subtitle($module)?>)</span>
+<? } ?>
+<br/>
+<? } ?>
+
 	<a href="../mobile-about/">About the <?=SITE_NAME?></a><br/>
         <a href="../customize/">Customize this Homescreen</a><br/>
         <? if (Modules::is_right_platform($page->platform, 'download')) { ?>

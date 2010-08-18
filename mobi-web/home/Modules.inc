@@ -2,7 +2,13 @@
 
 class Modules {
 
-  public static $default_order = array();
+  public static $primaryModules = array();
+
+  // non-customizable
+  public static $secondaryModules = array();
+
+  // TODO: create a Module class so we don't
+  // have to bother with so many array functions
 
   public static $module_data = Array(
     'people' => Array(
@@ -55,21 +61,26 @@ class Modules {
 
   // main function that initializes the module list for the phone
   public static function init($branch, $certs, $platform=NULL) {
-    if (!count(self::$default_order)) {
+    if (!count(self::$primaryModules)) {
 
       foreach (self::$module_data as $module => $data) {
-	// include if pass 3 criteria:
-	// if restricted, we have correct platform
-	// if require certs, we have certs
-	// if not regular module, we have grid layout
+
+	// if restricted, make sure we have correct platform
+	// if require certs, make sure we have certs
+
 	if ((!array_key_exists('restricted', $data) || in_array($platform, $data['restricted']))
-	    && (!array_key_exists('certs_required', $data) || $certs)
-	    && (!array_key_exists('extra', $data) || ($branch !== 'Basic'))) {
-	  self::$default_order[] = $module;
+	    && (!array_key_exists('certs_required', $data) || $certs))
+        {
+          if (!array_key_exists('extra', $data)) {
+            self::$primaryModules[] = $module;
+          } else {
+            self::$secondaryModules[] = $module;
+          }
 	}
+
       }
     }
-    return self::$default_order;
+    return self::$primaryModules;
   }
 
   public static function required($module) {
@@ -77,7 +88,12 @@ class Modules {
   }
   
   public static function add_required($modules) {
-    foreach(self::$default_order as $module) {
+    foreach(self::$primaryModules as $module) {
+      if(self::required($module) && !in_array($module, $modules)) {
+        $modules[] = $module;
+      }
+    }
+    foreach(self::$secondaryModules as $module) {
       if(self::required($module) && !in_array($module, $modules)) {
         $modules[] = $module;
       }
@@ -155,7 +171,7 @@ class Modules {
     $filtered = array();
 
     foreach($modules as $module) {
-      if(in_array($module, self::$default_order)) {
+      if(in_array($module, self::$primaryModules)) {
 	$filtered[] = $module;
       }
     }
@@ -166,7 +182,7 @@ class Modules {
     $new = array();    
 
     // add any modules not already in the list
-    foreach(self::$default_order as $module) {
+    foreach(self::$primaryModules as $module) {
       if(!in_array($module, $modules)) {
         $new[] = $module;
       }

@@ -22,8 +22,6 @@ $modules = Modules::refreshActive($old_modules, $modules);
 $modules = Modules::add_required($modules);
 setActiveModules($modules);
 
-$all_modules = Modules::$default_order;
-
 $page->prevent_caching('Basic');
 $page->prevent_caching('Touch');
 $page->cache();
