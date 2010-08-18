@@ -662,7 +662,8 @@ class CourseData {
             foreach($fc->field as $field) {
             $nm = explode(':', $field['name']);
             $nm_count = explode(':', $field['count']);
-                $schools[] = array('name'=> $nm[0], 'count' => $nm_count[0]);
+            $strShort = explode(':', $field['short_name']);
+                $schools[] = array('name'=> $nm[0], 'count' => $nm_count[0], 'name_short'=> $strShort[0]);
             }
         }
         $count_array = explode(':', $count);

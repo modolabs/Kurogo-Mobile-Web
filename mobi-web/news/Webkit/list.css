@@ -17,8 +17,7 @@ li.story {
 }
 
 .header {
-    padding-top: 0px;
-    padding: 0 5px;
+    padding: 5px;
 }
 
 .header button {
@@ -26,6 +25,11 @@ li.story {
 }
 .non-story a {
     background-image: none;
+}
+
+.newsinput  {
+	font-size: 89%;
+	width: 200px;
 }
 
 #search-form {
@@ -45,6 +49,11 @@ form {
 }
 
 .formlabel {
+	display: block;
+	float: left;
+	padding-right: 2px;
+	width: 60px;
 	color: #554c41;
-	font-size: 85%;
+	font-size: 89%;
+	line-height: 2em;
 }

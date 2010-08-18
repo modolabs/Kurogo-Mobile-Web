@@ -3,26 +3,26 @@ require_once "lib_constants.inc";
 require_once "ldap_config.php";
 require_once "LdapUtilities.php";
 
+$appError = 0;
+$appErrorMessage = "";
+// If there is an error during these functions, whether it is fatal or not, it should be logged to $appErrorMessages.
+// mit_search will then pass those error messages back to the client, along with the results.
+
 function mit_search($search)
 {
-    global $appError;
-    global $appErrorMessage;
-
+	global $appError;
+	global $appErrorMessage;
+		
     $query = standard_query($search);
 
-    if ($appError == 1)
-        return($query);
-    $results = do_query($query);
-
-    if ($appError == 1)
-	{
-		return wrap_error_for_JSON($results);
+    if ($appError != 1) {
+	    $results = do_query($query);	
+	    if ($appError != 1) {
+			$results = order_results($results, $search);
+		}
 	}
-	
-    return(order_results($results, $search));
-
+	return array(array("Results" => $results, "Message" => $appErrorMessage)); // The JSON serialization process needs an outer array to work.
 }
-
 
 function wrap_error_for_JSON($errorMessage)
 {
@@ -87,14 +87,16 @@ function email_query($search)
 
 function standard_query($search)
 {
-    global $appError;
-
+	global $appError;
+	global $appErrorMessage;
+	
     if (strpos($search, "@") != FALSE)
     {
         if (strpos($search, " ") != FALSE)
         {
             $appError = 1;
-            return(INVALID_EMAIL_ADDRESS);
+			$appErrorMessage = nonLDAPErrorMessage(INVALID_EMAIL_ADDRESS);
+            return;
         }
         $emailFilter = EMAIL_FILTER;
         $emailFilter = str_replace("%s", $search, $emailFilter);
@@ -115,8 +117,10 @@ function standard_query($search)
     if (($search == null) || (strlen($search) == 0))
     {
         $appError = 1;
-        return(INVALID_TELEPHONE_NUMBER);
+		$appErrorMessages = nonLDAPErrorMessage(INVALID_TELEPHONE_NUMBER);
+        return;
     }
+
     $telephoneFilter = TELEPHONE_FILTER;
     $telephoneFilter = str_replace("%s", $search, $telephoneFilter);
     $searchFilter = TELEPHONE_SEARCH_FILTER;
@@ -124,10 +128,15 @@ function standard_query($search)
     return($searchFilter);
 }
 
+// Returns an array of search results. Returns an empty array if there are no results.
+// Puts error messages in $appErrorMessages.
 function do_query($query, $search_results=array())
 {
-    global $appError;
-    
+	global $appError;
+	global $appErrorMessage;
+	
+    $ldapQueryResultMessage = "";
+
     try
     {
         $ds = ldap_connect(LDAP_SERVER);
@@ -151,18 +160,22 @@ function do_query($query, $search_results=array())
         {
             throw new Exception("");
         }
+        if ($ds) {
+            $appErrorMessage = generateErrorMessage($ds);
+		}
     }
     catch (Exception $e)
     {
         $appError = 1;
-        if($ds) {
-            $error_message = generateErrorMessage($ds);
-            if($error_message) {
-                return $error_message;
-            }
+        if ($ds) {
+			$appErrorMessage = generateErrorMessage($ds);
         }
-        return LDAP_SEARCH_ERROR;
+		else {
+			$appErrorMessage = nonLdapErrorMessage(LDAP_SEARCH_ERROR);
+		}
+        return array(); // Return empty result set.
     }
+    
     for ($i = 0; $i < $entries["count"]; $i++)
     {
         $entry = $entries[$i];
@@ -182,9 +195,9 @@ function do_query($query, $search_results=array())
             $search_results[id_key($entry)] = array_merge($old, $entry);
         }
     }
+	
     return $search_results;
 }
-
 
 /*********************************************
  *
@@ -193,24 +206,33 @@ function do_query($query, $search_results=array())
  *********************************************/
 function compare_people($person1, $person2)
 {
-    if($person1['surname'] != $person2['surname'])
+    if(get_person_propval($person1, 'sn') != get_person_propval($person2, 'sn'))
     {
-        return ($person1['surname'] < $person2['surname']) ? -1 : 1;
+        return ($person1['sn'] < $person2['sn']) ? -1 : 1;
     }
-    elseif($person1['givenname'] == $person2['givenname'])
+    elseif(get_person_propval($person1, 'givenname') == get_person_propval($person2, 'givenname'))
     {
         return 0;
     }
     else
     {
-        return ($person1['givenname'] < $person2['givenname']) ? -1 : 1;
+        return (get_person_propval($person1, 'givenname') <  get_person_propval($person2, 'givenname')) ? -1 : 1;
     }
 }
     
+function get_values_from_person($person, $propertyname)
+{
+	return $person[$propertyname]['Values'];
+}
+
+function get_person_propval($person, $propertyname)
+{
+	$values = get_values_from_person($person, $propertyname);
+	return $values[0];
+}
+
 function lookup_username($id)
 {
-    global $appError;
-
     if(strstr($id, '='))
     {
         //look up person by "dn" (distinct ldap name)
@@ -520,6 +542,22 @@ class RawQuery extends LdapQuery
 function ldap_die($message)
 {
     throw new DataServerException($message);
+}
+
+function nonLDAPErrorMessage($errorCode)
+{
+	$message = "Unknown error.";
+  	$errorCodes = array(
+   		// Errors not from LDAP but related to LDAP queries.
+		INVALID_EMAIL_ADDRESS => "Invalid email address.",
+		INVALID_TELEPHONE_NUMBER => "Invalid phone number.",
+		LDAP_SEARCH_ERROR => "There was a problem querying the server.",
+    );
+	if (isset($errorCodes[$errorCode]))
+	{
+		$message = $errorCodes[$errorCode];
+	}
+	return $message;
 }
 
 ?>
