@@ -172,6 +172,18 @@ class GazetteRSS extends RSS {
       }
 
       $item = $newdoc->importNode($item, TRUE);
+
+      // skip stories in multimedia category
+      $categories = $item->getElementsByTagName('category');
+      $skip = FALSE;
+      foreach ($categories as $category) {
+        if ($category->nodeValue == 'Multimedia') {
+	  $skip = TRUE;
+          break;
+        }
+      }
+      if ($skip) continue;
+
       if ($lastStoryId !== NULL) {
         $storyId = $item->getElementsByTagName('WPID')->item(0)->nodeValue;
 	  if ($storyId == $lastStoryId) {
