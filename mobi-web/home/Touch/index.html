@@ -29,16 +29,22 @@
 	</form>
 	</div>
 
-	<div id="homegrid">
+<div id="homegrid">
 <? foreach ($modules as $index => $module) { ?>
-		<div><a href="<?=Modules::url($module, $page->certs)?>"><img src="Touch/images/<?=$module?>.gif" width="44" height="44" alt="<?=Modules::title($module)?>" /><br/><?=Modules::wrap_title($module)?>
+	<div><a href="<?=Modules::url($module, $page->certs)?>"><img src="Touch/images/<?=$module?>.gif" width="44" height="44" alt="<?=Modules::title($module)?>" /><br/><?=Modules::wrap_title($module)?>
+<?   if(Modules::subtitle($module)) { ?>
+		<br/><span class="fineprint"><?=Modules::subtitle($module)?></span><?
+     } ?></a></div>
+<? } ?>
+	<div class="separator">
+<? foreach (Modules::$secondaryModules as $index => $module) { ?>
+		<div class="utility"><a href="<?=Modules::url($module, $page->certs)?>"><img src="Touch/images/<?=$module?>.gif" width="44" height="44" alt="<?=Modules::title($module)?>" /><br/><?=Modules::wrap_title($module)?>
 <?   if(Modules::subtitle($module)) { ?>
 			<br/><span class="fineprint"><?=Modules::subtitle($module)?></span><?
      } ?></a></div>
 <? } ?>
-<!--		<div><a href="../mobile-about/"><img src="Touch/images/about.gif" width="44" height="44" alt="About" /><br/>About this<br/>Site</a></div>
-		<div><a href="../customize/"><img src="Touch/images/preferences.gif" width="44" height="44" alt="Preferences" /><br/>Customize<br/>Home</a></div>-->
 	</div>
+</div>
 
 	<div id="footer">
 		&copy;2010 <?=INSTITUTION_NAME?>
