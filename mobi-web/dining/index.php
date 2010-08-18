@@ -13,7 +13,15 @@ function day_info($time, $offset=0) {
   );
 }
 
+function day_compare($day1, $day2) {
+    return ($day1['time'] - $day2['time'])/(24 * 60 * 60);
+}
+
 function dayURL($day, $tabs=NULL) {
+  if($day === NULL) {
+    return NULL;
+  }
+
   $url = "index.php?time={$day['time']}";
   if($tabs) {
       $url .= "&tab=" . $tabs->active();
@@ -25,10 +33,18 @@ $time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
 
 $day = date('Y-m-d', $time);
 
+$actual = day_info(time());
 $current = day_info($time);
 $next = day_info($time, 1);
 $prev = day_info($time, -1);
 
+// limit how far into the past/future we can see
+if(day_compare($next,$actual) >= 7) {
+    $next = NULL;
+}
+if(day_compare($actual, $prev) >= 7) {
+    $prev = NULL;
+}
 
 $food_items = array(
     "breakfast" => DINING_DATA::getDiningData($day, "BRK"),
