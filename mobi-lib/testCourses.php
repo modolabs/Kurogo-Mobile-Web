@@ -14,6 +14,12 @@ function compare_courseNumber($a, $b)
   return strnatcmp($a['name'], $b['name']);
 }
 
+function compare_schoolName($a, $b)
+{
+    //print($a['school_name_short']);
+    return strcmp($a['school_name_short'], $b['school_name_short']);
+}
+
 class MeetingTime {
   const SUN = 1;
   const MON = 2;
@@ -585,6 +591,8 @@ class CourseData {
                 }
 
     }
+    //print_r($self->schoolsToCoursesMap);
+    usort($self->schoolsToCoursesMap, 'compare_schoolName');
     return $self->schoolsToCoursesMap;
   }
 

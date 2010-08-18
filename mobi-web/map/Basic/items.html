@@ -1,5 +1,5 @@
 	<p class="focal results"> 
           <? foreach($results as $resultObj) { ?>
-              <a href="<?=detailURL($resultObj)?>"><?=$resultObj->value?></a><br/>
+              <a href="<?=detailURL($resultObj)?>"><?=titleFromResult($resultObj)?></a><br/>
           <? } ?> 
 	</p>

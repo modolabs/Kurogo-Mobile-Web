@@ -118,12 +118,21 @@ class ICalEvent extends ICalObject {
     return $this->range->get_start();
   }
 
+  public function set_start($str) {
+    $this->range->set_start($str);
+  }
+ 
+
   public function get_end() {
     if ($this->recur) {
       return $this->until;
     } else {
       return $this->range->get_end();
     }
+  }
+
+    public function set_end($ed) {
+    $this->range->set_end($ed);
   }
 
   public function get_url() {
@@ -538,9 +547,9 @@ class ICalendar extends ICalObject {
                 (($event->get_start() - 4*60*60 <= $day->get_start()) &&
                 ($event->get_end()  - 4*60*60 >= $day->get_end()))) {
 
-           $events[] = $event;
+                    $events[] = $event;
             
-        }
+                }
 
     }
     return $events;

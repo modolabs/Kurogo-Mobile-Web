@@ -281,6 +281,18 @@ class GazetteRSS extends RSS {
          $image = imagecreatefromstring($imageStr);
          if ($image) {
    
+           $oldWidth = imagesx($image);
+           $oldHeight = imagesy($image);
+
+           // don't waste time resizing 1 pixel images
+           // we need a signal so we know it's invalid the next time we
+           // try to access this image -- write a blank file
+           if ($oldWidth <= 1 && $oldHeight <= 1) {
+             $path = self::$imageWriter->getFullPath($imageName);
+             touch($path);
+             return FALSE;
+           }
+
            if ($newWidth === NULL && $newHeight === NULL) {
              // we don't know the image size so we just return it as unknown
              if (self::$imageWriter->writeImage($image, $imageName)) {
@@ -294,18 +306,6 @@ class GazetteRSS extends RSS {
              }
            }
      
-           $oldWidth = imagesx($image);
-           $oldHeight = imagesy($image);
-
-           // don't waste time resizing 1 pixel images
-           // we need a signal so we know it's invalid the next time we
-           // try to access this image -- write a blank file
-           if ($oldWidth <= 1 && $oldHeight <= 1) {
-             $path = self::$imageWriter->getFullPath($imageName);
-             touch($path);
-             return FALSE;
-           }
-
            $oldOriginX = 0;
            $oldOriginY = 0;
      
@@ -443,12 +443,14 @@ class GazetteRSS extends RSS {
   private static function getChildByTagName(DOMElement $xml, $tag) {
       $items = self::getChildrenWithTag($xml, $tag);
       if(count($items) == 1) {
-          return $items[0];
+          $result = $items[0];
       } else if(count($item) == 0) {
-          throw new Exception("No elements with $tag found");
+          $result = NULL;
       } else {
-          throw new Exception(count($items) . "with $tag found");
+          $result = $items[0];
+          error_log("multiple nodes with tag $tag found", 0);
       }
+      return $result;
   }
 
   private static function getChildValue(DOMElement $xml, $tag) {
@@ -469,16 +471,12 @@ class GazetteRSS extends RSS {
       return false;
   }
 
-  private static $gazette_placeholder = "http://news.harvard.edu/gazette/wp-content/themes/gazette/images/photo-placeholder.gif";
-
   private static function getImage($xml_item) {
       $image_xml = self::getChildByTagName($xml_item, "image");
 
       $url = self::getChildValue($image_xml,  "url");
-      if($url == self::$gazette_placeholder) {
-          // story has no thumbnail
-          return NULL;
-      }
+      if (!$url)
+        return NULL;
 
       return array(
           "title" => self::getChildValue($image_xml,  "title"),
