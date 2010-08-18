@@ -49,7 +49,7 @@ if ($tab == 'Map') {
     $name = str_replace('.', '', $name);
 
     // if we're looking at Dining, search the Dining collection not default
-    if ($_REQUEST['category'] == 'Dining') {
+    if (isset($_REQUEST['category']) && $_REQUEST['category'] == 'Dining') {
       $searchResults = ArcGISServer::search($name, 'Dining');
     } else {
       $searchResults = ArcGISServer::search($name);
