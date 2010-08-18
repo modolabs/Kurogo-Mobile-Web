@@ -15,6 +15,7 @@ define("NAME_SEARCH_FILTER", "(&(objectClass=person)%s)");
 define("UID_FILTER", "(uid=%s)");
 define("UID_SEARCH_FILTER", "(&(objectClass=person)%s)");
 
+
 // Scenarios:
 // 
 // A: 1 search term. Could be given name, surname, or email. Query for "hewitt":
@@ -55,15 +56,24 @@ define("UID_SEARCH_FILTER", "(&(objectClass=person)%s)");
 //    ordering of first, middle, then last name, and not trying out every 
 //    possible combination.
 
-function sanitizeSearch($search)
-{
-	// We allow letters, numbers, underscores, spaces, and single quotes (for
-	// names like "O'Reilly").  Everything else gets axed into a space.
-	return trim(preg_replace('/[^\w\'@.]/', " ", $search));
+// from http://php.net/manual/en/function.ldap-search.php
+function ldapEscape($str) 
+{ 
+    // see RFC2254 
+    // http://msdn.microsoft.com/en-us/library/ms675768(VS.85).aspx 
+    // http://www-03.ibm.com/systems/i/software/ldap/underdn.html        
+        
+    $metaChars = array('*', '(', ')', '\\', chr(0));
+    $quotedMetaChars = array(); 
+    foreach ($metaChars as $key => $value) {
+    	$quotedMetaChars[$key] = '\\'.str_pad(dechex(ord($value)), 2, '0'); 
+    }
+    $str = str_replace($metaChars, $quotedMetaChars, $str); 
+    return ($str); 
 }
 
 function queryForFirstLastName($firstName, $lastName) {
-    return "(&(givenName=$firstName*)(sn=$lastName*))";
+    return "(&(givenName=".ldapEscape($firstName)."*)(sn=".ldapEscape($lastName)."*))";
 }
 
 function queryForNames($names)
@@ -72,7 +82,7 @@ function queryForNames($names)
 
 	if ($nameCount == 1) {
 		// Just one name -- could be given or surname.
-		return "(|(givenName=$names[0]*)(sn=$names[0]*))";
+		return "(|(givenName=".ldapEscape($names[0])."*)(sn=".ldapEscape($names[0])."*))";
 	}
 	elseif ($nameCount == 2) {
 		// Two names, assume one is given, one is surname.  Assume that they 
@@ -100,7 +110,7 @@ function queryForNames($names)
 
 		// Kitchen sink -- just string them all together with wildcards
 		// and hope that it's a match on the common name.
-		$queries[] = "(cn=" . implode("*", $names) . "*)";
+		$queries[] = "(cn=" . implode("*", array_map("ldapEscape", $names)) . "*)";
 		
 		return "(|" . implode($queries) . ")";
 	}
@@ -108,13 +118,13 @@ function queryForNames($names)
 
 function queryForEmail($words)
 {
-	return "(mail=" . implode("*", $words) . "*)";
+	
+	return "(mail=" . implode("*", array_map("ldapEscape", $words)) . "*)";
 }
 
 function buildNameAndEmailLDAPQuery($search)
 {
-	$safeSearch = sanitizeSearch($search);
-	$words = preg_split("/\s+/", $safeSearch);
+	$words = preg_split("/\s+/", $search);
 	$query = "(|" . queryForNames($words) . queryForEmail($words) . ")";
 
 	// error_log("SAFE SEARCH: " . $safeSearch);
@@ -125,10 +135,20 @@ function buildNameAndEmailLDAPQuery($search)
     return($searchFilter);	
 }
 
+function buildEmailLDAPQuery($search) {
+  $emailFilter = str_replace("%s", ldapEscape($search), EMAIL_FILTER);
+  return str_replace("%s", $emailFilter, EMAIL_SEARCH_FILTER);	
+}
+
+function buildTelephoneQuery($search) {
+  $telephoneFilter = str_replace("%s", ldapEscape($search), TELEPHONE_FILTER);
+  return str_replace("%s", $telephoneFilter, TELEPHONE_SEARCH_FILTER);
+}
+
 // common ldap error codes
 define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 define("LDAP_PARTIAL_RESULTS", 0x09);
-define("LDAP_TIMELIME_EXCEEDED", 0x03);
+define("LDAP_TIMELIMIT_EXCEEDED", 0x03);
 
 function generateErrorMessage($ldap_resource) {
    $error_code = ldap_errno($ldap_resource);

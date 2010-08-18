@@ -12,7 +12,7 @@ $page->content_begin();
 	<div class="nonfocal">
 		<form method="get" action="<?=searchURL()?>">
 			<fieldset class="inputcombo emphasized">
-				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search campus map" <? if($query) { ?> value="<?=$query?>" <? } ?> />
+				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search campus map" <? if(isset($query)) { ?> value="<?=htmlspecialchars($query)?>" <? } ?> />
 				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
 			</fieldset>	
 		</form>

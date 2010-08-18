@@ -219,12 +219,12 @@ function isMinuteBeforeHours($minute, $meal_hours) {
 function stringToStartEndLimits($meal_hours) {
     // look for $meal_hours formatted as "starting 10:00pm"
     if(strpos($meal_hours, "starting") === 0) {
-        $parts = split(" ", $meal_hours);
+        $parts = explode(" ", $meal_hours);
         return array("start" => stringToMinutes($parts[1]));
     }
 
     // other possible formats "Noon-2:15pm", "11:30am-2:15pm", "7:30-10:00am"
-    $parts = split("-", $meal_hours);
+    $parts = explode("-", $meal_hours);
     $start = $parts[0];
     $end = $parts[1];
 

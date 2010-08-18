@@ -104,7 +104,7 @@ if (file_exists($cssfile)) { ?>
 	<div class="nonfocal">
 		<form method="get" action="./search.php">
 			<fieldset class="inputcombo emphasized">
-				<input class="forminput" type="text" id="filter" name="search_terms" placeholder="Search Harvard Mobile" value="<?=$searchTerms?>" />
+				<input class="forminput" type="text" id="filter" name="search_terms" placeholder="Search Harvard Mobile" value="<?=htmlspecialchars($searchTerms)?>" />
 				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
 			</fieldset>	
 		</form>

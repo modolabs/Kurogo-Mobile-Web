@@ -180,7 +180,7 @@ class Tabs {
   public function __construct($url, $param, $tabs) {
     $this->url = $url;
     $this->tabs = $tabs;
-    $this->active = $_REQUEST[$param];
+    $this->active = isset($_REQUEST[$param]) ? $_REQUEST[$param] : null;
     $this->param = $param;
   }
 
@@ -251,7 +251,7 @@ class ResultsContent {
     $this->template = $template;
     $this->module = $module;
     $this->extra_params = $extra_params;
-    $this->max_list_items = $page->max_list_items;
+    $this->max_list_items = isset($page->max_list_items) ? $page->max_list_items : NULL;
     $this->branch = $page->branch;
 	if ($showForm) {	
 		$this->form = new StandardForm($this->branch);

@@ -22,12 +22,12 @@ class TouchPage extends Page {
     );
 
     $attribs_file = WEBROOT . "/$this->branch/attribs-$this->platform.inc";
-    $this->viewport_device_width = $viewport_device_width;
+    $this->viewport_device_width = isset($viewport_device_width) ? $viewport_device_width : '0';
   }
 
   public function module($module) {
-    $this->title = Modules::$module_data['title'];
-    $this->header = Modules::$module_data['title'];
+    $this->title = Modules::$module_data[$module]['title'];
+    $this->header = Modules::$module_data[$module]['title'];
     $this->navbar_image = $module;
     $this->module = $module;
     return $this;
