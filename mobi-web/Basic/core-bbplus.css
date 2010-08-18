@@ -117,6 +117,7 @@ ul li {
 
 #header a {
 	text-decoration: none;
+	float: left;
 	color: #444;
 }
 
@@ -181,15 +182,6 @@ fieldset {
 
 .secondary a:hover {
 	text-decoration: underline;
-}
-
-.phonelabel {
-	color: #a00;
-	font-size: 100%;
-	background-image: url('../Basic/images/phone_icon.png');
-	background-repeat: no-repeat;
-	background-position: left;
-	padding-left: 20px;
 }
 
 .phonenumber {
