@@ -3,14 +3,14 @@
 		}
 		#homegrid {
 			margin: 0 auto;
-			padding: 0;
+			padding: 0 4px;
 			margin-left: 2px;
 			clear: both;
 		}
 		#homegrid div {
 			position: relative;
-			width: 79px;
-			height: 90px;
+			width: 103px;
+			height: 100px;
 			margin: 0;
 			padding: 0;
 			border: 0;
@@ -25,10 +25,11 @@
 			color: #333;
 			text-decoration: none;
 			-webkit-border-radius: 5px;
-			padding: 8px 6px;
+			padding: 8px 4px;
 		}
 		#homegrid a img {
-			margin-bottom: 1px
+			width: 70px;
+			height: 70px;
 		}
 		.intro {
 			margin-bottom: 0;
@@ -38,14 +39,10 @@
 			font-size: 10px;
 			color: #505659;
 		}
-		.homepage .pagetitle {
-			padding: 9px 5px;
-			text-align: center;
-		}
 		h1 {
 			font-size: 36px;
 			line-height: 36px;
-			margin: 18px 12px -6px 12px;
+			margin: 16px 12px -6px 12px;
 			color: #112;
 			text-align: center;
 		}
@@ -115,4 +112,25 @@
 			font-weight: bold;
 			background-image: url(Webkit/images/badge.png);
 			background-repeat: no-repeat;
+		}
+		form {
+			margin: 0 0 -10px 0;
+		}
+		#homegrid div.separator {
+			display: block;
+			width: 100%;
+			height: 10px;
+			clear:both;
+			margin: 0;
+			padding: 0;
+			float: none;
+		}
+		#homegrid div.utility {
+			width: 76px;
+			height: 90px;
+			font-size: 12px;
+		}
+		#homegrid div.utility a img {
+			width: 44px;
+			height: 44px;
 		}

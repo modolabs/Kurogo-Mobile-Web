@@ -19,14 +19,14 @@
             border-collapse: collapse;
             background-color: white;
             list-style-type: none; /* important to keep all drawing inside of element, or else animations become choppy */
-            line-height: 2em;
+            line-height: 30px;
             padding: 0;
         }
         #dragReorderList li input[type=checkbox] {
             font-size: 11px;
             width: 1.8em;
             height: 1.8em;
-            line-height: 2em;
+            line-height: 30px;
             margin: 0 1em 0 1em;
         }
         #dragReorderList li .required {
@@ -37,8 +37,8 @@
             width: 9.1em;
             margin: 0.35em 0;
             padding-left: 40px;
-            font-size: 16pt;
-            line-height: 1.3em;
+            font-size: 15pt;
+            line-height: 30px;
             /* display, width, overflow, text-overflow, and white-space combine to enable ellipsis truncation */
             overflow: hidden;
             text-overflow: ellipsis;
