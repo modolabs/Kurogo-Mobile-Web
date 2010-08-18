@@ -36,9 +36,51 @@ switch ($_REQUEST['command']) {
    $content = json_encode($result);
    break;
 
- case 'category':
-   require_once LIBDIR . '/ArcGISServer.php';
-   if ($category = $_REQUEST['id']) {
+ case 'search':
+   if (isset($_REQUEST['q'])) {
+
+     $searchTerms = $_REQUEST['q'];
+
+     if (isset($_REQUEST['loc'])) {
+  
+       $params = array(
+         'loc' => $_REQUEST['loc'],
+         'str' => $searchTerms,
+         );
+  
+       $query = http_build_query($params);
+       $content = file_get_contents(MAP_SEARCH_URL . '?' . $query);
+  
+     } else {
+
+       require_once LIBDIR . '/ArcGISServer.php';
+       if (isset($_REQUEST['category'])) {
+         $category = $_REQUEST['category'];
+         $json = ArcGISServer::search($_REQUEST['q'], $category);
+         if (count($json) <= 1) {
+           // if we're looking at a single result,
+           // see if we can get more comprehensive info from the main search
+           $moreJSON = ArcGISServer::search($_REQUEST['q']);
+           if (count($moreJSON->results) == 1) {
+             $result = $moreJSON->results[0];
+             if (count($json)) {
+               $attributes = $json->results[0]->attributes;
+               foreach ($attributes as $name => $value) {
+                 $result->attributes->{$name} = $value;
+               }
+             }
+             $json = $moreJSON;
+           }
+         }
+
+       } else {
+         $json = ArcGISServer::search($_REQUEST['q']);
+       }
+       $content = json_encode($json);
+     }
+   } elseif (isset($_REQUEST['category'])) {
+     require_once LIBDIR . '/ArcGISServer.php';
+     $category = $_REQUEST['category'];
      $collection = ArcGISServer::getCollection($category);
      $featurelist = $collection->getFeatureList();
      $results = array();
@@ -47,33 +89,6 @@ switch ($_REQUEST['command']) {
                                 array('displayName' => $featureId));
      }
      $content = json_encode($results);
-   }
-   break;
-
- case 'search':
-   if (isset($_REQUEST['q'])) {
-
-     if (isset($_REQUEST['loc'])) {
-  
-       $params = array(
-         'loc' => $_REQUEST['loc'],
-         'str' => $_REQUEST['q'],
-         );
-  
-       $query = http_build_query($params);
-       $content = file_get_contents(MAP_SEARCH_URL . '?' . $query);
-  
-     } else {
-       require_once LIBDIR . '/ArcGISServer.php';
-       if (isset($_REQUEST['category'])) {
-         $category = $_REQUEST['category'];
-         $json = ArcGISServer::search($_REQUEST['q'], $category);
-
-       } else {
-         $json = ArcGISServer::search($_REQUEST['q']);
-       }
-       $content = json_encode($json);
-     }
    }
    break;
 }
