@@ -16,15 +16,13 @@ $days = Array();
 
 foreach ($events as $event) {
   $dateTitle = formatDayTitleForAcademicEvents($event);
-
-  if (!array_key_exists($dateTitle, $days)) {
-    $days[$dateTitle] = Array();
-  }
   $summary = $event->get_summary();
-
   // bolden all-caps at the beginning of the string
   $summary = preg_replace('/^([^a-z]{2,})/', "<b>$1</b>", $summary, 1);
-  $days[$dateTitle][] = $summary;
+
+  if (!array_key_exists($summary, $days)) {
+    $days[$summary][] = $dateTitle;
+  }
 }
 
 $prev_yr = $year - 1;
