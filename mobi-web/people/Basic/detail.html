@@ -1,4 +1,5 @@
 <?php
+
 $page->title('Harvard People Directory: Detail')
      ->header('People Directory');
 
@@ -37,7 +38,7 @@ $item = new Item($person);
 
 $page->content_begin();
 ?>
-	<p class="nav">
+	<div class="focal">
         <?
           $item->display('name: ', 'cn', NULL, NULL);
           $item->display('title: ', 'title', NULL, NULL);
@@ -46,10 +47,10 @@ $page->content_begin();
           $item->display('phone: ', 'telephonenumber', "phoneHREF", 'phone');
           $item->display('fax: ', 'facsimiletelephonenumber', "phoneHREF", 'phone');
           $item->display('address: ', 'address');
-          $item->display('email: ', 'mail', "mailHREF");
-          $item->display('office: ', 'postaladdress', "officeURL");
+          $item->display('email: ', 'mail', "mailHREF", 'email');
+          $item->display('office: ', 'postaladdress', "officeURL", 'map');
         ?>
-	</p>
+	</div>
 
 <? 
 

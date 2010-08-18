@@ -6,7 +6,7 @@ require_once 'html2text.php';
 
 define('CATEGORY_QUERY_BASE', 'fq_dept_area_category=dept_area_category:"');
 define('TERM_QUERY','&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to+Dec+2010+(Fall+Term)"&');
-define('TERM', 'Fall2010');
+define('TERM', 'Fall 2010');
 define('SCHOOL_QUERY_BASE', '&fq_school_nm=school_nm:"');
 
 function compare_courseNumber($a, $b)
@@ -141,7 +141,7 @@ class MeetingTimes {
   public function toArray()
   {
     if (!$this->parseSucceeded())
-      return NULL;
+      return array();
     
     $serialized = array();
     foreach ($this->all() as $meetingTime) {
@@ -151,7 +151,7 @@ class MeetingTimes {
         $meetingTimeEntry["location"] = $meetingTime->locationText();
       }
       else {
-        $meetingTimeEntry["location"] = NULL;
+        $meetingTimeEntry["location"] = "";
       }
       $serialized[] = $meetingTimeEntry;
     }
@@ -521,7 +521,7 @@ class CourseData {
          $id = explode(':',$single_course['id']);
          $nm = explode(':', $single_course->course_number);
 
-         if (ctype_alpha(str_replace(' ', '', $nm[0]))) {
+         if (ctype_alpha(str_replace(' ', '', $nm[0])) || (substr($nm[0], 0, 1) == '0')) {
              $nm[0] = '0' .$nm[0];
          }
          

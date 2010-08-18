@@ -11,10 +11,12 @@ $page->content_begin();
 	> 
 
 	<p>
-		<strong>Search:</strong><br/>
+		<strong>Search:</strong><br class="bb"/>
 		<span class="inputcombo emphasized">
-			<input class="forminput" type="text" id="filter" name="filter" value="<?=htmlspecialchars($searchTerms)?>" />
-			<input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+		    <fieldset>
+			    <input class="forminput" type="text" id="filter" name="filter" value="<?=htmlspecialchars($searchTerms)?>" /> &nbsp;
+			    <input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+			</fieldset>
 		</span>	
 	</p>
 
@@ -34,6 +36,9 @@ $page->content_begin();
 
 $page->content_end(); 
 
-$page->extra_link("tel:16174951000", "Harvard directory service: 617-495-1000", "phone")
+$page->extra_link("tel:16174951000", "General directory <span class='smallprint'>(617-495-1000)</span>", "phone");
+$page->extra_link("tel:16174931000", "Student directory <span class='smallprint'>(617-495-1000)</span>", "phone");
+$page->extra_link("tel:16174955000", "Faculty/Staff directory <span class='smallprint'>(617-495-1000)</span>", "phone");
+
 
 ?>

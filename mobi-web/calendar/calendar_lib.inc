@@ -133,9 +133,9 @@ function formatDayTitle(ICalEvent $event) {
 }
 
 function formatDayTitleForAcademicEvents(ICalEvent $event) {
-  //$start = $event->get_start();
+  $start = $event->get_start();
   $end = $event->get_end();
-  $dateTitle = date('l F j', $end);
+  $dateTitle = date('l F j', $start) . " - " . date('l F j', $end);
 
   return $dateTitle;
 }
