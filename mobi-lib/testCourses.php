@@ -151,7 +151,7 @@ class MeetingTimes {
         $meetingTimeEntry["location"] = $meetingTime->locationText();
       }
       else {
-        $meetingTimeEntry["location"] = NULL;
+        $meetingTimeEntry["location"] = "";
       }
       $serialized[] = $meetingTimeEntry;
     }
