@@ -29,11 +29,13 @@ case 'term':
 case 'subjectInfo':
     $subjectId = urldecode($_REQUEST['id']);
     $data = CourseData::get_subject_details($subjectId);
-    if($data) {
-
-    } else {
+    if(!$data) {
       $data = array('error' => 'SubjectNotFound', 'message' => 'Courses could not find this subject');
     }
+    // If parsed_meeting_times is not NULL, then the iPhone can be smart about
+    // handling multiple locations and times.  Otherwise, we fall back on the
+    // old behavior of just assuming it's one location and one time being sent.
+    $data['parsed_meeting_times'] = $data['meeting_times']->toArray();
     break;
 
 case 'search':
