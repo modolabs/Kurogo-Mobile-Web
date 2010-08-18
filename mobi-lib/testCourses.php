@@ -145,9 +145,15 @@ class MeetingTimes {
     
     $serialized = array();
     foreach ($this->all() as $meetingTime) {
-      $serialized[] = array("days" => $meetingTime->daysText(),
-                            "time" => $meetingTime->timeText(),
-                            "location" => $meetingTime->locationText());
+      $meetingTimeEntry = array("days" => $meetingTime->daysText(),
+                                "time" => $meetingTime->timeText());
+      if ($meetingTime->isLocationKnown()) {
+        $serialized["location"] = $meetingTime->locationText();
+      }
+      else {
+        $serialized["location"] = NULL;
+      }
+      $serialized[] = $meetingTimeEntry;
     }
     
     return $serialized;
