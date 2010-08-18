@@ -184,15 +184,6 @@ fieldset {
 	text-decoration: underline;
 }
 
-.phonelabel {
-	color: #a00;
-	font-size: 100%;
-	background-image: url('../Basic/images/phone_icon.png');
-	background-repeat: no-repeat;
-	background-position: left;
-	padding-left: 20px;
-}
-
 .phonenumber {
 	color: #666;
 	font-size: 85%;
