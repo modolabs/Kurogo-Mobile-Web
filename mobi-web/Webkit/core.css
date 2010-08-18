@@ -171,7 +171,7 @@ fieldset {
 input, textarea, select {
 	color: #333;
 	font-size: 17px;
-	line-height: 1.2em;
+	line-height: 30px;
 }
 
 textarea {
@@ -187,7 +187,7 @@ select {
 	border: 1px solid #666;
 	position: absolute;
 	left: 0;
-	right: 36px;
+	right: 34px;
 	height: 30px;
 	padding: 4px 6px;
 	-webkit-appearance:textfield;
@@ -229,12 +229,12 @@ select {
 	-webkit-border-bottom-left-radius: 13px;	
 	-webkit-border-top-left-radius: 13px;	
 	padding: 6px 4px 8px 7px;
-	height: 22px;
+	height: 18px;
 }
 
 .emphasized .combobutton {
-	width: 40px;
-	height: 42px;
+	width: 38px;
+	height: 38px;
 }
 
 .searchlegend {
