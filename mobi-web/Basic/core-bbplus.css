@@ -583,7 +583,7 @@ fieldset {
 .phonelabel {
 	color: #a00;
 	font-size: 100%;
-	background-image: url('http://184.106.197.212/~jkang/mockup/people_files/phone_icon.png');
+	background-image: url('/basic/images/phone_icon.png');
 	background-repeat: no-repeat;
 	background-position: left;
 	padding-left: 20px;
