@@ -48,6 +48,7 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /var/www/html/download
 /var/www/html/e
 /var/www/html/error-page
+/var/www/html/favicon.ico
 /var/www/html/home
 /var/www/html/.htaccess
 /var/www/html/index.php
