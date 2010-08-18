@@ -14,7 +14,7 @@ Modules::init($page->branch, $page->certs, $page->platform);
 
 // iphone can customize without reloading
 if($page->delta == 'iphone') {
-  $modules = Modules::$default_order;
+  $modules = Modules::$primaryModules;
 
 } else {
   $modules = getModuleOrder();

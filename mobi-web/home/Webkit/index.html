@@ -112,20 +112,32 @@ if (file_exists($cssfile)) { ?>
 
 	
 	<div id="homegrid">
-               <? foreach($all_modules as $module) { ?>
+               <? foreach(Modules::$primaryModules as $module) { ?>
                      <div id="<?=$module?>">
                          <a href="<?=Modules::url($module, $page->certs)?>">
-                              <img src="Webkit/images/<?=$module?>.png" width="50" height="50" alt="<?=Modules::title($module)?>" />
+                              <img src="Webkit/images/<?=$module?>.png" alt="<?=Modules::title($module)?>" />
                               <br/><?=Modules::title($module)?>
                               <? if(Modules::subtitle($module)) { ?>
                                    <br/><span class="fineprint"><?=Modules::subtitle($module)?></span>
-                              <? } ?>
-			      <? if ($module == 'mobile-about' && $whats_new_count) { ?>
-			          <span class="badge"><?=$whats_new_count?></span>
-			      <? } ?> </a>
+                              <? } ?> </a>
                      </div>
                <? } ?>
-	
+               <div class="separator">&nbsp;</div>
+               <? foreach(Modules::$secondaryModules as $module) { ?>
+                      <div id="<?=$module?>" class="utility">
+                           <a href="<?=Modules::url($module, $page->certs)?>">
+                                <img src="Webkit/images/<?=$module?>.png" alt="<?=Modules::title($module)?>" />
+                                <br/><?=Modules::title($module)?>
+                                <? if(Modules::subtitle($module)) { ?>
+                                     <br/><span class="fineprint"><?=Modules::subtitle($module)?></span>
+                                <? } ?>
+               	         <? if ($module == 'mobile-about' && $whats_new_count) { ?>
+               	             <span class="badge"><?=$whats_new_count?></span>
+                                <? } ?> </a>
+                      </div>
+               <? } ?>
+               </div>
+  	</div>
 </div>
 
 <div id="footer">
