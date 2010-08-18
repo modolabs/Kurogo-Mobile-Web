@@ -43,7 +43,7 @@ class Modules {
     //  'title' => 'harvard.edu'
     // ),
     'customize' => Array(
-      'title' => 'Settings',
+      'title' => 'Customize Home',
       'extra' => TRUE,
       ),
     'mobile-about' => Array(
