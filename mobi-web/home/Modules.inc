@@ -6,16 +6,16 @@ class Modules {
 
   public static $module_data = Array(
     'people' => Array(
-      'title' => 'People Directory',
+      'title' => 'People',
       ),
     'map' => Array(
-      'title' => 'Campus Map',
+      'title' => 'Map',
       ),
     //'shuttleschedule' => Array(
     //  'title' => 'Shuttle Schedule',
     //  ),
     'calendar' => Array(
-      'title' => 'Calendar',
+      'title' => 'Events',
       ),
     'stellar' => Array(
       'title' => 'Courses',
@@ -31,15 +31,18 @@ class Modules {
     //  ),
     'links' => Array(
       'title' => 'Schools',
-      'subtitle' => 'webpage links',
+      // 'subtitle' => 'webpage links',
       ),
+    //'link' => Array(
+    //  'title' => 'harvard.edu'
+    // ),
     'customize' => Array(
-      'title' => 'Customize Home',
+      'title' => 'Settings',
       'extra' => TRUE,
       'required' => TRUE,
       ),
     'mobile-about' => Array(
-      'title' => 'About this site',
+      'title' => 'About',
       'extra' => TRUE,
       'required' => TRUE,
       ),
