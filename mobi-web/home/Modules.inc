@@ -5,44 +5,43 @@ class Modules {
   public static $default_order = array();
 
   public static $module_data = Array(
-    'news' => Array(
-      'title' => 'News',
-      ),
-    'people' => Array(
-      'title' => 'People Directory',
-      ),
+  	'people' => Array(
+    	'title' => 'People',
+		),
     'map' => Array(
-      'title' => 'Campus Map',
-      ),
+      	'title' => 'Map',
+		),
+  	'calendar' => Array(
+		'title' => 'Events',
+		),
+	'stellar' => Array(
+		'title' => 'Courses',
+		),
+	'news' => Array(
+		'title' => 'News',
+		),
     //'shuttleschedule' => Array(
     //  'title' => 'Shuttle Schedule',
     //  ),
-    'calendar' => Array(
-      'title' => 'Calendar',
-      ),
-    'stellar' => Array(
-      'title' => 'Courses',
-      ),
     //'emergency' => Array(
     //  'title' => 'Emergency Info',
     //  ),
-    'links' => Array(
-      'title' => 'Schools',
-      'subtitle' => 'webpage links',
-      ),
   	'dining' => Array(
-      'title' => 'Student Dining',
-      ),
-    'mobile-about' => Array(
-      'title' => 'About this site',
-      'extra' => TRUE,
-      'required' => TRUE,
-      ),
+		'title' => 'Student Dining',
+		),
+	'links' => Array(
+		'title' => 'Schools',
+		),
     'customize' => Array(
-      'title' => 'Customize Home',
-      'extra' => TRUE,
-      'required' => TRUE,
-      ),
+		'title' => 'Customize Home',
+		'extra' => TRUE,
+		'required' => TRUE,
+		),
+    'mobile-about' => Array(
+		'title' => 'About this site',
+		'extra' => TRUE,
+		'required' => TRUE,
+		),
     //'download' => Array(
     //  'title' => 'Download',
     //  'extra' => TRUE,
