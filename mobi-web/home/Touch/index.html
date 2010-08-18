@@ -36,6 +36,8 @@
 			<br/><span class="fineprint"><?=Modules::subtitle($module)?></span><?
      } ?></a></div>
 <? } ?>
+	</div>
+	<div id="homegrid-secondary">
 <? foreach (Modules::$secondaryModules as $index => $module) { ?>
 		<div><a href="<?=Modules::url($module, $page->certs)?>"><img src="Touch/images/<?=$module?>.gif" width="44" height="44" alt="<?=Modules::title($module)?>" /><br/><?=Modules::wrap_title($module)?>
 <?   if(Modules::subtitle($module)) { ?>

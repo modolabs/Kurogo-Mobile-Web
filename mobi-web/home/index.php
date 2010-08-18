@@ -17,7 +17,7 @@ $old_modules = getModuleOrder();
 $moduleorder = Modules::refreshAll($old_modules);
 setModuleOrder($moduleorder);
 
-$modules = getActiveModules($page->branch);
+$modules = getActiveModules();
 $modules = Modules::refreshActive($old_modules, $modules);
 $modules = Modules::add_required($modules);
 setActiveModules($modules);

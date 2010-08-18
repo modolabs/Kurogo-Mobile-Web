@@ -45,12 +45,10 @@ class Modules {
     'customize' => Array(
       'title' => 'Settings',
       'extra' => TRUE,
-      'required' => TRUE,
       ),
     'mobile-about' => Array(
       'title' => 'About',
       'extra' => TRUE,
-      'required' => TRUE,
       ),
     //'download' => Array(
     //  'title' => 'Download',
@@ -89,11 +87,6 @@ class Modules {
   
   public static function add_required($modules) {
     foreach(self::$primaryModules as $module) {
-      if(self::required($module) && !in_array($module, $modules)) {
-        $modules[] = $module;
-      }
-    }
-    foreach(self::$secondaryModules as $module) {
       if(self::required($module) && !in_array($module, $modules)) {
         $modules[] = $module;
       }
