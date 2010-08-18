@@ -25,22 +25,20 @@ class BasicPage extends Page {
     $this->viewport_content = $viewport_content;
     $this->meta_mobile_optimized = $meta_mobile_optimized;
 
-    // get font size from cookie
-    if (isset($_COOKIE['layout'])) { // this should already be set by Page
-      $params = explode(',', $_COOKIE['layout']);
-      if (count($params) > 3) {
-        $this->fontsize = $params[3];
-      }
-    }
-    $cookie_params = "$this->branch,$this->platform,$this->certs";
-
     // get font size from selection (override cookie value)
     if (isset($_REQUEST['font'])) {
       $fontsize = $_REQUEST['font'];
-      $cookie_params .= ",$fontsize";
-      setcookie('layout', $cookie_params, time() + $ini['LAYOUT_COOKIE_LIFESPAN'], '/');
-      $this->fontsize = $fontsize;
+      setcookie('fontsize', $fontsize, time() + $ini['LAYOUT_COOKIE_LIFESPAN'], '/');      
+//      echo "Set cookie to fontsize: $fontsize<br>";
+      $this->fontsize = $fontsize;      
+            
+    } else if (isset($_COOKIE['fontsize'])) { 
+                
+        $this->fontsize = $_COOKIE['fontsize'];
+//        echo "Using fontsize from cookie: $this->fontsize<br>";        
     }
+    $cookie_params = "$this->branch,$this->platform,$this->certs";
+
 
     switch ($this->fontsize) {
     case 'small':
