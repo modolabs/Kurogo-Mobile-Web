@@ -6,7 +6,7 @@ require_once 'html2text.php';
 
 define('CATEGORY_QUERY_BASE', 'fq_dept_area_category=dept_area_category:"');
 define('TERM_QUERY','&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to+Dec+2010+(Fall+Term)"&');
-define('TERM', 'Fall2010');
+define('TERM', 'Fall 2010');
 define('SCHOOL_QUERY_BASE', '&fq_school_nm=school_nm:"');
 
 function compare_courseNumber($a, $b)
@@ -90,6 +90,10 @@ class MeetingTime {
     return strtolower($text);
   }
   
+  public function daysAndTimeText() {
+      return $this->daysText() . " " . $this->timeText();
+  }
+  
   public function locationText() {
     return ($this->location == null) ? "TBA" : $this->location;
   }
@@ -131,6 +135,29 @@ class MeetingTimes {
   public function rawTimesText() { return $this->rawTimesText; }
   public function rawLocationsText() { return $this->rawLocationsText; }
   public function parseSucceeded() { return $this->parseSucceeded; }
+  
+  // Converts to something we can serialize in JSON, an array of time/location
+  // pairs.
+  public function toArray()
+  {
+    if (!$this->parseSucceeded())
+      return NULL;
+    
+    $serialized = array();
+    foreach ($this->all() as $meetingTime) {
+      $meetingTimeEntry = array("days" => $meetingTime->daysText(),
+                                "time" => $meetingTime->timeText());
+      if ($meetingTime->isLocationKnown()) {
+        $meetingTimeEntry["location"] = $meetingTime->locationText();
+      }
+      else {
+        $meetingTimeEntry["location"] = NULL;
+      }
+      $serialized[] = $meetingTimeEntry;
+    }
+    
+    return $serialized;
+  }
   
   private function parse() {
     $rawTimesArr = explode(";", $this->rawTimesText);
@@ -360,6 +387,7 @@ class CourseData {
     //$subject_fields['title'] = $titl[0];
     $desc = explode(':', $single_course->description);
     $len = count($desc);
+
     for ($ind = 0; $ind < $len; $ind++) {
       if ($ind == $len-1)
         $subject_fields['description'] = $subject_fields['description'] .$desc[$ind];

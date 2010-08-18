@@ -13,8 +13,10 @@ $page->content_begin();
 	<p>
 		<strong>Search:</strong><br/>
 		<span class="inputcombo emphasized">
-			<input class="forminput" type="text" id="filter" name="filter" value="<?=htmlspecialchars($searchTerms)?>" />
-			<input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+		    <fieldset>
+			    <input class="forminput" type="text" id="filter" name="filter" value="<?=htmlspecialchars($searchTerms)?>" /> &nbsp;
+			    <input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+			</fieldset>
 		</span>	
 	</p>
 
