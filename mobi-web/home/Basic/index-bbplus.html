@@ -32,14 +32,6 @@
 <? } ?>
 </div>
 
-<div id="homegrid-secondary">
-<? foreach (Modules::$secondaryModules as $index => $module) { ?>
-<div><a href="<?=Modules::url($module, $page->certs)?>"><?=$page->img_tag($module, 'png', Modules::title($module))?>
-<br/><?=Modules::wrap_title($module)?></a>
-</div>
-<? } ?>
-</div>
-
 <div id="footer">
 	&copy;2010 <?=INSTITUTION_NAME?>
 </div>
