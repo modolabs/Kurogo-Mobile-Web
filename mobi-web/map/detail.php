@@ -14,10 +14,7 @@ $detailBlacklist = array('Root', 'Shape', 'PHOTO_FILE', 'OBJECTID', 'FID', 'BL_I
 $name = $_REQUEST['selectvalues'];
 
 $details = $_REQUEST['info'];
-if (!isset($_REQUEST['tab']))
-  $_REQUEST['tab'] = 'Map';
-
-$tab = $_REQUEST['tab'];
+$tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'Map';
 
 if ($tab == 'Map') {
   require_once LIBDIR . '/WMSServer.php';

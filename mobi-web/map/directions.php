@@ -93,7 +93,7 @@ function directionsURL($link) {
   return "directions.php?page=$link";
 }
 
-if($_REQUEST['page']) {
+if(isset($_REQUEST['page'], $directions[$_REQUEST['page']])) {
   $info = $directions[ $_REQUEST['page'] ];
   require "$page->branch/direction.html";
 } else {
