@@ -148,10 +148,10 @@ class MeetingTimes {
       $meetingTimeEntry = array("days" => $meetingTime->daysText(),
                                 "time" => $meetingTime->timeText());
       if ($meetingTime->isLocationKnown()) {
-        $serialized["location"] = $meetingTime->locationText();
+        $meetingTimeEntry["location"] = $meetingTime->locationText();
       }
       else {
-        $serialized["location"] = NULL;
+        $meetingTimeEntry["location"] = NULL;
       }
       $serialized[] = $meetingTimeEntry;
     }
