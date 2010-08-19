@@ -15,20 +15,14 @@ class Item {
   public function display($label, $field, $href=NULL, $class=NULL)
   {
     foreach($this->person->getField($field) as $value) {
-      if ($this->first) {
-        $this->first = False;
-      } else {
-        echo '<br />';
-      }
-
       $formatted_value = $value;
       if ($href !== NULL) {
-        $formatted_value = '<a href="' . $href($value) . '" class="' . $class . '">'
+        $formatted_value = '<a href="' . $href($value) . '" class="action ' . $class . '">'
                . str_replace('$', '<br/>', $value) . '</a>';
       }
       ?>
-      <span class="label"><?=$label?></span>
-      <span class="value"><?=$formatted_value?></span>
+      <tr valign="top"><td><span class="dllabel"><?=$label?></span></td>
+      <td><span class="value"><?=$formatted_value?></span></tr>
       <?
     }
   }
@@ -39,6 +33,7 @@ $item = new Item($person);
 $page->content_begin();
 ?>
 	<div class="focal">
+		<table class="dl" cellpadding="0" cellspacing="0" border="0" style="margin: 0; padding: 0">
         <?
           $item->display('name: ', 'cn', NULL, NULL);
           $item->display('title: ', 'title', NULL, NULL);
@@ -50,11 +45,13 @@ $page->content_begin();
           $item->display('email: ', 'mail', "mailHREF", 'email');
           $item->display('office: ', 'postaladdress', "officeURL", 'map');
         ?>
+	</table>
 	</div>
+	
 
 <? 
 
 $page->content_end(); 
-$page->nav_link("index.php", "People Directory Home");
+$page->nav_link("index.php", "People Directory");
 
 ?>
