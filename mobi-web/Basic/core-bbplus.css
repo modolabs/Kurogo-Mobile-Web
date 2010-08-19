@@ -410,22 +410,42 @@ span.icon {
 
 .phone {
 	background-image: url(../Webkit/images/action-phone.png);
+	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
 }
 
 .email {
 	background-image: url(../Webkit/images/action-email.png);
+	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
 }
 
 .map {
 	background-image: url(../Webkit/images/action-map.png);
+	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
 }
 
 .external {
 	background-image: url(../Webkit/images/action-external.png);
+	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
 }
 
 .people {
 	background-image: url(../Webkit/images/action-people.png);
+	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
 }
 
 .action:hover {

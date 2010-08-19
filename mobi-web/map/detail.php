@@ -33,7 +33,7 @@ if ($tab == 'Map') {
      break;
    case 'Basic':
      if ($page->platform == 'bbplus') {
-       $imageWidth = 440; $imageHeight = 280;
+       $imageWidth = 420; $imageHeight = 280;
      } else {
        $imageWidth = 200; $imageHeight = 200;
      }
