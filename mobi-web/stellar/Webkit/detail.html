@@ -37,11 +37,9 @@ $page->content_begin();
     <h2><?=$class['name']?>: <?=className($class)?></h2>
     <ul id="tabs">
     <? if (!$no_stellar_site) { ?>
-      <li class="active"><a href="#scrolldown" onclick="showTab('announcetab',this)">News</a></li>
-      <li><a href="#scrolldown" onclick="showTab('infotab',this)">Info</a></li>
+      <li class="active"><a href="#scrolldown" onclick="showTab('infotab',this)">Info</a></li>
       <li><a href="#scrolldown" onclick="showTab('instructortab',this)">Staff</a></li>
     <? } else { ?>
-      <li class="greyedout">News</li>
       <li class="active">Info</li>
       <li class="greyedout">Staff</li>
     <? } ?>
@@ -103,5 +101,5 @@ $page->content_begin();
   </div> <!-- class="focal shaded" -->
 <?
 $page->content_end();
-$page->footer_script('showTab("announcetab");')
+$page->footer_script('showTab("infotab");')
 ?>
