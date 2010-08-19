@@ -60,9 +60,11 @@ class ArcGISServer {
       $searchFields = $collection->getDefaultSearchFields();
     }
 
+    $searchText = strtoupper(str_replace('.', '', $searchText));
+
     $queryBase = $collection->url . '/find?';
     $query = http_build_query(array(
-      'searchText'     => strtoupper($searchText),
+      'searchText'     => $searchText,
       'searchFields'   => $searchFields,
       'sr'             => '', // i hope this means use the default
       'layers'         => 0,
