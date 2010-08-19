@@ -21,7 +21,7 @@ case 'subjectList':
         }
     }
     break;
- 
+    
 case 'term':
     $data = array('term' => CourseData::get_term());
     break;
