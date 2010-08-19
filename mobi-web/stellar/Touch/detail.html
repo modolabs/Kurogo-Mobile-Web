@@ -18,6 +18,18 @@ $page->content_begin();
 		</div>
 	</div> <!-- class="shaded" -->
 
+        <?     if((strlen($class['meeting_times']) == 0) && (strlen($class['description']) == 0)
+                        && (strlen($class['preReq']) == 0)
+                        && (strlen($class['credits']) == 0)
+                        && (strlen($class['cross_reg']) == 0)
+                        && (strlen($class['exam_group']) == 0)
+                        && (strlen($class['department']) == 0)
+                        && (strlen($class['school']) == 0)
+                        && ((count($class['staff']['instructors'])) == 0)){ ?>
+
+                <p No detailed information to display </p>
+
+                <?} ?>
 	<div class="tabbody nopad">
 		<a name="scrolldown"> </a>
 		<ul class="results">
