@@ -16,8 +16,7 @@ function compare_courseNumber($a, $b)
 
 function compare_schoolName($a, $b)
 {
-    //print($a['school_name_short']);
-    return strcmp($a['school_name_short'], $b['school_name_short']);
+    return strcmp($a->school_name_short, $b->school_name_short);
 }
 
 class MeetingTime {
@@ -561,7 +560,10 @@ class CourseData {
       else {
           self::condenseXMLFileForCoursesAndWrite(STELLAR_BASE_URL .TERM_QUERY, $filenm);
       }
-      return json_decode(file_get_contents($filenm));
+      $schoolsAndCourses = json_decode(file_get_contents($filenm));
+      usort($schoolsAndCourses, "compare_schoolName");
+      
+      return $schoolsAndCourses;
   }
 
 
