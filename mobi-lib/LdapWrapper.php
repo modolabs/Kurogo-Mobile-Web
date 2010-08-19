@@ -179,10 +179,6 @@ class LdapWrapper {
     if (!$sr) {
         if($ds) {
             $this->errorMsg = generateErrorMessage($ds);
-            if(!$this->errorMsg) {
-                // failed to generate message (use a generic error message)
-                $this->errorMsg = LDAP_SEARCH_ERROR;
-            }
         }
       return FALSE;
     }
