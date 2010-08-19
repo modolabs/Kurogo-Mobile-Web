@@ -788,6 +788,7 @@ class CourseData {
       $urlString = STELLAR_BASE_URL .$courseName .$schoolName .$term .'q="' .$terms .'"&'  . $sorting_params .$queryAddition;
       $xml = file_get_contents($urlString);
 
+
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
       throw new DataServerException('COULD NOT GET XML');
@@ -813,6 +814,15 @@ class CourseData {
          }
          //$subject_fields['title'] = $titl[0];
          $subject_fields['term'] = TERM;
+
+         $temp = self::get_schoolsAndCourses();
+          foreach($temp as $schoolsMapping) {
+              //print_r($schoolsMapping);
+
+              if ( $schoolsMapping->school_name == $school[0]) {
+                  $subject_fields['short_name'] = $schoolsMapping->school_name_short;
+              }
+        }
 
          $subject_array[] = $subject_fields;
      }
