@@ -56,12 +56,12 @@ $page->content_begin();
                         echo("<a class=\"map\" href=\"" . mapURL($meetingTime->locationText()) . "\">" .
                               $meetingTime->daysText() . " " . $meetingTime->timeText() .
                               " (" . $meetingTime->locationText() . ")</a>");
-                     }
-                     else {
+                    }
+                    else {
                          echo($meetingTime->daysText() . " " . $meetingTime->timeText() .
                               " (" . $meetingTime->locationText() . ")");
-                      }
-                      echo("</li>");
+                    }
+                    echo("</li>");
                 }
             }
             else {
