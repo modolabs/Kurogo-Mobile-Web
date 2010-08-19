@@ -24,11 +24,12 @@
 </form>
 
 <div id="homegrid">
-<? foreach (Modules::$primaryModules as $module) { ?>
+<? foreach ($modules as $index => $module) { ?>
 <div><a href="<?=Modules::url($module, $page->certs)?>"><?=$page->img_tag($module, 'png', Modules::title($module))?>
 <br/><?=Modules::wrap_title($module)?></a>
 </div>
 <? } ?>
+
 <? foreach(Modules::$secondaryModules as $module) { ?>
   <div><a href="<?=Modules::url($module, $page->certs)?>"><?=$page->img_tag($module, 'png', Modules::title($module))?>
   <br/><?=Modules::wrap_title($module)?></a>
