@@ -9,7 +9,7 @@ $displayFields = array(
   'givenname' => 'givenname',
   'cn' => 'name',
   'title' => 'title',
-  'unit' => 'unit',
+  'ou' => 'unit',
   'description' => 'description',
   'uid' => 'id',
   'telephonenumber' => 'phone',
@@ -40,6 +40,7 @@ switch ($_REQUEST['command']) {
         $results = array();
         foreach ($people as $person) {
           $result = array();
+	  $result['uid'] = $person->getId();
           foreach ($displayFields as $ldapField => $displayField) {
             $value = $person->getField($ldapField);
             if ($value) {
