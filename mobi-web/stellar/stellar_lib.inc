@@ -60,7 +60,8 @@ function getMyStellar() {
   if(!isset($_COOKIE["mystellar"])) {
     $allTags = array();
   } else {
-    $term = CourseData::get_term();
+    $termAndYear = explode(" ",CourseData::get_term());
+    $term = $termAndYear[0];
     $allTags = explode(",", $_COOKIE["mystellar"]);
     natsort($allTags);
   }

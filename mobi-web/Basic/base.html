@@ -16,6 +16,7 @@
 </head>
 
 <body>
+<a name="top"></a>
 
 <? // conditional header for bbplus -- need to clean this up
 
@@ -47,28 +48,38 @@ if ($this->platform == 'bbplus') { ?>
         <? } ?>
       </p>
     <? } ?>      
-   
-    <? if($help_on) { ?>
-       <p class="secondary">
-          <? foreach($help_links as $link) {
-               $class_text = $link['class'] ? 'class="' . $link['class'] . '"' : ""; 
-               $extra = $link['phone'] ? " <span class=\"smallprint\">({$link['phone']})</span>" : ""; ?>
-               <a href="<?=$link['url']?>" <?=$class_text?>><?=$link['text']?></a><?=$extra?><br/>
-          <? } ?>
-             <a href="help.php"><?=$header?> Help</a>
-          </p>
-     <? } ?>
-
-    <p class="bottomnav">
-       <? $this->reset_access_key();
-          echo $this->link_access_key('../home', SITE_NAME . ' Home'); ?>
-       <br />
-       <? foreach($bottom_nav_links as $index => $link) { ?>
-            <?=$this->link_access_key($link['url'], $link['text'])?>
-            <br />
-       <? } ?>
-    </p>
 </div>
+
+<div class="nonfocal">
+   <? if($help_on) { ?>
+      <p class="secondary">
+         <? foreach($help_links as $link) {
+              $class_text = $link['class'] ? 'class="' . $link['class'] . '"' : ""; 
+              $extra = $link['phone'] ? " <span class=\"smallprint\">({$link['phone']})</span>" : ""; ?>
+              <a href="<?=$link['url']?>" <?=$class_text?>><?=$link['text']?></a><?=$extra?><br/>
+         <? } ?>
+            <a href="help.php"><?=$header?> Help</a>
+         </p>
+    <? } ?>
+
+<p class="bottomnav">
+	<a href="#top">Back to top</a>
+	<? if ($this->platform == 'bbplus') { ?>
+		&nbsp; | &nbsp;
+	<? } else { ?>
+       <br />
+	<? } ?>
+   <? $this->reset_access_key();
+      echo $this->link_access_key('../home', SITE_NAME . ' Home'); ?>
+   <? foreach($bottom_nav_links as $index => $link) { ?>
+	<? if ($this->platform == 'bbplus') { ?>
+		&nbsp; | &nbsp;
+	<? } else { ?>
+       <br />
+	<? } ?>
+        <?=$this->link_access_key($link['url'], $link['text'])?>
+   <? } ?>
+</p>
 
 <p class="fontsize">
 Font size: <?=$this->font_selector()?>
@@ -76,8 +87,8 @@ Font size: <?=$this->font_selector()?>
 
 <p class="bb"> </p>
 <p id="footer">
-	&copy;2010 <?=INSTITUTION_NAME?>
+	<?=COPYRIGHT_NOTICE?>
 </p>
-
+</div>
 </body>
 </html>

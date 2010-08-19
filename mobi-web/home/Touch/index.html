@@ -22,7 +22,7 @@
 
 	<div class="nonfocal">
 	<form method="get" action="./search.php">
-	<h3>Search Harvard Mobile:</h3>
+	<h3>Search Harvard mobile:</h3>
 	<table cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr ><td width="70%"><input type="text" id="query" name="search_terms" size="14" class="forminput" value=""/></td><td width="30%"><input type="submit" value="Search" class="submitbutton" /></td></tr></table>
 	<input id="type" name="type" type="hidden" value="name" />
 	<input id="group" name="group" type="hidden" value="*" />
@@ -36,12 +36,25 @@
 			<br/><span class="fineprint"><?=Modules::subtitle($module)?></span><?
      } ?></a></div>
 <? } ?>
-<!--		<div><a href="../mobile-about/"><img src="Touch/images/about.gif" width="44" height="44" alt="About" /><br/>About this<br/>Site</a></div>
-		<div><a href="../customize/"><img src="Touch/images/preferences.gif" width="44" height="44" alt="Preferences" /><br/>Customize<br/>Home</a></div>-->
+<div class="separator">&nbsp;</div>
+<? foreach(Modules::$secondaryModules as $module) { ?>
+       <div id="<?=$module?>" class="utility">
+            <a href="<?=Modules::url($module, $page->certs)?>">
+                 <img src="Touch/images/<?=$module?>.gif" width="32" height="32" alt="<?=Modules::title($module)?>" />
+                 <br/><?=Modules::title($module)?>
+                 <? if(Modules::subtitle($module)) { ?>
+                      <br/><span class="fineprint"><?=Modules::subtitle($module)?></span>
+                 <? } ?>
+	         <? if ($module == 'mobile-about' && $whats_new_count) { ?>
+	             <span class="badge"><?=$whats_new_count?></span>
+                 <? } ?> </a>
+       </div>
+<? } ?>
+</div>
 	</div>
 
 	<div id="footer">
-		&copy;2010 <?=INSTITUTION_NAME?>
+		&copy; 2010 <?=INSTITUTION_NAME?>
 	<? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 	</div>
 </div>

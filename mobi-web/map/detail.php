@@ -30,7 +30,7 @@ if ($tab == 'Map') {
      break;
    case 'Basic':
      if ($page->platform == 'bbplus') {
-       $imageWidth = 300; $imageHeight = 300;
+       $imageWidth = 410; $imageHeight = 260;
      } else {
        $imageWidth = 200; $imageHeight = 200;
      }
@@ -141,7 +141,7 @@ $selectvalue = $_REQUEST['selectvalues'];
 $tabs = new Tabs(selfURL($details), "tab", array("Map", "Photo", "Details"));
 
 if (array_key_exists('PHOTO_FILE', $details)) {
-  $photoURL = MAP_PHOTO_SERVER . $details['PHOTO_FILE'];
+  $photoURL = MAP_PHOTO_SERVER . rawurlencode($details['PHOTO_FILE']);
 
   // all photos returned are 300px wide but variable height
   if ($page->platform == 'bbplus') {

@@ -5,5 +5,6 @@
 //
 // define('INSTITUTION_NAME', "Harvard");
 // define('FEEDBACK_EMAIL', "digitalcomms@harvard.edu");
+// define('COPYRIGHT_NOTICE', "&copy;2010 The President and Fellows of Harvard College");
 
 ?>

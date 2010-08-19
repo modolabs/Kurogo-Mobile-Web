@@ -147,5 +147,8 @@ h1 {
 	text-align: center;
 }
 .forminput {
+	font-size: 100%;
 	width: 35%;
+	padding: 4px;
+	border: 2px solid #554c41;
 }

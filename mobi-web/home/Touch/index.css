@@ -67,6 +67,15 @@ h1 {
 	margin-bottom: 1px;
 	border: none;
 }
+#homegrid div.separator {
+	display: block;
+	width: 100%;
+	height: 10px;
+	clear:both;
+	margin: 0;
+	padding: 0;
+	float: none;
+}
 .intro {
 	margin-bottom: 0;
 	text-align: center;

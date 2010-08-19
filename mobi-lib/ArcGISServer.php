@@ -77,9 +77,6 @@ class ArcGISServer {
     foreach ($jsonObj->results as $result) {
       foreach ($result->attributes as $name => $value) {
         $result->attributes->{$name} = $value;
-        //if ($value == strtoupper($value)) {
-        //  $result->attributes->{$name} = ucwords(strtolower($value));
-        //}
       }
     }
 
@@ -269,13 +266,8 @@ class ArcGISLayer {
       $attributes = $featureInfo->attributes;
       $displayAttribs = array();
       foreach ($attributes as $attrName => $attrValue) {
-        // replace all caps with title case
-        //if ($attrValue == strtoupper($attrValue)) {
-        //  $attrValue = ucwords(strtolower($attrValue));
-        //}
         $displayAttribs[$this->fields[$attrName]] = $attrValue;
       }
-      //$featureId = ucwords(strtolower($attributes->{$displayField}));
       $featureId = $attributes->{$displayField};
       $result[$featureId] = $displayAttribs;
     }

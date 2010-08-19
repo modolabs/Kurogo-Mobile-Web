@@ -9,7 +9,7 @@ body {
 	background: #e3ddd1 url(/Basic/images/background-tile.jpg) repeat-x fixed;
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 14px;
-	line-height: 1.28em;
+	line-height: 1.33em;
 	color: #333;
 	padding: 0.2em;
 }
@@ -52,6 +52,7 @@ h3 {
 	font-weight: bold;
 	margin: 0 0 5px 0;
 	padding: 0;
+	color: #554c41;
 }
 
 h4 {

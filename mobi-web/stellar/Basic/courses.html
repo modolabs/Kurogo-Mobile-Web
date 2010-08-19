@@ -10,7 +10,7 @@ $courseGroupEncoded = urlencode($title);
 	<h2><?=$title?></h2>
 
 	<p class="nav">
-             <? foreach($courses as $course) { $courseName = $course["name"];
+             <? foreach($courses as $course) { $courseName = $course->name;
              if ($courseName == '')
                     $courseName = $title . '-other'; ?>
 		<a href="<?=courseURL($courseName, $which, $title)?>"><?=$courseName?></a><br/>

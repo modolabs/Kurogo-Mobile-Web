@@ -10,7 +10,7 @@ require_once "stellar_lib.inc";
 }*/
 
 
-$schools = CourseData::get_schoolsAndCourses();
+$schools = (CourseData::get_schoolsAndCourses());
 
 require "$page->branch/index.html";
 
