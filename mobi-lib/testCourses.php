@@ -16,8 +16,7 @@ function compare_courseNumber($a, $b)
 
 function compare_schoolName($a, $b)
 {
-    //print($a['school_name_short']);
-    return strcmp($a['school_name_short'], $b['school_name_short']);
+    return strcmp($a->school_name_short, $b->school_name_short);
 }
 
 class MeetingTime {
@@ -561,7 +560,10 @@ class CourseData {
       else {
           self::condenseXMLFileForCoursesAndWrite(STELLAR_BASE_URL .TERM_QUERY, $filenm);
       }
-      return json_decode(file_get_contents($filenm));
+      $schoolsAndCourses = json_decode(file_get_contents($filenm));
+      usort($schoolsAndCourses, "compare_schoolName");
+      
+      return $schoolsAndCourses;
   }
 
 
@@ -788,6 +790,7 @@ class CourseData {
       $urlString = STELLAR_BASE_URL .$courseName .$schoolName .$term .'q="' .$terms .'"&'  . $sorting_params .$queryAddition;
       $xml = file_get_contents($urlString);
 
+
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
       throw new DataServerException('COULD NOT GET XML');
@@ -813,6 +816,15 @@ class CourseData {
          }
          //$subject_fields['title'] = $titl[0];
          $subject_fields['term'] = TERM;
+
+         $temp = self::get_schoolsAndCourses();
+          foreach($temp as $schoolsMapping) {
+              //print_r($schoolsMapping);
+
+              if ( $schoolsMapping->school_name == $school[0]) {
+                  $subject_fields['short_name'] = $schoolsMapping->school_name_short;
+              }
+        }
 
          $subject_array[] = $subject_fields;
      }
