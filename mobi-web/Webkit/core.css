@@ -361,6 +361,7 @@ a.module img {
 
 .homepage .pagetitle {	
 	max-width: 210px;
+	margin-left: -4px;
 }
 
 .help {
