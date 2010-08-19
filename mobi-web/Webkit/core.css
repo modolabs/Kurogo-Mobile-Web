@@ -355,11 +355,11 @@ a.module img {
 	color: #fff;
 	vertical-align: top;
 	font-weight: bold;
+	margin-left: -4px;
 }
 
 .homepage .pagetitle {	
 	max-width: 210px;
-	margin-left: -4px;
 }
 
 .help {
