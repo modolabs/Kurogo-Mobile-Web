@@ -436,8 +436,9 @@ class CourseData {
                                                         $single_course->location);
 
     $ta_array = array();
-    $prof = explode(':', $single_course->faculty_description);
-    $staff['instructors'] = array($prof[0]);
+    //$prof = explode(':', $single_course->faculty_description);
+    //$staff['instructors'] = array($prof[0]);
+    $staff['instructors'] = explode(",",$single_course->faculty_description);
     $staff['tas'] = $ta_array;
     $subject_fields['staff'] = $staff;
 
@@ -537,8 +538,8 @@ class CourseData {
          //$subject_fields['title'] = $titl[0];
          $subject_fields['term'] = TERM;
 
-          $prof = explode(':', $single_course->faculty_description);
-          $staff['instructors'] = array($prof[0]);
+        //$prof = explode(':', $single_course->faculty_description);
+        $staff['instructors'] = $staff['instructors'] = explode(",",$single_course->faculty_description);
           $staff['tas'] = $ta_array;
           $subject_fields['staff'] = $staff;
 
