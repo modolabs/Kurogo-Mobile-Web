@@ -6,7 +6,7 @@ $page->title('Courses')
 
 $page->content_begin();
 ?>
-
+	<form method="get" action="searchMain.php">
 	<div class="nonfocal">
 	    <p>Descriptions, announcements and other information for <?=INSTITUTION_NAME?> classes.</p>
         </div>
@@ -67,4 +67,5 @@ $page->content_begin();
 			</span>	
 		</p>
 	</div>
+	</form>
 <? $page->content_end(); ?>
