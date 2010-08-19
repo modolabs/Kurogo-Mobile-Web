@@ -22,7 +22,26 @@ foreach($people as $person) {
 }
 
 
+// map search
+require_once LIBDIR . '/ArcGISServer.php';
+$resultObj = ArcGISServer::search($search_terms);
+$map_result_items = array();
+foreach ($resultObj->results as $result) {
+    $attributes = $result->attributes;
+    $title = $attributes->{'Building Name'};
+    if (!$title)
+        $title = $result->value;
+    $params = array(
+        'selectvalues' => $title,
+        'info' => $attributes,
+        );
 
+    $map_result_items[] = array(
+        'link' => '/map/detail.php?' . http_build_query($params),
+        'title' => $title,
+        'subtitle' => $attributes->address,
+        );
+}
 
 
 // calendar search
@@ -79,6 +98,11 @@ $federated_results = array(
     "people" => array(
         "results" => $people_result_items,
         "search-link" => "/people/index.php?filter=" . urlencode($search_terms),
+     ),
+
+    'map' => array(
+        'results' => $map_result_items,
+        'search-link' => '/map/search.php?filter=' . rawurlencode($search_terms),
      ),
 
     "calendar" => array(
