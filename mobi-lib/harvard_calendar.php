@@ -183,38 +183,30 @@ class TrumbaCache {
 
 function clean_up_ical_event($event) {
 
-     $event_dict = Array();
-     // we'll give the event a random unique ID since there's nothing
-     // useful we can do with it on the backend
+    $event_dict = Array();
+    // we'll give the event a random unique ID since there's nothing
+    // useful we can do with it on the backend
 
-     $event_dict['id'] = crc32($event->get_uid()) >> 1; // 32 bit unsigned before shift
-     $event_dict['title'] = $event->get_summary();
+    $event_dict['id'] = crc32($event->get_uid()) >> 1; // 32 bit unsigned before shift
+    $event_dict['title'] = $event->get_summary();
      
-     if (($time != NULL) && (($event->get_end() - $event->get_start()) > 24*60*60)) {
-         
-        $event_dict['start'] = $time;
-        $event_dict['end'] = $time + 24*60*60;
-     }
-     else {
-        $event_dict['start'] = $event->get_start();
-        $event_dict['end'] = $event->get_end();
-     }
+    $event_dict['start'] = $event->get_start();
+    $event_dict['end'] = $event->get_end();
 
-     if ($urlLink = $event->get_url()) {
-         $event_dict['url'] = $urlLink;
-     }
-     if ($location = $event->get_location()) {
-       $event_dict['location'] = $location;
-     }
-     if ($description = $event->get_description()) {
-       $event_dict['description'] = $description;
-     }
+    if ($urlLink = $event->get_url()) {
+        $event_dict['url'] = $urlLink;
+    }
+    if ($location = $event->get_location()) {
+        $event_dict['location'] = $location;
+    }
+    if ($description = $event->get_description()) {
+        $event_dict['description'] = $description;
+    }
+    if ($custom = $event->get_customFields()) {
+        $event_dict['custom'] = $custom;
+    }
 
-     if ($custom = $event->get_customFields()) {
-     	$event_dict['custom'] = $custom;
-     }
-
-     return $event_dict;
+    return $event_dict;
 }
 
 function get_academic_events($year, $returnCleanedDictsOfEvents = TRUE) {
