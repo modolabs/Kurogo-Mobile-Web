@@ -19,7 +19,7 @@ $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
 		</p>
 		<p>
                     <? if(briefLocation($event)) { ?>
-			Location: <a href="<?=mapURL(briefLocation($event))?>" class="map"><?=briefLocation($event)?></a>
+			Location: <a href="<?=mapURL(briefLocation($event))?>" class="action map"><?=briefLocation($event)?></a>
                     <? } ?>
 		</p>
 		<p>
@@ -28,13 +28,13 @@ $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
 
                 <? if(isset($event->infophone)) { ?>
 		    <p>
-  			For info call: <a href="<?=phoneURL($event->infophone)?>" class="phone"><?=$event->infophone?></a>
+  			For info call: <a href="<?=phoneURL($event->infophone)?>" class="action phone"><?=$event->infophone?></a>
 		    </p>
                 <? } ?>
 
                 <? if(isset($event->infourl)) { ?>
 		     <p>
-			Website: <a href="<?=$event->urlize?>" class="external" target="_new"><?=$event->infourl?></a>
+			Website: <a href="<?=$event->urlize?>" class="action external" target="_new"><?=$event->infourl?></a>
 		     </p>
                 <? } ?>
 
