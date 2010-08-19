@@ -133,11 +133,20 @@ function formatDayTitle(ICalEvent $event) {
 }
 
 function formatDayTitleForAcademicEvents(ICalEvent $event) {
-  $start = $event->get_start();
-  $end = $event->get_end();
-  $dateTitle = date('l F j', $start) . " - " . date('l F j', $end);
-
-  return $dateTitle;
+    $start = $event->get_start();
+    $end = $event->get_end();
+    
+    // Trumba data quirk for single day events.  Academic calendar events are
+    // all day affairs (at least at the moment), and that's being captured as 
+    // a midnight to midnight event.
+    $ONE_DAY = 24*60*60;
+    if ($end - $start < $ONE_DAY) {
+        $dateTitle = date('l F j', $end);
+    }
+    else {
+        $dateTitle = date('l F j', $start + $ONE_DAY) . " - " . date('l F j', $end);
+    }
+    return $dateTitle;
 }
 
 
