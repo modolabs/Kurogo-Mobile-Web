@@ -10,7 +10,8 @@ $search_terms = $_REQUEST['filter'];
 //$dates = SearchOptions::search_dates($timeframe);
 
        // retrieve data for the week
- $url = HARVARD_EVENTS_ICS_BASE_URL ."?days=7" ."&search=" .$search_terms;
+$date = date('Ymd', time());
+ $url = HARVARD_EVENTS_ICS_BASE_URL . "?startdate=" .$date ."&days=7" ."&search=" .$search_terms;
  
  $events = makeIcalSearchEvents($url, $search_terms);
 

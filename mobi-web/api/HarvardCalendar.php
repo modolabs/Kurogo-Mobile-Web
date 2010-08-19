@@ -32,8 +32,11 @@ switch ($_REQUEST['command']) {
    case 'search':
      $searchString = isset($_REQUEST['q']) ? $_REQUEST['q'] : '';
 
+
+       $date = date('Ymd', time());
        $searchString = urlencode($searchString);
-       $url = HARVARD_EVENTS_ICS_BASE_URL ."?days=7" ."&search=" .$searchString;
+       $url = HARVARD_EVENTS_ICS_BASE_URL . "?startdate=" . $date ."&days=7" ."&search=" .$searchString;
+
        $events = makeIcalSearchEvents($url, $searchString);
 
        foreach ($events as $event) {
