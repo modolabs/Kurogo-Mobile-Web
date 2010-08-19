@@ -17,7 +17,9 @@ $page->content_begin();
 	            <?=$tabs_html?>
 		</p>
 
-                <?     if((strlen($class['meeting_times']) == 0) && (strlen($class['description']) == 0)
+                <?     if((strlen($class['meeting_times']->rawTimesText()) == 0)
+                        && (strlen($class['meeting_times']->rawLocationsText()) == 0)
+                        && (strlen($class['description']) == 0)
                         && (strlen($class['preReq']) == 0)
                         && (strlen($class['credits']) == 0)
                         && (strlen($class['cross_reg']) == 0)
