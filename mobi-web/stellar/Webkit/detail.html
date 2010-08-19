@@ -30,6 +30,7 @@ $page->inline_js_end();
 $page->content_begin();
 ?>
 
+<<<<<<< HEAD
 	<a name="scrolldown"> </a>
 
 	<div class="focal shaded">
@@ -106,6 +107,29 @@ $page->content_begin();
 
 			<div class="tabbody" id="infotab"<? if (!$no_stellar_site) { ?> style="display:none"<? } ?>>
 				<ul class="nav">
+=======
+  <a name="scrolldown"> </a>
+
+  <div class="focal shaded">
+  <a id="mystellar" class="<?=$toggle?>" onclick="toggleMyStellar(this, '<?=$class_data?>')"></a>
+    <h2><?=$class['name']?>: <?=className($class)?></h2>
+    <ul id="tabs">
+    <? if (!$no_stellar_site) { ?>
+      <li class="active"><a href="#scrolldown" onclick="showTab('announcetab',this)">News</a></li>
+      <li><a href="#scrolldown" onclick="showTab('infotab',this)">Info</a></li>
+      <li><a href="#scrolldown" onclick="showTab('instructortab',this)">Staff</a></li>
+    <? } else { ?>
+      <li class="greyedout">News</li>
+      <li class="active">Info</li>
+      <li class="greyedout">Staff</li>
+    <? } ?>
+    </ul>
+
+    <div id="tabbodies">
+
+      <div class="tabbody" id="infotab"<? if (!$no_stellar_site) { ?> style="display:none"<? } ?>>
+        <ul class="nav">
+>>>>>>> 4cb1fb7182b2b6275db0b595044af9bdce768629
                        <? $meetingTimes = $class['meeting_times'];
                        if ($meetingTimes->parseSucceeded()) {
                          foreach ($meetingTimes->all() as $meetingTime) {
@@ -127,35 +151,35 @@ $page->content_begin();
                       }
                       ?>
                                         
-					<li>
-						<h3>Description:</h3>
-						<p><?=htmlentities($class['description'])?></p>
-					</li>
-				</ul>
-			</div> <!-- id="infotab" -->
-		<? if (!$no_stellar_site) { ?>
+          <li>
+            <h3>Description:</h3>
+            <p><?=htmlentities($class['description'])?></p>
+          </li>
+        </ul>
+      </div> <!-- id="infotab" -->
+    <? if (!$no_stellar_site) { ?>
 
-			<div class="tabbody" id="instructortab" style="display:none">
-				<ul class="nav">
-					<li><h3>Instructors:</h3></li>
+      <div class="tabbody" id="instructortab" style="display:none">
+        <ul class="nav">
+          <li><h3>Instructors:</h3></li>
                                         <? foreach($class['staff']['instructors'] as $instruct) { ?>
                                              <li><a href="<?=personURL($instruct)?>" class="people"><?=$instruct?></a></li>
                                         <? } ?>
 
                                         <? if(count($class['staff']['tas'])) { ?>
-					   <li><h3>TAs:</h3></li>
+             <li><h3>TAs:</h3></li>
                                            <? foreach($class['staff']['tas'] as $TA) { ?>
                                                 <li><a href="<?=personURL($TA)?>" class="people"><?=$TA?></a></li>
                                            <? } ?>
                                         <? } ?>
-				</ul>
-			</div> <!-- id="instructortab" -->
+        </ul>
+      </div> <!-- id="instructortab" -->
 
-			<div class="clear"></div>
-		<? } ?>
-		</div> <!-- id="tabbodies" -->
+      <div class="clear"></div>
+    <? } ?>
+    </div> <!-- id="tabbodies" -->
 
-	</div> <!-- class="focal shaded" -->
+  </div> <!-- class="focal shaded" -->
 <?
 $page->content_end();
 $page->footer_script('showTab("announcetab");')

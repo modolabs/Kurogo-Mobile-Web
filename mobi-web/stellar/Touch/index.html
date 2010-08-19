@@ -48,7 +48,7 @@ $page->content_begin();
 		 <? }  else if (count($school->courses) == 1) {  $school_name = $school->school_name; ?>
                  <a href="<?= courseURL($school->school_name_short, $which, $school_name)?>"><?=$school->school_name_short ?></a>
                  <? } else { ?>
-                 <a href="<?= coursesURL($school->school_name) ?>"><?= $school->school_name ?></a>
+                 <a href="<?= coursesURL($school->school_name) ?>"><?= $school->school_name_short ?></a>
 	    <? } ?>
 		</li>
 	<?} ?>
@@ -66,4 +66,5 @@ $page->content_begin();
 			</span>	
 		</p>
 	</div>
+	</form>
 <? $page->content_end(); ?>
