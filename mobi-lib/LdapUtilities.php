@@ -1,7 +1,5 @@
 <?php
 
-require_once "ldap_config.php";
-
 // search string templates
 define("SEARCH_TIMELIMIT", 30);
 define("READ_TIMELIMIT", 30);
@@ -154,14 +152,16 @@ define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 function generateErrorMessage($ldap_resource) {
    $error_code = ldap_errno($ldap_resource);
    $error_codes = array(
-	   	// LDAP error codes.
-	   	LDAP_SIZELIMIT_EXCEEDED => "There are more results than can be displayed. Showing the first 50.",
+   	// LDAP error codes.
+   	LDAP_SIZELIMIT_EXCEEDED => "There are more results than can be displayed. Showing the first 50.",
        	LDAP_PARTIAL_RESULTS => "There are more results than can be displayed. Showing the first 50.",
        	LDAP_INSUFFICIENT_ACCESS => "Too many results to display (more than 50). Please refine your search.",
        	LDAP_TIMELIMIT_EXCEEDED => "The directory service is not responding. Please try again later.",
     );
     if(isset($error_codes[$error_code])) {
         return $error_codes[$error_code];
+    } else { // return a generic error message
+        return "Your request cannot be processed at this time.";
     }
 }
 
