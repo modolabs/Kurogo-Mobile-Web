@@ -298,15 +298,25 @@ a.formbutton div {
 	background-image: url(../Webkit/images/navback.png);
 	background-repeat: repeat-x;
 	font-size: 17px;
-	line-height: 18px;
-	padding-left: 62px;
-} 
+	line-height: 46px;
+	overflow: hidden;
+}
+
+.breadcrumbs {
+	color: #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+	height: 48px;
+}
 
 .breadcrumbs a {
-	float: left;
-	padding: 13px 0px 16px 0;
-	margin-right: 0;
-	background-image: url(../Webkit/images/drillup-r.png);
+	display: inline-block;
+	height: 48px;
+	line-height: 48px;
+	vertical-align: top;
+    margin-left: -12px; /* overlap by the width of the drillup art */
+    background-image: url(../Webkit/images/drillup-r.png);
 	background-repeat: no-repeat;
 	background-position: top right;
 	text-decoration: none;
@@ -317,57 +327,52 @@ a.formbutton div {
 	color: #fff;
 }
 
-.breadcrumbs a span {
-	padding: 0 20px 0 0;
+.breadcrumbs a span,
+.breadcrumbs a img {
+    /* pad to center the icons and text, including negative margin */
+    padding: 0 22px 0 8px; 
 }
 
 a.homelink {
-	padding: 0;
-	margin-left: 0;
-	position: absolute;
-	top: 0;
-	left: -1px;
-	background-image: none;
+    background-image: none;
+    margin-left: 0;
+    padding: 0;
+    width: 58px;
 }
-
-a.module {
-	padding: 8px 0;
-	margin-left: -4px;
+.breadcrumbs a.homelink img {
+    padding: 0;
 }
 
 a.module img {
-	padding: 0 22px 0 0;
+    margin-top: 8px;
 }
 
 .homepage .moduleicon {
-	float: left;
-	padding-right: 5px;
-	margin-top: -4px;
+    display: inline-block;
+    padding-top: 8px;
 }
 
 .pagetitle {
-	float: left;
-	padding: 13px 0;
 	color: #fff;
-	max-width: 168px;
-	white-space:nowrap;
-	text-overflow:ellipsis;
-	overflow:hidden;
+	vertical-align: top;
+	line-height: 46px;
 	font-weight: bold;
 }
 
 .homepage .pagetitle {	
 	max-width: 210px;
-	margin-left: -4px;
 }
 
 .help {
 	position: absolute;
-	top: 1px;
+	top: 0px;
 	right: 0;
 	width: 46px;
 }
 
+#navbar.helpon {
+    padding-right: 46px;
+}
 
 /* Navigation and results listings */
 

@@ -1,7 +1,7 @@
 <div class="nonfocal">
       <form method="get" action="">
             <fieldset class="inputcombo">
-                  <input class="forminput" type="text" id="filter" name="filter" value="<?=htmlspecialchars(stripslashes($_REQUEST['filter']))?>" />
+                  <input class="forminput" type="text" id="filter" name="filter" <? if (isset($_REQUEST['filter'])) { ?> value="<?=htmlspecialchars(stripslashes($_REQUEST['filter']))?>" <? } ?>/>
                   <input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
             </fieldset>
             <p><?=$total?> matches found.</p>

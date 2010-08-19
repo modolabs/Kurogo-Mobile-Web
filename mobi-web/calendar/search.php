@@ -11,7 +11,7 @@ $search_terms = $_REQUEST['filter'];
 
        // retrieve data for the week
 $date = date('Ymd', time());
- $url = HARVARD_EVENTS_ICS_BASE_URL . "?startdate=" .$date ."&days=7" ."&search=" .$search_terms;
+$url = HARVARD_EVENTS_ICS_BASE_URL . "?startdate=" .$date ."&days=7" ."&search=" .urlencode(stripslashes($search_terms));
  
  $events = makeIcalSearchEvents($url, $search_terms);
 

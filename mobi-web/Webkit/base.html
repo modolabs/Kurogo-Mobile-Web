@@ -34,7 +34,7 @@
 </head>
 
 <body onload="<?=$extra_onload?>">
-<div id="navbar">
+<div id="navbar" <? if ($help_on) { ?>class="helpon"<? } ?>>
        <? if(!$home) { ?>
 
                <div class="breadcrumbs">
@@ -53,7 +53,7 @@
                           }
                        }
                       ?>
-                  <div class="pagetitle"><?=$last_breadcrumb?></div>
+                  <span class="pagetitle"><?=$last_breadcrumb?></span>
                </div>
 
        <? } else { ?>
@@ -62,10 +62,10 @@
                    <a href="../home/" class="homelink">
                          <img src="../Webkit/images/homelink.png" width="57" height="45" alt="<?=SITE_NAME?> Home" />
                    </a>
-                   <div class="pagetitle">
+                   <span class="pagetitle">
                          <img src="../Webkit/images/title-<?=$navbar_image?>.png" width="28" height="28" alt="" class="moduleicon" />
                          <?=$last_breadcrumb?>
-                   </div>
+                   </span>
                </div>
 
        <? } ?>    

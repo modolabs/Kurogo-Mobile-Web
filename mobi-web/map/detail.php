@@ -14,10 +14,7 @@ $detailBlacklist = array('Root', 'Shape', 'PHOTO_FILE', 'OBJECTID', 'FID', 'BL_I
 $name = $_REQUEST['selectvalues'];
 
 $details = $_REQUEST['info'];
-if (!isset($_REQUEST['tab']))
-  $_REQUEST['tab'] = 'Map';
-
-$tab = $_REQUEST['tab'];
+$tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'Map';
 
 if ($tab == 'Map') {
   require_once LIBDIR . '/WMSServer.php';
@@ -49,7 +46,7 @@ if ($tab == 'Map') {
     $name = str_replace('.', '', $name);
 
     // if we're looking at Dining, search the Dining collection not default
-    if ($_REQUEST['category'] == 'Dining') {
+    if (isset($_REQUEST['category']) && $_REQUEST['category'] == 'Dining') {
       $searchResults = ArcGISServer::search($name, 'Dining');
     } else {
       $searchResults = ArcGISServer::search($name);
