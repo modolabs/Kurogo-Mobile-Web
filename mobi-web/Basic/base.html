@@ -78,7 +78,6 @@ if ($this->platform == 'bbplus') { ?>
        <br />
 	<? } ?>
         <?=$this->link_access_key($link['url'], $link['text'])?>
-        <br />
    <? } ?>
 </p>
 
@@ -88,7 +87,7 @@ Font size: <?=$this->font_selector()?>
 
 <p class="bb"> </p>
 <p id="footer">
-	&copy;2010 <?=INSTITUTION_NAME?>
+	<?=COPYRIGHT_NOTICE?>
 </p>
 </div>
 </body>

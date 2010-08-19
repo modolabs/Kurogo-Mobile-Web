@@ -1,6 +1,6 @@
 <?php
 
-if ($search_terms = $_REQUEST['filter']) {
+if (isset($_REQUEST['filter']) && $search_terms = $_REQUEST['filter']) {
   $results = map_search($search_terms);
   $total = count($results);
   if ($total == 1) {

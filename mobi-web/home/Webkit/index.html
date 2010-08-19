@@ -92,7 +92,7 @@ if (file_exists($cssfile)) { ?>
 
 <body onload="setTimeout('scrollTo(0,1)', 100); init(); <?=$extra_onload?>" onunload="">
 
-<h1 <? if($top_item) {?>class="roomfornew"<? } ?> ><img src="Webkit/images/harvard-logo-home.png" width="265" height="44" alt="<?=SITE_NAME?>" /></h1>
+<h1 <? if($top_item) {?>class="roomfornew"<? } ?> ><img src="Webkit/images/harvard-logo-home.png" width="265" height="45" alt="<?=SITE_NAME?>" /></h1>
 
 <? if($top_item) { ?>
       <div id="new"><a href="../mobile-about/new.php"><span class="newlabel">NEW:</span><?=$top_item?></a></div>
@@ -104,7 +104,7 @@ if (file_exists($cssfile)) { ?>
 	<div class="nonfocal">
 		<form method="get" action="./search.php">
 			<fieldset class="inputcombo emphasized">
-				<input class="forminput" type="text" id="filter" name="search_terms" placeholder="Search Harvard Mobile" value="<?=htmlspecialchars($searchTerms)?>" />
+				<input class="forminput" type="text" id="filter" name="search_terms" placeholder="Search Harvard mobile" value="<?=htmlspecialchars($searchTerms)?>" />
 				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
 			</fieldset>	
 		</form>
@@ -141,7 +141,7 @@ if (file_exists($cssfile)) { ?>
 </div>
 
 <div id="footer">
-	&copy;2010 <?=INSTITUTION_NAME?>
+	&copy; 2010 <?=INSTITUTION_NAME?>
 <? if ($ini['SHOW_DEVICE_DETECTION']) { include('extra_footer.inc'); } ?>
 
 </div>

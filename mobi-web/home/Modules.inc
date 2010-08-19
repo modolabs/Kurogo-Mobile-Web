@@ -34,8 +34,9 @@ class Modules {
       'extra' => TRUE,
       ),
     'fullweb' => Array(
-      'title' => 'harvard.edu',
+      'title' => 'Full Website',
       'extra' => TRUE,
+      'url' => 'http://www.harvard.edu'
      ),
     'customize' => Array(
       'title' => 'Customize Home',

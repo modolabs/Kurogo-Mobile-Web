@@ -9,7 +9,7 @@ body {
 	background-color: #ebe7dd; 
 	background-image: url('../Basic/images/background-tile.png');
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 15pt;
+	font-size: 16pt;
 	line-height: 1.33em;
 	color: #333;
 	padding: 0em;
@@ -37,15 +37,19 @@ h1, h2, h3 {
 }
 
 h1 {
+	font-family: Georgia, serif;
 	font-size: 171%;
 	font-weight: normal;
+	color: #1a1611;
 	margin: 10px 0;
 	padding: 0;
 }
 
 h2 { 
-	font-size: 142%; 
+	font-family: Georgia, serif;
+	font-size: 150%; 
 	font-weight: normal;
+	color: #1a1611;
 	margin: 0 0 6px 0;
 	padding: 0;
 }
@@ -124,7 +128,7 @@ ul li {
 #footer {
 	height: 2em;
 	margin: 1.5em 0;
-	font-size: 83%;
+	font-size: 86%;
 	line-height: 1.33em;
 	color: #666;
 }
@@ -142,14 +146,19 @@ fieldset {
 	padding: 0;
 }
 
+input, select, option {
+	font-size: 100%;
+}
+
 .inputlabel {
 	margin-bottom: 4px;
 }
 
-.emphasized .forminput {
-	padding: 5px;
+.forminput {
+	padding: 4px;
 	width: 60%;
 	border: 2px solid #554c41;
+	margin-bottom: 2px;
 }
 
 #search_form_section {
@@ -176,14 +185,6 @@ fieldset {
 	line-height: 1.75em;
 }
 
-.secondary a {
-	text-decoration: none;
-}
-
-.secondary a:hover {
-	text-decoration: underline;
-}
-
 .phonenumber {
 	color: #666;
 	font-size: 85%;
@@ -192,7 +193,7 @@ fieldset {
 .bottomnav {
 	margin: 1em 0;
 	padding: .4em 0;
-	font-size: 83%;
+	font-size: 86%;
 	color: #999;
 }
 
@@ -215,6 +216,14 @@ fieldset {
 	margin-bottom: 1em;
 }
 
+.nav a, .secondary a, .results a {
+	text-decoration: none;
+}
+
+.nav a:hover, .secondary a:hover, .results a:hover {
+	text-decoration: underline;
+}
+
 .announcements {
 	font-size: 100%;
 	color: #606363;
@@ -234,26 +243,26 @@ fieldset {
 	text-align: left;
 	margin: 1em 0;
 	padding: .4em;
-	font-size: 93%;
+	font-size: 94%;
 	line-height: 1.6em;
 }
 
 .legend {
 	margin-top: 1em;
-	font-size: 88%;
+	font-size: 86%;
 	line-height: 1.36em;
 	color: #666;
 }
 
 .smallprint {
-	font-size: 88%;
+	font-size: 86%;
 	font-weight: normal;
 	line-height: 1.36em;
 	color: #666;
 }
 
 .fineprint {
-	font-size: 83%;
+	font-size: 80%;
 	line-height: 1.1em;
 	color: #666;
 }
@@ -266,6 +275,10 @@ fieldset {
 	display: block;
 	float: left;
 	width: 4em;
+	color: #554c41;
+}
+
+.dllabel {
 	color: #554c41;
 }
 
@@ -311,7 +324,7 @@ hr {
 }
 
 .fontsize {
-	font-size: 83%;
+	font-size: 86%;
 	color: #666;
 }
 
@@ -327,19 +340,19 @@ hr {
 }
 
 .fontsmall {
-	font-size: 7pt;
+	font-size: 8pt;
 }
 
 .fontmedium {
-	font-size: 9pt;
+	font-size: 10pt;
 }
 
 .fontlarge {
-	font-size: 12pt;
+	font-size: 13pt;
 }
 
 .fontxlarge {
-	font-size: 15pt;
+	font-size: 16pt;
 }
 
 /* Iconically coded links - e.g., Shuttle Schedule, 3DOWN, etc. */
@@ -388,19 +401,59 @@ span.icon {
 	background-image: url(../Basic/images/shuttle.gif);
 }
 
-.phone {
-	background: url(../Webkit/images/action-phone.png) left no-repeat;
+.action {
 	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
+}
+
+.phone {
+	background-image: url(../Webkit/images/action-phone.png);
+	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
 }
 
 .email {
-	background: url(../Webkit/images/action-email.png) left no-repeat;
+	background-image: url(../Webkit/images/action-email.png);
 	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
 }
 
 .map {
-	background: url(../Webkit/images/action-map.png) left no-repeat;
+	background-image: url(../Webkit/images/action-map.png);
 	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
+}
+
+.external {
+	background-image: url(../Webkit/images/action-external.png);
+	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
+}
+
+.people {
+	background-image: url(../Webkit/images/action-people.png);
+	padding-left: 24px;
+	text-decoration: none;
+	background-repeat: no-repeat;
+	background-position: left;
+}
+
+.action:hover {
+	text-decoration: underline;
+}
+
+.dl td {
+	padding: 0 8pt 12pt 0;
 }
 
 /* Tabs */
