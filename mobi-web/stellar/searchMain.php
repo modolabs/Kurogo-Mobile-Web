@@ -8,7 +8,6 @@ function selfURL() {
   return "searchMain.php?$query";
 }
 
-
     $queryTerms = urldecode($_REQUEST['filter']);
     $school = urldecode($_REQUEST['courseGroup']);
     $course = urldecode($_REQUEST['courseName']);
@@ -29,6 +28,7 @@ function selfURL() {
 
     if ($count <= 100) {
     foreach($classes as $class_current) {
+        $short_school_name = $class_current['short_name'];
 
         if (!in_array($class_current['school'], $school_array)) {
             $school_array[] = $class_current['school'];
@@ -36,7 +36,9 @@ function selfURL() {
         }
         else {
              $school_count_map[$class_current['school']] = $school_count_map[$class_current['school']] + 1;
-             $school_name_count_map[$class_current['school']] = array('name'=> $class_current['school'], 'count' => $school_count_map[$class_current['school']]);
+             $school_name_count_map[$class_current['school']] = array('name'=> $class_current['school'], 
+                                                                'count' => $school_count_map[$class_current['school']],
+                                                                'name_short' => $short_school_name);
         }
     }
     }
@@ -44,7 +46,7 @@ function selfURL() {
     else {
         foreach($schoolsAsResults as $school) {
              $school_count_map[$school['name']] = $school['count'];
-             $school_name_count_map[$school['name']] = array('name'=> $school['name'], 'count' => $school['count']);
+             $school_name_count_map[$school['name']] = array('name'=> $school['name'], 'count' => $school['count'], 'name_short' => $school['name_short']);
         }
     }
 

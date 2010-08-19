@@ -7,6 +7,7 @@ $page->content_begin();
 $filter = urlencode($queryTerms);
  $courseGroup = urlencode($school);
  $courseName = urlencode($course);
+
  
 ?>
 
@@ -16,7 +17,7 @@ $filter = urlencode($queryTerms);
 
 	<p class="nav">
              <? foreach($school_name_count_map as $school) {?>
-		<a href="<?=searchURL($filter, $school['name'], $courseName)?>"><?=$school['name']?> (<?=$school['count']?>)</a><br/>
+		<a href="<?=searchURL($filter, $school['name'], $courseName)?>"><?=$school['name_short']?> (<?=$school['count']?>)</a><br/>
              <? } ?>
 	</p>
 
