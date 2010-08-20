@@ -827,8 +827,12 @@ class CourseData {
          }
          //$subject_fields['title'] = $titl[0];
          $subject_fields['term'] = TERM;
-
-         $temp = self::get_schoolsAndCourses();
+         
+           $ta_array =array();
+          $staff['instructors'] = $staff['instructors'] = explode(",",$single_course->faculty_description);
+          $staff['tas'] = $ta_array;
+          $subject_fields['staff'] = $staff;
+          $temp = self::get_schoolsAndCourses();
           foreach($temp as $schoolsMapping) {
               //print_r($schoolsMapping);
 

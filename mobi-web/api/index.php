@@ -14,12 +14,10 @@ switch ($module) {
    break;
 
  case 'courses':
- require('coursesTest.php');
-//require('stellar.php');
-   break;
+    require('coursesApi.php');
+    break;
 
  case 'calendar':
-   //require('calendar.php');
    require('HarvardCalendar.php');
    break;
 

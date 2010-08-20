@@ -1,6 +1,6 @@
 <?php
 
-require_once LIBDIR . '/testCourses.php';
+require_once LIBDIR . '/courses.php';
 require_once "stellar_lib.inc";
 
 $class_id = $_REQUEST['id'];
