@@ -32,7 +32,6 @@ class PageViews {
   }
 
   private function increment_array(&$array, $day, $platform, $module) {
-var_dump($day);
 
     if (!array_key_exists($day, $array))
       $array[$day] = array();
