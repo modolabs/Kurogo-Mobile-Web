@@ -11,7 +11,7 @@ $page->content_begin();
 	<div class="nonfocal">
 		<form method="get" action="">
 			<fieldset class="inputcombo emphasized">
-				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search" value="<?=htmlspecialchars($searchTerms)?>" />
+				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search" <? if (isset($searchTerms)) { ?>value="<?=htmlspecialchars($searchTerms)?>"<? } ?>/>
 				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
 			</fieldset>	
 
