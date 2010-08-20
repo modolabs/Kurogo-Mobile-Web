@@ -46,7 +46,7 @@ $courseIdEncoded = urlencode($courseId);
             else {?>
             <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
             <? }}
-            else if (($ind == 0) && ($ind < count($classes) - 1)){
+            else if (($ind == 0) && ($ind <= count($classes) - 1)){
             $nextClass = $classes[$ind + 1];
 
             if (($class['name'] == $nextClass['name'])) {
