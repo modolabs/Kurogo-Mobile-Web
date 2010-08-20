@@ -1,6 +1,6 @@
 <?php
 
-$header = "Campus Map";
+$header = "Map";
 $module = "map";
 
 $help = array(
