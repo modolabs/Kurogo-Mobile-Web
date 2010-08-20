@@ -1,6 +1,6 @@
 
 <p class="focal results"> 
           <? foreach($results as $person) { ?>
-              <a href="<?=detail_url($person)?>"><?=$person->getFieldSingle('sn')?>, <?=$person->getFieldSingle('givenname')?></a><br/>
+              <a href="<?=detail_url($person)?>"><?=htmlspecialchars($person->getFieldSingle('sn'))?>, <?=htmlspecialchars($person->getFieldSingle('givenname'))?></a><br/>
           <? } ?> 
 </p>

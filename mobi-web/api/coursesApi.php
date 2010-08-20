@@ -1,5 +1,5 @@
 <?php
-require_once LIBDIR . '/testCourses.php';
+require_once LIBDIR . '/courses.php';
 
 switch ($_REQUEST['command']) {
 case 'courses':

@@ -1,6 +1,6 @@
 <?php
 
-require_once LIBDIR . '/testCourses.php';
+require_once LIBDIR . '/courses.php';
 require_once "stellar_lib.inc";
 
 $class_id = $_REQUEST['id'];
@@ -10,7 +10,7 @@ $class = CourseData::get_subject_details($subjectId);
 $term = CourseData::get_term();
 $term_id = $term;
 
-$tabs = new Tabs(selfURL(), 'tab', array('Info', 'Instructor(s)'));
+$tabs = new Tabs(selfURL(), 'tab', array('Info', 'Staff'));
 
 $back = $_REQUEST['back'];
 

@@ -16,9 +16,15 @@ class Item {
   {
     foreach($this->person->getField($field) as $value) {
       $formatted_value = $value;
+      if (strcmp($field, 'ou') == 0) {
+        $formatted_value = str_replace('^', ' / ', $formatted_value);
+      }
+      $formatted_value = htmlspecialchars($formatted_value);
+      $formatted_value = str_replace('$', '<br />', $formatted_value);
+
       if ($href !== NULL) {
         $formatted_value = '<a href="' . $href($value) . '" class="action ' . $class . '">'
-               . str_replace('$', '<br/>', $value) . '</a>';
+               . str_replace('$', '<br/>', $formatted_value) . '</a>';
       }
       ?>
       <tr valign="top"><td><span class="dllabel"><?=$label?></span></td>

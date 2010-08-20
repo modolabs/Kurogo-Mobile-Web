@@ -152,7 +152,7 @@ function formatDayTitleForAcademicEvents(ICalEvent $event) {
 
 function timeText($event) {
   if ($event->get_end() - $event->get_start() == -1) {
-    return $event->get_range()->format('D M j');
+    return $event->get_range()->format('D M j').' '.date('g:i a', $event->get_start());
   }
   return $event->get_range()->format('D M j g:i a');
 

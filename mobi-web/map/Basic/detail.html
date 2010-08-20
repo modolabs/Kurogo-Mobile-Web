@@ -43,11 +43,11 @@ $page->content_begin();
 	</div>
 <? if ($page->platform == 'bbplus') { ?>
 <div class="focal">
-<a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>,<?=$displayDetails['City']?>+<?=$displayDetails['State']?>" class="external">Google Map <span class="smallprint">(<?=$displayDetails['Address']?>)</span></a>
+<a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>,<?=$displayDetails['City']?>+<?=$displayDetails['State']?>" class="external">Google Map</a>
 </div>
 <? } ?>
 
 <?
 $page->content_end();
-$page->nav_link("./", "Campus Map");
+$page->nav_link("./", "Map Home");
 ?>

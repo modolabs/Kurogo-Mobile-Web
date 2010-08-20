@@ -552,8 +552,15 @@ class CourseData {
   }
 
   usort($subject_array, 'compare_courseNumber');
-  $courseToSubject = $subject_array;
-  $coursesToSubjectsMap[] = $courseToSubject; // store it in a global array containing courses to subjects
+
+  $subjectArrayToReturn = array();
+  foreach($subject_array as $subject) {
+      if (substr($subject["name"], 0, 1) == '0') {
+          $subject["name"] = substr($subject["name"], 1);
+      }
+      $subjectArrayToReturn[] = $subject;
+  }
+  $courseToSubject = $subjectArrayToReturn;
   return $courseToSubject;
  }
 
@@ -827,8 +834,12 @@ class CourseData {
          }
          //$subject_fields['title'] = $titl[0];
          $subject_fields['term'] = TERM;
-
-         $temp = self::get_schoolsAndCourses();
+         
+           $ta_array =array();
+          $staff['instructors'] = $staff['instructors'] = explode(",",$single_course->faculty_description);
+          $staff['tas'] = $ta_array;
+          $subject_fields['staff'] = $staff;
+          $temp = self::get_schoolsAndCourses();
           foreach($temp as $schoolsMapping) {
               //print_r($schoolsMapping);
 
@@ -841,8 +852,6 @@ class CourseData {
      }
   }
 
-  //usort($subject_array, 'compare_courseNumber');
-  //$courseToSubject = array('count' => $count, 'classes' => $subject_array);
         $count_array = explode(':', $count);
         $courseToSubject ['count'] = $count_array[0];
         $actual_count_array = explode(':', $actual_count);

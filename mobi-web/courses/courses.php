@@ -1,6 +1,6 @@
 <?php
 
-require_once LIBDIR . '/testCourses.php';
+require_once LIBDIR . '/courses.php';
 require_once "stellar_lib.inc";
 
 $selected_school_name = stripslashes($_REQUEST['which']);
