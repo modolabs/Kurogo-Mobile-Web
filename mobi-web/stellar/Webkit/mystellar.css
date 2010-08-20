@@ -1,9 +1,9 @@
 #mystellar {
 	display: block;
-	width: 76px;
+	width: 38px;
 	height: 37px;
 	overflow: hidden;
-	background-image: url(../Webkit/images/mystellar.png);
+	background-image: url(../Webkit/images/bookmark.png);
 	background-repeat: no-repeat;
 	float: right;
 	margin: -5px -5px 5px 5px;
