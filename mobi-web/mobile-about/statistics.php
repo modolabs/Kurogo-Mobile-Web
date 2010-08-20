@@ -88,7 +88,7 @@ function generate_popular_content($system, $data) {
       "people" => "Directory",
       "map" => "Map", 
       "calendar" => "Events",
-      "stellar" => "Courses", 
+      "courses" => "Courses", 
       "newsoffice" => "News",
       "dining" => "Dining",
       );

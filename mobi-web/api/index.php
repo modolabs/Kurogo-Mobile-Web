@@ -13,9 +13,9 @@ switch ($module) {
    require('people.php');
    break;
 
- case 'stellar':
- require('coursesApi.php');
-   break;
+ case 'courses':
+    require('coursesTest.php');
+    break;
 
  case 'calendar':
    require('HarvardCalendar.php');

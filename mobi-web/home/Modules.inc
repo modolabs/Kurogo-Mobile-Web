@@ -20,7 +20,7 @@ class Modules {
     'calendar' => Array(
       'title' => 'Events',
       ),
-    'stellar' => Array(
+    'courses' => Array(
       'title' => 'Courses',
       ),
     'news' => Array(

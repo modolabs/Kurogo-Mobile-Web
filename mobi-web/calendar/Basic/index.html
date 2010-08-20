@@ -1,6 +1,6 @@
 <?php
-$page->title('Events Calendar')
-     ->header('Events Calendar');
+$page->title('Events')
+     ->header('Events');
      
 $page->content_begin();
 ?>
@@ -9,9 +9,9 @@ $page->content_begin();
 	<h2><?=$today['weekday']?>, <?=$today['month_3Let']?> <?=$today['day_num']?>, <?=$today['year']?></h2>
 
 	<p class="nav">
-		<?=$page->link_access_key('', 'Events Calendar Home')?><br/>
+		<?=$page->link_access_key('', 'Events Home')?><br/>
 		<?=$page->link_access_key(dayURL($today, 'events'), "Today's Events")?><br/>
-		<?=$page->link_access_key(categorysURL(), 'Browse Events by Category')?><br/>
+		<?=$page->link_access_key(categorysURL(), 'Browse by Category')?><br/>
 		<?=$page->link_access_key(academicURL($today['year'], $today['month_num']), 'Academic Calendar')?><br/>
 	</p>
 	

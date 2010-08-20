@@ -102,22 +102,22 @@ Only relevant for Basic pages.  Reached by clicking the "more" link on
 a truncated announcement from the list of announcements in the detail
 page on a Basic device.  Retrieves the full text of a single
 announcement and populates the template
-``mobi-web/stellar/Basic/announcement.html``.  Creates a PHP session
+``mobi-web/courses/Basic/announcement.html``.  Creates a PHP session
 variable to keep track of the class being viewed.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/course.php
+mobi-web/courses/course.php
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/courses.php
+mobi-web/courses/courses.php
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Drill down list for a sublist of all Courses (1-10, 11-20, 21-24, and
 others).
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/detail.php
+mobi-web/courses/detail.php
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Subject detail page.  Populates content for three tabs: Announcements,
@@ -128,11 +128,11 @@ modules (people directory and campus map).
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/index.php
+mobi-web/courses/index.php
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/search.php
+mobi-web/courses/search.php
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Calls ``StellarData::search_subjects()`` on the search string entered
@@ -143,7 +143,7 @@ If exactly one result is returned from the search, the user is
 redirected to the detail page.
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/stellar_lib.php
+mobi-web/courses/stellar_lib.php
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
@@ -153,7 +153,7 @@ Template Files
 --------------
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/\*/index.html
+mobi-web/courses/\*/index.html
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Displays top-level links to drill down to a sublist of courses, a
@@ -162,51 +162,51 @@ subjects that have been bookmarked.
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/\*/course.html
+mobi-web/courses/\*/course.html
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/\*/courses.html
+mobi-web/courses/\*/courses.html
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/\*/detail.html
+mobi-web/courses/\*/detail.html
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/\*/items.html
+mobi-web/courses/\*/items.html
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/\*/mystellar.\*
+mobi-web/courses/\*/mystellar.\*
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/\*/search.html
+mobi-web/courses/\*/search.html
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/Basic/announcement.html
+mobi-web/courses/Basic/announcement.html
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/Webkit/mystellar.js
+mobi-web/courses/Webkit/mystellar.js
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-mobi-web/stellar/\*/mystellar.css
+mobi-web/courses/\*/mystellar.css
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

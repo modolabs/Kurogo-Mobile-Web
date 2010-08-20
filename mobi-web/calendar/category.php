@@ -39,7 +39,8 @@ $content = new ResultsContent(
 	$page,
 	array(
 	  "id"        => $id,
-	  "timeframe" => 0
+	  "timeframe" => 0,
+	  "from" => "category",
 	),
 	FALSE // Do not include the search form.
 );

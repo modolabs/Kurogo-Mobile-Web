@@ -1,10 +1,13 @@
 <?php
-$page->title("Courses: $title")
+$page->title("Courses: Browse by School")
      ->navbar_image('stellar')
-     ->breadcrumbs($title);
+     ->breadcrumbs('Browse By School');
 
 $page->content_begin();
 ?>
+	<div class="nonfocal">
+		<h2><?=$title?></h2>
+	</div>
 		
 	<ul class="nav">
         <? foreach($courses as $course) { 
@@ -13,7 +16,7 @@ $page->content_begin();
                   $courseName = $title . '-other'; 
 		?>
 			
-				<li><a href="<?=courseURL($courseName, $which, $title)?>"><?=$courseName?></a></li>
+				<li><a href="<?=courseURL($courseName, "Courses", $title)?>"><?=$courseName?></a></li>
         <? } ?>
 
 	</ul>

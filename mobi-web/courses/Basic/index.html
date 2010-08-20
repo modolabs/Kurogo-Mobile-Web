@@ -7,7 +7,7 @@ $page->content_begin();
 ?>
 	<form method="get" action="searchMain.php">
 	
-	<p>Descriptions, announcements and other information for Harvard classes.</p>
+	<p>Descriptions, announcements and other information for <?=INSTITUTION_NAME?> classes.</p>
            <? if (count(getMyStellar()->allTags) > 0 ) { ?>
 
         <h3>My Courses:</h3>
@@ -46,7 +46,7 @@ $page->content_begin();
 	</p>
 	
 	<p>
-		<strong>Search in all Schools:</strong><br/>
+		<strong>Search by course/subject #:</strong><br/>
 		<span class="inputcombo">
 			<input class="forminput" type="text" id="filter" name="filter" />
                         <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=""/>

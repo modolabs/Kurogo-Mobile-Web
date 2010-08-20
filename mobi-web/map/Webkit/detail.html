@@ -16,14 +16,14 @@ $bbox_script =<<<JS
      var mapOptions = '{$mapOptions}';
 JS;
 
-$page->title('Campus Map: Details')
+$page->title('Map: Details')
      ->navbar_image('map')
      ->not_scalable()
      ->add_stylesheet('Webkit/map')
      ->add_inline_script($bbox_script)
      ->add_javascript('../Webkit/uiscripts')
      ->add_javascript('Webkit/map')
-     ->breadcrumbs('Map Details')
+     ->breadcrumbs('Details')
      ->extra_onload("loadImage(getMapURL(mapBaseURL),'mapimage');");
 
 $page->content_begin();
@@ -93,7 +93,7 @@ $page->content_begin();
         <? if (array_key_exists('Address', $displayDetails)) { ?>
 	   <ul class="secondary">
 		<li>
-			<a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>, <?=$displayDetails['City']?> <?=$displayDetails['State']?>" class="external">Google Map <span class="smallprint">(<?=$displayDetails['Address']?>)</span></a>
+			<a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>, <?=$displayDetails['City']?> <?=$displayDetails['State']?>" class="external">Google Map</a>
 		</li>
 	  </ul>
 	<? } ?>

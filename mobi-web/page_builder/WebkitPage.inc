@@ -45,7 +45,8 @@ class WebkitPage extends Page {
 
   public function module($module) {
     $this->navbar_image = $module;
-    $this->title = Modules::$module_data[$module]['title'];
+    $this->title = isset(Modules::$module_data[$module]) ?
+        Modules::$module_data[$module]['title'] : '';
     $this->module = $module;
     return $this;
   }

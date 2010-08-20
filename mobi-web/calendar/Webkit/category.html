@@ -2,7 +2,7 @@
 $title = ucname($name) . ": " . ($isToday ? 
 	"Today" : $current['day_3Let'] . " " . $current['month'] . " " . $current['day_num']);
 
-$page->title($title)
+$page->title('Events: '.ucname($name))
 	 ->header('Category')
      ->navbar_image('calendar')
      ->breadcrumbs("Browse", ucname($name))
