@@ -85,12 +85,12 @@ function generate_popular_content($system, $data) {
     }
   } else { // api
     $modules = array(
+      "people" => "Directory",
+      "map" => "Map", 
+      "calendar" => "Events",
       "stellar" => "Courses", 
-      "shuttles" => "ShuttleTrack", 
-      "map" => "Campus Map", 
-      "people" => "Campus Directory",
-      "emergency" => "Emergency Info", 
-      "newsoffice" => "News"
+      "newsoffice" => "News",
+      "dining" => "Dining",
       );
   }
 

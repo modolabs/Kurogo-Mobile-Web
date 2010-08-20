@@ -21,11 +21,11 @@ $class_data = $class_id . " " . $term_id;
 
 if(in_array($class_data, $mystellar)) {
   $toggle = "ms_on";
-  $mystellar_img = 'mystellar-on';
+  $mystellar_img = 'bookmark-on';
   $action = 'remove';
 } elseif (!in_array($class_data, $mystellar)) {
   $toggle = "ms_off";
-  $mystellar_img = 'mystellar-off';
+  $mystellar_img = 'bookmark-off';
   $action = 'add';
 }
 

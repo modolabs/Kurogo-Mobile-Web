@@ -7,7 +7,7 @@ $page->content_begin();
 	<form method="get" action="<?=searchURL()?>">
 
 	<p>
-		<strong>Search campus map:</strong><br/>
+		<strong>Search Map:</strong><br/>
 		<span class="inputcombo emphasized">
 			<input class="forminput" type="text" id="filter" name="filter" <? if(isset($query)) { ?> value="<?=htmlspecialchars($query)?>" <? } ?> />
 			<input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
