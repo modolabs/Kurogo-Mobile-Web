@@ -19,6 +19,233 @@ function compare_schoolName($a, $b)
     return strcmp($a->school_name_short, $b->school_name_short);
 }
 
+class MeetingTime {
+  const SUN = 1;
+  const MON = 2;
+  const TUES = 3;
+  const WED = 4;
+  const THURS = 5;
+  const FRI = 6;
+  const SAT = 7;
+  
+  private $days;
+  private $startTime;
+  private $endTime;
+  private $location = NULL;
+
+  function __construct($daysArr, $startTime, $endTime, $location) {
+    $this->days = $daysArr;
+    $this->startTime = $startTime;
+    $this->endTime = $endTime;
+    $this->location = $location;
+  }
+
+  static function cmp($a, $b) {
+    if ($a->startTime == $b->startTime) {
+      return 0;
+    }
+    return ($a > $b) ? 1 : -1;
+  }
+
+  public function isLocationKnown() {
+    return !is_null($this->location);
+  }
+  
+  public function daysText() {
+    // For use when we have multiple days for the same lecture
+    $shortVersions = array(MeetingTime::SUN => "Su", MeetingTime::MON => "M",
+                           MeetingTime::TUES => "Tu", MeetingTime::WED => "W",
+                           MeetingTime::THURS => "Th", MeetingTime::FRI => "F",
+                           MeetingTime::SAT => "Sa");
+    // For use when we have one day for a given lecture
+    $longerVersions = array(MeetingTime::SUN => "Sun", MeetingTime::MON => "Mon",
+                            MeetingTime::TUES => "Tue", MeetingTime::WED => "Wed",
+                            MeetingTime::THURS => "Thu", MeetingTime::FRI => "Fri",
+                            MeetingTime::SAT => "Sat");
+
+    $textMapping = (count($this->days) > 1) ? $shortVersions : $longerVersions;
+    $daysTextArr = array();
+    foreach ($this->days as $day) {
+      $daysTextArr[] = $textMapping[$day];
+    }
+    
+    return implode(" ", $daysTextArr);
+  }
+  
+  public function timeText() {
+    // If they're both AM or PM, the start time doesn't need it's own "am"/"pm"
+    if (strftime("%p", $this->startTime) == strftime("%p", $this->endTime)) {
+      $startTimeFormat = "%l:%M";
+    }
+    else {
+      $startTimeFormat = "%l:%M%p";
+    }
+
+    // strftime is adding a trailing space.  I have no idea why.  But we trim.
+    $text = trim(strftime($startTimeFormat, $this->startTime)) . "-" .
+            trim(strftime("%l:%M%p", $this->endTime));
+
+    // I know, %P should return lowercase... but it's returning "A" or "P"
+    return strtolower($text);
+  }
+  
+  public function daysAndTimeText() {
+      return $this->daysText() . " " . $this->timeText();
+  }
+  
+  public function locationText() {
+    return ($this->location == null) ? "TBA" : $this->location;
+  }
+}
+
+
+/* Scenarios we've seen:
+ * 
+ * 1. Single time and location.  Days often come as one concatanated word...
+ *    Ex: MondayWednesday 1:00 p.m. - 2:30 p.m.
+ *
+ * 2. Multiple times and locations:
+ *    MondayTuesdayWednesdayThursday Monday Tuesday Wednesday Thursday 9:00 
+ *    a.m. -10:00 a.m.; Monday Tuesday Wednesday Thursday 11:00 a.m. -12:00 
+ *    p.m.; Monday Tuesday Wednesday Thursday 10:00 a.m. -11:00 a.m.
+ * 
+ */
+
+class MeetingTimesParseException extends Exception { }
+
+class MeetingTimes {
+  // If we run into errors while parsing, we'll fall back to just echoing this.
+  private $rawTimesText;
+  private $rawLocationsText;
+
+  private $parseSucceeded = false;
+  private $meetingTimes = array();
+  
+  function __construct($timesText, $locationsText) {
+    $this->rawTimesText = $timesText;
+    $this->rawLocationsText = $locationsText;
+    $this->parse();
+  }
+  
+  public function all() {
+    return $this->meetingTimes;
+  }
+
+  public function rawTimesText() { return $this->rawTimesText; }
+  public function rawLocationsText() { return $this->rawLocationsText; }
+  public function parseSucceeded() { return $this->parseSucceeded; }
+  
+  // Converts to something we can serialize in JSON, an array of time/location
+  // pairs.
+  public function toArray()
+  {
+    if (!$this->parseSucceeded())
+      return array();
+    
+    $serialized = array();
+    foreach ($this->all() as $meetingTime) {
+      $meetingTimeEntry = array("days" => $meetingTime->daysText(),
+                                "time" => $meetingTime->timeText());
+      if ($meetingTime->isLocationKnown()) {
+        $meetingTimeEntry["location"] = $meetingTime->locationText();
+      }
+      else {
+        $meetingTimeEntry["location"] = "";
+      }
+      $serialized[] = $meetingTimeEntry;
+    }
+    
+    return $serialized;
+  }
+  
+  private function parse() {
+    $rawTimesArr = explode(";", $this->rawTimesText);
+    $rawLocationsArr = explode(",", $this->rawLocationsText);
+
+    // Sometimes a comma is really one location, like "HBS, Cumnock Hall 230",
+    // so if there's only one time and multiple locations, that it's really
+    // one location that has a bunch of commas in it.  (Sometimes 2 or 3).
+    if (count($rawTimesArr) == 1) {
+      $rawLocationsArr = array($this->rawLocationsText);
+    }
+
+    if (count($rawTimesArr) != count($rawLocationsArr)) {
+      return; // Something's gone south here, handle it semi-gracefully.
+    }
+
+    try {
+      $i = 0;
+      foreach ($rawTimesArr as $timesText) {
+        $days = $this->parseDaysFromStr($timesText);
+        $startTime = $this->parseStartTimeFromStr($timesText);
+        $endTime = $this->parseEndTimeFromStr($timesText);
+        $location = $this->parseLocationFromStr($rawLocationsArr[$i]);
+      
+        $this->meetingTimes[] = new MeetingTime($days, $startTime, $endTime, $location);
+      }
+      usort($this->meetingTimes, array("MeetingTime", "cmp"));
+      $this->parseSucceeded = true;
+    }
+    catch (MeetingTimesParseException $e) {
+      error_log($e->getMessage());
+    }
+  }
+  
+  /*
+   * Accepts: String like: MondayTuesdayWednesdayThursday Monday Tuesday 
+   *                       Wednesday Thursday 9:00 a.m. - 10:00 a.m.;
+   *          Or: MondayTuesdayWednesdayThursday 9:00 a.m. - 10:00 a.m.
+   *
+   * Returns: Sorted array of MeetingTime date constants like MeetingTime::MON. 
+   *          Strips duplicates.
+   */
+  private function parseDaysFromStr($timeStr) {
+    $abbrevs = array("Sun" => MeetingTime::SUN, "Mon" => MeetingTime::MON,
+                     "Tues" => MeetingTime::TUES, "Wed" => MeetingTime::WED,
+                     "Thurs" => MeetingTime::THURS, "Fri" => MeetingTime::FRI,
+                     "Sat" => MeetingTime::SAT);
+    $days = array();
+    foreach ($abbrevs as $abbrev => $day) {
+      if (stristr($timeStr, $abbrev)) {
+        $days[] = $day;
+      }
+    }
+    if (count($days) == 0) {
+      throw new MeetingTimesParseException("No days found.");
+    }
+    sort($days);
+
+    return $days;
+  }
+  
+  private function parseTimeFromStr($timeStr, $index) {
+    $timeParts = explode("-", $timeStr);
+    if (count($timeParts) != 2) {
+      throw new MeetingTimesParseException("Time format unrecognized");
+    }
+    return strtotime($timeParts[$index]);
+  }
+  
+  private function parseStartTimeFromStr($timeStr) {
+    return $this->parseTimeFromStr($timeStr, 0);
+  }
+  
+  private function parseEndTimeFromStr($timeStr) {
+    return $this->parseTimeFromStr($timeStr, 1);
+  }
+
+  private function parseLocationFromStr($locationStr) {
+    if (is_null($locationStr) || 
+        trim($locationStr) == "" ||
+        strcasecmp("TBD", $locationStr) == 0 || 
+        strcasecmp("TBA", $locationStr) == 0) {
+      return NULL;
+    }
+
+    return trim($locationStr);
+  }
+}
+
 
 class CourseData {
 
@@ -99,6 +326,8 @@ class CourseData {
   }
 
   public static function get_term() {
+    //$data = self::get_term_data();
+    //return $data["season"] . $data["year"];
       return TERM;
   }
 
@@ -623,8 +852,6 @@ class CourseData {
      }
   }
 
-  //usort($subject_array, 'compare_courseNumber');
-  //$courseToSubject = array('count' => $count, 'classes' => $subject_array);
         $count_array = explode(':', $count);
         $courseToSubject ['count'] = $count_array[0];
         $actual_count_array = explode(':', $actual_count);
