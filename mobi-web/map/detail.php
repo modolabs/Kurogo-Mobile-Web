@@ -45,17 +45,23 @@ if ($tab == 'Map') {
     }
     $name = str_replace('.', '', $name);
 
-    // if we're looking at Dining, search the Dining collection not default
-    if (isset($_REQUEST['category']) && $_REQUEST['category'] == 'Dining') {
-      $searchResults = ArcGISServer::search($name, 'Dining');
-    } else {
-      $searchResults = ArcGISServer::search($name);
+    // merge search results with category info if they came from a category
+    $searchResults = ArcGISServer::search($name);
+    if (isset($_REQUEST['category'])) {
+      $secondaryResults = $searchResults;
+      $searchResults = ArcGISServer::search($name, $_REQUEST['category']);
     }
 
     if ($searchResults && $searchResults->results) {
       $result = $searchResults->results[0];
       foreach ($result->attributes as $field => $value) {
         $details[$field] = $value;
+      }
+
+      if (isset($secondaryResults)) {
+        foreach ($secondaryResults->results[0]->attributes as $field => $value) {
+          $details[$field] = $value;
+        }
       }
 
       switch ($result->geometryType) {

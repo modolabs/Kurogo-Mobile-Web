@@ -3,8 +3,10 @@
 define("MAX_ITEMS", 2);
 require_once 'Modules.inc';
 
-$search_terms = $_REQUEST['search_terms'];
-
+// some modules clean up search terms in the backend 
+// (i.e. mobi-lib portion) so we pass different sets
+$raw_search_terms = $_REQUEST['search_terms'];
+$search_terms = urlencode(stripslashes($raw_search_terms));
 
 // people search
 require_once LIBDIR . "/LdapWrapper.php";
@@ -22,7 +24,28 @@ foreach($people as $person) {
 }
 
 
+// map search
+require_once LIBDIR . '/ArcGISServer.php';
 
+// ArcGISServer.php does urlencode on the search terms
+$resultObj = ArcGISServer::search($raw_search_terms);
+$map_result_items = array();
+foreach ($resultObj->results as $result) {
+    $attributes = $result->attributes;
+    $title = $attributes->{'Building Name'};
+    if (!$title)
+        $title = $result->value;
+    $params = array(
+        'selectvalues' => $title,
+        'info' => $attributes,
+        );
+
+    $map_result_items[] = array(
+        'link' => '/map/detail.php?' . http_build_query($params),
+        'title' => $title,
+        'subtitle' => $attributes->address,
+        );
+}
 
 
 // calendar search
@@ -79,6 +102,11 @@ $federated_results = array(
     "people" => array(
         "results" => $people_result_items,
         "search-link" => "/people/index.php?filter=" . urlencode($search_terms),
+     ),
+
+    'map' => array(
+        'results' => $map_result_items,
+        'search-link' => '/map/search.php?filter=' . rawurlencode($search_terms),
      ),
 
     "calendar" => array(

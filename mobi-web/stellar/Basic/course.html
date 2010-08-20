@@ -8,18 +8,60 @@ $courseIdEncoded = urlencode($courseId);
         <form method="get" action="search.php">
 	<h2><?=$courseId?></h2>
 
-	<p class="nav">
-            <? foreach($classes as $class) {
-            
-                if (substr($class["name"], 0, 1) == "0") {
-                
-                    $className = substr($class["name"], 1);
-                    }
-                 else
-                    $className = $class["name"]; ?>
-		    <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
-            <? } ?>
-	</p>
+        <p class="nav">
+            <? for($ind=0; $ind < count($classes); $ind++) {
+
+            $class = $classes[$ind];
+            if (substr($class["name"], 0, 1) == "0") {
+            $className = substr($class["name"], 1);
+            }
+            else
+            $className = $class["name"];
+
+            if (($ind > 0) && ($ind < count($classes) - 1)){
+            $prevClass = $classes[$ind - 1];
+            $nextClass = $classes[$ind + 1];
+
+            if (($class['name'] == $prevClass['name']) || ($class['name'] == $nextClass['name'])) {
+            $staffName = '';
+            foreach($class['staff']['instructors'] as $name) {
+            $staffName = $name . ',' .$staffName;
+            } $staffName = substr($staffName, 0 , -1); ?>
+            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a><br/>
+            <? }
+            else  {?>
+            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
+            <? }}
+
+            else if (($ind > 0) && ($ind == count($classes) - 1)){
+            $prevClass = $classes[$ind - 1];
+
+            if (($class['name'] == $prevClass['name'])) {
+            $staffName = '';
+            foreach($class['staff']['instructors'] as $name) {
+            $staffName = $name . ',' .$staffName;
+            } $staffName = substr($staffName, 0 , -1); ?>
+            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a><br/>
+            <? }
+            else {?>
+            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
+            <? }}
+            else if (($ind == 0) && ($ind < count($classes) - 1)){
+            $nextClass = $classes[$ind + 1];
+
+            if (($class['name'] == $nextClass['name'])) {
+            $staffName = '';
+            foreach($class['staff']['instructors'] as $name) {
+            $staffName = $name . ',' .$staffName;
+            } $staffName = substr($staffName, 0 , -1); ?>
+            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a><br/>
+            <? }
+            else {?>
+            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
+            <? }} ?>
+
+            <?} ?>
+        </p>
 	
         <? if($back) { ?>
   	   <p class="paging">

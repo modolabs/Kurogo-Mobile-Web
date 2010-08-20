@@ -47,7 +47,7 @@ $is_first_page = ($newsURL->storyPage() == 0);
 
 $date = date("M d, Y", $story["unixtime"]);
 
-$share_url = "mailto:?" .
+$share_url = "mailto:@?" .
     http_build_query(
         array (
             "subject" => $story["title"],

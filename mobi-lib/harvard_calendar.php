@@ -76,38 +76,38 @@ class Harvard_Calendar {
 // TODO: use session variables on website whenever possible
 // to avoid parsing the entire .ics file on each web call
 function getIcalEvent($icsURL, $dateString, $eventId) {
-	$fileN = TrumbaCache::retrieveData($icsURL, $dateString, NULL, NULL);
+    $fileN = TrumbaCache::retrieveData($icsURL, $dateString, NULL, NULL);
         $ical = new ICalendar($fileN);
-	return $ical->get_event($eventId);
+    return $ical->get_event($eventId);
 }
 
 function makeIcalDayEvents($icsURL, $dateString, $category=NULL)
 {
-	$fileN = TrumbaCache::retrieveData($icsURL, $dateString, NULL, $category);
-        $ical = new ICalendar($fileN);	
+    $fileN = TrumbaCache::retrieveData($icsURL, $dateString, NULL, $category);
+        $ical = new ICalendar($fileN);  
 
-	$yr = (int)substr($dateString, 0, 4);
-	$mth = (int)substr($dateString, 4, 2);
-	$day = (int)substr($dateString, 6, 2);
+    $yr = (int)substr($dateString, 0, 4);
+    $mth = (int)substr($dateString, 4, 2);
+    $day = (int)substr($dateString, 6, 2);
 
-	$time = mktime(0,0,0, $mth,$day,$yr); 
+    $time = mktime(0,0,0, $mth,$day,$yr); 
 
-	return  $ical->get_day_events($time);
-	
+    return  $ical->get_day_events($time);
+    
 }
 
 
 function makeIcalSearchEvents($icsURL, $terms)
 {
-	$time = time();
+    $time = time();
         $date = date('Ymd', $time);
 
         $fileN = TrumbaCache::retrieveData($icsURL, $date, $terms, NULL);
          
         $ical = new ICalendar($fileN);
-	//$ical = new ICalendar($icsURL);
+    //$ical = new ICalendar($icsURL);
 
-	return  $ical->search_events($terms, NULL);
+    return  $ical->search_events($terms, NULL);
 }
 
 
@@ -119,7 +119,7 @@ function makeIcalSearchEvents($icsURL, $terms)
         
         $ical = new ICalendar($fileN);
 
-	return  $ical->search_events(NULL, NULL);
+    return  $ical->search_events(NULL, NULL);
        
 }*/
 
@@ -131,7 +131,7 @@ function makeIcalAcademicEvents($academic_ics_url, $startDate, $endDate)
 
         $ical = new ICalendar($fileN);
 
-	return  $ical->search_events(NULL, NULL);
+    return  $ical->search_events(NULL, NULL);
 
 }
 
@@ -183,74 +183,66 @@ class TrumbaCache {
 
 function clean_up_ical_event($event) {
 
-     $event_dict = Array();
-     // we'll give the event a random unique ID since there's nothing
-     // useful we can do with it on the backend
+    $event_dict = Array();
+    // we'll give the event a random unique ID since there's nothing
+    // useful we can do with it on the backend
 
-     $event_dict['id'] = crc32($event->get_uid()) >> 1; // 32 bit unsigned before shift
-     $event_dict['title'] = $event->get_summary();
+    $event_dict['id'] = crc32($event->get_uid()) >> 1; // 32 bit unsigned before shift
+    $event_dict['title'] = $event->get_summary();
      
-     if (($time != NULL) && (($event->get_end() - $event->get_start()) > 24*60*60)) {
-         
-        $event_dict['start'] = $time;
-        $event_dict['end'] = $time + 24*60*60;
-     }
-     else {
-        $event_dict['start'] = $event->get_start();
-        $event_dict['end'] = $event->get_end();
-     }
+    $event_dict['start'] = $event->get_start();
+    $event_dict['end'] = $event->get_end();
 
-     if ($urlLink = $event->get_url()) {
-         $event_dict['url'] = $urlLink;
-     }
-     if ($location = $event->get_location()) {
-       $event_dict['location'] = $location;
-     }
-     if ($description = $event->get_description()) {
-       $event_dict['description'] = $description;
-     }
+    if ($urlLink = $event->get_url()) {
+        $event_dict['url'] = $urlLink;
+    }
+    if ($location = $event->get_location()) {
+        $event_dict['location'] = $location;
+    }
+    if ($description = $event->get_description()) {
+        $event_dict['description'] = $description;
+    }
+    if ($custom = $event->get_customFields()) {
+        $event_dict['custom'] = $custom;
+    }
 
-     if ($custom = $event->get_customFields()) {
-     	$event_dict['custom'] = $custom;
-     }
-
-     return $event_dict;
+    return $event_dict;
 }
 
 function get_academic_events($year, $returnCleanedDictsOfEvents = TRUE) {
-	
-	$startDate = $year .'0901'; // september 1st of that year
-	$endYear = $year + 1;
-	$endDate = $endYear .'0831'; // august 31st of next year
+    
+    $startDate = $year .'0901'; // september 1st of that year
+    $endYear = $year + 1;
+    $endDate = $endYear .'0831'; // august 31st of next year
 
-	/* if (strlen($month) == 1)
-	   $month = '0' .$month;
+    /* if (strlen($month) == 1)
+       $month = '0' .$month;
 */
-	//$url = HARVARD_ACADEMIC_ICS_BASE_URL .'?startdate=' . $year .$month .'01&months=1';
-	//$academic_events = makeIcalAcademicEvents($url, $month, $year);
+    //$url = HARVARD_ACADEMIC_ICS_BASE_URL .'?startdate=' . $year .$month .'01&months=1';
+    //$academic_events = makeIcalAcademicEvents($url, $month, $year);
 
-	$url = HARVARD_ACADEMIC_ICS_BASE_URL . '?startdate=' .$startDate .'&enddate=' .$endDate;
-	$academic_events =  makeIcalAcademicEvents($url, $startDate, $endDate);
-	
-	if (!$returnCleanedDictsOfEvents) {
-		return $academic_events;
-	}
-	else {
-		foreach ($academic_events as $event) {
-			$cleaned_ical_event = clean_up_ical_event($event);
+    $url = HARVARD_ACADEMIC_ICS_BASE_URL . '?startdate=' .$startDate .'&enddate=' .$endDate;
+    $academic_events =  makeIcalAcademicEvents($url, $startDate, $endDate);
+    
+    if (!$returnCleanedDictsOfEvents) {
+        return $academic_events;
+    }
+    else {
+        $data = array();
+        foreach ($academic_events as $event) {
+            $cleaned_ical_event = clean_up_ical_event($event);
 
-			/* Need to correct for the start and end date discrepencies in the Trumba
-			 * feed we are getting from Gazette for the academic calendar.*/
-			$start = $event->get_start() + 24*60*60;
-			$end = $event->get_end() + 24*60*60;
+            /* Need to correct for the start and end date discrepencies in the Trumba
+             * feed we are getting from Gazette for the academic calendar.*/
+            $start = $event->get_start() + 24*60*60;
+            $end = $event->get_end();
+            $cleaned_ical_event['start'] = $start;
+            $cleaned_ical_event['end'] = $end;
 
-			$cleaned_ical_event['start'] = $start;
-			$cleaned_ical_event['end'] = $end;
-
-			$data[] = $cleaned_ical_event;
-		}
-		return $data;		
-	}
+            $data[] = $cleaned_ical_event;
+        }
+        return $data;       
+    }
 }
 
 ?>
