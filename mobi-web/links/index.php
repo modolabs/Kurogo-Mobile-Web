@@ -11,13 +11,13 @@ class Links {
     'Divinity' => 'http://www.hds.harvard.edu/',
     'Education' => 'http://www.gse.harvard.edu/',	
     'Engineering' => 'http://www.seas.harvard.edu/',
+    'FAS' => 'http://www.fas.harvard.edu/home/',
     'Government' => 'http://www.ksg.harvard.edu',
     'Graduate School' => 'http://www.gsas.harvard.edu',
     'Law' => 'http://www.law.harvard.edu',
     'Medical' => 'http://www.hms.harvard.edu/',
     'Public Health' => 'http://www.hsph.harvard.edu',
     'Radcliffe' => 'http://www.radcliffe.edu',
-    'FAS' => 'http://www.fas.harvard.edu/home/',
   );
 }
 

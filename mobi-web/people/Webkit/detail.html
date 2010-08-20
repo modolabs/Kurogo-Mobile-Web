@@ -15,17 +15,18 @@ class Item {
 
     foreach($this->person->getField($field) as $value) {
       $formatted_value = $value;
-      // prevent phones from creating links from things that look like phone/email
+      if (strcmp($field, 'ou') == 0) {
+        $formatted_value = str_replace('^', ' / ', $formatted_value);
+      }
+      $formatted_value = htmlspecialchars($formatted_value);
 	  if (strcmp($field, 'mail') != 0) {
 		// We now don't want hyphens to display in an email address, but it's OK elsewhere.
       	$formatted_value = str_replace('@', '@&shy;', $formatted_value);
 	  }
+      // prevent phones from creating links from things that look like phone/email
       $formatted_value = str_replace('-', '-&shy;', $formatted_value);
       $formatted_value = str_replace('$', '<br />', $formatted_value);
-	  if (strcmp($field, 'ou') == 0) {
-	  	$formatted_value = str_replace('^', ' / ', $formatted_value);
-	  }
-
+      
       $innerContents = "
                  <div class=\"label\">$label</div>
                  <div class=\"value\">$formatted_value</div>";
