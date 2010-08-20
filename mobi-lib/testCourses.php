@@ -704,7 +704,7 @@ class CourseData {
 
   public static function search_subjects($terms, $school, $courseTitle) {
       
-      $words = split(' ', $terms);
+      $words = explode(' ', $terms);
 
       $terms = '"';
       for ($ind=0; $ind< count($words); $ind++) {
@@ -714,7 +714,7 @@ class CourseData {
             $terms = $terms .$words[$ind] .'+';
       }
 
-      $schoolWords = split(' ', $school);
+      $schoolWords = explode(' ', $school);
 
       $schoolNm = '';
       for ($ind=0; $ind< count($schoolWords); $ind++) {
@@ -818,6 +818,7 @@ class CourseData {
          $subject_fields['masterId'] = $id[0];
          $titl = explode(':', $single_course->title);
                   $len = count($titl);
+          $subject_fields['title'] = '';
           for ($ind = 0; $ind < $len; $ind++) {
              if ($ind == $len-1)
                  $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
