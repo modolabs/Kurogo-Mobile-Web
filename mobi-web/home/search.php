@@ -3,8 +3,10 @@
 define("MAX_ITEMS", 2);
 require_once 'Modules.inc';
 
-$search_terms = $_REQUEST['search_terms'];
-
+// some modules clean up search terms in the backend 
+// (i.e. mobi-lib portion) so we pass different sets
+$raw_search_terms = $_REQUEST['search_terms'];
+$search_terms = urlencode(stripslashes($raw_search_terms));
 
 // people search
 require_once LIBDIR . "/LdapWrapper.php";
@@ -24,7 +26,9 @@ foreach($people as $person) {
 
 // map search
 require_once LIBDIR . '/ArcGISServer.php';
-$resultObj = ArcGISServer::search($search_terms);
+
+// ArcGISServer.php does urlencode on the search terms
+$resultObj = ArcGISServer::search($raw_search_terms);
 $map_result_items = array();
 foreach ($resultObj->results as $result) {
     $attributes = $result->attributes;
