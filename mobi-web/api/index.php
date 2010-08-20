@@ -14,7 +14,7 @@ switch ($module) {
    break;
 
  case 'courses':
-    require('coursesTest.php');
+    require('coursesApi.php');
     break;
 
  case 'calendar':
