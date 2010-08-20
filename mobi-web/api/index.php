@@ -13,7 +13,7 @@ switch ($module) {
    require('people.php');
    break;
 
- case 'stellar':
+ case 'courses':
  require('coursesTest.php');
 //require('stellar.php');
    break;

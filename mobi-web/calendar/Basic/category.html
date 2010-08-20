@@ -3,8 +3,8 @@
 $title = ucname($name) . ": " . ($isToday ?
 	"Today" : $current['day_3Let'] . " " . $current['month'] . " " . $current['day_num']);
 
-$page->title($title)
-     ->header("Events Calendar: " . ucname($name) );
+$page->title('Events: '.ucname($name))
+     ->header( ucname($name) );
 
 $page->content_begin();
 ?>
@@ -27,6 +27,6 @@ $content->output($events);
 <?
 $page->content_end(); 
 
-$page->nav_link("./", "Events Calendar Home");
+$page->nav_link("./", "Events Home");
 
 ?>

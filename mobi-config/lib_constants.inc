@@ -10,7 +10,7 @@ define('CACHE_DIR', '/opt/mitmobile/cache');
 define('DATADIR', '/opt/mitmobile/static');
 define('TMP_DIR', '/tmp/'); // cache files that we'll allow OS to clean out
 
-// database parameters
+// database parameter placeholders -- no, these values are not real
 define('MYSQL_USER', 'mysql_user');
 define('MYSQL_PASS', 'mysql_pass');
 define('MYSQL_DBNAME', 'mysql_db');

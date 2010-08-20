@@ -2,10 +2,10 @@
 if($tabs->active() == "locations") {
     $page->title('Student Dining: Locations');
 } else {
-    $page->title('Student Dining: Menu for ' . $current['shortest']);
+    $page->title('Student Dining');
 }
 
-$page->add_stylesheet('Basice/dining')
+$page->add_stylesheet('Basic/dining')
      ->header('Student Dining');
 
 $page->content_begin();

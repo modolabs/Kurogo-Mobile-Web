@@ -22,7 +22,7 @@
 
 <!-- remove spaces between "a" and other tags otherwise alignment will be off on IE -->
 <div id="navbar">
-	<a name="top" href="../home/"><?=$this->img_tag('harvard-logo2', 'gif', 'Harvard', array('border' => 0, 'align' => 'absmiddle'))?></a><a href="<?=$module_home_link?>"><?=$this->img_tag('title-' . $navbar_image, 'gif', $header, array('border' => 0, 'align' => 'absmiddle'));?></a><? if ($home) { ?><a name="top" href="index.php"><?=htmlentities($title)?></a><? } else { ?><span><?=$header?></span><? } ?>
+	<a name="top" href="../home/"><?=$this->img_tag('harvard-logo2', 'gif', 'Harvard', array('border' => 0, 'align' => 'absmiddle'))?></a><a href="<?=$module_home_link?>"><?=$this->img_tag('title-' . $navbar_image, 'gif', $header, array('border' => 0, 'align' => 'absmiddle'));?></a><? if ($home) { ?><a name="top" href="index.php"><?=htmlentities($header)?></a><? } else { ?><span><?=htmlentities($header)?></span><? } ?>
 </div>
 
 <div id="container">
@@ -34,10 +34,10 @@
 </div>
 
 <div id="footer">
-<? if ($standard_footer) { ?>
-	&copy; 2010 <?=INSTITUTION_NAME?>
+<? if ($this->standard_footer) { ?>
+	<?=COPYRIGHT_NOTICE?>
 <? } else { ?>
-<?=$footer?>
+<?=$this->footer?>
 <? } ?>
 </div>
 

@@ -16,14 +16,14 @@ $bbox_script =<<<JS
      var mapOptions = '{$mapOptions}';
 JS;
 
-$page->title('Campus Map: Details')
+$page->title('Map: Details')
      ->navbar_image('map')
      ->not_scalable()
      ->add_stylesheet('Webkit/map')
      ->add_inline_script($bbox_script)
      ->add_javascript('../Webkit/uiscripts')
      ->add_javascript('Webkit/map')
-     ->breadcrumbs('Map Details')
+     ->breadcrumbs('Details')
      ->extra_onload("loadImage(getMapURL(mapBaseURL),'mapimage');");
 
 $page->content_begin();
