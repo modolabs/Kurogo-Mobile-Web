@@ -39,6 +39,7 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /var/www/html/about
 /var/www/html/calendar
 /var/www/html/careers
+/var/www/html/courses
 /var/www/html/customize
 /var/www/html/download
 /var/www/html/e
@@ -59,7 +60,6 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /var/www/html/setup
 /var/www/html/shuttleschedule
 /var/www/html/sms
-/var/www/html/stellar
 /var/www/html/techcash
 
 %defattr(-,apache,apache,-)

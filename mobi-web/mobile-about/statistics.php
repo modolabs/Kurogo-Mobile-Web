@@ -85,7 +85,7 @@ function generate_popular_content($system, $data) {
     }
   } else { // api
     $modules = array(
-      "stellar" => "Courses", 
+      "courses" => "Courses", 
       "shuttles" => "ShuttleTrack", 
       "map" => "Campus Map", 
       "people" => "Campus Directory",
