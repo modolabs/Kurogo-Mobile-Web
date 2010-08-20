@@ -84,14 +84,14 @@ $page->content_begin();
             <? foreach($food_items[$tabs->active()] as $food_type => $foods) { ?>
                 <h3><?=$food_type?></h3>
                     <p class="results">
-                        <span class="iconlabel">
-                            <? foreach($foods as $food) { ?>
+                        <? foreach($foods as $food) { ?>
+                             <span class="iconlabel">
                                 <? foreach($food['properties'] as $property) { ?>
                                     <img src="Basic/images/dining-<?=$property?>-crop.gif" width="13" height="13" alt="<?=ucwords($property)?>">
                                 <? } ?>
-                            <? } ?>
-                        </span>
-                        <?=$food['item']?><br />
+                            </span>
+                            <?=$food['item']?><br />
+			<? } ?>
                     </p>
             <? } ?>
 
