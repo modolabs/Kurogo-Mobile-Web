@@ -1,7 +1,7 @@
 <?php
 
 $header = "Courses";
-$module = "stellar";
+$module = "courses";
 
 $help = array(
     'Type keyword or subject into the search bar at top, e.g., ' .

@@ -58,7 +58,7 @@ function selfURL() {
   die();
 }*/
 
-//$content = new ResultsContent("items", "stellar", $page, NULL, FALSE);
+//$content = new ResultsContent("items", "courses", $page, NULL, FALSE);
 
 require "$page->branch/searchMain.html";
 
