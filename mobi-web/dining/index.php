@@ -82,9 +82,6 @@ function collectFoodByCategory($items) {
     $food_categories = array();
 
     foreach($items as $item) {
-        // this is a hack for now just to fill in some of the data
-        $item["properties"] = array("vegetarian", "local");
-        
         if(!array_key_exists($item[category], $food_categories)) {
             $food_categories[$item[category]] = array($item);
         } else {
