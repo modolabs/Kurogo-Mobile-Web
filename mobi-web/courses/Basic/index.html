@@ -7,7 +7,7 @@ $page->content_begin();
 ?>
 	<form method="get" action="searchMain.php">
 	
-	<p>Descriptions, announcements and other information for Harvard classes.</p>
+	<p>Descriptions, announcements and other information for <?=INSTITUTION_NAME?> classes.</p>
            <? if (count(getMyStellar()->allTags) > 0 ) { ?>
 
         <h3>My Courses:</h3>
