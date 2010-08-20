@@ -376,6 +376,7 @@ class CourseData {
     $subject_fields['masterId'] = $id[0];
     $titl = explode(':', $single_course->title);
     $len = count($titl);
+    $subject_fields['title'] = '';
     for ($ind = 0; $ind < $len; $ind++) {
       if ($ind == $len-1)
         $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
@@ -386,7 +387,7 @@ class CourseData {
     //$subject_fields['title'] = $titl[0];
     $desc = explode(':', $single_course->description);
     $len = count($desc);
-
+    $subject_fields['description'] = '';
     for ($ind = 0; $ind < $len; $ind++) {
       if ($ind == $len-1)
         $subject_fields['description'] = $subject_fields['description'] .$desc[$ind];
@@ -420,6 +421,7 @@ class CourseData {
 
     $m_time = explode(':', $single_course->meeting_time);
     $len = count($m_time);
+    $classtime['time'] = '';
     for ($ind = 0; $ind < $len; $ind++) {
       if ($ind == $len-1)
         $classtime['time'] = $classtime['time'] .$m_time[$ind];
@@ -529,6 +531,7 @@ class CourseData {
          $subject_fields['masterId'] = $id[0];
          $titl = explode(':', $single_course->title);
                   $len = count($titl);
+         $subject_fields['title'] = '';
           for ($ind = 0; $ind < $len; $ind++) {
              if ($ind == $len-1)
                  $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
@@ -539,6 +542,7 @@ class CourseData {
          $subject_fields['term'] = TERM;
 
         //$prof = explode(':', $single_course->faculty_description);
+        $ta_array = array();
         $staff['instructors'] = $staff['instructors'] = explode(",",$single_course->faculty_description);
           $staff['tas'] = $ta_array;
           $subject_fields['staff'] = $staff;

@@ -29,14 +29,14 @@ if(in_array($class_data, $mystellar)) {
   $action = 'add';
 }
 
-if($_REQUEST['action'] == 'add') {
+if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'add') {
   if (!in_array($class_data, $mystellar)) {
     $mystellar[] = $class_data;
     header("Location: " . selfURL());
   }
 }
 
-if($_REQUEST['action'] == 'remove') {
+if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'remove') {
   if (in_array($class_data, $mystellar)) {
     array_splice($mystellar, array_search($class_data, $mystellar), 1);
     header("Location: " . selfURL());
@@ -75,7 +75,7 @@ else {
   $_SESSION['class'] = $class;
   $_SESSION['announcements'] = $announcements;
 
-  if($_REQUEST['all']) {
+  if(isset($_REQUEST['all']) && $_REQUEST['all']) {
     $all = true;
     $items = $announcements;
   } else {

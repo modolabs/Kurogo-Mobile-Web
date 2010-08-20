@@ -90,7 +90,7 @@ if (file_exists($cssfile)) { ?>
 <? } ?>
 </head>
 
-<body onload="setTimeout('scrollTo(0,1)', 100); init(); <?=$extra_onload?>" onunload="">
+<body onload="setTimeout('scrollTo(0,1)', 100); init(); <? if (isset($extra_onload)) { ?><?=$extra_onload?><? } ?>" onunload="">
 
 <h1 <? if($top_item) {?>class="roomfornew"<? } ?> ><img src="Webkit/images/harvard-logo-home.png" width="265" height="45" alt="<?=SITE_NAME?>" /></h1>
 

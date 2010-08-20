@@ -33,7 +33,7 @@
         <? } ?>
 </head>
 
-<body onload="<?=$extra_onload?>">
+<body <? if (isset($extra_onload)) { ?>onload="<?=$extra_onload?>"<? } ?>>
 <div id="navbar" <? if ($help_on) { ?>class="helpon"<? } ?>>
        <? if(!$home) { ?>
 
