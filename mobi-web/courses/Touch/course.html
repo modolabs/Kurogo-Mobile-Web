@@ -1,13 +1,13 @@
 <?php
 $page->title("Courses: " . $courseId)
      ->navbar_image('stellar')
-     ->header($Back, "Courses");
+     ->header("Courses");
 
 $page->content_begin();
 ?>
 
 	<div class="nonfocal">
-		<h2><?=name($course)?> (<?=idName($courseId, $course)?>)</h2>
+		<h2>$courseId</h2>
 	</div>
 	
 	<ul class="results">
@@ -29,10 +29,10 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a><br/>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
             <? }
             else  {?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
             <? }}
 
             else if (($ind > 0) && ($ind == count($classes) - 1)){
@@ -43,10 +43,10 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a><br/>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
             <? }
             else {?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
             <? }}
             else if (($ind == 0) && ($ind < count($classes) - 1)){
             $nextClass = $classes[$ind + 1];
@@ -56,10 +56,10 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a><br/>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
             <? }
             else {?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
             <? }} ?>
             <?} ?>
 	</ul>

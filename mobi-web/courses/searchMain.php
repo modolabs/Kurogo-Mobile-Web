@@ -20,7 +20,7 @@ function selfURL() {
     $classes = $data["classes"];
 
     /* SchoolsAsResults will only be available for searches from the top-level view where search results are > 100*/
-    $schoolsAsResults = $data['schools'];
+    $schoolsAsResults = isset($data['schools']) ? $data['schools'] : NULL;
 
     $school_array = array();
     $school_count_map = array();

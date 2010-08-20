@@ -3,7 +3,7 @@
 require_once LIBDIR . '/testCourses.php';
 require_once "stellar_lib.inc";
 
-$selected_school_name = $_REQUEST['which'];
+$selected_school_name = stripslashes($_REQUEST['which']);
 
 $schools = CourseData::get_schoolsAndCourses();
 

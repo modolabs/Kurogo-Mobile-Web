@@ -1,6 +1,6 @@
 <?php
-$page->title('Harvard People Directory')
-     ->header('People Directory');
+$page->title('People')
+     ->header('People');
 
 $page->content_begin();
 ?>
@@ -14,7 +14,7 @@ $page->content_begin();
 		<strong>Search:</strong>
 		<span class="inputcombo emphasized">
 		    <fieldset>
-			    <input class="forminput" type="text" id="filter" name="filter" value="<?=htmlspecialchars($searchTerms)?>" /> &nbsp;
+			    <input class="forminput" type="text" id="filter" name="filter" <? if (isset($searchTerms)) { ?>value="<?=htmlspecialchars($searchTerms)?>"<? } ?>" /> &nbsp;
 			    <input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
 			</fieldset>
 		</span>	

@@ -1,10 +1,10 @@
 <?
-$page->title("Campus Map: Browse $title")
-     ->header("Campus Map");
+$page->title("Map: Browse by Category")
+     ->header("Browse by Category");
 $page->content_begin();
 ?>
 
-	<h2><?=$title?></h2>
+	<h2>Browse Buildings: <?=$title?></h2>
 	
 	<p class="nav">
             <? foreach($places as $name => $info) { ?>            
@@ -17,5 +17,5 @@ $page->content_begin();
 	</p>
 <?
 $page->content_end();
-$page->nav_link("./", "Campus Map");
+$page->nav_link("./", "Map");
 ?>
