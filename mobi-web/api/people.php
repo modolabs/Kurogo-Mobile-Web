@@ -32,7 +32,7 @@ switch ($_REQUEST['command']) {
     }
     break;
   case 'search':
-    if (isset($_REQUEST['q']) && strlen(trim($_REQUEST['q']))) {
+    if (isset($_REQUEST['q']) && strlen((trim($_REQUEST['q'])))) {
       $ldap = new LdapWrapper();
       if ($ldap->buildQuery(stripslashes($_REQUEST['q']))) {
           $people = $ldap->doQuery();
@@ -72,6 +72,6 @@ switch ($_REQUEST['command']) {
     break;
 }
 
-
 header('Content-Length: ' . strlen($content));
 echo $content;
+?>
