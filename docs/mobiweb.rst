@@ -225,7 +225,6 @@ Contents of the MIT Mobile Web Source Tree
 * :ref:`subsubsection-mobiweb-mobi-web-directory` -- main directory of
   Mobile Web files.
 
-  * ``3down/`` -- Services Status module
   * ``a/`` -- URL shortener for inbound links from SMS
   * ``api/`` -- files for the REST API used to communicate with native
     app clients.
@@ -235,6 +234,7 @@ Contents of the MIT Mobile Web Source Tree
   * ``calendar/`` -- Events Calendar module.
   * ``careers/`` -- Careers module.
   * ``config/`` -- Constants for Mobile Web code.
+  * ``courses/`` -- Course Info module.
   * ``customize/`` -- Customize Home Screen module.
   * ``e/`` -- URL shortener for calendar events.
   * ``emergency/`` -- Emergency Info module.
@@ -250,9 +250,6 @@ Contents of the MIT Mobile Web Source Tree
   * ``page_builder/`` -- Page Builder package.
   * ``people/`` -- People Directory module.
   * ``shuttleschedule/`` -- Shuttles module.
-  * ``sms/`` -- SMS overview module.
-  * ``stellar/`` -- Course Info module.
-  * ``techcash/`` -- TechCASH module.
   * ``Touch/`` -- HTML templates, CSS, and image files for
     touch-screen phones with less advanced browsers.
   * ``Webkit/`` -- HTML templates, CSS, JS, and image files for Webkit
@@ -269,8 +266,8 @@ directories, i.e. they hold static files for each device bucket:
 The following dirctories under ``mobi-web`` are module directories:
 ``3down`` (:ref:`section-mobiweb-3down`), 
 ``calendar`` (:ref:`section-mobiweb-calendar`), 
+``courses`` (:ref:`section-mobiweb-stellar`), 
 ``customize`` (:ref:`section-mobiweb-customize`), 
-``careers`` (:ref:`section-mobiweb-careers`), 
 ``emergency`` (:ref:`section-mobiweb-emergency`), 
 ``libraries`` (:ref:`section-mobiweb-libraries`), 
 ``links`` (:ref:`section-mobiweb-links`), 
@@ -280,7 +277,6 @@ The following dirctories under ``mobi-web`` are module directories:
 ``people`` (:ref:`section-mobiweb-people`), 
 ``shuttleschedule`` (:ref:`section-mobiweb-shuttleschedule`), 
 ``sms`` (:ref:`section-mobiweb-sms`), 
-``stellar`` (:ref:`section-mobiweb-stellar`), 
 ``techcash`` (:ref:`section-mobiweb-techcash`).
 
 The directory ``mobi-web/page_builder`` contains

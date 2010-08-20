@@ -74,7 +74,7 @@ $class_results = CourseData::search_subjects($search_terms, '', '');
 $class_result_items = array();
 foreach($class_results['classes'] as $class) {
     $class_result_items[] = array(
-        "link" => "/stellar/detail.php?id=" . $class['masterId'],
+        "link" => "/courses/detail.php?id=" . $class['masterId'],
         "title" => $class['name'],
         "subtitle" => $class['title'],
     );
@@ -114,9 +114,9 @@ $federated_results = array(
         "search-link" => "/calendar/search.php?timeframe=0&filter=" . urlencode($search_terms),
      ),
 
-    "stellar" => array(
+    "courses" => array(
         "results" => $class_result_items,
-        "search-link" => "/stellar/search.php?filter=" . urlencode($search_terms),
+        "search-link" => "/courses/search.php?filter=" . urlencode($search_terms),
     ),
 
     "news" => array(

@@ -105,13 +105,13 @@ possible values.
 
 .. toctree::
 
+  mobiweb-api-modules/courses
   mobiweb-api-modules/emergency
   mobiweb-api-modules/events
   mobiweb-api-modules/map
   mobiweb-api-modules/news
   mobiweb-api-modules/people
   mobiweb-api-modules/shuttles
-  mobiweb-api-modules/stellar
 
 *********************
 Push Notification API

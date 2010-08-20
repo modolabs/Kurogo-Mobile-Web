@@ -3,7 +3,7 @@
 header("Location: ../error-page/?code=notfound");
 
 if(isset($_REQUEST['i'])) {
-  header("Location: ../stellar/detail.php?id={$_REQUEST['i']}");
+  header("Location: ../courses/detail.php?id={$_REQUEST['i']}");
 }
 
 if(isset($_REQUEST['c'])) {

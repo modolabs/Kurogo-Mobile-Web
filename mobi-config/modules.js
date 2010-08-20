@@ -17,7 +17,7 @@
       "title": "Calendar"
     }
     {
-      "id": "stellar",
+      "id": "courses",
       "title": "Courses",
       "subtitle": "class info"
     },
