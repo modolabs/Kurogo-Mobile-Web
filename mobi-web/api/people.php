@@ -32,31 +32,36 @@ switch ($_REQUEST['command']) {
     }
     break;
   case 'search':
-    if (isset($_REQUEST['q'])) {
+    if (isset($_REQUEST['q']) && strlen(trim($_REQUEST['q']))) {
       $ldap = new LdapWrapper();
-      $ldap->buildQuery($_REQUEST['q']);
-      $people = $ldap->doQuery();
-      if ($people) {
-        $results = array();
-        foreach ($people as $person) {
-          $result = array();
-	  $result['uid'] = $person->getId();
-          foreach ($displayFields as $ldapField => $displayField) {
-            $value = $person->getField($ldapField);
-            if ($value) {
-              $result[$ldapField] = $value;
+      if ($ldap->buildQuery(stripslashes($_REQUEST['q']))) {
+          $people = $ldap->doQuery();
+          if (is_array($people) && count($people)) {
+            $results = array();
+            foreach ($people as $person) {
+              $result = array();
+              $result['uid'] = $person->getId();
+              foreach ($displayFields as $ldapField => $displayField) {
+                $value = $person->getField($ldapField);
+                if ($value) {
+                  $result[$ldapField] = $value;
+                }
+              }
+              $results[] = $result;
             }
+            $content = json_encode($results);
+          } elseif (is_array($people)) { 
+            // empty arrays seem to return true to === FALSE 
+            $result = array('error' => 'Nothing Found');
+            $content = json_encode($result);
+          } else {
+            $result = array('error' => $ldap->getError());
+            $content = json_encode($result);
           }
-          $results[] = $result;
-        }
-        $content = json_encode($results);
-      } elseif (is_array($people)) { 
-        // empty arrays seem to return true to === FALSE 
-        $result = array('error' => 'Nothing Found');
-	$content = json_encode($result);
       } else {
-        $result = array('error' => $ldap->getError());
-	$content = json_encode($result);
+          // invalid query
+          $result = array('error' => 'Nothing Found');
+          $content = json_encode($result);
       }
     }
     break;
