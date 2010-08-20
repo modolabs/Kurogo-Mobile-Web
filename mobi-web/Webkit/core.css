@@ -313,7 +313,6 @@ a.formbutton div {
 .breadcrumbs a {
 	display: inline-block;
 	height: 48px;
-	line-height: 48px;
 	vertical-align: top;
     margin-left: -12px; /* overlap by the width of the drillup art */
     background-image: url(../Webkit/images/drillup-r.png);
@@ -355,8 +354,8 @@ a.module img {
 .pagetitle {
 	color: #fff;
 	vertical-align: top;
-	line-height: 46px;
 	font-weight: bold;
+	margin-left: -4px;
 }
 
 .homepage .pagetitle {	
