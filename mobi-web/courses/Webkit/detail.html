@@ -35,6 +35,7 @@ $page->content_begin();
 <div class="focal shaded">
     <a id="mystellar" class="<?=$toggle?>" onclick="toggleMyStellar(this, '<?=$class_data?>')"></a>
     <h2><?=$class['name']?>: <?=className($class)?></h2>
+	<p class="address"><?=$term?></p>
     <ul id="tabs">
     <? if (!$no_stellar_site) { ?>
         <li class="active"><a href="#scrolldown" onclick="showTab('infotab',this)">Info</a></li>
