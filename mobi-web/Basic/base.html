@@ -87,7 +87,11 @@ Font size: <?=$this->font_selector()?>
 
 <p class="bb"> </p>
 <p id="footer">
+<? if ($this->standard_footer) { ?>
 	<?=COPYRIGHT_NOTICE?>
+<? } else { ?>
+<?=$this->footer?>
+<? } ?>
 </p>
 </div>
 </body>

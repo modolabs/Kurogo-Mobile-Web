@@ -91,16 +91,16 @@
 </div>
 
 <div id="footer">
-<? if ($standard_footer) { ?>
-	&copy; 2010 <?=INSTITUTION_NAME?>
+<? if ($this->standard_footer) { ?>
+	<?=COPYRIGHT_NOTICE?>
 <? } else { ?>
-<?=$footer?>
+<?=$this->footer?>
 <? } ?>
 </div>
 
-<? if($footer_script) { ?>
+<? if($this->footer_script) { ?>
       <script type="text/javascript">
-          <?=$footer_script?>
+          <?=$this->footer_script?>
       </script>
 <? } ?>
 
