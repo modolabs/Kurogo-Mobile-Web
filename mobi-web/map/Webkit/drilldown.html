@@ -1,13 +1,13 @@
 <?php
-$page->title("Map: Browse $title")
+$page->title("Map: Browse by Category")
      ->navbar_image('map')
-     ->breadcrumbs('Browse', $last_crumb)
+     ->breadcrumbs("Browse by Category")
      ->breadcrumb_links(categoryURL());
 
 $page->content_begin();
 ?>
 	<div class="nonfocal">
-		<h2>Browse Buildings: <?=$heading?></h2>
+		<h2>Browse Buildings: <?=$title?></h2>
 	</div>
 	
 	<ul class="results">
