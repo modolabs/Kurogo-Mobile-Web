@@ -21,13 +21,6 @@ switch($pageParam) {
     );
     $device_phrase = $device_phrases[$page->branch];
 
-  case "requirements":
-  case "credits":
-    require "$page->branch/{$_REQUEST['page']}.html";
-    $page->cache();
-    $page->output();
-    break;
-
   case "about":
   default:
     $whats_new = new WhatsNew();
