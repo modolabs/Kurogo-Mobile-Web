@@ -69,7 +69,7 @@ foreach ($events as $event) {
 
 
 // Course search
-require_once LIBDIR . '/testCourses.php';
+require_once LIBDIR . '/courses.php';
 $class_results = CourseData::search_subjects($search_terms, '', '');
 $class_result_items = array();
 foreach($class_results['classes'] as $class) {
