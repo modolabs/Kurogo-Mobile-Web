@@ -55,7 +55,7 @@ case "Photo": ?>
 
 	<div class="tabbody centered">
 		<p><img src="<?=$photoURL?>" alt="Photo" width="<?=$photoWidth?>" class="photo" lowsrc="../Touch/images/loading3.gif"<? if ($width < 250) { ?> width="<?=$width?>"<? } ?> /></p>
-		<p class="legend">View from <?=$data['viewangle']?><? if ($data['architect']) { ?><br/>Architect: <?=$data['architect']?><? } ?></p>
+		<!--<p class="legend">View from <?=$data['viewangle']?><? if ($data['architect']) { ?><br/>Architect: <?=$data['architect']?><? } ?></p>-->
 
 <?
   break;
@@ -73,5 +73,10 @@ case "What's Here": ?>
 ?>
 
 	</div>
+
+<ul class="nav">
+<li><a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>,<?=$displayDetails['City']?>+<?=$displayDetails['State']?>" class="external">Google Map</a></li>
+</ul>
+
 
 <? $page->content_end(); ?>
