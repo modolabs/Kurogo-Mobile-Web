@@ -28,15 +28,11 @@ $page->content_begin();
 	</div>
 		
 	<ul class="secondary">
+	<? foreach ($phoneNumbers as $name => $number) { ?>
 		<li>
-			<a href="tel:16174951000" class="phone">General Directory <span class="smallprint">(617-495-1000&shy;)</span></a>
+			<a href="tel:<?=$number?>" class="phone"><?=$name?> <span class="smallprint">(<?=addSilentHyphens($number)?>)</span></a>
 		</li>
-		<li>
-			<a href="tel:16174931000" class="phone">Student Directory <span class="smallprint">(617-493-1000&shy;)</span></a>
-		</li>
-		<li>
-			<a href="tel:16174955000" class="phone">Faculty/Staff Directory <span class="smallprint">(617-495-5000&shy;)</span></a>
-		</li>		
+        <? } ?>
 	</ul>
 
 <? $page->content_end(); ?>

@@ -6,6 +6,12 @@ require LIBDIR . "/LdapWrapper.php";
 
 $failed_search = FALSE;
 
+$phoneNumbers = array(
+    'General Directory' => '6174951000',
+    'Student Directory' => '6174931000',
+    'Faculty/Staff Directory' => '6174955000',
+    );
+
 if (isset($_REQUEST['username']) && $username = $_REQUEST['username']) {
   $ldapWrapper = new LdapWrapper();
   $person = $ldapWrapper->lookupUser($username);
@@ -51,6 +57,12 @@ if (isset($_REQUEST['username']) && $username = $_REQUEST['username']) {
 }
 
 $page->output();
+
+function addSilentHyphens($number) {
+  return substr($number, 0, 3) . '&shy;-'
+       . substr($number, 3, 3) . '&shy;-'
+       . substr($number, 6);
+}
 
 function detail_url($person)
 {
