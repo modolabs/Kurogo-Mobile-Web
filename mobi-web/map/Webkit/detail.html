@@ -53,13 +53,13 @@ $page->content_begin();
 		
 		<div id="tabbodies">	
 
-			<div class="tabbody" id="phototab" style="display:none">
+			<div class="tabbody" id="phototab" <? if (!$photoURL) { ?>style="display:none"<? } ?>>
 				<img id="loadingimage2" src="../Webkit/images/loading2.gif" width="40" height="40" alt="Loading" />
 				<img id="photo" src="" width="<?=$photoWidth?>" height="" alt="Photo" onload="hide('loadingimage2')" />
 
 			</div> <!-- id="phototab" -->
 
-			<div class="tabbody" id="maptab" style="display:none">
+			<div class="tabbody" id="maptab" <? if ($photoURL) { ?>style="display:none"<? } ?>>
 				<div id="mapscrollers">
 					<div id="nw"><a href="#scrolldown" onclick="scroll('nw'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="NW" /></a></div>
 					<div id="n"><a href="#scrolldown" onclick="scroll('n'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="N" /></a></div>
