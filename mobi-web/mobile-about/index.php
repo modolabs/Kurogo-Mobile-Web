@@ -19,22 +19,24 @@ switch($pageParam) {
       "Touch" => "touchscreen phones",
       "Basic" => "non-touchscreen phones"
     );
-    $device_phrase = $device_phrases[$page->branch];
+    if ($page->platform == 'bbplus') {
+      $device_phrase = "high-resolution BlackBerry devices";
+    } else {
+      $device_phrase = $device_phrases[$page->branch];
+    }
+    $backgroundInfo = "The Harvard mobile website is part of a broader initiative to improve the mobile experience of students, faculty, staff, visitors, and neighbors who interact with Harvard's campus and community. We will continue to develop and improve the mobile website, and welcome your ideas and feedback.";
 
   case "requirements":
-  case "credits":
     require "$page->branch/{$_REQUEST['page']}.html";
     $page->cache();
     $page->output();
     break;
+    
 
-  case "about":
   default:
-    $whats_new = new WhatsNew();
-    $whats_new_count = $whats_new->count(WhatsNew::getLastTime());
     require "$page->branch/index.html";
     $page->output();
+    break;
 }
-
 
 ?>
