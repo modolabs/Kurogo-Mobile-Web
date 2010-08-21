@@ -14,9 +14,10 @@ $detailBlacklist = array('Root', 'Shape', 'PHOTO_FILE', 'OBJECTID', 'FID', 'BL_I
 $name = $_REQUEST['selectvalues'];
 
 $details = $_REQUEST['info'];
-$tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'Map';
+$tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'Photo';
 
-if ($tab == 'Map') {
+// if ($tab == 'Map') {
+
   require_once LIBDIR . '/WMSServer.php';
   $wms = new WMSServer(WMS_SERVER);
   $bbox = isset($_REQUEST['bbox']) ? bboxStr2Arr($_REQUEST['bbox']) : NULL;
@@ -140,11 +141,12 @@ if ($tab == 'Map') {
   $mapOptions = '&' . http_build_query(array(
     'crs' => 'EPSG:2249',
     ));
-}
+
+//} // if ($tab == 'Map')
 
 $selectvalue = $_REQUEST['selectvalues'];
 
-$tabs = new Tabs(selfURL($details), "tab", array("Map", "Photo", "Details"));
+$tabs = new Tabs(selfURL($details), "tab", array("Photo", "Map", "Details"));
 
 if (array_key_exists('PHOTO_FILE', $details)) {
   $photoURL = MAP_PHOTO_SERVER . rawurlencode($details['PHOTO_FILE']);
