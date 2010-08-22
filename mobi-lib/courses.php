@@ -383,6 +383,7 @@ class CourseData {
       else
         $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
     }
+    $subject_fields['title'] = HTML2TEXT($subject_fields['title']);
 
     //$subject_fields['title'] = $titl[0];
     $desc = explode(':', $single_course->description);
@@ -538,6 +539,7 @@ class CourseData {
              else
                 $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
          }
+         $subject_fields['title'] = HTML2TEXT($subject_fields['title']);
          //$subject_fields['title'] = $titl[0];
          $subject_fields['term'] = TERM;
 
