@@ -11,6 +11,7 @@ var minZoom = -8;	// integer: max zoom-out level
 var detailBaseURL = "detail.php?";	// base URL for the normal map detail screen
 var fullscreenBaseURL = "detail-fullscreen.php?";	// base URL for the fullscreen map detail screen
 
+
 function jumpbrowse(objSelect) {
 // Use the value of the 'browse by' select control to jump to a different browse page
 	if(objSelect) {
