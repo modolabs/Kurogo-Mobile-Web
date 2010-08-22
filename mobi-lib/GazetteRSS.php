@@ -94,7 +94,6 @@ class GazetteRSS extends RSS {
 
     $doc = new DOMDocument();
     $doc->load($cacheFile);
-    $items = $doc->getElementsByTagName("item");
     return $doc;
   }
 
@@ -269,9 +268,9 @@ class GazetteRSS extends RSS {
   private static function cacheImage($imgUrl, $newWidth=NULL, $newHeight=NULL) {
 
     $imageName = self::imageName($imgUrl, $newWidth, $newHeight);
-    if (self::$imageWriter->isFresh($imageName)) {
-      if (self::$imageWriter->isEmpty($imageName))
-        return FALSE;
+    if (self::$imageWriter->isEmpty($imageName))
+      return FALSE;
+    else if (self::$imageWriter->isFresh($imageName)) {
       list(self::$lastWidth, self::$lastHeight) = self::$imageWriter->getImageSize($imageName);
       return $imageName;
     } else {
