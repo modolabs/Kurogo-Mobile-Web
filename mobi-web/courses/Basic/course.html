@@ -27,7 +27,7 @@ $courseIdEncoded = urlencode($courseId);
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a><br/>
+            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a><br/>
             <? }
             else  {?>
             <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
@@ -41,7 +41,7 @@ $courseIdEncoded = urlencode($courseId);
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a><br/>
+            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a><br/>
             <? }
             else {?>
             <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>
@@ -54,7 +54,7 @@ $courseIdEncoded = urlencode($courseId);
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a><br/>
+            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a><br/>
             <? }
             else {?>
             <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/>

@@ -30,7 +30,7 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li>
             <? }
             else  {?>
             <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
@@ -44,7 +44,7 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li>
             <? }
             else {?>
             <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
@@ -57,7 +57,7 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li>
             <? }
             else {?>
             <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
