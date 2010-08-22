@@ -8,17 +8,11 @@ error_log(LIBDIR);
 
 $page->content_begin();
 ?>
-	<ul class="nav"> 
-		<li> 
-			<a href="./?page=background">About This Website</a> 
-		</li> 
-		<li> 
-			<a href="./?page=requirements">System Requirements</a> 
-		</li> 
-		<li> 
-			<a class="email" href="mailto:<?=FEEDBACK_EMAIL?>">Send us Feedback!</a>
-		</li> 
-	</ul> 
+    <ul class="nav"> 
+        <li><a href="./?page=about_site">About This Website</a></li>
+        <li><a href="./?page=about">About <?=INSTITUTION_NAME?></a></li> 
+        <li><a class="email" href="mailto:<?=FEEDBACK_EMAIL?>">Send us Feedback!</a></li> 
+    </ul> 
 <? 
 $page->content_end(); 
 $page->help_off();
