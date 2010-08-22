@@ -89,7 +89,33 @@ function collectFoodByCategory($items) {
         }
     }
 
-    return $food_categories;
+    // reorder food categories by priority
+    $orderedFoodCategories = array();
+    $priorityFoodCategories = array(
+        "Breakfast Entrees",
+        "Today's Soup",
+        "Brunch",
+        "Entrees",
+        "Accompaniments",
+        "Desserts",
+        "Pasta a la Carte",
+        "Vegetables",
+        "Starch & Potatoes",
+    );
+
+    foreach($priorityFoodCategories as $foodCategory) {
+        if(isset($food_categories[$foodCategory])) {
+            $orderedFoodCategories[$foodCategory] = $food_categories[$foodCategory];
+        }
+    }
+
+    foreach($food_categories as $category => $food_items) {
+        if(!isset($orderedFoodCategories[$category])) {
+	    $orderedFoodCategories[$category] = $food_items;
+	}
+    }
+   
+    return $orderedFoodCategories;
 }
 
 class DINING_CONSTANTS {

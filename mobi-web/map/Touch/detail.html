@@ -21,14 +21,8 @@ $page->content_begin();
 ?>
 
 	<div class="shaded">
-<? if($snippets) { ?>
-                   <p class="foundat"><?=$snippets?> found in:</p>
-<? } ?>
-		<h2><?=$building_title?></h2>
-		
-<? if($tab == "Map") { ?>
-  		   <p class="smallprint"><?=$data['street']?></p>
-<? } ?>
+		<h2><?=$name?></h2>
+		<p class="smallprint"><?=$displayDetails['Address']?></p>
 
 		<div id="tabs">
 		<?=$tabs_html?>
@@ -42,37 +36,36 @@ case 'Map': ?>
 
 	<div class="tabbody centered">
 		<a name="scrolldown"> </a>
-		<img id="mapimage" width="<?=$width?>" height="<?=$height?>" alt="Map" src="<?=imageURL($width, $height, $fontsize)?>" lowsrc="../../images/touch/loading3.gif" /> 
+		<img id="mapimage" width="<?=$imageWidth?>" height="<?=$imageHeight?>" alt="Map" src="<?=$imageUrl?>" lowsrc="../../images/touch/loading3.gif" /> 
 		<div class="zoomlinks">
-			Zoom: <a href="<?=zoomInURL()?>">In</a>&nbsp;|&nbsp;<a href="<?=zoomOutURL()?>">Out</a>
+			Zoom: <a href="<?=$zoomInUrl?>">In</a>&nbsp;|&nbsp;<a href="<?=$zoomOutUrl?>">Out</a>
 			<br/>
-			Scroll: <a href="<?=scrollURL('N')?>">N</a>&nbsp;|&nbsp;<a href="<?=scrollURL('S')?>">S</a>&nbsp;|&nbsp;<a href="<?=scrollURL('E')?>">E</a>&nbsp;|&nbsp;<a href="<?=scrollURL('W')?>">W</a><br/>
+			Scroll: <a href="<?=$scrollNorth?>">N</a>&nbsp;|&nbsp;<a href="<?=$scrollSouth?>">S</a>&nbsp;|&nbsp;<a href="<?=$scrollEast?>">E</a>&nbsp;|&nbsp;<a href="<?=$scrollWest?>">W</a><br/>
 		</div>
-
+    </div>
 <?
   break;
 case "Photo": ?>
 
 	<div class="tabbody centered">
-		<p><img src="<?=$photoURL?>" alt="Photo" width="<?=$photoWidth?>" class="photo" lowsrc="../Touch/images/loading3.gif"<? if ($width < 250) { ?> width="<?=$width?>"<? } ?> /></p>
-		<!--<p class="legend">View from <?=$data['viewangle']?><? if ($data['architect']) { ?><br/>Architect: <?=$data['architect']?><? } ?></p>-->
-
+		<p><img src="<?=$photoURL?>" alt="Photo" width="<?=$photoWidth?>" class="photo" lowsrc="../Touch/images/loading3.gif"<? if ($photoWidth < 250) { ?> width="<?=$photoWidth?>"<? } ?> /></p>
+    </div>
 <?
   break;
-case "What's Here": ?>
+case "Details": ?>
 
 	<div class="tabbody">
 		<ul>
-<?     foreach($whats_here as $item) { ?>
-			<li><?=$item?></li>
-<?     } ?>
+            <? foreach($displayDetails as $field => $value) { ?>
+                <li><?=$field?>: <?=$value?></li>
+            <? } ?>
 		</ul>
+	</div>
 <?
   break;
 }
 ?>
 
-	</div>
 
 <ul class="nav">
 <li><a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>,<?=$displayDetails['City']?>+<?=$displayDetails['State']?>" class="external">Google Map</a></li>
