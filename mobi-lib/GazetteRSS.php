@@ -94,7 +94,6 @@ class GazetteRSS extends RSS {
 
     $doc = new DOMDocument();
     $doc->load($cacheFile);
-    $items = $doc->getElementsByTagName("item");
     return $doc;
   }
 
@@ -151,6 +150,11 @@ class GazetteRSS extends RSS {
     $rssRoot->appendChild($channelRoot);
 
     $numItems = $dom->getElementsByTagName('item')->length;
+    $categoryTags = $dom->getElementsByTagName('category');
+    foreach ($categoryTags as $categoryTag) {
+      if ($categoryTag->nodeValue == 'Multimedia')
+        $numItems--;
+    }
     if ($lastStoryId === NULL) {
       // provide a flag to the native app so it knows how many stories
       // are in this feed, since we only return up to 10
@@ -269,9 +273,9 @@ class GazetteRSS extends RSS {
   private static function cacheImage($imgUrl, $newWidth=NULL, $newHeight=NULL) {
 
     $imageName = self::imageName($imgUrl, $newWidth, $newHeight);
+    if (self::$imageWriter->isEmpty($imageName))
+      return FALSE;
     if (self::$imageWriter->isFresh($imageName)) {
-      if (self::$imageWriter->isEmpty($imageName))
-        return FALSE;
       list(self::$lastWidth, self::$lastHeight) = self::$imageWriter->getImageSize($imageName);
       return $imageName;
     } else {

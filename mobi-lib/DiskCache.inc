@@ -166,7 +166,7 @@ class DiskCache {
 
   public function isEmpty($filename=NULL) {
     $path = $this->getFullPath($filename);
-    return (filesize($path) == 0);
+    return file_exists($path) && filesize($path) == 0;
   }
 
   public function getAge($filename=NULL) {
