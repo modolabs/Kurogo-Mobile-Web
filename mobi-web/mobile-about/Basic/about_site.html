@@ -1,0 +1,32 @@
+<?php
+$page->title('About this website')
+     ->header('About this website');
+
+$page->content_begin();
+?>
+
+    <div class="focal"> 
+    
+        <h2>About this website</h2> 
+        <p>
+            The Harvard mobile web application is part of a broader initiative to
+            improve the mobile experience of students, faculty, staff, visitors, 
+            and neighbors who interact with Harvard's campus and community. We 
+            will continue to develop, expand and improve the mobile website. 
+            We welcome your ideas and feedback.
+        </p>
+        <p>You're using the version optimized for <?=$device_phrase?>.</p>
+
+        <p>We value your feedback! Please email your questions and suggestions to <a href="mailto:<?=FEEDBACK_EMAIL?>"><?=FEEDBACK_EMAIL?></a>.</p> 
+    </div> 
+
+    <p class="nonfocal legend"> 
+        <strong>* Important note:</strong> <?=APP_NAME?> is a free service. Extra data charges may apply when using any website on your mobile device depending on your service plan.
+    </p> 
+
+<? 
+$page->content_end(); 
+$page->help_off();
+$page->nav_link('./', 'About this Site');
+
+?>
