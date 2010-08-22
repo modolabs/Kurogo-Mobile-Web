@@ -5,14 +5,14 @@ $page->title('About')
 $page->content_begin();
 ?>
 
-	<p class="nav"> 
-        <?=$page->link_access_key('./?page=background', 'About This Site')?><br />
-        <?=$page->link_access_key('./?page=requirements', 'System Requirements')?><br />
-	</p> 
-	
-	<p class="secondary"> 
-		<a href="mailto:<?=FEEDBACK_EMAIL?>">Send us Feedback!</a><br/> 
-	</p> 
+    <p class="nav"> 
+        <?=$page->link_access_key('./?page=about_site', 'About This Website')?><br />
+        <?=$page->link_access_key('./?page=about', 'About ' . INSTITUTION_NAME)?><br />
+    </p> 
+    
+    <p class="secondary"> 
+        <a href="mailto:<?=FEEDBACK_EMAIL?>">Send us Feedback!</a><br/> 
+    </p> 
 
 <? 
 $page->content_end(); 
