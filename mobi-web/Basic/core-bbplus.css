@@ -9,7 +9,7 @@ body {
 	background-color: #ebe7dd; 
 	background-image: url('../Basic/images/background-tile.png');
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 16pt;
+	font-size:16pt;
 	line-height: 1.33em;
 	color: #333;
 	padding: 0em;
@@ -38,7 +38,7 @@ h1, h2, h3 {
 
 h1 {
 	font-family: Georgia, serif;
-	font-size: 171%;
+	font-size: 150%;
 	font-weight: normal;
 	color: #1a1611;
 	margin: 10px 0;
@@ -47,7 +47,7 @@ h1 {
 
 h2 { 
 	font-family: Georgia, serif;
-	font-size: 150%; 
+	font-size: 130%; 
 	font-weight: normal;
 	color: #1a1611;
 	margin: 0 0 6px 0;
