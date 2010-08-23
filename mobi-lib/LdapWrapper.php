@@ -80,6 +80,9 @@ class LdapPerson {
       // lines in office address are literally delimited by a $ symbol
       $namePattern = '/^' . $nameParts[0] . '[\w\s\.]*' . end($nameParts) . '\$/';
       $address = preg_replace($namePattern, '', $address);
+      // Also replace '&amp;' with '&'. Both mobile web and the API need that symbol in the '&' form.
+      $address = preg_replace('/\&amp\;/', '&', $address);
+      
       $this->attributes['postaladdress'] = array($address);
     }
 

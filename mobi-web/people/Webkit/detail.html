@@ -1,7 +1,7 @@
 <?php
-$page->title('People: Details')
+$page->title('People: Detail')
      ->navbar_image('people')
-     ->breadcrumbs('Search', 'Details');
+     ->breadcrumbs('Search', 'Detail');
      
 if (isset($_REQUEST['filter'])) {
      $page->breadcrumb_links('index.php?filter='.urlencode(stripslashes($_REQUEST['filter'])));
