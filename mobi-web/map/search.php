@@ -35,8 +35,8 @@ function titleFromResult($resultObj) {
 }
 
 function map_search($terms) {
-  require_once LIBDIR . '/ArcGISServer.php';
-  $resultObj = ArcGISServer::search($terms);
+  require_once LIBDIR . '/MapSearch.php';
+  $resultObj = searchCampusMap($terms);
   $results = array();
   foreach ($resultObj->results as $result) {
     $results[] = $result;

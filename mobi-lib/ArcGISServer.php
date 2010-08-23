@@ -15,6 +15,7 @@ class ArcGISServer {
 
   private static $diskCache = NULL;
   private static $wkidCache = NULL;
+  private static $bldgCache = NULL;
   private static $collections = array();
 
   public static function getCollection($name=NULL) {
@@ -79,7 +80,42 @@ class ArcGISServer {
   }
 
   // only works on CampusMap layer
-  public static function getObjectByID($objectId) {
+  public static function getBldgByNumber($number) {
+    if (!self::$bldgCache->isFresh($number)) {
+      $collection = self::getCollection();
+      $searchFields = "Building Number";
+
+      $queryBase = $collection->getURL() . '/find?';
+      $query = http_build_query(array(
+        'searchText'     => $number,
+        'searchFields'   => $searchFields,
+        'contains'       => 'false',
+        'sr'             => '', // i hope this means use the default
+        'layers'         => 0,
+        'returnGeometry' => 'true',
+        'f'              => 'json',
+        ));
+
+      $json = file_get_contents($queryBase . $query);
+      $jsonObj = json_decode($json);
+        var_dump($json);
+
+      if ($jsonObj->results) {
+        foreach ($jsonObj->results as $result) {
+          foreach ($result->attributes as $name => $value) {
+            $result->attributes->{$name} = $value;
+          }
+        }
+
+        self::$bldgCache->write($jsonObj, $number);
+
+      } else {
+        error_log("could not find building $number", 0);
+      }
+    }
+
+    $result = self::$bldgCache->read($number);
+    return $result;
   }
 
   public static function search($searchText, $collectionName=NULL) {
@@ -117,7 +153,8 @@ class ArcGISServer {
 
     foreach ($jsonObj->results as $result) {
       foreach ($result->attributes as $name => $value) {
-        $result->attributes->{$name} = $value;
+        if ($value != 'Null')
+          $result->attributes->{$name} = $value;
       }
     }
 
@@ -127,6 +164,7 @@ class ArcGISServer {
   public static function init() {
     if (!self::$collections) {
       self::$diskCache = new DiskCache(ARCGIS_CACHE, 86400 * 7, TRUE);
+      self::$bldgCache = new DiskCache(CACHE_DIR . '/ARCGIS_BLDG', 86400 * 30, TRUE);
 
       self::$wkidCache = new DiskCache(ARCGIS_CACHE, 86400 * 30, TRUE);
       self::$wkidCache->setSuffix('.wkid');
@@ -336,7 +374,8 @@ class ArcGISLayer {
       $attributes = $featureInfo->attributes;
       $displayAttribs = array();
       foreach ($attributes as $attrName => $attrValue) {
-        $displayAttribs[$this->fields[$attrName]] = $attrValue;
+        if ($attrValue != 'Null')
+          $displayAttribs[$this->fields[$attrName]] = $attrValue;
       }
       $featureId = $attributes->{$displayField};
       $result[$featureId] = $displayAttribs;
