@@ -134,8 +134,9 @@ fieldset {
 }
 
 .combobutton {
-	background-color: #933;
+	background-color: #900;
 	color: #fff;
+	font-size: x-small;
 }
 
 .inputcombo .forminput {

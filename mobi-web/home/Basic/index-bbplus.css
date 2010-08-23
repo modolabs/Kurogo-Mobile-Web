@@ -152,9 +152,12 @@ h1 {
 	margin: 8px 0 18px 0;
 	text-align: center;
 }
+#homesearch table {
+	width: 100%;
+}
 .forminput {
 	font-size: 100%;
-	width: 35%;
+	width: 100%;
 	padding: 4px;
 	border: 2px solid #554c41;
 }
