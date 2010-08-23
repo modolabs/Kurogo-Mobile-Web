@@ -16,7 +16,7 @@ $bbox_script =<<<JS
      var mapOptions = '{$mapOptions}';
 JS;
 
-$page->title('Map: Details')
+$page->title('Map: Detail')
      ->navbar_image('map')
      ->not_scalable()
      ->add_stylesheet('Webkit/map')
@@ -28,11 +28,18 @@ $page->title('Map: Details')
 //construct the breadcrumbs
 $back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
 if ($back == 'Browse') {
-  $page->breadcrumbs('Browse', 'Detail');
-  $page->breadcrumb_links('index.php?category='.urlencode(stripslashes($_REQUEST['category'])));
+  $category = stripslashes($_REQUEST['category']);
+  $layer = ArcGISServer::getLayer($category);
+  $title = $layer->getName();
+
+  $page->breadcrumbs($title, 'Detail');
+  $page->breadcrumb_links('index.php?category='.urlencode($category));
+  $page->breadcrumb_classes('crumb1');
+  
 } else if ($back == 'Search') {
   $page->breadcrumbs('Search', 'Detail');
   $page->breadcrumb_links('search.php?filter='.urlencode(stripslashes($_REQUEST['filter'])));  
+  
 } else {
   $page->breadcrumbs('Detail');
 }

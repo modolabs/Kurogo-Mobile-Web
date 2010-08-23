@@ -1,9 +1,29 @@
 <ul class="results">
-            <? foreach($results as $class) { ?>
-                <? 
+            <? foreach($results as $i => $class) {
+                $className = $class['name'];
+          
+                $prevClassName = '';
+                $nextClassName = '';
+                if ($i > 0) {
+                  $prevClassName = $results[$i-1]['name'];
+                }
+                if ($i < count($results)-1) {
+                  $nextClassName = $results[$i+1]['name'];
+                }
+              
+                $staffName = '';
+                if ($className == $prevClassName || $className == $nextClassName) {
+                  // Multiple classes with the same name in a row, show instructors to differentiate      
+                  foreach($class['staff']['instructors'] as $name) {
+                    $staffName .= (strlen($staffName) ? ', ' : '').$name;
+                  }
+                  if (strlen($staffName)) {
+                    $staffName = ' ('.$staffName.')';
+                  }
+                }
                 $filter = isset($_REQUEST['filter']) ? stripslashes($_REQUEST['filter']) : '';
                 $courseGroup = isset($_REQUEST['courseGroup']) ? stripslashes($_REQUEST['courseGroup']) : '';
-                $selfParams = 'filter='.$filter.'&courseGroup='.$courseGroup; ?>
-                <li><a href="<?=detailURL($class, 'Search', $selfParams)?>"><strong><?=$class["name"]?></strong>: <?=$class["title"]?></a></li>
+                $selfParams = 'filter='.urlencode($filter).'&courseGroup='.urlencode($courseGroup); ?>
+                <li><a href="<?=detailURL($class, 'Search', $selfParams)?>"><strong><?=$className?></strong>: <?=$class["title"]?><?=$staffName?></a></li>
             <? } ?>
 </ul>

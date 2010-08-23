@@ -1,8 +1,34 @@
 <?php
 
-$page->title("Events: Event Details")
-     ->navbar_image('calendar')
-     ->breadcrumbs('Browse', "Details");
+$page->title("Events: Detail")
+     ->navbar_image('calendar');
+
+$back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
+if ($back == 'Search') {
+  $page->breadcrumbs('Search', 'Detail');
+  $page->breadcrumb_links('search.php?filter='.urlencode(stripslashes($_REQUEST['filter'])));
+  
+} else if ($back == 'Day') {
+  $time = stripslashes($_REQUEST['time']);
+  $type = stripslashes($_REQUEST['type']);
+  
+  $page->breadcrumbs('Day', "Detail");
+  $page->breadcrumb_links(
+    'day.php?time='.urlencode($time).'&type='.urlencode($type));
+    
+} else if ($back == 'Category') {
+  $catName = stripslashes($_REQUEST['catName']);
+  $catID = stripslashes($_REQUEST['catID']);
+
+  $page->breadcrumbs('Category', $catName, "Detail");
+  $page->breadcrumb_links(categorysURL(),
+    'category.php?name='.urlencode($catName).'&id='.urlencode($catID).
+      (isset($_REQUEST['catTime']) ? '&time='.urlencode(stripslashes($_REQUEST['catTime'])) : ''));
+  $page->breadcrumb_classes('', 'crumb1');
+  
+} else {
+  $page->breadcrumbs('Browse', "Detail");
+}
 
 // get a list of the category mappings first
 $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
