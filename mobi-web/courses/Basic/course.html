@@ -22,17 +22,18 @@ $courseIdEncoded = urlencode($courseId);
             $nextClassName = $classes[$i+1]['name'];
           }
           
+          $staffName = '';
           if ($className == $prevClassName || $className == $nextClassName) {
             // Multiple classes with the same name in a row, show instructors to differentiate      
-            $staffName = '';
             foreach($class['staff']['instructors'] as $name) {
-              $staffName = (strlen($staffName) ? ', ' : '').$name;
-            }?>
-    
-       <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a><br/><?
-          } else {?>
-            <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a><br/><?
-          }
+              $staffName .= (strlen($staffName) ? ', ' : '').$name;
+            }
+            if (strlen($staffName)) {
+              $staffName = ' ('.$staffName.')';
+            }
+          }?>
+
+         <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?><?=$staffName?></a><br/><?
         } 
         ?>
         </p>
