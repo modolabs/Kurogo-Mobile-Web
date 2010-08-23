@@ -24,6 +24,8 @@ class ArcGISServer {
     elseif (array_key_exists($name, self::$collections)) {
       return self::$collections[$name];
     }
+
+    return NULL;
   }
 
   public static function getCollections() {
@@ -59,6 +61,9 @@ class ArcGISServer {
       $collection = self::getCollection($collectionName);
       $searchFields = $collection->getDefaultSearchFields();
     }
+
+    if ($collection === NULL)
+      return FALSE;
 
     $searchText = strtoupper(str_replace('.', '', $searchText));
 
