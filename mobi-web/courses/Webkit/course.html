@@ -1,8 +1,20 @@
 <?php
 $page->title("Courses: " . $courseId)
-     ->header($courseId)
-     ->navbar_image('stellar')
-     ->breadcrumbs($Back, "Courses");
+     ->navbar_image('stellar');
+     
+     
+if (isset($_REQUEST['back'], $_REQUEST['courseGroup']) && $_REQUEST['back'] == 'School') {
+  $courseGroup = stripslashes($_REQUEST['courseGroup']);
+  
+  $page->breadcrumbs('School', 'Listing');
+  $page->breadcrumb_links('courses.php?which='.urlencode($courseGroup));
+  $self = 'School|Listing';
+  $selfParams = 'courseGroup='.urlencode($courseGroup).'&courseID='.urlencode($courseId);
+} else {
+  $page->breadcrumbs('Listing');
+  $self = 'Listing';
+  $selfParams = 'courseID='.urlencode($courseId);
+}
 
 $page->content_begin();
 ?>
@@ -30,10 +42,10 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
+            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
             <? }
             else  {?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
+            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?></a></li>
             <? }}
 
             else if (($ind > 0) && ($ind == count($classes) - 1)){
@@ -44,10 +56,10 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
+            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
             <? }
             else {?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
+            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?></a></li>
             <? }}
             else if (($ind == 0) && ($ind <= count($classes) - 1)){
             $nextClass = $classes[$ind + 1];
@@ -57,10 +69,10 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
+            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
             <? }
             else {?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
+            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?></a></li>
             <? }} ?>
             <?} ?>
 	</ul>

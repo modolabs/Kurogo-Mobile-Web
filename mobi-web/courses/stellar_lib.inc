@@ -29,8 +29,9 @@ function className($class) {
   return $class['title'];
 }
 
-function detailURL($class, $self) {
-  return "detail.php?id={$class['masterId']}&back=" . urlencode($self);
+function detailURL($class, $self, $selfParams='') {
+  return "detail.php?id={$class['masterId']}&back=" . urlencode($self).
+    (strlen($selfParams) ? '&'.$selfParams : '');
 }
 
 function name($course) {

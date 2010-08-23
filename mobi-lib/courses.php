@@ -440,7 +440,7 @@ class CourseData {
     $ta_array = array();
     //$prof = explode(':', $single_course->faculty_description);
     //$staff['instructors'] = array($prof[0]);
-    $staff['instructors'] = explode(",",$single_course->faculty_description);
+    $staff['instructors'] = preg_split('/\s*,(\sand)?\s*/', $single_course->faculty_description);
     $staff['tas'] = $ta_array;
     $subject_fields['staff'] = $staff;
 

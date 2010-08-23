@@ -12,7 +12,9 @@ $term_id = $term;
 
 $tabs = new Tabs(selfURL(), 'tab', array('Info', 'Staff'));
 
-$back = $_REQUEST['back'];
+$back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
+$no_stellar_site = FALSE;
+
 
 
 /* My Stellar actions */

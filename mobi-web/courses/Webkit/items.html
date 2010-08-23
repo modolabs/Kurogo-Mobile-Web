@@ -1,5 +1,6 @@
 <ul class="results">
             <? foreach($results as $class) { ?>
-                <li><a href="<?=detailURL($class, selfURL())?>"><strong><?=$class["name"]?></strong>: <?=$class["title"]?></a></li>
+                <? $selfParams = 'filter='.$filter.'&courseGroup='.$courseGroup.'&courseID='.$courseID; ?>
+                <li><a href="<?=detailURL($class, 'Search', $selfParams)?>"><strong><?=$class["name"]?></strong>: <?=$class["title"]?></a></li>
             <? } ?>
 </ul>

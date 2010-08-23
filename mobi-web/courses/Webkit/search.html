@@ -5,6 +5,10 @@ $page->title('Courses: Search Results')
 
 $page->content_begin();
 
+$filter = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : '';
+$courseGroup = isset($_REQUEST['courseGroup']) ? $_REQUEST['courseGroup'] : '';
+$courseID = isset($_REQUEST['courseID']) ? $_REQUEST['courseID'] : '';
+
 $content->output($classes);
 
 $page->content_end(); 
