@@ -66,10 +66,10 @@ case "Details": ?>
 }
 ?>
 
-
+<? if (isset($displayDetails['Address'], $displayDetails['City'], $displayDetails['State'])) { ?>
 <ul class="nav">
 <li><a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>,<?=$displayDetails['City']?>+<?=$displayDetails['State']?>" class="external">Google Map</a></li>
 </ul>
-
+<? } ?>
 
 <? $page->content_end(); ?>

@@ -21,62 +21,33 @@ $page->content_begin();
 	<div class="nonfocal">
 		<h2><?=$courseId?></h2>
 	</div>
-	
 	<ul class="results">
-            <? for($ind=0; $ind < count($classes); $ind++) {
+	<? 
+	foreach ($classes as $i => $class) {
+	  $className = $class['name'];
+	  
+	  $prevClassName = '';
+	  $nextClassName = '';
+	  if ($i > 0) {
+	    $prevClassName = $classes[$i-1]['name'];
+	  }
+	  if ($i < count($classes)-1) {
+	    $nextClassName = $classes[$i+1]['name'];
+	  }
+	  
+	  if ($className == $prevClassName || $className == $nextClassName) {
+        // Multiple classes with the same name in a row, show instructors to differentiate      
+   	    $staffName = '';
+        foreach($class['staff']['instructors'] as $name) {
+          $staffName = (strlen($staffName) ? ', ' : '').$name;
+        }?>
 
-            $class = $classes[$ind];
-            $className = $class["name"];
-
-            if (($ind > 0) && ($ind < count($classes) - 1)){
-            $prevClass = $classes[$ind - 1];
-            $nextClass = $classes[$ind + 1];
-
-            if (($class['name'] == $prevClass['name']) || ($class['name'] == $nextClass['name'])) {
-            $staffName = '';
-            foreach($class['staff']['instructors'] as $name) {
-            $staffName = $name . ',' .$staffName;
-            } $staffName = substr($staffName, 0 , -1); ?>
-
-            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li>
-
-            <? }
-            else  {?>
-            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?></a></li>
-            <? }}
-
-            else if (($ind > 0) && ($ind == count($classes) - 1)){
-            $prevClass = $classes[$ind - 1];
-
-            if (($class['name'] == $prevClass['name'])) {
-            $staffName = '';
-            foreach($class['staff']['instructors'] as $name) {
-            $staffName = $name . ',' .$staffName;
-            } $staffName = substr($staffName, 0 , -1); ?>
-
-            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li>
-
-            <? }
-            else {?>
-            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?></a></li>
-            <? }}
-            else if (($ind == 0) && ($ind <= count($classes) - 1)){
-            $nextClass = $classes[$ind + 1];
-
-            if (($class['name'] == $nextClass['name'])) {
-            $staffName = '';
-            foreach($class['staff']['instructors'] as $name) {
-            $staffName = $name . ',' .$staffName;
-            } $staffName = substr($staffName, 0 , -1); ?>
-
-            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li>
-
-            <? }
-            else {?>
-            <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?></a></li>
-            <? }} ?>
-            <?} ?>
+       <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li><?
+      } else {?>
+        <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?></a></li><?
+      }
+	} 
+	?>
 	</ul>
-
 <? $page->content_end(); ?>
 

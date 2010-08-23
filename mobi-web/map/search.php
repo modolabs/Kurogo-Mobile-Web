@@ -20,6 +20,8 @@ function detailURL($resultObj) {
   $params = array(
     'selectvalues' => titleFromResult($resultObj),
     'info' => $attributes,
+    'back' => 'Search',
+    'filter' => urlencode($_REQUEST['filter']),
     );
 
   return 'detail.php?' . http_build_query($params);

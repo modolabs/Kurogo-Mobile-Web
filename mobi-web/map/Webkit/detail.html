@@ -23,8 +23,19 @@ $page->title('Map: Details')
      ->add_inline_script($bbox_script)
      ->add_javascript('../Webkit/uiscripts')
      ->add_javascript('Webkit/map')
-     ->breadcrumbs('Details')
      ->extra_onload("loadImage(getMapURL(mapBaseURL),'mapimage');");
+
+//construct the breadcrumbs
+$back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
+if ($back == 'Browse') {
+  $page->breadcrumbs('Browse', 'Detail');
+  $page->breadcrumb_links('index.php?category='.urlencode(stripslashes($_REQUEST['category'])));
+} else if ($back == 'Search') {
+  $page->breadcrumbs('Search', 'Detail');
+  $page->breadcrumb_links('search.php?filter='.urlencode(stripslashes($_REQUEST['filter'])));  
+} else {
+  $page->breadcrumbs('Detail');
+}
 
 $page->content_begin();
 ?>
@@ -90,7 +101,7 @@ $page->content_begin();
 
 	</div> <!-- class="focal shaded" -->
 	
-        <? if (array_key_exists('Address', $displayDetails)) { ?>
+        <? if (isset($displayDetails['Address'], $displayDetails['City'], $displayDetails['State'])) { ?>
 	   <ul class="secondary">
 		<li>
 			<a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>, <?=$displayDetails['City']?> <?=$displayDetails['State']?>" class="external">Google Map</a>

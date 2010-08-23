@@ -58,7 +58,7 @@ if ($tab == 'Map') {
         $details[$field] = $value;
       }
 
-      if (isset($secondaryResults)) {
+      if (isset($secondaryResults, $secondaryResults->results[0])) {
         foreach ($secondaryResults->results[0]->attributes as $field => $value) {
           $details[$field] = $value;
         }
@@ -149,10 +149,12 @@ if (array_key_exists('PHOTO_FILE', $details)) {
   $photoFile = rawurlencode($details['PHOTO_FILE']);
   $photoURL = MAP_PHOTO_SERVER . $photoFile;
 
-  if ($photoFile == 'Null')
+  if ($photoFile == 'Null') {
     $tabs->hide("Photo");
+    $photoWidth = 'auto';
+    $photoURL = '';
 
-  else {
+  } else {
     // all photos returned are 300px wide but variable height
     if ($page->platform == 'bbplus') {
       $photoWidth = '300';
@@ -163,6 +165,8 @@ if (array_key_exists('PHOTO_FILE', $details)) {
 
 
 } else {
+  $photoURL = '';
+  $photoWidth = 'auto';
   $tabs->hide("Photo");
 }
 
