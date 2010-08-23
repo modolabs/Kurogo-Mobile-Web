@@ -42,16 +42,16 @@ class BasicPage extends Page {
 
     switch ($this->fontsize) {
     case 'small':
-      $this->inline_css = 'body { font-size: 80% } .credit { font-size: 80% } .postdate { font-size: 80% } .byline a { font-size: 80% }';
+      $this->inline_css = 'body { font-size: 12pt; line-height: 1.33em } .credit { font-size: 89% } .postdate { font-size: 89% } .byline a { font-size: 89% }';
       break;
     case 'large':
-      $this->inline_css = "body { font-size: 120% } .label { padding-top:0; } .inputcombo .combobutton { padding: .1em .2em; } .credit { font-size: 120% } .postdate { font-size: 120% } .byline a { font-size: 120% }";
+      $this->inline_css = "body { font-size: 16pt; line-height: 1.33em } .label { padding-top:0; } .inputcombo .combobutton { padding: .1em .2em; } .credit { font-size: 120% } .postdate { font-size: 120% } .byline a { font-size: 120% }";
       break;
     case 'xlarge':
-      $this->inline_css = 'body { font-size: 150% } .credit { font-size: 150% } .postdate { font-size: 150% } .byline a { font-size: 150% }';
+      $this->inline_css = 'body { font-size: 18pt; line-height: 1.33em } .credit { font-size: 150% } .postdate { font-size: 150% } .byline a { font-size: 150% }';
       break;
     default:
-      $this->inline_css = 'body { font-size: 100% } .credit { font-size: 100% } .postdate { font-size: 100% } .byline a { font-size: 100% }';
+      $this->inline_css = 'body { font-size: 14pt; line-height: 1.33em } .credit { font-size: 100% } .postdate { font-size: 100% } .byline a { font-size: 100% }';
       break;
     }
 
