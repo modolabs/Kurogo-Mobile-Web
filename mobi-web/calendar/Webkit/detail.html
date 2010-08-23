@@ -1,6 +1,6 @@
 <?php
 
-$page->title("Events: Event Details")
+$page->title("Events: Detail")
      ->navbar_image('calendar');
 
 $back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
@@ -12,7 +12,7 @@ if ($back == 'Search') {
   $time = stripslashes($_REQUEST['time']);
   $type = stripslashes($_REQUEST['type']);
   
-  $page->breadcrumbs('Day', "Details");
+  $page->breadcrumbs('Day', "Detail");
   $page->breadcrumb_links(
     'day.php?time='.urlencode($time).'&type='.urlencode($type));
     
@@ -20,14 +20,14 @@ if ($back == 'Search') {
   $catName = stripslashes($_REQUEST['catName']);
   $catID = stripslashes($_REQUEST['catID']);
 
-  $page->breadcrumbs('Category', $catName, "Details");
+  $page->breadcrumbs('Category', $catName, "Detail");
   $page->breadcrumb_links(categorysURL(),
     'category.php?name='.urlencode($catName).'&id='.urlencode($catID).
       (isset($_REQUEST['catTime']) ? '&time='.urlencode(stripslashes($_REQUEST['catTime'])) : ''));
   $page->breadcrumb_classes('', 'crumb1');
   
 } else {
-  $page->breadcrumbs('Browse', "Details");
+  $page->breadcrumbs('Browse', "Detail");
 }
 
 // get a list of the category mappings first
