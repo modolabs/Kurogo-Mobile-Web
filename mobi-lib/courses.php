@@ -319,14 +319,16 @@ class CourseData {
   }
   
   private static function getInstructorsFromDescription($description) {
-    // Need to split on ", and", ", " and " and " (in that order) because the 
+    // Need to split on ", and", ", " and " and " because the 
     // instructor string is in the following format:
     //      One instructor: "John Doe"
     //     Two instructors: "John Doe and Jane Doe"
     //   Three instructors: "John Doe, Jane Doe, and John Smith"
     //    Four instructors: "John Doe, Jane Doe, John Smith, and Jane Smith"
     if (strlen(trim($description))) {
-      return preg_split('/(,\s+and\s+|,\s+|\s+and\s+)/', trim($description));
+      $description = str_replace('and ', ',', str_replace(', and ', ',', trim($description)));
+      
+      return array_map('trim', explode(',', $description));
     }
     return array();
   }

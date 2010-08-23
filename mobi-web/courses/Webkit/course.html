@@ -1,7 +1,6 @@
 <?php
 $page->title("Courses: " . $courseId)
-     ->navbar_image('stellar');
-     
+     ->navbar_image('courses');
      
 if (isset($_REQUEST['back'], $_REQUEST['courseGroup']) && $_REQUEST['back'] == 'School') {
   $courseGroup = stripslashes($_REQUEST['courseGroup']);
