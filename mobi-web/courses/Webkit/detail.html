@@ -39,10 +39,10 @@ $page->content_begin();
     <ul id="tabs">
     <? if (!$no_stellar_site) { ?>
         <li class="active"><a href="#scrolldown" onclick="showTab('infotab',this)">Info</a></li>
-        <li><a href="#scrolldown" onclick="showTab('instructortab',this)">Staff</a></li>
+        <li><a href="#scrolldown" onclick="showTab('instructortab',this)">Instructor(s)</a></li>
     <? } else { ?>
         <li class="active">Info</li>
-        <li class="greyedout">Staff</li>
+        <li class="greyedout">Instructor(s)</li>
     <? } ?>
     </ul>
 
@@ -80,7 +80,7 @@ $page->content_begin();
     <? if (!$no_stellar_site) { ?>
         <div class="tabbody" id="instructortab" style="display:none">
             <ul class="nav">
-                <li><h3>Instructors:</h3></li>
+                <li><h3>Instructor(s):</h3></li>
             <? foreach($class['staff']['instructors'] as $instruct) { ?>
                 <li><a href="<?=personURL($instruct)?>" class="people"><?=$instruct?></a></li>
             <? } ?>
