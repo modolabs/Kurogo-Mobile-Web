@@ -1,5 +1,26 @@
 	<ul class="results">
-<? foreach($results as $class) { ?>
-    <li><a href="<?=detailURL($class, selfURL())?>"><strong><?=$class["name"]?></strong>: <?=$class["title"]?></a></li>
+<? foreach($results as $i => $class) { 
+    $className = $class['name'];
+
+    $prevClassName = '';
+    $nextClassName = '';
+    if ($i > 0) {
+      $prevClassName = $results[$i-1]['name'];
+    }
+    if ($i < count($results)-1) {
+      $nextClassName = $results[$i+1]['name'];
+    }
+  
+    $staffName = '';
+    if ($className == $prevClassName || $className == $nextClassName) {
+      // Multiple classes with the same name in a row, show instructors to differentiate      
+      foreach($class['staff']['instructors'] as $name) {
+        $staffName .= (strlen($staffName) ? ', ' : '').$name;
+      }
+      if (strlen($staffName)) {
+        $staffName = ' ('.$staffName.')';
+      }
+    }?>
+    <li><a href="<?=detailURL($class, selfURL())?>"><strong><?=$className?></strong>: <?=$class["title"]?><?=$staffName?></a></li>
 <? } ?>
 	</ul>
