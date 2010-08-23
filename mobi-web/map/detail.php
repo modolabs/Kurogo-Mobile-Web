@@ -146,14 +146,21 @@ $selectvalue = $_REQUEST['selectvalues'];
 $tabs = new Tabs(selfURL($details), "tab", array("Map", "Photo", "Details"));
 
 if (array_key_exists('PHOTO_FILE', $details)) {
-  $photoURL = MAP_PHOTO_SERVER . rawurlencode($details['PHOTO_FILE']);
+  $photoFile = rawurlencode($details['PHOTO_FILE']);
+  $photoURL = MAP_PHOTO_SERVER . $photoFile;
 
-  // all photos returned are 300px wide but variable height
-  if ($page->platform == 'bbplus') {
-    $photoWidth = '300';
-  } else {
-    $photoWidth = '90%';
+  if ($photoFile == 'Null')
+    $tabs->hide("Photo");
+
+  else {
+    // all photos returned are 300px wide but variable height
+    if ($page->platform == 'bbplus') {
+      $photoWidth = '300';
+    } else {
+      $photoWidth = '90%';
+    }
   }
+
 
 } else {
   $tabs->hide("Photo");
