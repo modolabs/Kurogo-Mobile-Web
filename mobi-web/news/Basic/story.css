@@ -4,7 +4,6 @@
 }
 
 .slugline {
-	font: 150%/1.25em Georgia, serif;
 	margin: 0 0 0.5em 0;
 }
 
@@ -13,7 +12,7 @@
 }
 
 .byline {
-    font-size: 12px;
+    font-size: 84%;
     color: #666;
 }
 
