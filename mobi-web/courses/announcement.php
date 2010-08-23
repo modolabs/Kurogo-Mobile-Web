@@ -6,7 +6,7 @@ require_once "stellar_lib.inc";
 //start session (used to save class details)
 session_id($_REQUEST['sess']);
 session_start();
-$class = $_SESSION['class'];
+$subjectID = $_SESSION['subjectID'];
 $announcements = $_SESSION['announcements'];
 $item = $announcements[ $_REQUEST['index'] ];
 

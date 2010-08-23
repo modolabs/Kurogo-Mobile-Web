@@ -2,15 +2,14 @@
 
 require_once LIBDIR . '/ArcGISServer.php';
 
-$categories = ArcGISServer::getCollections();
-
+$categories = ArcGISServer::getLayers();
 if (!isset($_REQUEST['category'])) {
   require "$page->branch/index.html";
 } else {
   $category = $_REQUEST['category'];
-  $collection = ArcGISServer::getCollection($category);
-  $title = $collection->getMapName();
-  $places = $collection->getFeatureList();
+  $layer = ArcGISServer::getLayer($category);
+  $title = $layer->getName();
+  $places = $layer->getFeatureList();
   require "$page->branch/drilldown.html";
 }
 
@@ -34,6 +33,7 @@ function detailURL($name, $category, $info) {
     'selectvalues' => $name,
     'category' => $category,
     'info' => $info,
+    'back' => 'Browse',
     );
   return 'detail.php?' . http_build_query($params);
 }

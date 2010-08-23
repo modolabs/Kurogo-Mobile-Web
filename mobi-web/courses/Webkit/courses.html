@@ -1,8 +1,7 @@
 <?php
-$page->title("Courses: Browse by School")
+$page->title("Courses: School")
      ->navbar_image('courses')
-     ->breadcrumbs('Browse By School');
-
+     ->breadcrumbs('School');
 $page->content_begin();
 ?>
 	<div class="nonfocal">
@@ -16,7 +15,7 @@ $page->content_begin();
                   $courseName = $title . '-other'; 
 		?>
 			
-				<li><a href="<?=courseURL($courseName, "Courses", $title)?>"><?=$courseName?></a></li>
+				<li><a href="<?=courseURL($courseName, "School", $title)?>"><?=$courseName?></a></li>
         <? } ?>
 
 	</ul>

@@ -58,12 +58,11 @@ if ($tab == 'Map') {
         $details[$field] = $value;
       }
 
-      if (isset($secondaryResults)) {
+      if (isset($secondaryResults, $secondaryResults->results[0])) {
         foreach ($secondaryResults->results[0]->attributes as $field => $value) {
           $details[$field] = $value;
         }
       }
-
       switch ($result->geometryType) {
        case 'esriGeometryPolygon':
          $rings = $result->geometry->rings;
@@ -147,16 +146,27 @@ $selectvalue = $_REQUEST['selectvalues'];
 $tabs = new Tabs(selfURL($details), "tab", array("Map", "Photo", "Details"));
 
 if (array_key_exists('PHOTO_FILE', $details)) {
-  $photoURL = MAP_PHOTO_SERVER . rawurlencode($details['PHOTO_FILE']);
+  $photoFile = rawurlencode($details['PHOTO_FILE']);
+  $photoURL = MAP_PHOTO_SERVER . $photoFile;
 
-  // all photos returned are 300px wide but variable height
-  if ($page->platform == 'bbplus') {
-    $photoWidth = '300';
+  if ($photoFile == 'Null') {
+    $tabs->hide("Photo");
+    $photoWidth = 'auto';
+    $photoURL = '';
+
   } else {
-    $photoWidth = '90%';
+    // all photos returned are 300px wide but variable height
+    if ($page->platform == 'bbplus') {
+      $photoWidth = '300';
+    } else {
+      $photoWidth = '90%';
+    }
   }
 
+
 } else {
+  $photoURL = '';
+  $photoWidth = 'auto';
   $tabs->hide("Photo");
 }
 

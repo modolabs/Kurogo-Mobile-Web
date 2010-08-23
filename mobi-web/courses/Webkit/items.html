@@ -1,5 +1,9 @@
 <ul class="results">
             <? foreach($results as $class) { ?>
-                <li><a href="<?=detailURL($class, selfURL())?>"><strong><?=$class["name"]?></strong>: <?=$class["title"]?></a></li>
+                <? 
+                $filter = isset($_REQUEST['filter']) ? stripslashes($_REQUEST['filter']) : '';
+                $courseGroup = isset($_REQUEST['courseGroup']) ? stripslashes($_REQUEST['courseGroup']) : '';
+                $selfParams = 'filter='.$filter.'&courseGroup='.$courseGroup; ?>
+                <li><a href="<?=detailURL($class, 'Search', $selfParams)?>"><strong><?=$class["name"]?></strong>: <?=$class["title"]?></a></li>
             <? } ?>
 </ul>
