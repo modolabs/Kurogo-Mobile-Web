@@ -15,7 +15,7 @@ WhatsNew::setLastTime();
 	<meta http-equiv="content-script-type" content="text/javascript" />
 	<title><?= SITE_NAME ?></title>
 	
-	<link rel="stylesheet" rev="stylesheet" href="helpsite.css" type="text/css" />
+	<!-- <link rel="stylesheet" rev="stylesheet" href="helpsite.css" type="text/css" /> -->
 	<script type="text/javascript">
 	<!--
 		function preview() {
@@ -27,11 +27,13 @@ WhatsNew::setLastTime();
 	</script>
 </head>
 <body>
+<!--
     <p>
 	    <a id="preview" href="preview.html" onclick="preview(); return false;">Click here to preview the site on your desktop or laptop.</a>
     </p>
     <p>
     Waiting on copy
     </p>
+    -->
 </body>
 </html>
