@@ -27,6 +27,8 @@ if ($back == 'School|Listing') {
   $page->breadcrumb_links(
     'searchMain.php?filter='.urlencode($filter), 
     'search.php?filter='.urlencode($filter).'&courseGroup='.$courseGroup);  
+} else {
+  $page->breadcrumbs('Detail');
 }
 
 $page->inline_css_begin();

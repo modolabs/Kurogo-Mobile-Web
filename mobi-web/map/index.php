@@ -2,8 +2,8 @@
 
 require_once LIBDIR . '/ArcGISServer.php';
 
+$categories = ArcGISServer::getLayers();
 if (!isset($_REQUEST['category'])) {
-  $categories = ArcGISServer::getLayers();
   require "$page->branch/index.html";
 } else {
   $category = $_REQUEST['category'];
@@ -33,6 +33,7 @@ function detailURL($name, $category, $info) {
     'selectvalues' => $name,
     'category' => $category,
     'info' => $info,
+    'back' => 'Browse',
     );
   return 'detail.php?' . http_build_query($params);
 }

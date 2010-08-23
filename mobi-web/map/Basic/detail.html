@@ -41,7 +41,7 @@ $page->content_begin();
 
                   <? } ?>
 	</div>
-<? if ($page->platform == 'bbplus') { ?>
+<? if ($page->platform == 'bbplus' && isset($displayDetails['Address'], $displayDetails['City'], $displayDetails['State'])) { ?>
 <div class="focal">
 <a href="http://maps.google.com/maps?q=<?=$displayDetails['Address']?>,<?=$displayDetails['City']?>+<?=$displayDetails['State']?>" class="external">Google Map</a>
 </div>
