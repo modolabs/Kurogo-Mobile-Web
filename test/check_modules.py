@@ -28,8 +28,8 @@ class TestModule(unittest.TestCase):
 
     def __init__(self, methodName='runTest', branch='Basic'):
         unittest.TestCase.__init__(self, methodName)
-        self.base_url = g_base_url
-        self.module_name = '' # Should be overridden.
+        self.baseUrl = g_base_url
+        self.moduleName = '' # Should be overridden.
         self.branch = branch
                 
     def setUp(self):
@@ -38,11 +38,13 @@ class TestModule(unittest.TestCase):
     # Tests
     def test_index(self):
         self.goToModulePage()
-        self.assertEqual(self.browser.get_code(), 200)
+        self.assertEqual(self.browser.get_code(), 200, 
+            'The ' + self.moduleName + ' module index page is not OK. It returned HTTP code: ' 
+            + str(self.browser.get_code()))
         self.verifyPageContents()
 
     def test_api(self):
-        self.hitAPIWithArguments([])
+        self.hitAPIWithArguments({ 'q': 'roger+brockett', 'command': 'search'})
         self.assertEqual(self.browser.get_code(), 200)
         self.verifyAPIResults()
         
@@ -57,7 +59,7 @@ class TestModule(unittest.TestCase):
         
     # Test helper methods
     def goToModulePage(self):
-        self.browser.go(self.appendBranchQueryArg(self.base_url + self.module_name))
+        self.browser.go(self.appendBranchQueryArg(self.baseUrl + self.moduleName))
     
     def appendBranchQueryArg(self, url):
         if self.branch:
@@ -69,32 +71,51 @@ class TestModule(unittest.TestCase):
             return url
         
     def hitAPIWithArguments(self, argumentDict):
-        # TODO
-        self.browser.go(self.base_url + 'api/?')
+        if not 'module' in argumentDict:
+            argumentDict['module'] = self.moduleName
+        
+        queryString = ''
+        for arg, val in argumentDict.iteritems():
+            if len(queryString) > 0:
+                queryString += '&'
+            queryString += (arg + '=' + val)
+            
+        self.browser.go(self.baseUrl + 'api/?' + queryString)
         
 
 class TestPeopleModule(TestModule):
     
     def __init__(self, methodName='runTest', branch='Basic'):
         TestModule.__init__(self, methodName, branch)
-        self.module_name = 'people'
+        self.moduleName = 'people'
     
     def setUp(self):
         TestModule.setUp(self)
         
     def verifyPageContents(self):
         # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>People</title>')
+        self.assertRegexpMatches(self.browser.get_html(), '<title>People</title>', 
+            'Could not verify index title.')
         #echo(self.browser.get_html())
+                
+    def verifyAPIResults(self):
+        # TODO: A little more precision.
+        self.assertRegexpMatches(self.browser.get_html(), 'Brockett',
+            'Could not find Brockett result.')
 
 
 def suite():
     # Builds the test suite.
     testSuite = unittest.TestSuite()
+    
+    # People
     testSuite.addTest(TestPeopleModule('test_index', 'Basic'))
     testSuite.addTest(TestPeopleModule('test_index', 'Touch'))
     testSuite.addTest(TestPeopleModule('test_index', 'Webkit'))
     testSuite.addTest(TestPeopleModule('test_index', 'Basic&Platform=bbplus'))
+    
+    testSuite.addTest(TestPeopleModule('test_api'))
+    
     #testSuite.addTest(TestPeopleModule('test_api'))
     return testSuite
 
