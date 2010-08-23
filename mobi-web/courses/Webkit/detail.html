@@ -9,24 +9,27 @@ if ($back == 'School|Listing') {
   $courseGroup = stripslashes($_REQUEST['courseGroup']);
   $courseID = stripslashes($_REQUEST['courseID']);
   
-  $page->breadcrumbs('School', 'Listing', 'Detail');
+  $page->breadcrumbs($courseGroup, $courseID, 'Detail');
   $page->breadcrumb_links(
     'courses.php?which='.urlencode($courseGroup), 
     'course.php?id='.urlencode($courseID).'&courseGroup='.urlencode($courseGroup).'&back=School');
+  $page->breadcrumb_classes('crumb2a', 'crumb1');
 } else if ($back == 'Listing') {
   $courseID = stripslashes($_REQUEST['courseID']);
   
-  $page->breadcrumbs('Listing', 'Detail');
+  $page->breadcrumbs($courseID, 'Detail');
   $page->breadcrumb_links('course.php?id='.urlencode($courseID).'&courseGroup='.urlencode($courseID));
+  $page->breadcrumb_classes('crumb1');
 
 } else if ($back == 'Search') {
   $filter = stripslashes($_REQUEST['filter']);
   $courseGroup = stripslashes($_REQUEST['courseGroup']);
 
-  $page->breadcrumbs('Search', 'School', 'Detail');
+  $page->breadcrumbs('Search', $courseGroup, 'Detail');
   $page->breadcrumb_links(
     'searchMain.php?filter='.urlencode($filter), 
     'search.php?filter='.urlencode($filter).'&courseGroup='.$courseGroup);  
+  $page->breadcrumb_classes('', 'crumb1');
 } else {
   $page->breadcrumbs('Detail');
 }

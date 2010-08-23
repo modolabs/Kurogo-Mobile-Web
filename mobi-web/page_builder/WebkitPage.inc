@@ -7,6 +7,7 @@ class WebkitPage extends Page {
   protected $breadcrumbs = array();
   protected $last_breadcrumb;
   protected $breadcrumb_links;
+  protected $breadcrumb_classes;
   protected $module_home_link = "./";
   protected $extra_onload = "scrollTo(0,1);";
   protected $onorientationchange;
@@ -22,7 +23,8 @@ class WebkitPage extends Page {
     $this->varnames = Array(
       'header', 'title', 'stylesheets', 'help_on',
       'navbar_image', 'inline_css', 'javascripts',
-      'breadcrumb_links', 'home', 'breadcrumbs', 'last_breadcrumb', 'module_home_link',
+      'breadcrumb_links', 'breadcrumb_classes', 'home', 'breadcrumbs', 
+      'last_breadcrumb', 'module_home_link',
       'footer', 'footer_script', 'standard_footer',
       'extra_onload', 'onorientationchange', 'raw_js', 'scalable', 'fixed',
     );
@@ -67,6 +69,14 @@ class WebkitPage extends Page {
     $tmp = func_get_args();
     for($cnt = 0; $cnt < count($tmp); $cnt++) {
       $this->breadcrumb_links[$cnt] = $tmp[$cnt];
+    }
+    return $this;
+  }
+
+  public function breadcrumb_classes() {
+    $tmp = func_get_args();
+    for($cnt = 0; $cnt < count($tmp); $cnt++) {
+      $this->breadcrumb_classes[$cnt] = $tmp[$cnt];
     }
     return $this;
   }

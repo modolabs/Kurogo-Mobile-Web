@@ -315,7 +315,7 @@ a.formbutton div {
 	height: 48px;
 	line-height: 44px;
 	vertical-align: top;
-    margin-left: -12px; /* overlap by the width of the drillup art */
+    margin-left: -8px; /* overlap by the width of the drillup art */
     background-image: url(../Webkit/images/drillup-r.png);
 	background-repeat: no-repeat;
 	background-position: top right;
@@ -347,7 +347,6 @@ a.homelink {
 }
 
 a.module img {
-	margin-left: -3px;
 	padding: 8px 5px 8px 8px;
 }
 
@@ -373,7 +372,6 @@ a.module img {
 	vertical-align: top;
 	line-height: 44px;
 	font-weight: bold;
-	margin-left: -3px;
 }
 
 .homepage .pagetitle {

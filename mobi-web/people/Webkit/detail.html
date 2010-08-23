@@ -2,6 +2,10 @@
 $page->title('People: Details')
      ->navbar_image('people')
      ->breadcrumbs('Search', 'Details');
+     
+if (isset($_REQUEST['filter'])) {
+     $page->breadcrumb_links('index.php?filter='.urlencode(stripslashes($_REQUEST['filter'])));
+}
 
 class Item {
   private $person;

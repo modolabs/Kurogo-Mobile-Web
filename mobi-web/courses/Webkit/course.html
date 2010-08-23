@@ -5,7 +5,8 @@ $page->title("Courses: " . $courseId)
 if (isset($_REQUEST['back'], $_REQUEST['courseGroup']) && $_REQUEST['back'] == 'School') {
   $courseGroup = stripslashes($_REQUEST['courseGroup']);
   
-  $page->breadcrumbs('School', 'Listing');
+  $page->breadcrumbs($courseGroup, 'Listing');
+  $page->breadcrumb_classes('crumb1');
   $page->breadcrumb_links('courses.php?which='.urlencode($courseGroup));
   $self = 'School|Listing';
   $selfParams = 'courseGroup='.urlencode($courseGroup).'&courseID='.urlencode($courseId);
