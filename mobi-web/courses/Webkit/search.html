@@ -1,11 +1,12 @@
 <?php
+$courseGroup = isset($_REQUEST['courseGroup']) ? $_REQUEST['courseGroup'] : '';
+
 $page->title('Courses: Search Results')
      ->navbar_image('courses')
-     ->breadcrumbs('Search', 'School')
+     ->breadcrumbs('Search', $courseGroup)
      ->breadcrumb_links('searchMain.php?filter='.$_REQUEST['filter']);
 
 $page->content_begin();
-$courseGroup = isset($_REQUEST['courseGroup']) ? $_REQUEST['courseGroup'] : '';
 
 ?>
 <div class="nonfocal">

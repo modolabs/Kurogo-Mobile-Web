@@ -37,24 +37,20 @@
 <div id="navbar" <? if ($help_on) { ?>class="helpon"<? } ?>>
        <? if(!$home) { ?>
 
-               <div class="breadcrumbs">
-                    <a name="top" href="../home/" class="homelink">
+               <div class="breadcrumbs"><a name="top" href="../home/" class="homelink">
                           <img src="../Webkit/images/homelink.png" width="57" height="45" alt="<?=SITE_NAME?> Home" />
-                    </a>
-                   <a href="<?=$module_home_link?>" class="module">
+                    </a><a href="<?=$module_home_link?>" class="module">
                           <img src="../Webkit/images/title-<?=$navbar_image?>.png" width="28" height="28" alt="" />
-                    </a>
-                      <?
+                    </a><?
                        foreach($breadcrumbs as $index => $breadcrumb) {
+                          $attr = isset($breadcrumb_classes[$index]) ? ' class="'.$breadcrumb_classes[$index].'"' : '';
                           if(isset($breadcrumb_links[$index])) {
-                            echo '<a href="' . $breadcrumb_links[$index] . '"><span>' . $breadcrumb . '</span></a>';
+                            echo '<a href="' . $breadcrumb_links[$index] . '"'.$attr.'><span>' . $breadcrumb . '</span></a>';
                           } else {
-                            echo '<a href="#" onclick="history.back(); return false"><span>' . $breadcrumb . '</span></a>';
+                            echo '<a href="#" onclick="history.back(); return false"'.$attr.'><span>' . $breadcrumb . '</span></a>';
                           }
                        }
-                      ?>
-                  <span class="pagetitle"><?=$last_breadcrumb?></span>
-               </div>
+                    ?><span class="pagetitle"><?=$last_breadcrumb?></span></div>
 
        <? } else { ?>
 

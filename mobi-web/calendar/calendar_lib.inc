@@ -111,8 +111,9 @@ function subCategorysURL($category) {
   return "sub-categorys.php?id=$id";
 }
 
-function detailURL($event) {
-  return "detail.php?id={$event->get_uid()}";
+function detailURL($event, $extraParams = '') {
+  return "detail.php?id={$event->get_uid()}".
+    (strlen($extraParams) ? '&'.$extraParams : '');
 }
 
 // convenience functions

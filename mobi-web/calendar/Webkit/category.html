@@ -5,7 +5,7 @@ $title = ucname($name) . ": " . ($isToday ?
 $page->title('Events: '.ucname($name))
 	 ->header('Category')
      ->navbar_image('calendar')
-     ->breadcrumbs("Browse", ucname($name))
+     ->breadcrumbs('Category', 'Listing')
      ->breadcrumb_links(categorysURL());
 
 $page->content_begin(); 
