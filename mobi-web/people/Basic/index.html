@@ -36,9 +36,10 @@ $page->content_begin();
 
 $page->content_end(); 
 
-$page->extra_link("tel:16174951000", "General directory <span class='smallprint'>(617-495-1000)</span>", "action phone");
-$page->extra_link("tel:16174931000", "Student directory <span class='smallprint'>(617-495-1000)</span>", "action phone");
-$page->extra_link("tel:16174955000", "Faculty/Staff directory <span class='smallprint'>(617-495-1000)</span>", "action phone");
+foreach ($phoneNumbers as $name => $number) {
 
+  $page->extra_link("tel:$number", "$name <span class='smallprint'>(" . addSilentHyphens($number) . ")</span>", "action phone");
+
+}
 
 ?>

@@ -10,7 +10,7 @@ $class = CourseData::get_subject_details($subjectId);
 $term = CourseData::get_term();
 $term_id = $term;
 
-$tabs = new Tabs(selfURL(), 'tab', array('Info', 'Staff'));
+$tabs = new Tabs(selfURL(), 'tab', array('Info', 'Instructor(s)'));
 
 $back = $_REQUEST['back'];
 

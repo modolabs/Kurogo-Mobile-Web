@@ -14,10 +14,6 @@ $page->content_begin();
             <? for($ind=0; $ind < count($classes); $ind++) {
 
             $class = $classes[$ind];
-            if (substr($class["name"], 0, 1) == "0") {
-            $className = substr($class["name"], 1);
-            }
-            else
             $className = $class["name"];
 
             if (($ind > 0) && ($ind < count($classes) - 1)){
@@ -29,7 +25,7 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li>
             <? }
             else  {?>
             <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
@@ -43,7 +39,7 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li>
             <? }
             else {?>
             <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>
@@ -56,7 +52,7 @@ $page->content_begin();
             foreach($class['staff']['instructors'] as $name) {
             $staffName = $name . ',' .$staffName;
             } $staffName = substr($staffName, 0 , -1); ?>
-            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?>(<?=$staffName?>)</a></li>
+            <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?> (<?=$staffName?>)</a></li>
             <? }
             else {?>
             <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?></a></li>

@@ -11,7 +11,7 @@ $search_terms = urlencode(stripslashes($raw_search_terms));
 // people search
 require_once LIBDIR . "/LdapWrapper.php";
 $ldapWrapper = new LdapWrapper();
-$ldapWrapper->buildQuery($search_terms);
+$ldapWrapper->buildQuery($raw_search_terms);
 $people = $ldapWrapper->doQuery();
 
 $people_result_items = array();
@@ -69,7 +69,7 @@ foreach ($events as $event) {
 
 
 // Course search
-require_once LIBDIR . '/testCourses.php';
+require_once LIBDIR . '/courses.php';
 $class_results = CourseData::search_subjects($search_terms, '', '');
 $class_result_items = array();
 foreach($class_results['classes'] as $class) {
@@ -87,7 +87,7 @@ foreach($class_results['classes'] as $class) {
 
 // News search
 require_once LIBDIR . '/GazetteRSS.php';
-$stories = GazetteRSS::searchArticlesArray($search_terms, NULL);
+$stories = GazetteRSS::searchArticlesArray($raw_search_terms, NULL);
 $news_result_items = array();
 foreach($stories as $story) {
     $news_result_items[] = array(

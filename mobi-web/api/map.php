@@ -57,7 +57,9 @@ switch ($_REQUEST['command']) {
        if (isset($_REQUEST['category'])) {
          $category = $_REQUEST['category'];
          $json = ArcGISServer::search($_REQUEST['q'], $category);
-         if (count($json) <= 1) {
+         if ($json === FALSE) {
+           $json = array();
+         } else if (count($json) <= 1) {
            // if we're looking at a single result,
            // see if we can get more comprehensive info from the main search
            $moreJSON = ArcGISServer::search($_REQUEST['q']);
@@ -81,12 +83,14 @@ switch ($_REQUEST['command']) {
    } elseif (isset($_REQUEST['category'])) {
      require_once LIBDIR . '/ArcGISServer.php';
      $category = $_REQUEST['category'];
-     $collection = ArcGISServer::getCollection($category);
-     $featurelist = $collection->getFeatureList();
      $results = array();
-     foreach ($featurelist as $featureId => $attributes) {
-       $results[] = array_merge($attributes,
-                                array('displayName' => $featureId));
+     $collection = ArcGISServer::getCollection($category);
+     if ($collection) {
+       $featurelist = $collection->getFeatureList();
+       foreach ($featurelist as $featureId => $attributes) {
+         $results[] = array_merge($attributes,
+                                  array('displayName' => $featureId));
+       }
      }
      $content = json_encode($results);
    }
