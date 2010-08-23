@@ -63,7 +63,6 @@ if ($tab == 'Map') {
           $details[$field] = $value;
         }
       }
-
       switch ($result->geometryType) {
        case 'esriGeometryPolygon':
          $rings = $result->geometry->rings;

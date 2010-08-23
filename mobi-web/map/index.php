@@ -2,15 +2,14 @@
 
 require_once LIBDIR . '/ArcGISServer.php';
 
-$categories = ArcGISServer::getCollections();
-
 if (!isset($_REQUEST['category'])) {
+  $categories = ArcGISServer::getLayers();
   require "$page->branch/index.html";
 } else {
   $category = $_REQUEST['category'];
-  $collection = ArcGISServer::getCollection($category);
-  $title = $collection->getMapName();
-  $places = $collection->getFeatureList();
+  $layer = ArcGISServer::getLayer($category);
+  $title = $layer->getName();
+  $places = $layer->getFeatureList();
   require "$page->branch/drilldown.html";
 }
 
