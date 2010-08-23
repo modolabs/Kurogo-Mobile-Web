@@ -36,6 +36,31 @@ class ArcGISServer {
     return $result;
   }
 
+  public static function getLayers() {
+    $result = array();
+    foreach (self::$collections as $id => $collection) {
+      
+      foreach ($collection->getLayerNames() as $layerId => $name) {
+        $result["$id.$layerId"] = $name;
+        // suppress all further disaggregations but housing for now
+        if ($id != 'Housing')
+	  break;
+      }
+    }
+    return $result;
+  }
+
+  public static function getLayer($collectionLayer) {
+    $parts = explode('.', $collectionLayer);
+    $collection = self::getCollection($parts[0]);
+    if (count($parts) == 2) {
+      $layer = $collection->getLayer(intval($parts[1]));
+      return $layer;
+    } else {
+      return $collection;
+    }
+  }
+
   // deprecate this
   public static function getCapabilities($name=NULL) {
     return self::getCollection($name)->getCapabilities();
@@ -53,12 +78,21 @@ class ArcGISServer {
     return array('properties' => $data);
   }
 
+  // only works on CampusMap layer
+  public static function getObjectByID($objectId) {
+  }
+
   public static function search($searchText, $collectionName=NULL) {
+    $layerId = 0;
     if (!$collectionName) {
       $collection = self::getCollection();
       $searchFields = self::$defaultSearchFields;
     } else {
-      $collection = self::getCollection($collectionName);
+      $parts = explode('.', $collectionName);
+      $collection = self::getLayer($parts[0]);
+      if (count($parts) == 2) {
+        $layerId = $parts[1];
+      }
       $searchFields = $collection->getDefaultSearchFields();
     }
 
@@ -67,12 +101,12 @@ class ArcGISServer {
 
     $searchText = strtoupper(str_replace('.', '', $searchText));
 
-    $queryBase = $collection->url . '/find?';
+    $queryBase = $collection->getURL() . '/find?';
     $query = http_build_query(array(
       'searchText'     => $searchText,
       'searchFields'   => $searchFields,
       'sr'             => '', // i hope this means use the default
-      'layers'         => 0,
+      'layers'         => $layerId,
       'returnGeometry' => 'true',
       'f'              => 'json',
       ));
@@ -134,12 +168,20 @@ class ArcGISCollection {
   public $fullExtent;
   public $serviceDescription;
   public $spatialRef;
-  public $url;
 
+  private $url;
   private $mapName;
   private $id;
   private $layers = array();
   private $diskCache;
+
+  public function getURL() {
+    return $this->url;
+  }
+
+  public function isLayer() {
+    return FALSE;
+  }
 
   public function getMapName() {
     if (!$this->mapName) {
@@ -170,7 +212,20 @@ class ArcGISCollection {
     return $this->getLayer(0)->getDisplayField();
   }
 
+  public function getLayerNames() {
+    if (!$this->layers) {
+      $this->getCapabilities();
+    }
+    return $this->layers;
+  }
+
   public function getLayer($layerId) {
+    if (is_int($layerId)) {
+      $layerNames = array_keys($this->getLayerNames());
+      if ($layerId < count($layerNames))
+        $layerId = $layerNames[$layerId];
+    }
+
     if (array_key_exists($layerId, $this->layers)) {
       $layer = $this->layers[$layerId];
       if (is_string($layer)) {
@@ -256,6 +311,14 @@ class ArcGISLayer {
     $filename = ARCGIS_CACHE . '/' . $collectionId . '.' . $layerId;
     $this->diskCache = new DiskCache($filename, 86400 * 7);
     $this->featureCache = new DiskCache("$filename.features", 86400 * 7);
+  }
+
+  public function isLayer() {
+    return TRUE;
+  }
+
+  public function getName() {
+    return $this->name;
   }
 
   public function getDisplayField() {

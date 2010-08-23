@@ -25,7 +25,7 @@ switch ($_REQUEST['command']) {
 
  case 'categorytitles':
    require_once LIBDIR . '/ArcGISServer.php';
-   $collections = ArcGISServer::getCollections();
+   $collections = ArcGISServer::getLayers();
    $result = array();
    foreach ($collections as $id => $name) {
      $result[] = array(
@@ -84,9 +84,9 @@ switch ($_REQUEST['command']) {
      require_once LIBDIR . '/ArcGISServer.php';
      $category = $_REQUEST['category'];
      $results = array();
-     $collection = ArcGISServer::getCollection($category);
-     if ($collection) {
-       $featurelist = $collection->getFeatureList();
+     $layer = ArcGISServer::getLayer($category);
+     if ($layer) {
+       $featurelist = $layer->getFeatureList();
        foreach ($featurelist as $featureId => $attributes) {
          $results[] = array_merge($attributes,
                                   array('displayName' => $featureId));
