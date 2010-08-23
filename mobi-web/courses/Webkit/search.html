@@ -1,14 +1,15 @@
 <?php
 $page->title('Courses: Search Results')
      ->navbar_image('stellar')
-     ->breadcrumbs('Search Results');
+     ->breadcrumbs('Search', 'School')
+     ->breadcrumb_links('searchMain.php?filter='.$_REQUEST['filter']);
 
 $page->content_begin();
-
-$filter = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : '';
 $courseGroup = isset($_REQUEST['courseGroup']) ? $_REQUEST['courseGroup'] : '';
-$courseID = isset($_REQUEST['courseID']) ? $_REQUEST['courseID'] : '';
 
+?><div class="nonfocal">
+<h2><?=$courseGroup?></h2>
+</div><?
 $content->output($classes);
 
 $page->content_end(); 

@@ -187,7 +187,10 @@ class MeetingTimes {
       $this->parseSucceeded = true;
     }
     catch (MeetingTimesParseException $e) {
-      error_log($e->getMessage());
+      if (!is_array($rawTimesArr) || count($rawTimesArr) != 1 || trim($rawTimesArr[0]) != 'tbd') {
+        // Don't warn on 'tbd' text used as placeholder before times are set.
+        error_log($e->getMessage());
+      }
     }
   }
   
@@ -314,6 +317,19 @@ class CourseData {
       return array();
     }
   }
+  
+  private static function getInstructorsFromDescription($description) {
+    // Need to split on ", and", ", " and " and " (in that order) because the 
+    // instructor string is in the following format:
+    //      One instructor: "John Doe"
+    //     Two instructors: "John Doe and Jane Doe"
+    //   Three instructors: "John Doe, Jane Doe, and John Smith"
+    //    Four instructors: "John Doe, Jane Doe, John Smith, and Jane Smith"
+    if (strlen(trim($description))) {
+      return preg_split('/(,\s+and\s+|,\s+|\s+and\s+)/', trim($description));
+    }
+    return array();
+  }
 
   public static function get_term_data() {
     $month = (int) date('m');
@@ -438,9 +454,7 @@ class CourseData {
                                                         $single_course->location);
 
     $ta_array = array();
-    //$prof = explode(':', $single_course->faculty_description);
-    //$staff['instructors'] = array($prof[0]);
-    $staff['instructors'] = preg_split('/\s*,(\sand)?\s*/', $single_course->faculty_description);
+    $staff['instructors'] = self::getInstructorsFromDescription($single_course->faculty_description);
     $staff['tas'] = $ta_array;
     $subject_fields['staff'] = $staff;
 
@@ -455,7 +469,6 @@ class CourseData {
     //$courseToSubject[$course] = $subject_array;// store it in a global array containing courses to subjects
     return $subjectDetails;
   }
-
 
   public static function get_subjectsForCourse($course, $courseGroup) {
       $gueryAdditionForCourseGroup = 'fq_school_nm=school_nm:"' .str_replace(' ', '+', $courseGroup) .'"&';
@@ -541,9 +554,8 @@ class CourseData {
          //$subject_fields['title'] = $titl[0];
          $subject_fields['term'] = TERM;
 
-        //$prof = explode(':', $single_course->faculty_description);
         $ta_array = array();
-        $staff['instructors'] = $staff['instructors'] = explode(",",$single_course->faculty_description);
+        $staff['instructors'] = self::getInstructorsFromDescription($single_course->faculty_description);
           $staff['tas'] = $ta_array;
           $subject_fields['staff'] = $staff;
 
@@ -711,7 +723,7 @@ class CourseData {
 
   public static function search_subjects($terms, $school, $courseTitle) {
       
-      $words = explode(' ', $terms);
+      $words = explode(' ', strtr($terms, array(':' => ' ')));
 
       $terms = '"';
       for ($ind=0; $ind< count($words); $ind++) {
@@ -836,7 +848,7 @@ class CourseData {
          $subject_fields['term'] = TERM;
          
            $ta_array =array();
-          $staff['instructors'] = $staff['instructors'] = explode(",",$single_course->faculty_description);
+          $staff['instructors'] = self::getInstructorsFromDescription($single_course->faculty_description);
           $staff['tas'] = $ta_array;
           $subject_fields['staff'] = $staff;
           $temp = self::get_schoolsAndCourses();

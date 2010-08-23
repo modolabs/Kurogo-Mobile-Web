@@ -21,9 +21,12 @@ if ($back == 'School|Listing') {
 
 } else if ($back == 'Search') {
   $filter = stripslashes($_REQUEST['filter']);
+  $courseGroup = stripslashes($_REQUEST['courseGroup']);
 
-  $page->breadcrumbs('Search', 'Detail');
-  $page->breadcrumb_links('search.php?filter='.urlencode($filter));  
+  $page->breadcrumbs('Search', 'School', 'Detail');
+  $page->breadcrumb_links(
+    'searchMain.php?filter='.urlencode($filter), 
+    'search.php?filter='.urlencode($filter).'&courseGroup='.$courseGroup);  
 }
 
 $page->inline_css_begin();
@@ -103,7 +106,7 @@ $page->content_begin();
     </div> <!-- id="tabbodies" -->
 
 </div> <!-- class="focal shaded" -->
-<?
+<? 
 $page->content_end();
-$page->footer_script('showTab("infotab");')
+$page->footer_script('showTab("infotab");');
 ?>

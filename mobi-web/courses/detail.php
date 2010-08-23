@@ -5,7 +5,7 @@ require_once "stellar_lib.inc";
 
 $class_id = $_REQUEST['id'];
 
-$subjectId = urldecode($_REQUEST['id']);
+$subjectId = stripslashes($_REQUEST['id']);
 $class = CourseData::get_subject_details($subjectId);
 $term = CourseData::get_term();
 $term_id = $term;
@@ -74,7 +74,7 @@ else {
 
   //start session (used to save class details)
   session_start();
-  $_SESSION['class'] = $class;
+  $_SESSION['subjectID'] = $subjectId;  // Cannot use $class because it contains objects
   $_SESSION['announcements'] = $announcements;
 
   if(isset($_REQUEST['all']) && $_REQUEST['all']) {
@@ -146,7 +146,7 @@ function sDate($item) {
 }
 
 function stellarURL($class) {
-  $class['stellarUrl'];
+  //$class['stellarUrl'];
 }
 
 ?>

@@ -8,16 +8,16 @@ function selfURL() {
   return "searchMain.php?$query";
 }
 
-    $queryTerms = urldecode($_REQUEST['filter']);
-    $school = urldecode($_REQUEST['courseGroup']);
-    $course = urldecode($_REQUEST['courseName']);
+    $queryTerms = stripslashes($_REQUEST['filter']);
+    $school = stripslashes(isset($_REQUEST['courseGroup']) ? $_REQUEST['courseGroup'] : '');
+    $course = stripslashes(isset($_REQUEST['courseName']) ? $_REQUEST['courseName'] : '');
     //print $_REQUEST['courseGroup'];
     $course = str_replace("\\", "", $course);
     $school = str_replace("\\", "", $school);
 
     $data = CourseData::search_subjects($queryTerms, str_replace('-other', '', $school), str_replace(' ', '+', $course));
     $count = $data['count'];
-    $classes = $data["classes"];
+    $classes = isset($data["classes"]) ? $data["classes"] : NULL;
 
     /* SchoolsAsResults will only be available for searches from the top-level view where search results are > 100*/
     $schoolsAsResults = isset($data['schools']) ? $data['schools'] : NULL;
