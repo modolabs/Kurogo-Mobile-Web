@@ -9,9 +9,9 @@ function selfURL() {
 }
 
 
-    $queryTerms = urldecode($_REQUEST['filter']);
-    $school = urldecode($_REQUEST['courseGroup']);
-    $course = urldecode($_REQUEST['courseName']);
+    $queryTerms = stripslashes($_REQUEST['filter']);
+    $school = stripslashes($_REQUEST['courseGroup']);
+    $course = stripslashes(isset($_REQUEST['courseName']) ? $_REQUEST['courseName'] : '');
     //print $_REQUEST['courseGroup'];
     $course = str_replace("\\", "", $course);
     $school = str_replace("\\", "", $school);
@@ -29,7 +29,7 @@ function selfURL() {
   die();
 }*/
 
-$content = new ResultsContent("items", "courses", $page, NULL, FALSE);
+$content = new ResultsContent("items", "courses", $page, array(), FALSE);
 
 require "$page->branch/search.html";
 

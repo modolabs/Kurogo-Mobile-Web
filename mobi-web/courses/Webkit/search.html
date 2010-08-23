@@ -1,10 +1,17 @@
 <?php
 $page->title('Courses: Search Results')
      ->navbar_image('courses')
-     ->breadcrumbs('Search Results');
+     ->breadcrumbs('Search', 'School')
+     ->breadcrumb_links('searchMain.php?filter='.$_REQUEST['filter']);
 
 $page->content_begin();
+$courseGroup = isset($_REQUEST['courseGroup']) ? $_REQUEST['courseGroup'] : '';
 
+?>
+<div class="nonfocal">
+<h2><?=$courseGroup?></h2>
+</div>
+<?
 $content->output($classes);
 
 $page->content_end(); 
