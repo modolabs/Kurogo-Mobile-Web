@@ -98,7 +98,6 @@ class ArcGISServer {
 
       $json = file_get_contents($queryBase . $query);
       $jsonObj = json_decode($json);
-        var_dump($json);
 
       if ($jsonObj->results) {
         foreach ($jsonObj->results as $result) {

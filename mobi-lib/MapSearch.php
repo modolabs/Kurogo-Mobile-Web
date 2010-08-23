@@ -3,7 +3,6 @@
 require_once 'ArcGISServer.php';
 
 function searchCampusMap($query) {
-    $query = urlencode($query);
 
     $locs = array('bldg', 'dept', 'lib', 'museum', 'room');
     $resultObj = new stdClass();
@@ -36,6 +35,12 @@ function searchCampusMap($query) {
                 $resultObj->results[] = $result;
             }
         }
+    }
+
+    // if map.harvard.edu can't find anything
+    // we'll try ArcGIS directly
+    if (!$resultObj->results) {
+        $resultObj = ArcGISServer::search($query);
     }
 
     return $resultObj;
