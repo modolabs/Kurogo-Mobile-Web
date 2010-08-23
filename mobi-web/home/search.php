@@ -25,10 +25,10 @@ foreach($people as $person) {
 
 
 // map search
-require_once LIBDIR . '/ArcGISServer.php';
+require_once LIBDIR . '/MapSearch.php';
 
 // ArcGISServer.php does urlencode on the search terms
-$resultObj = ArcGISServer::search($raw_search_terms);
+$resultObj = searchCampusMap($raw_search_terms);
 $map_result_items = array();
 foreach ($resultObj->results as $result) {
     $attributes = $result->attributes;
