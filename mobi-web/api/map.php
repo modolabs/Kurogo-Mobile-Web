@@ -76,7 +76,8 @@ switch ($_REQUEST['command']) {
          }
 
        } else {
-         $json = ArcGISServer::search($_REQUEST['q']);
+         require_once LIBDIR . '/MapSearch.php';
+         $json = searchCampusMap($_REQUEST['q']);
        }
        $content = json_encode($json);
      }

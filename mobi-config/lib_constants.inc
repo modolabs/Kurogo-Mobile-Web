@@ -23,8 +23,7 @@ define('LDAP_SEARCH_TIMELIMIT', 30);
 define('LDAP_READ_TIMELIMIT', 30);
 
 // campus_map
-// TODO: the following looks like a test url, should split this by dev/staging/production
-define('MAP_SEARCH_URL', 'http://map.harvard.edu/mapserver/mapsearch_test.cfm');
+define('MAP_SEARCH_URL', 'http://map.harvard.edu/mapserver/campusmap_search.cfm');
 define('BLDG_DATA_XML', DATADIR . '/bldg_data.xml');
 define('ARCGIS_SERVICE_JSON_FILE', '/opt/mitmobile/maptiles/service.json');
 define('ARCGIS_SERVER_URL', 'http://upo-srv2.cadm.harvard.edu/ArcGIS/rest/services/CampusMap/MapServer');
