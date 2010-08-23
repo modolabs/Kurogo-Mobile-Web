@@ -318,6 +318,9 @@ class ArcGISLayer {
   }
 
   public function getName() {
+    if (!$this->name) {
+      $this->getCapabilities();
+    }
     return $this->name;
   }
 
