@@ -441,7 +441,7 @@ class CourseData {
     $ta_array = array();
     //$prof = explode(':', $single_course->faculty_description);
     //$staff['instructors'] = array($prof[0]);
-    $staff['instructors'] = explode(",", str_replace('and ', ',', $single_course->faculty_description));
+    $staff['instructors'] = $staff['instructors'] = explode(",", str_replace(', ,',',', str_replace('and ', ',', $single_course->faculty_description)));
     $staff['tas'] = $ta_array;
     $subject_fields['staff'] = $staff;
 
@@ -545,7 +545,7 @@ class CourseData {
 
         //$prof = explode(':', $single_course->faculty_description);
         $ta_array = array();
-        $staff['instructors'] = explode(",", str_replace('and ', ',', $single_course->faculty_description));
+        $staff['instructors'] = $staff['instructors'] = explode(",", str_replace(', ,',',', str_replace('and ', ',', $single_course->faculty_description)));
           $staff['tas'] = $ta_array;
           $subject_fields['staff'] = $staff;
 
@@ -838,7 +838,7 @@ class CourseData {
          $subject_fields['term'] = TERM;
          
            $ta_array =array();
-          $staff['instructors'] = explode(",", str_replace('and ', ',', $single_course->faculty_description));
+          $staff['instructors'] = explode(",", str_replace(', ,',',', str_replace('and ', ',', $single_course->faculty_description)));
           $staff['tas'] = $ta_array;
           $subject_fields['staff'] = $staff;
           $temp = self::get_schoolsAndCourses();
