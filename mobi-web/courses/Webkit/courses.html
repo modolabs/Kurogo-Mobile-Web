@@ -8,6 +8,18 @@ $page->content_begin();
 		<h2><?=$selected_school_short_name?></h2>
 	</div>
 		
+	<div class="nonfocal">
+		<form method="get" action="search.php">
+			<fieldset class="inputcombo">
+				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search keyword, #, or instructor" />
+                <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value="<?=htmlspecialchars($selected_school_name)?>"/>
+                <input class="forminput" type="hidden" id="courseGroupShort" name="courseGroupShort" value="<?=htmlspecialchars($selected_school_short_name)?>"/>
+                <input class="forminput" type="hidden" id="back" name="back" value="School">
+				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
+			</fieldset>	
+		</form>
+	</div>        
+
 	<ul class="nav">
         <? foreach($courses as $course) { 
 			$courseName = $course->name;
@@ -20,17 +32,5 @@ $page->content_begin();
 
 	</ul>
 
-
-	<div class="nonfocal">
-		<form method="get" action="search.php">
-			<fieldset class="inputcombo">
-				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search keyword, #, or instructor" />
-                <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value="<?=htmlspecialchars($selected_school_name)?>"/>
-                <input class="forminput" type="hidden" id="courseGroupShort" name="courseGroupShort" value="<?=htmlspecialchars($selected_school_short_name)?>"/>
-                <input class="forminput" type="hidden" id="back" name="back" value="School">
-				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
-			</fieldset>	
-		</form>
-	</div>        
 
 <? $page->content_end(); ?>
