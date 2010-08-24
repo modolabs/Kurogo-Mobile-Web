@@ -6,7 +6,7 @@ $page->title('Courses: Search Results')
 if ($back == 'School|Listing') {
   $page->breadcrumbs(getBreadcrumbName($courseGroupShort), getBreadcrumbName($courseNameShort), 'Search Results');
   $page->breadcrumb_links(
-    coursesURL($courseGroup, $courseGroupShort)
+    coursesURL($courseGroup, $courseGroupShort),
     courseURL('School', $courseGroup, $courseGroupShort, $courseName, $courseNameShort));
   $page->breadcrumb_classes('crumb2a', 'crumb2b');
 
