@@ -3,6 +3,7 @@ $page->title("Courses: School")
      ->navbar_image('courses')
      ->breadcrumbs('School');
 $page->content_begin();
+$courseGroupEncoded = urlencode($title);
 ?>
 	<div class="nonfocal">
 		<h2><?=$title?></h2>
@@ -19,5 +20,17 @@ $page->content_begin();
         <? } ?>
 
 	</ul>
+
+        <div class="nonfocal">
+		<form method="get" action="search.php">
+		<fieldset class="inputcombo">
+                    <input class="forminput" type="text" id="filter" name="filter" placeholder="Search in <?=$title?>" />
+                        <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=\<?=$courseGroupEncoded?>>
+                        <input class="forminput" type="hidden" id="courseName" name="courseName" value=""/>
+                        <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+		</fieldset>
+            </form>
+	</div>
+        
 
 <? $page->content_end(); ?>

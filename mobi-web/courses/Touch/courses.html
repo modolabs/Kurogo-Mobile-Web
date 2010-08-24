@@ -1,9 +1,10 @@
 <?php
 $page->title("Courses: School")
      ->header("School")
-     ->navbar_image('courses')
+     ->navbar_image('courses');
 
 $page->content_begin();
+$courseGroupEncoded = urlencode($title);
 ?>
 	<div class="nonfocal">
 		<h2><?=$title?></h2>
@@ -19,5 +20,16 @@ $page->content_begin();
 				<li><a href="<?=courseURL($courseName, $which, $title)?>"><?=$courseName?></a></li>
         <? } ?>
 	</ul>
+
+        <div class="nonfocal">
+		<form method="get" action="search.php">
+		<span class="inputcombo">
+                    <input class="forminput" type="text" id="filter" name="filter" placeholder="Search in <?=$title?>" />
+                        <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=\<?=$courseGroupEncoded?>>
+                        <input class="forminput" type="hidden" id="courseName" name="courseName" value=""/>
+                        <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+		</span>
+            </form>
+	</div>
 
 <? $page->content_end(); ?>
