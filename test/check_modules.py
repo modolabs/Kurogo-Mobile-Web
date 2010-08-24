@@ -4,6 +4,9 @@ These tests require:
 - Twill (http://twill.idyll.org/)
 - Python 2.7 (http://www.python.org/download/releases/2.7/)
 
+Suggested usage: python check_modules.py 2> error.txt
+That way, messages from Twill are not interspersed with error reporting.
+
 """
 
 """
@@ -61,6 +64,7 @@ class TestModule(unittest.TestCase):
         self.verifyBranch()
         self.verifyPlatform()
         self.verifyPageContents()
+        self.verifyImages()
 
     def test_api(self):
         # Override in subclass.
@@ -86,6 +90,26 @@ class TestModule(unittest.TestCase):
         # Override this in subclasses.
         self.assertTrue(True)
         
+    def verifyImages(self):
+        # Just checks the images to see if they return 200.
+        echo("Searching this html for images: " + self.browser.get_html())
+        imageMatches = re.findall('<img src="([^"]*)"', self.browser.get_html())
+        if not imageMatches is None:
+            baseURL = self.browser.get_url()
+            imageSet = set(imageMatches)
+            echo(imageSet)
+            for imageSrc in imageSet:
+                echo("Checking image: " + imageSrc)
+                try:
+                    # Before going the image, go to the baseURL first, in case the image is using a relative path in its URL.
+                    self.browser.go(baseURL) 
+                    self.browser.go(imageSrc)
+                    self.assertEqual(self.browser.get_code(), 200, 
+                        'The image at ' + imageSrc + ' is not OK. Looking for it resulted in HTTP code: ' 
+                        + str(self.browser.get_code()))
+                except Exception as inst:
+                    self.fail("While checking image " + imageSrc + ", encountered exception: " + str(inst))
+                    
     # Test helper methods
     def goToModulePage(self):
         self.browser.go(endWithSlash(endWithSlash(self.baseUrl) + self.moduleName))
@@ -277,7 +301,7 @@ class TestAboutModule(TestModule):
 def suite():
     # Builds the test suite.
     testSuite = unittest.TestSuite()
-    
+
     # People
     testSuite.addTest(TestPeopleModule('test_index', g_basicPhoneUserAgent, 'Basic'))
     testSuite.addTest(TestPeopleModule('test_index', g_touchPhoneUserAgent, 'Touch'))
@@ -331,7 +355,7 @@ def suite():
     testSuite.addTest(TestCustomizeModule('test_index', g_touchPhoneUserAgent, 'Touch'))
     testSuite.addTest(TestCustomizeModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
     testSuite.addTest(TestCustomizeModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
-
+    
     # About
     testSuite.addTest(TestAboutModule('test_index', g_basicPhoneUserAgent, 'Basic'))
     testSuite.addTest(TestAboutModule('test_index', g_touchPhoneUserAgent, 'Touch'))
