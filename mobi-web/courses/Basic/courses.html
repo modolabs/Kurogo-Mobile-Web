@@ -5,7 +5,7 @@ $page->title("Courses: School")
 $page->content_begin();
 $courseGroupEncoded = urlencode($selected_school_name);
 ?>
-	<form method="get" action="search.php">
+	<form name="search_form" method="get" action="search.php">
             
 	<h2><?=$selected_school_short_name?></h2>
 
@@ -23,10 +23,14 @@ $courseGroupEncoded = urlencode($selected_school_name);
 			<input class="forminput" type="search" id="filter" name="filter" />
                         <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=\<?=$courseGroupEncoded?>>
                         <input class="forminput" type="hidden" id="courseName" name="courseName" value=""/>
-			<input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+                        <? if ($page->platform == 'bbplus') { ?>
+                        <input src="../Basic/images/search_button.png" name="search" id="sch_btn" class="imagebutton" type="image" value="Search" />
+                        <? } else { ?>
+                        <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+                        <? } ?>
 		</span>
 	</p>
-
+        </form>
 <?
 $page->content_end();
 $page->nav_link("./", "Courses Home");

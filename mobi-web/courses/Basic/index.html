@@ -1,11 +1,11 @@
 <?php
-$page->title('Harvard Course Info')
+$page->title('Courses')
      ->header('Courses');
 
 $page->content_begin();
 
 ?>
-	<form method="get" action="searchMain.php">
+	<form name="search_form" method="get" action="searchMain.php">
 	
 	<p>Descriptions, announcements and other information for <?=INSTITUTION_NAME?> classes.</p>
            <? if (count(getMyStellar()->allTags) > 0 ) { ?>
@@ -51,8 +51,14 @@ $page->content_begin();
 			<input class="forminput" type="text" id="filter" name="filter" />
                         <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=""/>
                         <input class="forminput" type="hidden" id="courseName" name="courseName" value=""/>
-			<input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+
+                        <? if ($page->platform == 'bbplus') { ?>
+                        <input src="../Basic/images/search_button.png" name="search" id="sch_btn" class="imagebutton" type="image" value="Search" />
+                        <? } else { ?>
+                        <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+                        <? } ?>
 		</span>	
 	</p>
+        </form>
 
 <? $page->content_end(); ?>

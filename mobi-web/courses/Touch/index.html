@@ -55,19 +55,15 @@ $page->content_begin();
 	
 	</ul>
 	
-    <div class="nonfocal">	
-		<p>
-			<strong>Search by keyword, #, or instructor:</strong><br/>
-                        <form method="get" action="searchMain.php">
+	<div class="nonfocal">
+		<form method="get" action="searchMain.php">
 			<span class="inputcombo">
-                            
-				<input class="forminput" type="search" id="filter" name="filter" />
-	                        <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=""/>
-	                        <input class="forminput" type="hidden" id="courseName" name="courseName" value=""/>
-				<input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search keyword, #, or instructor" />
+                                <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=""/>
+                                <input class="forminput" type="hidden" id="courseName" name="courseName" value=""/>
+				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
 			</span>
-                        </form>
-		</p>
+		</form>
 	</div>
 	
 <? $page->content_end(); ?>
