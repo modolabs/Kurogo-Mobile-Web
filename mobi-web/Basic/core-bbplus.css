@@ -144,7 +144,7 @@ ul li {
 /* Forms */
 
 form {
-	margin: 0.33em 0 1.33em 0;
+	margin: 0.33em 0 0.67em 0;
 	padding: 0;
 }
 
@@ -158,33 +158,16 @@ input, select, option {
 	font-size: 100%;
 }
 
-.inputlabel {
-	margin-bottom: 4px;
-}
-
 .forminput {
-	padding: 4px;
-	width: 60%;
-	border: 2px solid #554c41;
-	margin-bottom: 2px;
-}
-
-#search_form_section {
-	display: block;
-	width: 80%;
-}
-
-table.searchform {
-	width: 100%;
-}
-table.searchform td {
-	padding: 2px 4px 2px 0;
-}
-table.searchform .forminput {
-	font-size: 100%;
-	width: 100%;
 	padding: 3px;
+	font-size: 100%;
+	width: 90%;
 	border: 2px solid #554c41;
+}
+
+.imagebutton {
+	position: relative;
+	top: 0.5em;
 }
 
 /* Navigation and results listings */
