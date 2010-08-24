@@ -1,17 +1,23 @@
+html {
+	font-size: 13pt;
+}
+
 html, body {
 	margin: 0;
 	padding: 0;
-	width: 100%;
+}
+
+body {
+	background-color: #ebe7dd; 
+	background-image: url('/Basic/images/background-tile.png');
+	font-family: Helvetica, Arial, sans-serif;
+	line-height: 1.33em;
+	color: #333;
+	padding: 0em;
 }
 
 a img {
 	border: none 
-}
-
-body {
-	background: #ded8c9 url(/Basic/images/background-tile.jpg) repeat-x fixed;
-	font: 17px/1.33em Helvetica, Arial, sans-serif;
-	color: #202629;
 }
 
 #container { 
@@ -149,7 +155,7 @@ h1 {
 	font-size: 13px;
 }
 #homesearch {
-	margin: 8px 0 18px 0;
+	margin: 6px 0 16px 0;
 	text-align: center;
 }
 #homesearch table {
