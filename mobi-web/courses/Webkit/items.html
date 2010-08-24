@@ -24,7 +24,10 @@
                 $filter = isset($_REQUEST['filter']) ? stripslashes($_REQUEST['filter']) : '';
                 $courseGroup = isset($_REQUEST['courseGroup']) ? stripslashes($_REQUEST['courseGroup']) : '';
                 $courseGroupShort = isset($_REQUEST['courseGroupShort']) ? stripslashes($_REQUEST['courseGroupShort']) : ''; 
+                $courseName = isset($_REQUEST['courseName']) ? stripslashes($_REQUEST['courseName']) : '';
+                $courseNameShort = isset($_REQUEST['courseNameShort']) ? stripslashes($_REQUEST['courseNameShort']) : ''; 
+                $back = (isset($_REQUEST['back']) && strlen($_REQUEST['back'])) ? $_REQUEST['back'].'|Search' : 'Search' ;
                 ?>
-                <li><a href="<?=detailURL('Search', $class['masterId'], $courseGroup, $courseGroupShort, $courseGroup, $courseGroupShort, $filter)?>"><strong><?=$className?></strong>: <?=$class["title"]?><?=$staffName?></a></li>
+                <li><a href="<?=detailURL($back, $class['masterId'], $courseGroup, $courseGroupShort, $courseName, $courseNameShort, $filter)?>"><strong><?=$className?></strong>: <?=$class["title"]?><?=$staffName?></a></li>
             <? } ?>
 </ul>

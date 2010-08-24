@@ -4,6 +4,31 @@ $page->title("Courses: Detail")
 
 $page->add_stylesheet("Basic/mystellar");
 
+//construct the backURL
+if ($back == 'School|Listing') {
+  $backURL= courseURL('School', $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort);
+
+} else if ($back == 'School|Listing|Search') {
+  $backURL = searchURL('School|Listing', $filter, $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort);
+
+} else if ($back == 'Listing') {
+  $backURL = courseURL('', $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort);
+
+} else if ($back == 'Listing|Search') {
+  $backURL = searchURL('Listing', $filter, $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort);
+
+} else if ($back == 'School|Search') {
+  $backURL = searchURL('School', $filter, $courseGroup, $courseGroupShort, '', '');
+
+} else if ($back == 'Search') {
+  $filter = stripslashes($_REQUEST['filter']);
+  $backURL = searchURL('', $filter, $courseGroup, $courseGroupShort, '', '');  
+  
+} else {
+  $backURL = 'index.php';
+}
+
+
 $page->content_begin();
 ?>
 	<div class="focal">
@@ -151,7 +176,7 @@ $page->content_begin();
 	</div>
 
 	<p class="paging">
-		<a href="<?=$back?>" onclick="back(); return false">&lt; Back</a>
+		<a href="<?=$backURL?>" onclick="back(); return false">&lt; Back</a>
 	</p>
 <?
 $page->content_end();

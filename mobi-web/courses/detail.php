@@ -6,12 +6,13 @@ require_once "stellar_lib.inc";
 $back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
 $courseID = stripslashes($_REQUEST['id']);
 
+$filter              = isset($_REQUEST['filter'])         ? stripslashes($_REQUEST['filter']) : '';
 $courseGroup         = isset($_REQUEST['courseGroup'])         ? stripslashes($_REQUEST['courseGroup']) : '';
 $courseGroupShort    = isset($_REQUEST['courseGroupShort'])    ? stripslashes($_REQUEST['courseGroupShort']) : '';
 $courseSubGroup      = isset($_REQUEST['courseSubGroup'])      ? stripslashes($_REQUEST['courseSubGroup']) : '';
 $courseSubGroupShort = isset($_REQUEST['courseSubGroupShort']) ? stripslashes($_REQUEST['courseSubGroupShort']) : '';
 
-$class = CourseData::get_subject_details($courseID);error_log(print_r($courseID, true));
+$class = CourseData::get_subject_details($courseID);
 $term = CourseData::get_term();
 $term_id = $term;
 

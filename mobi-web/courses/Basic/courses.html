@@ -3,7 +3,6 @@ $page->title("Courses: School")
      ->header("School");
 
 $page->content_begin();
-$courseGroupEncoded = urlencode($selected_school_name);
 ?>
 	<form name="search_form" method="get" action="search.php">
             
@@ -13,7 +12,7 @@ $courseGroupEncoded = urlencode($selected_school_name);
              <? foreach($courses as $course) { $courseName = $course->name;
              if ($courseName == '')
                     $courseName = $selected_school_short_name . '-other'; ?>
-		<a href="<?=courseURL('School', $courseName, $courseName, $selected_school_name, $selected_school_short_name)?>"><?=$courseName?></a><br/>
+		<a href="<?=courseURL('School', $selected_school_name, $selected_school_short_name, $courseName, $courseName)?>"><?=$courseName?></a><br/>
              <? } ?>
 	</p>
 
@@ -21,8 +20,9 @@ $courseGroupEncoded = urlencode($selected_school_name);
 		<strong>Search in <?=$selected_school_short_name?>:</strong><br/>
 		<span class="inputcombo">
 			<input class="forminput" type="search" id="filter" name="filter" />
-                        <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value=\<?=$courseGroupEncoded?>>
-                        <input class="forminput" type="hidden" id="courseName" name="courseName" value=""/>
+                <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value="<?=htmlspecialchars($selected_school_name)?>"/>
+                <input class="forminput" type="hidden" id="courseGroupShort" name="courseGroupShort" value="<?=htmlspecialchars($selected_school_short_name)?>"/>
+                <input class="forminput" type="hidden" id="back" name="back" value="School">
                         <? if ($page->platform == 'bbplus') { ?>
                         <input src="../Basic/images/search_button.png" name="search" id="sch_btn" class="imagebutton" type="image" value="Search" />
                         <? } else { ?>

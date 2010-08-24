@@ -17,7 +17,7 @@ $filter = urlencode($queryTerms);
 
 	<p class="nav">
              <? foreach($school_name_count_map as $school) {?>
-		<a href="<?=searchURL($filter, $school['name'], $school['name_short'], '', '')?>"><?=htmlspecialchars($school['name_short'])?> (<?=$school['count']?>)</a><br/>
+		<a href="<?=searchURL('', $filter, $school['name'], $school['name_short'], '', '')?>"><?=htmlspecialchars($school['name_short'])?> (<?=$school['count']?>)</a><br/>
              <? } ?>
 	</p>
 

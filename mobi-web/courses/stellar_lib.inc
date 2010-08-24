@@ -1,24 +1,25 @@
 <?php
 
-function coursesURL($which, $whichShort) {
+function coursesURL($courseGroup, $courseGroupShort) {
   return "courses.php?".http_build_query(array(
-    "which" => $which,
-    "whichShort" => $whichShort,
+    "which" => $courseGroup,
+    "whichShort" => $courseGroupShort,
   ));
 }
 
-function courseURL($back, $id, $idShort, $courseGroup, $courseGroupShort) {
+function courseURL($back, $courseGroup, $courseGroupShort, $courseName, $courseNameShort) {
   return "course.php?".http_build_query(array(
     "back" => $back,
-    "id" => $id,
-    "idShort" => $idShort,
+    "id" => $courseName,
+    "idShort" => $courseNameShort,
     "courseGroup" => $courseGroup,
     "courseGroupShort" => $courseGroupShort,
   ));
 }
 
-function searchURL($filter, $courseGroup, $courseGroupShort, $courseName, $courseNameShort) {
+function searchURL($back, $filter, $courseGroup, $courseGroupShort, $courseName, $courseNameShort) {
   return "search.php?".http_build_query(array(
+    "back" => $back,
     "filter" => $filter,
     "courseName" => $courseName,
     "courseNameShort" => $courseNameShort,
@@ -37,6 +38,23 @@ function detailURL($back, $id, $courseGroup, $courseGroupShort, $courseSubGroup,
     "courseSubGroupShort" => $courseSubGroupShort,
     "filter" => $filter, 
   ));
+}
+
+  
+function getBreadcrumbName($shortName) {
+  switch ($shortName) {
+    case "Faculty of Arts and Sciences":
+    case "Arts and Sciences":
+      return "FAS";
+  
+    case "Business - Doctoral Program":
+      return "HBS PhD";
+    
+    case "Business - MBA Program":
+      return "HBS MBA";
+  }
+
+  return $shortName;
 }
 
 function longID($class) {
