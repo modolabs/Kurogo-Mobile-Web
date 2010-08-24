@@ -28,14 +28,14 @@ function searchURL($back, $filter, $courseGroup, $courseGroupShort, $courseName,
   ));
 }
 
-function detailURL($back, $id, $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort, $filter='') {
+function detailURL($back, $id, $courseGroup, $courseGroupShort, $courseName, $courseNameShort, $filter='') {
   return "detail.php?".http_build_query(array(
     "back" => $back,
     "id" => $id,
     "courseGroup" => $courseGroup,
     "courseGroupShort" => $courseGroupShort,
-    "courseSubGroup" => $courseSubGroup,
-    "courseSubGroupShort" => $courseSubGroupShort,
+    "courseName" => $courseName,
+    "courseNameShort" => $courseNameShort,
     "filter" => $filter, 
   ));
 }

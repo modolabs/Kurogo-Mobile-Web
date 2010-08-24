@@ -364,12 +364,22 @@ a.module img {
 	max-width: 90px;
 }
 
-.crumb2a {
+.crumb2a  {
 	max-width: 40px;
 }
-
-.crumb2b {
+.crumb2b  {
 	max-width: 50px;
+}
+
+.crumb3a {
+	max-width: 40px;
+    display: none !important; /* hidden for now because it doesn't fit */
+}
+.crumb3b {
+	max-width: 50px;
+}
+.crumb3c {
+	max-width: 60px;
 }
 
 .pagetitle {

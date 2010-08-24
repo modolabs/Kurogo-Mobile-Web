@@ -6,11 +6,11 @@ require_once "stellar_lib.inc";
 $back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
 $courseID = stripslashes($_REQUEST['id']);
 
-$filter              = isset($_REQUEST['filter'])         ? stripslashes($_REQUEST['filter']) : '';
-$courseGroup         = isset($_REQUEST['courseGroup'])         ? stripslashes($_REQUEST['courseGroup']) : '';
-$courseGroupShort    = isset($_REQUEST['courseGroupShort'])    ? stripslashes($_REQUEST['courseGroupShort']) : '';
-$courseSubGroup      = isset($_REQUEST['courseSubGroup'])      ? stripslashes($_REQUEST['courseSubGroup']) : '';
-$courseSubGroupShort = isset($_REQUEST['courseSubGroupShort']) ? stripslashes($_REQUEST['courseSubGroupShort']) : '';
+$filter           = isset($_REQUEST['filter'])           ? stripslashes($_REQUEST['filter']) : '';
+$courseGroup      = isset($_REQUEST['courseGroup'])      ? stripslashes($_REQUEST['courseGroup']) : '';
+$courseGroupShort = isset($_REQUEST['courseGroupShort']) ? stripslashes($_REQUEST['courseGroupShort']) : '';
+$courseName       = isset($_REQUEST['courseName'])       ? stripslashes($_REQUEST['courseName']) : '';
+$courseNameShort  = isset($_REQUEST['courseNameShort'])  ? stripslashes($_REQUEST['courseNameShort']) : '';
 
 $class = CourseData::get_subject_details($courseID);
 $term = CourseData::get_term();
@@ -118,8 +118,8 @@ function selfURL($all=NULL) {
     "id"                  => $_REQUEST['id'],
     "courseGroup"         => isset($_REQUEST['courseGroup'])         ? stripslashes($_REQUEST['courseGroup']) : '',
     "courseGroupShort"    => isset($_REQUEST['courseGroupShort'])    ? stripslashes($_REQUEST['courseGroupShort']) : '',
-    "courseSubGroup"      => isset($_REQUEST['courseSubGroup'])      ? stripslashes($_REQUEST['courseSubGroup']) : '',
-    "courseSubGroupShort" => isset($_REQUEST['courseSubGroupShort']) ? stripslashes($_REQUEST['courseSubGroupShort']) : '',
+    "courseName"      => isset($_REQUEST['courseName'])      ? stripslashes($_REQUEST['courseName']) : '',
+    "courseNameShort" => isset($_REQUEST['courseNameShort']) ? stripslashes($_REQUEST['courseNameShort']) : '',
     "back"                => isset($_REQUEST['back'])                ? stripslashes($_REQUEST['back']) : '',
   ));
 

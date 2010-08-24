@@ -13,7 +13,7 @@ $page->content_begin();
     <div>
         <form name="search_form" method="get" action="search.php">
 		<span class="inputcombo">
-            <input class="forminput" type="text" id="filter" name="filter" placeholder="Search in <?=$courseId?>" />
+            <input class="forminput" type="text" id="filter" name="filter" placeholder="Search keyword, #, or instructor" />
             <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value="<?=htmlspecialchars($courseGroup)?>"/>
             <input class="forminput" type="hidden" id="courseGroupShort" name="courseGroupShort" value="<?=htmlspecialchars($courseGroupShort)?>"/>
             <input class="forminput" type="hidden" id="courseName" name="courseName" value="<?=htmlspecialchars($courseId)?>">

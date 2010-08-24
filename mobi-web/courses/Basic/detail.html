@@ -6,16 +6,16 @@ $page->add_stylesheet("Basic/mystellar");
 
 //construct the backURL
 if ($back == 'School|Listing') {
-  $backURL= courseURL('School', $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort);
+  $backURL= courseURL('School', $courseGroup, $courseGroupShort, $courseName, $courseNameShort);
 
 } else if ($back == 'School|Listing|Search') {
-  $backURL = searchURL('School|Listing', $filter, $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort);
+  $backURL = searchURL('School|Listing', $filter, $courseGroup, $courseGroupShort, $courseName, $courseNameShort);
 
 } else if ($back == 'Listing') {
-  $backURL = courseURL('', $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort);
+  $backURL = courseURL('', $courseGroup, $courseGroupShort, $courseName, $courseNameShort);
 
 } else if ($back == 'Listing|Search') {
-  $backURL = searchURL('Listing', $filter, $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort);
+  $backURL = searchURL('Listing', $filter, $courseGroup, $courseGroupShort, $courseName, $courseNameShort);
 
 } else if ($back == 'School|Search') {
   $backURL = searchURL('School', $filter, $courseGroup, $courseGroupShort, '', '');

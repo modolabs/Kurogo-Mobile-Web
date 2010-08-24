@@ -6,31 +6,31 @@ $page->title("Courses: Detail")
 
 //construct the breadcrumbs
 if ($back == 'School|Listing') {
-  $page->breadcrumbs(getBreadcrumbName($courseGroupShort), getBreadcrumbName($courseSubGroupShort), 'Detail');
+  $page->breadcrumbs(getBreadcrumbName($courseGroupShort), getBreadcrumbName($courseNameShort), 'Detail');
   $page->breadcrumb_links(
     coursesURL($courseGroup, $courseGroup),
-    courseURL('School', $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort));
+    courseURL('School', $courseGroup, $courseGroupShort, $courseName, $courseNameShort));
   $page->breadcrumb_classes('crumb2a', 'crumb2b');
 
 } else if ($back == 'School|Listing|Search') {
-  $page->breadcrumbs(getBreadcrumbName($courseGroupShort), getBreadcrumbName($courseSubGroupShort), 'Search', 'Detail');
+  $page->breadcrumbs(getBreadcrumbName($courseGroupShort), getBreadcrumbName($courseNameShort), 'Search', 'Detail');
   $page->breadcrumb_links(
-    coursesURL($courseGroup, $courseGroup), 
-    courseURL('School', $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort),
-    searchURL('School|Listing', $filter, $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort));
-  $page->breadcrumb_classes('crumb2a', 'crumb2b', 'crumb1');
+    coursesURL($courseGroup, $courseGroup),
+    courseURL('School', $courseGroup, $courseGroupShort, $courseName, $courseNameShort),
+    searchURL('School|Listing', $filter, $courseGroup, $courseGroupShort, $courseName, $courseNameShort));
+  $page->breadcrumb_classes('crumb3a', 'crumb3b', 'crumb3c');
 
 } else if ($back == 'Listing') {
-  $page->breadcrumbs(getBreadcrumbName($courseSubGroupShort), 'Detail');
+  $page->breadcrumbs(getBreadcrumbName($courseNameShort), 'Detail');
   $page->breadcrumb_links(
-    courseURL('', $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort));
+    courseURL('', $courseGroup, $courseGroupShort, $courseName, $courseNameShort));
   $page->breadcrumb_classes('crumb1');
 
 } else if ($back == 'Listing|Search') {
-  $page->breadcrumbs(getBreadcrumbName($courseSubGroupShort), 'Search', 'Detail');
+  $page->breadcrumbs(getBreadcrumbName($courseNameShort), 'Search', 'Detail');
   $page->breadcrumb_links(
-    courseURL('', $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort),
-    searchURL('Listing', $filter, $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort));
+    courseURL('', $courseGroup, $courseGroupShort, $courseName, $courseNameShort),
+    searchURL('Listing', $filter, $courseGroup, $courseGroupShort, $courseName, $courseNameShort));
   $page->breadcrumb_classes('crumb2a', 'crumb2b');
 
 } else if ($back == 'School|Search') {
