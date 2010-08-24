@@ -9,10 +9,15 @@ These tests require:
 """
 Set this to the server you want to use for these tests.
 """
-#g_base_url = "http://localhost:8888"
+g_base_url = "http://localhost:8888"
 #g_base_url = "http://mobile-dev.harvard.edu"
 #g_base_url = "http://mobile-staging.harvard.edu/"
-g_base_url = "http://m.harvard.edu"
+#g_base_url = "http://m.harvard.edu"
+
+g_mobileSafariUserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_3 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7E18 Safari/528.16"
+g_touchPhoneUserAgent = "BlackBerry9530/4.7.0.167 Profile/MIDP-2.0 Configuration/CLDC-1.1 VendorID/102 UP.Link/6.3.1.20.0 BlackBerry9530/5.0.0.328 Profile/MIDP-2.1 Configuration/CLDC-1.1 VendorID/105"
+g_blackberryPlusUserAgent = "BlackBerry9630/4.7.1.40 Profile/MIDP-2.0 Configuration/CLDC-1.1 VendorID/104"
+g_basicPhoneUserAgent = "LG U880: LG/U880/v1.0"
 
 import unittest
 from twill import get_browser
@@ -34,14 +39,18 @@ do not define how the contents should be checked. Subclasses should do that.
 
 class TestModule(unittest.TestCase):
 
-    def __init__(self, methodName='runTest', branch='Basic'):
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
         unittest.TestCase.__init__(self, methodName)
         self.baseUrl = g_base_url
         self.moduleName = '' # Should be overridden.
+        self.userAgent = userAgent
         self.branch = branch
+        self.platform = platform
                 
     def setUp(self):
         self.browser = get_browser()
+        self.browser.set_agent_string(self.userAgent)
+        self.browser.clear_cookies()
 
     # Tests
     def test_index(self):
@@ -49,6 +58,8 @@ class TestModule(unittest.TestCase):
         self.assertEqual(self.browser.get_code(), 200, 
             'The ' + self.moduleName + ' module index page is not OK. It returned HTTP code: ' 
             + str(self.browser.get_code()))
+        self.verifyBranch()
+        self.verifyPlatform()
         self.verifyPageContents()
 
     def test_api(self):
@@ -56,6 +67,17 @@ class TestModule(unittest.TestCase):
         self.assertTrue(True)
         
     # Verification methods
+    def verifyBranch(self):
+        self.assertRegexpMatches(self.browser.get_html(), '<!--\ Branch:\ "' + self.branch + '"',
+            self.browser.get_url() + " is not displaying the " + self.branch + " branch for user agent " 
+            + self.userAgent)
+    
+    def verifyPlatform(self):
+        if len(self.platform) > 0:
+            self.assertRegexpMatches(self.browser.get_html(), '<!--\ Platform:\ "' + self.platform + '"',
+                self.browser.get_url() + " is not displaying the " + self.platform 
+                + " platform for user agent " + self.userAgent)
+        
     def verifyPageContents(self):
         # Override this in subclasses.
         self.assertTrue(True)
@@ -66,17 +88,7 @@ class TestModule(unittest.TestCase):
         
     # Test helper methods
     def goToModulePage(self):
-        self.browser.go(self.appendBranchQueryArg(
-            endWithSlash(endWithSlash(self.baseUrl) + self.moduleName)))
-            
-    def appendBranchQueryArg(self, url):
-        if self.branch:
-            connector = '?'
-            if (url.find('?') > -1):
-                connector = '&'            
-            return url + connector + 'branch=' + self.branch
-        else:
-            return url
+        self.browser.go(endWithSlash(endWithSlash(self.baseUrl) + self.moduleName))
         
     def hitAPIWithArguments(self, argumentDict):
         if not 'module' in argumentDict:
@@ -97,8 +109,8 @@ Module-specfic test cases.
 
 class TestPeopleModule(TestModule):
     
-    def __init__(self, methodName='runTest', branch='Basic'):
-        TestModule.__init__(self, methodName, branch)
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):        
+        TestModule.__init__(self, methodName, userAgent, branch, platform)
         self.moduleName = 'people'
     
     def verifyPageContents(self):
@@ -119,8 +131,8 @@ class TestPeopleModule(TestModule):
 
 class TestMapModule(TestModule):
 
-    def __init__(self, methodName='runTest', branch='Basic'):
-        TestModule.__init__(self, methodName, branch)
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
+        TestModule.__init__(self, methodName, userAgent, branch, platform)
         self.moduleName = 'map'
 
     def verifyPageContents(self):
@@ -140,8 +152,8 @@ class TestMapModule(TestModule):
 
 class TestCalendarModule(TestModule):
 
-    def __init__(self, methodName='runTest', branch='Basic'):
-        TestModule.__init__(self, methodName, branch)
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
+        TestModule.__init__(self, methodName, userAgent, branch, platform)
         self.moduleName = 'calendar'
 
     def verifyPageContents(self):
@@ -161,8 +173,8 @@ class TestCalendarModule(TestModule):
 
 class TestCoursesModule(TestModule):
 
-    def __init__(self, methodName='runTest', branch='Basic'):
-        TestModule.__init__(self, methodName, branch)
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
+        TestModule.__init__(self, methodName, userAgent, branch, platform)
         self.moduleName = 'courses'
 
     def verifyPageContents(self):
@@ -182,8 +194,8 @@ class TestCoursesModule(TestModule):
 
 class TestNewsModule(TestModule):
 
-    def __init__(self, methodName='runTest', branch='Basic'):
-        TestModule.__init__(self, methodName, branch)
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
+        TestModule.__init__(self, methodName, userAgent, branch, platform)
         self.moduleName = 'news'
 
     def verifyPageContents(self):
@@ -204,8 +216,8 @@ class TestNewsModule(TestModule):
 
 class TestDiningModule(TestModule):
 
-    def __init__(self, methodName='runTest', branch='Basic'):
-        TestModule.__init__(self, methodName, branch)
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
+        TestModule.__init__(self, methodName, userAgent, branch, platform)
         self.moduleName = 'dining'
 
     def verifyPageContents(self):
@@ -226,8 +238,8 @@ class TestDiningModule(TestModule):
 
 class TestLinksModule(TestModule):
 
-    def __init__(self, methodName='runTest', branch='Basic'):
-        TestModule.__init__(self, methodName, branch)
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
+        TestModule.__init__(self, methodName, userAgent, branch, platform)
         self.moduleName = 'links'
 
     def verifyPageContents(self):
@@ -238,8 +250,8 @@ class TestLinksModule(TestModule):
 
 class TestCustomizeModule(TestModule):
 
-    def __init__(self, methodName='runTest', branch='Basic'):
-        TestModule.__init__(self, methodName, branch)
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
+        TestModule.__init__(self, methodName, userAgent, branch, platform)
         self.moduleName = 'customize'
 
     def verifyPageContents(self):
@@ -250,8 +262,8 @@ class TestCustomizeModule(TestModule):
 
 class TestAboutModule(TestModule):
 
-    def __init__(self, methodName='runTest', branch='Basic'):
-        TestModule.__init__(self, methodName, branch)
+    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
+        TestModule.__init__(self, methodName, userAgent, branch, platform)
         self.moduleName = 'mobile-about'
 
     def verifyPageContents(self):
@@ -267,65 +279,65 @@ def suite():
     testSuite = unittest.TestSuite()
     
     # People
-    testSuite.addTest(TestPeopleModule('test_index', 'Basic'))
-    testSuite.addTest(TestPeopleModule('test_index', 'Touch'))
-    testSuite.addTest(TestPeopleModule('test_index', 'Webkit'))
-    testSuite.addTest(TestPeopleModule('test_index', 'Basic&Platform=bbplus'))
-    testSuite.addTest(TestPeopleModule('test_api'))
-
+    testSuite.addTest(TestPeopleModule('test_index', g_basicPhoneUserAgent, 'Basic'))
+    testSuite.addTest(TestPeopleModule('test_index', g_touchPhoneUserAgent, 'Touch'))
+    testSuite.addTest(TestPeopleModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
+    testSuite.addTest(TestPeopleModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
+    #testSuite.addTest(TestPeopleModule('test_api'))
+    
     # Map
-    testSuite.addTest(TestMapModule('test_index', 'Basic'))
-    testSuite.addTest(TestMapModule('test_index', 'Touch'))
-    testSuite.addTest(TestMapModule('test_index', 'Webkit'))
-    testSuite.addTest(TestMapModule('test_index', 'Basic&Platform=bbplus'))
+    testSuite.addTest(TestMapModule('test_index', g_basicPhoneUserAgent, 'Basic'))
+    testSuite.addTest(TestMapModule('test_index', g_touchPhoneUserAgent, 'Touch'))
+    testSuite.addTest(TestMapModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
+    testSuite.addTest(TestMapModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
     testSuite.addTest(TestMapModule('test_api'))
 
     # Calendar
-    testSuite.addTest(TestCalendarModule('test_index', 'Basic'))
-    testSuite.addTest(TestCalendarModule('test_index', 'Touch'))
-    testSuite.addTest(TestCalendarModule('test_index', 'Webkit'))
-    testSuite.addTest(TestCalendarModule('test_index', 'Basic&Platform=bbplus'))
+    testSuite.addTest(TestCalendarModule('test_index', g_basicPhoneUserAgent, 'Basic'))
+    testSuite.addTest(TestCalendarModule('test_index', g_touchPhoneUserAgent, 'Touch'))
+    testSuite.addTest(TestCalendarModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
+    testSuite.addTest(TestCalendarModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
     testSuite.addTest(TestCalendarModule('test_api'))
     
     # Courses
-    testSuite.addTest(TestCoursesModule('test_index', 'Basic'))
-    testSuite.addTest(TestCoursesModule('test_index', 'Touch'))
-    testSuite.addTest(TestCoursesModule('test_index', 'Webkit'))
-    testSuite.addTest(TestCoursesModule('test_index', 'Basic&Platform=bbplus'))
+    testSuite.addTest(TestCoursesModule('test_index', g_basicPhoneUserAgent, 'Basic'))
+    testSuite.addTest(TestCoursesModule('test_index', g_touchPhoneUserAgent, 'Touch'))
+    testSuite.addTest(TestCoursesModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
+    testSuite.addTest(TestCoursesModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
     testSuite.addTest(TestCoursesModule('test_api'))
         
     # News
-    testSuite.addTest(TestNewsModule('test_index', 'Basic'))
-    testSuite.addTest(TestNewsModule('test_index', 'Touch'))
-    testSuite.addTest(TestNewsModule('test_index', 'Webkit'))
-    testSuite.addTest(TestNewsModule('test_index', 'Basic&Platform=bbplus'))
+    testSuite.addTest(TestNewsModule('test_index', g_basicPhoneUserAgent, 'Basic'))
+    testSuite.addTest(TestNewsModule('test_index', g_touchPhoneUserAgent, 'Touch'))
+    testSuite.addTest(TestNewsModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
+    testSuite.addTest(TestNewsModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
     testSuite.addTest(TestNewsModule('test_api'))
 
     # Dining
-    testSuite.addTest(TestDiningModule('test_index', 'Basic'))
-    testSuite.addTest(TestDiningModule('test_index', 'Touch'))
-    testSuite.addTest(TestDiningModule('test_index', 'Webkit'))
-    testSuite.addTest(TestDiningModule('test_index', 'Basic&Platform=bbplus'))
+    testSuite.addTest(TestDiningModule('test_index', g_basicPhoneUserAgent, 'Basic'))
+    testSuite.addTest(TestDiningModule('test_index', g_touchPhoneUserAgent, 'Touch'))
+    testSuite.addTest(TestDiningModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
+    testSuite.addTest(TestDiningModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
     testSuite.addTest(TestDiningModule('test_api'))
 
     # Links
-    testSuite.addTest(TestLinksModule('test_index', 'Basic'))
-    testSuite.addTest(TestLinksModule('test_index', 'Touch'))
-    testSuite.addTest(TestLinksModule('test_index', 'Webkit'))
-    testSuite.addTest(TestLinksModule('test_index', 'Basic&Platform=bbplus'))
+    testSuite.addTest(TestLinksModule('test_index', g_basicPhoneUserAgent, 'Basic'))
+    testSuite.addTest(TestLinksModule('test_index', g_touchPhoneUserAgent, 'Touch'))
+    testSuite.addTest(TestLinksModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
+    testSuite.addTest(TestLinksModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
 
     # Customize
-    testSuite.addTest(TestCustomizeModule('test_index', 'Basic'))
-    testSuite.addTest(TestCustomizeModule('test_index', 'Touch'))
-    testSuite.addTest(TestCustomizeModule('test_index', 'Webkit'))
-    testSuite.addTest(TestCustomizeModule('test_index', 'Basic&Platform=bbplus'))
+    testSuite.addTest(TestCustomizeModule('test_index', g_basicPhoneUserAgent, 'Basic'))
+    testSuite.addTest(TestCustomizeModule('test_index', g_touchPhoneUserAgent, 'Touch'))
+    testSuite.addTest(TestCustomizeModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
+    testSuite.addTest(TestCustomizeModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
 
     # About
-    testSuite.addTest(TestAboutModule('test_index', 'Basic'))
-    testSuite.addTest(TestAboutModule('test_index', 'Touch'))
-    testSuite.addTest(TestAboutModule('test_index', 'Webkit'))
-    testSuite.addTest(TestAboutModule('test_index', 'Basic&Platform=bbplus'))
-    
+    testSuite.addTest(TestAboutModule('test_index', g_basicPhoneUserAgent, 'Basic'))
+    testSuite.addTest(TestAboutModule('test_index', g_touchPhoneUserAgent, 'Touch'))
+    testSuite.addTest(TestAboutModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
+    testSuite.addTest(TestAboutModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
+
     return testSuite
 
 if __name__ == '__main__':
