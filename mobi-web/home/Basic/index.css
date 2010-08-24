@@ -112,6 +112,11 @@ ul li {
 	color: #554c41;
 }
 
+#footer .copyright {
+    text-decoration: none;
+	color: #554c41;
+}
+
 /* Forms */
 
 form {

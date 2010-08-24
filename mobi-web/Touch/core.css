@@ -123,6 +123,11 @@ dd {
 	color: #333;
 }
 
+#footer .copyright {
+	text-decoration: none;
+	color: #333;
+}
+
 #footerlinks {
 	clear: both;
 	margin: 3em 6px 2em 6px; 
