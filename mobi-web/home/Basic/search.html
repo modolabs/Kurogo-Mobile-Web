@@ -7,24 +7,24 @@ $page->content_begin();
 
 
 <? foreach($federated_results as $module => $module_results) { ?>
-    <h3 class="nonfocal">
+    <h3>
         <?=Modules::title($module)?>
     </h3>
 
-    <p class="nav">
+    <div class="nav" style="line-height:1.33em">
                 <? if(count($module_results['results']) > 0) { ?>
                     <? for($i = 0 ; $i < count($module_results['results']) && $i < MAX_ITEMS; $i++) { ?>
                         <? $result = $module_results['results'][$i]; ?>
-                           <a href="..<?=$result['link']?>"><?=htmlentities($result['title'])?></a><br />
+                           <p><a href="..<?=$result['link']?>"><?=htmlentities($result['title'])?></a></p>
 
                     <? } ?>
                     <? if(count($module_results['results']) > MAX_ITEMS) { ?>
-                        <a href="..<?=$module_results['search-link']?>">More results</a>
+                        <p><a href="..<?=$module_results['search-link']?>">More results</a></p>
                     <? } ?>
                 <? } else { ?>
                     No results
                 <? } ?>
-    </p>
+    </div>
 <? } ?>
 
 	
