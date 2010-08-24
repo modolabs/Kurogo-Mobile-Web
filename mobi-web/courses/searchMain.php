@@ -54,7 +54,7 @@ function selfURL() {
 // if exactly one class is found redirect to that
 // classes detail page
 /*if(count($classes) == 1) {
-  header("Location: " . detailURL($classes[0], selfURL()));
+  header("Location: " . detailURL('', $classes[0]['masterId'], $courseGroup, $courseGroupShort, $courseId, $courseIdShort));
   die();
 }*/
 

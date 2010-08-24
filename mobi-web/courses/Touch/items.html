@@ -20,7 +20,11 @@
       if (strlen($staffName)) {
         $staffName = ' ('.$staffName.')';
       }
-    }?>
-    <li><a href="<?=detailURL($class, selfURL())?>"><strong><?=$className?></strong>: <?=$class["title"]?><?=$staffName?></a></li>
+    }
+    $filter = isset($_REQUEST['filter']) ? stripslashes($_REQUEST['filter']) : '';
+    $courseGroup = isset($_REQUEST['courseGroup']) ? stripslashes($_REQUEST['courseGroup']) : '';
+    $courseGroupShort = isset($_REQUEST['courseGroupShort']) ? stripslashes($_REQUEST['courseGroupShort']) : ''; 
+    ?>
+    <li><a href="<?=detailURL('Search', $class['masterId'], $courseGroup, $courseGroupShort, $courseGroup, $courseGroupShort, $filter)?>"><strong><?=$className?></strong>: <?=$class["title"]?><?=$staffName?></a></li>
 <? } ?>
 	</ul>

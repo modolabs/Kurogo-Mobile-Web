@@ -1,12 +1,12 @@
 <?php
-$page->title("Courses: " . $courseId)
-     ->header($courseId);
+$page->title("Courses: Listing")
+     ->header("Listing");
 
 $page->content_begin();
 $courseIdEncoded = urlencode($courseId);
 ?>
         <form method="get" action="search.php">
-	<h2><?=$courseId?></h2>
+	<h2><?=$courseIdShort?></h2>
 
         <p class="nav">
         <? 
@@ -33,14 +33,14 @@ $courseIdEncoded = urlencode($courseId);
             }
           }?>
 
-         <a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?><?=$staffName?></a><br/><?
+         <a href="<?=detailURL($back, $class['masterId'], $courseGroup, $courseGroupShort, $courseId, $courseIdShort)?>"><?=$className?> : <?=$class["title"]?><?=$staffName?></a><br/><?
         } 
         ?>
         </p>
 	
         <? if($back) { ?>
   	   <p class="paging">
-		<a href="<?=coursesURL($back)?>">&lt; Back</a>
+		<a href="<?=coursesURL($courseGroup, $courseGroupShort)?>">&lt; Back</a>
 	   </p>
         <? } ?>
 

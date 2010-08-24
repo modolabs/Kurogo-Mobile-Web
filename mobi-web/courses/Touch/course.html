@@ -1,13 +1,13 @@
 <?php
-$page->title("Courses: " . $courseId)
+$page->title("Courses: Listing")
      ->navbar_image('courses')
-     ->header("Courses");
+     ->header("Listing");
 
 $page->content_begin();
 ?>
 
 	<div class="nonfocal">
-		<h2><?=$courseId?></h2>
+		<h2><?=$courseIdShort?></h2>
 	</div>
 	
 	<ul class="results">
@@ -35,7 +35,7 @@ $page->content_begin();
         }
       }?>
 
-     <li><a href="<?=detailURL($class, selfURL())?>"><?=$className?> : <?=$class["title"]?><?=$staffName?></a></li><?
+     <li><a href="<?=detailURL('Listing', $class['masterId'], $courseGroup, $courseGroupShort, $courseId, $courseIdShort)?>"><?=$className?> : <?=$class["title"]?><?=$staffName?></a></li><?
 	} 
 	?>
 	</ul>

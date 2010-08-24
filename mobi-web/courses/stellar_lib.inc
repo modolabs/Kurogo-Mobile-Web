@@ -1,16 +1,42 @@
 <?php
 
-function coursesURL($which) {
-  return "courses.php?which=$which";
+function coursesURL($which, $whichShort) {
+  return "courses.php?".http_build_query(array(
+    "which" => $which,
+    "whichShort" => $whichShort,
+  ));
 }
 
-function courseURL($id, $which, $courseGroup) {
-  return "course.php?id=$id&back=$which&courseGroup=$courseGroup";
+function courseURL($back, $id, $idShort, $courseGroup, $courseGroupShort) {
+  return "course.php?".http_build_query(array(
+    "back" => $back,
+    "id" => $id,
+    "idShort" => $idShort,
+    "courseGroup" => $courseGroup,
+    "courseGroupShort" => $courseGroupShort,
+  ));
 }
 
-function searchURL($filter, $courseGroup, $courseName) {
+function searchURL($filter, $courseGroup, $courseGroupShort, $courseName, $courseNameShort) {
+  return "search.php?".http_build_query(array(
+    "filter" => $filter,
+    "courseName" => $courseName,
+    "courseNameShort" => $courseNameShort,
+    "courseGroup" => $courseGroup,
+    "courseGroupShort" => $courseGroupShort,
+  ));
+}
 
-    return "search.php?filter=$filter&courseGroup=$courseGroup&courseName=$courseName";
+function detailURL($back, $id, $courseGroup, $courseGroupShort, $courseSubGroup, $courseSubGroupShort, $filter='') {
+  return "detail.php?".http_build_query(array(
+    "back" => $back,
+    "id" => $id,
+    "courseGroup" => $courseGroup,
+    "courseGroupShort" => $courseGroupShort,
+    "courseSubGroup" => $courseSubGroup,
+    "courseSubGroupShort" => $courseSubGroupShort,
+    "filter" => $filter, 
+  ));
 }
 
 function longID($class) {
@@ -27,11 +53,6 @@ function longerID($class) {
 
 function className($class) {
   return $class['title'];
-}
-
-function detailURL($class, $self, $selfParams='') {
-  return "detail.php?id={$class['masterId']}&back=" . urlencode($self).
-    (strlen($selfParams) ? '&'.$selfParams : '');
 }
 
 function name($course) {

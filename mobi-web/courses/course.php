@@ -4,14 +4,20 @@ require_once LIBDIR . '/courses.php';
 require_once "stellar_lib.inc";
 
 function selfURL() {
-  $back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
-  return "course.php?id=" . $_REQUEST['id'] . '&back=' . $_REQUEST['back'] . '&courseGroup=' . $_REQUEST['courseGroup'];
+  return "course.php?".http_build_query(array(
+    'back' => stripslashes($_REQUEST['back']),
+    'id' => stripslashes($_REQUEST['id']),
+    'idShort' => stripslashes($_REQUEST['idShort']),
+    'courseGroup' => stripslashes($_REQUEST['courseGroup']),
+    'courseGroupShort' => stripslashes($_REQUEST['courseGroupShort']),    
+  ));
 }
 
 $back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
-
-$courseId = urldecode($_REQUEST['id']);
-$courseGroup = urldecode($_REQUEST['courseGroup']);
+$courseId = stripslashes($_REQUEST['id']);
+$courseIdShort = stripslashes($_REQUEST['idShort']);
+$courseGroup = stripslashes($_REQUEST['courseGroup']);
+$courseGroupShort = stripslashes($_REQUEST['courseGroupShort']);
 
 $classes = CourseData::get_subjectsForCourse(str_replace('-other', '', $courseId), $courseGroup);
 

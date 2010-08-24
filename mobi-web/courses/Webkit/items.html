@@ -23,7 +23,8 @@
                 }
                 $filter = isset($_REQUEST['filter']) ? stripslashes($_REQUEST['filter']) : '';
                 $courseGroup = isset($_REQUEST['courseGroup']) ? stripslashes($_REQUEST['courseGroup']) : '';
-                $selfParams = 'filter='.urlencode($filter).'&courseGroup='.urlencode($courseGroup); ?>
-                <li><a href="<?=detailURL($class, 'Search', $selfParams)?>"><strong><?=$className?></strong>: <?=$class["title"]?><?=$staffName?></a></li>
+                $courseGroupShort = isset($_REQUEST['courseGroupShort']) ? stripslashes($_REQUEST['courseGroupShort']) : ''; 
+                ?>
+                <li><a href="<?=detailURL('Search', $class['masterId'], $courseGroup, $courseGroupShort, $courseGroup, $courseGroupShort, $filter)?>"><strong><?=$className?></strong>: <?=$class["title"]?><?=$staffName?></a></li>
             <? } ?>
 </ul>

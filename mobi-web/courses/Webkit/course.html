@@ -1,26 +1,22 @@
 <?php
-$page->title("Courses: " . $courseId)
+$page->title("Courses: Listing")
      ->navbar_image('courses');
      
 if (isset($_REQUEST['back'], $_REQUEST['courseGroup']) && $_REQUEST['back'] == 'School') {
-  $courseGroup = stripslashes($_REQUEST['courseGroup']);
-  
-  $page->breadcrumbs($courseGroup, 'Listing');
+  $page->breadcrumbs($courseGroupShort, 'Listing');
   $page->breadcrumb_classes('crumb1');
   $page->breadcrumb_links('courses.php?which='.urlencode($courseGroup));
-  $self = 'School|Listing';
-  $selfParams = 'courseGroup='.urlencode($courseGroup).'&courseID='.urlencode($courseId);
+  $back = 'School|Listing';
 } else {
   $page->breadcrumbs('Listing');
-  $self = 'Listing';
-  $selfParams = 'courseID='.urlencode($courseId);
+  $back = 'Listing';
 }
 
 $page->content_begin();
 ?>
 	
 	<div class="nonfocal">
-		<h2><?=$courseId?></h2>
+		<h2><?=$courseIdShort?></h2>
 	</div>
 	<ul class="results">
 	<? 
@@ -47,7 +43,7 @@ $page->content_begin();
         }
       }?>
 
-     <li><a href="<?=detailURL($class, $self, $selfParams)?>"><?=$className?> : <?=$class["title"]?><?=$staffName?></a></li><?
+     <li><a href="<?=detailURL($back, $class['masterId'], $courseGroup, $courseGroupShort, $courseId, $courseIdShort)?>"><?=$className?> : <?=$class["title"]?><?=$staffName?></a></li><?
 	} 
 	?>
 	</ul>

@@ -3,10 +3,15 @@
 require_once LIBDIR . '/courses.php';
 require_once "stellar_lib.inc";
 
-$class_id = $_REQUEST['id'];
+$back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
+$courseID = stripslashes($_REQUEST['id']);
 
-$subjectId = stripslashes($_REQUEST['id']);
-$class = CourseData::get_subject_details($subjectId);
+$courseGroup         = isset($_REQUEST['courseGroup'])         ? stripslashes($_REQUEST['courseGroup']) : '';
+$courseGroupShort    = isset($_REQUEST['courseGroupShort'])    ? stripslashes($_REQUEST['courseGroupShort']) : '';
+$courseSubGroup      = isset($_REQUEST['courseSubGroup'])      ? stripslashes($_REQUEST['courseSubGroup']) : '';
+$courseSubGroupShort = isset($_REQUEST['courseSubGroupShort']) ? stripslashes($_REQUEST['courseSubGroupShort']) : '';
+
+$class = CourseData::get_subject_details($courseID);error_log(print_r($courseID, true));
 $term = CourseData::get_term();
 $term_id = $term;
 
@@ -19,7 +24,7 @@ $no_stellar_site = FALSE;
 
 /* My Stellar actions */
 $mystellar = getMyStellar()->allTags;
-$class_data = $class_id . " " . $term_id;
+$class_data = $courseID . " " . $term_id;
 
 if(in_array($class_data, $mystellar)) {
   $toggle = "ms_on";
@@ -44,7 +49,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'remove') {
     header("Location: " . selfURL());
   } else {
     foreach ($mystellar as $item) {
-      if (strpos($item,$class_id) !== false) {
+      if (strpos($item,$courseID) !== false) {
 	array_splice($mystellar, array_search($item, $mystellar), 1);
 	header("Location: index.php");
       }
@@ -57,7 +62,7 @@ setMyStellar($mystellar);
 
 if (!$class) {
   // no such class or none entered
-  $not_found_text = "Sorry, class '$class_id' not found for the $term term";
+  $not_found_text = "Sorry, class '$courseID' not found for the $term term";
   $page->prepare_error_page('Courses', 'stellar', $not_found_text);
 
 }
@@ -74,7 +79,7 @@ else {
 
   //start session (used to save class details)
   session_start();
-  $_SESSION['subjectID'] = $subjectId;  // Cannot use $class because it contains objects
+  $_SESSION['subjectID'] = $courseID;  // Cannot use $class because it contains objects
   $_SESSION['announcements'] = $announcements;
 
   if(isset($_REQUEST['all']) && $_REQUEST['all']) {
@@ -108,19 +113,14 @@ function personURL($name) {
 }
 
 function selfURL($all=NULL) {
- /* $all = $all ? $all : $_REQUEST['all'];
-  $query = http_build_query(array(
-    "id"   => $_REQUEST['id'],
-    "all"  => $all,
-    "back" => $_REQUEST['back']
+  return "detail.php?".http_build_query(array(
+    "id"                  => $_REQUEST['id'],
+    "courseGroup"         => isset($_REQUEST['courseGroup'])         ? stripslashes($_REQUEST['courseGroup']) : '',
+    "courseGroupShort"    => isset($_REQUEST['courseGroupShort'])    ? stripslashes($_REQUEST['courseGroupShort']) : '',
+    "courseSubGroup"      => isset($_REQUEST['courseSubGroup'])      ? stripslashes($_REQUEST['courseSubGroup']) : '',
+    "courseSubGroupShort" => isset($_REQUEST['courseSubGroupShort']) ? stripslashes($_REQUEST['courseSubGroupShort']) : '',
+    "back"                => isset($_REQUEST['back'])                ? stripslashes($_REQUEST['back']) : '',
   ));
-  return "detail.php?$query";*/
-    
-  $query = http_build_query(array(
-    "id"   => $_REQUEST['id'],
-    "back" => $_REQUEST['back']
-  ));
-  return "detail.php?$query";
 
 
 }

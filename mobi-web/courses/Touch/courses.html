@@ -1,22 +1,22 @@
 <?php
 $page->title("Courses: School")
      ->header("School")
-     ->navbar_image('courses')
+     ->navbar_image('courses');
 
 $page->content_begin();
 ?>
 	<div class="nonfocal">
-		<h2><?=$title?></h2>
+		<h2><?=$selected_school_short_name?></h2>
 	</div>
 	
 	<ul class="nav">
         <? foreach($courses as $course) { 
 			$courseName = $course->name;
            	if ($courseName == '')
-                  $courseName = $title . '-other'; 
+                  $courseName = $selected_school_short_name . '-other'; 
 		?>
 			
-				<li><a href="<?=courseURL($courseName, $which, $title)?>"><?=$courseName?></a></li>
+				<li><a href="<?=courseURL('School', $courseName, $courseName, $selected_school_name, $selected_school_short_name)?>"><?=$courseName?></a></li>
         <? } ?>
 	</ul>
 

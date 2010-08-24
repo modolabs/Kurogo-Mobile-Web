@@ -1,16 +1,14 @@
 <?php
-$courseGroup = isset($_REQUEST['courseGroup']) ? $_REQUEST['courseGroup'] : '';
-
 $page->title('Courses: Search Results')
      ->navbar_image('courses')
-     ->breadcrumbs('Search', $courseGroup)
+     ->breadcrumbs('Search', 'Search Results')
      ->breadcrumb_links('searchMain.php?filter='.$_REQUEST['filter']);
 
 $page->content_begin();
 
 ?>
 <div class="nonfocal">
-<h2><?=$school?></h2>
+<h2><?=$courseGroupShort?></h2>
 </div>
 <?
 $content->output($classes);
