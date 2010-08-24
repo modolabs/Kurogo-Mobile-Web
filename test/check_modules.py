@@ -52,9 +52,8 @@ class TestModule(unittest.TestCase):
         self.verifyPageContents()
 
     def test_api(self):
-        self.hitAPIWithArguments({ 'q': 'roger+brockett', 'command': 'search'})
-        self.assertEqual(self.browser.get_code(), 200)
-        self.verifyAPIResults()
+        # Override in subclass.
+        self.assertTrue(True)
         
     # Verification methods
     def verifyPageContents(self):
@@ -107,6 +106,11 @@ class TestPeopleModule(TestModule):
         self.assertRegexpMatches(self.browser.get_html(), '<title>People</title>', 
             'Could not verify index title.')
         #echo(self.browser.get_html())
+
+    def test_api(self):
+        self.hitAPIWithArguments({ 'q': 'roger+brockett', 'command': 'search'})
+        self.assertEqual(self.browser.get_code(), 200)
+        self.verifyAPIResults()
                 
     def verifyAPIResults(self):
         # TODO: A little more precision.
@@ -125,10 +129,14 @@ class TestMapModule(TestModule):
             'Could not verify index title.')
         #echo(self.browser.get_html())
 
+    def test_api(self):
+        self.hitAPIWithArguments({ 'q': '1737', 'command': 'search'})
+        self.assertEqual(self.browser.get_code(), 200)
+        self.verifyAPIResults()
+            
     def verifyAPIResults(self):
-        self.assertTrue(True)
-        #self.assertRegexpMatches(self.browser.get_html(), 'Brockett',
-        #    'Could not find Brockett result.')
+        self.assertRegexpMatches(self.browser.get_html(), '\"Building\ Name\":\"KNAFEL\ BUILDING\"',
+            'Could not find Knafel building.')
 
 class TestCalendarModule(TestModule):
 
@@ -142,10 +150,14 @@ class TestCalendarModule(TestModule):
             'Could not verify index title.')
         #echo(self.browser.get_html())
 
+    def test_api(self):
+        self.hitAPIWithArguments({'command': 'categories'})
+        self.assertEqual(self.browser.get_code(), 200)
+        self.verifyAPIResults()
+            
     def verifyAPIResults(self):
-        self.assertTrue(True)
-        #self.assertRegexpMatches(self.browser.get_html(), 'Brockett',
-        #    'Could not find Brockett result.')
+        self.assertRegexpMatches(self.browser.get_html(), 'Special\ Events',
+            'Could not find Special Event category.')
 
 class TestCoursesModule(TestModule):
 
@@ -159,10 +171,14 @@ class TestCoursesModule(TestModule):
             'Could not verify index title.')
         #echo(self.browser.get_html())
 
+    def test_api(self):
+        self.hitAPIWithArguments({'command': 'courses'})
+        self.assertEqual(self.browser.get_code(), 200)
+        self.verifyAPIResults()
+
     def verifyAPIResults(self):
-        self.assertTrue(True)
-        #self.assertRegexpMatches(self.browser.get_html(), 'Brockett',
-        #    'Could not find Brockett result.')
+        self.assertRegexpMatches(self.browser.get_html(), '\"school_name\":\"Harvard\ Business\ School\ -\ MBA\ Program\"',
+            'Could not find Harvard Business School Doctoral Program school in JSON results.')
 
 class TestNewsModule(TestModule):
 
@@ -176,10 +192,15 @@ class TestNewsModule(TestModule):
             'Could not verify index title.')
         #echo(self.browser.get_html())
 
+    def test_api(self):
+        self.hitAPIWithArguments({})
+        self.assertEqual(self.browser.get_code(), 200)
+        self.verifyAPIResults()
+            
     def verifyAPIResults(self):
-        self.assertTrue(True)
-        #self.assertRegexpMatches(self.browser.get_html(), 'Brockett',
-        #    'Could not find Brockett result.')
+        # Look for part of RSS header.        
+        self.assertRegexpMatches(self.browser.get_html(), 'xmlns:harvard="http://news.harvard.edu/gazette/',
+            'Could not find namespace in RSS header.')
 
 class TestDiningModule(TestModule):
 
@@ -193,10 +214,15 @@ class TestDiningModule(TestModule):
             'Could not verify index title.')
         #echo(self.browser.get_html())
 
+    def test_api(self):
+        self.hitAPIWithArguments({'command': 'hours'})
+        self.assertEqual(self.browser.get_code(), 200)
+        self.verifyAPIResults()
+
     def verifyAPIResults(self):
         self.assertTrue(True)
-        #self.assertRegexpMatches(self.browser.get_html(), 'Brockett',
-        #    'Could not find Brockett result.')
+        self.assertRegexpMatches(self.browser.get_html(), 'lunch_restrictions',
+            'Could not find lunch_restrictions in dining hours JSON.')
 
 class TestLinksModule(TestModule):
 
@@ -253,7 +279,7 @@ def suite():
     testSuite.addTest(TestMapModule('test_index', 'Webkit'))
     testSuite.addTest(TestMapModule('test_index', 'Basic&Platform=bbplus'))
     testSuite.addTest(TestMapModule('test_api'))
-    
+
     # Calendar
     testSuite.addTest(TestCalendarModule('test_index', 'Basic'))
     testSuite.addTest(TestCalendarModule('test_index', 'Touch'))
@@ -299,8 +325,7 @@ def suite():
     testSuite.addTest(TestAboutModule('test_index', 'Touch'))
     testSuite.addTest(TestAboutModule('test_index', 'Webkit'))
     testSuite.addTest(TestAboutModule('test_index', 'Basic&Platform=bbplus'))
-                
-    #testSuite.addTest(TestPeopleModule('test_api'))
+    
     return testSuite
 
 if __name__ == '__main__':
