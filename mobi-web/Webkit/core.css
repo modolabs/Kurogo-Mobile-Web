@@ -326,7 +326,7 @@ a.formbutton div {
 	background-position: top right;
 	text-decoration: none;
 	color: #fff;
-	padding-right: 18px;
+	padding-right: 16px;
 	overflow: hidden;
 	text-overflow: ellipsis
 }
@@ -337,7 +337,7 @@ a.formbutton div {
 
 .breadcrumbs a span {
     /* pad to center the icons and text, including negative margin */
-    padding: 0 0 0 8px; 
+    padding: 0 0 0 7px; 
 	line-height: 44px;
 }
 
@@ -357,7 +357,7 @@ a.module img {
 
 .homepage .moduleicon {
     display: inline-block;
-    padding: 8px 2px 8px 1px;
+    padding: 8px 1px 8px 2px;
 }
 
 .crumb1 {
