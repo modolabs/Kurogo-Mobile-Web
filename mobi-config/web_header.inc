@@ -1,7 +1,7 @@
 <?php
 // Template related
 define('INSTITUTION_NAME', "Harvard University");
-define('COPYRIGHT_NOTICE', "&copy;2010 The President and Fellows of Harvard College");
+define('COPYRIGHT_NOTICE', '<a href="http://www.harvard.edu/" class="copyright">&copy;2010 The President and Fellows of Harvard College</a>');
 define('FEEDBACK_EMAIL', "digitalcomms@harvard.edu");
 define('APP_NAME', "Harvard Mobile");
 define('SITE_NAME', "Harvard Mobile Web");

@@ -119,7 +119,10 @@ ul li {
 	line-height: 1.33em;
 	color: #666;
 }
-
+#footer .copyright {
+    text-decoration: none;
+	color: #666;
+}
 /* Forms */
 
 form {

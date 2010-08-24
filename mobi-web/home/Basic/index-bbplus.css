@@ -29,6 +29,10 @@ body {
 	font-weight: normal;
 	color: #303639;
 }
+#footer .copyright {
+    text-decoration: none;
+	color: #303639;
+}
 
 h1 {
 	margin: 0;

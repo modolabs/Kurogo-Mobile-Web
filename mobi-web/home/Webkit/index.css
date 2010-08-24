@@ -90,6 +90,10 @@ h1.roomfornew {
 	text-align: center;
 	clear: both;
 }
+#footer .copyright {
+	text-decoration: none;
+	color: #554C41;
+}
 #viewfull {
 	text-align: center;
 	margin: 14px 0;
