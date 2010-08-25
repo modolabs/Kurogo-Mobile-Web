@@ -27,19 +27,20 @@ foreach ($events as $event) {
 
 $prev_yr = $year - 1;
 $next_yr = $year + 1;
+$next_next_yr = $year + 2;
 
 // expensive way to see if there are past/future events
 $nav_links = Array();
 $prev_events = get_academic_events($prev_yr, FALSE);
 if (count($prev_events) > 0) {
   $prev_url = academicURL($prev_yr);
-  $nav_links[] = "<a href=\"$prev_url\">&lt; $prev_yr</a>";  
+  $nav_links[] = "<a href=\"$prev_url\">&lt; $prev_yr-$year</a>";
 }
 
 $next_events = get_academic_events($next_yr, FALSE);
 if (count($next_events) > 0) {
   $next_url = academicURL($next_yr);
-  $nav_links[] = "<a href=\"$next_url\">$next_yr &gt;</a>";
+  $nav_links[] = "<a href=\"$next_url\">$next_yr-$next_next_yr &gt;</a>";
 }
 
 require "$page->branch/academic.html";
