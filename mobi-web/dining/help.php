@@ -10,7 +10,7 @@ $help = array(
     'Harvard student ID is required.',
 
     'Looking for retail dining open to all? Go to map home, select ' .
-    '&ldquo;Browse,&rdquo; and then &ldquo;All Dining Services.&rdquo;',
+    '&ldquo;Browse,&rdquo; and then &ldquo;Dining Locations.&rdquo;',
 );
 
 ?>

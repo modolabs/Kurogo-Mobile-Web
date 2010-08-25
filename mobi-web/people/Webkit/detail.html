@@ -14,7 +14,7 @@ class Item {
     $this->person = $person;
   }
 
-  public function display($label, $field, $href=NULL, $class=NULL, $group=False) {
+  public function display($label, $field, $href=NULL, $class=NULL, $group=False, $flat=False) {
     $displayString = "";
 
     foreach($this->person->getField($field) as $value) {
@@ -31,24 +31,33 @@ class Item {
       $formatted_value = str_replace('-', '-&shy;', $formatted_value);
       $formatted_value = str_replace('$', '<br />', $formatted_value);
       
-      $innerContents = "
+      if ($flat) {
+        $displayString = '<h2>'.$formatted_value.'</h2>';
+        
+        if (!$group) {
+          $displayString = '<div class="nonfocal">'.$displayString.'</div>';
+        }
+        
+        
+      } else {
+        $innerContents = "
                  <div class=\"label\">$label</div>
                  <div class=\"value\">$formatted_value</div>";
-
-      if ($href !== NULL) {
+        if ($href !== NULL) {
 		  $linkAddress = $value;
 	
-        $innerContents = '<a href="' . $href($linkAddress) . '" class="' . $class . '">'
+          $innerContents = '<a href="' . $href($linkAddress) . '" class="' . $class . '">'
                        . $innerContents . '</a>';
+        }
+
+        $innerContents = '<li>' . $innerContents . '</li>';
+
+        if (!$group) {
+          $innerContents = '<ul class="nav">' . $innerContents . '</ul>';
+        }
+
+        $displayString .= $innerContents;
       }
-
-      $innerContents = '<li>' . $innerContents . '</li>';
-
-      if (!$group) {
-        $innerContents = '<ul class="nav">' . $innerContents . '</ul>';
-      }
-
-      $displayString .= $innerContents;
     }
     echo $displayString;
   }
@@ -58,23 +67,24 @@ $item = new Item($person);
 
 $page->content_begin();
 ?>
-	<ul class="nav">
-        <? $item->display('name', 'cn', NULL, NULL, TRUE); ?>
-        <? $item->display('title', 'title', NULL, NULL, TRUE); ?>
-        <? $item->display('unit', 'ou', NULL, NULL, TRUE); ?>
-	</ul>
+    
+        <? $item->display('name', 'cn', NULL, NULL, FALSE, TRUE); ?>
+
+        <? $item->display('title', 'title', NULL, NULL, FALSE); ?>
+
+        <? $item->display('email', 'mail', 'mailHREF', 'email', FALSE); ?>
 
         <? if(has_phone($person)) { ?>
           <ul class="nav">
-          <? $item->display('home', 'homephone', 'phoneHREF', 'phone', TRUE); ?>
           <? $item->display('phone', 'telephonenumber', 'phoneHREF', 'phone', TRUE); ?>
+          <? $item->display('home', 'homephone', 'phoneHREF', 'phone', TRUE); ?>
           <? $item->display('fax', 'facsimiletelephonenumber', 'phoneHREF', 'phone', TRUE); ?>
           </ul>
         <? } ?>
 
         <? $item->display('address', 'street', NULL, NULL, FALSE); ?>
-        <? $item->display('email', 'mail', 'mailHREF', 'email', FALSE); ?>
         <? $item->display('office', 'postaladdress', 'officeURL', 'map', FALSE); ?>
+        <? $item->display('unit', 'ou', NULL, NULL, FALSE); ?>
 
 <? $page->content_end(); ?>
 

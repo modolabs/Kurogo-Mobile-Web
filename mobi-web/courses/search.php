@@ -41,7 +41,13 @@ $classes = $data["classes"];
   die();
 }*/
 
-$content = new ResultsContent("items", "courses", $page, array(), FALSE);
+$content = new ResultsContent("items", "courses", $page, array(
+      'back' => $back,
+      'courseGroup' => $courseGroup,
+      'courseGroupShort' => $courseGroupShort,
+      'courseName' => $courseName,
+      'courseNameShort' => $courseNameShort,  
+    ), FALSE);
 
 require "$page->branch/search.html";
 

@@ -13,7 +13,11 @@ $page->content_begin();
             <p>
                 <span class="inputcombo emphasized">
                     <input class="forminput" type="search" id="filter" name="search_terms" value="<?=htmlspecialchars($newsURL->searchTerms())?>" />
-                    <input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+                    <? if ($page->platform == 'bbplus') { ?>
+                    <input src="../Basic/images/search_button.png" name="search" id="sch_btn" class="imagebutton" type="image" value="Search" />
+                    <? } else { ?>
+                    <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+                    <? } ?>
                 </span> 
             </p>
             <?=$newsURL->hiddenHomeStateForm()?>
@@ -28,7 +32,7 @@ $page->content_begin();
                 <? } ?>
 
                 <a class="story-link" href="<?=$newsURL->storyURL($story)?>"><?=$story["title"]?></a><br />
-                <span class="smallprint"><?=basic_deck($story)?></span>
+                <span class="smallprint"><?=basic_deck($story, $page->platform == 'bbplus')?></span>
             </p>
         <? } ?>
     </div>
@@ -41,7 +45,11 @@ $page->content_begin();
             <p>
                 <span class="inputcombo emphasized">
                     <input class="forminput" type="text" id="filter" name="search_terms" value="<?=htmlspecialchars($newsURL->searchTerms())?>" />
-                    <input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+                    <? if ($page->platform == 'bbplus') { ?>
+                    <input src="../Basic/images/search_button.png" name="search" id="sch_btn" class="imagebutton" type="image" value="Search" />
+                    <? } else { ?>
+                    <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+                    <? } ?>
                 </span>
             </p>
             <?=$newsURL->hiddenHomeStateForm()?>
