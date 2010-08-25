@@ -34,7 +34,8 @@ switch ($_REQUEST['command']) {
   case 'search':
     if (isset($_REQUEST['q']) && strlen((trim($_REQUEST['q'])))) {
       $ldap = new LdapWrapper();
-      if ($ldap->buildQuery(stripslashes($_REQUEST['q']))) {
+      $searchText = trim(stripslashes($_REQUEST['q']));
+      if ($ldap->buildQuery($searchText)) {
           $people = $ldap->doQuery();
           if (is_array($people) && count($people)) {
             $results = array();
