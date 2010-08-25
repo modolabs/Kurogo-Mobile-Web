@@ -17,6 +17,7 @@ g_base_url = "http://localhost:8888"
 #g_base_url = "http://mobile-staging.harvard.edu/"
 #g_base_url = "http://m.harvard.edu"
 
+# TODO: ALL CAPS
 g_mobileSafariUserAgent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_3 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7E18 Safari/528.16"
 g_touchPhoneUserAgent = "BlackBerry9530/4.7.0.167 Profile/MIDP-2.0 Configuration/CLDC-1.1 VendorID/102 UP.Link/6.3.1.20.0 BlackBerry9530/5.0.0.328 Profile/MIDP-2.1 Configuration/CLDC-1.1 VendorID/105"
 g_blackberryPlusUserAgent = "BlackBerry9630/4.7.1.40 Profile/MIDP-2.0 Configuration/CLDC-1.1 VendorID/104"
@@ -26,11 +27,11 @@ import unittest
 from twill import get_browser
 from twill.commands import *
 import re
-
+import urllib
 
 """ Utility functions. """
 def endWithSlash(string):
-    if string[-1] != '/':
+    if not string.endswith('/'):
         string += '/'
     return string
 
@@ -71,13 +72,14 @@ class TestModule(unittest.TestCase):
         self.assertTrue(True)
         
     # Verification methods
+    # TODO: Use underscores, not mixed case for all methods.    
     def verifyBranch(self):
         self.assertRegexpMatches(self.browser.get_html(), '<!--\ Branch:\ "' + self.branch + '"',
             self.browser.get_url() + " is not displaying the " + self.branch + " branch for user agent " 
             + self.userAgent)
     
     def verifyPlatform(self):
-        if len(self.platform) > 0:
+        if self.platform:
             self.assertRegexpMatches(self.browser.get_html(), '<!--\ Platform:\ "' + self.platform + '"',
                 self.browser.get_url() + " is not displaying the " + self.platform 
                 + " platform for user agent " + self.userAgent)
@@ -92,13 +94,14 @@ class TestModule(unittest.TestCase):
         
     def verifyImages(self):
         # Just checks the images to see if they return 200.
-        echo("Searching this html for images: " + self.browser.get_html())
+        #echo("Searching this html for images: " + self.browser.get_html())
         imageMatches = re.findall('<img src="([^"]*)"', self.browser.get_html())
-        if not imageMatches is None:
+        if imageMatches:
             baseURL = self.browser.get_url()
-            imageSet = set(imageMatches)
-            echo(imageSet)
+            imageSet = frozenset(imageMatches)
+            #echo(imageSet)
             for imageSrc in imageSet:
+                imageSrc = urllib.quote(imageSrc)
                 echo("Checking image: " + imageSrc)
                 try:
                     # Before going the image, go to the baseURL first, in case the image is using a relative path in its URL.
@@ -115,10 +118,10 @@ class TestModule(unittest.TestCase):
         self.browser.go(endWithSlash(endWithSlash(self.baseUrl) + self.moduleName))
         
     def hitAPIWithArguments(self, argumentDict):
-        if not 'module' in argumentDict:
+        if 'module' not in argumentDict:
             argumentDict['module'] = self.moduleName
         
-        queryString = ''
+        queryString = '' # todo: Look for urllib method for this.
         for arg, val in argumentDict.iteritems():
             if len(queryString) > 0:
                 queryString += '&'
