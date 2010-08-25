@@ -23,9 +23,7 @@ $page->content_begin();
                         <? } ?>
                 </select>
             </form>
-
          <? } ?>
-
          <form id="search-form" <? if($newsURL->isHome()) {?>style="display:none;"<? } ?> >
              <span class="formlabel">Search:</span>
                <input class="newsinput search-field" type="text" name="search_terms" value="<?=$newsURL->searchTerms()?>"/>
@@ -34,7 +32,6 @@ $page->content_begin();
                     <input class="submit-search" "type="submit" value="Search" />
                <? } ?>
          </form>
-
          <? if($newsURL->isHome()) { ?>
             <button id="toggle-search-button" onclick="toggleSearch();">Search</button>
          <? } ?>

@@ -21,6 +21,16 @@ if ($event->get_end() - $event->get_start() == -1) {
 $arr = $event->get_customFields();
 $categories = explode('\,',$arr['"Gazette Classification"']);
 
+// Get Lat Long info
+$jsonString= json_encode($arr);
+$latLongArray = explode('<\/Latitude>',$jsonString);
+$tempArray = explode(">", $latLongArray[0]);
+$tempArray_count = count($tempArray);
+$tempArray2 = explode("<\/Longitude>", $latLongArray[1]);
+
+$latitude = $tempArray[$tempArray_count - 1];
+$longitude = $tempArray2[0];
+
  function phoneURL($number) {
   if($number) {
 
