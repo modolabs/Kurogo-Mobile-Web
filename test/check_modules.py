@@ -6,12 +6,10 @@ These tests require:
 
 Suggested usage: python check_modules.py 2> error.txt
 That way, messages from Twill are not interspersed with error reporting.
-
 """
 
-"""
-Set this to the server you want to use for these tests.
-"""
+
+"""Set this to the server you want to use for these tests."""
 BASE_URL = "http://localhost:8888"
 #BASE_URL = "http://mobile-dev.harvard.edu"
 #BASE_URL = "http://mobile-staging.harvard.edu"
@@ -22,6 +20,7 @@ TOUCH_PHONE_USER_AGENT = "BlackBerry9530/4.7.0.167 Profile/MIDP-2.0 Configuratio
 BLACKBERRY_PLUS_USER_AGENT = "BlackBerry9630/4.7.1.40 Profile/MIDP-2.0 Configuration/CLDC-1.1 VendorID/104"
 BASIC_PHONE_USER_AGENT = "LG U880: LG/U880/v1.0"
 
+
 import unittest
 import re
 import urllib
@@ -29,10 +28,8 @@ from twill import get_browser
 from twill.commands import *
 
 
-""" 
-The 'abstract' base class for the test cases.
-"""
 class TestModuleBase(unittest.TestCase):
+    """The 'abstract' base class for the test cases."""
     def __init__(self, module_name, 
                  user_agent=BASIC_PHONE_USER_AGENT, branch='Basic', platform='',
                  methodName='runTest'):
@@ -48,18 +45,17 @@ class TestModuleBase(unittest.TestCase):
         self.browser.set_agent_string(self.user_agent)
         self.browser.clear_cookies()
 
-"""
-Class for testing module apis.
-"""
-class TestModuleAPI(TestModuleBase):
+
+class TestModuleAPI(TestModuleBase):    
+    """Class for testing module apis.
     
-    """
     module_name: e.g. people, dining. Is used as the module argument in the 
     API query.
     api_argument_dict: Arguments for the API query other than module.
     apiResultCheckRegex: The test case will run this regex against the API 
     output to determine whether or not the call was successful.
     """
+    
     def __init__(self, module_name, 
                  api_argument_dict = {}, api_result_check_regex = '*'):
         TestModuleBase.__init__(self, module_name)
@@ -86,21 +82,32 @@ class TestModuleAPI(TestModuleBase):
         self.assertRegexpMatches(self.browser.get_html(), self.api_result_check_regex,
             'Could not find API result matching "{}".'.format(self.api_result_check_regex))
 
-class TestModulePage(TestModuleBase):
 
-    """
-    module_name: people, dining. Is used to build the URLs for the page in the module.
-    user_agent: The user agent string to pass. Some user agent constants are defined 
-    at the top of the file.
-    branch: e.g. Basic, Touch. The branch the test case should expect to be shown 
-    when it uses the user_agent to browse the module.
+class TestModulePage(TestModuleBase):
+    """Class for testing a page in a module. 
+    
+    Checks status, branch, platform, images, and looks for whatever content you 
+    specify.
+    
+    module_name: people, dining. Is used to build the URLs for the page in the 
+    module.
+    
+    user_agent: The user agent string to pass. Some user agent constants are 
+    defined at the top of the file.
+    
+    branch: e.g. Basic, Touch. The branch the test case should expect to be 
+    shown when it uses the user_agent to browse the module.
+    
     platform: The platform the test case should expect to be shown. e.g. bbplus.
+    
     content_check_dict: A dictionary whose keys are regexes that the 
-    test case should run against the html returned by the module page. The values 
-    are error messages to log when the regexes fail to match anything.
+    test case should run against the html returned by the module page. The 
+    values are error messages to log when the regexes fail to match anything.
+    
     location_within_module: The location of the page to test relative to 
     host/module_name/. Leave as '' to test the index page.
     """
+    
     def __init__(self, module_name, 
                  user_agent=BASIC_PHONE_USER_AGENT, branch='Basic', platform='',
                  content_check_dict = {}, location_within_module = ''):
@@ -166,10 +173,13 @@ class TestModulePage(TestModuleBase):
 
 # Test suite functions
 
-# Adds a standard group of tests to the test suite for the module. If 
-# you need different tests for each branch (Basic, Touch, etc.), create 
-# the TestModulePage objects directly.
 def add_page_tests_for_module(module_name, suite, contentCheckDict):
+    """Adds a standard group of tests to the test suite for the module. 
+    
+    If you need differing content checks for each branch (Basic, Touch, etc.) 
+    of a module index or need to test pages other than the module index, create 
+    the TestModulePage objects directly.
+    """
     suite.addTest(TestModulePage(module_name, BASIC_PHONE_USER_AGENT, 
         'Basic', '', contentCheckDict))
     suite.addTest(TestModulePage(module_name, TOUCH_PHONE_USER_AGENT, 
@@ -179,8 +189,9 @@ def add_page_tests_for_module(module_name, suite, contentCheckDict):
     suite.addTest(TestModulePage(module_name, BLACKBERRY_PLUS_USER_AGENT, 
         'Basic', 'bbplus', contentCheckDict))
 
-# Builds the test suite.
 def suite():
+    """Builds the test suite to be run by this script."""
+    
     testSuite = unittest.TestSuite()
 
     # People    
@@ -232,6 +243,7 @@ def suite():
         {'<title>About</title>': 'Could not verify index title.'})
     
     return testSuite
+
 
 if __name__ == '__main__':
     suite = suite()
