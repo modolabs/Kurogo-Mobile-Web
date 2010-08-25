@@ -123,10 +123,20 @@ class ArcGISServer {
       $collection = self::getCollection();
       $searchFields = self::$defaultSearchFields;
     } else {
-      $parts = explode('.', $collectionName);
-      $collection = self::getLayer($parts[0]);
-      if (count($parts) == 2) {
-        $layerId = $parts[1];
+      $collection = self::getLayer($collectionName);
+      if ($collection->isLayer()) {
+        if ($collection->getGeometryType()) {
+          $results = $collection->query($searchText);
+          $obj = new stdClass();
+          $obj->results = array();
+          foreach ($results->features as $id => $result) {
+            $result->geometryType = $collection->getGeometryType();
+            $obj->results[] = $result;
+          }
+          return $obj;
+        }
+        $parts = explode('.', $collectionName);
+        $collection = self::getLayer($parts[0]);
       }
       $searchFields = $collection->getDefaultSearchFields();
     }
@@ -337,6 +347,7 @@ class ArcGISLayer {
   private $maxScale;
   private $displayField;
   private $spatialRef;
+  private $geometryType;
 
   private $url;
   private $diskCache;
@@ -359,6 +370,13 @@ class ArcGISLayer {
       $this->getCapabilities();
     }
     return $this->name;
+  }
+
+  public function getGeometryType() {
+    if (!$this->geometryType) {
+      $this->getCapabilities();
+    }
+    return $this->geometryType;
   }
 
   public function getDisplayField() {
@@ -396,6 +414,8 @@ class ArcGISLayer {
     if (!$this->name) {
       $this->getCapabilities();
     }
+
+    $text = str_replace('\\\'', '\'\'', $text);
 
     $params = array(
       'text'           => $text,
@@ -439,6 +459,7 @@ class ArcGISLayer {
     $this->minScale = $data->minScale;
     $this->maxScale = $data->maxScale;
     $this->displayField = $data->displayField;
+    $this->geometryType = $data->geometryType;
 
     foreach ($data->fields as $fieldInfo) {
       $this->fields[$fieldInfo->name] = $fieldInfo->alias;
