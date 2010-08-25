@@ -10,7 +10,7 @@ $page->content_begin();
 		
                 <? if($tab == "Map") { ?>
   		   <p>
-			<?=$details['Address']?>
+			<?=str_replace(' ', '&shy; ', $displayDetails['Address'])?>
 		   </p>
                 <? } ?>
 

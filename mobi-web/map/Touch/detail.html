@@ -22,7 +22,7 @@ $page->content_begin();
 
 	<div class="shaded">
 		<h2><?=$name?></h2>
-		<p class="smallprint"><?=$displayDetails['Address']?></p>
+		<p class="smallprint"><?=str_replace(' ', '&shy; ', $displayDetails['Address'])?></p>
 
 		<div id="tabs">
 		<?=$tabs_html?>

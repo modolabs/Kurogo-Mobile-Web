@@ -17,7 +17,6 @@ if ($event->get_end() - $event->get_start() == -1) {
   $time_of_day = $event->get_range()->format('g:i a');
 }
 
-
 $arr = $event->get_customFields();
 $categories = explode('\,',$arr['"Gazette Classification"']);
 

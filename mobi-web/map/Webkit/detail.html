@@ -50,7 +50,7 @@ $page->content_begin();
 	<div class="focal shaded">
 
 		<h2><?=$name?></h2>
-		<p class="address"><?=$displayDetails['Address']?></p>
+		<p class="address"><?=str_replace(' ', '&shy; ', $displayDetails['Address'])?></p>
 		<ul id="tabs">
 			<li class="active"><a href="#scrolldown" onclick="showTab('maptab',this); hide('loadingimage')">Map</a></li>
 			<? if ($photoURL) { ?>
