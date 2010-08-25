@@ -35,18 +35,16 @@ def endWithSlash(string):
         string += '/'
     return string
 
-
 """ 
-Base test case. Its tests go to the module pages and check for 200, but 
-do not define how the contents should be checked. Subclasses should do that.
+The 'abstract' base class for the test cases.
 """
-
-class TestModule(unittest.TestCase):
-
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
+class TestModuleBase(unittest.TestCase):
+    def __init__(self, moduleName, 
+                 userAgent=g_basicPhoneUserAgent, branch='Basic', platform='',
+                 methodName='runTest'):
         unittest.TestCase.__init__(self, methodName)
         self.baseUrl = g_base_url
-        self.moduleName = '' # Should be overridden.
+        self.moduleName = moduleName
         self.userAgent = userAgent
         self.branch = branch
         self.platform = platform
@@ -56,43 +54,100 @@ class TestModule(unittest.TestCase):
         self.browser.set_agent_string(self.userAgent)
         self.browser.clear_cookies()
 
-    # Tests
-    def test_index(self):
-        self.goToModulePage()
-        self.assertEqual(self.browser.get_code(), 200, 
-            'The ' + self.moduleName + ' module index page is not OK. It returned HTTP code: ' 
-            + str(self.browser.get_code()))
-        self.verifyBranch()
-        self.verifyPlatform()
-        self.verifyPageContents()
-        self.verifyImages()
+"""
+Class for testing module apis.
+"""
+class TestModuleAPI(TestModuleBase):
+    
+    """
+    moduleName: e.g. people, dining. Is used as the module argument in the 
+    API query.
+    apiArgumentDict: Arguments for the API query other than module.
+    apiResultCheckRegex: The test case will run this regex against the API 
+    output to determine whether or not the call was successful.
+    """
+    def __init__(self, moduleName, 
+                 apiArgumentDict = {}, apiResultCheckRegex = '*'):
+        TestModuleBase.__init__(self, moduleName)
+        self.apiArgumentDict = apiArgumentDict
+        self.apiResultCheckRegex = apiResultCheckRegex
 
+    def runTest(self):
+        self.test_api()
+        
     def test_api(self):
-        # Override in subclass.
-        self.assertTrue(True)
+        self.hit_api_with_arguments(self.apiArgumentDict)
+        self.assertEqual(self.browser.get_code(), 200)
+        self.verify_api_results()
+        
+    def hit_api_with_arguments(self, argumentDict):
+        if 'module' not in argumentDict:
+            argumentDict['module'] = self.moduleName
+
+        queryString = '' # todo: Look for urllib method for this.
+        for arg, val in argumentDict.iteritems():
+            if len(queryString) > 0:
+                queryString += '&'
+            queryString += (arg + '=' + val)
+
+        echo("Query: {}".format(endWithSlash(self.baseUrl) + 'api/?' + queryString))
+        self.browser.go(endWithSlash(self.baseUrl) + 'api/?' + queryString)
+            
+    def verify_api_results(self):
+        self.assertRegexpMatches(self.browser.get_html(), self.apiResultCheckRegex,
+            'Could not find API result matching "{}".'.format(self.apiResultCheckRegex))
+
+class TestModulePage(TestModuleBase):
+
+    """
+    moduleName: people, dining. Is used to build the URLs for the page in the module.
+    userAgent: The user agent string to pass. Some user agent constants are defined 
+    at the top of the file.
+    branch: e.g. Basic, Touch. The branch the test case should expect to be shown 
+    when it uses the userAgent to browse the module.
+    platform: The platform the test case should expect to be shown. e.g. bbplus.
+    contentCheckRegExesAndMessageDict: A dictionary whose keys are regexes that the 
+    test case should run against the html returned by the module page. The values 
+    are error messages to log when the regexes fail to match anything.
+    locationWithinModule: The location of the page to test relative to 
+    host/moduleName/. Leave as '' to test the index page.
+    """
+    def __init__(self, moduleName, 
+                 userAgent=g_basicPhoneUserAgent, branch='Basic', platform='',
+                 contentCheckRegExesAndMessageDict = {}, locationWithinModule = ''):
+        TestModuleBase.__init__(self, moduleName, userAgent, branch, platform)
+        self.locationWithinModule = locationWithinModule
+        self.contentCheckRegExesAndMessageDict = contentCheckRegExesAndMessageDict
+
+    def runTest(self):
+        self.browser.go(self.get_page_url())
+        self.assertEqual(self.browser.get_code(), 200, 
+            '{}: The page at {} is not OK. It returned HTTP code: {}'.format(
+                self.moduleName, self.get_page_url(), self.browser.get_code()))
+        self.verify_branch()
+        self.verify_platform()
+        self.verify_contents()
+        self.verify_images()
         
     # Verification methods
-    # TODO: Use underscores, not mixed case for all methods.    
-    def verifyBranch(self):
-        self.assertRegexpMatches(self.browser.get_html(), '<!--\ Branch:\ "' + self.branch + '"',
-            self.browser.get_url() + " is not displaying the " + self.branch + " branch for user agent " 
-            + self.userAgent)
+    def verify_branch(self):
+        self.assertRegexpMatches(self.browser.get_html(), 
+            '<!--\ Branch:\ "{}"'.format(self.branch),
+            "{} is not displaying the {} branch for user agent {}.".format(
+            self.browser.get_url(), self.branch, self.userAgent))
     
-    def verifyPlatform(self):
+    def verify_platform(self):
         if self.platform:
-            self.assertRegexpMatches(self.browser.get_html(), '<!--\ Platform:\ "' + self.platform + '"',
-                self.browser.get_url() + " is not displaying the " + self.platform 
-                + " platform for user agent " + self.userAgent)
+            self.assertRegexpMatches(self.browser.get_html(), 
+                '<!--\ Platform:\ "{}"'.format(self.platform),
+                "{} is not displaying the {} platform for user agent {}.".format(
+                self.browser.get_url(), self.platform, self.userAgent))
         
-    def verifyPageContents(self):
-        # Override this in subclasses.
-        self.assertTrue(True)
-
-    def verifyAPIResults(self):
-        # Override this in subclasses.
-        self.assertTrue(True)
+    def verify_contents(self):
+        for regex, message in self.contentCheckRegExesAndMessageDict.iteritems():
+            self.assertRegexpMatches(self.browser.get_html(), regex, message)
         
-    def verifyImages(self):
+    def verify_images(self):
         # Just checks the images to see if they return 200.
         #echo("Searching this html for images: " + self.browser.get_html())
         imageMatches = re.findall('<img src="([^"]*)"', self.browser.get_html())
@@ -102,269 +157,92 @@ class TestModule(unittest.TestCase):
             #echo(imageSet)
             for imageSrc in imageSet:
                 imageSrc = urllib.quote(imageSrc)
-                echo("Checking image: " + imageSrc)
+                echo("Checking image: {}".format(imageSrc))
                 try:
-                    # Before going the image, go to the baseURL first, in case the image is using a relative path in its URL.
+                    # Before going the image, go to the baseURL first, in case 
+                    # the image is using a relative path in its URL.
                     self.browser.go(baseURL) 
                     self.browser.go(imageSrc)
                     self.assertEqual(self.browser.get_code(), 200, 
-                        'The image at ' + imageSrc + ' is not OK. Looking for it resulted in HTTP code: ' 
-                        + str(self.browser.get_code()))
+                        'The image at {} is not OK. Looking for it resulted in HTTP code: {}'.format(
+                        imageSrc, self.browser.get_code()))
                 except Exception as inst:
-                    self.fail("While checking image " + imageSrc + ", encountered exception: " + str(inst))
+                    self.fail("While checking image {}, encountered exception: {}".format(
+                        [imageSrc, inst]))
                     
     # Test helper methods
-    def goToModulePage(self):
-        self.browser.go(endWithSlash(endWithSlash(self.baseUrl) + self.moduleName))
-        
-    def hitAPIWithArguments(self, argumentDict):
-        if 'module' not in argumentDict:
-            argumentDict['module'] = self.moduleName
-        
-        queryString = '' # todo: Look for urllib method for this.
-        for arg, val in argumentDict.iteritems():
-            if len(queryString) > 0:
-                queryString += '&'
-            queryString += (arg + '=' + val)
-            
-        self.browser.go(endWithSlash(self.baseUrl) + 'api/?' + queryString)
+    def get_page_url(self):
+        moduleURL = endWithSlash(endWithSlash(self.baseUrl) + self.moduleName)
+        return moduleURL + self.locationWithinModule
 
 
-"""
-Module-specfic test cases.
-"""        
+# Test suite functions
 
-class TestPeopleModule(TestModule):
-    
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):        
-        TestModule.__init__(self, methodName, userAgent, branch, platform)
-        self.moduleName = 'people'
-    
-    def verifyPageContents(self):
-        # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>People</title>', 
-            'Could not verify index title.')
-        #echo(self.browser.get_html())
+# Adds a standard group of tests to the test suite for the module. If 
+# you need different tests for each branch (Basic, Touch, etc.), create 
+# the TestModulePage objects directly.
+def add_page_tests_for_module(moduleName, suite, contentCheckDict):
+    suite.addTest(TestModulePage(moduleName, g_basicPhoneUserAgent, 
+        'Basic', '', contentCheckDict))
+    suite.addTest(TestModulePage(moduleName, g_touchPhoneUserAgent, 
+        'Touch', '', contentCheckDict))
+    suite.addTest(TestModulePage(moduleName, g_mobileSafariUserAgent, 
+        'Webkit', '', contentCheckDict))
+    suite.addTest(TestModulePage(moduleName, g_blackberryPlusUserAgent, 
+        'Basic', 'bbplus', contentCheckDict))
 
-    def test_api(self):
-        self.hitAPIWithArguments({ 'q': 'roger+brockett', 'command': 'search'})
-        self.assertEqual(self.browser.get_code(), 200)
-        self.verifyAPIResults()
-                
-    def verifyAPIResults(self):
-        # TODO: A little more precision.
-        self.assertRegexpMatches(self.browser.get_html(), 'Brockett',
-            'Could not find Brockett result.')
-
-class TestMapModule(TestModule):
-
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
-        TestModule.__init__(self, methodName, userAgent, branch, platform)
-        self.moduleName = 'map'
-
-    def verifyPageContents(self):
-        # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>Map</title>', 
-            'Could not verify index title.')
-        #echo(self.browser.get_html())
-
-    def test_api(self):
-        self.hitAPIWithArguments({ 'q': '1737', 'command': 'search'})
-        self.assertEqual(self.browser.get_code(), 200)
-        self.verifyAPIResults()
-            
-    def verifyAPIResults(self):
-        self.assertRegexpMatches(self.browser.get_html(), '\"Building\ Name\":\"KNAFEL\ BUILDING\"',
-            'Could not find Knafel building.')
-
-class TestCalendarModule(TestModule):
-
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
-        TestModule.__init__(self, methodName, userAgent, branch, platform)
-        self.moduleName = 'calendar'
-
-    def verifyPageContents(self):
-        # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>Events</title>', 
-            'Could not verify index title.')
-        #echo(self.browser.get_html())
-
-    def test_api(self):
-        self.hitAPIWithArguments({'command': 'categories'})
-        self.assertEqual(self.browser.get_code(), 200)
-        self.verifyAPIResults()
-            
-    def verifyAPIResults(self):
-        self.assertRegexpMatches(self.browser.get_html(), 'Special\ Events',
-            'Could not find Special Event category.')
-
-class TestCoursesModule(TestModule):
-
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
-        TestModule.__init__(self, methodName, userAgent, branch, platform)
-        self.moduleName = 'courses'
-
-    def verifyPageContents(self):
-        # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>Courses</title>', 
-            'Could not verify index title.')
-        #echo(self.browser.get_html())
-
-    def test_api(self):
-        self.hitAPIWithArguments({'command': 'courses'})
-        self.assertEqual(self.browser.get_code(), 200)
-        self.verifyAPIResults()
-
-    def verifyAPIResults(self):
-        self.assertRegexpMatches(self.browser.get_html(), '\"school_name\":\"Harvard\ Business\ School\ -\ MBA\ Program\"',
-            'Could not find Harvard Business School Doctoral Program school in JSON results.')
-
-class TestNewsModule(TestModule):
-
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
-        TestModule.__init__(self, methodName, userAgent, branch, platform)
-        self.moduleName = 'news'
-
-    def verifyPageContents(self):
-        # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>News</title>', 
-            'Could not verify index title.')
-        #echo(self.browser.get_html())
-
-    def test_api(self):
-        self.hitAPIWithArguments({})
-        self.assertEqual(self.browser.get_code(), 200)
-        self.verifyAPIResults()
-            
-    def verifyAPIResults(self):
-        # Look for part of RSS header.        
-        self.assertRegexpMatches(self.browser.get_html(), 'xmlns:harvard="http://news.harvard.edu/gazette/',
-            'Could not find namespace in RSS header.')
-
-class TestDiningModule(TestModule):
-
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
-        TestModule.__init__(self, methodName, userAgent, branch, platform)
-        self.moduleName = 'dining'
-
-    def verifyPageContents(self):
-        # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>Student Dining</title>', 
-            'Could not verify index title.')
-        #echo(self.browser.get_html())
-
-    def test_api(self):
-        self.hitAPIWithArguments({'command': 'hours'})
-        self.assertEqual(self.browser.get_code(), 200)
-        self.verifyAPIResults()
-
-    def verifyAPIResults(self):
-        self.assertTrue(True)
-        self.assertRegexpMatches(self.browser.get_html(), 'lunch_restrictions',
-            'Could not find lunch_restrictions in dining hours JSON.')
-
-class TestLinksModule(TestModule):
-
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
-        TestModule.__init__(self, methodName, userAgent, branch, platform)
-        self.moduleName = 'links'
-
-    def verifyPageContents(self):
-        # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>Schools</title>', 
-            'Could not verify index title.')
-        #echo(self.browser.get_html())
-
-class TestCustomizeModule(TestModule):
-
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
-        TestModule.__init__(self, methodName, userAgent, branch, platform)
-        self.moduleName = 'customize'
-
-    def verifyPageContents(self):
-        # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>Customize Home</title>', 
-            'Could not verify index title.')
-        #echo(self.browser.get_html())
-
-class TestAboutModule(TestModule):
-
-    def __init__(self, methodName='runTest', userAgent=g_basicPhoneUserAgent, branch='Basic', platform=''):
-        TestModule.__init__(self, methodName, userAgent, branch, platform)
-        self.moduleName = 'mobile-about'
-
-    def verifyPageContents(self):
-        # browser.get_title() doesn't seem to work.
-        self.assertRegexpMatches(self.browser.get_html(), '<title>About</title>', 
-            'Could not verify index title.')
-        #echo(self.browser.get_html())
-
-
-# Test suite
+# Builds the test suite.
 def suite():
-    # Builds the test suite.
     testSuite = unittest.TestSuite()
 
-    # People
-    testSuite.addTest(TestPeopleModule('test_index', g_basicPhoneUserAgent, 'Basic'))
-    testSuite.addTest(TestPeopleModule('test_index', g_touchPhoneUserAgent, 'Touch'))
-    testSuite.addTest(TestPeopleModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
-    testSuite.addTest(TestPeopleModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
-    #testSuite.addTest(TestPeopleModule('test_api'))
-    
-    # Map
-    testSuite.addTest(TestMapModule('test_index', g_basicPhoneUserAgent, 'Basic'))
-    testSuite.addTest(TestMapModule('test_index', g_touchPhoneUserAgent, 'Touch'))
-    testSuite.addTest(TestMapModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
-    testSuite.addTest(TestMapModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
-    testSuite.addTest(TestMapModule('test_api'))
+    # People    
+    testSuite.addTest(TestModuleAPI('people', 
+        {'q': 'roger+brockett', 'command': 'search'}, 'Brockett'))        
+    add_page_tests_for_module('people', testSuite, 
+        {'<title>People</title>': 'Could not verify index title.'})
+
+    # Map    
+    testSuite.addTest(TestModuleAPI('map', {'q': '1737', 'command': 'search'}, 
+        '\"Building\ Name\":\"KNAFEL\ BUILDING\"'))    
+    add_page_tests_for_module('map', testSuite, 
+        {'<title>Map</title>': 'Could not verify index title.'})
 
     # Calendar
-    testSuite.addTest(TestCalendarModule('test_index', g_basicPhoneUserAgent, 'Basic'))
-    testSuite.addTest(TestCalendarModule('test_index', g_touchPhoneUserAgent, 'Touch'))
-    testSuite.addTest(TestCalendarModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
-    testSuite.addTest(TestCalendarModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
-    testSuite.addTest(TestCalendarModule('test_api'))
+    testSuite.addTest(TestModuleAPI('calendar', {'command': 'categories'}, 
+        'Special\ Events'))    
+    add_page_tests_for_module('calendar', testSuite, 
+        {'<title>Events</title>': 'Could not verify index title.'})
     
-    # Courses
-    testSuite.addTest(TestCoursesModule('test_index', g_basicPhoneUserAgent, 'Basic'))
-    testSuite.addTest(TestCoursesModule('test_index', g_touchPhoneUserAgent, 'Touch'))
-    testSuite.addTest(TestCoursesModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
-    testSuite.addTest(TestCoursesModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
-    testSuite.addTest(TestCoursesModule('test_api'))
+    # Courses 
+    testSuite.addTest(TestModuleAPI('courses', {'command': 'courses'}, 
+        '\"school_name\":\"Harvard\ Business\ School\ -\ MBA\ Program\"'))    
+    add_page_tests_for_module('courses', testSuite, 
+        {'<title>Courses</title>': 'Could not verify index title.'})
         
     # News
-    testSuite.addTest(TestNewsModule('test_index', g_basicPhoneUserAgent, 'Basic'))
-    testSuite.addTest(TestNewsModule('test_index', g_touchPhoneUserAgent, 'Touch'))
-    testSuite.addTest(TestNewsModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
-    testSuite.addTest(TestNewsModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
-    testSuite.addTest(TestNewsModule('test_api'))
-
+    testSuite.addTest(TestModuleAPI('news', {}, 
+        'xmlns:harvard="http://news.harvard.edu/gazette/'))    
+    add_page_tests_for_module('news', testSuite, 
+        {'<title>News</title>': 'Could not verify index title.'})
+        
     # Dining
-    testSuite.addTest(TestDiningModule('test_index', g_basicPhoneUserAgent, 'Basic'))
-    testSuite.addTest(TestDiningModule('test_index', g_touchPhoneUserAgent, 'Touch'))
-    testSuite.addTest(TestDiningModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
-    testSuite.addTest(TestDiningModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
-    testSuite.addTest(TestDiningModule('test_api'))
-
+    testSuite.addTest(TestModuleAPI('dining', {'command': 'hours'}, 
+        'lunch_restrictions'))    
+    add_page_tests_for_module('dining', testSuite, 
+        {'<title>Student Dining</title>': 'Could not verify index title.'})
+    
     # Links
-    testSuite.addTest(TestLinksModule('test_index', g_basicPhoneUserAgent, 'Basic'))
-    testSuite.addTest(TestLinksModule('test_index', g_touchPhoneUserAgent, 'Touch'))
-    testSuite.addTest(TestLinksModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
-    testSuite.addTest(TestLinksModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
-
+    add_page_tests_for_module('links', testSuite, 
+        {'<title>Schools</title>': 'Could not verify index title.'})
+        
     # Customize
-    testSuite.addTest(TestCustomizeModule('test_index', g_basicPhoneUserAgent, 'Basic'))
-    testSuite.addTest(TestCustomizeModule('test_index', g_touchPhoneUserAgent, 'Touch'))
-    testSuite.addTest(TestCustomizeModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
-    testSuite.addTest(TestCustomizeModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
+    add_page_tests_for_module('customize', testSuite, 
+        {'<title>Customize Home</title>': 'Could not verify index title.'})
     
     # About
-    testSuite.addTest(TestAboutModule('test_index', g_basicPhoneUserAgent, 'Basic'))
-    testSuite.addTest(TestAboutModule('test_index', g_touchPhoneUserAgent, 'Touch'))
-    testSuite.addTest(TestAboutModule('test_index', g_mobileSafariUserAgent, 'Webkit'))
-    testSuite.addTest(TestAboutModule('test_index', g_blackberryPlusUserAgent, 'Basic', 'bbplus'))
-
+    add_page_tests_for_module('mobile-about', testSuite, 
+        {'<title>About</title>': 'Could not verify index title.'})
+    
     return testSuite
 
 if __name__ == '__main__':
