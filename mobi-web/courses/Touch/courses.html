@@ -12,11 +12,12 @@ $page->content_begin();
     <div class="nonfocal">
 		<form method="get" action="search.php">
 		<span class="inputcombo">
+                    <table cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr ><td width="70%">
                     <input class="forminput" type="text" id="filter" name="filter" placeholder="Search keyword, #, or instructor" />
                     <input class="forminput" type="hidden" id="courseGroup" name="courseGroup" value="<?=htmlspecialchars($selected_school_name)?>"/>
                     <input class="forminput" type="hidden" id="courseGroupShort" name="courseGroupShort" value="<?=htmlspecialchars($selected_school_short_name)?>"/>
-                    <input class="forminput" type="hidden" id="back" name="back" value="School">
-                        <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+                    <input class="forminput" type="hidden" id="back" name="back" value="School"></td><td width="30%">
+                    <input type="submit" value="Search" class="submitbutton" /></td></tr></table></td></tr></table>
 		</span>
         </form>
 	</div>
