@@ -26,6 +26,20 @@ if($newsURL->isHome()) {
     $stories_last_id = GazetteRSS::getSearchLastId($newsURL->searchTerms());
 }
 
+if (isset($stories)) {
+    $featuredIndex = 0;
+    foreach ($stories as $story) {
+        if ($story['featured'])
+            break;
+        $featuredIndex++;
+    }
+    if ($featuredIndex > 0) {
+        $featuredStory = $stories[$featuredIndex];
+        array_splice($stories, $featuredIndex-1, 1);
+        array_unshift($stories, $featuredStory);
+    }
+}
+
 $categories = GazetteRSS::getChannels();
 $category = $categories[$newsURL->categoryId()];
 
