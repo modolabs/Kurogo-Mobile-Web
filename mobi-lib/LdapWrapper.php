@@ -64,11 +64,10 @@ class LdapPerson {
     // get remaining attributes
     foreach (self::$ldapWhitelist as $field) {
 
-
       $value = self::getValues($field, $ldapEntry);
       if ($field == 'cn')
-	$this->fullname = $value[0];
-
+	      $this->fullname = $value[0];
+      
       $this->attributes[$field] = $value;
     }
 
@@ -92,6 +91,10 @@ class LdapPerson {
   protected static function getValues($ldapKey, $ldapEntry) {
     if (array_key_exists($ldapKey, $ldapEntry)) {
       $result = $ldapEntry[$ldapKey];
+      // Sometimes LDAP returns duplicate values for one field, but we don't want to send 
+      // duplicated back to the client.
+      $result = array_unique($result);
+      
       if ($result !== NULL) {
         unset($result["count"]);
         foreach ($result as $index => $value) {
