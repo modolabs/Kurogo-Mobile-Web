@@ -53,15 +53,17 @@ require "$page->branch/index.html";
 
 
 function webkit_deck($story) {
-    if(strlen($story["title"]) >= 30) {
-        // title is too large to show deck
-        return "";
-    }
-
     // set the truncation limit based on the size of title
     // smaller titles allow for longer deck text.
-
-    $limit = (strlen($story["title"]) < 20) ? 40 : 25;
+    if (strlen($story["title"]) <= 20) { // 1 line title
+        $limit = 70;
+    } else if (strlen($story["title"]) <= 45) { // 2 line title
+        $limit = 45;
+    } else if (strlen($story["title"]) <= 60) { // 3 line title
+        $limit = 25;
+    } else {
+        return "";
+    }
 
     $deck = $story["description"];
     if(strlen($deck) > $limit) {
@@ -72,10 +74,12 @@ function webkit_deck($story) {
     }
 }
 
-function basic_deck($story) {
+function basic_deck($story, $bbplus) {
+    $limit = $bbplus ? 95 : 75;
+
     $deck = $story["description"];
     if(strlen($deck) > $limit) {
-        $deck = mb_substr($deck, 0, 40, 'UTF-8');
+        $deck = mb_substr($deck, 0, $limit, 'UTF-8');
         return trim($deck) . "...";
     } else {
         return $deck;

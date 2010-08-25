@@ -32,7 +32,7 @@ $page->content_begin();
                 <? } ?>
 
                 <a class="story-link" href="<?=$newsURL->storyURL($story)?>"><?=$story["title"]?></a><br />
-                <span class="smallprint"><?=basic_deck($story)?></span>
+                <span class="smallprint"><?=basic_deck($story, $page->platform == 'bbplus')?></span>
             </p>
         <? } ?>
     </div>
