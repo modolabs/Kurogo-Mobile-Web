@@ -92,7 +92,7 @@ class LdapPerson {
     if (array_key_exists($ldapKey, $ldapEntry)) {
       $result = $ldapEntry[$ldapKey];
       // Sometimes LDAP returns duplicate values for one field, but we don't want to send 
-      // duplicated back to the client.
+      // duplicate values back to the client.
       $result = array_unique($result);
       
       if ($result !== NULL) {
