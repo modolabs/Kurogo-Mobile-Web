@@ -19,27 +19,29 @@ class GazetteRSS extends RSS {
   private static $lastWidth;
   private static $lastHeight;
 
+  // keep track of how many stories we read by the
+  // time we get to the end of the xml cache
+  private static $lastCount;
+
   // TODO: move this somewhere else instead of keeping in code
   private static $channels = array(
     array('title' => 'All News', 
-          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnline'),
+          'url' => 'http://news.harvard.edu/gazette/feed/'),
     array('title' => 'Campus & Community',
-          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineCampusCommunity'),
+          'url' => 'http://news.harvard.edu/gazette/section/campus-n-community/feed/'),
     array('title' => 'Arts & Culture',
-          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineArtsCulture'),
+          'url' => 'http://news.harvard.edu/gazette/section/arts-n-culture/feed/'),
     array('title' => 'Science & Health',
-          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineScienceHealth'),
+          'url' => 'http://news.harvard.edu/gazette/section/science-n-health/feed/'),
     array('title' => 'National & World Affairs',
-          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineNationalWorldAffairs'),
+          'url' => 'http://news.harvard.edu/gazette/section/national-n-world-affairs/feed/'),
     array('title' => 'Athletics',
-          'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineAthletics'),
-    //array('title' => 'Multimedia',
-    //      'url' => 'http://feeds.feedburner.com/HarvardGazetteOnlineMultimedia'),
+          'url' => 'http://news.harvard.edu/gazette/section/athletics/feed/'),
     );
   
   public static function init() {
     // news articles get updated continuously, so make the timeout short
-    self::$diskCache = new DiskCache(CACHE_DIR . '/GAZETTE', 300, TRUE);
+    self::$diskCache = new DiskCache(CACHE_DIR . '/GAZETTE', 1500, TRUE);
     self::$diskCache->setSuffix('.xml');
     self::$diskCache->preserveFormat();
 
@@ -115,16 +117,22 @@ class GazetteRSS extends RSS {
   }
 
   public static function getMoreArticles($channel=0, $lastStoryId=NULL, $direction="forward") {
-    $dom_document = self::getChannelXML($channel);
-    return self::loadArticlesFromCache($dom_document, $lastStoryId, $direction);
+    $dom = self::getChannelXML($channel);
+    $stories = self::loadArticlesFromCache($dom, $lastStoryId, $direction);
+    if (self::$lastCount < 10) {
+      $doc = self::getChannelXML($channel, 2);
+      $stories = self::loadArticlesFromCache($doc, NULL, 'forward', $stories);
+    }
+    return $stories;
   }
 
-  private static function getChannelXML($channel) {
+  private static function getChannelXML($channel, $page=1) {
     if ($channel < count(self::$channels)) {
         $channelInfo = self::$channels[$channel];
-        $channelUrl = $channelInfo['url'] . '?format=xml';
+        $pageExtension = ($page == 1) ? '' : "?paged=$page";
+        $channelUrl = $channelInfo['url'] . $pageExtension;
 
-        $filename = self::cacheName($channelInfo['url']);
+        $filename = self::cacheName($channelInfo['url'], $page);
         if (!self::$diskCache->isFresh($filename)) {
             $contents = file_get_contents($channelUrl);
             self::$diskCache->write($contents, $filename);
@@ -140,14 +148,11 @@ class GazetteRSS extends RSS {
     }
   }
 
-  private static function loadArticlesFromCache($dom, $lastStoryId=NULL, $direction="forward") {
+  private static function loadArticlesFromCache($dom, $lastStoryId=NULL, $direction="forward", $stories=NULL) {
 
     $newdoc = new DOMDocument($dom->xmlVersion, $dom->encoding);
     $rssRoot = $newdoc->importNode($dom->documentElement);
     $newdoc->appendChild($rssRoot);
-
-    $channelRoot = $newdoc->createElement('channel');
-    $rssRoot->appendChild($channelRoot);
 
     $numItems = $dom->getElementsByTagName('item')->length;
     $categoryTags = $dom->getElementsByTagName('category');
@@ -155,13 +160,29 @@ class GazetteRSS extends RSS {
       if ($categoryTag->nodeValue == 'Multimedia')
         $numItems--;
     }
-    if ($lastStoryId === NULL) {
-      // provide a flag to the native app so it knows how many stories
-      // are in this feed, since we only return up to 10
-      self::appendDOMAttribute($newdoc, $channelRoot, 'items', $numItems);
+
+    if (!$stories) { // we're loading the first page (usual)
+      $channelRoot = $newdoc->createElement('channel');
+      $rssRoot->appendChild($channelRoot);
+
+      if ($lastStoryId === NULL) {
+        // provide a flag to the native app so it knows how many stories
+        // are in this feed, since we only return up to 10
+        self::appendDOMAttribute($newdoc, $channelRoot, 'items', $numItems);
+      }
+      $count = 0;
+    }
+    else {
+      $olddoc = new DOMDocument();
+      $olddoc->loadXML($stories);
+      $oldChannelRoot = $olddoc->getElementsByTagName('channel')->item(0);
+      $channelRoot = $newdoc->importNode($oldChannelRoot, TRUE);
+      $rssRoot->appendChild($channelRoot);
+      $numItems = $dom->getElementsByTagName('item')->length;
+
+      $count = self::$lastCount;
     }
 
-    $count = 0;
     $itemNodes = $dom->getElementsByTagName('item');
     
     for($index = 0; $index < $numItems; $index++) {
@@ -201,10 +222,8 @@ class GazetteRSS extends RSS {
         $newThumbUrlString = self::imageUrl(self::cacheImage($thumbUrl->nodeValue, NULL)); // IMAGE_THUMBNAIL_SIZE));
 
         // replace url in rss feed
-        if ($newThumbUrlString) {
-          //$newThumbUrl = $newdoc->createElement('url', $newThumbUrlString);
-          //$thumb->replaceChild($newThumbUrl, $thumbUrl);
-        } else { // image creation bailed (perhaps from a 1px image)
+        if (!$newThumbUrlString) {
+          // image creation bailed (perhaps from a 1px image)
           $thumb->removeChild($thumbUrl);
         }
 
@@ -252,19 +271,26 @@ class GazetteRSS extends RSS {
 
         $cdata = $newdoc->createCDATASection($contentHTML->saveHTML());
         $contentNode->replaceChild($cdata, $contentNode->firstChild);
-
         $channelRoot->appendChild($item);
         $count++;
       } // else
     } // foeach
 
+    self::$lastCount = $count;
     $result = $newdoc->saveXML();
 
     return $result;
   }
 
-  private static function cacheName($url) {
-    return end(explode('/', $url));
+  private static function cacheName($url, $page) {
+    if (preg_match('#/([\w\-]+)/feed#', $url, $matches))
+      $cacheName = $matches[1];
+    else
+      $cacheName = 'unknown';
+    if ($page != 1) {
+      $cacheName .= ".$page";
+    }
+    return $cacheName . ".xml";
   }
 
   /** image caching and manipulation **/
