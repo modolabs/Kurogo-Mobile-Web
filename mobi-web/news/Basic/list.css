@@ -6,3 +6,7 @@
 .story-link {
     text-decoration: none;
 }
+
+.smallprint {
+	display: inline-block;
+}
