@@ -254,7 +254,7 @@ class ResultsContent {
     $this->max_list_items = isset($page->max_list_items) ? $page->max_list_items : NULL;
     $this->branch = $page->branch;
 	if ($showForm) {	
-		$this->form = new StandardForm($this->branch);
+		$this->form = new StandardForm($this->branch, $page->platform);
 	}
   }
    
@@ -287,9 +287,11 @@ class ResultsContent {
 abstract class Form {
 
   protected $prefix;
+  protected $platform;
 
-  public function __construct($prefix) {
+  public function __construct($prefix, $platform) {
     $this->prefix = $prefix;
+    $this->platform = $platform;
   }
 
   abstract public function out();
