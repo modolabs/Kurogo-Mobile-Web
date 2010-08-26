@@ -13,4 +13,4 @@ rm -rf /opt/mitmobile/cache/WMSCapabilities.xml
 rm -rf /var/www/html/api/newsimages/*
 
 # Reload dining data
-cp /home/huds/upload/menu.csv /opt/mitmobile/static/menu.csv
+sudo -u apache cp /home/huds/upload/menu.csv /opt/mitmobile/static/menu.csv
