@@ -16,7 +16,7 @@ $page->content_begin();
 		</li>
 
 <? if(briefLocation($event)) { ?>
-		<li><a href="<?=mapURL(briefLocation($event))?>" class="map"><?=briefLocation($event)?></a></li>
+		<li>Location: <?=briefLocation($event)?></li>
 <? } ?>
 
 		<li class="nolink"><?=$event->get_description()?></li>
