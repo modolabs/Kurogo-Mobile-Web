@@ -75,7 +75,7 @@ function getMapURL(strBaseURL, includeSelect) {
         // Add parameters for the original bounding box, so Image can be recentered
         if(includeSelect) {
         	newURL += "&bboxSelect=" + selectMapBoxW + "," + selectMapBoxS + "," + selectMapBoxE + "," + selectMapBoxN;
-        } 
+        }
 	return(newURL);
 }
 
@@ -208,6 +208,14 @@ function rotateMap() {
 		show("loadingimage");
 		mapW = window.innerWidth;
 		mapH = window.innerHeight;
+		var bboxW = mapBoxE - mapBoxW;
+		var bboxH = mapBoxN - mapBoxS;
+		if (mapH / mapW != bboxH / bboxW) { // need taller image
+			var newBBoxH = mapH * bboxW / mapW;
+			mapBoxN = mapBoxN + (newBBoxH - bboxH) / 2;
+			mapBoxS = mapBoxS - (newBBoxH - bboxH) / 2;
+		}
+
 		loadImage(getMapURL(mapBaseURL),'mapimage'); 
 	}
 	if(objContainer) {
