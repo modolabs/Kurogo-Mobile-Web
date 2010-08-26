@@ -23,7 +23,33 @@ $onorientationchange = "scrollTo(0,1); rotateScreen(); setTimeout('rotateMap()',
 $extra_onload = $onorientationchange;
 
 $wms = new WMSServer(WMS_SERVER);
-$mapBaseURL = $wms->getMapBaseUrl();
+
+$mapInitURL = $wms->getMapBaseURL(); // js variable
+$urlParts = parse_url($mapInitURL);
+parse_str($urlParts['query'], $queryParts);
+$mapLayers = $queryParts['layers'];
+
+$wms->disableAllLayers();
+//$mapBaseURL = $wms->getMapBaseUrl();
+//$wms->enableAllLayers();
+
+// extract url components and remove the 'layers' param
+$mapInitURL = $wms->getMapBaseUrl();
+$urlParts = parse_url($mapInitURL);
+parse_str($urlParts['query'], $queryParts);
+$baseLayers = $queryParts['layers'];
+$layers = explode(',', $mapLayers);
+$titles = $wms->getLayerTitles(); // to be encoded into a js var
+
+unset($queryParts['layers']);
+unset($queryParts['styles']);
+$urlParts['query'] = http_build_query($queryParts);
+
+$mapBaseURL = $urlParts['scheme'] . '://'
+            . $urlParts['host']
+            . $urlParts['path'] . '?'
+            . $urlParts['query']; // js variable
+
 $mapOptions = '&' . http_build_query(array(
   'crs' => 'EPSG:2249',
   'info' => $_REQUEST['info'],

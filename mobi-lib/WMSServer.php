@@ -20,12 +20,59 @@ class WMSServer {
   private $layers = array();
   private $styles = array();
   private $crs; // coord ref sys
+  private $layersByTitle = array();
+  private $disabledLayers = array();
 
   public function __construct($url) {
     $this->url = $url;
     $this->diskCache = new DiskCache(WMS_CACHE, 86400 * 7);
     $this->diskCache->preserveFormat();
     $this->getCapabilities();
+  }
+
+  public function getLayerTitles() {
+    $layerTitles = array();
+    foreach ($this->layersByTitle as $title => $layers) {
+      // don't allow certain layers to be disable-able
+      if (substr($title, 0, 8) != 'Map Text'
+          && $title != 'Harvard Campus Map'
+          && $title != 'Background'
+          && $title != 'Cambridge Area Towns'
+          && $title != 'Street Block'
+          && $title != 'Small scale text')
+      {
+        $layerTitles[$title] = $layers;
+      }
+    }
+    return $layerTitles;
+  }
+
+  public function disableLayer($layerTitle) {
+    $layerTitles = $this->getLayerTitles();
+    if (array_key_exists($layerTitle, $layerTitles)
+        && !in_array($layerTitle, $this->disabledLayers))
+    {
+      $this->disabledLayers[] = $layerTitle;
+    }
+  }
+
+  public function disableAllLayers() {
+    $layerTitles = $this->getLayerTitles();
+    foreach ($layerTitles as $title => $layers) {
+      if (!in_array($title, $this->disabledLayers)) {
+        $this->disabledLayers[] = $title;
+      }
+    }
+  }
+
+  public function enableLayer($layerTitle) {
+    if ($key = array_search($layerTitle, $this->disabledLayers)) {
+       unset($this->disabledLayers[$key]);
+    }
+  }
+
+  public function enableAllLayers() {
+    $this->disabledLayers = array();
   }
 
   // mandatory
@@ -47,6 +94,11 @@ class WMSServer {
     foreach ($xml->getElementsByTagName('Layer') as $layerXml) {
       $aLayer = new WMSLayer($layerXml);
       $this->layers[$aLayer->name] = $aLayer;
+      $title = $aLayer->title;
+      if (!array_key_exists($title, $this->layersByTitle)) {
+        $this->layersByTitle[$title] = array();
+      }
+      $this->layersByTitle[$title][] = $aLayer->name;
     }
 
     // layers may have different CRSes, but just assume they are
@@ -85,8 +137,10 @@ class WMSServer {
     $layerNames = array();
     $styleNames = array();
     foreach ($this->layers as $layer) {
-      $layerNames[] = $layer->name;
-      $styleNames[] = $layer->getDefaultStyle()->name;
+      if (!in_array($layer->title, $this->disabledLayers)) {
+        $layerNames[] = $layer->name;
+        $styleNames[] = $layer->getDefaultStyle()->name;
+      }
     }
 
     $params = array(

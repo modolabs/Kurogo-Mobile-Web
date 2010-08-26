@@ -10,7 +10,6 @@
  	<script src="../Webkit/uiscripts.js" type="text/javascript"> </script>
 
 	<script type="text/javascript">	
-		// These variables should be set when the page is compiled on the server at runtime
 		var mapSelect = "<?=$selectvalue?>";
 		var initMapBoxW = <?=$minx?>;
 		var initMapBoxN = <?=$maxy?>;
@@ -20,9 +19,45 @@
 		var selectMapBoxN = <?=$maxySelect?>;
 		var selectMapBoxS = <?=$minySelect?>;
 		var selectMapBoxE = <?=$maxxSelect?>;
-                var mapLayers = "<?=$layers?>";
+                var mapLayers = "<?=$mapLayers?>";
 		var mapBaseURL = "<?=$mapBaseURL?>";
 		var mapOptions = "<?=$mapOptions?>";
+		var layerTitles = <?=json_encode($titles)?>;
+
+// from http://www.w3schools.com/jsref/jsref_sort.asp
+function sortNumber(a,b)
+{
+return a - b;
+}
+
+function saveOptions(strFormID) {
+// Applies full-screen map-option changes and hides the form
+	var newLayers = "<?=$baseLayers?>";
+	
+	<? foreach ($titles as $title => $layerNames) {
+	     $chkTitle = 'chk' . str_replace(' ', '_', $title);
+	?>
+	if (document.mapform.<?=$chkTitle?>.checked) { newLayers = newLayers + "," + document.mapform.<?=$chkTitle?>.value; }
+	<? } ?>
+
+	var layerArr = newLayers.split(",");
+	layerArr.sort(sortNumber);
+	newLayers = layerArr.join(",");
+	
+	if(newLayers!=mapLayers) { 	// Only load a new map image if the user actually changed some options
+		mapLayers = newLayers;
+		loadImage(getMapURL(mapBaseURL),'mapimage'); 
+	}
+
+	hide("options");
+}
+
+
+
+
+
+
+
 	</script>
 
 	<script src="Webkit/map.js" type="text/javascript"> </script>
@@ -64,11 +99,12 @@
 	<div id="options">
 		<form action="#" method="get" id="mapform" name="mapform">
 			<h2>Labels for Fullscreen Map</h2>
-			<p><label><input class="check" name="chkLabelBuildings" id="chkLabelBuildings" type="checkbox" value="bldg-iden-14" checked="checked" /> Buildings</label></p>
-			<p><label><input class="check" name="chkLabelCourts" type="checkbox" value="greens-iden-12" checked="checked" />Courts &amp; Greenspace</label></p>
-			<p><label><input class="check" name="chkLabelParking" type="checkbox" value="parking-iden-12" />Parking lots</label></p>
-			<p><label><input class="check" name="chkLabelLandmarks" type="checkbox" value="landmarks-iden-12" checked="checked" />Landmarks</label></p>
-			<p><label><input class="check" name="chkLabelRoads" type="checkbox" value="road-iden-14" checked="checked" />Roads</label></p>
+			<? foreach ($titles as $title => $layerNames) {
+			     $chkTitle = 'chk' . str_replace(' ', '_', $title);
+			     $chkLayers = implode(',', $layerNames);
+			 ?>
+			<p><label><input class="check" name="<?=$chkTitle?>" id="<?=$chkTitle?>" type="checkbox" value="<?=$chkLayers?>" checked="checked" /><?=$title?></label></p>
+			<? } ?>
 			<div id="formbuttons">
 				<button type="button" id="submit" value="Apply" onclick="saveOptions('mapform')">Apply</button>
 				<button type="button" id="cancel" value="Cancel" onclick="cancelOptions('mapform')">Cancel</button>

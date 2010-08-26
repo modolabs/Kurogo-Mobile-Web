@@ -12,39 +12,6 @@ var detailBaseURL = "detail.php?";	// base URL for the normal map detail screen
 var fullscreenBaseURL = "detail-fullscreen.php?";	// base URL for the fullscreen map detail screen
 
 
-function jumpbrowse(objSelect) {
-// Use the value of the 'browse by' select control to jump to a different browse page
-	if(objSelect) {
-		switch(objSelect.value) {
-			case "number":
-				document.location.href="building-number.html";
-				break;
-			case "name":
-				document.location.href="building-name.html";
-				break;
-			case "residences":
-				document.location.href="residences.html";
-				break;
-			case "rooms":
-				document.location.href="rooms.html";
-				break;
-			case "streets":
-				document.location.href="streets.html";
-				break;
-			case "courts":
-				document.location.href="courts.html";
-				break;
-			case "food":
-				document.location.href="food.html";
-				break;
-			case "parking":
-				document.location.href="parking.html";
-				break;
-		}
-	}
-}
-
-
 function loadImage(imageURL,imageID) {
 // Loads an image from the given URL into the image with the specified ID
 	var objMap = document.getElementById(imageID);
@@ -69,14 +36,22 @@ function loadImage(imageURL,imageID) {
 
 
 function getMapURL(strBaseURL, includeSelect) {
-	// Returns a full URL for a map page or map image, using strBaseURL as the base
-	var newURL = strBaseURL + "&width=" + mapW + "&height=" + mapH + "&bbox=" + mapBoxW + "," + mapBoxS + "," + mapBoxE + "," + mapBoxN + mapOptions;
+    // Returns a full URL for a map page or map image, using strBaseURL as the base
+    var layerCount = mapLayers.split(",").length;
+    if (layerCount > 0) {
+	var mapStyles = "default";
+	for (i = 1; i < layerCount; i++) {
+	    mapStyles = mapStyles + ",default";
+	}
+    }
 
-        // Add parameters for the original bounding box, so Image can be recentered
-        if(includeSelect) {
-        	newURL += "&bboxSelect=" + selectMapBoxW + "," + selectMapBoxS + "," + selectMapBoxE + "," + selectMapBoxN;
-        }
-	return(newURL);
+    var newURL = strBaseURL + "&width=" + mapW + "&height=" + mapH + "&bbox=" + mapBoxW + "," + mapBoxS + "," + mapBoxE + "," + mapBoxN + "&layers=" + mapLayers + "&styles=" + mapStyles + mapOptions;
+
+    // Add parameters for the original bounding box, so Image can be recentered
+    if(includeSelect) {
+        newURL += "&bboxSelect=" + selectMapBoxW + "," + selectMapBoxS + "," + selectMapBoxE + "," + selectMapBoxN;
+    }
+    return(newURL);
 }
 
 
@@ -285,7 +260,7 @@ function enable(strID) {
 	}
 }
 
-
+/*
 function saveOptions(strFormID) {
 // Applies full-screen map-option changes and hides the form
 	var newLayers = "Towns,Hydro,Greenspace,Sport,Courtyards,Roads,Rail,Landmarks,Parking,Other+Buildings,Buildings,";
@@ -305,7 +280,7 @@ function saveOptions(strFormID) {
 
 	hide("options");
 }
-
+*/
 
 function cancelOptions(strFormID) {
 // Should cancel map-option changes and hide the form; this is just a stub for future real function
