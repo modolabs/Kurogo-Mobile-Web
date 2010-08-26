@@ -105,14 +105,23 @@ $page->output();
 
 function toggle_url($module, $action) {
   if($action) {
-    return "index.php?action=$action&module=$module";
+    return "index.php?".http_build_query(array(
+        "action" => $action,
+        "module" => $module,
+    ));
   }
 }
 
 function swap_url($module1, $position1, $module2, $position2) {
 
   if($module1 && $module2) {
-    return "index.php?action=swap&module1=$module1&position1=$position1&module2=$module2&position2=$position2";
+    return "index.php?".http_build_query(array(
+        "action" => 'swap',
+        "module1" => $module1,
+        "position1" => $position1,
+        "module2" => $module2,
+        "position2" => $position2,
+    ));
   }
 }
 

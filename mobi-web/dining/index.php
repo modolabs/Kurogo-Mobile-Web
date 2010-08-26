@@ -362,6 +362,6 @@ function statusSummary($status_details) {
 }
 
 function detailURL($status_details) {
-    return "./detail.php?location={$status_details['name']}";
+    return "./detail.php?location=".urlencode($status_details['name']);
 }
 ?>
