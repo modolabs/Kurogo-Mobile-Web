@@ -135,7 +135,20 @@ if ($tab == 'Map') {
   }
 
   // the following are only used by webkit version
-  $mapBaseURL = $wms->getMapBaseUrl();
+  $mapInitURL = $wms->getMapBaseURL(); // js variable
+  $urlParts = parse_url($mapInitURL);
+  parse_str($urlParts['query'], $queryParts);
+  $mapLayers = $queryParts['layers'];
+
+  unset($queryParts['layers']);
+  unset($queryParts['styles']);
+  $urlParts['query'] = http_build_query($queryParts);
+
+  $mapBaseURL = $urlParts['scheme'] . '://'
+              . $urlParts['host']
+              . $urlParts['path'] . '?'
+              . $urlParts['query']; // js variable
+
   $mapOptions = '&' . http_build_query(array(
     'crs' => 'EPSG:2249',
     ));
