@@ -71,29 +71,43 @@ class SearchOptions {
 
 // URL DEFINITIONS
 function dayURL($day, $type) {
-  return "day.php?time={$day['time']}&type=$type";
+  return "day.php?".http_build_query(array(
+    'time' => $day['time'],
+    'type' => $type,
+  ));
 }
 
 function categoryDayURL($day, $categoryID, $name) {
-  return "category.php?time={$day['time']}&id=$categoryID&name=$name";
+  return "category.php?".http_build_query(array(
+    'time' => $day['time'],
+    'id' => $categoryID,
+    'name' => $name, 
+  ));
 }
 
 function academicURL($year) {
-  return "academic.php?year=$year";
+  return "academic.php?".http_build_query(array(
+    'year' => $year,
+  ));
 }
 
 function holidaysURL($year=NULL) {
   if(!$year) {
     $year = $_REQUEST['year'];
   }
-  return "holidays.php?year=$year";
+  return "holidays.php?".http_build_query(array(
+    'year' => $year,
+  ));
 }
 
 function religiousURL($year=NULL) {
   if(!$year) {
     $year = $_REQUEST['year'];
   }
-  return "holidays.php?page=religious&year=$year";
+  return "holidays.php?".http_build_query(array(
+    'page' => 'religious',
+    'year' => $year,
+  ));
 }
 
 function categorysURL() {
@@ -103,16 +117,21 @@ function categorysURL() {
 function categoryURL($category) {
   $id = is_array($category) ? $category['catid'] : $category->get_cat_id();
   $name = is_array($category) ? $category['name'] : ucname($category->get_name());
-  return "category.php?id=$id&name=$name";
+  return "category.php?".http_build_query(array(
+    'id' => $id,
+    'name' => $name,
+  ));
 }
 
 function subCategorysURL($category) {
   $id = is_array($category) ? $category['catid'] : $category->get_cat_id();
-  return "sub-categorys.php?id=$id";
+  return "sub-categorys.php?".http_build_query(array(
+    'id' => $id,
+  ));
 }
 
 function detailURL($event, $extraParams = '') {
-  return "detail.php?id={$event->get_uid()}".
+  return "detail.php?id=".urlencode($event->get_uid()).
     (strlen($extraParams) ? '&'.$extraParams : '');
 }
 

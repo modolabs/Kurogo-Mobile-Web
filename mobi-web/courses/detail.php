@@ -115,19 +115,22 @@ function personURL($name) {
 
 function selfURL($all=NULL) {
   return "detail.php?".http_build_query(array(
-    "id"                  => $_REQUEST['id'],
-    "courseGroup"         => isset($_REQUEST['courseGroup'])         ? stripslashes($_REQUEST['courseGroup']) : '',
-    "courseGroupShort"    => isset($_REQUEST['courseGroupShort'])    ? stripslashes($_REQUEST['courseGroupShort']) : '',
-    "courseName"      => isset($_REQUEST['courseName'])      ? stripslashes($_REQUEST['courseName']) : '',
-    "courseNameShort" => isset($_REQUEST['courseNameShort']) ? stripslashes($_REQUEST['courseNameShort']) : '',
-    "back"                => isset($_REQUEST['back'])                ? stripslashes($_REQUEST['back']) : '',
+    "id"               => $_REQUEST['id'],
+    "courseGroup"      => isset($_REQUEST['courseGroup'])      ? stripslashes($_REQUEST['courseGroup']) : '',
+    "courseGroupShort" => isset($_REQUEST['courseGroupShort']) ? stripslashes($_REQUEST['courseGroupShort']) : '',
+    "courseName"       => isset($_REQUEST['courseName'])       ? stripslashes($_REQUEST['courseName']) : '',
+    "courseNameShort"  => isset($_REQUEST['courseNameShort'])  ? stripslashes($_REQUEST['courseNameShort']) : '',
+    "back"             => isset($_REQUEST['back'])             ? stripslashes($_REQUEST['back']) : '',
   ));
 
 
 }
 
 function announceURL($index) {
-  return "announcement.php?index=$index&sess=" . session_id();
+  return "announcement.php?".http_build_query(array(
+    'index' => $index,
+    'sess' => session_id(),
+  ));
 }
 
 function summary($item) {

@@ -22,7 +22,7 @@ if ($back == 'School|Listing') {
 
 } else {
   $page->breadcrumbs('Search', 'Results')
-     ->breadcrumb_links('searchMain.php?filter='.$_REQUEST['filter']);
+     ->breadcrumb_links('searchMain.php?filter='.urlencode(stripslashes($_REQUEST['filter'])));
 }
 
 $page->content_begin();
