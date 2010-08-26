@@ -42,7 +42,7 @@ $page->content_begin();
 			<li><?=$date_str?><br/><?=$time_of_day?></li>
 
                         <? if(briefLocation($event)) { ?>
- 			   <li><a href="<?=mapURL(briefLocation($event))?>" class="map"><?=briefLocation($event)?></a></li>
+ 			   <li>Location: <?=briefLocation($event)?></li>
                         <? } ?>
 
 			<li class="description"><?=$event->get_description()?></li>

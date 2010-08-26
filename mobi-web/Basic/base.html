@@ -55,7 +55,7 @@ if ($this->platform == 'bbplus') { ?>
               $extra = $link['phone'] ? " <span class=\"smallprint\">({$link['phone']})</span>" : ""; ?>
               <a href="<?=$link['url']?>" <?=$class_text?>><?=$link['text']?></a><?=$extra?><br/>
          <? } ?>
-            <a href="help.php"><?=$header?> Help</a>
+            <a href="help.php"><?=Modules::$module_data[$module]['title']?> Help</a>
          </p>
     <? } ?>
 

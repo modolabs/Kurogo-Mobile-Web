@@ -19,7 +19,7 @@ $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
 		</p>
 		<p>
                     <? if(briefLocation($event)) { ?>
-			Location: <a href="<?=mapURL(briefLocation($event))?>" class="action map"><?=briefLocation($event)?></a>
+			Location: <?=briefLocation($event)?>
                     <? } ?>
 		</p>
 		<p>
