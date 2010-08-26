@@ -19,12 +19,12 @@ function day_info($time, $offset=0) {
 class SearchOptions {
   private static $options = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
-    array("phrase" => "in the next 15 days",  "offset" => 15),
-    array("phrase" => "in the next 30 days",  "offset" => 30),
-    array("phrase" => "in the past 15 days",  "offset" => -15),
-    array("phrase" => "in the past 30 days",  "offset" => -30),
-    array("phrase" => "this school term",     "offset" => "term"),
-    array("phrase" => "this school year",     "offset" => "year")
+    //array("phrase" => "in the next 15 days",  "offset" => 15),
+    //array("phrase" => "in the next 30 days",  "offset" => 30),
+    //array("phrase" => "in the past 15 days",  "offset" => -15),
+    //array("phrase" => "in the past 30 days",  "offset" => -30),
+    //array("phrase" => "this school term",     "offset" => "term"),
+    //array("phrase" => "this school year",     "offset" => "year")
   );
 
   public static function get_options($selected = 0) {
