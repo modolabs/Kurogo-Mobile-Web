@@ -14,10 +14,10 @@ $page->content_begin();
 		<strong>Search:</strong>
 		<span class="inputcombo emphasized">
 		    <fieldset>
-			    <input class="forminput" type="text" id="filter" name="filter" <? if (isset($searchTerms)) { ?>value="<?=htmlspecialchars($searchTerms)?>"<? } ?>" /> &nbsp;
+			    <input class="forminput" type="text" id="filter" name="filter" <? if (isset($searchTerms)) { ?>value="<?=htmlspecialchars($searchTerms)?>"<? } ?>" />
                             <? if ($page->platform == 'bbplus') { ?>
                             <input src="../Basic/images/search_button.png" name="search" id="sch_btn" class="imagebutton" type="image" value="Search" />
-                            <? } else { ?>
+                            <? } else { ?>&nbsp;
                             <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
                             <? } ?>
 			</fieldset>
