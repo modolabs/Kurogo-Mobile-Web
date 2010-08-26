@@ -9,8 +9,7 @@ define('MIN_MAP_CONTEXT', 250);
 define('MAP_PHOTO_SERVER', 'http://map.harvard.edu/mapserver/images/bldg_photos/');
 
 // don't show these fields in detail page
-$detailBlacklist = array('Root', 'Shape', 'PHOTO_FILE', 'OBJECTID', 'FID', 'BL_ID');
-$detailURLList = array('Website', 'Project Link');
+$detailBlacklist = array('Root', 'Shape', 'PHOTO_FILE', 'Photo', 'OBJECTID', 'FID', 'BL_ID');
 
 $name = $_REQUEST['selectvalues'];
 
@@ -174,7 +173,7 @@ if (array_key_exists('PHOTO_FILE', $details)) {
 $displayDetails = array();
 foreach ($details as $field => $value) {
   if (!in_array($field, $detailBlacklist)) {
-    if (in_array($field, $detailURLList)) {
+    if (filter_var($value, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
       $displayDetails[$field] = '<a href="'.$value.'">'.$value.'</a>';
     } else {
       $displayDetails[$field] = $value;
