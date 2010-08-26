@@ -24,7 +24,7 @@ $page->content_begin();
             <input class="forminput" type="hidden" id="courseName" name="courseName" value="<?=htmlspecialchars($courseId)?>">
             <input class="forminput" type="hidden" id="courseName" name="courseNameShort" value="<?=htmlspecialchars($courseIdShort)?>">
             <input class="forminput" type="hidden" id="back" name="back" value="<?=$back?>">
-			<? if ($page->platform == 'bbplus') { ?>
+            <? if ($page->platform == 'bbplus') { ?>
             <input src="../Basic/images/search_button.png" name="search" id="sch_btn" class="imagebutton" type="image" value="Search" />
             <? } else { ?>
             <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
