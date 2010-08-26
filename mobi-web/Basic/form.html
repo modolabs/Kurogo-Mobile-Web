@@ -2,7 +2,11 @@
           <p>
                 <span class="inputcombo emphasized">
                         <input class="forminput" type="search" id="filter" name="filter" <? if (isset($_REQUEST['filter'])) { ?> value="<?=htmlspecialchars(stripslashes($_REQUEST['filter']))?>" <? } ?>/>
-                        <input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+                        <? if ($page->platform == 'bbplus') { ?>
+                        <input src="../Basic/images/search_button.png" name="search" id="sch_btn" class="imagebutton" type="image" value="Search" />
+                        <? } else { ?>
+                        <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+                        <? } ?>
                 </span>
           </p>
         </form>
