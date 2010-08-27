@@ -198,11 +198,15 @@ if (isset($photoFile)) {
 
 $displayDetails = array();
 foreach ($details as $field => $value) {
-  if (!in_array($field, $detailBlacklist)) {
-    if (filter_var($value, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
-      $displayDetails[$field] = '<a href="'.$value.'">'.$value.'</a>';
-    } else {
-      $displayDetails[$field] = $value;
+  $value = trim($value);
+  if (strlen(trim($value))) {
+    if (!in_array($field, $detailBlacklist)) {
+      // There is a bug in some versions of strtr where it can't handle hyphens in hostnames
+      if (filter_var(strtr($value, '-', '_'), FILTER_VALIDATE_URL)) {
+        $displayDetails[$field] = '<a href="'.$value.'">'.$value.'</a>';
+      } else {
+        $displayDetails[$field] = $value;
+      }
     }
   }
 }
