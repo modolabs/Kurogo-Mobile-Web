@@ -50,8 +50,11 @@ if ($tab == 'Map') {
     if (isset($_REQUEST['category'])) {
       $secondaryResults = $searchResults;
       $searchResults = ArcGISServer::search($name, $_REQUEST['category']);
+      if (!$searchResults || !$searchResults->results) {
+        $searchResults = $secondaryResults;
+        unset($secondarResults);
+      }
     }
-
     if ($searchResults && $searchResults->results) {
       $result = $searchResults->results[0];
       foreach ($result->attributes as $field => $value) {
@@ -150,7 +153,7 @@ if ($tab == 'Map') {
               . $urlParts['query']; // js variable
 
   $detailUrlOptions = http_build_query(array(
-    'info' => $_REQUEST['info'],
+    'info' => $details,
     'selectvalues' => $_REQUEST['selectvalues'],
     ));
 
@@ -165,6 +168,11 @@ $tabs = new Tabs(selfURL($details), "tab", array("Map", "Photo", "Details"));
 
 if (array_key_exists('PHOTO_FILE', $details)) {
   $photoFile = rawurlencode($details['PHOTO_FILE']);
+} elseif (array_key_exists('Photo', $details)) {
+  $photoFile = rawurlencode($details['Photo']);
+}
+
+if (isset($photoFile)) {
   $photoURL = MAP_PHOTO_SERVER . $photoFile;
 
   if ($photoFile == 'Null') {
