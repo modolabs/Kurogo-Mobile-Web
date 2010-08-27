@@ -1,8 +1,17 @@
 <?php
 
 if (isset($_REQUEST['filter']) && $search_terms = $_REQUEST['filter']) {
-  $results = map_search($search_terms);
-  $total = count($results);
+
+    // if loc is set then this is a courses location lookup
+    if (isset($_REQUEST['loc'])) {
+        $results = map_search_courses($search_terms);
+        $total = count($results);
+    }
+    else {
+        $results = map_search($search_terms);
+        $total = count($results);
+    }
+  
   if ($total == 1) {
     header("Location: " . detailURL($results[0]));
   } else {
@@ -39,6 +48,17 @@ function titleFromResult($resultObj) {
 function map_search($terms) {
   require_once LIBDIR . '/MapSearch.php';
   $resultObj = searchCampusMap($terms);
+  $results = array();
+  foreach ($resultObj->results as $result) {
+    $results[] = $result;
+  }
+  return $results;
+}
+
+// courses map lookup
+function map_search_courses($terms) {
+  require_once LIBDIR . '/MapSearch.php';
+  $resultObj = searchCampusMapForCourseLoc($terms);
   $results = array();
   foreach ($resultObj->results as $result) {
     $results[] = $result;
