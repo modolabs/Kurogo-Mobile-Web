@@ -355,6 +355,11 @@ function mapURL($location) {
   return "../map/search.php?filter=" . urlencode($location);
 }
 
+// create URL to the campus map for a courses lookup
+function mapURLForCourses($location) {
+  return "../map/search.php?loc=courses&filter=" . urlencode($location);
+}
+
 
 class HTMLPage {
     private $document;

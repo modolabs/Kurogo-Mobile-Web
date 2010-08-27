@@ -35,7 +35,7 @@ if (isset($stories)) {
     }
     if ($featuredIndex > 0) {
         $featuredStory = $stories[$featuredIndex];
-        array_splice($stories, $featuredIndex-1, 1);
+        array_splice($stories, $featuredIndex, 1);
         array_unshift($stories, $featuredStory);
     }
 }
