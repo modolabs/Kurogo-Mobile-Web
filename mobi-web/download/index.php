@@ -18,7 +18,7 @@ $device_names = Array(
   );
 
 $device_apps = Array(
-  'blackberry' => 'media/MITMobileWeb.jad',
+  'blackberry' => 'media/HarvardBBLauncher.jad',
   );
 
 $device_instructions = Array(
