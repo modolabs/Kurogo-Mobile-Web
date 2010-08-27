@@ -95,7 +95,7 @@ $page->content_begin();
                            echo($meetingTime->daysText() . " " . $meetingTime->timeText());
                            echo(" (");
                            if ($meetingTime->isLocationKnown()) {
-                             echo("<a href=\"" . mapURL($meetingTime->locationText()) . 
+                             echo("<a href=\"" . mapURLForCourses($meetingTime->locationText()) .
                                   "\">" . $meetingTime->locationText() . "</a>");
                            }
                            else {
