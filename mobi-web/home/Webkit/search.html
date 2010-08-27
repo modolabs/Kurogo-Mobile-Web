@@ -16,9 +16,9 @@ $page->content_begin();
                 <? if(count($module_results['results']) > 0) { ?>
                     <? for($i = 0 ; $i < count($module_results['results']) && $i < MAX_ITEMS; $i++) { ?>
                         <? $result = $module_results['results'][$i]; ?>
-                        <li><a href="..<?=$result['link']?>"><?=htmlentities($result['title'])?>
+                        <li><a href="..<?=$result['link']?>"><?=$result['title']?>
                             <? if($result['subtitle']) { ?>
-                                <br /><span class="smallprint"><?=htmlentities($result['subtitle'])?></span>
+                                <br /><span class="smallprint"><?=$result['subtitle']?></span>
                             <? } ?>
                             </a>
                         </li>
