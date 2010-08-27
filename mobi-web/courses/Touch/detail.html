@@ -71,7 +71,7 @@ $page->content_begin();
        foreach ($meetingTimes->all() as $meetingTime) {
          echo("<li>");
          if ($meetingTime->isLocationKnown()) {
-           echo("<a class=\"map\" href=\"" . mapURL($meetingTime->locationText()) . "\">" . 
+           echo("<a class=\"map\" href=\"" . mapURLForCourses($meetingTime->locationText()) . "\">" .
                 $meetingTime->daysText() . " " . $meetingTime->timeText() .
                 " (" . $meetingTime->locationText() . ")</a>");
          }
