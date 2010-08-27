@@ -101,6 +101,7 @@ if($page->delta == 'iphone') {
 
 require $template;
 
+$page->help_off();
 $page->output();
 
 function toggle_url($module, $action) {
