@@ -1,15 +1,11 @@
 <?
-
-
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-
 $device_names = Array(
   'iphone' => 'iPhone',
   'android' => 'Android',
   'webos' => 'webOS',
   'winmo' => 'Windows Mobile',
-  'blackberry' => 'Blackberry',
+  'bbplus' => "BlackBerry",
+  'blackberry' => 'BlackBerry',
   'symbian' => 'Symbian',
   'palmos' => 'Palm OS',
   'featurephone' => 'Feature Phone',
@@ -18,14 +14,17 @@ $device_names = Array(
   );
 
 $device_apps = Array(
-  'blackberry' => 'media/MITMobileWeb.jad',
+  'bbplus' => 'media/HarvardBBLauncher.jad',
+  'blackberry' => 'media/HarvardBBLauncher.jad',
   );
 
 $device_instructions = Array(
+  'bbplus' => 'On the next screen, click "Download", and "OK" or "Run" once the download is complete.',
   'blackberry' => 'On the next screen, click "Download", and "OK" or "Run" once the download is complete.',
   );
 
 $download_items = Array(
+  'bbplus' => 'shortcut',
   'blackberry' => 'shortcut',
 );
 
