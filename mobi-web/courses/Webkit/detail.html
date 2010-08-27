@@ -40,13 +40,20 @@ if ($back == 'School|Listing') {
     searchURL('School', $filter, $courseGroup, $courseGroupShort, '', ''));
   $page->breadcrumb_classes('crumb2a', 'crumb2b');
 
-} else if ($back == 'Search') {
+} else if ($back == 'Search' && strlen($courseGroupShort)) {
   $page->breadcrumbs('Search', getBreadcrumbName($courseGroupShort), 'Detail');
   $page->breadcrumb_links(
     'searchMain.php?filter='.urlencode($filter), 
     searchURL('', $filter, $courseGroup, $courseGroupShort, '', ''));  
   $page->breadcrumb_classes('', 'crumb1');
   
+} else if ($back == 'Search') {  
+  // This case is when we come from the global site search
+  $page->breadcrumbs('Search', 'Detail');
+  $page->breadcrumb_links(
+    'searchMain.php?filter='.urlencode($filter));  
+  $page->breadcrumb_classes('crumb1');
+
 } else {
   $page->breadcrumbs('Detail');
 }
