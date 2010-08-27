@@ -18,7 +18,7 @@ switch($_REQUEST['code']) {
     break;
 
   case "forbidden":
-    header("Status: 404 Not Found");
+    header("Status: 403 Forbidden");
     $message = "Not authorized to view this page";
     break;
 
