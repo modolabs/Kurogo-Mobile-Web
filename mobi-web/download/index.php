@@ -1,9 +1,4 @@
 <?
-
-
-require_once "../config/mobi_web_constants.php";
-require_once PAGE_HEADER;
-
 $device_names = Array(
   'iphone' => 'iPhone',
   'android' => 'Android',
