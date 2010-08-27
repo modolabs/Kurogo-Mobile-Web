@@ -15,6 +15,20 @@ if($newsURL->isHome()) {
     $stories_first_id = GazetteRSS::getArticlesFirstId($newsURL->categoryId());
     $stories_last_id = GazetteRSS::getArticlesLastId($newsURL->categoryId());
 
+    if (isset($stories)) {
+        $featuredIndex = 0;
+        foreach ($stories as $story) {
+            if ($story['featured'])
+                break;
+            $featuredIndex++;
+        }
+        if ($featuredIndex > 0 && isset($stories[$featuredIndex])) {
+            $featuredStory = $stories[$featuredIndex];
+            array_splice($stories, $featuredIndex, 1);
+            array_unshift($stories, $featuredStory);
+        }
+    }
+
 } else if($newsURL->isSearchResults()) {
 
     $stories = GazetteRSS::searchArticlesArray(
@@ -24,20 +38,6 @@ if($newsURL->isHome()) {
 
     $stories_first_id = GazetteRSS::getSearchFirstId($newsURL->searchTerms());
     $stories_last_id = GazetteRSS::getSearchLastId($newsURL->searchTerms());
-}
-
-if (isset($stories)) {
-    $featuredIndex = 0;
-    foreach ($stories as $story) {
-        if ($story['featured'])
-            break;
-        $featuredIndex++;
-    }
-    if ($featuredIndex > 0) {
-        $featuredStory = $stories[$featuredIndex];
-        array_splice($stories, $featuredIndex, 1);
-        array_unshift($stories, $featuredStory);
-    }
 }
 
 $categories = GazetteRSS::getChannels();
