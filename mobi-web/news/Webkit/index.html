@@ -3,7 +3,8 @@ $page->title("News")
      ->navbar_image("news")
      ->generate_navigation($newsURL->breadCrumbs("News", "Search"))
      ->add_stylesheet("Webkit/list")
-     ->add_javascript("Webkit/home");
+     ->add_javascript("Webkit/home")
+     ->not_scalable();
 
 $page->content_begin();
 ?>
@@ -12,8 +13,10 @@ $page->content_begin();
     <div id="category-switcher">
          <? if($newsURL->isHome()) {?>
             <form method="get" id="category-form">
-                <span class="formlabel">Section:</span>
-                <select class="newsinput" id="category_id" name="category_id" onchange="loadCategory(this);">
+                <table border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td class="formlabel">Section:</td>
+                    <td class="inputfield"><div><select class="newsinput" id="category_id" name="category_id" onchange="loadCategory(this);">
                         <? foreach($categories as $id => $title) { ?>
                             <? if($newsURL->categoryId() == $id) { ?>
                                 <option value="<?=$id?>" selected="true"><?=$title?></option>
@@ -21,20 +24,29 @@ $page->content_begin();
                                 <option value="<?=$id?>"><?=$title?></option>
                             <? } ?>
                         <? } ?>
-                </select>
+                    </select></div></td>
+                    <td class="togglefield"><input src="../Basic/images/search_button.png" type="image" class="toggle-search-button"  onclick="return toggleSearch();" /></td>
+                  </tr>
+                </table>
             </form>
          <? } ?>
          <form id="search-form" <? if($newsURL->isHome()) {?>style="display:none;"<? } ?> >
-             <span class="formlabel">Search:</span>
-               <input class="newsinput search-field" type="text" name="search_terms" value="<?=$newsURL->searchTerms()?>"/>
-               <?=$newsURL->hiddenHomeStateForm()?>
-               <? if($newsURL->isSearchResults()) { ?>
-                    <input class="submit-search" "type="submit" value="Search" />
-               <? } ?>
+             <? if($newsURL->isHome()) { ?>
+                <table border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td class="formlabel">Search:</td>
+                    <td class="inputfield"><input class="newsinput search-field" type="text" name="search_terms"/></td>
+                    <td class="togglefield"><input type="button" class="toggle-search-button"  onclick="return toggleSearch();" value="Cancel" /></td>
+                  </tr>
+                </table>
+                <?=$newsURL->hiddenHomeStateForm()?>
+             <? } else { ?>
+                <fieldset class="inputcombo">
+                    <input class="forminput" type="text" id="filter" name="filter" placeholder="Search" value="<?=htmlspecialchars($newsURL->searchTerms())?>"/>
+                    <input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
+                </fieldset>	
+            <? } ?>
          </form>
-         <? if($newsURL->isHome()) { ?>
-            <button id="toggle-search-button" onclick="toggleSearch();">Search</button>
-         <? } ?>
     </div>
 </div>
 

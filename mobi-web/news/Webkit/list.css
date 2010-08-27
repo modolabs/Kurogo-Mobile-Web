@@ -11,13 +11,74 @@ li.story {
     width: 70pt;
     height: 70pt;
 }
-
-.header form {
-    display: inline-block;
+#category-switcher table {
+    padding-top: 2px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
-
+#category-switcher .inputcombo {
+    margin: .25em .5em .5em .5em;
+}
+#category-switcher td {
+    vertical-align: middle;
+    height: 32px;
+    padding: 0;
+}
+#category-switcher .inputfield select,
+#category-switcher .inputfield input[type=text] {
+    width: 99.9%;
+    margin: 0;
+}
+#category-switcher .inputfield input[type=text] {
+    line-height: 1.5em;
+    padding-left: .25em;
+}
+#category-switcher .formlabel {
+    padding: 0 .25em;
+    padding-right: .25em;
+}
+#category-switcher #category-form .togglefield {
+    width: 40px;
+}
+#category-form .toggle-search-button {
+    padding: 0 .5em 0 .5em;
+}
+#category-switcher #search-form .togglefield {
+    width: 4em;
+    padding: 0 .25em 0 .75em;
+}
+#search-form .toggle-search-button {
+	font-size: 89%;
+	margin-left: .4em;
+}
+form {
+	margin: -8px 0 0 0;
+	padding: 0;
+}
+.formlabel {
+	width: 60px;
+    text-align: right;
+	color: #554c41;
+	font-size: 89%;
+}
+.header form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+.header form input {
+    line-height: normal;
+}
+.header form select {
+    line-height: normal;
+    padding: 4px 6px;
+    font-size: 16px;
+}
+#search-form .toggle-search-button {
+}
 .header {
-    padding: 5px;
+    padding: 0;
 }
 
 .header button {
@@ -32,28 +93,9 @@ li.story {
 	width: 200px;
 }
 
-#search-form {
-    display: inline;
-}
-
 .search-field, select {
 }
 
 select, .submit-search {
     font-size: 17px;
-}
-
-form {
-	margin: -8px 0 0 0;
-	padding: 0;
-}
-
-.formlabel {
-	display: block;
-	float: left;
-	padding-right: 2px;
-	width: 60px;
-	color: #554c41;
-	font-size: 89%;
-	line-height: 2em;
 }

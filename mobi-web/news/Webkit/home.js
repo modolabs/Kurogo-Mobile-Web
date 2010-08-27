@@ -3,16 +3,15 @@ function loadCategory(select) {
 }
 
 function toggleSearch() {
-    var button = document.getElementById("toggle-search-button")
-    var buttonText = button.innerHTML;
-
-    if(buttonText == "Search") {
-        document.getElementById("search-form").style.display = null;
-        document.getElementById("category-form").style.display = "none";
-        button.innerHTML = "Cancel";
+    var searchForm = document.getElementById("search-form");
+    var categoryForm = document.getElementById("category-form");
+    
+    if(searchForm.style.display == "none") {
+        searchForm.style.display = null;
+        categoryForm.style.display = "none";
     } else {
-        document.getElementById("search-form").style.display = "none";
-        document.getElementById("category-form").style.display = null;
-        button.innerHTML = "Search";
+        searchForm.style.display = "none";
+        categoryForm.style.display = null;
     }
+    return false;
 }
