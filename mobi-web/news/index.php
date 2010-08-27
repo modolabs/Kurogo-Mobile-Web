@@ -70,11 +70,11 @@ function webkit_deck($story) {
     // set the truncation limit based on the size of title
     // smaller titles allow for longer deck text.
     if (strlen($story["title"]) <= 20) { // 1 line title
-        $limit = 70;
-    } else if (strlen($story["title"]) <= 45) { // 2 line title
-        $limit = 45;
+        $limit = 65;
+    } else if (strlen($story["title"]) <= 40) { // 2 line title
+        $limit = 40;
     } else if (strlen($story["title"]) <= 60) { // 3 line title
-        $limit = 25;
+        $limit = 20;
     } else {
         return "";
     }

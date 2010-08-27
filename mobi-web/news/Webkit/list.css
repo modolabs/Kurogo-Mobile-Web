@@ -2,6 +2,7 @@ li.story {
     height: 70pt;
     padding: 1px;
     padding-right: 10px;
+    overflow: hidden;
 }
 
 .thumbnail {
