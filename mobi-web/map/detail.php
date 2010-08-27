@@ -149,6 +149,11 @@ if ($tab == 'Map') {
               . $urlParts['path'] . '?'
               . $urlParts['query']; // js variable
 
+  $detailUrlOptions = http_build_query(array(
+    'info' => $_REQUEST['info'],
+    'selectvalues' => $_REQUEST['selectvalues'],
+    ));
+
   $mapOptions = '&' . http_build_query(array(
     'crs' => 'EPSG:2249',
     ));

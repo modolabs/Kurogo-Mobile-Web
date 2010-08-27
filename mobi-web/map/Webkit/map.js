@@ -8,8 +8,6 @@ var mapBoxE = initMapBoxE;	// integer: eastern bound of map image (per IMS map A
 var hasMoved = false;	// boolean: has the map been scrolled or zoomed?
 var maxZoom = 2;	// integer: max zoom-in level
 var minZoom = -8;	// integer: max zoom-out level
-var detailBaseURL = "detail.php?";	// base URL for the normal map detail screen
-var fullscreenBaseURL = "detail-fullscreen.php?";	// base URL for the fullscreen map detail screen
 
 
 function loadImage(imageURL,imageID) {
@@ -30,7 +28,22 @@ function loadImage(imageURL,imageID) {
 	}
 	var objSmallscreen = document.getElementById("smallscreen");
 	if(objSmallscreen) {
-		objSmallscreen.href = getMapURL(detailBaseURL, true);
+	    var tempW = mapBoxW;
+	    var tempE = mapBoxE;
+	    var tempS = mapBoxS;
+	    var tempN = mapBoxN;
+
+	    mapBoxW = initMapBoxW;
+	    mapBoxE = initMapBoxE;
+	    mapBoxN = initMapBoxN;
+	    mapBoxS = initMapBoxS;
+
+	    objSmallscreen.href = getMapURL(detailBaseURL, true);
+
+	    mapBoxW = tempW;
+	    mapBoxE = tempE;
+	    mapBoxN = tempN;
+	    mapBoxS = tempS;
 	}
 }
 

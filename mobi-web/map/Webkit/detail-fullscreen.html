@@ -2,74 +2,72 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<meta http-equiv="content-type" content="application/xhtml+xml" />
-	<meta name="viewport" content="user-scalable=no,initial-scale=1.0,maximum-scale=1.0" id="viewport" />	
-	<title>Map: Full-Screen Map</title>
-	<link rel="stylesheet" type="text/css" href="../Webkit/core.css" />
-	<link rel="stylesheet" type="text/css" href="Webkit/map.css" />
- 	<script src="../Webkit/uiscripts.js" type="text/javascript"> </script>
+<meta http-equiv="content-type" content="application/xhtml+xml" />
+<meta name="viewport" content="user-scalable=no,initial-scale=1.0,maximum-scale=1.0" id="viewport" />	
+<title>Map: Full-Screen Map</title>
+<link rel="stylesheet" type="text/css" href="../Webkit/core.css" />
+<link rel="stylesheet" type="text/css" href="Webkit/map.css" />
+<script src="../Webkit/uiscripts.js" type="text/javascript"> </script>
 
-	<script type="text/javascript">	
-		var mapSelect = "<?=$selectvalue?>";
-		var initMapBoxW = <?=$minx?>;
-		var initMapBoxN = <?=$maxy?>;
-		var initMapBoxS = <?=$miny?>;
-		var initMapBoxE = <?=$maxx?>;
-		var selectMapBoxW = <?=$minxSelect?>;
-		var selectMapBoxN = <?=$maxySelect?>;
-		var selectMapBoxS = <?=$minySelect?>;
-		var selectMapBoxE = <?=$maxxSelect?>;
-                var mapLayers = "<?=$mapLayers?>";
-		var mapBaseURL = "<?=$mapBaseURL?>";
-		var mapOptions = "<?=$mapOptions?>";
-		var layerTitles = <?=json_encode($titles)?>;
+<script type="text/javascript">	
+var mapSelect = "<?=$selectvalue?>";
+var initMapBoxW = <?=$minx?>;
+var initMapBoxN = <?=$maxy?>;
+var initMapBoxS = <?=$miny?>;
+var initMapBoxE = <?=$maxx?>;
+var selectMapBoxW = <?=$minxSelect?>;
+var selectMapBoxN = <?=$maxySelect?>;
+var selectMapBoxS = <?=$minySelect?>;
+var selectMapBoxE = <?=$maxxSelect?>;
+var mapLayers = "<?=$mapLayers?>";
+var mapBaseURL = "<?=$mapBaseURL?>";
+var mapOptions = "<?=$mapOptions?>";
+var layerTitles = <?=json_encode($titles)?>;
+
+var detailBaseURL = "detail.php?<?=$detailUrlOptions?>";
+var fullscreenBaseURL = "detail-fullscreen.php?<?=$detailUrlOptions?>";
 
 // from http://www.w3schools.com/jsref/jsref_sort.asp
-function sortNumber(a,b)
-{
-return a - b;
+function sortNumber(a,b) {
+    return a - b;
 }
 
 function saveOptions(strFormID) {
 // Applies full-screen map-option changes and hides the form
-	var newLayers = "<?=$baseLayers?>";
-	
-	<? foreach ($titles as $title => $layerNames) {
-	     $chkTitle = 'chk' . str_replace(' ', '_', $title);
-	?>
-	if (document.mapform.<?=$chkTitle?>.checked) { newLayers = newLayers + "," + document.mapform.<?=$chkTitle?>.value; }
-	<? } ?>
+    var newLayers = "<?=$baseLayers?>";
 
-	var layerArr = newLayers.split(",");
-	layerArr.sort(sortNumber);
-	newLayers = layerArr.join(",");
-	
-	if(newLayers!=mapLayers) { 	// Only load a new map image if the user actually changed some options
-		mapLayers = newLayers;
-		loadImage(getMapURL(mapBaseURL),'mapimage'); 
-	}
+    <? foreach ($titles as $title => $layerNames) {
+        $chkTitle = 'chk' . str_replace(' ', '_', $title);
+    ?>
+    if (document.mapform.<?=$chkTitle?>.checked) {
+        newLayers = newLayers + "," + document.mapform.<?=$chkTitle?>.value;
+    }
+    <? } ?>
 
-	hide("options");
+    var layerArr = newLayers.split(",");
+    layerArr.sort(sortNumber);
+    newLayers = layerArr.join(",");
+
+    // Only load a new map image if the user actually changed some options
+    if(newLayers!=mapLayers) {
+        mapLayers = newLayers;
+        loadImage(getMapURL(mapBaseURL),'mapimage'); 
+    }
+
+    hide("options");
 }
+</script>
 
+<script src="Webkit/map.js" type="text/javascript"> </script>
 
+<link rel="apple-touch-icon" href="../Webkit/images/icon-map.png" />
 
-
-
-
-
-	</script>
-
-	<script src="Webkit/map.js" type="text/javascript"> </script>
-
- 	<link rel="apple-touch-icon" href="../Webkit/images/icon-map.png" />
-
-        <? if($onorientationchange) { ?>
-           <script type="text/javascript">
-              window.addEventListener("resize", function() {<?=$onorientationchange?>}, false);
-              window.addEventListener("orientationchange", function() {<?=$onorientationchange?>}, false);
-           </script>
-        <? } ?>
+<? if($onorientationchange) { ?>
+<script type="text/javascript">
+window.addEventListener("resize", function() {<?=$onorientationchange?>}, false);
+window.addEventListener("orientationchange", function() {<?=$onorientationchange?>}, false);
+</script>
+<? } ?>
 
 </head>
 

@@ -3,7 +3,7 @@
 require_once LIBDIR . "/WMSServer.php";
 
 $selectvalue = $_REQUEST['selectvalues'];
-$bbox = split(',', $_REQUEST['bbox']);
+$bbox = explode(',', $_REQUEST['bbox']);
 $minx = $bbox[0];
 $miny = $bbox[1];
 $maxx = $bbox[2];
@@ -50,10 +50,13 @@ $mapBaseURL = $urlParts['scheme'] . '://'
             . $urlParts['path'] . '?'
             . $urlParts['query']; // js variable
 
-$mapOptions = '&' . http_build_query(array(
-  'crs' => 'EPSG:2249',
+$detailUrlOptions = http_build_query(array(
   'info' => $_REQUEST['info'],
   'selectvalues' => $_REQUEST['selectvalues'],
+  ));
+
+$mapOptions = '&' . http_build_query(array(
+  'crs' => 'EPSG:2249',
   ));
 
 require "$page->branch/detail-fullscreen.html";

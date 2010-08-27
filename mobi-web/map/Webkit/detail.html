@@ -15,6 +15,10 @@ $bbox_script =<<<JS
      var mapBaseURL = '{$mapBaseURL}';
      var mapOptions = '{$mapOptions}';
      var mapLayers = '{$mapLayers}';
+
+     var detailBaseURL = 'detail.php?{$detailUrlOptions}';
+     var fullscreenBaseURL = 'detail-fullscreen.php?{$detailUrlOptions}';
+
 JS;
 
 $page->title('Map: Detail')
