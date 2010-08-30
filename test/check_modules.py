@@ -10,8 +10,8 @@ That way, messages from Twill are not interspersed with error reporting.
 
 
 """Set this to the server you want to use for these tests."""
-BASE_URL = "http://localhost:8888"
-#BASE_URL = "http://mobile-dev.harvard.edu"
+#BASE_URL = "http://localhost:8888"
+BASE_URL = "http://mobile-dev.harvard.edu"
 #BASE_URL = "http://mobile-staging.harvard.edu"
 #BASE_URL = "http://m.harvard.edu"
 
@@ -21,6 +21,7 @@ BLACKBERRY_PLUS_USER_AGENT = "BlackBerry9630/4.7.1.40 Profile/MIDP-2.0 Configura
 BASIC_PHONE_USER_AGENT = "LG U880: LG/U880/v1.0"
 
 
+from sys import exit
 import unittest
 import re
 import urllib
@@ -260,5 +261,9 @@ def suite():
 
 if __name__ == '__main__':
     suite = suite()
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    if result.wasSuccessful():
+        exit(1)
+    else:
+        exit(0)
 
