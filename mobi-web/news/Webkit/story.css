@@ -41,3 +41,9 @@
 #image a { text-align:right; font-size:11px; line-height: 30px; text-decoration:none; color:#777;}
 
 #image a div { margin-top: -4px; }
+
+.wp-caption {
+    width: auto !important;
+    font-size: 84%;
+    line-height: 1.2em;
+}
