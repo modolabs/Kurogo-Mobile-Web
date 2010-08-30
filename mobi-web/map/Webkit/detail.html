@@ -1,4 +1,5 @@
 <?php
+
 $select_bbox = shiftBBox($bbox, 0, 0, 1);
 
 $bbox_script =<<<JS
@@ -27,8 +28,11 @@ $page->title('Map: Detail')
      ->add_stylesheet('Webkit/map')
      ->add_inline_script($bbox_script)
      ->add_javascript('../Webkit/uiscripts')
-     ->add_javascript('Webkit/map')
-     ->extra_onload("loadImage(getMapURL(mapBaseURL),'mapimage');");
+     ->add_javascript('Webkit/map');
+     
+if ($hasMap) {
+     $page->extra_onload("loadImage(getMapURL(mapBaseURL),'mapimage');");
+}
 
 //construct the breadcrumbs
 $back = isset($_REQUEST['back']) ? $_REQUEST['back'] : '';
@@ -69,7 +73,8 @@ $page->content_begin();
 		
 		<div id="tabbodies">	
 			<div class="tabbody" id="maptab">
-				<div id="mapscrollers">
+			    <? if ($hasMap) { ?>
+				  <div id="mapscrollers">
 					<div id="nw"><a href="#scrolldown" onclick="scroll('nw'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="NW" /></a></div>
 					<div id="n"><a href="#scrolldown" onclick="scroll('n'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="N" /></a></div>
 					<div id="ne"><a href="#scrolldown" onclick="scroll('ne'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="NE" /></a></div>
@@ -79,14 +84,17 @@ $page->content_begin();
 					<div id="sw"><a href="#scrolldown" onclick="scroll('sw'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="SW" /></a></div>
 					<div id="w"><a href="#scrolldown" onclick="scroll('w'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="W" /></a></div>
 					<img id="loadingimage" src="../Webkit/images/loading2.gif" width="40" height="40" alt="Loading" />
-				</div> <!-- id="mapscrollers" -->
-				<img id="mapimage" width="290" height="190" alt="" onload="hide('loadingimage')" /> 
-				<div id="mapzoom">
+				  </div> <!-- id="mapscrollers" -->
+				  <img id="mapimage" width="290" height="190" alt="" onload="hide('loadingimage')"/> 
+				  <div id="mapzoom">
 					<a href="#" onclick="zoomin(); return false;" id="zoomin"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Zoom In" /></a>
 					<a href="#" onclick="zoomout(); return false;" id="zoomout"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Zoom Out" /></a>
 					<a href="#" onclick="recenter(); return false;" id="recenter" class="disabled"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Recenter" /></a>
 					<a href="detail-fullscreen.php" id="fullscreen"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Full Screen" /></a>
-				</div>
+				  </div>
+			    <? } else { ?>
+				    <img id="mapimage" width="290" height="190" alt="" onload="hide('loadingimage')" src="<?=$imageUrl?>"/> 
+				<? } ?>
 			</div> <!-- id="maptab" -->
 		
 
@@ -133,7 +141,7 @@ $script =<<<JS
 		mapH = objMap.scrollHeight - 2;
 	}
 
-        checkIfMoved();
+    checkIfMoved();
 JS;
 
 $page->footer_script($script);

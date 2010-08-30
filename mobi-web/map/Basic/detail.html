@@ -24,11 +24,12 @@ $page->content_begin();
 			  <a name="map"> </a>
 			  <img src="<?=$imageUrl?>" width="<?=$imageWidth?>" height="<?=$imageHeight?>" alt="Map" />
 		       </p>
+		       <? if ($hasMap) { ?>
 		       <p>
 			  Scroll: <a href="<?=$scrollNorth?>">N</a>&nbsp;|&nbsp;<a href="<?=$scrollSouth?>">S</a>&nbsp;|&nbsp;<a href="<?=$scrollEast?>">E</a>&nbsp;|&nbsp;<a href="<?=$scrollWest?>">W</a><br/>
 			  Zoom: <a href="<?=$zoomInUrl?>">In</a>&nbsp;|&nbsp;<a href="<?=$zoomOutUrl?>">Out</a>
 		      </p>
-                   <? break; case "Photo": ?>
+                   <? } break; case "Photo": ?>
 
 		      <p class="image"><img src="<?=$photoURL?>" width="<?=$photoWidth?>" alt="Photo" /></p>
                  
