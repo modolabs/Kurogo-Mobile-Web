@@ -9,6 +9,7 @@ function toggleSearch() {
     if(searchForm.style.display == "none") {
         searchForm.style.display = null;
         categoryForm.style.display = "none";
+        document.getElementById("search_terms").focus();
     } else {
         searchForm.style.display = "none";
         categoryForm.style.display = null;
