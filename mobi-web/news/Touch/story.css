@@ -36,6 +36,10 @@
     margin-bottom: 15px;
 }
 
+.pager {
+    text-align: center;
+}
+
 .page-button {
     display: inline-block;
     border: 1px solid black;

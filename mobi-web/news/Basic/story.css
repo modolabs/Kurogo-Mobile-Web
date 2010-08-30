@@ -11,6 +11,10 @@
     text-align: center;
 }
 
+.pager {
+    text-align: center;
+}
+
 .byline {
     font-size: 84%;
     color: #666;
