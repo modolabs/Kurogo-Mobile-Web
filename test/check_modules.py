@@ -24,6 +24,8 @@ BASIC_PHONE_USER_AGENT = "LG U880: LG/U880/v1.0"
 import unittest
 import re
 import urllib
+import httplib
+from urlparse import urljoin, urlsplit
 from twill import get_browser
 from twill.commands import *
 
@@ -150,22 +152,33 @@ class TestModulePage(TestModuleBase):
         if imageMatches:
             baseURL = self.browser.get_url()
             imageSet = frozenset(imageMatches)
+            echo(baseURL)
             #echo(imageSet)
             for imageSrc in imageSet:
-                imageSrc = urllib.quote(imageSrc)
-                echo("Checking image: {}".format(imageSrc))
-                try:
-                    # Before going the image, go to the baseURL first, in case 
-                    # the image is using a relative path in its URL.
-                    self.browser.go(baseURL) 
-                    self.browser.go(imageSrc)
-                    self.assertEqual(self.browser.get_code(), 200, 
-                        'The image at {} is not OK. Looking for it resulted in HTTP code: {}'.format(
-                        imageSrc, self.browser.get_code()))
-                except Exception as inst:
-                    self.fail("While checking image {}, encountered exception: {}".format(
-                        [imageSrc, inst]))
-                    
+                self.verify_image(baseURL, imageSrc)
+
+    def verify_image(self, baseURL, imageURL):
+        imageSrc = urllib.quote(imageURL)
+        if imageSrc.find('http://') != 0:
+            # Resolve relative path
+            imageSrc = urljoin(baseURL, imageSrc)
+        echo("Checking image: {}".format(imageSrc))
+        try:                    
+            urlparts = urlsplit(imageSrc)
+            if urlparts.netloc and urlparts.path:
+                conn = httplib.HTTPConnection(urlparts.netloc)
+                echo(urlparts)
+                conn.request("HEAD", urlparts.path)
+                res = conn.getresponse()
+                self.assertEqual(res.status, 200, 
+                    'The image at {} is not OK. Looking for it resulted in HTTP code: {}'.format(
+                    imageSrc, res.status))
+            else:
+                self.fail("The URL for this image is invalid: {}".format(imageSrc))                        
+        except Exception as inst:
+            self.fail("While checking image {}, encountered exception: {}".format(
+                imageSrc, inst))
+        
     # Test helper methods
     def get_page_url(self):
         return self.base_url + '/' + self.module_name + self.location_within_module
@@ -217,7 +230,7 @@ def suite():
         '\"school_name\":\"Harvard\ Business\ School\ -\ MBA\ Program\"'))    
     add_page_tests_for_module('courses', testSuite, 
         {'<title>Courses</title>': 'Could not verify index title.'})
-        
+
     # News
     testSuite.addTest(TestModuleAPI('news', {}, 
         'xmlns:harvard="http://news.harvard.edu/gazette/'))    
@@ -229,7 +242,7 @@ def suite():
         'lunch_restrictions'))    
     add_page_tests_for_module('dining', testSuite, 
         {'<title>Student Dining</title>': 'Could not verify index title.'})
-    
+
     # Links
     add_page_tests_for_module('links', testSuite, 
         {'<title>Schools</title>': 'Could not verify index title.'})
@@ -237,7 +250,7 @@ def suite():
     # Customize
     add_page_tests_for_module('customize', testSuite, 
         {'<title>Customize Home</title>': 'Could not verify index title.'})
-    
+
     # About
     add_page_tests_for_module('mobile-about', testSuite, 
         {'<title>About</title>': 'Could not verify index title.'})
