@@ -15,11 +15,11 @@ body {
 }
 
 a {
-	color: #900;
+	color: #a00;
 }
 
 a:visited {
-	color: #900;
+	color: #a00;
 }
 
 a img {
@@ -112,7 +112,7 @@ ul li {
 	color: #554c41;
 }
 
-#footer .copyright {
+#footer a {
     text-decoration: none;
 	color: #554c41;
 }
