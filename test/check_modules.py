@@ -144,12 +144,15 @@ class TestModulePage(TestModuleBase):
         
     def verify_contents(self):
         for regex, message in self.content_check_dict.iteritems():
-            self.assertRegexpMatches(self.browser.get_html(), regex, message)
+            self.assertRegexpMatches(self.browser.get_html(), regex, 
+                '{}, {}/{}: Content check for the page at {} failed. {}\n'.format(
+                    self.module_name, self.branch, self.platform, 
+                    self.get_page_url(), message))
         
     def verify_images(self):
         # Just checks the images to see if they return 200.
         #echo("Searching this html for images: " + self.browser.get_html())
-        imageMatches = re.findall('<img src="([^"]*)"', self.browser.get_html())
+        imageMatches = re.findall('<img .*?src="([^"]*)"', self.browser.get_html())
         if imageMatches:
             baseURL = self.browser.get_url()
             imageSet = frozenset(imageMatches)
@@ -211,7 +214,13 @@ class TestModulePage(TestModuleBase):
         
 # Test suite functions
 
-def add_page_tests_for_module(module_name, suite, pagesAndContentChecksDict):
+def add_page_tests_for_module(module_name, suite, pagesAndContentChecksDict, 
+    configurations = {
+        BASIC_PHONE_USER_AGENT: ['Basic', ''], 
+        TOUCH_PHONE_USER_AGENT: ['Touch', ''], 
+        MOBILE_SAFARI_USER_AGENT: ['Webkit', ''], 
+        BLACKBERRY_PLUS_USER_AGENT: ['Basic', 'bbplus']}
+    ):
     """Adds a standard group of tests to the test suite for the module. 
     
     pagesAndContentChecksDict: A dictionary:
@@ -226,19 +235,19 @@ def add_page_tests_for_module(module_name, suite, pagesAndContentChecksDict):
             Value: A message to display in the failture log if that regex 
                 doesn't match anything.
     
+    configurations: A dictionary mapping branch/platform pairs to user agents 
+    that should be used for the added tests. Use the default value if you 
+    want to add tests for all of the configurations.
+    
     If you need content checks specific to each branch (Basic, Touch, etc.) 
     of a module index, create the TestModulePage objects directly.        
     """
     
     for page, contentCheckDict in pagesAndContentChecksDict.iteritems():
-        suite.addTest(TestModulePage(module_name, BASIC_PHONE_USER_AGENT, 
-            'Basic', '', contentCheckDict, page))
-        suite.addTest(TestModulePage(module_name, TOUCH_PHONE_USER_AGENT, 
-            'Touch', '', contentCheckDict, page))
-        suite.addTest(TestModulePage(module_name, MOBILE_SAFARI_USER_AGENT, 
-            'Webkit', '', contentCheckDict, page))
-        suite.addTest(TestModulePage(module_name, BLACKBERRY_PLUS_USER_AGENT, 
-            'Basic', 'bbplus', contentCheckDict, page))
+        for useragent, branch_platform_pair in configurations.iteritems():
+            suite.addTest(TestModulePage(module_name, useragent, 
+                branch_platform_pair[0], branch_platform_pair[1], 
+                contentCheckDict, page))
 
 def suite():
     """Builds the test suite to be run by this script."""
@@ -259,6 +268,7 @@ def suite():
             {'If you are a member of the Harvard community concerned about your privacy settings':
             'Help page privacy clause not found.'}
     })
+    
     # Map    
     testSuite.addTest(TestModuleAPI('map', {'q': '1737', 'command': 'search'}, 
         '\"Building\ Name\":\"KNAFEL\ BUILDING\"'))    
@@ -268,28 +278,79 @@ def suite():
             'Could not verify index title.'},
         '/search.php?filter=knafel&x=0&y=0':
             {'1737&shy; CAMBRIDGE&shy; ST':
-            'Could not find the Knafel building.'}
+            'Could not find the Knafel building.'},
+        '/?category=Libraries.0':
+            {'UNIVERSITY HERBARIA':
+            'Could not find the Herbaria in the libraries category.'},
+        '/?category=Dining.0':
+            {'Barker Rotunda':
+            'Could not find the Barker Rotunda in the dining category.'},
+        '/detail.php?selectvalues=CRONKHITE+CENTER&category=Housing.2&info%5BBuilding+Name%5D=CRONKHITE+CENTER&info%5BAddress%5D=84-86+BRATTLE+ST&info%5BCity%5D=Cambridge&info%5BEligibility%5D=GSE%2C+GSD%2C+GSAS%2C+HDS%2C+KSG&info%5BMore+Info%5D=http%3A%2F%2Fradcliffe.harvard.edu%2Fabout%2Fhousing.aspx&info%5BHousing+Type%5D=Radcliffe+Institute&info%5BPhoto%5D=03022+CRONKHITE+GRADUATE+CENTER+NW+obl+020607.png&back=Browse':
+            {'84-86(&shy;)* BRATTLE(&shy;)* ST':
+            'Could not find the map of CRONKHITE CENTER.'},
+        '/help.php':
+            {'Search for buildings by short or long name':
+            'Help text could not be found.'}
     })
 
-    """
     # Calendar
     testSuite.addTest(TestModuleAPI('calendar', {'command': 'categories'}, 
         'Special\ Events'))    
-    add_page_tests_for_module('calendar', testSuite, 
-        {'<title>Events</title>': 'Could not verify index title.'})
+    add_page_tests_for_module('calendar', testSuite, {
+        '/':
+            {'<title>Events</title>': 
+            'Could not verify index title.'},
+        '/day.php?time=1283270400&type=events':
+            {'<a href="day.php\?time=\d+&type=events">.* | <a href="day.php\?time=\d+&type=events">': 
+            'Could not find next day and previous day links.'},
+        '/categorys.php':
+            {'<a href="category.php\?id=41150&name=Special\+Events">Special Events</a>': 
+            'Could not find Special Events category link.'},
+        '/category.php?id=41150&name=Special+Events':
+            {}, # Nothing we can count on being in the page, so just make sure the page is there.
+        '/academic.php?year=2010':
+            {'Martin Luther King Day': 
+            'Could not find Martin Luther King Day in academic calendar.'}
+    })
     
     # Courses 
     testSuite.addTest(TestModuleAPI('courses', {'command': 'courses'}, 
         '\"school_name\":\"Harvard\ Business\ School\ -\ MBA\ Program\"'))    
-    add_page_tests_for_module('courses', testSuite, 
-        {'<title>Courses</title>': 'Could not verify index title.'})
+    add_page_tests_for_module('courses', testSuite, {
+        '/':
+            {'<title>Courses</title>': 
+            'Could not verify index title.'},
+        '/searchMain.php?filter=differential+equations&courseGroup=&courseName=&sch_btn=Search':
+            {}, # Nothing we can count on being in the page, so just make sure the page is there.
+        '/detail.php?back=Search&id=d_dce_1011_1_MATH_E-15_10436&courseGroup=Harvard+Extension+School&courseGroupShort=Continuing+Education&courseName=&courseNameShort=&filter=calculus':
+            {'<h2>MATH E-15: Introduction to the Calculus A</h2>': 
+            'Could not find the name of the course.'},
+        '/course.php?back=&id=Law&idShort=Law&courseGroup=Harvard+Law+School&courseGroupShort=Law':
+            {'<a href="detail.php': 
+            'Could not find a link to a law course.'} 
+    })
 
     # News
     testSuite.addTest(TestModuleAPI('news', {}, 
         'xmlns:harvard="http://news.harvard.edu/gazette/'))    
-    add_page_tests_for_module('news', testSuite, 
-        {'<title>News</title>': 'Could not verify index title.'})
-        
+    add_page_tests_for_module('news', testSuite, {
+        '/':
+            {'<title>News</title>': 
+            'Could not verify index title.'},
+        '/index.php?category_id=0&category_seek_id=52703&category_seek_direction=forward':
+            {},
+            #{'(>Previous (S|s)tories<)':
+            #'Could not find Previous Stories link.'},
+        '/index.php?category_id=5':
+            {'>Athletics</':
+            'Could not find the Athletics category header.'},
+        '/?search_terms=harvard&category_id=0&category_seek_direction=forward':
+            {'href="story\.php':
+            'Could not find a single story link after searching for "Harvard".'}
+        })
+        # TODO: Check a story itself.
+
+    """
     # Dining
     testSuite.addTest(TestModuleAPI('dining', {'command': 'hours'}, 
         'lunch_restrictions'))    
