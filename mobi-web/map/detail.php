@@ -160,6 +160,19 @@ if ($tab == 'Map') {
   $mapOptions = '&' . http_build_query(array(
     'crs' => 'EPSG:2249',
     ));
+    
+  
+  $hasMap = true;
+  if (!$bbox) {
+    $hasMap = false;
+    $bbox = array(
+        'xmin' => 0,
+        'ymax' => 0,
+        'ymin' => 0,
+        'xmax' => 0,
+    );
+  }
+
 }
 
 $selectvalue = $_REQUEST['selectvalues'];

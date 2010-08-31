@@ -15,11 +15,11 @@ body {
 }
 
 a {
-	color: #900;
+	color: #a00;
 }
 
 a:visited {
-	color: #900;
+	color: #a00;
 }
 
 a img {
@@ -117,12 +117,17 @@ ul li {
 	margin: 1.5em 0;
 	font-size: 79%;
 	line-height: 1.33em;
-	color: #666;
+	color: #554c41;
 }
-#footer .copyright {
+#footer a {
     text-decoration: none;
-	color: #666;
+	color: #554c41;
 }
+#footer a:hover {
+	color: #a00;
+}
+
+
 /* Forms */
 
 form {
@@ -137,7 +142,7 @@ fieldset {
 }
 
 .combobutton {
-	background-color: #900;
+	background-color: #a00;
 	color: #fff;
 	font-size: x-small;
 }

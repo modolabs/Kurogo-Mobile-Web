@@ -3,6 +3,33 @@ li.story {
     padding: 1px;
     padding-right: 10px;
     overflow: hidden;
+    position: relative;
+}
+.results li.story a {
+    overflow: hidden;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    height: 70pt;
+}
+.results li.story a .ellipsis {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 3px 25px 3px 0;
+    color: #554C41;
+    font-size: 14px;
+    line-height: 20px;
+    padding-bottom: .25em;
+    height: 64pt;
+}
+
+.results li.story a .title {
+    color: #333;
+    font-size: 17px;
+    padding-bottom: .25em;
 }
 
 .thumbnail {
@@ -74,7 +101,7 @@ form {
 .header form select {
     line-height: normal;
     padding: 4px 6px;
-    font-size: 16px;
+    font-size: 15px;
 }
 #search-form .toggle-search-button {
 }
@@ -90,13 +117,9 @@ form {
 }
 
 .newsinput  {
-	font-size: 89%;
 	width: 200px;
 }
 
 .search-field, select {
 }
 
-select, .submit-search {
-    font-size: 16px;
-}

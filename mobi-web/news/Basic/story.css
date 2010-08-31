@@ -20,3 +20,8 @@
 	font: 120%/1.25em Georgia, serif;
     color: #554c41;
 }
+
+.wp-caption {
+    width: auto !important;
+    font-size: 84%;
+}

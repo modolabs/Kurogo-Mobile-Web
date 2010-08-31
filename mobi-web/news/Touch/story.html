@@ -35,32 +35,33 @@ $page->content_begin();
         <? } ?>
     <? } ?>
 
-    <?=$story_page->getText()?>
-
-    <? if($total_page_count > 1) { ?>
-        Page:
-        <? if($previous_page_url) { ?>
-            <a href="<?=$previous_page_url?>" class="page-button">&lt;</a>
-        <? } ?>
-
-        <? for($i = 0; $i < $total_page_count; $i++) { ?>
-            <a
-                href="<?=$newsURL->storyURL($story, $i)?>"
-                <? if($page_number == $i) { ?>
-                    class="page-button selected"
-                <? } else { ?>
-                    class="page-button"
+    <? if(isset($_REQUEST['allpages']) && $_REQUEST['allpages']) {  ?>
+          <?=$all_pages; ?>
+          <div class="pager">
+            <a href="<?=$newsURL->storyURL($story, 0)?>">View in Pages</a>
+          </div>
+    <? } else { ?>
+        <?=$story_page->getText(); ?>
+        <? if($total_page_count > 1) { ?>
+              <div class="pager">
+                Page:
+                <? if($previous_page_url) { ?>
+                    <a href="<?=$previous_page_url?>" class="page-button">&lt;</a>
                 <? } ?>
-
-                >
-                    <?=$i+1?>
-            </a>
-        <? } ?>
-
-        <? if($next_page_url) { ?>
-            <a href="<?=$next_page_url?>" class="page-button">&gt;</a>
-        <? } ?>
-     <? } ?>
+                <? for($i = 0; $i < $total_page_count; $i++) { ?>
+                    <? if($page_number == $i) { ?>
+                        <?=$i+1?>
+                    <? } else { ?>
+                        <a href="<?=$newsURL->storyURL($story, $i)?>"><?=$i+1?></a>
+                    <? } ?>
+                <? } ?>
+                <? if($next_page_url) { ?>
+                    &nbsp;&nbsp;<a href="<?=$next_page_url?>" class="page-button">&gt;</a>
+                <? } ?>
+                   <br/><br/><a href="<?=$newsURL->storyURL($story, 0).'&allpages=1'?>">Read Full Article</a>
+              </div>
+          <? } ?>
+    <? } ?>
     
 </div>
 

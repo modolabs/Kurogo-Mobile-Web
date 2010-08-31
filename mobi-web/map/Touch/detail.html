@@ -37,11 +37,13 @@ case 'Map': ?>
 	<div class="tabbody centered">
 		<a name="scrolldown"> </a>
 		<img id="mapimage" width="<?=$imageWidth?>" height="<?=$imageHeight?>" alt="Map" src="<?=$imageUrl?>" lowsrc="../../images/touch/loading3.gif" /> 
+	    <? if ($hasMap) { ?>
 		<div class="zoomlinks">
 			Zoom: <a href="<?=$zoomInUrl?>">In</a>&nbsp;|&nbsp;<a href="<?=$zoomOutUrl?>">Out</a>
 			<br/>
 			Scroll: <a href="<?=$scrollNorth?>">N</a>&nbsp;|&nbsp;<a href="<?=$scrollSouth?>">S</a>&nbsp;|&nbsp;<a href="<?=$scrollEast?>">E</a>&nbsp;|&nbsp;<a href="<?=$scrollWest?>">W</a><br/>
 		</div>
+		<? } ?>
     </div>
 <?
   break;

@@ -50,3 +50,8 @@
     background-color: #CECECE;
 }
 
+.wp-caption {
+    width: auto !important;
+    font-size: 84%;
+    line-height: 1.2em;
+}
