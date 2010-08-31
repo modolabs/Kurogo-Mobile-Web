@@ -26,7 +26,7 @@ import unittest
 import re
 import urllib
 import httplib
-from urlparse import urljoin, urlsplit
+from urlparse import urljoin, urlsplit, urlunsplit
 from twill import get_browser
 from twill.commands import *
 
@@ -159,49 +159,86 @@ class TestModulePage(TestModuleBase):
                 self.verify_image(baseURL, imageSrc)
 
     def verify_image(self, baseURL, imageURL):
-        imageSrc = urllib.quote(imageURL)
-        if imageSrc.find('http://') != 0:
+        fullImageURL = imageURL
+        if not urlsplit(imageURL).scheme:
             # Resolve relative path
-            imageSrc = urljoin(baseURL, imageSrc)
-        echo("Checking image: {}".format(imageSrc))
-        try:                    
-            urlparts = urlsplit(imageSrc)
-            if urlparts.netloc and urlparts.path:
+            fullImageURL = urljoin(baseURL, imageURL)
+
+        echo("Checking image: {}".format(fullImageURL))
+        urlparts = urlsplit(fullImageURL)
+        escapedparts = self.get_escaped_address_parts_minus_host(urlparts)
+        
+        if urlparts.netloc and urlparts.path:
+            try:                    
                 conn = httplib.HTTPConnection(urlparts.netloc)
-                echo(urlparts)
-                conn.request("HEAD", urlparts.path)
+                conn.request("HEAD", urlunsplit(escapedparts))
+                echo("Going to path: {}\n".format(urlunsplit(escapedparts)))
                 res = conn.getresponse()
-                self.assertEqual(res.status, 200, 
-                    'The image at {} is not OK. Looking for it resulted in HTTP code: {}'.format(
-                    imageSrc, res.status))
-            else:
-                self.fail("The URL for this image is invalid: {}".format(imageSrc))                        
-        except Exception as inst:
-            self.fail("While checking image {}, encountered exception: {}".format(
-                imageSrc, inst))
+            except Exception as inst:
+                self.fail("While checking image {}, encountered exception: {}".format(
+                    fullImageURL, inst))
+                    
+            self.assertEqual(res.status, 200, 
+                'The image at {} is not OK. Looking for it resulted in HTTP code: {}'.format(
+                    urlunsplit([urlparts.scheme, urlparts.netloc, escapedparts[2], 
+                        escapedparts[3], escapedparts[4]]), 
+                    res.status))
+        else:
+            self.fail("The URL for this image is invalid: {}".format(fullImageURL))
         
     # Test helper methods
     def get_page_url(self):
         return self.base_url + '/' + self.module_name + self.location_within_module
 
-
+    def get_escaped_address_parts_minus_host(self, urlsplitparts):
+        """
+        Takes the result of urlsplitting something like 'http://hostname.com/path/?querysting=args 
+        and returns the parts corresponding to just path/?querysting=args, with appropriate parts safely 
+        escaped.
+        
+        urlpartslist: urlparse.SplitResult.
+        """
+        urlpartscopy = list(urlsplitparts)
+        for i in range(5):
+            if i < 2:
+                # Drop the scheme and netloc from the copy.
+                urlpartscopy[i] = ''
+            else:
+                if i == 2:
+                    # Make sure this part is escaped properly.
+                    urlpartscopy[i] = urllib.quote(urlpartscopy[i]) 
+        return urlpartscopy
+        
 # Test suite functions
 
-def add_page_tests_for_module(module_name, suite, contentCheckDict):
+def add_page_tests_for_module(module_name, suite, pagesAndContentChecksDict):
     """Adds a standard group of tests to the test suite for the module. 
     
-    If you need differing content checks for each branch (Basic, Touch, etc.) 
-    of a module index or need to test pages other than the module index, create 
-    the TestModulePage objects directly.
+    pagesAndContentChecksDict: A dictionary:
+    
+        Key: Addresses local to the module. (e.g. 'help.php' in the module people 
+        would point to http://m.harvard.edu/people/help.php)
+        
+        Value: A dictionary that details what to check for in the output:
+        
+            Key: A regex to run against the html from the loaded page.
+            
+            Value: A message to display in the failture log if that regex 
+                doesn't match anything.
+    
+    If you need content checks specific to each branch (Basic, Touch, etc.) 
+    of a module index, create the TestModulePage objects directly.        
     """
-    suite.addTest(TestModulePage(module_name, BASIC_PHONE_USER_AGENT, 
-        'Basic', '', contentCheckDict))
-    suite.addTest(TestModulePage(module_name, TOUCH_PHONE_USER_AGENT, 
-        'Touch', '', contentCheckDict))
-    suite.addTest(TestModulePage(module_name, MOBILE_SAFARI_USER_AGENT, 
-        'Webkit', '', contentCheckDict))
-    suite.addTest(TestModulePage(module_name, BLACKBERRY_PLUS_USER_AGENT, 
-        'Basic', 'bbplus', contentCheckDict))
+    
+    for page, contentCheckDict in pagesAndContentChecksDict.iteritems():
+        suite.addTest(TestModulePage(module_name, BASIC_PHONE_USER_AGENT, 
+            'Basic', '', contentCheckDict, page))
+        suite.addTest(TestModulePage(module_name, TOUCH_PHONE_USER_AGENT, 
+            'Touch', '', contentCheckDict, page))
+        suite.addTest(TestModulePage(module_name, MOBILE_SAFARI_USER_AGENT, 
+            'Webkit', '', contentCheckDict, page))
+        suite.addTest(TestModulePage(module_name, BLACKBERRY_PLUS_USER_AGENT, 
+            'Basic', 'bbplus', contentCheckDict, page))
 
 def suite():
     """Builds the test suite to be run by this script."""
@@ -211,15 +248,30 @@ def suite():
     # People    
     testSuite.addTest(TestModuleAPI('people', 
         {'q': 'roger brockett', 'command': 'search'}, 'Brockett'))        
-    add_page_tests_for_module('people', testSuite, 
-        {'<title>People</title>': 'Could not verify index title.'})
-
+    add_page_tests_for_module('people', testSuite, {
+        '/': 
+            {'<title>People</title>': 
+            'Could not verify index title.'},
+        '/index.php?filter=brockett&sch_btn=Search': 
+            {'<(span|div) class=\"value\">An Wang Professor of Electrical Engineering and Computer Science</(span|div)>': 
+            'Search for brockett failed.'},
+        '/help.php':
+            {'If you are a member of the Harvard community concerned about your privacy settings':
+            'Help page privacy clause not found.'}
+    })
     # Map    
     testSuite.addTest(TestModuleAPI('map', {'q': '1737', 'command': 'search'}, 
         '\"Building\ Name\":\"KNAFEL\ BUILDING\"'))    
-    add_page_tests_for_module('map', testSuite, 
-        {'<title>Map</title>': 'Could not verify index title.'})
+    add_page_tests_for_module('map', testSuite, {
+        '/':
+            {'<title>Map</title>': 
+            'Could not verify index title.'},
+        '/search.php?filter=knafel&x=0&y=0':
+            {'1737&shy; CAMBRIDGE&shy; ST':
+            'Could not find the Knafel building.'}
+    })
 
+    """
     # Calendar
     testSuite.addTest(TestModuleAPI('calendar', {'command': 'categories'}, 
         'Special\ Events'))    
@@ -255,7 +307,7 @@ def suite():
     # About
     add_page_tests_for_module('mobile-about', testSuite, 
         {'<title>About</title>': 'Could not verify index title.'})
-    
+    """
     return testSuite
 
 
