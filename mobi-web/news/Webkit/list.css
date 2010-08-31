@@ -74,7 +74,7 @@ form {
 .header form select {
     line-height: normal;
     padding: 4px 6px;
-    font-size: 16px;
+    font-size: 15px;
 }
 #search-form .toggle-search-button {
 }
@@ -90,13 +90,9 @@ form {
 }
 
 .newsinput  {
-	font-size: 89%;
 	width: 200px;
 }
 
 .search-field, select {
 }
 
-select, .submit-search {
-    font-size: 16px;
-}
