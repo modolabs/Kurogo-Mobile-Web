@@ -1,5 +1,6 @@
 		body {
-			background: #e3ddd1 url("/Webkit/images/background-tile.jpg") repeat-x;
+			background-color: #ded8c9;
+			background: url(../Webkit/images/background-tile.jpg) top right repeat-x, url(../Webkit/images/background-tile-2.jpg) bottom left repeat;
 		}
 		#homegrid {
 			margin: 0 auto;

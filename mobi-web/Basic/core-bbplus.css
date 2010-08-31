@@ -133,12 +133,16 @@ ul li {
 	margin: 1.5em 0;
 	font-size: 86%;
 	line-height: 1.33em;
-	color: #666;
+	color: #554c41;
 }
 
-#footer .copyright {
+#footer a {
     text-decoration: none;
-	color: #666;
+	color: #554c41;
+}
+
+#footer a:hover {
+	color: #a00;
 }
 
 /* Forms */
