@@ -558,6 +558,7 @@ List of Services Used
   * For searches initiated via the Courses module, the query is str=<text>&loc=course
   * For all other searches, the query is str=<text>&fmt=json
 
+* Building photo server (http://map.harvard.edu/mapserver/images/bldg_photos/)
 * CampusMap ArcGIS Service
 
   * Service information (http://upo-srv2.cadm.harvard.edu/ArcGIS/rest/services/CampusMap/MapServer?f=json)
