@@ -15,6 +15,14 @@ The Courses module provides an interface to the university-wide course catalog f
 Schools and Department/Programs
 =================================
 
+The list of schools and departments/programs within each school is requested by the iPhone app as soon as the application is launched (and if the schools are not cached on the iPhone itself):
+
+    http://m.harvard.edu/api/?module=courses&command=courses
+
+This
+
+
+
 ============
 Class Lists
 ============
