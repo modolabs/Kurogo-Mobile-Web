@@ -46,7 +46,7 @@ if ($url_params['service'] == 'web') {
     );
 } else { // api
   $graphs = array(
-    summary_total(PageViews::count_iphone_tokens(), "total", "active users"),
+    //summary_total(PageViews::count_iphone_tokens(), "total", "active users"),
     summary_total($all_data, "total", "total API requests"),
     trend($all_data, "total", 
 	    'API Requests by ' . ucfirst($url_params['interval']), 

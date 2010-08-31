@@ -37,7 +37,7 @@ These categories are then cached on the iPhone itself and future networks calls 
 
 -------------------------
 Today's Events
-------------------------
+-------------------------
 
 For any given day, the server call to retrieve that particular day's events is:
     http://m.harvard.edu/api/?type=Events&time=1283281315&module=calendar&command=day
@@ -175,7 +175,7 @@ The server then parses this data and returns it back to the iPhone in the follow
 
 -------------------------
 Today's Events
-------------------------
+-------------------------
 
 When the "Today's Events" link is clicked, or another day in the past or future is selected, the following call is made:
     http://m.harvard.edu/calendar/day.php?time=1283184000&type=events
