@@ -14,8 +14,8 @@ $device_names = Array(
   );
 
 $device_apps = Array(
-  'bbplus' => 'media/HarvardBBLauncher.jad',
-  'blackberry' => 'media/HarvardBBLauncher.jad',
+  'bbplus' => 'media/HarvardBBLauncher1.jad',
+  'blackberry' => 'media/HarvardBBLauncher1.jad',
   );
 
 $device_instructions = Array(
