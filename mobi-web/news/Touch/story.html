@@ -38,7 +38,7 @@ $page->content_begin();
     <? if(isset($_REQUEST['allpages']) && $_REQUEST['allpages']) {  ?>
           <?=$all_pages; ?>
           <div class="pager">
-            <a href="<?=$newsURL->storyURL($story, 0)?>">Back to Paged View</a>
+            <a href="<?=$newsURL->storyURL($story, 0)?>">View in Pages</a>
           </div>
     <? } else { ?>
         <?=$story_page->getText(); ?>
