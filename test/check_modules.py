@@ -253,7 +253,7 @@ def suite():
     """Builds the test suite to be run by this script."""
     
     testSuite = unittest.TestSuite()
-
+    """
     # People    
     testSuite.addTest(TestModuleAPI('people', 
         {'q': 'roger brockett', 'command': 'search'}, 'Brockett'))        
@@ -349,26 +349,48 @@ def suite():
             'Could not find a single story link after searching for "Harvard".'}
         })
         # TODO: Check a story itself.
-
-    """
     # Dining
     testSuite.addTest(TestModuleAPI('dining', {'command': 'hours'}, 
         'lunch_restrictions'))    
-    add_page_tests_for_module('dining', testSuite, 
-        {'<title>Student Dining</title>': 'Could not verify index title.'})
+    add_page_tests_for_module('dining', testSuite, {
+        '/':
+            {'<title>Student Dining</title>': 
+            'Could not verify index title.',
+            '<a href="index.php\?time=\d+(&tab=locations)*">.*\w|(&nbsp;)|\w|(&nbsp;)<a href="index.php\?time=\d+(&tab=locations)*">': 
+            'Could not find next day and previous day links.'},
+        '/detail.php?location=Adams':
+            {'<h3>Interhouse Restrictions</h3>':
+            'Could not find Interhouse Restrictions.'},
+        '/help.php':
+            {'The student dining home screen shows you the menu for the current or upcoming meal available in Harvard&apos;s dining halls.':
+            'Could not find help text.'}
+    })
 
-    # Links
-    add_page_tests_for_module('links', testSuite, 
-        {'<title>Schools</title>': 'Could not verify index title.'})
-        
-    # Customize
-    add_page_tests_for_module('customize', testSuite, 
-        {'<title>Customize Home</title>': 'Could not verify index title.'})
-
-    # About
-    add_page_tests_for_module('mobile-about', testSuite, 
-        {'<title>About</title>': 'Could not verify index title.'})
     """
+    # Links
+    add_page_tests_for_module('links', testSuite, {
+        '/':
+            {'<title>Schools</title>': 'Could not verify index title.'}
+        })
+    # Customize
+    add_page_tests_for_module('customize', testSuite, {
+        '/':
+            {'<title>Customize Home</title>': 'Could not verify index title.'}
+        })
+        
+    # About
+    add_page_tests_for_module('mobile-about', testSuite, {
+        '/':
+            {'<title>About</title>': 
+            'Could not verify index title.'},
+        '/?page=about_site':
+            {'The Harvard mobile web application is part of a broader initiative':
+            'Could not find about site text.'},
+        '/?page=about':
+            {'Established in 1636, Harvard is the oldest institution':
+            'Could not find about Harvard text.'}
+        })
+
     return testSuite
 
 
