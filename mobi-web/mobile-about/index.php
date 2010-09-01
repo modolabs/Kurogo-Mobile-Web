@@ -7,11 +7,6 @@ $pageParam = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
 
 switch($pageParam) {
 
-  // dynamic cases
-  case "statistics":
-    require "statistics.php";
-    break;
-
   // static cases
   case "about":
   case "about_site":
