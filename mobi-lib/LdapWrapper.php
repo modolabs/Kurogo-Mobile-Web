@@ -93,11 +93,19 @@ class LdapPerson {
       $result = $ldapEntry[$ldapKey];
       // Sometimes LDAP returns duplicate values for one field, but we don't want to send 
       // duplicate values back to the client.
-      $result = array_unique($result);
+      //
+      // Note: array_unique does not re-arrange the indexing. So the unique values must be manually copied over
+      $new_result = array_unique($result);
+      $result = array(); // critical to re-declare the array here.
+      unset($new_result["count"]);
+      $unique_index = 0;
+      foreach($new_result as $index => $val) {
+            $result[$unique_index] = $val;
+            $unique_index++;
+      }
       
       if ($result !== NULL) {
-        unset($result["count"]);
-        foreach ($result as $index => $value) {
+        foreach ($result as $index => $value) {            
           $result[$index] = ldap_decode(htmlentities($value));
         }
         return $result;
