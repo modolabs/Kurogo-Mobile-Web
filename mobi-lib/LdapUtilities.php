@@ -1,5 +1,12 @@
 <?php
 
+/****************************************************************
+ *
+ *  Copyright 2010 The President and Fellows of Harvard College
+ *  Copyright 2010 Modo Labs Inc.
+ *
+ *****************************************************************/
+
 // search string templates
 define("SEARCH_TIMELIMIT", 30);
 define("READ_TIMELIMIT", 30);
