@@ -253,7 +253,7 @@ def suite():
     """Builds the test suite to be run by this script."""
     
     testSuite = unittest.TestSuite()
-    """
+
     # People    
     testSuite.addTest(TestModuleAPI('people', 
         {'q': 'roger brockett', 'command': 'search'}, 'Brockett'))        
@@ -366,7 +366,6 @@ def suite():
             'Could not find help text.'}
     })
 
-    """
     # Links
     add_page_tests_for_module('links', testSuite, {
         '/':
