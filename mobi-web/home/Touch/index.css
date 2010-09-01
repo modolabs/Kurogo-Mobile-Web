@@ -245,3 +245,15 @@ form h3 {
 	margin-bottom: 0;
 	font-size: 100%;
 }
+#download {
+	text-align: left;
+	clear: both;
+	padding: 10px 5px 5px 5px;
+}
+#download a {
+	color: #333;
+	text-decoration: none;
+}
+#download a:hover {
+	color: #a00;
+}
