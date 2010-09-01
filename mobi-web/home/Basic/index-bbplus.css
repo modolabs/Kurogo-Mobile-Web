@@ -33,11 +33,14 @@ a img {
 	font-size: 78%;
 	line-height: 1.1em;
 	font-weight: normal;
-	color: #303639;
+	color: #554c41;
 }
-#footer .copyright {
+#footer a {
     text-decoration: none;
-	color: #303639;
+	color: #554c41;
+}
+#footer a:hover {
+	color: #a00;
 }
 
 h1 {
@@ -147,12 +150,6 @@ h1 {
 	top: 0;
 	right: 0;
 }
-#footer {
-	margin-top: 0;
-	padding-top: 30px;
-	text-align: left;
-	clear: both;
-}
 #viewfull {
 	text-align: center;
 	margin: 14px 0;
@@ -170,4 +167,16 @@ h1 {
 	width: 100%;
 	padding: 4px;
 	border: 2px solid #554c41;
+}
+#download {
+	text-align: left;
+	clear: both;
+	padding: 40px 10px 20px 10px;
+}
+#download a {
+	color: #333;
+	text-decoration: none;
+}
+#download a:hover {
+	color: #a00;
 }

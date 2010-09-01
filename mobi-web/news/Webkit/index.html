@@ -3,10 +3,13 @@ $page->title("News")
      ->navbar_image("news")
      ->generate_navigation($newsURL->breadCrumbs("News", "Search"))
      ->add_stylesheet("Webkit/list")
+     ->add_javascript("Webkit/ellipsis")
      ->add_javascript("Webkit/home")
      ->not_scalable();
 
 $page->content_begin();
+
+$ellipsisCount = 0;
 ?>
 
 <div class="header">
@@ -35,7 +38,7 @@ $page->content_begin();
                 <table border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td class="formlabel">Search:</td>
-                    <td class="inputfield"><input class="newsinput search-field" type="text" name="search_terms"/></td>
+                    <td class="inputfield"><input class="newsinput search-field" type="text" id="search_terms" name="search_terms"/></td>
                     <td class="togglefield"><input type="button" class="toggle-search-button"  onclick="return toggleSearch();" value="Cancel" /></td>
                   </tr>
                 </table>
@@ -66,8 +69,10 @@ $page->content_begin();
                     <img class="thumbnail" src="news-placeholder.png" />
                 <? } ?>
                      <a href="<?=$newsURL->storyURL($story)?>">
-                        <?=$story["title"]?><br />
-                        <span class="smallprint"><?=webkit_deck($story)?></span>
+                        <div class="ellipsis" id="ellipsis_<?=$ellipsisCount++?>">
+                          <div class="title"><?=$story["title"]?></div>
+                          <?=$story['description']?>
+                        </div>
                      </a>
             </li>
         <? } ?>

@@ -14,13 +14,13 @@ $device_names = Array(
   );
 
 $device_apps = Array(
-  'bbplus' => 'media/HarvardBBLauncher.jad',
-  'blackberry' => 'media/HarvardBBLauncher.jad',
+  'bbplus' => 'media/HarvardBBLauncher1.jad',
+  'blackberry' => 'media/HarvardBBLauncher1.jad',
   );
 
 $device_instructions = Array(
-  'bbplus' => 'On the next screen, click "Download", and "OK" or "Run" once the download is complete.',
-  'blackberry' => 'On the next screen, click "Download", and "OK" or "Run" once the download is complete.',
+  'bbplus' => 'On the next screen, click "Download", and "OK" or "Run" once the download is complete. Once you\'ve installed the shortcut, it will appear on your BlackBerry home screen or in the Downloads folder.',
+  'blackberry' => 'On the next screen, click "Download", and "OK" or "Run" once the download is complete. Once you\'ve installed the shortcut, it will appear on your BlackBerry home screen or in the Downloads folder.',
   );
 
 $download_items = Array(

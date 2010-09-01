@@ -4,12 +4,11 @@ $page->title('Download')
 
 $page->content_begin();
 ?>
-
-	<p class="nonfocal">Click the link below to download the <?= SITE_NAME ?> <?=$download_item?> to your <?=$device_name?>.</p>
-
-	<div class="focal">
-		Instructions: <?=$instructions?><br />
-		<a href="<?=$download_url?>">Click here to begin</a><br />
-	</div>
+	<p class="nonfocal">Add a shortcut to your <?=$device_name?>'s home screen to get one-click access to the Harvard Mobile Web.</p>
+	
+	<p class="focal">
+		Instructions: <?=$instructions?><br/><br/>
+		<a href="<?=$download_url?>">Click here to begin</a>
+	</p>
 
 <? $page->content_end(); ?>

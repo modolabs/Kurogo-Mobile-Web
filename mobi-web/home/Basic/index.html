@@ -54,7 +54,12 @@
 <? } ?>
 </p>
 </div>
-<p class="bb"> </p>
+
+<? if (($page->platform == 'bb') || ($page->platform == 'blackberry')) { ?>
+<div id="download"><a href="../download/"><img src="Basic/images/download-bbplus.png" width="32" height="26" alt="Download" align="absmiddle" />Add the BlackBerry shortcut to your home screen</a><br /></div>
+<? } ?>
+
+<p class="bb"></p>
 
 <p class="fontsize">
 Font size: <?=$page->font_selector()?>
