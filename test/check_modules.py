@@ -1,4 +1,12 @@
 """
+
+/****************************************************************
+ *
+ *  Copyright 2010 The President and Fellows of Harvard College
+ *  Copyright 2010 Modo Labs Inc.
+ *
+ ****************************************************************/
+
 These tests require:
 
 - Twill (http://twill.idyll.org/)
@@ -16,10 +24,10 @@ BASE_URL = "http://mobile-dev.harvard.edu"
 #BASE_URL = "http://m.harvard.edu"
 
 MOBILE_SAFARI_USER_AGENT = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_3 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7E18 Safari/528.16"
+# This is the BlackBerry Storm.
 TOUCH_PHONE_USER_AGENT = "BlackBerry9530/4.7.0.167 Profile/MIDP-2.0 Configuration/CLDC-1.1 VendorID/102 UP.Link/6.3.1.20.0 BlackBerry9530/5.0.0.328 Profile/MIDP-2.1 Configuration/CLDC-1.1 VendorID/105"
 BLACKBERRY_PLUS_USER_AGENT = "BlackBerry9630/4.7.1.40 Profile/MIDP-2.0 Configuration/CLDC-1.1 VendorID/104"
 BASIC_PHONE_USER_AGENT = "LG U880: LG/U880/v1.0"
-
 
 from sys import exit
 import unittest
@@ -256,7 +264,8 @@ def suite():
 
     # People    
     testSuite.addTest(TestModuleAPI('people', 
-        {'q': 'roger brockett', 'command': 'search'}, 'Brockett'))        
+        {'q': 'roger brockett', 'command': 'search'}, 'Brockett'))
+        # TODO: More API tests.
     add_page_tests_for_module('people', testSuite, {
         '/': 
             {'<title>People</title>': 
@@ -299,8 +308,10 @@ def suite():
     add_page_tests_for_module('calendar', testSuite, {
         '/':
             {'<title>Events</title>': 
-            'Could not verify index title.'},
-        '/day.php?time=1283270400&type=events':
+            'Could not verify index title.',
+            # TODO: Academic calendar link, really all the links.
+            },
+        '/day.php?time=\d+&type=events':
             {'<a href="day.php\?time=\d+&type=events">.* | <a href="day.php\?time=\d+&type=events">': 
             'Could not find next day and previous day links.'},
         '/categorys.php':
@@ -390,6 +401,21 @@ def suite():
             'Could not find about Harvard text.'}
         })
 
+    # Home
+    add_page_tests_for_module('home', testSuite, {
+        '/':
+            {'<title>Harvard Mobile Web</title>': 
+            'Could not verify index title.'},
+        })
+    # Check for BlackBerry shortcut link only for BlackBerry platforms.
+    add_page_tests_for_module('home', testSuite, {
+        '/':
+            {'Add the BlackBerry shortcut to your home screen': 
+            'Could not find BlackBerry shortcut link.'}},
+        { 
+            TOUCH_PHONE_USER_AGENT: ['Touch', ''], 
+            BLACKBERRY_PLUS_USER_AGENT: ['Basic', 'bbplus']})
+
     return testSuite
 
 
@@ -397,7 +423,7 @@ if __name__ == '__main__':
     suite = suite()
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     if result.wasSuccessful():
-        exit(1)
-    else:
         exit(0)
+    else:
+        exit(1)
 

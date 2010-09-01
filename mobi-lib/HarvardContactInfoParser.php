@@ -1,5 +1,12 @@
 <?php
 
+/****************************************************************
+ *
+ *  Copyright 2010 The President and Fellows of Harvard College
+ *  Copyright 2010 Modo Labs Inc.
+ *
+ *****************************************************************/
+
 /**** Splits the "contact info" field of events out into individual "email", "phone", "link", and "text"
  * fields for ease of display in mobile app.
  */
