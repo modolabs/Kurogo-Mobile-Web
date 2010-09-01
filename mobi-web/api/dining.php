@@ -1,5 +1,12 @@
 <?php
 
+/****************************************************************
+ *
+ *  Copyright 2010 The President and Fellows of Harvard College
+ *  Copyright 2010 Modo Labs Inc.
+ *
+ *****************************************************************/
+
  require_once LIBDIR . "/harvard_dining.php";
  require_once LIBDIR ."/diningHrs.php";
 
