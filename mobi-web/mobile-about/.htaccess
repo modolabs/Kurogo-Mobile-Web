@@ -1,8 +1,4 @@
 AuthUserFile /var/www/html/mobile-about/.htpasswd
 AuthType Basic
 AuthName "Please provide Authentication"
-
-<Files "statistics.php">
-  Require valid-user
-</Files>
-
+Require valid-user
