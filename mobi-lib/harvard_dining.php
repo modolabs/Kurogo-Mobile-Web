@@ -1,5 +1,12 @@
 <?php
 
+/****************************************************************
+ *
+ *  Copyright 2010 The President and Fellows of Harvard College
+ *  Copyright 2010 Modo Labs Inc.
+ *
+ *****************************************************************/
+
 define('DINING_MENU_DIRECTORY', CACHE_DIR .'/DINING/');
 define('DINING_MENU_FLAT_FILE', DATADIR .'/MENU');
 define('DINING_MENU_RAW_FILE', DATADIR .'/menu.csv');
