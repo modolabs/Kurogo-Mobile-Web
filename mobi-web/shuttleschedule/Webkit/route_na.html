@@ -1,0 +1,24 @@
+<?php
+$page->title('Shuttles: ' . $routeName)
+     ->navbar_image('shuttleschedule')
+     ->fixed()
+     ->add_stylesheet('Webkit/shuttletrack')
+     ->breadcrumbs('Route Info');
+
+$page->content_begin();
+?>
+	<a name="scrolldown"></a>
+	
+	<div class="focal shaded">
+	
+		<h2><?=$routeName?></h2>
+                
+                <p>This route is not currently in service.  Please
+                update your bookmarks accordingly.  If you reached
+                this page via a link on the <a
+                href="index.php">Shuttle Schedule home page</a>,
+                please <a href="mailto:mobiweb.mit.edu">let us
+                know.</a></p>
+
+<? $page->content_end();
+?>

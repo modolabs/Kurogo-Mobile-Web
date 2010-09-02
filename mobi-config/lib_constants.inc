@@ -54,15 +54,15 @@ define("ACADEMIC_CALENDAR_CACHE_LIFESPAN", 86400 * 30);
 define("WHATS_NEW_PATH", DATADIR . "/whatsnew.xml");
 
 // shuttles
-// define('SHUTTLE_GTFS_FEED', DATADIR . '/gtfs.zip');
-// define('NEXTBUS_FEED_URL', 'http://www.nextbus.com/s/xmlFeed?');
-// define('NEXTBUS_AGENCY', 'mit');
-// define('NEXTBUS_ROUTE_CACHE_TIMEOUT', 86400); // max age, routeConfig data
-// define('NEXTBUS_PREDICTION_CACHE_TIMEOUT', 20); // max age, predictions
-// define('NEXTBUS_VEHICLE_CACHE_TIMEOUT', 10); // max age, vehicle locations
-// define('NEXTBUS_CACHE_MAX_TOLERANCE', 90); // when to revert to pub schedule
-// define('NEXTBUS_CACHE', CACHE_DIR . '/NEXTBUS/');
-// define('NEXTBUS_DAEMON_PID_FILE', CACHE_DIR . '/NEXTBUS_DAEMON_PID');
+ define('SHUTTLE_GTFS_FEED', DATADIR . '/gtfs.zip');
+ define('NEXTBUS_FEED_URL', 'http://www.nextbus.com/s/xmlFeed?');
+ define('NEXTBUS_AGENCY', 'mit');
+ define('NEXTBUS_ROUTE_CACHE_TIMEOUT', 86400); // max age, routeConfig data
+ define('NEXTBUS_PREDICTION_CACHE_TIMEOUT', 20); // max age, predictions
+ define('NEXTBUS_VEHICLE_CACHE_TIMEOUT', 10); // max age, vehicle locations
+ define('NEXTBUS_CACHE_MAX_TOLERANCE', 90); // when to revert to pub schedule
+ define('NEXTBUS_CACHE', CACHE_DIR . '/NEXTBUS/');
+ define('NEXTBUS_DAEMON_PID_FILE', CACHE_DIR . '/NEXTBUS_DAEMON_PID');
 
 // stellar -- see dev/stage/prod for base url
 
