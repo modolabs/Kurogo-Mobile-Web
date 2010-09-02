@@ -244,7 +244,15 @@ class ICalEvent extends ICalObject {
       break;
 
     case 'URL':
-        $this->url = $value;
+        $pos = strpos("http",$value);
+
+    if($pos === false) {
+        $urlLink = "http://" .$value;
+    }
+    else {
+        $urlLink = $value;
+    }
+        $this->url = $urlLink;
         break;
 
     case 'SUMMARY':
