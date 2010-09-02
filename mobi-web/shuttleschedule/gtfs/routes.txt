@@ -1,0 +1,15 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_color
+saferidebostonall,saferide,boston_all,Boston All,"Runs 6pm-2am Sun-Wed, 6pm-3am Thu-Sat, during summer and holiday breaks.",3,FF0000
+boston,mit,boston_daytime,Boston Daytime,"Runs weekdays 8am-6pm, Sep-May.",3,FF0000
+saferidebostone,saferide,boston_east,Boston East,"Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",3,FF0000
+saferidebostonw,saferide,boston_west,Boston West,"Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",3,FF0000
+saferidecamball,saferide,cambridge_all,Cambridge All,"Runs 6pm-2am Sun-Wed, 6pm-3am Thu-Sat, during summer and holiday breaks.",3,FF0000
+saferidecambeast,saferide,cambridge_east,Cambridge East,"Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",3,FF0000
+saferidecambwest,saferide,cambridge_west,Cambridge West,"Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",3,FF0000
+ezride_am,tma,ezride_am,EZRide - Morning,Runs 6:20am-10:46am Monday-Friday,3,FF0000
+ezride_md,tma,ezride_md,EZRide - Midday,Runs 10:44am-3pm Monday-Friday,3,FF0000
+ezride_pm,tma,ezride_pm,EZRide - Evening,"Runs 3pm-8pm, Monday-Friday",3,FF0000
+tech,mit,tech,Tech Shuttle,"Runs weekdays 7:15am-7:15pm, all year round.",3,FF0000
+1,mbta,1,MBTA #1 Bus,Runs every day,3,FF0000
+CT1,mbta,CT1,MBTA CT1 Bus,Runs weekdays 6am-7:40pm,3,FF0000
+CT2,mbta,CT2,MBTA CT2 Bus,Runs weekdays 6am-7:40pm,3,FF0000
