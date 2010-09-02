@@ -87,7 +87,7 @@ $page->content_begin();
   <? foreach ($service_types as $service => $title) { 
       if ($service != $url_params['service']) { ?>
     <li>
-      <a href="./?page=statistics&service=<?=$service?>&interval=<?=$url_params['interval']?>">
+      <a href="./statistics.php?service=<?=$service?>&interval=<?=$url_params['interval']?>">
         <?=$title?> Statistics
       </a>
     </li>
