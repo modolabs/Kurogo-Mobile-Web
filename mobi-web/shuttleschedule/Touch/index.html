@@ -1,0 +1,60 @@
+<?php
+$page->title('Shuttle Schedule')
+     ->navbar_image('shuttleschedule')
+     ->header('Shuttle Schedule')
+     ->breadcrumb_home();
+
+$page->content_begin();
+?>
+
+	<div class="nonfocal">
+		<h3>Daytime Shuttles:</h3>
+	</div>
+	<a name="top"></a>
+	<ul class="nav">
+            <? foreach($day_routes as $route) { ?>
+                <? if(ShuttleSchedule::is_running($route, $now)) { ?>
+                   <li class="icon running">
+                <? } else { ?>
+                   <li class="icon nonrunning">
+                <? } ?>
+                        <a href="times.php?route=<?=$route?>"><?=ShuttleSchedule::get_title($route)?></a>
+                </li>
+           <? } ?>
+	</ul>
+	
+	<div class="nonfocal">
+		<h3>Nighttime Saferide Shuttles:</h3>
+	</div>
+	<!--<a name="top"></a>-->
+	<ul class="nav">
+            <? foreach($night_routes as $route) { ?>
+                <? if(ShuttleSchedule::is_running($route, $now)) { ?>
+                   <li class="icon running">
+                <? } else { ?>
+                   <li class="icon nonrunning">
+                <? } ?>
+                        <a href="times.php?route=<?=$route?>"><?=ShuttleSchedule::get_title($route)?></a>
+                </li>
+           <? } ?>
+	</ul>
+	
+	<div class="nonfocal legend">
+		<img src="../Touch/images/shuttle.gif" width="18" height="19" alt="Running" align="absmiddle" />Running
+		&nbsp; &nbsp;
+		<img src="../Touch/images/shuttle-off.gif" width="18" height="19" alt="Not running" align="absmiddle" />Not currently running
+	</div>
+	
+	<ul class="secondary">
+		<li>
+			<a href="tel:16172586510" class="phone">Parking office <span class="smallprint">(617.258.6510&shy;)</span></a>
+		</li>
+		<li>
+			<a href="tel:16172532997" class="phone">Saferide <span class="smallprint">(617.253.2997&shy;)</span></a>
+		</li>
+	</ul>
+	
+<? 
+$page->content_end();
+$page->extra_footer("Map service provided by Facilities Department and");
+?>

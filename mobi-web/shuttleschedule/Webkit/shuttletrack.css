@@ -1,0 +1,162 @@
+#timestamp {
+	display: block;
+	line-height: 1.33em;
+	margin-top: 8px;
+}
+
+.tabbody {
+	min-height: 260px;
+}
+
+#schedule {
+	border-bottom: 1px dotted #ddd;
+	margin: 0 0 16px 0;
+}
+
+#schedule td {
+	border-top: 1px dotted #ddd;
+}
+
+.current td {
+	background-color: #b00;
+	color: #fff;
+}
+
+.current td:first-child {
+	padding-left: 24px !important;
+	background-image: url(../../Webkit/images/shuttle.png);
+	background-repeat: no-repeat;
+	background-position: 3px 3px;
+}
+
+.sid {
+	display: inline-block;
+	width: 18px;
+	text-align: center;
+	color: #999;
+}
+
+.current .sid {
+	color: #fff;
+	display: none;
+}
+
+#map, #maptab {
+	text-align: center;
+}
+
+#refresh {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	font-size: 14px;
+}
+
+.timestamp {
+	position: absolute;
+	right: 10px;
+	top: 14px;
+	float: right;
+	font-size: 14px;
+	font-weight: normal;
+	color: #506d8e;
+}
+
+
+
+
+/* Tall (portrait) orientation */
+
+body.portrait {
+	width: 100%;
+}
+
+body.portrait #timestamp {
+	display: block;
+}
+
+body.portrait #tabs {
+	display: block;
+}
+
+body.portrait .tabbody {
+	font-size: 17px;
+}
+
+body.portrait #scheduletab, #maptab {
+	width: auto;
+}
+
+body.portrait #mapimage {
+	width: 270px;
+	height: 270px;
+	text-align: center;
+}
+
+body.portrait #rotatemsg1 {
+	display: inline;
+}
+
+body.portrait #rotatemsg2 {
+	display: none;
+}
+
+
+
+/* Wide (landscape) orientation */
+
+body.landscape {
+	width: 100%;
+}
+
+body.landscape #timestamp {
+	display: inline;
+}
+
+body.landscape #schedule {
+	border-bottom: 1px solid #f0f0f0;
+	margin: 0 0 16px 0;
+}
+
+body.landscape #tabs {
+	display: none;
+}
+
+body.landscape .tabbody {
+	display: block !important;
+	float: left;
+	font-size: 14px;
+}
+
+body.landscape #scheduletab {
+	width: 47%;
+}
+
+body.landscape #maptab {
+	width: 53%;
+}
+
+body.landscape #map {
+	width: 225px;
+	height: 225px;
+	text-align: right;
+}
+
+body.landscape #mapimage {
+	width: 225px;
+	height: 225px;
+	margin-left: 10px;
+}
+
+body.landscape #rotatemsg1 {
+	display: none;
+}
+
+body.landscape #rotatemsg2 {
+	display: inline;
+}
+
+.ampm {
+	font-size: 75%;
+	padding-left: 0.2em
+}

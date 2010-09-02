@@ -1,0 +1,27 @@
+table.schedule {
+	width: 100%;
+	margin: 0.75em 0;
+	position: relative;
+	border-bottom: 1px solid #999;
+}
+table.schedule th {
+	padding: 2px 4px 2px 2px;
+	font-weight: normal;
+	line-height: 1em;
+	text-align: left;
+	color: #666;
+}
+table.schedule td {
+	padding: 2px 4px 2px 2px;
+	line-height: 1em;
+	border-top: 1px solid #ccc;
+}
+.current td {
+	background-color: #933;
+	padding-bottom: 4px;
+	color: #fff;
+	border-color: #933;
+}
+.current strong {
+	font-weight: normal;
+}

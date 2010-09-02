@@ -1,0 +1,101 @@
+body.portrait {
+	width: 100%;
+}
+
+body.portrait #timestamp {
+	display: inline;
+}
+
+body.portrait #schedule {
+	border-bottom: 1px solid #f0f0f0;
+	margin: 0 0 16px 0;
+}
+
+body.portrait #tabs {
+	display: none;
+}
+
+body.portrait .tabbody {
+	display: block !important;
+	float: left;
+	font-size: 17px;
+}
+
+body.portrait #scheduletab {
+	width: 50%;
+}
+
+body.portrait #maptab {
+	width: 50%;
+}
+
+body.portrait #map {
+	width: 100%;
+	height: auto;
+	text-align: center;
+}
+
+body.portrait #mapimage {
+	width: 250px;
+	height: 250px;
+	margin-left: 10px;
+}
+
+body.portrait #rotatemsg1 {
+	display: none;
+}
+
+body.portrait #rotatemsg2 {
+	display: none;
+}
+
+body.landscape {
+	width: 100%;
+}
+
+body.landscape #timestamp {
+	display: inline;
+}
+
+body.landscape #schedule {
+	border-bottom: 1px solid #f0f0f0;
+	margin: 0 0 16px 0;
+}
+
+body.landscape #tabs {
+	display: none;
+}
+
+body.landscape .tabbody {
+	display: block !important;
+	float: left;
+	font-size: 17px;
+}
+
+body.landscape #scheduletab {
+	width: 50%;
+}
+
+body.landscape #maptab {
+	width: 50%;
+}
+
+body.landscape #map {
+	width: 100%;
+	height: auto;
+	text-align: center;
+}
+
+body.landscape #mapimage {
+	width: 250px;
+	height: 250px;
+	margin-left: 10px;
+}
+
+body.landscape #rotatemsg1 {
+	display: none;
+}
+
+body.landscape #rotatemsg2 {
+	display: none;
+}

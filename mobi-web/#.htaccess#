@@ -1,0 +1,8 @@
+<FilesMatch "\.php$">
+php_value auto_prepend_file /Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/mobi-config/web_header.inc
+php_value audo_prepend_file /Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/mobi-config/lib_constants.inc
+php_value audo_prepend_file /Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/opt/mitmobile/mobi-config/template_text.inc
+</FilesMatch>
+<FilesMatch "help.php">
+php_value auto_append_file /Users/muhammadamjad/Documents/work/Harvard/Harvard-Mobile/mobi-web/page_builder/help.php
+</FilesMatch>
