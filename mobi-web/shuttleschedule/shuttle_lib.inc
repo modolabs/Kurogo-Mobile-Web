@@ -35,8 +35,14 @@ function list_stop_times($route, $time, $gps_active, $singleStopId=NULL) {
     $stopId = $stop['nextBusId'];
     $stopData['id'] = $stopId;
     $stopData['title'] = $stop['title'];
-    $stopData['lat'] = $nbStopsInfo[$stopId]['lat'];
-    $stopData['lon'] = $nbStopsInfo[$stopId]['lon'];
+    if (isset($nbStopsInfo[$stopId])) {
+      $stopData['lat'] = $nbStopsInfo[$stopId]['lat'];
+      $stopData['lon'] = $nbStopsInfo[$stopId]['lon'];
+    } else {
+      $stopData['lat'] = 0; // Atlantic Ocean - won't crash apps but noticeable
+      $stopData['lon'] = 0;
+      error_log("No coordinates available for stop '$stopId' on route '$route'.");
+    }
     $stopData['next'] = $stop['nextScheduled'];
     if ($gps_active && $stopData['next'] !== 0) {
       $stopData['predictions'] = Array();
