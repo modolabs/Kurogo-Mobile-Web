@@ -873,11 +873,7 @@ class CsvWrapper {
       }
       $result = array();
       foreach ($this->headers as $index => $header) {
-        if (isset($fields[$index])) {
-          $result[$header] = $fields[$index];
-        } else {
-          error_log("Warning: ".$fields[0]." does not have $header set");
-        }
+        $result[$header] = isset($fields[$index]) ? $fields[$index] : null;
       }
     }
     return $result;
