@@ -33,15 +33,10 @@ if (!in_array($route_id, ShuttleSchedule::getActiveRoutes())) {
   }
   unset($stops[$lastIndex]);
 
-  if ($page->branch != 'Basic') {
-    // format: 9:05AM -> 9:05<span class="ampm">AM</span>
-    $summary = preg_replace('/(\d)(AM|PM)/','$1<span class="ampm">$2</span>', $summary);
-  }
-
   $upcoming_stops = Array();
   $highlighted_stops = Array();
   foreach ($stops as $index => $stop) {
-    if ($stop['upcoming']) {
+    if (isset($stop['upcoming'])) {
       $upcoming_stops[] = $index;
       $highlighted_stops[] = $stop['id'];
     }
@@ -54,6 +49,11 @@ if (!in_array($route_id, ShuttleSchedule::getActiveRoutes())) {
   $loop_time = $interval / 60;
   $summary = $route->desc;
   $last_refreshed = $now;
+
+  if ($page->branch != 'Basic') {
+    // format: 9:05AM -> 9:05<span class="ampm">AM</span>
+    $summary = preg_replace('/(\d)(AM|PM)/','$1<span class="ampm">$2</span>', $summary);
+  }
 
   // determine size of route map to display on each device
   switch ($page->branch) {
@@ -87,7 +87,7 @@ if (!in_array($route_id, ShuttleSchedule::getActiveRoutes())) {
   require "$page->branch/times.html";
 }
 
-$page->prevent_caching($pagetype);
+//$page->prevent_caching($pagetype);
 $page->output();
 
 function selfURL() {

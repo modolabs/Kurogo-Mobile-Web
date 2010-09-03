@@ -48,6 +48,7 @@ class ShuttleSchedule {
     $prevTime = 0;
     $stops = array();
     $predicted = FALSE;
+    $lastIndex = 0;
     foreach ($nextLoop as $stop_id => $predictions) {
       if ($stop_id == 'lastUpdate') {
 	$predicted = TRUE;

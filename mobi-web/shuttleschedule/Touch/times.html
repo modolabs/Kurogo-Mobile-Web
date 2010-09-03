@@ -19,7 +19,7 @@ $page->content_begin();
 		<th>Time</th>
 		</tr>
                 <? foreach($stops as $index => $stop) { ?>
-		<tr <? if($stop['upcoming']) { ?> class="current" <? } ?> >
+		<tr <? if(isset($stop['upcoming'])) { ?> class="current" <? } ?> >
 			<td>
 				<span class="sid"><?=num2letter($index)?>.</span>
 			<?=$stop['title']?></td>

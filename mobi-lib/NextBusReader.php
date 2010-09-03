@@ -405,6 +405,11 @@ class NextBusAgency {
   public function predictionsForRoute($route_id) {
     $this->routeConfig($route_id);
     $time = time();
+    if (!isset($this->predictions[$route_id])) {
+      error_log("No predictions for route $route_id");
+      $this->predictions[$route_id] = array();
+      return $this->predictions[$route_id];
+    }
     $age = $this->predictions[$route_id]['lastUpdate'];
 
     if ($time - $age > 20) {
