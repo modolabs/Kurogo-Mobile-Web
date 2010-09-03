@@ -14,6 +14,9 @@ $help = array(
 
   'To update the estimated times and route map, click the &lsquo;Refresh&rsquo; link near the top of the page or use your web browser&apos;s &lsquo;Refresh&rsquo; command.',
 );
+$docRoot = getenv("DOCUMENT_ROOT");
 
+require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+require WEBROOT . "page_builder/help.php";
 
 ?>

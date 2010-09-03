@@ -21,9 +21,8 @@ $page->content_begin();
                 <? foreach($stops as $index => $stop) { ?>
 		<tr <? if($stop['upcoming']) { ?> class="current" <? } ?> >
 			<td>
-			<? if ($routeName != 'Boston All' && $routeName != 'Cambridge All') { ?>
 				<span class="sid"><?=num2letter($index)?>.</span>
-			<? } ?><?=$stop['title']?></td>
+			<?=$stop['title']?></td>
 			<td><?=format_shuttle_time($stop['next'])?></td>
 		</tr>
 		<? } ?>

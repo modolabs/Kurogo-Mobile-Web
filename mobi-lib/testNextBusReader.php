@@ -1,6 +1,8 @@
 <?
+$docRoot = getenv("DOCUMENT_ROOT");
 
-require_once("NextBusReader.php");
+require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
+require_once(LIBDIR . "NextBusReader.php");
 
 NextBusReader::init();
 
