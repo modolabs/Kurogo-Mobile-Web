@@ -1,9 +1,7 @@
 <?php
 $docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "page_builder/page_header.php";
-require_once LIBDIR . "GTFSReader.php";
+require_once LIBDIR . "/GTFSReader.php";
 
 $now = time();
 

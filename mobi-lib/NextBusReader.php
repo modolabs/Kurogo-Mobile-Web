@@ -12,8 +12,8 @@
  */
 $docRoot = getenv("DOCUMENT_ROOT");
 
-require_once($docRoot . '/mobi-config/mobi_lib_constants.php');
-require_once('DiskCache.php');
+require_once "lib_constants.inc";
+require_once('DiskCache.inc');
 require_once('ShuttleObjects.php');
 
 define('NEXTBUS_SERVICE_URL', 'http://webservices.nextbus.com/service/publicXMLFeed?');
