@@ -16,7 +16,7 @@ require_once "lib_constants.inc";
 require_once('DiskCache.inc');
 require_once('ShuttleObjects.php');
 
-define('NEXTBUS_SERVICE_URL', 'http://webservices.nextbus.com/service/publicXMLFeed?');
+//define('NEXTBUS_SERVICE_URL', 'http://webservices.nextbus.com/service/publicXMLFeed?');
 
 class NextBusAgency {
 
@@ -470,7 +470,7 @@ class NextBusAgency {
     $filename = $this->cacheFileName($params);
     if (!$cache->isFresh($filename)) {
       $params['a'] = $this->agency;
-      $url = NEXTBUS_SERVICE_URL . http_build_query($params);
+      $url = NEXTBUS_FEED_URL . http_build_query($params);
       // remove urlencoded brackets.  nextbus doesn't do brackets.
       $url = preg_replace('/%5B\d+%5D/', '', $url);
       //error_log("shuttles: requesting $url", 0);

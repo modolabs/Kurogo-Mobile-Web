@@ -177,9 +177,8 @@ class ShuttleSchedule {
 
   public static function getNextLoop($route_id) {
     $route = self::$gtfs->getRoute($route_id);
-    $agency = self::$agencies[$route->agency_id];
-    if ($agency) {
-      $agency->routeConfig($route_id);
+    if (isset(self::$agencies[$route->agency_id])) {
+      self::$agencies[$route->agency_id]->routeConfig($route_id);
     }
 
     $nextLoop = NULL;
@@ -197,9 +196,8 @@ class ShuttleSchedule {
     $predictions = array();
     $time = time();
     $route = self::$gtfs->getRoute($route_id);
-    $agency = self::$agencies[$route->agency_id];
-    if ($agency) {
-      $predictions = $agency->predictionsForRoute($route_id);
+    if (isset(self::$agencies[$route->agency_id])) {
+      self::$agencies[$route->agency_id]->predictionsForRoute($route_id);
     }
 
     $firstStop = $route->stops[0];
