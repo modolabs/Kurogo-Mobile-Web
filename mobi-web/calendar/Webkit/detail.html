@@ -45,14 +45,22 @@ $page->content_begin();
  			   <li>Location: <?=briefLocation($event)?></li>
                         <? } ?>
 
+                        <? if(strlen($ticketWebLink) > 0) { ?>
+                        <li>Link to Tickets: <a href="<?=$ticketWebLink?>" class="action external" target="_new"><?=$ticketWebLink?></a></li>
+                        <? } ?>
+
 			<li class="description"><?=$event->get_description()?></li>
  
-                        <? if(isset($event->infophone)) { ?>
- 			   <li><a href="<?=phoneURL($event->infophone)?>" class="phone"><?=str_replace('-', '-&shy;', $event->infophone)?></a></li>
+                        <? if(strlen($phoneNum)) { ?>
+
+                        <li>For info call: <a href="<?=$phoneNum?>" class="action phone"><?=$phoneNum?></a></li>
                         <? } ?>
-                       
-                        <? if(isset($event->infourl)) { ?>
-                           <li><a href="<?=$event->urlize?>" class="external" target="_new"><?=$event->infourl?></a></li>
+                        <? if(strlen($email)) { ?>
+
+                        <li>Email: <a href="<?=$email?>" class="action email"><?=$email?></a></li>
+                        <? } ?>
+                        <? if(strlen($url) > 0) { ?>
+                        <li>Website: <a href="<?=$url?>" class="action external" target="_new"><?=$url?></a></li>
                         <? } ?>
 		</ul>
 	

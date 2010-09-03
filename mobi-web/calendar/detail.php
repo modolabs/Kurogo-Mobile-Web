@@ -20,6 +20,38 @@ if ($event->get_end() - $event->get_start() == -1) {
 $arr = $event->get_customFields();
 $categories = explode('\,',$arr['"Gazette Classification"']);
 
+$descriptionString = $event->get_description();
+
+if (strlen($descriptionString) > 0)
+   $descriptionString = $descriptionString .'<br /><br />';
+
+$all_keys = array_keys($arr);
+$ind = 0;
+foreach($arr as $key) {
+    if (($key != $arr['"Event Type"']) && ($key != $arr['"Gazette Classification"'])
+        && ($key != $arr['"Contact Info"']) && ($key != $arr['"Location"'])
+          && ($key != $arr['"Ticket Web Link"'])) {
+
+            if (strlen(str_replace('"', '', $all_keys[$ind])) > 0) {
+                $descriptionString = $descriptionString . str_replace('"', '', $all_keys[$ind]) .': ';
+                $descriptionString = $descriptionString . $key . '<br /><br />';
+            }
+          }
+
+    $ind++;
+}
+
+$url = URLize($event->get_url());
+if ($url == "http://")
+    $url = '';
+
+$phoneNum = phoneURL($arr['"Contact Info"']->phone[0]);
+$email = $arr['"Contact Info"']->email[0];
+
+$ticketWebLink = URLize($arr['"Ticket Web Link"']);
+if ($ticketWebLink == "http://")
+    $ticketWebLink = '';
+
 // Get Lat Long info
 $jsonString= json_encode($arr);
 $latLongArray = explode('<\/Latitude>',$jsonString);
@@ -45,6 +77,8 @@ $longitude = $tempArray2[0];
 }
 
 function URLize($web_address) {
+  $web_address = str_replace("http://http://", "http://", $web_address);
+
   if(preg_match('/^http\:\/\//', $web_address)) {
     return $web_address;
   } else {
