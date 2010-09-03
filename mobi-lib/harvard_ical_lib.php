@@ -252,6 +252,8 @@ class ICalEvent extends ICalObject {
     else {
         $urlLink = $value;
     }
+
+    $urlLink = str_replace("http://http://", "http://", $urlLink);
         $this->url = $urlLink;
         break;
 
