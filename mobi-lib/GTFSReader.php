@@ -803,14 +803,13 @@ class CsvWrapper {
 
   public function __construct($filename, ZipArchive $zip=NULL, $headers=TRUE, $mode='r') {
 
-      $filename = CACHE_DIR .'/gtfs/' . $filename;
     if ($zip !== NULL) {
       $this->zip = $zip;
     } else {
       $this->zip = NULL;
     }
 
-    if ($write) {
+    if ($mode == 'w') {
       $this->new_file($filename, $headers);
     } else {
       $this->reset_file($filename, $headers);
@@ -825,6 +824,7 @@ class CsvWrapper {
 
   // write-only functions
   public function new_file($filename, $headers) {
+      $filename = CACHE_DIR .'/gtfs/' . $filename;
     $this->currentFile = $filename;
     if ($this->zip->locateName($filename)) {
       $this->zip->deleteName($filename);
@@ -872,13 +872,18 @@ class CsvWrapper {
       }
       $result = array();
       foreach ($this->headers as $index => $header) {
-	$result[$header] = $fields[$index];
+        if (isset($fields[$index])) {
+          $result[$header] = $fields[$index];
+        } else {
+          error_log("Warning: ".$fields[0]." does not have $header set");
+        }
       }
     }
     return $result;
   }
 
   public function reset_file($filename, $has_headers=TRUE) {
+      $filename = CACHE_DIR .'/gtfs/' . $filename;
     $this->currentFile = $filename;
     if ($this->zip !== NULL) {
       $this->fp = $this->zip->getStream($filename);
