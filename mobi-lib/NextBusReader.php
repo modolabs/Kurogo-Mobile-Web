@@ -54,7 +54,7 @@ class NextBusAgency {
       return $this->agency . '.' . $params['r']; // route
     } else if ($params['command'] == 'predictionsForMultiStops') {
       $stops = $params['stops'];
-      list($route_id/*, $direction_id*/, $stop_id) = explode('|', end($stops));
+      list($route_id, $direction_id, $stop_id) = explode('|', end($stops));
 
       // being lazy... if there's more than 5 items it's a route
       // otherwise it's a stop
@@ -411,13 +411,13 @@ class NextBusAgency {
     if ($time - $age > 20) {
       $route = $this->routes[$route_id];
       $stopList = array();
-      //foreach ($route->trips as $trip_id => $trip) {
-      //foreach ($trip->stop_times as $stop_id => $times) {
-      foreach ($route->stops as $stop_id) {
-	$stopList[] = $route_id . /*'|' . $trip->direction_id .*/ '|' . $stop_id;
+      foreach ($route->trips as $trip_id => $trip) {
+      foreach ($trip->stop_times as $stop_id => $times) {
+      //foreach ($route->stops as $stop_id) {
+	$stopList[] = $route_id . '|' . $trip->direction_id . '|' . $stop_id;
+      //}
       }
-      //}
-      //}
+      }
 
       $params = array(
         'command' => 'predictionsForMultiStops',

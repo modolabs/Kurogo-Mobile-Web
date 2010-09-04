@@ -619,9 +619,7 @@ class GTFSReader {
 
   public function write($filename, $headers=NULL) {
 
-    //$zip = new ZipArchive();
-
-    $zip = NULL;
+    $zip = new ZipArchive();
     
     if ($zip->open($this->filename, ZIPARCHIVE::OVERWRITE) !== TRUE) {
       $this->errMsg = "failed to open zip archive for writing";
@@ -672,12 +670,11 @@ class GTFSReader {
       return FALSE;
     }
 
-    //$zip = new ZipArchive();
-    $zip = NULL;
-   /* if ($zip->open($this->filename) !== TRUE) {
+    $zip = new ZipArchive();
+    if ($zip->open($this->filename) !== TRUE) {
       $this->errMsg = "failed to open zip archive for reading";
       return FALSE;
-    }*/
+    }
 
     // create agency objects
     $csv = new CsvWrapper('agency.txt', $zip);
@@ -799,7 +796,7 @@ class CsvWrapper {
   private $currenFile;
 
   public function __construct($filename, ZipArchive $zip=NULL, $headers=TRUE, $mode='r') {
-
+    $filename = CACHE_DIR .'/gtfs/' . $filename;
     if ($zip !== NULL) {
       $this->zip = $zip;
     } else {
@@ -821,7 +818,6 @@ class CsvWrapper {
 
   // write-only functions
   public function new_file($filename, $headers) {
-      $filename = CACHE_DIR .'/gtfs/' . $filename;
     $this->currentFile = $filename;
     if ($this->zip->locateName($filename)) {
       $this->zip->deleteName($filename);
@@ -876,19 +872,18 @@ class CsvWrapper {
   }
 
   public function reset_file($filename, $has_headers=TRUE) {
-      $filename = CACHE_DIR .'/gtfs/' . $filename;
     $this->currentFile = $filename;
     if ($this->zip !== NULL) {
       $this->fp = $this->zip->getStream($filename);
-      if (!$this->fp) {
-	error_log("could not open $filename");
+      if ($this->fp === FALSE) {
+        error_log(__FUNCTION__.": could not open $filename");
       }
     } else {
       $this->fp = fopen($filename, 'r');
-    }
 
-    if ($has_headers) {
-      $this->headers = fgetcsv($this->fp);
+      if ($has_headers) {
+        $this->headers = fgetcsv($this->fp);
+      }
     }
   }
 
