@@ -691,7 +691,7 @@ class GTFSReader {
       $agency_id = $fields['agency_id'];
       $route = new ShuttleRoute($fields);
       if ($agency = $this->getAgency($agency_id)) {
-	$agency->addRoute($route);
+        $agency->addRoute($route);
       }
       $this->routes[$route_id] = $route;
     }
@@ -796,7 +796,7 @@ class CsvWrapper {
   private $currenFile;
 
   public function __construct($filename, ZipArchive $zip=NULL, $headers=TRUE, $mode='r') {
-    $filename = CACHE_DIR .'/gtfs/' . $filename;
+    //$filename = CACHE_DIR .'/gtfs/' . $filename;
     if ($zip !== NULL) {
       $this->zip = $zip;
     } else {
@@ -861,11 +861,13 @@ class CsvWrapper {
       return NULL;
     } else {
       if (!$fields = fgetcsv($this->fp)) {
-	return NULL;
+        return NULL;
       }
       $result = array();
-      foreach ($this->headers as $index => $header) {
-        $result[$header] = isset($fields[$index]) ? $fields[$index] : null;
+      if ($this->headers) {
+        foreach ($this->headers as $index => $header) {
+          $result[$header] = isset($fields[$index]) ? $fields[$index] : null;
+        }
       }
     }
     return $result;
@@ -880,10 +882,10 @@ class CsvWrapper {
       }
     } else {
       $this->fp = fopen($filename, 'r');
-
-      if ($has_headers) {
-        $this->headers = fgetcsv($this->fp);
-      }
+    }
+    
+    if ($has_headers) {
+      $this->headers = fgetcsv($this->fp);
     }
   }
 
