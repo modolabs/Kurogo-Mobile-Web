@@ -276,7 +276,6 @@ class ShuttleSchedule {
 	'lon' => $stop->lon,
 	'next' => $times[0],
 	);
-
       if (array_key_exists($route_id, $predicted)
 	  && $predicted[$route_id])
       {

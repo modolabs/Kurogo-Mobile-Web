@@ -2,9 +2,9 @@
 
 $docRoot = getenv("DOCUMENT_ROOT");
 
-require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
 $APIROOT = WEBROOT . "/api";
-require_once $APIROOT . "/api_header.php";
+require_once $APIROOT . "/api_header.inc";
 PageViews::log_api('shuttles', 'iphone');
 
 require_once LIBDIR . "GTFSReader.php";
