@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<body copyright="All data copyright Massachusetts Institute of Technology 2010.">
+<predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="W92 at Amesbury St" stopTag="w92ames">
+  <direction title="to Kendall Square">
+    <prediction seconds="559" minutes="9" epochTime="1283890538173" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
+    <prediction seconds="990" minutes="16" epochTime="1283890968783" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
+    <prediction seconds="1715" minutes="28" epochTime="1283891694133" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
+    <prediction seconds="1996" minutes="33" epochTime="1283891975269" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
+    <prediction seconds="2915" minutes="48" epochTime="1283892894133" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
+  </direction>
+<message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
+</predictions>
+</body>
