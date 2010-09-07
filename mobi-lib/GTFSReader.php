@@ -19,10 +19,35 @@ require_once 'TimeRange.php';
 require_once 'datetime_lib.php';
 require_once 'NextBusReader.php';
 
-function firstElementCompare($a, $b) {
-  if ($a < $b) return -1;
-  elseif ($a > $b) return 1;
-  return 0;
+// encoding a polyline in base64
+// http://code.google.com/apis/maps/documentation/utilities/polylinealgorithm.html
+// (don't know if php has something more built-in to do this)
+function base64EncodeNumber($number) {
+  $num = round($number * 100000, 0);
+  if ($num > 0) {
+    $bin = base_convert($num << 1, 10, 2);
+    $bin = ltrim($bin, '0');
+  } else if ($num < 0) {
+    $bin = base_convert(($num << 1) + 1, 10, 2);
+    $bin = ltrim($bin, '0');
+  } else {
+    $bin = '0';
+  }
+
+  $chunks = ceil(strlen($bin) / 5);
+  $len = $chunks * 5;
+  $bin = str_pad($bin, $len, '0', STR_PAD_LEFT);
+  $result = '';
+  for ($i = $chunks; $i > 0; $i--) {
+    $chunk = substr($bin, ($i-1)*5, 5);
+    if ($i > 1) {
+      $value = (base_convert($chunk, 2, 10) | 0x20) + 63;
+    } else {
+      $value = base_convert($chunk, 2, 10) + 63;
+    }
+    $result .= chr($value);
+  }
+  return $result;
 }
 
 class ShuttleSchedule {
@@ -55,7 +80,7 @@ class ShuttleSchedule {
       }
 
       $stop = self::getStop($stop_id);
-      $nextTime = $predictions[0];
+      $nextTime = isset($predictions[0]) ? $predictions[0] : 0;
       $stopData = array(
         'id' => $stop_id,
 	'title' => $stop->name,
@@ -111,29 +136,29 @@ class ShuttleSchedule {
       );
 
     if (count($trip->shape->points) > 1) {
-      $path = 'weight:3|color:red';
+      $path = 'weight:3|color:red|enc:';
       $numPoints = count($trip->shape->points);
-      // we might have too many points to fit in 2K
-      // so we take every K points
-      $k = intval($numPoints / 50);
       $totalCount = 0;
       $usedCount = 0;
+      $prevLat = 0;
+      $prevLon = 0;
       $latSum = 0;
       $lonSum = 0;
-      foreach ($trip->shape->points as $point) {
-	$totalCount++;
-	if ($k && $totalCount % $k != 0)
-	  continue;
 
+      foreach ($trip->shape->points as $point) {
 	$latSum += $point[0];
 	$lonSum += $point[1];
 
-        $path .= '|' . strval($point[0]) . ',' . strval($point[1]);
+        $lat = $point[0] - $prevLat;
+        $lon = $point[1] - $prevLon;
+
+        $prevLat = $point[0];
+        $prevLon = $point[1];
+        $path .= base64EncodeNumber($lat) . base64EncodeNumber($lon);
 	$usedCount++;
       }
-      $center = strval($latSum / $usedCount) . ',' 
-	. strval($lonSum / $usedCount);
     
+      $center = strval($latSum / $usedCount) . ',' . strval($lonSum / $usedCount);
       $params['path'] = $path;
 
     } else {
@@ -145,7 +170,6 @@ class ShuttleSchedule {
     $query = $url . http_build_query($params);
     $tag = '<img src="' . $query . '" width="' . $size
       . '" height="' . $size . '" id="mapimage" alt="Map" />';
-
     return $tag;
   }
 
@@ -197,22 +221,9 @@ class ShuttleSchedule {
     $time = time();
     $route = self::$gtfs->getRoute($route_id);
     if (isset(self::$agencies[$route->agency_id])) {
-      self::$agencies[$route->agency_id]->predictionsForRoute($route_id);
+      $predictions = self::$agencies[$route->agency_id]->predictionsForRoute($route_id);
     }
-
-    $firstStop = $route->stops[0];
-    $result = array();
-    $indexOfFirstStop = 0;
-    foreach ($predictions as $stop => $prediction) {
-      if ($stop == $firstStop)
-        break;
-      $result[$stop] = $prediction;
-      $indexOfFirstStop++;
-    }
-    $result = array_merge(array_slice($predictions, $indexOfFirstStop),
-                          $result);
-
-    return $result;
+    return $predictions;
   }
 
   public static function getNextScheduledLoop($route_id, $time) {
@@ -276,6 +287,7 @@ class ShuttleSchedule {
 	'lon' => $stop->lon,
 	'next' => $times[0],
 	);
+
       if (array_key_exists($route_id, $predicted)
 	  && $predicted[$route_id])
       {
@@ -300,8 +312,10 @@ class ShuttleSchedule {
     $agencies = array(); // though unlikely that multiple agencies share stops
     foreach ($stop->routes as $route_id) {
       $route = self::getRoute($route_id);
+      if (array_key_exists($route->agency_id, self::$agencies)) {
       $agency = self::$agencies[$route->agency_id];
       $agencies[$route->agency_id] = $agency;
+    }
     }
     $result = array();
     foreach ($agencies as $id => $agency) {
@@ -319,6 +333,7 @@ class ShuttleSchedule {
     $result = array();
     foreach ($stop->routes as $route_id) {
       $route = self::getRoute($route_id);
+      if ($route->isInService($time)) {
       foreach ($route->trips as $trip) {
 	//if ($trip->isRunningToday($time)) {
 	$start = $trip->nextTripStart($time);
@@ -328,6 +343,7 @@ class ShuttleSchedule {
 	}
 	//}
       }
+    }
     }
     return $result;
   }
@@ -795,7 +811,6 @@ class CsvWrapper {
   private $currenFile;
 
   public function __construct($filename, ZipArchive $zip=NULL, $headers=TRUE, $mode='r') {
-    //$filename = CACHE_DIR .'/gtfs/' . $filename;
     if ($zip !== NULL) {
       $this->zip = $zip;
     } else {

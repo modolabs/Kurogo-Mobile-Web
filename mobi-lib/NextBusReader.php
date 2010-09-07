@@ -406,47 +406,54 @@ class NextBusAgency {
     $this->routeConfig($route_id);
     $time = time();
     $age = isset($this->predictions[$route_id]) ? 
-      $this->predictions[$route_id]['lastUpdate'] : 0;
-
+    $this->predictions[$route_id]['lastUpdate'] : 0;
+    
     if ($time - $age > 20) {
       $route = $this->routes[$route_id];
       $stopList = array();
       foreach ($route->trips as $trip_id => $trip) {
-      foreach ($trip->stop_times as $stop_id => $times) {
-      //foreach ($route->stops as $stop_id) {
-	$stopList[] = $route_id . '|' . $trip->direction_id . '|' . $stop_id;
-      //}
+        foreach ($trip->stop_times as $stop_id => $times) {
+          //foreach ($route->stops as $stop_id) {
+            $stopList[] = $route_id . '|' . $trip->direction_id . '|' . $stop_id;
+          //}
+        }
       }
-      }
-
+    
       $params = array(
         'command' => 'predictionsForMultiStops',
-	'stops' => $stopList,
-        );
+        'stops' => $stopList,
+      );
       $xml = $this->query($params);
+      
+      $result = array();
       if ($xml) {
-	$result = array();
-	foreach ($xml->getElementsByTagName('predictions') as $predictions) {
-	  $attributes = $predictions->attributes;
-	  $stop_id = $attributes->getNamedItem('stopTag')->nodeValue;
-	  $result[$stop_id] = array();
-	  foreach ($predictions->getElementsByTagName('prediction') as $prediction) {
-	    $attributes = $prediction->attributes;
-	    $seconds = $attributes->getNamedItem('seconds')->nodeValue;
-	    // nextbus returns the number of seconds
-	    // after the bus is expected to arrive.
-	    // keep in absolute time since we may cache for a long time
-	    $result[$stop_id][] = $time + intval($seconds);
-	  }
-	}
-
-	$result['lastUpdate'] = time() - $this->ageOfLastQuery;
-	$this->predictions[$route_id] = $result;
+        foreach ($xml->getElementsByTagName('predictions') as $predictions) {
+          $attributes = $predictions->attributes;
+          $stop_id = $attributes->getNamedItem('stopTag')->nodeValue;
+          $resultForStop = array();
+          foreach ($predictions->getElementsByTagName('prediction') as $prediction) {
+            $attributes = $prediction->attributes;
+            $seconds = $attributes->getNamedItem('seconds')->nodeValue;
+            // nextbus returns the number of seconds
+            // after the bus is expected to arrive.
+            // keep in absolute time since we may cache for a long time
+            $resultForStop[] = $time + intval($seconds);
+          }
+          if (count($resultForStop)) {
+            $result[$stop_id] = $resultForStop;
+          }
+        }
       }
-
-      // invalidate predictions if they're too old
-      else if ($age > 120)
-	$this->predictions[$route_id] = array();
+      
+      if (count($result)) {
+        $result['lastUpdate'] = time() - $this->ageOfLastQuery;
+        $age = $result['lastUpdate'];
+        $this->predictions[$route_id] = $result;
+                
+      } else if (time() - $age > 120) {  
+        // invalidate predictions if they're too old
+        $this->predictions[$route_id] = array();
+      }
     }
     return $this->predictions[$route_id];
   }
