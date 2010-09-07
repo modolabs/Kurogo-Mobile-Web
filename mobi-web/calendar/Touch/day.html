@@ -7,7 +7,7 @@ $page->content_begin();
 ?>
 
 	<div class="nonfocal">
-		<h2><?=$Type?> for <strong><?=$current['day_3Let']?> <?=$current['month']?> <?=$current['day_num']?>, <?=$current['year']?></strong></h2>
+		<h2><?=$Type?> for <strong><?=$current['day_3Let']?> <?=$current['month_3Let']?> <?=$current['day_num']?>, <?=$current['year']?></strong></h2>
 	</div>
 	<div class="sidenav">
 		<a href="<?=dayURL($prev, $type)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month_3Let']?> <?=$prev['day_num']?></a> | <a href="<?=dayURL($next, $type)?>"><?=$next['day_3Let']?> <?=$next['month_3Let']?> <?=$next['day_num']?> &gt;</a>
