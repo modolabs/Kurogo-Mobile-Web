@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?> 
 <body copyright="All data copyright Massachusetts Institute of Technology 2010.">
-<vehicle id="NEW 15645" routeTag="tech" dirTag="wcamp" lat="42.35809" lon="-71.09335" secsSinceReport="7" predictable="true" heading="245" speedKmHr="15.984000000000002"/>
-<vehicle id="1300" routeTag="tech" dirTag="kendsq" lat="42.36015" lon="-71.0949399" secsSinceReport="18" predictable="true" heading="57" speedKmHr="19.98"/>
-<lastTime time="1283890195419"/>
+<vehicle id="1600" routeTag="tech" dirTag="wcamp" lat="42.35796" lon="-71.0939" secsSinceReport="36" predictable="true" heading="255" speedKmHr="6.984"/>
+<lastTime time="1283974854677"/>
 </body>

@@ -2,56 +2,72 @@
 <body copyright="All data copyright Massachusetts Institute of Technology 2010.">
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Boston Daytime" routeTag="boston" stopTitle="84 Mass Ave" stopTag="mass84_d">
   <direction title="To Boston">
-    <prediction seconds="1566" minutes="26" epochTime="1283895790415" isDeparture="true" dirTag="boston" vehicle="800" block="1" />
+    <prediction seconds="1262" minutes="21" epochTime="1283976080091" isDeparture="true" dirTag="boston" vehicle="NEW 15645" block="1" />
+    <prediction seconds="2841" minutes="47" epochTime="1283977659547" isDeparture="true" dirTag="boston" vehicle="NEW 15645" block="1" />
+    <prediction seconds="4421" minutes="73" epochTime="1283979239003" isDeparture="true" dirTag="boston" vehicle="NEW 15645" block="1" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Boston Daytime" routeTag="boston" stopTitle="Mass Ave at Beacon St" stopTag="massbeac">
   <direction title="To Cambridge">
-    <prediction seconds="188" minutes="3" epochTime="1283894412629" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
-    <prediction seconds="1768" minutes="29" epochTime="1283895992085" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
+    <prediction seconds="18" minutes="0" epochTime="1283974836626" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="1463" minutes="24" epochTime="1283976281761" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="3043" minutes="50" epochTime="1283977861217" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="4622" minutes="77" epochTime="1283979440673" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Boston Daytime" routeTag="boston" stopTitle="487 Commonwealth Ave" stopTag="comm487">
   <direction title="To Cambridge">
-    <prediction seconds="387" minutes="6" epochTime="1283894610909" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
-    <prediction seconds="1966" minutes="32" epochTime="1283896190365" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
+    <prediction seconds="173" minutes="2" epochTime="1283974991156" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="1662" minutes="27" epochTime="1283976480041" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="3241" minutes="54" epochTime="1283978059497" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="4821" minutes="80" epochTime="1283979638953" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Boston Daytime" routeTag="boston" stopTitle="Commonwealth @ Sherbron" stopTag="commsher">
   <direction title="To Cambridge">
-    <prediction seconds="476" minutes="7" epochTime="1283894700695" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
-    <prediction seconds="2056" minutes="34" epochTime="1283896280151" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
+    <prediction seconds="262" minutes="4" epochTime="1283975080863" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="1751" minutes="29" epochTime="1283976569827" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="3331" minutes="55" epochTime="1283978149283" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="4910" minutes="81" epochTime="1283979728739" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Boston Daytime" routeTag="boston" stopTitle="478 Commonwealth Ave" stopTag="comm478">
   <direction title="To Cambridge">
-    <prediction seconds="847" minutes="14" epochTime="1283895070912" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
-    <prediction seconds="2426" minutes="40" epochTime="1283896650368" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
+    <prediction seconds="577" minutes="9" epochTime="1283975395851" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="2122" minutes="35" epochTime="1283976940044" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="3701" minutes="61" epochTime="1283978519500" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="5281" minutes="88" epochTime="1283980098956" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Boston Daytime" routeTag="boston" stopTitle="Beacon St at Mass Ave" stopTag="beacmass">
   <direction title="To Cambridge">
-    <prediction seconds="1079" minutes="17" epochTime="1283895303025" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
-    <prediction seconds="2658" minutes="44" epochTime="1283896882481" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
+    <prediction seconds="796" minutes="13" epochTime="1283975614299" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="2354" minutes="39" epochTime="1283977172157" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="3933" minutes="65" epochTime="1283978751613" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="5513" minutes="91" epochTime="1283980331069" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Boston Daytime" routeTag="boston" stopTitle="77 Mass Ave" stopTag="mass77">
   <direction title="To Cambridge">
-    <prediction seconds="1228" minutes="20" epochTime="1283895452546" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
-    <prediction seconds="2808" minutes="46" epochTime="1283897032002" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
+    <prediction seconds="929" minutes="15" epochTime="1283975747763" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="2503" minutes="41" epochTime="1283977321678" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="4083" minutes="68" epochTime="1283978901134" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="5662" minutes="94" epochTime="1283980480590" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Boston Daytime" routeTag="boston" stopTitle="Edgerton" stopTag="edge">
   <direction title="To Cambridge">
-    <prediction seconds="1426" minutes="23" epochTime="1283895649818" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
-    <prediction seconds="3005" minutes="50" epochTime="1283897229274" isDeparture="false" dirTag="cambridge" vehicle="800" block="1" />
+    <prediction seconds="1121" minutes="18" epochTime="1283975939582" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="2701" minutes="45" epochTime="1283977518950" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="4280" minutes="71" epochTime="1283979098406" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
+    <prediction seconds="5859" minutes="97" epochTime="1283980677862" isDeparture="false" dirTag="cambridge" vehicle="NEW 15645" block="1" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>

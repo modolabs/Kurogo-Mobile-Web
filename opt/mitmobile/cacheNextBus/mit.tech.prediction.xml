@@ -2,91 +2,90 @@
 <body copyright="All data copyright Massachusetts Institute of Technology 2010.">
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="W92 at Amesbury St" stopTag="w92ames">
   <direction title="to Kendall Square">
-    <prediction seconds="269" minutes="4" epochTime="1283890471211" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
-    <prediction seconds="793" minutes="13" epochTime="1283890995262" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
-    <prediction seconds="1492" minutes="24" epochTime="1283891694133" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
-    <prediction seconds="1799" minutes="29" epochTime="1283892001748" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
-    <prediction seconds="2692" minutes="44" epochTime="1283892894133" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
+    <prediction seconds="243" minutes="4" epochTime="1283975133616" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="1385" minutes="23" epochTime="1283976276099" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="2603" minutes="43" epochTime="1283977494133" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="3803" minutes="63" epochTime="1283978694133" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="5003" minutes="83" epochTime="1283979894133" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="Simmons Hall" stopTag="simmhl">
   <direction title="to Kendall Square">
-    <prediction seconds="345" minutes="5" epochTime="1283890547760" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
-    <prediction seconds="869" minutes="14" epochTime="1283891071811" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
-    <prediction seconds="1568" minutes="26" epochTime="1283891770682" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
-    <prediction seconds="1876" minutes="31" epochTime="1283892078297" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
-    <prediction seconds="2768" minutes="46" epochTime="1283892970682" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
+    <prediction seconds="320" minutes="5" epochTime="1283975210492" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="1462" minutes="24" epochTime="1283976352648" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="2680" minutes="44" epochTime="1283977570682" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="3880" minutes="64" epochTime="1283978770682" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="5080" minutes="84" epochTime="1283979970682" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="Vassar St at Mass Ave" stopTag="vassmass">
   <direction title="to Kendall Square">
-    <prediction seconds="462" minutes="7" epochTime="1283890664965" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
-    <prediction seconds="986" minutes="16" epochTime="1283891189016" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
-    <prediction seconds="1685" minutes="28" epochTime="1283891887887" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
-    <prediction seconds="1993" minutes="33" epochTime="1283892195502" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
-    <prediction seconds="2885" minutes="48" epochTime="1283893087887" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
+    <prediction seconds="438" minutes="7" epochTime="1283975329374" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="1579" minutes="26" epochTime="1283976469853" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="2797" minutes="46" epochTime="1283977687887" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="3997" minutes="66" epochTime="1283978887887" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="5197" minutes="86" epochTime="1283980087887" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="Stata Center" stopTag="statct">
   <direction title="to Kendall Square">
-    <prediction seconds="62" minutes="1" epochTime="1283890264598" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
-    <prediction seconds="544" minutes="9" epochTime="1283890747033" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
-    <prediction seconds="1069" minutes="17" epochTime="1283891271084" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
-    <prediction seconds="1767" minutes="29" epochTime="1283891969955" isDeparture="false" dirTag="kendsq" vehicle="NEW 15645" block="13" />
-    <prediction seconds="2075" minutes="34" epochTime="1283892277570" isDeparture="false" dirTag="kendsq" vehicle="1300" block="11" />
+    <prediction seconds="530" minutes="8" epochTime="1283975421393" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="1661" minutes="27" epochTime="1283976551921" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="2879" minutes="47" epochTime="1283977769955" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="4079" minutes="67" epochTime="1283978969955" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
+    <prediction seconds="5279" minutes="87" epochTime="1283980169955" isDeparture="false" dirTag="kendsq" vehicle="1600" block="11" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="Kendall Square" stopTag="kendsq_d">
   <direction title="West Campus">
-    <prediction seconds="199" minutes="3" epochTime="1283890401129" isDeparture="true" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="897" minutes="14" epochTime="1283891100000" isDeparture="true" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="1205" minutes="20" epochTime="1283891407615" isDeparture="true" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="2097" minutes="34" epochTime="1283892300000" isDeparture="true" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="2212" minutes="36" epochTime="1283892414101" isDeparture="true" dirTag="wcamp" vehicle="1300" block="11" />
+    <prediction seconds="809" minutes="13" epochTime="1283975700000" isDeparture="true" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="2009" minutes="33" epochTime="1283976900000" isDeparture="true" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="3209" minutes="53" epochTime="1283978100000" isDeparture="true" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="4409" minutes="73" epochTime="1283979300000" isDeparture="true" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="5609" minutes="93" epochTime="1283980500000" isDeparture="true" dirTag="wcamp" vehicle="1600" block="11" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="Amherst St at Wadsworth St" stopTag="amhewads">
   <direction title="West Campus">
-    <prediction seconds="276" minutes="4" epochTime="1283890478211" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="975" minutes="16" epochTime="1283891177082" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="1282" minutes="21" epochTime="1283891484697" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="2175" minutes="36" epochTime="1283892377082" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="2289" minutes="38" epochTime="1283892491183" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
+    <prediction seconds="882" minutes="14" epochTime="1283975773314" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="2086" minutes="34" epochTime="1283976977082" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="3286" minutes="54" epochTime="1283978177082" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="4486" minutes="74" epochTime="1283979377082" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="5686" minutes="94" epochTime="1283980577082" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="Kresge" stopTag="kres">
   <direction title="West Campus">
-    <prediction seconds="532" minutes="8" epochTime="1283890734948" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="1231" minutes="20" epochTime="1283891433819" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="1539" minutes="25" epochTime="1283891741434" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="2431" minutes="40" epochTime="1283892633819" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="2545" minutes="42" epochTime="1283892747920" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
+    <prediction seconds="1125" minutes="18" epochTime="1283976015785" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="2343" minutes="39" epochTime="1283977233819" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="3543" minutes="59" epochTime="1283978433819" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="4743" minutes="79" epochTime="1283979633819" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="Burton House" stopTag="burtho">
   <direction title="West Campus">
-    <prediction seconds="93" minutes="1" epochTime="1283890295307" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="617" minutes="10" epochTime="1283890819358" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="1316" minutes="21" epochTime="1283891518229" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="1623" minutes="27" epochTime="1283891825844" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="2516" minutes="41" epochTime="1283892718229" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
+    <prediction seconds="61" minutes="1" epochTime="1283974952116" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="1209" minutes="20" epochTime="1283976100195" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="2427" minutes="40" epochTime="1283977318229" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="3627" minutes="60" epochTime="1283978518229" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="4827" minutes="80" epochTime="1283979718229" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
 <predictions agencyTitle="Massachusetts Institute of Technology" routeTitle="Tech Shuttle" routeTag="tech" stopTitle="Tang/Westgate" stopTag="tangwest">
   <direction title="West Campus">
-    <prediction seconds="178" minutes="2" epochTime="1283890380327" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="702" minutes="11" epochTime="1283890904378" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="1401" minutes="23" epochTime="1283891603249" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
-    <prediction seconds="1708" minutes="28" epochTime="1283891910864" isDeparture="false" dirTag="wcamp" vehicle="1300" block="11" />
-    <prediction seconds="2601" minutes="43" epochTime="1283892803249" isDeparture="false" dirTag="wcamp" vehicle="NEW 15645" block="13" />
+    <prediction seconds="152" minutes="2" epochTime="1283975042926" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="1294" minutes="21" epochTime="1283976185215" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="2512" minutes="41" epochTime="1283977403249" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="3712" minutes="61" epochTime="1283978603249" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
+    <prediction seconds="4912" minutes="81" epochTime="1283979803249" isDeparture="false" dirTag="wcamp" vehicle="1600" block="11" />
   </direction>
 <message text="Contact Info:Parking office 617-258-6510 Saferide office (After 6pm) 617-253-2997"/>
 </predictions>
