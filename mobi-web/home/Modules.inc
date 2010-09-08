@@ -29,6 +29,9 @@ class Modules {
     'dining' => Array(
       'title' => 'Student Dining',
       ),
+    'shuttleschedule' => Array(
+      'title' => 'Shuttle Schedule',
+      ),
     'links' => Array(
       'title' => 'Schools',
       'extra' => TRUE,
