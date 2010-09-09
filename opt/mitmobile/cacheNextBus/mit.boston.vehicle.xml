@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?> 
-<body copyright="All data copyright Massachusetts Institute of Technology 2010.">
-<vehicle id="800" routeTag="boston" dirTag="cambridge" lat="42.34876" lon="-71.09643" secsSinceReport="33" predictable="true" heading="90" speedKmHr="36.972"/>
-<lastTime time="1284046133485"/>
-</body>
