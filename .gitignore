@@ -4,6 +4,7 @@ opt/mitmobile/bin/*mobi-*
 opt/mitmobile/mobi-config
 opt/mitmobile/mobi-lib
 opt/mitmobile/cache
+opt/mitmobile/cacheNextBus
 opt/mitmobile/logs/*
 mobi-web/.htaccess
 mobi-lib/lib_constants.inc
