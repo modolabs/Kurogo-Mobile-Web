@@ -71,7 +71,8 @@ window.addEventListener("orientationchange", function() {<?=$onorientationchange
 
 </head>
 
-<body <? if (isset($extra_onload)) { ?>onload="<?=$extra_onload?>"<? } ?> <?=$extra_body_tag?>>
+<body <? if (isset($extra_onload)) { ?>onload="<?=$extra_onload?>"<? } ?><? 
+  if (isset($extra_body_tag)) { ?> <?=$extra_body_tag?><? } ?>>
 <div id="container">
 	<div id="mapzoom">
 		<a href="#" onclick="zoomin(); scrollTo(0,1); return false;" id="zoomin"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Zoom In" /></a>

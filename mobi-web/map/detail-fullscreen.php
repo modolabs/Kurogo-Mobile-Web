@@ -15,9 +15,9 @@ $minySelect = $bbox[1];
 $maxxSelect = $bbox[2];
 $maxySelect = $bbox[3];
 
-$field = $_REQUEST['selectfield'];
-$layer = $_REQUEST['selectlayer'];
-$layers = $_REQUEST['layers'];
+$field = isset($_REQUEST['selectfield']) ? $_REQUEST['selectfield'] : null;
+$layer = isset($_REQUEST['selectlayer']) ? $_REQUEST['selectlayer'] : null;
+$layers = isset($_REQUEST['layers']) ? $_REQUEST['layers'] : null;
 
 $onorientationchange = "scrollTo(0,1); rotateScreen(); setTimeout('rotateMap()',500)";
 $extra_onload = $onorientationchange;
