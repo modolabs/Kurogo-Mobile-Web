@@ -4,29 +4,20 @@ $page->title("MIT Shuttle Schedule")
 
 $page->content_begin();
 ?>
-	<p class="nav">
-		<strong>Daytime Shuttles:</strong><br/>
-                <? foreach($day_routes as $route) { ?>
-                     <? if(ShuttleSchedule::is_running($route, $now)) { ?>
-                           <img src="../Basic/images/shuttle.gif" width="15" height="12" alt="Running" align="absmiddle" />
-                     <? } else { ?>
-                           <img src="../Basic/images/shuttle-off.gif" width="15" height="12" alt="Not running" align="absmiddle" />
-                     <? } ?>
-		     <a href="times.php?route=<?=$route?>"><?=ShuttleSchedule::get_title($route)?></a><br/>
-                <? } ?>
-	</p>
-
-	<p class="nav">
-		<strong>Nighttime Saferide Shuttles:</strong><br/>
-                <? foreach($night_routes as $route) { ?>
-                     <? if(ShuttleSchedule::is_running($route, $now)) { ?>
-                           <img src="../Basic/images/shuttle.gif" width="15" height="12" alt="Running" align="absmiddle" />
-                     <? } else { ?>
-                           <img src="../Basic/images/shuttle-off.gif" width="15" height="12" alt="Not Running" align="absmiddle" />
-                     <? } ?>
-		     <a href="times.php?route=<?=$route?>"><?=ShuttleSchedule::get_title($route)?></a><br/>
-                <? } ?>
-	</p>
+  <? foreach ($reader->getAgencies() as $agencyID) { ?>
+    <p class="nav">
+      <strong><?=$reader->getNameForAgency($agencyID)?> Shuttles:</strong><br/>
+      <? foreach ($reader->getRoutesForAgency($agencyID) as $routeID) { ?>
+        <? if($reader->routeIsRunning($routeID)) { ?>
+          <img src="../Basic/images/shuttle.gif" width="15" height="12" alt="Running" align="absmiddle" />
+        <? } else { ?>
+          <img src="../Basic/images/shuttle-off.gif" width="15" height="12" alt="Not running" align="absmiddle" />
+        <? } ?>
+          <a href="times.php?route=<?=$routeID?>"><?=$reader->getNameForRoute($routeID)?></a>
+        <br/>
+      <? } ?>
+    </p>
+  <? } ?>
 
 	<p class="legend">
  	        <img src="../Basic/images/shuttle.gif" width="15" height="12" alt="Running" align="absmiddle" />Running
