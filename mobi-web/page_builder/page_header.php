@@ -6,9 +6,7 @@ require WEBROOT . "page_builder/Page.inc";
 require WEBROOT . "page_builder/page_tools.php";
 //require WEBROOT . "page_builder/counter.php";
 
-  
 $page = Page::factory();
-
 
 /*
 //find which page is being requested
