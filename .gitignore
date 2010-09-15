@@ -19,3 +19,5 @@ iPhone-app/Harvard Mobile.xcodeproj/*.pbxuser
 opt/mitmobile/bin/clear-cache.sh
 opt/mitmobile/bin/reload-dining.sh
 
+nbproject/
+opt/mitmobile/cacheNextBus/
