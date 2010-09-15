@@ -16,3 +16,5 @@ iPhone-app/Common/Secret.m
 
 iPhone-app/Harvard Mobile.xcodeproj/*.mode1v3
 iPhone-app/Harvard Mobile.xcodeproj/*.pbxuser
+
+nbproject/

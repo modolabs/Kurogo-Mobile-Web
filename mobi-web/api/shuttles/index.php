@@ -9,12 +9,18 @@ require_once $APIROOT . "/api_header.inc";
 PageViews::log_api('shuttles', 'iphone');
 
 require_once LIBDIR . "/GTFSReader.php";
+require_once LIBDIR . "/TranslocReader.php";
+
+
+$transloc = new TranslocReader();
+
 $data = Array();
 $command = $_REQUEST['command'];
 
 switch ($command) {
  case 'stops':
-   $data = ShuttleSchedule::getAllStops();
+   $mockData = get_stops($transloc); // for Transloc, use $mockData
+   $data = ShuttleSchedule::getAllStops(); // for NextBus, use $data
    break;
  case 'stopInfo':
    $stop_id = $_REQUEST['id'];
@@ -40,7 +46,7 @@ switch ($command) {
        // we can split it out later if needed
        $routeInfo['stops'][0]['path'] = $path;
      }
-
+     //$data = get_all_routes_info($transloc, 'YES');
      $data[] = $routeInfo;
    }
    break;
@@ -120,6 +126,52 @@ switch ($command) {
 }
 
 echo json_encode($data);
+
+function get_stops($translocObj) {
+    $stops = $translocObj->getStops();
+
+    $stopsToReturn = array();
+    $routesDummy = array('route1', 'route2');
+
+    foreach($stops as $busStop) {
+
+
+        $stopsToReturn[] = array('title'=>$busStop['name'], 
+                                 'lon'=>$busStop['ll'][1], 'lat'=>$busStop['ll'][0],
+                                 'id'=>$busStop['id'],'routes'=>$routesDummy);
+    }
+
+    return $stopsToReturn;
+}
+
+function get_all_routes_info($translocObj, $compact) {
+
+    $routesInfoArray = $translocObj->getAllRoutesInfo();
+
+    $routesToReturn = array();
+
+    foreach($routesInfoArray as $routeInfo) {
+      if ($compact == 'NO') {
+           $routesToReturn[] =  array('route_id'=> $routeInfo['id'],
+                                'title'=> $routeInfo['long_name'],
+                                'interval'=> 60,
+                                'isSafeRide'=> 'false',
+                                'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
+                                'summary'=> 'Loops every N mins');
+        }
+
+        else {
+        $routesToReturn[] = array('route_id'=> $routeInfo['id'],
+                                'title'=> $routeInfo['long_name'],
+                                'interval'=> 60,
+                                'isSafeRide'=> 'false',
+                                'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
+                                'summary'=> 'Loops every N mins');
+        }
+
+    }
+    return $routesToReturn;
+}
 
 function get_route_metadata($route_id) {
   $route = ShuttleSchedule::getRoute($route_id);

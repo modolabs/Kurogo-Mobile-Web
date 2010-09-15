@@ -45,6 +45,20 @@ if (!in_array($routeID, $reader->getRoutes())) {
   }
   $imageTag = '<img src="'.$reader->getImageURLForRoute($routeID, $size).
     '" width="'.$size.'" height="'.$size.'" id="mapimage" alt="Map" />';
+
+  /*print_r($routeName);
+  print " >< ";
+  print_r($routeID);
+  print " >< ";
+  print_r($foundVehicles);
+  print " >< ";
+  print_r($vehicles);
+  print " >< ";
+  print_r($vehicleCount);
+  print " >< ";
+  print_r($summary);
+  print " >< ";
+  print_r($lastUpdated);*/
   
   require "$page->branch/times.html";
 }
