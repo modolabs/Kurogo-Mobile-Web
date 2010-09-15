@@ -142,7 +142,7 @@ class TranslocReader {
       $polyline = $this->segments[abs(intVal($segment))]['points'];
       $path = array_merge($path, decodePolylineToArray($polyline));
     }
-    print(json_encode($this->routes));
+    //print(json_encode($this->routes));
     $args['path'] = 'weight:4|color:0x'.$route['color'].'|enc:'.
           encodePolylineFromArray($path);
     
