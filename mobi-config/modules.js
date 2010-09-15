@@ -49,7 +49,7 @@
       "id": "webharvardedu",
       "title": "Full Website",
       "extra": true,
-      "url": "http://www.harvard.edu",
+      "url": "http://www.harvard.edu/?fullsite=yes",
       "platforms": ["iphone", "android", "webos", "winmo", "blackberry", "palm", "symbian", "computer"]
     },
     {
