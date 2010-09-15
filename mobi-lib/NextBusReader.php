@@ -306,36 +306,40 @@ class NextBusAgency {
   }
 
   public function vehicleLocations($route_id) {
-    $age = time() - $this->vehicles[$route_id]['lastUpdate'];
+    if (isset($this->vehicles[$route_id])) {
+      $age = time() - $this->vehicles[$route_id]['lastUpdate'];
+    } else {
+      $age = 9999; // no data at all, reload
+    }
     if ($age > 20) {
       $params = array(
         'command' => 'vehicleLocations',
         'r' => $route_id,
-	't' => '0',
-        );
+        't' => '0',
+      );
       $xml = $this->query($params);
       if ($xml) {
-	$result = array();
-	foreach ($xml->getElementsByTagName('vehicle') as $vehicle) {
-	  $attrs = $vehicle->attributes;
-	  $id = $attrs->getNamedItem('id')->nodeValue;
-	  $result[$id] = array(
+        $result = array();
+        foreach ($xml->getElementsByTagName('vehicle') as $vehicle) {
+          $attrs = $vehicle->attributes;
+          $id = $attrs->getNamedItem('id')->nodeValue;
+          $result[$id] = array(
             'lat' => $attrs->getNamedItem('lat')->nodeValue,
-	    'lon' => $attrs->getNamedItem('lon')->nodeValue,
-	    'secsSinceReport' => intval($attrs->getNamedItem('secsSinceReport')->nodeValue),
-	    'heading' => $attrs->getNamedItem('heading')->nodeValue,
-	    );
-	}
-	$age = $this->ageOfLastQuery;
-	$result['lastUpdate'] = time() - $age;
-	$this->vehicles[$route_id] = $result;
+            'lon' => $attrs->getNamedItem('lon')->nodeValue,
+            'secsSinceReport' => intval($attrs->getNamedItem('secsSinceReport')->nodeValue),
+            'heading' => $attrs->getNamedItem('heading')->nodeValue,
+          );
+        }
+        $age = $this->ageOfLastQuery;
+        $result['lastUpdate'] = time() - $age;
+        $this->vehicles[$route_id] = $result;
       }
     }
-
+    
     foreach ($this->vehicles[$route_id] as $vehicle => $report) {
       if ($vehicle != 'lastUpdate') {
-	$secsSinceReport = $report['secsSinceReport'] + $age;
-	$this->vehicles[$route_id][$vehicle]['secsSinceReport'] = $secsSinceReport;
+        $secsSinceReport = $report['secsSinceReport'] + $age;
+        $this->vehicles[$route_id][$vehicle]['secsSinceReport'] = $secsSinceReport;
       }
     }
 
@@ -373,7 +377,7 @@ class NextBusAgency {
 
     foreach ($this->stops[$stop_id]->routes as $route_id) {
       if (array_key_exists($route_id, $this->routes)) {
-	$stopList[] = $route_id . '|null|' . $stop_id;
+        $stopList[] = $route_id . '|null|' . $stop_id;
       }
     }
 
@@ -411,12 +415,8 @@ class NextBusAgency {
     if ($time - $age > 20) {
       $route = $this->routes[$route_id];
       $stopList = array();
-      foreach ($route->trips as $trip_id => $trip) {
-        foreach ($trip->stop_times as $stop_id => $times) {
-          //foreach ($route->stops as $stop_id) {
-            $stopList[] = $route_id . '|' . $trip->direction_id . '|' . $stop_id;
-          //}
-        }
+      foreach ($route->stops as $stop_id) {
+        $stopList[] = $route_id . '|null|' . $stop_id;
       }
     
       $params = array(
@@ -450,7 +450,7 @@ class NextBusAgency {
         $age = $result['lastUpdate'];
         $this->predictions[$route_id] = $result;
                 
-      } else if (time() - $age > 120) {  
+      } else if (time() - $age > 120) {
         // invalidate predictions if they're too old
         $this->predictions[$route_id] = array();
       }
@@ -481,6 +481,7 @@ class NextBusAgency {
       // remove urlencoded brackets.  nextbus doesn't do brackets.
       $url = preg_replace('/%5B\d+%5D/', '', $url);
       //error_log("shuttles: requesting $url", 0);
+      //error_log("Requesting NextBus query with params:\n".print_r($params, true));
       $contents = file_get_contents($url);
 
       if (!$contents) {

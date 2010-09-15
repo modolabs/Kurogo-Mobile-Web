@@ -5,43 +5,24 @@ $page->title('Shuttles')
      ->breadcrumbs('Shuttle Schedule')
      ->breadcrumb_home();
 
-
 $page->content_begin();
 ?>	
-
-        <div class="nonfocal">
-                <p id="statusmessage"></p>
-                <h3>Daytime Shuttles:</h3>
-        </div>
-
-	<ul class="nav">
-            <? foreach($day_routes as $route) { ?>
-                <? if(ShuttleSchedule::is_running($route, $now)) { ?>
-                   <li class="icon running">
-                <? } else { ?>
- 		   <li class="icon nonrunning">
-                <? } ?>
-			<a href="times.php?route=<?=$route?>"><?=ShuttleSchedule::get_title($route)?></a>
-		</li>
-           <? } ?>
-	</ul>
-
-        <div class="nonfocal">
-                <p id="statusmessage"></p>
-                <h3>Nighttime Saferide Shuttles:</h3>
-        </div>
-
-	<ul class="nav">
-            <? foreach($night_routes as $route) { ?>
-                <? if(ShuttleSchedule::is_running($route, $now)) { ?>
-                   <li class="icon running">
-                <? } else { ?>
- 		   <li class="icon nonrunning">
-                <? } ?>
-			<a href="times.php?route=<?=$route?>"><?=ShuttleSchedule::get_title($route)?></a>
-		</li>
-           <? } ?>
-	</ul>
+  <? foreach ($reader->getAgencies() as $agencyID) { ?>
+    <div class="nonfocal">
+      <h3><?=$reader->getNameForAgency($agencyID)?> Shuttles:</h3>
+    </div>
+    <ul class="nav">
+      <? foreach ($reader->getRoutesForAgency($agencyID) as $routeID) { ?>
+        <? if($reader->routeIsRunning($routeID)) { ?>
+          <li class="icon running">
+        <? } else { ?>
+          <li class="icon nonrunning">
+        <? } ?>
+          <a href="times.php?route=<?=$routeID?>"><?=$reader->getNameForRoute($routeID)?></a>
+        </li>
+      <? } ?>
+    </ul>
+  <? } ?>
 	
 	<div class="nonfocal legend">
 	       <div class="icon running">Running</div>
