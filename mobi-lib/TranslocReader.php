@@ -3,6 +3,7 @@
 require 'decodePolylineToArray.php';
 require 'encodePolylineFromArray.php';
 
+define('MASCO_TRANSLOC_FEED', 'http://masco.transloc.com/itouch/feeds/');
 define('HARVARD_TRANSLOC_FEED', 'http://harvard.transloc.com/itouch/feeds/');
 define('HARVARD_TRANSLOC_MARKERS', 'http://harvard.transloc.com/m/markers/marker.php');
 define('STATIC_MAPS_URL', 'http://maps.google.com/maps/api/staticmap?');
@@ -26,13 +27,20 @@ class TranslocReader {
   );
   
   public function __construct() {
-    $routeInfo = $this->getTranslocData('setup');
-    $stopsInfo = $this->getTranslocData('stops');
-    
+    $harvardRouteInfo = $this->getTranslocData('setup');
+    $harvardStopsInfo = $this->getTranslocData('stops');
+
+    $mascoRouteInfo = $this->getMascoTranslocData('setup');
+    $mascoStopsInfo = $this->getMascoTranslocData('stops');
+
+    $this->contructorHelper($harvardRouteInfo, $harvardStopsInfo);
+    $this->contructorHelper($mascoRouteInfo, $mascoStopsInfo);
+  }
+
+  function contructorHelper($routeInfo, $stopsInfo) {
     foreach ($routeInfo['segments'] as $segment) {
       $this->segments[$segment['id']] = $segment;
     }
-    
     foreach ($routeInfo['agencies'] as $agency) {
       $this->agencies[$agency['name']] = $agency;
 
@@ -44,11 +52,11 @@ class TranslocReader {
         $this->routes[$route['id']]['active'] = false;
       }
     }
-    
+
     foreach ($stopsInfo['stops'] as $stop) {
       $this->stops[$stop['id']] = $stop;
     }
-    
+
     foreach ($stopsInfo['routes'] as $route) {
       $this->routes[$route['id']]['stops'] = $route['stops'];
     }
@@ -60,7 +68,14 @@ class TranslocReader {
     $json = file_get_contents(HARVARD_TRANSLOC_FEED.$page.'?'.http_build_query($args));
     return json_decode($json, true);
   }
-  
+
+    function getMascoTranslocData($page, $args=array()) {
+    $args['v'] = 1; // version 1 of api
+
+    $json = file_get_contents(MASCO_TRANSLOC_FEED.$page.'?'.http_build_query($args));
+    return json_decode($json, true);
+  }
+
   function getAgencies() {
     return array_keys($this->agencies);
   }
@@ -77,15 +92,19 @@ class TranslocReader {
     return $this->routes[$routeID]['long_name'];
   }
   
-  function updateIfNeeded() {
-    if (time() > ($this->activeRoutes['lastUpdate'] + TRANSLOC_UPDATE_FREQ)) {
-      $update = $this->getTranslocData('update', array('nextstops' => 'true'));
-      
+  function updateIfNeeded($harvardUpdate, $mascoUpdate) {
       $this->activeRoutes = array();
-      foreach ($update['active_routes'] as $routeID) {
+
+
+      foreach ($harvardUpdate['active_routes'] as $routeID) {
         $this->activeRoutes[$routeID] = array();
       }
-      foreach ($update['vehicles'] as $vehicle) {
+      foreach ($mascoUpdate['active_routes'] as $routeID) {
+        $this->activeRoutes[$routeID] = array();
+      }
+
+
+      foreach ($harvardUpdate['vehicles'] as $vehicle) {
         if (isset($this->activeRoutes[$vehicle['r']])) {
           $this->activeRoutes[$vehicle['r']][$vehicle['id']] = $vehicle;
         } else {
@@ -93,19 +112,37 @@ class TranslocReader {
             ' has active vehicle '.$vehicle['id']);
         }
       }
+      foreach ($mascoUpdate['vehicles'] as $vehicle) {
+        if (isset($this->activeRoutes[$vehicle['r']])) {
+          $this->activeRoutes[$vehicle['r']][$vehicle['id']] = $vehicle;
+        } else {
+          error_log('Warning: inactive route '.$vehicle['r'].
+            ' has active vehicle '.$vehicle['id']);
+        }
+      }
+
+      
       $this->activeRoutes['lastUpdate'] = time();
+  }
+
+  function updateHarvardAndMascoIfNeeded() {
+    if (time() > ($this->activeRoutes['lastUpdate'] + TRANSLOC_UPDATE_FREQ)) {
+      $updateHarvard = $this->getTranslocData('update', array('nextstops' => 'true'));
+      $updateMasco = $this->getMascoTranslocData('update', array('nextstops' => 'true'));
+      $this->updateIfNeeded($updateHarvard,$updateMasco);
     }
   }
+
   
   function getVehiclesForRoute($routeID) {
-    $this->updateIfNeeded();
+    $this->updateHarvardAndMascoIfNeeded();
     
     return isset($this->activeRoutes[$routeID]) ? 
       $this->activeRoutes[$routeID] : array();
   }
   
   function routeIsRunning($routeID) {
-    $this->updateIfNeeded();
+    $this->updateHarvardAndMascoIfNeeded();
     return isset($this->activeRoutes[$routeID]);
   }
   
@@ -118,7 +155,7 @@ class TranslocReader {
   }
   
   function getActiveRoutes() {
-    $this->updateIfNeeded();
+    $this->updateHarvardAndMascoIfNeeded();
     return array_keys($this->activeRoutes);
   }
 
