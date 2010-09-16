@@ -124,10 +124,82 @@ class TranslocReader {
 
   function getStops() {
     return $this->stops;
+   /* $stopsToReturn = array();
+      foreach($this->routes as $route) {
+          $route_id = $route['id'];
+
+          foreach($route['stops'] as $stop) {
+              if (in_array($stop, $this->stops)) {
+                 $stopsToReturn[] = $this->stops
+              }
+
+          }
+      }*/
+  }
+
+  function getStopsForRoute($routeId) {
+    $route = $this->routes[$routeId];
+
+    $path = array();
+    $vehicles = $this->getVehiclesForRoute($routeId);
+   // print(json_encode($vehicles));
+
+
+    foreach ($route['segments'] as $segment) {
+      $polyline = $this->segments[abs(intVal($segment))]['points'];
+      $path = array_merge($path, decodePolylineToArray($polyline));
+    }
+    //print(json_encode($this->stops));
+    //print(json_encode($this->routes[$route['id']]['stops']));
+
+    $stopsToReturn = array();
+    foreach ($route['stops'] as $stop) {
+      $upComingStop =  false;
+            foreach ($vehicles as $vehicle) {
+                if($stop == $vehicle['next_stop'])
+                    $upComingStop = true;
+            }
+
+    if ($upComingStop == true) {
+        $stopsToReturn[] = array('id'=> strval($stop),
+                                'title'=>$this->stops[$stop]['name'],
+                                'lat'=>$this->stops[$stop]['ll'][0],
+                                'lon'=>$this->stops[$stop]['ll'][1],
+                                'next'=> 1284649000,
+                                'upcoming'=> $upComingStop,
+                                'predictions'=>array(3600, 7200));
+
+    }
+    else {
+               $stopsToReturn[] = array('id'=> strval($stop),
+                                'title'=>$this->stops[$stop]['name'],
+                                'lat'=>$this->stops[$stop]['ll'][0],
+                                'lon'=>$this->stops[$stop]['ll'][1],
+                                'next'=> 1284649000,
+                                'predictions'=>array(3600, 7200));
+        }
+    }
+
+    if (count($vehicles) > 0)
+        $stopsToReturn[] = array('gps'=>true); // if there is an upcomingstop, then we know we have vehicle data
+    else
+        $stopsToReturn[] = array('gps'=>false);
+
+    $pathToReturn = array();
+    foreach($path as $pathEntity) {
+        $pathToReturn[] = array('lat'=>$pathEntity[0], 'lon'=>$pathEntity[1]);
+    }
+    $stopsToReturn[0]['path'] = $pathToReturn;
+
+    return $stopsToReturn;
   }
 
   function getAllRoutesInfo() {
       return $this->routes;
+  }
+
+ function getOneRouteInfo($route_id) {
+      return $this->routes[$route_id];
   }
   
   function getImageURLForRoute($routeID, $size='400') {
@@ -142,12 +214,15 @@ class TranslocReader {
       $polyline = $this->segments[abs(intVal($segment))]['points'];
       $path = array_merge($path, decodePolylineToArray($polyline));
     }
-    //print(json_encode($this->routes));
+    //print(json_encode($this->stops));
+    //print(json_encode($this->routes[$route['id']]['stops']));
     $args['path'] = 'weight:4|color:0x'.$route['color'].'|enc:'.
           encodePolylineFromArray($path);
     
     $vehicleSuffix = '';
     $vehicles = $this->getVehiclesForRoute($routeID);
+
+    print(json_encode($vehicles));
     foreach ($vehicles as $vehicle) {
       $lat = $vehicle['ll'][0];
       $lon = $vehicle['ll'][1];

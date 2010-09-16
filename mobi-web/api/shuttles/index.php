@@ -20,14 +20,41 @@ $command = $_REQUEST['command'];
 switch ($command) {
  case 'stops':
    $mockData = get_stops($transloc); // for Transloc, use $mockData
-   $data = ShuttleSchedule::getAllStops(); // for NextBus, use $data
-   break;
+   //$data = ShuttleSchedule::getAllStops(); // for NextBus, use $data
+   $data = $mockData;
+     break;
+
  case 'stopInfo':
    $stop_id = $_REQUEST['id'];
    $time = time();
 
-   $data['stops'] = ShuttleSchedule::getTimesForStop($stop_id);
-   $data['now'] = $time;
+   $stops = get_stops($transloc);
+
+   $stopInfoToReturn = array();
+   $routes = array();
+   foreach($stops as $stop) {
+    if (strval($stop['id']) == strval($stop_id)) {
+       $routes = $stop['routes'];
+       $lat = $stop['lat'];
+       $lon = $stop['lon'];
+    }
+   }
+
+   foreach($routes as $route_id) {
+       $stopInfoToReturn[] = array('id'=>$stop_id,
+                                  'route_id'=>$route_id,
+                                  'lat'=> $lat,
+                                  'lon'=> $lon,
+                                  'next'=>1284934000,
+                                  'gps'=>false);
+   }
+
+   $mockData['stops'] = $stopInfoToReturn;
+   $mockData['now'] = $time;
+   $data= $mockData; // for Transloc, use $mockData
+
+   //$data['stops'] = ShuttleSchedule::getTimesForStop($stop_id);
+    //$data['now'] = $time;
 
    break;
  case 'routes': // static info about all routes
@@ -45,13 +72,18 @@ switch ($command) {
        // we had each stop's path segment appended to the stop
        // we can split it out later if needed
        $routeInfo['stops'][0]['path'] = $path;
+       $mockData = get_all_routes_info($transloc, 'NO'); // for Transloc, use $mockData
      }
-     //$data = get_all_routes_info($transloc, 'YES');
-     $data[] = $routeInfo;
+     else {
+         $mockData = get_all_routes_info($transloc, 'YES'); // for Transloc, use $mockData
+     }
+
+     $data = $mockData;
+     //$data[] = $routeInfo; // for NextBus, use $data
    }
    break;
  case 'routeInfo': // live info for individual routes
-   $route_id = $_REQUEST['id'];
+   /*$route_id = $_REQUEST['id'];
    $time = time();
    if ($route_id) {
 
@@ -85,8 +117,51 @@ switch ($command) {
    } else {
      $data = Array('error' => "no route parameter");
    }
+    break;*/
+
+   
+   $route_id = $_REQUEST['id'];
+   $time = time();
+   if ($route_id) {
+
+     $gpsActive = false;
+     if ($_REQUEST['full'] == 'true') {
+         $data = get_specific_routes_info($transloc, 'NO', $route_id); // for Transloc, use $mockData
+         $gpsActive = $data['stops'][count($data['stops']) - 1]['gps'];
+         unset($data['stops'][count($data['stops']) - 1]);
+     }
+     else {
+         $data = get_specific_routes_info($transloc, 'YES', $route_id); // for Transloc, use $mockData
+         $gpsActive = $data['stops'][count($data['stops']) - 1]['gps'];
+         unset($data['stops'][count($data['stops']) - 1]);
+     }
+
+
+     if ($gpsActive == true) {
+       $data['gpsActive'] = TRUE;
+
+
+       $vehicles = $transloc->getVehiclesForRoute($route_id);
+       $vehiclesArray = array();
+       foreach($vehicles as $vehicle) {
+           $vehiclesArray[] = array('lat'=>$vehicle['ll'][0],
+                                    'lon'=>$vehicle['ll'][1],
+                                    'secsSinceReport'=> 3600,
+                                    'heading'=>$vehicle['h']);
+       }
+
+       $data['vehicleLocations'] = $vehiclesArray;
+     }
+     
+     $data['now'] = $time;
+
+   } else {
+     $data = Array('error' => "no route parameter");
+   }
 
    break;
+
+
  case 'subscribe': case 'unsubscribe':
    require_once $APIROOT . '/push/apns_lib.php';
 
@@ -129,16 +204,22 @@ echo json_encode($data);
 
 function get_stops($translocObj) {
     $stops = $translocObj->getStops();
+    $allRoutes = $translocObj->getAllRoutesInfo();
+    //print_r($allRoutes);
 
     $stopsToReturn = array();
-    $routesDummy = array('route1', 'route2');
 
     foreach($stops as $busStop) {
-
-
+    $routesForThisStop = array();
+       foreach ($allRoutes as $route) {
+            $route_id = $route['id'];         
+                if (in_array($busStop['id'], $route['stops'])) {
+                    $routesForThisStop[] = $route['id'];
+                }
+        }
         $stopsToReturn[] = array('title'=>$busStop['name'], 
                                  'lon'=>$busStop['ll'][1], 'lat'=>$busStop['ll'][0],
-                                 'id'=>$busStop['id'],'routes'=>$routesDummy);
+                                 'id'=>$busStop['id'],'routes'=>$routesForThisStop);
     }
 
     return $stopsToReturn;
@@ -155,9 +236,10 @@ function get_all_routes_info($translocObj, $compact) {
            $routesToReturn[] =  array('route_id'=> $routeInfo['id'],
                                 'title'=> $routeInfo['long_name'],
                                 'interval'=> 60,
-                                'isSafeRide'=> 'false',
+                                'isSafeRide'=> false,
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
-                                'summary'=> 'Loops every N mins');
+                                'summary'=> 'Loops every N mins',
+                                'stops'=>$translocObj->getStopsForRoute($routeInfo['id']));
         }
 
         else {
@@ -172,6 +254,29 @@ function get_all_routes_info($translocObj, $compact) {
     }
     return $routesToReturn;
 }
+
+
+function get_specific_routes_info($translocObj, $compact, $route_id) {
+
+    $routeInfo = $translocObj->getOneRouteInfo($route_id);
+
+      if ($compact == 'NO') {
+           $routeToReturn =  array('route_id'=> $routeInfo['id'],
+                                'title'=> $routeInfo['long_name'],
+                                'interval'=> 60,
+                                'isSafeRide'=> false,
+                                'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
+                                'summary'=> 'Loops every N mins',
+                                'stops'=>$translocObj->getStopsForRoute($routeInfo['id']));
+        }
+
+        else {
+            $routeToReturn = array('stops'=>$translocObj->getStopsForRoute($routeInfo['id']));
+        }
+
+    return $routeToReturn;
+}
+
 
 function get_route_metadata($route_id) {
   $route = ShuttleSchedule::getRoute($route_id);
