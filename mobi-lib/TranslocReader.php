@@ -124,17 +124,6 @@ class TranslocReader {
 
   function getStops() {
     return $this->stops;
-   /* $stopsToReturn = array();
-      foreach($this->routes as $route) {
-          $route_id = $route['id'];
-
-          foreach($route['stops'] as $stop) {
-              if (in_array($stop, $this->stops)) {
-                 $stopsToReturn[] = $this->stops
-              }
-
-          }
-      }*/
   }
 
   function getStopsForRoute($routeId) {
@@ -222,7 +211,7 @@ class TranslocReader {
     $vehicleSuffix = '';
     $vehicles = $this->getVehiclesForRoute($routeID);
 
-    print(json_encode($vehicles));
+    //print(json_encode($vehicles));
     foreach ($vehicles as $vehicle) {
       $lat = $vehicle['ll'][0];
       $lon = $vehicle['ll'][1];
