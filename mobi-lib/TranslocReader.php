@@ -248,7 +248,7 @@ class TranslocReader {
     $vehicleSuffix = '';
     $vehicles = $this->getVehiclesForRoute($routeID);
 
-    //print(json_encode($vehicles));
+    //print(json_encode($this->routes));
     foreach ($vehicles as $vehicle) {
       $lat = $vehicle['ll'][0];
       $lon = $vehicle['ll'][1];

@@ -57,7 +57,8 @@ switch ($command) {
     //$data['now'] = $time;
 
    break;
- case 'routes': // static info about all routes
+
+   case 'routes': // static info about all routes
    $route_ids = ShuttleSchedule::getActiveRoutes();
    foreach ($route_ids as $route_id) {
      $routeInfo = get_route_metadata($route_id);
@@ -235,6 +236,7 @@ function get_all_routes_info($translocObj, $compact) {
       if ($compact == 'NO') {
            $routesToReturn[] =  array('route_id'=> $routeInfo['id'],
                                 'title'=> $routeInfo['long_name'],
+                                'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
                                 'isSafeRide'=> false,
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
@@ -245,6 +247,7 @@ function get_all_routes_info($translocObj, $compact) {
         else {
         $routesToReturn[] = array('route_id'=> $routeInfo['id'],
                                 'title'=> $routeInfo['long_name'],
+                                'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
                                 'isSafeRide'=> 'false',
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
@@ -263,6 +266,7 @@ function get_specific_routes_info($translocObj, $compact, $route_id) {
       if ($compact == 'NO') {
            $routeToReturn =  array('route_id'=> $routeInfo['id'],
                                 'title'=> $routeInfo['long_name'],
+                                'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
                                 'isSafeRide'=> false,
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
