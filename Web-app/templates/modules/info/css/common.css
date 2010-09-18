@@ -1,0 +1,173 @@
+@charset "UTF-8";
+/* CSS Document */
+
+body {
+	margin: 0 20px;
+	background: #978d87 url(/modules/info/images/body_bg.png) repeat-x;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	line-height: 1.4;
+	color: #333;
+}
+
+img {
+	border: 0;
+}
+
+a, a:visited {
+	color: #9E3039;
+}
+
+p {
+	padding: 0;
+	margin: 0 0 15px;
+}
+
+#container {
+	width: 1000px;
+	margin: 0 auto;
+}
+
+#header {
+	height: 304px;
+	overflow: hidden;
+	background: url(/modules/info/images/phone_images.png) no-repeat 570px bottom;
+}
+
+#utility_nav {
+	height: 20px;
+	text-align: right;
+	padding: 9px 30px 0 0;
+	font-size: 11px;
+	vertical-align: top;
+}
+
+#utility_nav a, #utility_nav a:visited {
+	color: #444;
+	text-decoration: none;
+}
+
+#utility_nav a:hover {
+	text-decoration: underline;
+}
+
+#logo {
+	padding-top: 10px;
+}
+
+#header h1 {
+	color: #fff;
+	padding: 40px 0 0 54px;
+	font-size: 36px;
+	margin: 0;
+	line-height: 1;
+}
+
+#header p {
+	color: #fff;
+	margin:12px 0 0 180px;
+	width: 300px;
+	font-size: 16px;
+	line-height: 1.2;
+}
+
+#content {
+	min-height: 400px;
+	background-color: #fff;
+	padding: 35px 40px 25px;
+}
+
+.leftcol {
+	width: 400px;
+	float: left;
+}
+
+.rightcol {
+	width: 410px;
+	float: right;
+	padding-left: 40px;
+	border-left: solid 2px #bcbcbc;
+}
+
+#content h2 {
+	color: #9E3039;
+	font-family: Georgia, "Times New Roman", Times, serif;
+	font-size: 18px;
+	line-height: 1.2;
+	font-weight: normal;
+	margin: 0 0 10px;
+	padding: 0;
+}
+
+div.feedback {
+	width: 390px;
+	height: 200px;
+	background: url(modules/info/images/beige_box_bg.png) no-repeat top left;
+	margin: 32px 0;
+}
+
+.feedback p {
+	font-size: 16px;
+	padding: 15px 25px 15px 20px;
+	color: #555;
+}
+
+.feedback a, .feedback a:visited {
+	color: #000;
+}
+
+.black_font {
+	color:#000;
+}
+
+table#download {
+	font-size: 14px;
+}
+
+table#download td {
+	padding: 0 12px 12px 0;
+}
+
+table#features td {
+	vertical-align: top;
+	padding: 0 20px 10px 0;
+}
+
+table#features td h2 {
+	font-family: Arial, Helvetica, sans-serif;
+	color: #000;
+	font-weight: bold;
+	font-size: 12px;
+	line-height: 1.2;
+	margin: 0;
+}
+
+.clr {
+	clear: both;
+}
+
+#footer {
+	font-size: 11px;
+	padding: 5px 0 15px;
+	color: #fff;
+}
+
+#footer a, #footer a:visited {
+	color: #fff;
+	text-decoration: none;
+}
+
+#footer a:hover {
+	text-decoration: underline;
+}
+
+a#preview_site, a#preview_site:visited {
+	display: block;
+	width: 217px;
+	height: 54px;
+	background: url(modules/info/images/preview.png) bottom left no-repeat;
+}
+
+a#preview_site:hover {
+	background: url(modules/info/images/preview.png) top left;
+}

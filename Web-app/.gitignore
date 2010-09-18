@@ -1,0 +1,7 @@
+*~
+*.DS_Store
+
+opt/config/*
+opt/cache/*
+opt/logs/*
+
