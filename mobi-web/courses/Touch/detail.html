@@ -12,7 +12,7 @@ $page->content_begin();
 		<a id="mystellar" href="<?= selfURL() ?>&action=<?=$action?>"><?=$page->img_tag($mystellar_img, 'gif', 'My Courses', array('border', '0'))?></a>
 
 		<h2><?=$class['name']?>: <?=className($class)?></h2>
-		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Courses site</a><? } ?></p>
+		<p> <?=$term?> <? if (strlen($class['stellarUrl']) > 0) { ?>| <a href="<?=$class['stellarUrl']?>" target="_new">Course Website</a><? } ?></p>
 
 		<div id="tabs">
 		<?=$tabs_html?>
