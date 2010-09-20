@@ -27,33 +27,44 @@ class AboutModule extends Module {
   }
   
   protected function initializeForPage($page, $args) {
+    $siteVars = $GLOBALS['siteConfig']->getThemeVar('site');
+    $navlistItems = array(
+      'about_site' => array(
+        'html' => 'About this website',
+        'url' => 'about_site.php',
+      ),
+      'about' => array(
+        'html' => 'About '.$siteVars['INSTITUTION_NAME'],
+        'url' => 'about.php',
+      ),
+      'feedback' => array(
+        'html' => 'Send us feedback!',
+        'url' => 'mailto:'.$siteVars['FEEDBACK_EMAIL'],
+        'class' => 'email',
+      ),
+    );
+
     switch ($page) {
       case 'index':
-        $siteVars = $GLOBALS['siteConfig']->getThemeVar('site');
-        
-        $this->assignByRef('navlistItems', array(
-          array(
-            'html' => 'About this website',
-            'url' => 'about_site.php',
-          ),
-          array(
-            'html' => 'About '.$siteVars['INSTITUTION_NAME'],
-            'url' => 'about.php',
-          ),
-          array(
-            'html' => 'Send us feedback!',
-            'url' => 'mailto:'.$siteVars['FEEDBACK_EMAIL'],
-            'class' => 'email',
-          ),
-        ));
-      case 'about_site':
-        $this->assignByRef('devicePhrase', $this->getPhraseForDevice());
+        if ($GLOBALS['deviceClassifier']->getPagetype() == 'basic') {
+          $this->assign('lastNavItem', array_pop($navlistItems));
+        }
+        $this->assign('navlistItems', $navlistItems);
         break;
         
+      case 'about_site':
+        $this->setPageTitle($navlistItems[$page]['html']);
+        $this->assign('devicePhrase', $this->getPhraseForDevice());
+        break;
+      
+      case 'about':
+        $this->setPageTitle($navlistItems[$page]['html']);
+        break;
+      
       case 'new':
         $whatsNew = new WhatsNew();
         
-        $this->assignByRef('items', $whatsNew->get_items());
+        $this->assign('items', $whatsNew->get_items());
         break;
     }
   }

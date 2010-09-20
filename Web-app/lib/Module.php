@@ -5,8 +5,7 @@ require_once realpath(LIB_DIR.'/TemplateEngine.php');
 abstract class Module {
   protected $id = 'none';
   
-  private $title = 'No Title';
-  private $pageTitle = 'No Page Title';
+  private $moduleName = 'No Title';
   
   private $inlineCSSBlocks = array();
   private $inlineJavascriptBlocks = array();
@@ -14,6 +13,9 @@ abstract class Module {
   private $onOrientationChangeBlocks = array();
   
   private $breadcrumbs = array();
+
+  private $fontsize = 'medium';
+  private $fontsizes = array('small', 'medium', 'large', 'xlarge');
   
   private $templateEngine = null;
   private $siteVars = null;
@@ -31,6 +33,30 @@ abstract class Module {
     return $minifySuffix;
   }
   
+  
+  private function getFontSizeCSS() {
+    switch ($this->fontsize) {
+      case 'small':
+        return 'body { font-size: 89%; line-height: 1.33em }';
+      case 'large':
+        return 'body { font-size: 125%; line-height: 1.33em }';
+      case 'xlarge':
+        return 'body { font-size: 150%; line-height: 1.33em }';
+      default:
+        return 'body { font-size: 100%; line-height: 1.33em }';
+    }
+  }
+   
+  private function getFontSizeURL($page, $args) {
+    unset($args['font']);
+    $argString = http_build_query($args);
+    if (strlen($argString)) {
+      return "$page.php?$argString&font=";
+    } else {
+      return "$page.php?font=";
+    }
+  }
+
   private function loadTemplateEngineIfNeeded() {
     if (!isset($this->templateEngine)) {
       $this->templateEngine = new TemplateEngine($this->id);
@@ -54,7 +80,7 @@ abstract class Module {
       return new $className;
       
     } else {
-      throw new PageNotFound('Module "'.$id.'" not found');
+      throw new PageNotFound("Module '$id' not found while handling '{$_SERVER['REQUEST_URI']}'");
     }
   }
   
@@ -63,8 +89,7 @@ abstract class Module {
     
     $modules = $GLOBALS['siteConfig']->getThemeVar('modules');
     if (isset($modules[$this->id])) {
-      $this->title = $modules[$this->id]['title'];
-      $this->pageTitle = $this->title;
+      $this->moduleName = $modules[$this->id]['title'];
     }
   }
   
@@ -92,7 +117,7 @@ abstract class Module {
   }
   
   protected function setPageTitle($title) {
-    $this->pageTitle = $title;
+    $this->assign('pageTitle', $title);
   }
 
   protected function loadThemeConfigFile($name) {
@@ -123,26 +148,40 @@ abstract class Module {
   public function displayPage($page='index', $args=array()) {
     $this->loadTemplateEngineIfNeeded();
     
-    // Set variables common to all pages for the module
-    $this->assignByRef('moduleID', $this->id);
-    $this->assignByRef('title', $this->title);
-    $this->assignByRef('page', $page);
-    $this->assignByRef('moduleHome', $page == 'index');
+    // Font size for template
+    if (isset($_REQUEST['font'])) {
+      $this->fontsize = $_REQUEST['font'];
+      setcookie('fontsize', $this->fontsize, time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), '/');      
+    
+    } else if (isset($_COOKIE['fontsize'])) { 
+      $this->fontSize = $_COOKIE['fontsize'];
+    }
+    
+    // Set variables common to all pages
+    $this->assign('moduleID', $this->id);
+    $this->assign('moduleName', $this->moduleName);
+    $this->assign('page', $page);
+    $this->assign('moduleHome', $page == 'index');
+    
+    $this->assign('fontsizes', $this->fontsizes);
+    $this->assign('fontsize', $this->fontsize);
+    $this->assign('fontsizeCSS', $this->getFontSizeCSS());
+    $this->assign('fontSizeURL', $this->getFontSizeURL($page, $args));
+
     
     $minifySuffix = $this->getMinifySuffix($page);
-    $this->assignByRef('minify', array(
+    $this->assign('minify', array(
       'css' => "../min/g=css-$minifySuffix",
       'js'  => "../min/g=js-$minifySuffix",
     ));
     
-    $this->assignByRef('inlineCSSBlocks', $this->inlineCSSBlocks);
-    $this->assignByRef('inlineJavascriptBlocks', $this->inlineJavascriptBlocks);
-    $this->assignByRef('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
-    $this->assignByRef('inlineJavascriptFooterBlocks', $this->inlineJavascriptFooterBlocks);
+    $this->assign('inlineCSSBlocks', $this->inlineCSSBlocks);
+    $this->assign('inlineJavascriptBlocks', $this->inlineJavascriptBlocks);
+    $this->assign('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
+    $this->assign('inlineJavascriptFooterBlocks', $this->inlineJavascriptFooterBlocks);
 
-    $this->assignByRef('breadcrumbs', $this->breadcrumbs);
-    $this->assignByRef('pageTitle', $this->pageTitle);
-
+    $this->assign('breadcrumbs', $this->breadcrumbs);
+    $this->assign('pageTitle', $this->moduleName);
 
     // Set variables for each page
     $this->initializeForPage($page, $args);

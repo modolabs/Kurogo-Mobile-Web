@@ -1,11 +1,16 @@
-<ul class="nav"> 
-  {foreach $navlistItems as $item}
-    {strip}
-    <li>
-      {if isset($item['url'])}<a href="{$item['url']}" class="{$item['class']|default:''}">{/if}  
+{strip}
+
+{block name="navlistStart"}<ul class="nav">{/block}
+  {assign var=last value=end(array_keys($navlistItems))}
+  {foreach $navlistItems as $index => $item}
+    {block name="navlistItem"}
+      <li>
+        <a href="{$item['url']}" class="{$item['class']|default:''}">
           {$item['html']}
-      {if isset($item['url'])}</a>{/if}  
-    </li>
-    {/strip}
+        </a>
+      </li>
+    {/block}
   {/foreach}
-</ul>
+{block name="navlistEnd"}</ul>{/block}
+
+{/strip}

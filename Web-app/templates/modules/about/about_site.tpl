@@ -1,6 +1,5 @@
 {include file="common/header.tpl"|for_device:$device}
 <div class="focal"> 
-  <h2>About this website</h2> 
   {foreach $INSTITUTION_ABOUT_HTML as $paragraph}
     <p>{$paragraph}</p>
   {/foreach}

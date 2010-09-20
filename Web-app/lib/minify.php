@@ -80,7 +80,7 @@ function minifyPostProcess($content, $type) {
     $layout = $GLOBALS['deviceClassifier']->getForcedLayout();
 
     $content = preg_replace(
-      '/url\("?([^"\)]+)"?\)/', 'url("/device/'.$layout.'\1")', $content);
+      '/url\("?\'?([^"\'\)]+)"?\'?\)/', 'url("/device/'.$layout.'\1")', $content);
   }
   return $content;
 }

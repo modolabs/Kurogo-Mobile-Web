@@ -1,4 +1,4 @@
-{include file="common/header.tpl"|for_device:$device}
+{include file="common/header.tpl"|for_device:$device pageTitle="What's New"}
 
 <ul class="focal"> 
   {foreach $items as $item}

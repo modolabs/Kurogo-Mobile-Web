@@ -1,36 +1,28 @@
-{include file="common/header.tpl"|for_device:$device navbar=false}
+{include file="common/header.tpl"|for_device:$device navbar=false startContainer=false}
 
+{block name="banner"}
   <h1{if isset($topItem)} class="roomfornew"{/if}>
-    <img src="modules/home/images/harvard-logo-home.png" width="265" height="45" alt="{$siteName}" />
+    <img src="../modules/home/images/harvard-logo-home.png" width="265" height="45" alt="{$SITE_NAME}" />
   </h1>
 
   {if isset($topItem)}
-      <div id="new"><a href="../mobile-about/new.php"><span class="newlabel">NEW:</span>{$topItem}</a></div>
+      <div id="new"><a href="../about/new.php"><span class="newlabel">NEW:</span>{$topItem}</a></div>
   {/if}
+{/block}
 
-{include file="common/search.tpl"|for_device:$device placeholder="Search "|cat:#SITE_NAME#}  
+<div id="container">
 
-  <div id="homegrid">
-    {foreach $homeModules as $category => $moduleCategory} 
+{include file="common/search.tpl"|for_device:$device placeholder="Search "|cat:$SITE_NAME}  
+  
+{block name="modulesStart"}{/block}
+  {assign var=lastCategory value=end(array_keys($homeModules))}
+  {foreach $homeModules as $category => $moduleCategory}
+    {block name="modulesCategoryStart"}{/block}
       {foreach $moduleCategory as $id => $info}
-        <div id="{$id}"{if $category == 'secondary'} class="utility"{/if}>
-          <a href="../{$info['url']|default:$id}/">
-            <img src="modules/{$moduleID}/images/{$id}.png" alt="{$info['title']}" />
-            <br/>{$info['title']}
-            {if isset($info['subTitle'])}
-              <br/><span class="fineprint">{$info['subTitle']}</span>
-            {/if}
-          {if $id == 'about' && $whatsNewCount > 0}
-            <span class="badge">{$whatsNewCount}</span>
-          {/if}
-          </a>
-        </div>
+        {block name="module"}{/block}
       {/foreach}
-      
-      {if $i == 0}
-        <div class="separator">&nbsp;</div>
-      {/if}   
-    {/foreach}
-  </div>
+    {block name="modulesCategoryEnd"}{/block}
+  {/foreach}
+{block name="modulesEnd"}{/block}
 
 {include file="common/footer.tpl"|for_device:$device}
