@@ -9,8 +9,8 @@ $page->content_begin();
 	<div class="focal">
 		<h2><?=$routeName?></h2>
 		<p class="smallprint"><?=$summary?>
-		<? if($foundVehicles) { ?> Refreshed at <?=formatShuttleTime($page, $lastUpdated)?> using Transloc GPS.
-		<? } else { ?> Transloc GPS is not available right now.
+		<? if($foundVehicles) { ?> Refreshed at <?=formatShuttleTime($page, $lastUpdated)?>.
+		<? } else { ?> Tracking is not available right now.
 		<? } ?></p>
 		<p class="smallprint">Route loop repeats every <?=$loopTime?> minutes.</p>
 		<div class="centered">

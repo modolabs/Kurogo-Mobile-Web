@@ -22,9 +22,9 @@ $page->content_begin();
 		     <?=$summary?><br/>
 
                      <? if($foundVehicles) { ?>
-		         Refreshed at <?=formatShuttleTime($page, $lastUpdated)?> using Transloc GPS. 
+		         Refreshed at <?=formatShuttleTime($page, $lastUpdated)?>. 
                      <? } else { ?>
-                         Transloc GPS is not available right now. 
+                         Tracking is not available right now.
                      <? } ?>
                 </p>
  

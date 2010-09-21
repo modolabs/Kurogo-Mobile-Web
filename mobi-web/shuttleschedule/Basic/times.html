@@ -12,9 +12,9 @@ $page->content_begin();
                     <?=$summary?> <br />
 
                     <? if($foundVehicles) { ?>
-                       Refreshed at <?=formatShuttleTime($page, $lastUpdated)?> (<a href="<?=selfURL()?>">refresh</a>) using NextBus GPS <br />
+                       Refreshed at <?=formatShuttleTime($page, $lastUpdated)?> (<a href="<?=selfURL()?>">refresh</a>) <br />
                     <? } else { ?>
-                       NextBus GPS is not available right now. Scheduled times are shown below.
+                       Tracking is not available right now. Scheduled times are shown below.
                     <? } ?>
 
                 </p>
