@@ -60,6 +60,7 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /var/www/html/news
 /var/www/html/page_builder
 /var/www/html/people
+/var/www/html/shuttleschedule
 /var/www/html/robots.txt
 /opt/mitmobile/cache
 /opt/mitmobile/logs
