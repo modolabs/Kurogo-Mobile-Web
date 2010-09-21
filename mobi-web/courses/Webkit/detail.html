@@ -74,8 +74,8 @@ $page->content_begin();
 	<p class="address"><?=$term?></p>
     <ul id="tabs">
     <? if (!$no_stellar_site) { ?>
-    <p> <?=$term?> <? if (strlen($class['stellarUrl']) > 0) { ?>| <a href="<?=$class['stellarUrl']?>" target="_new">Course Website</a><? } ?></p>
-        <li class="active"><a href="#scrolldown" onclick="showTab('infotab',this)">Info</a></li>
+        <p> <?=$term?> <? if (strlen($class['stellarUrl']) > 0) { ?>| <a href="<?=$class['stellarUrl']?>" target="_new">Course Website</a><? } ?></p>
+                <li class="active"><a href="#scrolldown" onclick="showTab('infotab',this)">Info</a></li>
         <li><a href="#scrolldown" onclick="showTab('instructortab',this)">Instructor(s)</a></li>
     <? } else { ?>
         <li class="active">Info</li>

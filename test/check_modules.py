@@ -261,7 +261,7 @@ def suite():
     """Builds the test suite to be run by this script."""
     
     testSuite = unittest.TestSuite()
-
+    
     # People    
     testSuite.addTest(TestModuleAPI('people', 
         {'q': 'roger brockett', 'command': 'search'}, 'Brockett'))
@@ -338,9 +338,15 @@ def suite():
             'Could not find the name of the course.'},
         '/course.php?back=&id=Law&idShort=Law&courseGroup=Harvard+Law+School&courseGroupShort=Law':
             {'<a href="detail.php': 
-            'Could not find a link to a law course.'} 
+            'Could not find a link to a law course.'},
+        '/detail.php?back=School%7CListing&id=d_fas_1011_1_COMPSCI_50_1&courseGroup=Faculty+of+Arts+and+Sciences&courseGroupShort=Faculty+of+Arts+and+Sciences&courseName=Computer+Science&courseNameShort=Computer+Science&filter=':
+            {'<a href=".*?>Course Website</a>':
+            'Could not find the course website link in detail page for COMPSCI 50'},
+        '/detail.php?back=School%7CListing&id=d_fas_1011_1_APMTH_21a_1&courseGroup=Faculty+of+Arts+and+Sciences&courseGroupShort=Faculty+of+Arts+and+Sciences&courseName=Applied+Mathematics&courseNameShort=Applied+Mathematics&filter=':
+            {'<a href=".*?>Course Website</a>':
+            'Could not find the course website link in detail page for APMTH 21A'}
     })
-
+    
     # News
     testSuite.addTest(TestModuleAPI('news', {}, 
         'xmlns:harvard="http://news.harvard.edu/gazette/'))    
@@ -415,7 +421,7 @@ def suite():
         { 
             TOUCH_PHONE_USER_AGENT: ['Touch', ''], 
             BLACKBERRY_PLUS_USER_AGENT: ['Basic', 'bbplus']})
-
+    
     return testSuite
 
 
