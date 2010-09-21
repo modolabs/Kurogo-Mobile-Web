@@ -1,3 +1,5 @@
+{extends file="modules/home/index.tpl"}
+
 {block name="modulesStart"}<div id="homegrid">{/block}
 
 {block name="modulesCategoryStart"}{/block}
@@ -17,7 +19,7 @@
     </a>
     {/strip}
   </div>
-{block}
+{/block}
 
 {block name="modulesCategoryEnd"}
   {if $category != $lastCategory}
