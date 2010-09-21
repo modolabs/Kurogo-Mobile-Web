@@ -12,6 +12,20 @@ require_once LIBDIR . "/GTFSReader.php";
 require_once LIBDIR . "/TranslocReader.php";
 
 
+define('HARVARD_TRANSLOC_MARKERS', 'http://harvard.transloc.com/m/markers/marker.php');
+
+$arrows = array(
+    '1' => 'n',
+    '2' => 'ne',
+    '3' => 'e',
+    '4' => 'se',
+    '5' => 's',
+    '6' => 'sw',
+    '7' => 'w',
+    '8' => 'sw',
+  );
+
+
 $transloc = new TranslocReader();
 
 $data = Array();
@@ -141,14 +155,30 @@ switch ($command) {
      if ($gpsActive == true) {
        $data['gpsActive'] = TRUE;
 
-
+        $route = $transloc->getOneRouteInfo($route_id);
        $vehicles = $transloc->getVehiclesForRoute($route_id);
        $vehiclesArray = array();
        foreach($vehicles as $vehicle) {
+
+           $heading = $vehicle['h'];
+          $arrowIndex = ($heading / 45) + 1.5;
+            if ($arrowIndex > 8) { $arrowIndex = 8; }
+            if ($arrowIndex < 0) { $arrowIndex = 0; }
+            $arrowIndex = floor($arrowIndex);
+
+       $iconURL = HARVARD_TRANSLOC_MARKERS.'?'.urlencode(http_build_query(array(
+        'm' => 'bus',
+        'c' => $route['color'],
+        'h' => $arrows[$arrowIndex],
+      )));
+
+
+
            $vehiclesArray[] = array('lat'=>$vehicle['ll'][0],
                                     'lon'=>$vehicle['ll'][1],
                                     'secsSinceReport'=> 3600,
-                                    'heading'=>$vehicle['h']);
+                                    'heading'=>$vehicle['h'],
+                                    'iconURL'=> urldecode($iconURL));
        }
 
        $data['vehicleLocations'] = $vehiclesArray;

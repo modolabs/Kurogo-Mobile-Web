@@ -269,8 +269,59 @@ class TranslocReader {
     }
 
     //print_r($iconURL);
-    
+    //print_r(urldecode(($iconURL)));
     return STATIC_MAPS_URL.http_build_query($args).$vehicleSuffix;
+      ;
+  }
+
+
+
+
+  function getIconUrl($routeID, $size='400') {
+    $route = $this->routes[$routeID];
+    $args = array(
+      'size'   => $size.'x'.$size,
+      'sensor' => 'false',
+    );
+
+    //print_r($route);
+    $path = array();
+    foreach ($route['segments'] as $segment) {
+      $polyline = $this->segments[abs(intVal($segment))]['points'];
+      $path = array_merge($path, decodePolylineToArray($polyline));
+    }
+    //print(json_encode($this->stops));
+    //print(json_encode($this->routes[$route['id']]['stops']));
+    $args['path'] = 'weight:4|color:0x'.$route['color'].'|enc:'.
+          encodePolylineFromArray($path);
+
+    $vehicleSuffix = '';
+    $vehicles = $this->getVehiclesForRoute($routeID);
+
+    //print(json_encode($this->routes));
+    foreach ($vehicles as $vehicle) {
+      $lat = $vehicle['ll'][0];
+      $lon = $vehicle['ll'][1];
+      $heading = $vehicle['h'];
+
+      $arrowIndex = ($heading / 45) + 1.5;
+      if ($arrowIndex > 8) { $arrowIndex = 8; }
+      if ($arrowIndex < 0) { $arrowIndex = 0; }
+      $arrowIndex = floor($arrowIndex);
+
+      $iconURL = HARVARD_TRANSLOC_MARKERS.'?'.urlencode(http_build_query(array(
+        'm' => 'bus',
+        'c' => $route['color'],
+        'h' => $this->arrows[$arrowIndex],
+      )));
+      $vehicleSuffix .= '&markers=icon:'.$iconURL.'|'.$lat.','.$lon;
+    }
+
+    
+    if ($iconURL != null)
+        return urldecode($iconURL);
+    else
+        return "";
       ;
   }
 }
