@@ -6,15 +6,17 @@ class SiteConfig {
   
   public function loadThemeFile($name, $section = true) {
     if (!in_array($name, array_keys($this->themeVars))) {
-      $fileVars = parse_ini_file(
-        realpath($this->getVar('TEMPLATE_CONFIG_DEFS_DIR')."/$name.ini"), $section);
-      
       $siteFile = realpath($this->getVar('TEMPLATE_CONFIG_SITE_DIR')."/$name.ini");
       if ($siteFile) {
-        $fileVars = array_merge($fileVars, parse_ini_file($siteFile, $section));
+        $this->themeVars[$name] = parse_ini_file($siteFile, $section);
+      } else {
+        $defsFile = realpath($this->getVar('TEMPLATE_CONFIG_DEFS_DIR')."/$name.ini");
+        if ($defsFile) {
+          $this->themeVars[$name] = parse_ini_file($defsFile, $section);
+        } else {
+          error_log(__FUNCTION__."(): no configuration file for '$name'");
+        }
       }
-            
-      $this->themeVars[$name] = $fileVars;
     }
   }
 

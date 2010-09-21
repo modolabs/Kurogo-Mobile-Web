@@ -11,8 +11,8 @@ class HomeModule extends Module {
       'secondary' => array(),
     );
     
-    foreach ($GLOBALS['siteConfig']->getThemeVar('modules') as $id => $info) {
-      if ($info['visible']) {
+    foreach ($this->getHomeScreenModules() as $id => $info) {
+      if (!$info['disabled']) {
         if ($info['primary']) {
           $homeModules['primary'][$id] = $info;
         } else {
@@ -20,7 +20,7 @@ class HomeModule extends Module {
         }
       }
     }
-    
+    error_log(print_r($homeModules, true));
     $this->assignByRef('homeModules', $homeModules);
     $this->assignByRef('whatsNewCount', 0);
     $this->assignByRef('topItem', null);

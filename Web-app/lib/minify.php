@@ -39,13 +39,33 @@ function getMinifyGroupsConfig() {
       );
     }
     
+    // Handle CSS and Javascript a little differently:
+    //
+    // CSS supports overrides so include all available CSS files.
+    // Javascript does not support overrides so include common files
+    // and the most specific platform file.
+    //
     $fileNames = array(
-      "common",
-      "$pagetype",
-      "$pagetype-$platform",
-      "$page-common",
-      "$page-$pagetype",
-      "$page-$pagetype-$platform",
+      'css' => array(
+        "common",
+        "$pagetype",
+        "$pagetype-$platform", 
+        "$page-common",
+        "$page-$pagetype",
+        "$page-$pagetype-$platform", 
+      ),
+      'js' => array(
+        "common",
+        array(
+          "$pagetype-$platform", 
+          "$pagetype",
+        ),
+        "$page-common",
+        array(
+          "$page-$pagetype-$platform", 
+          "$page-$pagetype",
+        ),
+      ),
     );
     
     $files = array();
@@ -54,8 +74,18 @@ function getMinifyGroupsConfig() {
       $dir .= '/'.$extDirs[$ext];
 
       if (realpath($dir)) {
-        foreach ($fileNames as $file) {
-          $path = "$dir/".$file.'.'.$ext;
+        foreach ($fileNames[$ext] as $file) {
+          $path = '';
+          
+          if (is_array($file)) {  
+            // files that override each other
+            foreach ($file as $override) {
+              $path = "$dir/".$override.'.'.$ext;
+              if (realpath($path)) { break; }
+            }
+          } else {
+            $path = "$dir/".$file.'.'.$ext;
+          }
           
           if (realpath($path)) {
             $files[] = realpath($path);

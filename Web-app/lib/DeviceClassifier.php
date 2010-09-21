@@ -62,7 +62,7 @@ class DeviceClassifier {
       $this->certs = $data['supports_certificate'];
       
       setcookie('layout', $this->getLayout(), 
-        time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), '/');
+        time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
 
       //error_log(__FUNCTION__."(): choosing mobi service layout '".$this->getLayout()."' <{$_SERVER['REQUEST_URI']}>");
     }

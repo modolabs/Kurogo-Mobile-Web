@@ -20,19 +20,6 @@ abstract class Module {
   private $templateEngine = null;
   private $siteVars = null;
   
-  private function getMinifySuffix($page) {
-    $minifySuffix = implode('-', array(
-      $this->id, 
-      $page
-    ));
-    
-    if ($GLOBALS['siteConfig']->getVar('MINIFY_DEBUG')) {
-      $minifySuffix .= '&debug=1';
-    }
-
-    return $minifySuffix;
-  }
-  
   
   private function getFontSizeCSS() {
     switch ($this->fontsize) {
@@ -93,6 +80,61 @@ abstract class Module {
     }
   }
   
+  // Module control functions
+  protected function getHomeScreenModules() {
+    $modules = $GLOBALS['siteConfig']->getThemeVar('modules');
+    
+    foreach ($modules as $id => $info) {
+      if (!$info['homescreen']) {
+        unset($modules[$id]);
+      }
+    }
+    
+    if (isset($_COOKIE["activemodules"])) {
+      if ($_COOKIE["activemodules"] == "NONE") {
+        $activeModuleIDs = array();
+      } else {
+        $activeModuleIDs = array_flip(explode(",", $_COOKIE["activemodules"]));
+      }
+      foreach ($modules as $moduleID => &$info) {
+         $info['disabled'] = !isset($activeModuleIDs[$moduleID]) && $info['disableable'];
+      }
+    }
+
+    if (isset($_COOKIE["moduleorder"])) {
+      $sortedModuleIDs = explode(",", $_COOKIE["moduleorder"]);
+      $unsortedModuleIDs = array_diff(array_keys($modules), $sortedModuleIDs);
+            
+      $sortedModules = array();
+      foreach (array_merge($sortedModuleIDs, $unsortedModuleIDs) as $moduleID) {
+        if (isset($modules[$moduleID])) {
+          $sortedModules[$moduleID] = $modules[$moduleID];
+        }
+      }
+      $modules = $sortedModules;
+    }    
+    //error_log('$modules(): '.print_r(array_keys($modules), true));
+    return $modules;
+  }
+  
+  protected function setHomeScreenModuleOrder($moduleIDs) {
+    $lifespan = $GLOBALS['siteConfig']->getVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $value = implode(",", $moduleIDs);
+    
+    setcookie("moduleorder", $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE["moduleorder"] = $value;
+    error_log(__FUNCTION__.'(): '.print_r($value, true));
+  }
+  
+  protected function setHomeScreenActiveModules($moduleIDs) {
+    $lifespan = $GLOBALS['siteConfig']->getVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
+    
+    setcookie("activemodules", $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE["activemodules"] = $value;
+    error_log(__FUNCTION__.'(): '.print_r($value, true));
+  }
+
   // Functions to add inline blocks of text
   // Call these from initializeForPage()
   protected function addInlineCSS($inlineCSS) {
@@ -151,7 +193,7 @@ abstract class Module {
     // Font size for template
     if (isset($_REQUEST['font'])) {
       $this->fontsize = $_REQUEST['font'];
-      setcookie('fontsize', $this->fontsize, time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), '/');      
+      setcookie('fontsize', $this->fontsize, time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
     
     } else if (isset($_COOKIE['fontsize'])) { 
       $this->fontSize = $_COOKIE['fontsize'];
@@ -168,13 +210,16 @@ abstract class Module {
     $this->assign('fontsizeCSS', $this->getFontSizeCSS());
     $this->assign('fontSizeURL', $this->getFontSizeURL($page, $args));
 
-    
-    $minifySuffix = $this->getMinifySuffix($page);
+    $minifyDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ?
+      '&debug=1' : '';
     $this->assign('minify', array(
-      'css' => "../min/g=css-$minifySuffix",
-      'js'  => "../min/g=js-$minifySuffix",
+      'css' => "../min/g=css-{$this->id}-$page$minifyDebug",
+      'js'  => "../min/g=js-{$this->id}-$page$minifyDebug",
     ));
     
+    // Set variables for each page
+    $this->initializeForPage($page, $args);
+
     $this->assign('inlineCSSBlocks', $this->inlineCSSBlocks);
     $this->assign('inlineJavascriptBlocks', $this->inlineJavascriptBlocks);
     $this->assign('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
@@ -182,9 +227,6 @@ abstract class Module {
 
     $this->assign('breadcrumbs', $this->breadcrumbs);
     $this->assign('pageTitle', $this->moduleName);
-
-    // Set variables for each page
-    $this->initializeForPage($page, $args);
     
     $this->templateEngine->displayForDevice('modules/'.$this->id.'/'.$page);    
   }

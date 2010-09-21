@@ -10,8 +10,11 @@ function InitializeWebapp(&$path) {
   define('TEMPLATES_DIR',   ROOT_DIR.'/templates');
   define('CONFIG_DEFS_DIR', ROOT_DIR.'/config');
   define('CONFIG_SITE_DIR', ROOT_DIR.'/opt/config');
-  
-  
+
+  // Constant for now
+  define('COOKIE_PATH', '/');
+
+
   //
   // Lazy load configuration files
   //    
@@ -46,9 +49,6 @@ function InitializeWebapp(&$path) {
     $layout = $matches[2];
     $path = $matches[1].$matches[3];
   }
-
   
   $GLOBALS['deviceClassifier'] = new DeviceClassifier($layout);
-
-
 }

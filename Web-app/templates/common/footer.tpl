@@ -18,8 +18,8 @@
       <p>
         <br/>
         Your user agent is "{$smarty.server.HTTP_USER_AGENT}"<br />
-        You are classified as {$pagetype}-{$platform}<br />
-        You {if !$supportsCerts}don't {/if}support certs
+        You are classified as "{$pagetype}-{$platform}-{$supportsCerts}"<br />
+        You {if !$supportsCerts}don't {/if}support certificates
       </p>
     {/if}
   </div>
