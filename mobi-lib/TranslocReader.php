@@ -235,6 +235,7 @@ class TranslocReader {
       'sensor' => 'false',
     );
 
+    //print_r($route);
     $path = array();
     foreach ($route['segments'] as $segment) {
       $polyline = $this->segments[abs(intVal($segment))]['points'];
@@ -266,6 +267,8 @@ class TranslocReader {
       )));
       $vehicleSuffix .= '&markers=icon:'.$iconURL.'|'.$lat.','.$lon;
     }
+
+    //print_r($iconURL);
     
     return STATIC_MAPS_URL.http_build_query($args).$vehicleSuffix;
       ;

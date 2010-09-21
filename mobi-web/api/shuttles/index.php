@@ -235,6 +235,7 @@ function get_all_routes_info($translocObj, $compact) {
     foreach($routesInfoArray as $routeInfo) {
       if ($compact == 'NO') {
            $routesToReturn[] =  array('route_id'=> $routeInfo['id'],
+                                'color'=>$routeInfo['color'],
                                 'title'=> $routeInfo['long_name'],
                                 'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
@@ -246,6 +247,7 @@ function get_all_routes_info($translocObj, $compact) {
 
         else {
         $routesToReturn[] = array('route_id'=> $routeInfo['id'],
+                                'color'=>$routeInfo['color'],
                                 'title'=> $routeInfo['long_name'],
                                 'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
@@ -265,6 +267,7 @@ function get_specific_routes_info($translocObj, $compact, $route_id) {
 
       if ($compact == 'NO') {
            $routeToReturn =  array('route_id'=> $routeInfo['id'],
+                                'color'=>$routeInfo['color'],
                                 'title'=> $routeInfo['long_name'],
                                 'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
