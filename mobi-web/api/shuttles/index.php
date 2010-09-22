@@ -192,6 +192,9 @@ switch ($command) {
 
    break;
 
+ case 'announcements':
+     $data = json_decode($transloc->getAnnouncementsJSON());
+     break;
 
  case 'subscribe': case 'unsubscribe':
    require_once $APIROOT . '/push/apns_lib.php';
