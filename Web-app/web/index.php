@@ -31,26 +31,32 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $q, $matches)) {
   
   //error_log("Detected image request");
   
-  $path = TEMPLATES_DIR.'/'.$matches[1].$matches[2];
   $file = $matches[3];
 
   $platform = $GLOBALS['deviceClassifier']->getPlatform();
   $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
-    
-  $testPaths = array(
-    "$path/$pagetype-$platform/$file",
-    "$path/$pagetype/$file",
-    "$path/$file",
+  
+  $testDirs = array(
+    $GLOBALS['siteConfig']->getVar('THEME_DIR').'/'.$matches[1].$matches[2],
+    TEMPLATES_DIR.'/'.$matches[1].$matches[2],
+  );
+  $testFiles = array(
+    "$pagetype-$platform/$file",
+    "$pagetype/$file",
+    "$file",
   );
   
   //error_log(print_r($testPaths, true));
   
-  foreach ($testPaths as $testPath) {
-    if (realpath($testPath)) {
-      header('Content-type: '.mime_content_type($testPath));
-      echo file_get_contents($testPath);
-      exit;
-    }        
+  foreach ($testDirs as $dir) {
+    foreach ($testFiles as $file) {
+      $path = "$dir/$file";
+      if (realpath($path)) {
+        header('Content-type: '.mime_content_type($path));
+        echo file_get_contents($path);
+        exit;
+      }        
+    }
   }
   header('Status: 404 Not Found');
   die;
@@ -74,8 +80,17 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $q, $matches)) {
   
   $id = 'home';
   $page = 'index';
+  
   $args = $_GET;
   unset($args['q']);
+  if (get_magic_quotes_gpc()) {
+    function deepStripSlashes($value) {
+      return is_array($value) ?
+                array_map('deepStripSlashes', $value) :
+                stripslashes($value);
+    }
+    deepStripslashes($args);
+  }
   
   $parts = explode('/', $q, 2);
   if (count($parts) > 1) {

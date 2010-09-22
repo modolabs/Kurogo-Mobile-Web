@@ -4,33 +4,106 @@ require_once realpath(LIB_DIR.'/smarty/Smarty.class.php');
 
 class TemplateEngine extends Smarty {
   static $accessKey = 0;
-  private $device = '';
   
-  static function getTemplateForDevice($template, $device) {
-    $path = dirname($template);
-    $name = basename($template, '.tpl');
-
-    if (strlen($path)) { $path .= '/'; }
-
-    $test = $path.$name.'-'.$device.'.tpl';
-    if (realpath(TEMPLATES_DIR.'/'.$test)) {
-      $template = $test;  // Use platform-specific
+  static private function getIncludeFile($name) {
+    $subDir = dirname($name);
+    $page = basename($name, '.tpl');
     
-    } else { 
-      $classification = explode('-', $device);
-      $test = $path.$name.'-'.$classification[0].'.tpl';
-      
-      if (realpath(TEMPLATES_DIR.'/'.$test)) {
-        $template = $test;  // Use pagetype-specific
-        
-      } else {
-        $template = $path.$name.'.tpl'; // Use generic
+    $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
+    $platform = $GLOBALS['deviceClassifier']->getPlatform();
+
+    if (strlen($subDir)) { $subDir .= '/'; }
+  
+    $checkDirs = array(
+      'THEME_DIR'     => $GLOBALS['siteConfig']->getVar('THEME_DIR'),
+      'TEMPLATES_DIR' => TEMPLATES_DIR,
+    );
+    $checkFiles = array(
+      "$subDir$page-$pagetype-$platform.tpl", // platform-specific
+      "$subDir$page-$pagetype.tpl",           // pagetype-specific
+      "$subDir$page.tpl",                     // default
+    );
+    
+    foreach ($checkDirs as $type => $dir) {
+      foreach ($checkFiles as $file) {
+        if (realpath("$dir/$file")) {
+          error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file'");
+          return "$dir/$file";
+        }
       }
     }
-    
-    error_log(__FUNCTION__.'('.$device.') choosing '.$template);
-    return $template;
+    return false;
   }
+  
+  static private function getExtendsFile($name) {
+    $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
+    $platform = $GLOBALS['deviceClassifier']->getPlatform();
+
+    $checkDirs = array(
+      'THEME_DIR'     => $GLOBALS['siteConfig']->getVar('THEME_DIR'),
+      'TEMPLATES_DIR' => TEMPLATES_DIR,
+    );
+    
+    foreach ($checkDirs as $type => $dir) {
+        if (realpath("$dir/$name")) {
+          error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$name'");
+          return "$dir/$name";
+        }
+    }
+    return false;
+  }
+  
+  static function smartyResourceIncludeGetSource($name, &$source, $smarty) {
+    $file = self::getIncludeFile($name);
+    if ($file !== false) {
+      $source = file_get_contents($file);
+      return true;
+    }
+    return false;
+  }
+
+  static function smartyResourceIncludeGetTimestamp($name, &$timestamp, $smarty) {
+    $file = self::getIncludeFile($name);
+    if ($file !== false) {
+      $timestamp = filemtime($file);
+      return true;
+    }
+    return false;
+  }
+
+  static function smartyResourceIncludeGetSecure($name, $smarty) {
+    return true;
+  }
+
+  static function smartyResourceIncludeGetTrusted($name, $smarty) {
+    return true;
+  }
+  
+  static function smartyResourceExtendsGetSource($name, &$source, $smarty) {
+    $file = self::getExtendsFile($name);
+    if ($file !== false) {
+      $source = file_get_contents($file);
+      return true;
+    }
+    return false;
+  }
+
+  static function smartyResourceExtendsGetTimestamp($name, &$timestamp, $smarty) {
+    $file = self::getExtendsFile($name);
+    if ($file !== false) {
+      $timestamp = filemtime($file);
+      return true;
+    }
+    return false;
+  }
+
+  static function smartyResourceExtendsGetSecure($name, $smarty) {
+    return true;
+  }
+
+  static function smartyResourceExtendsGetTrusted($name, $smarty) {
+    return true;
+  }  
   
   static function accessKeyLink($params, $content, &$smarty, &$repeat) {
     if (empty($params['href'])) {
@@ -82,27 +155,35 @@ class TemplateEngine extends Smarty {
   function __construct() {
     parent::__construct();
 
-    // Device type
-    $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
-    $platform = $GLOBALS['deviceClassifier']->getPlatform();
-    
-    $this->device = $pagetype.'-'.$platform;
+    // Device info
+    $pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
+    $platform      = $GLOBALS['deviceClassifier']->getPlatform();
+    $supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
     
     // Smarty configuration
-    $this->setTemplateDir(TEMPLATES_DIR);
     $this->setCompileDir ($GLOBALS['siteConfig']->getVar('TEMPLATE_COMPILE_DIR'));
     $this->setCacheDir   ($GLOBALS['siteConfig']->getVar('TEMPLATE_CACHE_DIR'));
-    $this->setCompileId  ($this->device);
+    $this->setCompileId  ("$pagetype-$platform");
     
-    $this->register->modifier('for_device', 'TemplateEngine::getTemplateForDevice');
-    $this->register->block('html_access_key_link', 'TemplateEngine::accessKeyLink');
+    $this->register->resource('findExtends', array(
+      'TemplateEngine::smartyResourceExtendsGetSource',
+      'TemplateEngine::smartyResourceExtendsGetTimestamp',
+      'TemplateEngine::smartyResourceExtendsGetSecure',
+      'TemplateEngine::smartyResourceExtendsGetTrusted',
+    ));
+    $this->register->resource('findInclude', array(
+      'TemplateEngine::smartyResourceIncludeGetSource',
+      'TemplateEngine::smartyResourceIncludeGetTimestamp',
+      'TemplateEngine::smartyResourceIncludeGetSecure',
+      'TemplateEngine::smartyResourceIncludeGetTrusted',
+    ));
+    $this->register->block(           'html_access_key_link',  'TemplateEngine::accessKeyLink');
     $this->register->templateFunction('html_access_key_reset', 'TemplateEngine::accessKeyReset');
       
     // variables common to all modules
-    $this->assign('device', $this->device);
     $this->assign('pagetype', $pagetype);
     $this->assign('platform', $platform);
-    $this->assign('supportsCerts', $GLOBALS['deviceClassifier']->getSupportsCerts());
+    $this->assign('supportsCerts', $supportsCerts);
     $this->assign('showDeviceDetection', $GLOBALS['siteConfig']->getVar('SHOW_DEVICE_DETECTION'));
     
     // Load site configuration
@@ -113,8 +194,6 @@ class TemplateEngine extends Smarty {
   }
   
   function displayForDevice($page, $cacheID = null, $compileID = null, $parent = null) {
-    $template = self::getTemplateForDevice($page, $this->device);
-    
-    $this->display($template, $cacheID, $compileID, $parent);
+    $this->display(self::getIncludeFile($page), $cacheID, $compileID, $parent);
   }
 }

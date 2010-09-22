@@ -1,6 +1,88 @@
 <?php
 
 require_once LIB_DIR.'/DiskCache.php';
+  
+//
+// Handle CSS and Javascript a little differently:
+//
+
+// CSS supports overrides so include all available CSS files.
+function getCSSFileConfigForDirs($page, $pagetype, $platform, $dirs) {
+  $config = array(
+    'include' => 'all',
+    'files' => array()
+  );
+  
+  foreach ($dirs as $dir) {
+    $config['files'][] = array(
+      'include' => 'all',
+      'files'   => array(
+        "$dir/css/common.css",
+        "$dir/css/$pagetype.css",
+        "$dir/css/$pagetype-$platform.css", 
+        "$dir/css/$page-common.css",
+        "$dir/css/$page-$pagetype.css",
+        "$dir/css/$page-$pagetype-$platform.css", 
+      ),
+    );
+  }
+  return $config;
+}
+
+// Javascript does not support overrides so include common files
+// and the most specific platform file.  Themes override js.
+function getJSFileConfigForDirs($page, $pagetype, $platform, $dirs) {
+  $config = array(
+    'include' => 'any',
+    'files' => array()
+  );
+  
+  foreach ($dirs as $dir) {
+    $config['files'][] =  array(
+      'include' => 'all',
+      'files'   => array(
+        "$dir/javascript/common.js",
+        array(
+          'include' => 'any',
+          'files'   => array(
+            "$dir/javascript/$pagetype-$platform.js", 
+            "$dir/javascript/$pagetype.js",
+          ),
+        ),
+        "$dir/javascript/$page-common.js",
+        array(
+          'include' => 'any',
+          'files'   => array(
+            "$dir/javascript/$page-$pagetype-$platform.js", 
+            "$dir/javascript/$page-$pagetype.js",
+          ),
+        ),
+      ),
+    );
+  }
+  return $config;
+}
+
+function buildFileList($checkFiles) {
+  $foundFiles = array();
+  foreach ($checkFiles['files'] as $entry) {
+    if (is_array($entry)) {
+      $result = buildFileList($entry);
+      if ($checkFiles['include'] == 'any') {
+        if (count($result)) {
+          $foundFiles = $result;
+          break; // break on first result we find in this list
+        }
+      } else {
+        $foundFiles = array_merge($foundFiles, $result);
+      }
+    } else if (realpath($entry)) { 
+      $foundFiles[] = $entry;
+      break; 
+    }
+  }
+  return $foundFiles;
+}
 
 function getMinifyGroupsConfig() {
   $minifyConfig = array();
@@ -18,12 +100,6 @@ function getMinifyGroupsConfig() {
     $minifyConfig = $cache->read($cacheName);
     
   } else {
-      
-    $extDirs = array(
-      'css' => 'css', 
-      'js'  => 'javascript',
-    );
-  
     if ($module == 'info') {
       // Info module does not inherit from common css files
       $dirs = array(
@@ -38,63 +114,13 @@ function getMinifyGroupsConfig() {
         $GLOBALS['siteConfig']->getVar('THEME_DIR').'/modules/'.$module,
       );
     }
-    
-    // Handle CSS and Javascript a little differently:
-    //
-    // CSS supports overrides so include all available CSS files.
-    // Javascript does not support overrides so include common files
-    // and the most specific platform file.
-    //
-    $fileNames = array(
-      'css' => array(
-        "common",
-        "$pagetype",
-        "$pagetype-$platform", 
-        "$page-common",
-        "$page-$pagetype",
-        "$page-$pagetype-$platform", 
-      ),
-      'js' => array(
-        "common",
-        array(
-          "$pagetype-$platform", 
-          "$pagetype",
-        ),
-        "$page-common",
-        array(
-          "$page-$pagetype-$platform", 
-          "$page-$pagetype",
-        ),
-      ),
+    $checkFiles = array(
+      'css' => getCSSFileConfigForDirs($page, $pagetype, $platform, $dirs),
+      'js'  => getJSFileConfigForDirs ($page, $pagetype, $platform, array_reverse($dirs)),
     );
     
-    $files = array();
-    
-    foreach ($dirs as $dir) {
-      $dir .= '/'.$extDirs[$ext];
+    $minifyConfig[$key] = buildFileList($checkFiles[$ext]);
 
-      if (realpath($dir)) {
-        foreach ($fileNames[$ext] as $file) {
-          $path = '';
-          
-          if (is_array($file)) {  
-            // files that override each other
-            foreach ($file as $override) {
-              $path = "$dir/".$override.'.'.$ext;
-              if (realpath($path)) { break; }
-            }
-          } else {
-            $path = "$dir/".$file.'.'.$ext;
-          }
-          
-          if (realpath($path)) {
-            $files[] = realpath($path);
-          }        
-        }
-      }
-            
-      $minifyConfig[$key] = $files;
-    }
     //error_log(__FUNCTION__.'('.$pagetype.'-'.$platform.') scanned filesystem');
 
     $cache->write($minifyConfig, $cacheName);
@@ -106,11 +132,11 @@ function getMinifyGroupsConfig() {
 
 function minifyPostProcess($content, $type) {
   error_log(__FUNCTION__."() post processing $type (".$GLOBALS['deviceClassifier']->layoutForced().")");
+  
   if ($GLOBALS['deviceClassifier']->layoutForced() && $type === Minify::TYPE_CSS) {    
     $layout = $GLOBALS['deviceClassifier']->getForcedLayout();
-
     $content = preg_replace(
-      '/url\("?\'?([^"\'\)]+)"?\'?\)/', 'url("/device/'.$layout.'\1")', $content);
+      ';url\("?\'?([^"\'\)]+)"?\'?\);', 'url("/device/'.$layout.'\1")', $content);
   }
   return $content;
 }

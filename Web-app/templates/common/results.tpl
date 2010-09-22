@@ -1,15 +1,15 @@
 {strip}
 
-{block name="navlistStart"}<ul class="nav{if $secondary} secondary{/if}">{/block}
+{block name="resultsStart"}<ul class="results">{/block}
   {assign var=last value=end(array_keys($navlistItems))}
-  {foreach $navlistItems as $index => $item}
+  {foreach $results as $index => $item}
     {capture name="itemHTML" assign="itemHTML"}
       {$item['title']}
       {if isset($item['subtitle'])}
         &nbsp;<span class="smallprint">{$item['subtitle']}</span>
       {/if}
     {/capture}
-    {block name="navlistItem"}
+    {block name="resultsItem"}
       <li>
         {if isset($item['url'])}
           <a href="{$item['url']}" class="{$item['class']|default:''}">
@@ -21,6 +21,6 @@
       </li>
     {/block}
   {/foreach}
-{block name="navlistEnd"}</ul>{/block}
+{block name="resultsEnd"}</ul>{/block}
 
 {/strip}

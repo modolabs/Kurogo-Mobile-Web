@@ -137,8 +137,7 @@ $min_serveOptions['minApp']['maxFiles'] = 10;
  * </code>
  */
 $min_symlinks = array(
-  '//common'  => TEMPLATES_DIR.'/common',
-  '//modules' => TEMPLATES_DIR.'/modules',
+  '//' => $GLOBALS['siteConfig']->getVar('THEME_DIR'),
 );
 
 

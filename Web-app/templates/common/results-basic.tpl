@@ -1,12 +1,12 @@
-{extends file="findExtends:common/navlist.tpl"}
+{extends file="findExtends:common/results.tpl"}
 
-{block name="navlistStart"} 
+{block name="resultsStart"} 
   {if $accessKey|default:true}
     {html_access_key_reset index=count($breadcrumbs)+1}
   {/if}
-  <p class="nav{if $secondary} secondary{/if}">
+  <p class="focal results">
 {/block}
-{block name="navlistItem"}
+{block name="resultsItem"}
   {if isset($item['url'])}
     {if $accessKey|default:true}
       {html_access_key_link href=$item['url'] class=$item['class']|default:null accessKey=false}
@@ -24,6 +24,6 @@
   {/if}
   <br/>
 {/block}
-{block name="navlistEnd"}
+{block name="resultsEnd"}
   </p>
 {/block}

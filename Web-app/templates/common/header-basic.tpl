@@ -1,4 +1,4 @@
-{extends file="common/header.tpl"}
+{extends file="findExtends:common/header.tpl"}
 
 {block name="javascript"}{/block}
 {block name="navHeader"}

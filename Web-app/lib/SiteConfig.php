@@ -6,16 +6,11 @@ class SiteConfig {
   
   public function loadThemeFile($name, $section = true) {
     if (!in_array($name, array_keys($this->themeVars))) {
-      $siteFile = realpath($this->getVar('TEMPLATE_CONFIG_SITE_DIR')."/$name.ini");
-      if ($siteFile) {
-        $this->themeVars[$name] = parse_ini_file($siteFile, $section);
+      $file = realpath($this->getVar('THEME_CONFIG_DIR')."/$name.ini");
+      if ($file) {
+        $this->themeVars[$name] = parse_ini_file($file, $section);
       } else {
-        $defsFile = realpath($this->getVar('TEMPLATE_CONFIG_DEFS_DIR')."/$name.ini");
-        if ($defsFile) {
-          $this->themeVars[$name] = parse_ini_file($defsFile, $section);
-        } else {
-          error_log(__FUNCTION__."(): no configuration file for '$name'");
-        }
+        error_log(__FUNCTION__."(): no configuration file for '$name'");
       }
     }
   }
@@ -68,7 +63,7 @@ class SiteConfig {
     
     // Set default directories if variables are not set in the config file
     $this->setDefaults(array( 
-      'THEME_DIR'                => ROOT_DIR.'/opt/theme',
+      'THEMES_DIR'               => ROOT_DIR.'/opt/themes',
       'DATA_DIR'                 => ROOT_DIR.'/opt/data',
       'CACHE_DIR'                => ROOT_DIR.'/opt/cache',
 
@@ -78,16 +73,20 @@ class SiteConfig {
       'TEMPLATE_CONFIG_DEFS_DIR' => TEMPLATES_DIR.'/config',
     ));
     
+    $this->setDefaults(array( 
+      'THEME_DIR' => $this->configVars['THEMES_DIR'].'/'.$this->configVars['ACTIVE_THEME'],
+    ));
+    
     // Set default subdirectories if variables are not set in the config file
     // Use separate pass so we can make subdirectory defaults relative to the directories above
     $this->setDefaults(array(
-      'WHATS_NEW_PATH'           => $this->configVars['DATA_DIR'].'/whatsnew.xml',
+      'WHATS_NEW_PATH'       => $this->configVars['DATA_DIR'].'/whatsnew.xml',
       
-      'TEMPLATE_CACHE_DIR'       => $this->configVars['CACHE_DIR'].'/smarty/html',
-      'TEMPLATE_COMPILE_DIR'     => $this->configVars['CACHE_DIR'].'/smarty/templates',
-      'MINIFY_CACHE_DIR'         => $this->configVars['CACHE_DIR'].'/minify',
+      'TEMPLATE_CACHE_DIR'   => $this->configVars['CACHE_DIR'].'/smarty/html',
+      'TEMPLATE_COMPILE_DIR' => $this->configVars['CACHE_DIR'].'/smarty/templates',
+      'MINIFY_CACHE_DIR'     => $this->configVars['CACHE_DIR'].'/minify',
 
-      'TEMPLATE_CONFIG_SITE_DIR' => $this->configVars['THEME_DIR'].'/config',
+      'THEME_CONFIG_DIR'     => $this->configVars['THEME_DIR'].'/config',
     ));
 
   }

@@ -1,4 +1,4 @@
-{include file="common/header.tpl"|for_device:$device}
+{include file="findInclude:common/header.tpl"}
 
 <div class="focal">
   <p>{$message}</p>
@@ -10,4 +10,4 @@
   {/if}
 </div>
 
-{include file="common/footer.tpl"|for_device:$device}
+{include file="findInclude:common/footer.tpl"}

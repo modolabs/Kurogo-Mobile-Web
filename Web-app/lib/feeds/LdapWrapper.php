@@ -1,7 +1,6 @@
 <?php
 
-require_once "lib_constants.inc";
-require_once "LdapUtilities.php";
+require_once realpath(LIB_DIR."/feeds/LdapUtilities.php");
 
 class LdapPerson {
 

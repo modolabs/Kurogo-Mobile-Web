@@ -1,4 +1,4 @@
-{extends file="modules/home/index.tpl"}
+{extends file="findExtends:modules/home/index.tpl"}
 
 {block name="modulesStart"}<div id="homegrid">{/block}
 
@@ -7,7 +7,7 @@
 {block name="module"}
   <div id="{$id}"{if $category == 'secondary'} class="utility"{/if}>
     {strip}
-    <a href="../{$info['url']|default:$id}/">
+    <a href="{$info['url']}">
       <img src="../modules/{$moduleID}/images/{$id}.png" alt="{$info['title']}" />
       <br/>{$info['title']}
       {if isset($info['subTitle'])}

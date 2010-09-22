@@ -1,13 +1,13 @@
-{include file="common/header.tpl"|for_device:$device}
+{include file="findInclude:common/header.tpl"}
 
-{include file="common/navlist.tpl"|for_device:$device navlistItems=$navlistItems}
+{include file="findInclude:common/navlist.tpl" navlistItems=$navlistItems}
 
 {if isset($lastNavItem)}
   <p class="nav secondary">
     <a href="{$lastNavItem['url']}" class="{$lastNavItem['class']|default:''}">
-      {$lastNavItem['html']}
+      {$lastNavItem['title']}
     </a>
   </p>
 {/if}
 
-{include file="common/footer.tpl"|for_device:$device}
+{include file="findInclude:common/footer.tpl"}

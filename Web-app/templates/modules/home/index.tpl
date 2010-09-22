@@ -1,4 +1,4 @@
-{include file="common/header.tpl"|for_device:$device navbar=false startContainer=false}
+{include file="findInclude:common/header.tpl" navbar=false startContainer=false}
 
 {block name="banner"}
   <h1{if isset($topItem)} class="roomfornew"{/if}>
@@ -12,7 +12,7 @@
 
 <div id="container">
 
-{include file="common/search.tpl"|for_device:$device placeholder="Search "|cat:$SITE_NAME}  
+{include file="findInclude:common/search.tpl" placeholder="Search "|cat:$SITE_NAME}  
   
 {block name="modulesStart"}{/block}
   {assign var=lastCategory value=end(array_keys($homeModules))}
@@ -25,4 +25,4 @@
   {/foreach}
 {block name="modulesEnd"}{/block}
 
-{include file="common/footer.tpl"|for_device:$device}
+{include file="findInclude:common/footer.tpl"}

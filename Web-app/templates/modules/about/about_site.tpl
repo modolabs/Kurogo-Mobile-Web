@@ -1,4 +1,4 @@
-{include file="common/header.tpl"|for_device:$device}
+{include file="findInclude:common/header.tpl"}
 <div class="focal"> 
   {foreach $INSTITUTION_ABOUT_HTML as $paragraph}
     <p>{$paragraph}</p>
@@ -15,4 +15,4 @@
 <div class="nonfocal legend"> 
   <p><strong>* Important note:</strong> {$appName} is a free service. Extra data charges may apply when using any website on your mobile device depending on your service plan.</p> 
 </div> 
-{include file="common/footer.tpl"|for_device:$device}
+{include file="findInclude:common/footer.tpl"}

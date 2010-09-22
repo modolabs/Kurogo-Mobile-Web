@@ -1,6 +1,6 @@
-{include file="common/header.tpl"|for_device:$device}
+{include file="findInclude:common/header.tpl"}
 
 {block name="content"}
 {/block}
 
-{include file="common/footer.tpl"|for_device:$device}
+{include file="findInclude:common/footer.tpl"}

@@ -13,6 +13,9 @@ class HomeModule extends Module {
     
     foreach ($this->getHomeScreenModules() as $id => $info) {
       if (!$info['disabled']) {
+        if (!isset($info['url'])) {
+          $info['url'] = "../$id/";
+        }
         if ($info['primary']) {
           $homeModules['primary'][$id] = $info;
         } else {
@@ -20,7 +23,7 @@ class HomeModule extends Module {
         }
       }
     }
-    error_log(print_r($homeModules, true));
+
     $this->assignByRef('homeModules', $homeModules);
     $this->assignByRef('whatsNewCount', 0);
     $this->assignByRef('topItem', null);

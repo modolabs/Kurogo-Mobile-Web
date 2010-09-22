@@ -1,4 +1,4 @@
-{extends file="modules/links/index.tpl"}
+{extends file="findExtends:modules/links/index.tpl"}
 
 {block name="textStart"}<p>{/block}
 {block name="textEnd"}</p>{/block}

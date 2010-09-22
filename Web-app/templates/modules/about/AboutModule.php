@@ -30,15 +30,15 @@ class AboutModule extends Module {
     $siteVars = $GLOBALS['siteConfig']->getThemeVar('site');
     $navlistItems = array(
       'about_site' => array(
-        'html' => 'About this website',
+        'title' => 'About this website',
         'url' => 'about_site.php',
       ),
       'about' => array(
-        'html' => 'About '.$siteVars['INSTITUTION_NAME'],
+        'title' => 'About '.$siteVars['INSTITUTION_NAME'],
         'url' => 'about.php',
       ),
       'feedback' => array(
-        'html' => 'Send us feedback!',
+        'title' => 'Send us feedback!',
         'url' => 'mailto:'.$siteVars['FEEDBACK_EMAIL'],
         'class' => 'email',
       ),

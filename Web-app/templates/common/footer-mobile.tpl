@@ -1,4 +1,4 @@
-{extends file="common/footer.tpl"}
+{extends file="findExtends:common/footer.tpl"}
 
 {block name="footerLinks"}
   {if $moduleID != 'home'}

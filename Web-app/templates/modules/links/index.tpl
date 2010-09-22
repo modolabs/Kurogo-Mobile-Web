@@ -1,4 +1,4 @@
-{include file="common/header.tpl"|for_device:$device}
+{include file="findInclude:common/header.tpl"}
 
 {block name="textStart"}<p class="nonfocal smallprint">{/block}
   Click on a shield to see each School's website. Please note that these websites may not be optimized for mobile.
@@ -20,4 +20,4 @@
 
 <p class="clear"> </p>
 
-{include file="common/footer.tpl"|for_device:$device}
+{include file="findInclude:common/footer.tpl"}

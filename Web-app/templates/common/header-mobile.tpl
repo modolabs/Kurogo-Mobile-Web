@@ -1,4 +1,4 @@
-{extends file="common/header.tpl"}
+{extends file="findExtends:common/header.tpl"}
 
 {block name="additionalHeadTags"}
   <meta name="viewport" id="viewport" 

@@ -1,4 +1,4 @@
-{extends file="modules/customize/index.tpl"}
+{extends file="findExtends:modules/customize/index.tpl"}
 
 {block name="content"}
   <div class="focal"> 

@@ -34,7 +34,7 @@ function getErrorURL($exception) {
 
 function exceptionHandlerForDevelopment($exception) {
   error_log(print_r($exception, TRUE));
-  //header('Location: '.getErrorURL($exception));
+  header('Location: '.getErrorURL($exception));
 }
 
 function exceptionHandlerForProduction($exception) {

@@ -782,13 +782,14 @@ ul.focal li:first-child {
 	font-size: 17px;
 	min-height: 20px;
 	line-height: 20px;
-	width: 204px;
+	/*width: 204px;*/
+	padding-right: 22px;
 	word-wrap: break-word;
 	padding-top: 1px;
 }
 
 .email .value {
-	width: 190px;
+	/*width: 190px;*/
 }
 
 
