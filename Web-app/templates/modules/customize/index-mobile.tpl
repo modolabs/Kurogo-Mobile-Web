@@ -11,15 +11,15 @@
         {if $info['disableable']}
           <input type="checkbox" onclick="toggle(this);"{if !$info['disabled']} checked="checked"{/if} />
         {/if}
-        <span class="nolink" style="background-image: url(../modules/{$moduleID}/images/{$id}-tiny.png)">
+        <span class="nolink" style="background-image: url(/modules/{$moduleID}/images/{$id}-tiny.png)">
           {$info['title']}
           <span class="nolinkbuttons"> 
             <a href="#" onclick="moveUp(this); return false;">
-              <!--<img src="../modules/{$moduleID}/images/button-up.png" width="26" height="26" class="moveup" alt="Move up"/>-->
+              <!--<img src="/modules/{$moduleID}/images/button-up.png" width="26" height="26" class="moveup" alt="Move up"/>-->
               <div class="moveup">&nbsp;</div>
             </a> 
             <a href="#" onclick="moveDown(this); return false;">
-              <!--<img src="../modules/{$moduleID}/images/button-down.png" width="26" height="26" class="movedown" alt="Move down"/>-->
+              <!--<img src="/modules/{$moduleID}/images/button-down.png" width="26" height="26" class="movedown" alt="Move down"/>-->
               <div class="movedown">&nbsp;</div>
             </a> 
           </span> 

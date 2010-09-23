@@ -1,30 +1,29 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/../lib/initialize.php';
+require_once dirname(__FILE__).'/../lib/initialize.php';
   
 //error_log(print_r($_GET, true));
 //error_log('Handling '.$_SERVER['REQUEST_URI']);
-
 
 //
 // Get q variable
 //
 
-$q = isset($_GET['q']) ? $_GET['q'] : '';
+$path = isset($_GET['q']) ? $_GET['q'] : '';
 
 
 //
 // Configure web application
 //
 
-InitializeWebapp($q); // modifies q for us if user set device in url
+InitializeWebapp($path, dirname(__FILE__)); // modifies q for us to strip prefix and device
 
 
 //
 // Handle page request
 //
 
-if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $q, $matches)) {
+if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   //
   // Images
   //
@@ -68,14 +67,6 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $q, $matches)) {
   
   //error_log("Detected page request");
   
-  if (!strlen($q)) {
-    if ($GLOBALS['deviceClassifier']->isComputer() || $GLOBALS['deviceClassifier']->isSpider()) {
-      header("Location: ./info/");
-    } else {
-      header("Location: ./home/");
-    }
-  }
-  
   require_once realpath(LIB_DIR.'/Module.php');
   
   $id = 'home';
@@ -84,19 +75,29 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $q, $matches)) {
   $args = $_GET;
   unset($args['q']);
   if (get_magic_quotes_gpc()) {
-    function deepStripSlashes($value) {
-      return is_array($value) ?
-                array_map('deepStripSlashes', $value) :
-                stripslashes($value);
+    function deepStripSlashes($v) {
+      return is_array($v) ? array_map('deepStripSlashes', $v) : stripslashes($v);
     }
     deepStripslashes($args);
   }
   
-  $parts = explode('/', $q, 2);
-  if (count($parts) > 1) {
-    $id = $parts[0];
-    if (strlen($parts[1])) {
-      $page = basename($parts[1], '.php');
+  if (!strlen($path) || $path == '/') {
+    error_log('flarg');
+    if ($GLOBALS['deviceClassifier']->isComputer() || $GLOBALS['deviceClassifier']->isSpider()) {
+      header("Location: ./info/");
+      error_log('blarg');
+    } else {
+      header("Location: ./home/");
+      error_log('alarg');
+    }
+  } else {  
+    $parts = explode('/', ltrim($path, '/'), 2);
+
+    if (count($parts) > 1) {
+      $id = $parts[0];
+      if (strlen($parts[1])) {
+        $page = basename($parts[1], '.php');
+      }
     }
   }
   

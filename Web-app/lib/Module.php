@@ -38,9 +38,9 @@ abstract class Module {
     unset($args['font']);
     $argString = http_build_query($args);
     if (strlen($argString)) {
-      return "$page.php?$argString&font=";
+      return "/{$this->id}/$page.php?$argString&font=";
     } else {
-      return "$page.php?font=";
+      return "/{$this->id}/$page.php?font=";
     }
   }
 
@@ -196,7 +196,7 @@ abstract class Module {
       setcookie('fontsize', $this->fontsize, time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
     
     } else if (isset($_COOKIE['fontsize'])) { 
-      $this->fontSize = $_COOKIE['fontsize'];
+      $this->fontsize = $_COOKIE['fontsize'];
     }
     
     // Set variables common to all pages
@@ -210,11 +210,10 @@ abstract class Module {
     $this->assign('fontsizeCSS', $this->getFontSizeCSS());
     $this->assign('fontSizeURL', $this->getFontSizeURL($page, $args));
 
-    $minifyDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ?
-      '&debug=1' : '';
+    $minifyDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ? '&debug=1' : '';
     $this->assign('minify', array(
-      'css' => "../min/g=css-{$this->id}-$page$minifyDebug",
-      'js'  => "../min/g=js-{$this->id}-$page$minifyDebug",
+      'css' => "/min/g=css-{$this->id}-$page$minifyDebug",
+      'js'  => "/min/g=js-{$this->id}-$page$minifyDebug",
     ));
     
     // Set variables for each page

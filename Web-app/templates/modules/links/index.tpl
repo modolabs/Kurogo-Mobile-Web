@@ -5,13 +5,13 @@
 {block name="textEnd"}</p>{/block}
 
 {block name="linksStart"}<div id="springboard">{/block}
-  {foreach $links as $link}
+  {foreach $links as $id => $link}
     {block name="link"}
-      <div id="{$link['name']}">
+      <div id="{$id}">
         <a href="{$link['url']}">
-          <img src="modules/{$moduleID}/images/{$link['icon']}" width="50" height="50" alt="{$link['name']}" />
+          <img src="/modules/{$moduleID}/images/{$link['icon']}" width="50" height="50" alt="{$link['title']}" />
           <br/>
-          {$link['name']}
+          {$link['title']}
         </a>
       </div>
     {/block}

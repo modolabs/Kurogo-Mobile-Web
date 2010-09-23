@@ -1,11 +1,9 @@
 <?php
 
-require_once $_SERVER['DOCUMENT_ROOT'].'/../lib/initialize.php';
-
-$pprefix = isset($_GET['pprefix']) ? $_GET['pprefix'] : null;
+require_once dirname(__FILE__).'/../../lib/initialize.php';
 
 // Configure web application
-InitializeWebapp($pprefix);
+InitializeWebapp($_SERVER['REQUEST_URI'], dirname(__FILE__));
 
 require_once LIB_DIR.'/minify.php';
 

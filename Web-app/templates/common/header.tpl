@@ -21,10 +21,6 @@
       </script>
     {/foreach}  
     
-    {foreach $javascriptFiles as $file}
-      <script src="{$file}.js" type="text/javascript"></script>
-    {/foreach}  
-    
     {if count($onOrientationChangeBlocks)}
       <script type="text/javascript">
         function onOrientationChange() {ldelim}

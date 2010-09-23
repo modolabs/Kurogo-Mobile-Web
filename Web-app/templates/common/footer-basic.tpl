@@ -26,12 +26,12 @@
     {html_access_key_reset index=0}
     <p class="bottomnav">
       <a href="#top">Back to top</a><br />
-      {html_access_key_link href="../home/"}
+      {html_access_key_link href="/home/"}
         {$SITE_NAME} Home
       {/html_access_key_link}
       {if !$moduleHome}
         <br/>
-        {html_access_key_link href="./"}
+        {html_access_key_link href="/$moduleID/"}
           {$moduleName} Home
         {/html_access_key_link}
       {/if}

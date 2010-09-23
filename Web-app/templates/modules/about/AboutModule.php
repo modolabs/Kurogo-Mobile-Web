@@ -31,11 +31,11 @@ class AboutModule extends Module {
     $navlistItems = array(
       'about_site' => array(
         'title' => 'About this website',
-        'url' => 'about_site.php',
+        'url' => "/{$this->id}/about_site.php",
       ),
       'about' => array(
         'title' => 'About '.$siteVars['INSTITUTION_NAME'],
-        'url' => 'about.php',
+        'url' => "/{$this->id}/about.php",
       ),
       'feedback' => array(
         'title' => 'Send us feedback!',
@@ -53,12 +53,12 @@ class AboutModule extends Module {
         break;
         
       case 'about_site':
-        $this->setPageTitle($navlistItems[$page]['html']);
+        $this->setPageTitle($navlistItems[$page]['title']);
         $this->assign('devicePhrase', $this->getPhraseForDevice());
         break;
       
       case 'about':
-        $this->setPageTitle($navlistItems[$page]['html']);
+        $this->setPageTitle($navlistItems[$page]['title']);
         break;
       
       case 'new':

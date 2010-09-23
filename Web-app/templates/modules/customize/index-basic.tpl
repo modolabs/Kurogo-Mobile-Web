@@ -11,9 +11,9 @@
             {if $info['disableable']}
               <a href="{$info['toggleDisabledURL']}">
                 {if $info['disabled']}
-                  <img src="../modules/{$moduleID}/images/check-on.gif" border="0" alt="On">
+                  <img src="/modules/{$moduleID}/images/check-on.gif" border="0" alt="On">
                 {else}
-                  <img src="../modules/{$moduleID}/images/check-off.gif" border="0" alt="Off">
+                  <img src="/modules/{$moduleID}/images/check-off.gif" border="0" alt="Off">
                 {/if}              
               </a>
             {/if}
@@ -22,14 +22,14 @@
           <td>
             {if isset($info['swapUpURL'])}
               <a href="{$info['swapUpURL']}">
-                <img src="../modules/{$moduleID}/images/up.gif" border="0" alt="Up">
+                <img src="/modules/{$moduleID}/images/up.gif" border="0" alt="Up">
               </a>
             {/if}
           </td>
           <td>
             {if isset($info['swapDownURL'])}
               <a href="{$info['swapDownURL']}">
-                <img src="../modules/{$moduleID}/images/down.gif" border="0" alt="Down">
+                <img src="/modules/{$moduleID}/images/down.gif" border="0" alt="Down">
               </a>
             {/if}
           </td>

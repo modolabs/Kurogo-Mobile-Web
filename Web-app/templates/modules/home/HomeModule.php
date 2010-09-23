@@ -14,7 +14,7 @@ class HomeModule extends Module {
     foreach ($this->getHomeScreenModules() as $id => $info) {
       if (!$info['disabled']) {
         if (!isset($info['url'])) {
-          $info['url'] = "../$id/";
+          $info['url'] = "/$id/";
         }
         if ($info['primary']) {
           $homeModules['primary'][$id] = $info;

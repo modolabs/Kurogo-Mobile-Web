@@ -26,7 +26,7 @@
     </div><!--/utility_nav-->
     
     <div id="logo">
-    	<img src="modules/info/images/Harvard_Shield_Horizontal.png" alt="Harvard University Mobile Internet" border="0" />
+    	<img src="/modules/info/images/Harvard_Shield_Horizontal.png" alt="Harvard University Mobile Internet" border="0" />
     </div><!--/logo-->
     
     <h1>m.harvard.edu</h1>
@@ -60,7 +60,7 @@
         	Download iPhone app 
             </td>
             <td>
-            <a href="http://itunes.apple.com/us/app/harvard-mobile/id389199460" target="_blank"><img src="modules/info/images/App_Store_Badge21.png" alt="Harvard Mobile iPhone App Download" width="90" height="31" /></a>
+            <a href="http://itunes.apple.com/us/app/harvard-mobile/id389199460" target="_blank"><img src="/modules/info/images/App_Store_Badge21.png" alt="Harvard Mobile iPhone App Download" width="90" height="31" /></a>
             </td>
           </tr>
         </table>
@@ -93,7 +93,7 @@
     	<table cellpadding="0" cellspacing="0" id="features">
           <tr>
             <td>
-              <img src="modules/info/images/icons/people.png" alt="People Directory" />
+              <img src="/modules/info/images/icons/people.png" alt="People Directory" />
             </td>
             <td>
             <h2>People Directory</h2>
@@ -104,7 +104,7 @@
           </tr>
           <tr>
             <td>
-              <img src="modules/info/images/icons/map.png" alt="Campus Map" />
+              <img src="/modules/info/images/icons/map.png" alt="Campus Map" />
             </td>
             <td>
             <h2>Campus Map</h2>
@@ -116,7 +116,7 @@
 
           <tr>
             <td>
-              <img src="modules/info/images/icons/calendar.png" alt="Events" />
+              <img src="/modules/info/images/icons/calendar.png" alt="Events" />
             </td>
             <td>
             <h2>Events</h2>
@@ -128,7 +128,7 @@
 
           <tr>
             <td>
-              <img src="modules/info/images/icons/stellar.png" alt="Courses" />
+              <img src="/modules/info/images/icons/stellar.png" alt="Courses" />
             </td>
             <td>
             <h2>Courses</h2>
@@ -140,7 +140,7 @@
 
           <tr>
             <td>
-              <img src="modules/info/images/icons/news.png" alt="News" />
+              <img src="/modules/info/images/icons/news.png" alt="News" />
             </td>
             <td>
             <h2>News</h2>
@@ -152,7 +152,7 @@
 
           <tr>
             <td>
-              <img src="modules/info/images/icons/dining.png" alt="Student Dining" />
+              <img src="/modules/info/images/icons/dining.png" alt="Student Dining" />
             </td>
             <td>
             <h2>Student Dining</h2>
@@ -163,7 +163,7 @@
           </tr>
           <tr>
             <td>
-              <img src="modules/info/images/icons/search.png" alt="Search" />
+              <img src="/modules/info/images/icons/search.png" alt="Search" />
             </td>
             <td>
             <h2>Search</h2>

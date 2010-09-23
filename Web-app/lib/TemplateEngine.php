@@ -103,13 +103,23 @@ class TemplateEngine extends Smarty {
 
   static function smartyResourceExtendsGetTrusted($name, $smarty) {
     return true;
-  }  
+  }
   
-  static function accessKeyLink($params, $content, &$smarty, &$repeat) {
+  static function smartyOutputfilterAddURLPrefix($output, $smarty) {
+    //error_log(__FUNCTION__."() Adding ".URL_PREFIX);
+    $output = preg_replace(
+      ';(url\("?\'?|href\s*=\s*"|src\s*=\s*")/;', 
+      '\1'.URL_PREFIX, 
+      $output);  
+  
+    return $output;
+  }
+  
+  static function smartyBlockAccessKeyLink($params, $content, &$smarty, &$repeat) {
     if (empty($params['href'])) {
         $smarty->trigger_error("assign: missing 'href' parameter");
     }
-
+    
     $html = '';
     
     if (!$repeat) {
@@ -132,7 +142,7 @@ class TemplateEngine extends Smarty {
     return $html;
   }
   
-  static function accessKeyReset($params, &$smarty) {
+  static function smartyTemplateAccessKeyReset($params, &$smarty) {
     if (!isset($params['index'])) {
         $smarty->trigger_error("assign: missing 'index' parameter");
         return;
@@ -165,6 +175,7 @@ class TemplateEngine extends Smarty {
     $this->setCacheDir   ($GLOBALS['siteConfig']->getVar('TEMPLATE_CACHE_DIR'));
     $this->setCompileId  ("$pagetype-$platform");
     
+    // Theme and device detection for includes and extends
     $this->register->resource('findExtends', array(
       'TemplateEngine::smartyResourceExtendsGetSource',
       'TemplateEngine::smartyResourceExtendsGetTimestamp',
@@ -177,8 +188,14 @@ class TemplateEngine extends Smarty {
       'TemplateEngine::smartyResourceIncludeGetSecure',
       'TemplateEngine::smartyResourceIncludeGetTrusted',
     ));
-    $this->register->block(           'html_access_key_link',  'TemplateEngine::accessKeyLink');
-    $this->register->templateFunction('html_access_key_reset', 'TemplateEngine::accessKeyReset');
+    
+    // Postfilter to add url prefix to absolute urls
+    $this->register->outputfilter(array('TemplateEngine', 'smartyOutputfilterAddURLPrefix'));
+    
+    $this->register->block('html_access_key_link',  
+      'TemplateEngine::smartyBlockAccessKeyLink');
+    $this->register->templateFunction('html_access_key_reset', 
+      'TemplateEngine::smartyTemplateAccessKeyReset');
       
     // variables common to all modules
     $this->assign('pagetype', $pagetype);

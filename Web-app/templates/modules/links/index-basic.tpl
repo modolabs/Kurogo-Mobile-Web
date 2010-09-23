@@ -10,7 +10,7 @@
 
 {block name="link"}
   {html_access_key_link href=$link['url']}
-    {$link['name']}
+    {$link['title']}
   {/html_access_key_link}
   <br/>
 {/block}
