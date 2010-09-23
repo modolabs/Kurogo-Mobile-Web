@@ -70,9 +70,9 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $q, $matches)) {
   
   if (!strlen($q)) {
     if ($GLOBALS['deviceClassifier']->isComputer() || $GLOBALS['deviceClassifier']->isSpider()) {
-      //header("Location: ./info/");
+      header("Location: ./info/");
     } else {
-      //header("Location: ./home/");
+      header("Location: ./home/");
     }
   }
   
