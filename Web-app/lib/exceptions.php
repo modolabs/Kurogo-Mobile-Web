@@ -29,7 +29,7 @@ function getErrorURL($exception) {
     $args['code'] = 'notfound';
   }
   
-  return '/error/?'.http_build_query($args);
+  return URL_PREFIX.'error/?'.http_build_query($args);
 }
 
 function exceptionHandlerForDevelopment($exception) {

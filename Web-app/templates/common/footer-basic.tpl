@@ -1,6 +1,6 @@
 {extends file="findExtends:common/footer.tpl"}
 
-{block name="beforeLinks"}
+{block name="footerLinks"}
   {strip}
   <p class="fontsize">
     Font size:&nbsp;
@@ -14,38 +14,31 @@
       {if $size != $last} | {/if}
     {/foreach}
   </p>
-  {/strip}
-{/block}
 
-{block name="beforeFooter"}
-  <p class="bb"> </p>
-{/block}
-
-{block name="footerLinks"}
   {if $moduleID != 'home'}
     {html_access_key_reset index=0}
     <p class="bottomnav">
-      <a href="#top">Back to top</a><br />
-      {html_access_key_link href="/home/"}
-        {$SITE_NAME} Home
-      {/html_access_key_link}
+      <a href="#top">Back to top</a>
+      <br />
+      {html_access_key_link href="/home/"}{$SITE_NAME} Home{/html_access_key_link}
       {if !$moduleHome}
         <br/>
-        {html_access_key_link href="/$moduleID/"}
-          {$moduleName} Home
-        {/html_access_key_link}
+        {html_access_key_link href="/$moduleID/"}{$moduleName} Home{/html_access_key_link}
       {/if}
       {foreach $breadcrumbs as $breadcrumb}
         <br />
-        {html_access_key_link href=$breadcrumb['url']}
-          {$breadcrumb['text']}
-        {/html_access_key_link}
+        {html_access_key_link href=$breadcrumb['url']}{$breadcrumb['text']}{/html_access_key_link}
       {/foreach}
     </p>
   {/if}
+  {/strip}
 {/block}
 
-{block name="afterFooter"}{/block}
+{block name="footer"}
+  <p class="bb"> </p>
+  {$smarty.block.parent}
+{/block}
 
-{block name="javascript"}{/block}
+{block name="javascript"}
+{/block}
 

@@ -1,7 +1,15 @@
 {extends file="findExtends:common/header.tpl"}
 
-{block name="javascript"}{/block}
-{block name="navHeader"}
+{block name="javascript"}
+{/block}
+
+{block name="additionalHeadTags"}
+    <style type="text/css" media="screen">
+      {$fontsizeCSS}
+    </style>
+{/block}
+
+{block name="header"}
   <table cellpadding="0" cellspacing="0" border="0">
     <tr valign="middle">
       <td>
@@ -12,10 +20,4 @@
       </td>
     </tr>
   </table>
-{/block}
-
-{block name="additionalHeadTags"}
-    <style type="text/css" media="screen">
-      {$fontsizeCSS}
-    </style>
 {/block}

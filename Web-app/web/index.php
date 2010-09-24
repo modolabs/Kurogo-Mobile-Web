@@ -45,8 +45,6 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
     "$file",
   );
   
-  //error_log(print_r($testPaths, true));
-  
   foreach ($testDirs as $dir) {
     foreach ($testFiles as $file) {
       $path = "$dir/$file";
@@ -75,20 +73,18 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   $args = $_GET;
   unset($args['q']);
   if (get_magic_quotes_gpc()) {
+    
     function deepStripSlashes($v) {
       return is_array($v) ? array_map('deepStripSlashes', $v) : stripslashes($v);
     }
-    deepStripslashes($args);
+    $args = deepStripslashes($args);
   }
   
   if (!strlen($path) || $path == '/') {
-    error_log('flarg');
     if ($GLOBALS['deviceClassifier']->isComputer() || $GLOBALS['deviceClassifier']->isSpider()) {
       header("Location: ./info/");
-      error_log('blarg');
     } else {
       header("Location: ./home/");
-      error_log('alarg');
     }
   } else {  
     $parts = explode('/', ltrim($path, '/'), 2);
@@ -100,7 +96,8 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
       }
     }
   }
-  
+  //error_log(print_r($args, true));
+
   $module = Module::factory($id);
   $module->displayPage($page, $args);
 }

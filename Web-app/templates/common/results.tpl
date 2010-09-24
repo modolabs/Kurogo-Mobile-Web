@@ -1,7 +1,6 @@
 {strip}
 
 {block name="resultsStart"}<ul class="results">{/block}
-  {assign var=last value=end(array_keys($navlistItems))}
   {foreach $results as $index => $item}
     {capture name="itemHTML" assign="itemHTML"}
       {$item['title']}

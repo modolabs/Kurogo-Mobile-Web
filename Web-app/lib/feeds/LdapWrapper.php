@@ -176,7 +176,7 @@ class LdapWrapper {
    */
   public function doQuery() {
 
-    $ds = ldap_connect(LDAP_SERVER);
+    $ds = ldap_connect($GLOBALS['siteConfig']->getVar('LDAP_SERVER'));
     if (!$ds) {
       $this->errorMsg = "Could not connect to LDAP server";
       return FALSE;
@@ -184,12 +184,14 @@ class LdapWrapper {
 
     // suppress warnings on non-dev servers
     // about searches that go over the result limit
-    if (!MOBILE_DEV_SERVER) {
+    if (!$GLOBALS['siteConfig']->getVar('LDAP_DEBUG')) {
       $error_reporting = ini_get('error_reporting');
       error_reporting($error_reporting & ~E_WARNING);
     }
 
-    $sr = ldap_search($ds, LDAP_PATH, $this->query, array(), 0, 0, SEARCH_TIMELIMIT);
+    $sr = ldap_search($ds, $GLOBALS['siteConfig']->getVar('LDAP_PATH'), 
+      $this->query, array(), 0, 0, 
+      $GLOBALS['siteConfig']->getVar('LDAP_SEARCH_TIMELIMIT'));
     if (!$sr) {
         if($ds) {
             $this->errorMsg = generateErrorMessage($ds);
@@ -197,7 +199,7 @@ class LdapWrapper {
       return FALSE;
     }
 
-    if (!MOBILE_DEV_SERVER) {
+    if (!$GLOBALS['siteConfig']->getVar('LDAP_DEBUG')) {
       error_reporting($error_reporting);
     }
 
@@ -225,14 +227,15 @@ class LdapWrapper {
     if (strstr($id, '=')) { 
       // assume we're looking up person by "dn" (distinct ldap name)
 
-      $ds = ldap_connect(LDAP_SERVER);
+      $ds = ldap_connect($GLOBALS['siteConfig']->getVar('LDAP_SERVER'));
       if (!$ds) {
         $this->errorMsg = "Could not connect to LDAP server";
         return FALSE;
       }
 
       // get all attributes of the person identified by $id
-      $sr = ldap_read($ds, $id, "(objectclass=*)", array(), 0, 0, READ_TIMELIMIT);
+      $sr = ldap_read($ds, $id, "(objectclass=*)", array(), 0, 0, 
+        $GLOBALS['siteConfig']->getVar('LDAP_READ_TIMELIMIT'));
       if (!$sr) {
         $this->errorMsg = "Search timed out";
         return FALSE;

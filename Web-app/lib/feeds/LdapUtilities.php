@@ -8,8 +8,6 @@
  *****************************************************************/
 
 // search string templates
-define("SEARCH_TIMELIMIT", 30);
-define("READ_TIMELIMIT", 30);
 define("TELEPHONE_FILTER", "(telephonenumber=*%s*)");
 define("TELEPHONE_SEARCH_FILTER", "(&(objectClass=person)%s)");
 define("EMAIL_FILTER", "(mail=*%s*)");

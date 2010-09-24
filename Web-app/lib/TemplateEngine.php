@@ -5,6 +5,10 @@ require_once realpath(LIB_DIR.'/smarty/Smarty.class.php');
 class TemplateEngine extends Smarty {
   static $accessKey = 0;
   
+  //
+  // Include file resource plugin
+  //
+  
   static private function getIncludeFile($name) {
     $subDir = dirname($name);
     $page = basename($name, '.tpl');
@@ -35,24 +39,6 @@ class TemplateEngine extends Smarty {
     return false;
   }
   
-  static private function getExtendsFile($name) {
-    $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
-    $platform = $GLOBALS['deviceClassifier']->getPlatform();
-
-    $checkDirs = array(
-      'THEME_DIR'     => $GLOBALS['siteConfig']->getVar('THEME_DIR'),
-      'TEMPLATES_DIR' => TEMPLATES_DIR,
-    );
-    
-    foreach ($checkDirs as $type => $dir) {
-        if (realpath("$dir/$name")) {
-          error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$name'");
-          return "$dir/$name";
-        }
-    }
-    return false;
-  }
-  
   static function smartyResourceIncludeGetSource($name, &$source, $smarty) {
     $file = self::getIncludeFile($name);
     if ($file !== false) {
@@ -77,6 +63,28 @@ class TemplateEngine extends Smarty {
 
   static function smartyResourceIncludeGetTrusted($name, $smarty) {
     return true;
+  }
+  
+  //
+  // Extends file resource plugin
+  //
+  
+  static private function getExtendsFile($name) {
+    $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
+    $platform = $GLOBALS['deviceClassifier']->getPlatform();
+
+    $checkDirs = array(
+      'TEMPLATES_DIR' => TEMPLATES_DIR,
+      'THEME_DIR'     => $GLOBALS['siteConfig']->getVar('THEME_DIR'),
+    );
+    
+    foreach ($checkDirs as $type => $dir) {
+        if (realpath("$dir/$name")) {
+          error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$name'");
+          return "$dir/$name";
+        }
+    }
+    return false;
   }
   
   static function smartyResourceExtendsGetSource($name, &$source, $smarty) {
@@ -106,14 +114,15 @@ class TemplateEngine extends Smarty {
   }
   
   static function smartyOutputfilterAddURLPrefix($output, $smarty) {
-    //error_log(__FUNCTION__."() Adding ".URL_PREFIX);
     $output = preg_replace(
-      ';(url\("?\'?|href\s*=\s*"|src\s*=\s*")/;', 
-      '\1'.URL_PREFIX, 
-      $output);  
-  
+      ';(url\("?\'?|href\s*=\s*"|src\s*=\s*")('.URL_PREFIX.'|/);', 
+      '\1'.URL_PREFIX, $output);  
     return $output;
   }
+  
+  //
+  // Access key block and template plugins
+  //
   
   static function smartyBlockAccessKeyLink($params, $content, &$smarty, &$repeat) {
     if (empty($params['href'])) {
@@ -150,6 +159,10 @@ class TemplateEngine extends Smarty {
     self::$accessKey = $params['index'];
   }
   
+  //
+  // Theme config files
+  //
+  
   public function loadThemeConfigFile($name, $loadVarKeys=false) {
     $GLOBALS['siteConfig']->loadThemeFile($name);
     
@@ -161,7 +174,12 @@ class TemplateEngine extends Smarty {
       $this->assign($name, $GLOBALS['siteConfig']->getThemeVar($name));
     }
   }
-   
+  
+  
+  //
+  // Constructor
+  //
+  
   function __construct() {
     parent::__construct();
 
@@ -209,6 +227,10 @@ class TemplateEngine extends Smarty {
     date_default_timezone_set($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
 
   }
+  
+  //
+  // Display template for device and theme
+  //
   
   function displayForDevice($page, $cacheID = null, $compileID = null, $parent = null) {
     $this->display(self::getIncludeFile($page), $cacheID, $compileID, $parent);

@@ -6,5 +6,6 @@ class InfoModule extends Module {
   protected $id = 'info';
      
   protected function initializeForPage($page, $args) {
+    // Just a static page
   }
 }

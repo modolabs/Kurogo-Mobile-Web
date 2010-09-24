@@ -100,10 +100,16 @@ function getMinifyGroupsConfig() {
     $minifyConfig = $cache->read($cacheName);
     
   } else {
-    $dirs = array(
+    // CSS includes all in order.  JS prefers theme
+    $cssDirs = array(
       TEMPLATES_DIR, 
       $GLOBALS['siteConfig']->getVar('THEME_DIR'),
     );
+    $jsDirs = array(
+      $GLOBALS['siteConfig']->getVar('THEME_DIR'),
+      TEMPLATES_DIR, 
+    );
+    
     if ($module == 'info') {
       // Info module does not inherit from common css files
       $subDirs = array(
@@ -115,15 +121,15 @@ function getMinifyGroupsConfig() {
         '/modules/'.$module,
       );
     }
+    
     $checkFiles = array(
       'css' => getCSSFileConfigForDirs(
-          $page, $pagetype, $platform, $dirs, $subDirs),
+          $page, $pagetype, $platform, $cssDirs, $subDirs),
       'js'  => getJSFileConfigForDirs (
-          $page, $pagetype, $platform, array_reverse($dirs), $subDirs),
+          $page, $pagetype, $platform, $jsDirs, $subDirs),
     );
     
     $minifyConfig[$key] = buildFileList($checkFiles[$ext]);
-
     error_log(__FUNCTION__."($pagetype-$platform) scanned filesystem for $key");
 
     $cache->write($minifyConfig, $cacheName);

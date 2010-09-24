@@ -6,47 +6,117 @@ require_once realpath(LIB_DIR.'/feeds/LdapWrapper.php');
 class PeopleModule extends Module {
   protected $id = 'people';
   
-  private function displayField() {
-    $details = array(
-      'name' => array('key' => 'cn',),
+  private function formatPersonDetails($person) {
+    $this->loadThemeConfigFile('peopleDetails');
+    
+    $detailFields = $this->getTemplateVars('peopleDetails');
+    $details = array();
+    //error_log(print_r($detailFields, true));
+    
+    $strtrValue = array(
+      '-', '-&shy;',
     );
     
-    
-    
+    foreach($detailFields as $key => $info) {
+      $section = array();
+      
+      if (isset($info['format'])) {
+        $formatFunction = create_function('$value', $info['format']);
+      } else {
+        $formatFunction = null;
+      }
+      
+      foreach($person->getField($info['keys']) as $value) {
+        $detail = array(
+          'label' => $info['label'],
+          'title' => $value,
+        );
+        
+        if (isset($formatFunction)) {
+          $detail['title'] = $formatFunction($detail['title']);
+        }
+        
+        switch(isset($info['type']) ? $info['type'] : 'text') {
+          case 'email':
+            $detail['title'] = str_replace('@', '@&shy;', $detail['title']);
+            
+            $detail['url'] = "mailto:$value";
+            $detail['class'] = 'email';
+            break;
+            
+          case 'phone':
+            $detail['title'] = strtr($detail['title'], '-', '-&shy;');
+            
+            if (strpos($value, '+1') !== 0) { $value = "+1$value"; }
+            $detail['url'] = 'tel:'.strtr($value, '-', '');
+            $detail['class'] = 'phone';
+            break;
+            
+          case 'map':
+            // Only send the next-to-last line of the address to the map module
+            $lines = explode('$', $value);
+            $count = count($lines);
+            $linkAddress = ($count > 1) ? $lines[$count - 2] : $value;
+            $detail['url'] = '/map/search.php?'.http_build_query(array(
+              'filter' => $linkAddress
+            ));
+            $detail['class'] = 'map';
+            break;
+        }
+        
+        // $ is the LDAP return character for multiline fields
+        $detail['title'] = str_replace('$', '<br />', $detail['title']);
+        
+        $section[] = $detail;
+      }
+      
+      if (count($section)) {
+        if (isset($info['section'])) {
+          if (!isset($details[$info['section']])) {
+            $details[$info['section']] = $section;
+          } else {
+            $details[$info['section']] = array_merge($details[$info['section']], $section);
+          }
+        } else {
+          $details[] = $section;
+        }
+      }
+    }
     
     return $details;
   }
-  
+
   protected function initializeForPage($page, $args) {
+    $this->loadThemeConfigFile('peopleContacts');
+
     if (isset($args['username'])) {
       $ldapWrapper = new LdapWrapper();
       $person = $ldapWrapper->lookupUser($args['username']);
       
       if ($person) {
-        $personDetails = $this->formatPersonDetails($person);
-        $this->assign('personDetails', $personDetails);
+        $this->assign('personDetails', $this->formatPersonDetails($person));
       } else {
         $this->assign('searchError', $ldapWrapper->getError());
       }
     } else if (isset($args['filter'])) {
-      $searchTerms = stripslashes(trim($args['filter']));
+      $searchTerms = trim($args['filter']);
       $ldapWrapper = new LdapWrapper();
+      
+      $this->assign('searchTerms', $searchTerms);
       
       if ($ldapWrapper->buildQuery($searchTerms)
           && ($people = $ldapWrapper->doQuery()) !== FALSE) {
         $resultCount = count($people);
         
         switch ($resultCount) {
-          case 0:
-            $this->assign('searchError', 'No matches found');
-            break;
           case 1:
-            $this->assign('person', $people[0]);
+            $this->assign('personDetails', $this->formatPersonDetails($people[0]));
             break;
+            
           default:
             $results = array();
             foreach ($people as $person) {
-              $results = array(
+              $results[] = array(
                 'url' => 'index.php?'.http_build_query(array(
                    'username' => $person->getId(),
                    'filter'   => $args['filter'],
@@ -56,7 +126,7 @@ class PeopleModule extends Module {
                     $person->getFieldSingle('givenname')
                 ),
               );
-            }
+            }//error_log(print_r($results, true));
             $this->assign('resultCount', $resultCount);
             $this->assign('results', $results);
             break;
@@ -67,74 +137,5 @@ class PeopleModule extends Module {
       }
     }
   
-    $this->loadThemeConfigFile('peopleContacts');
   }
 }
-/*  <? $item->display('name', 'cn', NULL, NULL, FALSE, TRUE); ?>
-  
-  <? $item->display('title', 'title', NULL, NULL, FALSE); ?>
-  
-  <? $item->display('email', 'mail', 'mailHREF', 'email', FALSE); ?>
-  
-  <? if(has_phone($person)) { ?>
-  <ul class="nav">
-  <? $item->display('phone', 'telephonenumber', 'phoneHREF', 'phone', TRUE); ?>
-  <? $item->display('home', 'homephone', 'phoneHREF', 'phone', TRUE); ?>
-  <? $item->display('fax', 'facsimiletelephonenumber', 'phoneHREF', 'phone', TRUE); ?>
-  </ul>
-  <? } ?>
-  
-  <? $item->display('address', 'street', NULL, NULL, FALSE); ?>
-  <? $item->display('office', 'postaladdress', 'officeURL', 'map', FALSE); ?>
-  <? $item->display('unit', 'ou', NULL, NULL, FALSE); ?>
-
-<?
-  public function display($label, $field, $href=NULL, $class=NULL, $group=False, $flat=False) {
-    $displayString = "";
-
-    foreach($this->person->getField($field) as $value) {
-      $formatted_value = $value;
-      if (strcmp($field, 'ou') == 0) {
-        $formatted_value = str_replace('^', ' / ', $formatted_value);
-      }
-      $formatted_value = htmlspecialchars($formatted_value);
-	  if (strcmp($field, 'mail') != 0) {
-		// We now don't want hyphens to display in an email address, but it's OK elsewhere.
-      	$formatted_value = str_replace('@', '@&shy;', $formatted_value);
-	  }
-      // prevent phones from creating links from things that look like phone/email
-      $formatted_value = str_replace('-', '-&shy;', $formatted_value);
-      $formatted_value = str_replace('$', '<br />', $formatted_value);
-      
-      if ($flat) {
-        $displayString = '<h2>'.$formatted_value.'</h2>';
-        
-        if (!$group) {
-          $displayString = '<div class="nonfocal">'.$displayString.'</div>';
-        }
-        
-        
-      } else {
-        $innerContents = "
-                 <div class=\"label\">$label</div>
-                 <div class=\"value\">$formatted_value</div>";
-        if ($href !== NULL) {
-		  $linkAddress = $value;
-	
-          $innerContents = '<a href="' . $href($linkAddress) . '" class="' . $class . '">'
-                       . $innerContents . '</a>';
-        }
-
-        $innerContents = '<li>' . $innerContents . '</li>';
-
-        if (!$group) {
-          $innerContents = '<ul class="nav">' . $innerContents . '</ul>';
-        }
-
-        $displayString .= $innerContents;
-      }
-    }
-    echo $displayString;
-  }
-}
-*/

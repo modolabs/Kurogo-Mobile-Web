@@ -6,6 +6,7 @@
   {/if}
   <p class="focal results">
 {/block}
+
 {block name="resultsItem"}
   {if isset($item['url'])}
     {if $accessKey|default:true}
@@ -13,9 +14,7 @@
         {$itemHTML}
       {/html_access_key_link}
     {else}
-      <a href="{$item['url']}" class="{$item['class']|default:''}">
-        {$itemHTML}
-      </a>
+      <a href="{$item['url']}" class="{$item['class']|default:''}">{$itemHTML}</a>
     {/if}
   {else}
     <span class="{$item['class']|default:''}">
@@ -24,6 +23,7 @@
   {/if}
   <br/>
 {/block}
+
 {block name="resultsEnd"}
   </p>
 {/block}

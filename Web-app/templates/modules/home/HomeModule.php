@@ -16,6 +16,9 @@ class HomeModule extends Module {
         if (!isset($info['url'])) {
           $info['url'] = "/$id/";
         }
+        if (!isset($info['img'])) {
+          $info['img'] = "/modules/{$this->id}/images/$id.png";
+        }
         if ($info['primary']) {
           $homeModules['primary'][$id] = $info;
         } else {
