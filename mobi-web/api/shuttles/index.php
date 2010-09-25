@@ -151,11 +151,18 @@ switch ($command) {
          unset($data['stops'][count($data['stops']) - 1]);
      }
 
+     $route = $transloc->getOneRouteInfo($route_id);
+     $stopMarkerURL = HARVARD_TRANSLOC_MARKERS.'?'.urlencode(http_build_query(array(
+        'm' => 'stop',
+        'c' => $route['color'],
+        'h' => '4',
+      )));
+
+     $data['stopMarkerUrl'] = urldecode($stopMarkerURL);
+
 
      if ($gpsActive == true) {
-       $data['gpsActive'] = TRUE;
-
-        $route = $transloc->getOneRouteInfo($route_id);
+       $data['gpsActive'] = TRUE;     
        $vehicles = $transloc->getVehiclesForRoute($route_id);
        $vehiclesArray = array();
        foreach($vehicles as $vehicle) {
