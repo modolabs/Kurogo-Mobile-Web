@@ -174,7 +174,11 @@ class TranslocReader {
 
     foreach ($route['segments'] as $segment) {
       $polyline = $this->segments[abs(intVal($segment))]['points'];
-      $path = array_merge($path, decodePolylineToArray($polyline));
+      $points = decodePolylineToArray($polyline);
+      if (intVal($segment) < 0) {
+        $points = array_reverse($points);
+      }
+      $path = array_merge($path, $points);
     }
     //print(json_encode($this->stops));
     //print(json_encode($this->routes[$route['id']]['stops']));
@@ -240,7 +244,11 @@ class TranslocReader {
     $path = array();
     foreach ($route['segments'] as $segment) {
       $polyline = $this->segments[abs(intVal($segment))]['points'];
-      $path = array_merge($path, decodePolylineToArray($polyline));
+      $points = decodePolylineToArray($polyline);
+      if (intVal($segment) < 0) {
+        $points = array_reverse($points);
+      }
+      $path = array_merge($path, $points);
     }
     //print(json_encode($this->stops));
     //print(json_encode($this->routes[$route['id']]['stops']));
@@ -289,7 +297,11 @@ class TranslocReader {
     $path = array();
     foreach ($route['segments'] as $segment) {
       $polyline = $this->segments[abs(intVal($segment))]['points'];
-      $path = array_merge($path, decodePolylineToArray($polyline));
+      $points = decodePolylineToArray($polyline);
+      if (intVal($segment) < 0) {
+        $points = array_reverse($points);
+      }
+      $path = array_merge($path, $points);
     }
     //print(json_encode($this->stops));
     //print(json_encode($this->routes[$route['id']]['stops']));
