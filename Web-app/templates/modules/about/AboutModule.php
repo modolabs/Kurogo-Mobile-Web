@@ -26,7 +26,7 @@ class AboutModule extends Module {
     }
   }
   
-  protected function initializeForPage($page, $args) {
+  protected function initializeForPage() {
     $siteVars = $GLOBALS['siteConfig']->getThemeVar('site');
     $navlistItems = array(
       'about_site' => array(
@@ -44,7 +44,7 @@ class AboutModule extends Module {
       ),
     );
 
-    switch ($page) {
+    switch ($this->page) {
       case 'index':
         if ($GLOBALS['deviceClassifier']->getPagetype() == 'basic') {
           $this->assign('lastNavItem', array_pop($navlistItems));
@@ -53,12 +53,12 @@ class AboutModule extends Module {
         break;
         
       case 'about_site':
-        $this->setPageTitle($navlistItems[$page]['title']);
+        $this->setPageTitle($navlistItems[$this->page]['title']);
         $this->assign('devicePhrase', $this->getPhraseForDevice());
         break;
       
       case 'about':
-        $this->setPageTitle($navlistItems[$page]['title']);
+        $this->setPageTitle($navlistItems[$this->page]['title']);
         break;
       
       case 'new':

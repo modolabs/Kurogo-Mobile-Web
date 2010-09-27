@@ -52,8 +52,8 @@ class CustomizeModule extends Module {
     }
   }
 
-  protected function initializeForPage($page, $args) {
-    $this->handleRequest($args);
+  protected function initializeForPage() {
+    $this->handleRequest($this->args);
 
     $modules = array();
     $moduleIDs = array();

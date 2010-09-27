@@ -98,6 +98,6 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   }
   //error_log(print_r($args, true));
 
-  $module = Module::factory($id);
-  $module->displayPage($page, $args);
+  $module = Module::factory($id, $page, $args);
+  $module->displayPage();
 }

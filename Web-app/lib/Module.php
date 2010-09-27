@@ -5,6 +5,9 @@ require_once realpath(LIB_DIR.'/TemplateEngine.php');
 abstract class Module {
   protected $id = 'none';
   
+  protected $page = 'index';
+  protected $args = array();
+  
   private $moduleName = 'No Title';
   
   private $inlineCSSBlocks = array();
@@ -12,6 +15,7 @@ abstract class Module {
   private $inlineJavascriptFooterBlocks = array();
   private $onOrientationChangeBlocks = array();
   
+  private $breadcrumbTitle = null;
   private $breadcrumbs = array();
 
   private $fontsize = 'medium';
@@ -34,13 +38,13 @@ abstract class Module {
     }
   }
    
-  private function getFontSizeURL($page, $args) {
-    unset($args['font']);
-    $argString = http_build_query($args);
+  private function getFontSizeURL() {
+    unset($this->args['font']);
+    $argString = http_build_query($this->args);
     if (strlen($argString)) {
-      return "/{$this->id}/$page.php?$argString&font=";
+      return "/{$this->id}/{$this->page}.php?$argString&font=";
     } else {
-      return "/{$this->id}/$page.php?font=";
+      return "/{$this->id}/{$this->page}.php?font=";
     }
   }
 
@@ -57,27 +61,46 @@ abstract class Module {
       return $default;
     }
   }
+
+  private static function buildURL($page, $args) {
+    $argString = '';
+    if (isset($args) && count($args)) {
+      $argString = http_build_query($args);
+    }
+    
+    return "$page.php".(strlen($argString) ? "?$argString" : "");
+  }
+
+  protected function redirectTo($page, $args=null) {
+    if (!isset($args)) { $args = $this->args; }
+  
+    header("Location: ./".self::buildURL($page, $args));
+    exit;
+  }
   
   // Factory function that instantiates objects for the different modules
-  public static function factory($id) {
+  public static function factory($id, $page='index', $args=array()) {
     $className = ucfirst($id).'Module';
     
     $moduleFile = realpath($GLOBALS['siteConfig']->getVar('MODULES_DIR')."/$id/$className.php");
     if ($moduleFile && include_once($moduleFile)) {
-      return new $className;
+      return new $className($page, $args);
       
     } else {
       throw new PageNotFound("Module '$id' not found while handling '{$_SERVER['REQUEST_URI']}'");
     }
   }
   
-  function __construct() {
+  function __construct($page='index', $args=array()) {
     $GLOBALS['siteConfig']->loadThemeFile('modules');
     
     $modules = $GLOBALS['siteConfig']->getThemeVar('modules');
     if (isset($modules[$this->id])) {
       $this->moduleName = $modules[$this->id]['title'];
     }
+    
+    $this->page = $page;
+    $this->args = $args;
   }
   
   // Module control functions
@@ -150,26 +173,61 @@ abstract class Module {
     $this->onOrientationChangeBlocks[] = $onOrientationChange;
   }
   
-  protected function addBreadcrumb($text, $url, $class='') {
-    $breadcrumbs[] = array(
-      'text'  => $text,
-      'url'   => $url,
-      'class' => $class,
-    );
+  // Breadcrumbs
+  private function loadBreadcrumbs() {
+    if (isset($this->args['breadcrumbs'])) {
+      $breadcrumbs = unserialize(rawurldecode($this->args['breadcrumbs']));
+      if (is_array($breadcrumbs)) {
+        $this->breadcrumbs = $breadcrumbs;
+      }
+    }
+    //error_log(__FUNCTION__."(): loaded breadcrumbs ".print_r($this->breadcrumbs, true));
   }
   
+  private function getBreadcrumbString() {
+    $breadcrumbs = $this->breadcrumbs;
+    
+    if ($this->page != 'index') {
+      $title = isset($this->breadcrumbTitle) ? 
+        $this->breadcrumbTitle : $this->getTemplateVars('pageTitle');
+    
+      $breadcrumbs[] = array(
+        'title' => $title,
+        'url'   => self::buildURL($this->page, $this->args),
+      );
+    }
+    //error_log(__FUNCTION__."(): saving breadcrumbs ".print_r($breadcrumbs, true));
+    return rawurlencode(serialize($breadcrumbs));
+  }
+  
+  private function getBreadcrumbInputs() {
+    return '<input type="hidden" name="breadcrumbs" value="'.$this->getBreadcrumbString().'" />';
+  }
+  
+  protected function buildBreadcrumbURL($page, $args) {
+    return "$page.php?".http_build_query(array_merge($args, array(
+      'breadcrumbs' => $this->getBreadcrumbString(),
+    )));
+  }
+  
+  protected function setBreadcrumbTitle($title) {
+    $this->breadcrumbTitle = $title;
+  }
+
+  // Page title
   protected function setPageTitle($title) {
     $this->assign('pageTitle', $title);
   }
 
+  // Config files
   protected function loadThemeConfigFile($name) {
     $this->loadTemplateEngineIfNeeded();
     
     $this->templateEngine->loadThemeConfigFile($name);
   }
 
-  // convenience functions
-  public function assignByRef($var, $value) {
+  // Convenience functions
+  public function assignByRef($var, &$value) {
     $this->loadTemplateEngineIfNeeded();
         
     $this->templateEngine->assignByRef($var, $value);
@@ -187,49 +245,54 @@ abstract class Module {
     return $this->templateEngine->getTemplateVars($key);
   }
   
-  public function displayPage($page='index', $args=array()) {
+  public function displayPage() {
     $this->loadTemplateEngineIfNeeded();
     
+    // Set variables common to all pages
+    $this->assign('moduleID', $this->id);
+    $this->assign('moduleName', $this->moduleName);
+    $this->assign('page', $this->page);
+    $this->assign('moduleHome', $this->page == 'index');
+    
     // Font size for template
-    if (isset($_REQUEST['font'])) {
-      $this->fontsize = $_REQUEST['font'];
+    if (isset($args['font'])) {
+      $this->fontsize = $args['font'];
       setcookie('fontsize', $this->fontsize, time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
     
     } else if (isset($_COOKIE['fontsize'])) { 
       $this->fontsize = $_COOKIE['fontsize'];
     }
-    
-    // Set variables common to all pages
-    $this->assign('moduleID', $this->id);
-    $this->assign('moduleName', $this->moduleName);
-    $this->assign('page', $page);
-    $this->assign('moduleHome', $page == 'index');
-    
-    $this->assign('fontsizes', $this->fontsizes);
-    $this->assign('fontsize', $this->fontsize);
+    $this->assign('fontsizes',   $this->fontsizes);
+    $this->assign('fontsize',    $this->fontsize);
     $this->assign('fontsizeCSS', $this->getFontSizeCSS());
-    $this->assign('fontSizeURL', $this->getFontSizeURL($page, $args));
+    $this->assign('fontSizeURL', $this->getFontSizeURL());
 
+    // Minify URLs
     $minifyDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ? '&debug=1' : '';
     $this->assign('minify', array(
-      'css' => "/min/g=css-{$this->id}-$page$minifyDebug",
-      'js'  => "/min/g=js-{$this->id}-$page$minifyDebug",
+      'css' => "/min/g=css-{$this->id}-{$this->page}$minifyDebug",
+      'js'  => "/min/g=js-{$this->id}-{$this->page}$minifyDebug",
     ));
     
+    // Breadcrumbs
+    $this->loadBreadcrumbs();
+    
     // Set variables for each page
-    $this->initializeForPage($page, $args);
+    $this->initializeForPage();
 
+    // variables which may have been modified by the module subclass
     $this->assign('inlineCSSBlocks', $this->inlineCSSBlocks);
     $this->assign('inlineJavascriptBlocks', $this->inlineJavascriptBlocks);
     $this->assign('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
     $this->assign('inlineJavascriptFooterBlocks', $this->inlineJavascriptFooterBlocks);
 
     $this->assign('breadcrumbs', $this->breadcrumbs);
+    $this->assign('breadcrumbInputs', $this->getBreadcrumbInputs());
     $this->assign('pageTitle', $this->moduleName);
     
-    $this->templateEngine->displayForDevice('modules/'.$this->id.'/'.$page);    
+    $this->templateEngine->displayForDevice('modules/'.$this->id.'/'.$this->page);    
   }
      
   // Subclass this function to set up variables for each template page
-  abstract protected function initializeForPage($page, $args); 
+  abstract protected function initializeForPage(); 
 }

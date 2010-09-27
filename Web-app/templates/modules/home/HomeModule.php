@@ -5,7 +5,7 @@ require_once realpath(LIB_DIR.'/Module.php');
 class HomeModule extends Module {
   protected $id = 'home';
      
-  protected function initializeForPage($page, $args) {
+  protected function initializeForPage() {
     $homeModules = array(
       'primary' => array(),
       'secondary' => array(),
@@ -27,8 +27,8 @@ class HomeModule extends Module {
       }
     }
 
-    $this->assignByRef('homeModules', $homeModules);
-    $this->assignByRef('whatsNewCount', 0);
-    $this->assignByRef('topItem', null);
+    $this->assign('homeModules', $homeModules);
+    $this->assign('whatsNewCount', 0);
+    $this->assign('topItem', null);
   }
 }

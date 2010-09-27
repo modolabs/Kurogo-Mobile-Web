@@ -4,6 +4,7 @@
     <span class="inputcombo{if $emphasized|default:$moduleHome} emphasized{/if}">
       <input class="forminput" type="search" id="filter" name="{$inputName|default:'filter'}" value="{$searchTerms|default:''}" />
       <input class="combobutton" name="search" id="sch_btn" type="submit" value="Search" />
+      {$breadcrumbInputs|default: ''}
     </span>	
   </p>
 </form>

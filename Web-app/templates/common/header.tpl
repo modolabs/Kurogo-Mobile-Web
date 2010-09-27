@@ -38,7 +38,7 @@
 </head>
 <body>
   {if isset($customHeader)}
-    {$banner|default:''}
+    {$customHeader|default:''}
   {else}
     {block name="header"}
       {strip}
@@ -52,9 +52,20 @@
             <a href="./" class="module">
               <img src="/common/images/title-{$navImageID|default:$moduleID}.png" width="28" height="28" alt="" />
             </a>
-            {foreach $breadcrumbs as $breadcrumb}
-              <a href="{$breadcrumb['url']}" class="{$breadcrumb['class']}">
-                <span>{$breadcrumb['text']}</span>
+            {foreach $breadcrumbs as $index => $breadcrumb}
+              {if count($breadcrumbs) == 2}
+                {if !$breadcrumb@last}
+                  {assign var=crumbClass value='crumb1'}
+                {/if}
+              {elseif count($breadcrumbs) > 2}
+                {if !$breadcrumb@last}
+                  {assign var=crumbClass value='crumb2a'}
+                {else}
+                  {assign var=crumbClass value='crumb2b'}                
+                {/if}
+              {/if}
+              <a href="{$breadcrumb['url']}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
+                <span>{$breadcrumb['title']}</span>
               </a>
             {/foreach}
           {/if}

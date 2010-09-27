@@ -86,56 +86,86 @@ class PeopleModule extends Module {
     return $details;
   }
 
-  protected function initializeForPage($page, $args) {
-    $this->loadThemeConfigFile('peopleContacts');
+  protected function initializeForPage() {
+    switch ($this->page) {
+      case 'detail':
+        $this->setPageTitle('Detail');
 
-    if (isset($args['username'])) {
-      $ldapWrapper = new LdapWrapper();
-      $person = $ldapWrapper->lookupUser($args['username']);
-      
-      if ($person) {
-        $this->assign('personDetails', $this->formatPersonDetails($person));
-      } else {
-        $this->assign('searchError', $ldapWrapper->getError());
-      }
-    } else if (isset($args['filter'])) {
-      $searchTerms = trim($args['filter']);
-      $ldapWrapper = new LdapWrapper();
-      
-      $this->assign('searchTerms', $searchTerms);
-      
-      if ($ldapWrapper->buildQuery($searchTerms)
-          && ($people = $ldapWrapper->doQuery()) !== FALSE) {
-        $resultCount = count($people);
-        
-        switch ($resultCount) {
-          case 1:
-            $this->assign('personDetails', $this->formatPersonDetails($people[0]));
-            break;
-            
-          default:
-            $results = array();
-            foreach ($people as $person) {
-              $results[] = array(
-                'url' => 'index.php?'.http_build_query(array(
-                   'username' => $person->getId(),
-                   'filter'   => $args['filter'],
-                )),
-                'title' => htmlentities(
-                    $person->getFieldSingle('sn').', '.
-                    $person->getFieldSingle('givenname')
-                ),
-              );
-            }//error_log(print_r($results, true));
-            $this->assign('resultCount', $resultCount);
-            $this->assign('results', $results);
-            break;
+        if (isset($this->args['username'])) {
+          $ldapWrapper = new LdapWrapper();
+          $person = $ldapWrapper->lookupUser($this->args['username']);
+          
+          if ($person) {
+            $this->assign('personDetails', $this->formatPersonDetails($person));
+          } else {
+            $this->assign('searchError', $ldapWrapper->getError());
+          }          
+        } else {
+          $this->assign('searchError', 'No username specified');
         }
+        break;
+        
+      case 'search':
+        $this->setPageTitle('Search');
       
-      } else {
-        $this->assign('searchError', $ldapWrapper->getError());
-      }
-    }
-  
+        if (isset($this->args['filter'])) {
+          $searchTerms = trim($this->args['filter']);
+          $ldapWrapper = new LdapWrapper();
+          
+          $this->assign('searchTerms', $searchTerms);
+          
+          if ($ldapWrapper->buildQuery($searchTerms)
+              && ($people = $ldapWrapper->doQuery()) !== FALSE) {
+            $resultCount = count($people);
+            
+            switch ($resultCount) {
+              case 0:
+                $this->redirectTo('index');
+                exit;
+              
+              case 1:
+                $this->assign('personDetails', $this->formatPersonDetails($people[0]));
+                break;
+                
+              default:
+                $results = array();
+                foreach ($people as $person) {
+                  $results[] = array(
+                    'url' => $this->buildBreadcrumbURL('detail', array(
+                       'username' => $person->getId(),
+                       'filter'   => $this->args['filter'],
+                    )),
+                    'title' => htmlentities(
+                        $person->getFieldSingle('sn').', '.
+                        $person->getFieldSingle('givenname')
+                    ),
+                  );
+                }//error_log(print_r($results, true));
+                $this->assign('resultCount', $resultCount);
+                $this->assign('results', $results);
+                break;
+            }
+          
+          } else {
+            $this->assign('searchError', $ldapWrapper->getError());
+          }
+        } else {
+          $this->redirectTo('index');
+        }
+        break;
+        
+      case 'index':
+      default:
+        // Redirect for old bookmarks
+        if (isset($this->args['username'])) {
+          $this->redirectTo('detail');
+    
+        } else if (isset($this->args['filter'])) {
+          $this->redirectTo('search');
+        }
+        
+        $this->loadThemeConfigFile('peopleContacts');
+        break;
+    }  
   }
 }

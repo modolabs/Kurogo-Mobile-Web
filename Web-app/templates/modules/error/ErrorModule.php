@@ -32,10 +32,10 @@ class ErrorModule extends Module {
     ),
   );
 
-  protected function initializeForPage($page, $args) {
-    error_log(print_r($args, true));
-    $code = self::argVal($args, 'code', 'default');
-    $url  = self::argVal($args, 'url', '');
+  protected function initializeForPage() {
+    error_log(print_r($this->args, true));
+    $code = self::argVal($this->args, 'code', 'default');
+    $url  = self::argVal($this->args, 'url', '');
     
     $error = isset($this->errors[$code]) ? 
       $this->errors[$code] : $this->errors['default'];;
@@ -44,8 +44,8 @@ class ErrorModule extends Module {
       header('Status: '.$error['status']);
     }
     
-    $this->assignByRef('navImageID', 'about');
-    $this->assignByRef('message', $error['message']);
-    $this->assignByRef('url', $url);
+    $this->assign('navImageID', 'about');
+    $this->assign('message', $error['message']);
+    $this->assign('url', $url);
   }
 }
