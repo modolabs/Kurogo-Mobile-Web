@@ -160,6 +160,14 @@ switch ($command) {
 
      $data['stopMarkerUrl'] = urldecode($stopMarkerURL);
 
+     $genericIconURL = HARVARD_TRANSLOC_MARKERS.'?'.urlencode(http_build_query(array(
+        'm' => 'bus',
+        'c' => $route['color'],
+        'h' => $arrows[4],
+      )));
+
+     $data['genericIconUrl'] = urldecode($genericIconURL);
+
 
      if ($gpsActive == true) {
        $data['gpsActive'] = TRUE;     
@@ -179,13 +187,19 @@ switch ($command) {
         'h' => $arrows[$arrowIndex],
       )));
 
+      $vehicleLat = $vehicle['ll'][0];
+      $vehicleLon = $vehicle['ll'][1];
+      $vechicleSecsSinceReport = 3600;
+      $vehicleHeading = $vehicle['h'];
+      $vehicleIconUrl = urldecode($iconURL);
 
-
-           $vehiclesArray[] = array('lat'=>$vehicle['ll'][0],
+      if (($vehicleLat) && ($vehicleLon)) {
+       $vehiclesArray[] = array('lat'=>$vehicle['ll'][0],
                                     'lon'=>$vehicle['ll'][1],
                                     'secsSinceReport'=> 3600,
                                     'heading'=>$vehicle['h'],
                                     'iconURL'=> urldecode($iconURL));
+       }
        }
 
        $data['vehicleLocations'] = $vehiclesArray;
