@@ -20,7 +20,7 @@ class DiskCache {
 
     if ($mkdir) {
       if (!file_exists($path)) {
-        if (!mkdir($path, 0755))
+        if (!mkdir($path, 0755, true))
           error_log("could not create $path");
       }
     }

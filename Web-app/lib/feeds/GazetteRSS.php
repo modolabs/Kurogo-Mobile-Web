@@ -7,13 +7,14 @@
  *
  *****************************************************************/
 
-require_once "rss_services.php";
-require_once "DiskCache.inc";
+require_once realpath(LIB_DIR.'/feeds/RSS.php');
+require_once realpath(LIB_DIR.'/DiskCache.php');
 
-define('IMAGE_CACHE_EXTENSION', '/api/newsimages');
 define('IMAGE_THUMBNAIL_SIZE', 76);
 define('IMAGE_MAX_WIDTH', 600);
 define('IMAGE_MAX_HEIGHT', 800);
+define('IMAGE_CACHE_WEBPATH', 'api/newsimages');
+define('IMAGE_CACHE_DIR', realpath(ROOT_DIR.'/web').'/'.IMAGE_CACHE_WEBPATH);
 
 class GazetteRSS extends RSS {
 
@@ -48,16 +49,16 @@ class GazetteRSS extends RSS {
   
   public static function init() {
     // news articles get updated continuously, so make the timeout short
-    self::$diskCache = new DiskCache(CACHE_DIR . '/GAZETTE', 1500, TRUE);
+    self::$diskCache = new DiskCache($GLOBALS['siteConfig']->getVar('GAZETTE_CACHE_PATH'), 1500, TRUE);
     self::$diskCache->setSuffix('.xml');
     self::$diskCache->preserveFormat();
 
     // allow cached search results to stick around longer
-    self::$searchCache = new DiskCache(CACHE_DIR . '/GAZETTE_SEARCH', 3600, TRUE);
+    self::$searchCache = new DiskCache($GLOBALS['siteConfig']->getVar('GAZETTE_SEARCH_CACHE_PATH'), 3600, TRUE);
     self::$searchCache->setSuffix('.xml');
     self::$searchCache->preserveFormat();
 
-    self::$imageWriter = new DiskCache(WEBROOT . IMAGE_CACHE_EXTENSION, PHP_INT_MAX, TRUE);
+    self::$imageWriter = new DiskCache(IMAGE_CACHE_DIR, PHP_INT_MAX, TRUE);
   }
 
   public static function getChannels() {
@@ -428,11 +429,9 @@ class GazetteRSS extends RSS {
     if (!$filename) return FALSE;
 
     $port = $_SERVER['SERVER_PORT'] == 80 
-      ? '' 
-      : ':' . $_SERVER['SERVER_PORT'];
+      ? '' : ":{$_SERVER['SERVER_PORT']}";
 
-    return 'http://' . $_SERVER['SERVER_NAME'] . $port
-      . IMAGE_CACHE_EXTENSION . '/' . $filename;
+    return "http://{$_SERVER['SERVER_NAME']}$port".URL_PREFIX.IMAGE_CACHE_WEBPATH.'/'.$filename;
   }
 
   private static function appendDOMAttribute($doc, $parent, $attribName, $attribValue) {
@@ -447,18 +446,16 @@ class GazetteRSS extends RSS {
 
       foreach($xml->getElementsByTagName("item") as $xml_item) {
           $item = array(
-             "title" => self::getChildValue($xml_item, "title"),
-             "link" => self::getChildValue($xml_item, "link"),
-             "story_id" => self::getChildValue($xml_item, "harvard:WPID"),
-             "author" => self::getChildValue($xml_item, "harvard:author"),
+             "title"       => self::getChildValue($xml_item, "title"),
+             "link"        => self::getChildValue($xml_item, "link"),
+             "story_id"    => self::getChildValue($xml_item, "harvard:WPID"),
+             "author"      => self::getChildValue($xml_item, "harvard:author"),
              "description" => self::getChildValue($xml_item, "description"),
-             "unixtime" => strtotime(self::getChildValue($xml_item, "pubDate")),
-             "featured" => self::isFeatured($xml_item),
-             "body" => self::getChildValue($xml_item, "content:encoded"),
-             "image" => self::getImage($xml_item),
-           );
-
-
+             "unixtime"    => strtotime(self::getChildValue($xml_item, "pubDate")),
+             "featured"    => self::isFeatured($xml_item),
+             "body"        => self::getChildValue($xml_item, "content:encoded"),
+             "image"       => self::getImage($xml_item),
+          );
           $items[] = $item;
       }
 
@@ -493,7 +490,7 @@ class GazetteRSS extends RSS {
       $items = self::getChildrenWithTag($xml, $tag);
       if(count($items) == 1) {
           $result = $items[0];
-      } else if(count($item) == 0) {
+      } else if(count($items) == 0) {
           $result = NULL;
       } else {
           $result = $items[0];
@@ -503,7 +500,9 @@ class GazetteRSS extends RSS {
   }
 
   private static function getChildValue(DOMElement $xml, $tag) {
-      return self::getChildByTagName($xml, $tag)->nodeValue;
+      $result = self::getChildByTagName($xml, $tag);
+      
+      return isset($result) ? $result->nodeValue : null;
   }
 
   private static function isFeatured(DOMElement $xml) {
@@ -536,5 +535,3 @@ class GazetteRSS extends RSS {
 }
 
 GazetteRSS::init();
-
-

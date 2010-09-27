@@ -210,6 +210,12 @@ abstract class Module {
     )));
   }
   
+  protected function getBreadcrumbArgString($prefix='?') {
+    return $prefix.http_build_query(array(
+      'breadcrumbs' => $this->getBreadcrumbString(),
+    ));
+  }
+  
   protected function setBreadcrumbTitle($title) {
     $this->breadcrumbTitle = $title;
   }

@@ -80,13 +80,17 @@ class SiteConfig {
     // Set default subdirectories if variables are not set in the config file
     // Use separate pass so we can make subdirectory defaults relative to the directories above
     $this->setDefaults(array(
-      'WHATS_NEW_PATH'       => $this->configVars['DATA_DIR'].'/whatsnew.xml',
-      
-      'TEMPLATE_CACHE_DIR'   => $this->configVars['CACHE_DIR'].'/smarty/html',
-      'TEMPLATE_COMPILE_DIR' => $this->configVars['CACHE_DIR'].'/smarty/templates',
-      'MINIFY_CACHE_DIR'     => $this->configVars['CACHE_DIR'].'/minify',
+      'WHATS_NEW_PATH'            => $this->configVars['DATA_DIR'].'/whatsnew.xml',
 
-      'THEME_CONFIG_DIR'     => $this->configVars['THEME_DIR'].'/config',
+      'GAZETTE_CACHE_PATH'        => $this->configVars['CACHE_DIR'].'/GAZETTE',
+      'GAZETTE_SEARCH_CACHE_PATH' => $this->configVars['CACHE_DIR'].'/GAZETTE_SEARCH',
+      'GAZETTE_IMAGE_CACHE_PATH'  => $this->configVars['CACHE_DIR'].'/GAZETTE_IMAGES',
+      
+      'TEMPLATE_CACHE_DIR'        => $this->configVars['CACHE_DIR'].'/smarty/html',
+      'TEMPLATE_COMPILE_DIR'      => $this->configVars['CACHE_DIR'].'/smarty/templates',
+      'MINIFY_CACHE_DIR'          => $this->configVars['CACHE_DIR'].'/minify',
+
+      'THEME_CONFIG_DIR'          => $this->configVars['THEME_DIR'].'/config',
     ));
 
   }

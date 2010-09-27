@@ -4,14 +4,13 @@
   {strip}
   <p class="fontsize">
     Font size:&nbsp;
-    {assign var=last value=end($fontsizes)}
     {foreach $fontsizes as $size}
       {if $size == $fontsize}
         <span class="font{$fontsize}">A</span>
       {else}
         <a href="{$fontSizeURL}{$size}" class="font{$size}">A</a>
       {/if}
-      {if $size != $last} | {/if}
+      {if !$size@last} | {/if}
     {/foreach}
   </p>
 

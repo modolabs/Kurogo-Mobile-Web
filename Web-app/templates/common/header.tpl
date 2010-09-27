@@ -55,11 +55,11 @@
             {foreach $breadcrumbs as $index => $breadcrumb}
               {if count($breadcrumbs) == 2}
                 {if !$breadcrumb@last}
-                  {assign var=crumbClass value='crumb1'}
+                  {$crumbClass = 'crumb1'}
                 {/if}
               {elseif count($breadcrumbs) > 2}
                 {if !$breadcrumb@last}
-                  {assign var=crumbClass value='crumb2a'}
+                  {$crumbClass = 'crumb2a'}
                 {else}
                   {assign var=crumbClass value='crumb2b'}                
                 {/if}

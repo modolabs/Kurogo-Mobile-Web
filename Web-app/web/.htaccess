@@ -6,6 +6,7 @@
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_URI} !=/favicon.ico
+  RewriteCond %{REQUEST_URI} !=api/.*$
   RewriteCond %{REQUEST_URI} !=min/.*$
   RewriteCond %{REQUEST_URI} ^(.*)$
   RewriteRule ^(.*)$ index.php?q=%1 [L,QSA]
