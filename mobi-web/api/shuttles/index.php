@@ -291,11 +291,12 @@ function get_all_routes_info($translocObj, $compact) {
            $routesToReturn[] =  array('route_id'=> $routeInfo['id'],
                                 'color'=>$routeInfo['color'],
                                 'title'=> $routeInfo['long_name'],
+                                'description' => $translocObj->getBriefDescription($routeInfo['long_name']),
                                 'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
                                 'isSafeRide'=> false,
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
-                                'summary'=> 'Loops every N mins',
+                                'summary'=> $translocObj->getSummary($routeInfo['long_name']),
                                 'stops'=>$translocObj->getStopsForRoute($routeInfo['id']));
         }
 
@@ -303,11 +304,12 @@ function get_all_routes_info($translocObj, $compact) {
         $routesToReturn[] = array('route_id'=> $routeInfo['id'],
                                 'color'=>$routeInfo['color'],
                                 'title'=> $routeInfo['long_name'],
+                                'description' => $translocObj->getBriefDescription($routeInfo['long_name']),
                                 'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
                                 'isSafeRide'=> 'false',
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
-                                'summary'=> 'Loops every N mins');
+                                'summary'=> $translocObj->getSummary($routeInfo['long_name']),);
         }
 
     }
@@ -323,11 +325,12 @@ function get_specific_routes_info($translocObj, $compact, $route_id) {
            $routeToReturn =  array('route_id'=> $routeInfo['id'],
                                 'color'=>$routeInfo['color'],
                                 'title'=> $routeInfo['long_name'],
+                                'description' => $translocObj->getBriefDescription($routeInfo['long_name']),
                                 'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
                                 'isSafeRide'=> false,
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
-                                'summary'=> 'Loops every N mins',
+                                'summary'=> $translocObj->getSummary($routeInfo['long_name']),
                                 'stops'=>$translocObj->getStopsForRoute($routeInfo['id']));
         }
 

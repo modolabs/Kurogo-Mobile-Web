@@ -342,4 +342,132 @@ class TranslocReader {
   function getAnnouncementsJSON() {
       return file_get_contents(ANNOUNCEMENTS_FEED);
   }
+
+
+
+  function getBriefDescription($routeName) {
+
+      switch ($routeName) {
+          case 'Quad Stadium':
+              return 'River Houses via Harvard Square';
+              break;
+
+          case 'Mather Express':
+              return 'Memorial Hall via Harvard Square';
+              break;
+
+          case 'Quad Express':
+              return 'Memorial Hall via Harvard Square';
+              break;
+
+          case 'River Houses A':
+              return 'Harvard Square - Quad - Memorial Hall - Lamont';
+              break;
+
+          case 'River Houses B':
+              return 'Harvard Square - Quad - Memorial Hall - Lamont';
+              break;
+
+          case 'River Houses C':
+              return 'Harvard Square - Quad - Memorial Hall - Lamont';
+              break;
+
+          case 'Quad-Yard Express':
+              return 'Lamont - Harvard Square';
+              break;
+
+          case 'Soldiers Field Park I':
+              return 'Quad - Lamont Library - via Harvard Square';
+              break;
+
+          case 'Soldiers Field Park II':
+              return 'Business School - Harvard Square';
+              break;
+
+          case 'Soldiers Field Park III':
+              return 'Business School - Harvard Square - Memorial Hall - Lamont';
+              break;
+
+          case 'Soldiers Field Park IV':
+              return 'Business School - Harvard Square - Memorial Hall - Lamont';
+              break;
+              
+         case 'Crimson Campus Cruiser':
+             return 'Quad - Mather House - via Memorial Hall';
+             break;
+
+         case '1636\'er':
+             return '';
+             break;
+
+         case 'Extended Overnight':
+             return 'Quad - Mather House via Memorial Hall';
+             break;      
+      }
+      return '';
+  }
+
+
+   function getSummary($routeName) {
+
+      switch ($routeName) {
+          case 'Quad Stadium':
+              return 'Runs 5.40am - 8.40am, Monday-Friday';
+              break;
+
+          case 'Mather Express':
+              return 'Runs 7.40am - 4.15pm, Monday-Friday';
+              break;
+
+          case 'Quad Express':
+              return 'Runs 7.40am - 4.33pm, Monday-Friday';
+              break;
+
+          case 'River Houses A':
+              return 'Runs 4.30pm - 12.37am, Monday-Friday';
+              break;
+
+          case 'River Houses B':
+              return 'Runs 4.30pm - 12.37am, Monday-Friday';
+              break;
+
+          case 'River Houses C':
+              return 'Runs 4.30pm - 12.37am, Monday-Friday';
+              break;
+
+          case 'Quad-Yard Express':
+              return 'Runs 4.45pm - 12.32am, Monday-Friday';
+              break;
+
+          case 'Soldiers Field Park I':
+              return 'Runs 5.00pm - 7.55pm, Saturday-Sunday';
+              break;
+
+          case 'Soldiers Field Park II':
+              return 'Runs 7.20am - 9.50am, Monday-Friday';
+              break;
+
+          case 'Soldiers Field Park III':
+              return 'Runs 3.50pm - 9.10pm, Monday-Friday';
+              break;
+
+          case 'Soldiers Field Park IV':
+              return 'Runs 3.50pm - 9.10pm, Monday-Friday';
+              break;
+
+         case 'Crimson Campus Cruiser':
+             return 'Runs 12.20pm - 4.23pm, Saturday-Sunday';
+             break;
+
+         case '1636\'er':
+              return 'Runs 4.20pm - 12.33am, Saturday-Sunday';
+             break;
+
+         case 'Extended Overnight':
+              return 'Runs 12.40am - 3.52am, Daily';
+             break;
+      }
+      return '';
+  }
+
 }
