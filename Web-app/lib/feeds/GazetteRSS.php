@@ -14,7 +14,7 @@ define('IMAGE_THUMBNAIL_SIZE', 76);
 define('IMAGE_MAX_WIDTH', 600);
 define('IMAGE_MAX_HEIGHT', 800);
 define('IMAGE_CACHE_WEBPATH', 'api/newsimages');
-define('IMAGE_CACHE_DIR', realpath(ROOT_DIR.'/web').'/'.IMAGE_CACHE_WEBPATH);
+define('IMAGE_CACHE_DIR', realpath(ROOT_DIR.'/web/'.IMAGE_CACHE_WEBPATH));
 
 class GazetteRSS extends RSS {
 

@@ -82,18 +82,29 @@ class NewsModule extends Module {
         if ($pageNumber + 1 < $totalPageCount ) {
           $nextPageUrl = $newsURL->storyURL($story, $pageNumber + 1);
         }
+        
+        $pager = array(
+          'mode'   => isset($this->args['allpages']) ? 'all' : 'paged',
+          'prev'   => $previousPageUrl,
+          'next'   => $nextPageUrl,
+          'paged'  => $newsURL->storyURL($story, 0),
+          'all'    => $newsURL->storyURL($story, 0).'&allpages=1',
+          'pages'  => array(),
+        );
+        for($i = 0; $i < $totalPageCount; $i++) {
+          $pager['pages'][$i+1] = $newsURL->storyURL($story, $i);
+        }
 
         $this->assign('story',           $story);
-        $this->assign('storyPages',      $storyPages);
         $this->assign('allPages',        $allPages);
-        $this->assign('storyPage',       $storyPage);
+        $this->assign('storyPage',       $storyPage->getText());
         $this->assign('pageNumber',      $pageNumber);
         $this->assign('totalPageCount',  $totalPageCount);
         $this->assign('isFirstPage',     $isFirstPage);
         $this->assign('date',            $date);
         $this->assign('shareUrl',        $shareUrl);
-        $this->assign('previousPageUrl', $previousPageUrl);
-        $this->assign('nextPageUrl',     $nextPageUrl);
+
+        $this->assign('pager',           $pager);
         break;
         
       case 'index':
@@ -123,7 +134,8 @@ class NewsModule extends Module {
         }
         
         $categories = GazetteRSS::getChannels();
-        $category = $categories[$newsURL->categoryId()];
+        $categoryId = $newsURL->categoryId();
+        $category = $categories[$categoryId];
         
         if($newsURL->isReverse()) {
           $stories = array_reverse($stories);
@@ -138,7 +150,7 @@ class NewsModule extends Module {
         if (sizeof($stories)) {
           $firstId = $stories[0]["story_id"];
           if($storiesFirstId != $firstId) {
-            $previousUrl = $newsURL->previousURL($first_id);
+            $previousUrl = $newsURL->previousURL($firstId);
           }
         
           $lastId = $stories[sizeof($stories)-1]["story_id"];
@@ -147,14 +159,27 @@ class NewsModule extends Module {
           }
         }
         
-        $this->assign('isHome', $newsURL->isHome());
+        $categoryLinks = array();
+        foreach ($categories as $id => $title) {
+          $categoryLinks[] = array(
+            'url'   => 'index.php?'.http_build_query(array('category_id' => $id)),
+            'title' => $title,
+          );
+        }
         
-        $this->assign('categories', $categories);
-        $this->assign('newsURLCategoryId', $newsURL->categoryId());
-        $this->assign('stories', $stories);
+        $this->assign('isHome',             $newsURL->isHome());
+        $this->assign('isSearchResults',    $newsURL->isSearchResults());
+        $this->assign('hiddenArgs',         $newsURL->hiddenArgs());
         
-        $this->assign('previousUrl', $previousUrl);
-        $this->assign('nextUrl', $nextUrl);
+        $this->assign('categories',         $categories);
+        $this->assign('categoryLinks',      $categoryLinks);
+        $this->assign('category',           $category);
+        $this->assign('categoryId',         $categoryId);
+        
+        $this->assign('stories',            $stories);
+        
+        $this->assign('previousUrl',        $previousUrl);
+        $this->assign('nextUrl',            $nextUrl);
         break;
     }
   }

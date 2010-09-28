@@ -59,7 +59,7 @@ li.story {
     margin: 0;
 }
 #category-switcher .inputfield input[type=text] {
-    line-height: 1.5em;
+    line-height: 1.25em;
     padding-left: .25em;
 }
 #category-switcher .formlabel {

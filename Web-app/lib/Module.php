@@ -82,7 +82,7 @@ abstract class Module {
   public static function factory($id, $page='index', $args=array()) {
     $className = ucfirst($id).'Module';
     
-    $moduleFile = realpath($GLOBALS['siteConfig']->getVar('MODULES_DIR')."/$id/$className.php");
+    $moduleFile = realpath_exists(MODULES_DIR."/$id/$className.php");
     if ($moduleFile && include_once($moduleFile)) {
       return new $className($page, $args);
       
@@ -200,20 +200,18 @@ abstract class Module {
     return rawurlencode(serialize($breadcrumbs));
   }
   
-  private function getBreadcrumbInputs() {
-    return '<input type="hidden" name="breadcrumbs" value="'.$this->getBreadcrumbString().'" />';
-  }
-  
-  protected function buildBreadcrumbURL($page, $args) {
-    return "$page.php?".http_build_query(array_merge($args, array(
+  private function getBreadcrumbArgs() {
+    return array(
       'breadcrumbs' => $this->getBreadcrumbString(),
-    )));
+    );
+  }
+
+  protected function buildBreadcrumbURL($page, $args) {
+    return "$page.php?".http_build_query(array_merge($args, $this->getBreadcrumbArgs()));
   }
   
   protected function getBreadcrumbArgString($prefix='?') {
-    return $prefix.http_build_query(array(
-      'breadcrumbs' => $this->getBreadcrumbString(),
-    ));
+    return $prefix.http_build_query($this->getBreadcrumbArgs());
   }
   
   protected function setBreadcrumbTitle($title) {
@@ -226,10 +224,10 @@ abstract class Module {
   }
 
   // Config files
-  protected function loadThemeConfigFile($name) {
+  protected function loadThemeConfigFile($name, $loadVarKeys=false) {
     $this->loadTemplateEngineIfNeeded();
     
-    $this->templateEngine->loadThemeConfigFile($name);
+    $this->templateEngine->loadThemeConfigFile($name, $loadVarKeys);
   }
 
   // Convenience functions
@@ -254,11 +252,18 @@ abstract class Module {
   public function displayPage() {
     $this->loadTemplateEngineIfNeeded();
     
-    // Set variables common to all pages
+    // Load site configuration and help text
+    $this->loadThemeConfigFile('site', true);
+    $this->loadThemeConfigFile('help');
+    
+    date_default_timezone_set($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
+
+    // Set variables common to all modules
     $this->assign('moduleID', $this->id);
     $this->assign('moduleName', $this->moduleName);
     $this->assign('page', $this->page);
     $this->assign('moduleHome', $this->page == 'index');
+    $this->assign('pageTitle', $this->moduleName);
     
     // Font size for template
     if (isset($args['font'])) {
@@ -274,29 +279,45 @@ abstract class Module {
     $this->assign('fontSizeURL', $this->getFontSizeURL());
 
     // Minify URLs
-    $minifyDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ? '&debug=1' : '';
+    $minKey = $this->id.'-'.$this->page.'-'.$this->getTemplateVars('pagetype').'-'.
+      $this->getTemplateVars('platform').'-'.md5(ROOT_DIR.URL_PREFIX);
+    $minDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ? '&debug=1' : '';
     $this->assign('minify', array(
-      'css' => "/min/g=css-{$this->id}-{$this->page}$minifyDebug",
-      'js'  => "/min/g=js-{$this->id}-{$this->page}$minifyDebug",
+      'css' => "/min/g=css-$minKey$minDebug",
+      'js'  => "/min/g=js-$minKey$minDebug",
     ));
     
     // Breadcrumbs
     $this->loadBreadcrumbs();
     
+        
     // Set variables for each page
     $this->initializeForPage();
 
-    // variables which may have been modified by the module subclass
+    // Variables which may have been modified by the module subclass
     $this->assign('inlineCSSBlocks', $this->inlineCSSBlocks);
     $this->assign('inlineJavascriptBlocks', $this->inlineJavascriptBlocks);
     $this->assign('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
     $this->assign('inlineJavascriptFooterBlocks', $this->inlineJavascriptFooterBlocks);
 
     $this->assign('breadcrumbs', $this->breadcrumbs);
-    $this->assign('breadcrumbInputs', $this->getBreadcrumbInputs());
-    $this->assign('pageTitle', $this->moduleName);
+    $this->assign('breadcrumbArgs', $this->getBreadcrumbArgs());
+
+    // Module Help
+    if ($this->page == 'help') {
+      $this->setPageTitle('Help');
+      $this->assign('hasHelp', false);
+      
+      $template = 'common/'.$this->page;
+    } else {
+      $helpConfig = $this->getTemplateVars('help');
+      $this->assign('hasHelp', isset($helpConfig[$this->id]));
     
-    $this->templateEngine->displayForDevice('modules/'.$this->id.'/'.$this->page);    
+      $template = 'modules/'.$this->id.'/'.$this->page;
+    }
+    
+    // Load template for page
+    $this->templateEngine->displayForDevice($template);    
   }
      
   // Subclass this function to set up variables for each template page

@@ -12,7 +12,7 @@
               <div>
                 <select class="newsinput" id="category_id" name="category_id" onchange="loadCategory(this);">
                   {foreach $categories as $id => $title}
-                    {if $newsURLCategoryId == $id}
+                    {if $categoryId == $id}
                         <option value="{$id}" selected="true">{$title}</option>
                     {else}
                         <option value="{$id}">{$title}</option>
@@ -41,13 +41,11 @@
             </td>
           </tr>
         </table>
-        {$hiddenHomeStateForm}
+        {foreach $hiddenArgs as $arg => $value}
+          <input type="hidden" name="{$arg}" value="{$value}" />
+        {/foreach}
       {else}
-        <fieldset class="inputcombo">
-          <input class="forminput" type="text" id="filter" name="filter" placeholder="Search" value="{$searchTerms|escape}"/>
-          <input class="combobutton" id="sch_btn" src="/common/images/search-button.png" type="image" />
-          {$breadcrumbInputs|default:''}
-        </fieldset>	
+        {include file="findInclude:common/search.tpl" extraArgs=$hiddenArgs inputName="search_terms" insideForm=true}
       {/if}
     </form>
   </div>

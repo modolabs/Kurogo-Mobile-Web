@@ -73,7 +73,7 @@ function buildFileList($checkFiles) {
   foreach ($checkFiles['files'] as $entry) {
     if (is_array($entry)) {
       $foundFiles = array_merge($foundFiles, buildFileList($entry));
-    } else if (realpath($entry)) { 
+    } else if (realpath_exists($entry)) { 
       $foundFiles[] = $entry;
     }
     if ($checkFiles['include'] == 'any' && count($foundFiles)) {
@@ -88,13 +88,10 @@ function getMinifyGroupsConfig() {
   $minifyConfig = array();
   
   $key = $_GET['g'];
-  list($ext, $module, $page) = explode('-', $key);
-
-  $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
-  $platform = $GLOBALS['deviceClassifier']->getPlatform();
+  list($ext, $module, $page, $pagetype, $platform, $base) = explode('-', $key);
 
   $cache = new DiskCache($GLOBALS['siteConfig']->getVar('MINIFY_CACHE_DIR'), 30, true);
-  $cacheName = "mg_$key-$pagetype-{$platform}_".md5(ROOT_DIR);
+  $cacheName = "group_$key";
   
   if ($cache->isFresh($cacheName)) {
     $minifyConfig = $cache->read($cacheName);

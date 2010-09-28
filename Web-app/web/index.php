@@ -47,8 +47,8 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   
   foreach ($testDirs as $dir) {
     foreach ($testFiles as $file) {
-      $path = "$dir/$file";
-      if (realpath($path)) {
+      $path = realpath_exists("$dir/$file");
+      if ($path) {
         header('Content-type: '.mime_content_type($path));
         echo file_get_contents($path);
         exit;

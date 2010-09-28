@@ -76,7 +76,7 @@
             {$pageTitle}
           </span>
         </div>
-        {if $showHelp}
+        {if $hasHelp}
           <div class="help">
             <a href="help.php"><img src="/common/images/help.png" width="46" height="45" alt="Help" /></a>
           </div>

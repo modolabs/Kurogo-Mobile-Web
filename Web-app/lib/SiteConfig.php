@@ -4,9 +4,10 @@ class SiteConfig {
   private $configVars = array();
   private $themeVars = array();
   
+
   public function loadThemeFile($name, $section = true) {
     if (!in_array($name, array_keys($this->themeVars))) {
-      $file = realpath($this->getVar('THEME_CONFIG_DIR')."/$name.ini");
+      $file = realpath_exists($this->getVar('THEME_CONFIG_DIR')."/$name.ini");
       if ($file) {
         $this->themeVars[$name] = parse_ini_file($file, $section);
       } else {
@@ -40,58 +41,55 @@ class SiteConfig {
     return null;
   }
   
-  private function setDefaults($defs) {
+  /*private function setDefaults($defs) {
     foreach($defs as $key => $value) {
       if (!isset($this->configVars[$key])) { 
         $this->configVars[$key] = $value; 
+      }
+    }
+  }*/
+  
+  private static function replaceVariables(&$config) {
+    foreach($config as $key => &$value) {
+      if (is_string($value)) {
+        for ($i = 0; $i < 10; $i++) {
+          $old = $value;
+          $value = preg_replace_callback('/\{([A-Za-z_]+)\}/', 
+            create_function(
+              '$matches',
+              'if (isset($GLOBALS["testVars"][$matches[1]])) { '.
+              '  return $GLOBALS["testVars"][$matches[1]];'.
+              '} else {'.
+              '  return $matches[0];'.
+              '}'
+            ), $value);
+          if ($value == $old) { break; }
+        }
+        
+      } else if (is_array($value)) {
+        self::replaceVariables($value);
       }
     }
   }
 
   function __construct($configName = 'config') {
     // Load main configuration file
-    if (!in_array($configName, array_keys($this->themeVars))) {
-      $fileVars = parse_ini_file(realpath(CONFIG_DEFS_DIR."/$configName.ini"), false);
-      
-      $siteFile = realpath(CONFIG_SITE_DIR."/config.ini");
-      if ($siteFile) {
-        $fileVars = array_merge($fileVars, parse_ini_file($siteFile, false));
-      }
-            
-      $this->configVars = $fileVars;
+    $fileVars = parse_ini_file(realpath(CONFIG_DEFS_DIR."/$configName.ini"), false);
+    
+    $siteFile = realpath_exists(CONFIG_SITE_DIR."/config.ini");
+    if ($siteFile) {
+      $fileVars = array_merge($fileVars, parse_ini_file($siteFile, false));
     }
     
-    // Set default directories if variables are not set in the config file
-    $this->setDefaults(array( 
-      'THEMES_DIR'               => ROOT_DIR.'/opt/themes',
-      'DATA_DIR'                 => ROOT_DIR.'/opt/data',
-      'CACHE_DIR'                => ROOT_DIR.'/opt/cache',
-
-      'TMP_DIR'                  => '/tmp/',
+    // Handle key-relative paths by replacing keys with paths
+    $GLOBALS['testVars'] = $fileVars;
     
-      'MODULES_DIR'              => TEMPLATES_DIR.'/modules',
-      'TEMPLATE_CONFIG_DEFS_DIR' => TEMPLATES_DIR.'/config',
-    ));
+    self::replaceVariables($fileVars);
     
-    $this->setDefaults(array( 
-      'THEME_DIR' => $this->configVars['THEMES_DIR'].'/'.$this->configVars['ACTIVE_THEME'],
-    ));
+    unset($GLOBALS['testVars']);
+          
+    $this->configVars = $fileVars;
     
-    // Set default subdirectories if variables are not set in the config file
-    // Use separate pass so we can make subdirectory defaults relative to the directories above
-    $this->setDefaults(array(
-      'WHATS_NEW_PATH'            => $this->configVars['DATA_DIR'].'/whatsnew.xml',
-
-      'GAZETTE_CACHE_PATH'        => $this->configVars['CACHE_DIR'].'/GAZETTE',
-      'GAZETTE_SEARCH_CACHE_PATH' => $this->configVars['CACHE_DIR'].'/GAZETTE_SEARCH',
-      'GAZETTE_IMAGE_CACHE_PATH'  => $this->configVars['CACHE_DIR'].'/GAZETTE_IMAGES',
-      
-      'TEMPLATE_CACHE_DIR'        => $this->configVars['CACHE_DIR'].'/smarty/html',
-      'TEMPLATE_COMPILE_DIR'      => $this->configVars['CACHE_DIR'].'/smarty/templates',
-      'MINIFY_CACHE_DIR'          => $this->configVars['CACHE_DIR'].'/minify',
-
-      'THEME_CONFIG_DIR'          => $this->configVars['THEME_DIR'].'/config',
-    ));
-
+    //error_log(print_r($fileVars, true));
   }
 }

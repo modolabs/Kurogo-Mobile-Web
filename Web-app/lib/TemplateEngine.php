@@ -30,7 +30,7 @@ class TemplateEngine extends Smarty {
     
     foreach ($checkDirs as $type => $dir) {
       foreach ($checkFiles as $file) {
-        if (realpath("$dir/$file")) {
+        if (realpath_exists("$dir/$file")) {
           error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file'");
           return "$dir/$file";
         }
@@ -79,7 +79,7 @@ class TemplateEngine extends Smarty {
     );
     
     foreach ($checkDirs as $type => $dir) {
-        if (realpath("$dir/$name")) {
+        if (realpath_exists("$dir/$name")) {
           error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$name'");
           return "$dir/$name";
         }
@@ -221,11 +221,6 @@ class TemplateEngine extends Smarty {
     $this->assign('supportsCerts', $supportsCerts);
     $this->assign('showDeviceDetection', $GLOBALS['siteConfig']->getVar('SHOW_DEVICE_DETECTION'));
     
-    // Load site configuration
-    $this->loadThemeConfigFile('site', true);
-    
-    date_default_timezone_set($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
-
   }
   
   //

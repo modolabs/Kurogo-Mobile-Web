@@ -184,22 +184,31 @@ class NewsURL {
     return $breadCrumbs;
   }
   
-  public function hiddenHomeStateForm() {
-    $form  = self::hiddenInputForm($this->homeState, "category_id", 0);
-    $form .= self::hiddenInputForm($this->homeState, "category_seek_id", NULL);
-    $form .= self::hiddenInputForm($this->homeState, "category_seek_direction", "forward");
-    return $form;
+  public function hiddenArgs() {
+    $fields = array(
+      'category_id'             => 0, 
+      'category_seek_id'        => NULL, 
+      'category_seek_direction' => 'forward'
+    );
+  
+    $args = array();
+    
+    foreach ($fields as $field => $default) {
+      $args[$field] =  self::hiddenInputValue($this->homeState, $field, $default);
+    }
+    
+    return $args;
   }
   
-  private static function hiddenInputForm($values, $field, $default) {
+  private static function hiddenInputValue($values, $field, $default) {
     if(isset($values[$field])) {
-      $value = $values[$field];
-    } else if ($default != NULL) {
-      $value = $default;
+      return $values[$field];
+      
+    } else if (isset($default)) {
+      return $default;
+    
     } else {
-      return "";
+      return '';
     }
-  
-    return '<input type="hidden" name="'.$field.'" value="'.$value.'" />';
   }
 }

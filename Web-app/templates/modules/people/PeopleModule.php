@@ -88,6 +88,9 @@ class PeopleModule extends Module {
 
   protected function initializeForPage() {
     switch ($this->page) {
+      case 'help':
+        break;
+        
       case 'detail':
         $this->setPageTitle('Detail');
 
