@@ -9,7 +9,8 @@
       {capture name="itemHTML" assign="itemHTML"}
         {$item['title']}
         {if isset($item['subtitle'])}
-          &nbsp;<span class="smallprint">{$item['subtitle']}</span>
+          <br/>
+          <span class="smallprint">{$item['subtitle']}</span>
         {/if}
       {/capture}
   
@@ -26,6 +27,11 @@
       {/block}
   
     {/foreach}
+    {if count($results) == 0}
+      {block name="noResults"}
+        <li>{$noResultsText|default:"No results found"}</li>
+      {/block}
+    {/if}
 
 {block name="resultsEnd"}
   </ul>

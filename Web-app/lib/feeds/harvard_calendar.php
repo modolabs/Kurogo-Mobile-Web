@@ -7,7 +7,7 @@
  *
  *****************************************************************/
 
-require_once 'harvard_ical_lib.php';
+require_once realpath(LIB_DIR.'/feeds/harvard_ical_lib.php');
 
 $categories = array();
 
@@ -143,8 +143,8 @@ function makeIcalAcademicEvents($academic_ics_url, $startDate, $endDate)
 }
 
 
+require_once realpath(LIB_DIR.'/DiskCache.php');
 
-require_once "DiskCache.inc";
 
 TrumbaCache::init();
 
@@ -155,7 +155,9 @@ class TrumbaCache {
 
   public function init() {
     if (self::$diskCache === NULL) {
-      self::$diskCache = new DiskCache(TRUMBA_CALENDAR_CACHE_DIR, TRUMBA_CALENDAR_CACHE_LIFESPAN, TRUE);
+      self::$diskCache = new DiskCache(
+        $GLOBALS['siteConfig']->getVar('TRUMBA_CALENDAR_CACHE_DIR'), 
+        $GLOBALS['siteConfig']->getVar('TRUMBA_CALENDAR_CACHE_LIFESPAN'), TRUE);
       self::$diskCache->preserveFormat();
     }
   }
@@ -228,7 +230,8 @@ function get_academic_events($year, $returnCleanedDictsOfEvents = TRUE) {
     //$url = HARVARD_ACADEMIC_ICS_BASE_URL .'?startdate=' . $year .$month .'01&months=1';
     //$academic_events = makeIcalAcademicEvents($url, $month, $year);
 
-    $url = HARVARD_ACADEMIC_ICS_BASE_URL . '?startdate=' .$startDate .'&enddate=' .$endDate;
+    $url = $GLOBALS['siteConfig']->getVar('HARVARD_ACADEMIC_ICS_BASE_URL') . 
+      '?startdate=' .$startDate .'&enddate=' .$endDate;
     $academic_events =  makeIcalAcademicEvents($url, $startDate, $endDate);
     
     if (!$returnCleanedDictsOfEvents) {

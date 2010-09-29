@@ -24,6 +24,10 @@
       <br/>
     {/block}
 
+    {block name="noResults"}
+      <span>{$noResultsText|default:"No results found"}</span>
+    {/block}
+
 {block name="resultsEnd"}
   </p>
 {/block}

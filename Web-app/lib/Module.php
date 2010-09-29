@@ -58,8 +58,8 @@ abstract class Module {
     );
 
     for ($i = 0; $i < $pager['pageCount']; $i++) {
-      $pager['url']['pages'][] = $this->urlForPage($i).'&'.http_build_query(
-        array('breadcrumbs' => $this->args['breadcrumbs']));
+      $pager['url']['pages'][] = $this->urlForPage($i).
+        $this->getBreadcrumbArgString('&', false);
     }
         
     if ($pager['pageNumber'] > 0) {
@@ -273,13 +273,13 @@ abstract class Module {
     //error_log(__FUNCTION__."(): loaded breadcrumbs ".print_r($this->breadcrumbs, true));
   }
   
-  private function getBreadcrumbString() {
+  private function getBreadcrumbString($addBreadcrumb=true) {
     $breadcrumbs = $this->breadcrumbs;
     
-    if ($this->page != 'index') {
+    if ($addBreadcrumb && $this->page != 'index') {
       $title = isset($this->breadcrumbTitle) ? 
         $this->breadcrumbTitle : $this->getTemplateVars('pageTitle');
-    
+      
       $breadcrumbs[] = array(
         'title' => $title,
         'url'   => self::buildURL($this->page, $this->args),
@@ -289,18 +289,18 @@ abstract class Module {
     return rawurlencode(serialize($breadcrumbs));
   }
   
-  private function getBreadcrumbArgs() {
+  private function getBreadcrumbArgs($addBreadcrumb=true) {
     return array(
-      'breadcrumbs' => $this->getBreadcrumbString(),
+      'breadcrumbs' => $this->getBreadcrumbString($addBreadcrumb),
     );
   }
 
-  protected function buildBreadcrumbURL($page, $args) {
-    return "$page.php?".http_build_query(array_merge($args, $this->getBreadcrumbArgs()));
+  protected function buildBreadcrumbURL($page, $args, $addBreadcrumb=true) {
+    return "$page.php?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
   }
   
-  protected function getBreadcrumbArgString($prefix='?') {
-    return $prefix.http_build_query($this->getBreadcrumbArgs());
+  protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
+    return $prefix.http_build_query($this->getBreadcrumbArgs($addBreadcrumb));
   }
   
   protected function setBreadcrumbTitle($title) {

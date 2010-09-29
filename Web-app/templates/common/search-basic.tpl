@@ -1,9 +1,17 @@
+{strip}
 {if !$insideForm}
   <form method="get" action="{$searchURL|default:'search.php'}">
-{/if}
     <p id="search">
+{/if}
       {if isset($placeholder) && strlen($placeholder)}
-        {$placeholder}:<br/>
+        {if $emphasized|default:$moduleHome}
+          <strong>
+        {/if}
+            {$placeholder}:
+        {if $emphasized|default:$moduleHome}
+          </strong>
+        {/if}
+        <br/>
       {/if}
       <span class="inputcombo{if $emphasized|default:$moduleHome} emphasized{/if}">
         <input class="forminput" type="search" id="filter" name="{$inputName|default:'filter'}" value="{$searchTerms|escape}" />
@@ -16,8 +24,8 @@
           <input type="hidden" name="{$arg}" value="{$value}" />
         {/foreach}
       </span>	
-    </p>
 {if !$insideForm}
+    </p>
   </form>
 {/if}
 {if $inlineSearchError}
@@ -29,3 +37,4 @@
     <p>{$resultCount} match{if $resultCount != 1}es{/if} found</p>
   {/if}
 {/if}
+{/strip}

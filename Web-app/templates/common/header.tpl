@@ -34,9 +34,10 @@
     {/if}
   {/block}
   
-  {block name="deviceHeadTags"}{/block}
+  {block name="additionalHeadTags"}{/block}
 </head>
 <body>
+  <a name="top"></a>
   {if isset($customHeader)}
     {$customHeader|default:''}
   {else}

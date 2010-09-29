@@ -5,8 +5,8 @@
  *
  */
 
-require_once('TimeRange.php');
-require_once('HarvardContactInfoParser.php');
+require_once realpath(LIB_DIR.'/feeds/TimeRange.php');
+require_once realpath(LIB_DIR.'/feeds/HarvardContactInfoParser.php');
 
 class ICalendarException extends Exception {
 }
