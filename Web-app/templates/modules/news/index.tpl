@@ -34,7 +34,7 @@
           <tr>
             <td class="formlabel">Search:</td>
             <td class="inputfield">
-              <input class="newsinput search-field" type="text" id="search_terms" name="search_terms"/>
+              <input class="newsinput search-field" type="text" id="search_terms" name="search_terms" value="{$searchTerms|escape}"/>
             </td>
             <td class="togglefield">
               <input type="button" class="toggle-search-button"  onclick="return toggleSearch();" value="Cancel" />

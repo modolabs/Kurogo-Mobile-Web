@@ -3,7 +3,7 @@
 <div class="news">
   <h1 class="slugline">{$story["title"]}</h1>
   
-  {if $isFirstPage}
+  {if $page['pageNumber'] == 0}
     <p class="byline">
       {block name="byline"}
         {block name="shareImage"}
@@ -17,21 +17,16 @@
         <span class="postdate">{$date}</span>
       {/block}
     </p>
-  {else}
-    <p>Page {$pageNumber+1} of {$totalPageCount}</p>
+    {if isset($story['image'])}
+      <div id="image">
+        <img class="thumbnail" src="{$story['image']['url']}"
+          {if isset($story['image']['width'])} width="{$story['image']['width']}"{/if}
+          {if isset($story['image']['height'])} height="{$story['image']['height']}"{/if}>
+      </div>
+    {/if}
   {/if}
   
-  {if $isFirstPage && isset($story['image'])}
-    <div id="image">
-      <img class="thumbnail" src="{$story['image']['url']}"
-        {if isset($story['image']['width'])} width="{$story['image']['width']}"{/if}
-        {if isset($story['image']['height'])} height="{$story['image']['height']}"{/if}>
-    </div>
-  {/if}
-  
-  {block name="content"}
-    {$allPages}
-  {/block}
+  {include file="findInclude:common/pager.tpl"}
 </div>
 
 

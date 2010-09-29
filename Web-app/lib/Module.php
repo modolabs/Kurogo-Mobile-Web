@@ -1,6 +1,7 @@
 <?php
 
 require_once realpath(LIB_DIR.'/TemplateEngine.php');
+require_once realpath(LIB_DIR.'/HTMLPager.php');
 
 abstract class Module {
   protected $id = 'none';
@@ -24,7 +25,57 @@ abstract class Module {
   private $templateEngine = null;
   private $siteVars = null;
   
+  private $htmlPager = null;
+  private $inPagedMode = true;
   
+  //
+  // Pager support
+  // Note: the first page is 0 (0 ... pageCount-1)
+  //
+  protected function enablePager($html, $pageNumber) {
+    $this->htmlPager = new HTMLPager($html, $pageNumber);
+  }
+  
+  protected function urlForPage($pageNumber) {
+    return '';
+  }
+    
+  private function getPager() {
+    $pager = array(
+      'pageNumber'   => $this->htmlPager->getPageNumber(),
+      'pageCount'    => $this->htmlPager->getPageCount(),
+      'inPagedMode'  => $this->htmlPager->getPageNumber() != ALL_PAGES,
+      'html' => array(
+        'all'  => $this->htmlPager->getAllPagesHTML(),
+        'page' => $this->htmlPager->getPageHTML(),
+      ),
+      'url' => array(
+        'prev'  => null,
+        'next'  => null,
+        'all'   => $this->urlForPage(ALL_PAGES),
+        'pages' => array(),
+      ),
+    );
+
+    for ($i = 0; $i < $pager['pageCount']; $i++) {
+      $pager['url']['pages'][] = $this->urlForPage($i).'&'.http_build_query(
+        array('breadcrumbs' => $this->args['breadcrumbs']));
+    }
+        
+    if ($pager['pageNumber'] > 0) {
+      $pager['url']['prev'] = $pager['url']['pages'][$pager['pageNumber']-1];
+    }
+    
+    if ($pager['pageNumber'] < ($pager['pageCount']-1)) {
+      $pager['url']['next'] = $pager['url']['pages'][$pager['pageNumber']+1];
+    }
+    
+    return $pager;
+  }
+  
+  //
+  // Font size controls
+  //
   private function getFontSizeCSS() {
     switch ($this->fontsize) {
       case 'small':
@@ -48,12 +99,32 @@ abstract class Module {
     }
   }
 
+  //
+  // Minify URLs
+  //
+  private function getMinifyUrls() {
+    $minKey = $this->id.'-'.$this->page.'-'.$this->getTemplateVars('pagetype').'-'.
+      $this->getTemplateVars('platform').'-'.md5(ROOT_DIR.URL_PREFIX);
+    $minDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ? '&debug=1' : '';
+    
+    return array(
+      'css' => "/min/g=css-$minKey$minDebug",
+      'js'  => "/min/g=js-$minKey$minDebug",
+    );
+  }
+
+  //
+  // Lazy load
+  //
   private function loadTemplateEngineIfNeeded() {
     if (!isset($this->templateEngine)) {
       $this->templateEngine = new TemplateEngine($this->id);
     }
   }
   
+  //
+  // URL helper functions
+  //
   protected static function argVal($args, $key, $default=null) {
     if (isset($args[$key])) {
       return $args[$key];
@@ -78,7 +149,10 @@ abstract class Module {
     exit;
   }
   
-  // Factory function that instantiates objects for the different modules
+  //
+  // Factory function
+  // instantiates objects for the different modules
+  //
   public static function factory($id, $page='index', $args=array()) {
     $className = ucfirst($id).'Module';
     
@@ -101,9 +175,20 @@ abstract class Module {
     
     $this->page = $page;
     $this->args = $args;
+
+    // Pull in fontsize
+    if (isset($args['font'])) {
+      $this->fontsize = $args['font'];
+      setcookie('fontsize', $this->fontsize, time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
+    
+    } else if (isset($_COOKIE['fontsize'])) { 
+      $this->fontsize = $_COOKIE['fontsize'];
+    }
   }
   
+  //
   // Module control functions
+  //
   protected function getHomeScreenModules() {
     $modules = $GLOBALS['siteConfig']->getThemeVar('modules');
     
@@ -158,8 +243,10 @@ abstract class Module {
     error_log(__FUNCTION__.'(): '.print_r($value, true));
   }
 
+  //
   // Functions to add inline blocks of text
   // Call these from initializeForPage()
+  //
   protected function addInlineCSS($inlineCSS) {
     $this->inlineCSSBlocks[] = $inlineCSS;
   }
@@ -173,7 +260,9 @@ abstract class Module {
     $this->onOrientationChangeBlocks[] = $onOrientationChange;
   }
   
+  //
   // Breadcrumbs
+  //
   private function loadBreadcrumbs() {
     if (isset($this->args['breadcrumbs'])) {
       $breadcrumbs = unserialize(rawurldecode($this->args['breadcrumbs']));
@@ -218,19 +307,25 @@ abstract class Module {
     $this->breadcrumbTitle = $title;
   }
 
+  //
   // Page title
+  //
   protected function setPageTitle($title) {
     $this->assign('pageTitle', $title);
   }
 
+  //
   // Config files
+  //
   protected function loadThemeConfigFile($name, $loadVarKeys=false) {
     $this->loadTemplateEngineIfNeeded();
     
     $this->templateEngine->loadThemeConfigFile($name, $loadVarKeys);
   }
 
+  //
   // Convenience functions
+  //
   public function assignByRef($var, &$value) {
     $this->loadTemplateEngineIfNeeded();
         
@@ -249,6 +344,9 @@ abstract class Module {
     return $this->templateEngine->getTemplateVars($key);
   }
   
+  //
+  // Display page
+  //
   public function displayPage() {
     $this->loadTemplateEngineIfNeeded();
     
@@ -266,26 +364,13 @@ abstract class Module {
     $this->assign('pageTitle', $this->moduleName);
     
     // Font size for template
-    if (isset($args['font'])) {
-      $this->fontsize = $args['font'];
-      setcookie('fontsize', $this->fontsize, time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
-    
-    } else if (isset($_COOKIE['fontsize'])) { 
-      $this->fontsize = $_COOKIE['fontsize'];
-    }
     $this->assign('fontsizes',   $this->fontsizes);
     $this->assign('fontsize',    $this->fontsize);
     $this->assign('fontsizeCSS', $this->getFontSizeCSS());
     $this->assign('fontSizeURL', $this->getFontSizeURL());
 
     // Minify URLs
-    $minKey = $this->id.'-'.$this->page.'-'.$this->getTemplateVars('pagetype').'-'.
-      $this->getTemplateVars('platform').'-'.md5(ROOT_DIR.URL_PREFIX);
-    $minDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ? '&debug=1' : '';
-    $this->assign('minify', array(
-      'css' => "/min/g=css-$minKey$minDebug",
-      'js'  => "/min/g=js-$minKey$minDebug",
-    ));
+    $this->assign('minify', $this->getMinifyUrls());
     
     // Breadcrumbs
     $this->loadBreadcrumbs();
@@ -316,10 +401,17 @@ abstract class Module {
       $template = 'modules/'.$this->id.'/'.$this->page;
     }
     
+    // Pager support
+    if (isset($this->htmlPager)) {
+      $this->assign('pager', $this->getPager());
+    }
+
     // Load template for page
     $this->templateEngine->displayForDevice($template);    
   }
      
+  //
   // Subclass this function to set up variables for each template page
+  //
   abstract protected function initializeForPage(); 
 }

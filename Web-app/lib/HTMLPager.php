@@ -1,71 +1,110 @@
 <?php
 
+define("PARAGRAPH_LIMIT", 4);
+define("ALL_PAGES", 'all');
+
 class HTMLPage {
-    private $document;
-    private $body;
-    private static $header = "<html><body>";
-    private static $footer = "</body></html>";
-
-
-    public function __construct() {
-        $this->document = new DOMDocument();
-        $this->document->loadHTML(self::$header . self::$footer);
-        $root = $this->document;
-        $this->body = $root->getElementsByTagName("body")->item(0);
-    }
-
-    public function addNode(DOMNode $node) {
-        $nodeCopy = $this->document->importNode($node, true);
-        $this->body->appendChild($nodeCopy);
-    }
-
-    public function getText() {
-        $text = $this->document->saveHTML();
-
-        // removes header
-        $content_position = strpos($text, self::$header) + strlen(self::$header);
-        $text = substr($text, $content_position);
-
-        // removes footer
-        $text = substr($text, 0, strlen($text) - strlen(self::$footer)-1);
-
-        return trim($text);
-    }
+  private $document;
+  private $body;
+  private static $header = "<html><body>";
+  private static $footer = "</body></html>";
+  
+  public function __construct() {
+    $this->document = new DOMDocument();
+    $this->document->loadHTML(self::$header . self::$footer);
+    $root = $this->document;
+    $this->body = $root->getElementsByTagName("body")->item(0);
+  }
+  
+  public function addNode(DOMNode $node) {
+    $nodeCopy = $this->document->importNode($node, true);
+    $this->body->appendChild($nodeCopy);
+  }
+  
+  public function getText() {
+    $text = $this->document->saveHTML();
+    
+    // removes header
+    $content_position = strpos($text, self::$header) + strlen(self::$header);
+    $text = substr($text, $content_position);
+    
+    // removes footer
+    $text = substr($text, 0, strlen($text) - strlen(self::$footer)-1);
+    
+    return trim($text);
+  }
 
 }
 
-function HTMLPager($html, $paragraph_limit) {
+class HTMLPager {
+  private $pages = array();
+  private $pageCount = 0;
+  private $pageNumber = 0;
+  
+  public function __construct($html, $pageNumber, $paragraphsPerPage=PARAGRAPH_LIMIT) {
     $dom = new DOMDocument();
     $dom->loadHTML($html);
     $body = $dom->getElementsByTagName("body")->item(0);
 
-    $current_page = NULL;
+    $currentPage = NULL;
     $pages = array();
-    $current_paragraph_count = 0;
+    $currentParagraphCount = 0;
 
     foreach($body->childNodes as $node) {
-        if($current_page == NULL) {
-            // need to start a new page
-            if(($node->nodeName == "#text") && (trim($node->nodeValue) == "")) {
-                // this node is blank so do not start a new page yet
-                continue;
-            }
-
-            $current_page = new HTMLPage();
-            $pages[] = $current_page;
+      if($currentPage == NULL) {
+        // need to start a new page
+        if(($node->nodeName == "#text") && (trim($node->nodeValue) == "")) {
+          continue; // this node is blank so do not start a new page yet
         }
 
-        $current_page->addNode($node);
+        $currentPage = new HTMLPage();
+        $pages[] = $currentPage;
+      }
 
-        if($node->nodeName == "p") {
-            $current_paragraph_count++;
-        }
+      $currentPage->addNode($node);
 
-        if($current_paragraph_count == $paragraph_limit) {
-            $current_page = NULL;
-            $current_paragraph_count = 0;
-        }
+      if($node->nodeName == "p") {
+        $currentParagraphCount++;
+      }
+
+      if($currentParagraphCount == $paragraphsPerPage) {
+        $currentPage = NULL;
+        $currentParagraphCount = 0;
+      }
     }
 
-    return $pages;
+    $this->pages = $pages;
+    $this->pageCount = count($pages);
+    
+    if ($pageNumber >= 0 && $pageNumber < $this->pageCount) {
+      $this->pageNumber = $pageNumber;
+    }
+  }
+  
+  public function getPageNumber() {
+    return $this->pageNumber;
+  }
+  
+  public function getPageCount() {
+    return $this->pageCount;
+  }
+  
+  public function getPageHTML() {
+    if ($this->pageNumber == ALL_PAGES) {
+      return $this->getAllPagesHTML();
+    
+    } else if (isset($this->pages[$this->pageNumber])) {
+      return $this->pages[$this->pageNumber]->getText();
+    }
+    return '';
+  }
+  
+  public function getAllPagesHTML() {
+    $allPagesHTML = '';
+    
+    foreach ($this->pages as $page) {
+      $allPagesHTML .= $page->getText();
+    }
+    return $allPagesHTML;
+  }
 }

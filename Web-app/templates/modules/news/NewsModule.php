@@ -1,15 +1,14 @@
 <?php
 
 require_once realpath(LIB_DIR.'/Module.php');
-require_once realpath(LIB_DIR.'/HTMLPager.php');
 
 require_once realpath(LIB_DIR.'/feeds/GazetteRSS.php');
 require_once realpath(dirname(__FILE__).'/NewsURL.php');
 
-define("PARAGRAPH_LIMIT", 4);
-
 class NewsModule extends Module {
   protected $id = 'news';
+  private $newsURL = null;
+  private $story = null;
   
   private function basicDeck($story, $bbplus) {
     $limit = $bbplus ? 95 : 75;
@@ -22,96 +21,65 @@ class NewsModule extends Module {
       return $deck;
     }
   }
+      
+  protected function urlForPage($pageNumber) {
+    return $this->newsURL->storyURL($this->story, $pageNumber);
+  }
 
   protected function initializeForPage() {
-    $newsURL = new NewsURL($this->args);
-        
-    if($newsURL->isSearchResults()) {
+    if (isset($this->args['allpages'])) {
+      $this->args['story_page'] = 'all'; // backwards compat with old paging system
+    }
+    
+    $this->newsURL = new NewsURL($this->args);
+    
+    if($this->newsURL->isSearchResults()) {
       $stories = GazetteRSS::searchArticlesArray(
-        $newsURL->searchTerms(),
-        $newsURL->searchSeekId(),
-        $newsURL->searchSeekDirection());
+        $this->newsURL->searchTerms(),
+        $this->newsURL->searchSeekId(),
+        $this->newsURL->searchSeekDirection());
     } else {
       $stories = GazetteRSS::getMoreArticlesArray(
-        $newsURL->categoryId(),
-        $newsURL->categorySeekId(),
-        $newsURL->categorySeekDirection());
+        $this->newsURL->categoryId(),
+        $this->newsURL->categorySeekId(),
+        $this->newsURL->categorySeekDirection());
     }
 
     switch ($this->page) {
       case 'story':
 
-        $storyId = $newsURL->storyId();
+        $storyId = $this->newsURL->storyId();
         for($i = 0; $i < count($stories); $i++) {
           if($stories[$i]["story_id"] == $storyId) {
-            $story = $stories[$i];
+            $this->story = $stories[$i];
             break;
           }
         }
         
         //$categories = GazetteRSS::getChannels();
         
-        $storyPages = HTMLPager($story["body"], PARAGRAPH_LIMIT);
-        
-        $allPages = "";
-        foreach($storyPages as $storyPage) {
-          $allPages .= $storyPage->getText();
-        }
-        
-        $pageNumber = $newsURL->storyPage();
-        $storyPage = $storyPages[$pageNumber];
-        $totalPageCount = count($storyPages);
-        $isFirstPage = ($newsURL->storyPage() == 0);
-        
-        $date = date("M d, Y", $story["unixtime"]);
+        $date = date("M d, Y", $this->story["unixtime"]);
         
         $shareUrl = "mailto:@?".http_build_query(array(
-          "subject" => $story["title"],
-          "body"    => $story["description"] . "\n\n" . $story["link"]
+          "subject" => $this->story["title"],
+          "body"    => $this->story["description"] . "\n\n" . $this->story["link"]
         ));
         
         //mailto url's do nor respect '+' (as space) so we convert to %20
         $shareUrl = str_replace('+', '%20', $shareUrl);
         
-        $previousPageUrl = NULL;
-        if ($pageNumber > 0) {
-          $previousPageUrl = $newsURL->storyURL($story, $pageNumber - 1);
-        }
-        
-        $nextPageUrl = NULL;
-        if ($pageNumber + 1 < $totalPageCount ) {
-          $nextPageUrl = $newsURL->storyURL($story, $pageNumber + 1);
-        }
-        
-        $pager = array(
-          'mode'   => isset($this->args['allpages']) ? 'all' : 'paged',
-          'prev'   => $previousPageUrl,
-          'next'   => $nextPageUrl,
-          'paged'  => $newsURL->storyURL($story, 0),
-          'all'    => $newsURL->storyURL($story, 0).'&allpages=1',
-          'pages'  => array(),
-        );
-        for($i = 0; $i < $totalPageCount; $i++) {
-          $pager['pages'][$i+1] = $newsURL->storyURL($story, $i);
-        }
+        $this->assign('date',     $date);
+        $this->assign('shareUrl', $shareUrl);
+        $this->assign('story',    $this->story);
+        $this->enablePager($this->story["body"], $this->newsURL->storyPage());
 
-        $this->assign('story',           $story);
-        $this->assign('allPages',        $allPages);
-        $this->assign('storyPage',       $storyPage->getText());
-        $this->assign('pageNumber',      $pageNumber);
-        $this->assign('totalPageCount',  $totalPageCount);
-        $this->assign('isFirstPage',     $isFirstPage);
-        $this->assign('date',            $date);
-        $this->assign('shareUrl',        $shareUrl);
-
-        $this->assign('pager',           $pager);
         break;
         
       case 'index':
       default:
-        if($newsURL->isHome()) {
-          $storiesFirstId = GazetteRSS::getArticlesFirstId($newsURL->categoryId());
-          $storiesLastId  = GazetteRSS::getArticlesLastId ($newsURL->categoryId());
+        if($this->newsURL->isHome()) {
+          $storiesFirstId = GazetteRSS::getArticlesFirstId($this->newsURL->categoryId());
+          $storiesLastId  = GazetteRSS::getArticlesLastId ($this->newsURL->categoryId());
           
           if (isset($stories)) {
             $featuredIndex = 0;
@@ -126,23 +94,23 @@ class NewsModule extends Module {
             }
           }
         
-        } else if ($newsURL->isSearchResults()) {
-          $storiesFirstId = GazetteRSS::getSearchFirstId($newsURL->searchTerms());
-          $storiesLastId  = GazetteRSS::getSearchLastId ($newsURL->searchTerms());
+        } else if ($this->newsURL->isSearchResults()) {
+          $storiesFirstId = GazetteRSS::getSearchFirstId($this->newsURL->searchTerms());
+          $storiesLastId  = GazetteRSS::getSearchLastId ($this->newsURL->searchTerms());
           
-          $this->assign('searchTerms', trim($this->args['filter']));       
+          $this->assign('searchTerms', trim($this->args['search_terms']));       
         }
         
         $categories = GazetteRSS::getChannels();
-        $categoryId = $newsURL->categoryId();
+        $categoryId = $this->newsURL->categoryId();
         $category = $categories[$categoryId];
         
-        if($newsURL->isReverse()) {
+        if($this->newsURL->isReverse()) {
           $stories = array_reverse($stories);
         }
         
         foreach ($stories as &$story) {
-          $story['url'] = $newsURL->storyURL($story).$this->getBreadcrumbArgString('&');
+          $story['url'] = $this->newsURL->storyURL($story).$this->getBreadcrumbArgString('&');
         }
         
         $previousUrl = NULL;
@@ -150,12 +118,12 @@ class NewsModule extends Module {
         if (sizeof($stories)) {
           $firstId = $stories[0]["story_id"];
           if($storiesFirstId != $firstId) {
-            $previousUrl = $newsURL->previousURL($firstId);
+            $previousUrl = $this->newsURL->previousURL($firstId);
           }
         
           $lastId = $stories[sizeof($stories)-1]["story_id"];
           if($storiesLastId != $lastId) {
-            $nextUrl = $newsURL->nextURL($lastId);
+            $nextUrl = $this->newsURL->nextURL($lastId);
           }
         }
         
@@ -167,9 +135,9 @@ class NewsModule extends Module {
           );
         }
         
-        $this->assign('isHome',             $newsURL->isHome());
-        $this->assign('isSearchResults',    $newsURL->isSearchResults());
-        $this->assign('hiddenArgs',         $newsURL->hiddenArgs());
+        $this->assign('isHome',             $this->newsURL->isHome());
+        $this->assign('isSearchResults',    $this->newsURL->isSearchResults());
+        $this->assign('hiddenArgs',         $this->newsURL->hiddenArgs());
         
         $this->assign('categories',         $categories);
         $this->assign('categoryLinks',      $categoryLinks);

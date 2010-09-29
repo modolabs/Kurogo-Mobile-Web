@@ -80,7 +80,7 @@ class TemplateEngine extends Smarty {
     
     foreach ($checkDirs as $type => $dir) {
         if (realpath_exists("$dir/$name")) {
-          error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$name'");
+          error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name'");
           return "$dir/$name";
         }
     }

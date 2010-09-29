@@ -95,7 +95,7 @@ class GazetteRSS extends RSS {
     // we will just store filenames by search terms
     if (!self::$searchCache->isFresh($searchTerms)) {
       $query = http_build_query(array('s' => $searchTerms, 'feed' => 'rss2'));
-      $url = NEWS_SEARCH_URL . '?' . $query;
+      $url = $GLOBALS['siteConfig']->getVar('NEWS_SEARCH_URL') . '?' . $query;
       $contents = file_get_contents($url);
       self::$searchCache->write($contents, $searchTerms);
     }
