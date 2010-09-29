@@ -29,12 +29,16 @@ switch ($module) {
    require('news.php');
    break;
 
- case 'push':
-   require('apns_push.php');
-   break;
+ //case 'push':
+ //  require('apns_push.php');
+ //  break;
 
  case 'dining':
    require('dining.php');
+   break;
+
+ case 'shuttles':
+   require('shuttles.php');
    break;
 
  default:
