@@ -1,15 +1,12 @@
 <?php
 
 require_once LIBDIR .'/lib_constants.inc';
-$APIROOT = WEBROOT . "/api";
-require_once $APIROOT . "/api_header.inc";
+require_once WEBROOT . "/api/api_header.inc";
 PageViews::log_api('shuttles', 'iphone');
 
-require_once LIBDIR . "/GTFSReader.php";
+//require_once LIBDIR . "/GTFSReader.php";
 require_once LIBDIR . "/TranslocReader.php";
 
-
-define('HARVARD_TRANSLOC_MARKERS', 'http://harvard.transloc.com/m/markers/marker.php');
 
 $arrows = array(
     '1' => 'n',
@@ -70,20 +67,18 @@ switch ($command) {
    break;
 
    case 'routes': // static info about all routes
-   $route_ids = ShuttleSchedule::getActiveRoutes();
-   foreach ($route_ids as $route_id) {
-     $routeInfo = get_route_metadata($route_id);
+   //$route_ids = ShuttleSchedule::getActiveRoutes();
+   //foreach ($route_ids as $route_id) {
+     //$routeInfo = get_route_metadata($route_id);
 
      if (!$_REQUEST['compact']) {
-       $routeInfo['stops'] = ShuttleSchedule::list_stop_times($route_id);
-       $route = ShuttleSchedule::getRoute($route_id);
-       $path = array();
-       foreach ($route->anyTrip(time())->shape->points as $point) {
-	 $path[] = array('lat' => $point[0], 'lon' => $point[1]);
-       }
-       // we had each stop's path segment appended to the stop
-       // we can split it out later if needed
-       $routeInfo['stops'][0]['path'] = $path;
+       //$routeInfo['stops'] = ShuttleSchedule::list_stop_times($route_id);
+       //$route = ShuttleSchedule::getRoute($route_id);
+       //$path = array();
+       //foreach ($route->anyTrip(time())->shape->points as $point) {
+       //  $path[] = array('lat' => $point[0], 'lon' => $point[1]);
+       //}
+       //$routeInfo['path'] = $path;
        $mockData = get_all_routes_info($transloc, 'NO'); // for Transloc, use $mockData
      }
      else {
@@ -92,7 +87,7 @@ switch ($command) {
 
      $data = $mockData;
      //$data[] = $routeInfo; // for NextBus, use $data
-   }
+   //}
    break;
  case 'routeInfo': // live info for individual routes
    /*$route_id = $_REQUEST['id'];
@@ -191,13 +186,15 @@ switch ($command) {
       $vehicleIconUrl = urldecode($iconURL);
 
       if (($vehicleLat) && ($vehicleLon)) {
-       $vehiclesArray[] = array('lat'=>$vehicle['ll'][0],
-                                    'lon'=>$vehicle['ll'][1],
-                                    'secsSinceReport'=> 3600,
-                                    'heading'=>$vehicle['h'],
-                                    'iconURL'=> urldecode($iconURL));
-       }
-       }
+        $vehicleData = array('lat'=>$vehicle['ll'][0],
+                             'lon'=>$vehicle['ll'][1],
+                             'secsSinceReport'=> 3600,
+                             'heading'=>$vehicle['h'],
+                             'iconURL'=> urldecode($iconURL));
+        if (array_key_exists('s', $vehicle)) $vehicleData['speed'] = $vehicle['s'];
+        $vehiclesArray[] = $vehicleData;
+      }
+     }
 
        $data['vehicleLocations'] = $vehiclesArray;
      }
@@ -293,10 +290,10 @@ function get_all_routes_info($translocObj, $compact) {
                                 'description' => $translocObj->getBriefDescription($routeInfo['long_name']),
                                 'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
-                                'isSafeRide'=> false,
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
                                 'summary'=> $translocObj->getSummary($routeInfo['long_name']),
-                                'stops'=>$translocObj->getStopsForRoute($routeInfo['id']));
+                                'stops'=>$translocObj->getStopsForRoute($routeInfo['id']),
+				'path'=>$translocObj->getPathForRoute($routeInfo['id']));
         }
 
         else {
@@ -306,7 +303,6 @@ function get_all_routes_info($translocObj, $compact) {
                                 'description' => $translocObj->getBriefDescription($routeInfo['long_name']),
                                 'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
-                                'isSafeRide'=> 'false',
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
                                 'summary'=> $translocObj->getSummary($routeInfo['long_name']),);
         }
@@ -327,10 +323,10 @@ function get_specific_routes_info($translocObj, $compact, $route_id) {
                                 'description' => $translocObj->getBriefDescription($routeInfo['long_name']),
                                 'agency' => $routeInfo['agency'],
                                 'interval'=> 60,
-                                'isSafeRide'=> false,
                                 'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
                                 'summary'=> $translocObj->getSummary($routeInfo['long_name']),
-                                'stops'=>$translocObj->getStopsForRoute($routeInfo['id']));
+                                'stops'=>$translocObj->getStopsForRoute($routeInfo['id']),
+				'path'=>$translocObj->getPathForRoute($routeInfo['id']));
         }
 
         else {
@@ -340,17 +336,17 @@ function get_specific_routes_info($translocObj, $compact, $route_id) {
     return $routeToReturn;
 }
 
-
+/*
 function get_route_metadata($route_id) {
   $route = ShuttleSchedule::getRoute($route_id);
   $metadata = Array();
   $metadata['route_id'] = $route->id;
   $metadata['title'] = $route->long_name;
   $metadata['interval'] = $route->anyTrip(time())->duration() / 60;
-  $metadata['isSafeRide'] = $route->agency_id == 'saferide';
   $metadata['isRunning'] = $route->isRunning(time());
   $metadata['summary'] = $route->desc;
   return $metadata;
 }
+*/
 
 ?>
