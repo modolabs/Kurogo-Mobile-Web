@@ -6,13 +6,7 @@
  * php must be compiled with support for Zip files.
  */
 
-$docRoot = getenv("DOCUMENT_ROOT");
-
 require_once "lib_constants.inc";
-//require_once $docRoot . "/mobi-config/lib_constants.inc";
-//require_once $docRoot . "/mobi-config/web_header.inc";
-
-//define("SHUTTLE_GTFS_FEED", WEBROOT . "shuttleschedule/gtfs/gtfs.zip");
 
 require_once 'ShuttleObjects.php';
 require_once 'TimeRange.php';
@@ -905,6 +899,5 @@ class CsvWrapper {
 
 }
 
-ShuttleSchedule::init();
 
 
