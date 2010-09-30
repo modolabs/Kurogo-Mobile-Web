@@ -1,7 +1,8 @@
 <?php
 
-require_once dirname(__FILE__).'/../lib/initialize.php';
-  
+$rootDir = realpath(dirname(__FILE__).'/..');
+require_once $rootDir.'/lib/initialize.php';
+
 //error_log(print_r($_GET, true));
 //error_log('Handling '.$_SERVER['REQUEST_URI']);
 
@@ -14,10 +15,10 @@ $path = isset($_GET['q']) ? $_GET['q'] : '';
 
 //
 // Configure web application
+// modifies $path for us to strip prefix and device
 //
 
-InitializeWebapp($path, dirname(__FILE__)); // modifies q for us to strip prefix and device
-
+InitializeForWebSite($rootDir, $path, dirname(__FILE__)); 
 
 //
 // Handle page request
@@ -36,7 +37,7 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
   
   $testDirs = array(
-    $GLOBALS['siteConfig']->getVar('THEME_DIR').'/'.$matches[1].$matches[2],
+    THEME_DIR.'/'.$matches[1].$matches[2],
     TEMPLATES_DIR.'/'.$matches[1].$matches[2],
   );
   $testFiles = array(

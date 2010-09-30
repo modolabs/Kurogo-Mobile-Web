@@ -90,7 +90,7 @@ function getMinifyGroupsConfig() {
   $key = $_GET['g'];
   list($ext, $module, $page, $pagetype, $platform, $base) = explode('-', $key);
 
-  $cache = new DiskCache($GLOBALS['siteConfig']->getVar('MINIFY_CACHE_DIR'), 30, true);
+  $cache = new DiskCache(CACHE_DIR.'/minify', 30, true);
   $cacheName = "group_$key";
   
   if ($cache->isFresh($cacheName)) {
@@ -100,10 +100,10 @@ function getMinifyGroupsConfig() {
     // CSS includes all in order.  JS prefers theme
     $cssDirs = array(
       TEMPLATES_DIR, 
-      $GLOBALS['siteConfig']->getVar('THEME_DIR'),
+      THEME_DIR,
     );
     $jsDirs = array(
-      $GLOBALS['siteConfig']->getVar('THEME_DIR'),
+      THEME_DIR,
       TEMPLATES_DIR, 
     );
     

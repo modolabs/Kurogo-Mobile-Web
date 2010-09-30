@@ -1,9 +1,11 @@
 <?php
 
-require_once dirname(__FILE__).'/../../lib/initialize.php';
+$rootDir = realpath(dirname(__FILE__).'/../..');
+require_once $rootDir.'/lib/initialize.php';
+
 
 // Configure web application
-InitializeWebapp($_SERVER['REQUEST_URI'], dirname(__FILE__));
+InitializeForWebSite($rootDir, $_SERVER['REQUEST_URI'], dirname(__FILE__));
 
 require_once LIB_DIR.'/minify.php';
 
@@ -50,7 +52,7 @@ $min_enableBuilder = false;
 //$min_cachePath = 'c:\\WINDOWS\\Temp';
 //$min_cachePath = '/tmp';
 //$min_cachePath = preg_replace('/^\\d+;/', '', session_save_path());
-$min_cachePath = $GLOBALS['siteConfig']->getVar('MINIFY_CACHE_DIR');
+$min_cachePath = CACHE_DIR.'/minify';
 
 /**
  * Leave an empty string to use PHP's $_SERVER['DOCUMENT_ROOT'].
@@ -135,7 +137,7 @@ $min_serveOptions['minApp']['maxFiles'] = 10;
  * </code>
  */
 $min_symlinks = array(
-  '//' => $GLOBALS['siteConfig']->getVar('THEME_DIR'),
+  '//' => THEME_DIR,
 );
 
 

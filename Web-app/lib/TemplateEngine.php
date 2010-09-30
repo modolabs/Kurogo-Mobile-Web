@@ -19,7 +19,7 @@ class TemplateEngine extends Smarty {
     if (strlen($subDir)) { $subDir .= '/'; }
   
     $checkDirs = array(
-      'THEME_DIR'     => $GLOBALS['siteConfig']->getVar('THEME_DIR'),
+      'THEME_DIR'     => THEME_DIR,
       'TEMPLATES_DIR' => TEMPLATES_DIR,
     );
     $checkFiles = array(
@@ -75,7 +75,7 @@ class TemplateEngine extends Smarty {
 
     $checkDirs = array(
       'TEMPLATES_DIR' => TEMPLATES_DIR,
-      'THEME_DIR'     => $GLOBALS['siteConfig']->getVar('THEME_DIR'),
+      'THEME_DIR'     => THEME_DIR,
     );
     
     foreach ($checkDirs as $type => $dir) {
@@ -189,8 +189,8 @@ class TemplateEngine extends Smarty {
     $supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
     
     // Smarty configuration
-    $this->setCompileDir ($GLOBALS['siteConfig']->getVar('TEMPLATE_COMPILE_DIR'));
-    $this->setCacheDir   ($GLOBALS['siteConfig']->getVar('TEMPLATE_CACHE_DIR'));
+    $this->setCompileDir (CACHE_DIR.'/smarty/templates');
+    $this->setCacheDir   (CACHE_DIR.'/smarty/html');
     $this->setCompileId  ("$pagetype-$platform");
     
     // Theme and device detection for includes and extends
