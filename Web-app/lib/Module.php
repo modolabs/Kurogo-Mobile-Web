@@ -17,6 +17,7 @@ abstract class Module {
   private $onOrientationChangeBlocks = array();
   
   private $breadcrumbTitle = null;
+  private $breadcrumbLongTitle = null;
   private $breadcrumbs = array();
 
   private $fontsize = 'medium';
@@ -278,11 +279,14 @@ abstract class Module {
     
     if ($addBreadcrumb && $this->page != 'index') {
       $title = isset($this->breadcrumbTitle) ? 
-        $this->breadcrumbTitle : $this->getTemplateVars('pageTitle');
+        $this->breadcrumbTitle : $pageTitle;
+      $longTitle = isset($this->breadcrumbLongTitle) ? 
+        $this->breadcrumbLongTitle : $this->getTemplateVars('pageTitle');
       
       $breadcrumbs[] = array(
-        'title' => $title,
-        'url'   => self::buildURL($this->page, $this->args),
+        'title'     => $title,
+        'longTitle' => $longTitle,
+        'url'       => self::buildURL($this->page, $this->args),
       );
     }
     //error_log(__FUNCTION__."(): saving breadcrumbs ".print_r($breadcrumbs, true));
@@ -305,6 +309,10 @@ abstract class Module {
   
   protected function setBreadcrumbTitle($title) {
     $this->breadcrumbTitle = $title;
+  }
+
+  protected function setBreadcrumbLongTitle($title) {
+    $this->breadcrumbLongTitle = $title;
   }
 
   //

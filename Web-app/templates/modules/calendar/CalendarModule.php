@@ -1,7 +1,7 @@
 <?php
 
 require_once realpath(LIB_DIR.'/Module.php');
-require_once realpath(LIB_DIR.'/feeds/harvard_calendar.php');
+require_once realpath(SITE_LIB_DIR.'/harvard_calendar.php');
 
 class CalendarModule extends Module {
   protected $id = 'calendar';
@@ -38,23 +38,6 @@ class CalendarModule extends Module {
       return $event->get_range()->format('D M j').' '.date('g:i a', $event->get_start());
     }
     return $event->get_range()->format('D M j g:i a');
-  
-    /*
-    $out = substr($event->start->weekday, 0, 3) . ' ';
-    $out .= substr($event->start->monthname, 0, 3) . ' ';
-    $out .= (int)$event->start->day . ' ';
-  
-    $out .= MIT_Calendar::timeText($event);
-    return $out;
-    */
-  }
-  
-  private function briefLocation($event) {
-    //if($loc = $event->shortloc) {
-    //  return $loc;
-    //} else {
-      return $event->get_location();
-    //}
   }
 
   private function ucname($name) {
@@ -104,32 +87,79 @@ class CalendarModule extends Module {
       return array("start" => $day1['date'], "end" => $endDate); 
     }
   }
+  
+  private function valueForType($type, $value) {
+    $valueForType = $value;
+  
+    switch ($type) {
+      case 'datetime':
+        if (get_class($value) == 'TimeRange') {
+          $valueForType = $value->format('D M j, Y').'<br/>'.$value->format('g:i a');
+        } else {
+          $valueForType = date('D M j, Y', $value).'<br/>'.date('g:i a', $value);
+        }
+        break;
 
-  private function phoneURL($number) {
-    if ($number) {
-  
-      // add the local area code if missing
-      if (preg_match('/^\d{3}-\d{4}/', $number)) {
-        $number = '617' . $number;
-      }
-  
-      // remove all non-word characters from the number
-      $number = preg_replace('/\W/', '', $number);
-      return "tel:1$number";
+      case 'url':
+        $valueForType = str_replace("http://http://", "http://", $value);
+        if (strlen($valueForType) && !preg_match('/^http\:\/\//', $valueForType)) {
+          $valueForType = 'http://'.$valueForType;
+        }
+        break;
+        
+      case 'phone':
+        // add the local area code if missing
+        if (preg_match('/^\d{3}-\d{4}/', $value)) {
+          $valueForType = $GLOBALS['siteConfig']->getVar('LOCAL_AREA_CODE').$value;
+        }
+        $valueForType = str_replace('-', '-&shy;', str_replace('.', '-', $value));
+        break;
+      
+      case 'email':
+        $valueForType = str_replace('@', '@&shy;', $value);
+        break;
+        
+      case 'category':
+        $valueForType = $this->ucname($value->get_name());
+        break;
     }
+    
+    return $valueForType;
   }
   
-  private function URLize($url) {
-    $url = str_replace("http://http://", "http://", $url);
+  private function urlForType($type, $value) {
+    $urlForType = null;
+  
+    switch ($type) {
+      case 'url':
+        $urlForType = str_replace("http://http://", "http://", $value);
+        if (strlen($urlForType) && !preg_match('/^http\:\/\//', $urlForType)) {
+          $urlForType = 'http://'.$urlForType;
+        }
+        break;
+        
+      case 'phone':
+        // add the local area code if missing
+        if (preg_match('/^\d{3}-\d{4}/', $value)) {
+          $urlForType = $GLOBALS['siteConfig']->getVar('LOCAL_AREA_CODE').$value;
+        }
     
-    
-    if (strlen($url) && !preg_match('/^http\:\/\//', $url)) {
-      $url = 'http://'.$url;
+        // remove all non-word characters from the number
+        $urlForType = 'tel:1'.preg_replace('/\W/', '', $value);
+        break;
+        
+      case 'email':
+        $urlForType = "mailto:$value";
+        break;
+        
+      case 'category':
+        $urlForType = $this->categoryURL($value, false);
+        break;
     }
     
-    return $url;
+    return $urlForType;
   }
-  
+
   // URL DEFINITIONS
   private function dayURL($day, $type, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('day', array(
@@ -165,8 +195,8 @@ class CalendarModule extends Module {
     ), $addBreadcrumb);
   }
   
-  private function categorysURL($addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('categorys', array(), $addBreadcrumb);
+  private function categoriesURL($addBreadcrumb=true) {
+    return $this->buildBreadcrumbURL('categories', array(), $addBreadcrumb);
   }
   
   private function categoryURL($category, $addBreadcrumb=true) {
@@ -185,6 +215,7 @@ class CalendarModule extends Module {
   private function detailURL($event, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('detail', array(
       'id' => $event->get_uid(),
+      'time' => isset($this->args['time']) ? $this->args['time'] : time(),
     ), $addBreadcrumb);
   }
 
@@ -201,11 +232,80 @@ class CalendarModule extends Module {
         
         $this->assign('todaysEventsUrl', $this->dayURL($today, 'events'));
         $this->assign('holidaysUrl',     $this->holidaysURL($today['year']));
-        $this->assign('categorysUrl',    $this->categorysURL());
+        $this->assign('categorysUrl',    $this->categoriesURL());
         $this->assign('academicUrl',     $this->academicURL($today['year']));
 
         break;
+      
+      case 'categories':
+        $this->setPageTitle("Browse by Category");
+        $this->setBreadcrumbTitle("Category");
+
+        $categories = array();
+        $categoryObjects = Harvard_Calendar::get_categories($GLOBALS['siteConfig']->getVar('PATH_TO_EVENTS_CAT'));
+        foreach ($categoryObjects as $categoryObject) {
+          $categories[] = array(
+            'title' => $this->ucname($categoryObject->get_name()),
+            'url' => $this->categoryURL($categoryObject),
+          );
+        }
         
+        $this->assign('categories', $categories);
+        break;
+      
+      case 'category':
+        $id   = self::argVal($this->args, 'id', '');
+        $name = self::argVal($this->args, 'name', '');
+        $time = self::argVal($this->args, 'time', time());
+
+        $this->setPageTitle('Listing');
+        $this->setBreadcrumbTitle($name);
+        $this->setBreadcrumbLongTitle($name);
+
+        $this->assign('category', $this->ucname($name));
+
+        $dayRange = new DayRange(time());
+        $next = $this->dayInfo($time, 1);
+        $prev = $this->dayInfo($time, -1);
+        
+        $this->assign('current', $this->dayInfo($time));
+        $this->assign('next',    $next);
+        $this->assign('prev',    $prev);
+        $this->assign('nextUrl', $this->categoryDayURL($next, $id, $name, false));
+        $this->assign('prevUrl', $this->categoryDayURL($prev, $id, $name, false));
+        $this->assign('isToday', $dayRange->contains(new TimeRange($time)));
+
+        $events = array();
+        
+        if (strlen($id) > 0) {
+          // copied from api/HarvardCalendar.php
+          $start = date('Ymd', $time);
+          $url = $GLOBALS['siteConfig']->getVar('HARVARD_EVENTS_ICS_BASE_URL').'?'.http_build_query(array(
+            'startdate'    => $start,
+            'days'         => 1,
+            'filter1'      => $id,
+            'filterfield1' => 15202,
+          ));
+          $iCalEvents = makeIcalDayEvents($url, $start, $id);
+          
+          foreach($iCalEvents as $iCalEvent) {
+            $subtitle = $this->timeText($iCalEvent);
+            $briefLocation = $iCalEvent->get_location();
+            if (isset($briefLocation)) {
+              $subtitle .= " | $briefLocation";
+            }
+          
+            $events[] = array(
+              'url'      => $this->detailURL($iCalEvent),
+              'title'    => $iCalEvent->get_summary(),
+              'subtitle' => $subtitle,
+            );
+          }
+        }
+        
+        $this->assign('events', $events);        
+        break;
+      
       case 'day':  
         $this->setPageTitle("Browse by day");
         $this->setBreadcrumbTitle("Day");
@@ -233,7 +333,7 @@ class CalendarModule extends Module {
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
           $subtitle = $this->timeText($iCalEvent);
-          $briefLocation = $this->briefLocation($iCalEvent);
+          $briefLocation = $iCalEvent->get_location();
           if (isset($briefLocation)) {
             $subtitle .= " | $briefLocation";
           }
@@ -250,93 +350,73 @@ class CalendarModule extends Module {
       case 'detail':  
         $this->setPageTitle("Detail");
 
-        // copied from api/HarvardCalendar.php
+        $this->loadThemeConfigFile('calendarDetail');
+        $calendarFields = $this->getTemplateVars('calendarDetail');
+
+        // Get event
         $time = isset($this->args['time']) ? $this->args['time'] : time();
         $url = $GLOBALS['siteConfig']->getVar('HARVARD_EVENTS_ICS_BASE_URL').'?'.http_build_query(array(
           'startdate' => date('Ym', $time).'01',
           'months'    => 1,
         ));
         $event = getIcalEvent($url, date('Ymd', $time), $this->args['id']);
-        
-        // Time
-        if ($event->get_end() - $event->get_start() == -1) {
-          $timeString = date('g:i a', $event->get_start());
-        } else {
-          $timeString = $event->get_range()->format('g:i a');
-        }
-        
-        $fields = $event->get_customFields();
-        
-        // Categories
-        $categories = explode('\,',$fields['"Gazette Classification"']);
-        $allCategories = Harvard_Calendar::get_categories($GLOBALS['siteConfig']->getVar('PATH_TO_EVENTS_CAT'));
-        
-        $eventCategories = array();
-        foreach ($categories as $category) {
-          $categoryObject = null;
-          foreach ($allCategories as $aCategory) {
-            // The strings from $harvard_cat may be null-terminated
-            if (strcmp(trim($aCategory->get_name()), trim($category)) == 0) {
-              $categoryObject = $aCategory;
-              break;
-            }
-          }
-          $eventCategories[] = array(
-            'title' => $this->ucname($category), 
-            'url'   => $this->categoryURL($categoryObject),
-          );
-        }
-        
-        // Description
-        $description = str_replace('\,', ',', $event->get_description());
-        
-        foreach ($fields as $key => $value) {
-          $skipKeys = array(
-            '"Event Type"', 
-            '"Gazette Classification"', 
-            '"Contact Info"', 
-            '"Location"', 
-            '"Ticket Web Link"'
-          );
-          $strippedKey = strtr($key, '"', '');
-          if (!in_array($key, $skipKeys) && strlen(strtr($key, '"', ''))) {
-            if (strlen($description)) { $description .= '<br /><br />'; }
+
+        // build the list of attributes
+        $fields = array();
+        foreach ($calendarFields as $key => $info) {
+          $value = $event->getFieldForDetailKey($key);
+          if (!isset($value)) { continue; }
+          
+          if ($key == 'misc') {
+            $fields = array_merge($fields, $value);
             
-            $description .= $strippedKey.': '.str_replace('\,', ',', $value);
+          } else {
+            $field = array();
+            
+            if (isset($info['label'])) {
+              $field['label'] = $info['label'];
+            }
+            
+            if (isset($info['class'])) {
+              $field['class'] = $info['class'];
+            }
+            
+            if ($key == 'categories') {
+              $fieldValues = array();
+              foreach ($value as $item) {
+                $fieldValue = '';
+                $fieldValueUrl = null;
+                
+                if (isset($info['type'])) {
+                  $fieldValue  = $this->valueForType($info['type'], $item);
+                  $fieldValueUrl = $this->urlForType($info['type'], $item);
+                } else {
+                  $fieldValue = $item;
+                }
+                
+                if (isset($fieldValueUrl)) {
+                  $fieldValue = '<a href="'.$fieldValueUrl.'">'.$fieldValue.'</a>';
+                }
+                
+                $fieldValues[] = $fieldValue;
+              }
+              $field['title'] = implode(', ', $fieldValues);
+
+            } else {
+              if (isset($info['type'])) {
+                $field['title'] = $this->valueForType($info['type'], $value);
+                $field['url']   = $this->urlForType($info['type'], $value);
+              } else {
+                $field['title'] = $value;
+              }
+            }
+            
+            $fields[] = $field;
           }
         }
         
-        $ticketsLink = $this->URLize($this->argVal($fields, '"Ticket Web Link"', ''));
-        $url = $this->URLize($event->get_url());
-        
-        $contact = $this->argVal($fields, '"Contact Info"');
-        $phone = isset($contact, $contact->phone[0]) ? $contact->phone[0] : '';
-        $phoneUrl = $this->phoneURL($phone);
-        $emailUrl = isset($contact, $contact->email[0]) ? $contact->email[0] : '';
-        $email = $emailUrl;
-        
-        // Get Lat Long info
-        //$jsonString = json_encode($fields);
-        //$latLongArray = explode('<\/Latitude>',$jsonString);
-        //$tempArray = explode(">", $latLongArray[0]);
-        //$tempArrayCount = count($tempArray);
-        //$tempArray2 = explode("<\/Longitude>", $latLongArray[1]);
-        
-        //$latitude = $tempArray[$tempArrayCount - 1];
-        //$longitude = $tempArray2[0];
-        
-        $this->assign('summary',      $event->get_summary());
-        $this->assign('date',         $event->get_range()->format('D M j, Y'));
-        $this->assign('time',         $timeString);
-        $this->assign('location',     $this->briefLocation($event));
-        $this->assign('description',  $description);
-        $this->assign('ticketsLink',  $ticketsLink);
-        $this->assign('url',          $url);
-        $this->assign('phone',        $phone);
-        $this->assign('phoneUrl',     $phoneUrl);
-        $this->assign('email',        $email);
-        $this->assign('emailUrl',     $emailUrl);
-        $this->assign('categories',   $eventCategories);
+        $this->assign('fields', $fields);
+        //error_log(print_r($fields, true));
     }
   }
 }

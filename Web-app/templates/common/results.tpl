@@ -4,29 +4,16 @@
   <ul class="results">
 {/block}
 
-    {foreach $results as $index => $item}
-  
-      {capture name="itemHTML" assign="itemHTML"}
-        {$item['title']}
-        {if isset($item['subtitle'])}
-          <br/>
-          <span class="smallprint">{$item['subtitle']}</span>
-        {/if}
-      {/capture}
+    {foreach $results as $item}
   
       {block name="resultsItem"}
         <li>
-          {if isset($item['url'])}
-            <a href="{$item['url']}" class="{$item['class']|default:''}">
-          {/if}
-              {$itemHTML}
-          {if isset($item['url'])}
-            </a>
-          {/if}
+          {include file="findInclude:common/listItem.tpl"}
         </li>
       {/block}
   
     {/foreach}
+    
     {if count($results) == 0}
       {block name="noResults"}
         <li>{$noResultsText|default:"No results found"}</li>

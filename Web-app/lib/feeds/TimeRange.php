@@ -42,15 +42,15 @@ class TimeRange {
   }
 
   public function format($format, $compress=TRUE) {
-    if ($this->start == $this->end) {
+    if ($this->end - $this->start <= 0) {
       return date($format, $this->start);
     } else {
       $token_types = Array();
       // the letters in this regex are the parameters for date()
       preg_match_all('/([AaDdFGgHhijlMmNnoSstWwYyz])/', $format, $matches);
       foreach ($matches[1] as $match) {
-	$prec = array_search($match, self::$precedence);
-	$token_types[$prec] = $match;
+        $prec = array_search($match, self::$precedence);
+        $token_types[$prec] = $match;
       }
       krsort($token_types);
 
@@ -58,49 +58,49 @@ class TimeRange {
       $right = Array(); // string to show right of hyphen
 
       if ($compress) {
-	// iterate through tokens in decreasing grain size
-	// until a tokens are different for start and end date
-	while (list($prec, $token_type) = each ($token_types)) {
-	  $start = date($token_type, $this->start);
-	  $end = date($token_type, $this->end);
-	  $left[strpos($format, $token_type)] = $start;
-	  if ($start != $end) {
-	    $right[strpos($format, $token_type)] = $end;
-	    break;
-	  }
-	}
+        // iterate through tokens in decreasing grain size
+        // until a tokens are different for start and end date
+        while (list($prec, $token_type) = each ($token_types)) {
+          $start = date($token_type, $this->start);
+          $end = date($token_type, $this->end);
+          $left[strpos($format, $token_type)] = $start;
+          if ($start != $end) {
+            $right[strpos($format, $token_type)] = $end;
+            break;
+          }
+        }
       }
 
       // iterate through the rest of the array
       while (list($prec, $token_type) = each ($token_types)) {
-	$start = date($token_type, $this->start);
-	$end = date($token_type, $this->end);
-	$left[strpos($format, $token_type)] = $start;
-	$right[strpos($format, $token_type)] = $end;
+        $start = date($token_type, $this->start);
+        $end = date($token_type, $this->end);
+        $left[strpos($format, $token_type)] = $start;
+        $right[strpos($format, $token_type)] = $end;
       }
 
       $formatted = '';
       $buffer = '';
       for ($i = 0; $i < strlen($format); $i++) {
-	if (array_key_exists($i, $left)) {
-	  if (array_key_exists($i, $right)) {
-	    $buffer .= $right[$i];
-	  } elseif ($buffer != '') {
-	    $formatted = rtrim($formatted, ' ,') . '-' . $buffer;
-	    //$formatted .= '-' . $buffer;
-	    $buffer = '';
-	  }
-	  $formatted .= $left[$i];
-	} else {
-	  $formatted .= substr($format, $i, 1);
-	  if ($buffer != '') {
-	    $buffer .= substr($format, $i, 1);
-	  }
-	}
+        if (array_key_exists($i, $left)) {
+          if (array_key_exists($i, $right)) {
+            $buffer .= $right[$i];
+          } elseif ($buffer != '') {
+            $formatted = rtrim($formatted, ' ,') . '-' . $buffer;
+            //$formatted .= '-' . $buffer;
+            $buffer = '';
+          }
+          $formatted .= $left[$i];
+        } else {
+          $formatted .= substr($format, $i, 1);
+          if ($buffer != '') {
+            $buffer .= substr($format, $i, 1);
+          }
+        }
       }
       if ($buffer != '') {
-	$formatted = rtrim($formatted, ' ,') . '-' . $buffer;
-	//$formatted .= '-' . $buffer;
+        $formatted = rtrim($formatted, ' ,') . '-' . $buffer;
+        //$formatted .= '-' . $buffer;
       }
 
       return $formatted;

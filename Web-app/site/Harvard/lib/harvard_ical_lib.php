@@ -98,6 +98,94 @@ class ICalEvent extends ICalObject {
   private $incrementor;
   private $interval = 1;
 
+  public function getFieldForDetailKey($key) {
+    $value = null;
+  
+    switch ($key) {
+      case 'summary':
+        $value = $this->summary;
+        break;
+        
+      case 'datetime':
+        if ($this->get_end() - $this->get_start() == -1) {
+          $value = $this->get_start();
+        } else {
+          $value = $this->range;
+        }
+        break;
+        
+      case 'location':
+        $value = $this->location;
+        break;
+        
+      case 'ticketsUrl':
+        if (isset($this->customFields['"Ticket Web Link"'])) {
+            $value = $this->customFields['"Ticket Web Link"'];
+        }
+        break;
+      
+      case 'description':
+        $value = str_replace('\,', ',', $this->description);
+        break;
+      
+      case 'misc':
+        $value = array();
+        foreach ($this->customFields as $key => $field) {
+          $skipKeys = array(
+            '"Event Type"', 
+            '"Gazette Classification"', 
+            '"Contact Info"', 
+            '"Location"', 
+            '"Ticket Web Link"'
+          );
+          $strippedKey = str_replace('"', '', $key);
+          if (!in_array($key, $skipKeys) && strlen($strippedKey)) {
+            $value[] = array(
+              'label' => $strippedKey,
+              'title' => str_replace('\,', ',', $field),
+            );
+          }
+        }
+        break;
+        
+      case 'phone':
+        if (isset($this->customFields['"Contact Info"'], $this->customFields['"Contact Info"']->phone[0])) { 
+          $value = $this->customFields['"Contact Info"']->phone[0];
+        }
+        break;
+        
+      case 'email':
+        if (isset($this->customFields['"Contact Info"'], $this->customFields['"Contact Info"']->email[0])) { 
+          $value = $this->customFields['"Contact Info"']->email[0];
+        }
+        break;
+        
+      case 'url':
+        $value = $this->url;
+        break;
+        
+      case 'categories':
+        // Categories
+        $categories = explode('\,', $this->customFields['"Gazette Classification"']);
+        $allCategories = Harvard_Calendar::get_categories($GLOBALS['siteConfig']->getVar('PATH_TO_EVENTS_CAT'));
+        
+        $value = array();
+        foreach ($categories as $category) {
+          $categoryObject = null;
+          foreach ($allCategories as $aCategory) {
+            // The strings from $harvard_cat may be null-terminated
+            if (strcmp(trim($aCategory->get_name()), trim($category)) == 0) {
+              $value[] = $aCategory;
+              break;
+            }
+          }
+        }
+        break;
+    }
+    
+    return $value;
+  }
+
   public function get_uid() {
     return $this->uid;
   }
@@ -173,24 +261,24 @@ class ICalEvent extends ICalObject {
       // check if $range is within this series at all
       $event_range = new TimeRange($this->get_start(), $this->get_end());
       if (!$event_range->$compare_type($range)) {
-	return Array();
+        return Array();
       } else {
-	$duration = $this->range->get_end() - $this->range->get_start();
-	$results = Array();
-	$starts = $this->occurrences;
-	while ($starts[0] < $this->until) {
-	  foreach ($starts as $start) {
-	    if ($start > $this->until)
-	      break 2;
-	    if (in_array($start, $this->exdates))
-	      continue;
-	    $event_range = new TimeRange($start, $start + $duration);
-	    if ($event_range->$compare_type($range)) {
-	      $results[] = new ICalEvent($this->summary, $event_range);
-	    }
-	  }
-	  $starts = $this->increment_set($starts);
-	}
+        $duration = $this->range->get_end() - $this->range->get_start();
+        $results = Array();
+        $starts = $this->occurrences;
+        while ($starts[0] < $this->until) {
+          foreach ($starts as $start) {
+            if ($start > $this->until)
+              break 2;
+            if (in_array($start, $this->exdates))
+              continue;
+            $event_range = new TimeRange($start, $start + $duration);
+            if ($event_range->$compare_type($range)) {
+              $results[] = new ICalEvent($this->summary, $event_range);
+            }
+          }
+          $starts = $this->increment_set($starts);
+        }
       }
       return $results;
     } else {
@@ -214,9 +302,9 @@ class ICalEvent extends ICalObject {
     switch ($attr) {
     case 'UID':
       if (strpos($value, '@') !== FALSE) {
-	$this->uid .= substr($value, 0, strpos($value, '@'));
+        $this->uid .= substr($value, 0, strpos($value, '@'));
       } else {
-	$this->uid .= $value;
+        $this->uid .= $value;
       }
       break;
     case 'RECURRENCE-ID':
@@ -270,9 +358,9 @@ class ICalEvent extends ICalObject {
        $start = ICalendar::ical2unix($value, NULL);
      // $start = ICalendar::ical2unix($value, $param_value);
       if (!$this->range) {
-	$this->range = new TimeRange($start);
+        $this->range = new TimeRange($start);
       } else {
-	$this->range->set_start($start);
+        $this->range->set_start($start);
       }
 
       break;
@@ -287,13 +375,13 @@ class ICalEvent extends ICalObject {
                 
       $end = ICalendar::ical2unix($value, NULL);
       if (!$this->range) {
-	$this->range = new TimeRange($end);
+        $this->range = new TimeRange($end);
       } else {
-	if (($end - $this->get_start()) % 86400 == 0) {
-	  // make all day events end at 11:59:59 so they don't overlap next day
-	  $end -= 1;
-	}
-	$this->range->set_end($end);
+        if (($end - $this->get_start()) % 86400 == 0) {
+          // make all day events end at 11:59:59 so they don't overlap next day
+          $end -= 1;
+        }
+        $this->range->set_end($end);
       }
       break;
     case 'DURATION':
@@ -338,7 +426,7 @@ class ICalEvent extends ICalObject {
       'SECONDLY' => 'increment_second',
       'MINUTELY' => 'increment_minute',
       'HOURLY' => 'increment_hour',
-      'DAILY' => 'increment_day',	
+      'DAILY' => 'increment_day',        
       'WEEKLY' => 'increment_week',
       'MONTHLY' => 'increment_month',
       'YEARLY' => 'increment_year',
@@ -352,21 +440,21 @@ class ICalEvent extends ICalObject {
       $rulevalue = $namevalue[1];
       switch ($rulename) {
       case 'FREQ': // always present
-	$this->incrementor = $incrementors[$rulevalue];
-	break;
+        $this->incrementor = $incrementors[$rulevalue];
+        break;
       case 'INTERVAL':
-	$this->interval = $rulevalue;
+        $this->interval = $rulevalue;
       case 'UNTIL':
-	$limit_type = 'UNTIL';
-	$this->until = ICalendar::ical2unix($rulevalue);
-	break;
+        $limit_type = 'UNTIL';
+        $this->until = ICalendar::ical2unix($rulevalue);
+        break;
       case 'COUNT':
-	$limit_type = 'COUNT';
-	$limit = $rulevalue;
-	break;
+        $limit_type = 'COUNT';
+        $limit = $rulevalue;
+        break;
       case (substr($rulename, 0, 2) == 'BY'):
-	$occurs_by_list[$rulename] = explode(',', $rulevalue);
-	break;
+        $occurs_by_list[$rulename] = explode(',', $rulevalue);
+        break;
       }
     }
     // finished reading attributes from rrule_string
@@ -389,33 +477,33 @@ class ICalEvent extends ICalObject {
       // act on each "by frequency" rule in order of decreasing grain size
 
       if (array_key_exists($byfreq, $occurs_by_list)) {
-	$new_occur_unit = Array();
+        $new_occur_unit = Array();
 
-	// every "when" within the "by frequency"
-	// e.g. MO,TU,WE for BYDAY
-	// needs to be a separate element of the occurrence set
-	foreach($occurs_by_list[$byfreq] as $when) {
-	  $occurs_when = ($byfreq == 'BYDAY') ? ICalendar::$dayIndex[$when] : $when;
+        // every "when" within the "by frequency"
+        // e.g. MO,TU,WE for BYDAY
+        // needs to be a separate element of the occurrence set
+        foreach($occurs_by_list[$byfreq] as $when) {
+          $occurs_when = ($byfreq == 'BYDAY') ? ICalendar::$dayIndex[$when] : $when;
 
-	  // if the set of occurrences already has multiple elements
-	  // they will be multiplied
-	  // e.g. MO,TU for BYDAY and 1,2,3 for BYMONTH
-	  // yields 6 elements in the occurence set
-	  foreach ($occur_unit as $start) {	    
-	    $count = 0; // for debugging below
-	    while (intval(date($attribs['format'], $start)) != $occurs_when) {
-	      $start = call_user_func($attribs['func'], $start);
+          // if the set of occurrences already has multiple elements
+          // they will be multiplied
+          // e.g. MO,TU for BYDAY and 1,2,3 for BYMONTH
+          // yields 6 elements in the occurence set
+          foreach ($occur_unit as $start) {            
+            $count = 0; // for debugging below
+            while (intval(date($attribs['format'], $start)) != $occurs_when) {
+              $start = call_user_func($attribs['func'], $start);
 
-	      // haven't seen this happen yet but who knows
-	      if ($count > 366) {
-		throw new ICalendarException("maximum loop count exceeded");
-	      }
-	      $count += 1;
-	    }
-	    $new_occur_unit[] = $start;
-	  }
-	}
-	$occur_unit = $new_occur_unit;
+              // haven't seen this happen yet but who knows
+              if ($count > 366) {
+                throw new ICalendarException("maximum loop count exceeded");
+              }
+              $count += 1;
+            }
+            $new_occur_unit[] = $start;
+          }
+        }
+        $occur_unit = $new_occur_unit;
       }
     }
 
@@ -424,12 +512,12 @@ class ICalEvent extends ICalObject {
       $new_occur_unit = Array();
       $setposlist = $occurs_by_list['BYSETPOS'];
       foreach ($setposlist as $setpos) {
-	if ($setpos < 0) {
-	  $setpos = count($occur_unit) + $setpos;
-	} else {
-	  $setpos = $setpos - 1;
-	}
-	$new_occur_unit[] = $occur_unit[$setpos];
+        if ($setpos < 0) {
+          $setpos = count($occur_unit) + $setpos;
+        } else {
+          $setpos = $setpos - 1;
+        }
+        $new_occur_unit[] = $occur_unit[$setpos];
       }
       $occur_unit = $new_occur_unit;
     }
@@ -442,8 +530,8 @@ class ICalEvent extends ICalObject {
       $num_increments = $limit / count($this_occurrences);
       $end = end($occur_unit);
       while ($num_increments > 0) {
-	$end = $this->incrementor($end);
-	$num_increments -= 1;
+        $end = $this->incrementor($end);
+        $num_increments -= 1;
       }
       $this->until = $end;
     }
@@ -492,10 +580,10 @@ class ICalendar extends ICalObject {
     
     foreach ($this->events as $id => $event){
       /*if ($event->get_recurid() !== NULL) // event is a duplicate
-	continue;*/
+        continue;*/
      /* if (($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
-	  && ($range === NULL || $event->overlaps($range))) {
-	$events[] = $event;
+          && ($range === NULL || $event->overlaps($range))) {
+        $events[] = $event;
       }*/
 
       /*if ($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
@@ -512,9 +600,9 @@ class ICalendar extends ICalObject {
     $events = Array();
     foreach ($this->events as $id => $event){
       if ($event->get_recurid() !== NULL) // event is a duplicate
-	continue;
+        continue;
       if ($event->overlaps($range)) {
-	$events[] = $event;
+        $events[] = $event;
       }
     }
     return $events;
@@ -527,9 +615,9 @@ class ICalendar extends ICalObject {
     $events = Array();
     foreach ($this->events as $id => $event) {
       if ($event->get_recurid() !== NULL) // event is a duplicate
-	continue;
+        continue;
       if (stripos($event->get_summary(), $title) !== FALSE) {
-	$events[] = $event;
+        $events[] = $event;
       }
     }
     return $events;
@@ -547,7 +635,7 @@ class ICalendar extends ICalObject {
     $events = Array();
     foreach ($this->events as $id => $event) {
       /* Making sure the events that start at 0000-0400hrs GMT
-      	 are still correctly captured as today's events */
+               are still correctly captured as today's events */
         if  ((($event->get_start() - 4*60*60 >= $day->get_start()) &&
                 ($event->get_start() - 4*60*60 <= $day->get_end())) ||
 
@@ -596,72 +684,72 @@ class ICalendar extends ICalObject {
       $value = $contentline['value'];
       switch($contentname) {
       case 'BEGIN':
-	switch ($value) {
-	case 'VEVENT':
-	  $nesting[] = new ICalEvent();
-	  break;
-	case 'VCALENDAR':
-	  $nesting[] = $this;
-	  break;
-	case 'VTIMEZONE':
-	  $nesting[] = new ICalTimeZone();
-	  break;
-	case 'DAYLIGHT':
-	  $nesting[] = new ICalDaylight();
-	  break;
-	case 'STANDARD':
-	  $nesting[] = new ICalStandard();
-	  break;
-	case 'VTODO':
-	  $nesting[] = new ICalTodo();
-	  break;
-	case 'VJOURNAL':
-	  $nesting[] = new ICalJournal();
-	  break;
-	case 'VFREEBUSY':
-	  $nesting[] = new ICalFreeBusy();
-	  break;
-	case 'VALARM':
-	  $nesting[] = new ICalAlarm();
-	  break;
-	default:
-	  throw new ICalendarException('unknown component type ' . $value);
-	  break;
-	}
-	break;
+        switch ($value) {
+        case 'VEVENT':
+          $nesting[] = new ICalEvent();
+          break;
+        case 'VCALENDAR':
+          $nesting[] = $this;
+          break;
+        case 'VTIMEZONE':
+          $nesting[] = new ICalTimeZone();
+          break;
+        case 'DAYLIGHT':
+          $nesting[] = new ICalDaylight();
+          break;
+        case 'STANDARD':
+          $nesting[] = new ICalStandard();
+          break;
+        case 'VTODO':
+          $nesting[] = new ICalTodo();
+          break;
+        case 'VJOURNAL':
+          $nesting[] = new ICalJournal();
+          break;
+        case 'VFREEBUSY':
+          $nesting[] = new ICalFreeBusy();
+          break;
+        case 'VALARM':
+          $nesting[] = new ICalAlarm();
+          break;
+        default:
+          throw new ICalendarException('unknown component type ' . $value);
+          break;
+        }
+        break;
       case 'END':
-	$last_object = array_pop($nesting);
-	$last_obj_name = $last_object->get_name();
-	if ($last_obj_name != $value) {
-	  throw new ICalendarException("BEGIN $last_obj_name ended by END $value");
-	}
-	switch ($value) {
-	case 'VEVENT':
-	  $id = $last_object->get_start();
-	  $last_object->set_attribute('TZID', isset($this->timezone) ? $this->timezone->tzid : NULL);
-	  while (array_key_exists($id, $this->events)) {
-	    $id += 1;
-	  }
-	  $this->events[$id] = $last_object;
-	  break;
-	case 'VTIMEZONE':
-	  $this->timezone = $last_object;
-	  break;
-	case 'VCALENDAR':
-	  break 3;
-	}
-	break;
+        $last_object = array_pop($nesting);
+        $last_obj_name = $last_object->get_name();
+        if ($last_obj_name != $value) {
+          throw new ICalendarException("BEGIN $last_obj_name ended by END $value");
+        }
+        switch ($value) {
+        case 'VEVENT':
+          $id = $last_object->get_start();
+          $last_object->set_attribute('TZID', isset($this->timezone) ? $this->timezone->tzid : NULL);
+          while (array_key_exists($id, $this->events)) {
+            $id += 1;
+          }
+          $this->events[$id] = $last_object;
+          break;
+        case 'VTIMEZONE':
+          $this->timezone = $last_object;
+          break;
+        case 'VCALENDAR':
+          break 3;
+        }
+        break;
       default:
-	if (array_key_exists('param_name', $contentline)) {
-	 $param_name = $contentline['param_name'];
-	 $param_value = $contentline['param_value'];
-	  end($nesting)->set_attribute($contentname, $value, $param_name, $param_value);
-	}
-	else {
+        if (array_key_exists('param_name', $contentline)) {
+         $param_name = $contentline['param_name'];
+         $param_value = $contentline['param_value'];
+          end($nesting)->set_attribute($contentname, $value, $param_name, $param_value);
+        }
+        else {
             if ($contentname !== 'RRULE')
                 end($nesting)->set_attribute($contentname, $value);
-	}
-	break;
+        }
+        break;
       }
     }
   }

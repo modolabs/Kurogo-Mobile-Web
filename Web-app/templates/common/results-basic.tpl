@@ -1,27 +1,16 @@
 {extends file="findExtends:common/results.tpl"}
 
 {block name="resultsStart"} 
-  {if $accessKey|default:true}
+  {if $accessKey|default:false}
     {html_access_key_reset index=count($breadcrumbs)+1}
   {/if}
-  <p class="focal results">
+  <div class="focal">
 {/block}
 
     {block name="resultsItem"}
-      {if isset($item['url'])}
-        {if $accessKey|default:true}
-          {html_access_key_link href=$item['url'] class=$item['class']|default:null accessKey=false}
-            {$itemHTML}
-          {/html_access_key_link}
-        {else}
-          <a href="{$item['url']}" class="{$item['class']|default:''}">{$itemHTML}</a>
-        {/if}
-      {else}
-        <span class="{$item['class']|default:''}">
-          {$itemHTML}
-        </span>
-      {/if}
-      <br/>
+      <p>
+        {include file="findInclude:common/listItem.tpl" accessKey=$accessKey|default:false}
+      </p>
     {/block}
 
     {block name="noResults"}
@@ -29,5 +18,5 @@
     {/block}
 
 {block name="resultsEnd"}
-  </p>
+  </div>
 {/block}

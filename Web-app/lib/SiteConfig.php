@@ -97,6 +97,7 @@ class SiteConfig {
 
     // Set up defines relative to SITE_DIR
     define('SITE_DIR',             $configVars['SITE_DIR']);
+    define('SITE_LIB_DIR',         SITE_DIR.'/lib');
     define('THEMES_DIR',           SITE_DIR.'/themes');
     define('DATA_DIR',             SITE_DIR.'/data');
     define('CACHE_DIR',            SITE_DIR.'/cache');

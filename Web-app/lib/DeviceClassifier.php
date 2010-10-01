@@ -4,32 +4,30 @@ class DeviceClassifier {
   private $pagetype = 'unknown';
   private $platform = 'unknown';
   private $certs = false;
-  private $forcedLayout = null;
 
-  public function getLayout() {
+  private function getDevice() {
     return implode('-', array(
       $this->pagetype, 
       $this->platform, 
       $this->certs ? '1' : '0')
     );
   }
-  private function setLayout($layout) {
-    $parts = explode('-', $layout);
+  private function setDevice($device) {
+    $parts = explode('-', $device);
     $this->pagetype = $parts[0];
     $this->platform = count($parts) > 1 && strlen($parts[1]) ? $parts[1] : 'unknown';
     $this->certs    = count($parts) > 2 && strlen($parts[2]) ? $parts[2] : false;
   }
   
-  function __construct($layout = null) {
+  function __construct($device = null) {
     
-    if ($layout && strlen($layout)) {
-      $this->setLayout($layout); // user override of device detection
-      $this->forcedLayout = $layout;
-      //error_log(__FUNCTION__."(): layout forced to '$layout' <{$_SERVER['REQUEST_URI']}>");
+    if ($device && strlen($device)) {
+      $this->setDevice($device); // user override of device detection
+      //error_log(__FUNCTION__."(): device forced to '$device' <{$_SERVER['REQUEST_URI']}>");
       
     } else if (isset($_COOKIE['layout'])) {
-      $this->setLayout($_COOKIE['layout']);
-      //error_log(__FUNCTION__."(): choosing cookie layout '{$_COOKIE['layout']}' <{$_SERVER['REQUEST_URI']}>");
+      $this->setDevice($_COOKIE['layout']);
+      //error_log(__FUNCTION__."(): choosing device cookie '{$_COOKIE['layout']}' <{$_SERVER['REQUEST_URI']}>");
       
     } else {
       $query = http_build_query(array(
@@ -61,13 +59,13 @@ class DeviceClassifier {
       $this->platform = $data['platform'];
       $this->certs = $data['supports_certificate'];
       
-      setcookie('layout', $this->getLayout(), 
+      setcookie('layout', $this->getDevice(), 
         time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
 
-      //error_log(__FUNCTION__."(): choosing mobi service layout '".$this->getLayout()."' <{$_SERVER['REQUEST_URI']}>");
+      //error_log(__FUNCTION__."(): choosing mobi service layout '".$this->getDevice()."' <{$_SERVER['REQUEST_URI']}>");
     }
     
-    //error_log('DeviceClassifier chose: '.$this->getLayout());
+    //error_log('DeviceClassifier chose: '.$this->getDevice());
     //error_log('User-agent is: '.$_SERVER['HTTP_USER_AGENT']);
   }
   
@@ -89,12 +87,5 @@ class DeviceClassifier {
   
   public function getSupportsCerts() {
     return $this->certs;
-  }
-
-  public function layoutForced() {
-    return isset($this->forcedLayout);
-  }
-  public function getForcedLayout() {
-    return $this->forcedLayout;
   }
 }

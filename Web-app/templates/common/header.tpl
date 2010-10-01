@@ -53,9 +53,9 @@
             <a href="./" class="module">
               <img src="/common/images/title-{$navImageID|default:$moduleID}.png" width="28" height="28" alt="" />
             </a>
-            {foreach $breadcrumbs as $index => $breadcrumb}
+            {foreach $breadcrumbs as $breadcrumb}
               {if count($breadcrumbs) == 2}
-                {if !$breadcrumb@last}
+                {if $breadcrumb@last}
                   {$crumbClass = 'crumb1'}
                 {/if}
               {elseif count($breadcrumbs) > 2}

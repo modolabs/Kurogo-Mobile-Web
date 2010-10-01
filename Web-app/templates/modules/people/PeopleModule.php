@@ -45,7 +45,7 @@ class PeopleModule extends Module {
             break;
             
           case 'phone':
-            $detail['title'] = strtr($detail['title'], '-', '-&shy;');
+            $detail['title'] = str_replace('-', '-&shy;', $detail['title']);
             
             if (strpos($value, '+1') !== 0) { $value = "+1$value"; }
             $detail['url'] = 'tel:'.strtr($value, '-', '');

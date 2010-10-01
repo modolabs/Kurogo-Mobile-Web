@@ -21,7 +21,7 @@
         {/if}
         {foreach $breadcrumbs as $breadcrumb}
           <br />
-          {html_access_key_link href=$breadcrumb['url']}{$breadcrumb['title']}{/html_access_key_link}
+          {html_access_key_link href=$breadcrumb['url']}{$breadcrumb['longTitle']}{/html_access_key_link}
         {/foreach}
         {if isset($additionalLinks)}
           {foreach $additionalLinks as $link}

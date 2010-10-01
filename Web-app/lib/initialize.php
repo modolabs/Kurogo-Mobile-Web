@@ -5,10 +5,8 @@
 // 
 // $path    - an optional path portion of the request uri which will be 
 //            stripped of the base url and device classifier if present
-//
-// $rootDir - an optional path to the location of the source tree.
-//            Avoid paths relative to $_SERVER['DOCUMENT_ROOT'] because the
-//            webroot may not be inside the document root due to symlinks
+//            If you want to force a specific device, you can specify 
+//            /device/[device]/ as the path.
 //
 
 define('ROOT_DIR', dirname(__FILE__).'/..'); // change if this file is moved
@@ -94,24 +92,24 @@ function Initialize(&$path=null) {
   // Initialize global device classifier
   //
   
-  $layout = null;
+  $device = null;
   $urlPrefix = URL_BASE;
   
   // Check for device classification in url and strip it if present
   if ($GLOBALS['siteConfig']->getVar('DEVICE_DEBUG') && 
       preg_match(';^device/([^/]+)(/.*)$;', $path, $matches)) {
-    $layout = $matches[1];  // layout forced by url
+    $device = $matches[1];  // layout forced by url
     $path = $matches[2];
-    $urlPrefix .= 'device/'.$layout.'/';
+    $urlPrefix .= "device/$device/";
   }
   
   define('URL_PREFIX', $urlPrefix);
   //error_log(__FUNCTION__."(): prefix: $urlPrefix");
   //error_log(__FUNCTION__."(): path: $path");
 
-  if (isset($layout) || isset($_SERVER['HTTP_USER_AGENT']) && strlen($_SERVER['HTTP_USER_AGENT'])) {
+  if (isset($device) || isset($_SERVER['HTTP_USER_AGENT']) && strlen($_SERVER['HTTP_USER_AGENT'])) {
     require_once realpath(LIB_DIR.'/DeviceClassifier.php');
     
-    $GLOBALS['deviceClassifier'] = new DeviceClassifier($layout);
+    $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
   }
 }

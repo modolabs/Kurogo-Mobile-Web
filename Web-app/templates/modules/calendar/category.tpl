@@ -2,10 +2,12 @@
 
 <div class="nonfocal">
   <h2>
-    {$Type} for 
-    {block name="date"}
+    {$category}: 
+    {if $isToday}
+      Today
+    {else}
       {$current['day_3Let']} {$current['month_3Let']} {$current['day_num']}, {$current['year']}
-    {/block}
+    {/if}
   </h2>
 </div>
 
@@ -21,6 +23,8 @@
 {/capture}
 
 {$sideNav}
+
+{block name="resultCount"}{/block}
 
 {include file="findInclude:common/results.tpl" results=$events noResultsText="No Events Found"}
 
