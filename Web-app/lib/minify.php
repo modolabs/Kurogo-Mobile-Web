@@ -138,8 +138,8 @@ function getMinifyGroupsConfig() {
 
 function minifyPostProcess($content, $type) {
   if ($type === Minify::TYPE_CSS) {
-    $content = preg_replace(';url\("?\'?/([^"\'\)]+)"?\'?\);', 'url("'.URL_PREFIX.'\1")', $content);
-    error_log(__FUNCTION__."() post processing $type");
+    $content = "/* Adding url prefix '".URL_PREFIX."' */\n\n".
+      preg_replace(';url\("?\'?/([^"\'\)]+)"?\'?\);', 'url("'.URL_PREFIX.'\1")', $content);
   }
   
   return $content;

@@ -30,9 +30,10 @@ class TemplateEngine extends Smarty {
     
     foreach ($checkDirs as $type => $dir) {
       foreach ($checkFiles as $file) {
-        if (realpath_exists("$dir/$file")) {
+        $test = realpath_exists("$dir/$file");
+        if ($test) {
           error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file'");
-          return "$dir/$file";
+          return $test;
         }
       }
     }
@@ -79,9 +80,10 @@ class TemplateEngine extends Smarty {
     );
     
     foreach ($checkDirs as $type => $dir) {
-        if (realpath_exists("$dir/$name")) {
+        $test = realpath_exists("$dir/$name");
+        if ($test) {
           error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name'");
-          return "$dir/$name";
+          return $test;
         }
     }
     return false;

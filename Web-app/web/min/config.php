@@ -1,11 +1,10 @@
 <?php
 
-$rootDir = realpath(dirname(__FILE__).'/../..');
-require_once $rootDir.'/lib/initialize.php';
-
 
 // Configure web application
-InitializeForWebSite($rootDir, $_SERVER['REQUEST_URI'], dirname(__FILE__));
+require_once realpath(dirname(__FILE__).'/../../lib/initialize.php');
+$path = $_SERVER['REQUEST_URI'];
+Initialize($path);
 
 require_once LIB_DIR.'/minify.php';
 

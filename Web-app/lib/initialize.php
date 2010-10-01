@@ -1,14 +1,23 @@
 <?php
 
+//
+// Initialization setup
+// 
+// $path    - an optional path portion of the request uri which will be 
+//            stripped of the base url and device classifier if present
+//
+// $rootDir - an optional path to the location of the source tree.
+//            Avoid paths relative to $_SERVER['DOCUMENT_ROOT'] because the
+//            webroot may not be inside the document root due to symlinks
+//
 
-// Helper functions
-function _initializeSiteConfig($rootDir) {
+define('ROOT_DIR', dirname(__FILE__).'/..'); // change if this file is moved
+
+function Initialize(&$path=null) {
   //
   // Constants which cannot be set by config file
   //
   
-  define('ROOT_DIR', $rootDir);
-
   define('WEBROOT_DIR',       ROOT_DIR.'/web'); 
   define('LIB_DIR',           ROOT_DIR.'/lib');
   define('MASTER_CONFIG_DIR', ROOT_DIR.'/config');
@@ -17,8 +26,16 @@ function _initializeSiteConfig($rootDir) {
   
   
   //
+  // Pull in functions to deal with php version differences
+  //
+  
+  require_once(ROOT_DIR.'/lib/compat.php');
+
+
+  //
   // Get URL base
   //
+  
   define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
   
   $pathParts = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $_SERVER['REQUEST_URI'])));
@@ -39,6 +56,7 @@ function _initializeSiteConfig($rootDir) {
     }
   }
   define('URL_BASE', $urlBase);
+
   define('COOKIE_PATH', URL_BASE); // We are installed under URL_BASE
 
 
@@ -49,10 +67,12 @@ function _initializeSiteConfig($rootDir) {
   require_once realpath(LIB_DIR.'/SiteConfig.php');
   
   $GLOBALS['siteConfig'] = new SiteConfig();
-}
-
-
-function _initializeExceptionHandlers() {
+  
+  
+  //
+  // Install exception handlers
+  //
+  
   require_once realpath(LIB_DIR.'/exceptions.php');
   
   if($GLOBALS['siteConfig']->getVar('USE_PRODUCTION_ERROR_HANDLER')) {
@@ -60,67 +80,38 @@ function _initializeExceptionHandlers() {
   } else {
     set_exception_handler("exceptionHandlerForDevelopment");
   }
-}
-
-
-
-function _initializeDeviceClassifier($layout=null) {
-  require_once realpath(LIB_DIR.'/DeviceClassifier.php');
-  
-  $GLOBALS['deviceClassifier'] = new DeviceClassifier($layout);
-}
-
-
-//
-// Used by web apis and some unit tests
-// Does not include setup for UI components
-//
-function InitializeForWebAPI($rootDir) {
-  // Pull in functions to deal with php version differences
-  require_once($rootDir.'/lib/compat.php');
-
-
-  // Set up paths and site defines
-  _initializeSiteConfig($rootDir);
-  
-  
-  // Install exception handlers
-  _initializeExceptionHandlers();  
-}
-
-
-//
-// Used by the Mobile Web platform
-// Includes all UI initialization
-//
-function InitializeForWebSite($rootDir, &$path, $scriptPath) {
-
-  // Set up paths, site defines and exception handlers
-  InitializeForWebAPI($rootDir);
     
+  if (isset($path)) {
+    // Strip the URL_BASE off the path
+    $baseLen = strlen(URL_BASE);
+    if ($baseLen && strpos($path, URL_BASE) === 0) {
+      $path = substr($path, $baseLen);
+    }
+  }  
+
+
+  //
+  // Initialize global device classifier
+  //
   
-  // Strip the URL_BASE off the path
-  $baseLen = strlen(URL_BASE);
-  if ($baseLen && strpos($path, URL_BASE) === 0) {
-    $path = substr($path, $baseLen);
-  }
-
-
-  // Check for device classification in url and strip it if present
   $layout = null;
   $urlPrefix = URL_BASE;
+  
+  // Check for device classification in url and strip it if present
   if ($GLOBALS['siteConfig']->getVar('DEVICE_DEBUG') && 
       preg_match(';^device/([^/]+)(/.*)$;', $path, $matches)) {
     $layout = $matches[1];  // layout forced by url
     $path = $matches[2];
     $urlPrefix .= 'device/'.$layout.'/';
   }
-  define('URL_PREFIX', $urlPrefix);
   
+  define('URL_PREFIX', $urlPrefix);
   //error_log(__FUNCTION__."(): prefix: $urlPrefix");
   //error_log(__FUNCTION__."(): path: $path");
-  
 
-  // Initialize global device classifier
-  _initializeDeviceClassifier($layout);
+  if (isset($layout) || isset($_SERVER['HTTP_USER_AGENT']) && strlen($_SERVER['HTTP_USER_AGENT'])) {
+    require_once realpath(LIB_DIR.'/DeviceClassifier.php');
+    
+    $GLOBALS['deviceClassifier'] = new DeviceClassifier($layout);
+  }
 }

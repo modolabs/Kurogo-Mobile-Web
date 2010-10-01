@@ -1,24 +1,18 @@
 <?php
 
-$rootDir = realpath(dirname(__FILE__).'/..');
-require_once $rootDir.'/lib/initialize.php';
+require_once realpath(dirname(__FILE__).'/../lib/initialize.php');
 
 //error_log(print_r($_GET, true));
 //error_log('Handling '.$_SERVER['REQUEST_URI']);
-
-//
-// Get q variable
-//
-
-$path = isset($_GET['q']) ? $_GET['q'] : '';
-
 
 //
 // Configure web application
 // modifies $path for us to strip prefix and device
 //
 
-InitializeForWebSite($rootDir, $path, dirname(__FILE__)); 
+$path = isset($_GET['q']) ? $_GET['q'] : '';
+
+Initialize($path); 
 
 //
 // Handle page request
@@ -28,8 +22,6 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   //
   // Images
   //
-  
-  //error_log("Detected image request");
   
   $file = $matches[3];
 
@@ -63,8 +55,6 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   //
   // HTML Pages
   //
-  
-  //error_log("Detected page request");
   
   require_once realpath(LIB_DIR.'/Module.php');
   
