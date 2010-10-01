@@ -1,16 +1,8 @@
 <ul class="results">
-     <? foreach($results as $event) { 
-       $params = '';
-       if (isset($_REQUEST['filter'])) {
-          $params = 'back=Search&filter='.urlencode(stripslashes($_REQUEST['filter']));
-       } else if (isset($_REQUEST['name'], $_REQUEST['id'])) {
-          $params = 'back=Category&catName='.urlencode(stripslashes($_REQUEST['name'])).
-            (isset($_REQUEST['time']) ? '&catTime='.urlencode(stripslashes($_REQUEST['time'])) : '').
-            '&catID='.urlencode(stripslashes($_REQUEST['id']));
-       }
-	?>
+
+     <? foreach($results as $event) { ?>
 			
-          <li><a href="<?=detailURL($event, $params)?>"><?=$event->get_summary() ?><br/><span class="smallprint"><?=timeText($event)?><? if($loc = briefLocation($event)) { ?> | <?=briefLocation($event)?><? } ?></span></a></li>
+          <li><a href="<?=detailURL($event)?>"><?=$event->get_summary() ?><br/><span class="smallprint"><?=timeText($event)?><? if($loc = briefLocation($event)) { ?> | <?=briefLocation($event)?><? } ?></span></a></li>
      <? } ?>
 </ul>
 

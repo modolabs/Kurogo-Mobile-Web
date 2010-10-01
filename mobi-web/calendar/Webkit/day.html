@@ -15,10 +15,8 @@ $page->content_begin();
 	
 	<ul class="results">
             <? foreach($events as $event) { 
-            $params = isset($_REQUEST['time'], $_REQUEST['type']) ? 
-              'back=Day&time='.urlencode(stripslashes($_REQUEST['time'])).'&type='.urlencode(stripslashes($_REQUEST['type'])) : '';
           ?>
-		<li><a href="<?=detailURL($event, $params)?>"><?=$event->get_summary()?><br/><span class="smallprint"><?=timeText($event)?><? if(briefLocation($event)) { ?> | <?=briefLocation($event)?><? } ?></span></a></li>
+		<li><a href="<?=detailURL($event)?>"><?=$event->get_summary()?><br/><span class="smallprint"><?=timeText($event)?><? if(briefLocation($event)) { ?> | <?=briefLocation($event)?><? } ?></span></a></li>
             <? } ?>
             <? if (count($events) == 0) { ?>
             <li> No Events Found </li>
