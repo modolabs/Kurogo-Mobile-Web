@@ -19,12 +19,11 @@ if ($back == 'Search') {
 } else if ($back == 'Category') {
   $catName = stripslashes($_REQUEST['catName']);
   $catID = stripslashes($_REQUEST['catID']);
-  $catTime = stripslashes($_REQUEST['catTime']);
 
   $page->breadcrumbs('Category', $catName, "Detail");
   $page->breadcrumb_links(categorysURL(),
     'category.php?name='.urlencode($catName).'&id='.urlencode($catID).
-      (isset($_REQUEST['catTime']) ? '&time='.urlencode($catTime) : ''));
+      (isset($_REQUEST['time']) ? '&time='.stripslashes($_REQUEST['time']) : ''));
   $page->breadcrumb_classes('', 'crumb1');
   
 } else {

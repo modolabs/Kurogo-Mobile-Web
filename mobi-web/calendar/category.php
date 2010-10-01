@@ -15,7 +15,6 @@ $GLOBALS['calendarExtraDetailParams'] = array(
   'back'    => 'Category',
   'catName' => $name,
   'catID'   => $id,
-  'catTime' => requestString('time'),
 );
 
 
