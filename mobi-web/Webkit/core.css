@@ -1082,6 +1082,10 @@ h2.icon {
 	margin-top: 22px;
 }
 
+.tabbody h3:first-child {
+	margin-top: 8px;
+}
+
 .tabbody li:first-child h3 {
 	margin-top: 2px;
 }
