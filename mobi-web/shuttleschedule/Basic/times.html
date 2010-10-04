@@ -6,13 +6,13 @@ $page->title('Shuttles: ' . $routeName)
 $page->content_begin();
 ?>
 	<div class="focal">
-		<h2><?=$routeName?><div id="refresh"><a href="<?=selfURL()?>"><? echo $page->img_tag('refresh', 'png', 'Update'); ?></a></div></h2>
+		<h2><?=$routeName?></h2>
                 
     <p class="smallprint">
      <?=$summary?><br/>
 
   <? if($foundVehicles) { ?>
-        Refreshed at <?=formatShuttleTime($page, $lastUpdated)?>. 
+        Refreshed at <?=formatShuttleTime($page, $lastUpdated)?> (<a href="<?=selfURL()?>">refresh</a>). 
   <? } else { ?>
         Tracking is not available right now.
   <? } ?>
@@ -20,29 +20,17 @@ $page->content_begin();
 
     <p class="legend">Route loop repeats every <?=$loopTime?> minutes.</p>
 
-		<p class="tabs"> <!-- No extra whitespace in code below; non-breaking spaces required -->
-      <?=$tabs_html?>
-    </p>
+    <table cellpadding="0" cellspacing="0" border="0" class="schedule">
+  <? foreach($stops as $index => $stop) {  
+      if (!isset($stop['title'])) { continue; } /* skip gps entry */ ?>
+      <tr <? if( isset($stop['upcoming']) && $stop['upcoming']) { ?> class="current" <? } ?> >
+        <td><span class="sid"> </span> <?=$stop['title']?></td>
+      </tr>
+  <? } ?>
+    </table>
 
-<?  switch ($tab) { 
-      case "Route Map": ?>
-				<p class="map"><?=$imageTag?></p>
+	  <p class="image"><?=$imageTag?></p>
 
-<?      break; 
-
-      case "Schedule": ?>
-				<table cellpadding="0" cellspacing="0" border="0" class="schedule">
-      <? foreach($stops as $index => $stop) {  
-          if (!isset($stop['title'])) { continue; } /* skip gps entry */ ?>
-		      <tr <? if( isset($stop['upcoming']) && $stop['upcoming']) { ?> class="current" <? } ?> >
-					  <td><span class="sid"> </span> <?=$stop['title']?></td>
-		      </tr>
-      <? } ?>
-				</table>
-        
-<?      break;
-
-    } ?>
   </div>
 
 <?
