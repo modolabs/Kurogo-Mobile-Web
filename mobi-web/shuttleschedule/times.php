@@ -24,6 +24,7 @@ if (!in_array($routeID, $reader->getRoutes())) {
   $foundVehicles = $reader->routeIsRunning($routeID);
   $vehicles = $reader->getVehiclesForRoute($routeID);
   $vehicleCount = count($vehicles);
+  $stops = $reader->getStopsForRoute($routeID);
 
   $summary = $vehicleCount.' shuttle'.($vehicleCount != 1 ? 's':'').' found.';
   $loopTime = 'N';
