@@ -24,7 +24,11 @@ $page->content_begin();
   <? foreach($stops as $index => $stop) {  
       if (!isset($stop['title'])) { continue; } /* skip gps entry */ ?>
       <tr <? if( isset($stop['upcoming']) && $stop['upcoming']) { ?> class="current" <? } ?> >
-        <td><span class="sid"> </span> <?=$stop['title']?></td>
+        <td><? if( isset($stop['upcoming']) && $stop['upcoming']) { 
+          ?><img src="../Basic/images/bus.gif" alt="bus" width="16" height="13" />&nbsp;<strong><?
+          } ?><?=$stop['title']?><? if( isset($stop['upcoming']) && $stop['upcoming']) { 
+          ?></strong><?
+          } ?></td>
       </tr>
   <? } ?>
     </table>
