@@ -1,12 +1,59 @@
 <?php
-$page->title('Shuttles')
+$page->title('Shuttle Tracker')
      ->navbar_image('shuttleschedule')
      ->add_stylesheet('Webkit/shuttletrack')
-     ->breadcrumbs('Shuttle Schedule')
+     ->add_javascript('../Webkit/uiscripts')
+     ->extra_onload("showTab('runningtab')")
+     ->breadcrumbs('Shuttle Tracker')
      ->breadcrumb_home();
 
 $page->content_begin();
-?>	
+?>
+
+<a name="scrolldown"> </a>
+<div class="nonfocal">
+  <ul id="tabs" style="font-size:12pt">
+    <li class="active"><a href="#running" onclick="showTab('runningtab',this)">Running</a></li>
+    <li><a href="#offline" onclick="showTab('offlinetab',this)">Offline</a></li>
+    <li><a href="#news" onclick="showTab('newstab',this)">News</a></li>
+    <li><a href="#info" onclick="showTab('infotab',this)">Info</a></li>
+  </ul>
+
+  <div id="tabbodies">
+  	<div class="tabbody" id="runningtab">
+  <?  foreach ($agencies as $agencyID => $agencyName) { ?>
+        <h3><?= $agencyName ?> Shuttles</h3>
+        <ul class="nav nested">
+      <?  foreach ($runningRoutes[$agencyID] as $routeID => $routeName) { ?>
+          <li><a href="times.php?route=<?=$routeID?>"><?= $routeName ?></a></li>
+      <?  } ?>
+        </ul>
+  <?  } ?>
+  	</div> <!-- id="runningtab" -->
+
+  	<div class="tabbody" id="offlinetab" style="display:none">
+  <?  foreach ($agencies as $agencyID => $agencyName) { ?>
+        <h3><?= $agencyName ?> Shuttles</h3>
+        <ul class="nav nested">
+      <?  foreach ($nonRunningRoutes[$agencyID] as $routeID => $routeName) { ?>
+          <li><a href="times.php?route=<?=$routeID?>"><?= $routeName ?></a></li>
+      <?  } ?>
+        </ul>
+  <?  } ?>
+  	</div> <!-- id="offlinetab" -->
+
+  	<div class="tabbody" id="newstab" style="display:none">
+  		News
+  	</div> <!-- id="newstab" -->
+
+  	<div class="tabbody" id="infotab" style="display:none">
+  		Info
+  	</div> <!-- id="infotab" -->
+
+  	<div class="clear"></div>
+
+</div>
+	<!--
   <? foreach ($reader->getAgencies() as $agencyID) { ?>
     <div class="nonfocal">
       <h3><?=$reader->getNameForAgency($agencyID)?> Shuttles:</h3>
@@ -24,9 +71,9 @@ $page->content_begin();
     </ul>
   <? } ?>
 	
-	<div class="nonfocal legend">
-	       <div class="icon running">Running</div>
-               <div class="icon nonrunning">Not currently running</div>
+  <div class="nonfocal legend">
+    <div class="icon running">Running</div>
+    <div class="icon nonrunning">Not currently running</div>
 	</div>
 
 	<ul class="secondary">
@@ -37,7 +84,7 @@ $page->content_begin();
 			<a href="tel:16172532997" class="phone">Saferide <span class="smallprint">(617.253.2997&shy;)</span></a>
 		</li>
 	</ul>
-
+  -->
 <? 
 $page->content_end();
 $page->extra_footer("Map service provided by Facilities Department and");

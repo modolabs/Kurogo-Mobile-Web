@@ -7,6 +7,16 @@ $now = time();
 
 $reader = new TranslocReader();
 
+$agencies = $reader->getAgenciesAndNames();
+$runningRoutes = array();
+foreach ($agencies as $agencyID => $agencyName) {
+  $runningRoutes[$agencyID] = $reader->getRunningRoutesAndNamesForAgency($agencyID);
+}
+$nonRunningRoutes = array();
+foreach ($agencies as $agencyID => $agencyName) {
+  $nonRunningRoutes[$agencyID] = $reader->getNonRunningRoutesAndNamesForAgency($agencyID);
+}
+
 require "$page->branch/index.html";
 $page->output();
 ?>

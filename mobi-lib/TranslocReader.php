@@ -81,6 +81,14 @@ class TranslocReader {
     return array_keys($this->agencies);
   }
   
+  function getAgenciesAndNames() {
+    $agenciesAndNames = array();
+    foreach($this->agencies as $agencyID => $agencyInfo) {
+      $agenciesAndNames[$agencyID] = $agencyInfo['long_name'];
+    }
+    return $agenciesAndNames;
+  }
+  
   function getNameForAgency($agencyID) {
     return $this->agencies[$agencyID]['long_name'];
   }
@@ -88,6 +96,28 @@ class TranslocReader {
   function getRoutesForAgency($agencyID) {
     return $this->agencies[$agencyID]['routes'];
   }
+  
+  function getRunningRoutesAndNamesForAgency($agencyID) {
+    $runningRoutes = array();
+    foreach ($this->getRoutesForAgency($agencyID) as $routeID) {
+      if ($this->routeIsRunning($routeID)) {
+        $runningRoutes[$routeID] = $this->getNameForRoute($routeID);
+      }
+    }
+    //sort($runningRoutes);
+    return $runningRoutes;
+  }
+
+  function getNonRunningRoutesAndNamesForAgency($agencyID) {
+    $nonRunningRoutes = array();
+    foreach ($this->getRoutesForAgency($agencyID) as $routeID) {
+      if (!$this->routeIsRunning($routeID)) {
+        $nonRunningRoutes[$routeID] = $this->getNameForRoute($routeID);
+      }
+    }
+    //sort($nonRunningRoutes);
+    return $nonRunningRoutes;
+  }  
   
   function getNameForRoute($routeID) {
     return $this->routes[$routeID]['long_name'];
