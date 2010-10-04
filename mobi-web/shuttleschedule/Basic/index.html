@@ -15,9 +15,9 @@ $page->content_begin();
       case "Running": ?>
     <?  foreach ($agencies as $agencyID => $agencyName) { ?>
           <h3><?= $agencyName ?> Shuttles</h3>
-          <p class="nav nested">
-        <?  foreach ($runningRoutes[$agencyID] as $routeID => $routeName) { ?>
-              <a href="times.php?route=<?=$routeID?>"><?= $routeName ?></a><br/>
+          <p class="nav nested"><?  
+          foreach ($runningRoutes[$agencyID] as $routeID => $routeName) { 
+            ?><a href="times.php?route=<?=$routeID?>"><?= $routeName ?></a><br/>
         <?  } ?>
           </p>
     <?  }
@@ -26,9 +26,9 @@ $page->content_begin();
       case "Offline": ?>
     <?  foreach ($agencies as $agencyID => $agencyName) { ?>
           <h3><?= $agencyName ?> Shuttles</h3>
-          <p class="nav nested">
-        <?  foreach ($nonRunningRoutes[$agencyID] as $routeID => $routeName) { ?>
-              <a href="times.php?route=<?=$routeID?>"><?= $routeName ?></a><br/>
+          <p class="nav nested"><?
+            foreach ($nonRunningRoutes[$agencyID] as $routeID => $routeName) {
+               ?><a href="times.php?route=<?=$routeID?>"><?= $routeName ?></a><br/>
         <?  } ?>
           </p>
     <?  }

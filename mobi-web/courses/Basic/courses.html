@@ -23,12 +23,12 @@ $page->content_begin();
     </span>
     </p>
 
-	<p class="nav">
-             <? foreach($courses as $course) { $courseName = $course->name;
-             if ($courseName == '')
-                    $courseName = $selected_school_short_name . '-other'; ?>
-		<a href="<?=courseURL('School', $selected_school_name, $selected_school_short_name, $courseName, $courseName)?>"><?=$courseName?></a><br/>
-             <? } ?>
+	<p class="nav"><? 
+	  foreach($courses as $course) { $courseName = $course->name;
+      if ($courseName == '')
+        $courseName = $selected_school_short_name . '-other';
+		  ?><a href="<?=courseURL('School', $selected_school_name, $selected_school_short_name, $courseName, $courseName)?>"><?=$courseName?></a><br/>
+    <? } ?>
 	</p>
 
     </form>
