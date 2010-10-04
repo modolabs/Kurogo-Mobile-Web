@@ -1,31 +1,50 @@
 <?php
 $page->title("MIT Shuttle Schedule")
-     ->header("Shuttle Schedule");
+     ->header("Shuttle Schedule")
+     ->add_stylesheet('Basic/shuttletrack');
 
 $page->content_begin();
 ?>
-  <? foreach ($reader->getAgencies() as $agencyID) { ?>
-    <p class="nav">
-      <strong><?=$reader->getNameForAgency($agencyID)?> Shuttles:</strong><br/>
-      <? foreach ($reader->getRoutesForAgency($agencyID) as $routeID) { ?>
-        <? if($reader->routeIsRunning($routeID)) { ?>
-          <img src="../Basic/images/shuttle.gif" width="15" height="12" alt="Running" align="absmiddle" />
-        <? } else { ?>
-          <img src="../Basic/images/shuttle-off.gif" width="15" height="12" alt="Not running" align="absmiddle" />
-        <? } ?>
-          <a href="times.php?route=<?=$routeID?>"><?=$reader->getNameForRoute($routeID)?></a>
-        <br/>
-      <? } ?>
+
+	<div class="focal">
+		<p class="tabs"> <!-- No extra whitespace in code below; non-breaking spaces required -->
+      <?=$tabs_html?>
     </p>
-  <? } ?>
 
-	<p class="legend">
- 	        <img src="../Basic/images/shuttle.gif" width="15" height="12" alt="Running" align="absmiddle" />Running
- 	        <img src="../Basic/images/shuttle-off.gif" width="15" height="12" alt="Not running" align="absmiddle" />Not currently running
-	</p>
+<?  switch ($tab) { 
+      case "Running": ?>
+    <?  foreach ($agencies as $agencyID => $agencyName) { ?>
+          <h3><?= $agencyName ?> Shuttles</h3>
+          <p class="nav nested">
+        <?  foreach ($runningRoutes[$agencyID] as $routeID => $routeName) { ?>
+              <a href="times.php?route=<?=$routeID?>"><?= $routeName ?></a><br/>
+        <?  } ?>
+          </p>
+    <?  }
+        break; 
+        
+      case "Offline": ?>
+    <?  foreach ($agencies as $agencyID => $agencyName) { ?>
+          <h3><?= $agencyName ?> Shuttles</h3>
+          <p class="nav nested">
+        <?  foreach ($nonRunningRoutes[$agencyID] as $routeID => $routeName) { ?>
+              <a href="times.php?route=<?=$routeID?>"><?= $routeName ?></a><br/>
+        <?  } ?>
+          </p>
+    <?  }
+        break; 
+        
+      case "News": ?>
+        News
+<?      break; 
 
+      case "Info": ?>
+        Info
+<?      break;
+
+    } ?>
+	</div>
 <? 
 $page->content_end();
-$page->help_link("tel:16172586510", "Parking office: 617.258.6510")
-     ->help_link("tel:16172532997", "Saferide: 617.253.2997");
+$page->extra_footer("Map service provided by Facilities Department and");
 ?>

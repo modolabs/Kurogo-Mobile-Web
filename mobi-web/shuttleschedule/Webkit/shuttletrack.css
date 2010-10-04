@@ -15,6 +15,9 @@
 
 #schedule td {
 	border-top: 1px dotted #ddd;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .current td {
@@ -145,7 +148,7 @@ body.landscape #map {
 body.landscape #mapimage {
 	width: 225px;
 	height: 225px;
-	margin-left: 10px;
+	margin-left: 0;
 }
 
 body.landscape #rotatemsg1 {

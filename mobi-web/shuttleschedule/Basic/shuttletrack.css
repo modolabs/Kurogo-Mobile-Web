@@ -25,3 +25,7 @@ table.schedule td {
 .current strong {
 	font-weight: normal;
 }
+
+.nested {
+  margin-top: 0;
+}

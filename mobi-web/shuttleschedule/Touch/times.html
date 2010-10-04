@@ -5,16 +5,46 @@ $page->title('Shuttles: ' . $routeName)
 
 $page->content_begin();
 ?>
-	
-	<div class="focal">
-		<h2><?=$routeName?></h2>
-		<p class="smallprint"><?=$summary?>
-		<? if($foundVehicles) { ?> Refreshed at <?=formatShuttleTime($page, $lastUpdated)?>.
-		<? } else { ?> Tracking is not available right now.
-		<? } ?></p>
-		<p class="smallprint">Route loop repeats every <?=$loopTime?> minutes.</p>
-		<div class="centered">
-		<?=$imageTag?>
-		</div>
+	<div class="shaded">
+		<h2><?=$routeName?><div id="refresh"><a href="<?=selfURL()?>"><? echo $page->img_tag('refresh', 'png', 'Update'); ?></a></div></h2>
+                
+    <p class="smallprint">
+     <?=$summary?><br/>
+
+  <? if($foundVehicles) { ?>
+        Refreshed at <?=formatShuttleTime($page, $lastUpdated)?>. 
+  <? } else { ?>
+        Tracking is not available right now.
+  <? } ?>
+    </p>
+
+    <p class="legend">Route loop repeats every <?=$loopTime?> minutes.</p>
+
+		<div id="tabs"> <!-- No extra whitespace in code below; non-breaking spaces required -->
+      <?=$tabs_html?>
+    </div>
+  </div>
+
+  <div class="tabbody">
+<?  switch ($tab) { 
+      case "Route Map": ?>
+				<div id="map"><?=$imageTag?></div>
+
+<?      break; 
+
+      case "Schedule": ?>
+				<table cellpadding="0" cellspacing="0" border="0" id="schedule">
+      <? foreach($stops as $index => $stop) { 
+          if (!isset($stop['title'])) { continue; } /* skip gps entry */ ?>
+		      <tr <? if( isset($stop['upcoming']) && $stop['upcoming']) { ?> class="current" <? } ?> >
+					  <td><span class="sid"> </span> <?=$stop['title']?></td>
+		      </tr>
+      <? } ?>
+				</table>
+        
+<?      break;
+
+    } ?>
 	</div>
+
 <? $page->content_end(); ?>

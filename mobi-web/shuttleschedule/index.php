@@ -21,6 +21,20 @@ foreach ($agencies as $agencyID => $agencyName) {
 $announcements = $reader->getAnnouncements();
 // print_r($announcements);
 
+$tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'Running';
+
+$tabs = new Tabs(selfURL(), "tab", array("Running", "Offline", "News", "Info"));
+
+$tabs_html = $tabs->html($page->branch);
+
+
 require "$page->branch/index.html";
 $page->output();
+
+function selfURL() {
+  $params = $_GET;
+  unset($params['tab']);
+  return 'index.php?' . http_build_query($params);
+}
+
 ?>
