@@ -17,7 +17,7 @@ body {
 	border: 0;
 	float: left;
 	font-size: 13px;
-	line-height: 14px;
+	line-height: 15px;
 	text-align: center;		
 	vertical-align: top;
 }
@@ -26,6 +26,7 @@ body {
 	color: #333;
 	text-decoration: none;
 	padding: 8px 5px;
+	word-wrap: normal;
 }
 #homegrid a img {
 	width: 70px;

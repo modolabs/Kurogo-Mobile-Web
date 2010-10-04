@@ -6,6 +6,8 @@
  *
  *****************************************************************/
 
+define('PATH_TO_DINING_HRS', DATA_DIR.'/DiningHours');
+
 class MealRestrictions {
     
     public $days = array();

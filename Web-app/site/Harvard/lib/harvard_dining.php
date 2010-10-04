@@ -7,16 +7,19 @@
  *
  *****************************************************************/
 
+define('DINING_MENU_DIRECTORY', CACHE_DIR.'/DINING/');
+define('DINING_MENU_FLAT_FILE', DATA_DIR.'/MENU');
+define('DINING_MENU_RAW_FILE', DATA_DIR.'/menu.csv');
+define('DINING_LIFESPAN', 60*60*24);
 
 class HARVARD_DINING {
 
-public function getMealData($baseUrl, $dateToday, $mealExtension)
-{
-$urlLink = $baseUrl.$dateToday.$mealExtension;
-$contents = file_get_contents($urlLink);
-
-return $contents;
-}
+  public function getMealData($baseUrl, $dateToday, $mealExtension) {
+    $urlLink = $baseUrl.$dateToday.$mealExtension;
+    $contents = file_get_contents($urlLink);
+    
+    return $contents;
+  }
 }
 
 
@@ -267,9 +270,14 @@ class DINING_DATA {
         /*
         * Write out a file for each date in appropriate sorted order.
         */
-
+        if (!file_exists(DINING_MENU_DIRECTORY)) {
+          if (!mkdir(DINING_MENU_DIRECTORY, 0755, true)) {
+            error_log("could not create $path");
+          }
+        }
+        
         foreach ($menus as $menuDate => $menuItemList) {
-        // Format as YYYY-MM-DD for file name
+            // Format as YYYY-MM-DD for file name
             $filename = DINING_MENU_DIRECTORY .date("Y-m-d", $menuDate).".csv";
             $handle = fopen($filename, "w");
             usort($menuItemList, array("MenuItem", "compare"));
@@ -292,7 +300,7 @@ class DINING_DATA {
         $day = $date;
         $filename = DINING_MENU_DIRECTORY .$day .".csv";
 
-        self::createDiningFLatFile(DINING_MENU_FLAT_FILE);
+        self::createDiningFlatFile(DINING_MENU_FLAT_FILE);
 
         if (file_exists($filename))
             $handle = fopen($filename, "r");
@@ -320,4 +328,3 @@ class DINING_DATA {
     return $menu;
     }
 }
-?>
