@@ -392,6 +392,10 @@ class TranslocReader {
       ;
   }
 
+  function getAnnouncements() {
+    return json_decode($this->getAnnouncementsJSON(), true);
+  }
+
 
   function getAnnouncementsJSON() {
       return file_get_contents(ANNOUNCEMENTS_FEED);
