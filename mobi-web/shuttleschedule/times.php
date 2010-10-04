@@ -8,6 +8,14 @@ $routeID = $_REQUEST['route'];
 
 $reader = new TranslocReader();
 
+
+$tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'Running';
+
+$tabs = new Tabs(selfURL(), "tab", array("Route Map", "Schedule"));
+
+$tabs_html = $tabs->html($page->branch);
+
+
 if (!in_array($routeID, $reader->getRoutes())) {
   $routeName = $routeID;
   $routeError = "does not exist";
@@ -65,7 +73,12 @@ if (!in_array($routeID, $reader->getRoutes())) {
 }
 
 function selfURL() {
-  return "times.php?route={$_REQUEST['route']}&now=" . time() . "&rand=" . rand();
+  $params = $_GET;
+  $params['now'] = time();
+  $params['rand'] = rand();
+  unset($params['tab']);
+
+  return 'times.php?' . http_build_query($params);
 }
 
 // device-dependent time formatting function
