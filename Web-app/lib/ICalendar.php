@@ -97,6 +97,18 @@ class ICalEvent extends ICalObject {
   protected $exdates = Array();
   protected $incrementor;
   protected $interval = 1;
+  
+  protected $standardAttributes = array(
+    'summary', 
+    'location', 
+    'description', 
+    'uid', 
+    'start', 
+    'end', 
+    'url', 
+    'categories',
+    'datetime',
+  );
 
   public function get_uid() {
     return $this->uid;
@@ -196,25 +208,21 @@ class ICalEvent extends ICalObject {
     return $this->compare_ranges($range, 'contained_by');
   }
   
-  public function get_attribute($attr)
-  {
-  	switch ($attr)
-  	{
-  		case 'summary':
-  		case 'location':
-  		case 'description':
-  		case 'uid':
-  		case 'start':
-  		case 'end':
-  		case 'url':
-  		case 'categories':
-  			$method = "get_$attr";
-  			return $this->$method();
-		  case 'datetime':
-		  	return $this->range;
-  		default:
-		  	return isset($this->properties[$attr]) ? $this->properties[$attr] : null;
-  	}
+  public function get_attribute($attr) {
+    if (in_array($attr, $this->standardAttributes)) {
+      if ($attr == 'datetime') {
+        return $this->range;
+      } else {
+        $method = "get_$attr";
+        return $this->$method();
+      }
+    } else {
+      return isset($this->properties[$attr]) ? $this->properties[$attr] : null;
+    }
+  }
+  
+  public function get_all_attributes() {
+    return array_merge($this->standardAttributes, array_keys($this->properties));
   }
 
   public function set_attribute($attr, $value, $params=NULL) {

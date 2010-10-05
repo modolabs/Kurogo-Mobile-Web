@@ -10,7 +10,7 @@ class HarvardEvent extends TrumbaEvent
     {
     	$categories = HarvardEvent::get_all_categories();
     	foreach ($categories as $category) {
-    		if ($name==$category->get_name()) {
+    		if ($name == $category->get_name()) {
     			return $category;
     		}
     	}
@@ -67,11 +67,9 @@ class HarvardEvent extends TrumbaEvent
     }
   }
 
-  public function get_attribute($attr)
-  {
-  	switch ($attr)
-  	{
-  		case 'description':
+  public function get_attribute($attr) {
+  	switch ($attr) {
+  		/*case 'description':
   			$fields = array(
   				$this->description
 			);
@@ -82,7 +80,7 @@ class HarvardEvent extends TrumbaEvent
 				}
   			}
   			return implode("\n\n", $fields);
-  			break;
+  			break;*/
   		case 'Gazette Classification':
   			return $this->HarvardCategories;
   		default:

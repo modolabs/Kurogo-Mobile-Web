@@ -341,11 +341,11 @@ class CalendarModule extends Module {
         $this->assign('nextUrl', $this->dayURL($next, $type, false));
         $this->assign('prevUrl', $this->dayURL($prev, $type, false));
         
-		$controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-		$parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-		$eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-		$baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
-		$feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+        $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+        $parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+        $eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+        $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+        $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
         
         $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
         $start->setTime(0,0,0);
@@ -379,68 +379,88 @@ class CalendarModule extends Module {
         $this->loadThemeConfigFile('calendarDetail');
         $calendarFields = $this->getTemplateVars('calendarDetail');
 
-		$controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-		$parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-		$eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-		$baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
-		$feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
-		
+        $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+        $parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+        $eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+        $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+        $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+        
         $time = isset($this->args['time']) ? $this->args['time'] : time();
-		if ($event = $feed->getItem($this->args['id'], $time)) {
-			$this->assign('event', $event);
-		} else {
-			throw new Exception("Event not found");
-		}
-
+        if ($event = $feed->getItem($this->args['id'], $time)) {
+          $this->assign('event', $event);
+        } else {
+          throw new Exception("Event not found");
+        }
+    
         // build the list of attributes
+        $allKeys = array_keys($calendarFields);
+
         $fields = array();
         foreach ($calendarFields as $key => $info) {
-          $value = $event->get_attribute($key);
-          if (!isset($value)) { continue; }
-          
-		$field = array();
-		
-		if (isset($info['label'])) {
-		  $field['label'] = $info['label'];
-		}
-		
-		if (isset($info['class'])) {
-		  $field['class'] = $info['class'];
-		}
+          if ($key == '*') {
+            $skipKeys = $allKeys;
+            if (isset($info['suppress'])) {
+              $skipKeys = array_merge($skipKeys, $info['suppress']);
+            }
+            $extraKeys = array_diff($event->get_all_attributes(), $skipKeys);
+            
+            foreach ($extraKeys as $key) {
+              if ($key != '*' && substr_compare($key, 'X-', 0, 2) != 0) {
+                $fields[$key] = array(
+                  'label' => $this->ucname($key),
+                  'title' => $event->get_attribute($key),
+                );  
+              }
+            }
+            
+          } else {
+            $field = array();
+            
+            $value = $event->get_attribute($key);
+            if (!isset($value)) { continue; }
 
-		if (is_array($value)) {		
-		  $fieldValues = array();
-		  foreach ($value as $item) {
-			$fieldValue = '';
-			$fieldValueUrl = null;
-			
-			if (isset($info['type'])) {
-			  $fieldValue  = $this->valueForType($info['type'], $item);
-			  $fieldValueUrl = $this->urlForType($info['type'], $item);
-			} else {
-			  $fieldValue = $item;
-			}
-			
-			if (isset($fieldValueUrl)) {
-			  $fieldValue = '<a href="'.$fieldValueUrl.'">'.$fieldValue.'</a>';
-			}
-			
-			$fieldValues[] = $fieldValue;
-		  }
-		  $field['title'] = implode(', ', $fieldValues);
-
-		} else {
-		  if (isset($info['type'])) {
-			$field['title'] = $this->valueForType($info['type'], $value);
-			$field['url']   = $this->urlForType($info['type'], $value);
-		  } else {
-			$field['title'] = nl2br($value);
-		  }
-		}
-		
-		$fields[] = $field;
-	  }
-
+            if (isset($info['label'])) {
+              $field['label'] = $info['label'];
+            }
+            
+            if (isset($info['class'])) {
+              $field['class'] = $info['class'];
+            }
+            
+            if (is_array($value)) {		
+              $fieldValues = array();
+              foreach ($value as $item) {
+                $fieldValue = '';
+                $fieldValueUrl = null;
+                
+                if (isset($info['type'])) {
+                  $fieldValue  = $this->valueForType($info['type'], $item);
+                  $fieldValueUrl = $this->urlForType($info['type'], $item);
+                } else {
+                  $fieldValue = $item;
+                }
+                
+                if (isset($fieldValueUrl)) {
+                  $fieldValue = '<a href="'.$fieldValueUrl.'">'.$fieldValue.'</a>';
+                }
+                
+                $fieldValues[] = $fieldValue;
+              }
+              $field['title'] = implode(', ', $fieldValues);
+            
+            } else {
+              if (isset($info['type'])) {
+                $field['title'] = $this->valueForType($info['type'], $value);
+                $field['url']   = $this->urlForType($info['type'], $value);
+              } else {
+                $field['title'] = nl2br($value);
+              }
+            }
+            
+            $fields[] = $field;
+          }
+        }
+    
         $this->assign('fields', $fields);
         //error_log(print_r($fields, true));
     }
