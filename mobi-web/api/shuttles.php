@@ -166,7 +166,6 @@ switch ($command) {
        $vehicles = $transloc->getVehiclesForRoute($route_id);
        $vehiclesArray = array();
        foreach($vehicles as $vehicle) {
-
            $heading = $vehicle['h'];
           $arrowIndex = ($heading / 45) + 1.5;
             if ($arrowIndex > 8) { $arrowIndex = 8; }
@@ -186,7 +185,8 @@ switch ($command) {
       $vehicleIconUrl = urldecode($iconURL);
 
       if (($vehicleLat) && ($vehicleLon)) {
-        $vehicleData = array('lat'=>$vehicle['ll'][0],
+        $vehicleData = array('id' => $vehicle['id'],
+                             'lat'=>$vehicle['ll'][0],
                              'lon'=>$vehicle['ll'][1],
                              'secsSinceReport'=> 3600,
                              'heading'=>$vehicle['h'],
