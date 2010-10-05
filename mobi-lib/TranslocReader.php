@@ -470,59 +470,59 @@ class TranslocReader {
 
       switch ($routeName) {
           case 'Quad Stadium':
-              return 'Runs 5.40am - 8.40am, Monday-Friday';
+              return 'Runs 5:40am - 8:40am, Monday-Friday';
               break;
 
           case 'Mather Express':
-              return 'Runs 7.40am - 4.15pm, Monday-Friday';
+              return 'Runs 7:40am - 4:15pm, Monday-Friday';
               break;
 
           case 'Quad Express':
-              return 'Runs 7.40am - 4.33pm, Monday-Friday';
+              return 'Runs 7:40am - 4:33pm, Monday-Friday';
               break;
 
           case 'River Houses A':
-              return 'Runs 4.30pm - 12.37am, Monday-Friday';
+              return 'Runs 4:30pm - 12:37am, Monday-Friday';
               break;
 
           case 'River Houses B':
-              return 'Runs 4.30pm - 12.37am, Monday-Friday';
+              return 'Runs 4:30pm - 12:37am, Monday-Friday';
               break;
 
           case 'River Houses C':
-              return 'Runs 4.30pm - 12.37am, Monday-Friday';
+              return 'Runs 4:30pm - 12:37am, Monday-Friday';
               break;
 
           case 'Quad-Yard Express':
-              return 'Runs 4.45pm - 12.32am, Monday-Friday';
+              return 'Runs 4:45pm - 12:32am, Monday-Friday';
               break;
 
           case 'Soldiers Field Park I':
-              return 'Runs 5.00pm - 7.55pm, Saturday-Sunday';
+              return 'Runs 5:00pm - 7:55pm, Saturday-Sunday';
               break;
 
           case 'Soldiers Field Park II':
-              return 'Runs 7.20am - 9.50am, Monday-Friday';
+              return 'Runs 7:20am - 9:50am, Monday-Friday';
               break;
 
           case 'Soldiers Field Park III':
-              return 'Runs 3.50pm - 9.10pm, Monday-Friday';
+              return 'Runs 3:50pm - 9:10pm, Monday-Friday';
               break;
 
           case 'Soldiers Field Park IV':
-              return 'Runs 3.50pm - 9.10pm, Monday-Friday';
+              return 'Runs 3:50pm - 9:10pm, Monday-Friday';
               break;
 
          case 'Crimson Campus Cruiser':
-             return 'Runs 12.20pm - 4.23pm, Saturday-Sunday';
+             return 'Runs 12:20pm - 4:23pm, Saturday-Sunday';
              break;
 
          case '1636\'er':
-              return 'Runs 4.20pm - 12.33am, Saturday-Sunday';
+              return 'Runs 4:20pm - 12:33am, Saturday-Sunday';
              break;
 
          case 'Extended Overnight':
-              return 'Runs 12.40am - 3.52am, Daily';
+              return 'Runs 12:40am - 3:52am, Daily';
              break;
       }
       return '';
