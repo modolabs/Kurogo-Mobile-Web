@@ -405,7 +405,7 @@ class CalendarModule extends Module {
             $extraKeys = array_diff($event->get_all_attributes(), $skipKeys);
             
             foreach ($extraKeys as $key) {
-              if ($key != '*' && substr_compare($key, 'X-', 0, 2) != 0) {
+              if ($key != '*' && substr_compare($key, 'X-', 0, 2, true) != 0) {
                 $fields[$key] = array(
                   'label' => $this->ucname($key),
                   'title' => $event->get_attribute($key),

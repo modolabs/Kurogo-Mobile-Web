@@ -89,6 +89,15 @@ function Initialize(&$path=null) {
 
 
   //
+  // Set up library autoloader
+  //
+  
+  require_once realpath(LIB_DIR.'/autoloader.php');
+  
+  spl_autoload_register("siteLibAutoloader");
+
+
+  //
   // Initialize global device classifier
   //
   
@@ -113,18 +122,3 @@ function Initialize(&$path=null) {
     $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
   }
 }
-
-function modoAutoload($className) {
-    $paths = array(LIB_DIR, SITE_LIB_DIR);
-    
-    foreach ($paths as $path) {
-        $file = realpath_exists("$path/$className.php");
-        if ($file) {
-            require_once $file;
-            return;
-        }
-    }
-    return;
-}
-
-spl_autoload_register("modoAutoload");
