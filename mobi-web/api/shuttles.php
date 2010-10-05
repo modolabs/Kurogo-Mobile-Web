@@ -25,7 +25,7 @@ March 12-19<br/>
 May 15<br/>
 EOM;
 
-$img_src = $_SERVER['SERVER_NAME'] . HTTPROOT . '/api/handicap.jpg';
+$img_src = 'http://' . $_SERVER['SERVER_NAME'] . HTTPROOT . 'api/handicap.jpg';
 $about_harvard_shuttles = <<<EOM
 <h2>Daytime Van <img style="float:right;" src="$img_src"/></h2>
 The Daytime Van is designed for persons who, because of mobility impairment or medical condition, find it difficult or impossible to use the regular shuttle bus.  Transportation is door to door within the Cambridge and Allston campuses. This year-round service is scheduled by appointment only. Service hours vary for academic, weekend, summer and holiday periods. For service hours, reservations and other information, please call 617-495-0400. For information for the hearing impaired, please call 617-496-6642 (TTY#)
