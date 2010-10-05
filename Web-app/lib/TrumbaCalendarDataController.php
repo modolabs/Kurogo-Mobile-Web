@@ -4,6 +4,27 @@ require_once(LIB_DIR . '/ICalendar.php');
 
 class TrumbaCalendarDataController extends CalendarDataController
 {
+    protected $trumbaFilters=array();
+    
+    public function addTrumbaFilter($var, $value)
+    {
+        $this->trumbaFilters[$var] = $value;
+        $index = count($this->trumbaFilters);
+        $this->addFilter("filter" . $index, $value);
+        $this->addFilter('filterfield'.$index, $var);
+    }
+    
+    public function addFilter($var, $value)
+    {
+        switch ($var)
+        {
+            case 'category':
+                $this->addTrumbaFilter($GLOBALS['siteConfig']->getVar('CALENDAR_CATEGORY_FILTER_FIELD'), $value);
+                break;
+            default:
+                return parent::addFilter($var, $value);
+        }
+    }
     public function url()
     {
         if (empty($this->startDate) || empty($this->endDate)) {
@@ -12,11 +33,17 @@ class TrumbaCalendarDataController extends CalendarDataController
         
         $diff = $this->end_timestamp() - $this->start_timestamp();
         if ($diff<86400) {
-            $this->requiresDateFilter(true);
-            $this->setFilter('startdate', $this->startDate->format('Ym').'01');
-            $this->setFilter('months', 1);
+            if (count($this->trumbaFilters)>0) {
+                $this->requiresDateFilter(false);
+                $this->addFilter('startdate', $this->startDate->format('Ymd'));
+                $this->addFilter('days', 1);
+            } else {
+                $this->requiresDateFilter(true);
+                $this->addFilter('startdate', $this->startDate->format('Ym').'01');
+                $this->addFilter('months', 1);
+           }
         } else {
-            Debug::die_here($diff);
+            trigger_error("Have not handled ranges greater than 1 day yet", E_USER_ERROR);
         }
         
         return parent::url();

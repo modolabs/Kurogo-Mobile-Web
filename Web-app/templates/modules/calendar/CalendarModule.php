@@ -1,6 +1,7 @@
 <?php
 
 require_once realpath(LIB_DIR.'/Module.php');
+require_once realpath(LIB_DIR.'/TimeRange.php');
 
 class CalendarModule extends Module {
   protected $id = 'calendar';
@@ -261,7 +262,10 @@ class CalendarModule extends Module {
         $this->setBreadcrumbTitle("Category");
 
         $categories = array();
-        $categoryObjects = Harvard_Calendar::get_categories($GLOBALS['siteConfig']->getVar('PATH_TO_EVENTS_CAT'));
+        $eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+        
+        $categoryObjects = call_user_func(array($eventClass, 'get_all_categories'));
+
         foreach ($categoryObjects as $categoryObject) {
           $categories[] = array(
             'title' => $this->ucname($categoryObject->get_name()),
@@ -282,7 +286,7 @@ class CalendarModule extends Module {
         $this->setBreadcrumbLongTitle($name);
 
         $this->assign('category', $this->ucname($name));
-
+        
         $dayRange = new DayRange(time());
         $next = $this->dayInfo($time, 1);
         $prev = $this->dayInfo($time, -1);
@@ -297,6 +301,7 @@ class CalendarModule extends Module {
         $events = array();
         
         if (strlen($id) > 0) {
+/*        
           // copied from api/HarvardCalendar.php
           $start = date('Ymd', $time);
           $url = $GLOBALS['siteConfig']->getVar('HARVARD_EVENTS_ICS_BASE_URL').'?'.http_build_query(array(
@@ -305,7 +310,25 @@ class CalendarModule extends Module {
             'filter1'      => $id,
             'filterfield1' => 15202,
           ));
+          
           $iCalEvents = makeIcalDayEvents($url, $start, $id);
+          */
+
+            $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+            $parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+            $eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+            $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+            $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+            
+            $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
+            $start->setTime(0,0,0);
+            $end = clone $start;
+            $end->setTime(23,59,59);
+    
+            $feed->setStartDate($start);
+            $feed->setEndDate($end);
+            $feed->addFilter('category', $id);
+            $iCalEvents = $feed->items();
           
           foreach($iCalEvents as $iCalEvent) {
             $subtitle = $this->timeText($iCalEvent);

@@ -98,7 +98,9 @@ class ICalEvent extends ICalObject {
   protected $incrementor;
   protected $interval = 1;
   
-  protected $standardAttributes = array(
+  protected function standardAttributes()
+  {
+    return array(
     'summary', 
     'location', 
     'description', 
@@ -109,7 +111,7 @@ class ICalEvent extends ICalObject {
     'categories',
     'datetime',
   );
-
+  }
   public function get_uid() {
     return $this->uid;
   }
@@ -209,7 +211,7 @@ class ICalEvent extends ICalObject {
   }
   
   public function get_attribute($attr) {
-    if (in_array($attr, $this->standardAttributes)) {
+    if (in_array($attr, $this->standardAttributes())) {
       if ($attr == 'datetime') {
         return $this->range;
       } else {
@@ -222,7 +224,7 @@ class ICalEvent extends ICalObject {
   }
   
   public function get_all_attributes() {
-    return array_merge($this->standardAttributes, array_keys($this->properties));
+    return array_merge($this->standardAttributes(), array_keys($this->properties));
   }
 
   public function set_attribute($attr, $value, $params=NULL) {
@@ -259,7 +261,6 @@ class ICalEvent extends ICalObject {
     case 'DTSTAMP':
 
         if (array_key_exists('TZID', $params)) {
-            Debug::die_here(func_get_args());
             $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
         } else {
             $datetime = new DateTime($value);
@@ -269,7 +270,6 @@ class ICalEvent extends ICalObject {
     case 'DTSTART':
     case 'DTEND':
         if (array_key_exists('TZID', $params)) {
-            Debug::die_here(func_get_args());
             $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
         } else {
             $datetime = new DateTime($value);
@@ -309,15 +309,13 @@ class ICalEvent extends ICalObject {
       $this->add_rrule($value);
       break;
     case 'EXDATE':
-        if ($params) {
-            Debug::die_here($params);
+        if (array_key_exists('TZID', $params)) {
+            $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+        } else {
+            $datetime = new DateTime($value);
         }
-/*      if ($param_name == 'TZID') {
-        $this->exdates[] = ICalendar::ical2unix($value, $param_value);
-      } else {
-        $this->exdates[] = ICalendar::ical2unix($value);
-      }
-      */
+
+        $this->exdates[] = $datetime->format('U');
       break;
     case 'TZID': // this only gets called by ICalendar::__construct
       $this->tzid = $value;
@@ -606,11 +604,8 @@ class ICalendar extends ICalObject {
   {
   }
 
-  public function set_attribute($attr, $value, $params=null)
+  public function set_attribute($attr, $value)
   {
-    if ($params) {
-        Debug::die_here(func_get_args());
-    }
     $this->properties[$attr] = $value;
   }
 
