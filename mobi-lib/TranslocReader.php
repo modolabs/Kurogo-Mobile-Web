@@ -81,6 +81,14 @@ class TranslocReader {
     return array_keys($this->agencies);
   }
   
+  function getAgenciesAndNames() {
+    $agenciesAndNames = array();
+    foreach($this->agencies as $agencyID => $agencyInfo) {
+      $agenciesAndNames[$agencyID] = $agencyInfo['long_name'];
+    }
+    return $agenciesAndNames;
+  }
+  
   function getNameForAgency($agencyID) {
     return $this->agencies[$agencyID]['long_name'];
   }
@@ -88,6 +96,28 @@ class TranslocReader {
   function getRoutesForAgency($agencyID) {
     return $this->agencies[$agencyID]['routes'];
   }
+  
+  function getRunningRoutesAndNamesForAgency($agencyID) {
+    $runningRoutes = array();
+    foreach ($this->getRoutesForAgency($agencyID) as $routeID) {
+      if ($this->routeIsRunning($routeID)) {
+        $runningRoutes[$routeID] = $this->getNameForRoute($routeID);
+      }
+    }
+    //sort($runningRoutes);
+    return $runningRoutes;
+  }
+
+  function getNonRunningRoutesAndNamesForAgency($agencyID) {
+    $nonRunningRoutes = array();
+    foreach ($this->getRoutesForAgency($agencyID) as $routeID) {
+      if (!$this->routeIsRunning($routeID)) {
+        $nonRunningRoutes[$routeID] = $this->getNameForRoute($routeID);
+      }
+    }
+    //sort($nonRunningRoutes);
+    return $nonRunningRoutes;
+  }  
   
   function getNameForRoute($routeID) {
     return $this->routes[$routeID]['long_name'];
@@ -293,21 +323,34 @@ class TranslocReader {
       if ($arrowIndex < 0) { $arrowIndex = 0; }
       $arrowIndex = floor($arrowIndex);
       
-      $iconURL = HARVARD_TRANSLOC_MARKERS.'?'.urlencode(http_build_query(array(
+      $iconURL = HARVARD_TRANSLOC_MARKERS.'?'.http_build_query(array(
         'm' => 'bus',
         'c' => $route['color'],
         'h' => $this->arrows[$arrowIndex],
-      )));
-      $vehicleSuffix .= '&markers=icon:'.$iconURL.'|'.$lat.','.$lon;
+      ));
+      $vehicleSuffix .= '&amp;'.http_build_query(array(
+        'markers' => 'icon:'.$iconURL.'|'.$lat.','.$lon
+      ));
     }
 
-    //print_r($iconURL);
+    //error_log(print_r($iconURL, true));
     //print_r(urldecode(($iconURL)));
-    return STATIC_MAPS_URL.http_build_query($args).$vehicleSuffix;
-      ;
+    return STATIC_MAPS_URL.http_build_query($args, 0, '&amp;').$vehicleSuffix;
   }
 
+  function getImageURLForStop($routeID, $stop, $width, $height) {
+      $route = $this->routes[$routeID];
 
+      $mapParams = array(
+          "center" => $stop['ll'][0] . ',' . $stop['ll'][1],
+          "markers" => "color:0x" . $route['color'] . "|" . $stop['ll'][0] . ',' . $stop['ll'][1],
+          "sensor" => "false",
+          "zoom" => "17",
+          "size" => $width . 'x' . $height,
+      );
+
+      return STATIC_MAPS_URL . http_build_query($mapParams, 0, '&amp;');
+  }
 
 
   function getIconUrl($routeID, $size='400') {
@@ -360,6 +403,10 @@ class TranslocReader {
     else
         return "";
       ;
+  }
+
+  function getAnnouncements() {
+    return json_decode($this->getAnnouncementsJSON(), true);
   }
 
 
@@ -436,59 +483,59 @@ class TranslocReader {
 
       switch ($routeName) {
           case 'Quad Stadium':
-              return 'Runs 5.40am - 8.40am, Monday-Friday';
+              return 'Runs 5:40am - 8:40am, Monday-Friday';
               break;
 
           case 'Mather Express':
-              return 'Runs 7.40am - 4.15pm, Monday-Friday';
+              return 'Runs 7:40am - 4:15pm, Monday-Friday';
               break;
 
           case 'Quad Express':
-              return 'Runs 7.40am - 4.33pm, Monday-Friday';
+              return 'Runs 7:40am - 4:33pm, Monday-Friday';
               break;
 
           case 'River Houses A':
-              return 'Runs 4.30pm - 12.37am, Monday-Friday';
+              return 'Runs 4:30pm - 12:37am, Monday-Friday';
               break;
 
           case 'River Houses B':
-              return 'Runs 4.30pm - 12.37am, Monday-Friday';
+              return 'Runs 4:30pm - 12:37am, Monday-Friday';
               break;
 
           case 'River Houses C':
-              return 'Runs 4.30pm - 12.37am, Monday-Friday';
+              return 'Runs 4:30pm - 12:37am, Monday-Friday';
               break;
 
           case 'Quad-Yard Express':
-              return 'Runs 4.45pm - 12.32am, Monday-Friday';
+              return 'Runs 4:45pm - 12:32am, Monday-Friday';
               break;
 
           case 'Soldiers Field Park I':
-              return 'Runs 5.00pm - 7.55pm, Saturday-Sunday';
+              return 'Runs 5:00pm - 7:55pm, Saturday-Sunday';
               break;
 
           case 'Soldiers Field Park II':
-              return 'Runs 7.20am - 9.50am, Monday-Friday';
+              return 'Runs 7:20am - 9:50am, Monday-Friday';
               break;
 
           case 'Soldiers Field Park III':
-              return 'Runs 3.50pm - 9.10pm, Monday-Friday';
+              return 'Runs 3:50pm - 9:10pm, Monday-Friday';
               break;
 
           case 'Soldiers Field Park IV':
-              return 'Runs 3.50pm - 9.10pm, Monday-Friday';
+              return 'Runs 3:50pm - 9:10pm, Monday-Friday';
               break;
 
          case 'Crimson Campus Cruiser':
-             return 'Runs 12.20pm - 4.23pm, Saturday-Sunday';
+             return 'Runs 12:20pm - 4:23pm, Saturday-Sunday';
              break;
 
          case '1636\'er':
-              return 'Runs 4.20pm - 12.33am, Saturday-Sunday';
+              return 'Runs 4:20pm - 12:33am, Saturday-Sunday';
              break;
 
          case 'Extended Overnight':
-              return 'Runs 12.40am - 3.52am, Daily';
+              return 'Runs 12:40am - 3:52am, Daily';
              break;
       }
       return '';

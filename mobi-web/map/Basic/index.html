@@ -22,11 +22,10 @@ $page->content_begin();
 		<strong>Tip:</strong> You can search by any 'Browse by' category shown below.
 	</p>
 
-	<p class="nav">
-             <? foreach ($categories as $category => $title) { ?>
-                <?=$page->link_access_key(categoryURL($category), $title)?>
-                <br/>
-             <? } ?>
+	<p class="nav"><? 
+	  foreach ($categories as $category => $title) { 
+	    ?><?=$page->link_access_key(categoryURL($category), $title)?><br/>
+    <? } ?>
 	</p>
 <?
 $page->content_end();

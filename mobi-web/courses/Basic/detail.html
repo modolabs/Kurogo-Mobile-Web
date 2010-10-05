@@ -88,8 +88,7 @@ $page->content_begin();
 
                    <? $meetingTimes = $class['meeting_times']; ?>
                        <h4>Lecture:</h4>
-                       <p>
-                       <?
+                       <p><?
                        if ($meetingTimes->parseSucceeded()) {
                          foreach ($meetingTimes->all() as $meetingTime) {
                            echo($meetingTime->daysText() . " " . $meetingTime->timeText());
@@ -116,42 +115,42 @@ $page->content_begin();
                          </pre>
                        </p>
                    <p class="divider"> </p>
-                   <h3> Description </h3>
+                   <h3>Description</h3>
 		   <p><?=htmlentities($class['description'])?></p>
 
                    <? if (strlen($class['preReq']) > 0) { ?>
                    <p class="divider"> </p>
-                   <h3> Pre-Requisites </h3>
+                   <h3>Pre-Requisites</h3>
 		   <p><?=htmlentities($class['preReq'])?></p>
                    <? } ?>
 
                    <? if (strlen($class['credits']) > 0) { ?>
                    <p class="divider"> </p>
-                   <h3> Credits </h3>
+                   <h3>Credits</h3>
 		   <p><?=htmlentities($class['credits'])?></p>
                    <? } ?>
 
                    <? if (strlen($class['cross_reg']) > 0) { ?>
                    <p class="divider"> </p>
-                   <h3> Cross-Registration </h3>
+                   <h3>Cross-Registration</h3>
 		   <p><?=htmlentities($class['cross_reg'])?></p>
                    <? } ?>
 
                    <? if (strlen($class['exam_group']) > 0) { ?>
                    <p class="divider"> </p>
-                   <h3> Exam Group </h3>
+                   <h3>Exam Group</h3>
 		   <p><?=htmlentities($class['exam_group'])?></p>
                    <? } ?>
 
                    <? if (strlen($class['department']) > 0) { ?>
                    <p class="divider"> </p>
-                   <h3> Department </h3>
+                   <h3>Department</h3>
 		   <p><?=htmlentities($class['department'])?></p>
                    <? } ?>
 
                    <? if (strlen($class['school']) > 0) { ?>
                    <p class="divider"> </p>
-                   <h3> School </h3>
+                   <h3>School</h3>
 		   <p><?=htmlentities($class['school'])?></p>
                    <? } ?>
 

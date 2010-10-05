@@ -24,6 +24,7 @@ if (!in_array($routeID, $reader->getRoutes())) {
   $foundVehicles = $reader->routeIsRunning($routeID);
   $vehicles = $reader->getVehiclesForRoute($routeID);
   $vehicleCount = count($vehicles);
+  $stops = $reader->getStopsForRoute($routeID);
 
   $summary = $vehicleCount.' shuttle'.($vehicleCount != 1 ? 's':'').' found.';
   $loopTime = 'N';
@@ -64,7 +65,16 @@ if (!in_array($routeID, $reader->getRoutes())) {
 }
 
 function selfURL() {
-  return "times.php?route={$_REQUEST['route']}&now=" . time() . "&rand=" . rand();
+  $params = $_GET;
+  $params['now'] = time();
+  $params['rand'] = rand();
+
+  return 'times.php?' . http_build_query($params);
+}
+
+function detailURL($stop) {
+    $params = array('routeId' => $_REQUEST['route'], 'stopId' => $stop['id']);
+    return 'details.php?' . http_build_query($params);
 }
 
 // device-dependent time formatting function

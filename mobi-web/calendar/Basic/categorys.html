@@ -8,10 +8,10 @@ $page->content_begin();
 
 	<h2>Browse by Category</h2>
 
-	<p class="nav">
-            <? foreach($categories as $category) {?>
-                <a href="<?=categoryURL($category)?>"><?=ucname($category->get_name())?></a><br/>
-            <? } ?>
+	<p class="nav"><? 
+	  foreach($categories as $category) {
+      ?><a href="<?=categoryURL($category)?>"><?=ucname($category->get_name())?></a><br/>
+    <? } ?>
 	</p>
 <?
 

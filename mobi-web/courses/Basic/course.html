@@ -32,8 +32,7 @@ $page->content_begin();
 		</span>
 	    </p>
 
-        <p class="nav">
-        <? 
+        <p class="nav"><? 
         foreach ($classes as $i => $class) {
           $className = $class['name'];
           
@@ -55,9 +54,8 @@ $page->content_begin();
             if (strlen($staffName)) {
               $staffName = ' ('.$staffName.')';
             }
-          }?>
-
-         <a href="<?=detailURL($back, $class['masterId'], $courseGroup, $courseGroupShort, $courseId, $courseIdShort)?>"><?=$className?> : <?=$class["title"]?><?=$staffName?></a><br/><?
+          }
+          ?><a href="<?=detailURL($back, $class['masterId'], $courseGroup, $courseGroupShort, $courseId, $courseIdShort)?>"><?=$className?> : <?=$class["title"]?><?=$staffName?></a><br/><?
         } 
         ?>
         </p>

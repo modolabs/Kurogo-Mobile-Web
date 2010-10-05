@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="application/xhtml+xml" />
+<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
+<title>Shuttles: Mather Express</title>
+<!-- Branch: "Webkit" -->
+<link rel="stylesheet" type="text/css" href="../Webkit/core.css" />
+<link rel="apple-touch-icon" href="../Webkit/images/icon-shuttleschedule.png" />
+<link rel="stylesheet" type="text/css" href="Webkit/shuttletrack.css" />
+<link rel="stylesheet" type="text/css" media="all and (min-device-width: 481px) and (min-device-height: 961px)" href="Webkit/shuttletrack-tablet.css" />
+<style type="text/css">
+#map {
+	position: relative;
+}
+#mapscrollers {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 10;
+}
+
+#maptab #mapscrollers {
+	left: 50%;
+	margin-left: -50%;
+	width: 100%;
+	height: 100%;
+}
+
+#mapscrollers div {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	text-align: center;
+	padding: 0;
+	z-index: 10;
+	background-image: url(../map/Webkit/images/scrollers.png);
+	background-repeat: no-repeat;
+}
+
+#nw {
+	top: 0;
+	left: 0;
+	background-position: -350px 0px;
+}
+
+#n {
+	top: 0;
+	left: 50%;
+	margin-left: -25px;
+	background-position: 0px 0px;
+}
+
+#ne {
+	top: 0;
+	right: 0;
+	background-position: -200px 0px;
+}
+
+#e {
+	top: 50%;
+	margin-top: -25px;
+	right: 0;
+	background-position: -50px 0px;
+}
+
+#se {
+	bottom: 0;
+	right: 0;
+	background-position: -250px 0px;
+}
+
+#s {
+	bottom: 0;
+	left: 50%;
+	margin-left: -25px;
+	background-position: -100px 0px;
+}
+
+#sw {
+	bottom: 0;
+	left: 0;
+	background-position: -300px 0px;
+}
+
+#w {
+	top: 50%;
+	margin-top: -25px;
+	left: 0;
+	background-position: -150px 0px;
+}
+
+#mapzoom {
+	position: relative;
+	height: 34px;
+}
+
+#mapzoom a {
+	display: block;
+	position: absolute;
+	width: 40px;
+	height: 34px;
+	background-image: url(../map/Webkit/images/buttons.png);
+	background-repeat: no-repeat;
+}
+
+#zoomin {
+	top: 0;
+	left: 7%;
+	margin: 0 0 0 -19px;
+	background-position: 0 0;
+}
+
+#zoomout {
+	top: 0;
+	left: 23%;
+	margin: 0 0 0 -16px;
+	background-position: -40px 0;
+}
+
+#recenter {
+	top: 0;
+	left: 58%;
+	margin: 0 0 0 -19px;
+	background-position: -120px 0;
+}
+</style>
+<script src="../Webkit/uiscripts.js" type="text/javascript"> </script>
+<script type="text/javascript">
+window.addEventListener("orientationchange", function() { rotateScreen()}, false);
+window.addEventListener("resize", function() { rotateScreen()}, false);
+</script>
+</head>
+<body onload="scrollTo(0,1); rotateScreen()">
+<div id="navbar" class="helpon">
+<div class="breadcrumbs"><a name="top" href="../home/" class="homelink">
+<img src="../Webkit/images/homelink.png" width="57" height="45" alt="Harvard Mobile Web Home" />
+</a><a href="./" class="module">
+<img src="../Webkit/images/title-shuttleschedule.png" width="28" height="28" alt="" />
+</a><span class="pagetitle">Route Info</span></div>
+<div class="help">
+<a href="help.php"><img src="../Webkit/images/help.png" width="46" height="45" alt="Help" /></a>
+</div>
+</div>
+<div id="container">
+<a name="scrolldown"></a>
+<div class="focal shaded">
+<h2>Mather Express<div id="refresh"><a href="times.php?route=harvard-29&now=1285861916&rand=558994700"><img src="../Webkit/images/refresh.png" alt="Update" width="82" height="32" /></a></div></h2>
+<p class="smallprint">
+Harvard Square via Memorial Hall.<br/>
+Route loop repeats every 20 minutes.</p>
+<ul id="tabs">
+	<li class="active"><a href="#scrolldown" onclick="showTab('maptab',this)">Route Map</a></li>
+	<li><a href="#scrolldown" onclick="showTab('scheduletab',this)">Schedule</a></li>
+</ul>
+<div id="tabbodies">
+<div class="tabbody" id="maptab" style="display:none">
+<div id="map">
+	<div id="mapscrollers">
+	<div id="nw"><a href="#scrolldown" onclick="scroll('nw'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="NW" /></a></div>
+	<div id="n"><a href="#scrolldown" onclick="scroll('n'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="N" /></a></div>
+	<div id="ne"><a href="#scrolldown" onclick="scroll('ne'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="NE" /></a></div>
+	<div id="e"><a href="#scrolldown" onclick="scroll('e'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="E" /></a></div>
+	<div id="se"><a href="#scrolldown" onclick="scroll('se'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="SE" /></a></div>
+	<div id="s"><a href="#scrolldown" onclick="scroll('s'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="S" /></a></div>
+	<div id="sw"><a href="#scrolldown" onclick="scroll('sw'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="SW" /></a></div>
+	<div id="w"><a href="#scrolldown" onclick="scroll('w'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="W" /></a></div>
+	</div> <!-- id="mapscrollers" -->
+	<img src="http://maps.google.com/maps/api/staticmap?size=270x270&sensor=false&path=weight%3A4%7Ccolor%3A0x0000FF%7Cenc%3AessaG%7EnaqLc%40t%40g%40%5EqDx%40w%40HwKg%40Z%7BSrEVhNwDSuBZONSFgAUU_%40EU%40OgArDb%40j%40Lv%40eLdC%5CpBlAkAdD%7BA%7CC%3FRlN%60CMn%40z%40v%40FBjAOL%40f%40z%40%7EKrFR%5D%60BsJ%3FsAoBOgFc%40jAeFq%40A_MbPoCjN%3F%60%40s%40V%7B%40RoFu%40sAW%7B%40Fk%40RiAbC&markers=icon:http://harvard.transloc.com/m/markers/marker.php?m%3Dbus%26c%3D0000FF%26h%3Ds|42.375792,-71.114326&markers=icon:http://harvard.transloc.com/m/markers/marker.php?m%3Dbus%26c%3D0000FF%26h%3Dne|42.370429,-71.114419" width="270" height="270" id="mapimage" alt="Map" /></div>
+	<div style="border:1px solid red">
+	<a href="#" onclick="zoomin(); return false;" id="zoomin"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Zoom In" /></a>
+	<a href="#" onclick="zoomout(); return false;" id="zoomout"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Zoom Out" /></a>
+	<a href="#" onclick="recenter(); return false;" id="recenter" class="disabled"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Recenter" /></a>
+	</div>
+</div> <!-- id="maptab" -->
+<div class="tabbody" id="scheduletab" style="display:none">
+<p>Stop times go here!</p>
+</div> <!-- id="scheduletab" -->
+<div class="clear"></div>
+</div> <!-- id="tabbodies" -->
+</div> <!-- class="focal shaded" -->
+<div class="nonfocal legend"><span id="rotatemsg1">Rotate your device to view map &amp; schedule side by side.</span><span id="rotatemsg2">Rotate your device to view schedule and map separately.</span></div>
+<div class="clear"></div>
+</div>
+<div id="footerlinks">
+<a href="#top">Back to top</a> | <a href="../home/">Harvard Mobile Web home</a>
+</div>
+<div id="footer">
+<a href="http://www.harvard.edu/" class="copyright">&copy;2011 The President and Fellows of Harvard College</a></div>
+<script type="text/javascript">
+showTab("maptab"); </script>
+</body>
+</html>

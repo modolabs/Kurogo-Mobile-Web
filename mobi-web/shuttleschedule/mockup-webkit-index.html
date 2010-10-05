@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="application/xhtml+xml" />
+<meta name="viewport" id="viewport" content="width=device-width, user-scalable=no" />
+<title>Shuttle Tracker</title>
+<!-- Branch: "Webkit" -->
+<link rel="stylesheet" type="text/css" href="../Webkit/core.css" />
+<link rel="apple-touch-icon" href="../Webkit/images/icon-shuttleschedule.png" />
+<link rel="stylesheet" type="text/css" href="Webkit/shuttletrack.css" />
+<script src="../Webkit/uiscripts.js" type="text/javascript"> </script>
+</head>
+<body onload="scrollTo(0,1);">
+<div id="navbar" class="helpon">
+	<div class="breadcrumbs homepage">
+	<a href="../home/" class="homelink"><img src="../Webkit/images/homelink.png" width="57" height="45" alt="Harvard Mobile Web Home" /></a><span class="pagetitle"><img src="../Webkit/images/title-shuttleschedule.png" width="28" height="28" alt="" class="moduleicon" />
+	Shuttle Tracker </span></div>
+	<div class="help">
+	<a href="help.php"><img src="../Webkit/images/help.png" width="46" height="45" alt="Help" /></a>
+	</div>
+</div>
+<div id="container">
+<a name="scrolldown"> </a>
+<div class="nonfocal">
+<ul id="tabs" style="font-size:12pt">
+<li class="active"><a href="#scrolldown" onclick="showTab('runningtab',this)">Running</a></li>
+<li><a href="#scrolldown" onclick="showTab('offlinetab',this)">Offline</a></li>
+<li><a href="#scrolldown" onclick="showTab('newstab',this)">News</a></li>
+<li><a href="#scrolldown" onclick="showTab('infotab',this)">Info</a></li>
+</ul>
+<div id="tabbodies">
+	<div class="tabbody" id="runningtab" style="display:none">
+		<h3>Harvard University Shuttles:</h3>
+		<ul class="nav nested">
+		<li><a href="mockup-webkit-route-detail.html">Mather Express</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Quad Express</a></li>
+		</ul>
+
+		<h3>MASCO Shuttles:</h3>
+		<ul class="nav nested">
+		<li><a href="mockup-webkit-route-detail.html">M2 Cambridge - Vanderbilt Hall</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Wentworth Shuttle - PM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Crosstown - PM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Fenway Mid-Day</a></li>
+		</ul>
+	</div> <!-- id="runningtab" -->
+
+	<div class="tabbody" id="offlinetab" style="display:none">
+		<h3>Harvard University Shuttles:</h3>
+		<ul class="nav nested">
+		<li><a href="mockup-webkit-route-detail.html">Quad Stadium</a></li>
+		<li><a href="mockup-webkit-route-detail.html">1636'er</a></li>
+		<li><a href="mockup-webkit-route-detail.html">River Houses A</a></li>
+		<li><a href="mockup-webkit-route-detail.html">River Houses B</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Soldiers Field Park III</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Soldiers Field Park IV</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Extended Overnight</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Quad-Yard Express</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Crimson Campus Cruiser</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Soldiers Field Park I</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Soldiers Field Park II</a></li>
+		<li><a href="mockup-webkit-route-detail.html">River Houses C</a></li>
+		</ul>
+
+		<h3>MASCO Shuttles:</h3>
+		<ul class="nav nested">
+		<li><a href="mockup-webkit-route-detail.html">M2 Cambridge - Coolidge Corner</a></li>
+		<li><a href="mockup-webkit-route-detail.html">JFK/UMASS - PM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">M6 Chestnut Hill - AM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">M6 Chestnut Hill - PM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">JFK/UMASS - AM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Ruggles Express - AM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Crosstown - AM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Ruggles Express - PM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Fenway (Beacon/Kenmore) - AM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Fenway (Lansdowne) - AM</a></li>
+		<li><a href="mockup-webkit-route-detail.html">Fenway - PM</a></li>
+		</ul>
+	</div> <!-- id="offlinetab" -->
+
+	<div class="tabbody" id="newstab" style="display:none">
+		News
+	</div> <!-- id="newstab" -->
+
+	<div class="tabbody" id="infotab" style="display:none">
+		Info
+	</div> <!-- id="infotab" -->
+
+	<div class="clear"></div>
+
+</div> <!-- id="tabbodies" -->
+
+</div> <!-- class="nonfocal" -->
+
+
+<div id="footerlinks">
+<a href="#top">Back to top</a> | <a href="../home/">Harvard Mobile Web home</a>
+</div>
+
+<div id="footer">
+&copy;2010 Harvard University
+</div>
+
+<script type="text/javascript">
+showTab('runningtab');
+</script>
+</body>
+</html>

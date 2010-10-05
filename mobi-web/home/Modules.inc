@@ -30,7 +30,7 @@ class Modules {
       'title' => 'Student Dining',
       ),
     'shuttleschedule' => Array(
-      'title' => 'Shuttle Schedule',
+      'title' => 'Shuttle Tracker',
       ),
     'links' => Array(
       'title' => 'Schools',

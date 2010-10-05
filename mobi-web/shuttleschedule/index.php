@@ -7,6 +7,34 @@ $now = time();
 
 $reader = new TranslocReader();
 
+$agencies = $reader->getAgenciesAndNames();
+
+$runningRoutes = array();
+foreach ($agencies as $agencyID => $agencyName) {
+  $runningRoutes[$agencyID] = $reader->getRunningRoutesAndNamesForAgency($agencyID);
+}
+$nonRunningRoutes = array();
+foreach ($agencies as $agencyID => $agencyName) {
+  $nonRunningRoutes[$agencyID] = $reader->getNonRunningRoutesAndNamesForAgency($agencyID);
+}
+
+$announcements = $reader->getAnnouncements();
+// print_r($announcements);
+
+$tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'Running';
+
+$tabs = new Tabs(selfURL(), "tab", array("Running", "Offline", "News", "Info"));
+
+$tabs_html = $tabs->html($page->branch);
+
+
 require "$page->branch/index.html";
 $page->output();
+
+function selfURL() {
+  $params = $_GET;
+  unset($params['tab']);
+  return 'index.php?' . http_build_query($params);
+}
+
 ?>
