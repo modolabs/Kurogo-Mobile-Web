@@ -87,7 +87,7 @@
       <ul class="nav nested">
         {foreach $diningStatuses as $diningStatus}
           <li class="dininghall {$diningStatus['status']}">
-            <a href="{$diningStatus}">
+            <a href="{$diningStatus['url']}">
               {$diningStatus['name']}
               <br/>
               <span class="smallprint">{$diningStatus['summary']}</span>

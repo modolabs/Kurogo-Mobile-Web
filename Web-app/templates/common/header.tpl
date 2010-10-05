@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+{strip}  
 <head>
   <meta http-equiv="content-type" content="application/xhtml+xml" />
   <title>{$moduleName}{if !$moduleHome}: {$pageTitle}{/if}</title>
   <link href="{$minify['css']}" rel="stylesheet" media="all" type="text/css"/>
-  
   {foreach $inlineCSSBlocks as $css}
     <style type="text/css" media="screen">
       {$css}
@@ -32,11 +32,21 @@
         window.addEventListener("resize", onOrientationChange, false);
       </script>
     {/if}
+
+    {if count($onLoadBlocks)}
+      <script type="text/javascript">
+        function onLoad() {ldelim}
+          {foreach $onLoadBlocks as $script}
+            {$script}
+          {/foreach}
+        {rdelim}
+      </script>
+    {/if}
   {/block}
   
   {block name="additionalHeadTags"}{/block}
 </head>
-<body>
+<body{if count($onLoadBlocks)} onload="onLoad();"{/if}>
   <a name="top"></a>
   {if isset($customHeader)}
     {$customHeader|default:''}
@@ -86,5 +96,5 @@
       {/strip}
     {/block}
   {/if}
-  
+{/strip}  
   <div id="container">

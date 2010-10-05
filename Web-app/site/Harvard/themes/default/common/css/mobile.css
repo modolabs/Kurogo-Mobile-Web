@@ -762,34 +762,26 @@ ul.focal li:first-child {
 
 .label {	
 	display: block;
-	height: 21px;
-	width: 61px;
-	margin-left: -2px;
-	top: 4px;
-	position: relative;
-	padding-right: 10px;
+	width: 78px;
+	position: absolute;
+	top: 17px;
+	left: 0px;
 	font-size: 13px;
 	line-height: 15px;
 	font-weight: bold;
 	text-align: right;
 	color: #554c41;
+	word-wrap: normal;
 }
 
 .value {
 	display: block;
-	margin-top: -21px;
-	margin-left: 67px;
+	margin-left: 76px;
 	font-size: 17px;
 	min-height: 20px;
-	line-height: 20px;
-	/*width: 204px;*/
+	line-height: 24px;
 	padding-right: 22px;
 	word-wrap: break-word;
-	padding-top: 1px;
-}
-
-.email .value {
-	/*width: 190px;*/
 }
 
 

@@ -15,6 +15,7 @@ abstract class Module {
   private $inlineJavascriptBlocks = array();
   private $inlineJavascriptFooterBlocks = array();
   private $onOrientationChangeBlocks = array();
+  private $onLoadBlocks = array('scrollTo(0,1);');
   
   private $breadcrumbTitle = null;
   private $breadcrumbLongTitle = null;
@@ -260,6 +261,9 @@ abstract class Module {
   protected function addOnOrientationChange($onOrientationChange) {
     $this->onOrientationChangeBlocks[] = $onOrientationChange;
   }
+  protected function addOnLoad($onLoad) {
+    $this->onLoadBlocks[] = $onLoad;
+  }
   
   //
   // Breadcrumbs
@@ -278,10 +282,9 @@ abstract class Module {
     $breadcrumbs = $this->breadcrumbs;
     
     if ($addBreadcrumb && $this->page != 'index') {
-      $title = isset($this->breadcrumbTitle) ? 
-        $this->breadcrumbTitle : $pageTitle;
-      $longTitle = isset($this->breadcrumbLongTitle) ? 
-        $this->breadcrumbLongTitle : $this->getTemplateVars('pageTitle');
+      $pageTitle = $this->getTemplateVars('pageTitle');
+      $title     = isset($this->breadcrumbTitle)     ? $this->breadcrumbTitle     : $pageTitle;
+      $longTitle = isset($this->breadcrumbLongTitle) ? $this->breadcrumbLongTitle : $pageTitle;
       
       $breadcrumbs[] = array(
         'title'     => $title,
@@ -391,6 +394,7 @@ abstract class Module {
     $this->assign('inlineCSSBlocks', $this->inlineCSSBlocks);
     $this->assign('inlineJavascriptBlocks', $this->inlineJavascriptBlocks);
     $this->assign('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
+    $this->assign('onLoadBlocks', $this->onLoadBlocks);
     $this->assign('inlineJavascriptFooterBlocks', $this->inlineJavascriptFooterBlocks);
 
     $this->assign('breadcrumbs', $this->breadcrumbs);

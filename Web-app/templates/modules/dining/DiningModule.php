@@ -18,9 +18,9 @@ class DiningModule extends Module {
     return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
   }  
 
-  private function detailURL($statusDetails, $addBreadcrumb=true) {
+  private function detailURL($diningStatus, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('detail', array(
-      'location' => $statusDetails['name'],      
+      'location' => $diningStatus['name'],      
     ), $addBreadcrumb);
   }
 
@@ -53,22 +53,25 @@ class DiningModule extends Module {
         
         $day = date('Y-m-d', $time);
         $foodItems = array(
-          "breakfast" => DiningData::getDiningData($day, "BRK"),
-          "lunch"     => DiningData::getDiningData($day, "LUN"),
-          "dinner"    => DiningData::getDiningData($day, "DIN"),
+          'breakfast' => DiningData::getDiningData($day, 'BRK'),
+          'lunch'     => DiningData::getDiningData($day, 'LUN'),
+          'dinner'    => DiningData::getDiningData($day, 'DIN'),
         );
         
         $hour = intval(date('G'));
         if($hour < 12) {
-            $currentMeal = "breakfast";
+            $currentMeal = 'breakfast';
         } else if ($hour < 15) {
-            $currentMeal = "lunch";
+            $currentMeal = 'lunch';
         } else {
-            $currentMeal = "dinner";
+            $currentMeal = 'dinner';
         }
         
         $diningStatuses = DiningHalls::getDiningHallStatuses();
-
+        foreach ($diningStatuses as &$diningStatus) {
+          $diningStatus['url'] = $this->detailURL($diningStatus);
+        }
+  
         error_log(print_r($foodItems, true));
         //error_log(print_r($diningHours, true));
         //error_log(print_r($diningStatuses, true));
@@ -82,6 +85,67 @@ class DiningModule extends Module {
         break;
         
       case 'detail':
+        $diningHall = $this->args['location'];
+
+        $allHours = DiningHalls::getDiningHallHours();
+        $theseHours = null;
+        
+        foreach ($allHours as $hours) {
+          if($hours->name == $diningHall) {
+            $theseHours = $hours;
+            break;
+          }
+        }
+        
+        $diningHallHours = array(
+          'breakfast'   => $theseHours->breakfast_hours,
+          'lunch'       => $theseHours->lunch_hours,
+          'dinner'      => $theseHours->dinner_hours,
+          'brain break' => $theseHours->bb_hours,
+          'brunch'      => $theseHours->brunch_hours,
+        );
+
+        foreach ($diningHallHours as &$hour) {
+          if($hour == 'NA') {
+             $hour = 'Closed';
+          }
+        }
+        
+        if ($diningHallHours['brain break'] != 'Closed') {
+          $bbHoursParts = explode(' ', $diningHallHours['brain break']);
+          $bbStartTime = $bbHoursParts[1];
+          $diningHallHours['brain break'] = "Sunday-Thursday starting at {$bbStartTime}";
+        }
+        
+        if ($diningHallHours['brunch'] != 'Closed') {
+          $diningHallHours['brunch'] = "Sunday {$diningHallHours['brunch']}";
+        }
+        
+        $diningHallRestrictions = array(
+          'lunch'  => $theseHours->lunch_restrictions[0]->message,
+          'dinner' => $theseHours->dinner_restrictions[0]->message,
+          'brunch' => $theseHours->brunch_restrictions[0]->message,
+        );
+        
+        foreach ($diningHallRestrictions as &$restriction) {
+          if($restriction == 'NA') {
+            $restriction = 'None';
+          }
+        }
+        
+        // super special cases
+        if ($diningHall == 'Hillel') {
+          $diningHallHours['lunch'] = 'Saturday only';
+          $diningHallHours['dinner'] .= ' (Sunday-Thursday)';
+        }
+        
+        if ($diningHall == 'Fly-By') {
+          $diningHallHours['lunch'] .= ' (Monday-Friday)';
+        }
+
+        $this->assign('diningHall',             $diningHall);
+        $this->assign('diningHallHours',        $diningHallHours);
+        $this->assign('diningHallRestrictions', $diningHallRestrictions);
         break;
     }
   }
