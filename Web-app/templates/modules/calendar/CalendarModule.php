@@ -1,10 +1,10 @@
 <?php
 
 require_once realpath(LIB_DIR.'/Module.php');
-require_once realpath(SITE_LIB_DIR.'/harvard_calendar.php');
 
 class CalendarModule extends Module {
   protected $id = 'calendar';
+  protected $timezone;
   
   private $searchOptions = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
@@ -93,11 +93,26 @@ class CalendarModule extends Module {
   
     switch ($type) {
       case 'datetime':
-        if (get_class($value) == 'TimeRange') {
-          $valueForType = $value->format('D M j, Y').'<br/>'.$value->format('g:i a');
+        if (is_a($value, 'DayRange')) {
+        	$valueForType = strval($value);
         } else {
-          $valueForType = date('D M j, Y', $value).'<br/>'.date('g:i a', $value);
-        }
+			$valueForType = date("D M j", $value->get_start());
+			if ( $value->get_end() && $value->get_end()!=$value->get_start()) {
+				if ( date('Ymd', $value->get_start()) != date('Ymd', $value->get_end())) {
+					$valueForType .= date(' g:i', $value->get_start());
+					if ( date('a', $value->get_start()) != date('a', $value->get_end())) {
+						$valueForType .= date(' a', $value->get_start());
+					}
+				
+					$valueForType .= date(" - D M j g:i a", $value->get_end());
+				} else {
+					$valueForType .= "<br/>" . date('g:i', $value->get_start()) . date("-g:i a", $value->get_end());
+				}
+			} else {
+				$valueForType .= "<br/>" . date('g:i a', $value->get_start());
+			}
+		}
+		
         break;
 
       case 'url':
@@ -120,7 +135,7 @@ class CalendarModule extends Module {
         break;
         
       case 'category':
-        $valueForType = $this->ucname($value->get_name());
+        $valueForType = $this->ucname($value);
         break;
     }
     
@@ -215,11 +230,15 @@ class CalendarModule extends Module {
   private function detailURL($event, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('detail', array(
       'id' => $event->get_uid(),
-      'time' => isset($this->args['time']) ? $this->args['time'] : time(),
+      'time'=>$event->get_start()
+//      'time' => isset($this->args['time']) ? $this->args['time'] : time(),
     ), $addBreadcrumb);
   }
 
   protected function initializeForPage() {
+//  	$GLOBALS['siteConfig']->loadThemeFile('calendar');
+  	$this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
+
     switch ($this->page) {
       case 'help':
         break;
@@ -232,7 +251,7 @@ class CalendarModule extends Module {
         
         $this->assign('todaysEventsUrl', $this->dayURL($today, 'events'));
         $this->assign('holidaysUrl',     $this->holidaysURL($today['year']));
-        $this->assign('categorysUrl',    $this->categoriesURL());
+        $this->assign('categoriesUrl',    $this->categoriesURL());
         $this->assign('academicUrl',     $this->academicURL($today['year']));
 
         break;
@@ -310,10 +329,10 @@ class CalendarModule extends Module {
         $this->setPageTitle("Browse by day");
         $this->setBreadcrumbTitle("Day");
       
-        $type = $this->args['type'];
+        $type = isset($this->args['type']) ? $this->args['type'] : 'events';
         $this->assign('Type', ucwords($type));
 
-        $time = $this->args['time'];
+        $time = isset($this->args['time']) ? $this->args['time'] : time();
         $next = $this->dayInfo($time, 1);
         $prev = $this->dayInfo($time, -1);
         $this->assign('current', $this->dayInfo($time));
@@ -322,14 +341,21 @@ class CalendarModule extends Module {
         $this->assign('nextUrl', $this->dayURL($next, $type, false));
         $this->assign('prevUrl', $this->dayURL($prev, $type, false));
         
-        // copied from api/HarvardCalendar.php
-        $time = isset($this->args['time']) ? $this->args['time'] : time();
-        $url = $GLOBALS['siteConfig']->getVar('HARVARD_EVENTS_ICS_BASE_URL').'?'.http_build_query(array(
-          'startdate' => date('Ym', $time).'01',
-          'months'    => 1,
-        ));
-        $iCalEvents = makeIcalDayEvents($url, date('Ymd', $time), NULL);
+		$controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+		$parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+		$eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+		$baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+		$feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
         
+        $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
+        $start->setTime(0,0,0);
+        $end = clone $start;
+        $end->setTime(23,59,59);
+
+        $feed->setStartDate($start);
+        $feed->setEndDate($end);
+        $iCalEvents = $feed->items();
+                
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
           $subtitle = $this->timeText($iCalEvent);
@@ -341,7 +367,7 @@ class CalendarModule extends Module {
           $events[] = array(
             'url'      => $this->detailURL($iCalEvent),
             'title'    => $iCalEvent->get_summary(),
-            'subtitle' => $subtitle,
+            'subtitle' => $subtitle
           );
         }
         $this->assign('events', $events);        
@@ -353,68 +379,68 @@ class CalendarModule extends Module {
         $this->loadThemeConfigFile('calendarDetail');
         $calendarFields = $this->getTemplateVars('calendarDetail');
 
-        // Get event
+		$controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+		$parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+		$eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+		$baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+		$feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+		
         $time = isset($this->args['time']) ? $this->args['time'] : time();
-        $url = $GLOBALS['siteConfig']->getVar('HARVARD_EVENTS_ICS_BASE_URL').'?'.http_build_query(array(
-          'startdate' => date('Ym', $time).'01',
-          'months'    => 1,
-        ));
-        $event = getIcalEvent($url, date('Ymd', $time), $this->args['id']);
+		if ($event = $feed->getItem($this->args['id'], $time)) {
+			$this->assign('event', $event);
+		} else {
+			throw new Exception("Event not found");
+		}
 
         // build the list of attributes
         $fields = array();
         foreach ($calendarFields as $key => $info) {
-          $value = $event->getFieldForDetailKey($key);
+          $value = $event->get_attribute($key);
           if (!isset($value)) { continue; }
           
-          if ($key == 'misc') {
-            $fields = array_merge($fields, $value);
-            
-          } else {
-            $field = array();
-            
-            if (isset($info['label'])) {
-              $field['label'] = $info['label'];
-            }
-            
-            if (isset($info['class'])) {
-              $field['class'] = $info['class'];
-            }
-            
-            if ($key == 'categories') {
-              $fieldValues = array();
-              foreach ($value as $item) {
-                $fieldValue = '';
-                $fieldValueUrl = null;
-                
-                if (isset($info['type'])) {
-                  $fieldValue  = $this->valueForType($info['type'], $item);
-                  $fieldValueUrl = $this->urlForType($info['type'], $item);
-                } else {
-                  $fieldValue = $item;
-                }
-                
-                if (isset($fieldValueUrl)) {
-                  $fieldValue = '<a href="'.$fieldValueUrl.'">'.$fieldValue.'</a>';
-                }
-                
-                $fieldValues[] = $fieldValue;
-              }
-              $field['title'] = implode(', ', $fieldValues);
+		$field = array();
+		
+		if (isset($info['label'])) {
+		  $field['label'] = $info['label'];
+		}
+		
+		if (isset($info['class'])) {
+		  $field['class'] = $info['class'];
+		}
 
-            } else {
-              if (isset($info['type'])) {
-                $field['title'] = $this->valueForType($info['type'], $value);
-                $field['url']   = $this->urlForType($info['type'], $value);
-              } else {
-                $field['title'] = $value;
-              }
-            }
-            
-            $fields[] = $field;
-          }
-        }
-        
+		if (is_array($value)) {		
+		  $fieldValues = array();
+		  foreach ($value as $item) {
+			$fieldValue = '';
+			$fieldValueUrl = null;
+			
+			if (isset($info['type'])) {
+			  $fieldValue  = $this->valueForType($info['type'], $item);
+			  $fieldValueUrl = $this->urlForType($info['type'], $item);
+			} else {
+			  $fieldValue = $item;
+			}
+			
+			if (isset($fieldValueUrl)) {
+			  $fieldValue = '<a href="'.$fieldValueUrl.'">'.$fieldValue.'</a>';
+			}
+			
+			$fieldValues[] = $fieldValue;
+		  }
+		  $field['title'] = implode(', ', $fieldValues);
+
+		} else {
+		  if (isset($info['type'])) {
+			$field['title'] = $this->valueForType($info['type'], $value);
+			$field['url']   = $this->urlForType($info['type'], $value);
+		  } else {
+			$field['title'] = nl2br($value);
+		  }
+		}
+		
+		$fields[] = $field;
+	  }
+
         $this->assign('fields', $fields);
         //error_log(print_r($fields, true));
     }

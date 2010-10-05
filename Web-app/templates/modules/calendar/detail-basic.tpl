@@ -2,7 +2,7 @@
 
 {block name="firstField"}
   <h2>
-    {include file="findInclude:common/listItem.tpl" item=$firstNavlistItem}
+    {include file="findInclude:common/listItem.tpl" item=$firstField}
   </h2>
 {/block}
 

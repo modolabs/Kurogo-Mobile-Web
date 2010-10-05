@@ -13,7 +13,7 @@
   
   {$navlistItems[1] = array()}
   {$navlistItems[1]['title'] = "Browse events by category"}
-  {$navlistItems[1]['url']   = $categorysUrl}
+  {$navlistItems[1]['url']   = $categoriesUrl}
   
   {$navlistItems[2] = array()}
   {$navlistItems[2]['title'] = "Academic calendar"}
