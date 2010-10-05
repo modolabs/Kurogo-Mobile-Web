@@ -25,10 +25,11 @@ March 12-19<br/>
 May 15<br/>
 EOM;
 
+$img_src = $_SERVER['SERVER_NAME'] . HTTPROOT . '/api/handicap.jpg';
 $about_harvard_shuttles = <<<EOM
-<h2>Daytime Van</h2>
+<h2>Daytime Van <img style="float:right;" src="$img_src"/></h2>
 The Daytime Van is designed for persons who, because of mobility impairment or medical condition, find it difficult or impossible to use the regular shuttle bus.  Transportation is door to door within the Cambridge and Allston campuses. This year-round service is scheduled by appointment only. Service hours vary for academic, weekend, summer and holiday periods. For service hours, reservations and other information, please call 617-495-0400. For information for the hearing impaired, please call 617-496-6642 (TTY#)
-<h2>Evening Van</h2>
+<h2>Evening Van <img style="float:right;" src="$img_src"/></h2>
 The Evening Van provides service to areas not on scheduled shuttle routes, between 7pm and 12:30am nightly, in the Cambridge/Allston campus area. Please call 617-495-0400 for more information and service requests. Please refer to map for service boundaries outlined. Last call received at 11:45 pm nightly.
 <h2>Charter Service</h2>
 Buses and vans are available to University affiliates for charters. We can accommodate small and large groups for both on and off campus service. Charter fees are billed on an hourly basis with a 2 hour minimum. We can provide referrals who offer expanded services.
@@ -38,6 +39,10 @@ For more information, please call 617-495-0400.
 Bus stops are marked with special crimson, red and white signs. If you wish to exit at a non-designated stop, please inform the driver when boarding. Drivers will make requested stops whenever it is safe to do so.
 <h2>Bikes on Shuttles</h2>
 Harvard Passenger Transport Services gives bicyclists open access to our entire system. You can combine the freedom of riding your bicycle to work or class with the convenience of using Shuttles around campus during inclement weather or at night. Bikes are allowed on all buses equipped with bike racks at any time.
+EOM;
+
+$about_masco = <<<EOM
+MASCO manages the Harvard Medical School shuttle which runs between the LMA and Harvard University in Cambridge.
 EOM;
 
 $arrows = array(
@@ -62,7 +67,7 @@ switch ($command) {
    if ($_REQUEST['agency'] == 'harvard') {
      $data = array("html" => $about_harvard_shuttles);
    } elseif ($_REQUEST['agency'] == 'masco') {
-     $data = array("html" => $about_harvard_shuttles);
+     $data = array("html" => $about_masco);
    }
    break;
  case 'calendar':
