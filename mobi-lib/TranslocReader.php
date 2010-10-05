@@ -338,7 +338,19 @@ class TranslocReader {
     return STATIC_MAPS_URL.http_build_query($args, 0, '&amp;').$vehicleSuffix;
   }
 
+  function getImageURLForStop($routeID, $stop, $width, $height) {
+      $route = $this->routes[$routeID];
 
+      $mapParams = array(
+          "center" => $stop['ll'][0] . ',' . $stop['ll'][1],
+          "markers" => "color:0x" . $route['color'] . "|" . $stop['ll'][0] . ',' . $stop['ll'][1],
+          "sensor" => "false",
+          "zoom" => "17",
+          "size" => $width . 'x' . $height,
+      );
+
+      return STATIC_MAPS_URL . http_build_query($mapParams, 0, '&amp;');
+  }
 
 
   function getIconUrl($routeID, $size='400') {

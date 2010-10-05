@@ -48,6 +48,10 @@
 	text-align: center;
 }
 
+.stop-map {
+    border: 2pt solid white;
+}
+
 #refresh {
 	position: absolute;
 	top: 8px;

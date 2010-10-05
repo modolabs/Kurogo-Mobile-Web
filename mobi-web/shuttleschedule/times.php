@@ -72,6 +72,11 @@ function selfURL() {
   return 'times.php?' . http_build_query($params);
 }
 
+function detailURL($stop) {
+    $params = array('routeId' => $_REQUEST['route'], 'stopId' => $stop['id']);
+    return 'details.php?' . http_build_query($params);
+}
+
 // device-dependent time formatting function
 function formatShuttleTime($page, $tstamp) {
   if ($page->branch == 'Basic') {
