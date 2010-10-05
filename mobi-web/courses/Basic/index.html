@@ -13,11 +13,11 @@ $page->content_begin();
         <h3>My Courses:</h3>
 
         <? if (count(getMyStellar()->currentIds)) { ?>
-	   <p class="nav">
-    	     <? foreach (getMyStellar()->currentIds as $id) {
-                $class = CourseData::get_subject_details($id);?>
-		    <a href="detail.php?id=<?= $id ?>&back=index.php"><?= name($class)?>: <?=$class['title']?></a><br />
-             <? } ?>
+	   <p class="nav"><? 
+	      foreach (getMyStellar()->currentIds as $id) {
+                $class = CourseData::get_subject_details($id);
+		      ?><a href="detail.php?id=<?= $id ?>&back=index.php"><?= name($class)?>: <?=$class['title']?></a><br />
+        <? } ?>
 	   </p>
         <? } ?>
 
@@ -30,9 +30,7 @@ $page->content_begin();
     <? } ?>
 	<h3>Browse by school:</h3>
 
-	<p class="nav">
-
-		<?=$page->link_access_key('', 'Courses Home')?><br/>
+	<p class="nav"><?=$page->link_access_key('', 'Courses Home')?><br/>
                 <? foreach($schools as $school) { ?>
                 <? if ((count($school->courses) == 1) && ($school->courses[0]->name == "")){ $school_name = $school->school_name;?>
                     <?=$page->link_access_key(courseURL('', $school_name, $school->school_name_short, $school_name, $school->school_name_short), $school->school_name_short)?><br/>

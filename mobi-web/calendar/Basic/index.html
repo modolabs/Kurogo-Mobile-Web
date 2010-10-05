@@ -8,8 +8,7 @@ $page->content_begin();
 
 	<h2><?=$today['weekday']?>, <?=$today['month_3Let']?> <?=$today['day_num']?>, <?=$today['year']?></h2>
 
-	<p class="nav">
-		<?=$page->link_access_key('', 'Events Home')?><br/>
+	<p class="nav"><?=$page->link_access_key('', 'Events Home')?><br/>
 		<?=$page->link_access_key(dayURL($today, 'events'), "Today's Events")?><br/>
 		<?=$page->link_access_key(categorysURL(), 'Browse by Category')?><br/>
 		<?=$page->link_access_key(academicURL($today['year'], $today['month_num']), 'Academic Calendar')?><br/>

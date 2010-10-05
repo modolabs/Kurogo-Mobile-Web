@@ -51,18 +51,17 @@ if ($this->platform == 'bbplus') { ?>
 
 <div class="nonfocal">
    <? if($help_on) { ?>
-      <p class="secondary">
-         <? foreach($help_links as $link) {
-              $class_text = $link['class'] ? 'class="' . $link['class'] . '"' : ""; 
-              $extra = $link['phone'] ? " <span class=\"smallprint\">({$link['phone']})</span>" : ""; ?>
-              <a href="<?=$link['url']?>" <?=$class_text?>><?=$link['text']?></a><?=$extra?><br/>
-         <? } ?>
-            <a href="help.php"><?=Modules::$module_data[$module]['title']?> Help</a>
+      <p class="secondary"><? 
+        foreach($help_links as $link) {
+          $class_text = $link['class'] ? 'class="' . $link['class'] . '"' : ""; 
+          $extra = $link['phone'] ? " <span class=\"smallprint\">({$link['phone']})</span>" : ""; 
+          ?><a href="<?=$link['url']?>" <?=$class_text?>><?=$link['text']?></a><?=$extra?><br/>
+         <? } 
+         ?><a href="help.php"><?=Modules::$module_data[$module]['title']?> Help</a>
          </p>
     <? } ?>
 
-<p class="bottomnav">
-	<a href="#top">Back to top</a>
+<p class="bottomnav"><a href="#top">Back to top</a>
 	<? if ($this->platform == 'bbplus') { ?>
 		&nbsp; | &nbsp;
 	<? } else { ?>

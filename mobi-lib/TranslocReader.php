@@ -323,18 +323,19 @@ class TranslocReader {
       if ($arrowIndex < 0) { $arrowIndex = 0; }
       $arrowIndex = floor($arrowIndex);
       
-      $iconURL = HARVARD_TRANSLOC_MARKERS.'?'.urlencode(http_build_query(array(
+      $iconURL = HARVARD_TRANSLOC_MARKERS.'?'.http_build_query(array(
         'm' => 'bus',
         'c' => $route['color'],
         'h' => $this->arrows[$arrowIndex],
-      )));
-      $vehicleSuffix .= '&markers=icon:'.$iconURL.'|'.$lat.','.$lon;
+      ));
+      $vehicleSuffix .= '&amp;'.http_build_query(array(
+        'markers' => 'icon:'.$iconURL.'|'.$lat.','.$lon
+      ));
     }
 
-    //print_r($iconURL);
+    //error_log(print_r($iconURL, true));
     //print_r(urldecode(($iconURL)));
-    return STATIC_MAPS_URL.http_build_query($args).$vehicleSuffix;
-      ;
+    return STATIC_MAPS_URL.http_build_query($args, 0, '&amp;').$vehicleSuffix;
   }
 
 
