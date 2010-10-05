@@ -113,3 +113,18 @@ function Initialize(&$path=null) {
     $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
   }
 }
+
+function modoAutoload($class_name) {
+	$paths = array(LIB_DIR, SITE_LIB_DIR);
+	
+	foreach($paths as $path) {
+		$file = sprintf("%s/%s.php", $path, $class_name);
+		if (file_exists($file)) {
+			include($file);
+			return;
+		}
+	}
+	return;
+}
+
+spl_autoload_register("modoAutoload");

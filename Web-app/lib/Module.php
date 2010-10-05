@@ -279,7 +279,7 @@ abstract class Module {
     
     if ($addBreadcrumb && $this->page != 'index') {
       $title = isset($this->breadcrumbTitle) ? 
-        $this->breadcrumbTitle : $pageTitle;
+        $this->breadcrumbTitle : $this->getTemplateVars('pageTitle');
       $longTitle = isset($this->breadcrumbLongTitle) ? 
         $this->breadcrumbLongTitle : $this->getTemplateVars('pageTitle');
       
