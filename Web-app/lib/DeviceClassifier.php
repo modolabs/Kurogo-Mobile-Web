@@ -5,7 +5,7 @@ class DeviceClassifier {
   private $platform = 'unknown';
   private $certs = false;
 
-  private function getDevice() {
+  public function getDevice() {
     return implode('-', array(
       $this->pagetype, 
       $this->platform, 

@@ -314,7 +314,7 @@ class DiningData {
     $filename = DINING_MENU_DIRECTORY."$day.csv";
 
     self::createDiningFlatFile(DINING_MENU_FLAT_FILE);
-error_log($filename);
+
     if (file_exists($filename)) {
       $handle = fopen($filename, "r");
 
@@ -343,10 +343,10 @@ error_log($filename);
     $foodCategories = array();
 
     foreach($items as $item) {
-      if(!array_key_exists($item[category], $foodCategories)) {
-        $foodCategories[$item[category]] = array($item);
+      if(!array_key_exists($item['category'], $foodCategories)) {
+        $foodCategories[$item['category']] = array($item);
       } else {
-        $foodCategories[$item[category]][] = $item;
+        $foodCategories[$item['category']][] = $item;
       }
     }
 

@@ -30,6 +30,33 @@ abstract class Module {
   private $htmlPager = null;
   private $inPagedMode = true;
   
+  private $tabbedView = null;
+  
+  //
+  // Tabbed View support
+  //
+  
+  protected function enableTabs($tabs, $defaultTab=null) {
+    $currentTab = $tabs[0];
+    if (isset($this->args['tab']) && in_array($this->args['tab'], $tabs)) {
+      $currentTab = $this->args['tab'];
+      
+    } else if (isset($defaultTab) && in_array($defaultTab, $tabs)) {
+      $currentTab = $defaultTab;
+    }
+    
+    $args = $this->args;
+    unset($args['tab']);
+    
+    $this->tabbedView = array(
+      'tabs'    => $tabs,
+      'current' => $currentTab,
+      'url'     => $this->buildBreadcrumbURL($this->page, $args, false),
+    );
+
+    $this->addInlineJavascriptFooter("showTab('{$currentTab}Tab');");
+  }
+  
   //
   // Pager support
   // Note: the first page is 0 (0 ... pageCount-1)
@@ -105,8 +132,8 @@ abstract class Module {
   // Minify URLs
   //
   private function getMinifyUrls() {
-    $minKey = $this->id.'-'.$this->page.'-'.$this->getTemplateVars('pagetype').'-'.
-      $this->getTemplateVars('platform').'-'.md5(ROOT_DIR.URL_PREFIX);
+    $minKey = $this->id.'-'.$this->page.'-'.$GLOBALS['deviceClassifier']->getPagetype().'-'.
+      $GLOBALS['deviceClassifier']->getPlatform().'-'.md5(ROOT_DIR);
     $minDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ? '&debug=1' : '';
     
     return array(
@@ -416,6 +443,11 @@ abstract class Module {
     // Pager support
     if (isset($this->htmlPager)) {
       $this->assign('pager', $this->getPager());
+    }
+    
+    // Tab support
+    if (isset($this->tabbedView)) {
+      $this->assign('tabbedView', $this->tabbedView);
     }
 
     // Load template for page

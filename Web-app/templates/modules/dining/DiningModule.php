@@ -72,19 +72,23 @@ class DiningModule extends Module {
           $diningStatus['url'] = $this->detailURL($diningStatus);
         }
   
-        error_log(print_r($foodItems, true));
+        //error_log(print_r($foodItems, true));
         //error_log(print_r($diningHours, true));
         //error_log(print_r($diningStatuses, true));
         
         $this->assign('currentMeal',    $currentMeal);
         $this->assign('foodItems',      $foodItems);
         $this->assign('diningStatuses', $diningStatuses);
-
-        $this->addInlineJavascriptFooter("showTab('{$currentMeal}tab');");
-
+        
+        $tabs = array_keys($foodItems);
+        $tabs[] = 'location';
+        
+        $this->enableTabs($tabs, $currentMeal);
         break;
         
       case 'detail':
+        $this->setPageTitle('Detail');
+
         $diningHall = $this->args['location'];
 
         $allHours = DiningHalls::getDiningHallHours();
@@ -112,9 +116,8 @@ class DiningModule extends Module {
         }
         
         if ($diningHallHours['brain break'] != 'Closed') {
-          $bbHoursParts = explode(' ', $diningHallHours['brain break']);
-          $bbStartTime = $bbHoursParts[1];
-          $diningHallHours['brain break'] = "Sunday-Thursday starting at {$bbStartTime}";
+          $diningHallHours['brain break'] = 'Sunday-Thursday '.
+            preg_replace(';starting(\s+at|);', 'starting at', $diningHallHours['brain break']);
         }
         
         if ($diningHallHours['brunch'] != 'Closed') {

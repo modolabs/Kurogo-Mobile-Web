@@ -1010,7 +1010,7 @@ h2.icon {
 
 #tabs li {
 	float: left;
-	margin-bottom: -2px;
+	margin-bottom: -1px;
 	margin-right: 4px;
 	background-color: #bbb;
 	border-top: 1px solid #bbb;
@@ -1029,7 +1029,7 @@ h2.icon {
 	border-right: 1px solid #bbb;
 	border-left: 1px solid #bbb;
 	border-bottom: 1px solid #fff;
-	margin-top: -3px;
+	margin-top: -2px;
 	padding-top: 5px;
 	padding-bottom: 6px;
 }

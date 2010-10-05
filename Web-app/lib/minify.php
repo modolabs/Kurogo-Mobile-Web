@@ -88,7 +88,7 @@ function getMinifyGroupsConfig() {
   $minifyConfig = array();
   
   $key = $_GET['g'];
-  list($ext, $module, $page, $pagetype, $platform, $base) = explode('-', $key);
+  list($ext, $module, $page, $pagetype, $platform, $pathHash) = explode('-', $key);
 
   $cache = new DiskCache(CACHE_DIR.'/minify', 30, true);
   $cacheName = "group_$key";
@@ -138,8 +138,15 @@ function getMinifyGroupsConfig() {
 
 function minifyPostProcess($content, $type) {
   if ($type === Minify::TYPE_CSS) {
-    $content = "/* Adding url prefix '".URL_PREFIX."' */\n\n".
-      preg_replace(';url\("?\'?/([^"\'\)]+)"?\'?\);', 'url("'.URL_PREFIX.'\1")', $content);
+    $urlPrefix = URL_PREFIX;
+          
+    if ($GLOBALS['siteConfig']->getVar('DEVICE_DEBUG') && URL_PREFIX == URL_BASE) {
+      // if device debugging is on, always append since minify
+      $urlPrefix .= 'device/'.$GLOBALS['deviceClassifier']->getDevice().'/';
+    }
+
+    $content = "/* Adding url prefix '".$urlPrefix."' */\n\n".
+      preg_replace(';url\("?\'?/([^"\'\)]+)"?\'?\);', 'url("'.$urlPrefix.'\1")', $content);
   }
   
   return $content;
