@@ -1,0 +1,36 @@
+<?php
+$page->title('Shuttle Tracker')
+     ->navbar_image('shuttleschedule')
+     ->add_stylesheet('Webkit/shuttletrack')
+     ->breadcrumbs('Route', 'Stop Info')
+     ->breadcrumb_links(routeURL($routeId));
+
+$page->content_begin();
+?>
+
+<div id="map">
+    <h3><?=$stop['name']?></h3>
+    <img src="<?=$imageURL?>" width="<?=$mapWidth?>" height="<?=$mapHeight?>" id="mapimage" alt="Map" class="stop-map"/>
+</div>
+
+<? if(count($runningRoutes) > 0) { ?>
+    <h3 class="nonfocal"><?=$runningTitle?></h3>
+    <ul class="nav nested">
+        <? foreach($runningRoutes as $route) { ?>
+            <li><a href="<?=routeURL($route['id'])?>"><?=$route["long_name"]?></a></li>
+        <? } ?>
+    </ul>
+<? } ?>
+
+<? if(count($offlineRoutes) > 0) { ?>
+    <h3 class="nonfocal"><?=$offlineTitle?></h3>
+    <ul class="nav nested">
+        <? foreach($offlineRoutes as $route) { ?>
+            <li><a href="<?=routeURL($route['id'])?>"><?=$route["long_name"]?></a></li>
+        <? } ?>
+    </ul>
+<? } ?>
+
+<? 
+$page->content_end();
+?>
