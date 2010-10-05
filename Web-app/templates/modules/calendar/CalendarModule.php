@@ -48,7 +48,7 @@ class CalendarModule extends Module {
 
 
   private function dayInfo($time, $offset=0) {
-    $time += $offset * 24 * 60 * 60;
+    $time += $offset * DAY_SECONDS;
     return array(
       "weekday"       => date('l', $time),
       "month"         => date('F', $time),
@@ -493,6 +493,7 @@ class CalendarModule extends Module {
     
         $this->assign('fields', $fields);
         //error_log(print_r($fields, true));
+        break;
         
       case 'search':
         $this->setPageTitle("Search");
@@ -509,7 +510,7 @@ class CalendarModule extends Module {
           $feed->setStartDate($start);
           $feed->setEndDate($end);
           $feed->addFilter('search', $searchTerms);
-          $feed->items();
+          $iCalEvents = $feed->items();
 
           $events = array();
           foreach($iCalEvents as $iCalEvent) {

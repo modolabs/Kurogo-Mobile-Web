@@ -42,8 +42,11 @@ class TrumbaCalendarDataController extends CalendarDataController
                 $this->addFilter('startdate', $this->startDate->format('Ym').'01');
                 $this->addFilter('months', 1);
            }
+        } elseif ($diff % 86400 == 0) {
+            $this->addFilter('startdate', $this->startDate->format('Ymd'));
+            $this->addFilter('days', $diff / 86400);
         } else {
-            trigger_error("Have not handled ranges greater than 1 day yet", E_USER_ERROR);
+            trigger_error("Non day integral duration specified $diff", E_USER_ERROR);
         }
         
         return parent::url();

@@ -52,6 +52,7 @@ abstract class DataController
     
     public function __construct($baseURL, DataParser $parser)
     {
+        $this->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
         $this->setBaseURL($baseURL);
         $this->setParser($parser);
     }
