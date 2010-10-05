@@ -3,19 +3,48 @@
 require_once realpath(LIB_DIR.'/Module.php');
 require_once realpath(LIB_DIR.'/TimeRange.php');
 
+define('DAY_SECONDS', 24*60*60);
+
 class CalendarModule extends Module {
   protected $id = 'calendar';
   protected $timezone;
   
   private $searchOptions = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
-    //array("phrase" => "in the next 15 days",  "offset" => 15),
-    //array("phrase" => "in the next 30 days",  "offset" => 30),
-    //array("phrase" => "in the past 15 days",  "offset" => -15),
-    //array("phrase" => "in the past 30 days",  "offset" => -30),
+    array("phrase" => "in the next 15 days",  "offset" => 15),
+    array("phrase" => "in the next 30 days",  "offset" => 30),
+    array("phrase" => "in the past 15 days",  "offset" => -15),
+    array("phrase" => "in the past 30 days",  "offset" => -30),
     //array("phrase" => "this school term",     "offset" => "term"),
     //array("phrase" => "this school year",     "offset" => "year")
   );
+  
+  private function getDatesForSearchOption($option) {
+    $start = $end = time();
+    
+    switch ($option['offset']) {
+      case 'term':
+        // TODO
+        break;
+        
+      case 'year':
+        // TODO
+        break;
+        
+      default: // day counts
+        if ($option['offset'] >= 0) {
+          $end = $start + ($option['offset']*DAY_SECONDS);
+        } else {
+          $start = $end + ($option['offset']*DAY_SECONDS);
+        }
+        break;
+    }
+
+    return array (
+      new DateTime(date('Y-m-d H:i:s', $start), $this->timezone), 
+      new DateTime(date('Y-m-d H:i:s', $end  ), $this->timezone),
+    );
+  }
 
 
   private function dayInfo($time, $offset=0) {
@@ -230,14 +259,17 @@ class CalendarModule extends Module {
   
   private function detailURL($event, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('detail', array(
-      'id' => $event->get_uid(),
-      'time'=>$event->get_start()
-//      'time' => isset($this->args['time']) ? $this->args['time'] : time(),
+      'id'   => $event->get_uid(),
+      'time' => $event->get_start()
     ), $addBreadcrumb);
   }
 
   protected function initializeForPage() {
-//      $GLOBALS['siteConfig']->loadThemeFile('calendar');
+    $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+    $parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+    $eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+    $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+    
     $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
 
     switch ($this->page) {
@@ -301,23 +333,6 @@ class CalendarModule extends Module {
         $events = array();
         
         if (strlen($id) > 0) {
-/*        
-          // copied from api/HarvardCalendar.php
-          $start = date('Ymd', $time);
-          $url = $GLOBALS['siteConfig']->getVar('HARVARD_EVENTS_ICS_BASE_URL').'?'.http_build_query(array(
-            'startdate'    => $start,
-            'days'         => 1,
-            'filter1'      => $id,
-            'filterfield1' => 15202,
-          ));
-          
-          $iCalEvents = makeIcalDayEvents($url, $start, $id);
-          */
-
-            $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-            $parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-            $eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-            $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
             $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
             
             $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
@@ -364,10 +379,6 @@ class CalendarModule extends Module {
         $this->assign('nextUrl', $this->dayURL($next, $type, false));
         $this->assign('prevUrl', $this->dayURL($prev, $type, false));
         
-        $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-        $parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-        $eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-        $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
         $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
         
         $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
@@ -402,10 +413,6 @@ class CalendarModule extends Module {
         $this->loadThemeConfigFile('calendarDetail');
         $calendarFields = $this->getTemplateVars('calendarDetail');
 
-        $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-        $parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-        $eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-        $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
         $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
         
         $time = isset($this->args['time']) ? $this->args['time'] : time();
@@ -489,28 +496,45 @@ class CalendarModule extends Module {
         
       case 'search':
         $this->setPageTitle("Search");
+        $this->setBreadcrumbLongTitle("Search Results");
         
-        if (isset($this->args['filter'])) {
+        if (isset($this->args['filter'], $this->args['timeframe'])) {
           $searchTerms = trim($this->args['filter']);
+          $timeframeKey = $this->args['timeframe'];
+          $searchOption = $this->searchOptions[$timeframeKey];
+          
+          $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+          
+          list($start, $end) = $this->getDatesForSearchOption($searchOption);          
+          $feed->setStartDate($start);
+          $feed->setEndDate($end);
+          $feed->addFilter('search', $searchTerms);
+          $iCalEvents = array();//$feed->items();
 
-          // retrieve data for the week
-          $start = date('Ymd', time());
-          $url = $GLOBALS['siteConfig']->getVar('HARVARD_EVENTS_ICS_BASE_URL').'?'.http_build_query(array(
-            'startdate' => $start,
-            'days'      => 7,
-            'search'    => $searchTerms,
-          ));
-         
-          $events = makeIcalSearchEvents($url, $searchTerms);
+          $events = array();
+          foreach($iCalEvents as $iCalEvent) {
+            $subtitle = $this->timeText($iCalEvent);
+            $briefLocation = $iCalEvent->get_location();
+            if (isset($briefLocation)) {
+              $subtitle .= " | $briefLocation";
+            }
+        
+            $events[] = array(
+              'url'      => $this->detailURL($iCalEvent),
+              'title'    => $iCalEvent->get_summary(),
+              'subtitle' => $subtitle
+            );
+          }
                     
+          $this->assign('events',      $events);        
+          $this->assign('searchTerms', $searchTerms);        
+
         } else {
           $this->redirectTo('index');
         }
         
-        $searchTerms = $this->args['filter'];
-
-
         break;
     }
+    
   }
 }
