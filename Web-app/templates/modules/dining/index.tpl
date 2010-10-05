@@ -6,14 +6,21 @@
 </div>
 
 {capture name="sideNav" assign="sideNav"}
+  {strip}
   <div class="{block name='sideNavClass'}sidenav{/block}">
-    <a href="{$prev['url']}">
-      &lt; {$prev['timestamp']|date_format:"%a %b %e"}
-    </a> | 
-    <a href="{$next['url']}">
-      {$next['timestamp']|date_format:"%a %b %e"} &gt;
-    </a>
+    {if isset($prev)}
+      <a href="{$prev['url']}">
+        &lt; {$prev['timestamp']|date_format:"%a %b %e"}
+      </a>
+    {/if}
+    {if isset($prev, $next)} | {/if}
+    {if isset($next)}    
+      <a href="{$next['url']}">
+        {$next['timestamp']|date_format:"%a %b %e"} &gt;
+      </a>
+    {/if}
   </div>
+  {/strip}
 {/capture}
 
 {$sideNav}
@@ -33,7 +40,7 @@
   <div id="tabbodies">
     {foreach $foodItems as $meal => $foodTypes}
       <div class="tabbody" id="{$meal}tab" style="display:none">
-        {if count($foodTypes) > 0}
+        {if count($foodTypes)}
           {foreach $foodTypes as $foodType => $foods}
             <h3>{$foodType}</h3>
             <ul class="nav nested">
