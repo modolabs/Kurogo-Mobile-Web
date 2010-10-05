@@ -463,6 +463,31 @@ class CalendarModule extends Module {
     
         $this->assign('fields', $fields);
         //error_log(print_r($fields, true));
+        
+      case 'search':
+        $this->setPageTitle("Search");
+        
+        if (isset($this->args['filter'])) {
+          $searchTerms = trim($this->args['filter']);
+
+          // retrieve data for the week
+          $start = date('Ymd', time());
+          $url = $GLOBALS['siteConfig']->getVar('HARVARD_EVENTS_ICS_BASE_URL').'?'.http_build_query(array(
+            'startdate' => $start,
+            'days'      => 7,
+            'search'    => $searchTerms,
+          ));
+         
+          $events = makeIcalSearchEvents($url, $searchTerms);
+                    
+        } else {
+          $this->redirectTo('index');
+        }
+        
+        $searchTerms = $this->args['filter'];
+
+
+        break;
     }
   }
 }
