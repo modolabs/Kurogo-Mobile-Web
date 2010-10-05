@@ -15,9 +15,6 @@ class ICSDataParser extends DataParser
             'value'=>'',
             'params'=>array()
         );
-/*      $sep_pos = strpos($line, ':');
-        $nameparam = explode(';', substr($line, 0, $sep_pos));
-        */
 
         if (preg_match('/(.*?)(?!<\\\):(.*)/', $line, $parts)) {
             $params = explode(';', $parts[1]);
@@ -29,20 +26,9 @@ class ICSDataParser extends DataParser
                 $contentline['params'][$param_bits[1]] = str_replace("\"", "", $param_bits[2]);
             }
         } else {
-            Debug::die_here($line);
+        	error_log("Found a line $line that may not be valid");
         }
         
-        return $contentline;
-        
-        Debug::wp($line);
-        Debug::wp($nameparam);
-        if (count($nameparam) > 1) {
-            Debug::wp($nameparam);
-            $param = explode('=', $nameparam[1]);
-            $contentline['param_name'] = $param[0];
-            $contentline['param_value'] = $param[1];
-        }
-        $contentline['value'] = trim(substr($line, $sep_pos + 1));
         return $contentline;
     }
     
