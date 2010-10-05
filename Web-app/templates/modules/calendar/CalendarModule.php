@@ -509,7 +509,7 @@ class CalendarModule extends Module {
           $feed->setStartDate($start);
           $feed->setEndDate($end);
           $feed->addFilter('search', $searchTerms);
-          $iCalEvents = array();//$feed->items();
+          $feed->items();
 
           $events = array();
           foreach($iCalEvents as $iCalEvent) {
@@ -532,7 +532,6 @@ class CalendarModule extends Module {
         } else {
           $this->redirectTo('index');
         }
-        
         break;
     }
     
