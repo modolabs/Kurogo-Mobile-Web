@@ -4,25 +4,25 @@ require_once(LIB_DIR . '/TrumbaCalendarDataController.php');
 
 class HarvardEvent extends TrumbaEvent
 {
-	public $HarvardCategories=array();
-	
+    public $HarvardCategories=array();
+    
     public function get_category_from_name($name)
     {
-    	$categories = HarvardEvent::get_all_categories();
-    	foreach ($categories as $category) {
-    		if ($name==$category->get_name()) {
-    			return $category;
-    		}
-    	}
-    	
-    	return false;
+        $categories = HarvardEvent::get_all_categories();
+        foreach ($categories as $category) {
+            if ($name==$category->get_name()) {
+                return $category;
+            }
+        }
+        
+        return false;
     }
 
     public function get_all_categories() {
     
         static $categories=array();
         if ($categories) {
-        	return $categories;
+            return $categories;
         }
     
         $filename = fopen($GLOBALS['siteConfig']->getVar('PATH_TO_EVENTS_CAT'), "r");
@@ -49,45 +49,45 @@ class HarvardEvent extends TrumbaEvent
 
   public function set_attribute($attr, $value, $params=null) {
     switch ($attr) {
-    	case 'Gazette Classification':
-			$this->set_attribute('CATEGORIES', $value);
-    		$values = explode(',', $value);
-    		foreach ($values as $category_name) {
-    			$category_name = trim($category_name);
-				if ($category = self::get_category_from_name($category_name)) {
-					$this->HarvardCategories[] = $category;
-				} else {
-					error_log("HarvardEvent->set_attribute(): Cannot find category for $category_name");
-				}
-			}
-    		break;
-    	default:
-    		parent::set_attribute($attr, $value, $params);
-    		break;
+        case 'Gazette Classification':
+            $this->set_attribute('CATEGORIES', $value);
+            $values = explode(',', $value);
+            foreach ($values as $category_name) {
+                $category_name = trim($category_name);
+                if ($category = self::get_category_from_name($category_name)) {
+                    $this->HarvardCategories[] = $category;
+                } else {
+                    error_log("HarvardEvent->set_attribute(): Cannot find category for $category_name");
+                }
+            }
+            break;
+        default:
+            parent::set_attribute($attr, $value, $params);
+            break;
     }
   }
 
   public function get_attribute($attr)
   {
-  	switch ($attr)
-  	{
-  		case 'description':
-  			$fields = array(
-  				$this->description
-			);
-			$other_fields = array('Event Template', 'Organization/Sponsor', 'Cost', 'Ticket Info');
-			foreach ($other_fields as $field) {
-				if ($value = $this->get_attribute($field)) {
-					$fields[] = sprintf("%s: %s", $field, $value);
-				}
-  			}
-  			return implode("\n\n", $fields);
-  			break;
-  		case 'Gazette Classification':
-  			return $this->HarvardCategories;
-  		default:
-		  	return parent::get_attribute($attr);
-  	}
+    switch ($attr)
+    {
+        case 'description':
+            $fields = array(
+                $this->description
+            );
+            $other_fields = array('Organization/Sponsor', 'Cost', 'Ticket Info');
+            foreach ($other_fields as $field) {
+                if ($value = $this->get_attribute($field)) {
+                    $fields[] = sprintf("%s: %s", $field, $value);
+                }
+            }
+            return implode("\n\n", $fields);
+            break;
+        case 'Gazette Classification':
+            return $this->HarvardCategories;
+        default:
+            return parent::get_attribute($attr);
+    }
   }
 
 }

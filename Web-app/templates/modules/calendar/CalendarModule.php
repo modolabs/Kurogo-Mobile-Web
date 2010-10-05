@@ -70,7 +70,7 @@ class CalendarModule extends Module {
         case "term":
           if($day1['month_num'] < 7) {
             $endDate = "{$day1['year']}/07/01";
-	  } else {
+      } else {
             $endDate = "{$day1['year']}/12/31";
           }
           break;
@@ -78,7 +78,7 @@ class CalendarModule extends Module {
         case "year": 
           if($day1['month_num'] < 7) {
             $endDate = "{$day1['year']}/07/01";
-	  } else {
+      } else {
             $year = $day1['year'] + 1;
             $endDate = "$year/07/01";
           }
@@ -236,8 +236,8 @@ class CalendarModule extends Module {
   }
 
   protected function initializeForPage() {
-//  	$GLOBALS['siteConfig']->loadThemeFile('calendar');
-  	$this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
+//      $GLOBALS['siteConfig']->loadThemeFile('calendar');
+    $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
 
     switch ($this->page) {
       case 'help':
@@ -341,11 +341,11 @@ class CalendarModule extends Module {
         $this->assign('nextUrl', $this->dayURL($next, $type, false));
         $this->assign('prevUrl', $this->dayURL($prev, $type, false));
         
-		$controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-		$parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-		$eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-		$baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
-		$feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+        $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+        $parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+        $eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+        $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+        $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
         
         $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
         $start->setTime(0,0,0);
@@ -379,18 +379,18 @@ class CalendarModule extends Module {
         $this->loadThemeConfigFile('calendarDetail');
         $calendarFields = $this->getTemplateVars('calendarDetail');
 
-		$controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-		$parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-		$eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-		$baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
-		$feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
-		
+        $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+        $parserClass = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+        $eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+        $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+        $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+        
         $time = isset($this->args['time']) ? $this->args['time'] : time();
-		if ($event = $feed->getItem($this->args['id'], $time)) {
-			$this->assign('event', $event);
-		} else {
-			throw new Exception("Event not found");
-		}
+        if ($event = $feed->getItem($this->args['id'], $time)) {
+            $this->assign('event', $event);
+        } else {
+            throw new Exception("Event not found");
+        }
 
         // build the list of attributes
         $fields = array();
@@ -398,48 +398,48 @@ class CalendarModule extends Module {
           $value = $event->get_attribute($key);
           if (!isset($value)) { continue; }
           
-		$field = array();
-		
-		if (isset($info['label'])) {
-		  $field['label'] = $info['label'];
-		}
-		
-		if (isset($info['class'])) {
-		  $field['class'] = $info['class'];
-		}
+        $field = array();
+        
+        if (isset($info['label'])) {
+          $field['label'] = $info['label'];
+        }
+        
+        if (isset($info['class'])) {
+          $field['class'] = $info['class'];
+        }
 
-		if (is_array($value)) {		
-		  $fieldValues = array();
-		  foreach ($value as $item) {
-			$fieldValue = '';
-			$fieldValueUrl = null;
-			
-			if (isset($info['type'])) {
-			  $fieldValue  = $this->valueForType($info['type'], $item);
-			  $fieldValueUrl = $this->urlForType($info['type'], $item);
-			} else {
-			  $fieldValue = $item;
-			}
-			
-			if (isset($fieldValueUrl)) {
-			  $fieldValue = '<a href="'.$fieldValueUrl.'">'.$fieldValue.'</a>';
-			}
-			
-			$fieldValues[] = $fieldValue;
-		  }
-		  $field['title'] = implode(', ', $fieldValues);
+        if (is_array($value)) {     
+          $fieldValues = array();
+          foreach ($value as $item) {
+            $fieldValue = '';
+            $fieldValueUrl = null;
+            
+            if (isset($info['type'])) {
+              $fieldValue  = $this->valueForType($info['type'], $item);
+              $fieldValueUrl = $this->urlForType($info['type'], $item);
+            } else {
+              $fieldValue = $item;
+            }
+            
+            if (isset($fieldValueUrl)) {
+              $fieldValue = '<a href="'.$fieldValueUrl.'">'.$fieldValue.'</a>';
+            }
+            
+            $fieldValues[] = $fieldValue;
+          }
+          $field['title'] = implode(', ', $fieldValues);
 
-		} else {
-		  if (isset($info['type'])) {
-			$field['title'] = $this->valueForType($info['type'], $value);
-			$field['url']   = $this->urlForType($info['type'], $value);
-		  } else {
-			$field['title'] = nl2br($value);
-		  }
-		}
-		
-		$fields[] = $field;
-	  }
+        } else {
+          if (isset($info['type'])) {
+            $field['title'] = $this->valueForType($info['type'], $value);
+            $field['url']   = $this->urlForType($info['type'], $value);
+          } else {
+            $field['title'] = nl2br($value);
+          }
+        }
+        
+        $fields[] = $field;
+      }
 
         $this->assign('fields', $fields);
         //error_log(print_r($fields, true));
