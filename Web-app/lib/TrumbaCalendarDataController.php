@@ -6,14 +6,14 @@ class TrumbaCalendarDataController extends CalendarDataController
 {
     public function url()
     {
-        if (empty($this->start_date) || empty($this->end_date)) {
+        if (empty($this->startDate) || empty($this->endDate)) {
             throw new Exception('Start or end date cannot be blank');
         }
         
         $diff = $this->end_timestamp() - $this->start_timestamp();
         if ($diff<86400) {
-            $this->requires_date_filter(true);
-            $this->setFilter('startdate', $this->start_date->format('Ym').'01');
+            $this->requiresDateFilter(true);
+            $this->setFilter('startdate', $this->startDate->format('Ym').'01');
             $this->setFilter('months', 1);
         } else {
             Debug::die_here($diff);
