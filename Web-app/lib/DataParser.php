@@ -2,13 +2,12 @@
 
 abstract class DataParser
 {
-	abstract public function parseData($data);
+    abstract public function parseData($data);
 
-	public function parseFile($filename) 
-	{
-		return $this->parseData(file_get_contents($filename));
-	}
-	
+    public function parseFile($filename) 
+    {
+        return $this->parseData(file_get_contents($filename));
+    }
+    
 }
 
-?>

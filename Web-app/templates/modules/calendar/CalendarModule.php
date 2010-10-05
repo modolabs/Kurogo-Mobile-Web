@@ -70,7 +70,7 @@ class CalendarModule extends Module {
         case "term":
           if($day1['month_num'] < 7) {
             $endDate = "{$day1['year']}/07/01";
-	  } else {
+      } else {
             $endDate = "{$day1['year']}/12/31";
           }
           break;
@@ -78,7 +78,7 @@ class CalendarModule extends Module {
         case "year": 
           if($day1['month_num'] < 7) {
             $endDate = "{$day1['year']}/07/01";
-	  } else {
+      } else {
             $year = $day1['year'] + 1;
             $endDate = "$year/07/01";
           }
@@ -236,8 +236,8 @@ class CalendarModule extends Module {
   }
 
   protected function initializeForPage() {
-//  	$GLOBALS['siteConfig']->loadThemeFile('calendar');
-  	$this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
+//      $GLOBALS['siteConfig']->loadThemeFile('calendar');
+    $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
 
     switch ($this->page) {
       case 'help':
