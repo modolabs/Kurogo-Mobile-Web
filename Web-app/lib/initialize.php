@@ -114,13 +114,13 @@ function Initialize(&$path=null) {
   }
 }
 
-function modoAutoload($class_name) {
+function modoAutoload($className) {
 	$paths = array(LIB_DIR, SITE_LIB_DIR);
 	
-	foreach($paths as $path) {
-		$file = sprintf("%s/%s.php", $path, $class_name);
-		if (file_exists($file)) {
-			include($file);
+	foreach ($paths as $path) {
+		$file = realpath_exists("$path/$className.php");
+		if ($file) {
+			require_once $file;
 			return;
 		}
 	}

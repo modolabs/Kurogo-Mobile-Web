@@ -94,47 +94,35 @@ class HarvardEvent extends TrumbaEvent
 
 class Harvard_Event_Category {
 
-private static $name;
-private static $id;
-private static $urlLink;
-
-public function __toString()
-{
-	return $this->get_name();
-}
-
-public function set_name($nm) {
-
+  private static $name;
+  private static $id;
+  private static $urlLink;
+  
+  public function __toString() {
+    return $this->get_name();
+  }
+  
+  public function set_name($nm) {
     $this->name = $nm;
-    }
-
-public function set_cat_id($uid) {
-
+  }
+  
+  public function set_cat_id($uid) {
     $this->id = $uid;
-    }
-
-public function set_url($url) {
-
+  }
+  
+  public function set_url($url) {
     $this->urlLink = $url;
-    }
-
-public function get_name() {
-
+  }
+  
+  public function get_name() {
     return $this->name;
-    }
-
-public function get_cat_id() {
-
+  }
+  
+  public function get_cat_id() {
     return $this->id;
-    }
-
-public function get_url() {
-
+  }
+  
+  public function get_url() {
     return $this->urlLink;
-    }
-
-
+  }
 }
-
-
-?>

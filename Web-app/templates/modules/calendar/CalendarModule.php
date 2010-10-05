@@ -94,25 +94,25 @@ class CalendarModule extends Module {
     switch ($type) {
       case 'datetime':
         if (is_a($value, 'DayRange')) {
-        	$valueForType = strval($value);
+          $valueForType = strval($value);
         } else {
-			$valueForType = date("D M j", $value->get_start());
-			if ( $value->get_end() && $value->get_end()!=$value->get_start()) {
-				if ( date('Ymd', $value->get_start()) != date('Ymd', $value->get_end())) {
-					$valueForType .= date(' g:i', $value->get_start());
-					if ( date('a', $value->get_start()) != date('a', $value->get_end())) {
-						$valueForType .= date(' a', $value->get_start());
-					}
-				
-					$valueForType .= date(" - D M j g:i a", $value->get_end());
-				} else {
-					$valueForType .= "<br/>" . date('g:i', $value->get_start()) . date("-g:i a", $value->get_end());
-				}
-			} else {
-				$valueForType .= "<br/>" . date('g:i a', $value->get_start());
-			}
-		}
-		
+          $valueForType = date("D M j", $value->get_start());
+          if ($value->get_end() && $value->get_end()!=$value->get_start()) {
+            if (date('Ymd', $value->get_start()) != date('Ymd', $value->get_end())) {
+              $valueForType .= date(' g:i', $value->get_start());
+              if (date('a', $value->get_start()) != date('a', $value->get_end())) {
+                $valueForType .= date(' a', $value->get_start());
+              }
+        
+              $valueForType .= date(" - D M j g:i a", $value->get_end());
+            } else {
+              $valueForType .= "<br/>" . date('g:i', $value->get_start()) . date("-g:i a", $value->get_end());
+            }
+          } else {
+            $valueForType .= "<br/>" . date('g:i a', $value->get_start());
+          }
+        }
+        
         break;
 
       case 'url':
