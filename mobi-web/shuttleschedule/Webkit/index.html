@@ -46,7 +46,7 @@ $page->content_begin();
   	<div class="tabbody" id="newstab" style="display:none">
   <ul class="nav">
       <? foreach ($agenciesAnnouncementsAndName as $announcementsAndName) { ?>
-           <li><h3><?=$announcementsAndName['long_name']?> Shuttles News</h3></li>
+           <li><h3><?=$announcementsAndName['long_name']?> Shuttles</h3></li>
            <? if($announcementsAndName['announcements']) { ?>
                 <? foreach($announcementsAndName['announcements'] as $index => $announcement) { ?>
                      <li>
