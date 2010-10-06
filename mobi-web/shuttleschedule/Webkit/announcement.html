@@ -1,0 +1,19 @@
+<?php
+$page->title('Shuttles: News')
+     ->navbar_image('shuttleschedule')
+     ->breadcrumbs('Shuttle News');
+
+$page->content_begin();
+?>
+
+<div class="focal">
+
+  <h2 class="icon"><?=$announcement['title']?></h2>
+
+  <p class="smallprint"><?=$announcement['date']?></p>
+
+  <?=$announcement['html']?>  
+
+
+</div>
+<? $page->content_end(); ?>

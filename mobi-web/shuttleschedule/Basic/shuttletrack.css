@@ -26,6 +26,14 @@ table.schedule td {
 	font-weight: normal;
 }
 
+.schedule a {
+    color: #000;
+}
+
+.current a {
+    color: #fff;
+}
+
 .nested {
   margin-top: 0;
 }

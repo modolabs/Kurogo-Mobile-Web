@@ -1,0 +1,22 @@
+<?php
+$page->title('Shuttles: News')
+     ->header("Shuttle Schedule")
+     ->add_stylesheet("Basic/shuttletrack");
+
+$page->content_begin();
+?>
+
+<div class="focal">
+
+  <h2><?=$announcement['title']?></h2>
+
+  <p class="smallprint"><?=$announcement['date']?></p>
+
+  <?=$announcement['html']?>
+
+</div>
+
+<?
+$page->content_end();
+$page->nav_link("./", "Shuttle Schedule Home");
+?>
