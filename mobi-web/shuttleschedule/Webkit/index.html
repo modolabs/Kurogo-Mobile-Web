@@ -22,6 +22,7 @@ $page->content_begin();
   <div id="tabbodies">
   	<div class="tabbody" id="runningtab">
   <?  foreach ($agencies as $agencyID => $agencyName) { ?>
+
         <h3><?= $agencyName ?> Shuttles</h3>
         <ul class="nav nested">
       <?  foreach ($runningRoutes[$agencyID] as $routeID => $routeName) { ?>
@@ -43,7 +44,23 @@ $page->content_begin();
   	</div> <!-- id="offlinetab" -->
 
   	<div class="tabbody" id="newstab" style="display:none">
-  		News
+  <ul class="nav">
+      <? foreach ($agenciesAnnouncementsAndName as $announcementsAndName) { ?>
+           <li><h3><?=$announcementsAndName['long_name']?> Shuttles News</h3></li>
+           <? if($announcementsAndName['announcements']) { ?>
+                <? foreach($announcementsAndName['announcements'] as $index => $announcement) { ?>
+                     <li>
+                         <a href="<?=announcementURL($announcements['name'],$index)?>">
+                             <?=$announcement['title']?><br />
+                             <span class="smallprint"><?=$announcement['date']?></span>
+                         </a>
+                     </li>
+                <? } ?>
+           <? } else { ?>
+                <li>No announcements at this time</li>
+           <? } ?>
+      <? } ?>
+  </ul>
   	</div> <!-- id="newstab" -->
 
   	<div class="tabbody" id="infotab" style="display:none">

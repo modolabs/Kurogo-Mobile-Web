@@ -18,8 +18,20 @@ foreach ($agencies as $agencyID => $agencyName) {
   $nonRunningRoutes[$agencyID] = $reader->getNonRunningRoutesAndNamesForAgency($agencyID);
 }
 
-$announcements = $reader->getAnnouncements();
-// print_r($announcements);
+$agenciesAnnouncements = $reader->getAnnouncements();
+$agencyAnnouncementsAndName = array();
+
+foreach($agencies as $agencyID => $agencyName) {
+    $tempAnnouncments = array('name' => $agencyID, 'long_name' => $agencyName);
+    foreach($agenciesAnnouncements['agencies'] as $announcements) {
+
+        if($announcements['name'] == $agencyID) {
+           $tempAnnouncments = array_merge($tempAnnouncments, $announcements);
+           break;
+        }
+    }
+    $agenciesAnnouncementsAndName[] = $tempAnnouncments;
+}
 
 $tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'Running';
 
@@ -35,6 +47,10 @@ function selfURL() {
   $params = $_GET;
   unset($params['tab']);
   return 'index.php?' . http_build_query($params);
+}
+
+function announcementURL($agency, $index) {
+    return "announcement.php?agencyId=$agency&index=$index";
 }
 
 ?>
