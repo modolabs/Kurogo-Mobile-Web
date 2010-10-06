@@ -7,6 +7,43 @@ PageViews::log_api('shuttles', 'iphone');
 //require_once LIBDIR . "/GTFSReader.php";
 require_once LIBDIR . "/TranslocReader.php";
 
+// TODO move these arrays to a better data source
+$calendar = <<<EOM
+<h2>2010-2011 Shuttles Calendar</h2>
+<h2>Full Service</h2>
+August 29-November 24<br/>
+November 28-December 21<br/>
+January 2-March 11<br/>
+March 20-May 14<br/>
+<h2>No Service</h2>
+September 6<br/>
+October 11<br/>
+November 11<br/>
+November 25-27<br/>
+December 22-January 1<br/>
+March 12-19<br/>
+May 15<br/>
+EOM;
+
+$img_src = 'http://' . $_SERVER['SERVER_NAME'] . HTTPROOT . 'api/handicap.jpg';
+$about_harvard_shuttles = <<<EOM
+<h2>Daytime Van <img style="float:right;" src="$img_src"/></h2>
+The Daytime Van is designed for persons who, because of mobility impairment or medical condition, find it difficult or impossible to use the regular shuttle bus.  Transportation is door to door within the Cambridge and Allston campuses. This year-round service is scheduled by appointment only. Service hours vary for academic, weekend, summer and holiday periods. For service hours, reservations and other information, please call 617-495-0400. For information for the hearing impaired, please call 617-496-6642 (TTY#)
+<h2>Evening Van <img style="float:right;" src="$img_src"/></h2>
+The Evening Van provides service to areas not on scheduled shuttle routes, between 7pm and 12:30am nightly, in the Cambridge/Allston campus area. Please call 617-495-0400 for more information and service requests. Please refer to map for service boundaries outlined. Last call received at 11:45 pm nightly.
+<h2>Charter Service</h2>
+Buses and vans are available to University affiliates for charters. We can accommodate small and large groups for both on and off campus service. Charter fees are billed on an hourly basis with a 2 hour minimum. We can provide referrals who offer expanded services.
+<br/><br/>
+For more information, please call 617-495-0400.
+<h2>Stops</h2>
+Bus stops are marked with special crimson, red and white signs. If you wish to exit at a non-designated stop, please inform the driver when boarding. Drivers will make requested stops whenever it is safe to do so.
+<h2>Bikes on Shuttles</h2>
+Harvard Passenger Transport Services gives bicyclists open access to our entire system. You can combine the freedom of riding your bicycle to work or class with the convenience of using Shuttles around campus during inclement weather or at night. Bikes are allowed on all buses equipped with bike racks at any time.
+EOM;
+
+$about_masco = <<<EOM
+MASCO manages the Harvard Medical School shuttle which runs between the LMA and Harvard University in Cambridge.
+EOM;
 
 $arrows = array(
     '1' => 'n',
@@ -26,6 +63,16 @@ $data = Array();
 $command = $_REQUEST['command'];
 
 switch ($command) {
+ case 'about':
+   if ($_REQUEST['agency'] == 'harvard') {
+     $data = array("html" => $about_harvard_shuttles);
+   } elseif ($_REQUEST['agency'] == 'masco') {
+     $data = array("html" => $about_masco);
+   }
+   break;
+ case 'calendar':
+   $data = array("html" => $calendar);
+   break;
  case 'stops':
    $mockData = get_stops($transloc); // for Transloc, use $mockData
    //$data = ShuttleSchedule::getAllStops(); // for NextBus, use $data
