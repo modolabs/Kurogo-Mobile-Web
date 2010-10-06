@@ -32,8 +32,8 @@ foreach($reader->getAllRoutesInfo() as $aRoute) {
     }
 }
 
-$runningTitle = "Currently serviced by";
-$offlineTitle = "Services at other times";
+$runningTitle = "Currently serviced by:";
+$offlineTitle = "Services at other times by:";
 
 
 // determine size of stop map to display on each device
