@@ -38,7 +38,24 @@ $page->content_begin();
         break; 
         
       case "News": ?>
-        News
+
+      <? foreach ($agenciesAnnouncementsAndName as $announcementsAndName) { ?>
+         <h3><?=$announcementsAndName['long_name']?> Shuttles</h3>
+         <ul class="nav">
+           <? if($announcementsAndName['announcements']) { ?>
+                <? foreach($announcementsAndName['announcements'] as $index => $announcement) { ?>
+                     <li>
+                         <a href="<?=announcementURL($announcements['name'],$index)?>">
+                             <?=$announcement['title']?><br />
+                             <span class="smallprint"><?=$announcement['date']?></span>
+                         </a>
+                     </li>
+                <? } ?>
+           <? } else { ?>
+                <li class="nolink">No announcements at this time</li>
+           <? } ?>
+       </ul>
+      <? } ?>
 <?      break; 
 
       case "Info": ?>

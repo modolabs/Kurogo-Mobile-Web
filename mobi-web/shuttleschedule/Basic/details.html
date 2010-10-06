@@ -1,0 +1,35 @@
+<?php
+$page->title('Shuttles: ' . $routeName)
+     ->header("Shuttle Schedule")
+     ->add_stylesheet("Basic/shuttletrack");
+
+$page->content_begin();
+?>
+
+
+<h3><?=$stop['name']?></h3>
+
+<img src="<?=$imageURL?>" style="padding-top: 4pt; padding-bottom: 10pt;" width="<?=$mapWidth?>" height="<?=$mapHeight?>" id="mapimage" alt="Map" />
+
+<? if(count($runningRoutes) > 0) { ?>
+    <h3><?=$runningTitle?></h3>
+    <div class="nav" style="line-height:1.33em">
+        <? foreach($runningRoutes as $route) { ?>
+            <p><a href="<?=routeURL($route['id'])?>"><?=$route["long_name"]?></a></p>
+        <? } ?>
+    </div>
+<? } ?>
+
+<? if(count($offlineRoutes) > 0) { ?>
+    <h3><?=$offlineTitle?></h3>
+    <div class="nav" style="line-height:1.33em">
+        <? foreach($offlineRoutes as $route) { ?>
+        <p><a href="<?=routeURL($route['id'])?>"><?=$route["long_name"]?></a></p>
+        <? } ?>
+    </div>
+<? } ?>
+
+<?
+$page->content_end();
+$page->nav_link("./", "Shuttle Schedule Home");
+?>

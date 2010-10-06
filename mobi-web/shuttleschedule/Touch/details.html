@@ -1,0 +1,37 @@
+<?php
+$page->title('Shuttles: ' . $stop['name'])
+     ->navbar_image('shuttleschedule')
+     ->header('Stop Info');
+
+$page->add_stylesheet("Touch/details");
+
+$page->content_begin();
+
+?>
+
+<div class="stop-map">
+   <h3 class="nonfocal"><?=$stop['name']?></h3>
+   <img src="<?=$imageURL?>" width="<?=$mapWidth?>" height="<?=$mapHeight?>" id="mapimage" alt="Map" />
+</div>
+
+<? if(count($runningRoutes) > 0) { ?>
+    <h3 class="nonfocal"><?=$runningTitle?></h3>
+    <ul class="nav">
+        <? foreach($runningRoutes as $route) { ?>
+            <li><a href="<?=routeURL($route['id'])?>"><?=$route["long_name"]?></a></li>
+        <? } ?>
+    </ul>
+<? } ?>
+
+<? if(count($offlineRoutes) > 0) { ?>
+    <h3 class="nonfocal"><?=$offlineTitle?></h3>
+    <ul class="nav">
+        <? foreach($offlineRoutes as $route) { ?>
+            <li><a href="<?=routeURL($route['id'])?>"><?=$route["long_name"]?></a></li>
+        <? } ?>
+    </ul>
+<? } ?>
+
+
+
+<? $page->content_end(); ?>

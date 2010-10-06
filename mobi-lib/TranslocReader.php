@@ -345,7 +345,7 @@ class TranslocReader {
           "center" => $stop['ll'][0] . ',' . $stop['ll'][1],
           "markers" => "color:0x" . $route['color'] . "|" . $stop['ll'][0] . ',' . $stop['ll'][1],
           "sensor" => "false",
-          "zoom" => "17",
+          "zoom" => "16",
           "size" => $width . 'x' . $height,
       );
 

@@ -849,7 +849,14 @@ h2.icon {
 
 #schedule .current td {
 	background-color: #b00;
-	color: #fff;
+}
+
+#schedule a {
+	  color: #000;
+}
+
+#schedule .current a {
+        color: #fff;
 }
 
 #schedule .sid {
