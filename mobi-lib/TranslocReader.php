@@ -527,7 +527,7 @@ class TranslocReader {
               break;
 
          case 'Crimson Campus Cruiser':
-             return 'Runs 12:20pm - 4:23pm, Saturday-Sunday';
+             return 'Runs 12:05pm - 4:23pm, Saturday-Sunday';
              break;
 
          case '1636\'er':
@@ -535,10 +535,57 @@ class TranslocReader {
              break;
 
          case 'Extended Overnight':
-              return 'Runs 12:40am - 3:52am, Daily';
+              return 'Runs 12:40am - 3:52am, Sunday-Thursday Nights; 12:40am - 4:52am, Friday-Saturday Nights';
              break;
       }
       return '';
   }
 
 }
+
+function aboutHarvardShuttles() {
+    $img_src = 'http://' . $_SERVER['SERVER_NAME'] . HTTPROOT . 'api/handicap.jpg';
+    return <<<EOM
+<h2>Daytime Van <img style="float:right;" src="$img_src"/></h2>
+The Daytime Van is designed for persons who, because of mobility impairment or medical condition, find it difficult or impossible to use the regular shuttle bus.  Transportation is door to door within the Cambridge and Allston campuses. This year-round service is scheduled by appointment only. Service hours vary for academic, weekend, summer and holiday periods. For service hours, reservations and other information, please call 617-495-0400. For information for the hearing impaired, please call 617-496-6642 (TTY#)
+<h2>Evening Van <img style="float:right;" src="$img_src"/></h2>
+The Evening Van provides service to areas not on scheduled shuttle routes, between 7pm and 12:30am nightly, in the Cambridge/Allston campus area. Please call 617-495-0400 for more information and service requests. Please refer to map for service boundaries outlined. Last call received at 11:45 pm nightly.
+<h2>Charter Service</h2>
+Buses and vans are available to University affiliates for charters. We can accommodate small and large groups for both on and off campus service. Charter fees are billed on an hourly basis with a 2 hour minimum. We can provide referrals who offer expanded services.
+<br/><br/>
+For more information, please call 617-495-0400.
+<h2>Stops</h2>
+Bus stops are marked with special crimson, red and white signs. If you wish to exit at a non-designated stop, please inform the driver when boarding. Drivers will make requested stops whenever it is safe to do so.
+<h2>Bikes on Shuttles</h2>
+Harvard Passenger Transport Services gives bicyclists open access to our entire system. You can combine the freedom of riding your bicycle to work or class with the convenience of using Shuttles around campus during inclement weather or at night. Bikes are allowed on all buses equipped with bike racks at any time.
+EOM;
+}
+
+function aboutMasco() {
+    return <<<EOM
+<p>The Harvard Medical School shuttle (M2), which is managed by MASCO, runs between the Longwood Medical Area (LMA) and Harvard's Cambridge campus. The shuttle is free to Harvard faculty and staff, and students at HMS, HSPH, GSAS, HSDM, DMS, HBS, and FAS. Other Harvard University graduate students may purchase shuttle tickets at the Info Center in the Holyoke Center
+Arcade, or see the <a href="http://www.masco.org/transit/ptsM2_FareInfo.htm">Masco website</a> for other ticket locations.</p>
+<p>All M2 shuttles are wheelchair accessible. Weekday service runs from approximate 7:00 a.m. until 11:30 p.m., while Saturday service runs from 8:30 a.m. until 10:30 p.m. There is no service on Sundays or holidays.</p>
+<p>Tickets cost $3.25 each way, and may be paid in Crimson Cash. No cash is accepted on the shuttle.</p>
+EOM;
+}
+
+function shuttlesCalendar() {
+    return <<<EOM
+<h2>2010-2011 Shuttles Calendar</h2>
+<h2>Full Service</h2>
+August 29-November 24<br/>
+November 28-December 21<br/>
+January 2-March 11<br/>
+March 20-May 14<br/>
+<h2>No Service</h2>
+September 6<br/>
+October 11<br/>
+November 11<br/>
+November 25-27<br/>
+December 22-January 1<br/>
+March 12-19<br/>
+May 15<br/>
+EOM;
+}
+
