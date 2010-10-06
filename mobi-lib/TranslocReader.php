@@ -544,11 +544,13 @@ class TranslocReader {
 }
 
 function aboutHarvardShuttles() {
-    $img_src = 'http://' . $_SERVER['SERVER_NAME'] . HTTPROOT . 'api/handicap.jpg';
+    $port = $_SERVER['SERVER_PORT'];
+    $port = $port == '' ? '' : ":$port";
+    $img_src = 'http://' . $_SERVER['SERVER_NAME'] . $port . HTTPROOT . 'shuttleschedule/Webkit/images/handicapped.png';
     return <<<EOM
-<h2>Daytime Van <img style="float:right;" src="$img_src"/></h2>
+<h2>Daytime Van <img style="float:right;" src="$img_src" width="40" height="40"/></h2>
 The Daytime Van is designed for persons who, because of mobility impairment or medical condition, find it difficult or impossible to use the regular shuttle bus.  Transportation is door to door within the Cambridge and Allston campuses. This year-round service is scheduled by appointment only. Service hours vary for academic, weekend, summer and holiday periods. For service hours, reservations and other information, please call 617-495-0400. For information for the hearing impaired, please call 617-496-6642 (TTY#)
-<h2>Evening Van <img style="float:right;" src="$img_src"/></h2>
+<h2>Evening Van <img style="float:right;" src="$img_src" width="40" height="40"/></h2>
 The Evening Van provides service to areas not on scheduled shuttle routes, between 7pm and 12:30am nightly, in the Cambridge/Allston campus area. Please call 617-495-0400 for more information and service requests. Please refer to map for service boundaries outlined. Last call received at 11:45 pm nightly.
 <h2>Charter Service</h2>
 Buses and vans are available to University affiliates for charters. We can accommodate small and large groups for both on and off campus service. Charter fees are billed on an hourly basis with a 2 hour minimum. We can provide referrals who offer expanded services.
