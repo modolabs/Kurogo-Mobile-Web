@@ -31,7 +31,7 @@ class CalendarModule extends Module {
         // TODO
         break;
         
-      default: // day counts
+      default: // day counts TODO: This is not daylight saving time safe
         if ($option['offset'] >= 0) {
           $end = $start + ($option['offset']*DAY_SECONDS);
         } else {
@@ -533,6 +533,30 @@ class CalendarModule extends Module {
         } else {
           $this->redirectTo('index');
         }
+        break;
+      case 'academic':
+        $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ACADEMIC_ICS_URL');
+        $year = isset($this->args['year']) ? intval($this->args['year']) : date('Y');
+
+         $start = new DateTime($year . "0901", $this->timezone);        
+         $end = new DateTime(($year+1) . "0831", $this->timezone);
+        
+        $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+        $feed->setStartDate($start);
+        $feed->setEndDate($end);
+        $iCalEvents = $feed->items();
+
+          $events = array();
+          foreach($iCalEvents as $iCalEvent) {
+            $events[] = array(
+              'title'    => $iCalEvent->get_summary(),
+              'subtitle' => date('l F j', $iCalEvent->get_start())
+            );
+          }
+
+          $this->assign('events',      $events);        
+        
+        
         break;
     }
     

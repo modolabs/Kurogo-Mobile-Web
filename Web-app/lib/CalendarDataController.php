@@ -32,7 +32,7 @@ class CalendarDataController extends DataController
         $this->startDate = $time;
     }
     
-    public function start_timestamp()
+    public function startTimestamp()
     {
         return $this->startDate ? $this->startDate->format('U') : false;
     }
@@ -42,7 +42,7 @@ class CalendarDataController extends DataController
         $this->endDate = $time;
     }
 
-    public function end_timestamp()
+    public function endTimestamp()
     {
         return $this->endDate ? $this->endDate->format('U') : false;
     }
@@ -92,14 +92,14 @@ class CalendarDataController extends DataController
             $items = $events;
             $events = array();
             foreach ($items as $id => $event) {
-                if  ((($event->get_start() >= $this->start_timestamp()) &&
-                        ($event->get_start() <= $this->end_timestamp())) ||
+                if  ((($event->get_start() >= $this->startTimestamp()) &&
+                        ($event->get_start() <= $this->endTimestamp())) ||
         
-                       (($event->get_end() >= $this->start_timestamp()) &&
-                        ($event->get_end() <= $this->end_timestamp())) ||
+                       (($event->get_end() >= $this->startTimestamp()) &&
+                        ($event->get_end() <= $this->endTimestamp())) ||
         
-                        (($event->get_start() <= $this->start_timestamp()) &&
-                        ($event->get_end() >= $this->end_timestamp()))) 
+                        (($event->get_start() <= $this->startTimestamp()) &&
+                        ($event->get_end() >= $this->endTimestamp()))) 
                 {
                     $events[$id] = $event;
                 }

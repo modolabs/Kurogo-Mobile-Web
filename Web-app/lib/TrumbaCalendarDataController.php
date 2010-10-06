@@ -31,7 +31,7 @@ class TrumbaCalendarDataController extends CalendarDataController
             throw new Exception('Start or end date cannot be blank');
         }
         
-        $diff = $this->end_timestamp() - $this->start_timestamp();
+        $diff = $this->endTimestamp() - $this->startTimestamp();
         if ($diff<86400) {
             if (count($this->trumbaFilters)>0) {
                 $this->requiresDateFilter(false);
