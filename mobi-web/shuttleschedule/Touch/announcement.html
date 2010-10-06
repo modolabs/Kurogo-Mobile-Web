@@ -1,0 +1,18 @@
+<?php
+$page->title('Shuttles: News')
+     ->header('Status News');
+
+$page->content_begin();
+?>
+
+<div class="focal">
+
+  <h2><?=$announcement['title']?></h2>
+
+  <p class="smallprint"><?=$announcement['date']?></p>
+
+  <?=$announcement['html']?>
+
+</div>
+
+<? $page->content_end(); ?>
