@@ -554,6 +554,19 @@ class CalendarModule extends Module {
             );
           }
 
+        $current = sprintf("%s-%s", $year, $year+1);
+        $next = sprintf("%s-%s", $year+1, $year+2);
+        if ( (date('Y')+1) > $year) {
+            $this->assign('next',    $next);
+            $this->assign('nextUrl', $this->academicURL($year+1, false));
+        }
+        if ($year>date('Y')) {
+            $prev = sprintf("%s-%s", $year-1, $year);
+            $this->assign('prev',    $prev);
+            $this->assign('prevUrl', $this->academicURL($year-1, false));
+        }
+
+        $this->assign('current',    $current);
           $this->assign('events',      $events);        
         
         
