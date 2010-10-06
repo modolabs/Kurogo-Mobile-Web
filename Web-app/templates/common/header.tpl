@@ -4,7 +4,7 @@
 {strip}  
 <head>
   <meta http-equiv="content-type" content="application/xhtml+xml" />
-  <title>{$moduleName}{if !$moduleHome}: {$pageTitle}{/if}</title>
+  <title>{$moduleName}{if !$isModuleHome}: {$pageTitle}{/if}</title>
   <link href="{$minify['css']}" rel="stylesheet" media="all" type="text/css"/>
   {foreach $inlineCSSBlocks as $css}
     <style type="text/css" media="screen">
@@ -12,15 +12,15 @@
     </style>
   {/foreach}
   
-  {block name="javascript"}
-    <script src="{$minify['js']}" type="text/javascript"></script>
-  
+  {block name="javascript"}  
     {foreach $inlineJavascriptBlocks as $script}
       <script type="text/javascript">
         {$script} 
       </script>
     {/foreach}  
     
+    <script src="{$minify['js']}" type="text/javascript"></script>
+
     {if count($onOrientationChangeBlocks)}
       <script type="text/javascript">
         function onOrientationChange() {ldelim}
@@ -54,12 +54,12 @@
     {block name="header"}
       {strip}
       <div id="navbar"{if $help} class="helpon"{/if}>
-        <div class="breadcrumbs{if $moduleHome} homepage{/if}">
+        <div class="breadcrumbs{if $isModuleHome} homepage{/if}">
           <a name="top" href="/home/" class="homelink">
             <img src="/common/images/homelink.png" width="57" height="45" alt="{$SITE_NAME} Home" />
           </a>
           
-          {if !$moduleHome}
+          {if !$isModuleHome}
             <a href="./" class="module">
               <img src="/common/images/title-{$navImageID|default:$moduleID}.png" width="28" height="28" alt="" />
             </a>
@@ -81,7 +81,7 @@
             {/foreach}
           {/if}
           <span class="pagetitle">
-            {if $moduleHome}
+            {if $isModuleHome}
               <img src="/common/images/title-{$navImageID|default:$moduleID}.png" width="28" height="28" alt="" class="moduleicon" />
             {/if}
             {$pageTitle}

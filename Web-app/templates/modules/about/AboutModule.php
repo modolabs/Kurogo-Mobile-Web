@@ -27,38 +27,16 @@ class AboutModule extends Module {
   }
   
   protected function initializeForPage() {
-    $siteVars = $GLOBALS['siteConfig']->getThemeVar('site');
-    $navlistItems = array(
-      'about_site' => array(
-        'title' => 'About this website',
-        'url' => "/{$this->id}/about_site.php",
-      ),
-      'about' => array(
-        'title' => 'About '.$siteVars['INSTITUTION_NAME'],
-        'url' => "/{$this->id}/about.php",
-      ),
-      'feedback' => array(
-        'title' => 'Send us feedback!',
-        'url' => 'mailto:'.$siteVars['FEEDBACK_EMAIL'],
-        'class' => 'email',
-      ),
-    );
-
     switch ($this->page) {
       case 'index':
-        if ($GLOBALS['deviceClassifier']->getPagetype() == 'basic') {
-          $this->assign('lastNavItem', array_pop($navlistItems));
-        }
-        $this->assign('navlistItems', $navlistItems);
+        $this->loadThemeConfigFile('about-index', 'aboutPages');
         break;
         
       case 'about_site':
-        $this->setPageTitle($navlistItems[$this->page]['title']);
         $this->assign('devicePhrase', $this->getPhraseForDevice());
         break;
       
       case 'about':
-        $this->setPageTitle($navlistItems[$this->page]['title']);
         break;
       
       case 'new':

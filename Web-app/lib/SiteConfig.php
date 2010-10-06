@@ -5,15 +5,19 @@ class SiteConfig {
   private $themeVars = array();
   
 
-  public function loadThemeFile($name, $section = true) {
+  public function loadThemeFile($name, $section = true, $ignoreError = false) {
     if (!in_array($name, array_keys($this->themeVars))) {
       $file = realpath_exists(THEME_CONFIG_DIR."/$name.ini");
       if ($file) {
         $this->themeVars[$name] = parse_ini_file($file, $section);
-      } else {
+        $this->replaceThemeVariables($this->themeVars[$name]);
+        return true;
+
+      } else if (!$ignoreError) {
         error_log(__FUNCTION__."(): no configuration file for '$name'");
       }
     }
+    return true;
   }
 
   public function getVar($key) {
@@ -59,14 +63,26 @@ class SiteConfig {
         }
         
       } else if (is_array($value)) {
-        self::replaceVariables($value);
+        self::_replaceVariables($value);
       }
     }
   }
 
-  private static function replaceVariables(&$config) {
+  private function replaceConfigVariables(&$config) {
     // Handle key-relative paths by replacing keys with paths
-    $GLOBALS['testVars'] = $config;
+    $GLOBALS['testVars'] = $this->configVars;
+    self::_replaceVariables($config);
+    unset($GLOBALS['testVars']);
+  }
+
+  private function replaceThemeVariables(&$config) {
+    $testVars = $config;
+    if (isset($this->themeVars['site'])) {
+      $testVars = array_merge($this->themeVars['site'], $testVars);
+    }
+  
+    // Handle key-relative paths by replacing keys with paths
+    $GLOBALS['testVars'] = $testVars;
     self::_replaceVariables($config);
     unset($GLOBALS['testVars']);
   }
@@ -89,14 +105,14 @@ class SiteConfig {
   function __construct() {
     // Load main configuration file
     $file = MASTER_CONFIG_DIR."/config.ini";
-    $configVars = parse_ini_file(self::getPathOrDie($file), false); 
-    self::replaceVariables($configVars);
+    $this->configVars = parse_ini_file(self::getPathOrDie($file), false); 
+    $this->replaceConfigVariables($this->configVars);
 
-    $siteDir  = self::getVarOrDie($file, $configVars, 'SITE_DIR');
-    $siteMode = self::getVarOrDie($file, $configVars, 'SITE_MODE');
+    $siteDir  = self::getVarOrDie($file, $this->configVars, 'SITE_DIR');
+    $siteMode = self::getVarOrDie($file, $this->configVars, 'SITE_MODE');
 
     // Set up defines relative to SITE_DIR
-    define('SITE_DIR',             $configVars['SITE_DIR']);
+    define('SITE_DIR',             $this->configVars['SITE_DIR']);
     define('SITE_LIB_DIR',         SITE_DIR.'/lib');
     define('THEMES_DIR',           SITE_DIR.'/themes');
     define('DATA_DIR',             SITE_DIR.'/data');
@@ -104,20 +120,18 @@ class SiteConfig {
     define('SITE_CONFIG_DIR',      SITE_DIR.'/config');
 
     // Load site configuration file
-    $configVars = array_merge($configVars, 
+    $this->configVars = array_merge($this->configVars, 
       parse_ini_file(self::getPathOrDie(SITE_CONFIG_DIR."/config.ini"), false));   
-    self::replaceVariables($configVars);
+    $this->replaceConfigVariables($this->configVars);
     
-    define('THEME_DIR',        THEMES_DIR.'/'.$configVars['ACTIVE_THEME']);
+    define('THEME_DIR',        THEMES_DIR.'/'.$this->configVars['ACTIVE_THEME']);
     define('THEME_CONFIG_DIR', THEME_DIR.'/config');
 
     // Load site mode configuration file
-    $configVars = array_merge($configVars, 
+    $this->configVars = array_merge($this->configVars, 
       parse_ini_file(self::getPathOrDie(SITE_CONFIG_DIR."/config-$siteMode.ini"), false));   
-    self::replaceVariables($configVars);
-          
-    $this->configVars = $configVars;
+    $this->replaceConfigVariables($this->configVars);
     
-    //error_log(print_r($configVars, true));
+    //error_log(print_r($this->configVars, true));
   }
 }

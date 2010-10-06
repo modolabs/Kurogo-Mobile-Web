@@ -7,11 +7,10 @@
  *
  *****************************************************************/
 
-require_once "DiskCache.inc";
+require_once realpath(LIB_DIR.'/DiskCache.php');
 
 // TODO: make these into configurable parameters
 define('ARCGIS_SEARCH_LAYERS', '0');
-define('ARCGIS_REST_SERVER', 'http://upo-srv2.cadm.harvard.edu/ArcGIS/rest/services');
 
 ArcGISServer::init();
 
@@ -179,16 +178,16 @@ class ArcGISServer {
 
   public static function init() {
     if (!self::$collections) {
-      self::$diskCache = new DiskCache(ARCGIS_CACHE, 86400 * 7, TRUE);
-      self::$bldgCache = new DiskCache(CACHE_DIR . '/ARCGIS_BLDG', 86400 * 30, TRUE);
+      self::$diskCache = new DiskCache($GLOBALS['siteConfig']->getVar('ARCGIS_CACHE'), 86400 * 7, TRUE);
+      self::$bldgCache = new DiskCache($GLOBALS['siteConfig']->getVar('ARCGIS_BLDG_CACHE'), 86400 * 30, TRUE);
 
-      self::$wkidCache = new DiskCache(ARCGIS_CACHE, 86400 * 30, TRUE);
+      self::$wkidCache = new DiskCache($GLOBALS['siteConfig']->getVar('ARCGIS_CACHE'), 86400 * 30, TRUE);
       self::$wkidCache->setSuffix('.wkid');
       self::$wkidCache->preserveFormat();
 
       // TODO: make service names an external data source
 
-      $url = ARCGIS_REST_SERVER . '/CampusMap/MapServer';
+      $url = $GLOBALS['siteConfig']->getVar('ARCGIS_REST_SERVER') . '/CampusMap/MapServer';
       self::$defaultCollection = new ArcGISCollection('CampusMap', $url);
 
       $names = array(
@@ -208,7 +207,7 @@ class ArcGISServer {
 
       self::$collections = array();
       foreach ($names as $name) {
-        $url = ARCGIS_REST_SERVER . '/' . $name . '/MapServer';
+        $url = $GLOBALS['siteConfig']->getVar('ARCGIS_REST_SERVER') . '/' . $name . '/MapServer';
         self::$collections[$name] = new ArcGISCollection($name, $url);
       }
     }
@@ -293,7 +292,7 @@ class ArcGISCollection {
   public function __construct($id, $url) {
     $this->id = $id;
     $this->url = $url;
-    $filename = ARCGIS_CACHE . '/' . $id;
+    $filename = $GLOBALS['siteConfig']->getVar('ARCGIS_CACHE')."/$id";
     $this->diskCache = new DiskCache($filename, 86400 * 7);
   }
 
@@ -363,7 +362,7 @@ class ArcGISLayer {
   public function __construct($collectionId, $layerId, $url) {
     $this->id = $layerId;
     $this->url = $url;
-    $filename = ARCGIS_CACHE . '/' . $collectionId . '.' . $layerId;
+    $filename = $GLOBALS['siteConfig']->getVar('ARCGIS_CACHE')."/$collectionId'.$layerId";
     $this->diskCache = new DiskCache($filename, 86400 * 7);
     $this->featureCache = new DiskCache("$filename.features", 86400 * 7);
   }

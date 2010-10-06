@@ -7,13 +7,11 @@
  *
  *****************************************************************/
 
-require_once 'DiskCache.inc';
+require_once realpath(LIB_DIR.'/DiskCache.php');
 
 // client to server that implements of ISO/DIS 19128
 
 define('WMS_VERSION', '1.3.0');
-define('WMS_CACHE', CACHE_DIR . '/WMSCapabilities.xml');
-define('WMS_SERVER', 'http://upo-srv2.cadm.harvard.edu/ArcGIS/services/CampusMapWithText/MapServer/WMSServer');
 define('WMS_METERS_PER_PIXEL', 0.00028); // WMS standard definition
 define('WMS_OBJECT_PADDING', 1.0); // how much context to provide around a building relative to its size
 
@@ -22,7 +20,6 @@ define('WMS_OBJECT_PADDING', 1.0); // how much context to provide around a build
 // the corresponding service; neither means it is not in the WMS spec.
 class WMSServer {
 
-  private $url;
   private $diskCache;
   private $layers = array();
   private $styles = array();
@@ -30,9 +27,8 @@ class WMSServer {
   private $layersByTitle = array();
   private $disabledLayers = array();
 
-  public function __construct($url) {
-    $this->url = $url;
-    $this->diskCache = new DiskCache(WMS_CACHE, 86400 * 7);
+  public function __construct() {
+    $this->diskCache = new DiskCache($GLOBALS['siteConfig']->getVar('WMS_CACHE'), 86400 * 7);
     $this->diskCache->preserveFormat();
     $this->getCapabilities();
   }
@@ -90,7 +86,7 @@ class WMSServer {
         'request' => 'GetCapabilities',
         'service' => 'WMS',
         );
-      $query = $this->url . '?' . http_build_query($params);
+      $query = $GLOBALS['siteConfig']->getVar('WMS_SERVER').'?'.http_build_query($params);
       $contents = file_get_contents($query);
       $this->diskCache->write($contents);
     }
@@ -158,7 +154,7 @@ class WMSServer {
       'format' => 'png',
       );
 
-    $url = WMS_SERVER . '?' . http_build_query($params);
+    $url = $GLOBALS['siteConfig']->getVar('WMS_SERVER') . '?' . http_build_query($params);
     return $url;
   }
 

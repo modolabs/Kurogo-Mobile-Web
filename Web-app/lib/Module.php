@@ -8,6 +8,10 @@ abstract class Module {
   
   protected $page = 'index';
   protected $args = array();
+
+  private $pageTitle           = 'No Title';
+  private $breadcrumbTitle     = 'No Title';
+  private $breadcrumbLongTitle = 'No Title';
   
   private $moduleName = 'No Title';
   
@@ -17,8 +21,6 @@ abstract class Module {
   private $onOrientationChangeBlocks = array();
   private $onLoadBlocks = array('scrollTo(0,1);');
   
-  private $breadcrumbTitle = null;
-  private $breadcrumbLongTitle = null;
   private $breadcrumbs = array();
 
   private $fontsize = 'medium';
@@ -36,7 +38,7 @@ abstract class Module {
   // Tabbed View support
   //
   
-  protected function enableTabs($tabs, $defaultTab=null) {
+  protected function enableTabs($tabs, $defaultTab=null, $tabsJavascript=array()) {
     $currentTab = $tabs[0];
     if (isset($this->args['tab']) && in_array($this->args['tab'], $tabs)) {
       $currentTab = $this->args['tab'];
@@ -49,11 +51,11 @@ abstract class Module {
     unset($args['tab']);
     
     $this->tabbedView = array(
-      'tabs'    => $tabs,
-      'current' => $currentTab,
-      'url'     => $this->buildBreadcrumbURL($this->page, $args, false),
+      'tabs'       => $tabs,
+      'javascript' => $tabsJavascript,
+      'current'    => $currentTab,
+      'url'        => $this->buildBreadcrumbURL($this->page, $args, false),
     );
-
     $this->addInlineJavascriptFooter("showTab('{$currentTab}Tab');");
   }
   
@@ -65,6 +67,7 @@ abstract class Module {
     $this->htmlPager = new HTMLPager($html, $pageNumber);
   }
   
+  // Override in subclass if you are using the pager
   protected function urlForPage($pageNumber) {
     return '';
   }
@@ -309,13 +312,9 @@ abstract class Module {
     $breadcrumbs = $this->breadcrumbs;
     
     if ($addBreadcrumb && $this->page != 'index') {
-      $pageTitle = $this->getTemplateVars('pageTitle');
-      $title     = isset($this->breadcrumbTitle)     ? $this->breadcrumbTitle     : $pageTitle;
-      $longTitle = isset($this->breadcrumbLongTitle) ? $this->breadcrumbLongTitle : $pageTitle;
-      
       $breadcrumbs[] = array(
-        'title'     => $title,
-        'longTitle' => $longTitle,
+        'title'     => $this->breadcrumbTitle,
+        'longTitle' => $this->breadcrumbLongTitle,
         'url'       => self::buildURL($this->page, $this->args),
       );
     }
@@ -336,29 +335,59 @@ abstract class Module {
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
     return $prefix.http_build_query($this->getBreadcrumbArgs($addBreadcrumb));
   }
+
+  //
+  // Page config
+  //
+  private function loadPageConfig() {
+    // Load site configuration and help text
+    $this->loadThemeConfigFile('site', false);
+    $this->loadThemeConfigFile('help');
+
+    // load module config file
+    $config = $this->loadThemeConfigFile($this->id, "{$this->id}PageConfig", true);
   
+    $this->pageTitle = $this->moduleName;
+
+    if (isset($config[$this->page])) {
+      $pageConfig = $config[$this->page];
+      
+      if (isset($pageConfig['pageTitle'])) {
+        $this->pageTitle = $pageConfig['pageTitle'];
+      }
+        
+      if (isset($pageConfig['breadcrumbTitle'])) {
+        $this->breadcrumbTitle = $pageConfig['breadcrumbTitle'];
+      } else {
+        $this->breadcrumbTitle = $this->pageTitle;
+      }
+        
+      if (isset($pageConfig['breadcrumbLongTitle'])) {
+        $this->breadcrumbLongTitle = $pageConfig['breadcrumbLongTitle'];
+      } else {
+        $this->breadcrumbLongTitle = $this->pageTitle;
+      }     
+    }
+  }
+  
+  // Programmatic overrides for titles generated from backend data
+  protected function setPageTitle($title) {
+    $this->pageTitle = $title;
+  }
   protected function setBreadcrumbTitle($title) {
     $this->breadcrumbTitle = $title;
   }
-
   protected function setBreadcrumbLongTitle($title) {
     $this->breadcrumbLongTitle = $title;
   }
 
   //
-  // Page title
-  //
-  protected function setPageTitle($title) {
-    $this->assign('pageTitle', $title);
-  }
-
-  //
   // Config files
   //
-  protected function loadThemeConfigFile($name, $loadVarKeys=false) {
+  protected function loadThemeConfigFile($name, $loadVarKeys=false, $ignoreError=false) {
     $this->loadTemplateEngineIfNeeded();
     
-    $this->templateEngine->loadThemeConfigFile($name, $loadVarKeys);
+    return $this->templateEngine->loadThemeConfigFile($name, $loadVarKeys, $ignoreError);
   }
 
   //
@@ -387,19 +416,17 @@ abstract class Module {
   //
   public function displayPage() {
     $this->loadTemplateEngineIfNeeded();
-    
-    // Load site configuration and help text
-    $this->loadThemeConfigFile('site', true);
-    $this->loadThemeConfigFile('help');
+        
+    $this->loadPageConfig();
     
     date_default_timezone_set($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
 
     // Set variables common to all modules
-    $this->assign('moduleID', $this->id);
-    $this->assign('moduleName', $this->moduleName);
-    $this->assign('page', $this->page);
-    $this->assign('moduleHome', $this->page == 'index');
-    $this->assign('pageTitle', $this->moduleName);
+    $this->assign('moduleID',     $this->id);
+    $this->assign('moduleName',   $this->moduleName);
+    $this->assign('page',         $this->page);
+    $this->assign('isModuleHome', $this->page == 'index');
+    $this->assign('pageTitle',    $this->pageTitle);
     
     // Font size for template
     $this->assign('fontsizes',   $this->fontsizes);
@@ -424,19 +451,19 @@ abstract class Module {
     $this->assign('onLoadBlocks', $this->onLoadBlocks);
     $this->assign('inlineJavascriptFooterBlocks', $this->inlineJavascriptFooterBlocks);
 
-    $this->assign('breadcrumbs', $this->breadcrumbs);
-    $this->assign('breadcrumbArgs', $this->getBreadcrumbArgs());
+    $this->assign('breadcrumbs',            $this->breadcrumbs);
+    $this->assign('breadcrumbArgs',         $this->getBreadcrumbArgs());
+    $this->assign('breadcrumbSamePageArgs', $this->getBreadcrumbArgs(false));
 
     // Module Help
     if ($this->page == 'help') {
-      $this->setPageTitle('Help');
       $this->assign('hasHelp', false);
       
       $template = 'common/'.$this->page;
     } else {
       $helpConfig = $this->getTemplateVars('help');
       $this->assign('hasHelp', isset($helpConfig[$this->id]));
-    
+      
       $template = 'modules/'.$this->id.'/'.$this->page;
     }
     

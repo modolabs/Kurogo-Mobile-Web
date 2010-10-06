@@ -6,6 +6,6 @@ class LinksModule extends Module {
   protected $id = 'links';
   
   protected function initializeForPage() {
-    $this->loadThemeConfigFile('links');
+    $this->loadThemeConfigFile('links-index', 'links');
   }
 }

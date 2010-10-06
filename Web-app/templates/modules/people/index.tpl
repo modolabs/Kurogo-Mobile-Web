@@ -6,6 +6,6 @@
   <strong>Search tips:</strong> You can search by part or all of a person's name, email address or phone number.
 </div>
 
-{include file="findInclude:common/navlist.tpl" navlistItems=$peopleContacts secondary=true accessKey=false}
+{include file="findInclude:common/navlist.tpl" navlistItems=$contacts secondary=true accessKey=false}
 
 {include file="findInclude:common/footer.tpl"}

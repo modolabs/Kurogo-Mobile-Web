@@ -10,7 +10,13 @@
 {/capture}
 
 {if isset($item['label'])}
-  {$item['label']}:&nbsp;
+  {if $boldLabels}
+    <strong>
+  {/if}
+      {$item['label']}:&nbsp;
+  {if $boldLabels}
+    </strong>
+  {/if}
 {/if}
 {block name="itemLink"}
   {if isset($item['url'])}

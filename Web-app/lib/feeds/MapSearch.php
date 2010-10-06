@@ -7,7 +7,7 @@
  *
  *****************************************************************/
 
-require_once 'ArcGISServer.php';
+require_once realpath(LIB_DIR.'/feeds/ArcGISServer.php');
 
 function searchCampusMap($query) {
 
@@ -20,7 +20,7 @@ function searchCampusMap($query) {
         'fmt' => 'json',
         );
     
-    $url = MAP_SEARCH_URL . '?' . http_build_query($params);
+    $url = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_URL').'?'.http_build_query($params);
     $rawContent = file_get_contents($url);
     $content = json_decode($rawContent);
     
@@ -53,7 +53,7 @@ function searchCampusMapForCourseLoc($query) {
         'loc' => 'course',
         );
 
-    $url = MAP_SEARCH_URL . '?' . http_build_query($params);
+    $url = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_URL').'?'.http_build_query($params);
     $rawContent = file_get_contents($url);
     $content = json_decode($rawContent);
 

@@ -1,7 +1,11 @@
 <ul id="tabs" class="smalltabs">
   {foreach $tabbedView['tabs'] as $tab}
+    {$tabJavascript=''}
+    {if isset($tabbedView['javascript'][$tab])}
+      {$tabJavascript=$tabbedView['javascript'][$tab]}
+    {/if}
     <li{if $tab == $tabbedView['current']} class="active"{/if}>
-      <a href="#scrolldown" onclick="showTab('{$tab|replace:' ':'_'}Tab', this)">{$tab|capitalize}</a>
+      <a href="#scrolldown" onclick="showTab('{$tab|replace:' ':'_'}Tab', this);{$tabJavascript}">{$tab|capitalize}</a>
     </li>
   {/foreach}
 </ul>

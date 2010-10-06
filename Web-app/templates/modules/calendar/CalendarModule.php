@@ -290,9 +290,6 @@ class CalendarModule extends Module {
         break;
       
       case 'categories':
-        $this->setPageTitle("Browse by Category");
-        $this->setBreadcrumbTitle("Category");
-
         $categories = array();
         $eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
         
@@ -313,7 +310,6 @@ class CalendarModule extends Module {
         $name = self::argVal($this->args, 'name', '');
         $time = self::argVal($this->args, 'time', time());
 
-        $this->setPageTitle('Listing');
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
 
@@ -364,9 +360,6 @@ class CalendarModule extends Module {
         break;
       
       case 'day':  
-        $this->setPageTitle("Browse by day");
-        $this->setBreadcrumbTitle("Day");
-      
         $type = isset($this->args['type']) ? $this->args['type'] : 'events';
         $this->assign('Type', ucwords($type));
 
@@ -408,10 +401,7 @@ class CalendarModule extends Module {
         break;
         
       case 'detail':  
-        $this->setPageTitle("Detail");
-
-        $this->loadThemeConfigFile('calendarDetail');
-        $calendarFields = $this->getTemplateVars('calendarDetail');
+        $calendarFields = $this->loadThemeConfigFile('calendar-detail', 'detailFields');
 
         $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
         
@@ -496,9 +486,6 @@ class CalendarModule extends Module {
         break;
         
       case 'search':
-        $this->setPageTitle("Search");
-        $this->setBreadcrumbLongTitle("Search Results");
-        
         if (isset($this->args['filter'], $this->args['timeframe'])) {
           $searchTerms = trim($this->args['filter']);
           $timeframeKey = $this->args['timeframe'];
@@ -534,42 +521,42 @@ class CalendarModule extends Module {
           $this->redirectTo('index');
         }
         break;
+        
       case 'academic':
-        $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ACADEMIC_ICS_URL');
+        $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ACADEMIC_ICS_URL');
         $year = isset($this->args['year']) ? intval($this->args['year']) : date('Y');
 
-         $start = new DateTime($year . "0901", $this->timezone);        
-         $end = new DateTime(($year+1) . "0831", $this->timezone);
+        $start = new DateTime( $year   ."0901", $this->timezone);        
+        $end   = new DateTime(($year+1)."0831", $this->timezone);
         
         $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
         $feed->setStartDate($start);
         $feed->setEndDate($end);
         $iCalEvents = $feed->items();
 
-          $events = array();
-          foreach($iCalEvents as $iCalEvent) {
-            $events[] = array(
-              'title'    => $iCalEvent->get_summary(),
-              'subtitle' => date('l F j', $iCalEvent->get_start())
-            );
-          }
-
-        $current = sprintf("%s-%s", $year, $year+1);
-        $next = sprintf("%s-%s", $year+1, $year+2);
-        if ( (date('Y')+1) > $year) {
-            $this->assign('next',    $next);
-            $this->assign('nextUrl', $this->academicURL($year+1, false));
-        }
-        if ($year>date('Y')) {
-            $prev = sprintf("%s-%s", $year-1, $year);
-            $this->assign('prev',    $prev);
-            $this->assign('prevUrl', $this->academicURL($year-1, false));
+        $events = array();
+        foreach($iCalEvents as $iCalEvent) {
+          $events[] = array(
+            'title'    => $iCalEvent->get_summary(),
+            'subtitle' => date('l F j', $iCalEvent->get_start()),
+          );
         }
 
-        $this->assign('current',    $current);
-          $this->assign('events',      $events);        
-        
-        
+        $current =  $year   .'-'.($year+1);
+        $next    = ($year+1).'-'.($year+2);
+        $prev    = ($year-1).'-'. $year;
+
+        if ((date('Y')+1) > $year) {
+          $this->assign('next',    $next);
+          $this->assign('nextUrl', $this->academicURL($year+1, false));
+        }
+        if ($year > intval(date('Y'))) {
+          $this->assign('prev',    $prev);
+          $this->assign('prevUrl', $this->academicURL($year-1, false));
+        }
+
+        $this->assign('current', $current);
+        $this->assign('events',  $events);        
         break;
     }
     

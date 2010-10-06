@@ -7,9 +7,8 @@ class PeopleModule extends Module {
   protected $id = 'people';
   
   private function formatPersonDetails($person) {
-    $this->loadThemeConfigFile('peopleDetails');
+    $detailFields = $this->loadThemeConfigFile('people-details', 'detailFields');
     
-    $detailFields = $this->getTemplateVars('peopleDetails');
     $details = array();
     //error_log(print_r($detailFields, true));
     
@@ -92,8 +91,6 @@ class PeopleModule extends Module {
         break;
         
       case 'detail':
-        $this->setPageTitle('Detail');
-
         if (isset($this->args['username'])) {
           $ldapWrapper = new LdapWrapper();
           $person = $ldapWrapper->lookupUser($this->args['username']);
@@ -109,8 +106,6 @@ class PeopleModule extends Module {
         break;
         
       case 'search':
-        $this->setPageTitle('Search');
-      
         if (isset($this->args['filter'])) {
           $searchTerms = trim($this->args['filter']);
           $ldapWrapper = new LdapWrapper();
@@ -158,7 +153,6 @@ class PeopleModule extends Module {
         break;
         
       case 'index':
-      default:
         // Redirect for old bookmarks
         if (isset($this->args['username'])) {
           $this->redirectTo('detail');
@@ -167,7 +161,7 @@ class PeopleModule extends Module {
           $this->redirectTo('search');
         }
         
-        $this->loadThemeConfigFile('peopleContacts');
+        $this->loadThemeConfigFile('people-index', 'contacts');
         break;
     }  
   }

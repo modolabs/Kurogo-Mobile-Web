@@ -1,4 +1,4 @@
-<?
+<?php
 
 require_once realpath(LIB_DIR.'/Module.php');
 require_once realpath(SITE_LIB_DIR.'/HarvardDining.php');
@@ -87,8 +87,6 @@ class DiningModule extends Module {
         break;
         
       case 'detail':
-        $this->setPageTitle('Detail');
-
         $diningHall = $this->args['location'];
 
         $allHours = DiningHalls::getDiningHallHours();

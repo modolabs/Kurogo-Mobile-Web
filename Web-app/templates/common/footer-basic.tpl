@@ -15,7 +15,7 @@
         <a href="#top">Back to top</a>
         <br />
         {html_access_key_link href="/home/"}{$SITE_NAME} Home{/html_access_key_link}
-        {if !$moduleHome}
+        {if !$isModuleHome}
           <br/>
           {html_access_key_link href="/$moduleID/"}{$moduleName} Home{/html_access_key_link}
         {/if}

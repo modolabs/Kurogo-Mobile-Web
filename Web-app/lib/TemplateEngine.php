@@ -165,16 +165,24 @@ class TemplateEngine extends Smarty {
   // Theme config files
   //
   
-  public function loadThemeConfigFile($name, $loadVarKeys=false) {
-    $GLOBALS['siteConfig']->loadThemeFile($name);
+  public function loadThemeConfigFile($name, $keyName=null, $ignoreError=false) {
+    if ($keyName === null) { $keyName = $name; }
     
-    if ($loadVarKeys) {
-      foreach($GLOBALS['siteConfig']->getThemeVar($name) as $key => $value) {
+    if (!$GLOBALS['siteConfig']->loadThemeFile($name, true, $ignoreError)) {
+      return array();
+    }
+        
+    $themeVars = $GLOBALS['siteConfig']->getThemeVar($name);
+    
+    if ($keyName === false) {
+      foreach($themeVars as $key => $value) {
         $this->assign($key, $value);
       }
     } else {
-      $this->assign($name, $GLOBALS['siteConfig']->getThemeVar($name));
+      $this->assign($keyName, $themeVars);
     }
+    
+    return $themeVars;
   }
   
   
