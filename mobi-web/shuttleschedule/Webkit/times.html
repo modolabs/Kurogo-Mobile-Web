@@ -19,16 +19,19 @@ $page->content_begin();
 		<h2><?=$routeName?><div id="refresh"><a href="<?=selfURL()?>"><? echo $page->img_tag('refresh', 'png', 'Update'); ?></a></div></h2>
                 
                 <p class="smallprint">
-		     <?=$summary?><br/>
-
+                    <? if($briefDescription) { ?>
+		        <?=$briefDescription?><br />
+                    <? } ?>
+                    <? if($scheduleSummary) { ?>
+                        <?=$scheduleSummary?><br />
+                    <? } ?>
+                    
                      <? if($foundVehicles) { ?>
 		         Refreshed at <?=formatShuttleTime($page, $lastUpdated)?>. 
                      <? } else { ?>
                          Tracking is not available right now.
                      <? } ?>
                 </p>
- 
-                <p class="legend">Route loop repeats every <?=$loopTime?> minutes.</p>
 
 		<ul id="tabs">
 			<li class="active"><a href="#scrolldown" onclick="showTab('maptab',this)">Route Map</a></li>

@@ -55,9 +55,19 @@ $page->content_begin();
           <h3>System Information</h3>
           <p class="nav nested">
               <?  foreach ($infoItems as $infoItem) { ?>
-                  <a href="infoURL($infoItem)"><?=$infoItem('name')?></a>
+                   <a href="<?=infoURL($infoItem)?>"><?=$infoItem['name']?></a><br />
               <?  } ?>
           </p>
+
+          <? foreach($contacts as $type => $numberItems) { ?>
+             <h3><?=$type?></h3>
+             <p class="nav nested">
+                <? foreach($numberItems as $numberItem) { ?>
+                    <a href="<?=phoneURL($numberItem)?>" class="phone"><?=$numberItem['name']?></a>
+                            <span class="smallprint">(<?=$numberItem['number']?>)</span><br />
+                <? } ?>
+             </p>
+          <? } ?>
 <?      break;
 
     } ?>

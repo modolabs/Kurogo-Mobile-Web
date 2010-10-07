@@ -27,8 +27,11 @@ if (!in_array($routeID, $reader->getRoutes())) {
   $stops = $reader->getStopsForRoute($routeID);
 
   $summary = $vehicleCount.' shuttle'.($vehicleCount != 1 ? 's':'').' found.';
-  $loopTime = 'N';
   $lastUpdated = $reader->getVehiclesLastUpdateTime($routeID);
+
+  $routeRunningSummary = $foundVehicles ? 'Real time bus tracking online.' : 'Bus not running. Following schedule';
+  $briefDescription = $reader->getBriefDescription($routeName);
+  $scheduleSummary = $reader->getSummary($routeName);
   
   //error_log(print_r($vehicles, true));
   
