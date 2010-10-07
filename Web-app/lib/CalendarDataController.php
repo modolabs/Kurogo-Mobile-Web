@@ -70,6 +70,12 @@ class CalendarDataController extends DataController
         }
     }
 
+    public function __construct($baseURL, ICSDataParser $parser, $eventClass='ICalEvent')
+    {
+        parent::__construct($baseURL, $parser);
+        $this->parser->setEventClass($eventClass);
+    }
+
     public function getItem($id)
     {
         $items = $this->getItems();
