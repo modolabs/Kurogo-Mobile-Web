@@ -1,0 +1,19 @@
+<?php
+$page->title("Shuttles: $name")
+     ->header("Shuttle Schedule");
+     //->add_stylesheet("Basic/shuttletrack");
+
+$page->add_inline_css("h2 {padding-top:4px;}");
+$page->content_begin();
+?>
+
+<div class="focal">
+
+  <?=$content?>
+
+</div>
+
+<?
+$page->content_end();
+$page->nav_link("./", "Shuttle Schedule Home");
+?>
