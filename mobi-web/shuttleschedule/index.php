@@ -43,7 +43,7 @@ $contacts = array(
     "Shuttle Service" => array(
         array("name" => "Shuttle Bus and Van Service", "number" => "617-495-0400"),
         array("name" => "Parking Service",             "number" => "617-495-3772"),
-        array("name" => "Commuter Choice",              "number" => "617-384-7433"),
+        array("name" => "CommuterChoice",              "number" => "617-384-7433"),
         array("name" => "Motorist Assistance Program", "number" => "617-496-4375"),
         array("name" => "M2 Shuttle",                  "number" => "617-632-2800"),
      ),
