@@ -59,7 +59,11 @@ abstract class DataController
     
     protected function url()
     {
-        $url = sprintf("%s?%s", $this->baseURL, http_build_query($this->filters));
+        $url = $this->baseURL;
+        if (count($this->filters)>0) {
+            $url .= "?" . http_build_query($this->filters);
+        }
+        
         return $url;
     }
     
@@ -80,6 +84,10 @@ abstract class DataController
             if ($this->cache->isFresh($this->cacheFilename())) {
                 $data = $this->cache->read($this->cacheFilename());
             } else {
+                if (!$url = $this->url()) {
+                    throw new Exception("Invalid URL");
+                }
+                
                 if ($this->debugMode) {
                     error_log(sprintf("Retrieving %s", $this->url()));
                 }

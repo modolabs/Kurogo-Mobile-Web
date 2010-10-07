@@ -23,7 +23,7 @@ class HarvardEvent extends TrumbaEvent {
             return $categories;
         }
     
-        $filename = fopen($GLOBALS['siteConfig']->getVar('PATH_TO_EVENTS_CAT'), "r");
+        $filename = fopen($GLOBALS['siteConfig']->getVar('HARVARD_CALENDAR_CATEGORY_FILE'), "r");
 
        
         while(!feof($filename)) {

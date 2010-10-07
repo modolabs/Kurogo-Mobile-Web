@@ -73,8 +73,7 @@ class TrumbaCalendarDataController extends CalendarDataController
 
     public function __construct($baseURL, ICSDataParser $parser, $eventClass='TrumbaEvent')
     {
-        parent::__construct($baseURL, $parser);
-        $this->parser->setEventClass($eventClass);
+        parent::__construct($baseURL, $parser, $eventClass);
     }
     
 }

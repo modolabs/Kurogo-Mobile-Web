@@ -15,5 +15,10 @@ abstract class DataParser
         return $this->parseData(file_get_contents($filename));
     }
     
+    public function __construct()
+    {
+        $this->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+    }
+    
 }
 
