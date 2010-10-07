@@ -1,0 +1,17 @@
+<?php
+$page->title('Shuttle Tracker')
+     ->navbar_image('shuttleschedule')
+     ->breadcrumbs('Details');
+
+$page->add_inline_css("h2 {padding-top:10pt;}");
+
+$page->content_begin();
+?>
+
+<div class="focal">
+  <?=$content?>
+</div>
+
+<?
+$page->content_end();
+?>

@@ -39,6 +39,23 @@ $tabs = new Tabs(selfURL(), "tab", array("Running", "Offline", "News", "Info"));
 
 $tabs_html = $tabs->html($page->branch);
 
+$contacts = array(
+    "Shuttle Service" => array(
+        array("name" => "Shuttle Bus and Van Service", "number" => "617-495-0400"),
+        array("name" => "Parking Service",             "number" => "617-495-3772"),
+        array("name" => "Commute Choice",              "number" => "617-384-7433"),
+        array("name" => "Motorist Assistance Program", "number" => "617-496-4375"),
+        array("name" => "M2 Shuttle",                  "number" => "617-632-2800"),
+     ),
+    "Emergency Phone Numbers" => array(
+         array("name" => "University Police",          "number" => "617-495-1212"),
+         array("name" => "Health Services",            "number" => "617-495-5711"),
+     ),
+);
+
+
+// this populates the $infoItems data
+require "shuttle_info.inc";
 
 require "$page->branch/index.html";
 $page->output();
@@ -52,5 +69,14 @@ function selfURL() {
 function announcementURL($agency, $index) {
     return "announcement.php?agencyId=$agency&index=$index";
 }
+
+function infoURL($infoItem) {
+    return "info.php?id={$infoItem['id']}";
+}
+
+function phoneURL($phoneItem) {
+    return 'tel:+1' . str_replace('-', '', $phoneItem['number']);
+}
+
 
 ?>

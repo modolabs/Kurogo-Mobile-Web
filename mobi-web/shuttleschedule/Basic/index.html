@@ -45,14 +45,19 @@ $page->content_begin();
                          <span class="smallprint"> (<?=$announcement['date']?>)</span> <br />
                 <? } ?>
            <? } else { ?>
-                No announcements at this time</br />
+                No announcements at this time<br />
            <? } ?>
          </p>
       <? } ?>
 <?      break; 
 
       case "Info": ?>
-        Info
+          <h3>System Information</h3>
+          <p class="nav nested">
+              <?  foreach ($infoItems as $infoItem) { ?>
+                  <a href="infoURL($infoItem)"><?=$infoItem('name')?></a>
+              <?  } ?>
+          </p>
 <?      break;
 
     } ?>

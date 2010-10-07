@@ -64,7 +64,23 @@ $page->content_begin();
   	</div> <!-- id="newstab" -->
 
   	<div class="tabbody" id="infotab" style="display:none">
-  		Info
+          <h3>System Information</h3>
+          <ul class="nav nested">
+              <?  foreach ($infoItems as $infoItem) { ?>
+                   <li><a href="<?=infoURL($infoItem)?>"><?=$infoItem['name']?></a></li>
+              <?  } ?>
+          </ul>
+
+          <? foreach($contacts as $type => $numberItems) { ?>
+             <h3><?=$type?></h3>
+             <ul class="nav nested">
+                <? foreach($numberItems as $numberItem) { ?>
+                    <li><a href="<?=phoneURL($numberItem)?>" class="phone"><?=$numberItem['name']?><br />
+                            <span class="smallprint">(<?=$numberItem['number']?>)</span></a></li>
+                <? } ?>
+             </ul>
+          <? } ?>
+
   	</div> <!-- id="infotab" -->
 
   	<div class="clear"></div>

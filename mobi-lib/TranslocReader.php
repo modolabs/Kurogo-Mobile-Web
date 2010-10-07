@@ -629,7 +629,7 @@ EOM;
 
 function shuttlesCalendar() {
     return <<<EOM
-<h2>2010-2011 Shuttles Calendar</h2>
+<h2>2010-&shy;2011 Shuttles Calendar</h2>
 <h2>Full Service</h2>
 August 29-November 24<br/>
 November 28-December 21<br/>
