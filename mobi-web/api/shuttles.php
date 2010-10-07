@@ -36,10 +36,8 @@ switch ($command) {
    $data = array("html" => shuttlesCalendar());
    break;
  case 'stops':
-   $mockData = get_stops($transloc); // for Transloc, use $mockData
-   //$data = ShuttleSchedule::getAllStops(); // for NextBus, use $data
-   $data = $mockData;
-     break;
+   $data = get_stops($transloc); // for Transloc, use $mockData
+   break;
 
  case 'stopInfo':
    $stop_id = $_REQUEST['id'];
@@ -66,75 +64,24 @@ switch ($command) {
                                   'gps'=>false);
    }
 
-   $mockData['stops'] = $stopInfoToReturn;
-   $mockData['now'] = $time;
-   $data= $mockData; // for Transloc, use $mockData
-
-   //$data['stops'] = ShuttleSchedule::getTimesForStop($stop_id);
-    //$data['now'] = $time;
+   $data['stops'] = $stopInfoToReturn;
+   $data['now'] = $time;
 
    break;
 
    case 'routes': // static info about all routes
-   //$route_ids = ShuttleSchedule::getActiveRoutes();
-   //foreach ($route_ids as $route_id) {
-     //$routeInfo = get_route_metadata($route_id);
 
      if (!$_REQUEST['compact']) {
-       //$routeInfo['stops'] = ShuttleSchedule::list_stop_times($route_id);
-       //$route = ShuttleSchedule::getRoute($route_id);
-       //$path = array();
-       //foreach ($route->anyTrip(time())->shape->points as $point) {
-       //  $path[] = array('lat' => $point[0], 'lon' => $point[1]);
-       //}
-       //$routeInfo['path'] = $path;
-       $mockData = get_all_routes_info($transloc, 'NO'); // for Transloc, use $mockData
+       $data = get_all_routes_info($transloc, 'NO');
      }
      else {
-         $mockData = get_all_routes_info($transloc, 'YES'); // for Transloc, use $mockData
+         $data = get_all_routes_info($transloc, 'YES');
      }
 
      $data = $mockData;
-     //$data[] = $routeInfo; // for NextBus, use $data
-   //}
+
    break;
  case 'routeInfo': // live info for individual routes
-   /*$route_id = $_REQUEST['id'];
-   $time = time();
-   if ($route_id) {
-
-     $stopTimes = ShuttleSchedule::list_stop_times($route_id);
-     $gpsActive = $stopTimes[count($stopTimes) - 1]['gps'];
-     unset($stopTimes[count($stopTimes) - 1]);
-
-     if ($_REQUEST['full'] == 'true') {
-       $data = get_route_metadata($route_id);
-       $route = ShuttleSchedule::getRoute($route_id);
-       $path = array();
-       foreach ($route->anyTrip(time())->shape->points as $point) {
-	 $path[] = array('lat' => $point[0], 'lon' => $point[1]);
-       }
-       // see comment above
-       $stopTimes[0]['path'] = $path;
-     }
-
-     $data['stops'] = $stopTimes;
-
-     if ($gpsActive) {
-       $data['gpsActive'] = TRUE;
-       foreach (ShuttleSchedule::getVehicleLocations($route_id) as $id => $location) {
-	 if ($id != 'lastUpdate')
-	   $data['vehicleLocations'][] = $location;
-       }
-     }
-
-     $data['now'] = $time;
-
-   } else {
-     $data = Array('error' => "no route parameter");
-   }
-    break;*/
-
    
    $route_id = $_REQUEST['id'];
    $time = time();

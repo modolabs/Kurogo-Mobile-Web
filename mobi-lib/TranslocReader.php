@@ -2,6 +2,7 @@
 
 require 'decodePolylineToArray.php';
 require 'encodePolylineFromArray.php';
+require 'DiskCache.inc';
 
 define('MASCO_TRANSLOC_FEED', 'http://masco.transloc.com/itouch/feeds/');
 define('HARVARD_TRANSLOC_FEED', 'http://harvard.transloc.com/itouch/feeds/');
@@ -26,8 +27,47 @@ class TranslocReader {
     '7' => 'w',
     '8' => 'sw',
   );
+
+  private $harvardRouteCache;
+  private $harvardStopsCache;
+  private $mascoRouteCache;
+  private $mascoStopsCache;
   
   public function __construct() {
+    $this->harvardRouteCache = new DiskCache(CACHE_DIR . '/transloc.harvard.setup', 3600 * 2);
+    $this->harvardStopsCache = new DiskCache(CACHE_DIR . '/transloc.harvard.stops', 3600 * 2);
+    $this->mascoRouteCache = new DiskCache(CACHE_DIR . '/transloc.masco.setup', 3600 * 2);
+    $this->mascoStopsCache = new DiskCache(CACHE_DIR . '/transloc.masco.stops', 3600 * 2);
+
+    if (!$this->harvardRouteCache->isFresh()) {
+      $harvardRouteInfo = $this->getTranslocData('setup');
+    } else {
+      $harvardRouteInfo = $this->harvardRouteCache->read();
+    }
+
+    if (!$this->harvardStopsCache->isFresh()) {
+      $harvardStopsInfo = $this->getTranslocData('stops');
+    } else {
+      $harvardStopsInfo = $this->harvardStopsCache->read();
+    }
+
+    if (!$this->mascoRouteCache->isFresh()) {
+      $mascoRouteInfo = $this->getMascoTranslocData('setup');
+    } else {
+      $mascoRouteInfo = $this->mascoRouteCache->read();
+    }
+
+    if (!$this->mascoStopsCache->isFresh()) {
+      $mascoStopsInfo = $this->getMascoTranslocData('stops');
+    } else {
+      $mascoStopsInfo = $this->mascoStopsCache->read();
+    }
+
+    $this->contructorHelper($harvardRouteInfo, $harvardStopsInfo);
+    $this->contructorHelper($mascoRouteInfo, $mascoStopsInfo);
+  }
+
+  public function refreshSetup() {
     $harvardRouteInfo = $this->getTranslocData('setup');
     $harvardStopsInfo = $this->getTranslocData('stops');
 
@@ -67,14 +107,28 @@ class TranslocReader {
     $args['v'] = 1; // version 1 of api
     
     $json = file_get_contents(HARVARD_TRANSLOC_FEED.$page.'?'.http_build_query($args));
-    return json_decode($json, true);
+    $result = json_decode($json, true);
+
+    if ($page == 'setup')
+      $this->harvardRouteCache->write($result);
+    elseif ($page == 'stops')
+      $this->harvardStopsCache->write($result);
+
+    return $result;
   }
 
-    function getMascoTranslocData($page, $args=array()) {
+  function getMascoTranslocData($page, $args=array()) {
     $args['v'] = 1; // version 1 of api
 
     $json = file_get_contents(MASCO_TRANSLOC_FEED.$page.'?'.http_build_query($args));
-    return json_decode($json, true);
+    $result = json_decode($json, true);
+
+    if ($page == 'setup')
+      $this->mascoRouteCache->write($result);
+    elseif ($page == 'stops')
+      $this->mascoStopsCache->write($result);
+
+    return $result;
   }
 
   function getAgencies() {
@@ -280,6 +334,7 @@ class TranslocReader {
   }
 
   function getAllRoutesInfo() {
+      $this->refreshSetup();
       return $this->routes;
   }
 
