@@ -421,7 +421,6 @@ JS;
   }
 
   protected function initializeForPage() {
-
     switch ($this->page) {
       case 'help':
         break;
@@ -505,14 +504,14 @@ JS;
       
       case 'detail':
         $detailConfig = $this->loadThemeConfigFile('map-detail', 'detailConfig');        
-        $tabs = array();
-        $tabsJavascript = array();
+        $tabKeys = array();
+        $tabJavascripts = array();
         
         $name    = $this->args['selectvalues'];
         $details = $this->args['info'];
         
         // Map Tab
-        $tabs[] = 'Map';
+        $tabKeys[] = 'map';
         $hasMap = $this->initializeMap($name, $details);
         $this->assign('hasMap', $hasMap);
         
@@ -527,8 +526,8 @@ JS;
         
         $photoUrl = '';
         if (isset($photoFile) && $photoFile != 'Null') {
-          $tabs[] = 'Photo';
-          $tabsJavascript['Photo'] = "loadPhoto(photoURL,'photo');";
+          $tabKeys[] = 'photo';
+          $tabJavascripts['photo'] = "loadPhoto(photoURL,'photo');";
           $photoUrl = $GLOBALS['siteConfig']->getVar('MAP_PHOTO_SERVER').$photoFile;
           $this->assign('photoUrl', $photoUrl);
         }
@@ -536,7 +535,7 @@ JS;
         
         
         // Details Tab
-        $tabs[] = 'Details';
+        $tabKeys[] = 'detail';
         
         $displayDetails = array();
         foreach ($details as $field => $value) {
@@ -559,7 +558,7 @@ JS;
         $this->assign('address', $details['Address']);
         $this->assign('details', $displayDetails);
         
-        $this->enableTabs($tabs, null, $tabsJavascript);
+        $this->enableTabs($tabKeys, null, $tabJavascripts);
         break;
         
       case 'fullscreen':
@@ -568,11 +567,3 @@ JS;
     }
   }
 }
-
-// don't show these fields in detail page
-$detailBlacklist = array('Root', 'Shape', 'PHOTO_FILE', 'Photo', 'OBJECTID', 'FID', 'BL_ID');
-
-$name = $_REQUEST['selectvalues'];
-
-$details = $_REQUEST['info'];
-$tab = isset($_REQUEST['tab']) ? $_REQUEST['tab'] : 'Map';

@@ -1,8 +1,7 @@
 <?php
 
-require_once "lib_constants.inc";
-require_once "DiskCache.inc";
-require_once 'html2text.php';
+require_once realpath(LIB_DIR.'/DiskCache.php');
+require_once realpath(LIB_DIR.'/feeds/html2text.php');
 
 define('CATEGORY_QUERY_BASE', 'fq_dept_area_category=dept_area_category:"');
 define('TERM_QUERY','&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to+Dec+2010+(Fall+Term)"&');
@@ -267,10 +266,6 @@ class CourseData {
   private static $course_last_cache_times = array();
   private static $course_last_cache_terms = array();
 
-  private static $base_url = STELLAR_BASE_URL;
-
-  private static $rss_url = STELLAR_RSS_URL;
-
   //private static $subscriptions = Array();
   public static $subscriptions = Array();
 
@@ -362,13 +357,13 @@ class CourseData {
 
   public static function get_subject_details($subjectId) {
 
-    $urlString = STELLAR_BASE_URL .'q=id:'.$subjectId;
+    $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL') .'q=id:'.$subjectId;
 
     error_log("COURSE DEBUG: " . $urlString);
 
-    $filenm = STELLAR_COURSE_DIR. '/Course-' .$subjectId . '.xml';
+    $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR'). '/Course-' .$subjectId . '.xml';
 
-    if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
+    if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
       $urlString = $filenm; //file_get_contents($filenm);
     }
     else {
@@ -480,10 +475,10 @@ class CourseData {
       if ( $course == $courseGroup)
            $queryAddition = 'fq_dept_area_category=dept_area_category:[*+TO+""]';
 
-      $urlString = STELLAR_BASE_URL .$term .$gueryAdditionForCourseGroup .$queryAddition;
+      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL') .$term .$gueryAdditionForCourseGroup .$queryAddition;
 
-      $filenm = STELLAR_COURSE_DIR .'/' .$course .'-' . $courseGroup .'.xml';
-      if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
+      $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR') ."/$course-$courseGroup.xml";
+      if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
       }
       else {
           $handle = fopen($filenm, "w");
@@ -511,10 +506,10 @@ class CourseData {
         $queryString = $queryAddition .'&start=' .$number;
 
 
-      $urlString = STELLAR_BASE_URL .$term .$gueryAdditionForCourseGroup .$queryString;
+      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL') .$term .$gueryAdditionForCourseGroup .$queryString;
 
-      $filenm1 = STELLAR_COURSE_DIR .'/' .$course .'-' . $courseGroup.'-' .$index.'.xml';
-      if (file_exists($filenm1) && ((time() - filemtime($filenm1)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
+      $filenm1 = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR') ."/$course-$courseGroup-$index.xml";
+      if (file_exists($filenm1) && ((time() - filemtime($filenm1)) < $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
 
       }
       else {
@@ -582,14 +577,14 @@ class CourseData {
   // returns the Schools (Course-Group) to Departmetns (Courses) map
   public static function get_schoolsAndCourses() {
 
-     // $filenm = STELLAR_COURSE_DIR. '/SchoolsAndCourses' .'.xml';
-      $filenm = STELLAR_COURSE_DIR. '/SchoolsAndCourses' .'.txt';
+     // $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR'). '/SchoolsAndCourses' .'.xml';
+      $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR'). '/SchoolsAndCourses' .'.txt';
 
-      if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
+      if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
           //$urlString = $filenm; //file_get_contents($filenm);
       }
       else {
-          self::condenseXMLFileForCoursesAndWrite(STELLAR_BASE_URL .TERM_QUERY, $filenm);
+          self::condenseXMLFileForCoursesAndWrite($GLOBALS['siteConfig']->getVar('COURSES_BASE_URL') .TERM_QUERY, $filenm);
       }
       $schoolsAndCourses = json_decode(file_get_contents($filenm));
       usort($schoolsAndCourses, "compare_schoolName");
@@ -599,13 +594,18 @@ class CourseData {
 
 
   public static function condenseXMLFileForCoursesAndWrite($xmlURLPath, $fileToWrite) {
+      $path = dirname($fileToWrite);
+      if (!file_exists($path)) {
+        if (!mkdir($path, 0755, true))
+          error_log("could not create $path");
+      }
 
       $handle = fopen($fileToWrite, "w");
 
       $xml = file_get_contents($xmlURLPath);
 
 
-   // $xml = file_get_contents(STELLAR_BASE_URL .TERM_QUERY);
+   // $xml = file_get_contents($GLOBALS['siteConfig']->getVar('COURSES_BASE_URL') .TERM_QUERY);
 
       if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
@@ -621,7 +621,7 @@ class CourseData {
                 $self->schools[] = $field['name'];
 
                 $school_string = SCHOOL_QUERY_BASE .str_replace(' ', '+', $field['name']) .'"&';
-                $urlString = STELLAR_BASE_URL .TERM_QUERY . $school_string;
+                $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL') .TERM_QUERY . $school_string;
                 $courses_map_xml = file_get_contents($urlString);
 
                     if($courses_map_xml == "") {
@@ -764,7 +764,7 @@ class CourseData {
       else if ($courseTitle == $school) {
           $courseName = '&' .'fq_dept_area_category=dept_area_category:[*+TO+""]';
       }
-      $urlString = STELLAR_BASE_URL .$courseName .$schoolName .$term . 'q="' .$terms .'"&' . $sorting_params;
+      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL') .$courseName .$schoolName .$term . 'q="' .$terms .'"&' . $sorting_params;
 
       $xml = file_get_contents($urlString);
 
@@ -818,7 +818,7 @@ class CourseData {
         $queryAddition = '&start=' .$number;
 
 
-      $urlString = STELLAR_BASE_URL .$courseName .$schoolName .$term .'q="' .$terms .'"&'  . $sorting_params .$queryAddition;
+      $urlString = self::$base_url .$courseName .$schoolName .$term .'q="' .$terms .'"&'  . $sorting_params .$queryAddition;
       $xml = file_get_contents($urlString);
 
 

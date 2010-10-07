@@ -1,13 +1,22 @@
-<p class="tabs top">
-  {strip}
-  {foreach $tabbedView['tabs'] as $tab}
-    {if $tab == $tabbedView['current']}
-      <span class="active">{$tab|capitalize}</span>
-    {else}
-      <a href="{$tabbedView['url']}&tab={$tab}">{$tab|capitalize}</a>
-    {/if}
-    {if !$tab@last} | {/if}
-  {/foreach}
-  {/strip}
-</p>
-{$tabBodies[$tabbedView['current']]}
+{extends file="findExtends:common/tabs.tpl"}
+
+{block name="tabsStart"}
+  <p class="tabs top">
+{/block}
+
+{block name="tab"}
+  {if $tabKey == $tabbedView['current']}
+      <span class="active">{$tabInfo['title']}</span>
+  {else}
+      <a href="{$tabInfo['url']}">{$tabInfo['title']}</a>
+  {/if}
+  {if !$tabBody@last} | {/if}
+{/block}
+    
+{block name="tabsEnd"}
+  </p>
+{/block}
+
+{block name="tabBodies"}
+  {$tabBodies[$tabbedView['current']]}
+{/block}

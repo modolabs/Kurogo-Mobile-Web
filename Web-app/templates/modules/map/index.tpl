@@ -1,6 +1,6 @@
 {include file="findInclude:common/header.tpl"}
 
-{include file="findInclude:common/search.tpl" placeholder="Search Map" resultCount=$resultCount}
+{include file="findInclude:common/search.tpl" placeholder="Search Map"}
 
 <div class="legend nonfocal">
   <strong>Search tip:</strong> You can search by any category shown in the 'Browse by' list below.

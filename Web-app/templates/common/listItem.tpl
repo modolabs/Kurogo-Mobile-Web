@@ -1,10 +1,7 @@
+{strip}
 {capture name="subtitleHTML" assign="subtitleHTML"}
   {if isset($item['subtitle'])}
-    {if $subTitleNewline|default:true}
-      <br/>
-    {else}
-      &nbsp;
-    {/if}
+    {if $subTitleNewline|default:true}<br/>{else}&nbsp;{/if}
     <span class="smallprint">{$item['subtitle']}</span>
   {/if}
 {/capture}
@@ -28,3 +25,4 @@
     </a>
   {/if}
 {/block}
+{/strip}
