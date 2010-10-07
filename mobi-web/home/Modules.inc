@@ -29,9 +29,11 @@ class Modules {
     'dining' => Array(
       'title' => 'Student Dining',
       ),
+    /*
     'shuttleschedule' => Array(
       'title' => 'Shuttle Tracker',
       ),
+    */
     'links' => Array(
       'title' => 'Schools',
       'extra' => TRUE,
