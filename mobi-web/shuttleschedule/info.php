@@ -11,6 +11,7 @@ $id = $_REQUEST['id'];
 foreach($infoItems as $infoItem) {
   if($infoItem['id'] == $id) {
     $content = $infoItem['html'];
+    $name = $infoItem['name'];
     break;
   }
 }

@@ -1,0 +1,16 @@
+<?php
+$page->title('Shuttles: ' . $name)
+     ->navbar_image('shuttleschedule')
+     ->header('Shuttle Info');
+
+$page->add_stylesheet("Touch/info");
+
+$page->content_begin();
+
+?>
+
+<div class="focal">
+  <?=$content?>
+</div>
+
+<? $page->content_end(); ?>
