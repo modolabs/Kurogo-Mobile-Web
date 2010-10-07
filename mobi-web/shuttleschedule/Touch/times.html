@@ -9,7 +9,12 @@ $page->content_begin();
 		<h2><?=$routeName?></h2>
                 
     <p class="smallprint">
-     <?=$summary?><br/>
+         <? if($briefDescription) { ?>
+              <?=$briefDescription?><br />
+         <? } ?>
+         <? if($scheduleSummary) { ?>
+              <?=$scheduleSummary?><br />
+         <? } ?>
 
   <? if($foundVehicles) { ?>
         Refreshed at <?=formatShuttleTime($page, $lastUpdated)?> (<a href="<?=selfURL()?>">refresh</a>). 
@@ -17,8 +22,6 @@ $page->content_begin();
         Tracking is not available right now.
   <? } ?>
     </p>
-
-    <p class="legend">Route loop repeats every <?=$loopTime?> minutes.</p>
 
     <table cellpadding="0" cellspacing="0" border="0" id="schedule">
   <? foreach($stops as $index => $stop) {  
