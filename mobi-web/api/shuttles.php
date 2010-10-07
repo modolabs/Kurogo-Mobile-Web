@@ -78,8 +78,6 @@ switch ($command) {
          $data = get_all_routes_info($transloc, 'YES');
      }
 
-     $data = $mockData;
-
    break;
  case 'routeInfo': // live info for individual routes
    
