@@ -166,6 +166,8 @@ class MapModule extends Module {
       $zoomOutUrl  = $this->detailUrlForBBox($this->bboxArr2Str($this->shiftBBox($bbox,  0,  0, -1)));
     }
   
+    $this->assign('imageUrl', $imageUrl);
+  
     // the following are only used by webkit version
     $mapInitURL = $wms->getMapBaseURL(); // js variable
     $urlParts = parse_url($mapInitURL);
