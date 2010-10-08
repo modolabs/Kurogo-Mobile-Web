@@ -11,6 +11,13 @@ function requestString($paramName, $defaultValue = "")
 $id = requestString('id');
 $name = requestString('name');
 
+$GLOBALS['calendarExtraDetailParams'] = array(
+  'back'    => 'Category',
+  'catName' => $name,
+  'catID'   => $id,
+);
+
+
 if (strlen($id) > 0) {
 	
 	// These variables are used for the next day/previous day links in the html.

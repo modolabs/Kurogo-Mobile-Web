@@ -130,9 +130,16 @@ function subCategorysURL($category) {
   ));
 }
 
-function detailURL($event, $extraParams = '') {
-  return "detail.php?id=".urlencode($event->get_uid()).
-    (strlen($extraParams) ? '&'.$extraParams : '');
+function detailURL($event) {
+  $args = array(
+    'id' => $event->get_uid(),
+    'time' => isset($_REQUEST['time']) ? $_REQUEST['time'] : time(),
+  );
+  if (isset($GLOBALS['calendarExtraDetailParams'])) {
+    $args = array_merge($args, $GLOBALS['calendarExtraDetailParams']);
+  }
+  
+  return "detail.php?".http_build_query($args);
 }
 
 // convenience functions

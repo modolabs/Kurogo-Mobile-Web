@@ -22,20 +22,27 @@ $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
 			Location: <?=briefLocation($event)?>
                     <? } ?>
 		</p>
-		<p>
-                        <?=$event->get_description()?>
-		</p>
 
-                <? if(isset($event->infophone)) { ?>
+               <? if(strlen($ticketWebLink) > 0) { ?>
+		     <p>
+			Link to Tickets: <a href="<?=$ticketWebLink?>" class="action external" target="_new"><?=$ticketWebLink?></a>
+		     </p>
+                <? } ?>
+                        <?=$descriptionString?>
+
+                <? if(strlen($phoneNum)) { ?>
 		    <p>
-  			For info call: <a href="<?=phoneURL($event->infophone)?>" class="action phone"><?=$event->infophone?></a>
+  			For info call: <a href="<?=$phoneNum?>" class="action phone"><?=$phoneNum?></a>
+		    </p>
+                <? } ?>
+                   <? if(strlen($email)) { ?>
+		    <p>
+  			Email: <a href="<?=$email?>" class="action phone"><?=$email?></a>
 		    </p>
                 <? } ?>
 
-                <? if(isset($event->infourl)) { ?>
-		     <p>
-			Website: <a href="<?=$event->urlize?>" class="action external" target="_new"><?=$event->infourl?></a>
-		     </p>
+                <? if(strlen($url) > 0) { ?>
+			Website: <a href="<?=$url?>" class="action external" target="_new"><?=$url?></a>
                 <? } ?>
 
 		<p class="legend">Categorized as:
