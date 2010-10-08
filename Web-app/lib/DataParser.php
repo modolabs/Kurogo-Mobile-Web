@@ -11,7 +11,7 @@ abstract class DataParser
         $this->debugMode = $debugMode ? true : false;
     }
 
-    protected function setEncoding($encoding)
+    public function setEncoding($encoding)
     {
         $this->encoding = $encoding;
     }
