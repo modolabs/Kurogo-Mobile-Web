@@ -126,7 +126,12 @@ abstract class DataController
     {
         $this->parser->setEncoding($encoding);
     }
-    
+
+    public function setObjectClass($class, $className)
+    {
+        $this->parser->setObjectClass($class, $className);
+    }
+
     public function getEncoding()
     {
         return $this->parser->getEncoding();

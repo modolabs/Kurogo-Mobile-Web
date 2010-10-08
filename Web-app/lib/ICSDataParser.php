@@ -32,9 +32,26 @@ class ICSDataParser extends DataParser
         return $contentline;
     }
     
+    public function setObjectClass($class, $className)
+    {
+        switch ($class)
+        {
+            case 'event':
+                $this->setEventClass($className);
+                break;
+            default:
+                throw new Exception("Invalid class $class");
+        }
+    }
+    
     public function setEventClass($eventClass)
     {
-        $this->eventClass = $eventClass;
+    	if ($eventClass) {
+    		if (!class_exists($eventClass)) {
+    			throw new Exception("Cannot load class $eventClass");
+    		}
+			$this->eventClass = $eventClass;
+		}
     }
     
     public function parseData($contents)
