@@ -54,7 +54,7 @@ class RSSDataController extends DataController
             $items = $this->channel->getItems();
             $totalItems = count($items);
         } else {
-            Debug::die_here($this);
+            throw new Exception("Error loading rss data");
         }
 
         return $this->limitItems($items, $start, $limit);
