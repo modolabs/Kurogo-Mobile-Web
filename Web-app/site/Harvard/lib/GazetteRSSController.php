@@ -1,5 +1,7 @@
 <?php
 
+require_once(LIB_DIR . '/RSS.php');
+
 class GazetteRSScontroller extends RSSDataController
 {
     protected $loadMore=true;
@@ -78,3 +80,10 @@ class GazetteRSScontroller extends RSSDataController
     }
 }
 
+class GazetteRSSItem extends RSSItem
+{
+}
+
+class GazetteRSSImage extends RSSImage
+{
+}

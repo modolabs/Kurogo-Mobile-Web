@@ -9,6 +9,24 @@ class RSSDataParser extends DataParser
     protected $channelClass='RSSChannel';
     protected $itemClass='RSSItem';
     protected $imageClass='RSSImage';
+    
+    public function setObjectClass($class, $className)
+    {
+        switch ($class)
+        {
+            case 'channel':
+                $this->setChannelClass($className);
+                break;
+            case 'item':
+                $this->setItemClass($className);
+                break;
+            case 'image':
+                $this->setImageClass($className);
+                break;
+            default:
+                throw new Exception("Invalid class $class");
+        }
+    }
 
     protected function startElement($xml_parser, $name, $attribs)
     {
@@ -32,17 +50,32 @@ class RSSDataParser extends DataParser
 
     public function setChannelClass($channelClass)
     {
-        $this->channelClass = $channelClass;
+    	if ($channelClass) {
+    		if (!class_exists($channelClass)) {
+    			throw new Exception("Cannot load class $channelClass");
+    		}
+			$this->channelClass = $channelClass;
+		}
     }
 
     public function setItemClass($itemClass)
     {
-        $this->itemClass = $itemClass;
+    	if ($itemClass) {
+    		if (!class_exists($itemClass)) {
+    			throw new Exception("Cannot load class $itemClass");
+    		}
+			$this->itemClass = $itemClass;
+		}
     }
 
     public function setImageClass($imageClass)
     {
-        $this->imageClass = $imageClass;
+    	if ($imageClass) {
+    		if (!class_exists($imageClass)) {
+    			throw new Exception("Cannot load class $imageClass");
+    		}
+			$this->imageClass = $imageClass;
+		}
     }
 
     protected function endElement($xml_parser, $name)

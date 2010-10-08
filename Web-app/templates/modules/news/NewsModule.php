@@ -83,6 +83,9 @@ class NewsModule extends Module {
   protected function initializeForPage() {
     $controllerClass = $GLOBALS['siteConfig']->getVar('NEWS_CONTROLLER_CLASS');
     $parserClass     = $GLOBALS['siteConfig']->getVar('NEWS_PARSER_CLASS');
+    $channelClass    = $GLOBALS['siteConfig']->getVar('NEWS_CHANNEL_CLASS');
+    $itemClass       = $GLOBALS['siteConfig']->getVar('NEWS_ITEM_CLASS');
+    $imageClass      = $GLOBALS['siteConfig']->getVar('NEWS_IMAGE_CLASS');
     $maxPerPage      = $GLOBALS['siteConfig']->getVar('NEWS_MAX_RESULTS');
     
     $this->loadFeeds();
@@ -93,6 +96,9 @@ class NewsModule extends Module {
     }
 
     $feed = new $controllerClass($this->feedURLForFeed($this->feedIndex), new $parserClass);
+    $feed->setObjectClass('channel', $channelClass);
+    $feed->setObjectClass('item', $itemClass);
+    $feed->setObjectClass('image', $imageClass);
 
     switch ($this->page) {
       case 'story':
