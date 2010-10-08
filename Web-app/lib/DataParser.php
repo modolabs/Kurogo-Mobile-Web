@@ -3,11 +3,22 @@
 abstract class DataParser
 {
     abstract public function parseData($data);
+    protected $encoding='utf-8';
     protected $debugMode=false;
 
     public function setDebugMode($debugMode)
     {
         $this->debugMode = $debugMode ? true : false;
+    }
+
+    protected function setEncoding($encoding)
+    {
+        $this->encoding = $encoding;
+    }
+    
+    protected function getEncoding()
+    {
+        return $this->encoding;
     }
 
     public function parseFile($filename) 
