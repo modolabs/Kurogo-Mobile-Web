@@ -5,6 +5,6 @@
 {block name="resultCount"}
 {/block}
 
-{include file="findInclude:modules/{$moduleID}/include/stories.tpl"}
+{include file="findInclude:modules/{$moduleID}/common/stories.tpl"}
 
 {include file="findInclude:common/footer.tpl"}

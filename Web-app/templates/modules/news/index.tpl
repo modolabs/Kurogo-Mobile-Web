@@ -46,7 +46,7 @@
   </div>
 {/block}
 
-{include file="findInclude:modules/{$moduleID}/include/stories.tpl"}
+{include file="findInclude:modules/{$moduleID}/common/stories.tpl"}
 
 {block name="newsFooter"}
   {include file="findInclude:common/footer.tpl"}

@@ -16,7 +16,7 @@ abstract class DataParser
         $this->encoding = $encoding;
     }
     
-    protected function getEncoding()
+    public function getEncoding()
     {
         return $this->encoding;
     }

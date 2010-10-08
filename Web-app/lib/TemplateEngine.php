@@ -32,7 +32,7 @@ class TemplateEngine extends Smarty {
       foreach ($checkFiles as $file) {
         $test = realpath_exists("$dir/$file");
         if ($test) {
-          error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file'");
+          //error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file'");
           return $test;
         }
       }
@@ -82,7 +82,7 @@ class TemplateEngine extends Smarty {
     foreach ($checkDirs as $type => $dir) {
         $test = realpath_exists("$dir/$name");
         if ($test) {
-          error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name'");
+          //error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name'");
           return $test;
         }
     }

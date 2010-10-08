@@ -127,7 +127,6 @@ class NewsModule extends Module {
         $this->assign('shareUrl', $shareUrl);
         $this->assign('title',    $story->getTitle());
         $this->assign('author',   $story->getProperty('harvard:author'));
-        $this->assign('image',    $image);
         $this->assign('image',    $this->getImageForStory($story));
         break;
         
@@ -222,11 +221,12 @@ class NewsModule extends Module {
           );
         }
         
-        $this->assign('sections',    $sections);
-        $this->assign('stories',     $stories);
-        $this->assign('isHome',      true);
-        $this->assign('previousUrl', $previousUrl);
-        $this->assign('nextUrl',     $nextUrl);
+        $this->assign('sections',       $sections);
+        $this->assign('currentSection', $sections[$this->feedIndex]);
+        $this->assign('stories',        $stories);
+        $this->assign('isHome',         true);
+        $this->assign('previousUrl',    $previousUrl);
+        $this->assign('nextUrl',        $nextUrl);
         break;
     }
   }

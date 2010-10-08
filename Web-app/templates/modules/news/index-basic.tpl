@@ -1,7 +1,7 @@
 {extends file="findExtends:modules/$moduleID/index.tpl"}
 
 {block name="newsHeader"}
-  <h2>{$feed.title}</h2>
+  <h2>{$currentSection['title']}</h2>
 {/block}
 
 {block name="newsFooter"}
