@@ -284,7 +284,8 @@ function get_specific_routes_info($translocObj, $compact, $route_id) {
         }
 
         else {
-            $routeToReturn = array('stops'=>$translocObj->getStopsForRoute($routeInfo['id']));
+            $routeToReturn = array('stops'=>$translocObj->getStopsForRoute($routeInfo['id']),
+                                   'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']));
         }
 
     return $routeToReturn;
