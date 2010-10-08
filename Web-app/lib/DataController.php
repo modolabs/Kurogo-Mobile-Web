@@ -122,12 +122,12 @@ abstract class DataController
         return $data;
     }
 
-    protected function setEncoding($encoding)
+    public function setEncoding($encoding)
     {
         $this->parser->setEncoding($encoding);
     }
     
-    protected function getEncoding()
+    public function getEncoding()
     {
         return $this->parser->getEncoding();
     }
