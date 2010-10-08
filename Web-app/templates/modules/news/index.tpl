@@ -1,21 +1,20 @@
 {include file="findInclude:common/header.tpl"}
 
-
-<div class="header">
-  <div id="category-switcher">
-    {if $isHome}
+{block name="newsHeader"}
+  <div class="header">
+    <div id="category-switcher">
       <form method="get" id="category-form">
         <table border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td class="formlabel">Section:</td>
             <td class="inputfield">
               <div>
-                <select class="newsinput" id="feedIndex" name="feedIndex" onchange="loadFeed(this);">
-                  {foreach $feeds as $index => $feedData}
-                    {if $feedIndex == $index}
-                        <option value="{$index}" selected="true">{$feedData.title|escape}</option>
+                <select class="newsinput" id="section" name="section" onchange="loadSection(this);">
+                  {foreach $sections as $section}
+                    {if $section['selected']}
+                      <option value="{$section['value']}" selected="true">{$section['title']}</option>
                     {else}
-                        <option value="{$index}">{$feedData.title|escape}</option>
+                      <option value="{$section['value']}">{$section['title']}</option>
                     {/if}
                   {/foreach}
                 </select>
@@ -27,9 +26,7 @@
           </tr>
         </table>
       </form>
-    {/if}
-    <form action="search.php" id="search-form" style="display:none;">
-      {if $isHome}
+      <form action="search.php" id="search-form" style="display:none;">
         <table border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td class="formlabel">Search:</td>
@@ -44,42 +41,13 @@
         {foreach $hiddenArgs as $arg => $value}
           <input type="hidden" name="{$arg}" value="{$value}" />
         {/foreach}
-      {else}
-        {include file="findInclude:common/search.tpl" extraArgs=$hiddenArgs inputName="search_terms" insideForm=true}
-      {/if}
-    </form>
+      </form>
+    </div>
   </div>
-</div>
+{/block}
 
-<ul class="results">
-  {if $previousUrl}
-    <li class="non-story">
-      <a href="{$previousUrl}">Previous stories</a>
-    </li>
-  {/if}
+{include file="findInclude:modules/{$moduleID}/include/stories.tpl"}
 
-  {$ellipsisCount=0}
-  {foreach $stories as $story}
-    <li class="story">
-      {if $story['image']}
-        <img class="thumbnail" src="{$story['image']->getURL()}" />
-      {else}
-        <img class="thumbnail" src="/common/images/news-placeholder.png" />
-      {/if}
-      <a href="{$story['url']}">
-        <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
-          <div class="title">{$story["title"]}</div>
-          {$story['description']}
-        </div>
-      </a>
-    </li>
-  {/foreach}
-
-  {if $nextUrl}
-    <li class="non-story">
-      <a href="{$nextUrl}">More stories</a>
-    </li>
-  {/if}
-</ul>
-
-{include file="findInclude:common/footer.tpl"}
+{block name="newsFooter"}
+  {include file="findInclude:common/footer.tpl"}
+{/block}

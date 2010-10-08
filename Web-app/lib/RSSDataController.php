@@ -43,7 +43,7 @@ class RSSDataController extends DataController
         parent::clearInternalCache();
     }
 
-     public function items($start=0,$limit=null, &$totalItems=0) 
+    public function items($start=0,$limit=null, &$totalItems=0) 
     {
         if (!$this->channel) {
             $data = $this->getData();
@@ -59,6 +59,10 @@ class RSSDataController extends DataController
 
         return $this->limitItems($items, $start, $limit);
     }
-
+    
+    public function getEncoding() {
+      // An encoding string in the format for mb_convert_encoding()
+      return 'utf-8';  // placeholder
+    }
 }
 

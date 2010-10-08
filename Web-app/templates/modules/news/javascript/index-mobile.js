@@ -1,5 +1,5 @@
-function loadFeed(select) {
-    window.location = "./?feedIndex=" + select.value;
+function loadSection(select) {
+    window.location = "./?section=" + select.value;
 }
 
 function toggleSearch() {

@@ -60,6 +60,25 @@ class CoursesModule extends Module {
     ), $addBreadcrumb);
   }
   
+  private function getClassListItem($classes, $i) {
+    $class = $classes[$i];
+  
+    // Multiple classes with the same name in a row, show instructors to differentiate     
+    $staffNamesIfNeeded = '';    
+    if (($i > 0                   && $className == $classes[$i-1]['name']) || 
+        ($i < (count($classes)-1) && $className == $classes[$i+1]['name'])) {
+      $staffNamesIfNeeded = implode(', ', $class['staff']['instructors']);
+      if (strlen($staffName)) {
+        $staffNamesIfNeeded = ' ('.$staffNamesIfNeeded.')';
+      }
+    }
+    
+    return array(
+      'title' => $class['name'].': '.$class['title'].$staffNamesIfNeeded,
+      'url'   => $this->detailURL($class['masterId']),
+    );
+  }
+
   private function courseURL($course, $courseShort, $school, $schoolShort, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('course', array(
       "course"      => $course,
@@ -69,13 +88,22 @@ class CoursesModule extends Module {
     ), $addBreadcrumb);
   }
   
-  private function searchURL($filter, $addBreadcrumb=true) {
+  private function searchSchoolURL($filter, $school, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('search', array(
       'filter' => $filter,
+      "school" => $school,
     ), $addBreadcrumb);
   }
   
-  private function detailURL($class) {
+  private function searchCourseURL($filter, $school, $course, $addBreadcrumb=true) {
+    return $this->buildBreadcrumbURL('search', array(
+      'filter' => $filter,
+      "course" => $course,
+      "school" => $school,
+    ), $addBreadcrumb);
+  }
+  
+  private function detailURL($class, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('detail', array(
       'class' => $class,
     ), $addBreadcrumb);
@@ -144,74 +172,115 @@ class CoursesModule extends Module {
         
         $schoolsInfo = CourseData::get_schoolsAndCourses();
         
-        $courses = array();
+        $schoolNameShort = '';
+        $coursesInfo = array();
         foreach($schoolsInfo as $schoolInfo) {
           if ($schoolInfo->school_name == $schoolName) {
             $coursesInfo = $schoolInfo->courses;
-            foreach ($coursesInfo as $courseInfo) {
-              $courseName = strlen($courseInfo->name) ? 
-                  $courseInfo->name : $schoolInfo->school_name_short.'-other';
-              $courses[] = array(
-                'title' => $courseName,
-                'url'   => $this->courseURL($courseName, $courseName, $schoolName, $schoolInfo->school_name_short),
-              );
-            }
+            $schoolNameShort = $schoolInfo->school_name_short;
             break;
           }
         }
+        
+        $courses = array();
+        foreach ($coursesInfo as $courseInfo) {
+          $courseName = $courseInfo->name;
+          if (!strlen($courseName) {
+            $courseName = $schoolNameShort.'-other';
+          }
+          
+          $courses[] = array(
+            'title' => $courseName,
+            'url'   => $this->courseURL($courseName, $courseName, $schoolName, $schoolNameShort),
+          );
+        }
+        
+        $this->assign('schoolNameShort', $schoolNameShort);
         $this->assign('courses', $courses);
         $this->assign('extraSearchArgs', array(
           'school' => $this->args['school'],
         ));
         break;
-        
+
       case 'course':
         // A list of classes in a department
-        $courseName      = $this->args['course'];
-        $courseNameShort = $this->args['courseShort'];
-        $schoolName      = $this->args['school'];
-        $schoolNameShort = $this->args['schoolShort'];
+        $courseName      = $this->getArg('course');
+        $courseNameShort = $this->getArg('courseShort');
+        $schoolName      = $this->getArg('school');
+        $schoolNameShort = $this->getArg('schoolShort');
         
         $classesInfo = CourseData::get_subjectsForCourse(str_replace('-other', '', $courseName), $schoolName);
 
         $classes = array();
         foreach ($classesInfo as $i => $classInfo) {
-          $className = $classInfo['name'].': '.$classInfo['title'];
-          
-          // Multiple classes with the same name in a row, show instructors to differentiate     
-          if (($i > 0                   && $className == $classesInfo[$i-1]['name']) || 
-              ($i < (count($classes)-1) && $className == $classesInfo[$i+1]['name'])) {
-            $staffName = '';
-            foreach($class['staff']['instructors'] as $name) {
-              $staffName .= (strlen($staffName) ? ', ' : '').$name;
-            }
-            if (strlen($staffName)) {
-              $className .= ' ('.$staffName.')';
-            }
-              
-          }
-          $classes[] = array(
-            'title' => $className,
-            'url'   => $this->detailURL($classInfo['masterId']),
-          );
+          $classes[] = $this->getClassListItem($classesInfo, $i);
         }        
 
         $this->assign('classes',         $classes);
         $this->assign('courseNameShort', $courseNameShort);
         $this->assign('extraSearchArgs', array(
-          'school'      => $this->args['school'],
-          'schoolShort' => $this->args['schoolShort'],
-          'course'      => $this->args['course'],
-          'courseShort' => $this->args['courseShort'],
+          'school'      => $schoolName,
+          'schoolShort' => $schoolNameShort,
+          'course'      => $courseName,
+          'courseShort' => $courseNameShort,
         ));
         break;
         
       case 'searchCourses':
         // A list of departments with search results
+        $searchTerms = $this->getArg('filter');
+
+        $data = CourseData::search_subjects($searchTerms, '', '');
+        $count = $data['count'];
+        $classes = isset($data["classes"]) ? $data["classes"] : NULL;
+    
+      
+        $schools = array();
+        if ($data['count'] <= 100) {
+          foreach ($data["classes"] as $class) {
+            if (!in_array($class['school'], array_keys($schools))) {
+              $schools[$class['school']] = array(
+                'title' => "{$class['short_name']} (1)",
+                'url'   => $this->searchSchoolURL($searchTerms, $class['school']),
+                'count' => 1,
+              );
+            } else {
+              $schools[$class['school']]['count']++;
+              $schools[$class['school']]['title'] = "{$class['short_name']} ({$schools[$class['school']]['count']})";
+            }
+          }
+        } else {
+          // schoolData will only be available for searches 
+          // from the top-level view where search results are > 100
+          $schoolData = isset($data['schools']) ? $data['schools'] : NULL;
+          foreach ($schoolData as $school) {
+            $schools[$class['school']] = array(
+              'title' => "{$class['short_name']} ({$school['count']})",
+              'url'   => $this->searchSchoolURL($searchTerms, $class['school']),
+              'count' => $school['count'],
+            );
+          }
+        }
+        $this->assign('searchTerms', $searchTerms);
+        $this->assign('schools',     array_values($schools));
         break;
         
       case 'search':
         // search results for a department
+        $searchTerms = $this->getArg('filter');
+        $schoolName  = $this->getArg('school');
+        $courseName  = $this->getArg('course');
+
+        $data = CourseData::search_subjects($searchTerms, $schoolName, $courseName);
+        $count = $data['count'];
+        $classes = isset($data["classes"]) ? $data["classes"] : NULL;
+    
+        $classes = array();
+        foreach ($data["classes"] as $i => $classInfo) {
+          $classes[] = $this->getClassListItem($data["classes"], $i);
+        }        
+
+        $this->assign('classes', $classes);
         break;
         
       case 'detail':

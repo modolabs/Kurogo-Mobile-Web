@@ -80,8 +80,8 @@ abstract class Module {
   // Pager support
   // Note: the first page is 0 (0 ... pageCount-1)
   //
-  protected function enablePager($html, $pageNumber) {
-    $this->htmlPager = new HTMLPager($html, $pageNumber);
+  protected function enablePager($html, $encoding, $pageNumber) {
+    $this->htmlPager = new HTMLPager($html, $encoding, $pageNumber);
   }
   
   // Override in subclass if you are using the pager
@@ -180,6 +180,10 @@ abstract class Module {
     } else {
       return $default;
     }
+  }
+  
+  protected function getArg($key, $default='') {
+    return self::argVal($this->args, $key, $default);
   }
 
   private static function buildURL($page, $args) {

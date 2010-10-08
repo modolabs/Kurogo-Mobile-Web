@@ -33,9 +33,8 @@ class ErrorModule extends Module {
   );
 
   protected function initializeForPage() {
-    error_log(print_r($this->args, true));
-    $code = self::argVal($this->args, 'code', 'default');
-    $url  = self::argVal($this->args, 'url', '');
+    $code = $this->getArg('code', 'default');
+    $url  = $this->getArg('url', '');
     
     $error = isset($this->errors[$code]) ? 
       $this->errors[$code] : $this->errors['default'];;

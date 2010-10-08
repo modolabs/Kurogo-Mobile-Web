@@ -306,9 +306,9 @@ class CalendarModule extends Module {
         break;
       
       case 'category':
-        $id   = self::argVal($this->args, 'id', '');
-        $name = self::argVal($this->args, 'name', '');
-        $time = self::argVal($this->args, 'time', time());
+        $id   = $this->getArg('id', '');
+        $name = $this->getArg('name', '');
+        $time = $this->getArg('time', time());
 
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
