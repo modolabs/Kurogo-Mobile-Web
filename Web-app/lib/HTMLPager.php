@@ -42,8 +42,16 @@ class HTMLPager {
   private $pageNumber = 0;
   
   public function __construct($html, $pageNumber, $paragraphsPerPage=PARAGRAPH_LIMIT) {
+
     $dom = new DOMDocument();
-    $dom->loadHTML($html);
+    
+    // ENCODING FIX FROM  http://php.net/manual/en/domdocument.loadhtml.php#95251
+    $dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+    foreach ($dom->childNodes as $item)
+        if ($item->nodeType == XML_PI_NODE)
+            $dom->removeChild($item); // remove hack
+    $dom->encoding = 'UTF-8';
+    
     $body = $dom->getElementsByTagName("body")->item(0);
 
     $currentPage = NULL;
