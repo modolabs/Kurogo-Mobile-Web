@@ -46,14 +46,14 @@ class NewsModule extends Module {
 
   private function feedURL($feedIndex, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('index', array(
-      'feedIndex' => $feedIndex
+      'section' => $feedIndex
     ), $addBreadcrumb);
   }
 
-  private function storyURL($story, $feedIndex, $addBreadcrumb=true) {
+  private function storyURL($story, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('story', array(
       'storyID'   => $story->getProperty($GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD')),
-      'feedIndex' => $feedIndex,
+      'section'   => $this->feedIndex,
       'start'     => $this->argVal($this->args, 'start'),
       'filter'    => $this->argVal($this->args, 'filter')
     ), $addBreadcrumb);
@@ -96,7 +96,7 @@ class NewsModule extends Module {
 
     switch ($this->page) {
       case 'story':
-        $searchTerms = $this->getArg('filter');
+        $searchTerms = $this->getArg('filter', false);
         if ($searchTerms) {
           $feed->addFilter('search', $searchTerms);
         }
@@ -106,7 +106,6 @@ class NewsModule extends Module {
         $story     = $feed->getItem($storyID);
         
         if (!$story) {
-          Debug::die_here("Story $storyID not found");
           throw new Exception("Story $storyID not found");
         }
         
@@ -144,7 +143,7 @@ class NewsModule extends Module {
             $item = array(
               'title'       => $story->getTitle(),
               'description' => $story->getDescription(),
-              'url'         => $this->storyURL($story, $this->feedIndex),
+              'url'         => $this->storyURL($story),
               'image'       => $this->getImageForStory($story),
             );
             $stories[] = $item;
@@ -154,20 +153,15 @@ class NewsModule extends Module {
           $nextUrl = '';
           
           if ($totalItems > $maxPerPage) {
+            $args = $this->args;
             if ($start > 0) {
-              $previousUrl = $this->buildBreadcrumbURL($this->page, array(
-                'feedIndex' => $this->feedIndex, 
-                'filter'    => $searchTerms,
-                'start'     => $start - $maxPerPage
-              ));
+              $args['start'] = $start - $maxPerPage;
+              $previousUrl = $this->buildBreadcrumbURL($this->page, $args, false);
             }
             
             if ($totalItems - $start <= $maxPerPage) {
-              $nextUrl = $this->buildBreadcrumbURL($this->page, array(
-                'feedIndex' => $this->feedIndex, 
-                'filter'    => $searchTerms,
-                'start'     => $start + $maxPerPage
-              ), false);
+              $args['start'] = $start + $maxPerPage;
+              $nextUrl = $this->buildBreadcrumbURL($this->page, $args, false);
             }
           }
 
@@ -205,7 +199,7 @@ class NewsModule extends Module {
           $item = array(
             'title'       => $story->getTitle(),
             'description' => $story->getDescription(),
-            'url'         => $this->storyURL($story, $this->feedIndex),
+            'url'         => $this->storyURL($story),
             'image'       => $this->getImageForStory($story),
           );
           $stories[] = $item;
