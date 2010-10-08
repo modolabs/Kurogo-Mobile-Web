@@ -3,7 +3,7 @@
 abstract class DataController
 {
     protected $parser;
-    protected $cacheFile;
+    protected $url;
     protected $cache;
     protected $baseURL;
     protected $filters=array();
@@ -23,8 +23,21 @@ abstract class DataController
     public function addFilter($var, $value)
     {
         $this->filters[$var] = $value;
+        $this->clearInternalCache();
     }
-    
+
+    public function removeFilter($var)
+    {
+        if (isset($this->filters[$var])) {
+            unset($this->filters[$var]);
+            $this->clearInternalCache();
+        }
+    }
+
+    protected function clearInternalCache()
+    {
+    }
+
     protected function cacheFilename()
     {
         return md5($this->url());
@@ -48,6 +61,7 @@ abstract class DataController
     public function setBaseURL($baseURL)
     {
         $this->baseURL = $baseURL;
+        $this->clearInternalCache();
     }
     
     public function __construct($baseURL, DataParser $parser)
@@ -74,40 +88,67 @@ abstract class DataController
     
     public function getData()
     {
+        if (!$url = $this->url()) {
+            throw new Exception("Invalid URL");
+        }
+
+        $this->url = $url;
         if ($this->useCache) {
+            $cacheFilename = $this->cacheFilename();
             if ($this->cache === NULL) {
                   $this->cache = new DiskCache($this->cacheFolder(), $this->cacheLifespan(), TRUE);
                   $this->cache->setSuffix($this->cacheFileSuffix());
                   $this->cache->preserveFormat();
             }
-    
-            if ($this->cache->isFresh($this->cacheFilename())) {
-                $data = $this->cache->read($this->cacheFilename());
+
+            if ($this->cache->isFresh($cacheFilename)) {
+                $data = $this->cache->read($cacheFilename);
             } else {
-                if (!$url = $this->url()) {
-                    throw new Exception("Invalid URL");
+                if ($this->debugMode) {
+                    error_log(sprintf("Retrieving %s", $url));
                 }
                 
+                $data = file_get_contents($url);
+                $this->cache->write($data, $cacheFilename);
+                
                 if ($this->debugMode) {
-                    error_log(sprintf("Retrieving %s", $this->url()));
-                }
-                $data = file_get_contents($this->url());
-                $this->cache->write($data, $this->cacheFilename());
-                if ($this->debugMode) {
-                    file_put_contents($this->cacheMetaFile(), $this->url());
+                    file_put_contents($this->cacheMetaFile(), $url);
                 }
             }
         } else {
-            $data = file_get_contents($this->url());
+            $data = file_get_contents($url);
         }
         
         return $data;
     }
     
-    public function items()
+    protected function limitItems($items, $start=0, $limit=null)
+    {
+        $start = intval($start);
+        $limit = is_null($limit) ? null : intval($limit);
+
+        if ($limit && $start % $limit != 0) {
+            $start = floor($start/$limit)*$limit;
+        }
+        
+        if (!is_array($items)) {
+            throw new Exception("Items list is not an array");
+        }
+        
+        if ($start>0 || !is_null($limit)) {
+            $items = array_slice($items, $start, $limit);
+        }
+        
+        return $items;
+        
+    }
+    
+    public function items($start=0, $limit=null, &$totalItems)
     {
         $data = $this->getData();
-        return $this->parseData($data);
+        $items = $this->parseData($data);
+        $totalItems = count($items);
+        return $this->limitItems($items,$start, $limit);
     }
 }
 

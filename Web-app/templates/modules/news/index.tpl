@@ -10,12 +10,12 @@
             <td class="formlabel">Section:</td>
             <td class="inputfield">
               <div>
-                <select class="newsinput" id="category_id" name="category_id" onchange="loadCategory(this);">
-                  {foreach $categories as $id => $title}
-                    {if $categoryId == $id}
-                        <option value="{$id}" selected="true">{$title}</option>
+                <select class="newsinput" id="feedIndex" name="feedIndex" onchange="loadFeed(this);">
+                  {foreach $feeds as $index => $feedData}
+                    {if $feedIndex == $index}
+                        <option value="{$index}" selected="true">{$feedData.title|escape}</option>
                     {else}
-                        <option value="{$id}">{$title}</option>
+                        <option value="{$index}">{$feedData.title|escape}</option>
                     {/if}
                   {/foreach}
                 </select>
@@ -28,13 +28,13 @@
         </table>
       </form>
     {/if}
-    <form id="search-form"{if $isHome} style="display:none;"{/if}>
+    <form action="search.php" id="search-form" style="display:none;">
       {if $isHome}
         <table border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td class="formlabel">Search:</td>
             <td class="inputfield">
-              <input class="newsinput search-field" type="text" id="search_terms" name="search_terms" value="{$searchTerms|escape}"/>
+              <input class="newsinput search-field" type="text" id="search_terms" name="filter" value="{$searchTerms|escape}"/>
             </td>
             <td class="togglefield">
               <input type="button" class="toggle-search-button"  onclick="return toggleSearch();" value="Cancel" />
@@ -61,8 +61,8 @@
   {$ellipsisCount=0}
   {foreach $stories as $story}
     <li class="story">
-      {if isset($story['image'])}
-        <img class="thumbnail" src="{$story['image']['url']}" />
+      {if $story['image']}
+        <img class="thumbnail" src="{$story['image']->getURL()}" />
       {else}
         <img class="thumbnail" src="/common/images/news-placeholder.png" />
       {/if}

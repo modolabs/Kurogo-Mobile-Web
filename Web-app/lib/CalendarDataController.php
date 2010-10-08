@@ -11,7 +11,7 @@ class CalendarDataController extends DataController
     {
         $this->requiresDateFilter = $bool ? true : false;
     }
-
+    
     protected function cacheFolder()
     {
         return CACHE_DIR . "/Calendar";
@@ -86,7 +86,13 @@ class CalendarDataController extends DataController
         return false;
     }
     
-    public function items() 
+    protected function clearInternalCache()
+    {
+        $this->calendar = null;
+        parent::clearInternalCache();
+    }
+    
+    public function items($start=0, $limit=null) 
     {
         if (!$this->calendar) {
             $data = $this->getData();
@@ -112,6 +118,6 @@ class CalendarDataController extends DataController
             }
         }
         
-        return $events;
+        return $this->limitItems($events, $start, $limit);
     }
 }

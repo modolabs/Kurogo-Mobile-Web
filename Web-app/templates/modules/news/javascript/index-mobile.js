@@ -1,5 +1,5 @@
-function loadCategory(select) {
-    window.location = "./?category_id=" + select.value;
+function loadFeed(select) {
+    window.location = "./?feedIndex=" + select.value;
 }
 
 function toggleSearch() {

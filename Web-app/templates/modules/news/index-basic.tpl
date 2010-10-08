@@ -1,7 +1,7 @@
 {include file="findInclude:common/header.tpl"}
 
 {if $isHome}
-  <h2>{$category}</h2>
+  <h2>{$feed.title}</h2>
 {elseif $isSearchResults}
   {include file="findInclude:common/search.tpl" extraArgs=$hiddenArgs inputName="search_terms"}
 {/if}
@@ -10,11 +10,11 @@
   {foreach $stories as $story}
     <p>
       {if $story@first && isset($story['image'])}
-        <img class="thumbnail" src="{$story['image']['url']}" />
+        <img class="thumbnail" src="{$story['image']->getURL()}" />
       {/if}
-      <a class="story-link" href="{$story['url']}">{$story["title"]}</a>
+      <a class="story-link" href="{$story['url']}">{$story["title"]|escape}</a>
       <br />
-      <span class="smallprint">{$story['description']}</span>
+      <span class="smallprint">{$story['description']|truncate:75|escape}</span>
     </p>
   {/foreach}
 </div>
@@ -31,4 +31,4 @@
 
 {include file="findInclude:common/search.tpl" extraArgs=$hiddenArgs}
 
-{include file="findInclude:common/footer.tpl" additionalLinks=$categoryLinks}
+{include file="findInclude:common/footer.tpl" additionalLinks=$feeds}
