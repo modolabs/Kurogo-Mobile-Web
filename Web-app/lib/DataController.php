@@ -3,6 +3,7 @@
 abstract class DataController
 {
     protected $parser;
+    protected $encoding='utf-8';
     protected $url;
     protected $cache;
     protected $baseURL;
@@ -120,6 +121,16 @@ abstract class DataController
         }
         
         return $data;
+    }
+
+    protected function setEncoding($encoding)
+    {
+        $this->encoding = $encoding;
+    }
+    
+    protected function getEncoding()
+    {
+        return $this->encoding;
     }
     
     protected function limitItems($items, $start=0, $limit=null)
