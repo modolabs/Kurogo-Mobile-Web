@@ -82,8 +82,87 @@ class GazetteRSScontroller extends RSSDataController
 
 class GazetteRSSItem extends RSSItem
 {
+    public function addElement(RSSElement $element)
+    {
+        $name = $element->name();
+        $value = $element->value();
+        
+        switch ($name)
+        {
+            case 'image':
+                if ($element->getWidth()>1) {
+                    $this->images[] = $element;
+                }
+                break;
+            default:
+                parent::addElement($element);
+                break;
+        }
+        
+    }
 }
 
 class GazetteRSSImage extends RSSImage
 {
+    private function cacheFilename()
+    {
+        return md5($this->url);
+    }
+
+    protected function cacheFolder()
+    {
+        return CACHE_DIR . "/GazetteImages";
+    }
+    
+    protected function cacheLifespan()
+    {
+        return $GLOBALS['siteConfig']->getVar('GAZETTE_NEWS_IMAGE_CACHE_LIFESPAN');
+    }
+
+    protected function cacheFileSuffix()
+    {
+        $extension = pathinfo($this->url, PATHINFO_EXTENSION);
+        return $extension ? '.' . $extension : '';
+    }
+
+    private function cacheImage()
+    {
+        if (!$this->url) {
+            return;
+        }
+        
+        $cacheFilename = $this->cacheFilename();
+        $cache = new DiskCache($this->cacheFolder(), $this->cacheLifespan(), TRUE);
+        $cache->setSuffix($this->cacheFileSuffix());
+        $cache->preserveFormat();
+        
+        if (!$cache->isFresh($cacheFilename)) {
+            if ($data = file_get_contents($this->url)) {
+                $cache->write($data, $cacheFilename);
+            }
+        }
+
+        if ($image_size = getimagesize($cache->getFullPath($cacheFilename))) {
+            $this->width = intval($image_size[0]);
+            $this->height = intval($image_size[1]);
+        }
+        
+    }
+    
+    public function addElement(RSSElement $element)
+    {
+        switch ($element->name())
+        {
+            case 'WIDTH':
+            case 'HEIGHT':
+                /* ignore width and height because it lies */
+                break;
+            case 'URL':
+                $this->url = $element->value();
+                $this->cacheImage();
+                break;
+            default:
+                return parent::addElement($element);
+        }
+    }
 }
