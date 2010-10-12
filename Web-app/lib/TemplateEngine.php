@@ -32,7 +32,7 @@ class TemplateEngine extends Smarty {
       foreach ($checkFiles as $file) {
         $test = realpath_exists("$dir/$file");
         if ($test) {
-          error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file'");
+          //error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file'");
           return $test;
         }
       }
@@ -82,7 +82,7 @@ class TemplateEngine extends Smarty {
     foreach ($checkDirs as $type => $dir) {
         $test = realpath_exists("$dir/$name");
         if ($test) {
-          error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name'");
+          //error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name'");
           return $test;
         }
     }
@@ -159,30 +159,6 @@ class TemplateEngine extends Smarty {
         return;
     }
     self::$accessKey = $params['index'];
-  }
-  
-  //
-  // Theme config files
-  //
-  
-  public function loadThemeConfigFile($name, $keyName=null, $ignoreError=false) {
-    if ($keyName === null) { $keyName = $name; }
-    
-    if (!$GLOBALS['siteConfig']->loadThemeFile($name, true, $ignoreError)) {
-      return array();
-    }
-        
-    $themeVars = $GLOBALS['siteConfig']->getThemeVar($name);
-    
-    if ($keyName === false) {
-      foreach($themeVars as $key => $value) {
-        $this->assign($key, $value);
-      }
-    } else {
-      $this->assign($keyName, $themeVars);
-    }
-    
-    return $themeVars;
   }
   
   

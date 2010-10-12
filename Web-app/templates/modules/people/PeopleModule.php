@@ -7,7 +7,7 @@ class PeopleModule extends Module {
   protected $id = 'people';
   
   private function formatPersonDetails($person) {
-    $detailFields = $this->loadThemeConfigFile('people-details', 'detailFields');
+    $detailFields = $this->loadThemeConfigFile('people-detail', 'detailFields');
     
     $details = array();
     //error_log(print_r($detailFields, true));

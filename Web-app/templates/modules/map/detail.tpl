@@ -3,8 +3,8 @@
 {$tabBodies = array()}
 
 {capture name="mapPane" assign="mapPane"}
+  {strip}
   {block name="mapPane"}
-    {strip}
     {if $hasMap}
       <div id="mapscrollers">
         <div id="nw">
@@ -67,10 +67,10 @@
     {else}
       <img id="mapimage" width="{$imageWidth}" height="{$imageHeight}" alt="" onload="hide('loadingimage')" src="{$imageUrl}"/> 
     {/if}
-    {strip}
   {/block}
+  {strip}
 {/capture}
-{$tabBodies['Map'] = $mapPane}
+{$tabBodies['map'] = $mapPane}
 
 {capture name="photoPane" assign="photoPane"}
   {block name="photoPane"}
@@ -78,14 +78,14 @@
     <img id="photo" src="" width="99.9%" alt="{$name} Photo" onload="hide('loadingimage2')" />
   {/block}
 {/capture}
-{$tabBodies['Photo'] = $photoPane}
+{$tabBodies['photo'] = $photoPane}
 
 {capture name="detailPane" assign="detailPane"}
   {block name="detailPane"}
-    {include file="findInclude:common/navlist.tpl" navlistItems=$details boldLabels=true}
+    {include file="findInclude:common/navlist.tpl" navlistItems=$details boldLabels=true accessKey=false}
   {/block}
 {/capture}
-{$tabBodies['Details'] = $detailPane}
+{$tabBodies['detail'] = $detailPane}
 
 {block name="tabView"}
 	<a name="scrolldown"></a>		

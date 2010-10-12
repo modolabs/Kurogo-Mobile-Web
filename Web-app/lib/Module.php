@@ -8,7 +8,9 @@ abstract class Module {
   
   protected $page = 'index';
   protected $args = array();
-
+  
+  private $pageConfig = null;
+  
   private $pageTitle           = 'No Title';
   private $breadcrumbTitle     = 'No Title';
   private $breadcrumbLongTitle = 'No Title';
@@ -38,24 +40,39 @@ abstract class Module {
   // Tabbed View support
   //
   
-  protected function enableTabs($tabs, $defaultTab=null, $tabsJavascript=array()) {
-    $currentTab = $tabs[0];
-    if (isset($this->args['tab']) && in_array($this->args['tab'], $tabs)) {
+  protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array()) {
+    $currentTab = $tabKeys[0];
+    if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
       $currentTab = $this->args['tab'];
       
-    } else if (isset($defaultTab) && in_array($defaultTab, $tabs)) {
+    } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
       $currentTab = $defaultTab;
     }
     
-    $args = $this->args;
-    unset($args['tab']);
+    $tabs = array();
+    foreach ($tabKeys as $tabKey) {
+      $title = ucwords($tabKey);
+      $configKey = "tab_{$tabKey}";
+      if (isset($this->pageConfig, $this->pageConfig[$configKey]) && 
+          strlen($this->pageConfig[$configKey])) {
+        $title = $this->pageConfig[$configKey];
+      }
+      
+      $tabArgs = $this->args;
+      $tabArgs['tab'] = $tabKey;
+      
+      $tabs[$tabKey] = array(
+        'title' => $title,
+        'url'   => $this->buildBreadcrumbURL($this->page, $tabArgs, false),
+        'javascript' => isset($javascripts[$tabKey]) ? $javascripts[$tabKey] : '',
+      );
+    }
     
     $this->tabbedView = array(
       'tabs'       => $tabs,
-      'javascript' => $tabsJavascript,
       'current'    => $currentTab,
-      'url'        => $this->buildBreadcrumbURL($this->page, $args, false),
     );
+
     $this->addInlineJavascriptFooter("showTab('{$currentTab}Tab');");
   }
   
@@ -63,8 +80,8 @@ abstract class Module {
   // Pager support
   // Note: the first page is 0 (0 ... pageCount-1)
   //
-  protected function enablePager($html, $pageNumber) {
-    $this->htmlPager = new HTMLPager($html, $pageNumber);
+  protected function enablePager($html, $encoding, $pageNumber) {
+    $this->htmlPager = new HTMLPager($html, $encoding, $pageNumber);
   }
   
   // Override in subclass if you are using the pager
@@ -163,6 +180,10 @@ abstract class Module {
     } else {
       return $default;
     }
+  }
+  
+  protected function getArg($key, $default='') {
+    return self::argVal($this->args, $key, $default);
   }
 
   private static function buildURL($page, $args) {
@@ -340,33 +361,38 @@ abstract class Module {
   // Page config
   //
   private function loadPageConfig() {
-    // Load site configuration and help text
-    $this->loadThemeConfigFile('site', false);
-    $this->loadThemeConfigFile('help');
-
-    // load module config file
-    $config = $this->loadThemeConfigFile($this->id, "{$this->id}PageConfig", true);
+    if (!isset($this->pageConfig)) {
+      // Load site configuration and help text
+      $this->loadThemeConfigFile('site', false);
+      $this->loadThemeConfigFile('help');
   
-    $this->pageTitle = $this->moduleName;
-
-    if (isset($config[$this->page])) {
-      $pageConfig = $config[$this->page];
-      
-      if (isset($pageConfig['pageTitle'])) {
-        $this->pageTitle = $pageConfig['pageTitle'];
-      }
+      // load module config file
+      $modulePageConfig = $this->loadThemeConfigFile($this->id, "{$this->id}PageConfig", true);
+    
+      $this->pageTitle = $this->moduleName;
+  
+      if (isset($modulePageConfig[$this->page])) {
+        $pageConfig = $modulePageConfig[$this->page];
         
-      if (isset($pageConfig['breadcrumbTitle'])) {
-        $this->breadcrumbTitle = $pageConfig['breadcrumbTitle'];
+        if (isset($pageConfig['pageTitle'])) {
+          $this->pageTitle = $pageConfig['pageTitle'];
+        }
+          
+        if (isset($pageConfig['breadcrumbTitle'])) {
+          $this->breadcrumbTitle = $pageConfig['breadcrumbTitle'];
+        } else {
+          $this->breadcrumbTitle = $this->pageTitle;
+        }
+          
+        if (isset($pageConfig['breadcrumbLongTitle'])) {
+          $this->breadcrumbLongTitle = $pageConfig['breadcrumbLongTitle'];
+        } else {
+          $this->breadcrumbLongTitle = $this->pageTitle;
+        }     
+        $this->pageConfig = $pageConfig;
       } else {
-        $this->breadcrumbTitle = $this->pageTitle;
+        $this->pageConfig = array();
       }
-        
-      if (isset($pageConfig['breadcrumbLongTitle'])) {
-        $this->breadcrumbLongTitle = $pageConfig['breadcrumbLongTitle'];
-      } else {
-        $this->breadcrumbLongTitle = $this->pageTitle;
-      }     
     }
   }
   
@@ -382,14 +408,31 @@ abstract class Module {
   }
 
   //
-  // Config files
+  // Theme config files
   //
-  protected function loadThemeConfigFile($name, $loadVarKeys=false, $ignoreError=false) {
+  
+  protected function loadThemeConfigFile($name, $keyName=null, $ignoreError=false) {
     $this->loadTemplateEngineIfNeeded();
-    
-    return $this->templateEngine->loadThemeConfigFile($name, $loadVarKeys, $ignoreError);
-  }
 
+    if ($keyName === null) { $keyName = $name; }
+    
+    if (!$GLOBALS['siteConfig']->loadThemeFile($name, true, $ignoreError)) {
+      return array();
+    }
+        
+    $themeVars = $GLOBALS['siteConfig']->getThemeVar($name);
+    
+    if ($keyName === false) {
+      foreach($themeVars as $key => $value) {
+        $this->templateEngine->assign($key, $value);
+      }
+    } else {
+      $this->templateEngine->assign($keyName, $themeVars);
+    }
+    
+    return $themeVars;
+  }
+  
   //
   // Convenience functions
   //

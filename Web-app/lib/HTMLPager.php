@@ -41,9 +41,9 @@ class HTMLPager {
   private $pageCount = 0;
   private $pageNumber = 0;
   
-  public function __construct($html, $pageNumber, $paragraphsPerPage=PARAGRAPH_LIMIT) {
+  public function __construct($html, $encoding, $pageNumber, $paragraphsPerPage=PARAGRAPH_LIMIT) {
     $dom = new DOMDocument();
-    $dom->loadHTML($html);
+    $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', $encoding));
     $body = $dom->getElementsByTagName("body")->item(0);
 
     $currentPage = NULL;

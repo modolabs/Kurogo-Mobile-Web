@@ -1,13 +1,9 @@
 <?php
 
-require_once "lib_constants.inc";
-require_once "DiskCache.inc";
-require_once 'html2text.php';
+require_once realpath(LIB_DIR.'/DiskCache.php');
+require_once realpath(LIB_DIR.'/feeds/html2text.php');
 
-define('CATEGORY_QUERY_BASE', 'fq_dept_area_category=dept_area_category:"');
-define('TERM_QUERY','&fq_coordinated_semester_yr=coordinated_semester_yr:"Sep+to+Dec+2010+(Fall+Term)"&');
 define('TERM', 'Fall 2010');
-define('SCHOOL_QUERY_BASE', '&fq_school_nm=school_nm:"');
 
 function compare_courseNumber($a, $b)
 {
@@ -267,15 +263,53 @@ class CourseData {
   private static $course_last_cache_times = array();
   private static $course_last_cache_terms = array();
 
-  private static $base_url = STELLAR_BASE_URL;
-
-  private static $rss_url = STELLAR_RSS_URL;
-
   //private static $subscriptions = Array();
   public static $subscriptions = Array();
 
   private static $courseDiskCache = NULL;
   private static $feedDiskCache = NULL;
+  
+  private static function addTermQueryToArgs(&$args, $term=null) {
+    if (!isset($term)) {
+      $term = self::get_term();
+    }
+    $termParts = explode(' ', $term);
+    if ($termParts > 1) {
+      $semesterYr = '';
+      switch (strtolower($termParts[0])) {
+        case 'winter':
+          $semesterYr = "Jan {$termParts[1]} (Winter Session)";
+          break;
+        case 'spring':
+          $semesterYr = "Jan to May {$termParts[1]} (Spring Term)";
+          break;
+        case 'summer':
+          $semesterYr = "Jun to Aug {$termParts[1]} (Summer Term)";
+          break;
+        case 'fall':
+          $semesterYr = "Sep to Dec {$termParts[1]} (Fall Term)";
+          break;
+        
+        default:
+          return;
+      }
+
+      $args['fq_coordinated_semester_yr'] = 'coordinated_semester_yr:"'.$semesterYr.'"';
+    }
+  }
+  
+  private static function addSchoolQueryToArgs(&$args, $school) {
+    $args['fq_school_nm'] = 'school_nm:"'.$school.'"';
+  }
+  
+  private static function addCategoryQueryToArgs(&$args, $category=null) {
+    if (isset($category) && strlen($category)) {
+      $args['fq_dept_area_category'] = 'dept_area_category:"'.$category.'"';
+    } else {
+      $args['fq_dept_area_category'] = 'dept_area_category:[* TO ""]';
+    }
+  }
+
 
   private static function clean_text($text) {
     $text = str_replace(chr(194), '', $text);
@@ -361,22 +395,18 @@ class CourseData {
   }
 
   public static function get_subject_details($subjectId) {
-
-    $urlString = STELLAR_BASE_URL .'q=id:'.$subjectId;
+    $args = array('q' => 'id:'.$subjectId);
+    $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args);
 
     error_log("COURSE DEBUG: " . $urlString);
 
-    $filenm = STELLAR_COURSE_DIR. '/Course-' .$subjectId . '.xml';
+    $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR'). '/Course-' .$subjectId . '.xml';
 
-    if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
-      $urlString = $filenm; //file_get_contents($filenm);
-    }
-    else {
+    if (!file_exists($filenm) || ((time() - filemtime($filenm)) > $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
       $handle = fopen($filenm, "w");
       fwrite($handle, file_get_contents($urlString));
-      $urlString = $filenm;
     }
-    $xml = file_get_contents($urlString);
+    $xml = file_get_contents($filenm);
 
     if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
@@ -428,10 +458,10 @@ class CourseData {
     $subject_fields['school'] = $school[0];
     //$trm = explode(':',$single_course->term_description);
     //$subject_fields['term'] = $trm[0];
-    $subject_fields['term'] = TERM;
+    $subject_fields['term'] = self::get_term();
     $ur = explode(':',$single_course->url);
     if (count($ur) > 1)
-      $subject_fields['stellarUrl'] = $ur[0].':'.$ur[1];
+      $subject_fields['url'] = $ur[0].':'.$ur[1];
 
     $classtime['title'] = 'Lecture';
     $loc = explode(':',$single_course->location);
@@ -472,28 +502,28 @@ class CourseData {
     return $subjectDetails;
   }
 
-  public static function get_subjectsForCourse($course, $courseGroup) {
-      $gueryAdditionForCourseGroup = 'fq_school_nm=school_nm:"' .str_replace(' ', '+', $courseGroup) .'"&';
-      $queryAddition = 'fq_dept_area_category=dept_area_category:"' . str_replace(' ', '+', str_replace('&', '%26',$course)) .'"&';
-      $term = TERM_QUERY;
+  public static function get_subjectsForCourse($course, $school) {
+    $args = array();
+    self::addTermQueryToArgs($args);
+    self::addSchoolQueryToArgs($args, $school);
 
-      if ( $course == $courseGroup)
-           $queryAddition = 'fq_dept_area_category=dept_area_category:[*+TO+""]';
+    if ($course == $school) {
+      self::addCategoryQueryToArgs($args);
+    } else {
+      self::addCategoryQueryToArgs($args, $course);
+    }
+    $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args).'&';
 
-      $urlString = STELLAR_BASE_URL .$term .$gueryAdditionForCourseGroup .$queryAddition;
+    $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR') ."/$course-$school.xml";
+    if (!file_exists($filenm) || ((time() - filemtime($filenm)) > $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
+        $handle = fopen($filenm, "w");
+        fwrite($handle, file_get_contents($urlString));
+        //$urlString = $filenm;
+    }
 
-      $filenm = STELLAR_COURSE_DIR .'/' .$course .'-' . $courseGroup .'.xml';
-      if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
-      }
-      else {
-          $handle = fopen($filenm, "w");
-          fwrite($handle, file_get_contents($urlString));
-          //$urlString = $filenm;
-      }
+    $xml = file_get_contents($filenm);
 
-      $xml = file_get_contents($filenm);
-
-      if($xml == "") {
+    if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
       throw new DataServerException('COULD NOT GET XML');
     }
@@ -506,20 +536,14 @@ class CourseData {
     
     $subject_array = array();
     for ($index=0; $index < $iterations; $index=$index+1) {
-        //printf(" Current = %d\n",$index*25);
-        $number = $index * 25;
-        $queryString = $queryAddition .'&start=' .$number;
+      //printf(" Current = %d\n",$index*25);
+      $args['start'] = $index * 25;
+      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args).'&';
 
-
-      $urlString = STELLAR_BASE_URL .$term .$gueryAdditionForCourseGroup .$queryString;
-
-      $filenm1 = STELLAR_COURSE_DIR .'/' .$course .'-' . $courseGroup.'-' .$index.'.xml';
-      if (file_exists($filenm1) && ((time() - filemtime($filenm1)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
-
-      }
-      else {
-          $handle = fopen($filenm1, "w");
-          fwrite($handle, file_get_contents($urlString));
+      $filenm1 = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR') ."/$course-$school-$index.xml";
+      if (!file_exists($filenm1) || ((time() - filemtime($filenm1)) > $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
+        $handle = fopen($filenm1, "w");
+        fwrite($handle, file_get_contents($urlString));
       }
 
       $xml = file_get_contents($filenm1);
@@ -529,50 +553,50 @@ class CourseData {
       throw new DataServerException('COULD NOT GET XML');
     }
    
-     $xml_obj = simplexml_load_string($xml);
+    $xml_obj = simplexml_load_string($xml);
     // $nbr = 1;
-
-     
-     foreach($xml_obj->courses->course as $single_course) {
-         $subject_fields = array();
-         $id = explode(':',$single_course['id']);
-         $nm = explode(':', $single_course->course_number);
-
-         if (ctype_alpha(str_replace(' ', '', $nm[0])) || (substr($nm[0], 0, 1) == '0')) {
-             $nm[0] = '0' .$nm[0];
-         }
-         
-         $subject_fields['name'] = $nm[0];
-         $subject_fields['masterId'] = $id[0];
-         $titl = explode(':', $single_course->title);
-                  $len = count($titl);
-         $subject_fields['title'] = '';
-          for ($ind = 0; $ind < $len; $ind++) {
-             if ($ind == $len-1)
-                 $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
-             else
-                $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
-         }
-         //$subject_fields['title'] = $titl[0];
-         $subject_fields['term'] = TERM;
-
-        $ta_array = array();
-        $staff['instructors'] = self::getInstructorsFromDescription($single_course->faculty_description);
-          $staff['tas'] = $ta_array;
-          $subject_fields['staff'] = $staff;
-
-         $subject_array[] = $subject_fields;
-     }
+    
+    
+    foreach($xml_obj->courses->course as $single_course) {
+      $subject_fields = array();
+      $id = explode(':',$single_course['id']);
+      $nm = explode(':', $single_course->course_number);
+      
+      if (ctype_alpha(str_replace(' ', '', $nm[0])) || (substr($nm[0], 0, 1) == '0')) {
+        $nm[0] = '0' .$nm[0];
+      }
+      
+      $subject_fields['name'] = $nm[0];
+      $subject_fields['masterId'] = $id[0];
+      $titl = explode(':', $single_course->title);
+      $len = count($titl);
+      $subject_fields['title'] = '';
+      for ($ind = 0; $ind < $len; $ind++) {
+        if ($ind == $len-1)
+          $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
+        else
+          $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
+      }
+      //$subject_fields['title'] = $titl[0];
+      $subject_fields['term'] = self::get_term();
+      
+      $ta_array = array();
+      $staff['instructors'] = self::getInstructorsFromDescription($single_course->faculty_description);
+      $staff['tas'] = $ta_array;
+      $subject_fields['staff'] = $staff;
+      
+      $subject_array[] = $subject_fields;
+    }
   }
 
   usort($subject_array, 'compare_courseNumber');
 
   $subjectArrayToReturn = array();
   foreach($subject_array as $subject) {
-      if (substr($subject["name"], 0, 1) == '0') {
-          $subject["name"] = substr($subject["name"], 1);
-      }
-      $subjectArrayToReturn[] = $subject;
+    if (substr($subject["name"], 0, 1) == '0') {
+      $subject["name"] = substr($subject["name"], 1);
+    }
+    $subjectArrayToReturn[] = $subject;
   }
   $courseToSubject = $subjectArrayToReturn;
   return $courseToSubject;
@@ -581,33 +605,34 @@ class CourseData {
 
   // returns the Schools (Course-Group) to Departmetns (Courses) map
   public static function get_schoolsAndCourses() {
-
-     // $filenm = STELLAR_COURSE_DIR. '/SchoolsAndCourses' .'.xml';
-      $filenm = STELLAR_COURSE_DIR. '/SchoolsAndCourses' .'.txt';
-
-      if (file_exists($filenm) && ((time() - filemtime($filenm)) < STELLAR_COURSE_CACHE_TIMEOUT)) {
-          //$urlString = $filenm; //file_get_contents($filenm);
-      }
-      else {
-          self::condenseXMLFileForCoursesAndWrite(STELLAR_BASE_URL .TERM_QUERY, $filenm);
-      }
-      $schoolsAndCourses = json_decode(file_get_contents($filenm));
-      usort($schoolsAndCourses, "compare_schoolName");
-      
-      return $schoolsAndCourses;
+    // $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR'). '/SchoolsAndCourses' .'.xml';
+    $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR'). '/SchoolsAndCourses' .'.txt';
+    
+    if (!file_exists($filenm) || (time() - filemtime($filenm)) > $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT')) {
+      $args = array();
+      self::addTermQueryToArgs($args);
+      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args).'&';
+      self::condenseXMLFileForCoursesAndWrite($urlString, $filenm);
+    }
+    $schoolsAndCourses = json_decode(file_get_contents($filenm));
+    usort($schoolsAndCourses, "compare_schoolName");
+    
+    return $schoolsAndCourses;
   }
 
 
   public static function condenseXMLFileForCoursesAndWrite($xmlURLPath, $fileToWrite) {
+    $path = dirname($fileToWrite);
+    if (!file_exists($path)) {
+      if (!mkdir($path, 0755, true))
+        error_log("could not create $path");
+    }
 
-      $handle = fopen($fileToWrite, "w");
+    $handle = fopen($fileToWrite, "w");
 
-      $xml = file_get_contents($xmlURLPath);
+    $xml = file_get_contents($xmlURLPath);
 
-
-   // $xml = file_get_contents(STELLAR_BASE_URL .TERM_QUERY);
-
-      if($xml == "") {
+    if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
       throw new DataServerException('COULD NOT GET XML');
     }
@@ -615,266 +640,184 @@ class CourseData {
     $xml_obj = simplexml_load_string($xml);
 
     foreach($xml_obj->facets->facet as $fc) {
+      if ($fc['name'] == 'school_nm') {
+        foreach($fc->field as $field) {
+          self::$schools[] = $field['name'];
 
-        if ($fc['name'] == 'school_nm')
-            foreach($fc->field as $field) {
-                $self->schools[] = $field['name'];
-
-                $school_string = SCHOOL_QUERY_BASE .str_replace(' ', '+', $field['name']) .'"&';
-                $urlString = STELLAR_BASE_URL .TERM_QUERY . $school_string;
-                $courses_map_xml = file_get_contents($urlString);
-
-                    if($courses_map_xml == "") {
-                    // if failed to grab xml feed, then run the generic error handler
-                        throw new DataServerException('COULD NOT GET XML');
-                    }
-
-                     $courses_xml_obj = simplexml_load_string($courses_map_xml);
-
-                     foreach($courses_xml_obj->facets->facet as $fcm) {
-                        if ($fcm['name'] == 'dept_area_category') {
-
-                            $map = array();
-                            $course_array = array();
-                             foreach($fcm->field as $fieldMap) {
-                                 $crs = explode(':', $fieldMap['name']);
-
-                                 if ($crs != '') {
-                                    $crsMap['name'] = $crs[0];
-                                    $crsMap['short'] = '1';
-                                    $course_array[] = $crsMap;
-                                 }
-                             }
-                       }
-                      }
-
-                      if (count($course_array) >= 1) {
-                             $str = explode(':', $field['name']);
-                             $map['school_name'] = $str[0];
-                             $strShort = explode(':', $field['short_name']);
-                             $map['school_name_short'] = $strShort[0];
-                             $map['courses'] = $course_array;
-
-                             $self->schoolsToCoursesMap[] = $map;
-                      }
+          $args = array();
+          self::addTermQueryToArgs($args);
+          self::addSchoolQueryToArgs($args, $field['name']);
+      
+          $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args).'&';
+          $courses_map_xml = file_get_contents($urlString);
+      
+          if($courses_map_xml == "") {
+            // if failed to grab xml feed, then run the generic error handler
+            throw new DataServerException('COULD NOT GET XML');
+          }
+      
+          $courses_xml_obj = simplexml_load_string($courses_map_xml);
+      
+          foreach($courses_xml_obj->facets->facet as $fcm) {
+            if ($fcm['name'] == 'dept_area_category') {
+              $course_array = array();
+              foreach($fcm->field as $fieldMap) {
+                $crs = explode(':', $fieldMap['name']);
+        
+                if (is_array($crs) && $crs[0] != '') {
+                  $course_array[] = array(
+                    'name'  => $crs[0],
+                    'short' => '1',
+                  );
                 }
-
-    }
-
-    $stringToWrite = '';
-    foreach($self->schoolsToCoursesMap as $schoolsMapping) {
-        if ($schoolsMapping['school_name'] != '') {
-        $stringToWrite = $stringToWrite . $schoolsMapping['school_name'] .',,,' .$schoolsMapping['school_name_short'] . ':::';
-            foreach($schoolsMapping['courses'] as $course) {
-                $stringToWrite = $stringToWrite . $course['name'] . ',,,';
+              }
             }
-
-            $stringToWrite = substr($stringToWrite, 0, -1) . '...';
+          }
+    
+          $str      = explode(':', $field['name']);
+          $strShort = explode(':', $field['short_name']);
+      
+          if ($str[0] != '' && isset($course_array)) {
+            self::$schoolsToCoursesMap[] = array(
+              'school_name'       => $str[0],
+              'school_name_short' => $strShort[0],
+              'courses'           => $course_array,
+            );
+          }
         }
+      }
     }
+    //error_log(print_r(self::$schools, true));
 
-    fwrite($handle, $stringToWrite);
+    fwrite($handle, json_encode(self::$schoolsToCoursesMap));
     fclose($handle);
-
-    self::getXMLSchoolsMapJSONEncoded($fileToWrite);
 
     return;
   }
 
-
-  public static function getXMLSchoolsMapJSONEncoded($filenm) {
-
-      $dummySchoolsToCoursesMap = array();
-       $str = file_get_contents($filenm);
-
-      $schoolLayerArray = explode('...', $str);
-
-      foreach($schoolLayerArray as $schoolLayer) {
-          $mappingArray = explode(':::',$schoolLayer);
-
-          $nameLayerArray = explode(',,,', $mappingArray[0]);
-          $groupLayerArray = explode(',,,', $mappingArray[1]);
-
-          $courseArray = Array();
-          foreach($groupLayerArray as $dept) {
-              $crsMap['name'] = str_replace(',,', '', $dept);
-              $crsMap['short'] = '1';
-              $courseArray[] = $crsMap;
-          }
-
-          if (count($courseArray) >= 1) {
-
-              if (strlen($nameLayerArray[0]) > 0) {
-                             $map['school_name'] = $nameLayerArray[0];
-                             $map['school_name_short'] = $nameLayerArray[1];
-                             $map['courses'] = $courseArray;
-
-                             $dummySchoolsToCoursesMap[] = $map;
-                      }
-          }
+  public static function search_subjects($terms, $school, $courseTitle) {    
+    $args = array(
+      'q'    => str_replace(':', ' ', $terms),
+      'sort' => 'score desc,course_title asc',
+    );
+    self::addTermQueryToArgs($args);
+    
+    if (strlen($school)) {
+      self::addSchoolQueryToArgs($args, $school);
+    }
+    
+    if (strlen($courseTitle)) {
+      if ($courseTitle == $school) {
+        self::addCategoryQueryToArgs($args);
+      } else {
+        self::addCategoryQueryToArgs($args, $courseTitle);
       }
-
-      $handle = fopen($filenm, "w");
-      fwrite($handle, json_encode($dummySchoolsToCoursesMap));
-      fclose($handle);
-
-      return;
-
-        //return schoolsToCoursesMap;
-  }
-
-  public static function search_subjects($terms, $school, $courseTitle) {
-      
-      $words = explode(' ', strtr($terms, array(':' => ' ')));
-
-      $terms = '"';
-      for ($ind=0; $ind< count($words); $ind++) {
-          if ($ind == count($words)-1)
-            $terms = $terms .$words[$ind]. '"';
-          else
-            $terms = $terms .$words[$ind] .'+';
-      }
-
-      $schoolWords = explode(' ', $school);
-
-      $schoolNm = '';
-      for ($ind=0; $ind< count($schoolWords); $ind++) {
-          if ($ind == count($schoolWords)-1)
-            $schoolNm = $schoolNm .$schoolWords[$ind];
-          else
-            $schoolNm = $schoolNm .$schoolWords[$ind] .'+';
-      }
-
-
-      $term = TERM_QUERY;
-      $search_terms = $terms;
-      $sorting_params = 'sort=score+desc,course_title+asc';
-      $schoolName = SCHOOL_QUERY_BASE . $schoolNm . '"';
-
-      if ($school == '') {
-        $schoolName = '';
-      }
-
-      $courseName = '&' .CATEGORY_QUERY_BASE .$courseTitle .'"';
-
-      if ($courseTitle == '') {
-          $courseName = '';
-      }
-
-      else if ($courseTitle == $school) {
-          $courseName = '&' .'fq_dept_area_category=dept_area_category:[*+TO+""]';
-      }
-      $urlString = STELLAR_BASE_URL .$courseName .$schoolName .$term . 'q="' .$terms .'"&' . $sorting_params;
-
-      $xml = file_get_contents($urlString);
-
-     // echo $urlString;
-      //echo $xml;
-      
-      if($xml == "") {
-      // if failed to grab xml feed, then run the generic error handler
+    }
+    
+    $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args);
+    $xml = file_get_contents($urlString);
+    
+    // echo $urlString;
+    //echo $xml;
+    
+    if($xml == "") {
+    // if failed to grab xml feed, then run the generic error handler
       throw new DataServerException('COULD NOT GET XML');
     }
-
+    
     $xml_obj = simplexml_load_string($xml);
     $count = $xml_obj->courses['numFound']; // Number of Courses Found
-
-
+    
     /* ONLY IF search results from the MAIN courses page are greater than 100 */
     if (($count > 100)  && ($school == '')){
-
-        foreach($xml_obj->facets->facet as $fc) {
-
+    
+      foreach($xml_obj->facets->facet as $fc) {
+    
         if ($fc['name'] == 'school_nm')
-            foreach($fc->field as $field) {
+          foreach($fc->field as $field) {
             $nm = explode(':', $field['name']);
             $nm_count = explode(':', $field['count']);
             $strShort = explode(':', $field['short_name']);
-                $schools[] = array('name'=> $nm[0], 'count' => $nm_count[0], 'name_short'=> $strShort[0]);
-            }
-        }
-        $count_array = explode(':', $count);
-        $too_many_results['count'] =$count_array[0];
-        $too_many_results['schools'] = $schools;
-        return $too_many_results;
+            $schools[] = array('name'=> $nm[0], 'count' => $nm_count[0], 'name_short'=> $strShort[0]);
+          }
+      }
+      $count_array = explode(':', $count);
+      $too_many_results['count'] =$count_array[0];
+      $too_many_results['schools'] = $schools;
+      return $too_many_results;
     }
-
+    
     $iterations = ($count/25);
-
+    
     $actual_count = $count;
     if ($iterations > 4) {
-        $iterations = 4;
-        $count = 100;
+      $iterations = 4;
+      $count = 100;
     }
-
-
-   // printf("Total: %d\n",$count);
-   // printf("Iterations: %d\n",$iterations);
-
+    
+    
+    // printf("Total: %d\n",$count);
+    // printf("Iterations: %d\n",$iterations);
+    
     $subject_array = array();
     for ($index=0; $index < $iterations; $index=$index+1) {
-        //printf(" Current = %d\n",$index*25);
-        $number = $index * 25;
-        $queryAddition = '&start=' .$number;
-
-
-      $urlString = STELLAR_BASE_URL .$courseName .$schoolName .$term .'q="' .$terms .'"&'  . $sorting_params .$queryAddition;
+      $args['start'] = $index * 25;
+      //printf(" Current = %d\n",$index*25);
+      
+      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args);
       $xml = file_get_contents($urlString);
-
-
+    
+    
       if($xml == "") {
-      // if failed to grab xml feed, then run the generic error handler
-      throw new DataServerException('COULD NOT GET XML');
-    }
-
-     $xml_obj = simplexml_load_string($xml);
-
-     foreach($xml_obj->courses->course as $single_course) {
-         $subject_fields = array();
-         $id = explode(':',$single_course['id']);
-         $nm = explode(':', $single_course->course_number);
-         $subject_fields['name'] = $nm[0];
-         $school = explode(':', $single_course->school_name);
-         $subject_fields['school'] = $school[0];
-         $subject_fields['masterId'] = $id[0];
-         $titl = explode(':', $single_course->title);
-                  $len = count($titl);
-          $subject_fields['title'] = '';
-          for ($ind = 0; $ind < $len; $ind++) {
-             if ($ind == $len-1)
-                 $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
-             else
-                $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
-         }
-         //$subject_fields['title'] = $titl[0];
-         $subject_fields['term'] = TERM;
-         
-           $ta_array =array();
-          $staff['instructors'] = self::getInstructorsFromDescription($single_course->faculty_description);
-          $staff['tas'] = $ta_array;
-          $subject_fields['staff'] = $staff;
-          $temp = self::get_schoolsAndCourses();
-          foreach($temp as $schoolsMapping) {
-              //print_r($schoolsMapping);
-
-              if ( $schoolsMapping->school_name == $school[0]) {
-                  $subject_fields['short_name'] = $schoolsMapping->school_name_short;
-              }
+        // if failed to grab xml feed, then run the generic error handler
+        throw new DataServerException('COULD NOT GET XML');
+      }
+    
+      $xml_obj = simplexml_load_string($xml);
+      
+      foreach($xml_obj->courses->course as $single_course) {
+        $subject_fields = array();
+        $id = explode(':',$single_course['id']);
+        $nm = explode(':', $single_course->course_number);
+        $subject_fields['name'] = $nm[0];
+        $school = explode(':', $single_course->school_name);
+        $subject_fields['school'] = $school[0];
+        $subject_fields['masterId'] = $id[0];
+        $titl = explode(':', $single_course->title);
+        $len = count($titl);
+        $subject_fields['title'] = '';
+        for ($ind = 0; $ind < $len; $ind++) {
+          if ($ind == $len-1)
+            $subject_fields['title'] = $subject_fields['title'] .$titl[$ind];
+          else
+            $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
         }
+        //$subject_fields['title'] = $titl[0];
+        $subject_fields['term'] = self::get_term();
+    
+        $ta_array =array();
+        $staff['instructors'] = self::getInstructorsFromDescription($single_course->faculty_description);
+        $staff['tas'] = $ta_array;
+        $subject_fields['staff'] = $staff;
+        $temp = self::get_schoolsAndCourses();
+        foreach($temp as $schoolsMapping) {
+          //print_r($schoolsMapping);
+    
+          if ( $schoolsMapping->school_name == $school[0]) {
+            $subject_fields['short_name'] = $schoolsMapping->school_name_short;
+          }
+        }
+    
+        $subject_array[] = $subject_fields;
+      }
+    }
+    
+    $count_array = explode(':', $count);
+    $courseToSubject ['count'] = $count_array[0];
+    $actual_count_array = explode(':', $actual_count);
+    $courseToSubject['actual_count'] = $actual_count_array[0];
+    $courseToSubject ['classes'] = $subject_array;
 
-         $subject_array[] = $subject_fields;
-     }
+    return $courseToSubject;
   }
-
-        $count_array = explode(':', $count);
-        $courseToSubject ['count'] = $count_array[0];
-        $actual_count_array = explode(':', $actual_count);
-        $courseToSubject['actual_count'] = $actual_count_array[0];
-        $courseToSubject ['classes'] = $subject_array;
-  return $courseToSubject;
-
-
-  }
-
 }
-?>

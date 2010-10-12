@@ -291,7 +291,6 @@ class CalendarModule extends Module {
       
       case 'categories':
         $categories = array();
-        $eventClass = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
         
         $categoryObjects = call_user_func(array($eventClass, 'get_all_categories'));
 
@@ -306,9 +305,9 @@ class CalendarModule extends Module {
         break;
       
       case 'category':
-        $id   = self::argVal($this->args, 'id', '');
-        $name = self::argVal($this->args, 'name', '');
-        $time = self::argVal($this->args, 'time', time());
+        $id   = $this->getArg('id', '');
+        $name = $this->getArg('name', '');
+        $time = $this->getArg('time', time());
 
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
@@ -329,7 +328,8 @@ class CalendarModule extends Module {
         $events = array();
         
         if (strlen($id) > 0) {
-            $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+            $feed = new $controllerClass($baseURL, new $parserClass);
+            $feed->setObjectClass('event', $eventClass);
             
             $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
             $start->setTime(0,0,0);
@@ -372,7 +372,8 @@ class CalendarModule extends Module {
         $this->assign('nextUrl', $this->dayURL($next, $type, false));
         $this->assign('prevUrl', $this->dayURL($prev, $type, false));
         
-        $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+        $feed = new $controllerClass($baseURL, new $parserClass);
+        $feed->setObjectClass('event', $eventClass);
         
         $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
         $start->setTime(0,0,0);
@@ -403,7 +404,8 @@ class CalendarModule extends Module {
       case 'detail':  
         $calendarFields = $this->loadThemeConfigFile('calendar-detail', 'detailFields');
 
-        $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+        $feed = new $controllerClass($baseURL, new $parserClass);
+        $feed->setObjectClass('event', $eventClass);
         
         $time = isset($this->args['time']) ? $this->args['time'] : time();
         if ($event = $feed->getItem($this->args['id'], $time)) {
@@ -411,7 +413,7 @@ class CalendarModule extends Module {
         } else {
           throw new Exception("Event not found");
         }
-    
+            
         // build the list of attributes
         $allKeys = array_keys($calendarFields);
 
@@ -491,7 +493,8 @@ class CalendarModule extends Module {
           $timeframeKey = $this->args['timeframe'];
           $searchOption = $this->searchOptions[$timeframeKey];
           
-          $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+          $feed = new $controllerClass($baseURL, new $parserClass);
+          $feed->setObjectClass('event', $eventClass);
           
           list($start, $end) = $this->getDatesForSearchOption($searchOption);          
           $feed->setStartDate($start);
@@ -529,7 +532,8 @@ class CalendarModule extends Module {
         $start = new DateTime( $year   ."0901", $this->timezone);        
         $end   = new DateTime(($year+1)."0831", $this->timezone);
         
-        $feed = new $controllerClass($baseURL, new $parserClass, $eventClass);
+        $feed = new $controllerClass($baseURL, new $parserClass);
+        $feed->setObjectClass('event', $eventClass);
         $feed->setStartDate($start);
         $feed->setEndDate($end);
         $iCalEvents = $feed->items();
