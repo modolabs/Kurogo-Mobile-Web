@@ -7,6 +7,12 @@ require "calendar_lib.inc";
 
 $search_terms = $_REQUEST['filter'];
 
+$GLOBALS['calendarExtraDetailParams'] = array(
+  'back' => 'Search',
+  'filter' => $_REQUEST['filter'],
+);
+
+
 //$dates = SearchOptions::search_dates($timeframe);
 
        // retrieve data for the week

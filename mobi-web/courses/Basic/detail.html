@@ -36,7 +36,10 @@ $page->content_begin();
 		<h2><?=$class['name']?>: <?=className($class)?></h2>
 		<p> <?=$term?>
                 <span class="<?=$toggle?>"><?=$page->img_tag($mystellar_img, 'gif', 'My Courses', array('class', 'ms_star'))?>My Courses <span class="fineprint">(<a id="mystellar" href="<?= selfURL() ?>&action=<?=$action?>"><?=$action?></a>)</span></span>
-		</p>
+		<? if (strlen($class['stellarUrl']) > 0) {?>
+                <a href="<?=$class['stellarUrl']?>" class="action external" target="_new">Course Website</a>
+                <? } ?>
+                </p
 
 		<p class="tabs"> <!-- No extra whitespace in code below; non-breaking spaces required -->
 	            <?=$tabs_html?>

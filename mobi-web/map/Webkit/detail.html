@@ -85,7 +85,7 @@ $page->content_begin();
 					<div id="w"><a href="#scrolldown" onclick="scroll('w'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="W" /></a></div>
 					<img id="loadingimage" src="../Webkit/images/loading2.gif" width="40" height="40" alt="Loading" />
 				  </div> <!-- id="mapscrollers" -->
-				  <img id="mapimage" width="290" height="190" alt="" onload="hide('loadingimage')"/> 
+				  <img id="mapimage" width="<?=$imageWidth?>" height="<?=$imageHeight?>" alt="" onload="hide('loadingimage')"/> 
 				  <div id="mapzoom">
 					<a href="#" onclick="zoomin(); return false;" id="zoomin"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Zoom In" /></a>
 					<a href="#" onclick="zoomout(); return false;" id="zoomout"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Zoom Out" /></a>
@@ -93,7 +93,7 @@ $page->content_begin();
 					<a href="detail-fullscreen.php" id="fullscreen"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Full Screen" /></a>
 				  </div>
 			    <? } else { ?>
-				    <img id="mapimage" width="290" height="190" alt="" onload="hide('loadingimage')" src="<?=$imageUrl?>"/> 
+				    <img id="mapimage" width="<?=$imageWidth?>" height="<?=$imageHeight?>" alt="" onload="hide('loadingimage')" src="<?=$imageUrl?>"/> 
 				<? } ?>
 			</div> <!-- id="maptab" -->
 		
@@ -135,13 +135,10 @@ $page->content_end();
 $script =<<<JS
 	showTab('maptab');
 
-	var objMap = document.getElementById('mapimage');
-	if(objMap) {
-		mapW = objMap.scrollWidth - 2;
-		mapH = objMap.scrollHeight - 2;
-	}
+	mapW = {$imageWidth};
+	mapH = {$imageHeight};
 
-    checkIfMoved();
+  checkIfMoved();
 JS;
 
 $page->footer_script($script);

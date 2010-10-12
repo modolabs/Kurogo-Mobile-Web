@@ -12,6 +12,12 @@ $prev = day_info($time, -1);
 $type = $_REQUEST['type'];
 $Type = ucwords($type);
 
+$GLOBALS['calendarExtraDetailParams'] = array(
+  'back' => 'Day',
+  'type' => $_REQUEST['type'],
+);
+
+
 // copied from api/HarvardCalendar.php
 $time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
 $date1 = date('Ym', $time);
