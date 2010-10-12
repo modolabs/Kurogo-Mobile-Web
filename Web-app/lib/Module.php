@@ -408,14 +408,31 @@ abstract class Module {
   }
 
   //
-  // Config files
+  // Theme config files
   //
-  protected function loadThemeConfigFile($name, $loadVarKeys=false, $ignoreError=false) {
+  
+  protected function loadThemeConfigFile($name, $keyName=null, $ignoreError=false) {
     $this->loadTemplateEngineIfNeeded();
-    
-    return $this->templateEngine->loadThemeConfigFile($name, $loadVarKeys, $ignoreError);
-  }
 
+    if ($keyName === null) { $keyName = $name; }
+    
+    if (!$GLOBALS['siteConfig']->loadThemeFile($name, true, $ignoreError)) {
+      return array();
+    }
+        
+    $themeVars = $GLOBALS['siteConfig']->getThemeVar($name);
+    
+    if ($keyName === false) {
+      foreach($themeVars as $key => $value) {
+        $this->templateEngine->assign($key, $value);
+      }
+    } else {
+      $this->templateEngine->assign($keyName, $themeVars);
+    }
+    
+    return $themeVars;
+  }
+  
   //
   // Convenience functions
   //

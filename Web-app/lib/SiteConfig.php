@@ -13,8 +13,11 @@ class SiteConfig {
         $this->replaceThemeVariables($this->themeVars[$name]);
         return true;
 
-      } else if (!$ignoreError) {
-        error_log(__FUNCTION__."(): no configuration file for '$name'");
+      } else {
+        if (!$ignoreError) {
+          error_log(__FUNCTION__."(): no configuration file for '$name'");
+        }
+        return false;
       }
     }
     return true;
