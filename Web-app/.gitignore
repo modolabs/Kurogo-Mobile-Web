@@ -1,7 +1,7 @@
 *~
 *.DS_Store
 
-api/newsimages
+api/newsimages/*
 site/Harvard/cache/*
 site/Harvard/logs/*
 site/Modo/cache/*
