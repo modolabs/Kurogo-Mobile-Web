@@ -3,11 +3,14 @@
 require 'decodePolylineToArray.php';
 require 'encodePolylineFromArray.php';
 require 'DiskCache.inc';
+require 'MapPlotUtility.php';
 
 define('MASCO_TRANSLOC_FEED', 'http://masco.transloc.com/itouch/feeds/');
 define('HARVARD_TRANSLOC_FEED', 'http://harvard.transloc.com/itouch/feeds/');
 define('HARVARD_TRANSLOC_MARKERS', 'http://harvard.transloc.com/m/markers/marker.php');
 define('STATIC_MAPS_URL', 'http://maps.google.com/maps/api/staticmap?');
+define('TRANSLOC_ICON_PATH', '/shuttleschedule/shuttle-transloc.png');
+define('TRANSLOC_ICON_ALTERNATIVE', 'http://www.transloc.com/templates/transloc/images/transloc_logo_tiny.png');
 define('TRANSLOC_UPDATE_FREQ', 200);
 define('ANNOUNCEMENTS_FEED', 'http://harvard.transloc.com/itouch/feeds/announcements?v=1&contents=true');
 
@@ -341,11 +344,17 @@ class TranslocReader {
  function getOneRouteInfo($route_id) {
       return $this->routes[$route_id];
   }
+
+  private static function getTranslocIconURL() {
+      if($_SERVER['SERVER_NAME'] != 'localhost') {
+          return 'http://' . $_SERVER['SERVER_NAME'] . TRANSLOC_ICON_PATH;
+      } else
+          return TRANSLOC_ICON_ALTERNATIVE;
+  }
   
   function getImageURLForRoute($routeID, $size='400') {
     $route = $this->routes[$routeID];
     $args = array(
-      'size'   => $size.'x'.$size,
       'sensor' => 'false',
     );
 
@@ -388,9 +397,19 @@ class TranslocReader {
       ));
     }
 
+    $bounds = MapPlotUtility::getBounds($this->getPathForRoute($routeID));
+    $mapParams = MapPlotUtility::ComputeMapParameters($size, $size, $bounds, 0.1);
+    $args = array_merge($args, MapPlotUtility::URLParams($mapParams));
+    $iconLatLon = MapPlotUtility::computeLatLon($mapParams, 0.90, 0.88);
+
+    $translocIcon = http_build_query(array(
+       'markers' => 'icon:' . self::getTranslocIconURL() . '|shadow:false|' .
+                    $iconLatLon['lat'] . ',' . $iconLatLon['lon'] ));
+
+
     //error_log(print_r($iconURL, true));
     //print_r(urldecode(($iconURL)));
-    return STATIC_MAPS_URL.http_build_query($args, 0, '&amp;').$vehicleSuffix;
+    return STATIC_MAPS_URL.$translocIcon.'&amp;'.http_build_query($args, 0, '&amp;').$vehicleSuffix;
   }
 
   function getImageURLForStop($routeID, $stop, $width, $height) {
