@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Modo University Mobile Internet</title>
+<link type="text/css" href="{$minify['css']}" rel="stylesheet" />
+<link rel="shortcut icon" href="/favicon.ico" />
+</head>
+
+<body>
+
+<div id="container">
+  <div id="header">
+  	<div id="utility_nav">
+    	<a href="http://www.modolabs.com" target="_blank">Modo Labs</a>
+    </div><!--/utility_nav-->
+    
+    <div id="logo">
+    	<img src="/modules/info/images/Harvard_Shield_Horizontal.png" alt="Harvard University Mobile Internet" border="0" />
+    </div><!--/logo-->
+    
+    <h1>m.modolabs.com</h1>
+    <p>
+        About Statment
+    </p>
+    
+  </div><!--/header-->
+  
+  <div id="content">
+  	<div class="leftcol">
+    	<h2>Mobile Web Application</h2>
+        <p>
+            You can reach the mobile web application by going to <a href="http://m.modolabs.com">m.modolabs.com</a> on your
+            web browser on any internet-enabled mobile device. The mobile web
+            application includes all the features listed at right.
+        </p>
+        <p>
+        	<a href="#" onclick="javascript:window.open('/home','ModoMobile','width=350,height=550');" id="preview_site"></a>
+        </p>
+        <!--
+    	<h2>Native iPhone Application</h2>
+        <p>
+        	The iPhone app can be used with the iPhone 4, 3GS, and 3G hardware, 
+            but users must download the free iOS 4 software update. 
+        </p>
+        <table cellpadding="0" cellspacing="0" id="download" align="right">
+          <tr>
+            <td>
+        	Download iPhone app 
+            </td>
+            <td>
+            <a href="http://itunes.apple.com/us/app/harvard-mobile/id389199460" target="_blank"><img src="/modules/info/images/App_Store_Badge21.png" alt="Harvard Mobile iPhone App Download" width="90" height="31" /></a>
+            </td>
+          </tr>
+        </table>
+        <div class="clr"></div>
+-->
+<!--
+    	<h2>What's next?</h2>
+        <p>
+            We recognize that this is just the starting point for providing a better
+            Harvard mobile experience for students, faculty, staff, alumni, and
+            visitors. We will continue to roll out new features, including fully
+            integrated shuttle tracking in October 2010.
+        </p>
+-->
+<!--
+        <div class="feedback">
+        	<p>
+            <span class="black_font"><strong>Feedback</strong></span>
+            <br />
+            Find a bug? Want to recommend a feature? This initiative is 1.0, and your
+            ideas and usage will help inform future development. Please send your feedback
+            to <a href="mailto:digitalcomms@harvard.edu">digitalcomms@harvard.edu</a>.      
+            </p>
+        </div>
+-->        
+    </div><!--/leftcol -->
+    
+    <div class="rightcol">
+    	<h2>Features</h2>
+        
+    	<table cellpadding="0" cellspacing="0" id="features">
+          <tr>
+            <td>
+              <img src="/modules/info/images/icons/people.png" alt="People Directory" />
+            </td>
+            <td>
+            <h2>People Directory</h2>
+            <p>
+            Search by first and last name for phone numbers, email addresses, and office location for students, faculty and staff. Note that contact details vary and are informed by individual privacy settings.
+            </p>
+            </td>
+          </tr>
+          <!--
+          <tr>
+            <td>
+              <img src="/modules/info/images/icons/map.png" alt="Campus Map" />
+            </td>
+            <td>
+            <h2>Campus Map</h2>
+            <p> 
+            Navigate around Harvard’s campus by searching for classroom buildings, houses, and offices. The map will display the location, and you can zoom in, zoom out or scroll in any direction. You can also browse locations by type, such as libraries or museums.
+            </p>
+            </td>
+          </tr>
+-->
+          <tr>
+            <td>
+              <img src="/modules/info/images/icons/calendar.png" alt="Events" />
+            </td>
+            <td>
+            <h2>Events</h2>
+            <p>
+            Find out what&#8217;s going on today or coming up soon. Events from the calendar are available by category with the date and time, and location. Where available, you can click on the event’s location to see it on the map.
+            </p>
+            </td>
+          </tr>
+<!--
+          <tr>
+            <td>
+              <img src="/modules/info/images/icons/stellar.png" alt="Courses" />
+            </td>
+            <td>
+            <h2>Courses</h2>
+            <p>
+            The complete course catalog is searchable across all of Harvard’s schools or individually within each school. You can type in a keyword or subject to access general information about the course including the course description, meeting times, location, and instructor name where provided. 
+            </p>
+            </td>
+          </tr>
+-->
+          <tr>
+            <td>
+              <img src="/modules/info/images/icons/news.png" alt="News" />
+            </td>
+            <td>
+            <h2>News</h2>
+            <p>
+            Get the latest news about the community, arts and culture, and science and research. You can share articles using email, Facebook, or Twitter. 
+            </p>
+            </td>
+          </tr>
+<!--
+          <tr>
+            <td>
+              <img src="/modules/info/images/icons/dining.png" alt="Student Dining" />
+            </td>
+            <td>
+            <h2>Student Dining</h2>
+            <p>
+            What&#8217;s for dinner, and where? Student dining includes current and upcoming menus for breakfast, lunch, and dinner. Also find out the hours for each of the dining halls and current and upcoming interhouse restrictions.
+            </p>
+            </td>
+          </tr>
+          -->
+          <tr>
+            <td>
+              <img src="/modules/info/images/icons/search.png" alt="Search" />
+            </td>
+            <td>
+            <h2>Search</h2>
+            <p>
+            Search offers a quick and powerful way to search across content from most or all of the features above. Search results will be presented grouped by type, and recent search queries will be saved and auto-suggested for even faster and easier access.
+            </p>
+            </td>
+          </tr>
+          
+        </table>
+    </div><!--/rightcol-->
+
+	<div class="clr"></div>
+    
+  </div><!--/content-->
+  
+  <div id="footer">
+  	<span class="copyright">&copy; 2010 <a href="http://www.modolabs.com" target="_blank">Modo Labs, Inc.</a></span><!--/copyright-- 
+  </div><!--/footer-->
+  
+</div><!--/container-->
+
+</body>
+</html>
