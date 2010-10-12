@@ -1,0 +1,49 @@
+.news {
+    background-color: #fff;
+    margin-top: -12px;
+    padding: 10px;
+}
+
+.slugline {
+    font-family: Georgia;
+    color:#1A1611;
+    font-size:22px;
+    line-height: 30px;
+    margin: 0;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.byline {
+    font-size: 11px;
+    color: #666666;
+    min-height:40px;
+    line-height: 14px;
+    border-bottom-style: dotted;
+    border-bottom-width: 1px;
+}
+
+.share {
+    float: right;
+}
+
+.dek {font-family: Georgia; font-size: 16px;line-height: 20px;margin: 14px 0;color: #666666;}
+.dek:empty { margin: 0; } /* CSS 3: shrink if no content */
+
+#image {float:right;margin: 16px 0 -1px 8px;}
+
+#image img.thumbnail {float:right; border: 1px solid #505050; /* scale to width respecting aspect */}
+
+#image img.enlarge { float:right; margin-left: 4px; }
+
+#image div { float:right; margin-top: 2px; margin-right:-2px; }
+
+#image a { text-align:right; font-size:11px; line-height: 30px; text-decoration:none; color:#777;}
+
+#image a div { margin-top: -4px; }
+
+.wp-caption {
+    width: auto !important;
+    font-size: 84%;
+    line-height: 1.2em;
+}

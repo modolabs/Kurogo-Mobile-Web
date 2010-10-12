@@ -1,0 +1,27 @@
+.news {
+    background-color: #fff;
+    padding: 0.67em;
+}
+
+.slugline {
+	margin: 0 0 0.5em 0;
+}
+
+#image {
+    text-align: center;
+}
+
+.byline {
+    font-size: 84%;
+    color: #666;
+}
+
+.dek {
+	font: 120%/1.25em Georgia, serif;
+    color: #554c41;
+}
+
+.wp-caption {
+    width: auto !important;
+    font-size: 84%;
+}
