@@ -1,0 +1,12 @@
+.thumbnail {
+    height: 70px;
+    width: 70px;
+}
+
+.story-link {
+    text-decoration: none;
+}
+
+.smallprint {
+	display: inline-block;
+}

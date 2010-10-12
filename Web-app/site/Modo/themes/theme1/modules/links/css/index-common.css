@@ -1,0 +1,29 @@
+#springboard {
+	margin: 0 auto;
+	padding: 0;
+	margin-left: 1px;
+	clear: both;
+}
+#springboard div {
+	position: relative;
+	width: 79px;
+	height: 85px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	float: left;
+	font-size: 11px;
+	line-height: 12px;
+	text-align: center;		
+	vertical-align: top;
+}
+#springboard a {
+	display: block;
+	color: #404346;
+	text-decoration: none;
+	-webkit-border-radius: 5px;
+	padding: 8px 6px;
+}
+#springboard a img {
+	margin-bottom: 1px
+}
