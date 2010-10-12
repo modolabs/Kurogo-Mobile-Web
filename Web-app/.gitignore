@@ -1,7 +1,5 @@
 *~
 *.DS_Store
 
-opt/config/*
-opt/cache/*
-opt/logs/*
-
+site/cache/*
+site/logs/*

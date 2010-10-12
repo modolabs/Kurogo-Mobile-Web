@@ -362,22 +362,22 @@ a.module img {
 }
 
 .crumb1 {
-	max-width: 90px;
+	max-width: 120px;
 }
 
 .crumb2a  {
-	max-width: 40px;
+	max-width: 60px;
 }
 .crumb2b  {
-	max-width: 50px;
+	max-width: 60px;
 }
 
 .crumb3a {
 	max-width: 40px;
-    display: none !important; /* hidden for now because it doesn't fit */
+  display: none !important; /* hidden for now because it doesn't fit */
 }
 .crumb3b {
-	max-width: 50px;
+	max-width: 60px;
 }
 .crumb3c {
 	max-width: 60px;
