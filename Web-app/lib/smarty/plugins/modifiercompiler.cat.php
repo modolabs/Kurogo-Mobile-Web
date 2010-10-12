@@ -1,10 +1,10 @@
 <?php
 /**
  * Smarty plugin
+ *
  * @package Smarty
- * @subpackage PluginsModifier
+ * @subpackage PluginsModifierCompiler
  */
-
 
 /**
  * Smarty cat modifier plugin
@@ -17,15 +17,13 @@
  * Example:  {$var|cat:"foo"}
  * @link http://smarty.php.net/manual/en/language.modifier.cat.php cat
  *          (Smarty online manual)
- * @author   Monte Ohrt <monte at ohrt dot com>
- * @version 1.0
- * @param string
- * @param string
- * @return string
+ * @author   Uwe Tews
+ * @param array $params parameters
+ * @return string with compiled code
  */
-function smarty_modifier_cat($string, $cat)
+function smarty_modifiercompiler_cat($params, $compiler)
 {
-    return $string . $cat;
+    return '('.implode(').(', $params).')';
 }
 
 ?>

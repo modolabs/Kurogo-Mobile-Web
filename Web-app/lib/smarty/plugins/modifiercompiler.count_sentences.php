@@ -1,10 +1,10 @@
 <?php
 /**
  * Smarty plugin
+ *
  * @package Smarty
- * @subpackage PluginsModifier
+ * @subpackage PluginsModifierCompiler
  */
-
 
 /**
  * Smarty count_sentences modifier plugin
@@ -14,14 +14,14 @@
  * Purpose:  count the number of sentences in a text
  * @link http://smarty.php.net/manual/en/language.modifier.count.paragraphs.php
  *          count_sentences (Smarty online manual)
- * @author   Monte Ohrt <monte at ohrt dot com>
- * @param string
- * @return integer
+ * @author Uwe Tews 
+ * @param array $params parameters
+ * @return string with compiled code
  */
-function smarty_modifier_count_sentences($string)
+function smarty_modifiercompiler_count_sentences($params, $compiler)
 {
     // find periods with a word before but not after.
-    return preg_match_all('/[^\s]\.(?!\w)/', $string, $match);
+    return 'preg_match_all(\'/[^\s]\.(?!\w)/\', ' . $params[0] . ', $tmp)';
 }
 
 ?>

@@ -1,10 +1,10 @@
 <?php
 /**
  * Smarty plugin
+ *
  * @package Smarty
- * @subpackage PluginsModifier
+ * @subpackage PluginsModifierCompiler
  */
-
 
 /**
  * Smarty count_paragraphs modifier plugin
@@ -14,13 +14,14 @@
  * Purpose:  count the number of paragraphs in a text
  * @link http://smarty.php.net/manual/en/language.modifier.count.paragraphs.php
  *          count_paragraphs (Smarty online manual)
- * @author   Monte Ohrt <monte at ohrt dot com>
- * @param string
- * @return integer
+ * @author Uwe Tews 
+ * @param array $params parameters
+ * @return string with compiled code
  */
-function smarty_modifier_count_paragraphs($string)
+function smarty_modifiercompiler_count_paragraphs($params, $compiler)
 {
     // count \r or \n characters
-    return count(preg_split('/[\r\n]+/', $string));
+    return '(preg_match_all(\'#[\r\n]+#\', ' . $params[0] . ', $tmp)+1)';
 }
+
 ?>
