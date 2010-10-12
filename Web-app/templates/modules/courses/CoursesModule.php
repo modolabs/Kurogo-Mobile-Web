@@ -30,7 +30,7 @@ class CoursesModule extends Module {
     
     $term = CourseData::get_term();
     if(isset($_COOKIE[MY_CLASSES_COOKIE])) {
-      $allTags = explode(",", $_COOKIE[MY_CLASSES_COOKIE]);
+      $allTags = explode(',', $_COOKIE[MY_CLASSES_COOKIE]);
       natsort($allTags);
     } else {
       $allTags = array();
@@ -40,7 +40,7 @@ class CoursesModule extends Module {
     $currentIds = array();
     $oldIds = array();
     foreach($allTags as $classTag) {
-      $parts = explode(" ", $classTag, 2);
+      $parts = explode(' ', $classTag, 2);
       if(count($parts) > 1 && $parts[1] == $term) {
         $currentTags[] = $classTag;
         $currentIds[] = $parts[0];
@@ -50,10 +50,10 @@ class CoursesModule extends Module {
     }
   
     return array(
-      "allTags"     => $allTags,
-      "currentTags" => $currentTags,
-      "currentIds"  => $currentIds,
-      "oldIds"      => $oldIds,
+      'allTags'     => $allTags,
+      'currentTags' => $currentTags,
+      'currentIds'  => $currentIds,
+      'oldIds'      => $oldIds,
     );
   }
   
@@ -63,12 +63,12 @@ class CoursesModule extends Module {
   }
   
   private function setMyClasses($classes) {
-    setcookie(MY_CLASSES_COOKIE, implode(",", $classes), time() + MYCOURSES_EXPIRE_TIME);
+    setcookie(MY_CLASSES_COOKIE, implode(',', $classes), time() + MYCOURSES_EXPIRE_TIME);
   }
   
   private function coursesURL($school, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('courses', array(
-      "school" => $school,
+      'school' => $school,
     ), $addBreadcrumb);
   }
   
@@ -97,28 +97,29 @@ class CoursesModule extends Module {
 
   private function courseURL($course, $courseShort, $school, $schoolShort, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('course', array(
-      "course"      => $course,
-      "courseShort" => $courseShort,
-      "school"      => $school,
-      "schoolShort" => $schoolShort,
+      'course'      => $course,
+      'courseShort' => $courseShort,
+      'school'      => $school,
+      'schoolShort' => $schoolShort,
     ), $addBreadcrumb);
   }
   
   private function searchSchoolURL($filter, $school, $schoolShort, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('search', array(
       'filter'      => $filter,
-      "school"      => $school,
-      "schoolShort" => $schoolShort,
+      'school'      => $school,
+      'schoolShort' => $schoolShort,
+      'fromMain'    => '1',
     ), $addBreadcrumb);
   }
   
   private function searchCourseURL($filter, $course, $courseShort, $school, $schoolShort, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('search', array(
       'filter'      => $filter,
-      "course"      => $course,
-      "courseShort" => $courseShort,
-      "school"      => $school,
-      "schoolShort" => $schoolShort,
+      'course'      => $course,
+      'courseShort' => $courseShort,
+      'school'      => $school,
+      'schoolShort' => $schoolShort,
     ), $addBreadcrumb);
   }
   
@@ -214,7 +215,8 @@ class CoursesModule extends Module {
         $this->assign('schoolNameShort', $schoolNameShort);
         $this->assign('courses', $courses);
         $this->assign('extraSearchArgs', array(
-          'school' => $this->args['school'],
+          'school'      => $this->args['school'],
+          'schoolShort' => $schoolNameShort,
         ));
         break;
 
@@ -245,12 +247,12 @@ class CoursesModule extends Module {
 
         $data = CourseData::search_subjects($searchTerms, '', '');
         $count = $data['count'];
-        $classes = isset($data["classes"]) ? $data["classes"] : NULL;
+        $classes = isset($data['classes']) ? $data['classes'] : NULL;
     
       
         $schools = array();
         if ($data['count'] <= 100) {
-          foreach ($data["classes"] as $class) {
+          foreach ($data['classes'] as $class) {
             if (!in_array($class['school'], array_keys($schools))) {
               $schools[$class['school']] = array(
                 'title' => "{$class['short_name']} (1)",
@@ -281,6 +283,7 @@ class CoursesModule extends Module {
       case 'search':
         // search results for a department
         $searchTerms     = $this->getArg('filter');
+        $fromSearchMain  = $this->getArg('fromMain');
         $courseName      = $this->getArg('course');
         $courseNameShort = $this->getArg('courseShort');
         $schoolName      = $this->getArg('school');
@@ -288,14 +291,23 @@ class CoursesModule extends Module {
 
         $shortName = strlen($courseNameShort) ? $courseNameShort : $schoolNameShort;
   
-        $this->setBreadcrumbTitle($shortName);
-
+        if (isset($fromSearchMain) && $fromSearchMain) {
+          $this->setBreadcrumbTitle($shortName);
+        }
+        
         $data = CourseData::search_subjects($searchTerms, $schoolName, $courseName);
         $count = $data['count'];
-        $classes = isset($data["classes"]) ? $data["classes"] : array();
+        $classes = isset($data['classes']) ? $data['classes'] : array();
 
-        $this->assign('shortName', $shortName);
-        $this->assign('classes',   $this->getClassListItems($classes));
+        $this->assign('shortName',   $shortName);
+        $this->assign('classes',     $this->getClassListItems($classes));
+        $this->assign('searchTerms', $searchTerms);
+        $this->assign('extraSearchArgs', array(
+          'school'      => $schoolName,
+          'schoolShort' => $schoolNameShort,
+          'course'      => $courseName,
+          'courseShort' => $courseNameShort,
+        ));
         break;
         
       case 'detail':

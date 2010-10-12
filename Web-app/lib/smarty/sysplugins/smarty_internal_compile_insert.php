@@ -9,6 +9,7 @@
  * @subpackage Compiler
  * @author Uwe Tews 
  */
+
 /**
  * Smarty Internal Plugin Compile Insert Class
  */
@@ -31,6 +32,8 @@ class Smarty_Internal_Compile_Insert extends Smarty_Internal_CompileBase {
         $this->compiler->suppressNocacheProcessing = true;
         $this->compiler->tag_nocache = true;
         $_smarty_tpl = $compiler->template;
+        $_name = null;
+        $_script = null;
 
         $_output = '<?php '; 
         // save posible attributes

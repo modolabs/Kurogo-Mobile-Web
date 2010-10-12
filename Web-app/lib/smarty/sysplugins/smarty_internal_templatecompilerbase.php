@@ -8,6 +8,7 @@
  * @subpackage Compiler
  * @author Uwe Tews 
  */
+
 /**
  * Main compiler class
  */
@@ -183,7 +184,7 @@ class Smarty_Internal_TemplateCompilerBase {
                                 return $plugin_object->compile($args, $this);
                             } 
                         } 
-                        throw new Exception("Plugin \"{$tag}\" not callable");
+                        throw new SmartyException("Plugin \"{$tag}\" not callable");
                     } else {
                         if ($function = $this->getPlugin($tag, $plugin_type)) {
                             return $this->callTagCompiler('private_' . $plugin_type . '_plugin', $args, $tag, $function);
@@ -222,7 +223,7 @@ class Smarty_Internal_TemplateCompilerBase {
                             return $plugin_object->compile($args, $this);
                         } 
                     } 
-                    throw new Exception("Plugin \"{$tag}\" not callable");
+                    throw new SmartyException("Plugin \"{$tag}\" not callable");
                 } 
             } 
             $this->trigger_template_error ("unknown tag \"" . $tag . "\"", $this->lex->taglineno);
@@ -400,8 +401,7 @@ class Smarty_Internal_TemplateCompilerBase {
             // output parser error message
             $error_text .= ' - Unexpected "' . $this->lex->value . '", expected one of: ' . implode(' , ', $expect);
         } 
-        throw new Exception($error_text);
+        throw new SmartyCompilerException($error_text);
     } 
-} 
-
+}
 ?>

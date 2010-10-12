@@ -66,12 +66,21 @@
             {foreach $breadcrumbs as $breadcrumb}
               {if count($breadcrumbs) == 1}
                 {$crumbClass = 'crumb1'}
-              {elseif count($breadcrumbs) > 1}
+              {elseif count($breadcrumbs) == 2}
                 {if !$breadcrumb@last}
                   {$crumbClass = 'crumb2a'}
                 {else}
                   {assign var=crumbClass value='crumb2b'}                
                 {/if}
+              {elseif count($breadcrumbs) > 2}
+                {if $breadcrumb@last}
+                  {$crumbClass = 'crumb3c'}
+                {elseif $breadcrumb@index == ($breadcrumb@total-2)}
+                  {assign var=crumbClass value='crumb3b'}                
+                {else}
+                  {assign var=crumbClass value='crumb3a'}                
+                {/if}
+                
               {/if}
               <a href="{$breadcrumb['url']}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
                 <span>{$breadcrumb['title']}</span>
