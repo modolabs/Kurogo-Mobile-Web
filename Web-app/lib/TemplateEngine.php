@@ -172,7 +172,7 @@ class TemplateEngine extends Smarty {
       return array();
     }
         
-    $themeVars = $GLOBALS['siteConfig']->getThemeVar($name);
+    $themeVars = $GLOBALS['siteConfig']->getThemeVar($name, null, $ignoreError);
     
     if ($keyName === false) {
       foreach($themeVars as $key => $value) {
