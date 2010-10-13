@@ -31,6 +31,8 @@ foreach($reader->getAllRoutesInfo() as $aRoute) {
         }
     }
 }
+usort($runningRoutes, "cmpRouteTitle");
+usort($offlineRoutes, "cmpRouteTitle");
 
 $runningTitle = "Currently serviced by:";
 $offlineTitle = "Services at other times by:";
@@ -57,6 +59,10 @@ $imageURL = $reader->getImageURLForStop($routeId, $stop, $mapWidth, $mapHeight);
 
 function routeURL($routeId) {
     return "times.php?route=" . $routeId;
+}
+
+function cmpRouteTitle($routeA, $routeB) {
+    return strcmp($routeA['long_name'], $routeB['long_name']);
 }
 
 require "$page->branch/details.html";

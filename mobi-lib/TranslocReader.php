@@ -161,7 +161,7 @@ class TranslocReader {
         $runningRoutes[$routeID] = $this->getNameForRoute($routeID);
       }
     }
-    //sort($runningRoutes);
+    asort($runningRoutes);
     return $runningRoutes;
   }
 
@@ -172,7 +172,7 @@ class TranslocReader {
         $nonRunningRoutes[$routeID] = $this->getNameForRoute($routeID);
       }
     }
-    //sort($nonRunningRoutes);
+    asort($nonRunningRoutes);
     return $nonRunningRoutes;
   }  
   
