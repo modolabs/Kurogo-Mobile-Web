@@ -16,10 +16,10 @@ $page->content_begin();
                 <?=$scheduleSummary?><br />
          <? } ?>
          
-         <? if($foundVehicles) { ?>
+         <? if($isRunning) { ?>
             Refreshed at <?=formatShuttleTime($page, $lastUpdated)?> (<a href="<?=selfURL()?>">refresh</a>).
          <? } else { ?>
-            Tracking is not available right now.
+            <?=NOT_RUNNING_SUMMARY?>
          <? } ?>
     </p>
 

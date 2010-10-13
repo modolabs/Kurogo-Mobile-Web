@@ -4,6 +4,8 @@ $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once LIBDIR . "/TranslocReader.php";
 
+define('NOT_RUNNING_SUMMARY', 'Bus not running.');
+
 $routeID = $_REQUEST['route'];
 
 $reader = new TranslocReader();
@@ -21,7 +23,7 @@ if (!in_array($routeID, $reader->getRoutes())) {
   $now = time();
 
   $routeName = $reader->getNameForRoute($routeID);
-  $foundVehicles = $reader->routeIsRunning($routeID);
+  $isRunning = $reader->routeIsRunning($routeID);
   $vehicles = $reader->getVehiclesForRoute($routeID);
   $vehicleCount = count($vehicles);
   $stops = $reader->getStopsForRoute($routeID);
@@ -29,7 +31,6 @@ if (!in_array($routeID, $reader->getRoutes())) {
   $summary = $vehicleCount.' shuttle'.($vehicleCount != 1 ? 's':'').' found.';
   $lastUpdated = $reader->getVehiclesLastUpdateTime($routeID);
 
-  $routeRunningSummary = $foundVehicles ? 'Real time bus tracking online.' : 'Bus not running. Following schedule';
   $briefDescription = $reader->getBriefDescription($routeName);
   $scheduleSummary = $reader->getSummary($routeName);
   
