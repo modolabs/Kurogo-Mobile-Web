@@ -6,67 +6,91 @@ require_once realpath(LIB_DIR.'/LDAPWrapper.php');
 class PeopleModule extends Module {
   protected $id = 'people';
   
-  private function formatPersonDetails($person) {
-    $detailFields = $this->loadThemeConfigFile('people-detail', 'detailFields');
+  private $detailFields = array();
+  private $detailAttributes = array();
+  
+  private function formatValues($values, $info) {
+    if (isset($info['parse'])) {
+      $formatFunction = create_function('$value', $info['parse']);
+      foreach ($values as &$value) {
+        $value = $formatFunction($value);
+      }
+    }
+    return $values;
+  }
+  
+  private function formatDetail($values, $info) {
+    if (isset($info['format'])) {
+      $value = vsprintf($info['format'], $values);
+    } else {
+      $value = implode(' ', $values);
+    }
     
-    $details = array();
-    //error_log(print_r($detailFields, true));
-    
-    $strtrValue = array(
-      '-', '-&shy;',
+    $detail = array(
+      'label' => $info['label'],
+      'title' => $value,
     );
     
-    foreach($detailFields as $key => $info) {
+    switch(isset($info['type']) ? $info['type'] : 'text') {
+      case 'email':
+        $detail['title'] = str_replace('@', '@&shy;', $detail['title']);
+        
+        $detail['url'] = "mailto:$value";
+        $detail['class'] = 'email';
+        break;
+        
+      case 'phone':
+        $detail['title'] = str_replace('-', '-&shy;', $detail['title']);
+        
+        if (strpos($value, '+1') !== 0) { $value = "+1$value"; }
+        $detail['url'] = 'tel:'.strtr($value, '-', '');
+        $detail['class'] = 'phone';
+        break;
+        
+      case 'map':
+        // Only send the next-to-last line of the address to the map module
+        $lines = explode('$', $value);
+        $count = count($lines);
+        $linkAddress = ($count > 1) ? $lines[$count - 2] : $value;
+        $detail['url'] = '/map/search.php?'.http_build_query(array(
+          'filter' => $linkAddress
+        ));
+        $detail['class'] = 'map';
+        break;
+    }
+    
+    $detail['title'] = str_replace('$', '<br />', $detail['title']); // $ is the LDAP multiline char
+    
+    return $detail;
+  }
+  
+  private function formatPersonDetails($person) {
+    //error_log(print_r($this->detailFields, true));
+    
+    $details = array();    
+    foreach($this->detailFields as $key => $info) {
       $section = array();
       
-      if (isset($info['format'])) {
-        $formatFunction = create_function('$value', $info['format']);
+      if (count($info['attributes']) == 1) {
+        $values = (array)$person->getField($info['attributes'][0]);
+        if (count($values)) {
+          $section[] = $this->formatDetail($this->formatValues($values, $info), $info);
+        }      
       } else {
-        $formatFunction = null;
-      }
+        $valueGroups = array();
       
-      foreach($person->getField($info['keys']) as $value) {
-        $detail = array(
-          'label' => $info['label'],
-          'title' => $value,
-        );
-        
-        if (isset($formatFunction)) {
-          $detail['title'] = $formatFunction($detail['title']);
+        foreach ($info['attributes'] as $attribute) {
+          $values = $this->formatValues((array)$person->getField($attribute), $info);
+          
+          if (count($values)) {
+            foreach ($values as $i => $value) {
+              $valueGroups[$i][] = $value;
+            }
+          }
         }
-        
-        switch(isset($info['type']) ? $info['type'] : 'text') {
-          case 'email':
-            $detail['title'] = str_replace('@', '@&shy;', $detail['title']);
-            
-            $detail['url'] = "mailto:$value";
-            $detail['class'] = 'email';
-            break;
-            
-          case 'phone':
-            $detail['title'] = str_replace('-', '-&shy;', $detail['title']);
-            
-            if (strpos($value, '+1') !== 0) { $value = "+1$value"; }
-            $detail['url'] = 'tel:'.strtr($value, '-', '');
-            $detail['class'] = 'phone';
-            break;
-            
-          case 'map':
-            // Only send the next-to-last line of the address to the map module
-            $lines = explode('$', $value);
-            $count = count($lines);
-            $linkAddress = ($count > 1) ? $lines[$count - 2] : $value;
-            $detail['url'] = '/map/search.php?'.http_build_query(array(
-              'filter' => $linkAddress
-            ));
-            $detail['class'] = 'map';
-            break;
+        foreach ($valueGroups as $valueGroup) {
+          $section[] = $this->formatDetail($valueGroup, $info);
         }
-        
-        // $ is the LDAP return character for multiline fields
-        $detail['title'] = str_replace('$', '<br />', $detail['title']);
-        
-        $section[] = $detail;
       }
       
       if (count($section)) {
@@ -81,12 +105,17 @@ class PeopleModule extends Module {
         }
       }
     }
-    
+    //error_log(print_r($details, true));
     return $details;
   }
 
   protected function initializeForPage() {
-  
+    $this->detailFields = $this->loadThemeConfigFile('people-detail', 'detailFields');
+    foreach($this->detailFields as $field => $info) {
+      $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
+    }
+    $this->detailAttributes = array_unique($this->detailAttributes);
+    
     switch ($this->page) {
       case 'help':
         break;
