@@ -422,7 +422,7 @@ class TranslocReader {
           "zoom" => "16",
        );
        
-      $iconLatLon = MapPlotUtility::computeLatLon($mapParams, 0.92, 0.80);
+      $iconLatLon = MapPlotUtility::computeLatLon($mapParams, 0.90, 0.79);
       $translocIconQuery = http_build_query(array(
           'markers' => 'icon:' . self::getTranslocIconURL() . '|shadow:false|' .
                     $iconLatLon['lat'] . ',' . $iconLatLon['lon'] ));
