@@ -5,7 +5,6 @@
  * DayRange: child class of TimeRange describing a full day
  */
 
-//require_once('datetime_lib.php');
 
 class TimeRange {
 
