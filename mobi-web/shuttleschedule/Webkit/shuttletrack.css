@@ -53,9 +53,10 @@
 }
 
 #refresh {
-	position: absolute;
-	top: 8px;
-	right: 8px;
+	float: right;
+        position: relative;
+	top: -4px;
+	right: -4px;
 	font-size: 14px;
 }
 

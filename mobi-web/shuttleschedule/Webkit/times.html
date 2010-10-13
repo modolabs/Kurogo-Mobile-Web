@@ -16,8 +16,10 @@ $page->content_begin();
 
 	<div class="focal shaded">
 	
-		<h2><?=$routeName?><div id="refresh"><a href="<?=selfURL()?>"><? echo $page->img_tag('refresh', 'png', 'Update'); ?></a></div></h2>
-                
+		<h2><div id="refresh"><a href="<?=selfURL()?>"><? echo $page->img_tag('refresh', 'png', 'Update'); ?></a></div><?=$routeName?></h2>
+
+                <div style="height: 5px; width: 10px"></div>
+
                 <p class="smallprint">
                     <? if($briefDescription) { ?>
 		        <?=$briefDescription?><br />
