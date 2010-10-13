@@ -1,6 +1,7 @@
 {include file="findInclude:common/header.tpl"}
 
 {include file="findInclude:common/search.tpl" placeholder="Search" emphasized=false}
+{$searchError}
 
 {include file="findInclude:common/results.tpl" results=$results accessKey=false}
 

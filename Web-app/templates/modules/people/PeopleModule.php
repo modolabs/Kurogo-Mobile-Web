@@ -118,6 +118,8 @@ class PeopleModule extends Module {
           $this->assign('searchTerms', $searchTerms);
           
           $people = $ldapWrapper->query($searchTerms);
+          $this->assign('searchError', $ldapWrapper->getError());
+
           if ($people !== false) {
             $resultCount = count($people);
             
@@ -135,6 +137,8 @@ class PeopleModule extends Module {
                 
               default:
                 $results = array();
+                
+                
                 foreach ($people as $person) {
                   $results[] = array(
                     'url' => $this->buildBreadcrumbURL('detail', array(
