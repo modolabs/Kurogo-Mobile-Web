@@ -7,8 +7,6 @@ require_once realpath(SITE_LIB_DIR.'/HarvardDiningHalls.php');
   
 class DiningModule extends Module {
   protected $id = 'dining';
-  private $activeTab = '';
-  
   
   private function dayURL($time, $addBreadcrumb=true) {
     $args = array('time' => $time);

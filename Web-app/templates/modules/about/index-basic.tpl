@@ -3,7 +3,7 @@
 {block name="navList"}
   {$lastAboutPage = array_pop($aboutPages)}
   
-  {include file="findInclude:common/navlist.tpl" navlistItems=$aboutPages}
+  {$smarty.block.parent}
 
   <p class="nav secondary">
     <a href="{$lastAboutPage['url']}" class="{$lastAboutPage['class']|default:''}">

@@ -11,7 +11,6 @@ define('MIN_MAP_CONTEXT', 250); // enforce a minimum range in feet (their units)
 
 class MapModule extends Module {
   protected $id = 'map';
-  private $activeTab = '';
 
   private function bboxArr2Str($bbox) {
     return implode(',', array_values($bbox));

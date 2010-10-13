@@ -125,6 +125,7 @@ function getMinifyGroupsConfig() {
       'js'  => getJSFileConfigForDirs (
           $page, $pagetype, $platform, $jsDirs, $subDirs),
     );
+    //error_log(print_r($checkFiles, true));
     
     $minifyConfig[$key] = buildFileList($checkFiles[$ext]);
     error_log(__FUNCTION__."($pagetype-$platform) scanned filesystem for $key");
