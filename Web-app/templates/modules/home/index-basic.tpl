@@ -1,7 +1,7 @@
 {extends file="findExtends:modules/home/index.tpl"}
 
 {block name="banner"}
-  <h1><img id="logo" src="/modules/home/images/harvard-logo-home.gif" width="208" height="35" alt="{$SITE_NAME}" /></h1>
+  <h1><img id="logo" src="/modules/home/images/logo-home.gif" width="208" height="35" alt="{$SITE_NAME}" /></h1>
   <p class="bb"> </p>
 {/block}
 

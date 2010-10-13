@@ -1,7 +1,7 @@
 {capture name="banner" assign="banner"}
   {block name="banner"}
     <h1{if isset($topItem)} class="roomfornew"{/if}>
-      <img src="/modules/home/images/harvard-logo-home.png" width="265" height="45" alt="{$SITE_NAME}" />
+      <img src="/modules/home/images/logo-home.png" width="265" height="45" alt="{$SITE_NAME}" />
     </h1>
   
     {if isset($topItem)}
