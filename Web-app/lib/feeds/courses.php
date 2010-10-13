@@ -3,9 +3,7 @@
 require_once realpath(LIB_DIR.'/DiskCache.php');
 require_once realpath(LIB_DIR.'/feeds/html2text.php');
 
-
-define('TERM', 'Fall 2010'); // WRONG!!!!!!
-
+define('TERM', 'Fall 2010');
 
 function compare_courseNumber($a, $b)
 {
@@ -270,17 +268,6 @@ class CourseData {
 
   private static $courseDiskCache = NULL;
   private static $feedDiskCache = NULL;
-
-  private static $termConfig = array(
-    'fall' => array(
-      'start' => 'Sep',
-      'end'   => 'Dec',
-    ),
-    'spring' => array(
-      'start' => 'Jan',
-      'end'   => 'Jun',
-    ),
-  );
   
   private static function addTermQueryToArgs(&$args, $term=null) {
     if (!isset($term)) {
@@ -288,15 +275,26 @@ class CourseData {
     }
     $termParts = explode(' ', $term);
     if ($termParts > 1) {
-      $semester = $termParts[0];
-      $year     = $termParts[1];
-      
-      $key = strtolower($semester);
-      
-      $args['fq_coordinated_semester_yr'] = 'coordinated_semester_yr:"'.
-        self::$termConfig[$key]['start'].' to '.
-        self::$termConfig[$key]['end'].' '.$year.
-        ' ('.$semester.' Term)"';
+      $semesterYr = '';
+      switch (strtolower($termParts[0])) {
+        case 'winter':
+          $semesterYr = "Jan {$termParts[1]} (Winter Session)";
+          break;
+        case 'spring':
+          $semesterYr = "Jan to May {$termParts[1]} (Spring Term)";
+          break;
+        case 'summer':
+          $semesterYr = "Jun to Aug {$termParts[1]} (Summer Term)";
+          break;
+        case 'fall':
+          $semesterYr = "Sep to Dec {$termParts[1]} (Fall Term)";
+          break;
+        
+        default:
+          return;
+      }
+
+      $args['fq_coordinated_semester_yr'] = 'coordinated_semester_yr:"'.$semesterYr.'"';
     }
   }
   
@@ -308,7 +306,7 @@ class CourseData {
     if (isset($category) && strlen($category)) {
       $args['fq_dept_area_category'] = 'dept_area_category:"'.$category.'"';
     } else {
-      $args['fq_dept_area_category'] = 'dept_area_category:"[* TO ""]"';
+      $args['fq_dept_area_category'] = 'dept_area_category:[* TO ""]';
     }
   }
 
@@ -404,15 +402,11 @@ class CourseData {
 
     $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR'). '/Course-' .$subjectId . '.xml';
 
-    if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
-      $urlString = $filenm; //file_get_contents($filenm);
-    }
-    else {
+    if (!file_exists($filenm) || ((time() - filemtime($filenm)) > $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
       $handle = fopen($filenm, "w");
       fwrite($handle, file_get_contents($urlString));
-      $urlString = $filenm;
     }
-    $xml = file_get_contents($urlString);
+    $xml = file_get_contents($filenm);
 
     if($xml == "") {
       // if failed to grab xml feed, then run the generic error handler
@@ -464,10 +458,10 @@ class CourseData {
     $subject_fields['school'] = $school[0];
     //$trm = explode(':',$single_course->term_description);
     //$subject_fields['term'] = $trm[0];
-    $subject_fields['term'] = TERM;
+    $subject_fields['term'] = self::get_term();
     $ur = explode(':',$single_course->url);
     if (count($ur) > 1)
-      $subject_fields['stellarUrl'] = $ur[0].':'.$ur[1];
+      $subject_fields['url'] = $ur[0].':'.$ur[1];
 
     $classtime['title'] = 'Lecture';
     $loc = explode(':',$single_course->location);
@@ -508,21 +502,20 @@ class CourseData {
     return $subjectDetails;
   }
 
-  public static function get_subjectsForCourse($course, $courseGroup) {
+  public static function get_subjectsForCourse($course, $school) {
     $args = array();
     self::addTermQueryToArgs($args);
-    self::addSchoolQueryToArgs($args, $courseGroup);
+    self::addSchoolQueryToArgs($args, $school);
 
-    if ($course == $courseGroup) {
+    if ($course == $school) {
       self::addCategoryQueryToArgs($args);
     } else {
       self::addCategoryQueryToArgs($args, $course);
     }
-    $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args);
+    $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args).'&';
 
-    $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR') ."/$course-$courseGroup.xml";
-    if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
-    } else {
+    $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR') ."/$course-$school.xml";
+    if (!file_exists($filenm) || ((time() - filemtime($filenm)) > $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
         $handle = fopen($filenm, "w");
         fwrite($handle, file_get_contents($urlString));
         //$urlString = $filenm;
@@ -545,15 +538,12 @@ class CourseData {
     for ($index=0; $index < $iterations; $index=$index+1) {
       //printf(" Current = %d\n",$index*25);
       $args['start'] = $index * 25;
+      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args).'&';
 
-      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args);
-
-      $filenm1 = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR') ."/$course-$courseGroup-$index.xml";
-      if (file_exists($filenm1) && ((time() - filemtime($filenm1)) < $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
-
-      } else {
-          $handle = fopen($filenm1, "w");
-          fwrite($handle, file_get_contents($urlString));
+      $filenm1 = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR') ."/$course-$school-$index.xml";
+      if (!file_exists($filenm1) || ((time() - filemtime($filenm1)) > $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
+        $handle = fopen($filenm1, "w");
+        fwrite($handle, file_get_contents($urlString));
       }
 
       $xml = file_get_contents($filenm1);
@@ -588,7 +578,7 @@ class CourseData {
           $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
       }
       //$subject_fields['title'] = $titl[0];
-      $subject_fields['term'] = TERM;
+      $subject_fields['term'] = self::get_term();
       
       $ta_array = array();
       $staff['instructors'] = self::getInstructorsFromDescription($single_course->faculty_description);
@@ -618,13 +608,10 @@ class CourseData {
     // $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR'). '/SchoolsAndCourses' .'.xml';
     $filenm = $GLOBALS['siteConfig']->getVar('COURSES_CACHE_DIR'). '/SchoolsAndCourses' .'.txt';
     
-    if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT'))) {
-      //$urlString = $filenm; //file_get_contents($filenm);
-    } else {
+    if (!file_exists($filenm) || (time() - filemtime($filenm)) > $GLOBALS['siteConfig']->getVar('COURSES_CACHE_TIMEOUT')) {
       $args = array();
       self::addTermQueryToArgs($args);
-      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args);
-      error_log($urlString);
+      $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args).'&';
       self::condenseXMLFileForCoursesAndWrite($urlString, $filenm);
     }
     $schoolsAndCourses = json_decode(file_get_contents($filenm));
@@ -653,16 +640,15 @@ class CourseData {
     $xml_obj = simplexml_load_string($xml);
 
     foreach($xml_obj->facets->facet as $fc) {
-
-      if ($fc['name'] == 'school_nm')
+      if ($fc['name'] == 'school_nm') {
         foreach($fc->field as $field) {
-          $self->schools[] = $field['name'];
-      
+          self::$schools[] = $field['name'];
+
           $args = array();
           self::addTermQueryToArgs($args);
           self::addSchoolQueryToArgs($args, $field['name']);
       
-          $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args);
+          $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args).'&';
           $courses_map_xml = file_get_contents($urlString);
       
           if($courses_map_xml == "") {
@@ -674,93 +660,39 @@ class CourseData {
       
           foreach($courses_xml_obj->facets->facet as $fcm) {
             if ($fcm['name'] == 'dept_area_category') {
-      
-            $map = array();
-            $course_array = array();
-            foreach($fcm->field as $fieldMap) {
-              $crs = explode(':', $fieldMap['name']);
-      
-              if ($crs != '') {
-                $crsMap['name'] = $crs[0];
-                $crsMap['short'] = '1';
-                $course_array[] = $crsMap;
+              $course_array = array();
+              foreach($fcm->field as $fieldMap) {
+                $crs = explode(':', $fieldMap['name']);
+        
+                if (is_array($crs) && $crs[0] != '') {
+                  $course_array[] = array(
+                    'name'  => $crs[0],
+                    'short' => '1',
+                  );
+                }
               }
             }
           }
-        }
-      
-        if (count($course_array) >= 1) {
-          $str = explode(':', $field['name']);
-          $map['school_name'] = $str[0];
+    
+          $str      = explode(':', $field['name']);
           $strShort = explode(':', $field['short_name']);
-          $map['school_name_short'] = $strShort[0];
-          $map['courses'] = $course_array;
       
-          $self->schoolsToCoursesMap[] = $map;
+          if ($str[0] != '' && isset($course_array)) {
+            self::$schoolsToCoursesMap[] = array(
+              'school_name'       => $str[0],
+              'school_name_short' => $strShort[0],
+              'courses'           => $course_array,
+            );
+          }
         }
       }
     }
+    //error_log(print_r(self::$schools, true));
 
-    $stringToWrite = '';
-    foreach($self->schoolsToCoursesMap as $schoolsMapping) {
-      if ($schoolsMapping['school_name'] != '') {
-      $stringToWrite = $stringToWrite . $schoolsMapping['school_name'] .',,,' .$schoolsMapping['school_name_short'] . ':::';
-        foreach($schoolsMapping['courses'] as $course) {
-          $stringToWrite = $stringToWrite . $course['name'] . ',,,';
-        }
-
-        $stringToWrite = substr($stringToWrite, 0, -1) . '...';
-      }
-    }
-
-    fwrite($handle, $stringToWrite);
+    fwrite($handle, json_encode(self::$schoolsToCoursesMap));
     fclose($handle);
 
-    self::getXMLSchoolsMapJSONEncoded($fileToWrite);
-
     return;
-  }
-
-
-  public static function getXMLSchoolsMapJSONEncoded($filenm) {
-
-      $dummySchoolsToCoursesMap = array();
-       $str = file_get_contents($filenm);
-
-      $schoolLayerArray = explode('...', $str);
-
-      foreach($schoolLayerArray as $schoolLayer) {
-          $mappingArray = explode(':::',$schoolLayer);
-
-          $nameLayerArray = explode(',,,', $mappingArray[0]);
-          $groupLayerArray = explode(',,,', $mappingArray[1]);
-
-          $courseArray = Array();
-          foreach($groupLayerArray as $dept) {
-              $crsMap['name'] = str_replace(',,', '', $dept);
-              $crsMap['short'] = '1';
-              $courseArray[] = $crsMap;
-          }
-
-          if (count($courseArray) >= 1) {
-
-              if (strlen($nameLayerArray[0]) > 0) {
-                             $map['school_name'] = $nameLayerArray[0];
-                             $map['school_name_short'] = $nameLayerArray[1];
-                             $map['courses'] = $courseArray;
-
-                             $dummySchoolsToCoursesMap[] = $map;
-                      }
-          }
-      }
-
-      $handle = fopen($filenm, "w");
-      fwrite($handle, json_encode($dummySchoolsToCoursesMap));
-      fclose($handle);
-
-      return;
-
-        //return schoolsToCoursesMap;
   }
 
   public static function search_subjects($terms, $school, $courseTitle) {    
@@ -783,7 +715,6 @@ class CourseData {
     }
     
     $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args);
-    //error_log("\n".$urlString);
     $xml = file_get_contents($urlString);
     
     // echo $urlString;
@@ -832,12 +763,8 @@ class CourseData {
     for ($index=0; $index < $iterations; $index=$index+1) {
       $args['start'] = $index * 25;
       //printf(" Current = %d\n",$index*25);
-      //$number = $index * 25;
-      //$queryAddition = '&start=' .$number;
-    
-    
+      
       $urlString = $GLOBALS['siteConfig']->getVar('COURSES_BASE_URL').http_build_query($args);
-      //.$courseName .$schoolName .$term .'q="' .$terms .'"&'  . $sorting_params .$queryAddition;
       $xml = file_get_contents($urlString);
     
     
@@ -847,6 +774,7 @@ class CourseData {
       }
     
       $xml_obj = simplexml_load_string($xml);
+      
       foreach($xml_obj->courses->course as $single_course) {
         $subject_fields = array();
         $id = explode(':',$single_course['id']);
@@ -865,7 +793,7 @@ class CourseData {
             $subject_fields['title'] = $subject_fields['title'] .$titl[$ind] .':';
         }
         //$subject_fields['title'] = $titl[0];
-        $subject_fields['term'] = TERM;
+        $subject_fields['term'] = self::get_term();
     
         $ta_array =array();
         $staff['instructors'] = self::getInstructorsFromDescription($single_course->faculty_description);

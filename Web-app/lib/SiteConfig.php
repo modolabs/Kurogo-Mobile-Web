@@ -13,8 +13,11 @@ class SiteConfig {
         $this->replaceThemeVariables($this->themeVars[$name]);
         return true;
 
-      } else if (!$ignoreError) {
-        error_log(__FUNCTION__."(): no configuration file for '$name'");
+      } else {
+        if (!$ignoreError) {
+          error_log(__FUNCTION__."(): no configuration file for '$name'");
+        }
+        return false;
       }
     }
     return true;
@@ -25,12 +28,12 @@ class SiteConfig {
       return $this->configVars[$key];
     }
     
-    error_log(__FUNCTION__."(): configuration variable'$key' not set");
+    error_log(__FUNCTION__."(): configuration variable '$key' not set");
     
     return null;
   }
 
-  public function getThemeVar($key, $subKey = null) {
+  public function getThemeVar($key, $subKey = null, $ignoreError = false) {
     if (isset($this->themeVars[$key])) {
       if (!isset($subKey)) {
         return $this->themeVars[$key];
@@ -39,8 +42,10 @@ class SiteConfig {
       }
     }
     
-    error_log(__FUNCTION__."(): themeVar['$key']".
-      (isset($subKey) ? "['$subKey']" : "")." not set");
+    if (!$ignoreError) {
+      error_log(__FUNCTION__."(): themeVar['$key']".
+        (isset($subKey) ? "['$subKey']" : "")." not set");
+    }
     
     return null;
   }

@@ -1,7 +1,8 @@
 *~
 *.DS_Store
 
-opt/config/*
-opt/cache/*
-opt/logs/*
-
+api/newsimages/*
+site/Harvard/cache/*
+site/Harvard/logs/*
+site/Modo/cache/*
+site/Modo/logs/*

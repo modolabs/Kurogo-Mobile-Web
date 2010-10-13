@@ -1,24 +1,25 @@
 <?php
 
 /**
-* Smarty Internal Plugin Compile Eval
-*
-* Compiles the {eval} tag 
-* @package Smarty
-* @subpackage Compiler
-* @author Uwe Tews
-*/
+ * Smarty Internal Plugin Compile Eval
+ *
+ * Compiles the {eval} tag 
+ * @package Smarty
+ * @subpackage Compiler
+ * @author Uwe Tews
+ */
+
 /**
-* Smarty Internal Plugin Compile Eval Class
-*/ 
+ * Smarty Internal Plugin Compile Eval Class
+ */ 
 class Smarty_Internal_Compile_Eval extends Smarty_Internal_CompileBase {
     /**
-    * Compiles code for the {eval} tag
-    * 
-    * @param array $args array with attributes from parser
-    * @param object $compiler compiler object
-    * @return string compiled code
-    */
+     * Compiles code for the {eval} tag
+     * 
+     * @param array $args array with attributes from parser
+     * @param object $compiler compiler object
+     * @return string compiled code
+     */
     public function compile($args, $compiler)
     {
         $this->compiler = $compiler; 
@@ -32,7 +33,7 @@ class Smarty_Internal_Compile_Eval extends Smarty_Internal_CompileBase {
         }
   
         // create template object
-        $_output = "\$_template = new {$compiler->smarty->template_class}('string:'.".$_attr['var'].", \$_smarty_tpl->smarty, \$_smarty_tpl);"; 
+        $_output = "\$_template = new {$compiler->smarty->template_class}('eval:'.".$_attr['var'].", \$_smarty_tpl->smarty, \$_smarty_tpl);"; 
         //was there an assign attribute? 
         if (isset($_assign)) {
             $_output .= "\$_smarty_tpl->assign($_assign,\$_template->getRenderedTemplate());";

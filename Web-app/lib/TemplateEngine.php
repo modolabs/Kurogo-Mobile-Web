@@ -161,30 +161,6 @@ class TemplateEngine extends Smarty {
     self::$accessKey = $params['index'];
   }
   
-  //
-  // Theme config files
-  //
-  
-  public function loadThemeConfigFile($name, $keyName=null, $ignoreError=false) {
-    if ($keyName === null) { $keyName = $name; }
-    
-    if (!$GLOBALS['siteConfig']->loadThemeFile($name, true, $ignoreError)) {
-      return array();
-    }
-        
-    $themeVars = $GLOBALS['siteConfig']->getThemeVar($name);
-    
-    if ($keyName === false) {
-      foreach($themeVars as $key => $value) {
-        $this->assign($key, $value);
-      }
-    } else {
-      $this->assign($keyName, $themeVars);
-    }
-    
-    return $themeVars;
-  }
-  
   
   //
   // Constructor
