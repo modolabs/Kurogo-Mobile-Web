@@ -1,7 +1,7 @@
 <?php
 
 require_once realpath(LIB_DIR.'/Module.php');
-require_once realpath(LIB_DIR.'/feeds/LdapWrapper.php');
+require_once realpath(LIB_DIR.'/LDAPWrapper.php');
 
 class PeopleModule extends Module {
   protected $id = 'people';
@@ -86,14 +86,17 @@ class PeopleModule extends Module {
   }
 
   protected function initializeForPage() {
+  
     switch ($this->page) {
       case 'help':
         break;
         
       case 'detail':
-        if (isset($this->args['username'])) {
-          $ldapWrapper = new LdapWrapper();
-          $person = $ldapWrapper->lookupUser($this->args['username']);
+        if (isset($this->args['uid'])) {
+          $personClass      = $GLOBALS['siteConfig']->getVar('LDAP_PERSON_CLASS');
+          $ldapWrapper = new LDAPWrapper();
+          $ldapWrapper->setPersonClass($personClass);
+          $person = $ldapWrapper->lookupUser($this->args['uid']);
           
           if ($person) {
             $this->assign('personDetails', $this->formatPersonDetails($person));
@@ -108,21 +111,26 @@ class PeopleModule extends Module {
       case 'search':
         if (isset($this->args['filter'])) {
           $searchTerms = trim($this->args['filter']);
-          $ldapWrapper = new LdapWrapper();
+          $personClass      = $GLOBALS['siteConfig']->getVar('LDAP_PERSON_CLASS');
+          $ldapWrapper = new LDAPWrapper();
+          $ldapWrapper->setPersonClass($personClass);
           
           $this->assign('searchTerms', $searchTerms);
           
-          if ($ldapWrapper->buildQuery($searchTerms)
-              && ($people = $ldapWrapper->doQuery()) !== FALSE) {
+          $people = $ldapWrapper->query($searchTerms);
+          if ($people !== false) {
             $resultCount = count($people);
             
             switch ($resultCount) {
               case 0:
-                $this->redirectTo('index');
-                exit;
+                break;
               
               case 1:
-                $this->assign('personDetails', $this->formatPersonDetails($people[0]));
+                $person = $people[0];
+                $this->redirectTo('detail', array(
+                    'uid'=>$person->getId()
+                    )
+                );
                 break;
                 
               default:
@@ -130,12 +138,12 @@ class PeopleModule extends Module {
                 foreach ($people as $person) {
                   $results[] = array(
                     'url' => $this->buildBreadcrumbURL('detail', array(
-                       'username' => $person->getId(),
+                       'uid' => $person->getId(),
                        'filter'   => $this->args['filter'],
                     )),
                     'title' => htmlentities(
-                        $person->getFieldSingle('sn').', '.
-                        $person->getFieldSingle('givenname')
+                        $person->getFieldSingle($ldapWrapper->getLDAPField('sn')).', '.
+                        $person->getFieldSingle($ldapWrapper->getLDAPField('givenname'))
                     ),
                   );
                 }//error_log(print_r($results, true));
@@ -154,7 +162,7 @@ class PeopleModule extends Module {
         
       case 'index':
         // Redirect for old bookmarks
-        if (isset($this->args['username'])) {
+        if (isset($this->args['uid'])) {
           $this->redirectTo('detail');
     
         } else if (isset($this->args['filter'])) {
