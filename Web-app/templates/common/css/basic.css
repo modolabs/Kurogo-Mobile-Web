@@ -6,20 +6,7 @@ html, body {
 }
 
 body {
-	background: #ded8c9 url(../images/background-tile.jpg);
-	font-family: Helvetica, Arial, sans-serif;
-	font-size: 14px;
-	line-height: 1.28em;
-	color: #333;
 	padding: 0.2em;
-}
-
-a {
-	color: #a00;
-}
-
-a:visited {
-	color: #a00;
 }
 
 a img {
@@ -28,47 +15,27 @@ a img {
 
 h1, h2, h3 {
 	line-height: 1.2em;
-	color: #000;
+	padding: 0;
 }
 
 h1 {
-	font-family: Georgia, serif;
-	font-size: 142%; 
-	font-weight: normal;
 	margin: 10px 0;
-	padding: 0;
 }
 
 h2 { 
-	font-family: Georgia, serif;
-	font-size: 142%; 
-	font-weight: normal;
 	margin: 0 0 6px 0;
-	padding: 0;
 }
 
 h3 {
-	font-size: 100%; 
-	font-weight: bold;
 	margin: 0 0 5px 0;
-	padding: 0;
-	color: #554c41;
 }
 
 h4 {
-	font-size: 100%; 
-	font-weight: bold;
 	margin: 0;
-	padding: 0;
 }
 
 p {
 	margin: 0 0 10px 0;
-}
-
-th, td, li, option, select, input {
-	font-family: Helvetica, Arial, sans-serif;
-	font-size: 100%;
 }
 
 ul {
@@ -109,23 +76,13 @@ ul li {
 
 #header a {
 	text-decoration: none;
-	color: #444;
 }
 
 #footer {
 	height: 2em;
 	margin: 1.5em 0;
-	font-size: 79%;
-	line-height: 1.33em;
-	color: #554c41;
 }
-#footer a {
-    text-decoration: none;
-	color: #554c41;
-}
-#footer a:hover {
-	color: #a00;
-}
+
 
 
 /* Forms */
@@ -142,8 +99,6 @@ fieldset {
 }
 
 .combobutton {
-	background-color: #a00;
-	color: #fff;
 	font-size: x-small;
 }
 
@@ -160,13 +115,12 @@ fieldset {
 	margin-left: .3em
 }
 
-/* Navigation and results listings */
+/* Navigation and results lists */
 /* Many smartphones don't correctly interpret "display:block" for inline elements like <a> */
 
 .nav {
 	margin: 1em 0;
 	padding: .5em;
-	background-color: #fff;
 	font-size: 100%;
 	line-height: 1.75em;
 }
@@ -174,32 +128,19 @@ fieldset {
 .secondary {
 	margin: 1em 0;
 	padding: .4em;
-	background-color: #f9f6ef;
-	font-size: 93%;
 	line-height: 1.6em;
 }
 
 .paging {
 	margin: 0;
 	padding: .4em;
-	font-size: 93%;
 	line-height: 1.6em;
 }
 
 .bottomnav {
 	margin: 1.5em 0 0.75em 0;
 	padding: .4em;
-	background-color: #4d4a47;	
-	font-size: 93%;
 	line-height: 1.5em;
-}
-
-.bottomnav a {
-	color: #fff!important; 
-}
-
-.bottomnav a:visited {
-	color: #fff!important; 
 }
 
 .results {
@@ -208,16 +149,11 @@ fieldset {
 	margin-bottom: 1em;
 }
 
-.announcements {
-	font-size: 100%;
-	color: #606363;
-	padding: 5px;
-}
+
 
 /* Specific content formatting */
 
 .focal {
-	background-color: #fff;
 	padding: .5em;
 }
 
@@ -240,20 +176,17 @@ h3.nonfocal {
 	margin-top: 0.5em;
 	font-size: 79%;
 	line-height: 1.36em;
-	color: #666;
 }
 
 .smallprint {
 	font-size: 86%;
 	font-weight: normal;
 	line-height: 1.36em;
-	color: #666;
 }
 
 .fineprint {
 	font-size: 71%;
 	line-height: 1.1em;
-	color: #666;
 }
 
 .clear {
@@ -262,7 +195,6 @@ h3.nonfocal {
 
 .label {
 	width: 3.5em;
-	color: #554c41;
 	padding-right: 3px;
 }
 
@@ -374,20 +306,15 @@ span.icon {
 	background-image: url(../images/shuttle.gif);
 }
 
+
 /* Tabs */
 
 .tabs {
-	color: #999;
 	margin: 1.5em 0 1em 0;
 }
 
 .tabs.top {
 	margin-top: 0.25em;
-}
-
-.tabs .active {
-	font-weight: bold;
-	color: #000;
 }
 
 .tabs a {
@@ -397,7 +324,6 @@ span.icon {
 
 .iconlegend {
 	font-size: 80%;
-	color: #555;
 	margin-bottom: 1.5em;
 }
 

@@ -1,23 +1,22 @@
+/* Overall font and colors */
+
 body {
-	background-color: #ded8c9;
-	background: url(/common/images/background-tile.jpg) top right repeat-x, url(/common/images/background-tile-2.jpg) bottom left repeat;
-	font: 17px/1.33em 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	color: #404040;
+	background: #ded8c9 url(/common/images/background-tile.jpg) top right repeat-x, url(/common/images/background-tile-2.jpg) bottom left repeat;
 }
 
-/* Border color for many container elements and list items */
+body, th, td, li, option, select, input {
+	/* Primary font */
+	font: 17px/1.33em 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	color: #222;
+}
+
 .focal, .nav, .results, .secondary, #tabbodies, .nav li, .results li, .secondary li, ul.focal li  {
+	/* Border color for many container elements and list items */
 	border-color: #bbb;
 }
 
-/* Color for several types of secondary text that typically appear on the colored background */
-.legend h2, .legend h3, #footer, .copyright, #footerlinks a {
-	color: #554c41;
-}
-
-/* Text color for several types of secondary text that appears on white backgrounds, e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
-dt, .label, .smallprint {
-	color: #554C41;
+a, a:visited {
+	color: #933;
 }
 
 h1 {
@@ -43,30 +42,33 @@ h3 {
 h4 {
 	font-size: 1em;
 	font-weight: normal;
-	color: #554C41;
+	color: #554c41;
 }
 
-a, a:visited {
-	color: #933;
+dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3 {
+	/* Accent text color for several types of secondary text that appears on white backgrounds, e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
+	/* Often the same as the secondary text color defined in the next rule */
+	color: #554c41;
 }
 
-#footer {
-	font-size: 12px;
-}
-
-#footer .copyright {
-	text-decoration: none;
-}
-
-#footerlinks {
-	color: #fff
+.foundat, .address, .smallprint, #footer, .copyright, #footerlinks a {
+	/* Secondary text color for several types of secondary text that typically appear on the colored background */
+	color: #554c41;
 }
 
 
 
-/* Text input fields, e.g., search fields */
-.forminput {
-	border-color: #666;
+/* Major content blocks */
+
+.focal {   
+	/* Focal content div */
+	color: #222;
+	background-color: #fff;
+}
+
+.shaded {
+	/* Shaded subclass of focal content - e.g., background for tabbed focal div */
+	background-color: #f9f6ef;
 }
 
 
@@ -94,6 +96,27 @@ a, a:visited {
 }
 
 
+/* Footer */
+
+#footer {
+	font-size: 12px;
+}
+
+#footer .copyright {
+	text-decoration: none;
+}
+
+#footerlinks {
+	color: #fff
+}
+
+
+/* Text input fields, e.g., search fields */
+.forminput {
+	border-color: #666; 	/* Should match the border color of image /common/images/mobile/search_button.png */
+}
+
+
 
 /* Navigation and results lists */
 
@@ -112,22 +135,11 @@ a, a:visited {
 	color: #333;
 }
 
-
-
-.tabbody .nested {
-	/* Tab nested inside a focal div */
-	background-color: #f9f6ef;
-}
-
-
-
 .nav .badge {
 	/* Badge shown within a navigation list, e.g., unread count for messages */
 	color: #fff;
 	background-color: #c00;
 }
-
-
 
 .announcements {	   
 	background-color: #d8e3f2;
@@ -140,6 +152,8 @@ a, a:visited {
 }
 
 
+/* Next/previous navigation - e.g., going from day to day in events calendar */
+
 .sidenav {
 	/* Divider between next/previous links */
 	color: #a0a09f;
@@ -150,23 +164,6 @@ a, a:visited {
 	color: #1a1611;
 }
 
-
-.focal {   
-	/* Focal content div */
-	line-height: 1.33em;
-	color: #222;
-	background-color: #fff;
-}
-
-.shaded {
-	/* Shaded content div - e.g., background for tabbed focal div */
-	background-color: #f9f6ef;
-}
-
-.legend, .legend.nonfocal {
-	/* Legend text to explain other elements onscreen, e.g., hint text for search fields */
-	color: #404040;
-}
 
 .smallprint {
 	font-size: 14px;
@@ -183,10 +180,7 @@ a, a:visited {
 	color: #933;
 }
 
-.foundat, .address {
-	/* In Map module detail screen, "[query] was found at..." and street address */
-	color: #404040;
-}
+
 
 
 /* Tabs */
@@ -202,21 +196,28 @@ a, a:visited {
 }
 
 #tabs li a {
+	/* Text label of unselected tab */
 	color: #404040;
 }
 
 #tabs li.active a {
+	/* Text label of currently selected tab */
 	color: #000;
 }
 
 #tabs li.greyedout {
-	/* Disabled tab */
+	/* Text label of disabled tab */
   	color: #666;
 }
 
 #tabbodies {
 	border-color: #bbb;
 	background-color: #fff;
+}
+
+.tabbody .nested {
+	/* Navigation list inside a tab body needs a bit of background color to contrast from tab body background */
+	background-color: #f9f6ef;
 }
 
 
