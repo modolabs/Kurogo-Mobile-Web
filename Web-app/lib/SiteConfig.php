@@ -28,7 +28,7 @@ class SiteConfig {
       return $this->configVars[$key];
     }
     
-    error_log(__FUNCTION__."(): configuration variable'$key' not set");
+    error_log(__FUNCTION__."(): configuration variable '$key' not set");
     
     return null;
   }
