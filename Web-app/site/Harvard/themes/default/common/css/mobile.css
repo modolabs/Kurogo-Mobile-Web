@@ -1,7 +1,8 @@
 /* Overall font and colors */
 
 body {
-	background: #ded8c9 url(/common/images/background-tile.jpg) top right repeat-x, url(/common/images/background-tile-2.jpg) bottom left repeat;
+	background-color: #ded8c9;
+	background: url(/common/images/background-tile.jpg) top right repeat-x, url(/common/images/background-tile-2.jpg) bottom left repeat;
 }
 
 body, th, td, li, option, select, input {
@@ -45,15 +46,20 @@ h4 {
 	color: #554c41;
 }
 
-dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3 {
+dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fineprint, .dek {
 	/* Accent text color for several types of secondary text that appears on white backgrounds, e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
 	/* Often the same as the secondary text color defined in the next rule */
 	color: #554c41;
 }
 
-.foundat, .address, .smallprint, #footer, .copyright, #footerlinks a {
+.foundat, .address, #footer, .copyright, #footerlinks a {
 	/* Secondary text color for several types of secondary text that typically appear on the colored background */
 	color: #554c41;
+}
+
+.springboard a {
+	/* Text color for icon labels in springboard-type screens (grids of icon launchers) */
+	color: #404346;
 }
 
 
@@ -164,21 +170,6 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3 {
 	color: #1a1611;
 }
 
-
-.smallprint {
-	font-size: 14px;
-	line-height: 17px;
-}
-
-.fineprint {
-	font-size: 12px;
-	line-height: 14px;
-	color: #666;
-}
-
-.more {
-	color: #933;
-}
 
 
 

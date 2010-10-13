@@ -607,8 +607,16 @@ ul.focal li:first-child {
 	padding-left: 31px;
 }
 
-.smallprint, .fineprint {
+.smallprint {
 	font-weight: normal;
+	font-size: 14px;
+	line-height: 17px;
+}
+
+.fineprint {
+	font-weight: normal;
+	font-size: 12px;
+	line-height: 14px;
 }
 
 .label {	
@@ -980,6 +988,36 @@ h2.icon {
 	white-space: nowrap;
 	margin-top: 3px;
 }
+
+#springboard {
+	margin: 0 auto;
+	padding: 0;
+	margin-left: 1px;
+	clear: both;
+}
+#springboard div {
+	position: relative;
+	width: 79px;
+	height: 85px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	float: left;
+	font-size: 11px;
+	line-height: 12px;
+	text-align: center;		
+	vertical-align: top;
+}
+#springboard a {
+	display: block;
+	text-decoration: none;
+	-webkit-border-radius: 5px;
+	padding: 8px 6px;
+}
+#springboard a img {
+	margin-bottom: 1px
+}
+
 
 
 /* "Loading content" (for AJAX data pulls) */
