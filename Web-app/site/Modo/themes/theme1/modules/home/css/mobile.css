@@ -1,6 +1,7 @@
 body {
-	background-color: #ded8c9;
-	background: url(../../common/images/background-tile.jpg) top right repeat-x, url(../../common/images/background-tile-2.jpg) bottom left repeat;
+	background-color: #aaa;
+	background-image: url(../../common/images/background-glow.png);
+/*url(../../common/images/background-tile-2.jpg) bottom left repeat;*/
 }
 #homegrid {
 	margin: 0 auto;
@@ -136,3 +137,4 @@ form {
 	width: 44px;
 	height: 44px;
 }
+
