@@ -11,13 +11,14 @@ class Validator
         return preg_match($pattern, $value);
     }
 
-    public static function isValidPhone($value)
+    /* this is currently only valid for US phone numbers */
+    public static function isValidPhone($value, &$bits=null)
     {
         if (!is_scalar($value)) {
             return false;
         }
         $pattern = '/^\(?(\d\d\d)?[-).\s]*(\d\d\d)[-.\s]?(\d\d\d\d)$/';
-        return preg_match($pattern, $value);
+        return preg_match($pattern, $value, $bits);
     }
 
     public static function isValidURL($value)
