@@ -9,7 +9,7 @@ html, body {
 
 body {
 	background-color: #ebe7dd; 
-	background-image: url('../../common/images/background-tile.png');
+	background-image: url('/common/images/background-tile.png');
 	font-family: Helvetica, Arial, sans-serif;
 	line-height: 1.33em;
 	color: #333;
@@ -30,25 +30,12 @@ a img {
 	clear: both;
 	min-height: 22px;
 	margin: 20px 10px 14px 10px;
-	font-size: 78%;
-	line-height: 1.1em;
-	font-weight: normal;
-	color: #554c41;
-}
-#footer a {
-    text-decoration: none;
-	color: #554c41;
-}
-#footer a:hover {
-	color: #a00;
 }
 
 h1 {
 	margin: 0;
 	padding: 17px 0 11px 0;
 	text-align: center;
-	color: #000;
-	font-size: 171%;
 }
 #homegrid {
 	margin: 0 auto;
@@ -57,22 +44,16 @@ h1 {
 }
 #homegrid div {
 	position: relative;
-	width: 82px;
-	height: 114px;
 	margin: 1px 4px;
 	padding: 0;
 	border: 0;
 	float: left;
-	font-size: 16px;
 	line-height: 1.1em;
 	text-align: center;		
 	vertical-align: top;
 }
 #homegrid a {	
 	display: block;
-	width: 76px;
-	height: 106px;
-	color: #333;
 	text-decoration: none;
 	border: none;
 	padding: 4px 6px;
@@ -120,7 +101,7 @@ h1 {
 	right: 0;
 	width: 80px;
 	height: 80px;
-	background-image: url(../images/newbig.jpg);
+	background-image: url(/modules/home/images/newbig.jpg);
 	background-repeat: no-repeat;
 	color: #fff;
 	font-size: 13px;
