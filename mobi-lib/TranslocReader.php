@@ -415,15 +415,23 @@ class TranslocReader {
   function getImageURLForStop($routeID, $stop, $width, $height) {
       $route = $this->routes[$routeID];
 
-      $mapParams = array(
-          "center" => $stop['ll'][0] . ',' . $stop['ll'][1],
-          "markers" => "color:0x" . $route['color'] . "|" . $stop['ll'][0] . ',' . $stop['ll'][1],
-          "sensor" => "false",
+       $mapParams = array(
+          "center" => array('lat' => $stop['ll'][0], 'lon' => $stop['ll'][1]),
+          "width" => $width,
+          "height" => $height,
           "zoom" => "16",
-          "size" => $width . 'x' . $height,
-      );
+       );
+       
+      $iconLatLon = MapPlotUtility::computeLatLon($mapParams, 0.92, 0.80);
+      $translocIconQuery = http_build_query(array(
+          'markers' => 'icon:' . self::getTranslocIconURL() . '|shadow:false|' .
+                    $iconLatLon['lat'] . ',' . $iconLatLon['lon'] ));
 
-      return STATIC_MAPS_URL . http_build_query($mapParams, 0, '&amp;');
+      $stopMarkerQuery = http_build_query(array(
+         "markers" => "color:0x" . $route['color'] . "|" . $stop['ll'][0] . ',' . $stop['ll'][1]));
+
+      return STATIC_MAPS_URL . http_build_query(MapPlotUtility::URLParams($mapParams), 0, '&amp;') .
+              '&amp;' . $translocIconQuery . '&amp;' . $stopMarkerQuery . '&amp;sensor=false';
   }
 
   function getAnnouncements() {
