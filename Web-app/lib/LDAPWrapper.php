@@ -46,14 +46,15 @@ class LDAPPerson {
   
   public function __construct($ldapEntry) {
     $this->dn = $ldapEntry['dn'];
-
     $this->attributes = array();
+
     for ($i=0; $i<$ldapEntry['count']; $i++) {
         $attribute = $ldapEntry[$i];
         $count = $ldapEntry[$attribute]['count'];
+        $this->attributes[$attribute] = array();
         for ($j=0; $j<$count; $j++) {
-            if (!in_array($ldapEntry[$ldapEntry[$i]][$j], $this->attributes[$ldapEntry[$i]])) {
-                $this->attributes[$ldapEntry[$i]][] = $ldapEntry[$ldapEntry[$i]][$j];
+            if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attribute])) {
+                $this->attributes[$attribute][] = $ldapEntry[$attribute][$j];
             }
         }
     }
