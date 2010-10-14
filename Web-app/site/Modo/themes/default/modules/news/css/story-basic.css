@@ -1,0 +1,13 @@
+.news {
+ 	/* Background color for news listing */
+   background-color: #fff;
+}
+
+.byline {
+    font-size: 84%;
+}
+
+.dek {
+	font: 120%/1.25em Georgia, serif;
+    color: #554c41;
+}

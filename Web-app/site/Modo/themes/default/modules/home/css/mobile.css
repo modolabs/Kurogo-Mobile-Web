@@ -1,0 +1,31 @@
+#homegrid div {
+	/* Overall size of one cell in the home grid */
+	width: 103px;
+	height: 100px;
+	font-size: 14px;
+	line-height: 15px;
+}
+
+#homegrid a {	
+	color: #404355;
+}
+
+#homegrid a img {
+	/* Size of actual module icon in home grid */
+	width: 62px;
+	height: 62px;
+}
+
+#homegrid div.utility {
+	/* Overall size of one cell in the home grid's bottom row of fixed utility-type modules */
+	width: 76px;
+	height: 90px;
+	font-size: 12px;
+	line-height: 13px;
+}
+
+#homegrid div.utility a img {
+	/* Size of actual module icon in the home grid's bottom row of fixed utility-type modules */
+	width: 40px;
+	height: 40px;
+}
