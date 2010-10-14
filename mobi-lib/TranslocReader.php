@@ -398,7 +398,7 @@ class TranslocReader {
     }
 
     $bounds = MapPlotUtility::getBounds($this->getPathForRoute($routeID));
-    $mapParams = MapPlotUtility::ComputeMapParameters($size, $size, $bounds, 0.1);
+    $mapParams = MapPlotUtility::ComputeMapParameters($size, $size, $bounds, 0.0);
     $args = array_merge($args, MapPlotUtility::URLParams($mapParams));
     $iconLatLon = MapPlotUtility::computeLatLon($mapParams, 0.90, 0.88);
 
