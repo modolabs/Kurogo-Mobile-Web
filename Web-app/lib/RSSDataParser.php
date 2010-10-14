@@ -5,10 +5,17 @@ require_once(LIB_DIR . '/RSS.php');
 class RSSDataParser extends DataParser
 {
     protected $root;
+    protected $stripTags = true;
     protected $elementStack = array();
     protected $channelClass='RSSChannel';
     protected $itemClass='RSSItem';
     protected $imageClass='RSSImage';
+    protected $data='';
+
+    public function setStripTags($bool)
+    {
+        $this->stripTags = $bool ? true : false;
+    }
     
     public function setObjectClass($class, $className)
     {
@@ -30,6 +37,7 @@ class RSSDataParser extends DataParser
 
     protected function startElement($xml_parser, $name, $attribs)
     {
+        $this->data = '';
         switch ($name)
         {
             case 'RSS':
@@ -81,6 +89,12 @@ class RSSDataParser extends DataParser
     protected function endElement($xml_parser, $name)
     {
         if ($element = array_pop($this->elementStack)) {
+
+            if ($this->stripTags) {
+                $this->data = strip_tags($this->data);
+            }               
+            $element->setValue($this->data);
+
             if ($parent = end($this->elementStack)) {
                 $parent->addElement($element);
             } else {
@@ -91,12 +105,7 @@ class RSSDataParser extends DataParser
 
     protected function characterData($xml_parser, $data)
     {
-        $data = trim($data);
-        if ($data) {
-            if ($element = end($this->elementStack)) {
-                $element->appendValue($data);
-            }
-        }
+        $this->data .= trim($data);
     }
     
   public function parseData($contents) {
