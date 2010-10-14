@@ -179,6 +179,11 @@ class NewsModule extends Module {
             }
           }
 
+               $extraArgs = array(
+                'section'=>$this->feedIndex
+            );
+
+          $this->assign('extraArgs',     $extraArgs);
           $this->assign('searchTerms', $searchTerms);
           $this->assign('stories',     $stories);
           $this->assign('previousUrl', $previousUrl);
@@ -229,6 +234,10 @@ class NewsModule extends Module {
           );
         }
         
+        $hiddenArgs = array(
+            'section'=>$this->feedIndex
+        );
+        $this->assign('hiddenArgs',     $hiddenArgs);
         $this->assign('sections',       $sections);
         $this->assign('currentSection', $sections[$this->feedIndex]);
         $this->assign('stories',        $stories);
