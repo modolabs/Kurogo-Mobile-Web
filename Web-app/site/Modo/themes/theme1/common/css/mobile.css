@@ -326,7 +326,7 @@ a.formbutton div {
 	background-repeat: no-repeat;
 	background-position: top right;
 	text-decoration: none;
-	color: #fff;
+	color: #003366;
 	padding-right: 17px;
 	overflow: hidden;
 	text-overflow: ellipsis
@@ -717,8 +717,7 @@ ul.focal li:first-child {
 }
 
 .shaded {
-	background-color: #f9f6ef;
-	border: 1px solid #d9d6cf;
+	background-color: #fff;
 }
 
 .legend {
