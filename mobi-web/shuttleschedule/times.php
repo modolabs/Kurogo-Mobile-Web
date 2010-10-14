@@ -16,7 +16,7 @@ if (!in_array($routeID, $reader->getRoutes())) {
 
   $not_found_text = '<p>The route ' . $routeName . ' ' . $routeError . '.  Please update your bookmarks accordingly.  For more information see the <a href="help.php">help page</a>.</p>';
 
-  $page->prepare_error_page('Shuttle Schedule', 'shuttle', $not_found_text);
+  $page->prepare_error_page('ShuttleTracker', 'shuttle', $not_found_text);
 
 } else {
 
