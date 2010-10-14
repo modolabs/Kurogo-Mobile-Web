@@ -1,6 +1,6 @@
 <?php
 
-$header = "Shuttle Schedule";
+$header = "ShuttleTracker";
 $module = "shuttleschedule";
 
 $help = array(
