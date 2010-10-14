@@ -370,7 +370,7 @@ class TranslocReader {
     }
     //print(json_encode($this->stops));
     //print(json_encode($this->routes[$route['id']]['stops']));
-    $opacity = 'FF';
+    $opacity = 'C0';
     $args['path'] = 'weight:4|color:0x'.$route['color'].$opacity.'|enc:'.
           encodePolylineFromArray($path);
     
