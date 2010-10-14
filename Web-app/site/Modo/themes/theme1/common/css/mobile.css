@@ -7,7 +7,7 @@ html, body {
 }
 
 body {
-	background-color: #d8d7d9;
+	background-color: #dcdddf;
 	/*background: url(../images/background-tile.jpg) top right repeat-x, url(../images/background-tile-2.jpg) bottom left repeat;*/
 	font: 17px/1.33em 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	color: #404040;
@@ -359,7 +359,7 @@ a.module img {
 
 .homepage .moduleicon {
     display: inline-block;
-    padding: 8px 1px 8px 2px;
+    padding: 8px 2px 8px 3px;
 }
 
 .crumb1 {
@@ -560,7 +560,7 @@ ul.focal li:first-child {
 .secondary {
 	margin: 10px; 
 	padding: 0;	   
-	background-color: #f9f6ef;
+	background-color: #fff;
 	border: 1px solid #ccc;
 	-webkit-border-radius: 9px;	
 	border-radius: 9px;	
