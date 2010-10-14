@@ -9,6 +9,10 @@ abstract class Module {
   protected $page = 'index';
   protected $args = array();
   
+  protected $pagetype = 'unknown';
+  protected $platform = 'unknown';
+  protected $supportsCerts = false;
+  
   private $pageConfig = null;
   
   private $pageTitle           = 'No Title';
@@ -152,8 +156,7 @@ abstract class Module {
   // Minify URLs
   //
   private function getMinifyUrls() {
-    $minKey = $this->id.'-'.$this->page.'-'.$GLOBALS['deviceClassifier']->getPagetype().'-'.
-      $GLOBALS['deviceClassifier']->getPlatform().'-'.md5(ROOT_DIR);
+    $minKey = "{$this->id}-{$this->page}-{$this->pagetype}-{$this->platform}-".md5(ROOT_DIR);
     $minDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ? '&debug=1' : '';
     
     return array(
@@ -228,7 +231,11 @@ abstract class Module {
     
     $this->page = $page;
     $this->args = $args;
-
+    
+    $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
+    $this->platform      = $GLOBALS['deviceClassifier']->getPlatform();
+    $this->supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
+    
     // Pull in fontsize
     if (isset($args['font'])) {
       $this->fontsize = $args['font'];
@@ -519,6 +526,16 @@ abstract class Module {
     if (isset($this->tabbedView)) {
       $this->assign('tabbedView', $this->tabbedView);
     }
+    
+    // Access Key Start
+    $accessKeyStart = count($this->breadcrumbs);
+    if ($this->id != 'home') {
+      $accessKeyStart++;  // Home link
+      if ($this->page != 'index') {
+        $accessKeyStart++;  // Module home link
+      }
+    }
+    $this->assign('accessKeyStart', $accessKeyStart);
 
     // Load template for page
     $this->templateEngine->displayForDevice($template);    

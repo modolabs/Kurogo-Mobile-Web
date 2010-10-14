@@ -48,8 +48,29 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
       }        
     }
   }
-  header('Status: 404 Not Found');
-  die;
+
+} else if (preg_match(';^.*(api/.*)$;', $path, $matches)) {
+  //
+  // API
+  //
+  
+  $path = realpath_exists(WEBROOT_DIR."/$matches[1]");  
+  if ($path) {
+    require_once($path);
+    exit;
+  }
+  
+} else if (preg_match(';^.*media/(.*)$;', $path, $matches)) {
+  //
+  // Media
+  //
+
+  $path = realpath_exists(SITE_DIR."/media/$matches[1]");
+  if ($path) {
+    header('Content-type: '.mime_content_type($path));
+    echo file_get_contents($path);
+    exit;
+  }
   
 } else {
   //
@@ -91,4 +112,11 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
 
   $module = Module::factory($id, $page, $args);
   $module->displayPage();
+  exit;
 }
+
+//
+// Nothing Found
+//
+header('Status: 404 Not Found');
+die;

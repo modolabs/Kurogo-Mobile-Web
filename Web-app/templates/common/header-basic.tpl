@@ -1,7 +1,7 @@
 {extends file="findExtends:common/header.tpl"}
 
-{block name="javascript"}
-{/block}
+{block name="javascript"}{/block}
+{block name="onLoad"}{/block}
 
 {block name="additionalHeadTags"}
     <style type="text/css" media="screen">

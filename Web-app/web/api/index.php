@@ -14,11 +14,11 @@ switch ($module) {
    break;
 
  case 'courses':
-    require('coursesApi.php');
+    require('courses.php');
     break;
 
  case 'calendar':
-   require('HarvardCalendar.php');
+   require('calendar.php');
    break;
 
  case 'map':
@@ -42,7 +42,3 @@ switch ($module) {
    echo json_encode($data);
    break;
 }
-
-
-
-?>

@@ -2,7 +2,7 @@
 
 {block name="resultsStart"} 
   {if $accessKey|default:false}
-    {html_access_key_reset index=count($breadcrumbs)+1}
+    {html_access_key_reset index=$accessKeyStart}
   {/if}
   <div class="focal">
 {/block}

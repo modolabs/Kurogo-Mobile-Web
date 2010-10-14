@@ -61,5 +61,3 @@ switch ($_REQUEST['device_type']) {
  }
 
 echo json_encode($data);
-
-?>

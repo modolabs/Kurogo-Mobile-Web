@@ -57,7 +57,7 @@ class MapModule extends Module {
     $wms = new WMSServer();
     $bbox = isset($this->args['bbox']) ? $this->bboxStr2Arr($this->args['bbox']) : NULL;
   
-    switch ($GLOBALS['deviceClassifier']->getPagetype()) {
+    switch ($this->pagetype) {
      case 'mobile':
        $imageWidth = 290; $imageHeight = 190;
        break;

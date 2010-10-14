@@ -8,11 +8,6 @@ html, body {
 }
 
 body {
-	background-color: #ebe7dd; 
-	background-image: url('/common/images/background-tile.png');
-	font-family: Helvetica, Arial, sans-serif;
-	line-height: 1.33em;
-	color: #333;
 	padding: 0em;
 }
 
@@ -57,9 +52,6 @@ h1 {
 	text-decoration: none;
 	border: none;
 	padding: 4px 6px;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
 }
 #homegrid a:hover {
 	border: 2px solid #c00;

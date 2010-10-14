@@ -12,6 +12,3 @@ if (isset($_REQUEST['subscribe'])) {
 } elseif (isset($_REQUEST['unsubscribe'])) {
   StellarData::push_unsubscribe($subject, $uid);
 }
-
-
-?>

@@ -27,20 +27,38 @@
   {/if}
 {/capture}
 
+{capture name="tipHTML" assign="tipHTML"}
+  {if isset($tip)}
+    <p class="legend nonfocal">
+      <strong>Search tip:</strong> {$tip}
+    </p>
+  {/if}
+{/capture}
+
 {block name="form"}
   {if !$insideForm}
-  <div class="nonfocal">
-    <form method="get" action="{$searchPage|default:'search'}.php">
+    <div class="nonfocal">
+      <form method="get" action="{$searchPage|default:'search'}.php">
   {/if}
-      <fieldset class="inputcombo{if $emphasized|default:$isModuleHome} emphasized{/if}">
-        <input class="forminput" type="text" id="{$inputName|default:'filter'}" name="{$inputName|default:'filter'}" placeholder="{$placeholder|default:''}" value="{$searchTerms|escape}" />
-        <input class="combobutton" id="sch_btn" src="/common/images/search-button.png" type="image" />
-        {$hiddenArgHTML}
-      </fieldset>	
-      {$inlineErrorHTML}
+  
+        <fieldset class="inputcombo{if $emphasized|default:$isModuleHome} emphasized{/if}">
+          <input class="forminput" type="text" id="{$inputName|default:'filter'}" name="{$inputName|default:'filter'}" placeholder="{$placeholder|default:''}" value="{$searchTerms|escape}" />
+          <input class="combobutton" id="sch_btn" src="/common/images/search-button.png" type="image" />
+          {$hiddenArgHTML}
+        </fieldset>
+        {if isset($additionalInputs)}
+          <fieldset>
+            {$additionalInputs}
+          </fieldset>
+        {/if}
+        {$tipHTML}
+        {$inlineErrorHTML}
+      
   {if !$insideForm}
-    </form>
-  </div>
+      </form>
+    </div>
   {/if}
 {/block}
+  
+
 {/strip}

@@ -59,5 +59,3 @@ case 'search':
 }
 
 echo json_encode($data);
-
-?>

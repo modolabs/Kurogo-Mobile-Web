@@ -3,7 +3,7 @@
 {block name="headingClass"}{/block}
 
 {block name="linksStart"}
-  {html_access_key_reset index=count($breadcrumbs)+1}
+  {html_access_key_reset index=$accessKeyStart}
   <p class="nav">
 {/block}
 

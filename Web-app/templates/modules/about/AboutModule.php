@@ -7,7 +7,7 @@ class AboutModule extends Module {
   protected $id = 'about';
   
   private function getPhraseForDevice() {
-    switch($GLOBALS['deviceClassifier']->getPlatform()) {
+    switch($this->platform) {
       case 'iphone':
         return 'iPhone';
         
@@ -15,7 +15,7 @@ class AboutModule extends Module {
         return 'Android phones';
         
       default:
-        switch ($GLOBALS['deviceClassifier']->getPagetype()) {
+        switch ($this->pagetype) {
           case 'mobile':
             return 'touchscreen phones';
           

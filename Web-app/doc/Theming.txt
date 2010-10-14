@@ -288,7 +288,7 @@ For example here is the About module class:
     protected $id = 'about';
     
     private function getPhraseForDevice() {
-      switch($GLOBALS['deviceClassifier']->getPlatform()) {
+      switch($this->platform) {
         case 'iphone':
           return 'iPhone';
           
@@ -296,7 +296,7 @@ For example here is the About module class:
           return 'Android phones';
           
         default:
-          switch ($GLOBALS['deviceClassifier']->getPagetype()) {
+          switch ($this->pagetype) {
             case 'mobile':
               return 'touchscreen phones';
             

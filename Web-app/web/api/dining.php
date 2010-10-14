@@ -55,5 +55,3 @@ switch ($_REQEUST['command']) {
 
         echo json_encode($diningData);
 }*/
- 
-?>

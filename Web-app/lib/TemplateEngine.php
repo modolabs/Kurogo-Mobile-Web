@@ -128,7 +128,7 @@ class TemplateEngine extends Smarty {
   
   static function smartyBlockAccessKeyLink($params, $content, &$smarty, &$repeat) {
     if (empty($params['href'])) {
-        $smarty->trigger_error("assign: missing 'href' parameter");
+      $smarty->trigger_error("assign: missing 'href' parameter");
     }
     
     $html = '';
@@ -142,7 +142,7 @@ class TemplateEngine extends Smarty {
       if (isset($params['id'])) {
         $html .= " id=\"{$params['id']}\"";
       }
-      if (self::$accessKey < 10) {
+      if ($GLOBALS['deviceClassifier']->getPlatform() != 'bbplus' && self::$accessKey < 10) {
         $html .= ' accesskey="'.self::$accessKey.'">'.self::$accessKey.': ';
         self::$accessKey++;
       } else {

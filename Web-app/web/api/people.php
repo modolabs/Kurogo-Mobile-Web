@@ -75,4 +75,3 @@ switch ($_REQUEST['command']) {
 
 header('Content-Length: ' . strlen($content));
 echo $content;
-?>
