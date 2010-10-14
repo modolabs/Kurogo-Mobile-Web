@@ -3,6 +3,7 @@
 class RSSDataController extends DataController
 {
     protected $channel;
+    protected $contentFilter;
 
     protected function cacheFolder()
     {
@@ -17,6 +18,19 @@ class RSSDataController extends DataController
     protected function cacheFileSuffix()
     {
         return '.rss';
+    }
+
+    public function addFilter($var, $value)
+    {
+        switch ($var)
+        {
+            case 'search': 
+            //sub classes should override this if there is a more direct way to search. Default implementation is to iterate through each item
+                $this->contentFilter = $value;
+                break;
+            default:
+                return parent::addFilter($var, $value);
+        }
     }
     
     public function getItem($id)
@@ -50,12 +64,23 @@ class RSSDataController extends DataController
             $this->channel = $this->parseData($data);
         }
         
-        if ($this->channel) {
-            $items = $this->channel->getItems();
-            $totalItems = count($items);
-        } else {
+        if (!$this->channel) {
             throw new Exception("Error loading rss data");
         }
+
+        $items = $this->channel->getItems();
+        
+        if ($this->contentFilter) {
+            $_items = $items;
+            $items = array();
+            foreach ($_items as $id=>$item) {
+                if ( (stripos($item->getTitle(), $this->contentFilter)!==FALSE) || (stripos($item->getDescription(), $this->contentFilter)!==FALSE)) {
+                    $items[$id] = $item;
+                }
+            }
+        }
+        
+        $totalItems = count($items);
 
         return $this->limitItems($items, $start, $limit);
     }
