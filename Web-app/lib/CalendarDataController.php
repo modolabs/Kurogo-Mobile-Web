@@ -5,9 +5,9 @@ class CalendarDataController extends DataController
     protected $startDate;
     protected $endDate;
     protected $calendar;
-    protected $requiresDateFilter=false;
+    protected $requiresDateFilter=true;
     
-    public function requiresDateFilter($bool)
+    public function setRequiresDateFilter($bool)
     {
         $this->requiresDateFilter = $bool ? true : false;
     }
@@ -78,7 +78,8 @@ class CalendarDataController extends DataController
 
     public function getItem($id)
     {
-        $items = $this->getItems();
+        $this->setRequiresDateFilter(false);
+        $items = $this->items();
         if (array_key_exists($id, $items)) {
             return $items[$id];
         }

@@ -34,15 +34,16 @@ class TrumbaCalendarDataController extends CalendarDataController
         $diff = $this->endTimestamp() - $this->startTimestamp();
         if ($diff<86400) {
             if (count($this->trumbaFilters)>0) {
-                $this->requiresDateFilter(false);
+                $this->setRequiresDateFilter(false);
                 $this->addFilter('startdate', $this->startDate->format('Ymd'));
                 $this->addFilter('days', 1);
             } else {
-                $this->requiresDateFilter(true);
+                $this->setRequiresDateFilter(true);
                 $this->addFilter('startdate', $this->startDate->format('Ym').'01');
                 $this->addFilter('months', 1);
            }
         } elseif ($diff % 86400 == 0) {
+            $this->setRequiresDateFilter(false);
             $this->addFilter('startdate', $this->startDate->format('Ymd'));
             $this->addFilter('days', $diff / 86400);
         } else {
