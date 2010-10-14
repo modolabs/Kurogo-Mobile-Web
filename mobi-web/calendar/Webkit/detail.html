@@ -24,7 +24,7 @@ if ($back == 'Search') {
   $page->breadcrumb_links(categorysURL(),
     'category.php?name='.urlencode($catName).'&id='.urlencode($catID).
       (isset($_REQUEST['time']) ? '&time='.stripslashes($_REQUEST['time']) : ''));
-  $page->breadcrumb_classes('', 'crumb1');
+  $page->breadcrumb_classes('crumb2a', 'crumb2b');
   
 } else {
   $page->breadcrumbs('Browse', "Detail");
