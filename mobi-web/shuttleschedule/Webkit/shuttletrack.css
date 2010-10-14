@@ -18,8 +18,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	height: 17px;
-        line-height: 17px;
+        font-size: 17px;
 }
 
 .current td {
