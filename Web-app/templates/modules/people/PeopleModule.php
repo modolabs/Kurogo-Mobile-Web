@@ -1,7 +1,6 @@
 <?php
 
 require_once realpath(LIB_DIR.'/Module.php');
-require_once realpath(LIB_DIR.'/LDAPWrapper.php');
 
 class PeopleModule extends Module {
   protected $id = 'people';
@@ -110,6 +109,9 @@ class PeopleModule extends Module {
   }
 
   protected function initializeForPage() {
+    $peopleController = $GLOBALS['siteConfig']->getVar('PEOPLE_CONTROLLER_CLASS');
+    $personClass      = $GLOBALS['siteConfig']->getVar('PEOPLE_PERSON_CLASS');
+
     $this->detailFields = $this->loadThemeConfigFile('people-detail', 'detailFields');
     foreach($this->detailFields as $field => $info) {
       $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
@@ -122,15 +124,15 @@ class PeopleModule extends Module {
         
       case 'detail':
         if (isset($this->args['uid'])) {
-          $personClass      = $GLOBALS['siteConfig']->getVar('LDAP_PERSON_CLASS');
-          $ldapWrapper = new LDAPWrapper();
-          $ldapWrapper->setPersonClass($personClass);
-          $person = $ldapWrapper->lookupUser($this->args['uid']);
+          $PeopleController = new $peopleController();
+          $PeopleController->setPersonClass($personClass);
+          $PeopleController->setAttributes($this->detailAttributes);
+          $person = $PeopleController->lookupUser($this->args['uid']);
           
           if ($person) {
             $this->assign('personDetails', $this->formatPersonDetails($person));
           } else {
-            $this->assign('searchError', $ldapWrapper->getError());
+            $this->assign('searchError', $PeopleController->getError());
           }          
         } else {
           $this->assign('searchError', 'No username specified');
@@ -140,14 +142,14 @@ class PeopleModule extends Module {
       case 'search':
         if (isset($this->args['filter'])) {
           $searchTerms = trim($this->args['filter']);
-          $personClass      = $GLOBALS['siteConfig']->getVar('LDAP_PERSON_CLASS');
-          $ldapWrapper = new LDAPWrapper();
-          $ldapWrapper->setPersonClass($personClass);
+          $PeopleController = new $peopleController();
+          $PeopleController->setPersonClass($personClass);
+          $PeopleController->setAttributes($this->detailAttributes);
           
           $this->assign('searchTerms', $searchTerms);
           
-          $people = $ldapWrapper->query($searchTerms);
-          $this->assign('searchError', $ldapWrapper->getError());
+          $people = $PeopleController->search($searchTerms);
+          $this->assign('searchError', $PeopleController->getError());
 
           if ($people !== false) {
             $resultCount = count($people);
@@ -167,7 +169,6 @@ class PeopleModule extends Module {
               default:
                 $results = array();
                 
-                
                 foreach ($people as $person) {
                   $results[] = array(
                     'url' => $this->buildBreadcrumbURL('detail', array(
@@ -175,8 +176,8 @@ class PeopleModule extends Module {
                        'filter'   => $this->args['filter'],
                     )),
                     'title' => htmlentities(
-                        $person->getFieldSingle($ldapWrapper->getLDAPField('sn')).', '.
-                        $person->getFieldSingle($ldapWrapper->getLDAPField('givenname'))
+                        $person->getFieldSingle($PeopleController->getField('sn')).', '.
+                        $person->getFieldSingle($PeopleController->getField('givenname'))
                     ),
                   );
                 }//error_log(print_r($results, true));
@@ -186,7 +187,7 @@ class PeopleModule extends Module {
             }
           
           } else {
-            $this->assign('searchError', $ldapWrapper->getError());
+            $this->assign('searchError', $PeopleController->getError());
           }
         } else {
           $this->redirectTo('index');
