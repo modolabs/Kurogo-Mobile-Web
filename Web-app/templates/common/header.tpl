@@ -46,7 +46,7 @@
   
   {block name="additionalHeadTags"}{/block}
 </head>
-<body{if count($onLoadBlocks)} onload="onLoad();"{/if}>
+<body{block name="onLoad"}{if count($onLoadBlocks)} onload="onLoad();"{/if}{/block}>
   <a name="top"></a>
   {if isset($customHeader)}
     {$customHeader|default:''}

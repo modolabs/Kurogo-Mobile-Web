@@ -3,8 +3,64 @@
 require_once(LIB_DIR . '/TrumbaCalendarDataController.php');
 
 class HarvardEvent extends TrumbaEvent {
-    public $HarvardCategories = array();
+    protected $HarvardCategories = array();
     
+    const emailPattern = "@^[A-Z0-9._%+-]+\@[A-Z0-9.-]+\.[A-Z]{2,6}$@i"; // From http://www.regular-expressions.info/email.html, should identify most email addresses
+    const phonePattern = "@^\(?([0-9]{3}[\)\.\-])? ?[0-9]{3}[\.\-][0-9]{4}$@"; // assuming no international, and either "." or "-" as delimiters
+    const urlPattern = "@^((https?://)?([-\w]+\.[-\w\.]+)+\w(:\d+)?(/([-\w/_\.]*(\?\S+)?)?)*)$@"; // From http://snipplr.com/view/36992/improvement-of-url-interpretation-with-regex/
+
+    private function getContactInfoArray()
+    {
+    	$ContactInfo = isset($this->TrumbaCustomFields['Contact Info']) ? $this->TrumbaCustomFields['Contact Info'] : '';
+    	$info = array('email'=>array(), 'phone'=>array(), 'url'=>array(), 'text'=>array(), 'full'=>$ContactInfo);
+		$data = preg_split("/(\\\)?,/", $ContactInfo);
+		
+		// For each value, check to see what it's most likely to be
+		foreach ($data as $datum) {
+		  $datum = trim($datum);
+		  if (preg_match(self::emailPattern, $datum) > 0) {
+			$info['email'][] = $datum;
+		  } elseif (preg_match(self::phonePattern, $datum) > 0) {
+			$info['phone'][] = preg_replace("/[ \(]/", "", preg_replace("/[\-\)]/", ".", $datum)); // Normalize things into "."s while we're in here
+		  } elseif (preg_match(self::urlPattern, $datum) > 0) {
+			$info['url'][] = $datum;
+		  } else {
+			$info['text'][] = $datum;
+		  }
+		}
+
+		return $info;
+    }
+
+    public function apiArray()
+    {
+    
+	 $arr= array (
+	 	'id'=>crc32($this->get_uid()) >>1,
+	 	'title'=>$this->get_summary(),
+	 	'start'=>$this->get_start(),
+	 	'end'=>$this->get_end()
+	 );
+
+    if ($urlLink = $this->get_url()) {
+        $arr['url'] = $urlLink;
+    }
+    if ($location = $this->get_location()) {
+        $arr['location'] = $location;
+    }
+    if ($description = $this->get_description()) {
+        $arr['description'] = $description;
+    }
+    
+    if ($custom = $this->TrumbaCustomFields) {
+ 		$custom['Contact Info'] = $this->getContactInfoArray();
+ 		$arr['custom'] = $custom;
+	}
+	 return $arr;
+    
+	}
+
+
     public function get_category_from_name($name) {
     	$categories = HarvardEvent::get_all_categories();
     	foreach ($categories as $category) {
@@ -47,6 +103,18 @@ class HarvardEvent extends TrumbaEvent {
 
   public function set_attribute($attr, $value, $params=null) {
     switch ($attr) {
+        case 'Contact Info':
+            $values = explode(',', iCalendar::ical_unescape_text($value));
+            foreach ($values as $_value) {
+                $_value = trim($_value);
+                if (Validator::isValidEmail($_value)) {
+                    $this->set_attribute('email', $_value);
+                } elseif (Validator::isValidPhone($_value)) {
+                    $this->set_attribute('phone', $_value);
+                } elseif (Validator::isValidURL($_value)) {
+                }
+            }
+            break;
         case 'Gazette Classification':
             $this->set_attribute('CATEGORIES', $value);
             $values = explode(',', $value);

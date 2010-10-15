@@ -75,7 +75,7 @@ class CustomizeModule extends Module {
       }
     }
     
-    switch($GLOBALS['deviceClassifier']->getPagetype()) {
+    switch($this->pagetype) {
       case 'mobile':
         $this->addInlineJavascript('var httpRoot = "'.COOKIE_PATH.'"');
         $this->addInlineJavascriptFooter('init();');

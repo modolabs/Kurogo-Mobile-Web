@@ -12,7 +12,9 @@
 
 {include file="findInclude:common/header.tpl" customHeader=$banner}
 
-{include file="findInclude:common/search.tpl" placeholder="Search "|cat:$SITE_NAME}  
+{block name="homeSearch"}
+  {include file="findInclude:common/search.tpl" placeholder="Search "|cat:$SITE_NAME}  
+{/block}
   
 {block name="modulesStart"}
   <div id="homegrid">
@@ -52,6 +54,9 @@
 
 {block name="modulesEnd"}
   </div>
+{/block}
+
+{block name="homeFooter"}
 {/block}
 
 {include file="findInclude:common/footer.tpl"}

@@ -5,11 +5,25 @@ class CalendarDataController extends DataController
     protected $startDate;
     protected $endDate;
     protected $calendar;
-    protected $requiresDateFilter=false;
+    protected $requiresDateFilter=true;
+    protected $contentFilter;
     
-    public function requiresDateFilter($bool)
+    public function setRequiresDateFilter($bool)
     {
         $this->requiresDateFilter = $bool ? true : false;
+    }
+
+    public function addFilter($var, $value)
+    {
+        switch ($var)
+        {
+            case 'search': 
+            //sub classes should override this if there is a more direct way to search. Default implementation is to iterate through each item
+                $this->contentFilter = $value;
+                break;
+            default:
+                return parent::addFilter($var, $value);
+        }
     }
     
     protected function cacheFolder()
@@ -78,7 +92,8 @@ class CalendarDataController extends DataController
 
     public function getItem($id)
     {
-        $items = $this->getItems();
+        $this->setRequiresDateFilter(false);
+        $items = $this->items();
         if (array_key_exists($id, $items)) {
             return $items[$id];
         }
@@ -100,6 +115,7 @@ class CalendarDataController extends DataController
         }
 
         $events = $this->calendar->get_events();
+        
         if ($this->requiresDateFilter) {
             $items = $events;
             $events = array();
@@ -113,6 +129,16 @@ class CalendarDataController extends DataController
                         (($event->get_start() <= $this->startTimestamp()) &&
                         ($event->get_end() >= $this->endTimestamp()))) 
                 {
+                    $events[$id] = $event;
+                }
+            }
+        }
+
+        if ($this->contentFilter) {
+            $items = $events;
+            $events = array();
+            foreach ($items as $id => $event) {
+                if ( (stripos($event->get_description(), $this->contentFilter)!==FALSE) || (stripos($event->get_summary(), $this->contentFilter)!==FALSE)) {
                     $events[$id] = $event;
                 }
             }

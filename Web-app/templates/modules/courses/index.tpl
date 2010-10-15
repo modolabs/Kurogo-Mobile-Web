@@ -1,10 +1,10 @@
 {include file="findInclude:common/header.tpl"}
 
-{include file="findInclude:common/search.tpl" placeholder="Search Courses" searchPage='searchCourses'}
+{capture name="searchBar" assign="searchBar"}
+  {include file="findInclude:common/search.tpl" placeholder="Search Courses" searchPage='searchCourses' tip="You can search for courses by keyword, course #, or instructor name."}
+{/capture}
 
-<div class="legend nonfocal">
-  <strong>Search tip:</strong> You can search for courses by keyword, course #, or instructor name.
-</div>
+{block name="topSearch"}{$searchBar}{/block}
 
 {if count($myClasses) || count($myRemovedClasses)}
   <div class="nonfocal">        
@@ -27,5 +27,7 @@
   <h3>Browse by school:</h3>
 </div>
 {include file="findInclude:common/navlist.tpl" navlistItems=$schools}
+
+{block name="bottomSearch"}{/block}
 
 {include file="findInclude:common/footer.tpl"}

@@ -1,0 +1,21 @@
+﻿Manifest-Version:  1.0
+MIDlet-Version:  1.0
+MIDlet-Jar-Size:  32056
+RIM-COD-Module-Dependencies:  net_rim_cldc,net_rim_bb_framework_api,net_rim_bbapi_browser,net_rim_bbapi_phone
+MicroEdition-Configuration:  CLDC-1.1
+MIDlet-Jar-URL:  HarvardBBLauncher1.jar
+RIM-MIDlet-Flags-2:  3
+RIM-MIDlet-Flags-1:  0
+RIM-COD-Module-Name:  HarvardBBLauncher1
+MIDlet-Name:  HarvardBBLauncher1
+RIM-COD-Creation-Time:  1283355285
+MIDlet-2: Harvard,,autostartup
+MIDlet-1: Harvard,..\..\src\com\bblauncher\launcher\order3830\item1\images\default-normal.png,
+MIDlet-Description: Harvard University Mobile Application
+RIM-MIDlet-NameResourceId-1:  0
+MicroEdition-Profile:  MIDP-2.0
+MIDlet-Vendor:  Harvard University
+RIM-MIDlet-NameResourceBundle-1:  com.bblauncher.launcher.order3830.item1.resources.LauncherStrings
+RIM-COD-URL: HarvardBBLauncher1.cod
+RIM-COD-SHA1:  50 8e 6f ac c7 02 1e 67 e9 d1 97 d4 e9 03 9e 19 6c 33 a0 c5
+RIM-COD-Size: 21032

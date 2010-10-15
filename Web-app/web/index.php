@@ -2,9 +2,6 @@
 
 require_once realpath(dirname(__FILE__).'/../lib/initialize.php');
 
-//error_log(print_r($_GET, true));
-//error_log('Handling '.$_SERVER['REQUEST_URI']);
-
 //
 // Configure web application
 // modifies $path for us to strip prefix and device
@@ -48,16 +45,46 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
       }        
     }
   }
-  header('Status: 404 Not Found');
-  die;
+
+} else if (preg_match(';^.*media/(.*)$;', $path, $matches)) {
+  //
+  // Media
+  //
+
+  $path = realpath_exists(SITE_DIR."/media/$matches[1]");
+  if ($path) {
+    header('Content-type: '.mime_content_type($path));
+    echo file_get_contents($path);
+    exit;
+  }
+  
+} else if (preg_match(';^.*api/$;', $path, $matches)) {
+  //
+  // Native Interface API
+  //  
+
+  require_once realpath(LIB_DIR.'/PageViews.php');
+  
+  if (isset($_REQUEST['module']) && $_REQUEST['module']) {
+    $id = $_REQUEST['module'];
+    $path = realpath_exists(LIB_DIR."/api/$id.php");
+    
+    if ($path) {
+      PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
+      
+      require_once($path);
+      exit;
+    }
+  }
   
 } else {
   //
-  // HTML Pages
+  // Web Interface
   //
   
   require_once realpath(LIB_DIR.'/Module.php');
-  
+  require_once realpath(LIB_DIR.'/PageViews.php');
+    
   $id = 'home';
   $page = 'index';
   
@@ -87,8 +114,17 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
       }
     }
   }
-  //error_log(print_r($args, true));
 
+  PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
+  
   $module = Module::factory($id, $page, $args);
   $module->displayPage();
+  exit;
 }
+
+//
+// Unsupported Request
+//
+
+header('Status: 404 Not Found');
+die;

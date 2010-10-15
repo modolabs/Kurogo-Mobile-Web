@@ -3,6 +3,7 @@
 class SiteConfig {
   private $configVars = array();
   private $themeVars = array();
+  private $apiVars = array();
   
 
   public function loadThemeFile($name, $section = true, $ignoreError = false) {
@@ -15,7 +16,7 @@ class SiteConfig {
 
       } else {
         if (!$ignoreError) {
-          error_log(__FUNCTION__."(): no configuration file for '$name'");
+          error_log(__FUNCTION__."(): no theme configuration file for '$name'");
         }
         return false;
       }
@@ -23,15 +24,23 @@ class SiteConfig {
     return true;
   }
 
-  public function getVar($key) {
-    if (isset($this->configVars[$key])) {
-      return $this->configVars[$key];
+  public function loadAPIFile($name, $section = true) {
+    if (!in_array($name, array_keys($this->apiVars))) {
+      $file = realpath_exists(SITE_CONFIG_DIR."/api/$name.ini");
+      if ($file) {
+        $this->apiVars[$name] = parse_ini_file($file, $section);
+        $this->replaceAPIVariables($this->apiVars[$name]);
+        return true;
+
+      } else {
+        error_log(__FUNCTION__."(): no api configuration file for '$name'");
+        return false;
+      }
     }
-    
-    error_log(__FUNCTION__."(): configuration variable '$key' not set");
-    
-    return null;
+    return true;
   }
+
+  // -------------------------------------------------------------------------
 
   public function getThemeVar($key, $subKey = null, $ignoreError = false) {
     if (isset($this->themeVars[$key])) {
@@ -49,6 +58,28 @@ class SiteConfig {
     
     return null;
   }
+  
+  public function getAPIVar($key) {
+    if (isset($this->apiVars[$key])) {
+      return $this->apiVars[$key];
+    }
+    
+    error_log(__FUNCTION__."(): api variable '$key' not set");
+    
+    return null;
+  }
+
+  public function getVar($key) {
+    if (isset($this->configVars[$key])) {
+      return $this->configVars[$key];
+    }
+    
+    error_log(__FUNCTION__."(): configuration variable '$key' not set");
+    
+    return null;
+  }
+  
+  // -------------------------------------------------------------------------
   
   private static function _replaceVariables(&$config) {
     foreach($config as $key => &$value) {
@@ -72,14 +103,7 @@ class SiteConfig {
       }
     }
   }
-
-  private function replaceConfigVariables(&$config) {
-    // Handle key-relative paths by replacing keys with paths
-    $GLOBALS['testVars'] = $this->configVars;
-    self::_replaceVariables($config);
-    unset($GLOBALS['testVars']);
-  }
-
+  
   private function replaceThemeVariables(&$config) {
     $testVars = $config;
     if (isset($this->themeVars['site'])) {
@@ -91,6 +115,22 @@ class SiteConfig {
     self::_replaceVariables($config);
     unset($GLOBALS['testVars']);
   }
+
+  private function replaceAPIVariables(&$config) {
+    // Handle key-relative paths by replacing keys with paths
+    $GLOBALS['testVars'] = array_merge($this->configVars, $config);
+    self::_replaceVariables($config);
+    unset($GLOBALS['testVars']);
+  }
+
+  private function replaceConfigVariables(&$config) {
+    // Handle key-relative paths by replacing keys with paths
+    $GLOBALS['testVars'] = $this->configVars;
+    self::_replaceVariables($config);
+    unset($GLOBALS['testVars']);
+  }
+  
+  // -------------------------------------------------------------------------
   
   private static function getPathOrDie($path) {
     $file = realpath_exists($path);
@@ -107,6 +147,8 @@ class SiteConfig {
     return $vars[$key];
   }
 
+  // -------------------------------------------------------------------------
+
   function __construct() {
     // Load main configuration file
     $file = MASTER_CONFIG_DIR."/config.ini";
@@ -122,6 +164,7 @@ class SiteConfig {
     define('THEMES_DIR',           SITE_DIR.'/themes');
     define('DATA_DIR',             SITE_DIR.'/data');
     define('CACHE_DIR',            SITE_DIR.'/cache');
+    define('LOG_DIR',              SITE_DIR.'/logs');
     define('SITE_CONFIG_DIR',      SITE_DIR.'/config');
 
     // Load site configuration file

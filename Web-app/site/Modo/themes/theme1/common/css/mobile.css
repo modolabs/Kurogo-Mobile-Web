@@ -7,7 +7,7 @@ html, body {
 }
 
 body {
-	background-color: #d8d7d9;
+	background-color: #dcdddf;
 	/*background: url(../images/background-tile.jpg) top right repeat-x, url(../images/background-tile-2.jpg) bottom left repeat;*/
 	font: 17px/1.33em 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	color: #404040;
@@ -52,11 +52,11 @@ h4 {
 }
 
 a {
-	color: #933;
+	color: #336699;
 }
 
 a:visited {
-	color: #933;
+	color: #336699;
 }
 
 a img {
@@ -326,7 +326,7 @@ a.formbutton div {
 	background-repeat: no-repeat;
 	background-position: top right;
 	text-decoration: none;
-	color: #fff;
+	color: #003366;
 	padding-right: 17px;
 	overflow: hidden;
 	text-overflow: ellipsis
@@ -359,7 +359,7 @@ a.module img {
 
 .homepage .moduleicon {
     display: inline-block;
-    padding: 8px 1px 8px 2px;
+    padding: 8px 2px 8px 3px;
 }
 
 .crumb1 {
@@ -560,7 +560,7 @@ ul.focal li:first-child {
 .secondary {
 	margin: 10px; 
 	padding: 0;	   
-	background-color: #f9f6ef;
+	background-color: #fff;
 	border: 1px solid #ccc;
 	-webkit-border-radius: 9px;	
 	border-radius: 9px;	
@@ -717,8 +717,7 @@ ul.focal li:first-child {
 }
 
 .shaded {
-	background-color: #f9f6ef;
-	border: 1px solid #d9d6cf;
+	background-color: #fff;
 }
 
 .legend {

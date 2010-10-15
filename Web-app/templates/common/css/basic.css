@@ -279,31 +279,31 @@ span.icon {
 }
 
 .gps {
-	background-image: url(../images/gps.gif);
+	background-image: url(/common/images/gps.gif);
 }
 
 .sch {
-	background-image: url(../images/schedule.gif);
+	background-image: url(/common/images/schedule.gif);
 }
 
 .ok {
-	background-image: url(../images/ok.gif);
+	background-image: url(/common/images/ok.gif);
 }
 
 .alert {
-	background-image: url(../images/alert.gif);
+	background-image: url(/common/images/alert.gif);
 }
 
 .warning {
-	background-image: url(../images/warning.gif);
+	background-image: url(/common/images/warning.gif);
 }
 
 .critical {
-	background-image: url(../images/critical.gif);
+	background-image: url(/common/images/critical.gif);
 }
 
 .running {
-	background-image: url(../images/shuttle.gif);
+	background-image: url(/common/images/shuttle.gif);
 }
 
 
