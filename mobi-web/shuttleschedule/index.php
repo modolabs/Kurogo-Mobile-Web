@@ -11,7 +11,7 @@ $agencies = $reader->getAgenciesAndNames();
 
 // this method is only called so that we make a call back
 // to transloc, so transloc can tabulate accurate statistics
-header("refresh: 60;url=index.php?autorefreshed=true");
+header("refresh: 180;url=index.php?autorefreshed=true");
 if(!$_REQUEST['autorefreshed']) {
     $reader->refreshSetup();
 }
