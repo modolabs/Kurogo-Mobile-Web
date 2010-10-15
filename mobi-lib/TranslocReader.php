@@ -10,7 +10,7 @@ define('HARVARD_TRANSLOC_FEED', 'http://harvard.transloc.com/itouch/feeds/');
 define('HARVARD_TRANSLOC_MARKERS', 'http://harvard.transloc.com/m/markers/marker.php');
 define('STATIC_MAPS_URL', 'http://maps.google.com/maps/api/staticmap?');
 define('TRANSLOC_ICON_PATH', '/shuttleschedule/shuttle-transloc.png');
-define('BUS_ICON_PATH', '/shuttleschedule/shuttle_pin.png');
+define('BUS_ICON_PATH', '/shuttleschedule/shuttle_stop_pin.png');
 define('TRANSLOC_UPDATE_FREQ', 200);
 define('ANNOUNCEMENTS_FEED', 'http://harvard.transloc.com/itouch/feeds/announcements?v=1&contents=true');
 
