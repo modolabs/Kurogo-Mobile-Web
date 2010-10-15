@@ -5,7 +5,7 @@ $parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
 $eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
 $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
 
-$timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('SITE_TIMEZONE'));
+$timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
 $data = array();
 
 switch ($_REQUEST['command']) {

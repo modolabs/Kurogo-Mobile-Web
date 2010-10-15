@@ -272,7 +272,7 @@ class CalendarModule extends Module {
     $eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
     $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
     
-    $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
+    $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
 
     switch ($this->page) {
       case 'help':

@@ -121,4 +121,12 @@ function Initialize(&$path=null) {
     
     $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
   }
+  
+  
+  //
+  // Set timezone
+  //
+  
+  date_default_timezone_set($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
+
 }

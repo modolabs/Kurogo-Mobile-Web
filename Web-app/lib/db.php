@@ -1,23 +1,21 @@
 <?php
 
-require_once "lib_constants.inc";
 
 define('MYSQL_NOT_SUPPORTED', 1);
 
 class db {
   public static $connection = NULL;
 
-  private static $host = MYSQL_HOST;
-  private static $username = MYSQL_USER;
-  private static $passwd = MYSQL_PASS;
-  private static $db = MYSQL_DBNAME;
-
   public static function init() {
     if(!self::$connection) {
       if (extension_loaded('mysql')) {
-	self::$connection = new mysqli(self::$host, self::$username, self::$passwd, self::$db);
+	      self::$connection = new mysqli(
+	        $GLOBALS['siteConfig']->getVar('MYSQL_HOST'), 
+	        $GLOBALS['siteConfig']->getVar('MYSQL_USER'), 
+	        $GLOBALS['siteConfig']->getVar('MYSQL_PASS'), 
+	        $GLOBALS['siteConfig']->getVar('MYSQL_DBNAME'));
       } else {
-	self::$connection = MYSQL_NOT_SUPPORTED;
+	      self::$connection = MYSQL_NOT_SUPPORTED;
       }
     }
   }

@@ -41,6 +41,19 @@ abstract class Module {
   private $tabbedView = null;
   
   //
+  // Federated search support
+  //
+  protected function federatedSearch($searchTerms) {
+    return 0;
+  }
+  
+  protected function urlForSearch($searchTerms) {
+    return buildURL('search', array(
+      'filter' => $searchTerms,
+    ));
+  }
+  
+  //
   // Tabbed View support
   //
   
@@ -469,8 +482,6 @@ abstract class Module {
         
     $this->loadPageConfig();
     
-    date_default_timezone_set($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
-
     // Set variables common to all modules
     $this->assign('moduleID',     $this->id);
     $this->assign('moduleName',   $this->moduleName);

@@ -18,7 +18,7 @@ function getTomorrow($timestamp)
 $path = '';
 Initialize($path); 
 $GLOBALS['siteConfig']->loadThemeFile('site', true);
-$tzid = $GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE');
+$tzid = $GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE');
 $uid_base = 'http://imobileu.org/events/';
 
 require_once(LIB_DIR . '/iCalendar.php');
