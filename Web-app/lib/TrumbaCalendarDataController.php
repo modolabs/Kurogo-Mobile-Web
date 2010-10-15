@@ -34,15 +34,16 @@ class TrumbaCalendarDataController extends CalendarDataController
         $diff = $this->endTimestamp() - $this->startTimestamp();
         if ($diff<86400) {
             if (count($this->trumbaFilters)>0) {
-                $this->requiresDateFilter(false);
+                $this->setRequiresDateFilter(false);
                 $this->addFilter('startdate', $this->startDate->format('Ymd'));
                 $this->addFilter('days', 1);
             } else {
-                $this->requiresDateFilter(true);
+                $this->setRequiresDateFilter(true);
                 $this->addFilter('startdate', $this->startDate->format('Ym').'01');
                 $this->addFilter('months', 1);
            }
         } elseif ($diff % 86400 == 0) {
+            $this->setRequiresDateFilter(false);
             $this->addFilter('startdate', $this->startDate->format('Ymd'));
             $this->addFilter('days', $diff / 86400);
         } else {
@@ -80,24 +81,14 @@ class TrumbaCalendarDataController extends CalendarDataController
 
 class TrumbaEvent extends ICalEvent
 {
-  public function set_attribute($attr, $value, $params=NULL) {
+    protected $TrumbaCustomFields=array();
+    public function set_attribute($attr, $value, $params=NULL) {
     switch ($attr) {
-        case 'Contact Info':
-            $values = explode(',', iCalendar::ical_unescape_text($value));
-            foreach ($values as $_value) {
-                $_value = trim($_value);
-                if (Validator::isValidEmail($_value)) {
-                    $this->set_attribute('email', $_value);
-                } elseif (Validator::isValidPhone($_value)) {
-                    $this->set_attribute('phone', $_value);
-                } elseif (Validator::isValidURL($_value)) {
-                }
-            }
-            break;
         case 'X-TRUMBA-CUSTOMFIELD':
             if (array_key_exists('NAME', $params)) {
                 $name = $params['NAME'];
                 unset($params['NAME']);
+                $this->TrumbaCustomFields[$name] = $value;
                 $this->set_attribute($name, $value, $params);
             }
             break;

@@ -8,24 +8,34 @@
         <a href="help.php">{$moduleName} Help</a>
       </p>
     {/if}
-  
+    
+    {capture name="breadcrumbSeparator" assign="breadcrumbSeparator"}
+      {block name="breadcrumbSeparator"}
+        <br />
+      {/block}
+    {/capture}
+    
     {if $moduleID != 'home'}
       {html_access_key_reset index=0}
       <p class="bottomnav">
         <a href="#top">Back to top</a>
-        <br />
+        {$breadcrumbSeparator}
         {html_access_key_link href="/home/"}{$SITE_NAME} Home{/html_access_key_link}
         {if !$isModuleHome}
-          <br/>
+          {$breadcrumbSeparator}
           {html_access_key_link href="/$moduleID/"}{$moduleName} Home{/html_access_key_link}
         {/if}
-        {foreach $breadcrumbs as $breadcrumb}
-          <br />
-          {html_access_key_link href=$breadcrumb['url']}{$breadcrumb['longTitle']}{/html_access_key_link}
-        {/foreach}
+        {if count($breadcrumbs)}
+          <br/>
+          {foreach $breadcrumbs as $breadcrumb}
+            {if !$breadcrumb@first}{$breadcrumbSeparator}{/if}
+            {html_access_key_link href=$breadcrumb['url']}{$breadcrumb['longTitle']}{/html_access_key_link}
+          {/foreach}
+        {/if}
         {if isset($additionalLinks)}
+          <br/>
           {foreach $additionalLinks as $link}
-            <br />
+            {if !$link@first}{$breadcrumbSeparator}{/if}
             {html_access_key_link href=$link['url']}{$link['title']}{/html_access_key_link}
           {/foreach}
         {/if}

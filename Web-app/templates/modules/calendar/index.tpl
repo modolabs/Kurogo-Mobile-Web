@@ -22,21 +22,16 @@
 
 {include file="findInclude:common/navlist.tpl" navlistItems=$navlistItems}
 
-{block name="form"}
-  <div class="nonfocal">
-    <form method="get" action="search.php">
-      {include file="findInclude:common/search.tpl" insideForm=true emphasized=false placeholder="Search for events"}
-      <fieldset>
-        <select id="timeframe" name="timeframe">
-          {foreach $searchOptions as $key => $option}
-            <option value="{$key}"{if isset($option['selected']) && $option['selected']} selected="selected"{/if} >
-              {$option['phrase']}
-            </option>
-          {/foreach}
-        </select>
-      </fieldset>	
-    </form>
-  </div>
-{/block}
+{capture name="selectSection" assign="selectSection"}
+  <select id="timeframe" name="timeframe">
+    {foreach $searchOptions as $key => $option}
+      <option value="{$key}"{if isset($option['selected']) && $option['selected']} selected="selected"{/if} >
+        {$option['phrase']}
+      </option>
+    {/foreach}
+  </select>
+{/capture}
+
+{include file="findInclude:common/search.tpl" additionalInputs=$selectSection placeholder="Search for events"}
 
 {include file="findInclude:common/footer.tpl"}

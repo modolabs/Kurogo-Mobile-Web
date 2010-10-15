@@ -54,9 +54,9 @@ function Initialize(&$path=null) {
     }
   }
   define('URL_BASE', $urlBase);
+  define('FULL_URL_BASE', sprintf("http://%s%s", $_SERVER['HTTP_HOST'], URL_BASE));
 
   define('COOKIE_PATH', URL_BASE); // We are installed under URL_BASE
-
 
   //
   // Load configuration files
@@ -121,4 +121,12 @@ function Initialize(&$path=null) {
     
     $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
   }
+  
+  
+  //
+  // Set timezone
+  //
+  
+  date_default_timezone_set($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
+
 }

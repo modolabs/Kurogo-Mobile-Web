@@ -6,29 +6,57 @@ class HomeModule extends Module {
   protected $id = 'home';
      
   protected function initializeForPage() {
-    $homeModules = array(
-      'primary' => array(),
-      'secondary' => array(),
-    );
+    switch ($this->page) {
+      case 'help':
+        break;
+        
+      case 'index':
+        $homeModules = array(
+          'primary' => array(),
+          'secondary' => array(),
+        );
+        
+        foreach ($this->getHomeScreenModules() as $id => $info) {
+          if (!$info['disabled']) {
+            if (!isset($info['url'])) {
+              $info['url'] = "/$id/";
+            }
+            if (!isset($info['img'])) {
+              $info['img'] = "/modules/{$this->id}/images/$id.png";
+            }
+            if ($info['primary']) {
+              $homeModules['primary'][$id] = $info;
+            } else {
+              $homeModules['secondary'][$id] = $info;
+            }
+          }
+        }
     
-    foreach ($this->getHomeScreenModules() as $id => $info) {
-      if (!$info['disabled']) {
-        if (!isset($info['url'])) {
-          $info['url'] = "/$id/";
+        $this->assign('homeModules', $homeModules);
+        $this->assign('whatsNewCount', 0);
+        $this->assign('topItem', null);
+        break;
+        
+     case 'search':
+        $searchTerms = $this->getArg('filter');
+        
+        $results = array();
+     
+        foreach ($this->getHomeScreenModules() as $id => $info) {
+          if ($info['homescreen'] && !$info['url']) {
+            $module = Module::factory($id, $this->page, $this->args);
+            
+            $count = $module->federatedSearch($searchTerms);
+            if ($count) {
+              $results[] = array(
+                'title' => "{$info['title']} ({$count})",
+                'url'   => $module->urlForSearch($searchTerms),
+              );
+            }
+          }
         }
-        if (!isset($info['img'])) {
-          $info['img'] = "/modules/{$this->id}/images/$id.png";
-        }
-        if ($info['primary']) {
-          $homeModules['primary'][$id] = $info;
-        } else {
-          $homeModules['secondary'][$id] = $info;
-        }
-      }
+        
+        break;
     }
-
-    $this->assign('homeModules', $homeModules);
-    $this->assign('whatsNewCount', 0);
-    $this->assign('topItem', null);
   }
 }

@@ -2,6 +2,7 @@
 
 require_once realpath(LIB_DIR.'/Module.php');
 require_once realpath(LIB_DIR.'/TimeRange.php');
+require_once realpath(LIB_DIR.'/ICalendar.php');
 
 define('DAY_SECONDS', 24*60*60);
 
@@ -64,6 +65,7 @@ class CalendarModule extends Module {
   }
   
   private function timeText($event) {
+    return strval($event->get_range());
     if ($event->get_end() - $event->get_start() == -1) {
       return $event->get_range()->format('D M j').' '.date('g:i a', $event->get_start());
     }
@@ -270,7 +272,7 @@ class CalendarModule extends Module {
     $eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
     $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
     
-    $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getThemeVar('site', 'SITE_TIMEZONE'));
+    $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
 
     switch ($this->page) {
       case 'help':

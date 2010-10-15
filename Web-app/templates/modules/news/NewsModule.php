@@ -115,6 +115,15 @@ class NewsModule extends Module {
           throw new Exception("Story $storyID not found");
         }
         
+        if (!$content = $story->getProperty($GLOBALS['siteConfig']->getVar('NEWS_FEED_CONTENT_PROPERTY'))) {
+            if ($url = $story->getProperty('link')) {
+                header("Location: $url");
+                exit();
+            } else {
+                throw new Exception("No content or link found for story $storyID");
+            }
+        }
+        
         $shareUrl = "mailto:@?".http_build_query(array(
           "subject" => $story->getTitle(),
           "body"    => $story->getDescription()."\n\n".$story->getLink()
@@ -125,7 +134,6 @@ class NewsModule extends Module {
         $pubDate = strtotime($story->getProperty("pubDate"));
         $date = date("M d, Y", $pubDate);
         
-        $content = $story->getProperty($GLOBALS['siteConfig']->getVar('NEWS_FEED_CONTENT_PROPERTY'));
         $this->enablePager($content, $feed->getEncoding(), $storyPage);
         
         $this->assign('date',     $date);
@@ -171,6 +179,11 @@ class NewsModule extends Module {
             }
           }
 
+               $extraArgs = array(
+                'section'=>$this->feedIndex
+            );
+
+          $this->assign('extraArgs',     $extraArgs);
           $this->assign('searchTerms', $searchTerms);
           $this->assign('stories',     $stories);
           $this->assign('previousUrl', $previousUrl);
@@ -221,6 +234,10 @@ class NewsModule extends Module {
           );
         }
         
+        $hiddenArgs = array(
+            'section'=>$this->feedIndex
+        );
+        $this->assign('hiddenArgs',     $hiddenArgs);
         $this->assign('sections',       $sections);
         $this->assign('currentSection', $sections[$this->feedIndex]);
         $this->assign('stories',        $stories);
