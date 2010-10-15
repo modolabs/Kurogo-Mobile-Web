@@ -7,7 +7,7 @@ require_once realpath(dirname(__FILE__).'/../lib/initialize.php');
 // modifies $path for us to strip prefix and device
 //
 
-$path = isset($_GET['q']) ? $_GET['q'] : '';
+$path = isset($_GET['_path']) ? $_GET['_path'] : '';
 
 Initialize($path); 
 
@@ -71,7 +71,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
   //
   // Native Interface API
   //  
-
+  
   require_once realpath(LIB_DIR.'/PageViews.php');
   
   if (isset($_REQUEST['module']) && $_REQUEST['module']) {
