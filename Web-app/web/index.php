@@ -15,7 +15,16 @@ Initialize($path);
 // Handle page request
 //
 
-if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
+if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
+  $icon = realpath_exists(THEME_DIR.'/common/images/favicon.ico');
+  if ($icon) {
+    header('Content-type: '.mime_content_type($icon));
+    echo file_get_contents($icon);
+    exit;
+  }
+  
+
+} else if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   //
   // Images
   //
@@ -37,10 +46,10 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   
   foreach ($testDirs as $dir) {
     foreach ($testFiles as $file) {
-      $path = realpath_exists("$dir/$file");
-      if ($path) {
-        header('Content-type: '.mime_content_type($path));
-        echo file_get_contents($path);
+      $image = realpath_exists("$dir/$file");
+      if ($image) {
+        header('Content-type: '.mime_content_type($image));
+        echo file_get_contents($image);
         exit;
       }        
     }
@@ -51,10 +60,10 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   // Media
   //
 
-  $path = realpath_exists(SITE_DIR."/media/$matches[1]");
-  if ($path) {
-    header('Content-type: '.mime_content_type($path));
-    echo file_get_contents($path);
+  $media = realpath_exists(SITE_DIR."/media/$matches[1]");
+  if ($media) {
+    header('Content-type: '.mime_content_type($media));
+    echo file_get_contents($media);
     exit;
   }
   
@@ -67,12 +76,13 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   
   if (isset($_REQUEST['module']) && $_REQUEST['module']) {
     $id = $_REQUEST['module'];
-    $path = realpath_exists(LIB_DIR."/api/$id.php");
+    $api = realpath_exists(LIB_DIR."/api/$id.php");
     
-    if ($path) {
+    if ($api) {
       PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
       
-      require_once($path);
+      $GLOBALS['siteConfig']->loadAPIFile($id, true);
+      require_once($api);
       exit;
     }
   }

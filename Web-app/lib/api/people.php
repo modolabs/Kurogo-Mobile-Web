@@ -1,22 +1,9 @@
 <?php
 
-require_once LIBDIR . "/LdapWrapper.php";
+$peopleController = $GLOBALS['siteConfig']->getVar('PEOPLE_CONTROLLER_CLASS');
+$personClass      = $GLOBALS['siteConfig']->getVar('PEOPLE_PERSON_CLASS');
 
-$content = '';
-
-$displayFields = array(
-  'sn' => 'surname',
-  'givenname' => 'givenname',
-  'cn' => 'name',
-  'title' => 'title',
-  'ou' => 'unit',
-  'description' => 'description',
-  'uid' => 'id',
-  'telephonenumber' => 'phone',
-  'facsimiletelephonenumber' => 'fax',
-  'mail' => 'email',
-  'postaladdress' => 'office',
-  );
+$displayFields = $GLOBALS['siteConfig']->getAPIVar($_REQUEST['module'], 'displayFields');
 
 switch ($_REQUEST['command']) {
   case 'details':

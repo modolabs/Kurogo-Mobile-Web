@@ -16,7 +16,7 @@ class AboutModule extends Module {
         
       default:
         switch ($this->pagetype) {
-          case 'mobile':
+          case 'compliant':
             return 'touchscreen phones';
           
           case 'basic':

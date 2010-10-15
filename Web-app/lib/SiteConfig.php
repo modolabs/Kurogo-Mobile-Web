@@ -24,7 +24,7 @@ class SiteConfig {
     return true;
   }
 
-  public function loadAPIFile($name, $section = true) {
+  public function loadAPIFile($name, $section = true, $ignoreError = false) {
     if (!in_array($name, array_keys($this->apiVars))) {
       $file = realpath_exists(SITE_CONFIG_DIR."/api/$name.ini");
       if ($file) {
@@ -33,7 +33,9 @@ class SiteConfig {
         return true;
 
       } else {
-        error_log(__FUNCTION__."(): no api configuration file for '$name'");
+        if (!$ignoreError) {
+          error_log(__FUNCTION__."(): no api configuration file for '$name'");
+        }
         return false;
       }
     }
@@ -59,13 +61,20 @@ class SiteConfig {
     return null;
   }
   
-  public function getAPIVar($key) {
+  public function getAPIVar($key, $subKey = null, $ignoreError = false) {
     if (isset($this->apiVars[$key])) {
-      return $this->apiVars[$key];
+      if (!isset($subKey)) {
+        return $this->apiVars[$key];
+      } else if (isset($this->apiVars[$key][$subKey])) {
+        return $this->apiVars[$key][$subKey];
+      }
     }
-    
-    error_log(__FUNCTION__."(): api variable '$key' not set");
-    
+
+    if (!$ignoreError) {
+      error_log(__FUNCTION__."(): apiVar['$key']".
+        (isset($subKey) ? "['$subKey']" : "")." not set");
+    }
+
     return null;
   }
 
