@@ -115,7 +115,7 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
     }
   }
 
-  PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
+  PageViews::increment($id, $GLOBALS['deviceClassifier']->getPlatform());
   
   $module = Module::factory($id, $page, $args);
   $module->displayPage();
