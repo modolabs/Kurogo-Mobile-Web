@@ -58,7 +58,7 @@ class MapModule extends Module {
     $bbox = isset($this->args['bbox']) ? $this->bboxStr2Arr($this->args['bbox']) : NULL;
   
     switch ($this->pagetype) {
-     case 'mobile':
+     case 'compliant':
        $imageWidth = 290; $imageHeight = 190;
        break;
        

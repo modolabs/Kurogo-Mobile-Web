@@ -76,7 +76,7 @@ class CustomizeModule extends Module {
     }
     
     switch($this->pagetype) {
-      case 'mobile':
+      case 'compliant':
         $this->addInlineJavascript('var httpRoot = "'.COOKIE_PATH.'"');
         $this->addInlineJavascriptFooter('init();');
         
