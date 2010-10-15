@@ -5,21 +5,27 @@
 {capture name="infoPane" assign="infoPane"}
   {block name="infoPane"}
     <ul class="nav">
-      {foreach $times as $time}
-        <li>
-          {if isset($time['location'], $time['url'])}
-            <a class="map" href="{$time['url']}">
-              {$time['days']} {$time['time']} ({$time['location']})
-            </a>
-          {else}
-            {$time['days']} {$time['time']}
-          {/if}
-        </li>
-      {/foreach}
-      <li>
-        <h3>Description:</h3>
-        <p>{$description|escape}</p>
-      </li>
+      {if !count($times) && !count($infoItems)}
+        <li> No detailed information to display </li>
+      {else}
+        {foreach $times as $time}
+          <li>
+            {if isset($time['location'], $time['url'])}
+              <a class="map" href="{$time['url']}">
+                {$time['days']} {$time['time']} ({$time['location']})
+              </a>
+            {else}
+              {$time['days']} {$time['time']}
+            {/if}
+          </li>
+        {/foreach}
+        {foreach $infoItems as $item}
+          <li>
+            <h3>{$item['header']}</h3>
+            <p>{$item['content']|escape}</p>
+          </li>
+        {/foreach}
+      {/if}
     </ul>
   {/block}
 {/capture}

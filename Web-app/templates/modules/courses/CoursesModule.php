@@ -370,6 +370,17 @@ class CoursesModule extends Module {
           );
         }
         
+        $infoFields = $this->loadThemeConfigFile('courses-detail', 'infoFields');
+        $infoItems = array();
+        foreach ($infoFields['info'] as $field => $header) {
+          if (isset($classInfo[$field]) && strlen($classInfo[$field])) {
+            $infoItems[] = array(
+              'header'  => $header,
+              'content' => $classInfo[$field],
+            );
+          }
+        }
+
         // Staff
         $staff = array();
         foreach ($classInfo['staff'] as $type => $staffList) {
@@ -388,7 +399,7 @@ class CoursesModule extends Module {
         $this->assign('classTitle',    $classInfo['title']);
         $this->assign('classUrl',      $classInfo['url']);
         $this->assign('times',         $times);
-        $this->assign('description',   $classInfo['description']);
+        $this->assign('infoItems',     $infoItems);
         $this->assign('staff',         $staff);
         $this->assign('isInMyClasses', $isInMyClasses);
         

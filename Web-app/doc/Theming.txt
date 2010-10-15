@@ -22,9 +22,9 @@ Device Detection
 The Modo device detection service provides three pieces of information about devices:
 
 1) The pagetype.  Possible values include:
-    * desktop - a desktop machine with a large screen and mouse interface
-    * mobile  - a full featured browser running on a device with a small screen and touch interface
-    * basic   - a basic browser (usually WAP) running on a device with a small screen and cursor-based interface
+    * desktop   - a desktop machine
+    * compliant - a full featured browser running on a device with a small screen
+    * basic     - a basic browser running on a device with a small screen and cursor-based interface
     
 2) The platform the page will be displayed on.  Possible values (grouped by pagetype) include:
     * desktop
