@@ -10,7 +10,7 @@ define('HARVARD_TRANSLOC_FEED', 'http://harvard.transloc.com/itouch/feeds/');
 define('HARVARD_TRANSLOC_MARKERS', 'http://harvard.transloc.com/m/markers/marker.php');
 define('STATIC_MAPS_URL', 'http://maps.google.com/maps/api/staticmap?');
 define('TRANSLOC_ICON_PATH', '/shuttleschedule/shuttle-transloc.png');
-define('TRANSLOC_ICON_ALTERNATIVE', 'http://www.transloc.com/templates/transloc/images/transloc_logo_tiny.png');
+define('BUS_ICON_PATH', '/shuttleschedule/shuttle_pin.png');
 define('TRANSLOC_UPDATE_FREQ', 200);
 define('ANNOUNCEMENTS_FEED', 'http://harvard.transloc.com/itouch/feeds/announcements?v=1&contents=true');
 
@@ -348,10 +348,19 @@ class TranslocReader {
   private static function getTranslocIconURL() {
       if($_SERVER['SERVER_NAME'] != 'localhost') {
           return 'http://' . $_SERVER['SERVER_NAME'] . TRANSLOC_ICON_PATH;
-      } else
-          return TRANSLOC_ICON_ALTERNATIVE;
+      } else {
+          return SITE_URL . TRANSLOC_ICON_PATH;
+      }
   }
   
+  private static function getBusIconURL() {
+      if($_SERVER['SERVER_NAME'] != 'localhost') {
+          return 'http://' . $_SERVER['SERVER_NAME'] . BUS_ICON_PATH;
+      } else {
+          return SITE_URL . BUS_ICON_PATH;
+      }
+  }
+
   function getImageURLForRoute($routeID, $size='400') {
     $route = $this->routes[$routeID];
     $args = array(
@@ -429,7 +438,7 @@ class TranslocReader {
                     $iconLatLon['lat'] . ',' . $iconLatLon['lon'] ));
 
       $stopMarkerQuery = http_build_query(array(
-         "markers" => "color:0x" . $route['color'] . "|" . $stop['ll'][0] . ',' . $stop['ll'][1]));
+         "markers" => "icon:" . self::getBusIconURL() . "|" . $stop['ll'][0] . ',' . $stop['ll'][1]));
 
       return STATIC_MAPS_URL . http_build_query(MapPlotUtility::URLParams($mapParams), 0, '&amp;') .
               '&amp;' . $translocIconQuery . '&amp;' . $stopMarkerQuery . '&amp;sensor=false';
