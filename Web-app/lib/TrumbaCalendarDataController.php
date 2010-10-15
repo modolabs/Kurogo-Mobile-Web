@@ -81,24 +81,14 @@ class TrumbaCalendarDataController extends CalendarDataController
 
 class TrumbaEvent extends ICalEvent
 {
-  public function set_attribute($attr, $value, $params=NULL) {
+    protected $TrumbaCustomFields=array();
+    public function set_attribute($attr, $value, $params=NULL) {
     switch ($attr) {
-        case 'Contact Info':
-            $values = explode(',', iCalendar::ical_unescape_text($value));
-            foreach ($values as $_value) {
-                $_value = trim($_value);
-                if (Validator::isValidEmail($_value)) {
-                    $this->set_attribute('email', $_value);
-                } elseif (Validator::isValidPhone($_value)) {
-                    $this->set_attribute('phone', $_value);
-                } elseif (Validator::isValidURL($_value)) {
-                }
-            }
-            break;
         case 'X-TRUMBA-CUSTOMFIELD':
             if (array_key_exists('NAME', $params)) {
                 $name = $params['NAME'];
                 unset($params['NAME']);
+                $this->TrumbaCustomFields[$name] = $value;
                 $this->set_attribute($name, $value, $params);
             }
             break;

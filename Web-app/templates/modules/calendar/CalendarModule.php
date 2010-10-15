@@ -65,6 +65,7 @@ class CalendarModule extends Module {
   }
   
   private function timeText($event) {
+    return strval($event->get_range());
     if ($event->get_end() - $event->get_start() == -1) {
       return $event->get_range()->format('D M j').' '.date('g:i a', $event->get_start());
     }

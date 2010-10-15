@@ -116,6 +116,14 @@ class ICalEvent extends ICalObject {
     'datetime',
   );
   }
+  
+  public function apiArray()
+  {
+    //TODO: Not yet implemented
+     return array (
+     );
+  }
+  
   public function get_uid() {
     return $this->uid;
   }

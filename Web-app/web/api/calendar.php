@@ -1,49 +1,56 @@
 <?php
 
-require_once LIBDIR .'/harvard_calendar.php';
+$controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+$parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+$eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+$baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
 
-
+$timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('SITE_TIMEZONE'));
 $data = array();
 
 switch ($_REQUEST['command']) {
   case 'day':
-   $type = $_REQUEST['type'];
-   $time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
 
-   $date1 = date('Ym', $time);
-   $month = "?startdate=" .$date1 ."01&months=1";
+    $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 'events';
+    $time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
+    
+    $feed = new $controllerClass($baseURL, new $parserClass);
+    $feed->setObjectClass('event', $eventClass);
+    
+    $start = new DateTime(date('Y-m-d H:i:s', $time), $timezone);
+    $start->setTime(0,0,0);
+    $end = clone $start;
+    $end->setTime(23,59,59);
 
-   $date = date('Ymd', $time);
-   $events = array();
-
-  // $url = HARVARD_EVENTS_ICS_BASE_URL ."?startdate=" .$date;
-   // extracting data for one month at a time
-    $url = HARVARD_EVENTS_ICS_BASE_URL .$month; 
-   if ($type == 'Events') {
-       $events = makeIcalDayEvents($url, $date, NULL);
-   }
-
-   foreach ($events as $event) {
-     $data[] = clean_up_ical_event($event);
-   }
+    $feed->setStartDate($start);
+    $feed->setEndDate($end);
+    $iCalEvents = $feed->items();
+            
+    foreach($iCalEvents as $iCalEvent) {
+        $data[] = $iCalEvent->apiArray();
+    }
    break;
 
 
    case 'search':
      $searchString = isset($_REQUEST['q']) ? $_REQUEST['q'] : '';
 
+      $feed = new $controllerClass($baseURL, new $parserClass);
+      $feed->setObjectClass('event', $eventClass);
+      
+      $start = new DateTime(null, $timezone);
+      $start->setTime(0,0,0);
+      $feed->setStartDate($start);
+      $feed->setDuration(7,'day');
+      $feed->addFilter('search', $searchString);
+      $iCalEvents = $feed->items();
 
-       $date = date('Ymd', time());
-       $searchString = urlencode($searchString);
-       $url = HARVARD_EVENTS_ICS_BASE_URL . "?startdate=" . $date ."&days=7" ."&search=" .$searchString;
-
-       $events = makeIcalSearchEvents($url, $searchString);
-
-       foreach ($events as $event) {
-            $event_data[] = clean_up_ical_event($event);
+        foreach($iCalEvents as $iCalEvent) {
+            $data[] = $iCalEvent->apiArray();
         }
+      
+      $data = array('events'=>$data);
 
-         $data['events'] = $event_data;
    break;
 
    case 'category':
@@ -51,23 +58,32 @@ switch ($_REQUEST['command']) {
      $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : time();
      $end = isset($_REQUEST['end']) ? $_REQUEST['end'] : $start + 86400;
 
-     $date1 = date('Ym', $start);
-     $start = date('Ymd', $start);
-     $end = date('Ymd', $end);
-     //retrieve data for the whole month at a time
-     $month = "?startdate=" .$date1 ."01&months=1";
-     $url = HARVARD_EVENTS_ICS_BASE_URL .$month ."&filter1=" .$id ."&filterfield1=15202";
-
-    $events = makeIcalDayEvents($url, $start, $id);
-
-    foreach ($events as $event) {
-        $data[] = clean_up_ical_event($event);
+        $events = array();
+        
+        if (strlen($id) > 0) {
+            $feed = new $controllerClass($baseURL, new $parserClass);
+            $feed->setObjectClass('event', $eventClass);
+            
+            $start = new DateTime(date('Y-m-d H:i:s', $start), $timezone);
+            $start->setTime(0,0,0);
+            $end = clone $start;
+            $end->setTime(23,59,59);
+    
+            $feed->setStartDate($start);
+            $feed->setEndDate($end);
+            $feed->addFilter('category', $id);
+            $events = $feed->items();
+            foreach ($events as $event) {
+                $data[] = $event->apiArray();
+            }
         }
+
     }
+
    break;
 
    case 'categories':
-    $categories = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
+    $categories = call_user_func(array($eventClass, 'get_all_categories'));
 
        foreach ($categories as $categoryObject) {
      
@@ -80,14 +96,26 @@ switch ($_REQUEST['command']) {
                       'url' => $url);
 
            $data[] = $catData;
-           }
+       }
    break;
 
    case 'academic':
-		$data = get_academic_events($_REQUEST['year']);
+        $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ACADEMIC_ICS_URL');
+        $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 
-                if ($data == null)
-                    $data = array();
+        $start = new DateTime( $year   ."0901", $timezone);        
+        $end   = new DateTime(($year+1)."0831", $timezone);
+        
+        $feed = new $controllerClass($baseURL, new $parserClass);
+        $feed->setObjectClass('event', $eventClass);
+        $feed->setStartDate($start);
+        $feed->setEndDate($end);
+        $iCalEvents = $feed->items();
+
+        foreach($iCalEvents as $event) {
+            $data[] = $event->apiArray();
+        }
+
        	break;
 
    default:
