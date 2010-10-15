@@ -17,14 +17,14 @@ class Modules {
     'map' => Array(
       'title' => 'Map',
       ),
+    'news' => Array(
+      'title' => 'News',
+      ),
     'calendar' => Array(
       'title' => 'Events',
       ),
     'courses' => Array(
       'title' => 'Courses',
-      ),
-    'news' => Array(
-      'title' => 'News',
       ),
     'dining' => Array(
       'title' => 'Student Dining',
