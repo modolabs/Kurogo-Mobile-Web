@@ -11,10 +11,16 @@ body, th, td, li, option, select, input {
 	color: #222;
 }
 
-.focal, .nav, .results, .secondary, #tabbodies, .nav li, .results li, .secondary li, ul.focal li  {
-	/* Border color for many container elements and list items */
+.focal, .nav, .results {
+	/* Border color for many container elements */
 	border-color: #bbb;
 }
+
+.nav li, .results li, .secondary li, ul.focal li  {
+	/* Border color for list items */
+	border-color: #bbb;
+}
+
 
 a, a:visited {
 	color: #933;
@@ -57,10 +63,27 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fin
 	color: #554c41;
 }
 
-.springboard a {
+#springboard a {
 	/* Text color for icon labels in springboard-type screens (grids of icon launchers) */
 	color: #404346;
+	font-size: 12px;
+	line-height: 13px;
 }
+
+#springboard div {
+	/* Grid element size in springboard-type screens */
+	position: relative;
+	width: 79px;
+	height: 88px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	float: left;
+	text-align: center;		
+	vertical-align: top;
+}
+
+
 
 
 

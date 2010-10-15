@@ -11,7 +11,7 @@ body, th, td, li, option, select, input {
 	color: #222;
 }
 
-.focal, .nav, .results, .secondary, #tabbodies {
+.focal, .nav, .results {
 	/* Border color for many container elements */
 	/* border-color: #bbb; */
 	border: none;
@@ -19,12 +19,12 @@ body, th, td, li, option, select, input {
 
 .secondary {
 	/* Border color override specific to this theme */
-	border-color: #bbb;
+	border-color: #ccc;
 }
 
 .nav li, .results li, .secondary li, ul.focal li  {
 	/* Border color for list items */
-	border-color: #bbb;
+	border-color: #ccc;
 }
 
 a, a:visited {
@@ -68,11 +68,25 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	color: #555;
 }
 
-.springboard a {
+#springboard a {
 	/* Text color for icon labels in springboard-type screens (grids of icon launchers) */
 	color: #333;
+	font-size: 12px;
+	line-height: 13px;
 }
 
+#springboard div {
+	/* Grid element size in springboard-type screens */
+	position: relative;
+	width: 79px;
+	height: 88px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	float: left;
+	text-align: center;		
+	vertical-align: top;
+}
 
 
 /* Major content blocks */

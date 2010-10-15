@@ -54,15 +54,13 @@ ul li {
 }
 
 #header {
-	margin: 0;
-	padding: 8px 4px;
+	margin: 2px 2px 8px 2px;
 	font-size: 142%;
-	line-height: 32px;
+	line-height: 50px;
 }
 
 #header img {
 	float: left;
-	margin-right: 6px;
 }
 
 #header.homehead {
@@ -149,6 +147,12 @@ fieldset {
 	margin-bottom: 1em;
 }
 
+ul.nav, ul.secondary, ul.results {
+	list-style-type: none;
+	margin: 0 0 10px 0;
+	padding: 0;
+}
+
 
 
 /* Specific content formatting */
@@ -158,10 +162,10 @@ fieldset {
 }
 
 .nonfocal {
-	padding: .4em;
+	padding: 0;
 }
 
-h3.nonfocal {
+h3.nonfocal, .nonfocal h3 {
 	margin: 1em 0 -0.5em 0;
 	padding: 0;
 	margin-top: 1em;
@@ -340,4 +344,8 @@ span.icon {
 
 .dininghall {
 	margin-left: 4px;
+}
+
+.dl td {
+	padding: 0 4px 10px 0;
 }

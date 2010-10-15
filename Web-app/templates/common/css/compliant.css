@@ -265,20 +265,14 @@ a.formbutton div {
 	height: 100%;
 	line-height: 44px;
 	vertical-align: top;
-    margin-left: -8px; /* overlap by the width of the drillup art */
+    margin-left: -7px; /* overlap by the width of the drillup art */
+    padding: 0 19px 0 3px; 
     background-image: url(/common/images/drillup-r.png);
 	background-repeat: no-repeat;
 	background-position: top right;
 	text-decoration: none;
-	padding-right: 16px;
 	overflow: hidden;
 	text-overflow: ellipsis
-}
-
-.breadcrumbs a span {
-    /* pad to center the icons and text, including negative margin */
-    padding: 0 0 0 7px; 
-	line-height: 44px;
 }
 
 a.homelink {
@@ -292,12 +286,12 @@ a.homelink {
 }
 
 a.module img {
-	padding: 8px 4px 8px 8px;
+	padding: 8px 3px 8px 4px;
 }
 
 .homepage .moduleicon {
     display: inline-block;
-    padding: 8px 4px 8px 2px;
+    padding: 8px 6px 8px 4px;
 }
 
 .crumb1 {
@@ -324,12 +318,12 @@ a.module img {
 
 .pagetitle {
 	font-weight: bold;
+	margin-left: -4px;	
 	vertical-align: top;
 	line-height: 44px;
 }
 
 .homepage .pagetitle {
-	margin-left: -8px;	
 	max-width: 210px;
 }
 
@@ -1003,8 +997,6 @@ h2.icon {
 	padding: 0;
 	border: 0;
 	float: left;
-	font-size: 11px;
-	line-height: 12px;
 	text-align: center;		
 	vertical-align: top;
 }
@@ -1013,6 +1005,8 @@ h2.icon {
 	text-decoration: none;
 	-webkit-border-radius: 5px;
 	padding: 8px 6px;
+	font-size: 11px;
+	line-height: 12px;
 }
 #springboard a img {
 	margin-bottom: 1px
