@@ -1,7 +1,7 @@
 /* Overall font and colors */
 
 body {
-	background-color: #d8dbde;
+	background-color: #dcdddf;
 	/* background: url(/common/images/background-tile.jpg) top right repeat-x, url(/common/images/background-tile-2.jpg) bottom left repeat; */
 }
 
@@ -11,9 +11,20 @@ body, th, td, li, option, select, input {
 	color: #222;
 }
 
-.focal, .nav, .results, .secondary, #tabbodies, .nav li, .results li, .secondary li, ul.focal li  {
-	/* Border color for many container elements and list items */
-	border-color: #bbb;
+.focal, .nav, .results {
+	/* Border color for many container elements */
+	/* border-color: #bbb; */
+	border: none;
+}
+
+.secondary {
+	/* Border color override specific to this theme */
+	border-color: #ccc;
+}
+
+.nav li, .results li, .secondary li, ul.focal li  {
+	/* Border color for list items */
+	border-color: #ccc;
 }
 
 a, a:visited {
@@ -46,10 +57,10 @@ h4 {
 	color: #333;
 }
 
-dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fineprint, .dek {
+dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .smallprint, .fineprint, .dek {
 	/* Accent text color for several types of secondary text that appears on white backgrounds, e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
 	/* Often the same as the secondary text color defined in the next rule */
-	color: #555;
+	color: #404649;
 }
 
 .foundat, .address, #footer, .copyright, #footerlinks a {
@@ -57,11 +68,25 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fin
 	color: #555;
 }
 
-.springboard a {
+#springboard a {
 	/* Text color for icon labels in springboard-type screens (grids of icon launchers) */
 	color: #333;
+	font-size: 12px;
+	line-height: 13px;
 }
 
+#springboard div {
+	/* Grid element size in springboard-type screens */
+	position: relative;
+	width: 79px;
+	height: 88px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	float: left;
+	text-align: center;		
+	vertical-align: top;
+}
 
 
 /* Major content blocks */

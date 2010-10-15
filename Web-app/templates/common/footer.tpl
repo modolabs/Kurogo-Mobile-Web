@@ -1,4 +1,3 @@
-  </div>
   {strip}
   
   {capture name="footerHTML" assign="footerHTML"}
@@ -38,5 +37,6 @@
   {/block}
 
   {/strip}
+</div>
 </body>
 </html>

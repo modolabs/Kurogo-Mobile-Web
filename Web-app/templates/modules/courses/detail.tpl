@@ -37,13 +37,15 @@
         <li><h3>Instructor(s):</h3></li>
         {foreach $staff['instructors'] as $instructor}
           <li><a href="{$instructor['url']}" class="people">{$instructor['title']}</a></li>
-        {/foreach}
+ 		  <li></li>
+       {/foreach}
         
         {if count($staff['tas'])}
           <li><h3>TAs:</h3></li>
           {foreach $staff['tas'] as $ta}
             <li><a href="{$ta['url']}" class="people">{$ta['title']}</a></li>
           {/foreach}
+		  <li></li>
         {/if}
     </ul>
   {/block}

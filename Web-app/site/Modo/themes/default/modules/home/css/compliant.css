@@ -1,3 +1,8 @@
+body {
+	background-color: #aaa;
+	background-image: url(/common/images/background-glow.png);
+}
+
 #homegrid div {
 	/* Overall size of one cell in the home grid */
 	width: 103px;

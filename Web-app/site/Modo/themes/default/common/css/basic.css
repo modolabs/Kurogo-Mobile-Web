@@ -1,7 +1,7 @@
 /* Overall font and colors */
 
 body {
-	background: #d8dbde;
+	background: #dcdddf;
 }
 
 body, th, td, li, option, select, input {
@@ -15,19 +15,19 @@ a, a:visited {
 }
 
 a:hover {
-	color: #e00;
+	color: #07d;
 }
 
 h1 {
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: Georgia, serif;
 	font-size: 142%; 
 	font-weight: normal;
-	color: #333;
+	color: #036;
 }
 
 h2 {
 	font-family: Helvetica, Arial, sans-serif;
-	font-size: 142%; 
+	font-size: 133%; 
 	font-weight: normal;
 	color: #036;
 }
@@ -35,7 +35,7 @@ h2 {
 h3 {
 	font-size: 100%; 
 	font-weight: bold;
-	color: #036;
+	color: #333;
 }
 
 h4 {
@@ -49,7 +49,7 @@ dt, .label, .legend {
 	color: #303339;
 }
 
-.smallprint, .fineprint, .iconlegend {
+.smallprint, .fineprint, .iconlegend, .dllabel {
 	/* Secondary text color */
 	color: #666;
 }
