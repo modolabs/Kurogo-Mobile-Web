@@ -28,6 +28,21 @@ if (!in_array($routeID, $reader->getRoutes())) {
   $vehicleCount = count($vehicles);
   $stops = $reader->getStopsForRoute($routeID);
 
+  $highlightedStopsCount = 0;
+  foreach($stops as $aStop) {
+      if(isset($aStop['upcoming']) && $aStop['upcoming']) {
+          $highlightedStopsCount++;
+      }
+  }
+
+  if($highlightedStopsCount == 0) {
+    $arrivingNextLegendHtml = "";
+  } else if($highlightedStopsCount == 1) {
+    $arrivingNextLegendHtml = '<span class="smallprint">Bus arrives next at the highlighted stop</span>';  
+  } else {
+    $arrivingNextLegendHtml = '<span class="smallprint">Bus arrives next at the highlighted stops</span>';
+  }
+
   $summary = $vehicleCount.' shuttle'.($vehicleCount != 1 ? 's':'').' found.';
   $lastUpdated = $reader->getVehiclesLastUpdateTime($routeID);
 

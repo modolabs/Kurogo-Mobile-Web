@@ -23,6 +23,7 @@ $page->content_begin();
          <? } ?>
     </p>
 
+    <?=$arrivingNextLegendHtml?>
     <table cellpadding="0" cellspacing="0" border="0" class="schedule">
   <? foreach($stops as $index => $stop) {  
       if (!isset($stop['title'])) { continue; } /* skip gps entry */ ?>
