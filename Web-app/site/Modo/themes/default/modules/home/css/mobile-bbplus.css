@@ -1,0 +1,35 @@
+body {
+	background-color: #ebe7dd; 
+	background-image: url('/common/images/background-tile.png');
+	font-family: Helvetica, Arial, sans-serif;
+	line-height: 1.33em;
+	color: #333;
+}
+
+h1 {
+	padding: 17px 0 11px 0;
+	text-align: center;
+	color: #000;
+	font-size: 171%;
+}
+
+#homegrid div {
+	width: 82px;
+	height: 114px;
+	font-size: 16px;
+}
+#homegrid a {	
+	width: 76px;
+	height: 106px;
+	color: #333;
+}
+#homegrid a:hover {
+	border-color: #c00;
+}
+#homegrid a:active {
+	border-color: #900;
+}
+
+.forminput {
+	border-color: #554c41;
+}
