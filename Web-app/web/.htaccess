@@ -5,5 +5,5 @@
   
   RewriteCond %{REQUEST_URI} !=min/.*$
   RewriteCond %{REQUEST_URI} ^(.*)$
-  RewriteRule ^(.*)$ index.php?q=%1 [L,QSA]
+  RewriteRule ^(.*)$ index.php?_path=%1 [L,QSA]
 </IfModule>
