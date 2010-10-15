@@ -53,12 +53,19 @@ if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   //
   // API
   //
-  
-  $path = realpath_exists(WEBROOT_DIR."/$matches[1]");  
-  if ($path) {
-    require_once($path);
-    exit;
-  }
+  if (isset($_GET['module']) && $_GET['module']) {
+      $path = realpath_exists(WEBROOT_DIR."/api/" . $_GET['module'] . '.php');
+      if ($path) {
+        require_once($path);
+        exit;
+      }
+  } else {
+      $path = realpath_exists(WEBROOT_DIR."/$matches[1]");  
+      if ($path) {
+        require_once($path);
+        exit;
+      }
+ }
   
 } else if (preg_match(';^.*media/(.*)$;', $path, $matches)) {
   //

@@ -1,4 +1,8 @@
 <?
+
+$_GET['q'] = '/api/';
+require_once('../index.php');
+exit();
 require_once("api_header.inc");
 
 $module = $_REQUEST['module'];

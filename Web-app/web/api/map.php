@@ -12,26 +12,26 @@ $content = "";
 switch ($_REQUEST['command']) {
 
  case 'capabilities':
-   require_once LIBDIR . '/ArcGISServer.php';
+   require_once LIB_DIR . '/feeds/ArcGISServer.php';
    $json = ArcGISServer::getCapabilities();
    $content = json_encode($json);
    break;
 
  case 'proj4specs':
-   require_once LIBDIR . '/ArcGISServer.php';
+   require_once LIB_DIR . '/feeds/ArcGISServer.php';
    $wkid = $_REQUEST['wkid'];
    $json = ArcGISServer::getWkidProperties($wkid);
    $content = json_encode($json);
    break;
 
  case 'tilesupdated':
-   $date = file_get_contents(MAP_TILE_CACHE_DATE);
+   $date = file_get_contents($GLOBALS['siteConfig']->getVar('MAP_TILE_CACHE_DATE'));
    $data = array("last_updated" => trim($date));
    $content = json_encode($data);
    break;
 
  case 'categorytitles':
-   require_once LIBDIR . '/ArcGISServer.php';
+   require_once LIB_DIR . '/feeds/ArcGISServer.php';
    $collections = ArcGISServer::getLayers();
    $result = array();
    foreach ($collections as $id => $name) {
@@ -60,7 +60,7 @@ switch ($_REQUEST['command']) {
   
      } else {
 
-       require_once LIBDIR . '/ArcGISServer.php';
+       require_once LIB_DIR . '/feeds/ArcGISServer.php';
        if (isset($_REQUEST['category'])) {
          $category = $_REQUEST['category'];
          $json = ArcGISServer::search($_REQUEST['q'], $category);
@@ -89,7 +89,7 @@ switch ($_REQUEST['command']) {
        $content = json_encode($json);
      }
    } elseif (isset($_REQUEST['category'])) {
-     require_once LIBDIR . '/ArcGISServer.php';
+       require_once LIB_DIR . '/feeds/ArcGISServer.php';
      $category = $_REQUEST['category'];
      $results = array();
      $layer = ArcGISServer::getLayer($category);
