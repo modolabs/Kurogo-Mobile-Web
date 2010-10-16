@@ -7,6 +7,8 @@ class PeopleModule extends Module {
   
   private $detailFields = array();
   private $detailAttributes = array();
+  private $peopleController = '';
+  private $personClass = '';
   
   private function formatValues($values, $info) {
     if (isset($info['parse'])) {
@@ -63,34 +65,40 @@ class PeopleModule extends Module {
     return $detail;
   }
   
+  private function formatPersonDetail($person, $info) {
+    $section = array();
+    
+    if (count($info['attributes']) == 1) {
+      $values = (array)$person->getField($info['attributes'][0]);
+      if (count($values)) {
+        $section[] = $this->formatDetail($this->formatValues($values, $info), $info);
+      }      
+    } else {
+      $valueGroups = array();
+    
+      foreach ($info['attributes'] as $attribute) {
+        $values = $this->formatValues((array)$person->getField($attribute), $info);
+        
+        if (count($values)) {
+          foreach ($values as $i => $value) {
+            $valueGroups[$i][] = $value;
+          }
+        }
+      }
+      foreach ($valueGroups as $valueGroup) {
+        $section[] = $this->formatDetail($valueGroup, $info);
+      }
+    }
+    
+    return $section;
+  }
+  
   private function formatPersonDetails($person) {
     //error_log(print_r($this->detailFields, true));
     
     $details = array();    
     foreach($this->detailFields as $key => $info) {
-      $section = array();
-      
-      if (count($info['attributes']) == 1) {
-        $values = (array)$person->getField($info['attributes'][0]);
-        if (count($values)) {
-          $section[] = $this->formatDetail($this->formatValues($values, $info), $info);
-        }      
-      } else {
-        $valueGroups = array();
-      
-        foreach ($info['attributes'] as $attribute) {
-          $values = $this->formatValues((array)$person->getField($attribute), $info);
-          
-          if (count($values)) {
-            foreach ($values as $i => $value) {
-              $valueGroups[$i][] = $value;
-            }
-          }
-        }
-        foreach ($valueGroups as $valueGroup) {
-          $section[] = $this->formatDetail($valueGroup, $info);
-        }
-      }
+      $section = $this->formatPersonDetail($person, $info);
       
       if (count($section)) {
         if (isset($info['section'])) {
@@ -107,16 +115,46 @@ class PeopleModule extends Module {
     //error_log(print_r($details, true));
     return $details;
   }
+  
+  public function federatedSearch($searchTerms, $maxCount, &$results) {
+    $total = 0;
+    $results = array();
+  
+    $PeopleController = new $this->peopleController();
+    $PeopleController->setPersonClass($this->personClass);
+    $PeopleController->setAttributes($this->detailAttributes);
+    
+    $people = $PeopleController->search($searchTerms);
 
-  protected function initializeForPage() {
-    $peopleController = $GLOBALS['siteConfig']->getVar('PEOPLE_CONTROLLER_CLASS');
-    $personClass      = $GLOBALS['siteConfig']->getVar('PEOPLE_PERSON_CLASS');
+    if ($people !== false) {
+      $limit = min($maxCount, count($people));
+      for ($i = 0; $i < $limit; $i++) {
+        $section = $this->formatPersonDetail($people[$i], $this->detailFields['name']);
+        
+        $results[] = array(
+          'url' => $this->buildBreadcrumbURL("/{$this->id}/detail", array(
+             'uid'    => $people[$i]->getId(),
+             'filter' => $this->args['filter'],
+          ), false),
+          'title' => htmlentities($section[0]['title']),
+        );
+      }
+    }
+    return count($people);
+  }
+  
+  protected function initialize() {
+    $this->peopleController = $GLOBALS['siteConfig']->getVar('PEOPLE_CONTROLLER_CLASS');
+    $this->personClass      = $GLOBALS['siteConfig']->getVar('PEOPLE_PERSON_CLASS');
 
     $this->detailFields = $this->loadThemeConfigFile('people-detail', 'detailFields');
     foreach($this->detailFields as $field => $info) {
       $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
     }
     $this->detailAttributes = array_unique($this->detailAttributes);
+  }
+
+  protected function initializeForPage() {
     
     switch ($this->page) {
       case 'help':
@@ -124,8 +162,8 @@ class PeopleModule extends Module {
         
       case 'detail':
         if (isset($this->args['uid'])) {
-          $PeopleController = new $peopleController();
-          $PeopleController->setPersonClass($personClass);
+          $PeopleController = new $this->peopleController();
+          $PeopleController->setPersonClass($this->personClass);
           $PeopleController->setAttributes($this->detailAttributes);
           $person = $PeopleController->lookupUser($this->args['uid']);
           
@@ -142,8 +180,8 @@ class PeopleModule extends Module {
       case 'search':
         if (isset($this->args['filter'])) {
           $searchTerms = trim($this->args['filter']);
-          $PeopleController = new $peopleController();
-          $PeopleController->setPersonClass($personClass);
+          $PeopleController = new $this->peopleController();
+          $PeopleController->setPersonClass($this->personClass);
           $PeopleController->setAttributes($this->detailAttributes);
           
           $this->assign('searchTerms', $searchTerms);
@@ -170,17 +208,17 @@ class PeopleModule extends Module {
                 $results = array();
                 
                 foreach ($people as $person) {
+                  $section = $this->formatPersonDetail($person, $this->detailFields['name']);
+                  
                   $results[] = array(
                     'url' => $this->buildBreadcrumbURL('detail', array(
-                       'uid' => $person->getId(),
-                       'filter'   => $this->args['filter'],
+                       'uid'    => $person->getId(),
+                       'filter' => $this->args['filter'],
                     )),
-                    'title' => htmlentities(
-                        $person->getFieldSingle($PeopleController->getField('sn')).', '.
-                        $person->getFieldSingle($PeopleController->getField('givenname'))
-                    ),
+                    'title' => htmlentities($section[0]['title']),
                   );
-                }//error_log(print_r($results, true));
+                }
+                //error_log(print_r($results, true));
                 $this->assign('resultCount', $resultCount);
                 $this->assign('results', $results);
                 break;

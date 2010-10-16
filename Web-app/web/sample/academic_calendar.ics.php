@@ -2,11 +2,7 @@
 
 /* sample academic calendar server */
 ini_set('display_errors','no');
-require_once realpath(dirname(__FILE__).'/../../lib/initialize.php');
 
-
-$path = '';
-Initialize($path); 
 $GLOBALS['siteConfig']->loadThemeFile('site', true);
 $tzid = $GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE');
 

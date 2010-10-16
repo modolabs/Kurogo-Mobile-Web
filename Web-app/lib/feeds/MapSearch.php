@@ -24,9 +24,9 @@ function searchCampusMap($query) {
     $rawContent = file_get_contents($url);
     $content = json_decode($rawContent);
     
-    foreach ($content->results as $resultObj) {
-        if (strlen($resultObj->bld_num) && !in_array($resultObj->bld_num, $bldgIds))
-            $bldgIds[] = $resultObj->bld_num;
+    foreach ($content->results as $result) {
+        if (strlen($result->bld_num) && !in_array($result->bld_num, $bldgIds))
+            $bldgIds[] = $result->bld_num;
     }
 
     if ($bldgIds) {
@@ -37,7 +37,6 @@ function searchCampusMap($query) {
             }
         }
     }
-
     return $resultObj;
 }
 

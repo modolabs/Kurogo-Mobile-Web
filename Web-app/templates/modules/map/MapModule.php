@@ -419,6 +419,22 @@ JS;
     return $this->buildBreadcrumbURL('fullscreen', $args, false);
   }
 
+  public function federatedSearch($searchTerms, $maxCount, &$results) {
+    $searchResults = array_values(searchCampusMap($searchTerms)->results);
+    
+    $limit = min($maxCount, count($searchResults));
+    for ($i = 0; $i < $limit; $i++) {
+      $result = array(
+        'title' => $this->getTitleForSearchResult($searchResults[$i]),
+        'url'   => $this->buildBreadcrumbURL("/{$this->id}/detail", 
+          $this->detailURLArgsForResult($searchResults[$i]), false),
+      );
+      $results[] = $result;
+    }
+
+    return count($searchResults);
+  }
+
   protected function initializeForPage() {
     switch ($this->page) {
       case 'help':

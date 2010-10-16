@@ -72,9 +72,15 @@ class CoursesModule extends Module {
     ), $addBreadcrumb);
   }
   
-  private function getClassListItems($classes) {
+  private function getClassListItems($classes, $externalLink=false, $limit=null) {
     $listItems = array();
     
+    $detailPath = 'detail';
+    if ($externalLink) {
+      $detailPath = "/{$this->id}/detail";
+    }
+    
+    $count = 0;
     foreach ($classes as $i => $class) {
       // Multiple classes with the same name in a row, show instructors to differentiate     
       $staffNamesIfNeeded = '';    
@@ -88,8 +94,15 @@ class CoursesModule extends Module {
       
       $listItems[] = array(
         'title' => $class['name'].' : '.$class['title'].$staffNamesIfNeeded,
-        'url'   => $this->detailURL($class['masterId']),
+        'url'   => $this->buildBreadcrumbURL($detailPath, array(
+          'class' => $class['masterId'],
+        ), !$externalLink),
       );
+      
+      $count++;
+      if (isset($limit) && $count >= $limit) {
+        break;
+      }
     }        
     
     return $listItems;
@@ -140,6 +153,16 @@ class CoursesModule extends Module {
       'loc'    => 'courses',
       'filter' => $location,
     ));
+  }
+
+  public function federatedSearch($searchTerms, $maxCount, &$results) {
+    $data = CourseData::search_subjects($searchTerms, '', '');
+    
+    if ($data['count'] > 0 && isset($data['classes'])) {
+      $this->getClassListItems($results, true, $maxCount);
+    }   
+    
+    return $data['count'];
   }
 
   protected function initializeForPage() {

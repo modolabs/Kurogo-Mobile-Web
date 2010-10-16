@@ -41,19 +41,6 @@ abstract class Module {
   private $tabbedView = null;
   
   //
-  // Federated search support
-  //
-  protected function federatedSearch($searchTerms) {
-    return 0;
-  }
-  
-  protected function urlForSearch($searchTerms) {
-    return buildURL('search', array(
-      'filter' => $searchTerms,
-    ));
-  }
-  
-  //
   // Tabbed View support
   //
   
@@ -213,8 +200,11 @@ abstract class Module {
 
   protected function redirectTo($page, $args=null) {
     if (!isset($args)) { $args = $this->args; }
-  
-    header("Location: ./".self::buildURL($page, $args));
+    
+    $url = URL_PREFIX."{$this->id}/".self::buildURL($page, $args);
+    error_log('Redirecting to: '.$url);
+    
+    header("Location: $url");
     exit;
   }
   
@@ -257,6 +247,8 @@ abstract class Module {
     } else if (isset($_COOKIE['fontsize'])) { 
       $this->fontsize = $_COOKIE['fontsize'];
     }
+    
+    $this->initialize();
   }
   
   //
@@ -551,9 +543,29 @@ abstract class Module {
     // Load template for page
     $this->templateEngine->displayForDevice($template);    
   }
-     
+  
+  
   //
   // Subclass this function to set up variables for each template page
   //
-  abstract protected function initializeForPage(); 
+  abstract protected function initializeForPage();
+
+  //
+  // Subclass this function to perform initialization just after __construct()
+  //
+  protected function initialize() {} 
+  
+  //
+  // Subclass these functions for federated search support
+  // Return 2 items and a link to get more
+  //
+  public function federatedSearch($searchTerms, $maxCount, &$results) {
+    return 0;
+  }
+  
+  protected function urlForSearch($searchTerms) {
+    return $this->buildBreadcrumbURL("/{$this->id}/search", array(
+      'filter' => $searchTerms,
+    ), false);
+  }
 }

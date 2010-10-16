@@ -10,8 +10,8 @@ class DiningModule extends Module {
   
   private function dayURL($time, $addBreadcrumb=true) {
     $args = array('time' => $time);
-    if($this->activeTab) {
-      $args['tab'] = $this->activeTab;
+    if(isset($this->args['tab'])) {
+      $args['tab'] = $this->args['tab'];
     }
     return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
   }  

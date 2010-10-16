@@ -80,6 +80,54 @@ class NewsModule extends Module {
     return $this->feeds;
   }
 
+  public function federatedSearch($searchTerms, $maxCount, &$results) {
+    $controllerClass = $GLOBALS['siteConfig']->getVar('NEWS_CONTROLLER_CLASS');
+    $parserClass     = $GLOBALS['siteConfig']->getVar('NEWS_PARSER_CLASS');
+    $start           = 0;
+    $feedIndex       = 0;
+    
+    $feed = new $controllerClass($this->feedURLForFeed($feedIndex), new $parserClass);
+    
+    $feed->addFilter('search', $searchTerms);
+    $items = $feed->items($start, $maxCount+1, $totalItems);
+    
+    $limit = min($maxCount, count($items));
+    for ($i = 0; $i < $limit; $i++) {
+      $results[] = array(
+        'title' => $items[$i]->getTitle(),
+        'url'   => $this->buildBreadcrumbURL("/{$this->id}/story", array(
+          'storyID' => $items[$i]->getProperty($GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD')),
+          'section' => $feedIndex,
+          'start'   => $start ,
+          'filter'  => $searchTerms,
+        ), false),
+      );
+    }
+    
+    return count($items);
+  }
+
+  protected function initialize() {
+    $controllerClass = $GLOBALS['siteConfig']->getVar('NEWS_CONTROLLER_CLASS');
+    $parserClass     = $GLOBALS['siteConfig']->getVar('NEWS_PARSER_CLASS');
+    $channelClass    = $GLOBALS['siteConfig']->getVar('NEWS_CHANNEL_CLASS');
+    $itemClass       = $GLOBALS['siteConfig']->getVar('NEWS_ITEM_CLASS');
+    $imageClass      = $GLOBALS['siteConfig']->getVar('NEWS_IMAGE_CLASS');
+    $maxPerPage      = $GLOBALS['siteConfig']->getVar('NEWS_MAX_RESULTS');
+    
+    $this->loadFeeds();
+
+    $this->feedIndex = $this->getArg('section', 0);
+    if (!isset($this->feeds[$this->feedIndex])) {
+      $this->feedIndex = 0;
+    }
+
+    $feed = new $controllerClass($this->feedURLForFeed($this->feedIndex), new $parserClass);
+    $feed->setObjectClass('channel', $channelClass);
+    $feed->setObjectClass('item', $itemClass);
+    $feed->setObjectClass('image', $imageClass);
+  }
+
   protected function initializeForPage() {
     $controllerClass = $GLOBALS['siteConfig']->getVar('NEWS_CONTROLLER_CLASS');
     $parserClass     = $GLOBALS['siteConfig']->getVar('NEWS_PARSER_CLASS');

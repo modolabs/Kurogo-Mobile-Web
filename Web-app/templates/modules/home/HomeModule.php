@@ -40,22 +40,25 @@ class HomeModule extends Module {
      case 'search':
         $searchTerms = $this->getArg('filter');
         
-        $results = array();
+        $federatedResults = array();
      
         foreach ($this->getHomeScreenModules() as $id => $info) {
-          if ($info['homescreen'] && !$info['url']) {
+          if ($info['search']) {
+            $results = array();
             $module = Module::factory($id, $this->page, $this->args);
-            
-            $count = $module->federatedSearch($searchTerms);
-            if ($count) {
-              $results[] = array(
-                'title' => "{$info['title']} ({$count})",
-                'url'   => $module->urlForSearch($searchTerms),
-              );
-            }
+            $total = $module->federatedSearch($searchTerms, 2, $results);
+            $federatedResults[] = array(
+              'title'   => $info['title'],
+              'results' => $results,
+              'total'   => $total,
+              'url'     => $module->urlForSearch($searchTerms),
+            );
+            unset($module);
           }
         }
-        
+        //error_log(print_r($federatedResults, true));
+        $this->assign('federatedResults', $federatedResults);
+        $this->assign('searchTerms',      $searchTerms);
         break;
     }
   }

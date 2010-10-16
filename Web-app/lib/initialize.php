@@ -120,6 +120,7 @@ function Initialize(&$path=null) {
     require_once realpath(LIB_DIR.'/DeviceClassifier.php');
     
     $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
+
   }
   
   

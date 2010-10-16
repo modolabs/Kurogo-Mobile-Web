@@ -6,7 +6,6 @@
 */
 
 ini_set('display_errors','yes');
-require_once realpath(dirname(__FILE__).'/../../lib/initialize.php');
 
 function getTomorrow($timestamp)
 {
@@ -14,9 +13,6 @@ function getTomorrow($timestamp)
 	return mktime(0,0,0,date('m', $timestamp), date('d', $timestamp), date('Y', $timestamp));
 }
 
-
-$path = '';
-Initialize($path); 
 $GLOBALS['siteConfig']->loadThemeFile('site', true);
 $tzid = $GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE');
 $uid_base = 'http://imobileu.org/events/';

@@ -8,7 +8,7 @@
       
       {block name="navlistItem"}
         <li>
-          {include file="findInclude:common/listItem.tpl" subTitleNewline=false}
+          {include file="findInclude:common/listItem.tpl" subTitleNewline=$subTitleNewline|default:false}
         </li>
       {/block}
       

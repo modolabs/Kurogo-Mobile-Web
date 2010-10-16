@@ -66,6 +66,17 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
     echo file_get_contents($media);
     exit;
   }
+
+} else if (preg_match(';^.*(sample/.*)$;', $path, $matches)) {
+  //
+  // Sample Files
+  //
+
+  $sample = realpath_exists(WEBROOT_DIR."/$matches[1].php");
+  if ($sample) {
+    require_once $sample;
+    exit;
+  }
   
 } else if (preg_match(';^.*api/$;', $path, $matches)) {
   //
@@ -99,7 +110,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
   $page = 'index';
   
   $args = $_GET;
-  unset($args['q']);
+  unset($args['_path']);
   if (get_magic_quotes_gpc()) {
     
     function deepStripSlashes($v) {
@@ -126,7 +137,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
   }
 
   PageViews::increment($id, $GLOBALS['deviceClassifier']->getPlatform());
-  
+
   $module = Module::factory($id, $page, $args);
   $module->displayPage();
   exit;
