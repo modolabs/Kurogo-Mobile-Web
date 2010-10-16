@@ -9,6 +9,13 @@ $reader = new TranslocReader();
 
 $agencies = $reader->getAgenciesAndNames();
 
+// this method is only called so that we make a call back
+// to transloc, so transloc can tabulate accurate statistics
+header("refresh: 180;url=index.php?autorefreshed=true");
+if(!$_REQUEST['autorefreshed']) {
+    $reader->refreshSetup();
+}
+
 $runningRoutes = array();
 foreach ($agencies as $agencyID => $agencyName) {
   $runningRoutes[$agencyID] = $reader->getRunningRoutesAndNamesForAgency($agencyID);

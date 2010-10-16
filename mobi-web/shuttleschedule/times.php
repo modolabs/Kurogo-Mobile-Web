@@ -4,6 +4,8 @@ $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once LIBDIR . "/TranslocReader.php";
 
+define('NOT_RUNNING_SUMMARY', 'Bus not running.');
+
 $routeID = $_REQUEST['route'];
 
 $reader = new TranslocReader();
@@ -14,22 +16,36 @@ if (!in_array($routeID, $reader->getRoutes())) {
 
   $not_found_text = '<p>The route ' . $routeName . ' ' . $routeError . '.  Please update your bookmarks accordingly.  For more information see the <a href="help.php">help page</a>.</p>';
 
-  $page->prepare_error_page('Shuttle Schedule', 'shuttle', $not_found_text);
+  $page->prepare_error_page('ShuttleTracker', 'shuttle', $not_found_text);
 
 } else {
 
   $now = time();
 
   $routeName = $reader->getNameForRoute($routeID);
-  $foundVehicles = $reader->routeIsRunning($routeID);
+  $isRunning = $reader->routeIsRunning($routeID);
   $vehicles = $reader->getVehiclesForRoute($routeID);
   $vehicleCount = count($vehicles);
   $stops = $reader->getStopsForRoute($routeID);
 
+  $highlightedStopsCount = 0;
+  foreach($stops as $aStop) {
+      if(isset($aStop['upcoming']) && $aStop['upcoming']) {
+          $highlightedStopsCount++;
+      }
+  }
+
+  if($highlightedStopsCount == 0) {
+    $arrivingNextLegendHtml = "";
+  } else if($highlightedStopsCount == 1) {
+    $arrivingNextLegendHtml = '<span class="smallprint">Bus arrives next at the highlighted stop</span>';  
+  } else {
+    $arrivingNextLegendHtml = '<span class="smallprint">Bus arrives next at the highlighted stops</span>';
+  }
+
   $summary = $vehicleCount.' shuttle'.($vehicleCount != 1 ? 's':'').' found.';
   $lastUpdated = $reader->getVehiclesLastUpdateTime($routeID);
 
-  $routeRunningSummary = $foundVehicles ? 'Real time bus tracking online.' : 'Bus not running. Following schedule';
   $briefDescription = $reader->getBriefDescription($routeName);
   $scheduleSummary = $reader->getSummary($routeName);
   

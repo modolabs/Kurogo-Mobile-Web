@@ -18,6 +18,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+        font-size: 17px;
 }
 
 .current td {
@@ -30,6 +31,11 @@
 	background-image: url(../../Webkit/images/shuttle.png);
 	background-repeat: no-repeat;
 	background-position: 3px 3px;
+}
+
+/* required so that the text-overflow property of ellipsis is not ignored */
+table, tbody, td, tr {
+       display: block;
 }
 
 .sid {
@@ -53,9 +59,10 @@
 }
 
 #refresh {
-	position: absolute;
-	top: 8px;
-	right: 8px;
+	float: right;
+        position: relative;
+	top: -4px;
+	right: -4px;
 	font-size: 14px;
 }
 

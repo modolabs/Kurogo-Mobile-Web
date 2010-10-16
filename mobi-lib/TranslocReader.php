@@ -3,11 +3,14 @@
 require 'decodePolylineToArray.php';
 require 'encodePolylineFromArray.php';
 require 'DiskCache.inc';
+require 'MapPlotUtility.php';
 
 define('MASCO_TRANSLOC_FEED', 'http://masco.transloc.com/itouch/feeds/');
 define('HARVARD_TRANSLOC_FEED', 'http://harvard.transloc.com/itouch/feeds/');
 define('HARVARD_TRANSLOC_MARKERS', 'http://harvard.transloc.com/m/markers/marker.php');
 define('STATIC_MAPS_URL', 'http://maps.google.com/maps/api/staticmap?');
+define('TRANSLOC_ICON_PATH', '/shuttleschedule/shuttle-transloc.png');
+define('BUS_ICON_PATH', '/shuttleschedule/shuttle_stop_pin.png');
 define('TRANSLOC_UPDATE_FREQ', 200);
 define('ANNOUNCEMENTS_FEED', 'http://harvard.transloc.com/itouch/feeds/announcements?v=1&contents=true');
 
@@ -158,7 +161,7 @@ class TranslocReader {
         $runningRoutes[$routeID] = $this->getNameForRoute($routeID);
       }
     }
-    //sort($runningRoutes);
+    asort($runningRoutes);
     return $runningRoutes;
   }
 
@@ -169,7 +172,7 @@ class TranslocReader {
         $nonRunningRoutes[$routeID] = $this->getNameForRoute($routeID);
       }
     }
-    //sort($nonRunningRoutes);
+    asort($nonRunningRoutes);
     return $nonRunningRoutes;
   }  
   
@@ -341,11 +344,26 @@ class TranslocReader {
  function getOneRouteInfo($route_id) {
       return $this->routes[$route_id];
   }
+
+  private static function getTranslocIconURL() {
+      if($_SERVER['SERVER_NAME'] != 'localhost') {
+          return 'http://' . $_SERVER['SERVER_NAME'] . TRANSLOC_ICON_PATH;
+      } else {
+          return SITE_URL . TRANSLOC_ICON_PATH;
+      }
+  }
   
+  private static function getBusIconURL() {
+      if($_SERVER['SERVER_NAME'] != 'localhost') {
+          return 'http://' . $_SERVER['SERVER_NAME'] . BUS_ICON_PATH;
+      } else {
+          return SITE_URL . BUS_ICON_PATH;
+      }
+  }
+
   function getImageURLForRoute($routeID, $size='400') {
     $route = $this->routes[$routeID];
     $args = array(
-      'size'   => $size.'x'.$size,
       'sensor' => 'false',
     );
 
@@ -361,7 +379,8 @@ class TranslocReader {
     }
     //print(json_encode($this->stops));
     //print(json_encode($this->routes[$route['id']]['stops']));
-    $args['path'] = 'weight:4|color:0x'.$route['color'].'|enc:'.
+    $opacity = 'C0';
+    $args['path'] = 'weight:4|color:0x'.$route['color'].$opacity.'|enc:'.
           encodePolylineFromArray($path);
     
     $vehicleSuffix = '';
@@ -388,76 +407,41 @@ class TranslocReader {
       ));
     }
 
+    $bounds = MapPlotUtility::getBounds($this->getPathForRoute($routeID));
+    $mapParams = MapPlotUtility::ComputeMapParameters($size, $size, $bounds, 0.0);
+    $args = array_merge($args, MapPlotUtility::URLParams($mapParams));
+    $iconLatLon = MapPlotUtility::computeLatLon($mapParams, 0.90, 0.88);
+
+    $translocIcon = http_build_query(array(
+       'markers' => 'icon:' . self::getTranslocIconURL() . '|shadow:false|' .
+                    $iconLatLon['lat'] . ',' . $iconLatLon['lon'] ));
+
+
     //error_log(print_r($iconURL, true));
     //print_r(urldecode(($iconURL)));
-    return STATIC_MAPS_URL.http_build_query($args, 0, '&amp;').$vehicleSuffix;
+    return STATIC_MAPS_URL.$translocIcon.'&amp;'.http_build_query($args, 0, '&amp;').$vehicleSuffix;
   }
 
   function getImageURLForStop($routeID, $stop, $width, $height) {
       $route = $this->routes[$routeID];
 
-      $mapParams = array(
-          "center" => $stop['ll'][0] . ',' . $stop['ll'][1],
-          "markers" => "color:0x" . $route['color'] . "|" . $stop['ll'][0] . ',' . $stop['ll'][1],
-          "sensor" => "false",
+       $mapParams = array(
+          "center" => array('lat' => $stop['ll'][0], 'lon' => $stop['ll'][1]),
+          "width" => $width,
+          "height" => $height,
           "zoom" => "16",
-          "size" => $width . 'x' . $height,
-      );
+       );
+       
+      $iconLatLon = MapPlotUtility::computeLatLon($mapParams, 0.90, 0.79);
+      $translocIconQuery = http_build_query(array(
+          'markers' => 'icon:' . self::getTranslocIconURL() . '|shadow:false|' .
+                    $iconLatLon['lat'] . ',' . $iconLatLon['lon'] ));
 
-      return STATIC_MAPS_URL . http_build_query($mapParams, 0, '&amp;');
-  }
+      $stopMarkerQuery = http_build_query(array(
+         "markers" => "icon:" . self::getBusIconURL() . "|" . $stop['ll'][0] . ',' . $stop['ll'][1]));
 
-
-  function getIconUrl($routeID, $size='400') {
-    $route = $this->routes[$routeID];
-    $args = array(
-      'size'   => $size.'x'.$size,
-      'sensor' => 'false',
-    );
-
-    //print_r($route);
-    $path = array();
-    foreach ($route['segments'] as $segment) {
-      $polyline = $this->segments[abs(intVal($segment))]['points'];
-      $points = decodePolylineToArray($polyline);
-      if (intVal($segment) < 0) {
-        $points = array_reverse($points);
-      }
-      $path = array_merge($path, $points);
-    }
-    //print(json_encode($this->stops));
-    //print(json_encode($this->routes[$route['id']]['stops']));
-    $args['path'] = 'weight:4|color:0x'.$route['color'].'|enc:'.
-          encodePolylineFromArray($path);
-
-    $vehicleSuffix = '';
-    $vehicles = $this->getVehiclesForRoute($routeID);
-
-    //print(json_encode($this->routes));
-    foreach ($vehicles as $vehicle) {
-      $lat = $vehicle['ll'][0];
-      $lon = $vehicle['ll'][1];
-      $heading = $vehicle['h'];
-
-      $arrowIndex = ($heading / 45) + 1.5;
-      if ($arrowIndex > 8) { $arrowIndex = 8; }
-      if ($arrowIndex < 0) { $arrowIndex = 0; }
-      $arrowIndex = floor($arrowIndex);
-
-      $iconURL = HARVARD_TRANSLOC_MARKERS.'?'.urlencode(http_build_query(array(
-        'm' => 'bus',
-        'c' => $route['color'],
-        'h' => $this->arrows[$arrowIndex],
-      )));
-      $vehicleSuffix .= '&markers=icon:'.$iconURL.'|'.$lat.','.$lon;
-    }
-
-    
-    if ($iconURL != null)
-        return urldecode($iconURL);
-    else
-        return "";
-      ;
+      return STATIC_MAPS_URL . http_build_query(MapPlotUtility::URLParams($mapParams), 0, '&amp;') .
+              '&amp;' . $translocIconQuery . '&amp;' . $stopMarkerQuery . '&amp;sensor=false';
   }
 
   function getAnnouncements() {
