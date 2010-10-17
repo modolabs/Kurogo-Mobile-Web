@@ -266,6 +266,47 @@ class CalendarModule extends Module {
     ), $addBreadcrumb);
   }
 
+  public function federatedSearch($searchTerms, $maxCount, &$results) {
+    $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+    $parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+    $eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+    $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+    
+    $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
+
+      $timeframeKey = 0;
+      $searchOption = $this->searchOptions[$timeframeKey];
+      
+      $feed = new $controllerClass($baseURL, new $parserClass);
+      $feed->setObjectClass('event', $eventClass);
+      
+      list($start, $end) = $this->getDatesForSearchOption($searchOption);          
+      $feed->setStartDate($start);
+      $feed->setEndDate($end);
+      $feed->addFilter('search', $searchTerms);
+      $iCalEvents = $feed->items();
+      
+      $results = array();
+      foreach($iCalEvents as $event) {
+        $subtitle = $this->timeText($event);
+        $briefLocation = $event->get_location();
+        if (isset($briefLocation)) {
+          $subtitle .= " | $briefLocation";
+        }
+    
+        $results[] = array(
+          'url'=>$this->buildBreadcrumbURL("/{$this->id}/detail", array(
+              'id'   => $event->get_uid(),
+              'time' => $event->get_start()
+          ), false),
+          'title'    => $event->get_summary(),
+          'subtitle' => $subtitle
+        );
+      }
+                
+      return count($results);
+  }
+
   protected function initializeForPage() {
     $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
     $parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
