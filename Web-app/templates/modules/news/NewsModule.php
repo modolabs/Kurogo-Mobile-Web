@@ -55,7 +55,7 @@ class NewsModule extends Module {
   }
 
   private function storyURL($story, $addBreadcrumb=true) {
-    if ($storyID = $story->getProperty($GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD'))) {
+    if ($storyID = $story->getGUID()) {
         return $this->buildBreadcrumbURL('story', array(
           'storyID'   => $storyID,
           'section'   => $this->feedIndex,
@@ -105,9 +105,9 @@ class NewsModule extends Module {
       $results[] = array(
         'title' => $items[$i]->getTitle(),
         'url'   => $this->buildBreadcrumbURL("/{$this->id}/story", array(
-          'storyID' => $items[$i]->getProperty($GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD')),
+          'storyID' => $items[$i]->getGUID(),
           'section' => $feedIndex,
-          'start'   => $start ,
+          'start'   => $start,
           'filter'  => $searchTerms,
         ), false),
       );
@@ -171,8 +171,7 @@ class NewsModule extends Module {
         if (!$story) {
           throw new Exception("Story $storyID not found");
         }
-        
-        if (!$content = $story->getProperty($GLOBALS['siteConfig']->getVar('NEWS_FEED_CONTENT_PROPERTY'))) {
+        if (!$content = $story->getProperty('content')) {
             if ($url = $story->getProperty('link')) {
                 header("Location: $url");
                 exit();

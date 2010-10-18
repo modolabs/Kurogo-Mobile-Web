@@ -25,15 +25,20 @@ class RSSElement
             $this->attribs = $attribs;
         }
     }
+
+    public function getAttrib($attrib)
+    {
+        return isset($this->attribs[$attrib]) ? $this->attribs[$attrib] : null;
+    }
     
     public function getAttribs()
     {
         return $this->attribs;
     }
     
-    public function setValue($value)
+    public function setValue($value, $strip_tags=false)
     {
-        $this->value = $value;
+        $this->value = $strip_tags ? strip_tags($value) : $value;
     }
 
     public function appendValue($value)
@@ -200,8 +205,14 @@ class RSSItem extends RSSElement
     protected $guid;
     protected $pubDate;
     protected $comments;
+    protected $content;
     protected $category=array();
     protected $images=array();
+    
+    public function getContent()
+    {
+        return $this->content;
+    }
 
     public function getTitle()
     {
@@ -255,6 +266,14 @@ class RSSItem extends RSSElement
         
         switch ($name)
         {
+            case 'LINK':
+                if (!$value) {
+                    if ($link = $element->getAttrib('HREF')) {
+                        $element->setValue($link);
+                    }
+                }
+                parent::addElement($element);
+                break;
             case 'image':
                 $this->images[] = $element;
                 break;
@@ -274,6 +293,7 @@ class RSSItem extends RSSElement
         return array(
             'title',
             'description',
+            'content',
             'link',
             'guid',
             'pubDate',
@@ -291,8 +311,14 @@ class RSSItem extends RSSElement
             'DESCRIPTION'=>'description',
             'LINK'=>'link',
             'GUID'=>'guid',
+            'ID'=>'guid',
             'PUBDATE'=>'pubDate',
-            'COMMENTS'=>'comments'
+            'COMMENTS'=>'comments',
+            'SUMMARY'=>'description',
+            'CONTENT'=>'content',
+            'DC:DATE'=>'pubDate',
+            'PUBLISHED'=>'pubDate'
+            
         );
     }
 

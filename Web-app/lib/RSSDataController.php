@@ -40,10 +40,9 @@ class RSSDataController extends DataController
         }
         
         $items = $this->items();
-        $idField = $GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD');
         
         foreach ($items as $item) {
-            if ($item->getProperty($idField)==$id) {
+            if ($item->getGUID()==$id) {
                 return $item;
             }
         }

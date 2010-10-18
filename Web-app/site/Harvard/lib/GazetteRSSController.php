@@ -22,12 +22,11 @@ class GazetteRSScontroller extends RSSDataController
     public function getItem($id, $page=1)
     {
         $maxPages = $GLOBALS['siteConfig']->getVar('GAZETTE_NEWS_MAX_PAGES');; // to prevent runaway trains
-        $idField = $GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD');
         
         while ($page < $maxPages) {
             $items = $this->loadPage($page++);
             foreach ($items as $item) {
-                if ($item->getProperty($idField)==$id) {
+                if ($item->getGUID()==$id) {
                     return $item;
                 }
             }
@@ -82,6 +81,17 @@ class GazetteRSScontroller extends RSSDataController
 
 class GazetteRSSItem extends RSSItem
 {
+    protected function elementMap()
+    {
+        $elementMap = array_merge(parent::elementMap(), array(
+            'HARVARD:WPID'=>'guid',
+            'CONTENT:ENCODED'=>'content'
+            )
+        );
+        
+        return $elementMap;
+    }
+    
     public function addElement(RSSElement $element)
     {
         $name = $element->name();

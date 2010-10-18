@@ -10,7 +10,6 @@ class RSSDataParser extends DataParser
 {
     protected $root;
     protected $channel;
-    protected $stripTags = true;
     protected $elementStack = array();
     protected $channelClass='RSSChannel';
     protected $itemClass='RSSItem';
@@ -23,11 +22,6 @@ class RSSDataParser extends DataParser
         return $this->items;
     }
 
-    public function setStripTags($bool)
-    {
-        $this->stripTags = $bool ? true : false;
-    }
-    
     public function setObjectClass($class, $className)
     {
         switch ($class)
@@ -56,9 +50,11 @@ class RSSDataParser extends DataParser
             case 'RDF:RDF':
                 break;
             case 'CHANNEL':
+            case 'FEED': //for atom feeds
                 $this->elementStack[] = new $this->channelClass($attribs);
                 break;
             case 'ITEM':
+            case 'ENTRY': //for atom feeds
                 $this->elementStack[] = new $this->itemClass($attribs);
                 break;
             case 'IMAGE':
@@ -103,17 +99,16 @@ class RSSDataParser extends DataParser
     {
         if ($element = array_pop($this->elementStack)) {
 
-            if ($this->stripTags) {
-                $this->data = strip_tags($this->data);
-            }               
             $element->setValue($this->data);
             
             switch ($name)
             {
+                case 'FEED': //for atom feeds
                 case 'CHANNEL':
                     $this->channel = $element;
                     break;
                 case 'ITEM':
+                case 'ENTRY': //for atom feeds
                     $this->items[] = $element;
                     break;
                 default:
