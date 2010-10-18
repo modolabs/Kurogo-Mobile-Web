@@ -92,7 +92,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
     if ($api) {
       PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
       
-      $GLOBALS['siteConfig']->loadAPIFile($id, true);
+      $GLOBALS['siteConfig']->loadAPIFile($id, true, true);
       require_once($api);
       exit;
     }
