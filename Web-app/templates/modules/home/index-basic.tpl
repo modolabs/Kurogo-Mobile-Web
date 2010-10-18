@@ -5,14 +5,11 @@
   <p class="bb"> </p>
 {/block}
 
-{block name="modulesStart"}
-{/block}
-
-  {block name="categoryStartTag"}
+{block name="modulesList"}
+  {strip}
+  {foreach $homeModules as $category => $categoryModules}
     <p class="nav {$category}">
-  {/block}
-
-      {block name="module"}
+      {foreach $categoryModules as $id => $info}
         {if $category == 'primary'}
           {html_access_key_link href=$info['url']}
             {$info['title']}
@@ -26,11 +23,8 @@
           <span class="smallprint"> ({$info['subTitle']})</span>
         {/if}
         <br/>
-      {/block}
-
-  {block name="categoryEnd"}
+      {/foreach}
     </p>
-  {/block}
-
-{block name="modulesEndTag"}
+  {/foreach}
+  {strip}
 {/block}

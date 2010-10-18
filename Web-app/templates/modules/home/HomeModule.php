@@ -11,6 +11,8 @@ class HomeModule extends Module {
         break;
         
       case 'index':
+        $this->loadThemeConfigFile('home-index', 'home');
+      
         $homeModules = array(
           'primary' => array(),
           'secondary' => array(),
