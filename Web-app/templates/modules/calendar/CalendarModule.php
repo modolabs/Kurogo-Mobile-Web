@@ -9,7 +9,12 @@ define('DAY_SECONDS', 24*60*60);
 class CalendarModule extends Module {
   protected $id = 'calendar';
   protected $timezone;
-  
+
+  private $controllerClass = '';
+  private $parserClass     = '';
+  private $eventClass      = '';
+  private $baseURL         = '';
+
   private $searchOptions = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
     array("phrase" => "in the next 15 days",  "offset" => 15),
@@ -265,15 +270,58 @@ class CalendarModule extends Module {
       'time' => $event->get_start()
     ), $addBreadcrumb);
   }
+  
+  public function federatedSearch($searchTerms, $maxCount, &$results) {
+    $searchOption = $this->searchOptions[0]; // default timeframe
+    
+    $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
+    $feed->setObjectClass('event', $this->eventClass);
+    
+    list($start, $end) = $this->getDatesForSearchOption($searchOption);          
+    $feed->setStartDate($start);
+    $feed->setEndDate($end);
+    $feed->addFilter('search', $searchTerms);
+    $iCalEvents = array_values($feed->items());
 
-  protected function initializeForPage() {
-    $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-    $parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-    $eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-    $baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
+    $limit = min($maxCount, count($iCalEvents));
+    for ($i = 0; $i < $limit; $i++) {
+      $subtitle = $this->timeText($iCalEvents[$i]);
+      $briefLocation = $iCalEvents[$i]->get_location();
+      if (isset($briefLocation)) {
+        $subtitle .= " | $briefLocation";
+      }
+  
+      $results[] = array(
+        'url'      => $this->buildBreadcrumbURL("/{$this->id}/detail", array(
+            'id'   => $iCalEvents[$i]->get_uid(),
+            'time' => $iCalEvents[$i]->get_start()
+          ), false),
+        'title'    => $iCalEvents[$i]->get_summary(),
+        'subtitle' => $subtitle,
+      );
+    }
+    
+    return count($iCalEvents);
+  }
+  
+  protected function urlForSearch($searchTerms) {
+    return $this->buildBreadcrumbURL("/{$this->id}/search", array(
+      'filter'    => $searchTerms,
+      'timeframe' => '0',
+    ), false);
+  }
+
+
+  protected function initialize() {
+    $this->controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
+    $this->parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
+    $this->eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
+    $this->baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
     
     $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
+  }
 
+  protected function initializeForPage() {
     switch ($this->page) {
       case 'help':
         break;
@@ -294,7 +342,7 @@ class CalendarModule extends Module {
       case 'categories':
         $categories = array();
         
-        $categoryObjects = call_user_func(array($eventClass, 'get_all_categories'));
+        $categoryObjects = call_user_func(array($this->eventClass, 'get_all_categories'));
 
         foreach ($categoryObjects as $categoryObject) {
           $categories[] = array(
@@ -330,8 +378,8 @@ class CalendarModule extends Module {
         $events = array();
         
         if (strlen($id) > 0) {
-            $feed = new $controllerClass($baseURL, new $parserClass);
-            $feed->setObjectClass('event', $eventClass);
+            $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
+            $feed->setObjectClass('event', $this->eventClass);
             
             $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
             $start->setTime(0,0,0);
@@ -374,8 +422,8 @@ class CalendarModule extends Module {
         $this->assign('nextUrl', $this->dayURL($next, $type, false));
         $this->assign('prevUrl', $this->dayURL($prev, $type, false));
         
-        $feed = new $controllerClass($baseURL, new $parserClass);
-        $feed->setObjectClass('event', $eventClass);
+        $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
+        $feed->setObjectClass('event', $this->eventClass);
         
         $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
         $start->setTime(0,0,0);
@@ -406,8 +454,8 @@ class CalendarModule extends Module {
       case 'detail':  
         $calendarFields = $this->loadThemeConfigFile('calendar-detail', 'detailFields');
 
-        $feed = new $controllerClass($baseURL, new $parserClass);
-        $feed->setObjectClass('event', $eventClass);
+        $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
+        $feed->setObjectClass('event', $this->eventClass);
         
         $time = isset($this->args['time']) ? $this->args['time'] : time();
         if ($event = $feed->getItem($this->args['id'], $time)) {
@@ -495,8 +543,8 @@ class CalendarModule extends Module {
           $timeframeKey = $this->args['timeframe'];
           $searchOption = $this->searchOptions[$timeframeKey];
           
-          $feed = new $controllerClass($baseURL, new $parserClass);
-          $feed->setObjectClass('event', $eventClass);
+          $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
+          $feed->setObjectClass('event', $this->eventClass);
           
           list($start, $end) = $this->getDatesForSearchOption($searchOption);          
           $feed->setStartDate($start);
@@ -534,8 +582,8 @@ class CalendarModule extends Module {
         $start = new DateTime( $year   ."0901", $this->timezone);        
         $end   = new DateTime(($year+1)."0831", $this->timezone);
         
-        $feed = new $controllerClass($baseURL, new $parserClass);
-        $feed->setObjectClass('event', $eventClass);
+        $feed = new $this->controllerClass($baseURL, new $this->parserClass);
+        $feed->setObjectClass('event', $this->eventClass);
         $feed->setStartDate($start);
         $feed->setEndDate($end);
         $iCalEvents = $feed->items();
