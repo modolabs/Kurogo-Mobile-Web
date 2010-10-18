@@ -1,16 +1,27 @@
 <?php
 
+if (!function_exists('xml_parser_create')) {
+    die('XML Parser commands not available.');
+}
+
 require_once(LIB_DIR . '/RSS.php');
 
 class RSSDataParser extends DataParser
 {
     protected $root;
+    protected $channel;
     protected $stripTags = true;
     protected $elementStack = array();
     protected $channelClass='RSSChannel';
     protected $itemClass='RSSItem';
     protected $imageClass='RSSImage';
+    protected $items=array();
     protected $data='';
+    
+    public function items()
+    {
+        return $this->items;
+    }
 
     public function setStripTags($bool)
     {
@@ -41,6 +52,8 @@ class RSSDataParser extends DataParser
         switch ($name)
         {
             case 'RSS':
+                break;
+            case 'RDF:RDF':
                 break;
             case 'CHANNEL':
                 $this->elementStack[] = new $this->channelClass($attribs);
@@ -94,11 +107,21 @@ class RSSDataParser extends DataParser
                 $this->data = strip_tags($this->data);
             }               
             $element->setValue($this->data);
-
-            if ($parent = end($this->elementStack)) {
-                $parent->addElement($element);
-            } else {
-                $this->root = $element;
+            
+            switch ($name)
+            {
+                case 'CHANNEL':
+                    $this->channel = $element;
+                    break;
+                case 'ITEM':
+                    $this->items[] = $element;
+                    break;
+                default:
+                    if ($parent = end($this->elementStack)) {
+                        $parent->addElement($element);
+                    } else {
+                        $this->root = $element;
+                    }
             }
         }
     }
@@ -125,7 +148,7 @@ class RSSDataParser extends DataParser
                         xml_get_current_line_number($xml_parser)));
         }
         xml_parser_free($xml_parser);
-        return $this->root;
+        return $this->items;
        }
 }
 

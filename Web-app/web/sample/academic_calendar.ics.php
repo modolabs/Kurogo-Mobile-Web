@@ -3,10 +3,9 @@
 /* sample academic calendar server */
 ini_set('display_errors','no');
 
-$GLOBALS['siteConfig']->loadThemeFile('site', true);
-$tzid = $GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE');
+$tzid = date_default_timezone_get();
 
-require_once(LIB_DIR . '/iCalendar.php');
+require_once('../../lib/iCalendar.php');
 
 $calendar = new ICalendar();
 $startdate = isset($_GET['startdate']) ? $_GET['startdate'] : date('Ymd');

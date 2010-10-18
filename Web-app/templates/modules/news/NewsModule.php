@@ -2,6 +2,10 @@
 
 require_once realpath(LIB_DIR.'/Module.php');
 
+if (!function_exists('mb_substr')) {
+    die('Multibyte String Functions not available (mbstring)');
+}
+
 class NewsModule extends Module {
   protected $id = 'news';
   protected $feeds = array();
@@ -51,13 +55,18 @@ class NewsModule extends Module {
   }
 
   private function storyURL($story, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('story', array(
-      'storyID'   => $story->getProperty($GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD')),
-      'section'   => $this->feedIndex,
-      'start'     => $this->argVal($this->args, 'start'),
-      'filter'    => $this->argVal($this->args, 'filter')
-    ), $addBreadcrumb);
-    
+    if ($storyID = $story->getProperty($GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD'))) {
+        return $this->buildBreadcrumbURL('story', array(
+          'storyID'   => $storyID,
+          'section'   => $this->feedIndex,
+          'start'     => $this->argVal($this->args, 'start'),
+          'filter'    => $this->argVal($this->args, 'filter')
+        ), $addBreadcrumb);
+    } elseif ($link = $story->getProperty('link')) {
+        return $link;
+    } else {
+        return '';
+    }
   }
   
   private function loadFeeds() {
