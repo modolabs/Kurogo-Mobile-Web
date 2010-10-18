@@ -1,6 +1,6 @@
   {strip}
   
-  {if isset($moduleDebugString)}
+  {if $moduleDebug && isset($moduleDebugString)}
     <p class="legend nonfocal"><br/>{$moduleDebugString}</p>
   {/if}
   
