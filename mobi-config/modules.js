@@ -46,7 +46,7 @@
       "url": ""
     },
     {
-      "id": "webharvardedu",
+      "id": "fullweb",
       "title": "Full Website",
       "extra": true,
       "url": "http://www.harvard.edu/?fullsite=yes",
