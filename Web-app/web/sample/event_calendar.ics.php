@@ -13,11 +13,10 @@ function getTomorrow($timestamp)
 	return mktime(0,0,0,date('m', $timestamp), date('d', $timestamp), date('Y', $timestamp));
 }
 
-$GLOBALS['siteConfig']->loadThemeFile('site', true);
-$tzid = $GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE');
 $uid_base = 'http://imobileu.org/events/';
+$tzid = date_default_timezone_get();
 
-require_once(LIB_DIR . '/iCalendar.php');
+require_once('../../lib/iCalendar.php');
 
 $startdate = isset($_GET['startdate']) ? $_GET['startdate'] : date('Ymd');
 
