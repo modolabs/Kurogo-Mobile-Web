@@ -2,6 +2,10 @@
 
 require_once(LIB_DIR . '/LDAP.php');
 
+if (!function_exists('ldap_connect')) {
+    die('LDAP Functions not available');
+}
+
 // common ldap error codes
 define("LDAP_TIMELIMIT_EXCEEDED", 0x03);
 define("LDAP_SIZELIMIT_EXCEEDED", 0x04);
