@@ -137,6 +137,7 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 
 #footer {
 	font-size: 12px;
+	line-height: 14px;
 }
 
 #footer .copyright {

@@ -1,12 +1,12 @@
 body {
-	background-color: #aaa;
 	background-image: url(/common/images/background-glow.png);
+	background-repeat: repeat-x;
 }
 
 #homegrid div {
 	/* Overall size of one cell in the home grid */
 	width: 103px;
-	height: 100px;
+	height: 96px;
 	font-size: 14px;
 	line-height: 15px;
 }
@@ -17,20 +17,20 @@ body {
 
 #homegrid a img {
 	/* Size of actual module icon in home grid */
-	width: 62px;
-	height: 62px;
+	width: 60px;
+	height: 60px;
 }
 
 #homegrid div.utility {
 	/* Overall size of one cell in the home grid's bottom row of fixed utility-type modules */
 	width: 76px;
-	height: 90px;
+	height: 86px;
 	font-size: 12px;
 	line-height: 13px;
 }
 
 #homegrid div.utility a img {
 	/* Size of actual module icon in the home grid's bottom row of fixed utility-type modules */
-	width: 40px;
-	height: 40px;
+	width: 36px;
+	height: 36px;
 }
