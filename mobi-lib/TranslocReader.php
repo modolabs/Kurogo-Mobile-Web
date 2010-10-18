@@ -28,7 +28,7 @@ class TranslocReader {
     '5' => 's',
     '6' => 'sw',
     '7' => 'w',
-    '8' => 'sw',
+    '8' => 'nw',
   );
 
   private $harvardRouteCache;
