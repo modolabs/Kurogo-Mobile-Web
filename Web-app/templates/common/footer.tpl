@@ -1,7 +1,11 @@
   {strip}
   
-  {if $moduleDebug && isset($moduleDebugString)}
-    <p class="legend nonfocal"><br/>{$moduleDebugString}</p>
+  {if $moduleDebug && count($moduleDebugStrings)}
+    <p class="legend nonfocal">
+      {foreach $moduleDebugStrings as $string}
+        <br/>{$string}
+      {/foreach}
+    </p>  
   {/if}
   
   {capture name="footerHTML" assign="footerHTML"}

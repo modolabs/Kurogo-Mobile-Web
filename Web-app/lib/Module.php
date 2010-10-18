@@ -26,6 +26,8 @@ abstract class Module {
   private $inlineJavascriptFooterBlocks = array();
   private $onOrientationChangeBlocks = array();
   private $onLoadBlocks = array('scrollTo(0,1);');
+
+  private $moduleDebugStrings = array();
   
   private $breadcrumbs = array();
 
@@ -420,6 +422,13 @@ abstract class Module {
   }
 
   //
+  // Module debugging
+  //
+  protected function addModuleDebugString($string) {
+    $this->moduleDebugStrings[] = $string;
+  }
+
+  //
   // Theme config files
   //
   
@@ -507,6 +516,8 @@ abstract class Module {
     $this->assign('breadcrumbs',            $this->breadcrumbs);
     $this->assign('breadcrumbArgs',         $this->getBreadcrumbArgs());
     $this->assign('breadcrumbSamePageArgs', $this->getBreadcrumbArgs(false));
+
+    $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
 
     // Module Help
     if ($this->page == 'help') {
