@@ -157,9 +157,8 @@ class CoursesModule extends Module {
 
   public function federatedSearch($searchTerms, $maxCount, &$results) {
     $data = CourseData::search_subjects($searchTerms, '', '');
-    
     if ($data['count'] > 0 && isset($data['classes'])) {
-      $this->getClassListItems($results, true, $maxCount);
+      $results = $this->getClassListItems($data['classes'], true, $maxCount);
     }   
     
     return $data['count'];
