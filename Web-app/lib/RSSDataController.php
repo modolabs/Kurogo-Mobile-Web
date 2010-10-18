@@ -2,17 +2,17 @@
 
 class RSSDataController extends DataController
 {
-    protected $channel;
+    protected $items;
     protected $contentFilter;
 
     protected function cacheFolder()
     {
-        return CACHE_DIR . "/RSS";
+        return CACHE_DIR . "/News";
     }
     
     protected function cacheLifespan()
     {
-        return $GLOBALS['siteConfig']->getVar('RSS_CACHE_LIFESPAN');
+        return $GLOBALS['siteConfig']->getVar('NEWS_CACHE_LIFESPAN');
     }
 
     protected function cacheFileSuffix()
@@ -53,22 +53,19 @@ class RSSDataController extends DataController
  
     protected function clearInternalCache()
     {
-        $this->channel = null;
+        $this->items = null;
         parent::clearInternalCache();
     }
 
     public function items($start=0,$limit=null, &$totalItems=0) 
     {
-        if (!$this->channel) {
+        if (!$this->items) {
             $data = $this->getData();
-            $this->channel = $this->parseData($data);
+            $this->items = $this->parseData($data);
+            
         }
         
-        if (!$this->channel) {
-            throw new Exception("Error loading rss data");
-        }
-
-        $items = $this->channel->getItems();
+        $items = $this->items;
         
         if ($this->contentFilter) {
             $_items = $items;

@@ -83,6 +83,11 @@ class RSSElement
         
         if (array_key_exists($name, $map)) {
             $this->$map[$name] = $value;
+        } elseif (isset($this->properties[$name])) {
+            if (!is_array($this->properties[$name])) {
+                $this->properties[$name] = array($this->properties[$name]);
+            }
+            $this->properties[$name][] = $element;
         } else {
             $this->properties[$name] = $element;
        }
