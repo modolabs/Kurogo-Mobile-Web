@@ -5,7 +5,7 @@ ini_set('display_errors','no');
 
 $tzid = date_default_timezone_get();
 
-require_once('../../lib/iCalendar.php');
+require_once realpath(LIB_DIR.'/ICalendar.php');
 
 $calendar = new ICalendar();
 $startdate = isset($_GET['startdate']) ? $_GET['startdate'] : date('Ymd');

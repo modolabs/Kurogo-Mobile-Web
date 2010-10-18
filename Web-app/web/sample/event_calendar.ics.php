@@ -5,7 +5,7 @@
 	This is used primarily for testing
 */
 
-ini_set('display_errors','yes');
+require_once realpath(LIB_DIR.'/ICalendar.php');
 
 function getTomorrow($timestamp)
 {
@@ -15,8 +15,6 @@ function getTomorrow($timestamp)
 
 $uid_base = 'http://imobileu.org/events/';
 $tzid = date_default_timezone_get();
-
-require_once('../../lib/iCalendar.php');
 
 $startdate = isset($_GET['startdate']) ? $_GET['startdate'] : date('Ymd');
 
