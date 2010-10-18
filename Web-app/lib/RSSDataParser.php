@@ -94,12 +94,25 @@ class RSSDataParser extends DataParser
 			$this->imageClass = $imageClass;
 		}
     }
+    
+    protected function shouldStripTags($element)
+    {
+        $strip_tags = true;
+        switch ($element->name())
+        {
+            case 'CONTENT':
+                $strip_tags = false;
+                break;
+        }
+        
+        return $strip_tags;
+    }
 
     protected function endElement($xml_parser, $name)
     {
         if ($element = array_pop($this->elementStack)) {
 
-            $element->setValue($this->data);
+            $element->setValue($this->data, $this->shouldStripTags($element));
             
             switch ($name)
             {

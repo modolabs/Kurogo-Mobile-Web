@@ -5,6 +5,7 @@ require_once(LIB_DIR . '/RSS.php');
 class GazetteRSScontroller extends RSSDataController
 {
     protected $loadMore=true;
+    
     public function addFilter($var, $value)
     {
         switch ($var)
@@ -76,6 +77,24 @@ class GazetteRSScontroller extends RSSDataController
         $this->addFilter('paged',$page);
         $items = $this->items();
         return $items;   
+    }
+}
+
+class GazetteRSSParser extends RSSDataParser
+{
+    protected function shouldStripTags($element)
+    {
+        switch ($element->name())
+        {
+            case 'CONTENT:ENCODED':
+                $strip_tags = false;
+                break;
+            default:
+                $strip_tags = parent::shouldStripTags($element);
+                break;
+        }
+        
+        return $strip_tags;
     }
 }
 
