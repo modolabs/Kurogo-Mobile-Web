@@ -57,7 +57,7 @@ class NewsModule extends Module {
   private function storyURL($story, $addBreadcrumb=true) {
     if ($storyID = $story->getProperty($GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD'))) {
         return $this->buildBreadcrumbURL('story', array(
-          'storyID'   => $story->getProperty($GLOBALS['siteConfig']->getVar('NEWS_STORY_ID_FIELD')),
+          'storyID'   => $storyID,
           'section'   => $this->feedIndex,
           'start'     => $this->argVal($this->args, 'start'),
           'filter'    => $this->argVal($this->args, 'filter')
