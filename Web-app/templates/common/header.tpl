@@ -60,9 +60,11 @@
           </a>
           
           {if !$isModuleHome}
-            <a href="./" class="module">
-              <img src="/common/images/title-{$navImageID|default:$moduleID}.png" width="28" height="28" alt="" />
-            </a>
+            {if $moduleID != 'home'}
+              <a href="./" class="module">
+                <img src="/common/images/title-{$navImageID|default:$moduleID}.png"   width="28" height="28" alt="" />
+              </a>
+            {/if}
             {foreach $breadcrumbs as $breadcrumb}
               {if count($breadcrumbs) == 1}
                 {$crumbClass = 'crumb1'}
