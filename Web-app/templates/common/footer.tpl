@@ -1,5 +1,9 @@
   {strip}
   
+  {if isset($moduleDebugString)}
+    <p class="legend nonfocal"><br/>{$moduleDebugString}</p>
+  {/if}
+  
   {capture name="footerHTML" assign="footerHTML"}
     {if $COPYRIGHT_LINK}
       <a href="{$COPYRIGHT_LINK}" class="copyright">
