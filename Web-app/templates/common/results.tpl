@@ -7,7 +7,7 @@
     {foreach $results as $item}
   
       {block name="resultsItem"}
-        <li>
+        <li{if $item['img']} class="icon"{/if}>
           {include file="findInclude:common/listItem.tpl"}
         </li>
       {/block}

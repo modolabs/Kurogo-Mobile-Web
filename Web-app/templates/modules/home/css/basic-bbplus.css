@@ -32,45 +32,6 @@ h1 {
 	padding: 17px 0 11px 0;
 	text-align: center;
 }
-#homegrid {
-	margin: 0 auto;
-	padding: 0;
-	margin-left: 2px;
-}
-#homegrid div {
-	position: relative;
-	margin: 1px 4px;
-	padding: 0;
-	border: 0;
-	float: left;
-	line-height: 1.1em;
-	text-align: center;		
-	vertical-align: top;
-}
-#homegrid a {	
-	display: block;
-	text-decoration: none;
-	border: none;
-	padding: 4px 6px;
-}
-#homegrid a:hover {
-	border: 2px solid #c00;
-	padding: 2px 4px;
-}
-#homegrid a:active {
-	border: 4px solid #c00;
-	padding: 0px 2px;
-}
-#homegrid a img {
-	margin-bottom: 1px;
-	border: none;
-}
-#homegrid div.separator {
-	clear:both;
-	float: none;
-	width: 100%;
-	height: 10px;
-}
 .intro {
 	margin-bottom: 0;
 	text-align: center;

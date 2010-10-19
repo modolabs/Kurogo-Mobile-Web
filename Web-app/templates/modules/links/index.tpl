@@ -4,25 +4,11 @@
     {$linksPageConfig.INTRO_STRING}
 </p>
 
-{block name="linksStart"}
-  <div id="springboard">
-{/block}
-
-    {foreach $links as $id => $link}
-      {block name="link"}
-        <div id="{$id}">
-          <a href="{$link['url']}">
-            <img src="/modules/{$moduleID}/images/{$link['icon']}" width="50" height="50" alt="{$link['title']}" />
-            <br/>
-            {$link['title']}
-          </a>
-        </div>
-      {/block}
-    {/foreach}
-  
-{block name="linksEnd"}
-  </div>
-{/block}
+{if $springboard}
+  {include file="findInclude:common/springboard.tpl" springboardItems=$links springboardID="links"}
+{else}
+  {include file="findInclude:common/navlist.tpl" navlistItems=$links}
+{/if}
 
 <p class="clear"> </p>
 

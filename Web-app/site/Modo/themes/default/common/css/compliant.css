@@ -154,7 +154,39 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	border-color: #666; 	/* Should match the border color of image /common/images/mobile/search_button.png */
 }
 
+/* Springboards */
 
+.springboard div {
+	/* Overall size of one cell in the springboard */
+	width: 103px;
+	height: 96px;
+	font-size: 14px;
+	line-height: 15px;
+}
+
+.springboard a {	
+	color: #404355;
+}
+
+.springboard a img {
+	/* Size of actual item icon in springboard */
+	width: 60px;
+	height: 60px;
+}
+
+.springboard div.utility {
+	/* Overall size of one cell in the springboard's fixed utility-type items */
+	width: 76px;
+	height: 86px;
+	font-size: 12px;
+	line-height: 13px;
+}
+
+.springboard div.utility a img {
+	/* Size of actual item icon in the springboard's fixed utility-type items */
+	width: 36px;
+	height: 36px;
+}
 
 /* Navigation and results lists */
 

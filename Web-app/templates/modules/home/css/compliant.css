@@ -1,42 +1,3 @@
-#homelist li {
-  padding: 0 12px;
-  min-height: 54px;
-}
-#homelist img {
-  position: absolute;
-  top: 2px;
-  left: 0;
-  height: 50px;
-  width: 50px;
-}
-#homelist li a {
-  position: relative;
-  margin: 0;
-  padding: 12px 5px 12px 58px;
-  line-height: 30px;
-}
-
-#homegrid {
-	margin: 0 auto;
-	padding: 0 4px;
-	margin-left: 2px;
-	clear: both;
-}
-#homegrid div {
-	position: relative;
-	margin: 0;
-	padding: 0;
-	border: 0;
-	float: left;
-	text-align: center;		
-	vertical-align: top;
-}
-#homegrid a {	
-	display: block;
-	text-decoration: none;
-	padding: 8px 5px;
-	word-wrap: normal;
-}
 .intro {
 	margin-bottom: 0;
 	text-align: center;
@@ -91,29 +52,6 @@ h1.roomfornew {
 	text-align: center;
 	clear: both;
 }
-.badge {
-	position: absolute;
-	right: 12px;
-	top: 5px;
-	width: 24px;
-	height: 24px;
-	padding-top: 5px;
-	text-align: center;
-	color: #fff;
-	font-size:12px;
-	font-weight: bold;
-	background-image: url(../images/badge.png);
-	background-repeat: no-repeat;
-}
 form {
 	margin: 0 0 -7px 0;
-}
-#homegrid div.separator {
-	display: block;
-	width: 100%;
-	height: 10px;
-	clear:both;
-	margin: 0;
-	padding: 0;
-	float: none;
 }

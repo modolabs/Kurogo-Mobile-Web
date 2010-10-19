@@ -339,6 +339,59 @@ a.module img {
     padding-right: 46px;
 }
 
+/* Springboards */
+
+.springboard {
+	margin: 0 auto;
+	padding: 0 4px;
+	margin-left: 2px;
+	clear: both;
+}
+
+.springboard div {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	float: left;
+	text-align: center;		
+	vertical-align: top;
+}
+
+.springboard a {
+	display: block;
+	text-decoration: none;
+	padding: 8px 5px;
+	word-wrap: normal;
+}
+.springboard a img {
+  height: 50px;
+  width: 50px;
+}
+
+.springboard .separator {
+	display: block;
+	width: 100%;
+	height: 10px;
+	clear:both;
+	margin: 0;
+	padding: 0;
+	float: none;
+}
+.springboard .badge {
+	position: absolute;
+	right: 12px;
+	top: 5px;
+	width: 24px;
+	height: 24px;
+	padding-top: 5px;
+	text-align: center;
+	color: #fff;
+	font-size:12px;
+	font-weight: bold;
+	background-image: url(/common/images/badge.png);
+	background-repeat: no-repeat;
+}
 
 /* Navigation and results listings */
 
@@ -382,6 +435,24 @@ a.module img {
 	line-height: 1.2em;
 	text-decoration: none;
 	-webkit-border-radius: 5px;	
+}
+
+.nav li.icon {
+  padding: 0 12px;
+  min-height: 54px;
+}
+.nav li.icon img {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 50px;
+  width: 50px;
+}
+.nav li.icon a {
+  position: relative;
+  margin: 0;
+  padding: 12px 5px 12px 58px;
+  line-height: 30px;
 }
 
 .nav h2, .nav h3 {
@@ -988,34 +1059,6 @@ h2.icon {
 	margin-top: 3px;
 }
 
-#springboard {
-	margin: 0 auto;
-	padding: 0;
-	margin-left: 1px;
-	clear: both;
-}
-#springboard div {
-	position: relative;
-	width: 79px;
-	height: 85px;
-	margin: 0;
-	padding: 0;
-	border: 0;
-	float: left;
-	text-align: center;		
-	vertical-align: top;
-}
-#springboard a {
-	display: block;
-	text-decoration: none;
-	-webkit-border-radius: 5px;
-	padding: 8px 6px;
-	font-size: 11px;
-	line-height: 12px;
-}
-#springboard a img {
-	margin-bottom: 1px
-}
 
 
 
