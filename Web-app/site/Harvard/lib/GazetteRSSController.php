@@ -82,20 +82,6 @@ class GazetteRSScontroller extends RSSDataController
 
 class GazetteRSSParser extends RSSDataParser
 {
-    protected function shouldStripTags($element)
-    {
-        switch ($element->name())
-        {
-            case 'CONTENT:ENCODED':
-                $strip_tags = false;
-                break;
-            default:
-                $strip_tags = parent::shouldStripTags($element);
-                break;
-        }
-        
-        return $strip_tags;
-    }
 }
 
 class GazetteRSSItem extends RSSItem
@@ -103,8 +89,7 @@ class GazetteRSSItem extends RSSItem
     protected function elementMap()
     {
         $elementMap = array_merge(parent::elementMap(), array(
-            'HARVARD:WPID'=>'guid',
-            'CONTENT:ENCODED'=>'content'
+            'HARVARD:WPID'=>'guid'
             )
         );
         
