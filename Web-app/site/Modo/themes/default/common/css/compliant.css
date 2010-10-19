@@ -63,7 +63,7 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	color: #404649;
 }
 
-.foundat, .address, #footer, .copyright, #footerlinks a {
+.foundat, .address, #footer, .copyright, #footerlinks a, #footerlinks a:visited {
 	/* Secondary text color for several types of secondary text that typically appear on the colored background */
 	color: #555;
 }

@@ -1139,3 +1139,20 @@ h2.icon {
 	margin-left: -13px;
 	margin-top: 16px;
 }
+
+.devicedetection {
+  border: none;
+  margin: 1.5em 0;
+}
+.devicedetection th,
+.devicedetection td {
+  font-size: 10px;
+  padding: 0 .25em;
+  margin: 0;
+  text-align: left;
+}
+.devicedetection th {
+  font-weight: bold;
+  text-align: right;
+  white-space: nowrap;
+}
