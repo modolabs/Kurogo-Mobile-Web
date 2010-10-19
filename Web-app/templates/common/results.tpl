@@ -5,13 +5,15 @@
 {/block}
 
     {foreach $results as $item}
+      {if !isset($item['separator'])}
   
-      {block name="resultsItem"}
-        <li>
-          {include file="findInclude:common/listItem.tpl"}
-        </li>
-      {/block}
+        {block name="resultsItem"}
+          <li{if $item['img']} class="icon"{/if}>
+            {include file="findInclude:common/listItem.tpl"}
+          </li>
+        {/block}
   
+      {/if}
     {/foreach}
     
     {if count($results) == 0}

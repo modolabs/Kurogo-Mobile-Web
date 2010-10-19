@@ -13,29 +13,35 @@ class HomeModule extends Module {
       case 'index':
         $this->loadThemeConfigFile('home-index', 'home');
       
-        $homeModules = array(
-          'primary' => array(),
-          'secondary' => array(),
-        );
+        $whatsNewCount = 0;
+        $modules = array();
+        $secondaryModules = array();
         
         foreach ($this->getHomeScreenModules() as $id => $info) {
           if (!$info['disabled']) {
-            if (!isset($info['url'])) {
-              $info['url'] = "/$id/";
-            }
-            if (!isset($info['img'])) {
-              $info['img'] = "/modules/{$this->id}/images/$id.png";
+            $module = array(
+              'title' => $info['title'],
+              'url'   => isset($info['url']) ? $info['url'] : "/$id/",
+              'img'   => isset($info['img']) ? $info['img'] : "/modules/{$this->id}/images/$id.png",
+            );
+            if ($id == 'about' && $whatsNewCount > 0) {
+              $module['badge'] = $whatsNewCount;
             }
             if ($info['primary']) {
-              $homeModules['primary'][$id] = $info;
+              $modules[] = $module;
             } else {
-              $homeModules['secondary'][$id] = $info;
+              $module['class'] = 'utility';
+              $secondaryModules[] = $module;
             }
           }
         }
-    
-        $this->assign('homeModules', $homeModules);
-        $this->assign('whatsNewCount', 0);
+        
+        if (count($modules) && count($secondaryModules)) {
+          $modules[] = array('separator' => true);
+        }
+        $modules = array_merge($modules, $secondaryModules);
+        
+        $this->assign('modules', $modules);
         $this->assign('topItem', null);
         break;
         

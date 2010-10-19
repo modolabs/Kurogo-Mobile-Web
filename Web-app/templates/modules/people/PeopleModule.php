@@ -181,7 +181,7 @@ class PeopleModule extends Module {
         break;
         
       case 'search':
-        if (isset($this->args['filter'])) {
+        if (isset($this->args['filter']) && !empty($this->args['filter'])) {
           $searchTerms = trim($this->args['filter']);
           $PeopleController = new $this->peopleController();
           $PeopleController->setPersonClass($this->personClass);
@@ -237,10 +237,10 @@ class PeopleModule extends Module {
         
       case 'index':
         // Redirect for old bookmarks
-        if (isset($this->args['uid'])) {
+        if (isset($this->args['uid'])  && !empty($this->args['uid'])) {
           $this->redirectTo('detail');
     
-        } else if (isset($this->args['filter'])) {
+        } else if (isset($this->args['filter']) && !empty($this->args['filter'])) {
           $this->redirectTo('search');
         }
         

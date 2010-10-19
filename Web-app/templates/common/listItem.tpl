@@ -19,8 +19,14 @@
   {if isset($item['url'])}
     <a href="{$item['url']}" class="{$item['class']|default:''}">
   {/if}
+    {if isset($item['img'])}
+      <img src="{$item['img']}" alt="{$item['title']}" width="50" height="50"/>
+    {/if}
     {$item['title']}
     {$subtitleHTML}
+    {if isset($item['badge'])}
+      <span class="badge">{$item['badge']}</span>
+    {/if}
   {if isset($item['url'])}
     </a>
   {/if}

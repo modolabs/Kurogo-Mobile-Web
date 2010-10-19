@@ -4,14 +4,16 @@
   <ul class="nav{if $secondary} secondary{/if}">
 {/block}
 
-    {foreach $navlistItems as $item}
+    {foreach $navlistItems as $item}     
+      {if !isset($item['separator'])}
       
-      {block name="navlistItem"}
-        <li>
-          {include file="findInclude:common/listItem.tpl" subTitleNewline=$subTitleNewline|default:false}
-        </li>
-      {/block}
+        {block name="navlistItem"}
+          <li{if $item['img']} class="icon"{/if}>
+            {include file="findInclude:common/listItem.tpl" subTitleNewline=$subTitleNewline|default:false}
+          </li>
+        {/block}
       
+      {/if}
     {/foreach}
 
 {block name="navlistEnd"}

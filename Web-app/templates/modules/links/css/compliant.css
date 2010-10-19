@@ -1,0 +1,17 @@
+#links {
+	padding: 0;
+	margin-left: 1px;
+}
+#links div {
+	width: 79px;
+	height: 85px;
+}
+#links a {
+	-webkit-border-radius: 5px;
+	padding: 8px 6px;
+	font-size: 11px;
+	line-height: 12px;
+}
+#links a img {
+	margin-bottom: 1px
+}

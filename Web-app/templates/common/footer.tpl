@@ -17,10 +17,12 @@
       </a>
     {/if}
     {if $moduleID == 'home' && $showDeviceDetection}
-      <br/>
-      Your user agent is "{$smarty.server.HTTP_USER_AGENT}"<br />
-      You are classified as "{$pagetype}-{$platform}-{$supportsCerts}"<br />
-      You {if !$supportsCerts}don't {/if}support certificates
+      <table class="devicedetection">
+        <tr>  <th>User Agent:</th><td>{$smarty.server.HTTP_USER_AGENT}</td></tr>
+        <tr>    <th>Platform:</th><td>{$platform}</td></tr>
+        <tr>     <th>Browser:</th><td>{$pagetype}</td></tr>
+        <tr><th>Certificates:</th><td>{if $supportsCerts}yes{else}no{/if}</td></tr>
+      </table>
     {/if}
   {/capture}
   
