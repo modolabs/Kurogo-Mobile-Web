@@ -284,8 +284,19 @@ function get_specific_routes_info($translocObj, $compact, $route_id) {
         }
 
         else {
-            $routeToReturn = array('stops'=>$translocObj->getStopsForRoute($routeInfo['id']),
-                                   'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']));
+           /* $routeToReturn = array('stops'=>$translocObj->getStopsForRoute($routeInfo['id']),
+                                   'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']));*/
+
+          $routeToReturn =  array('route_id'=> $routeInfo['id'],
+                                'color'=>$routeInfo['color'],
+                                'title'=> $routeInfo['long_name'],
+                                'description' => $translocObj->getBriefDescription($routeInfo['long_name']),
+                                'agency' => $routeInfo['agency'],
+                                'interval'=> 60,
+                                'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']),
+                                'summary'=> $translocObj->getSummary($routeInfo['long_name']),
+                                'stops'=>$translocObj->getStopsForRoute($routeInfo['id']),
+                                'isRunning'=> $translocObj->routeIsRunning($routeInfo['id']));
         }
 
     return $routeToReturn;

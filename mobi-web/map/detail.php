@@ -118,6 +118,7 @@ if ($tab == 'Map') {
   }
 
   if ($bbox) {
+      //$wms->disableAllLayers();
     $imageUrl = $wms->getMap($imageWidth, $imageHeight, 'EPSG:2249', $bbox);
 
     // build urls for panning/zooming
