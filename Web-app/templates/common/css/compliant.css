@@ -541,6 +541,24 @@ ul.focal li:first-child {
 	border: none;
 }
 
+.results li.icon {
+  padding: 0 10px;
+  min-height: 54px;
+}
+.results li.icon a {
+  position: relative;
+  margin: 0;
+  padding: 13px 18px 13px 58px;
+  line-height: 30px;
+}
+.results li.icon img {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 50px;
+  width: 50px;
+}
+
 .secondary {
 	margin: 10px; 
 	padding: 0;	   
