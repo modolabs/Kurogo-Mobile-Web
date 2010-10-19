@@ -1,7 +1,7 @@
 {include file="findInclude:common/header.tpl"}
 
 <p class="{block name='headingClass'}nonfocal smallprint{/block}">
-  Click on a shield to see each School's website. Please note that these websites may not be optimized for mobile.
+    {$linksPageConfig.INTRO_STRING}
 </p>
 
 {block name="linksStart"}
