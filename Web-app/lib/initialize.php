@@ -113,6 +113,7 @@ function Initialize(&$path=null) {
   }
   
   define('URL_PREFIX', $urlPrefix);
+
   //error_log(__FUNCTION__."(): prefix: $urlPrefix");
   //error_log(__FUNCTION__."(): path: $path");
 

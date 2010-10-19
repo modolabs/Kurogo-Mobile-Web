@@ -316,6 +316,7 @@ class RSSItem extends RSSElement
             'COMMENTS'=>'comments',
             'SUMMARY'=>'description',
             'CONTENT'=>'content',
+            'CONTENT:ENCODED'=>'content',
             'DC:DATE'=>'pubDate',
             'PUBLISHED'=>'pubDate'
             

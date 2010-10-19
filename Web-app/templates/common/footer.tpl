@@ -1,5 +1,13 @@
   {strip}
   
+  {if $moduleDebug && count($moduleDebugStrings)}
+    <p class="legend nonfocal">
+      {foreach $moduleDebugStrings as $string}
+        <br/>{$string}
+      {/foreach}
+    </p>  
+  {/if}
+  
   {capture name="footerHTML" assign="footerHTML"}
     {if $COPYRIGHT_LINK}
       <a href="{$COPYRIGHT_LINK}" class="copyright">

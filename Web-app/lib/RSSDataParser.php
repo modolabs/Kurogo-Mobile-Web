@@ -94,13 +94,27 @@ class RSSDataParser extends DataParser
 			$this->imageClass = $imageClass;
 		}
     }
+    
+    protected function shouldStripTags($element)
+    {
+        $strip_tags = true;
+        switch ($element->name())
+        {
+            case 'CONTENT:ENCODED':
+            case 'CONTENT':
+                $strip_tags = false;
+                break;
+        }
+        
+        return $strip_tags;
+    }
 
     protected function endElement($xml_parser, $name)
     {
         if ($element = array_pop($this->elementStack)) {
 
-            $element->setValue($this->data);
-            
+            $element->setValue($this->data, $this->shouldStripTags($element));
+            $parent = end($this->elementStack);
             switch ($name)
             {
                 case 'FEED': //for atom feeds
@@ -111,8 +125,16 @@ class RSSDataParser extends DataParser
                 case 'ENTRY': //for atom feeds
                     $this->items[] = $element;
                     break;
+                case 'DESCRIPTION':
+                    /* dupe description to content if content is not defined */
+                    if (is_a($parent, 'RSSItem') && !$parent->getContent()) {
+                        $contentElement = clone($element);
+                        $contentElement->setName('CONTENT');
+                        $contentElement->setValue($this->data, $this->shouldStripTags($contentElement));
+                        $parent->addElement($contentElement);
+                    }
                 default:
-                    if ($parent = end($this->elementStack)) {
+                    if ($parent) {
                         $parent->addElement($element);
                     } else {
                         $this->root = $element;
@@ -123,7 +145,7 @@ class RSSDataParser extends DataParser
 
     protected function characterData($xml_parser, $data)
     {
-        $this->data .= trim($data);
+        $this->data .= $data;
     }
     
   public function parseData($contents) {

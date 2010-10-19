@@ -14,11 +14,16 @@ define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 
 class LDAPDataController {
   protected $personClass = 'LDAPPerson';
+  protected $ldapServer;
   protected $filter;
   protected $errorNo;
   protected $errorMsg;
   protected $attributes=array();
   
+  public function debugInfo()
+  {
+        return   sprintf("Using LDAP Server: %s", $this->ldapServer);
+  }
   
   public function setAttributes($attribs)
   {
@@ -143,7 +148,7 @@ class LDAPDataController {
         return FALSE;
     }
     
-    $ds = ldap_connect($GLOBALS['siteConfig']->getVar('LDAP_SERVER'));
+    $ds = ldap_connect($this->ldapServer);
     if (!$ds) {
       $this->errorMsg = "Could not connect to LDAP server";
       return FALSE;
@@ -210,7 +215,7 @@ class LDAPDataController {
     if (strstr($id, '=')) { 
       // assume we're looking up person by "dn" (distinct ldap name)
 
-      $ds = ldap_connect($GLOBALS['siteConfig']->getVar('LDAP_SERVER'));
+      $ds = ldap_connect($this->ldapServer);
       if (!$ds) {
         $this->errorMsg = "Could not connect to LDAP server";
         return FALSE;
@@ -260,6 +265,10 @@ protected function generateErrorMessage($ldap_resource) {
         return "Your request cannot be processed at this time.";
     }
 }
+    public function __construct()
+    {
+        $this->ldapServer = $GLOBALS['siteConfig']->getVar('LDAP_SERVER');
+    }    
 
 }
 

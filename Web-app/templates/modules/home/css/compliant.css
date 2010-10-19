@@ -1,3 +1,21 @@
+#homelist li {
+  padding: 0 12px;
+  min-height: 54px;
+}
+#homelist img {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 50px;
+  width: 50px;
+}
+#homelist li a {
+  position: relative;
+  margin: 0;
+  padding: 12px 5px 12px 58px;
+  line-height: 30px;
+}
+
 #homegrid {
 	margin: 0 auto;
 	padding: 0 4px;
@@ -39,7 +57,7 @@ h1.roomfornew {
 	right: -9px;
 	width: 80px;
 	height: 80px;
-	background-image: url(../images/newbig.png);
+	background-image: url(/modules/home/images/newbig.png);
 	background-repeat: no-repeat;
 	color: #fff;
 	font-size: 12px;

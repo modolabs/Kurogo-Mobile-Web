@@ -72,7 +72,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
   // Sample Files
   //
 
-  $sample = realpath_exists(WEBROOT_DIR."/$matches[1].php");
+  $sample = realpath_exists(SITE_DIR."/$matches[1].php");
   if ($sample) {
     require_once $sample;
     exit;
@@ -92,7 +92,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
     if ($api) {
       PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
       
-      $GLOBALS['siteConfig']->loadAPIFile($id, true);
+      $GLOBALS['siteConfig']->loadAPIFile($id, true, true);
       require_once($api);
       exit;
     }

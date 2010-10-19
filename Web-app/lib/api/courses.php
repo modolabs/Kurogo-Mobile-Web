@@ -7,35 +7,35 @@
  *
  *****************************************************************/
 
-require_once LIBDIR . '/courses.php';
+require_once realpath(LIB_DIR.'/feeds/courses.php');
 
 switch ($_REQUEST['command']) {
-case 'courses':
+  case 'courses':
     $data = CourseData::get_schoolsAndCourses();
     break;
-
-case 'subjectList':
-    $courseId = urldecode($_REQUEST['id']);
-    $courseGroup = urldecode($_REQUEST['coursegroup']);
-    $data = CourseData::get_subjectsForCourse(str_replace('-other', '', $courseId), $courseGroup);
-
+  
+  case 'subjectList':
+    $course = stripslashes($_REQUEST['id']);
+    $school = str_replace('-other', '', stripslashes($_REQUEST['coursegroup']));
+    $data = CourseData::get_subjectsForCourse($course, $school);
+  
     if(isset($_REQUEST['checksum'])) {
-        $checksum = md5(json_encode($data));
-        if(isset($_REQUEST['full'])) {
-            $data = array('checksum' => $checksum, 'classes' => $data);
-        }
-        else {
-            $data = array('checksum' => $checksum);
-        }
+      $checksum = md5(json_encode($data));
+      if(isset($_REQUEST['full'])) {
+        $data = array('checksum' => $checksum, 'classes' => $data);
+      }
+      else {
+        $data = array('checksum' => $checksum);
+      }
     }
     break;
     
-case 'term':
+  case 'term':
     $data = array('term' => CourseData::get_term());
     break;
-
-case 'subjectInfo':
-    $subjectId = urldecode($_REQUEST['id']);
+  
+  case 'subjectInfo':
+    $subjectId = stripslashes($_REQUEST['id']);
     $data = CourseData::get_subject_details($subjectId);
     if(!$data) {
       $data = array('error' => 'SubjectNotFound', 'message' => 'Courses could not find this subject');
@@ -45,16 +45,13 @@ case 'subjectInfo':
     // old behavior of just assuming it's one location and one time being sent.
     $data['parsed_meeting_times'] = $data['meeting_times']->toArray();
     break;
-
-case 'search':
-    $query = urldecode($_REQUEST['query']);
-    $school = urldecode($_REQUEST['courseGroup']);
-    $course = urldecode($_REQUEST['courseName']);
-    $course = urlencode(str_replace('-other', '', $course));
-    $school = urlencode(str_replace('-other', '', $school));
-    $query = urlencode($query);
-
-    $data = CourseData::search_subjects($query, str_replace('-other', '', $school), str_replace(' ', '+', $course));
+  
+  case 'search':
+    $query = stripslashes($_REQUEST['query']);
+    $school = str_replace('-other', '', stripslashes($_REQUEST['courseGroup']));
+    $course = str_replace('-other', '', stripslashes($_REQUEST['courseName']));
+  
+    $data = CourseData::search_subjects($query, $school, $course);
     break;
 }
 

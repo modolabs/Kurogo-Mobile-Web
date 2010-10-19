@@ -307,7 +307,7 @@ class DiningData {
   }
 
 
-  public static function getDiningData($date, $mealTime) {
+  public static function getDiningData($date, $mealTime, $categorize=true) {
 
     $menu = array();
     $day = $date;
@@ -336,7 +336,11 @@ class DiningData {
       }
     }
 
-    return self::collectFoodByCategory($menu);
+    if ($categorize) {
+      return self::collectFoodByCategory($menu);
+    } else {
+      return $menu;
+    }
   }
   
   private static function collectFoodByCategory($items) {

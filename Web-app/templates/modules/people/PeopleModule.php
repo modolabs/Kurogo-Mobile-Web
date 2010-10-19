@@ -155,6 +155,9 @@ class PeopleModule extends Module {
   }
 
   protected function initializeForPage() {
+    if ($GLOBALS['siteConfig']->getVar('LDAP_DEBUG')) {
+      $this->addModuleDebugString('Using LDAP server: '.$GLOBALS['siteConfig']->getVar('LDAP_SERVER'));
+    }
     
     switch ($this->page) {
       case 'help':

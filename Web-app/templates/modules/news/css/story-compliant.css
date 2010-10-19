@@ -42,3 +42,8 @@
     font-size: 84%;
     line-height: 1.2em;
 }
+
+a.external {
+    background-image: none !important;
+    padding-right: 0;
+}

@@ -15,46 +15,55 @@
 {block name="homeSearch"}
   {include file="findInclude:common/search.tpl" placeholder="Search "|cat:$SITE_NAME}  
 {/block}
-  
-{block name="modulesStart"}
-  <div id="homegrid">
-{/block}
 
-    {strip}
+{strip}
+
+{block name="modulesList"}
+  {if $home['springboard'] || $gridOnly}
+    <div id="homegrid">
       {foreach $homeModules as $category => $categoryModules}
-      
-        {block name="categoryStartTag"}
-        {/block}
-        
-          {foreach $categoryModules as $id => $info}
-            {block name="module"}
-              <div id="{$id}"{if $category == 'secondary'} class="utility"{/if}>
-                <a href="{$info['url']}">
-                  <img src="{$info['img']}" alt="{$info['title']}" />
-                  <br/>{$info['title']}
-                  {if isset($info['subTitle'])}
-                    <br/><span class="fineprint">{$info['subTitle']}</span>
-                  {/if}
-                {if $id == 'about' && $whatsNewCount > 0}
-                  <span class="badge">{$whatsNewCount}</span>
-                {/if}
-                </a>
-              </div>
-            {/block}
-          {/foreach}
-        
-        {block name="categoryEndTag"}
-          {if !$categoryModules@last}
-            <div class="separator">&nbsp;</div>
-          {/if}
-        {/block}
-        
+        {foreach $categoryModules as $id => $info}
+          <div id="{$id}"{if $category == 'secondary'} class="utility"{/if}>
+            <a href="{$info['url']}">
+              <img src="{$info['img']}" alt="{$info['title']}" />
+              <br/>{$info['title']}
+              {if isset($info['subTitle'])}
+                <br/><span class="fineprint">{$info['subTitle']}</span>
+              {/if}
+              {if $id == 'about' && $whatsNewCount > 0}
+                <span class="badge">{$whatsNewCount}</span>
+              {/if}
+            </a>
+          </div>
+        {/foreach}
+        {if !$categoryModules@last}
+          <div class="separator">&nbsp;</div>
+        {/if}
       {/foreach}
-    {/strip}
-
-{block name="modulesEnd"}
-  </div>
+    </div>
+  {else}
+    <ul class="nav" id="homelist">
+      {foreach $homeModules as $category => $categoryModules}
+        {foreach $categoryModules as $id => $info}
+          <li{if $category == 'secondary'} class="utility"{/if}>
+            <a href="{$info['url']}">
+              {if $id == 'about' && $whatsNewCount > 0}
+                <span class="badge">{$whatsNewCount}</span>
+              {/if}
+              <img src="{$info['img']}" alt="{$info['title']}" width="50" height="50"/>
+              &nbsp;{$info['title']}
+              {if isset($info['subTitle'])}
+                <br/><span class="fineprint">{$info['subTitle']}</span>
+              {/if}
+            </a>
+          </li>
+        {/foreach}
+      {/foreach}
+    </ul>
+  {/if}
 {/block}
+
+{/strip}
 
 {block name="homeFooter"}
 {/block}

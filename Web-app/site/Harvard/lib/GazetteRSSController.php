@@ -5,6 +5,7 @@ require_once(LIB_DIR . '/RSS.php');
 class GazetteRSScontroller extends RSSDataController
 {
     protected $loadMore=true;
+    
     public function addFilter($var, $value)
     {
         switch ($var)
@@ -79,13 +80,16 @@ class GazetteRSScontroller extends RSSDataController
     }
 }
 
+class GazetteRSSParser extends RSSDataParser
+{
+}
+
 class GazetteRSSItem extends RSSItem
 {
     protected function elementMap()
     {
         $elementMap = array_merge(parent::elementMap(), array(
-            'HARVARD:WPID'=>'guid',
-            'CONTENT:ENCODED'=>'content'
+            'HARVARD:WPID'=>'guid'
             )
         );
         

@@ -1,4 +1,4 @@
-{extends file="findExtends:modules/{$moduleID}/index-basic-blackberry.tpl"}
+{extends file="findExtends:modules/{$moduleID}/index.tpl"}
 
 {block name="banner"}
   <h1><img id="logo" src="/modules/home/images/logo-home.png" width="400" height="67" alt="{$SITE_NAME}" /></h1>
@@ -23,4 +23,43 @@
       </table>
     </div>
   </form>
+{/block}
+
+
+{block name="modulesList"}
+  {if !$home['springboard']}
+    {strip}
+    {foreach $homeModules as $category => $categoryModules}
+      <p class="nav {$category}">
+        {foreach $categoryModules as $id => $info}
+          {if $category == 'primary'}
+            {html_access_key_link href=$info['url']}
+              {$info['title']}
+            {/html_access_key_link}
+          {else}
+            <a href="{$info['url']}">
+              {$info['title']}
+            </a>
+          {/if}
+          {if isset($info['subTitle'])}
+            <span class="smallprint"> ({$info['subTitle']})</span>
+          {/if}
+          <br/>
+        {/foreach}
+      </p>
+    {/foreach}
+    {strip}
+  {else}
+    {$smarty.block.parent}
+  {/if}
+{/block}
+
+{block name="homeFooter"}
+  <div id="download">
+    <a href="../download/">
+      <img src="/modules/home/images/download-bbplus.png" width="32" height="26" alt="Download" align="absmiddle" />
+      Add the BlackBerry shortcut to your home screen
+    </a>
+    <br />
+  </div>
 {/block}
