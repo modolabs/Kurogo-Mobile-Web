@@ -204,7 +204,7 @@ class TemplateEngine extends Smarty {
     // variables common to all modules
     $this->assign('pagetype', $pagetype);
     $this->assign('platform', $platform);
-    $this->assign('supportsCerts', $supportsCerts);
+    $this->assign('supportsCerts', $supportsCerts ? 1 : 0);
     $this->assign('showDeviceDetection', $GLOBALS['siteConfig']->getVar('SHOW_DEVICE_DETECTION'));
     $this->assign('moduleDebug', $GLOBALS['siteConfig']->getVar('MODULE_DEBUG'));
     
