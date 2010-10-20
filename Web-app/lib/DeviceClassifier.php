@@ -39,21 +39,18 @@ class DeviceClassifier {
       
       switch ($data['pagetype']) {
         case 'Basic':
-          $this->pagetype = 'basic';
+          if ($data['platform'] == 'computer' || $data['platform'] == 'spider') {
+            $this->pagetype = 'compliant';
+          } else {
+            $this->pagetype = 'basic';
+          }
           break;
         
         case 'Compliant':
         case 'Webkit':
         case 'Touch':
-          $this->pagetype = 'compliant';
-          break;
-          
         default:
-          if ($data['platform'] == 'computer' || $data['platform'] == 'spider') {
-            $this->pagetype = 'desktop';
-          } else {
-            $this->pagetype = 'compliant';
-          }
+          $this->pagetype = 'compliant';
           break;
       }
       $this->platform = $data['platform'];
