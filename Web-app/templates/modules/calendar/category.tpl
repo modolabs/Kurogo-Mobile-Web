@@ -6,7 +6,7 @@
     {if $isToday}
       Today
     {else}
-      {$current['day_3Let']} {$current['month_3Let']} {$current['day_num']}, {$current['year']}
+      {$current|date_format:"%a %b %e, %Y"}
     {/if}
   </h2>
 </div>
@@ -14,10 +14,10 @@
 {capture name="sideNav" assign="sideNav"}
   <div class="{block name='sideNavClass'}sidenav{/block}">
     <a href="{$prevUrl}">
-      &lt; {$prev['day_3Let']} {$prev['month_3Let']} {$prev['day_num']}
+      &lt; {$prev|date_format:"%a %b %e"}
     </a> | 
     <a href="{$nextUrl}">
-      {$next['day_3Let']} {$next['month_3Let']} {$next['day_num']} &gt;
+      {$next|date_format:"%a %b %e"} &gt;
     </a>
   </div>
 {/capture}

@@ -1,7 +1,6 @@
 <?php
 
 require_once realpath(LIB_DIR.'/Module.php');
-require_once realpath(LIB_DIR.'/feeds/WhatsNew.php');
 
 class AboutModule extends Module {
   protected $id = 'about';
@@ -40,9 +39,7 @@ class AboutModule extends Module {
         break;
       
       case 'new':
-        $whatsNew = new WhatsNew();
-        
-        $this->assign('items', $whatsNew->get_items());
+        $this->assign('items', array()); // Disabled for now
         break;
     }
   }

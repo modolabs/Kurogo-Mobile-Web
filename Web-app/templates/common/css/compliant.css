@@ -1143,6 +1143,7 @@ h2.icon {
 .devicedetection {
   border: none;
   margin: 1.5em 0;
+  width: 100%;
 }
 .devicedetection th,
 .devicedetection td {
@@ -1155,4 +1156,10 @@ h2.icon {
   font-weight: bold;
   text-align: right;
   white-space: nowrap;
+  width: 50%;
+}
+.devicedetection th[colspan],
+.devicedetection td[colspan] {
+  width: auto;
+  text-align: center;
 }

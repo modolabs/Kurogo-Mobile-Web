@@ -1,7 +1,7 @@
 {include file="findInclude:common/header.tpl"}
 
 <div class="nonfocal">
-  <h2>{$today['weekday']}, {$today['month_3Let']} {$today['day_num']}, {$today['year']}</h2>
+  <h2>{$today|date_format:"%A %b %e, %Y"}</h2>
 </div>
 
 {strip}

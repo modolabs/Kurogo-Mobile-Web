@@ -51,24 +51,7 @@ class CalendarModule extends Module {
       new DateTime(date('Y-m-d H:i:s', $end  ), $this->timezone),
     );
   }
-
-
-  private function dayInfo($time, $offset=0) {
-    $time += $offset * DAY_SECONDS;
-    return array(
-      "weekday"       => date('l', $time),
-      "month"         => date('F', $time),
-      "month_3Let"    => date('M', $time),
-      "day_num"       => date('j', $time),
-      "year"          => date('Y', $time),
-      "month_num"     => date('m', $time),
-      "day_3Let"      => date('D', $time),
-      "day_num_2dig"  => date('d', $time),
-      "date"          => date('Y/m/d', $time),
-      "time"          => strtotime(date("Y-m-d 12:00:00", $time))
-    );
-  }
-  
+    
   private function timeText($event) {
     return strval($event->get_range());
     if ($event->get_end() - $event->get_start() == -1) {
@@ -88,41 +71,6 @@ class CalendarModule extends Module {
       $new_words[] = $new_word;
     } 
     return implode(' ', $new_words);
-  }
-
-  private function searchDates($option) {
-    $offset = $this->options[$option]["offset"];
-    $time = time();
-    $day1 = dayInfo($time);
-
-    if(is_int($offset)) {
-      $day2 = dayInfo($time, $offset);
-      if($offset > 0) {
-        return array("start" => $day1['date'], "end" => $day2['date']);
-      } else {
-        return array("start" => $day2['date'], "end" => $day1['date']); 
-      }
-    } else {
-      switch($offset) {
-        case "term":
-          if($day1['month_num'] < 7) {
-            $endDate = "{$day1['year']}/07/01";
-      } else {
-            $endDate = "{$day1['year']}/12/31";
-          }
-          break;
-
-        case "year": 
-          if($day1['month_num'] < 7) {
-            $endDate = "{$day1['year']}/07/01";
-      } else {
-            $year = $day1['year'] + 1;
-            $endDate = "$year/07/01";
-          }
-          break;
-      }    
-      return array("start" => $day1['date'], "end" => $endDate); 
-    }
   }
   
   private function valueForType($type, $value) {
@@ -213,16 +161,16 @@ class CalendarModule extends Module {
   }
 
   // URL DEFINITIONS
-  private function dayURL($day, $type, $addBreadcrumb=true) {
+  private function dayURL($time, $type, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('day', array(
-      'time' => $day['time'],
+      'time' => $time,
       'type' => $type,
     ), $addBreadcrumb);
   }
   
-  private function categoryDayURL($day, $categoryID, $name, $addBreadcrumb=true) {
+  private function categoryDayURL($time, $categoryID, $name, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('category', array(
-      'time' => $day['time'],
+      'time' => $time,
       'id'   => $categoryID,
       'name' => $name, 
     ), $addBreadcrumb);
@@ -327,15 +275,16 @@ class CalendarModule extends Module {
         break;
         
       case 'index':
-        $today = $this->dayInfo(time());
+        $today = strtotime(date("Y-m-d 12:00:00", time()));
+        $year = date('Y', $today);
       
         $this->assign('today',           $today);
         $this->assign('searchOptions',   $this->searchOptions);
         
         $this->assign('todaysEventsUrl', $this->dayURL($today, 'events'));
-        $this->assign('holidaysUrl',     $this->holidaysURL($today['year']));
-        $this->assign('categoriesUrl',    $this->categoriesURL());
-        $this->assign('academicUrl',     $this->academicURL($today['year']));
+        $this->assign('holidaysUrl',     $this->holidaysURL($year));
+        $this->assign('categoriesUrl',   $this->categoriesURL());
+        $this->assign('academicUrl',     $this->academicURL($year));
 
         break;
       
@@ -355,9 +304,11 @@ class CalendarModule extends Module {
         break;
       
       case 'category':
-        $id   = $this->getArg('id', '');
-        $name = $this->getArg('name', '');
-        $time = $this->getArg('time', time());
+        $id      = $this->getArg('id', '');
+        $name    = $this->getArg('name', '');
+        $current = $this->getArg('time', time());
+        $next    = $current + DAY_SECONDS;
+        $prev    = $current - DAY_SECONDS;
 
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
@@ -365,15 +316,13 @@ class CalendarModule extends Module {
         $this->assign('category', $this->ucname($name));
         
         $dayRange = new DayRange(time());
-        $next = $this->dayInfo($time, 1);
-        $prev = $this->dayInfo($time, -1);
         
-        $this->assign('current', $this->dayInfo($time));
+        $this->assign('current', $current);
         $this->assign('next',    $next);
         $this->assign('prev',    $prev);
         $this->assign('nextUrl', $this->categoryDayURL($next, $id, $name, false));
         $this->assign('prevUrl', $this->categoryDayURL($prev, $id, $name, false));
-        $this->assign('isToday', $dayRange->contains(new TimeRange($time)));
+        $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
 
         $events = array();
         
@@ -381,7 +330,7 @@ class CalendarModule extends Module {
             $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
             $feed->setObjectClass('event', $this->eventClass);
             
-            $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
+            $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
             $start->setTime(0,0,0);
             $end = clone $start;
             $end->setTime(23,59,59);
@@ -410,22 +359,16 @@ class CalendarModule extends Module {
         break;
       
       case 'day':  
-        $type = isset($this->args['type']) ? $this->args['type'] : 'events';
-        $this->assign('Type', ucwords($type));
+        $type = $this->getArg('type', 'events');
 
-        $time = isset($this->args['time']) ? $this->args['time'] : time();
-        $next = $this->dayInfo($time, 1);
-        $prev = $this->dayInfo($time, -1);
-        $this->assign('current', $this->dayInfo($time));
-        $this->assign('next',    $next);
-        $this->assign('prev',    $prev);
-        $this->assign('nextUrl', $this->dayURL($next, $type, false));
-        $this->assign('prevUrl', $this->dayURL($prev, $type, false));
+        $current = $this->getArg('time', time());
+        $next = $current + DAY_SECONDS;
+        $prev = $current - DAY_SECONDS;
         
         $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
         $feed->setObjectClass('event', $this->eventClass);
         
-        $start = new DateTime(date('Y-m-d H:i:s', $time), $this->timezone);
+        $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
         $start->setTime(0,0,0);
         $end = clone $start;
         $end->setTime(23,59,59);
@@ -448,7 +391,14 @@ class CalendarModule extends Module {
             'subtitle' => $subtitle
           );
         }
-        $this->assign('events', $events);        
+
+        $this->assign('type',    $type);
+        $this->assign('current', $current);
+        $this->assign('next',    $next);
+        $this->assign('prev',    $prev);
+        $this->assign('nextUrl', $this->dayURL($next, $type, false));
+        $this->assign('prevUrl', $this->dayURL($prev, $type, false));
+        $this->assign('events',  $events);        
         break;
         
       case 'detail':  
@@ -457,7 +407,7 @@ class CalendarModule extends Module {
         $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
         $feed->setObjectClass('event', $this->eventClass);
         
-        $time = isset($this->args['time']) ? $this->args['time'] : time();
+        $time = $this->getArg('time', time());
         if ($event = $feed->getItem($this->args['id'], $time)) {
           $this->assign('event', $event);
         } else {
