@@ -615,7 +615,11 @@ class CourseData {
       self::condenseXMLFileForCoursesAndWrite($urlString, $filenm);
     }
     $schoolsAndCourses = json_decode(file_get_contents($filenm));
-    usort($schoolsAndCourses, "compare_schoolName");
+    if (is_array($schoolsAndCourses)) {
+        usort($schoolsAndCourses, "compare_schoolName");
+    } else {
+        $schoolsAndCourses = array();
+    }
     
     return $schoolsAndCourses;
   }

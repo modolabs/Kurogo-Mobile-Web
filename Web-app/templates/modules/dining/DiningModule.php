@@ -1,8 +1,15 @@
 <?php
 
 require_once realpath(LIB_DIR.'/Module.php');
-require_once realpath(SITE_LIB_DIR.'/HarvardDining.php');
-require_once realpath(SITE_LIB_DIR.'/HarvardDiningHalls.php');
+
+if (realpath(SITE_LIB_DIR.'/HarvardDining.php')) {
+    require_once realpath(SITE_LIB_DIR.'/HarvardDining.php');
+    require_once realpath(SITE_LIB_DIR.'/HarvardDiningHalls.php');
+}
+
+if (!class_exists('DiningData')) {
+    throw new Exception("Dining not configured");
+}
 
   
 class DiningModule extends Module {
