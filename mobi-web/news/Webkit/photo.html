@@ -1,0 +1,45 @@
+<?php
+$page->title('News')
+     ->navbar_image('news')
+     ->module_home_link(newsHomeURL())
+     ->add_javascript('../Webkit/uiscripts')
+     ->add_javascript('Webkit/news')
+     ->add_stylesheet('Webkit/news')
+     ->extra_onload('androidPlaceholderFix()');
+
+if(isSearchResult()) {
+  $page->breadcrumbs('Search', 'Story', 'Photos')
+       ->breadcrumb_links(searchHomeURL(), path2StoryURL());
+} else {
+  $page->breadcrumbs('Story', 'Photos')
+       ->breadcrumb_links(path2storyURL());
+}
+
+$page->content_begin();
+?>
+<div class="storyphoto"> 
+
+  <img src="<?=$photo->full_url?>" alt="Photo" border="0" /> 
+
+  <p><? if($caption) { echo $caption . '<br/>'; } ?><?=$credits?></p> 
+
+  <? if($total_photos > 1) { ?>
+
+     <div class="pagination"> 
+       <span class="pagelabel">Photo:</span> 
+       <? for($i = 0; $i < $total_photos; $i++) { ?>
+          <? if($current_photo_index == $i) { ?>
+             <a class="page current"><?=$i+1?></a> 
+          <? } else { ?>
+             <a href="<?=photoURL($i)?>" class="page"><?=$i+1?></a> 
+          <? } ?>
+        <? } ?>
+     </div> 
+
+   <? } ?>
+  <div class="clear"></div> 
+</div> 
+
+<? 
+$page->content_end();
+?>

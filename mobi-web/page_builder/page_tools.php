@@ -127,31 +127,49 @@ class Pager {
     }
   }
 
-  public function next_html($url, $params, $id_name) {
-    if($this->next_id() === NULL) {
+  public function prev_next_html($url, $params, $id_name) {
+    $arrows = new HtmlPrevNextArrows($url, $params, $id_name, $this->prev_id(), $this->next_id());
+    return $arrows->prev_next_html();
+  }      
+}
+
+class HtmlPrevNextArrows {
+
+  public function __construct($url, $params, $id_name, $prev_id, $next_id) {
+    $this->url = $url;
+    $this->params = $params;
+    $this->id_name = $id_name;
+    $this->prev_id = $prev_id;
+    $this->next_id = $next_id;
+  }
+
+  private function next_html() {
+    if($this->next_id === NULL) {
       return '';
     }
 
-    $params[$id_name] = $this->next_id();
-    $url .= '?' . http_build_query($params);
+    $params = $this->params;
+    $params[$this->id_name] = $this->next_id;
+    $url = $this->url . '?' . http_build_query($params);
     
     return '<a href="' . $url . '">Next &gt;</a>';
   }
 
-  public function prev_html($url, $params, $id_name) {
-    if($this->prev_id() === NULL) {
+  private function prev_html() {
+    if($this->prev_id === NULL) {
       return '';
     }
 
-    $params[$id_name] = $this->prev_id();
-    $url .= '?' . http_build_query($params);
+    $params = $this->params;
+    $params[$this->id_name] = $this->prev_id;
+    $url = $this->url . '?' . http_build_query($params);
     
     return '<a href="' . $url . '">&lt; Prev</a>';
   }
 
-  public function prev_next_html($url, $params, $id_name) {
-    $next = $this->next_html($url, $params, $id_name);
-    $prev = $this->prev_html($url, $params, $id_name);
+  public function prev_next_html() {
+    $next = $this->next_html();
+    $prev = $this->prev_html();
     $middle = ($next && $prev) ? "&nbsp;|&nbsp;" : "";
     return $prev . $middle . $next;
   }
@@ -294,20 +312,17 @@ function summary_string($text) {
     $dots = True;
   }
 
-  $text = htmlentities(substr($text, 0, MAX_TEXT));
+  $text = htmlentities(substr($text, 0, MAX_TEXT), ENT_QUOTES, 'UTF-8');
   if($dots) {
     $text .= '...';
   }
-
-  //this hack fixes some strange encoding problem
-  return str_replace('&Acirc;', '', $text);
+  return $text;
 }
 
 function is_long_string($text) {
   $temp = trim($text);
   return strlen($temp) > MAX_TEXT;
 }
-
 
 function google_analytics($bucket) {
   switch($bucket) {
@@ -344,6 +359,14 @@ function pre_hack($text) {
   return preg_replace('/([\d\-\. ]{4})([\d\-\. ]+)/', '${1}&shy;${2}', $text);
 }
 
+function notPhoneNumber($text) {
+  $output = '';
+  for($i = 0; $i < strlen($text); $i++) {
+    $output .= '<span>'. substr($text,$i, 1) . '</span>';
+  }
+  return $output;
+}
+
 // create a URL to the campus map if given a building number
 // or a search term
 function mapURL($location) {
@@ -352,6 +375,108 @@ function mapURL($location) {
     return "../map/detail.php?selectvalues={$matches[2]}{$matches[3]}&snippets=$location";
   } else {
     return "../map/search.php?filter=" . urlencode($location);
+  }
+}
+
+class HTMLFragment {
+  private $dom_document;
+  private static $html_header = '<html><meta http-equiv="Content-Type" content="text/html;charset=utf-8"><body>';
+  private static $html_footer = "</body>\n</html>";
+
+  public function __construct($html) {
+    $this->dom_document = new DOMDocument();
+    $this->dom_document->loadHTML(self::$html_header . $html . self::$html_footer);    
+  }
+    
+  public function getBody() {
+    $full_html = $this->dom_document->saveHTML();
+    $body_tag_pos = strpos($full_html, '<body>') + strlen('<body>');
+    $inner_fragment = substr($full_html, $body_tag_pos, -strlen(self::$html_footer)-1);
+    return $inner_fragment;
+  }
+    
+  public function bodyElement() {
+    return $this->dom_document->getElementsByTagname('body')->item(0);
+  }
+  
+  /**
+   *  uses the strategy of estimating paragraphs based on linebreaks "<br />"
+   */
+  public function pages() {
+    $body = $this->dom_document->getElementsByTagname('body')->item(0);
+
+    $current_page = new HTMLFragment("");
+    $current_page_count = 0;
+    $current_linebreak_count = 0;
+    $pages = array($current_page);
+    foreach($this->bodyElement()->childNodes as $node) {
+      if($node->nodeName == 'br') {
+        $current_linebreak_count += 1;
+      }
+      if($node->nodeName == 'p') {
+        // a new paragraph is similar to two linebreaks
+        $current_linebreak_count += 2;
+      }
+
+      $nodeCopy = $current_page->dom_document->importNode($node, TRUE);
+      $current_page->bodyElement()->appendChild($nodeCopy);
+        
+      if($current_linebreak_count >= 12) {
+        // we limit the number of paragraphs per page
+        $current_page = new HTMLFragment("");
+	$current_page_count = 0;
+	$current_linebreak_count = 0;
+	$pages[] = $current_page;
+      }
+    }
+    
+    // trim white spaces and line breaks
+    $trimmed_pages = array();
+    foreach($pages as $page) {
+      $trimmed_page = $page->trim();
+      if($trimmed_page) {
+        $trimmed_pages[] = $trimmed_page;
+      }
+    }
+    return $trimmed_pages;
+  }
+
+  public function trim() {
+    $new = new HTMLFragment($this->getBody());
+    $body = $new->bodyElement();    
+
+    // trim beginning
+    while($body->firstChild && self::is_white_space($body->firstChild)) {
+      $body->removeChild($body->firstChild);
+    }
+    if($body->firstChild && $body->firstChild->nodeName == '#text') {
+      $body->firstChild->nodeValue = ltrim($body->firstChild->nodeValue);
+    }
+
+    // trim end
+    while($body->lastChild && self::is_white_space($body->lastChild)) {
+      $body->removeChild($body->lastChild);
+    }
+    if($body->lastChild && $body->lastChild->nodeName == '#text') {
+      $body->lastChild->nodeValue = rtrim($body->lastChild->nodeValue);
+    }
+
+    // only return pages with non empty text
+    if(trim($new->getBody())) {
+      return $new;
+    }
+  }
+
+  private function is_white_space($domNode) {
+    if( ($domNode->nodeName == '#text') && (trim($domNode->nodeValue) == '') ) {
+      return True;
+    }
+
+    if($domNode->nodeName == 'br') {
+      return True;
+    }
+
+    return False;
   }
 }
 

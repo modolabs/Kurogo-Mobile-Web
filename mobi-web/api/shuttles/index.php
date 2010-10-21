@@ -1,93 +1,75 @@
-<?
+<?php
 
 $docRoot = getenv("DOCUMENT_ROOT");
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "shuttleschedule/shuttle_lib.php";
-$APIROOT = WEBROOT . "/api";
-require_once $APIROOT . "/api_header.php";
-PageViews::log_api('shuttles', 'iphone');
+require_once WEBROOT . "api/api_header.php";
 
+log_api('shuttles');
+
+require_once LIBDIR . "GTFSReader.php";
 $data = Array();
 $command = $_REQUEST['command'];
 
 switch ($command) {
  case 'stops':
-   $stops = NextBusReader::get_all_stops();
-   $data = array_values($stops);
+   $data = ShuttleSchedule::getAllStops();
    break;
  case 'stopInfo':
-   $stops = NextBusReader::get_all_stops();
+   $stop_id = $_REQUEST['id'];
    $time = time();
-   $stopId = $_REQUEST['id'];
-   $stopInfo = $stops[$stopId];
-   if (!$stopInfo) {
-     error_log("failed to get stop info for $stopId");
-     $data = Array('error' => 'could not get stop info');
-   }
 
-   $data['stops'] = Array();
-   foreach ($stopInfo['routes'] as $route) {
-     $gpsActive = ShuttleSchedule::is_running($route) && NextBusReader::gps_active($route);
-     $stopTimes = list_stop_times($route, $time, $gpsActive, $stopId);
-
-     $routeInfoForStop = $stopTimes;
-     $routeInfoForStop['route_id'] = $route;
-     $routeInfoForStop['gps'] = $gpsActive;
-
-     $data['stops'][] = $routeInfoForStop;
-   }
+   $data['stops'] = ShuttleSchedule::getTimesForStop($stop_id);
    $data['now'] = $time;
 
    break;
  case 'routes': // static info about all routes
-   $route_ids = ShuttleSchedule::get_active_routes();
-   foreach ($route_ids as $route) {
-     $routeInfo = get_route_metadata($route);
+   $route_ids = ShuttleSchedule::getActiveRoutes();
+   foreach ($route_ids as $route_id) {
+     $routeInfo = get_route_metadata($route_id);
 
-     if ($_REQUEST['compact'] == 'true') {
-       unset($routeInfo['summary']);
-     } else {
-       $routeInfo['stops'] = Array();
-       if ($stops = NextBusReader::get_route_info($route)) {
-	 foreach ($stops as $stop_id => $stopInfo) {
-	   $stopInfo['stop_id'] = $stop_id;
-	   $routeInfo['stops'][] = $stopInfo;
-	 }
+     if (!$_REQUEST['compact']) {
+       $routeInfo['stops'] = ShuttleSchedule::list_stop_times($route_id);
+       $route = ShuttleSchedule::getRoute($route_id);
+       $path = array();
+       foreach ($route->anyTrip(time())->shape->points as $point) {
+	 $path[] = array('lat' => $point[0], 'lon' => $point[1]);
        }
+       // we had each stop's path segment appended to the stop
+       // we can split it out later if needed
+       $routeInfo['stops'][0]['path'] = $path;
      }
 
      $data[] = $routeInfo;
    }
    break;
  case 'routeInfo': // live info for individual routes
-   $route = $_REQUEST['id'];
+   $route_id = $_REQUEST['id'];
    $time = time();
-   if ($route) {
+   if ($route_id) {
 
-     $gpsActive = NextBusReader::gps_active($route);
-     $stopTimes = list_stop_times($route, $time, $gpsActive);
+     $stopTimes = ShuttleSchedule::list_stop_times($route_id);
+     $gpsActive = $stopTimes[count($stopTimes) - 1]['gps'];
+     unset($stopTimes[count($stopTimes) - 1]);
 
      if ($_REQUEST['full'] == 'true') {
-       $data = get_route_metadata($route);
-
-       $stops = Array();
-       if ($stops = NextBusReader::get_route_info($route)) {
-	 foreach ($stopTimes as $index => $stopTimeInfo) {
-	   $stopInfo = $stops[$stopTimeInfo['id']];
-	   foreach ($stopInfo as $property => $value) {
-	     if ($property == 'title')
-	       continue;
-	     $stopTimes[$index][$property] = $value;
-	   }
-	 }
+       $data = get_route_metadata($route_id);
+       $route = ShuttleSchedule::getRoute($route_id);
+       $path = array();
+       foreach ($route->anyTrip(time())->shape->points as $point) {
+	 $path[] = array('lat' => $point[0], 'lon' => $point[1]);
        }
+       // see comment above
+       $stopTimes[0]['path'] = $path;
      }
 
      $data['stops'] = $stopTimes;
 
      if ($gpsActive) {
        $data['gpsActive'] = TRUE;
-       $data['vehicleLocations'] = NextBusReader::get_coordinates($route);
+       foreach (ShuttleSchedule::getVehicleLocations($route_id) as $id => $location) {
+	 if ($id != 'lastUpdate')
+	   $data['vehicleLocations'][] = $location;
+       }
      }
 
      $data['now'] = $time;
@@ -102,11 +84,13 @@ switch ($command) {
 
    $data = Array('error' => "could not perform $command");
    if ($sub = APNSSubscriber::create()) {
-     $route = $_REQUEST['route'];
+     $route_id = $_REQUEST['route'];
      $params = Array(
-       'route_id' => $route,
+       'route_id' => $route_id,
        'stop_id' => $_REQUEST['stop'],
        );
+
+     $route = ShuttleSchedule::getRoute($route_id);
 
      // unsubscribe any existing subscriptions for the same route/stop
      if ($sub->unsubscribe("ShuttleSubscription", $params) && $command == 'unsubscribe') {
@@ -114,11 +98,11 @@ switch ($command) {
 
      } else {
        $request_time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
-
-       $interval = ShuttleSchedule::get_interval($route);
-       if (($numshuttles = ShuttleSchedule::count_shuttles_running($route, $request_time)) > 1) {
-	 $interval /= $numshuttles;
-       }
+       $trip = $route->anyTrip($request_time);
+       $interval = $trip->duration();
+       $numShuttles = $trip->numShuttlesRunning($request_time);
+       if ($numShuttles > 1)
+	 $interval /= $numShuttles;
 
        $start_time = $request_time - intval($interval / 2);
        $expire_time = $start_time + intval($interval * 1.5);
@@ -135,14 +119,15 @@ switch ($command) {
 
 echo json_encode($data);
 
-function get_route_metadata($route) {
+function get_route_metadata($route_id) {
+  $route = ShuttleSchedule::getRoute($route_id);
   $metadata = Array();
-  $metadata['route_id'] = $route;
-  $metadata['title'] = ShuttleSchedule::get_title($route);
-  $metadata['interval'] = ShuttleSchedule::get_interval($route) / 60;
-  $metadata['isSafeRide'] = ShuttleSchedule::is_safe_ride($route);
-  $metadata['isRunning'] = ShuttleSchedule::is_running($route);
-  $metadata['summary'] = ShuttleSchedule::get_summary($route);
+  $metadata['route_id'] = $route->id;
+  $metadata['title'] = $route->long_name;
+  $metadata['interval'] = $route->anyTrip(time())->duration() / 60;
+  $metadata['isSafeRide'] = $route->agency_id == 'saferide';
+  $metadata['isRunning'] = $route->isRunning(time());
+  $metadata['summary'] = $route->desc;
   return $metadata;
 }
 

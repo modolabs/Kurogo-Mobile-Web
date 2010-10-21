@@ -8,6 +8,7 @@ $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
 require_once LIBDIR . "DrupalDB.php";
+require_once LIBDIR . 'mit_ical_lib.php';
 
 class LibraryInfo {
 
@@ -22,6 +23,16 @@ class LibraryInfo {
   // returns cached location
   public static function ical_filename($library) {
     return str_replace(' ', '_', CACHE_DIR . "LIBRARIES_$library.ics");
+  }
+
+  public static function get_calendar($library) {
+    $ical_file = self::ical_filename($library);
+    if (!file_exists($ical_file)) {
+      self::cache_ical($library);
+    }
+
+    $cal = new ICalendar($ical_file);
+    return $cal;
   }
 
   public static function get_libraries() {
@@ -101,8 +112,8 @@ class LibraryInfo {
   public static function cache_icals() {
     foreach (self::get_libraries() as $library) {
       if ($library == 'Aeronautics and Astronautics Library'
-	  || $library != 'Lindgren Library') continue;
-      else cache_ical($library);
+	  || $library == 'Lindgren Library') continue;
+      else self::cache_ical($library);
     }
   }
 }

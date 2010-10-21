@@ -11,7 +11,13 @@ $search_terms = $_REQUEST['filter'];
 
 $timeframe = isset($_REQUEST['timeframe']) ? $_REQUEST['timeframe'] : 0;
 $dates = SearchOptions::search_dates($timeframe);
-$events = MIT_Calendar::fullTextSearch($search_terms, $dates['start'], $dates['end']);
+
+if ($search_terms) {
+  $events = MIT_Calendar::fullTextSearch($search_terms, $dates['start'], $dates['end']);
+} else {
+  $events = MIT_Calendar::eventsInDateRange($dates['start'], $dates['end']);
+}
+
 
 $content = new ResultsContent("items", "calendar", $page, array("timeframe" => $timeframe));
 

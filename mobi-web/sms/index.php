@@ -4,6 +4,8 @@ $docRoot = getenv("DOCUMENT_ROOT");
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "page_builder/page_header.php";
 
+$sms_announcement = 'MIT SMS (Beta) is no longer in service. <a href="http://ist.mit.edu/news/smsretirement">More information</a>';
+
 $sms_instructions = new SMSInstructions(
   module("People Directory",
    "Search all or part of a name, email address, or phone number.",

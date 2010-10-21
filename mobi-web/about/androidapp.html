@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="content-script-type" content="text/javascript" />
+	<title>MIT Mobile android&reg; App</title>
+	<link rel="stylesheet" rev="stylesheet" href="androidapp.css" type="text/css" />
+	<script type="text/javascript">
+	<!--
+		function highlight(objTrigger,strModule) {
+			var objScreen = document.getElementById("screen");
+			objScreen.src=("images/androidapp/" + strModule + ".jpg");
+			var arrModules = document.getElementById("modules").getElementsByTagName("a");
+			for(i=0;i<arrModules.length;i++) {
+				arrModules[i].className="";
+			}
+			objTrigger.className="current";
+		}
+		function highlightfirst() {
+			var arrModules = document.getElementById("modules").getElementsByTagName("a");
+			for(i=0;i<arrModules.length;i++) {
+				arrModules[i].className="";
+			}
+			var objFirst = arrModules[0];
+			highlight(objFirst,'news');
+		}
+	//-->
+	</script>
+</head>
+<body onload="highlightfirst()">
+  <div id="container">
+	<div id="focal">
+		<div class="content">
+			<div id="android">
+				<img id="screen" width="300" height="534" alt="Screen" src="" />
+			</div>
+			<div id="introduction">
+				<h1><a href="http://web.mit.edu" class="floatleft"><img src="images/androidapp/title-logo.gif" alt="MIT" width="73" height="111" /></a><img src="images/androidapp/title.gif" alt="MIT Android App" width="310" height="122" /></h1>
+				
+				<p class="lead"><a href="http://itunes.apple.com"> <img src="images/androidapp/qrcode.png" alt="QR code to Android Market" width="100" height="100" class="market" /></a>Designed specifically for the Android user, <br />
+			  the MIT Mobile Android app allows for real-time access to essential institute information. <br/>
+			  Download MIT Mobile from the Android Market.</p>
+								
+				<ul id="modules">
+				  <li><a href="#" onmouseover="highlight(this,'news')"><img src="images/androidapp/news.png" width="42" height="42" alt="News" /><strong>MIT News</strong> keeps the Institute community and the world informed about MIT research, innovation, teaching and more.</a></li>
+
+					<li><a href="#" onmouseover="highlight(this,'events')"><img src="images/androidapp/events.png" width="42" height="42" alt="Events" /><strong>Events Calendar</strong> lets you search or browse through events, exhibits, and the academic and Institute calendars.</a></li>
+
+					<li><a href="#" onmouseover="highlight(this,'shuttle')"><img src="images/androidapp/shuttle.png" width="42" height="42" alt="Shuttle" />The real-time GPS <strong>shuttle tracker</strong> allows you to monitor bus routes and schedule a notification as the shuttle approaches your stop.</a></li>
+
+					<li><a href="#" onmouseover="highlight(this,'map')"><img src="images/androidapp/map.png" width="42" height="42" alt="Map" />The searchable <strong>campus map</strong> pinpoints services and buildings at MIT. Wondering what's in Building 31, or what food is available at Stata? The campus map will tell you and provide an image of the structure.</a></li>
+
+					<li><a href="#" onmouseover="highlight(this,'stellar')"><img src="images/androidapp/stellar.png" width="42" height="42" alt="Stellar" /><strong>Stellar</strong> offers mobile access to MIT's course management system, including notifications of announcements for selected courses.</a></li>
+
+					<li><a href="#" onmouseover="highlight(this,'people')"><img src="images/androidapp/people.png" width="42" height="42" alt="People" />The searchable <strong>people directory</strong> provides contact information for MIT students, faculty and staff.</a></li>
+
+					<li><a href="#" onmouseover="highlight(this,'emergency')"><img src="images/androidapp/emergency.png" width="42" height="42" alt="Emergency" /><strong>Emergency Info</strong> provides contact information for MIT emergency services, and acts as a portal for any campus-wide emergency announcements.</a></li>
+			  </ul>
+			</div>
+		</div>
+	</div>
+	<div id="support">
+		<div class="content">
+			<div id="details">
+				<p>This app builds on the functionality developed for the <a href="index.php">MIT Mobile Web</a>  which continues to be available for your Android device and most other mobile phones and smartphones.</p>
+				
+				<p><a href="http://itunes.apple.com/us/app/mit-mobile/id353590319">Download the <strong>free</strong> MIT Mobile Android app from the Android Market.</a></p>
+				
+			</div>
+			<div id="sidebar">
+				<div id="feedback" onclick="location.href='mailto:&#105;&#112;&#104;&#111;&#110;&#101;&#45;&#97;&#112;&#112;&#45;&#102;&#101;&#101;&#100;&#98;&#97;&#99;&#107;&#64;&#109;&#105;&#116;&#46;&#101;&#100;&#117;">
+					<h2><img src="images/home/icon-feedback.gif" alt="" width="38" height="34" class="icon"/>We want to hear from you!</h2>
+					<p class="nospace">Your suggestions will help us to continually improve this exciting new service. Click here to send us feedback at <a href="mailto:&#105;&#112;&#104;&#111;&#110;&#101;&#45;&#97;&#112;&#112;&#45;&#102;&#101;&#101;&#100;&#98;&#97;&#99;&#107;&#64;&#109;&#105;&#116;&#46;&#101;&#100;&#117;">&#105;&#112;&#104;&#111;&#110;&#101;&#45;&#97;&#112;&#112;&#45;&#102;&#101;&#101;&#100;&#98;&#97;&#99;&#107;&#64;&#109;&#105;&#116;&#46;&#101;&#100;&#117;</a>.</p>
+				</div>
+			</div>
+			<div id="footer">
+				<div id="footerlogo">
+				<a href="http://web.mit.edu/"><img src="http://web.mit.edu/graphicidentity/interface/mit-greywhite-footer3.gif"
+alt="MIT" width="62" height="36" /></a></div>
+
+
+				<p>Copyright &copy;2010 <a href="http://web.mit.edu">Massachusetts Institute of Technology</a>. All rights reserved.</p>
+			</div>
+		</div>
+	</div>
+  </div>
+</body>
+</html>

@@ -4,10 +4,11 @@ $page->title('Shuttles: ' . $routeName)
      ->not_scalable()
      ->fixed()
      ->add_stylesheet('Webkit/shuttletrack')
+     ->add_stylesheet(array('media' => 'all and (min-device-width: 481px) and (min-device-height: 961px)', 'href'=>'Webkit/shuttletrack-tablet.css'))
      ->add_javascript('../Webkit/uiscripts')
-     ->breadcrumbs('Route Info')
      ->extra_onload("rotateScreen()")
-     ->onorientationchange("rotateScreen()");
+     ->onorientationchange("rotateScreen()")
+     ->breadcrumbs('Route Info');
 
 $page->content_begin();
 ?>
@@ -27,13 +28,11 @@ $page->content_begin();
                      <? } ?>
                 </p>
  
-                <p class="legend">Route loop repeats every <?=$loop_time?> minutes.</p>
+                <p class="legend">Service every <?=$loop_time?> minutes.</p>
 
 		<ul id="tabs">
 			<li class="active"><a href="#scrolldown" onclick="showTab('scheduletab',this)">Schedule</a></li>
-			<? if ($routeName != 'Boston All' && $routeName != 'Cambridge All') { ?>
 			<li><a href="#scrolldown" onclick="showTab('maptab',this)">Route Map</a></li>
-			<? } ?>
 		</ul>
 		
 		<div id="tabbodies">	
@@ -45,9 +44,7 @@ $page->content_begin();
 					</tr>
                                         <? foreach($stops as $index => $stop) { ?>
  					      <tr <? if($stop['upcoming']) { ?> class="current" <? } ?> >
-						  <td><? if ($routeName != 'Boston All' && $routeName != 'Cambridge All') { ?>
-						      <span class="sid"><?=num2letter($index)?>.</span>
-						      <? } ?>
+						  <td>
                                                       <?=$stop['title']?></td>
 						  <td><?=format_shuttle_time($stop['next'])?></td>
 					      </tr>
@@ -57,17 +54,15 @@ $page->content_begin();
 		
 			</div> <!-- id="scheduletab" -->
 		
-		        <? if ($routeName != 'Boston All' && $routeName != 'Cambridge All') { ?>
 			<div class="tabbody" id="maptab" style="display:none">
 				<div id="map"><?=$image_tag?></div>
 			</div> <!-- id="maptab" -->
-			<? } ?>
 			
 			<div class="clear"></div>
 		</div> <!-- id="tabbodies" -->
 		
 	</div> <!-- class="focal shaded" -->
-	<? if ($routeName != 'Boston All' && $routeName != 'Cambridge All' && $page->platform == 'iphone') { ?>
+	<? if ($page->platform == 'iphone') { ?>
 	<div class="nonfocal legend"><span id="rotatemsg1">Rotate your device to view map &amp; schedule side by side.</span><span id="rotatemsg2">Rotate your device to view schedule and map separately.</span></div>
 	<? } ?>
 

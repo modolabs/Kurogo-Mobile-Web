@@ -9,8 +9,7 @@ function hours_today($library, $time=NULL) {
   if ($time === NULL) {
     $time = time();
   }
-  //$cal = new ICalendar(LibraryInfo::ical_url($library));
-  $cal = new ICalendar(LibraryInfo::ical_filename($library));
+  $cal = LibraryInfo::get_calendar($library);
   $hours = $cal->get_day_events($time);
   $hour_strings = Array();
   foreach ($hours as $hour) {

@@ -75,15 +75,17 @@ class ApplePushServersPool {
     // and which is older than the minimum wait time.
     foreach($this->push_connection_last_times as $index => $last_time) {
       $age = $time - $last_time;
-      if( ($age > APNS_MINIMUM_WAIT) && ($age < APNS_PUSH_TIMEOUT) && ($time < $oldest) ) {
-	$oldest = $time;
-        $oldest_index = $index;
+      if( ($age > APNS_MINIMUM_WAIT) && ($age < APNS_PUSH_TIMEOUT) ) {
+	if(!$oldest || ($time < $oldest) ) {
+	  $oldest = $time;
+          $oldest_index = $index;
+        }
       }
     }
 
     if($oldest_index !== NULL) {
       // found a usable connection
-      return $$oldest_index;
+      return $oldest_index;
     }
 
     // no reusable connection found just find the oldest one
@@ -105,6 +107,7 @@ class ApplePushNotificationConnection {
   protected $mode;
   protected $certificate_path;
   protected $certificate_pass;
+  protected $context;
  
   protected $push_socket;
   protected $feedback_socket;
@@ -126,6 +129,11 @@ class ApplePushNotificationConnection {
     $this->mode = APNS_SANDBOX ? 'sandbox' : 'production';      
     $this->certificate_path = APNS_SANDBOX ? APNS_CERTIFICATE_DEV : APNS_CERTIFICATE_PROD;
     $this->certificate_pass = APNS_SANDBOX ? APNS_CERTIFICATE_DEV_PASSWORD : APNS_CERTIFICATE_PASSWORD_PROD;
+
+    // ssl options
+    $this->context = stream_context_create();
+    stream_context_set_option($this->context, 'ssl', 'local_cert', $this->certificate_path); 
+    stream_context_set_option($this->context, 'ssl', 'passphrase', $this->certificate_pass);  
   }
 
   public function is_push_open() {
@@ -183,7 +191,9 @@ class ApplePushNotificationConnection {
     if(!$this->feedback_socket) {
       Throw new Exception("Feedback Server connection already closed");
     }
+
     fclose($this->feedback_socket);
+
     $this->feedback_socket = NULL;
   }
 
@@ -207,14 +217,8 @@ class ApplePushNotificationConnection {
   }
 
   private function open_ssl_socket($url) {
-    $context = stream_context_create();
+    $socket = stream_socket_client($url, $error, $errorString, self::$timeout, STREAM_CLIENT_CONNECT, $this->context);
 
-    // ssl options             
-    stream_context_set_option($context, 'ssl', 'local_cert', $this->certificate_path);
-    stream_context_set_option($context, 'ssl', 'passphrase', $this->certificate_pass);
-
-    $socket = stream_socket_client($url, $error, $errorString, self::$timeout, STREAM_CLIENT_CONNECT, $context);
-    
     if(!$socket) {
       Throw new Exception("Failed to connect to $url (error $error): $errorString");
     }

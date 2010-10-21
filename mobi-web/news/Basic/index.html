@@ -1,0 +1,78 @@
+<?php
+$page->title('MIT News')
+     ->add_stylesheet('Basic/news')
+     ->header('MIT News');
+
+$page->content_begin();
+
+?>
+
+<form method="GET"> 
+
+   <? if(isSearchResult()) { ?>
+     <? if($search_results_total > 0) { ?>
+        <p> 
+          <span class="inputcombo emphasized"> 
+              <input class="forminput" type="text" id="filter" name="query" value="<?=$search_query?>" /> 
+              <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" /> 
+          </span>
+        </p> 
+     <? } ?>
+
+     <p><?=$search_results_displayed_description?></p> 
+
+   <? } ?>
+
+
+   <h3><?=$channel_title?></h3> 
+   <p class="focal stories">
+
+     <? foreach($stories as $index => $story) { ?> 
+        <? if($story['featured']) { ?>
+            <a href="<?=storyURL($index, $story)?>" class="a1"><img src="<?=thumbURL($story)?>" width="76" height="75" alt="" align="left" /><?=$story['title']?></a>
+        <? } else { ?>
+            <a href="<?=storyURL($index, $story)?>"><?=$story['title']?></a>
+        <? } ?>
+
+        <? if(storySummary($story)) { ?>
+            <br/><span class="deck"><?=storySummary($story)?></span>
+        <? } ?>
+
+        <? if($index < sizeof($stories)-1) { ?>
+           <? // seperator for items ?>      
+           <br/><br/> 
+        <? } ?>
+     <? } ?>
+
+   </p> 
+
+   <? if($load_previous_url || $load_next_url) { ?>
+       <p class="paging">
+           <? if($load_previous_url) { ?>
+               <a href="<?=$load_previous_url?>">&lt; <?=$previous_phrase?></a>
+           <? } ?>
+
+           <? if($load_previous_url && $load_next_url) { echo " | "; } ?>
+
+           <? if($load_next_url) { ?>
+               <a href="<?=$load_next_url?>"><?=$next_phrase?> &gt;</a>
+           <? } ?>
+       </p>
+   <? } ?>
+
+   <p>
+       <? if(!isSearchResult()) { ?>
+           <strong>Search:</strong><br/>
+       <? } ?>
+       <span class="inputcombo emphasized">
+         <input class="forminput" type="text" id="filter" name="query" value="<?=$search_query?>" />
+         <input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" /> 
+       <span class="inputcombo emphasized"> 
+   </p>
+
+</form>
+
+<?
+$page->content_end();
+require "channel_nav_links.php";
+?>

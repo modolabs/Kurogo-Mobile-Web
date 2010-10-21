@@ -19,15 +19,11 @@ $daemon->start($argv);
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
-require_once LIBDIR . "ShuttleSchedule.php";
-require_once LIBDIR . "NextBusReader.php";
+require_once LIBDIR . "GTFSReader.php";
 require_once LIBDIR . "db.php";
 require_once "apns_lib.php";
 
-ShuttleSchedule::init();
-NextBusReader::init();
-
-$all_routes = ShuttleSchedule::get_route_list();
+$all_routes = ShuttleSchedule::getRouteList();
 
 while ($daemon->sleep(10)) {
   db::ping(); // keep the database connection running
@@ -39,10 +35,9 @@ while ($daemon->sleep(10)) {
   $routes = array_filter($all_routes, array('ShuttleSchedule', 'is_running'));
 
   if (count($routes)) {
-    foreach ($routes as $route) {
+    foreach ($routes as $route_id) {
       // force NextBusReader to cache
-      NextBusReader::get_predictions($route);
-      NextBusReader::get_coordinates($route);
+      ShuttleSchedule::getNextLoop($route_id);
     }
 
     $sql = "SELECT device_id, device_type, route_id, stop_id, start_time FROM ShuttleSubscription WHERE ("
@@ -55,52 +50,44 @@ while ($daemon->sleep(10)) {
       while ($row = $result->fetch_assoc()) {
 	$route_id = $row['route_id'];
 
+	$route = ShuttleSchedule::getRoute($route_id);
+	$trip = $route->anyTrip($time);
+
 	// skip rows whose start times are more than 1.5 loops ago
-	if ($time - $row['start_time'] > 1.5 * ShuttleSchedule::get_interval($route_id))
+	if ($time - $row['start_time'] > 1.5 * $trip->duration())
 	  continue;
 
 	$stop_id = $row['stop_id'];
 	$next_seconds = -1;
 	$source = 'null';
 
-	if ($route_preds = NextBusReader::get_predictions($route_id)) {
-	  $stop_preds = $route_preds[$stop_id];
-	  if ($stop_preds) {
-	    $source = 'nextbus';
-	    $next_seconds = $stop_preds[0];
-	    $next_time = $time + $next_seconds;
-	  }
+	$route_preds = ShuttleSchedule::getNextLoop($route_id);
+	if (array_key_exists('lastUpdate', $route_preds)) {
+	  unset($route_preds['lastUpdate']);
+	  $source = 'nextbus';
 	} else {
-	  $stop_times = ShuttleSchedule::get_next_scheduled_loop($route_id, $row['start_time']);
-	  foreach ($stop_times as $stop_time) {
-	    if ($stop_time['nextBusId'] == $stop_id) {
-	      $source = 'schedule';
-	      $next_time = $stop_time['nextScheduled'];
-	      $next_seconds = $next_time - $time;
-	      $stopname = $stop_time['title'];
-	      break;
-	    }
-	  }
+	  $source = 'schedule';
 	}
 
+	$stop_preds = $route_preds[$stop_id];
+	$next_time = $stop_preds[0];
+	$next_seconds = $next_time - $time;
+	$stopname = ShuttleSchedule::getStop($stop_id)->name;
+
 	if ($next_seconds > 0 && $next_seconds < SHUTTLE_NOTIFY_THRESHOLD) {
-	  $shuttle = ShuttleSchedule::get_title($route_id);
+	  $shuttle = $route->long_name;
 	  $minutes = intval($next_seconds / 60);
 	  $timestr = date('g:ia', $next_time);
 
 	  switch ($source) {
 	  case 'nextbus':
-	    $stopname = ShuttleSchedule::get_stop_title($route_id, $stop_id);
 	    $message = "$shuttle arriving at $stopname in $minutes minutes ($timestr)";
-
 	    break;
 	  case 'schedule':
-	    // $stopname was defined earlier
 	    $message = "$shuttle (NOT GPS TRACKED) scheduled to arrive at $stopname in $minutes minutes ($timestr)";
 	    break;
 	  }
 
-	  //$stopname = ShuttleSchedule::get_stop_title($route_id, $stop_id);
 	  switch ($row['device_type']) {
 	  case 'apple':
 	    $aps = array('aps' => 

@@ -410,7 +410,21 @@ class ICalendar extends ICalObject {
     return datetime2unix($time);
   }
 
+  public function search_events($title=NULL, TimeRange $range=NULL) {
+    $events = Array();
+    foreach ($this->events as $id => $event){
+      if ($event->get_recurid() !== NULL) // event is a duplicate
+	continue;
+      if (($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
+	  && ($range === NULL || $event->overlaps($range))) {
+	$events[] = $event;
+      }
+    }
+    return $events;
+  }
+
   public function search_by_range(Timerange $range) {
+    /*
     $events = Array();
     foreach ($this->events as $id => $event){
       if ($event->get_recurid() !== NULL) // event is a duplicate
@@ -420,9 +434,12 @@ class ICalendar extends ICalObject {
       }
     }
     return $events;
+    */
+    return $this->search_events(NULL, $range);
   }
 
   public function search_by_title($title) {
+    /*
     $events = Array();
     foreach ($this->events as $id => $event) {
       if ($event->get_recurid() !== NULL) // event is a duplicate
@@ -432,6 +449,8 @@ class ICalendar extends ICalObject {
       }
     }
     return $events;
+    */
+    return $this->search_events($title, NULL);
   }
 
   public function get_day_events($time=NULL) {

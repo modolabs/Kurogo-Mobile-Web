@@ -315,7 +315,7 @@ a.formbutton div {
 }
 
 .breadcrumbs a span {
-	padding: 0 21px 0 23px;
+	padding: 0 19px 0 21px;
 }
 
 a.homelink {
@@ -329,11 +329,11 @@ a.homelink {
 
 a.module {
 	padding: 4px 0;
-	margin-left: -22px;
+	margin-left: -24px;
 }
 
 a.module img {
-	padding: 0 20px 0 24px;
+	padding: 0 22px 0 25px;
 }
 
 .homepage .moduleicon {
@@ -759,7 +759,7 @@ ul.focal li:first-child {
 }
 
 .disabled {
-	opacity: 0.22;
+	opacity: 0.25;
 }
 
 .collapsed .summary {
@@ -857,7 +857,7 @@ a.pdf {
 }
 
 a.noaction {
-	background-image: none;
+	background-image: none!important;
 	padding-right: 7px;
 }
 

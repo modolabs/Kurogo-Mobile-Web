@@ -4,39 +4,58 @@ $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "page_builder/page_header.php";
-require_once("shuttle_lib.php");
+require_once LIBDIR . "GTFSReader.php";
 
-$route = $_REQUEST['route'];
-if (!in_array($route, ShuttleSchedule::get_active_routes())) {
-  $routeName = ucwords(str_replace('_', ' ', $_REQUEST['route']));
+$route_id = $_REQUEST['route'];
 
-  $not_found_text = '<p>The route ' . $routeName . ' is not currently in service.  Please update your bookmarks accordingly.  For more information see the <a href="help.php">help page</a>.</p>';
+if (!in_array($route_id, ShuttleSchedule::getActiveRoutes())) {
+  if (!in_array($route_id, ShuttleSchedule::getRouteList())) {
+    $routeName = $route_id;
+    $routeError = "does not exist";
+  } else {
+    $routeName = ShuttleSchedule::getRoute($route_id)->long_name;
+    $routeError = "is not currently in service";
+  }
+
+  $not_found_text = '<p>The route ' . $routeName . ' ' . $routeError . '.  Please update your bookmarks accordingly.  For more information see the <a href="help.php">help page</a>.</p>';
 
   $page->prepare_error_page('Shuttle Schedule', 'shuttle', $not_found_text);
 
 } else {
 
   $now = time();
-  $routeName = ShuttleSchedule::get_title($route);
-  $interval = ShuttleSchedule::get_interval($route);
-  $loop_time = $interval / 60;
-  $summary = ShuttleSchedule::get_summary($route);
+
+  $route = ShuttleSchedule::getRoute($route_id);
+  $stops = ShuttleSchedule::list_stop_times($route_id);
+  $lastIndex = count($stops) - 1;
+  if ($stops[$lastIndex]['gps']) {
+    $gps_active = TRUE;
+  } else {
+    $gps_active = FALSE;
+  }
+  unset($stops[$lastIndex]);
+
   if ($page->branch != 'Basic') {
     // format: 9:05AM -> 9:05<span class="ampm">AM</span>
     $summary = preg_replace('/(\d)(AM|PM)/','$1<span class="ampm">$2</span>', $summary);
   }
 
-  $gps_active = (ShuttleSchedule::is_running($route)
-		 && NextBusReader::gps_active($route));
-
-  $stops = list_stop_times($route, $now, $gps_active);
-
   $upcoming_stops = Array();
+  $highlighted_stops = Array();
   foreach ($stops as $index => $stop) {
     if ($stop['upcoming']) {
       $upcoming_stops[] = $index;
+      $highlighted_stops[] = $stop['id'];
     }
   }
+  $trip = $route->anyTrip($now);
+
+  // fields to display in html template
+  $routeName = $route->long_name;
+  $interval = $trip->getFrequency();
+  $loop_time = round($interval / 60, 0);
+  $summary = $route->desc;
+  $last_refreshed = $now;
 
   // determine size of route map to display on each device
   switch ($page->branch) {
@@ -50,8 +69,9 @@ if (!in_array($route, ShuttleSchedule::get_active_routes())) {
     $size = 200;
     break;
   }
-  $image_tag = image_tag($size, $route, $upcoming_stops);  
-  $last_refreshed = $now;
+
+  // produce url to google static maps image
+  $image_tag = ShuttleSchedule::image_tag($size, $trip, $highlighted_stops);  
 
   // device-dependent time formatting function
   if ($page->branch == 'Basic') {
@@ -69,30 +89,11 @@ if (!in_array($route, ShuttleSchedule::get_active_routes())) {
   require "$page->branch/times.html";
 }
 
+$page->prevent_caching($pagetype);
 $page->output();
 
 function selfURL() {
-  return "times.php?route={$_REQUEST['route']}";
-}
-
-function image_tag($size, $route, $upcoming_stops) {
-  if ($route == 'boston_all' || $route == 'cambridge_all') {
-    // these don't have maps
-    // should save this info somewhere else instead of hard coding here
-    return '';
-  }  
-  $base = $route;
-
-  if(count($upcoming_stops) > 0) {
-    $base .= '-';
-    foreach($upcoming_stops as $nextStop) { 
-      $base .= strtolower(num2letter($nextStop));
-    }
-  }
-
-  return '<img src="images/' . $size . 
-    '/' . $base . '.gif" width="' . $size . 
-    '" height="' . $size . '" id="mapimage" alt="Map" />';
+  return "times.php?route={$_REQUEST['route']}&now=" . time() . "&rand=" . rand();
 }
 
 function num2letter($number) {

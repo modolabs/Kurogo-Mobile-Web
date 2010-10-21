@@ -49,10 +49,18 @@ $page->content_begin();
 <? } ?>
 
 <p class="secondary">
-  <? foreach ($service_types as $service => $title) { 
-      if ($service != $url_params['service']) { ?>
-    <a href="./?page=statistics&service=<?=$service?>&interval=<?=$url_params['interval']?>"><?=$title?> Statistics</a>
-  <? } } ?>
+  <? $first_link = True; ?>
+  <? foreach ($service_types as $service => $title) { ?>
+     <? if ($service != $url_params['service']) { ?>
+        <? if(!$first_link) { ?>
+           <br />
+        <? } else { ?>
+           <? $first_link = False; ?>
+        <? } ?>
+        <a href="./?page=statistics&service=<?=$service?>&interval=<?=$url_params['interval']?>"><?=$title?> Statistics</a>
+
+     <? } ?>
+  <? } ?>
 </p>
 
 <? 

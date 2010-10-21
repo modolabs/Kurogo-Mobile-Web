@@ -84,5 +84,12 @@ define("LDAP_SERVER", 'ldap.mit.edu');
 
 */
 
+/* Events Calendar */
+define("EVENTS_CALENDAR_UNIQUE_EVENT_URL", "http://events.mit.edu/event.html?id=");
+
+/* news office */
+define("NEWSOFFICE_FEED_URL", 'http://web.mit.edu/newsoffice/feeds/iphone.php');
+define("NEWSOFFICE_STORY_URL", 'http://web.mit.edu/newsoffice/index.php?option=com_content&view=article&id=');
+define("NEWSOFFICE_SEARCH_URL", 'http://web.mit.edu/newsoffice/index.php?option=com_search&view=isearch');
 
 ?>

@@ -8,6 +8,7 @@ require_once LIBDIR . 'LibraryInfo.php';
 require WEBROOT . "libraries/libraries_lib.php";
 
 $library = urldecode($_GET['library']);
+LibraryInfo::cache_ical($library);
 $attribs = LibraryInfo::get_library_info($library);
 $today = time();
 $hours_today = hours_today($library, $today);

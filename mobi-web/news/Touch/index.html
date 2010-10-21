@@ -1,0 +1,80 @@
+<?php
+$page->title('News')
+     ->navbar_image('news')
+     ->add_stylesheet('Touch/news');
+
+if(isSearchResult()) {
+  $page->header('Search Results')
+       ->module_home_link(newsHomeURL());
+} else {
+  $page->header('News')
+       ->breadcrumb_home();
+
+}
+
+$page->content_begin();
+?>
+
+<? if(isSearchResult()) { ?>
+   <div class="nonfocal"> 
+          <form method="get" action=""> 
+
+             <? if($search_results_count > 0) { ?>
+                <? // do not show this form if no results present (the form at the bottom is sufficient ?>
+                <table cellpadding="0" cellspacing="0" border="0" style="width:100%"><tr ><td width="70%"><input type="text" id="query" name="query" size="14" class="forminput" value="<?=addslashes($search_query)?>"/></td><td width="30%"><input type="submit" value="Search" class="submitbutton" /></td></tr></table> 
+                <input name="channel_id" type="hidden" value="<?=channelID()?>" />
+                <input name="seek_story_id" type="hidden" value="<?=seekStoryId()?>" />  
+                <input name="next" type="hidden" value="<?=afterOrBefore()?>" /> 
+             <? }  ?>
+
+          <?=$search_results_description?>
+
+          </form> 
+   </div>
+<? } else { ?>
+   <div class="nonfocal"> 
+        <h1 class="section"><?=$channel_title?></h1> 
+        <div class="changesection"><a href="<?=channelsURL()?>">Change Section</a></div> 
+   </div>
+<? } ?> 
+
+<ul class="stories"> 
+    <? foreach($stories as $index => $story) { ?>
+         <li> 
+             <a href="<?=storyURL($index, $story)?>"><img src="<?=thumbURL($story)?>" width="76" height="75" alt="" class="storythumb" /><?=$story['title']?><span class="deck"><?=storySummary($story)?></span></a> 
+        </li> 
+    <? } ?>
+</ul> 
+
+<? if($load_previous_url || $load_next_url) { ?>
+       <p class="sidenav">
+           <? if($load_previous_url) { ?>
+               <a href="<?=$load_previous_url?>">&lt; <?=$previous_phrase?></a>
+           <? } ?>
+
+           <? if($load_previous_url && $load_next_url) { echo " | "; } ?>
+
+           <? if($load_next_url) { ?>
+               <a href="<?=$load_next_url?>"><?=$next_phrase?> &gt;</a>
+           <? } ?>
+       </p>
+<? } ?>
+
+
+<div class="nonfocal"> 
+   <form method="get"> 
+       <table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+           <tr >
+                <td width="70%"><input type="text" id="query" name="query" size="14" class="forminput" value="<?=$search_query?>"/></td>
+                <td width="30%"><input type="submit" value="Search" class="submitbutton" /></td>
+           </tr>
+       </table> 
+       <input name="channel_id" type="hidden" value="<?=channelID()?>" /> 
+       <input name="seek_story_id" type="hidden" value="<?=seekStoryId()?>" /> 
+       <input name="next" type="hidden" value="<?=afterOrBefore()?>" /> 
+   </form> 
+</div>
+ 
+<? 
+$page->content_end();
+?>

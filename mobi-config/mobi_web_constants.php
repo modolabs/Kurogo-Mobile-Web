@@ -10,7 +10,7 @@ define("USE_PRODUCTION_ERROR_HANDLER", True);
  * of the people the server should email when something
  * goes wrong
  */
-define("DEVELOPER_EMAIL", "nobody@mit.edu");
+define("DEVELOPER_EMAIL", "mobile-project-errors@mit.edu");
 
 /** log file locations
  *
@@ -52,6 +52,7 @@ define("UID_SEARCH_FILTER", "(&(objectClass=person)%s)");
  *  index 7: set to TRUE if needed for processing (non display), otherwise FALSE
 */
 $appError = 0;
+global $personDisplayMapping;
 $personDisplayMapping = array(array("surname", "sn", null, null, FALSE, FALSE, FALSE, TRUE),
                      array("givenname", "givenname", null, null, FALSE, FALSE, FALSE, TRUE),
                      array("name", "cn", null, null, TRUE, TRUE, FALSE, FALSE),
@@ -116,9 +117,7 @@ define("MOBI_SERVICE_URL", 'http://mobile-service-dev.mit.edu/mobi-service/');
 
 /* mqp searchserver */
 define("MAP_SEARCH_URL", 'http://whereis.mit.edu/search');
-
-/* news office */
-define("NEWSOFFICE_FEED_URL", 'http://web.mit.edu/newsoffice/feeds/iphone.php');
+define("MAP_TILE_CACHE_DATE", 'tiles_last_updated.txt');
 
 // cookie expire times
 define("MODULE_ORDER_COOKIE_LIFESPAN", 160 * 86400);
@@ -135,7 +134,7 @@ define("APNS_CERTIFICATE_DEV", '/usr/local/etc/was/certs/apns_dev.pem');
 define("APNS_CERTIFICATE_DEV_PASSWORD", '');
 define("APNS_CERTIFICATE_PROD", '/usr/local/etc/was/certs/apns_prod.pem');
 define("APNS_CERTIFICATE_PROD_PASSWORD", '');
-define("APNS_SANDBOX", True);
+define("APNS_SANDBOX", False);
 define("APPLE_RELEASE_APP_ID", "edu.mit.mitmobile");
 define("APNS_CONNECTIONS_LIMIT", 100);
 

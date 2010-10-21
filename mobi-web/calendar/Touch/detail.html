@@ -20,7 +20,7 @@ $page->content_begin();
 		<li class="nolink"><?=$event->description?></li>
 <? if($event->infophone) { ?>
 
-		<li><a href="<?=phoneURL($event->infophone)?>" class="phone"><?=$event->infophone?></a></li>
+		<li><a href="<?=phoneURL($event->infophone)?>" class="phone"><?=map_mit_phone($event->infophone)?></a></li>
 <? } ?>
                        
 <? if($event->infourl) { ?>
@@ -35,7 +35,7 @@ $page->content_begin();
   $size = count($event->categories);
   foreach($event->categories as $index => $category) {
     $last = ($size-1 == $index); ?>
-		<a href="<?=categoryURL($category)?>"><?=$category->name?></a>
+		<a href="<?=categoryURL($category)?>"><?=ucname($category->name)?></a>
 <? 
     if(!$last) echo ",";
   }

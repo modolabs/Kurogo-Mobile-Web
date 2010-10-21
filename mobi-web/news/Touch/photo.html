@@ -1,0 +1,39 @@
+<?php
+$page->title('News: Photo')
+     ->navbar_image('news')
+     ->header('Photo')
+     ->module_home_link(newsHomeURL())
+     ->add_stylesheet('Touch/news');
+
+$page->content_begin();
+?>
+
+
+<div class="storyphoto">
+
+  <img src="<?=$photo->full_url?>" alt="Photo" width="<?=$width?>" height="<?=$height?>" border="0" />
+
+  <p><? if($caption) { echo $caption . '<br/>'; } ?><?=$credits?></p>
+
+  <p><a href="<?=path2storyURL()?>">&lt; Back to story</a></p>
+
+  <? if($total_photos > 1) { ?>
+
+     <div class="pagination">
+       <span class="pagelabel">Photo:</span>
+       <? for($i = 0; $i < $total_photos; $i++) { ?>
+          <? if($current_photo_index == $i) { ?>
+             <a class="page current"><?=$i+1?></a>
+          <? } else { ?>
+             <a href="<?=photoURL($i)?>" class="page"><?=$i+1?></a>
+          <? } ?>
+        <? } ?>
+     </div>
+
+   <? } ?>
+  <div class="clear"></div>
+</div>
+ 
+<? 
+$page->content_end();
+?>

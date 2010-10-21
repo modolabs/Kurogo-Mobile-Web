@@ -29,7 +29,7 @@ foreach ($events as $event) {
   $summary = $event->get_summary();
 
   // bolden all-caps at the beginning of the string
-  $summary = preg_replace('/^([^a-z]{2,})/', "<b>$1</b>", $summary, 1);
+  $summary = preg_replace('/^([ A-Z0-9:\.\-]{2,})/', "<b>$1</b>", $summary, 1);
   $days[$dateTitle][] = $summary;
 }
 

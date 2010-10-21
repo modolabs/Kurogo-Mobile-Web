@@ -13,11 +13,12 @@ class TouchPage extends Page {
     $this->platform = $platform;
     $this->certs = $certs;
     $this->max_list_items = 25;
+    $this->module_home_link = "./";
 
     $this->varnames= Array(
      'header', 'title', 'viewport_device_width', 
      'stylesheets', 'help_on',
-     'home', 'navbar_image', 'breadcrumb', 'footer', 'standard_footer',
+     'home', 'navbar_image', 'breadcrumb', 'module_home_link', 'footer', 'standard_footer',
     );
 
     $attribs_file = WEBROOT . "$this->branch/attribs-$this->platform.php";
@@ -48,6 +49,11 @@ class TouchPage extends Page {
 
   public function breadcrumb_home() {
     $this->home = True;
+    return $this;
+  }
+
+  public function module_home_link($link) {
+    $this->module_home_link = $link;
     return $this;
   }
 

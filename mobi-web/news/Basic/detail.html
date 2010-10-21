@@ -1,0 +1,48 @@
+<?php
+$page->title("MIT News: Story")
+     ->add_stylesheet('Basic/news')
+     ->header("MIT News");
+
+$page->content_begin();
+?>
+
+<div class="focal article"> 
+   <h2 class="articletitle"><?=$story['title']?></h2> 
+   <? if($current_page == 0) { ?>
+      <p class="byline">
+        <?=$story['author']?><br/>
+        <?=postDay($story)?><br/>
+        <a href="<?=$email_query?>">Email this article</a>
+      </p> 
+      <p class="deck"><?=$story['description']?></p>
+
+      <? if($main_image) { ?>
+         <div class="callout">
+             <a href="<?=mainPhotoURL()?>">
+                  <img src="<?=$main_image->small_url?>" 
+                       width="<?=$main_image->small_dimensions['width']?>" 
+                       height="<?=$main_image->small_dimensions['height']?>"
+                       alt="Image" class="thumbnail" />
+                  <br/>
+                  <span class="seemore"><img class="button" src="../Touch/images/button-zoom-in2.gif" alt="Zoom in" width="20" height="18" border="0" />
+                    <?=$see_instructions?>
+                  </span>
+             </a>
+         </div>
+      <? } ?>
+   <? } else { ?>
+      <p class="smallprint">Page <?=$current_page+1?> of <?=$page_count?></p>
+   <? } ?>
+
+   <?=$page_content?>
+
+   <? require "shared/photo_pagination.html"; ?>
+
+</div>
+
+
+<?
+$page->content_end();
+require "channel_nav_links.php";
+
+?>

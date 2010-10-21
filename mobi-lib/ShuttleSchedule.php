@@ -24,13 +24,6 @@ class ShuttleSchedule {
 
   private static $routes = Array();
 
-  private static function assert_exists($routeName) {
-    self::init();
-    if (!array_key_exists($routeName, self::$routes)) {
-      throw new Exception("invalid route name '$routeName'");
-    }
-  }
-
   // this function does as much work as possible
   // to populate the static data
   public static function init() {
@@ -106,7 +99,11 @@ class ShuttleSchedule {
     // test whether the first run after now
     // is more than $interval seconds in the future
 
-    $next_start = min(self::get_next_scheduled_loop_start($routeName, $time));
+    $next_starts = self::get_next_scheduled_loop_start($routeName, $time);
+    if (count($next_starts) == 0) {
+      return FALSE;
+    }
+    $next_start = min($next_starts);
     return ($next_start - $time <= self::get_interval($routeName));
   }
 
@@ -114,6 +111,9 @@ class ShuttleSchedule {
     if ($time === NULL)
       $time = time();
     $routeInfo = self::get_route_info($routeName);
+    if (!$routeInfo)
+      return FALSE;
+
     if (array_key_exists('excludeHolidays', $routeInfo)) {
       if (AcademicCalendar::is_holiday($time))
         if ($strict || AcademicCalendar::is_holiday($time + 86400))
@@ -139,13 +139,17 @@ class ShuttleSchedule {
   }
 
   public static function get_route_info($routeName) {
-    self::assert_exists($routeName);
-    return self::$routes[$routeName];
+    if (array_key_exists($routeName, self::$routes)) {
+      return self::$routes[$routeName];
+    }
+    return NULL;
   }
 
   public static function get_interval($routeName) {
     $routeInfo = self::get_route_info($routeName);
-    return $routeInfo['interval'];    
+    if ($routeInfo !== NULL) {
+      return $routeInfo['interval'];    
+    }
   }
 
   public static function count_shuttles_running($routeName, $time) {
@@ -162,38 +166,50 @@ class ShuttleSchedule {
 
   public static function is_safe_ride($routeName) {
     $routeInfo = self::get_route_info($routeName);
-    return array_key_exists('isSafeRide', $routeInfo);
+    if ($routeInfo !== NULL) {
+      return array_key_exists('isSafeRide', $routeInfo);
+    }
   }
 
   public static function get_summary($routeName) {
     $routeInfo = self::get_route_info($routeName);
-    return $routeInfo['summary'];
+    if ($routeInfo !== NULL) {
+      return $routeInfo['summary'];
+    }
   }
 
   public static function get_title($routeName) {
     $routeInfo = self::get_route_info($routeName);
-    return $routeInfo['title'];
+    if ($routeInfo !== NULL) {
+      return $routeInfo['title'];
+    }
   }
 
   public static function get_stop_title($routeName, $stopName) {
     $routeInfo = self::get_route_info($routeName);
-    foreach ($routeInfo['stops'] as $stop) {
-      if ($stop['nextBusId'] == $stopName) {
-	return $stop['title'];
+    if ($routeInfo !== NULL) {
+      foreach ($routeInfo['stops'] as $stop) {
+	if ($stop['nextBusId'] == $stopName) {
+	  return $stop['title'];
+	}
       }
     }
   }
 
   public static function get_sms_title($routeName) {
     $routeInfo = self::get_route_info($routeName);
-    if (array_key_exists('smsTitle', $routeInfo))
-      return $routeInfo['smsTitle'];
-    return $routeInfo['title'];
+    if ($routeInfo !== NULL) {
+      if (array_key_exists('smsTitle', $routeInfo))
+	return $routeInfo['smsTitle'];
+      return $routeInfo['title'];
+    }
   }
 
   public static function get_stop_list($routeName) {
     $routeInfo = self::get_route_info($routeName);
-    return $routeInfo['stops'];
+    if ($routeInfo !== NULL) {
+      return $routeInfo['stops'];
+    }
   }
 
   // functions for upcoming schedule
@@ -202,10 +218,12 @@ class ShuttleSchedule {
     $runsToday = Array();
     if (self::is_running_today($routeName, $time, TRUE)) {
       $routeInfo = self::get_route_info($routeName);
-      $sSinceMidnight = $time - day_of($time, TIMEZONE);
-      $day = date('D', $time);
-      if (array_key_exists($day, $routeInfo['runs'])) {
-	$runsToday = $routeInfo['runs'][$day];
+      if ($routeInfo !== NULL) {
+	$sSinceMidnight = $time - day_of($time, TIMEZONE);
+	$day = date('D', $time);
+	if (array_key_exists($day, $routeInfo['runs'])) {
+	  $runsToday = $routeInfo['runs'][$day];
+	}
       }
     }
 
@@ -229,6 +247,9 @@ class ShuttleSchedule {
       $time = time();
 
     $routeInfo = self::get_route_info($routeName);
+    if ($routeInfo === NULL)
+      return NULL;
+
     $interval = self::get_interval($routeName);
     $sSinceMidnight = $time - day_of($time, TIMEZONE);
     // use case for people checking saferides after midnight
@@ -276,6 +297,9 @@ class ShuttleSchedule {
     if ($time === NULL)
       $time = time();
     $nextStarts = self::get_next_scheduled_loop_start($routeName, $time);
+    if (!$nextStarts)
+      return array();
+
     $stopList = self::get_stop_list($routeName);
     $interval = self::get_interval($routeName);
     $loopInfo = Array();
@@ -283,6 +307,7 @@ class ShuttleSchedule {
       $stopInfo = Array(
         'title' => $stop['title'],
 	'nextBusId' => $stop['nextBusId'],
+        'smsTitle' => $stop['smsTitle'],
 	);
       $nextTimes = Array();
       foreach ($nextStarts as $nextStart) {
@@ -293,7 +318,7 @@ class ShuttleSchedule {
 	  $nextTime -= $interval;
 	$nextTimes[] = $nextTime;
       }
-      $nextTime = min($nextTimes);
+      $nextTime = (count($nextTimes)) ? min($nextTimes) : 0;
       $stopInfo['nextScheduled'] = ($nextTime < $time) ? 0 : $nextTime;
       $loopInfo[] = $stopInfo;
     }
@@ -308,6 +333,9 @@ class ShuttleSchedule {
     if ($time === NULL)
       $time = time();
     $interval = self::get_interval($routeName);
+    if (!$interval)
+      return array();
+
     $loopInfo = self::get_next_scheduled_loop($routeName, $time);
     foreach ($loopInfo as $index => $loop) {
       $loopInfo[$index]['nextScheduled'] = Array($loop['nextScheduled']);
@@ -328,6 +356,9 @@ class ShuttleSchedule {
     if ($time === NULL)
       $time = time();
     $nextStart = self::get_next_scheduled_loop_start($routeName, $time);
+    if (!$nextStart)
+      return FALSE;
+
     $stopList = self::get_stop_list($routeName);
     $interval = self::get_interval($routeName);
     foreach ($stopList as $stopInfo) {

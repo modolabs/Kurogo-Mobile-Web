@@ -3,6 +3,7 @@ $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
 require_once("AcademicCalendar.php");
+require_once('DiskCache.php');
 
 class StellarData {
   // is there really not a data source for this?
@@ -26,7 +27,7 @@ class StellarData {
     '17'   => Array('subjects' => Array(), 'name' => 'Political Science'),
     '18'   => Array('subjects' => Array(), 'name' => 'Mathematics'),
     '20'   => Array('subjects' => Array(), 'name' => 'Biological Engineering'),
-    '21'   => Array('subjects' => Array(), 'name' => 'Humanities'),
+    //'21'   => Array('subjects' => Array(), 'name' => 'Humanities'),
     '21A'  => Array('subjects' => Array(), 'name' => 'Anthropology'),
     '21F'  => Array('subjects' => Array(), 'name' => 'Foreign Languages and Literatures'),
     '21H'  => Array('subjects' => Array(), 'name' => 'History'),
@@ -45,6 +46,11 @@ class StellarData {
   );
 
   private static $not_courses = array("SP");
+  
+  // general course info is cached in the $courses array (since some long living processes) use this data
+  // we need to make sure the data does not get too old
+  private static $course_last_cache_times = array();
+  private static $course_last_cache_terms = array();
 
   private static $base_url = STELLAR_BASE_URL;
 
@@ -140,50 +146,9 @@ class StellarData {
     return $out;
   }
 
-  private static function write_course_cache($course, $term) {
-    $fh = fopen(STELLAR_COURSE_DIR . 'course' . $course . '-' . $term, 'w');
-    fwrite($fh, json_encode(self::$courses[$course]));
-    fclose($fh);
-  }
-
-  private static function read_course_cache($course, $term) {
-    $fname = STELLAR_COURSE_DIR . 'course' . $course . '-' . $term;
-    if (!file_exists($fname))
-      throw new Exception("file $fname does not exist");
-    self::$courses[$course] = json_decode(file_get_contents($fname), TRUE);
-    return self::$courses[$course];
-  }
-
-  private static function course_cache_is_fresh($course, $term) {
-    $fname = STELLAR_COURSE_DIR . 'course' . $course . '-' . $term;
-    if (!file_exists($fname))
-      return FALSE;
-    return (time() - filemtime($fname) < STELLAR_COURSE_CACHE_TIMEOUT);
-  }
-
-  private static function write_feed_cache($subject, $xml) {
-    $xml = preg_replace('/>\s+</', '><', trim($xml));
-    $fh = fopen(STELLAR_FEED_DIR . $subject, 'w');
-    fwrite($fh, $xml);
-    fclose($fh);
-  }
-
-  private static function read_feed_cache($subject) {
-    $fname = STELLAR_FEED_DIR . $subject;
-    if(file_exists($fname)) {
-      return file_get_contents($fname);
-    } else {
-      return False;
-    }
-  }
-
-  private static function feed_cache_is_fresh($subject) {
-    $fname = STELLAR_FEED_DIR . $subject;
-    if (!file_exists($fname))
-      return FALSE;
-    return (time() - filemtime($fname) < STELLAR_FEED_CACHE_TIMEOUT);
-  }
-
+  private static $feedCache = NULL;
+  private static $courseCache;
+ 
   private static function announcements_is_changed($subject) {
     $current_announcements = self::get_announcements($subject);
 
@@ -326,14 +291,25 @@ class StellarData {
       throw new Exception("$course not a valid course ID-number");
     }
 
-    if (count(self::$courses[$course]['subjects']) > 0) {
-      return self::$courses[$course]['subjects'];
+    if (self::$courseCache === NULL) {
+      self::$courseCache = new DiskCache(
+        STELLAR_COURSE_DIR, STELLAR_COURSE_CACHE_TIMEOUT, true);
     }
 
+    // checking to see if the data cached in local memory is valid (it is invalid if it was never populated, or old, or the term has changed)
     $term = self::get_term();
-    if (self::course_cache_is_fresh($course, $term)) {
-      $courseData = self::read_course_cache($course, $term);
-      return $courseData['subjects'];
+    if ( (array_key_exists($course, self::$course_last_cache_times)) &&
+         (time()-self::$course_last_cache_times[$course] < STELLAR_COURSE_CACHE_TIMEOUT) &&
+         (self::$course_last_cache_terms[$course] == $term)) {
+            return self::$courses[$course]['subjects'];
+    }
+
+    $cacheName = 'course' . $course . '-' . $term;
+    if (self::$courseCache->isFresh($cacheName)) {
+      self::$courses[$course] = self::$courseCache->read($cacheName);
+      self::$course_last_cache_times[$course] = self::$courseCache->getAge($cacheName);
+      self::$course_last_cache_terms[$course] = $term;
+      return self::$courses[$course]['subjects'];
     }
     
     $xml_obj = new DOMDocument();
@@ -432,7 +408,12 @@ class StellarData {
       }
     }
 
-    self::write_course_cache($course, $term);
+    self::$courseCache->write(self::$courses[$course], $cacheName);
+
+    // record time/term when course cached into memory
+    self::$course_last_cache_times[$course] = time();
+    self::$course_last_cache_terms[$course] = $term;    
+
     return self::$courses[$course]['subjects'];
   }
 
@@ -468,14 +449,20 @@ class StellarData {
   }
 
   private static function get_announcements_xml($subjectId) {
-    if (self::feed_cache_is_fresh($subjectId))
-      return self::read_feed_cache($subjectId);
+    if (self::$feedCache === NULL) {
+      self::$feedCache = new DiskCache(
+        STELLAR_FEED_DIR, STELLAR_FEED_CACHE_TIMEOUT, true);
+      self::$feedCache->preserveFormat();
+    }
+
+    if (self::$feedCache->isFresh($subjectId))
+      return self::$feedCache->read($subjectId);
     
     $subjectData = self::get_subject_info($subjectId);
     if (array_key_exists('stellarUrl', $subjectData)) {
       $rss_id = $subjectData['stellarUrl'];
       $rss = file_get_contents(self::$rss_url . $rss_id);
-      self::write_feed_cache($subjectId, $rss);
+      self::$feedCache->write($rss, $subjectId);
       return $rss;
     } else { // no feed because no stellarUrl
       return FALSE;

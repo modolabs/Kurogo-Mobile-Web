@@ -23,7 +23,6 @@
 <p class="bb"> </p>
 
 <p class="nav">
-        <a href="../sms/"><?=$page->img_tag('sms','gif', 'SMS', array('border' => 0))?></a><br/>
         <? foreach($modules as $index => $module) { ?>
 	    <a href="<?=Modules::url($module, $page->certs)?>" <? if($index < 9) { ?>accesskey="<?=$index+1?>"><?=$index+1?>: <? } else { ?> ><? }?><?=Modules::title($module)?></a> 
             <? if(Modules::subtitle($module)) { ?>
@@ -36,7 +35,6 @@
 <p class="nav secondary">
 	<a href="../mobile-about/">About the MIT Mobile Web</a><br/>
         <a href="../mobile-about/new.php">What's New</a><? if($whats_new_count) { ?> (<?=$whats_new_count?> items)<? } ?><br/> 
-        <a href="../sms/">MIT SMS (BETA)</a><br />
         <a href="../customize/">Customize this Homescreen</a><br/>
         <? if (Modules::is_right_platform($page->platform, 'download')) { ?>
                 <a href="../download/">Download</a><br />

@@ -1,0 +1,46 @@
+<?php
+$page->title('News')
+     ->navbar_image('news')
+     ->module_home_link(newsHomeURL())
+     ->add_javascript('../Webkit/uiscripts')
+     ->add_javascript('Webkit/news')
+     ->add_stylesheet('Webkit/news')
+     ->extra_onload('androidPlaceholderFix()');
+
+if(isSearchResult()) {
+  $page->breadcrumbs('Search', 'Story')
+       ->breadcrumb_links(searchHomeURL());
+} else {
+  $page->breadcrumbs('Story');
+}
+
+$page->content_begin();
+?>
+
+<div class="article"> 
+   <h2 class="articletitle"><?=$story['title']?></h2> 
+   <div class="actionbuttons">
+       <a href="<?=$email_query?>">
+           <img src="../Webkit/images/email-share.png" alt="Email" width="37" height="37" border="0" />
+       </a>
+   </div>
+   <p class="byline"><?=$story['author']?><br/><?=postDay($story)?></p> 
+   <? if($main_image) { ?>
+         <div class="callout">
+            <a href="<?=mainPhotoURL()?>"><img src="<?=$main_image->small_url?>" width="" height="" alt="Image" class="thumbnail" />
+               <span class="seemore">
+                   <img class="button" src="../Webkit/images/button-zoom-in2.png" alt="Zoom in" width="30" height="30" border="0" />       
+                   <?=$see_instructions?>
+               </span>
+            </a>
+         </div>
+   <? } ?> 
+   <p class="deck"><?=$story['description']?></p>
+
+   <?=$story['body']?> 
+
+   <div class="clear"></div> 
+</div> 
+<? 
+$page->content_end();
+?>

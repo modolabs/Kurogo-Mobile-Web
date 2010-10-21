@@ -12,6 +12,7 @@ class WebkitPage extends Page {
   protected $raw_js = array();
   protected $scalable = "yes";
   protected $fixed = False;
+  protected $module_home_link = "./";
 
   public function __construct($platform, $certs) {
     $this->branch = 'Webkit';
@@ -21,7 +22,7 @@ class WebkitPage extends Page {
     $this->varnames = Array(
       'header', 'title', 'stylesheets', 'help_on',
       'navbar_image', 'inline_css', 'javascripts',
-      'breadcrumb_links', 'home', 'breadcrumbs', 'last_breadcrumb',
+      'breadcrumb_links', 'home', 'breadcrumbs', 'last_breadcrumb', 'module_home_link',
       'footer', 'footer_script', 'standard_footer',
       'extra_onload', 'onorientationchange', 'raw_js', 'scalable', 'fixed',
     );
@@ -71,6 +72,11 @@ class WebkitPage extends Page {
 
   public function breadcrumb_home() {
     $this->home = True;
+    return $this;
+  }
+
+  public function module_home_link($link) {
+    $this->module_home_link = $link;
     return $this;
   }
 

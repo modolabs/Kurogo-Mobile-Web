@@ -5,7 +5,7 @@ require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "page_builder/page_header.php";
 
 if ($page->branch == 'Webkit') {
-  $location_img = $page->img_tag('location', 'gif', 'Map', 280, 238);
+  $location_img = $page->img_tag('location', 'gif', 'Map', array('width' => 280, 'height' => 238));
 } else {
   $location_img = $page->img_tag('location', 'gif', 'Map');
 }
@@ -18,13 +18,13 @@ shore of the Charles River Basin in Cambridge, Massachusetts, USA. The campus is
 HTML;
 
 $google =<<<HTML
-<p>To find MIT using Google Maps, use the address "<a href="http://maps.google.com/maps?f=q&q=77+Massachusetts+Avenue,+Cambridge+MA+02139">77 Massachusetts Avenue, Cambridge MA 
+<p>To find MIT using Google Maps, use the address "<a href="http://maps.google.com/maps?f=q&q=77+Massachusetts+Avenue,+Cambridge,+MA+02142">77 Massachusetts Avenue, Cambridge MA 
 02139</a>" as your reference point for general directions to MIT. This is the famous <a 
 href="detail.php?selectvalues=7">domed building</a> at the center of campus.</p>
 HTML;
 
 $google_extra =<<<EXTRA
-<li><a href="http://maps.google.com/maps?f=q&q=77+Massachusetts+Avenue,+Cambridge+MA+02139" class="external">MIT on Google Maps</a></li>
+<li><a href="http://maps.google.com/maps?f=q&q=77+Massachusetts+Avenue,+Cambridge+MA+02142" class="external">MIT on Google Maps</a></li>
 EXTRA;
 
 $logan =<<<HTML

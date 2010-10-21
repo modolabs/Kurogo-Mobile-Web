@@ -4,7 +4,7 @@ $page->title('Map: Browse by Building Number')
      ->breadcrumbs('Browse Map');
 
 $drilldowns = array(
-  "Main"      => "1-68",
+  "Main"      => "1-76",
   "North"     => "N4-N57",
   "Northeast" => "NE18-NE125",
   "East"      => "E1-E70",
@@ -28,8 +28,8 @@ $page->content_begin();
 		<form action="" method="get" >
                         <select name="category" onchange="this.parentNode.submit();">
 				<option value="" selected="selected">Browse map by:</option>
-                                <? foreach($category_info as $category => $info) { ?>
-                                    <option value="<?=$category?>"><?=$info[0]?></option>
+                                <? foreach($category_info as $id => $title) { ?>
+                                    <option value="<?=$id?>"><?=$title?></option>
                                 <? } ?>
 			</select>
 		</form>

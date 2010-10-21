@@ -115,7 +115,7 @@ WhatsNew::setLastTime();
 alt="MIT" width="62" height="36" ></a></div>
 					<p>Copyright &copy;2009-2010 <a href="http://web.mit.edu">Massachusetts Institute of Technology</a>. All rights reserved. The MIT Mobile Web is designed, developed and maintained by <a href="http://web.mit.edu/ist/">Information Systems &amp; Technology (IS&amp;T)</a>. For more information, or for help using the MIT Mobile Web, please contact us at <a href="mailto:&#109;&#111;&#98;&#105;&#119;&#101;&#98;&#64;&#109;&#105;&#116;&#46;e&#100;&#117;">&#109;o&#98;&#105;&#119;e&#98;&#64;&#109;i&#116;&#46;&#101;d&#117;</a>.</p>
 					<p><a name="disclaimer"> </a>
-					* Terms and Conditions: The MIT Mobile Web is a free service. <strong>Extra data charges may apply</strong> when using any website on your mobile device depending on your service plan. The MIT SMS Service is provided free of charge by MIT. <strong>Carrier charges may apply</strong> for text messages, depending on your plan.
+					* Terms and Conditions: The MIT Mobile Web is a free service. <strong>Extra data charges may apply</strong> when using any website on your mobile device depending on your service plan.
 					</p>
 				</div>
 			</div>
@@ -125,6 +125,10 @@ alt="MIT" width="62" height="36" ></a></div>
 					<a href="iphoneapp.html"><img src="images/home/iphoneapp-icon.gif" alt="iPhone App" width="57" height="57" class="floatleft" /></a><h2><a href="iphoneapp.html">MIT Mobile iPhone App</a></h2>
 					The MIT app for your iPhone or iPod Touch offers MIT news, real-time GPS shuttle tracking, push notifications for upcoming shuttles and class announcements, and  more. Now available in the App Store.<br/><a href="iphoneapp.html">Learn more &gt;</a>
 				</div>
+				<div id="androidapp">
+					<a href="androidapp.html"><img src="images/androidapp/qrcode.png" alt="Android App" width="90" height="90" class="floatleft" /></a><h2><a href="androidapp.html">MIT Mobile Android App</a></h2>
+					MIT Mobile for Android offers MIT news, real-time GPS shuttle tracking, notifications for upcoming shuttles and class announcements, and  more. Now available on the Android Market.<br/><a href="androidapp.html">Learn more &gt;</a>
+				</div>
 				<div id="whatsnew">
 					<h2>What's New</h2>
 					<ul>
@@ -133,13 +137,6 @@ alt="MIT" width="62" height="36" ></a></div>
 					<li><strong><?=$content['title'] ?>:</strong> <?=$content['body'] ?> (<?=$content['date']['month']?>/<?=$content['date']['day']?>)</li>
 					<? } ?>
 					</ul>
-				</div>
-				
-				<div id="sms">
-					<h2><a href="sms.html">SMS Service (Beta)</a></h2>
-					Don't have mobile web access? The People Directory, Shuttle Schedule, and Stellar announcements are also available via a free* <a href="sms.html">text-messaging service</a>. Just text-message "help" to 648338 ("MITEDU") to get started.
-					<br/>
-					<p class="fineprint">* Carrier text-messaging charges may apply</p>					
 				</div>
 				
 				<div id="howto">

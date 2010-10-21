@@ -32,16 +32,20 @@ function rotateScreen() {
 	{
 		case 0:
 		case 180:
-			document.getElementsByTagName("body")[0].className = "portrait";
+                        setOrientation('portrait');
 		break;
 
 		case -90:
 		case 90:
-			document.getElementsByTagName("body")[0].className = "landscape";
+                        setOrientation('landscape');
 		break;
 
 	}
 	setTimeout(scrollToTop, 500);
+}
+
+function setOrientation(orientation) {
+        document.getElementsByTagName("body")[0].className = orientation;
 }
 
 function scrollToTop() {

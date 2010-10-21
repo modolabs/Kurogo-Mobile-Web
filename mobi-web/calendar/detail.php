@@ -16,35 +16,7 @@ $event->urlize = URLize($event->infourl);
 
 function phoneURL($number) {
   if($number) {
-
-    // add the local area code if missing
-    if(preg_match('/^\d{3}-\d{4}/', $number)) {
-      $number = '617' . $number;
-    }
-
-    // check if the number is short number such as x4-2323, 4-2323, 42323
-    if(preg_match('/^\d{5}/', $number)) {
-      $first_digit = substr($number, 0, 1);
-    } elseif(preg_match('/^x\d/', $number)) {
-      $number = substr($number, 1);
-      $first_digit = substr($number, 0, 1);
-    } elseif(preg_match('/^\d-\d{4}/', $number)) {
-      $first_digit = substr($number, 0, 1);
-    }
-
-    // if short number add the appropriate prefix and area code
-    $prefixes = array('252', '253', '324', '225', '577', '258');
-    if($first_digit) {
-      foreach($prefixes as $prefix) {
-        if(substr($prefix, -1) == $first_digit) {
-          $number = "617" . substr($prefix, 0, 2) . $number;
-          break;
-        }  
-      }
-    }
-
-    // remove all non-word characters from the number
-    $number = preg_replace('/\W/', '', $number);
+    $number = preg_replace('/\W/', '', map_mit_phone($number));
     return "tel:1$number";
   }
 }

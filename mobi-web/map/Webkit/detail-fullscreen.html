@@ -24,14 +24,17 @@
                 var mapLayers = "<?=$layers?>";
 	</script>
 
-	<script type="text/javascript">	
-		mapW=320;
-		mapH=480;
-	</script>
-
 	<script src="Webkit/map.js" type="text/javascript"> </script>
 
  	<link rel="apple-touch-icon" href="../Webkit/images/icon-map.png" />
+
+        <? if($onorientationchange) { ?>
+           <script type="text/javascript">
+              window.addEventListener("resize", function() {<?=$onorientationchange?>}, false);
+              window.addEventListener("orientationchange", function() {<?=$onorientationchange?>}, false);
+           </script>
+        <? } ?>
+
 </head>
 
 <body onload="<?=$extra_onload?>" <?=$extra_body_tag?>>
@@ -55,7 +58,7 @@
 		<img id="loadingimage" src="../Webkit/images/loading2.gif" width="40" height="40" alt="Loading" />
 	</div>
 	<div id="fullmap">
-		<img width="320" height="480" alt="" id="mapimage" onload="hide('loadingimage')" />
+		<img width="" height="" alt="" id="mapimage" onload="hide('loadingimage')" />
 	</div>
 	<div id="options">
 		<form action="#" method="get" id="mapform" name="mapform">

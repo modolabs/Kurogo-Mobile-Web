@@ -1,0 +1,81 @@
+.stories a {
+	text-decoration: none;
+}
+
+.stories a:hover {
+	text-decoration: underline;
+}
+
+.stories a:hover .deck {
+	text-decoration: none;
+}
+
+.stories a.a1 {
+	font-size: 110%;
+}
+
+.stories a.a1 img {
+	margin-right: 8px;
+}
+
+.stories .deck {
+	font-weight: normal;
+	color: #555;
+	font-size: 85%;
+	line-height: 1.1em
+}
+
+.byline {
+	font-size: 88%;
+	line-height: 1.2em;
+	font-weight: normal;
+	color: #505659;
+}
+
+.article .deck {
+	font-size: 120%;
+	line-height: 1.2em;
+	color: #555;
+}
+
+.callout {
+	text-align: center;
+	margin: 10px 0 20px 0;
+}
+
+.seemore {
+	font-size: 88%;
+	line-height: 1em;
+	color: #505659;
+	padding: 0;
+	margin: -4px 0 6px 0;
+}
+
+.callout a {
+	text-decoration: none;
+	color: #505659
+}
+
+.callout a .button {
+	position: relative;
+	top: 4px;
+	border: none;
+}
+
+.storyphoto {
+	margin-top: -12px;
+	padding: 10px;
+	background-color: #fff;
+	text-align: center;
+	color: #444
+}
+
+.storyphoto img {
+	margin-bottom: 8px;
+}
+
+.paging .current {
+	color: #000;
+	text-decoration: none;
+	font-weight: bold;
+}

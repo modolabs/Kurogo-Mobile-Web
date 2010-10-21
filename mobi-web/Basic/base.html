@@ -7,9 +7,7 @@
         <meta name = "viewport" content = "width=device-width, height=device-height" />
 	<title><?=$title?></title>
 	<link rel="stylesheet" type="text/css" href="../Basic/core.css" />
-        <? foreach($stylesheets as $stylesheet) { ?>
-  	   <link rel="stylesheet" type="text/css" href="<?=$stylesheet?>.css" />
-        <? } ?>
+        <? echo $this->stylesheet_links() ?>
 
 	<? if ($inline_css) { ?>
 	<style type="text/css">

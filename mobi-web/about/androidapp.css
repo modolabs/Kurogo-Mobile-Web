@@ -1,0 +1,345 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	background-color: #3d3d3d;
+}
+
+body {
+	font: 12px/20px Arial, sans-serif;
+	padding: 0;
+	margin-bottom: 30px;
+}	
+
+p {
+	margin: 0 0 20px 0;
+}
+
+a {
+	color: #c0c0c0;
+}
+
+a:visited {
+	color: #e0e0e0;
+}
+
+a:hover {
+	color: #f22;
+}
+
+a:active {
+	color: #900;
+}
+
+a img {
+	border: none;
+}
+
+img {
+	border: none;
+}
+
+#container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	min-width: 930px;
+}
+
+#focal {
+	position: relative;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 700px;
+	background: #749ac0 url(images/androidapp/back.jpg) repeat-x;
+	border-bottom: 2px solid #393939;
+}
+
+#introduction {
+	position: absolute;
+	top: 4px;
+	left: 0;
+	width: 490px;
+	font-size: 14px;
+	color: #1c2630;
+	line-height: 20px;
+}
+
+h1 {
+	margin: 0 0 16px 1px;
+	padding: 0;
+	font-weight: normal;
+}
+
+h2 {
+	margin: 0 0 20px 0;
+	padding: 0;
+	font-size: 14px;
+	font-weight: normal;
+	line-height: 20px;
+}
+
+#introduction p.lead {
+	margin: 0 0 20px 0;
+	padding: 0;
+	font-size: 18px;
+	font-weight: normal;
+	color: #222833;
+	line-height: 27px;
+}
+
+#introduction p.lead strong {
+	font-weight: bold;
+	color: #c00;
+}
+
+#introduction a {
+	color: #fff;
+	text-decoration: none;
+}
+
+#introduction a:hover {
+	text-decoration: underline;
+}
+
+#introduction p.lead a {
+	color: #a31111;
+}
+
+#modules {
+	margin: -4px 0 0 -10px;
+	padding: 0;
+	z-index: 1;
+}
+
+#modules li {
+	margin: 0 0 0 0;
+	padding: 0;
+	font-size: 14px;
+	line-height: 18px;
+	list-style-type: none;
+}
+
+#modules a {
+	display: block;
+	margin: 0;
+	padding: 9px 20px 9px 8px;
+	width: 508px;
+	color: #222833;
+}
+
+#modules img {
+	float: left;
+	padding-right: 10px
+}
+
+#modules a:hover {
+	text-decoration: none;
+}
+
+#modules a.current {
+	text-decoration: none;
+	background-color: #cae0f6;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+}
+
+#modules a strong {
+	font-weight: semibold;
+	color: #000000;
+}
+
+#modules a.current strong {
+	color: #000
+}
+
+.market {
+	float: right;
+	margin: 2px 2px 0px 2px;
+}
+
+#android {
+	position: absolute;
+	z-index: 10;
+	right: 0;
+	margin-right: -10px;
+	top: 11px;
+	width: 407px;
+	height: 770px;
+	background: url(images/androidapp/droid.png) no-repeat;
+}
+
+#screen {
+	position: absolute;
+	top: 103px;
+	right: 53px;
+}
+
+.content {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	margin-left: -450px;
+	width: 900px;
+}
+
+#support {
+	position: relative;
+	margin: 35px 0;
+	color: #ddd;
+}
+
+#sidebar {
+	position: absolute;
+	right: 0;
+	top: 30px;
+	width: 386px;
+	color: #000;
+}
+
+#sidebar h2 {
+	font-size: 19px;
+}
+
+#sidebar a {
+	color: #000;
+}
+
+#sidebar a:hover {
+	color: #fff;
+}
+
+#sidebar a:active {
+	color: #000;
+}
+
+#sidebar ol {
+	margin: 10px 0;
+	padding-left: 1.4em;
+}
+
+#sidebar ul {
+	margin:  0;
+	padding-left: 1.4em;
+}
+
+.helptext {
+	font-weight: normal
+}
+
+.text {
+	margin-left: 140px
+}
+
+.label {
+	color: #fff;
+	font-weight: bold;
+	width: 90px;
+}
+
+.note {
+	color: #ccc
+}
+
+#sidebar .note a {
+	color: #ccc
+}
+
+#sidebar .note a:hover {
+	color: #fff
+}
+
+#feedback {
+	padding: 15px;
+	margin-bottom: 20px;
+	background-color: #5e87af;
+	-webkit-border-radius: 8px;	
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	color: #fff;
+}
+
+#feedback:hover {
+	background-color: #215e9a;
+	color: #fff;
+}
+
+#feedback:active {
+	background-color: #4182c2;
+}
+
+#feedback a {
+	color: #fff;
+	text-decoration: none;
+}
+
+#feedback h2 {
+	margin-bottom: 6px;
+	color: #fff;
+}
+
+#details {
+	width: 475px
+}
+
+#support .address a {
+	color: #000;
+	text-decoration: none;
+}
+
+#support .address a:hover {
+	color: #f00;
+	text-decoration: underline;
+}
+
+#support .address a:active {
+	color: #900;
+}
+
+.icon {
+	border: 0;
+	vertical-align: middle;
+	padding-right: 5px
+}
+
+.nospace {
+	margin-bottom: 0;
+}
+
+.smallprint {
+	color: #555;
+	font-size: 12px;
+	line-height: 15px;
+}
+
+.floatleft {
+	float: left
+}
+
+#android {
+	position: absolute;
+	right: 0;
+}
+
+#footer {
+	clear: both;
+	padding: 75px 0 25px 0;
+	font-size: 11px;
+	line-height: 15px;
+	height: 160px;
+}
+
+#footerlogo {
+	margin-bottom: 8px;
+	margin-left: -3px;
+}
+
+.istlogo {
+	float: right;
+	margin-top: 4px;
+}
+
+#footer strong {
+	color: #fff
+}

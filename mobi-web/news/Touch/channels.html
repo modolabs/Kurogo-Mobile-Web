@@ -1,0 +1,20 @@
+<?php
+$page->title("News: Sections")
+     ->navbar_image('news')
+     ->module_home_link(newsHomeURL())
+     ->header("Sections");
+
+$page->content_begin();
+?>
+
+<ul class="nav"> 
+  <? foreach(channels() as $index => $channel_title) { ?>
+     <li><a href="./?channel_id=<?=$index?>"><?=$channel_title?></a></li> 
+  <? } ?>
+</ul> 
+
+
+<?
+$page->content_end();
+?>
+

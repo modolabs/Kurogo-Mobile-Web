@@ -7,12 +7,10 @@ require_once LIBDIR . 'mit_ical_lib.php';
 require_once LIBDIR . 'LibraryInfo.php';
 require WEBROOT . "libraries/libraries_lib.php";
 
-//LibraryInfo::cache_icals();
 $libraries = LibraryInfo::get_libraries();
 $hours_today = Array();
 
 foreach ($libraries as $library) {
-  LibraryInfo::cache_ical($library);
   $hourstr = hours_today($library);
   if ($hourstr != 'Closed') {
     $hours_today[$library] = 'Open ' . $hourstr;

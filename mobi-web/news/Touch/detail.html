@@ -1,0 +1,49 @@
+<?php
+$page->title('MIT News: Story')
+     ->navbar_image('news')
+     ->header('Story')
+     ->module_home_link(newsHomeURL())
+     ->add_stylesheet('Touch/news');
+
+$page->content_begin();
+?>
+
+<div class="article"> 
+   <h2 class="articletitle"><?=$story['title']?></h2> 
+   <? if($current_page == 0) { ?>
+      <div class="actionbuttons">
+          <a href="<?=$email_query?>">
+              <img src="../Touch/images/email-share.gif" alt="Email" width="33" height="32" border="0" />
+          </a>
+      </div>
+      <p class="byline"><?=$story['author']?><br/><?=postDay($story)?></p> 
+      <p class="deck"><?=$story['description']?></p>
+      <? if($main_image) { ?> 
+         <div class="callout">
+              <a href="<?=mainPhotoURL()?>">
+                   <img src="<?=$main_image->small_url?>" 
+                        width="<?=$main_image->small_dimensions['width']?>"
+                        height="<?=$main_image->small_dimension['height']?>" 
+                        alt="Image" class="thumbnail" />
+                   <span class="seemore">
+                          <img class="button" src="../Touch/images/button-zoom-in2.gif" alt="Zoom in" width="20" height="18" border="0" />
+                         <?=$see_instructions?>
+                   </span>
+              </a>
+         </div>
+      <? } ?>
+
+   <? } else {?>
+      <p class="smallprint">Page <?=$current_page+1?> of <?=$page_count?></p>
+   <? } ?>
+    
+   <?=$page_content?>
+
+   <? require "shared/photo_pagination.html"; ?>
+
+<div class="clear"> </div> 
+</div> 
+ 
+<? 
+$page->content_end();
+?>

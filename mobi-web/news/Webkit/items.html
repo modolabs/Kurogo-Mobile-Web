@@ -1,0 +1,7 @@
+<? foreach($stories as $index => $story) { ?>
+           <li> 
+               <a href="<?=storyURL($index, $story)?>">
+                    <img src="<?=thumbURL($story)?>" width="76" height="75" alt="" class="storythumb" /><?=$story['title']?><span class="deck"><?=storySummary($story)?></span>
+              </a> 
+           </li>
+<? } ?> 

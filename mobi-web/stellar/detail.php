@@ -97,8 +97,7 @@ if (!$class) {
     $item = $announcements[ $_REQUEST['index'] ];
 
     // from announcement.php
-    $itemtext = htmlentities($item['text']);
-    $itemtext = str_replace('&Acirc;', '', $itemtext);
+    $itemtext = htmlentities($item['text'], ENT_QUOTES, 'UTF-8');
     $itemtext = str_replace("\n", '<br/>', $itemtext);
   }
 
@@ -111,6 +110,7 @@ $page->output();
 
 function personURL($name) {
   $name = preg_replace('/\s+/', ' ', $name);
+  $name = str_replace('.', '', $name);
   return "../people/?filter=" . urlencode($name);
 }
 
@@ -137,7 +137,7 @@ function is_long_text($item) {
 }
 
 function full($item) {
-  return htmlentities($item['text']);
+  return htmlentities($item['text'], ENT_QUOTES, 'UTF-8');
 }
 
 function sDate($item) {

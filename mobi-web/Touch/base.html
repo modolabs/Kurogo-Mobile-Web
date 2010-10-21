@@ -8,9 +8,7 @@
 	<meta name="MobileOptimized" content="240">
 	<title><?=$title?></title>
 	<link rel="stylesheet" type="text/css" href="../Touch/core.css" />
-        <? foreach($stylesheets as $stylesheet) { ?>
-              <link rel="stylesheet" type="text/css" href="<?=$stylesheet?>.css" />
-        <? } ?>
+        <? echo $this->stylesheet_links() ?>
 
         <style type="text/css" media="screen">
            <?=$inline_css?>
@@ -21,8 +19,11 @@
 <body>
 
 <!-- remove spaces between "a" and other tags otherwise alignment will be off on IE -->
+<?php
+   $navbar_image = $home ? $navbar_image : $navbar_image . "2";
+?>
 <div id="navbar">
-	<a name="top" href="../home/"><?=$this->img_tag('mit-logo4', 'gif', 'MIT', array('border' => 0, 'align' => 'absmiddle'))?></a><a href="./"><?=$this->img_tag('title-' . $navbar_image, 'gif', $header, array('border' => 0, 'align' => 'absmiddle'));?></a><? if ($home) { ?><a name="top" href="index.php"><?=htmlentities($title)?></a><? } else { ?><span><?=$header?></span><? } ?>
+	<a name="top" href="../home/"><?=$this->img_tag('mit-logo4', 'gif', 'MIT', array('border' => 0, 'align' => 'absmiddle'))?></a><a href="<?=$module_home_link?>"><?=$this->img_tag('title-' . $navbar_image, 'gif', $header, array('border' => 0, 'align' => 'absmiddle'));?></a><? if ($home) { ?><a name="top" href="<?=$module_home_link?>"><?=htmlentities($title)?></a><? } else { ?><span><?=$header?></span><? } ?>
 </div>
 
 <div id="container">

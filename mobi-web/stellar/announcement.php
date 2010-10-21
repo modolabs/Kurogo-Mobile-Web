@@ -19,10 +19,7 @@ $page->output();
 /* functions */
 
 function paragraphs($item) {
-  $text = htmlentities($item['text']);
-
-  //this hack fixes some strange encoding problem
-  $text = str_replace('&Acirc;', '', $text);
+  $text = htmlentities($item['text'], ENT_QUOTES, 'UTF-8');
   return explode("\n", $text);
 }
 

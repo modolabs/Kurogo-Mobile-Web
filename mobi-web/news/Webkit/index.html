@@ -1,0 +1,79 @@
+<?php
+$page->title('News')
+     ->navbar_image('news')
+     ->add_javascript('../Webkit/uiscripts')
+     ->add_javascript('Webkit/news')
+     ->add_javascript('Webkit/load_next_ten')
+     ->add_stylesheet('Webkit/news')
+     ->extra_onload('androidPlaceholderFix()');
+
+if(isSearchResult()) {
+  $page->breadcrumbs('Search Results')
+       ->module_home_link(newsHomeURL());
+} else {
+  $page->breadcrumbs('News')
+       ->breadcrumb_home();
+
+}
+
+$page->content_begin();
+?>
+
+    <div class="sectionbar">
+         <form id="switcher" action="" method="get">
+             <? if(isSearchResult()) { ?>
+                 <?=$search_results_description?>
+             <? } else { ?>                  
+	        <label for="section">Section:</label> 
+	        <select id="section" onchange="switchSection(this)" class="floatinput">
+	             <? foreach(channels() as $index => $name) { ?>
+                          <option value="<?=$index?>" 
+		              <? if($channel_id==$index) { ?>
+			         selected="selected"
+                              <? } ?> >
+                                        <?=$name?>
+                          </option>
+                     <? } ?> 
+                </select>
+             <? } ?>
+	     <a href="javascript:toggleBar('switcher','searchbar','query')" class="switchselect"><img src="../Webkit/images/search-float.png" width="36" height="36" alt="Search" /></a>
+	  </form> 
+	  <form id="searchbar" method="get" style="display:none" action=""> 
+	     <input type="search" id="query" name="query"
+                    <? if($search_query) {?>value="<?=addslashes($search_query)?>"<? } ?> 
+                    placeholder="Search by title or keyword" style="width:240px" class="floatinput" /> 
+             <input name="channel_id" type="hidden" value="<?=channelID()?>" />
+             <input name="seek_story_id" type="hidden" value="<?=seekStoryID()?>" />
+             <input name="next" type="hidden" value="<?=afterOrBeforeInt()?>" />
+	     <a href="javascript:toggleBar('searchbar','switcher')" class="switchselect"><img src="../Webkit/images/cancel-float.png" width="58" height="36" alt="Cancel" /></a> 
+	  </form> 
+    </div> 
+
+    <ul class="stories" id="news-items"> 
+       <li class="busybox" id="load-previous-busy" style="display: none;">
+	   <img src="Webkit/iPhoneBusybox.gif" />
+       </li>
+       <li class="fullypadded" id="load-previous-button" <? if(!$previous_params) { ?>style="display: none;"<? } ?> >
+           <a onclick="loadMoreNewsItems(false);" class="noaction">Load 10 previous articles</a>
+       </li>
+
+       <li class="fullypadded" id="load-next-button" <? if(!$next_params) { ?>style="display: none;"<? } ?> >
+           <a onclick="loadMoreNewsItems(true);" class="noaction">Load 10 more articles</a>
+       </li>
+       <li class="busybox" id="load-next-busy" style="display: none;">
+	   <img src="Webkit/iPhoneBusybox.gif" />
+       </li>
+
+    </ul>
+
+<? 
+$page->content_end();
+
+$init_script = <<<JS
+  previous_params = {$previous_params_json};
+  requestSucceededHandler({$items_json_html}, true);
+JS;
+
+$page->footer_script($init_script);
+
+?>

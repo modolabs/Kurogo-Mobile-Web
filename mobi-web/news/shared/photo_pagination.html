@@ -1,0 +1,25 @@
+<? if($page_count > 1) { ?>
+     <div class="pagination">
+       <span class="pagelabel">Page:</span>
+
+       <? if($previous_page !== NULL) { ?>
+	    <a href="<?=storyPageURL($previous_page)?>" class="page previous">&lt;</a>
+       <? } else { ?>
+            <a class="page previous disabled">&lt;</a>
+       <? } ?>
+
+       <? for($i=0; $i < $page_count; $i++) { ?>
+           <? if($i == $current_page) { ?>
+               <a class="page current"><?=$i+1?></a>
+	   <? } else { ?>
+               <a href="<?=storyPageURL($i)?>" class="page"><?=$i+1?></a>
+	   <? } ?>
+       <? } ?>
+
+       <? if($next_page !== NULL) { ?>
+           <a href="<?=storyPageURL($next_page)?>" class="page next">&gt;</a>
+       <? } else { ?>
+           <a class="page next disabled">&gt;</a>
+       <? } ?>
+     </div>
+<? } ?>

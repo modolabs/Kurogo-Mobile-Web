@@ -320,29 +320,28 @@ h2 {
 	text-decoration: none;
 }
 
-#sms {
+#androidapp {
 	padding: 15px;
 	margin-bottom: 20px;
-	background-color: #c0db77;
-	color: #222;
+	background-color: #000;
+	color: #ccc;
 	-webkit-border-radius: 8px;	
 	-moz-border-radius: 8px;
 	border-radius: 8px;
 }
 
-#sms h2 {
+#androidapp h2 {
 	margin-bottom: 6px;
 	color: #000;
 }
 
-#sms .fineprint {
-	color: #443;
-	font-size: 11px;
-	margin-bottom: 0
+#androidapp a {
+	color: #fff;
 }
 
-#sms strong {
-	color: #000;
+#androidapp h2 a {
+	color: #fff;
+	text-decoration: none;
 }
 
 #whatsnew {
