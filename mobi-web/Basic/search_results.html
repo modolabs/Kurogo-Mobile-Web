@@ -1,0 +1,36 @@
+        <? if($this->form) { 
+         $this->form->out();
+          } ?> 
+
+        <? if($arrows) { ?>
+           <? if($start != $end) { ?> 
+              <p><?=$start?>-<?=$end?> of <?=$total?> matches found</p>
+           <? } else { ?>
+              <p>last match of the <?=$total?> found</p>
+           <? } ?>
+        <? } else { ?>
+	   <p><?=$total?> matches found</p>
+        <? } ?>
+
+        <? if($total >=50) { ?>
+           <p>Many entries found, please refine your search</p>
+        <? } ?>
+
+
+        <? $docRoot = getenv("DOCUMENT_ROOT");
+           require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+           require WEBROOT . "{$this->module}/Basic/{$this->template}.html";
+        ?>
+
+
+        <? $docRoot = getenv("DOCUMENT_ROOT");
+           require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+           require WEBROOT . "Basic/arrows.html";
+        ?>
+
+        <? if($this->form && count($results) >= 5) { 
+               if(!$arrows) {
+                 echo " <br />";
+               }
+               $this->form->out();
+           } ?>

@@ -1,0 +1,18 @@
+<?
+$page->title("MIT Map: Directions to MIT")
+     ->header("Campus Map");
+$page->content_begin();
+?>
+
+	<h2>Directions to MIT</h2>
+	
+        <p class="nav">
+            <? foreach($directions as $link => $value) { ?>
+                 <a href="<?=directionsURL($link)?>"><?=$value->link_text?></a><br/>
+            <? } ?>
+        </p>    
+
+<?
+$page->content_end();
+$page->nav_link("./", "Campus Map");
+?>

@@ -1,0 +1,11 @@
+<? 
+$page->title('MIT People Directory: Search Results')
+     ->header('People Directory');
+
+$page->content_begin();
+
+$content->output($people);
+
+$page->content_end();
+$page->nav_link('./', "People Directory Home");
+?>

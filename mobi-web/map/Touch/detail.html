@@ -1,0 +1,77 @@
+<?
+$page->title("MIT Campus Map: Details")
+     ->navbar_image('map')
+     ->header("Campus Map");
+
+function tabs() {
+  $html = array();
+  foreach(array("Map", "Photo", "What's Here") as $aTab) {
+    if($url = selfURL($aTab)) {
+      if(tab() == $aTab) {
+        $html[] = '<span class="active">' . $aTab . '</span>';
+      } else {
+        $html[] = "<a href=\"$url\">$aTab</a>";
+      }
+    }
+  }
+  return implode("&nbsp;|&nbsp;", $html);
+}
+
+$page->content_begin();
+?>
+
+	<div class="shaded">
+<? if($snippets) { ?>
+                   <p class="foundat"><?=$snippets?> found in:</p>
+<? } ?>
+		<h2><?=$building_title?></h2>
+		
+<? if($tab == "Map") { ?>
+  		   <p class="smallprint"><?=$data['street']?></p>
+<? } ?>
+
+		<div id="tabs">
+		<?=$tabs_html?>
+		</div>
+
+	</div> <!-- class="shaded" -->
+
+<? 
+switch ($tab) {
+case 'Map': ?>
+
+	<div class="tabbody centered">
+		<a name="scrolldown"> </a>
+		<img id="mapimage" width="<?=$width?>" height="<?=$height?>" alt="Map" src="<?=imageURL($width, $height, $fontsize)?>" lowsrc="../../images/touch/loading3.gif" /> 
+		<div class="zoomlinks">
+			Zoom: <a href="<?=zoomInURL()?>">In</a>&nbsp;|&nbsp;<a href="<?=zoomOutURL()?>">Out</a>
+			<br/>
+			Scroll: <a href="<?=scrollURL('N')?>">N</a>&nbsp;|&nbsp;<a href="<?=scrollURL('S')?>">S</a>&nbsp;|&nbsp;<a href="<?=scrollURL('E')?>">E</a>&nbsp;|&nbsp;<a href="<?=scrollURL('W')?>">W</a><br/>
+		</div>
+
+<?
+  break;
+case "Photo": ?>
+
+	<div class="tabbody centered">
+		<p><img src="<?=$photoURL?>" alt="Photo" class="photo" lowsrc="../Touch/images/loading3.gif"<? if ($width < 250) { ?> width="<?=$width?>"<? } ?> /></p>
+		<p class="legend">View from <?=$data['viewangle']?><? if ($data['architect']) { ?><br/>Architect: <?=$data['architect']?><? } ?></p>
+
+<?
+  break;
+case "What's Here": ?>
+
+	<div class="tabbody">
+		<ul>
+<?     foreach($whats_here as $item) { ?>
+			<li><?=$item?></li>
+<?     } ?>
+		</ul>
+<?
+  break;
+}
+?>
+
+	</div>
+
+<? $page->content_end(); ?>

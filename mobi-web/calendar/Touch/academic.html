@@ -1,0 +1,51 @@
+<?php
+$page->title("Events: Academic Calendar")
+     ->navbar_image('calendar')
+     ->header('Academic');
+
+$page->content_begin();
+?>
+	<div class="nonfocal">
+		<h2>Academic Calendar for<br/><strong><?=$Month?> <?=$year?></strong></h2>
+	</div>
+	
+	<div class="sidenav">
+<? if($has_prev) { ?> 
+	<a href="<?=$prev_url?>">&lt; <?=$prev_month?> <?=$prev_yr?></a> 
+<? }
+   if($has_prev && $has_next) { ?>
+	| 
+<? } 
+   if($has_next) { ?>
+	<a href="<?=$next_url?>"><?=$next_month?> <?=$next_yr?> &gt;</a>
+<? } ?>
+	</div>
+
+	<ul class="results nolinks">
+
+<? foreach($days as $day) { ?>
+      <li>
+          <h4><?=$day->day_text($year, $month)?></h4>
+          <ul>
+<?   foreach($day->items as $item) { ?>
+		<li><?=$item->html()?></li>
+<?   } ?>
+          </ul>
+      </li>
+<? } ?>
+
+	</ul>
+
+	<div class="sidenav">
+<? if($has_prev) { ?> 
+	<a href="<?=$prev_url?>">&lt; <?=$prev_month?> <?=$prev_yr?></a> 
+<? }
+   if($has_prev && $has_next) { ?>
+	| 
+<? } 
+   if($has_next) { ?>
+	<a href="<?=$next_url?>"><?=$next_month?> <?=$next_yr?> &gt;</a>
+<? } ?>
+	</div>
+
+<? $page->content_end(); ?>

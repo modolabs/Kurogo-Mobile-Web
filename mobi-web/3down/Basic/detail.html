@@ -1,0 +1,21 @@
+<?php
+$page->title('MIT 3DOWN: Detail')
+     ->header('3DOWN');
+
+$page->content_begin();
+?>
+
+	<div class="focal">
+	
+		<h2><?=$title?></h2>
+
+                <? foreach($paragraphs as $paragraph) { ?>	
+		   <p><?=$paragraph?></p>
+                <? } ?>
+		<p class="smallprint"><?=$long_date?></p>
+
+	</div>
+<? 
+$page->content_end();
+$page->nav_link("./", "3DOWN Home");
+?>

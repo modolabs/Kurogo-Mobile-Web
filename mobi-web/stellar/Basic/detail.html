@@ -1,0 +1,86 @@
+<?php
+$page->title("MIT Stellar: Search Results")
+     ->header("Stellar");
+
+$page->add_stylesheet("Basic/mystellar");
+
+$page->content_begin();
+?>
+	<div class="focal">
+
+		<h2><?=longerID($class)?>: <?=className($class)?></h2>
+		<p> <?=$term?> |
+		<span class="<?=$toggle?>"><?=$page->img_tag($mystellar_img, 'gif', 'My Stellar', array('class', 'ms_star'))?>My Stellar <span class="fineprint">(<a id="mystellar" href="<?= selfURL() ?>&action=<?=$action?>"><?=$action?></a>)</span></span>
+		</p>
+
+		<p class="tabs"> <!-- No extra whitespace in code below; non-breaking spaces required -->
+	            <?=$tabs_html?>
+		</p>
+
+                <? switch ($tab) {
+                    case "News": ?>
+                    <? if($has_news) { ?>
+
+                        <? foreach($items as $index => $item) { ?>
+		          <p>
+			    <strong><?=$item['title']?></strong>:
+                               <span class="smallprint">
+                                  <? if(is_long_text($item)) { ?>
+                                     <?=summary($item)?> <a href="<?=announceURL($index)?>">more</a>
+                                  <? } else { ?>
+                                     <?=full($item)?>
+                                  <? } ?>
+                                  (<?=sDate($item)?>)
+                               </span>
+		         </p>
+                        <? } ?>
+                    <? } else { ?>
+                         <p>No announcements</p>
+                    <? } ?>
+
+                   <? if(!$all && $has_old_news) { ?>
+		      <p class="smallprint">
+			   <a href="<?=selfURL('all')?>">Older announcements &gt;</a>
+		      </p>
+                   <? } ?>
+
+		<? break; case "Info": ?>
+
+                   <? foreach($class['times'] as $time) { ?>
+                       <h4><?=$time['title']?>:</h4>
+                       <p>
+                           <?=$time['time']?> (<a href="<?=mapURL($time['location'])?>"><?=$time['location']?></a>)
+                       </p>
+                   <? } ?>
+
+                   <p class="divider"> </p>
+		   <p><?=htmlentities($class['description'])?></p>
+
+                <? break; case "Staff": ?>
+
+		   <h4>Instructors:</h4>
+		   <p>
+                      <? foreach($class['staff']['instructors'] as $instruct) { ?>
+		          <a href="<?=personURL($instruct)?>" class="people"><?=$instruct?></a><br/>
+                      <? } ?>
+		   </p>
+
+                   <? if(count($class['staff']['tas'])) { ?>
+		      <h4>TAs:</h4>
+		      <p>
+                         <? foreach($class['staff']['tas'] as $TA) { ?>
+		             <a href="<?=personURL($TA)?>" class="people"><?=$TA?></a><br/>
+                         <? } ?>
+	              </p>
+                   <? } ?>
+
+                <? break; } ?>
+	</div>
+
+	<p class="paging">
+		<a href="<?=$back?>" onclick="back(); return false">&lt; Back</a>
+	</p>
+<?
+$page->content_end();
+$page->nav_link("./", "Stellar Home");
+?>

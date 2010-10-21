@@ -1,0 +1,28 @@
+<?php
+$page->title("Events Calendar: $Type for {$current['day_3Let']} {$current['month_3Let']} {$current['day_num']}, {$current['year']}")
+     ->header('Events Calendar');
+
+$page->content_begin();
+?>
+
+	<h2><?=$Type?> for <?=$current['day_3Let']?> <?=$current['month_3Let']?> <?=$current['day_num']?>, <?=$current['year']?></h2>
+
+	<div class="nonfocal">
+		<p>	<a href="<?=dayURL($prev, $type)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month_3Let']?> <?=$prev['day_num']?></a>&nbsp;|&nbsp;<a href="<?=dayURL($next, $type)?>"><?=$next['day_3Let']?> <?=$next['month_3Let']?> <?=$next['day_num']?> &gt;</a></p>
+	</div>
+	
+	<div class="focal">
+            <? foreach($events as $event) { ?>
+		<p><a href="<?=detailURL($event)?>"><?=$event->title?></a><br/><span class="smallprint"><?=timeText($event)?><? if(briefLocation($event)) { ?>&nbsp;|&nbsp;<?=briefLocation($event)?><? } ?></span></a></p>
+            <? } ?>
+	</div>
+	
+	<p class="nonfocal">
+		<a href="<?=dayURL($prev, $type)?>">&lt; <?=$prev['day_3Let']?> <?=$prev['month_3Let']?> <?=$prev['day_num']?></a>&nbsp;|&nbsp;<a href="<?=dayURL($next, $type)?>"><?=$next['day_3Let']?> <?=$next['month_3Let']?> <?=$next['day_num']?> &gt;</a>
+	</p>
+<?
+
+$page->content_end();
+$page->nav_link("./", "Events Calendar Home");
+
+?>

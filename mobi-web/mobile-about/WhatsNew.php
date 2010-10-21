@@ -1,0 +1,59 @@
+<?php
+$docRoot = getenv("DOCUMENT_ROOT");
+
+require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+require_once LIBDIR . 'rss_services.php';
+
+class WhatsNew extends RSS {
+  protected $rss_url = "http://localhost/drupal/whats_new/rss.xml";
+
+  protected $custom_tags = array('body', 'shortName');
+
+  private static $topitem_timeout = 14;
+  private static $newuser_timeout =  30;
+  private static $cookie_timeout = 160;
+
+  public function get_items() {
+    $feed = array_reverse($this->get_feed());
+    foreach($feed as $index => $item) {
+      $feed[$index]['body'] = RSS::cleanText($feed[$index]['body']);
+    }
+    return $feed;
+  }
+
+  public function count($time) {
+    $count = 0;
+    foreach($this->get_feed() as $item) {
+      if($item["unixtime"] >= $time) {
+	$count++;
+      }
+    }
+    return $count;
+  }
+
+  public static function getLastTime() {
+    if(isset($_COOKIE["whatsnewtime"])) {
+      return intval($_COOKIE["whatsnewtime"]);
+    } else {
+      // no time set go back one month
+      return time() - self::$newuser_timeout*24*60*60;
+    }
+  }
+
+  public static function setLastTime() {
+    // expires 160 days from now
+    setcookie("whatsnewtime", time(), time() + self::$cookie_timeout*24*60*60, "/");
+  }
+
+  public function getTopItemName() {
+    foreach($this->get_items() as $item) {
+      if(time() - $item["unixtime"] < self::$topitem_timeout*24*60*60) {
+        return $item["shortName"];
+      } else {
+        return NULL;
+      }
+    }
+  }
+}
+
+?>

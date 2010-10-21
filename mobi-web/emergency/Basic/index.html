@@ -1,0 +1,25 @@
+<?php
+$page->title("MIT Emergency Info")
+     ->header("Emergency Info");
+
+$page->content_begin();
+?>
+
+	<p class="focal" id="statusmsg">
+             <? 
+	     foreach ($paragraphs as $paragraph) {
+	       $paragraph = str_replace('<p>', '', $paragraph);
+	       $paragraph = str_replace('</p>', '<br/>', $paragraph);
+	     }
+	     echo $paragraph;
+             ?>
+	</p>
+	
+	<p class="secondary">
+            <? foreach($main as $item) { ?>
+		<a href="tel:1<?=$item->call_number()?>" class="phone"><?=$item->label()?></a> <span class="smallprint"> (<?=$item->message_text()?><?=$item->number_text()?>)</span><br/>
+            <? } ?>
+		<a href="<?=contactsURL()?>">More Emergency Contacts</a><br/>
+	</p>
+
+<? $page->content_end() ?>

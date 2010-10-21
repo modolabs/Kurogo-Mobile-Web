@@ -1,0 +1,45 @@
+<?='<?xml version="1.0" encoding="UTF-8"?>'?>
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
+	<meta name="viewport" content="<? if ($viewport_device_width) { ?>width=device-width, <? } ?>initial-scale=1.0, user-scalable=false" />
+	<meta name="HandheldFriendly" content="True" />	
+	<meta name="MobileOptimized" content="240">
+	<title><?=$title?></title>
+	<link rel="stylesheet" type="text/css" href="../Touch/core.css" />
+        <? foreach($stylesheets as $stylesheet) { ?>
+              <link rel="stylesheet" type="text/css" href="<?=$stylesheet?>.css" />
+        <? } ?>
+
+        <style type="text/css" media="screen">
+           <?=$inline_css?>
+        </style>
+
+</head>
+
+<body>
+
+<!-- remove spaces between "a" and other tags otherwise alignment will be off on IE -->
+<div id="navbar">
+	<a name="top" href="../home/"><?=$this->img_tag('mit-logo4', 'gif', 'MIT', array('border' => 0, 'align' => 'absmiddle'))?></a><a href="./"><?=$this->img_tag('title-' . $navbar_image, 'gif', $header, array('border' => 0, 'align' => 'absmiddle'));?></a><? if ($home) { ?><a name="top" href="index.php"><?=htmlentities($title)?></a><? } else { ?><span><?=$header?></span><? } ?>
+</div>
+
+<div id="container">
+<? $this->draw_content(); ?>	
+</div> <!-- id="container" -->
+
+<div id="footerlinks">
+	<a href="#top">Back to top</a> <? if ($help_on) { ?>| <a href="help.php">Help</a><? } ?> | <a href="../home/">MIT Mobile Web</a>
+</div>
+
+<div id="footer">
+<? if ($standard_footer) { ?>
+	<a href="http://web.mit.edu/ist/"><img src="../Touch/images/ist-logo.gif" width="26" height="18" alt="IST" /></a>Information Services &amp; Technology
+<? } else { ?>
+<?=$footer?>
+<? } ?>
+</div>
+
+</body>
+</html>

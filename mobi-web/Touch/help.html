@@ -1,0 +1,23 @@
+<?php
+$page->title("MIT $header: Help")
+     ->navbar_image($module)
+     ->header('Help');
+
+$page->content_begin();
+?>
+		
+	<div class="focal">
+		<h2>Help</h2>
+                <? 
+                  foreach($help as $paragraph) {
+                    ?>
+                      <p><?=$paragraph?></p>
+                    <?
+                  }
+		?>
+	</div>
+
+<? 
+$page->content_end(); 
+$page->help_off();
+?>

@@ -1,0 +1,63 @@
+<?php
+$page->title('People: Details')
+     ->navbar_image('people')
+     ->breadcrumbs('Search', 'Details');
+
+class Item {
+    private $person;
+
+    public function __construct($person) {
+        $this->person = $person;
+    }
+
+    public function display($label, $field, $href=NULL, $class=NULL, $group=False) {
+        foreach($this->person[$field] as $value) {
+          ?>
+            <? if(!$group) { ?>  <ul class="nav">    <? } ?>
+              <li>
+                 <? if($href != NULL) {                   
+                     echo '<a href="' . $href($value) . '" class="' . $class . '">';
+                 } ?>
+
+		 <? // temporary palm pre hack
+		 $value = str_replace('@', '@&shy;', $value);
+		 $value = str_replace('-', '-&shy;', $value);
+		 ?>
+                 <div class="label"><?=$label?></div>
+                 <div class="value"><?=$value?></div>
+
+                 <? if($href != NULL) {                   
+                       echo "</a>";
+                 } ?>
+              </li>
+            <? if (!$group) { ?>  </ul>  <? } ?>   
+          <?
+        }
+    }
+}             
+$item = new Item($person);
+
+$page->content_begin();
+?>
+	<ul class="nav">
+              <?  $item->display('name', 'fullname', NULL, NULL, True); ?>
+              <?  $item->display('title', 'title', NULL, NULL, True); ?>
+              <?  $item->display('dept', 'dept', NULL, NULL, True); ?>
+	</ul>
+	
+        <? if(has_phone($person)) { ?>
+           <ul class="nav">
+             <?  $item->display('home', 'homephone', "phoneHREF", 'phone', True);   ?>      
+             <?  $item->display('phone', 'telephone', "phoneHREF", 'phone', True);  ?>
+             <?  $item->display('fax', 'fax', "phoneHREF", 'phone', True);  ?>
+           </ul>
+        <? } ?>
+
+        <?
+           $item->display('address', 'address');             
+           $item->display('email', 'email', "mailHREF", 'email');             
+           $item->display('office', 'room', "mapURL", 'map');
+
+        ?>
+<? $page->content_end(); ?>
+

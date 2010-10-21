@@ -1,0 +1,34 @@
+<?php
+$page->title('About this Site')
+     ->navbar_image('about')
+     ->header('About this Site')
+     ->breadcrumb_home();
+
+$page->content_begin();
+?>
+
+	<ul class="nav">
+		<li>
+			<a href="new.php">What's New
+                              <? if($whats_new_count) { ?>
+                                   <span class="badge"><strong><?=$whats_new_count?></strong> unread</span>
+                              <? } ?>
+			</a>
+		</li>
+		<li>
+			<a href="./?page=background">Background Information</a>
+		</li>
+		<li>
+			<a href="./?page=requirements">System Requirements</a>
+		</li>
+		<li>
+			<a href="./?page=credits">Credits</a>
+		</li>
+		<li>
+			<a class="email" href="mailto:mobiweb@mit.edu">Send us Feedback!</a>
+		</li>
+	</ul>
+<? 
+$page->content_end(); 
+$page->help_off();
+?>

@@ -1,0 +1,35 @@
+<?php
+$page->title('Events')
+     ->header('Events Calendar')
+     ->navbar_image('calendar')
+     ->breadcrumb_home();
+
+$page->content_begin();
+?>
+	<div class="nonfocal">
+		<h2><?=$today['weekday']?>, <?=$today['month']?> <?=$today['day_num']?>, <?=$today['year']?></h2>
+	</div>
+	
+	<ul class="nav">
+		<li><a href="<?=dayURL($today, 'events')?>">Today's events</a></li>
+		<li><a href="<?=dayURL($today, 'exhibits')?>">Today's exhibits</a></li>
+		<li><a href="<?=academicURL($today['year'], $today['month_num'])?>">Academic calendar</a></li>
+		<li><a href="<?=holidaysURL($today['year'])?>">MIT holidays</a></li>
+		<li><a href="<?=categorysURL()?>">Browse events by category</a></li>
+	</ul>
+	
+	<div class="nonfocal">
+		<form method="get" action="search.php">
+			<h3>Search for events:</h3>
+			<table cellpadding="0" cellspacing="0" border="0"><tr ><td width="70%"><input type="text" id="query" name="filter" size="14" class="forminput" value=""/></td><td width="30%"><input type="submit" value="Search" class="submitbutton" /></td></tr>
+			<tr><td colspan="2">
+			<select id="timeframe" name="timeframe">
+<? foreach($search_options as $key => $option) { ?> 
+				<option value="<?=$key?>" <? if($option['selected']) { ?>selected="selected"<? } ?> ><?=$option['phrase']?></option>
+<? } ?>
+			</select></td></tr>
+		  	</table>
+		</form>
+	</div>
+
+<? $page->content_end(); ?>

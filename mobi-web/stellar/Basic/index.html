@@ -1,0 +1,48 @@
+<?php
+$page->title('MIT Stellar')
+     ->header('Stellar');
+
+$page->content_begin();
+
+?>
+
+	<form method="get" action="search.php">
+	
+	<p>Descriptions, announcements and other information for MIT classes.</p>	
+    
+    <? if (count(getMyStellar()) > 0 ) { ?>
+        
+    <h3>My Stellar:</h3> 
+    
+	<p class="nav">
+    	<? foreach (getMyStellar() as $item) { 
+        	$arr = explode(" ", $item);
+            $id = $arr[0]; 
+            $class = StellarData::get_subject_info($id);?>
+			<a href="detail.php?id=<?= $id ?>&back=index.php"><?= longerID($class) ?></a><br />
+        <? } ?>
+	</p>
+    
+    <? } ?>
+    
+	<h3>Browse by course:</h3>
+
+	<p class="nav">
+		1. Stellar Home<br/>
+		<a href="<?=coursesURL("1-10")?>" accesskey="2">2. Courses 1-10</a><br/>
+		<a href="<?=coursesURL("11-20")?>" accesskey="3">3. Courses 11-20</a><br/>
+		<a href="<?=coursesURL("21-24")?>" accesskey="4">4. Courses 21-24</a><br/>
+		<a href="<?=coursesURL("other")?>" accesskey="5">5. Other Courses</a><br/>
+	</p>
+	
+	<p>
+		<strong>Search by course/subject #:</strong><br/>
+		<span class="inputcombo">
+			<input class="forminput" type="search" id="filter" name="filter" />
+			<input id="type" name="type" type="hidden" value="name" />
+			<input id="group" name="group" type="hidden" value="*" />
+			<input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+		</span>	
+	</p>
+
+<? $page->content_end(); ?>

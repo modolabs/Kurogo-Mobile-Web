@@ -1,0 +1,186 @@
+<html>
+<head>
+<style type="text/css">
+h2 {margin-left: 20px;}
+h3 {margin-left: 40px;}
+h4 {margin-left: 60px;}
+h5 {margin-left: 80px;}
+p {margin-left: 80px;}
+</style>
+</head>
+<body>
+
+<h1>MIT LDAP</h1>
+<h2>Filename: mit_ldap.php</h2>
+
+<h4>Function: mit_search( string <em>$search</em> )</h4>
+<h5><em>$search</em> is the search string entered by the user.</h5>
+<h5>Returns: a sorted array of user matches (sorted by last 
+name, with exact email address matches at the top).</h5>
+<p>This function takes a search string and calls <b>do_query</b> to 
+do a query.</p>
+
+<h4>Function: do_query( LdapQuery <em>$query</em> [, array 
+<em>$search_results</em>] )</h4>
+<h5><em>$query</em> is an object of class LdapQuery.</h5>
+<h5><em>$search_results</em> is an array of previous results that 
+data will be added to.  The array keys are usernames.  New entries 
+will be created for users not alreaady in the array.</h5>
+<h5>Returns: an array of user matches.</h5>
+<p>This function calls the MIT LDAP server and finds all people who 
+match the search query.</p>
+
+<h3>Class: LdapQuery</h3>
+<p>This class allows you to easily construct LDAP queries.</p>
+<h4>Method: out()</h4>
+<h5>Returns: string in LDAP query syntax.</h5>
+
+<h1>STELLAR</h1>
+<h2>Filename: stellar.php</h2>
+
+<h3>Class: StellarData</h3>
+<p>This class has the methods to access the stellar data, which is stored in the database and/or available
+from XML and RSS feeds</p>
+<h4>Method: get_courses()</h4>
+<h5>Returns: Array of all courses(departments) at MIT.  Array keys are the course ids, and each course contains a &quot;name&quot; element, and &quot;is_course&quot; element</h5>  
+<p>This method returns all the courses stored in the private data of this class</p>
+
+<h4>Method: get_course(string <em>$id</em>)</h4>
+<h5><em>$id</em> a string with the course id</h5>
+<h5>Returns: Array with a &quot;name&quot; and &quot;is_course&quot; element for the course id</h5>
+<p>Looks up the &quot;name&quot; and &quot;is_course&quot; information for the course id.</p>
+
+<h4>Method: get_others()</h4>
+<h5>Returns: Array of all courses(departments) with non-numeric ids.  Array keys are the course ids, each course contains a &quot;name&quot; element and &quot;is_course&quot; element</h5>  
+<p>This method returns all the courses with purely alphabetic id&apos;s such as HST(Health Sciences and Technology)</p>
+
+<h4>Method: get_classes(string <em>$course</em>)</h4>
+<h5><em>$course</em> string containing the course id</h5>
+<h5>Returns: Array of all the classes in the given course(department), each class is represented by an array that has the following elements &quot;masterId&quot;, &quot;rssId&quot;, &quot;id&quot;, &quot;name&quot;, &quot;title&quot;, &quot;description&quot;, &quot;times&quot;, and &quot;staff&quot;</h5>
+<p>This method retrieves all the classes in a course and data associated with the class, the data is retrieved from an external XML feed hosted by stellar.</p>
+
+<h4>Method: get_class_id(string <em>$id</em>)</h4>
+<h5><em>$id</em> string of the class id</h5>
+<h5>Returns: String of classes master id</h5>
+<p>This method searches the database for a matching class id (example format 8.02), and returns the master id for that class.  All other lookups for the class should be done using the master id.</p>
+
+<h4>Method: get_class_info(string <em>$id</em>)</h4>
+<h5><em>$id</em>  string of the class id</h5>
+<h5>Returns: Array that contains time sensitive information on a specific class, the &quot;announcements&quot; element contains an array of the most recent announcements</h5>
+<p>This method retrieves an RSS feed that contains all the current information for the specific class.</p>
+
+<h4>Method: search_classes(string <em>$terms</em>)</h4>
+<h5><em>$terms</em> string containing search terms to identify a class</h5>
+<h5>Returns: Array containing course ids for every matching results</h5>
+<p>This method searches the database for all the classes that have names containing every single search term.  For example searching for &quot;6&quot;, returns all classes in course 6.  Searching for &quot;6 quant&quot; would return every class in course 6, with a title that has "quant" somewhere in the name.</p>
+
+<h1>EVENTS CALENDAR</h1>
+<h2>Filename: mit_calendar.php</h2>
+<h3>Class: MIT_Calendar</h3>
+<p>This class use MITs Events Calendar SOAP interface to grab data about upcoming events at MIT</p>
+
+<h4>Method: Categorys()</h4>
+<h5>Returns: Array of event categories, each category has a &quot;catid&quot; and &quot;name&quot; attribute</h5>
+<p>Calls MITs SOAP interface to retreive the top level event categories</p>
+
+<h4>Method: subCategorys(integer <em>$id</em>)</h4>
+<h4><em>$id</em> integer id for the event category</h4>
+<h5>Returns: Array of event categories, each category has a &quot;catid&quot; and &quot;name&quot; attribute</h5>
+<p>Calls MITs SOAP interface to retreive sub-categories of a top level category specified by category id</p>
+
+<h4>Method: fullTextSearch(string <em>$text</em>, string <em>$start</em>, string <em>$end</em>, [integer <em>$category</em>])</h4>
+<h4><em>$text</em> the search text</h4>
+<h4><em>$start</em> a datetime string to delimit the beggining of the search</h4>
+<h4><em>$end</em> a datetime string to delimit the end of the search</h4>
+<h4><em>$category</em> category id integer</h4>
+<h4>Returns: Array of objects representing events</h4>
+<p>Use the MIT Calendar SOAP interface to search through all events which contain the text $text.  Events have to take place after the $start time and before $end time.  If a $category is specified then only events classifed as belonging to that category are returned</p>
+
+<h1>RSS Services</h1>
+<h2>Filename: rss_services.php</h2>
+
+<h3>Class: Emergency</h3>
+<p>This class extends the <b>RSS</b> with a URL to the MIT Emergency RSS
+service.</p>
+
+<h3>Class: RSS</h3>
+<h4>Method: get_feed()</h4>
+<h5>Returns: Array of feed items.  Each item is indexed by title 
+and includes time of last update and body text.</h5>
+
+<h1>Shuttle Schedule</h1>
+<h2>Filename: ShuttleSchedule.php</h2>
+
+<h3>Class: ShuttleSchedule</h3>
+<p>This class represents a set of shuttle <b>Route</b>s.</p>
+
+<h4>Method: route( string <em>$routeName</em>, string 
+<em>$shortName</em> [, string <em>$isSafeRide</em>] )</h4>
+<h5><em>$name</em> is the full name of the shuttle (example: 
+&quot;Cambridge East&quot;)</h5>
+<h5><em>$shortName</em> is the ID of the shuttle assigned by 
+NextBus.</h5>
+<h5><em>$isSafeRide</em> if this parameter is present and not 
+False, the shuttle is a night-time Saferide.</h5>
+<h5>Returns: a new <b>Route</b> object.</h5>
+
+<h3>Class: Route</h3>
+<p>This class specifies characteristics of a shuttle route.</p>
+<h4>Method: summary( string <em>$summary</em> )</h4>
+<p>This method adds a description of the route to be displayed 
+(example: &quot;Runs every evening, all year round&quot;)</p>
+<h5><em>$summary</em> is a text description of the route.</h5>
+
+<h4>Method: perHour( int <em>$perHour</em> )</h4>
+<h5><em>$perHour</em> is the number of times the shuttle runs ever 
+hour.</h5>
+
+<h4>Method: stops( array <em>$stops_data</em> )</h4>
+<h5><em>$stops_data</em> is an array of stops created using the 
+<b>st()</b> function.</h5>
+
+<h4>Method: addHours( string <em>$days_str</em>, HourList 
+<em>$hours</em> )</h4>
+<h5><em>$days_str</em> the range of days of the week that the 
+shuttle is run on this route (example: &quot;Sun-Wed&quot;)</h5>
+<h5><em>$hours</em> the HourList object representing the hours this 
+route is run each day in <em>$day_str</em></h5>
+
+<h3>Class: HourList</h3>
+<h4>Method: append(Hourlist <em>$new_hours</em>)</h4>
+<p>This function appends a new HourList object to an existing 
+HourList object.</p>
+<h5><em>$new_hours</em> hours to be added</h5>
+
+<h4>Function: hours(string <em>$hours_string</em>)</h4>
+<h5><em>$hours_string</em> is a space-delimited string of hours on a 
+24-hour time scale (example: &quot;23 0 1&quot;).  
+Consecutive hours may be respresented using a hyphen (example: 
+&quot;18-22&quot;)</em>
+<h5>Returns: Hourlist object with the hours specified in 
+<em>$hours_string</em></h5>
+
+<h4>Function: delay(int <em>$delay</em>, string <em>$hours_string</em> )</h4>
+<h5><em>$delay</em> is the number of minutes by which each hour in 
+<em>$hours_string</em> should be delayed.</h5>
+<h5><em>$hours_string</em> is the string of hours to be 
+delayed (example: &quot;23 0 1 2 3&quot;).</h5>
+<p>Additionally, a colon followed by a number <em>n</em> after the hour 
+indicates that the shuttle runs <em>n</em> times in this hour.  For 
+example, &quot;3:1&quot; means the shuttle at 3am runs once.</p>
+<h5>Returns: Hourlist object with each hour in <em>$hours_string</em> 
+delayed by <em>$delay</em> minutes.</h5>
+
+<h4>Function: st( string <em>$name</em>, string <em>$shortName</em>, 
+string <em>$direction</em>, string <em>$time</em> )</h4>
+<p>This function creates a representation of a single stop.</p>
+<h5><em>$name</em> is the full name of the stop (example: &quot;84 
+Mass. Ave&quot;).</h5>
+<h5><em>$shortName</em> is the ID assigned by NextBus to the stop.</h5>
+<h5><em>$direction</em> is the ID assigned by NextBus to the direction 
+the shuttle is going when at this stop</h5>
+<h5><em>$time</em> indicates the position of this stop along the route. 
+</h5>
+
+</body>
+</html>

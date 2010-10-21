@@ -1,0 +1,17 @@
+<?php
+$page->title($destination_name)
+     ->header('MIT Certificates Required')
+     ->help_off();
+
+$page->content_begin();
+?>
+
+<p><?=$destination_name?> requires MIT certificates.</p>  
+<p>If you don't have MIT certificates, get them now.</p>
+
+<p class="nav">
+	<a href="<?=$destination?>" accesskey="1">1. Go to <?=$destination_name?></a>
+	<a href="http://ca.mit.edu" accesskey="2">2. Get MIT Certificates</a><br>
+</p>
+
+<? $page->content_end(); ?>

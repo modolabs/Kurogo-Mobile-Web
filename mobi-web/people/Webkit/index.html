@@ -1,0 +1,41 @@
+<?php
+$page->title('People')
+     ->navbar_image('people')
+     ->breadcrumbs('People Directory')
+     ->breadcrumb_home()
+     ->add_javascript('../Webkit/uiscripts')
+     ->extra_onload('androidPlaceholderFix()');
+
+$page->content_begin();
+?>
+	<div class="nonfocal">
+		<form method="get" action="">
+			<fieldset class="inputcombo emphasized">
+				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search" value="<?=$search_terms?>" />
+				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
+			</fieldset>	
+
+                <? if($failed_search) { ?>
+                      <p>No matches found</p>
+                <? } ?>
+
+		</form>
+	</div>
+	
+	<div class="legend nonfocal">
+	<strong>Sample searches:</strong><br/>
+	    Name: 'william barton rogers', 'rogers'<br/>
+	    Email: 'wbrogers', 'wbrogers&shy;@&shy;mit.edu'<br/>
+	    Phone: '61725&shy;31000&shy;', '31000&shy;'
+	</div>
+	
+	<ul class="secondary">
+		<li>
+			<a href="tel:16172531000" class="phone">Phone Directory <span class="smallprint">(617.253.1000&shy;)</span></a>
+		</li>
+		<li>
+			<a href="../emergency/" >Emergency Contacts</a>
+		</li>
+	</ul>
+	
+<? $page->content_end(); ?>

@@ -1,0 +1,21 @@
+﻿Manifest-Version:  1.0
+MIDlet-Version:  1.1
+MIDlet-Jar-Size:  16093
+RIM-COD-Module-Dependencies:  net_rim_cldc,net_rim_bb_framework_api,net_rim_bbapi_browser
+MicroEdition-Configuration:  CLDC-1.1
+MIDlet-Jar-URL:  MITMobileWeb.jar
+RIM-MIDlet-Flags-2:  3
+RIM-MIDlet-Flags-1:  0
+RIM-COD-Module-Name:  MITMobileWeb
+MIDlet-Name:  MITMobileWeb
+RIM-COD-Creation-Time:  1247501085
+MIDlet-2: MIT Mobile Web,,autostartup
+MIDlet-1: MIT Mobile Web,..\..\src\com\bblauncher\launcher\order2299\item1\images\default-normal.png,
+MIDlet-Description: People, maps, shuttles, events, Stellar and more, optimized for your mobile device
+RIM-MIDlet-NameResourceId-1:  0
+MicroEdition-Profile:  MIDP-2.0
+MIDlet-Vendor:  Massachusetts Institute of Technology
+RIM-MIDlet-NameResourceBundle-1:  com.bblauncher.launcher.order2299.item1.resources.LauncherStrings
+RIM-COD-URL: MITMobileWeb.cod
+RIM-COD-SHA1:  b2 d6 a6 ea 0f 8b 2e 07 5e 73 9c b3 b2 77 b5 72 59 24 b4 6f
+RIM-COD-Size: 8092

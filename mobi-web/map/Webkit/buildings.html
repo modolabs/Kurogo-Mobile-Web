@@ -1,0 +1,38 @@
+<?php
+$page->title('Map: Browse by Building Number')
+     ->navbar_image('map')
+     ->breadcrumbs('Browse Map');
+
+$drilldowns = array(
+  "Main"      => "1-68",
+  "North"     => "N4-N57",
+  "Northeast" => "NE18-NE125",
+  "East"      => "E1-E70",
+  "West"      => "W1-WW15",
+  "Northwest" => "NW10-NW95"
+);
+
+$page->content_begin();
+?>
+	<div class="nonfocal">
+		<h2>Browse Buildings by Number</h2>
+	</div>
+	
+	<ul class="nav">
+            <? foreach($drilldowns as $name => $drilldown) { ?>
+		<li><a href="<?=drillURL($drilldown, $name)?>"><?=$name?> Campus <span class="smallprint">(<?=$drilldown?>)</span></a></li>
+            <? } ?>
+	</ul>
+	
+	<div class="nonfocal">
+		<form action="" method="get" >
+                        <select name="category" onchange="this.parentNode.submit();">
+				<option value="" selected="selected">Browse map by:</option>
+                                <? foreach($category_info as $category => $info) { ?>
+                                    <option value="<?=$category?>"><?=$info[0]?></option>
+                                <? } ?>
+			</select>
+		</form>
+	</div>
+
+<? $page->content_end(); ?>

@@ -1,0 +1,31 @@
+<?php
+$page->title('About this Site')
+     ->header('About this Site');
+
+$page->content_begin();
+?>
+
+	<div class="focal"> 
+	
+		<h2>Background Information</h2> 
+		<p>The MIT Mobile Web provides essential MIT information and services anytime, anywhere on your mobile device, with an interface optimized for on-the-go access.</p> 
+		
+		<p>This site detects the device you're using and delivers an experience optimized for it. You're using the version optimized for <?=$device_phrase?>.</p> 
+		
+		<p><a href="../sms/">A parallel service based on SMS (text messaging)</a>, offering much of the same content as this website, is also available by texting to 648338 ('MITEDU'). For more information, text 'help' to 648338.</p> 
+		
+		<p>The MIT Mobile Web is provided by IS&amp;T, in cooperation with other departments, as a free service* to the MIT community.</p> 
+		
+		<p>We value your feedback! Please email your questions and suggestions to <a href="mailto:mobiweb@mit.edu">mobiweb@mit.edu</a>.</p> 
+	</div> 
+
+	<p class="nonfocal legend"> 
+		<strong>* Important note:</strong> The MIT Web is a free service. Extra data charges may apply when using any website on your mobile device depending on your service plan.
+	</p> 
+
+<? 
+$page->content_end(); 
+$page->help_off();
+$page->nav_link('./', 'About this Site');
+
+?>

@@ -1,0 +1,19 @@
+<?
+$page->title("MIT Map: Directions to MIT")
+     ->header("Campus Map");
+$page->content_begin();
+?>
+
+        <div class="focal">
+  	    <h2><?=$info->header?></h2>	
+            <?=$info->html?>
+        </div>
+
+	<p class="paging">
+		<a href="directions.php">&lt; Back to Directions</a>
+	</p>    
+
+<?
+$page->content_end();
+$page->nav_link("./", "Campus Map");
+?>

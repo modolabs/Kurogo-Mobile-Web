@@ -1,0 +1,23 @@
+<?php
+$page->title('About this Site')
+     ->header('About this Site');
+
+$page->content_begin();
+?>
+
+	<p class="nav"> 
+		<a href="new.php" accesskey="1">1. What's New</a><? if($whats_new_count) { ?> (<?=$whats_new_count?> unread)<? } ?><br/> 
+		<a href="../customize/" accesskey="2">2. Customize Homepage</a><br/> 
+		<a href="./?page=requirements" accesskey="3">3. System Requirements</a><br/> 
+		<a href="./?page=background" accesskey="4">4. Background Information</a><br/> 
+		<a href="./?page=credits" accesskey="5">5. Credits</a><br/> 
+	</p> 
+	
+	<p class="secondary"> 
+		<a href="mailto:mobiweb@mit.edu">Send us Feedback!</a><br/> 
+	</p> 
+
+<? 
+$page->content_end(); 
+$page->help_off();
+?>

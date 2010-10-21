@@ -1,0 +1,38 @@
+<?php
+$page->title("Events: MIT Holidays")
+     ->navbar_image('calendar')
+     ->header("MIT Holidays");
+
+$page->content_begin();
+?>
+	<div class="nonfocal">
+		<h2>MIT Holidays <strong><?=$year?></strong></h2>
+		<p>
+                   <? if($has_prev) { ?>
+                       <a href="<?=holidaysURL($prev)?>">&lt; <?=$prev?></a> 
+                   <? } ?>
+
+                   <? if($has_prev && $has_next) { ?> | <? } ?>
+
+                   <? if($has_next) { ?>
+                      <a href="<?=holidaysURL($next)?>"><?=$next?> &gt;</a>
+                   <? } ?>
+                </p>
+	</div>
+	
+	<div class="focal">
+	
+		<dl>
+                     <? for($cnt=0; $cnt < count($holidays); $cnt += 2) { ?>
+			<dt><?=weekday($holidays[$cnt], $year)?>, <?=$holidays[$cnt]?>, <?=$year?></dt>
+			<dd><?=$holidays[$cnt+1]?></dd>
+	             <? } ?>
+		</dl>
+			
+	</div>
+	
+	<ul class="secondary">
+ 	    <li><a href="<?=religiousURL()?>">Student Absences for Religious Observances</a></li>
+	</ul>
+
+<? $page->content_end(); ?>

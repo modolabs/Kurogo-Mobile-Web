@@ -1,0 +1,118 @@
+		#homegrid {
+			margin: 0 auto;
+			padding: 0;
+			margin-left: 2px;
+		}
+		#homegrid div {
+			position: relative;
+			width: 78px;
+			height: 91px;
+			margin: 0;
+			padding: 0;
+			border: 0;
+			float: left;
+			font-size: 13px;
+			line-height: 14px;
+			text-align: center;		
+			vertical-align: top;
+		}
+		#homegrid a {	
+			display: block;
+			color: #303336;
+			text-decoration: none;
+			padding: 8px 5px;
+		}
+		#homegrid a img {
+			margin-bottom: 1px;
+		}
+		.intro {
+			margin-bottom: 0;
+			text-align: center;
+		}
+		.fineprint {
+			font-size: 10px;
+			color: #404649;
+		}
+		.homepage .pagetitle {
+			padding: 9px 5px;
+			text-align: center;
+		}
+		h1 {
+			font-size: 36px;
+			line-height: 36px;
+			margin: 14px 15px 6px 15px;
+			color: #112;
+			text-align: center;
+		}
+		h1.roomfornew {
+			font-size: 33px;
+			text-align: left;
+		}
+		#logo {
+			padding-right: 14px;
+		}
+		h1.roomfornew #logo {
+			width: 48px;
+			height: 24px;
+		}
+		#new {
+			position: absolute;
+			top: -12px;
+			right: -9px;
+			width: 80px;
+			height: 80px;
+			background-image: url(Webkit/images/newbig.png);
+			background-repeat: no-repeat;
+			color: #fff;
+			font-size: 13px;
+			line-height: 13px;
+			text-align: center;
+			overflow: hidden;
+		}
+		#new a {
+			display: block;
+			width: 56px;
+			height: 50px;
+			padding: 0;
+			text-decoration: none;
+			color: #fff;
+			position: absolute;
+			top: 18px;
+			right: 7px;
+		}
+		#new a .newlabel {
+			display: block;
+			font-size: 9px;
+			line-height: 11px;
+			color: #ffcece;
+		}
+		#beta {
+			position: absolute;
+			top: 0;
+			right: 0;
+		}
+		#footer {
+			margin-top: 0;
+			padding-top: 8px;
+			text-align: center;
+			clear: both;
+		}
+		#viewfull {
+			text-align: center;
+			margin: 14px 0;
+			font-size: 13px;
+		}
+		.badge {
+			position: absolute;
+			right: 10px;
+			top: 2px;
+			width: 24px;
+			height: 24px;
+			padding-top: 5px;
+			text-align: center;
+			color: #fff;
+			font-size:12px;
+			font-weight: bold;
+			background-image: url(Webkit/images/badge.png);
+			background-repeat: no-repeat;
+		}

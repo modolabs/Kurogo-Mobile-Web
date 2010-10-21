@@ -1,0 +1,126 @@
+<?='<?xml version="1.0" encoding="UTF-8"?>'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="content-type" content="application/xhtml+xml" />
+	<meta name="viewport" id="viewport" content="width=device-width, user-scalable=yes,initial-scale=1.0,maximum-scale=1.0">		
+	<title>MIT Mobile Web</title>
+	<link rel="stylesheet" type="text/css" href="../Webkit/core.css" />
+ 	<link rel="apple-touch-icon" href="../Webkit/images/icon.png" />
+
+
+<script type="text/javascript" charset="utf-8">
+   function init() {
+
+       // 1. set up reorderable list
+       var cookie = getCookie("activemodules");
+       var activeModules = (cookie) ? cookie.split(",") : [];
+       cookie = getCookie("moduleorder");
+       var moduleOrder = (cookie) ? cookie.split(",") : [];
+       var container = document.getElementById("homegrid");
+       var modules = container.getElementsByTagName("div");
+       // deal with sort order
+       var k = 0;
+       var modName = null;
+       for (var j=0; j < activeModules.length; j++) {
+           for (var i=0; i < modules.length; i++) {
+               modName = modules[i].getAttribute("id");
+               if (activeModules[j] == modName) {
+                   container.appendChild(modules[i]);
+                   break;
+               }
+           }
+       }
+       // hide inactive modules and put modules not mentioned in the cookies at all at the end
+       addClass(container, "invisible");
+       for (var i=0; i < modules.length - activeModules.length; i++) {
+           for (var j=0; j < moduleOrder.length; j++) {
+               if (moduleOrder[j] == modules[0].getAttribute("id")) {
+                   addClass(modules[0], "invisible");
+                   break;
+               }
+           }
+           container.appendChild(modules[0]);
+       }
+       removeClass(container, "invisible");
+       window.scrollTo(0,1);
+   }
+
+   function getCookie(name) {
+       var cookie = document.cookie;
+       var result = null;
+       var start = cookie.indexOf(name + "=");
+       if (start > -1) {
+           start += name.length + 1;
+           end=cookie.indexOf(";", start);
+           if (end < 0) {
+               end = cookie.length;
+           }
+           result = unescape(cookie.substring(start, end));
+       }
+       return result;
+   }
+
+   function hasClass(ele,cls) {
+       return (ele && ele.className && ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)')));
+   }
+   function addClass(ele,cls) {
+       if (!this.hasClass(ele,cls)) ele.className += " " + cls;
+   }
+   function removeClass(ele,cls) {
+       if (hasClass(ele,cls)) {
+           var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+           ele.className=ele.className.replace(reg,' ');
+       }
+   }
+
+<?
+$jsfile = $page->delta_file('index', 'js');
+if (file_exists($jsfile)) {
+  require $jsfile;
+}
+?>
+</script>
+<?
+$cssfile = $page->delta_file('index', 'css');
+if (file_exists($cssfile)) { ?>
+<style type="text/css">
+<? require $cssfile; ?>
+</style>
+<? } ?>
+</head>
+
+<body onload="setTimeout('scrollTo(0,1)', 100); init(); <?=$extra_onload?>" onunload="">
+
+<h1 <? if($top_item) {?>class="roomfornew"<? } ?> ><img src="Webkit/images/mit-logo-home.gif" width="56" height="28" alt="" id="logo" />Mobile Web</h1>
+
+<? if($top_item) { ?>
+      <div id="new"><a href="../mobile-about/new.php"><span class="newlabel">NEW:</span><?=$top_item?></a></div>
+<? } ?>
+
+
+<div id="container">
+
+	<div id="homegrid">
+               <? foreach($all_modules as $module) { ?>
+                     <div id="<?=$module?>">
+                         <a href="<?=url($module)?>">
+                              <img src="Webkit/images/<?=$module?>.png" width="50" height="50" alt="<?=Modules::title($module)?>" />
+                              <br/><?=Modules::title($module)?>
+                              <? if(Modules::subtitle($module)) { ?>
+                                   <br/><span class="fineprint"><?=Modules::subtitle($module)?></span>
+                              <? } ?>
+			      <? if ($module == 'mobile-about' && $whats_new_count) { ?>
+			          <span class="badge"><?=$whats_new_count?></span>
+			      <? } ?> </a>
+                     </div>
+               <? } ?>
+	
+</div>
+
+<div id="footer">
+	<a href="http://web.mit.edu/ist/"><img src="../Webkit/images/ist-logo.png" width="35" height="21" alt="IST" /></a>Information Services &amp; Technology
+<? if ($_SERVER['SERVER_NAME'] == 'mobi2.mit.edu') { include('extra_footer.php'); } ?>
+</div>
+</body>
+</html>

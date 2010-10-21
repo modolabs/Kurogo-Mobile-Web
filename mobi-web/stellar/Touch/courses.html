@@ -1,0 +1,14 @@
+<?php
+$page->title("Stellar: $title")
+     ->navbar_image('stellar')
+     ->header($title);
+
+$page->content_begin();
+?>
+	<ul class="nav">
+            <? foreach($courses as $id => $course) { ?>
+		<li><a href="<?=courseURL($id, $which)?>"><?=name($course)?> (<?=idName($id, $course)?>)</a></li>
+            <? } ?>
+	</ul>
+
+<? $page->content_end(); ?>

@@ -1,0 +1,18 @@
+<div class="nonfocal">
+	<form method="get" action="">
+		<fieldset class="inputcombo">
+			<input class="forminput" type="text" id="filter" name="filter" value="<?=$_REQUEST['filter']?>" />
+			<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
+                        <input type="hidden" name="id" value="<?=$catid?>" />
+		</fieldset>	
+		<fieldset>
+		        <select id="timeframe" name="timeframe">
+		               <? foreach($search_options as $key => $option) { ?>
+                                      <option value="<?=$key?>" <? if($option['selected']) { ?>selected="selected"<? } ?> ><?=$option['phrase']?></option>
+                               <? } ?>
+			</select>
+		</fieldset>	
+		<p><?=$total?> matching events found.</p>
+	</form>
+</div>
+

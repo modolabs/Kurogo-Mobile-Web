@@ -1,0 +1,11 @@
+
+	<ul class="results">
+              <? foreach($results as $person) { ?>
+		     <li>
+                        <a href="<?=detail_url($person)?>">
+                           <?=$person['surname'][0]?>, <?=$person['givenname'][0]?>
+                        </a>
+                     </li>
+	      <? } ?>
+	</ul>
+	

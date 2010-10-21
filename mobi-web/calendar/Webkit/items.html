@@ -1,0 +1,6 @@
+<ul class="results">
+     <? foreach($results as $event) { ?>
+          <li><a href="<?=detailURL($event)?>"><?=$event->title?><br/><span class="smallprint"><?=timeText($event)?><? if($loc = briefLocation($event)) { ?> | <?=briefLocation($event)?><? } ?></span></a></li>
+     <? } ?>
+</ul>
+

@@ -1,0 +1,131 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+a img {
+	border: none 
+}
+
+body {
+	background-color: #b9c6d6;
+	font: 14px/1.33em Helvetica, Arial, sans-serif;
+	color: #202629;
+}
+
+#container { 
+	margin: 0 auto;
+	padding: 0 2px;
+	text-align: left;
+	min-height: 400px;
+}
+#footer {
+	clear: both;
+	min-height: 22px;
+	margin: 20px 10px 14px 10px;
+	font-size: 78%;
+	line-height: 1.1em;
+	font-weight: normal;
+	color: #303639;
+}
+
+h1 {
+	margin: 0;
+	padding: 14px 0 8px 12px;
+	text-align: left;
+	color: #000;
+	font-size: 171%;
+}
+#homegrid {
+	margin: 0 auto;
+	padding: 0;
+	margin-left: 2px;
+}
+#homegrid div {
+	position: relative;
+	width: 72px;
+	height: 82px;
+	margin: 0 1px;
+	padding: 0;
+	border: 0;
+	float: left;
+	font-size: 12px;
+	line-height: 1.1em;
+	text-align: center;		
+	vertical-align: top;
+}
+#homegrid a {	
+	display: block;
+	color: #202326;
+	text-decoration: none;
+	border: none;
+	padding: 8px 5px;
+}
+#homegrid a img {
+	margin-bottom: 1px;
+	border: none;
+}
+.intro {
+	margin-bottom: 0;
+	text-align: center;
+}
+.fineprint {
+	font-size: 80%;
+	color: #404649;
+	line-height: 1.2em;
+}
+.homepage .pagetitle {
+	padding: 9px 5px;
+	text-align: center;
+}
+#logo {
+	padding: 0;
+}
+#new {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 80px;
+	height: 80px;
+	background-image: url(images/newbig.jpg);
+	background-repeat: no-repeat;
+	color: #fff;
+	font-size: 13px;
+	line-height: 13px;
+	text-align: center;
+	overflow: hidden;
+}
+#new a {
+	display: block;
+	width: 56px;
+	height: 50px;
+	padding: 0;
+	text-decoration: none;
+	color: #fff;
+	position: absolute;
+	top: 18px;
+	right: 7px;
+}
+#new a .newlabel {
+	display: block;
+	font-size: 9px;
+	line-height: 11px;
+	color: #ffcece;
+}
+#beta {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+#footer {
+	margin-top: 0;
+	padding-top: 24px;
+	text-align: left;
+	clear: both;
+}
+#viewfull {
+	text-align: center;
+	margin: 14px 0;
+	font-size: 13px;
+}

@@ -1,0 +1,30 @@
+<?php
+$page->title("Events Calendar: Academic Calendar")
+     ->header('Events Calendar');
+
+$page->content_begin();
+?>
+
+   <h2>Academic Calendar <strong><?=$Month?> <?=$year?></strong></h2>
+
+   <p class="nonfocal"><? if($has_prev) { ?><a href="<?=$prev_url?>">&lt; <?=$prev_month?> <?=$prev_yr?></a><? } if($has_prev && $has_next) { ?>&nbsp;|&nbsp;<? } if($has_next) { ?><a href="<?=$next_url?>"><?=$next_month?> <?=$next_yr?> &gt;</a><? } ?></p>
+
+<div class="focal">
+   <? foreach($days as $index => $day) { ?>
+      <h4><?=$day->day_text($year, $month)?></h4>
+      <ul>
+          <? foreach($day->items as $item) { ?>
+             <li><?=$item->html()?></li>
+          <? } ?>
+      </ul>
+      <? if($index != sizeof($days)-1 && $phone == 'sp') {?>
+          <p class="bb">&nbsp;</p>
+      <? } ?>
+   <? } ?>
+</div>
+<?
+
+$page->content_end();
+$page->nav_link("./", "Events Calendar Home");
+
+?>

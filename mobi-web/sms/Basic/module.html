@@ -1,0 +1,23 @@
+<?php
+$page->title('MIT SMS (BETA)')
+     ->header('MIT SMS (BETA)');
+
+$page->content_begin();
+?>
+
+   <div class="focal">
+       <h2><?=$module->name?></h2>
+       <p><?=$module->text?>  To get started, text-message "<?=$module->keyword?> [help]" to 648338 ('MITEDU').</p>
+       <? foreach($module->elements as $title => $lines) { ?>
+           <p><strong><?=$title?>:</strong><br/><?=implode('<br/>', $lines)?></p>
+       <? } ?>
+   </div>
+
+   <p class="nonfocal legend">
+       This service is free from MIT, but carrier charges may apply.
+   </p>
+
+<? 
+$page->content_end(); 
+$page->nav_link("./", "MIT SMS (BETA)");
+?>

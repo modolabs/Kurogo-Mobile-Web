@@ -1,0 +1,19 @@
+<?php
+$page->title("Map: Browse $title")
+     ->navbar_image('map')
+     ->header('Browse Map');
+
+$page->content_begin();
+?>
+		
+	<div class="nonfocal">
+		<h2>Browse <?=$title?></h2>
+	</div>
+	
+	<ul class="nav">
+            <? foreach($places as $name => $number) { ?>
+		<li><a href="<?=detailURL($number, $name)?>"><?=$name?></a></li>
+            <? } ?>
+	</ul>
+
+<? $page->content_end(); ?>

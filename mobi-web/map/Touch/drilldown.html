@@ -1,0 +1,36 @@
+<?
+switch ($category) {
+  case "buildings":
+    $shortcuts = array(
+      "Main" => "Main",
+      "Northwest" => "NW",
+      "Northeast" => "NE",
+      "West" => "West",
+      "East" => "East",
+      "North" => "North"
+    );
+    $heading = $drilldown_title . " Campus";
+    break;
+  case "names":
+    $heading = $drilldown;
+    break;
+}
+
+$page->title("Map: Browse by $titlebar")
+     ->navbar_image('map')
+     ->header($heading);
+
+$page->content_begin();
+?>
+
+	<div class="nonfocal">
+		<h2>Browse Buildings: <?=$heading?></h2>
+	</div>
+	
+	<ul class="nav">
+             <? foreach($places as $name => $number) { ?>
+		<li><a href="<?=detailURL($number, $name)?>"><?=$name?></a></li>
+             <? } ?>
+	</ul>
+
+<? $page->content_end(); ?>

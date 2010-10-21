@@ -1,0 +1,26 @@
+<?php
+$page->title('About this Site')
+     ->header('About this Site');
+
+$page->content_begin();
+?>
+
+<div class="focal"> 
+	<h2>What's New</h2> 
+
+	<? foreach($items as $item) { ?>
+		<p><strong><?=$item['title']?></strong>: <?=text($item)?> <span class="smallprint">(<?=date_string($item, 'M j')?>)</span></p>
+        <? } ?> 
+
+</div>  
+
+<? $docRoot = getenv("DOCUMENT_ROOT");
+    require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+    require WEBROOT . "Basic/arrows.html"; ?>
+
+<? 
+$page->content_end(); 
+$page->help_off();
+$page->nav_link('./', 'About this Site');
+
+?>

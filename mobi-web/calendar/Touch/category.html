@@ -1,0 +1,21 @@
+<?php
+$title_end = !$is_search ? " for Today" : "";
+
+$page->title("Events: " . ucname($category->name) . $title_end)
+     ->navbar_image('calendar')
+     ->header("Browse");
+
+$page->content_begin(); 
+?>
+
+<div class="nonfocal">
+   <h2><?=ucname($category->name)?></h2>
+</div>
+
+<?
+
+$content->output($events);
+
+$page->content_end(); 
+?>
+

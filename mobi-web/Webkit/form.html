@@ -1,0 +1,14 @@
+<div class="nonfocal">
+      <form method="get" action="">
+            <fieldset class="inputcombo">
+                  <input class="forminput" type="text" id="filter" name="filter" value="<?=$_REQUEST['filter']?>" />
+                  <input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
+            </fieldset>
+            <p><?=$total?> matches found.</p>
+
+            <? if($total >=50) { ?>
+                <p>Many entries found, please refine your search</p>
+            <? } ?>
+
+      </form>
+</div>

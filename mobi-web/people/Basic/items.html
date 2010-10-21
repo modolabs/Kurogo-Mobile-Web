@@ -1,0 +1,6 @@
+
+<p class="focal results"> 
+          <? foreach($results as $person) { ?>
+              <a href="<?=detail_url($person)?>"><?=$person['surname'][0]?>, <?=$person['givenname'][0]?></a><br/>
+          <? } ?> 
+</p>

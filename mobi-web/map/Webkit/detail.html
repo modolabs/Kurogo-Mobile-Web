@@ -1,0 +1,122 @@
+<?
+$bbox = iPhoneBBox();
+$select_bbox = iPhoneSelectBBox();
+$mapLayers = layers();
+
+$bbox_script =<<<JS
+     var mapSelect = '$selectvalue';
+     var initMapBoxW = {$bbox["minx"]};
+     var initMapBoxN = {$bbox["maxy"]};
+     var initMapBoxS = {$bbox["miny"]};
+     var initMapBoxE = {$bbox["maxx"]};
+     var selectMapBoxW = {$select_bbox["minx"]};
+     var selectMapBoxN = {$select_bbox["maxy"]};
+     var selectMapBoxS = {$select_bbox["miny"]};
+     var selectMapBoxE = {$select_bbox["maxx"]};
+     var photoURL = '$photoURL';	// If there's no photo, set to ""
+     var mapOptions = "&selectfield={$types['field']}&selectlayer={$types['type']}";
+     var mapLayers = "$layers";
+JS;
+
+$page->title('Campus Map: Details')
+     ->navbar_image('map')
+     ->not_scalable()
+     ->add_stylesheet('Webkit/map')
+     ->add_inline_script($bbox_script)
+     ->add_javascript('../Webkit/uiscripts')
+     ->add_javascript('Webkit/map')
+     ->breadcrumbs('Map Details')
+     ->extra_onload("loadImage(getMapURL(mapBaseURL),'mapimage');");
+
+$page->content_begin();
+?>
+	<a name="scrolldown"></a>		
+	<div class="focal shaded">
+                <? if($snippets) { ?>
+                   <p class="foundat"><?=$snippets?> found in:</p>
+                <? } ?>
+
+		<h2><?=$building_title?></h2>
+		<p class="address"><?=$data['street']?></p>
+		<ul id="tabs">
+			<li class="active"><a href="#scrolldown" onclick="showTab('maptab',this); hide('loadingimage')">Map</a></li>
+			<? if($photoURL) { ?>
+                           <li><a href="#scrolldown" onclick="showTab('phototab',this),loadImage(photoURL,'photo')">Photo</a></li>
+                        <? } ?>
+                        
+                        <? if($anything_here) { ?>
+			   <li><a href="#scrolldown" onclick="showTab('heretab',this)">What's Here</a></li>
+                        <? } ?>
+		</ul>
+		
+		<div id="tabbodies">	
+			<div class="tabbody" id="maptab">
+				<div id="mapscrollers">
+					<div id="nw"><a href="#scrolldown" onclick="scroll('nw'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="NW" /></a></div>
+					<div id="n"><a href="#scrolldown" onclick="scroll('n'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="N" /></a></div>
+					<div id="ne"><a href="#scrolldown" onclick="scroll('ne'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="NE" /></a></div>
+					<div id="e"><a href="#scrolldown" onclick="scroll('e'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="E" /></a></div>
+					<div id="se"><a href="#scrolldown" onclick="scroll('se'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="SE" /></a></div>
+					<div id="s"><a href="#scrolldown" onclick="scroll('s'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="S" /></a></div>
+					<div id="sw"><a href="#scrolldown" onclick="scroll('sw'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="SW" /></a></div>
+					<div id="w"><a href="#scrolldown" onclick="scroll('w'); "><img src="../Webkit/images/blank.png" width="50" height="50" alt="W" /></a></div>
+					<img id="loadingimage" src="../Webkit/images/loading2.gif" width="40" height="40" alt="Loading" />
+				</div> <!-- id="mapscrollers" -->
+				<img id="mapimage" width="290" height="190" alt="" onload="hide('loadingimage')" /> 
+				<div id="mapzoom">
+					<a href="#" onclick="zoomin(); return false;" id="zoomin"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Zoom In" /></a>
+					<a href="#" onclick="zoomout(); return false;" id="zoomout"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Zoom Out" /></a>
+					<a href="#" onclick="recenter(); return false;" id="recenter" class="disabled"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Recenter" /></a>
+					<a href="detail-fullscreen.php" id="fullscreen"><img src="../Webkit/images/blank.png" width="40" height="34" alt="Full Screen" /></a>
+				</div>
+			</div> <!-- id="maptab" -->
+		
+
+			<div class="tabbody" id="phototab" style="display:none">
+				<img id="loadingimage2" src="../Webkit/images/loading2.gif" width="40" height="40" alt="Loading" />
+				<img id="photo" src="" width="" height="" alt="Photo" onload="hide('loadingimage2')" />
+				<p class="legend">View from <?=$data['viewangle']?><? if($data['architect']) {?><br/>Architect: <?=$data['architect']?><? } ?></p>	 
+			</div> <!-- id="phototab" -->
+
+
+
+			<div class="tabbody" id="heretab" style="display:none">
+				<ul>
+                                     <? foreach($whats_here as $item) { ?>
+					  <li><?=$item?></li>
+                                     <? } ?>
+				</ul>
+			</div> <!-- id="heretab" -->
+
+
+
+			<div class="clear"></div>
+		</div>
+
+	</div> <!-- class="focal shaded" -->
+	
+        <? if(cleanStreet($data)) {?>
+	   <ul class="secondary">
+		<li>
+			<a href="http://maps.google.com/maps?q=<?=cleanStreet($data)?>, <?=$data['city']?>" class="external">Google Map <span class="smallprint">(<?=cleanStreet($data)?>)</span></a>
+		</li>
+	  </ul>
+	<? } ?>
+<?
+$page->content_end();
+
+
+$script =<<<JS
+	showTab('maptab');
+
+	var objMap = document.getElementById('mapimage');
+	if(objMap) {
+		mapW = objMap.scrollWidth - 2;
+		mapH = objMap.scrollHeight - 2;
+	}
+
+        checkIfMoved();
+JS;
+
+$page->footer_script($script);
+?>

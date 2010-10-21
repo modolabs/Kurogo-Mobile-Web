@@ -1,0 +1,4 @@
+AddType text/vnd.sun.j2me.app-descriptor .jad
+AddType application/java-archive .jar
+AddType application/vnd.rim.cod .cod
+

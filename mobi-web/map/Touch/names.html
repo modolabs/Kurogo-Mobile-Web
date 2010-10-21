@@ -1,0 +1,18 @@
+<?php
+$page->title('Map: Browse by Building Name')
+     ->navbar_image('map')
+     ->header('Browse Map');
+
+$page->content_begin();
+?>
+	<div class="nonfocal">
+		<h2>Browse Buildings by Name</h2>
+	</div>
+	
+	<ul class="nav">
+            <? foreach(array("1-999","A-C","D-F","G-L","M-Q","R-U","V-Z") as $drilldown) { ?>
+		<li><a href="<?=drillURL($drilldown)?>"><?=$drilldown?></a></li>
+            <? } ?>
+	</ul>
+
+<? $page->content_end(); ?>

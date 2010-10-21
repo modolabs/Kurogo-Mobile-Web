@@ -1,0 +1,52 @@
+<?
+$page->title('Preferences')
+     ->navbar_image('preferences')
+     ->breadcrumbs('Preferences')
+     ->breadcrumb_home()
+     ->not_scalable()
+     ->add_inline_script('var httpRoot = "' . HTTPROOT . '";');
+ 
+$page->inline_css_begin(); 
+  require $page->delta_file('index', 'css');
+$page->inline_css_end();
+
+$page->inline_js_begin(); 
+  require $page->delta_file('index', 'js');
+$page->inline_js_end(); 
+?>
+<? $page->content_begin(); ?>
+
+	<div class="nonfocal smallprint"> 
+		Use the arrow buttons to customize the order of icons on your homepage, and the checkboxes to toggle visibility. Your changes will be automatically saved.
+	</div> 
+
+	<ul class="nav iconic" id="homepageList">
+	     <? foreach($menu as $item) { ?>
+		<li id="<?=$item['name']?>">
+                       <? if($item['toggle_url']) { ?>
+                                <input type="checkbox" onclick="toggle(this);" <? if($item['status']=='on') {?>checked="checked"<? } ?> />
+                       <? } ?>
+                       <span class="nolink" style="background-image:url(Webkit/images/<?=$item['name']?>-tiny.png)"><?=Modules::title($item['name'])?>
+				<span class="nolinkbuttons"> 
+					<a href="#" onclick="moveUp(this); return false;"><!--<img src="Webkit/images/button-up.png" width="26" height="26" class="moveup" alt="Move up"/>--><div class="moveup">&nbsp;</div></a> 
+					<a href="#" onclick="moveDown(this); return false;"><!--<img src="Webkit/images/button-down.png" width="26" height="26" class="movedown" alt="Move down"/>--><div class="movedown">&nbsp;</div></a> 
+				</span> 
+			</span>                   
+		</li>
+	     <? } ?>
+         </ul>
+     <div class="formbuttons">
+         <a class="formbutton" href="../home/"><div>Return to Home</div></a>
+     </div>
+<? $page->content_end(); ?>
+<? 
+
+$script =<<<JS
+	initializeHomeArray();
+	var objBusybox = document.createElement("IMG");
+	objBusybox.src = "../../Webkit/images/loading.gif";
+	objBusybox.className = "busybox";
+JS;
+
+$page->footer_script($script);
+?>

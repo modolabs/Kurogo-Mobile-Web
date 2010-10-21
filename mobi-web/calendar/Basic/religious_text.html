@@ -1,0 +1,26 @@
+<?php
+$page->title("Events Calendar: Holidays")
+     ->header('Events Calendar');
+
+$page->content_begin();
+?>
+
+   <h2>Student Observances for Religious Holidays</h2>
+
+   <div class="focal">
+      <p>Massachusetts state law regarding student absence due to religious beliefs has been adopted by the Institute as follows:</p>
+      <p>&quot;Any student who is unable to attend classes or participate in any examination, study, or work requirement on a particular day because of his or her religious beliefs is excused from any such activity.  The student will be given the opportunity to make up the work that was missed, provided that the makeup work does not create an unreasonable burden upon MIT.</p>
+
+      <p>The Institute will not level fees or charges of any kind when allowing the student to make up missed work.  In addition, no adverse or prejudicial effects will result because students have made use of these provisions.&quot;</p>
+      <p>For more information, please contact the Registrar's Office.</p>
+   </div>
+
+   <p class="paging">
+      <a href="<?=holidaysURL($year)?>">&lt; Back</a>
+   </p>
+<?
+
+$page->content_end();
+$page->nav_link("./", "Events Calendar Home");
+
+?>

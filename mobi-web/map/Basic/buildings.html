@@ -1,0 +1,24 @@
+<?
+$page->title("MIT Campus Map: Browse by Building Number")
+     ->header("Campus Map");
+
+$drilldowns = array(
+  "1-10", "11-26", "31-48", "50-68", "E1-E28", "E33-E70",
+  "N4-N57", "NE18-NE125", "NW10-NW17", "NW20-NW95", "W1-W16",
+  "W20-W61", "W70-WW15"
+); 
+
+$page->content_begin();
+?>
+
+	<h2>Buildings by Number</h2>
+	
+	<p class="nav">	
+             <? foreach($drilldowns as $drilldown) {?>
+		<a href="<?=drillURL($drilldown)?>"><?=$drilldown?></a> &nbsp;
+             <? } ?>
+	</p>
+<?
+$page->content_end();
+$page->nav_link("./", "Campus Map Home");
+?>

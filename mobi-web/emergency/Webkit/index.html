@@ -1,0 +1,27 @@
+<?php
+$page->title("Emergency")
+     ->navbar_image("emergency")
+     ->breadcrumbs("Emergency Info")
+     ->breadcrumb_home();
+
+$page->content_begin();
+?>
+	<div class="focal" id="statusmsg">
+             <?
+                echo implode('<br /><br />', $paragraphs);
+             ?>
+	</div>
+	
+	<ul class="secondary">
+
+            <? foreach($main as $item) { ?>
+		<li>
+			<a href="tel:<?=$item->call_number()?>" class="phone"><?=$item->label()?> <span class="smallprint">(<?=$item->message_text()?><?=$item->number_text()?>&shy;)</span></a>
+		</li>
+            <? } ?>
+		<li>
+			<a href="<?=contactsURL()?>">More Emergency Contacts</a>
+		</li>
+	</ul>
+
+<? $page->content_end(); ?>

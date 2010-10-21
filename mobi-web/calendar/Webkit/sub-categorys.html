@@ -1,0 +1,20 @@
+<?php
+$page->title("Events: Browse By Category")
+     ->navbar_image('calendar')
+     ->breadcrumbs("Browse", "Category")
+     ->breadcrumb_links(categorysURL());
+
+$page->content_begin();
+?>
+
+	<h2 class="nonfocal"><?=ucname($category->name)?></h2>
+			
+	<ul class="nav">
+		<li><a href="<?=categoryURL($category)?>">All <?=ucname($category->name)?></a></li>
+                
+                <? foreach($categorys as $category) { ?> 
+		   <li><a href="<?=categoryURL($category)?>"><?=ucname($category->name)?></a></li>
+                <? } ?>
+	</ul>
+	
+<? $page->content_end(); ?>

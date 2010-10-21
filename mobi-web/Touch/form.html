@@ -1,0 +1,19 @@
+<div class="nonfocal">
+     <form method="get" action="">
+         <table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+             <tr>
+                  <td width="70%">
+                      <input type="text" id="query" name="filter" size="14" class="forminput" value="<?=$_REQUEST['filter']?>"/>
+                  </td>
+                  <td width="30%">
+                      <input type="submit" value="Search" class="submitbutton" />
+                  </td>
+              </tr>
+         </table>
+         <input id="type" name="type" type="hidden" value="name" />
+         <input id="group" name="group" type="hidden" value="*" />
+         <? if ($total >= 50) { ?>
+         <p>First 50 of <?=$total?> matches are shown. Please try refining your search.</p>
+         <? } ?>
+     </form>
+</div>

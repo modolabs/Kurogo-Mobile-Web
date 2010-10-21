@@ -1,0 +1,25 @@
+<?php
+$page->title('TechCASH: Details')
+     ->navbar_image('techcash')
+     ->header($account_name);
+
+$page->content_begin();
+?>
+   <div id="statusmsg" class="focal"> 
+      <div class="amount"><strong>$ <?=$current_balance?></strong><br /></div>
+      <strong>Current Balance</strong><br />
+   </div> 
+   
+   <p><span class="smallprint indent"><?=count($transactions)?> most recent by transaction date &amp; time</span></p> 
+ 
+   <ul class="results"> 
+
+      <? foreach($transactions as $transaction) { ?>
+         <li><div class="amount"><?=$transaction['APPRVALUEOFTRAN']?></div> 
+            <?=$transaction['LOCATION']?><br/> 
+            <span class="smallprint"><?=date("m/d g:i A",$transaction['UNIX_TRANDATE'])?></span></li> 
+      <? } ?>
+
+   </ul> 
+
+<? $page->content_end(); ?>

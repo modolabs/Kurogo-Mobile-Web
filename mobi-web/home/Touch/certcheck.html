@@ -1,0 +1,25 @@
+<?php
+$page->title($destination_name)
+     ->navbar_image($destination_image)
+     ->header($destination_name)
+     ->breadcrumb_home()
+     ->help_off();
+
+$page->content_begin();
+?>
+
+	<div class="nonfocal">
+		<h3>MIT Certificates Required</h3>
+		<p class="legend">Access to <?=$destination_name?> requires MIT certificates.</p>
+		<p class="legend">If you don't have MIT certificates, get them now.</p>
+	</div>
+	<ul class="nav">
+		<li>
+			<a href="<?=$destination?>">Go to <?=$destination_name?></a>
+		</li>
+		<li>
+			<a href="http://ca.mit.edu">Get MIT Certificates</a>
+		</li>
+	</ul>
+	
+<? $page->content_end(); ?>

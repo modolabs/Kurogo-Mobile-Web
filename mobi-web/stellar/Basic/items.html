@@ -1,0 +1,5 @@
+<div class="focal">
+            <? foreach($results as $class) { ?>
+		<p><a href="<?=detailURL($class, selfURL())?>"><?=longID($class)?>: <?=className($class)?></a></p>
+            <? } ?>
+</div>

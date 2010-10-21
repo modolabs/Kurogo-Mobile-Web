@@ -1,0 +1,25 @@
+<?php
+$page->title("Events Calendar: Broswe by Category")
+     ->header('Events Calendar');
+
+$page->content_begin();
+?>
+
+	<h2><?=ucname($category->name)?></h2>
+
+	<p class="nav">
+		<a href="<?=categoryURL($category)?>">All <?=ucname($category->name)?></a><br/>
+                <? foreach($categorys as $category) { ?>
+		   <a href="<?=categoryURL($category)?>"><?=ucname($category->name)?></a><br/>
+                <? } ?>
+	</p>
+	
+	<p class="secondary">
+		<a href="<?=categorysURL()?>">&lt; Back</a>
+	</p>
+<?
+
+$page->content_end();
+$page->nav_link("./", "Events Calendar Home");
+
+?>

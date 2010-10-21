@@ -1,0 +1,14 @@
+<?php
+$page->title("Emergency Contacts")
+     ->navbar_image("emergency")
+     ->breadcrumbs("Contacts");
+
+$page->content_begin();
+?>
+	<ul class="results">
+            <? foreach($others as $item) { ?>
+                <li><a href="tel:<?=$item->call_number()?>" class="phone"><?=$item->label()?> <span class="smallprint">(<?=$item->message_text()?><?=$item->number_text()?>&shy;)</span></a></li>
+            <? } ?>
+	</ul>
+
+<? $page->content_end(); ?>

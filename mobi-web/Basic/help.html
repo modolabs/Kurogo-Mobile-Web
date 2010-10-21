@@ -1,0 +1,24 @@
+<?
+$page->title("MIT $header: Help")
+     ->header($header);
+
+$page->content_begin();
+?>
+	<div class="focal">
+	
+		<h2>Help</h2>
+	        <?
+                  foreach($help as $paragraph) {
+                    ?>
+                      <p><?=$paragraph?></p>
+                    <?
+                  }
+                ?>
+	</div>
+
+<? 
+
+$page->content_end(); 
+$page->help_off()
+     ->nav_link("index.php", "$header Home");
+?>

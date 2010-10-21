@@ -1,0 +1,17 @@
+<?php
+$page->title("MIT Campus Emergencies: Emergency Contacts")
+     ->header("Emergency Info");
+     
+$page->content_begin();
+?>
+	<h2>Emergency Contacts</h2>
+	
+	<div class="focal">
+            <? foreach($others as $item) { ?>
+                <p><a href="tel:1<?=$item->call_number()?>" class="phone"><?=$item->label()?></a> <span class="smallprint"> (<?=$item->message_text()?><?=$item->number_text()?>)</span></p>
+            <? } ?>
+	</div>
+<?
+$page->content_end();
+$page->nav_link("./", "Emergency Info Home");
+?>

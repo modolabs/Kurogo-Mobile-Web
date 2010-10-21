@@ -1,0 +1,15 @@
+<?php
+$page->title('Useful Links')
+     ->header('Useful Links');
+
+$page->content_begin();
+?>
+
+      <p class="nav">
+           1. Useful Links Home<br/>
+           <? foreach($links as $index => $item) { ?>
+                  <a href="http://<?=$item['link']?>" accesskey="<?=$index+2?>"><?=$index+2?>. <?=$item['name']?></a><br/>
+           <? } ?>
+      </p>
+
+<? $page->content_end(); ?>

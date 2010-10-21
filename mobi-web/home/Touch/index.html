@@ -1,0 +1,41 @@
+<?='<?xml version="1.0" encoding="UTF-8"?>'?>
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
+	<?=$page->viewport()?>
+
+	<meta name="HandheldFriendly" content="True" />	
+	<meta name="MobileOptimized" content="240" />
+	<title>MIT Mobile Web</title>
+	<link rel="stylesheet" type="text/css" href="Touch/index.css" />	
+	<style type="text/css">
+<?=$page->get_homegrid_css()?>
+	</style>
+</head>
+
+<body>
+
+<div id="container">
+
+	<h1><img src="Touch/images/mit-logo-home3.gif" width="213" height="30" alt="" id="logo" /></h1> 
+
+	<div id="homegrid">
+<? foreach ($modules as $index => $module) { ?>
+		<div><a href="<?=url($module)?>"><img src="Touch/images/<?=$module?>.gif" width="44" height="44" alt="<?=Modules::title($module)?>" /><br/><?=Modules::wrap_title($module)?>
+<?   if(Modules::subtitle($module)) { ?>
+			<br/><span class="fineprint"><?=Modules::subtitle($module)?></span><?
+     } ?></a></div>
+<? } ?>
+<!--		<div><a href="../mobile-about/"><img src="Touch/images/about.gif" width="44" height="44" alt="About" /><br/>About this<br/>Site</a></div>
+		<div><a href="../customize/"><img src="Touch/images/preferences.gif" width="44" height="44" alt="Preferences" /><br/>Customize<br/>Home</a></div>-->
+	</div>
+
+	<div id="footer">
+		<a href="http://web.mit.edu/ist/"><img src="../Touch/images/ist-logo.gif" width="26" height="18" alt="IST" /></a>Information Services &amp; Technology
+	<? if ($_SERVER['SERVER_NAME'] == 'mobi2.mit.edu') { include('extra_footer.php'); } ?>
+	</div>
+</div>
+
+</body>
+</html>

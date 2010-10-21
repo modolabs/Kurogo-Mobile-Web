@@ -1,0 +1,24 @@
+<?php
+$page->title("MIT Stellar: " . idName($id, $course))
+     ->header("Stellar");
+
+$page->content_begin();
+?>
+
+	<h2><?=name($course)?> (<?=idName($id, $course)?>)</h2>
+
+	<p class="nav">
+            <? foreach($classes as $class) { ?>
+		    <a href="<?=detailURL($class, selfURL())?>"><?=longID($class)?>: <?=className($class)?></a><br/>
+            <? } ?>
+	</p>
+	
+        <? if($back) { ?>
+  	   <p class="paging">
+		<a href="<?=coursesURL($back)?>">&lt; Back</a>
+	   </p>
+        <? } ?>
+<?
+$page->content_end();
+$page->nav_link("./", "Stellar Home");
+?>

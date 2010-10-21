@@ -1,0 +1,15 @@
+<?php
+$page->title('Download')
+     ->header('Download');
+
+$page->content_begin();
+?>
+
+	<p class="nonfocal">Click the link below to download the MIT Mobile Web <?=$download_item?> to your <?=$device_name?>.</p>
+
+	<div class="focal">
+		Instructions: <?=$instructions?><br />
+		<a href="<?=$download_url?>">Click here to begin</a><br />
+	</div>
+
+<? $page->content_end(); ?>

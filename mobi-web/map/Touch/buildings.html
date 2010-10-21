@@ -1,0 +1,29 @@
+<?php
+$page->title('Map: Browse by Building Number')
+     ->navbar_image('map')
+     ->header('Browse Map');
+
+$drilldowns = array(
+  "Main"      => "1-68",
+  "North"     => "N4-N57",
+  "Northeast" => "NE18-NE125",
+  "East"      => "E1-E70",
+  "West"      => "W1-WW15",
+  "Northwest" => "NW10-NW95"
+);
+
+$page->content_begin();
+?>
+
+<div id="container">
+	<div class="nonfocal">
+		<h2>Browse Buildings by Number</h2>
+	</div>
+	
+	<ul class="nav">
+            <? foreach($drilldowns as $name => $drilldown) { ?>
+		<li><a href="<?=drillURL($drilldown, $name)?>"><?=$name?> Campus <span class="smallprint">(<?=$drilldown?>)</span></a></li>
+            <? } ?>
+	</ul>
+
+<? $page->content_end(); ?>

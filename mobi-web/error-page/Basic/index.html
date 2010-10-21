@@ -1,0 +1,20 @@
+<?php
+$page->title('MIT Mobile Web Error Page')
+     ->header('Error Page');
+
+$page->content_begin();
+?>
+         
+   <div class="focal">
+	<p><?=$message?></p>
+
+        <? if($url) { ?>
+	   <p>
+               <a href="<?=$url?>">Click here to retry page</a>
+	   </p>
+        <? } ?>		
+   </div>
+<? 
+
+$page->content_end(); 
+?>

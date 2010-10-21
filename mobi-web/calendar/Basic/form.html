@@ -1,0 +1,17 @@
+	  <form method="get" action="">
+	    <p>
+		<span class="inputcombo">
+			<input class="forminput" type="search" id="filter" name="filter" value="<?=$_REQUEST['filter']?>" />
+			<input class="combobutton" name="sch_btn" id="sch_btn" type="submit" value="Search" />
+                        <? if($catid) { ?>
+                             <input type="hidden" name="id" value="<?=$catid?>" />
+                        <? } ?>
+		</span>
+		<br/>
+		<select id="timeframe" name="timeframe">
+                    <? foreach($search_options as $key => $option) { ?>
+                       <option value="<?=$key?>" <? if($option['selected']) { ?>selected="selected"<? } ?> ><?=$option['phrase']?></option>
+                    <? } ?>
+		</select>
+	    </p>
+	  </form>

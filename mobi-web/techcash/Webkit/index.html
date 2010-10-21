@@ -1,0 +1,35 @@
+<?php
+$page->title('TechCASH')
+     ->navbar_image('techcash')
+     ->breadcrumbs('TechCASH (BETA)')
+     ->breadcrumb_home();
+
+$page->content_begin();
+?>
+
+   <div id="statusmsg" class="focal"> 
+      <strong><?=$fullname?></strong><br /> 
+      <span class="smallprint">Account: XXXXX<?=last_4($mit_id)?></span> 
+   </div> 
+
+   <? if(count($accounts) > 0) { ?> 
+      <h2 class="indent">Accounts</h2> 
+ 
+      <ul  class="nav"> 
+         <? foreach($accounts as $account) { ?>
+             <li><a href="<?=detailURL($account)?>"><?=$account['NAME']?><br /> 
+             <span class="smallprint">Current Balance: $ <?=$account['BALANCE']?></span></a></li> 
+         <? } ?>
+      </ul>
+   <? } else { ?>
+      <p class="nonfocal">No TechCASH accounts found.</p>
+   <? } ?> 
+   
+   <ul class="secondary"> 
+      <li><a class="phone" href="tel:16172530364">Call TechCASH <span 
+class="smallprint">(617.253.0364)</span></a></li> 
+      <li><a class="email" href="mailto:techcash@mit.edu?subject=Mobile Web: TechCASH (BETA) feedback&cc=mobile-project@mit.edu&body=MIT username: <?=$username?>">Email 
+TechCASH</a></li> 
+   </ul> 
+
+<? $page->content_end(); ?>

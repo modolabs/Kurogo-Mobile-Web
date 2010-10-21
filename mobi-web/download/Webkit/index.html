@@ -1,0 +1,19 @@
+<?php
+$page->title('Download')
+     ->navbar_image('download')
+     ->breadcrumbs('Download')
+     ->breadcrumb_home();
+
+$page->content_begin();
+?>
+
+	<p class="nonfocal">Click the link below to download the MIT Mobile Web <?=$download_item?> to your <?=$device_name?> device.</p>
+
+	<div class="focal">
+		Instructions: <?=$instructions?>
+		<div class="formbuttons">
+			<a class="formbutton" href="<?=$download_url?>"><div>Click to Begin</div></a>
+		</div>
+	</div>
+	
+<? $page->content_end(); ?>

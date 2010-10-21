@@ -1,0 +1,20 @@
+<?php
+$page->title("Stellar: " . idName($id, $course))
+     ->navbar_image('stellar')
+     ->breadcrumbs($Back, idName($id, $course));
+
+$page->content_begin();
+?>
+	
+	<div class="nonfocal">
+		<h2><?=name($course)?> (<?=idName($id, $course)?>)</h2>
+	</div>
+	
+	<ul class="results">
+                <? foreach($classes as $class) { ?>
+                    <li><a href="<?=detailURL($class, selfURL())?>"><strong><?=longID($class)?></strong>: <?=className($class)?></a></li>
+                <? } ?>
+	</ul>
+
+<? $page->content_end(); ?>
+

@@ -1,0 +1,28 @@
+<?
+$page->title("MIT Campus Map: Browse by Building Name")
+     ->header("Campus Map");
+
+
+$drilldowns = array(
+  "1-9", "A", "B", "C",
+  "D", "E", "F", "G", "H", "I-K",
+  "L", "M", "N-Q", "R", "S",
+  "T-V", "W-Z"
+);
+
+$page->content_begin();
+?>
+	<h2>Buildings by Name</h2>
+	
+	<p class="nav">
+             <? foreach($drilldowns as $drilldown) { ?>
+
+			<a href="<?=drillURL($drilldown)?>"><?=$drilldown?></a> &nbsp;
+
+             <? } ?>
+	</p>
+<?
+$page->content_end();
+$page->nav_link("./","Campus Map Home");
+?>
+

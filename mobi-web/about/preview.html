@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>MIT Mobile Web Preview</title>
+	<style type="text/css">
+		html, body {
+			margin: 0;
+			padding: 0;
+			width: 100%;
+		}
+		
+		body {
+			background-color: #d9e0e8;
+			font-family: Helvetica, Arial, sans-serif;
+			font-size: 13px;
+			line-height: 18px;
+			color: #202629;
+		}
+		
+		h1, h2, h3 {
+			line-height: 1.2em;
+			color: #000;
+		}
+		
+		h1 {
+			font-size: 22px;
+			font-weight: normal;
+			margin: 10px 0;
+			padding: 0;
+		}
+		
+		p {
+			margin: 0 0 18px 0;
+		}
+		
+		#container {
+			padding: 8px;
+		}
+		
+		#header {
+			margin: 0 0 10px 0;
+			font-size: 20px;
+		}
+		
+		#header a {
+			text-decoration: none;
+			color: #444;
+		}
+		
+		#header strong {
+			font-weight: normal;
+			color: #789;
+		}
+		
+		#preview {
+			display: block;
+			margin-bottom:18px;
+			background-color: #c30000;
+			color: #fff;
+			text-decoration: none;
+			font-size: 15px;
+			text-align: center;
+			padding: 9px 7px;
+			-webkit-border-radius: 17px;	
+		}
+		
+		#preview:hover {
+			background-color: #e00;
+		}
+		
+		#preview:active {
+			background-color: #900;
+		}
+		
+		#return {
+			display: block;
+			margin-bottom:18px;
+			color: #c30000;
+			text-decoration: none;
+			text-align: center;
+		}
+		
+		#return:hover {
+			color: #e00;
+		}
+		
+		#return:active {
+			color: #900;
+		}
+		
+		#footer {
+			margin-top: 18px;
+			font-size: 11px;
+			line-height: 13px;
+			color: #666;
+		}
+	</style>
+	<script type="text/javascript">
+	<!--
+		window.resizeTo(300,520);
+		
+		function goback() {
+			window.close();
+			//window.resizeTo(960,700);
+			//window.location.href="index.html";
+		}
+	//-->
+	</script>
+</head>
+<body>
+
+  <div id="container">
+	<h1 id="header">
+	<img src="images/preview/mit-logo.gif" width="48" height="19" />Mobile Web <strong>Preview</strong>
+	</h1>
+	
+	<p>
+		You are about to preview the MIT Mobile Web. You will be viewing the version optimized for smartphones (such as BlackBerry, Windows Mobile or Palm devices).  
+	</p>
+	
+	<p>
+		Note that links that would normally dial a phone number will not work, and that not everything will look exactly as it would on a mobile device. 
+	</p>
+	
+	<a id="preview" href="../home/">Preview the MIT Mobile Web</a>
+	
+	<a id="return" href="index.html" onclick="goback(); return false">Close</a>
+	
+  </div>
+
+</body>
+</html>

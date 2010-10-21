@@ -1,0 +1,58 @@
+<?php
+$page->title('Preferences')
+     ->navbar_image('preferences')
+     ->breadcrumbs('Preferences')
+     ->breadcrumb_home()
+     ->not_scalable()
+     ->fixed()
+     ->add_inline_script('var httpRoot = "' . HTTPROOT . '";');
+ 
+$page->inline_css_begin(); 
+require "index-iphone.css";
+$page->inline_css_end();
+
+$page->inline_js_begin(); 
+require "index-iphone.js";
+$page->inline_js_end(); 
+
+$page->content_begin(); 
+?>
+
+    <? if(Modules::new_apps_count() > 0) { ?>
+       <div id="statusmsg" class="focal collapsed" onclick="showHideFuller(this);">
+           <strong><?=Modules::new_apps_count()?> New App<? if(Modules::new_apps_count() > 1) { ?>s<? } ?></strong>
+           <span class="smallprint">
+           <span class="summary"><span class="more">show</span></span>
+           <span class="fulltext"><span class="more">hide</span>
+               <ul class="newapps">
+                   <? foreach(Modules::new_apps() as $module) { ?>
+                      <li><a href="#<?=$module?>"><?=Modules::title($module)?></a></li>
+                   <? } ?>
+               </ul>
+           </span>
+           </span>
+       </div>
+
+       <h3 id="allapps">All Apps</h3>
+
+    <? } else { ?>
+
+       <h3 id="allapps"></h3>
+
+    <? } ?>
+
+    
+    <ul id="dragReorderList">
+        <? foreach($modules as $module) { ?>
+            <li><a name="<?=$module?>"></a><input type="checkbox" name="<?=$module?>" checked="true" value="" <?if(Modules::required($module)){?>class="required prefs_<?=$module?>"<?}?> ><a class="title prefs_<?=$module?>"   href="<?=Modules::url($module)?>"><?=Modules::title($module)?></a><div class="draghandle"></div></li>
+        <? } ?>
+    </ul>
+    <div class="formbuttons">
+        <a class="formbutton" href="../home/"><div>Return to Home</div></a>
+    </div>
+    <p id="savedMessage">Saved</p>
+<? 
+$page->content_end(); 
+$page->footer_script("init();");
+
+?>

@@ -1,0 +1,22 @@
+<?php
+$page->title("Events Calendar: Holidays")
+     ->header('Events Calendar');
+
+$page->content_begin();
+?>
+
+	<h2>Religious Observances <strong><?=$year?></strong></h2>
+
+	<p class="nonfocal"><a href="<?=religiousURL($prev)?>">&lt; <?=$prev?></a>&nbsp;|&nbsp;<a href="<?=religiousURL($next)?>"><?=$next?> &gt;</a></p>
+
+	<p class="focal">
+            <? foreach($religious as $date => $name) { ?>
+                  <?=$date?>: <?=$name?><br/>
+            <? } ?>
+	</p>
+<?
+
+$page->content_end();
+$page->nav_link("./", "Events Calendar Home");
+$page->nav_link(holidaysURL(), "MIT Holidays");
+?>

@@ -1,0 +1,35 @@
+<?php
+$page->title('3DOWN')
+     ->navbar_image('3down')
+     ->header('3DOWN')
+     ->breadcrumb_home();
+
+$page->content_begin();
+?>
+
+	<div class="nonfocal">
+		3DOWN shows the status of services available to the MIT community.
+	</div>
+	
+	<ul class="nav">
+<? foreach($states as $title => $state) { ?>
+<?   if(is_long_text($state)) { ?>
+		<li>
+			<a href="<?=detailURL($title)?>"><strong><?=$title?></strong>: <?=summary($state)?> <span class="more">more</span> (<?=short_date($state['date'])?>)</a>
+<?   } else { ?>
+		<li class="nolink">
+			<strong><?=$title?></strong>: <?=full($state)?> (<?=short_date($state['date'])?>)
+<?   } ?>
+		</li>
+<? } ?>
+	
+	</ul>
+	
+	<ul class="secondary">
+		<li><a href="tel:16172534357" class="phone">Report phone/cable outage<br/> (617-253-4357&shy;)</span></a></li>
+		<li><a href="tel:16172531101" class="phone">Report other problems<br/> (617-253-1101&shy;)</span></a></li>
+		<li><a href="../../emergency/touch/index.asp">Campus emergency information</a></li>
+		
+	</ul>
+
+<? $page->content_end(); ?>

@@ -1,0 +1,52 @@
+<?php
+$page->title('Stellar')
+     ->navbar_image('stellar')
+     ->breadcrumbs('Stellar')
+     ->breadcrumb_home()
+     ->add_javascript('../Webkit/uiscripts')
+     ->extra_onload('androidPlaceholderFix()');
+
+$page->content_begin();
+?>
+
+
+	<div class="nonfocal">
+		<p>Descriptions, announcements and other information for MIT classes.</p>
+    
+	<? if (count(getMyStellar()) > 0) { ?>
+        
+        <h3>My Stellar</h3> 
+    </div>
+    
+	<ul class="nav">
+    	<? foreach (getMyStellar() as $item) { 
+            $arr = explode(" ", $item);
+            $id = $arr[0];
+            $class = StellarData::get_subject_info($id);?>
+			<li><a href="detail.php?id=<?= $id ?>&back=index.php"><?= longerID($class) ?></a></li>
+        <? } ?>
+	</ul>
+		
+    <div class="nonfocal">
+    
+    <? } ?>
+		
+		<h3>Browse by course:</h3>
+	</div>
+
+	<ul class="nav">
+		<li><a href="<?=coursesURL('1-10')?>">Courses 1-10</a></li>
+		<li><a href="<?=coursesURL('11-20')?>">Courses 11-20</a></li>
+		<li><a href="<?=coursesURL('21-24')?>">Courses 21-24</a></li>
+		<li><a href="<?=coursesURL('other')?>">Other Courses</a></li>
+	</ul>
+	
+	<div class="nonfocal">
+		<form method="get" action="search.php">
+			<fieldset class="inputcombo">
+				<input class="forminput" type="text" id="filter" name="filter" placeholder="Search by course/subject #" />
+				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
+			</fieldset>	
+		</form>
+	</div>
+<? $page->content_end(); ?>

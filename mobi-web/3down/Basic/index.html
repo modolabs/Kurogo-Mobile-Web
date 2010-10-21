@@ -1,0 +1,25 @@
+<?php
+$page->title('MIT 3DOWN')
+     ->header('3DOWN');
+
+$page->content_begin();
+?>
+
+	<p>This page shows the status of services available to the MIT community.</p>
+
+        <? foreach($states as $title => $state) { ?>	
+	   <p class="focal">
+		<strong><?=$title?></strong><br/>
+                <? if(is_long_text($state)) { ?>
+		    <span class="smallprint"><?=summary($state)?> <a href="<?=detailURL($title)?>">more</a> (<?=short_date($state['date'])?>)</span>
+                <? } else { ?>
+		    <span class="smallprint"><?=full($state)?> (<?=short_date($state['date'])?>)</span>
+                <? } ?>
+	   </p>
+        <? } ?>
+<?
+$page->content_end();
+$page->help_link("tel:16172534357", "Report phone/cable outage", "phone", "617.253.4357")
+     ->help_link("tel:16172531101", "Report other problems", "phone", "617.253.1101")
+     ->help_link("../emergency", "Campus emergency information");
+?>

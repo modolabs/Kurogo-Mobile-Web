@@ -1,0 +1,14 @@
+<?php
+$page->title('Map: Directions to MIT')
+     ->navbar_image('map')
+     ->breadcrumbs('Directions to MIT');
+
+$page->content_begin();
+?>
+	<ul class="nav">
+            <? foreach($directions as $link => $value) { ?>
+		 <li><a href="<?=directionsURL($link)?>"><?=$value->link_text?></a></li>
+            <? } ?>
+	</ul>
+	
+<? $page->content_end(); ?>

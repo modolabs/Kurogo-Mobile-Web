@@ -1,0 +1,20 @@
+<?php
+$page->title('Map: Directions to MIT')
+     ->navbar_image('map')
+     ->header($info->breadcrumb);
+
+$page->content_begin();
+?>
+	<ul class="focal">
+            <h2><?=$info->header?></h2>
+
+            <?=$info->html?>
+	</ul>
+
+        <? if($info->google_html) { ?>
+            <ul class="nav">
+	        <?=$info->google_html?>
+	    </ul>
+        <? } ?>
+	
+<? $page->content_end(); ?>

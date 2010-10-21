@@ -1,0 +1,21 @@
+<?
+$page->title("MIT Campus Map: Browse by $titlebar")
+     ->header("Campus Map");
+$page->content_begin();
+?>
+
+	<h2><?=$title?>: <?=$drilldown?></h2>
+	
+	<p class="nav">
+            <? foreach($places as $name => $number) { ?>            
+		<a href="<?=detailURL($number, $name)?>"><?=$name?></a><br/>
+            <? } ?>
+	</p>
+	
+	<p class="paging">
+		<a href="<?=categoryURL()?>">&lt; Back</a>
+	</p>
+<?
+$page->content_end();
+$page->nav_link("./", "Campus Map");
+?>

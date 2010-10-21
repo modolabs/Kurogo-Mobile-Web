@@ -1,0 +1,90 @@
+<?php
+$page->title("MIT Stellar: Search Results")
+     ->navbar_image('stellar')
+     ->header("Stellar");
+
+$page->add_stylesheet('Touch/mystellar');
+
+$page->content_begin();
+?>
+
+	<div class="shaded">
+		<a id="mystellar" href="<?= selfURL() ?>&action=<?=$action?>"><?=$page->img_tag($mystellar_img, 'gif', 'My Stellar', array('border', '0'))?></a>
+
+		<h2><?=longerID($class)?>: <?=className($class)?></h2>
+		<p> <?=$term?> <? if (!$no_stellar_site) { ?>| <a href="<?=$stellar_url?>" target="_new">Stellar site</a><? } ?></p>
+
+		<div id="tabs">
+		<?=$tabs_html?>
+		</div>
+	</div> <!-- class="shaded" -->
+
+	<div class="tabbody nopad">
+		<a name="scrolldown"> </a>
+		<ul class="results">
+<? switch ($tab) {
+   case 'News':
+     if (isset($item)) { ?>
+
+			<li class="nolink"><strong><?=$item['title']?></strong>:<?=$itemtext?><span class="smallprint">(<?=sDate($item)?>)</span></li>
+			<li><a href="<?=selfURL()?>" class="noaction">&lt; Back to News</a></li>
+    <? } elseif ($has_news) {
+         foreach($items as $index => $item) {
+           if(is_long_text($item)) { ?>
+			<li>
+				<a href="<?=selfURL()?>&amp;index=<?=$index?>">
+				<strong><?=$item['title']?></strong>:
+				<?=summary($item)?><span class="more">more</span> <span class="smallprint">(<?=sDate($item)?>)</span>
+				</a>
+        <? } else { ?>
+			<li class="nolink">
+				<strong><?=$item['title']?></strong>:
+				<?=summary($item)?> <span class="smallprint">(<?=sDate($item)?>)</span>
+			</li>
+        <? } // if (is_long_text($item))
+         } // foreach ($items as $index => $item)
+       } else { ?>
+
+			<li class="nolink">No announcements
+    <? } ?>
+
+			</li>
+    <? break; // case 'News'
+
+   case 'Info':
+     foreach ($class['times'] as $time) { ?>
+			<li><a href="<?=mapURL($time['location'])?>" class="map"><strong><?=$time['title']?></strong>: <?=$time['time']?> (<?=$time['location']?>)</a></li>
+    <? } ?>
+
+			<li class="nolink">
+				<h3>Description:</h3>
+				<p><?=htmlentities($class['description'])?></p>
+			</li>
+
+    <? break; // case 'Info'
+
+     case 'Staff': ?>
+			<li class="nolink"><h3>Instructors:</h3></li>
+
+    <? foreach ($class['staff']['instructors'] as $instruct) { ?>
+
+			<li><a href="<?=personURL($instruct)?>" class="people"><?=$instruct?></a></li>
+
+    <? }
+       if (count($class['staff']['tas'])) { ?>
+
+			<li class="nolink"><h3>TAs:</h3></li>
+    <? foreach ($class['staff']['tas'] as $TA) { ?>
+
+			<li><a href="<?=personURL($TA)?>" class="people"><?=$TA?></a></li>
+
+    <? } // foreach ($class['staff']['tas'] as $TA)
+     } // if (count($class['staff']['tas'])) {
+     break; // case 'Staff'
+   } ?>
+		</ul>
+
+	</div>
+
+
+<? $page->content_end(); ?>

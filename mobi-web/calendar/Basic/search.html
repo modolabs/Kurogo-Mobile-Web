@@ -1,0 +1,12 @@
+<?php
+$page->title("Events Calendar: Search Results")
+     ->header('Events Calendar');
+
+$page->content_begin();
+
+$content->output($events);
+
+$page->content_end();
+$page->nav_link("./", "Events Calendar Home");
+
+?>

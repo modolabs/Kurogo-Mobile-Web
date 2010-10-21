@@ -1,0 +1,62 @@
+<?php
+$page->title('People Directory')
+     ->navbar_image('people')
+     ->header('Detail');
+
+
+class Item {
+    private $person;
+
+    public function __construct($person) {
+        $this->person = $person;
+    }
+
+    public function display($label, $field, $href=NULL, $class=NULL, $group=False, $has_link=False) {
+        foreach($this->person[$field] as $value) { ?>
+<?          if(!$group) { ?>
+            <ul class="nav">
+<?          } ?>
+              <li<? if (!$has_link) {?> class="nolink"<? } ?>>
+<?          if($href != NULL) {                   
+                     echo '<a href="' . $href($value) . '" class="' . $class . '">';
+            } ?>
+
+                 <span class="label"><?=$label?></span>
+                 <span class="value"><?=$value?></span>
+
+                 <? if($href != NULL) {                   
+                       echo "</a>";
+                 } ?>
+              </li>
+            <? if (!$group) { ?>  </ul>  <? } ?>   
+          <?
+        }
+    }
+}             
+$item = new Item($person);
+
+$page->content_begin();
+?>
+	<ul class="nav">
+              <?  $item->display('name', 'fullname', NULL, NULL, True); ?>
+              <?  $item->display('title', 'title', NULL, NULL, True); ?>
+              <?  $item->display('dept', 'dept', NULL, NULL, True); ?>
+	</ul>
+	
+        <? if(has_phone($person)) { ?>
+           <ul class="nav">
+             <?  $item->display('home', 'homephone', "phoneHREF", 'phone', True, True);   ?>      
+             <?  $item->display('phone', 'telephone', "phoneHREF", 'phone', True, True);  ?>
+             <?  $item->display('fax', 'fax', "phoneHREF", 'phone', True, True);  ?>
+           </ul>
+        <? } ?>
+
+        <?
+           $item->display('address', 'address');             
+           $item->display('email', 'email', "mailHREF", 'email', False, True);             
+           $item->display('office', 'room', "mapURL", 'map', False, True);
+
+        ?>
+
+<? $page->content_end(); ?>
+

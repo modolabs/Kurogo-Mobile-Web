@@ -1,0 +1,34 @@
+<?php
+$page->title('MIT Mobile Web: Customize Homepage')
+     ->header('Customize Home')
+     ->help_off();
+
+$spacer = ($page->platform == "featurephone") ? "&nbsp;" : "";
+$page->content_begin(); 
+?>
+	<div class="focal"> 
+	
+	    <p>Use the up and down links to customize the order of
+	      icons on your homepage. Use the checkboxes to toggle
+	      visibility. Changes are automatically saved, but
+	      <strong>you may need to manually refresh your
+	      homepage</strong> after you're finished here.</p>
+
+	    <table cellpadding="2" cellspacing="0" border="0" width="100%" id="homepageList"> 
+              <? $index = 0; foreach($menu as $item) { ?>		
+		  <tr> 
+                        <? if($item['status'] == 'on') { ?>
+		  	    <td <? if($index >= 9) { ?>class="noaccess"<? } ?>><?=$index+1?></td>
+                            <? $index++; ?>
+                        <? } else { ?>
+                            <td></td>
+                        <? } ?>
+		  	<td><? if($item['toggle_url']) { ?><a href="<?=$item['toggle_url']?>"><?=$check_imgs[$item['status']]?></a><? } ?></td> 
+		  	<td><?=Modules::title($item['name'])?></td> 
+		  	<td><? if($item['swap_up_url']) { ?><a href="<?=$item['swap_up_url']?>"><?=$up_img?></a><? } else {?><?=$spacer?><? } ?></td> 
+		  	<td><? if($item['swap_down_url']) { ?><a href="<?=$item['swap_down_url']?>"><?=$down_img?></a><? } else {?><?=$spacer?><? } ?></td> 
+		  </tr>
+              <? } ?> 
+            </table>
+        </div>
+<? $page->content_end(); ?>

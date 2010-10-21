@@ -1,0 +1,25 @@
+<?php
+if (!isset($help_title))
+  $help_title = 'Help';
+
+$page->title("MIT $header: $help_title")
+     ->navbar_image($module)
+     ->breadcrumbs($help_title);
+
+$page->content_begin();
+?>
+	<div class="focal">
+		<h2><?=$help_title?></h2>
+                <? 
+                  foreach($help as $paragraph) {
+                    ?>
+                      <p><?=$paragraph?></p>
+                    <?
+                  }
+		?>
+	</div>
+	
+<? 
+$page->content_end(); 
+$page->help_off();
+?>

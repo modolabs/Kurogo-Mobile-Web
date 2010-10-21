@@ -1,0 +1,11 @@
+<? 
+$page->title('MIT Campus Map: Search Results')
+     ->header('Campus Map');
+
+$page->content_begin();
+
+$content->output($results);
+
+$page->content_end();
+$page->nav_link('./', "Campus Map Home");
+?>

@@ -1,0 +1,24 @@
+<div class="nonfocal">
+    <form method="get" action="">
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td width="70%">
+                    <input type="text" id="query" name="q" size="14" class="forminput" value="<?=$_REQUEST['filter']?>"/>
+                </td>
+                <td width="30%">
+                    <input type="submit" value="Search" class="submitbutton" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <select id="timeframe" name="timeframe">
+<? foreach($search_options as $key => $option) { ?>
+                        <option value="<?=$key?>" <? if($option['selected']) { ?>selected="selected"<? } ?> ><?=$option['phrase']?></option>
+<? } ?>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+

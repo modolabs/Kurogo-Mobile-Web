@@ -1,0 +1,18 @@
+<?php
+$page->title("MIT Stellar: $title")
+     ->header("Stellar");
+
+$page->content_begin();
+?>
+
+	<h2><?=$title?></h2>
+
+	<p class="nav">
+             <? foreach($courses as $id => $course) { ?>        
+		<a href="<?=courseURL($id, $which)?>"><?=name($course)?> (<?=idName($id, $course)?>)</a><br/>
+             <? } ?>
+	</p>
+<?
+$page->content_end();
+$page->nav_link("./", "Stellar Home");
+?>
