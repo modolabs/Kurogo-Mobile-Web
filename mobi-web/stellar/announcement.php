@@ -2,9 +2,9 @@
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require_once WEBROOT . "/mobi-web/page_builder/page_header.php";
-require_once LIBDIR . "/mobi-lib/StellarData.php";
-require_once WEBROOT . "/mobi-web/stellar/stellar_lib.php";
+require_once WEBROOT . "page_builder/page_header.php";
+require_once LIBDIR . "StellarData.php";
+require_once WEBROOT . "stellar/stellar_lib.php";
 
 //start session (used to save class details)
 session_id($_REQUEST['sess']);

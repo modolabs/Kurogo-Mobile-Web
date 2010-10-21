@@ -6,11 +6,11 @@ $page->title("What's New")
 $page->content_begin();
 ?>
 
-     <ul class="nav"> 
+     <ul class="focal"> 
           <? foreach($items as $item) { ?>
 		<li> 
 			<strong><?=$item['title']?></strong>: 
-			<span class="smallprint"><?=text($item)?> (<?=date_string($item, 'n/j')?>)</span> 
+			<span class="smallprint"><?=$item['body']?> (<?=date_string($item, 'n/j')?>)</span> 
 		</li> 
           <? } ?>
      </ul> 

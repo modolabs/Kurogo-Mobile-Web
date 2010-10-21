@@ -2,60 +2,64 @@
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-require WEBROOT . "page_builder/page_header.php";
-require LIBDIR . "academic.php";
+require_once WEBROOT . "page_builder/page_header.php";
+require_once LIBDIR . "AcademicCalendar.php";
+require_once "calendar_lib.php";
 
 $month = $_REQUEST['month'];
 $year = $_REQUEST['year'];
 $time = time();
 if(!$month) {
-  $month = strtoupper(date('F', $time));
+  $month = date('n', $time);
 }
 if(!$year) {
   $year = date('Y', $time);
 }
+$time = mktime(0, 0, 0, $month, 1, $year);
 
-$prev = prev_month($month, $year);
-$next = next_month($month, $year);
-$prev_yr = $prev['year'];
-$next_yr = $next['year'];
-$prev_month = Month($prev['month']);
-$next_month = Month($next['month']);
-$Month = Month($month); 
-$prev_url = "academic.php?year={$prev_yr}&month={$prev['month']}";
-$next_url = "academic.php?year={$next_yr}&month={$next['month']}";
-$days = $academic->years[$year][$month];
-$has_prev = isset($academic->years[$prev_yr][ $prev['month'] ]);
-$has_next = isset($academic->years[$next_yr][ $next['month'] ]);
+$events = AcademicCalendar::get_events($month, $year);
+$days = Array();
+
+foreach ($events as $event) {
+  $dateTitle = formatDayTitle($event);
+
+  if (!array_key_exists($dateTitle, $days)) {
+    $days[$dateTitle] = Array();
+  }
+  $summary = $event->get_summary();
+
+  // bolden all-caps at the beginning of the string
+  $summary = preg_replace('/^([^a-z]{2,})/', "<b>$1</b>", $summary, 1);
+  $days[$dateTitle][] = $summary;
+}
+
+$prev = increment_month($time, -1);
+$next = increment_month($time, 1);
+
+$prev_month = date('n', $prev);
+$prev_yr = date('Y', $prev);
+
+$next_month = date('n', $next);
+$next_yr = date('Y', $next);
+
+// expensive way to see if there are past/future events
+$nav_links = Array();
+$prev_events = AcademicCalendar::get_events($prev_month, $prev_yr);
+if (count($prev_events) > 0) {
+  $prev_title = date('F Y', $prev);
+  $prev_url = academicURL($prev_yr, $prev_month);
+  $nav_links[] = "<a href=\"$prev_url\">&lt; $prev_title</a>";  
+}
+
+$next_events = AcademicCalendar::get_events($next_month, $next_yr);
+if (count($next_events) > 0) {
+  $next_title = date('F Y', $next);
+  $next_url = academicURL($next_yr, $next_month);
+  $nav_links[] = "<a href=\"$next_url\">$next_title &gt;</a>";
+}
 
 require "$page->branch/academic.html";
 $page->output();
 
-class month_data {
-  public static $months = array(
-    "JANUARY",  "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", 
-    "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
-  );
-}
-
-function next_month($month, $year) {
-  $number = array_search($month, month_data::$months);
-  $number++; 
-  if($number == 12) {
-    $year++;
-    $number = 0;
-  }
-  return array("year" => $year, "month" => month_data::$months[$number]);
-}
-
-function prev_month($month, $year) {
-  $number = array_search($month, month_data::$months);
-  $number--; 
-  if($number == -1) {
-    $year--;
-    $number = 11;
-  }
-  return array("year" => $year, "month" => month_data::$months[$number]);
-}
 
 ?>

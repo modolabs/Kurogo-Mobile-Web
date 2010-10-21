@@ -2,40 +2,27 @@
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
+require_once("api_header.php");
 
-function replace_bool($arr) {
-  foreach ($arr as $key => $value) {
-    if (is_array($value)) {
-      $arr[$key] = replace_bool($value);
-    } else {
-      if ($value === TRUE) {
-	$arr[$key] = 1;
-      } elseif ($value === FALSE) {
-	$arr[$key] = 0;
-      }
-    }
-  }
-  return $arr;
-}
+$module = $_REQUEST['module'];
+PageViews::log_api($module, 'iphone');
 
-switch ($_REQUEST['module']) {
+switch ($module) {
  case 'emergency':
-   $docRoot = getenv("DOCUMENT_ROOT");
-   require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-   require LIBDIR . "rss_services.php";
-   $Emergency = new Emergency();
-   $emergency = $Emergency->get_feed();
-   if($emergency === False) {
-     $text = array('Emergency information is currently not available');
+   if (isset($_REQUEST['command']) && $_REQUEST['command'] == 'contacts') {
+     $data = json_decode(file_get_contents(LIBDIR . "EmergencyContacts.json"));
    } else {
-     $text = $emergency[0]['text'];
+     require LIBDIR . "rss_services.php";
+     $Emergency = new Emergency();
+     $data = $Emergency->get_feed_html();
+     if($data === False) {
+       $data = array('Emergency information is currently not available');
+     }
    }
-   echo json_encode($text);
+   echo json_encode($data);
    break;
 
  case 'people':
-   $docRoot = getenv("DOCUMENT_ROOT");
-   require_once $docRoot . "/mobi-config/mobi_web_constants.php";
    require LIBDIR . 'mit_ldap.php';
    $raw_people = mit_search($_REQUEST['q']);
    $people = Array();
@@ -46,20 +33,7 @@ switch ($_REQUEST['module']) {
      }
      $people[] = $person;
    }
-   $total = count($people);
-   $result = Array(
-     'resultSet' => Array(
-       'totalResultsAvailable' => $total,
-       'totalResultsReturned' => $total,
-       'firstResultPosition' => 1,
-       'result' => $people),
-     );
-   echo json_encode($result);
-   break;
-
- case 'map':
-   $json = file_get_contents('http://map-dev.mit.edu/search?type=query&q=' . $_REQUEST['q'] . '&output=json');
-   echo $json;
+   echo json_encode($people);
    break;
 
  case 'shuttleschedule':
@@ -68,8 +42,6 @@ switch ($_REQUEST['module']) {
     * &route=routeName&stop=stopName: return multiple predictions
     * &route=routeName& ... blah
     */
-   $docRoot = getenv("DOCUMENT_ROOT");
-   require_once $docRoot . "/mobi-config/mobi_web_constants.php";
    require LIBDIR . "ShuttleSchedule.php";
    require LIBDIR . "NextBusReader.php";
    NextBusReader::init();
@@ -132,47 +104,92 @@ switch ($_REQUEST['module']) {
    break;
 
  case 'stellar':
-   $docRoot = getenv("DOCUMENT_ROOT");
-   require_once $docRoot . "/mobi-config/mobi_web_constants.php";
    require LIBDIR . 'StellarData.php';
-   StellarData::init();
-   $query = urldecode($_REQUEST['q']);
-   $subjects = StellarData::search_subjects($query);
-   $doc = new DOMDocument('1.0');
-   $doc->formatOutput = TRUE;
 
-   $root = $doc->createElement('results');
-   $root = $doc->appendChild($root);
+   if (isset($_REQUEST['command'])) {
+     $data = Array();
+     switch ($_REQUEST['command']) {
+     case 'courses':
+       $courses = StellarData::get_courses();
+       foreach ($courses as $short => $course) {
+	 if ($short == 99)
+	   continue;
+	 $is_course = ($course['is_course']) ? 1 : 0;
+	 $data[] = Array(
+	   'short' => sprintf('%s', $short),
+	   'name' => $course['name'],
+	   'is_course' => $is_course,
+	   );
+       }
+       break;
+     case 'subjectList':
+       $courseId = urldecode($_REQUEST['id']);
+       $subjectList = StellarData::get_subjects_with_xref($courseId);
+       foreach ($subjectList as $subjectId => $info) {
+	 $info['term'] = StellarData::get_term();
+	 $data[] = $info;
+       }
+       break;
+     case 'subjectInfo':
+       $subjectId = urldecode($_REQUEST['id']);
+       $data = StellarData::get_subject_info($subjectId);
+       if($data) {
+         $data['announcements'] = StellarData::get_announcements($subjectId);
+       
+         // some classes dont have stellar announcements
+         if($data['announcements'] === False) {
+	   unset($data['announcements']);
+         }
 
-   $results = Array();
-   foreach ($subjects as $subjectid => $subjectData) {
-     $subject = $doc->createELement('subject');
-     $subject = $root->appendChild($subject);
+         $data['term'] = StellarData::get_term();
+       } else {
+	 $data = array('error' => 'SubjectNotFound', 'message' => 'Stellar could not find this subject'); 
+       }
+       break;
+     case 'search':
+       $query = urldecode($_REQUEST['query']);
+       $data = StellarData::search_subjects($query);
+       $term = StellarData::get_term();
+       foreach($data as $index => $value) {
+         $data[$index]['term'] = $term;
+       }
+       break;
+     case 'term':
+       $data = array('term' => StellarData::get_term());
+       break;
 
-     $name = $doc->createElement('name');
-     $name = $subject->appendChild($name);
-     $nameText = $doc->createTextNode($subjectData['name']);
-     $nameText = $name->appendChild($nameText);
+     case 'myStellar':
+       require_once 'push/apns_lib.php';
+       $pass_key = intval($_REQUEST['pass_key']);
+       $device_id = intval($_REQUEST['device_id']);       
+       $device_type = $_REQUEST['device_type'];       
+       $subject = $_REQUEST['subject'];
+       $term = $_REQUEST['term'];
 
-     $masterId = $doc->createElement('masterId');
-     $masterId = $subject->appendChild($masterId);
-     $masterIdText = $doc->createTextNode($subjectData['masterId']);
-     $masterIdText = $masterId->appendChild($masterIdText);
+       if($device_type == 'apple') {
+         if(!APNS_DB::verify_device_id($device_id, $pass_key)) {
+           Throw new Exception("invalid {$pass_key} for {$device_id}");
+         }
+       } else {
+	 Throw new Exception("Device type='${device_type}' not yet supported");
+       }
 
-     $course = $doc->createElement('course');
-     $course = $subject->appendChild($course);
-     $course_parts = explode('.', $subjectData['masterId']);
-     $courseText = $doc->createTextNode($course_parts[0]);
-     $courseText = $course->appendChild($courseText);
+       switch($_REQUEST['action']) {
+         case 'subscribe':
+	   StellarData::push_subscribe($subject, $term, $device_id, $device_type);
+           $data = array('success' => True);
+           break;
+         case 'unsubscribe':
+	   StellarData::push_unsubscribe($subject, $term, $device_id, $device_type);
+           $data = array('success' => True);
+           break;
+       }
 
-     $title = $doc->createElement('title');
-     $title = $subject->appendChild($title);
-     $titleText = str_replace('&', ' and ', $subjectData['title']);
-     $titleText = str_replace('  ', ' ', $titleText);
-     $titleText = $doc->createTextNode($titleText);
-     $titleText = $title->appendChild($titleText);
+     default:
+       break;
+     }
+     echo json_encode($data);
    }
-   echo $doc->saveXML();
    break;
 
  case 'help':
@@ -185,6 +202,64 @@ switch ($_REQUEST['module']) {
     'emergency' => Array('no arge' => 'Show current emergency status'),
     );
    echo json_encode($help);
+   break;
+
+ case 'push':
+   switch ($_REQUEST['device_type']) {
+     case 'apple':
+       require "push/apns_lib.php";
+
+       $command = ($_REQUEST['command']);
+       if($command == 'register') {
+         $identifiers = APNS_DB::create_device_pass_key();
+         if(isset($_REQUEST['device_token'])) {
+	   APNS_DB::register_device_token($_REQUEST['device_token'], $identifiers['device_id'], $_REQUEST['app_id']);
+         }
+         echo json_encode($identifiers);
+       
+       } else {
+         $device_id = $_REQUEST['device_id'];
+
+	 if(!APNS_DB::verify_device_id($device_id, $_REQUEST['pass_key'])) {
+	   throw new Exception('invalid pass_key');
+	 }
+         
+         if($command == 'newDeviceToken') {
+	   APNS_DB::register_device_token($_REQUEST['device_token'], $device_id, $_REQUEST['app_id']);
+           echo json_encode(array('success' => True));
+
+         } elseif($command == 'moduleSetting') {
+           $enabled = (bool)intval($_REQUEST['enabled']);
+           $module = $_REQUEST['module_name'];
+	   APNS_DB::set_module_setting($device_id, $module, $enabled);
+           echo json_encode(array('success' => True, 'module' => $module, 'enabled' => $enabled));
+
+         } else {
+           $device = APNS_DB::get_device($device_id);
+           $unreads = $device['unread_notifications'];
+
+           if($command == 'getUnreadNotifications') {
+	     echo json_encode($unreads);
+                    
+           } elseif($command == 'markNotificationsAsRead') {
+             
+             foreach(json_decode($_REQUEST['tags']) as $readNotification) {
+               $position = array_search($readNotification, $unreads);
+               if($position !== False) {
+                 array_splice($unreads, $position, 1);
+               }
+	     }
+	     APNS_DB::save_unread_notifications($device_id, $unreads);
+             echo json_encode($unreads);
+           }
+         }
+       }
+       break;
+
+     default:
+       echo 'device type not supported';
+       break;
+   }
    break;
 
  default:

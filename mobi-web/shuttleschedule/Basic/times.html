@@ -31,7 +31,7 @@ $page->content_begin();
 				<th>Time</th>
 			</tr>
                         <? foreach($stops as $index => $stop) { ?>
-                            <? if(in_array($index, $upcoming_stops)) { ?>
+                            <? if($stop['upcoming']) { ?>
   			       <tr class="current">
 				   <td><?=$page->img_tag('bus', 'gif', 'bus')?>&nbsp;<strong><?=$stop['title']?></strong></td>
 				   <td><strong><?=format_shuttle_time($stop['next'])?></strong></td>

@@ -16,7 +16,7 @@ $page->content_begin();
 
             <? foreach($main as $item) { ?>
 		<li>
-			<a href="tel:<?=$item->call_number()?>" class="phone"><?=$item->label()?> <span class="smallprint">(<?=$item->message_text()?><?=$item->number_text()?>)</span></a>
+			<a href="<?=dialURL($item)?>" class="phone"><?=$item['contact']?> <span class="smallprint">(<?=number_text($item, TRUE)?>)</span></a>
 		</li>
             <? } ?>
 		<li>

@@ -6,47 +6,55 @@ class Item {
     private $person;
     private $first = True;
 
-    public function __construct($person) {
+    public function __construct($person, $personDisplayMapping)
+    {
         $this->person = $person;
     }
 
-    public function normal($label, $field, $href=NULL, $class=NULL) {
-        foreach($this->person[$field] as $value) {
-          if($this->first) {
-            $this->first = False;
-          } else {
-            echo '<br />';
-          }
-          ?>
+    public function normal($label, $field, $href=NULL, $class=NULL)
+    {
+        foreach($this->person[$field] as $value)
+        {
+            if($this->first)
+            {
+                $this->first = False;
+            }
+            else
+            {
+             echo '<br />';
+            }
+            ?>
             <span class="label"><?=$label?></span>
-	    <span class="value"><?
-                   if($href != NULL) {
-                       echo '<a href="' . $href($value) . '" class="' . $class . '">';
-                   }
-                   echo $value;
-                   if($href != NULL) {
-                       echo "</a>";
-                   }
-                 ?></span>
-          <?
+	    <span class="value">
+                <?
+                if($href != NULL)
+                {
+                    echo '<a href="' . $href($value) . '" class="' . $class . '">';
+                }
+                echo $value;
+                if($href != NULL)
+                {
+                    echo "</a>";
+                }
+                ?>
+            </span>
+            <?
         }
     }
 }
-$item = new Item($person);
+$item = new Item($person, $personDisplayMapping);
 
 $page->content_begin();
 ?>
 	<p class="nav">
             <?
-              $item->normal('name', 'fullname');
-              $item->normal('title', 'title');
-              $item->normal('dept', 'dept');              
-              $item->normal('home', 'homephone', 'phoneHREF', 'phone');              
-              $item->normal('phone', 'telephone', 'phoneHREF', 'phone');              
-              $item->normal('fax', 'fax', 'phoneHREF', 'phone');              
-              $item->normal('address', 'address');              
-              $item->normal('email', 'email', 'mailHREF', 'email');              
-              $item->normal('office', 'room', 'mapURL', 'map');
+            foreach($personDisplayMapping as $attribute)
+            {
+                if ($attribute[4] == TRUE)
+                {
+                    $item->normal($attribute[0], $attribute[0], $attribute[2], $attribute[3]);
+                }
+            }
             ?>
 	</p>
 

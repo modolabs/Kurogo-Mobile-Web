@@ -9,14 +9,18 @@ require_once $docRoot . '/mobi-config/mobi_web_constants.php';
 //  require_once '../constants.php';
 //}
 
+require_once WEBROOT . 'home/Modules.php';
+
 require_once WEBROOT . 'page_builder/WebkitPage.php';
 require_once WEBROOT . 'page_builder/TouchPage.php';
 require_once WEBROOT . 'page_builder/BasicPage.php';
 
+require_once WEBROOT . 'page_builder/counter.php';
+
 class Page {
   // sections of the HTML page
-  protected $title;
-  protected $header;
+  protected $module;
+  protected $title; // displayed on browser title bar
   protected $cache_control = 'max-age=86400';
   protected $stylesheets = array();
   protected $javascripts = array();
@@ -113,6 +117,12 @@ class Page {
     return $this;
   }
 
+  public function module($module) {
+    $this->title = Modules::$module_data['title'];
+    $this->module = $module;
+    return $this;
+  }
+
   public function title($title) {
     $this->title = $title;
     return $this;
@@ -199,6 +209,17 @@ class Page {
   }
 
   public function output() {
+
+    if (!$this->module) {
+      // here is a stricter version of the overly permissive regex
+      // that used to be in page_header
+      $module_list = implode('|', array_keys(Modules::$module_data));
+      preg_match('/\/(' . $module_list . ')\/[^\/]*?$/', $_SERVER['REQUEST_URI'], $match);
+      $this->module = $match[1];
+    }
+
+    PageViews::increment($this->module, $this->platform);
+
     foreach($this->varnames as $varname) {
       ${$varname} = $this->$varname;
     }
@@ -259,11 +280,8 @@ class Page {
    * if not found, search images/ in the parent directory
    */
   public function img_tag($name, $extension, $alt_text='', $attribs=NULL) {
-    //$delta_file = $this->branch . '/images/' . $name . '-' . $this->delta . '.' . $extension;
-    //if (!file_exists($delta_file)) 
+
     $delta_file = $this->branch . '/images/' . $name . '.' . $extension;
-    //if (!file_exists($delta_file)) 
-    //  $delta_file = '../' . $this->branch . '/images/' . $name . '-' . $this->delta . '.' . $extension;
     if (!file_exists($delta_file)) 
       $delta_file = '../' . $this->branch . '/images/' . $name . '.' . $extension;
 

@@ -1,7 +1,4 @@
 <?php
-$page->title('MIT People Directory')
-     ->header('People Directory');
-
 $page->content_begin();
 ?>
 	<form method="get" action="<?=$_SERVER['SCRIPT_NAME']?>">
@@ -14,6 +11,9 @@ $page->content_begin();
 		</span>	
 	</p>
 
+        <? if (($errorMessage != null)) { ?>
+            <p><?= $errorMessage ?></p>
+        <? } ?>
         <? if($failed_search) { ?>
                 <p>No matches found</p>
         <? } ?>

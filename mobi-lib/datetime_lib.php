@@ -7,7 +7,17 @@ function day_of($time, $tzid=NULL) {
   if ($tzid !== NULL) {
     $timezone = new DateTimeZone($tzid);
     $transitions = $timezone->getTransitions();
-    $tztime = $tztime - $transitions[0]['offset'];
+    $is_dst = date('I', $tztime);
+    $offset = 0;
+
+    foreach ($transitions as $transition) {
+      if ($transition['isdst'] == $is_dst) {
+	$offset = $transition['offset'];
+	break;
+      }
+    }
+
+    $tztime = $tztime - $offset;
     if ($tztime > $time)
       $tztime -= 86400;
   }
@@ -53,33 +63,34 @@ function increment_week($date, $numweeks=1) {
 }
 
 function increment_year($date, $numyears=1) {
-  $info = getdate($date);
   return mktime(
-   $info['hours'],
-   $info['minutes'], 
-   $info['seconds'],
-   $info['mon'],
-   $info['mday'],
-   $info['year'] + $numyears
-   );  
+   date('H', $date),
+   date(trim('i', '0'), $date),
+   date(trim('s', '0'), $date),
+   date('n', $date),
+   date('d', $date),
+   date('Y', $date) + $numyears
+   );
 }
 
 function increment_month($date, $nummonths=1) {
-  $info = getdate($date);
-  $month = $info['mon'] + $nummonths;
+  $month = date('n', $date) + $nummonths;
   if ($month > 12) {
-    $year = $info['year'] + ($month - ($month % 12)) / 12;
-    $month = $month % 12;
-  } elseif ($month < 1) {
-    $year = $info['year'] + ($month - ($month % 12)) / 12;
-    $month = $month % 12 + 12;    
+    $remainder = $month % 12;
+    $year = date('Y', $date) + ($month - $remainder) / 12;
+    $month = $remainder;
   } else {
-    $year = $info['year'];
+    $year = date('Y', $date);
   }
+
   return mktime(
-   $info['hours'], $info['minutes'], $info['seconds'],
-   $month, $info['mday'], $year
-   );
+    date('H', $date),
+    date(trim('i', '0'), $date),
+    date(trim('s', '0'), $date),
+    $month,
+    date('d', $date),
+    $year
+    );
 }
 
 function seconds_since_midnight($humantime) {

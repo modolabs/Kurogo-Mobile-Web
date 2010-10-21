@@ -10,18 +10,24 @@ $page->content_begin();
 	
 	<p>Descriptions, announcements and other information for MIT classes.</p>	
     
-    <? if (count(getMyStellar()) > 0 ) { ?>
+    <? if (count(getMyStellar()->allTags) > 0 ) { ?>
         
-    <h3>My Stellar:</h3> 
+        <h3>My Stellar:</h3> 
     
-	<p class="nav">
-    	<? foreach (getMyStellar() as $item) { 
-        	$arr = explode(" ", $item);
-            $id = $arr[0]; 
-            $class = StellarData::get_subject_info($id);?>
-			<a href="detail.php?id=<?= $id ?>&back=index.php"><?= longerID($class) ?></a><br />
+        <? if (count(getMyStellar()->currentIds)) { ?>
+	   <p class="nav">
+    	     <? foreach (getMyStellar()->currentIds as $id) { 
+                $class = StellarData::get_subject_info($id);?>
+		    <a href="detail.php?id=<?= $id ?>&back=index.php"><?= longerID($class) ?></a><br />
+             <? } ?>
+	   </p>
         <? } ?>
-	</p>
+
+        <? if (count(getMyStellar()->oldIds)) { ?>
+           <div class="nonfocal legend">The following old classes have been removed from your My Stellar settings:
+             <?=implode(", ", getMyStellar()->oldIds)?>
+           </div>
+        <? } ?>
     
     <? } ?>
     

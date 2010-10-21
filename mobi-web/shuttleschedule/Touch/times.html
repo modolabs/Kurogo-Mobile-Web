@@ -19,7 +19,7 @@ $page->content_begin();
 		<th>Time</th>
 		</tr>
                 <? foreach($stops as $index => $stop) { ?>
-		<tr <? if(in_array($index, $upcoming_stops)) { ?> class="current" <? } ?> >
+		<tr <? if($stop['upcoming']) { ?> class="current" <? } ?> >
 			<td>
 			<? if ($routeName != 'Boston All' && $routeName != 'Cambridge All') { ?>
 				<span class="sid"><?=num2letter($index)?>.</span>

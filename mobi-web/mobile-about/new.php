@@ -17,9 +17,11 @@ $items = $pager->items();
 require "$page->branch/new.html";
 $page->output();
 
+/*
 function text($data) {
   return htmlentities($data['body']);
 }
+*/
 
 function date_string($data, $format) {
   return date($format, $data['unixtime']);

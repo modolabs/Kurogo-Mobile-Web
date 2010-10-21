@@ -23,7 +23,7 @@ $page->content_begin();
     <? switch($graph['type']) { 
 
          case "TOTAL": ?>
-             <strong><?=f($graph['total'])?></strong> <?=$graph['title']?>
+             <strong><?=number_format($graph['total'])?></strong> <?=$graph['title']?>
       <? break; ?>
       <? case "TREND": ?>
              <h3><?=$graph['title']?>:</h3>
@@ -74,7 +74,7 @@ $page->content_begin();
                          <? } else { ?>
                                 <?=$item['name']?>
                          <? } ?>
-                         <span class="smallprint">(<?=f($item['count'])?> <?=$graph['label']?>)</span>
+                         <span class="smallprint">(<?=number_format($item['count'])?> <?=$graph['label']?>)</span>
                      </li>
                  <? } ?>
              </ol>
@@ -84,9 +84,14 @@ $page->content_begin();
 <? } ?>
 
 <ul class="secondary">
+  <? foreach ($service_types as $service => $title) { 
+      if ($service != $url_params['service']) { ?>
     <li>
-        <a href="<?=$other['url']?>"><?=$other['name']?> Statistics</a>
+      <a href="./?page=statistics&service=<?=$service?>&interval=<?=$url_params['interval']?>">
+        <?=$title?> Statistics
+      </a>
     </li>
+  <? } } ?>
 </ul>
 
 <? 

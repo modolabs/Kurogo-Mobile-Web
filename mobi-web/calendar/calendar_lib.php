@@ -75,7 +75,7 @@ function dayURL($day, $type) {
 }
 
 function academicURL($year, $month) {
-  return "academic.php";
+  return "academic.php?year=$year&month=$month";
 }
 
 function holidaysURL($year=NULL) {
@@ -108,6 +108,23 @@ function subCategorysURL($category) {
 
 function detailURL($event) {
   return "detail.php?id={$event->id}";
+}
+
+// convenience functions
+
+// for academic and holiday calendars
+function formatDayTitle(ICalEvent $event) {
+  $start = $event->get_start();
+  $end = $event->get_end();
+  if ($start != $end) {
+    // all of acad calendar time units are in days so
+    // we can end 23:59:00 instead of 00:00:00 next day
+    $timeRange = new TimeRange($start, $end - 1);
+    $dateTitle = $timeRange->format('l F j');
+  } else {
+    $dateTitle = date('l F j', $start);
+  }
+  return $dateTitle;
 }
 
 function timeText($event) {

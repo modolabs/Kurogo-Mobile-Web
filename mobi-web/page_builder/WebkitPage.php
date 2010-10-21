@@ -42,6 +42,13 @@ class WebkitPage extends Page {
     return $this;
   }
 
+  public function module($module) {
+    $this->navbar_image = $module;
+    $this->title = Modules::$module_data['title'];
+    $this->module = $module;
+    return $this;
+  }
+
   public function navbar_image($navbar_image) {
     $this->navbar_image = $navbar_image;
     return $this;

@@ -6,8 +6,8 @@ $page->title("Emergency Contacts")
 $page->content_begin();
 ?>
 	<ul class="results">
-            <? foreach($others as $item) { ?>
-                <li><a href="tel:<?=$item->call_number()?>" class="phone"><?=$item->label()?> <span class="smallprint">(<?=$item->message_text()?><?=$item->number_text()?>)</span></a></li>
+            <? foreach($contacts as $item) { ?>
+                <li><a href="<?=dialURL($item)?>" class="phone"><?=$item['contact']?> <span class="smallprint">(<?=message_text($item)?><?=number_text($item)?>)</span></a></li>
             <? } ?>
 	</ul>
 

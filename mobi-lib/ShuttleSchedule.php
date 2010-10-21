@@ -11,14 +11,14 @@
  *
  */
 $docRoot = getenv("DOCUMENT_ROOT");
+require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
 
 define("SHUTTLE_SCHEDULE_SOURCE", LIBDIR . 'shuttle_schedule.json');
 
 /* constants used in constants.php: TIMEZONE */
-require_once($docRoot . '/mobi-config/mobi_lib_constants.php');
-require_once(LIBDIR . 'TimeRange.php');
-require_once(LIBDIR . 'datetime_lib.php');
-require_once(LIBDIR . 'holiday_data.php');
+require_once 'TimeRange.php';
+require_once 'datetime_lib.php';
+require_once 'AcademicCalendar.php';
 
 class ShuttleSchedule {
 
@@ -101,20 +101,24 @@ class ShuttleSchedule {
   public static function is_running($routeName, $time=NULL) {
     if ($time === NULL)
       $time = time();
-    if (!self::is_running_today($routeName, $time))
+    if (!self::is_running_today($routeName, $time, TRUE))
       return FALSE;
     // test whether the first run after now
     // is more than $interval seconds in the future
-    return (min(self::get_next_scheduled_loop_start($routeName, $time)) - $time <= self::get_interval($routeName));
+
+    $next_start = min(self::get_next_scheduled_loop_start($routeName, $time));
+    return ($next_start - $time <= self::get_interval($routeName));
   }
 
-  public static function is_running_today($routeName, $time=NULL) {
+  public static function is_running_today($routeName, $time=NULL, $strict=FALSE) {
     if ($time === NULL)
       $time = time();
     $routeInfo = self::get_route_info($routeName);
-    if (array_key_exists('excludeHolidays', $routeInfo)
-	&& (is_holiday($time) && is_holiday($time + 86400)))
-      return FALSE;
+    if (array_key_exists('excludeHolidays', $routeInfo)) {
+      if (AcademicCalendar::is_holiday($time))
+        if ($strict || AcademicCalendar::is_holiday($time + 86400))
+	  return FALSE;
+    }
 
     // for year-round shuttles
     if (count($routeInfo['dates']) == 0)
@@ -123,7 +127,8 @@ class ShuttleSchedule {
     // shuttles with limite date ranges
     foreach ($routeInfo['dates'] as $dateRange) {
       // allow them to view times up to 1 day from now
-      if ($dateRange->contains_point($time) || $dateRange->contains_point($time + 86400))
+      if ($dateRange->contains_point($time) 
+	  || (!$strict && $dateRange->contains_point($time + 86400)))
 	return TRUE;
     }
     return FALSE;
@@ -143,6 +148,18 @@ class ShuttleSchedule {
     return $routeInfo['interval'];    
   }
 
+  public static function count_shuttles_running($routeName, $time) {
+    $runsToday = self::get_runs_today($routeName, $time);
+    $midnight = day_of($time, TIMEZONE);
+    $numshuttles = 0;
+    foreach ($runsToday as $run) {
+      $timeRange = new TimeRange($midnight + $run['first'], $midnight + $run['last']);
+      if ($timeRange->contains_point($time))
+	$numshuttles++;
+    }
+    return $numshuttles;
+  }
+
   public static function is_safe_ride($routeName) {
     $routeInfo = self::get_route_info($routeName);
     return array_key_exists('isSafeRide', $routeInfo);
@@ -158,16 +175,20 @@ class ShuttleSchedule {
     return $routeInfo['title'];
   }
 
+  public static function get_stop_title($routeName, $stopName) {
+    $routeInfo = self::get_route_info($routeName);
+    foreach ($routeInfo['stops'] as $stop) {
+      if ($stop['nextBusId'] == $stopName) {
+	return $stop['title'];
+      }
+    }
+  }
+
   public static function get_sms_title($routeName) {
     $routeInfo = self::get_route_info($routeName);
     if (array_key_exists('smsTitle', $routeInfo))
       return $routeInfo['smsTitle'];
     return $routeInfo['title'];
-  }
-
-  public static function get_nextbus_id($routeName) {
-    $routeInfo = self::get_route_info($routeName);
-    return $routeInfo['nextBusId'];
   }
 
   public static function get_stop_list($routeName) {
@@ -177,39 +198,61 @@ class ShuttleSchedule {
 
   // functions for upcoming schedule
 
+  private static function get_runs_today($routeName, $time) {
+    $runsToday = Array();
+    if (self::is_running_today($routeName, $time, TRUE)) {
+      $routeInfo = self::get_route_info($routeName);
+      $sSinceMidnight = $time - day_of($time, TIMEZONE);
+      $day = date('D', $time);
+      if (array_key_exists($day, $routeInfo['runs'])) {
+	$runsToday = $routeInfo['runs'][$day];
+      }
+    }
+
+    return $runsToday;
+  }
+
+  public static function get_last_run($routeName, $time=NULL) {
+    if ($time === NULL)
+      $time = time();
+    $runsToday = self::get_runs_today($routeName, $time);
+    $last = 0;
+    foreach ($runsToday as $run) {
+      if ($run['last'] > $last)
+	$last = $run['last'];
+    }
+    return $last + day_of($time, TIMEZONE);
+  }
+
   private static function get_next_scheduled_loop_start($routeName, $time=NULL) {
     if ($time === NULL)
       $time = time();
-    if (!self::is_running_today($routeName, $time)) {
-      warn("route $routeName is not currently available");
-      return;
-    }
 
     $routeInfo = self::get_route_info($routeName);
     $interval = self::get_interval($routeName);
     $sSinceMidnight = $time - day_of($time, TIMEZONE);
-    $day = date('D', $time);
     // use case for people checking saferides after midnight
     if (array_key_exists('isSafeRide', $routeInfo) && $sSinceMidnight < 5 * 3600) {
       $sSinceMidnight += 86400;
-      $day = date('D', $time - 86400);
+      $runsToday = self::get_runs_today($routeName, $time - 86400);
+    } else {
+      $runsToday = self::get_runs_today($routeName, $time);
     }
 
     $nextStarts = Array();
-    if (array_key_exists($day, $routeInfo['runs'])) {
-      $runsToday = $routeInfo['runs'][$day];
-      foreach ($runsToday as $run) {
-	if ($run['first'] >= $sSinceMidnight || $run['last'] + $interval < $sSinceMidnight)
-	  continue;
-	$sSinceStart = $sSinceMidnight - $run['first'];
-	$sSinceLastRun = $sSinceStart % $interval;
+    foreach ($runsToday as $run) {
+      if ($run['last'] + $interval < $sSinceMidnight)
+	continue;
+      $sSinceStart = $sSinceMidnight - $run['first'];
 
-	// let get_next_scheduled_loop figure out this is expired
-	$nextStarts[] = ($sSinceStart - $sSinceLastRun + $interval < $run['last']) ?
-	  $time - $sSinceLastRun + $interval : $time - $sSinceLastRun;
-      }
+      if ($sSinceStart < 0) { // route has not started for the day
+	$nextStarts[] = day_of($time, TIMEZONE) + $run['first'];
+      } else if ($sSinceStart < $run['last']) {
+	$nextStarts[] = $time - ($sSinceStart % $interval) + $interval;
+      } // otherwise, route is done for the day
     }
-    if (count($nextStarts) == 0) {
+
+    if (count($nextStarts) == 0) { // route doesn't run today, get earliest day
       for ($i = 0; $i < 7; $i++) {
 	$time += 86400;
 	$day = date('D', $time);
@@ -223,8 +266,8 @@ class ShuttleSchedule {
 	  break;
 	}
       }
-      if ($nextStart && self::is_running_today($routeName, $time))
-	$nextStarts[] = $nextStart;      
+      if ($nextStart && self::is_running_today($routeName, $time, TRUE))
+	$nextStarts[] = $nextStart;
     }
     return $nextStarts;
   }
@@ -244,16 +287,22 @@ class ShuttleSchedule {
       $nextTimes = Array();
       foreach ($nextStarts as $nextStart) {
 	$nextTime = $nextStart + $stop['offset'] * 60;
-	if ($nextTime - $interval > $time && day_of($nextTime, TIMEZONE) == day_of($time, TIMEZONE))
+	if ($nextTime - $interval > $time 
+	    && $nextTime - 2 * $interval <= $time
+	    && $nextTime - $interval > $nextStart)
 	  $nextTime -= $interval;
 	$nextTimes[] = $nextTime;
       }
       $nextTime = min($nextTimes);
-      $stopInfo['nextScheduled'] = ($nextTime < $time) ? 'finished' : $nextTime;
+      $stopInfo['nextScheduled'] = ($nextTime < $time) ? 0 : $nextTime;
       $loopInfo[] = $stopInfo;
     }
     return $loopInfo;
   }
+
+  /* not sure if any of the functions after this are being used
+   * should make sure at some point 
+   */
 
   public static function get_next_scheduled_loops($routeName, $time=NULL, $limit=3) {
     if ($time === NULL)

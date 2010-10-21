@@ -210,17 +210,27 @@ class ICalEvent extends ICalObject {
     case 'DTSTART':
       // for dtstart and dtend the param is always time zone id
       $start = ICalendar::ical2unix($value, $param_value);
-      $this->range = new TimeRange($start);
+      if (!$this->range) {
+	$this->range = new TimeRange($start);
+      } else {
+	$this->range->set_start($start);
+      }
       break;
     case 'DTEND':
       $end = ICalendar::ical2unix($value, $param_value);
-      if (($end - $this->get_start()) % 86400 == 0) {
-	// make all day events end at 11:59:59 so they don't overlap next day
-	$end -= 1;
+      if (!$this->range) {
+	$this->range = new TimeRange($end);
+      } else {
+	if (($end - $this->get_start()) % 86400 == 0) {
+	  // make all day events end at 11:59:59 so they don't overlap next day
+	  $end -= 1;
+	}
+	$this->range->set_end($end);
       }
-      $this->range->set_end($end);
       break;
     case 'DURATION':
+      // todo:
+      // if this tag comes before DTSTART we will break
       $this->range->set_end($this->get_start() + $value);
       break;
     case 'RRULE':

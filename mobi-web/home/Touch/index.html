@@ -22,7 +22,7 @@
 
 	<div id="homegrid">
 <? foreach ($modules as $index => $module) { ?>
-		<div><a href="<?=url($module)?>"><img src="Touch/images/<?=$module?>.gif" width="44" height="44" alt="<?=Modules::title($module)?>" /><br/><?=Modules::wrap_title($module)?>
+		<div><a href="<?=Modules::url($module, $page->certs)?>"><img src="Touch/images/<?=$module?>.gif" width="44" height="44" alt="<?=Modules::title($module)?>" /><br/><?=Modules::wrap_title($module)?>
 <?   if(Modules::subtitle($module)) { ?>
 			<br/><span class="fineprint"><?=Modules::subtitle($module)?></span><?
      } ?></a></div>
@@ -33,7 +33,7 @@
 
 	<div id="footer">
 		<a href="http://web.mit.edu/ist/"><img src="../Touch/images/ist-logo.gif" width="26" height="18" alt="IST" /></a>Information Services &amp; Technology
-	<? if ($_SERVER['SERVER_NAME'] == 'mobi2.mit.edu') { include('extra_footer.php'); } ?>
+	<? if (SHOW_DEVICE_DETECTION) { include('extra_footer.php'); } ?>
 	</div>
 </div>
 

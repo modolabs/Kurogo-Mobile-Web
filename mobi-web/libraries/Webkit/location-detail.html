@@ -1,17 +1,5 @@
 <?php
 
-$prev_next_links = Array();
-
-if ($terms_before_today) {
-  $data = $terms_before_today[0];
-  $prev_next_links[] = '<a href="location-detail.php?library=' . $library . '&termday=' . $data['termday'] . '">&lt;' . $data['name'] . ' hours</a>';
-}
-
-if ($terms_after_today) {
-  $data = $terms_after_today[0];
-  $prev_next_links[] = '<a href="location-detail.php?library=' . $library . '&termday=' . $data['termday'] . '">' . $data['name'] . ' hours &gt;</a>';
-}
-
 $prev_next_html = implode(' | ', $prev_next_links);
 
 $page->title('MIT Libraries Hours &amp; Locations')

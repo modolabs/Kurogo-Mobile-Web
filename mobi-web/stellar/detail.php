@@ -9,38 +9,39 @@ require_once WEBROOT . "stellar/stellar_lib.php";
 $class_id = $_REQUEST['id'];
 $class = StellarData::get_subject_info($class_id);
 $term = StellarData::get_term_text();
+$term_id = StellarData::get_term();
 
 $tabs = new Tabs(selfURL(), 'tab', array('News', 'Info', 'Staff'));
 
 $back = $_REQUEST['back'];
 
 /* My Stellar actions */
-$mystellar = getMyStellar();
-$class_data = $class_id . " " . $term;
+$mystellar = getMyStellar()->allTags;
+$class_data = $class_id . " " . $term_id;
 
-if(in_array($class_data, getMyStellar())) { 
+if(in_array($class_data, $mystellar)) { 
   $toggle = "ms_on";
   $mystellar_img = 'mystellar-on';
   $action = 'remove';
-} elseif (!in_array($class_data, getMyStellar())) {
+} elseif (!in_array($class_data, $mystellar)) {
   $toggle = "ms_off";
   $mystellar_img = 'mystellar-off';
   $action = 'add';
 }
 
 if($_REQUEST['action'] == 'add') {
-  if (!in_array($class_data, getMyStellar())) {
+  if (!in_array($class_data, $mystellar)) {
     $mystellar[] = $class_data;
     header("Location: " . selfURL());
   }
 }
 
 if($_REQUEST['action'] == 'remove') {
-  if (in_array($class_data, getMyStellar())) {
+  if (in_array($class_data, $mystellar)) {
     array_splice($mystellar, array_search($class_data, $mystellar), 1);
     header("Location: " . selfURL());
   } else {
-    foreach (getMyStellar() as $item) {
+    foreach ($mystellar as $item) {
       if (strpos($item,$class_id) !== false) {
 	array_splice($mystellar, array_search($item, $mystellar), 1);
 	header("Location: index.php");
@@ -144,7 +145,7 @@ function sDate($item) {
 }
 
 function stellarURL($class) {
-  return 'http://stellar.mit.edu/course' . $class['stellarUrl'];
+  return 'http://stellar.mit.edu/' . $class['stellarUrl'];
 }
 
 ?>

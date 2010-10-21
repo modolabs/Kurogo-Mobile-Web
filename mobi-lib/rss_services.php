@@ -1,19 +1,26 @@
 <?php
+$docRoot = getenv("DOCUMENT_ROOT");
+require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
 
 class Emergency extends RSS {
-  protected $rss_url = "http://emergency.mit.edu/emergency/rss.php";
+  protected $rss_url = EMERGENCY_RSS_URL;
+  protected $custom_tags = array('version');
 }
  
 class ThreeDown extends RSS {
-  protected $rss_url = "http://3down.mit.edu/3down/index.php?rss=1";
+  protected $rss_url = THREEDOWN_RSS_URL;
   protected $index_by_title = True;
 }
 
 class RSS {
 
   protected $custom_tags = array();
+  protected $custom_html_tags = array();
 
   private $cache = NULL;
+
+  // allows long living processes to disable caching
+  public $use_cache = True;
 
   /*
    * get plain text of "description" tag in the feed
@@ -21,6 +28,10 @@ class RSS {
    */
   public function get_feed() {
     $html_feed = $this->get_feed_html();
+    if($html_feed === False) {
+      return False;
+    }
+
     $items = Array();
     foreach ($html_feed as $index => $contents) {
       $items[$index] = array(
@@ -63,7 +74,9 @@ class RSS {
       return FALSE;
     }
 
-    $rss_obj->loadXML($rss);
+    if(!$rss_obj->loadXML($rss)) {
+      return FALSE;
+    }
     $rss_root = $rss_obj->documentElement;
     $items = array();
 
@@ -85,14 +98,27 @@ class RSS {
           "title"    => $title
       );
 
-      foreach($this->custom_tags as $custom_tag) {
-        $custom_item = self::getTag($item, $custom_tag)->nodeValue;
-	$items[$index][$custom_tag] = html_entity_decode($custom_item, ENT_QUOTES);
+      if ($this->custom_html_tags
+	  && count($this->custom_tags) == count($this->custom_html_tags)) {
+        $tags = array_combine($this->custom_tags, $this->custom_html_tags);
+        foreach ($tags as $tag => $allowed_html_tags) {
+          $custom_item = strip_tags(
+            self::getTag($item, $tag)->nodeValue,
+            $allowed_html_tags);
+          $items[$index][$tag] = html_entity_decode($custom_item);
+        }
+      } else {
+        foreach($this->custom_tags as $custom_tag) {
+         $custom_item = self::getTag($item, $custom_tag)->nodeValue;
+	 $items[$index][$custom_tag] = html_entity_decode($custom_item, ENT_QUOTES);
+        }
       }
     }
 
-    // cache the result (to prevent multiple remote calls)
-    $this->cache = $items;
+    if($this->use_cache) {
+      // cache the result (to prevent multiple remote calls)
+      $this->cache = $items;
+    }
     return $items;
   }
 

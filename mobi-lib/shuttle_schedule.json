@@ -1,10 +1,9 @@
 {
-  "cambridge_all":{
+  "saferidecamball":{
     "title": "Cambridge All",
     "smsTitle": "Camb All",
-    "nextBusId": "saferidecamball",
     "isSafeRide": 1,
-    "summary": "This shuttle runs every evening during summer and holiday breaks. No map is available for this route.",
+    "summary": "Runs 6pm-2am Sun-Wed, 6pm-3am Thu-Sat, during summer and holiday breaks.",
     "interval": 60,
     "stops": [
       {"title":"84 Mass Ave", "nextBusId":"mass84_d", "smsTitle": "84Mass", "offset": 0},
@@ -46,11 +45,10 @@
     ],
     "dates": ["20090606-20090813", "20091125-20091128", "20091218-20100114", "20100319-20100325"]
   },
-  "boston_all": {
+  "saferidebostonall": {
     "title": "Boston All",
-    "nextBusId": "saferidebostonall",
     "isSafeRide": 1,
-    "summary": "This shuttle runs every evening during summer and holiday breaks. No map is available for this route.",
+    "summary": "Runs 6pm-2am Sun-Wed, 6pm-3am Thu-Sat, during summer and holiday breaks.",
     "interval": 60,
     "stops": [
       {"title": "84 Mass Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAv", "offset": 0},
@@ -76,12 +74,11 @@
     ],
     "dates": ["20090606-20090813", "20091125-20091128", "20091218-20100114", "20100319-20100325"]
   },
-  "cambridge_east": {
+  "saferidecambeast": {
     "title": "Cambridge East",
     "smsTitle": "Camb East",
-    "nextBusId": "saferidecambeast", 
     "isSafeRide": 1,
-    "summary": "This shuttle runs every evening, except summer and holiday breaks.",
+    "summary": "Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",
     "interval": 30,
     "stops": [
       {"title":"84 Mass. Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAve", "offset":0},
@@ -109,12 +106,11 @@
     ],
     "dates": ["20090814-20091124", "20091129-20091217", "20100115-20100320", "20100326-20100606"]
   },
-  "cambridge_west": {
+  "saferidecambwest": {
     "title": "Cambridge West", 
     "smsTitle": "Camb West",
-    "nextBusId": "saferidecambwest",
     "isSafeRide": 1,
-    "summary": "This shuttle runs every evening, except summer and holiday breaks.",
+    "summary": "Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",
     "interval": 30,
     "stops": [
       {"title":"84 Mass. Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAve", "offset":0},
@@ -142,11 +138,10 @@
     ],
     "dates": ["20090814-20091124", "20091129-20091217", "20100115-20100320", "20100326-20100606"]
   },
-  "boston_west": {
+  "saferidebostonw": {
     "title": "Boston West",
-    "nextBusId": "saferidebostonw", 
     "isSafeRide": 1,
-    "summary": "This shuttle runs every evening, except summer and holiday breaks.",
+    "summary": "Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",
     "interval": 30,
     "stops": [
       {"title":"84 Mass Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAve", "offset": 0},
@@ -166,11 +161,10 @@
     ],
     "dates": ["20090814-20091124", "20091129-20091217", "20100115-20100320", "20100326-20100606"]
   },
-  "boston_east": {
+  "saferidebostone": {
     "title": "Boston East",
-    "nextBusId": "saferidebostone", 
     "isSafeRide": 1,
-    "summary": "This shuttle runs every evening, except summer and holiday breaks.",
+    "summary": "Runs 6pm-2:30am Sun-Wed, 6pm-3:30am Thu-Sat, except summer and holiday breaks.",
     "interval": 20,
     "stops": [
       {"title":"84 Mass Ave", "nextBusId":"mass84_d","smsTitle": "84MassAve", "offset": 0},
@@ -187,10 +181,9 @@
     ],
     "dates": ["20090814-20091124", "20091129-20091217", "20100115-20100320", "20100326-20100606"]
   },
-  "tech_shuttle": {
+  "tech": {
     "title": "Tech Shuttle",
-    "nextBusId": "tech",
-    "summary": "This shuttle runs weekdays 7AM-7PM, all year round.",
+    "summary": "Runs weekdays 7:15am-7:15pm, all year round.",
     "interval": 20,
     "stops": [
       {"title":"Kendall Square T", "nextBusId":"kendsq_d", "smsTitle": "KendallSqT", "offset": 0},
@@ -213,11 +206,10 @@
     "dates": [],
     "excludeHolidays": 1
   },
-  "northwest_shuttle": {
+  "northwest": {
     "title": "Northwest Shuttle",
     "smsTitle": "NW Shuttle",
-    "nextBusId": "northwest",
-    "summary": "This shuttle runs weekdays 7AM-6PM, all year round.",
+    "summary": "Runs weekdays 7:25am-6:42pm, all year round.",
     "interval": 20,
     "stops": [
       {"title":"Kendall Square T", "nextBusId":"kendsq_d", "smsTitle": "KendallSqT", "offset": 0},
@@ -237,10 +229,9 @@
     "dates": [],
     "excludeHolidays": 1
   },
-  "boston_daytime": {
+  "boston": {
     "title": "Boston Daytime",
-    "nextBusId": "boston",
-    "summary": "This shuttle runs weekdays 8AM-6PM, Sep-May.",
+    "summary": "Runs weekdays 8am-6pm, Sep-May.",
     "interval": 20,
     "stops": [      
       {"title":"84 Mass Ave", "nextBusId":"mass84_d", "smsTitle": "84MassAve", "offset": 0},

@@ -9,7 +9,7 @@ $page->content_begin();
 	<h2>What's New</h2> 
 
 	<? foreach($items as $item) { ?>
-		<p><strong><?=$item['title']?></strong>: <?=text($item)?> <span class="smallprint">(<?=date_string($item, 'M j')?>)</span></p>
+		<p><strong><?=$item['title']?></strong>: <?=$item['body']?> <span class="smallprint">(<?=date_string($item, 'M j')?>)</span></p>
         <? } ?> 
 
 </div>  

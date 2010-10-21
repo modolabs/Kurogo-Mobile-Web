@@ -5,13 +5,14 @@ require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "home/Home.php";
 require_once WEBROOT . "home/Modules.php";
 require_once WEBROOT . "page_builder/Page.php";
-require WEBROOT . "page_builder/counter.php";
+//require WEBROOT . "page_builder/counter.php";
 require WEBROOT . "page_builder/page_tools.php";
 require WEBROOT . "customize/customize_lib.php";
 
 $page = Page::factory();
+$page->module('home');
 
-PageViews::increment('home', $page->platform);
+//PageViews::increment('home', $page->platform);
 
 $whats_new_count = Home::$whats_new_count;
 $top_item = Home::$whats_new->getTopItemName();
@@ -37,6 +38,7 @@ $page->prevent_caching('Basic');
 $page->prevent_caching('Touch');
 $page->cache();
 
+/*
 function url($module) {
   // we rewrite urls for modules which require certificates
   // to make sure the user at least once sees the get certificates page
@@ -47,6 +49,7 @@ function url($module) {
 
   return $url;
 }
+*/
 
 ob_start();
   require $page->branch . '/index.html';

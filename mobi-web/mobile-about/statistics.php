@@ -3,7 +3,7 @@ $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "home/Modules.php";
-define("SMS_STATS_URL", 'stats_url');
+define("SMS_STATS_URL", 'http://sms1.mit.edu/~blpatt/trunk/mangotext/api/statistics.php');
 
 $platforms = Array(
     'iphone' => 'iPhone',
@@ -17,17 +17,15 @@ $platforms = Array(
     'computer' => 'Computer',
   );
 
-$url_params = Array( // default values
-  'page' => 'statistics',
-  'service' => 'web',
-  'interval' => 'day',
-  );
-
+$service_types = Array('web' => 'Website', 'sms' => 'SMS', 'api' => 'Native App');
 $interval_types = Array(
   'day' => Array('duration' => 7, 'title' => 'Week', 'numdays' => 7),
   'week' => Array('duration' => 12, 'title' => '12 Weeks', 'numdays' => 84),
   'month' => Array('duration' => 12, 'title' => 'Year', 'numdays' => 365),
   );
+
+// default params
+$url_params = Array('page' => 'statistics', 'service' => 'web', 'interval' => 'day');
 
 foreach ($url_params as $param => $value) {
   if(isset($_GET[$param])) {
@@ -37,27 +35,7 @@ foreach ($url_params as $param => $value) {
 
 $duration = $interval_types[$url_params['interval']]['duration'];
 
-if($url_params['service'] == 'web') {
-  $name = 'Website';
-  $all_data = PageViews::view_past($url_params['interval'], $duration);
-  $graphs = array(
-    summary_total($all_data, "total", "total page views"),
-    trend($all_data, "total", 
-	  'Page Views by ' . ucfirst($url_params['interval']), 
-	  $url_params['interval']),
-    bar_percentage( platform_data($all_data), "Traffic by Platform"),
-    list_items(generate_popular_web_content($all_data), "Most Popular Content", "page views"),
-  );
-
-  $other = build_other($url_params);
- 
-} elseif($url_params['service'] == 'sms') {
-  $docRoot = getenv("DOCUMENT_ROOT");
-  require_once $docRoot . "/mobi-config/mobi_web_constants.php";
-  require_once WEBROOT . 'page_builder/security.php';
-  users_restricted();
-
-  $name = 'SMS';
+if ($url_params['service'] == 'sms') {
   $stats_url = SMS_STATS_URL . "?days=" . $interval_types[$url_params['interval']]['numdays'];
   $stats_data = json_decode(file_get_contents($stats_url), TRUE);
 
@@ -79,9 +57,31 @@ if($url_params['service'] == 'web') {
     list_items( generate_sms_content($modules), "Popular SMS Queries", "queries"),
   );
 
-  $other = build_other($url_params);
+} else {
+  $all_data = PageViews::view_past($url_params['service'], $url_params['interval'], $duration);
+  if ($url_params['service'] == 'web') {
+    $graphs = array(
+      summary_total($all_data, "total", "total page views"),
+      trend($all_data, "total", 
+	    'Page Views by ' . ucfirst($url_params['interval']), 
+	    $url_params['interval']),
+      bar_percentage( platform_data($all_data), "Traffic by Platform"),
+      list_items(generate_popular_content('web', $all_data), "Most Popular Content", "page views"),
+      );
+  } else { // api
+    $graphs = array(
+      summary_total($all_data, "total", "total API requests"),
+      trend($all_data, "total", 
+	    'API Requests by ' . ucfirst($url_params['interval']), 
+	    $url_params['interval']),
+      list_items(generate_popular_content('api', $all_data), "Most Popular Modules", "requests"),
+      );
+  }
 } 
 
+$name = $service_types[$url_params['service']];
+
+// set states of fake segmented control
 $statclasses = Array();
 foreach ($interval_types as $type => $attrs) {
   $stclass = Array();
@@ -98,24 +98,7 @@ foreach ($interval_types as $type => $attrs) {
 require "$page->branch/statistics.html";
 $page->output();
 
-/* functions */
-
-function build_other($params) {
-  $new_params = $params;
-
-  if ($params['service'] == 'web') {
-    $new_params['service'] = 'sms';
-    $name = 'SMS';
-  } elseif ($params['service'] == 'sms') {
-    $new_params['service'] = 'web';
-    $name = 'Website';
-  }
-  
-  return Array(
-    'url' => './?' . http_build_query($new_params),
-    'name' => $name,
-    );
-}
+/* sms functions */
 
 function aggregate_days($days, $interval_type, $duration) {
   $intervals = Array();
@@ -178,32 +161,6 @@ function aggregate_days($days, $interval_type, $duration) {
   return array_reverse($intervals);
 }
 
-function generate_popular_web_content($data) {
-  $viewcounts = array();
-
-  foreach (Modules::full_list() as $module => $title) {
-    $viewcounts[$module] = 0;
-  }
-
-  foreach($data as $datum) {
-    foreach ($datum as $field => $count) {
-      if (array_key_exists($field, $viewcounts))
-	$viewcounts[$field] += $count;
-    }
-  }
-
-  $popular_pages = Array();
-  foreach ($viewcounts as $module => $count) {
-    $popular_pages[] = array(
-      'name' => Modules::title($module),
-      'link' => Modules::url($module),
-      'count' => $count,
-    );
-  }
-
-  return $popular_pages;
-}
-
 function generate_sms_content($data) {
   foreach($data as $index => $module_row) {
     $module = $module_row['module'];
@@ -217,6 +174,63 @@ function generate_sms_content($data) {
   return $data;
 }
 
+function carriers_data($data) {
+  $output = array();
+  foreach($data as $row) {
+    $output[$row['carrier']] = $row['count'];
+  }
+  return $output;
+}
+
+/* web functions */
+
+function generate_popular_content($system, $data) {
+  $viewcounts = array();
+  if ($system == 'web') {
+    $modules = array();
+    foreach (Modules::$module_data as $module => $mdata) {
+      $modules[$module] = $mdata['title'];
+    }
+  } else { // api
+    $modules = array(
+      "stellar" => "Stellar", 
+      "shuttles" => "ShuttleTrack", 
+      "map" => "Campus Map", 
+      "people" => "Campus Directory",
+      "emergency" => "Emergency Info", 
+      "newsoffice" => "News"
+      );
+  }
+
+  foreach ($modules as $module => $title) {
+    $viewcounts[$module] = 0;
+  }
+
+  foreach($data as $datum) {
+    foreach ($datum as $field => $count) {
+      if (array_key_exists($field, $viewcounts))
+	$viewcounts[$field] += $count;
+    }
+  }
+
+  $popular_pages = Array();
+  foreach ($viewcounts as $module => $count) {
+    $module_stats = array(
+      'name' => $modules[$module],
+      'count' => $count,
+      );
+    if ($system == 'web') {
+      $module_stats['name'] = Modules::title($module);
+      $module_stats['link'] = Modules::url($module);
+    }
+
+    $popular_pages[] = $module_stats;
+  }
+  return $popular_pages;
+}
+
+/* general */
+
 function compare_content($content1, $content2) {
   if($content1['count'] < $content2['count']) {
     return 1;
@@ -225,15 +239,6 @@ function compare_content($content1, $content2) {
     return -1;
   }
   return 0;
-}
-
-function f($count) {
-  $count_str = (string) $count;
-  if(strlen($count_str) <= 3 ) {
-    return $count_str;
-  } else {
-    return f(substr($count_str, 0, -3)) . ',' . substr($count_str, -3);
-  }
 }
 
 function per_cent($part, $total) {
@@ -353,28 +358,5 @@ function platform_data($data) {
   return $traffic;
 }
 
-function carriers_data($data) {
-  $output = array();
-  foreach($data as $row) {
-    $output[$row['carrier']] = $row['count'];
-  }
-  return $output;
-}
-
-/*
-function convert_rows($rows) {
-  $args = func_get_args();
-  $fields = array_slice($args, 1);
-  $new_rows = array();
-  foreach($rows as $row) {
-    $new_row = array();
-    foreach($fields as $field) {
-      $new_row[$field] = $row->$field;
-    }
-    $new_rows[] = $new_row;
-  }
-  return $new_rows;
-}
-*/
 
 ?>

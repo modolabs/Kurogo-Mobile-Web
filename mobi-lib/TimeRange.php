@@ -43,7 +43,7 @@ class TimeRange {
     $this->end = $end;
   }
 
-  public function format($format) {
+  public function format($format, $compress=TRUE) {
     if ($this->start == $this->end) {
       return date($format, $this->start);
     } else {
@@ -58,15 +58,22 @@ class TimeRange {
 
       $left = Array();  // string to show left of hyphen
       $right = Array(); // string to show right of hyphen
-      while (list($prec, $token_type) = each ($token_types)) {
-	$start = date($token_type, $this->start);
-	$end = date($token_type, $this->end);
-	$left[strpos($format, $token_type)] = $start;
-	if ($start != $end) {
-	  $right[strpos($format, $token_type)] = $end;
-	  break;
+
+      if ($compress) {
+	// iterate through tokens in decreasing grain size
+	// until a tokens are different for start and end date
+	while (list($prec, $token_type) = each ($token_types)) {
+	  $start = date($token_type, $this->start);
+	  $end = date($token_type, $this->end);
+	  $left[strpos($format, $token_type)] = $start;
+	  if ($start != $end) {
+	    $right[strpos($format, $token_type)] = $end;
+	    break;
+	  }
 	}
       }
+
+      // iterate through the rest of the array
       while (list($prec, $token_type) = each ($token_types)) {
 	$start = date($token_type, $this->start);
 	$end = date($token_type, $this->end);

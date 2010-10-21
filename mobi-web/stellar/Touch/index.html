@@ -8,27 +8,34 @@ $page->content_begin();
 ?>
 
 	<div class="nonfocal">
-	<p>Descriptions, announcements and other information for MIT classes.</p>
+	    <p>Descriptions, announcements and other information for MIT classes.</p>
+        </div>
     
-    <? if (count(getMyStellar()) > 0 ) { ?>
+    <? if (count(getMyStellar()->allTags) > 0 ) { ?>
         
-        <h3>My Stellar</h3> 
-    </div>
+        <div class="nonfocal">
+            <h3>My Stellar</h3> 
+        </div>
     
-	<ul class="nav">
-    	<? foreach (getMyStellar() as $item) { 
-        	$arr = explode(" ", $item);
-            $id = $arr[0]; 
-            $class = StellarData::get_subject_info($id);?>
-			<li><a href="detail.php?id=<?= $id ?>&back=index.php"><?= longerID($class) ?></a></li>
+        <? if (count(getMyStellar()->currentIds)) { ?>
+	    <ul class="nav">
+    	    <? foreach (getMyStellar()->currentIds as $id) { 
+                $class = StellarData::get_subject_info($id);?>
+	            <li><a href="detail.php?id=<?= $id ?>&back=index.php"><?= longerID($class) ?></a></li>
+            <? } ?>
+	    </ul>
+	<? } ?>
+
+        <? if (count(getMyStellar()->oldIds)) { ?>
+           <div class="nonfocal legend">The following old classes have been removed from your My Stellar settings:
+              <?=implode(", ", getMyStellar()->oldIds)?>
+           </div>
         <? } ?>
-	</ul>
-		
-    <div class="nonfocal">
     
     <? } ?>
 	
-	<h3>Browse by course:</h3>
+        <div class="nonfocal">
+	    <h3>Browse by course:</h3>
 	</div>
 
 	<ul class="nav">

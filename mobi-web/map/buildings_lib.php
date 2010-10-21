@@ -2,7 +2,6 @@
 
 function loadXML($filename) {
   $xml_obj = new DOMDocument('1.0', 'iso-8859-1');
-  $xml_txt = file_get_contents($filename);
   $xml_obj->load($filename);
   return $xml_obj;
 }
@@ -94,6 +93,47 @@ function find_contents($type, $building_nodes) {
     }
   }
   ksort($found);
+  return $found;
+}
+
+function find_objects_ll($type, $building_nodes) {
+  $found = array();
+
+  foreach($building_nodes as $building) {
+    if(is_type($building, $type)) {
+      $bldg_id = getID($building);
+      $lat = $building->getElementsByTagName('lat_wgs84')->item(0)->nodeValue;
+      $lon = $building->getElementsByTagName('long_wgs84')->item(0)->nodeValue;
+
+      $found[] = Array('name' => getName($building), 
+        'building' => $bldg_id, 'lat' => $lat, 'lon' => $lon);
+
+      foreach($building->getElementsByTagName('altname') as $node) {
+	$found[] = Array('name' => trim($node->nodeValue),
+	  'building' => $bldg_id, 'lat' => $lat, 'lon' => $lon );
+      }
+    }
+  }
+  return $found;
+}
+
+function find_contents_ll($type, $building_nodes) {
+  $found = array();
+
+  foreach($building_nodes as $building) {
+    foreach($building->getElementsByTagName('contents') as $content) {
+      if(is_type($content, $type)) {
+	$lat = $building->getElementsByTagName('lat_wgs84');
+	$lon = $building->getElementsByTagName('long_wgs84');
+	$found[] = Array(
+	  'name' => getName($content),
+	  'building' => getID($building),
+	  'lon' => $lon->item(0)->nodeValue,
+	  'lat' => $lat->item(0)->nodeValue,
+	  );
+      }
+    }
+  }
   return $found;
 }
 

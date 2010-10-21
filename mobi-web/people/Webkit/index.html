@@ -15,6 +15,9 @@ $page->content_begin();
 				<input class="combobutton" id="sch_btn" src="../Webkit/images/search-button.png" type="image" />
 			</fieldset>	
 
+                <? if (($errorMessage != null)) { ?>
+                    <p><?= $errorMessage ?></p>
+                <? } ?>
                 <? if($failed_search) { ?>
                       <p>No matches found</p>
                 <? } ?>

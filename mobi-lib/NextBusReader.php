@@ -13,15 +13,19 @@
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once($docRoot . '/mobi-config/mobi_lib_constants.php');
+require_once("ShuttleSchedule.php");
+
 
 class NextBusReader {
   private static $query_params = Array();
-  private static $routeCache = Array();
-  private static $predictionCache = Array();
-  private static $vehicleCache = Array();
+  private static $routeCache = Array(); // results of routeConfig command
+  private static $predictionCache = Array(); // results of predictions command
+  private static $vehicleCache = Array(); // results of vehicleLocatiosn command
+  private static $unmodifiedRouteList = Array(); // results of routeList command
   private static $routeCachePrefix = 'NEXTBUS_ROUTE_';
   private static $predictionCachePrefix = 'NEXTBUS_PREDICTION_';
   private static $vehicleCacheFile = 'NEXTBUS_VEHICLE_LOCATIONS';
+  private static $stopsCacheFile = 'NEXTBUS_STOPS';
 
   /* private query methods */
 
@@ -62,11 +66,12 @@ class NextBusReader {
       // errors usually appear when nextbus is initializing our routes
       foreach ($xml_obj->getElementsByTagName('Error') as $error) {
 	$errors = TRUE;
-	//warn($error->nodeValue);
+	error_log('NextBus returned XML: ' . $error->nodeValue);
       }
       if (!$errors)
 	return $xml_obj;
     }
+    error_log('Could not fetch XML from NextBus');
     return FALSE;
   }
 
@@ -81,11 +86,12 @@ class NextBusReader {
     }
   }
 
-  private static function assert_exists($routeName) {
+  private static function is_nextbus_route($routeName) {
     self::init();
-    if (!array_key_exists($routeName, self::$routeCache)) {
-      throw new Exception("invalid route name '$routeName' for nextbus");
+    if (!in_array($routeName, self::$unmodifiedRouteList)) {
+      return FALSE;
     }
+    return TRUE;
   }
 
   /* private cache methods */
@@ -99,6 +105,7 @@ class NextBusReader {
   private static function read_cache($filename) {
     if (file_exists(CACHE_DIR . $filename))
       return json_decode(file_get_contents(CACHE_DIR . $filename), TRUE);
+    error_log('could not find cache file: ' . CACHE_DIR . $filename);
     return FALSE;
   }
 
@@ -128,22 +135,40 @@ class NextBusReader {
     return self::read_cache(self::$vehicleCacheFile);
   }
 
-  private static function route_is_fresh($routeName) {
+  private static function get_route_age($routeName) {
     $filename = CACHE_DIR . self::$routeCachePrefix . $routeName;
-    return (file_exists($filename) 
-	    && time() - filemtime($filename) < NEXTBUS_ROUTE_CACHE_TIMEOUT);
-  }
-
-  private static function get_prediction_age($routeName) {
-    $filename = CACHE_DIR . self::$predictionCachePrefix . $routeName;
     if (file_exists($filename))
       return time() - filemtime($filename);
     return FALSE;
   }
 
+  private static function route_is_fresh($routeName) {
+    $age = self::get_route_age($routeName);
+    return ($age && $age <= NEXTBUS_ROUTE_CACHE_TIMEOUT);
+  }
+
+  private static function get_vehicle_age() {
+    $filename = CACHE_DIR . self::$vehicleCacheFile;
+    if (file_exists($filename))
+      return time() - filemtime($filename);
+    return FALSE;
+  }
+
+  private static function get_prediction_age($routeName) {
+    if (self::$predictionCache[$routeName]
+	&& array_key_exists('updated', self::$predictionCache[$routeName])) {
+      return (time() - self::$predictionCache[$routeName]['updated']);
+    } else {
+      $filename = CACHE_DIR . self::$predictionCachePrefix . $routeName;
+      if (file_exists($filename))
+	return time() - filemtime($filename);
+    }
+    return FALSE;
+  }
+
   private static function prediction_is_fresh($routeName) {
     $age = self::get_prediction_age($routeName);
-    return ($age && $age < NEXTBUS_PREDICTION_CACHE_TIMEOUT);
+    return ($age && $age <= NEXTBUS_PREDICTION_CACHE_TIMEOUT);
   }
 
   /* public top-level methods */
@@ -151,25 +176,49 @@ class NextBusReader {
   public static function init() {
     self::reset_query();
     if (!self::$routeCache) {
+      ShuttleSchedule::init();
+      // this is part of a hack to correct 
+      // saferide route names that nextbus gets wrong
+      $combined_routes = Array(
+        'saferidebostone' => 'saferidebostonall',
+	'saferidebostonw' => 'saferidebostonall',
+	'saferidecambeast' => 'saferidecamball',
+	'saferidecambwest' => 'saferidecamball',
+	);
+
       // query nextbus to see what routes are available
       self::set_command('routeList');
       $xml = self::query();
-      if (!$xml) {
-	// query failed; get {routeName}s from cached filenames
-	foreach (scandir(CACHE_DIR) as $filename) {
-	  if (strpos($filename, self::$route_cache_prefix) == 0) {
-	    $routeName = substr($filename, 0, strlen(self::$route_cache_prefix));
+
+      if ($xml) {
+	self::$unmodifiedRouteList = Array();
+
+	foreach ($xml->getElementsByTagName('route') as $route) {
+	  $routeName = $route->getAttribute('tag');
+	  self::$unmodifiedRouteList[] = $routeName;
+
+	  // if nextbus' route list is not consistent with the published schedule
+	  // use the published route list
+	  if (!ShuttleSchedule::is_running_today($routeName)
+	      && ShuttleSchedule::is_running_today($combined_routes[$routeName])) {
+	    $routeName = $combined_routes[$routeName];
+	  }
+
+	  if (!self::$routeCache[$routeName] = self::read_route_cache($routeName)) {
 	    self::$routeCache[$routeName] = Array();
 	  }
 	}
+
       } else {
-	foreach ($xml->getElementsByTagName('route') as $route) {
-	  $routeName = $route->getAttribute('tag');
-	  self::$routeCache[$routeName] = Array();
-	  if (!self::route_is_fresh($routeName))
+	// query failed; get {routeName}s from cached filenames
+	foreach (scandir(CACHE_DIR) as $filename) {
+	  if (strpos($filename, self::$routeCachePrefix) == 0) {
+	    $routeName = substr($filename, 0, strlen(self::$routeCachePrefix));
 	    self::$routeCache[$routeName] = self::read_route_cache($routeName);
+	  }
 	}
       }
+
     }
   }
 
@@ -178,33 +227,60 @@ class NextBusReader {
     return array_keys(self::$routeCache);
   }
 
+  public static function get_all_stops() {
+    $stopsCache = CACHE_DIR . self::$stopsCacheFile;
+
+    if (file_exists($stopsCache) && time() - filemtime($stopsCache) <= NEXTBUS_ROUTE_CACHE_TIMEOUT) {
+      $json = file_get_contents($stopsCache);
+      return json_decode($json, TRUE);
+    }
+
+    $stops = Array();
+    foreach (self::$routeCache as $route => $routeInfo) {
+      if (!$routeInfo) {
+	$routeInfo = self::get_route_info($route);
+      }
+
+      foreach ($routeInfo as $stop => $stopInfo) {
+	$stops[$stop]['title'] = $stopInfo['title'];
+	$stops[$stop]['lon'] = $stopInfo['lon'];
+	$stops[$stop]['lat'] = $stopInfo['lat'];
+	$stops[$stop]['id'] = $stop;
+	if (!array_key_exists('routes', $stops[$stop]))
+	  $stops[$stop]['routes'] = Array();
+	$stops[$stop]['routes'][] = $route;
+      }
+    }
+
+    if (!$fh = fopen($stopsCache, 'w'))
+      die("could not open $stopsCache");
+    fwrite($fh, json_encode($stops));
+    fclose($fh);
+
+    return $stops;
+  }
+
   /* public route methods */
 
   public static function get_last_refreshed($routeName) {
     return time() - self::get_prediction_age($routeName);
   }
 
-  public static function get_stop_list($routeName) {
-    self::assert_exists($routeName);
-    $routeInfo = self::get_route_info($routeName);
-    return array_keys($routeInfo);
-  }
-
-  public static function get_path($routeName) {
-    self::assert_exists($routeName);
-    $routeInfo = self::get_route_info($routeName);
-    $path = Array();
-    foreach ($routeInfo as $stopName => $stopInfo) {
-      $path = array_merge($path, $stopInfo['path']);
-    }
-  }
-
   public static function get_route_info($routeName) {
-    self::assert_exists($routeName);
-    if (self::route_is_fresh($routeName)) {
+    $age = self::get_route_age($routeName);
+    if (!$age && !self::is_nextbus_route($routeName)) {
+      // we have nothing cached and NextBus doesn't know about $routeName
+      return FALSE;
+    }
+
+    if (!self::$routeCache[$routeName]) {
       self::$routeCache[$routeName] = self::read_route_cache($routeName);
+    }
+
+    if (self::route_is_fresh($routeName) || !self::is_nextbus_route($routeName)) {
       return self::$routeCache[$routeName];
     }
+
     self::set_command('routeConfig');
     self::set_query_route($routeName);
     $xml = self::query();
@@ -306,6 +382,8 @@ class NextBusReader {
 
   /* public predictions methods */
 
+  // max tolerance is how long we should go without receiving updates
+  // before we decide the GPS is not active
   public static function gps_active($routeName) {
     self::get_predictions($routeName);
     $age = self::get_prediction_age($routeName);
@@ -313,38 +391,36 @@ class NextBusReader {
   }
 
   // coordinates of current position of vehicle(s)
+  // nextbus api returns all vehicles at once
   public static function get_coordinates($routeName) {
-    $age = 0;
-    if (file_exists(self::$vehicleCacheFile)) {
-      self::$vehicleCache = self::read_vehicle_data();
-      $age = time() - filemtime(self::$vehicleCacheFile);
+    $age = self::get_vehicle_age();
 
-      // if cache is fresh, return cached values
-      if ($age <= NEXTBUS_PRDICTION_CACHE_TIMEOUT) {
+    $coordinates = Array();
+    // if cache is fresh, return cached values
+    if ($age && $age <= NEXTBUS_VEHICLE_CACHE_TIMEOUT) {
+      self::$vehicleCache = self::read_vehicle_cache();
 
-	// but if not for this route, skip to query below
-	if (in_array($routeName, self::$vehicleCache)) { 
-	  $coordinates = Array();
-	  foreach (self::$vehicleCache[$routeName] as $coords) {
-	    $coords['secsSinceReport'] += $age;
-	    $coordinates[] = $coords;
-	  }
-	  return $coordinates;
+      if (array_key_exists($routeName, self::$vehicleCache)) { 
+	foreach (self::$vehicleCache[$routeName] as $coords) {
+	  $coords['secsSinceReport'] += $age;
+	  $coordinates[] = $coords;
 	}
       }
+      return $coordinates;
     }
+
+    $age = ($age === FALSE) ? 0 : $age;
 
     // get all vehicle locations
     self::set_command('vehicleLocations');
     self::set_other_params(Array('t' => 0));
     $xml = self::query();
     if (!$xml) {
-      if (!in_array($routeName, self::$vehicleCache))
-	return FALSE;
-      $coordinates = Array();
-      foreach (self::$vehicleCache[$routeName] as $coords) {
-	$coords['secsSinceReport'] += $age;
-	$coordinates[] = $coords;
+      if (array_key_exists($routeName, self::$vehicleCache)) {
+	foreach (self::$vehicleCache[$routeName] as $coords) {
+	  $coords['secsSinceReport'] += $age;
+	  $coordinates[] = $coords;
+	}
       }
     } else {
       // since not all vehicles always show up,
@@ -366,7 +442,7 @@ class NextBusReader {
       $results = Array();
       foreach ($xml->getElementsByTagName('vehicle') as $vehicle) {
 	$routeTag = $vehicle->getAttribute('routeTag');
-	if (!in_array($routeTag, $results)) 
+	if (!array_key_exists($routeTag, $results)) 
 	  $results[$routeTag] = Array();
 	$results[$routeTag][] = Array(
          'lat' => $vehicle->getAttribute('lat'),
@@ -380,14 +456,18 @@ class NextBusReader {
 	self::$vehicleCache[$route] = $data;
       }
       self::write_vehicle_cache();
-      $coordinates = self::$vehicleCache[$routeName];
+      if (self::$vehicleCache[$routeName])
+	$coordinates = self::$vehicleCache[$routeName];
     }
+
     return $coordinates;
   }
 
   // predictions for multiple stops
+  // returns array of times or false on failure
   public static function get_predictions($routeName) {
-    self::assert_exists($routeName);
+    if (!self::is_nextbus_route($routeName))
+      return FALSE;
     if (self::prediction_is_fresh($routeName)) {
       self::$predictionCache[$routeName] = self::read_prediction_cache($routeName);
       return self::$predictionCache[$routeName];
@@ -423,6 +503,7 @@ class NextBusReader {
       }
       if (count($results)) {
 	self::$predictionCache[$routeName] = $results;
+	self::$predictionCache[$routeName]['updated'] = time();
 	self::write_prediction_cache($routeName);
       }
     }

@@ -4,52 +4,148 @@ $docRoot = getenv("DOCUMENT_ROOT");
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . 'home/Modules.php';
 require_once LIBDIR . 'db.php';
-define("PAGE_VIEWS_TABLE", 'mobi_web_page_views');
 
 class PageViews {
 
-  public static function increment($module, $platform, $time=NULL) {
-    if($platform == 'spider') {
-      // do not count spiders as page views
-      return;
-    }
+  public static function log_api($module, $platform, $time=NULL) {
+    $extra = serialize($_GET);
+    self::log_item('api', $module, $platform, $extra, $time);
+  }
 
+  public static function increment($module, $platform, $time=NULL) {
+    self::log_item('web', $module, $platform, "", $time);
+  }
+
+  public static function log_item($system, $module, $platform, $extra, $time) {
     if ($time === NULL)
       $time = time();
 
-    $db = db::$connection;
-    $today = date('Y-m-d', $time);
+    if ($system == 'web')
+      $logfile = WEB_CURRENT_LOG_FILE;
+    else // assume 'api'
+      $logfile = API_CURRENT_LOG_FILE;
+    
+    $fh = fopen($logfile, 'a');
+    fwrite($fh, sprintf("%s %s %s: %s\n",
+			date(LOG_DATE_FORMAT, $time),
+			$platform, $module, $extra));
+    fclose($fh);      
+  }
 
-    // if a $platform device already accessed $module, increment viewcount by 1
-    // otherwise create row with viewcount 1
-    $row = self::getTimeSeries($today, $platform, $module);
-    $db->query('LOCK TABLE ' . PAGE_VIEWS_TABLE . ' WRITE');
-    if(!$row) {
-      $sql = 'INSERT INTO ' . PAGE_VIEWS_TABLE . ' (day, platform, module, viewcount)' .
-	" VALUES ('$today', '$platform', '$module', 1)";
-    } else {
-      $current_cnt = $row[0]['viewcount'] + 1;
-      $sql = 'UPDATE ' . PAGE_VIEWS_TABLE . ' SET viewcount=' . $current_cnt .
-	" WHERE day='$today' AND platform='$platform' AND module='$module'";
+  private function increment_array(&$array, $day, $platform, $module) {
+    if (!array_key_exists($day, $array))
+      $array[$day] = array();
+    if (!array_key_exists($platform, $array[$day]))
+      $array[$day][$platform] = array();
+    if (!array_key_exists($module, $array[$day][$platform]))
+      $array[$day][$platform][$module] = 1;
+    else
+      $array[$day][$platform][$module] += 1;
+  }
+
+  public static function export_stats($system) {
+    if ($system == 'web') {
+      $table = PAGE_VIEWS_TABLE;
+      $logfile = WEB_CURRENT_LOG_FILE;
+      $target = WEB_LOG_FILE;
+    } else {// assume 'api'
+      $table = API_STATS_TABLE;
+      $logfile = API_CURRENT_LOG_FILE;
+      $target = API_LOG_FILE;
+    }
+    
+    $today = date('Ymd', time());
+    
+    if (file_exists($target) && date('Ymd', filemtime($target)) == $today)
+      return; // we have already exported today
+    $logfilecopy = "/tmp/mobi_log_copy.$today";
+    
+    if (!$outfile = fopen($target, 'a')) {
+      error_log("could not open $target for writing");
+      return;
+    }
+    
+    if (!rename($logfile, $logfilecopy)) {
+      error_log("failed to rename $logfile to $logfilecopy");
+      return; 
     }
 
-    //debug($sql);
-    $db->query($sql);
+    if (!touch($logfile)) {
+      error_log("failed to create empty $logfile");
+      return; 
+    }
+    
+    $db = db::$connection;
 
-    $db->query("UNLOCK TABLE");
+    $result = $db->query(
+      "SELECT day, platform, module, viewcount FROM $table
+        WHERE day=(SELECT MAX(day) FROM $table)");
+
+    $stats = Array();
+    while ($row = $result->fetch_assoc()) {
+      self::increment_array($stats, $row['day'], $row['platform'], $row['module']);      
+    }
+
+    $infile = fopen($logfilecopy, 'r');
+    $date_length = strlen(date(LOG_DATE_FORMAT));
+    while (!feof($infile)) {
+      $line = fgets($infile, 1024);
+      fwrite($outfile, $line);
+
+      if (preg_match(LOG_DATE_PATTERN, $line, $matches) == 0)
+	continue;
+
+      // the following match positions should also be defined where
+      // the date regex is defined
+      $day = sprintf("%s-%s-%s", $matches[3], $matches[1], $matches[2]);
+      preg_match('/^.{' . $date_length . '} (\w+) (\w+):/', $line, $matches);
+      $platform = $matches[1];
+      $module = $matches[2];
+      self::increment_array($stats, $day, $platform, $module);
+    }
+    fclose($outfile);
+    fclose($infile);
+
+    if ($stats) {
+      $db->query('LOCK TABLE $table WRITE');
+      $db->query("DELETE FROM $table WHERE day=(SELECT MAX(day) FROM $table)");
+      foreach ($stats as $day => $platforms) {
+	foreach ($platforms as $platform => $modules) {
+	  foreach ($modules as $module => $count) {
+	    $sql = "INSERT INTO $table ( day, platform, module, viewcount )
+                         VALUES ('$day', '$platform', '$module', $count)";
+	    if (!$db->query($sql)) {
+	      error_log("mysql query failed: $sql");
+	    }
+	  }
+	}
+      }
+      $db->query("UNLOCK TABLE");
+    }
+
+    unlink($logfilecopy);
   }
 
   /* get total viewcount for platform $platform (default all platforms),
    * module $module (default all modules),
    * between dates $start and $end (any string compatible with strtotime)
    */
-  private static function getTimeSeries($start, $platform=NULL, $module=NULL, $end=NULL) {
+  private static function getTimeSeries($system, $start, $platform=NULL, $module=NULL, $end=NULL) {
+    self::export_stats($system);
+
     $db = db::$connection;
     $sql_fields = Array();
+    $sql_criteria = Array();
+
+    if ($system == 'web')
+      $table = PAGE_VIEWS_TABLE;
+    else // assume 'api'
+      $table = API_STATS_TABLE;
+
     if (($end === NULL) || (strtotime($end) - strtotime($start) == 86400)) {
-      $sql_criteria = Array("day='$start'");
+      $sql_criteria[] = "day='$start'";
     } else {
-      $sql_criteria = Array("day >= '$start' AND day < '$end'");
+      $sql_criteria[] = "day >= '$start' AND day < '$end'";
       $groupby = Array();
     }
 
@@ -71,9 +167,10 @@ class PageViews {
       $groupby = $sql_fields;
       $sql_fields[] = 'SUM(viewcount) AS viewcount';
     }
+
     $sql = "SELECT " . implode(', ', $sql_fields);
-    array_pop($sql_fields);
-    $sql .= ' FROM ' . PAGE_VIEWS_TABLE . ' WHERE ' . implode(' AND ', $sql_criteria);
+    //array_pop($sql_fields);
+    $sql .= ' FROM ' . $table . ' WHERE ' . implode(' AND ', $sql_criteria);
     $sql .= (isset($groupby) && count($groupby)) ? ' GROUP BY ' . implode(', ', $groupby) : '';
 
     //var_dump($sql);
@@ -93,7 +190,7 @@ class PageViews {
     return $output;
   }
 
-  public static function view_past($time_unit, $duration) {
+  public static function view_past($system, $time_unit, $duration) {
     $increments = Array(0); // the first element never gets used
 
     // figure out value to use for $begin in sql query
@@ -139,7 +236,7 @@ class PageViews {
 
       // array below has index for each module, bucket
       // and the index 'day' for the day or first day of week/month
-      $results = self::getTimeSeries($sql_start_date, NULL, NULL, $sql_end_date);
+      $results = self::getTimeSeries($system, $sql_start_date, NULL, NULL, $sql_end_date);
       foreach ($results as $row) {
 	if (array_key_exists('platform', $row)) {
           if (!array_key_exists($row['platform'], $new_view))

@@ -1,12 +1,10 @@
 <?php
+
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "page_builder/page_header.php";
-require_once LIBDIR . "ShuttleSchedule.php";
-require_once LIBDIR . "NextBusReader.php";
-
-NextBusReader::init();
+require_once("shuttle_lib.php");
 
 $route = $_REQUEST['route'];
 if (!in_array($route, ShuttleSchedule::get_active_routes())) {
@@ -28,51 +26,17 @@ if (!in_array($route, ShuttleSchedule::get_active_routes())) {
     $summary = preg_replace('/(\d)(AM|PM)/','$1<span class="ampm">$2</span>', $summary);
   }
 
-  // get scheduled stops first because we need to figure out
-  // the stop names to query nextbus with
-  $schedStops = ShuttleSchedule::get_next_scheduled_loop($route, $now);
-
-  $stops = Array();
-
-  // this array will contain the stops to be highlighted
-  $upcoming_stops = Array();
-  $previous_time = $time + $interval;
-
-  // get nextbus data, if available
-  $nbRoute = ShuttleSchedule::get_nextbus_id($route);
-
-  // don't poll the GPS if the shuttle isn't running anyway
   $gps_active = (ShuttleSchedule::is_running($route)
-		 && NextBusReader::gps_active($nbRoute));
+		 && NextBusReader::gps_active($route));
 
-  if ($gps_active) {
-    $nbPredictions = NextBusReader::get_predictions($nbRoute, $now);
-    $last_refreshed = NextBusReader::get_last_refreshed($nbRoute);
-  }
+  $stops = list_stop_times($route, $now, $gps_active);
 
-  // this gives an array of seconds until next arrival
-  // at each stop
-  foreach ($schedStops as $index => $stop) {
-    $stopData = Array();
-    $stopData['title'] = $stop['title'];
-    if ($gps_active) {
-      $nbId = $stop['nextBusId'];
-      // predictions comes in an array
-      // we want the prediciton closest to current time
-      $stopData['next'] = $now + min($nbPredictions[$nbId]);
-    } else {
-      $stopData['next'] = $stop['nextScheduled'];
-    }
-
-    if ($stopData['next'] < $previous_time 
-	&& $stopData['next'] - $now < $interval)
+  $upcoming_stops = Array();
+  foreach ($stops as $index => $stop) {
+    if ($stop['upcoming']) {
       $upcoming_stops[] = $index;
-    $stops[] = $stopData;
-    $previous_time = $stopData['next'];
+    }
   }
-  if ($stops[0]['next'] < $stops[count($stops) - 1]['next']
-      && $stops[0]['next'] - $now < $interval)
-    array_unshift($upcoming_stops, 0);
 
   // determine size of route map to display on each device
   switch ($page->branch) {
@@ -87,16 +51,17 @@ if (!in_array($route, ShuttleSchedule::get_active_routes())) {
     break;
   }
   $image_tag = image_tag($size, $route, $upcoming_stops);  
+  $last_refreshed = $now;
 
   // device-dependent time formatting function
   if ($page->branch == 'Basic') {
     function format_shuttle_time($tstamp) {
-      if ($tstamp == 'finished') return $tstamp;
+      if ($tstamp === 0) return 'finished';
       return date('g:i', $tstamp) . substr(date('a', $tstamp), 0, 1);
     }
   } else {
     function format_shuttle_time($tstamp) {
-      if ($tstamp == 'finished') return $tstamp;
+      if ($tstamp === 0) return 'finished';
       return date('g:i', $tstamp) . '<span class="ampm">' . date('A', $tstamp) . '</span>';
     }
   }

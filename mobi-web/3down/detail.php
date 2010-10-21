@@ -20,6 +20,7 @@ foreach($text as $paragraph) {
 $long_date = date("l, F j, Y G:i:s", $states[$title]['unixtime']);
 
 require "$page->branch/detail.html";
+$page->module('3down');
 $page->output();
     
 ?>

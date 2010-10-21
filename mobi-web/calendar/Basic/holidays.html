@@ -7,15 +7,13 @@ $page->content_begin();
 
 	<h2>MIT Holidays <strong><?=$year?></strong></h2>
 
-	<p class="nonfocal">
-           <? if($has_prev) { ?><a href="<?=holidaysURL($prev)?>">&lt; <?=$prev?></a><? } if($has_prev && $has_next) { ?>&nbsp;|&nbsp;<? } if($has_next) { ?><a href="<?=holidaysURL($next)?>"><?=$next?> &gt;</a><? } ?>
-        </p>
+	<p class="nonfocal"><?=implode('&nbsp;|&nbsp;', $nav_links)?></p>
 
 	<div class="focal">
-            <? for($cnt=0; $cnt < count($holidays); $cnt += 2) { ?>
+            <? foreach ($holidays as $holiday) { ?>
                 <p>
-                   <span class="date"><?=weekday($holidays[$cnt], $year)?> <?=$holidays[$cnt]?>, <?=$year?></span><br/>
-                   <?=$holidays[$cnt+1]?>
+                   <span class="date"><?=formatDayTitle($holiday)?></span><br/>
+                   <?=$holiday->get_summary()?>
                 </p>
             <? } ?>
 	</div>

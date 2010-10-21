@@ -260,11 +260,11 @@ function snippets() {
   // we do not want to display snippets
   // if snippets just repeats the building number
   // or building name
-  if($snippets == $data['bldgnum']) {
+  if($snippets == trim($data['bldgnum'])) {
     return NULL;
   } 
 
-  if($snippets == $data['name']) {
+  if($snippets == trim($data['name'])) {
     return NULL;
   } 
 
@@ -353,8 +353,7 @@ class Data {
   public static $values;
 
   public static function init() {
-    $docRoot = getenv("DOCUMENT_ROOT");
-    require $docRoot . "/mobi-web/map/buildings.php";
+    require WEBROOT . "map/buildings.php";
     self::$values = $building_data[select_value()];
   }
 }
@@ -370,9 +369,9 @@ if($anything_here) {
   sort($whats_here);
 }
 
-if($num = $data['bldgnum']) {
+if($num = trim($data['bldgnum'])) {
   $building_title = "Building $num";
-  if( ($name = $data['name']) && ($name !== $building_title) ) {
+  if( ($name = trim($data['name'])) && ($name !== $building_title) ) {
     $building_title .= " ($name)";
   }
 } else {

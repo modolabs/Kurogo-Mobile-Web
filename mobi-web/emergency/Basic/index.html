@@ -17,7 +17,7 @@ $page->content_begin();
 	
 	<p class="secondary">
             <? foreach($main as $item) { ?>
-		<a href="tel:1<?=$item->call_number()?>" class="phone"><?=$item->label()?></a> <span class="smallprint"> (<?=$item->message_text()?><?=$item->number_text()?>)</span><br/>
+		<a href="<?=dialURL($item)?>" class="phone"><?=$item['contact']?></a> <span class="smallprint"> (<?=number_text($item, TRUE)?>)</span><br/>
             <? } ?>
 		<a href="<?=contactsURL()?>">More Emergency Contacts</a><br/>
 	</p>

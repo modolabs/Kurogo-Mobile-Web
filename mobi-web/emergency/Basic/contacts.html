@@ -7,8 +7,8 @@ $page->content_begin();
 	<h2>Emergency Contacts</h2>
 	
 	<div class="focal">
-            <? foreach($others as $item) { ?>
-                <p><a href="tel:1<?=$item->call_number()?>" class="phone"><?=$item->label()?></a> <span class="smallprint"> (<?=$item->message_text()?><?=$item->number_text()?>)</span></p>
+            <? foreach($contacts as $item) { ?>
+                <p><a href="<?=dialURL($item)?>" class="phone"><?=$item['contact']?></a> <span class="smallprint"> (<?=message_text($item)?><?=number_text($item)?>)</span></p>
             <? } ?>
 	</div>
 <?

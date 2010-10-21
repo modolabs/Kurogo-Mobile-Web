@@ -8,16 +8,14 @@ class WhatsNew extends RSS {
   protected $rss_url = "http://localhost/drupal/whats_new/rss.xml";
 
   protected $custom_tags = array('body', 'shortName');
+  protected $custom_html_tags = array('<a><b><br><del><em><i><ins><strong>', '');
 
   private static $topitem_timeout = 14;
   private static $newuser_timeout =  30;
   private static $cookie_timeout = 160;
 
   public function get_items() {
-    $feed = array_reverse($this->get_feed());
-    foreach($feed as $index => $item) {
-      $feed[$index]['body'] = RSS::cleanText($feed[$index]['body']);
-    }
+    $feed = array_reverse($this->get_feed_html());
     return $feed;
   }
 

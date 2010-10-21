@@ -84,10 +84,17 @@ class LibraryInfo {
     if (!file_exists($ical_file_location) 
 	|| ($time - filemtime($ical_file_location)) > ICS_CACHE_LIFESPAN 
 	|| !filesize($ical_file_location)) {
+      
       $google_cal_url = self::ical_url($library);
       $fhandle = fopen($ical_file_location, 'w');
-      fwrite($fhandle, file_get_contents($google_cal_url));
-      fclose($fhandle);
+
+      $error_reporting = intval(ini_get('error_reporting'));
+      error_reporting($error_reporting & ~E_WARNING);
+      if ($contents = file_get_contents($google_cal_url)) {
+	fwrite($fhandle, $contents);
+	fclose($fhandle);
+      }
+      error_reporting($error_reporting);
     }
   }
 

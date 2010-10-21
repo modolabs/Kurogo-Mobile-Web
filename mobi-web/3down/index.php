@@ -26,6 +26,7 @@ function full($item) {
 
 require "$page->branch/index.html";
 
+$page->module('3down');
 $page->output();
     
 ?>

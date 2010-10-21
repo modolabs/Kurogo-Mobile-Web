@@ -40,24 +40,38 @@ $item = new Item($person);
 $page->content_begin();
 ?>
 	<ul class="nav">
-              <?  $item->display('name', 'fullname', NULL, NULL, True); ?>
-              <?  $item->display('title', 'title', NULL, NULL, True); ?>
-              <?  $item->display('dept', 'dept', NULL, NULL, True); ?>
+            <?
+            foreach($personDisplayMapping as $attribute)
+            {
+                if (($attribute[4] == TRUE) && (($attribute[5] == TRUE) && ($attribute[6] == FALSE)))
+                {
+                    $item->display($attribute[0], $attribute[0], $attribute[2], $attribute[3], $attribute[5]);
+                }
+            }
+            ?>
 	</ul>
 	
         <? if(has_phone($person)) { ?>
            <ul class="nav">
-             <?  $item->display('home', 'homephone', "phoneHREF", 'phone', True);   ?>      
-             <?  $item->display('phone', 'telephone', "phoneHREF", 'phone', True);  ?>
-             <?  $item->display('fax', 'fax', "phoneHREF", 'phone', True);  ?>
+            <?
+            foreach($personDisplayMapping as $attribute)
+            {
+                if (($attribute[4] == TRUE) && (($attribute[5] == TRUE) && ($attribute[6] == TRUE)))
+                {
+                    $item->display($attribute[0], $attribute[0], $attribute[2], $attribute[3], $attribute[5]);
+                }
+            }
+            ?>
            </ul>
         <? } ?>
-
         <?
-           $item->display('address', 'address');             
-           $item->display('email', 'email', "mailHREF", 'email');             
-           $item->display('office', 'room', "mapURL", 'map');
-
+            foreach($personDisplayMapping as $attribute)
+            {
+                if (($attribute[4] == TRUE) && (($attribute[5] == FALSE) && ($attribute[6] == TRUE)))
+                {
+                    $item->display($attribute[0], $attribute[0], $attribute[2], $attribute[3], $attribute[5]);
+                }
+            }
         ?>
 <? $page->content_end(); ?>
 

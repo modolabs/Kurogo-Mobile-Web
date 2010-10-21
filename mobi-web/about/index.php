@@ -13,6 +13,7 @@ WhatsNew::setLastTime();
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="content-script-type" content="text/javascript" />
 	<title>MIT Mobile Web</title>
 	
 	<link rel="stylesheet" rev="stylesheet" href="helpsite.css" type="text/css" />
@@ -79,8 +80,7 @@ WhatsNew::setLastTime();
 				</div>
 
                                 <div class="module">
-                                        <img class="thumbnail" src="images/modul
-es/techcash-thumb.gif" width="160" height="160" alt="Tech Cash" />
+                                        <img class="thumbnail" src="images/modules/techcash-thumb.gif" width="160" height="160" alt="Tech Cash" />
                                         <h3>Tech Cash (BETA)</h3>
                                         <p>Get up-to-the-minute account balances
  and reports of recent activity on your Tech Cash accounts (currently for iPhone
@@ -112,8 +112,8 @@ es/techcash-thumb.gif" width="160" height="160" alt="Tech Cash" />
 
 				<div id="footer">
 					<div id="footerlogo"><a href="http://web.mit.edu/"><img src="http://web.mit.edu/graphicidentity/interface/mit-greywhite-footer3.gif"
-alt="MIT" width="62" height="36" border="0"></a></div>
-					<p>Copyright &copy;2009 <a href="http://web.mit.edu">Massachusetts Institute of Technology</a>. All rights reserved. The MIT Mobile Web is designed, developed and maintained by <a href="http://web.mit.edu/ist/">Information Systems &amp; Technology (IS&amp;T)</a>. For more information, or for help using the MIT Mobile Web, please contact us at <a href="mailto:&#109;&#111;&#98;&#105;&#119;&#101;&#98;&#64;&#109;&#105;&#116;&#46;e&#100;&#117;">&#109;o&#98;&#105;&#119;e&#98;&#64;&#109;i&#116;&#46;&#101;d&#117;</a>.</p>
+alt="MIT" width="62" height="36" ></a></div>
+					<p>Copyright &copy;2009-2010 <a href="http://web.mit.edu">Massachusetts Institute of Technology</a>. All rights reserved. The MIT Mobile Web is designed, developed and maintained by <a href="http://web.mit.edu/ist/">Information Systems &amp; Technology (IS&amp;T)</a>. For more information, or for help using the MIT Mobile Web, please contact us at <a href="mailto:&#109;&#111;&#98;&#105;&#119;&#101;&#98;&#64;&#109;&#105;&#116;&#46;e&#100;&#117;">&#109;o&#98;&#105;&#119;e&#98;&#64;&#109;i&#116;&#46;&#101;d&#117;</a>.</p>
 					<p><a name="disclaimer"> </a>
 					* Terms and Conditions: The MIT Mobile Web is a free service. <strong>Extra data charges may apply</strong> when using any website on your mobile device depending on your service plan. The MIT SMS Service is provided free of charge by MIT. <strong>Carrier charges may apply</strong> for text messages, depending on your plan.
 					</p>
@@ -121,10 +121,15 @@ alt="MIT" width="62" height="36" border="0"></a></div>
 			</div>
 			
 			<div id="sidebar">
+				<div id="iphoneapp">
+					<a href="iphoneapp.html"><img src="images/home/iphoneapp-icon.gif" alt="iPhone App" width="57" height="57" class="floatleft" /></a><h2><a href="iphoneapp.html">MIT Mobile iPhone App</a></h2>
+					The MIT app for your iPhone or iPod Touch offers MIT news, real-time GPS shuttle tracking, push notifications for upcoming shuttles and class announcements, and  more. Now available in the App Store.<br/><a href="iphoneapp.html">Learn more &gt;</a>
+				</div>
 				<div id="whatsnew">
 					<h2>What's New</h2>
 					<ul>
 					<? foreach ($new_items as $index => $content) { ?>
+					<? if ($index >= 3) { break; } ?>
 					<li><strong><?=$content['title'] ?>:</strong> <?=$content['body'] ?> (<?=$content['date']['month']?>/<?=$content['date']['day']?>)</li>
 					<? } ?>
 					</ul>
@@ -145,9 +150,8 @@ alt="MIT" width="62" height="36" border="0"></a></div>
 						<li><strong>A web-capable mobile device:</strong> 
 							<ul>
 								<li>iPhone or iPod Touch</li>
-								<li>Smartphone (BlackBerry, Windows Mobile, Treo, Centro, Android, etc.)</li>
-								<li>Most recent 'feature' phones (including flip, slider or bar phones like the RAZR, Chocolate, Sync, etc.)
-								<li>WiFi PDA (Windows Mobile, Palm T|X)</li>
+								<li>Smartphone (BlackBerry, Windows Mobile, Android, Pre/Pixi, etc.)</li>
+								<li>Most recent 'feature' phones (including flip, slider or bar phones like the RAZR, Chocolate, Sync, etc.)</li>
 							</ul>
 						</li>
 						<li><strong>A network connection:</strong> A web/data plan from your carrier<strong><a href="#disclaimer">*</a></strong> or a WiFi connection if your device has WiFi.</li>

@@ -170,9 +170,12 @@ class TechCash extends OracleInterface {
   
 
 class Warehouse extends OracleInterface {
-  protected $username=TECHCASH_WAREHOUSE_USER;
-  protected $password=TECHCASH_WAREHOUSE_PASS;
-  protected $db_alias=TECHCASH_WAREHOUSE_DB;
+//  protected $username=TECHCASH_WAREHOUSE_USER;
+//  protected $password=TECHCASH_WAREHOUSE_PASS;
+//  protected $db_alias=TECHCASH_WAREHOUSE_DB;
+  protected $username=TECHCASH_ORACLE_USER;
+  protected $password=TECHCASH_ORACLE_PASS;
+  protected $db_alias=TECHCASH_ORACLE_DB;
 
   public function getMitID($name) {
     $sql = "SELECT MIT_ID FROM KRB_MAPPING WHERE KRB_NAME='$name'";

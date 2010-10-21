@@ -31,10 +31,17 @@ foreach ($nearby_events as $event) {
     if (!array_key_exists($term, $term_data)) {
       $term_data[$term]['range'] = $event->get_range();
       $term_data[$term]['hours'] = Array();
+    } else {
+      $new_start = $event->get_range()->get_start();
+      if ($new_start < $term_data[$term]['range']->get_start())
+	$term_data[$term]['range']->set_start($new_start);
+      $new_end = $event->get_range()->get_end();
+      if ($new_end > $term_data[$term]['range']->get_end())
+	$term_data[$term]['range']->set_end($new_end);
     }
 
     // create hour string, e.g. 10am-5pm
-    $hourstr = $event->get_range()->format('g:ia');
+    $hourstr = $event->get_range()->format('g:ia', FALSE);
     $hourstr = str_replace(':00', '', $hourstr);
     if (stripos($event->get_summary(), 'by appointment') !== FALSE) {
       $hourstr .= ' (by appointment)';
@@ -131,25 +138,67 @@ foreach ($term_data as $term => $data) {
   // since we're done clustering
   $data['name'] = $term;
 
-  if ($data['range']->get_start() > $termday) {
-    $data['termday'] = $data['range']->get_start();
+  $data_start = $data['range']->get_start();
+  $data_end = $data['range']->get_end();
+
+  if ($data_start > $termday) {
+    $data['termday'] = $data_start;
     if (is_int($term))
       $data['name'] = 'Next term'; // for libraries w/o term name
     $terms_after_today[] = $data;
-  } elseif ($data['range']->get_end() < $termday) {
-    $data['termday'] = $data['range']->get_start();
+  } elseif ($data_end < $termday) {
+    $data['termday'] = $data_start + 1;
     if (is_int($term))
       $data['name'] = 'Previous term'; // for libraries w/o term name
     $terms_before_today[] = $data;
   } else {
     if (is_int($term))
       $data['name'] = ''; // for libraries w/o term name
-    $term_today = $data;
+
+    // if this interval is within another, e.g. spring break
+    // the outer interval should be both previous and next
+    if (!$term_today) {
+      $term_today = $data;
+    } else {
+      if ($data_start < $term_today['range']->get_start()) {
+	$data['termday'] = $data_start;
+	$terms_before_today[] = $data;
+
+	if ($data_end > $term_today['range']->get_end()) {
+	  $data['termday'] = $term_today['range']->get_end() + 1;
+	  $terms_after_today[] = $data;
+	} else {
+	  // this should never happen as long as ranges don't overlap
+	}
+
+      } else {
+	$term_today['termday'] = $term_today['range']->get_start();
+	$terms_before_today[] = $term_today;
+
+	$term_today['termday'] = $term_today['range']->get_end();
+	$terms_after_today[] = $term_today;
+
+	$term_today = $data;
+      }
+
+    }
   }
 }
 
 usort($terms_after_today, 'compare_terms');
 usort($terms_before_today, 'rcompare_terms');
+
+$prev_next_links = Array();
+
+if ($terms_before_today) {
+  $data = $terms_before_today[0];
+  $prev_next_links[] = '<a href="location-detail.php?library=' . $library . '&termday=' . $data['termday'] . '">&lt;' . $data['name'] . ' hours</a>';
+}
+
+if ($terms_after_today) {
+  $data = $terms_after_today[0];
+  $prev_next_links[] = '<a href="location-detail.php?library=' . $library . '&termday=' . $data['termday'] . '">' . $data['name'] . ' hours &gt;</a>';
+}
 
 require "$page->branch/location-detail.html";
 
@@ -157,7 +206,13 @@ $page->output();
 
 function extract_term_name($str) {
   preg_match('/(Spring Vacation|Fall|Spring|Summer|IAP|Winter Vacation)/i', $str, $matches);
-  return $matches[1];
+  $term = $matches[1];
+  // sometimes they put special cases in parens after the term name
+  if ($term && strpos($str, '(') !== FALSE) {
+    preg_match('/\((.+)\)/', $str, $matches);
+    return "$term ({$matches[1]})";
+  }
+  return $term;
 }
 
 function compare_terms($term_data_a, $term_data_b) {

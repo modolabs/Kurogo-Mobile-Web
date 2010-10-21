@@ -2,6 +2,7 @@
 $docRoot = getenv("DOCUMENT_ROOT");
 
 require_once $docRoot . "/mobi-config/mobi_lib_constants.php";
+require_once("AcademicCalendar.php");
 
 class StellarData {
   // is there really not a data source for this?
@@ -18,7 +19,7 @@ class StellarData {
     '10'   => Array('subjects' => Array(), 'name' => 'Chemical Engineering'),
     '11'   => Array('subjects' => Array(), 'name' => 'Urban Studies and Planning'),
     '12'   => Array('subjects' => Array(), 'name' => 'Earth, Atmospheric, and Planetary Sciences'),
-    '13'   => Array('subjects' => Array(), 'name' => 'Ocean Engineering'),
+    //'13'   => Array('subjects' => Array(), 'name' => 'Ocean Engineering'),
     '14'   => Array('subjects' => Array(), 'name' => 'Economics'),
     '15'   => Array('subjects' => Array(), 'name' => 'Management'),
     '16'   => Array('subjects' => Array(), 'name' => 'Aeronautics and Astronautics'),
@@ -45,9 +46,9 @@ class StellarData {
 
   private static $not_courses = array("SP");
 
-  private static $base_url = "http://stellar.mit.edu/courseguide/course/";
+  private static $base_url = STELLAR_BASE_URL;
 
-  private static $rss_url = "http://stellar.mit.edu/SRSS/rss";
+  private static $rss_url = STELLAR_RSS_URL;
 
   //private static $subscriptions = Array();
   public static $subscriptions = Array();
@@ -95,9 +96,11 @@ class StellarData {
 
   public static function get_term_data() {
     $month = (int) date('m');
+    AcademicCalendar::init();
     return array(
       "year" => date('y'),
-      "season" => ($month <= 7) ? 'sp' : 'fa'
+      "season" => AcademicCalendar::get_term(),
+      //"season" => ($month <= 7) ? 'sp' : 'fa'
     );
   }
 
@@ -167,7 +170,11 @@ class StellarData {
 
   private static function read_feed_cache($subject) {
     $fname = STELLAR_FEED_DIR . $subject;
-    return file_get_contents($fname);
+    if(file_exists($fname)) {
+      return file_get_contents($fname);
+    } else {
+      return False;
+    }
   }
 
   private static function feed_cache_is_fresh($subject) {
@@ -177,70 +184,117 @@ class StellarData {
     return (time() - filemtime($fname) < STELLAR_FEED_CACHE_TIMEOUT);
   }
 
-  private static function feed_is_changed($subject) {
-    $cached_xml = self::read_feed_cache($subject);
-    $xml = self::get_announcements_xml($subject);
-    $xml = preg_replace('/>\s+</', '><', trim($xml));
-    return ($xml != $cached_xml);
+  private static function announcements_is_changed($subject) {
+    $current_announcements = self::get_announcements($subject);
+
+    if($current_announcements === False) {
+      // this announcements data is not valid 
+      // we mark this as a null timestamp
+      $current_timestamp = NULL;
+    } else if(count($current_announcements)==0) {
+      // no annoucements we mark this as zero timestamp
+      $current_timestamp = 0;
+    } else {
+      $current_timestamp = $current_announcements[0]['unixtime'];
+    }
+
+    $date_fname = STELLAR_FEED_DIR . "{$subject}_last_timestamp";
+    if(file_exists($date_fname)) {
+      $old_timestamp = intval(file_get_contents($date_fname));
+    } else {
+      $old_timestamp = NULL;
+    }
+
+    if($current_timestamp !== NULL) {
+      // record the current timestamps for future checks
+      file_put_contents($date_fname, "{$current_timestamp}");
+    }
+
+    if(($old_timestamp === NULL) || ($current_timestamp === NULL)) {
+      return False;
+    }
+    
+    return ($current_timestamp > $old_timestamp);
   }
 
-  public static function check_subscriptions() {
+  public static function check_subscriptions($term) {
     $updates = Array();
-    self::$subscriptions = self::read_subscriptions_cache();
-    foreach (self::$subscriptions as $subject => $uids) {
-      if (self::feed_is_changed($subject)) {
-	$updates[$subject] = $uids;
+    foreach (self::subjects_with_subscriptions($term) as $subject) {
+      if (self::announcements_is_changed($subject)) {
+	$updates[] = $subject;
       }
     }
     return $updates;
   }
-
-  public static function push_subscribe($subject, $uid) {
-    $subjectId = self::get_subject_id($subject);
-    if (!array_key_exists($subjectId, self::$subscriptions))
-      self::$subscriptions[$subjectId] = Array();
-    self::$subscriptions[$subjectId][] = $uid;
-    self::write_subscriptions_cache();
-    // make sure cache file exists so no false alarms
-    self::get_announcements_xml($subjectId);
-  }
-
-  public static function push_unsubscribe($subject, $uid) {
-    $subjectId = self::get_subject_id($subject);
-    if (!array_key_exists($subjectId, self::$subscriptions))
-      throw new Exception("nobody is subscribed to $subjectId");
-    elseif (!in_array($uid, self::$subscriptions[$subjectId]))
-      throw new Exception("this user is not subscribed to $subjectId");
-    else {
-      $id_pos = array_search($uid, self::$subscriptions[$subjectId]);
-      array_splice(self::$subscriptions[$subjectId], $id_pos, 1);
-      if (count(self::$subscriptions[$subjectId]) == 0)
-	unset(self::$subscriptions[$subjectId]);
-      self::write_subscriptions_cache();
+  
+  public static function subjects_with_subscriptions($term) {
+    // this function is meant to be robust to database connections getting lost
+    // since it is run inside a daemon script
+    $subject_ids = array();
+    $results = db::$connection->query("SELECT subject_id FROM MyStellarSubscription "
+      . "WHERE term='$term' GROUP BY subject_id");
+    while($results && $row = $results->fetch_assoc()) {
+      $subject_ids[] = $row['subject_id'];
     }
+    if($results) {
+      $results->close();
+    }
+    return $subject_ids;
   }
 
-  private static function write_subscriptions_cache() {
-    $fh = fopen(STELLAR_SUBSCRIPTIONS_FILE, 'w');
-    fwrite($fh, json_encode(self::$subscriptions));
-    fclose($fh);
+  public static function subscriptions_for_subject($subject, $term) {
+    $subscriptions = array();
+    $results = db::$connection->query(
+      "SELECT device_id, device_type FROM MyStellarSubscription "
+      . "WHERE term='$term' AND subject_id='$subject'");
+    while($row = $results->fetch_assoc()) {
+      $subscriptions[] = $row;
+    }
+    $results->close();
+    return $subscriptions;
   }
 
-  private static function read_subscriptions_cache() {
-    if (!file_exists(STELLAR_SUBSCRIPTIONS_FILE))
-      return Array();
-    return json_decode(file_get_contents(STELLAR_SUBSCRIPTIONS_FILE), TRUE);
+  public static function push_subscribe($subject, $term, $device_id, $device_type) {
+    $subjectId = self::get_subject_id($subject);
+    $term = db::escape($term);
+    $device_id = db::escape($device_id);
+    $device_type = db::escape($device_type);
+
+    // use a transaction to insure a person only get subscribed once per class
+    db::$connection->query("START TRANSACTION");
+    // this statement will cause row locking
+    $initial = db::$connection->query(
+      "SELECT * FROM MyStellarSubscription WHERE subject_id='$subjectId' AND term='$term'"
+      .  " AND device_id=$device_id AND device_type='{$device_type}' FOR UPDATE");
+
+    if(!$initial->fetch_assoc()) {
+      // no subscription exists yet so create it
+      db::$connection->query(
+        "INSERT INTO MyStellarSubscription (subject_id, term, device_id, device_type)"
+        . " VALUES ('{$subjectId}', '$term', {$device_id}, '{$device_type}')");
+    }
+    $initial->close();
+    db::$connection->query("COMMIT");
   }
 
+  public static function push_unsubscribe($subject, $term, $device_id, $device_type) {
+    $subjectId = self::get_subject_id($subject);
+    $term = db::escape($term);
+    $device_id = db::escape($device_id);
+    $device_type = db::escape($device_type);
+
+    db::$connection->query("DELETE FROM MyStellarSubscription WHERE "
+      . " subject_id='$subjectId' AND term='$term' " 
+      . " AND device_id=$device_id AND device_type='{$device_type}'");
+  }
+
+  /*
   public static function init() {
-    // remove this section later
-    self::$courses['99'] = json_decode(file_get_contents('/home/nobody/lib/trunk/duspStellar.json'), TRUE);
-    // end of removable section
-
     if (count(self::$subscriptions) == 0) {
       self::$subscriptions = self::read_subscriptions_cache();
     }
   }
+  */
 
   public static function get_course($id) {
     return Array(
@@ -256,7 +310,9 @@ class StellarData {
       if (!array_key_exists('title', $subjectData)) { // subjectId != masterId
 	if (!array_key_exists(self::get_subject_id($subjectId), $subjects)) {
 	  $masterSubjectData = self::get_subject_info($subjectId);
-	  $results[$subjectId] = $masterSubjectData;	  
+	  if($masterSubjectData !== False) {
+	    $results[$subjectId] = $masterSubjectData;
+	  }
 	}
       } else {
 	$results[$subjectId] = $subjectData;
@@ -414,12 +470,12 @@ class StellarData {
   private static function get_announcements_xml($subjectId) {
     if (self::feed_cache_is_fresh($subjectId))
       return self::read_feed_cache($subjectId);
+    
     $subjectData = self::get_subject_info($subjectId);
     if (array_key_exists('stellarUrl', $subjectData)) {
       $rss_id = $subjectData['stellarUrl'];
       $rss = file_get_contents(self::$rss_url . $rss_id);
-      if (array_key_exists($subjectId, self::$subscriptions))
-	self::write_feed_cache($subjectId, $rss);
+      self::write_feed_cache($subjectId, $rss);
       return $rss;
     } else { // no feed because no stellarUrl
       return FALSE;
@@ -428,45 +484,54 @@ class StellarData {
 
   public static function get_announcements($subjectId) {
     $rss = self::get_announcements_xml($subjectId);
+
     if (!$rss)
       return FALSE;
 
     $rss_obj = new DOMDocument();
-    $rss_obj->loadXML($rss);
+    if(!$rss_obj->loadXML($rss)) {
+      // make sure the XML parses correctly
+      return FALSE;
+    }
     $rss_root = $rss_obj->documentElement;
 
     $announcements = Array();
     foreach($rss_root->getElementsByTagName('item') as $item) {
       $title = self::getTag($item, 'title')->nodeValue;
       $colon_pos = strpos($title, ":");
-      $announcements[] = array(
+      if (substr($title, 0, $colon_pos) == 'announcement') {
+	$announcements[] = array(
           "date"     => date_parse(self::getTag($item, 'pubDate')->nodeValue),
           "unixtime" => strtotime(self::getTag($item, 'pubDate')->nodeValue),
-          "title"    => substr($title, $colon_pos + 1),
+          "title"    => trim(substr($title, $colon_pos + 1)),
           "text"     => self::clean_text(self::getTag($item, 'description')->nodeValue)
-      );
+	  );
+      }
     }
     return $announcements;
   }
 
   public static function search_subjects($terms) {
+    $terms = trim($terms);
     $subjects_found = Array();
 
     $terms_uc = strtoupper($terms);
     if (array_key_exists($terms_uc, self::$courses)) {
+      self::get_subjects($terms_uc);
       foreach (self::$courses[$terms_uc]['subjects'] as $subjectId => $subjectData) {
 	$subjects_found[] = self::get_subject_info($subjectId);
       }
 
-    } elseif (preg_match('/(\w{1,3})\.(\w{1,5})/', $terms, $matches)) {
+    } elseif (preg_match('/(\w{1,3})\.(\w{1,5})/', $terms_uc, $matches)) {
       $course = $matches[1];
-      $courseData = self::get_subjects($course);
-      foreach ($courseData as $subjectId => $subjectData) {
-	// search for subjects that start with search term
-	if (strpos($subjectId, $terms_uc) === 0 
-	    && $subjectId == $subjectData['masterId']) {
-	  $subjects_found[] = $subjectData;
-	}
+      if (array_key_exists($course, self::$courses)) {
+        $courseData = self::get_subjects($course);
+        foreach ($courseData as $subjectId => $subjectData) {
+	  // search for subjects that start with search term
+	  if (strpos($subjectId, $terms_uc) === 0) {
+	    $subjects_found[] = $subjectData;
+	  }
+        }
       }
     } else { // match all terms
       $words = split(' ', $terms);
@@ -476,8 +541,10 @@ class StellarData {
 	  $found = TRUE;
 	  $title = strtolower($subjectData['title']);
 	  foreach ($words as $word) {
-	    if (strpos($title, strtolower($word)) === FALSE)
-	      $found = FALSE;
+            if($word) { //filter out $word=''
+	      if (strpos($title, strtolower($word)) === FALSE)
+	        $found = FALSE;
+            }
 	  }
 	  if ($found)
 	    $subjects_found[] = $subjectData;

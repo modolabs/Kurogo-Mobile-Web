@@ -4,7 +4,8 @@ $docRoot = getenv("DOCUMENT_ROOT");
 require_once $docRoot . "/mobi-config/mobi_web_constants.php";
 require_once WEBROOT . "map/buildings_lib.php";
 
-$bldg_data = loadXML('xml/bldg_data.xml');
+$xmlfile = WEBROOT . 'map/xml/bldg_data.xml';
+$bldg_data = loadXML($xmlfile);
 $campus_map = $bldg_data->documentElement;
 $building_nodes = $bldg_data->documentElement->getElementsByTagName('object');
 
@@ -18,7 +19,7 @@ foreach($building_nodes as $building) {
 }
 usort($buildings, 'id_compare');
 
-$names = makeArray('xml/bldg_data.xml');
+$names = makeArray($xmlfile);
 
 $rooms = find_contents('room', $building_nodes);
 $food = find_contents('food', $building_nodes);

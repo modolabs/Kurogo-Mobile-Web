@@ -16,6 +16,18 @@ class db {
       self::$connection = new mysqli(self::$host, self::$username, self::$passwd, self::$db);
     }
   }
+
+  public static function escape($string) {
+    return self::$connection->real_escape_string($string);
+  }
+
+  public static function ping() {
+    if(!self::$connection->ping()) {
+      self::$connection->close();
+      self::$connection = NULL;
+      self::init();
+    }
+  }
 }
 
 db::init();

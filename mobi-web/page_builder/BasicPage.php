@@ -2,6 +2,7 @@
 
 class BasicPage extends Page {
 
+  protected $header; // html header
   protected $extra_links = array();
   protected $help_links = array();
   protected $bottom_nav_links = array();
@@ -25,9 +26,6 @@ class BasicPage extends Page {
       $fontsize = $_REQUEST['font'];
       $cookie_params .= ",$fontsize";
       setcookie('layout', $cookie_params, time() + LAYOUT_COOKIE_LIFESPAN, '/');
-      if ($fontsize != $this->fontsize) {
-	header("refresh: 0; url=index.php?font=$fontsize");
-      }
       $this->fontsize = $fontsize;
     }
 
@@ -51,6 +49,18 @@ class BasicPage extends Page {
       'extra_links', 'help_links', 'bottom_nav_links', 'inline_css',
       'centered_image_width', 'centered_image_height', 'centered_image_font_size',
     );
+  }
+
+  public function module($module) {
+    $this->title = Modules::$module_data[$module]['title'];
+    $this->header = Modules::$module_data[$module]['title'];
+    $this->module = $module;
+    return $this;
+  }
+
+  public function header($header) {
+    $this->header = $header;
+    return $this;
   }
 
   public function extra_link($href, $text, $class=NULL) {

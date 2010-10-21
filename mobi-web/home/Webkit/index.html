@@ -104,7 +104,7 @@ if (file_exists($cssfile)) { ?>
 	<div id="homegrid">
                <? foreach($all_modules as $module) { ?>
                      <div id="<?=$module?>">
-                         <a href="<?=url($module)?>">
+                         <a href="<?=Modules::url($module, $page->certs)?>">
                               <img src="Webkit/images/<?=$module?>.png" width="50" height="50" alt="<?=Modules::title($module)?>" />
                               <br/><?=Modules::title($module)?>
                               <? if(Modules::subtitle($module)) { ?>
@@ -120,7 +120,7 @@ if (file_exists($cssfile)) { ?>
 
 <div id="footer">
 	<a href="http://web.mit.edu/ist/"><img src="../Webkit/images/ist-logo.png" width="35" height="21" alt="IST" /></a>Information Services &amp; Technology
-<? if ($_SERVER['SERVER_NAME'] == 'mobi2.mit.edu') { include('extra_footer.php'); } ?>
+<? if (SHOW_DEVICE_DETECTION) { include('extra_footer.php'); } ?>
 </div>
 </body>
 </html>

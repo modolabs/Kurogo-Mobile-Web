@@ -2,17 +2,11 @@
 
 class TouchPage extends Page {
 
+  protected $header; // displayed on nav bar
   protected $navbar_image;
   protected $home;
   protected $breadcrumb;
   protected $viewport_device_width;
-  /*
-  protected $homegrid_css;
-
-  public $centered_image_width;
-  public $centered_image_height;
-  public $centered_image_font_size;
-  */
 
   public function __construct($platform, $certs) {
     $this->branch = 'Touch';
@@ -20,12 +14,10 @@ class TouchPage extends Page {
     $this->certs = $certs;
     $this->max_list_items = 25;
 
-    // inline_css may not be used anymore
     $this->varnames= Array(
      'header', 'title', 'viewport_device_width', 
-     'stylesheets', 'help_on', // 'inline_css', 'homegrid_css', 
+     'stylesheets', 'help_on',
      'home', 'navbar_image', 'breadcrumb', 'footer', 'standard_footer',
-     //'centered_image_width', 'centered_image_height', 'centered_image_font_size',
     );
 
     $attribs_file = WEBROOT . "$this->branch/attribs-$this->platform.php";
@@ -34,13 +26,19 @@ class TouchPage extends Page {
     }
     include($attribs_file);
     $this->viewport_device_width = $viewport_device_width;
-    //$this->centered_image_width = $centered_image_width;
-    //$this->centered_image_height = $centered_image_height;
-    //$this->centered_image_font_size = $centered_image_font_size;
+  }
 
-    //$this->inline_css = $extra_css;
-    //$this->home_css = $home_css;
+  public function module($module) {
+    $this->title = Modules::$module_data['title'];
+    $this->header = Modules::$module_data['title'];
+    $this->navbar_image = $module;
+    $this->module = $module;
+    return $this;
+  }
 
+  public function header($header) {
+    $this->header = $header;
+    return $this;
   }
 
   public function navbar_image($navbar_image) {
