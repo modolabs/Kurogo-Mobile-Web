@@ -119,9 +119,26 @@ class ICalEvent extends ICalObject {
   
   public function apiArray()
   {
-    //TODO: Not yet implemented
-     return array (
-     );
+    
+	 $arr= array (
+	 	'id'=>crc32($this->get_uid()) >>1,
+	 	'title'=>$this->get_summary(),
+	 	'start'=>$this->get_start(),
+	 	'end'=>$this->get_end()
+	 );
+
+    if ($urlLink = $this->get_url()) {
+        $arr['url'] = $urlLink;
+    }
+    if ($location = $this->get_location()) {
+        $arr['location'] = $location;
+    }
+    if ($description = $this->get_description()) {
+        $arr['description'] = $description;
+    }
+    
+	 return $arr;
+
   }
   
   public function get_uid() {

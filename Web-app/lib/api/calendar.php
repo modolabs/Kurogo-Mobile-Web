@@ -1,5 +1,7 @@
 <?php
 
+require_once(LIB_DIR . '/ICalendar.php');
+
 $controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
 $parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
 $eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
