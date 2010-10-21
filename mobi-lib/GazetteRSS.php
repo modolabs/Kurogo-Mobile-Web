@@ -224,12 +224,46 @@ class GazetteRSS extends RSS {
 
       } else {
         // download and resize thumbnail image
-        $thumb = $item->getElementsByTagName('image')->item(0);
-        $thumbUrl = $thumb->getElementsByTagName('url')->item(0);
-        $newThumbUrlString = self::imageUrl(self::cacheImage($thumbUrl->nodeValue, NULL)); // IMAGE_THUMBNAIL_SIZE));
+       // $thumb = $item->getElementsByTagName('image')->item(0);
+       // $thumbUrl = $thumb->getElementsByTagName('url')->item(0);
+       // $newThumbUrlString = self::imageUrl(self::cacheImage($thumbUrl->nodeValue, NULL)); // IMAGE_THUMBNAIL_SIZE));
 
+
+       // download and resize thumbnail image
+        $thumb = $item->getElementsByTagName("enclosure")->item(0);
+        $thumbUrl = $thumb->getAttribute('url');
+        $newThumbUrlString = self::imageUrl(self::cacheImage($thumbUrl, NULL)); // IMAGE_THUMBNAIL_SIZE));
         // replace url in rss feed
         if (!$newThumbUrlString) {
+          // image creation bailed (perhaps from a 1px image)
+          $thumb->removeAttribute('url');
+        }
+
+
+        $oldThumbFeedElement = $item->getElementsByTagName("image")->item(0);
+
+        // remove the old feed version of <image> if found in the feed
+        if ($oldThumbFeedElement)
+            $item->removeChild($oldThumbFeedElement);
+
+        // create new childs for the iPhone application dependency
+        if ($newThumbUrlString) {
+            $im = $newdoc->createElement('image');
+            $item->appendChild($im);
+
+            $im_title = $newdoc->createElement('title', self::getChildValue($item, "title"));
+            $im->appendChild($im_title);
+
+            $im_link = $newdoc->createElement('link', self::getChildValue($item, "link"));
+            $im->appendChild($im_link);
+
+            $im_url = $newdoc->createElement('url', $thumbUrl);
+            $im->appendChild($im_url);
+        }
+
+
+        // replace url in rss feed
+       /* if (!$newThumbUrlString) {
           // image creation bailed (perhaps from a 1px image)
           $thumb->removeChild($thumbUrl);
         }
@@ -238,10 +272,10 @@ class GazetteRSS extends RSS {
         if ($widthTag = $thumb->getElementsByTagName('width')->item(0))
           $thumb->removeChild($widthTag);
         if ($heightTag = $thumb->getElementsByTagName('height')->item(0))
-          $thumb->removeChild($heightTag);
+          $thumb->removeChild($heightTag);*/
 
+        
         // remove images from main <content> tag
-
         $contentNode = $item->getElementsByTagName('encoded')->item(0);
         $content = $contentNode->nodeValue;
         $contentHTML = new DOMDocument();
@@ -521,7 +555,7 @@ class GazetteRSS extends RSS {
   }
 
   private static function getImage($xml_item) {
-      $image_xml = self::getChildByTagName($xml_item, "image");
+     /* $image_xml = self::getChildByTagName($xml_item, "image");
 
       $url = self::getChildValue($image_xml,  "url");
       if (!$url)
@@ -530,6 +564,16 @@ class GazetteRSS extends RSS {
       return array(
           "title" => self::getChildValue($image_xml,  "title"),
           "link"  => self::getChildValue($image_xml,  "link"),
+          "url"   => $url,
+      );*/
+
+
+        $thumb = $xml_item->getElementsByTagName("enclosure")->item(0);
+        $url= $thumb->getAttribute('url');
+
+        return array(
+          "title" => self::getChildValue($xml_item, "title"),
+          "link"  => self::getChildValue($xml_item, "link"),
           "url"   => $url,
       );
   }
