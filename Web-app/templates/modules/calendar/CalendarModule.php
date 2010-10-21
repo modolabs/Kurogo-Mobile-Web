@@ -536,6 +536,7 @@ class CalendarModule extends Module {
         $feed->setObjectClass('event', $this->eventClass);
         $feed->setStartDate($start);
         $feed->setEndDate($end);
+        $feed->addFilter('year', $year);
         $iCalEvents = $feed->items();
 
         $events = array();
