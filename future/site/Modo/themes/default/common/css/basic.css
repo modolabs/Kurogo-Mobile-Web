@@ -1,0 +1,142 @@
+/* Overall font and colors */
+
+body {
+	background: #dcdddf;
+}
+
+body, th, td, li, option, select, input {
+	/* Primary font */
+	font: 14px/1.28em Helvetica, Arial, sans-serif;
+	color: #222;
+}
+
+a, a:visited {
+	color: #036;
+}
+
+a:hover {
+	color: #07d;
+}
+
+h1 {
+	font-family: Georgia, serif;
+	font-size: 142%; 
+	font-weight: normal;
+	color: #036;
+}
+
+h2 {
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 133%; 
+	font-weight: normal;
+	color: #036;
+}
+
+h3 {
+	font-size: 100%; 
+	font-weight: bold;
+	color: #333;
+}
+
+h4 {
+	font-size: 100%; 
+	font-weight: bold;
+	color: #333;
+}
+
+dt, .label, .legend {
+	/* Accent text color */
+	color: #303339;
+}
+
+.smallprint, .fineprint, .iconlegend, .dllabel {
+	/* Secondary text color */
+	color: #666;
+}
+
+
+
+/* Major content blocks */
+
+.focal {
+	background-color: #fff;
+}
+
+
+
+/* Header and footer */
+
+#header a {
+	text-decoration: none;
+	color: #333;
+}
+
+#footer {
+	font-size: 79%;
+	line-height: 1.33em;
+	color: #554c41;
+}
+
+#footer a {
+    text-decoration: none;
+	color: #554c41;
+}
+
+#footer a:hover {
+	color: #e00;
+}
+
+
+/* Form elements */
+
+.combobutton {
+	/* Button for submitting forms, e.g., "Search" button */
+	background-color: #036;
+	color: #fff;
+}
+
+
+
+/* Navigation and results lists */
+
+.nav, .results {
+	/* Main navigation lists and search-results lists */
+	background-color: #fff;
+}
+
+.secondary {
+	/* Secondary navigation or action lists; typically have slightly smaller font size and slightly darker/tinted backgrounds */
+	background-color: #edeef0;
+	font-size: 93%;
+}
+
+.paging {
+	/* Paging links */
+	font-size: 93%;
+}
+
+.bottomnav {
+	/* Navigation at bottom of page -- e.g., "Back to top" */
+	background-color: #4a4c4f;	
+	font-size: 93%;
+}
+
+.bottomnav a, .bottomnav a:visited {
+	color: #fff; 
+}
+
+
+
+/* Tabs */
+
+.tabs {
+	/* Text labels of unselected tab */
+	color: #999;
+}
+
+.tabs .active {
+	/* Text label of currently selected tabs */
+	font-weight: bold;
+	color: #000;
+}
+

@@ -1,0 +1,116 @@
+html {
+	font-size: 13pt;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	padding: 0em;
+}
+
+a img {
+	border: none 
+}
+
+#container { 
+	margin: 0 auto;
+	padding: 0 2px;
+	text-align: left;
+	min-height: 400px;
+}
+#footer {
+	clear: both;
+	min-height: 22px;
+	margin: 20px 10px 14px 10px;
+}
+
+h1 {
+	margin: 0;
+	padding: 17px 0 11px 0;
+	text-align: center;
+}
+.intro {
+	margin-bottom: 0;
+	text-align: center;
+}
+.fineprint {
+	font-size: 80%;
+	color: #404649;
+	line-height: 1.2em;
+}
+.homepage .pagetitle {
+	padding: 9px 5px;
+	text-align: center;
+}
+#logo {
+	padding: 0;
+}
+#new {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 80px;
+	height: 80px;
+	background-image: url(/modules/home/images/newbig.jpg);
+	background-repeat: no-repeat;
+	color: #fff;
+	font-size: 13px;
+	line-height: 13px;
+	text-align: center;
+	overflow: hidden;
+}
+#new a {
+	display: block;
+	width: 56px;
+	height: 50px;
+	padding: 0;
+	text-decoration: none;
+	color: #fff;
+	position: absolute;
+	top: 18px;
+	right: 7px;
+}
+#new a .newlabel {
+	display: block;
+	font-size: 9px;
+	line-height: 11px;
+	color: #ffcece;
+}
+#beta {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+#viewfull {
+	text-align: center;
+	margin: 14px 0;
+	font-size: 13px;
+}
+#homesearch {
+	margin: 6px 0 16px 0;
+	text-align: center;
+}
+#homesearch table {
+	width: 100%;
+}
+.forminput {
+	font-size: 100%;
+	width: 100%;
+	padding: 4px;
+	border: 2px solid #554c41;
+}
+#download {
+	text-align: left;
+	clear: both;
+	padding: 40px 10px 20px 10px;
+}
+#download a {
+	color: #333;
+	text-decoration: none;
+}
+#download a:hover {
+	color: #a00;
+}

@@ -1,0 +1,57 @@
+.intro {
+	margin-bottom: 0;
+	text-align: center;
+}
+h1 {
+	font-size: 36px;
+	line-height: 36px;
+	margin: 16px 12px -6px 12px;
+	color: #112;
+	text-align: center;
+}
+h1.roomfornew {
+	text-align: left;
+}
+#new {
+	position: absolute;
+	top: -13px;
+	right: -9px;
+	width: 80px;
+	height: 80px;
+	background-image: url(/modules/home/images/newbig.png);
+	background-repeat: no-repeat;
+	color: #fff;
+	font-size: 12px;
+	line-height: 13px;
+	text-align: center;
+	overflow: hidden;
+}
+#new a {
+	display: block;
+	width: 50px;
+	height: 50px;
+	padding: 0;
+	text-decoration: none;
+	color: #fff;
+	position: absolute;
+	top: 19px;
+	right: 10px;
+}
+#new a .newlabel {
+	display: block;
+	font-size: 9px;
+	line-height: 9px;
+	color: #ffcece;
+}
+#beta {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+#footer {
+	text-align: center;
+	clear: both;
+}
+form {
+	margin: 0 0 -7px 0;
+}

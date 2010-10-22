@@ -1,0 +1,509 @@
+h2 {
+	margin-bottom: 4px;
+}
+
+#photo {
+}
+
+#phototab {
+	text-align: center;
+}
+
+#phototab img {
+	margin-bottom: 8px
+}
+
+#maptab {
+	margin: -7px -7px -5px -7px;
+}
+
+#mapimage {
+	position: relative;
+	left: 50%;
+	top: 0;
+	margin-left: -147px;
+	width: 292px;
+	height: 190px
+	margin-bottom: 5px;
+	border: 1px solid #999;
+	background-color: #fff;
+}
+
+#mapscrollers {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	z-index: 10;
+}
+
+.tabbody #mapscrollers {
+	left: 50%;
+	margin-left: -147px;
+	width: 294px;
+	height: 192px;
+	bottom: 44px;
+}
+
+#mapscrollers div {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	text-align: center;
+	padding: 0;
+	z-index: 10;
+	background-image: url(/modules/map/images/scrollers.png);
+	background-repeat: no-repeat;
+}
+
+#nw {
+	top: 0;
+	left: 0;
+	background-position: -350px 0px;
+}
+
+#n {
+	top: 0;
+	left: 50%;
+	margin-left: -25px;
+	background-position: 0px 0px;
+}
+
+#ne {
+	top: 0;
+	right: 0;
+	background-position: -200px 0px;
+}
+
+#e {
+	top: 50%;
+	margin-top: -25px;
+	right: 0;
+	background-position: -50px 0px;
+}
+
+#se {
+	bottom: 0;
+	right: 0;
+	background-position: -250px 0px;
+}
+
+#s {
+	bottom: 0;
+	left: 50%;
+	margin-left: -25px;
+	background-position: -100px 0px;
+}
+
+#sw {
+	bottom: 0;
+	left: 0;
+	background-position: -300px 0px;
+}
+
+#w {
+	top: 50%;
+	margin-top: -25px;
+	left: 0;
+	background-position: -150px 0px;
+}
+
+#mapzoom {
+	position: relative;
+	height: 34px;
+}
+
+#mapzoom a {
+	display: block;
+	position: absolute;
+	width: 40px;
+	height: 34px;
+	background-image: url(/modules/map/images/buttons.png);
+	background-repeat: no-repeat;
+}
+
+#zoomin {
+	top: 0;
+	left: 7%;
+	margin: 0 0 0 -19px;
+	background-position: 0 0;
+}
+
+#zoomout {
+	top: 0;
+	left: 23%;
+	margin: 0 0 0 -16px;
+	background-position: -40px 0;
+}
+
+#recenter {
+	top: 0;
+	left: 58%;
+	margin: 0 0 0 -19px;
+	background-position: -120px 0;
+}
+
+#fullscreen {
+	top: 0;
+	bottom: auto;
+	right: 7%;
+	margin: 0 -19px 0 0;
+	background-position: -80px 0;
+}
+
+#viewoptions {
+	background-position: -160px 0;
+}
+
+#loadingimage {
+	position: absolute;
+	z-index: 100;
+	top: 50%;
+	left: 50%;
+	margin-left: -20px;
+	margin-top: -20px;
+	opacity: 0.75;
+}
+
+#options {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10000;
+}
+
+#scrim {
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color: #333;
+	opacity: 0.5;
+}
+
+#mapform {
+	position: absolute;
+	z-index: 20000;
+	top: 9px;
+	bottom: 9px;
+	left: 9px;
+	right: 9px;
+	padding: 15px;
+	margin: 0;
+	background-color: #333;
+	color: #fff;
+	-webkit-border-radius: 12px;
+	opacity: 0.85
+}
+
+#options h2 {
+	color: #fff;
+	margin-bottom: 12px;
+}
+
+#options h3 {
+	color: #fff;
+	margin-bottom: 12px;
+}
+
+#options form p {
+	margin-bottom: 0.5em;
+}
+
+#options th {
+	color: #bbb;
+	padding: 0 7px 6px 0;
+	text-align: center;
+	font-size: 16px;
+	line-height: 1em;
+}
+
+#options th:first-child {
+	text-align: left;
+}
+
+#options th.lastcol {
+	padding-right: 0;
+}
+
+#options td {
+	color: #fff;
+	padding: 5px 0;
+	text-align: center;
+	font-size: 16px;
+	line-height: 1em;
+}
+
+#options td:first-child {
+	text-align: left;
+}
+
+#options input, #options button {
+	font-size: 15px;
+}
+
+#options .check {
+	width: 23px;
+	height: 23px;
+}
+
+#heretab ul {
+	margin-left: 0;
+	padding-left: 0;
+}
+
+#heretab ul li {
+	list-style-type: none;
+	background-image: url(/common/images/bullet.png)!important;
+	background-repeat: no-repeat;
+	background-position: 0 2px;
+	padding-left: 19px;
+	margin: 0 0 0 -4px;
+}
+
+
+
+
+
+/* Fullscreen in portrait (tall) orientation */
+
+body.portrait {
+	width: 100%;
+	height: 100%;
+	min-height: 500px;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+body.portrait #container {
+	position: absolute;
+	overflow: hidden;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+}
+
+body.portrait #mapscrollers {
+	margin: 0;
+	top: 42px;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+
+body.portrait #mapzoom {
+	position: absolute;
+	z-index:2000;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 42px;
+	padding: 0;
+	background-color: #444;
+	border-bottom: 1px solid #222;
+	opacity: 0.75;
+	margin: 0;
+}
+
+body.portrait #mapzoom a {
+	background-image: url(/modules/map/images/buttons-reverse.png);
+}
+
+body.portrait #zoomin {
+	position: absolute;
+	top: 5px;
+	bottom: auto;
+	right: auto;
+	left: 10%;
+	margin-left: -19px;
+}
+
+body.portrait #zoomout {
+	position: absolute;
+	top: 5px;
+	bottom: auto;
+	right: auto;
+	left: 30%;
+	margin-left: -19px;
+}
+
+body.portrait #recenter {
+	position: absolute;
+	top: 5px;
+	bottom: auto;
+	right: auto;
+	left: 50%;
+	margin-left: -19px;
+}
+
+body.portrait #viewoptions {
+	position: absolute;
+	top: 5px;
+	bottom: auto;
+	right: auto;
+	left: 70%;
+	margin-left: -19px;
+}
+
+body.portrait #smallscreen {
+	position: absolute;
+	top: 5px;
+	bottom: auto;
+	right: 10%;
+	left: auto;
+	margin-right: -19px;
+	background-position: -80px 0;
+}
+
+body.portrait #mapimage {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: 0;
+}
+
+body.portrait #formbuttons {
+	position: absolute;
+	left: 12px;
+	bottom: 14px;
+}
+
+
+
+
+/* Fullscreen mode in wide (landscape) orientation */
+
+body.landscape {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+body.landscape #container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+body.landscape #mapscrollers {
+	margin: 0;
+	top: 0;
+	left: 42px;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+}
+
+body.landscape #mapzoom {
+	position: relative;
+	top: 0;
+	left: 0;
+	z-index: 2000;
+	width: 42px;
+	height: 100%;
+	padding: 0;
+	margin: 0;
+	background-color: #444;
+	border-bottom: none;
+	opacity: 0.75;
+}
+
+body.landscape #mapzoom a {
+	background-image: url(/modules/map/images/buttons-reverse.png);
+}
+
+body.landscape #zoomin {
+	top: 10%;
+	bottom: auto;
+	right: 1px;
+	left: auto;
+	margin: -16px 0 0 0;
+}
+
+body.landscape #zoomout {
+	top: 30%;
+	bottom: auto;
+	right: 1px;
+	left: auto;
+	margin: -16px 0 0 0;
+}
+
+body.landscape #recenter {
+	top: 50%;
+	bottom: auto;
+	right: 1px;
+	left: auto;
+	margin: -16px 0 0 0;
+}
+
+body.landscape #viewoptions {
+	top: 70%;
+	bottom: auto;
+	right: 1px;
+	left: auto;
+	margin: -16px 0 0 0;
+}
+
+body.landscape #smallscreen {
+	top: auto;
+	bottom: 10%;
+	right: 1px;
+	left: auto;
+	margin: 0 0 -16px 0;
+	background-position: -80px 0;
+}
+
+body.landscape #mapimage {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: 0;
+}
+
+body.landscape #formbuttons {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+}
+
+body.landscape #mapform {
+	margin: 0;
+}
+
+body.landscape #options {
+	font-size: 15px;
+}
+
+body.landscape #options th {
+	font-size: 15px;
+	padding: 0 7px 4px 0;
+}
+
+body.landscape #options td {
+	font-size: 15px;
+	padding: 1px 0 0 0;
+}
+
+body.landscape #options .check {
+	width: 20px;
+	height: 20px;
+}
+

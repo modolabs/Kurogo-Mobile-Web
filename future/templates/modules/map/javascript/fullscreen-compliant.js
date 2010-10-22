@@ -1,0 +1,1 @@
+detail-mobile.js

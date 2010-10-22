@@ -1,0 +1,9 @@
+.rowbar {
+	background: #6499cb url(/common/images/rowbar.png) repeat-x;
+}
+.colbar {
+	background: #6499cb url(/common/images/colbar.png) repeat-y;
+}
+.average {
+	border-color: #c00;
+}
