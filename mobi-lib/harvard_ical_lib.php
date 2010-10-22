@@ -6,7 +6,7 @@
  */
 
 require_once('TimeRange.php');
-require_once('HarvardContactInfoParser.php')
+require_once('HarvardContactInfoParser.php');
 
 class ICalendarException extends Exception {
 }
