@@ -47,10 +47,9 @@ if (isset($_GET['days'])) {
 /* random durations and titles */
 $durations = array(1800,2700,3600, 5400, 7200);
 $titles = array(
-	'Important Lecture;
-	and things',
+	'Important Lecture',
 	'Special Event',
-	'Student Group Meeting, and stuff',
+	'Student Group Meeting',
 	'Faculty Meeting',
 	'Presentation',
 	'Concert'
@@ -59,15 +58,19 @@ $titles = array(
 $sample_events = array();
 
 for ($i=1;$i<=$count; $i++) {
-	$start = $current_day+(rand(8,18)*3600);
-	$end = $start + $durations[array_rand($durations)];
-	$event = array('summary'=>$titles[array_rand($titles)], 'range'=>new TimeRange($start,$end), 'uid'=>sprintf("%s%s%s%d", $uid_base, $year, $month, $i));
+	$numEvents = rand(1,4);
 	
-	if ($startDay>=$startdate) {
-		if (empty($search) || stripos($event['summary'], $search)!== false) { //very crude search
-			$sample_events[] = $event;
-		}
-	}
+	for ($e=0;$e<$numEvents; $e++) {
+        $start = $current_day+(rand(8,18)*3600);
+        $end = $start + $durations[array_rand($durations)];
+        $event = array('summary'=>$titles[array_rand($titles)], 'range'=>new TimeRange($start,$end), 'uid'=>sprintf("%s%s%s%d%d", $uid_base, $year, $month, $i, $e));
+	
+        if ($startDay>=$startdate) {
+            if (empty($search) || stripos($event['summary'], $search)!== false) { //very crude search
+                $sample_events[] = $event;
+            }
+        }
+    }
 	$current_day = getTomorrow($current_day);
 }
 
