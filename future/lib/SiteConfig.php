@@ -2,21 +2,21 @@
 
 class SiteConfig {
   private $configVars = array();
-  private $themeVars = array();
+  private $webAppVars = array();
   private $apiVars = array();
   
 
-  public function loadThemeFile($name, $section = true, $ignoreError = false) {
-    if (!in_array($name, array_keys($this->themeVars))) {
-      $file = realpath_exists(THEME_CONFIG_DIR."/$name.ini");
+  public function loadWebAppFile($name, $section = true, $ignoreError = false) {
+    if (!in_array($name, array_keys($this->webAppVars))) {
+      $file = realpath_exists(SITE_CONFIG_DIR."/web/$name.ini");
       if ($file) {
-        $this->themeVars[$name] = parse_ini_file($file, $section);
-        $this->replaceThemeVariables($this->themeVars[$name]);
+        $this->webAppVars[$name] = parse_ini_file($file, $section);
+        $this->replaceWebAppVariables($this->webAppVars[$name]);
         return true;
 
       } else {
         if (!$ignoreError) {
-          error_log(__FUNCTION__."(): no theme configuration file for '$name'");
+          error_log(__FUNCTION__."(): no web application configuration file for '$name'");
         }
         return false;
       }
@@ -44,17 +44,17 @@ class SiteConfig {
 
   // -------------------------------------------------------------------------
 
-  public function getThemeVar($key, $subKey = null, $ignoreError = false) {
-    if (isset($this->themeVars[$key])) {
+  public function getWebAppVar($key, $subKey = null, $ignoreError = false) {
+    if (isset($this->webAppVars[$key])) {
       if (!isset($subKey)) {
-        return $this->themeVars[$key];
-      } else if (isset($this->themeVars[$key][$subKey])) {
-        return $this->themeVars[$key][$subKey];
+        return $this->webAppVars[$key];
+      } else if (isset($this->webAppVars[$key][$subKey])) {
+        return $this->webAppVars[$key][$subKey];
       }
     }
     
     if (!$ignoreError) {
-      error_log(__FUNCTION__."(): themeVar['$key']".
+      error_log(__FUNCTION__."(): webAppVars['$key']".
         (isset($subKey) ? "['$subKey']" : "")." not set");
     }
     
@@ -71,7 +71,7 @@ class SiteConfig {
     }
 
     if (!$ignoreError) {
-      error_log(__FUNCTION__."(): apiVar['$key']".
+      error_log(__FUNCTION__."(): apiVars['$key']".
         (isset($subKey) ? "['$subKey']" : "")." not set");
     }
 
@@ -113,10 +113,10 @@ class SiteConfig {
     }
   }
   
-  private function replaceThemeVariables(&$config) {
+  private function replaceWebAppVariables(&$config) {
     $testVars = $config;
-    if (isset($this->themeVars['site'])) {
-      $testVars = array_merge($this->themeVars['site'], $testVars);
+    if (isset($this->webAppVars['site'])) {
+      $testVars = array_merge($this->webAppVars['site'], $testVars);
     }
   
     // Handle key-relative paths by replacing keys with paths
@@ -170,7 +170,6 @@ class SiteConfig {
     // Set up defines relative to SITE_DIR
     define('SITE_DIR',             $this->configVars['SITE_DIR']);
     define('SITE_LIB_DIR',         SITE_DIR.'/lib');
-    define('THEMES_DIR',           SITE_DIR.'/themes');
     define('DATA_DIR',             SITE_DIR.'/data');
     define('CACHE_DIR',            SITE_DIR.'/cache');
     define('LOG_DIR',              SITE_DIR.'/logs');
@@ -180,15 +179,15 @@ class SiteConfig {
     $this->configVars = array_merge($this->configVars, 
       parse_ini_file(self::getPathOrDie(SITE_CONFIG_DIR."/config.ini"), false));   
     $this->replaceConfigVariables($this->configVars);
-    
-    define('THEME_DIR',        THEMES_DIR.'/'.$this->configVars['ACTIVE_THEME']);
-    define('THEME_CONFIG_DIR', THEME_DIR.'/config');
 
     // Load site mode configuration file
     $this->configVars = array_merge($this->configVars, 
       parse_ini_file(self::getPathOrDie(SITE_CONFIG_DIR."/config-$siteMode.ini"), false));   
     $this->replaceConfigVariables($this->configVars);
     
+    // Set up theme define
+    define('THEME_DIR', SITE_DIR.'/themes/'.$this->configVars['ACTIVE_THEME']);
+
     //error_log(print_r($this->configVars, true));
   }
 }

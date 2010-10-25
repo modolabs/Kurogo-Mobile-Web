@@ -66,7 +66,6 @@ function Initialize(&$path=null) {
   
   $GLOBALS['siteConfig'] = new SiteConfig();
   
-  
   //
   // Install exception handlers
   //
@@ -121,7 +120,6 @@ function Initialize(&$path=null) {
     require_once realpath(LIB_DIR.'/DeviceClassifier.php');
     
     $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
-
   }
   
   

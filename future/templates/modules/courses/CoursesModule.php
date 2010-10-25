@@ -11,7 +11,7 @@ class CoursesModule extends Module {
   protected $id = 'courses';
 
   protected function setBreadcrumbTitle($title) {
-    $config = $this->loadThemeConfigFile("{$this->id}-abbreviations", true);
+    $config = $this->loadWebAppConfigFile("{$this->id}-abbreviations", true);
 
     if (isset($config['breadcrumbs'], $config['breadcrumbs']['from'], $config['breadcrumbs']['to'])) {
       $mappings = array_combine($config['breadcrumbs']['from'], $config['breadcrumbs']['to']);
@@ -392,7 +392,7 @@ class CoursesModule extends Module {
           );
         }
         
-        $infoFields = $this->loadThemeConfigFile('courses-detail', 'infoFields');
+        $infoFields = $this->loadWebAppConfigFile('courses-detail', 'infoFields');
         $infoItems = array();
         foreach ($infoFields['info'] as $field => $header) {
           if (isset($classInfo[$field]) && strlen($classInfo[$field])) {
@@ -419,7 +419,7 @@ class CoursesModule extends Module {
         $this->assign('classId',       $classId);
         $this->assign('className',     $classInfo['name']);
         $this->assign('classTitle',    $classInfo['title']);
-        $this->assign('classUrl',      $classInfo['url']);
+        $this->assign('classUrl',      self::argVal($classInfo, 'url', ''));
         $this->assign('times',         $times);
         $this->assign('infoItems',     $infoItems);
         $this->assign('staff',         $staff);

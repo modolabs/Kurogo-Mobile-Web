@@ -22,7 +22,12 @@ class PageViews {
     else // assume 'api'
       $logfile = $GLOBALS['siteConfig']->getVar('API_CURRENT_LOG_FILE');
 
-    $fh = fopen($logfile, 'a');
+    $dir = dirname($logfile);
+    if (!file_exists($dir)) {
+      if (!mkdir($dir, 0755, true))
+        error_log("could not create $dir");
+    }
+    $fh = fopen($logfile, 'a+');
     fwrite($fh, sprintf("%s %s %s: %s\n",
                         date($GLOBALS['siteConfig']->getVar('LOG_DATE_FORMAT'), $time),
                         $platform, $module, $extra));

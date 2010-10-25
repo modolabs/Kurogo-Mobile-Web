@@ -402,7 +402,7 @@ class CalendarModule extends Module {
         break;
         
       case 'detail':  
-        $calendarFields = $this->loadThemeConfigFile('calendar-detail', 'detailFields');
+        $calendarFields = $this->loadWebAppConfigFile('calendar-detail', 'detailFields');
 
         $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
         $feed->setObjectClass('event', $this->eventClass);

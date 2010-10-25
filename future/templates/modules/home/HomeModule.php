@@ -11,7 +11,7 @@ class HomeModule extends Module {
         break;
         
       case 'index':
-        $this->loadThemeConfigFile('home-index', 'home');
+        $this->loadWebAppConfigFile('home-index', 'home');
       
         $whatsNewCount = 0;
         $modules = array();

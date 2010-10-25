@@ -61,8 +61,8 @@ class NewsModule extends Module {
         return $this->buildBreadcrumbURL('story', array(
           'storyID'   => $storyID,
           'section'   => $this->feedIndex,
-          'start'     => $this->argVal($this->args, 'start'),
-          'filter'    => $this->argVal($this->args, 'filter')
+          'start'     => self::argVal($this->args, 'start'),
+          'filter'    => self::argVal($this->args, 'filter')
         ), $addBreadcrumb);
     } elseif ($link = $story->getProperty('link')) {
         return $link;

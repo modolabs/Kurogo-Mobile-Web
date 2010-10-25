@@ -518,7 +518,7 @@ JS;
         break;
       
       case 'detail':
-        $detailConfig = $this->loadThemeConfigFile('map-detail', 'detailConfig');        
+        $detailConfig = $this->loadWebAppConfigFile('map-detail', 'detailConfig');        
         $tabKeys = array();
         $tabJavascripts = array();
         

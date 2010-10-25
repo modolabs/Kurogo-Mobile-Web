@@ -147,7 +147,7 @@ class PeopleModule extends Module {
     $this->peopleController = $GLOBALS['siteConfig']->getVar('PEOPLE_CONTROLLER_CLASS');
     $this->personClass      = $GLOBALS['siteConfig']->getVar('PEOPLE_PERSON_CLASS');
 
-    $this->detailFields = $this->loadThemeConfigFile('people-detail', 'detailFields');
+    $this->detailFields = $this->loadWebAppConfigFile('people-detail', 'detailFields');
     foreach($this->detailFields as $field => $info) {
       $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
     }
@@ -244,7 +244,7 @@ class PeopleModule extends Module {
           $this->redirectTo('search');
         }
         
-        $this->loadThemeConfigFile('people-index', 'contacts');
+        $this->loadWebAppConfigFile('people-index', 'contacts');
         break;
     }  
   }

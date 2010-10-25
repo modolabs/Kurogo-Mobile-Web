@@ -28,7 +28,7 @@ class AboutModule extends Module {
   protected function initializeForPage() {
     switch ($this->page) {
       case 'index':
-        $this->loadThemeConfigFile('about-index', 'aboutPages');
+        $this->loadWebAppConfigFile('about-index', 'aboutPages');
         break;
         
       case 'about_site':

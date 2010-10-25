@@ -6,7 +6,7 @@ class DownloadModule extends Module {
   protected $id = 'download';
   
   protected function initializeForPage() {
-    $downloadInfo = $this->loadThemeConfigFile('download-index', 'download');
+    $downloadInfo = $this->loadWebAppConfigFile('download-index', 'download');
 
     $this->assign('deviceName',   self::argVal($downloadInfo['deviceNames'],        $this->platform, null));
     $this->assign('instructions', self::argVal($downloadInfo['deviceInstructions'], $this->platform, null));

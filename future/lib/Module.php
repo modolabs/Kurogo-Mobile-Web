@@ -227,9 +227,9 @@ abstract class Module {
   }
   
   function __construct($page='index', $args=array()) {
-    $GLOBALS['siteConfig']->loadThemeFile('modules');
+    $GLOBALS['siteConfig']->loadWebAppFile('modules');
     
-    $modules = $GLOBALS['siteConfig']->getThemeVar('modules');
+    $modules = $GLOBALS['siteConfig']->getWebAppVar('modules');
     if (isset($modules[$this->id])) {
       $this->moduleName = $modules[$this->id]['title'];
     }
@@ -257,7 +257,7 @@ abstract class Module {
   // Module control functions
   //
   protected function getHomeScreenModules() {
-    $modules = $GLOBALS['siteConfig']->getThemeVar('modules');
+    $modules = $GLOBALS['siteConfig']->getWebAppVar('modules');
     
     foreach ($modules as $id => $info) {
       if (!$info['homescreen']) {
@@ -377,11 +377,11 @@ abstract class Module {
   private function loadPageConfig() {
     if (!isset($this->pageConfig)) {
       // Load site configuration and help text
-      $this->loadThemeConfigFile('site', false);
-      $this->loadThemeConfigFile('help');
+      $this->loadWebAppConfigFile('site', false);
+      $this->loadWebAppConfigFile('help');
   
       // load module config file
-      $modulePageConfig = $this->loadThemeConfigFile($this->id, "{$this->id}PageConfig", true);
+      $modulePageConfig = $this->loadWebAppConfigFile($this->id, "{$this->id}PageConfig", true);
     
       $this->pageTitle = $this->moduleName;
   
@@ -432,16 +432,16 @@ abstract class Module {
   // Theme config files
   //
   
-  protected function loadThemeConfigFile($name, $keyName=null, $ignoreError=false) {
+  protected function loadWebAppConfigFile($name, $keyName=null, $ignoreError=false) {
     $this->loadTemplateEngineIfNeeded();
 
     if ($keyName === null) { $keyName = $name; }
     
-    if (!$GLOBALS['siteConfig']->loadThemeFile($name, true, $ignoreError)) {
+    if (!$GLOBALS['siteConfig']->loadWebAppFile($name, true, $ignoreError)) {
       return array();
     }
         
-    $themeVars = $GLOBALS['siteConfig']->getThemeVar($name);
+    $themeVars = $GLOBALS['siteConfig']->getWebAppVar($name);
     
     if ($keyName === false) {
       foreach($themeVars as $key => $value) {
