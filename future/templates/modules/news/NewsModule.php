@@ -36,8 +36,8 @@ class NewsModule extends Module {
     if ($image) {
       return array(
         'src'    => $image->getURL(),
-        'width'  => $image->getWidth(),
-        'height' => $image->getHeight(),
+        'width'  => $image->getProperty('width'),
+        'height' => $image->getProperty('height'),
       );
     }
     
@@ -119,6 +119,7 @@ class NewsModule extends Module {
     $parserClass     = $GLOBALS['siteConfig']->getVar('NEWS_PARSER_CLASS');
     $channelClass    = $GLOBALS['siteConfig']->getVar('NEWS_CHANNEL_CLASS');
     $itemClass       = $GLOBALS['siteConfig']->getVar('NEWS_ITEM_CLASS');
+    $enclosureClass  = $GLOBALS['siteConfig']->getVar('NEWS_ENCLOSURE_CLASS');
     $imageClass      = $GLOBALS['siteConfig']->getVar('NEWS_IMAGE_CLASS');
     $this->maxPerPage      = $GLOBALS['siteConfig']->getVar('NEWS_MAX_RESULTS');
     $this->loadFeeds();
@@ -131,6 +132,7 @@ class NewsModule extends Module {
     $this->feed = new $controllerClass($this->feedURLForFeed($this->feedIndex), new $parserClass);
     $this->feed->setObjectClass('channel', $channelClass);
     $this->feed->setObjectClass('item', $itemClass);
+    $this->feed->setObjectClass('enclosure', $enclosureClass);
     $this->feed->setObjectClass('image', $imageClass);
   }
 

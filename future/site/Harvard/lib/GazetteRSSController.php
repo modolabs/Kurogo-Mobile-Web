@@ -86,16 +86,6 @@ class GazetteRSSParser extends RSSDataParser
 
 class GazetteRSSItem extends RSSItem
 {
-    protected function elementMap()
-    {
-        $elementMap = array_merge(parent::elementMap(), array(
-            'HARVARD:WPID'=>'guid'
-            )
-        );
-        
-        return $elementMap;
-    }
-    
     public function addElement(RSSElement $element)
     {
         $name = $element->name();
@@ -103,9 +93,11 @@ class GazetteRSSItem extends RSSItem
         
         switch ($name)
         {
-            case 'image':
-                if ($element->getWidth()>1) {
-                    $this->images[] = $element;
+            case 'enclosure':
+                if ($element->isImage()) {
+                    if ($element->getProperty('width')>1) {
+                        $this->enclosure = $element;
+                    }
                 }
                 break;
             default:
@@ -116,8 +108,37 @@ class GazetteRSSItem extends RSSItem
     }
 }
 
-class GazetteRSSImage extends RSSImage
+class GazetteRSSEnclosure extends RSSEnclosure
 {
+    protected $width;
+    protected $height;
+    
+    protected function standardAttributes()
+    {
+        $attributes = array_merge(parent::standardAttributes(),array(
+            'width',
+            'height'));
+        return $attributes;
+    }
+
+    public function getHeight()
+    {
+        if ($this->cacheImage()) {
+            return $this->height;
+        }
+        
+        return null;
+    }
+
+    public function getWidth()
+    {
+        if ($this->cacheImage()) {
+            return $this->height;
+        }
+        
+        return null;
+    }
+    
     private function cacheFilename()
     {
         return md5($this->url);
@@ -159,24 +180,8 @@ class GazetteRSSImage extends RSSImage
         if ($image_size = getimagesize($cache->getFullPath($cacheFilename))) {
             $this->width = intval($image_size[0]);
             $this->height = intval($image_size[1]);
-        }
-        
-    }
-    
-    public function addElement(RSSElement $element)
-    {
-        switch ($element->name())
-        {
-            case 'WIDTH':
-            case 'HEIGHT':
-                /* ignore width and height because it lies */
-                break;
-            case 'URL':
-                $this->url = $element->value();
-                $this->cacheImage();
-                break;
-            default:
-                return parent::addElement($element);
+            return true;
         }
     }
 }
+

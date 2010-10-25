@@ -74,7 +74,8 @@ class RSSElement
     public function getProperty($var)
     {
         if (in_array($var, $this->standardAttributes())) {
-            return $this->$var;
+            $method = "get" . $var;
+            return $this->$method();
         } elseif (array_key_exists(strtoupper($var), $this->properties)) {
             return $this->properties[strtoupper($var)]->value();
         }
@@ -207,6 +208,7 @@ class RSSItem extends RSSElement
     protected $comments;
     protected $content;
     protected $category=array();
+    protected $enclosure;
     protected $images=array();
     
     public function getContent()
@@ -254,9 +256,20 @@ class RSSItem extends RSSElement
         return $this->images;
     }
     
+    public function getEnclosure()
+    {
+        return $this->enclosure;
+    }
+    
     public function getImage()
     {
-        return count($this->images)>0 ? $this->images[0] : null;
+        if ( ($enclosure = $this->getEnclosure()) && $enclosure->isImage()) {
+            return $enclosure;
+        } elseif (count($this->images)>0) {
+            return $this->images[0];
+        }
+
+        return null;
     }
     
     public function addElement(RSSElement $element)
@@ -273,6 +286,9 @@ class RSSItem extends RSSElement
                     }
                 }
                 parent::addElement($element);
+                break;
+            case 'enclosure':
+                $this->enclosure = $element;
                 break;
             case 'image':
                 $this->images[] = $element;
@@ -328,6 +344,57 @@ class RSSItem extends RSSElement
         $this->setAttribs($attribs);
     }
     
+}
+
+class RSSEnclosure extends RSSElement
+{
+    protected $name='enclosure';
+    protected $url;
+    protected $length;
+    protected $type;
+
+    protected function standardAttributes()
+    {
+        return array(
+            'url',
+            'length',
+            'type'
+        );
+    }
+    
+    public function __construct($attribs)
+    {
+        $this->setAttribs($attribs);
+        $this->url = $this->getAttrib('URL');
+        $this->length = $this->getAttrib('LENGTH');
+        $this->type = $this->getAttrib('TYPE');
+    }
+    
+    public function isImage()
+    {
+        $image_types = array(
+            'image/jpeg',
+            'image/jpg',
+            'image/gif',
+            'image/png'
+            );
+        return in_array($this->type, $image_types);
+    }
+    
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function getURL()
+    {
+        return $this->url;
+    }
+
+    public function getLength()
+    {
+        return $this->length;
+    }
 }
 
 class RSSImage extends RSSElement

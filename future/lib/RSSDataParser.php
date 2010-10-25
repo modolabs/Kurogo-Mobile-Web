@@ -14,6 +14,7 @@ class RSSDataParser extends DataParser
     protected $channelClass='RSSChannel';
     protected $itemClass='RSSItem';
     protected $imageClass='RSSImage';
+    protected $enclosureClass='RSSEnclosure';
     protected $items=array();
     protected $data='';
     
@@ -31,6 +32,9 @@ class RSSDataParser extends DataParser
                 break;
             case 'item':
                 $this->setItemClass($className);
+                break;
+            case 'enclosure':
+                $this->setEnclosureClass($className);
                 break;
             case 'image':
                 $this->setImageClass($className);
@@ -57,6 +61,9 @@ class RSSDataParser extends DataParser
             case 'ENTRY': //for atom feeds
                 $this->elementStack[] = new $this->itemClass($attribs);
                 break;
+            case 'ENCLOSURE';
+                $this->elementStack[] = new $this->enclosureClass($attribs);
+                break;
             case 'IMAGE':
                 $this->elementStack[] = new $this->imageClass($attribs);
                 break;
@@ -82,6 +89,16 @@ class RSSDataParser extends DataParser
     			throw new Exception("Cannot load class $itemClass");
     		}
 			$this->itemClass = $itemClass;
+		}
+    }
+
+    public function setEnclosureClass($enclosureClass)
+    {
+    	if ($enclosureClass) {
+    		if (!class_exists($enclosureClass)) {
+    			throw new Exception("Cannot load class $enclosureClass");
+    		}
+			$this->enclosureClass = $enclosureClass;
 		}
     }
 
