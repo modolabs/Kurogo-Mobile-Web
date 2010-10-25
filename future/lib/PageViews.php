@@ -50,7 +50,7 @@ class PageViews {
     $db = db::$connection;
 
     // TODO: make a version of this that supports non-mysql clients
-    if ($db === MYSQL_NOT_SUPPORTED)
+    if ($db === DB_NOT_SUPPORTED)
       return;
 
     if ($system == 'web') {
@@ -160,7 +160,7 @@ class PageViews {
     $output = Array();
 
     $db = db::$connection;
-    if ($db !== MYSQL_NOT_SUPPORTED) {
+    if ($db !== DB_NOT_SUPPORTED) {
       self::export_stats($system);
 
       $sql_fields = Array();

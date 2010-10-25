@@ -1,7 +1,7 @@
 <?php
 
 
-define('MYSQL_NOT_SUPPORTED', 1);
+define('DB_NOT_SUPPORTED', 1);
 
 class db {
   public static $connection = NULL;
@@ -15,7 +15,7 @@ class db {
 	        $GLOBALS['siteConfig']->getVar('MYSQL_PASS'), 
 	        $GLOBALS['siteConfig']->getVar('MYSQL_DBNAME'));
       } else {
-	      self::$connection = MYSQL_NOT_SUPPORTED;
+	      self::$connection = DB_NOT_SUPPORTED;
       }
     }
   }
