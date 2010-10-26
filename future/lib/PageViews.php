@@ -47,10 +47,10 @@ class PageViews {
   }
 
   public static function export_stats($system) {
-    $db = db::$connection;
+    $connection = db::connection();
 
     // TODO: make a version of this that supports non-mysql clients
-    if ($db === DB_NOT_SUPPORTED)
+    if ($connection === DB_NOT_SUPPORTED)
       return;
 
     if ($system == 'web') {
@@ -94,7 +94,7 @@ class PageViews {
       return; 
     }
 
-    $result = $db->query(
+    $result = $connection->query(
       "SELECT day, platform, module, viewcount FROM $table
         WHERE day=(SELECT MAX(day) FROM $table)");
 
@@ -126,20 +126,20 @@ class PageViews {
     fclose($infile);
 
     if ($stats) {
-      $db->query('LOCK TABLE $table WRITE');
-      $db->query("DELETE FROM $table WHERE day=(SELECT MAX(day) FROM $table)");
+      $connection->query('LOCK TABLE $table WRITE');
+      $connection->query("DELETE FROM $table WHERE day=(SELECT MAX(day) FROM $table)");
       foreach ($stats as $day => $platforms) {
         foreach ($platforms as $platform => $modules) {
           foreach ($modules as $module => $count) {
             $sql = "INSERT INTO $table ( day, platform, module, viewcount )
                          VALUES ('$day', '$platform', '$module', $count)";
-            if (!$db->query($sql)) {
+            if (!$connection->query($sql)) {
               error_log("mysql query failed: $sql");
             }
           }
         }
       }
-      $db->query("UNLOCK TABLE");
+      $connection->query("UNLOCK TABLE");
     }
 
     unlink($logfilecopy);
@@ -159,8 +159,8 @@ class PageViews {
   private static function getTimeSeries($system, $start, $platform=NULL, $module=NULL, $end=NULL) {
     $output = Array();
 
-    $db = db::$connection;
-    if ($db !== DB_NOT_SUPPORTED) {
+    $connection = db::connection();
+    if ($connection !== DB_NOT_SUPPORTED) {
       self::export_stats($system);
 
       $sql_fields = Array();
@@ -201,7 +201,7 @@ class PageViews {
       $sql .= ' FROM ' . $table . ' WHERE ' . implode(' AND ', $sql_criteria);
       $sql .= (isset($groupby) && count($groupby)) ? ' GROUP BY ' . implode(', ', $groupby) : '';
 
-      $result = $db->query($sql);
+      $result = $connection->query($sql);
 
       // results are returned as (not necessarily in this order):
       // Array('module' => ..., 'platform' => ..., 'viewcount' => ...)
@@ -305,7 +305,8 @@ class PageViews {
 
   public static function count_iphone_tokens() {
     $sql = "SELECT count(*) FROM AppleDevice WHERE device_token IS NOT NULL and active = 1";
-    $result = db::$connection->query($sql);
+    $connection = db::connection();
+    $result = $connection->query($sql);
     $row = $result->fetch_assoc();
     return $row;
   }

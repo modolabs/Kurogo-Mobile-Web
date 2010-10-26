@@ -1,10 +1,15 @@
 <?php
 
-
 define('DB_NOT_SUPPORTED', 1);
 
 class db {
   public static $connection = NULL;
+  
+  public static function connection()
+  {
+    self::init();
+    return self::$connection;
+  }
 
   public static function init() {
     if(!self::$connection) {
@@ -19,13 +24,21 @@ class db {
       }
     }
   }
+  
+  public static function query($sql)
+  {
+    $connection = self::connection();
+    return $connection->query($sql);
+  }
 
   public static function escape($string) {
-    return self::$connection->real_escape_string($string);
+    $connection = self::connection();
+    return $connection->real_escape_string($string);
   }
 
   public static function ping() {
-    if(!self::$connection->ping()) {
+    $connection = self::connection();
+    if(!$connection->ping()) {
       self::$connection->close();
       self::$connection = NULL;
       self::init();
@@ -33,6 +46,5 @@ class db {
   }
 }
 
-db::init();
 
-?>
+
