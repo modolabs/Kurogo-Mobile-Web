@@ -98,7 +98,7 @@ class ICalEvent extends ICalObject {
   protected $incrementor;
   protected $interval = 1;
   
-  public function get_all_categories() {
+  public function getEventCategories() {
     return array();
   }
 

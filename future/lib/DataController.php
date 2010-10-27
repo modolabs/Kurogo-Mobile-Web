@@ -2,6 +2,7 @@
 
 abstract class DataController
 {
+    const DEFAULT_PARSER_CLASS=null;
     protected $parser;
     protected $url;
     protected $cache;
@@ -64,11 +65,30 @@ abstract class DataController
         $this->clearInternalCache();
     }
     
-    public function __construct($baseURL, DataParser $parser)
+    protected function init($args)
     {
-        $this->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
-        $this->setBaseURL($baseURL);
+        $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this::DEFAULT_PARSER_CLASS;
+        $parser = $args['PARSER_CLASS']::factory($args);
+        
         $this->setParser($parser);
+        
+        if (isset($args['BASE_URL'])) {
+            $this->setBaseURL($args['BASE_URL']);
+        }
+    }
+
+    public static function factory($args)
+    {
+        $controllerClass = isset($args['CONTROLLER_CLASS']) ? $args['CONTROLLER_CLASS'] : __CLASS__;
+
+        if (!class_exists($controllerClass)) {
+            throw new Exception("Controller class $controllerClass not defined");
+        }
+        
+        $controller = new $controllerClass;
+        $controller->init($args);
+        
+        return $controller;
     }
     
     protected function url()
@@ -125,11 +145,6 @@ abstract class DataController
     public function setEncoding($encoding)
     {
         $this->parser->setEncoding($encoding);
-    }
-
-    public function setObjectClass($class, $className)
-    {
-        $this->parser->setObjectClass($class, $className);
     }
 
     public function getEncoding()

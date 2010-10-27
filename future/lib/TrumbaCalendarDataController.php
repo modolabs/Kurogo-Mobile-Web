@@ -4,7 +4,9 @@ require_once(LIB_DIR . '/ICalendar.php');
 
 class TrumbaCalendarDataController extends CalendarDataController
 {
+    const DEFAULT_EVENT_CLASS='TrumbaEvent';
     protected $trumbaFilters=array();
+    protected $supportsSearch = true;
     
     public function addTrumbaFilter($var, $value)
     {
@@ -32,7 +34,8 @@ class TrumbaCalendarDataController extends CalendarDataController
         }
         
         $diff = $this->endTimestamp() - $this->startTimestamp();
-        if ($diff<86400) {
+
+        if ($diff<86400 || $diff == 89999) { // fix for DST
             if (count($this->trumbaFilters)>0) {
                 $this->setRequiresDateFilter(false);
                 $this->addFilter('startdate', $this->startDate->format('Ymd'));
@@ -70,11 +73,6 @@ class TrumbaCalendarDataController extends CalendarDataController
         }
     
         throw new Exception("Can't load event without a time");
-    }
-
-    public function __construct($baseURL, ICSDataParser $parser, $eventClass='TrumbaEvent')
-    {
-        parent::__construct($baseURL, $parser, $eventClass);
     }
     
 }

@@ -210,6 +210,17 @@ abstract class Module {
     exit;
   }
   
+  protected function loadFeedData()
+  {
+    $data = null;
+    $feedConfigFile = realpath_exists(sprintf("%s/feeds/%s.ini", SITE_CONFIG_DIR, $this->id));
+    if ($feedConfigFile) {
+        $data = parse_ini_file($feedConfigFile, true);
+    } 
+    
+    return $data;
+  }
+  
   //
   // Factory function
   // instantiates objects for the different modules

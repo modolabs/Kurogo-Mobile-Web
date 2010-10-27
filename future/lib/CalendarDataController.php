@@ -2,11 +2,14 @@
 
 class CalendarDataController extends DataController
 {
+    const DEFAULT_PARSER_CLASS='ICSDataParser';
+    const DEFAULT_EVENT_CLASS='ICalEvent';
     protected $startDate;
     protected $endDate;
     protected $calendar;
     protected $requiresDateFilter=true;
     protected $contentFilter;
+    protected $supportsSearch = false;
     
     public function setRequiresDateFilter($bool)
     {
@@ -18,8 +21,11 @@ class CalendarDataController extends DataController
         switch ($var)
         {
             case 'search': 
-            //sub classes should override this if there is a more direct way to search. Default implementation is to iterate through each item
-                $this->contentFilter = $value;
+                if ($this->supportsSearch) {
+                    return parent::addFilter($var, $value);
+                } else {
+                    $this->contentFilter = $value;
+                }
                 break;
             default:
                 return parent::addFilter($var, $value);
@@ -60,7 +66,12 @@ class CalendarDataController extends DataController
     {
         return $this->endDate ? $this->endDate->format('U') : false;
     }
-
+    
+    public function getEventCategories()
+    {
+        return $this->parser->getEventCategories();
+    }
+    
     public function setDuration($duration, $duration_units)
     {
         if (!$this->startDate) {
@@ -83,11 +94,14 @@ class CalendarDataController extends DataController
             
         }
     }
-
-    public function __construct($baseURL, ICSDataParser $parser, $eventClass='ICalEvent')
+    
+    public static function factory($args=null)
     {
-        parent::__construct($baseURL, $parser);
-        $this->parser->setEventClass($eventClass);
+        $args['CONTROLLER_CLASS'] = isset($args['CONTROLLER_CLASS']) ? $args['CONTROLLER_CLASS'] : __CLASS__;
+        $args['EVENT_CLASS'] = isset($args['EVENT_CLASS']) ? $args['EVENT_CLASS'] : self::DEFAULT_EVENT_CLASS;
+        $controller = parent::factory($args);
+        
+        return $controller;
     }
 
     public function getItem($id)

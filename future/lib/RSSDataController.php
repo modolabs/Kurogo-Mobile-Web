@@ -2,6 +2,7 @@
 
 class RSSDataController extends DataController
 {
+    const DEFAULT_PARSER_CLASS='RSSDataParser';
     protected $items;
     protected $contentFilter;
 

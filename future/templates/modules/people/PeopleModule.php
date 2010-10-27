@@ -7,8 +7,7 @@ class PeopleModule extends Module {
   
   private $detailFields = array();
   private $detailAttributes = array();
-  private $peopleController = '';
-  private $personClass = '';
+  protected $feeds=array();
   
   private function formatValues($values, $info) {
     if (isset($info['parse'])) {
@@ -120,9 +119,7 @@ class PeopleModule extends Module {
     $total = 0;
     $results = array();
   
-    $PeopleController = new $this->peopleController();
-    $PeopleController->setPersonClass($this->personClass);
-    $PeopleController->setAttributes($this->detailAttributes);
+    $PeopleController = $this->getFeed('people');
     
     $people = $PeopleController->search($searchTerms);
 
@@ -143,10 +140,21 @@ class PeopleModule extends Module {
     return count($people);
   }
   
+  protected function getFeed($index)
+  {
+    if (isset($this->feeds[$index])) {
+        $feedData = $this->feeds[$index];
+        $controller = PeopleController::factory($feedData);
+        $controller->setAttributes($this->detailAttributes);
+        $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+        return $controller;
+    } else {
+        throw new Exception("Error getting people feed for index $index");
+    }
+  }
+  
   protected function initialize() {
-    $this->peopleController = $GLOBALS['siteConfig']->getVar('PEOPLE_CONTROLLER_CLASS');
-    $this->personClass      = $GLOBALS['siteConfig']->getVar('PEOPLE_PERSON_CLASS');
-
+    $this->feeds = $this->loadFeedData();
     $this->detailFields = $this->loadWebAppConfigFile('people-detail', 'detailFields');
     foreach($this->detailFields as $field => $info) {
       $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
@@ -155,8 +163,10 @@ class PeopleModule extends Module {
   }
 
   protected function initializeForPage() {
+    $PeopleController = $this->getFeed('people');
+    
     if ($GLOBALS['siteConfig']->getVar('LDAP_DEBUG')) {
-      $this->addModuleDebugString('Using LDAP server: '.$GLOBALS['siteConfig']->getVar('LDAP_SERVER'));
+      $this->addModuleDebugString($PeopleController->debugInfo());
     }
     
     switch ($this->page) {
@@ -165,9 +175,6 @@ class PeopleModule extends Module {
         
       case 'detail':
         if (isset($this->args['uid'])) {
-          $PeopleController = new $this->peopleController();
-          $PeopleController->setPersonClass($this->personClass);
-          $PeopleController->setAttributes($this->detailAttributes);
           $person = $PeopleController->lookupUser($this->args['uid']);
           
           if ($person) {
@@ -183,9 +190,6 @@ class PeopleModule extends Module {
       case 'search':
         if (isset($this->args['filter']) && !empty($this->args['filter'])) {
           $searchTerms = trim($this->args['filter']);
-          $PeopleController = new $this->peopleController();
-          $PeopleController->setPersonClass($this->personClass);
-          $PeopleController->setAttributes($this->detailAttributes);
           
           $this->assign('searchTerms', $searchTerms);
           

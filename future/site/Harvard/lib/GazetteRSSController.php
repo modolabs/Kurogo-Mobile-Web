@@ -80,10 +80,6 @@ class GazetteRSScontroller extends RSSDataController
     }
 }
 
-class GazetteRSSParser extends RSSDataParser
-{
-}
-
 class GazetteRSSItem extends RSSItem
 {
     public function addElement(RSSElement $element)

@@ -71,24 +71,16 @@ class NewsModule extends Module {
     }
   }
   
-  private function loadFeeds() {
-    $feeds      = $GLOBALS['siteConfig']->getVar('NEWS_FEEDS');
-    $feedLabels = $GLOBALS['siteConfig']->getVar('NEWS_FEED_LABELS');
-
-    if (!$feeds || (count($feeds) != count($feedLabels))) {
-      throw new Exception("Invalid feed and label list");
+  protected function getFeed($index)
+  {
+    if (isset($this->feeds[$index])) {
+        $feedData = $this->feeds[$index];
+        $controller = RSSDataController::factory($feedData['data']);
+        $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+        return $controller;
+    } else {
+        throw new Exception("Error getting news feed for index $index");
     }
-    
-    $this->feeds = array();
-    foreach ($feeds as $index => $feed) {
-      $this->feeds[$index] = array(
-        'baseURL' => $feed,
-        'url'     => $this->feedURL($index),
-        'title'   => $feedLabels[$index]
-      );
-    }
-    
-    return $this->feeds;
   }
 
   public function federatedSearch($searchTerms, $maxCount, &$results) {
@@ -113,27 +105,29 @@ class NewsModule extends Module {
     
     return count($items);
   }
+  
+  protected function loadFeedData()
+  {
+      $_feeds = parent::loadFeedData();
+      $feeds = array();
+      foreach ($_feeds as $index=>$feedData) {
+         $feeds[] = array('title'=>$index, 'data'=>$feedData);
+      }
+
+      return $feeds;
+  }
 
   protected function initialize() {
-    $controllerClass = $GLOBALS['siteConfig']->getVar('NEWS_CONTROLLER_CLASS');
-    $parserClass     = $GLOBALS['siteConfig']->getVar('NEWS_PARSER_CLASS');
-    $channelClass    = $GLOBALS['siteConfig']->getVar('NEWS_CHANNEL_CLASS');
-    $itemClass       = $GLOBALS['siteConfig']->getVar('NEWS_ITEM_CLASS');
-    $enclosureClass  = $GLOBALS['siteConfig']->getVar('NEWS_ENCLOSURE_CLASS');
-    $imageClass      = $GLOBALS['siteConfig']->getVar('NEWS_IMAGE_CLASS');
-    $this->maxPerPage      = $GLOBALS['siteConfig']->getVar('NEWS_MAX_RESULTS');
-    $this->loadFeeds();
-
+    $this->feeds      = $this->loadFeedData();
+    $this->maxPerPage = $GLOBALS['siteConfig']->getVar('NEWS_MAX_RESULTS');
+    
     $this->feedIndex = $this->getArg('section', 0);
     if (!isset($this->feeds[$this->feedIndex])) {
       $this->feedIndex = 0;
     }
     
-    $this->feed = new $controllerClass($this->feedURLForFeed($this->feedIndex), new $parserClass);
-    $this->feed->setObjectClass('channel', $channelClass);
-    $this->feed->setObjectClass('item', $itemClass);
-    $this->feed->setObjectClass('enclosure', $enclosureClass);
-    $this->feed->setObjectClass('image', $imageClass);
+    $this->feed = $this->getFeed($this->feedIndex);
+    
   }
 
   protected function initializeForPage() {

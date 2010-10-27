@@ -23,24 +23,22 @@ class RSSDataParser extends DataParser
         return $this->items;
     }
 
-    public function setObjectClass($class, $className)
+    public function init($args)
     {
-        switch ($class)
-        {
-            case 'channel':
-                $this->setChannelClass($className);
-                break;
-            case 'item':
-                $this->setItemClass($className);
-                break;
-            case 'enclosure':
-                $this->setEnclosureClass($className);
-                break;
-            case 'image':
-                $this->setImageClass($className);
-                break;
-            default:
-                throw new Exception("Invalid class $class");
+        if (isset($args['CHANNEL_CLASS'])) {
+            $this->setChannelClass($args['CHANNEL_CLASS']);
+        }
+
+        if (isset($args['ITEM_CLASS'])) {
+            $this->setItemClass($args['ITEM_CLASS']);
+        }
+
+        if (isset($args['IMAGE_CLASS'])) {
+            $this->setImageClass($args['IMAGE_CLASS']);
+        }
+
+        if (isset($args['ENCLOSURE_CLASS'])) {
+            $this->setEnclosureClass($args['ENCLOSURE_CLASS']);
         }
     }
 

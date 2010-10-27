@@ -12,9 +12,9 @@ define("LDAP_SIZELIMIT_EXCEEDED", 0x04);
 define("LDAP_PARTIAL_RESULTS", 0x09);
 define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 
-class LDAPDataController {
+class LDAPDataController extends PeopleController {
   protected $personClass = 'LDAPPerson';
-  protected $ldapServer;
+  protected $searchBase;
   protected $filter;
   protected $errorNo;
   protected $errorMsg;
@@ -22,7 +22,7 @@ class LDAPDataController {
   
   public function debugInfo()
   {
-        return   sprintf("Using LDAP Server: %s", $this->ldapServer);
+        return   sprintf("Using LDAP Server: %s", $this->host);
   }
   
   public function setAttributes($attribs)
@@ -35,6 +35,7 @@ class LDAPDataController {
         $this->attributes = array();
     }
   }
+  
   public function search($searchString)
   {
     $this->buildQuery($searchString);
@@ -148,7 +149,7 @@ class LDAPDataController {
         return FALSE;
     }
     
-    $ds = ldap_connect($this->ldapServer);
+    $ds = ldap_connect($this->host);
     if (!$ds) {
       $this->errorMsg = "Could not connect to LDAP server";
       return FALSE;
@@ -162,9 +163,9 @@ class LDAPDataController {
     }
     
     $filter = strval($this->filter);
-    $sr = ldap_search($ds, $GLOBALS['siteConfig']->getVar('LDAP_PATH'), 
+    $sr = ldap_search($ds, $this->searchBase,
       $filter, $this->attributes, 0, 0, 
-      $GLOBALS['siteConfig']->getVar('LDAP_SEARCH_TIMELIMIT'));
+      $GLOBALS['siteConfig']->getVar('PEOPLE_SEARCH_TIMELIMIT'));
     if (!$sr) {
         if($ds) {
             $this->errorMsg = self::generateErrorMessage($ds);
@@ -198,16 +199,6 @@ class LDAPDataController {
     
     } 
   
-    public function setPersonClass($className)
-    {
-    	if ($className) {
-    		if (!class_exists($className)) {
-    			throw new Exception("Cannot load class $className");
-    		}
-			$this->personClass = $className;
-		}
-    }
-
   /* returns a person object on success
    * FALSE on failure
    */
@@ -215,7 +206,7 @@ class LDAPDataController {
     if (strstr($id, '=')) { 
       // assume we're looking up person by "dn" (distinct ldap name)
 
-      $ds = ldap_connect($this->ldapServer);
+      $ds = ldap_connect($this->host);
       if (!$ds) {
         $this->errorMsg = "Could not connect to LDAP server";
         return FALSE;
@@ -223,7 +214,7 @@ class LDAPDataController {
 
       // get all attributes of the person identified by $id
       $sr = ldap_read($ds, $id, "(objectclass=*)", $this->attributes, 0, 0, 
-        $GLOBALS['siteConfig']->getVar('LDAP_READ_TIMELIMIT'));
+        $GLOBALS['siteConfig']->getVar('PEOPLE_READ_TIMELIMIT'));
       if (!$sr) {
         $this->errorMsg = "Search timed out";
         return FALSE;
@@ -265,10 +256,18 @@ protected function generateErrorMessage($ldap_resource) {
         return "Your request cannot be processed at this time.";
     }
 }
-    public function __construct()
+    public function setSearchBase($searchBase)
     {
-        $this->ldapServer = $GLOBALS['siteConfig']->getVar('LDAP_SERVER');
-    }    
+        $this->searchBase = $searchBase;
+    }
+
+    protected function init($args)
+    {
+        parent::init($args);
+        if (isset($args['SEARCH_BASE'])) {
+            $this->setSearchBase($args['SEARCH_BASE']);
+        }
+    }
 
 }
 

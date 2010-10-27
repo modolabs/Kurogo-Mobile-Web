@@ -8,12 +8,8 @@ define('DAY_SECONDS', 24*60*60);
 
 class CalendarModule extends Module {
   protected $id = 'calendar';
+  protected $feeds = array();
   protected $timezone;
-
-  private $controllerClass = '';
-  private $parserClass     = '';
-  private $eventClass      = '';
-  private $baseURL         = '';
 
   private $searchOptions = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
@@ -212,18 +208,17 @@ class CalendarModule extends Module {
     ), $addBreadcrumb);
   }
   
-  private function detailURL($event, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('detail', array(
+  private function detailURL($event, $options=array(), $addBreadcrumb=true) {
+    return $this->buildBreadcrumbURL('detail', array_merge($options, array(
       'id'   => $event->get_uid(),
       'time' => $event->get_start()
-    ), $addBreadcrumb);
+    )), $addBreadcrumb);
   }
   
   public function federatedSearch($searchTerms, $maxCount, &$results) {
     $searchOption = $this->searchOptions[0]; // default timeframe
     
-    $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
-    $feed->setObjectClass('event', $this->eventClass);
+    $feed = $this->getFeed('events'); // this allows us to have multiple feeds in the future
     
     list($start, $end) = $this->getDatesForSearchOption($searchOption);          
     $feed->setStartDate($start);
@@ -258,15 +253,28 @@ class CalendarModule extends Module {
       'timeframe' => '0',
     ), false);
   }
-
-
+  
+  protected function getFeed($index)
+  {
+    if (isset($this->feeds[$index])) {
+        
+        // lazy load feed controllers
+        if (!is_a($this->feeds[$index], 'CalendarDataController')) {
+            $feedData = $this->feeds[$index];
+            $controller = CalendarDataController::factory($feedData);
+            $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+            $this->feeds[$index] = $controller;
+        }
+        
+        return $this->feeds[$index];
+    } else {
+        throw new Exception("Error getting calendar feed for index $index");
+    }
+  }
+ 
   protected function initialize() {
-    $this->controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-    $this->parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-    $this->eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-    $this->baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
-    
-    $this->timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
+    $this->feeds      = $this->loadFeedData();
+    $this->timezone   = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
   }
 
   protected function initializeForPage() {
@@ -291,7 +299,9 @@ class CalendarModule extends Module {
       case 'categories':
         $categories = array();
         
-        $categoryObjects = call_user_func(array($this->eventClass, 'get_all_categories'));
+        $feed = $this->getFeed('events'); 
+        
+        $categoryObjects = $feed->getEventCategories();
 
         foreach ($categoryObjects as $categoryObject) {
           $categories[] = array(
@@ -327,8 +337,7 @@ class CalendarModule extends Module {
         $events = array();
         
         if (strlen($id) > 0) {
-            $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
-            $feed->setObjectClass('event', $this->eventClass);
+            $feed = $this->getFeed('events'); // this allows us to have multiple feeds in the future
             
             $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
             $start->setTime(0,0,0);
@@ -362,11 +371,10 @@ class CalendarModule extends Module {
         $type = $this->getArg('type', 'events');
 
         $current = $this->getArg('time', time());
-        $next = $current + DAY_SECONDS;
-        $prev = $current - DAY_SECONDS;
+        $next = strtotime("+1 day", $current);
+        $prev = strtotime("-1 day", $current);
         
-        $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
-        $feed->setObjectClass('event', $this->eventClass);
+        $feed = $this->getFeed('events'); // this allows us to have multiple feeds in the future
         
         $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
         $start->setTime(0,0,0);
@@ -403,9 +411,12 @@ class CalendarModule extends Module {
         
       case 'detail':  
         $calendarFields = $this->loadWebAppConfigFile('calendar-detail', 'detailFields');
-
-        $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
-        $feed->setObjectClass('event', $this->eventClass);
+        
+        $feed = $this->getFeed('events'); // this allows us to have multiple feeds in the future
+        
+        if (isset($this->args['filter'])) {
+            $feed->addFilter('search', $this->args['filter']);
+        }
         
         $time = $this->getArg('time', time());
         if ($event = $feed->getItem($this->args['id'], $time)) {
@@ -493,8 +504,7 @@ class CalendarModule extends Module {
           $timeframeKey = $this->args['timeframe'];
           $searchOption = $this->searchOptions[$timeframeKey];
           
-          $feed = new $this->controllerClass($this->baseURL, new $this->parserClass);
-          $feed->setObjectClass('event', $this->eventClass);
+          $feed = $this->getFeed('events'); // this allows us to have multiple feeds in the future
           
           list($start, $end) = $this->getDatesForSearchOption($searchOption);          
           $feed->setStartDate($start);
@@ -511,7 +521,7 @@ class CalendarModule extends Module {
             }
         
             $events[] = array(
-              'url'      => $this->detailURL($iCalEvent),
+              'url'      => $this->detailURL($iCalEvent, array('filter'=>$searchTerms, 'timeframe'=>$timeframeKey)),
               'title'    => $iCalEvent->get_summary(),
               'subtitle' => $subtitle
             );
@@ -526,14 +536,12 @@ class CalendarModule extends Module {
         break;
         
       case 'academic':
-        $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ACADEMIC_ICS_URL');
         $year = isset($this->args['year']) ? intval($this->args['year']) : date('Y');
 
         $start = new DateTime( $year   ."0901", $this->timezone);        
         $end   = new DateTime(($year+1)."0831", $this->timezone);
         
-        $feed = new $this->controllerClass($baseURL, new $this->parserClass);
-        $feed->setObjectClass('event', $this->eventClass);
+        $feed = $this->getFeed('academic');
         $feed->setStartDate($start);
         $feed->setEndDate($end);
         $feed->addFilter('year', $year);

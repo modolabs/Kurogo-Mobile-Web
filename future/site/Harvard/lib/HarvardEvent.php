@@ -62,7 +62,7 @@ class HarvardEvent extends TrumbaEvent {
 
 
     public function get_category_from_name($name) {
-    	$categories = HarvardEvent::get_all_categories();
+    	$categories = HarvardEvent::getEventCategories();
     	foreach ($categories as $category) {
     		if ($name == $category->get_name()) {
     			return $category;
@@ -72,7 +72,7 @@ class HarvardEvent extends TrumbaEvent {
     	return false;
     }
 
-    public function get_all_categories() {
+    public function getEventCategories() {
     
         static $categories=array();
         if ($categories) {

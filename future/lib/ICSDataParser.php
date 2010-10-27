@@ -8,6 +8,21 @@ class ICSDataParser extends DataParser
     protected function unfold($text) {
         return str_replace("\n ", "", $text);
     }
+
+    public function getEventCategories()
+    {
+        return call_user_func(array($this->eventClass, 'getEventCategories'));
+    }
+    
+    public function init($args)
+    {
+        parent::init($args);
+
+        if (isset($args['EVENT_CLASS'])) {
+            $this->setEventClass($args['EVENT_CLASS']);
+        }
+        
+    }
     
     protected function contentline($line) {
         $contentline = array(
@@ -32,23 +47,11 @@ class ICSDataParser extends DataParser
         return $contentline;
     }
     
-    public function setObjectClass($class, $className)
-    {
-        switch ($class)
-        {
-            case 'event':
-                $this->setEventClass($className);
-                break;
-            default:
-                throw new Exception("Invalid class $class");
-        }
-    }
-    
     public function setEventClass($eventClass)
     {
     	if ($eventClass) {
     		if (!class_exists($eventClass)) {
-    			throw new Exception("Cannot load class $eventClass");
+                throw new Exception("Event class $eventClass not defined");
     		}
 			$this->eventClass = $eventClass;
 		}
