@@ -1,5 +1,7 @@
 <?php
 
+define('COOKIE_KEY', 'deviceClassification');
+
 class DeviceClassifier {
   private $pagetype = 'unknown';
   private $platform = 'unknown';
@@ -25,8 +27,8 @@ class DeviceClassifier {
       $this->setDevice($device); // user override of device detection
       //error_log(__FUNCTION__."(): device forced to '$device' <{$_SERVER['REQUEST_URI']}>");
       
-    } else if (isset($_COOKIE['layout'])) {
-      $this->setDevice($_COOKIE['layout']);
+    } else if (isset($_COOKIE[COOKIE_KEY])) {
+      $this->setDevice($_COOKIE[COOKIE_KEY]);
       //error_log(__FUNCTION__."(): choosing device cookie '{$_COOKIE['layout']}' <{$_SERVER['REQUEST_URI']}>");
       
     } else {
@@ -56,7 +58,7 @@ class DeviceClassifier {
       $this->platform = $data['platform'];
       $this->certs = $data['supports_certificate'];
       
-      setcookie('layout', $this->getDevice(), 
+      setcookie(COOKIE_KEY, $this->getDevice(), 
         time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
 
       //error_log(__FUNCTION__."(): choosing mobi service layout '".$this->getDevice()."' <{$_SERVER['REQUEST_URI']}>");
