@@ -2,22 +2,18 @@
 
 require_once(LIB_DIR . '/ICalendar.php');
 
-$controllerClass = $GLOBALS['siteConfig']->getVar('CALENDAR_CONTROLLER_CLASS');
-$parserClass     = $GLOBALS['siteConfig']->getVar('CALENDAR_PARSER_CLASS');
-$eventClass      = $GLOBALS['siteConfig']->getVar('CALENDAR_EVENT_CLASS');
-$baseURL         = $GLOBALS['siteConfig']->getVar('CALENDAR_ICS_URL');
-
 $timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
 $data = array();
+
+$module = Module::factory('calendar', '', $_GET);
 
 switch ($_REQUEST['command']) {
 
   case 'day':
-    $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : 'events';
+    $type = isset($_REQUEST['type']) ? strtolower($_REQUEST['type']) : 'events';
     $time = isset($_REQUEST['time']) ? $_REQUEST['time'] : time();
     
-    $feed = new $controllerClass($baseURL, new $parserClass);
-    $feed->setObjectClass('event', $eventClass);
+    $feed = $module->getFeed($type);
     
     $start = new DateTime(date('Y-m-d H:i:s', $time), $timezone);
     $start->setTime(0,0,0);
@@ -35,10 +31,10 @@ switch ($_REQUEST['command']) {
 
 
   case 'search':
+    $type = isset($_REQUEST['type']) ? strtolower($_REQUEST['type']) : 'events';
     $searchString = isset($_REQUEST['q']) ? $_REQUEST['q'] : '';
     
-    $feed = new $controllerClass($baseURL, new $parserClass);
-    $feed->setObjectClass('event', $eventClass);
+    $feed = $module->getFeed($type);
     
     $start = new DateTime(null, $timezone);
     $start->setTime(0,0,0);
@@ -55,6 +51,7 @@ switch ($_REQUEST['command']) {
     break;
 
   case 'category':
+    $type = isset($_REQUEST['type']) ? strtolower($_REQUEST['type']) : 'events';
     if ($id = $_REQUEST['id']) {
       $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : time();
       $end = isset($_REQUEST['end']) ? $_REQUEST['end'] : $start + 86400;
@@ -62,7 +59,7 @@ switch ($_REQUEST['command']) {
       $events = array();
       
       if (strlen($id) > 0) {
-        $feed = new $controllerClass($baseURL, new $parserClass);
+        $feed = $module->getFeed($type);
         $feed->setObjectClass('event', $eventClass);
         
         $start = new DateTime(date('Y-m-d H:i:s', $start), $timezone);
@@ -82,9 +79,11 @@ switch ($_REQUEST['command']) {
    break;
 
   case 'categories':
-    $categories = call_user_func(array($eventClass, 'get_all_categories'));
+    $type = isset($_REQUEST['type']) ? strtolower($_REQUEST['type']) : 'events';
+    $feed = $module->getFeed($type);
+    $categoryObjects = $feed->getEventCategories();
 
-    foreach ($categories as $categoryObject) {
+    foreach ($categoryObjects as $categoryObject) {
  
       $name = ucwords($categoryObject->get_name());
       $catid = $categoryObject->get_cat_id();
@@ -101,14 +100,12 @@ switch ($_REQUEST['command']) {
     break;
 
   case 'academic':
-    $baseURL = $GLOBALS['siteConfig']->getVar('CALENDAR_ACADEMIC_ICS_URL');
     $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 
     $start = new DateTime( $year   ."0901", $timezone);        
     $end   = new DateTime(($year+1)."0831", $timezone);
     
-    $feed = new $controllerClass($baseURL, new $parserClass);
-    $feed->setObjectClass('event', $eventClass);
+    $feed = $module->getFeed('academic');
     $feed->setStartDate($start);
     $feed->setEndDate($end);
     $iCalEvents = $feed->items();

@@ -268,7 +268,7 @@ class CalendarModule extends Module {
     }
   }
   
-  protected function getFeed($index)
+  public function getFeed($index)
   {
     if (isset($this->feeds[$index])) {
         
