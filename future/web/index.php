@@ -128,11 +128,14 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
   } else {  
     $parts = explode('/', ltrim($path, '/'), 2);
 
-    if (count($parts) > 1) {
-      $id = $parts[0];
+    $id = $parts[0];
+    if (isset($parts[1])) {
       if (strlen($parts[1])) {
         $page = basename($parts[1], '.php');
       }
+    } else {
+      // redirect with trailing slash for completeness
+      header("Location: ./$id/");
     }
   }
 
