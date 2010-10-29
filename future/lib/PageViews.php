@@ -22,7 +22,7 @@ class PageViews {
     else // assume 'api'
       $logfile = $GLOBALS['siteConfig']->getVar('API_CURRENT_LOG_FILE');
 
-    $dir = dirname($logfile);
+    $dir = dirname(realpath($logfile));
     if (!file_exists($dir)) {
       if (!mkdir($dir, 0755, true))
         error_log("could not create $dir");
@@ -47,12 +47,7 @@ class PageViews {
   }
 
   public static function export_stats($system) {
-    $connection = db::connection();
-
-    // TODO: make a version of this that supports non-mysql clients
-    if ($connection === DB_NOT_SUPPORTED)
-      return;
-
+  
     if ($system == 'web') {
       $table   = $GLOBALS['siteConfig']->getVar('PAGE_VIEWS_TABLE');
       $logfile = $GLOBALS['siteConfig']->getVar('WEB_CURRENT_LOG_FILE');
@@ -77,7 +72,8 @@ class PageViews {
 
     if (file_exists($target) && date('Ymd', filemtime($target)) == $today)
       return; // we have already exported today
-    $logfilecopy = "/tmp/mobi_log_copy.$today";
+
+    $logfilecopy = $GLOBALS['siteConfig']->getVar('TMP_DIR') . "/mobi_log_copy.$today";
 
     if (!$outfile = fopen($target, 'a')) {
       error_log("could not open $target for writing");
@@ -94,12 +90,12 @@ class PageViews {
       return; 
     }
 
-    $result = $connection->query(
+    $result = db::query(
       "SELECT day, platform, module, viewcount FROM $table
         WHERE day=(SELECT MAX(day) FROM $table)");
 
     $stats = Array();
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch()) {
       self::increment_array($stats, $row['day'], $row['platform'], $row['module']);      
     }
 
@@ -126,20 +122,20 @@ class PageViews {
     fclose($infile);
 
     if ($stats) {
-      $connection->query('LOCK TABLE $table WRITE');
-      $connection->query("DELETE FROM $table WHERE day=(SELECT MAX(day) FROM $table)");
+      db::query('LOCK TABLE $table WRITE');
+      db::query("DELETE FROM $table WHERE day=(SELECT MAX(day) FROM $table)");
       foreach ($stats as $day => $platforms) {
         foreach ($platforms as $platform => $modules) {
           foreach ($modules as $module => $count) {
             $sql = "INSERT INTO $table ( day, platform, module, viewcount )
-                         VALUES ('$day', '$platform', '$module', $count)";
-            if (!$connection->query($sql)) {
-              error_log("mysql query failed: $sql");
+                         VALUES (?,?,?,?)";
+            if (!db::query($sql, array($day, $platform, $module,$count))) {
+              error_log("query failed: $sql");
             }
           }
         }
       }
-      $connection->query("UNLOCK TABLE");
+      db::query("UNLOCK TABLE");
     }
 
     unlink($logfilecopy);
@@ -158,10 +154,8 @@ class PageViews {
    */
   private static function getTimeSeries($system, $start, $platform=NULL, $module=NULL, $end=NULL) {
     $output = Array();
-
-    $connection = db::connection();
-    if ($connection !== DB_NOT_SUPPORTED) {
-      self::export_stats($system);
+    
+    $result = self::export_stats($system);
 
       $sql_fields = Array();
       $sql_criteria = Array();
@@ -201,19 +195,18 @@ class PageViews {
       $sql .= ' FROM ' . $table . ' WHERE ' . implode(' AND ', $sql_criteria);
       $sql .= (isset($groupby) && count($groupby)) ? ' GROUP BY ' . implode(', ', $groupby) : '';
 
-      $result = $connection->query($sql);
+      $result = db::query($sql);
 
       // results are returned as (not necessarily in this order):
       // Array('module' => ..., 'platform' => ..., 'viewcount' => ...)
       // one row per platform/module combo
-      while($row = $result->fetch_assoc()) {
+      while($row = $result->fetch()) {
         $output[] = $row;
       }
 
       if (count($output) == 1 && $output[0]['viewcount'] === NULL) {
         $output = Array();
       }
-    }
     return $output;
   }
 
@@ -291,8 +284,9 @@ class PageViews {
           $new_view[$row['platform']] += $row['viewcount'];
         }
         if (array_key_exists('module', $row)) {
-          if (!array_key_exists($row['platform'], $new_view))
-            $new_view[$row['platform']] = 0;
+          if (!array_key_exists($row['module'], $new_view))
+            $new_view[$row['module']] = 0;
+            
           $new_view[$row['module']] += $row['viewcount'];
         }
         $new_view['total'] += $row['viewcount'];
@@ -305,8 +299,7 @@ class PageViews {
 
   public static function count_iphone_tokens() {
     $sql = "SELECT count(*) FROM AppleDevice WHERE device_token IS NOT NULL and active = 1";
-    $connection = db::connection();
-    $result = $connection->query($sql);
+    $result = db::query($sql);
     $row = $result->fetch_assoc();
     return $row;
   }
