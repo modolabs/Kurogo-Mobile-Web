@@ -71,7 +71,12 @@ class NewsModule extends Module {
     }
   }
   
-  protected function getFeed($index)
+  public function getFeeds()
+  {
+    return $this->feeds;
+  }
+  
+  public function getFeed($index)
   {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
