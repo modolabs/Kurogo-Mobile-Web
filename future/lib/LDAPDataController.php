@@ -245,8 +245,8 @@ protected function generateErrorMessage($ldap_resource) {
    $error_name = ldap_error($ldap_resource);
    $error_codes = array(
    	// LDAP error codes.
-   	    LDAP_SIZELIMIT_EXCEEDED => "There are more results than can be displayed.",
-       	LDAP_PARTIAL_RESULTS => "There are more results than can be displayed.",
+   	    LDAP_SIZELIMIT_EXCEEDED => "There are more results than can be displayed. Please refine your search.",
+       	LDAP_PARTIAL_RESULTS => "There are more results than can be displayed. Please refine your search.",
 /*       	LDAP_INSUFFICIENT_ACCESS => "Too many results to display (more than 50). Please refine your search.", */
        	LDAP_TIMELIMIT_EXCEEDED => "The directory service is not responding. Please try again later.",
     );
