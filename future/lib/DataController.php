@@ -2,7 +2,7 @@
 
 abstract class DataController
 {
-    const DEFAULT_PARSER_CLASS=null;
+    protected $DEFAULT_PARSER_CLASS;
     protected $parser;
     protected $url;
     protected $cache;
@@ -67,8 +67,8 @@ abstract class DataController
     
     protected function init($args)
     {
-        $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this::DEFAULT_PARSER_CLASS;
-        $parser = $args['PARSER_CLASS']::factory($args);
+        $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
+        $parser = call_user_func(array($args['PARSER_CLASS'],'factory'),$args);
         
         $this->setParser($parser);
         

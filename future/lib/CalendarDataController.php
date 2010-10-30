@@ -2,7 +2,7 @@
 
 class CalendarDataController extends DataController
 {
-    const DEFAULT_PARSER_CLASS='ICSDataParser';
+    protected $DEFAULT_PARSER_CLASS='ICSDataParser';
     const DEFAULT_EVENT_CLASS='ICalEvent';
     protected $startDate;
     protected $endDate;
