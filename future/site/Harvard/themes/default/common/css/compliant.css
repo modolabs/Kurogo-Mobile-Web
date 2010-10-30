@@ -3,11 +3,11 @@
 body {
 	background-color: #ded8c9;
 	background: url(/common/images/background-tile.jpg) top right repeat-x, url(/common/images/background-tile-2.jpg) bottom left repeat;
+	font: 17px/1.33em 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 body, th, td, li, option, select, input {
 	/* Primary font */
-	font: 17px/1.33em 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	color: #222;
 }
 
@@ -63,15 +63,19 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fin
 	color: #554c41;
 }
 
+/*
 #springboard a {
 	/* Text color for icon labels in springboard-type screens (grids of icon launchers) */
+	/*
 	color: #404346;
 	font-size: 12px;
 	line-height: 13px;
 }
-
+*/
+/*
 #springboard div {
 	/* Grid element size in springboard-type screens */
+	/*
 	position: relative;
 	width: 79px;
 	height: 88px;
@@ -83,7 +87,7 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fin
 	vertical-align: top;
 }
 
-
+*/
 
 
 
@@ -149,10 +153,10 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fin
 
 .springboard div {
 	/* Overall size of one cell in the springboard */
-	width: 103px;
-	height: 96px;
-	font-size: 14px;
-	line-height: 15px;
+	width: 77px;
+	height: 100px;
+	font-size: 13px;
+	line-height: 14px;
 }
 
 .springboard a {	
@@ -161,8 +165,8 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fin
 
 .springboard a img {
 	/* Size of actual item icon in springboard */
-	width: 60px;
-	height: 60px;
+	width: 70px;
+	height: 70px;
 }
 
 .springboard div.utility {
@@ -175,8 +179,8 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fin
 
 .springboard div.utility a img {
 	/* Size of actual item icon in the springboard's fixed utility-type items */
-	width: 36px;
-	height: 36px;
+	width: 44px;
+	height: 44px;
 }
 
 /* Navigation and results lists */
