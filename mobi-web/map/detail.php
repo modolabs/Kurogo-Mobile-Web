@@ -9,7 +9,7 @@ define('MIN_MAP_CONTEXT', 250);
 define('MAP_PHOTO_SERVER', 'http://map.harvard.edu/mapserver/images/bldg_photos/');
 
 // don't show these fields in detail page
-$detailBlacklist = array('Root', 'Shape', 'PHOTO_FILE', 'Photo', 'OBJECTID', 'FID', 'BL_ID');
+$detailBlacklist = array('Root', 'Shape', 'PHOTO_FILE', 'Photo', 'OBJECTID', 'FID', 'BL_ID', 'Bld_num');
 
 $name = $_REQUEST['selectvalues'];
 
