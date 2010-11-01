@@ -21,8 +21,8 @@ class PageViews {
       $logfile = $GLOBALS['siteConfig']->getVar('WEB_CURRENT_LOG_FILE');
     else // assume 'api'
       $logfile = $GLOBALS['siteConfig']->getVar('API_CURRENT_LOG_FILE');
-
-    $dir = dirname(realpath($logfile));
+      
+    $dir = dirname($logfile);
     if (!file_exists($dir)) {
       if (!mkdir($dir, 0755, true))
         error_log("could not create $dir");
