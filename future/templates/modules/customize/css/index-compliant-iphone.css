@@ -50,7 +50,7 @@ ul {
 }
 #dragReorderList li .draghandle {
     float: right;
-    background-image: url('../modules/customize/images/handle.png');
+    background-image: url(/modules/customize/images/compliant/handle.png);
     background-repeat: no-repeat;
     background-position: center;
     padding: 16pt;
