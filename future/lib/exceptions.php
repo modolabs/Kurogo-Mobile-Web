@@ -13,6 +13,9 @@ class DeviceNotSupported extends Exception {
 class PageNotFound extends Exception {
 }
 
+class DisabledModuleException extends Exception {
+}
+
 function getErrorURL($exception) {
   $args = array(
     'code' => 'internal',
@@ -27,6 +30,9 @@ function getErrorURL($exception) {
     
   } else if(is_a($exception, "PageNotFound")) {
     $args['code'] = 'notfound';
+    
+  } else if(is_a($exception, "DisabledModuleException")) {
+    $args['code'] = 'forbidden';
   }
   
   return URL_PREFIX.'error/?'.http_build_query($args);

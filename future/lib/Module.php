@@ -243,6 +243,23 @@ abstract class Module {
     $modules = $GLOBALS['siteConfig']->getWebAppVar('modules');
     if (isset($modules[$this->id])) {
       $this->moduleName = $modules[$this->id]['title'];
+      $moduleData = $modules[$this->id];
+    } else {
+        throw new Exception("Module data not found");
+    }
+    
+    $disabled = self::argVal($moduleData, 'disabled', false);
+    $secure = self::argVal($moduleData, 'secure', false);
+    
+    if ($disabled) {
+        throw new DisabledModuleException("Module $this->id is disabled");
+    }
+    
+    if ($secure && (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
+        // redirect to https (at this time, we are assuming it's on the same host)
+         $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+         header("Location:$redirect");    
+         exit();
     }
     
     $this->page = $page;

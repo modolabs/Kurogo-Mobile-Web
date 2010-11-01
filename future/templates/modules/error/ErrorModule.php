@@ -29,7 +29,7 @@ class ErrorModule extends Module {
     'default' => array(
       'status'  => '500 Internal Server Error',
       'message' => 'Unknown error',
-    ),
+    )
   );
 
   protected function initializeForPage() {
