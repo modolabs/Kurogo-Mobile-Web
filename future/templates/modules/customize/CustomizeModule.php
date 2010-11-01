@@ -32,16 +32,16 @@ class CustomizeModule extends Module {
         case 'on':
         case 'off':
           if (isset($args['module'])) {
-            $activeModuleIDs = array();
+            $visibleModuleIDs = array();
             
             foreach ($currentModules as $id => &$info) {
               if ($id == $args['module']) {
                 $info['disabled'] = $args['action'] != 'on';
               }
-              if (!$info['disabled']) { $activeModuleIDs[] = $id; }
+              if (!$info['disabled']) { $visibleModuleIDs[] = $id; }
             }
             
-            $this->setHomeScreenActiveModules($activeModuleIDs);
+            $this->setHomeScreenVisibleModules($visibleModuleIDs);
           }
           break;
         

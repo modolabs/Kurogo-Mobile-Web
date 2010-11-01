@@ -284,23 +284,28 @@ abstract class Module {
   //
   // Module control functions
   //
-  protected function getHomeScreenModules() {
+  protected function getAllModules() {
     $modules = $GLOBALS['siteConfig']->getWebAppVar('modules');
+    return $modules;
+  }
+
+  protected function getHomeScreenModules() {
+    $modules = $this->getAllModules();
     
     foreach ($modules as $id => $info) {
-      if (!$info['homescreen']) {
+      if (!$info['homescreen'] || $info['disabled']) {
         unset($modules[$id]);
       }
     }
     
-    if (isset($_COOKIE["activemodules"])) {
-      if ($_COOKIE["activemodules"] == "NONE") {
-        $activeModuleIDs = array();
+    if (isset($_COOKIE["visiblemodules"])) {
+      if ($_COOKIE["visiblemodules"] == "NONE") {
+        $visibleModuleIDs = array();
       } else {
-        $activeModuleIDs = array_flip(explode(",", $_COOKIE["activemodules"]));
+        $visibleModuleIDs = array_flip(explode(",", $_COOKIE["visiblemodules"]));
       }
       foreach ($modules as $moduleID => &$info) {
-         $info['disabled'] = !isset($activeModuleIDs[$moduleID]) && $info['disableable'];
+         $info['disabled'] = !isset($visibleModuleIDs[$moduleID]) && $info['disableable'];
       }
     }
 
@@ -329,12 +334,12 @@ abstract class Module {
     error_log(__FUNCTION__.'(): '.print_r($value, true));
   }
   
-  protected function setHomeScreenActiveModules($moduleIDs) {
+  protected function setHomeScreenVisibleModules($moduleIDs) {
     $lifespan = $GLOBALS['siteConfig']->getVar('MODULE_ORDER_COOKIE_LIFESPAN');
     $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
     
-    setcookie("activemodules", $value, time() + $lifespan, COOKIE_PATH);
-    $_COOKIE["activemodules"] = $value;
+    setcookie("visiblemodules", $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE["visiblemodules"] = $value;
     error_log(__FUNCTION__.'(): '.print_r($value, true));
   }
 

@@ -130,7 +130,7 @@ function isActiveModule(module) {
 function writeCookies() {
   // null means never expire
   writeCookie("moduleorder", modules.join(), null, httpRoot);
-  writeCookie("activemodules", activeModules.join(), null, httpRoot);
+  writeCookie("visiblemodules", activeModules.join(), null, httpRoot);
 }
 
 function writeCookie(name, value, expiredays, path) {

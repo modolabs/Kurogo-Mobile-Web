@@ -12,7 +12,7 @@ var dirtyBit = false; // needs saving
 
 function init() {
     // 1. set up reorderable list
-    var cookie = getCookie("activemodules");
+    var cookie = getCookie("visiblemodules");
     var activeModules = (cookie) ? cookie.split(",") : [];
     cookie = getCookie("moduleorder");
     var moduleOrder = (cookie) ? cookie.split(",") : [];
@@ -260,7 +260,7 @@ function updateCookie() {
         };
     };
 
-    cookieName = "activemodules";
+    cookieName = "visiblemodules";
     expiredays = null; // never expire
     setCookie(cookieName, moduleNames.join(), null, httpRoot);
     
