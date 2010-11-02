@@ -2,9 +2,12 @@
 
 require_once realpath(LIB_DIR.'/TemplateEngine.php');
 require_once realpath(LIB_DIR.'/HTMLPager.php');
+require_once realpath(LIB_DIR.'/User.php');
 
 abstract class Module {
   protected $id = 'none';
+  
+  protected $user;
   
   protected $page = 'index';
   protected $args = array();
@@ -200,6 +203,14 @@ abstract class Module {
     return "$page.php".(strlen($argString) ? "?$argString" : "");
   }
 
+  protected function redirectToModule($id, $args=array()) {
+    $url = URL_BASE."{$id}/?". http_build_query($args);
+    error_log('Redirecting to: '.$url);
+    
+    header("Location: $url");
+    exit;
+  }
+
   protected function redirectTo($page, $args=null) {
     if (!isset($args)) { $args = $this->args; }
     
@@ -245,21 +256,29 @@ abstract class Module {
       $this->moduleName = $modules[$this->id]['title'];
       $moduleData = $modules[$this->id];
     } else {
-        throw new Exception("Module data not found");
+        throw new Exception("Module data for $this->id not found");
     }
+    
+    $this->user = User::factory();
+    
     
     $disabled = self::argVal($moduleData, 'disabled', false);
-    $secure = self::argVal($moduleData, 'secure', false);
-    
     if ($disabled) {
-        throw new DisabledModuleException("Module $this->id is disabled");
+        $this->redirectToModule('error', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
     }
     
+    $secure = self::argVal($moduleData, 'secure', false);
     if ($secure && (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
         // redirect to https (at this time, we are assuming it's on the same host)
          $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
          header("Location:$redirect");    
          exit();
+    }
+    
+    $protected = self::argVal($moduleData, 'protected', false);
+    if ($protected && !$this->user->isLoggedIn()) {
+        $this->redirectToModule('error', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
+            http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
     }
     
     $this->page = $page;
@@ -281,6 +300,14 @@ abstract class Module {
     $this->initialize();
   }
   
+  //
+  // User functions
+  //
+  public function getUser()
+  {
+    return $this->user;
+  }
+
   //
   // Module control functions
   //

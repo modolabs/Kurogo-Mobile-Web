@@ -5,7 +5,7 @@
   
   {if isset($url)}
     <p>
-      <a href="{$url}">Click here to retry page</a>
+      <a href="{$url}">{$linkText|default:'Click here to retry page'}</a>
     </p>
   {/if}
 </div>

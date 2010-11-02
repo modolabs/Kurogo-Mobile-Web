@@ -1,0 +1,8 @@
+#loginForm label {
+    display: block;
+    font-weight: bold;
+}
+
+.loginFormInput {
+    width: 260px;
+}

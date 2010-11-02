@@ -26,6 +26,13 @@ class ErrorModule extends Module {
       'status'  => null,
       'message' => 'This functionality is not supported on this device',
     ),
+    'disabled'  => array(
+      'message' =>  'This module has been disabled'
+    ),
+    'protected' => array(
+      'message' =>  'This module requires you to login',
+      'linkText' => 'Click here to login'
+    ),
     'default' => array(
       'status'  => '500 Internal Server Error',
       'message' => 'Unknown error',
@@ -41,6 +48,10 @@ class ErrorModule extends Module {
     
     if (isset($error['status'])) {
       header('Status: '.$error['status']);
+    }
+
+    if (isset($error['linkText'])) {
+        $this->assign('linkText', $error['linkText']);
     }
     
     $this->assign('navImageID', 'about');
