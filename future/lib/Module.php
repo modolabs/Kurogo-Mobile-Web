@@ -7,7 +7,7 @@ require_once realpath(LIB_DIR.'/User.php');
 abstract class Module {
   protected $id = 'none';
   
-  protected $user;
+  protected $session;
   
   protected $page = 'index';
   protected $args = array();
@@ -194,7 +194,7 @@ abstract class Module {
     return self::argVal($this->args, $key, $default);
   }
 
-  private static function buildURL($page, $args) {
+  protected static function buildURL($page, $args=array()) {
     $argString = '';
     if (isset($args) && count($args)) {
       $argString = http_build_query($args);
@@ -248,6 +248,17 @@ abstract class Module {
     }
   }
   
+  protected function initSession()
+  {
+    if (!$this->session) {
+        $authorityClass = $GLOBALS['siteConfig']->getVar('AUTHENTICATION_AUTHORITY');
+        $authorityArgs = $GLOBALS['siteConfig']->getSection('authentication');
+        $AuthenticationAuthority = AuthenticationAuthority::factory($authorityClass, $authorityArgs);
+        
+        $this->session = new Session($AuthenticationAuthority);
+    }
+  }
+  
   function __construct($page='index', $args=array()) {
     $GLOBALS['siteConfig']->loadWebAppFile('modules');
     
@@ -258,9 +269,6 @@ abstract class Module {
     } else {
         throw new Exception("Module data for $this->id not found");
     }
-    
-    $this->user = User::factory();
-    
     
     $disabled = self::argVal($moduleData, 'disabled', false);
     if ($disabled) {
@@ -275,10 +283,17 @@ abstract class Module {
          exit();
     }
     
-    $protected = self::argVal($moduleData, 'protected', false);
-    if ($protected && !$this->user->isLoggedIn()) {
-        $this->redirectToModule('error', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
-            http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
+    if ($GLOBALS['siteConfig']->getVar('AUTHENTICATION_ENABLED')) {
+        $this->initSession();
+        $user = $this->getUser();
+        $this->assign('session_userID', $user->getUserID());
+        $protected = self::argVal($moduleData, 'protected', false);
+        if ($protected) {
+            if (!$this->session->isLoggedIn()) {
+                $this->redirectToModule('error', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
+                    http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
+            }
+        }
     }
     
     $this->page = $page;
@@ -305,7 +320,8 @@ abstract class Module {
   //
   public function getUser()
   {
-    return $this->user;
+    $this->initSession();
+    return $this->session->getUser();
   }
 
   //

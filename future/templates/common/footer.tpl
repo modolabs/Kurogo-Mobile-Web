@@ -30,7 +30,7 @@
 
     {if $moduleID != 'home'}
       <div id="footerlinks">
-        <a href="#top">Back to top</a> | <a href="../home/">{$SITE_NAME} home</a>
+        <a href="#top">Back to top</a> | <a href="../home/">{$SITE_NAME} home</a>{if $session_userID} | <a href="../login">{$session_userID} logged in</a>{/if}
       </div>
     {/if}
 

@@ -1,6 +1,8 @@
 <?php
 
-class User
+require_once(LIB_DIR . '/Session.php');
+
+abstract class User
 {
     protected $userID;
     protected $email;
@@ -15,26 +17,29 @@ class User
         return $this->email;
     }
     
-    public static function factory()
+    public function setEmail($email)
     {
-        //for now we'll just return an non-loggedin user;
-        return new AnonymousUser();
+        $this->email = $email;
     }
 
-    public function isLoggedIn()
+    public function setUserID($userID)
     {
-        return true;
+        $this->userID = $userID;
     }
+    
+    public static function factory(AuthenticationAuthority $AuthenticationAuthority)
+    {
+        //load the session object which contains the current session user
+        $session = new Session($AuthenticationAuthority); 
+        return $session->getUser();
+    }
+}
+
+class BasicUser extends User
+{
 }
 
 class AnonymousUser extends User
 {
-    protected $userID='';
-    protected $email='';
-    
-    public function isLoggedIn()
-    {
-        return false;
-    }
 }
 

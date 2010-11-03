@@ -109,7 +109,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
   $id = 'home';
   $page = 'index';
   
-  $args = $_GET;
+  $args = array_merge($_GET, $_POST);
   unset($args['_path']);
   if (get_magic_quotes_gpc()) {
     

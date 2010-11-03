@@ -2,6 +2,7 @@
 
 class SiteConfig {
   private $configVars = array();
+  private $sectionVars = array();
   private $webAppVars = array();
   private $apiVars = array();
   
@@ -77,6 +78,17 @@ class SiteConfig {
 
     return null;
   }
+  
+  public function getSection($key)
+  {
+    if (isset($this->sectionVars[$key])) {
+      return $this->sectionVars[$key];
+    }
+    
+    error_log(__FUNCTION__."(): configuration section '$key' not set");
+    
+    return null;
+  }
 
   public function getVar($key) {
     if (isset($this->configVars[$key])) {
@@ -139,6 +151,17 @@ class SiteConfig {
     unset($GLOBALS['testVars']);
   }
   
+  /* merges together config variables by section */
+  private function addSectionVars($sectionVars) {
+    foreach ($sectionVars as $var=>$value) {
+        if (isset($this->sectionVars[$var])) {
+            $this->sectionVars[$var] = array_merge($this->sectionVars[$var], $value);
+        } else {
+            $this->sectionVars[$var] = $value;
+        }
+    }
+  }
+  
   // -------------------------------------------------------------------------
   
   private static function getPathOrDie($path) {
@@ -162,6 +185,7 @@ class SiteConfig {
     // Load main configuration file
     $file = MASTER_CONFIG_DIR."/config.ini";
     $this->configVars = parse_ini_file(self::getPathOrDie($file), false); 
+    $this->addSectionVars(parse_ini_file(self::getPathOrDie($file), true));
     $this->replaceConfigVariables($this->configVars);
 
     $siteDir  = self::getVarOrDie($file, $this->configVars, 'SITE_DIR');
@@ -178,11 +202,13 @@ class SiteConfig {
     // Load site configuration file
     $this->configVars = array_merge($this->configVars, 
       parse_ini_file(self::getPathOrDie(SITE_CONFIG_DIR."/config.ini"), false));   
+    $this->addSectionVars(parse_ini_file(self::getPathOrDie(SITE_CONFIG_DIR."/config.ini"), true));
     $this->replaceConfigVariables($this->configVars);
 
     // Load site mode configuration file
     $this->configVars = array_merge($this->configVars, 
       parse_ini_file(self::getPathOrDie(SITE_CONFIG_DIR."/config-$siteMode.ini"), false));   
+    $this->addSectionVars(parse_ini_file(self::getPathOrDie(SITE_CONFIG_DIR."/config-$siteMode.ini"), true));
     $this->replaceConfigVariables($this->configVars);
     
     // Set up theme define
