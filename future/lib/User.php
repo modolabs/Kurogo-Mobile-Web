@@ -6,6 +6,10 @@ abstract class User
 {
     protected $userID;
     protected $email;
+    protected $FirstName;
+    protected $LastName;
+    
+    protected $attributes=array();
     
     public function getUserID()
     {
@@ -33,6 +37,55 @@ abstract class User
         $session = new Session($AuthenticationAuthority); 
         return $session->getUser();
     }
+    
+    protected function standardAttributes()
+    {
+        return array(
+            'userID', 'email'
+        );
+    }
+    
+    public function setAttribute($attribute, $value)
+    {
+        if (in_array($attribute, $this->standardAttributes())) {
+            $method = "set" . $attribute;
+            return $this->$method($value);
+        } else {
+            $this->attributes[$attribute] = $value;
+        }
+    
+    }
+    
+    public function getAttribute($attribute)
+    {
+        if (in_array($attribute, $this->standardAttributes())) {
+            $method = "get" . $var;
+            return $this->$method();
+        } elseif (array_key_exists($var, $this->attributes)) {
+            return $this->attributes[$var];
+        }
+    }
+    
+    public function setFirstName($FirstName)
+    {
+        $this->FirstName = $FirstName;
+    }
+
+    public function setLastName($LastName)
+    {
+        $this->LastName = $LastName;
+    }
+    
+    public function getFirstName()
+    {
+        return $this->FirstName;
+    }
+
+    public function getLastName()
+    {
+        return $this->LastName;
+    }
+    
 }
 
 class BasicUser extends User

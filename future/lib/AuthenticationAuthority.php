@@ -3,7 +3,8 @@
 define('AUTH_OK', 1);
 define('AUTH_FAILED', -1);
 define('AUTH_USER_NOT_FOUND', -2);
-define('AUTH_DISABLED', -3);
+define('AUTH_USER_DISABLED', -3);
+define('AUTH_ERROR', -4); // server or i/o error
 
 abstract class AuthenticationAuthority
 {
