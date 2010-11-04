@@ -29,11 +29,12 @@ class LoginModule extends Module {
             break;
             
         case 'login':
-            if ($this->session->isLoggedIn()) {
+            $login = $this->argVal($_POST, 'loginUser', '');
+
+            if ($this->session->isLoggedIn() || empty($login)) {
                 $this->redirectTo('index');
             }
             
-            $login = $this->argVal($_POST, 'loginUser', '');
             $password = $this->argVal($_POST, 'loginPassword', '');
             $result = $this->session->login($login, $password, $user);
 
