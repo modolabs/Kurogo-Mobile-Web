@@ -111,12 +111,13 @@ class PageViews {
       // the following match positions should also be defined where
       // the date regex is defined
       $day = sprintf("%s-%s-%s", $matches[3], $matches[1], $matches[2]);
-      preg_match('/^.{' . $date_length . '} (\w+) (\w+):/', $line, $matches);
-      $platform = $matches[1];
-      $module = $matches[2];
-      if ($module) {
-        self::increment_array($stats, $day, $platform, $module);
-      }
+      if (preg_match('/^.{' . $date_length . '} (\w+) (\w+):/', $line, $matches)) {
+          $platform = $matches[1];
+          $module = $matches[2];
+          if ($module) {
+            self::increment_array($stats, $day, $platform, $module);
+          }
+       }
     }
     fclose($outfile);
     fclose($infile);
