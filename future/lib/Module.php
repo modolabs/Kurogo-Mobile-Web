@@ -267,7 +267,12 @@ abstract class Module {
       $this->moduleName = $modules[$this->id]['title'];
       $moduleData = $modules[$this->id];
     } else {
+      if($this->id == 'error'){
+        // prevents infinite redirects
+        die('Encountered and error and Module [error] is not defined in modules.ini');
+      } else {
         throw new Exception("Module data for $this->id not found");
+      }
     }
     
     $disabled = self::argVal($moduleData, 'disabled', false);
