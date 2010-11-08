@@ -80,7 +80,7 @@ class NewsModule extends Module {
   {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
-        $controller = RSSDataController::factory($feedData['data']);
+        $controller = RSSDataController::factory($feedData);
         $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
         return $controller;
     } else {
@@ -111,17 +111,6 @@ class NewsModule extends Module {
     return count($items);
   }
   
-  protected function loadFeedData()
-  {
-      $_feeds = parent::loadFeedData();
-      $feeds = array();
-      foreach ($_feeds as $index=>$feedData) {
-         $feeds[] = array('title'=>$index, 'data'=>$feedData);
-      }
-
-      return $feeds;
-  }
-
   protected function initialize() {
     $this->feeds      = $this->loadFeedData();
     $this->maxPerPage = $GLOBALS['siteConfig']->getVar('NEWS_MAX_RESULTS');
@@ -265,7 +254,7 @@ class NewsModule extends Module {
         foreach ($this->feeds as $index => $feedData) {
           $sections[] = array(
             'value'    => $index,
-            'title'    => htmlentities($feedData['title']),
+            'title'    => htmlentities($feedData['TITLE']),
             'selected' => ($this->feedIndex == $index),
             'url'      => $this->feedURL($index, false),
           );
