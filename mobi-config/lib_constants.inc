@@ -16,6 +16,9 @@ define('MYSQL_PASS', 'mysql_pass');
 define('MYSQL_DBNAME', 'mysql_db');
 define('MYSQL_HOST', 'localhost');
 
+// Google Analytics Account
+define('GA_ACCOUNT', 'UA-2923555-23');
+
 // directory
 define("LDAP_SERVER", "phonebook.harvard.edu");
 define("LDAP_PATH", 'o=Harvard University,c=US');
