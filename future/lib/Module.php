@@ -269,7 +269,7 @@ abstract class Module {
     } else {
       if($this->id == 'error'){
         // prevents infinite redirects
-        die('Encountered and error and Module [error] is not defined in modules.ini');
+        die('Encountered an error and Module [error] is not defined in modules.ini');
       } else {
         throw new Exception("Module data for $this->id not found");
       }
