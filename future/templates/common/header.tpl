@@ -26,13 +26,17 @@
         {rdelim})();
       </script>
     {/if}
-
+    
     {foreach $inlineJavascriptBlocks as $script}
       <script type="text/javascript">
         {$script} 
       </script>
     {/foreach}  
     
+    {foreach $externalJavascriptURLs as $url}
+      <script src="{$url}" type="text/javascript"></script>
+    {/foreach}
+
     <script src="{$minify['js']}" type="text/javascript"></script>
 
     {if count($onOrientationChangeBlocks)}

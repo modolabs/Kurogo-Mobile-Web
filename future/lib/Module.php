@@ -29,6 +29,7 @@ abstract class Module {
   private $inlineJavascriptFooterBlocks = array();
   private $onOrientationChangeBlocks = array();
   private $onLoadBlocks = array('scrollTo(0,1);');
+  private $externalJavascriptURLs = array();
 
   private $moduleDebugStrings = array();
   
@@ -405,6 +406,9 @@ abstract class Module {
   protected function addOnLoad($onLoad) {
     $this->onLoadBlocks[] = $onLoad;
   }
+  protected function addExternalJavascript($url) {
+    $this->externalJavascriptURLs[] = $url;
+  }
   
   //
   // Breadcrumbs
@@ -588,6 +592,7 @@ abstract class Module {
     $this->assign('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
     $this->assign('onLoadBlocks', $this->onLoadBlocks);
     $this->assign('inlineJavascriptFooterBlocks', $this->inlineJavascriptFooterBlocks);
+    $this->assign('externalJavascriptURLs', $this->externalJavascriptURLs);
 
     $this->assign('breadcrumbs',            $this->breadcrumbs);
     $this->assign('breadcrumbArgs',         $this->getBreadcrumbArgs());
