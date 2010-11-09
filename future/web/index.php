@@ -54,6 +54,10 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
       }        
     }
   }
+  
+  // image not found
+  header("HTTP/1.0 404 Not Found");
+  exit;
 
 } else if (preg_match(';^.*media/(.*)$;', $path, $matches)) {
   //
