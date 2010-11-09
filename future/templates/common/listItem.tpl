@@ -17,7 +17,7 @@
 {/if}
 {block name="itemLink"}
   {if isset($item['url'])}
-    <a href="{$item['url']}" class="{$item['class']|default:''}">
+    <a href="{$item['url']}" class="{$item['class']|default:''}"{if $linkTarget} target="{$linkTarget}"{/if}>
   {/if}
     {if isset($item['img'])}
       <img src="{$item['img']}" alt="{$item['title']}" width="50" height="50"/>
