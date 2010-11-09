@@ -396,6 +396,7 @@ class ICalEvent extends ICalObject {
     break;
       case 'INTERVAL':
     $this->interval = $rulevalue;
+        break;
       case 'UNTIL':
     $limit_type = 'UNTIL';
     $this->until = ICalendar::ical2unix($rulevalue);
