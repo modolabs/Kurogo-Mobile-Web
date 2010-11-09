@@ -88,6 +88,7 @@ if (file_exists($cssfile)) { ?>
 <? require $cssfile; ?>
 </style>
 <? } ?>
+<? require_once '../Webkit/ga.html'; ?>
 </head>
 
 <body onload="setTimeout('scrollTo(0,1)', 100); init(); <? if (isset($extra_onload)) { ?><?=$extra_onload?><? } ?>" onunload="">
