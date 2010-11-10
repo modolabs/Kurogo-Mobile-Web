@@ -22,7 +22,13 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
     echo file_get_contents($icon);
     exit;
   }
+} else if (preg_match(';^.*ga.php$;', $path, $matches)) {
+  //
+  // Google Analytics for non-Javascript devices
+  //
   
+  require_once realpath(LIB_DIR.'/ga.php');
+  exit;
 
 } else if (preg_match(';^.*(modules|common)(/.*images)/(.*)$;', $path, $matches)) {
   //

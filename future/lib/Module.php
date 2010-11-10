@@ -172,6 +172,36 @@ abstract class Module {
   }
 
   //
+  // Google Analytics for non-Javascript devices
+  //
+  private function googleAnalyticsGetImageUrl($gaID) {
+    if (isset($gaID) && strlen($gaID)) {
+      $url = '/ga.php?';
+      $url .= "utmac=$gaID";
+      $url .= '&utmn=' . rand(0, 0x7fffffff);
+  
+      $referer = $this->argVal($_SERVER, 'HTTP_REFERER');
+      $path    = $this->argVal($_SERVER, 'REQUEST_URI');
+  
+      if (!isset($referer)) {
+        $referer = '-';
+      }
+      $url .= '&utmr=' . urlencode($referer);
+  
+      if (isset($path)) {
+        $url .= '&utmp=' . urlencode($path);
+      }
+  
+      $url .= '&guid=ON';
+
+      return $url;
+      
+    } else {
+      return '';
+    }
+  }
+
+  //
   // Lazy load
   //
   private function loadTemplateEngineIfNeeded() {
@@ -578,6 +608,11 @@ abstract class Module {
 
     // Minify URLs
     $this->assign('minify', $this->getMinifyUrls());
+    
+    // Google Analytics
+    $gaID = $GLOBALS['siteConfig']->getVar('GOOGLE_ANALYTICS_ID');
+    $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
+    $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
     
     // Breadcrumbs
     $this->loadBreadcrumbs();
