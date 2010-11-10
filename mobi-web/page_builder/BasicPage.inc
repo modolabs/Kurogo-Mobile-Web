@@ -68,8 +68,8 @@ class BasicPage extends Page {
     $this->gaImage = new GAImage;
   }
   
-  public function gaImage() {
-    return $this->gaImage->imageHTML($this->title);
+  public function gaImage($title=null) {
+    return $this->gaImage->imageHTML(isset($title) ? $title : $this->title);
   }
 
   public function header($header) {

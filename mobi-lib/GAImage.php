@@ -127,7 +127,7 @@ class GAImage {
         // CHECK FOR REFERRALS
         // See if we can match the tracking domain to the referring host. If
         // we can then return a (direct), if not return a (referral).
-        if (!preg_match('/'.$_SERVER['HTTP_HOST'].'$/', $parsedURL['host'])) {
+        if (!preg_match('/'.$this->hostname.'$/', $parsedURL['host'])) {
           // Finally, return (referral) if nothing else has returned so far
           $utmcsr = $parsedURL['host'];
           $utmccn = '(referral)';
