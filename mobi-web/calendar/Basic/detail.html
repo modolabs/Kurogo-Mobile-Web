@@ -28,7 +28,7 @@ $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
 			Link to Tickets: <a href="<?=$ticketWebLink?>" class="action external" target="_new"><?=$ticketWebLink?></a>
 		     </p>
                 <? } ?>
-                        <?=$descriptionString?>
+                        <?=stripslashes($descriptionString)?>
 
                 <? if(strlen($phoneNum)) { ?>
 		    <p>

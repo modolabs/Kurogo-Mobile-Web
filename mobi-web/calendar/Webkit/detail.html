@@ -36,7 +36,7 @@ $harvard_cat = Harvard_Calendar::get_categories(PATH_TO_EVENTS_CAT);
 $page->content_begin();
 ?>
 	<div class="focal ">
-		<h2><?=$event->get_summary()?></h2>
+		<h2><?= $event->get_summary()?></h2>
 	
 		<ul class="nav">
 			<li><?=$date_str?><br/><?=$time_of_day?></li>
@@ -49,7 +49,7 @@ $page->content_begin();
                         <li>Link to Tickets: <a href="<?=$ticketWebLink?>" class="action external" target="_new"><?=$ticketWebLink?></a></li>
                         <? } ?>
 
-			<li class="description"><?=$descriptionString?></li>
+			<li class="description"><?=stripslashes($descriptionString)?></li>
  
                         <? if(strlen($phoneNum)) { ?>
 
