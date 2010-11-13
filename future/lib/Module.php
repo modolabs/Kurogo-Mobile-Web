@@ -242,12 +242,18 @@ abstract class Module {
     exit;
   }
 
-  protected function redirectTo($page, $args=null) {
+  protected function redirectTo($page, $args=null, $preserveBreadcrumbs=false) {
     if (!isset($args)) { $args = $this->args; }
     
-    $url = URL_PREFIX."{$this->id}/".self::buildURL($page, $args);
-    error_log('Redirecting to: '.$url);
+    $url = URL_PREFIX."{$this->id}/";
     
+    if ($preserveBreadcrumbs) {
+      $url .= $this->buildBreadcrumbURL($page, $args, false);
+    } else {
+      $url .= self::buildURL($page, $args);
+    }
+    
+    error_log('Redirecting to: '.$url);
     header("Location: $url");
     exit;
   }
@@ -598,7 +604,6 @@ abstract class Module {
     $this->assign('moduleName',   $this->moduleName);
     $this->assign('page',         $this->page);
     $this->assign('isModuleHome', $this->page == 'index');
-    $this->assign('pageTitle',    $this->pageTitle);
     
     // Font size for template
     $this->assign('fontsizes',   $this->fontsizes);
@@ -616,10 +621,11 @@ abstract class Module {
     
     // Breadcrumbs
     $this->loadBreadcrumbs();
-    
-        
+            
     // Set variables for each page
     $this->initializeForPage();
+
+    $this->assign('pageTitle', $this->pageTitle);
 
     // Variables which may have been modified by the module subclass
     $this->assign('inlineCSSBlocks', $this->inlineCSSBlocks);

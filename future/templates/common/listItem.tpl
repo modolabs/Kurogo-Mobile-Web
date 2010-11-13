@@ -10,7 +10,7 @@
   {if $boldLabels}
     <strong>
   {/if}
-      {$item['label']}:&nbsp;
+      {$item['label']}{if $labelColon|default:true}:&nbsp;{/if}
   {if $boldLabels}
     </strong>
   {/if}
