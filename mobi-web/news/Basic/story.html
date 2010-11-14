@@ -37,7 +37,7 @@ $page->content_begin();
     <? if($is_first_page) { ?>
         <!--<p class="dek"><?=$story['description']?></p>-->
 
-        <? if($story['image']) { ?>
+        <? if($story['image']['url']) { ?>
             <div id="image">
                 <img class="thumbnail" src="<?=$story['image']['url']?>">
             </div>
