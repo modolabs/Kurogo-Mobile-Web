@@ -1,0 +1,21 @@
+#
+# Future Code
+# 
+# This .htaccess allows for the future code to be deployed to a 
+# subdirectory.  All requests are redirected to the future folder
+#
+# The subdirectory used below is "harvard-mobile"
+#
+
+#<IfModule mod_rewrite.c>
+#  RewriteEngine on
+#  
+#  RewriteCond %{REQUEST_URI} min/
+#  RewriteCond %{REQUEST_URI} ^/harvard-mobile(.*)$
+#  RewriteRule .* future/web/%1
+#  
+#  RewriteCond %{REQUEST_URI} !min/
+#  RewriteCond %{REQUEST_URI} ^/harvard-mobile(.*)$
+#  RewriteRule .* future/web/index.php?_path=%1
+#
+#</IfModule>
