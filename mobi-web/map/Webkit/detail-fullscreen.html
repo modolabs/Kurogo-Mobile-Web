@@ -68,7 +68,7 @@ window.addEventListener("resize", function() {<?=$onorientationchange?>}, false)
 window.addEventListener("orientationchange", function() {<?=$onorientationchange?>}, false);
 </script>
 <? } ?>
-
+<? require_once '../Webkit/ga.html'; ?>
 </head>
 
 <body <? if (isset($extra_onload)) { ?>onload="<?=$extra_onload?>"<? } ?><? 

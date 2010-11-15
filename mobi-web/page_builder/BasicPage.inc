@@ -61,6 +61,29 @@ class BasicPage extends Page {
       'meta_mobile_optimized', 'img_extension', 'viewport_content',
     );
   }
+  
+  public function googleAnalyticsGetImageUrl() {
+    $url = "/Basic/ga.php?";
+    $url .= "utmac=" . GA_ACCOUNT;
+    $url .= "&utmn=" . rand(0, 0x7fffffff);
+
+    $referer = $_SERVER["HTTP_REFERER"];
+    $query = $_SERVER["QUERY_STRING"];
+    $path = $_SERVER["REQUEST_URI"];
+
+    if (empty($referer)) {
+      $referer = "-";
+    }
+    $url .= "&utmr=" . urlencode($referer);
+
+    if (!empty($path)) {
+      $url .= "&utmp=" . urlencode($path);
+    }
+
+    $url .= "&guid=ON";
+
+    return '<img src="'.$url.'" />';
+  }
 
   public function header($header) {
     $this->header = $header;

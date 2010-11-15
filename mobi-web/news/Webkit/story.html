@@ -28,7 +28,7 @@ $page->content_begin();
          <span class="postdate"><?=$date?></span>
     </p>
 
-    <? if($story['image']) { ?>
+    <? if($story['image']['url']) { ?>
         <div id="image">
             <img class="thumbnail" src="<?=$story['image']['url']?>" <? 
             	if (isset($story['image']['width'])) { 

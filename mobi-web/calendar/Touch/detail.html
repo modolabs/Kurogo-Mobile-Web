@@ -24,7 +24,7 @@ $page->content_begin();
 <li>Link to Tickets: <a href="<?=$ticketWebLink?>" class="action external" target="_new"><?=$ticketWebLink?></a></li>
  <? } ?>
 
-		<li class="nolink"><?=$descriptionString?></li>
+		<li class="nolink"><?= stripslashes($descriptionString) ?></li>
 <? if(strlen($phoneNum)) { ?>
 
 <li>For info call: <a href="<?=$phoneNum?>" class="action phone"><?=$phoneNum?></a></li>

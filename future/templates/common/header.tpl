@@ -26,13 +26,17 @@
         {rdelim})();
       </script>
     {/if}
-
+    
     {foreach $inlineJavascriptBlocks as $script}
       <script type="text/javascript">
         {$script} 
       </script>
     {/foreach}  
     
+    {foreach $externalJavascriptURLs as $url}
+      <script src="{$url}" type="text/javascript"></script>
+    {/foreach}
+
     <script src="{$minify['js']}" type="text/javascript"></script>
 
     {if count($onOrientationChangeBlocks)}
@@ -67,7 +71,7 @@
   {else}
     {block name="header"}
       {strip}
-      <div id="navbar"{if $help} class="helpon"{/if}>
+      <div id="navbar"{if $hasHelp} class="helpon"{/if}>
         <div class="breadcrumbs{if $isModuleHome} homepage{/if}">
           <a name="top" href="/home/" class="homelink">
             <img src="/common/images/homelink.png" width="57" height="45" alt="{$SITE_NAME} Home" />

@@ -29,6 +29,7 @@ abstract class Module {
   private $inlineJavascriptFooterBlocks = array();
   private $onOrientationChangeBlocks = array();
   private $onLoadBlocks = array('scrollTo(0,1);');
+  private $externalJavascriptURLs = array();
 
   private $moduleDebugStrings = array();
   
@@ -171,6 +172,36 @@ abstract class Module {
   }
 
   //
+  // Google Analytics for non-Javascript devices
+  //
+  private function googleAnalyticsGetImageUrl($gaID) {
+    if (isset($gaID) && strlen($gaID)) {
+      $url = '/ga.php?';
+      $url .= "utmac=$gaID";
+      $url .= '&utmn=' . rand(0, 0x7fffffff);
+  
+      $referer = $this->argVal($_SERVER, 'HTTP_REFERER');
+      $path    = $this->argVal($_SERVER, 'REQUEST_URI');
+  
+      if (!isset($referer)) {
+        $referer = '-';
+      }
+      $url .= '&utmr=' . urlencode($referer);
+  
+      if (isset($path)) {
+        $url .= '&utmp=' . urlencode($path);
+      }
+  
+      $url .= '&guid=ON';
+
+      return $url;
+      
+    } else {
+      return '';
+    }
+  }
+
+  //
   // Lazy load
   //
   private function loadTemplateEngineIfNeeded() {
@@ -211,12 +242,18 @@ abstract class Module {
     exit;
   }
 
-  protected function redirectTo($page, $args=null) {
+  protected function redirectTo($page, $args=null, $preserveBreadcrumbs=false) {
     if (!isset($args)) { $args = $this->args; }
     
-    $url = URL_PREFIX."{$this->id}/".self::buildURL($page, $args);
-    error_log('Redirecting to: '.$url);
+    $url = URL_PREFIX."{$this->id}/";
     
+    if ($preserveBreadcrumbs) {
+      $url .= $this->buildBreadcrumbURL($page, $args, false);
+    } else {
+      $url .= self::buildURL($page, $args);
+    }
+    
+    error_log('Redirecting to: '.$url);
     header("Location: $url");
     exit;
   }
@@ -410,6 +447,9 @@ abstract class Module {
   protected function addOnLoad($onLoad) {
     $this->onLoadBlocks[] = $onLoad;
   }
+  protected function addExternalJavascript($url) {
+    $this->externalJavascriptURLs[] = $url;
+  }
   
   //
   // Breadcrumbs
@@ -569,7 +609,6 @@ abstract class Module {
     $this->assign('moduleName',   $this->moduleName);
     $this->assign('page',         $this->page);
     $this->assign('isModuleHome', $this->page == 'index');
-    $this->assign('pageTitle',    $this->pageTitle);
     
     // Font size for template
     $this->assign('fontsizes',   $this->fontsizes);
@@ -580,12 +619,18 @@ abstract class Module {
     // Minify URLs
     $this->assign('minify', $this->getMinifyUrls());
     
+    // Google Analytics
+    $gaID = $GLOBALS['siteConfig']->getVar('GOOGLE_ANALYTICS_ID');
+    $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
+    $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
+    
     // Breadcrumbs
     $this->loadBreadcrumbs();
-    
-        
+            
     // Set variables for each page
     $this->initializeForPage();
+
+    $this->assign('pageTitle', $this->pageTitle);
 
     // Variables which may have been modified by the module subclass
     $this->assign('inlineCSSBlocks', $this->inlineCSSBlocks);
@@ -593,6 +638,7 @@ abstract class Module {
     $this->assign('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
     $this->assign('onLoadBlocks', $this->onLoadBlocks);
     $this->assign('inlineJavascriptFooterBlocks', $this->inlineJavascriptFooterBlocks);
+    $this->assign('externalJavascriptURLs', $this->externalJavascriptURLs);
 
     $this->assign('breadcrumbs',            $this->breadcrumbs);
     $this->assign('breadcrumbArgs',         $this->getBreadcrumbArgs());

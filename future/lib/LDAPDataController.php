@@ -19,6 +19,7 @@ class LDAPDataController extends PeopleController {
   protected $errorNo;
   protected $errorMsg;
   protected $attributes=array();
+  protected $fieldMap=array();
   
   public function debugInfo()
   {
@@ -44,8 +45,8 @@ class LDAPDataController extends PeopleController {
   
   public function getField($_field)
   {
-       if ($field = $GLOBALS['siteConfig']->getVar(sprintf('LDAP_%s_FIELD', strtoupper($_field)))) {
-            return $field;
+       if (array_key_exists($_field, $this->fieldMap)) {
+            return $this->fieldMap[$_field];
        }
        
        return $_field;

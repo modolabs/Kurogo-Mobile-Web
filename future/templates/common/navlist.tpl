@@ -1,7 +1,7 @@
 {strip}
 
 {block name="navlistStart"}
-  <ul class="nav{if $secondary} secondary{/if}">
+  <ul class="nav{if $secondary} secondary{/if}"{if $navlistID} id="{$navlistID}"{/if}>
 {/block}
 
     {foreach $navlistItems as $item}     

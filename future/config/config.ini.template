@@ -1,13 +1,7 @@
 ACTIVE_SITE = "Harvard"
 SITE_DIR    = ROOT_DIR"/site/{ACTIVE_SITE}"
 
-; One of development, production or staging
+; One of development, stage or production
 ; Causes SITE_DIR/config/config_SITE_MODE.ini to get loaded
 SITE_MODE = "development"
 
-[people]
-LDAP_GIVENNAME_FIELD                = "givenname"
-LDAP_SN_FIELD                       = "sn"
-LDAP_MAIL_FIELD                     = "mail"
-LDAP_UID_FIELD                      = "uid"
-LDAP_PHONE_FIELD                    = "telephonenumber"

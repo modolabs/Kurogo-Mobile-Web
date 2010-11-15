@@ -46,7 +46,7 @@ $page->content_begin();
 
         <? foreach($stories as $story) { ?>
             <li class="story">
-                <? if($story['image']) { ?>
+                <? if($story['image']['url']) { ?>
                     <img class="thumbnail" src="<?=$story['image']['url']?>" />
                 <? } else { ?>
                     <img class="thumbnail" src="news-placeholder.png" />
