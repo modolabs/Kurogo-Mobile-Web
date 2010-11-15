@@ -425,7 +425,11 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
                             } else {
                             	$this->getResourceTypeName($_file_to_check[0], $resource_type, $resource_name);
                                 $resource_handler = $this->loadTemplateResourceHandler($resource_type);
-                                $mtime = $resource_handler->getTemplateTimestampTypeName($resource_type, $resource_name);
+                                if(method_exists($resource_handler, 'getTemplateTimestampTypeName')){
+                                    $mtime = $resource_handler->getTemplateTimestampTypeName($resource_type, $resource_name);
+                                } else {
+                                    $mtime = time();
+                                }
                             } 
                             // If ($mtime != $_file_to_check[1]) {
                             If ($mtime > $_file_to_check[1]) {
