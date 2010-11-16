@@ -1,5 +1,9 @@
 <?php
 
+if (!class_exists('DOMDocument')) {
+    die('DOMDocument Functions not available (php-xml)');
+}
+
 define("PARAGRAPH_LIMIT", 4);
 define("ALL_PAGES", 'all');
 

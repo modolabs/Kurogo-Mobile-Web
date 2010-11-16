@@ -74,6 +74,11 @@ function mime_type($filename) {
   }
 }
 
+// Add json_(de/en)code functions (this really shouldn't happen, but is there for people who must use 5.1)
+if(!function_exists('json_decode')) {
+    include('JSON.php');
+}
+
 // Simulate PHP 5.3 behavior on 5.2
 function realpath_exists($path) {
   $test = realpath($path);
