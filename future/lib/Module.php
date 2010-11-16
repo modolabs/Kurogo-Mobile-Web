@@ -310,6 +310,7 @@ abstract class Module {
       // prevents infinite redirects and misconfiguration
       $this->moduleName = (isset($modules[$this->id])) ? $modules[$this->id]['title'] : 'Error';
       $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
+      $this->args = $args;
       return;
     } else if (isset($modules[$this->id])) {
       $this->moduleName = $modules[$this->id]['title'];
