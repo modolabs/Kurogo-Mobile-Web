@@ -181,16 +181,16 @@ class TemplateEngine extends Smarty {
     
     // Theme and device detection for includes and extends
     $this->registerResource('findExtends', array(
-      'TemplateEngine::smartyResourceExtendsGetSource',
-      'TemplateEngine::smartyResourceExtendsGetTimestamp',
-      'TemplateEngine::smartyResourceExtendsGetSecure',
-      'TemplateEngine::smartyResourceExtendsGetTrusted',
+      array('TemplateEngine','smartyResourceExtendsGetSource'),
+      array('TemplateEngine','smartyResourceExtendsGetTimestamp'),
+      array('TemplateEngine','smartyResourceExtendsGetSecure'),
+      array('TemplateEngine','smartyResourceExtendsGetTrusted')
     ));
     $this->registerResource('findInclude', array(
-      'TemplateEngine::smartyResourceIncludeGetSource',
-      'TemplateEngine::smartyResourceIncludeGetTimestamp',
-      'TemplateEngine::smartyResourceIncludeGetSecure',
-      'TemplateEngine::smartyResourceIncludeGetTrusted',
+      array('TemplateEngine','smartyResourceIncludeGetSource'),
+      array('TemplateEngine','smartyResourceIncludeGetTimestamp'),
+      array('TemplateEngine','smartyResourceIncludeGetSecure'),
+      array('TemplateEngine','smartyResourceIncludeGetTrusted')
     ));
     
     // Postfilter to add url prefix to absolute urls
