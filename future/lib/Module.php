@@ -300,16 +300,17 @@ abstract class Module {
     $GLOBALS['siteConfig']->loadWebAppFile('modules');
     
     $modules = $GLOBALS['siteConfig']->getWebAppVar('modules');
-    if (isset($modules[$this->id])) {
+    
+    if($this->id == 'error'){
+      // prevents infinite redirects and misconfiguration
+      $this->moduleName = (isset($modules[$this->id])) ? $modules[$this->id]['title'] : 'Error';
+      $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
+      return;
+    } else if (isset($modules[$this->id])) {
       $this->moduleName = $modules[$this->id]['title'];
       $moduleData = $modules[$this->id];
     } else {
-      if($this->id == 'error'){
-        // prevents infinite redirects
-        die('Encountered an error and Module [error] is not defined in modules.ini');
-      } else {
-        throw new Exception("Module data for $this->id not found");
-      }
+      throw new Exception("Module data for $this->id not found");
     }
     
     $disabled = self::argVal($moduleData, 'disabled', false);
