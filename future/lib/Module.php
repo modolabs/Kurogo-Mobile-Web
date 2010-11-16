@@ -276,13 +276,18 @@ abstract class Module {
   public static function factory($id, $page='index', $args=array()) {
     $className = ucfirst($id).'Module';
     
-    $moduleFile = realpath_exists(MODULES_DIR."/$id/$className.php");
-    if ($moduleFile && include_once($moduleFile)) {
-      return new $className($page, $args);
-      
-    } else {
-      throw new PageNotFound("Module '$id' not found while handling '{$_SERVER['REQUEST_URI']}'");
+    $modulePaths = array(
+      THEME_DIR."/modules/$id/$className.php",
+      MODULES_DIR."/$id/$className.php",
+    );
+    
+    foreach($modulePaths as $path){ 
+      $moduleFile = realpath_exists($path);
+      if ($moduleFile && include_once($moduleFile)) {
+        return new $className($page, $args);
+      }
     }
+    throw new PageNotFound("Module '$id' not found while handling '{$_SERVER['REQUEST_URI']}'");
   }
   
   protected function initSession()
