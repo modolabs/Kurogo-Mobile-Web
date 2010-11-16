@@ -1,7 +1,5 @@
 <?php
 
-require_once LIBDIR.'/GAImage.php';
-
 class BasicPage extends Page {
 
   protected static $access_key = 1; // feature phone access key
@@ -13,8 +11,6 @@ class BasicPage extends Page {
   protected $img_extension;
   protected $viewport_content;
   protected $meta_mobile_optimized;
-  
-  protected $gaImage = null;
 
   public function __construct($platform, $certs) {
     global $ini;
@@ -64,12 +60,29 @@ class BasicPage extends Page {
       'extra_links', 'help_links', 'bottom_nav_links', 'inline_css',
       'meta_mobile_optimized', 'img_extension', 'viewport_content',
     );
-    
-    $this->gaImage = new GAImage;
   }
   
-  public function gaImage() {
-    return $this->gaImage->imageHTML($this->title);
+  public function googleAnalyticsGetImageUrl() {
+    $url = "/Basic/ga.php?";
+    $url .= "utmac=" . GA_ACCOUNT;
+    $url .= "&utmn=" . rand(0, 0x7fffffff);
+
+    $referer = $_SERVER["HTTP_REFERER"];
+    $query = $_SERVER["QUERY_STRING"];
+    $path = $_SERVER["REQUEST_URI"];
+
+    if (empty($referer)) {
+      $referer = "-";
+    }
+    $url .= "&utmr=" . urlencode($referer);
+
+    if (!empty($path)) {
+      $url .= "&utmp=" . urlencode($path);
+    }
+
+    $url .= "&guid=ON";
+
+    return '<img src="'.$url.'" />';
   }
 
   public function header($header) {

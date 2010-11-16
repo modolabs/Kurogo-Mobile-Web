@@ -180,13 +180,13 @@ class TemplateEngine extends Smarty {
     $this->setCompileId  ("$pagetype-$platform");
     
     // Theme and device detection for includes and extends
-    $this->register->resource('findExtends', array(
+    $this->registerResource('findExtends', array(
       'TemplateEngine::smartyResourceExtendsGetSource',
       'TemplateEngine::smartyResourceExtendsGetTimestamp',
       'TemplateEngine::smartyResourceExtendsGetSecure',
       'TemplateEngine::smartyResourceExtendsGetTrusted',
     ));
-    $this->register->resource('findInclude', array(
+    $this->registerResource('findInclude', array(
       'TemplateEngine::smartyResourceIncludeGetSource',
       'TemplateEngine::smartyResourceIncludeGetTimestamp',
       'TemplateEngine::smartyResourceIncludeGetSecure',
@@ -194,11 +194,11 @@ class TemplateEngine extends Smarty {
     ));
     
     // Postfilter to add url prefix to absolute urls
-    $this->register->outputfilter(array('TemplateEngine', 'smartyOutputfilterAddURLPrefix'));
+    $this->registerFilter('output', array('TemplateEngine', 'smartyOutputfilterAddURLPrefix'));
     
-    $this->register->block('html_access_key_link',  
+    $this->registerPlugin('block', 'html_access_key_link',  
       'TemplateEngine::smartyBlockAccessKeyLink');
-    $this->register->templateFunction('html_access_key_reset', 
+    $this->registerPlugin('function', 'html_access_key_reset', 
       'TemplateEngine::smartyTemplateAccessKeyReset');
       
     // variables common to all modules

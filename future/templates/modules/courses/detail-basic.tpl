@@ -7,7 +7,7 @@
       <h4>Lecture:</h4>
       {foreach $times as $time}
         <p>
-          {if isset($time['location'], $time['url'])}
+          {if isset($time['location']) && isset($time['url'])}
             {$time['days']} {$time['time']} 
             (<a class="map" href="{$time['url']}">{$time['location']}</a>)
           {else}

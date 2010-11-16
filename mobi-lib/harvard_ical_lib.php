@@ -476,7 +476,7 @@ class ICalendar extends ICalObject {
       $time = new DateTime($icaltime, $tz);
     }
     $time = new DateTime($icaltime, new DateTimeZone('America/New_York'));
-    return (datetime2unix($time) - (4*60*60));
+    return (datetime2unix($time) - (5*60*60));
   }
 
   public function get_event($uid) {
@@ -546,16 +546,16 @@ class ICalendar extends ICalObject {
 
     $events = Array();
     foreach ($this->events as $id => $event) {
-      /* Making sure the events that start at 0000-0400hrs GMT
+      /* Making sure the events that start at 0000-0500hrs GMT
       	 are still correctly captured as today's events */
-        if  ((($event->get_start() - 4*60*60 >= $day->get_start()) &&
-                ($event->get_start() - 4*60*60 <= $day->get_end())) ||
+        if  ((($event->get_start() - 5*60*60 >= $day->get_start()) &&
+                ($event->get_start() - 5*60*60 <= $day->get_end())) ||
 
-               (($event->get_end() - 4*60*60 >= $day->get_start()) &&
-                ($event->get_end() - 4*60*60 <= $day->get_end())) ||
+               (($event->get_end() - 5*60*60 >= $day->get_start()) &&
+                ($event->get_end() - 5*60*60 <= $day->get_end())) ||
 
-                (($event->get_start() - 4*60*60 <= $day->get_start()) &&
-                ($event->get_end()  - 4*60*60 >= $day->get_end()))) {
+                (($event->get_start() - 5*60*60 <= $day->get_start()) &&
+                ($event->get_end()  - 5*60*60 >= $day->get_end()))) {
 
                     $events[] = $event;
             

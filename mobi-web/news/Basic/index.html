@@ -34,8 +34,10 @@ $page->content_begin();
     <div class="focal">
         <? foreach($stories as $index => $story) { ?>
             <p>
-                <? if(($index==0) && $story['image']) { ?>
+                <? if($story['image']['url']) { ?>
                     <img class="thumbnail" src="<?=$story['image']['url']?>" />
+                <? } else { ?>
+                     <img class="thumbnail" src="news-placeholder.png" />
                 <? } ?>
 
                 <a class="story-link" href="<?=$newsURL->storyURL($story)?>"><?=$story["title"]?></a><br />

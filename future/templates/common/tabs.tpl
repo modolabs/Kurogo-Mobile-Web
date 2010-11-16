@@ -7,6 +7,7 @@
     {foreach $tabBodies as $tabKey => $tabBody}
       {if isset($tabbedView['tabs'][$tabKey])}
         {$tabInfo = $tabbedView['tabs'][$tabKey]}
+        {$isLastTab = $tabBody@last}
         
         {block name="tab"}
           <li{if $tabKey == $tabbedView['current']} class="active"{/if}>

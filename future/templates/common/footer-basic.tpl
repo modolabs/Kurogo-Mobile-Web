@@ -59,6 +59,9 @@
     <p id="footer">
       {$footerHTML}
     </p>
-
   </div>
+  
+  {if strlen($gaImageURL)}
+    <img src="{$gaImageURL}" />
+  {/if}
 {/block}

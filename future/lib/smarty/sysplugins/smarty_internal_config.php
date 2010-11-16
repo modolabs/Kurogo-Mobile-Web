@@ -135,6 +135,7 @@ class Smarty_Internal_Config {
     } 
     public function buildCompiledFilepath()
     {
+        $_compile_id = isset($this->smarty->compile_id) ? preg_replace('![^\w\|]+!', '_', $this->smarty->compile_id) : null;
         $_flag = (int)$this->smarty->config_read_hidden + (int)$this->smarty->config_booleanize * 2 +
         (int)$this->smarty->config_overwrite * 4;
         $_filepath = sha1($this->config_resource_name . $_flag); 
@@ -144,6 +145,10 @@ class Smarty_Internal_Config {
              . substr($_filepath, 2, 2) . DS
              . substr($_filepath, 4, 2) . DS
              . $_filepath;
+        } 
+        $_compile_dir_sep = $this->smarty->use_sub_dirs ? DS : '^';
+        if (isset($_compile_id)) {
+            $_filepath = $_compile_id . $_compile_dir_sep . $_filepath;
         } 
         $_compile_dir = $this->smarty->compile_dir;
         if (substr($_compile_dir, -1) != DS) {
@@ -236,9 +241,9 @@ class Smarty_Internal_Config {
     public function loadConfigVars ($sections = null, $scope)
     {
         if (isset($this->template)) {
-            $this->template->properties['file_dependency'][sha1($this->getConfigFilepath())] = array($this->getConfigFilepath(), $this->getTimestamp());
+            $this->template->properties['file_dependency'][sha1($this->getConfigFilepath())] = array($this->getConfigFilepath(), $this->getTimestamp(),'file');
         } else {
-            $this->smarty->properties['file_dependency'][sha1($this->getConfigFilepath())] = array($this->getConfigFilepath(), $this->getTimestamp());
+            $this->smarty->properties['file_dependency'][sha1($this->getConfigFilepath())] = array($this->getConfigFilepath(), $this->getTimestamp(),'file');
         } 
         if ($this->mustCompile()) {
             $this->compileConfigSource();

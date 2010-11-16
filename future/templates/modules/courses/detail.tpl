@@ -10,7 +10,7 @@
       {else}
         {foreach $times as $time}
           <li>
-            {if isset($time['location'], $time['url'])}
+            {if isset($time['location']) && isset($time['url'])}
               <a class="map" href="{$time['url']}">
                 {$time['days']} {$time['time']} ({$time['location']})
               </a>
