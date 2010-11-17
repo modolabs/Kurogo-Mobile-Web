@@ -106,7 +106,7 @@ class CalendarModule extends Module {
       case 'phone':
         // add the local area code if missing
         if (preg_match('/^\d{3}-\d{4}/', $value)) {
-          $valueForType = $GLOBALS['siteConfig']->getVar('LOCAL_AREA_CODE').$value;
+          $valueForType = $this->getSiteVar('LOCAL_AREA_CODE').$value;
         }
         $valueForType = str_replace('-', '-&shy;', str_replace('.', '-', $value));
         break;
@@ -137,7 +137,7 @@ class CalendarModule extends Module {
       case 'phone':
         // add the local area code if missing
         if (preg_match('/^\d{3}-\d{4}/', $value)) {
-          $urlForType = $GLOBALS['siteConfig']->getVar('LOCAL_AREA_CODE').$value;
+          $urlForType = $this->getSiteVar('LOCAL_AREA_CODE').$value;
         }
     
         // remove all non-word characters from the number
@@ -274,7 +274,7 @@ class CalendarModule extends Module {
         
         $feedData = $this->feeds[$index];
         $controller = CalendarDataController::factory($feedData);
-        $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+        $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
         return $controller;
     } else {
         throw new Exception("Error getting calendar feed for index $index");
@@ -283,7 +283,7 @@ class CalendarModule extends Module {
  
   protected function initialize() {
     $this->feeds      = $this->loadFeedData();
-    $this->timezone   = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
+    $this->timezone   = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
   }
 
   protected function initializeForPage() {

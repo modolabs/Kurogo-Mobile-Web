@@ -146,7 +146,7 @@ class PeopleModule extends Module {
         $feedData = $this->feeds[$index];
         $controller = PeopleController::factory($feedData);
         $controller->setAttributes($this->detailAttributes);
-        $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+        $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
         return $controller;
     } else {
         throw new Exception("Error getting people feed for index $index");
@@ -165,7 +165,7 @@ class PeopleModule extends Module {
   protected function initializeForPage() {
     $PeopleController = $this->getFeed('people');
     
-    if ($GLOBALS['siteConfig']->getVar('LDAP_DEBUG')) {
+    if ($this->getSiteVar('LDAP_DEBUG')) {
       $this->addModuleDebugString($PeopleController->debugInfo());
     }
     

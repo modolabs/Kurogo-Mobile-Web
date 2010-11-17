@@ -163,7 +163,7 @@ abstract class Module {
   //
   private function getMinifyUrls() {
     $minKey = "{$this->id}-{$this->page}-{$this->pagetype}-{$this->platform}-".md5(ROOT_DIR);
-    $minDebug = $GLOBALS['siteConfig']->getVar('MINIFY_DEBUG') ? '&debug=1' : '';
+    $minDebug = $this->getSiteVar('MINIFY_DEBUG') ? '&debug=1' : '';
     
     return array(
       'css' => "/min/g=css-$minKey$minDebug",
@@ -257,6 +257,25 @@ abstract class Module {
     header("Location: $url");
     exit;
   }
+
+  //
+  // Configuration
+  //
+  protected function getSiteVar($var)
+  {
+      return $GLOBALS['siteConfig']->getVar($var);
+  }
+
+  protected function getSiteSection($var)
+  {
+      return $GLOBALS['siteConfig']->getSection($var);
+  }
+
+  protected function getModuleVar($var)
+  {
+      Debug::die_here();
+      return $GLOBALS['siteConfig']->getVar($var);
+  }
   
   protected function loadFeedData()
   {
@@ -288,8 +307,8 @@ abstract class Module {
   protected function initSession()
   {
     if (!$this->session) {
-        $authorityClass = $GLOBALS['siteConfig']->getVar('AUTHENTICATION_AUTHORITY');
-        $authorityArgs = $GLOBALS['siteConfig']->getSection('authentication');
+        $authorityClass = $this->getSiteVar('AUTHENTICATION_AUTHORITY');
+        $authorityArgs = $this->getSiteSection('authentication');
         $AuthenticationAuthority = AuthenticationAuthority::factory($authorityClass, $authorityArgs);
         
         $this->session = new Session($AuthenticationAuthority);
@@ -297,9 +316,8 @@ abstract class Module {
   }
   
   function __construct($page='index', $args=array()) {
-    $GLOBALS['siteConfig']->loadWebAppFile('modules');
     
-    $modules = $GLOBALS['siteConfig']->getWebAppVar('modules');
+    $modules = $this->getAllModules();
     if (isset($modules[$this->id])) {
       $this->moduleName = $modules[$this->id]['title'];
       $moduleData = $modules[$this->id];
@@ -320,7 +338,7 @@ abstract class Module {
          exit();
     }
     
-    if ($GLOBALS['siteConfig']->getVar('AUTHENTICATION_ENABLED')) {
+    if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
         $this->initSession();
         $user = $this->getUser();
         $this->assign('session_userID', $user->getUserID());
@@ -343,7 +361,7 @@ abstract class Module {
     // Pull in fontsize
     if (isset($args['font'])) {
       $this->fontsize = $args['font'];
-      setcookie('fontsize', $this->fontsize, time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
+      setcookie('fontsize', $this->fontsize, time() + $this->getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
     
     } else if (isset($_COOKIE['fontsize'])) { 
       $this->fontsize = $_COOKIE['fontsize'];
@@ -365,8 +383,8 @@ abstract class Module {
   // Module control functions
   //
   protected function getAllModules() {
-    $modules = $GLOBALS['siteConfig']->getWebAppVar('modules');
-    return $modules;
+    $moduleConfig = Config::factory('modules', 'web');
+    return $moduleConfig->getSectionVars();
   }
 
   protected function getHomeScreenModules() {
@@ -406,7 +424,7 @@ abstract class Module {
   }
   
   protected function setHomeScreenModuleOrder($moduleIDs) {
-    $lifespan = $GLOBALS['siteConfig']->getVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
     $value = implode(",", $moduleIDs);
     
     setcookie("moduleorder", $value, time() + $lifespan, COOKIE_PATH);
@@ -415,7 +433,7 @@ abstract class Module {
   }
   
   protected function setHomeScreenVisibleModules($moduleIDs) {
-    $lifespan = $GLOBALS['siteConfig']->getVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
     $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
     
     setcookie("visiblemodules", $value, time() + $lifespan, COOKIE_PATH);
@@ -553,11 +571,9 @@ abstract class Module {
 
     if ($keyName === null) { $keyName = $name; }
     
-    if (!$GLOBALS['siteConfig']->loadWebAppFile($name, true, $ignoreError)) {
-      return array();
-    }
-        
-    $themeVars = $GLOBALS['siteConfig']->getWebAppVar($name);
+    $config = Config::factory($name, 'web');
+    $GLOBALS['siteConfig']->addConfig($config);
+    $themeVars = $config->getSectionVars(true);
     
     if ($keyName === false) {
       foreach($themeVars as $key => $value) {
@@ -615,7 +631,7 @@ abstract class Module {
     $this->assign('minify', $this->getMinifyUrls());
     
     // Google Analytics
-    $gaID = $GLOBALS['siteConfig']->getVar('GOOGLE_ANALYTICS_ID');
+    $gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID');
     $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
     $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
     
