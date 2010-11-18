@@ -9,10 +9,10 @@ class AdminModule extends Module {
 
   }
 
-  protected function getModuleDefaultData($module)
+  protected function getModuleDefaultData()
   {
     return array(
-        'title'=>$module->getModuleName(),
+        'title'=>'No Title',
         'homescreen'=>0,
         'primary'=>0,
         'disabled'=>0,
@@ -63,28 +63,22 @@ class AdminModule extends Module {
                 if (empty($moduleID)) {
                     $this->redirectTo('modules');
                 }
-
-                try {
-                    $module = Module::factory($moduleID);
-                } catch(Exception $e) {
-                    $this->redirectTo('modules');
-                }
-                
                 $modules = $this->getAllModules();
-                $moduleData = $this->getModuleDefaultData($module);
-                if (!isset($modules[$moduleID])) {
-                    throw new Exception("Module data for $moduleID not found");
+                $moduleData = $this->getModuleDefaultData();
+
+                if (isset($modules[$moduleID])) {
+                    $moduleData = array_merge($moduleData, $modules[$moduleID]);
                 }
-                
-                
-                $moduleData = array_merge($moduleData, $modules[$moduleID]);
                 
                 if ($this->getArg('submit')) {
                     $moduleData = array_merge($moduleData, $this->getArg('moduleData'));
-                    $module->setModuleData($moduleData);
+                    $moduleConfigFile = ConfigFile::factory('modules', 'web');
+                    $moduleData = array($moduleID => $moduleData);
+                    
+                    $moduleConfigFile->addSectionVars($moduleData);
+                    $moduleConfigFile->saveFile();
                     $this->redirectTo('modules');
                 }
-                
                 
                 $this->setPageTitle(sprintf("Administering %s module", $moduleData['title']));
                 
@@ -113,7 +107,6 @@ class AdminModule extends Module {
 
                 foreach ($allModules as $moduleID=>$moduleData) {
                     try {
-                        $module = Module::factory($moduleID);
                         $moduleList[] = array(
                             'title'=>$moduleData['title'],
                             'url'=>$this->buildBreadcrumbURL('module', array(

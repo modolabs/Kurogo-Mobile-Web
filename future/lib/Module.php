@@ -387,15 +387,6 @@ abstract class Module {
     return $moduleConfig->getSectionVars();
   }
 
-  public function setModuleData($moduleData)
-  {
-    $moduleConfigFile = ConfigFile::factory('modules', 'web');
-    $moduleData = array($this->id => $moduleData);
-    
-    $moduleConfigFile->addSectionVars($moduleData);
-    $moduleConfigFile->saveFile();
-  }
-  
   public function getModuleData()
   {
     $modules = $this->getAllModules();
