@@ -12,10 +12,10 @@
 #  
 #  RewriteCond %{REQUEST_URI} min/
 #  RewriteCond %{REQUEST_URI} ^/harvard-mobile(.*)$
-#  RewriteRule .* future/web/%1
+#  RewriteRule .* future/web/%1 [QSA]
 #  
 #  RewriteCond %{REQUEST_URI} !min/
 #  RewriteCond %{REQUEST_URI} ^/harvard-mobile(.*)$
-#  RewriteRule .* future/web/index.php?_path=%1
+#  RewriteRule .* future/web/index.php?_path=%1 [QSA]
 #
 #</IfModule>
