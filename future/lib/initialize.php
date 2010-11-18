@@ -29,6 +29,14 @@ function Initialize(&$path=null) {
   
   require_once(ROOT_DIR.'/lib/compat.php');
 
+  //
+  // Set up library autoloader
+  //
+  
+  require_once realpath(LIB_DIR.'/autoloader.php');
+  
+  spl_autoload_register("siteLibAutoloader");
+
 
   //
   // Get URL base
@@ -62,8 +70,6 @@ function Initialize(&$path=null) {
   // Load configuration files
   //    
   
-  require_once realpath(LIB_DIR.'/SiteConfig.php');
-  
   $GLOBALS['siteConfig'] = new SiteConfig();
   
   //
@@ -87,13 +93,6 @@ function Initialize(&$path=null) {
   }  
 
 
-  //
-  // Set up library autoloader
-  //
-  
-  require_once realpath(LIB_DIR.'/autoloader.php');
-  
-  spl_autoload_register("siteLibAutoloader");
 
 
   //
