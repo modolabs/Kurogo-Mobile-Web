@@ -315,15 +315,15 @@ abstract class Module {
     }
   }
   
+  public function getModuleName()
+  {
+    return $this->moduleName;
+  }
+  
   function __construct($page='index', $args=array()) {
     
-    $modules = $this->getAllModules();
-    if (isset($modules[$this->id])) {
-      $this->moduleName = $modules[$this->id]['title'];
-      $moduleData = $modules[$this->id];
-    } else {
-        throw new Exception("Module data for $this->id not found");
-    }
+    $moduleData = $this->getModuleData();
+    $this->moduleName = $moduleData['title'];
     
     $disabled = self::argVal($moduleData, 'disabled', false);
     if ($disabled) {
@@ -383,8 +383,27 @@ abstract class Module {
   // Module control functions
   //
   protected function getAllModules() {
-    $moduleConfig = Config::factory('modules', 'web');
+    $moduleConfig = ConfigFile::factory('modules', 'web');
     return $moduleConfig->getSectionVars();
+  }
+
+  public function setModuleData($moduleData)
+  {
+    $moduleConfigFile = ConfigFile::factory('modules', 'web');
+    $moduleData = array($this->id => $moduleData);
+    
+    $moduleConfigFile->addSectionVars($moduleData);
+    $moduleConfigFile->saveFile();
+  }
+  
+  public function getModuleData()
+  {
+    $modules = $this->getAllModules();
+    if (isset($modules[$this->id])) {
+        return $modules[$this->id];
+    } else {
+        throw new Exception("Module data for $this->id not found");
+    }
   }
 
   protected function getHomeScreenModules() {
@@ -517,7 +536,7 @@ abstract class Module {
       // load module config file
       $modulePageConfig = $this->loadWebAppConfigFile($this->id, "{$this->id}PageConfig", true);
     
-      $this->pageTitle = $this->moduleName;
+      $this->setPageTitle($this->moduleName);
   
       if (isset($modulePageConfig[$this->page])) {
         $pageConfig = $modulePageConfig[$this->page];
@@ -571,8 +590,9 @@ abstract class Module {
 
     if ($keyName === null) { $keyName = $name; }
     
-    $config = Config::factory($name, 'web');
+    $config = ConfigFile::factory($name, 'web');
     $GLOBALS['siteConfig']->addConfig($config);
+    
     $themeVars = $config->getSectionVars(true);
     
     if ($keyName === false) {

@@ -1,12 +1,11 @@
 <?php
 
-require_once(LIB_DIR . '/Config.php');
-
-class SiteConfig extends Config {
+class SiteConfig extends ConfigGroup {
 
   function __construct() {
     // Load main configuration file
-    $this->loadFile(MASTER_CONFIG_DIR."/config.ini");
+    $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini");
+    $this->addConfig($config);
     
     $siteDir  = realpath_exists($this->getVar('SITE_DIR'));
     $siteMode = $this->getVar('SITE_MODE');
@@ -19,20 +18,15 @@ class SiteConfig extends Config {
     define('LOG_DIR',              SITE_DIR.'/logs');
     define('SITE_CONFIG_DIR',      SITE_DIR.'/config');
 
-    $this->loadFile(SITE_CONFIG_DIR."/config.ini");
-    $this->loadFile(SITE_CONFIG_DIR."/config-$siteMode.ini");
+    $config = ConfigFile::factory(SITE_CONFIG_DIR."/config.ini");
+    $this->addConfig($config);
+
+    $config = ConfigFile::factory(SITE_CONFIG_DIR."/config-$siteMode.ini");
+    $this->addConfig($config);
     
     // Set up theme define
     define('THEME_DIR', SITE_DIR.'/themes/'.$this->getVar('ACTIVE_THEME'));
     //error_log(print_r($this->configVars, true));
   }
-    
-  public function addConfig(Config &$config)
-  {
-       parent::addConfig($config);
-       $config->addConfig($this);
-       
-       $this->addVars($config->getVars());
-       $this->addSectionVars($config->getSectionVars());
-  }
+
 }
