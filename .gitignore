@@ -1,4 +1,7 @@
 *~
+._*
+.DS_Store
+Thumbs.db
 
 opt/mitmobile/bin/*mobi-*
 opt/mitmobile/mobi-config
