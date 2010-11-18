@@ -66,10 +66,6 @@ class AdminModule extends Module {
                 $modules = $this->getAllModules();
                 $moduleData = $this->getModuleDefaultData();
 
-                if (isset($modules[$moduleID])) {
-                    $moduleData = array_merge($moduleData, $modules[$moduleID]);
-                }
-                
                 if ($this->getArg('submit')) {
                     $moduleData = array_merge($moduleData, $this->getArg('moduleData'));
                     $moduleConfigFile = ConfigFile::factory('modules', 'web');
@@ -77,7 +73,9 @@ class AdminModule extends Module {
                     
                     $moduleConfigFile->addSectionVars($moduleData);
                     $moduleConfigFile->saveFile();
-                    $this->redirectTo('modules');
+                    $this->redirectTo('modules', false, false);
+                } elseif (isset($modules[$moduleID])) {
+                    $moduleData = array_merge($moduleData, $modules[$moduleID]);
                 }
                 
                 $this->setPageTitle(sprintf("Administering %s module", $moduleData['title']));
