@@ -55,7 +55,7 @@ class AdminModule extends Module {
                 $moduleData = $module->getModuleData();
 
                 if ($this->getArg('submit')) {
-                    $moduleData = array_merge($moduleData, $this->getArg('moduleData'));
+                    $moduleData = array_merge($module->getModuleDefaultData(), $this->getArg('moduleData'));
                     $moduleConfigFile = ConfigFile::factory('modules', 'web', true);
                     $moduleConfigFile->addSectionVars(array($moduleID => $moduleData));
                     $moduleConfigFile->saveFile();

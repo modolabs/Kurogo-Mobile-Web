@@ -1,8 +1,8 @@
 <?php
 
-require_once realpath(LIB_DIR.'/Module.php');
+require_once realpath(MODULES_DIR.'/home/HomeModule.php');
 
-class CustomizeModule extends Module {
+class CustomizeModule extends HomeModule {
   protected $id = 'customize';
 
   protected function setHomeScreenModuleOrder($moduleIDs) {
