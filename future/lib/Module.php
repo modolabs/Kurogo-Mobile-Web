@@ -382,14 +382,14 @@ abstract class Module {
   //
   // Module control functions
   //
-  protected function getAllModules() {
+  protected function getAllModuleData() {
     $moduleConfig = ConfigFile::factory('modules', 'web');
     return $moduleConfig->getSectionVars();
   }
 
   public function getModuleData()
   {
-    $modules = $this->getAllModules();
+    $modules = $this->getAllModuleData();
     if (isset($modules[$this->id])) {
         return $modules[$this->id];
     } else {
@@ -398,11 +398,11 @@ abstract class Module {
   }
 
   protected function getHomeScreenModules() {
-    $modules = $this->getAllModules();
+    $moduleData = $this->getAllModuleData();
     
-    foreach ($modules as $id => $info) {
+    foreach ($moduleData as $id => $info) {
       if (!$info['homescreen'] || $info['disabled']) {
-        unset($modules[$id]);
+        unset($moduleData[$id]);
       }
     }
     
@@ -412,25 +412,25 @@ abstract class Module {
       } else {
         $visibleModuleIDs = array_flip(explode(",", $_COOKIE["visiblemodules"]));
       }
-      foreach ($modules as $moduleID => &$info) {
+      foreach ($moduleData as $moduleID => &$info) {
          $info['disabled'] = !isset($visibleModuleIDs[$moduleID]) && $info['disableable'];
       }
     }
 
     if (isset($_COOKIE["moduleorder"])) {
       $sortedModuleIDs = explode(",", $_COOKIE["moduleorder"]);
-      $unsortedModuleIDs = array_diff(array_keys($modules), $sortedModuleIDs);
+      $unsortedModuleIDs = array_diff(array_keys($moduleData), $sortedModuleIDs);
             
       $sortedModules = array();
       foreach (array_merge($sortedModuleIDs, $unsortedModuleIDs) as $moduleID) {
-        if (isset($modules[$moduleID])) {
-          $sortedModules[$moduleID] = $modules[$moduleID];
+        if (isset($moduleData[$moduleID])) {
+          $sortedModules[$moduleID] = $moduleData[$moduleID];
         }
       }
-      $modules = $sortedModules;
+      $moduleData = $sortedModules;
     }    
     //error_log('$modules(): '.print_r(array_keys($modules), true));
-    return $modules;
+    return $moduleData;
   }
   
   protected function setHomeScreenModuleOrder($moduleIDs) {

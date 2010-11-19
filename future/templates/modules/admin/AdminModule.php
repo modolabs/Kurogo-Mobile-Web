@@ -63,7 +63,7 @@ class AdminModule extends Module {
                 if (empty($moduleID)) {
                     $this->redirectTo('modules');
                 }
-                $modules = $this->getAllModules();
+                $modules = $this->getAllModuleData();
                 $moduleData = $this->getModuleDefaultData();
 
                 if ($this->getArg('submit')) {
@@ -100,7 +100,7 @@ class AdminModule extends Module {
                 break;
 
             case 'modules':
-                $allModules = $this->getAllModules();
+                $allModules = $this->getAllModuleData();
                 $moduleList = array();
 
                 foreach ($allModules as $moduleID=>$moduleData) {
