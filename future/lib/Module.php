@@ -6,6 +6,7 @@ require_once realpath(LIB_DIR.'/User.php');
 
 abstract class Module {
   protected $id = 'none';
+  protected $moduleName = '';
   
   protected $session;
   
@@ -21,8 +22,6 @@ abstract class Module {
   private $pageTitle           = 'No Title';
   private $breadcrumbTitle     = 'No Title';
   private $breadcrumbLongTitle = 'No Title';
-  
-  private $moduleName = 'No Title';
   
   private $inlineCSSBlocks = array();
   private $inlineJavascriptBlocks = array();
@@ -292,16 +291,70 @@ abstract class Module {
   // Factory function
   // instantiates objects for the different modules
   //
-  public static function factory($id, $page='index', $args=array()) {
+  public static function factory($id, $page='', $args=array()) {
     $className = ucfirst($id).'Module';
     
     $moduleFile = realpath_exists(MODULES_DIR."/$id/$className.php");
     if ($moduleFile && include_once($moduleFile)) {
-      return new $className($page, $args);
-      
+      $module = new $className();
+      if ($page) {
+          $module->factoryInit($page, $args);
+      }
+      return $module;
     } else {
       throw new PageNotFound("Module '$id' not found while handling '{$_SERVER['REQUEST_URI']}'");
     }
+   }
+   
+   public function factoryInit($page, $args)
+   {
+        $moduleData = $this->getModuleData();
+        $this->moduleName = $moduleData['title'];
+        
+        $disabled = self::argVal($moduleData, 'disabled', false);
+        if ($disabled) {
+            $this->redirectToModule('error', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
+        }
+        
+        $secure = self::argVal($moduleData, 'secure', false);
+        if ($secure && (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
+            // redirect to https (at this time, we are assuming it's on the same host)
+             $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+             header("Location:$redirect");    
+             exit();
+        }
+        
+        if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
+            $this->initSession();
+            $user = $this->getUser();
+            $this->assign('session_userID', $user->getUserID());
+            $protected = self::argVal($moduleData, 'protected', false);
+            if ($protected) {
+                if (!$this->session->isLoggedIn()) {
+                    $this->redirectToModule('error', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
+                        http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
+                }
+            }
+        }
+        
+        $this->page = $page;
+        $this->args = $args;
+        
+        $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
+        $this->platform      = $GLOBALS['deviceClassifier']->getPlatform();
+        $this->supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
+        
+        // Pull in fontsize
+        if (isset($args['font'])) {
+          $this->fontsize = $args['font'];
+          setcookie('fontsize', $this->fontsize, time() + $this->getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
+        
+        } else if (isset($_COOKIE['fontsize'])) { 
+          $this->fontsize = $_COOKIE['fontsize'];
+        }
+        
+        $this->initialize();
+  
   }
   
   protected function initSession()
@@ -320,54 +373,24 @@ abstract class Module {
     return $this->moduleName;
   }
   
-  function __construct($page='index', $args=array()) {
-    
-    $moduleData = $this->getModuleData();
-    $this->moduleName = $moduleData['title'];
-    
-    $disabled = self::argVal($moduleData, 'disabled', false);
-    if ($disabled) {
-        $this->redirectToModule('error', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
-    }
-    
-    $secure = self::argVal($moduleData, 'secure', false);
-    if ($secure && (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
-        // redirect to https (at this time, we are assuming it's on the same host)
-         $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-         header("Location:$redirect");    
-         exit();
-    }
-    
-    if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
-        $this->initSession();
-        $user = $this->getUser();
-        $this->assign('session_userID', $user->getUserID());
-        $protected = self::argVal($moduleData, 'protected', false);
-        if ($protected) {
-            if (!$this->session->isLoggedIn()) {
-                $this->redirectToModule('error', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
-                    http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
-            }
-        }
-    }
-    
-    $this->page = $page;
-    $this->args = $args;
-    
-    $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
-    $this->platform      = $GLOBALS['deviceClassifier']->getPlatform();
-    $this->supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
-    
-    // Pull in fontsize
-    if (isset($args['font'])) {
-      $this->fontsize = $args['font'];
-      setcookie('fontsize', $this->fontsize, time() + $this->getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
-    
-    } else if (isset($_COOKIE['fontsize'])) { 
-      $this->fontsize = $_COOKIE['fontsize'];
-    }
-    
-    $this->initialize();
+  protected function getModuleDefaultData()
+  {
+    return array(
+        'title'=>$this->moduleName,
+        'homescreen'=>0,
+        'primary'=>0,
+        'disabled'=>0,
+        'disableable'=>0,
+        'movable'=>0,
+        'new'=>0,
+        'search'=>0,
+        'protected'=>0,
+        'secure'=>0
+    );
+  }
+                    
+  function __construct() {
+     $this->moduleName = ucfirst($this->id);
   }
   
   //
@@ -387,68 +410,28 @@ abstract class Module {
     return $moduleConfig->getSectionVars();
   }
 
-  public function getModuleData()
-  {
-    $modules = $this->getAllModuleData();
-    if (isset($modules[$this->id])) {
-        return $modules[$this->id];
-    } else {
-        throw new Exception("Module data for $this->id not found");
-    }
-  }
-
-  protected function getHomeScreenModules() {
-    $moduleData = $this->getAllModuleData();
-    
-    foreach ($moduleData as $id => $info) {
-      if (!$info['homescreen'] || $info['disabled']) {
-        unset($moduleData[$id]);
-      }
-    }
-    
-    if (isset($_COOKIE["visiblemodules"])) {
-      if ($_COOKIE["visiblemodules"] == "NONE") {
-        $visibleModuleIDs = array();
-      } else {
-        $visibleModuleIDs = array_flip(explode(",", $_COOKIE["visiblemodules"]));
-      }
-      foreach ($moduleData as $moduleID => &$info) {
-         $info['disabled'] = !isset($visibleModuleIDs[$moduleID]) && $info['disableable'];
-      }
-    }
-
-    if (isset($_COOKIE["moduleorder"])) {
-      $sortedModuleIDs = explode(",", $_COOKIE["moduleorder"]);
-      $unsortedModuleIDs = array_diff(array_keys($moduleData), $sortedModuleIDs);
-            
-      $sortedModules = array();
-      foreach (array_merge($sortedModuleIDs, $unsortedModuleIDs) as $moduleID) {
-        if (isset($moduleData[$moduleID])) {
-          $sortedModules[$moduleID] = $moduleData[$moduleID];
+  protected function getAllModules() {
+    $d = dir(MODULES_DIR);
+    $modules = array();
+    while (false !== ($entry = $d->read())) {
+        if ($entry[0]!='.' && is_dir(sprintf("%s/%s", MODULES_DIR, $entry))) {
+            $module = Module::factory($entry);
+            $modules[$entry] = $module;
         }
-      }
-      $moduleData = $sortedModules;
-    }    
-    //error_log('$modules(): '.print_r(array_keys($modules), true));
+    }
+    ksort($modules);    
+    return $modules;        
+  }
+
+  public function getModuleData() {
+
+    $moduleData = $this->getModuleDefaultData();
+    $allModuleData = $this->getAllModuleData();
+    if (isset($allModuleData[$this->id])) {
+        $moduleData = array_merge($moduleData, $allModuleData[$this->id]);
+    }
+    
     return $moduleData;
-  }
-  
-  protected function setHomeScreenModuleOrder($moduleIDs) {
-    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
-    $value = implode(",", $moduleIDs);
-    
-    setcookie("moduleorder", $value, time() + $lifespan, COOKIE_PATH);
-    $_COOKIE["moduleorder"] = $value;
-    error_log(__FUNCTION__.'(): '.print_r($value, true));
-  }
-  
-  protected function setHomeScreenVisibleModules($moduleIDs) {
-    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
-    $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
-    
-    setcookie("visiblemodules", $value, time() + $lifespan, COOKIE_PATH);
-    $_COOKIE["visiblemodules"] = $value;
-    error_log(__FUNCTION__.'(): '.print_r($value, true));
   }
 
   //

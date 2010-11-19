@@ -5,6 +5,24 @@ require_once realpath(LIB_DIR.'/Module.php');
 class CustomizeModule extends Module {
   protected $id = 'customize';
 
+  protected function setHomeScreenModuleOrder($moduleIDs) {
+    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $value = implode(",", $moduleIDs);
+    
+    setcookie("moduleorder", $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE["moduleorder"] = $value;
+    error_log(__FUNCTION__.'(): '.print_r($value, true));
+  }
+  
+  protected function setHomeScreenVisibleModules($moduleIDs) {
+    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
+    
+    setcookie("visiblemodules", $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE["visiblemodules"] = $value;
+    error_log(__FUNCTION__.'(): '.print_r($value, true));
+  }
+
   private function handleRequest($args) {
     if (isset($args['action'])) {
       $currentModules = $this->getHomeScreenModules();

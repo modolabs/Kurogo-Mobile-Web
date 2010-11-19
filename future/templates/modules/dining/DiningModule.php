@@ -7,9 +7,6 @@ if (realpath(SITE_LIB_DIR.'/HarvardDining.php')) {
     require_once realpath(SITE_LIB_DIR.'/HarvardDiningHalls.php');
 }
 
-if (!class_exists('DiningData')) {
-    throw new Exception("Dining not configured");
-}
 
   
 class DiningModule extends Module {
@@ -30,6 +27,11 @@ class DiningModule extends Module {
   }
 
   protected function initializeForPage() {
+  
+    if (!class_exists('DiningData')) {
+        throw new Exception("Dining not configured");
+    }
+    
     switch ($this->page) {
       case 'help':
         break;

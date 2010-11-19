@@ -12,6 +12,8 @@
     <input type="checkbox" name="{$item.name}" value="1"{if $item.value} checked{/if}>
     {elseif $item.type=='submit'}
     <input type="submit" name="{$item.name}" value="{$item.value|escape}">
+    {elseif $item.type=='label'}
+    {$item.value|escape}
     {/if}
 {/block}
 {/strip}

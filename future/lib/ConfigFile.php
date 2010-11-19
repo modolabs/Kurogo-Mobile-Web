@@ -3,9 +3,14 @@
 class ConfigFile extends Config {
   protected $configs = array();
   protected $file;
+  
+  public function exists()
+  {
+    return file_exists($this->file);
+  }
 
   // loads a config object from a file/type combination  
-  public static function factory($file, $type='file', $ignoreError=false) {
+  public static function factory($file, $type='file', $createFile=false) {
 
     switch ($type)
     {
@@ -22,10 +27,8 @@ class ConfigFile extends Config {
     }
     
     $config = new ConfigFile();
-    if (!$config->loadFile(sprintf($pattern, $file))) {
-        if (!$ignoreError) {
-          error_log("ccannot load $type configuration file: $file");
-        }
+    if (!$config->loadFile(sprintf($pattern, $file), $createFile)) {
+          error_log("cannot load $type configuration file: $file");
     }
     return $config;
    }
@@ -46,9 +49,13 @@ class ConfigFile extends Config {
     return $matches[0];
   }
 
-  protected function loadFile($_file) {
+  protected function loadFile($_file, $createFile=false) {
   
      if (!$file = realpath_exists($_file)) {
+        if ($createFile) {
+            @touch($_file);
+            return $this->loadFile($_file);
+        }
         return false;
      }
      
@@ -98,6 +105,7 @@ class ConfigFile extends Config {
   }
   
   public function saveFile() {
+
     if (!is_writable($this->file)) {
         throw new Exception("Cannot save config file: $this->file Check permissions");
     }

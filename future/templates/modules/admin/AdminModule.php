@@ -9,22 +9,6 @@ class AdminModule extends Module {
 
   }
 
-  protected function getModuleDefaultData()
-  {
-    return array(
-        'title'=>'No Title',
-        'homescreen'=>0,
-        'primary'=>0,
-        'disabled'=>0,
-        'disableable'=>0,
-        'movable'=>0,
-        'new'=>0,
-        'search'=>0,
-        'protected'=>0,
-        'secure'=>0
-    );
-  }
-                    
   private function getModuleItemForKey($key, $value)
   {
     $item = array(
@@ -49,6 +33,9 @@ class AdminModule extends Module {
         case 'secure':
             $item['type'] = 'boolean';
             break;
+        case 'id':
+            $item['type'] = 'label';
+            break;
     }
 
     return $item;
@@ -63,24 +50,23 @@ class AdminModule extends Module {
                 if (empty($moduleID)) {
                     $this->redirectTo('modules');
                 }
-                $modules = $this->getAllModuleData();
-                $moduleData = $this->getModuleDefaultData();
+
+                $module = Module::factory($moduleID);
+                $moduleData = $module->getModuleData();
 
                 if ($this->getArg('submit')) {
                     $moduleData = array_merge($moduleData, $this->getArg('moduleData'));
-                    $moduleConfigFile = ConfigFile::factory('modules', 'web');
-                    $moduleData = array($moduleID => $moduleData);
-                    
-                    $moduleConfigFile->addSectionVars($moduleData);
+                    $moduleConfigFile = ConfigFile::factory('modules', 'web', true);
+                    $moduleConfigFile->addSectionVars(array($moduleID => $moduleData));
                     $moduleConfigFile->saveFile();
                     $this->redirectTo('modules', false, false);
-                } elseif (isset($modules[$moduleID])) {
-                    $moduleData = array_merge($moduleData, $modules[$moduleID]);
-                }
+                } 
                 
                 $this->setPageTitle(sprintf("Administering %s module", $moduleData['title']));
                 
-                $formListItems = array();
+                $formListItems = array(
+                    $this->getModuleItemForKey('id', $moduleID)
+                );
                 foreach ($moduleData as $key=>$value) {
                     $formListItems[] = $this->getModuleItemForKey($key, $value);
                 }
@@ -100,13 +86,13 @@ class AdminModule extends Module {
                 break;
 
             case 'modules':
-                $allModules = $this->getAllModuleData();
+                $allModules = $this->getAllModules();
                 $moduleList = array();
 
                 foreach ($allModules as $moduleID=>$moduleData) {
                     try {
                         $moduleList[] = array(
-                            'title'=>$moduleData['title'],
+                            'title'=>$moduleData->getModuleName(),
                             'url'=>$this->buildBreadcrumbURL('module', array(
                                 'moduleID'=>$moduleID
                                 )
@@ -114,12 +100,11 @@ class AdminModule extends Module {
                         );
                         $this->assign('moduleList', $moduleList);
                         
-                    } catch(Exception $e) {
-                    }
+                    } catch(Exception $e) {}
                 }
-                
             
                 break;
+
             case 'index':
                 $adminList = array();
                 $adminList[] = array(
