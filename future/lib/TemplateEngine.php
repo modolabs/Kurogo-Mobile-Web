@@ -73,10 +73,10 @@ class TemplateEngine extends Smarty {
   static private function getExtendsFile($name) {
     $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
     $platform = $GLOBALS['deviceClassifier']->getPlatform();
-
+    
     $checkDirs = array(
-      'TEMPLATES_DIR' => TEMPLATES_DIR,
       'THEME_DIR'     => THEME_DIR,
+      'TEMPLATES_DIR' => TEMPLATES_DIR,
     );
     
     foreach ($checkDirs as $type => $dir) {
