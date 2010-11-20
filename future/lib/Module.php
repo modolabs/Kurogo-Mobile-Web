@@ -540,7 +540,8 @@ abstract class Module {
       $this->setPageTitle($this->moduleName);
 
       // Load site configuration and help text
-      
+
+      $this->loadSiteConfigFile('strings', false);
       $this->loadWebAppConfigFile('help');
   
       // load module config file
@@ -598,16 +599,27 @@ abstract class Module {
     $GLOBALS['siteConfig']->addConfig($config);
     return $config;
   }
-  
+
+  protected function loadSiteConfigFile($name, $keyName=null) {
+    $config = $this->getConfig($name, 'site');
+    if ($keyName === null) { $keyName = $name; }
+
+    $this->loadConfigFile($config, $keyName);
+  }
+
   protected function loadWebAppConfigFile($name, $keyName=null) {
+    $config = $this->getConfig($name, 'web');
+    if ($keyName === null) { $keyName = $name; }
+    $this->loadConfigFile($config, $keyName);
+  }
+  
+  protected function loadConfigFile(Config $config, $keyName=null) {
     $this->loadTemplateEngineIfNeeded();
 
-    if ($keyName === null) { $keyName = $name; }
-    
-    $config = $this->getConfig($name, 'web');
     $themeVars = $config->getSectionVars(true);
     
     if ($keyName === false) {
+    
       foreach($themeVars as $key => $value) {
         $this->templateEngine->assign($key, $value);
       }

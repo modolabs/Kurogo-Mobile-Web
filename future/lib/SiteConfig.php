@@ -24,9 +24,6 @@ class SiteConfig extends ConfigGroup {
     $config = ConfigFile::factory(SITE_CONFIG_DIR."/config-$siteMode.ini");
     $this->addConfig($config);
 
-    $config = ConfigFile::factory(SITE_CONFIG_DIR."/strings.ini");
-    $this->addConfig($config);
-    
     // Set up theme define
     define('THEME_DIR', SITE_DIR.'/themes/'.$this->getVar('ACTIVE_THEME'));
     //error_log(print_r($this->configVars, true));
