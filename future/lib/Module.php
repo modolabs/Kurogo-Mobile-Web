@@ -604,13 +604,13 @@ abstract class Module {
     $config = $this->getConfig($name, 'site');
     if ($keyName === null) { $keyName = $name; }
 
-    $this->loadConfigFile($config, $keyName);
+    return $this->loadConfigFile($config, $keyName);
   }
 
   protected function loadWebAppConfigFile($name, $keyName=null) {
     $config = $this->getConfig($name, 'web');
     if ($keyName === null) { $keyName = $name; }
-    $this->loadConfigFile($config, $keyName);
+    return $this->loadConfigFile($config, $keyName);
   }
   
   protected function loadConfigFile(Config $config, $keyName=null) {
