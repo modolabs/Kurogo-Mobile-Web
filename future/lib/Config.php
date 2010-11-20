@@ -6,7 +6,7 @@ abstract class Config {
   
   abstract protected function replaceCallback($matches);
 
-  protected function addVars($vars) {
+  public function addVars($vars) {
     $this->vars = array_merge($this->vars, $vars);
   }
   

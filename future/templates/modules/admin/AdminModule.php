@@ -9,38 +9,6 @@ class AdminModule extends Module {
 
   }
 
-  private function getModuleItemForKey($key, $value)
-  {
-    $item = array(
-        'label'=>ucfirst($key),
-        'name'=>"moduleData[$key]",
-        'value'=>$value
-    );
-
-    switch ($key)
-    {
-        case 'title':
-            $item['type'] = 'text';
-            break;
-        case 'homescreen':
-        case 'primary':
-        case 'disabled':
-        case 'disableable':
-        case 'movable':
-        case 'new':
-        case 'search':
-        case 'protected':
-        case 'secure':
-            $item['type'] = 'boolean';
-            break;
-        case 'id':
-            $item['type'] = 'label';
-            break;
-    }
-
-    return $item;
-  }
-
   protected function initializeForPage() {
   
         switch ($this->page)
@@ -56,8 +24,8 @@ class AdminModule extends Module {
 
                 if ($this->getArg('submit')) {
                     $moduleData = array_merge($module->getModuleDefaultData(), $this->getArg('moduleData'));
-                    $moduleConfigFile = ConfigFile::factory('modules', 'web', true);
-                    $moduleConfigFile->addSectionVars(array($moduleID => $moduleData));
+                    $moduleConfigFile = ConfigFile::factory($moduleID, 'module', true);
+                    $moduleConfigFile->addSectionVars($moduleData);
                     $moduleConfigFile->saveFile();
                     $this->redirectTo('modules', false, false);
                 } 
@@ -68,7 +36,9 @@ class AdminModule extends Module {
                     $this->getModuleItemForKey('id', $moduleID)
                 );
                 foreach ($moduleData as $key=>$value) {
-                    $formListItems[] = $this->getModuleItemForKey($key, $value);
+                    if (is_scalar($value)) {
+                        $formListItems[] = $this->getModuleItemForKey($key, $value);
+                    }
                 }
 
                 $formListItems[] = array(
@@ -109,7 +79,6 @@ class AdminModule extends Module {
                 $adminList = array();
                 $adminList[] = array(
                     'title'=>'Modules',
-                    'subtitle'=>'Administer Module Activation and Order',
                     'url'=>$this->buildBreadcrumbURL('modules', array())
                 );
                 $this->assign('adminList', $adminList);

@@ -16,6 +16,7 @@ class ConfigFile extends Config {
     {
         case 'api':
         case 'web':
+        case 'module':
             $pattern = sprintf("%s/%s/%%s.ini", SITE_CONFIG_DIR, $type);
             break;
         case 'site':
@@ -24,6 +25,8 @@ class ConfigFile extends Config {
         case 'file':
             $pattern = "%s";
             break;
+        default:
+            throw new Exception("Invalid config type $type");
     }
     
     $config = new ConfigFile();
@@ -119,7 +122,7 @@ class ConfigFile extends Config {
                     $string[] = sprintf("%s[] = %s", $section, $this->saveValue($value));
                 }
                 $sectionData = array();
-            } else {
+            } elseif ($section != 'No Section') {
                 $string[] = sprintf("[%s]", $section);
             }
 

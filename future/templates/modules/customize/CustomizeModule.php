@@ -54,9 +54,9 @@ class CustomizeModule extends HomeModule {
             
             foreach ($currentModules as $id => &$info) {
               if ($id == $args['module']) {
-                $info['disabled'] = $args['action'] != 'on';
+                $info['visible'] = $args['action'] != 'on';
               }
-              if (!$info['disabled']) { $visibleModuleIDs[] = $id; }
+              if ($info['visible']) { $visibleModuleIDs[] = $id; }
             }
             
             $this->setHomeScreenVisibleModules($visibleModuleIDs);
@@ -79,21 +79,17 @@ class CustomizeModule extends HomeModule {
     $newCount = 0;
 
     foreach ($this->getHomeScreenModules() as $moduleID => $info) {
-      if ($info['primary']) {
-        $modules[$moduleID] = $info;
-        
-        $moduleIDs[] = $moduleID;
-        if (!$info['disabled']) { 
+        $module = Module::factory($moduleID);
+        $info['disableable'] = $module->getModuleVar('disableable');
+        if ($info['primary'] ) {
+          $modules[$moduleID] = $info;
+          $moduleIDs[] = $moduleID;
           $activeModuleIDs[] = $moduleID; 
         }
-        
-        if ($info['new']) { 
-          $newCount++; 
-        }
-      }
     }
     
-    switch($this->pagetype) {
+    
+    switch($this->pagetype)  {
       case 'compliant':
         $this->addInlineJavascript('var httpRoot = "'.COOKIE_PATH.'"');
         $this->addInlineJavascriptFooter('init();');
@@ -114,7 +110,7 @@ class CustomizeModule extends HomeModule {
       case 'basic':
         foreach ($moduleIDs as $index => $id) {
           $modules[$id]['toggleDisabledURL'] = 'index.php?'.http_build_query(array(
-            'action' => $modules[$id]['disabled'] ? 'on' : 'off',
+            'action' => $modules[$id]['visible'] ? 'on' : 'off',
             'module' => $id,
           ));
           

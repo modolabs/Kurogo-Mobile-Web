@@ -6,39 +6,56 @@ class HomeModule extends Module {
   protected $id = 'home';
   
   protected function getHomeScreenModules() {
-    $moduleData = $this->getAllModuleData();
-    
-    foreach ($moduleData as $id => $info) {
-      if (!$info['homescreen'] || $info['disabled']) {
-        unset($moduleData[$id]);
-      }
-    }
-    
+      
+    $config = ConfigFile::factory('home','module');
+    $moduleData = $config->getSectionVars(true);
+    $allVisible = true;
+
     if (isset($_COOKIE["visiblemodules"])) {
+      $allVisible = false;
       if ($_COOKIE["visiblemodules"] == "NONE") {
         $visibleModuleIDs = array();
       } else {
         $visibleModuleIDs = array_flip(explode(",", $_COOKIE["visiblemodules"]));
       }
-      foreach ($moduleData as $moduleID => &$info) {
-         $info['disabled'] = !isset($visibleModuleIDs[$moduleID]) && $info['disableable'];
-      }
+    }
+    
+    $modules = array();
+    
+    foreach ($moduleData['primary_modules'] as $moduleID=>$title) {
+        $modules[$moduleID] = array(
+            'title'=>$title,
+            'primary'=>1,
+            'disableable'=>1,
+            'visible'=>$allVisible || isset($visibleModuleIDs[$moduleID])
+        );
+    }
+
+    foreach ($moduleData['secondary_modules'] as $moduleID=>$title) {
+        $modules[$moduleID] = array(
+            'title'=>$title,
+            'primary'=>0,
+            'disableable'=>0,
+            'visible'=>1
+        );
     }
 
     if (isset($_COOKIE["moduleorder"])) {
       $sortedModuleIDs = explode(",", $_COOKIE["moduleorder"]);
-      $unsortedModuleIDs = array_diff(array_keys($moduleData), $sortedModuleIDs);
+      $unsortedModuleIDs = array_diff(array_keys($modules), $sortedModuleIDs);
             
       $sortedModules = array();
       foreach (array_merge($sortedModuleIDs, $unsortedModuleIDs) as $moduleID) {
-        if (isset($moduleData[$moduleID])) {
-          $sortedModules[$moduleID] = $moduleData[$moduleID];
+        if (isset($modules[$moduleID])) {
+          $sortedModules[$moduleID] = $modules[$moduleID];
         }
       }
-      $moduleData = $sortedModules;
-    }    
+      $modules = $sortedModules;
+    }
+  
+  
     //error_log('$modules(): '.print_r(array_keys($modules), true));
-    return $moduleData;
+    return $modules;
   }
   
      
@@ -55,22 +72,22 @@ class HomeModule extends Module {
         $secondaryModules = array();
         
         foreach ($this->getHomeScreenModules() as $id => $info) {
-          if (!$info['disabled']) {
-            $module = array(
-              'title' => $info['title'],
-              'url'   => isset($info['url']) ? $info['url'] : "/$id/",
-              'img'   => isset($info['img']) ? $info['img'] : "/modules/{$this->id}/images/$id.png",
-            );
-            if ($id == 'about' && $whatsNewCount > 0) {
-              $module['badge'] = $whatsNewCount;
+            if ($info['visible']) {
+                $module = array(
+                  'title' => $info['title'],    
+                  'url'   => isset($info['url']) ? $info['url'] : "/$id/",
+                  'img'   => isset($info['img']) ? $info['img'] : "/modules/{$this->id}/images/$id.png",
+                );
+                if ($id == 'about' && $whatsNewCount > 0) {
+                  $module['badge'] = $whatsNewCount;
+                }
+                if ($info['primary']) {
+                  $modules[] = $module;
+                } else {
+                  $module['class'] = 'utility';
+                  $secondaryModules[] = $module;
+                }
             }
-            if ($info['primary']) {
-              $modules[] = $module;
-            } else {
-              $module['class'] = 'utility';
-              $secondaryModules[] = $module;
-            }
-          }
         }
         
         if (count($modules) && count($secondaryModules)) {
@@ -88,9 +105,9 @@ class HomeModule extends Module {
         $federatedResults = array();
      
         foreach ($this->getHomeScreenModules() as $id => $info) {
-          if ($info['search']) {
+          $module = Module::factory($id);
+          if ($module->getModuleVar('search')) {
             $results = array();
-            $module = Module::factory($id, $this->page, $this->args);
             $total = $module->federatedSearch($searchTerms, 2, $results);
             $federatedResults[] = array(
               'title'   => $info['title'],

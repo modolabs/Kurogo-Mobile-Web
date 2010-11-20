@@ -8,7 +8,7 @@
   {foreach $modules as $id => $info}
     <li id="{$id}">
       {if $info['disableable']}
-        <input type="checkbox" onclick="toggle(this);"{if !$info['disabled']} checked="checked"{/if} />
+        <input type="checkbox" onclick="toggle(this);"{if $info['visible']} checked="checked"{/if} />
       {/if}
       <span class="nolink" style="background-image: url(/modules/{$moduleID}/images/{$id}-tiny.png)">
         {$info['title']}

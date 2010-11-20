@@ -272,8 +272,8 @@ abstract class Module {
 
   protected function getModuleVar($var)
   {
-      Debug::die_here();
-      return $GLOBALS['siteConfig']->getVar($var);
+     $config = $this->getModuleConfig();
+     return $config->getVar($var);
   }
   
   protected function loadFeedData()
@@ -377,17 +377,47 @@ abstract class Module {
   {
     return array(
         'title'=>$this->moduleName,
-        'homescreen'=>0,
-        'primary'=>0,
         'disabled'=>0,
         'disableable'=>0,
         'movable'=>0,
-        'new'=>0,
-        'search'=>0,
         'protected'=>0,
+        'search'=>0,
         'secure'=>0
     );
   }
+
+  protected function getModuleItemForKey($key, $value)
+  {
+    $item = array(
+        'label'=>ucfirst($key),
+        'name'=>"moduleData[$key]",
+        'value'=>$value,
+        'type'=>'text'
+    );
+
+    switch ($key)
+    {
+        case 'title':
+            $item['type'] = 'text';
+            break;
+        case 'disabled':
+        case 'disableable':
+        case 'movable':
+        case 'search':
+        case 'protected':
+        case 'secure':
+            $item['type'] = 'boolean';
+            break;
+        case 'id':
+            $item['type'] = 'label';
+            break;
+        default:
+            break;
+    }
+    
+    return $item;
+  }
+
                     
   function __construct() {
      $this->moduleName = ucfirst($this->id);
@@ -405,11 +435,6 @@ abstract class Module {
   //
   // Module control functions
   //
-  protected function getAllModuleData() {
-    $moduleConfig = ConfigFile::factory('modules', 'web');
-    return $moduleConfig->getSectionVars();
-  }
-
   protected function getAllModules() {
     $d = dir(MODULES_DIR);
     $modules = array();
@@ -423,12 +448,21 @@ abstract class Module {
     return $modules;        
   }
 
-  public function getModuleData() {
+  public function getModuleConfig() {
+    static $moduleConfig;
+    if (!$moduleConfig) {
+        $moduleConfig = $this->getConfig($this->id, 'module');
+    }
 
-    $moduleData = $this->getModuleDefaultData();
-    $allModuleData = $this->getAllModuleData();
-    if (isset($allModuleData[$this->id])) {
-        $moduleData = array_merge($moduleData, $allModuleData[$this->id]);
+    return $moduleConfig;
+  }
+
+  public function getModuleData() {
+    static $moduleData;
+    if (!$moduleData) {
+        $moduleData = $this->getModuleDefaultData();
+        $config = $this->getModuleConfig();
+        $moduleData = array_merge($moduleData, $config->getSectionVars(true));
     }
     
     return $moduleData;
@@ -503,15 +537,15 @@ abstract class Module {
   //
   private function loadPageConfig() {
     if (!isset($this->pageConfig)) {
+      $this->setPageTitle($this->moduleName);
+
       // Load site configuration and help text
-      $this->loadWebAppConfigFile('site', false);
+      
       $this->loadWebAppConfigFile('help');
   
       // load module config file
-      $modulePageConfig = $this->loadWebAppConfigFile($this->id, "{$this->id}PageConfig", true);
+      $modulePageConfig = $this->loadWebAppConfigFile($this->id, "{$this->id}PageConfig");
     
-      $this->setPageTitle($this->moduleName);
-  
       if (isset($modulePageConfig[$this->page])) {
         $pageConfig = $modulePageConfig[$this->page];
         
@@ -556,17 +590,21 @@ abstract class Module {
   }
 
   //
-  // Theme config files
+  // Config files
   //
   
-  protected function loadWebAppConfigFile($name, $keyName=null, $ignoreError=false) {
+  protected function getConfig($name, $type) {
+    $config = ConfigFile::factory($name, $type);
+    $GLOBALS['siteConfig']->addConfig($config);
+    return $config;
+  }
+  
+  protected function loadWebAppConfigFile($name, $keyName=null) {
     $this->loadTemplateEngineIfNeeded();
 
     if ($keyName === null) { $keyName = $name; }
     
-    $config = ConfigFile::factory($name, 'web');
-    $GLOBALS['siteConfig']->addConfig($config);
-    
+    $config = $this->getConfig($name, 'web');
     $themeVars = $config->getSectionVars(true);
     
     if ($keyName === false) {
