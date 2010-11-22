@@ -47,6 +47,7 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 /opt/harvardmobile/site
 /opt/harvardmobile/templates
 /opt/harvardmobile/web
+/var/www/html/.htaccess
 
 %post
 if [ "$1" = "1" ]; then # user is installing
