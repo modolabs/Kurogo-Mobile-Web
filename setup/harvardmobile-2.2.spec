@@ -33,6 +33,12 @@ cp -r $RPM_BUILD_DIR/$RPM_PACKAGE_NAME-$RPM_PACKAGE_VERSION/* $RPM_BUILD_ROOT
 %clean
 
 %files
+/var/www/html/config
+/var/www/html/doc
+/var/www/html/lib
+/var/www/html/site
+/var/www/html/templates
+/var/www/html/web
 
 %defattr(-,apache,apache,-)
 /opt/harvardmobile/config
