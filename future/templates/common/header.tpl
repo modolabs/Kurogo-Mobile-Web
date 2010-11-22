@@ -6,6 +6,9 @@
   <meta http-equiv="content-type" content="application/xhtml+xml" />
   <title>{$moduleName}{if !$isModuleHome}: {$pageTitle}{/if}</title>
   <link href="{$minify['css']}" rel="stylesheet" media="all" type="text/css"/>
+  {foreach $externalCSSURLs as $url}
+  <link href="{$url}" rel="stylesheet" media="all" type="text/css"/>
+  {/foreach}
   {foreach $inlineCSSBlocks as $css}
     <style type="text/css" media="screen">
       {$css}

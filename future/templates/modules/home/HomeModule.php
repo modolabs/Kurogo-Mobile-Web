@@ -5,7 +5,40 @@ require_once realpath(LIB_DIR.'/Module.php');
 class HomeModule extends Module {
   protected $id = 'home';
   
-  protected function getHomeScreenModules() {
+  protected function getSectionTitleForKey($key)
+  {
+    switch ($key)
+    {
+        case 'primary_modules': return 'Primary Modules';
+        case 'secondary_modules': return 'Secondary Modules';
+        default: return parent::getSectionTitleForKey($key);
+    }
+  }
+  
+  protected function prepareAdminForSection($section, &$adminModule) {
+    switch ($section)
+    {
+    
+        case 'primary_modules':
+        case 'secondary_modules':
+            $adminModule->setTemplatePage('module_order', $this->id);
+            $adminModule->addExternalJavascript(URL_BASE . "modules/{$this->id}/javascript/admin.js");
+            $adminModule->addExternalCSS(URL_BASE . "modules/{$this->id}/css/admin.css");
+
+            $allModules = $this->getAllModules();
+            $sectionModules = $this->getHomeScreenModules($section);
+
+            foreach ($allModules as $moduleID=>$module) {
+                $allModules[$moduleID] = $module->getModuleName();
+            }
+            
+            $adminModule->assign('allModules', $allModules);
+            $adminModule->assign('sectionModules', $sectionModules);
+            break;
+    }
+  }
+
+  protected function getHomeScreenModules($type=null) {
       
     $config = ConfigFile::factory('home','module');
     $moduleData = $config->getSectionVars(true);
@@ -38,6 +71,12 @@ class HomeModule extends Module {
             'disableable'=>0,
             'visible'=>1
         );
+    }
+    
+    switch ($type) {
+        case 'primary_modules':
+        case 'secondary_modules':
+            return $moduleData[$type];
     }
 
     if (isset($_COOKIE["moduleorder"])) {

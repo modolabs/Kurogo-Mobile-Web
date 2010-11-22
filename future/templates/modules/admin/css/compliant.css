@@ -2,15 +2,19 @@ label {
     display: block;
     font-weight: bold;
     float: left;
-    width: 120px;
+    width: 110px;
 }
 
-input {
-    width: 140px;
+input[type=text] {
+    width: 120px;
 }
 
 input[type=submit] {
     display: block;
     width: 240px;
     margin: 0 auto;
+}
+
+#addModuleID {
+    width: auto;
 }

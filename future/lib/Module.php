@@ -12,6 +12,9 @@ abstract class Module {
   
   protected $page = 'index';
   protected $args = array();
+
+  protected $templateModule = 'none'; 
+  protected $templatePage = 'index';
   
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
@@ -24,6 +27,7 @@ abstract class Module {
   private $breadcrumbLongTitle = 'No Title';
   
   private $inlineCSSBlocks = array();
+  private $externalCSSURLs = array();
   private $inlineJavascriptBlocks = array();
   private $inlineJavascriptFooterBlocks = array();
   private $onOrientationChangeBlocks = array();
@@ -288,6 +292,21 @@ abstract class Module {
   }
   
   //
+  // Admin Methods
+  //
+  //
+  
+  protected function prepareAdminForSection($section, $adminModule) {
+  }
+  
+  protected function saveConfig($moduleData, $section=null)
+  {
+        $moduleConfigFile = ConfigFile::factory($this->id, 'module', true);
+        $moduleConfigFile->addSectionVars($moduleData, !$section);
+        $moduleConfigFile->saveFile();
+  }
+  
+  //
   // Factory function
   // instantiates objects for the different modules
   //
@@ -338,6 +357,7 @@ abstract class Module {
         }
         
         $this->page = $page;
+        $this->setTemplatePage($this->page, $this->id);
         $this->args = $args;
         
         $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
@@ -384,6 +404,11 @@ abstract class Module {
         'search'=>0,
         'secure'=>0
     );
+  }
+  
+  protected function getSectionTitleForKey($key)
+  {
+    return $key; //should be overridden by subclasses
   }
 
   protected function getModuleItemForKey($key, $value)
@@ -474,6 +499,9 @@ abstract class Module {
   //
   protected function addInlineCSS($inlineCSS) {
     $this->inlineCSSBlocks[] = $inlineCSS;
+  }
+  protected function addExternalCSS($url) {
+    $this->externalCSSURLs[] = $url;
   }
   protected function addInlineJavascript($inlineJavascript) {
     $this->inlineJavascriptBlocks[] = $inlineJavascript;
@@ -571,6 +599,14 @@ abstract class Module {
       }
     }
   }
+  
+  protected function setTemplatePage($page, $moduleID=null)
+  {
+    $moduleID = is_null($moduleID) ? $this->id : $moduleID;
+    $this->templatePage = $page;
+    $this->templateModule = $moduleID;
+  }
+  
   
   // Programmatic overrides for titles generated from backend data
   protected function setPageTitle($title) {
@@ -689,6 +725,7 @@ abstract class Module {
 
     // Variables which may have been modified by the module subclass
     $this->assign('inlineCSSBlocks', $this->inlineCSSBlocks);
+    $this->assign('externalCSSURLs', $this->externalCSSURLs);
     $this->assign('inlineJavascriptBlocks', $this->inlineJavascriptBlocks);
     $this->assign('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
     $this->assign('onLoadBlocks', $this->onLoadBlocks);
@@ -710,7 +747,7 @@ abstract class Module {
       $helpConfig = $this->getTemplateVars('help');
       $this->assign('hasHelp', isset($helpConfig[$this->id]));
       
-      $template = 'modules/'.$this->id.'/'.$this->page;
+      $template = 'modules/'.$this->templateModule.'/'.$this->templatePage;
     }
     
     // Pager support

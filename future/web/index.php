@@ -60,7 +60,34 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
       }        
     }
   }
+} else if (preg_match(';^.*(modules|common)(/.*(javascript|css))/(.*)$;', $path, $matches)) {
+  $file = $matches[4];
 
+  $platform = $GLOBALS['deviceClassifier']->getPlatform();
+  $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
+  
+  $testDirs = array(
+    SITE_DIR.'/'.$matches[1].$matches[2],
+    TEMPLATES_DIR.'/'.$matches[1].$matches[2]
+  );
+
+  $testFiles = array(
+    "$pagetype-$platform/$file",
+    "$pagetype/$file",
+    "$file",
+  );
+  
+  foreach ($testDirs as $dir) {
+    foreach ($testFiles as $file) {
+      $file = realpath_exists("$dir/$file");
+      if ($file) {
+      
+        header("Content-type: text/" . $matches[3]);
+        readfile($file);
+        exit;
+      }        
+    }
+  }
 } else if (preg_match(';^.*media/(.*)$;', $path, $matches)) {
   //
   // Media
