@@ -24,13 +24,18 @@ class AdminModule extends Module {
                 $moduleSections = array();
                 
                 if ($section = $this->getArg('section')) {
+                    
+                    if ($section=='feeds' && $feedData = $module->loadFeedData()) {
+                        $moduleData['feeds'] = $feedData;
+                    }
+                
                     if (isset($moduleData[$section])) {
                         $module->prepareAdminForSection($section, $this);
                     } else {
                         $section = null;
                     }
                 }
-                
+
                 if ($this->getArg('submit')) {
                     $merge = $this->getArg('merge', true);
                     if ($merge) {
@@ -38,9 +43,13 @@ class AdminModule extends Module {
                     } else {
                         $moduleData = $this->getArg('moduleData');
                     }                    
-                    
+
                     $module->saveConfig($moduleData, $section);
-                    $this->redirectTo('modules', false, false);
+                    if ($section) {
+                        $this->redirectTo('module', array('moduleID'=>$moduleID), false);
+                    } else {
+                        $this->redirectTo('modules', false, false);
+                    }
                 } 
                 
                 $this->setPageTitle(sprintf("Administering %s module", $moduleData['title']));
@@ -73,6 +82,17 @@ class AdminModule extends Module {
                             )
                         );
                     }
+
+                    if ($module->loadFeedData()) {
+                        $formListItems[] = array(
+                            'type'=>'url',
+                            'name'=>'Data Configuration',
+                            'value'=>$this->buildBreadcrumbURL('module', array(
+                                'moduleID'=>$moduleID,
+                                'section'=>'feeds')
+                            )
+                        );
+                    }
                 }
                 
                 $module = array(
@@ -91,6 +111,7 @@ class AdminModule extends Module {
                 foreach ($allModules as $moduleID=>$moduleData) {
                     try {
                         $moduleList[] = array(
+                            'img'=>"/modules/home/images/{$moduleID}.png",
                             'title'=>$moduleData->getModuleName(),
                             'url'=>$this->buildBreadcrumbURL('module', array(
                                 'moduleID'=>$moduleID
@@ -103,12 +124,24 @@ class AdminModule extends Module {
                 }
             
                 break;
+            case 'site':
+
+                if ($this->getArg('submit')) {
+                    //$module->saveConfig($moduleData, $section);
+                    $this->redirectTo('index', false, false);
+                } 
+            
+                break;
 
             case 'index':
                 $adminList = array();
                 $adminList[] = array(
                     'title'=>'Modules',
                     'url'=>$this->buildBreadcrumbURL('modules', array())
+                );
+                $adminList[] = array(
+                    'title'=>'Site Configuration',
+                    'url'=>$this->buildBreadcrumbURL('site', array())
                 );
                 $this->assign('adminList', $adminList);
                 break;

@@ -1,12 +1,10 @@
 label {
     display: block;
     font-weight: bold;
-    float: left;
-    width: 110px;
 }
 
 input[type=text] {
-    width: 120px;
+    width: 90%;
 }
 
 input[type=submit] {

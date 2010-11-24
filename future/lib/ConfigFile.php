@@ -17,6 +17,7 @@ class ConfigFile extends Config {
         case 'api':
         case 'web':
         case 'module':
+        case 'feeds':
             $pattern = sprintf("%s/%s/%%s.ini", SITE_CONFIG_DIR, $type);
             break;
         case 'site':
@@ -122,7 +123,7 @@ class ConfigFile extends Config {
                     $string[] = sprintf("%s[] = %s", $section, $this->saveValue($value));
                 }
                 $sectionData = array();
-            } elseif ($section != 'No Section') {
+            } elseif ($section !== 'No Section') {
                 $string[] = sprintf("[%s]", $section);
             }
 

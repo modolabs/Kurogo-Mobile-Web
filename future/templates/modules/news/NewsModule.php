@@ -70,6 +70,17 @@ class NewsModule extends Module {
         return '';
     }
   }
+
+  protected function prepareAdminForSection($section, &$adminModule) {
+    switch ($section)
+    {
+        case 'feeds':
+            $feeds = $this->loadFeedData();
+            $adminModule->assign('feeds', $feeds);
+            $adminModule->setTemplatePage('feedAdmin', $this->id);
+            break;
+    }
+  }
   
   public function getFeeds()
   {

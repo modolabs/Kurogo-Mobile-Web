@@ -256,6 +256,19 @@ class CalendarModule extends Module {
       'timeframe' => '0',
     ), false);
   }
+  
+  protected function prepareAdminForSection($section, &$adminModule) {
+    switch ($section)
+    {
+        case 'feeds':
+            $feeds = $this->loadFeedData();
+            $adminModule->assign('feeds', $feeds);
+            $adminModule->assign('showFeedLabels', true);
+            $adminModule->setTemplatePage('feedAdmin', $this->id);
+            break;
+    }
+  }
+  
 
   protected function getFeedTitle($index)
   {

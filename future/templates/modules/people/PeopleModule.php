@@ -139,6 +139,38 @@ class PeopleModule extends Module {
     }
     return count($people);
   }
+
+/*
+[people]
+CONTROLLER_CLASS        = "LDAPDataController"
+HOST                    = "phonebook.harvard.edu"
+SEARCH_BASE             = "o=Harvard University,c=US"
+#PERSON_CLASS           = "LDAPPerson"
+*/
+
+  protected function prepareAdminForSection($section, &$adminModule) {
+    switch ($section)
+    {
+        case 'feeds':
+            $feeds = $this->loadFeedData();
+            $adminModule->assign('feeds', $feeds);
+            $adminModule->setTemplatePage('feedAdmin', $this->id);
+            $formListItems = array();
+            foreach ($feeds as $feed=>$data) {
+                foreach ($data as $key=>$value) {
+                    $formListItems[] = array(
+                        'label'=>$key,
+                        'type'=>'text',
+                        'name'=>sprintf("moduleData[feeds][%s][%s]", $feed, $key),
+                        'value'=>$value
+                    );
+                }
+            }
+            
+            $adminModule->assign('peopleAdminListItems', $formListItems);
+            break;
+    }
+  }
   
   protected function getFeed($index)
   {
