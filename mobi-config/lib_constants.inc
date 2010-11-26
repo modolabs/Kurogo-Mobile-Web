@@ -39,6 +39,9 @@ define("MAP_TILE_CACHE_DATE", '/opt/mitmobile/maptiles/tiles_updated.txt');
 // dining
 define('PATH_TO_DINING_HRS', '/opt/mitmobile/static/DiningHours');
 
+//libraries
+define('URL_LIBRARIES_INFO', 'http://faulkner.hul.harvard.edu:9020/rest/lib/info');
+
 // news_office
 define('NEWS_SEARCH_URL', 'http://news.harvard.edu/gazette/');
 
