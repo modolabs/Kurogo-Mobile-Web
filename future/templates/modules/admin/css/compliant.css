@@ -16,3 +16,9 @@ input[type=submit] {
 #addModuleID {
     width: auto;
 }
+
+.advancedFeedFields {
+    display: none;
+    margin-left: 0;
+    padding-left: 0;
+}

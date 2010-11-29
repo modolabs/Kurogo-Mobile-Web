@@ -8,6 +8,7 @@ abstract class Module {
   protected $id = 'none';
   protected $moduleName = '';
   protected $hasFeeds = false;
+  protected $feedFields = array();
   
   protected $session;
   
@@ -284,6 +285,11 @@ abstract class Module {
   public function hasFeeds()
   {
      return $this->hasFeeds;
+  }
+  
+  public function getFeedFields()
+  {
+     return $this->feedFields;
   }
   
   public function removeFeed($index)

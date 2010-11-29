@@ -15,6 +15,20 @@
          <label>URL</label>
          <input type="text" name="moduleData[feeds][{$key}][BASE_URL]" value="{$item.BASE_URL|escape}" />
       </li>
+{if $feedFields}
+      <li>
+         <a href="#" onclick='toggleAdvancedFields()'>Show Advanced Fields</a>
+         <ul class="advancedFeedFields">
+         {foreach $feedFields as $field=>$label}
+      <li>
+         <label>{$label}</label>
+         <input type="text" name="moduleData[feeds][{$key}][{$field}]" value="{$item.$field|escape}" />
+      </li>
+{/foreach}
+         </ul>
+
+      </li>
+{/if}
       {if $showDelete}
       <li>
          <a href="{$feedURL}&amp;removeFeed={$key}" onclick="return(confirm('Are you sure you want to delete this feed?'));">Remove Feed</a>

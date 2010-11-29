@@ -11,6 +11,7 @@ class CalendarModule extends Module {
   protected $feeds = array();
   protected $hasFeeds = true;
   protected $timezone;
+  protected $feedFields = array('CONTROLLER_CLASS'=>'Controller Class','PARSER_CLASS'=>'Parser Class');
 
   private $searchOptions = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
@@ -269,7 +270,6 @@ class CalendarModule extends Module {
             break;
     }
   }
-  
 
   protected function getFeedTitle($index)
   {

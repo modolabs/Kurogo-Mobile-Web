@@ -43,6 +43,7 @@ class AdminModule extends Module {
                                 'moduleID'=>$moduleID,
                                 'section'=>$section),false
                             ));
+                        $this->assign('feedFields', $module->getFeedFields());
                     }
                 
                     if (isset($moduleData[$section])) {

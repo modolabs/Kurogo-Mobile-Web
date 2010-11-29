@@ -10,6 +10,7 @@ class NewsModule extends Module {
   protected $id = 'news';
   protected $hasFeeds = true;
   protected $feeds = array();
+  protected $feedFields = array('CONTROLLER_CLASS'=>'Controller Class','ITEM_CLASS'=>'Item Class', 'ENCLOSURE_CLASS'=>'Enclosure Class');
   private $feedIndex=0;
   protected $feed;
   protected $maxPerPage;
