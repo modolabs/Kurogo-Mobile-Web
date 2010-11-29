@@ -9,6 +9,12 @@ abstract class Config {
   public function addVars($vars) {
     $this->vars = array_merge($this->vars, $vars);
   }
+
+  /* used when you completely want to replace all sections */
+  public function setSectionVars($sectionVars)
+  {
+     $this->sectionVars = $sectionVars;
+  }
   
   /* merges together config variables by section */
   public function addSectionVars($sectionVars, $merge=true) {
