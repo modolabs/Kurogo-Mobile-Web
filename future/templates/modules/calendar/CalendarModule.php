@@ -9,6 +9,7 @@ define('DAY_SECONDS', 24*60*60);
 class CalendarModule extends Module {
   protected $id = 'calendar';
   protected $feeds = array();
+  protected $hasFeeds = true;
   protected $timezone;
 
   private $searchOptions = array(

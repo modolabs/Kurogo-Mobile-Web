@@ -8,6 +8,7 @@ if (!function_exists('mb_substr')) {
 
 class NewsModule extends Module {
   protected $id = 'news';
+  protected $hasFeeds = true;
   protected $feeds = array();
   private $feedIndex=0;
   protected $feed;

@@ -7,6 +7,7 @@ require_once realpath(LIB_DIR.'/User.php');
 abstract class Module {
   protected $id = 'none';
   protected $moduleName = '';
+  protected $hasFeeds = false;
   
   protected $session;
   
@@ -280,6 +281,50 @@ abstract class Module {
      return $config->getVar($var);
   }
   
+  public function hasFeeds()
+  {
+     return $this->hasFeeds;
+  }
+  
+  public function removeFeed($index)
+  {
+       $feedData = $this->loadFeedData();
+       if (isset($feedData[$index])) {
+           unset($feedData[$index]);
+           if (is_numeric($index)) {
+              $feedData = array_values($feedData);
+           }
+           
+           $this->saveConfig(array('feeds'=>$feedData), 'feeds');
+           
+       }
+  }
+  
+  public function addFeed($newFeedData, &$error=null)
+  {
+       $feedData = $this->loadFeedData();
+       if (!isset($newFeedData['TITLE']) || empty($newFeedData['TITLE'])) {
+         $error = "Feed Title cannot be blank";
+         return false;
+       }
+
+       if (!isset($newFeedData['BASE_URL']) || empty($newFeedData['BASE_URL'])) {
+         $error = "Feed URL cannot be blank";
+         return false;
+       }
+       
+       if (isset($newFeedData['LABEL'])) {
+          $label = $newFeedData['LABEL'];
+          unset($newFeedData['LABEL']);
+          $feedData[$label] = $newFeedData;
+       } else {
+          $feedData[] = $newFeedData;
+       }
+       
+       return $this->saveConfig(array('feeds'=>$feedData), 'feeds');
+       
+  }
+  
   protected function loadFeedData()
   {
     $data = null;
@@ -306,9 +351,11 @@ abstract class Module {
         
         if ($section=='feeds') {
             $moduleData = $moduleData[$section];
+            $moduleConfigFile->setSectionVars($moduleData);
+        } else {
+            $moduleConfigFile->addSectionVars($moduleData, !$section);
         }
         
-        $moduleConfigFile->addSectionVars($moduleData, !$section);
         $moduleConfigFile->saveFile();
   }
   

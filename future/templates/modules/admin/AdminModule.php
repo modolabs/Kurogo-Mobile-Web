@@ -25,8 +25,24 @@ class AdminModule extends Module {
                 
                 if ($section = $this->getArg('section')) {
                     
-                    if ($section=='feeds' && $feedData = $module->loadFeedData()) {
-                        $moduleData['feeds'] = $feedData;
+                    if ($section=='feeds' && $module->hasFeeds()) {
+                        if (strlen($this->getArg('removeFeed'))>0) {
+                            $index = $this->getArg('removeFeed');
+                            $module->removeFeed($index);
+                        }
+
+                        if ($this->getArg('addFeed')) {
+                            $feedData = $this->getArg('addFeedData');
+                            if (!$module->addFeed($feedData, $error)) {
+                                $this->assign('errorMessage', $error);
+                            }
+                        }
+
+                        $moduleData['feeds'] = $module->loadFeedData();
+                        $this->assign('feedURL', $this->buildBreadcrumbURL('module', array(
+                                'moduleID'=>$moduleID,
+                                'section'=>$section),false
+                            ));
                     }
                 
                     if (isset($moduleData[$section])) {
@@ -83,7 +99,7 @@ class AdminModule extends Module {
                         );
                     }
 
-                    if ($module->loadFeedData()) {
+                    if ($module->hasFeeds()) {
                         $formListItems[] = array(
                             'type'=>'url',
                             'name'=>'Data Configuration',

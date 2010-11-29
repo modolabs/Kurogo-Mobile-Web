@@ -8,6 +8,7 @@ class PeopleModule extends Module {
   private $detailFields = array();
   private $detailAttributes = array();
   protected $feeds=array();
+  protected $hasFeeds = true;
   
   private function formatValues($values, $info) {
     if (isset($info['parse'])) {
