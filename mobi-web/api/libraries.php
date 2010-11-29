@@ -11,11 +11,11 @@ require_once LIBDIR . '/LibrariesInfo.php';
 
 switch ($_REQUEST['command']) {
     case 'libraries':
-        $data = Libraries::getAllLibrariesOrArchives('Library');
+        $data = Libraries::getAllLibraries();
         break;
 
     case 'archives':
-        $data = Libraries::getAllLibrariesOrArchives('archive');
+        $data = Libraries::getAllArchives();
         break;
     
     }

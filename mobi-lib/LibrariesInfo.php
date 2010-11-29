@@ -5,13 +5,21 @@ require_once 'html2text.php';
 
 class Libraries{
 
-    public static function getAllLibrariesOrArchives($librariesOrArchives) {
 
-        $institutes = array();
+    public static function getAllLibraries() {
 
+       $xmlURLPath = URL_LIBRARIES_INFO;
 
-        $xmlURLPath = URL_LIBRARIES_INFO;
-        $xml = file_get_contents($xmlURLPath);
+      $filenm = LIB_DIR .'/librariesInfo.xml';
+      if (file_exists($filenm) && ((time() - filemtime($filenm)) < LIB_DIR_CACHE_TIMEOUT)) {
+      }
+      else {
+          $handle = fopen($filenm, "w");
+          fwrite($handle, file_get_contents($xmlURLPath));
+          //$urlString = $filenm;
+      }
+
+      $xml = file_get_contents($filenm);
 
         if ($xml == "") {
             // if failed to grab xml feed, then run the generic error handler
@@ -19,7 +27,39 @@ class Libraries{
         }
 
         $xml_obj = simplexml_load_string($xml);
-        
+        return self::getAllLibrariesOrArchives('Library', $xml_obj);
+    }
+
+
+    public static function getAllArchives() {
+
+        $xmlURLPath = URL_LIBRARIES_INFO;
+
+      $filenm = LIB_DIR .'/librariesInfo.xml';
+      if (file_exists($filenm) && ((time() - filemtime($filenm)) < LIB_DIR_CACHE_TIMEOUT)) {
+      }
+      else {
+          $handle = fopen($filenm, "w");
+          fwrite($handle, file_get_contents($xmlURLPath));
+          //$urlString = $filenm;
+      }
+
+      $xml = file_get_contents($filenm);
+
+        if ($xml == "") {
+            // if failed to grab xml feed, then run the generic error handler
+            throw new DataServerException('COULD NOT GET XML');
+        }
+
+        $xml_obj = simplexml_load_string($xml);
+        return self::getAllLibrariesOrArchives('archive', $xml_obj);
+    }
+
+
+    public static function getAllLibrariesOrArchives($librariesOrArchives, $xml_obj) {
+
+        $institutes = array();
+       
         $count = 0;
          foreach ($xml_obj->institution as $institution) {
 
@@ -33,8 +73,11 @@ class Libraries{
                  $timeOpen = "N/A";
              }
 
-             
              $isOpen = self::isOpenNow($timeOpen);
+             /*print($institution->id[0]);
+             print("     ");
+             print($timeOpenToSend);
+             print("<br>");*/
             
              $type = explode(":",$institution->type[0]);
              $type = $type[0];
@@ -83,6 +126,9 @@ class Libraries{
 
                $isEndAM = self::isAM($endString);
                $isEndPM = self::isPM($endString);
+
+               $startTime = $startString;
+               $endTime = $endString;
 
                if ($isStartAM){
                    $sPos = strpos($startString, 'am');
@@ -135,11 +181,32 @@ class Libraries{
                    $endMins = (int)$endTimeArray[1];
                }
 
-               if ($isStartPM)
+               if (($isStartPM) && ($startHrs != 12))
                    $startHrs += 12;
 
-               if ($isEndPM)
+               if (($isEndPM) && ($startHrs != 12))
                    $endHrs += 12;
+
+
+               $posNOON_start = strpos($startString, "noon");
+
+               if ($posNOON_start > 0)
+                   $startHrs = 12;
+
+               $posMIDNIGHT_start = strpos($startString, "midnight");
+
+               if ($posMIDNIGHT_start > 0)
+                   $startHrs = 0;
+
+               $posNOON_end = strpos($endString, "noon");
+
+               if ($posNOON_end > 0)
+                   $endHrs = 12;
+
+               $posMIDNIGHT_end= strpos($endString, "midnight");
+
+               if ($posMIDNIGHT_start > 0)
+                   $endHrs = 24;
 
 
                $start = 60*((int)$startHrs) +((int)$startMins);
@@ -149,7 +216,22 @@ class Libraries{
                $nowMins = date('i');
 
                $now = 60*$nowHrs + $nowMins;
-              /* print("satrtHrs = ");
+
+               /*print("startTime = ");
+               print($startTime);
+               print('<br>');               
+               print("startTimeArray = ");
+               print_r($startTimeArray);
+               print('<br>');
+
+               print("endTime = ");
+               print($endTime);
+               print('<br>');
+               print("endTimeArray = ");
+               print_r($endTimeArray);
+               print('<br>');
+
+               print("satrtHrs = ");
                print($startHrs);
                print("startMins = ");
                print($startMins);
@@ -159,8 +241,17 @@ class Libraries{
                print("endMins = ");
                print($endMins);
                print('<br>');
-               */
+               print("nowHrs = ");
+               print($nowHrs);
+               print("nowMins = ");
+               print($nowMins);
+               print('<br>');
 
+               if ($isStartPM)
+               print("isStartPM = YES");
+               
+               print('<br>');
+               */
 
                if (($now > $start) && ($now < $end)){
                    return "YES";
