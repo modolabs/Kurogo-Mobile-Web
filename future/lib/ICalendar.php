@@ -392,22 +392,22 @@ class ICalEvent extends ICalObject {
       $rulevalue = $namevalue[1];
       switch ($rulename) {
       case 'FREQ': // always present
-    $this->incrementor = $incrementors[$rulevalue];
-    break;
+        $this->incrementor = $incrementors[$rulevalue];
+        break;
       case 'INTERVAL':
-    $this->interval = $rulevalue;
+        $this->interval = $rulevalue;
         break;
       case 'UNTIL':
-    $limit_type = 'UNTIL';
-    $this->until = ICalendar::ical2unix($rulevalue);
-    break;
+        $limit_type = 'UNTIL';
+        $this->until = ICalendar::ical2unix($rulevalue);
+        break;
       case 'COUNT':
-    $limit_type = 'COUNT';
-    $limit = $rulevalue;
-    break;
+        $limit_type = 'COUNT';
+        $limit = $rulevalue;
+        break;
       case (substr($rulename, 0, 2) == 'BY'):
-    $occurs_by_list[$rulename] = explode(',', $rulevalue);
-    break;
+        $occurs_by_list[$rulename] = explode(',', $rulevalue);
+        break;
       }
     }
     // finished reading attributes from rrule_string
@@ -430,33 +430,45 @@ class ICalEvent extends ICalObject {
       // act on each "by frequency" rule in order of decreasing grain size
 
       if (array_key_exists($byfreq, $occurs_by_list)) {
-    $new_occur_unit = Array();
+        $new_occur_unit = Array();
 
-    // every "when" within the "by frequency"
-    // e.g. MO,TU,WE for BYDAY
-    // needs to be a separate element of the occurrence set
-    foreach($occurs_by_list[$byfreq] as $when) {
-      $occurs_when = ($byfreq == 'BYDAY') ? ICalendar::$dayIndex[$when] : $when;
+        // every "when" within the "by frequency"
+        // e.g. MO,TU,WE for BYDAY
+        // needs to be a separate element of the occurrence set
+        foreach($occurs_by_list[$byfreq] as $when) {
+            if ($byfreq=='BYDAY') {
+                if (isset(ICalendar::$dayIndex[$when])) {
+                    $occurs_when = ICalendar::$dayIndex[$when];
+                } elseif (preg_match("/^(-?\d)([A-Z]{2})$/", $when, $bits) && isset(ICalendar::$dayIndex[$bits[2]])) {
+                    // this is broken for now
+                    $occurs_when = ICalendar::$dayIndex[$bits[2]];
+                } else {
+                   // ???
+                }
+            } else {
+                $occurs_when = $when;
+            }
 
-      // if the set of occurrences already has multiple elements
-      // they will be multiplied
-      // e.g. MO,TU for BYDAY and 1,2,3 for BYMONTH
-      // yields 6 elements in the occurence set
-      foreach ($occur_unit as $start) {     
-        $count = 0; // for debugging below
-        while (intval(date($attribs['format'], $start)) != $occurs_when) {
-          $start = call_user_func($attribs['func'], $start);
-
-          // haven't seen this happen yet but who knows
-          if ($count > 366) {
-        throw new ICalendarException("maximum loop count exceeded");
+          // if the set of occurrences already has multiple elements
+          // they will be multiplied
+          // e.g. MO,TU for BYDAY and 1,2,3 for BYMONTH
+          // yields 6 elements in the occurence set
+          foreach ($occur_unit as $start) {     
+            $count = 0; // for debugging below
+            while (intval(date($attribs['format'], $start)) != $occurs_when) {
+              $start = call_user_func(array('ICalendar',$attribs['func']), $start);
+    
+              // haven't seen this happen yet but who knows
+              if ($count > 366) {
+            throw new ICalendarException("maximum loop count exceeded");
+              }
+              $count += 1;
+            }
+            $new_occur_unit[] = $start;
           }
-          $count += 1;
         }
-        $new_occur_unit[] = $start;
-      }
-    }
-    $occur_unit = $new_occur_unit;
+
+        $occur_unit = $new_occur_unit;
       }
     }
 
@@ -465,12 +477,12 @@ class ICalEvent extends ICalObject {
       $new_occur_unit = Array();
       $setposlist = $occurs_by_list['BYSETPOS'];
       foreach ($setposlist as $setpos) {
-    if ($setpos < 0) {
-      $setpos = count($occur_unit) + $setpos;
-    } else {
-      $setpos = $setpos - 1;
-    }
-    $new_occur_unit[] = $occur_unit[$setpos];
+        if ($setpos < 0) {
+          $setpos = count($occur_unit) + $setpos;
+        } else {
+          $setpos = $setpos - 1;
+        }
+        $new_occur_unit[] = $occur_unit[$setpos];
       }
       $occur_unit = $new_occur_unit;
     }
@@ -483,8 +495,8 @@ class ICalEvent extends ICalObject {
       $num_increments = $limit / count($this_occurrences);
       $end = end($occur_unit);
       while ($num_increments > 0) {
-    $end = $this->incrementor($end);
-    $num_increments -= 1;
+        $end = $this->incrementor($end);
+        $num_increments -= 1;
       }
       $this->until = $end;
     }
@@ -672,6 +684,66 @@ class ICalendar extends ICalObject {
         $output_string .= 'END:VCALENDAR';
         return $output_string;
   }
+
+    function increment_second($date, $numseconds=1) {
+      return $date + $numseconds;
+    }
+    
+    function increment_minute($date, $nummins=1) {
+      return $date + 60 * $nummins;
+    }
+    
+    function increment_hour($date, $numhours=1) {
+      return $date + 3600 * $numhours;
+    }
+    
+    function increment_day($date, $numdays=1) {
+        $hour = date('H', $date);
+        $min = date('i', $date);
+        $sec = date('s', $date);
+
+        for ($i=0; $i<$numdays; $i++) {
+            $date = mktime(0, 0, 0, date('m', $date), date('d', $date), date('Y', $date)) + 100800; //advance well within the next day
+        }
+        
+        $return = mktime($hour, $min, $sec, date('m', $date), date('d', $date), date('Y', $date));
+        return $return;
+    }
+    
+    function increment_week($date, $numweeks=1) {
+        return ICalendar::increment_day($date, 7 * $numweeks);
+    }
+    
+    function increment_year($date, $numyears=1) {
+      return mktime(
+       date('H', $date),
+       date(trim('i', '0'), $date),
+       date(trim('s', '0'), $date),
+       date('n', $date),
+       date('d', $date),
+       date('Y', $date) + $numyears
+       );
+    }
+    
+    function increment_month($date, $nummonths=1) {
+      $month = date('n', $date) + $nummonths;
+      if ($month > 12) {
+        $remainder = $month % 12;
+        $year = date('Y', $date) + ($month - $remainder) / 12;
+        $month = $remainder;
+      } else {
+        $year = date('Y', $date);
+      }
+    
+      return mktime(
+        date('H', $date),
+        date(trim('i', '0'), $date),
+        date(trim('s', '0'), $date),
+        $month,
+        date('d', $date),
+        $year
+        );
+    }
 
 }
 
