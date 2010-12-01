@@ -357,6 +357,14 @@ abstract class Module {
         
         if ($section=='feeds') {
             $moduleData = $moduleData[$section];
+            // clear out empty values
+            foreach ($moduleData as $feed=>$feedData) {
+                foreach ($feedData as $var=>$value) {
+                    if (strlen($value)==0) {
+                        unset($moduleData[$feed][$var]);
+                    }
+                }
+            }
             $moduleConfigFile->setSectionVars($moduleData);
         } else {
             $moduleConfigFile->addSectionVars($moduleData, !$section);
