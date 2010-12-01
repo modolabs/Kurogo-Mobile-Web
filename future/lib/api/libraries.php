@@ -7,7 +7,7 @@
  *
  *****************************************************************/
 
-require_once LIBDIR . '/LibrariesInfo.php';
+require_once realpath(LIB_DIR.'/feeds/LibrariesInfo.php');
 
 switch ($_REQUEST['command']) {
     case 'libraries':

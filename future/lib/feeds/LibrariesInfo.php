@@ -1,17 +1,18 @@
 <?php
 
-require_once 'lib_constants.inc';
-require_once 'html2text.php';
+//require_once 'lib_constants.inc';
+require_once realpath(LIB_DIR.'/feeds/html2text.php');
 
 class Libraries{
 
-
     public static function getAllLibraries() {
 
-       $xmlURLPath = URL_LIBRARIES_INFO;
+      $xmlURLPath = $GLOBALS['siteConfig']->getVar('URL_LIBRARIES_INFO');
 
-      $filenm = LIB_DIR .'/librariesInfo.xml';
-      if (file_exists($filenm) && ((time() - filemtime($filenm)) < LIB_DIR_CACHE_TIMEOUT)) {
+      error_log("LIBRARIES DEBUG: " . $xmlURLPath);
+      $filenm = $GLOBALS['siteConfig']->getVar('LIB_CACHE_DIR').'/librariesInfo.xml';
+
+      if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('LIB_DIR_CACHE_TIMEOUT'))) {
       }
       else {
           $handle = fopen($filenm, "w");
@@ -33,10 +34,12 @@ class Libraries{
 
     public static function getAllArchives() {
 
-        $xmlURLPath = URL_LIBRARIES_INFO;
+      $xmlURLPath = $GLOBALS['siteConfig']->getVar('URL_LIBRARIES_INFO');
 
-      $filenm = LIB_DIR .'/librariesInfo.xml';
-      if (file_exists($filenm) && ((time() - filemtime($filenm)) < LIB_DIR_CACHE_TIMEOUT)) {
+      error_log("LIBRARIES DEBUG: " . $xmlURLPath);
+      $filenm = $GLOBALS['siteConfig']->getVar('LIB_CACHE_DIR').'/librariesInfo.xml';
+
+      if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('LIB_DIR_CACHE_TIMEOUT'))) {
       }
       else {
           $handle = fopen($filenm, "w");
@@ -112,11 +115,12 @@ class Libraries{
 
        public static function getOpenNow() {
 
-        $xmlURLPath = URL_LIBRARIES_INFO;
+        $xmlURLPath = $GLOBALS['siteConfig']->getVar('URL_LIBRARIES_INFO');
 
-        $filenm = LIB_DIR . '/librariesInfo.xml';
-        if (file_exists($filenm) && ((time() - filemtime($filenm)) < LIB_DIR_CACHE_TIMEOUT)) {
+        error_log("LIBRARIES DEBUG: " . $xmlURLPath);
+        $filenm = $GLOBALS['siteConfig']->getVar('LIB_CACHE_DIR').'/librariesInfo.xml';
 
+        if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('LIB_DIR_CACHE_TIMEOUT'))) {
         } else {
             $handle = fopen($filenm, "w");
             fwrite($handle, file_get_contents($xmlURLPath));
@@ -168,20 +172,24 @@ class Libraries{
 
        public static function getLibraryDetails($libId, $libName){
 
-        $xmlURLPath = URL_LIB_DETAIL_BASE . $libId;
+       $xmlURLPath = $GLOBALS['siteConfig']->getVar('URL_LIB_DETAIL_BASE'). $libId;
 
-        $filenm = LIB_DIR . '/lib-' .$libId. $libName . '.xml';
-        if (file_exists($filenm) && ((time() - filemtime($filenm)) < LIB_DIR_CACHE_TIMEOUT*24)) {
+        error_log("LIBRARIES DEBUG: " . $xmlURLPath);
 
-        } else {
+        $filenm = $GLOBALS['siteConfig']->getVar('LIB_CACHE_DIR'). '/lib-' .$libId. $libName . '.xml';
+
+        if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('LIB_DIR_CACHE_TIMEOUT')*24)) {
+        }
+       else {
             $handle = fopen($filenm, "w");
             fwrite($handle, file_get_contents($xmlURLPath));
             //$urlString = $filenm;
         }
 
-        $xml = file_get_contents($filenm);
+        //$xml = file_get_contents($filenm);
+         
 
-        //$xml = file_get_contents($xmlURLPath);
+        $xml = file_get_contents($xmlURLPath);
 
         if ($xml == "") {
             // if failed to grab xml feed, then run the generic error handler
@@ -197,19 +205,22 @@ class Libraries{
 
        public static function getArchiveDetails($archiveId, $archiveName){
 
-        $xmlURLPath = URL_ARCHIVE_DETAIL_BASE . $archiveId;
+       $xmlURLPath = $GLOBALS['siteConfig']->getVar('URL_ARCHIVE_DETAIL_BASE'). $archiveId;
 
-        $filenm = LIB_DIR . '/archive-' .$archiveId. $archiveName . '.xml';
-        if (file_exists($filenm) && ((time() - filemtime($filenm)) < LIB_DIR_CACHE_TIMEOUT*24)) {
+        error_log("LIBRARIES DEBUG: " . $xmlURLPath);
 
-        } else {
+        $filenm = $GLOBALS['siteConfig']->getVar('LIB_CACHE_DIR'). '/lib-' .$archiveId. $archiveName . '.xml';
+
+        if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('LIB_DIR_CACHE_TIMEOUT')*24)) {
+        }
+       else {
             $handle = fopen($filenm, "w");
             fwrite($handle, file_get_contents($xmlURLPath));
             //$urlString = $filenm;
         }
 
         $xml = file_get_contents($filenm);
-         
+
         //$xml = file_get_contents($xmlURLPath);
 
         if ($xml == "") {
