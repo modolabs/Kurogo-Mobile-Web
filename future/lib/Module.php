@@ -353,7 +353,7 @@ abstract class Module {
   protected function saveConfig($moduleData, $section=null)
   {
         $type = $section == 'feeds' ? 'feeds' : 'module';
-        $moduleConfigFile = ConfigFile::factory($this->id, $section, true);
+        $moduleConfigFile = ConfigFile::factory($this->id, $type, true);
         
         if ($section=='feeds') {
             $moduleData = $moduleData[$section];
