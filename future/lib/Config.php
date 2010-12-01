@@ -60,13 +60,17 @@ abstract class Config {
     }
   }
 
-  public function getSection($key) {
+  public function getSection($key, $log_error=true) {
 
     if (isset($this->sectionVars[$key])) {
       return $this->sectionVars[$key];
     }
     
-    error_log(__FUNCTION__."(): config section '$key' not set");
+    if ($log_error) {
+        $bt = debug_backtrace();
+        $call = sprintf("%s:%s", $bt[0]['file'], $bt[0]['line']);
+        error_log(__FUNCTION__."(): config section '$key' not set (Called $call)");
+    }
     
     return null;
   }
@@ -82,7 +86,7 @@ abstract class Config {
       return $value;
   }
   
-  public function getVar($key, $expand = true) {
+  public function getVar($key, $expand = true, $log_error=true) {
     if (isset($this->vars[$key])) {
         $value = $this->vars[$key];
         if ($expand) {
@@ -92,7 +96,11 @@ abstract class Config {
         return $value;
     }
     
-    error_log(__FUNCTION__."(): config variable '$key' not set");
+    if ($log_error) {
+        $bt = debug_backtrace();
+        $call = sprintf("%s:%s", $bt[0]['file'], $bt[0]['line']);
+        error_log(__FUNCTION__."(): config variable '$key' not set (Called $call)");
+    }
     
     return null;
   }

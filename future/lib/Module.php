@@ -266,14 +266,14 @@ abstract class Module {
   //
   // Configuration
   //
-  protected function getSiteVar($var)
+  protected function getSiteVar($var, $log_error=true)
   {
-      return $GLOBALS['siteConfig']->getVar($var);
+      return $GLOBALS['siteConfig']->getVar($var, true, $log_error);
   }
 
-  protected function getSiteSection($var)
+  protected function getSiteSection($var, $log_error=true)
   {
-      return $GLOBALS['siteConfig']->getSection($var);
+      return $GLOBALS['siteConfig']->getSection($var, $log_error);
   }
 
   protected function getModuleVar($var)
@@ -777,10 +777,11 @@ abstract class Module {
     // Minify URLs
     $this->assign('minify', $this->getMinifyUrls());
     
-    // Google Analytics
-    $gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID');
-    $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
-    $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
+    // Google Analytics. This probably needs to be moved
+    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', false)) {
+        $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
+        $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
+    }
     
     // Breadcrumbs
     $this->loadBreadcrumbs();
