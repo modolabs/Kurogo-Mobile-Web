@@ -18,19 +18,29 @@ abstract class Config {
   
   /* merges together config variables by section */
   public function addSectionVars($sectionVars, $merge=true) {
-
+    $first = true;
+    
     foreach ($sectionVars as $var=>$value) {
         if (!is_array($value)) {
             $_var = $var;
             $var = 'No Section';
             $value = array($_var=>$value);
+            if ($first && !$merge) {
+                $this->sectionVars['No Section'] = array();
+            }
         }
         
-        if (isset($this->sectionVars[$var]) && is_array($this->sectionVars[$var]) && $merge) {
-            $this->sectionVars[$var] = array_merge($this->sectionVars[$var], $value);
+        if ($merge || $var=='No Section') {
+            if (isset($this->sectionVars[$var]) && is_array($this->sectionVars[$var])) {
+                $this->sectionVars[$var] = array_merge($this->sectionVars[$var], $value);
+            } else {
+                $this->sectionVars[$var] = $value;
+            }
         } else {
             $this->sectionVars[$var] = $value;
         }
+        
+        $first = false;
     }
   }
 

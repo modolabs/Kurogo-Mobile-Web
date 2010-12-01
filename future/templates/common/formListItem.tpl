@@ -4,10 +4,13 @@
       {$item['label']}{if $labelColon|default:true}:{/if}
     </label>
 {/if}
+    <input type="hidden" name="_type[{$item.typename|default:$item.name}]" value="{$item.type}" />
 {block name="itemLink"}
     {$item['title']}
     {if $item.type=='text'}
     <input type="text" name="{$item.name}" value="{$item.value|escape}" />
+    {elseif $item.type=='paragraph'}
+    <textarea name="{$item.name}" cols="28" rows="8">{$item.value|escape}</textarea>
     {elseif $item.type=='boolean'}
     <input type="checkbox" name="{$item.name}" value="1"{if $item.value} checked{/if} />
     {elseif $item.type=='submit'}

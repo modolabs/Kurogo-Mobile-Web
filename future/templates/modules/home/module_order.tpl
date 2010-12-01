@@ -19,6 +19,7 @@
     <li>
         <div class="deletehandle"></div> 
         <label>{$_moduleID}</label> 
+        <input type="hidden" name="_type[moduleData][{$section}][{$_moduleID}]" value="text" />
         <input type="text" name="moduleData[{$section}][{$_moduleID}]" value="{$moduleTitle|escape}" />
         <span class="movebuttons">
             <div class="moveup"></div>

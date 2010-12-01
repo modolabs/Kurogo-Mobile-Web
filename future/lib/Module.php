@@ -483,6 +483,7 @@ abstract class Module {
     $item = array(
         'label'=>ucfirst($key),
         'name'=>"moduleData[$key]",
+        'typename'=>"moduleData][$key",
         'value'=>$value,
         'type'=>'text'
     );

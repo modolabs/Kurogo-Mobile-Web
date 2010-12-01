@@ -8,6 +8,57 @@ class AdminModule extends Module {
   protected function initialize() {
 
   }
+  
+  /* submit values are affected by the _type specifiers */
+  protected function prepareSubmitData($key)
+  {
+    if (!$var = $this->getArg($key)) {
+        //couldn't find the variable
+        return false;
+    } elseif (!$type = $this->getArg('_type')) {
+        DEbug::die_here();
+        return $var;
+    }
+    
+    if (!is_array($var)) {
+        $type = isset($type[$key]) ? $type[$key] : null;
+        DEbug::die_here();
+        return $this->prepareSubmitValue($var, $type);
+    } elseif (!isset($type[$key])) {
+        DEbug::die_here();
+        return $var;
+    }
+    
+    $types = $type[$key];
+    foreach ($types as $key=>$type) {
+        $value = isset($var[$key]) ? $var[$key] : null;
+        $var[$key] = $this->prepareSubmitValue($value, $type);
+    }
+
+    return $var;    
+  }
+
+ protected function prepareSubmitValue($value, $type)
+ {
+    switch ($type)
+    {
+        case 'paragraph':
+            //convert CRLF to LF, then CR to LF (i.e. normalize line endings)
+            $value = is_null($value) ? '' : explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $value));
+            break;
+        case 'boolean':
+            $value = is_null($value) ? 0 : $value;
+            break;
+        case 'text':
+            $value = is_null($value) ? '' : $value;
+            break;
+        default:
+            $value = is_null($value) ? null : $value;
+            break;
+    }
+    
+    return $value;
+ }
 
   protected function initializeForPage() {
   
@@ -141,6 +192,41 @@ class AdminModule extends Module {
                 }
             
                 break;
+            case 'strings':
+                if ($this->getArg('submit')) {
+                    //$module->saveConfig($moduleData, $section);
+                    $strings = $this->prepareSubmitData('strings');
+                    $configFile = $this->getConfig('strings', 'site');
+                    $configFile->addSectionVars($strings, false);
+                    $configFile->saveFile();
+                    $this->redirectTo('index', false, false);
+                } 
+
+                $config = $this->getConfig('strings', 'site');
+                $strings = $config->getSectionVars(true);
+                $formListItems = array();
+                foreach ($strings as $key=>$value) {
+                    if (is_scalar($value)) {
+                        $formListItems[] = array(
+                        'label'=>$key,
+                        'name'=>"strings[$key]",
+                        'typename'=>"strings][$key",
+                        'value'=>$value,
+                        'type'=>'text'
+                        );
+                    } else {
+                        $formListItems[] = array(
+                        'label'=>$key,
+                        'name'=>"strings[$key]",
+                        'typename'=>"strings][$key",
+                        'value'=>implode("\n\n", $value),
+                        'type'=>'paragraph'
+                        );
+                    }
+                }
+                $this->assign('strings', $strings);
+                $this->assign('formListItems', $formListItems);
+                break;
             case 'site':
 
                 if ($this->getArg('submit')) {
@@ -159,6 +245,10 @@ class AdminModule extends Module {
                 $adminList[] = array(
                     'title'=>'Site Configuration',
                     'url'=>$this->buildBreadcrumbURL('site', array())
+                );
+                $adminList[] = array(
+                    'title'=>'String Configuration',
+                    'url'=>$this->buildBreadcrumbURL('strings', array())
                 );
                 $this->assign('adminList', $adminList);
                 break;

@@ -117,7 +117,9 @@ class ConfigFile extends Config {
       $string = array();
       foreach ($this->sectionVars as $section=>$sectionData) {
         if (is_array($sectionData)) {
-            $string[] = '';
+            if (count($string)>0) {
+                $string[] = '';
+            }
             if (isset($sectionData[0])) {
                 foreach ($sectionData as $value) {
                     $string[] = sprintf("%s[] = %s", $section, $this->saveValue($value));
