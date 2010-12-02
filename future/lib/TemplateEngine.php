@@ -75,8 +75,8 @@ class TemplateEngine extends Smarty {
     $platform = $GLOBALS['deviceClassifier']->getPlatform();
     
     $checkDirs = array(
-      'THEME_DIR'     => THEME_DIR,
       'TEMPLATES_DIR' => TEMPLATES_DIR,
+      'THEME_DIR'     => THEME_DIR
     );
     
     foreach ($checkDirs as $type => $dir) {
