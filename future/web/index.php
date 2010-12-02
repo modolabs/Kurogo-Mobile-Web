@@ -18,7 +18,7 @@ Initialize($path);
 if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
   $icon = realpath_exists(THEME_DIR.'/common/images/favicon.ico');
   if ($icon) {
-    header('Content-type: '.mime_content_type($icon));
+    header('Content-type: '.mime_type($icon));
     echo file_get_contents($icon);
     exit;
   }
@@ -54,12 +54,17 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
     foreach ($testFiles as $file) {
       $image = realpath_exists("$dir/$file");
       if ($image) {
-        header('Content-type: '.mime_content_type($image));
+        header('Content-type: '.mime_type($image));
         echo file_get_contents($image);
         exit;
       }        
     }
   }
+  
+    // image not found
+  header("HTTP/1.0 404 Not Found");
+  exit;
+
 } else if (preg_match(';^.*(modules|common)(/.*(javascript|css))/(.*)$;', $path, $matches)) {
   $file = $matches[4];
 
@@ -88,6 +93,11 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
       }        
     }
   }
+  
+  // image not found
+  header("HTTP/1.0 404 Not Found");
+  exit;
+
 } else if (preg_match(';^.*media/(.*)$;', $path, $matches)) {
   //
   // Media
@@ -95,11 +105,11 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
 
   $media = realpath_exists(SITE_DIR."/media/$matches[1]");
   if ($media) {
-    header('Content-type: '.mime_content_type($media));
+    header('Content-type: '.mime_type($media));
     echo file_get_contents($media);
     exit;
   }
-
+  
 } else if (preg_match(';^.*(sample/.*)$;', $path, $matches)) {
   //
   // Sample Files

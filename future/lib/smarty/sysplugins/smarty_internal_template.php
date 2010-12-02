@@ -417,12 +417,19 @@ class Smarty_Internal_Template extends Smarty_Internal_Data {
                         $resource_type = null;
                         $resource_name = null;
                         foreach ($this->properties['file_dependency'] as $_file_to_check) {
-                            If ($_file_to_check[2] == 'file' || $_file_to_check[2] == 'extends' || $_file_to_check[2] == 'php') {
+                            If (
+                                isset($_file_to_check[2]) &&
+                                ($_file_to_check[2] == 'file' || $_file_to_check[2] == 'extends' || $_file_to_check[2] == 'php')
+                            ) {
                                 $mtime = filemtime($_file_to_check[0]);
                             } else {
                             	$this->getResourceTypeName($_file_to_check[0], $resource_type, $resource_name);
                                 $resource_handler = $this->loadTemplateResourceHandler($resource_type);
-                                $mtime = $resource_handler->getTemplateTimestampTypeName($resource_type, $resource_name);
+                                if(method_exists($resource_handler, 'getTemplateTimestampTypeName')){
+                                    $mtime = $resource_handler->getTemplateTimestampTypeName($resource_type, $resource_name);
+                                } else {
+                                    $mtime = time();
+                                }
                             } 
                             // If ($mtime != $_file_to_check[1]) {
                             If ($mtime > $_file_to_check[1]) {

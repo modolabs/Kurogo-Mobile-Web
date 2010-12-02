@@ -55,7 +55,31 @@ class ErrorModule extends Module {
     }
     
     $this->assign('navImageID', 'about');
-    $this->assign('message', $error['message']);
+    if($this->devError() === false){
+      $this->assign('message', $error['message']);
+    } else {
+      $this->assign('message', $this->devError());
+    }
     $this->assign('url', $url);
   }
+  
+  protected function devError() {
+    
+    // production
+    if($GLOBALS['siteConfig']->getVar('USE_PRODUCTION_ERROR_HANDLER'))
+      return false;
+      
+    //check for development errors
+    if(isset($_GET['error'])){
+      $file = $path =  CACHE_DIR . "/errors/" . $_GET['error'] . ".log";
+      if(file_exists($file) && $handle = fopen($file, "r")){
+        $msg = fread($handle, filesize($file));
+        fclose($handle);
+        return $msg;
+      }
+    }
+    
+    return false;
+  }
+  
 }

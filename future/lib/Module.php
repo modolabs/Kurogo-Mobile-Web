@@ -379,17 +379,23 @@ abstract class Module {
   //
   public static function factory($id, $page='', $args=array()) {
     $className = ucfirst($id).'Module';
+
+    $modulePaths = array(
+      THEME_DIR."/modules/$id/Theme{$className}.php"=>"Theme" .$className,
+      MODULES_DIR."/$id/$className.php"=>$className
+    );
     
-    $moduleFile = realpath_exists(MODULES_DIR."/$id/$className.php");
-    if ($moduleFile && include_once($moduleFile)) {
-      $module = new $className();
-      if ($page) {
-          $module->factoryInit($page, $args);
+    foreach($modulePaths as $path=>$className){ 
+      $moduleFile = realpath_exists($path);
+      if ($moduleFile && include_once($moduleFile)) {
+        $module = new $className();
+        if ($page) {
+            $module->factoryInit($page, $args);
+        }
+        return $module;
       }
-      return $module;
-    } else {
-      throw new PageNotFound("Module '$id' not found while handling '{$_SERVER['REQUEST_URI']}'");
     }
+    throw new PageNotFound("Module '$id' not found while handling '{$_SERVER['REQUEST_URI']}'");
    }
    
    public function factoryInit($page, $args)
