@@ -493,12 +493,190 @@ class Libraries{
                }
                else
                    return "NO";
-           }
-       
+           }       
        }
 
 
-       public static function isPM ($timeString) {
+       public static function searchItems($queryTerms) {
+
+        $xmlURLPath = $GLOBALS['siteConfig']->getVar('URL_LIBRARIES_SEARCH_BASE') . 'q=' . urlencode($queryTerms);
+
+        //print($xmlURLPath);
+        /*
+          error_log("LIBRARIES SEARCH DEBUG: " . $xmlURLPath);
+          $filenm = $GLOBALS['siteConfig']->getVar('LIB_CACHE_DIR').'search-' .$queryTerms .'.xml';
+
+          if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('LIB_DIR_CACHE_TIMEOUT'))) {
+          }
+          else {
+          $handle = fopen($filenm, "w");
+          fwrite($handle, file_get_contents($xmlURLPath));
+          //$urlString = $filenm;
+          }
+
+          $xml = file_get_contents($filenm);
+         */
+        $xml = file_get_contents($xmlURLPath);
+        //print_r(json_encode($xml));
+
+        if ($xml == "") {
+            // if failed to grab xml feed, then run the generic error handler
+            throw new DataServerException('COULD NOT GET XML');
+        }
+
+        $xml_obj = simplexml_load_string($xml);
+        //print_r($xml_obj);
+
+        $totalResults = explode(":", $xml_obj->totalResults[0]);
+        $totalResults = $totalResults[0];
+
+        $searchResults = array();
+
+
+        foreach ($xml_obj->resultSet->item as $result) {
+
+            $item = $result;
+            $itemIndex = explode(":",$item['position']);
+            $itemIndex = $itemIndex[0];
+            $itemId = explode(":",$item['id']);
+            $itemId = $itemId[0];
+
+            $editionArray = explode(":", $item->edition);
+            $edition = $editionArray[0];
+            for ($j = 1; $j < count($editionArray); $j++) {
+                $edition = $edition . ":" . $editionArray[$j];
+            }
+
+            $namespaces = $result->getNameSpaces(true);
+            $dc = $item->children($namespaces['dc']);
+
+
+            $creatorArray = explode(":", $dc->creator);
+            $creator = $creatorArray[0];
+            for ($i = 1; $i < count($creatorArray); $i++) {
+                $creator = $creator . ":" . $creatorArray[$i];
+            }
+
+            $titleArray = explode(":", $dc->title);
+            $title = $titleArray[0];
+            for ($j = 1; $j < count($titleArray); $j++) {
+                $title = $title . ":" . $titleArray[$j];
+            }
+
+            $dateArray = explode(":", $dc->date);
+            $date = $dateArray[0];
+            for ($k = 1; $k < count($dateArray); $k++) {
+                $date = $date . ":" . $dateArray[$k];
+            }
+
+
+            $format = array();
+
+            foreach ($dc->format as $formats) {
+                $type = "";
+                $val = "";
+                if ($formats->attributes()) {
+
+                    foreach ($formats->attributes() as $tp => $value) {
+                        $type = $tp;
+                        $val = explode(":", $value);
+                        $val = $val[0];
+                    }
+                }
+
+                $formatArray = explode(":", $formats[0]);
+                $fm = $formatArray[0];
+                for ($k = 1; $k < count($formatArray); $k++) {
+                    $fm = $fm . ":" . $formatArray[$k];
+                }
+
+                if (strlen($val) > 0) {
+                    $format['type'] = $val;
+                    $format['typeDetail'] = $fm;
+                }
+                else
+                    $format['formatDetail'] = $fm;
+            }
+
+            $isOnline = "NO";
+            $isFigure = "NO";
+            $onlineAvailabilityArray = array();
+            foreach($dc->identifier as $identifier){
+
+                $idenType = "";
+                $idenValue = "";
+                $idenLink = "";
+                foreach ($identifier->attributes() as $idenTp => $idenVal){
+                        $idenType = $idenTp;
+                        $valA = explode(":", $idenVal);
+                        $idenValue = $valA[0];
+
+                        $idenArray = explode(":", $identifier[0]);
+                        $idenLink = $idenArray[0];
+                        for ($k = 1; $k < count($idenArray); $k++) {
+                            $idenLink = $idenLink . ":" . $idenArray[$k];
+                        }
+
+                        for($r=1; $r<count($valA); $r++){
+                            $idenValue = $idenValue . ":" .$valA[$r];
+                        }
+
+                        if ($idenValue == "NET")
+                            $isOnline = "YES";
+
+                        else if ($idenValue == "FIG")
+                            $isFigure = "YES";
+
+                        
+                }
+
+                $onlineavail = array();
+                $onlineavail['type'] = $idenValue;
+                $onlineavail['link'] = $idenLink;
+
+                $onlineAvailabilityArray[] = $onlineavail;
+            }
+
+
+            $resultArray = array();
+            $resultArray['index'] = $itemIndex;
+            $resultArray['itemId'] = $itemId;
+            $resultArray['creator'] = $creator;
+            $resultArray['title'] = $title;
+            $resultArray['date'] = $date;
+            $resultArray['edition'] = $edition;
+            $resultArray['format'] = $format;
+            $resultArray['isFigure'] = $isFigure;
+            $resultArray['isOnline'] = $isOnline;
+            $resultArray['otherAvailability'] = $onlineAvailabilityArray;
+
+
+            $searchResults[] = $resultArray;
+
+           /* print($itemIndex);
+            print("<br>");
+            print($itemId);
+            print("<br>");
+            print($edition);
+            print("<br>");
+            print($creator);
+            print("<br>");
+            print($date);
+            print("<br>");
+            print($title);
+            print("<br>");
+            print_r($format);
+            print("<br>");
+            //print($type);
+            print("<br>");
+           // print($val);
+            print("<br>");*/
+        }
+
+        return $searchResults;
+    }
+
+    public static function isPM ($timeString) {
 
         $posPM = strpos($timeString,'pm');
 

@@ -32,6 +32,13 @@ switch ($_REQUEST['command']) {
         $archiveId = urldecode($_REQUEST['id']);
         $archiveName = urldecode($_REQUEST['name']);
         $data = Libraries::getArchiveDetails($archiveId, $archiveName);
+        break;
+
+    case 'search':
+        $queryTerms = $_REQUEST['q'];
+        $data = Libraries::searchItems($queryTerms);
+        break;
+
 }
 
     echo json_encode($data);
