@@ -19,7 +19,7 @@ if (isset($_REQUEST['command'])) {
      $feeds = $module->getFeeds();
      $feed_labels = array();
      foreach ($feeds as $feedData) {
-        $feed_labels[] = $feedData['title'];
+        $feed_labels[] = $feedData['TITLE'];
      }
 
      $content = json_encode($feed_labels);
