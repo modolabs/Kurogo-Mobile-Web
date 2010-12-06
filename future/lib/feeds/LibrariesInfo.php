@@ -309,6 +309,8 @@ class Libraries{
 
                   $weeklyHours = array();
 
+                  $hrsOpenToday = "closed";
+                  $today = date('l');
                     foreach ($institution->dailyhours as $hours) {
                         $openHours = array();
 
@@ -329,6 +331,9 @@ class Libraries{
                         $openHours['hours'] = $dayHours;
 
                         $weeklyHours[] = $openHours;
+
+                        if ($day == $today)
+                            $hrsOpenToday = $dayHours;
                   }
 
 
@@ -340,6 +345,7 @@ class Libraries{
                   $details['email'] = $email;
                   $details['phone'] = $phoneNumberArray;
                   $details['weeklyHours'] = $weeklyHours;
+                  $details['hrsOpenToday'] = $hrsOpenToday;
 
             return $details;
            
@@ -501,10 +507,8 @@ class Libraries{
 
         $xmlURLPath = $GLOBALS['siteConfig']->getVar('URL_LIBRARIES_SEARCH_BASE') . 'q=' . urlencode($queryTerms);
 
-        //print($xmlURLPath);
-        /*
           error_log("LIBRARIES SEARCH DEBUG: " . $xmlURLPath);
-          $filenm = $GLOBALS['siteConfig']->getVar('LIB_CACHE_DIR').'search-' .$queryTerms .'.xml';
+          $filenm = $GLOBALS['siteConfig']->getVar('LIB_CACHE_DIR').'/search-' .$queryTerms .'.xml';
 
           if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('LIB_DIR_CACHE_TIMEOUT'))) {
           }
@@ -515,8 +519,8 @@ class Libraries{
           }
 
           $xml = file_get_contents($filenm);
-         */
-        $xml = file_get_contents($xmlURLPath);
+         
+       // $xml = file_get_contents($xmlURLPath);
         //print_r(json_encode($xml));
 
         if ($xml == "") {
