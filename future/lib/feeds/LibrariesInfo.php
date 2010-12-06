@@ -680,6 +680,164 @@ class Libraries{
         return $searchResults;
     }
 
+
+
+    public static function getFullAvailability($itemId) {
+         $xmlURLPath = $GLOBALS['siteConfig']->getVar('URL_LIBRARIES_AVAILABILITY_BASE') . $itemId;
+
+          error_log("LIBRARIES FULL AVAILABILITY DEBUG: " . $xmlURLPath);
+          $filenm = $GLOBALS['siteConfig']->getVar('LIB_CACHE_DIR').'/fullAvailability-' .$itemId .'.xml';
+
+          if (file_exists($filenm) && ((time() - filemtime($filenm)) < $GLOBALS['siteConfig']->getVar('LIB_DIR_CACHE_TIMEOUT'))) {
+          }
+          else {
+          $handle = fopen($filenm, "w");
+          fwrite($handle, file_get_contents($xmlURLPath));
+          //$urlString = $filenm;
+          }
+
+          $xml = file_get_contents($filenm);
+
+          
+          $xml_obj = simplexml_load_string($xml);
+          
+          $librariesToReturn = array();
+        foreach ($xml_obj->branch as $branch) {
+
+            $libName = explode(":", $branch->library->name[0]);
+            $libId = explode(":", $branch->library->id[0]);
+
+            $collection = $branch->collection;
+            $parentCallNumber = "";
+            $parentCallNumber = explode(":",$collection->callnumber);
+
+            $itemsToReturn = array();
+            $statsList = array();
+            foreach($collection->items->itemrecord as $item){
+
+                $isAvailable = "N";
+                $callNumber = "";
+                $stat = "";
+                $reqUrl = "";
+                
+                $itemArray = array();
+                $isAvailable = explode(":", $item->isavail);
+                $callNumber = explode(":", $item->call);
+                $stat = explode(":", $item->stat);
+                $req = explode(":", $item->req->url);
+                $reqUrl = $req[0];
+
+                for($i=1; $i < count($req); $i++)
+                    $reqUrl = $reqUrl . $req[$i];
+
+                if ($isAvailable[0] == "Y")
+                    $itemArray['available'] = "YES";
+                else
+                     $itemArray['available'] = "NO";
+
+                if (strlen($callNumber[0]) > 0)
+                    $itemArray['callNumber'] = $callNumber[0];
+
+                else
+                    $itemArray['callNumber'] = $parentCallNumber[0];
+
+                
+                $stA = explode(" | ", $stat[0]);
+
+                $itemArray['statMain'] = strtolower($stA[0]);
+                $itemArray['statSecondary'] = strtolower($stA[1]);
+                $itemArray['requestUrl'] = $reqUrl;
+
+                if (strtolower($stA[1]) == 'checked out')
+                    $itemArray['checkedOutItem'] = "YES";
+                else
+                    $itemArray['checkedOutItem'] = "NO";
+
+                if (($itemArray['available'] == "NO") && (strlen($itemArray['requestUrl']) == 0))
+                    $itemArray['unavailable'] = "YES";
+                else
+                    $itemArray['unavailable'] = "NO";
+
+                if ((strlen($itemArray['requestUrl']) > 0))
+                    $itemArray['canRequest'] = "YES";
+                else
+                     $itemArray['canRequest'] = "NO";
+
+                $itemsToReturn[] = $itemArray;
+
+                if (!in_array(strtolower($stA[0]), $statsList)){
+                    $statsList[] = strtolower($stA[0]);
+                }
+                
+            }
+
+            $statsToReturn = array();
+            for($j=0; $j < count($statsList); $j++){
+            $statArr = array();
+            $statArr['availableItems'] = array();
+            $statArr['checkedOutItems'] = array();
+            $statArr['unavailableItems'] = array();
+            $availCount = 0;
+            $requestCount = 0;
+            $unavailCount = 0;
+            $checkedOutCount = 0;
+            $callNo = "";
+             $statArr['statMain'] = $statsList[$j];
+                foreach($itemsToReturn as $itm){
+                    if ($itm['statMain'] == $statsList[$j]){
+
+                        if ($itm['available'] == 'YES')
+                            $availCount++;
+
+                        if (strlen($itm['requestUrl']) > 0)
+                            $requestCount++;
+
+                        if ($itm['unavailable'] == 'YES')
+                            $unavailCount++;
+
+
+                        if ($itm['checkedOutItem'] == 'YES')
+                            $checkedOutCount++;
+
+                        $callNo = $itm['callNumber'];
+                        //$statArr['items'][] = $itm;
+
+                        if ($itm['available'] == 'YES') {
+                            $statArr['availableItems'][] = $itm;
+                        }
+
+                        else if ($itm['checkedOutItem'] == "YES")
+                            $statArr['checkedOutItems'][] = $itm;
+
+                        else
+                            $statArr['unavailableItems'][] = $itm;
+
+                    }
+                }
+               
+                $statArr['availCount'] = $availCount;
+                $statArr['unavailCount'] = $unavailCount;
+                $statArr['requestCount'] = $requestCount;
+                $statArr['checkedOutCount'] = $checkedOutCount;
+                $statArr['callNumber'] = $callNo;
+
+                $statsToReturn[] = $statArr;
+            }
+
+            $lib = array();
+            $lib['name'] = $libName[0];
+            $lib['id'] = $libId[0];
+            //$lib['items'] = $itemsToReturn;
+            $lib['itemsByStat'] = $statsToReturn;
+
+            $librariesToReturn[] = $lib;
+        }
+
+        return $librariesToReturn;
+    }
+
+
+
     public static function isPM ($timeString) {
 
         $posPM = strpos($timeString,'pm');

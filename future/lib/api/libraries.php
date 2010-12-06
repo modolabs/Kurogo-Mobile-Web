@@ -39,6 +39,11 @@ switch ($_REQUEST['command']) {
         $data = Libraries::searchItems($queryTerms);
         break;
 
+    case 'fullavailability':
+        $itemid = urldecode($_REQUEST['itemid']);
+        $data = Libraries::getFullAvailability($itemid);
+        break;
+
 }
 
     echo json_encode($data);
