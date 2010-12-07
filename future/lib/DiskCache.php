@@ -178,6 +178,7 @@ class DiskCache {
   public function getAge($filename=NULL) {
     if ($this->exists($filename)) {
       $path = $this->getFullPath($filename);
+      clearstatcache();
       return time() - filemtime($path);
     }
     return PHP_INT_MAX;
