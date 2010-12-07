@@ -150,11 +150,15 @@ class NewsModule extends Module {
             }
         }
         
-        $shareUrl = "mailto:@?".http_build_query(array(
+        $placeholder = ''; 
+        if ($this->pagetype == 'basic' && $this->platform == 'blackberry') {
+          $placeholder = '@'; // Some old blackberries don't like empty email links
+        }
+        $shareUrl = "mailto:{$placeholder}?".http_build_query(array(
           "subject" => $story->getTitle(),
           "body"    => $story->getDescription()."\n\n".$story->getLink()
         ));
-        // mailto url's do nor respect '+' (as space) so we convert to %20
+        // mailto url's do not respect '+' (as space) so we convert to %20
         $shareUrl = str_replace('+', '%20', $shareUrl);
 
         $pubDate = strtotime($story->getProperty("pubDate"));
