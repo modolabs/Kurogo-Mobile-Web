@@ -6,6 +6,7 @@ class SiteConfig {
   private $webAppVars = array();
   private $apiVars = array();
   
+  static private $testVars = null;
 
   public function loadWebAppFile($name, $section = true, $ignoreError = false) {
     if (!in_array($name, array_keys($this->webAppVars))) {
@@ -102,25 +103,28 @@ class SiteConfig {
   
   // -------------------------------------------------------------------------
   
-  private static function _replaceVariables(&$config) {
+  private static function _replaceVariablesCallback($matches) {
+    if (isset(self::$testVars[$matches[1]])) {
+      return self::$testVars[$matches[1]];
+    } else {
+      return $matches[0];
+    }
+  }
+  
+  private function replaceVariables(&$config, $testVars) {
     foreach($config as $key => &$value) {
       if (is_string($value)) {
+        self::$testVars = $testVars;
         for ($i = 0; $i < 10; $i++) {
           $old = $value;
           $value = preg_replace_callback('/\{([A-Za-z_]+)\}/', 
-            create_function(
-              '$matches',
-              'if (isset($GLOBALS["testVars"][$matches[1]])) { '.
-              '  return $GLOBALS["testVars"][$matches[1]];'.
-              '} else {'.
-              '  return $matches[0];'.
-              '}'
-            ), $value);
+              array(get_class($this), '_replaceVariablesCallback'), $value);
           if ($value == $old) { break; }
         }
+        self::$testVars = null;
         
       } else if (is_array($value)) {
-        self::_replaceVariables($value);
+        $this->replaceVariables($value, $testVars);
       }
     }
   }
@@ -132,23 +136,17 @@ class SiteConfig {
     }
   
     // Handle key-relative paths by replacing keys with paths
-    $GLOBALS['testVars'] = $testVars;
-    self::_replaceVariables($config);
-    unset($GLOBALS['testVars']);
+    $this->replaceVariables($config, $testVars);
   }
 
   private function replaceAPIVariables(&$config) {
     // Handle key-relative paths by replacing keys with paths
-    $GLOBALS['testVars'] = array_merge($this->configVars, $config);
-    self::_replaceVariables($config);
-    unset($GLOBALS['testVars']);
+    $this->replaceVariables($config, array_merge($this->configVars, $config));
   }
 
   private function replaceConfigVariables(&$config) {
     // Handle key-relative paths by replacing keys with paths
-    $GLOBALS['testVars'] = $this->configVars;
-    self::_replaceVariables($config);
-    unset($GLOBALS['testVars']);
+    $this->replaceVariables($config, $this->configVars);
   }
   
   /* merges together config variables by section */

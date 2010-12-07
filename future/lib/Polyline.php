@@ -47,7 +47,7 @@ class Polyline {
         $current = array_pop($stack);
         $maxDist = 0;
         for($i = $current[0]+1; $i < $current[1]; $i++) {
-          $temp = distance($points[$i], $points[$current[0]], $points[$current[1]]);
+          $temp = self::distance($points[$i], $points[$current[0]], $points[$current[1]]);
           if($temp > $maxDist) {
             $maxDist = $temp;
             $maxLoc = $i;
@@ -75,7 +75,7 @@ class Polyline {
         $dlng = $lnge5 - $plng;
         $plat = $late5;
         $plng = $lnge5;
-        $encodedPoints .= encodeSignedNumber($dlat) . encodeSignedNumber($dlng);
+        $encodedPoints .= self::encodeSignedNumber($dlat) . self::encodeSignedNumber($dlng);
       }
     }
     

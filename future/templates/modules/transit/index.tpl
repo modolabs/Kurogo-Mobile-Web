@@ -5,7 +5,7 @@
 {capture name="runningPane" assign="runningPane"}
   {strip}
   {block name="runningPane"}
-    {foreach $activeRoutes as $section}
+    {foreach $runningRoutes as $section}
       <h3>{$section['heading']}</h3>
       {include file="findInclude:common/navlist.tpl" navlistItems=$section['items'] accessKey=false nested=true}
     {/foreach}
@@ -17,7 +17,7 @@
 {capture name="offlinePane" assign="offlinePane"}
   {strip}
   {block name="offlinePane"}
-    {foreach $inactiveRoutes as $section}
+    {foreach $offlineRoutes as $section}
       <h3>{$section['heading']}</h3>
       {include file="findInclude:common/navlist.tpl" navlistItems=$section['items'] accessKey=false nested=true}
     {/foreach}
@@ -31,7 +31,10 @@
   {block name="newsPane"}
     {foreach $news as $section}
       <h3>{$section['heading']}</h3>
-      {include file="findInclude:common/navlist.tpl" navlistItems=$section['items'] accessKey=false nested=true}
+      {foreach $section['items'] as $index => $item}
+        {$section['items'][$index]['subtitle'] = $item['date']|date_format:"%a %b %e, %Y"}
+      {/foreach}
+      {include file="findInclude:common/navlist.tpl" navlistItems=$section['items'] accessKey=false nested=true subTitleNewline=true}
     {/foreach}
   {/block}
   {strip}
@@ -53,7 +56,7 @@
 {block name="tabView"}
 	<a name="scrolldown"></a>		
   <div class="nonfocal">
-	  {include file="findInclude:common/tabs.tpl" tabBodies=$tabBodies}
+	  {include file="findInclude:common/tabs.tpl" tabBodies=$tabBodies smallTabs=true}
 	</div>
 {/block}
 
