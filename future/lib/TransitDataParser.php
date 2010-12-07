@@ -817,7 +817,8 @@ abstract class TransitDataParser {
     
     $iconURL = false;
     if($_SERVER['SERVER_NAME'] != 'localhost') {
-      $iconURL = "http://{$_SERVER['SERVER_NAME']}/modules/transit/images/shuttle_stop_pin.png";
+      $iconURL = "http://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}".
+          "/modules/transit/images/shuttle_stop_pin.png";
     } else {
       $iconURL = "http://chart.apis.google.com/chart?".http_build_query(array(
         'chst' => 'd_map_pin_icon',
