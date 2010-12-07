@@ -644,6 +644,7 @@ class Libraries{
 
             $resultArray = array();
             $resultArray['index'] = $itemIndex;
+            $resultArray['totalResults'] = $totalResults;
             $resultArray['itemId'] = $itemId;
             $resultArray['creator'] = $creator;
             $resultArray['title'] = $title;
