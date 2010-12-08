@@ -16,30 +16,28 @@
 {capture name="stopsPane" assign="stopsPane"}
   {strip}
   {block name="stopsPane"}
-    <span class="smallprint">Bus arrives next at the highlighted stops</span>
-    <table cellpadding="0" cellspacing="0" border="0" id="schedule">
-      {foreach $routeInfo['stops'] as $index => $stop}
-        <tr><td{if $stop['upcoming']} class="current"{/if}>
-          <a href="{$stop['url']}" id="stop_($index}"><span class="sid"> </span> {$stop['name']}</a>
-        </td></tr>
-      {/foreach}
-    </table>
+    <span class="smallprint">{$timesConfig['stopTimeHelpText']}</span>
+    <div id="schedule">
+      {include file="findInclude:common/results.tpl" results=$routeInfo['stops']}
+    </div>
   {/block}
   {strip}
 {/capture}
 {$tabBodies['stops'] = $stopsPane}
 
-{block name="tabView"}
-	<a name="scrolldown"></a>		
-  <div class="focal shaded">
-		<h2 class="refreshContainer">
-		  <div id="refresh"><a href="{$refreshURL}">
+<a name="scrolldown"></a>		
+<div class="focal shaded">
+  <h2 class="refreshContainer">
+    {block name="refreshButton"}
+      <div id="refresh"><a href="{$refreshURL}">
         <img src="/common/images/refresh.png" alt="Update" width="82" height="32">
-		  </a></div>
-		  {$routeInfo['name']}
-	  </h2>
-		
-    <p class="smallprint logoContainer clear">
+      </a></div>
+    {/block}
+    {$routeInfo['name']}
+  </h2>
+  
+  <p class="smallprint logoContainer clear">
+    {block name="routeInfo"}
       {if $routeInfo['description']}
         {$routeInfo['description']}<br/>
       {/if}
@@ -52,7 +50,9 @@
       {else}
         Bus not running.
       {/if}
-      
+    {/block}
+    
+    {block name="headerServiceLogo"}
       {if $timesConfig['serviceLogo']}
         <span id="servicelogo">
           {if $timesConfig['serviceLink']}<a href="{$timesConfig['serviceLink']}">{/if}
@@ -60,9 +60,11 @@
           {if $timesConfig['serviceLink']}</a>{/if}
         </span>
       {/if}
-    </p>
+    {/block}
+  </p>
+{block name="tabView"}
 	  {include file="findInclude:common/tabs.tpl" tabBodies=$tabBodies}
-	</div>
 {/block}
+</div>
 
 {include file="findInclude:common/footer.tpl"}

@@ -9,44 +9,21 @@
 }
 
 #schedule {
-	border-bottom: 1px dotted #ddd;
-	margin: 0 0 16px 0;
+  margin: 0px -12px;
 }
 
-#schedule td {
-	border-top: 1px dotted #ddd;
-	padding: 0;
-	background-image: url(/common/images/action-arrow.png); 
-	background-repeat: no-repeat;
-	background-position: right; 
-
-}
-#schedule td a {
-  color: inherit;
-  text-decoration: none;  
-  display: block;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-  font-size: 17px;
-  padding: 4px 6px 5px 2px;
+#schedule li.icon {
+  min-height: 0;
 }
 
-#schedule td.current {
-	background-color: #b00;
+#schedule li.icon a {
+  padding: 13px 25px 13px 25px;
+  line-height: 1.2em;
 }
-
-#schedule td.current a {
-	color: #fff;
-	padding-left: 24px !important;
-	background-image: url(/common/images/shuttle.png);
-	background-repeat: no-repeat;
-	background-position: 3px 3px;
-}
-
-/* required so that the text-overflow property of ellipsis is not ignored */
-table, tbody, td, tr {
-       display: block;
+#schedule li.icon img {
+  width: 18px;
+  height: 19px;
+  top: 14px;
 }
 
 .sid {
