@@ -39,6 +39,14 @@ define("MAP_TILE_CACHE_DATE", '/opt/mitmobile/maptiles/tiles_updated.txt');
 // dining
 define('PATH_TO_DINING_HRS', '/opt/mitmobile/static/DiningHours');
 
+//libraries
+define('URL_LIBRARIES_INFO', 'http://faulkner.hul.harvard.edu:9020/rest/lib/info');
+define('URL_LIB_DETAIL_BASE','http://faulkner.hul.harvard.edu:9020/rest/lib/library/');
+define('URL_ARCHIVE_DETAIL_BASE', 'http://faulkner.hul.harvard.edu:9020/rest/lib/archive/');
+define('LIB_DIR', CACHE_DIR . '/LIBRARIES_CACHE');
+// how long to keep cached subject files
+define('LIB_DIR_CACHE_TIMEOUT', 60*60);
+
 // news_office
 define('NEWS_SEARCH_URL', 'http://news.harvard.edu/gazette/');
 

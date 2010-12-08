@@ -41,6 +41,10 @@ switch ($module) {
    require('shuttles.php');
    break;
 
+case 'libraries':
+    require('libraries.php');
+    break;
+
  default:
    $data = Array('error' => 'not a valid query');
    echo json_encode($data);

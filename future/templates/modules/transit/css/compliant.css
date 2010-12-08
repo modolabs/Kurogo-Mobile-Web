@@ -1,0 +1,195 @@
+#timestamp {
+	display: block;
+	line-height: 1.33em;
+	margin-top: 8px;
+}
+
+.tabbody {
+	min-height: 260px;
+}
+
+#schedule {
+	border-bottom: 1px dotted #ddd;
+	margin: 0 0 16px 0;
+}
+
+#schedule td {
+	border-top: 1px dotted #ddd;
+	padding: 0;
+	background-image: url(/common/images/action-arrow.png); 
+	background-repeat: no-repeat;
+	background-position: right; 
+
+}
+#schedule td a {
+  color: inherit;
+  text-decoration: none;  
+  display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+  font-size: 17px;
+  padding: 4px 6px 5px 2px;
+}
+
+#schedule td.current {
+	background-color: #b00;
+}
+
+#schedule td.current a {
+	color: #fff;
+	padding-left: 24px !important;
+	background-image: url(/common/images/shuttle.png);
+	background-repeat: no-repeat;
+	background-position: 3px 3px;
+}
+
+/* required so that the text-overflow property of ellipsis is not ignored */
+table, tbody, td, tr {
+       display: block;
+}
+
+.sid {
+	display: inline-block;
+	width: 18px;
+	text-align: center;
+	color: #999;
+}
+
+.current .sid {
+	color: #fff;
+	display: none;
+}
+
+#map, #maptab {
+	text-align: center;
+}
+
+.stop-map {
+    border: 2pt solid white;
+}
+
+.logoContainer {
+  position: relative;
+}
+#servicelogo {
+  display: inline-block;
+  position: absolute;
+  bottom: -12px;
+  right: -5px;
+}
+#refresh {
+  float: right;
+	margin-top: -4px;
+	margin-right: -4px;
+	font-size: 14px;
+}
+
+.timestamp {
+	position: absolute;
+	right: 10px;
+	top: 14px;
+	float: right;
+	font-size: 14px;
+	font-weight: normal;
+	color: #506d8e;
+}
+
+
+
+
+/* Tall (portrait) orientation */
+
+body.portrait {
+	width: 100%;
+}
+
+body.portrait #timestamp {
+	display: block;
+}
+
+body.portrait #tabs {
+	display: block;
+}
+
+body.portrait .tabbody {
+	font-size: 17px;
+}
+
+body.portrait #scheduletab, #maptab {
+	width: auto;
+}
+
+body.portrait #mapimage {
+	width: 270px;
+	height: 270px;
+	text-align: center;
+}
+
+body.portrait #rotatemsg1 {
+	display: inline;
+}
+
+body.portrait #rotatemsg2 {
+	display: none;
+}
+
+
+
+/* Wide (landscape) orientation */
+
+body.landscape {
+	width: 100%;
+}
+
+body.landscape #timestamp {
+	display: inline;
+}
+
+body.landscape #schedule {
+	border-bottom: 1px solid #f0f0f0;
+	margin: 0 0 16px 0;
+}
+
+body.landscape #tabs {
+	display: none;
+}
+
+body.landscape .tabbody {
+	display: block !important;
+	float: left;
+	font-size: 14px;
+}
+
+body.landscape #scheduletab {
+	width: 47%;
+}
+
+body.landscape #maptab {
+	width: 53%;
+}
+
+body.landscape #map {
+	width: 225px;
+	height: 225px;
+	text-align: right;
+}
+
+body.landscape #mapimage {
+	width: 225px;
+	height: 225px;
+	margin-left: 0;
+}
+
+body.landscape #rotatemsg1 {
+	display: none;
+}
+
+body.landscape #rotatemsg2 {
+	display: inline;
+}
+
+.ampm {
+	font-size: 75%;
+	padding-left: 0.2em
+}

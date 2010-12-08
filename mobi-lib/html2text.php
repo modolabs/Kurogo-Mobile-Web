@@ -24,7 +24,7 @@ $Rules = array ('@<script[^>]*?>.*?</script>@si', // Strip out javascript
                 '@&#(d+);@e');                   // Evaluate as php
 $Replace = array ('',
                   '',
-                  '1',
+                  '',
                   '"',
                   '&',
                   '<',

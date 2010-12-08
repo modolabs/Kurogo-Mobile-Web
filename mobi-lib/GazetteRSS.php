@@ -38,7 +38,7 @@ class GazetteRSS extends RSS {
           'url' => 'http://news.harvard.edu/gazette/section/campus-n-community/feed/'),
     array('title' => 'Arts & Culture',
           'url' => 'http://news.harvard.edu/gazette/section/arts-n-culture/feed/'),
-    array('title' => 'Science & Health',
+    array('title' => 'HarvardScience',
           'url' => 'http://news.harvard.edu/gazette/section/science-n-health/feed/'),
     array('title' => 'National & World Affairs',
           'url' => 'http://news.harvard.edu/gazette/section/national-n-world-affairs/feed/'),
