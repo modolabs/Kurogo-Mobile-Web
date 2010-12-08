@@ -10,7 +10,7 @@ class ConfigFile extends Config {
   }
 
   // loads a config object from a file/type combination  
-  public static function factory($file, $type='file', $createFile=false) {
+  public static function factory($file, $type='file', $createFile=false, $dieOnFailure=false) {
 
     switch ($type)
     {
@@ -32,7 +32,11 @@ class ConfigFile extends Config {
     
     $config = new ConfigFile();
     if (!$config->loadFile(sprintf($pattern, $file), $createFile)) {
+        if ($dieOnFailure) {
+          die("FATAL ERROR: cannot load $type configuration file: $file");
+        } else {
           error_log("cannot load $type configuration file: $file");
+        }
     }
     return $config;
    }

@@ -4,10 +4,17 @@ class SiteConfig extends ConfigGroup {
 
   function __construct() {
     // Load main configuration file
-    $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini");
+    $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini", 'file', false, true);
     $this->addConfig($config);
     
-    $siteDir  = realpath_exists($this->getVar('SITE_DIR'));
+    if (!$site = $this->getVar('ACTIVE_SITE')) {
+        die("FATAL ERROR: ACTIVE_SITE not set");
+    }
+    
+    if (!$siteDir  = realpath_exists($this->getVar('SITE_DIR'))) {
+        die("FATAL ERROR: Site Directory ". $this->getVar('SITE_DIR') . " not found for site " . $site);
+    }
+    
     $siteMode = $this->getVar('SITE_MODE');
     
     // Set up defines relative to SITE_DIR
@@ -18,7 +25,7 @@ class SiteConfig extends ConfigGroup {
     define('LOG_DIR',              SITE_DIR.'/logs');
     define('SITE_CONFIG_DIR',      SITE_DIR.'/config');
 
-    $config = ConfigFile::factory(SITE_CONFIG_DIR."/config.ini");
+    $config = ConfigFile::factory(SITE_CONFIG_DIR."/config.ini", 'file', false, true);
     $this->addConfig($config);
 
     $config = ConfigFile::factory(SITE_CONFIG_DIR."/config-$siteMode.ini");
