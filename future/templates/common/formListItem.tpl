@@ -5,6 +5,9 @@
     </label>
 {/if}
     <input type="hidden" name="_type[{$item.typename|default:$item.name}]" value="{$item.type}" />
+{if isset($item['subtitle'])}
+<span class="smallprint">{$item.subtitle|escape}</span>
+{/if}
 {block name="itemLink"}
     {$item['title']}
     {if $item.type=='text'}

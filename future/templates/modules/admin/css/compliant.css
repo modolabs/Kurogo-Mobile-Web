@@ -22,3 +22,9 @@ input[type=submit] {
     margin-left: 0;
     padding-left: 0;
 }
+
+ul.nav .smallprint {
+    display: block;
+    margin: .5em 0 .5em 0;
+    color: #aaa;
+}

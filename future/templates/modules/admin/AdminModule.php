@@ -240,15 +240,18 @@ class AdminModule extends Module {
                 $adminList = array();
                 $adminList[] = array(
                     'title'=>'Modules',
-                    'url'=>$this->buildBreadcrumbURL('modules', array())
+                    'url'=>$this->buildBreadcrumbURL('modules', array()),
+                    'subtitle'=>'Manage module configuration and data'
                 );
                 $adminList[] = array(
                     'title'=>'Site Configuration',
-                    'url'=>$this->buildBreadcrumbURL('site', array())
+                    'url'=>$this->buildBreadcrumbURL('site', array()),
+                    'subtitle'=>''
                 );
                 $adminList[] = array(
                     'title'=>'String Configuration',
-                    'url'=>$this->buildBreadcrumbURL('strings', array())
+                    'url'=>$this->buildBreadcrumbURL('strings', array()),
+                    'subtitle'=>'Update textual strings used throughout the site'
                 );
                 $this->assign('adminList', $adminList);
                 break;

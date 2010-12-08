@@ -498,17 +498,41 @@ abstract class Module {
     {
         case 'title':
             $item['type'] = 'text';
+            $item['subtitle'] = 'The name this module will be presented as to users (i.e. the home screen)';
             break;
         case 'disabled':
+            $item['type'] = 'boolean';
+            $item['subtitle'] = 'If a module is disabled, it will be inaccessible to all users';
+            $item['label'] = 'Module Disabled';
+            break;
         case 'disableable':
+            $item['type'] = 'boolean';
+            $item['subtitle'] = 'Allows users to hide the module from the home screen using the Customize module';
+            $item['label'] = 'Users can disable';
+            break;
         case 'movable':
+            $item['type'] = 'boolean';
+            $item['subtitle'] = 'Allows users to adjust the order of this module on the home screen using the Customize module';
+            $item['label'] = 'Users can reorder';
+            break;
         case 'search':
+            $item['type'] = 'boolean';
+            $item['subtitle'] = 'Module should be included when doing site-wide (federated) search from the home screen';
+            $item['label'] = 'Search';
+            break;
         case 'protected':
+            $item['type'] = 'boolean';
+            $item['subtitle'] = 'Allows access to the module only by authenticated users';
+            $item['label'] = 'Protected';
+            break;
         case 'secure':
             $item['type'] = 'boolean';
+            $item['subtitle'] = 'Module must be accessed using a SSL connection. Note: Maintaing a proper SSL site is the responsibility of the system administrator';
+            $item['label'] = 'Secure';
             break;
         case 'id':
             $item['type'] = 'label';
+            $item['subtitle'] = 'The internal id for this module. It can only be changed in the source code';
             break;
         default:
             break;
