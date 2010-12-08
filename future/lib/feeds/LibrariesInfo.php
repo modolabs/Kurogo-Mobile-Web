@@ -801,7 +801,11 @@ class Libraries{
                         if ($itm['checkedOutItem'] == 'YES')
                             $checkedOutCount++;
 
-                        $callNo = $itm['callNumber'];
+                        if (strlen($parentCallNumber[0]) > 0)
+                             $callNo = $parentCallNumber[0];
+
+                        else
+                            $callNo = $itm['callNumber'];
                         //$statArr['items'][] = $itm;
 
                         if ($itm['available'] == 'YES') {
