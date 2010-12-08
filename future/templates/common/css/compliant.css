@@ -450,7 +450,7 @@ a.module img {
 }
 .nav li.icon a {
   position: relative;
-  margin: 0;
+  margin: 0 -7px 0 0;
   padding: 12px 5px 12px 58px;
   line-height: 30px;
 }
@@ -547,7 +547,7 @@ ul.focal li:first-child {
 }
 .results li.icon a {
   position: relative;
-  margin: 0;
+  margin: 0 -7px 0 0;
   padding: 13px 18px 13px 58px;
   line-height: 30px;
 }
