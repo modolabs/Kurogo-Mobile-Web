@@ -1,22 +1,22 @@
-{extends file="findExtends:modules/{$moduleID}/times.tpl"}
+{extends file="findExtends:modules/{$moduleID}/route.tpl"}
 
 {block name="mapPane"}
   <p class="image">
     <img src="{$mapImageSrc}" height="{$mapImageSize}" width="{$mapImageSize}" />
   </p>
-  {if $timesConfig['serviceLogo']}
+  {if $routeConfig['serviceLogo']}
     <table align="center">
       <tr>
         <td valign="middle">
-          {if $timesConfig['serviceLink'] && !$timesConfig['serviceName']}<a href="{$timesConfig['serviceLink']}">{/if}
-            <img src="/modules/{$moduleID}/images/{$timesConfig['serviceLogo']}" />
-          {if $timesConfig['serviceLink'] && !$timesConfig['serviceName']}</a>{/if}
+          {if $routeConfig['serviceLink'] && !$routeConfig['serviceName']}<a href="{$routeConfig['serviceLink']}">{/if}
+            <img src="/modules/{$moduleID}/images/{$routeConfig['serviceLogo']}" />
+          {if $routeConfig['serviceLink'] && !$routeConfig['serviceName']}</a>{/if}
         </td>
-        {if $timesConfig['serviceName']}
+        {if $routeConfig['serviceName']}
           <td valign="middle">
-            {if $timesConfig['serviceLink']}<a href="{$timesConfig['serviceLink']}">{/if}
-              {$timesConfig['serviceName']}
-            {if $timesConfig['serviceLink']}</a>{/if}
+            {if $routeConfig['serviceLink']}<a href="{$routeConfig['serviceLink']}">{/if}
+              {$routeConfig['serviceName']}
+            {if $routeConfig['serviceLink']}</a>{/if}
           </td>
         {/if}
       </tr>
@@ -25,7 +25,7 @@
 {/block}
 
 {block name="stopsPane"}
-  <span class="smallprint">{$timesConfig['stopTimeHelpText']}</span>
+  <span class="smallprint">{$routeConfig['stopTimeHelpText']}</span>
   <table width="100%" id="schedule">
     {foreach $routeInfo['stops'] as $routeID => $stop}
       <tr>

@@ -12,11 +12,11 @@ class TransitModule extends Module {
 
   private function timesURL($routeID, $addBreadcrumb=true, $noBreadcrumb=false) {
     if ($noBreadcrumb) {
-      return $this->buildURL('times', array(
+      return $this->buildURL('route', array(
         'id' => $routeID,      
       ));
     } else {
-      return $this->buildBreadcrumbURL('times', array(
+      return $this->buildBreadcrumbURL('route', array(
         'id' => $routeID,      
       ), $addBreadcrumb);
     }
@@ -29,7 +29,7 @@ class TransitModule extends Module {
   }
   
   private function stopURL($stopID, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('detail', array(
+    return $this->buildBreadcrumbURL('stop', array(
       'id' => $stopID,      
     ), $addBreadcrumb);
   }
@@ -150,10 +150,10 @@ class TransitModule extends Module {
         $this->assign('infosections',  $infosections);
         break;
         
-      case 'times':
+      case 'route':
         $routeID = $this->getArg('id');
         
-        $timesConfig = $this->loadWebAppConfigFile('transit-times', 'timesConfig');
+        $routeConfig = $this->loadWebAppConfigFile('transit-route', 'routeConfig');
         
         $routeInfo = $view->getRouteInfo($routeID);
         foreach ($routeInfo['stops'] as $stopID => $stop) {
@@ -162,7 +162,7 @@ class TransitModule extends Module {
           
           if ($stop['upcoming']) {
             $routeInfo['stops'][$stopID]['title'] = "<strong>{$stop['name']}</strong>";
-            $routeInfo['stops'][$stopID]['imgAlt'] = $timesConfig['busImageAltText'];
+            $routeInfo['stops'][$stopID]['imgAlt'] = $routeConfig['busImageAltText'];
          }
           
           $routeInfo['stops'][$stopID]['img'] = '/common/images/';
@@ -186,7 +186,7 @@ class TransitModule extends Module {
         $this->assign('routeInfo',    $routeInfo);
         break;
       
-      case 'detail':
+      case 'stop':
         $stopID = $this->getArg('id');
         
         $stopInfo = $view->getStopInfo($stopID);

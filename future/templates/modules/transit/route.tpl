@@ -16,7 +16,7 @@
 {capture name="stopsPane" assign="stopsPane"}
   {strip}
   {block name="stopsPane"}
-    <span class="smallprint">{$timesConfig['stopTimeHelpText']}</span>
+    <span class="smallprint">{$routeConfig['stopTimeHelpText']}</span>
     <div id="schedule">
       {include file="findInclude:common/results.tpl" results=$routeInfo['stops']}
     </div>
@@ -46,18 +46,18 @@
       {/if}
       {if $routeInfo['running']}
         Refreshed at {$lastRefresh|date_format:"%l:%M"}<span class="ampm">{$lastRefresh|date_format:"%p"}</span>
-        {if $timesConfig['serviceName']} using {$timesConfig['serviceName']}{/if}
+        {if $routeConfig['serviceName']} using {$routeConfig['serviceName']}{/if}
       {else}
         Bus not running.
       {/if}
     {/block}
     
     {block name="headerServiceLogo"}
-      {if $timesConfig['serviceLogo']}
+      {if $routeConfig['serviceLogo']}
         <span id="servicelogo">
-          {if $timesConfig['serviceLink']}<a href="{$timesConfig['serviceLink']}">{/if}
-            <img src="/modules/{$moduleID}/images/{$timesConfig['serviceLogo']}" />
-          {if $timesConfig['serviceLink']}</a>{/if}
+          {if $routeConfig['serviceLink']}<a href="{$routeConfig['serviceLink']}">{/if}
+            <img src="/modules/{$moduleID}/images/{$routeConfig['serviceLogo']}" />
+          {if $routeConfig['serviceLink']}</a>{/if}
         </span>
       {/if}
     {/block}
