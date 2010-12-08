@@ -12,7 +12,19 @@ class TransitModule extends Module {
 
   private function timesURL($routeID, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('times', array(
-      'route' => $routeID,      
+      'id' => $routeID,      
+    ), $addBreadcrumb);
+  }
+
+  private function newsURL($newsID, $addBreadcrumb=true) {
+    return $this->buildBreadcrumbURL('announcement', array(
+      'id' => $newsID,      
+    ), $addBreadcrumb);
+  }
+  
+  private function stopURL($stopID, $addBreadcrumb=true) {
+    return $this->buildBreadcrumbURL('detail', array(
+      'id' => $stopID,      
     ), $addBreadcrumb);
   }
   
@@ -28,54 +40,73 @@ class TransitModule extends Module {
         $indexConfig = $this->loadWebAppConfigFile('transit-index', 'indexConfig');        
         
         //
-        // Running, Offline and News Panes
+        // Running and Offline Panes
         //
-        $activeRouteConfigs = $view->getRoutes();
-        $inactiveRouteConfigs = $view->getInactiveRoutes();
+        $routeConfigs = $view->getRoutes();
+        $runningRoutes = array();
+        $offlineRoutes = array();
 
-        $activeRoutes = array();
-        $inactiveRoutes = array();
-
-        foreach ($activeRouteConfigs as $routeID => $routeConfig) {
+        foreach ($routeConfigs as $routeID => $routeConfig) {
           $agencyID = $routeConfig['agency'];
+          $entry = array(
+            'title' => $routeConfig['name'],
+            'url'   => $this->timesURL($routeID),
+          );
+          
+          if ($routeConfig['running']) {
+            if (!isset($runningRoutes[$agencyID])) {
+              $heading = isset($indexConfig['agencies'][$agencyID]) ? 
+                $indexConfig['agencies'][$agencyID] : $agencyID;
+            
+              $runningRoutes[$agencyID] = array(
+                'heading' => $heading,
+                'items' => array(),
+              );
+            }
+            $runningRoutes[$agencyID]['items'][$routeID] = $entry;
+          } else {
+            if (!isset($offlineRoutes[$agencyID])) {
+              $heading = isset($indexConfig['agencies'][$agencyID]) ? 
+                $indexConfig['agencies'][$agencyID] : $agencyID;
+            
+              $offlineRoutes[$agencyID] = array(
+                'heading' => $heading,
+                'items' => array(),
+              );
+            }
+            $offlineRoutes[$agencyID]['items'][$routeID] = $entry;
+          }
+        }
+        foreach ($runningRoutes as $agencyID => $section) {
+          uasort($runningRoutes[$agencyID]['items'], array(get_class($this), 'routeSort'));
+        }
+        foreach ($offlineRoutes as $agencyID => $section) {
+          uasort($offlineRoutes[$agencyID]['items'], array(get_class($this), 'routeSort'));
+        }
         
-          if (!isset($activeRoutes[$agencyID])) {
+        //
+        // News Pane
+        //
+        $newsConfigs = $view->getNews();
+        
+        $news = array();
+        foreach ($newsConfigs as $newsID => $newsConfig) {
+          $agencyID = $newsConfig['agency'];
+        
+          if (!isset($news[$agencyID])) {
             $heading = isset($indexConfig['agencies'][$agencyID]) ? 
               $indexConfig['agencies'][$agencyID] : $agencyID;
           
-            $activeRoutes[$agencyID] = array(
+            $news[$agencyID] = array(
               'heading' => $heading,
               'items' => array(),
             );
           }
-          $activeRoutes[$agencyID]['items'][$routeID] = array(
-            'title' => $routeConfig['name'],
-            'url'   => $this->timesURL($routeID),
+          $news[$agencyID]['items'][$newsID] = array(
+            'title' => $newsConfig['title'],
+            'date'  => $newsConfig['date'],
+            'url'   => $this->newsURL($newsID),
           );
-        }
-        foreach ($activeRoutes as $agencyID => $section) {
-          uasort($activeRoutes[$agencyID]['items'], array(get_class($this), 'routeSort'));
-        }
-        
-        foreach ($inactiveRouteConfigs as $routeID => $routeConfig) {
-          $agencyID = $routeConfig['agency'];
-        
-          if (!isset($inactiveRoutes[$agencyID])) {
-            $heading = isset($indexConfig['agencies'][$agencyID]) ? 
-              $indexConfig['agencies'][$agencyID] : $agencyID;
-          
-            $inactiveRoutes[$agencyID] = array(
-              'heading' => $heading,
-              'items' => array(),
-            );
-          }
-          $inactiveRoutes[$agencyID]['items'][$routeID] = array(
-            'title' => $routeConfig['name'],
-            'url'   => $this->timesURL($routeID),
-          );
-        }
-        foreach ($inactiveRoutes as $agencyID => $section) {
-          uasort($inactiveRoutes[$agencyID]['items'], array(get_class($this), 'routeSort'));
         }
         
         //
@@ -107,17 +138,90 @@ class TransitModule extends Module {
           'info',
         ));
         
-        $this->assign('activeRoutes',   $activeRoutes);
-        $this->assign('inactiveRoutes', $inactiveRoutes);
-        $this->assign('infosections',   $infosections);
+        $this->assign('runningRoutes', $runningRoutes);
+        $this->assign('offlineRoutes', $offlineRoutes);
+        $this->assign('news',          $news);
+        $this->assign('infosections',  $infosections);
         break;
         
       case 'times':
-        $routeID = $this->getArg('route');
+        $routeID = $this->getArg('id');
+        
+        $timesConfig = $this->loadWebAppConfigFile('transit-times', 'timesConfig');
         
         $routeInfo = $view->getRouteInfo($routeID);
+        foreach ($routeInfo['stops'] as $stopID => $stop) {
+          $routeInfo['stops'][$stopID]['url'] = $this->stopURL($stopID);
+        }
+
+        $this->enableTabs(array('map', 'stops'));
         
-        $this->assign('routeInfo', $routeInfo);
+        $mapImageSize = 270;
+        if ($this->pagetype == 'basic') {
+          $mapImageSize = 200;
+        }
+
+        $this->assign('mapImageSrc',  $view->getMapImageForRoute($routeID, $mapImageSize, $mapImageSize));
+        $this->assign('mapImageSize', $mapImageSize);
+        $this->assign('lastRefresh',  time());
+        $this->assign('routeInfo',    $routeInfo);
+        break;
+      
+      case 'detail':
+        $stopID = $this->getArg('id');
+        
+        $stopInfo = $view->getStopInfo($stopID);
+        
+        $runningRoutes = array();
+        $offlineRoutes = array();
+        foreach ($stopInfo['routes'] as $routeID => $routeInfo) {
+          $entry = array(
+            'title' => $routeInfo['name'],
+            'url'   => $this->timesURL($routeID),
+          );
+          if ($routeInfo['running']) {
+            $runningRoutes[$routeID] = $entry;
+          } else {
+            $offlineRoutes[$routeID] = $entry;
+          }
+        }
+        
+        $mapImageWidth = 270;
+        if ($this->pagetype == 'basic') {
+          $mapImageWidth = 200;
+        }
+        $mapImageHeight = floor($mapImageWidth/2);
+        
+        $this->assign('mapImageSrc',    $view->getMapImageForStop($stopID, $mapImageWidth, $mapImageHeight));
+        $this->assign('mapImageWidth',  $mapImageWidth);
+        $this->assign('mapImageHeight', $mapImageHeight);
+        $this->assign('stopName',       $stopInfo['name']);
+        $this->assign('runningRoutes',  $runningRoutes);
+        $this->assign('offlineRoutes',  $offlineRoutes);
+        break;
+      
+      case 'info':
+        $infoConfig = $this->loadWebAppConfigFile('transit-info', 'infoConfig');
+        $infoType = $this->getArg('id');
+        
+        if (!isset($infoConfig[$infoType], $infoConfig[$infoType]['content']) || 
+            !count($infoConfig[$infoType]['content'])) {
+          $this->redirectTo('index', array());
+        }
+        $this->assign('infoType', $infoType);        
+        break;
+        
+      case 'announcement':
+        $newsConfigs = $view->getNews();
+        $newsID = $this->getArg('id');
+        
+        if (!isset($newsConfigs[$newsID])) {
+          $this->redirectTo('index', array());
+        }
+
+        $this->assign('title',   $newsConfigs[$newsID]['title']);        
+        $this->assign('date',    $newsConfigs[$newsID]['date']);        
+        $this->assign('content', $newsConfigs[$newsID]['html']);        
         break;
     }
   }

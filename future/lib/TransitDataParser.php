@@ -6,6 +6,7 @@ define('STATIC_MAPS_URL', 'http://maps.google.com/maps/api/staticmap?');
 
 define('TRANSIT_MAX_ARRIVAL_DELAY', 120*60); // 2 hours
 define('TRANSIT_PREDICTION_THRESHOLD', 320); // 5 mins, 20 seconds
+define('TRANSIT_DEFAULT_ROUTE_COLOR', 'b12727'); // shade of red
 
 class TransitConfig {
   static private $transitConfig = array(
@@ -21,37 +22,37 @@ class TransitConfig {
           'hostname' => 'harvard',
           'routeFieldOverrides' => array(
             'description' => array(
-              'harvard-5'  => 'Runs 5:40am - 8:40am, Monday-Friday',    // Quad Stadium
-              'harvard-52' => 'Runs 7:40am - 4:33pm, Monday-Friday',    // Quad Express
-              'harvard-7'  => 'Runs 4:20pm - 12:33am, Saturday-Sunday', // 1636'er
-              'harvard-8'  => 'Runs 4:30pm - 12:37am, Monday-Friday',   // River Houses A
-              'harvard-9'  => 'Runs 4:30pm - 12:37am, Monday-Friday',   // River Houses B
-              'harvard-51' => 'Runs 4:30pm - 12:37am, Monday-Friday',   // River Houses C
-              'harvard-27' => 'Runs 4:45pm - 12:32am, Monday-Friday',   // Quad-Yard Express
-              'harvard-29' => 'Runs 7:40am - 4:15pm, Monday-Friday',    // Mather Express
-              'harvard-39' => 'Runs 12:05pm - 4:23pm, Saturday-Sunday', // Crimson Campus Cruiser
-              'harvard-40' => 'Runs 5:00pm - 7:55pm, Saturday-Sunday',  // Soldiers Field Park I
-              'harvard-41' => 'Runs 7:20am - 9:50am, Monday-Friday',    // Soldiers Field Park II
-              'harvard-11' => 'Runs 3:50pm - 9:10pm, Monday-Friday',    // Soldiers Field Park III
-              'harvard-13' => 'Runs 3:50pm - 9:10pm, Monday-Friday',    // Soldiers Field Park IV
+              'harvard-5'  => 'Runs 5:40am - 8:40am, Mon-Fri',  // Quad Stadium
+              'harvard-52' => 'Runs 7:40am - 4:33pm, Mon-Fri',  // Quad Express
+              'harvard-7'  => 'Runs 4:20pm - 12:33am, Sat-Sun', // 1636'er
+              'harvard-8'  => 'Runs 4:30pm - 12:37am, Mon-Fri', // River Houses A
+              'harvard-9'  => 'Runs 4:30pm - 12:37am, Mon-Fri', // River Houses B
+              'harvard-51' => 'Runs 4:30pm - 12:37am, Mon-Fri', // River Houses C
+              'harvard-27' => 'Runs 4:45pm - 12:32am, Mon-Fri', // Quad-Yard Express
+              'harvard-29' => 'Runs 7:40am - 4:15pm, Mon-Fri',  // Mather Express
+              'harvard-39' => 'Runs 12:05pm - 4:23pm, Sat-Sun', // Crimson Campus Cruiser
+              'harvard-40' => 'Runs 5:00pm - 7:55pm, Sat-Sun',  // Soldiers Field Park I
+              'harvard-41' => 'Runs 7:20am - 9:50am, Mon-Fri',  // Soldiers Field Park II
+              'harvard-11' => 'Runs 3:50pm - 9:10pm, Mon-Fri',  // Soldiers Field Park III
+              'harvard-13' => 'Runs 3:50pm - 9:10pm, Mon-Fri',  // Soldiers Field Park IV
               // Extended Overnight
-              'harvard-14' => 'Runs 12:40am - 3:52am, Sunday-Thursday Nights; 12:40am - 4:52am, Friday-Saturday Nights', 
+              'harvard-14' => 'Runs 12:40am - 3:52am, Sun-Thurs Nights; 12:40am - 4:52am, Fri-Sat Nights', 
             ),
             'summary' => array(
-              'harvard-5'  => 'River Houses via Harvard Square',                           // Quad Stadium
-              'harvard-52' => 'Memorial Hall via Harvard Square',                          // Quad Express
-              'harvard-7'  => '',                                                          // 1636'er
-              'harvard-8'  => 'Harvard Square - Quad - Memorial Hall - Lamont',            // River Houses A
-              'harvard-9'  => 'Harvard Square - Quad - Memorial Hall - Lamont',            // River Houses B
-              'harvard-51' => 'Harvard Square - Quad - Memorial Hall - Lamont',            // River Houses C
-              'harvard-27' => 'Lamont - Harvard Square',                                   // Quad-Yard Express
-              'harvard-29' => 'Memorial Hall via Harvard Square',                          // Mather Express
-              'harvard-39' => 'Quad - Mather House - via Memorial Hall',                   // Crimson Campus Cruiser
-              'harvard-40' => 'Quad - Lamont Library - via Harvard Square',                // Soldiers Field Park I
-              'harvard-41' => 'Business School - Harvard Square',                          // Soldiers Field Park II
-              'harvard-11' => 'Business School - Harvard Square - Memorial Hall - Lamont', // Soldiers Field Park III
-              'harvard-13' => 'Business School - Harvard Square - Memorial Hall - Lamont', // Soldiers Field Park IV
-              'harvard-14' => 'Quad - Mather House via Memorial Hall',                     // Extended Overnight
+              'harvard-5'  => 'River Houses via Harvard Sq',                           // Quad Stadium
+              'harvard-52' => 'Memorial Hall via Harvard Sq',                          // Quad Express
+              'harvard-7'  => 'Quad - Memorial Hall - Lamont - Boylston',              // 1636'er
+              'harvard-8'  => 'Harvard Sq - Quad - Memorial Hall - Lamont',            // River Houses A
+              'harvard-9'  => 'Harvard Sq - Quad - Memorial Hall - Lamont',            // River Houses B
+              'harvard-51' => 'Harvard Sq - Quad - Memorial Hall - Lamont',            // River Houses C
+              'harvard-27' => 'Lamont - Harvard Sq',                                   // Quad-Yard Express
+              'harvard-29' => 'Memorial Hall via Harvard Sq',                          // Mather Express
+              'harvard-39' => 'Quad - Mather House - via Memorial Hall',               // Crimson Campus Cruiser
+              'harvard-40' => 'Quad - Lamont Library - via Harvard Sq',                // Soldiers Field Park I
+              'harvard-41' => 'Business School - Harvard Sq',                          // Soldiers Field Park II
+              'harvard-11' => 'Business School - Harvard Sq - Memorial Hall - Lamont', // Soldiers Field Park III
+              'harvard-13' => 'Business School - Harvard Sq - Memorial Hall - Lamont', // Soldiers Field Park IV
+              'harvard-14' => 'Quad - Mather House via Memorial Hall',                 // Extended Overnight
             ),
           ),
         ),
@@ -67,6 +68,46 @@ class TransitConfig {
         'class' => 'TranslocTransitDataParser',
         'args' => array(
           'hostname' => 'masco',
+          'routeFieldOverrides' => array(
+            'description' => array(
+              'masco-3'  => 'Runs 6:40am - 11:30pm Mon-Fri, 8:00AM - 10:30pm Sat',  // M2 Cambridge - Coolidge Corner
+              'masco-10' => 'Runs 3:20pm - 8:05pm, Mon-Fri',                        // JFK/UMASS - PM
+              'masco-11' => 'Runs 5:40am - 9:30am, Mon-Fri',                        // M6 Chestnut Hill - AM
+              'masco-12' => 'Runs 2:35pm - 8:30pm, Mon-Fri',                        // M6 Chestnut Hill - PM
+              'masco-13' => 'Runs 6:00am - 9:35am, Mon-Fri',                        // JFK/UMASS - AM
+              'masco-14' => 'Runs 5:30am - 9:50am, Mon-Fri',                        // Ruggles Express - AM
+              'masco-16' => 'Runs 6:40am - 11:30pm, Mon-Fri, 8:00AM - 10:30pm Sat', // M2 Cambridge - Vanderbilt Hall
+              'masco-17' => 'Runs 5:35am - 10:30pm, Mon-Fri',                       // Wentworth Shuttle - AM
+              'masco-18' => 'Runs 2:25pm - 8:55pm, Mon-Fri',                        // Wentworth Shuttle - PM
+              'masco-19' => 'Runs 5:30am - 10:20am, Mon-Fri',                       // Crosstown - AM
+              'masco-20' => 'Runs 2:25pm - 8:55pm, Mon-Fri',                        // Crosstown - PM
+              'masco-25' => 'Runs 2:30pm - 8:45pm, Mon-Fri',                        // Ruggles Express - PM
+              'masco-27' => 'Runs 5:00am - 10:00am, Mon-Fri',                       // Fenway (Beacon/Kenmore) - AM
+              'masco-28' => 'Runs 5:30am - 10:00am, Mon-Fri',                       // Fenway (Lansdowne) - AM
+              'masco-29' => 'Runs 2:30pm - 9:30pm, Mon-Fri',                        // Fenway - PM
+              'masco-30' => 'Runs 10:12am - 2:28pm, Mon-Fri',                       // Fenway Mid-Day
+              'masco-31' => 'Runs 10:12am - 2:28pm, Mon-Fri',                       // Fenway Mid-Day Express
+            ),
+            'summary' => array(
+              'masco-3'  => 'Vanderbilt - Central Sq - Lamont',                     // M2 Cambridge - Coolidge Corner
+              'masco-10' => 'JFK/UMASS Station - Vanderbilt - Brigham Circle',      // JFK/UMASS - PM
+              'masco-11' => 'Chestnut Hill Lot - BIDMC Shapiro',                    // M6 Chestnut Hill - AM
+              'masco-12' => '70 Francis St - Chestnut Hill Lot',                    // M6 Chestnut Hill - PM
+              'masco-13' => 'JFK/UMASS MBTA Station - Vanderbilt - Brigham Circle', // JFK/UMASS - AM
+              'masco-14' => 'Ruggles Station - BIDMC Shapiro',                      // Ruggles Express - AM
+              'masco-16' => 'Vanderbilt - Central Square - Lamont',                 // M2 Cambridge - Vanderbilt Hall
+              'masco-17' => 'Wentworth Lot - Children’s Station',                   // Wentworth Shuttle - AM
+              'masco-18' => 'Vanderbilt - BIDMC Shapiro - Wentworth Lot',           // Wentworth Shuttle - PM
+              'masco-19' => 'Crosstown Garage - BIDMC Shapiro - BIDMC East ',       // Crosstown - AM
+              'masco-20' => 'Vanderbilt - 70 Francis St - Crosstown Garage',        // Crosstown - PM
+              'masco-25' => 'BIDMC West - Ruggles Station',                         // Ruggles Express - PM
+              'masco-27' => 'Beacon Street Lot - Landmark - Brookline Ave/Bank of America', // Fenway (Beacon/Kenmore) - AM
+              'masco-28' => 'Lansdowne Garage - Landmark - Brookline Ave/Bank of America',  // Fenway (Lansdowne) - AM
+              'masco-29' => 'Deaconess Rd - Brookline/BI East - Fenway Garage',     // Fenway - PM
+              'masco-30' => 'BIDMC West - BIDMC East - Kenmore Lot',                // Fenway Mid-Day
+              'masco-31' => 'BIDMC West - BIDMC East - Kenmore Lot',                // Fenway Mid-Day Express
+            ),
+          ),
         ),
       ),
     ),
@@ -152,9 +193,6 @@ class TransitDataView {
     $this->transitConfig = TransitConfig::get();
     foreach ($this->transitConfig as $config) {
       $this->routeIDs = array_merge($this->routeIDs, $config['routes']);
-      $parser = array(
-        'routeIDs' => $config['routes'],
-      );
       if (isset($config['live'])) {
         $parser['live'] = TransitDataParser::factory(
           $config['live']['class'], 
@@ -281,16 +319,31 @@ class TransitDataView {
     return $stopInfo;
   }
 
-  public function getMapImageForRoute($routeID, $size=270) {
+  public function getMapImageForStop($stopID, $width=270, $height=270) {
+    $image = false;
+    $parser = reset($this->parsersForStop($stopID));
+    
+    if ($parser['live']) {
+      $image = $parser['live']->getMapImageForStop($stopID, $width, $height);
+    }
+    
+    if (!$image && $parser['static']) {
+      $image = $parser['static']->getMapImageForStop($stopID, $width, $height);
+    }
+    
+    return $image;
+  }
+
+  public function getMapImageForRoute($routeID, $width=270, $height=270) {
     $image = false;
     $parser = $this->parserForRoute($routeID);
     
     if ($parser['live']) {
-      $image = $parser['live']->getMapImageForRoute($routeID, $size);
+      $image = $parser['live']->getMapImageForRoute($routeID, $width, $height);
     }
     
     if (!$image && $parser['static']) {
-      $image = $parser['static']->getMapImageForRoute($routeID, $size);
+      $image = $parser['static']->getMapImageForRoute($routeID, $width, $height);
     }
     
     return $image;
@@ -446,6 +499,31 @@ class TransitDataView {
     
     return $vehicles;
   }
+  
+  public function getNews() {
+    $allNews = array();
+    
+    foreach ($this->parsers as $parser) {
+      $news = array();
+
+      if ($parser['live']) {
+        $news = $parser['live']->getNews();
+      }
+      
+      if ($parser['static']) {
+        $staticNews = $parser['static']->getNews();
+        if (!count($news)) {
+          $news = $staticNews;
+        
+        } else if (count($staticNews)) {
+          $news = $news + $staticNews;
+        }
+      }
+      $allNews += $news;
+    }
+    
+    return $allNews;
+  }
 
   private function getAllRoutes($time=null) {
     $allRoutes = array();
@@ -519,7 +597,10 @@ class TransitDataView {
 
   private function parserForRoute($routeID) {
     foreach ($this->parsers as $parser) {
-      if (in_array($routeID, $parser['routeIDs'])) {
+      if ($parser['live'] && $parser['live']->hasRoute($routeID)) {
+        return $parser;
+      }
+      if ($parser['static'] && $parser['static']->hasRoute($routeID)) {
         return $parser;
       }
     }
@@ -567,9 +648,9 @@ abstract class TransitDataParser {
     return $parser;
   }
   
-  function __construct($agencyIDs, $routeIDs, $args) {
+  function __construct($agencyIDs, &$routeIDs, $args) {
     $this->args = $args;
-    $this->loadData($agencyIDs, $routeIDs, $args);
+    $this->loadData($agencyIDs, &$routeIDs, $args);
   }
   
   protected function updatePredictionData($routeID) {
@@ -578,6 +659,11 @@ abstract class TransitDataParser {
     
   public function getRouteVehicles($routeID) {
     // override if the parser has vehicle locations
+    return array();
+  }
+  
+  public function getNewsForRoutes() {
+    // override if the parser can get news items
     return array();
   }
   
@@ -608,6 +694,11 @@ abstract class TransitDataParser {
     return $this->routes[$id];
   }
   
+  // used to avoid warnings when looking for the right parser for a route
+  public function hasRoute($id) {
+    return isset($this->routes[$id]);
+  }
+
   //
   // Stops
   //
@@ -650,6 +741,10 @@ abstract class TransitDataParser {
     return $query;
   }  
   
+  protected function getRouteColor($routeID) {
+    return TRANSIT_DEFAULT_ROUTE_COLOR;
+  }
+
   //
   // Query functions
   // 
@@ -697,6 +792,9 @@ abstract class TransitDataParser {
         }
       }
     }
+    foreach ($routePredictions as $routeID => $prediction) {
+      $routePredictions[$routeID]['name'] = $this->getRoute($routeID)->getName();
+    }
     
     $stopInfo = array(
       'name'        => $this->stops[$stopID]->getName(),
@@ -708,7 +806,36 @@ abstract class TransitDataParser {
     return $stopInfo;
   }
  
-  public function getMapImageForRoute($id, $size=270) {
+  public function getMapImageForStop($id, $width=270, $height=270) {
+    if (!isset($this->stops[$id])) {
+      error_log(__FUNCTION__."(): Warning no such stop '$id'");
+      return false;
+    }
+    
+    $stop = $this->stops[$id];
+    $coords = $stop->getCoordinates();
+    
+    $iconURL = false;
+    if($_SERVER['SERVER_NAME'] != 'localhost') {
+      $iconURL = "http://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}".
+          "/modules/transit/images/shuttle_stop_pin.png";
+    } else {
+      $iconURL = "http://chart.apis.google.com/chart?".http_build_query(array(
+        'chst' => 'd_map_pin_icon',
+        'chld' => 'bus|'.TRANSIT_DEFAULT_ROUTE_COLOR,
+      ));
+    }
+    
+    $query = http_build_query(array(
+      'sensor'  => 'false',
+      'size'    => "{$width}x{$height}",
+      'markers' => "icon:$iconURL|{$coords['lat']},{$coords['lon']}",
+    ));
+    
+    return STATIC_MAPS_URL.$query;
+  }
+
+  public function getMapImageForRoute($id, $width=270, $height=270) {
     if (!isset($this->routes[$id])) {
       error_log(__FUNCTION__."(): Warning no such route '$id'");
       return false;
@@ -716,6 +843,7 @@ abstract class TransitDataParser {
     
     $route = $this->routes[$id];
     $paths = $route->getPaths();
+    $color = $this->getRouteColor($id);
     
     if (!count($paths)) {
       error_log(__FUNCTION__."(): Warning no path for route '$id'");
@@ -724,7 +852,7 @@ abstract class TransitDataParser {
     
     $query = http_build_query(array(
       'sensor' => 'false',
-      'size'   => "{$size}x{$size}",
+      'size'   => "{$width}x{$height}",
     ));
   
     $now = TransitTime::getCurrentTime();
@@ -738,7 +866,7 @@ abstract class TransitDataParser {
         $point = array_values($point);
       }
       $query .= '&'.http_build_query(array(
-        'path' => 'weight:3|color:0xb12727C0|enc:'.Polyline::encodeFromArray($points)
+        'path' => 'weight:3|color:0x'.$color.'C0|enc:'.Polyline::encodeFromArray($points)
       ), 0, '&amp;');
     }
     
@@ -756,7 +884,7 @@ abstract class TransitDataParser {
     if (!isset($time)) {
       $time = TransitTime::getCurrentTime();
     }
-    return $this->routes[$routeID]->isRunning($now);
+    return $this->routes[$routeID]->isRunning($time);
   }
   
   public function getRoutePaths($routeID) {
@@ -848,6 +976,7 @@ abstract class TransitDataParser {
         );
       }
     }
+
     // Check if we can merge the directions together into one big loop
     if (count($directions) > 1) {
       $newDirections = array();
@@ -1220,7 +1349,9 @@ class TransitRoute {
   }
   
   public function getPredictionsForStop($stopID, $time) {
-    $predictions = array();
+    $predictions = array(
+      'running' => $this->isRunning($time),
+    );
     foreach ($this->directions as $directionID => $direction) {
       foreach ($direction['segments'] as $segment) {
         foreach ($segment->getStops() as $stopIndex => $stopInfo) {

@@ -8,7 +8,6 @@ define('TRANSLOC_MARKERS_URL_FORMAT', 'http://%s.transloc.com/m/markers/marker.p
 define('TRANSLOC_ICON_PATH', '/shuttleschedule/shuttle-transloc.png');
 define('BUS_ICON_PATH', '/shuttleschedule/shuttle_stop_pin.png');
 define('TRANSLOC_UPDATE_FREQ', 200);
-define('ANNOUNCEMENTS_FEED', 'http://harvard.transloc.com/itouch/feeds/announcements?v=1&contents=true');
 
 class TranslocTransitDataParser extends TransitDataParser {
   private static $caches = array();
@@ -31,7 +30,7 @@ class TranslocTransitDataParser extends TransitDataParser {
       $feedURL = sprintf(TRANSLOC_MARKERS_URL_FORMAT, $vehicle['agencyID']).'?';
       $iconURL = $feedURL.http_build_query(array(
         'm' => 'bus',
-        'c' => $this->routeColors[$vehicle['routeID']],
+        'c' => $this->getRouteColor($vehicle['routeID']),
         'h' => self::$arrows[$arrowIndex],
       ));
 
@@ -41,22 +40,51 @@ class TranslocTransitDataParser extends TransitDataParser {
     }
     
     return $query;
-  }  
+  }
+  
+  protected function getRouteColor($routeID) {
+    if (isset($this->routeColors[$routeID])) {
+      return $this->routeColors[$routeID];
+    } else {
+      return parent::getRouteColor($routeID);
+    }
+  }
 
+  public function getNews() {
+    $news = array();
+    
+    $newsInfo = self::getData($this->translocHostname, 'announcements');
+    foreach ($newsInfo['agencies'] as $agencyNews) {
+      foreach ($agencyNews['announcements'] as $routeNews) {
+        $news[$routeNews['id']] = array(
+          'agency' => $agencyNews['name'],
+          'title'  => $routeNews['title'],
+          'date'   => strtotime($routeNews['date']),
+          'urgent' => $routeNews['urgent'],
+          'html'   => $routeNews['html'],
+        );
+      }
+    }
+    
+    return $news;
+  }
+  
   public function getRouteVehicles($routeID) {
     $updateInfo = self::getData($this->translocHostname, 'update');
     
     $vehicles = array();
     foreach ($updateInfo['vehicles'] as $vehicleInfo) {
-      if ($this->getRoute($vehicle['r'])->isRunning()) {
+      if ($vehicleInfo['r'] != $routeID) { continue; }
+      
+      if ($this->routeIsRunning($vehicleInfo['r'])) {
         $vehicles[$vehicleInfo['id']] = array(
           'secsSinceReport' => $vehicleInfo['t'],
           'lat'             => $vehicleInfo['ll'][0],
           'lon'             => $vehicleInfo['ll'][1],
           'heading'         => $vehicleInfo['h'],
           'nextStop'        => $vehicleInfo['next_stop'],
-          'agencyID'        => $this->getRoute($vehicle['r'])->getAgencyID(),
-          'routeID'         => $vehicle['r'],
+          'agencyID'        => $this->getRoute($vehicleInfo['r'])->getAgencyID(),
+          'routeID'         => $vehicleInfo['r'],
         );
       } else {
         error_log('Warning: inactive route '.$vehicleInfo['r'].
@@ -108,11 +136,7 @@ class TranslocTransitDataParser extends TransitDataParser {
         $this->getRoute($routeID)->addPath(new TransitPath('loop', $path));
         
         // special service type
-        $routeService = new TranslocTransitService(
-          "{$routeID}_service", 
-          $this->translocHostname, 
-          $routeID
-        );
+        $routeService = new TransitService("{$routeID}_service", true);
         
         // segments will be filled in below by the stop config
         $mergedSegments[$routeID] = new TranslocTransitSegment(
@@ -164,6 +188,10 @@ class TranslocTransitDataParser extends TransitDataParser {
         case 'update':
           $cacheTimeout = 120;
           break;
+          
+        case 'announcements':
+          $cacheTimeout = 120;
+          break;          
      }
   
       self::$caches[$cacheKey] = new DiskCache(CACHE_DIR.'/TranslocParser', $cacheTimeout, TRUE);
@@ -183,14 +211,17 @@ class TranslocTransitDataParser extends TransitDataParser {
       $results = json_decode($cache->read($cacheName), true);
       
     } else {
-      $params['v'] = 1; // version 1 of api
+      $params = array('v' => 1); // version 1 of api
       if ($action == 'update') {
         $params['nextstops'] = 'true';
+      } else if ($action == 'announcements') {
+        $params['contents'] = 'true';
       }
 
       $url = sprintf(TRANSLOC_SERVICE_URL_FORMAT, $hostname, $action).http_build_query($params);
+      error_log("TranslocTransitDataParser requesting $url", 0);
       $contents = file_get_contents($url);
-      error_log("TranslocTransitDataParser requested $url", 0);
+      error_log("TranslocTransitDataParser done", 0);
       
       if (!$contents) {
         error_log("Failed to read contents from $url, reading expired cache");
@@ -212,19 +243,19 @@ class TranslocTransitDataParser extends TransitDataParser {
   
   public function getRouteInfo($routeID, $time=null) {
     $routeInfo = parent::getRouteInfo($routeID, $time);
-    
     $updateInfo = self::getData($this->translocHostname, 'update');
 
-    $runnningStops = array();
+    $runningStops = array();
     foreach ($updateInfo['vehicles'] as $vehicleInfo) {
-      $runnningStops[$vehicleInfo['next_stop']] = true;
+      if ($vehicleInfo['r'] == $routeID) {
+        $runningStops[$vehicleInfo['next_stop']] = true;
+      }
     }
 
     // Add upcoming stop information
     foreach ($routeInfo['stops'] as $stopID => $stopInfo) {
-      $routeInfo['stops'][$stopID]['upcoming'] = isset($runnningStops[$stopID]);
+      $routeInfo['stops'][$stopID]['upcoming'] = isset($runningStops[$stopID]);
     }
-
     return $routeInfo;
   }
 
