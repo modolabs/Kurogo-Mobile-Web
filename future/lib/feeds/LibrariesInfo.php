@@ -705,8 +705,9 @@ class Libraries{
           $librariesToReturn = array();
         foreach ($xml_obj->branch as $branch) {
 
-            $libName = explode(":", $branch->library->name[0]);
-            $libId = explode(":", $branch->library->id[0]);
+            $libName = explode(":", $branch->repository->name[0]);
+            $libId = explode(":", $branch->repository->id[0]);
+            $libType = explode(":", $branch->repository->type[0]);
 
             $collection = $branch->collection;
             $parentCallNumber = "";
@@ -800,7 +801,11 @@ class Libraries{
                         if ($itm['checkedOutItem'] == 'YES')
                             $checkedOutCount++;
 
-                        $callNo = $itm['callNumber'];
+                        if (strlen($parentCallNumber[0]) > 0)
+                             $callNo = $parentCallNumber[0];
+
+                        else
+                            $callNo = $itm['callNumber'];
                         //$statArr['items'][] = $itm;
 
                         if ($itm['available'] == 'YES') {
@@ -828,6 +833,7 @@ class Libraries{
             $lib = array();
             $lib['name'] = $libName[0];
             $lib['id'] = $libId[0];
+            $lib['type'] = $libType[0];
             //$lib['items'] = $itemsToReturn;
             $lib['itemsByStat'] = $statsToReturn;
 

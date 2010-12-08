@@ -10,10 +10,16 @@ class TransitModule extends Module {
 
   }
 
-  private function timesURL($routeID, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('times', array(
-      'id' => $routeID,      
-    ), $addBreadcrumb);
+  private function timesURL($routeID, $addBreadcrumb=true, $noBreadcrumb=false) {
+    if ($noBreadcrumb) {
+      return $this->buildURL('route', array(
+        'id' => $routeID,      
+      ));
+    } else {
+      return $this->buildBreadcrumbURL('route', array(
+        'id' => $routeID,      
+      ), $addBreadcrumb);
+    }
   }
 
   private function newsURL($newsID, $addBreadcrumb=true) {
@@ -23,7 +29,7 @@ class TransitModule extends Module {
   }
   
   private function stopURL($stopID, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('detail', array(
+    return $this->buildBreadcrumbURL('stop', array(
       'id' => $stopID,      
     ), $addBreadcrumb);
   }
@@ -144,14 +150,27 @@ class TransitModule extends Module {
         $this->assign('infosections',  $infosections);
         break;
         
-      case 'times':
+      case 'route':
         $routeID = $this->getArg('id');
         
-        $timesConfig = $this->loadWebAppConfigFile('transit-times', 'timesConfig');
+        $routeConfig = $this->loadWebAppConfigFile('transit-route', 'routeConfig');
         
         $routeInfo = $view->getRouteInfo($routeID);
         foreach ($routeInfo['stops'] as $stopID => $stop) {
-          $routeInfo['stops'][$stopID]['url'] = $this->stopURL($stopID);
+          $routeInfo['stops'][$stopID]['url']   = $this->stopURL($stopID);
+          $routeInfo['stops'][$stopID]['title'] = $stop['name'];
+          
+          if ($stop['upcoming']) {
+            $routeInfo['stops'][$stopID]['title'] = "<strong>{$stop['name']}</strong>";
+            $routeInfo['stops'][$stopID]['imgAlt'] = $routeConfig['busImageAltText'];
+         }
+          
+          $routeInfo['stops'][$stopID]['img'] = '/common/images/';
+          if ($this->pagetype == 'basic') {
+            $routeInfo['stops'][$stopID]['img'] .= $stop['upcoming'] ? 'bus.gif' : 'bus-spacer.gif';
+          } else {
+            $routeInfo['stops'][$stopID]['img'] .= $stop['upcoming'] ? 'shuttle.png' : 'shuttle-spacer.png';
+          }
         }
 
         $this->enableTabs(array('map', 'stops'));
@@ -167,7 +186,7 @@ class TransitModule extends Module {
         $this->assign('routeInfo',    $routeInfo);
         break;
       
-      case 'detail':
+      case 'stop':
         $stopID = $this->getArg('id');
         
         $stopInfo = $view->getStopInfo($stopID);
@@ -177,7 +196,7 @@ class TransitModule extends Module {
         foreach ($stopInfo['routes'] as $routeID => $routeInfo) {
           $entry = array(
             'title' => $routeInfo['name'],
-            'url'   => $this->timesURL($routeID),
+            'url'   => $this->timesURL($routeID, false, true), // no breadcrumbs
           );
           if ($routeInfo['running']) {
             $runningRoutes[$routeID] = $entry;

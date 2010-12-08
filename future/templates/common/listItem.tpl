@@ -20,7 +20,10 @@
     <a href="{$item['url']}" class="{$item['class']|default:''}"{if $linkTarget} target="{$linkTarget}"{/if}>
   {/if}
     {if isset($item['img'])}
-      <img src="{$item['img']}" alt="{$item['title']}" width="50" height="50"/>
+      <img src="{$item['img']}" alt="{$item['title']}"{if $item['imgWidth']} 
+        width="{$item['imgWidth']}"{/if}{if $item['imgHeight']} 
+        height="{$item['imgHeight']}"{/if}{if $item['imgAlt']} 
+        alt="{$item['imgAlt']}"{/if} />
     {/if}
     {$item['title']}
     {$subtitleHTML}
