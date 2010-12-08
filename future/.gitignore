@@ -1,7 +1,5 @@
 *~
 *.DS_Store
 
-site/Harvard/cache/*
-site/Harvard/logs/*
-site/Modo/cache/*
-site/Modo/logs/*
+site/*/cache/*
+site/*/logs/*
