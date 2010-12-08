@@ -32,7 +32,9 @@
       <a class="title" href="../{$id}/" style="background: url('/modules/{$moduleID}/images/{$id}-tiny.png') no-repeat left;">
         {$info['title']}
       </a>
+      {if $info['movable']}
       <div class="draghandle"></div>
+      {/if}
     </li>
   {/foreach}
 </ul>

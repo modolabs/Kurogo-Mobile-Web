@@ -12,6 +12,7 @@
       {/if}
       <span class="nolink" style="background-image: url(/modules/{$moduleID}/images/{$id}-tiny.png)">
         {$info['title']}
+        {if $info['movable']}
         <span class="nolinkbuttons"> 
           <a href="#" onclick="moveUp(this); return false;">
             <!--<img src="/modules/{$moduleID}/images/button-up.png" width="26" height="26" class="moveup" alt="Move up"/>-->
@@ -22,6 +23,7 @@
             <div class="movedown">&nbsp;</div>
           </a> 
         </span> 
+        {/if}
       </span>                   
     </li>
   {/foreach}

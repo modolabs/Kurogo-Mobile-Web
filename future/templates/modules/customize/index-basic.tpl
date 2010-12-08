@@ -20,14 +20,14 @@
         </td>
         <td>{$info['title']}</td>
         <td>
-          {if isset($info['swapUpURL'])}
+          {if isset($info['swapUpURL']) && $info['movable']}
             <a href="{$info['swapUpURL']}">
               <img src="/modules/{$moduleID}/images/up.gif" border="0" alt="Up">
             </a>
           {/if}
         </td>
         <td>
-          {if isset($info['swapDownURL'])}
+          {if isset($info['swapDownURL']) && $info['movable']}
             <a href="{$info['swapDownURL']}">
               <img src="/modules/{$moduleID}/images/down.gif" border="0" alt="Down">
             </a>
