@@ -18,7 +18,7 @@ class LoginModule extends Module {
     switch ($this->page)
     {
         case 'logout':
-            $this->page = 'message';
+            $this->setTemplatePage('message');
             if (!$this->session->isLoggedIn()) {
                 $this->redirectTo('login');
             } else {
@@ -45,22 +45,27 @@ class LoginModule extends Module {
                         header("Location: $url");
                         exit();
                     } 
-                    $this->page = 'message';
+                    $this->setTemplatePage('message');
                     $this->assign('message', 'Login Successful');
                     break;
 
                 case AUTH_FAILED:
                 case AUTH_USER_NOT_FOUND:
-                    $this->page = 'index';
+                
+                    $this->setTemplatePage('index');
                     $this->assign('message', 'Login Failed. Please check your login and password');
                     break;
+                default:
+                    $this->setTemplatePage('index');
+                    $this->assign('message', "Login Failed. An unknown error occurred $result");
+                    
 
             }
             break;
         case 'index':
             if ($this->session->isLoggedIn()) {
                 $user = $this->getUser();
-                $this->page = 'message';
+                $this->setTemplatePage('message');
                 $this->assign('message', "You are logged in as " . $user->getUserID());
                 $this->assign('url', $this->buildURL('logout'));
                 $this->assign('linkText', 'Click here to logout.');
