@@ -28,7 +28,7 @@ class Libraries{
         }
 
         $xml_obj = simplexml_load_string($xml);
-        return self::getAllLibrariesOrArchives('Library', $xml_obj);
+        return self::getAllLibrariesOrArchives('library', $xml_obj);
     }
 
 
