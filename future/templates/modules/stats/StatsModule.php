@@ -55,10 +55,10 @@ protected function generate_popular_content($system, $data) {
   $viewcounts = array();
   if ($system == 'web') {
     $modules = array();
-    $moduleData = $this->getHomeScreenModules();
-
-    foreach ($moduleData as $module => $mdata) {
-      $modules[$module] = $mdata['title'];
+    $moduleData = $this->getAllModules();
+    
+    foreach ($moduleData as $moduleID => $module) {
+      $modules[$moduleID] = $module->getModuleName();
     }
   } else { // api
     $modules = array(
@@ -90,7 +90,7 @@ protected function generate_popular_content($system, $data) {
       'count' => $count,
       );
     if ($system == 'web') {
-      $module_stats['name'] = $moduleData[$module]['title'];
+      $module_stats['name'] = $moduleData[$module]->getModuleName();
       $module_stats['link'] = sprintf("%s%s/", URL_BASE, $module);
     }
 
