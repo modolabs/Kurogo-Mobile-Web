@@ -16,16 +16,13 @@ class AdminModule extends Module {
         //couldn't find the variable
         return false;
     } elseif (!$type = $this->getArg('_type')) {
-        DEbug::die_here();
         return $var;
     }
     
     if (!is_array($var)) {
         $type = isset($type[$key]) ? $type[$key] : null;
-        DEbug::die_here();
         return $this->prepareSubmitValue($var, $type);
     } elseif (!isset($type[$key])) {
-        DEbug::die_here();
         return $var;
     }
     
