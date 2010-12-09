@@ -4,7 +4,9 @@
       {$item['label']}{if $labelColon|default:true}:{/if}
     </label>
 {/if}
+{if $item.type !='label'}
     <input type="hidden" name="_type[{$item.typename|default:$item.name}]" value="{$item.type}" />
+{/if}    
 {if isset($item['subtitle'])}
 <span class="smallprint">{$item.subtitle|escape}</span>
 {/if}
