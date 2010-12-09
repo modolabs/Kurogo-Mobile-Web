@@ -141,7 +141,7 @@ class ConfigFile extends Config {
                         $string[] = sprintf("%s[] = %s", $var, $this->saveValue($_value));
                     }
                 } else {
-                    trigger_error("Error parsing non scalar value in " . $data['file'], E_USER_ERROR);
+                    trigger_error("Error parsing non scalar value for $var in " . $this->file, E_USER_ERROR);
                 }
             }
         } else {
