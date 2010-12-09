@@ -97,9 +97,7 @@ class AdminModule extends Module {
                         $this->assign('feedFields', $module->getFeedFields());
                     }
                 
-                    if (isset($moduleData[$section])) {
-                        $module->prepareAdminForSection($section, $this);
-                    } else {
+                    if (!isset($moduleData[$section])) {
                         $section = null;
                     }
                 }
@@ -107,9 +105,10 @@ class AdminModule extends Module {
                 if ($this->getArg('submit')) {
                     $merge = $this->getArg('merge', true);
                     if ($merge) {
-                        $moduleData = array_merge($module->getModuleDefaultData(), $this->getArg('moduleData'));
+                        $moduleData = $this->prepareSubmitData('moduleData');
+                        $moduleData = array_merge($module->getModuleDefaultData(), $moduleData);
                     } else {
-                        $moduleData = $this->getArg('moduleData');
+                        $moduleData = $this->prepareSubmitData('moduleData');
                     }                    
 
                     $module->saveConfig($moduleData, $section);
@@ -124,13 +123,15 @@ class AdminModule extends Module {
                 $this->setBreadcrumbTitle($moduleData['title']);
                 $this->setBreadcrumbLongTitle($moduleData['title']);
                 
-                $formListItems = array(
-                    $this->getModuleItemForKey('id', $moduleID)
-                );
+                
+                $formListItems = array();
 
                 if ($section) {
                     $moduleData = $moduleData[$section];
+                } else {
+                   $formListItems[] = $this->getModuleItemForKey('id', $moduleID);
                 }
+                
                 foreach ($moduleData as $key=>$value) {
                     if (is_scalar($value)) {
                         $formListItems[] = $module->getModuleItemForKey($key, $value);
@@ -161,15 +162,19 @@ class AdminModule extends Module {
                             )
                         );
                     }
-                }
+                } 
                 
-                $module = array(
+                $_module = array(
                     'id'=>$moduleID
                 );
 
                 $this->assign('formListItems', $formListItems);
-                $this->assign('module'       , $module);
+                $this->assign('module'       , $_module);
                 $this->assign('section'      , $section);
+
+                if ($section) {
+                    $module->prepareAdminForSection($section, $this);
+                }
                 break;
 
             case 'modules':
