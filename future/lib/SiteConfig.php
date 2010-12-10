@@ -6,16 +6,16 @@ class SiteConfig extends ConfigGroup {
     // Load main configuration file
     $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini", 'file', false, true);
     $this->addConfig($config);
-    
+
+    //make sure active site is set    
     if (!$site = $this->getVar('ACTIVE_SITE')) {
         die("FATAL ERROR: ACTIVE_SITE not set");
     }
     
-    if (!$siteDir  = realpath_exists($this->getVar('SITE_DIR'))) {
+    //make sure site_dir is set and is a valid path
+    if (!($siteDir = $this->getVar('SITE_DIR')) || !($siteDir = realpath_exists($siteDir))) {
         die("FATAL ERROR: Site Directory ". $this->getVar('SITE_DIR') . " not found for site " . $site);
     }
-    
-    $siteMode = $this->getVar('SITE_MODE');
     
     // Set up defines relative to SITE_DIR
     define('SITE_DIR',             $siteDir);
@@ -25,15 +25,22 @@ class SiteConfig extends ConfigGroup {
     define('LOG_DIR',              SITE_DIR.'/logs');
     define('SITE_CONFIG_DIR',      SITE_DIR.'/config');
 
+    //load in the site config file (required);
     $config = ConfigFile::factory(SITE_CONFIG_DIR."/config.ini", 'file', false, true);
     $this->addConfig($config);
 
-    $config = ConfigFile::factory(SITE_CONFIG_DIR."/config-$siteMode.ini");
-    $this->addConfig($config);
+    if ($siteMode = $this->getVar('SITE_MODE')) {
+        // optionally load a side mode config file
+        $config = ConfigFile::factory(SITE_CONFIG_DIR."/config-$siteMode.ini");
+        $this->addConfig($config);
+    }
 
     // Set up theme define
-    define('THEME_DIR', SITE_DIR.'/themes/'.$this->getVar('ACTIVE_THEME'));
-    //error_log(print_r($this->configVars, true));
+    if (!$theme = $this->getVar('ACTIVE_THEME')) {
+        die("FATAL ERROR: ACTIVE_THEME not set");
+    }
+    
+    define('THEME_DIR', SITE_DIR.'/themes/'.$theme);
   }
 
 }
