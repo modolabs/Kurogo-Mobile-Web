@@ -113,7 +113,11 @@ class AdminModule extends Module {
                         $moduleData = array_merge($module->getModuleDefaultData(), $moduleData);
                     } else {
                         $moduleData = $this->prepareSubmitData('moduleData');
-                    }                    
+                    }
+
+                    if ($section) {
+                        $moduleData = array($section=>$moduleData[$section]);
+                    }
 
                     $module->saveConfig($moduleData, $section);
                     if ($section) {
