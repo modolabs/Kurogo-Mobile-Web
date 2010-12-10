@@ -281,6 +281,12 @@ abstract class Module {
      $config = $this->getModuleConfig();
      return $config->getVar($var);
   }
+
+  protected function getModuleSection($var)
+  {
+     $config = $this->getModuleConfig();
+     return $config->getSection($var);
+  }
   
   public function hasFeeds()
   {
@@ -348,6 +354,23 @@ abstract class Module {
   //
   
   protected function prepareAdminForSection($section, $adminModule) {
+    switch ($section)
+    {
+        case 'strings':
+            $strings = $this->getModuleSection('strings');
+            $formListItems = array();
+            foreach ($strings as $string=>$value) {
+                $formListItems[] = array(
+                    'label'=>ucfirst($string),
+                    'name'=>"moduleData[strings][$string]",
+                    'typename'=>"moduleData][strings][$string",
+                    'value'=>implode("\n\n", $value),
+                    'type'=>'paragraph'
+                );
+            }
+            $adminModule->assign('formListItems' ,$formListItems);
+            break;
+    }
   }
   
   protected function saveConfig($moduleData, $section=null)
@@ -481,7 +504,12 @@ abstract class Module {
   
   protected function getSectionTitleForKey($key)
   {
-    return $key; //should be overridden by subclasses
+     switch ($key)
+     {
+            case 'strings':
+                return 'Strings';
+     }
+     return $key;
   }
 
   protected function getModuleItemForKey($key, $value)

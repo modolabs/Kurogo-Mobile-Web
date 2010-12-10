@@ -28,10 +28,17 @@ class AdminModule extends Module {
     
     $types = $type[$key];
     foreach ($types as $key=>$type) {
-        $value = isset($var[$key]) ? $var[$key] : null;
-        $var[$key] = $this->prepareSubmitValue($value, $type);
+        if (is_array($type)) {
+            foreach ($type as $_key=>$_type) {
+                $value = isset($var[$key][$_key]) ? $var[$key][$_key] : null;
+                $var[$key][$_key] = $this->prepareSubmitValue($value, $_type);
+            }
+        } else {
+            $value = isset($var[$key]) ? $var[$key] : null;
+            $var[$key] = $this->prepareSubmitValue($value, $type);
+        }
     }
-
+    
     return $var;    
   }
 
@@ -229,8 +236,8 @@ class AdminModule extends Module {
                 $this->assign('strings', $strings);
                 $this->assign('formListItems', $formListItems);
                 break;
-            case 'site':
 
+            case 'site':
                 if ($this->getArg('submit')) {
                     //$module->saveConfig($moduleData, $section);
                     $this->redirectTo('index', false, false);

@@ -4,17 +4,7 @@ require_once realpath(LIB_DIR.'/Module.php');
 
 class AboutModule extends Module {
   protected $id = 'about';
-  
-  protected function getSectionTitleForKey($key)
-  {
-    switch ($key)
-    {
-        case 'ABOUT_HTML': return "About " . $this->getSiteVar('INSTITUTION_NAME');
-        case 'SITE_ABOUT_HTML': return "About this site";
-        default: return parent::getSectionTitleForKey($key);
-    }
-  }
-  
+
   protected function getModuleItemForKey($key, $value)
   {
     $item = array(
@@ -39,26 +29,6 @@ class AboutModule extends Module {
     return $item;
   }
 
-  protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section)
-    {
-        case 'ABOUT_HTML':
-        case 'SITE_ABOUT_HTML':
-            $formListItems = array();
-            $formListItems[] = array(
-                'label'=>ucfirst($section),
-                'name'=>"moduleData[$section]",
-                'typename'=>"moduleData][$section",
-                'value'=>implode("\n\n", $this->getModuleVar($section)),
-                'type'=>'paragraph'
-            );
-            $adminModule->assign('formListItems' ,$formListItems);
-            break;
-        default: 
-            return parent::prepareAdminForSection($section, $adminModule);
-    }
-  }
-  
   private function getPhraseForDevice() {
     switch($this->platform) {
       case 'iphone':
