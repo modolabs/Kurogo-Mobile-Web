@@ -22,6 +22,16 @@
     <input type="submit" name="{$item.name}" value="{$item.value|escape}" />
     {elseif $item.type=='label'}
     {$item.value|escape}
+    {elseif $item.type=='radio'}
+    {foreach $item['options'] as $_value=>$_label}
+    <input type="radio" name="{$item.name}" value="{$_value}"{if $item.value==$_value} checked{/if}> {$_label|escape}&nbsp;
+    {/foreach}
+    {elseif $item.type=='select'}
+    <select name="{$item.name}">
+    {foreach $item['options'] as $_value=>$_label}
+    <option value="{$_value}"{if $item.value==$_value} selected{/if}>{$_label|escape}</option>
+    {/foreach}
+    </select>
     {elseif $item.type=='url'}
     <a href="{$item['value']}" class="{$item['class']|default:''}"{if $linkTarget} target="{$linkTarget}"{/if}>{$item['name']}</a>
     {/if}
