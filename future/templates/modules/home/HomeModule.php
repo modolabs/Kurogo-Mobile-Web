@@ -4,6 +4,14 @@ require_once realpath(LIB_DIR.'/Module.php');
 
 class HomeModule extends Module {
   protected $id = 'home';
+
+  protected function getModuleDefaultData()
+  {
+    return array_merge(parent::getModuleDefaultData(), array(
+        'springboard'=>1
+        )
+    );
+  }
   
   protected function getSectionTitleForKey($key)
   {
@@ -104,8 +112,6 @@ class HomeModule extends Module {
         break;
         
       case 'index':
-        $this->loadWebAppConfigFile('home-index', 'home');
-      
         $whatsNewCount = 0;
         $modules = array();
         $secondaryModules = array();
@@ -134,6 +140,7 @@ class HomeModule extends Module {
         }
         $modules = array_merge($modules, $secondaryModules);
         
+        $this->assign('springboard', $this->getModuleVar('springboard'));
         $this->assign('modules', $modules);
         $this->assign('topItem', null);
         break;

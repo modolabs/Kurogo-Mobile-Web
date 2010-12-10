@@ -16,7 +16,7 @@
   {include file="findInclude:common/search.tpl" placeholder="Search "|cat:$SITE_NAME}  
 {/block}
 
-{if $home['springboard']}
+{if $springboard}
   {include file="findInclude:common/springboard.tpl" springboardItems=$modules springboardID="homegrid"}
 {else}
   {include file="findInclude:common/navlist.tpl" navlistItems=$modules}

@@ -282,12 +282,32 @@ abstract class Module {
      return $config->getVar($var);
   }
 
-  protected function getModuleSection($var)
+  protected function getModuleSection($section)
   {
      $config = $this->getModuleConfig();
-     return $config->getSection($var);
+     return $config->getSection($section);
   }
-  
+
+  protected function getModuleArray($section)
+  {
+     $config = $this->getModuleConfig();
+     $return = array();
+     
+     if ($data = $config->getSection($section)) {
+        $fields = array_keys($data);
+        
+        for ($i=0; $i<count($data[$fields[0]]); $i++) {
+            $item = array();
+            foreach ($fields as $field) {
+                $item[$field] = $data[$field][$i];
+            }
+            $return[] = $item;
+        }
+     } 
+     
+     return $return;
+  }
+
   public function hasFeeds()
   {
      return $this->hasFeeds;
@@ -360,13 +380,15 @@ abstract class Module {
             $strings = $this->getModuleSection('strings');
             $formListItems = array();
             foreach ($strings as $string=>$value) {
-                $formListItems[] = array(
+                $item = array(
                     'label'=>ucfirst($string),
                     'name'=>"moduleData[strings][$string]",
                     'typename'=>"moduleData][strings][$string",
-                    'value'=>implode("\n\n", $value),
-                    'type'=>'paragraph'
+                    'value'=>is_array($value) ? implode("\n\n", $value) : $value,
+                    'type'=>is_array($value) ? 'paragraph' : 'text'
                 );
+                
+                $formListItems[] = $item;
             }
             $adminModule->assign('formListItems' ,$formListItems);
             break;
@@ -375,7 +397,16 @@ abstract class Module {
   
   protected function saveConfig($moduleData, $section=null)
   {
-        $type = $section == 'feeds' ? 'feeds' : 'module';
+        switch ($section)
+        {
+            case 'feeds':
+                $type = $section;
+                break;
+            default:
+                $type = 'module';
+                break;
+        }
+
         $moduleConfigFile = ConfigFile::factory($this->id, $type, true);
         
         if ($section=='feeds') {
@@ -524,6 +555,13 @@ abstract class Module {
 
     switch ($key)
     {
+        case 'springboard':
+            $item['label'] = 'Display type';
+            $item['type'] = 'radio';
+            $item['options'] = array(
+                0=>'List View',
+                1=>'Springboard');
+            break;
         case 'title':
             $item['type'] = 'text';
             $item['subtitle'] = 'The name this module will be presented as to users (i.e. the home screen)';
