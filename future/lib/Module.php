@@ -736,7 +736,7 @@ abstract class Module {
 
       // Load site configuration and help text
 
-      $this->loadSiteConfigFile('strings', false);
+      $this->loadSiteConfigFile('strings', false, ConfigFile::OPTION_CREATE_WITH_DEFAULT);
       $this->loadWebAppConfigFile('help');
   
       // load module config file
@@ -803,15 +803,15 @@ abstract class Module {
     return $config;
   }
 
-  protected function loadSiteConfigFile($name, $keyName=null) {
-    $config = $this->getConfig($name, 'site');
+  protected function loadSiteConfigFile($name, $keyName=null, $opts=0) {
+    $config = $this->getConfig($name, 'site', $opts);
     if ($keyName === null) { $keyName = $name; }
 
     return $this->loadConfigFile($config, $keyName);
   }
 
-  protected function loadWebAppConfigFile($name, $keyName=null) {
-    $config = $this->getConfig($name, 'web');
+  protected function loadWebAppConfigFile($name, $keyName=null, $opts=0) {
+    $config = $this->getConfig($name, 'web', $opts);
     if ($keyName === null) { $keyName = $name; }
     return $this->loadConfigFile($config, $keyName);
   }

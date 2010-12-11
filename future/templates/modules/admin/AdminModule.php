@@ -207,9 +207,8 @@ class AdminModule extends Module {
                 break;
             case 'strings':
                 if ($this->getArg('submit')) {
-                    //$module->saveConfig($moduleData, $section);
                     $strings = $this->prepareSubmitData('strings');
-                    $configFile = $this->getConfig('strings', 'site');
+                    $configFile = $this->getConfig('strings', 'site', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
                     $configFile->addSectionVars($strings, false);
                     $configFile->saveFile();
                     $this->redirectTo('index', false, false);
