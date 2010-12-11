@@ -4,7 +4,7 @@ class SiteConfig extends ConfigGroup {
 
   function __construct() {
     // Load main configuration file
-    $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini", 'file', false, true);
+    $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini", 'file', ConfigFile::OPTION_DIE_ON_FAILURE);
     $this->addConfig($config);
 
     //make sure active site is set    
@@ -26,7 +26,7 @@ class SiteConfig extends ConfigGroup {
     define('SITE_CONFIG_DIR',      SITE_DIR.'/config');
 
     //load in the site config file (required);
-    $config = ConfigFile::factory(SITE_CONFIG_DIR."/config.ini", 'file', false, true);
+    $config = ConfigFile::factory(SITE_CONFIG_DIR."/config.ini", 'file', ConfigFile::OPTION_DIE_ON_FAILURE);
     $this->addConfig($config);
 
     if ($siteMode = $this->getVar('SITE_MODE')) {

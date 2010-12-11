@@ -285,7 +285,10 @@ abstract class Module {
   protected function getModuleSection($section)
   {
      $config = $this->getModuleConfig();
-     return $config->getSection($section);
+     if (!$section = $config->getSection($section)) {
+        $section = array();
+     }
+     return $section;
   }
 
   protected function getModuleArray($section)
@@ -407,7 +410,7 @@ abstract class Module {
                 break;
         }
 
-        $moduleConfigFile = ConfigFile::factory($this->id, $type, true);
+        $moduleConfigFile = ConfigFile::factory($this->id, $type, ConfigFile::OPTION_CREATE_EMPTY);
         
         if ($section=='feeds') {
             $moduleData = $moduleData[$section];
@@ -640,7 +643,7 @@ abstract class Module {
   public function getModuleConfig() {
     static $moduleConfig;
     if (!$moduleConfig) {
-        $moduleConfig = $this->getConfig($this->id, 'module');
+        $moduleConfig = $this->getConfig($this->id, 'module', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
     }
 
     return $moduleConfig;
@@ -794,8 +797,8 @@ abstract class Module {
   // Config files
   //
   
-  protected function getConfig($name, $type) {
-    $config = ConfigFile::factory($name, $type);
+  protected function getConfig($name, $type, $opts=0) {
+    $config = ConfigFile::factory($name, $type, $opts);
     $GLOBALS['siteConfig']->addConfig($config);
     return $config;
   }

@@ -1,19 +1,39 @@
 <?php
 
 class ConfigFile extends Config {
+  const OPTION_CREATE_EMPTY=1;
+  const OPTION_CREATE_WITH_DEFAULT=2;
+  const OPTION_DIE_ON_FAILURE=4;
   protected $configs = array();
   protected $file;
+  protected $type;
+  protected $filepath;
   
   public function exists()
   {
-    return file_exists($this->file);
+    return file_exists($this->filepath);
   }
 
   // loads a config object from a file/type combination  
-  public static function factory($file, $type='file', $createFile=false, $dieOnFailure=false) {
+  public static function factory($file, $type='file', $options=0) {
+    $config = new ConfigFile();
+    
+    if (!$result = $config->loadFileType($file, $type, $options)) {
+        if ($options & ConfigFile::OPTION_DIE_ON_FAILURE) {
+          die("FATAL ERROR: cannot load $type configuration file: $file");
+        }
+    }
+    
+    return $config;
+  }
 
+  protected function getFileByType($file, $type)
+  {
     switch ($type)
     {
+        case 'module-default':
+            $pattern = sprintf('%s/%%1$s/config/%%1$s-default.ini', MODULES_DIR);
+            break;
         case 'api':
         case 'web':
         case 'module':
@@ -24,23 +44,63 @@ class ConfigFile extends Config {
             $pattern = sprintf("%s/%%s.ini", SITE_CONFIG_DIR);
             break;
         case 'file':
+            if ($f = realpath($file)) {
+                $file = $f;
+            }
             $pattern = "%s";
             break;
         default:
-            throw new Exception("Invalid config type $type");
+            return false;
     }
     
-    $config = new ConfigFile();
-    if (!$config->loadFile(sprintf($pattern, $file), $createFile)) {
-        if ($dieOnFailure) {
-          die("FATAL ERROR: cannot load $type configuration file: $file");
-        } else {
-          error_log("cannot load $type configuration file: $file");
+    return sprintf($pattern, $file);
+  }
+  
+  public function loadFileType($file, $type, $options=0)
+  {
+    $this->file = $file;
+    $this->type = $type;
+
+    if (!$_file = $this->getFileByType($file, $type)) {
+        return false;
+    }
+    
+    if ($this->loadFile($_file)) {
+        return true;
+    } 
+    
+    if ($options & ConfigFile::OPTION_CREATE_EMPTY) {
+        //create an empty file and then load it
+        $this->createDirIfNotExists(dirname($_file));
+        if (!is_dir(dirname($_file))) {
+            @mkdir(dirname($_file), 0700, true);
+        }
+         @touch($_file);
+         return $this->loadFile($_file);
+    } elseif ($options & ConfigFile::OPTION_CREATE_WITH_DEFAULT) {
+        //attempts to use a default version of the file
+        if ($defaultFile = $this->getFileByType($file, $type.'-default')) {
+            if (file_exists($defaultFile)) {
+                $this->createDirIfNotExists(dirname($_file));
+                @copy($defaultFile, $_file);
+                return $this->loadFile($_file);
+            }
         }
     }
-    return $config;
-   }
-
+    
+    return false;
+    
+  }
+  
+  private function createDirIfNotExists($dir)
+  {
+    if (!is_dir($dir)) {
+        return @mkdir($dir, 0700, true);
+    }
+    
+    return true;
+  }
+  
   public function addConfig(Config $config) {
        $this->configs[] = $config;
   }
@@ -57,17 +117,13 @@ class ConfigFile extends Config {
     return $matches[0];
   }
 
-  protected function loadFile($_file, $createFile=false) {
+  protected function loadFile($_file) {
   
      if (!$file = realpath_exists($_file)) {
-        if ($createFile) {
-            @touch($_file);
-            return $this->loadFile($_file);
-        }
         return false;
      }
      
-     $this->file = $file;
+     $this->filepath = $file;
      
      $vars = parse_ini_file($file, false);
      $this->addVars($vars);
@@ -114,8 +170,8 @@ class ConfigFile extends Config {
   
   public function saveFile() {
 
-    if (!is_writable($this->file)) {
-        throw new Exception("Cannot save config file: $this->file Check permissions");
+    if (!is_writable($this->filepath)) {
+        throw new Exception("Cannot save config file: $this->filepath Check permissions");
     }
   
       $string = array();
@@ -141,7 +197,7 @@ class ConfigFile extends Config {
                         $string[] = sprintf("%s[] = %s", $var, $this->saveValue($_value));
                     }
                 } else {
-                    trigger_error("Error parsing non scalar value for $var in " . $this->file, E_USER_ERROR);
+                    trigger_error("Error parsing non scalar value for $var in " . $this->filepath, E_USER_ERROR);
                 }
             }
         } else {
@@ -150,7 +206,7 @@ class ConfigFile extends Config {
         
       }
       
-      file_put_contents($this->file, implode(PHP_EOL, $string));
+      file_put_contents($this->filepath, implode(PHP_EOL, $string));
       return true;
   }
 
