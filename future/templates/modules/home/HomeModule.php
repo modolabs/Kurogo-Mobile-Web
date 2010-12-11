@@ -48,7 +48,7 @@ class HomeModule extends Module {
     }
   }
 
-  protected function getHomeScreenModules($type=null) {
+  public function getHomeScreenModules($type=null) {
       
     $allVisible = true;
 

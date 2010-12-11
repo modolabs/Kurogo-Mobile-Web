@@ -2,7 +2,7 @@
 
 require_once realpath(MODULES_DIR.'/home/HomeModule.php');
 
-class CustomizeModule extends HomeModule {
+class CustomizeModule extends Module {
   protected $id = 'customize';
 
   protected function setHomeScreenModuleOrder($moduleIDs) {
@@ -21,6 +21,16 @@ class CustomizeModule extends HomeModule {
     setcookie("visiblemodules", $value, time() + $lifespan, COOKIE_PATH);
     $_COOKIE["visiblemodules"] = $value;
     error_log(__FUNCTION__.'(): '.print_r($value, true));
+  }
+  
+  protected function getHomeScreenModules()
+  {
+    static $homeModule;
+    if (!$homeModule) {
+        $homeModule = Module::factory('home');
+    }
+        
+    return $homeModule->getHomeScreenModules();
   }
 
   private function handleRequest($args) {
