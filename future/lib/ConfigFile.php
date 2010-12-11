@@ -31,6 +31,9 @@ class ConfigFile extends Config {
   {
     switch ($type)
     {
+        case 'site-default':
+            $pattern = sprintf('%s/%%s-default.ini', MASTER_CONFIG_DIR);
+            break;
         case 'module-default':
             $pattern = sprintf('%s/%%1$s/config/%%1$s-default.ini', MODULES_DIR);
             break;
@@ -85,6 +88,8 @@ class ConfigFile extends Config {
                 @copy($defaultFile, $_file);
                 return $this->loadFile($_file);
             }
+        } else {
+            trigger_error(sprintf("Trying to get %s-default for %s", $type, $file), E_USER_ERROR);
         }
     }
     
