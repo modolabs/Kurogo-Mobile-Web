@@ -8,7 +8,9 @@ class HomeModule extends Module {
   protected function getModuleDefaultData()
   {
     return array_merge(parent::getModuleDefaultData(), array(
-        'springboard'=>1
+        'springboard'=>1,
+        'primary_modules'=>array(),
+        'secondary_modules'=>array()
         )
     );
   }
@@ -48,8 +50,6 @@ class HomeModule extends Module {
 
   protected function getHomeScreenModules($type=null) {
       
-    $config = ConfigFile::factory('home','module');
-    $moduleData = $config->getSectionVars(true);
     $allVisible = true;
 
     if (isset($_COOKIE["visiblemodules"])) {
@@ -62,8 +62,9 @@ class HomeModule extends Module {
     }
     
     $modules = array();
-    
-    foreach ($moduleData['primary_modules'] as $moduleID=>$title) {
+
+    $primary_modules = $this->getModuleSection('primary_modules');
+    foreach ($primary_modules as $moduleID=>$title) {
         $modules[$moduleID] = array(
             'title'=>$title,
             'primary'=>1,
@@ -72,7 +73,8 @@ class HomeModule extends Module {
         );
     }
 
-    foreach ($moduleData['secondary_modules'] as $moduleID=>$title) {
+    $secondary_modules = $this->getModuleSection('secondary_modules');
+    foreach ($secondary_modules as $moduleID=>$title) {
         $modules[$moduleID] = array(
             'title'=>$title,
             'primary'=>0,
@@ -84,7 +86,7 @@ class HomeModule extends Module {
     switch ($type) {
         case 'primary_modules':
         case 'secondary_modules':
-            return $moduleData[$type];
+            return $$type;
     }
 
     if (isset($_COOKIE["moduleorder"])) {
