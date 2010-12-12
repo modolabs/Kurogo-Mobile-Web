@@ -59,7 +59,38 @@ class ConfigFile extends Config {
     return sprintf($pattern, $file);
   }
   
-  public function loadFileType($file, $type, $options=0)
+  protected function createDefaultFile($file, $type)
+  {
+    switch ($type)
+    {
+        case 'site':
+            $_file = $this->getFileByType($file, $type);
+            $defaultFile = $this->getFileByType($file, $type.'-default');
+            if (file_exists($defaultFile)) {
+                $this->createDirIfNotExists(dirname($_file));
+                return @copy($defaultFile, $_file);
+            }
+            
+            return false;
+            break;
+            
+        case 'module':
+            //check to see if the module has a default config file first
+            $_file = $this->getFileByType($file, $type);
+            $defaultFile = $this->getFileByType($file, $type.'-default');
+            if (file_exists($defaultFile)) {
+                $this->createDirIfNotExists(dirname($_file));
+                return @copy($defaultFile, $_file);
+            } elseif ($module = Module::factory($file)) {
+                return $module->createDefaultConfigFile();
+            } else {
+                throw new Exception("Module $file not found");
+            }
+            break;
+    }
+  }
+  
+  protected function loadFileType($file, $type, $options=0)
   {
     $this->file = $file;
     $this->type = $type;
@@ -81,15 +112,9 @@ class ConfigFile extends Config {
          @touch($_file);
          return $this->loadFile($_file);
     } elseif ($options & ConfigFile::OPTION_CREATE_WITH_DEFAULT) {
-        //attempts to use a default version of the file
-        if ($defaultFile = $this->getFileByType($file, $type.'-default')) {
-            if (file_exists($defaultFile)) {
-                $this->createDirIfNotExists(dirname($_file));
-                @copy($defaultFile, $_file);
-                return $this->loadFile($_file);
-            }
-        } else {
-            trigger_error(sprintf("Trying to get %s-default for %s", $type, $file), E_USER_ERROR);
+        //attempt to create a file with default options
+        if ($this->createDefaultFile($file, $type)) {
+            return $this->loadFile($_file);
         }
     }
     

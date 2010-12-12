@@ -398,6 +398,13 @@ abstract class Module {
     }
   }
   
+  public function createDefaultConfigFile()
+  {
+    $moduleConfig = $this->getConfig($this->id, 'module', ConfigFile::OPTION_CREATE_EMPTY);
+    $moduleConfig->addSectionVars($this->getModuleDefaultData());
+    return $moduleConfig->saveFile();
+  }
+  
   protected function saveConfig($moduleData, $section=null)
   {
         switch ($section)
@@ -528,8 +535,6 @@ abstract class Module {
     return array(
         'title'=>$this->moduleName,
         'disabled'=>0,
-        'disableable'=>0,
-        'movable'=>0,
         'protected'=>0,
         'search'=>0,
         'secure'=>0
