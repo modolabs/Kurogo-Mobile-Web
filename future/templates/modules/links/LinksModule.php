@@ -10,7 +10,8 @@ class LinksModule extends Module {
     return array_merge(parent::getModuleDefaultData(), array(
         'springboard'=>0,
         'strings'=>array(
-            'description'=>'',
+            'description'=>''
+        ),
         'links'=>array()
         )
     );
