@@ -1,6 +1,6 @@
 {include file="findInclude:common/header.tpl"}
 <div class="focal"> 
-  {foreach $SITE_ABOUT_HTML as $paragraph}
+  {foreach $moduleStrings.SITE_ABOUT_HTML as $paragraph}
     <p>{$paragraph}</p>
   {/foreach}
   <p>

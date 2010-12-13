@@ -45,6 +45,8 @@ class HomeModule extends Module {
             $adminModule->assign('allModules', $allModules);
             $adminModule->assign('sectionModules', $sectionModules);
             break;
+        default:
+            return parent::prepareAdminForSection($section, $adminModule);
     }
   }
 

@@ -56,12 +56,10 @@ class AboutModule extends Module {
         break;
         
       case 'about_site':
-        $this->assign('SITE_ABOUT_HTML', $this->getModuleVar('SITE_ABOUT_HTML'));
         $this->assign('devicePhrase', $this->getPhraseForDevice()); // TODO: this should be more generic, not part of this module
         break;
       
       case 'about':
-        $this->assign('ABOUT_HTML', $this->getModuleVar('ABOUT_HTML'));
         break;
       
       case 'new':

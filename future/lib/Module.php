@@ -743,9 +743,7 @@ abstract class Module {
       $this->setPageTitle($this->moduleName);
 
       // Load site configuration and help text
-
       $this->loadSiteConfigFile('strings', false, ConfigFile::OPTION_CREATE_WITH_DEFAULT);
-      $this->loadWebAppConfigFile('help');
   
       // load module config file
       $pageData = $this->getPageData();
@@ -768,6 +766,7 @@ abstract class Module {
         } else {
           $this->breadcrumbLongTitle = $this->pageTitle;
         }     
+
         $this->pageConfig = $pageConfig;
       } else {
         $this->pageConfig = array();
@@ -919,16 +918,16 @@ abstract class Module {
     $this->assign('breadcrumbSamePageArgs', $this->getBreadcrumbArgs(false));
 
     $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
+    
+    $moduleStrings = $this->getModuleSection('strings');
+    $this->assign('moduleStrings', $moduleStrings);
 
     // Module Help
     if ($this->page == 'help') {
       $this->assign('hasHelp', false);
-      
       $template = 'common/'.$this->page;
     } else {
-      $helpConfig = $this->getTemplateVars('help');
-      $this->assign('hasHelp', isset($helpConfig[$this->id]));
-      
+      $this->assign('hasHelp', isset($moduleStrings['help']));
       $template = 'modules/'.$this->templateModule.'/'.$this->templatePage;
     }
     

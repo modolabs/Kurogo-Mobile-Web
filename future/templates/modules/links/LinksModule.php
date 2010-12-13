@@ -47,7 +47,6 @@ class LinksModule extends Module {
     $links = $this->getModuleArray('links');
     
     $springboard = isset($links['springboard']) && $links['springboard'];
-    $description = self::argVal($links, 'description', null);    
     
     foreach ($links as &$link) {
       if (!is_array($link)) {

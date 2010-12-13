@@ -268,6 +268,8 @@ class CalendarModule extends Module {
             $adminModule->assign('showFeedLabels', true);
             $adminModule->setTemplatePage('feedAdmin', $this->id);
             break;
+        default:
+            return parent::prepareAdminForSection($section, $adminModule);
     }
   }
 

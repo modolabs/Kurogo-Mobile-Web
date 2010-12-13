@@ -81,6 +81,8 @@ class NewsModule extends Module {
             $adminModule->assign('feeds', $feeds);
             $adminModule->setTemplatePage('feedAdmin', $this->id);
             break;
+        default:
+            return parent::prepareAdminForSection($section, $adminModule);
     }
   }
   

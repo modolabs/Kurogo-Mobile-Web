@@ -132,8 +132,7 @@ class PeopleModule extends Module {
         
         $results[] = array(
           'url' => $this->buildBreadcrumbURL("/{$this->id}/detail", array(
-             'uid'    => $people[$i]->getId(),
-             'filter' => $this->args['filter'],
+             'uid'    => $people[$i]->getId()
           ), false),
           'title' => htmlentities($section[0]['title']),
         );
@@ -141,14 +140,6 @@ class PeopleModule extends Module {
     }
     return count($people);
   }
-
-/*
-[people]
-CONTROLLER_CLASS        = "LDAPDataController"
-HOST                    = "phonebook.harvard.edu"
-SEARCH_BASE             = "o=Harvard University,c=US"
-#PERSON_CLASS           = "LDAPPerson"
-*/
 
   protected function prepareAdminForSection($section, &$adminModule) {
     switch ($section)
@@ -171,6 +162,9 @@ SEARCH_BASE             = "o=Harvard University,c=US"
             
             $adminModule->assign('peopleAdminListItems', $formListItems);
             break;
+        default:
+            return parent::prepareAdminForSection($section, $adminModule);
+        
     }
   }
   
@@ -194,6 +188,7 @@ SEARCH_BASE             = "o=Harvard University,c=US"
       $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
     }
     $this->detailAttributes = array_unique($this->detailAttributes);
+
   }
 
   protected function initializeForPage() {
