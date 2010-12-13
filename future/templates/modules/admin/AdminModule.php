@@ -14,8 +14,10 @@ class AdminModule extends Module {
   {
     if (!$var = $this->getArg($key)) {
         //couldn't find the variable
+        error_log("Could not find variable $key");
         return false;
     } elseif (!$type = $this->getArg('_type')) {
+        error_log("Type data not found");
         return $var;
     }
     
@@ -23,6 +25,7 @@ class AdminModule extends Module {
         $type = isset($type[$key]) ? $type[$key] : null;
         return $this->prepareSubmitValue($var, $type);
     } elseif (!isset($type[$key])) {
+        error_log("Type data not found for $key");
         return $var;
     }
     
@@ -170,6 +173,15 @@ class AdminModule extends Module {
                             )
                         );
                     }
+
+                    $formListItems[] = array(
+                        'type'=>'url',
+                        'name'=>'Page Data',
+                        'value'=>$this->buildBreadcrumbURL('pageData', array(
+                            'moduleID'=>$moduleID
+                            )
+                        )
+                    );
                 } 
                 
                 $_module = array(
@@ -204,6 +216,62 @@ class AdminModule extends Module {
                     } catch(Exception $e) {}
                 }
             
+                break;
+            case 'pageData':
+                $moduleID = $this->getArg('moduleID');
+                if (empty($moduleID)) {
+                    $this->redirectTo('modules');
+                }
+
+                $module = Module::factory($moduleID);
+                $pageData = $module->getPageData();
+
+                if ($this->getArg('submit')) {
+                    $pageData = $this->prepareSubmitData('pageData');
+                    $module->saveConfig(array('page'=>$pageData), 'page');
+                } 
+                
+                $this->setPageTitle(sprintf("Administering Page Data for %s", $module->getModuleName()));
+                $pages = array();
+
+                foreach ($pageData as $page=>$_pageData) {
+                    $item = array();
+                    $item[] = array(
+                        'label'=>'Page',
+                        'type'=>'label',
+                        'value'=>$page
+                    );
+                    $item[] = array(
+                        'label'=>'Title',
+                        'type'=>'text',
+                        'name'=>"pageData[$page][pageTitle]",
+                        'typename'=>"pageData][$page][pageTitle",
+                        'value'=>isset($_pageData['pageTitle']) ? $_pageData['pageTitle'] : ''
+                    );
+                    $item[] = array(
+                        'label'=>'Breadcrumb Title',
+                        'type'=>'text',
+                        'name'=>"pageData[$page][breadcrumbTitle]",
+                        'typename'=>"pageData][$page][breadcrumbTitle",
+                        'value'=>isset($_pageData['breadcrumbTitle']) ? $_pageData['breadcrumbTitle'] : ''
+                    );
+                    $item[] = array(
+                        'label'=>'Breadcrumb Long Title',
+                        'type'=>'text',
+                        'name'=>"pageData[$page][breadcrumbLongTitle]",
+                        'typename'=>"pageData][$page][breadcrumbLongTitle",
+                        'value'=>isset($_pageData['breadcrumbLongTitle']) ? $_pageData['breadcrumbLongTitle'] : ''
+                    );
+                    $pages[$page] = $item;
+                }
+                
+                $_module = array(
+                    'id'=>$moduleID
+                );
+
+                $this->assign('pages'        , $pages);
+                $this->assign('module'       , $_module);
+
                 break;
             case 'strings':
                 if ($this->getArg('submit')) {

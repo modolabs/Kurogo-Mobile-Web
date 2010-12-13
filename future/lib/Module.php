@@ -410,6 +410,7 @@ abstract class Module {
         switch ($section)
         {
             case 'feeds':
+            case 'page':
                 $type = $section;
                 break;
             default:
@@ -419,19 +420,23 @@ abstract class Module {
 
         $moduleConfigFile = ConfigFile::factory($this->id, $type, ConfigFile::OPTION_CREATE_EMPTY);
         
-        if ($section=='feeds') {
-            $moduleData = $moduleData[$section];
-            // clear out empty values
-            foreach ($moduleData as $feed=>$feedData) {
-                foreach ($feedData as $var=>$value) {
-                    if (strlen($value)==0) {
-                        unset($moduleData[$feed][$var]);
+        switch ($section)
+        {
+            case 'feeds':
+            case 'page':
+                $moduleData = $moduleData[$section];
+                // clear out empty values
+                foreach ($moduleData as $feed=>$feedData) {
+                    foreach ($feedData as $var=>$value) {
+                        if (strlen($value)==0) {
+                            unset($moduleData[$feed][$var]);
+                        }
                     }
                 }
-            }
-            $moduleConfigFile->setSectionVars($moduleData);
-        } else {
-            $moduleConfigFile->addSectionVars($moduleData, !$section);
+                $moduleConfigFile->setSectionVars($moduleData);
+                break;
+            default:
+                $moduleConfigFile->addSectionVars($moduleData, !$section);
         }
         
         $moduleConfigFile->saveFile();
@@ -456,6 +461,7 @@ abstract class Module {
         if ($page) {
             $module->factoryInit($page, $args);
         }
+        $module->initialize();
         return $module;
       }
     }
@@ -509,9 +515,6 @@ abstract class Module {
         } else if (isset($_COOKIE['fontsize'])) { 
           $this->fontsize = $_COOKIE['fontsize'];
         }
-        
-        $this->initialize();
-  
   }
   
   protected function initSession()
@@ -745,10 +748,10 @@ abstract class Module {
       $this->loadWebAppConfigFile('help');
   
       // load module config file
-      $modulePageConfig = $this->loadWebAppConfigFile($this->id, "{$this->id}PageConfig");
-    
-      if (isset($modulePageConfig[$this->page])) {
-        $pageConfig = $modulePageConfig[$this->page];
+      $pageData = $this->getPageData();
+
+      if (isset($pageData[$this->page])) {
+        $pageConfig = $pageData[$this->page];
         
         if (isset($pageConfig['pageTitle'])) {
           $this->pageTitle = $pageConfig['pageTitle'];
@@ -801,6 +804,12 @@ abstract class Module {
   //
   // Config files
   //
+  
+  protected function getPageData()
+  {
+     $pageConfig = $this->getConfig($this->id, 'page');
+     return $pageConfig->getSectionVars();
+  }
   
   protected function getConfig($name, $type, $opts=0) {
     $config = ConfigFile::factory($name, $type, $opts);

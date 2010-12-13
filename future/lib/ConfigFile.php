@@ -40,6 +40,7 @@ class ConfigFile extends Config {
         case 'api':
         case 'web':
         case 'module':
+        case 'page':
         case 'feeds':
             $pattern = sprintf("%s/%s/%%s.ini", SITE_CONFIG_DIR, $type);
             break;
