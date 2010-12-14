@@ -381,7 +381,7 @@ class AdminModule extends Module {
                 $adminList[] = array(
                     'title'=>'Site Configuration',
                     'url'=>$this->buildBreadcrumbURL('site', array()),
-                    'subtitle'=>''
+                    'subtitle'=>'Manage site-wide configuration'
                 );
                 $adminList[] = array(
                     'title'=>'String Configuration',
