@@ -45,8 +45,8 @@ class AdminModule extends Module {
     return $var;    
   }
 
- protected function prepareSubmitValue($value, $type)
- {
+  protected function prepareSubmitValue($value, $type)
+  {
     switch ($type)
     {
         case 'paragraph':
@@ -67,6 +67,25 @@ class AdminModule extends Module {
     return $value;
  }
 
+  protected function getSiteItemForKey($section, $key, $value)
+  {
+    $item = array(
+        'label'=>ucfirst($key),
+        'name'=>"siteData[$section][$key]",
+        'typename'=>"siteData][$section][$key",
+        'value'=>$value,
+        'type'=>'text'
+    );
+
+    switch ($key)
+    {
+        default:
+            break;
+    }
+    
+    return $item;
+  }
+  
   protected function initializeForPage() {
   
         switch ($this->page)
@@ -309,11 +328,47 @@ class AdminModule extends Module {
                 break;
 
             case 'site':
-                if ($this->getArg('submit')) {
-                    //$module->saveConfig($moduleData, $section);
-                    $this->redirectTo('index', false, false);
-                } 
-            
+                $configFile = ConfigFile::factory('config', 'site');
+                $siteVars = $configFile->getSectionVars();
+
+                if ($section = $this->getArg('section')) {
+                
+                    if (!isset($siteVars[$section])) {
+                        $section = null;
+                    }
+                }
+                
+                $formListItems = array();
+
+                if ($section) {
+                    $sectionVars = $siteVars[$section];
+
+                    if ($this->getArg('submit')) {
+                        $sectionVars = $this->prepareSubmitData('siteData');
+                        $configFile->addSectionVars($sectionVars, true);
+                        $configFile->saveFile();
+                        $this->redirectTo('site', false, false);
+                    }
+                    
+                    foreach ($sectionVars as $key=>$value) {
+                        $formListItems[] = $this->getSiteItemForKey($section, $key, $value);
+                    }
+                    
+                } else {
+                    foreach ($siteVars as $sectionName=>$sectionVars){
+                        $formListItems[] = array(
+                            'type'=>'url',
+                            'name'=>$sectionName,
+                            'value'=>$this->buildBreadcrumbURL('site', array(
+                                'section'=>$sectionName
+                                )
+                            )
+                        );
+                    }
+                }
+                                            
+                $this->assign('section'      , $section);
+                $this->assign('formListItems', $formListItems);
                 break;
 
             case 'index':
