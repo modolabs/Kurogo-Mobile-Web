@@ -451,9 +451,10 @@ abstract class Module {
 
     $modulePaths = array(
       THEME_DIR."/modules/$id/Theme{$className}.php"=>"Theme" .$className,
+      SITE_DIR."/modules/$id/Site{$className}.php"=>"Site" .$className,
       MODULES_DIR."/$id/$className.php"=>$className
     );
-    
+        
     foreach($modulePaths as $path=>$className){ 
       $moduleFile = realpath_exists($path);
       if ($moduleFile && include_once($moduleFile)) {
