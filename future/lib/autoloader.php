@@ -7,7 +7,7 @@ function siteLibAutoloader($className) {
     }
     
     if (defined('MODULES_DIR') && preg_match("/(.*)Module/", $className, $bits)) {
-        $paths = array(MODULES_DIR . '/' . $bits[1]);
+        $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
     }
         
     foreach ($paths as $path) {
