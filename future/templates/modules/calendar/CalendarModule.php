@@ -396,9 +396,41 @@ class CalendarModule extends Module {
         break;
         
       case 'list':
+        $current = $this->getArg('time', time());
+        $type = $this->getArg('type', 'events');
+        $limit = $this->getArg('limit', 20);
+        $feed = $this->getFeed($type); 
+        $this->setPageTitle($this->getFeedTitle($type));
+        $this->setBreadcrumbTitle('List');
+        $this->setBreadcrumbLongTitle($this->getFeedTitle($type));
         
+        $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
+        $start->setTime(0,0,0);
+
+        $feed->setStartDate($start);
+        $iCalEvents = $feed->items(0, $limit);
+                        
+        $events = array();
+        foreach($iCalEvents as $iCalEvent) {
+          $subtitle = $this->timeText($iCalEvent);
+          $briefLocation = $iCalEvent->get_location();
+          if (isset($briefLocation)) {
+            $subtitle .= " | $briefLocation";
+          }
+        
+          $events[] = array(
+            'url'      => $this->detailURL($iCalEvent),
+            'title'    => $iCalEvent->get_summary(),
+            'subtitle' => $subtitle
+          );
+        }
+
+        $this->assign('feedTitle', $this->getFeedTitle($type));
+        $this->assign('type',    $type);
+        $this->assign('current', $current);
+        $this->assign('events',  $events);        
         break;
-      
+        
       case 'day':  
 
         $current = $this->getArg('time', time());

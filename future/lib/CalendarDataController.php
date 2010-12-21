@@ -124,25 +124,28 @@ class CalendarDataController extends DataController
         }
 
         $events = $this->calendar->get_events();
-        
         if ($this->requiresDateFilter) {
+        
+            $startTimestamp = $this->startTimestamp() ? $this->startTimestamp() : 0;
+            $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : PHP_INT_MAX;
+            
             $items = $events;
             $events = array();
             foreach ($items as $id => $event) {
-                if  ((($event->get_start() >= $this->startTimestamp()) &&
-                        ($event->get_start() <= $this->endTimestamp())) ||
+                if  ((($event->get_start() >= $startTimestamp) &&
+                        ($event->get_start() <= $endTimestamp)) ||
         
-                       (($event->get_end() >= $this->startTimestamp()) &&
-                        ($event->get_end() <= $this->endTimestamp())) ||
+                       (($event->get_end() >= $startTimestamp) &&
+                        ($event->get_end() <= $endTimestamp)) ||
         
-                        (($event->get_start() <= $this->startTimestamp()) &&
-                        ($event->get_end() >= $this->endTimestamp()))) 
+                        (($event->get_start() <= $startTimestamp) &&
+                        ($event->get_end() >= $endTimestamp))) 
                 {
                     $events[$id] = $event;
                 }
             }
         }
-
+        
         if ($this->contentFilter) {
             $items = $events;
             $events = array();
