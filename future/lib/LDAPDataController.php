@@ -345,7 +345,7 @@ class LDAPCompoundFilter extends LDAPFilter
         
         for ($i=1; $i < func_num_args(); $i++) {
             $filter = func_get_arg($i);
-            if ($filter instanceOF LDAPFilter)) { 
+            if ($filter instanceOF LDAPFilter) { 
                 $this->filters[] = $filter;
             } elseif (is_array($filter)) {
                 foreach ($filter as $_filter) {
