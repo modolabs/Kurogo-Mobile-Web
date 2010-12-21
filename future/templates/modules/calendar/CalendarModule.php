@@ -76,7 +76,7 @@ class CalendarModule extends Module {
   
     switch ($type) {
       case 'datetime':
-        if (is_a($value, 'DayRange')) {
+        if ($value instanceOf DayRange) {
           $valueForType = strval($value);
         } else {
           $valueForType = date("D M j", $value->get_start());

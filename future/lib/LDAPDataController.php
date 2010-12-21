@@ -345,11 +345,11 @@ class LDAPCompoundFilter extends LDAPFilter
         
         for ($i=1; $i < func_num_args(); $i++) {
             $filter = func_get_arg($i);
-            if (is_a($filter, 'LDAPFilter')) { 
+            if ($filter instanceOF LDAPFilter)) { 
                 $this->filters[] = $filter;
             } elseif (is_array($filter)) {
                 foreach ($filter as $_filter) {
-                    if (!is_a($_filter, 'LDAPFilter')) {
+                    if (!($_filter instanceOf LDAPFilter)) {
                         throw new Exception("Invalid filter for in array");
                     }
                 }

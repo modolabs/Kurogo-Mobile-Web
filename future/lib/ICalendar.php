@@ -528,7 +528,7 @@ class ICalEvent extends ICalObject {
         }
         
         if ($this->range) {
-            if (is_a($this->range, 'DayRange'))  {
+            if ($this->range instanceOf DayRange)  {
                 $this->addLine($output_string, "DTSTART", date('Ymd', $this->range->get_start()));
             } else {
                 $this->addLine($output_string, "DTSTART", strftime('%Y%m%dT%H%M%S', $this->range->get_start()));

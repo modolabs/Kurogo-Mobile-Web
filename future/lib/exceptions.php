@@ -22,16 +22,16 @@ function getErrorURL($exception, $devError = false) {
     'url' => $_SERVER['REQUEST_URI'],
   );
   
-  if (is_a($exception, "DataServerException")) {
+  if ($exception instanceOf DataServerException) {
     $args['code'] = 'data';
   
-  } else if(is_a($exception, "DeviceNotSupported")) {
+  } else if($exception instanceOf DeviceNotSupported) {
     $args['code'] = 'device_notsupported';
     
-  } else if(is_a($exception, "PageNotFound")) {
+  } else if($exception instanceOf PageNotFound) {
     $args['code'] = 'notfound';
     
-  } else if(is_a($exception, "DisabledModuleException")) {
+  } else if($exception instanceOf DisabledModuleException) {
     $args['code'] = 'forbidden';
   }
   

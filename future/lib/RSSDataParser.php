@@ -144,7 +144,7 @@ class RSSDataParser extends DataParser
                     break;
                 case 'DESCRIPTION':
                     /* dupe description to content if content is not defined */
-                    if (is_a($parent, 'RSSItem') && !$parent->getContent()) {
+                    if ($parent instanceOf RSSItem && !$parent->getContent()) {
                         $contentElement = clone($element);
                         $contentElement->setName('CONTENT');
                         $contentElement->setValue($this->data, $this->shouldStripTags($contentElement));
