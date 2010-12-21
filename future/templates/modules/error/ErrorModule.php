@@ -58,7 +58,7 @@ class ErrorModule extends Module {
     if($this->devError() === false){
       $this->assign('message', $error['message']);
     } else {
-      $this->assign('message', $this->devError());
+      $this->assign('message', nl2br($this->devError()));
     }
     $this->assign('url', $url);
   }
