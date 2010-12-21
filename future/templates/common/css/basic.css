@@ -1,0 +1,368 @@
+/* Redefinition of basic elements */
+
+html, body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	padding: 0.2em;
+}
+
+a img {
+	border: none;
+}
+
+h1, h2, h3 {
+	line-height: 1.2em;
+	padding: 0;
+}
+
+h1 {
+	margin: 10px 0;
+}
+
+h2 { 
+	margin: 0 0 6px 0;
+}
+
+h3 {
+	margin: 0 0 5px 0;
+}
+
+h4 {
+	margin: 0;
+}
+
+p {
+	margin: 0 0 10px 0;
+}
+
+ul {
+	margin: 0 0 1em 0;
+	padding: 0 0 0 1em;
+}
+
+ul li {
+	padding: 0 0 4px 0;
+}
+
+/* Major layout blocks */
+
+#container {
+	padding: 5px;
+}
+
+#header {
+	margin: 2px 2px 8px 2px;
+	font-size: 142%;
+	line-height: 50px;
+}
+
+#header img {
+	float: left;
+}
+
+#header.homehead {
+	padding-bottom: 0;
+}
+
+#header.homehead img {
+	float: none;
+	margin: 0;
+}
+
+#header a {
+	text-decoration: none;
+}
+
+#footer {
+	height: 2em;
+	margin: 1.5em 0;
+}
+
+
+
+/* Forms */
+
+form {
+	margin: 0 0 1em 0;
+	padding: 0;
+}
+
+fieldset {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+
+.combobutton {
+	font-size: x-small;
+}
+
+.inputcombo .forminput {
+	font-size: 100%;
+	float: left;
+	width: 60%;
+	padding: .2em;
+}
+
+.inputcombo .combobutton {
+	font-size: 100%;
+	padding: 0 .2em;
+	margin-left: .3em
+}
+
+/* Navigation and results lists */
+/* Many smartphones don't correctly interpret "display:block" for inline elements like <a> */
+
+.nav {
+	margin: 1em 0;
+	padding: .5em;
+	font-size: 100%;
+	line-height: 1.75em;
+}
+
+.secondary {
+	margin: 1em 0;
+	padding: .4em;
+	line-height: 1.6em;
+}
+
+.paging {
+	margin: 0;
+	padding: .4em;
+	line-height: 1.6em;
+}
+
+.bottomnav {
+	margin: 1.5em 0 0.75em 0;
+	padding: .4em;
+	line-height: 1.5em;
+}
+
+.results {
+	font-size: 100%;
+	line-height: 1.75em;
+	margin-bottom: 1em;
+}
+
+ul.nav, ul.secondary, ul.results {
+	list-style-type: none;
+	margin: 0 0 10px 0;
+	padding: 0;
+}
+
+
+
+/* Specific content formatting */
+
+.focal {
+	padding: .5em;
+}
+
+.nonfocal {
+	padding: 0;
+}
+
+h3.nonfocal, .nonfocal h3 {
+	margin: 1em 0 -0.5em 0;
+	padding: 0;
+	margin-top: 1em;
+}
+
+.paging {
+	text-align: left;
+	margin: 1em 0;
+}
+
+.legend {
+	margin-top: 0.5em;
+	font-size: 79%;
+	line-height: 1.36em;
+}
+
+.smallprint {
+	font-size: 86%;
+	font-weight: normal;
+	line-height: 1.36em;
+}
+
+.fineprint {
+	font-size: 71%;
+	line-height: 1.1em;
+}
+
+.clear {
+	clear: both;
+}
+
+.label {
+	width: 3.5em;
+	padding-right: 3px;
+}
+
+.value {
+	font-size: 100%;
+}
+
+.divider {
+	height: 0;
+	margin: 0.75em 0;
+	border: none;
+	border-top: 1px dotted #999;
+}
+
+hr {
+	display: none;
+}
+
+.bb {
+	display: none;
+}
+
+.image {
+	text-align: center;
+	padding-bottom: .4em;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+.maintable {
+	width: 100%;
+	background-color: #fff;
+}
+
+.maintable td, .maintable th {
+	padding: .21em .36em;
+}
+
+.centered {
+	text-align: center
+}
+
+.fontsize {
+	font-size: 93%;
+	margin: 1.5em 0;
+}
+
+.fontsmall {
+	font-size: 5pt;
+}
+
+.fontmedium {
+	font-size: 8pt;
+}
+
+.fontlarge {
+	font-size: 11pt;
+}
+
+.fontxlarge {
+	font-size: 13pt;
+}
+
+/* Iconically coded links - e.g., Shuttle Schedule, 3DOWN, etc. */
+
+a.icon {
+	background-repeat: no-repeat;
+	background-position: 0px 3px;
+}
+
+span.icon {
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	padding-right: 6px;
+}
+
+.icon span {
+	padding: 3px 0 3px 17px;
+	line-height: 1.14em;
+}
+
+.gps {
+	background-image: url(/common/images/gps.gif);
+}
+
+.sch {
+	background-image: url(/common/images/schedule.gif);
+}
+
+.ok {
+	background-image: url(/common/images/ok.gif);
+}
+
+.alert {
+	background-image: url(/common/images/alert.gif);
+}
+
+.warning {
+	background-image: url(/common/images/warning.gif);
+}
+
+.critical {
+	background-image: url(/common/images/critical.gif);
+}
+
+.running {
+	background-image: url(/common/images/shuttle.gif);
+}
+
+
+/* Tabs */
+
+.tabs {
+	margin: 1.5em 0 1em 0;
+}
+
+.tabs.top {
+	margin-top: 0.25em;
+}
+
+.tabs a {
+	font-weight: normal;
+}
+
+
+.iconlegend {
+	font-size: 80%;
+	margin-bottom: 1.5em;
+}
+
+.iconlegend img {
+	margin-right: 3px;
+	position: relative;
+	top: 2px;
+}
+
+.iconlabel {
+	float: right;
+	margin-left: 10px;
+}
+
+.dininghall {
+	margin-left: 4px;
+}
+
+.dl td {
+	padding: 0 4px 10px 0;
+}
+
+.devicedetection {
+  border: none;
+  margin: 1.5em 0;
+}
+.devicedetection th,
+.devicedetection td {
+  font-size: 10px;
+  padding: 0 .25em;
+  margin: 0;
+  text-align: left;
+}
+.devicedetection th {
+  font-weight: bold;
+  text-align: right;
+  white-space: nowrap;
+}

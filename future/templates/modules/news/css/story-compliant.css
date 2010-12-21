@@ -1,0 +1,49 @@
+.news {
+    margin-top: -12px;
+    padding: 10px;
+}
+
+.slugline {
+    margin: 0;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.byline {
+    min-height:40px;
+	margin-top: -8px;
+}
+
+.share {
+    float: right;
+	margin-top: -8px;
+}
+
+.dek {
+	margin: 14px 0
+}
+
+.dek:empty { margin: 0; } /* CSS 3: shrink if no content */
+
+#image {float:right;margin: 6px 0 6px 8px;}
+
+#image img.thumbnail {float:right; border: 1px solid #505050; /* scale to width respecting aspect */}
+
+#image img.enlarge { float:right; margin-left: 4px; }
+
+#image div { float:right; margin-top: 2px; margin-right:-2px; }
+
+#image a { text-align:right; font-size:11px; line-height: 30px; text-decoration:none; color:#777;}
+
+#image a div { margin-top: -4px; }
+
+.wp-caption {
+    width: auto !important;
+    font-size: 84%;
+    line-height: 1.2em;
+}
+
+a.external {
+    background-image: none !important;
+    padding-right: 0;
+}

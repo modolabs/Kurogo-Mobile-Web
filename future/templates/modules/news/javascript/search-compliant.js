@@ -1,0 +1,1 @@
+index-compliant.js

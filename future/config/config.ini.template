@@ -1,0 +1,5 @@
+; Should be a folder within site/ case sensitivity is based on your file system
+ACTIVE_SITE = "Universitas" 
+
+; you can move the site folder elsewhere if you wish
+SITE_DIR    = ROOT_DIR"/site/{ACTIVE_SITE}" 

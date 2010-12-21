@@ -1,0 +1,57 @@
+.nav a {
+  display: inline-block;
+  padding: 5px;
+  margin: 0;
+  background-image: none;
+}
+ul.iconic li {
+  background-color: #fff;
+  padding-left: 44px;
+}
+/* start of new styles */
+ul.iconic li .moveup {
+  width:26px;
+  height:26px;
+  background-image:url(/modules/customize/images/compliant/button-up.png);
+}
+ul.iconic li .movedown {
+  width:26px;
+  height:26px;
+  background-image:url(/modules/customize/images/compliant/button-down.png);
+}
+/* end of new styles*/
+ul.iconic li:first-child {
+  -webkit-border-top-left-radius: 9px;	
+  -webkit-border-top-right-radius: 9px;	
+}
+ul.iconic li:last-child {
+  -webkit-border-bottom-left-radius: 9px;	
+  -webkit-border-bottom-right-radius: 9px;	
+}
+ul.iconic li:first-child .moveup {
+  background-image:url(/modules/customize/images/compliant/button-up-alpha.png);
+  /* opacity:0.33; */
+}
+ul.iconic li:last-child .movedown {
+  background-image:url(/modules/customize/images/compliant/button-down-alpha.png);
+  /* opacity:0.33; */
+}
+ul.iconic span.nolink { 
+  position: relative;
+  padding-left: 37px;
+  background-position: 3px 3px;
+  font-size: 16px;
+}
+ul.iconic span.nolinkbuttons {
+  float: right;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+ul.iconic input {
+  width: 21px; 
+  height: 21px;
+  position: absolute;
+  left: 6px;
+  top: 8px;
+}

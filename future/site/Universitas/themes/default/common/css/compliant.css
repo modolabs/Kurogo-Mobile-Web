@@ -1,0 +1,297 @@
+/* Overall font and colors */
+
+body {
+	background-color: #dcdddf;
+	font: 17px/1.33em 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	/* background: url(/common/images/background-tile.jpg) top right repeat-x, url(/common/images/background-tile-2.jpg) bottom left repeat; */
+}
+
+body, th, td, li, option, select, input {
+	/* Primary font */
+	color: #222;
+}
+
+.focal, .nav, .results {
+	/* Border color for many container elements */
+	/* border-color: #bbb; */
+	border: none;
+}
+
+.secondary {
+	/* Border color override specific to this theme */
+	border-color: #ccc;
+}
+
+.nav li, .results li, .secondary li, ul.focal li  {
+	/* Border color for list items */
+	border-color: #ccc;
+}
+
+a, a:visited {
+	color: #036;
+}
+
+h1 {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 29px;
+	font-weight: normal;
+	color: #fff;
+}
+
+h2 {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-size: 21px;
+	font-weight: normal;
+	color: #036;
+}
+
+h3 {
+	font-size: 1em;
+	font-weight: bold;
+	color: #036;
+}
+
+h4 {
+	font-size: 1em;
+	font-weight: normal;
+	color: #333;
+}
+
+dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .smallprint, .fineprint, .dek {
+	/* Accent text color for several types of secondary text that appears on white backgrounds, e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
+	/* Often the same as the secondary text color defined in the next rule */
+	color: #404649;
+}
+
+.foundat, .address, #footer, .copyright, #footerlinks a, #footerlinks a:visited {
+	/* Secondary text color for several types of secondary text that typically appear on the colored background */
+	color: #555;
+}
+
+/*
+#springboard a {
+	/* Text color for icon labels in springboard-type screens (grids of icon launchers) */
+	/*
+	color: #404346;
+	font-size: 12px;
+	line-height: 13px;
+}
+*/
+/*
+#springboard div {
+	/* Grid element size in springboard-type screens */
+	/*
+	position: relative;
+	width: 79px;
+	height: 88px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	float: left;
+	text-align: center;		
+	vertical-align: top;
+}
+
+*/
+
+
+
+/* Major content blocks */
+
+.focal {   
+	/* Focal content div */
+	color: #222;
+	background-color: #fff;
+}
+
+.shaded {
+	/* Shaded subclass of focal content - e.g., background for tabbed focal div */
+	background-color: #edeef0;
+}
+
+
+
+/* Nav bar at top of all screens other than home screen */
+
+#navbar {
+	height: 48px; 
+	background: url(/common/images/navback.png) repeat-x;
+	font-size: 16px;
+}
+
+/* Uncomment this rule and comment out the previous one to use a background gradient rather than image
+#navbar {
+	height: 45px;
+	background: #800;	
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#d02023), to(#400006));
+	font-size: 16px;
+}
+*/
+
+.breadcrumbs, .breadcrumbs a, .breadcrumbs a:visited {
+ 	/* All breadcrumb links in nav bar */
+	color: #036;
+}
+
+.pagetitle {
+ 	/* Current page title in nav bar */
+	color: #036;
+}
+
+
+/* Footer */
+
+#footer {
+	font-size: 12px;
+	line-height: 14px;
+}
+
+#footer .copyright {
+	text-decoration: none;
+}
+
+#footerlinks {
+	color: #fff
+}
+
+
+/* Text input fields, e.g., search fields */
+.forminput {
+	border-color: #666; 	/* Should match the border color of image /common/images/mobile/search_button.png */
+}
+
+/* Springboards */
+
+.springboard div {
+	/* Overall size of one cell in the springboard */
+	width: 77px;
+	height: 100px;
+	font-size: 13px;
+	line-height: 14px;
+}
+
+.springboard a {	
+	color: #404355;
+}
+
+.springboard a img {
+	/* Size of actual item icon in springboard */
+	width: 60px;
+	height: 60px;
+}
+
+.springboard div.utility {
+	/* Overall size of one cell in the springboard's fixed utility-type items */
+	width: 76px;
+	height: 86px;
+	font-size: 12px;
+	line-height: 13px;
+}
+
+.springboard div.utility a img {
+	/* Size of actual item icon in the springboard's fixed utility-type items */
+	width: 36px;
+	height: 36px;
+}
+
+/* Navigation and results lists */
+
+.nav, .results {
+	/* Main navigation lists and search-results lists */
+	background-color: #fff; 	
+}
+
+.secondary {
+	/* Secondary navigation or action lists; typically have slightly smaller font size and slightly darker/tinted backgrounds */
+	font-size: 95%;
+	background-color: #edeef0;
+}
+
+.nav, .results, .secondary, .nav a, .nav a:visited, .nav span.nolink, .results a, .results a:visited, .secondary, .secondary a, .secondary a:visited  {
+	color: #333;
+}
+
+.nav .badge {
+	/* Badge shown within a navigation list, e.g., unread count for messages */
+	color: #fff;
+	background-color: #c00;
+}
+
+.announcements {	   
+	background-color: #edeef0;
+}
+
+.announcements li {	
+	font-size: 14px;
+	line-height: 19px;
+	color: #202020;
+}
+
+
+/* Next/previous navigation - e.g., going from day to day in events calendar */
+
+.sidenav {
+	/* Divider between next/previous links */
+	color: #a0a09f;
+}
+
+.sidenav a {
+	/* Next/previous links */
+	color: #1a1611;
+}
+
+
+
+
+
+/* Tabs */
+
+#tabs li {
+	border: 1px solid #bbb;	/* Should match #tabbodies border-color */
+	background-color: #bbb;	/* Should match #tabbodies border-color */
+}
+
+#tabs li.active {
+	border-bottom: 1px solid #fff;	/* Should match #tabbodies background-color */
+	background-color: #fff;	/* Should match #tabbodies background-color */
+}
+
+#tabs li a {
+	/* Text label of unselected tab */
+	color: #404040;
+}
+
+#tabs li.active a {
+	/* Text label of currently selected tab */
+	color: #000;
+}
+
+#tabs li.greyedout {
+	/* Text label of disabled tab */
+  	color: #666;
+}
+
+#tabbodies {
+	border-color: #bbb;
+	background-color: #fff;
+}
+
+.tabbody .nested {
+	/* Navigation list inside a tab body needs a bit of background color to contrast from tab body background */
+	background-color: #f9f6ef;
+}
+
+
+
+/* Data charts */
+
+.rowbar {
+	background: #6499cb url(/common/images/rowbar.png) repeat-x;
+}
+.colbar {
+	background: #6499cb url(/common/images/colbar.png) repeat-y;
+}
+.average {
+	border-color: #c00;
+}
+

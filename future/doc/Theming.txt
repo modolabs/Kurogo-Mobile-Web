@@ -1,0 +1,465 @@
+-------------
+Theming Guide
+-------------
+
+The Modo Mobile Framework has a theming layer which allows sites to make most stylistic changes to the web application without modifying the core libraries.  The advantage of using the theming layer is that site changes are isolated from the framework sources and can be more easily moved to a new version of the framework.
+
+
+The core visual interface of the Modo Mobile Framework lives in "web/templates/".  It is made up of HTML templates, CSS and Javascript files.  All HTML, CSS and Javascript in the core interface can be overridden by a theme.  
+
+Images and other assets live inside themes.
+
+Themes are stored in "web/site/[SITE_NAME]/themes/"
+
+Each theme is contained within a directory inside the themes folder.  By convention the default theme is named "default".
+
+Themes have the same directory structure as the core visual interface directory (web/templates/).  This allows paths in the CSS and HTML to be the same for the core interface and the theme interface. 
+
+
+Device Detection
+----------------
+
+The Modo device detection service provides three pieces of information about devices:
+
+1) The pagetype.  Possible values include:
+    * desktop   - a desktop machine
+    * compliant - a full featured browser running on a device with a small screen
+    * basic     - a basic browser running on a device with a small screen and cursor-based interface
+    
+2) The platform the page will be displayed on.  Possible values (grouped by pagetype) include:
+    * desktop
+        * spider
+        * computer
+
+    * mobile:
+        * iphone
+        * android
+      
+    * basic
+        * blackberry
+        * bbplus - blackberry devices with some CSS support
+        * webos
+        * winmo
+        * palmos
+        * symbian
+        * featurephone
+
+3) Whether or not the device supports certificates
+
+
+When the framework is running in device debugging mode (DEVICE_DEBUG == 1), you can prepend any framework url with "device/[PAGETYPE]-[PLATFORM]/" or "device/[PAGETYPE]/" to see that version of the page in your browser.  So for example "/device/basic/about/" will show the basic version of the About module's index page.
+
+
+
+HTML Templates
+--------------
+
+The Modo Mobile Framework uses Smarty 3 as its template engine.  For information about the template file syntax please refer to the Smarty documentation: <http://www.smarty.net/docs.php>.
+
+
+Template files use the following naming convention:
+
+  [PAGE]-[device pagetype]-[device platform].tpl
+
+Both the device pagetype and device platform are optional, however the theming engine will choose the most specific file that matches the current device.  For example if you are on an iphone looking at the index page of a module, the theming engine will choose index-mobile-iphone.tpl over index-mobile.tpl and index-mobile.tpl over index.tpl.
+
+
+The framework uses the templating engine to perform two tasks:
+
+1) Avoid HTML duplication of commonly used components (eg: search bars, headers, footer, etc).  
+
+2) Avoid HTML duplication between the layouts used by the different mobile platforms.
+   
+
+Smarty has two mechanisms for avoiding code duplication: template inclusion {include} and template inheritance {extends}.  The framework uses template inclusion for commonly used components and template inheritance to avoid duplication between platform layouts:
+
+For example the About module index page contains a list of links to the other pages in the module.  This is the contents of index.tpl:
+
+  {include file="findInclude:common/header.tpl"}
+  
+  {block name="navList"}
+    {include file="findInclude:common/navlist.tpl" navlistItems=$aboutPages}
+  {/block}
+  
+  {include file="findInclude:common/footer.tpl"}
+
+This file uses template {include} to reuse a header, a navigation list (for the list of pages) and a footer.  Not only does this make the template shorter and easier to read, but it also ensures that common ui elements (such as the navlist) use the same DOM structure and CSS classes across the entire web application.  This makes theming these elements much easier.
+
+
+
+
+On basic browsers the About module index page looks a little different.  The last element in the navigation list is broken out and separated from the rest of the elements.  This is the contents of index-basic.tpl:
+
+  {extends file="findExtends:modules/$moduleID/index.tpl"}
+  
+  {block name="navList"}
+    {$lastAboutPage = array_pop($aboutPages)}
+    
+    {$smarty.block.parent}
+  
+    <p class="nav secondary">
+      <a href="{$lastAboutPage['url']}" class="{$lastAboutPage['class']|default:''}">
+        {$lastAboutPage['title']}
+      </a>
+    </p>
+  {/block}
+
+Here the basic version of the index page extends the version above and overrides the block "navList".  Inside the override it removes the last element with the php function array_pop(), displays the navlist by specifying the parent version of the block, and then displaying the last element in a separate div.  By using template inheritance, the basic template only includes the differences between the two versions of the page.  So if, for example, someone changes the index template to use a results list instead of a nav list, the basic version of the page will also start using the results list without needing to be changed.  While this isn't much of a savings in a small page like this, for larger pages it can greatly reduce HTML complexity and avoid situations where different versions of the pages get out of sync.
+
+
+"findInclude" and "findExtends" Resource Types:
+
+In order to avoid having to specify the theme, pagetype and device type in each include, the framework provides two resource types which search for template files based on the filepath given.  "findInclude" should be used with {include} and "findExtends" should be used with {extends}.
+
+The path should be relative to either the templates directory or the theme directory (these two directories must use the same sub-paths for the theme to work).
+
+The reason there are two resource types is that "findInclude" searches both for theme versions and also pagetype and platform-specific versions, preferring the theme version and the most device-specific version.  "findExtends" only searches for theme versions of the file because when you are extending you want to refer to a version for a specific device.
+
+
+
+
+Global Template Variables:
+
+There are a number of template variables which are set for all templates and should not be modified.
+
+The following reserved variables may be useful to some modules:
+
+  $pagetype                     - The device pagetype
+  $platform                     - The device platform
+  $supportsCerts                - Whether or not the device browser supports certs
+  $showDeviceDetection          - Whether or not to show the device detection text at the bottom of the homepage
+  
+  $moduleID                     - The module id (eg: 'about')
+  $moduleName                   - The display name of the module (eg: 'About')
+  $page                         - The current page (eg: 'index')
+  $isModuleHome                 - Whether or not the current page is the index page
+  $pageTitle                    - The page title
+
+The following reserved variables are used by the header and footer templates:
+
+  $fontsizes                    - An array of possible font sizes
+  $fontsize                     - The current font size
+  $fontsizeCSS                  - An inline CSS block to set the current font
+  $fontSizeURL                  - A url to set the font (the font name can be appended to it)
+  $minify                       - An array of urls to load the CSS and Javascript for the page and device
+  $hasHelp                      - Whether or not the module has help text
+      
+The following reserved variables are controlled by the Module class and should not be referenced directly:
+
+  $pager                        - An array containing information about any paging enabled for this page
+  $tabbedView                   - An array containing information about any tabs on this page
+  $breadcrumbs                  - An array containing information about the current page breadcrumbs
+  $breadcrumbArgs               - A string of breadcrumb arguments containing breadcrumbs for this page
+  $breadcrumbSamePageArgs       - A string of breadcrumb arguments not containing breadcrumbs for this page
+  $inlineCSSBlocks              - An array of CSS blocks to place inline in the page header
+  $inlineJavascriptBlocks       - An array of Javascript blocks to place inline in the page header
+  $onOrientationChangeBlocks    - An array of Javascript blocks to add to the function called on orientation change
+  $onLoadBlocks                 - An array of Javascript blocks to add to the function called on page load
+  $inlineJavascriptFooterBlocks - An array of Javascript blocks to place inline in the page footer
+
+
+CSS and Javascript
+------------------
+
+All CSS and Javascript files are loaded automatically using Minify.  Rather than having to specify each CSS and Javascript file per page, Minify locates the files based on their names.  The naming scheme is similar to that of the templates, except there is a special file name "common" which indicates the file should be included for all devices:
+
+CSS search paths from least specific to most specific.  All matching CSS files are concatenated together from least specific to most specific.  This allows you to override styles for specific pages or devices.
+
+CSS Search Paths:
+
+  Check common core files in /web/templates/common/css/ for:
+      common.css
+      [PAGETYPE].css
+      [PAGETYPE]-[PLATFORM].css
+      [PAGE]-common.css
+      [PAGE]-[PAGETYPE].css
+      [PAGE]-[PAGETYPE]-[PLATFORM].css
+  
+  Check module core files in /web/templates/modules/[current module]/css/ for:
+      common.css
+      [PAGETYPE].css
+      [PAGETYPE]-[PLATFORM].css
+      [PAGE]-common.css
+      [PAGE]-[PAGETYPE].css
+      [PAGE]-[PAGETYPE]-[PLATFORM].css
+
+  Check common theme files in /web/site/[SITE_NAME]/themes/[THEME_NAME]/common/css/ for:
+      common.css
+      [PAGETYPE].css
+      [PAGETYPE]-[PLATFORM].css
+      [PAGE]-common.css
+      [PAGE]-[PAGETYPE].css
+      [PAGE]-[PAGETYPE]-[PLATFORM].css
+  
+  Check module theme files in /web/site/[SITE_NAME]/themes/[THEME_NAME]/modules/[current module]/css/ for:
+      common.css
+      [PAGETYPE].css
+      [PAGETYPE]-[PLATFORM].css
+      [PAGE]-common.css
+      [PAGE]-[PAGETYPE].css
+      [PAGE]-[PAGETYPE]-[PLATFORM].css
+
+
+
+Because Javascript does not allow overriding of functions, only the most device specific file in each directory is included, and theme files completely override core files.  When overriding be aware that you may need to duplicate code or move it into a common file to get it included on multiple pagetypes or platforms.
+
+Javascript Search Paths:
+
+  Check common theme files in /web/site/[SITE_NAME]/themes/[THEME_NAME]/common/javascript/ for:
+      common.js
+      [PAGETYPE]-[PLATFORM].js or if not check [PAGETYPE].js
+      [PAGE]-common.js
+      [PAGE]-[PAGETYPE]-[PLATFORM].js or if not check [PAGE]-[PAGETYPE].js
+            
+          If there are no common theme files, check common core files in  /web/templates/common/javascript/ for:
+                common.js
+                [PAGETYPE]-[PLATFORM].js or if not check [PAGETYPE].js
+                [PAGE]-common.js
+                [PAGE]-[PAGETYPE]-[PLATFORM].js or if not check [PAGE]-[PAGETYPE].js
+  
+  Check module theme files in /web/site/[SITE_NAME]/themes/[THEME_NAME]/modules/[current module]/javascript/ for:
+      common.js
+      [PAGETYPE]-[PLATFORM].js or if not check [PAGETYPE].js
+      [PAGE]-common.js
+      [PAGE]-[PAGETYPE]-[PLATFORM].js or if not check [PAGE]-[PAGETYPE].js
+  
+          If there are no module theme files, check module core files in /web/templates/modules/[current module]/javascript/ for:
+                common.js
+                [PAGETYPE]-[PLATFORM].js or if not check [PAGETYPE].js
+                [PAGE]-common.js
+                [PAGE]-[PAGETYPE]-[PLATFORM].js or if not check [PAGE]-[PAGETYPE].js
+    
+
+ 
+Because Minify combines all files into a single file, it can be hard to tell where an given line of CSS or Javascript actually comes from.  When Minify debugging is turned on (MINIFY_DEBUG == 1), Minify adds comments to help with locating the actual file associated with a given line.
+
+
+Note that the framework caches which files exist so it doesn't have to check all the possible files on every page load.  If you add a new file you may need to empty the minify cache to pick up the new file.
+
+
+
+Images
+------
+
+Because images can live in either the core templates folder or the theme folder, image paths have the theme and platform directories added automatically.  Images are either common to all modules or belong to a specific module.  In order to allow flexible image naming, the device the image is for is specified by folder name rather than file name.
+
+Images are searched across paths and the first image file present is returned.  
+
+
+Common Image Search Paths: (ie: /common/images/[IMAGE_NAME].[EXT])
+    
+    Check theme images in /web/site/[SITE_NAME]/themes/[THEME_NAME]/common/images/ for:
+        [PAGETYPE]-[PLATFORM]/[IMAGE_NAME].[EXT]
+        [PAGETYPE]/[IMAGE_NAME].[EXT]
+        [IMAGE_NAME].[EXT]
+    
+    Check core images in /web/templates/common/images/ for:
+        [PAGETYPE]-[PLATFORM]/[IMAGE_NAME].[EXT]
+        [PAGETYPE]/[IMAGE_NAME].[EXT]
+        [IMAGE_NAME].[EXT]
+
+Module Image Search Paths: (ie: /modules/[MODULE_ID]/[IMAGE_NAME].[EXT])
+  
+    Check theme images in /web/site/[SITE_NAME]/themes/[THEME_NAME]/modules/links/images/ for:
+        [PAGETYPE]-[PLATFORM]/[IMAGE_NAME].[EXT]
+        [PAGETYPE]/[IMAGE_NAME].[EXT]
+        [IMAGE_NAME].[EXT]
+
+    Check core images in /web/templates/modules/[MODULE_ID]/images/[PAGETYPE]-[PLATFORM]/ for:
+        [PAGETYPE]-[PLATFORM]/[IMAGE_NAME].[EXT]
+        [PAGETYPE]/[IMAGE_NAME].[EXT]
+        [IMAGE_NAME].[EXT]
+
+
+The rationale for searching for images rather than just specifying the full path is so that themes don't have to override a template just to replace an image being referenced inside it with an IMG tag.  By dropping their own version of the image in the theme folder, the theme image will automatically be selected.  The device selection aspect of the image search algorithm is mostly just for convenience and to make the templates and CSS files more terse.
+
+Note that image paths in CSS and templates should always be specified by an absolute path (ie: start with a /) but not contain the protocol, server, port, etc.  Any url base or device path will be prepended automatically by the framework.
+
+
+
+Anatomy of a Module
+-------------------
+
+Modules live in "/web/templates/modules/[MODULE_ID]/".  Each module folder contains a file named [MODULE_ID]Module.php and template files for each page in the module.  The [MODULE_ID]Module.php contains a subclass of the abstract class Module named [MODULE_ID]Module.
+
+For example here is the About module class:
+
+  class AboutModule extends Module {
+    protected $id = 'about';
+    
+    private function getPhraseForDevice() {
+      switch($this->platform) {
+        case 'iphone':
+          return 'iPhone';
+          
+        case 'android':
+          return 'Android phones';
+          
+        default:
+          switch ($this->pagetype) {
+            case 'mobile':
+              return 'touchscreen phones';
+            
+            case 'basic':
+            default:
+              return 'non-touchscreen phones';
+          }
+      }
+    }
+    
+    protected function initializeForPage() {
+      switch ($this->page) {
+        case 'index':
+          $this->loadWebAppConfigFile('about-index', 'aboutPages');
+          break;
+          
+        case 'about_site':
+          $this->assign('devicePhrase', $this->getPhraseForDevice());
+          break;
+        
+        case 'about':
+          break;
+        
+        case 'new':
+          $whatsNew = new WhatsNew();
+          
+          $this->assign('items', $whatsNew->get_items());
+          break;
+      }
+    }
+  }
+
+
+There are two very important Module class member variables which almost every module will need:
+  $this->page  - The name of the current page (eg: 'index')
+  $this->args  - The arguments passed into the page as GET parameters
+  
+There is also a convenience function for obtaining GET parameters which are not always set:
+  $value = $this->getArg(
+      $key,         // The name of the GET parameter
+      $default      // The value to pass back if $key is not set (defaults to '')
+  );
+
+All page selection and template loading is handled by the Module class.  All a module needs to do is subclass the abstract method initializeForPage() and set template variables based on which page is being requested.  Those variables will then be available to the template for that page.  
+
+Be sure not to use variable names that collide with template variables already in use by the TemplateEngine and Module classes.
+
+
+HTML Paging
+-----------
+
+The framework comes with a built-in pager which turns on paging for basic devices.  The pager splits HTML into multiple segments and provides a navigation bar at the bottom to select different pages or view the entire page.
+
+To turn on the pager call the Module class method enablePager():
+  $this->enablePager(
+      $html,       // A string containing the html or xml to split into pages
+      $encoding,   // A string to pass into mb_convert_encoding() 
+                   // ('HTML-ENTITIES' if it is just plain HTML)
+      $pageNumber  // The current page number requested by the user 
+                   // (0 for the first page)
+  );
+
+Then subclass the Module class method urlForPage():
+  function urlForPage($pageNumber) {
+    // Calculate the url for the page with page number $pageNumber
+  }
+
+In your template just include the pager:
+
+  {include file="findInclude:common/pager.tpl"}
+  
+  
+Tabs
+----
+
+The framework comes with built-in support for tabbed interfaces.  On mobile platforms the tabs are Javascript and on the basic platforms they are links to versions of the page for each tab.
+
+To turn on tabs call the Module class method enableTabs()
+
+  $this->enableTabs(
+      $tabKeys,    // An array of keys for the tabs
+      $defaultTab, // The key of the tab that will be selected by default 
+                   // (default null, which selects the first tab)
+      $javascripts // An array of tab key to Javascript block which should be 
+                   // called when the tab is selected, for lazy loading of tab 
+                   // content.  (defaults to an empty array)
+  );
+
+In your template build an array of tabbodies keyed off the tab keys and then include the tabs template:
+
+  {capture name="tab1" assign="tab1"}
+    {* tab 1 content *}
+  {/capture}
+  
+  {capture name="tab2" assign="tab2"}
+    {* tab 2 content *}
+  {/capture}
+  
+  {capture name="tab3" assign="tab3"}
+    {* tab 3 content *}
+  {/capture}
+
+  {$tabBodies = array()}
+  {$tabBodies['tab1Key'] = $tab1}  
+  {$tabBodies['tab2Key'] = $tab2}
+  {$tabBodies['tab3Key'] = $tab3}
+  
+  {include file="findInclude:common/tabs.tpl" tabBodies=$tabBodies}
+
+
+Breadcrumbs
+-----------
+
+The framework provides a built-in facility for tracking breadcrumbs for pages within a module.  This allows the header and footer templates to present links to previous pages.
+
+In order to use the breadcrumb facility all links to other pages in the module should use buildBreadcrumbURL() to create links:
+  $this->buildBreadcrumbURL(
+      $page,         // The name of the page (eg: 'index')
+      $args,         // An associative array of url parameters to add to the url.
+      $addBreadcrumb // True if you want to add a breadcrumb for the current page.  False if you just want to preserve the existing breadcrumbs. (default: true)
+  );
+
+If you need the breadcrumb arguments as a string to concatenate to your url, use getBreadcrumbArgString().
+  $this->getBreadcrumbArgString(
+      $prefix,       // A prefix for the resulting parameter string so it can be  
+                     // added to the url.  Usually '?' or '&' (defaults to '?')
+      $addBreadcrumb // True if you want to add a breadcrumb for the current 
+                     // page.  False if you just want to preserve the existing 
+                     // breadcrumbs. (default: true)
+  );
+    
+The search template will automatically append breadcrumb arguments on form post.  It will add a breadcrumb for the current page unless it is posting to the current page (ie: posting to itself).
+
+
+
+Inline CSS and Javascript
+-------------------------
+
+Sometimes modules need to append dynamically generated CSS or Javascript to pages.  The following functions support this:
+
+  $this->addInlineCSS(
+      $inlineCSS  // A string of CSS to place inline in the header
+  );
+  
+  $this->addInlineJavascript(
+      $inlineJavascript // A string of Javascript to place in the header
+  );
+  
+  $this->addInlineJavascriptFooter(
+      $inlineJavascript // A string of Javascript to place in the footer
+  );
+  
+  $this->addOnOrientationChange(
+      $onOrientationChange // A string of Javascript to call on device 
+                           // orientation change (eg: resize and move controls)
+  );
+  
+  $this->addOnLoad(
+      $onLoad // A string of Javascript to run on page load (body onload)
+  );
+
+All these functions can be called multiple times.
+
+
+
+

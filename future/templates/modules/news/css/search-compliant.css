@@ -1,0 +1,123 @@
+li.story {
+    height: 70pt;
+    padding: 1px;
+    padding-right: 10px;
+    overflow: hidden;
+    position: relative;
+}
+.results li.story a {
+    overflow: hidden;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    height: 70pt;
+}
+.results li.story a .ellipsis {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 3px 25px 3px 0;
+    font-size: 14px;
+    line-height: 20px;
+    padding-bottom: .25em;
+    height: 64pt;
+}
+
+.results li.story a .title {
+    font-size: 17px;
+    padding-bottom: .25em;
+}
+
+.thumbnail {
+    float:left;
+    padding:0px;
+    padding-right: 7px;
+    width: 70pt;
+    height: 70pt;
+}
+#category-switcher table {
+    padding-top: 2px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+#category-switcher .inputcombo {
+    margin: .25em .5em .5em .5em;
+}
+#category-switcher td {
+    vertical-align: middle;
+    height: 32px;
+    padding: 0;
+}
+#category-switcher .inputfield select,
+#category-switcher .inputfield input[type=text] {
+    width: 99.9%;
+    margin: 0;
+}
+#category-switcher .inputfield input[type=text] {
+    line-height: 1.25em;
+    padding-left: .25em;
+}
+#category-switcher .formlabel {
+    padding: 0 .25em;
+    padding-right: .25em;
+}
+#category-switcher #category-form .togglefield {
+    width: 40px;
+}
+#category-form .toggle-search-button {
+    padding: 0 .5em 0 .5em;
+}
+#category-switcher #search-form .togglefield {
+    width: 4em;
+    padding: 0 .25em 0 .75em;
+}
+#search-form .toggle-search-button {
+	font-size: 89%;
+	margin-left: .4em;
+}
+form {
+	margin: -8px 0 0 0;
+	padding: 0;
+}
+.formlabel {
+	width: 60px;
+    text-align: right;
+	color: #554c41;
+	font-size: 89%;
+}
+.header form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+.header form input {
+    line-height: normal;
+}
+.header form select {
+    line-height: normal;
+    padding: 4px 6px;
+    font-size: 15px;
+}
+#search-form .toggle-search-button {
+}
+.header {
+    padding: 0;
+}
+
+.header button {
+    display: inline;
+}
+.non-story a {
+    background-image: none;
+}
+
+.newsinput  {
+	width: 200px;
+}
+
+.search-field, select {
+}
+

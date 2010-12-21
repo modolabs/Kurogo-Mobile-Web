@@ -1,7 +1,15 @@
-MIT Mobile Web 2.2.7
+# Current Development
+* ``future/``  
+The current development of the mobile web framework is taking place in the ``future/`` directory.
+It is a migration from the old website which is contained in the other directories.  The new
+development is designed to be more extensible and more customizable and easier to theme.
 
-This is the same code running on http://m.mit.edu/ as of October 2010, minus the mobile device detection server. That will have its own repository on GitHub.
+# Requirements
+* Apache server
+* PHP 5.2 or greater
+* MySQL 5 or greater (optional)
+* Separate server running MIT browser detection
 
-The MIT Mobile Web is an open source project released under the MIT License, detailed in the file named LICENSE.
 
-A better README is forthcoming.
+
+
