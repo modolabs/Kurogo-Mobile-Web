@@ -79,6 +79,7 @@ class ICalAlarm extends ICalObject {
 class ICalEvent extends ICalObject {
 
   protected $uid;
+  protected $sequence;
   protected $recurid = NULL;
   protected $range;
   protected $summary;
@@ -86,18 +87,14 @@ class ICalEvent extends ICalObject {
   protected $location;
   protected $tzid;
   protected $url;
+  protected $created;
   protected $updated;
+  protected $transparency;
   protected $categories=array();
   protected $properties=array();
+  protected $rrules=array();
+  protected $exdates = array();
 
-  // attributes that will be populated only if recurring
-  protected $recur = FALSE;
-  protected $occurrences; // start times only
-  protected $until;
-  protected $exdates = Array();
-  protected $incrementor;
-  protected $interval = 1;
-  
   public function getEventCategories() {
     return array();
   }
@@ -140,6 +137,10 @@ class ICalEvent extends ICalObject {
 	 return $arr;
 
   }
+
+  public function get_tzid() {
+    return $this->tzid;
+  }
   
   public function get_uid() {
     return $this->uid;
@@ -162,11 +163,7 @@ class ICalEvent extends ICalObject {
   }
 
   public function get_end() {
-    if ($this->recur) {
-      return $this->until;
-    } else {
-      return $this->range->get_end();
-    }
+    return $this->range->get_end();
   }
 
   public function get_summary() {
@@ -190,14 +187,32 @@ class ICalEvent extends ICalObject {
   }
 
   public function is_recurring() {
-    return $this->recur;
+    return count($this->rrules)>0;
   }
 
-  public function get_occurrences() {
-    return $this->occurrences;
+  /* returns an array of occurrences that occur in the given range */
+  public function getOccurrencesInRange(TimeRange $range)
+  {
+    $occurrences = array();
+
+    /* check the "base" event */    
+    if ($this->range->overlaps($range)) {
+        $occurrences[] = $this;
+    }
+    
+    foreach ($this->rrules as $rrule) {
+        foreach ($rrule->occurrences($this, $range) as $occurrence) {
+            if (!in_array($occurrence->get_start(), $this->exdates)) {
+                $occurrences[] = $occurrence;
+            }
+        }
+    }
+
+    return $occurrences;
   }
 
   protected function compare_ranges(TimeRange $range, $compare_type) {
+    throw new Exception("compare_range Not handled yet");
     if ($this->recur) {
       // check if $range is within this series at all
       $event_range = new TimeRange($this->get_start(), $this->get_end());
@@ -255,6 +270,11 @@ class ICalEvent extends ICalObject {
   public function get_all_attributes() {
     return array_merge($this->standardAttributes(), array_keys($this->properties));
   }
+  
+  public function setRange(TimeRange $range)
+  {
+    $this->range = $range;
+  }
 
   public function set_attribute($attr, $value, $params=NULL) {
     switch ($attr) {
@@ -286,6 +306,17 @@ class ICalEvent extends ICalObject {
         break;
     case 'URL':
         $this->url = iCalendar::ical_unescape_text($value);
+        break;
+    case 'SEQUENCE':
+        $this->sequence = $value;
+        break;
+    case 'CREATED':
+        if (array_key_exists('TZID', $params)) {
+            $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+        } else {
+            $datetime = new DateTime($value);
+        }
+        $this->created = $datetime->format('U');
         break;
     case 'DTSTAMP':
 
@@ -329,6 +360,9 @@ class ICalEvent extends ICalObject {
          }
       }
       break;
+    case 'TRANSP':
+        $this->transparency = $value;
+        break;
     case 'DURATION':
       // todo:
       // if this tag comes before DTSTART we will break
@@ -344,7 +378,7 @@ class ICalEvent extends ICalObject {
             $datetime = new DateTime($value);
         }
 
-        $this->exdates[] = $datetime->format('U');
+        $this->exdates[] = $datetime->format('U'); //start time
       break;
     case 'TZID': // this only gets called by ICalendar::__construct
       $this->tzid = $value;
@@ -363,143 +397,17 @@ class ICalEvent extends ICalObject {
       );
   }
 
-  protected function add_rrule($rrule_string) {
-    $rules = explode(';', $rrule_string);
-    $this->recur = TRUE;
-    if ($this->occurrences === NULL) {
-      $this->occurrences = Array();
-    }
+  public function clear_rrules()
+  {
+    $this->rrules = array();
+  }
 
-    // read attributes from rrule_string
-    $limit_type = '';
-    $limit = '';
-
-    $incrementors = Array(
-      'SECONDLY' => 'increment_second',
-      'MINUTELY' => 'increment_minute',
-      'HOURLY' => 'increment_hour',
-      'DAILY' => 'increment_day',   
-      'WEEKLY' => 'increment_week',
-      'MONTHLY' => 'increment_month',
-      'YEARLY' => 'increment_year',
-      );
-
-    $occurs_by_list = Array();
-
-    foreach ($rules as $rule) {
-      $namevalue = explode('=', $rule);
-      $rulename = $namevalue[0];
-      $rulevalue = $namevalue[1];
-      switch ($rulename) {
-      case 'FREQ': // always present
-        $this->incrementor = $incrementors[$rulevalue];
-        break;
-      case 'INTERVAL':
-        $this->interval = $rulevalue;
-        break;
-      case 'UNTIL':
-        $limit_type = 'UNTIL';
-        $this->until = ICalendar::ical2unix($rulevalue);
-        break;
-      case 'COUNT':
-        $limit_type = 'COUNT';
-        $limit = $rulevalue;
-        break;
-      case (substr($rulename, 0, 2) == 'BY'):
-        $occurs_by_list[$rulename] = explode(',', $rulevalue);
-        break;
-      }
-    }
-    // finished reading attributes from rrule_string
-
-    $occursByTypes = Array(
-      'BYMONTH' => Array('func' => 'increment_month', 'format' => 'n'),
-      'BYWEEKNO' => Array('func' => 'increment_week', 'format' => 'W'),
-      'BYYEARDAY' => Array('func' => 'increment_day', 'format' => 'z'),
-      'BYMONTHDAY' => Array('func'=> 'increment_day', 'format' => 'j'),
-      'BYDAY' => Array('func' => 'increment_day', 'format' => 'w'),
-      'BYHOUR' => Array('func' => 'increment_hour', 'format' => 'G'),
-      'BYMINUTE' => Array('func' => 'increment_minute', 'format' => 'i'),
-      'BYSECOND' => Array('func' => 'increment_second', 'format' => 's'),
-      );
-
-    // create the first occurrence set
-    $occur_unit = Array($this->range->get_start());
-    foreach ($occursByTypes as $byfreq => $attribs) {
-      // we loop through occurByTypes so we can be sure to
-      // act on each "by frequency" rule in order of decreasing grain size
-
-      if (array_key_exists($byfreq, $occurs_by_list)) {
-        $new_occur_unit = Array();
-
-        // every "when" within the "by frequency"
-        // e.g. MO,TU,WE for BYDAY
-        // needs to be a separate element of the occurrence set
-        foreach($occurs_by_list[$byfreq] as $when) {
-            if ($byfreq=='BYDAY') {
-                if (isset(ICalendar::$dayIndex[$when])) {
-                    $occurs_when = ICalendar::$dayIndex[$when];
-                } elseif (preg_match("/^(-?\d)([A-Z]{2})$/", $when, $bits) && isset(ICalendar::$dayIndex[$bits[2]])) {
-                    // this is broken for now
-                    $occurs_when = ICalendar::$dayIndex[$bits[2]];
-                } else {
-                   // ???
-                }
-            } else {
-                $occurs_when = $when;
-            }
-
-          // if the set of occurrences already has multiple elements
-          // they will be multiplied
-          // e.g. MO,TU for BYDAY and 1,2,3 for BYMONTH
-          // yields 6 elements in the occurence set
-          foreach ($occur_unit as $start) {     
-            $count = 0; // for debugging below
-            while (intval(date($attribs['format'], $start)) != $occurs_when) {
-              $start = call_user_func(array('ICalendar',$attribs['func']), $start);
-    
-              // haven't seen this happen yet but who knows
-              if ($count > 366) {
-            throw new ICalendarException("maximum loop count exceeded");
-              }
-              $count += 1;
-            }
-            $new_occur_unit[] = $start;
-          }
-        }
-
-        $occur_unit = $new_occur_unit;
-      }
-    }
-
-    // BYSETPOS limits us to particular indices of the occurrence set
-    if (array_key_exists('BYSETPOS', $occurs_by_list)) {
-      $new_occur_unit = Array();
-      $setposlist = $occurs_by_list['BYSETPOS'];
-      foreach ($setposlist as $setpos) {
-        if ($setpos < 0) {
-          $setpos = count($occur_unit) + $setpos;
-        } else {
-          $setpos = $setpos - 1;
-        }
-        $new_occur_unit[] = $occur_unit[$setpos];
-      }
-      $occur_unit = $new_occur_unit;
-    }
-
-    $this->occurrences = $occur_unit;
-
-    // duplicate the occurrence set for COUNT limits
-    // this is approximate
-    if ($limit_type == 'COUNT') {
-      $num_increments = $limit / count($this_occurrences);
-      $end = end($occur_unit);
-      while ($num_increments > 0) {
-        $end = $this->incrementor($end);
-        $num_increments -= 1;
-      }
-      $this->until = $end;
-    }
+  protected function add_rrule($rrule_string) 
+  {
+    $rrule = new ICalRecurrenceRule($rrule_string);
+    $this->rrules[] = $rrule;
+  
+    return;
   }
   
   private function addLine(&$string, $prop, $value)
@@ -551,101 +459,183 @@ class ICalEvent extends ICalObject {
   }
 }
 
+class ICalRecurrenceRule extends ICalObject {
+  const MAX_OCCURRENCES=PHP_INT_MAX; // provided as a safety net
+  protected $classname='RECURRENCE';
+  protected $type;
+  protected $limit=-1;
+  protected $limitType='COUNT';
+  protected $interval = 1;
+  private static $dayIndex = Array('SU'=>0, 'MO'=>1, 'TU'=>2, 'WE'=>3, 'TH'=>4, 'FR'=>5, 'SA'=>6 );
+
+  private $frequencies = Array(
+      'SECONDLY',
+      'MINUTELY',
+      'HOURLY',
+      'DAILY',
+      'WEEKLY',
+      'MONTHLY',
+      'YEARLY'
+      );
+  
+  function __construct($rule_string) 
+  {
+    $rules = explode(';', $rule_string);
+
+    foreach ($rules as $rule) {
+      $namevalue = explode('=', $rule);
+      $rulename = $namevalue[0];
+      $rulevalue = $namevalue[1];
+      switch ($rulename) {
+      case 'FREQ': // always present
+        if (in_array($rulevalue, $this->frequencies)) {
+            $this->type = $rulevalue;
+        } else {
+            throw new Exception("Invalid frequency $rulevalue");
+        }
+        
+        break;
+      case 'INTERVAL':
+        $this->interval = $rulevalue;
+        break;
+      case 'UNTIL':
+        $this->limitType = 'UNTIL';
+        $datetime = new DateTime($rulevalue);
+        $this->limit = $datetime->format('U');
+        break;
+      case 'COUNT':
+        $limitType = 'COUNT';
+        $this->limit = $rulevalue;
+        break;
+      case (substr($rulename, 0, 2) == 'BY'):
+        throw new Exception("BY* rules Not handled yet");
+        $occurs_by_list[$rulename] = explode(',', $rulevalue);
+        break;
+      }
+    }
+
+    if (empty($this->type)) {
+        throw new Exception("Invalid Frequency");
+    }
+  }
+  
+  private function nextIncrement($time, $type, $interval=1)
+  {
+      switch ($type)
+      {
+        case 'SECONDLY': 
+            $time += $interval; 
+            break;
+        case 'MINUTELY': 
+            $time += ($interval * 60); 
+            break;
+        case 'HOURLY'  : 
+            $time += ($interval * 3600);
+            break;
+        case 'DAILY':
+            $hour = date('H', $time);
+            $minute = date('i', $time);
+            $second = date('s', $time);
+			for ($i=0; $i<$interval; $i++) {
+			    //can't assume 24 "hours" in a day due to daylight savings. start at midnight and add 28 hours to be in the next day
+				$timestamp = mktime(0,0,0, date('m', $time), date('d', $time), date('Y', $time)) + 100800; 
+				$time =  mktime($hour, $minute, $second, date('m', $timestamp), date('d', $timestamp), date('Y', $timestamp));
+			}
+            break;
+        case 'WEEKLY':
+            $time = self::nextIncrement($time, 'DAILY', 7*$interval);
+            break;
+        case 'MONTHLY':
+            throw new Exception("MONTHLY increment Not handled yet");
+            break;
+        case 'YEARLY':
+            $time = mktime(date('H', $time), date('i', $time), date('s', $time), date('m', $time), date('d', $time), date('Y', $time)+$interval);
+            break;
+        default:
+            throw new Exception("Invalid type $type");
+      }
+      
+      return $time;
+  }
+
+  /* takes an event and range as parmeters and returns an array of occurrences DOES NOT include the original event */
+  function occurrences(ICalEvent $event, TimeRange $range=null)
+  {
+    $occurrences = array();
+    $time = $event->get_start();
+    $diff = $event->get_end()-$event->get_start();
+    $limitType = $this->limitType;
+    $limit = $this->limit;
+    $count = 0;
+
+//    echo date('m/d/Y H:i:s', $time) . "<br>\n";
+    $time = $this->nextIncrement($time, $this->type, $this->interval);
+    while ($time <= $range->get_end())
+    {
+        $occurrence_range = new TimeRange($time, $time+$diff);
+        if ($occurrence_range->overlaps($range)) {
+            $occurrence = clone $event;
+            $occurrence->setRange($occurrence_range);
+            $occurrence->clear_rrules();
+            $recurrence_id = strftime("%Y%m%dT%H%M%S",$time);
+            if ($tzid = $occurrence->get_tzid()) {
+                $recurrence_id = sprintf("TZID=%s:%s", $tzid, $recurrence_id);
+            }
+            $occurrence->set_attribute('RECURRENCE-ID', $recurrence_id);
+            $occurrences[] = $occurrence;
+        }
+        if ( ($limitType=='COUNT') && ($count < $limit) ) { break; }
+        if ( ($limitType=='UNTIL') && ($time > $limit) ) { break; }
+        if ( $count > ICalRecurrenceRule::MAX_OCCURRENCES) { break; }
+        $time = $this->nextIncrement($time, $this->type, $this->interval);
+        $count++;
+    }
+    
+    return $occurrences;
+
+  }
+}
+
 class ICalendar extends ICalObject {
   protected $properties;
   public $timezone = NULL;
   protected $events;
-
-  // corresponds to date('w', $date)
-  public static $dayIndex = Array('SU'=>0, 'MO'=>1, 'TU'=>2, 'WE'=>3, 'TH'=>4, 'FR'=>5, 'SA'=>6 );
-
-  public static function ical2unix($icaltime, $tzid=NULL) {
-    if ($tzid === NULL) {
-      $time = new DateTime($icaltime);
-    } else {
-      $tz = new DateTimeZone($tzid);
-      $time = new DateTime($icaltime, $tz);
-    }
-    return $time->format('U');
-  }
-
-  public function search_events($title=NULL, TimeRange $range=NULL) {
-    $events = Array();
-    foreach ($this->events as $id => $event){
-      if ($event->get_recurid() !== NULL) // event is a duplicate
-    continue;
-      if (($title === NULL || stripos($event->get_summary(), $title) !== FALSE)
-      && ($range === NULL || $event->overlaps($range))) {
-    $events[] = $event;
-      }
-    }
-    return $events;
-  }
-
-  public function search_by_range(Timerange $range) {
-    /*
-    $events = Array();
-    foreach ($this->events as $id => $event){
-      if ($event->get_recurid() !== NULL) // event is a duplicate
-    continue;
-      if ($event->overlaps($range)) {
-    $events[] = $event;
-      }
-    }
-    return $events;
-    */
-    return $this->search_events(NULL, $range);
-  }
-
-  public function search_by_title($title) {
-    /*
-    $events = Array();
-    foreach ($this->events as $id => $event) {
-      if ($event->get_recurid() !== NULL) // event is a duplicate
-    continue;
-      if (stripos($event->get_summary(), $title) !== FALSE) {
-    $events[] = $event;
-      }
-    }
-    return $events;
-    */
-    return $this->search_events($title, NULL);
-  }
-
-  public function get_day_events($time=NULL) {
-    if ($time === NULL) {
-      $time = time();
-    }
-    $day = new DayRange($time, $this->timezone->tzid);
-
-    $events = Array();
-    foreach ($this->events as $id => $event) {
-      if ($event->is_recurring()) {
-    $day_events = $event->overlaps($day);
-    foreach ($day_events as $day_event) {
-      $events[] = $day_event;
-    }
-      } elseif ($event->overlaps($day)) {
-    $events[] = $event;
-      }
-    }
-    return $events;
-  }
+  protected $occurrences;
 
   public function add_event(ICalEvent $event) {
     $uid = $event->get_uid();
     $this->events[$uid] = $event;
   }
   
-  public function get_events()
+  public function getEvents()
   {
     return $this->events;
   }
   
-  public function get_extra_attributes()
+  /* returns an array of events keyed by uid containing an array of occurrences keyed by start time */
+  public function getEventsInRange(TimeRange $range=null)
   {
-  }
+    $events = $this->events;
+    $occurrences = array();
 
+    foreach ($events as $id => $event) {
+        
+        $eventOccurrences = $event->getOccurrencesInRange($range);
+        
+        foreach ($eventOccurrences as $occurrence) {
+            
+            $uid = $occurrence->get_uid();
+            if (!array_key_exists($uid, $occurrences)) {
+                $occurrences[$uid] = array();
+            }
+            
+            $occurrences[$uid][$occurrence->get_start()] = $occurrence;
+        }
+    }
+        
+    return $occurrences;
+  }
+  
   public function set_attribute($attr, $value)
   {
     $this->properties[$attr] = $value;
@@ -685,65 +675,4 @@ class ICalendar extends ICalObject {
         return $output_string;
   }
 
-    function increment_second($date, $numseconds=1) {
-      return $date + $numseconds;
-    }
-    
-    function increment_minute($date, $nummins=1) {
-      return $date + 60 * $nummins;
-    }
-    
-    function increment_hour($date, $numhours=1) {
-      return $date + 3600 * $numhours;
-    }
-    
-    function increment_day($date, $numdays=1) {
-        $hour = date('H', $date);
-        $min = date('i', $date);
-        $sec = date('s', $date);
-
-        for ($i=0; $i<$numdays; $i++) {
-            $date = mktime(0, 0, 0, date('m', $date), date('d', $date), date('Y', $date)) + 100800; //advance well within the next day
-        }
-        
-        $return = mktime($hour, $min, $sec, date('m', $date), date('d', $date), date('Y', $date));
-        return $return;
-    }
-    
-    function increment_week($date, $numweeks=1) {
-        return ICalendar::increment_day($date, 7 * $numweeks);
-    }
-    
-    function increment_year($date, $numyears=1) {
-      return mktime(
-       date('H', $date),
-       date(trim('i', '0'), $date),
-       date(trim('s', '0'), $date),
-       date('n', $date),
-       date('d', $date),
-       date('Y', $date) + $numyears
-       );
-    }
-    
-    function increment_month($date, $nummonths=1) {
-      $month = date('n', $date) + $nummonths;
-      if ($month > 12) {
-        $remainder = $month % 12;
-        $year = date('Y', $date) + ($month - $remainder) / 12;
-        $month = $remainder;
-      } else {
-        $year = date('Y', $date);
-      }
-    
-      return mktime(
-        date('H', $date),
-        date(trim('i', '0'), $date),
-        date(trim('s', '0'), $date),
-        $month,
-        date('d', $date),
-        $year
-        );
-    }
-
 }
-

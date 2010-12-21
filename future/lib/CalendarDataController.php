@@ -4,6 +4,8 @@ class CalendarDataController extends DataController
 {
     protected $DEFAULT_PARSER_CLASS='ICSDataParser';
     const DEFAULT_EVENT_CLASS='ICalEvent';
+    const START_TIME_LIMIT=-2147483647; 
+    const END_TIME_LIMIT=2147483647; 
     protected $startDate;
     protected $endDate;
     protected $calendar;
@@ -99,15 +101,40 @@ class CalendarDataController extends DataController
         return $controller;
     }
 
-    public function getItem($id)
+    public function getItem($id, $time=null)
     {
-        $this->setRequiresDateFilter(false);
-        $items = $this->items();
+        //use the time to limit the range of events to seek (necessary for recurring events)
+        if ($time) {
+            $start = new DateTime(date('Y-m-d H:i:s', $time));
+            $start->setTime(0,0,0);
+            $end = clone $start;
+            $end->setTime(23,59,59);
+            $this->setStartDate($start);
+            $this->setEndDate($end);
+        }
+        
+        $items = $this->events();
         if (array_key_exists($id, $items)) {
-            return $items[$id];
+            if (array_key_exists($time, $items[$id])) {
+                return $items[$id][$time];
+            }
         }
         
         return false;
+    }
+    
+    protected function events()
+    {
+        if (!$this->calendar) {
+            $data = $this->getData();
+            $this->calendar = $this->parseData($data);
+        }
+
+        $startTimestamp = $this->startTimestamp() ? $this->startTimestamp() : CalendarDataController::START_TIME_LIMIT;
+        $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : CalendarDataController::END_TIME_LIMIT;
+        $range = new TimeRange($startTimestamp, $endTimestamp);
+        
+        return $this->calendar->getEventsInRange($range);
     }
     
     protected function clearInternalCache()
@@ -118,44 +145,20 @@ class CalendarDataController extends DataController
     
     public function items($start=0, $limit=null) 
     {
-        if (!$this->calendar) {
-            $data = $this->getData();
-            $this->calendar = $this->parseData($data);
+        $items = $this->events();
+        $events = array();
+        foreach ($items as $eventOccurrences) {
+            foreach ($eventOccurrences as $occurrence) {
+                if ($this->contentFilter) {
+                    if ( (stripos($event->get_description(), $this->contentFilter)!==FALSE) || (stripos($event->get_summary(), $this->contentFilter)!==FALSE)) {
+                        $events[] = $occurrence;
+                    }
+                } else {
+                    $events[] = $occurrence;
+                }
+            }
         }
 
-        $events = $this->calendar->get_events();
-        if ($this->requiresDateFilter) {
-        
-            $startTimestamp = $this->startTimestamp() ? $this->startTimestamp() : 0;
-            $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : PHP_INT_MAX;
-            
-            $items = $events;
-            $events = array();
-            foreach ($items as $id => $event) {
-                if  ((($event->get_start() >= $startTimestamp) &&
-                        ($event->get_start() <= $endTimestamp)) ||
-        
-                       (($event->get_end() >= $startTimestamp) &&
-                        ($event->get_end() <= $endTimestamp)) ||
-        
-                        (($event->get_start() <= $startTimestamp) &&
-                        ($event->get_end() >= $endTimestamp))) 
-                {
-                    $events[$id] = $event;
-                }
-            }
-        }
-        
-        if ($this->contentFilter) {
-            $items = $events;
-            $events = array();
-            foreach ($items as $id => $event) {
-                if ( (stripos($event->get_description(), $this->contentFilter)!==FALSE) || (stripos($event->get_summary(), $this->contentFilter)!==FALSE)) {
-                    $events[$id] = $event;
-                }
-            }
-        }
-        
         return $this->limitItems($events, $start, $limit);
     }
 }
