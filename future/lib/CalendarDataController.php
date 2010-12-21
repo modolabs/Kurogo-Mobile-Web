@@ -37,11 +37,6 @@ class CalendarDataController extends DataController
         return CACHE_DIR . "/Calendar";
     }
     
-    protected function cacheLifespan()
-    {
-        return $GLOBALS['siteConfig']->getVar('ICS_CACHE_LIFESPAN');
-    }
-
     protected function cacheFileSuffix()
     {
         return '.ics';

@@ -11,11 +11,6 @@ class RSSDataController extends DataController
         return CACHE_DIR . "/RSS";
     }
     
-    protected function cacheLifespan()
-    {
-        return $GLOBALS['siteConfig']->getVar('NEWS_CACHE_LIFESPAN');
-    }
-
     protected function cacheFileSuffix()
     {
         return '.rss';

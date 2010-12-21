@@ -10,9 +10,9 @@ abstract class DataController
     protected $filters=array();
     protected $debugMode=false;
     protected $useCache=true;
+    protected $cacheLifetime=900;
     
     abstract protected function cacheFolder();
-    abstract protected function cacheLifespan();
     abstract protected function cacheFileSuffix();
     abstract public function getItem($id);
     
@@ -75,6 +75,11 @@ abstract class DataController
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
         }
+
+        if (isset($args['CACHE_LIFETIME'])) {
+            $this->setCacheLifetime($args['CACHE_LIFETIME']);
+        }
+        
     }
 
     public static function factory($args)
@@ -116,7 +121,7 @@ abstract class DataController
         if ($this->useCache) {
             $cacheFilename = $this->cacheFilename();
             if ($this->cache === NULL) {
-                  $this->cache = new DiskCache($this->cacheFolder(), $this->cacheLifespan(), TRUE);
+                  $this->cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime, TRUE);
                   $this->cache->setSuffix($this->cacheFileSuffix());
                   $this->cache->preserveFormat();
             }
@@ -140,6 +145,11 @@ abstract class DataController
         }
         
         return $data;
+    }
+
+    public function setCacheLifetime($seconds)
+    {
+        $this->cacheLifetime = intval($seconds);
     }
 
     public function setEncoding($encoding)
