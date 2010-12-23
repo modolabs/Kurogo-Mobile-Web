@@ -12,6 +12,7 @@ class CalendarModule extends Module {
   protected $hasFeeds = true;
   protected $timezone;
   protected $feedFields = array('CACHE_LIFETIME'=>'Cache lifetime (seconds)', 'CONTROLLER_CLASS'=>'Controller Class','PARSER_CLASS'=>'Parser Class','EVENT_CLASS'=>'Event Class');
+  protected $defaultSearchOption = 0;
 
   private $searchOptions = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
@@ -220,7 +221,7 @@ class CalendarModule extends Module {
   }
   
   public function federatedSearch($searchTerms, $maxCount, &$results) {
-    $searchOption = $this->searchOptions[0]; // default timeframe
+    $searchOption = $this->searchOptions[$this->defaultSearchOption]; // default timeframe
     $type = 'events';
     
     $feed = $this->getFeed($type); // this allows us to have multiple feeds in the future
