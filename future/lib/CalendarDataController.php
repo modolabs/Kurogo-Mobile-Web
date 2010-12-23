@@ -150,7 +150,7 @@ class CalendarDataController extends DataController
         foreach ($items as $eventOccurrences) {
             foreach ($eventOccurrences as $occurrence) {
                 if ($this->contentFilter) {
-                    if ( (stripos($event->get_description(), $this->contentFilter)!==FALSE) || (stripos($event->get_summary(), $this->contentFilter)!==FALSE)) {
+                    if ( (stripos($occurrence->get_description(), $this->contentFilter)!==FALSE) || (stripos($occurrence->get_summary(), $this->contentFilter)!==FALSE)) {
                         $events[] = $occurrence;
                     }
                 } else {
