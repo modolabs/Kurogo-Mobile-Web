@@ -166,33 +166,20 @@ class CalendarModule extends Module {
       'type' => $type,
     ), $addBreadcrumb);
   }
+
+  private function yearURL($year, $month, $type, $addBreadcrumb=true) {
+    return $this->buildBreadcrumbURL('year', array(
+      'year' => $year,
+      'month'=> $month,
+      'type' => $type,
+    ), $addBreadcrumb);
+  }
   
   private function categoryDayURL($time, $categoryID, $name, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('category', array(
       'time' => $time,
       'id'   => $categoryID,
       'name' => $name, 
-    ), $addBreadcrumb);
-  }
-  
-  private function academicURL($year, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('year', array(
-      'type'=> 'academic',
-      'month'=>'9',
-      'year' => $year,
-    ), $addBreadcrumb);
-  }
-  
-  private function holidaysURL($year=NULL, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('holidays', array(
-      'year' => isset($year) ? $year : $this->args['year'],
-    ), $addBreadcrumb);
-  }
-  
-  private function religiousURL($year=NULL, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('holidays', array(
-      'page' => 'religious',
-      'year' => isset($year) ? $year : $this->args['year'],
     ), $addBreadcrumb);
   }
   
@@ -314,11 +301,6 @@ class CalendarModule extends Module {
       
         $this->assign('today',           $today);
         $this->assign('searchOptions',   $this->searchOptions);
-        
-        $this->assign('todaysEventsUrl', $this->dayURL($today, 'events'));
-//        $this->assign('holidaysUrl',     $this->holidaysURL($year));
-        $this->assign('categoriesUrl',   $this->categoriesURL());
-        $this->assign('academicUrl',     $this->academicURL($year));
 
         break;
       
@@ -632,11 +614,11 @@ class CalendarModule extends Module {
 
         if ((date('Y')+1) > $year) {
           $this->assign('next',    $next);
-          $this->assign('nextUrl', $this->academicURL($year+1, false));
+          $this->assign('nextUrl', $this->yearURL($year+1, $month, $type, false));
         }
         if ($year > intval(date('Y'))) {
           $this->assign('prev',    $prev);
-          $this->assign('prevUrl', $this->academicURL($year-1, false));
+          $this->assign('prevUrl', $this->yearURL($year-1, $month, $type, false));
         }
 
         $this->assign('current', $current);
