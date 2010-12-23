@@ -13,7 +13,15 @@ class NewsModule extends Module {
   protected $feedFields = array('CACHE_LIFETIME'=>'Cache lifetime (seconds)','CONTROLLER_CLASS'=>'Controller Class','ITEM_CLASS'=>'Item Class', 'ENCLOSURE_CLASS'=>'Enclosure Class');
   private $feedIndex=0;
   protected $feed;
-  protected $maxPerPage;
+  protected $maxPerPage=10;
+
+  protected function getModuleDefaultData()
+  {
+    return array_merge(parent::getModuleDefaultData(), array(
+        'NEWS_MAX_RESULTS'=>10
+        )
+    );
+  }
   
   private function basicDeck($story, $bbplus) {
     $limit = $bbplus ? 95 : 75;
@@ -128,7 +136,9 @@ class NewsModule extends Module {
   
   protected function initialize() {
     $this->feeds      = $this->loadFeedData();
-    $this->maxPerPage = $GLOBALS['siteConfig']->getVar('NEWS_MAX_RESULTS');
+    if ($max = $this->getModuleVar('NEWS_MAX_RESULTS')) {
+        $this->maxPerPage = $max;
+    }
     
     $this->feedIndex = $this->getArg('section', 0);
     if (!isset($this->feeds[$this->feedIndex])) {
@@ -136,7 +146,6 @@ class NewsModule extends Module {
     }
     
     $this->feed = $this->getFeed($this->feedIndex);
-    
   }
 
   protected function initializeForPage() {
