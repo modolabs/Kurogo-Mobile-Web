@@ -235,8 +235,7 @@ class CalendarModule extends Module {
     $limit = min($maxCount, count($iCalEvents));
     for ($i = 0; $i < $limit; $i++) {
       $subtitle = $this->timeText($iCalEvents[$i]);
-      $briefLocation = $iCalEvents[$i]->get_location();
-      if (isset($briefLocation)) {
+      if ($briefLocation = $iCalEvents[$i]->get_location()) {
         $subtitle .= " | $briefLocation";
       }
   
@@ -380,8 +379,7 @@ class CalendarModule extends Module {
           
           foreach($iCalEvents as $iCalEvent) {
             $subtitle = $this->timeText($iCalEvent);
-            $briefLocation = $iCalEvent->get_location();
-            if (isset($briefLocation)) {
+            if ($briefLocation = $iCalEvent->get_location()) {
               $subtitle .= " | $briefLocation";
             }
           
@@ -414,11 +412,10 @@ class CalendarModule extends Module {
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
           $subtitle = $this->timeText($iCalEvent);
-          $briefLocation = $iCalEvent->get_location();
-          if (isset($briefLocation)) {
+          if ($briefLocation = $iCalEvent->get_location()) {
             $subtitle .= " | $briefLocation";
           }
-        
+
           $events[] = array(
             'url'      => $this->detailURL($iCalEvent),
             'title'    => $iCalEvent->get_summary(),
@@ -453,10 +450,9 @@ class CalendarModule extends Module {
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
           $subtitle = $this->timeText($iCalEvent);
-          $briefLocation = $iCalEvent->get_location();
-          if (isset($briefLocation)) {
-            $subtitle .= " | $briefLocation";
-          }
+            if ($briefLocation = $iCalEvent->get_location()) {
+              $subtitle .= " | $briefLocation";
+            }
         
           $events[] = array(
             'url'      => $this->detailURL($iCalEvent),
@@ -521,7 +517,7 @@ class CalendarModule extends Module {
             $field = array();
             
             $value = $event->get_attribute($key);
-            if (!isset($value) || (is_array($value) && count($value)==0)) { 
+            if (!strlen($value) || (is_array($value) && count($value)==0)) { 
                 continue; 
             }
 
@@ -589,8 +585,7 @@ class CalendarModule extends Module {
           $events = array();
           foreach($iCalEvents as $iCalEvent) {
             $subtitle = $this->timeText($iCalEvent);
-            $briefLocation = $iCalEvent->get_location();
-            if (isset($briefLocation)) {
+            if ($briefLocation = $iCalEvent->get_location()) {
               $subtitle .= " | $briefLocation";
             }
         
