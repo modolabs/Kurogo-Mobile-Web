@@ -89,6 +89,8 @@ class ICalEvent extends ICalObject {
   protected $url;
   protected $created;
   protected $updated;
+  protected $dtstamp;
+  protected $status;
   protected $transparency;
   protected $categories=array();
   protected $properties=array();
@@ -310,6 +312,9 @@ class ICalEvent extends ICalObject {
     case 'SEQUENCE':
         $this->sequence = $value;
         break;
+    case 'STATUS':
+        $this->status = $value;
+        break;
     case 'CREATED':
         if (array_key_exists('TZID', $params)) {
             $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
@@ -318,14 +323,21 @@ class ICalEvent extends ICalObject {
         }
         $this->created = $datetime->format('U');
         break;
-    case 'DTSTAMP':
-
+    case 'LAST-MODIFIED':
         if (array_key_exists('TZID', $params)) {
             $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
         } else {
             $datetime = new DateTime($value);
         }
-      $this->updated = $datetime->format('U');
+        $this->updated = $datetime->format('U');
+        break;
+    case 'DTSTAMP':
+        if (array_key_exists('TZID', $params)) {
+            $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+        } else {
+            $datetime = new DateTime($value);
+        }
+      $this->dtstamp = $datetime->format('U');
         break;
     case 'DTSTART':
     case 'DTEND':
