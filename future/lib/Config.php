@@ -1,6 +1,10 @@
 <?php
 
 abstract class Config {
+    const EXPAND_VALUE = true;
+    const NO_EXPAND_VALUE = false;
+    const LOG_ERRORS = true;
+    const SUPRESS_ERRORS = false;
   protected $vars = array();
   protected $sectionVars = array();
   
@@ -44,7 +48,7 @@ abstract class Config {
     }
   }
 
-  public function getSectionVars($expand = false) {
+  public function getSectionVars($expand = Config::NO_EXPAND_VALUE) {
 
     if ($expand) {
         $sectionVars = $this->sectionVars;
@@ -61,7 +65,7 @@ abstract class Config {
     }
   }
 
-  public function getVars($expand = false) {
+  public function getVars($expand = Config::NO_EXPAND_VALUE) {
 
     if ($expand) {
         return array_map(array($this, 'replaceVariable'), $this->vars);
@@ -70,7 +74,7 @@ abstract class Config {
     }
   }
 
-  public function getSection($key, $log_error=true) {
+  public function getSection($key, $log_error=Config::LOG_ERRORS) {
 
     if (isset($this->sectionVars[$key])) {
       return $this->sectionVars[$key];
@@ -96,7 +100,7 @@ abstract class Config {
       return $value;
   }
   
-  public function getVar($key, $expand = true, $log_error=true) {
+  public function getVar($key, $expand = Config::EXPAND_VALUE, $log_error=Config::LOG_ERRORS) {
     if (isset($this->vars[$key])) {
         $value = $this->vars[$key];
         if ($expand) {

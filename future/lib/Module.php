@@ -266,27 +266,28 @@ abstract class Module {
   //
   // Configuration
   //
-  protected function getSiteVar($var, $log_error=true)
+  protected function getSiteVar($var, $log_error=Config::LOG_ERRORS)
   {
-      return $GLOBALS['siteConfig']->getVar($var, true, $log_error);
+      return $GLOBALS['siteConfig']->getVar($var, Config::EXPAND_VALUE, $log_error);
   }
 
-  protected function getSiteSection($var, $log_error=true)
+  protected function getSiteSection($var, $log_error=Config::LOG_ERRORS)
   {
       return $GLOBALS['siteConfig']->getSection($var, $log_error);
   }
 
-  protected function getModuleVar($var)
+  protected function getModuleVar($var, $default=null)
   {
      $config = $this->getModuleConfig();
-     return $config->getVar($var);
+     $value = $config->getVar($var, Config::EXPAND_VALUE);
+     return is_null($value) ? $default :$value;
   }
 
-  protected function getModuleSection($section)
+  protected function getModuleSection($section, $default=array())
   {
      $config = $this->getModuleConfig();
      if (!$section = $config->getSection($section)) {
-        $section = array();
+        $section = $default;
      }
      return $section;
   }
@@ -892,7 +893,7 @@ abstract class Module {
     $this->assign('minify', $this->getMinifyUrls());
     
     // Google Analytics. This probably needs to be moved
-    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', false)) {
+    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', Config::SUPRESS_ERRORS)) {
         $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
         $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
     }
