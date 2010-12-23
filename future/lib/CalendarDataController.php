@@ -123,7 +123,7 @@ class CalendarDataController extends DataController
         return false;
     }
     
-    protected function events()
+    protected function events($limit=null)
     {
         if (!$this->calendar) {
             $data = $this->getData();
@@ -134,7 +134,7 @@ class CalendarDataController extends DataController
         $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : CalendarDataController::END_TIME_LIMIT;
         $range = new TimeRange($startTimestamp, $endTimestamp);
         
-        return $this->calendar->getEventsInRange($range);
+        return $this->calendar->getEventsInRange($range, $limit);
     }
     
     protected function clearInternalCache()
@@ -145,7 +145,7 @@ class CalendarDataController extends DataController
     
     public function items($start=0, $limit=null) 
     {
-        $items = $this->events();
+        $items = $this->events($limit);
         $events = array();
         foreach ($items as $eventOccurrences) {
             foreach ($eventOccurrences as $occurrence) {

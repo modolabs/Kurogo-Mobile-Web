@@ -191,7 +191,7 @@ class ICalEvent extends ICalObject {
   }
 
   /* returns an array of occurrences that occur in the given range */
-  public function getOccurrencesInRange(TimeRange $range)
+  public function getOccurrencesInRange(TimeRange $range, $limit=null)
   {
     $occurrences = array();
 
@@ -201,7 +201,7 @@ class ICalEvent extends ICalObject {
     }
     
     foreach ($this->rrules as $rrule) {
-        foreach ($rrule->occurrences($this, $range) as $occurrence) {
+        foreach ($rrule->occurrences($this, $range, $limit) as $occurrence) {
             if (!in_array($occurrence->get_start(), $this->exdates)) {
                 $occurrences[] = $occurrence;
             }
@@ -559,7 +559,7 @@ class ICalRecurrenceRule extends ICalObject {
   }
 
   /* takes an event and range as parmeters and returns an array of occurrences DOES NOT include the original event */
-  function occurrences(ICalEvent $event, TimeRange $range=null)
+  function occurrences(ICalEvent $event, TimeRange $range=null, $max=null)
   {
     $occurrences = array();
     $time = $event->get_start();
@@ -569,9 +569,11 @@ class ICalRecurrenceRule extends ICalObject {
     $count = 0;
 
 //    echo date('m/d/Y H:i:s', $time) . "<br>\n";
+
     $time = $this->nextIncrement($time, $this->type, $this->interval);
     while ($time <= $range->get_end())
     {
+  //      echo date('m/d/Y H:i:s', $time) . "<br>\n";
         $occurrence_range = new TimeRange($time, $time+$diff);
         if ($occurrence_range->overlaps($range)) {
             $occurrence = clone $event;
@@ -587,6 +589,7 @@ class ICalRecurrenceRule extends ICalObject {
         if ( ($limitType=='COUNT') && ($count < $limit) ) { break; }
         if ( ($limitType=='UNTIL') && ($time > $limit) ) { break; }
         if ( $count > ICalRecurrenceRule::MAX_OCCURRENCES) { break; }
+        if ( !is_null($max) && count($occurrences)>=$max) { break; }
         $time = $this->nextIncrement($time, $this->type, $this->interval);
         $count++;
     }
@@ -613,14 +616,14 @@ class ICalendar extends ICalObject {
   }
   
   /* returns an array of events keyed by uid containing an array of occurrences keyed by start time */
-  public function getEventsInRange(TimeRange $range=null)
+  public function getEventsInRange(TimeRange $range=null, $limit=null)
   {
     $events = $this->events;
     $occurrences = array();
 
     foreach ($events as $id => $event) {
         
-        $eventOccurrences = $event->getOccurrencesInRange($range);
+        $eventOccurrences = $event->getOccurrencesInRange($range, $limit);
         
         foreach ($eventOccurrences as $occurrence) {
             
