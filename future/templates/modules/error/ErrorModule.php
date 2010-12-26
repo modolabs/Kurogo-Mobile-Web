@@ -66,7 +66,7 @@ class ErrorModule extends Module {
   protected function devError() {
     
     // production
-    if($GLOBALS['siteConfig']->getVar('USE_PRODUCTION_ERROR_HANDLER'))
+    if(this->getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED'))
       return false;
       
     //check for development errors

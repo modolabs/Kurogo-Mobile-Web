@@ -78,7 +78,7 @@ function Initialize(&$path=null) {
   
   require_once realpath(LIB_DIR.'/exceptions.php');
   
-  if($GLOBALS['siteConfig']->getVar('USE_PRODUCTION_ERROR_HANDLER')) {
+  if($GLOBALS['siteConfig']->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
     set_exception_handler("exceptionHandlerForProduction");
   } else {
     set_exception_handler("exceptionHandlerForDevelopment");
