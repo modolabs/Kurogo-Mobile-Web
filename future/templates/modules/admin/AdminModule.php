@@ -44,6 +44,17 @@ class AdminModule extends Module {
     
     return $var;    
   }
+  
+  protected function prepareAdminForSection($section, $adminModule) {
+    $sectionVars = $this->getSiteSection($section);
+    $formListItems = array();
+
+    foreach ($sectionVars as $key=>$value) {
+        $formListItems[] = $this->getSiteItemForKey($section, $key, $value);
+    }
+
+    return $formListItems;    
+  }
 
   protected function prepareSubmitValue($value, $type)
   {
@@ -79,7 +90,15 @@ class AdminModule extends Module {
 
     switch ($key)
     {
+        case 'AUTHENTICATION_AUTHORITY':
+            $item['type'] = 'select';
+            $item['options'] = AuthenticationAuthority::getInstalledAuthentiationAuthorities();
+            $item['default'] = '--';
+            break;
         default:
+            if (preg_match("/_(DEBUG|ENABLED)$/", $key)) {
+                $item['type'] = 'boolean';
+            }
             break;
     }
     
@@ -341,7 +360,6 @@ class AdminModule extends Module {
                 $formListItems = array();
 
                 if ($section) {
-                    $sectionVars = $siteVars[$section];
 
                     if ($this->getArg('submit')) {
                         $sectionVars = $this->prepareSubmitData('siteData');
@@ -349,11 +367,9 @@ class AdminModule extends Module {
                         $configFile->saveFile();
                         $this->redirectTo('site', false, false);
                     }
-                    
-                    foreach ($sectionVars as $key=>$value) {
-                        $formListItems[] = $this->getSiteItemForKey($section, $key, $value);
-                    }
-                    
+
+                    $formListItems = $this->prepareAdminForSection($section, $this);
+                                        
                 } else {
                     foreach ($siteVars as $sectionName=>$sectionVars){
                         $formListItems[] = array(
@@ -369,6 +385,7 @@ class AdminModule extends Module {
                                             
                 $this->assign('section'      , $section);
                 $this->assign('formListItems', $formListItems);
+                
                 break;
 
             case 'index':
