@@ -16,6 +16,34 @@ abstract class AuthenticationAuthority
 
     //Initializes the authority objects based on an associative array of arguments
     abstract function init($args);
+    
+    public static function getInstalledAuthentiationAuthorities()
+    {
+        $dirs = array(
+            LIB_DIR, SITE_DIR . '/lib'
+        );
+        
+        $authorities = array();
+        foreach ($dirs as $dir) {
+            if (is_dir($dir)) {
+                $d = dir($dir);
+                while (false !== ($entry = $d->read())) {
+                    $file = $dir . '/' . $entry;
+                    if (preg_match("/^([A-Z].*?)\.php$/", $entry, $bits)) {
+                        $class = $bits[1];
+                        if (@include_once($file)) {
+                            if (class_exists($class) && is_subclass_of($class, 'AuthenticationAuthority')) {
+                                $authorities[$class] = $class;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+                
+        return $authorities;
+    }
+    
 
     public static function factory($authorityClass, $args)
     {
