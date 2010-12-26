@@ -28,6 +28,9 @@
     {/foreach}
     {elseif $item.type=='select'}
     <select name="{$item.name}">
+    {if $item['default']}
+    <option value="">{$item['default']|escape}</option>
+    {/if}
     {foreach $item['options'] as $_value=>$_label}
     <option value="{$_value}"{if $item.value==$_value} selected{/if}>{$_label|escape}</option>
     {/foreach}
