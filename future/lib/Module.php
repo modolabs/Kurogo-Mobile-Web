@@ -385,7 +385,7 @@ abstract class Module {
             $formListItems = array();
             foreach ($strings as $string=>$value) {
                 $item = array(
-                    'label'=>ucfirst($string),
+                    'label'=>implode(" ", array_map("ucfirst", explode("_", strtolower($key)))),
                     'name'=>"moduleData[strings][$string]",
                     'typename'=>"moduleData][strings][$string",
                     'value'=>is_array($value) ? implode("\n\n", $value) : $value,
@@ -559,7 +559,7 @@ abstract class Module {
   protected function getModuleItemForKey($key, $value)
   {
     $item = array(
-        'label'=>ucfirst($key),
+        'label'=>implode(" ", array_map("ucfirst", explode("_", strtolower($key)))),
         'name'=>"moduleData[$key]",
         'typename'=>"moduleData][$key",
         'value'=>$value,

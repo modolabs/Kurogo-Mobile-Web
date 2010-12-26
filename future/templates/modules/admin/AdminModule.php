@@ -77,11 +77,24 @@ class AdminModule extends Module {
     
     return $value;
  }
+ 
+  protected function getSectionTitleForKey($key)
+  {
+     switch (strtolower($key))
+     {
+        case 'ga':
+            return 'Google Analytics';
+        default:
+           return implode(" ", array_map("ucfirst", explode("_", strtolower($key))));
+     }
+     return $key;
+  }
 
+                             
   protected function getSiteItemForKey($section, $key, $value)
   {
     $item = array(
-        'label'=>ucfirst($key),
+        'label'=>implode(" ", array_map("ucfirst", explode("_", strtolower($key)))),
         'name'=>"siteData[$section][$key]",
         'typename'=>"siteData][$section][$key",
         'value'=>$value,
@@ -326,7 +339,7 @@ class AdminModule extends Module {
                 foreach ($strings as $key=>$value) {
                     if (is_scalar($value)) {
                         $formListItems[] = array(
-                        'label'=>$key,
+                        'label'=>implode(" ", array_map("ucfirst", explode("_", strtolower($key)))),
                         'name'=>"strings[$key]",
                         'typename'=>"strings][$key",
                         'value'=>$value,
@@ -334,7 +347,7 @@ class AdminModule extends Module {
                         );
                     } else {
                         $formListItems[] = array(
-                        'label'=>$key,
+                        'label'=>implode(" ", array_map("ucfirst", explode("_", strtolower($key)))),
                         'name'=>"strings[$key]",
                         'typename'=>"strings][$key",
                         'value'=>implode("\n\n", $value),
@@ -374,7 +387,7 @@ class AdminModule extends Module {
                     foreach ($siteVars as $sectionName=>$sectionVars){
                         $formListItems[] = array(
                             'type'=>'url',
-                            'name'=>$sectionName,
+                            'name'=>$this->getSectionTitleForKey($sectionName),
                             'value'=>$this->buildBreadcrumbURL('site', array(
                                 'section'=>$sectionName
                                 )
