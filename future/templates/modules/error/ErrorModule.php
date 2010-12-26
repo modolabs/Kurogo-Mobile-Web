@@ -66,8 +66,9 @@ class ErrorModule extends Module {
   protected function devError() {
     
     // production
-    if(this->getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED'))
+    if($this->getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
       return false;
+    }
       
     //check for development errors
     if(isset($_GET['error'])){
