@@ -47,7 +47,7 @@ class PageViews {
   }
 
   public static function export_stats($system) {
-  
+    PageViews::createDatabaseTables();
     if ($system == 'web') {
       $table   = $GLOBALS['siteConfig']->getVar('PAGE_VIEWS_TABLE');
       $logfile = $GLOBALS['siteConfig']->getVar('WEB_CURRENT_LOG_FILE');
@@ -209,6 +209,28 @@ class PageViews {
         $output = Array();
       }
     return $output;
+  }
+  
+  protected function createDatabaseTables()
+  {
+    $sqls = array(
+        "CREATE TABLE IF NOT EXISTS mobi_web_page_views (
+            `day` date, 
+            `platform` char(31) NOT NULL, 
+            `module` char(31) NOT NULL, 
+            `viewcount` int(6) NOT NULL)",
+        "CREATE TABLE IF NOT EXISTS `mobi_api_requests` (
+            `day` date default NULL, 
+            `platform` char(31) default NULL, 
+            `module` char(31) default NULL,
+            `viewcount` int(11) default NULL,
+            UNIQUE (`day`,`platform`,`module`)
+        )"
+    );
+
+    foreach ($sqls as $sql) {
+        db::query($sql);
+    }
   }
 
   public static function view_past($system, $time_unit, $duration) {
