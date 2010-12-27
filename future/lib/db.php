@@ -37,7 +37,11 @@ class db {
 
         if (!$result = $connection->prepare($sql)) {
             $errorInfo = $connection->errorInfo();
-            error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+            if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
+                throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+            } else {
+                error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+            }
             return;
         }
 
@@ -45,7 +49,11 @@ class db {
         
         if (!$result->execute($parameters)) {
             $errorInfo = $result->errorInfo();
-            error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+            if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
+                throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+            } else {
+                error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+            }
         }
 
         return $result;
