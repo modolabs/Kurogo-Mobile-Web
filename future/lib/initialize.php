@@ -114,12 +114,9 @@ function Initialize(&$path=null) {
 
   //error_log(__FUNCTION__."(): prefix: $urlPrefix");
   //error_log(__FUNCTION__."(): path: $path");
-
-  if (isset($device) || isset($_SERVER['HTTP_USER_AGENT']) && strlen($_SERVER['HTTP_USER_AGENT'])) {
-    require_once realpath(LIB_DIR.'/DeviceClassifier.php');
-    
-    $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
-  }
+  
+  require_once realpath(LIB_DIR.'/DeviceClassifier.php');
+  $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
   
   
   //
