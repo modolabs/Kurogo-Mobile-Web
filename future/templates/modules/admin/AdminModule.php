@@ -103,11 +103,6 @@ class AdminModule extends Module {
 
     switch ($key)
     {
-        case 'AUTHENTICATION_AUTHORITY':
-            $item['type'] = 'select';
-            $item['options'] = AuthenticationAuthority::getInstalledAuthentiationAuthorities();
-            $item['default'] = '--';
-            break;
         default:
             if (preg_match("/_(DEBUG|ENABLED)$/", $key)) {
                 $item['type'] = 'boolean';

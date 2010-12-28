@@ -79,7 +79,7 @@ class PasswdAuthentication extends AuthenticationAuthority
     public function init($args)
     {
         $args = is_array($args) ? $args : array();
-        $this->passwdFile = isset($args['AUTHENTICATION_FILE']) ? $args['AUTHENTICATION_FILE'] : null;
+        $this->passwdFile = isset($args['FILE']) ? $args['FILE'] : null;
         if (!file_exists($this->passwdFile)) {
             throw new Exception("Unable to load password file $this->passwdFile");
         }

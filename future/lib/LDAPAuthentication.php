@@ -140,16 +140,16 @@ class LDAPAuthentication extends AuthenticationAuthority
     public function init($args)
     {
         $args = is_array($args) ? $args : array();
-        $this->ldapServer = isset($args['AUTHENTICATION_SERVER']) ? $args['AUTHENTICATION_SERVER'] : null;
-        $this->ldapPort = isset($args['AUTHENTICATION_SERVER_PORT']) ? $args['AUTHENTICATION_SERVER_PORT'] : 389;
-        $this->ldapSearchBase = isset($args['AUTHENTICATION_LDAP_SEARCH_BASE']) ? $args['AUTHENTICATION_LDAP_SEARCH_BASE'] : null;
+        $this->ldapServer = isset($args['HOST']) ? $args['HOST'] : null;
+        $this->ldapPort = isset($args['PORT']) ? $args['PORT'] : 389;
+        $this->ldapSearchBase = isset($args['SEARCH_BASE']) ? $args['SEARCH_BASE'] : null;
 
         //used if anonymous searches are not permitted (i.e. AD)
-        $this->ldapAdminDN = isset($args['AUTHENTICATION_LDAP_ADMIN_DN']) ? $args['AUTHENTICATION_LDAP_ADMIN_DN'] : null;
-        $this->ldapAdminPassword = isset($args['AUTHENTICATION_LDAP_ADMIN_PASSWORD']) ? $args['AUTHENTICATION_LDAP_ADMIN_PASSWORD'] : null;
+        $this->ldapAdminDN = isset($args['ADMIN_DN']) ? $args['ADMIN_DN'] : null;
+        $this->ldapAdminPassword = isset($args['ADMIN_PASSWORD']) ? $args['ADMIN_PASSWORD'] : null;
 
         //field use store the login name of the user. Typically uid in "regular" ldap directories. It's cn in active directory
-        $this->ldapUIDField = isset($args['AUTHENTICATION_LDAP_USER_UID']) ? $args['AUTHENTICATION_LDAP_USER_UID'] : 'uid';
+        $this->ldapUIDField = isset($args['USER_UID']) ? $args['USER_UID'] : 'uid';
         
         if ( empty($this->ldapServer) || empty($this->ldapPort)) {
             throw new Exception("Invalid LDAP Options");

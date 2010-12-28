@@ -30,13 +30,14 @@ class LoginModule extends Module {
             
         case 'login':
             $login = $this->argVal($_POST, 'loginUser', '');
+            $authority = $this->argVal($_POST, 'authority', AuthenticationAuthority::getDefaultAuthenticationAuthority());
 
             if ($this->session->isLoggedIn() || empty($login)) {
                 $this->redirectTo('index');
             }
             
             $password = $this->argVal($_POST, 'loginPassword', '');
-            $result = $this->session->login($login, $password, $user);
+            $result = $this->session->login($login, $password, $authority);
 
             switch ($result)
             {
@@ -69,6 +70,17 @@ class LoginModule extends Module {
                 $this->assign('message', "You are logged in as " . $user->getUserID());
                 $this->assign('url', $this->buildURL('logout'));
                 $this->assign('linkText', 'Click here to logout.');
+            } else {
+                $authenticationAuthorities = array();                
+                foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authority=>$authorityData) {
+                    $authenticationAuthorities[$authority] = $authorityData['TITLE'];
+                }
+                                
+                if (count($authenticationAuthorities)==0) {
+                    throw new Exception("No authentication authorities have been defined");
+                }
+                
+                $this->assign('authenticationAuthorities', $authenticationAuthorities);
             }
             break;
     }

@@ -522,11 +522,7 @@ abstract class Module {
   protected function initSession()
   {
     if (!$this->session) {
-        $authorityClass = $this->getSiteVar('AUTHENTICATION_AUTHORITY');
-        $authorityArgs = $this->getSiteSection('authentication');
-        $AuthenticationAuthority = AuthenticationAuthority::factory($authorityClass, $authorityArgs);
-        
-        $this->session = new Session($AuthenticationAuthority);
+        $this->session = new Session();
     }
   }
   

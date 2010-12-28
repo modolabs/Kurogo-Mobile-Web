@@ -12,6 +12,15 @@
 <input type="hidden" name="url" value="{$url|escape}">
 <p class="focal"><label for="loginUser">login:</label> <input type="text" name="loginUser" class="loginFormInput"></p>
 <p class="focal"><label for="loginUser">password:</label> <input type="password" name="loginPassword" class="loginFormInput"></p>
+{if $authenticationAuthorities|@count > 1}
+<p class="focal">
+<select name="authority">
+{foreach $authenticationAuthorities as $authorityName=>$authorityTitle}
+<option value="{$authorityName}">{$authorityTitle|escape}</option>
+{/foreach}
+</select>
+</p>
+{/if}
 <p class="focal"><input type="submit" id="login_submit" value="Login"></p>
 
 </form>

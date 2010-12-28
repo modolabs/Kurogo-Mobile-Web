@@ -4,7 +4,8 @@ define('AUTH_OK', 1);
 define('AUTH_FAILED', -1);
 define('AUTH_USER_NOT_FOUND', -2);
 define('AUTH_USER_DISABLED', -3);
-define('AUTH_ERROR', -4); // server or i/o error
+define('AUTH_INVALID_AUTHORITY', -4);
+define('AUTH_ERROR', -10); // server or i/o error
 
 abstract class AuthenticationAuthority
 {
@@ -16,6 +17,37 @@ abstract class AuthenticationAuthority
 
     //Initializes the authority objects based on an associative array of arguments
     abstract function init($args);
+
+    public static function getDefinedAuthenticationAuthorities()
+    {
+        static $configFile;
+        if (!$configFile) {
+            $configFile = ConfigFile::factory('authentication', 'feeds');
+        }
+        
+        return $configFile->getSectionVars();
+    }
+    
+    public static function getDefaultAuthenticationAuthority()
+    {
+        $authorities = self::getDefinedAuthenticationAuthorities();
+        return current($authorities);
+    }
+
+    public static function getAuthenticationAuthority($index)
+    {
+        static $configFile;
+        if (!$configFile) {
+            $configFile = ConfigFile::factory('authentication', 'feeds');
+        }
+        
+        if ($authorityData = $configFile->getSection($index)) {
+            $authorityClass = $authorityData['CONTROLLER_CLASS'];
+            return self::factory($authorityClass, $authorityData);
+        }
+        
+        return false;
+    }
     
     public static function getInstalledAuthentiationAuthorities()
     {
