@@ -79,6 +79,9 @@ abstract class AuthenticationAuthority
 
     public static function factory($authorityClass, $args)
     {
+        if (!class_exists($authorityClass)) {
+            throw new Exception("Invalid authentication class $authorityClass");
+        }
         $authority = new $authorityClass;
         $authority->init($args);
         return $authority;
