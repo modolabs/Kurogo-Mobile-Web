@@ -7,30 +7,33 @@ class db {
   
   public function __construct($config=null)
   {
+    if (!is_array($config)) {
+        if (!$config instanceOf Config) {
+           $config = $GLOBALS['siteConfig'];
+        }
+        
+        $config = array(
+            'DB_TYPE'=>$config->getVar('DB_TYPE'),
+            'DB_HOST'=>$config->getVar('DB_HOST'),
+            'DB_USER'=>$config->getVar('DB_USER'),
+            'DB_PASS'=>$config->getVar('DB_PASS'),
+            'DB_DBNAME'=>$config->getVar('DB_DBNAME'),   
+            'DB_FILE'=>$config->getVar('DB_FILE')
+        );
+    }
+
     $this->init($config);
   }
   
   public function init($config=null) 
   {
-    if (!$config instanceOf Config) {
-        $config = $GLOBALS['siteConfig'];
-    }
-    
-    $db_type = $config->getVar('DB_TYPE');
+    $db_type = isset($config['DB_TYPE']) ? $config['DB_TYPE'] : null;
     if (!file_exists(LIB_DIR . "/db/db_$db_type.php")) {
         throw new Exception("Database type $db_type not found");
     }
     
-    $dsn_data = array(
-        'DB_HOST'=>$config->getVar('DB_HOST'),
-        'DB_USER'=>$config->getVar('DB_USER'),
-        'DB_PASS'=>$config->getVar('DB_PASS'),
-        'DB_DBNAME'=>$config->getVar('DB_DBNAME'),   
-        'DB_FILE'=>$config->getVar('DB_FILE')
-    );
-    
     require_once(LIB_DIR . "/db/db_$db_type.php");
-    $this->connection = call_user_func(array("db_$db_type", 'connection'), $dsn_data);
+    $this->connection = call_user_func(array("db_$db_type", 'connection'), $config);
   }
   
   public function query($sql, $parameters=array())
