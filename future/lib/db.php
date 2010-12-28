@@ -3,73 +3,75 @@
 define('DB_NOT_SUPPORTED', 1);
 
 class db {
-  public static $connection = NULL;
+  protected $connection;
   
-  public static function connection()
+  public function __construct($config=null)
   {
-    self::init();
-    return self::$connection;
+    $this->init($config);
   }
-
-  public static function init() {
-    if(!self::$connection) {
-        $db_type = $GLOBALS['siteConfig']->getVar('DB_TYPE');
-        $dsn_data = array(
-            'DB_HOST'=>$GLOBALS['siteConfig']->getVar('DB_HOST'),
-            'DB_USER'=>$GLOBALS['siteConfig']->getVar('DB_USER'),
-            'DB_PASS'=>$GLOBALS['siteConfig']->getVar('DB_PASS'),
-            'DB_DBNAME'=>$GLOBALS['siteConfig']->getVar('DB_DBNAME'),
-            'DB_FILE'=>$GLOBALS['siteConfig']->getVar('DB_FILE')
-        );
-    
-        require_once(LIB_DIR . "/db/db_$db_type.php");
-        
-        self::$connection = call_user_func(array("db_$db_type", 'connection'), $dsn_data);
+  
+  public function init($config=null) 
+  {
+    if (!$config instanceOf Config) {
+        $config = $GLOBALS['siteConfig'];
     }
+    
+    $db_type = $config->getVar('DB_TYPE');
+    if (!file_exists(LIB_DIR . "/db/db_$db_type.php")) {
+        throw new Exception("Database type $db_type not found");
+    }
+    
+    $dsn_data = array(
+        'DB_HOST'=>$config->getVar('DB_HOST'),
+        'DB_USER'=>$config->getVar('DB_USER'),
+        'DB_PASS'=>$config->getVar('DB_PASS'),
+        'DB_DBNAME'=>$config->getVar('DB_DBNAME'),   
+        'DB_FILE'=>$config->getVar('DB_FILE')
+    );
+    
+    require_once(LIB_DIR . "/db/db_$db_type.php");
+    $this->connection = call_user_func(array("db_$db_type", 'connection'), $dsn_data);
   }
   
-  public static function query($sql, $parameters=array())
+  public function query($sql, $parameters=array())
   {
-        $connection = self::connection();
+    if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
+        error_log("Query Log: $sql");
+    }
+
+    if (!$result = $this->connection->prepare($sql)) {
+        $errorInfo = $this->connection->errorInfo();
         if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
-            error_log("Query Log: $sql");
+            throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+        } else {
+            error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
         }
+        return;
+    }
 
-        if (!$result = $connection->prepare($sql)) {
-            $errorInfo = $connection->errorInfo();
-            if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
-                throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
-            } else {
-                error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
-            }
-            return;
+    $result->setFetchMode(PDO::FETCH_ASSOC);
+    
+    if (!$result->execute($parameters)) {
+        $errorInfo = $result->errorInfo();
+        if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
+            throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+        } else {
+            error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
         }
+    }
 
-        $result->setFetchMode(PDO::FETCH_ASSOC);
-        
-        if (!$result->execute($parameters)) {
-            $errorInfo = $result->errorInfo();
-            if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
-                throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
-            } else {
-                error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
-            }
-        }
-
-        return $result;
+    return $result;
   }
 
-  public static function escape($string) {
-    $connection = self::connection();
-    return $connection->real_escape_string($string);
+  public function escape($string) {
+    return $this->connection->real_escape_string($string);
   }
 
-  public static function ping() {
-    $connection = self::connection();
-    if(!$connection->ping()) {
-      self::$connection->close();
-      self::$connection = NULL;
-      self::init();
+  public function ping() {
+    if(!$this->connection->ping()) {
+      $this->connection->close();
+      $this->connection = NULL;
+      $this->init();
     }
   }
 }

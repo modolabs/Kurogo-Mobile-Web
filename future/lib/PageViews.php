@@ -90,7 +90,7 @@ class PageViews {
       return; 
     }
 
-    $result = db::query(
+    $result = SiteDB::query(
       "SELECT day, platform, module, viewcount FROM $table
         WHERE day=(SELECT MAX(day) FROM $table)");
 
@@ -123,20 +123,20 @@ class PageViews {
     fclose($infile);
 
     if ($stats) {
-      db::query('LOCK TABLE $table WRITE');
-      db::query("DELETE FROM $table WHERE day=(SELECT MAX(day) FROM $table)");
+      SiteDB::query("LOCK TABLE $table WRITE");
+      SiteDB::query("DELETE FROM $table WHERE day=(SELECT MAX(day) FROM $table)");
       foreach ($stats as $day => $platforms) {
         foreach ($platforms as $platform => $modules) {
           foreach ($modules as $module => $count) {
             $sql = "INSERT INTO $table ( day, platform, module, viewcount )
                          VALUES (?,?,?,?)";
-            if (!db::query($sql, array($day, $platform, $module,$count))) {
+            if (!SiteDB::query($sql, array($day, $platform, $module,$count))) {
               error_log("query failed: $sql");
             }
           }
         }
       }
-      db::query("UNLOCK TABLE");
+      SiteDB::query("UNLOCK TABLE");
     }
 
     unlink($logfilecopy);
@@ -196,7 +196,7 @@ class PageViews {
       $sql .= ' FROM ' . $table . ' WHERE ' . implode(' AND ', $sql_criteria);
       $sql .= (isset($groupby) && count($groupby)) ? ' GROUP BY ' . implode(', ', $groupby) : '';
 
-      $result = db::query($sql);
+      $result = SiteDB::query($sql);
 
       // results are returned as (not necessarily in this order):
       // Array('module' => ..., 'platform' => ..., 'viewcount' => ...)
@@ -229,7 +229,7 @@ class PageViews {
     );
 
     foreach ($sqls as $sql) {
-        db::query($sql);
+        SiteDB::query($sql);
     }
   }
 
@@ -322,7 +322,7 @@ class PageViews {
 
   public static function count_iphone_tokens() {
     $sql = "SELECT count(*) FROM AppleDevice WHERE device_token IS NOT NULL and active = 1";
-    $result = db::query($sql);
+    $result = SiteDB::query($sql);
     $row = $result->fetch_assoc();
     return $row;
   }
