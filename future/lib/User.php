@@ -5,6 +5,7 @@ require_once(LIB_DIR . '/Session.php');
 abstract class User
 {
     protected $userID;
+    protected $AuthenticationAuthority;
     protected $email;
     protected $FirstName;
     protected $LastName;
@@ -31,11 +32,14 @@ abstract class User
         $this->userID = $userID;
     }
     
-    public static function factory(AuthenticationAuthority $AuthenticationAuthority)
+    public function setAuthenticationAuthority(AuthenticationAuthority $AuthenticationAuthority)
     {
-        //load the session object which contains the current session user
-        $session = new Session($AuthenticationAuthority); 
-        return $session->getUser();
+        $this->AuthenticationAuthority = $AuthenticationAuthority->getAuthorityIndex();
+    }
+
+    public function getAuthenticationAuthority()
+    {
+        return AuthentictionAuthority::getAuthenticationAuthority($this->AuthenticationAuthority);
     }
     
     protected function standardAttributes()
@@ -86,6 +90,11 @@ abstract class User
         return $this->LastName;
     }
     
+    public function __construct(AuthenticationAuthority $AuthenticationAuthority)
+    {
+        $this->setAuthenticationAuthority($AuthenticationAuthority);
+    }
+    
 }
 
 class BasicUser extends User
@@ -94,5 +103,8 @@ class BasicUser extends User
 
 class AnonymousUser extends User
 {
+    public function __construct()
+    {
+    }
 }
 

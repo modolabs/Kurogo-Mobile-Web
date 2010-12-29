@@ -108,7 +108,7 @@ class LDAPAuthentication extends AuthenticationAuthority
             // see if we got a result back 
             if ($result['count']>0) {
                 $entry = $result[0];
-                $user = new LDAPUser();
+                $user = new LDAPUser($this);
                 $user->setLdapUIDField($this->ldapUIDField);
                 $user->setDN($entry['dn']);
 

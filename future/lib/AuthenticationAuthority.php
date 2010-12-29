@@ -9,6 +9,7 @@ define('AUTH_ERROR', -10); // server or i/o error
 
 abstract class AuthenticationAuthority
 {
+    protected $AuthorityIndex;
     //Should return one of the auth constants, and set the user variable appropriately
     abstract public function auth($login, $password, &$user);
     
@@ -17,6 +18,16 @@ abstract class AuthenticationAuthority
 
     //Initializes the authority objects based on an associative array of arguments
     abstract function init($args);
+    
+    public function getAuthorityIndex()
+    {
+        return $this->AuthorityIndex;
+    }
+
+    public function setAuthorityIndex($index)
+    {
+        $this->AuthorityIndex = $index;
+    }
 
     public static function getDefinedAuthenticationAuthorities()
     {
@@ -43,7 +54,9 @@ abstract class AuthenticationAuthority
         
         if ($authorityData = $configFile->getSection($index)) {
             $authorityClass = $authorityData['CONTROLLER_CLASS'];
-            return self::factory($authorityClass, $authorityData);
+            $authority = self::factory($authorityClass, $authorityData);
+            $authority->setAuthorityIndex($index);
+            return $authority;
         }
         
         return false;

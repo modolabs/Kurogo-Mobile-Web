@@ -66,7 +66,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         }
 
         if (isset($this->users[$login])) {
-            $user = new BasicUser();
+            $user = new BasicUser($this);
             $user->setUserID($this->users[$login]['userID']);
             $user->setEmail($this->users[$login]['email']);
             return $user;

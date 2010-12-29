@@ -34,7 +34,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
         $sql = sprintf("SELECT * FROM `%s` WHERE `%s`=?", $this->dbUserTable, $this->dbUserIDField);
         $result = $this->connection->query($sql, array($login));
         if ($row = $result->fetch()) {
-            $user = new BasicUser();
+            $user = new BasicUser($this);
             $user->setUserID($row[$this->dbUserIDField]);
             $user->setEmail($row[$this->dbEmailField]);
             return $user;
