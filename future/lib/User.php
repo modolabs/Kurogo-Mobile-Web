@@ -34,12 +34,12 @@ abstract class User
     
     public function setAuthenticationAuthority(AuthenticationAuthority $AuthenticationAuthority)
     {
-        $this->AuthenticationAuthority = $AuthenticationAuthority->getAuthorityIndex();
+        $this->AuthenticationAuthority = $AuthenticationAuthority;
     }
 
     public function getAuthenticationAuthority()
     {
-        return AuthentictionAuthority::getAuthenticationAuthority($this->AuthenticationAuthority);
+        return $this->AuthenticationAuthority;
     }
     
     protected function standardAttributes()
