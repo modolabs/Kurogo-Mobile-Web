@@ -33,6 +33,9 @@ class ErrorModule extends Module {
       'message' =>  'This module requires you to login',
       'linkText' => 'Click here to login'
     ),
+    'protectedACL' => array(
+      'message' =>  'You are not permitted to use this module',
+    ),
     'default' => array(
       'status'  => '500 Internal Server Error',
       'message' => 'Unknown error',
