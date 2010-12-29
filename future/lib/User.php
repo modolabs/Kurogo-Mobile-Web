@@ -41,6 +41,11 @@ abstract class User
     {
         return $this->AuthenticationAuthority;
     }
+
+    public function getAuthenticationAuthorityIndex()
+    {
+        return $this->AuthenticationAuthority->getAuthorityIndex();
+    }
     
     protected function standardAttributes()
     {
