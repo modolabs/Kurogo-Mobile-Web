@@ -10,10 +10,24 @@ class LoginModule extends Module {
   }
 
   protected function initializeForPage() {
+    if (!$this->getSiteVar('AUTHENTICATION_ENABLED')) {
+        throw new Exception("Authentication is not enabled");
+    }
     
     $url = $this->getArg('url', ''); //return url
     $this->assign('url', $url);
     $user = $this->getUser();
+
+    $authenticationAuthorities = array();                
+    foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authority=>$authorityData) {
+        $authenticationAuthorities[$authority] = $authorityData['TITLE'];
+    }
+                    
+    if (count($authenticationAuthorities)==0) {
+        throw new Exception("No authentication authorities have been defined");
+    }
+    
+    $this->assign('authenticationAuthorities', $authenticationAuthorities);
 
     switch ($this->page)
     {
@@ -38,6 +52,7 @@ class LoginModule extends Module {
             
             $password = $this->argVal($_POST, 'loginPassword', '');
             $result = $this->session->login($login, $password, $authority);
+            $this->assign('authority', $authority);
 
             switch ($result)
             {
@@ -70,17 +85,6 @@ class LoginModule extends Module {
                 $this->assign('message', "You are logged in as " . $user->getUserID());
                 $this->assign('url', $this->buildURL('logout'));
                 $this->assign('linkText', 'Click here to logout.');
-            } else {
-                $authenticationAuthorities = array();                
-                foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authority=>$authorityData) {
-                    $authenticationAuthorities[$authority] = $authorityData['TITLE'];
-                }
-                                
-                if (count($authenticationAuthorities)==0) {
-                    throw new Exception("No authentication authorities have been defined");
-                }
-                
-                $this->assign('authenticationAuthorities', $authenticationAuthorities);
             }
             break;
     }

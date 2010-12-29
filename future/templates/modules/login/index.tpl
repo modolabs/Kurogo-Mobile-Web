@@ -16,7 +16,7 @@
 <p class="focal">
 <select name="authority">
 {foreach $authenticationAuthorities as $authorityName=>$authorityTitle}
-<option value="{$authorityName}">{$authorityTitle|escape}</option>
+<option value="{$authorityName}"{if $authority==$authorityName} selected{/if}>{$authorityTitle|escape}</option>
 {/foreach}
 </select>
 </p>
