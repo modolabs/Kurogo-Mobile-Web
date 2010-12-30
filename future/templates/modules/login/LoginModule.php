@@ -19,16 +19,23 @@ class LoginModule extends Module {
     $user = $this->getUser();
 
     $authenticationAuthorities = array();                
+    $authenticationAuthorityLinks = array();                
     foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authority=>$authorityData) {
-        $authenticationAuthorities[$authority] = $authorityData;
+        if (isset($authorityData['URL'])) {
+            $authorityData['LINK'] = $this->buildBreadcrumbURL('login', array('url'=>$url,'authority'=>$authority), false);
+            $authenticationAuthorityLinks[$authority] = $authorityData;
+        } else {
+            $authenticationAuthorities[$authority] = $authorityData;
+        }
     }
                     
-    if (count($authenticationAuthorities)==0) {
+    if (count($authenticationAuthorities)==0 && count($authenticationAuthoritysLinks)==0) {
         throw new Exception("No authentication authorities have been defined");
     }
     
     $this->assign('authenticationAuthorities', $authenticationAuthorities);
-
+    $this->assign('authenticationAuthorityLinks', $authenticationAuthorityLinks);
+    
     switch ($this->page)
     {
         case 'logout':

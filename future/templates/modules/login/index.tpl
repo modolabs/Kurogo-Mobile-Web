@@ -21,6 +21,13 @@
 </select>
 </p>
 {/if}
+{if $authenticationAuthorityLinks}
+<p class="focal">
+{foreach $authenticationAuthorityLinks as $authorityName=>$authorityData}
+<a href="{$authorityData.LINK}">{$authorityData.TITLE|escape}</a>
+{/foreach}
+</p>
+{/if}
 <p class="focal"><input type="submit" name="login_submit" id="login_submit" value="Login"></p>
 
 </form>
