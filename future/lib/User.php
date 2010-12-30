@@ -1,6 +1,7 @@
 <?php
 
 require_once(LIB_DIR . '/Session.php');
+require_once(LIB_DIR . '/UserGroup.php');
 
 abstract class User
 {
@@ -44,7 +45,11 @@ abstract class User
 
     public function getAuthenticationAuthorityIndex()
     {
-        return $this->AuthenticationAuthority->getAuthorityIndex();
+        if ($authority = $this->getAuthenticationAuthority()) {
+            return $authority->getAuthorityIndex();
+        } 
+        
+        return null;
     }
     
     protected function standardAttributes()
@@ -100,6 +105,10 @@ abstract class User
         $this->setAuthenticationAuthority($AuthenticationAuthority);
     }
     
+    public function isMemberOfGroup(UserGroup $group)
+    {
+        return $group->userIsMember($this);
+    }
 }
 
 class BasicUser extends User

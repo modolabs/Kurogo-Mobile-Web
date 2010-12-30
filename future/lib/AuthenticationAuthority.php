@@ -16,6 +16,9 @@ abstract class AuthenticationAuthority
     //Should return a valid User object (see User.php)
     abstract public function getUser($login);
 
+    //Should return a valid Group object (see UserGroup.php)
+    abstract public function getGroup($group);
+
     //Initializes the authority objects based on an associative array of arguments
     abstract function init($args);
     

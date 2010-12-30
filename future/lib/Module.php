@@ -276,17 +276,17 @@ abstract class Module {
       return $GLOBALS['siteConfig']->getSection($var, $log_error);
   }
 
-  protected function getModuleVar($var, $default=null)
+  protected function getModuleVar($var, $default=null, $log_error=Config::LOG_ERRORS)
   {
      $config = $this->getModuleConfig();
-     $value = $config->getVar($var, Config::EXPAND_VALUE);
+     $value = $config->getVar($var, Config::EXPAND_VALUE, $log_error);
      return is_null($value) ? $default :$value;
   }
 
-  protected function getModuleSection($section, $default=array())
+  protected function getModuleSection($section, $default=array(), $log_error=Config::LOG_ERRORS)
   {
      $config = $this->getModuleConfig();
-     if (!$section = $config->getSection($section)) {
+     if (!$section = $config->getSection($section, $log_error)) {
         $section = $default;
      }
      return $section;
@@ -499,6 +499,25 @@ abstract class Module {
                         http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
                 }
             }
+            
+            $acls = $this->getAccessControlLists();
+            $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
+            foreach ($acls as $acl) {
+                $result = $acl->evaluateForUser($user);
+                switch ($result)
+                {
+                    case AccessControlList::RULE_ACTION_ALLOW:
+                        $allow = true;
+                        break;
+                    case AccessControlList::RULE_ACTION_DENY:
+                        $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_PREFIX."{$this->id}/". $this->buildURL($page, $args)));
+                        break;
+                }
+            }
+            
+            if (!$allow) {
+                $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_PREFIX."{$this->id}/" . $this->buildURL($page, $args)));
+            }
         }
         
         $this->page = $page;
@@ -664,6 +683,24 @@ abstract class Module {
     }
     
     return $moduleData;
+  }
+  
+  public function getAccessControlLists()
+  {
+    $acls = array();
+    $aclStrings = $this->getModuleVar('acl', array(), Config::SUPRESS_ERRORS);
+    foreach ($aclStrings as $aclString) {
+        $values = explode(':', $aclString);
+        if (count($values)==3) {
+            if ($acl = AccessControlList::factory($values[0], $values[1], $values[2])) {
+                $acls[] = $acl;
+            } else {
+                throw new Exception("Invalid ACL $aclString in $this->id");
+            }
+        }
+    }
+    
+    return $acls;
   }
 
   //
@@ -917,7 +954,7 @@ abstract class Module {
 
     $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
     
-    $moduleStrings = $this->getModuleSection('strings');
+    $moduleStrings = $this->getModuleSection('strings', array(), Config::SUPRESS_ERRORS);
     $this->assign('moduleStrings', $moduleStrings);
 
     // Module Help
