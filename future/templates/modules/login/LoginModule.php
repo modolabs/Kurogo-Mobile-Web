@@ -17,6 +17,7 @@ class LoginModule extends Module {
     $url = $this->getArg('url', ''); //return url
     $this->assign('url', $url);
     $user = $this->getUser();
+    $session = $this->getSession();
 
     $authenticationAuthorities = array();                
     $authenticationAuthorityLinks = array();                
@@ -43,7 +44,7 @@ class LoginModule extends Module {
             if (!$this->isLoggedIn()) {
                 $this->redirectTo('login');
             } else {
-                $result = $this->session->logout($user);
+                $result = $session->logout($user);
                 $this->assign('message', 'Logout Successful');
                 $this->assign('session_userID', $user->getUserID());
             }
@@ -66,7 +67,7 @@ class LoginModule extends Module {
             }
             
             if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
-                $result = $authority->login($login, $password, $this->session, $user);
+                $result = $authority->login($login, $password, $session, $user);
             } else {
                 $this->redirectTo('index');
             }

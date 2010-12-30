@@ -489,12 +489,11 @@ abstract class Module {
         }
         
         if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
-            $this->initSession();
             $user = $this->getUser();
             $this->assign('session_userID', $user->getUserID());
             $protected = self::argVal($moduleData, 'protected', false);
             if ($protected) {
-                if (!$this->session->isLoggedIn()) {
+                if (!$this->isLoggedIn()) {
                     $this->redirectToModule('error', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
                         http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
                 }
@@ -540,11 +539,13 @@ abstract class Module {
         }
   }
   
-  protected function initSession()
+  public function getSession()
   {
     if (!$this->session) {
         $this->session = new Session();
     }
+    
+    return $this->session;
   }
   
   public function getModuleName()
@@ -648,13 +649,13 @@ abstract class Module {
   
   public function isLoggedIn()
   {
-    $this->initSession();
-    return $this->session->isLoggedIn();
+    $session = $this->getSession();
+    return $session->isLoggedIn();
   }
   public function getUser()
   {
-    $this->initSession();
-    return $this->session->getUser();
+    $session = $this->getSession();
+    return $session->getUser();
   }
 
   //
