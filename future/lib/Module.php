@@ -643,6 +643,12 @@ abstract class Module {
   //
   // User functions
   //
+  
+  public function isLoggedIn()
+  {
+    $this->initSession();
+    return $this->session->isLoggedIn();
+  }
   public function getUser()
   {
     $this->initSession();
