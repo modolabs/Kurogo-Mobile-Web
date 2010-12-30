@@ -103,11 +103,12 @@ abstract class AuthenticationAuthority
         return $authority;
     }
     
-    public function login($login, $pass, Session $session, &$user)
+    public function login($login, $pass, Module $module)
     {
         $result = $this->auth($login, $pass, $user);
         
         if ($result == AUTH_OK) {
+            $session = $module->getSession();
             $session->login($user);
         }
         

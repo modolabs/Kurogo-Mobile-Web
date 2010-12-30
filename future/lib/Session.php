@@ -61,7 +61,7 @@ class Session
         return $user;
     }
 
-    public function logout(&$user)
+    public function logout()
     {
         $user = new AnonymousUser();
         $this->setUser($user);
