@@ -20,7 +20,7 @@ class LoginModule extends Module {
 
     $authenticationAuthorities = array();                
     foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authority=>$authorityData) {
-        $authenticationAuthorities[$authority] = $authorityData['TITLE'];
+        $authenticationAuthorities[$authority] = $authorityData;
     }
                     
     if (count($authenticationAuthorities)==0) {
@@ -33,26 +33,36 @@ class LoginModule extends Module {
     {
         case 'logout':
             $this->setTemplatePage('message');
-            if (!$this->session->isLoggedIn()) {
+            if (!$this->isLoggedIn()) {
                 $this->redirectTo('login');
             } else {
                 $result = $this->session->logout($user);
                 $this->assign('message', 'Logout Successful');
+                $this->assign('session_userID', $user->getUserID());
             }
         
             break;
             
         case 'login':
             $login = $this->argVal($_POST, 'loginUser', '');
-            $authority = $this->argVal($_POST, 'authority', AuthenticationAuthority::getDefaultAuthenticationAuthority());
+            $password = $this->argVal($_POST, 'loginPassword', '');
+            
+            $authorityIndex = $this->getArg('authority', AuthenticationAuthority::getDefaultAuthenticationAuthority());
+            $this->assign('authority', $authorityIndex);
 
-            if ($this->session->isLoggedIn() || empty($login)) {
+            if ($this->isLoggedIn()) {
+                $this->redirectTo('index');
+            }                    
+            
+            if ($this->argVal($_POST, 'login_submit') && empty($login)) {
                 $this->redirectTo('index');
             }
             
-            $password = $this->argVal($_POST, 'loginPassword', '');
-            $result = $this->session->login($login, $password, $authority);
-            $this->assign('authority', $authority);
+            if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
+                $result = $authority->login($login, $password, $this->session, $user);
+            } else {
+                $this->redirectTo('index');
+            }
 
             switch ($result)
             {
@@ -77,9 +87,11 @@ class LoginModule extends Module {
                     
 
             }
+
+            $this->assign('session_userID', $user->getUserID());
             break;
         case 'index':
-            if ($this->session->isLoggedIn()) {
+            if ($this->isLoggedIn()) {
                 $user = $this->getUser();
                 $this->setTemplatePage('message');
                 $this->assign('message', "You are logged in as " . $user->getUserID());

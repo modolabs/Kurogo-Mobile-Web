@@ -15,13 +15,13 @@
 {if $authenticationAuthorities|@count > 1}
 <p class="focal">
 <select name="authority">
-{foreach $authenticationAuthorities as $authorityName=>$authorityTitle}
-<option value="{$authorityName}"{if $authority==$authorityName} selected{/if}>{$authorityTitle|escape}</option>
+{foreach $authenticationAuthorities as $authorityName=>$authorityData}
+<option value="{$authorityName}"{if $authority==$authorityName} selected{/if}>{$authorityData.TITLE|escape}</option>
 {/foreach}
 </select>
 </p>
 {/if}
-<p class="focal"><input type="submit" id="login_submit" value="Login"></p>
+<p class="focal"><input type="submit" name="login_submit" id="login_submit" value="Login"></p>
 
 </form>
 {include file="findInclude:common/footer.tpl"}
