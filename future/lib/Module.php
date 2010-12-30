@@ -510,13 +510,15 @@ abstract class Module {
                         $allow = true;
                         break;
                     case AccessControlList::RULE_ACTION_DENY:
-                        $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_PREFIX."{$this->id}/". $this->buildURL($page, $args)));
+                        $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
+                            http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
                         break;
                 }
             }
             
             if (!$allow) {
-                $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_PREFIX."{$this->id}/" . $this->buildURL($page, $args)));
+                $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
+                    http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
             }
         }
         
