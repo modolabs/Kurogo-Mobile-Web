@@ -30,7 +30,7 @@
 
     {if $moduleID != 'home'}
       <div id="footerlinks">
-        <a href="#top">Back to top</a> | <a href="../home/">{$SITE_NAME} home</a>{if $session} | <a href="../login">{if $session->isLoggedIn()}{$session_user->getFullName()}{else}Not{/if} logged in</a>{/if}
+        <a href="#top">Back to top</a> | <a href="../home/">{$SITE_NAME} home</a>{if $session}<br><a href="../login">{if $session->isLoggedIn()}{$session_user->getFullName()}{else}Not{/if} logged in</a>{/if}
       </div>
     {/if}
 
