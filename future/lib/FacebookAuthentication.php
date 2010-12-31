@@ -59,6 +59,8 @@ class FacebookAuthentication extends AuthenticationAuthority
     {
         if (isset($_GET['code'])) {
             $this->redirect_uri = $_SESSION['redirect_uri'];
+            unset($_SESSION['redirect_uri']);
+            
             $code = $_GET['code'];
             
             $url = "https://graph.facebook.com/oauth/access_token?" . http_build_query(array(
