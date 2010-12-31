@@ -7,6 +7,8 @@ class FacebookAuthentication extends AuthenticationAuthority
     protected $redirect_uri;
     protected $access_token;
     protected $expires;
+    protected $useCache = true;
+    protected $cache;
     
     public function auth($login, $password, &$user)
     {
@@ -20,38 +22,53 @@ class FacebookAuthentication extends AuthenticationAuthority
             return new AnonymousUser();       
         }
         
-        if ($user = $this->getCurrentUser()) {
-            if ($user->getUserID() == $login) {
-                return $user;
+        if ($this->useCache && $login != 'me') {
+            $cacheFilename = "user_$login";
+            if ($this->cache === NULL) {
+                  $this->cache = new DiskCache(CACHE_DIR . "/Facebook", 900, TRUE);
+                  $this->cache->setSuffix('.json');
+                  $this->cache->preserveFormat();
             }
-        }
 
-        return false;
-    }
-    
-    public function getCurrentUser()
-    {
-        if ($this->access_token) {
-            $url = "https://graph.facebook.com/me?" . http_build_query(array(
-            'access_token'=>$this->access_token
-            ));
-
-            if ($result = @file_get_contents($url)) {
-                if ($vars = json_decode($result, true)) {
-                    $user = new FacebookUser($this);
-                    $user->setUserID($vars['id']);
-                    $user->setFirstName($vars['first_name']);
-                    $user->setLastName($vars['last_name']);
-                    if (isset($vars['email'])) {
-                        $user->setEmail($vars['email']);
-                    }
-                    
-                    return $user;
-                }
+            if ($this->cache->isFresh($cacheFilename)) {
+                $data = $this->cache->read($cacheFilename);
             } else {
-                $this->reset(); // access token is likely invalidated
+
+                $url = sprintf("https://graph.facebook.com/%s?%s", $login, http_build_query(array(
+                'fields'=>'id,first_name,last_name,email,picture,gender',
+                'access_token'=>$this->access_token
+                )));
+
+                if ($data = @file_get_contents($url)) {
+                    $this->cache->write($data, $cacheFilename);
+                }
+                
             }
+        } else {
+            $url = sprintf("https://graph.facebook.com/%s?%s", $login, http_build_query(array(
+            'fields'=>'id,first_name,last_name,email,picture,gender',
+            'access_token'=>$this->access_token
+            )));
+
+            $data = @file_get_contents($url);
         }
+        
+		// make the call
+		if ($data) {
+            $json = @json_decode($data, true);
+
+            if (isset($json['id'])) {
+                $user = new FacebookUser($this);
+                $user->setUserID($json['id']);
+                $user->setFirstName($json['first_name']);
+                $user->setLastName($json['last_name']);
+                if (isset($json['email'])) {
+                    $user->setEmail($json['email']);
+                }
+                return $user;
+            }        
+        }
+        
         return false;
     }
     
@@ -93,7 +110,7 @@ class FacebookAuthentication extends AuthenticationAuthority
                 }
 
                 // get the current user via API
-                if ($user = $this->getCurrentUser()) {
+                if ($user = $this->getUser('me')) {
                     $session = $module->getSession();
                     $session->login($user);
                     return AUTH_OK;
