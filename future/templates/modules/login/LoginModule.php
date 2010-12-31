@@ -101,15 +101,12 @@ class LoginModule extends Module {
             if ($this->isLoggedIn()) {
                 $user = $this->getUser();
                 $this->setTemplatePage('message');
-                $this->assign('message', "You are logged in as " . $user->getUserID());
+                $this->assign('message', "You are logged in as " . $user->getFullName());
                 $this->assign('url', $this->buildURL('logout'));
                 $this->assign('linkText', 'Click here to logout.');
             }
             break;
     }
-
-    $user = $this->getUser();
-    $this->assign('session_userID', $user->getUserID());
   }
 
 }
