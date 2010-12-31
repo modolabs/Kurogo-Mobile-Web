@@ -27,7 +27,7 @@ class Session
                     if ($_user = $authority->getUser($auth_userID)) {
                         $user = $_user;
                     } else {
-                        error_log("Error trying to load user $userID");
+                        error_log("Error trying to load user $auth_userID");
                     } 
                 }
             }
