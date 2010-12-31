@@ -496,8 +496,6 @@ abstract class Module {
         if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
             $user = $this->getUser();
             $session = $this->getSession();
-            $this->assign('session', $this->session);
-            $this->assign('session_user', $user);
             $protected = self::argVal($moduleData, 'protected', false);
             if ($protected) {
                 if (!$this->isLoggedIn()) {
@@ -1001,6 +999,11 @@ abstract class Module {
       }
     }
     $this->assign('accessKeyStart', $accessKeyStart);
+
+    if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
+        $this->assign('session', $this->getSession());
+        $this->assign('session_user', $this->getUser());
+    }
 
     // Load template for page
     $this->templateEngine->displayForDevice($template);    
