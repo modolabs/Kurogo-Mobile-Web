@@ -98,7 +98,7 @@ class LDAPAuthentication extends AuthenticationAuthority
     {
         // don't try if it's empty
         if (empty($login)) {
-            return false;
+            return new AnonymousUser();       
         }
 
         $ldap = $this->connectToServer();
