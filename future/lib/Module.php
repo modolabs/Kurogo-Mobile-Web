@@ -51,6 +51,11 @@ abstract class Module {
   
   private $tabbedView = null;
   
+  public function getID()
+  {
+    return $this->id;
+  }
+  
   //
   // Tabbed View support
   //
