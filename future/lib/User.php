@@ -90,6 +90,14 @@ abstract class User
         $this->LastName = $LastName;
     }
     
+    public function getFullName()
+    {
+        if (!empty($this->FirstName) || !empty($this->LastName)) {
+            return trim(sprintf("%s %s", $this->FirstName, $this->LastName));
+        } else {
+            return $this->getUserID();
+        }
+    }
     public function getFirstName()
     {
         return $this->FirstName;
