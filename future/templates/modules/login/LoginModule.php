@@ -21,7 +21,7 @@ class LoginModule extends Module {
     $authenticationAuthorities = array();                
     $authenticationAuthorityLinks = array();                
     foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authority=>$authorityData) {
-        if (isset($authorityData['URL'])) {
+        if (isset($authorityData['OAUTH'])) {
             $authorityData['LINK'] = $this->buildBreadcrumbURL('login', array('url'=>$url,'authority'=>$authority), false);
             $authenticationAuthorityLinks[$authority] = $authorityData;
         } else {
@@ -43,7 +43,9 @@ class LoginModule extends Module {
             if (!$this->isLoggedIn()) {
                 $this->redirectTo('login');
             } else {
-                $result = $session->logout();
+                $user = $this->getUser();
+                $authority = $user->getAuthenticationAuthority();
+                $authority->logout($this);
                 $this->assign('message', 'Logout Successful');
             }
         
