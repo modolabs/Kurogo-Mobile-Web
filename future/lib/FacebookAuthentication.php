@@ -49,7 +49,7 @@ class FacebookAuthentication extends AuthenticationAuthority
                     return $user;
                 }
             } else {
-                throw new Exception("Error getting user: " . $result);
+                $this->reset(); // access token is likely invalidated
             }
         }
         return false;
@@ -58,6 +58,10 @@ class FacebookAuthentication extends AuthenticationAuthority
     public function login($login, $pass, Module $module)
     {
         if (isset($_GET['code'])) {
+            if (!isset($_SESSION['redirect_uri'])) {
+                return AUTH_FAILED;
+            }
+            
             $this->redirect_uri = $_SESSION['redirect_uri'];
             unset($_SESSION['redirect_uri']);
             
@@ -101,25 +105,40 @@ class FacebookAuthentication extends AuthenticationAuthority
             //most likely the user denied
             return AUTH_FAILED;
         } else {
+            $deviceClassifier = $GLOBALS['deviceClassifier'];
+            switch ($deviceClassifier->getPagetype())
+            {
+                case 'compliant':
+                    $display = $deviceClassifier->isComputer() ? 'page' : 'touch';
+                    break;
+                case 'basic':
+                    $display = 'wap';
+                    break;
+                default:
+                    $display = 'page';
+                    break;
+            }
+            
+            
             $this->redirect_uri = $_SESSION['redirect_uri'] = FULL_URL_BASE . 'login/login?' . http_build_query(array('authority'=>$this->getAuthorityIndex()));
             $url = "https://graph.facebook.com/oauth/authorize?" . http_build_query(array(
             'client_id'=>$this->api_key,
             'redirect_uri'=>$this->redirect_uri,
-            'scope'=>'user_about_me,email'
+            'scope'=>'user_about_me,email',
+            'display'=>$display
             ));
-
+            
             header("Location: $url");
             exit();
         }
     }
     
-    public function logout(Module $module)
+    protected function reset()
     {
         unset($_SESSION['fb_expires']);
         unset($_SESSION['fb_access_token']);
-        parent::logout($module);
     }
-
+    
     //does not support groups
     public function getGroup($group)
     {
