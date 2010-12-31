@@ -10,6 +10,7 @@ abstract class User
     protected $email;
     protected $FirstName;
     protected $LastName;
+    protected $FullName;
     
     protected $attributes=array();
     
@@ -89,10 +90,17 @@ abstract class User
     {
         $this->LastName = $LastName;
     }
+
+    public function setFullName($FullName)
+    {
+        $this->FullName = $FullName;
+    }
     
     public function getFullName()
     {
-        if (!empty($this->FirstName) || !empty($this->LastName)) {
+        if (!empty($this->FullName)) {
+            return $this->FullName;
+        } elseif (!empty($this->FirstName) || !empty($this->LastName)) {
             return trim(sprintf("%s %s", $this->FirstName, $this->LastName));
         } else {
             return $this->getUserID();
