@@ -58,6 +58,8 @@ class FacebookAuthentication extends AuthenticationAuthority
     public function login($login, $pass, Module $module)
     {
         if (isset($_GET['code'])) {
+        
+            // if a redirect_uri isn't set than we can't get an access token
             if (!isset($_SESSION['redirect_uri'])) {
                 return AUTH_FAILED;
             }
@@ -65,16 +67,17 @@ class FacebookAuthentication extends AuthenticationAuthority
             $this->redirect_uri = $_SESSION['redirect_uri'];
             unset($_SESSION['redirect_uri']);
             
-            $code = $_GET['code'];
-            
+            //get access token
             $url = "https://graph.facebook.com/oauth/access_token?" . http_build_query(array(
-            'client_id'=>$this->api_key,
-            'redirect_uri'=>$this->redirect_uri,
-            'client_secret'=>$this->api_secret,
-            'code'=>$_GET['code']
+                'client_id'=>$this->api_key,
+                'redirect_uri'=>$this->redirect_uri,
+                'client_secret'=>$this->api_secret,
+                'code'=>$_GET['code']
             ));
                                     
             if ($result = @file_get_contents($url)) {
+                
+                // results are in query string form
                 $vars = explode("&", $result);
                 foreach ($vars as $var) {
                     $var = explode("=", $var);
@@ -88,23 +91,27 @@ class FacebookAuthentication extends AuthenticationAuthority
                             break;
                     }
                 }
-                
+
+                // get the current user via API
                 if ($user = $this->getCurrentUser()) {
                     $session = $module->getSession();
                     $session->login($user);
                     return AUTH_OK;
                 }  else {
-                    return AUTH_FAILED;
+                    return AUTH_FAILED; // something is amiss
                 }
 
             } else {
-                return AUTH_FAILED;
+                return AUTH_FAILED; //something is amiss
             }
             
         } elseif (isset($_GET['error'])) {
             //most likely the user denied
             return AUTH_FAILED;
         } else {
+            //show the authorization/login screen
+            
+            //find out which "display" to use based on the device
             $deviceClassifier = $GLOBALS['deviceClassifier'];
             switch ($deviceClassifier->getPagetype())
             {
