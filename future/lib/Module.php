@@ -495,7 +495,9 @@ abstract class Module {
         
         if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
             $user = $this->getUser();
-            $this->assign('session_userID', $user->getUserID());
+            $session = $this->getSession();
+            $this->assign('session', $this->session);
+            $this->assign('session_user', $user);
             $protected = self::argVal($moduleData, 'protected', false);
             if ($protected) {
                 if (!$this->isLoggedIn()) {
