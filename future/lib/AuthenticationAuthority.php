@@ -103,10 +103,15 @@ abstract class AuthenticationAuthority
         return $authority;
     }
     
+    protected function reset()
+    {
+    }
+    
     public function logout(Module $module)
     {
         $session = $module->getSession();
         $session->logout();
+        $this->reset();
     }
     
     public function login($login, $pass, Module $module)
