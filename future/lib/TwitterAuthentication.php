@@ -15,7 +15,9 @@ class TwitterAuthentication extends AuthenticationAuthority
     protected $token_secret;
     protected $useCache = true;
     protected $cache;
+    protected $cacheLifetime = 900;
     
+    // auth is handled by twitter
     public function auth($login, $password, &$user)
     {
         return AUTH_FAILED;
@@ -127,9 +129,9 @@ class TwitterAuthentication extends AuthenticationAuthority
 	}
 
 	private function doOAuthCall($method, array $parameters = null)
-	{
-		// redefine
-		
+	{		
+		$parameters = (array) $parameters;
+
 		// append default parameters
 		$parameters['oauth_consumer_key'] = $this->consumer_key;
 		$parameters['oauth_nonce'] = md5(microtime() . rand());
@@ -148,13 +150,8 @@ class TwitterAuthentication extends AuthenticationAuthority
 
 		// set options
 		$options[CURLOPT_URL] = self::SECURE_API_URL .'/oauth/'. $method;
-		$options[CURLOPT_PORT] = 443;
-//		$options[CURLOPT_USERAGENT] = $this->getUserAgent();
 		$options[CURLOPT_FOLLOWLOCATION] = true;
 		$options[CURLOPT_RETURNTRANSFER] = true;
-//		$options[CURLOPT_TIMEOUT] = (int) $this->getTimeOut();
-//		$options[CURLOPT_SSL_VERIFYPEER] = false;
-//		$options[CURLOPT_SSL_VERIFYHOST] = false;
 		$options[CURLOPT_HTTPHEADER] = array('Expect:');
 		$options[CURLOPT_POST] = true;
 		$options[CURLOPT_POSTFIELDS] = $this->buildQuery($parameters);
@@ -167,17 +164,6 @@ class TwitterAuthentication extends AuthenticationAuthority
 
 		// execute
 		$response = curl_exec($this->curl);
-		$headers = curl_getinfo($this->curl);
-
-		// fetch errors
-		$errorNumber = curl_errno($this->curl);
-		$errorMessage = curl_error($this->curl);
-
-		// error?
-		if($errorNumber != '') throw new Exception($errorMessage, $errorNumber);
-
-		// init var
-		$return = array();
 
 		// parse the string
 		parse_str($response, $return);
@@ -187,20 +173,7 @@ class TwitterAuthentication extends AuthenticationAuthority
 	}
 
 	private function doCall($url, array $parameters = null)
-	
-//	, $authenticate = false, $method = 'GET', $filePath = null, $expectJSON = true, $returnHeaders = false)
 	{
-	/*
-		// allowed methods
-		$allowedMethods = array('GET', 'POST');
-
-		// redefine
-		$url = (string) $url;
-		$authenticate = (bool) $authenticate;
-		$method = (string) $method;
-		$expectJSON = (bool) $expectJSON;
-		*/
-
 		$parameters = (array) $parameters;
 
 		// append default parameters
@@ -213,9 +186,10 @@ class TwitterAuthentication extends AuthenticationAuthority
 
 		// set data
 		$data = $oauth;
-		if(!empty($parameters)) $data = array_merge($data, $parameters);
-
-        if(!empty($parameters)) $url .= '?'. $this->buildQuery($parameters);
+		if(!empty($parameters)) {
+		    $data = array_merge($data, $parameters);
+            $url .= '?'. $this->buildQuery($parameters);
+        }
 
         $options[CURLOPT_POST] = false;
 
@@ -230,30 +204,21 @@ class TwitterAuthentication extends AuthenticationAuthority
 
 		// set options
 		$options[CURLOPT_URL] = self::API_URL .'/'. $url;
-		$options[CURLOPT_PORT] = 443;
-//		$options[CURLOPT_USERAGENT] = $this->getUserAgent();
-//		if(ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) $options[CURLOPT_FOLLOWLOCATION] = true;
+		$options[CURLOPT_FOLLOWLOCATION] = true;
 		$options[CURLOPT_RETURNTRANSFER] = true;
-//		$options[CURLOPT_TIMEOUT] = (int) $this->getTimeOut();
-//		$options[CURLOPT_SSL_VERIFYPEER] = false;
-//		$options[CURLOPT_SSL_VERIFYHOST] = false;
 		$options[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
 		$options[CURLOPT_HTTPHEADER] = $headers;
 
 		// init
-		if($this->curl == null) $this->curl = curl_init();
+		if($this->curl == null) {
+		    $this->curl = curl_init();
+		}
 
 		// set options
 		curl_setopt_array($this->curl, $options);
 
 		// execute
 		$response = curl_exec($this->curl);
-		$headers = curl_getinfo($this->curl);
-
-		// fetch errors
-		$errorNumber = curl_errno($this->curl);
-		$errorMessage = curl_error($this->curl);
-        
         return $response;
 	}
 
@@ -263,10 +228,11 @@ class TwitterAuthentication extends AuthenticationAuthority
             return new AnonymousUser();       
         }
 
+        //use the cache if available
         if ($this->useCache) {
             $cacheFilename = "user_$login";
             if ($this->cache === NULL) {
-                  $this->cache = new DiskCache(CACHE_DIR . "/Twitter", 900, TRUE);
+                  $this->cache = new DiskCache(CACHE_DIR . "/Twitter", $this->cacheLifetime, TRUE);
                   $this->cache->setSuffix('.json');
                   $this->cache->preserveFormat();
             }
@@ -274,12 +240,14 @@ class TwitterAuthentication extends AuthenticationAuthority
             if ($this->cache->isFresh($cacheFilename)) {
                 $data = $this->cache->read($cacheFilename);
             } else {
+                //cache isn't fresh, load the data
                 if ($data = $this->doCall('users/show.json', array('screen_name'=>$login))) {
                     $this->cache->write($data, $cacheFilename);
                 }
                 
             }
         } else {
+            //load the data
             $data = $this->doCall('users/show.json', array('screen_name'=>$login));
         }
         
@@ -302,11 +270,17 @@ class TwitterAuthentication extends AuthenticationAuthority
     private function getRequestToken()
     {
         //get a request token    
-        $parameters['oauth_callback'] = FULL_URL_BASE . 'login/login?' . http_build_query(array('authority'=>$this->getAuthorityIndex()));
+		$parameters = array(
+		    'oauth_callback'=>FULL_URL_BASE . 'login/login?' . http_build_query(array(
+		        'authority'=>$this->getAuthorityIndex()
+		        ))
+        );
         $response = $this->doOAuthCall('request_token', $parameters);
 
 		// validate
-		if(!isset($response['oauth_token'], $response['oauth_token_secret'])) throw new Exception(implode(', ', array_keys($response)));
+		if(!isset($response['oauth_token'], $response['oauth_token_secret'])) {
+		    return false;
+		}
 		
 		$this->setToken($response['oauth_token']);
         $this->setTokenSecret($response['oauth_token_secret']);
@@ -315,13 +289,17 @@ class TwitterAuthentication extends AuthenticationAuthority
 
 	public function getAccessToken($token, $verifier)
 	{
-		// init var
-		$parameters = array();
-		$parameters['oauth_token'] = (string) $token;
-		$parameters['oauth_verifier'] = (string) $verifier;
+		$parameters = array(
+		    'oauth_token'=>$token,
+		    'oauth_verifier'=>$verifier
+		);
 
 		// make the call
 		$response = $this->doOAuthCall('access_token', $parameters);
+
+		if(!isset($response['oauth_token'], $response['oauth_token_secret'])) {
+		    return false;
+		}
 
 		// set some properties
 		$this->setToken($response['oauth_token']);
@@ -333,13 +311,17 @@ class TwitterAuthentication extends AuthenticationAuthority
     
     public function login($login, $pass, Module $module)
     {
+        //see if we already have a request token
         if (!$this->token || !$this->token_secret) {
             $this->getRequestToken();
         }
         
+        //if oauth_verifier is set then we are in the callback
         if (isset($_GET['oauth_verifier'])) {
+            //get an access token
             if ($response = $this->getAccessToken($this->token, $_GET['oauth_verifier'])) {
                 
+                //we should now have the current user
                 if ($user = $this->getUser($response['screen_name'])) {
                     $session = $module->getSession();
                     $session->login($user);
@@ -350,7 +332,7 @@ class TwitterAuthentication extends AuthenticationAuthority
             }
         } else {
         
-            //redirect to auth page        
+            //redirect to auth page
             $url = sprintf("%s/oauth/authenticate?oauth_token=%s", self::SECURE_API_URL, $this->token);
             header("Location: " . $url);
             exit();
