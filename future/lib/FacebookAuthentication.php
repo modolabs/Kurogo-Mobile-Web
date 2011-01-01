@@ -9,6 +9,7 @@ class FacebookAuthentication extends AuthenticationAuthority
     protected $expires;
     protected $useCache = true;
     protected $cache;
+    protected $cacheLifetime = 900;
     
     // auth is handled by fb
     public function auth($login, $password, &$user)
@@ -27,7 +28,7 @@ class FacebookAuthentication extends AuthenticationAuthority
         if ($this->useCache && $login != 'me') {
             $cacheFilename = "user_$login";
             if ($this->cache === NULL) {
-                  $this->cache = new DiskCache(CACHE_DIR . "/Facebook", 900, TRUE);
+                  $this->cache = new DiskCache(CACHE_DIR . "/Facebook", $this->cacheLifetime, TRUE);
                   $this->cache->setSuffix('.json');
                   $this->cache->preserveFormat();
             }
@@ -99,7 +100,7 @@ class FacebookAuthentication extends AuthenticationAuthority
             if ($result = @file_get_contents($url)) {
                 
                 parse_str($result, $vars);
-                foreach ($vars as $var=>$value) {
+                foreach ($vars as $arg=>$value) {
                     switch ($arg) 
                     {
                         case 'access_token':
