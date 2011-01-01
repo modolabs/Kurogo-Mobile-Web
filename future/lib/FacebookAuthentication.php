@@ -10,6 +10,7 @@ class FacebookAuthentication extends AuthenticationAuthority
     protected $useCache = true;
     protected $cache;
     
+    // auth is handled by fb
     public function auth($login, $password, &$user)
     {
         return AUTH_FAILED;
@@ -22,6 +23,7 @@ class FacebookAuthentication extends AuthenticationAuthority
             return new AnonymousUser();       
         }
         
+        //use the cache if available. Don't use the cache for the special me user
         if ($this->useCache && $login != 'me') {
             $cacheFilename = "user_$login";
             if ($this->cache === NULL) {
@@ -34,6 +36,7 @@ class FacebookAuthentication extends AuthenticationAuthority
                 $data = $this->cache->read($cacheFilename);
             } else {
 
+                //get the data
                 $url = sprintf("https://graph.facebook.com/%s?%s", $login, http_build_query(array(
                 'fields'=>'id,first_name,last_name,email,picture,gender',
                 'access_token'=>$this->access_token
@@ -45,6 +48,7 @@ class FacebookAuthentication extends AuthenticationAuthority
                 
             }
         } else {
+            //get the data
             $url = sprintf("https://graph.facebook.com/%s?%s", $login, http_build_query(array(
             'fields'=>'id,first_name,last_name,email,picture,gender',
             'access_token'=>$this->access_token
@@ -53,7 +57,6 @@ class FacebookAuthentication extends AuthenticationAuthority
             $data = @file_get_contents($url);
         }
         
-		// make the call
 		if ($data) {
             $json = @json_decode($data, true);
 
@@ -74,6 +77,7 @@ class FacebookAuthentication extends AuthenticationAuthority
     
     public function login($login, $pass, Module $module)
     {
+        //if the code is present, then this is the callback that the user authorized the application
         if (isset($_GET['code'])) {
         
             // if a redirect_uri isn't set than we can't get an access token
@@ -94,12 +98,8 @@ class FacebookAuthentication extends AuthenticationAuthority
                                     
             if ($result = @file_get_contents($url)) {
                 
-                // results are in query string form
-                $vars = explode("&", $result);
-                foreach ($vars as $var) {
-                    $var = explode("=", $var);
-                    $arg = $var[0];
-                    $value = $var[1];
+                parse_str($result, $vars);
+                foreach ($vars as $var=>$value) {
                     switch ($arg) 
                     {
                         case 'access_token':
@@ -126,10 +126,10 @@ class FacebookAuthentication extends AuthenticationAuthority
             //most likely the user denied
             return AUTH_FAILED;
         } else {
-            //show the authorization/login screen
             
             //find out which "display" to use based on the device
             $deviceClassifier = $GLOBALS['deviceClassifier'];
+            $display = 'page';
             switch ($deviceClassifier->getPagetype())
             {
                 case 'compliant':
@@ -138,18 +138,18 @@ class FacebookAuthentication extends AuthenticationAuthority
                 case 'basic':
                     $display = 'wap';
                     break;
-                default:
-                    $display = 'page';
-                    break;
             }
             
             
+            //save the redirect_uri so we can use it later
             $this->redirect_uri = $_SESSION['redirect_uri'] = FULL_URL_BASE . 'login/login?' . http_build_query(array('authority'=>$this->getAuthorityIndex()));
+
+            //show the authorization/login screen
             $url = "https://graph.facebook.com/oauth/authorize?" . http_build_query(array(
-            'client_id'=>$this->api_key,
-            'redirect_uri'=>$this->redirect_uri,
-            'scope'=>'user_about_me,email',
-            'display'=>$display
+                'client_id'=>$this->api_key,
+                'redirect_uri'=>$this->redirect_uri,
+                'scope'=>'user_about_me,email',
+                'display'=>$display
             ));
             
             header("Location: $url");
