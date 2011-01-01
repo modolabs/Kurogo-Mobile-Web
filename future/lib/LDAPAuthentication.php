@@ -223,6 +223,7 @@ class LDAPAuthentication extends AuthenticationAuthority
     
     public function init($args)
     {
+        parent::init($args);
         $args = is_array($args) ? $args : array();
         $this->ldapServer = isset($args['HOST']) ? $args['HOST'] : null;
         $this->ldapPort = isset($args['PORT']) ? $args['PORT'] : 389;

@@ -172,9 +172,14 @@ class FacebookAuthentication extends AuthenticationAuthority
 
     public function init($args)
     {
+        parent::init($args);
         $args = is_array($args) ? $args : array();
         if (!isset($args['API_KEY']) || !isset($args['API_SECRET'])) {
             throw new Exception("API key and secret not set");
+        }
+
+        if (!isset($args['OAUTH']) || !$args['OAUTH']) {
+            throw new Exception("Twitter authentication must have OAUTH option set");
         }
         
         $this->api_key = $args['API_KEY'];

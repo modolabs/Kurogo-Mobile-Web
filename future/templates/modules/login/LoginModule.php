@@ -36,6 +36,8 @@ class LoginModule extends Module {
     $this->assign('authenticationAuthorities', $authenticationAuthorities);
     $this->assign('authenticationAuthorityLinks', $authenticationAuthorityLinks);
     
+    $multipleAuthorities = count($authenticationAuthorities) + count($authenticationAuthorityLinks) > 1;
+    
     switch ($this->page)
     {
         case 'logout':
@@ -100,10 +102,13 @@ class LoginModule extends Module {
         case 'index':
             if ($this->isLoggedIn()) {
                 $user = $this->getUser();
+                $authority = $user->getAuthenticationAuthority();
                 $this->setTemplatePage('message');
-                $this->assign('message', "You are logged in as " . $user->getFullName());
+                
+                $this->assign('message', sprintf("You are logged in as %s %s", $user->getFullName(), $multipleAuthorities ? '(' . $authority->getAuthorityTitle() . ')' : ''));
+                
                 $this->assign('url', $this->buildURL('logout'));
-                $this->assign('linkText', 'Click here to logout.');
+                $this->assign('linkText', 'Logout');
             }
             break;
     }

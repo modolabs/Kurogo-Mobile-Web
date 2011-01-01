@@ -10,6 +10,9 @@ define('AUTH_ERROR', -10); // server or i/o error
 abstract class AuthenticationAuthority
 {
     protected $AuthorityIndex;
+    protected $AuthorityTitle;
+    protected $AuthorityImage; // image shown next to user name when logged in
+    
     //Should return one of the auth constants, and set the user variable appropriately
     abstract public function auth($login, $password, &$user);
     
@@ -20,8 +23,22 @@ abstract class AuthenticationAuthority
     abstract public function getGroup($group);
 
     //Initializes the authority objects based on an associative array of arguments
-    abstract function init($args);
-    
+    public function init($args)
+    {
+        $args = is_array($args) ? $args : array();
+        if (!isset($args['TITLE'], $args['INDEX'])) {
+            throw new Exception("Title and index must be set");
+        }
+        
+        $this->setAuthorityIndex($args['INDEX']);
+        $this->setAuthorityTitle($args['TITLE']);
+        
+        if (isset($args['LOGGEDIN_IMAGE_URL']) && strlen($args['LOGGEDIN_IMAGE_URL'])) {
+            $this->setAuthorityImage($args['LOGGEDIN_IMAGE_URL']);
+        }
+        
+    }
+
     public function getAuthorityIndex()
     {
         return $this->AuthorityIndex;
@@ -30,6 +47,26 @@ abstract class AuthenticationAuthority
     public function setAuthorityIndex($index)
     {
         $this->AuthorityIndex = $index;
+    }
+
+    public function setAuthorityTitle($title)
+    {
+        $this->AuthorityTitle = $title;
+    }
+
+    public function getAuthorityTitle()
+    {
+        return $this->AuthorityTitle;
+    }
+
+    public function setAuthorityImage($url)
+    {
+        $this->AuthorityImage = $url;
+    }
+
+    public function getAuthorityImage()
+    {
+        return $this->AuthorityImage;
     }
 
     public static function getDefinedAuthenticationAuthorities()
@@ -57,8 +94,8 @@ abstract class AuthenticationAuthority
         
         if ($authorityData = $configFile->getSection($index)) {
             $authorityClass = $authorityData['CONTROLLER_CLASS'];
+            $authorityData['INDEX'] = $index;
             $authority = self::factory($authorityClass, $authorityData);
-            $authority->setAuthorityIndex($index);
             return $authority;
         }
         
@@ -91,7 +128,6 @@ abstract class AuthenticationAuthority
                 
         return $authorities;
     }
-    
 
     public static function factory($authorityClass, $args)
     {

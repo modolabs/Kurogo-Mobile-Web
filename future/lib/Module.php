@@ -1002,7 +1002,12 @@ abstract class Module {
 
     if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
         $this->assign('session', $this->getSession());
-        $this->assign('session_user', $this->getUser());
+        $user = $this->getUser();
+        $this->assign('session_user', $user);
+        if ($authority = $user->getAuthenticationAuthority()) {
+            $this->assign('session_authority_image', $authority->getAuthorityImage());
+            $this->assign('session_authority_title', $authority->getAuthorityTitle());
+        }
     }
 
     // Load template for page

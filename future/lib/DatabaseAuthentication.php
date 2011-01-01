@@ -61,6 +61,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
 
     public function init($args)
     {
+        parent::init($args);
         $args = is_array($args) ? $args : array();
         if (!isset($args['DB_TYPE'])) {
             $args = array_merge($GLOBALS['siteConfig']->getSection('database'), $args);
