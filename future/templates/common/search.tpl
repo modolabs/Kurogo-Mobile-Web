@@ -41,7 +41,7 @@
       <form method="get" action="{$searchPage|default:'search'}.php">
   {/if}
   
-        <fieldset class="inputcombo{if $emphasized|default:$isModuleHome} emphasized{/if}">
+        <fieldset class="inputcombo{if $emphasized|default:$isModuleHome} emphasized{/if} search_{$moduleID}">
           <input class="forminput" type="text" id="{$inputName|default:'filter'}" name="{$inputName|default:'filter'}" placeholder="{$placeholder|default:''}" value="{$searchTerms|escape}" />
           <input class="combobutton" id="sch_btn" src="/common/images/search-button.png" type="image" />
           {$hiddenArgHTML}
