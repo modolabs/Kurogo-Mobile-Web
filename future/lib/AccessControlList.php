@@ -1,29 +1,58 @@
 <?php
+/**
+ * @package Authentication
+ * @subpackage AccessControlList
+ */
 
 /**
  * AccessControlList
  * Used to encapsulate a rule used for access control
  * @see Module::getAccessControlLists()
  * @see AuthenticationAuthority 
+ * @package Authentication
+ * @subpackage AccessControlList
  */
 class AccessControlList
 {
     /* enums for rule types */
-    const RULE_TYPE_AUTHORITY='A'; // matches any user within the specified authority 
-    const RULE_TYPE_USER='U'; // matches a specific user/authority combo
-    const RULE_TYPE_GROUP='G'; // matches a group/authority combo
-    const RULE_TYPE_EVERYONE='E'; // matches everyone (including anonymous)
-
-    /* special constant to match all values of a particular type */
+    /** matches any user within the specified authority */
+    const RULE_TYPE_AUTHORITY='A'; 
+    
+    /** matches any user within the specified authority */
+    const RULE_TYPE_USER='U'; 
+    
+    /** matches a group/authority combo */
+    const RULE_TYPE_GROUP='G'; 
+    
+    /** matches everyone (including anonymous) */
+    const RULE_TYPE_EVERYONE='E'; 
+    
+    /** special constant to match all values of a particular type */
     const RULE_VALUE_ALL='*'; 
     
     /* enums for rule actions */
-    const RULE_ACTION_ALLOW='A'; // allows this combination
-    const RULE_ACTION_DENY='D'; // deny this combination
+    /** allow */
+    const RULE_ACTION_ALLOW='A'; 
+    
+    /** deny */
+    const RULE_ACTION_DENY='D';
 
-    /* properties */
+    /**
+      * Rule Action
+      * @var string 
+    */
     protected $ruleAction;
+
+    /**
+      * Rule type
+      * @var string 
+    */
     protected $ruleType;
+
+    /**
+      * Rule value
+      * @var string 
+    */
     protected $ruleValue;
     
     /**
