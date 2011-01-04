@@ -147,6 +147,8 @@ class AccessControlList
      * @param $ruleAction string @see AccessControlList::ruleActions() 
      * @param $ruleType string @see AccessControlList::ruleTypes() 
      * @param $ruleValue string 
+     *
+     * Will throw an exception if invalid values are present
      */
     public function __construct($ruleAction, $ruleType, $ruleValue)
     {
