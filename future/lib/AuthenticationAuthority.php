@@ -1,28 +1,55 @@
 <?php
+/**
+ * @package Authentication
+ */
 
 /** defined constants returned by authentication actions **/
-define('AUTH_OK', 1); // Authentication was successful
-define('AUTH_FAILED', -1); // Authentication failed (invalid credentials)
-define('AUTH_USER_NOT_FOUND', -2); // Authentication failed (user was not found)
-define('AUTH_USER_DISABLED', -3); // Authentication failed (User is inactive/disabled)
-define('AUTH_ERROR', -4); // Unknown server or i/o error
+
+/** Authentication was successful */
+define('AUTH_OK', 1); 
+
+/** Authentication failed (invalid credentials) */
+define('AUTH_FAILED', -1); // 
+
+/** Authentication failed (user was not found) */
+define('AUTH_USER_NOT_FOUND', -2); 
+
+/** Authentication failed (User is inactive/disabled) */
+define('AUTH_USER_DISABLED', -3);
+
+/** Unknown server or i/o error */
+define('AUTH_ERROR', -4); // 
 
 /**
- * AuthenticationAuthority
  * An abstract class that all authorities must inherit from. 
+ * @package Authentication
  */
 abstract class AuthenticationAuthority
 {
     
-    protected $AuthorityIndex; /* The tag used to identify this authority */
-    protected $AuthorityTitle; /* The human readable title of this authority */
-    protected $AuthorityImage; /* image shown next to user name when logged in (optional) */
+    /** 
+      * The tag used to identify this authority 
+      * @var string
+      */
+    protected $AuthorityIndex; 
+
+    /** 
+      * The human readable title of this authority
+      * @var string
+      */
+    protected $AuthorityTitle; 
+    
+    /** 
+      * Image shown next to user name when logged in (optional) 
+      * @var string
+      */
+    protected $AuthorityImage; 
     
     /**
      * Attempts to authenticate the user using the included credentials
      * @param string $login the userid to login (this will be blank for OAUTH based authorities)
-     * @param string $password (this will be blank for OAUTH based authorities)
-     * @param User $user This object is passed by reference and should be set to the logged in user upon sucesssful login
+     * @param string $password password (this will be blank for OAUTH based authorities)
+     * @param User &$user This object is passed by reference and should be set to the logged in user upon sucesssful login
 	 * @return int should return one of the AUTH_ constants     
      */
     abstract protected function auth($login, $password, &$user);
@@ -30,7 +57,7 @@ abstract class AuthenticationAuthority
     /**
      * Retrieves a user object from this authority
      * @param string $login the userid to retrieve
-	 * @return User returns a valid user object or false if the user could not be found
+	 * @return User a valid user object or false if the user could not be found
 	 * @see User object
      */
     abstract public function getUser($login);
@@ -38,7 +65,7 @@ abstract class AuthenticationAuthority
     /**
      * Retrieves a group object from this authority
      * @param string $group the shortname of the group to retrieve
-	 * @return UserGroup returns a valid group object or false if the group could not be found
+	 * @return UserGroup a valid group object or false if the group could not be found
 	 * @see UserGroup object
      */
     abstract public function getGroup($group);
@@ -75,7 +102,7 @@ abstract class AuthenticationAuthority
         
     }
 
-    /*
+    /**
      * Retrieves the authority index
      * @return string
     */
@@ -84,7 +111,7 @@ abstract class AuthenticationAuthority
         return $this->AuthorityIndex;
     }
 
-    /*
+    /**
      * Sets the authority index
      * @param string $index the authority index/tag
     */
@@ -93,7 +120,7 @@ abstract class AuthenticationAuthority
         $this->AuthorityIndex = (string) $index;
     }
 
-    /*
+    /**
      * Sets the authority title
      * @param string $title a human readable title
     */
@@ -102,7 +129,7 @@ abstract class AuthenticationAuthority
         $this->AuthorityTitle = (string) $title;
     }
 
-    /*
+    /**
      * Retrieves the authority title
      * @return string
     */
@@ -111,7 +138,7 @@ abstract class AuthenticationAuthority
         return $this->AuthorityTitle;
     }
 
-    /*
+    /**
      * Sets the authority image, an image that is shown next to the user when logged in. If an image is not present it will show the authority title
      * @param string a url (full or relative as appropriate) to a browser viewable image/badge. For best results use an image less than the text height of the footer content
     */
@@ -120,7 +147,7 @@ abstract class AuthenticationAuthority
         $this->AuthorityImage = (string) $url;
     }
 
-    /*
+    /**
      * Retrieves the authority image
      * @return string
     */
@@ -129,7 +156,7 @@ abstract class AuthenticationAuthority
         return $this->AuthorityImage;
     }
 
-    /*
+    /**
      * Parses the authentication config file and returns a list of authorities and their arguments
      * @return array
     */
@@ -143,7 +170,7 @@ abstract class AuthenticationAuthority
         return $configFile->getSectionVars();
     }
     
-    /*
+    /**
      * Returns the default (i.e. the first) authentication authority in the config file. 
      * @return array 
     */
@@ -153,7 +180,7 @@ abstract class AuthenticationAuthority
         return current($authorities);
     }
 
-    /*
+    /**
      * Retrieves an authentication authority by its index. This is the preferred way to retrieve an authority
      * @param string $index the index/tag of the authority to retrieve
      * @return AuthenticationAuthority object initialized based on the values in the authentication config file or false if the index was not found
@@ -214,7 +241,8 @@ abstract class AuthenticationAuthority
      * Initializes an authentication authority object
      * @param string $authorityClass the name of the class to instantiate. Must be a subclass of AuthenticationAuthority
      * @param array $args an associative array of arguments. Argument values depend on the authority
-     * @see AuthenticationAuthority->init()
+     * @return AuthenticationAuthority
+     * @see AuthenticationAuthority::init()
      */
     public static function factory($authorityClass, $args)
     {
@@ -253,6 +281,7 @@ abstract class AuthenticationAuthority
      * @param string $login 
      * @param string $password
      * @param Module $module 
+     * @see AuthenticationAuthority::reset()
      * 
      * Subclasses should not need to override this, but instead provide additional behavior in reset()
      */
