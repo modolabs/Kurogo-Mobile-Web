@@ -179,7 +179,7 @@ class FacebookAuthentication extends AuthenticationAuthority
         }
 
         if (!isset($args['OAUTH']) || !$args['OAUTH']) {
-            throw new Exception("Twitter authentication must have OAUTH option set");
+            throw new Exception("Facebook authentication must have OAUTH option set");
         }
         
         $this->api_key = $args['API_KEY'];
