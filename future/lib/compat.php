@@ -1,5 +1,12 @@
 <?php
-
+/**
+  * Compatibility Functions
+  * @package Compatability
+  */
+  
+/**
+  * Returns a mime type for a given extension
+  */
 function mime_type($filename) {
   // http://www.php.net/manual/en/function.mime-content-type.php#87856
   $mime_types = array(
@@ -74,12 +81,16 @@ function mime_type($filename) {
   }
 }
 
-// Add json_(de/en)code functions (this really shouldn't happen, but is there for people who must use 5.1)
+/**
+  * Add json_(de/en)code functions (this really shouldn't happen, but is there for people who must use 5.1)
+  */
 if(!function_exists('json_decode')) {
     include(LIB_DIR .'/compat/JSON.php');
 }
 
-// Simulate PHP 5.3 behavior on 5.2
+/**
+  * Simulate PHP 5.3 behavior on 5.2
+  */
 function realpath_exists($path) {
   $test = realpath($path);
   if (version_compare(PHP_VERSION, '5.3.0') >= 0 || 

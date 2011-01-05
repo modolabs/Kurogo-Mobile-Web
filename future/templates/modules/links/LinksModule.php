@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Links
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/Module.php');
 
+/**
+  * @package Module
+  * @subpackage Links
+  */
 class LinksModule extends Module {
   protected $id = 'links';
 

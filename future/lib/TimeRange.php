@@ -1,11 +1,14 @@
 <?php
+/**
+  * @package ExternalData
+  * @subpackage Calendar
+  */
 
-/*
- * TimeRange: class describing a time interval.
- * DayRange: child class of TimeRange describing a full day
- */
-
-
+/**
+  * TimeRange: class describing a time interval.
+  * @package ExternalData
+  * @subpackage Calendar
+  */
 class TimeRange {
 
   protected $start;
@@ -162,6 +165,11 @@ class TimeRange {
   }
 }
 
+/**
+  * DayRange: child class of TimeRange describing a full day
+  * @package ExternalData
+  * @subpackage Calendar
+  */
 class DayRange extends TimeRange {
     public function __toString()
     {

@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Error
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/Module.php');
 
+/**
+  * @package Module
+  * @subpackage Error
+  */
 class ErrorModule extends Module {
   protected $id = 'error';
 

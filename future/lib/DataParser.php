@@ -1,5 +1,12 @@
 <?php
+/**
+ * @package ExternalData
+ */
 
+/**
+ * A generic class to handle the parsing of external data
+ * @package ExternalData
+ */
 abstract class DataParser
 {
     abstract public function parseData($data);

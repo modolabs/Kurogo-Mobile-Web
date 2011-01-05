@@ -1,5 +1,11 @@
 <?php
+/**
+  * @package Directory
+  */
 
+/**
+  * @package Directory
+  */
 class LDAPPerson {
 
   protected $dn;

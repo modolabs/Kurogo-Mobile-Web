@@ -1,10 +1,15 @@
 <?php
-/****************************************************************
- *
- *  Copyright 2010 Modo Labs Inc.
- *
- *****************************************************************/
+/**
+  * @copyright 2010 Modo Labs Inc.
+  * @package Core
+  *
+   */
 
+/**
+  * Provides an abstraction for an on disk cache
+  * @package Core
+  *
+  */
 class DiskCache {
 
   private $path;

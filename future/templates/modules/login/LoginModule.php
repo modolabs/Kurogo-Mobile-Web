@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Login
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/Module.php');
 
+/**
+  * @package Module
+  * @subpackage Login
+  */
 class LoginModule extends Module {
   protected $id = 'login';
   

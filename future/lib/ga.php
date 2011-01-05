@@ -1,4 +1,8 @@
 <?php
+/**
+ * Google analytics
+ * @package Analytics
+ */
 
 /**
   Copyright 2009 Google Inc. All Rights Reserved.

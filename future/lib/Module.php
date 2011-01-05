@@ -1,9 +1,26 @@
 <?php
+/**
+  * @package Module
+  */
 
+/**
+  * 
+  */
 require_once realpath(LIB_DIR.'/TemplateEngine.php');
+
+/**
+  * 
+  */
 require_once realpath(LIB_DIR.'/HTMLPager.php');
+
+/**
+  * 
+  */
 require_once realpath(LIB_DIR.'/User.php');
 
+/**
+  * @package Core
+  */
 abstract class Module {
   protected $id = 'none';
   protected $moduleName = '';
@@ -113,7 +130,7 @@ abstract class Module {
     $pager = array(
       'pageNumber'   => $this->htmlPager->getPageNumber(),
       'pageCount'    => $this->htmlPager->getPageCount(),
-      'inPagedMode'  => $this->htmlPager->getPageNumber() != ALL_PAGES,
+      'inPagedMode'  => $this->htmlPager->getPageNumber() != HTMLPager::ALL_PAGES,
       'html' => array(
         'all'  => $this->htmlPager->getAllPagesHTML(),
         'page' => $this->htmlPager->getPageHTML(),
@@ -121,7 +138,7 @@ abstract class Module {
       'url' => array(
         'prev'  => null,
         'next'  => null,
-        'all'   => $this->urlForPage(ALL_PAGES),
+        'all'   => $this->urlForPage(HTMLPager::ALL_PAGES),
         'pages' => array(),
       ),
     );

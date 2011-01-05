@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Stats
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/Module.php');
 
+/**
+  * @package Module
+  * @subpackage Stats
+  */
 class StatsModule extends Module {
   protected $id = 'stats';
   protected $platforms = Array(

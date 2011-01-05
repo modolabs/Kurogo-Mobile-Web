@@ -1,5 +1,11 @@
 <?php
+/**
+  * @package Authentication
+  */
 
+/**
+  * @package Authentication
+  */
 abstract class UserGroup
 {
     protected $group;
@@ -105,6 +111,9 @@ abstract class UserGroup
     }
 }
 
+/**
+  * @package Authentication
+  */
 class BasicUserGroup extends UserGroup
 {
 }

@@ -1,6 +1,12 @@
 <?php
+/**
+  * @package Authentication
+  */
 
-// this authority uses a passed style file
+/**
+  * This authority uses a passed style file
+  * @package Authentication
+  */
 class PasswdAuthentication extends AuthenticationAuthority
 {
     private $passwdFile;

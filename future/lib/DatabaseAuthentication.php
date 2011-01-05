@@ -1,6 +1,14 @@
 <?php
+/**
+ * Database Authentication
+ * @package Authentication
+ */
 
-// this authority uses a database 
+/**
+ * Authentication Authority based on values in a database
+ * @see db
+ * @package Authentication
+ */
 class DatabaseAuthentication extends AuthenticationAuthority
 {
     protected $connection;
@@ -32,7 +40,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
         $sql = sprintf("SELECT * FROM `%s` WHERE `%s`=?", $this->getTable('user'), $this->getField('userid'));
         $result = $this->connection->query($sql, array($login));
         if ($row = $result->fetch()) {
-            $user = new BasicUser($this);
+            $user = new DatabaseUser($this);
             $user->setUserID($row[$this->getField('userid')]);
             $user->setEmail($row[$this->getField('email')]);
             return $user;
@@ -111,6 +119,18 @@ class DatabaseAuthentication extends AuthenticationAuthority
     
 }
 
+/**
+ * Database User
+ * @package Authentication
+ */
+class DatabaseUser extends User
+{
+}
+
+/**
+ * Database Group
+ * @package Authentication
+ */
 class DatabaseUserGroup extends UserGroup
 {
     public function getMembers()

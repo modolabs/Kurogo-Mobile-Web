@@ -1,5 +1,11 @@
 <?php
-
+/**
+  * @package Directory
+  */
+  
+/**
+  * @package Directory
+  */
 abstract class PeopleController
 {
     protected $host;

@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Admin
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/Module.php');
 
+/**
+  * @package Module
+  * @subpackage Admin
+  */
 class AdminModule extends Module {
   protected $id = 'admin';
   

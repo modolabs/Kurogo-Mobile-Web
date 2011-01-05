@@ -1,9 +1,15 @@
 <?php
+/**
+  * @package Authentication
+  */
 
 if (!function_exists('curl_init')) {
     throw new Exception("cURL library not available");
 }
 
+/**
+  * @package Authentication
+  */
 class TwitterAuthentication extends AuthenticationAuthority
 {
 	const API_URL = 'https://api.twitter.com/1';
@@ -383,6 +389,9 @@ class TwitterAuthentication extends AuthenticationAuthority
     }
 }
 
+/**
+  * @package Authentication
+  */
 class TwitterUser extends BasicUser
 {
     protected $twitter_userID;

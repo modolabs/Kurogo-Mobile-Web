@@ -1,5 +1,14 @@
 <?php
+/**
+ * @package ExternalData
+ */
 
+/**
+ * A generic class to handle the retrieval of external data
+ * 
+ * Handles retrieval, caching and parsing of data. 
+ * @package ExternalData
+ */
 abstract class DataController
 {
     protected $DEFAULT_PARSER_CLASS;

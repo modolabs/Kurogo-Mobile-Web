@@ -1,5 +1,13 @@
 <?php
+/**
+ * Facebook Authentication
+ * @package Authentication
+ */
 
+/**
+ * Facebook authentication
+ * @package Authentication
+ */
 class FacebookAuthentication extends AuthenticationAuthority
 {
     protected $api_key;
@@ -190,6 +198,10 @@ class FacebookAuthentication extends AuthenticationAuthority
     }
 }
 
+/**
+ * Facebook user
+ * @package Authentication
+ */
 class FacebookUser extends BasicUser
 {
 }

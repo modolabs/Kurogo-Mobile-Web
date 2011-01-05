@@ -1,8 +1,19 @@
 <?php
+/**
+  * @package Authentication
+  */
 
+/**
+  */
 require_once(LIB_DIR . '/AuthenticationAuthority.php');
+
+/**
+  */
 require_once(LIB_DIR . '/User.php');
 
+/**
+  * @package Authentication
+  */
 class LDAPAuthentication extends AuthenticationAuthority
 {
     private $ldapServer;
@@ -255,6 +266,9 @@ class LDAPAuthentication extends AuthenticationAuthority
     }
 }
 
+/**
+  * @package Authentication
+  */
 class LDAPUser extends BasicUser
 {
     protected $dn;
@@ -302,6 +316,9 @@ class LDAPUser extends BasicUser
     }    
 }
 
+/**
+  * @package Authentication
+  */
 class LDAPUserGroup extends BasicUserGroup
 {
     protected $dn;

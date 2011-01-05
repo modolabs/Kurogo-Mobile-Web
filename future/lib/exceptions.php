@@ -1,21 +1,36 @@
 <?php
+/**
+  * @package Exceptions
+  *
+  */
 
-//
-// Helper functions and classes
-//
-
+/**
+  *  Returned when there is a problem returning data from a server
+  * @package Exceptions
+  */
 class DataServerException extends Exception {
 }
 
+/**
+  * @package Exceptions
+  */
 class DeviceNotSupported extends Exception {
 }
 
+/**
+  * @package Exceptions
+  */
 class PageNotFound extends Exception {
 }
 
+/**
+  * @package Exceptions
+  */
 class DisabledModuleException extends Exception {
 }
 
+/**
+  */
 function getErrorURL($exception, $devError = false) {
   $args = array(
     'code' => 'internal',
@@ -42,9 +57,9 @@ function getErrorURL($exception, $devError = false) {
   return URL_PREFIX.'error/?'.http_build_query($args);
 }
 
-//
-// When in development, see your errors on the page instead of opening error log
-// 
+/**
+  * When in development, see your errors on the page instead of opening error log
+  */
 function developmentErrorLog($exception){
   $path =  CACHE_DIR . "/errors/";
   if (!file_exists($path)) {
@@ -117,16 +132,18 @@ function developmentErrorLog($exception){
   
 }
 
-
-//
-// Exceptoin Handler set in initialize.php
-// 
+/**
+  * Exception Handler set in initialize.php
+  */
 function exceptionHandlerForDevelopment($exception) {
   $errtime = developmentErrorLog($exception);
   error_log(print_r($exception, TRUE));
   header('Location: '.getErrorURL($exception, $errtime));
 }
 
+/**
+  * Exception Handler set in initialize.php
+  */
 function exceptionHandlerForProduction($exception) {
   if(!$GLOBALS['deviceClassifier']->isSpider()) {
     $protocol = isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ?

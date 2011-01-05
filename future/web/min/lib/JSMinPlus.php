@@ -20,6 +20,7 @@
  *
  * Latest version of this script: http://files.tweakers.net/jsminplus/jsminplus.zip
  *
+ * @package JSMin
  */
 
 /* ***** BEGIN LICENSE BLOCK *****

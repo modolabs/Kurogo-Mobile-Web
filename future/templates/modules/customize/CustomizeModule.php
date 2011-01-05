@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Customize
+  */
 
+/**
+  */
 require_once realpath(MODULES_DIR.'/home/HomeModule.php');
 
+/**
+  * @package Module
+  * @subpackage Customize
+  */
 class CustomizeModule extends Module {
   protected $id = 'customize';
 

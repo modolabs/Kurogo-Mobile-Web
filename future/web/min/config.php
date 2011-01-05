@@ -1,8 +1,14 @@
 <?php
+/**
+ * @package Minify
+ */
 
+
+/**
+  */
+require_once realpath(dirname(__FILE__).'/../../lib/initialize.php');
 
 // Configure web application
-require_once realpath(dirname(__FILE__).'/../../lib/initialize.php');
 $path = $_SERVER['REQUEST_URI'];
 Initialize($path);
 

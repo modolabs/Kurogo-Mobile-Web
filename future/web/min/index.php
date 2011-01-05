@@ -1,20 +1,28 @@
 <?php
 /**
+  * @package Minify
+  */
+  
+/**
  * Front controller for default Minify implementation
  * 
  * DO NOT EDIT! Configure this utility via config.php and groupsConfig.php
  * 
- * @package Minify
  */
 
+/**
+  */
 define('MINIFY_MIN_DIR', dirname(__FILE__));
 
-// load config
+/**
+  */
 require MINIFY_MIN_DIR . '/config.php';
 
 // setup include path
 set_include_path($min_libPath . PATH_SEPARATOR . get_include_path());
 
+/**
+  */
 require 'Minify.php';
 
 Minify::$uploaderHoursBehind = $min_uploaderHoursBehind;

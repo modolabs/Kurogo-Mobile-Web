@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Fullweb
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/Module.php');
 
+/**
+  * @package Module
+  * @subpackage Fullweb
+  */
 class FullwebModule extends Module {
   protected $id = 'fullweb';
   protected function getModuleDefaultData()

@@ -1,5 +1,11 @@
 <?php
+/**
+  * @package Core
+  */
 
+/**
+  * @package Core
+  */
 class Validator
 {
     public static function isValidEmail($value) 

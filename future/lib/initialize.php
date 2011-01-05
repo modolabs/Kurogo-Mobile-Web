@@ -1,4 +1,7 @@
 <?php
+/**
+  * @package Core
+  */
 
 //
 // Initialization setup
@@ -9,8 +12,14 @@
 //            /device/[device]/ as the path.
 //
 
-define('ROOT_DIR', dirname(__FILE__).'/..'); // change if this file is moved
+/**
+  * change if this file is moved
+  */
+define('ROOT_DIR', dirname(__FILE__).'/..'); 
 
+/**
+  * 
+  */
 function Initialize(&$path=null) {
   //
   // Constants which cannot be set by config file

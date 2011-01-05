@@ -1,4 +1,8 @@
 <?php
+/**
+  * @package Module
+  * @subpackage People
+  */
 
 $peopleController = $GLOBALS['siteConfig']->getVar('PEOPLE_CONTROLLER_CLASS');
 $personClass      = $GLOBALS['siteConfig']->getVar('PEOPLE_PERSON_CLASS');

@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Core
+  */
 
+/**
+  * Name of the cookie used for device classification
+  */
 define('COOKIE_KEY', 'deviceClassification');
 
+/**
+  * Contacts the Device Classification Server and sets the the appropriate properties
+  * @package Core
+  */
 class DeviceClassifier {
   private $pagetype = 'unknown';
   private $platform = 'unknown';

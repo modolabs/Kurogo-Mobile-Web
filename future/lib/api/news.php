@@ -1,10 +1,9 @@
 <?php
-
-/****************************************************************
- *
- *  Copyright 2010 Modo Labs Inc.
- *
- *****************************************************************/
+/**
+  * @package Module
+  * @subpackage News
+  * @copyright 2010 Modo Labs Inc.
+  */
 
 $maxPerPage      = $GLOBALS['siteConfig']->getVar('NEWS_MAX_RESULTS');
 

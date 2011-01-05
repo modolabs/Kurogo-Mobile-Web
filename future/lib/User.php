@@ -1,8 +1,13 @@
 <?php
+/**
+ * User
+ * @package Authentication
+ */
 
-require_once(LIB_DIR . '/Session.php');
-require_once(LIB_DIR . '/UserGroup.php');
-
+/**
+ * User class
+ * @package Authentication
+ */
 abstract class User
 {
     protected $userID;
@@ -127,10 +132,18 @@ abstract class User
     }
 }
 
+/**
+ * Basic user class
+ * @package Authentication
+ */
 class BasicUser extends User
 {
 }
 
+/**
+ * Anonymous User
+ * @package Authentication
+ */
 class AnonymousUser extends User
 {
     public function __construct()
