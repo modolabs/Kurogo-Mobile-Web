@@ -1,11 +1,21 @@
 <?php
+/**
+  * @package ExternalData
+  * @subpackage RSS
+  */
 
 if (!function_exists('xml_parser_create')) {
     die('XML Parser commands not available.');
 }
 
+/**
+  */
 require_once(LIB_DIR . '/RSS.php');
 
+/**
+  * @package ExternalData
+  * @subpackage RSS
+  */
 class RSSDataParser extends DataParser
 {
     protected $root;

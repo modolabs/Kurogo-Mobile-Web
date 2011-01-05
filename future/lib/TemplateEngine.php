@@ -1,7 +1,15 @@
 <?php
+/**
+  * @package Core
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/smarty/Smarty.class.php');
 
+/**
+  * @package Core
+  */
 class TemplateEngine extends Smarty {
   static $accessKey = 0;
   

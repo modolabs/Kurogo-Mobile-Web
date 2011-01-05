@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * @package Config
+ */
+ 
+/**
+ * Handles multiple config files
+ * @package Config
+ */
 class ConfigGroup extends Config
 {
     protected $configs = array();

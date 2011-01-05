@@ -1,4 +1,8 @@
 <?php
+/**
+  * @package Module
+  * @subpackage People
+  */
 
 $module = Module::factory('people');
 $displayFields = $module->getAPISection('displayFields');

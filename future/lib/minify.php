@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @package Minify
+ */
+ 
+/**
+  */
 require_once LIB_DIR.'/DiskCache.php';
   
 //

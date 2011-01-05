@@ -1,7 +1,20 @@
 <?php
+/**
+  * ICalendar
+  * The ICal* classes in this file together partially implement RFC 2445.
+  * @package ExternalData
+  * @subpackage Calendar
+ */
 
+/**
+  * 
+  */
 require_once('ICalendar.php');
 
+/**
+  * @package ExternalData
+  * @subpackage Calendar
+  */
 class ICSDataParser extends DataParser
 {
     protected $eventClass='ICalEvent';

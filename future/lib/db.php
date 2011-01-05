@@ -1,7 +1,15 @@
 <?php
+/**
+ * @package Database
+ */
 
+/** Not supported */
 define('DB_NOT_SUPPORTED', 1);
 
+/**
+ * Handles connections to a database
+ * @package Database
+ */
 class db {
   protected $connection;
   

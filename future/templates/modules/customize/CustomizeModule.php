@@ -1,7 +1,13 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Customize
+  */
 
-require_once realpath(LIB_DIR.'/Module.php');
-
+/**
+  * @package Module
+  * @subpackage Customize
+  */
 class CustomizeModule extends Module {
   protected $id = 'customize';
 

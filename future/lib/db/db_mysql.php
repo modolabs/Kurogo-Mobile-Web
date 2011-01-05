@@ -1,5 +1,13 @@
 <?php
+/**
+  * MySQL database abstraction
+  * @package Database
+  */
 
+/**
+  * MySQL database abstraction
+  * @package Database
+  */
 class db_mysql extends db
 {
     public static function connection($dsn_data)

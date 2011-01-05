@@ -1,11 +1,16 @@
 <?php
+/**
+  * @package Module
+  */
 
-require_once realpath(LIB_DIR.'/TemplateEngine.php');
-require_once realpath(LIB_DIR.'/HTMLPager.php');
-require_once realpath(LIB_DIR.'/User.php');
-
+/**
+  * Breadcrumb Parameter
+  */
 define('MODULE_BREADCRUMB_PARAM', '_b');
 
+/**
+  * @package Core
+  */
 abstract class Module {
   protected $id = 'none';
   protected $moduleName = '';
@@ -52,6 +57,11 @@ abstract class Module {
   private $inPagedMode = true;
   
   private $tabbedView = null;
+  
+  public function getID()
+  {
+    return $this->id;
+  }
   
   //
   // Tabbed View support
@@ -110,7 +120,7 @@ abstract class Module {
     $pager = array(
       'pageNumber'   => $this->htmlPager->getPageNumber(),
       'pageCount'    => $this->htmlPager->getPageCount(),
-      'inPagedMode'  => $this->htmlPager->getPageNumber() != ALL_PAGES,
+      'inPagedMode'  => $this->htmlPager->getPageNumber() != HTMLPager::ALL_PAGES,
       'html' => array(
         'all'  => $this->htmlPager->getAllPagesHTML(),
         'page' => $this->htmlPager->getPageHTML(),
@@ -118,7 +128,7 @@ abstract class Module {
       'url' => array(
         'prev'  => null,
         'next'  => null,
-        'all'   => $this->urlForPage(ALL_PAGES),
+        'all'   => $this->urlForPage(HTMLPager::ALL_PAGES),
         'pages' => array(),
       ),
     );
@@ -303,17 +313,17 @@ abstract class Module {
       return $GLOBALS['siteConfig']->getSection($var, $log_error);
   }
 
-  public function getModuleVar($var, $default=null)
+  protected function getModuleVar($var, $default=null, $log_error=Config::LOG_ERRORS)
   {
      $config = $this->getModuleConfig();
-     $value = $config->getVar($var, Config::EXPAND_VALUE);
+     $value = $config->getVar($var, Config::EXPAND_VALUE, $log_error);
      return is_null($value) ? $default :$value;
   }
 
-  public function getModuleSection($section, $default=array())
+  protected function getModuleSection($section, $default=array(), $log_error=Config::LOG_ERRORS)
   {
      $config = $this->getModuleConfig();
-     if (!$section = $config->getSection($section)) {
+     if (!$section = $config->getSection($section, $log_error)) {
         $section = $default;
      }
      return $section;
@@ -531,15 +541,35 @@ abstract class Module {
         }
         
         if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
-            $this->initSession();
             $user = $this->getUser();
-            $this->assign('session_userID', $user->getUserID());
+            $session = $this->getSession();
             $protected = self::argVal($moduleData, 'protected', false);
             if ($protected) {
-                if (!$this->session->isLoggedIn()) {
+                if (!$this->isLoggedIn()) {
                     $this->redirectToModule('error', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
                         http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
                 }
+            }
+            
+            $acls = $this->getAccessControlLists();
+            $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
+            foreach ($acls as $acl) {
+                $result = $acl->evaluateForUser($user);
+                switch ($result)
+                {
+                    case AccessControlList::RULE_ACTION_ALLOW:
+                        $allow = true;
+                        break;
+                    case AccessControlList::RULE_ACTION_DENY:
+                        $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
+                            http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
+                        break;
+                }
+            }
+            
+            if (!$allow) {
+                $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
+                    http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
             }
         }
         
@@ -561,15 +591,13 @@ abstract class Module {
         }
   }
   
-  protected function initSession()
+  public function getSession()
   {
     if (!$this->session) {
-        $authorityClass = $this->getSiteVar('AUTHENTICATION_AUTHORITY');
-        $authorityArgs = $this->getSiteSection('authentication');
-        $AuthenticationAuthority = AuthenticationAuthority::factory($authorityClass, $authorityArgs);
-        
-        $this->session = new Session($AuthenticationAuthority);
+        $this->session = new Session();
     }
+    
+    return $this->session;
   }
   
   public function getModuleName()
@@ -670,10 +698,16 @@ abstract class Module {
   //
   // User functions
   //
+  
+  public function isLoggedIn()
+  {
+    $session = $this->getSession();
+    return $session->isLoggedIn();
+  }
   public function getUser()
   {
-    $this->initSession();
-    return $this->session->getUser();
+    $session = $this->getSession();
+    return $session->getUser();
   }
 
   //
@@ -719,6 +753,24 @@ abstract class Module {
     }
     
     return $moduleData;
+  }
+  
+  public function getAccessControlLists()
+  {
+    $acls = array();
+    $aclStrings = $this->getModuleVar('acl', array(), Config::SUPRESS_ERRORS);
+    foreach ($aclStrings as $aclString) {
+        $values = explode(':', $aclString);
+        if (count($values)==3) {
+            if ($acl = AccessControlList::factory($values[0], $values[1], $values[2])) {
+                $acls[] = $acl;
+            } else {
+                throw new Exception("Invalid ACL $aclString in $this->id");
+            }
+        }
+    }
+    
+    return $acls;
   }
 
   //
@@ -1010,7 +1062,7 @@ abstract class Module {
 
     $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
     
-    $moduleStrings = $this->getModuleSection('strings');
+    $moduleStrings = $this->getModuleSection('strings', array(), Config::SUPRESS_ERRORS);
     $this->assign('moduleStrings', $moduleStrings);
 
     // Module Help
@@ -1041,6 +1093,16 @@ abstract class Module {
       }
     }
     $this->assign('accessKeyStart', $accessKeyStart);
+
+    if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
+        $this->assign('session', $this->getSession());
+        $user = $this->getUser();
+        $this->assign('session_user', $user);
+        if ($authority = $user->getAuthenticationAuthority()) {
+            $this->assign('session_authority_image', $authority->getAuthorityImage());
+            $this->assign('session_authority_title', $authority->getAuthorityTitle());
+        }
+    }
 
     // Load template for page
     $this->templateEngine->displayForDevice($template);    

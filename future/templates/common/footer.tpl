@@ -25,12 +25,17 @@
       </table>
     {/if}
   {/capture}
+
+  {capture name="loginHTML" assign="loginHTML"}
+    {if $session}<div id="loginInfo"><a href="../login">{if $session->isLoggedIn()}{$session_user->getFullName()}{if $session_authority_image} <img src="{$session_authority_image}" alt="{$session_authority_title|escape}" />{else} ({$session_authority_title}){/if}{else}Not{/if} logged in</a></div>{/if}
+  {/capture}
   
   {block name="footer"}
 
     {if $moduleID != 'home'}
       <div id="footerlinks">
-        <a href="#top">Back to top</a> | <a href="../home/">{$SITE_NAME} home</a>{if $session_userID} | <a href="../login">{$session_userID} logged in</a>{/if}
+        <a href="#top">Back to top</a> | <a href="../home/">{$SITE_NAME} home</a>
+        {$loginHTML}
       </div>
     {/if}
 

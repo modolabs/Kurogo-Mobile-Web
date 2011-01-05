@@ -1,5 +1,12 @@
 <?php
+/**
+ * @package Config
+ */
 
+/**
+ * Class to load and parse ini files
+ * @package Config
+ */
 class ConfigFile extends Config {
   const OPTION_CREATE_EMPTY=1;
   const OPTION_CREATE_WITH_DEFAULT=2;

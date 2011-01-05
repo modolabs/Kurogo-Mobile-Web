@@ -41,6 +41,8 @@
         {/if}
       </p>
     {/if}
+
+    {$loginHTML}
   
     <p class="fontsize">
       Font size:&nbsp;

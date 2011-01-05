@@ -1,5 +1,13 @@
 <?php
+/**
+ * Config
+ * @package Config
+ */
 
+/**
+ * Config abstract class to handle config parameters
+ * @package Config
+ */
 abstract class Config {
     const EXPAND_VALUE = true;
     const NO_EXPAND_VALUE = false;

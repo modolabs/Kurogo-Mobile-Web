@@ -1,12 +1,14 @@
 <?php
+/**
+  * @package Core
+  */
 
+/**
+  */
 require_once realpath(dirname(__FILE__).'/../lib/initialize.php');
 
-//
-// Configure web application
-// modifies $path for us to strip prefix and device
-//
-
+/**
+  */
 function _404()
 {
     header("HTTP/1.0 404 Not Found");
@@ -14,6 +16,11 @@ function _404()
     echo "The page that you have requested could not be found.\n";
     exit();
 }
+
+//
+// Configure web application
+// modifies $path for us to strip prefix and device
+//
 
 $path = isset($_GET['_path']) ? $_GET['_path'] : '';
 

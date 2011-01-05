@@ -1,5 +1,11 @@
 <?php
+/**
+  * @package Config
+  */
 
+/**
+  * @package Config
+  */
 class SiteConfig extends ConfigGroup {
 
   function __construct() {

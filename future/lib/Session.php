@@ -1,36 +1,50 @@
 <?php
+/**
+  * @package Authentication
+  */
 
+/**
+  */
 require_once(LIB_DIR . '/AuthenticationAuthority.php');
+/**
+  */
 require_once(LIB_DIR . '/User.php');
 
+/**
+  * @package Authentication
+  */
 class Session
 {
     protected $user;
-    protected $AuthenticationAuthority;
+    protected $auth;
+    protected $auth_userID;
     
-    public function __construct(AuthenticationAuthority $AuthenticationAuthority)
+    public function __construct()
     {
         if (!isset($_SESSION)) {
             session_start();
         }
         
-        $this->AuthenticationAuthority = $AuthenticationAuthority;
+        $user = new AnonymousUser();
         
-        $userID = isset($_SESSION['userID']) ? $_SESSION['userID'] : '';
-        if (!$user = $this->AuthenticationAuthority->getUser($userID)) {
-            if ($userID) {
-                error_log("Error trying to load user $userID");
+        if (isset($_SESSION['auth'])) {
+            if ($authority = AuthenticationAuthority::getAuthenticationAuthority($_SESSION['auth'])) {
+
+                $auth_userID = isset($_SESSION['auth_userID']) ? $_SESSION['auth_userID'] : '';
+
+                if ($auth_userID) {
+                
+                    if ($_user = $authority->getUser($auth_userID)) {
+                        $user = $_user;
+                    } else {
+                        error_log("Error trying to load user $auth_userID");
+                    } 
+                }
             }
-            $user = new AnonymousUser();
         }
+                    
         $this->setUser($user);
     }    
-
-    private function reset() {
-        $user = new AnonymousUser();
-        $this->setUser($user);
-		session_regenerate_id(true);
-    }
 
     public function isLoggedIn()
     {
@@ -41,6 +55,8 @@ class Session
     {
         $this->user = $user;
         $_SESSION['userID'] = $user->getUserID();
+        $_SESSION['auth_userID'] = $user->getUserID();
+        $_SESSION['auth'] = $user->getAuthenticationAuthorityIndex();
     }
 
     public function getUser()
@@ -48,21 +64,18 @@ class Session
         return $this->user;
     }
     
-    public function login($login, $pass)
+    public function login(User $user)
     {
-        $result = $this->AuthenticationAuthority->auth($login, $pass, $user);
-        
-        if ($result == AUTH_OK) {
-            session_regenerate_id(true);
-            $this->setUser($user);
-        }
-        
-        return $result;
+        session_regenerate_id(true);
+        $this->setUser($user);
+        return $user;
     }
 
     public function logout()
     {
-    	$this->reset();
+        $user = new AnonymousUser();
+        $this->setUser($user);
+		session_regenerate_id(true);
         return true;
     }
 }

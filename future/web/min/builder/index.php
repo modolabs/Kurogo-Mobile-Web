@@ -1,4 +1,7 @@
 <?php 
+/**
+ * @package Minify
+ */
 
 if (phpversion() < 5) {
     exit('Minify requires PHP5 or greater.');
@@ -8,6 +11,8 @@ if (phpversion() < 5) {
 $encodeOutput = (function_exists('gzdeflate')
                  && !ini_get('zlib.output_compression'));
 
+/**
+  */
 require dirname(__FILE__) . '/../config.php';
 
 if (! $min_enableBuilder) {

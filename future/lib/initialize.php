@@ -1,4 +1,7 @@
 <?php
+/**
+  * @package Core
+  */
 
 //
 // Initialization setup
@@ -9,8 +12,14 @@
 //            /device/[device]/ as the path.
 //
 
-define('ROOT_DIR', dirname(__FILE__).'/..'); // change if this file is moved
+/**
+  * change if this file is moved
+  */
+define('ROOT_DIR', dirname(__FILE__).'/..'); 
 
+/**
+  * 
+  */
 function Initialize(&$path=null) {
   //
   // Constants which cannot be set by config file
@@ -78,8 +87,8 @@ function Initialize(&$path=null) {
     }
   }
   define('URL_BASE', $urlBase);
-  define('FULL_URL_BASE', sprintf("http://%s%s", $_SERVER['HTTP_HOST'], URL_BASE));
-
+  define('IS_SECURE', isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
+  define('FULL_URL_BASE', sprintf("http%s://%s%s", IS_SECURE ? 's' : '', $_SERVER['HTTP_HOST'], URL_BASE));
   define('COOKIE_PATH', URL_BASE); // We are installed under URL_BASE
 
   //

@@ -1,5 +1,13 @@
 <?php
+/**
+  * @package ExternalData
+  * @subpackage RSS
+  */
 
+/**
+  * @package ExternalData
+  * @subpackage RSS
+  */
 class RSSDataController extends DataController
 {
     protected $DEFAULT_PARSER_CLASS='RSSDataParser';

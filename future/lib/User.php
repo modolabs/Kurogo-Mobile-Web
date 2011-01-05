@@ -1,13 +1,21 @@
 <?php
+/**
+ * User
+ * @package Authentication
+ */
 
-require_once(LIB_DIR . '/Session.php');
-
+/**
+ * User class
+ * @package Authentication
+ */
 abstract class User
 {
     protected $userID;
+    protected $AuthenticationAuthority;
     protected $email;
     protected $FirstName;
     protected $LastName;
+    protected $FullName;
     
     protected $attributes=array();
     
@@ -31,11 +39,23 @@ abstract class User
         $this->userID = $userID;
     }
     
-    public static function factory(AuthenticationAuthority $AuthenticationAuthority)
+    public function setAuthenticationAuthority(AuthenticationAuthority $AuthenticationAuthority)
     {
-        //load the session object which contains the current session user
-        $session = new Session($AuthenticationAuthority); 
-        return $session->getUser();
+        $this->AuthenticationAuthority = $AuthenticationAuthority;
+    }
+
+    public function getAuthenticationAuthority()
+    {
+        return $this->AuthenticationAuthority;
+    }
+
+    public function getAuthenticationAuthorityIndex()
+    {
+        if ($authority = $this->getAuthenticationAuthority()) {
+            return $authority->getAuthorityIndex();
+        } 
+        
+        return null;
     }
     
     protected function standardAttributes()
@@ -75,7 +95,22 @@ abstract class User
     {
         $this->LastName = $LastName;
     }
+
+    public function setFullName($FullName)
+    {
+        $this->FullName = $FullName;
+    }
     
+    public function getFullName()
+    {
+        if (!empty($this->FullName)) {
+            return $this->FullName;
+        } elseif (!empty($this->FirstName) || !empty($this->LastName)) {
+            return trim(sprintf("%s %s", $this->FirstName, $this->LastName));
+        } else {
+            return $this->getUserID();
+        }
+    }
     public function getFirstName()
     {
         return $this->FirstName;
@@ -86,13 +121,33 @@ abstract class User
         return $this->LastName;
     }
     
+    public function __construct(AuthenticationAuthority $AuthenticationAuthority)
+    {
+        $this->setAuthenticationAuthority($AuthenticationAuthority);
+    }
+    
+    public function isMemberOfGroup(UserGroup $group)
+    {
+        return $group->userIsMember($this);
+    }
 }
 
+/**
+ * Basic user class
+ * @package Authentication
+ */
 class BasicUser extends User
 {
 }
 
+/**
+ * Anonymous User
+ * @package Authentication
+ */
 class AnonymousUser extends User
 {
+    public function __construct()
+    {
+    }
 }
 

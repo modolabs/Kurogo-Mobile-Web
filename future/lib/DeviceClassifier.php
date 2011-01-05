@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Core
+  */
 
+/**
+  * Name of the cookie used for device classification
+  */
 define('COOKIE_KEY', 'deviceClassification');
 
+/**
+  * Contacts the Device Classification Server and sets the the appropriate properties
+  * @package Core
+  */
 class DeviceClassifier {
   private $pagetype = 'unknown';
   private $platform = 'unknown';
@@ -63,10 +73,11 @@ class DeviceClassifier {
         time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
 
       //error_log(__FUNCTION__."(): choosing mobi service layout '".$this->getDevice()."' <{$_SERVER['REQUEST_URI']}>");
+      //error_log('User-agent is: '.$_SERVER['HTTP_USER_AGENT']);
+    } else {
     }
     
     //error_log('DeviceClassifier chose: '.$this->getDevice());
-    //error_log('User-agent is: '.$_SERVER['HTTP_USER_AGENT']);
   }
   
   public function isComputer() {

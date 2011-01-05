@@ -1,5 +1,11 @@
 <?php
+/**
+  * @package Database
+  */
 
+/**
+  * @package Database
+  */
 class SiteDB
 {
   public static $db = null;

@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Error
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/Module.php');
 
+/**
+  * @package Module
+  * @subpackage Error
+  */
 class ErrorModule extends Module {
   protected $id = 'error';
 
@@ -31,6 +41,10 @@ class ErrorModule extends Module {
     ),
     'protected' => array(
       'message' =>  'This module requires you to login',
+      'linkText' => 'Click here to login'
+    ),
+    'protectedACL' => array(
+      'message' =>  'You are not permitted to use this module',
       'linkText' => 'Click here to login'
     ),
     'default' => array(

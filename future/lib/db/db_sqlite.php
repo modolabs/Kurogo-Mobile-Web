@@ -1,4 +1,13 @@
 <?php
+/**
+  * SQLite database abstraction
+  * @package Database
+  */
+
+/**
+  * SQLite database abstraction
+  * @package Database
+  */
 
 class db_sqlite extends db
 {

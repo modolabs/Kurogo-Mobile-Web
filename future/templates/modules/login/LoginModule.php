@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Login
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/Module.php');
 
+/**
+  * @package Module
+  * @subpackage Login
+  */
 class LoginModule extends Module {
   protected $id = 'login';
   
@@ -10,19 +20,44 @@ class LoginModule extends Module {
   }
 
   protected function initializeForPage() {
+    if (!$this->getSiteVar('AUTHENTICATION_ENABLED')) {
+        throw new Exception("Authentication is not enabled");
+    }
     
     $url = $this->getArg('url', ''); //return url
     $this->assign('url', $url);
-    $user = $this->getUser();
+    $session = $this->getSession();
 
+    $authenticationAuthorities = array();                
+    $authenticationAuthorityLinks = array();                
+    foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authorityIndex=>$authorityData) {
+        if (isset($authorityData['OAUTH'])) {
+            $authorityData['LINK'] = $this->buildBreadcrumbURL('login', array('url'=>$url,'authority'=>$authorityIndex), false);
+            $authenticationAuthorityLinks[$authorityIndex] = $authorityData;
+        } else {
+            $authenticationAuthorities[$authorityIndex] = $authorityData;
+        }
+    }
+                    
+    if (count($authenticationAuthorities)==0 && count($authenticationAuthoritysLinks)==0) {
+        throw new Exception("No authentication authorities have been defined");
+    }
+    
+    $this->assign('authenticationAuthorities', $authenticationAuthorities);
+    $this->assign('authenticationAuthorityLinks', $authenticationAuthorityLinks);
+    
+    $multipleAuthorities = count($authenticationAuthorities) + count($authenticationAuthorityLinks) > 1;
+    
     switch ($this->page)
     {
         case 'logout':
             $this->setTemplatePage('message');
-            if (!$this->session->isLoggedIn()) {
+            if (!$this->isLoggedIn()) {
                 $this->redirectTo('login');
             } else {
-                $result = $this->session->logout($user);
+                $user = $this->getUser();
+                $authority = $user->getAuthenticationAuthority();
+                $authority->logout($this);
                 $this->assign('message', 'Logout Successful');
             }
         
@@ -30,13 +65,24 @@ class LoginModule extends Module {
             
         case 'login':
             $login = $this->argVal($_POST, 'loginUser', '');
+            $password = $this->argVal($_POST, 'loginPassword', '');
+            
+            $authorityIndex = $this->getArg('authority', AuthenticationAuthority::getDefaultAuthenticationAuthority());
+            $this->assign('authority', $authorityIndex);
 
-            if ($this->session->isLoggedIn() || empty($login)) {
+            if ($this->isLoggedIn()) {
+                $this->redirectTo('index');
+            }                    
+            
+            if ($this->argVal($_POST, 'login_submit') && empty($login)) {
                 $this->redirectTo('index');
             }
             
-            $password = $this->argVal($_POST, 'loginPassword', '');
-            $result = $this->session->login($login, $password, $user);
+            if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
+                $result = $authority->login($login, $password, $this);
+            } else {
+                $this->redirectTo('index');
+            }
 
             switch ($result)
             {
@@ -61,14 +107,18 @@ class LoginModule extends Module {
                     
 
             }
+
             break;
         case 'index':
-            if ($this->session->isLoggedIn()) {
+            if ($this->isLoggedIn()) {
                 $user = $this->getUser();
+                $authority = $user->getAuthenticationAuthority();
                 $this->setTemplatePage('message');
-                $this->assign('message', "You are logged in as " . $user->getUserID());
+                
+                $this->assign('message', sprintf("You are logged in as %s %s", $user->getFullName(), $multipleAuthorities ? '(' . $authority->getAuthorityTitle() . ')' : ''));
+                
                 $this->assign('url', $this->buildURL('logout'));
-                $this->assign('linkText', 'Click here to logout.');
+                $this->assign('linkText', 'Logout');
             }
             break;
     }

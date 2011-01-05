@@ -1,16 +1,28 @@
 <?php
+/**
+  * @package Authentication
+  */
 
+/**
+  */
 require_once(LIB_DIR . '/AuthenticationAuthority.php');
+
+/**
+  */
 require_once(LIB_DIR . '/User.php');
 
+/**
+  * @package Authentication
+  */
 class LDAPAuthentication extends AuthenticationAuthority
 {
     private $ldapServer;
     private $ldapPort=389;
-    private $ldapSearchBase;
+    private $ldapUserSearchBase;
+    private $ldapGroupSearchBase;
     private $ldapAdminDN;
     private $ldapAdminPassword;
-    private $ldapUIDField='uid';
+    private $fieldMap=array();
     private $ldapResource;
     
     private function connectToServer()
@@ -41,7 +53,7 @@ class LDAPAuthentication extends AuthenticationAuthority
         }
      
         // attempt to bind as this user
-        $auth = ldap_bind($ldap, $user->getDN(), $password);
+        $auth = @ldap_bind($ldap, $user->getDN(), $password);
         if ($auth) {
             return AUTH_OK;
         } else {
@@ -49,12 +61,27 @@ class LDAPAuthentication extends AuthenticationAuthority
         }
     }
     
-    public function ldapSearchBase()
+    public function getField($field)
     {
-        if ($this->ldapSearchBase) {
-            return $this->ldapSearchBase;
+        return isset($this->fieldMap[$field]) ? $this->fieldMap[$field] : null;
+    }
+    
+    public function ldapSearchBase($type)
+    {
+        switch ($type)
+        {
+            case 'user':
+                if ($this->ldapUserSearchBase) {
+                    return $this->ldapUserSearchBase;
+                }
+                break;
+            case 'group':
+                if ($this->ldapGroupSearchBase) {
+                    return $this->ldapGroupSearchBase;
+                }
+                break;
         }
-
+        
         //we can attempt to "discover" the search base in many cases, but this might have some performance implications
         $ldap = $this->connectToServer();
         if (!$ldap) {
@@ -82,7 +109,7 @@ class LDAPAuthentication extends AuthenticationAuthority
     {
         // don't try if it's empty
         if (empty($login)) {
-            return false;
+            return new AnonymousUser();       
         }
 
         $ldap = $this->connectToServer();
@@ -101,19 +128,22 @@ class LDAPAuthentication extends AuthenticationAuthority
                 return false;
             }
         }
+        
+        if (!$this->getField('uid')) {
+            throw new Exception('LDAP uid field not specified');
+        }
 
-        $search = @ldap_search($ldap, $this->ldapSearchBase(), sprintf("%s=%s", $this->ldapUIDField, $login));
+        $search = @ldap_search($ldap, $this->ldapSearchBase('user'), sprintf("%s=%s", $this->getField('uid'), $login));
         if ($search) {
             $result = @ldap_get_entries($ldap, $search);
             // see if we got a result back 
             if ($result['count']>0) {
                 $entry = $result[0];
-                $user = new LDAPUser();
-                $user->setLdapUIDField($this->ldapUIDField);
+                $user = new LDAPUser($this);
                 $user->setDN($entry['dn']);
 
                 // single value attributes expect a maximum of one value
-                $singleValueAttributes = LDAPUser::singleValueAttributes();
+                $singleValueAttributes = $user->singleValueAttributes();
                 for ($i=0; $i<$entry['count']; $i++) {
                     $attrib = $entry[$i];
                     
@@ -137,19 +167,98 @@ class LDAPAuthentication extends AuthenticationAuthority
         }
     }
 
+    public function getGroup($group)
+    {
+        // don't try if it's empty
+        if (empty($group)) {
+            return false;
+        }
+
+        $ldap = $this->connectToServer();
+        if (!$ldap) {
+            return false;
+        }
+        
+        /*
+            some servers don't permit anonymous searches so we need to bind as a valid user 
+             Note: it does not, and should not be an account with administrative privilages. 
+                    Usually a regular service account will suffice
+        */
+        if ($this->ldapAdminDN) {
+            if (!ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
+                error_log("Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap));
+                return false;
+            }
+        }
+
+        if (!$this->getField('groupname')) {
+            throw new Exception('LDAP group name field not specified');
+        }
+
+        if (!$this->getField('members')) {
+            throw new Exception('LDAP group members field not specified');
+        }
+        
+        $search = @ldap_search($ldap, $this->ldapSearchBase('group'), sprintf("%s=%s", $this->getField('groupname'), $group));
+        if ($search) {
+            $result = @ldap_get_entries($ldap, $search);
+            // see if we got a result back 
+            if ($result['count']>0) {
+                $entry = $result[0];
+                $group = new LDAPUserGroup($this);
+                $group->setDN($entry['dn']);
+
+                // single value attributes expect a maximum of one value
+                $singleValueAttributes = $group->singleValueAttributes();
+                for ($i=0; $i<$entry['count']; $i++) {
+                    $attrib = $entry[$i];
+                    
+                    if (in_array($attrib, $singleValueAttributes)) {
+                        $value = $entry[$attrib][0];
+                    } else {
+                        $value = $entry[$attrib];
+                        unset($value['count']);
+                    }
+                    
+                    $group->setAttribute($attrib, $value);
+                }
+                return $group;
+            } else {
+                return false;
+            }
+        } else {
+            error_log("Error searching LDAP Server $this->ldapServer for group=$group: " . ldap_error($ldap));
+            return false;
+        }
+    }
+    
     public function init($args)
     {
+        parent::init($args);
         $args = is_array($args) ? $args : array();
-        $this->ldapServer = isset($args['AUTHENTICATION_SERVER']) ? $args['AUTHENTICATION_SERVER'] : null;
-        $this->ldapPort = isset($args['AUTHENTICATION_SERVER_PORT']) ? $args['AUTHENTICATION_SERVER_PORT'] : 389;
-        $this->ldapSearchBase = isset($args['AUTHENTICATION_LDAP_SEARCH_BASE']) ? $args['AUTHENTICATION_LDAP_SEARCH_BASE'] : null;
+        $this->ldapServer = isset($args['HOST']) ? $args['HOST'] : null;
+        $this->ldapPort = isset($args['PORT']) ? $args['PORT'] : 389;
+        $this->ldapUserSearchBase = isset($args['USER_SEARCH_BASE']) ? $args['USER_SEARCH_BASE'] : null;
+        $this->ldapGroupSearchBase = isset($args['GROUP_SEARCH_BASE']) ? $args['GROUP_SEARCH_BASE'] : null;
 
         //used if anonymous searches are not permitted (i.e. AD)
-        $this->ldapAdminDN = isset($args['AUTHENTICATION_LDAP_ADMIN_DN']) ? $args['AUTHENTICATION_LDAP_ADMIN_DN'] : null;
-        $this->ldapAdminPassword = isset($args['AUTHENTICATION_LDAP_ADMIN_PASSWORD']) ? $args['AUTHENTICATION_LDAP_ADMIN_PASSWORD'] : null;
-
-        //field use store the login name of the user. Typically uid in "regular" ldap directories. It's cn in active directory
-        $this->ldapUIDField = isset($args['AUTHENTICATION_LDAP_USER_UID']) ? $args['AUTHENTICATION_LDAP_USER_UID'] : 'uid';
+        $this->ldapAdminDN = isset($args['ADMIN_DN']) ? $args['ADMIN_DN'] : null;
+        $this->ldapAdminPassword = isset($args['ADMIN_PASSWORD']) ? $args['ADMIN_PASSWORD'] : null;
+        
+        $this->fieldMap = array(
+            'uid'=>'',
+            'groupname'=>'',
+            'members'=>'',
+            'gid'=>''
+        );
+        
+        foreach ($args as $arg=>$value) {
+            if (preg_match("/^(user|group)_(.*?)_field$/", strtolower($arg), $bits)) {
+                if (isset($this->fieldMap[$bits[2]])) {
+                    $this->fieldMap[$bits[2]] = strtolower($value);
+                }
+            }
+        }
         
         if ( empty($this->ldapServer) || empty($this->ldapPort)) {
             throw new Exception("Invalid LDAP Options");
@@ -157,16 +266,13 @@ class LDAPAuthentication extends AuthenticationAuthority
     }
 }
 
+/**
+  * @package Authentication
+  */
 class LDAPUser extends BasicUser
 {
-    protected $ldapUIDField='uid';
     protected $dn;
     
-    public function setLdapUIDField($field)
-    {
-        $this->ldapUIDField = $field;
-    }
-
     public function getDN()
     {
         return $this->dn;
@@ -190,7 +296,7 @@ class LDAPUser extends BasicUser
             case 'givenname':
                 $this->setFirstName($value);
                 break;
-            case $this->ldapUIDField:
+            case $this->AuthenticationAuthority->getField('uid'):
                 $this->setUserID($value);
                 break;
             default:
@@ -201,11 +307,83 @@ class LDAPUser extends BasicUser
 
     public function singleValueAttributes()
     {
-        return array('dn','mail','uid','sn','cn','givenname'); //there's more here. 
+        return array('dn','mail',$this->AuthenticationAuthority->getField('uid'),'sn','cn','givenname'); //there's more here. 
     }    
 
     protected function standardAttributes()
     {
-        return array_merge(parent::standardAttributes(), array('dn','mail','sn','givenname'));
+        return array_merge(parent::standardAttributes(), array('dn'));
     }    
+}
+
+/**
+  * @package Authentication
+  */
+class LDAPUserGroup extends BasicUserGroup
+{
+    protected $dn;
+    
+    public function getDN()
+    {
+        return $this->dn;
+    }
+
+    public function setDN($dn)
+    {
+        $this->dn = $dn;
+    }
+
+    public function singleValueAttributes()
+    {
+        return array('cn', $this->AuthenticationAuthority->getField('gid')); //there's more here. 
+    }    
+
+    protected function standardAttributes()
+    {
+        return array_merge(parent::standardAttributes(), array('dn'));
+    }    
+
+    public function setAttribute($attribute, $value)
+    {
+        switch ($attribute)
+        {
+            case $this->AuthenticationAuthority->getField('groupname'):
+                $this->setGroupName($value);
+                break;
+            case $this->AuthenticationAuthority->getField('gid'):
+                $this->setGroupID($value);
+                break;
+            case $this->AuthenticationAuthority->getField('members'):
+                $this->members=$value;
+                break;
+            default:
+                parent::setAttribute($attribute, $value);
+                break;
+        }
+    }
+
+    public function getMembers()
+    {
+        //lazy load the members since performance might be a factor
+        $members = array();
+        foreach ($this->members as $userID) {
+            if ($user = $this->AuthenticationAuthority->getUser($userID)) {
+                $members[] = $user;
+            }
+        }
+        
+        return $members;
+    }
+    
+    public function userIsMember(User $user)
+    {
+        //by definition LDAP groups can only contain users from the same authority
+        if ($user->getAuthenticationAuthorityIndex()==$this->getAuthenticationAuthorityIndex()) {
+            if (in_array($user->getUserID(), $this->members)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }

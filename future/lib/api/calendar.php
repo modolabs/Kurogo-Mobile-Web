@@ -1,5 +1,11 @@
 <?php
+/**
+  * @package Module
+  * @subpackage Calendar
+  */
 
+/**
+  */
 require_once(LIB_DIR . '/ICalendar.php');
 
 $data = array();

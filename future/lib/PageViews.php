@@ -1,7 +1,15 @@
 <?php
+/**
+  * @package Core
+  */
 
+/**
+  */
 require_once realpath(LIB_DIR.'/db.php');
 
+/**
+  * @package Core
+  */
 class PageViews {
 
   public static function log_api($module, $platform, $time=NULL) {

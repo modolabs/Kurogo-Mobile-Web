@@ -1,7 +1,17 @@
 <?php
+/**
+  * @package ExternalData
+  * @subpackage Calendar
+  */
 
+/**
+  */
 require_once(LIB_DIR . '/ICalendar.php');
 
+/**
+  * @package ExternalData
+  * @subpackage Calendar
+  */
 class TrumbaCalendarDataController extends CalendarDataController
 {
     const DEFAULT_EVENT_CLASS='TrumbaEvent';
@@ -77,6 +87,10 @@ class TrumbaCalendarDataController extends CalendarDataController
     
 }
 
+/**
+  * @package ExternalData
+  * @subpackage Calendar
+  */
 class TrumbaEvent extends ICalEvent
 {
     protected $TrumbaCustomFields=array();
