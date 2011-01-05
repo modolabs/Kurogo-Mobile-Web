@@ -1,4 +1,7 @@
-{include file="findInclude:common/header.tpl"}
+{block name="header"}
+    {include file="findInclude:common/header.tpl"}
+{/block}
+
 
 <div class="nonfocal">
   <h2>{$today|date_format:"%A %b %e, %Y"}</h2>
@@ -18,6 +21,8 @@
   </select>
 {/capture}
 
-{include file="findInclude:common/search.tpl" additionalInputs=$selectSection placeholder="Search for events"}
+{block name="searchsection"}
+    {include file="findInclude:common/search.tpl" additionalInputs=$selectSection placeholder="Search for events"}
+{/block}
 
 {include file="findInclude:common/footer.tpl"}

@@ -37,13 +37,16 @@
 
 {block name="form"}
   {if !$insideForm}
-    <div class="nonfocal">
+    <div class="nonfocal" id="searchformcontainer">
       <form method="get" action="{$searchPage|default:'search'}.php">
   {/if}
   
         <fieldset class="inputcombo{if $emphasized|default:$isModuleHome} emphasized{/if} search_{$moduleID}">
-          <input class="forminput" type="text" id="{$inputName|default:'filter'}" name="{$inputName|default:'filter'}" placeholder="{$placeholder|default:''}" value="{$searchTerms|escape}" />
-          <input class="combobutton" id="sch_btn" src="/common/images/search-button.png" type="image" />
+          <input class="forminput" type="text" id="{$inputName|default:'filter'}" name="{$inputName|default:'filter'}" placeholder="{$placeholder|default:''}" value="{$searchTerms|escape}" onfocus="androidPlaceholderFix(this);" />
+
+          {block name="searchbutton"}
+            <input class="combobutton" id="sch_btn" src="/common/images/search-button.png" type="image" />
+          {/block}
           {$hiddenArgHTML}
         </fieldset>
         {if isset($additionalInputs)}

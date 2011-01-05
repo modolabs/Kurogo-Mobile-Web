@@ -2,7 +2,6 @@
 
 require_once(LIB_DIR . '/ICalendar.php');
 
-$timezone = new DateTimeZone($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
 $data = array();
 
 $module = Module::factory('calendar', '', $_GET);
@@ -15,7 +14,7 @@ switch ($_REQUEST['command']) {
     
     $feed = $module->getFeed($type);
     
-    $start = new DateTime(date('Y-m-d H:i:s', $time), $timezone);
+    $start = new DateTime(date('Y-m-d H:i:s', $time), $module->timezone());
     $start->setTime(0,0,0);
     $end = clone $start;
     $end->setTime(23,59,59);
@@ -36,7 +35,7 @@ switch ($_REQUEST['command']) {
     
     $feed = $module->getFeed($type);
     
-    $start = new DateTime(null, $timezone);
+    $start = new DateTime(null, $module->timezone());
     $start->setTime(0,0,0);
     $feed->setStartDate($start);
     $feed->setDuration(7,'day');
@@ -60,9 +59,8 @@ switch ($_REQUEST['command']) {
       
       if (strlen($id) > 0) {
         $feed = $module->getFeed($type);
-        $feed->setObjectClass('event', $eventClass);
         
-        $start = new DateTime(date('Y-m-d H:i:s', $start), $timezone);
+        $start = new DateTime(date('Y-m-d H:i:s', $start), $module->timezone());
         $start->setTime(0,0,0);
         $end = clone $start;
         $end->setTime(23,59,59);
@@ -102,8 +100,8 @@ switch ($_REQUEST['command']) {
   case 'academic':
     $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 
-    $start = new DateTime( $year   ."0901", $timezone);        
-    $end   = new DateTime(($year+1)."0831", $timezone);
+    $start = new DateTime( $year   ."0901", $module->timezone());        
+    $end   = new DateTime(($year+1)."0831", $module->timezone());
     
     $feed = $module->getFeed('academic');
     $feed->setStartDate($start);

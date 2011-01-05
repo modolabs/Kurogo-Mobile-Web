@@ -1,4 +1,7 @@
-{include file="findInclude:common/header.tpl"}
+{block name="header"}
+    {include file="findInclude:common/header.tpl"}
+{/block}
+
 
 <div class="focal"> 
   <p>Use the up and down links to customize the order of icons on your homepage. Use the checkboxes to toggle visibility. Changes are automatically saved, but <strong>you may need to manually refresh your homepage</strong> after you're finished here.</p>

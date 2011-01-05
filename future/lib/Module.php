@@ -4,6 +4,8 @@ require_once realpath(LIB_DIR.'/TemplateEngine.php');
 require_once realpath(LIB_DIR.'/HTMLPager.php');
 require_once realpath(LIB_DIR.'/User.php');
 
+define('MODULE_BREADCRUMB_PARAM', '_b');
+
 abstract class Module {
   protected $id = 'none';
   protected $moduleName = '';
@@ -238,6 +240,31 @@ abstract class Module {
     
     return "$page.php".(strlen($argString) ? "?$argString" : "");
   }
+  
+  protected function buildMailtoLink($to, $subject, $body) {
+    $to = trim($to);
+    
+    // Some old BlackBerries will give you an error about unsupported protocol
+    // if you have a mailto: link that doesn't have a "@" in the recipient 
+    // field. So we can't leave this field blank for these models. It's not
+    // a matter of being <= 9000 either, since there are Curves that are fine.
+    $modelsNeedingToField = array("8100", "8220", "8230", "9000");
+    if ($to == '') {
+      foreach ($modelsNeedingToField as $model) {
+        if (strpos($_SERVER['HTTP_USER_AGENT'], "BlackBerry".$model) !== FALSE) {
+          $to = '@';
+          break;
+        }
+      }
+    }
+
+    $url = "mailto:{$to}?".http_build_query(array("subject" => $subject, 
+                                                  "body" => $body));
+    // mailto url's do not respect '+' (as space) so we convert to %20
+    $url = str_replace('+', '%20', $url); 
+    
+    return $url;
+  }
 
   protected function redirectToModule($id, $args=array()) {
     $url = URL_BASE."{$id}/?". http_build_query($args);
@@ -276,16 +303,32 @@ abstract class Module {
       return $GLOBALS['siteConfig']->getSection($var, $log_error);
   }
 
-  protected function getModuleVar($var, $default=null)
+  public function getModuleVar($var, $default=null)
   {
      $config = $this->getModuleConfig();
      $value = $config->getVar($var, Config::EXPAND_VALUE);
      return is_null($value) ? $default :$value;
   }
 
-  protected function getModuleSection($section, $default=array())
+  public function getModuleSection($section, $default=array())
   {
      $config = $this->getModuleConfig();
+     if (!$section = $config->getSection($section)) {
+        $section = $default;
+     }
+     return $section;
+  }
+
+  public function getAPIVar($var, $default=null)
+  {
+     $config = $this->getAPIConfig();
+     $value = $config->getVar($var, Config::EXPAND_VALUE);
+     return is_null($value) ? $default :$value;
+  }
+
+  public function getAPISection($section, $default=array())
+  {
+     $config = $this->getAPIConfig();
      if (!$section = $config->getSection($section)) {
         $section = $default;
      }
@@ -361,8 +404,7 @@ abstract class Module {
        
   }
   
-  protected function loadFeedData()
-  {
+  protected function loadFeedData() {
     $data = null;
     $feedConfigFile = realpath_exists(sprintf("%s/feeds/%s.ini", SITE_CONFIG_DIR, $this->id));
     if ($feedConfigFile) {
@@ -659,6 +701,15 @@ abstract class Module {
     return $moduleConfig;
   }
 
+  public function getAPIConfig() {
+    static $apiConfig;
+    if (!$apiConfig) {
+        $apiConfig = $this->getConfig($this->id, 'api', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
+    }
+
+    return $apiConfig;
+  }
+
   public function getModuleData() {
     static $moduleData;
     if (!$moduleData) {
@@ -700,32 +751,71 @@ abstract class Module {
   // Breadcrumbs
   //
   private function loadBreadcrumbs() {
-    if (isset($this->args['breadcrumbs'])) {
-      $breadcrumbs = unserialize(rawurldecode($this->args['breadcrumbs']));
+    if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {
+      $breadcrumbs = unserialize(urldecode($this->args[MODULE_BREADCRUMB_PARAM]));
       if (is_array($breadcrumbs)) {
+        for ($i = 0; $i < count($breadcrumbs); $i++) {
+          $b = $breadcrumbs[$i];
+          
+          $breadcrumbs[$i]['title'] = $b['t'];
+          $breadcrumbs[$i]['longTitle'] = $b['lt'];
+          
+          $breadcrumbs[$i]['url'] = "{$b['p']}.php";
+          if (strlen($b['a'])) {
+            $breadcrumbs[$i]['url'] .= "?{$b['a']}";
+          }
+          
+          $linkCrumbs = array_slice($breadcrumbs, 0, $i);
+          if (count($linkCrumbs)) { 
+            $this->cleanBreadcrumbs(&$linkCrumbs);
+            
+            $crumbParam = http_build_query(array(
+              MODULE_BREADCRUMB_PARAM => urlencode(serialize($linkCrumbs))
+            ));
+            if (strlen($crumbParam)) {
+              $breadcrumbs[$i]['url'] .= (strlen($b['a']) ? '&' : '?').$crumbParam;
+            }
+          }
+        }
+
         $this->breadcrumbs = $breadcrumbs;
+        
       }
     }
     //error_log(__FUNCTION__."(): loaded breadcrumbs ".print_r($this->breadcrumbs, true));
   }
   
+  private function cleanBreadcrumbs(&$breadcrumbs) {
+    foreach ($breadcrumbs as $index => $breadcrumb) {
+      unset($breadcrumbs[$index]['url']);
+      unset($breadcrumbs[$index]['title']);
+      unset($breadcrumbs[$index]['longTitle']);
+    }
+  }
+  
   private function getBreadcrumbString($addBreadcrumb=true) {
     $breadcrumbs = $this->breadcrumbs;
     
+    $this->cleanBreadcrumbs(&$breadcrumbs);
+    
     if ($addBreadcrumb && $this->page != 'index') {
+      $args = $this->args;
+      unset($args[MODULE_BREADCRUMB_PARAM]);
+      
       $breadcrumbs[] = array(
-        'title'     => $this->breadcrumbTitle,
-        'longTitle' => $this->breadcrumbLongTitle,
-        'url'       => self::buildURL($this->page, $this->args),
+        't'  => $this->breadcrumbTitle,
+        'lt' => $this->breadcrumbLongTitle,
+        'p'  => $this->page,
+        'a'  => http_build_query($args),
       );
     }
     //error_log(__FUNCTION__."(): saving breadcrumbs ".print_r($breadcrumbs, true));
-    return rawurlencode(serialize($breadcrumbs));
+    return urlencode(serialize($breadcrumbs));
   }
   
   private function getBreadcrumbArgs($addBreadcrumb=true) {
     return array(
-      'breadcrumbs' => $this->getBreadcrumbString($addBreadcrumb),
+      MODULE_BREADCRUMB_PARAM => $this->getBreadcrumbString($addBreadcrumb),
     );
   }
 
@@ -837,7 +927,6 @@ abstract class Module {
     $themeVars = $config->getSectionVars(true);
     
     if ($keyName === false) {
-    
       foreach($themeVars as $key => $value) {
         $this->templateEngine->assign($key, $value);
       }

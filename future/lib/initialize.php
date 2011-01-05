@@ -39,6 +39,22 @@ function Initialize(&$path=null) {
 
 
   //
+  // Set up host define for server name and port
+  //
+  $host = $_SERVER['SERVER_NAME'];
+  if ($_SERVER['SERVER_PORT']) {
+    $host .= ":{$_SERVER['SERVER_PORT']}";
+  }
+  define('SERVER_HOST', $host);
+  
+  
+  //
+  // And a double quote define for ini files (php 5.1 can't escape them)
+  //
+  define('_QQ_', '"');
+  
+
+  //
   // Get URL base
   //
   
@@ -114,12 +130,9 @@ function Initialize(&$path=null) {
 
   //error_log(__FUNCTION__."(): prefix: $urlPrefix");
   //error_log(__FUNCTION__."(): path: $path");
-
-  if (isset($device) || isset($_SERVER['HTTP_USER_AGENT']) && strlen($_SERVER['HTTP_USER_AGENT'])) {
-    require_once realpath(LIB_DIR.'/DeviceClassifier.php');
-    
-    $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
-  }
+  
+  require_once realpath(LIB_DIR.'/DeviceClassifier.php');
+  $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
   
   
   //

@@ -89,13 +89,7 @@ h1 {
 	margin: 14px 0;
 	font-size: 13px;
 }
-#homesearch {
-	margin: 6px 0 16px 0;
-	text-align: center;
-}
-#homesearch table {
-	width: 100%;
-}
+
 .forminput {
 	font-size: 100%;
 	width: 100%;

@@ -65,3 +65,6 @@
     <img src="{$gaImageURL}" />
   {/if}
 {/block}
+
+{block name="footerJavascript"}
+{/block}

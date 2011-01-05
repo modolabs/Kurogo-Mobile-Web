@@ -1,4 +1,7 @@
-{include file="findInclude:common/header.tpl"}
+{block name="header"}
+    {include file="findInclude:common/header.tpl"}
+{/block}
+
 
 {if $newCount > 0}
   <div id="statusmsg" class="focal collapsed" onclick="showHideFuller(this);">

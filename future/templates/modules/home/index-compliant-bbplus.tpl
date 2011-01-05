@@ -1,4 +1,8 @@
-{extends file="findExtends:modules/{$moduleID}/index-basic.tpl"}
+{extends file="findExtends:modules/{$moduleID}/index.tpl"}
+
+{block name="banner"}
+    <h1><img id="logo" src="/modules/home/images/logo-home.png" width="400" height="67" alt="{$SITE_NAME}" /></h1>
+{/block}
 
 {block name="homeFooter"}
   <div id="download">

@@ -1,4 +1,7 @@
-{include file="findInclude:common/header.tpl"}
+{block name="header"}
+    {include file="findInclude:common/header.tpl"}
+{/block}
+
 
 <div class="nonfocal">
   <h2>{$feedTitle} for {$current}</h2>

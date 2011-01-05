@@ -1,17 +1,15 @@
 <?php
 
-$peopleController = $GLOBALS['siteConfig']->getVar('PEOPLE_CONTROLLER_CLASS');
-$personClass      = $GLOBALS['siteConfig']->getVar('PEOPLE_PERSON_CLASS');
+$module = Module::factory('people');
+$displayFields = $module->getAPISection('displayFields');
 
-$displayFields = $GLOBALS['siteConfig']->getAPIVar($_REQUEST['module'], 'displayFields');
+$PeopleController = $module->getFeed('people');
+$PeopleController->setAttributes(array_keys($displayFields));
 
 switch ($_REQUEST['command']) {
   case 'details':
     if (isset($_REQUEST['uid'])) {
 
-      $PeopleController = new $peopleController();
-      $PeopleController->setPersonClass($personClass);
-      $PeopleController->setAttributes(array_keys($displayFields));
       if ($person = $PeopleController->lookupUser($_REQUEST['uid'])) {
             $result = array(
                 'uid'=>$person->getId()
@@ -32,9 +30,6 @@ switch ($_REQUEST['command']) {
   case 'search':
     if (isset($_REQUEST['q']) && strlen((trim($_REQUEST['q'])))) {
           $searchText = trim(stripslashes($_REQUEST['q']));
-          $PeopleController = new $peopleController();
-          $PeopleController->setPersonClass($personClass);
-          $PeopleController->setAttributes(array_keys($displayFields));
           
           $people = $PeopleController->search($searchText);
           if (!is_array($people)) {

@@ -1,6 +1,6 @@
 <?php
 
-require_once realpath(MODULES_DIR.'/home/HomeModule.php');
+require_once realpath(LIB_DIR.'/Module.php');
 
 class CustomizeModule extends Module {
   protected $id = 'customize';

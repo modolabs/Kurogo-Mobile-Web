@@ -1,6 +1,8 @@
 {include file="findInclude:common/header.tpl" scalable=false}
 
-{include file="findInclude:common/search.tpl" emphasized=false placeholder="Search $SITE_NAME"}
+{block name="searchsection"}
+    {include file="findInclude:common/search.tpl" emphasized=false placeholder="Search $SITE_NAME"}
+{/block}
 
 {foreach $federatedResults as $federatedResult}
   <h3 class="nonfocal">{$federatedResult['title']}</h3>

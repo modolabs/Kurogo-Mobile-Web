@@ -38,7 +38,7 @@ class RSSElement
     
     public function setValue($value, $strip_tags=false)
     {
-        $this->value = $strip_tags ? strip_tags($value) : $value;
+        $this->value = $strip_tags ? strip_tags($value) : html_entity_decode($value);
     }
 
     public function appendValue($value)

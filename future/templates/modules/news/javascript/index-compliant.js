@@ -3,16 +3,13 @@ function loadSection(select) {
 }
 
 function toggleSearch() {
-    var searchForm = document.getElementById("search-form");
-    var categoryForm = document.getElementById("category-form");
+    var categorySwitcher = document.getElementById("category-switcher");
     
-    if(searchForm.style.display == "none") {
-        searchForm.style.display = null;
-        categoryForm.style.display = "none";
-        document.getElementById("search_terms").focus();
+    if (categorySwitcher.className == "search-mode") {
+        categorySwitcher.className = "category-mode";
     } else {
-        searchForm.style.display = "none";
-        categoryForm.style.display = null;
+        categorySwitcher.className = "search-mode";
+        document.getElementById("search_terms").focus();
     }
     return false;
 }

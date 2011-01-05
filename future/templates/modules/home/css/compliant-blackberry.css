@@ -1,0 +1,22 @@
+
+#homegrid div {
+	width: 76px;
+	height: 114px;
+	font-size: 16px;
+}
+#homegrid div.utility {
+	width: 76px;
+	height: 114px;
+	font-size: 14px;
+}
+#homegrid a {	
+	width: 76px;
+	height: 106px;
+	color: #333;
+}
+#homegrid a:hover {
+	border-color: #c00;
+}
+#homegrid a:active {
+	border-color: #900;
+}

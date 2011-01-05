@@ -11,12 +11,15 @@
 
 .byline {
     min-height:40px;
-	margin-top: -8px;
+	margin-top: -6px;
+	padding-bottom: 0.33em;
+	margin-bottom: 1.33em;
+    border-bottom: 1px dotted #999;
 }
 
-.share {
-    float: right;
-	margin-top: -8px;
+#storysubhead
+{
+    display: block;
 }
 
 .dek {
@@ -25,9 +28,9 @@
 
 .dek:empty { margin: 0; } /* CSS 3: shrink if no content */
 
-#image {float:right;margin: 6px 0 6px 8px;}
+#image {float:right;margin: 4px 0 6px 8px;}
 
-#image img.thumbnail {float:right; border: 1px solid #505050; /* scale to width respecting aspect */}
+#image img.thumbnail {border: 1px solid #505050; /* scale to width respecting aspect */}
 
 #image img.enlarge { float:right; margin-left: 4px; }
 

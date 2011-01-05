@@ -1,25 +1,38 @@
 .nav a {
-  display: inline-block;
-  padding: 5px;
-  margin: 0;
   background-image: none;
 }
 ul.iconic li {
   background-color: #fff;
   padding-left: 44px;
 }
-/* start of new styles */
+.nolink {
+	position: absolute;
+	top: 0;
+	border: 1px solid red;
+}
+.nolinkbuttons {
+	float: right;
+	width: 94px;
+	height: 36px;
+	margin-right: 9px;
+	position: relative;
+}
 ul.iconic li .moveup {
+  position: absolute;
+  left: 5px;
+  top: 5px;
   width:26px;
   height:26px;
   background-image:url(/modules/customize/images/compliant/button-up.png);
 }
 ul.iconic li .movedown {
+  position: absolute;
+  right: 5px;
+  top: 5px;
   width:26px;
   height:26px;
   background-image:url(/modules/customize/images/compliant/button-down.png);
 }
-/* end of new styles*/
 ul.iconic li:first-child {
   -webkit-border-top-left-radius: 9px;	
   -webkit-border-top-right-radius: 9px;	
@@ -30,11 +43,9 @@ ul.iconic li:last-child {
 }
 ul.iconic li:first-child .moveup {
   background-image:url(/modules/customize/images/compliant/button-up-alpha.png);
-  /* opacity:0.33; */
 }
 ul.iconic li:last-child .movedown {
   background-image:url(/modules/customize/images/compliant/button-down-alpha.png);
-  /* opacity:0.33; */
 }
 ul.iconic span.nolink { 
   position: relative;

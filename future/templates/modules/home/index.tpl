@@ -10,18 +10,21 @@
   {/block}
 {/capture}
 
-{include file="findInclude:common/header.tpl" customHeader=$banner scalable=false}
-
-{block name="homeSearch"}
-  {include file="findInclude:common/search.tpl" placeholder="Search "|cat:$SITE_NAME}  
+{block name="header"}
+    {include file="findInclude:common/header.tpl" customHeader=$banner scalable=false}
 {/block}
 
+{block name="searchsection"}
+  {include file="findInclude:common/search.tpl" placeholder="Search "|cat:$SITE_NAME}
+{/block}
+
+{block name="moduleItems"}
 {if $springboard}
   {include file="findInclude:common/springboard.tpl" springboardItems=$modules springboardID="homegrid"}
 {else}
   {include file="findInclude:common/navlist.tpl" navlistItems=$modules}
 {/if}
-
+{/block}
 
 {block name="homeFooter"}
 {/block}

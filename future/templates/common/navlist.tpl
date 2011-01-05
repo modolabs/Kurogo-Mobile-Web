@@ -6,7 +6,7 @@
 
     {foreach $navlistItems as $item}     
       {if !isset($item['separator'])}
-      
+        {$lastListItem = $item@last}
         {block name="navlistItem"}
           <li{if $item['img']} class="icon"{/if}>
             {include file="findInclude:common/listItem.tpl" subTitleNewline=$subTitleNewline|default:false}

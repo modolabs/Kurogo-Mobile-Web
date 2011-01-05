@@ -92,6 +92,7 @@ strong {
 #footer {
 	clear: both;
 	min-height: 22px;
+	padding-top: 10px;
 	margin: 20px 12px 14px 12px;
 	font-weight: normal;
 }
@@ -154,7 +155,11 @@ select {
 	height: 30px;
 	padding: 4px 6px;
 	-webkit-appearance:textfield;
-	-webkit-border-radius: 5px;
+}
+
+*:first-child+html .forminput {
+	/* The return of IE CSS hacks makes me mad */
+	width: 90%;	
 }
 
 .inputcombo {
@@ -215,6 +220,7 @@ a.formbutton {
 	margin: 0 5px;
 	height: 36px;
 	overflow: hidden;
+	text-decoration: none;
 }
 
 a.formbutton div {
@@ -228,6 +234,37 @@ a.formbutton div {
 	background-image: url(/common/images/button-sd-l.png);
 	background-repeat: no-repeat;
 	background-position: left;
+	text-decoration: none;
+}
+
+input.formbutton {
+  -webkit-appearance: none;
+  display: inline-block;
+	color: #fff;
+	font-weight: bold;
+	font-size: 16px;
+	line-height: 26px;
+	text-decoration: none;
+	padding: 5px 5px 5px 14px;
+	margin-right: 0;
+  border: none;
+	height: 36px;
+	overflow: hidden;  
+	background-color: transparent;
+	background-image: url(/common/images/button-sd-l.png);
+	background-repeat: no-repeat;
+	background-position: center left;
+	-webkit-border-radius: 0px;
+}
+.formbuttonclose {
+  display: inline-block;
+	background-color: transparent;
+	background-image: url(/common/images/button-sd-r.png);
+	background-repeat: no-repeat;
+	background-position: center right;
+	margin: 0;
+	height: 36px;
+	padding-right: 7px;
 }
 
 .radiobutton {
@@ -266,33 +303,46 @@ a.formbutton div {
 	height: 100%;
 	line-height: 44px;
 	vertical-align: top;
-    margin-left: -7px; /* overlap by the width of the drillup art */
-    padding: 0 19px 0 3px; 
+    margin-left: -8px; /* overlap by the width of the drillup art */
+    padding: 0 18px 0 2px; 
     background-image: url(/common/images/drillup-r.png);
 	background-repeat: no-repeat;
 	background-position: top right;
 	text-decoration: none;
 	overflow: hidden;
-	text-overflow: ellipsis
+	text-overflow: ellipsis;
+}
+
+*:first-child+html .breadcrumbs a {
+	/* The return of IE CSS hacks makes me mad */
+    margin-left: -5px; 	/* +3px vs normal */
+	padding-right: 16px;
 }
 
 a.homelink {
     background-image: none;
     margin-left: -2px;
-    padding: 0;
-    width: 58px;
+    margin-right: -5px;
+    padding: 0!important;	/* !important necessitated by IE for WP7 grrr */
+    width: 62px;
 }
+
 .breadcrumbs a.homelink img {
     padding: 0;
 }
 
 a.module img {
-	padding: 8px 3px 8px 4px;
+	padding: 8px 2px 8px 4px;
 }
 
 .homepage .moduleicon {
-    display: inline-block;
-    padding: 8px 6px 8px 4px;
+    padding: 8px 5px;
+}
+
+*:first-child+html .homepage .moduleicon {
+	/* The return of IE CSS hacks makes me mad */
+	padding-left: 3px;
+	float: left;
 }
 
 .crumb1 {
@@ -302,6 +352,7 @@ a.module img {
 .crumb2a  {
 	max-width: 60px;
 }
+
 .crumb2b  {
 	max-width: 60px;
 }
@@ -310,18 +361,32 @@ a.module img {
 	max-width: 40px;
   	display: none !important; /* hidden for now because it doesn't fit */
 }
+
 .crumb3b {
 	max-width: 60px;
 }
+
 .crumb3c {
 	max-width: 60px;
 }
 
 .pagetitle {
+	display: inline-block;
 	font-weight: bold;
-	margin-left: -4px;	
+	margin-left: -6px;	
 	vertical-align: top;
 	line-height: 44px;
+	height: 44px;
+}
+
+*:first-child+html .pagetitle {
+	/* The return of IE CSS hacks makes me cry */
+	margin-left: -3px;	
+}
+
+.homepage .pagetitle {
+	display: inline;
+	max-width: 210px;
 }
 
 .homepage .pagetitle {
@@ -343,7 +408,7 @@ a.module img {
 
 .springboard {
 	margin: 0 auto;
-	padding: 0 4px;
+	padding: 5px;
 	margin-left: 2px;
 	clear: both;
 }
@@ -364,6 +429,7 @@ a.module img {
 	padding: 8px 5px;
 	word-wrap: normal;
 }
+
 .springboard a img {
   height: 50px;
   width: 50px;
@@ -372,7 +438,7 @@ a.module img {
 .springboard .separator {
 	display: block;
 	width: 100%;
-	height: 10px;
+	height: 18px;
 	clear:both;
 	margin: 0;
 	padding: 0;
@@ -412,6 +478,10 @@ a.module img {
 
 .nav li:first-child {
 	border-top:0; 
+}
+
+.nav li div.smallprint {
+  padding-top: 2px;
 }
 
 .nav span.nolink {
@@ -481,8 +551,17 @@ ul.focal li:first-child {
 }
 
 .tabbody .nav {
-	margin: -4px -11px;
+	margin: 0 -8px;
 	border: none;
+	-webkit-border-bottom-right-radius: 8px;	
+	-webkit-border-bottom-left-radius: 8px;	
+}
+
+.tabbody .results {
+	margin: 8px 4px 0 4px;
+	border-width: 1px 0 0 0;
+	-webkit-border-bottom-right-radius: 8px;	
+	-webkit-border-bottom-left-radius: 8px;	
 }
 
 .tabbody .nested {
@@ -529,6 +608,10 @@ ul.focal li:first-child {
 .results li ul {
 	margin: 0 0 -8px 0;
 	padding: 0;
+}
+
+.results li div.smallprint {
+  padding-top: 2px;
 }
 
 .results li ul li {
@@ -631,7 +714,7 @@ ul.focal li:first-child {
 }
 
 .sidenav {
-	margin: 1.2em 8px;
+	margin: 12px 8px;
 	color: #a0a09f;
 }
 
@@ -729,6 +812,21 @@ ul.focal li:first-child {
 
 .value a {
 	background-position: 8px right;
+}
+
+.longlabel {
+	display: block;
+	font-size: 13px;
+	line-height: 15px;
+	font-weight: bold;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: auto;
+}
+.longlabel + .value {
+  margin-left: 0px;
 }
 
 .more {
@@ -931,7 +1029,7 @@ h2.icon {
 
 #tabs {
 	list-style-type: none;
-	margin: 0 0;
+	margin: 0;
 	padding: 0;
 }
 
@@ -942,13 +1040,13 @@ h2.icon {
 	-webkit-border-top-right-radius: 7px;	
 	-webkit-border-top-left-radius: 7px;	
 	text-align: center;
-	padding: 4px 10px 5px 10px;
+	padding: 6px 10px 7px 10px;
 }
 
 #tabs li.active {
-	margin-top: -2px;
-	padding-top: 5px;
-	padding-bottom: 6px;
+	margin-top: -1px;
+	padding-top: 7px;
+	padding-bottom: 8px;
 }
 
 #tabs li a {
@@ -965,21 +1063,26 @@ h2.icon {
 }
 
 #tabbodies {
-	margin: 0 -12px 0 -12px;
-	padding: 11px;
+	margin: -12px -12px 0 -12px;
 	clear: both;
 	border-top: 1px solid #bbb;
 	-webkit-border-bottom-right-radius: 8px;	
 	-webkit-border-bottom-left-radius: 8px;	
 }
 
+.shaded #tabbodies {
+	margin-top: -11px;
+}
+
 .tabbody {
 	position: relative;
 	min-height: 230px;
+	padding: 8px;
 }
 
 .tabbody h3 {
-	margin-top: 22px;
+	margin-top: 16px;
+	padding-top: 4px;
 }
 
 .tabbody h3:first-child {
@@ -1013,14 +1116,14 @@ h2.icon {
 	line-height: 32px;
 	text-decoration: none;
 	color: #fff;
-	background: url(/common/images/tabstrip.png) repeat-x;
+	background: url(/common/images/tabstrip.jpg) repeat-x;
 	-webkit-background-origin: padding-box; -webkit-background-clip: content-box; 
 	border-right: 1px solid #9fb8d3;
 	-webkit-border-radius: 1px;	
 }	
 
 #tabstrip li.active a {
-	background-image: url(/common/images/tabstrip-active.png);
+	background-image: url(/common/images/tabstrip-active.jpg);
 }
 
 #tabstrip li:first-child a {
@@ -1062,6 +1165,8 @@ h2.icon {
 	list-style-type: none;
 	padding: 0;
 	font-size: 70%;
+	margin: 0;
+	line-height: 1em;
 }
 
 .iconlegend img {
@@ -1162,4 +1267,67 @@ h2.icon {
 .devicedetection td[colspan] {
   width: auto;
   text-align: center;
+}
+
+#share {
+	float: right;
+	margin: -12px 0 0 8px;
+}
+#sharesheet {
+	visibility: hidden;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10000;
+}
+#shareback {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 200%;
+	background-color: #333;
+	opacity: 0.5;
+	-webkit-opacity: 0.5;
+	-moz-opacity: 0.5;
+	filter: alpha(opacity=67); /* IE */
+}
+#sharedialog {
+	position: absolute;
+	top: 80px;
+	left: 50%;
+	width: 260px;
+	margin-left: -140px;
+	-webkit-border-radius: 10px;
+	padding: 10px;
+	background: #ddd; /* Non-CSS3 browsers */
+	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#d0d0d0)); /* Webkit browsers */
+	background: -moz-linear-gradient(top,  #f9f9f9,  #d0d0d0); /* Firefox 3.6+ */
+	-moz-box-shadow: 0px 3px 7px #333;
+	-webkit-box-shadow: 0px 3px 7px #333;
+	box-shadow: 0px 3px 7px #333;
+}
+#sharedialog h1 {
+	color: #333;
+	font: 16pt/1.33em sans-serif;
+	margin-bottom: 6px
+}
+#sharedialog ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#sharedialog a {
+	display: block;
+	text-decoration: none;
+	padding: 6px 0;
+	line-height: 32px;
+	color: #000;
+}
+#sharedialog a img {
+	float: left;
+	margin-right: 6px;
+	border: none;
 }

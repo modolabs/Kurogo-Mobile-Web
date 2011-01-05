@@ -14,6 +14,11 @@ class CalendarModule extends Module {
   protected $feedFields = array('CACHE_LIFETIME'=>'Cache lifetime (seconds)', 'CONTROLLER_CLASS'=>'Controller Class','PARSER_CLASS'=>'Parser Class','EVENT_CLASS'=>'Event Class');
   protected $defaultSearchOption = 0;
 
+  public function timezone()
+  {
+    return $this->timezone;
+  }
+
   private $searchOptions = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
     array("phrase" => "in the next 15 days",  "offset" => 15),
@@ -324,7 +329,7 @@ class CalendarModule extends Module {
       
       case 'category':
         $type    = $this->getArg('type', 'events');
-        $id      = $this->getArg('catid', '');
+        $catid      = $this->getArg('catid', '');
         $name    = $this->getArg('name', '');
         $current = $this->getArg('time', time());
         $next    = $current + DAY_SECONDS;
@@ -340,15 +345,14 @@ class CalendarModule extends Module {
         $this->assign('current', $current);
         $this->assign('next',    $next);
         $this->assign('prev',    $prev);
-        $this->assign('nextUrl', $this->categoryDayURL($next, $id, $name, false));
-        $this->assign('prevUrl', $this->categoryDayURL($prev, $id, $name, false));
+        $this->assign('nextUrl', $this->categoryDayURL($next, $catid, $name, false));
+        $this->assign('prevUrl', $this->categoryDayURL($prev, $catid, $name, false));
         $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
 
         $events = array();
         
-        if (strlen($id) > 0) {
+        if (strlen($catid) > 0) {
             $feed = $this->getFeed($type); // this allows us to have multiple feeds in the future
-            
             $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
             $start->setTime(0,0,0);
             $end = clone $start;
@@ -356,7 +360,7 @@ class CalendarModule extends Module {
     
             $feed->setStartDate($start);
             $feed->setEndDate($end);
-            $feed->addFilter('category', $id);
+            $feed->addFilter('category', $catid);
             $iCalEvents = $feed->items();
           
           foreach($iCalEvents as $iCalEvent) {
@@ -366,7 +370,7 @@ class CalendarModule extends Module {
             }
           
             $events[] = array(
-              'url'      => $this->detailURL($iCalEvent,array('catid'=>$id)),
+              'url'      => $this->detailURL($iCalEvent,array('catid'=>$catid)),
               'title'    => $iCalEvent->get_summary(),
               'subtitle' => $subtitle,
             );
@@ -499,7 +503,7 @@ class CalendarModule extends Module {
             $field = array();
             
             $value = $event->get_attribute($key);
-            if (!strlen($value) || (is_array($value) && count($value)==0)) { 
+            if ((is_array($value) && count($value)==0) || strlen($value)==0)  { 
                 continue; 
             }
 

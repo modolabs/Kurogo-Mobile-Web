@@ -1,4 +1,6 @@
-{include file="findInclude:common/header.tpl"}
+{block name="header"}
+    {include file="findInclude:common/header.tpl"}
+{/block}
 
 {if isset($moduleStrings.description) && strlen($moduleStrings.description)}
   <p class="{block name='headingClass'}nonfocal smallprint{/block}">

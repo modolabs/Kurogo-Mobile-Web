@@ -9,8 +9,8 @@
 {/block}
     
     {block name="navlistItem"}
-      {include file="findInclude:common/listItem.tpl" subTitleNewline=false}
-      <br/>
+      {include file="findInclude:common/listItem.tpl" subTitleNewline=$subTitleNewline|default:false}
+      {if !$lastListItem}<br/>{/if}
     {/block}
     
 {block name="navlistEnd"}

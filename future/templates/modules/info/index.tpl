@@ -21,6 +21,7 @@
   <div id="content">
     {block name="content"}
       <h3>This is the default info page for desktop users to find out about your site.  Please extend this template in your theme to provide site-specific details.</h3>
+      <p>You probably want to go <a href="../home">to the home screen</a></p>
     {/block}
   </div>
   
