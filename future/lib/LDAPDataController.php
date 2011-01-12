@@ -51,7 +51,7 @@ class LDAPDataController extends PeopleController {
     return $this->doQuery();
   }
   
-  public function getField($_field)
+  private function getField($_field)
   {
        if (array_key_exists($_field, $this->fieldMap)) {
             return $this->fieldMap[$_field];
@@ -68,7 +68,7 @@ class LDAPDataController extends PeopleController {
         return $filter;
   }
   
-  public function buildQuery($searchString) {
+  private function buildQuery($searchString) {
 
     $this->filter = $filter = false;
     $this->errorNo = $this->errorMsg = null;
@@ -142,7 +142,7 @@ class LDAPDataController extends PeopleController {
     return $this->filter;
   }
 
-  public function getErrorNo() {
+  private function getErrorNo() {
     return $this->errorNo;
   }
 
@@ -152,7 +152,7 @@ class LDAPDataController extends PeopleController {
 
   /* return results, or FALSE on error.
    */
-  public function doQuery() {
+  private function doQuery() {
   
     if (!$this->filter) {
         return FALSE;
@@ -265,7 +265,7 @@ protected function generateErrorMessage($ldap_resource) {
         return "Your request cannot be processed at this time.";
     }
 }
-    public function setSearchBase($searchBase)
+    private function setSearchBase($searchBase)
     {
         $this->searchBase = $searchBase;
     }
@@ -299,7 +299,7 @@ class LDAPFilter
         $this->options = intval($options);
     }
 
-    public function ldapEscape($str) 
+    public static function ldapEscape($str) 
     { 
         // see RFC2254 
         // http://msdn.microsoft.com/en-us/library/ms675768(VS.85).aspx 
