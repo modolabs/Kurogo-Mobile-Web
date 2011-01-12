@@ -6,10 +6,9 @@
 /**
   * @package Directory
   */
-class LDAPPerson {
+class LDAPPerson extends Person {
 
   protected $dn;
-  protected $attributes = array();
   
   public function getDn() {
     return $this->dn;
@@ -20,16 +19,7 @@ class LDAPPerson {
     return $uid ? $uid : $this->getDn();
   }
   
-  public function getFullName()
-  {
-        if ($this->getFieldSingle('cn')) {
-            return $this->getFieldSingle('cn');
-        } 
-        
-        return trim(sprintf("%s %s", $this->getFieldSingle('givenName'), $this->getFieldSingle('sn')));
-  }
-
-  public function getFieldSingle($field) {
+  private function getFieldSingle($field) {
     $values = $this->getField($field);
     if ($values) {
       return $values[0];
@@ -37,13 +27,6 @@ class LDAPPerson {
     return NULL;
   }
 
-  public function getField($field) {
-    if (array_key_exists($field, $this->attributes)) {
-      return $this->attributes[$field];
-    }
-    return array();
-  }
-  
   public function __construct($ldapEntry) {
     $this->dn = $ldapEntry['dn'];
     $this->attributes = array();

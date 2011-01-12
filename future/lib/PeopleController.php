@@ -15,7 +15,7 @@ abstract class PeopleController
 
     protected $host;
     protected $debugMode=false;
-    protected $personClass;
+    protected $personClass = 'Person';
     
     public function debugInfo()
     {
@@ -71,5 +71,18 @@ abstract class PeopleController
         
         return $controller;
     }
+}
+
+abstract class Person
+{
+    protected $attributes = array();
+    abstract public function getId();
+    
+    public function getField($field) {
+    if (array_key_exists($field, $this->attributes)) {
+      return $this->attributes[$field];
+    }
+    return array();
+  }
 }
 
