@@ -8,9 +8,19 @@
   */
 abstract class PeopleController
 {
+    abstract public function lookupUser($id);
+    abstract public function search($searchTerms);
+    abstract public function getError();
+    abstract public function setAttributes($attributes);
+
     protected $host;
     protected $debugMode=false;
     protected $personClass;
+    
+    public function debugInfo()
+    {
+        return '';
+    }
 
     public function host()
     {
