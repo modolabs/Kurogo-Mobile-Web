@@ -437,7 +437,7 @@ abstract class Module {
             $formListItems = array();
             foreach ($strings as $string=>$value) {
                 $item = array(
-                    'label'=>implode(" ", array_map("ucfirst", explode("_", strtolower($key)))),
+                    'label'=>implode(" ", array_map("ucfirst", explode("_", strtolower($section)))),
                     'name'=>"moduleData[strings][$string]",
                     'typename'=>"moduleData][strings][$string",
                     'value'=>is_array($value) ? implode("\n\n", $value) : $value,
