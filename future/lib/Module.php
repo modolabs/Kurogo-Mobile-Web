@@ -522,7 +522,7 @@ abstract class Module {
     throw new PageNotFound("Module '$id' not found while handling '{$_SERVER['REQUEST_URI']}'");
    }
    
-   public function factoryInit($page, $args)
+   private function factoryInit($page, $args)
    {
         $moduleData = $this->getModuleData();
         $this->moduleName = $moduleData['title'];
