@@ -499,27 +499,10 @@ class CalendarModule extends Module {
 
         $fields = array();
         foreach ($calendarFields as $key => $info) {
-          if ($key == '*') {
-            $skipKeys = $allKeys;
-            if (isset($info['suppress'])) {
-              $skipKeys = array_merge($skipKeys, $info['suppress']);
-            }
-            $extraKeys = array_diff($event->get_all_attributes(), $skipKeys);
-            
-            foreach ($extraKeys as $key) {
-              if ($key != '*' && substr_compare($key, 'X-', 0, 2, true) != 0) {
-                $fields[$key] = array(
-                  'label' => $this->ucname($key),
-                  'title' => $event->get_attribute($key),
-                );  
-              }
-            }
-            
-          } else {
             $field = array();
             
             $value = $event->get_attribute($key);
-            if ((is_array($value) && count($value)==0) || strlen($value)==0)  { 
+            if (empty($value)) {
                 continue; 
             }
 
@@ -563,8 +546,8 @@ class CalendarModule extends Module {
             
             $fields[] = $field;
           }
-        }
-    
+        
+
         $this->assign('fields', $fields);
         //error_log(print_r($fields, true));
         break;
