@@ -11,7 +11,7 @@
  */
 abstract class DataController
 {
-    protected $DEFAULT_PARSER_CLASS;
+    protected $DEFAULT_PARSER_CLASS='PassthroughDataParser';
     protected $parser;
     protected $url;
     protected $cache;
