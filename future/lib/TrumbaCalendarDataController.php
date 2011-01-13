@@ -77,9 +77,12 @@ class TrumbaCalendarDataController extends CalendarDataController
             $this->setStartDate($start);
             $this->setEndDate($end);
             
-            $items = $this->items();
-            
-            return isset($items[$id]) ? $items[$id] : false;
+            $items = $this->events();
+            if (array_key_exists($id, $items)) {
+                if (array_key_exists($time, $items[$id])) {
+                    return $items[$id][$time];
+                }
+            }
         }
     
         throw new Exception("Can't load event without a time");
