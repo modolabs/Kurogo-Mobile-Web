@@ -230,7 +230,7 @@ class CalendarModule extends Module {
   
   public function federatedSearch($searchTerms, $maxCount, &$results) {
     $searchOption = $this->searchOptions[$this->defaultSearchOption]; // default timeframe
-    $type = 'events';
+    $type = $this->getDefaultFeed();
     
     $feed = $this->getFeed($type); // this allows us to have multiple feeds in the future
     
@@ -281,6 +281,13 @@ class CalendarModule extends Module {
     }
   }
 
+  public function getDefaultFeed()
+  {
+     if ($indexes = array_keys($this->feeds)) {
+         return current($indexes);
+     }
+  }
+  
   protected function getFeedTitle($index)
   {
     if (isset($this->feeds[$index])) {
@@ -327,7 +334,7 @@ class CalendarModule extends Module {
       
       case 'categories':
         $categories = array();
-        $type = $this->getArg('type', 'events');
+        $type = $this->getArg('type', $this->getDefaultFeed());
         
         $feed = $this->getFeed($type);
         
@@ -344,7 +351,7 @@ class CalendarModule extends Module {
         break;
       
       case 'category':
-        $type    = $this->getArg('type', 'events');
+        $type    = $this->getArg('type', $this->getDefaultFeed());
         $catid      = $this->getArg('catid', '');
         $name    = $this->getArg('name', '');
         $current = $this->getArg('time', time());
@@ -398,7 +405,7 @@ class CalendarModule extends Module {
         
       case 'list':
         $current = $this->getArg('time', time());
-        $type = $this->getArg('type', 'events');
+        $type = $this->getArg('type', $this->getDefaultFeed());
         $limit = $this->getArg('limit', 20);
         $feed = $this->getFeed($type); 
         $this->setPageTitle($this->getFeedTitle($type));
@@ -434,7 +441,7 @@ class CalendarModule extends Module {
       case 'day':  
 
         $current = $this->getArg('time', time());
-        $type = $this->getArg('type', 'events');
+        $type = $this->getArg('type', $this->getDefaultFeed());
         $next = strtotime("+1 day", $current);
         $prev = strtotime("-1 day", $current);
         
@@ -475,7 +482,7 @@ class CalendarModule extends Module {
         
       case 'detail':  
         $calendarFields = $this->loadWebAppConfigFile('calendar-detail', 'detailFields');
-        $type = $this->getArg('type', 'events');
+        $type = $this->getArg('type', $this->getDefaultFeed());
         
         $feed = $this->getFeed($type); // this allows us to have multiple feeds in the future
         
@@ -557,7 +564,7 @@ class CalendarModule extends Module {
           $searchTerms = trim($this->args['filter']);
           $timeframeKey = $this->args['timeframe'];
           $searchOption = $this->searchOptions[$timeframeKey];
-          $type = $this->getArg('type', 'events');
+          $type = $this->getArg('type', $this->getDefaultFeed());
           
           $feed = $this->getFeed($type);
           
@@ -591,7 +598,7 @@ class CalendarModule extends Module {
         
       case 'year':
         $year  = $this->getArg('year', date('Y'));
-        $type  = $this->getArg('type', 'events');
+        $type  = $this->getArg('type', $this->getDefaultFeed());
         $month = $this->getArg('month', 1); //default to january
         
         $start = new DateTime(sprintf("%d%02d01", $year, $month, $this->timezone));
