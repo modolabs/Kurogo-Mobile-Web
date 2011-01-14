@@ -126,6 +126,12 @@ abstract class DataController
         return $this->parser->parseData($data);
     }
     
+    public function getParsedData()
+    {
+        $data = $this->getData();
+        return $this->parseData($data);
+    }
+    
     public function getData()
     {
         if (!$url = $this->url()) {
@@ -200,8 +206,7 @@ abstract class DataController
     
     public function items($start=0, $limit=null, &$totalItems)
     {
-        $data = $this->getData();
-        $items = $this->parseData($data);
+        $items = $this->getParsedData();
         $totalItems = count($items);
         return $this->limitItems($items,$start, $limit);
     }
