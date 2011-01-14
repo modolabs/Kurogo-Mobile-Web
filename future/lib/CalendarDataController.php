@@ -16,6 +16,8 @@ class CalendarDataController extends DataController
     const DEFAULT_EVENT_CLASS='ICalEvent';
     const START_TIME_LIMIT=-2147483647; 
     const END_TIME_LIMIT=2147483647; 
+    protected $cacheFolder = 'Calendar';
+    protected $cacheFileSuffix = 'ics';
     protected $startDate;
     protected $endDate;
     protected $calendar;
@@ -42,16 +44,6 @@ class CalendarDataController extends DataController
             default:
                 return parent::addFilter($var, $value);
         }
-    }
-    
-    protected function cacheFolder()
-    {
-        return CACHE_DIR . "/Calendar";
-    }
-    
-    protected function cacheFileSuffix()
-    {
-        return '.ics';
     }
     
     public function setStartDate(DateTime $time)

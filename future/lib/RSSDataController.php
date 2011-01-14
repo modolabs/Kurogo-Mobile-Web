@@ -13,16 +13,8 @@ class RSSDataController extends DataController
     protected $DEFAULT_PARSER_CLASS='RSSDataParser';
     protected $items;
     protected $contentFilter;
-
-    protected function cacheFolder()
-    {
-        return CACHE_DIR . "/RSS";
-    }
-    
-    protected function cacheFileSuffix()
-    {
-        return '.rss';
-    }
+    protected $cacheFolder = 'RSS';
+    protected $cacheFileSuffix = 'rss';
 
     public function addFilter($var, $value)
     {

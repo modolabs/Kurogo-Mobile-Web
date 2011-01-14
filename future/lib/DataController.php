@@ -12,6 +12,8 @@
 abstract class DataController
 {
     protected $DEFAULT_PARSER_CLASS='PassthroughDataParser';
+    protected $cacheFolder='Data';
+    protected $cacheFileSuffix='';
     protected $parser;
     protected $url;
     protected $cache;
@@ -21,9 +23,17 @@ abstract class DataController
     protected $useCache=true;
     protected $cacheLifetime=900;
     
-    abstract protected function cacheFolder();
-    abstract protected function cacheFileSuffix();
     abstract public function getItem($id);
+
+    protected function cacheFolder()
+    {
+        return CACHE_DIR . "/" . $this->cacheFolder;
+    }
+    
+    protected function cacheFileSuffix()
+    {
+        return $this->cacheFileSuffix ? '.' . $this->cacheFileSuffix : '';
+    }
     
     public function setDebugMode($debugMode)
     {
