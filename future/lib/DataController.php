@@ -44,6 +44,12 @@ abstract class DataController
         }
     }
 
+    public function removeAllFilters()
+    {
+        $this->filters = array();
+        $this->clearInternalCache();
+    }
+
     protected function clearInternalCache()
     {
     }
