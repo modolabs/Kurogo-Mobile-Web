@@ -5,7 +5,7 @@
   {if $accessKey|default:true}
     {html_access_key_reset index=$accessKeyStart}
   {/if}
-  <p class="nav{if $secondary} secondary{/if}">
+  <p class="nav{if $secondary} secondary{/if}"{if $navlistID} id="{$navlistID}"{/if}>
 {/block}
     
     {block name="navlistItem"}
