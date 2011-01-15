@@ -87,6 +87,7 @@ abstract class DataController
     public function setBaseURL($baseURL)
     {
         $this->baseURL = $baseURL;
+        $this->removeAllFilters();
         $this->clearInternalCache();
     }
     
