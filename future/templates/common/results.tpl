@@ -1,7 +1,7 @@
 {strip}
 
 {block name="resultsStart"}
-  <ul class="results">
+  <ul class="results"{if $resultsID} id="{$resultsID}"{/if}>
 {/block}
 
     {foreach $results as $item}
