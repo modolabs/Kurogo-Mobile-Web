@@ -105,10 +105,12 @@ function getMinifyGroupsConfig() {
     // CSS includes all in order.  JS prefers theme
     $cssDirs = array(
       TEMPLATES_DIR, 
+      SITE_DIR, 
       THEME_DIR,
     );
     $jsDirs = array(
       THEME_DIR,
+      SITE_DIR, 
       TEMPLATES_DIR, 
     );
     
