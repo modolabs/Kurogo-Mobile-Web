@@ -143,7 +143,7 @@ class PeopleModule extends Module {
         $results[] = array(
           'url' => $this->buildBreadcrumbURL("/{$this->id}/detail", array(
              'uid'    => $people[$i]->getId(),
-             'filter' => $this->args['filter'],
+             'filter' => $searchTerms,
           ), false),
           'title' => htmlentities($section[0]['title']),
         );
@@ -258,8 +258,7 @@ class PeopleModule extends Module {
                   
                   $results[] = array(
                     'url' => $this->buildBreadcrumbURL('detail', array(
-                       'uid'    => $person->getId(),
-                       'filter' => $this->args['filter'],
+                       'uid'    => $person->getId()
                     )),
                     'title' => htmlentities($section[0]['title']),
                   );
