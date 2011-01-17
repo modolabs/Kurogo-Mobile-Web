@@ -204,7 +204,7 @@ class PeopleModule extends Module {
   protected function initializeForPage() {
     $PeopleController = $this->getFeed('people');
     
-    if ($this->getSiteVar('LDAP_DEBUG')) {
+    if ($this->debugMode) {
       $this->addModuleDebugString($PeopleController->debugInfo());
     }
     
