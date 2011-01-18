@@ -714,12 +714,15 @@ abstract class Module {
   // Module control functions
   //
   protected function getAllModules() {
-    $d = dir(MODULES_DIR);
+    $dirs = array(MODULES_DIR, SITE_DIR . "/modules", THEME_DIR . "/modules");
     $modules = array();
-    while (false !== ($entry = $d->read())) {
-        if ($entry[0]!='.' && is_dir(sprintf("%s/%s", MODULES_DIR, $entry))) {
-            $module = Module::factory($entry);
-            $modules[$entry] = $module;
+    foreach ($dirs as $dir) {
+        $d = dir($dir);
+        while (false !== ($entry = $d->read())) {
+            if ($entry[0]!='.' && is_dir(sprintf("%s/%s", $dir, $entry))) {
+               $module = Module::factory($entry);
+               $modules[$entry] = $module;
+            }
         }
     }
     ksort($modules);    
