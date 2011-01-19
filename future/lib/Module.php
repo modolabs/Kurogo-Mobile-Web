@@ -69,8 +69,8 @@ abstract class Module {
   
   protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array()) {
     $currentTab = $tabKeys[0];
-    if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
-      $currentTab = $this->args['tab'];
+    if (in_array($this->getArg('tab'), $tabKeys)) {
+      $currentTab = $this->getArg('tab');
       
     } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
       $currentTab = $defaultTab;
@@ -806,8 +806,8 @@ abstract class Module {
   // Breadcrumbs
   //
   private function loadBreadcrumbs() {
-    if (isset($this->args[MODULE_BREADCRUMB_PARAM])) {
-      $breadcrumbs = unserialize(urldecode($this->args[MODULE_BREADCRUMB_PARAM]));
+    if ($breadcrumbArg = $this->getArg(MODULE_BREADCRUMB_PARAM)) {
+      $breadcrumbs = unserialize(urldecode($breadcrumbArg));
       if (is_array($breadcrumbs)) {
         for ($i = 0; $i < count($breadcrumbs); $i++) {
           $b = $breadcrumbs[$i];

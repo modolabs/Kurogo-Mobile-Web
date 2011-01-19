@@ -486,16 +486,16 @@ class CalendarModule extends Module {
         
         $feed = $this->getFeed($type); // this allows us to have multiple feeds in the future
         
-        if (isset($this->args['filter'])) {
-            $feed->addFilter('search', $this->args['filter']);
+        if ($filter = $this->getArg('filter')) {
+            $feed->addFilter('search', $filter);
         }
 
-        if (isset($this->args['catid'])) {
-            $feed->addFilter('category', $this->args['catid']);
+        if ($catid = $this->getArg('catid')) {
+            $feed->addFilter('category', $catid);
         }
         
         $time = $this->getArg('time', time());
-        if ($event = $feed->getItem($this->args['id'], $time)) {
+        if ($event = $feed->getItem($this->getArg('id'), $time)) {
           $this->assign('event', $event);
         } else {
           throw new Exception("Event not found");
@@ -560,9 +560,9 @@ class CalendarModule extends Module {
         break;
         
       case 'search':
-        if (isset($this->args['filter'], $this->args['timeframe'])) {
-          $searchTerms = trim($this->args['filter']);
-          $timeframeKey = $this->args['timeframe'];
+        if ($filter = $this->getArg('filter')) {
+          $searchTerms = trim($filter);
+          $timeframeKey = $this->getArg('timeframe');
           $searchOption = $this->searchOptions[$timeframeKey];
           $type = $this->getArg('type', $this->getDefaultFeed());
           

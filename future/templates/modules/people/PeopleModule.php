@@ -213,8 +213,8 @@ class PeopleModule extends Module {
         break;
         
       case 'detail':
-        if (isset($this->args['uid'])) {
-          $person = $PeopleController->lookupUser($this->args['uid']);
+        if ($uid = $this->getArg('uid')) {
+          $person = $PeopleController->lookupUser($uid);
           
           if ($person) {
             $this->assign('personDetails', $this->formatPersonDetails($person));
@@ -227,8 +227,8 @@ class PeopleModule extends Module {
         break;
         
       case 'search':
-        if (isset($this->args['filter']) && !empty($this->args['filter'])) {
-          $searchTerms = trim($this->args['filter']);
+        if ($filter = $this->getArg('filter')) {
+          $searchTerms = trim($filter);
           
           $this->assign('searchTerms', $searchTerms);
           
@@ -279,10 +279,10 @@ class PeopleModule extends Module {
         
       case 'index':
         // Redirect for old bookmarks
-        if (isset($this->args['uid'])  && !empty($this->args['uid'])) {
+        if ($this->getArg('uid')) {
           $this->redirectTo('detail');
     
-        } else if (isset($this->args['filter']) && !empty($this->args['filter'])) {
+        } else if ($this->getArg('filter')) {
           $this->redirectTo('search');
         }
         
