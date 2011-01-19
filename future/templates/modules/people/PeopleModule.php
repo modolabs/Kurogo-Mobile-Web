@@ -204,7 +204,7 @@ class PeopleModule extends Module {
   protected function initializeForPage() {
     $PeopleController = $this->getFeed('people');
     
-    if ($this->debugMode) {
+    if ($this->getSiteVar('MODULE_DEBUG')) {
       $this->addModuleDebugString($PeopleController->debugInfo());
     }
     
