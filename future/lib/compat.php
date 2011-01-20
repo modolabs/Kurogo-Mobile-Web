@@ -63,6 +63,10 @@ function mime_type($filename) {
     // open office
     'odt' => 'application/vnd.oasis.opendocument.text',
     'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+    
+    // blackberry
+    'jad' => 'text/vnd.sun.j2me.app-descriptor',
+    'cod' => 'application/vnd.rim.cod',
   );
   
   $ext = strtolower(array_pop(explode('.', $filename)));
