@@ -33,6 +33,7 @@ Initialize($path);
 if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
   $icon = realpath_exists(THEME_DIR.'/common/images/favicon.ico');
   if ($icon) {
+    CacheHeaders($icon);
     header('Content-type: '.mime_type($icon));
     echo file_get_contents($icon);
     exit;
@@ -71,6 +72,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
     foreach ($testFiles as $file) {
       $image = realpath_exists("$dir/$file");
       if ($image) {
+        CacheHeaders($image);
         header('Content-type: '.mime_type($image));
         echo file_get_contents($image);
         exit;
@@ -103,6 +105,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
       $file = realpath_exists("$dir/$file");
       if ($file) {
       
+        CacheHeaders($file);
         header("Content-type: text/" . $matches[3]);
         readfile($file);
         exit;

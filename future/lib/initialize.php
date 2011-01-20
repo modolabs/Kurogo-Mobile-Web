@@ -17,6 +17,20 @@
   */
 define('ROOT_DIR', dirname(__FILE__).'/..'); 
 
+function CacheHeaders($file)
+{
+    $mtime = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
+    if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+        if ($_SERVER['HTTP_IF_MODIFIED_SINCE'] == $mtime) {
+            header('HTTP/1.1 304 Not Modified');
+            exit();
+        }
+    }
+    
+    header("Last-Modified: $mtime");
+    return;
+}
+
 /**
   * 
   */
