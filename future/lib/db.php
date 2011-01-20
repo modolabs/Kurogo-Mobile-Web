@@ -12,6 +12,7 @@ define('DB_NOT_SUPPORTED', 1);
  */
 class db {
   protected $connection;
+  const IGNORE_ERRORS=true;
   
   public function __construct($config=null)
   {
@@ -44,13 +45,16 @@ class db {
     $this->connection = call_user_func(array("db_$db_type", 'connection'), $config);
   }
   
-  public function query($sql, $parameters=array())
+  public function query($sql, $parameters=array(), $ignoreErrors=false)
   {
     if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
         error_log("Query Log: $sql");
     }
 
     if (!$result = $this->connection->prepare($sql)) {
+        if ($ignoreErrors) {
+            return;
+        }
         $errorInfo = $this->connection->errorInfo();
         if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
             throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
@@ -63,6 +67,9 @@ class db {
     $result->setFetchMode(PDO::FETCH_ASSOC);
     
     if (!$result->execute($parameters)) {
+        if ($ignoreErrors) {
+            return;
+        }
         $errorInfo = $result->errorInfo();
         if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
             throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
@@ -84,6 +91,24 @@ class db {
       $this->connection = NULL;
       $this->init();
     }
+  }
+  
+  public function beginTransaction()
+  {
+    return $this->connection->beginTransaction();
+  }
+
+  public function commit()
+  {
+    return $this->connection->commit();
+  }
+  
+  public static function lockTable($table)
+  {
+  }
+
+  public static function unlockTable()
+  {
   }
 }
 

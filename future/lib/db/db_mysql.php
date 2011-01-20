@@ -16,6 +16,16 @@ class db_mysql extends db
         $connection = new PDO($dsn, $dsn_data['DB_USER'], $dsn_data['DB_PASS']);
         return $connection;
     }
+
+    public static function lockTable($table)
+    {
+        $this->query("LOCK TABLE $table WRITE");
+    }
+    
+    public static function unlockTable()
+    {
+        $this->query("UNLOCK TABLES");
+    }
 }
 
 
