@@ -152,7 +152,7 @@ function exceptionHandlerForProduction($exception) {
     mail($GLOBALS['siteConfig']->getVar('DEVELOPER_EMAIL'), 
       "Mobile web page experiencing problems",
       "The following page is throwing exceptions:\n\n" .
-      "URL: $protocol://{$_SERVER['SERVER_NAME']}{$_SERVER['REQUEST_URI']}\n" .
+      "URL: $protocol://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
       "User-Agent: \"{$_SERVER['HTTP_USER_AGENT']}\"\n" .
       "Referrer URL: \"{$_SERVER['HTTP_REFERER']}\"\n" .
       "Exception:\n\n" . 
