@@ -49,19 +49,33 @@ class DeviceClassifier {
       $json = file_get_contents($GLOBALS['siteConfig']->getVar('MOBI_SERVICE_URL').'?'.$query);
       $data = json_decode($json, true);
       
-      switch ($data['pagetype']) {
-        case 'Basic':
-          if ($data['platform'] == 'computer' || $data['platform'] == 'spider' || 
-           $data['platform'] == 'bbplus') {
+      switch (strtolower($data['pagetype'])) {
+        case 'basic':
+          if ($data['platform'] == 'computer' || $data['platform'] == 'spider') {
             $this->pagetype = 'compliant';
+            
+          } else if ($data['platform'] == 'bbplus') {
+            $this->pagetype = 'compliant';
+            
           } else {
             $this->pagetype = 'basic';
           }
           break;
         
-        case 'Touch':
-        case 'Compliant':
-        case 'Webkit':
+        case 'touch':
+          if ($data['platform'] == 'blackberry') {
+            $this->pagetype = 'compliant'; // Storm, Storm 2
+            
+          } else if ($data['platform'] == 'winphone7') {
+            $this->pagetype = 'compliant'; // Windows Phone 7
+            
+          } else {
+            $this->pagetype = 'touch';
+          }
+          break;
+          
+        case 'compliant':
+        case 'webkit':
         default:
           $this->pagetype = 'compliant';
           break;
@@ -73,11 +87,10 @@ class DeviceClassifier {
         time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
 
       //error_log(__FUNCTION__."(): choosing mobi service layout '".$this->getDevice()."' <{$_SERVER['REQUEST_URI']}>");
-      //error_log('User-agent is: '.$_SERVER['HTTP_USER_AGENT']);
-    } else {
     }
     
     //error_log('DeviceClassifier chose: '.$this->getDevice());
+    //error_log('User-agent is: '.$_SERVER['HTTP_USER_AGENT']);
   }
   
   public function isComputer() {
@@ -98,5 +111,20 @@ class DeviceClassifier {
   
   public function getSupportsCerts() {
     return $this->certs;
+  }
+  
+  public function mailToLinkNeedsAtInToField() {
+    // Some old BlackBerries will give you an error about unsupported protocol
+    // if you have a mailto: link that doesn't have a "@" in the recipient 
+    // field. So we can't leave this field blank for these models. It's not
+    // a matter of being <= 9000 either, since there are Curves that are fine.
+    $modelsNeedingToField = array("8100", "8220", "8230", "9000");
+    
+    foreach ($modelsNeedingToField as $model) {
+      if (strpos($_SERVER['HTTP_USER_AGENT'], "BlackBerry".$model) !== FALSE) {
+        return true;
+      }
+    }
+    return false;
   }
 }
