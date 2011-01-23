@@ -926,7 +926,6 @@ abstract class Module {
         } else {
           $this->breadcrumbLongTitle = $this->pageTitle;
         }     
-
         $this->pageConfig = $pageConfig;
       } else {
         $this->pageConfig = array();
@@ -946,8 +945,14 @@ abstract class Module {
   protected function setPageTitle($title) {
     $this->pageTitle = $title;
   }
+  protected function getBreadcrumbTitle() {
+    return $this->breadcrumbTitle;
+  }
   protected function setBreadcrumbTitle($title) {
     $this->breadcrumbTitle = $title;
+  }
+  protected function getBreadcrumbLongTitle() {
+    return $this->breadcrumbLongTitle;
   }
   protected function setBreadcrumbLongTitle($title) {
     $this->breadcrumbLongTitle = $title;
