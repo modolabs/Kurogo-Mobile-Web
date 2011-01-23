@@ -134,8 +134,8 @@ class HomeModule extends Module {
             if ($info['visible']) {
                 $module = array(
                   'title' => $info['title'],    
-                  'url'   => isset($info['url']) ? $info['url'] : "/$id/",
-                  'img'   => isset($info['img']) ? $info['img'] : "/modules/{$this->id}/images/$id.png",
+                  'url'   => isset($info['url']) ? $info['url'] : URL_BASE . $id . '/',
+                  'img'   => isset($info['img']) ? $info['img'] : sprintf('%smodules/%s/images/%s%s', URL_BASE, $this->id, $id, $this->imageExt)
                 );
                 if ($id == 'about' && $whatsNewCount > 0) {
                   $module['badge'] = $whatsNewCount;

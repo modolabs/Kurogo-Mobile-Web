@@ -28,6 +28,8 @@ abstract class Module {
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
   protected $supportsCerts = false;
+
+  protected $imageExt = '.png';
   
   private $pageConfig = null;
   
@@ -588,6 +590,17 @@ abstract class Module {
         
         } else if (isset($_COOKIE['fontsize'])) { 
           $this->fontsize = $_COOKIE['fontsize'];
+        }
+
+        switch ($this->pagetype) {
+          case 'compliant':
+            $this->imageExt = '.png';
+            break;
+            
+          case 'touch':
+          case 'basic':
+            $this->imageExt = '.gif';
+            break;
         }
   }
   

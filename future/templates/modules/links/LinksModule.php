@@ -62,7 +62,7 @@ class LinksModule extends Module {
       if (!is_array($link)) {
         unset($link);
       } else if (isset($link['icon']) && strlen($link['icon'])>0) {
-        $link['img'] = "/modules/{$this->id}/images/{$link['icon']}";
+        $link['img'] = sprintf("%smodules/%s/images/%s%s", URL_BASE, $this->id, $link['icon'], $this->imageExt);
       }
     }
     
