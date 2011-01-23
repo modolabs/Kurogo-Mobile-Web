@@ -50,6 +50,7 @@ ul.iconic span.nolink {
   padding-left: 37px;
   background-position: 3px 3px;
   font-size: 94.112%;
+  margin-right: 85px; /* don't overlap buttons */
 }
 
 ul.iconic span.nolinkbuttons {
@@ -58,6 +59,7 @@ ul.iconic span.nolinkbuttons {
   height: 38px;
   margin: -11px;
   position: relative;
+  z-index: 1000;
 }
 
 ul.iconic span.nolinkbuttons a {
