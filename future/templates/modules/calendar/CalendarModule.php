@@ -260,7 +260,7 @@ class CalendarModule extends Module {
     return count($iCalEvents);
   }
   
-  protected function urlForSearch($searchTerms) {
+  protected function urlForFederatedSearch($searchTerms) {
     return $this->buildBreadcrumbURL("/{$this->id}/search", array(
       'filter'    => $searchTerms,
       'timeframe' => '0',

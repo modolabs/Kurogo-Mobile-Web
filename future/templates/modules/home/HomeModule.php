@@ -173,7 +173,7 @@ class HomeModule extends Module {
               'title'   => $info['title'],
               'results' => $results,
               'total'   => $total,
-              'url'     => $module->urlForSearch($searchTerms),
+              'url'     => $module->urlForFederatedSearch($searchTerms),
             );
             unset($module);
           }
