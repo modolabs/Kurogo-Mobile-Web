@@ -31,8 +31,8 @@ class LoginModule extends Module {
     $authenticationAuthorities = array();                
     $authenticationAuthorityLinks = array();                
     foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authorityIndex=>$authorityData) {
-        if (isset($authorityData['OAUTH'])) {
-            $authorityData['LINK'] = $this->buildBreadcrumbURL('login', array('url'=>$url,'authority'=>$authorityIndex), false);
+        if (isset($authorityData['OAUTH']) || isset($authorityData['OPENID'])) {
+            $authorityData['LINK'] = $this->buildBreadcrumbURL('login', array('url'=>$url,'authority'=>$authorityIndex, 'startOver'=>true), false);
             $authenticationAuthorityLinks[$authorityIndex] = $authorityData;
         } else {
             $authenticationAuthorities[$authorityIndex] = $authorityData;
