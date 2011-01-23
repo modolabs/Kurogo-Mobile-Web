@@ -13,7 +13,16 @@ class TwitterAuthentication extends OAuthAuthentication
     protected $requestTokenURL = 'https://api.twitter.com/oauth/request_token';
     protected $accessTokenURL = 'https://api.twitter.com/oauth/access_token';
 	protected $API_URL = 'https://api.twitter.com/1';
-    
+	
+    protected function getUserFromArray(array $array)
+    {
+        if (isset($array['screen_name'])) {
+            return $this->getUser($array['screen_name']);
+        }
+        
+        return false;
+    }
+	
     public function getUser($login)
     {
         if (empty($login)) {

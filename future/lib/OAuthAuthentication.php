@@ -21,8 +21,11 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     protected $useCache = true;
     protected $cache;
     protected $cacheLifetime = 900;
+    protected $verifierKey = 'oauth_verifier';
+    protected $verifierErrorKey = '';
     
     abstract protected function getAuthURL();
+    abstract protected function getUserFromArray(array $array);
 		
     // auth is handled by oauth
     protected function auth($login, $password, &$user)
@@ -53,7 +56,6 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		parse_str($response, $return);
 
 		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
-		    Debug::die_here($response);
 		    return false;
 		}
 
@@ -85,7 +87,6 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 
 		// validate
 		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
-		    Debug::die_here($response);
 		    return false;
 		}
 		
@@ -273,13 +274,11 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         }
         
         //if oauth_verifier is set then we are in the callback
-        if (isset($_GET['oauth_verifier'])) {
+        if (isset($_GET[$this->verifierKey])) {
             //get an access token
-            if ($response = $this->getAccessToken($this->token, $_GET['oauth_verifier'])) {
-                
-                Debug::die_here($response);
+            if ($response = $this->getAccessToken($this->token, $_GET[$this->verifierKey])) {
                 //we should now have the current user
-                if ($user = $this->getUser($response['screen_name'])) {
+                if ($user = $this->getUserFromArray($response)) {
                     $session = $module->getSession();
                     $session->login($user);
                     return AUTH_OK;
