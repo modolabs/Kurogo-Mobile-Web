@@ -186,7 +186,7 @@ class NewsModule extends Module {
         }
 
         $body = $story->getDescription()."\n\n".$story->getLink();
-        $shareEmailURL = $this->buildMailtoLink("", $story->getTitle(), $body);
+        $shareEmailURL = $this->buildMailToLink("", $story->getTitle(), $body);
 
         $pubDate = strtotime($story->getProperty("pubDate"));
         $date = date("M d, Y", $pubDate);
