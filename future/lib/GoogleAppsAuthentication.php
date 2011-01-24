@@ -163,11 +163,16 @@ class GoogleAppsAuthentication extends OAuthAuthentication
             throw new Exception("Unable to get OpenID endpoint url for $this->domain.");
         }
         
-        /*
-            if you're using OAuth, it appears you MUST be on the same exact domain. No subdomains allowed.
-            If you're not using OAuth, subdomains are allowed. 
-        */
-        $realm = sprintf("http://%s%s", $this->oauth ? '' : '*.', $this->domain);
+        $url_parts = parse_url(FULL_URL_BASE);
+
+        $realm = sprintf("http://%s%s", $this->domain != $url_parts['host'] ? '*.' : '', $this->domain);
+        if (!in_array($_SERVER['SERVER_PORT'], array(80,443))) {
+            if ($this->oauth) {
+                throw new Exception("OAuth will not work with custom ports");
+            }
+            
+            $realm .= ":" . $_SERVER['SERVER_PORT'];
+        }
 
         $parameters = array(
             'openid.mode'=>'checkid_setup',
@@ -214,16 +219,16 @@ class GoogleAppsAuthentication extends OAuthAuthentication
 
         $this->domain = $args['DOMAIN'];
 
+        $url_parts = parse_url(FULL_URL_BASE);
+        if (!preg_match("#" . $this->domain . "$#", $url_parts['host'])) {
+            throw new Exception("This application must be run on a subdomain of $this->domain");
+        }
+
         if (isset($args['OAUTH']) && $args['OAUTH']) {
             if (!isset($args['CONSUMER_KEY'], $args['CONSUMER_SECRET'])) {
                 throw new Exception("Consumer Key and secret must be set when OAuth is on");
             }
             
-            $url_parts = parse_url(FULL_URL_BASE);
-            if ($this->domain != $url_parts['host']) {
-                throw new Exception("This application must be run from the $this->domain domain or OAuth will not work");
-            }
-
             $this->oauth = true;
             $this->consumer_key = $args['CONSUMER_KEY'];
             $this->consumer_secret = $args['CONSUMER_SECRET'];
