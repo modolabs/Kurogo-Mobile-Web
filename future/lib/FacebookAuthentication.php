@@ -182,7 +182,8 @@ class FacebookAuthentication extends AuthenticationAuthority
     {
         parent::init($args);
         $args = is_array($args) ? $args : array();
-        if (!isset($args['API_KEY']) || !isset($args['API_SECRET'])) {
+        if (!isset($args['API_KEY'], $args['API_SECRET']) ||
+            strlen($args['API_KEY'])==0 || strlen($args['API_SECRET'])==0) {
             throw new Exception("API key and secret not set");
         }
 
