@@ -155,6 +155,15 @@ abstract class AuthenticationAuthority
     {
         return $this->AuthorityImage;
     }
+    
+    /**
+     * Returns the authentication config file
+     * @return ConfigFile
+    */
+    private static function getAuthorityConfigFile()
+    {
+        return ConfigFile::factory('authentication', 'site');
+    }
 
     /**
      * Parses the authentication config file and returns a list of authorities and their arguments
@@ -164,7 +173,7 @@ abstract class AuthenticationAuthority
     {
         static $configFile;
         if (!$configFile) {
-            $configFile = ConfigFile::factory('authentication', 'site');
+            $configFile = self::getAuthorityConfigFile();
         }
         
         return $configFile->getSectionVars();
@@ -189,7 +198,7 @@ abstract class AuthenticationAuthority
     {
         static $configFile;
         if (!$configFile) {
-            $configFile = ConfigFile::factory('authentication', 'feeds');
+            $configFile = self::getAuthorityConfigFile();
         }
         
         if ($authorityData = $configFile->getSection($index)) {
