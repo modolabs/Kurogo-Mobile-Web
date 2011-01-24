@@ -164,7 +164,7 @@ abstract class AuthenticationAuthority
     {
         static $configFile;
         if (!$configFile) {
-            $configFile = ConfigFile::factory('authentication', 'feeds');
+            $configFile = ConfigFile::factory('authentication', 'site');
         }
         
         return $configFile->getSectionVars();
