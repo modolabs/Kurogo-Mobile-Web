@@ -4,6 +4,10 @@ if (!function_exists('curl_init')) {
     throw new Exception("cURL library not available");
 }
 
+if (!function_exists('hash_hmac')) {
+    throw new Exception("hash_hmac function not available");
+}
+
 
 abstract class OAuthAuthentication extends AuthenticationAuthority
 {
@@ -44,13 +48,16 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 	    return array();
 	}
 	
-	protected function getAccessToken($token, $verifier)
+	protected function getAccessToken($token, $verifier='')
 	{
 		$parameters = array_merge($this->getAccessTokenParameters(),array(
-		    'oauth_token'=>$token,
-		    'oauth_verifier'=>$verifier
-		));
-
+		    'oauth_token'=>$token
+        ));
+        
+        if (strlen($verifier)) {
+            $parameters['oauth_verifier']=$verifier;
+        }
+        
 		// make the call
 		$response = $this->doOAuthCall($this->accessTokenURL, $this->accessTokenMethod, $parameters);
 		parse_str($response, $return);
@@ -141,7 +148,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		foreach($parameters as $key => $value) $chunks[] = str_replace('%25', '%', self::urlencode_rfc3986($key) .'="'. self::urlencode_rfc3986($value) .'"');
 
 		// build return
-		$return = 'Authorization: OAuth realm="' . $parts['scheme'] . '://' . $parts['host'] . $parts['path'] . '", ';
+		$return = 'Authorization: OAuth ';
+//		realm="' . $parts['scheme'] . '://' . $parts['host'] . $parts['path'] . '", ';
 		$return .= implode(',', $chunks);
 
 		// prepend name and OAuth part
@@ -191,7 +199,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 			$search = array('+', ' ', '%7E', '%');
 			$replace = array('%20', '%20', '~', '%25');
 
-			return str_replace($search, $replace, urlencode($value));
+			return str_replace($search, $replace, rawurlencode($value));
 		}
 	}
 
@@ -204,7 +212,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 	{
 		// calculate the base string
 		$base = $this->calculateBaseString($url, $method, $parameters);
-		$sig = $this->hmacsha1($this->consumer_secret .'&' . $this->token_secret, $base);
+		$key = rawurlencode($this->consumer_secret) .'&' . rawurlencode($this->token_secret);
+		$sig = $this->hmacsha1($key, $base);
 		return $sig;
 	}
 	
