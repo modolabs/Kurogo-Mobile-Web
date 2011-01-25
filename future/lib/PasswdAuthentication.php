@@ -4,12 +4,12 @@
   */
 
 /**
-  * This authority uses a passed style file
+  * This authority uses a passwd style file
   * @package Authentication
   */
 class PasswdAuthentication extends AuthenticationAuthority
 {
-    private $passwdFile;
+    private $userFile;
     private $groupFile;
     private $users = array();
     private $groups = array();
@@ -25,7 +25,7 @@ class PasswdAuthentication extends AuthenticationAuthority
             return;
         }
         
-        $data = file_get_contents($this->passwdFile);
+        $data = file_get_contents($this->userFile);
         $lines = explode(PHP_EOL, $data);
         $this->users = array();
         foreach ($lines as $line) {
@@ -60,6 +60,10 @@ class PasswdAuthentication extends AuthenticationAuthority
     {
         if ($this->groups) {
             return;
+        }
+        
+        if (!is_readable($this->groupFile)) {
+            throw new Exception("Unable to load group file $this->groupFile");
         }
         
         $data = file_get_contents($this->groupFile);
@@ -98,6 +102,10 @@ class PasswdAuthentication extends AuthenticationAuthority
     
     public function auth($login, $password, &$user)
     {
+        if ($this->userLogin == 'NONE') {
+            return AUTH_FAILED;
+        }
+        
         $this->loadUserData();
         if (isset($this->users[$login])) {
             if (md5($password) == $this->users[$login]['md5']) {
@@ -113,6 +121,10 @@ class PasswdAuthentication extends AuthenticationAuthority
 
     public function getUser($login)
     {
+        if ($this->userLogin == 'NONE') {
+            return false;
+        }
+
         $this->loadUserData();
         if (empty($login)) {
             return new AnonymousUser();       
@@ -164,10 +176,13 @@ class PasswdAuthentication extends AuthenticationAuthority
     {
         parent::init($args);
         $args = is_array($args) ? $args : array();
-        $this->passwdFile = isset($args['USER_FILE']) ? $args['USER_FILE'] : null;
+        $this->userFile = isset($args['USER_FILE']) ? $args['USER_FILE'] : null;
         $this->groupFile = isset($args['GROUP_FILE']) ? $args['GROUP_FILE'] : null;
-        if (!file_exists($this->passwdFile)) {
-            throw new Exception("Unable to load password file $this->passwdFile");
+        
+        if ($this->userLogin != 'NONE') {        
+            if (!is_readable($this->userFile)) {
+                throw new Exception("Unable to load password file $this->userFile");
+            }
         }
     }
 }
