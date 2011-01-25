@@ -116,12 +116,24 @@ class AccessControlList
                 } else { 
                     /* user values are specified as AUTHORITY|userID */
                     $values = explode("|", $this->ruleValue);
-                    $authority = isset($values[0]) ? $values[0] : '';
-                    $userID = isset($values[1]) ? $values[1] : '';
+                    switch ($count($values)) {
+                        case 1:
+                            $authority = AuthenticationAuthority::getDefaultAuthenticationAuthorityIndex();
+                            $userID = $values[0];
+                            break;
+                        case 2:
+                            $authority = $values[0];
+                            $userID = $values[1];
+                            break;
+                    }
                     
-                    /* see if the userID and authority match */
-                    if ($user->getUserID()==$userID && $user->getAuthenticationAuthorityIndex()==$authority) {
-                        return $this->ruleAction;
+                    /* see if the userID/email and authority match */
+                    if ($user->getAuthenticationAuthorityIndex()==$authority)
+                        /* can match either userID or email */
+                        if  ($user->getUserID()==$userID ||
+                            (Validator::isValidEmail($userID) && $user->getEmail()==$userID)) { /
+                            return $this->ruleAction;
+                        }
                     }
                 }
                 break;
@@ -130,8 +142,17 @@ class AccessControlList
 
                 /* group values are specified as AUTHORITY|group */
                 $values = explode("|", $this->ruleValue);
-                $authority = isset($values[0]) ? $values[0] : '';
-                $group = isset($values[1]) ? $values[1] : '';
+                switch (count($values)) {
+                    case 1:
+                        $authority = AuthenticationAuthority::getDefaultAuthenticationAuthorityIndex();
+                        $group = $values[0];
+                        break;
+                    case 2:
+                        $authority = $values[0];
+                        $group = $values[1];
+                        break;
+                }
+
 
                 /* attempt to load the authority, then get the group */
                 if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authority)) {
