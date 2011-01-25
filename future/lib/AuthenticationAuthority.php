@@ -189,6 +189,12 @@ abstract class AuthenticationAuthority
         return current($authorities);
     }
 
+    public static function getDefaultAuthenticationAuthorityIndex()
+    {
+        $authorities = self::getDefinedAuthenticationAuthorities();
+        return key($authorities);
+    }
+
     /**
      * Retrieves an authentication authority by its index. This is the preferred way to retrieve an authority
      * @param string $index the index/tag of the authority to retrieve
