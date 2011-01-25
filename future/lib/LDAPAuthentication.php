@@ -4,28 +4,20 @@
   */
 
 /**
-  */
-require_once(LIB_DIR . '/AuthenticationAuthority.php');
-
-/**
-  */
-require_once(LIB_DIR . '/User.php');
-
-/**
   * @package Authentication
   */
 class LDAPAuthentication extends AuthenticationAuthority
 {
-    private $ldapServer;
-    private $ldapPort=389;
-    private $ldapUserSearchBase;
-    private $ldapGroupSearchBase;
-    private $ldapAdminDN;
-    private $ldapAdminPassword;
-    private $fieldMap=array();
-    private $ldapResource;
+    protected $ldapServer;
+    protected $ldapPort=389;
+    protected $ldapUserSearchBase;
+    protected $ldapGroupSearchBase;
+    protected $ldapAdminDN;
+    protected $ldapAdminPassword;
+    protected $fieldMap=array();
+    protected $ldapResource;
     
-    private function connectToServer()
+    protected function connectToServer()
     {
         if (!$this->ldapResource) {
             $this->ldapResource = ldap_connect($this->ldapServer, $this->ldapPort);
