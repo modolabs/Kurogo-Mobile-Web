@@ -128,10 +128,10 @@ class AccessControlList
                     }
                     
                     /* see if the userID/email and authority match */
-                    if ($user->getAuthenticationAuthorityIndex()==$authority)
+                    if ($user->getAuthenticationAuthorityIndex()==$authority) {
                         /* can match either userID or email */
                         if  ($user->getUserID()==$userID ||
-                            (Validator::isValidEmail($userID) && $user->getEmail()==$userID)) { /
+                            (Validator::isValidEmail($userID) && $user->getEmail()==$userID)) { 
                             return $this->ruleAction;
                         }
                     }
