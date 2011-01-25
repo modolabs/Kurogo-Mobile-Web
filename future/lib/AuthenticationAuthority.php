@@ -44,6 +44,12 @@ abstract class AuthenticationAuthority
       * @var string
       */
     protected $AuthorityImage; 
+
+    /** 
+      * User Login type. One of 3 values: FORM, LINK or NONE
+      * @var string
+      */
+    protected $userLogin;
     
     /**
      * Attempts to authenticate the user using the included credentials
@@ -95,11 +101,53 @@ abstract class AuthenticationAuthority
         
         $this->setAuthorityIndex($args['INDEX']);
         $this->setAuthorityTitle($args['TITLE']);
+
+        if (!isset($args['USER_LOGIN'])) {
+            throw new Exception("USER_LOGIN value not set for " . $this->AuthorityTitle);
+        }
+
+        if (!$this->setUserLogin($args['USER_LOGIN'])) {
+            throw new Exception("Invalid USER_LOGIN setting for " . $this->AuthorityTitle);
+        }
+        
         
         if (isset($args['LOGGEDIN_IMAGE_URL']) && strlen($args['LOGGEDIN_IMAGE_URL'])) {
             $this->setAuthorityImage($args['LOGGEDIN_IMAGE_URL']);
         }
+    }
+    
+    /**
+      * Returns an array of valid user login types. Subclasses can override this to indicate valid
+      * values
+      * @return array a list of valid user login types
+      */
+    protected function validUserLogins()
+    {
+        return array('FORM', 'LINK', 'NONE');
+    }
+    
+    /**
+      * Sets the user login type
+      * @param string userLogin a valid userLogin type (FORM, LINK, NONE)
+      * @return boolean true if it was successful or false if it was not
+      */
+    public function setUserLogin($userLogin)
+    {
+        if (in_array($userLogin, $this->validUserLogins())) {
+            $this->userLogin = strtoupper($userLogin);
+            return true;
+        }
         
+        return false;
+    }
+
+    /**
+      * Returns the user login type
+      * @return string the user Login type
+      */
+    public function getUserLogin()
+    {
+        return $this->userLogin;
     }
 
     /**

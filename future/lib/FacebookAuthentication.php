@@ -19,6 +19,11 @@ class FacebookAuthentication extends AuthenticationAuthority
     protected $cache;
     protected $cacheLifetime = 900;
     
+    protected function validUserLogins()
+    {
+        return array('LINK', 'NONE');
+    }
+    
     // auth is handled by fb
     public function auth($login, $password, &$user)
     {
@@ -187,10 +192,6 @@ class FacebookAuthentication extends AuthenticationAuthority
             throw new Exception("API key and secret not set");
         }
 
-        if (!isset($args['OAUTH']) || !$args['OAUTH']) {
-            throw new Exception("Facebook authentication must have OAUTH option set");
-        }
-        
         $this->api_key = $args['API_KEY'];
         $this->api_secret = $args['API_SECRET'];
         if (isset($_SESSION['fb_access_token'])) {

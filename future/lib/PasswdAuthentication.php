@@ -14,6 +14,11 @@ class PasswdAuthentication extends AuthenticationAuthority
     private $users = array();
     private $groups = array();
     
+    protected function validUserLogins()
+    {
+        return array('FORM', 'NONE');
+    }
+    
     private function loadUserData()
     {
         if ($this->users) {

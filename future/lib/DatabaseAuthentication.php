@@ -15,6 +15,11 @@ class DatabaseAuthentication extends AuthenticationAuthority
     protected $tableMap=array();
     protected $fieldMap=array();
     
+    protected function validUserLogins()
+    {
+        return array('FORM', 'NONE');
+    }
+
     public function auth($login, $password, &$user)
     {
         $sql = sprintf("SELECT `%s` FROM `%s` WHERE `%s`=?", $this->getField('password'), $this->getTable('user'), $this->getField('userid'));

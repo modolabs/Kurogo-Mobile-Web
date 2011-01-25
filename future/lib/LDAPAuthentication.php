@@ -39,6 +39,11 @@ class LDAPAuthentication extends AuthenticationAuthority
         
         return $this->ldapResource;
     }
+
+    protected function validUserLogins()
+    {
+        return array('FORM', 'NONE');
+    }
         
     public function auth($login, $password, &$user)
     {

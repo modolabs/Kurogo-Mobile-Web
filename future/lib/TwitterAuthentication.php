@@ -86,10 +86,6 @@ class TwitterAuthentication extends OAuthAuthentication
             throw new Exception("Consumer key and secret not set");
         }
         
-        if (!isset($args['OAUTH']) || !$args['OAUTH']) {
-            throw new Exception("Twitter authentication must have OAUTH option set");
-        }
-
         $this->consumer_key = $args['CONSUMER_KEY'];
         $this->consumer_secret = $args['CONSUMER_SECRET'];
     }

@@ -30,6 +30,11 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     
     abstract protected function getAuthURL();
     abstract protected function getUserFromArray(array $array);
+
+    protected function validUserLogins()
+    {
+        return array('LINK', 'NONE');
+    }
 		
     // auth is handled by oauth
     protected function auth($login, $password, &$user)
