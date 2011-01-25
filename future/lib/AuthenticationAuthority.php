@@ -20,6 +20,9 @@ define('AUTH_USER_DISABLED', -3);
 /** Unknown server or i/o error */
 define('AUTH_ERROR', -4); // 
 
+require_once(LIB_DIR . "/User.php");
+require_once(LIB_DIR . "/UserGroup.php");
+
 /**
  * An abstract class that all authorities must inherit from. 
  * @package Authentication
@@ -69,7 +72,8 @@ abstract class AuthenticationAuthority
     abstract public function getUser($login);
 
     /**
-     * Retrieves a group object from this authority
+     * Retrieves a group object from this authority. Authorities which do not provide group information
+     * should always return false
      * @param string $group the shortname of the group to retrieve
 	 * @return UserGroup a valid group object or false if the group could not be found
 	 * @see UserGroup object
