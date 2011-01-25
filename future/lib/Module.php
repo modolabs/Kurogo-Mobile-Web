@@ -769,13 +769,10 @@ abstract class Module {
     $acls = array();
     $aclStrings = $this->getModuleVar('acl', array(), Config::SUPRESS_ERRORS);
     foreach ($aclStrings as $aclString) {
-        $values = explode(':', $aclString);
-        if (count($values)==3) {
-            if ($acl = AccessControlList::factory($values[0], $values[1], $values[2])) {
-                $acls[] = $acl;
-            } else {
-                throw new Exception("Invalid ACL $aclString in $this->id");
-            }
+        if ($acl = AccessControlList::createFromString($aclString)) {
+            $acls[] = $acl;
+        } else {
+            throw new Exception("Invalid ACL $aclString in $this->id");
         }
     }
     

@@ -155,6 +155,21 @@ class AccessControlList
     }
     
     /**
+      * Returns an access control list based on a string
+      * @param string Should be in format ACTION:RULE:VALUE
+      * @return AccessControlList or false if the string is invalid
+      */
+    public static function createFromString($aclString)
+    {
+        $values = explode(':', $aclString);
+        if (count($values)==3) {
+            return AccessControlList::factory($values[0], $values[1], $values[2]);
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * Instantiates an AccessControlList 
      * @param $ruleAction string @see AccessControlList::ruleActions() 
      * @param $ruleType string @see AccessControlList::ruleTypes() 
