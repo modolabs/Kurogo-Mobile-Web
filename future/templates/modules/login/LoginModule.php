@@ -21,7 +21,7 @@ class LoginModule extends Module {
 
   protected function initializeForPage() {
     if (!$this->getSiteVar('AUTHENTICATION_ENABLED')) {
-        throw new Exception("Authentication is not enabled");
+        throw new Exception("Authentication is not enabled on this site");
     }
     
     $url = $this->getArg('url', ''); //return url
@@ -31,15 +31,20 @@ class LoginModule extends Module {
     $authenticationAuthorities = array();                
     $authenticationAuthorityLinks = array();                
     foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authorityIndex=>$authorityData) {
-        if (isset($authorityData['OAUTH']) || isset($authorityData['OPENID'])) {
-            $authorityData['LINK'] = $this->buildBreadcrumbURL('login', array('url'=>$url,'authority'=>$authorityIndex, 'startOver'=>true), false);
-            $authenticationAuthorityLinks[$authorityIndex] = $authorityData;
-        } else {
+        $USER_LOGIN = $this->argVal($authorityData, 'USER_LOGIN', 'NONE');
+        
+        if ($USER_LOGIN=='FORM') {
             $authenticationAuthorities[$authorityIndex] = $authorityData;
+        } elseif ($USER_LOGIN=='LINK') {
+            $authorityData['LINK'] = $this->buildBreadcrumbURL('login', array(
+                'url'=>$url,
+                'authority'=>$authorityIndex, 
+                'startOver'=>true), false);
+            $authenticationAuthorityLinks[$authorityIndex] = $authorityData;
         }
     }
                     
-    if (count($authenticationAuthorities)==0 && count($authenticationAuthoritysLinks)==0) {
+    if (count($authenticationAuthorities)==0 && count($authenticationAuthorityLinks)==0) {
         throw new Exception("No authentication authorities have been defined");
     }
     
