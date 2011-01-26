@@ -11,14 +11,23 @@ class ConfigFile extends Config {
   const OPTION_CREATE_EMPTY=1;
   const OPTION_CREATE_WITH_DEFAULT=2;
   const OPTION_DIE_ON_FAILURE=4;
+  const OPTION_IGNORE_LOCAL=8;
   protected $configs = array();
   protected $file;
   protected $type;
   protected $filepath;
+  protected $localFile = false;
   
   public function exists()
   {
     return file_exists($this->filepath);
+  }
+
+  public function localFile()
+  {
+      if (preg_match("/^(.*?)\.ini$/", $this->filepath, $bits)) {      
+         return realpath_exists($localFile = $bits[1] . '-local.ini');
+      }
   }
 
   // loads a config object from a file/type combination  
@@ -108,6 +117,15 @@ class ConfigFile extends Config {
     }
     
     if ($this->loadFile($_file)) {
+        if (!($options & ConfigFile::OPTION_IGNORE_LOCAL)) {
+            if ($localFile = $this->localFile()) {
+                 $this->localFile = $localFile;
+                 $vars = parse_ini_file($localFile, false);
+                 $this->addVars($vars);
+                 $sectionVars = parse_ini_file($localFile, true);
+                 $this->addSectionVars($sectionVars);
+            }
+        }
         return true;
     } 
     
@@ -168,7 +186,7 @@ class ConfigFile extends Config {
 
      $sectionVars = parse_ini_file($file, true);
      $this->addSectionVars($sectionVars);
-     
+
      return true;
   }
   
@@ -210,6 +228,8 @@ class ConfigFile extends Config {
 
     if (!is_writable($this->filepath)) {
         throw new Exception("Cannot save config file: $this->filepath Check permissions");
+    } elseif ($this->localFile) {
+        throw new Exception("Safety net. File will not be saved because it was loaded and has local overrides. The code is probably wrong");
     }
   
       $string = array();
@@ -243,6 +263,9 @@ class ConfigFile extends Config {
         }
         
       }
+      
+      DEbug::wp($this);
+      Debug::die_here($string);
       
       file_put_contents($this->filepath, implode(PHP_EOL, $string));
       return true;

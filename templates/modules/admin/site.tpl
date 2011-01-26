@@ -2,6 +2,8 @@
 
 <div class="nonfocal">
 <h2>{$pageTitle}</h2>
+{if $localFile}<p><b>Note:</b> This site's config.ini has local modifications. The administration module does not alter 
+the config-local.ini file. Values shown here are for the config.ini file</p>{/if}
 </div>
 
 {if $section}

@@ -22,11 +22,9 @@ class AdminModule extends Module {
   /* submit values are affected by the _type specifiers */
   protected function prepareSubmitData($key)
   {
-    if (!$var = $this->getArg($key)) {
-        //couldn't find the variable
-        error_log("Could not find variable $key");
-        return false;
-    } elseif (!$type = $this->getArg('_type')) {
+    $var = $this->getArg($key, array());
+        
+    if (!$type = $this->getArg('_type')) {
         error_log("Type data not found");
         return $var;
     }
@@ -55,16 +53,6 @@ class AdminModule extends Module {
     return $var;    
   }
   
-  protected function prepareAdminForSection($section, $adminModule) {
-    $sectionVars = $this->getSiteSection($section);
-    $formListItems = array();
-
-    foreach ($sectionVars as $key=>$value) {
-        $formListItems[] = $this->getSiteItemForKey($section, $key, $value);
-    }
-
-    return $formListItems;    
-  }
 
   protected function prepareSubmitValue($value, $type)
   {
@@ -330,16 +318,16 @@ class AdminModule extends Module {
 
                 break;
             case 'strings':
+                $configFile = ConfigFile::factory('strings', 'site', ConfigFile::OPTION_CREATE_WITH_DEFAULT | ConfigFile::OPTION_IGNORE_LOCAL);
+
                 if ($this->getArg('submit')) {
                     $strings = $this->prepareSubmitData('strings');
-                    $configFile = $this->getConfig('strings', 'site', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
                     $configFile->addSectionVars($strings, false);
                     $configFile->saveFile();
                     $this->redirectTo('index', false, false);
                 } 
 
-                $config = $this->getConfig('strings', 'site');
-                $strings = $config->getSectionVars(true);
+                $strings = $configFile->getSectionVars(true);
                 $formListItems = array();
                 foreach ($strings as $key=>$value) {
                     if (is_scalar($value)) {
@@ -360,12 +348,14 @@ class AdminModule extends Module {
                         );
                     }
                 }
+
+                $this->assign('localFile'    , $configFile->localFile());
                 $this->assign('strings', $strings);
                 $this->assign('formListItems', $formListItems);
                 break;
 
             case 'site':
-                $configFile = ConfigFile::factory('config', 'site');
+                $configFile = ConfigFile::factory('config', 'site', ConfigFile::OPTION_IGNORE_LOCAL);
                 $siteVars = $configFile->getSectionVars();
 
                 if ($section = $this->getArg('section')) {
@@ -386,8 +376,13 @@ class AdminModule extends Module {
                         $this->redirectTo('site', false, false);
                     }
 
-                    $formListItems = $this->prepareAdminForSection($section, $this);
-                                        
+                    $formListItems = array();
+                    $sectionVars = $configFile->getSection($section);
+
+                    foreach ($sectionVars as $key=>$value) {
+                        $formListItems[] = $this->getSiteItemForKey($section, $key, $value);
+                    }
+
                 } else {
                     foreach ($siteVars as $sectionName=>$sectionVars){
                         $formListItems[] = array(
@@ -401,6 +396,7 @@ class AdminModule extends Module {
                     }
                 }
                                             
+                $this->assign('localFile'    , $configFile->localFile());
                 $this->assign('section'      , $section);
                 $this->assign('formListItems', $formListItems);
                 
