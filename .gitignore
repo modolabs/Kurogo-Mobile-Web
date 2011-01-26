@@ -3,3 +3,6 @@
 .DS_Store
 Thumbs.db
 
+site/*/cache/*
+site/*/logs/*
+
