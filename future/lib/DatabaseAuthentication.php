@@ -14,6 +14,8 @@ class DatabaseAuthentication extends AuthenticationAuthority
     protected $connection;
     protected $tableMap=array();
     protected $fieldMap=array();
+    protected $hashAlgo='md5';
+    protected $hashSalt='';
     
     protected function validUserLogins()
     {
@@ -22,10 +24,10 @@ class DatabaseAuthentication extends AuthenticationAuthority
 
     public function auth($login, $password, &$user)
     {
-        $sql = sprintf("SELECT `%s` FROM `%s` WHERE `%s`=?", $this->getField('password'), $this->getTable('user'), $this->getField('userid'));
+        $sql = sprintf("SELECT `%s` FROM `%s` WHERE `%s`=?", $this->getField('user_password'), $this->getTable('user'), $this->getField('user_userid'));
         $result = $this->connection->query($sql, array($login));
         if ($row = $result->fetch()) {
-            if (md5($password) == $row[$this->getField('password')]) {
+            if (hash($this->hashAlgo, $this->hashSalt . $password) == $row[$this->getField('user_password')]) {
                 $user = $this->getUser($login);
                 return AUTH_OK;
             } else {
@@ -42,12 +44,22 @@ class DatabaseAuthentication extends AuthenticationAuthority
             return new AnonymousUser();       
         }
 
-        $sql = sprintf("SELECT * FROM `%s` WHERE `%s`=?", $this->getTable('user'), $this->getField('userid'));
+        $sql = sprintf("SELECT * FROM `%s` WHERE `%s`=?", $this->getTable('user'), $this->getField('user_userid'));
         $result = $this->connection->query($sql, array($login));
         if ($row = $result->fetch()) {
             $user = new DatabaseUser($this);
-            $user->setUserID($row[$this->getField('userid')]);
-            $user->setEmail($row[$this->getField('email')]);
+            $user->setUserID($row[$this->getField('user_userid')]);
+            $user->setEmail($row[$this->getField('user_email')]);
+            if (isset($row[$this->getField('user_fullname')])) {
+                $user->setFullName($row[$this->getField('user_fullname')]);
+            }
+            if (isset($row[$this->getField('user_firstname')])) {
+                $user->setFirstName($row[$this->getField('user_firstname')]) ;
+            }
+            if (isset($row[$this->getField('user_lastname')])) {
+                $user->setLastName($row[$this->getField('user_lastname')]) ;
+            }
+
             return $user;
         } else {
             return false;
@@ -60,12 +72,12 @@ class DatabaseAuthentication extends AuthenticationAuthority
             return false;
         }
 
-        $sql = sprintf("SELECT * FROM `%s` WHERE `%s`=?", $this->getTable('group'), $this->getField('groupname'));
+        $sql = sprintf("SELECT * FROM `%s` WHERE `%s`=?", $this->getTable('group'), $this->getField('group_groupname'));
         $result = $this->connection->query($sql, array($group));
         if ($row = $result->fetch()) {
             $group = new DatabaseUserGroup($this);
-            $group->setGroupID($row[$this->getField('gid')]);
-            $group->setGroupName($row[$this->getField('groupname')]);
+            $group->setGroupID($row[$this->getField('group_gid')]);
+            $group->setGroupName($row[$this->getField('group_groupname')]);
             return $group;
         } else {
             return false;
@@ -89,19 +101,38 @@ class DatabaseAuthentication extends AuthenticationAuthority
         );
 
         $this->fieldMap = array(
-            'userid'=>'userID',
-            'password'=>'password',
-            'email'=>'email',
-            'groupname'=>'group',
-            'gid'=>'gid',
-            'authority'=>''
+            'user_userid'=>'userID',
+            'user_password'=>'password',
+            'user_email'=>'email',
+            'user_firstname'=>'firstname',
+            'user_lastname'=>'lastname',
+            'user_fullname'=>'fullname',
+            'group_groupname'=>'group',
+            'group_gid'=>'gid',
+            'groupmember_group'=>'gid',
+            'groupmember_user'=>'userID',
+            'groupmember_authority'=>''
         );
         
         foreach ($args as $arg=>$value) {
-            if (preg_match("/^(user|group)_(.*?)_(field|table)$/", strtolower($arg), $bits)) {
-                if (isset($this->fieldMap[$bits[2]])) {
-                    $this->fieldMap[$bits[2]] = $value;
+            if (preg_match("/^(user|group|groupmember)_(.*?)_field$/", strtolower($arg), $bits)) {
+                $key = sprintf("%s_%s", $bits[1], $bits[2]);
+                if (isset($this->fieldMap[$key])) {
+                    $this->fieldMap[$key] = $value;
                 }
+            } elseif (preg_match("/^(.*?)_table$/", strtolower($arg), $bits)) {
+                $key = $bits[1];
+                if (isset($this->tableMap[$key])) {
+                    $this->tableMap[$key] = $value;
+                }
+            } elseif ($arg=='USER_PASSWORD_HASH') {
+                if (!in_array($value, hash_algos())) {
+                    throw new Exception ("Hashing algorithm $value not available");
+                }
+                $this->hashAlgo = $value;
+            
+            } elseif ($arg=='USER_PASSWORD_SALT') {
+                $this->hashSalt = $value;
             }
         }
         
@@ -140,18 +171,18 @@ class DatabaseUserGroup extends UserGroup
 {
     public function getMembers()
     {
-        if ($this->AuthenticationAuthority->getField('authority')) {
+        if ($this->AuthenticationAuthority->getField('group_authority')) {
             $sql = sprintf("SELECT `%s`,`%s` FROM `%s` WHERE %s=?",
-                $this->AuthenticationAuthority->getField('authority'),
-                $this->AuthenticationAuthority->getField('userid'),
+                $this->AuthenticationAuthority->getField('groupmember_authority'),
+                $this->AuthenticationAuthority->getField('groupmember_user'),
                 $this->AuthenticationAuthority->getTable('groupmembers'),
-                $this->AuthenticationAuthority->getField('gid')
+                $this->AuthenticationAuthority->getField('groupmember_group')
             );
         } else {
             $sql = sprintf("SELECT `%s` FROM `%s` WHERE %s=?",
-                $this->AuthenticationAuthority->getField('userid'),
+                $this->AuthenticationAuthority->getField('groupmember_user'),
                 $this->AuthenticationAuthority->getTable('groupmembers'),
-                $this->AuthenticationAuthority->getField('gid')
+                $this->AuthenticationAuthority->getField('groupmember_group')
             );
         }
         
@@ -173,20 +204,20 @@ class DatabaseUserGroup extends UserGroup
     
     public function userIsMember(User $user)
     {
-        if ($this->AuthenticationAuthority->getField('authority')) {
+        if ($this->AuthenticationAuthority->getField('groupmember_authority')) {
             $sql = sprintf("SELECT * FROM `%s` WHERE %s=? AND %s=? AND %s=?", 
                 $this->AuthenticationAuthority->getTable('groupmembers'),
-                $this->AuthenticationAuthority->getField('gid'),
-                $this->AuthenticationAuthority->getField('authority'),
-                $this->AuthenticationAuthority->getField('userid')
+                $this->AuthenticationAuthority->getField('groupmember_group'),
+                $this->AuthenticationAuthority->getField('groupmember_authority'),
+                $this->AuthenticationAuthority->getField('groupmember_user')
             );
             $parameters = array($this->gid, $user->getAuthenticationAuthorityIndex(), $user->getUserID());
         } elseif ($user->getAuthenticationAuthorityIndex()==$this->getAuthenticationAuthorityIndex()) {
             //if we don't use authorities in this database then make sure the user is from the same authority
             $sql = sprintf("SELECT * FROM `%s` WHERE %s=? AND %s=?", 
                 $this->AuthenticationAuthority->getTable('groupmembers'),
-                $this->AuthenticationAuthority->getField('gid'),
-                $this->AuthenticationAuthority->getField('userid')
+                $this->AuthenticationAuthority->getField('groupmember_group'),
+                $this->AuthenticationAuthority->getField('groupmember_user')
             );
             $parameters = array($this->gid, $user->getUserID());
         } else {
