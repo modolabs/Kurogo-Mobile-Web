@@ -1,0 +1,9 @@
+@import url("nature.css");
+
+em {
+    color: #3B981E; 
+}
+
+a em {
+    color: #005B81;
+}
