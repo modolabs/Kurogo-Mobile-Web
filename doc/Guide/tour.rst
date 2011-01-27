@@ -118,26 +118,10 @@ User Access and Authentication
 
 * *AuthenticationAuthority* - This is the root class for authenticating users, getting user and group
   data. It is designed to be subclassed so each authority can provide the means of actually authenticating
-  users, but still maintain a consistent interface for the login module. Included authorities include:
-  
-  *  *PasswdAuthentication* - Uses a flat file similar to unix passwd files with an md5 hashed password.
-     Used primarily in demonstration or testing purposes. 
-  *  *DatabaseAuthentication* - Uses a series of database tables using the included database abstraction
-     library. All it needs is information on tables and which fields contain the necessary information.
-     You can also set it up to retrieve group information and members.
-  *  *LDAPAuthentication* - Connects to an LDAP server for authentication and information. When properly
-     configured it can also get group information and members.
-  *  *FacebookAuthentication* - Allows people to login using their Facebook account. Requires a Facebook
-     application key and secret. Rather than having a user type in their credentials, it uses Facebook's
-     implementation of OAuth and redirects the user to the Facebook login page. After they approve the
-     application it will log them in.
-  *  *TwitterAuthentication* - Allows people to login using their Twitter account. Requires a Twitter
-     application key and secret. Rather than having a user type in their credentials, it uses Twitter's
-     implementation of OAuth and redirects the user to the twitter login page. After they approve the
-     application it will log them in.
-
+  users, but still maintain a consistent interface for the login module. See :doc:`authentication`
+  for more information about the included authorities. 
 * *AccessControlList* - A class used by the authorization system to restrict access to modules based on
-  user or group membership. This is especially useful for the :doc:`administration module <configuration>`.
+  user or group membership. This is especially useful for the :ref:`admin-module`.
 * *Session* - Handles the saving and restoration of user state. This is currently implemented using 
   PHP session variables.
 * *User* - The base class for identifying logged in users
@@ -159,7 +143,7 @@ Modules and Templates
 ---------------------
 
 * *Module* - The core class that all modules inherit from. Provides a variety of necessary services
-  and behavior to module subclasses
+  and behavior to module subclasses. See :doc:`modules`.
 * *HTMLPager* - A support class used to paginate content
 * *smarty* - The `Smarty Template System <http://www.smarty.net/>`_
 * *TemplateEngine* - An subclass of the smarty object used by the framework
@@ -241,10 +225,10 @@ folder. For more information, please see :doc:`moduleextend`
 Site folder
 ===========
 
-The site folder contains a series of folders for each *site* available. This allows each site to
+The site folder contains a series of folders for each *site*. This allows each site to
 have specific configuration, design and custom code. At any given time there is only one **active site**.
-You can enable the active site in the *config.ini* file found in the config folder in the root of 
-the project directory. It is important the that case used in naming the folder matches the ACTIVE_SITE
+You can enable the active site in the *config/config.ini* file found in the the root of the project 
+directory. It is important the that case used in naming the folder matches the ACTIVE_SITE
 case in the config.ini file.
 
 Multiple site folders exist to assist developers who might be working on different versions of their site
@@ -256,7 +240,7 @@ Each site folder contains the following directories:
 * *cache* - Contains server generated files that are cached for performance. This folder is created 
   if needed, but must be writable by the web server process. 
 * *config* - Contains the site specific configuration files in .ini format. Many of these files can 
-  be managed using the :doc:`Administration Module <configuration>`
+  be managed using the :ref:`admin-module`
 
   * *config.ini* - The general configuration file that affects all site behavior such as timezone, log file locations,
     database configuration, and more

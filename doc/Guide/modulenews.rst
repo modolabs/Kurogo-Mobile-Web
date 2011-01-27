@@ -12,7 +12,7 @@ Configuring News Feeds
 
 In order to use the news module, you must first setup the connection to your data. There are
 2 required values that must be set and a few optional ones. You can set these values by either using
-the :doc:`Administration Module <configuration>` or by editing the `config/feeds/news.ini` file 
+the :ref:`admin-module` or by editing the `config/feeds/news.ini` file 
 directly.
 
 The module supports multiple feeds. Each feed is indicated by a section in the configuration

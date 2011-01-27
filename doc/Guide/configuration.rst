@@ -7,8 +7,8 @@ however, you are going to want to be familiar with many of the site and module o
 affect file locations, debugging information and module behavior. 
 
 All of the site's configuration is controlled using .ini files. You can either edit these files 
-manually or use the administration module to edit most of these values. It is the goal of the 
-framework to have all options be able to be administered using the admin module, however, at this
+manually or use the :ref:`admin-module` to edit most of these values. It is the goal of the 
+framework to have all options be able to be administered using the :ref:`admin-module`, however, at this
 time there are some options that have not been exposed. Please keep track of the framework's progress
 in this regard.
 
@@ -254,6 +254,7 @@ contains values common to all modules, as well as module specific values.
 * *secure* - Whether or not the module requires a secure (https) connection. Configuring secure
   sites is beyond the scope of this document.
 * *acl[]*  - a series of access control list entries. See :doc:`authentication`.
+
 It is important to turn on the disabled flag for any modules you do not wish to use. It is *very* 
 important to make sure that the *admin* module is either disabled or protected appropriately to prevent
 exposure of critically important data and configuration. If you utilize logins you should make sure
@@ -309,9 +310,11 @@ it is a part of. These include:
 * *COPYRIGHT_NOTICE* - Copyright notice 
 * *FEEDBACK_EMAIL* - email address where user's can send feedback.
 
-================
-The Admin Module
-================
+.. _admin-module:
+
+=====================
+Administration Module
+=====================
 
 In addition to editing these files, you can use the administration module to manage the configuration.
 The admin module is located at */admin* and does not have an icon on the home screen. It has several 

@@ -29,7 +29,7 @@ properties that you will need to use if creating your own module. These include:
   This property **must** be set by all modules. 
 * *moduleName* (string) - This property represents the canonical name of the module and is shown at
   on the nav bar. It can be overridden using the configuration file.
-* *hasFeeds* (boolean) - used by the administration module to indicate that the module has configurable
+* *hasFeeds* (boolean) - used by the :ref:`admin-module` to indicate that the module has configurable
   data feeds. This should be set to true if the module uses feeds.
 * *page* (string) - This property is set when the module initializes and represents the current page the 
   user is viewing (based on the :doc:`request <requests>`). 
