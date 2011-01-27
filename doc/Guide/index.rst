@@ -40,5 +40,5 @@ reaches 1.0 status
    libs
    modulenew
    moduleextend
-   authentication
-   
+   authenticationintro
+   glossary   
