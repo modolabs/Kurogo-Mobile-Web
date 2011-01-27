@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Kurogo Framework Guide
-====================================
+**********************
 
 The Kurogo Framework is a PHP based web application that can help institutions efficiently deliver
 campus services and information to a wide array of mobile devices. Based on the MIT Framework, this
@@ -24,9 +24,6 @@ This guide serves as a tour of the project source code and its features.
 **Note:** This is documentation for a Beta product. Please be aware that certain details may change before it 
 reaches 1.0 status
 
-Contents
---------
-
 .. toctree::
    :maxdepth: 2
 
@@ -45,10 +42,3 @@ Contents
    moduleextend
    authentication
    
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-

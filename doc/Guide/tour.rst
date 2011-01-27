@@ -137,7 +137,7 @@ User Access and Authentication
      application it will log them in.
 
 * *AccessControlList* - A class used by the authorization system to restrict access to modules based on
-  user or group membership. This is especially useful for the :doc:`administration module <administration>`.
+  user or group membership. This is especially useful for the :doc:`administration module <configuration>`.
 * *Session* - Handles the saving and restoration of user state. This is currently implemented using 
   PHP session variables.
 * *User* - The base class for identifying logged in users
@@ -256,7 +256,7 @@ Each site folder contains the following directories:
 * *cache* - Contains server generated files that are cached for performance. This folder is created 
   if needed, but must be writable by the web server process. 
 * *config* - Contains the site specific configuration files in .ini format. Many of these files can 
-  be managed using the :doc:`Administration Module <administration>`
+  be managed using the :doc:`Administration Module <configuration>`
 
   * *config.ini* - The general configuration file that affects all site behavior such as timezone, log file locations,
     database configuration, and more

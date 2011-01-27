@@ -12,7 +12,7 @@ Configuring the Server Connection
 
 In order to use the people module, you must first setup the connection to your LDAP server. There are
 2 required values that must be set and a few optional ones. You can set these values by either using
-the :doc:`Administration Module <administration>` or by editing the `config/feeds/people.ini` file 
+the :doc:`Administration Module <configuration>` or by editing the `config/feeds/people.ini` file 
 directly.
 
 * The HOST value should match the address of your LDAP server. Keep in mind that this server must

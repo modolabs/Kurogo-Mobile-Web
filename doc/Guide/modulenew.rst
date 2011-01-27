@@ -368,7 +368,7 @@ screen, refine the experience and make the module more flexible.
 Home Screen
 -----------
 
-Adding the module to the home screen is simple. You can either use the :doc:`administration module <administration>`
+Adding the module to the home screen is simple. You can either use the :doc:`administration module <configuration>`
 or by editing the *SITE_DIR/config/modules/home.ini* file. 
 
 #. In the *[primary_modules]* section, add an entry that says :kbd:`video="Video"`

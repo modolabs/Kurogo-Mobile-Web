@@ -65,7 +65,7 @@ not rename this section after you have deployed your site, otherwise it may caus
 refer to it in any module authorization settings. 
 
 Each authority has a number of required attributes and depending on the type of authority it will
-have several others. See :doc:`administration` for more information on configuration files.
+have several others. See :doc:`configuration` for more information on configuration files.
 
 The following values are *required* for all authorities:
 
