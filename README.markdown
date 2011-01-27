@@ -12,11 +12,31 @@ to early generation smart phones, to modern devices and tablets. It currently in
 * Statistics
 * About
 
+## Online Guide
+
+We strongly recommend developers read the (in progress) framework guide:
+
+* [HTML](http://modolabs.com/kurogo/guide)
+* [PDF](http://modolabs.com/kurogo/guide.pdf)
+
+Please contact kurogo@modolabs.com for more information.
+
 ## NOTICE: Pre-release version
 
 This project is still in a beta stage with a final release in March 2011. Please be aware that certain
 conventions, API and file locations may change. We will strive to provide detailed release notes 
 when critical core behavior has been altered.
+
+## Version 1.0
+
+The following is planned before the official 1.0 release:
+
+* A generalized, configurable Map module
+* Updated UI and templates for the "Touch" branch which includes certain BlackBerry devices
+* A UI and templates for tablet form factor devices
+* A module for retrieving Emergency information
+* An abstract module to ease displaying a variety of free form text content from      other sources
+* API Support for the soon to be released open source iOS native   application 
 
 ## History
 
@@ -33,19 +53,4 @@ There are some parts of the project that are not present:
 * Modules that have not been generalized are not included. Please refer to the [Harvard Mobile Web Repository](https://github.com/modolabs/Harvard-Mobile-Web) for modules that you do not find here. Some modules will eventually be generalized and folded into this project.
 * Native API support. The API for native apps will be changing.
 
-## Version 1.0
 
-The following is planned before the official 1.0 release:
-
-* A generalized, configurable Map module
-* A UI and templates for tablet form factor devices
-* A module for retrieving Emergency information
-* An abstract module to ease displaying a variety of free form text content from      other sources
-* API Support for the soon to be released open source iOS native   application 
-
-## Online Guide
-
-We strongly recommend developers read the (in progress) framework guide:
-
-* [HTML](http://modolabs.com/kurogo/guide)
-* [PDF](http://modolabs.com/kurogo/guide.pdf)
