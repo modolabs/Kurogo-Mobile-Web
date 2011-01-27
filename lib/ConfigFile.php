@@ -12,27 +12,33 @@ class ConfigFile extends Config {
   const OPTION_CREATE_WITH_DEFAULT=2;
   const OPTION_DIE_ON_FAILURE=4;
   const OPTION_IGNORE_LOCAL=8;
+  const OPTION_IGNORE_MODE=16;
   protected $configs = array();
   protected $file;
   protected $type;
   protected $filepath;
   protected $localFile = false;
-  
-  public function modeFile($mode)
+
+  protected function fileVariant($variant) 
   {
-      /* valid modes are alphanumeric characters and the underscore */
-      if (!preg_match("/^[a-z0-9_]+$/i", $mode)) {
+      /* valid variants are alphanumeric characters and the underscore */
+      if (!preg_match("/^[a-z0-9_]+$/i", $variant)) {
         return false;
       }
       
       if (preg_match("/^(.*?)\.ini$/", $this->filepath, $bits)) {      
-         return realpath_exists(sprintf("%s-%s.ini", $bits[1], $mode));
+         return realpath_exists(sprintf("%s-%s.ini", $bits[1], $variant));
       }
+  }
+  
+  public function modeFile()
+  {
+    return $this->fileVariant(CONFIG_MODE);
   }
 
   public function localFile()
   {
-     return $this->modeFile('local');
+    return CONFIG_IGNORE_LOCAL ? false : $this->fileVariant('local');
   }
 
   // loads a config object from a file/type combination  
@@ -122,6 +128,15 @@ class ConfigFile extends Config {
     }
     
     if ($this->loadFile($_file)) {
+        if (!($options & ConfigFile::OPTION_IGNORE_MODE)) {
+            if ($modeFile = $this->modeFile()) {
+                 $this->modeFile = $modeFile;
+                 $vars = parse_ini_file($modeFile, false);
+                 $this->addVars($vars);
+                 $sectionVars = parse_ini_file($modeFile, true);
+                 $this->addSectionVars($sectionVars);
+            }
+        }
         if (!($options & ConfigFile::OPTION_IGNORE_LOCAL)) {
             if ($localFile = $this->localFile()) {
                  $this->localFile = $localFile;

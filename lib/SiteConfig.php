@@ -10,8 +10,11 @@ class SiteConfig extends ConfigGroup {
 
   function __construct() {
     // Load main configuration file
-    $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini", 'file', ConfigFile::OPTION_DIE_ON_FAILURE);
+    $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini", 'file', ConfigFile::OPTION_DIE_ON_FAILURE | ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
     $this->addConfig($config);
+
+    define('CONFIG_MODE', $config->getVar('CONFIG_MODE'));
+    define('CONFIG_IGNORE_LOCAL', $config->getVar('CONFIG_IGNORE_LOCAL'));
 
     //make sure active site is set    
     if (!$site = $this->getVar('ACTIVE_SITE')) {
