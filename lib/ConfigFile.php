@@ -18,16 +18,21 @@ class ConfigFile extends Config {
   protected $filepath;
   protected $localFile = false;
   
-  public function exists()
+  public function modeFile($mode)
   {
-    return file_exists($this->filepath);
+      /* valid modes are alphanumeric characters and the underscore */
+      if (!preg_match("/^[a-z0-9_]+$/i", $mode)) {
+        return false;
+      }
+      
+      if (preg_match("/^(.*?)\.ini$/", $this->filepath, $bits)) {      
+         return realpath_exists(sprintf("%s-%s.ini", $bits[1], $mode));
+      }
   }
 
   public function localFile()
   {
-      if (preg_match("/^(.*?)\.ini$/", $this->filepath, $bits)) {      
-         return realpath_exists($localFile = $bits[1] . '-local.ini');
-      }
+     return $this->modeFile('local');
   }
 
   // loads a config object from a file/type combination  
@@ -263,9 +268,6 @@ class ConfigFile extends Config {
         }
         
       }
-      
-      DEbug::wp($this);
-      Debug::die_here($string);
       
       file_put_contents($this->filepath, implode(PHP_EOL, $string));
       return true;
