@@ -144,29 +144,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
 
     //not found  
   _404();
-  
-} else if (preg_match(';^.*api/$;', $path, $matches)) {
-  //
-  // Native Interface API
-  //  
-  
-  require_once realpath(LIB_DIR.'/PageViews.php');
-  
-  if (isset($_REQUEST['module']) && $_REQUEST['module']) {
-    $id = $_REQUEST['module'];
-    $api = realpath_exists(LIB_DIR."/api/$id.php");
     
-    if ($api) {
-      PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
-      
-      require_once($api);
-      exit;
-    }
-  }
-
-    //not found  
-  _404();
-  
 } else {
   //
   // Web Interface
