@@ -2,7 +2,7 @@
 Source code tour
 #################
 
-This section will give you a tour of the various files and directories in the iMobileU source code
+This section will give you a tour of the various files and directories in the Kurogo source code
 directory. Knowing the layout of the project will help you understand some of the decisions behind
 code and where to place your own files so upgrading to newer versions is as seamless as possible.
 
