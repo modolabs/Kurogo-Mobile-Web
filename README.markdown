@@ -20,28 +20,32 @@ when critical core behavior has been altered.
 
 ## History
 
-This project is based off the original MIT Mobile Framework and was adapted for use at Harvard University.
+This project is based off the original [MIT Mobile Framework](https://github.com/MIT-Mobile/MIT-Mobile-Web) and was adapted for use at [Harvard University](https://github.com/modolabs/Harvard-Mobile-Web).
 If you have followed the progress of the Harvard project you will notice some improvements and differences:
 
 * An overhauled configuration system with web-based administration interface
 * A robust authentication system with support for many types of authentication authorities
 * Authorization support to restrict access to content by user or group
+* Many other small improvements to ease in customization
 
-There are some parts of the project that are not present
+There are some parts of the project that are not present:
 
-* Modules that have not been generalized are not included. Please refer to https://github.com/modolabs/Harvard-Mobile-Web for modules that you do not find here. Some modules (i.e. Maps) will eventually be put in this project.
+* Modules that have not been generalized are not included. Please refer to the [Harvard Mobile Web Repository](https://github.com/modolabs/Harvard-Mobile-Web) for modules that you do not find here. Some modules will eventually be generalized and folded into this project.
 * Native API support. The API for native apps will be changing.
 
-The following is planned before the final release:
+## Version 1.0
+
+The following is planned before the official 1.0 release:
 
 * A generalized, configurable Map module
 * A UI and templates for tablet form factor devices
 * A module for retrieving Emergency information
 * An abstract module to ease displaying a variety of free form text content from      other sources
+* API Support for the soon to be released open source iOS native   application 
 
 ## Online Guide
 
-We strongly recommend you read the (in progress) developer's guide at 
+We strongly recommend developers read the (in progress) framework guide:
 
-* http://modolabs.com/kurogo/guide 
-* http://modolabs.com/kurogo/guide.pdf
+* [HTML](http://modolabs.com/kurogo/guide)
+* [PDF](http://modolabs.com/kurogo/guide.pdf)
