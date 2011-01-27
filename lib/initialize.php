@@ -116,6 +116,7 @@ function Initialize(&$path=null) {
   //    
   
   $GLOBALS['siteConfig'] = new SiteConfig();
+  ini_set('display_errors', $GLOBALS['siteConfig']->getVar('DISPLAY_ERRORS'));
   
   //
   // Install exception handlers
