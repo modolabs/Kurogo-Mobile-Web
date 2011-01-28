@@ -29,7 +29,7 @@
     {foreach $modules as $id => $info}
       <li>
         <a name="{$id}"></a>
-        <input type="checkbox" name="{$id}" checked="true" value="" {if !$info['disableable']}class="required prefs_{$moduleID}"{/if} />
+        <input type="checkbox" name="{$id}" checked="true" value="" />
         <a class="title" href="../{$id}/" style="background: url('/modules/{$moduleID}/images/{$id}-tiny.png') no-repeat left;">
           {$info['title']}
         </a>
