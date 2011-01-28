@@ -68,12 +68,12 @@ class AboutModule extends Module {
       case 'about_site':
         $this->assign('devicePhrase', $this->getPhraseForDevice()); // TODO: this should be more generic, not part of this module
         break;
-      
+
       case 'about':
         break;
-      
-      case 'new':
-        $this->assign('items', array()); // Disabled for now
+
+      default:
+        $this->redirectTo('index');
         break;
     }
   }
