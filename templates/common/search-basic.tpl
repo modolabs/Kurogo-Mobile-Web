@@ -1,7 +1,6 @@
 {extends file="findExtends:common/search.tpl"}
 
 {block name="form"}
-  {strip}
   {if !$insideForm}
     <form method="get" action="{$searchURL|default:'search.php'}">
       <p id="search">
@@ -35,5 +34,4 @@
     </form>
   {/if}
   {$inlineErrorHTML}
-  {/strip}
 {/block}

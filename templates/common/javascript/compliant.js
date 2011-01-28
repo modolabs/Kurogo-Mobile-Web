@@ -110,8 +110,7 @@ function clipWithEllipsis(getElements) {
 
    function getCSSValue(elem, key) {
         if (window.getComputedStyle) {
-            return document.defaultView.getComputedStyle(elem, null)
-                    .getPropertyValue(key);
+            return document.defaultView.getComputedStyle(elem, null).getPropertyValue(key);
         } else if (elem.currentStyle) {
             return elem.currentStyle[key];
         }
@@ -162,8 +161,9 @@ function clipWithEllipsis(getElements) {
         copy.style['width'] = getCSSWidth(elem)+'px';
         copy.style['height'] = 'auto';
         
-        elem.parentElement.style['position'] = 'relative';
-        elem.parentElement.appendChild(copy);
+        elem.parentNode.style['position'] = 'relative';
+        elem.parentNode.appendChild(copy);
+        
         
         // Binary search through lengths to see where the copy gets
         // bigger than the real div.  Clip at that length.
@@ -186,20 +186,28 @@ function clipWithEllipsis(getElements) {
                     upper = testLoc;
                 } else if (copy.offsetHeight < clipHeight) {
                     lower = testLoc;
+                } else if (upper - lower > 2) {
+                    lower = testLoc; // this works but try to fill out last line
                 } else {
-                    // found it
-                    lower = upper = testLoc;
+                    upper = lower = testLoc; // found it!
                 }
             }   
         }
         elem.innerHTML = copy.innerHTML;
-        copy.parentElement.removeChild(copy);
+        copy.parentNode.removeChild(copy);
+    }
+    
+    function clipWrapper(elem) {
+      setTimeout(function () {
+        clipIfNeeded(elem);
+      }, 0);
     }
     
     function clipAllIfNeeded(elems) {
         for (var i = 0; i < elems.length; i++) {
             if (getCSSValue(elems[i], 'overflow') != 'hidden') { continue; } // won't clip
-            clipIfNeeded(elems[i]);
+            
+            clipWrapper(elems[i]);
         }
     }
     

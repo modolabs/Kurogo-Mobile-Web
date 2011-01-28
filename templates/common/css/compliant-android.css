@@ -1,8 +1,3 @@
-.springboard a {
-  -webkit-border-radius: 5px;
-  padding: 8px 4px;
-}
-
 #sharedialog {
 	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#d0d0d0)); /* Webkit browsers */
 }

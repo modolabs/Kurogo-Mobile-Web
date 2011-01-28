@@ -4,12 +4,12 @@
 {block name="onLoad"}{/block}
 
 {block name="additionalHeadTags"}
-    <style type="text/css" media="screen">
-      {$fontsizeCSS}
-    </style>
+  <style type="text/css" media="screen">
+    {$fontsizeCSS}
+  </style>
 {/block}
 
-{block name="header"}
+{block name="navbar"}
   <table cellpadding="0" cellspacing="0" border="0">
     <tr valign="middle">
       <td>
