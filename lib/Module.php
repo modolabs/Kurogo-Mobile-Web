@@ -60,6 +60,8 @@ abstract class Module {
   
   private $tabbedView = null;
   
+  protected $cacheMaxAge=0;
+  
   public function getID()
   {
     return $this->id;
@@ -1115,6 +1117,7 @@ abstract class Module {
     $this->assign('accessKeyStart', $accessKeyStart);
 
     if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
+        $this->setCacheMaxAge(0);
         $this->assign('session', $this->getSession());
         $user = $this->getUser();
         $this->assign('session_user', $user);
@@ -1124,8 +1127,17 @@ abstract class Module {
         }
     }
 
+    /* set cache age. Modules that present content that rarely changes can set this value
+    to something higher */
+    header(sprintf("Cache-Control: max-age=%d", $this->cacheMaxAge));
+
     // Load template for page
     $this->templateEngine->displayForDevice($template);    
+  }
+  
+  protected function setCacheMaxAge($age)
+  {
+    $this->cacheMaxAge = intval($age);
   }
   
   
