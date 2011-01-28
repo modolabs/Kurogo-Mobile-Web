@@ -1,31 +1,27 @@
 <div id="share">
-	<a onclick="showShare()"><img src="/device/compliant/common/images/share.png"/></a>
-	<div id="sharesheet">
-		<div id="shareback"> </div>
-		<div id="sharedialog">
-			<h1>Share this story</h1>
-			<ul>
-				<li><a href="mailto:?"><img src="/device/compliant/common/images/button-email.png" alt="" width="32" height="32" />Email</a></li>
-				<li>
-				    <!--
-				    <a href="https://graph.facebook.com/oauth/authorize?
-                        client_id=API_KEY&
-                        redirect_uri=http://{$smarty.server.SERVER_NAME}{$smarty.server.REQUEST_URI}&
-                        display=touch">
-				        <img src="/device/compliant/common/images/button-facebook.png" 
-				        alt="" width="32" height="32" />Facebook
-				    </a>
-				    -->
-				    <img src="/device/compliant/common/images/button-facebook.png" 
-			        alt="" width="32" height="32" />Facebook
-				</li>
-				<li>
-				    <a href="http://m.twitter.com/share?url={$urlToBeShared}&amp;text={$shareRemark}&amp;Via=Harvard">
-				        <img src="/device/compliant/common/images/button-twitter.png" alt="" width="32" height="32" />Twitter
-				    </a>
-                </li>
+  <a onclick="showShare()"><img src="/common/images/share.png"/></a>
+  <div id="sharesheet" style="display:none">
+    <div id="shareback"> </div>
+    <div id="sharedialog">
+      <h1>Share this story</h1>
+      <ul>
+        {if $shareEmailURL}
+          <li>
+            <a class="sharelink" href="{$shareEmailURL}"><img src="/common/images/button-email.png" alt="" width="32" height="32" />Email</a>
+          </li>
+        {/if}
+        {if $shareURL}
+          <li>
+            <a class="sharelink" href="http://m.facebook.com/sharer.php?u={$shareURL}&t={$shareRemark}"><img src="/common/images/button-facebook.png" alt="" width="32" height="32" />Facebook</a>
+          </li>
+          <li>
+            <a class="sharelink" href="http://m.twitter.com/share?url={$shareURL}&amp;text={$shareRemark}&amp;Via=Harvard"><img src="/common/images/button-twitter.png" alt="" width="32" height="32" />Twitter</a>
+          </li>
+        {/if}
 			</ul>
-			<a onclick="hideShare()">Cancel</a>
+      <div class="formbuttons">
+        <a class="formbutton" onclick="hideShare()"><div>Cancel</div></a>
+      </div>
 		</div>
 	</div>
 </div>

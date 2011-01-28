@@ -1,7 +1,7 @@
 <ul class="results">
-  {if $previousUrl}
-    <li class="non-story">
-      <a href="{$previousUrl}">Previous stories</a>
+  {if $previousURL}
+    <li class="pagerlink">
+      <a href="{$previousURL}">Previous 10 stories...</a>
     </li>
   {/if}
 
@@ -11,9 +11,8 @@
       {if $story['image']}
         <img class="thumbnail" src="{$story['image']['src']}" />
       {else}
-        <img class="thumbnail" src="{$smarty.const.URL_BASE}modules/news/images/news-placeholder.png" />
+        <img class="thumbnail" src="/common/images/news-placeholder.png" />
       {/if}
-      
       <a href="{$story['url']}">
         <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
           <div class="title">{$story["title"]}</div>
@@ -23,9 +22,9 @@
     </li>
   {/foreach}
 
-  {if $nextUrl}
-    <li class="non-story">
-      <a href="{$nextUrl}">More stories</a>
+  {if $nextURL}
+    <li class="pagerlink">
+      <a href="{$nextURL}">Next 10 stories...</a>
     </li>
   {/if}
 </ul>

@@ -15,16 +15,14 @@
 }
 
 .byline {
-    min-height:40px;
-	margin-top: -6px;
+  min-height:40px;
 	padding-bottom: 0.33em;
 	margin-bottom: 1.33em;
-    border-bottom: 1px dotted #999;
+  border-bottom: 1px dotted #999;
 }
 
-#storysubhead
-{
-    display: block;
+#storysubhead {
+  display: block;
 }
 
 .dek {

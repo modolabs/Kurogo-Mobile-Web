@@ -20,7 +20,7 @@
         <table border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td class="formlabel">Section:</td>
-            <td class="inputfield"><div>{$categorySelect}</div></td>
+            <td class="inputfield"><div id="news-category-select">{$categorySelect}</div></td>
             <td class="togglefield">
               {block name="categoryButton"}
                 <input src="/common/images/search_button.png" type="image" class="toggle-search-button"  onclick="return toggleSearch();" />
@@ -41,10 +41,12 @@
           <tr>
             <td class="formlabel">Search:</td>
             <td class="inputfield">
-              <input class="newsinput search-field" type="text" id="search_terms" name="filter" value="{$searchTerms|escape}"/>
+              <input class="newsinput search-field" type="text" id="search_terms" 
+              name="filter" value="{$searchTerms|escape}" 
+              onKeyPress="return submitenter(this, event);"/>
             </td>
             <td class="togglefield">
-              <input type="button" class="toggle-search-button"  onclick="return toggleSearch();" value="Cancel" />
+              <input type="button" class="toggle-search-button" onclick="return toggleSearch();" value="Cancel" />
             </td>
           </tr>
         </table>

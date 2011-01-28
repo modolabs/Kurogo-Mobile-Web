@@ -1274,7 +1274,6 @@ h2.icon {
 	margin: -12px 0 0 8px;
 }
 #sharesheet {
-	visibility: hidden;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -1298,11 +1297,12 @@ h2.icon {
 	position: absolute;
 	top: 80px;
 	left: 50%;
-	width: 260px;
-	margin-left: -140px;
+	width: 220px;
+	margin-left: -130px;
 	-webkit-border-radius: 10px;
-	padding: 10px;
-	background: #ddd; /* Non-CSS3 browsers */
+	padding: 10px 20px;
+	background: #eee; /* Non-CSS3 browsers */
+	/* This doesn't work with the Palm Pre: 
 	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#d0d0d0)); /* Webkit browsers */
 	background: -moz-linear-gradient(top,  #f9f9f9,  #d0d0d0); /* Firefox 3.6+ */
 	-moz-box-shadow: 0px 3px 7px #333;
@@ -1319,7 +1319,7 @@ h2.icon {
 	margin: 0;
 	padding: 0;
 }
-#sharedialog a {
+#sharedialog a.sharelink {
 	display: block;
 	text-decoration: none;
 	padding: 6px 0;

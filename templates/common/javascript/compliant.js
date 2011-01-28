@@ -265,11 +265,11 @@ function setCookie(c_name, value, expiredays) {
 
 // Share-related functions
 function showShare() {
-	document.getElementById("sharesheet").style.visibility="visible";
+	document.getElementById("sharesheet").style.display="block";
 	document.addEventListener('touchmove', doNotScroll, true);
 }
 function hideShare() {
-	document.getElementById("sharesheet").style.visibility="hidden";
+	document.getElementById("sharesheet").style.display="none";
 	document.removeEventListener('touchmove', doNotScroll, true);
 }
 function doNotScroll( event ) {
