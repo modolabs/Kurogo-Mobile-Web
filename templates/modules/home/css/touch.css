@@ -1,10 +1,13 @@
-#homelogo {
-	font-size: 200%;
-	line-height: 1em;
-	margin: 18px auto -4px auto;
+.intro {
+	margin-bottom: 0;
 	text-align: center;
-	width: 100%;
-	padding: 0;
+}
+h1 {
+	font-size: 211.7%;
+	line-height: 1em;
+	margin: 16px 12px -6px 12px;
+	color: #112;
+	text-align: center;
 }
 h1.roomfornew {
 	text-align: left;
@@ -50,6 +53,6 @@ h1.roomfornew {
 	clear: both;
 }
 form {
-	margin: 0 0 -7px 0;
+	margin: 0 0 -0.5em 0;
 }
 

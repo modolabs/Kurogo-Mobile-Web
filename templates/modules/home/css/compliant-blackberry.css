@@ -1,22 +1,65 @@
+#homelogo {
+  margin-bottom: 12px;
+}
 
-#homegrid div {
-	width: 76px;
-	height: 114px;
-	font-size: 16px;
+h1 {
+	margin: 0;
+	padding: 17px 0 11px 0;
+	text-align: center;
 }
-#homegrid div.utility {
-	width: 76px;
-	height: 114px;
-	font-size: 14px;
+#new {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 80px;
+	height: 80px;
+	background-image: url(/modules/home/images/newbig.jpg);
+	background-repeat: no-repeat;
+	color: #fff;
+	font-size: 13px;
+	line-height: 13px;
+	text-align: center;
+	overflow: hidden;
 }
-#homegrid a {	
-	width: 76px;
-	height: 106px;
+#new a {
+	display: block;
+	width: 56px;
+	height: 50px;
+	padding: 0;
+	text-decoration: none;
+	color: #fff;
+	position: absolute;
+	top: 18px;
+	right: 7px;
+}
+#new a .newlabel {
+	display: block;
+	font-size: 9px;
+	line-height: 11px;
+	color: #ffcece;
+}
+.forminput {
+	position: relative;
+	font-size: 100%;
+	width: 100%;
+	height: 1.4em;
+	padding: 2px;
+	border: 2px solid #554c41;
+}
+#download {
+	text-align: left;
+	clear: both;
+	padding: 10px 10px 10px 10px;
+	font-size: 76.47%;
+}
+#download a {
 	color: #333;
+	text-decoration: none;
 }
-#homegrid a:hover {
-	border-color: #c00;
+#download a:hover {
+	color: #a00;
 }
-#homegrid a:active {
-	border-color: #900;
+#footer {
+	text-align: center;
+	clear: both;
 }

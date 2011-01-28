@@ -644,12 +644,12 @@ abstract class Module {
 
     switch ($key)
     {
-        case 'springboard':
+        case 'display_type':
             $item['label'] = 'Display type';
             $item['type'] = 'radio';
             $item['options'] = array(
-                0=>'List View',
-                1=>'Springboard');
+                'list'=>'List View',
+                'springboard'=>'Springboard');
             break;
         case 'title':
             $item['type'] = 'text';

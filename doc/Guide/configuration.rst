@@ -273,10 +273,10 @@ Home Screen Type
 
 .. code-block:: ini
 
-  springboard = 1
+  display_type = "springboard" 
 
-The springboard property is a boolean that controls whether the home screen displays like a grid of 
-icons (true) or a list of items (false). 
+The display type property is a value that controls whether the home screen displays like a grid of 
+icons ("springboard") or a list of items ("list"). 
 
 ---------------------
 Module list and order
