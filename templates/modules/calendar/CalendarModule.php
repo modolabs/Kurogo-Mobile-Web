@@ -302,7 +302,6 @@ class CalendarModule extends Module {
   public function getFeed($index)
   {
     if (isset($this->feeds[$index])) {
-        
         $feedData = $this->feeds[$index];
         $controller = CalendarDataController::factory($feedData);
         $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
@@ -313,8 +312,8 @@ class CalendarModule extends Module {
   }
  
   protected function initialize() {
-    $this->feeds      = $this->loadFeedData();
-    $this->timezone   = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
+    $this->feeds    = $this->loadFeedData();
+    $this->timezone = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
   }
 
   protected function initializeForPage() {
@@ -329,7 +328,6 @@ class CalendarModule extends Module {
       
         $this->assign('today',           $today);
         $this->assign('searchOptions',   $this->searchOptions);
-
         break;
       
       case 'categories':
@@ -352,7 +350,7 @@ class CalendarModule extends Module {
       
       case 'category':
         $type    = $this->getArg('type', $this->getDefaultFeed());
-        $catid      = $this->getArg('catid', '');
+        $catid   = $this->getArg('catid', '');
         $name    = $this->getArg('name', '');
         $current = $this->getArg('time', time());
         $next    = $current + DAY_SECONDS;
@@ -368,8 +366,8 @@ class CalendarModule extends Module {
         $this->assign('current', $current);
         $this->assign('next',    $next);
         $this->assign('prev',    $prev);
-        $this->assign('nextUrl', $this->categoryDayURL($next, $catid, $name, false));
-        $this->assign('prevUrl', $this->categoryDayURL($prev, $catid, $name, false));
+        $this->assign('nextURL', $this->categoryDayURL($next, $catid, $name, false));
+        $this->assign('prevURL', $this->categoryDayURL($prev, $catid, $name, false));
         $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
 
         $events = array();
@@ -439,7 +437,6 @@ class CalendarModule extends Module {
         break;
         
       case 'day':  
-
         $current = $this->getArg('time', time());
         $type = $this->getArg('type', $this->getDefaultFeed());
         $next = strtotime("+1 day", $current);
@@ -475,8 +472,8 @@ class CalendarModule extends Module {
         $this->assign('current', $current);
         $this->assign('next',    $next);
         $this->assign('prev',    $prev);
-        $this->assign('nextUrl', $this->dayURL($next, $type, false));
-        $this->assign('prevUrl', $this->dayURL($prev, $type, false));
+        $this->assign('nextURL', $this->dayURL($next, $type, false));
+        $this->assign('prevURL', $this->dayURL($prev, $type, false));
         $this->assign('events',  $events);        
         break;
         
@@ -590,6 +587,8 @@ class CalendarModule extends Module {
                     
           $this->assign('events',      $events);        
           $this->assign('searchTerms', $searchTerms);        
+          $this->assign('selectedOption', $timeframeKey);
+          $this->assign('searchOptions',  $this->searchOptions);
 
         } else {
           $this->redirectTo('index');
@@ -618,26 +617,23 @@ class CalendarModule extends Module {
           );
         }
 
-        $current =  $year   .'-'.($year+1);
-        $next    = ($year+1).'-'.($year+2);
-        $prev    = ($year-1).'-'. $year;
+        $current =  $year   .'&nbsp;-&nbsp;'.($year+1);
+        $next    = ($year+1).'&nbsp;-&nbsp;'.($year+2);
+        $prev    = ($year-1).'&nbsp;-&nbsp;'. $year;
 
         if ((date('Y')+1) > $year) {
           $this->assign('next',    $next);
-          $this->assign('nextUrl', $this->yearURL($year+1, $month, $type, false));
+          $this->assign('nextURL', $this->yearURL($year+1, $month, $type, false));
         }
         if ($year > intval(date('Y'))) {
           $this->assign('prev',    $prev);
-          $this->assign('prevUrl', $this->yearURL($year-1, $month, $type, false));
+          $this->assign('prevURL', $this->yearURL($year-1, $month, $type, false));
         }
 
         $this->assign('current', $current);
         $this->assign('events',  $events);        
         $this->assign('feedTitle', $this->getFeedTitle($type));
         break;
-      
-      case 'academic': //preserved for compatibility
-        $this->redirectTo('year', array('type'=>'academic','month'=>9));
     }
     
   }
