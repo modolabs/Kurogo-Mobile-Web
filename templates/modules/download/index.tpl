@@ -1,7 +1,4 @@
-{block name="header"}
-    {include file="findInclude:common/header.tpl"}
-{/block}
-
+{include file="findInclude:common/header.tpl"}
 
 {if isset($instructions) && isset($downloadUrl)}
   <p class="nonfocal">
