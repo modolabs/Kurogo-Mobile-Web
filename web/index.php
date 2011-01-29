@@ -130,21 +130,7 @@ if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
 
     //not found  
   _404();
-  
-} else if (preg_match(';^.*(sample/.*)$;', $path, $matches)) {
-  //
-  // Sample Files
-  //
-
-  $sample = realpath_exists(SITE_DIR."/$matches[1].php");
-  if ($sample) {
-    require_once $sample;
-    exit;
-  }
-
-    //not found  
-  _404();
-    
+      
 } else {
   //
   // Web Interface
