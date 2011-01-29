@@ -4,10 +4,6 @@
   * @subpackage News
   */
 
-/**
-  */
-require_once realpath(LIB_DIR.'/Module.php');
-
 if (!function_exists('mb_substr')) {
     die('Multibyte String Functions not available (mbstring)');
 }
