@@ -169,14 +169,15 @@ abstract class Module {
     }
   }
    
-  private function getFontSizeURL() {
-    unset($this->args['font']);
-    $argString = http_build_query($this->args);
-    if (strlen($argString)) {
-      return "/{$this->id}/{$this->page}.php?$argString&font=";
-    } else {
-      return "/{$this->id}/{$this->page}.php?font=";
+  private function getFontSizeURLs() {
+    $urls = array();
+    
+    $args = $this->args;
+    foreach ($this->fontsizes as $fontsize) {
+      $args['font'] = $fontsize;
+      $urls[$fontsize] = self::buildURL($this->page, $args);
     }
+    return $urls;
   }
 
   //
@@ -1047,10 +1048,10 @@ abstract class Module {
     $this->assign('isModuleHome', $this->page == 'index');
     
     // Font size for template
-    $this->assign('fontsizes',   $this->fontsizes);
-    $this->assign('fontsize',    $this->fontsize);
-    $this->assign('fontsizeCSS', $this->getFontSizeCSS());
-    $this->assign('fontSizeURL', $this->getFontSizeURL());
+    $this->assign('fontsizes',    $this->fontsizes);
+    $this->assign('fontsize',     $this->fontsize);
+    $this->assign('fontsizeCSS',  $this->getFontSizeCSS());
+    $this->assign('fontSizeURLs', $this->getFontSizeURLs());
 
     // Minify URLs
     $this->assign('minify', $this->getMinifyUrls());
