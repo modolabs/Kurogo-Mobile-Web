@@ -10,7 +10,7 @@
   {else}
       <a href="{$tabInfo['url']}">{$tabInfo['title']}</a>
   {/if}
-  {if !$isLastTab} | {/if}
+  {if !$isLastTab}&nbsp;|&nbsp;{/if}
 {/block}
     
 {block name="tabsEnd"}

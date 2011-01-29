@@ -352,7 +352,8 @@ span.icon {
 
 .devicedetection {
   border: none;
-  margin: 1.5em 0;
+  margin: 1.5em .5em;
+  width: auto;
 }
 .devicedetection th,
 .devicedetection td {

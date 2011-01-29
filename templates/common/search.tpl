@@ -1,5 +1,3 @@
-{strip}
-
 {capture name="hiddenArgHTML" assign="hiddenArgHTML"}
   {if (!isset($searchPage) && ($page == 'search')) || ($page == $searchPage)}
     {$hiddenArgs = $breadcrumbSamePageArgs}
@@ -8,7 +6,7 @@
   {/if}
   
   {if isset($extraArgs)}
-    {$hiddenArgs = array_merge($hiddenArgs, $extraArgs)}
+    {$hiddenArgs = array_merge($extraArgs, $hiddenArgs)}
   {/if}
   {foreach $hiddenArgs as $arg => $value}
     <input type="hidden" name="{$arg}" value="{$value}" />
@@ -44,9 +42,7 @@
         <fieldset class="inputcombo{if $emphasized|default:$isModuleHome} emphasized{/if} search_{$moduleID}">
           <input class="forminput" type="text" id="{$inputName|default:'filter'}" name="{$inputName|default:'filter'}" placeholder="{$placeholder|default:''}" value="{$searchTerms|escape}" onfocus="androidPlaceholderFix(this);" />
 
-          {block name="searchbutton"}
-            <input class="combobutton" id="sch_btn" src="/common/images/search-button.png" type="image" />
-          {/block}
+          <input class="combobutton" id="sch_btn" src="/common/images/search-button.png" type="image" />
           {$hiddenArgHTML}
         </fieldset>
         {if isset($additionalInputs)}
@@ -62,6 +58,3 @@
     </div>
   {/if}
 {/block}
-  
-
-{/strip}

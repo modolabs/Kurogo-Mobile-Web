@@ -4,10 +4,7 @@ html, body {
 	margin: 0;
 	padding: 0;
 	width: 100%;
-}
-
-body {
-	-webkit-text-size-adjust: none; 
+	min-height: 100%;
 }
 
 h1, h2, h3 {
@@ -21,7 +18,7 @@ h3.nonfocal {
 }
 
 h4 {
-	margin: 0 0 6px 0;
+	margin: 0 0 .33em 0;
 	padding: 0;
 }
 
@@ -35,11 +32,11 @@ p {
 
 table {
 	width: 100%;
-	margin: 0 0 0.75em 0;
+	margin: 0 0 0.5em 0;
 }
 
 th, td {
-	padding: 4px 6px 5px 2px; 
+	padding: 0.2em; 
 	line-height: 1em;
 	vertical-align: top;
 }
@@ -85,26 +82,27 @@ strong {
 /* Major layout blocks */
 
 #container {
-	min-height: 320px;
+	min-height: 248px;
 }
 
 #footer {
 	clear: both;
-	min-height: 22px;
-	padding-top: 10px;
-	margin: 20px 12px 14px 12px;
+	margin: 2em 0.5em;
 	font-weight: normal;
+	line-height: 1.2em;
 }
 
 #footerlinks {
 	clear: both;
-	margin: 3em 6px 2em 6px; 
-	font-size: 70.589%;
+	margin: 2em 0.25em; 
+	padding: 0;
+	font-size: 75%;
+	line-height: 1.2em;
 }
 
 #footerlinks a {
 	text-decoration: none;
-	padding: 4px;
+	padding: 0 0.25em;
 }
 
 .leftfoot {
@@ -118,14 +116,14 @@ strong {
 /* Forms */
 
 form {	
-	margin: 18px 0 12px 0;
+	margin: 1em 0;
 	padding: 0;
 	border: none;
 	position: relative;
 }
 
 fieldset {
-	margin: 6px 0;
+	margin: 0.33em 0;
 	padding: 0;
 	border: none;
 	position: relative;
@@ -134,7 +132,7 @@ fieldset {
 input, textarea, select {
 	color: #333;
 	font-size: 100%;
-	line-height: 30px;
+	line-height: 1.2em;
 }
 
 textarea {
@@ -143,69 +141,28 @@ textarea {
 
 select {
 	width: 100%;
-	padding: 4px 2px;
-}
-
-#searchformcontainer h3 {
-	margin: 0 0 0.2em 0;
-}
-
-#searchformcontainer td {
-	padding: 0;
+	padding: 3px 2px;
 }
 
 .forminput {
-	border: 1px solid #666;
-	position: absolute;
-	left: 0;
-	right: 34px;
-	height: 30px;
-	padding: 4px 6px;
-	-webkit-appearance:textfield;
+	border: 2px solid #666;
+	height: 1.2em;
+	padding: 0.2em;
+	width: 96%;
+	margin: 0 0.2em 0 0;
 }
 
-*:first-child+html .forminput {
-	/* The return of IE CSS hacks makes me mad */
-	width: 90%;	
+.submitbutton {
+	font-size: 100%;
+	line-height: 1em;
+	height: 1.8em;
+	background-color: #666;
+	color: #fff;
+	border: none;
 }
 
-.inputcombo {
-	height: 38px;
-	position: relative;
-}
-
-.inputcombo .forminput {
-	height: 24px;
-	padding: 4px 4px 8px 7px;
-	line-height: 24px;
-	border: 1px 0 1px 1px solid #666;
-	-webkit-border-bottom-right-radius: 0;	
-	-webkit-border-top-right-radius: 0;	
-}
-
-.inputcombo .combobutton {
-	position: absolute;
-	z-index: 10;
-	top: 0;
-	right: 0;
-	width: 38px;
-	height: 38px;
-}
-
-.emphasized {
-	margin: 14px 0;
-}
-
-
-.emphasized  .forminput {
-	border: 3px solid #666;
-	padding: 6px 4px 8px 7px;
-	height: 18px;
-}
-
-.emphasized .combobutton {
-	width: 38px;
-	height: 38px;
+html>body .submitbutton {
+	padding: 0.4em 0.3em;
 }
 
 .formbuttons {
@@ -214,11 +171,10 @@ select {
 }
 
 a.formbutton {
-  cursor: default;
 	text-align: center;
 	display: inline-block;
 	padding-right: 7px;
-	background-image: url(/common/images/button-sd-r.png);
+	background-image: url(/common/images/button-sd-r.gif);
 	background-repeat: no-repeat;
 	background-position: right;
 	margin: 0 5px;
@@ -230,38 +186,36 @@ a.formbutton div {
 	display: inline-block;
 	color: #fff;
 	font-weight: bold;
-	font-size: 94.12%;
-	line-height: 26px;  /* height minus padding */
+	font-size: 100%;
+	line-height: 1.67em;
 	text-decoration: none;
 	padding: 5px 5px 5px 12px;
-	background-image: url(/common/images/button-sd-l.png);
+	background-image: url(/common/images/button-sd-l.gif);
 	background-repeat: no-repeat;
 	background-position: left;
 	text-decoration: none;
 }
 
 input.formbutton {
-  -webkit-appearance: none;
   display: inline-block;
 	color: #fff;
 	font-weight: bold;
-	font-size: 94.12%;
-	line-height: 26px;  /* height minus padding */
+	font-size: 100%;
+	line-height: 1.67em;
 	text-decoration: none;
 	padding: 5px 5px 5px 12px;
 	margin-right: 0;
   border: none;
-	height: 36px;
+	height: 36px; 
 	background-color: transparent;
-	background-image: url(/common/images/button-sd-l.png);
+	background-image: url(/common/images/button-sd-l.gif);
 	background-repeat: no-repeat;
 	background-position: center left;
-	-webkit-border-radius: 0px;
 }
 .formbuttonclose {
   display: inline-block;
 	background-color: transparent;
-	background-image: url(/common/images/button-sd-r.png);
+	background-image: url(/common/images/button-sd-r.gif);
 	background-repeat: no-repeat;
 	background-position: center right;
 	margin: 0;
@@ -276,7 +230,6 @@ input.formbutton {
 	margin-left: 0;
 	margin-bottom: 8px;
 	vertical-align: -12%;
-	-webkit-border-radius: 12px;
 }
 
 .required {
@@ -289,7 +242,6 @@ input.formbutton {
 #navbar {
 	height: 48px;
 	margin: 0 0 9px 0;
-	line-height: 44px;
 	overflow: hidden;
 }
 
@@ -301,110 +253,30 @@ input.formbutton {
 }
 
 .breadcrumbs a {
-	display: inline-block;
-	height: 100%;
-	line-height: 44px;
-	vertical-align: top;
-  margin-left: -4px; /* overlap by the width of the drillup art */
-  padding: 0 18px 0 2px; 
-  background-image: url(/common/images/drillup-r.png);
-	background-repeat: no-repeat;
-	background-position: top right;
-	text-decoration: none;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-*:first-child+html .breadcrumbs a {
-	/* The return of IE CSS hacks makes me mad */
-    margin-left: -5px; 	/* +3px vs normal */
-	padding-right: 16px;
-}
-
-a.homelink {
-    background-image: none;
-    margin-left: -2px;
-    margin-right: -5px;
-    padding: 0!important;	/* !important necessitated by IE for WP7 grrr */
-    width: 62px;
-}
-
-.breadcrumbs a.homelink img {
-    padding: 0;
-}
-
-a.module img {
-	padding: 8px 2px 8px 0px;
-}
-
-.homepage .moduleicon {
-    padding: 8px 5px 8px 6px;
-}
-
-*:first-child+html .homepage .moduleicon {
-	/* The return of IE CSS hacks makes me mad */
-	padding-left: 3px;
 	float: left;
 }
 
-.crumb1 {
-	max-width: 120px;
+.breadcrumbs a.homelink img {
+    padding: 8px 0.3em;
 }
 
-.crumb2a  {
-	max-width: 45px;
+a.module img {
+	padding: 8px 2px;
 }
 
-.crumb2b  {
-	max-width: 50px;
+.moduleicon {
+    padding: 8px 0;
 }
 
-.crumb3a {
-	max-width: 40px;
-  	display: none !important; /* hidden for now because it doesn't fit */
-}
-
-.crumb3b {
-	max-width: 45px;
-}
-
-.crumb3c {
-	max-width: 50px;
+.homepage .moduleicon {
+	float: left;
 }
 
 .pagetitle {
-	display: inline-block;
+	float: left;
 	font-weight: bold;
-	margin-left: -4px;	
-	vertical-align: top;
-	line-height: 44px;
-	height: 44px;
-}
-
-*:first-child+html .pagetitle {
-	/* The return of IE CSS hacks makes me cry */
-	margin-left: -3px;	
-}
-
-.homepage .pagetitle {
-	display: inline;
 	max-width: 210px;
-	margin-left: -8px;	
-}
-
-.homepage .pagetitle {
-	max-width: 210px;
-}
-
-.help {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	width: 46px;
-}
-
-#navbar.helpon {
-    padding-right: 46px;
+	padding: 11px 0 0 8px;
 }
 
 /* Springboards */
@@ -412,7 +284,6 @@ a.module img {
 .springboard {
 	margin: 0 auto;
 	padding: 5px;
-	margin-left: 2px;
 	clear: both;
 }
 
@@ -431,12 +302,13 @@ a.module img {
 	text-decoration: none;
 	padding: 8px 5px;
 	word-wrap: normal;
+	line-height: 1.1em;
 }
 
 .springboard a img {
-	height: 50px;
-	width: 50px;
-	margin-bottom: 1px;
+  	height: 44px;
+  	width: 44px;
+	margin-bottom: 2px;
 }
 
 .springboard .separator {
@@ -448,6 +320,7 @@ a.module img {
 	padding: 0;
 	float: none;
 }
+
 .springboard .badge {
 	position: absolute;
 	right: 12px;
@@ -457,9 +330,9 @@ a.module img {
 	padding-top: 5px;
 	text-align: center;
 	color: #fff;
-	font-size:70.59%;
+	font-size:75%;
 	font-weight: bold;
-	background-image: url(/common/images/badge.png);
+	background-image: url(/common/images/badge.gif);
 	background-repeat: no-repeat;
 }
 
@@ -467,16 +340,14 @@ a.module img {
 
 .nav {	   
 	padding: 0;	   
-	margin: 9px; 
+	margin: 0.5em; 
 	border: 1px solid #ccc;
-	-webkit-border-radius: 9px;	
-	border-radius: 9px;	
 }
 
 .nav li {	
 	list-style-type: none;	
 	border-top: 1px solid #ccc;
-	padding: 11px;
+	padding: 0.6em 0.5em;
 	position: relative;
 }
 
@@ -490,31 +361,28 @@ a.module img {
 
 .nav span.nolink {
 	display: block;
-	padding: 8px;
-	margin: -8px;	 
 	background-repeat: no-repeat;
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
-	-webkit-border-radius: 5px;	
 }
 
 .nav a  {
 	display: block;
-	padding: 8px 24px 10px 8px;
-	margin: -8px;	 
-	background-image: url(/common/images/action-arrow.png); 
+	padding: 0.6em 30px 0.6em 0.5em;
+	margin: -0.6em -0.5em;	 
+	background-image: url(/common/images/action-arrow.gif); 
 	background-repeat: no-repeat;
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
-	-webkit-border-radius: 5px;	
 }
 
 .nav li.icon {
   padding: 0 11px;
   min-height: 54px;
 }
+
 .nav li.icon img {
   position: absolute;
   top: 2px;
@@ -522,6 +390,7 @@ a.module img {
   height: 50px;
   width: 50px;
 }
+
 .nav li.icon a {
   position: relative;
   margin: 0 -7px 0 0;
@@ -534,8 +403,7 @@ a.module img {
 }
 
 .focal .nav {
-	margin: 10px -13px;
-	-webkit-border-radius: 0px;	
+	margin: 1em -0.5em;
 }
 
 ul.focal {
@@ -545,7 +413,7 @@ ul.focal {
 
 ul.focal li {
 	list-style-type: none;
-	padding: 11px;
+	padding: 0.5em;
 	position: relative;
 	border-top: 1px solid #ccc; 
 }
@@ -555,17 +423,13 @@ ul.focal li:first-child {
 }
 
 .tabbody .nav {
-	margin: 0 -8px;
+	margin: 0 -0.5em;
 	border: none;
-	-webkit-border-bottom-right-radius: 8px;	
-	-webkit-border-bottom-left-radius: 8px;	
 }
 
 .tabbody .results {
-	margin: 8px 4px 0 4px;
+	margin: 0.5em 0.25em 0 0.25em;
 	border-width: 1px 0 0 0;
-	-webkit-border-bottom-right-radius: 8px;	
-	-webkit-border-bottom-left-radius: 8px;	
 }
 
 .tabbody .nested {
@@ -574,12 +438,12 @@ ul.focal li:first-child {
 }
 
 .tabbody .nested li {
-	padding: 10px;
+	padding: 0.5em 0.5em;
 }
 
 .results {	   
 	padding: 0;	   
-	margin: 10px 0; 
+	margin: 0.5em 0; 
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #ccc;
 }
@@ -587,7 +451,7 @@ ul.focal li:first-child {
 .results li {	
 	list-style-type: none;		
 	border-top: 1px solid #ccc;
-	padding: 10px;
+	padding: 0.6em 0.5em;
 }
 
 .results li:first-child {
@@ -596,14 +460,13 @@ ul.focal li:first-child {
 
 .results a  {
 	display: block;
-	padding: 9px 25px 9px 7px;
-	margin: -7px;	 
-	background-image: url(/common/images/action-arrow.png); 
+	padding: 0.6em 2em 0.6em 0.5em;
+	margin: -0.6em -0.5em;	 
+	background-image: url(/common/images/action-arrow.gif); 
 	background-repeat: no-repeat;
 	background-position: right; 
 	line-height: 1.2em;
 	text-decoration: none;
-	-webkit-border-radius: 5px;	
 }
 
 .results a:visited {
@@ -611,17 +474,17 @@ ul.focal li:first-child {
 }
 
 .results li ul {
-	margin: 0 0 -8px 0;
+	margin: 0 0 -0.5em 0;
 	padding: 0;
 }
 
 .results li div.smallprint {
-  padding-top: .25em;
+  padding-top: 2px;
 }
 
 .results li ul li {
 	list-style-type: none;
-	background-image: url(/common/images/bullet.png);
+	background-image: url(/common/images/bullet.gif);
 	background-repeat: no-repeat;
 	background-position: 0 2px;
 	padding: 0 0 0 19px;
@@ -633,54 +496,20 @@ ul.focal li:first-child {
   padding: 0 10px;
   min-height: 54px;
 }
+
 .results li.icon a {
   position: relative;
   margin: 0 -7px 0 0;
   padding: 13px 18px 13px 58px;
   line-height: 30px;
 }
+
 .results li.icon img {
   position: absolute;
   top: 2px;
   left: 0;
   height: 50px;
   width: 50px;
-}
-
-.secondary {
-	margin: 10px; 
-	padding: 0;	   
-	border: 1px solid #ccc;
-	-webkit-border-radius: 8px;	
-	border-radius: 8px;	
-}
-
-.secondary li {
-	list-style-type: none;		
-	border-top: 1px solid #ccc;
-	position: relative;
-	padding: 9px;
-}
-
-.secondary li:first-child {
-	border-top: none;
-}
-
-.secondary a {
-	display: block;
-	padding: 8px 25px 8px 7px;
-	margin: -6px;	 
-	background-image: url(/common/images/action-arrow.png); 
-	background-repeat: no-repeat;
-	background-position: right; 
-	line-height: 1.2em;
-	text-decoration: none;
-	color: #333;
-	-webkit-border-radius: 5px;	
-}
-
-.secondary a:visited {
-	color: #333;
 }
 
 .bottomnav {
@@ -695,10 +524,9 @@ ul.focal li:first-child {
 	top: -1px;
 	margin-left: 4px;
 	margin-bottom: -4px;
-	font-size: 83.353%;
+	font-size: 82.353%;
 	line-height: 1em;
 	padding: 4px 9px 4px 7px;
-	-webkit-border-radius: 10px;
 }
 
 .announcements {	   
@@ -707,13 +535,11 @@ ul.focal li:first-child {
 	font-weight: normal;
 	background-color: #d8e3f2;
 	border-bottom: none;
-	-webkit-border-radius: 9px;	
-	border-radius: 9px;	
 }
 
 .announcements li {	
 	padding: 8px;
-	font-size: 83.353%;
+	font-size: 82.353%;
 	line-height: 1.357em;
 	color: #202020;
 }
@@ -735,21 +561,15 @@ ul.focal li:first-child {
 
 .focal {   
 	position: relative;
-	padding: 12px;	   
-	margin: 10px; 
+	padding: 0.5em;	   
+	margin: 0.5em; 
 	font-weight:normal;
 	line-height: 1.33em;
 	border: 1px solid #ccc;
-	-webkit-border-radius: 9px;	
 }
 
 .nonfocal {
-	margin: 12px;
-}
-
-.nonfocal form {
-	margin-left: -4px;
-	margin-right: -4px;
+	margin: 0.5em;
 }
 
 .shaded {
@@ -758,14 +578,13 @@ ul.focal li:first-child {
 }
 
 .legend {
-	margin: 7px 0;
+	margin: 0.33em 0;
 	font-size: 82.353%;
-	line-height: 1.214em;
+	line-height: 1.2em;
 }
 
 .legend.nonfocal {
-	margin: 0 0 24px 0;
-	padding: 0 12px;
+	margin: 0 0.5em 2em 0.5em;
 }
 
 .legend div {
@@ -782,33 +601,35 @@ ul.focal li:first-child {
 .smallprint {
 	font-weight: normal;
 	font-size: 82.353%;
-	line-height: 1.214em;
+	line-height: 1.357em;
 }
 
 .fineprint {
 	font-weight: normal;
 	font-size: 70.589%;
-	line-height: 1.1167em;
+	line-height: 1.167em;
 }
 
 .label {
     display: block;
     width: 6em;
+    font-size: 85%;
     position: relative;
-    font-size: 76.471%;
     line-height: 1.3em;
     font-weight: bold;
     text-align: right;
+    vertical-align: top;
 }
 
 .value {
     display: block;
     margin-top: -1.2em;
-    margin-left: 5em;
+    margin-left: 5.5em;
     font-size: 100%;
     min-height: 1.3em;
     line-height: 1.3em;
     word-wrap: break-word;
+    vertical-align: top;
 }
 
 .longlabel {
@@ -866,8 +687,8 @@ ul.focal li:first-child {
 }
 
 .foundat {
-	font-size: 83.353%;
-	line-height: 1.214em;
+	font-size: 82.353%;
+	line-height: 1.357em;
 	font-weight: normal;
 	color: #444;
 }
@@ -877,8 +698,8 @@ p.foundat {
 }
 
 .address {
-	font-size: 83.353%;
-	line-height: 1.214em;
+	font-size: 82.353%;
+	line-height: 1.25em;
 	font-weight: normal;
 }
 
@@ -898,47 +719,47 @@ p.foundat {
 }
 
 a.arrow {  
-	background-image: url(/common/images/action-arrow.png); 
+	background-image: url(/common/images/action-arrow.gif); 
 	padding-right: 25px;
 }
 
 a.phone {  
-	background-image: url(/common/images/action-phone.png); 
-	padding-right: 36px;
+	background-image: url(/common/images/action-phone.gif); 
+	padding-right: 35px;
 }
 
 a.email {  
-	background-image: url(/common/images/action-email.png); 
+	background-image: url(/common/images/action-email.gif); 
 	padding-right: 38px;
 }
 
 a.map {  
-	background-image: url(/common/images/action-map.png); 
+	background-image: url(/common/images/action-map.gif); 
 	padding-right: 38px;
 }
 
 a.search {  
-	background-image: url(/common/images/action-search.png); 
+	background-image: url(/common/images/action-search.gif); 
 	padding-right: 36px;
 }
 
 a.people {  
-	background-image: url(/common/images/action-people.png); 
+	background-image: url(/common/images/action-people.gif); 
 	padding-right: 36px;
 }
 
 a.external {  
-	background-image: url(/common/images/action-external.png); 
+	background-image: url(/common/images/action-external.gif); 
 	padding-right: 34px;
 }
 
 a.secure {  
-	background-image: url(/common/images/action-secure.png); 
+	background-image: url(/common/images/action-secure.gif); 
 	padding-right: 34px;
 }
 
 a.pdf {  
-	background-image: url(/common/images/action-pdf.png); 
+	background-image: url(/common/images/action-pdf.gif); 
 	padding-right: 34px;
 }
 
@@ -972,44 +793,44 @@ h2.icon {
 }
 
 .gps {
-	background-image: url(/common/images/gps.png);
+	background-image: url(/common/images/gps.gif);
 }
 
 .sch {
-	background-image: url(/common/images/schedule.png);
+	background-image: url(/common/images/schedule.gif);
 }
 
 .ok {
-	background-image: url(/common/images/ok.png);
+	background-image: url(/common/images/ok.gif);
 }
 
 .alert {
-	background-image: url(/common/images/alert.png);
+	background-image: url(/common/images/alert.gif);
 }
 
 .warning {
-	background-image: url(/common/images/warning.png);
+	background-image: url(/common/images/warning.gif);
 }
 
 .critical {
-	background-image: url(/common/images/critical.png);
+	background-image: url(/common/images/critical.gif);
 }
 
 .available {
-	background-image: url(/common/images/available.png);
+	background-image: url(/common/images/available.gif);
 }
 
 .full {
-	background-image: url(/common/images/donotenter.png);
+	background-image: url(/common/images/donotenter.gif);
 }
 
 .running {
-	background-image: url(/common/images/shuttle.png);
+	background-image: url(/common/images/shuttle.gif);
 	background-position: 11px 12px;
 }
 
 .nonrunning {
-	background-image: url(/common/images/shuttle-off.png);
+	background-image: url(/common/images/shuttle-off.gif);
 	background-position: 11px 12px;
 }
 
@@ -1032,46 +853,38 @@ h2.icon {
 }
 
 #tabs li {
+	font-size: 88.24%;
 	float: left;
 	margin-bottom: -1px;
 	margin-right: 4px;
-	-webkit-border-top-right-radius: 7px;	
-	-webkit-border-top-left-radius: 7px;	
 	text-align: center;
+}
+
+#tabs li.active {
+	margin-top: -0.2em;
+	padding-bottom: 0.2em;
 }
 
 #tabs li a {
 	display: block;
 	text-decoration: none;
-	min-width: 30px;
-	padding: 7px 10px 8px 10px;
+	min-width: 2.5em;
+	padding: 0.6em 0.6em;
 }
 
 #tabs.smalltabs li {
-	font-size: 88.26%;
+	font-size: 82.35%;
 	margin-right: 3px;
 }
 
 #tabs.smalltabs li a {
-	padding-right: 7px;
-	padding-left: 7px;
-}
-
-#tabs li.active {
-	margin-top: -1px;
-}
-
-#tabs li.active a {
-	padding-top: 8px;
-	padding-bottom: 9px;
+	padding: 0.6em 0.33em;
 }
 
 #tabbodies {
-	margin: -12px -12px 0 -12px;
+	margin: -12px -0.5em 0 -0.5em;
 	clear: both;
 	border-top: 1px solid #bbb;
-	-webkit-border-bottom-right-radius: 8px;	
-	-webkit-border-bottom-left-radius: 8px;	
 }
 
 .shaded #tabbodies {
@@ -1081,7 +894,7 @@ h2.icon {
 .tabbody {
 	position: relative;
 	min-height: 230px;
-	padding: 8px;
+	padding: 0.5em;
 }
 
 .tabbody h3 {
@@ -1100,7 +913,6 @@ h2.icon {
 #tabstrip {
 	list-style-type: none;
 	height: 32px;
-	-webkit-border-radius: 10px;	
 	margin: 0;
 	padding: 0;
 	left: 0;
@@ -1121,23 +933,11 @@ h2.icon {
 	text-decoration: none;
 	color: #fff;
 	background: url(/common/images/tabstrip.jpg) repeat-x;
-	-webkit-background-origin: padding-box; -webkit-background-clip: content-box; 
 	border-right: 1px solid #9fb8d3;
-	-webkit-border-radius: 1px;	
 }	
 
 #tabstrip li.active a {
 	background-image: url(/common/images/tabstrip-active.jpg);
-}
-
-#tabstrip li:first-child a {
-	-webkit-border-bottom-left-radius: 10px;	
-	-webkit-border-top-left-radius: 10px;	
-}
-
-#tabstrip li:last-child a {
-	-webkit-border-bottom-right-radius: 10px;	
-	-webkit-border-top-right-radius: 10px;	
 }
 
 .twotabs li {
@@ -1193,7 +993,7 @@ h2.icon {
 
 .loading {
 	margin: 16px 0;
-	font-size: 83.353%;
+	font-size: 82.353%;
 	line-height: 1.5em;
 	font-weight: normal;
 	color: #888;
@@ -1209,24 +1009,12 @@ h2.icon {
 	bottom: 0px;
 }
 
-/*
-#scrim {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-	z-index: 10000;
-	opacity: 0.65;
-	background-color: #212b34
-}
-*/
 #message {
 	position: absolute;
 	z-index: 100001;
 	top: 50%;
 	left: 50%;
-	font-size: 83.236%;
+	font-size: 88.235%;
 	line-height: 1.2em;
 	padding: 20px 10px;
 	width: 230px;
@@ -1234,8 +1022,6 @@ h2.icon {
 	margin-top: -50px;
 	background-color: #fff;
 	color: #000;
-	opacity: 0.8;
-	-webkit-border-radius: 10px;
 	text-align: center;
 	display: table-cell;
 	vertical-align: middle;
@@ -1257,7 +1043,7 @@ h2.icon {
 .devicedetection th,
 .devicedetection td {
   font-size: 65.71%;
-  line-height: 1.2em;
+  line-height: 1.25em;
   padding: 0 .25em;
   margin: 0;
   text-align: left;
@@ -1273,6 +1059,7 @@ h2.icon {
 	margin: -12px 0 0 8px;
 }
 #sharesheet {
+	visibility: hidden;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -1287,26 +1074,15 @@ h2.icon {
 	width: 100%;
 	height: 200%;
 	background-color: #333;
-	opacity: 0.5;
-	-webkit-opacity: 0.5;
-	-moz-opacity: 0.5;
-	filter: alpha(opacity=67); /* IE */
 }
 #sharedialog {
 	position: absolute;
 	top: 80px;
 	left: 50%;
-	width: 220px;
-	margin-left: -130px;
-	-webkit-border-radius: 10px;
-	padding: 10px 20px;
-	background: #eee; /* Non-CSS3 browsers */
-	/* This doesn't work with the Palm Pre: 
-	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#d0d0d0)); /* Webkit browsers */
-	background: -moz-linear-gradient(top,  #f9f9f9,  #d0d0d0); /* Firefox 3.6+ */
-	-moz-box-shadow: 0px 3px 7px #333;
-	-webkit-box-shadow: 0px 3px 7px #333;
-	box-shadow: 0px 3px 7px #333;
+	width: 260px;
+	margin-left: -140px;
+	padding: 10px;
+	background: #ddd; 
 }
 #sharedialog h1 {
 	color: #333;
@@ -1318,7 +1094,7 @@ h2.icon {
 	margin: 0;
 	padding: 0;
 }
-#sharedialog a.sharelink {
+#sharedialog a {
 	display: block;
 	text-decoration: none;
 	padding: 6px 0;
@@ -1329,15 +1105,4 @@ h2.icon {
 	float: left;
 	margin-right: 6px;
 	border: none;
-}
-
-/* firefox adds these a tags when you edit the dom */
-.ellipsis a[xmlns] {
-	display: inline !important;
-	padding: 0 !important;
-	margin: 0 !important;	 
-	background: none !important; 
-	line-height: inherit !important;
-	text-decoration: none !important;
-	font-size: inherit !important;
 }
