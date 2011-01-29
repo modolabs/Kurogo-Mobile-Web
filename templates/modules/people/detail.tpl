@@ -1,6 +1,4 @@
-{block name="header"}
-    {include file="findInclude:common/header.tpl"}
-{/block}
+{include file="findInclude:common/header.tpl"}
 
 {block name="detailsStart"}
 {/block}
@@ -9,7 +7,6 @@
       <ul class="nav">
     {/block}        
         {foreach $section as $item}
-          {strip}
           {block name="detail"}
             <li>
               {if isset($item['url'])}
@@ -22,7 +19,6 @@
               {/if}
             </li>
           {/block}
-          {/strip}
         {/foreach}    
     {block name="sectionEnd"}
       </ul>
