@@ -5,10 +5,6 @@
   */
 
 /**
-  */
-require_once realpath(LIB_DIR.'/Module.php');
-
-/**
   * @package Module
   * @subpackage Error
   */
@@ -52,6 +48,14 @@ class ErrorModule extends Module {
       'message' => 'Unknown error',
     )
   );
+
+  protected function factoryInit($page, $args) {
+      $this->pagetype = $GLOBALS['deviceClassifier']->getPagetype();
+      $this->page = 'index';
+      $this->setTemplatePage($this->page, $this->id);
+      $this->args = $args;
+      return;
+  }
 
   protected function initializeForPage() {
     $code = $this->getArg('code', 'default');
