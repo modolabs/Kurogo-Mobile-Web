@@ -260,13 +260,6 @@ class CalendarModule extends Module {
     return count($iCalEvents);
   }
   
-  protected function urlForFederatedSearch($searchTerms) {
-    return $this->buildBreadcrumbURL("/{$this->id}/search", array(
-      'filter'    => $searchTerms,
-      'timeframe' => '0',
-    ), false);
-  }
-  
   protected function prepareAdminForSection($section, &$adminModule) {
     switch ($section)
     {
@@ -559,7 +552,7 @@ class CalendarModule extends Module {
       case 'search':
         if ($filter = $this->getArg('filter')) {
           $searchTerms = trim($filter);
-          $timeframeKey = $this->getArg('timeframe');
+          $timeframeKey = $this->getArg('timeframe', 0);
           $searchOption = $this->searchOptions[$timeframeKey];
           $type = $this->getArg('type', $this->getDefaultFeed());
           
