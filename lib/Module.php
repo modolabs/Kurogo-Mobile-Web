@@ -12,6 +12,7 @@ define('MODULE_BREADCRUMB_PARAM', '_b');
   * @package Core
   */
 abstract class Module {
+
   protected $id = 'none';
   protected $moduleName = '';
   protected $hasFeeds = false;
@@ -28,7 +29,7 @@ abstract class Module {
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
   protected $supportsCerts = false;
-
+  
   protected $imageExt = '.png';
   
   private $pageConfig = null;
@@ -253,7 +254,11 @@ abstract class Module {
       $argString = http_build_query($args);
     }
     
-    return "$page.php".(strlen($argString) ? "?$argString" : "");
+    return sprintf("%s%s", $page, (strlen($argString) ? "?$argString" : ""));
+  }
+
+  public static function buildURLForModule($id, $page, $args=array()) {
+    return sprintf("%s%s/%s", URL_BASE, $id, self::buildURL($page, $args));
   }
   
   protected function buildMailToLink($to, $subject, $body) {
@@ -272,9 +277,10 @@ abstract class Module {
     return $url;
   }
 
-  protected function redirectToModule($id, $args=array()) {
-    $url = URL_BASE."{$id}/?". http_build_query($args);
-    error_log('Redirecting to: '.$url);
+  public function redirectToModule($id, $args=array()) {
+  
+    $url = sprintf("%s/%s/?%s", URL_BASE, $id, http_build_query($args));
+    //error_log('Redirecting to: '.$url);
     
     header("Location: $url");
     exit;
@@ -283,19 +289,18 @@ abstract class Module {
   protected function redirectTo($page, $args=null, $preserveBreadcrumbs=false) {
     if (!isset($args)) { $args = $this->args; }
     
-    $url = URL_PREFIX."{$this->id}/";
-    
+    $url = '';
     if ($preserveBreadcrumbs) {
-      $url .= $this->buildBreadcrumbURL($page, $args, false);
+      $url = $this->buildBreadcrumbURL($page, $args, false);
     } else {
-      $url .= self::buildURL($page, $args);
+      $url = self::buildURL($page, $args);
     }
     
-    error_log('Redirecting to: '.$url);
+    //error_log('Redirecting to: '.$url);
     header("Location: $url");
     exit;
   }
-
+    
   //
   // Configuration
   //
@@ -503,7 +508,7 @@ abstract class Module {
       SITE_DIR."/modules/$id/Site{$className}.php"=>"Site" .$className,
       MODULES_DIR."/$id/$className.php"=>$className
     );
-        
+    
     foreach($modulePaths as $path=>$className){ 
       $moduleFile = realpath_exists($path);
       if ($moduleFile && include_once($moduleFile)) {
@@ -890,7 +895,7 @@ abstract class Module {
   }
 
   protected function buildBreadcrumbURL($page, $args, $addBreadcrumb=true) {
-    return "$page.php?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
+    return sprintf("%s?%s",$page, http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb))));
   }
   
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
@@ -1161,8 +1166,7 @@ abstract class Module {
   }
   
   protected function urlForFederatedSearch($searchTerms) {
-    return $this->buildBreadcrumbURL("/{$this->id}/search", array(
-      'filter' => $searchTerms,
-    ), false);
+    return URL_BASE . $this->id . "/". $this->buildBreadcrumbURL('search', array(
+      'filter' => $searchTerms));
   }
 }
