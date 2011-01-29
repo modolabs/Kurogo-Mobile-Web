@@ -4,10 +4,6 @@
   * @subpackage News
   */
 
-if (!function_exists('mb_substr')) {
-    die('Multibyte String Functions not available (mbstring)');
-}
-
 /**
   * @package Module
   * @subpackage News
