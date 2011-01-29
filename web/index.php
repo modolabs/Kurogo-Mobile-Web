@@ -1,21 +1,13 @@
 <?php
 /**
+  * This script handles all incoming requests
   * @package Core
   */
 
 /**
+  * The initialize library sets up the environment
   */
 require_once realpath(dirname(__FILE__).'/../lib/initialize.php');
-
-/**
-  */
-function _404()
-{
-    header("HTTP/1.0 404 Not Found");
-    echo "<h1>404 Not Found</h1>\n";
-    echo "The page that you have requested could not be found.\n";
-    exit();
-}
 
 //
 // Configure web application
@@ -30,6 +22,9 @@ Initialize($path);
 // Handle page request
 //
 
+/*
+ * favicon.ico files are looked for in the THEME_DIR/common/images
+ */
 if (preg_match(';^.*favicon.ico$;', $path, $matches)) {
   $icon = realpath_exists(THEME_DIR.'/common/images/favicon.ico');
   if ($icon) {

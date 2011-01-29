@@ -17,6 +17,10 @@
   */
 define('ROOT_DIR', dirname(__FILE__).'/..'); 
 
+/**
+  * Will see if there is a HTTP_IF_MODIFIED_SINCE header and if the dates match it will return a 304
+  * otherwise will set the Last-Modified header
+  */
 function CacheHeaders($file)
 {
     $mtime = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
@@ -30,6 +34,18 @@ function CacheHeaders($file)
     header("Last-Modified: $mtime");
     return;
 }
+
+/**
+  * Outputs a 404 error message
+  */
+function _404()
+{
+    header("HTTP/1.0 404 Not Found");
+    echo "<h1>404 Not Found</h1>\n";
+    echo "The page that you have requested could not be found.\n";
+    exit();
+}
+
 
 /**
   * 
