@@ -191,6 +191,19 @@ Themes
 ------
 * *ACTIVE_THEME* - This is set to the active theme. It should be a valid folder inside the *SITE_DIR/themes* 
   directory. 
+  
+  
+-------------
+URL Rewriting
+-------------
+
+In the **[urls]** section you can put a series of values that allow you to map a url to another. Typically
+this would be if you want to map a module's url to several possible values, perhaps to maintain 
+historical bookmarks. The entered url will be redirected to the value you specify. For example:
+
+* **directory = people** would map the url */directory* to */people* (i.e. the people module)
+
+Take care that you do not create infinite redirect loops.
 
 ----------------
 Device Detection
