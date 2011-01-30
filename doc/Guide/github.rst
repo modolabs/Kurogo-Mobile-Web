@@ -22,6 +22,7 @@ the project.
 #. Browse to https://github.com/Kurogo/Kurogo-Mobile-Web
 #. Click the **fork** icon in the upper right portion of the page
 #. (Optional) You may wish to rename your project
+#. Clone your project to your local machine. 
 #. Set up an upstream remote: 
    
    * :kbd:`git remote add upstream git@github.com:modolabs/Kurogo-Mobile-Web.git`
