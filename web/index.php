@@ -122,14 +122,28 @@ if (get_magic_quotes_gpc()) {
     $args = deepStripslashes($args);
 }
 
-/* if the path is "empty" route to the default page. TODO: make the default page configurable */
+/* if the path is "empty" route to the default page. Will search the config file in order:
+ * DEFAULT-PAGETYPE-PLATFORM
+ * DEFAULT-PAGETYPE
+ * DEFAULT
+ * home is the default
+ */
 if (!strlen($path) || $path == '/') {
-    if ($GLOBALS['deviceClassifier']->isComputer() || $GLOBALS['deviceClassifier']->isSpider()) {
-      $url = URL_BASE . "info/";
-    } else {
-      $url = URL_BASE . "home/";
-    }
+  $PLATFORM = strtoupper($GLOBALS['deviceClassifier']->getPlatform());
+  $PAGETYPE = strtoupper($GLOBALS['deviceClassifier']->getPagetype());
 
+    if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT-{$PAGETYPE}-{$PLATFORM}", Config::EXPAND_VALUE, Config::SUPRESS_ERRORS)) {
+        if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT-{$PAGETYPE}", Config::EXPAND_VALUE, Config::SUPRESS_ERRORS)) {
+            if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT", Config::EXPAND_VALUE, Config::SUPRESS_ERRORS)) {
+                $url = 'home';
+            }
+        }
+    } 
+
+    if (!preg_match("/^http/", $url)) {
+        $url = URL_BASE . $url . "/";
+    }
+    
     header("Location: $url");
     exit;
 } 
@@ -144,6 +158,8 @@ if ($url_redirects = $GLOBALS['siteConfig']->getSection('urls', ConfigFile::SUPR
         header("Location: " . URL_BASE . implode("/", $parts));
         exit;
     }
+    
+    
 }
 
 /* find the page part */

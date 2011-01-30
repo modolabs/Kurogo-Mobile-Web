@@ -193,9 +193,9 @@ Themes
   directory. 
   
   
--------------
-URL Rewriting
--------------
+----------------------------------
+URL Rewriting and the default page
+----------------------------------
 
 In the **[urls]** section you can put a series of values that allow you to map a url to another. Typically
 this would be if you want to map a module's url to several possible values, perhaps to maintain 
@@ -205,11 +205,28 @@ historical bookmarks. The entered url will be redirected to the value you specif
 
 Take care that you do not create infinite redirect loops.
 
+There is a special case for the *DEFAULT* url. This is the module that is loaded when users enter your
+site without a module name (i.e. the root of your site). You can configure this to show a different
+module depending on the type of device/platform. In the initial setting, users browsing your site
+from a computer will be presented with the **info** module and users browsing your site from a mobile
+device will be shown the **home** module. 
+
+The default option will look for the most specific value when determining which default page to show.
+You can create entries like such (in uppercase)
+
+    * *DEFAULT-PAGETYPE-PLATFORM* - matches the specific pagetype/platform combination. like *DEFAULT-COMPLIANT-COMPUTER*
+      or *DEFAULT-TOUCH-BLACKBERRY*.
+    * *DEFAULT-PAGETYPE* - matches all the devices from a particular pagetype. Like *DEFAULT-COMPLIANT* or
+      *DEFAULT-BASIC*
+    * *DEFAULT* will match any device if a more specific entry is not found
+    
+This allows you to customize the front door experience for your users.
+
 ----------------
 Device Detection
 ----------------
 
-* *MOBI_SERVICE_URL* - Set this to the URL of the device detection server.
+* *MOBI_SERVICE_URL* - Set this to the URL of the :doc:`device detection <devicedetection>` server.
 
   * https://modolabs-device-test.appspot.com/api/
   * https://modolabs-device.appspot.com/api/
