@@ -17,6 +17,21 @@ class LDAPAuthentication extends AuthenticationAuthority
     protected $fieldMap=array();
     protected $ldapResource;
     
+    public static function ldapEscape($str) 
+    { 
+        // see RFC2254 
+        // http://msdn.microsoft.com/en-us/library/ms675768(VS.85).aspx 
+        // http://www-03.ibm.com/systems/i/software/ldap/underdn.html        
+            
+        $metaChars = array('*', '(', ')', '\\', chr(0));
+        $quotedMetaChars = array(); 
+        foreach ($metaChars as $key => $value) {
+            $quotedMetaChars[$key] = '\\'.str_pad(dechex(ord($value)), 2, '0'); 
+        }
+        $str = str_replace($metaChars, $quotedMetaChars, $str); 
+        return ($str); 
+    }
+    
     protected function connectToServer()
     {
         if (!$this->ldapResource) {
@@ -130,7 +145,17 @@ class LDAPAuthentication extends AuthenticationAuthority
             throw new Exception('LDAP uid field not specified');
         }
 
-        $search = @ldap_search($ldap, $this->ldapSearchBase('user'), sprintf("%s=%s", $this->getField('uid'), $login));
+        $searchStr = array(
+            sprintf('(%s=%s)', $this->getField('uid'), $this->ldapEscape($login)),
+        );
+        
+        if ($this->getField('email')) {
+            $searchStr[] = sprintf('(%s=%s)', $this->getField('email'), $this->ldapEscape($login));
+        }
+        
+        $searchStr = count($searchStr) > 1 ? "(|" . implode("", $searchStr) . ")" : implode("", $searchStr);
+                
+        $search = @ldap_search($ldap, $this->ldapSearchBase('user'), $searchStr);
         if ($search) {
             $result = @ldap_get_entries($ldap, $search);
             // see if we got a result back 
@@ -153,6 +178,7 @@ class LDAPAuthentication extends AuthenticationAuthority
                     
                     $user->setAttribute($attrib, $value);
                 }
+
                 return $user;
             } else {
                 return false;
@@ -243,10 +269,13 @@ class LDAPAuthentication extends AuthenticationAuthority
         $this->ldapAdminPassword = isset($args['ADMIN_PASSWORD']) ? $args['ADMIN_PASSWORD'] : null;
         
         $this->fieldMap = array(
-            'uid'=>'',
-            'groupname'=>'',
+            'uid'=>'uid',
+            'email'=>'mail',
+            'firstname'=>'givenName',
+            'lastname'=>'sn',
+            'groupname'=>'cn',
             'members'=>'',
-            'gid'=>''
+            'gid'=>'gid'
         );
         
         foreach ($args as $arg=>$value) {
@@ -260,6 +289,7 @@ class LDAPAuthentication extends AuthenticationAuthority
         if ( empty($this->ldapServer) || empty($this->ldapPort)) {
             throw new Exception("Invalid LDAP Options");
         }
+        
     }
 }
 
@@ -284,13 +314,13 @@ class LDAPUser extends BasicUser
     {
         switch ($attribute)
         {
-            case 'mail':
+            case $this->AuthenticationAuthority->getField('email'):
                 $this->setEmail($value);
                 break;
-            case 'sn':
+            case $this->AuthenticationAuthority->getField('lastname'):
                 $this->setLastName($value);
                 break;
-            case 'givenname':
+            case $this->AuthenticationAuthority->getField('firstname'):
                 $this->setFirstName($value);
                 break;
             case $this->AuthenticationAuthority->getField('uid'):
@@ -304,7 +334,14 @@ class LDAPUser extends BasicUser
 
     public function singleValueAttributes()
     {
-        return array('dn','mail',$this->AuthenticationAuthority->getField('uid'),'sn','cn','givenname'); //there's more here. 
+        return array('dn', 
+            $this->AuthenticationAuthority->getField('email'), 
+            $this->AuthenticationAuthority->getField('uid'),
+            $this->AuthenticationAuthority->getField('lastname'),
+            $this->AuthenticationAuthority->getField('firstname'),
+            $this->AuthenticationAuthority->getField('lastname')
+        );
+          
     }    
 
     protected function standardAttributes()
@@ -332,7 +369,10 @@ class LDAPUserGroup extends BasicUserGroup
 
     public function singleValueAttributes()
     {
-        return array('cn', $this->AuthenticationAuthority->getField('gid')); //there's more here. 
+        return array(
+            $this->AuthenticationAuthority->getField('groupname'), 
+            $this->AuthenticationAuthority->getField('gid')
+        ); //there's more here. 
     }    
 
     protected function standardAttributes()
