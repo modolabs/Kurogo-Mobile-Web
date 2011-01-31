@@ -19,7 +19,7 @@ If you are interested in maintaining your own project you should `fork <http://h
 the project. 
 
 #. Log into GitHub
-#. Browse to https://github.com/Kurogo/Kurogo-Mobile-Web
+#. Browse to https://github.com/modolabs/Kurogo-Mobile-Web
 #. Click the **fork** icon in the upper right portion of the page
 #. (Optional) You may wish to rename your project
 #. Clone your project to your local machine. 
@@ -32,9 +32,9 @@ the project.
 #. When new changes come down you can run:
    
    * :kbd:`git checkout upstream` Change to upstream branch
-   * :kbd:`git pull` Pull down changes
+   * :kbd:`git pull upstream master` Pull down changes
    * :kbd:`git checkout master` Change to master branch
-   * :kbd:`git merge upstream` Merge changes into master branch
+   * :kbd:` ` Merge changes into master branch
 
 There are certainly other ways to manage your repository, but this method provides flexibility and
 will allow you to maintain a branch that represents the current development in the project.
