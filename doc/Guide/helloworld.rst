@@ -62,7 +62,7 @@ Viewing the module
 ------------------
 
 At this time you should be able to view your new module in your web browser. Assuming your site is on port 8888
-on your local machine go to :kbd:`http://localhost:8888`. If successful you should see your new module:
+on your local machine go to :kbd:`http://localhost:8888/hello`. If successful you should see your new module:
 
 .. image:: images/helloworld_view.png
 

@@ -63,7 +63,7 @@ Libraries
 The framework utilizes a number of code libraries to modularize and abstract certain processes and 
 encourage code reuse. The design goal behind the libraries is to ensure that they operate as generically
 as possible so that they can function in a variety of uses and contexts (even if, in practice, they are
-currently only used by one). Nearly all the libraries exist as PHP classes and currently fall
+currently used in only one context). Nearly all the libraries exist as PHP classes and currently fall
 into one of several categories:
 
 --------------------
