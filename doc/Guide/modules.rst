@@ -119,6 +119,15 @@ Included Modules
 .. toctree::
    :maxdepth: 1
 
+   modulehome
+   moduleinfo
    modulepeople
    modulecalendar
    modulenews
+   modulelinks
+   modulefullweb
+   modulecustomize
+   moduleabout
+   modulelogin
+   modulestats
+   

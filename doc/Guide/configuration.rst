@@ -7,10 +7,7 @@ however, you are going to want to be familiar with many of the site and module o
 affect file locations, debugging information and module behavior. 
 
 All of the site's configuration is controlled using .ini files. You can either edit these files 
-manually or use the :ref:`admin-module` to edit most of these values. It is the goal of the 
-framework to have all options be able to be administered using the :ref:`admin-module`, however, at this
-time there are some options that have not been exposed. Please keep track of the framework's progress
-in this regard.
+manually or use the :ref:`admin-module` to edit most of these values. 
 
 =======================
 Structure of .ini Files
@@ -192,7 +189,8 @@ Themes
 * *ACTIVE_THEME* - This is set to the active theme. It should be a valid folder inside the *SITE_DIR/themes* 
   directory. 
   
-  
+.. _url-rewriting:
+
 ----------------------------------
 URL Rewriting and the default page
 ----------------------------------
