@@ -96,8 +96,6 @@ class CustomizeModule extends Module {
 
     foreach ($this->getHomeScreenModules() as $moduleID => $info) {
         $module = Module::factory($moduleID);
-        $info['disableable'] = $module->getModuleVar('disableable');
-        $info['movable'] = $module->getModuleVar('movable');
         if ($info['primary'] ) {
           $modules[$moduleID] = $info;
           $moduleIDs[] = $moduleID;
