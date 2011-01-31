@@ -305,27 +305,28 @@ abstract class Module {
   //
   // Configuration
   //
-  protected function getSiteVar($var, $log_error=Config::LOG_ERRORS)
+  protected function getSiteVar($var, $opts=Config::LOG_ERRORS)
   {
-      return $GLOBALS['siteConfig']->getVar($var, Config::EXPAND_VALUE, $log_error);
+    
+      return $GLOBALS['siteConfig']->getVar($var, $opts | Config::EXPAND_VALUE);
   }
 
-  protected function getSiteSection($var, $log_error=Config::LOG_ERRORS)
+  protected function getSiteSection($var, $opts=Config::LOG_ERRORS)
   {
-      return $GLOBALS['siteConfig']->getSection($var, $log_error);
+      return $GLOBALS['siteConfig']->getSection($var, $opts);
   }
 
-  protected function getModuleVar($var, $default=null, $log_error=Config::LOG_ERRORS)
+  protected function getModuleVar($var, $default=null, $opts=Config::LOG_ERRORS)
   {
      $config = $this->getModuleConfig();
-     $value = $config->getVar($var, Config::EXPAND_VALUE, $log_error);
+     $value = $config->getVar($var, Config::EXPAND_VALUE| $opts);
      return is_null($value) ? $default :$value;
   }
 
-  protected function getModuleSection($section, $default=array(), $log_error=Config::LOG_ERRORS)
+  protected function getModuleSection($section, $default=array(), $opts=Config::LOG_ERRORS)
   {
      $config = $this->getModuleConfig();
-     if (!$section = $config->getSection($section, $log_error)) {
+     if (!$section = $config->getSection($section, $opts)) {
         $section = $default;
      }
      return $section;

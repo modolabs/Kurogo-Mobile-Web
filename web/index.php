@@ -132,14 +132,14 @@ if (!strlen($path) || $path == '/') {
   $PLATFORM = strtoupper($GLOBALS['deviceClassifier']->getPlatform());
   $PAGETYPE = strtoupper($GLOBALS['deviceClassifier']->getPagetype());
 
-    if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT-{$PAGETYPE}-{$PLATFORM}", Config::EXPAND_VALUE, Config::SUPRESS_ERRORS)) {
-        if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT-{$PAGETYPE}", Config::EXPAND_VALUE, Config::SUPRESS_ERRORS)) {
-            if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT", Config::EXPAND_VALUE, Config::SUPRESS_ERRORS)) {
+    if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT-{$PAGETYPE}-{$PLATFORM}", Config::SUPRESS_ERRORS)) {
+        if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT-{$PAGETYPE}", Config::SUPRESS_ERRORS)) {
+            if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT", Config::SUPRESS_ERRORS)) {
                 $url = 'home';
             }
         }
     } 
-
+    
     if (!preg_match("/^http/", $url)) {
         $url = URL_BASE . $url . "/";
     }
