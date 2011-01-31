@@ -347,7 +347,7 @@ Create *compliant.css* in the css folder with the following contents:
         line-height: auto;
     }
     
-* We fix the height of the results row to 75 pixels and reset the paddding. A 10px padding on the right
+* We fix the height of the results row to 75 pixels and reset the padding. A 10px padding on the right
   ensures that the arrow is offset appropriately from the right side.
 * All of the list item content is wrapped in an anchor tag. We move the margin to the left to make room
   for the image and then reset the padding, and adjusted the height and line-height to accomodate longer
@@ -442,20 +442,4 @@ We can now use it in our *SiteVideoModule.php* file when we call the search meth
 The method *getModuleVar* will attempt to retrieve a value from the *config/module/MODULEID.ini* file.
 You can also use the *getSiteVar* method to retrive a value from *config/config.ini* which is used by
 all modules
-
-================
-Providing Search
-================
-
-One of the more useful features of the framework is federated search. This allows a user to make a 
-search request at the home screen that returns results from all modules that provide searching capabilities
-
-There are only 2 things you need to do to provide searching capabilities. Enable the search option in
-your module's config file and implementing the *federatedSearch* method in your module code. 
-
-* Edit *SITE_DIR/config/module/video.ini* and change *search* to *1*. 
-* Edit *SiteVideoModule.php* and add this new method::
-
-    <?php
-
 
