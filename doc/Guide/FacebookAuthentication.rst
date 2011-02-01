@@ -12,7 +12,7 @@ Facebook uses a form of *OAuth*. Instead of authenticating directly to Facebook,
 to the Facebook login page. Then they must authenticate and then authorize access to the application. 
 Your application has no access to the user's login or password.
 
-In order to successfully authenticate users using Faecbook, you must first register your application.
+In order to successfully authenticate users using Facebook, you must first register your application.
 
 * Go to http://www.facebook.com/developers/createapp.php
 * Enter an App Name
@@ -34,7 +34,6 @@ There are a few parameters you need to configure:
 
 You should keep your API key and secret protected since they represent your application's identity. 
 Do not place these values in a public source code repository.
-
 
 ============
 How it Works
