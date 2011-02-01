@@ -20,7 +20,7 @@ authority.
 Configuration
 =============
 
-There is very little to configure for this authority. You simply include a *USER_LOGIN = FORM* value
+There is very little to configure for this authority. You simply include a *USER_LOGIN = LINK* value
 along with the title and *GoogleAuthentication* controller class.
 
 ============
