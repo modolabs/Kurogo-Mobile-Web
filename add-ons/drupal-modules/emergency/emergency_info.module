@@ -1,0 +1,189 @@
+<?php
+ 
+/**
+ * Implementation of CCK's hook_field_info()
+ * 
+ * Return an array containing basic information about our field
+ */
+function emergency_info_field_info() {
+	return array(
+		'emergency_contact' => array(
+			'label' => t('Emergency Contact Field'),
+			'description' => t('Phone numbers and people to call for help in an emergency'),
+		),
+	);
+}
+
+/**
+ * Implementation of CCK's hook_field_settings()
+ * 
+ * Defines database storage for this field, plus any field settings forms.
+ */
+function emergency_info_field_settings($op, $field) {
+	switch ($op) {
+	    
+	    // field settings
+		case 'form':
+			return array();
+		case 'save':
+			return array();
+		case 'database columns':
+			return array(
+				'title' => array(
+					'type' => 'varchar',
+					'length' => 255,
+					'not null' => TRUE,
+					'default' => '',
+				),
+			   'subtitle' => array(
+					'type' => 'varchar',
+					'length' => 255,
+					'not null' => FALSE,
+					'default' => '',
+				),
+				'phone' => array(
+					'type' => 'varchar',
+					'length' => 20,
+					'not null' => TRUE,
+					'default' => ''
+				)
+			);
+		case 'filters':
+			return array();
+	}
+}
+
+/**
+ * Implementation of CCK's hook_field_()
+ * 
+ * Defines the behavior of a field 
+ */
+function emergency_info_field($op, &$node, $field, &$items, $teaser, $page) {	
+	switch($op) {
+	 case 'view':
+	    foreach($items as $index => $item) {
+			$items[$index]['view'] = content_format($field, $item, 'default', $node);
+		}	
+		return theme('field', $node, $field, $items, $teaser, $page);
+
+	 case 'validate':
+	    foreach($items as $index => $item) {
+			if(!emergency_info_content_is_empty($item, $field)) {
+				$form_name_prefix = $field['field_name'] . '][' . $index . ']';
+				$nth = $index+1;
+				if(empty($item['title'])) {
+					form_set_error("{$form_name_prefix}[title]", "Contact title not set for contact #{$nth}");
+					error_log("{$form_name_prefix}[title]");
+				}
+				if(empty($item['phone'])) {
+					form_set_error("{$form_name_prefix}[phone]", "Phone number not set for contact \"{$item['title']}\"");
+				}
+			}
+		}
+		break;
+	
+	 case 'save':
+	    break;
+	}
+}
+
+function emergency_info_widget_info() {
+  return array(
+    'text' => array(
+      'label' => 'Emergency Contact Form',
+      'field types' => array('emergency_contact'),
+    ),
+  );
+}
+
+function emergency_info_widget_settings($op, $widget) {
+  /*
+  switch ($op) {
+    case 'form':
+      $form = array();
+      $form['rows'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Rows'),
+        '#default_value' => $widget['rows'] ? $widget['rows'] : 1,
+        '#required' => TRUE,
+      );
+      return $form;
+
+    case 'validate':
+      if (!is_numeric($widget['rows']) || intval($widget['rows']) != $widget['rows'] || $widget['rows'] <= 0) {
+        form_set_error('rows', t('"Rows" must be a positive integer.'));
+      }
+      break;
+
+    case 'save':
+      return array('rows');
+  }
+  */
+}
+
+function emergency_info_widget(&$form, &$form_state, $field, $items, $delta = 0) {
+	return array(
+		'title' => array(
+			'#type' => 'textfield',
+			'#title' => 'Emergency Contact Title',
+			'#default_value' => $items[$delta]['title'],
+		),
+		'subtitle' => array(
+			'#type' => 'textfield',
+			'#title' => 'Subtitle',
+			'#default_value' => $items[$delta]['subtitle'],
+		),
+		'phone' => array(
+			'#type' => 'textfield',
+			'#title' => 'Phone',
+			'#default_value' => $items[$delta]['phone'],
+		),
+	);
+}
+
+
+function emergency_info_field_formatter_info() {
+	return array(
+		'default' => array(
+			'label' => t('Default'),
+			'field types' => array('emergency_contact'),
+			'multiple values' => CONTENT_HANDLE_CORE,
+		),
+	);
+}
+
+function emergency_info_theme() {
+	return array(
+		'emergency_info_formatter_default' => array(
+			'arguments' => array('element' => NULL)
+		)
+	);
+}
+
+function theme_emergency_info_formatter_default($element = NULL) {
+	return ''.
+	    '<div class="emergency-contact">' .
+            '<div class="title">' . htmlentities($element['#item']['title']) . '</div>' .
+            '<div class="subtitle">' . htmlentities($element['#item']['subtitle']) . '</div>' .
+            '<div class="phone">' . htmlentities($element['#item']['phone']) . '</div>' .  
+        '</div>';
+}
+
+function emergency_info_content_is_empty($item, $field) {
+	$keys = array('title', 'subtitle', 'phone');
+	foreach($keys as $key) {
+		if(!empty($item[$key])) {
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+/*
+ * implements hook_views_api()
+ */
+function emergency_info_views_api() {
+	return array('api' => 2);
+}
+
+
