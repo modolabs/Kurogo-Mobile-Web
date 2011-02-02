@@ -4,15 +4,11 @@
   */
 
 /**
-  * Name of the cookie used for device classification
-  */
-define('COOKIE_KEY', 'deviceClassification');
-
-/**
   * Contacts the Device Classification Server and sets the the appropriate properties
   * @package Core
   */
 class DeviceClassifier {
+  const COOKIE_KEY='deviceClassification';
   private $pagetype = 'unknown';
   private $platform = 'unknown';
   private $certs = false;
@@ -47,8 +43,8 @@ class DeviceClassifier {
       $this->setDevice($device); // user override of device detection
       //error_log(__FUNCTION__."(): device forced to '$device' <{$_SERVER['REQUEST_URI']}>");
       
-    } else if (isset($_COOKIE[COOKIE_KEY])) {
-      $this->setDevice($_COOKIE[COOKIE_KEY]);
+    } else if (isset($_COOKIE[self::COOKIE_KEY])) {
+      $this->setDevice($_COOKIE[self::COOKIE_KEY]);
       //error_log(__FUNCTION__."(): choosing device cookie '{$_COOKIE['layout']}' <{$_SERVER['REQUEST_URI']}>");
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -109,7 +105,7 @@ class DeviceClassifier {
       $this->platform = $data['platform'];
       $this->certs = $data['supports_certificate'];
       
-      setcookie(COOKIE_KEY, $this->getDevice(), 
+      setcookie(self::COOKIE_KEY, $this->getDevice(), 
         time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
 
       //error_log(__FUNCTION__."(): choosing mobi service layout '".$this->getDevice()."' <{$_SERVER['REQUEST_URI']}>");
