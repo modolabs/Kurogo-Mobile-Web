@@ -5,14 +5,6 @@
   */
 
 /**
-  */
-require_once realpath(LIB_DIR.'/Module.php');
-
-if (!function_exists('mb_substr')) {
-    die('Multibyte String Functions not available (mbstring)');
-}
-
-/**
   * @package Module
   * @subpackage News
   */
@@ -21,30 +13,17 @@ class NewsModule extends Module {
   protected $hasFeeds = true;
   protected $feeds = array();
   protected $feedFields = array('CACHE_LIFETIME'=>'Cache lifetime (seconds)','CONTROLLER_CLASS'=>'Controller Class','ITEM_CLASS'=>'Item Class', 'ENCLOSURE_CLASS'=>'Enclosure Class');
-  private $feedIndex=0;
+  protected $feedIndex=0;
   protected $feed;
   protected $maxPerPage=10;
 
-  protected function getModuleDefaultData()
-  {
+  protected function getModuleDefaultData() {
     return array_merge(parent::getModuleDefaultData(), array(
         'NEWS_MAX_RESULTS'=>10
         )
     );
   }
   
-  private function basicDeck($story, $bbplus) {
-    $limit = $bbplus ? 95 : 75;
-    
-    $deck = $story["description"];
-    if(strlen($deck) > $limit) {
-      $deck = mb_substr($deck, 0, $limit, 'UTF-8');
-      return trim($deck) . "...";
-    } else {
-      return $deck;
-    }
-  }
-
   private function feedURLForFeed($feedIndex) {
     return isset($this->feeds[$feedIndex]) ? 
       $this->feeds[$feedIndex]['baseURL'] : null;
@@ -104,17 +83,15 @@ class NewsModule extends Module {
     }
   }
   
-  public function getFeeds()
-  {
+  public function getFeeds() {
     return $this->feeds;
   }
   
-  public function getFeed($index)
-  {
+  public function getFeed($index) {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
         $controller = RSSDataController::factory($feedData);
-        $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+        $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
         return $controller;
     } else {
         throw new Exception("Error getting news feed for index $index");
@@ -193,13 +170,13 @@ class NewsModule extends Module {
         
         $this->enablePager($content, $this->feed->getEncoding(), $storyPage);
         
-        $this->assign('date',     $date);
-        $this->assign('storyURL', urlencode($story->getLink()));
+        $this->assign('date',          $date);
+        $this->assign('storyURL',      urlencode($story->getLink()));
         $this->assign('shareEmailURL', $shareEmailURL);
-        $this->assign('title',    $story->getTitle());
-        $this->assign('shareRemark', urlencode($story->getTitle()));
-        $this->assign('author',   $story->getAuthor());
-        $this->assign('image',    $this->getImageForStory($story));
+        $this->assign('title',         $story->getTitle());
+        $this->assign('shareRemark',   urlencode($story->getTitle()));
+        $this->assign('author',        $story->getAuthor());
+        $this->assign('image',         $this->getImageForStory($story));
         break;
         
       case 'search':
@@ -222,31 +199,31 @@ class NewsModule extends Module {
             $stories[] = $item;
            }
 
-          $previousUrl = '';
-          $nextUrl = '';
+          $previousURL = '';
+          $nextURL = '';
           
           if ($totalItems > $this->maxPerPage) {
             $args = $this->args;
             if ($start > 0) {
               $args['start'] = $start - $this->maxPerPage;
-              $previousUrl = $this->buildBreadcrumbURL($this->page, $args, false);
+              $previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
             }
             
-            if ($totalItems - $start <= $this->maxPerPage) {
+            if (($totalItems - $start) > $this->maxPerPage) {
               $args['start'] = $start + $this->maxPerPage;
-              $nextUrl = $this->buildBreadcrumbURL($this->page, $args, false);
+              $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
             }
           }
 
           $extraArgs = array(
-            'section'=>$this->feedIndex
+            'section' => $this->feedIndex
           );
 
-          $this->assign('extraArgs',     $extraArgs);
+          $this->assign('extraArgs',   $extraArgs);
           $this->assign('searchTerms', $searchTerms);
           $this->assign('stories',     $stories);
-          $this->assign('previousUrl', $previousUrl);
-          $this->assign('nextUrl',     $nextUrl);
+          $this->assign('previousURL', $previousURL);
+          $this->assign('nextURL',     $nextURL);
           
         } else {
           $this->redirectTo('index'); // search was blank
@@ -259,17 +236,19 @@ class NewsModule extends Module {
       
         $items = $this->feed->items($start, $this->maxPerPage, $totalItems);
        
-        $previousUrl = null;
-        $nextUrl = null;
+        $previousURL = null;
+        $nextURL = null;
         if ($totalItems > $this->maxPerPage) {
           $args = $this->args;
           if ($start > 0) {
             $args['start'] = $start - $this->maxPerPage;
-            $previousUrl = $this->buildBreadcrumbURL($this->page, $args, false);
+            $previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
           }
           
-          $args['start'] = $start + $this->maxPerPage;
-          $nextUrl = $this->buildBreadcrumbURL($this->page, $args, false);
+          if (($totalItems - $start) > $this->maxPerPage) {
+            $args['start'] = $start + $this->maxPerPage;
+            $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+          }
         }
         
         $stories = array();
@@ -302,8 +281,8 @@ class NewsModule extends Module {
         $this->assign('currentSection', $sections[$this->feedIndex]);
         $this->assign('stories',        $stories);
         $this->assign('isHome',         true);
-        $this->assign('previousUrl',    $previousUrl);
-        $this->assign('nextUrl',        $nextUrl);
+        $this->assign('previousURL',    $previousURL);
+        $this->assign('nextURL',        $nextURL);
         break;
     }
   }

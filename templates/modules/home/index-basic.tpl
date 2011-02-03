@@ -1,6 +1,11 @@
 {extends file="findExtends:modules/{$moduleID}/index.tpl"}
 
-{block name="banner"}
-  <h1><img id="logo" src="/modules/home/images/logo-home.gif" width="208" height="35" alt="{$SITE_NAME}" /></h1>
-  <p class="bb"> </p>
+{block name="bannerImageDetails"}
+  {$bannerImg['src'] = $bannerImg['src']|cat:".gif"}
+  {$bannerImg['width'] = 208}
+  {$bannerImg['height'] = 35}
+{/block}
+
+{block name="topItem"}
+  <p class="bb"> </p>  
 {/block}

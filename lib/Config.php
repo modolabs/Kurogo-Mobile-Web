@@ -9,10 +9,10 @@
  * @package Config
  */
 abstract class Config {
-    const EXPAND_VALUE = true;
-    const NO_EXPAND_VALUE = false;
-    const LOG_ERRORS = true;
-    const SUPRESS_ERRORS = false;
+  const NO_EXPAND_VALUE = 0;
+  const EXPAND_VALUE = 1;
+  const LOG_ERRORS = 2;
+  const SUPRESS_ERRORS = 0;
   protected $vars = array();
   protected $sectionVars = array();
   
@@ -56,9 +56,9 @@ abstract class Config {
     }
   }
 
-  public function getSectionVars($expand = Config::NO_EXPAND_VALUE) {
+  public function getSectionVars($opts = Config::NO_EXPAND_VALUE) {
 
-    if ($expand) {
+    if ($opts & Config::EXPAND_VALUE) {
         $sectionVars = $this->sectionVars;
         // flatten the "No Section" section *
         if (isset($sectionVars['No Section'])) {
@@ -73,22 +73,21 @@ abstract class Config {
     }
   }
 
-  public function getVars($expand = Config::NO_EXPAND_VALUE) {
-
-    if ($expand) {
+  public function getVars($opts = Config::NO_EXPAND_VALUE) {
+    if ($opts & Config::EXPAND_VALUE) {
         return array_map(array($this, 'replaceVariable'), $this->vars);
     } else {
         return $this->vars;
     }
   }
 
-  public function getSection($key, $log_error=Config::LOG_ERRORS) {
+  public function getSection($key, $opts=Config::LOG_ERRORS) {
 
     if (isset($this->sectionVars[$key])) {
       return $this->sectionVars[$key];
     }
     
-    if ($log_error) {
+    if ($opts & Config::LOG_ERRORS) {
         $bt = debug_backtrace();
         $call = sprintf("%s:%s", $bt[0]['file'], $bt[0]['line']);
         error_log(__FUNCTION__."(): config section '$key' not set (Called $call)");
@@ -108,17 +107,18 @@ abstract class Config {
       return $value;
   }
   
-  public function getVar($key, $expand = Config::EXPAND_VALUE, $log_error=Config::LOG_ERRORS) {
+  public function getVar($key, $opts = Config::EXPAND_VALUE) {
+  
     if (isset($this->vars[$key])) {
         $value = $this->vars[$key];
-        if ($expand) {
+        if ($opts & Config::EXPAND_VALUE) {
            $value = preg_replace_callback('/\{([A-Za-z_]+)\}/', array($this, 'replaceCallback'), $value);
         }
         
         return $value;
     }
     
-    if ($log_error) {
+    if ($opts & Config::LOG_ERRORS) {
         $bt = debug_backtrace();
         $call = sprintf("%s:%s", $bt[0]['file'], $bt[0]['line']);
         error_log(__FUNCTION__."(): config variable '$key' not set (Called $call)");

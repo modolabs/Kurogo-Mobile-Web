@@ -1,8 +1,6 @@
 {include file="findInclude:common/header.tpl" scalable=false}
 
-{block name="searchsection"}
-    {include file="findInclude:common/search.tpl" emphasized=false placeholder="Search $SITE_NAME"}
-{/block}
+{include file="findInclude:common/search.tpl" emphasized=false placeholder="Search $SITE_NAME"}
 
 {foreach $federatedResults as $federatedResult}
   <h3 class="nonfocal">{$federatedResult['title']}</h3>
@@ -10,7 +8,8 @@
   {if !count($results)}
     {$noResults = array()}
     {$noResults['title'] = "No results"}
-    {$results[] = $noResults}    
+    {$results[] = $noResults}
+    
   {elseif $federatedResult['total'] > count($results)}
     {$moreLink = array()}
     {$moreLink['title'] = "More results"}

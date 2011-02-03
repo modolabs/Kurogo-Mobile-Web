@@ -1,10 +1,7 @@
-.results.storylist li {
-	padding: 1px;
-}
 li.story {
-    height: 70pt;
-	margin: 0;
-    padding: 1px 10px 1px 1px;
+    height: 5.5em;
+	  margin: 0;
+    padding: 1px;
     overflow: hidden;
     position: relative;
 }
@@ -13,32 +10,30 @@ li.story {
     position: relative;
     margin: 0;
     padding: 0;
-    height: 70pt;
+    height: 5.5em;
 }
 .results li.story a .ellipsis {
     overflow: hidden;
-    position: absolute;
-    top: 0;
-    left: 0;
     margin: 0;
-    padding: 3px 25px 3px 0;
-    font-size: 14px;
-    line-height: 19px;
-    padding-bottom: .25em;
-    height: 62pt;
+    margin: .4em 25px .4em 0;
+    font-size: 82.35%;
+    line-height: 1.36em;
+    height: 5.9em;
 }
 
 .results li.story a .title {
-    font-size: 17px;
-	color: #000;
-    padding: 3px 0;
+    font-size: 114.29%;
+	  color: #000;
+    padding: 0 0 .25em 0;
 }
 
 .thumbnail {
     float:left;
     padding:0 8px 0 0;
-    width: 70pt;
-    height: 70pt;
+    width: 5.5em;
+    height: 5.5em;
+    background: transparent url('/modules/news/images/news-placeholder.png') no-repeat top left;
+    background-size: 5.5em;
 }
 #category-switcher table {
     padding-top: 2px;
@@ -101,24 +96,27 @@ form {
 .header form select {
     line-height: normal;
     padding: 4px 6px;
-    font-size: 15px;
+    font-size: 88.23%;
 }
 #search-form .toggle-search-button {
 }
 .header {
-    padding: 0;
+    padding: 5px 0;
 }
 
 .header button {
     display: inline;
 }
 
-.results li.non-story {
+.results li.pagerlink {
 	padding: 9px;
 }
 
-.results li.non-story a {
-    background-image: none;
+.results li.pagerlink a {
+  color: #1A1611;
+  font-weight: bold;
+  background-image: none;
+  font-size: 90%;
 }
 
 .newsinput  {

@@ -5,10 +5,6 @@
   */
 
 /**
-  */
-require_once realpath(LIB_DIR.'/Module.php');
-
-/**
   * @package Module
   * @subpackage Links
   */
@@ -18,7 +14,7 @@ class LinksModule extends Module {
   protected function getModuleDefaultData()
   {
     return array_merge(parent::getModuleDefaultData(), array(
-        'springboard'=>0,
+        'display_type'=>'springboard',
         'strings'=>array(
             'description'=>''
         ),
@@ -55,9 +51,7 @@ class LinksModule extends Module {
   
   protected function initializeForPage() {
     $links = $this->getModuleArray('links');
-    
-    $springboard = isset($links['springboard']) && $links['springboard'];
-    
+        
     foreach ($links as &$link) {
       if (!is_array($link)) {
         unset($link);
@@ -66,8 +60,8 @@ class LinksModule extends Module {
       }
     }
     
-    $this->assign('springboard', $this->getModuleVar('springboard'));
-    $this->assign('description', $this->getModuleVar('description'));
-    $this->assign('links',       $links);
+    $this->assign('display_type', $this->getModuleVar('display_type'));
+    $this->assign('description',  $this->getModuleVar('description'));
+    $this->assign('links',        $links);
   }
 }

@@ -1,6 +1,4 @@
-{block name="header"}
-    {include file="findInclude:common/header.tpl"}
-{/block}
+{include file="findInclude:common/header.tpl"}
 
 <div class="focal"> 
   {foreach $moduleStrings.ABOUT_HTML as $paragraph}

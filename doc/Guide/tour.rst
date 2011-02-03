@@ -63,7 +63,7 @@ Libraries
 The framework utilizes a number of code libraries to modularize and abstract certain processes and 
 encourage code reuse. The design goal behind the libraries is to ensure that they operate as generically
 as possible so that they can function in a variety of uses and contexts (even if, in practice, they are
-currently only used by one). Nearly all the libraries exist as PHP classes and currently fall
+currently used in only one context). Nearly all the libraries exist as PHP classes and currently fall
 into one of several categories:
 
 --------------------
@@ -258,7 +258,6 @@ Each site folder contains the following directories:
 * *modules* - Site specific modules. To promote ease when updating the framework to new versions,
   it is usually best if you keep site specific modules in this folder rather than in the *templates/modules*
   folder. If you wish to include your work in the project, please see :doc:`github`. Also see :doc:`moduleextend`.
-* *sample* - Only used in the reference site. Contains scripts used to generate example data.
 * *themes* - Contains the themes available for this site. Each theme folder contains a *common* and *modules*
   folder that contains the CSS and image assets for the site. See :doc:`template` for more information.
 

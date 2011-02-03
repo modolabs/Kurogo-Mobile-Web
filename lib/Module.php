@@ -12,6 +12,7 @@ define('MODULE_BREADCRUMB_PARAM', '_b');
   * @package Core
   */
 abstract class Module {
+
   protected $id = 'none';
   protected $moduleName = '';
   protected $hasFeeds = false;
@@ -28,7 +29,7 @@ abstract class Module {
   protected $pagetype = 'unknown';
   protected $platform = 'unknown';
   protected $supportsCerts = false;
-
+  
   protected $imageExt = '.png';
   
   private $pageConfig = null;
@@ -169,21 +170,23 @@ abstract class Module {
     }
   }
    
-  private function getFontSizeURL() {
-    unset($this->args['font']);
-    $argString = http_build_query($this->args);
-    if (strlen($argString)) {
-      return "/{$this->id}/{$this->page}.php?$argString&font=";
-    } else {
-      return "/{$this->id}/{$this->page}.php?font=";
+  private function getFontSizeURLs() {
+    $urls = array();
+    
+    $args = $this->args;
+    foreach ($this->fontsizes as $fontsize) {
+      $args['font'] = $fontsize;
+      $urls[$fontsize] = self::buildURL($this->page, $args);
     }
+    return $urls;
   }
 
   //
   // Minify URLs
   //
   private function getMinifyUrls() {
-    $minKey = "{$this->id}-{$this->page}-{$this->pagetype}-{$this->platform}-".md5(SITE_DIR);
+    $page = preg_replace('/[\s-]+/', '+', $this->page);
+    $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(SITE_DIR);
     $minDebug = $this->getSiteVar('MINIFY_DEBUG') ? '&debug=1' : '';
     
     return array(
@@ -252,7 +255,11 @@ abstract class Module {
       $argString = http_build_query($args);
     }
     
-    return "$page.php".(strlen($argString) ? "?$argString" : "");
+    return sprintf("%s%s", $page, (strlen($argString) ? "?$argString" : ""));
+  }
+
+  public static function buildURLForModule($id, $page, $args=array()) {
+    return sprintf("%s%s/%s", URL_BASE, $id, self::buildURL($page, $args));
   }
   
   protected function buildMailToLink($to, $subject, $body) {
@@ -271,9 +278,10 @@ abstract class Module {
     return $url;
   }
 
-  protected function redirectToModule($id, $args=array()) {
-    $url = URL_BASE."{$id}/?". http_build_query($args);
-    error_log('Redirecting to: '.$url);
+  public function redirectToModule($id, $args=array()) {
+  
+    $url = sprintf("%s/%s/?%s", URL_BASE, $id, http_build_query($args));
+    //error_log('Redirecting to: '.$url);
     
     header("Location: $url");
     exit;
@@ -282,43 +290,43 @@ abstract class Module {
   protected function redirectTo($page, $args=null, $preserveBreadcrumbs=false) {
     if (!isset($args)) { $args = $this->args; }
     
-    $url = URL_PREFIX."{$this->id}/";
-    
+    $url = '';
     if ($preserveBreadcrumbs) {
-      $url .= $this->buildBreadcrumbURL($page, $args, false);
+      $url = $this->buildBreadcrumbURL($page, $args, false);
     } else {
-      $url .= self::buildURL($page, $args);
+      $url = self::buildURL($page, $args);
     }
     
-    error_log('Redirecting to: '.$url);
+    //error_log('Redirecting to: '.$url);
     header("Location: $url");
     exit;
   }
-
+    
   //
   // Configuration
   //
-  protected function getSiteVar($var, $log_error=Config::LOG_ERRORS)
+  protected function getSiteVar($var, $opts=Config::LOG_ERRORS)
   {
-      return $GLOBALS['siteConfig']->getVar($var, Config::EXPAND_VALUE, $log_error);
+    
+      return $GLOBALS['siteConfig']->getVar($var, $opts | Config::EXPAND_VALUE);
   }
 
-  protected function getSiteSection($var, $log_error=Config::LOG_ERRORS)
+  protected function getSiteSection($var, $opts=Config::LOG_ERRORS)
   {
-      return $GLOBALS['siteConfig']->getSection($var, $log_error);
+      return $GLOBALS['siteConfig']->getSection($var, $opts);
   }
 
-  protected function getModuleVar($var, $default=null, $log_error=Config::LOG_ERRORS)
+  protected function getModuleVar($var, $default=null, $opts=Config::LOG_ERRORS)
   {
      $config = $this->getModuleConfig();
-     $value = $config->getVar($var, Config::EXPAND_VALUE, $log_error);
+     $value = $config->getVar($var, Config::EXPAND_VALUE| $opts);
      return is_null($value) ? $default :$value;
   }
 
-  protected function getModuleSection($section, $default=array(), $log_error=Config::LOG_ERRORS)
+  protected function getModuleSection($section, $default=array(), $opts=Config::LOG_ERRORS)
   {
      $config = $this->getModuleConfig();
-     if (!$section = $config->getSection($section, $log_error)) {
+     if (!$section = $config->getSection($section, $opts)) {
         $section = $default;
      }
      return $section;
@@ -502,7 +510,7 @@ abstract class Module {
       SITE_DIR."/modules/$id/Site{$className}.php"=>"Site" .$className,
       MODULES_DIR."/$id/$className.php"=>$className
     );
-        
+    
     foreach($modulePaths as $path=>$className){ 
       $moduleFile = realpath_exists($path);
       if ($moduleFile && include_once($moduleFile)) {
@@ -644,12 +652,12 @@ abstract class Module {
 
     switch ($key)
     {
-        case 'springboard':
+        case 'display_type':
             $item['label'] = 'Display type';
             $item['type'] = 'radio';
             $item['options'] = array(
-                0=>'List View',
-                1=>'Springboard');
+                'list'=>'List View',
+                'springboard'=>'Springboard');
             break;
         case 'title':
             $item['type'] = 'text';
@@ -889,7 +897,7 @@ abstract class Module {
   }
 
   protected function buildBreadcrumbURL($page, $args, $addBreadcrumb=true) {
-    return "$page.php?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
+    return sprintf("%s?%s",$page, http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb))));
   }
   
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
@@ -1047,10 +1055,10 @@ abstract class Module {
     $this->assign('isModuleHome', $this->page == 'index');
     
     // Font size for template
-    $this->assign('fontsizes',   $this->fontsizes);
-    $this->assign('fontsize',    $this->fontsize);
-    $this->assign('fontsizeCSS', $this->getFontSizeCSS());
-    $this->assign('fontSizeURL', $this->getFontSizeURL());
+    $this->assign('fontsizes',    $this->fontsizes);
+    $this->assign('fontsize',     $this->fontsize);
+    $this->assign('fontsizeCSS',  $this->getFontSizeCSS());
+    $this->assign('fontSizeURLs', $this->getFontSizeURLs());
 
     // Minify URLs
     $this->assign('minify', $this->getMinifyUrls());
@@ -1160,8 +1168,7 @@ abstract class Module {
   }
   
   protected function urlForFederatedSearch($searchTerms) {
-    return $this->buildBreadcrumbURL("/{$this->id}/search", array(
-      'filter' => $searchTerms,
-    ), false);
+    return URL_BASE . $this->id . "/". $this->buildBreadcrumbURL('search', array(
+      'filter' => $searchTerms));
   }
 }

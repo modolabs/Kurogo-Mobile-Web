@@ -31,6 +31,16 @@ class DeviceClassifier {
     $this->certs    = count($parts) > 2 && strlen($parts[2]) ? $parts[2] : false;
   }
   
+  private function cacheFolder()
+  {
+    return CACHE_DIR . "/DeviceDetection";
+  }
+
+  private function cacheLifetime()
+  {
+    return 900;
+  }
+  
   function __construct($device = null) {
     
     if ($device && strlen($device)) {
@@ -42,11 +52,27 @@ class DeviceClassifier {
       //error_log(__FUNCTION__."(): choosing device cookie '{$_COOKIE['layout']}' <{$_SERVER['REQUEST_URI']}>");
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
-      $query = http_build_query(array(
-        'user-agent' => $_SERVER['HTTP_USER_AGENT'],
-      ));
+    
+      $user_agent = $_SERVER['HTTP_USER_AGENT'];
       
-      $json = file_get_contents($GLOBALS['siteConfig']->getVar('MOBI_SERVICE_URL').'?'.$query);
+      /* see if the server has cached the results from the the device detection server */
+      $cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime(), TRUE);
+      $cacheFilename = md5($user_agent);
+
+      if ($cache->isFresh($cacheFilename)) {
+           $json = $cache->read($cacheFilename);
+      } else {
+
+          $query = http_build_query(array(
+            'user-agent' => $user_agent
+          ));
+          
+          $url = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_URL').'?'.$query;
+          $json = file_get_contents($url);
+
+          $cache->write($json, $cacheFilename);
+      }            
+
       $data = json_decode($json, true);
       
       switch (strtolower($data['pagetype'])) {

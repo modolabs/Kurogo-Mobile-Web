@@ -5,10 +5,6 @@
   */
 
 /**
-  */
-require_once realpath(LIB_DIR.'/Module.php');
-
-/**
   * @package Module
   * @subpackage Home
   */
@@ -18,7 +14,7 @@ class HomeModule extends Module {
   protected function getModuleDefaultData()
   {
     return array_merge(parent::getModuleDefaultData(), array(
-        'springboard'=>1,
+        'display_type'=>'springboard',
         'primary_modules'=>array(),
         'secondary_modules'=>array()
         )
@@ -127,7 +123,7 @@ class HomeModule extends Module {
         
       case 'index':
         $whatsNewCount = 0;
-        $modules = array();
+        $primaryModules = array();
         $secondaryModules = array();
         
         foreach ($this->getHomeScreenModules() as $id => $info) {
@@ -141,7 +137,7 @@ class HomeModule extends Module {
                   $module['badge'] = $whatsNewCount;
                 }
                 if ($info['primary']) {
-                  $modules[] = $module;
+                  $primaryModules[] = $module;
                 } else {
                   $module['class'] = 'utility';
                   $secondaryModules[] = $module;
@@ -149,13 +145,15 @@ class HomeModule extends Module {
             }
         }
         
-        if (count($modules) && count($secondaryModules)) {
-          $modules[] = array('separator' => true);
+        if (count($primaryModules) && count($secondaryModules)) {
+          $primaryModules[] = array('separator' => true);
         }
-        $modules = array_merge($modules, $secondaryModules);
+        $modules = array_merge($primaryModules, $secondaryModules);
         
-        $this->assign('springboard', $this->getModuleVar('springboard'));
+        $this->assign('display_type', $this->getModuleVar('display_type'));
         $this->assign('modules', $modules);
+        $this->assign('primaryModules', $primaryModules);
+        $this->assign('secondaryModules', $secondaryModules);
         $this->assign('topItem', null);
         break;
         

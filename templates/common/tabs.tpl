@@ -1,5 +1,3 @@
-{strip}
-
 {block name="tabsStart"}
   <ul id="tabs"{if $smallTabs} class="smalltabs"{/if}>
 {/block}
@@ -22,7 +20,6 @@
 </ul>
 {/block}
 
-{strip}
 {block name="tabBodies"}
   <div id="tabbodies">
     {foreach $tabBodies as $tabKey => $tabBody}

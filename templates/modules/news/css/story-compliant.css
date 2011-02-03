@@ -2,6 +2,11 @@
     margin-top: -12px;
     padding: 10px;
 }
+#storybody div img {
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+}
 
 .slugline {
     margin: 0;
@@ -36,7 +41,7 @@
 
 #image div { float:right; margin-top: 2px; margin-right:-2px; }
 
-#image a { text-align:right; font-size:11px; line-height: 30px; text-decoration:none; color:#777;}
+#image a { text-align:right; font-size:64.7%; line-height: 2.72em; text-decoration:none; color:#777;}
 
 #image a div { margin-top: -4px; }
 

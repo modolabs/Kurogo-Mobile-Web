@@ -1,6 +1,4 @@
-{block name="header"}
-    {include file="findInclude:common/header.tpl"}
-{/block}
+{include file="findInclude:common/header.tpl"}
 
 {if isset($moduleStrings.description) && strlen($moduleStrings.description)}
   <p class="{block name='headingClass'}nonfocal smallprint{/block}">
@@ -8,9 +6,9 @@
   </p>
 {/if}
 
-{if $springboard}
+{if $display_type=='springboard'}
   {include file="findInclude:common/springboard.tpl" springboardItems=$links springboardID="links"}
-{else}
+{elseif $display_type=='list'}
   {include file="findInclude:common/navlist.tpl" navlistItems=$links}
 {/if}
 

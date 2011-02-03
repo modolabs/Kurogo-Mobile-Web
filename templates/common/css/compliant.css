@@ -4,7 +4,6 @@ html, body {
 	margin: 0;
 	padding: 0;
 	width: 100%;
-	min-height: 100%;
 }
 
 body {
@@ -86,7 +85,7 @@ strong {
 /* Major layout blocks */
 
 #container {
-	min-height: 248px;
+	min-height: 320px;
 }
 
 #footer {
@@ -100,7 +99,7 @@ strong {
 #footerlinks {
 	clear: both;
 	margin: 3em 6px 2em 6px; 
-	font-size: 12px;
+	font-size: 70.589%;
 }
 
 #footerlinks a {
@@ -134,7 +133,7 @@ fieldset {
 
 input, textarea, select {
 	color: #333;
-	font-size: 17px;
+	font-size: 100%;
 	line-height: 30px;
 }
 
@@ -145,6 +144,14 @@ textarea {
 select {
 	width: 100%;
 	padding: 4px 2px;
+}
+
+#searchformcontainer h3 {
+	margin: 0 0 0.2em 0;
+}
+
+#searchformcontainer td {
+	padding: 0;
 }
 
 .forminput {
@@ -188,14 +195,12 @@ select {
 }
 
 .emphasized {
-	margin: 16px 0;
+	margin: 14px 0;
 }
 
 
 .emphasized  .forminput {
 	border: 3px solid #666;
-	-webkit-border-bottom-left-radius: 13px;	
-	-webkit-border-top-left-radius: 13px;	
 	padding: 6px 4px 8px 7px;
 	height: 18px;
 }
@@ -211,6 +216,7 @@ select {
 }
 
 a.formbutton {
+  cursor: default;
 	text-align: center;
 	display: inline-block;
 	padding-right: 7px;
@@ -219,7 +225,6 @@ a.formbutton {
 	background-position: right;
 	margin: 0 5px;
 	height: 36px;
-	overflow: hidden;
 	text-decoration: none;
 }
 
@@ -227,8 +232,8 @@ a.formbutton div {
 	display: inline-block;
 	color: #fff;
 	font-weight: bold;
-	font-size: 16px;
-	line-height: 26px;
+	font-size: 94.12%;
+	line-height: 26px;  /* height minus padding */
 	text-decoration: none;
 	padding: 5px 5px 5px 12px;
 	background-image: url(/common/images/button-sd-l.png);
@@ -242,14 +247,13 @@ input.formbutton {
   display: inline-block;
 	color: #fff;
 	font-weight: bold;
-	font-size: 16px;
-	line-height: 26px;
+	font-size: 94.12%;
+	line-height: 26px;  /* height minus padding */
 	text-decoration: none;
-	padding: 5px 5px 5px 14px;
+	padding: 5px 5px 5px 12px;
 	margin-right: 0;
   border: none;
 	height: 36px;
-	overflow: hidden;  
 	background-color: transparent;
 	background-image: url(/common/images/button-sd-l.png);
 	background-repeat: no-repeat;
@@ -303,9 +307,9 @@ input.formbutton {
 	height: 100%;
 	line-height: 44px;
 	vertical-align: top;
-    margin-left: -8px; /* overlap by the width of the drillup art */
-    padding: 0 18px 0 2px; 
-    background-image: url(/common/images/drillup-r.png);
+  margin-left: -4px; /* overlap by the width of the drillup art */
+  padding: 0 18px 0 2px; 
+  background-image: url(/common/images/drillup-r.png);
 	background-repeat: no-repeat;
 	background-position: top right;
 	text-decoration: none;
@@ -332,11 +336,11 @@ a.homelink {
 }
 
 a.module img {
-	padding: 8px 2px 8px 4px;
+	padding: 8px 2px 8px 0px;
 }
 
 .homepage .moduleicon {
-    padding: 8px 5px;
+    padding: 8px 5px 8px 6px;
 }
 
 *:first-child+html .homepage .moduleicon {
@@ -350,11 +354,11 @@ a.module img {
 }
 
 .crumb2a  {
-	max-width: 60px;
+	max-width: 45px;
 }
 
 .crumb2b  {
-	max-width: 60px;
+	max-width: 50px;
 }
 
 .crumb3a {
@@ -363,17 +367,17 @@ a.module img {
 }
 
 .crumb3b {
-	max-width: 60px;
+	max-width: 45px;
 }
 
 .crumb3c {
-	max-width: 60px;
+	max-width: 50px;
 }
 
 .pagetitle {
 	display: inline-block;
 	font-weight: bold;
-	margin-left: -6px;	
+	margin-left: -4px;	
 	vertical-align: top;
 	line-height: 44px;
 	height: 44px;
@@ -387,6 +391,7 @@ a.module img {
 .homepage .pagetitle {
 	display: inline;
 	max-width: 210px;
+	margin-left: -8px;	
 }
 
 .homepage .pagetitle {
@@ -431,8 +436,9 @@ a.module img {
 }
 
 .springboard a img {
-  height: 50px;
-  width: 50px;
+	height: 50px;
+	width: 50px;
+	margin-bottom: 1px;
 }
 
 .springboard .separator {
@@ -453,7 +459,7 @@ a.module img {
 	padding-top: 5px;
 	text-align: center;
 	color: #fff;
-	font-size:12px;
+	font-size:70.59%;
 	font-weight: bold;
 	background-image: url(/common/images/badge.png);
 	background-repeat: no-repeat;
@@ -472,7 +478,7 @@ a.module img {
 .nav li {	
 	list-style-type: none;	
 	border-top: 1px solid #ccc;
-	padding: 12px;
+	padding: 11px;
 	position: relative;
 }
 
@@ -497,7 +503,7 @@ a.module img {
 
 .nav a  {
 	display: block;
-	padding: 8px 25px 8px 8px;
+	padding: 8px 24px 10px 8px;
 	margin: -8px;	 
 	background-image: url(/common/images/action-arrow.png); 
 	background-repeat: no-repeat;
@@ -508,7 +514,7 @@ a.module img {
 }
 
 .nav li.icon {
-  padding: 0 12px;
+  padding: 0 11px;
   min-height: 54px;
 }
 .nav li.icon img {
@@ -521,7 +527,7 @@ a.module img {
 .nav li.icon a {
   position: relative;
   margin: 0 -7px 0 0;
-  padding: 12px 5px 12px 58px;
+  padding: 11px 4px 11px 57px;
   line-height: 30px;
 }
 
@@ -541,7 +547,7 @@ ul.focal {
 
 ul.focal li {
 	list-style-type: none;
-	padding: 12px;
+	padding: 11px;
 	position: relative;
 	border-top: 1px solid #ccc; 
 }
@@ -576,7 +582,8 @@ ul.focal li:first-child {
 .results {	   
 	padding: 0;	   
 	margin: 10px 0; 
-	border: 1px solid #ccc;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 }
 
 .results li {	
@@ -591,7 +598,7 @@ ul.focal li:first-child {
 
 .results a  {
 	display: block;
-	padding: 10px 25px 10px 7px;
+	padding: 9px 25px 9px 7px;
 	margin: -7px;	 
 	background-image: url(/common/images/action-arrow.png); 
 	background-repeat: no-repeat;
@@ -611,7 +618,7 @@ ul.focal li:first-child {
 }
 
 .results li div.smallprint {
-  padding-top: 2px;
+  padding-top: .25em;
 }
 
 .results li ul li {
@@ -646,15 +653,15 @@ ul.focal li:first-child {
 	margin: 10px; 
 	padding: 0;	   
 	border: 1px solid #ccc;
-	-webkit-border-radius: 9px;	
-	border-radius: 9px;	
+	-webkit-border-radius: 8px;	
+	border-radius: 8px;	
 }
 
 .secondary li {
 	list-style-type: none;		
 	border-top: 1px solid #ccc;
 	position: relative;
-	padding: 9px 10px;
+	padding: 9px;
 }
 
 .secondary li:first-child {
@@ -663,8 +670,8 @@ ul.focal li:first-child {
 
 .secondary a {
 	display: block;
-	padding: 9px 25px 9px 8px;
-	margin: -7px;	 
+	padding: 8px 25px 8px 7px;
+	margin: -6px;	 
 	background-image: url(/common/images/action-arrow.png); 
 	background-repeat: no-repeat;
 	background-position: right; 
@@ -690,8 +697,8 @@ ul.focal li:first-child {
 	top: -1px;
 	margin-left: 4px;
 	margin-bottom: -4px;
-	font-size: 14px;
-	line-height: 14px;
+	font-size: 83.353%;
+	line-height: 1em;
 	padding: 4px 9px 4px 7px;
 	-webkit-border-radius: 10px;
 }
@@ -708,8 +715,8 @@ ul.focal li:first-child {
 
 .announcements li {	
 	padding: 8px;
-	font-size: 14px;
-	line-height: 19px;
+	font-size: 83.353%;
+	line-height: 1.357em;
 	color: #202020;
 }
 
@@ -754,8 +761,8 @@ ul.focal li:first-child {
 
 .legend {
 	margin: 7px 0;
-	font-size: 14px;
-	line-height: 17px;
+	font-size: 82.353%;
+	line-height: 1.214em;
 }
 
 .legend.nonfocal {
@@ -776,57 +783,50 @@ ul.focal li:first-child {
 
 .smallprint {
 	font-weight: normal;
-	font-size: 14px;
-	line-height: 17px;
+	font-size: 82.353%;
+	line-height: 1.214em;
 }
 
 .fineprint {
 	font-weight: normal;
-	font-size: 12px;
-	line-height: 14px;
+	font-size: 70.589%;
+	line-height: 1.1167em;
 }
 
-.label {	
-	display: block;
-	width: 78px;
-	position: absolute;
-	top: 17px;
-	left: 0px;
-	font-size: 13px;
-	line-height: 15px;
-	font-weight: bold;
-	text-align: right;
-	word-wrap: normal;
+.label {
+    display: block;
+    width: 6em;
+    position: relative;
+    font-size: 76.471%;
+    line-height: 1.3em;
+    font-weight: bold;
+    text-align: right;
 }
 
 .value {
-	display: block;
-	margin-left: 76px;
-	font-size: 17px;
-	min-height: 20px;
-	line-height: 24px;
-	padding-right: 22px;
-	word-wrap: break-word;
-}
-
-
-.value a {
-	background-position: 8px right;
+    display: block;
+    margin-top: -1.2em;
+    margin-left: 5em;
+    font-size: 100%;
+    min-height: 1.3em;
+    line-height: 1.3em;
+    word-wrap: break-word;
 }
 
 .longlabel {
 	display: block;
-	font-size: 13px;
-	line-height: 15px;
+	font-size: 76.471%;
+	line-height: 1.154em;
 	font-weight: bold;
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: auto;
 }
+
 .longlabel + .value {
   margin-left: 0px;
+  margin-top: 0px;
 }
 
 .more {
@@ -868,8 +868,8 @@ ul.focal li:first-child {
 }
 
 .foundat {
-	font-size: 14px;
-	line-height: 17px;
+	font-size: 83.353%;
+	line-height: 1.214em;
 	font-weight: normal;
 	color: #444;
 }
@@ -879,8 +879,8 @@ p.foundat {
 }
 
 .address {
-	font-size: 14px;
-	line-height: 17px;
+	font-size: 83.353%;
+	line-height: 1.214em;
 	font-weight: normal;
 }
 
@@ -1040,26 +1040,32 @@ h2.icon {
 	-webkit-border-top-right-radius: 7px;	
 	-webkit-border-top-left-radius: 7px;	
 	text-align: center;
-	padding: 6px 10px 7px 10px;
-}
-
-#tabs li.active {
-	margin-top: -1px;
-	padding-top: 7px;
-	padding-bottom: 8px;
 }
 
 #tabs li a {
 	display: block;
 	text-decoration: none;
-	min-width: 40px;
+	min-width: 30px;
+	padding: 7px 10px 8px 10px;
 }
 
 #tabs.smalltabs li {
-	font-size: 12pt;
+	font-size: 88.26%;
 	margin-right: 3px;
-	padding-right: 6px;
-	padding-left: 6px;
+}
+
+#tabs.smalltabs li a {
+	padding-right: 7px;
+	padding-left: 7px;
+}
+
+#tabs li.active {
+	margin-top: -1px;
+}
+
+#tabs li.active a {
+	padding-top: 8px;
+	padding-bottom: 9px;
 }
 
 #tabbodies {
@@ -1189,8 +1195,8 @@ h2.icon {
 
 .loading {
 	margin: 16px 0;
-	font-size: 14px;
-	line-height: 21px;
+	font-size: 83.353%;
+	line-height: 1.5em;
 	font-weight: normal;
 	color: #888;
 	text-align: center;
@@ -1205,7 +1211,7 @@ h2.icon {
 	bottom: 0px;
 }
 
-/'
+/*
 #scrim {
 	position: absolute;
 	top: 0px;
@@ -1216,14 +1222,14 @@ h2.icon {
 	opacity: 0.65;
 	background-color: #212b34
 }
-'/
+*/
 #message {
 	position: absolute;
 	z-index: 100001;
 	top: 50%;
 	left: 50%;
-	font-size: 15px;
-	line-height: 18px;
+	font-size: 83.236%;
+	line-height: 1.2em;
 	padding: 20px 10px;
 	width: 230px;
 	margin-left: -125px;
@@ -1247,12 +1253,13 @@ h2.icon {
 
 .devicedetection {
   border: none;
-  margin: 1.5em 0;
-  width: 100%;
+  margin: 1.5em .5em;
+  width: auto;
 }
 .devicedetection th,
 .devicedetection td {
-  font-size: 10px;
+  font-size: 65.71%;
+  line-height: 1.2em;
   padding: 0 .25em;
   margin: 0;
   text-align: left;
@@ -1261,12 +1268,6 @@ h2.icon {
   font-weight: bold;
   text-align: right;
   white-space: nowrap;
-  width: 50%;
-}
-.devicedetection th[colspan],
-.devicedetection td[colspan] {
-  width: auto;
-  text-align: center;
 }
 
 #share {
@@ -1274,7 +1275,6 @@ h2.icon {
 	margin: -12px 0 0 8px;
 }
 #sharesheet {
-	visibility: hidden;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -1298,11 +1298,12 @@ h2.icon {
 	position: absolute;
 	top: 80px;
 	left: 50%;
-	width: 260px;
-	margin-left: -140px;
+	width: 220px;
+	margin-left: -130px;
 	-webkit-border-radius: 10px;
-	padding: 10px;
-	background: #ddd; /* Non-CSS3 browsers */
+	padding: 10px 20px;
+	background: #eee; /* Non-CSS3 browsers */
+	/* This doesn't work with the Palm Pre: 
 	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#d0d0d0)); /* Webkit browsers */
 	background: -moz-linear-gradient(top,  #f9f9f9,  #d0d0d0); /* Firefox 3.6+ */
 	-moz-box-shadow: 0px 3px 7px #333;
@@ -1319,7 +1320,7 @@ h2.icon {
 	margin: 0;
 	padding: 0;
 }
-#sharedialog a {
+#sharedialog a.sharelink {
 	display: block;
 	text-decoration: none;
 	padding: 6px 0;
@@ -1330,4 +1331,15 @@ h2.icon {
 	float: left;
 	margin-right: 6px;
 	border: none;
+}
+
+/* firefox adds these a tags when you edit the dom */
+.ellipsis a[xmlns] {
+	display: inline !important;
+	padding: 0 !important;
+	margin: 0 !important;	 
+	background: none !important; 
+	line-height: inherit !important;
+	text-decoration: none !important;
+	font-size: inherit !important;
 }

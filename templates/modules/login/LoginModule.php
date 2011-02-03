@@ -5,10 +5,6 @@
   */
 
 /**
-  */
-require_once realpath(LIB_DIR.'/Module.php');
-
-/**
   * @package Module
   * @subpackage Login
   */
@@ -72,7 +68,7 @@ class LoginModule extends Module {
             $login = $this->argVal($_POST, 'loginUser', '');
             $password = $this->argVal($_POST, 'loginPassword', '');
             
-            $authorityIndex = $this->getArg('authority', AuthenticationAuthority::getDefaultAuthenticationAuthority());
+            $authorityIndex = $this->getArg('authority', AuthenticationAuthority::getDefaultAuthenticationAuthorityIndex());
             $this->assign('authority', $authorityIndex);
 
             if ($this->isLoggedIn()) {
@@ -86,6 +82,7 @@ class LoginModule extends Module {
             if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
                 $result = $authority->login($login, $password, $this);
             } else {
+                error_log("Invalid authority $authorityIndex");
                 $this->redirectTo('index');
             }
 

@@ -1,7 +1,5 @@
 <?php
 
-require_once realpath(LIB_DIR.'/Module.php');
-
 class DownloadModule extends Module {
   protected $id = 'download';
   

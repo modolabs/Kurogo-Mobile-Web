@@ -5,10 +5,6 @@
   */
 
 /**
-  */
-require_once realpath(LIB_DIR.'/Module.php');
-
-/**
   * @package Module
   * @subpackage Admin
   */
@@ -164,6 +160,15 @@ class AdminModule extends Module {
 
                     if ($section) {
                         $moduleData = array($section=>$moduleData[$section]);
+                    } else {
+                        /* only include the scalar values since array values come from sections */
+                        $_data = array();
+                        foreach ($moduleData as $var=>$val) {
+                            if (is_scalar($val)) {
+                                $_data[$var] = $val;
+                            }
+                            $moduleData = $_data;
+                        }
                     }
 
                     $module->saveConfig($moduleData, $section);

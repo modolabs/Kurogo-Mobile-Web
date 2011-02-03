@@ -1,7 +1,4 @@
-{block name="header"}
-    {include file="findInclude:common/header.tpl"}
-{/block}
-
+{include file="findInclude:common/header.tpl"}
 
 <div class="nonfocal">
   <h2>
@@ -14,10 +11,10 @@
 
 {capture name="sideNav" assign="sideNav"}
   <div class="{block name='sideNavClass'}sidenav{/block}">
-    <a href="{$prevUrl}">
+    <a href="{$prevURL}">
       &lt; {$prev|date_format:"%a %b %e"}
     </a> | 
-    <a href="{$nextUrl}">
+    <a href="{$nextURL}">
       {$next|date_format:"%a %b %e"} &gt;
     </a>
   </div>

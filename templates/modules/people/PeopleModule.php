@@ -5,10 +5,6 @@
   */
 
 /**
-  */
-require_once realpath(LIB_DIR.'/Module.php');
-
-/**
   * @package Module
   * @subpackage People
   */
@@ -64,7 +60,7 @@ class PeopleModule extends Module {
         $lines = explode('$', $value);
         $count = count($lines);
         $linkAddress = ($count > 1) ? $lines[$count - 2] : $value;
-        $detail['url'] = '/map/search.php?'.http_build_query(array(
+        $detail['url'] = self::buildURLForModule('map', 'search', array(
           'filter' => $linkAddress
         ));
         $detail['class'] = 'map';
@@ -143,7 +139,7 @@ class PeopleModule extends Module {
         $results[] = array(
           'url' => $this->buildBreadcrumbURL("/{$this->id}/detail", array(
              'uid'    => $people[$i]->getId(),
-             'filter' => $searchTerms,
+             'filter' => $searchTerms
           ), false),
           'title' => htmlentities($section[0]['title']),
         );
@@ -179,7 +175,7 @@ class PeopleModule extends Module {
     }
   }
   
-  public function getFeed($index)
+  protected function getFeed($index)
   {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
@@ -258,7 +254,8 @@ class PeopleModule extends Module {
                   
                   $results[] = array(
                     'url' => $this->buildBreadcrumbURL('detail', array(
-                       'uid'    => $person->getId()
+                       'uid'    => $person->getId(),
+                       'filter' => $this->getArg('filter')
                     )),
                     'title' => htmlentities($section[0]['title']),
                   );
