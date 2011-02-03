@@ -4,6 +4,9 @@ class EmergencyNoticeDataController extends DataController
 {
     protected $DEFAULT_PARSER_CLASS = 'RSSDataParser';
     protected $emergencyNotice = NULL;
+    protected $cacheFolder = "Emergency";
+    protected $cacheFileSuffix = "rss";
+
     protected $cacheLifetime = 60; // emergency notice should have a short cache time
 
     /*
@@ -27,22 +30,6 @@ class EmergencyNoticeDataController extends DataController
         }
 
         return $this->emergencyNotice;
-    }
-
-    // the next 3 methods can be removed when
-    // we upgrade to Kurogo
-    protected function cacheFolder()
-    {
-        return CACHE_DIR . "/EmergencyNotice";
-    }
-
-    protected function cacheLifespan()
-    {
-        return $GLOBALS['siteConfig']->getVar('EMERGENCY_NOTICE_CACHE_TIMEOUT');
-    }
-
-    protected function cacheFileSuffix() {
-        return '.xml';
     }
 
     public static function factory($args)

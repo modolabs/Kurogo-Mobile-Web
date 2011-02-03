@@ -3,6 +3,7 @@
 class DrupalContactsListDataController extends ContactsListDataController
 {
     protected $DEFAULT_PARSER_CLASS = 'DrupalContactsDataParser';
+    protected $cacheFileSuffix = "rss";
     protected $contactsLoaded = FALSE;
 
     protected function loadContacts() {

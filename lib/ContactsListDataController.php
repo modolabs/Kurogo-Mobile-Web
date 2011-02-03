@@ -4,7 +4,7 @@ abstract class ContactsListDataController extends DataController
 {
     protected $DEFAULT_PARSER_CLASS = 'DrupalContactsDataParser';
 
-
+    protected $cacheFolder = 'ContactsList';
     protected $primaryContacts = NULL;
     protected $secondaryContects = NULL;
 
