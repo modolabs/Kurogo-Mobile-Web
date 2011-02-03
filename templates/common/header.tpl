@@ -61,6 +61,9 @@
     {/if}
   {/block}
   
+  {if !$autoPhoneNumberDetection}
+  <meta name="format-detection" content="telephone=no">
+  {/if}
   <meta name="HandheldFriendly" content="true" />
   <meta name="viewport" id="viewport" 
     content="width=device-width, {if $scalable|default:true}user-scalable=yes{else}user-scalable=no, initial-scale=1.0, maximum-scale=1.0{/if}" />
