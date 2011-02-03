@@ -124,6 +124,7 @@ Included Modules
    modulepeople
    modulecalendar
    modulenews
+   moduleemergency
    modulelinks
    modulefullweb
    modulecustomize
