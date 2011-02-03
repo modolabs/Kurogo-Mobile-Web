@@ -51,7 +51,7 @@ abstract class ContactsListDataController extends DataController
 
     public static function factory($args)
     {
-        $args['CONTROLLER_CLASS'] = $args['contacts']['DATA_CONTROLLER'];
+        $args['CONTROLLER_CLASS'] = $args['contacts']['CONTROLLER_CLASS'];
         return parent::factory($args);
     }
 }

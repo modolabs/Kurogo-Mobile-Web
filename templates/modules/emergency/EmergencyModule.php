@@ -8,24 +8,31 @@ class EmergencyModule extends Module
         // construct controllers
 
         $config = $this->loadFeedData();
-        $contactsController = ContactsListDataController::factory($config);
+        if(isset($config['contacts'])) {
+          $contactsController = ContactsListDataController::factory($config);
+        } else {
+          $contactsController = NULL;
+        }
         $emergencyNoticeController = EmergencyNoticeDataController::factory($config);
         
         switch($this->page) {
             case 'index':
                 $contactNavListItems = array();
-                foreach($contactsController->getPrimaryContacts() as $contact) {
-                    $contactNavListItems[] = self::contactNavListItem($contact);
-                }
+                if($contactsController !== NULL) {
+                    foreach($contactsController->getPrimaryContacts() as $contact) {
+                        $contactNavListItems[] = self::contactNavListItem($contact);
+                    }
 
-                if($contactsController->hasSecondaryContacts()) {
-                    $moduleStrings = $this->getModuleSection('strings');
-                    $contactNavListItems[] = array(
-                        'title' => $moduleStrings['MORE_CONTACTS'],
-                        'url' => $this->buildBreadcrumbURL('contacts', array()),
-                    );
+                    if($contactsController->hasSecondaryContacts()) {
+                        $moduleStrings = $this->getModuleSection('strings');
+                        $contactNavListItems[] = array(
+                            'title' => $moduleStrings['MORE_CONTACTS'],
+                            'url' => $this->buildBreadcrumbURL('contacts', array()),
+                        );
+                    }
+                    $this->assign('contactNavListItems', $contactNavListItems);
                 }
-                $this->assign('contactNavListItems', $contactNavListItems);
+                $this->assign('hasContacts', (count($contactNavListItems) > 0));
 
                 $emergencyNotice = $emergencyNoticeController->getLatestEmergencyNotice();
                 $this->assign('title', $emergencyNotice['title']);

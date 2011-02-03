@@ -8,12 +8,9 @@ class INIFileContactsListDataController extends ContactsListDataController
     protected $secondarySection;
 
     protected function init($args) {
-        $this->primaryContacts = self::createContactsList($args['primary']);
-         if(isset($args['secondary'])) {
-            $this->secondaryContacts = self::createContactsList($args['secondary']);
-         } else {
-            $this->secondaryContacts = array();
-         }
+        $this->primaryContacts = isset($args['primary']) ? self::createContactsList($args['primary']) : array();
+
+        $this->secondaryContacts = isset($args['secondary']) ? self::createContactsList($args['secondary']) : array();
     }
 
     private static function createContactsList($iniData) {

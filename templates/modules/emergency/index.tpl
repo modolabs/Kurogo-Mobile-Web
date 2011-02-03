@@ -6,12 +6,13 @@
   {$content}
 </div>
 
-<div>
-  {include file="findInclude:common/navlist.tpl" 
-     navlistItems=$contactNavListItems
-     accessKey=false
-     nested=true
-     subtitleNewLine=false}
-</div>
-
+{if $hasContacts}
+  <div>
+    {include file="findInclude:common/navlist.tpl"
+       navlistItems=$contactNavListItems
+       accessKey=false
+       nested=true
+       subtitleNewLine=false}
+  </div>
+{/if}
 {include file="findInclude:common/footer.tpl"}
