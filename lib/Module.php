@@ -63,6 +63,8 @@ abstract class Module {
   
   protected $cacheMaxAge=0;
   
+  protected $autoPhoneNumberDetection = true;
+  
   public function getID()
   {
     return $this->id;
@@ -576,9 +578,10 @@ abstract class Module {
             }
         }
         
-        $this->page = $page;
+        $this->setPage($page);
         $this->setTemplatePage($this->page, $this->id);
         $this->args = $args;
+        $this->setAutoPhoneNumberDetection($GLOBALS['siteConfig']->getVar('AUTODETECT_PHONE_NUMBERS'));
         
         $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
         $this->platform      = $GLOBALS['deviceClassifier']->getPlatform();
@@ -603,6 +606,12 @@ abstract class Module {
             $this->imageExt = '.gif';
             break;
         }
+  }
+  
+  protected function setAutoPhoneNumberDetection($bool)
+  {
+    $this->autoPhoneNumberDetection = $bool ? true : false;
+    $this->assign('autoPhoneNumberDetection', $this->autoPhoneNumberDetection);
   }
   
   public function getSession()
@@ -951,6 +960,9 @@ abstract class Module {
   
   
   // Programmatic overrides for titles generated from backend data
+  protected function setPage($page) {
+    $this->page = $page;
+  }
   protected function setPageTitle($title) {
     $this->pageTitle = $title;
   }

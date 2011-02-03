@@ -214,6 +214,12 @@ abstract class DataController
         return $items;
         
     }
+
+    public function getItemByIndex($index)
+    {
+        $items = $this->getParsedData();
+        return current($items);
+    }
     
     public function items($start=0, $limit=null, &$totalItems)
     {
