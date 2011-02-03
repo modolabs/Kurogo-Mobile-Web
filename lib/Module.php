@@ -578,7 +578,7 @@ abstract class Module {
             }
         }
         
-        $this->page = $page;
+        $this->setPage($page);
         $this->setTemplatePage($this->page, $this->id);
         $this->args = $args;
         $this->setAutoPhoneNumberDetection($GLOBALS['siteConfig']->getVar('AUTODETECT_PHONE_NUMBERS'));
@@ -960,6 +960,9 @@ abstract class Module {
   
   
   // Programmatic overrides for titles generated from backend data
+  protected function setPage($page) {
+    $this->page = $page;
+  }
   protected function setPageTitle($title) {
     $this->pageTitle = $title;
   }
