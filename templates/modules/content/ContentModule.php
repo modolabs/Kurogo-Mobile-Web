@@ -2,6 +2,34 @@
 
 abstract class ContentModule extends Module {
    protected $id = 'content';
+   protected $feedFields = array('CONTENT_TYPE'=>'Content Type');
+
+  protected function prepareAdminForSection($section, &$adminModule) {
+    switch ($section)
+    {
+        case 'feeds':
+            $feeds = $this->loadFeedData();
+            $adminModule->addExternalJavascript(URL_BASE . "modules/{$this->id}/javascript/admin.js");
+            $adminModule->addExternalCSS(URL_BASE . "modules/{$this->id}/css/admin.css");
+            $adminModule->assign('feeds', $feeds);
+            $adminModule->assign('showFeedLabels', true);
+            $adminModule->assign('showNew', true);
+            $adminModule->assign('content_types', array(
+                'html'=>'HTML (editable)',
+                'html_url'=>'HTML (remote)',
+                'rss'=>'RSS (remote)'
+            ));
+            $adminModule->setTemplatePage('feedAdmin', $this->id);
+            break;
+        default:
+            return parent::prepareAdminForSection($section, $adminModule);
+    }
+  }
+
+   public function hasFeeds()
+   {
+      return true;
+   }
    
    protected function getContent($feedData)
    {
@@ -10,6 +38,10 @@ abstract class ContentModule extends Module {
         switch ($content_type)
         {
             case 'html':
+                $content = isset($feedData['CONTENT_HTML']) ? $feedData['CONTENT_HTML'] : '';
+                return $content;
+                break;
+            case 'html_url':
                 $controller = HTMLDataController::factory($feedData);
                 if (isset($feedData['HTML_ID'])) {
                     $content = $controller->getContentById($feedData['HTML_ID']);
