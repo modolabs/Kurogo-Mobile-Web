@@ -2,7 +2,6 @@
 
 <h1 class="focal videoTitle">{$videoTitle}</h1>
 
-
 <p class="nonfocal">
     <script type="text/javascript" src="http://admin.brightcove.com/js/BrightcoveExperiences.js"></script>
 	<script src="http://brightcove-swf-hosting.s3.amazonaws.com/MobileCompatibility.js" type="text/javascript"></script>
@@ -10,8 +9,8 @@
 	  <param name="bgcolor" value="#FFFFFF" />
 	  <param name="width" value="298" />
 	  <param name="height" value="200" />
-	  <param name="playerID" value="63793987001" />
-	  <param name="publisherID" value="1079084864"/>
+	  <param name="playerID" value="{$playerid}" />
+	  <param name="publisherID" value="{$accountid}"/>
 	  <param name="isVid" value="true" />
 	  <param name="isUI" value="true" />
 	  <param name="optimizedContentLoad" value="true" />

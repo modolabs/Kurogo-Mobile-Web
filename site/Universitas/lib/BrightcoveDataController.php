@@ -15,7 +15,10 @@
 
      public function search($q)
      {
-         // set the base url to YouTube
+     	
+     	// TODO use $accountid and $playerid
+     	
+         // set the base url to Brightcove
          $this->setBaseUrl('http://link.brightcove.com/services/mrss/player1459151488/270881183/new');
          //$this->addFilter('alt', 'json'); //set the output format to json
          //$this->addFilter('q', $q); //set the query
@@ -36,32 +39,30 @@
          return $results;
      }
 
-	 // retrieves a YouTube Video based on its video id
+	 // retrieves a Brightcove Video based on its video id
 	public function getItem($id)
 	{
-	    $this->setBaseUrl("http://link.brightcove.com/services/mrss/player1459151488/270881183/$id");
-	    //$this->addFilter('alt', 'json'); //set the output format to json
-	    //$this->addFilter('format', 6); //only return mobile videos
-	    //$this->addFilter('v', 2); // version 2
-	
-         //$data = $this->getParsedData();
-
-	    ////////////////
-	    // IG: copy from RSSDataController
+		// FIXME
+	    $this->setBaseUrl("http://link.brightcove.com/services/mrss/player$playerid/$accountid/$titleid");
+	    //$this->setBaseUrl($id);
+	   
+	    //http://localhost:8888/video2/video2/kurogo/Kurogo-Mobile-Web/web/detail?
+	    //videoid=34459290001&playerid=1459151488&accountid=270881183&_b=%258B%258E%2505%2500
 	    
-	    $data = $this->items();
+	    $data = $this->items(0,null,$total);   // IG: copy from RSSDataController
           
-        foreach ($items as $item) {
+        foreach ($data as $item) {
+        	
+        	echo $item->getGUID();
+        	//print_r($item->getGUID());  // FIXME difference?
+        	
             if ($item->getGUID()==$id) {
                 return $item;
             }
         }
         
         return null;
-	    ////////////////
-        
-         
-	    ////return isset($data['entry']) ? $data['entry'] : false;
+	    
 	    //return isset($data['item']) ? $data['item'] : false;
 	}
 
