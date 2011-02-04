@@ -154,8 +154,13 @@ $id = $parts[0];
 /* see if there's a redirect for this path */
 if ($url_redirects = $GLOBALS['siteConfig']->getSection('urls', ConfigFile::SUPRESS_ERRORS)) {
     if (array_key_exists($id, $url_redirects)) {
-        $parts[0] = $url_redirects[$id];
-        header("Location: " . URL_BASE . implode("/", $parts));
+        if (preg_match("#^http(s)?://#", $url_redirects[$id])) {
+            $url = $url_redirects[$id];
+        } else {
+            $parts[0] = $url_redirects[$id];
+            $url = URL_BASE . implode("/", $parts);
+        }
+        header("Location: " . $url);
         exit;
     }
     
