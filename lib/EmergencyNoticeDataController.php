@@ -22,11 +22,13 @@ class EmergencyNoticeDataController extends DataController
         if($this->emergencyNotice === NULL) {
             $data = $this->getData();
             $items = $this->parseData($data);
-            $this->emergencyNotice = array(
-                'title' => $items[0]->getTitle(),
-                'text' => $items[0]->getDescription(),
-                'date' => $items[0]->getPubDate()
-            );
+            if(count($items) > 0) {
+                $this->emergencyNotice = array(
+                   'title' => $items[0]->getTitle(),
+                   'text' => $items[0]->getDescription(),
+                   'date' => $items[0]->getPubDate()
+                );
+            } 
         }
 
         return $this->emergencyNotice;
@@ -35,7 +37,7 @@ class EmergencyNoticeDataController extends DataController
     public static function factory($args)
     {
         $args = array(
-	    'BASE_URL' => $args['notice']['RSS_URL'],
+	    'BASE_URL' => $args['RSS_URL'],
             'CONTROLLER_CLASS' => __CLASS__,
         );
         return parent::factory($args);

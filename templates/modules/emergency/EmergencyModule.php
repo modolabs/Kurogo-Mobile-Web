@@ -13,8 +13,13 @@ class EmergencyModule extends Module
         } else {
           $contactsController = NULL;
         }
-        $emergencyNoticeController = EmergencyNoticeDataController::factory($config);
         
+        if(isset($config['notice'])) {
+          $emergencyNoticeController = EmergencyNoticeDataController::factory($config['notice']);
+        } else {
+          $emergencyNoticeController = NULL;
+        }        
+
         switch($this->page) {
             case 'index':
                 $contactNavListItems = array();
@@ -34,10 +39,20 @@ class EmergencyModule extends Module
                 }
                 $this->assign('hasContacts', (count($contactNavListItems) > 0));
 
-                $emergencyNotice = $emergencyNoticeController->getLatestEmergencyNotice();
-                $this->assign('title', $emergencyNotice['title']);
-                $this->assign('content', $emergencyNotice['text']);
-                $this->assign('date', $emergencyNotice['date']);
+                $hasEmergencyFeed = ($emergencyNoticeController !== NULL);
+                $this->assign('hasEmergencyFeed', $hasEmergencyFeed);
+                if($hasEmergencyFeed) {
+                    $emergencyNotice = $emergencyNoticeController->getLatestEmergencyNotice();
+                    
+                    if($emergencyNotice !== NULL) {
+                        $this->assign('emergencyFeedEmpty', FALSE);             
+                        $this->assign('title', $emergencyNotice['title']);
+                        $this->assign('content', $emergencyNotice['text']);
+                        $this->assign('date', $emergencyNotice['date']);
+                    } else {
+                        $this->assign('emergencyFeedEmpty', TRUE);
+                    }
+                }
 
                 break;
 
