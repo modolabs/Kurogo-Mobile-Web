@@ -1,6 +1,6 @@
 <?php
 
-abstract class ContentModule extends Module {
+class ContentModule extends Module {
    protected $id = 'content';
    protected $feedFields = array('CONTENT_TYPE'=>'Content Type');
 
