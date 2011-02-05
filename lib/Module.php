@@ -1150,6 +1150,7 @@ abstract class Module {
     /* set cache age. Modules that present content that rarely changes can set this value
     to something higher */
     header(sprintf("Cache-Control: max-age=%d", $this->cacheMaxAge));
+    header("Expires: " . gmdate('D, d M Y H:i:s', time() + $this->cacheMaxAge) . ' GMT');
 
     // Load template for page
     $this->templateEngine->displayForDevice($template);    
