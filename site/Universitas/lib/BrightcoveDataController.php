@@ -16,23 +16,18 @@
      public function search($q)
      {
      	
+     	// TODO add search
+     	//$this->setBaseUrl("http://api.brightcove.com/services/library?command=search_videos&video_fields=name,shortDescription&page_size=3&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$token");
+	    
      	// TODO use $accountid and $playerid
+         //$this->setBaseUrl('http://link.brightcove.com/services/mrss/player$playerid/$accountid/new');
+         $url = "http://link.brightcove.com/services/mrss/$q/new";
+         $this->setBaseUrl($url);  // TEMP
      	
-         // set the base url to Brightcove
-         $this->setBaseUrl('http://link.brightcove.com/services/mrss/player1459151488/270881183/new');
-         //$this->addFilter('alt', 'json'); //set the output format to json
-         //$this->addFilter('q', $q); //set the query
-         //$this->addFilter('format', 6); //only return mobile videos
-         //$this->addFilter('v', 2); // version 2
-
          //$data = $this->getParsedData();
          $data = $this->items(0,null,$total);
          
-         //print_r($data);
-          
-         // $results = $data['feed']['entry'];
-         //$results = $data['rss']['channel']['item'];
-         //$results = $data->getItem();
+
          //$results = $data[0];
          $results = $data;
 
@@ -43,11 +38,12 @@
 	public function getItem($id)
 	{
 		// FIXME
-	    $this->setBaseUrl("http://link.brightcove.com/services/mrss/player$playerid/$accountid/$titleid");
+	    //$this->setBaseUrl("http://link.brightcove.com/services/mrss/player$playerid/$accountid/$titleid");
 	    //$this->setBaseUrl($id);
-	   
-	    //http://localhost:8888/video2/video2/kurogo/Kurogo-Mobile-Web/web/detail?
-	    //videoid=34459290001&playerid=1459151488&accountid=270881183&_b=%258B%258E%2505%2500
+	    $url = "http://api.brightcove.com/services/library?command=search_videos&video_fields=name,shortDescription&page_size=3&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$id";
+		$this->setBaseUrl("http://api.brightcove.com/services/library?command=search_videos&video_fields=name,shortDescription&page_size=3&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$id");
+	    
+	    
 	    
 	    $data = $this->items(0,null,$total);   // IG: copy from RSSDataController
           

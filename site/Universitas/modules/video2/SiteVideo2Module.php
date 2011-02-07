@@ -2,31 +2,37 @@
 
  class SiteVideo2Module extends Module
  {
-   protected $id='video';
+ 	
+   protected $id='video2';  // this affects which .ini is loaded
+   
    protected function initializeForPage() {
-     //instantiate controller
+
      $controller = BrightcoveDataController::factory();
 
+	 $playerid = $this->getModuleVar('playerId');
+	 $accountid = $this->getModuleVar('accountId');
+	 $q = $this->getModuleVar('SEARCH_QUERY');
+			
      switch ($this->page)
      {
         case 'index':
         	
-        	//search for videos
-			$items = $controller->search($this->getModuleVar('SEARCH_QUERY'));
-             //$items = $controller->search('mobile web');
-             
+        	 //search for videos
+			 //$items = $controller->search($this->getModuleVar('SEARCH_QUERY'));
+             $items = $controller->search($accountid);
+
+			
+			
              $videos = array();
 
              //prepare the list
-            
              foreach ($items as $video) {
              	
-             	//print_r($video);
              	
              	//$prop_titleid  = $video->getProperty('bc$titleid');   // NULL
              	//$prop_playerid = $video->getProperty('bc$playerid');  // NULL
              	$prop_titleid  = $video->getProperty('bc:titleid');  // case-insensitive
-             	$prop_playerid  = $video->getProperty('bc:playerid');
+             	$prop_playerid  = $video->getProperty('bc:playerid');  // FIXME why null?
              	$prop_accountid = $video->getProperty('bc:accountid');
              	
              	$prop_thumbnail = $video->getLink();
@@ -37,12 +43,13 @@
              	//$titleid  = $video->properties['bc$titleid']->value();
              	//$playerid = $video->properties['bc$playerid']->value();
              	
+             	//print_r($video);
              	//print_r($titleid);
              	//print_r($playerid);
              	
              	$videos[] = array(
 			        'titleid'=>$prop_titleid,
-			        'playerid'=>$prop_playerid,
+			        'playerid'=>$playerid,
 			        'title'=>$video->getTitle(),
              	
 			        'img'=>$video->getImage(),
@@ -51,8 +58,10 @@
              	    // FIXME
 			        //'url'=>$this->buildBreadcrumbURL('detail', array('videoid'=>$prop_titleid))
 			        'url'=>$this->buildBreadcrumbURL('detail', array(
+			            'videoTitle'=>$video->getTitle(),
+			            'videoDescription'=>$video->getDescription(),
 			            'videoid'=>$prop_titleid,
-			            'playerid'=>$prop_playerid,
+			            'playerid'=>$playerid,
 			            'accountid'=>$prop_accountid
              		))
              		
@@ -79,12 +88,11 @@
 			   }
 			   */
 			   // #2
-			    $this->assign('playerid', $this->getArg('playerid'));
+			    $this->assign('playerid', $playerid);
+			    $this->assign('videoid', $videoid);
 			    $this->assign('accountid', $this->getArg('accountid'));
-			    $this->assign('videoTitle', 'videoTitle');
-			    $this->assign('videoDescription', 'videoDescription');
-			    //$this->assign('videoTitle', $this->getArg('videoTitle'));
-			    //$this->assign('videoDescription', $this->getArg('videoDescription'));
+			    $this->assign('videoTitle', $this->getArg('videoTitle'));
+			    $this->assign('videoDescription', $this->getArg('videoDescription'));
 			   
 			   break;     
      }
