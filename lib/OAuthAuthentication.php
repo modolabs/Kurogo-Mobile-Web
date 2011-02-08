@@ -19,7 +19,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     protected $verifierErrorKey = '';
     private $oauth;
     
-    abstract protected function getAuthURL();
+    abstract protected function getAuthURL(array $params);
     abstract protected function getUserFromArray(array $array);
 
     protected function validUserLogins() { 
@@ -78,15 +78,16 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 	    return array();
 	}
 
-    protected function getRequestToken() {
+    protected function getRequestToken(array $params) {
         $this->reset();
         //get a request token 
         // at this time it uses the login module, that may need to be more flexible
 		$parameters = array_merge($this->getRequestTokenParameters(), array(
-		    'oauth_callback'=>FULL_URL_BASE . 'login/login?' . http_build_query(array(
+		    'oauth_callback'=>FULL_URL_BASE . 'login/login?' . http_build_query(array_merge($params, array(
 		        'authority'=>$this->getAuthorityIndex()
-		        ))
+		        )))
         ));
+
         $response = $this->oauthRequest($this->requestTokenMethod, $this->requestTokenURL, $parameters);
 		parse_str($response, $return);
 
@@ -112,9 +113,10 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 
     public function login($login, $pass, Module $module) {
         $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
+        $url = isset($_GET['url']) ? urldecode($_GET['url']) : '';
         //see if we already have a request token
         if ($startOver || !$this->token || !$this->tokenSecret) {
-            if (!$this->getRequestToken()) {
+            if (!$this->getRequestToken(array('url'=>$url))) {
                 return AUTH_FAILED;
             }
         }
@@ -137,7 +139,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         } else {
         
             //redirect to auth page
-            $url = $this->getAuthURL();
+            $url = $this->getAuthURL(array('url'=>$url));
             header("Location: " . $url);
             exit();
         }
