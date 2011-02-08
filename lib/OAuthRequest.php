@@ -15,6 +15,7 @@ class OAuthRequest
     protected $consumerKey;
     protected $consumerSecret;
     protected $tokenSecret;
+    protected $cert;
     protected $returnHeaders = array();
     protected $signatureMethod = 'HMAC-SHA1';
 
@@ -112,12 +113,34 @@ class OAuthRequest
 		// calculate the base string
 		$baseString = $this->calculateBaseString($method, $url, $parameters);
 		$key = rawurlencode($this->consumerSecret) .'&' . rawurlencode($this->tokenSecret);
-		$sig = base64_encode(hash_hmac('SHA1', $baseString, $key, true));
+		
+		switch ($this->signatureMethod)
+		{
+		    case 'HMAC-SHA1':
+        		$sig = base64_encode(hash_hmac('SHA1', $baseString, $key, true));
+        		break;
+        	case 'RSA-SHA1':
+
+                if (!$privatekeyid = openssl_get_privatekey($this->cert)) {
+                    throw new Exception("Error getting private key for $this->cert");
+                }
+
+                // Sign using the key
+                $ok = openssl_sign($base_string, $signature, $privatekeyid);
+
+                // Release the key resource
+                openssl_free_key($privatekeyid);
+
+                $sig = base64_encode($signature);
+        	    break;
+        	default:
+        	    throw new Exception("Signature method $this->signatureMethod not handled");
+		}
+		
 		return $sig;
 	}
 	
-	protected function baseURL($url)
-	{
+	protected function baseURL($url) {
         $parts = parse_url($url);
     
         $scheme = (isset($parts['scheme'])) ? $parts['scheme'] : 'http';
@@ -132,8 +155,7 @@ class OAuthRequest
         return "$scheme://$host$path";
 	}
 	
-	protected function parseQueryString($queryString)
-	{
+	protected function parseQueryString($queryString) {
 	    $return = array();
 	    $vars = explode('&', $queryString);
 	    foreach ($vars as $value) {
@@ -143,8 +165,22 @@ class OAuthRequest
 	    return $return;
 	}
 	
-	public function setTokenSecret($tokenSecret)
-	{
+	public function setCertificate($cert) {
+	    $this->cert = $cert;
+	}
+	
+	public function setSignatureMethod($signatureMethod) {
+	    if (!in_array($signatureMethod, array(
+	        'HMAC-SHA1',
+	        'RSA-SHA1'
+            ))) {
+            throw new Exception ("Invalid signature method $signatureMethod");
+        }
+        
+        $this->signatureMethod = $signatureMethod;
+	}
+	
+	public function setTokenSecret($tokenSecret) {
 	    $this->tokenSecret = $tokenSecret;
 	}
 
