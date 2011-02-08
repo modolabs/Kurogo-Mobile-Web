@@ -26,23 +26,26 @@
              //prepare the list
              foreach ($items as $video) {
              	
-             	$prop_titleid  = $video->getProperty('bc:titleid');  // case-insensitive
+             	$prop_titleid  = $video->getProperty('bc:titleid');  
              	$prop_playerid  = $video->getProperty('bc:playerid');  // FIXME why null?
              	$prop_accountid = $video->getProperty('bc:accountid');
              	
-             	$prop_thumbnail = $video->getLink();
-             	//$prop_thumbnail = $video->getProperty('media:thumbnail');  // FIXME Call to a member function value() on a non-object
-             	//$attr_url = $prop_thumbnail->getAttr("url");
+             	//$link = $video->getLink();  // FIXME blank?
+             	//$img = $video->getImage();  // also blank
              	
+             	$prop_thumbnail = $video->getProperty('media:thumbnail');  
+             	if (is_array($prop_thumbnail)) {
+             		$attr_url = $prop_thumbnail[0]->getAttrib("URL"); 
+             	} else {
+             		$attr_url = ""; 
+             		//$attr_url = $prop_thumbnail->getAttrib("URL"); // FIXME
+             	}
              	
              	$videos[] = array(
 			        'titleid'=>$prop_titleid,
 			        'playerid'=>$playerid,
 			        'title'=>$video->getTitle(),
-             	
-			        'img'=>$video->getImage(),
-			        //'img'=>$attr_url,  // TODO
-			        
+			        'img'=>$attr_url,  
 			        'url'=>$this->buildBreadcrumbURL('detail', array(
 			            'videoTitle'=>$video->getTitle(),
 			            'videoDescription'=>$video->getDescription(),

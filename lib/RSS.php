@@ -85,7 +85,12 @@ class RSSElement
             $method = "get" . $var;
             return $this->$method();
         } elseif (array_key_exists(strtoupper($var), $this->properties)) {
-            return $this->properties[strtoupper($var)]->value();
+        	$prop = $this->properties[strtoupper($var)];
+        	if (is_array($prop)) {
+                return $prop;
+            } else {
+           		return $prop->value();
+            }
         }
     }
  
