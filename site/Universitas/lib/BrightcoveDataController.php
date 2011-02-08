@@ -12,54 +12,47 @@
          $controller = parent::factory($args);
          return $controller;
      }
-
-     public function search($q)
+  
+     public function latest($accountid)
      {
-     	
-     	// TODO add search
-     	//$this->setBaseUrl("http://api.brightcove.com/services/library?command=search_videos&video_fields=name,shortDescription&page_size=3&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$token");
-	    
-     	// TODO use $accountid and $playerid
+     	 // TODO use $playerid
          //$this->setBaseUrl('http://link.brightcove.com/services/mrss/player$playerid/$accountid/new');
-         $url = "http://link.brightcove.com/services/mrss/$q/new";
-         $this->setBaseUrl($url);  // TEMP
+         $url = "http://link.brightcove.com/services/mrss/$accountid/new";
+         $this->setBaseUrl($url);  
      	
-         //$data = $this->getParsedData();
          $data = $this->items(0,null,$total);
          
-
-         //$results = $data[0];
-         $results = $data;
-
-         return $results;
+         return $data;
+     }
+     
+     public function search($q,$token)
+     {
+     	 $this->setBaseUrl("http://api.brightcove.com/services/library?command=search_videos&video_fields=name,shortDescription&page_size=3&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$token");
+	 
+         $data = $this->items(0,null,$total);
+         
+         return $data;
      }
 
 	 // retrieves a Brightcove Video based on its video id
 	public function getItem($id)
 	{
-		// FIXME
-	    //$this->setBaseUrl("http://link.brightcove.com/services/mrss/player$playerid/$accountid/$titleid");
-	    //$this->setBaseUrl($id);
-	    $url = "http://api.brightcove.com/services/library?command=search_videos&video_fields=name,shortDescription&page_size=3&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$id";
-		$this->setBaseUrl("http://api.brightcove.com/services/library?command=search_videos&video_fields=name,shortDescription&page_size=3&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$id");
+		// FIXME cannot add token to params above
+		
+		$url = "http://api.brightcove.com/services/library?command=find_video_by_id&video_id=$id&token=$token";
 	    
+		$this->setBaseUrl($url);
 	    
-	    
-	    $data = $this->items(0,null,$total);   // IG: copy from RSSDataController
+	    $data = $this->items(0,null,$total);   
           
         foreach ($data as $item) {
-        	
-        	echo $item->getGUID();
-        	//print_r($item->getGUID());  // FIXME difference?
-        	
             if ($item->getGUID()==$id) {
                 return $item;
             }
         }
         
         return null;
-	    
-	    //return isset($data['item']) ? $data['item'] : false;
+        
 	}
 
  }
