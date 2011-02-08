@@ -165,8 +165,9 @@ abstract class DataController
                     error_log(sprintf("Retrieving %s", $url));
                 }
                 
-                $data = file_get_contents($url);
-                $this->cache->write($data, $cacheFilename);
+                if ($data = $this->retrieveData()) {
+                    $this->cache->write($data, $cacheFilename);
+                }
                 
                 if ($this->debugMode) {
                     file_put_contents($this->cacheMetaFile(), $url);
@@ -177,6 +178,10 @@ abstract class DataController
         }
         
         return $data;
+    }
+    
+    protected function retrieveData() {
+        return file_get_contents($this->url);
     }
 
     public function setCacheLifetime($seconds)
