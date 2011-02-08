@@ -11,7 +11,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     protected $consumer_key;
     protected $consumer_secret;
     protected $token;
-    protected $token_secret;
+    protected $tokenSecret='';
     protected $useCache = true;
     protected $cache;
     protected $cacheLifetime = 900;
@@ -40,12 +40,13 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 	    return array();
 	}
 	
-	protected function oauthRequest($url, $method, $parameters = null) {
+	protected function oauthRequest($method, $url, $parameters = null) {
 	    if (!$this->oauth) {
 	        $this->oauth = new OAuthRequest($this->consumer_key, $this->consumer_secret);
 	    }
 	    
-	    return $this->oauth->request($url, $method, $parameters, $this->token_secret);
+	    $this->oauth->setTokenSecret($this->tokenSecret);
+	    return $this->oauth->request($method, $url, $parameters);
 	}
 	
 	protected function getAccessToken($token, $verifier='') {
@@ -58,7 +59,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         }
         
 		// make the call
-		$response = $this->oauthRequest($this->accessTokenURL, $this->accessTokenMethod, $parameters);
+		$response = $this->oauthRequest($this->accessTokenMethod, $this->accessTokenURL,  $parameters);
 		parse_str($response, $return);
 
 		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
@@ -86,7 +87,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		        'authority'=>$this->getAuthorityIndex()
 		        ))
         ));
-        $response = $this->oauthRequest($this->requestTokenURL, $this->requestTokenMethod, $parameters);
+        $response = $this->oauthRequest($this->requestTokenMethod, $this->requestTokenURL, $parameters);
 		parse_str($response, $return);
 
 		// validate
@@ -112,7 +113,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     public function login($login, $pass, Module $module) {
         $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
         //see if we already have a request token
-        if ($startOver || !$this->token || !$this->token_secret) {
+        if ($startOver || !$this->token || !$this->tokenSecret) {
             if (!$this->getRequestToken()) {
                 return AUTH_FAILED;
             }
@@ -164,8 +165,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $_SESSION[$this->tokenSessionVar] = $token;
     }
 
-    public function setTokenSecret($token_secret) {
-        $this->token_secret = $token_secret;
-        $_SESSION[$this->tokenSecretSessionVar] = $token_secret;
+    public function setTokenSecret($tokenSecret) {
+        $this->tokenSecret = $tokenSecret;
+        $_SESSION[$this->tokenSecretSessionVar] = $tokenSecret;
     }
 }

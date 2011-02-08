@@ -14,7 +14,8 @@ class OAuthRequest
     protected $curl;
     protected $consumerKey;
     protected $consumerSecret;
-    private $returnHeaders = array();
+    protected $tokenSecret;
+    protected $returnHeaders = array();
 
 	protected function buildQuery(array $parameters) {
 
@@ -45,7 +46,7 @@ class OAuthRequest
 		return implode('&', $params);
 	}
 
-	protected function calculateHeader(array $parameters, $url) {
+	protected function calculateHeader($url, $parameters) {
 
 		// init var
 		$params = array();
@@ -62,7 +63,7 @@ class OAuthRequest
 	}
 
     /* Builds the base string according to 3.4.1 of RFC 5849 */
-	protected function calculateBaseString($url, $method, array $parameters) {
+	protected function calculateBaseString($method, $url, $parameters) {
 
 		$parameters = is_array($parameters) ? $parameters : array();
 
@@ -106,10 +107,10 @@ class OAuthRequest
 	}
 
     /* sign the request according to 3.1 of RFC 5849 */
-	protected function oauthSignature($url, $token_secret, $method, $parameters) {
+	protected function oauthSignature($method, $url, $parameters) {
 		// calculate the base string
-		$baseString = $this->calculateBaseString($url, $method, $parameters);
-		$key = rawurlencode($this->consumerSecret) .'&' . rawurlencode($token_secret);
+		$baseString = $this->calculateBaseString($method, $url, $parameters);
+		$key = rawurlencode($this->consumerSecret) .'&' . rawurlencode($this->tokenSecret);
 		$sig = base64_encode(hash_hmac('SHA1', $baseString, $key, true));
 		return $sig;
 	}
@@ -140,12 +141,17 @@ class OAuthRequest
 	    }
 	    return $return;
 	}
+	
+	public function setTokenSecret($tokenSecret)
+	{
+	    $this->tokenSecret = $tokenSecret;
+	}
 
     /* public method to make an OAuth Request */
-	public function request($url, $method, $parameters = null, $token_secret='') {		
+	public function request($method, $url, $parameters = null, $headers = null) {		
 		$parameters = (array) $parameters;
 		$options = array();
-		$headers = array();
+		$headers = (array) $headers;
 		$curl_url = $url;
 
 		// append default parameters
@@ -159,7 +165,7 @@ class OAuthRequest
         {
             case 'POST':
                 $params = array_merge($parameters, $oauth);
-        		$params['oauth_signature'] = $this->oauthSignature($url, $token_secret, $method, $params);
+        		$params['oauth_signature'] = $this->oauthSignature($method, $url, $params);
                 $options[CURLOPT_POST] = true;
                 $options[CURLOPT_POSTFIELDS] = $this->buildQuery($params);
                 break;
@@ -171,8 +177,8 @@ class OAuthRequest
                     $curl_url .= '?'. $this->buildQuery($parameters);
                 }
                 $base_url = $this->baseURL($curl_url);
-        		$oauth['oauth_signature'] = $this->oauthSignature($base_url, $token_secret, $method, $data);
-                $headers[] = $this->calculateHeader($oauth, $curl_url);
+        		$oauth['oauth_signature'] = $this->oauthSignature($method, $base_url, $data);
+                $headers[] = $this->calculateHeader($curl_url, $oauth);
                 break;
             default:
                 throw new Exception("Invalid method $method");
@@ -187,6 +193,7 @@ class OAuthRequest
 		$options[CURLOPT_RETURNTRANSFER] = true;
 		$options[CURLOPT_HTTPHEADER] = $headers;
 		$options[CURLOPT_HEADERFUNCTION] = array($this,'readHeader');
+		$options[CURLOPT_FAILONERROR] = true;
 
 		// init
 		$this->curl = curl_init();		
@@ -198,6 +205,13 @@ class OAuthRequest
 		// execute
 		$response = curl_exec($this->curl);
 		
+		// check for errors
+        $http_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
+        if (curl_errno($this->curl) || $http_code >= 400) {
+            error_log("There was an error $http_code retrieving $curl_url");
+            return false;
+        }
+        
 		/* see if there is a redirect. If so resign and submit */
 		if (isset($this->returnHeaders['Location'])) {
 		    $redirectParts = parse_url($this->returnHeaders['Location']);
@@ -206,8 +220,9 @@ class OAuthRequest
 		    }
 		    $newURL = $this->baseURL($this->returnHeaders['Location']);
 		    
-    		return $this->request($newURL, $method, $parameters, $token_secret);
+    		return $this->request($method, $newURL, $parameters);
 		}
+		
 		return $response;
 	}
 
@@ -219,7 +234,8 @@ class OAuthRequest
             $this->returnHeaders[] = $value;
         }
         return strlen($header);
-    }	
+    }
+    
 	public function __construct($consumerKey, $consumerSecret) {
 	    $this->consumerKey = $consumerKey;
 	    $this->consumerSecret = $consumerSecret;

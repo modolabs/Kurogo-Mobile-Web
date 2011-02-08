@@ -42,14 +42,14 @@ class TwitterAuthentication extends OAuthAuthentication
                 $data = $this->cache->read($cacheFilename);
             } else {
                 //cache isn't fresh, load the data
-                if ($data = $this->oauthRequest($this->API_URL .'/users/show.json', 'GET', array('screen_name'=>$login))) {
+                if ($data = $this->oauthRequest('GET', $this->API_URL .'/users/show.json', array('screen_name'=>$login))) {
                     $this->cache->write($data, $cacheFilename);
                 }
                 
             }
         } else {
             //load the data
-            $data = $this->oauthRequest($this->API_URL . '/users/show.json', 'GET', array('screen_name'=>$login));
+            $data = $this->oauthRequest('GET', $this->API_URL . '/users/show.json', array('screen_name'=>$login));
         }
         
 		// make the call
