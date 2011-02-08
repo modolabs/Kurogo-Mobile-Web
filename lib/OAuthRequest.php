@@ -153,6 +153,7 @@ class OAuthRequest
 		$options = array();
 		$headers = (array) $headers;
 		$curl_url = $url;
+		$curl_headers = $headers;
 
 		// append default parameters
 		$oauth['oauth_consumer_key'] = $this->consumerKey;
@@ -178,7 +179,7 @@ class OAuthRequest
                 }
                 $base_url = $this->baseURL($curl_url);
         		$oauth['oauth_signature'] = $this->oauthSignature($method, $base_url, $data);
-                $headers[] = $this->calculateHeader($curl_url, $oauth);
+                $curl_headers[] = $this->calculateHeader($curl_url, $oauth);
                 break;
             default:
                 throw new Exception("Invalid method $method");
@@ -191,7 +192,7 @@ class OAuthRequest
 		$options[CURLOPT_URL] = $curl_url;
 		$options[CURLOPT_FOLLOWLOCATION] = false;
 		$options[CURLOPT_RETURNTRANSFER] = true;
-		$options[CURLOPT_HTTPHEADER] = $headers;
+		$options[CURLOPT_HTTPHEADER] = $curl_headers;
 		$options[CURLOPT_HEADERFUNCTION] = array($this,'readHeader');
 
 		// init
@@ -219,7 +220,7 @@ class OAuthRequest
 		    }
 		    $newURL = $this->baseURL($this->returnHeaders['Location']);
 		    
-    		return $this->request($method, $newURL, $parameters);
+    		return $this->request($method, $newURL, $parameters, $headers);
 		}
 		
 		return $response;
