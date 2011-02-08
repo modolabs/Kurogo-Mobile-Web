@@ -79,10 +79,10 @@ abstract class User
     public function getAttribute($attribute)
     {
         if (in_array($attribute, $this->standardAttributes())) {
-            $method = "get" . $var;
+            $method = "get" . $attribute;
             return $this->$method();
-        } elseif (array_key_exists($var, $this->attributes)) {
-            return $this->attributes[$var];
+        } elseif (array_key_exists($attribute, $this->attributes)) {
+            return $this->attributes[$attribute];
         }
     }
     
