@@ -14,6 +14,7 @@ class OAuthRequest
     protected $curl;
     protected $consumerKey;
     protected $consumerSecret;
+    private $returnHeaders = array();
 
 	protected function buildQuery(array $parameters) {
 
@@ -45,9 +46,6 @@ class OAuthRequest
 	}
 
 	protected function calculateHeader(array $parameters, $url) {
-
-		// divide into parts
-		$parts = parse_url($url);
 
 		// init var
 		$params = array();
@@ -81,16 +79,19 @@ class OAuthRequest
 			    $value = natsort($value);
             }
 
-			$params[] = self::urlencode($key) .'%3D'. self::urlencode($value);
+			$params[] = self::urlencode($key) .'='. self::urlencode($value);
 		}
-
+		
 		// builds base
-		$base = strtoupper($method) .'&';
-		$base .= urlencode($url) .'&';
-		$base .= implode('%26', $params);
-
-		// return
-		return $base;
+		$parts = array(
+		    strtoupper($method),
+		    $url,
+		    implode('&', $params)
+        );
+        
+        $parts = self::urlencode($parts);
+        $base = implode('&', $parts);
+        return $base;
 	}
 
     /* Encodes urls. This attempts to conform to 3.6 of RFC 5849 
@@ -101,10 +102,7 @@ class OAuthRequest
 		    return array_map(array(__CLASS__, 'urlencode'), $value);
 		}
 
-        $search = array('+', ' ', '%7E', '%');
-        $replace = array('%20', '%20', '~', '%25');
-
-        return str_replace($search, $replace, rawurlencode($value));
+        return str_replace('+',' ', str_replace('%7E', '~', rawurlencode($value)));
 	}
 
     /* sign the request according to 3.1 of RFC 5849 */
@@ -115,12 +113,40 @@ class OAuthRequest
 		$sig = base64_encode(hash_hmac('SHA1', $baseString, $key, true));
 		return $sig;
 	}
+	
+	protected function baseURL($url)
+	{
+        $parts = parse_url($url);
+    
+        $scheme = (isset($parts['scheme'])) ? $parts['scheme'] : 'http';
+        $port = (isset($parts['port'])) ? $parts['port'] : (($scheme == 'https') ? '443' : '80');
+        $host = (isset($parts['host'])) ? $parts['host'] : '';
+        $path = (isset($parts['path'])) ? $parts['path'] : '';
+    
+        if (($scheme == 'https' && $port != '443')
+            || ($scheme == 'http' && $port != '80')) {
+          $host = "$host:$port";
+        }
+        return "$scheme://$host$path";
+	}
+	
+	protected function parseQueryString($queryString)
+	{
+	    $return = array();
+	    $vars = explode('&', $queryString);
+	    foreach ($vars as $value) {
+	        $bits = explode("=", $value);
+	        $return[$bits[0]] = $bits[1];
+	    }
+	    return $return;
+	}
 
     /* public method to make an OAuth Request */
 	public function request($url, $method, $parameters = null, $token_secret='') {		
 		$parameters = (array) $parameters;
 		$options = array();
 		$headers = array();
+		$curl_url = $url;
 
 		// append default parameters
 		$oauth['oauth_consumer_key'] = $this->consumerKey;
@@ -132,20 +158,21 @@ class OAuthRequest
         switch ($method)
         {
             case 'POST':
-                $parameters = array_merge($parameters, $oauth);
-        		$parameters['oauth_signature'] = $this->oauthSignature($url, $token_secret, $method, $parameters);
+                $params = array_merge($parameters, $oauth);
+        		$params['oauth_signature'] = $this->oauthSignature($url, $token_secret, $method, $params);
                 $options[CURLOPT_POST] = true;
-                $options[CURLOPT_POSTFIELDS] = $this->buildQuery($parameters);
-
+                $options[CURLOPT_POSTFIELDS] = $this->buildQuery($params);
                 break;
+                
             case 'GET':
                 $data = $oauth;
-                if(!empty($parameters)) {
+                if(count($parameters)>0) {
                     $data = array_merge($data, $parameters);
-                    $url .= '?'. $this->buildQuery($parameters);
+                    $curl_url .= '?'. $this->buildQuery($parameters);
                 }
-        		$oauth['oauth_signature'] = $this->oauthSignature($url, $token_secret, $method, $parameters);
-                $headers[] = $this->calculateHeader($oauth, $url);
+                $base_url = $this->baseURL($curl_url);
+        		$oauth['oauth_signature'] = $this->oauthSignature($base_url, $token_secret, $method, $data);
+                $headers[] = $this->calculateHeader($oauth, $curl_url);
                 break;
             default:
                 throw new Exception("Invalid method $method");
@@ -155,22 +182,44 @@ class OAuthRequest
         $headers[] = 'Expect:';
 
 		// set options
-		$options[CURLOPT_URL] = $url;
-		$options[CURLOPT_FOLLOWLOCATION] = true;
+		$options[CURLOPT_URL] = $curl_url;
+		$options[CURLOPT_FOLLOWLOCATION] = false;
 		$options[CURLOPT_RETURNTRANSFER] = true;
 		$options[CURLOPT_HTTPHEADER] = $headers;
+		$options[CURLOPT_HEADERFUNCTION] = array($this,'readHeader');
 
 		// init
-		$this->curl = curl_init();
+		$this->curl = curl_init();		
+		$this->returnHeaders = array();
 		
 		// set options
 		curl_setopt_array($this->curl, $options);
 
 		// execute
 		$response = curl_exec($this->curl);
+		
+		/* see if there is a redirect. If so resign and submit */
+		if (isset($this->returnHeaders['Location'])) {
+		    $redirectParts = parse_url($this->returnHeaders['Location']);
+		    if (isset($redirectParts['query'])) {
+		        $parameters = array_merge($parameters, $this->parseQueryString($redirectParts['query']));
+		    }
+		    $newURL = $this->baseURL($this->returnHeaders['Location']);
+		    
+    		return $this->request($newURL, $method, $parameters, $token_secret);
+		}
 		return $response;
 	}
-	
+
+    private function readHeader($ch, $header) {
+        $value = trim($header);
+        if (preg_match("/^(.*?):(.*)$/", $value, $bits)) {
+            $this->returnHeaders[$bits[1]] = trim($bits[2]); 
+        } elseif ($value) {
+            $this->returnHeaders[] = $value;
+        }
+        return strlen($header);
+    }	
 	public function __construct($consumerKey, $consumerSecret) {
 	    $this->consumerKey = $consumerKey;
 	    $this->consumerSecret = $consumerSecret;
