@@ -16,6 +16,7 @@ class OAuthRequest
     protected $consumerSecret;
     protected $tokenSecret;
     protected $returnHeaders = array();
+    protected $signatureMethod = 'HMAC-SHA1';
 
 	protected function buildQuery(array $parameters) {
 
@@ -53,7 +54,7 @@ class OAuthRequest
 
 		// encode each parameter
 		foreach($parameters as $key => $value) {
-		    $params[] = str_replace('%25', '%', self::urlencode($key) .'="'. self::urlencode($value) .'"');
+		    $params[] = self::urlencode($key) .'="'. self::urlencode($value) .'"';
 		}
 
 		// build return
@@ -158,7 +159,7 @@ class OAuthRequest
 		// append default parameters
 		$oauth['oauth_consumer_key'] = $this->consumerKey;
 		$oauth['oauth_nonce'] = md5(microtime() . rand());
-		$oauth['oauth_signature_method'] = 'HMAC-SHA1';
+		$oauth['oauth_signature_method'] = $this->signatureMethod;
 		$oauth['oauth_timestamp'] = time();
 		$oauth['oauth_version'] = '1.0';
 
@@ -166,9 +167,9 @@ class OAuthRequest
         {
             case 'POST':
                 $params = array_merge($parameters, $oauth);
-        		$params['oauth_signature'] = $this->oauthSignature($method, $url, $params);
+        		$params['oauth_signature'] = $this->oauthSignature($method, $curl_url, $params);
                 $options[CURLOPT_POST] = true;
-                $options[CURLOPT_POSTFIELDS] = $this->buildQuery($params);
+                $curl_headers[] = $this->calculateHeader($curl_url, $params);
                 break;
                 
             case 'GET':
@@ -186,7 +187,7 @@ class OAuthRequest
                 break;
         }            
 
-        $headers[] = 'Expect:';
+        $curl_headers[] = 'Expect:';
 
 		// set options
 		$options[CURLOPT_URL] = $curl_url;
