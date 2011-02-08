@@ -97,8 +97,8 @@ $url_patterns = array(
 foreach ($url_patterns as $pattern_data) {
 
     if (preg_match($pattern_data['pattern'], $path, $matches)) {
-        $params = isset($pattern_data['params']) ? $pattern_data['params'] : $matches;
-        call_user_func($pattern_data['func'], $params);
+        $params = isset($pattern_data['params']) ? $pattern_data['params'] : array($matches);
+        call_user_func_array($pattern_data['func'], $params);
     }
 }
 

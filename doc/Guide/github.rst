@@ -13,7 +13,7 @@ Forking and Managing your repository
 ====================================
 
 If you simply want to download the code, you should clone the repository using
-:kbd:`git clone git@github.com:modolabs/Kurogo-Mobile-Web.git`
+:kbd:`git clone git://github.com/modolabs/Kurogo-Mobile-Web.git`
 
 If you are interested in maintaining your own project you should `fork <http://help.github.com/forking/>`_
 the project. 
@@ -25,16 +25,16 @@ the project.
 #. Clone your project to your local machine. 
 #. Set up an upstream remote: 
    
-   * :kbd:`git remote add upstream git@github.com:modolabs/Kurogo-Mobile-Web.git`
+   * :kbd:`git remote add upstream git://github.com/modolabs/Kurogo-Mobile-Web.git`
    * :kbd:`git fetch upstream`
-   * :kbd:`git branch upstream`
+   * :kbd:`git checkout -b upstream/master`
 
 #. When new changes come down you can run:
    
    * :kbd:`git checkout upstream` Change to upstream branch
    * :kbd:`git pull upstream master` Pull down changes
    * :kbd:`git checkout master` Change to master branch
-   * :kbd:` ` Merge changes into master branch
+   * :kbd:`git merge upstream` Merge changes into master branch
 
 There are certainly other ways to manage your repository, but this method provides flexibility and
 will allow you to maintain a branch that represents the current development in the project.
