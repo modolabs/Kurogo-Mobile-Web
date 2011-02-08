@@ -7,10 +7,9 @@
   * Breadcrumb Parameter
   */
 define('MODULE_BREADCRUMB_PARAM', '_b');
+define('DISABLED_MODULES_COOKIE', 'disabledmodules');
+define('MODULE_ORDER_COOKIE', 'moduleorder');
 
-/**
-  * @package Core
-  */
 abstract class Module {
 
   protected $id = 'none';
@@ -65,8 +64,7 @@ abstract class Module {
   
   protected $autoPhoneNumberDetection = true;
   
-  public function getID()
-  {
+  public function getID() {
     return $this->id;
   }
   
@@ -76,8 +74,8 @@ abstract class Module {
   
   protected function enableTabs($tabKeys, $defaultTab=null, $javascripts=array()) {
     $currentTab = $tabKeys[0];
-    if (in_array($this->getArg('tab'), $tabKeys)) {
-      $currentTab = $this->getArg('tab');
+    if (isset($this->args['tab']) && in_array($this->args['tab'], $tabKeys)) {
+      $currentTab = $this->args['tab'];
       
     } else if (isset($defaultTab) && in_array($defaultTab, $tabKeys)) {
       $currentTab = $defaultTab;
@@ -257,11 +255,11 @@ abstract class Module {
       $argString = http_build_query($args);
     }
     
-    return sprintf("%s%s", $page, (strlen($argString) ? "?$argString" : ""));
+    return $page.(strlen($argString) ? "?$argString" : "");
   }
 
   public static function buildURLForModule($id, $page, $args=array()) {
-    return sprintf("%s%s/%s", URL_BASE, $id, self::buildURL($page, $args));
+    return URL_BASE."$id/".self::buildURL($page, $args);
   }
   
   protected function buildMailToLink($to, $subject, $body) {
@@ -280,9 +278,8 @@ abstract class Module {
     return $url;
   }
 
-  public function redirectToModule($id, $args=array()) {
-  
-    $url = sprintf("%s%s/?%s", URL_BASE, $id, http_build_query($args));
+  public function redirectToModule($id, $page, $args=array()) {
+    $url = self::buildURLForModule($id, $page, $args);
     //error_log('Redirecting to: '.$url);
     
     header("Location: $url");
@@ -534,14 +531,14 @@ abstract class Module {
         
         $disabled = self::argVal($moduleData, 'disabled', false);
         if ($disabled) {
-            $this->redirectToModule('error', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
+            $this->redirectToModule('error', '', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
         }
         
         $secure = self::argVal($moduleData, 'secure', false);
         if ($secure && (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
             // redirect to https (at this time, we are assuming it's on the same host)
              $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-             header("Location:$redirect");    
+             header("Location: $redirect");    
              exit();
         }
         
@@ -551,7 +548,7 @@ abstract class Module {
             $protected = self::argVal($moduleData, 'protected', false);
             if ($protected) {
                 if (!$this->isLoggedIn()) {
-                    $this->redirectToModule('error', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
+                    $this->redirectToModule('error', '', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
                         http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
                 }
             }
@@ -566,14 +563,14 @@ abstract class Module {
                         $allow = true;
                         break;
                     case AccessControlList::RULE_ACTION_DENY:
-                        $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
+                        $this->redirectToModule('error', '', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
                             http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
                         break;
                 }
             }
             
             if (!$allow) {
-                $this->redirectToModule('error', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
+                $this->redirectToModule('error', '', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
                     http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
             }
         }
@@ -846,7 +843,7 @@ abstract class Module {
           $breadcrumbs[$i]['title'] = $b['t'];
           $breadcrumbs[$i]['longTitle'] = $b['lt'];
           
-          $breadcrumbs[$i]['url'] = "{$b['p']}.php";
+          $breadcrumbs[$i]['url'] = "{$b['p']}";
           if (strlen($b['a'])) {
             $breadcrumbs[$i]['url'] .= "?{$b['a']}";
           }
@@ -906,7 +903,13 @@ abstract class Module {
   }
 
   protected function buildBreadcrumbURL($page, $args, $addBreadcrumb=true) {
-    return sprintf("%s?%s",$page, http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb))));
+    return "$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
+  }
+  
+  protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
+    $path = self::getPathSegmentForModuleID($id);
+  
+    return URL_BASE."$path/$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
   }
   
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
@@ -1052,10 +1055,7 @@ abstract class Module {
     return $this->templateEngine->getTemplateVars($key);
   }
   
-  //
-  // Display page
-  //
-  public function displayPage() {
+  private function setPageVariables() {
     $this->loadTemplateEngineIfNeeded();
         
     $this->loadPageConfig();
@@ -1151,9 +1151,28 @@ abstract class Module {
     to something higher */
     header(sprintf("Cache-Control: max-age=%d", $this->cacheMaxAge));
     header("Expires: " . gmdate('D, d M Y H:i:s', time() + $this->cacheMaxAge) . ' GMT');
+    
+    return $template;
+  }
 
+  //
+  // Display page
+  //
+  public function displayPage() {
+    $template = $this->setPageVariables();
+    
     // Load template for page
     $this->templateEngine->displayForDevice($template);    
+  }
+  
+  //
+  // Fetch page
+  //
+  public function fetchPage() {
+    $template = $this->setPageVariables();
+    
+    // return template for page in variable
+    return $this->templateEngine->fetchForDevice($template);    
   }
   
   protected function setCacheMaxAge($age)
@@ -1181,7 +1200,8 @@ abstract class Module {
   }
   
   protected function urlForFederatedSearch($searchTerms) {
-    return URL_BASE . $this->id . "/". $this->buildBreadcrumbURL('search', array(
-      'filter' => $searchTerms));
+    return $this->buildBreadcrumbURLForModule($this->id, 'search', array(
+      'filter' => $searchTerms,
+    ), false);
   }
 }
