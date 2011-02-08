@@ -282,7 +282,7 @@ abstract class Module {
 
   public function redirectToModule($id, $args=array()) {
   
-    $url = sprintf("%s/%s/?%s", URL_BASE, $id, http_build_query($args));
+    $url = sprintf("%s%s/?%s", URL_BASE, $id, http_build_query($args));
     //error_log('Redirecting to: '.$url);
     
     header("Location: $url");
