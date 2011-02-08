@@ -193,7 +193,6 @@ class OAuthRequest
 		$options[CURLOPT_RETURNTRANSFER] = true;
 		$options[CURLOPT_HTTPHEADER] = $headers;
 		$options[CURLOPT_HEADERFUNCTION] = array($this,'readHeader');
-		$options[CURLOPT_FAILONERROR] = true;
 
 		// init
 		$this->curl = curl_init();		
