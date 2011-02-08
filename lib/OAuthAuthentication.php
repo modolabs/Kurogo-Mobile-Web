@@ -17,7 +17,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     protected $cacheLifetime = 900;
     protected $verifierKey = 'oauth_verifier';
     protected $verifierErrorKey = '';
-    protected $oauth;
+    private $oauth;
     
     abstract protected function getAuthURL();
     abstract protected function getUserFromArray(array $array);
@@ -97,6 +97,16 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		$this->setToken($return['oauth_token']);
         $this->setTokenSecret($return['oauth_token_secret']);
         return true;
+    }
+    
+    public function getConsumerKey()
+    {
+        return $this->consumer_key;
+    }
+
+    public function getConsumerSecret()
+    {
+        return $this->consumer_secret;
     }
 
     public function login($login, $pass, Module $module) {
