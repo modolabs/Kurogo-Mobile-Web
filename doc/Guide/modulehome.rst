@@ -37,3 +37,12 @@ Primary modules can be rearranged and hidden by the user using the *Customize* m
 appear smaller, but cannot be rearranged or removed by the user. Keep in mind that even if the entry is
 not on the home screen, users can still manually navigate to the url. So if you have a modules that you
 do not wish to use, ensure they have been *disabled* in their module configuration file.
+
+
+-----
+Icons
+-----
+
+For compliant browsers, you will need to create icons for each module. These icons should be placed
+in: *SITE_DIR/themes/default/modules/home/images/compliant*. Each module should have an 72x72 PNG file 
+named the same as its module id (about.png, news.png, etc.)

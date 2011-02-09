@@ -143,7 +143,8 @@ The properties in this section are used during development. Most of them are boo
 
 * *DISPLAY_ERRORS* - Display PHP errors. This can make discovering bugs more easy. You should turn this
   off on a production site.
-* *MODULE_DEBUG* - 
+* *MODULE_DEBUG* - Enables debugging information provided by each module. The type of information will
+  vary by module. An example of this is showing the LDAP server used by the People module
 * *DEVICE_DEBUG* - When the framework is running in device debugging mode, you can prepend any framework 
   url with *device/[PAGETYPE]-[PLATFORM]/* or *device/[PAGETYPE]/* to see that version of the page in 
   your browser.  So for example "/device/basic/about/" will show the basic version of the About 
