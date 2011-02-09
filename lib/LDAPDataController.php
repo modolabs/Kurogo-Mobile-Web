@@ -208,6 +208,45 @@ class LDAPDataController extends PeopleController {
     
     } 
   
+    
+    private function showLdapJpeg( $conn, $dn, $entry) {
+    	
+    	//http://msdn.microsoft.com/en-us/library/ms676813
+    	
+		$search_result = ldap_search( $conn, $dn, 'objectClass=*', array( 'jpegPhoto' ) );
+		$entry = ldap_first_entry( $conn, $search_result );
+	
+		for ($i=0; $i<$info["count"]; $i++) {
+	
+			$values = ldap_get_values_len($ldap, $entry, "jpegphoto");
+			$jpeg_filename = $jpeg_temp_dir . basename( tempnam ('.', 'djp') );
+			$outjpeg = fopen($jpeg_filename, "wb");
+			
+			if( ! $outjpeg ) echo "error <br>";
+			
+			fwrite($outjpeg, $values[$i]);
+			fclose ($outjpeg);
+			
+		}
+		
+		$jpeg_dimensions = getimagesize ($jpeg_filename);
+		$width = $jpeg_dimensions[0];
+		$height = $jpeg_dimensions[1];
+		if( $width > 300 ) {
+			$scale_factor = 300 / $width;
+			$img_width = 300;
+			$img_height = $height * $scale_factor; 
+		} else {
+			$img_width = $width;
+			$img_height = $height;
+		}
+		//echo "<img width=\"$img_width\" height=\"$img_height\"
+
+		echo "<img src=\"PhotoJpeg.php?file=" . basename($jpeg_filename) . "\">";
+    
+    }
+    
+    
   /* returns a person object on success
    * FALSE on failure
    */
