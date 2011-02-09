@@ -277,7 +277,7 @@ class AdminModule extends Module {
 
                 if ($this->getArg('submit')) {
                     $pageData = $this->prepareSubmitData('pageData');
-                    $module->saveConfig(array('page'=>$pageData), 'page');
+                    $module->saveConfig(array('nav'=>$pageData), 'nav');
                 } 
                 
                 $this->setPageTitle(sprintf("Administering Page Data for %s", $module->getModuleName()));

@@ -468,7 +468,7 @@ abstract class Module {
         switch ($section)
         {
             case 'feeds':
-            case 'page':
+            case 'nav':
                 $type = $section;
                 break;
             default:
@@ -481,7 +481,7 @@ abstract class Module {
         switch ($section)
         {
             case 'feeds':
-            case 'page':
+            case 'nav':
                 $moduleData = $moduleData[$section];
                 // clear out empty values
                 foreach ($moduleData as $feed=>$feedData) {
@@ -992,7 +992,7 @@ abstract class Module {
   
   protected function getPageData()
   {
-     $pageConfig = $this->getConfig($this->id, 'page');
+     $pageConfig = $this->getConfig($this->id, 'nav');
      return $pageConfig->getSectionVars(true);
   }
   
