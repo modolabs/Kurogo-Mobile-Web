@@ -144,6 +144,7 @@ textarea {
 select {
 	width: 100%;
 	padding: 4px 2px;
+	line-height: normal;
 }
 
 #searchformcontainer h3 {

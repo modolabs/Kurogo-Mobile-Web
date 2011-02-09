@@ -1,14 +1,5 @@
 <?php
 
-if (!function_exists('curl_init')) {
-    throw new Exception("cURL library not available");
-}
-
-if (!function_exists('hash_hmac')) {
-    throw new Exception("hash_hmac function not available");
-}
-
-
 abstract class OAuthAuthentication extends AuthenticationAuthority
 {
     protected $tokenSessionVar;
@@ -17,44 +8,48 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     protected $requestTokenMethod='POST';
     protected $accessTokenURL;
     protected $accessTokenMethod='POST';
-    protected $curl;
     protected $consumer_key;
     protected $consumer_secret;
     protected $token;
-    protected $token_secret;
+    protected $tokenSecret='';
     protected $useCache = true;
     protected $cache;
     protected $cacheLifetime = 900;
     protected $verifierKey = 'oauth_verifier';
     protected $verifierErrorKey = '';
+    private $oauth;
     
-    abstract protected function getAuthURL();
+    abstract protected function getAuthURL(array $params);
     abstract protected function getUserFromArray(array $array);
 
-    protected function validUserLogins()
-    {
+    protected function validUserLogins() { 
         return array('LINK', 'NONE');
     }
 		
     // auth is handled by oauth
-    protected function auth($login, $password, &$user)
-    {
+    protected function auth($login, $password, &$user) {
         return AUTH_FAILED;
     }
 
     //does not support groups
-    public function getGroup($group)
-    {
+    public function getGroup($group) {
         return false;
     }
 
-	protected function getAccessTokenParameters()
-	{
+	protected function getAccessTokenParameters() {
 	    return array();
 	}
 	
-	protected function getAccessToken($token, $verifier='')
-	{
+	protected function oauthRequest($method, $url, $parameters = null) {
+	    if (!$this->oauth) {
+	        $this->oauth = new OAuthRequest($this->consumer_key, $this->consumer_secret);
+	    }
+	    
+	    $this->oauth->setTokenSecret($this->tokenSecret);
+	    return $this->oauth->request($method, $url, $parameters);
+	}
+	
+	protected function getAccessToken($token, $verifier='') {
 		$parameters = array_merge($this->getAccessTokenParameters(),array(
 		    'oauth_token'=>$token
         ));
@@ -64,7 +59,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         }
         
 		// make the call
-		$response = $this->doOAuthCall($this->accessTokenURL, $this->accessTokenMethod, $parameters);
+		$response = $this->oauthRequest($this->accessTokenMethod, $this->accessTokenURL,  $parameters);
 		parse_str($response, $return);
 
 		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
@@ -79,22 +74,21 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		return $return;
 	}
 
-	protected function getRequestTokenParameters()
-	{
+	protected function getRequestTokenParameters() {
 	    return array();
 	}
 
-    protected function getRequestToken()
-    {
+    protected function getRequestToken(array $params) {
         $this->reset();
         //get a request token 
         // at this time it uses the login module, that may need to be more flexible
 		$parameters = array_merge($this->getRequestTokenParameters(), array(
-		    'oauth_callback'=>FULL_URL_BASE . 'login/login?' . http_build_query(array(
+		    'oauth_callback'=>FULL_URL_BASE . 'login/login?' . http_build_query(array_merge($params, array(
 		        'authority'=>$this->getAuthorityIndex()
-		        ))
+		        )))
         ));
-        $response = $this->doOAuthCall($this->requestTokenURL, $this->requestTokenMethod, $parameters);
+
+        $response = $this->oauthRequest($this->requestTokenMethod, $this->requestTokenURL, $parameters);
 		parse_str($response, $return);
 
 		// validate
@@ -106,183 +100,23 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $this->setTokenSecret($return['oauth_token_secret']);
         return true;
     }
-
-	protected function buildQuery(array $parameters)
-	{
-		// no parameters?
-		if(empty($parameters)) return '';
-
-		// encode the keys
-		$keys = self::urlencode_rfc3986(array_keys($parameters));
-
-		// encode the values
-		$values = self::urlencode_rfc3986(array_values($parameters));
-
-		// reset the parameters
-		$parameters = array_combine($keys, $values);
-
-		// sort parameters by key
-		uksort($parameters, 'strcmp');
-
-		// loop parameters
-		foreach($parameters as $key => $value)
-		{
-			// sort by value
-			if(is_array($value)) $parameters[$key] = natsort($value);
-		}
-
-		// process parameters
-		foreach($parameters as $key => $value) $chunks[] = $key .'='. str_replace('%25', '%', $value);
-
-		// return
-		return implode('&', $chunks);
-	}
-
-	protected function calculateHeader(array $parameters, $url)
-	{
-		// redefine
-		$url = (string) $url;
-
-		// divide into parts
-		$parts = parse_url($url);
-
-		// init var
-		$chunks = array();
-
-		// process queries
-		foreach($parameters as $key => $value) $chunks[] = str_replace('%25', '%', self::urlencode_rfc3986($key) .'="'. self::urlencode_rfc3986($value) .'"');
-
-		// build return
-		$return = 'Authorization: OAuth ';
-//		realm="' . $parts['scheme'] . '://' . $parts['host'] . $parts['path'] . '", ';
-		$return .= implode(',', $chunks);
-
-		// prepend name and OAuth part
-		return $return;
-	}
-
-	protected function calculateBaseString($url, $method, array $parameters)
-	{
-		// redefine
-		$url = (string) $url;
-		$parameters = (array) $parameters;
-
-		// init var
-		$pairs = array();
-		$chunks = array();
-
-		// sort parameters by key
-		uksort($parameters, 'strcmp');
-
-		// loop parameters
-		foreach($parameters as $key => $value)
-		{
-			// sort by value
-			if(is_array($value)) $parameters[$key] = natsort($value);
-		}
-
-		// process queries
-		foreach($parameters as $key => $value)
-		{
-			$chunks[] = self::urlencode_rfc3986($key) .'%3D'. self::urlencode_rfc3986($value);
-		}
-
-		// buils base
-		$base = $method .'&';
-		$base .= urlencode($url) .'&';
-		$base .= implode('%26', $chunks);
-
-		// return
-		return $base;
-	}
-
-	protected static function urlencode_rfc3986($value)
-	{
-		if(is_array($value)) return array_map(array(__CLASS__, 'urlencode_rfc3986'), $value);
-		else
-		{
-			$search = array('+', ' ', '%7E', '%');
-			$replace = array('%20', '%20', '~', '%25');
-
-			return str_replace($search, $replace, rawurlencode($value));
-		}
-	}
-
-	protected function hmacsha1($key, $data)
-	{
-		return base64_encode(hash_hmac('SHA1', $data, $key, true));
-	}
-	
-	protected function oauthSignature($url, $method, $parameters)
-	{
-		// calculate the base string
-		$base = $this->calculateBaseString($url, $method, $parameters);
-		$key = rawurlencode($this->consumer_secret) .'&' . rawurlencode($this->token_secret);
-		$sig = $this->hmacsha1($key, $base);
-		return $sig;
-	}
-	
-	protected function doOAuthCall($url, $method, $parameters = null)
-	{		
-		$parameters = (array) $parameters;
-		$options = array();
-		$headers = array();
-
-		// append default parameters
-		$oauth['oauth_consumer_key'] = $this->consumer_key;
-		$oauth['oauth_nonce'] = md5(microtime() . rand());
-		$oauth['oauth_signature_method'] = 'HMAC-SHA1';
-		$oauth['oauth_timestamp'] = time();
-		$oauth['oauth_version'] = '1.0';
-
-        switch ($method)
-        {
-            case 'POST':
-                $parameters = array_merge($parameters, $oauth);
-        		$parameters['oauth_signature'] = $this->oauthSignature($url, $method, $parameters);
-                $options[CURLOPT_POST] = true;
-                $options[CURLOPT_POSTFIELDS] = $this->buildQuery($parameters);
-
-                break;
-            case 'GET':
-                $data = $oauth;
-                if(!empty($parameters)) {
-                    $data = array_merge($data, $parameters);
-                    $url .= '?'. $this->buildQuery($parameters);
-                }
-        		$oauth['oauth_signature'] = $this->oauthSignature($url, $method, $parameters);
-                $headers[] = $this->calculateHeader($oauth, $url);
-                break;
-            default:
-                throw new Exception("Invalid method $method");
-                break;
-        }            
-
-        $headers[] = 'Expect:';
-
-		// set options
-		$options[CURLOPT_URL] = $url;
-		$options[CURLOPT_FOLLOWLOCATION] = true;
-		$options[CURLOPT_RETURNTRANSFER] = true;
-		$options[CURLOPT_HTTPHEADER] = $headers;
-
-		// init
-		$this->curl = curl_init();
-		
-		// set options
-		curl_setopt_array($this->curl, $options);
-
-		// execute
-		$response = curl_exec($this->curl);
-		return $response;
-	}
-	
-    public function login($login, $pass, Module $module)
+    
+    public function getConsumerKey()
     {
+        return $this->consumer_key;
+    }
+
+    public function getConsumerSecret()
+    {
+        return $this->consumer_secret;
+    }
+
+    public function login($login, $pass, Module $module) {
         $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
+        $url = isset($_GET['url']) ? urldecode($_GET['url']) : '';
         //see if we already have a request token
-        if ($startOver || !$this->token || !$this->token_secret) {
-            if (!$this->getRequestToken()) {
+        if ($startOver || !$this->token || !$this->tokenSecret) {
+            if (!$this->getRequestToken(array('url'=>$url))) {
                 return AUTH_FAILED;
             }
         }
@@ -305,14 +139,13 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         } else {
         
             //redirect to auth page
-            $url = $this->getAuthURL();
+            $url = $this->getAuthURL(array('url'=>$url));
             header("Location: " . $url);
             exit();
         }
     }
 
-    public function init($args)
-    {
+    public function init($args) {
         parent::init($args);
         $args = is_array($args) ? $args : array();
 
@@ -322,8 +155,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         }
     }
 
-    protected function reset()
-    {
+    protected function reset() {
         $this->setToken(null);
         $this->setTokenSecret(null);
         unset($_SESSION[$this->tokenSessionVar]);
@@ -335,8 +167,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $_SESSION[$this->tokenSessionVar] = $token;
     }
 
-    public function setTokenSecret($token_secret) {
-        $this->token_secret = $token_secret;
-        $_SESSION[$this->tokenSecretSessionVar] = $token_secret;
+    public function setTokenSecret($tokenSecret) {
+        $this->tokenSecret = $tokenSecret;
+        $_SESSION[$this->tokenSecretSessionVar] = $tokenSecret;
     }
 }

@@ -112,6 +112,7 @@ class GoogleAppsAuthentication extends OAuthAuthentication
     public function login($login, $pass, Module $module)
     {
         $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
+        $url = isset($_GET['url']) ? urldecode($_GET['url']) : '';
         //see if we already have a request token
         if ($startOver) {
             $this->reset();
@@ -151,13 +152,13 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         } else {
         
             //redirect to auth page
-            $url = $this->getAuthURL();
+            $url = $this->getAuthURL(array('url'=>$url));
             header("Location: " . $url);
             exit();
         }
     }
     
-    protected function getAuthURL()
+    protected function getAuthURL(array $params)
     {
         if (!$url = $this->getOpenIDEndpoint()) {
             throw new Exception("Unable to get OpenID endpoint url for $this->domain.");
@@ -179,9 +180,10 @@ class GoogleAppsAuthentication extends OAuthAuthentication
             'openid.ns'=>'http://specs.openid.net/auth/2.0',
             'openid.claimed_id'=>'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.identity'=>'http://specs.openid.net/auth/2.0/identifier_select',
-            'openid.return_to'=>FULL_URL_BASE . 'login/login?' . http_build_query(array(
-                'authority'=>$this->getAuthorityIndex()
-		        )),
+            'openid.return_to'=>FULL_URL_BASE . 'login/login?' . http_build_query(array_merge($params,
+                array(
+                    'authority'=>$this->getAuthorityIndex()
+		        ))),
             'openid.realm'=>$realm,
             'openid.ns.ax'=>'http://openid.net/srv/ax/1.0',
             'openid.ax.mode'=>'fetch_request',
@@ -196,9 +198,9 @@ class GoogleAppsAuthentication extends OAuthAuthentication
             'openid.ns.oauth'=>'http://specs.openid.net/extensions/oauth/1.0',
             'openid.oauth.consumer'=>$this->consumer_key,
             'openid.oauth.scope'=>implode(' ', array(
-	            'http://www.google.com/calendar/feeds',
-                'http://docs.google.com/feeds/',
-                'http://spreadsheets.google.com/feeds/'
+	            'https://www.google.com/calendar/feeds/',
+                'https://docs.google.com/feeds/',
+                'https://spreadsheets.google.com/feeds/'
                 )
             )));
         }

@@ -21,7 +21,7 @@
   define("COOKIE_USER_PERSISTENCE", 63072000);
 
   // 1x1 transparent GIF
-  $GIF_DATA = array(
+  $GLOBALS['GIF_DATA'] = array(
       chr(0x47), chr(0x49), chr(0x46), chr(0x38), chr(0x39), chr(0x61),
       chr(0x01), chr(0x00), chr(0x01), chr(0x00), chr(0x80), chr(0xff),
       chr(0x00), chr(0xff), chr(0xff), chr(0xff), chr(0x00), chr(0x00),
@@ -77,13 +77,12 @@
 
   // Writes the bytes of a 1x1 transparent gif into the response.
   function writeGifData() {
-    global $GIF_DATA;
     header("Content-Type: image/gif");
     header("Cache-Control: " .
            "private, no-cache, no-cache=Set-Cookie, proxy-revalidate");
     header("Pragma: no-cache");
     header("Expires: Wed, 17 Sep 1975 21:32:10 GMT");
-    echo join($GIF_DATA);
+    echo join($GLOBALS['GIF_DATA']);
   }
 
   // Make a tracking request to Google Analytics from this server.

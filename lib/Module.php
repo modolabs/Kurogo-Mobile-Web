@@ -282,7 +282,7 @@ abstract class Module {
 
   public function redirectToModule($id, $args=array()) {
   
-    $url = sprintf("%s/%s/?%s", URL_BASE, $id, http_build_query($args));
+    $url = sprintf("%s%s/?%s", URL_BASE, $id, http_build_query($args));
     //error_log('Redirecting to: '.$url);
     
     header("Location: $url");
@@ -1150,6 +1150,7 @@ abstract class Module {
     /* set cache age. Modules that present content that rarely changes can set this value
     to something higher */
     header(sprintf("Cache-Control: max-age=%d", $this->cacheMaxAge));
+    header("Expires: " . gmdate('D, d M Y H:i:s', time() + $this->cacheMaxAge) . ' GMT');
 
     // Load template for page
     $this->templateEngine->displayForDevice($template);    
