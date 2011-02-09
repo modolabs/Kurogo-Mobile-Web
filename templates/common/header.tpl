@@ -32,7 +32,7 @@
       </script>
     {/foreach}  
     
-    {foreach $externalJavascriptURLs as $url}
+    {foreach $javascriptURLs as $url}
       <script src="{$url}" type="text/javascript"></script>
     {/foreach}
 

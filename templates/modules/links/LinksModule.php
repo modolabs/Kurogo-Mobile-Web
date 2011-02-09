@@ -38,8 +38,8 @@ class LinksModule extends Module {
     
         case 'links':
             $adminModule->setTemplatePage('admin_links', $this->id);
-            $adminModule->addExternalJavascript(URL_BASE . "modules/{$this->id}/javascript/admin.js");
-            $adminModule->addExternalCSS(URL_BASE . "modules/{$this->id}/css/admin.css");
+            $adminModule->addInternalJavascript("/modules/{$this->id}/javascript/admin.js");
+            $adminModule->addInternalCSS("/modules/{$this->id}/css/admin.css");
             $links = $this->getModuleArray('links');
             $adminModule->assign('links', $links);
             break;
@@ -52,16 +52,16 @@ class LinksModule extends Module {
   protected function initializeForPage() {
     $links = $this->getModuleArray('links');
         
-    foreach ($links as &$link) {
+    foreach ($links as $index => $link) {
       if (!is_array($link)) {
-        unset($link);
-      } else if (isset($link['icon']) && strlen($link['icon'])>0) {
-        $link['img'] = sprintf("%smodules/%s/images/%s%s", URL_BASE, $this->id, $link['icon'], $this->imageExt);
+        unset($links[$index]);
+      } else if (self::argVal($link, 'icon', false)) {
+        $link['img'] = "/modules/{$this->id}/images/{$link['icon']}{$this->imageExt}";
       }
     }
     
-    $this->assign('display_type', $this->getModuleVar('display_type'));
-    $this->assign('description',  $this->getModuleVar('description'));
-    $this->assign('links',        $links);
+    $this->assign('displayType', $this->getModuleVar('display_type'));
+    $this->assign('description', $this->getModuleVar('description'));
+    $this->assign('links',       $links);
   }
 }

@@ -6,7 +6,7 @@ var arrInitialArray = new Array;	// array that stores the order of icons as when
 function init() {
   initializeHomeArray();
   var objBusybox = document.createElement("IMG");
-  objBusybox.src = "/common/images/loading.gif";
+  objBusybox.src = "../common/images/loading.gif";
   objBusybox.className = "busybox";
 }
 

@@ -38,12 +38,12 @@ abstract class Module {
   private $breadcrumbLongTitle = 'No Title';
   
   private $inlineCSSBlocks = array();
-  private $externalCSSURLs = array();
+  private $cssURLs = array();
   private $inlineJavascriptBlocks = array();
   private $inlineJavascriptFooterBlocks = array();
   private $onOrientationChangeBlocks = array();
   private $onLoadBlocks = array('scrollTo(0,1);');
-  private $externalJavascriptURLs = array();
+  private $javascriptURLs = array();
 
   private $moduleDebugStrings = array();
   
@@ -60,7 +60,7 @@ abstract class Module {
   
   private $tabbedView = null;
   
-  protected $cacheMaxAge=0;
+  protected $cacheMaxAge = 0;
   
   protected $autoPhoneNumberDetection = true;
   
@@ -760,6 +760,113 @@ abstract class Module {
     return $moduleConfig;
   }
 
+  //
+  // Module list control functions
+  //
+  private function getModuleNavigationConfig() {
+    static $moduleNavConfig;
+    if (!$moduleNavConfig) {
+        $moduleNavConfig = $this->getConfig('home', 'module', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
+    }
+    
+    return $moduleNavConfig;
+  }
+
+  protected function getModuleNavlist() {
+    $navModules = $this->getNavigationModules(false);
+    $separator = array('separator' => array('separator' => true));
+    return array_merge($navModules['primary'], $separator, $navModules['secondary']);
+  }
+  
+  protected function getModuleCustomizeList() {    
+    $navModules = $this->getNavigationModules(true);
+    return $navModules['primary'];
+  }
+
+  protected function getNavigationModules($includeDisabled=true) {
+    $moduleNavConfig = $this->getModuleNavigationConfig();
+    
+    $moduleConfig = array();
+    
+    $moduleConfig['primary'] = $moduleNavConfig->getSection('primary_modules', Config::LOG_ERRORS);
+    if (!$moduleConfig['primary']) { $moduleConfig['primary'] = array(); }
+
+    $moduleConfig['secondary'] = $moduleNavConfig->getSection('secondary_modules', Config::LOG_ERRORS);
+    if (!$moduleConfig['secondary']) { $moduleConfig['secondary'] = array(); }
+
+    $disabledIDs = array();
+    if (isset($_COOKIE[DISABLED_MODULES_COOKIE]) && $_COOKIE[DISABLED_MODULES_COOKIE] != "NONE") {
+      $disabledIDs = explode(",", $_COOKIE[DISABLED_MODULES_COOKIE]);
+    }
+    
+    $modules = array(
+      'primary' => array(),
+      'secondary' => array(),
+    );
+    
+    foreach ($moduleConfig as $type => $modulesOfType) {
+      foreach ($modulesOfType as $id => $title) {
+        $disabled = in_array($id, $disabledIDs);
+        
+        if ($includeDisabled || !$disabled) {
+          $selected = $this->id == $id;
+          $primary = $type == 'primary';
+  
+          $classes = array();
+          if ($selected) { $classes[] = 'selected'; }
+          if (!$primary) { $classes[] = 'utility'; }
+    
+          $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '-selected' : '';
+
+          $modules[$type][$id] = array(
+            'title'       => $title,
+            'shortTitle'  => $title,
+            'url'         => "/$id/",
+            'primary'     => $primary,
+            'disableable' => true,
+            'disabled'    => $disabled,
+            'img'         => "/modules/home/images/{$id}{$imgSuffix}".$this->imageExt,
+            'class'       => implode(' ', $classes),
+          );
+        }
+      }
+    }
+    
+    // sort primary modules if sort cookie is set
+    if (isset($_COOKIE[MODULE_ORDER_COOKIE])) {
+      $sortedIDs = array_merge(array('home'), explode(",", $_COOKIE[MODULE_ORDER_COOKIE]));
+      $unsortedIDs = array_diff(array_keys($modules['primary']), $sortedIDs);
+            
+      $sortedModules = array();
+      foreach (array_merge($sortedIDs, $unsortedIDs) as $id) {
+        if (isset($modules['primary'][$id])) {
+          $sortedModules[$id] = $modules['primary'][$id];
+        }
+      }
+      $modules['primary'] = $sortedModules;
+    }
+    //error_log('$modules(): '.print_r(array_keys($modules), true));
+    return $modules;
+  }
+  
+  protected function setNavigationModuleOrder($moduleIDs) {
+    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $value = implode(",", $moduleIDs);
+    
+    setcookie(MODULE_ORDER_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE[MODULE_ORDER_COOKIE] = $value;
+    //error_log(__FUNCTION__.'(): '.print_r($value, true));
+  }
+  
+  protected function setNavigationHiddenModules($moduleIDs) {
+    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
+    
+    setcookie(DISABLED_MODULES_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
+    $_COOKIE[DISABLED_MODULES_COOKIE] = $value;
+    //error_log(__FUNCTION__.'(): '.print_r($value, true));
+  }
+
   public function getAPIConfig() {
     static $apiConfig;
     if (!$apiConfig) {
@@ -802,8 +909,11 @@ abstract class Module {
   protected function addInlineCSS($inlineCSS) {
     $this->inlineCSSBlocks[] = $inlineCSS;
   }
+  protected function addInternalCSS($path) {
+    $this->cssURLs[] = '/min/g='.MIN_FILE_PREFIX.$path;
+  }
   protected function addExternalCSS($url) {
-    $this->externalCSSURLs[] = $url;
+    $this->cssURLs[] = $url;
   }
   protected function addInlineJavascript($inlineJavascript) {
     $this->inlineJavascriptBlocks[] = $inlineJavascript;
@@ -817,8 +927,11 @@ abstract class Module {
   protected function addOnLoad($onLoad) {
     $this->onLoadBlocks[] = $onLoad;
   }
+  protected function addInternalJavascript($path) {
+    $this->javascriptURLs[] = '/min/g='.MIN_FILE_PREFIX.$path;
+  }
   protected function addExternalJavascript($url) {
-    $this->externalJavascriptURLs[] = $url;
+    $this->javascriptURLs[] = $url;
   }
   
   //
@@ -1083,6 +1196,11 @@ abstract class Module {
     
     // Breadcrumbs
     $this->loadBreadcrumbs();
+    
+    // Tablet module nav list
+    if ($this->pagetype == 'tablet') {
+      $this->assign('moduleNavList', $this->getModuleNavlist());
+    }
             
     // Set variables for each page
     $this->initializeForPage();
@@ -1090,14 +1208,14 @@ abstract class Module {
     $this->assign('pageTitle', $this->pageTitle);
 
     // Variables which may have been modified by the module subclass
-    $this->assign('inlineCSSBlocks', $this->inlineCSSBlocks);
-    $this->assign('externalCSSURLs', $this->externalCSSURLs);
-    $this->assign('inlineJavascriptBlocks', $this->inlineJavascriptBlocks);
-    $this->assign('onOrientationChangeBlocks', $this->onOrientationChangeBlocks);
-    $this->assign('onLoadBlocks', $this->onLoadBlocks);
+    $this->assign('inlineCSSBlocks',              $this->inlineCSSBlocks);
+    $this->assign('cssURLs',                      $this->cssURLs);
+    $this->assign('inlineJavascriptBlocks',       $this->inlineJavascriptBlocks);
+    $this->assign('onOrientationChangeBlocks',    $this->onOrientationChangeBlocks);
+    $this->assign('onLoadBlocks',                 $this->onLoadBlocks);
     $this->assign('inlineJavascriptFooterBlocks', $this->inlineJavascriptFooterBlocks);
-    $this->assign('externalJavascriptURLs', $this->externalJavascriptURLs);
-
+    $this->assign('javascriptURLs',               $this->javascriptURLs);
+    
     $this->assign('breadcrumbs',            $this->breadcrumbs);
     $this->assign('breadcrumbArgs',         $this->getBreadcrumbArgs());
     $this->assign('breadcrumbSamePageArgs', $this->getBreadcrumbArgs(false));
@@ -1175,8 +1293,7 @@ abstract class Module {
     return $this->templateEngine->fetchForDevice($template);    
   }
   
-  protected function setCacheMaxAge($age)
-  {
+  protected function setCacheMaxAge($age) {
     $this->cacheMaxAge = intval($age);
   }
   

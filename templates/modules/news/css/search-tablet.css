@@ -1,10 +1,15 @@
+#searchformcontainer {
+  margin-top: 1em;
+}
+
 form {
 	margin: -8px 0 0 0;
 	padding: 0;
 }
 .formlabel {
-	width: 62px;
+	width: 60px;
     text-align: right;
+	color: #554c41;
 	font-size: 89%;
 }
 .header form {
@@ -20,6 +25,7 @@ form {
     padding: 4px 6px;
     font-size: 88.23%;
 }
+
 .header {
     padding: 0;
 }
@@ -27,12 +33,7 @@ form {
 .header button {
     display: inline;
 }
-
-.results li.pagerlink {
-	padding: 9px;
-}
-
-.results li.pagerlink a {
+.pagerlink a {
   background-image: none;
   color: #1A1611;
   font-weight: bold;
@@ -40,18 +41,9 @@ form {
 }
 
 .newsinput  {
-	width: auto;
+	width: 200px;
 }
 
 .search-field, select {
 }
 
-#category-form {
-    padding: .25em .5em;
-}
-#category-form label {
-  padding-right: .25em;
-}
-#searchformcontainer form {
-  margin: 0;
-}

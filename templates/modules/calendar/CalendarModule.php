@@ -589,7 +589,7 @@ class CalendarModule extends Module {
         $type  = $this->getArg('type', $this->getDefaultFeed());
         $month = $this->getArg('month', 1); //default to january
         
-        $start = new DateTime(sprintf("%d%02d01", $year, $month, $this->timezone));
+        $start = new DateTime(sprintf("%d%02d01", $year, $month), $this->timezone);
         $end   = new DateTime(sprintf("%d%02d01", $year+1, $month), $this->timezone);
         
         $feed = $this->getFeed($type);
