@@ -61,7 +61,7 @@ abstract class User
     protected function standardAttributes()
     {
         return array(
-            'userID', 'email'
+            'userid', 'email'
         );
     }
     
@@ -78,7 +78,7 @@ abstract class User
     
     public function getAttribute($attribute)
     {
-        if (in_array($attribute, $this->standardAttributes())) {
+        if (in_array(strtolower($attribute), $this->standardAttributes())) {
             $method = "get" . $attribute;
             return $this->$method();
         } elseif (array_key_exists($attribute, $this->attributes)) {
