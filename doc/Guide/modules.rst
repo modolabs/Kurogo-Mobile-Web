@@ -125,6 +125,7 @@ Included Modules
    modulecalendar
    modulenews
    modulelinks
+   modulefullweb
    modulecustomize
    moduleabout
    modulelogin

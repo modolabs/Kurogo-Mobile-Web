@@ -207,9 +207,6 @@ historical bookmarks. The entered url will be redirected to the value you specif
 
 * **directory = people** would map the url */directory* to */people* (i.e. the people module)
 
-An entry for the *fullweb* url has been added. You can update this to the url to your full website if
-you wish to provide this url to your users. 
-
 Take care that you do not create infinite redirect loops.
 
 There is a special case for the *DEFAULT* url. This is the module that is loaded when users enter your
