@@ -95,7 +95,6 @@ class CustomizeModule extends Module {
     $newCount = 0;
 
     foreach ($this->getHomeScreenModules() as $moduleID => $info) {
-        $module = Module::factory($moduleID);
         if ($info['primary'] ) {
           $modules[$moduleID] = $info;
           $moduleIDs[] = $moduleID;

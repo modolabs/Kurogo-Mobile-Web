@@ -163,18 +163,22 @@ class HomeModule extends Module {
         $federatedResults = array();
      
         foreach ($this->getHomeScreenModules() as $id => $info) {
-          $module = Module::factory($id);
-          if ($module->getModuleVar('search')) {
-            $results = array();
-            $total = $module->federatedSearch($searchTerms, 2, $results);
-            $federatedResults[] = array(
-              'title'   => $info['title'],
-              'results' => $results,
-              'total'   => $total,
-              'url'     => $module->urlForFederatedSearch($searchTerms),
-            );
-            unset($module);
-          }
+          try {
+              $module = Module::factory($id);
+              if ($module->getModuleVar('search')) {
+                $results = array();
+                $total = $module->federatedSearch($searchTerms, 2, $results);
+                $federatedResults[] = array(
+                  'title'   => $info['title'],
+                  'results' => $results,
+                  'total'   => $total,
+                  'url'     => $module->urlForFederatedSearch($searchTerms),
+                );
+                unset($module);
+              }
+            } catch (Exception $e) {
+                // not a real module (could be a URL)
+            }
         }
         //error_log(print_r($federatedResults, true));
         $this->assign('federatedResults', $federatedResults);
