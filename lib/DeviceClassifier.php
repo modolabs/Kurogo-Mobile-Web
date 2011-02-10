@@ -40,7 +40,7 @@ class DeviceClassifier {
   
   function __construct($device = null) {
   
-    $this->version = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_VERSION');
+    $this->version = intval($GLOBALS['siteConfig']->getVar('MOBI_SERVICE_VERSION'));
     
     if ($device && strlen($device)) {
       $this->setDevice($device); // user override of device detection
@@ -77,7 +77,7 @@ class DeviceClassifier {
      $db_file =  $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_FILE');
      $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
      try {
-         $result = $db->query('SELECT * FROM userAgentPatterns WHERE version=? ORDER BY patternorder', array($this->version));
+         $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
      } catch (Exception $e) {
         error_log("Error with device detection");
         return false;
