@@ -72,7 +72,7 @@ class ContentModule extends Module {
     switch ($this->page) {
         case 'index':
             if (count($feeds)==1) {
-                $this->redirectTo(key($this->page));
+                $this->redirectTo(key($feeds));
             } 
             
             $pages = array();
