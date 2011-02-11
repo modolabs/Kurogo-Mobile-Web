@@ -6,18 +6,24 @@
 /**
   * @package Authentication
   */
-class GoogleAppsAuthentication extends OAuthAuthentication
+class GoogleAppsAuthentication extends AuthenticationAuthority
 {
-    protected $tokenSessionVar = 'google_oauth_token';
-    protected $tokenSecretSessionVar = 'google_oauth_token_secret';
-    protected $accessTokenURL = 'https://www.google.com/accounts/OAuthGetAccessToken';
-    protected $accessTokenMethod = 'POST';
     protected $domain;
     protected $oauth = false;
 
     public function getDomain()
     {
         return $this->domain;
+    }
+
+    // auth is handled by openID
+    protected function auth($login, $password, &$user) {
+        return AUTH_FAILED;
+    }
+
+    //does not support groups
+    public function getGroup($group) {
+        return false;
     }
 
     //Not sure if we can get users or not...
@@ -71,6 +77,7 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         return false;
     }
 
+
     /**
      * Discovers the OpenID Endpoint for a Google Apps domain
      * http://groups.google.com/group/google-federated-login-api/web/openid-discovery-for-hosted-domains?pli=1
@@ -122,24 +129,7 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         $ARGS = $_SERVER['REQUEST_METHOD'] == 'GET' ? $_GET : $_POST;
         if (isset($ARGS['openid_mode'])) {
             if (isset($ARGS['openid_identity'])) {
-                if ($this->oauth) {
-                    if ($ns = $this->getOpenIDNameSpace('http://specs.openid.net/extensions/oauth/1.0', $ARGS)) {
-                        if ($request_token = $this->getOpenIDValue('request_token', $ns, $ARGS)) {
-                            if ($result = $this->getAccessToken($request_token)) {
-                                $ARGS['oauth_token'] = $result['oauth_token'];
-                                $ARGS['oauth_token_secret'] = $result['oauth_token_secret'];
-                            } else {
-                                throw new Exception("Error getting Access Token");
-                            }
-                        } else {
-                            throw new Exception("Error getting Access Token");
-                        }
-                    } else {
-                        throw new Exception("Could not find OAuth information");
-                    }
-                }
                 if ($user = $this->getUserFromArray($ARGS)) {
-    
                     $session = $module->getSession();
                     $session->login($user);
                     return AUTH_OK;
@@ -168,10 +158,6 @@ class GoogleAppsAuthentication extends OAuthAuthentication
 
         $realm = sprintf("http://%s%s", $this->domain != $url_parts['host'] ? '*.' : '', $this->domain);
         if (!in_array($_SERVER['SERVER_PORT'], array(80,443))) {
-            if ($this->oauth) {
-                throw new Exception("OAuth will not work with custom ports");
-            }
-            
             $realm .= ":" . $_SERVER['SERVER_PORT'];
         }
 
@@ -193,21 +179,19 @@ class GoogleAppsAuthentication extends OAuthAuthentication
             'openid.ax.type.lastname'=>'http://axschema.org/namePerson/last'
         );
         
-        if ($this->oauth) {
-            $parameters = array_merge($parameters, array(
-            'openid.ns.oauth'=>'http://specs.openid.net/extensions/oauth/1.0',
-            'openid.oauth.consumer'=>$this->consumer_key,
-            'openid.oauth.scope'=>implode(' ', array(
-	            'https://www.google.com/calendar/feeds/',
-                'https://docs.google.com/feeds/',
-                'https://spreadsheets.google.com/feeds/'
-                )
-            )));
-        }
-	    
 	    $url .= stripos($url, "?") ? '&' : '?';
         $url .= http_build_query($parameters);
         return $url;
+    }
+    
+    public function getConsumerKey()
+    {
+        return $this->consumer_key;
+    }
+
+    public function getConsumerSecret()
+    {
+        return $this->consumer_secret;
     }
 
     public function init($args)
