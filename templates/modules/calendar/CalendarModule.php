@@ -269,20 +269,29 @@ class CalendarModule extends Module {
             return parent::prepareAdminForSection($section, $adminModule);
     }
   }
+  
+  protected function getFeeds()
+  {
+    if (!$this->feeds) {
+        $this->feeds = $this->loadFeedData();
+    }
+    
+    return $this->feeds;
+  }
 
   public function getDefaultFeed()
   {
-     if ($indexes = array_keys($this->feeds)) {
+    $feeds = $this->getFeeds();
+     if ($indexes = array_keys($feeds)) {
          return current($indexes);
      }
   }
   
   protected function getFeedTitle($index)
   {
-    if (isset($this->feeds[$index])) {
-        
-        $feedData = $this->feeds[$index];
-        return $feedData['TITLE'];
+    $feeds = $this->getFeeds();
+    if (isset($feeds[$index])) {
+        return $feeds[$index]['TITLE'];
     } else {
         throw new Exception("Error getting calendar title for index $index");
     }
@@ -290,8 +299,9 @@ class CalendarModule extends Module {
   
   public function getFeed($index)
   {
-    if (isset($this->feeds[$index])) {
-        $feedData = $this->feeds[$index];
+    $feeds = $this->getFeeds();
+    if (isset($feeds[$index])) {
+        $feedData = $feeds[$index];
         $controller = CalendarDataController::factory($feedData);
         $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
         return $controller;
@@ -301,7 +311,6 @@ class CalendarModule extends Module {
   }
  
   protected function initialize() {
-    $this->feeds    = $this->loadFeedData();
     $this->timezone = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
   }
 
