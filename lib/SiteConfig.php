@@ -28,6 +28,7 @@ class SiteConfig extends ConfigGroup {
     
     // Set up defines relative to SITE_DIR
     define('SITE_DIR',             $siteDir);
+    define('SITE_KEY',             md5($siteDir));
     define('SITE_LIB_DIR',         SITE_DIR.'/lib');
     define('DATA_DIR',             SITE_DIR.'/data');
     define('CACHE_DIR',            SITE_DIR.'/cache');

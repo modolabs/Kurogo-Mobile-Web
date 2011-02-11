@@ -22,6 +22,13 @@ class Session
     public function __construct()
     {
         if (!isset($_SESSION)) {
+            if (!is_dir(CACHE_DIR . "/session")) {
+                mkdir(CACHE_DIR . "/session",0700);
+            }
+            ini_set('session.save_path', CACHE_DIR . "/session");
+            ini_set('session.name', SITE_KEY);
+            ini_set('session.use_only_cookies', 1);
+            ini_set('session.cookie_path', URL_BASE);
             session_start();
         }
         
