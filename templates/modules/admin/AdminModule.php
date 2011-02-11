@@ -108,7 +108,7 @@ class AdminModule extends Module {
   }
   
   protected function initializeForPage() {
-  
+        $this->addJQuery();
         switch ($this->page)
         {
              case 'module':
