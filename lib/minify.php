@@ -12,7 +12,7 @@ require_once LIB_DIR.'/DiskCache.php';
 //
 
 // CSS supports overrides so include all available CSS files.
-function getCSSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs) {
+function getCSSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs, $pageOnly=false) {
   $config = array(
     'include' => 'all',
     'files' => array()
@@ -20,9 +20,11 @@ function getCSSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs) {
   
   foreach ($dirs as $dir) {
     foreach ($subDirs as $subDir) {
-      $config['files'][] = "$dir$subDir/css/common.css";
-      $config['files'][] = "$dir$subDir/css/$pagetype.css";
-      $config['files'][] = "$dir$subDir/css/$pagetype-$platform.css"; 
+      if (!$pageOnly) {
+        $config['files'][] = "$dir$subDir/css/common.css";
+        $config['files'][] = "$dir$subDir/css/$pagetype.css";
+        $config['files'][] = "$dir$subDir/css/$pagetype-$platform.css"; 
+      }
       $config['files'][] = "$dir$subDir/css/$page-common.css";
       $config['files'][] = "$dir$subDir/css/$page-$pagetype.css";
       $config['files'][] = "$dir$subDir/css/$page-$pagetype-$platform.css"; 
@@ -33,7 +35,7 @@ function getCSSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs) {
 
 // Javascript does not support overrides so include common files
 // and the most specific platform file.  Themes override js.
-function getJSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs) {
+function getJSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs, $pageOnly=false) {
   $config = array(
     'include' => 'all',
     'files' => array()
@@ -45,27 +47,32 @@ function getJSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs) {
       'files' => array()
     );
     foreach ($dirs as $dir) {
-      $dirConfig['files'][] =  array(
+      $files = array(
         'include' => 'all',
+        'files'   => array(),
+      );
+
+      if (!$pageOnly) {
+        $files['files'][] = "$dir$subDir/javascript/common.js";
+        $files['files'][] = array(
+          'include' => 'any',
+          'files'   => array(
+            "$dir$subDir/javascript/$pagetype-$platform.js", 
+            "$dir$subDir/javascript/$pagetype.js",
+          ),
+        );
+      }
+
+      $files['files'][] = "$dir$subDir/javascript/$page-common.js";
+      $files['files'][] = array(
+        'include' => 'any',
         'files'   => array(
-          "$dir$subDir/javascript/common.js",
-          array(
-            'include' => 'any',
-            'files'   => array(
-              "$dir$subDir/javascript/$pagetype-$platform.js", 
-              "$dir$subDir/javascript/$pagetype.js",
-            ),
-          ),
-          "$dir$subDir/javascript/$page-common.js",
-          array(
-            'include' => 'any',
-            'files'   => array(
-              "$dir$subDir/javascript/$page-$pagetype-$platform.js", 
-              "$dir$subDir/javascript/$page-$pagetype.js",
-            ),
-          ),
+          "$dir$subDir/javascript/$page-$pagetype-$platform.js", 
+          "$dir$subDir/javascript/$page-$pagetype.js",
         ),
       );
+      
+      $dirConfig['files'][] = $files;
     }
     $config['files'][] = $dirConfig;
   }
@@ -116,6 +123,8 @@ function getMinifyGroupsConfig() {
   //
   // Page request
   //
+  $pageOnly = isset($_GET['pageOnly']) && $_GET['pageOnly'];
+
   list($ext, $module, $page, $pagetype, $platform, $pathHash) = explode('-', $key);
 
   $cache = new DiskCache(CACHE_DIR.'/minify', 30, true);
@@ -137,8 +146,8 @@ function getMinifyGroupsConfig() {
       TEMPLATES_DIR, 
     );
     
-    if ($module == 'info') {
-      // Info module does not inherit from common css files
+    if ($pageOnly || $module == 'info') {
+      // Info module does not inherit from common files
       $subDirs = array(
         '/modules/'.$module,
       );
@@ -151,9 +160,9 @@ function getMinifyGroupsConfig() {
     
     $checkFiles = array(
       'css' => getCSSFileConfigForDirs(
-          $page, $pagetype, $platform, $cssDirs, $subDirs),
+          $page, $pagetype, $platform, $cssDirs, $subDirs, $pageOnly),
       'js'  => getJSFileConfigForDirs (
-          $page, $pagetype, $platform, $jsDirs, $subDirs),
+          $page, $pagetype, $platform, $jsDirs, $subDirs, $pageOnly),
     );
     //error_log(print_r($checkFiles, true));
     

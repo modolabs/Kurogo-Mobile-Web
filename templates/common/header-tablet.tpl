@@ -5,11 +5,6 @@
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
 {/block}
 
-{block name="javascript"}
-  <script src="/media/iscroll.js" type="text/javascript"></script>
-  {$smarty.block.parent}
-{/block}
-
 {block name="onLoad"} onload="tabletInit(); {if count($onLoadBlocks)}onLoad();{/if}"{/block}
 
 {block name="navbar"}

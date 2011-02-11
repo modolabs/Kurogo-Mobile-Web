@@ -68,6 +68,9 @@ class AboutModule extends Module {
       case 'about':
         break;
 
+      case 'pane':
+        break;
+
       default:
         $this->redirectTo('index');
         break;

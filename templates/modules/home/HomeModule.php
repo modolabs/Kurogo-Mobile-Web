@@ -54,20 +54,20 @@ class HomeModule extends Module {
     $modulePanes = array();
     
     foreach ($tabletConfig as $blockName => $moduleID) {
-      $path = self::getPathSegmentForModuleID($moduleID);
-    
-      $module = self::factory($path, 'pane', $this->args);
+      $module = self::factory($moduleID, 'pane', $this->args);
       
       $paneContent = $module->fetchPage(); // sets pageTitle var
+      
+      $this->importCSSAndJavascript($module->exportCSSAndJavascript());
       
       $modulePanes[$blockName] = array(
         'id' => $moduleID,
         'url' => $this->buildURLForModule($moduleID, 'index'),
         'title' => $module->getTemplateVars('pageTitle'),
         'content' => $paneContent,
-      );
+      );  
     }
-    
+   
     return $modulePanes;
   }
      
@@ -84,7 +84,10 @@ class HomeModule extends Module {
         $this->addOnOrientationChange('rotateScreen();');
 
         if ($this->pagetype == 'tablet') {
-          $this->assign('modulePanes', $this->getTabletModulePanes($homeConfig['tabletPanes']));
+          $config = $this->getModuleConfig();
+          
+          $this->assign('modulePanes', $this->getTabletModulePanes($config->getSection('tablet_panes')));
+          $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
           $this->addOnLoad('moduleHandleWindowResize();');
         } else {
           $this->assign('modules', $this->getModuleNavList());

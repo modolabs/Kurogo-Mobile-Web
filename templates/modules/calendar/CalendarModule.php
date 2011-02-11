@@ -68,12 +68,16 @@ class CalendarModule extends Module {
     );
   }
     
-  private function timeText($event) {
-    return strval($event->get_range());
-    if ($event->get_end() - $event->get_start() == -1) {
-      return $event->get_range()->format('D M j').' '.date('g:i a', $event->get_start());
+  private function timeText($event, $timeOnly=false) {
+    if ($timeOnly) {
+      if ($event->get_end() - $event->get_start() == -1) {
+        return $event->get_start()->format('g:i a');
+      } else {
+        return date('g:ia', $event->get_start()).' - '.date('g:ia', $event->get_end());
+      }
+    } else {
+      return strval($event->get_range());
     }
-    return $event->get_range()->format('D M j g:i a');
   }
 
   private function ucname($name) {
@@ -186,9 +190,9 @@ class CalendarModule extends Module {
 
   private function yearURL($year, $month, $type, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('year', array(
-      'year' => $year,
-      'month'=> $month,
-      'type' => $type,
+      'year'  => $year,
+      'month' => $month,
+      'type'  => $type,
     ), $addBreadcrumb);
   }
   
@@ -217,11 +221,17 @@ class CalendarModule extends Module {
     ), $addBreadcrumb);
   }
   
-  private function detailURL($event, $options=array(), $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('detail', array_merge($options, array(
+  private function detailURL($event, $options=array(), $addBreadcrumb=true, $noBreadcrumbs=false) {
+    $args = array_merge($options, array(
       'id'   => $event->get_uid(),
       'time' => $event->get_start()
-    )), $addBreadcrumb);
+    ));
+  
+    if ($noBreadcrumbs) {
+      return $this->buildURL('detail', $args);
+    } else {
+      return $this->buildBreadcrumbURL('detail', $args, $addBreadcrumb);
+    }
   }
   
   public function federatedSearch($searchTerms, $maxCount, &$results) {
@@ -244,10 +254,7 @@ class CalendarModule extends Module {
       }
   
       $results[] = array(
-        'url'      => $this->buildBreadcrumbURL("/{$this->id}/detail", array(
-            'id'   => $iCalEvents[$i]->get_uid(),
-            'time' => $iCalEvents[$i]->get_start()
-          ), false),
+        'url'      => $this->detailURL($iCalEvents[$i], array(), false, false),
         'title'    => $iCalEvents[$i]->get_summary(),
         'subtitle' => $subtitle,
       );
@@ -257,8 +264,7 @@ class CalendarModule extends Module {
   }
   
   protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section)
-    {
+    switch ($section) {
         case 'feeds':
             $feeds = $this->loadFeedData();
             $adminModule->assign('feeds', $feeds);
@@ -270,15 +276,13 @@ class CalendarModule extends Module {
     }
   }
 
-  public function getDefaultFeed()
-  {
+  public function getDefaultFeed() {
      if ($indexes = array_keys($this->feeds)) {
          return current($indexes);
      }
   }
   
-  protected function getFeedTitle($index)
-  {
+  protected function getFeedTitle($index) {
     if (isset($this->feeds[$index])) {
         
         $feedData = $this->feeds[$index];
@@ -288,8 +292,7 @@ class CalendarModule extends Module {
     }
   }
   
-  public function getFeed($index)
-  {
+  public function getFeed($index) {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
         $controller = CalendarDataController::factory($feedData);
@@ -310,6 +313,29 @@ class CalendarModule extends Module {
       case 'help':
         break;
         
+      case 'pane':
+        $start = new DateTime(date('Y-m-d H:i:s', time()), $this->timezone);
+        $start->setTime(0,0,0);
+        $end = clone $start;
+        $end->setTime(23,59,59);
+        
+        $feed = $this->getFeed('events'); 
+        $feed->setStartDate($start);
+        $feed->setEndDate($end);
+        $iCalEvents = $feed->items();
+                
+        $events = array();
+        foreach($iCalEvents as $iCalEvent) {
+          $events[] = array(
+            'url'      => $this->detailURL($iCalEvent, array(), false, true),
+            'title'    => $iCalEvent->get_summary().':',
+            'subtitle' => $this->timeText($iCalEvent, true),
+          );
+        }
+        
+        $this->assign('events',  $events);        
+        break;
+
       case 'index':
         $this->loadWebAppConfigFile('calendar-index','calendarPages');
         $today = mktime(12,0,0);
@@ -380,7 +406,7 @@ class CalendarModule extends Module {
             }
           
             $events[] = array(
-              'url'      => $this->detailURL($iCalEvent,array('catid'=>$catid)),
+              'url'      => $this->detailURL($iCalEvent, array('catid' => $catid)),
               'title'    => $iCalEvent->get_summary(),
               'subtitle' => $subtitle,
             );
@@ -444,7 +470,7 @@ class CalendarModule extends Module {
                 
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
-          $subtitle = $this->timeText($iCalEvent);
+          $subtitle = $this->timeText($iCalEvent, true);
             if ($briefLocation = $iCalEvent->get_location()) {
               $subtitle .= " | $briefLocation";
             }
@@ -492,65 +518,63 @@ class CalendarModule extends Module {
 
         $fields = array();
         foreach ($calendarFields as $key => $info) {
-            $field = array();
-            
-            $value = $event->get_attribute($key);
-            if (empty($value)) {
-                continue; 
-            }
+          $field = array();
+          
+          $value = $event->get_attribute($key);
+          if (empty($value)) { continue; }
 
-            if (isset($info['label'])) {
-              $field['label'] = $info['label'];
-            }
-            
-            if (isset($info['class'])) {
-              $field['class'] = $info['class'];
-            }
-            
-            if (is_array($value)) {		
-              $fieldValues = array();
-              foreach ($value as $item) {
-                $fieldValue = '';
-                $fieldValueUrl = null;
-                
-                if (isset($info['type'])) {
-                  $fieldValue  = $this->valueForType($info['type'], $item);
-                  $fieldValueUrl = $this->urlForType($info['type'], $item);
-                } else {
-                  $fieldValue = $item;
-                }
-                
-                if (isset($fieldValueUrl)) {
-                  $fieldValue = '<a href="'.$fieldValueUrl.'">'.$fieldValue.'</a>';
-                }
-                
-                $fieldValues[] = $fieldValue;
-              }
-              $field['title'] = implode(', ', $fieldValues);
-            
-            } else {
-              if (isset($info['type'])) {
-                $field['title'] = $this->valueForType($info['type'], $value);
-                $field['url']   = $this->urlForType($info['type'], $value);
-              } else {
-                $field['title'] = nl2br($value);
-              }
-            }
-            
-            $fields[] = $field;
+          if (isset($info['label'])) {
+            $field['label'] = $info['label'];
           }
-        
+          
+          if (isset($info['class'])) {
+            $field['class'] = $info['class'];
+          }
+          
+          if (is_array($value)) {		
+            $fieldValues = array();
+            foreach ($value as $item) {
+              $fieldValue = '';
+              $fieldValueUrl = null;
+              
+              if (isset($info['type'])) {
+                $fieldValue  = $this->valueForType($info['type'], $item);
+                $fieldValueUrl = $this->urlForType($info['type'], $item);
+              } else {
+                $fieldValue = $item;
+              }
+              
+              if (isset($fieldValueUrl)) {
+                $fieldValue = '<a href="'.$fieldValueUrl.'">'.$fieldValue.'</a>';
+              }
+              
+              $fieldValues[] = $fieldValue;
+            }
+            $field['title'] = implode(', ', $fieldValues);
+          
+          } else {
+            if (isset($info['type'])) {
+              $field['title'] = $this->valueForType($info['type'], $value);
+              $field['url']   = $this->urlForType($info['type'], $value);
+            } else {
+              $field['title'] = nl2br($value);
+            }
+          }
+          
+          $fields[] = $field;
+        }        
 
         $this->assign('fields', $fields);
         //error_log(print_r($fields, true));
         break;
         
       case 'search':
-        if ($filter = $this->getArg('filter')) {
-          $searchTerms = trim($filter);
-          $timeframeKey = $this->getArg('timeframe', 0);
+        $searchTerms  = $this->getArg('filter');
+        $timeframeKey = $this->getArg('timeframe', 0);
+        $type = $this->getArg('type', $this->getDefaultFeed());
+          
+        if ($searchTerms && isset($this->searchOptions[$timeframeKey])) {
           $searchOption = $this->searchOptions[$timeframeKey];
-          $type = $this->getArg('type', $this->getDefaultFeed());
           
           $feed = $this->getFeed($type);
           
@@ -568,7 +592,9 @@ class CalendarModule extends Module {
             }
         
             $events[] = array(
-              'url'      => $this->detailURL($iCalEvent, array('filter'=>$searchTerms, 'timeframe'=>$timeframeKey)),
+              'url'      => $this->detailURL($iCalEvent, array(
+                'filter'    => $searchTerms, 
+                'timeframe' => $timeframeKey)),
               'title'    => $iCalEvent->get_summary(),
               'subtitle' => $subtitle
             );
