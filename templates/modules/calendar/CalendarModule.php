@@ -274,6 +274,9 @@ class CalendarModule extends Module {
   {
     if (!$this->feeds) {
         $this->feeds = $this->loadFeedData();
+        if (!is_array($this->feeds)) {
+            $this->feeds = array();
+        }
     }
     
     return $this->feeds;
