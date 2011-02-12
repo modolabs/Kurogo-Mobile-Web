@@ -4,7 +4,7 @@ GitHub Repository
 
 Kurogo is an open source project. You are free to download, update and use the code for your own
 use without charge. The project uses the `Git <http://git-scm.com/>`_ distributed version control
-system. The Git repository is hosted by GitHub. It can be found at https://github.com/Kurogo/Kurogo-Mobile-Web.
+system. The Git repository is hosted by GitHub. It can be found at https://github.com/modolabs/Kurogo-Mobile-Web.
 
 For those not familiar with Git or GitHub, please view the `GitHub Help Site <http://help.github.com/>`_.
 
@@ -13,26 +13,26 @@ Forking and Managing your repository
 ====================================
 
 If you simply want to download the code, you should clone the repository using
-:kbd:`git clone git@github.com:modolabs/Kurogo-Mobile-Web.git`
+:kbd:`git clone git://github.com/modolabs/Kurogo-Mobile-Web.git`
 
 If you are interested in maintaining your own project you should `fork <http://help.github.com/forking/>`_
 the project. 
 
 #. Log into GitHub
-#. Browse to https://github.com/Kurogo/Kurogo-Mobile-Web
+#. Browse to https://github.com/modolabs/Kurogo-Mobile-Web
 #. Click the **fork** icon in the upper right portion of the page
 #. (Optional) You may wish to rename your project
 #. Clone your project to your local machine. 
 #. Set up an upstream remote: 
    
-   * :kbd:`git remote add upstream git@github.com:modolabs/Kurogo-Mobile-Web.git`
+   * :kbd:`git remote add upstream git://github.com/modolabs/Kurogo-Mobile-Web.git`
    * :kbd:`git fetch upstream`
-   * :kbd:`git branch upstream`
+   * :kbd:`git checkout -b upstream/master`
 
 #. When new changes come down you can run:
    
    * :kbd:`git checkout upstream` Change to upstream branch
-   * :kbd:`git pull` Pull down changes
+   * :kbd:`git pull upstream master` Pull down changes
    * :kbd:`git checkout master` Change to master branch
    * :kbd:`git merge upstream` Merge changes into master branch
 

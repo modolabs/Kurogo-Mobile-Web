@@ -4,6 +4,10 @@
   * @subpackage Calendar
   */
 
+interface CalendarInterface {
+    public function getEventsInRange(TimeRange $range=null, $limit=null);
+}
+
 /**
   * TimeRange: class describing a time interval.
   * @package ExternalData

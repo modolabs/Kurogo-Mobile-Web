@@ -63,7 +63,7 @@ Libraries
 The framework utilizes a number of code libraries to modularize and abstract certain processes and 
 encourage code reuse. The design goal behind the libraries is to ensure that they operate as generically
 as possible so that they can function in a variety of uses and contexts (even if, in practice, they are
-currently only used by one). Nearly all the libraries exist as PHP classes and currently fall
+currently used in only one context). Nearly all the libraries exist as PHP classes and currently fall
 into one of several categories:
 
 --------------------
@@ -101,9 +101,15 @@ Included examples of DataControllers/Parsers include:
 * *PeopleController* - access directory/person data. The only included implementation at this time 
   is the *LDAPDataController* which queries information from an LDAP directory. Note this is distinct
   from authenticating users.
-   
+
 These classes also use the *DiskCache* class to cache the retrieved data.
 
+Other included Data Parsers:
+
+* *PassthroughDataParser* - A no-op parser. Passes the data as is.
+* *JSONDataParser* - Parses JSON content into a PHP structure.
+* *DOMDataParser* - Parses HTML content into a DOM Object
+   
 ---------------
 Database Access
 ---------------
@@ -130,6 +136,8 @@ User Access and Authentication
 -------------
 Configuration
 -------------
+
+See :doc:`configuration` for more information on configuring Kurogo.
 
 * *Config* - An abstract class that stores key/value data and has logic for handling replacement values
   (i.e referencing other keys' values within a value) 
@@ -182,12 +190,12 @@ template system and file naming) A non-exhaustive list of these templates includ
   
   * **listitem.tpl** template used for an individual item in a list
   
-* **pager.tpl** - ?
-* **results.tpl** - ?
-* **search.tpl** - ?
-* **share.tpl** - ?
-* **springboard** - ?
-* **tabs.tpl** - ?
+* **pager.tpl** - template for providing pagination for long-form content
+* **results.tpl** - template for displaying results in a list
+* **search.tpl** - template for presenting a search box
+* **share.tpl** - template for presenting a sharing content via social networking
+* **springboard** - template for displaying content as a grid of icons
+* **tabs.tpl** - template for displaying content in tabs
 
 -------
 Modules
@@ -202,7 +210,7 @@ The naming conventions are very important (especially for case sensitive file sy
 * The folder **must** be lower case and be the same as the url of the module (/about, /home, /links)
 * The folder **must** contain a PHP file named *LocationModulenameModule.php*. If the module is located
   in the *site* folder then it should be called *SiteModulenameModule.php*. If the module is located
-  in the *theme* folder then it should be called *ThemeModulenameModule.php*. Project modules are
+  in the *theme* folder then it should be called *ThemeModulenameModule.php*. Included modules are
   called *ModulenameModule.php*.
 * The first (and ONLY) letter of the module **must** be capitalized and followed by Module.php. 
   

@@ -4,6 +4,7 @@
 <head>
   <meta http-equiv="content-type" content="application/xhtml+xml" />
   <title>{$moduleName}{if !$isModuleHome}: {$pageTitle}{/if}</title>
+  <link rel="shortcut icon" href="/favicon.ico" />
   <link href="{$minify['css']}" rel="stylesheet" media="all" type="text/css"/>
   {foreach $inlineCSSBlocks as $css}
     <style type="text/css" media="screen">
@@ -61,6 +62,9 @@
     {/if}
   {/block}
   
+  {if !$autoPhoneNumberDetection}
+  <meta name="format-detection" content="telephone=no">
+  {/if}
   <meta name="HandheldFriendly" content="true" />
   <meta name="viewport" id="viewport" 
     content="width=device-width, {if $scalable|default:true}user-scalable=yes{else}user-scalable=no, initial-scale=1.0, maximum-scale=1.0{/if}" />

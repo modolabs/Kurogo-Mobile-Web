@@ -443,19 +443,3 @@ The method *getModuleVar* will attempt to retrieve a value from the *config/modu
 You can also use the *getSiteVar* method to retrive a value from *config/config.ini* which is used by
 all modules
 
-================
-Providing Search
-================
-
-One of the more useful features of the framework is federated search. This allows a user to make a 
-search request at the home screen that returns results from all modules that provide searching capabilities
-
-There are only 2 things you need to do to provide searching capabilities. Enable the search option in
-your module's config file and implementing the *federatedSearch* method in your module code. 
-
-* Edit *SITE_DIR/config/module/video.ini* and change *search* to *1*. 
-* Edit *SiteVideoModule.php* and add this new method::
-
-    <?php
-
-

@@ -38,8 +38,8 @@ class LinksModule extends Module {
     
         case 'links':
             $adminModule->setTemplatePage('admin_links', $this->id);
-            $adminModule->addExternalJavascript(URL_BASE . "modules/{$this->id}/javascript/admin.js");
-            $adminModule->addExternalCSS(URL_BASE . "modules/{$this->id}/css/admin.css");
+            $adminModule->addExternalJavascript("/modules/{$this->id}/javascript/admin.js");
+            $adminModule->addExternalCSS("/modules/{$this->id}/css/admin.css");
             $links = $this->getModuleArray('links');
             $adminModule->assign('links', $links);
             break;
@@ -56,7 +56,7 @@ class LinksModule extends Module {
       if (!is_array($link)) {
         unset($link);
       } else if (isset($link['icon']) && strlen($link['icon'])>0) {
-        $link['img'] = sprintf("%smodules/%s/images/%s%s", URL_BASE, $this->id, $link['icon'], $this->imageExt);
+        $link['img'] = "/modules/$this->id/images/".$this->id.$this->imageExt;
       }
     }
     

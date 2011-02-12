@@ -42,14 +42,14 @@ class TwitterAuthentication extends OAuthAuthentication
                 $data = $this->cache->read($cacheFilename);
             } else {
                 //cache isn't fresh, load the data
-                if ($data = $this->doOAuthCall($this->API_URL .'/users/show.json', 'GET', array('screen_name'=>$login))) {
+                if ($data = $this->oauthRequest('GET', $this->API_URL .'/users/show.json', array('screen_name'=>$login))) {
                     $this->cache->write($data, $cacheFilename);
                 }
                 
             }
         } else {
             //load the data
-            $data = $this->doOAuthCall($this->API_URL . '/users/show.json', 'GET', array('screen_name'=>$login));
+            $data = $this->oauthRequest('GET', $this->API_URL . '/users/show.json', array('screen_name'=>$login));
         }
         
 		// make the call
@@ -68,11 +68,11 @@ class TwitterAuthentication extends OAuthAuthentication
         return false;
     }
     
-    protected function getAuthURL()
+    protected function getAuthURL(array $params)
     {
-        $url = "https://api.twitter.com/oauth/authenticate?" . http_build_query(array(
+        $url = "https://api.twitter.com/oauth/authenticate?" . http_build_query(array_merge($params, array(
             'oauth_token'=>$this->token
-            )
+            ))
         );
         return $url;
     }
@@ -83,7 +83,7 @@ class TwitterAuthentication extends OAuthAuthentication
         $args = is_array($args) ? $args : array();
         if (!isset($args['CONSUMER_KEY'], $args['CONSUMER_SECRET']) || 
             strlen($args['CONSUMER_KEY'])==0 || strlen($args['CONSUMER_SECRET'])==0) {
-            throw new Exception("Consumer key and secret not set");
+            throw new Exception("Twitter Consumer key and secret not set");
         }
         
         $this->consumer_key = $args['CONSUMER_KEY'];

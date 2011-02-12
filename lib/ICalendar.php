@@ -9,7 +9,7 @@
 /**
   * 
   */
-require_once('TimeRange.php');
+require_once realpath(LIB_DIR.'/DateTimeUtils.php');
 
 /**
  * ICalendar
@@ -663,7 +663,7 @@ class ICalRecurrenceRule extends ICalObject {
   * @package ExternalData
   * @subpackage Calendar
  */
-class ICalendar extends ICalObject {
+class ICalendar extends ICalObject implements CalendarInterface {
   protected $properties;
   public $timezone = NULL;
   protected $events;

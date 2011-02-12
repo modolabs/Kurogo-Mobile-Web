@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Kurogo Framework Guide
-**********************
+Kurogo Developer's Guide
+************************
 
 The Kurogo Framework is a PHP based web application that can help institutions efficiently deliver
 campus services and information to a wide array of mobile devices. Based on the MIT Framework, this
@@ -27,6 +27,7 @@ reaches 1.0 status
 .. toctree::
    :maxdepth: 2
 
+   overview
    github
    setup
    helloworld

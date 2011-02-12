@@ -63,6 +63,8 @@ abstract class Module {
   
   protected $cacheMaxAge=0;
   
+  protected $autoPhoneNumberDetection = true;
+  
   public function getID()
   {
     return $this->id;
@@ -280,7 +282,7 @@ abstract class Module {
 
   public function redirectToModule($id, $args=array()) {
   
-    $url = sprintf("%s/%s/?%s", URL_BASE, $id, http_build_query($args));
+    $url = sprintf("%s%s/?%s", URL_BASE, $id, http_build_query($args));
     //error_log('Redirecting to: '.$url);
     
     header("Location: $url");
@@ -400,7 +402,7 @@ abstract class Module {
          return false;
        }
 
-       if (!isset($newFeedData['BASE_URL']) || empty($newFeedData['BASE_URL'])) {
+       if (isset($newFeedData['BASE_URL']) && empty($newFeedData['BASE_URL'])) {
          $error = "Feed URL cannot be blank";
          return false;
        }
@@ -466,7 +468,7 @@ abstract class Module {
         switch ($section)
         {
             case 'feeds':
-            case 'page':
+            case 'nav':
                 $type = $section;
                 break;
             default:
@@ -479,7 +481,7 @@ abstract class Module {
         switch ($section)
         {
             case 'feeds':
-            case 'page':
+            case 'nav':
                 $moduleData = $moduleData[$section];
                 // clear out empty values
                 foreach ($moduleData as $feed=>$feedData) {
@@ -576,9 +578,10 @@ abstract class Module {
             }
         }
         
-        $this->page = $page;
+        $this->setPage($page);
         $this->setTemplatePage($this->page, $this->id);
         $this->args = $args;
+        $this->setAutoPhoneNumberDetection($GLOBALS['siteConfig']->getVar('AUTODETECT_PHONE_NUMBERS'));
         
         $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
         $this->platform      = $GLOBALS['deviceClassifier']->getPlatform();
@@ -603,6 +606,12 @@ abstract class Module {
             $this->imageExt = '.gif';
             break;
         }
+  }
+  
+  protected function setAutoPhoneNumberDetection($bool)
+  {
+    $this->autoPhoneNumberDetection = $bool ? true : false;
+    $this->assign('autoPhoneNumberDetection', $this->autoPhoneNumberDetection);
   }
   
   public function getSession()
@@ -814,6 +823,9 @@ abstract class Module {
   protected function addExternalJavascript($url) {
     $this->externalJavascriptURLs[] = $url;
   }
+  protected function addJQuery() {
+    $this->addExternalJavascript(URL_BASE . 'common/javascript/jquery.js');
+  }
   
   //
   // Breadcrumbs
@@ -951,6 +963,9 @@ abstract class Module {
   
   
   // Programmatic overrides for titles generated from backend data
+  protected function setPage($page) {
+    $this->page = $page;
+  }
   protected function setPageTitle($title) {
     $this->pageTitle = $title;
   }
@@ -980,7 +995,7 @@ abstract class Module {
   
   protected function getPageData()
   {
-     $pageConfig = $this->getConfig($this->id, 'page');
+     $pageConfig = $this->getConfig($this->id, 'nav');
      return $pageConfig->getSectionVars(true);
   }
   
@@ -1138,6 +1153,7 @@ abstract class Module {
     /* set cache age. Modules that present content that rarely changes can set this value
     to something higher */
     header(sprintf("Cache-Control: max-age=%d", $this->cacheMaxAge));
+    header("Expires: " . gmdate('D, d M Y H:i:s', time() + $this->cacheMaxAge) . ' GMT');
 
     // Load template for page
     $this->templateEngine->displayForDevice($template);    

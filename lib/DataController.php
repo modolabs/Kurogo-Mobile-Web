@@ -94,7 +94,7 @@ abstract class DataController
     protected function init($args)
     {
         $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
-        $parser = call_user_func(array($args['PARSER_CLASS'],'factory'),$args);
+        $parser = DataParser::factory($args['PARSER_CLASS'], $args);
         
         $this->setParser($parser);
         
@@ -108,15 +108,18 @@ abstract class DataController
         
     }
 
-    public static function factory($args)
+    public static function factory($controllerClass, $args)
     {
-        $controllerClass = isset($args['CONTROLLER_CLASS']) ? $args['CONTROLLER_CLASS'] : __CLASS__;
-
         if (!class_exists($controllerClass)) {
             throw new Exception("Controller class $controllerClass not defined");
         }
         
         $controller = new $controllerClass;
+        
+        if (!$controller instanceOf DataController) {
+            throw new Exception("$controllerClass is not a subclass of DataController");
+        }
+
         $controller->init($args);
         
         return $controller;
@@ -132,15 +135,18 @@ abstract class DataController
         return $url;
     }
     
-    public function parseData($data)
+    protected function parseData($data, DataParser $parser=null)
     {
-        return $this->parser->parseData($data);
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        return $parser->parseData($data);
     }
     
-    public function getParsedData()
+    public function getParsedData(DataParser $parser=null)
     {
         $data = $this->getData();
-        return $this->parseData($data);
+        return $this->parseData($data, $parser);
     }
     
     public function getData()
@@ -165,8 +171,9 @@ abstract class DataController
                     error_log(sprintf("Retrieving %s", $url));
                 }
                 
-                $data = file_get_contents($url);
-                $this->cache->write($data, $cacheFilename);
+                if ($data = $this->retrieveData($url)) {
+                    $this->cache->write($data, $cacheFilename);
+                }
                 
                 if ($this->debugMode) {
                     file_put_contents($this->cacheMetaFile(), $url);
@@ -177,6 +184,10 @@ abstract class DataController
         }
         
         return $data;
+    }
+    
+    protected function retrieveData($url) {
+        return file_get_contents($url);
     }
 
     public function setCacheLifetime($seconds)
@@ -213,6 +224,12 @@ abstract class DataController
         
         return $items;
         
+    }
+
+    public function getItemByIndex($index)
+    {
+        $items = $this->getParsedData();
+        return current($items);
     }
     
     public function items($start=0, $limit=null, &$totalItems)

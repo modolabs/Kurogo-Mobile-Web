@@ -13,15 +13,18 @@ abstract class DataParser
     protected $encoding='utf-8';
     protected $debugMode=false;
     
-    public static function factory($args)
+    public static function factory($parserClass, $args)
     {
-        $parserClass = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : __CLASS__;
-        
         if (!class_exists($parserClass)) {
             throw new Exception("Parser class $parserClass not defined");
         } 
         
         $parser = new $parserClass;
+        
+        if (!$parser instanceOf DataParser) {
+            throw new Exception("$parserClass is not a subclass of DataParser");
+        }
+        
         $parser->init($args);
         return $parser;
     }

@@ -6,18 +6,18 @@
 /**
   * @package Authentication
   */
-class GoogleAppsAuthentication extends OAuthAuthentication
+class GoogleAuthentication extends AuthenticationAuthority
 {
-    protected $tokenSessionVar = 'google_oauth_token';
-    protected $tokenSecretSessionVar = 'google_oauth_token_secret';
-    protected $accessTokenURL = 'https://www.google.com/accounts/OAuthGetAccessToken';
-    protected $accessTokenMethod = 'POST';
-    protected $domain;
-    protected $oauth = false;
-
-    public function getDomain()
+    // auth is handled by openid
+    protected function auth($login, $password, &$user)
     {
-        return $this->domain;
+        return AUTH_FAILED;
+    }
+
+    //does not support groups
+    public function getGroup($group)
+    {
+        return false;
     }
 
     //Not sure if we can get users or not...
@@ -62,7 +62,7 @@ class GoogleAppsAuthentication extends OAuthAuthentication
     
     protected function getUserFromArray(array $array)
     {
-        $user = new GoogleAppsUser($this);
+        $user = new GoogleUser($this);
         if ($user->setVars($array)) {
             $this->cacheUserArray($user->getUserID(), $array);
             return $user;
@@ -78,15 +78,10 @@ class GoogleAppsAuthentication extends OAuthAuthentication
      */
     protected function getOpenIDEndpoint()
     {
-        $url = "https://www.google.com/accounts/o8/.well-known/host-meta?hd=" . $this->domain;
-        if ($host_meta = file_get_contents($url)) {
-            if (preg_match("/Link: <(.*?)>/", $host_meta, $matches)) {
-                $url = $matches[1];
-                if ($xrds = file_get_contents($url)) {
-                    if (preg_match("#<URI>(.*?)</URI>#", $xrds, $matches)) {
-                        return $matches[1];
-                    }
-                }
+        $url = "https://www.google.com/accounts/o8/id" ;
+        if ($xrds = file_get_contents($url)) {
+            if (preg_match("#<URI>(.*?)</URI>#", $xrds, $matches)) {
+                return $matches[1];
             }
         }
 
@@ -121,22 +116,6 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         $ARGS = $_SERVER['REQUEST_METHOD'] == 'GET' ? $_GET : $_POST;
         if (isset($ARGS['openid_mode'])) {
             if (isset($ARGS['openid_identity'])) {
-                if ($this->oauth) {
-                    if ($ns = $this->getOpenIDNameSpace('http://specs.openid.net/extensions/oauth/1.0', $ARGS)) {
-                        if ($request_token = $this->getOpenIDValue('request_token', $ns, $ARGS)) {
-                            if ($result = $this->getAccessToken($request_token)) {
-                                $ARGS['oauth_token'] = $result['oauth_token'];
-                                $ARGS['oauth_token_secret'] = $result['oauth_token_secret'];
-                            } else {
-                                throw new Exception("Error getting Access Token");
-                            }
-                        } else {
-                            throw new Exception("Error getting Access Token");
-                        }
-                    } else {
-                        throw new Exception("Could not find OAuth information");
-                    }
-                }
                 if ($user = $this->getUserFromArray($ARGS)) {
     
                     $session = $module->getSession();
@@ -160,20 +139,16 @@ class GoogleAppsAuthentication extends OAuthAuthentication
     protected function getAuthURL()
     {
         if (!$url = $this->getOpenIDEndpoint()) {
-            throw new Exception("Unable to get OpenID endpoint url for $this->domain.");
+            throw new Exception("Unable to get Google OpenID endpoint.");
         }
         
         $url_parts = parse_url(FULL_URL_BASE);
 
-        $realm = sprintf("http://%s%s", $this->domain != $url_parts['host'] ? '*.' : '', $this->domain);
+        $realm = sprintf("http://%s", $url_parts['host']);
         if (!in_array($_SERVER['SERVER_PORT'], array(80,443))) {
-            if ($this->oauth) {
-                throw new Exception("OAuth will not work with custom ports");
-            }
-            
             $realm .= ":" . $_SERVER['SERVER_PORT'];
         }
-
+        
         $parameters = array(
             'openid.mode'=>'checkid_setup',
             'openid.ns'=>'http://specs.openid.net/auth/2.0',
@@ -191,76 +166,23 @@ class GoogleAppsAuthentication extends OAuthAuthentication
             'openid.ax.type.lastname'=>'http://axschema.org/namePerson/last'
         );
         
-        if ($this->oauth) {
-            $parameters = array_merge($parameters, array(
-            'openid.ns.oauth'=>'http://specs.openid.net/extensions/oauth/1.0',
-            'openid.oauth.consumer'=>$this->consumer_key,
-            'openid.oauth.scope'=>implode(' ', array(
-	            'http://www.google.com/calendar/feeds',
-                'http://docs.google.com/feeds/',
-                'http://spreadsheets.google.com/feeds/'
-                )
-            )));
-        }
-	    
 	    $url .= stripos($url, "?") ? '&' : '?';
         $url .= http_build_query($parameters);
         return $url;
-    }
-
-    public function init($args)
-    {
-        parent::init($args);
-        $args = is_array($args) ? $args : array();
-
-        if (!isset($args['DOMAIN']) || strlen($args['DOMAIN'])==0) {
-            throw new Exception("Google Apps Domain not set");
-        }
-
-        $this->domain = $args['DOMAIN'];
-
-        $url_parts = parse_url(FULL_URL_BASE);
-        if (!preg_match("#" . $this->domain . "$#", $url_parts['host'])) {
-            throw new Exception("This application must be run on a subdomain of $this->domain");
-        }
-
-        if (isset($args['OAUTH']) && $args['OAUTH']) {
-            if (!isset($args['CONSUMER_KEY'], $args['CONSUMER_SECRET'])) {
-                throw new Exception("Consumer Key and secret must be set when OAuth is on");
-            }
-            
-            $this->oauth = true;
-            $this->consumer_key = $args['CONSUMER_KEY'];
-            $this->consumer_secret = $args['CONSUMER_SECRET'];
-        }
     }
 }
 
 /**
   * @package Authentication
   */
-class GoogleAppsUser extends BasicUser
+class GoogleUser extends BasicUser
 {
-    protected $oauth_token;
-    protected $oauth_token_secret;
-    
-    public function getDomain()
-    {
-        return $this->AuthenticationAuthority->getDomain();
-    }
-
     protected function valueKeyForTypeKey($key) {
         if (preg_match("/^openid_(.*?)_type_(.*?)$/", $key, $matches)) {
             return sprintf("openid_%s_value_%s", $matches[1], $matches[2]);
         }
         
         return null;
-    }
-    
-    public function setOAuthToken($token, $token_secret)
-    {
-        $this->oauth_token = $_SESSION['google_oauth_token'] = $token;
-        $this->oauth_token_secret = $_SESSION['google_oauth_token_secret'] = $token_secret;
     }
     
     public function setVars(array $array)
@@ -270,10 +192,6 @@ class GoogleAppsUser extends BasicUser
         }
         
         $this->setUserID($array['openid_identity']);
-        
-        if (isset($array['oauth_token'], $array['oauth_token_secret'])) {
-            $this->setOAuthToken($array['oauth_token'], $array['oauth_token_secret']);
-        }
         
         if ( ($type_key = array_search('http://schema.openid.net/contact/email', $array)) !== false) {
             if ( ($value_key = $this->valueKeyForTypeKey($type_key)) && isset($array[$value_key])) {

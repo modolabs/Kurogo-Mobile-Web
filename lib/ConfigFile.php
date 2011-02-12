@@ -64,10 +64,12 @@ class ConfigFile extends Config {
         case 'module-default':
             $pattern = sprintf('%s/%%1$s/config/%%1$s-default.ini', MODULES_DIR);
             break;
+        case 'nav':
+            $pattern = sprintf("%s/web/%s/%%s.ini", SITE_CONFIG_DIR, $type);
+            break;
         case 'api':
         case 'web':
         case 'module':
-        case 'page':
         case 'feeds':
             $pattern = sprintf("%s/%s/%%s.ini", SITE_CONFIG_DIR, $type);
             break;
