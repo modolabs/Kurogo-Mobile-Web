@@ -4,15 +4,8 @@
  {
      protected $cacheFolder = "Videos"; // set the cache folder
      protected $cacheSuffix = "xml";   // set the suffix for cache files
+     protected $DEFAULT_PARSER_CLASS='RSSDataParser';
 
-     public static function factory($args=null)
-     {
-         $args['CONTROLLER_CLASS'] =  __CLASS__;
-         $args['PARSER_CLASS'] =  'RSSDataParser';
-         $controller = parent::factory($args);
-         return $controller;
-     }
-  
      public function latest($accountid)
      {
      	 // TODO use $playerid

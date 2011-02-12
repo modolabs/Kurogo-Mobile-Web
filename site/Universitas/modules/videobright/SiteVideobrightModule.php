@@ -7,7 +7,7 @@
    
    protected function initializeForPage() {
 
-     $controller = BrightcoveDataController::factory();
+     $controller = DataController::factory('BrightcoveDataController');
 
 	 $playerid = $this->getModuleVar('playerId');
 	 $accountid = $this->getModuleVar('accountId');
