@@ -9,13 +9,13 @@ class EmergencyModule extends Module
 
         $config = $this->loadFeedData();
         if(isset($config['contacts'])) {
-          $contactsController = ContactsListDataController::factory($config);
+          $contactsController = DataController::factory($config['contacts']['CONTROLLER_CLASS'], $config);
         } else {
           $contactsController = NULL;
         }
         
         if(isset($config['notice'])) {
-          $emergencyNoticeController = EmergencyNoticeDataController::factory($config['notice']);
+          $emergencyNoticeController = DataController::factory('EmergencyNoticeDataController', $config['notice']);
         } else {
           $emergencyNoticeController = NULL;
         }        

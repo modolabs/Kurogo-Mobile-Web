@@ -34,12 +34,4 @@ class EmergencyNoticeDataController extends DataController
         return $this->emergencyNotice;
     }
 
-    public static function factory($args)
-    {
-        $args = array(
-	    'BASE_URL' => $args['RSS_URL'],
-            'CONTROLLER_CLASS' => __CLASS__,
-        );
-        return parent::factory($args);
-    }
 }

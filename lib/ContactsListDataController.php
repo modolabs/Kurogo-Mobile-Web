@@ -49,9 +49,4 @@ abstract class ContactsListDataController extends DataController
 
     abstract protected function loadContacts();
 
-    public static function factory($args)
-    {
-        $args['CONTROLLER_CLASS'] = $args['contacts']['CONTROLLER_CLASS'];
-        return parent::factory($args);
-    }
 }
