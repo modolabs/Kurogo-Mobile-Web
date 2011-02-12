@@ -57,16 +57,19 @@ abstract class PeopleController
             $this->setPersonClass($args['PERSON_CLASS']);
         }
     }
-    
-    public static function factory($args)
-    {
-        $controllerClass = isset($args['CONTROLLER_CLASS']) ? $args['CONTROLLER_CLASS'] : __CLASS__;
 
+    public static function factory($controllerClass, $args)
+    {
         if (!class_exists($controllerClass)) {
             throw new Exception("Controller class $controllerClass not defined");
         }
         
         $controller = new $controllerClass;
+
+        if (!$controller instanceOf PeopleController) {
+            throw new Exception("$controller class is not a subclass of PeopleController");
+        }
+        
         $controller->init($args);
         
         return $controller;

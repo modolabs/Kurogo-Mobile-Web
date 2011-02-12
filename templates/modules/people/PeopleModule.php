@@ -179,7 +179,7 @@ class PeopleModule extends Module {
   {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
-        $controller = PeopleController::factory($feedData);
+        $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         $controller->setAttributes($this->detailAttributes);
         $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
         return $controller;
