@@ -1,7 +1,9 @@
 <ul class="results">
   {foreach $results as $item}
     {if !isset($item['separator'])}
-      <li{if $item['img']} class="icon"{/if}>{include file="findInclude:common/listItem.tpl"}</li>
+      <li{if $item['img']} class="icon"{/if}>
+        {include file="findInclude:common/listItem.tpl" subTitleNewline=$subTitleNewline|default:true}
+      </li>
     {/if}
   {/foreach}
   {if count($results) == 0}

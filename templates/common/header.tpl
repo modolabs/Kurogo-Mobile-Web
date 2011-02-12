@@ -29,10 +29,14 @@
       </script>
     {/if}
     
+    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
+      <script type="text/javascript">{$inlineJavascriptBlock}</script>
+    {/foreach}
+    
     {foreach $javascriptURLs as $url}
       <script src="{$url}" type="text/javascript"></script>
-    {/foreach}  
-
+    {/foreach}
+    
     <script src="{$minify['js']}" type="text/javascript"></script>
 
     {if count($onOrientationChangeBlocks)}

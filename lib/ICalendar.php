@@ -317,8 +317,7 @@ class ICalEvent extends ICalObject {
     return array_merge($this->standardAttributes(), array_keys($this->properties));
   }
   
-  public function setRange(TimeRange $range)
-  {
+  public function setRange(TimeRange $range) {
     $this->range = $range;
   }
 
@@ -434,7 +433,7 @@ class ICalEvent extends ICalObject {
             $datetime = new DateTime($value);
         }
 
-        $this->exdates[] = $datetime->format('U'); //start time
+        $this->exdates[] = $datetime->format('U'); // start time
       break;
     case 'TZID': // this only gets called by ICalendar::__construct
       $this->tzid = $value;

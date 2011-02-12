@@ -31,13 +31,11 @@ class DeviceClassifier {
     $this->certs    = count($parts) > 2 && strlen($parts[2]) ? $parts[2] : false;
   }
   
-  private function cacheFolder()
-  {
+  private function cacheFolder() {
     return CACHE_DIR . "/DeviceDetection";
   }
 
-  private function cacheLifetime()
-  {
+  private function cacheLifetime() {
     return 900;
   }
   
@@ -52,7 +50,6 @@ class DeviceClassifier {
       //error_log(__FUNCTION__."(): choosing device cookie '{$_COOKIE['layout']}' <{$_SERVER['REQUEST_URI']}>");
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
-    
       $user_agent = $_SERVER['HTTP_USER_AGENT'];
       
       /* see if the server has cached the results from the the device detection server */
@@ -61,8 +58,8 @@ class DeviceClassifier {
 
       if ($cache->isFresh($cacheFilename)) {
            $json = $cache->read($cacheFilename);
-      } else {
 
+      } else {
           $query = http_build_query(array(
             'user-agent' => $user_agent
           ));

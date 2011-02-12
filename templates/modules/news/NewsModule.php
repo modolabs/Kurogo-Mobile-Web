@@ -252,6 +252,7 @@ class NewsModule extends Module {
           );
           $stories[] = $item;
         }
+        
         $this->assign('stories', $stories);
         break;
       

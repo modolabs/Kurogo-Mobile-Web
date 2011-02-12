@@ -74,7 +74,8 @@ protected function generate_popular_content($system, $data) {
       "courses" => "Courses", 
       "news" => "News",
       "dining" => "Dining",
-      "shuttles" => "ShuttleTracker",
+      "transit" => "ShuttleTracker",
+      "libraries" => "Libraries",
       );
   }
 

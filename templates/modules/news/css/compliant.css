@@ -32,7 +32,7 @@ li.story {
     padding:0 8px 0 0;
     width: 5.5em;
     height: 5.5em;
-    background: transparent url('/common/images/news-placeholder.png') no-repeat top left;
+    background: transparent url('/modules/news/images/news-placeholder.png') no-repeat top left;
     background-size: 5.5em;
 }
 

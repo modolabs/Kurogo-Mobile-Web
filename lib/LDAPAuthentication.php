@@ -289,7 +289,6 @@ class LDAPAuthentication extends AuthenticationAuthority
         if ( empty($this->ldapServer) || empty($this->ldapPort)) {
             throw new Exception("Invalid LDAP Options");
         }
-        
     }
 }
 

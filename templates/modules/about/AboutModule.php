@@ -11,8 +11,7 @@
 class AboutModule extends Module {
   protected $id = 'about';
 
-  protected function getModuleItemForKey($key, $value)
-  {
+  protected function getModuleItemForKey($key, $value) {
     $item = array(
         'label'=>ucfirst($key),
         'name'=>"moduleData[$key]",
@@ -21,8 +20,7 @@ class AboutModule extends Module {
         'type'=>'text'
     );
 
-    switch ($key)
-    {
+    switch ($key) {
         case 'ABOUT_HTML':
         case 'SITE_ABOUT_HTML':
             $item['type'] = 'paragraph';

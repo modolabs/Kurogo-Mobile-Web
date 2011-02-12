@@ -75,7 +75,7 @@ class Session
     {
         $user = new AnonymousUser();
         $this->setUser($user);
-		session_regenerate_id(true);
+		    session_regenerate_id(true);
         return true;
     }
 }

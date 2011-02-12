@@ -14,26 +14,26 @@
  * 
  */
 function siteLibAutoloader($className) {
-    $paths = array();
+  $paths = array();
 
-    /* If the className has Module in it then use the modules dir */
-    if (defined('MODULES_DIR') && preg_match("/(.*)Module/", $className, $bits)) {
-        $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
-    }
+  /* If the className has Module in it then use the modules dir */
+  if (defined('MODULES_DIR') && preg_match("/(.*)Module/", $className, $bits)) {
+    $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
+  }
 
-    /* use the site lib dir if it's been defined */
-    if (defined('SITE_LIB_DIR')) {
-        $paths[] = SITE_LIB_DIR;
+  /* use the site lib dir if it's been defined */
+  if (defined('SITE_LIB_DIR')) {
+    $paths[] = SITE_LIB_DIR;
+  }
+      
+  $paths[] = LIB_DIR;
+      
+  foreach ($paths as $path) {
+    $file = realpath_exists("$path/$className.php");
+    if ($file) {
+      require_once $file;
+      return;
     }
-
-    $paths[] = LIB_DIR;
-        
-    foreach ($paths as $path) {
-        $file = realpath_exists("$path/$className.php");
-        if ($file) {
-            require_once $file;
-            return;
-        }
-    }
-    return;
+  }
+  return;
 }

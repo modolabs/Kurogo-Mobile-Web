@@ -213,7 +213,6 @@ class PageViews {
       // Array('module' => ..., 'platform' => ..., 'viewcount' => ...)
       // one row per platform/module combo
       while($row = $result->fetch()) {
-        
         $output[] = array_map('trim', $row);
       }
 

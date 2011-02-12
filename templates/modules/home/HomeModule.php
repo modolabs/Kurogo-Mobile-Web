@@ -61,9 +61,9 @@ class HomeModule extends Module {
       $this->importCSSAndJavascript($module->exportCSSAndJavascript());
       
       $modulePanes[$blockName] = array(
-        'id' => $moduleID,
-        'url' => $this->buildURLForModule($moduleID, 'index'),
-        'title' => $module->getTemplateVars('pageTitle'),
+        'id'      => $moduleID,
+        'url'     => self::buildURLForModule($moduleID, 'index'),
+        'title'   => $module->getTemplateVars('pageTitle'),
         'content' => $paneContent,
       );  
     }
