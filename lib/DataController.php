@@ -108,8 +108,10 @@ abstract class DataController
         
     }
 
-    public static function factory($controllerClass, $args)
+    public static function factory($controllerClass, $args=array())
     {
+        $args = is_array($args) ? $args : array();
+
         if (!class_exists($controllerClass)) {
             throw new Exception("Controller class $controllerClass not defined");
         }
@@ -119,7 +121,7 @@ abstract class DataController
         if (!$controller instanceOf DataController) {
             throw new Exception("$controllerClass is not a subclass of DataController");
         }
-
+        
         $controller->init($args);
         
         return $controller;
