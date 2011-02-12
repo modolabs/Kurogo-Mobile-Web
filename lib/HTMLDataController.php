@@ -33,13 +33,4 @@ class HTMLDataController extends DataController
         
         return $content;
     }
-
-    public static function factory($args=null)
-    {
-        $args['CONTROLLER_CLASS'] = isset($args['CONTROLLER_CLASS']) ? $args['CONTROLLER_CLASS'] : __CLASS__;
-        $controller = parent::factory($args);
-        
-        return $controller;
-    }
-
 }

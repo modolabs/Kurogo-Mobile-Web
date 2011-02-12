@@ -42,7 +42,7 @@ class ContentModule extends Module {
                 return $content;
                 break;
             case 'html_url':
-                $controller = HTMLDataController::factory($feedData);
+                $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
                 if (isset($feedData['HTML_ID'])) {
                     $content = $controller->getContentById($feedData['HTML_ID']);
                 } else {
@@ -52,7 +52,7 @@ class ContentModule extends Module {
                 return $content;
                 break;
             case 'rss':
-                $controller = RSSDataController::factory($feedData);
+                $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
                 if ($item = $controller->getItemByIndex(0)) {
                     return $item->getContent();
                 }

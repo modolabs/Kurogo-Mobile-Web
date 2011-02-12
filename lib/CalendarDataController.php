@@ -96,15 +96,12 @@ class CalendarDataController extends DataController
         }
     }
     
-    public static function factory($args=null)
+    protected function init($args)
     {
-        $args['CONTROLLER_CLASS'] = isset($args['CONTROLLER_CLASS']) ? $args['CONTROLLER_CLASS'] : __CLASS__;
         $args['EVENT_CLASS'] = isset($args['EVENT_CLASS']) ? $args['EVENT_CLASS'] : self::DEFAULT_EVENT_CLASS;
-        $controller = parent::factory($args);
-        
-        return $controller;
+        parent::init($args);
     }
-
+    
     public function getItem($id, $time=null)
     {
         //use the time to limit the range of events to seek (necessary for recurring events)

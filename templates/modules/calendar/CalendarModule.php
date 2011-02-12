@@ -305,7 +305,10 @@ class CalendarModule extends Module {
     $feeds = $this->getFeeds();
     if (isset($feeds[$index])) {
         $feedData = $feeds[$index];
-        $controller = CalendarDataController::factory($feedData);
+        if (!isset($feedData['CONTROLLER_CLASS'])) {
+            $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
+        }
+        $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
         $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
         return $controller;
     } else {
