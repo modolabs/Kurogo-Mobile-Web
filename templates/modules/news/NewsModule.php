@@ -90,7 +90,10 @@ class NewsModule extends Module {
   public function getFeed($index) {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
-        $controller = RSSDataController::factory($feedData);
+        if (!isset($feedData['CONTROLLER_CLASS'])) {
+            $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
+        }
+        $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
         return $controller;
     } else {

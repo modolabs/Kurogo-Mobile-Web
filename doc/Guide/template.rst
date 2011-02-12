@@ -166,6 +166,8 @@ There are several variables you can pass to affect how it is displayed:
 * *navlistItems* an array of list items (each of which is an array). See *listitem* for a list of keys each list item should have
 * *secondary* adds the *secondary* class to the navlist
 
+.. _listitem:
+
 ------------
 listitem.tpl
 ------------

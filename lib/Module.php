@@ -402,7 +402,7 @@ abstract class Module {
          return false;
        }
 
-       if (!isset($newFeedData['BASE_URL']) || empty($newFeedData['BASE_URL'])) {
+       if (isset($newFeedData['BASE_URL']) && empty($newFeedData['BASE_URL'])) {
          $error = "Feed URL cannot be blank";
          return false;
        }
@@ -468,7 +468,7 @@ abstract class Module {
         switch ($section)
         {
             case 'feeds':
-            case 'page':
+            case 'nav':
                 $type = $section;
                 break;
             default:
@@ -481,7 +481,7 @@ abstract class Module {
         switch ($section)
         {
             case 'feeds':
-            case 'page':
+            case 'nav':
                 $moduleData = $moduleData[$section];
                 // clear out empty values
                 foreach ($moduleData as $feed=>$feedData) {
@@ -823,6 +823,9 @@ abstract class Module {
   protected function addExternalJavascript($url) {
     $this->externalJavascriptURLs[] = $url;
   }
+  protected function addJQuery() {
+    $this->addExternalJavascript(URL_BASE . 'common/javascript/jquery.js');
+  }
   
   //
   // Breadcrumbs
@@ -992,7 +995,7 @@ abstract class Module {
   
   protected function getPageData()
   {
-     $pageConfig = $this->getConfig($this->id, 'page');
+     $pageConfig = $this->getConfig($this->id, 'nav');
      return $pageConfig->getSectionVars(true);
   }
   

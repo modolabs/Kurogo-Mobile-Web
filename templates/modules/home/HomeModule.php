@@ -38,8 +38,8 @@ class HomeModule extends Module {
         case 'primary_modules':
         case 'secondary_modules':
             $adminModule->setTemplatePage('module_order', $this->id);
-            $adminModule->addExternalJavascript(URL_BASE . "modules/{$this->id}/javascript/admin.js");
-            $adminModule->addExternalCSS(URL_BASE . "modules/{$this->id}/css/admin.css");
+            $adminModule->addExternalJavascript("/modules/{$this->id}/javascript/admin.js");
+            $adminModule->addExternalCSS("/modules/{$this->id}/css/admin.css");
 
             $allModules = $this->getAllModules();
             $sectionModules = $this->getHomeScreenModules($section);
@@ -130,8 +130,8 @@ class HomeModule extends Module {
             if ($info['visible']) {
                 $module = array(
                   'title' => $info['title'],    
-                  'url'   => isset($info['url']) ? $info['url'] : URL_BASE . $id . '/',
-                  'img'   => isset($info['img']) ? $info['img'] : sprintf('%smodules/%s/images/%s%s', URL_BASE, $this->id, $id, $this->imageExt)
+                  'url'   => isset($info['url']) ? $info['url'] : "/$id",
+                  'img'   => isset($info['img']) ? $info['img'] :"/modules/$this->id/images/$id$this->imageExt"
                 );
                 if ($id == 'about' && $whatsNewCount > 0) {
                   $module['badge'] = $whatsNewCount;
@@ -163,18 +163,22 @@ class HomeModule extends Module {
         $federatedResults = array();
      
         foreach ($this->getHomeScreenModules() as $id => $info) {
-          $module = Module::factory($id);
-          if ($module->getModuleVar('search')) {
-            $results = array();
-            $total = $module->federatedSearch($searchTerms, 2, $results);
-            $federatedResults[] = array(
-              'title'   => $info['title'],
-              'results' => $results,
-              'total'   => $total,
-              'url'     => $module->urlForFederatedSearch($searchTerms),
-            );
-            unset($module);
-          }
+          try {
+              $module = Module::factory($id);
+              if ($module->getModuleVar('search')) {
+                $results = array();
+                $total = $module->federatedSearch($searchTerms, 2, $results);
+                $federatedResults[] = array(
+                  'title'   => $info['title'],
+                  'results' => $results,
+                  'total'   => $total,
+                  'url'     => $module->urlForFederatedSearch($searchTerms),
+                );
+                unset($module);
+              }
+            } catch (Exception $e) {
+                // not a real module (could be a URL)
+            }
         }
         //error_log(print_r($federatedResults, true));
         $this->assign('federatedResults', $federatedResults);

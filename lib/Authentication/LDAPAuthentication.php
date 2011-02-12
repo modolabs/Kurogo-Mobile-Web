@@ -8,8 +8,11 @@
   */
 class LDAPAuthentication extends AuthenticationAuthority
 {
+    protected $userClass='LDAPUser';
+    protected $groupClass='LDAPUserGroup';
     protected $ldapServer;
     protected $ldapPort=389;
+    protected $ldapSearchBase;
     protected $ldapUserSearchBase;
     protected $ldapGroupSearchBase;
     protected $ldapAdminDN;
@@ -78,7 +81,7 @@ class LDAPAuthentication extends AuthenticationAuthority
         return isset($this->fieldMap[$field]) ? $this->fieldMap[$field] : null;
     }
     
-    public function ldapSearchBase($type)
+    public function ldapSearchBase($type=null)
     {
         switch ($type)
         {
@@ -92,6 +95,10 @@ class LDAPAuthentication extends AuthenticationAuthority
                     return $this->ldapGroupSearchBase;
                 }
                 break;
+        }
+        
+        if ($this->ldapSearchBase) {
+            return $this->ldapSearchBase;
         }
         
         //we can attempt to "discover" the search base in many cases, but this might have some performance implications
@@ -144,6 +151,15 @@ class LDAPAuthentication extends AuthenticationAuthority
         if (!$this->getField('uid')) {
             throw new Exception('LDAP uid field not specified');
         }
+        
+        /* dn searches don't work so we have to get the uid value */
+        if (stripos($login, $this->ldapSearchBase())!==FALSE) {
+            if ($sr = ldap_read($ldap, $login, "(objectclass=*)", array($this->getField('uid')))) {
+                if ($entries = ldap_get_entries($ldap, $sr)) {
+                    $login = $entries[0][$this->getField('uid')][0];
+                }
+            }
+        }
 
         $searchStr = array(
             sprintf('(%s=%s)', $this->getField('uid'), $this->ldapEscape($login)),
@@ -161,7 +177,7 @@ class LDAPAuthentication extends AuthenticationAuthority
             // see if we got a result back 
             if ($result['count']>0) {
                 $entry = $result[0];
-                $user = new LDAPUser($this);
+                $user = new $this->userClass($this);
                 $user->setDN($entry['dn']);
 
                 // single value attributes expect a maximum of one value
@@ -222,13 +238,19 @@ class LDAPAuthentication extends AuthenticationAuthority
             throw new Exception('LDAP group members field not specified');
         }
         
-        $search = @ldap_search($ldap, $this->ldapSearchBase('group'), sprintf("%s=%s", $this->getField('groupname'), $group));
+        $searchStr = array(
+            sprintf('(%s=%s)', $this->getField('groupname'), $this->ldapEscape($group))
+        );
+        
+        $searchStr = count($searchStr) > 1 ? "(|" . implode("", $searchStr) . ")" : implode("", $searchStr);
+                
+        $search = @ldap_search($ldap, $this->ldapSearchBase('group'), $searchStr);
         if ($search) {
             $result = @ldap_get_entries($ldap, $search);
             // see if we got a result back 
             if ($result['count']>0) {
                 $entry = $result[0];
-                $group = new LDAPUserGroup($this);
+                $group = new $this->groupClass($this);
                 $group->setDN($entry['dn']);
 
                 // single value attributes expect a maximum of one value
@@ -255,12 +277,27 @@ class LDAPAuthentication extends AuthenticationAuthority
         }
     }
     
+    protected function defaultFieldMap()
+    {
+        return array(
+            'uid'=>'uid',
+            'email'=>'mail',
+            'firstname'=>'givenname',
+            'lastname'=>'sn',
+            'groupname'=>'cn',
+            'members'=>'memberuid',
+            'memberuid'=>'userid', 
+            'gid'=>'gid'
+        );
+    }
+    
     public function init($args)
     {
         parent::init($args);
         $args = is_array($args) ? $args : array();
         $this->ldapServer = isset($args['HOST']) ? $args['HOST'] : null;
         $this->ldapPort = isset($args['PORT']) ? $args['PORT'] : 389;
+        $this->ldapSearchBase = isset($args['SEARCH_BASE']) ? $args['SEARCH_BASE'] : null;
         $this->ldapUserSearchBase = isset($args['USER_SEARCH_BASE']) ? $args['USER_SEARCH_BASE'] : null;
         $this->ldapGroupSearchBase = isset($args['GROUP_SEARCH_BASE']) ? $args['GROUP_SEARCH_BASE'] : null;
 
@@ -268,15 +305,7 @@ class LDAPAuthentication extends AuthenticationAuthority
         $this->ldapAdminDN = isset($args['ADMIN_DN']) ? $args['ADMIN_DN'] : null;
         $this->ldapAdminPassword = isset($args['ADMIN_PASSWORD']) ? $args['ADMIN_PASSWORD'] : null;
         
-        $this->fieldMap = array(
-            'uid'=>'uid',
-            'email'=>'mail',
-            'firstname'=>'givenName',
-            'lastname'=>'sn',
-            'groupname'=>'cn',
-            'members'=>'',
-            'gid'=>'gid'
-        );
+        $this->fieldMap = $this->defaultFieldMap();
         
         foreach ($args as $arg=>$value) {
             if (preg_match("/^(user|group)_(.*?)_field$/", strtolower($arg), $bits)) {
@@ -331,7 +360,7 @@ class LDAPUser extends BasicUser
                 break;
         }
     }
-
+    
     public function singleValueAttributes()
     {
         return array('dn', 
@@ -346,7 +375,7 @@ class LDAPUser extends BasicUser
 
     protected function standardAttributes()
     {
-        return array_merge(parent::standardAttributes(), array('dn'));
+        return array_merge(parent::standardAttributes(), array('dn', $this->AuthenticationAuthority->getField('uid')));
     }    
 }
 
@@ -416,7 +445,7 @@ class LDAPUserGroup extends BasicUserGroup
     {
         //by definition LDAP groups can only contain users from the same authority
         if ($user->getAuthenticationAuthorityIndex()==$this->getAuthenticationAuthorityIndex()) {
-            if (in_array($user->getUserID(), $this->members)) {
+            if (in_array($user->getAttribute($this->AuthenticationAuthority->getField('memberuid')), $this->members)) {
                 return true;
             }
         }

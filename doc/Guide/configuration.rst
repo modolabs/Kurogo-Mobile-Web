@@ -72,7 +72,7 @@ When running a module, the following config files are loaded automatically:
 * *SITE_DIR/config/module/MODULEID.ini* - Basic configuration file for the current module. Specifies properties
   regarding the module including disabled status, protected, secure and authorization. Also includes
   any unique module configurable parameters
-* *SITE_DIR/config/page/MODULEID.ini* - Page titles configuration for the current module. 
+* *SITE_DIR/config/web/nav/MODULEID.ini* - Title/navigation configuration for the current module. 
 
 
 Other modules may also load files from the *SITE_DIR/config/feeds* folder for external data configuration,
@@ -141,10 +141,14 @@ Error handling and debugging
 
 The properties in this section are used during development. Most of them are boolean values (0 is off, 1 is on)
 
+* *DISPLAY_ERRORS* - Display PHP errors. This can make discovering bugs more easy. You should turn this
+  off on a production site.
 * *DEVICE_DEBUG* - When the framework is running in device debugging mode, you can prepend any framework 
-  url with "device/[PAGETYPE]-[PLATFORM]/" or "device/[PAGETYPE]/" to see that version of the page in 
+  url with *device/[PAGETYPE]-[PLATFORM]/* or *device/[PAGETYPE]/* to see that version of the page in 
   your browser.  So for example "/device/basic/about/" will show the basic version of the About 
   module's index page.
+* *MODULE_DEBUG* - Enables debugging information provided by each module. The type of information will
+  vary by module. An example of this is showing the LDAP server used by the People module
 * *MINIFY_DEBUG* - When Minify debugging is turned on, Minify adds comments to help with locating the 
   actual file associated with a given line.
 * *DATA_DEBUG* - Data debugging enables logging and certain output to debug data controller connections. 
@@ -166,7 +170,9 @@ Site settings
 * *LOCAL_TIMEZONE* - Set this to your environment's time zone. See http://php.net/manual/en/timezones.php
   for a list of valid time zones
 * *LOCAL_AREA_CODE* - Set this to your environment's primary area code
-
+* *AUTODETECT_PHONE_NUMBERS* - Turn this off to prevent the auto detection of telephone numbers in 
+  content. This is primarily only supported in iOS devices at this time.
+  
 ---------
 Analytics
 ---------
@@ -249,8 +255,8 @@ The main database connection can be used by a variety of modules for storing and
 * *DB_HOST* - used by db systems that are hosted on a server
 * *DB_USER* - used by db systems that require a user to authenticate
 * *DB_PASS* - used by db systems that require a password
-* *DB_DBNAME* - - used by db systems that require a database
-* *DB_FILE*   = user by db systems the use a file (i.e. sqlite).
+* *DB_DBNAME* - used by db systems that require a database
+* *DB_FILE* - used by db systems the use a file (i.e. sqlite).
 
 --------------
 Authentication
@@ -292,38 +298,7 @@ the *login* module requires *secure* connections if you have a valid certificate
 Home Screen
 ===========
 
-The *SITE_DIR/config/module/home.ini* file contains the standard module configuration, but also has
-several other keys for controlling the configuration of the home screen.
-
-----------------
-Home Screen Type
-----------------
-
-.. code-block:: ini
-
-  display_type = "springboard" 
-
-The display type property is a value that controls whether the home screen displays like a grid of 
-icons ("springboard") or a list of items ("list"). 
-
----------------------
-Module list and order
----------------------
-
-There are 2 sections *[primary_modules]* and *[secondary_modules]* that indicate which modules are
-shown on the home screen.
-
-Each section has a list of values that represent the order of the modules and their labels. The order
-of these values affects the order of the modules. Each value is the format:
-
-.. code-block:: ini
-
-    moduleID = "Label"
-    
-Primary modules can be rearranged and hidden by the user using the *Customize* module, secondary modules
-appear smaller, but cannot be rearranged or removed by the user. Keep in mind that even if the entry is
-not on the home screen, users can still manually navigate to the url. So if you have a modules that you
-do not wish to use, ensure they have been *disabled* in their module configuration file.
+See :doc:`modulehome` for information on configuring the look and layout of the home screen.
 
 =======
 Strings

@@ -126,6 +126,7 @@ Included Modules
    modulenews
    moduleemergency
    modulelinks
+   modulecontent
    modulefullweb
    modulecustomize
    moduleabout

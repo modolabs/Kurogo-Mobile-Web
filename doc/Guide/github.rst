@@ -4,7 +4,7 @@ GitHub Repository
 
 Kurogo is an open source project. You are free to download, update and use the code for your own
 use without charge. The project uses the `Git <http://git-scm.com/>`_ distributed version control
-system. The Git repository is hosted by GitHub. It can be found at https://github.com/Kurogo/Kurogo-Mobile-Web.
+system. The Git repository is hosted by GitHub. It can be found at https://github.com/modolabs/Kurogo-Mobile-Web.
 
 For those not familiar with Git or GitHub, please view the `GitHub Help Site <http://help.github.com/>`_.
 

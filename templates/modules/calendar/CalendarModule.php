@@ -6,7 +6,7 @@
 
 /**
   */
-require_once realpath(LIB_DIR.'/TimeRange.php');
+require_once realpath(LIB_DIR.'/DateTimeUtils.php');
 
 /**
   */
@@ -269,20 +269,32 @@ class CalendarModule extends Module {
             return parent::prepareAdminForSection($section, $adminModule);
     }
   }
+  
+  protected function getFeeds()
+  {
+    if (!$this->feeds) {
+        $this->feeds = $this->loadFeedData();
+        if (!is_array($this->feeds)) {
+            $this->feeds = array();
+        }
+    }
+    
+    return $this->feeds;
+  }
 
   public function getDefaultFeed()
   {
-     if ($indexes = array_keys($this->feeds)) {
+    $feeds = $this->getFeeds();
+     if ($indexes = array_keys($feeds)) {
          return current($indexes);
      }
   }
   
   protected function getFeedTitle($index)
   {
-    if (isset($this->feeds[$index])) {
-        
-        $feedData = $this->feeds[$index];
-        return $feedData['TITLE'];
+    $feeds = $this->getFeeds();
+    if (isset($feeds[$index])) {
+        return $feeds[$index]['TITLE'];
     } else {
         throw new Exception("Error getting calendar title for index $index");
     }
@@ -290,9 +302,13 @@ class CalendarModule extends Module {
   
   public function getFeed($index)
   {
-    if (isset($this->feeds[$index])) {
-        $feedData = $this->feeds[$index];
-        $controller = CalendarDataController::factory($feedData);
+    $feeds = $this->getFeeds();
+    if (isset($feeds[$index])) {
+        $feedData = $feeds[$index];
+        if (!isset($feedData['CONTROLLER_CLASS'])) {
+            $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
+        }
+        $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
         $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
         return $controller;
     } else {
@@ -301,7 +317,6 @@ class CalendarModule extends Module {
   }
  
   protected function initialize() {
-    $this->feeds    = $this->loadFeedData();
     $this->timezone = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
   }
 

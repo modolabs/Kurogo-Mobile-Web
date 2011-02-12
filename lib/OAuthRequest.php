@@ -186,10 +186,17 @@ class OAuthRequest
 
     /* public method to make an OAuth Request */
 	public function request($method, $url, $parameters = null, $headers = null) {		
-		$parameters = (array) $parameters;
+		$params = (array) $parameters;
 		$options = array();
 		$headers = (array) $headers;
-		$curl_url = $url;
+
+        /* strip out query string and add it to parameters */
+        $urlParts = parse_url($url);
+        if (isset($urlParts['query'])) {
+            $params = array_merge($params, $this->parseQueryString($urlParts['query']));
+        }
+
+		$curl_url = $this->baseURL($url);
 		$curl_headers = $headers;
 
 		// append default parameters
@@ -202,7 +209,7 @@ class OAuthRequest
         switch ($method)
         {
             case 'POST':
-                $params = array_merge($parameters, $oauth);
+                $params = array_merge($params, $oauth);
         		$params['oauth_signature'] = $this->oauthSignature($method, $curl_url, $params);
                 $options[CURLOPT_POST] = true;
                 $curl_headers[] = $this->calculateHeader($curl_url, $params);
@@ -210,9 +217,9 @@ class OAuthRequest
                 
             case 'GET':
                 $data = $oauth;
-                if(count($parameters)>0) {
-                    $data = array_merge($data, $parameters);
-                    $curl_url .= '?'. $this->buildQuery($parameters);
+                if(count($params)>0) {
+                    $data = array_merge($data, $params);
+                    $curl_url .= '?'. $this->buildQuery($params);
                 }
                 $base_url = $this->baseURL($curl_url);
         		$oauth['oauth_signature'] = $this->oauthSignature($method, $base_url, $data);
