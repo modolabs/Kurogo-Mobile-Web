@@ -291,7 +291,7 @@ class CalendarModule extends Module {
           break;
          
         case 'user':
-            if ($listController = $this->getModuleVar('UserCalendarListController')) {
+            if ($listController = $this->getModuleVar('UserCalendarListController', '', Config::SUPRESS_ERRORS)) {
                 $controller = CalendarListController::factory($listController);
                 $feeds = $controller->getUserCalendars($this->getUser());
             }
