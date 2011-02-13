@@ -131,7 +131,8 @@ abstract class DataController
     {
         $url = $this->baseURL;
         if (count($this->filters)>0) {
-            $url .= "?" . http_build_query($this->filters);
+            $glue = strpos($this->baseURL, '?') !== false ? '&' : '?';
+            $url .= $glue . http_build_query($this->filters);
         }
         
         return $url;
