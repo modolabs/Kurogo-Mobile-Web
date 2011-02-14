@@ -354,7 +354,8 @@ class CalendarModule extends Module {
         $end = clone $start;
         $end->setTime(23,59,59);
         
-        $feed = $this->getFeed('events'); 
+        $type = $this->getArg('type', 'static');
+        $feed = $this->getFeed('events', $type);
         $feed->setStartDate($start);
         $feed->setEndDate($end);
         $iCalEvents = $feed->items();
@@ -368,11 +369,10 @@ class CalendarModule extends Module {
           );
         }
         
-        $this->assign('events',  $events);        
+        $this->assign('events', $events);
         break;
 
       case 'index':
-
         if ($userFeeds = $this->getFeeds('user')) {
           $userCalendars = array();
           foreach ($userFeeds as $id=>$calendar) {
@@ -384,15 +384,15 @@ class CalendarModule extends Module {
               )),
             );
           }
-          $this->assign('userCalendars',   $userCalendars);
+          $this->assign('userCalendars', $userCalendars);
         }
 
         $this->loadWebAppConfigFile('calendar-index','calendarPages');
 
         $today = mktime(12,0,0);
       
-        $this->assign('today',           $today);
-        $this->assign('searchOptions',   $this->searchOptions);
+        $this->assign('today',         $today);
+        $this->assign('searchOptions', $this->searchOptions);
         break;
       
       case 'categories':
