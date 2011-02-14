@@ -23,7 +23,7 @@ class Session
     {
         if (!isset($_SESSION)) {
             if (!is_dir(CACHE_DIR . "/session")) {
-                mkdir(CACHE_DIR . "/session",0700);
+                mkdir(CACHE_DIR . "/session",0700,true);
             }
             ini_set('session.save_path', CACHE_DIR . "/session");
             ini_set('session.name', SITE_KEY);
