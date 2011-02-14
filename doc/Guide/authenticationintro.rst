@@ -2,20 +2,6 @@
 Authentication and Authorization
 ################################
 
-.. toctree::
-   :maxdepth: 1
-   :hidden:
-
-   authentication
-   PasswdAuthentication
-   DatabaseAuthentication
-   LDAPAuthentication
-   ActiveDirectoryAuthentication
-   FacebookAuthentication
-   TwitterAuthentication
-   GoogleAuthentication
-   GoogleAppsAuthentication
-   authorization
 
 While many services are suitable for a public audience, there are instances where you want to restrict
 access to certain modules or data to authenticated users. You may also want to provide personalized 
@@ -29,3 +15,16 @@ Kurogo is designed to integrate with existing identity systems such as Active Di
 Twitter, Facebook and Google. You can supplement this information by creating groups managed by the
 framework independent of the user's original identity.
 
+.. toctree::
+   :maxdepth: 1
+
+   authentication
+   PasswdAuthentication
+   DatabaseAuthentication
+   LDAPAuthentication
+   ActiveDirectoryAuthentication
+   FacebookAuthentication
+   TwitterAuthentication
+   GoogleAuthentication
+   GoogleAppsAuthentication
+   authorization

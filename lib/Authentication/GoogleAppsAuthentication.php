@@ -10,6 +10,7 @@ class GoogleAppsAuthentication extends AuthenticationAuthority
 {
     protected $domain;
     protected $oauth = false;
+    protected $oauthRequest;
 
     public function getDomain()
     {
@@ -179,6 +180,10 @@ class GoogleAppsAuthentication extends AuthenticationAuthority
             'openid.ax.type.lastname'=>'http://axschema.org/namePerson/last'
         );
         
+        if (!$GLOBALS['deviceClassifier']->isComputer()) {
+            $paramters['btmpl'] ='mobile';
+        }
+        
 	    $url .= stripos($url, "?") ? '&' : '?';
         $url .= http_build_query($parameters);
         return $url;
@@ -192,6 +197,19 @@ class GoogleAppsAuthentication extends AuthenticationAuthority
     public function getConsumerSecret()
     {
         return $this->consumer_secret;
+    }
+    
+    public function oAuthRequest($method, $url, $parameters=null, $headers=null) {
+    
+        $parameters = is_array($parameters) ? $parameters : array();
+        $headers = is_array($headers) ? $headers : array();
+
+        if (!$this->oauthRequest) {
+            $this->oauthRequest =  new OAuthRequest($this->getConsumerKey(), $this->getConsumerSecret());
+        }
+        
+        $result = $this->oauthRequest->request('GET', $url, $parameters, $headers);
+        return $result;
     }
 
     public function init($args)

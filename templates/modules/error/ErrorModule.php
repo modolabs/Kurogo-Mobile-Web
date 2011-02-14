@@ -88,10 +88,10 @@ class ErrorModule extends Module {
       return false;
     }
       
-    //check for development errors
+    // check for development errors
     if(isset($_GET['error'])){
       $file = $path =  CACHE_DIR . "/errors/" . $_GET['error'] . ".log";
-      if(file_exists($file) && $handle = fopen($file, "r")){
+      if(file_exists($file) && $handle = fopen($file, "r")) {
         $msg = fread($handle, filesize($file));
         fclose($handle);
         return $msg;

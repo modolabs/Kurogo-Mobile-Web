@@ -8,12 +8,12 @@
   {$ellipsisCount=0}
   {foreach $stories as $story}
     <li class="story">
-      {if $story['image']}
-        <img class="thumbnail" src="{$story['image']['src']}" />
-      {else}
-        <img class="thumbnail" src="/modules/{$moduleID}/images/news-placeholder.png" />
-      {/if}
       <a href="{$story['url']}">
+        {if $story['image']}
+          <img class="thumbnail" src="{$story['image']['src']}" />
+        {else}
+          <img class="thumbnail" src="/modules/{$moduleID}/images/news-placeholder.png" />
+        {/if}
         <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
           <div class="title">{$story["title"]}</div>
           {$story['description']}

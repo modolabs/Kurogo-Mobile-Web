@@ -18,6 +18,7 @@ class OAuthRequest
     protected $cert;
     protected $returnHeaders = array();
     protected $signatureMethod = 'HMAC-SHA1';
+    protected $baseString='';
 
 	protected function buildQuery(array $parameters) {
 
@@ -111,13 +112,13 @@ class OAuthRequest
     /* sign the request according to 3.1 of RFC 5849 */
 	protected function oauthSignature($method, $url, $parameters) {
 		// calculate the base string
-		$baseString = $this->calculateBaseString($method, $url, $parameters);
+		$this->baseString = $this->calculateBaseString($method, $url, $parameters);
 		$key = rawurlencode($this->consumerSecret) .'&' . rawurlencode($this->tokenSecret);
 		
 		switch ($this->signatureMethod)
 		{
 		    case 'HMAC-SHA1':
-        		$sig = base64_encode(hash_hmac('SHA1', $baseString, $key, true));
+        		$sig = base64_encode(hash_hmac('SHA1', $this->baseString, $key, true));
         		break;
         	case 'RSA-SHA1':
 
@@ -126,7 +127,7 @@ class OAuthRequest
                 }
 
                 // Sign using the key
-                $ok = openssl_sign($base_string, $signature, $privatekeyid);
+                $ok = openssl_sign($this->base_string, $signature, $privatekeyid);
 
                 // Release the key resource
                 openssl_free_key($privatekeyid);
@@ -160,7 +161,7 @@ class OAuthRequest
 	    $vars = explode('&', $queryString);
 	    foreach ($vars as $value) {
 	        $bits = explode("=", $value);
-	        $return[$bits[0]] = $bits[1];
+	        $return[$bits[0]] = urldecode($bits[1]);
 	    }
 	    return $return;
 	}
@@ -252,7 +253,7 @@ class OAuthRequest
 		// check for errors
         $http_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
         if (curl_errno($this->curl) || $http_code >= 400) {
-            error_log("There was an error $http_code retrieving $curl_url");
+            error_log("There was an error $http_code retrieving $curl_url: $response");
             return false;
         }
         

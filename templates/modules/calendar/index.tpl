@@ -4,6 +4,10 @@
   <h2>{$today|date_format:"%A %b %e, %Y"}</h2>
 </div>
 
+{if count($userCalendars)}
+  {include file="findInclude:common/navlist.tpl" navlistItems=$userCalendars}
+{/if}
+
 {include file="findInclude:common/navlist.tpl" navlistItems=$calendarPages}
 
 {capture name="selectSection" assign="selectSection"}

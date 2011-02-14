@@ -40,13 +40,13 @@ function getErrorURL($exception, $devError = false) {
   if ($exception instanceOf DataServerException) {
     $args['code'] = 'data';
   
-  } else if($exception instanceOf DeviceNotSupported) {
+  } else if ($exception instanceOf DeviceNotSupported) {
     $args['code'] = 'device_notsupported';
     
-  } else if($exception instanceOf PageNotFound) {
+  } else if ($exception instanceOf PageNotFound) {
     $args['code'] = 'notfound';
     
-  } else if($exception instanceOf DisabledModuleException) {
+  } else if ($exception instanceOf DisabledModuleException) {
     $args['code'] = 'forbidden';
   }
   
@@ -88,22 +88,29 @@ function developmentErrorLog($exception){
   // alter your trace as you please, here
   $trace = $exception->getTrace();
   foreach ($trace as $key => $stackPoint) {
+    if (isset($trace[$key]['args'])) {
       // I'm converting arguments to their type
       // (prevents passwords from ever getting logged as anything other than 'string')
       $trace[$key]['args'] = array_map('gettype', $trace[$key]['args']);
+    }
   }
 
   // build your tracelines
   $result = array();
   foreach ($trace as $key => $stackPoint) {
-      $result[] = sprintf(
-          $traceline,
-          $key,
-          $stackPoint['file'],
-          $stackPoint['line'],
-          $stackPoint['function'],
-          implode(', ', $stackPoint['args'])
-      );
+    $stackPoint['file'] = isset($stackPoint['file']) ? $stackPoint['file'] : 'Unknown';
+    $stackPoint['line'] = isset($stackPoint['line']) ? $stackPoint['line'] : 'Unknown';
+    $stackPoint['function'] = isset($stackPoint['function']) ? $stackPoint['function'] : '';
+    $stackPoint['args'] = isset($stackPoint['args']) ? $stackPoint['args'] : array();
+
+    $result[] = sprintf(
+      $traceline,
+      $key,
+      $stackPoint['file'],
+      $stackPoint['line'],
+      $stackPoint['function'],
+      implode(', ', $stackPoint['args'])
+    );
   }
   // trace always ends with {main}
   $result[] = '#' . ++$key . ' {main}';
@@ -146,13 +153,10 @@ function exceptionHandlerForDevelopment($exception) {
   */
 function exceptionHandlerForProduction($exception) {
   if(!$GLOBALS['deviceClassifier']->isSpider()) {
-    $protocol = isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ?
-      'https' : 'http';
-  
     mail($GLOBALS['siteConfig']->getVar('DEVELOPER_EMAIL'), 
       "Mobile web page experiencing problems",
       "The following page is throwing exceptions:\n\n" .
-      "URL: $protocol://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
+      "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
       "User-Agent: \"{$_SERVER['HTTP_USER_AGENT']}\"\n" .
       "Referrer URL: \"{$_SERVER['HTTP_REFERER']}\"\n" .
       "Exception:\n\n" . 

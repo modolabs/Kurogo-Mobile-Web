@@ -28,13 +28,11 @@ class DeviceClassifier {
     $this->certs    = count($parts) > 2 && strlen($parts[2]) ? $parts[2] : false;
   }
   
-  private function cacheFolder()
-  {
+  private function cacheFolder() {
     return CACHE_DIR . "/DeviceDetection";
   }
 
-  private function cacheLifetime()
-  {
+  private function cacheLifetime() {
     return $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_CACHE_LIFETIME');
   }
   
@@ -49,34 +47,36 @@ class DeviceClassifier {
       $this->setDevice($_COOKIE[self::COOKIE_KEY]);
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
-        $user_agent = $_SERVER['HTTP_USER_AGENT'];
+      $user_agent = $_SERVER['HTTP_USER_AGENT'];
 
-        if ($data = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_USE_EXTERNAL') ? 
-            $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($user_agent) ) {
-            
-            $this->pagetype = $data['pagetype'];
-            $this->platform = $data['platform'];
-            $this->certs = $data['supports_certificate'];
-            $this->setDeviceCookie();
-        }
+      if ($data = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_USE_EXTERNAL') ? 
+        $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($user_agent) ) {
+        
+        $this->pagetype = $data['pagetype'];
+        $this->platform = $data['platform'];
+        $this->certs = $data['supports_certificate'];
+        $this->setDeviceCookie();
+      }
     }
   }
     
-  private function setDeviceCookie()
-  {
-      setcookie(self::COOKIE_KEY, $this->getDevice(), 
-        time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
+  private function setDeviceCookie() {
+    setcookie(self::COOKIE_KEY, $this->getDevice(), 
+      time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
   }
   
-  private function detectDeviceInternal($user_agent)
-  {
+  private function detectDeviceInternal($user_agent) {
     if (!$user_agent) {
-        return;
+      return;
     }
      
-     $db_file =  $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_FILE');
-     $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
+     if (!$db_file =  $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_FILE')) {
+        error_log('MOBI_SERVICE_FILE not specified in site config.');
+        die("MOBI_SERVICE_FILE not specified in site config.");
+     }
+     
      try {
+         $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
          $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
      } catch (Exception $e) {
         error_log("Error with device detection");
@@ -92,35 +92,34 @@ class DeviceClassifier {
      return false;
   }
   
-  private function detectDeviceExternal($user_agent)
-  {
+  private function detectDeviceExternal($user_agent) {
     if (!$user_agent) {
-        return;
+      return;
     }
             
-      /* see if the server has cached the results from the the device detection server */
-      $cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime(), TRUE);
-      $cacheFilename = md5($user_agent);
+    // see if the server has cached the results from the the device detection server
+    $cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime(), TRUE);
+    $cacheFilename = md5($user_agent);
 
-      if ($cache->isFresh($cacheFilename)) {
-           $json = $cache->read($cacheFilename);
-      } else {
+    if ($cache->isFresh($cacheFilename)) {
+      $json = $cache->read($cacheFilename);
 
-          $query = http_build_query(array(
-            'user-agent' => $user_agent,
-            'version'=> $this->version
-          ));
-          
-          $url = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_URL').'?'.$query;
-          $json = file_get_contents($url);
+    } else {
+      $query = http_build_query(array(
+        'user-agent' => $user_agent,
+        'version'=> $this->version
+      ));
+      
+      $url = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_URL').'?'.$query;
+      $json = file_get_contents($url);
 
-          $cache->write($json, $cacheFilename);
-      }            
+      $cache->write($json, $cacheFilename);
+    }            
 
-      $data = json_decode($json, true);
+    $data = json_decode($json, true);
 
-    /* fix values when using old version */
-     if ($this->version==1) {
+    // fix values when using old version
+    if ($this->version == 1) {
       switch (strtolower($data['pagetype'])) {
         case 'basic':
           if ($data['platform'] == 'computer' || $data['platform'] == 'spider') {
@@ -151,10 +150,10 @@ class DeviceClassifier {
         default:
           $data['pagetype'] = 'compliant';
           break;
-        }
       }
-
-      return $data;          
+    }
+    
+    return $data;          
   }
   
   public function isComputer() {

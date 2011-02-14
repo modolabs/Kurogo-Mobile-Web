@@ -38,8 +38,7 @@ function CacheHeaders($file)
 /**
   * Outputs a 404 error message
   */
-function _404()
-{
+function _404() {
     header("HTTP/1.0 404 Not Found");
     echo "<h1>404 Not Found</h1>\n";
     echo "The page that you have requested could not be found.\n";
@@ -60,6 +59,8 @@ function Initialize(&$path=null) {
   define('MASTER_CONFIG_DIR', realpath(ROOT_DIR.'/config'));
   define('TEMPLATES_DIR',     realpath(ROOT_DIR.'/templates'));
   define('MODULES_DIR',       realpath(TEMPLATES_DIR.'/modules'));
+  
+  define('MIN_FILE_PREFIX', 'file:');
   
   
   //
@@ -124,7 +125,7 @@ function Initialize(&$path=null) {
   }
   define('URL_BASE', $foundPath ? $urlBase : '/');
   define('IS_SECURE', isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
-  define('FULL_URL_BASE', sprintf("http%s://%s%s", IS_SECURE ? 's' : '', $_SERVER['HTTP_HOST'], URL_BASE));
+  define('FULL_URL_BASE', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_BASE);
   define('COOKIE_PATH', URL_BASE); // We are installed under URL_BASE
 
   //
@@ -176,7 +177,7 @@ function Initialize(&$path=null) {
   
   define('URL_DEVICE_DEBUG_PREFIX', $urlDeviceDebugPrefix);
   define('URL_PREFIX', $urlPrefix);
-  define('FULL_URL_PREFIX', sprintf("http%s://%s%s", IS_SECURE ? 's' : '', $_SERVER['HTTP_HOST'], URL_PREFIX));
+  define('FULL_URL_PREFIX', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_PREFIX);
 
   //error_log(__FUNCTION__."(): prefix: $urlPrefix");
   //error_log(__FUNCTION__."(): path: $path");

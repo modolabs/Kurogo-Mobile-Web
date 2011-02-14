@@ -52,7 +52,7 @@ Configuring the Initial Screen
 ==============================
 
 The index page can be configured to show a list of links to show views of the calendars you have configured.
-You can update the contents of this list by editing the *config/modules/web/calendar-index.ini*. Each entry
+You can update the contents of this list by editing the *config/web/calendar-index.ini*. Each entry
 is a section. Each section has values that map to the the values used by the *listItem* template. 
 
 * *title* - The Name of the entry as it's shown to the user

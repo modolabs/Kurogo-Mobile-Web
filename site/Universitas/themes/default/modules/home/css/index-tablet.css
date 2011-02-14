@@ -1,0 +1,19 @@
+/* Nav bar at top of the home screen */
+#navbar {
+	background: url(/common/images/navback-home.png) repeat-x;
+}
+
+#navbar .pagetitle {
+  color: white;
+	font-size: 150%;
+}
+
+body,
+#container {
+  background-color: #b8c1d2;
+}
+
+.blockcontent .results a,
+.blockcontent .results a:visited {
+  color: #29557e;
+}

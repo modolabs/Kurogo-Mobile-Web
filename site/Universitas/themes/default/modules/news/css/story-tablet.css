@@ -1,0 +1,19 @@
+.news {
+	/* Background color for news listing and story */
+    background-color: #fff;
+}
+
+.slugline {
+    font: 22px/26px Georgia, serif;
+    color:#1a1611;
+}
+
+.byline {
+    font-size: 11px;
+    line-height: 14px;
+    border-bottom: 1px dotted #999;
+}
+
+.dek {
+	font: 16px/20px Georgia, serif; 
+}

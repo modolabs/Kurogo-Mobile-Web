@@ -1,0 +1,255 @@
+#navbar {
+	height: 50px;
+	line-height: 49px;
+}
+#navbar .moduleicon {
+  padding-top: 5px;
+  padding-left: 5px;
+}
+#navbar .pagetitle {
+	height: 50px;
+  line-height: 49px;
+  vertical-align: top;
+  margin-left: .25em;
+  font-weight: normal;
+  letter-spacing: 1px;
+}
+
+#containerinset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+}
+
+h1.roomfornew {
+	text-align: left;
+}
+#new {
+	position: absolute;
+	top: -13px;
+	right: -9px;
+	width: 80px;
+	height: 80px;
+	background-image: url(/modules/home/images/newbig.png);
+	background-repeat: no-repeat;
+	color: #fff;
+	font-size: 70.59%;
+	line-height: 1.1em;
+	text-align: center;
+	overflow: hidden;
+}
+#new a {
+	display: block;
+	width: 50px;
+	height: 50px;
+	padding: 0;
+	text-decoration: none;
+	color: #fff;
+	position: absolute;
+	top: 19px;
+	right: 10px;
+}
+#new a .newlabel {
+	display: block;
+	font-size: 52.94%;
+	line-height: 1em;
+	color: #ffcece;
+}
+#beta {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+#footer {
+	text-align: center;
+	clear: both;
+}
+form {
+	margin: 0 0 -7px 0;
+}
+
+.blocks {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.block {
+  width: 30%;
+  height: 50%;
+  overflow: hidden;
+  position: absolute;
+}
+
+.blockborder {
+  margin: 10px;
+  -webkit-border-radius: 8px;
+  border: solid 1px #6b717c;
+  background-color: #f2f4f7;
+  overflow: hidden;
+  position: relative;
+}
+.blockheader {
+  display: block;
+  margin: 1px;
+  padding: 0;
+  padding-left: 52px;
+  background: transparent url(/modules/home/images/pane-header-bg.png) repeat-x top left;
+  color: white;
+  font-size: 130%;
+  text-align: left;
+  text-decoration: none;
+  -webkit-border-radius: 6px;
+  min-height: 41px;
+  line-height: 41px;
+  position: relative;
+}
+.blockheader:visited {
+  color: white;
+}
+.blockheader .icon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  margin-top: -18px;
+  background-color: transparent;
+  background-position: top left;
+  background-repeat: none;
+  background-size: 36px;
+  -o-background-size: 36px;
+  -moz-background-size: 36px;
+  -khtml-background-size: 36px;
+  -webkit-background-size: 36px;
+}
+.news .blockheader .icon {
+  background-image: url(/common/images/pane-news.png);
+}
+.about .blockheader .icon {
+  background-image: url(/common/images/pane-about.png);
+}
+.calendar .blockheader .icon {
+  background-image: url(/common/images/pane-calendar.png);
+}
+.courses .blockheader .icon {
+  background-image: url(/common/images/pane-courses.png);
+}
+.transit .blockheader .icon {
+  background-image: url(/common/images/pane-transit.png);
+}
+.dining .blockheader .icon {
+  background-image: url(/common/images/pane-dining.png);
+}
+.blockheader .nextlink {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  background: transparent url(/common/images/action-module.png) no-repeat top left;
+}
+
+.blockcontent {
+  overflow: hidden;
+}
+
+.blockcontent .results {
+  margin: 0;
+  background: transparent;
+  border: none;
+}
+.blockcontent .results li {
+  border: none;
+  padding-top: 0;
+}
+.blockcontent .results li:first-child {
+  padding-top: 10px;
+}
+.blockcontent .results a,
+.blockcontent .results a:visited {
+  background: none;
+}
+
+.portrait .large {
+  width: 60%;
+  height: 40%;
+  top: 0;
+  left: 0;
+}
+.portrait .medium1 {
+  width: 60%;
+  height: 30%;
+  top: 40%;
+  left: 0;
+}
+.portrait .medium2 {
+  width: 60%;
+  height: 30%;
+  top: 70%;
+  left: 0;
+}
+.portrait .tall {
+  width: 40%;
+  height: 70%;
+  top: 0;
+  right: 0;
+}
+.portrait .small {
+  width: 40%;
+  height: 30%;
+  top: 70%;
+  right: 0;
+}
+.portrait .medium1 .blockborder,
+.portrait .medium2 .blockborder,
+.portrait .small .blockborder {
+  margin-top: 0;
+}
+.portrait .tall .blockborder,
+.portrait .small .blockborder {
+  margin-left: 0;
+}
+
+.landscape .large {
+  width: 30%;
+  height: 60%;
+  top: 0;
+  left: 0;
+}
+.landscape .medium1 {
+  width: 40%;
+  height: 60%;
+  top: 0;
+  left: 30%;
+}
+.landscape .medium2 {
+  width: 40%;
+  height: 40%;
+  top: 60%;
+  left: 30%;
+}
+.landscape .tall {
+  width: 30%;
+  height: 100%;
+  top: 0;
+  left: 70%;
+}
+.landscape .small {
+  width: 30%;
+  height: 40%;
+  top: 60%;
+  left: 0;
+}
+.landscape .small .blockborder,
+.landscape .medium2 .blockborder {
+  margin-top: 0;
+}
+.landscape .medium1 .blockborder,
+.landscape .medium2 .blockborder,
+.landscape .tall .blockborder {
+  margin-left: 0;
+}
