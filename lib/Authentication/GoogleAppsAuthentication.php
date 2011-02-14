@@ -180,6 +180,10 @@ class GoogleAppsAuthentication extends AuthenticationAuthority
             'openid.ax.type.lastname'=>'http://axschema.org/namePerson/last'
         );
         
+        if (!$GLOBALS['deviceClassifier']->isComputer()) {
+            $paramters['btmpl'] ='mobile';
+        }
+        
 	    $url .= stripos($url, "?") ? '&' : '?';
         $url .= http_build_query($parameters);
         return $url;

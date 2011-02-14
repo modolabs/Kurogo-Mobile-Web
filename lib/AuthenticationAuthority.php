@@ -297,6 +297,7 @@ abstract class AuthenticationAuthority
                         }
                     }
                 }
+                $d->close();
             }
         }
                 
