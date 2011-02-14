@@ -43,7 +43,7 @@ function _outputSiteFile($matches) {
 }
 
 function _outputTypeFile($matches) { 
-  $file = $matches[4];
+  $file = $matches[3];
 
   $platform = $GLOBALS['deviceClassifier']->getPlatform();
   $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
@@ -72,7 +72,16 @@ function _outputTypeFile($matches) {
 }
 
 function _outputImageLoaderFile($matches) {
-  _outputTypeFile(ImageLoader::load($matches[1]));
+  $fullPath = ImageLoader::load($matches[1]);
+  
+  if ($fullPath) {
+    CacheHeaders($fullPath);    
+    header('Content-type: '.mime_type($fullPath));
+    echo file_get_contents($fullPath);
+    exit;
+  }
+
+  _404();
 }
 
 function _outputAPICall() {
@@ -125,10 +134,6 @@ $url_patterns = array(
   array(
     'pattern' => ';^.*(media)(/.*)$;',
     'func'    => '_outputSiteFile',
-  ),
-  array(
-    'pattern' => ';^.*(sample/.*)$;',
-    'func'    => '_phpFile',
   ),
   array(
     'pattern' => ';^.*api/$;',
