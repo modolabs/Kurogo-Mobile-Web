@@ -96,6 +96,11 @@ function developmentErrorLog($exception){
   // build your tracelines
   $result = array();
   foreach ($trace as $key => $stackPoint) {
+      $stackPoint['file'] = isset($stackPoint['file']) ? $stackPoint['file'] : 'Unknown';
+      $stackPoint['line'] = isset($stackPoint['line']) ? $stackPoint['line'] : 'Unknown';
+      $stackPoint['function'] = isset($stackPoint['function']) ? $stackPoint['function'] : '';
+      $stackPoint['args'] = isset($stackPoint['args']) ? $stackPoint['args'] : array();
+
       $result[] = sprintf(
           $traceline,
           $key,
