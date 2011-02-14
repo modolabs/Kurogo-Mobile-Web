@@ -748,6 +748,7 @@ abstract class Module {
                    $modules[$entry] = $module;
                 }
             }
+            $d->close();
         }
     }
     ksort($modules);    
