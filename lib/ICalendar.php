@@ -9,7 +9,7 @@
 /**
   * 
   */
-require_once('TimeRange.php');
+require_once realpath(LIB_DIR.'/DateTimeUtils.php');
 
 /**
  * ICalendar
@@ -320,27 +320,43 @@ class ICalEvent extends ICalObject {
   public function setRange(TimeRange $range) {
     $this->range = $range;
   }
+  
+  public function setSummary($summary) {
+    $this->summary = $summary;
+  }
+  
+  public function setDescription($description) {
+    $this->description = $description;
+  }
 
+  public function setUID($uid) {
+    $this->uid = $uid;
+  }
+  
+  public function setLocation($location) {
+    $this->location = $location;
+  }
+  
   public function set_attribute($attr, $value, $params=NULL) {
     switch ($attr) {
     case 'UID':
       if (strpos($value, '@') !== FALSE) {
-        $this->uid .= substr($value, 0, strpos($value, '@'));
+        $this->setUID(substr($value, 0, strpos($value, '@')));
       } else {
-        $this->uid .= $value;
+        $this->setUID($value);
       }
       break;
     case 'RECURRENCE-ID':
       $this->recurid = $value;
       break;
     case 'DESCRIPTION':
-      $this->description = iCalendar::ical_unescape_text($value);
+      $this->setDescription(iCalendar::ical_unescape_text($value));
       break;
     case 'LOCATION':
-      $this->location = iCalendar::ical_unescape_text($value);
+      $this->setLocation(iCalendar::ical_unescape_text($value));
       break;
     case 'SUMMARY':
-      $this->summary = iCalendar::ical_unescape_text($value);
+      $this->setSummary(iCalendar::ical_unescape_text($value));
       break;
     case 'CATEGORIES':
         $categories = explode(',', $value);
@@ -493,6 +509,7 @@ class ICalEvent extends ICalObject {
         if ($this->range) {
             if ($this->range instanceOf DayRange)  {
                 $this->addLine($output_string, "DTSTART", date('Ymd', $this->range->get_start()));
+                $this->addLine($output_string, "DTEND", date('Ymd', $this->range->get_end()));
             } else {
                 $this->addLine($output_string, "DTSTART", strftime('%Y%m%dT%H%M%S', $this->range->get_start()));
                 $this->addLine($output_string, "DTEND", strftime('%Y%m%dT%H%M%S', $this->range->get_end()));
@@ -662,7 +679,7 @@ class ICalRecurrenceRule extends ICalObject {
   * @package ExternalData
   * @subpackage Calendar
  */
-class ICalendar extends ICalObject {
+class ICalendar extends ICalObject implements CalendarInterface {
   protected $properties;
   public $timezone = NULL;
   protected $events;

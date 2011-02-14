@@ -4,18 +4,15 @@
   */
 
 /**
-  * Name of the cookie used for device classification
-  */
-define('COOKIE_KEY', 'deviceClassification');
-
-/**
   * Contacts the Device Classification Server and sets the the appropriate properties
   * @package Core
   */
 class DeviceClassifier {
+  const COOKIE_KEY='deviceClassification';
   private $pagetype = 'unknown';
   private $platform = 'unknown';
   private $certs = false;
+  protected $version = 1;
 
   public function getDevice() {
     return implode('-', array(
@@ -36,84 +33,123 @@ class DeviceClassifier {
   }
 
   private function cacheLifetime() {
-    return 900;
+    return $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_CACHE_LIFETIME');
   }
   
   function __construct($device = null) {
+  
+    $this->version = intval($GLOBALS['siteConfig']->getVar('MOBI_SERVICE_VERSION'));
     
     if ($device && strlen($device)) {
       $this->setDevice($device); // user override of device detection
-      //error_log(__FUNCTION__."(): device forced to '$device' <{$_SERVER['REQUEST_URI']}>");
       
-    } else if (isset($_COOKIE[COOKIE_KEY])) {
-      $this->setDevice($_COOKIE[COOKIE_KEY]);
-      //error_log(__FUNCTION__."(): choosing device cookie '{$_COOKIE['layout']}' <{$_SERVER['REQUEST_URI']}>");
+    } elseif (isset($_COOKIE[self::COOKIE_KEY])) {
+      $this->setDevice($_COOKIE[self::COOKIE_KEY]);
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
       $user_agent = $_SERVER['HTTP_USER_AGENT'];
+
+      if ($data = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_USE_EXTERNAL') ? 
+        $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($user_agent) ) {
+        
+        $this->pagetype = $data['pagetype'];
+        $this->platform = $data['platform'];
+        $this->certs = $data['supports_certificate'];
+        $this->setDeviceCookie();
+      }
+    }
+  }
+    
+  private function setDeviceCookie() {
+    setcookie(self::COOKIE_KEY, $this->getDevice(), 
+      time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
+  }
+  
+  private function detectDeviceInternal($user_agent) {
+    if (!$user_agent) {
+      return;
+    }
+     
+    $db_file =  $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_FILE');
+    $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
+    try {
+       $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
+    } catch (Exception $e) {
+      error_log("Error with device detection");
+      return false;
+    }
+    
+    while ($row = $result->fetch()) {
+      if (preg_match("#" . $row['pattern'] . "#i", $user_agent)) {
+        return $row;
+      }
+    }
+    
+    return false;
+  }
+  
+  private function detectDeviceExternal($user_agent) {
+    if (!$user_agent) {
+      return;
+    }
+            
+    // see if the server has cached the results from the the device detection server
+    $cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime(), TRUE);
+    $cacheFilename = md5($user_agent);
+
+    if ($cache->isFresh($cacheFilename)) {
+      $json = $cache->read($cacheFilename);
+
+    } else {
+      $query = http_build_query(array(
+        'user-agent' => $user_agent,
+        'version'=> $this->version
+      ));
       
-      /* see if the server has cached the results from the the device detection server */
-      $cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime(), TRUE);
-      $cacheFilename = md5($user_agent);
+      $url = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_URL').'?'.$query;
+      $json = file_get_contents($url);
 
-      if ($cache->isFresh($cacheFilename)) {
-           $json = $cache->read($cacheFilename);
+      $cache->write($json, $cacheFilename);
+    }            
 
-      } else {
-          $query = http_build_query(array(
-            'user-agent' => $user_agent
-          ));
-          
-          $url = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_URL').'?'.$query;
-          $json = file_get_contents($url);
+    $data = json_decode($json, true);
 
-          $cache->write($json, $cacheFilename);
-      }            
-
-      $data = json_decode($json, true);
-      
+    // fix values when using old version
+    if ($this->version == 1) {
       switch (strtolower($data['pagetype'])) {
         case 'basic':
           if ($data['platform'] == 'computer' || $data['platform'] == 'spider') {
-            $this->pagetype = 'compliant';
+            $data['pagetype'] = 'compliant';
             
           } else if ($data['platform'] == 'bbplus') {
-            $this->pagetype = 'compliant';
+            $data['pagetype'] = 'compliant';
             
           } else {
-            $this->pagetype = 'basic';
+            $data['pagetype'] = 'basic';
           }
           break;
         
         case 'touch':
           if ($data['platform'] == 'blackberry') {
-            $this->pagetype = 'compliant'; // Storm, Storm 2
+            $data['pagetype'] = 'compliant'; // Storm, Storm 2
             
           } else if ($data['platform'] == 'winphone7') {
-            $this->pagetype = 'compliant'; // Windows Phone 7
+            $data['pagetype'] = 'compliant'; // Windows Phone 7
             
           } else {
-            $this->pagetype = 'touch';
+            $data['pagetype'] = 'touch';
           }
           break;
           
         case 'compliant':
         case 'webkit':
         default:
-          $this->pagetype = 'compliant';
+          $data['pagetype'] = 'compliant';
           break;
       }
-      $this->platform = $data['platform'];
-      $this->certs = $data['supports_certificate'];
-      
-      setcookie(COOKIE_KEY, $this->getDevice(), 
-        time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
-
-      //error_log(__FUNCTION__."(): choosing mobi service layout '".$this->getDevice()."' <{$_SERVER['REQUEST_URI']}>");
     }
     
-    //error_log('DeviceClassifier chose: '.$this->getDevice());
-    //error_log('User-agent is: '.$_SERVER['HTTP_USER_AGENT']);
+    return $data;          
   }
   
   public function isComputer() {

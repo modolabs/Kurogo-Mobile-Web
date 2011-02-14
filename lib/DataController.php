@@ -94,7 +94,7 @@ abstract class DataController
     protected function init($args)
     {
         $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
-        $parser = call_user_func(array($args['PARSER_CLASS'],'factory'),$args);
+        $parser = DataParser::factory($args['PARSER_CLASS'], $args);
         
         $this->setParser($parser);
         
@@ -108,15 +108,20 @@ abstract class DataController
         
     }
 
-    public static function factory($args)
+    public static function factory($controllerClass, $args=array())
     {
-        $controllerClass = isset($args['CONTROLLER_CLASS']) ? $args['CONTROLLER_CLASS'] : __CLASS__;
+        $args = is_array($args) ? $args : array();
 
         if (!class_exists($controllerClass)) {
             throw new Exception("Controller class $controllerClass not defined");
         }
         
         $controller = new $controllerClass;
+        
+        if (!$controller instanceOf DataController) {
+            throw new Exception("$controllerClass is not a subclass of DataController");
+        }
+        
         $controller->init($args);
         
         return $controller;
@@ -126,21 +131,25 @@ abstract class DataController
     {
         $url = $this->baseURL;
         if (count($this->filters)>0) {
-            $url .= "?" . http_build_query($this->filters);
+            $glue = strpos($this->baseURL, '?') !== false ? '&' : '?';
+            $url .= $glue . http_build_query($this->filters);
         }
         
         return $url;
     }
     
-    public function parseData($data)
+    protected function parseData($data, DataParser $parser=null)
     {
-        return $this->parser->parseData($data);
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        return $parser->parseData($data);
     }
     
-    public function getParsedData()
+    public function getParsedData(DataParser $parser=null)
     {
         $data = $this->getData();
-        return $this->parseData($data);
+        return $this->parseData($data, $parser);
     }
     
     public function getData()
@@ -165,7 +174,7 @@ abstract class DataController
                     error_log(sprintf("Retrieving %s", $url));
                 }
                 
-                if ($data = $this->retrieveData()) {
+                if ($data = $this->retrieveData($url)) {
                     $this->cache->write($data, $cacheFilename);
                 }
                 
@@ -180,8 +189,8 @@ abstract class DataController
         return $data;
     }
     
-    protected function retrieveData() {
-        return file_get_contents($this->url);
+    protected function retrieveData($url) {
+        return file_get_contents($url);
     }
 
     public function setCacheLifetime($seconds)

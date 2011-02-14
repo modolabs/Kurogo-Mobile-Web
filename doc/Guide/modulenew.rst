@@ -90,15 +90,8 @@ Steps
     {
         protected $cacheFolder = "Videos"; // set the cache folder
         protected $cacheSuffix = "json";   // set the suffix for cache files
+        protected $DEFAULT_PARSER_CLASS='JSONDataParser'; // the default parser
         
-        public static function factory($args=null)
-        {
-            $args['CONTROLLER_CLASS'] =  __CLASS__;
-            $args['PARSER_CLASS'] =  'JSONDataParser';
-            $controller = parent::factory($args);
-            return $controller;
-        }
-    
         public function search($q)
         {
             // set the base url to YouTube
@@ -121,8 +114,9 @@ Steps
 
 Some notes on this listing:
 
-* The *cacheFolder* and *cacheSuffix* properties set the cache settings
-* The *factory* method instantiates the class and sets the parser
+* The *cacheFolder* and *cacheSuffix* properties set the cache settings.
+* The *DEFAULT_PARSER_CLASS* property sets which parser will be used (it can be overridden by setting the
+  *PARSER_CLASS* key when using the factory method.
 * The *search* method sets the base URL and adds filters. Filters work as parameters that are added to 
   the url's query string. The *getParsedData* method is called which will retrieve that data (using
   the cache if necessary) and run the data through the parser (a JSON parser in this case). In the
@@ -144,7 +138,7 @@ Now that we have a controller, we can utilize it in our module. Here is an updat
       protected $id='video';
       protected function initializeForPage() {
         //instantiate controller
-        $controller = YouTubeDataController::factory();
+        $controller = DataController::factory('YouTubeDataController');
 
         switch ($this->page)
         {
@@ -169,7 +163,8 @@ Now that we have a controller, we can utilize it in our module. Here is an updat
 
 Some notes on this listing:
 
-* We instantiate our controller using the factory method. 
+* We instantiate our controller using the DataController factory method with the name of the class
+  as the first parameter. Any options can be specified in an associative array in the second parameter.
 * Using a *switch* statement allows us to have different logic depending on which page we are on. We
   can add logic for other pages shortly
 * Then we use our search method and search for a fixed phrase. The method returns an array of entries
@@ -369,7 +364,7 @@ Home Screen
 -----------
 
 Adding the module to the home screen is simple. You can either use the :ref:`admin-module`
-or by editing the *SITE_DIR/config/modules/home.ini* file. 
+or by editing the *SITE_DIR/config/module/home.ini* file. 
 
 #. In the *[primary_modules]* section, add an entry that says :kbd:`video="Video"`
 #. Create a 72x72 PNG image named *video.png* and place it in the *SITE_DIR/themes/default/modules/home/images/compliant*

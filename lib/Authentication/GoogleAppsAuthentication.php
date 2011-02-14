@@ -6,18 +6,25 @@
 /**
   * @package Authentication
   */
-class GoogleAppsAuthentication extends OAuthAuthentication
+class GoogleAppsAuthentication extends AuthenticationAuthority
 {
-    protected $tokenSessionVar = 'google_oauth_token';
-    protected $tokenSecretSessionVar = 'google_oauth_token_secret';
-    protected $accessTokenURL = 'https://www.google.com/accounts/OAuthGetAccessToken';
-    protected $accessTokenMethod = 'POST';
     protected $domain;
     protected $oauth = false;
+    protected $oauthRequest;
 
     public function getDomain()
     {
         return $this->domain;
+    }
+
+    // auth is handled by openID
+    protected function auth($login, $password, &$user) {
+        return AUTH_FAILED;
+    }
+
+    //does not support groups
+    public function getGroup($group) {
+        return false;
     }
 
     //Not sure if we can get users or not...
@@ -71,6 +78,7 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         return false;
     }
 
+
     /**
      * Discovers the OpenID Endpoint for a Google Apps domain
      * http://groups.google.com/group/google-federated-login-api/web/openid-discovery-for-hosted-domains?pli=1
@@ -112,6 +120,7 @@ class GoogleAppsAuthentication extends OAuthAuthentication
     public function login($login, $pass, Module $module)
     {
         $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
+        $url = isset($_GET['url']) ? urldecode($_GET['url']) : '';
         //see if we already have a request token
         if ($startOver) {
             $this->reset();
@@ -121,24 +130,7 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         $ARGS = $_SERVER['REQUEST_METHOD'] == 'GET' ? $_GET : $_POST;
         if (isset($ARGS['openid_mode'])) {
             if (isset($ARGS['openid_identity'])) {
-                if ($this->oauth) {
-                    if ($ns = $this->getOpenIDNameSpace('http://specs.openid.net/extensions/oauth/1.0', $ARGS)) {
-                        if ($request_token = $this->getOpenIDValue('request_token', $ns, $ARGS)) {
-                            if ($result = $this->getAccessToken($request_token)) {
-                                $ARGS['oauth_token'] = $result['oauth_token'];
-                                $ARGS['oauth_token_secret'] = $result['oauth_token_secret'];
-                            } else {
-                                throw new Exception("Error getting Access Token");
-                            }
-                        } else {
-                            throw new Exception("Error getting Access Token");
-                        }
-                    } else {
-                        throw new Exception("Could not find OAuth information");
-                    }
-                }
                 if ($user = $this->getUserFromArray($ARGS)) {
-    
                     $session = $module->getSession();
                     $session->login($user);
                     return AUTH_OK;
@@ -151,13 +143,13 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         } else {
         
             //redirect to auth page
-            $url = $this->getAuthURL();
+            $url = $this->getAuthURL(array('url'=>$url));
             header("Location: " . $url);
             exit();
         }
     }
     
-    protected function getAuthURL()
+    protected function getAuthURL(array $params)
     {
         if (!$url = $this->getOpenIDEndpoint()) {
             throw new Exception("Unable to get OpenID endpoint url for $this->domain.");
@@ -167,10 +159,6 @@ class GoogleAppsAuthentication extends OAuthAuthentication
 
         $realm = sprintf("http://%s%s", $this->domain != $url_parts['host'] ? '*.' : '', $this->domain);
         if (!in_array($_SERVER['SERVER_PORT'], array(80,443))) {
-            if ($this->oauth) {
-                throw new Exception("OAuth will not work with custom ports");
-            }
-            
             $realm .= ":" . $_SERVER['SERVER_PORT'];
         }
 
@@ -179,9 +167,10 @@ class GoogleAppsAuthentication extends OAuthAuthentication
             'openid.ns'=>'http://specs.openid.net/auth/2.0',
             'openid.claimed_id'=>'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.identity'=>'http://specs.openid.net/auth/2.0/identifier_select',
-            'openid.return_to'=>FULL_URL_BASE . 'login/login?' . http_build_query(array(
-                'authority'=>$this->getAuthorityIndex()
-		        )),
+            'openid.return_to'=>FULL_URL_BASE . 'login/login?' . http_build_query(array_merge($params,
+                array(
+                    'authority'=>$this->getAuthorityIndex()
+		        ))),
             'openid.realm'=>$realm,
             'openid.ns.ax'=>'http://openid.net/srv/ax/1.0',
             'openid.ax.mode'=>'fetch_request',
@@ -191,21 +180,36 @@ class GoogleAppsAuthentication extends OAuthAuthentication
             'openid.ax.type.lastname'=>'http://axschema.org/namePerson/last'
         );
         
-        if ($this->oauth) {
-            $parameters = array_merge($parameters, array(
-            'openid.ns.oauth'=>'http://specs.openid.net/extensions/oauth/1.0',
-            'openid.oauth.consumer'=>$this->consumer_key,
-            'openid.oauth.scope'=>implode(' ', array(
-	            'http://www.google.com/calendar/feeds',
-                'http://docs.google.com/feeds/',
-                'http://spreadsheets.google.com/feeds/'
-                )
-            )));
+        if (!$GLOBALS['deviceClassifier']->isComputer()) {
+            $paramters['btmpl'] ='mobile';
         }
-	    
+        
 	    $url .= stripos($url, "?") ? '&' : '?';
         $url .= http_build_query($parameters);
         return $url;
+    }
+    
+    public function getConsumerKey()
+    {
+        return $this->consumer_key;
+    }
+
+    public function getConsumerSecret()
+    {
+        return $this->consumer_secret;
+    }
+    
+    public function oAuthRequest($method, $url, $parameters=null, $headers=null) {
+    
+        $parameters = is_array($parameters) ? $parameters : array();
+        $headers = is_array($headers) ? $headers : array();
+
+        if (!$this->oauthRequest) {
+            $this->oauthRequest =  new OAuthRequest($this->getConsumerKey(), $this->getConsumerSecret());
+        }
+        
+        $result = $this->oauthRequest->request('GET', $url, $parameters, $headers);
+        return $result;
     }
 
     public function init($args)

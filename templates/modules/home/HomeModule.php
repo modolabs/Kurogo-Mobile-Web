@@ -21,32 +21,32 @@ class HomeModule extends Module {
   
   protected function getSectionTitleForKey($key) {
     switch ($key) {
-        case 'primary_modules': return 'Primary Modules';
-        case 'secondary_modules': return 'Secondary Modules';
-        default: return parent::getSectionTitleForKey($key);
+      case 'primary_modules': return 'Primary Modules';
+      case 'secondary_modules': return 'Secondary Modules';
+      default: return parent::getSectionTitleForKey($key);
     }
   }
   
   protected function prepareAdminForSection($section, &$adminModule) {
     switch ($section) {
-        case 'primary_modules':
-        case 'secondary_modules':
-            $adminModule->setTemplatePage('module_order', $this->id);
-            $adminModule->addInternalJavascript("/modules/{$this->id}/javascript/admin.js");
-            $adminModule->addInternalCSS("/modules/{$this->id}/css/admin.css");
+      case 'primary_modules':
+      case 'secondary_modules':
+        $adminModule->setTemplatePage('module_order', $this->id);
+        $adminModule->addInternalJavascript("/modules/{$this->id}/javascript/admin.js");
+        $adminModule->addInternalCSS("/modules/{$this->id}/css/admin.css");
 
-            $allModules = $this->getAllModules();
-            $navigationModules = $this->getNavigationModules();
+        $allModules = $this->getAllModules();
+        $navigationModules = $this->getNavigationModules();
 
-            foreach ($allModules as $moduleID=>$module) {
-                $allModules[$moduleID] = $module->getModuleName();
-            }
-            
-            $adminModule->assign('allModules', $allModules);
-            $adminModule->assign('sectionModules', $navigationModules[$section]);
-            break;
-        default:
-            return parent::prepareAdminForSection($section, $adminModule);
+        foreach ($allModules as $moduleID=>$module) {
+          $allModules[$moduleID] = $module->getModuleName();
+        }
+        
+        $adminModule->assign('allModules', $allModules);
+        $adminModule->assign('sectionModules', $navigationModules[$section]);
+        break;
+      default:
+        return parent::prepareAdminForSection($section, $adminModule);
     }
   }
   
@@ -75,10 +75,7 @@ class HomeModule extends Module {
     switch ($this->page) {
       case 'help':
         break;
-        
-      case 'pane':
-        break;
-        
+              
       case 'index':
         $this->addOnLoad('rotateScreen();');
         $this->addOnOrientationChange('rotateScreen();');

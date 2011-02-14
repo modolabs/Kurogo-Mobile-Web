@@ -39,14 +39,11 @@ There are several methods that you should be familiar with to use this class app
   use to generate a filtered result set
 * *setBaseURL($url)* - Sets the base url to use. You will have the opportunity to manipulate the url
   that gets used if you subclass the *url()* method.
-* *factory($args)* - The factory method is the public way to instantiate your class. *args*
-  is an associative array of parameters used to initialize it's settings. If you override this class
-  you should add any default options necessary to the $args array. If any required options aren't present,
-  you should throw an exception. You *should* call parent::factory($args) at the end of your 
-  implementation and then return the result. 
   
 There are several other methods that can be overridden
 
+* *init($args) - this method is called after instantiation. It includes an array of key/values to initialize
+  the class. Make sure you call parent::init($args).
 * *url()* - Should return the complet url to use for the request. You can provide an interface to set various
   parameters that will then affect the building of the query to the web service. By default, this method
   will simply return the base url.
