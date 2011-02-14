@@ -127,10 +127,26 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	color: #fff
 }
 
-
 /* Text input fields, e.g., search fields */
+
 .forminput {
-	border-color: #666; 	/* Should match the border color of image /common/images/mobile/search_button.png */
+  /* Should match the border color of image /common/images/mobile/search_button.png */
+	border-color: #666; 	
+}
+
+.inputcombo .forminput {
+  /* Border color should match the border color of image /common/images/mobile/search_button.png */
+	border: 1px 0 1px 1px solid #666; 	
+	-webkit-border-bottom-left-radius: 8px;	
+	-webkit-border-top-left-radius: 8px;	
+}
+
+.emphasized  .forminput {
+  /* Border color should match the border color of image /common/images/mobile/search_button.png, border weight should be 2px greater than border weight of .inputcombo .forminput */
+	border: 3px solid #666; 		
+	/* Corner radius should be 2px greater than corner radius of .inputcombo .forminput */
+	-webkit-border-bottom-left-radius: 10px; 		
+	-webkit-border-top-left-radius: 10px;	
 }
 
 /* Springboards */

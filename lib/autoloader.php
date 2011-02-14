@@ -14,35 +14,35 @@
  * 
  */
 function siteLibAutoloader($className) {
-    $paths = array();
-    
-    /* If the className has Authentication at the end try the  authentication dir */
-    if (preg_match("/(Authentication)$/", $className, $bits)) {
-        if (defined('SITE_LIB_DIR')) {
-            $paths[] = SITE_LIB_DIR . "/" . $bits[1];
-        }
-        $paths[] = LIB_DIR . "/" . $bits[1];
-    }
-
-    /* If the className has Module in it then use the modules dir */
-    if (defined('MODULES_DIR') && preg_match("/(.*)Module/", $className, $bits)) {
-        $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
-    }
-
-    /* use the site lib dir if it's been defined */
+  $paths = array();
+  
+  // If the className has Authentication at the end try the  authentication dir
+  if (preg_match("/(Authentication)$/", $className, $bits)) {
     if (defined('SITE_LIB_DIR')) {
-        $paths[] = SITE_LIB_DIR;
+      $paths[] = SITE_LIB_DIR . "/" . $bits[1];
     }
+    $paths[] = LIB_DIR . "/" . $bits[1];
+  }
 
-    $paths[] = LIB_DIR;
-        
-    foreach ($paths as $path) {
-        $file = realpath_exists("$path/$className.php");
-        if ($file) {
-            //error_log("Autoloader found $file for $className");
-            include $file;
-            return;
-        }
+  // If the className has Module in it then use the modules dir
+  if (defined('MODULES_DIR') && preg_match("/(.*)Module/", $className, $bits)) {
+    $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
+  }
+
+  // use the site lib dir if it's been defined
+  if (defined('SITE_LIB_DIR')) {
+    $paths[] = SITE_LIB_DIR;
+  }
+  
+  $paths[] = LIB_DIR;
+      
+  foreach ($paths as $path) {
+    $file = realpath_exists("$path/$className.php");
+    if ($file) {
+      //error_log("Autoloader found $file for $className");
+      include $file;
+      return;
     }
-    return;
+  }
+  return;
 }

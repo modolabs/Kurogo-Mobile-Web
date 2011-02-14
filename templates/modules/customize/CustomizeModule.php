@@ -11,41 +11,13 @@
 class CustomizeModule extends Module {
   protected $id = 'customize';
 
-  protected function setHomeScreenModuleOrder($moduleIDs) {
-    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
-    $value = implode(",", $moduleIDs);
-    
-    setcookie("moduleorder", $value, time() + $lifespan, COOKIE_PATH);
-    $_COOKIE["moduleorder"] = $value;
-    error_log(__FUNCTION__.'(): '.print_r($value, true));
-  }
-  
-  protected function setHomeScreenVisibleModules($moduleIDs) {
-    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
-    $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
-    
-    setcookie("visiblemodules", $value, time() + $lifespan, COOKIE_PATH);
-    $_COOKIE["visiblemodules"] = $value;
-    error_log(__FUNCTION__.'(): '.print_r($value, true));
-  }
-  
-  protected function getHomeScreenModules()
-  {
-    static $homeModule;
-    if (!$homeModule) {
-        $homeModule = Module::factory('home');
-    }
-        
-    return $homeModule->getHomeScreenModules();
-  }
-
   private function handleRequest($args) {
     if (isset($args['action'])) {
-      $currentModules = $this->getHomeScreenModules();
+      $currentModules = $this->getModuleCustomizeList();
       
       switch ($args['action']) {
         case 'swap':
-         $currentIDs = array_keys($currentModules);
+          $currentIDs = array_keys($currentModules);
           
           if (isset($args['module1'], $args['module2']) && 
               in_array($args['module1'], $currentIDs) && 
@@ -59,23 +31,23 @@ class CustomizeModule extends Module {
               }
             }
             
-            $this->setHomeScreenModuleOrder($currentIDs);
+            $this->setNavigationModuleOrder($currentIDs);
           }
           break;
           
         case 'on':
         case 'off':
           if (isset($args['module'])) {
-            $visibleModuleIDs = array();
+            $disabledModuleIDs = array();
             
             foreach ($currentModules as $id => &$info) {
               if ($id == $args['module']) {
-                $info['visible'] = $args['action'] != 'on';
+                $info['disabled'] = $args['action'] != 'on';
               }
-              if ($info['visible']) { $visibleModuleIDs[] = $id; }
+              if ($info['disabled']) { $disabledModuleIDs[] = $id; }
             }
             
-            $this->setHomeScreenVisibleModules($visibleModuleIDs);
+            $this->setNavigationHiddenModules($disabledModuleIDs);
           }
           break;
         
@@ -89,58 +61,52 @@ class CustomizeModule extends Module {
   protected function initializeForPage() {
     $this->handleRequest($this->args);
 
-    $modules = array();
+    $modules = $this->getModuleCustomizeList();
     $moduleIDs = array();
-    $activeModuleIDs = array();
-    $newCount = 0;
-
-    foreach ($this->getHomeScreenModules() as $moduleID => $info) {
-        if ($info['primary'] ) {
-          $modules[$moduleID] = $info;
-          $moduleIDs[] = $moduleID;
-          $activeModuleIDs[] = $moduleID; 
-        }
+    $disabledModuleIDs = array();
+    
+    foreach ($modules as $id => $info) {
+      $moduleIDs[] = $id; 
+      if ($info['disabled']) { 
+        $disabledModuleIDs[] = $id; 
+      }
     }
     
-    
-    switch($this->pagetype)  {
+    switch($this->pagetype) {
       case 'compliant':
-        $this->addInlineJavascript('var httpRoot = "'.COOKIE_PATH.'"');
+      case 'tablet':
+         $this->addInlineJavascript(
+          'var modules = '.json_encode($moduleIDs).';'.
+          'var disabledModules = '.json_encode($disabledModuleIDs).';'.
+          'var MODULE_ORDER_COOKIE = "'.MODULE_ORDER_COOKIE.'";'.
+          'var DISABLED_MODULES_COOKIE = "'.DISABLED_MODULES_COOKIE.'";'.
+          'var MODULE_ORDER_COOKIE_LIFESPAN = '.$this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN').';'.
+          'var COOKIE_PATH = "'.COOKIE_PATH.'";'
+        );
         $this->addInlineJavascriptFooter('init();');
-        
-        switch ($GLOBALS['deviceClassifier']->getPlatform()) {
-          case 'iphone':
-            break;
-          
-          default:
-            $this->addInlineJavascript(
-              'var modules = '.json_encode($moduleIDs).';'.
-              'var activeModules = '.json_encode($activeModuleIDs).';'
-            );
-            break;
-        }
         break;
-        
+      
+      case 'touch':
       case 'basic':
         foreach ($moduleIDs as $index => $id) {
-          $modules[$id]['toggleDisabledURL'] = 'index.php?'.http_build_query(array(
-            'action' => $modules[$id]['visible'] ? 'on' : 'off',
+          $modules[$id]['toggleDisabledURL'] = $this->buildBreadcrumbURL('index', array(
+            'action' => $modules[$id]['disabled'] ? 'on' : 'off',
             'module' => $id,
-          ));
+          ), false);
           
           if ($index > 0) {
-            $modules[$id]['swapUpURL'] = 'index.php?'.http_build_query(array(
+            $modules[$id]['swapUpURL'] = $this->buildBreadcrumbURL('index', array(
               'action'    => 'swap',
               'module1'   => $id,
               'module2'   => $moduleIDs[$index-1],
-            ));
+            ), false);
           }
           if ($index < (count($moduleIDs)-1)) {
-            $modules[$id]['swapDownURL'] = 'index.php?'.http_build_query(array(
+            $modules[$id]['swapDownURL'] = $this->buildBreadcrumbURL('index', array(
               'action'    => 'swap',
               'module1'   => $id,
               'module2'   => $moduleIDs[$index+1],
-            ));
+            ), false);
           }
         }
         break;
@@ -150,6 +116,5 @@ class CustomizeModule extends Module {
     }    
     
     $this->assignByRef('modules', $modules);
-    $this->assignByRef('newCount', $newCount);
   }
 }
