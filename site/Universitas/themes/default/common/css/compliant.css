@@ -147,6 +147,7 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	/* Corner radius should be 2px greater than corner radius of .inputcombo .forminput */
 	-webkit-border-bottom-left-radius: 10px; 		
 	-webkit-border-top-left-radius: 10px;	
+}
 
 /* Springboards */
 
