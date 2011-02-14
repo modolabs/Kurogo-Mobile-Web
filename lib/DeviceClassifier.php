@@ -70,22 +70,26 @@ class DeviceClassifier {
       return;
     }
      
-    $db_file =  $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_FILE');
-    $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
-    try {
-       $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
-    } catch (Exception $e) {
-      error_log("Error with device detection");
-      return false;
-    }
-    
-    while ($row = $result->fetch()) {
-      if (preg_match("#" . $row['pattern'] . "#i", $user_agent)) {
-        return $row;
-      }
-    }
-    
-    return false;
+     if (!$db_file =  $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_FILE')) {
+        error_log('MOBI_SERVICE_FILE not specified in site config.');
+        die("MOBI_SERVICE_FILE not specified in site config.");
+     }
+     
+     try {
+         $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
+         $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
+     } catch (Exception $e) {
+        error_log("Error with device detection");
+        return false;
+     }
+
+     while ($row = $result->fetch()) {
+        if (preg_match("#" . $row['pattern'] . "#i", $user_agent)) {
+            return $row;
+        }
+     }
+     
+     return false;
   }
   
   private function detectDeviceExternal($user_agent) {
