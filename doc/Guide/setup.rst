@@ -18,14 +18,15 @@ System Requirements
   * xml
   * dom
   * json
-  * PDO
+  * PDO (SQLite required, also can use MySQL)
+  * mbstring
+  
      
 * Some PHP modules are optional depending on whether you need their backend functionality
 
   * LDAP
+  * curl
   
-* Access to the :doc:`MIT Device Detection Framework <devicedetection>`
-
 .. _installation:
 
 ============
