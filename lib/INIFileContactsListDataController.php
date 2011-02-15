@@ -7,12 +7,6 @@ class INIFileContactsListDataController extends ContactsListDataController
     protected $primarySection;
     protected $secondarySection;
 
-    protected function init($args) {
-        $this->primaryContacts = isset($args['primary']) ? self::createContactsList($args['primary']) : array();
-
-        $this->secondaryContacts = isset($args['secondary']) ? self::createContactsList($args['secondary']) : array();
-    }
-
     private static function createContactsList($iniData) {
         $contactsList = array();
         if(isset($iniData['title'])) {
@@ -27,8 +21,17 @@ class INIFileContactsListDataController extends ContactsListDataController
         return $contactsList;
     }
 
+    private $contactsLoaded = FALSE;
+
     protected function loadContacts() {
-        // contacts are loaded in init form the $args
-        // nothing to do
+        if(!$this->contactsLoaded) {
+            $this->getData();
+            // have to read from the cache file directly
+            // because parse_ini_string is not supported in PHP 5.2
+            $iniData = parse_ini_file($this->cache->getFullPath($this->cacheFilename()), TRUE);
+            $this->primaryContacts = isset($iniData['primary']) ? self::createContactsList($iniData['primary']) : array();
+            $this->secondaryContacts = isset($iniData['secondary']) ? self::createContactsList($iniData['secondary']) : array();
+            $this->contactsLoaded = TRUE;
+        }
     }
 }

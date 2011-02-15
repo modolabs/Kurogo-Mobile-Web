@@ -17,8 +17,8 @@ class DrupalContactsListDataController extends ContactsListDataController
     }
 
     protected function init($args) {
-        $args['BASE_URL'] = $args['contacts']['DRUPAL_SERVER_URL'] .
-            "/emergency-contacts-v" . $args['contacts']['FEED_VERSION'];
+        $args['BASE_URL'] = $args['DRUPAL_SERVER_URL'] .
+            "/emergency-contacts-v" . $args['FEED_VERSION'];
         parent::init($args);
     }
 }

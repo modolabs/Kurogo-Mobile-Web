@@ -9,7 +9,7 @@ class EmergencyModule extends Module
 
         $config = $this->loadFeedData();
         if(isset($config['contacts'])) {
-          $contactsController = DataController::factory($config['contacts']['CONTROLLER_CLASS'], $config);
+          $contactsController = DataController::factory($config['contacts']['CONTROLLER_CLASS'], $config['contacts']);
         } else {
           $contactsController = NULL;
         }
