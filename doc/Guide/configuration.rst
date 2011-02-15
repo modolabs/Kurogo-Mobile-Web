@@ -226,14 +226,23 @@ You can create entries like such (in uppercase)
     
 This allows you to customize the front door experience for your users.
 
+.. _devicedetection_config:
+
 ----------------
 Device Detection
 ----------------
 
-* *MOBI_SERVICE_URL* - Set this to the URL of the :doc:`device detection <devicedetection>` server.
+See :doc:`devicedetection` for more details
 
-  * https://modolabs-device-test.appspot.com/api/
-  * https://modolabs-device.appspot.com/api/
+* *MOBI_SERVICE_VERSION* - Includes the version of device detection to use. Provided for compatibility.
+* *MOBI_SERVICE_USE_EXTERNAL* - Boolean. If 0, Kurogo will use the internal device detection server. If 1 it will use an external server
+* *MOBI_SERVICE_FILE* - Location of device detection SQLite database if using internal detection. (typically located in LIB_DIR/deviceData.db)
+* *MOBI_SERVICE_URL* - Url of device detection server if using external detection
+
+  * (Development) https://modolabs-device-test.appspot.com/api/
+  * (Production) https://modolabs-device.appspot.com/api/
+
+* *MOBI_SERVICE_CACHE_LIFETIME* - Time (in seconds) to keep cached results from the external device detection service
 
 -------
 Cookies
