@@ -14,12 +14,13 @@ Configuring the Server Connection
 =================================
 
 In order to use the emergency module, you must first setup the connection to your data.
-At minimum you need to configure the RSS feed which gives the most recent emergency information,
-by editing the `notice` section of *config/feeds/emergency.ini*.
+If you want to display an emergency notice you will need to include a `notice` section
+in *config/feeds/emergency.ini*.  In the `notice` section you will need to configure
+the url for the emergency notice RSS feed.
 
-* If you are using the add-on emergency drupal module, you can set the RSS_URL to
+* If you are using the add-on emergency drupal module, you can set the BASE_URL to
   "http://YOUR_DRUPAL_SERVER_DOMAIN/emergency-information-v1", where YOUR_DRUPAL_SERVER_DOMAIN.
-  Otherwise just set the RSS_URL to the appropriate RSS feed.
+  Otherwise just set the BASE_URL to the appropriate RSS feed.
 
 If you also want to include emergency contact phone numbers, you will need to include
 a `contacts` section in *config/feeds/emergency.ini*
@@ -32,10 +33,13 @@ Configure contacts list to connect to the drupal emergency module:
 * DRUPAL_SERVER_URL = "http://YOUR_DRUPAL_SERVER_DOMAIN"  
 * FEED_VERSION = 1
 
-Otherwise you can configure the contacts list directly in this ini file with,
-CONTROLLER_CLASS = "INIFileContactsListDataController", and you will need a
-`primary` section for primary contacts and a `secondary` section for secondary contacts.
-Each contact is formatted as follows::
+Otherwise you can configure the contacts list directly in an ini file with:  
+
+* CONTROLLER_CLASS = "INIFileContactsListDataController"
+* BASE_URL must point to the appropriate ini file
+
+The ini file will need a `primary` section for primary contacts and 
+a `secondary` section for secondary contacts. Each contact is formatted as follows::
 
   title[] = "Police"  
   subtitle[] = ""  
