@@ -274,6 +274,9 @@ class LDAPDataController extends PeopleController {
         return FALSE;
       }
 
+      // IG: move
+      //showLdapJpeg($ds, $id, $entries[0]);
+      
       return new $this->personClass($entries[0]);
 
     } else {
