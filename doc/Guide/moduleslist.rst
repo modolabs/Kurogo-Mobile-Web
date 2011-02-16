@@ -13,6 +13,7 @@ you can learn more about these modules, what they do and how to configure them.
    modulepeople
    modulecalendar
    modulenews
+   moduleemergency
    modulelinks
    modulecontent
    modulefullweb
