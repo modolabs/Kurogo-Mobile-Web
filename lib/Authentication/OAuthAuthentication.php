@@ -40,19 +40,19 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 	    return array();
 	}
 	
-	protected function oauthRequest($method, $url, $parameters = null) {
+	public function oauthRequest($method, $url, $parameters = null, $headers = null) {
+        $parameters = is_array($parameters) ? $parameters : array();
 	    if (!$this->oauth) {
 	        $this->oauth = new OAuthRequest($this->consumer_key, $this->consumer_secret);
 	    }
 	    
+	    $this->oauth->setToken($this->token);
 	    $this->oauth->setTokenSecret($this->tokenSecret);
-	    return $this->oauth->request($method, $url, $parameters);
+	    return $this->oauth->request($method, $url, $parameters, $headers);
 	}
 	
-	protected function getAccessToken($token, $verifier='') {
-		$parameters = array_merge($this->getAccessTokenParameters(),array(
-		    'oauth_token'=>$token
-        ));
+	protected function getAccessToken($verifier='') {
+		$parameters = $this->getAccessTokenParameters();
         
         if (strlen($verifier)) {
             $parameters['oauth_verifier']=$verifier;
@@ -62,7 +62,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		$response = $this->oauthRequest($this->accessTokenMethod, $this->accessTokenURL,  $parameters);
 		parse_str($response, $return);
 
-		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
+		if (!isset($return['oauth_token'], $return['oauth_token_secret'])) {
 		    return false;
 		}
 
@@ -124,7 +124,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         //if oauth_verifier is set then we are in the callback
         if (isset($_GET[$this->verifierKey])) {
             //get an access token
-            if ($response = $this->getAccessToken($this->token, $_GET[$this->verifierKey])) {
+            if ($response = $this->getAccessToken($_GET[$this->verifierKey])) {
                 //we should now have the current user
                 if ($user = $this->getUserFromArray($response)) {
                     $session = $module->getSession();
@@ -148,6 +148,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     public function init($args) {
         parent::init($args);
         $args = is_array($args) ? $args : array();
+        $this->tokenSessionVar = sprintf("%s_token", $this->getAuthorityIndex());
+        $this->tokenSecretSessionVar = sprintf("%s_tokenSecret", $this->getAuthorityIndex());
 
         if (isset($_SESSION[$this->tokenSessionVar], $_SESSION[$this->tokenSecretSessionVar])) {
             $this->setToken($_SESSION[$this->tokenSessionVar]);
@@ -160,6 +162,14 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $this->setTokenSecret(null);
         unset($_SESSION[$this->tokenSessionVar]);
         unset($_SESSION[$this->tokenSecretSessionVar]);
+    }
+
+    public function getToken() {
+        return $this->token;
+    }
+    
+    public function getTokenSecret() {
+        return $this->tokenSecret;
     }
 
     public function setToken($token) {
