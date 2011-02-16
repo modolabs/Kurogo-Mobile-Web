@@ -293,15 +293,15 @@ class CalendarModule extends Module {
        
       case 'resource':
         if ($listController = $this->getModuleVar('ResourceListController', '', Config::SUPRESS_ERRORS)) {
-            $controller = CalendarListController::factory($listController);
-            $feeds = $controller->getResources($this->getUser());
+            $controller = CalendarListController::factory($listController, array('USER'=>$this->getUser()));
+            $feeds = $controller->getResources();
         }
         break;
       
       case 'user':
         if ($listController = $this->getModuleVar('UserCalendarListController', '', Config::SUPRESS_ERRORS)) {
-            $controller = CalendarListController::factory($listController);
-            $feeds = $controller->getUserCalendars($this->getUser());
+            $controller = CalendarListController::factory($listController, array('USER'=>$this->getUser()));
+            $feeds = $controller->getUserCalendars();
         }
         break;
       default:

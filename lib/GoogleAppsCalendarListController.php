@@ -4,18 +4,18 @@ class GoogleAppsCalendarListController extends CalendarListController
 {
     protected $cacheLifetime = 300;
     
-    public function getResources(User $user)
+    public function getResources()
     {
-        if (!$user instanceOf GoogleAppsUser) {
+        if (!$this->user instanceOf GoogleAppsUser) {
             return array();
         }
         
-        $url = 'https://apps-apis.google.com/a/feeds/calendar/resource/2.0/' . $user->getDomain() .'/' ;
+        $url = 'https://apps-apis.google.com/a/feeds/calendar/resource/2.0/' . $this->user->getDomain() .'/' ;
         $parameters = array(
             'alt'=>'json'
         );
         
-        $data = $this->calendarQuery($url, $parameters, array(), $user, false);
+        $data = $this->calendarQuery($url, $parameters, array(), false);
         $data = json_decode($data, true);
         
         $feeds = array();
@@ -24,7 +24,7 @@ class GoogleAppsCalendarListController extends CalendarListController
             foreach ($data['feed']['entry'] as $resource) {
                 $feed = array(
                     'CONTROLLER_CLASS'=>'GoogleAppsCalendarDataController',
-                    'USER'=>$user
+                    'USER'=>$this->user
                 );
 
                 foreach ($resource['apps$property'] as $property) {
@@ -49,9 +49,9 @@ class GoogleAppsCalendarListController extends CalendarListController
         return $feeds;
     }
 
-    protected function calendarQuery($url, $parameters, $headers, User $user, $unique=false) {
+    protected function calendarQuery($url, $parameters, $headers=null, $unique=true) {
 
-        if (!$user instanceOf GoogleAppsUser) {
+        if (!$this->user instanceOf GoogleAppsUser) {
             return array();
         }
         
@@ -59,13 +59,15 @@ class GoogleAppsCalendarListController extends CalendarListController
         $cache->setSuffix('.json');
         $cache->preserveFormat();
         
-        $cacheFilename = $unique ? md5($url . $user->getEmail()) : md5($url);
+        $cacheURL = $url . count($parameters) ? '?' . http_build_query($parameters) : $url;
+        
+        $cacheFilename = $unique ? md5($cacheURL. $this->user->getEmail()) : md5($cacheURL);
         
         if ($cache->isFresh($cacheFilename)) {
             $data = $cache->read($cacheFilename);
         } else {
 
-            $authority = $user->getAuthenticationAuthority();
+            $authority = $this->user->getAuthenticationAuthority();
             $method = 'GET';        
         
             if ($data = $authority->oAuthRequest($method, $url, $parameters, $headers)) {
@@ -76,8 +78,8 @@ class GoogleAppsCalendarListController extends CalendarListController
         return $data;
     }
     
-    public function getUserCalendars(User $user) {
-        if (!$user instanceOf GoogleAppsUser) {
+    public function getUserCalendars() {
+        if (!$this->user instanceOf GoogleAppsUser) {
             return array();
         }
 
@@ -90,7 +92,7 @@ class GoogleAppsCalendarListController extends CalendarListController
             'GData-Version: 2'
         );
 
-        $data = $this->calendarQuery($url, $parameters, $headers, $user, true);
+        $data = $this->calendarQuery($url, $parameters, $headers, true);
         $data = json_decode($data, true);
 
         $feeds = array();
@@ -99,7 +101,7 @@ class GoogleAppsCalendarListController extends CalendarListController
             foreach ($data['data']['items'] as $calendar) {
                 $feeds[$calendar['id']] = array(
                     'CONTROLLER_CLASS'=>'GoogleAppsCalendarDataController',
-                    'USER'=>$user, 
+                    'USER'=>$this->user, 
                     'BASE_URL'=>$calendar['eventFeedLink'],
                     'TITLE'=>$calendar['title']
                 );
