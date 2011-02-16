@@ -40,14 +40,19 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 	    return array();
 	}
 	
-	public function oauthRequest($method, $url, $parameters = null, $headers = null) {
+	public function oauthRequest($method, $url, $parameters = null, $headers = null, $use_token=true) {
         $parameters = is_array($parameters) ? $parameters : array();
 	    if (!$this->oauth) {
 	        $this->oauth = new OAuthRequest($this->consumer_key, $this->consumer_secret);
 	    }
 	    
-	    $this->oauth->setToken($this->token);
-	    $this->oauth->setTokenSecret($this->tokenSecret);
+	    if ($use_token) {
+            $this->oauth->setToken($this->token);
+            $this->oauth->setTokenSecret($this->tokenSecret);
+        } else {
+            $this->oauth->setToken('');
+            $this->oauth->setTokenSecret('');
+        }
 	    return $this->oauth->request($method, $url, $parameters, $headers);
 	}
 	
@@ -63,6 +68,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		parse_str($response, $return);
 
 		if (!isset($return['oauth_token'], $return['oauth_token_secret'])) {
+		    error_log('oauth_token not found in getAccessToken');
 		    return false;
 		}
 
@@ -93,6 +99,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 
 		// validate
 		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
+		    error_log('oauth_token not found in getRequestToken');
 		    return false;
 		}
 		
@@ -117,6 +124,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         //see if we already have a request token
         if ($startOver || !$this->token || !$this->tokenSecret) {
             if (!$this->getRequestToken(array('url'=>$url))) {
+                error_log("Error getting request token");
                 return AUTH_FAILED;
             }
         }
@@ -131,9 +139,11 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
                     $session->login($user);
                     return AUTH_OK;
                 } else {
+                    error_log("Unable to find user for $response");
                     return AUTH_FAILED;
                 }
             } else {
+                error_log("Error getting Access token");
                 return AUTH_FAILED;
             }
         } else {
