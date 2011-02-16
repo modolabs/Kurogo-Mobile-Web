@@ -3,7 +3,7 @@
 abstract class CalendarListController
 {
     abstract public function getUserCalendars(User $user);
-/*    abstract public function getPublicCalendars(User $user); */
+    abstract public function getResources(User $user); 
     
     public static function factory($controllerClass, $args=array()) {
         $args = is_array($args) ? $args : array();

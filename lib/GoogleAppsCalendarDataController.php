@@ -50,10 +50,6 @@ class GoogleAppsCalendarDataController extends CalendarDataController
             throw new Exception("Authority not set");
         }
         
-        if (!$this->oauth) {
-            $this->oauth =  new OAuthRequest($this->authority->getConsumerKey(), $this->authority->getConsumerSecret());
-        }
-                
         $parameters = array(
             'xoauth_requestor_id'=>$this->user->getEmail(),
             'alt'=>'jsonc'
@@ -63,7 +59,7 @@ class GoogleAppsCalendarDataController extends CalendarDataController
             'GData-Version: 2'
         );
 
-        $result = $this->oauth->request('GET', $url, $parameters, $headers);
+        $result = $this->authority->oauthRequest('GET', $url, $parameters, $headers);
         return $result;
     }
     
@@ -100,7 +96,7 @@ class GoogleCalendarDataParser extends DataParser
         
     }
 
-        public function parseData($data)
+    public function parseData($data)
     {
         $calendar = new ICalendar();
 
@@ -140,4 +136,5 @@ class GoogleCalendarDataParser extends DataParser
     }
     
 }
+
 

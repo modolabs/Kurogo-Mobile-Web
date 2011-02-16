@@ -291,6 +291,13 @@ class CalendarModule extends Module {
         $feeds = $this->loadFeedData();
         break;
        
+      case 'resource':
+        if ($listController = $this->getModuleVar('ResourceListController', '', Config::SUPRESS_ERRORS)) {
+            $controller = CalendarListController::factory($listController);
+            $feeds = $controller->getResources($this->getUser());
+        }
+        break;
+      
       case 'user':
         if ($listController = $this->getModuleVar('UserCalendarListController', '', Config::SUPRESS_ERRORS)) {
             $controller = CalendarListController::factory($listController);
@@ -385,6 +392,20 @@ class CalendarModule extends Module {
             );
           }
           $this->assign('userCalendars', $userCalendars);
+        }
+
+        if ($resourceFeeds = $this->getFeeds('resource')) {
+          $resources = array();
+          foreach ($resourceFeeds as $id=>$resource) {
+            $resources[$id] = array(
+              'title' => $resource['TITLE'],
+              'url'   => $this->buildBreadcrumbURL('day', array(
+                'type'     => 'resource', 
+                'calendar' => $id
+              )),
+            );
+          }
+          $this->assign('resources', $resources);
         }
 
         $this->loadWebAppConfigFile('calendar-index','calendarPages');
