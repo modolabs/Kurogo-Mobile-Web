@@ -134,6 +134,15 @@ function Initialize(&$path=null) {
   
   $GLOBALS['siteConfig'] = new SiteConfig();
   ini_set('display_errors', $GLOBALS['siteConfig']->getVar('DISPLAY_ERRORS'));
+  if (!ini_get('error_log')) {
+     ini_set('error_log', LOG_DIR . '/php_error.log');
+  }
+
+  //
+  // Set timezone
+  //
+  
+  date_default_timezone_set($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
   
   //
   // Install exception handlers
@@ -185,10 +194,5 @@ function Initialize(&$path=null) {
   $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
   
   
-  //
-  // Set timezone
-  //
-  
-  date_default_timezone_set($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
 
 }

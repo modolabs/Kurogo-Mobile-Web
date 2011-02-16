@@ -45,7 +45,7 @@ recommend `MAMP <http://mamp.info/>`_ on Mac OS X.
 
    * **Critical:** Make sure the web server user (typically *apache* or *www*) has write access to all the contents *SITE_FOLDER*. 
    
-#. In the *config* directory, make a copy of the *config.ini.template* file called *config.ini*
+#. In the *config* directory, make a copy of the *config-default.ini* file called *config.ini*
 #. Edit the new config.ini file and change the *ACTIVE_SITE* option to match the name of *SITE_FOLDER*
 #. (re)Start your webserver and direct your web browser to the server/port that you specified.
 

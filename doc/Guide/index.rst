@@ -36,6 +36,7 @@ reaches 1.0 status
    configuration
    requests
    modules
+   moduleslist
    template
    themes
    libs
