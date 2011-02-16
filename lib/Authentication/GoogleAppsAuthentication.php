@@ -30,6 +30,7 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         );
         
         if (!$result = $this->oauthRequest('GET', $url, $parameters)) {
+            error_log("Error getting email from $url");
             return false;
         }
 
@@ -46,42 +47,20 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         if (empty($login)) {
             return new AnonymousUser();       
         }
-
+        
+        /* right now there is no way to validate a user. We'll be looking into this */
         //if the login is an email, trim off the domain part        
         if (preg_match('/^(.*?)@'. $this->domain . '$/', $login, $bits)) {        
+
+            $user = new GoogleAppsUser($this);
+            $user->setUserID($login);
+            $user->setEmail($login);
+            $user->setFullname($login);
+            return $user;
+
             $login = $bits[1];
         }
         
-        $url = 'https://apps-apis.google.com/a/feeds/'.$this->domain .'/user/2.0/' . $login;
-        $parameters = array(
-            'alt'=>'json'
-        );
-        
-        $cacheFilename = "user_$login";
-        if ($this->cache === NULL) {
-              $this->cache = new DiskCache(CACHE_DIR . "/" . $this->domain, $this->cacheLifetime, TRUE);
-              $this->cache->setSuffix('.json');
-              $this->cache->preserveFormat();
-        }
-
-        if ($this->cache->isFresh($cacheFilename)) {
-            $data = $this->cache->read($cacheFilename);
-        } else {
-            //cache isn't fresh, load the data
-            if ($data = $this->oauthRequest('GET', $url, $parameters)) {
-                $this->cache->write($data, $cacheFilename);
-            }
-        }
-        
-		// make the call
-		if ($data) {
-            $json = @json_decode($data, true);
-            $user = new GoogleAppsUser($this);
-            if ($user->setVars($json)) {
-                return $user;
-            }
-        }
-
         return false;
     }
     
@@ -90,7 +69,8 @@ class GoogleAppsAuthentication extends OAuthAuthentication
             'scope'=>implode(' ', array(
                 'http://www.google.com/calendar/feeds',
                 'http://apps-apis.google.com/a/feeds/',
-                'https://www.googleapis.com/auth/userinfo#email'
+                'https://www.googleapis.com/auth/userinfo#email',
+                'http://www.google.com/m8/feeds/'
             ))
         );
         
@@ -174,12 +154,19 @@ class GoogleAppsUser extends BasicUser
             }
 
             if (isset($data['entry']['apps$login'])) {
+                if (!isset($data['entry']['apps$login']['userName'])) {
+                    error_log('$apps$login/userName not present');
+                }
                 $this->setUserID($data['entry']['apps$login']['userName']);                
                 $this->setEmail($data['entry']['apps$login']['userName'] . '@' . $this->getDomain());
                 $this->setAdmin($data['entry']['apps$login']['admin']);
+            } else {
+                error_log('$apps$login data not present');
             }
 
             return $this->getUserID();
+        } else {
+            error_log("Entry value not present");
         }
     }    
 }
