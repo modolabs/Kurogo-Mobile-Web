@@ -72,6 +72,35 @@ function _outputTypeFile($matches) {
   _404();
 }
 
+function _outputImageLoaderFile($matches) {
+  $fullPath = ImageLoader::load($matches[1]);
+  
+  if ($fullPath) {
+    CacheHeaders($fullPath);    
+    header('Content-type: '.mime_type($fullPath));
+    echo file_get_contents($fullPath);
+    exit;
+  }
+
+  _404();
+}
+
+// Instead of cached ImageLoader images, may do second LDAP request
+function _outputLDAPImageFile($matches) {
+  $fullPath = ImageLoader::loadLDAP($matches[1]);
+  
+  if ($fullPath) {
+    CacheHeaders($fullPath);    
+    header('Content-type: '.mime_type($fullPath));
+    echo file_get_contents($fullPath);
+    // TODO delete temp file?
+    //LDAP::deleteLDAP($matches[1]);
+    exit;
+  }
+
+  _404();
+}
+
 //
 // Handle page request
 //
@@ -87,6 +116,9 @@ $url_patterns = array(
          ),
     array('pattern' =>';^.*(modules|common)(/.*(javascript|css|images))/(.*)$;',
           'func'    =>'_outputTypeFile'
+          ),
+    array('pattern' => ';^.*'.ImageLoader::imageDir().'/(.+)$;',
+          'func'    => '_outputImageLoaderFile',
           ),
     array('pattern' =>';^.*(media)(/.*)$;',
           'func'    =>'_outputSiteFile',
