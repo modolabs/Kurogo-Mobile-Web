@@ -35,7 +35,14 @@ class Session
         $user = new AnonymousUser();
         
         if (isset($_SESSION['auth'])) {
-            if ($authority = AuthenticationAuthority::getAuthenticationAuthority($_SESSION['auth'])) {
+        
+            $maxIdleTime = intval($GLOBALS['siteConfig']->getVar('AUTHENTICATION_IDLE_TIMEOUT'));
+            $lastPing = isset($_SESSION['ping']) ? $_SESSION['ping'] : 0;
+            $diff = time() - $lastPing;
+            
+            if ( $maxIdleTime && ($diff > $maxIdleTime)) {
+                // right now nothing happens, but we could show and error if necessary.
+            } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($_SESSION['auth'])) {
 
                 $auth_userID = isset($_SESSION['auth_userID']) ? $_SESSION['auth_userID'] : '';
 
@@ -64,6 +71,7 @@ class Session
         $_SESSION['userID'] = $user->getUserID();
         $_SESSION['auth_userID'] = $user->getUserID();
         $_SESSION['auth'] = $user->getAuthenticationAuthorityIndex();
+        $_SESSION['ping'] = time();
     }
 
     public function getUser()

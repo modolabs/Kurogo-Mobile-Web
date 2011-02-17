@@ -1303,6 +1303,11 @@ abstract class Module {
         $this->assign('session', $this->getSession());
         $user = $this->getUser();
         $this->assign('session_user', $user);
+
+        if ($this->isLoggedIn()) {
+            $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', Config::SUPRESS_ERRORS)));
+        }
+        
         if ($authority = $user->getAuthenticationAuthority()) {
             $this->assign('session_authority_image', $authority->getAuthorityImage());
             $this->assign('session_authority_title', $authority->getAuthorityTitle());
