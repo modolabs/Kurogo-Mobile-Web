@@ -257,7 +257,7 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 
 .tabbody .nested {
 	/* Navigation list inside a tab body needs a bit of background color to contrast from tab body background */
-	background-color: #f9f6ef;
+	background-color: #ecedef;
 }
 
 
