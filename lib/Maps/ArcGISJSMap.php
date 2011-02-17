@@ -307,6 +307,14 @@ JS;
     }
 
     function getFooterScript() {
+        $imageWidth = $this->imageWidth;
+    	if (strpos($imageWidth, '%') === FALSE) {
+    	    $imageWidth = $imageWidth.'px';
+    	}
+        $imageHeight = $this->imageHeight;
+    	if (strpos($imageHeight, '%') === FALSE) {
+    	    $imageHeight = $imageWidth.'px';
+    	}
 
         // put dojo stuff in the footer since the header script
         // gets loaded before the included script
@@ -331,8 +339,8 @@ var map;
 function loadMap() {
     var mapImage = document.getElementById("mapimage");
     mapImage.style.display = "inline-block";
-    mapImage.style.width = "{$this->imageWidth}px";
-    mapImage.style.height = "{$this->imageHeight}px";
+    mapImage.style.width = "{$imageWidth}";
+    mapImage.style.height = "{$imageHeight}";
     
     map = new esri.Map("{$this->mapElement}");
     var basemapURL = "{$this->baseURL}";

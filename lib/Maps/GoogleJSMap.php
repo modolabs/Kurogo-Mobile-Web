@@ -154,6 +154,15 @@ JS;
     }
 
     public function getHeaderScript() {
+        $imageWidth = $this->imageWidth;
+    	if (strpos($imageWidth, '%') === FALSE) {
+    	    $imageWidth = $imageWidth.'px';
+    	}
+        $imageHeight = $this->imageHeight;
+    	if (strpos($imageHeight, '%') === FALSE) {
+    	    // setting height as % won't actually work, but...
+    	    $imageHeight = $imageWidth.'px';
+    	}
 
         $script = <<<JS
 
@@ -162,8 +171,8 @@ var map;
 function loadMap() {
     var mapImage = document.getElementById("{$this->mapElement}");
     mapImage.style.display = "inline-block";
-    mapImage.style.width = "{$this->imageWidth}px";
-    mapImage.style.height = "{$this->imageHeight}px";
+    mapImage.style.width = "{$imageWidth}";
+    mapImage.style.height = "{$imageHeight}";
 
 
     var latlng = new google.maps.LatLng({$this->center['lat']}, {$this->center['lon']});
