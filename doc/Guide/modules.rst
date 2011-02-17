@@ -112,23 +112,3 @@ Template
   to pass to the page. *addBreadcrumb* is a boolean (default true) whether to add the entry
   to the list of breadcrumbs or start a new series.
 
-================
-Included Modules
-================
-
-.. toctree::
-   :maxdepth: 1
-
-   modulehome
-   moduleinfo
-   modulepeople
-   modulecalendar
-   modulenews
-   modulelinks
-   modulecontent
-   modulefullweb
-   modulecustomize
-   moduleabout
-   modulelogin
-   modulestats
-   

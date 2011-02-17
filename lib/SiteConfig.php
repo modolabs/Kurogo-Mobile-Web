@@ -10,7 +10,7 @@ class SiteConfig extends ConfigGroup {
 
   function __construct() {
     // Load main configuration file
-    $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini", 'file', ConfigFile::OPTION_DIE_ON_FAILURE | ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
+    $config = ConfigFile::factory(MASTER_CONFIG_DIR."/config.ini", 'file', ConfigFile::OPTION_DIE_ON_FAILURE | ConfigFile::OPTION_CREATE_WITH_DEFAULT | ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
     $this->addConfig($config);
 
     define('CONFIG_MODE', $config->getVar('CONFIG_MODE'));

@@ -28,7 +28,7 @@
     <input type="submit" name="login_submit" id="login_submit" value="Login">
 {/if}    
     {foreach $authenticationAuthorityLinks as $authorityName=>$authorityData}
-    <a href="{$authorityData.LINK}">{if $authorityData.LOGIN_IMAGE_URL}<img src="{$authorityData.LOGIN_IMAGE_URL}" border="0" class="login_link_image" />{else}{$authorityData.TITLE|escape}{/if}</a>
+    <a href="{$authorityData.LINK}">{if $authorityData.LOGIN_IMAGE_URL}<img src="{$authorityData.LOGIN_IMAGE_URL}" border="0" class="login_link_image" />{else}{$authorityData.TITLE|escape}{/if}</a>&nbsp;
     {/foreach}
 </p>
 {if $authenticationAuthorities}

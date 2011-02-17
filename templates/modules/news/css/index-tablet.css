@@ -23,22 +23,22 @@
   padding-left: .5em;
 }
 
-#categoryformcontainer label {
+#newsHeader #categoryformcontainer label {
   padding-right: .5em;
   font-size: 89%;
 }
-#categoryformcontainer select {
+#newsHeader #categoryformcontainer select {
   width: auto;
   min-width: 250px;
 }
 
 #newsHeader tr #searchformcontainer form,
-#searchformcontainer fieldset {
+#newsHeader #searchformcontainer fieldset {
   height: 40px;
   width: 100%;
   position: relative;
 }
-#searchformcontainer fieldset .forminput {
+#newsHeader #searchformcontainer fieldset .forminput {
   position: absolute;
   top: 0;
   right: 0;
