@@ -6,16 +6,15 @@
    protected $id='video';  // this affects which .ini is loaded
    
    protected function initializeForPage() {
-
-   	 $doSearch = $this->getModuleVar('search');
-     if ($doSearch==1) $this->assign('doSearch', $doSearch);
-     
+   
      if ($GLOBALS['deviceClassifier']->getPagetype()=='basic') {
 	     $this->assign('showUnsupported', true);
 	     return;
      }
      
-            
+   	 $doSearch = $this->getModuleVar('search');
+     if ($doSearch==1) $this->assign('doSearch', $doSearch);
+         
 	 $brightcove_or_youtube = $this->getModuleVar('brightcove_or_youtube');
 	 
 	 if ($brightcove_or_youtube==1) {
@@ -44,7 +43,7 @@
 	          $searchTerms = trim($filter);
 	          
         	  //search for videos
-			  $items = $controller->search($searchTerms);
+			  $items = $controller->search($searchTerms,$brightcoveToken);
 			 
 			  if ($items !== false) {
 			  	
@@ -61,6 +60,7 @@
         case 'index':
         	
              $items = $controller->latest($accountid);
+			 //$items = $controller->search("funny",$brightcoveToken);  // TEST
 
              $videos = array();
 

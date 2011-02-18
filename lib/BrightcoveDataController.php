@@ -28,7 +28,9 @@
      
      public function search($q,$token)
      {
-     	 $this->setBaseUrl("http://api.brightcove.com/services/library?command=search_videos&video_fields=name,shortDescription&page_size=3&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$token");
+     	 $url = "http://api.brightcove.com/services/library?command=search_videos&output=mrss&video_fields=id,name,shortDescription,thumbnailURL&page_size=20&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$token";
+     	    	
+     	 $this->setBaseUrl($url);
 	 
          $data = $this->items(0,null,$total);
          
