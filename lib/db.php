@@ -110,6 +110,11 @@ class db {
   public static function unlockTable()
   {
   }
+
+  public function lastInsertId()
+  {
+      return $this->connection->lastInsertId();
+  }
 }
 
 

@@ -3,6 +3,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
   <meta http-equiv="content-type" content="application/xhtml+xml" />
+  {if $session_max_idle}
+    <meta http-equiv="refresh" content="{$session_max_idle+2}" />
+  {/if}
   <title>{$moduleName}{if !$isModuleHome}: {$pageTitle}{/if}</title>
   <link rel="shortcut icon" href="/favicon.ico" />
   <link href="{$minify['css']}" rel="stylesheet" media="all" type="text/css"/>

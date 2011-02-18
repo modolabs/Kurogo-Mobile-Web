@@ -1,0 +1,40 @@
+/* Springboards */
+
+.springboard div {
+	/* Overall size of one cell in the springboard */
+	width: 76px;
+	height: 106px;
+}
+
+.springboard div a {	
+	/* Color and size of text label below each springboard icon */
+	font-size: 90%;
+}
+
+.springboard a img {
+	/* Size of actual item icon in springboard - for best results make actual PNGs match this size */
+	width: 64px;
+	height: 64px;
+}
+
+.springboard div.utility {
+	/* Overall size of one cell in the springboard's fixed utility-type items */
+	width: 76px;
+	height: 94px;
+}
+
+.springboard div.utility a {
+	font-size: 90%;
+}
+
+.springboard div.utility a img {
+	/* Size of actual item icon in the springboard's fixed utility-type items - for best results make actual PNGs match this size */
+	width: 42px;
+	height: 42px;
+}
+
+.nonfocal form {
+	margin-left: -2px;
+	margin-right: -2px;
+}
+
