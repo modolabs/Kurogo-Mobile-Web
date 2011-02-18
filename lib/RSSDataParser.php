@@ -109,6 +109,7 @@ class RSSDataParser extends XMLDataParser
                     $contentElement->setValue($this->data, $this->shouldStripTags($contentElement));
                     $parent->addElement($contentElement);
                 }
+                $parent->addElement($element);
                 break;
         }
     }
