@@ -10,6 +10,12 @@
    	 $doSearch = $this->getModuleVar('search');
      if ($doSearch==1) $this->assign('doSearch', $doSearch);
      
+     if ($GLOBALS['deviceClassifier']->getPagetype()=='basic') {
+	     $this->assign('showUnsupported', true);
+	     return;
+     }
+     
+            
 	 $brightcove_or_youtube = $this->getModuleVar('brightcove_or_youtube');
 	 
 	 if ($brightcove_or_youtube==1) {
