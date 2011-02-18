@@ -7,71 +7,57 @@
    
    protected function initializeForPage() {
 
+   	 $doSearch = $this->getModuleVar('search');
+     if ($doSearch==1) $this->assign('doSearch', $doSearch);
+     
 	 $brightcove_or_youtube = $this->getModuleVar('brightcove_or_youtube');
 	 
 	 if ($brightcove_or_youtube==1) {
         $controller = DataController::factory('BrightcoveDataController');
-	 	//$controller = BrightcoveDataController::factory();
 	 	$this->handleBrightcove($controller);
 	 } else {
         $controller = DataController::factory('YouTubeDataController');
-     	//$controller = YouTubeDataController::factory();
      	$this->handleYoutube($controller);
      }
      
    }
    
   protected function handleBrightcove($controller) {
-  	
+  	  
+	 $brightcoveToken  = $this->getModuleVar('brightcoveToken');
+     $this->assign('token', $brightcoveToken);
+             
 	 $playerid  = $this->getModuleVar('playerId');
 	 $accountid = $this->getModuleVar('accountId');
 	 
      switch ($this->page)
      {
+     	    
+        case 'search':
+	        if ($filter = $this->getArg('filter')) {
+	          $searchTerms = trim($filter);
+	          
+        	  //search for videos
+			  $items = $controller->search($searchTerms);
+			 
+			  if ($items !== false) {
+			  	
+            	  $resultCount = count($items);
+			  	
+			  	  // TODO handle 0 or 1 result
+			  	
+             	  $videos = array();
+            	  
+			  }
+			  
+	        }
+	        break;
         case 'index':
         	
-        	 //search for videos
-			 //$items = $controller->search($this->getModuleVar('SEARCH_QUERY'));
              $items = $controller->latest($accountid);
 
              $videos = array();
 
-             //prepare the list
-             foreach ($items as $video) {
-             	
-             	$prop_titleid  = $video->getProperty('bc:titleid');  
-             	$prop_playerid  = $video->getProperty('bc:playerid');  // FIXME why null?
-             	$prop_accountid = $video->getProperty('bc:accountid');
-             	
-             	//$link = $video->getLink();  // FIXME blank?
-             	//$img = $video->getImage();  // also blank
-             	
-             	$prop_thumbnail = $video->getProperty('media:thumbnail');  
-             	if (is_array($prop_thumbnail)) {
-             		$attr_url = $prop_thumbnail[0]->getAttrib("URL"); 
-             	} else {
-             		$attr_url = ""; 
-             		//$attr_url = $prop_thumbnail->getAttrib("URL"); // FIXME
-             	}
-             	
-             	$videos[] = array(
-			        'titleid'=>$prop_titleid,
-			        'playerid'=>$playerid,
-			        'title'=>$video->getTitle(),
-			        'img'=>$attr_url,  
-			        //'url'=>$this->buildBreadcrumbURL('detail', array(
-			        'url'=>$this->buildBreadcrumbURL('detail-brightcove', array(
-			            'videoTitle'=>$video->getTitle(),
-			            'videoDescription'=>$video->getDescription(),
-			            'videoid'=>$prop_titleid,
-			            'playerid'=>$playerid,
-			            'accountid'=>$prop_accountid
-             		))
-             		
-             	);
-             }
-             
-             $this->assign('videos', $videos);
              break;
         case 'detail-brightcove':
 			   $videoid = $this->getArg('videoid');
@@ -99,6 +85,46 @@
 			   
 			   break;     
      }
+     
+     if (isset($videos)) {
+     	
+             //prepare the list
+             foreach ($items as $video) {
+             	
+             	$prop_titleid  = $video->getProperty('bc:titleid');  
+             	$prop_playerid  = $video->getProperty('bc:playerid');  // FIXME why null?
+             	$prop_accountid = $video->getProperty('bc:accountid');
+             	
+             	//$link = $video->getLink();  // FIXME blank?
+             	//$img = $video->getImage();  // also blank
+             	
+             	$prop_thumbnail = $video->getProperty('media:thumbnail');  
+             	if (is_array($prop_thumbnail)) {
+             		$attr_url = $prop_thumbnail[0]->getAttrib("URL"); 
+             	} else {
+             		$attr_url = ""; 
+             		//$attr_url = $prop_thumbnail->getAttrib("URL"); // FIXME
+             	}
+             	
+             	$videos[] = array(
+			        'titleid'=>$prop_titleid,
+			        'playerid'=>$playerid,
+			        'title'=>$video->getTitle(),
+			        'img'=>$attr_url,  
+			        'url'=>$this->buildBreadcrumbURL('detail-brightcove', array(
+			            'videoTitle'=>$video->getTitle(),
+			            'videoDescription'=>$video->getDescription(),
+			            'videoid'=>$prop_titleid,
+			            'playerid'=>$playerid,
+			            'accountid'=>$prop_accountid
+             		))
+             		
+             	);
+             }
+             
+             $this->assign('videos', $videos);
+     }
+     
   } 
    
   protected function handleYouTube($controller) {
@@ -109,10 +135,9 @@
      {
         case 'index':
         	
-        	
-        	//search for videos
-			$items = $controller->search($this->getModuleVar('SEARCH_QUERY'));
-             //$items = $controller->search('mobile web');
+        	 //search for videos
+			 $items = $controller->search($this->getModuleVar('SEARCH_QUERY'));
+			
              $videos = array();
 
              //prepare the list
