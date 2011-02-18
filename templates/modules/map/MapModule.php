@@ -131,7 +131,9 @@ class MapModule extends Module {
 
             } else {
                 $mapController->setMapElement('mapimage');
-                $this->addExternalJavascript($mapController->getIncludeScript());
+                foreach($mapController->getIncludeScripts() as $includeScript) {
+                    $this->addExternalJavascript($includeScript);
+                }
                 $this->addInlineJavascript($mapController->getHeaderScript());
                 $this->addInlineJavascriptFooter($mapController->getFooterScript());
             }

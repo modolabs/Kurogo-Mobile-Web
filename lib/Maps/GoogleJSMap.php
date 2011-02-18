@@ -148,9 +148,9 @@ JS;
     ////////////// output ///////////////
 
     // url of script to include in <script src="...
-    public function getIncludeScript() {
-        return 'http://maps.google.com/maps/api/js?sensor='
-             . ($this->locatesUser ? 'true' : 'false');
+    public function getIncludeScripts() {
+        return array('http://maps.google.com/maps/api/js?sensor='
+             . ($this->locatesUser ? 'true' : 'false'));
     }
 
     public function getHeaderScript() {

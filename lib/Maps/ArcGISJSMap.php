@@ -292,8 +292,8 @@ JS;
     }
 
     // url of script to include in <script src="...
-    function getIncludeScript() {
-        return 'http://serverapi.arcgisonline.com/jsapi/arcgis/?v='.$this->apiVersion.'compact';
+    function getIncludeScripts() {
+        return array('http://serverapi.arcgisonline.com/jsapi/arcgis/?v='.$this->apiVersion.'compact');
     }
     
     function getIncludeStyles() {
