@@ -1,6 +1,7 @@
 <?php
 
-require_once LIB_DIR . '/Maps/MapLayerDataController.php';
+require_once LIB_DIR . '/Maps/MapDataController.php';
+require_once LIB_DIR . '/Maps/MapFeature.php';
 require_once LIB_DIR . '/Maps/MapImageController.php';
 require_once LIB_DIR . '/Maps/Polyline.php';
 
@@ -22,13 +23,6 @@ require_once LIB_DIR . '/Maps/WMSStaticMap.php';
 
 
 class MapModule extends Module {
-// TODO for this module:
-// - terminology is bad:
-//   * "category" and "layer" are used interchangeably when we
-//      mean the thing that contains the image controller
-//   * "selectvalues" is MIT legacy and we really mean a place identifier
-// - need to write map image controllers in such a way that other modules
-//   can incorporate map images without redoing work
 
     protected $id = 'map';
     protected $feeds;
@@ -39,7 +33,7 @@ class MapModule extends Module {
             && $this->platform != 'bbplus';
     }
     
-    private function initializeMap(MapLayerDataController $layer, MapFeature $feature) {
+    private function initializeMap(MapDataController $dataController, MapFeature $feature) {
         
         $style = $feature->getStyle();
         $geometry = $feature->getGeometry();
@@ -56,7 +50,7 @@ class MapModule extends Module {
         if (isset($this->args['zoom'])) {
             $zoomLevel = $this->args['zoom'];
         } else {
-            $zoomLevel = $layer->getDefaultZoomLevel();
+            $zoomLevel = $dataController->getDefaultZoomLevel();
         }
 
         // image size
@@ -79,68 +73,68 @@ class MapModule extends Module {
         $this->assign('imageHeight', $imageHeight);
         $this->assign('imageWidth',  $imageWidth);
 
-        $mapControllers = array();
-        $mapControllers[] = $layer->getStaticMapController();
-        if ($this->pageSupportsDynamicMap() && $layer->supportsDynamicMap()) {
-            $mapControllers[] = $layer->getDynamicMapController();
+        $imgControllers = array();
+        $imgControllers[] = $dataController->getStaticMapController();
+        if ($this->pageSupportsDynamicMap() && $dataController->supportsDynamicMap()) {
+            $imgControllers[] = $dataController->getDynamicMapController();
         }
 
-        foreach ($mapControllers as $mapController) {
+        foreach ($imgControllers as $imgController) {
 
-            if ($mapController->supportsProjections()) {
-                $mapController->setDataProjection($layer->getProjection());
+            if ($imgController->supportsProjections()) {
+                $imgController->setDataProjection($dataController->getProjection());
             }
             
-            $mapController->setCenter($center);
-            $mapController->setZoomLevel($zoomLevel);
+            $imgController->setCenter($center);
+            $imgController->setZoomLevel($zoomLevel);
 
             switch ($geometry->getType()) {
-                case 'Point':
-                    if ($mapController->canAddAnnotations()) {
-                        $mapController->addAnnotation($center['lat'], $center['lon'], $style, $feature->getTitle());
+                case MapGeometry::POINT:
+                    if ($imgController->canAddAnnotations()) {
+                        $imgController->addAnnotation($center['lat'], $center['lon'], $style, $feature->getTitle());
                     }
                     break;
-                case 'Polyline':
-                    if ($mapController->canAddPaths()) {
-                        $mapController->addPath($geometry->getPoints(), $style);
+                case MapGeometry::POLYLINE:
+                    if ($imgController->canAddPaths()) {
+                        $imgController->addPath($geometry->getPoints(), $style);
                     }
                     break;
-                case 'Polygon':
-                    if ($mapController->canAddPolygons()) {
-                        $mapController->addPolygon($geometry->getRings(), $style);
+                case MapGeometry::POLYGON:
+                    if ($imgController->canAddPolygons()) {
+                        $imgController->addPolygon($geometry->getRings(), $style);
                     }
                     break;
                 default:
                     break;
             }
 
-            $mapController->setImageWidth($imageWidth);
-            $mapController->setImageHeight($imageHeight);
+            $imgController->setImageWidth($imageWidth);
+            $imgController->setImageHeight($imageHeight);
 
-            if ($mapController->isStatic()) {
+            if ($imgController->isStatic()) {
 
-                $this->assign('imageUrl', $mapController->getImageURL());
+                $this->assign('imageUrl', $imgController->getImageURL());
 
-                $this->assign('scrollNorth', $this->detailUrlForPan('n', $mapController));
-                $this->assign('scrollEast', $this->detailUrlForPan('e', $mapController));
-                $this->assign('scrollSouth', $this->detailUrlForPan('s', $mapController));
-                $this->assign('scrollWest', $this->detailUrlForPan('w', $mapController));
+                $this->assign('scrollNorth', $this->detailUrlForPan('n', $imgController));
+                $this->assign('scrollEast', $this->detailUrlForPan('e', $imgController));
+                $this->assign('scrollSouth', $this->detailUrlForPan('s', $imgController));
+                $this->assign('scrollWest', $this->detailUrlForPan('w', $imgController));
 
-                $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $mapController));
-                $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $mapController));
+                $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
+                $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
             } else {
-                $mapController->setMapElement('mapimage');
-                $this->addExternalJavascript($mapController->getIncludeScript());
-                $this->addInlineJavascript($mapController->getHeaderScript());
-                $this->addInlineJavascriptFooter($mapController->getFooterScript());
+                $imgController->setMapElement('mapimage');
+                $this->addExternalJavascript($imgController->getIncludeScript());
+                $this->addInlineJavascript($imgController->getHeaderScript());
+                $this->addInlineJavascriptFooter($imgController->getFooterScript());
             }
         }
     }
 
     // TODO finish this
     private function initializeFullscreenMap() {
-        $selectvalue = $this->args['selectvalues'];
+        $featureIndex = $this->args['featureindex'];
     }
   
     private function categoryURL($category=NULL, $subCategory=NULL, $addBreadcrumb=true) {
@@ -149,10 +143,16 @@ class MapModule extends Module {
             'subcategory' => $subCategory,
         ), $addBreadcrumb);
     }
+    
+    private function campusURL($campusIndex, $addBreadcrumb=true) {
+        return $this->buildBreadcrumbURL('campus', array(
+            'campus' => $campusIndex,
+        ), $addBreadcrumb);
+    }
 
     private function detailURL($name, $category, $subCategory=null, $info=null, $addBreadcrumb=true) {
         return $this->buildBreadcrumbURL('detail', array(
-            'selectvalues' => $name,
+            'featureindex' => $name,
             'category'     => $category,
             'subcategory'  => $subCategory,
             'info'         => $info,
@@ -167,16 +167,16 @@ class MapModule extends Module {
         return $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
     }
   
-    private function detailUrlForPan($direction, $mapController) {
+    private function detailUrlForPan($direction, $imgController) {
         $args = $this->args;
-        $center = $mapController->getCenterForPanning($direction);
+        $center = $imgController->getCenterForPanning($direction);
         $args['center'] = $center['lat'] .','. $center['lon'];
         return $this->buildBreadcrumbURL('detail', $args, false);
     }
 
-    private function detailUrlForZoom($direction, $mapController) {
+    private function detailUrlForZoom($direction, $imgController) {
         $args = $this->args;
-        $args['zoom'] = $mapController->getLevelForZooming($direction);
+        $args['zoom'] = $imgController->getLevelForZooming($direction);
         return $this->buildBreadcrumbURL('detail', $args, false);
     }
 
@@ -218,13 +218,34 @@ class MapModule extends Module {
         return count($searchResults);
     }
 
-    private function getLayer($index) {
-        if (isset($this->feeds[$index])) {
+    private function getDataController($index) {
+        if ($index === NULL) {
+            return MapDataController::factory('MapDataController', array(
+                'JS_MAP_CLASS' => 'GoogleJSMap',
+                'DEFAULT_ZOOM_LEVEL' => 10
+                ));
+        
+        } else if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
-            $controller = MapLayerDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
             return $controller;
         }
+    }
+    
+    private function assignCategoriesForCampus($campusID=NULL) {
+        $categories = array();
+        foreach ($this->feeds as $id => $feed) {
+            if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
+            if ($campusID && !isset($feed['CAMPUS']) || $feed['CAMPUS'] != $campusID) continue;
+            $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
+            $categories[] = array(
+                'title' => $feed['TITLE'],
+                'subtitle' => $subtitle,
+                'url' => $this->categoryURL($id),
+                );
+        }
+        $this->assign('categories', $categories);
     }
 
     protected function initializeForPage() {
@@ -233,31 +254,47 @@ class MapModule extends Module {
                 break;
             
             case 'index':
-                if (!$this->feeds)
-                    $this->feeds = $this->loadFeedData();
-        
-                $categories = array();
-                foreach ($this->feeds as $id => $feed) {
-                    if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
-                    $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
-                    $categories[] = array(
-                        'title' => $feed['TITLE'],
-                        'subtitle' => $subtitle,
-                        'url' => $this->categoryURL($id),
-                        );
+                $numCampuses = $GLOBALS['siteConfig']->getVar('CAMPUS_COUNT');
+                if ($numCampuses > 1) {
+                    $campusLinks = array();
+                    for ($i = 0; $i < $numCampuses; $i++) {
+                        $aCampus = $GLOBALS['siteConfig']->getSection('campus-'.$i);
+                        $campusLinks[] = array(
+                            'title' => $aCampus['title'],
+                            'url' => $this->campusURL($i),
+                            );
+                    }
+                    $this->assign('browseHint', 'Browse Campuses:');
+                    $this->assign('categories', $campusLinks);
+
+                } else {
+                    $this->assignCategoriesForCampus(NULL);
+                    $this->assign('browseHint', 'Browse map by:');
                 }
         
-                // TODO show category description in cell subtitles
-                $this->assign('categories', $categories);
+                break;
+            
+            case 'campus':
+                // this is like the index page for single-campus organizations
+                if (!$this->feeds)
+                    $this->feeds = $this->loadFeedData();
+                
+                $index = $this->args['campus'];
+                $campus = $GLOBALS['siteConfig']->getSection('campus-'.$index);
+                $title = $campus['title'];
+                $id = $campus['id'];
+                
+                $this->assignCategoriesForCampus($id);
+                $this->assign('browseHint', "Browse {$title} by:");
+                
                 break;
             
             case 'search':
           
                 if (isset($this->args['filter'])) {
                     $searchTerms = $this->args['filter'];
-        
+
                     // need more standardized var name for this config
-                    //$externalSearch = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_URL');
                     $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
                     $mapSearch = new $mapSearchClass();
                     if (!$this->feeds)
@@ -306,7 +343,7 @@ class MapModule extends Module {
         
                     // build the drill-down list
                     $category = $this->args['category'];
-                    $layer = $this->getLayer($category);
+                    $dataController = $this->getDataController($category);
         
                     if (isset($this->args['subcategory'])) {
                         $subCategory = $this->args['subcategory'];
@@ -314,24 +351,24 @@ class MapModule extends Module {
                         $subCategory = null;
                     }
         
-                    $listItems = $layer->getListItems($subCategory);
+                    $listItems = $dataController->getListItems($subCategory);
         
                     $places = array();
                     foreach ($listItems as $listItem) {
-                      if ($listItem instanceof MapFeature) {
-                          $url = $this->detailURL($listItem->getIndex(), $category, $subCategory);
-                      } else {
-                          // for folder objects, getIndex returns the subcategory ID
-                          $url = $this->categoryURL($category, $listItem->getIndex());
-                      }
-                      $places[] = array(
-                          'title'    => $listItem->getTitle(),
+                        if ($listItem instanceof MapFeature) {
+                            $url = $this->detailURL($listItem->getIndex(), $category, $subCategory);
+                        } else {
+                            // for folder objects, getIndex returns the subcategory ID
+                            $url = $this->categoryURL($category, $listItem->getIndex());
+                        }
+                        $places[] = array(
+                            'title'    => $listItem->getTitle(),
                             'subtitle' => $listItem->getSubtitle(),
                             'url'      => $url,
-                          );
-                      }
-                      $this->assign('title',      $layer->getTitle());
-                      $this->assign('places',     $places);          
+                            );
+                    }
+                    $this->assign('title',  $dataController->getTitle());
+                    $this->assign('places', $places);          
                   
                 } else {
                       $this->redirectTo('index');
@@ -345,17 +382,33 @@ class MapModule extends Module {
                 
                 // Map Tab
                 $tabKeys[] = 'map';
-        
+
                 $hasMap = true;
                 $this->assign('hasMap', $hasMap);
+
                 if (!$this->feeds)
                     $this->feeds = $this->loadFeedData();
-        
-                $index = $this->args['selectvalues'];
-                $layer = $this->getLayer($this->args['category']);
-                $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
-                $feature = $layer->getFeature($index, $subCategory);
-                $this->initializeMap($layer, $feature);
+                
+                if (isset($this->args['featureindex'])) { // this is a regular place
+                    $index = $this->args['featureindex'];
+                    $dataController = $this->getDataController($this->args['category']);
+                    $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
+                    $feature = $dataController->getFeature($index, $subCategory);
+                } else { // this is a campus
+                    $index = $this->args['campus'];
+                    $campus = $GLOBALS['siteConfig']->getSection('campus-'.$index);
+                    $coordParts = explode(',', $campus['center']);
+                    $center = array('lat' => $coordParts[0], 'lon' => $coordParts[1]);
+
+                    $dataController = $this->getDataController(NULL);
+                    
+                    $feature = new EmptyMapFeature($center);
+                    $feature->setTitle($campus['title']);
+                    $feature->setAddress($campus['address']);
+                    $feature->setDescription($campus['description']);
+                    $feature->setIndex($index);
+                }
+                $this->initializeMap($dataController, $feature);
         
                 $this->assign('name', $feature->getTitle());
                 $this->assign('address', $feature->getSubtitle());
@@ -378,7 +431,7 @@ class MapModule extends Module {
                 
                 // Details Tab
                 $tabKeys[] = 'detail';
-                if (is_subclass_of($layer, 'ArcGISDataController')) {
+                if (is_subclass_of($dataController, 'ArcGISDataController')) {
                     $feature->setBlackList($detailConfig['details']['suppress']);
                 }
                 

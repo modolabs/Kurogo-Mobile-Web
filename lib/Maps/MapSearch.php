@@ -69,7 +69,7 @@ class MapSearch {
 
         // please think twice before refactoring this.
         foreach ($this->feeds as $categoryID => $feedData) {
-            $controller = MapLayerDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
 
             if ($controller->canSearch()) { // respect config settings
@@ -145,7 +145,7 @@ class MapSearch {
         $this->searchResults = array();
     
     	foreach ($this->feeds as $id => $feedData) {
-            $controller = MapLayerDataController::factory($feedData);
+            $controller = MapDataController::factory($feedData);
             $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
             
             if ($controller->canSearch()) {
@@ -183,7 +183,7 @@ class MapSearch {
     
     public function getURLArgsForSearchResult($aResult) {
         return array(
-            'selectvalues' => $aResult['index'],
+            'featureindex' => $aResult['index'],
             'subcategory' => isset($aResult['subcategory']) ? $aResult['subcategory'] : null,
             'category' => $aResult['category'],
             );

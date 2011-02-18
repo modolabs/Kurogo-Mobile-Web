@@ -1,6 +1,6 @@
 <?php
 
-class KMLDataController extends MapLayerDataController
+class KMLDataController extends MapDataController
 {
     protected $parserClass = 'KMLDataParser';
 

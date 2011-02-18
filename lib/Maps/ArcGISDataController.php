@@ -1,6 +1,6 @@
 <?php
 
-class ArcGISDataController extends MapLayerDataController
+class ArcGISDataController extends MapDataController
 {
     protected $DEFAULT_PARSER_CLASS = 'ArcGISParser';
     protected $filters = array('f' => 'json');

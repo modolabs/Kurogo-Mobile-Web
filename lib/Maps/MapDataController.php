@@ -3,61 +3,9 @@
 // for KML, each KML file is a category
 // for ArcGIS, each layer (or service instance?) is a category
 
-// TODO move these interfaces to a separate file if
-// we create maps without using MapLayerDataController
-
-interface MapListElement
-{
-    const DESCRIPTION_TEXT = 0;
-    const DESCRIPTION_LIST = 1;
-
-    public function getTitle();
-    public function getSubtitle();
-    public function getIndex();
-}
-
-interface MapFeature extends MapListElement
-{
-    public function getGeometry();
-    public function getDescription();
-    public function getDescriptionType();
-    public function getStyle();
-}
-
-interface MapGeometry
-{
-    public function getCenterCoordinate();
-    public function getType();
-}
-
-interface MapStyle
-{
-    const POINT = 0;
-    const LINE = 1;
-    const POLYGON = 2;
-    const CALLOUT = 3;
-
-    // these just have to be unique within the enclosing style type
-    const COLOR = 'color';             // points
-    const FILLCOLOR = 'fillColor';     // polygons, callouts, list view
-    const STROKECOLOR = 'strokeColor'; // lines
-    const TEXTCOLOR = self::COLOR;     // callouts
-    const HEIGHT = 'height';           // points
-    const WIDTH = 'width';             // points and lines
-    const SIZE = self::WIDTH;          // points
-    const WEIGHT = self::WIDTH;        // lines
-    const ICON = 'icon';               // points, cell image in list view
-    const SCALE = 'scale';             // points, labels -- kml
-    const SHAPE = 'shape';             // points -- esri
-    const CONSISTENCY = 'consistency'; // lines -- dotted/dashed/etc
-    const SHOULD_OUTLINE = 'outline';  // polygons
-
-    public function getStyleForTypeAndParam($type, $param);
-}
-
 define('GEOGRAPHIC_PROJECTION', 4326);
 
-class MapLayerDataController extends DataController
+class MapDataController extends DataController
 {
     const SEARCH_RESULTS = -1;
 

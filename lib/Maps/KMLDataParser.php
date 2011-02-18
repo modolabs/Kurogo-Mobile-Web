@@ -146,38 +146,7 @@ class KMLStyle extends XMLElement implements MapStyle
         $this->setAttribs($attribs);
     }
 }
-/*
-class KMLIconStyle extends XMLElement {
 
-    protected $scale;
-    protected $width;
-    protected $height;
-    protected $url;
-    
-    public function getScale() { return $this->scale; }
-    public function getWidth() { return $this->width; }
-    public function getHeight() { return $this->height; }
-    public function getURL() { return $this->url; }
-    
-    protected function elementMap() {
-        return array( 'SCALE' => 'scale');
-    }
-    
-    public function addElement(XMLElement $element)
-    {
-        $name = $element->name();
-        $value = $element->value();
-        
-        if ($name == 'ICON') {
-            $this->url = $element->getProperty('HREF');
-            $this->weight = $element->getProperty('W');
-            $this->height = $element->getProperty('H');
-        } else {
-            parent::addElement($element);
-        }
-    }
-}
-*/
 class KMLPlacemark extends XMLElement implements MapFeature
 {
     protected $name = 'Placemark';
@@ -255,12 +224,6 @@ class KMLPlacemark extends XMLElement implements MapFeature
         
         switch ($name)
         {
-            //case 'NAME':
-            //    $this->title = $value;
-            //    break;
-            //case 'DESCRIPTION':
-            //    $this->description = $value;
-            //    break;
             case 'POINT':
             case 'LINESTRING':
             case 'LINEARRING':
@@ -291,7 +254,7 @@ class KMLPoint extends XMLElement implements MapGeometry
 
     public function getType()
     {
-        return 'Point';
+        return MapGeometry::POINT;
     }
 
     public function addElement(XMLElement $element)
@@ -340,7 +303,7 @@ class KMLLineString extends XMLElement implements MapGeometry
 
     public function getType()
     {
-        return 'Polyline';
+        return MapGeometry::POLYLINE;
     }
 
     public function getPoints() {
@@ -393,7 +356,7 @@ class KMLPolygon extends XMLElement implements MapGeometry
 
     public function getType()
     {
-        return 'Polygon';
+        return MapGeometry::POLYGON;
     }
 
     public function getRings()

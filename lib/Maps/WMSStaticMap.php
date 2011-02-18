@@ -41,7 +41,7 @@ class WMSStaticMap extends StaticMapImageController {
         $this->wmsParser = new WMSDataParser();
         $this->wmsParser->parseData($contents);
         $this->enableAllLayers();
-        $this->setMapProjection(GEOGRAPHIC_PROJECTION); // currently defined in MapLayerDataController.php
+        $this->setMapProjection(GEOGRAPHIC_PROJECTION); // currently defined in MapDataController.php
     }
 
     // http://wiki.openstreetmap.org/wiki/MinScaleDenominator

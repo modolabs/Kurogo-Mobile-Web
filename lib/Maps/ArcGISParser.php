@@ -26,7 +26,7 @@ class ArcGISPoint implements MapGeometry
     
     public function getType()
     {
-        return 'Point';
+        return MapGeometry::POINT;
     }
 }
 
@@ -70,7 +70,7 @@ class ArcGISPolygon implements MapGeometry
     
     public function getType()
     {
-        return 'Polygon';
+        return MapGeometry::POLYGON;
     }
 }
 
