@@ -145,7 +145,7 @@ class MapSearch {
         $this->searchResults = array();
     
     	foreach ($this->feeds as $id => $feedData) {
-            $controller = MapDataController::factory($feedData);
+            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
             
             if ($controller->canSearch()) {
