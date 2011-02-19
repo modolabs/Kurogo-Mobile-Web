@@ -155,18 +155,20 @@ JS;
 
     public function getHeaderScript() {
         $imageWidth = $this->imageWidth;
-    	if (strpos($imageWidth, '%') === FALSE) {
-    	    $imageWidth = $imageWidth.'px';
-    	}
+        if (strpos($imageWidth, '%') === FALSE) {
+            $imageWidth = $imageWidth.'px';
+        }
         $imageHeight = $this->imageHeight;
-    	if (strpos($imageHeight, '%') === FALSE) {
-    	    // setting height as % won't actually work, but...
-    	    $imageHeight = $imageWidth.'px';
-    	}
+        if (strpos($imageHeight, '%') === FALSE) {
+            // setting height as % won't actually work, but...
+            $imageHeight = $imageHeight.'px';
+        }
 
         $script = <<<JS
 
 var map;
+var initLat = {$this->center['lat']};
+var initLon = {$this->center['lon']};
 
 function loadMap() {
     var mapImage = document.getElementById("{$this->mapElement}");
@@ -174,15 +176,35 @@ function loadMap() {
     mapImage.style.width = "{$imageWidth}";
     mapImage.style.height = "{$imageHeight}";
 
-
-    var latlng = new google.maps.LatLng({$this->center['lat']}, {$this->center['lon']});
+    var initCoord = new google.maps.LatLng({$this->center['lat']}, {$this->center['lon']});
     var options = {
         zoom: {$this->zoomLevel},
-        center: latlng,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        center: initCoord,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapTypeControl: false,
+        panControl: false,
+        zoomControl: false,
+        scaleControl: false,
+        streetViewControl: false
     };
 
     map = new google.maps.Map(mapImage, options);
+
+    var zoomIn = document.getElementById("zoomin");
+alert(zoomIn);
+    google.maps.event.addDomListener(zoomIn, "click", function() {
+        map.setZoom(map.getZoom() + 1);
+    });
+    
+    var zoomOut = document.getElementById("zoomout");
+    google.maps.event.addDomListener(zoomOut, "click", function() {
+        map.setZoom(map.getZoom() - 1);
+    });
+    
+    var recenter = document.getElementById("recenter");
+    google.maps.event.addDomListener(recenter, "click", function() {
+        map.setCenter(initCoord)
+    });
 }
 
 JS;
@@ -199,9 +221,9 @@ loadMap();
 
 JS;
 
-		if ($this->polygons) {
+        if ($this->polygons) {
             $script .= $this->getPolygonJS();
-		}
+        }
 
         if ($this->paths) {
             $script .= $this->getPathJS();

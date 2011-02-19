@@ -3,23 +3,14 @@
 {$tabBodies = array()}
 
 {capture name="mapPane" assign="mapPane"}
-    <p class="image">
-      <a name="map"> </a>
-      <img src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
-    </p>
-    {if $hasMap}
-      <p class="scrollers">
-        Scroll: 
-        <a href="{$scrollNorth}">N</a>&nbsp;|&nbsp;
-        <a href="{$scrollSouth}">S</a>&nbsp;|&nbsp;
-        <a href="{$scrollEast}">E</a>&nbsp;|&nbsp;
-        <a href="{$scrollWest}">W</a><br/>
-        Zoom: 
-        <a href="{$zoomInUrl}">In</a>&nbsp;|&nbsp;
-        <a href="{$zoomOutUrl}">Out</a>
-      </p>
-    {/if}
-    <div id="mapimage" style="display:none"></div>
+  <p class="image">
+    <a name="map"> </a>
+    <img src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
+  </p>
+  {if $hasMap}
+    {include file="findInclude:modules/map/mapcontrols.tpl"}
+  {/if}
+  <div id="mapimage" style="display:none"></div>
 {/capture}
 {$tabBodies['map'] = $mapPane}
 
@@ -44,12 +35,11 @@
 {$tabBodies['detail'] = $detailPane}
 
 {block name="tabView"}
-  <a name="scrolldown"> </a>		
-	<div class="focal shaded">
-
-		<h2>{$name}</h2>
-		<p class="address">{$address|replace:' ':'&shy; '}</p>
-		<a name="scrolldown"></a>		
+  <a name="scrolldown"> </a>
+    <div class="focal shaded">
+        <h2>{$name}</h2>
+        <p class="address">{$address|replace:' ':'&shy; '}</p>
+        <a name="scrolldown"></a>
     {include file="findInclude:common/tabs.tpl" tabBodies=$tabBodies}
   </div>
 {/block}
