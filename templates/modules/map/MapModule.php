@@ -56,13 +56,13 @@ class MapModule extends Module {
         // image size
         switch ($this->pagetype) {
             case 'tablet':
-                $imageWidth = '98%'; $imageHeight = 350;
+                $imageWidth = 600; $imageHeight = 350;
                 break;
             case 'compliant':
                 if ($GLOBALS['deviceClassifier']->getPlatform() == 'bbplus') {
                     $imageWidth = 410; $imageHeight = 260;
                 } else {
-                    $imageWidth = '98%'; $imageHeight = 290;
+                    $imageWidth = 290; $imageHeight = 290;
                 }
                 break;
             case 'touch':
@@ -108,10 +108,10 @@ class MapModule extends Module {
                     break;
             }
 
-            $imgController->setImageWidth($imageWidth);
             $imgController->setImageHeight($imageHeight);
 
             if ($imgController->isStatic()) {
+                $imgController->setImageWidth($imageWidth);
 
                 $this->assign('imageUrl', $imgController->getImageURL());
 
@@ -124,6 +124,7 @@ class MapModule extends Module {
                 $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
             } else {
+                $imgController->setImageWidth('98%');
                 $imgController->setMapElement('mapimage');
                 foreach($imgController->getIncludeScripts() as $includeScript) {
                     $this->addExternalJavascript($includeScript);
