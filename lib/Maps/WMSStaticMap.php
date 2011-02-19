@@ -152,6 +152,28 @@ class WMSStaticMap extends StaticMapImageController {
 
         return $this->baseURL.'?'.http_build_query($params);
     }
+
+    public function getJavascriptControlOptions() {
+        $params = array(
+            'request' => 'GetMap',
+            'version' => '1.3.0',  // TODO allow config
+            'format'  => 'png',    // TODO allow config
+            'width' => $this->imageWidth,
+            'height' => $this->imageHeight,
+            'crs' => $this->mapProjection,
+            'layers' => implode(',', $layers),
+            'styles' => implode(',', $styles),
+            );
+            
+        if (!isset($params['crs'])) $params['crs'] = $this->defaultProjection;
+
+        $baseURL = $this->baseURL.'?'.http_build_query($params);
+
+        return json_encode(array(
+            'bbox' => $this->bbox,
+            'baseURL' => $baseURL,
+            ));
+    }
     
     public function getAvailableLayers() {
         if ($this->availableLayers === null) {

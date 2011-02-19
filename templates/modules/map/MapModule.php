@@ -123,6 +123,13 @@ class MapModule extends Module {
                 $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
                 $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
+                if ($this->pagetype == 'compliant') {
+                    $this->addOnLoad(
+                        "\nstaticMapOptions = "
+                        .$imgController->getJavascriptControlOptions()
+                        .";\n    addStaticMapControls();");
+                }
+
             } else {
                 $imgController->setImageWidth('98%');
                 $imgController->setMapElement('mapimage');
@@ -522,7 +529,7 @@ class MapModule extends Module {
                     $photoFile = $feature->getField('Photo');
                     if (isset($photoFile) && $photoFile != 'Null') {
                         $tabKeys[] = 'photo';
-                        $tabJavascripts['photo'] = "loadPhoto(photoURL,'photo');";
+                        $tabJavascripts['photo'] = "loadImage(photoURL,'photo');";
                         $photoUrl = $photoServer.$photoFile;
                         $this->assign('photoUrl', $photoUrl);
                         $this->addInlineJavascript("var photoURL = '{$photoUrl}';");

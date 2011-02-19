@@ -12,6 +12,9 @@ abstract class StaticMapImageController extends MapImageController
     // final function that generates url for the img src argument
     abstract public function getImageURL();
 
+    public function getJavascriptControlOptions() {
+    }
+
     public function isStatic() {
         return true;
     }

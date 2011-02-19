@@ -328,6 +328,28 @@ class GoogleStaticMap extends StaticMapImageController {
         return $this->baseURL . '?' . $query;
     }
 
+    public function getJavascriptControlOptions() {
+        $params = array(
+            'mapType' => $this->mapType,
+            'size' => $this->imageWidth .'x'. $this->imageHeight, // "size=512x512"
+            'markers' => $this->getMarkers(),
+            'path' => $this->getPaths(),
+            'style' => $this->getLayerStyles(),
+            'sensor' => ($this->sensor ? 'true' : 'false'),
+            'format' => $this->imageFormat,
+            );
+
+        $query = http_build_query($params);
+        $query = preg_replace('/%5B\d+%5D/', '', $query); // remove brackets
+        $baseURL = $this->baseURL . '?' . $query;
+
+        return json_encode(array(
+            'center' => $this->center,
+            'zoom' => $this->zoomLevel,
+            'baseURL' => $baseURL,
+            ));
+    }
+
     public function __construct() {
         $this->enableAllLayers();
     }

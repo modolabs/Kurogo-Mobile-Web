@@ -5,12 +5,12 @@
 {capture name="mapPane" assign="mapPane"}
   <p class="image">
     <a name="map"> </a>
-    <img src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
+    <img id="mapimage" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
   </p>
+  <div id="mapimage" style="display:none"></div>
   {if $hasMap}
     {include file="findInclude:modules/map/mapcontrols.tpl"}
   {/if}
-  <div id="mapimage" style="display:none"></div>
 {/capture}
 {$tabBodies['map'] = $mapPane}
 

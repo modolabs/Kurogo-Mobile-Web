@@ -171,6 +171,29 @@ class ArcGISStaticMap extends StaticMapImageController {
 
         return $this->baseURL . '/export?' . $query;
     }
+
+    public function getJavascriptControlOptions() {
+        
+        $params = array(
+            'f' => 'image',
+            'size' => $this->imageWidth.','.$this->imageHeight,
+            'dpi' => null, // default 96
+            'imageSR' => $this->mapProjection,
+            'bboxSR' => $this->mapProjection,
+            'format' => $this->imageFormat,
+            'layerDefs' => $this->getLayerDefs(),
+            'layers' => 'show:'.implode(',', $this->enabledLayers),
+            'transparent' => $this->transparent ? 'true' : 'false',
+            );
+
+        $query = http_build_query($params);
+        $baseURL = $this->baseURL . '/export?' . $query;
+
+        return json_encode(array(
+            'bbox' => $this->bbox,
+            'baseURL' => $baseURL,
+            ));
+    }
     
     private function getLayerDefs() {
         if (!$this->layerFilters)
