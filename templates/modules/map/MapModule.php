@@ -91,7 +91,7 @@ class MapModule extends Module {
             switch ($geometry->getType()) {
                 case MapGeometry::POINT:
                     if ($imgController->canAddAnnotations()) {
-                        $imgController->addAnnotation($center['lat'], $center['lon'], $style, $feature->getTitle());
+                        $imgController->addAnnotation($geometry->getCenterCoordinate(), $style, $feature->getTitle());
                     }
                     break;
                 case MapGeometry::POLYLINE:

@@ -21,13 +21,8 @@ class GoogleJSMap extends JavascriptMapImageController {
 
     ////////////// overlays ///////////////
 
-    public function addAnnotation($latitude, $longitude, $style=null, $title=null)
+    public function addAnnotation($marker, $style=null, $title=null)
     {
-        $marker = array(
-            'lat' => $latitude,
-            'lon' => $longitude,
-            );
-
         if ($title) {
             $marker['title'] = $title;
         }
@@ -191,7 +186,6 @@ function loadMap() {
     map = new google.maps.Map(mapImage, options);
 
     var zoomIn = document.getElementById("zoomin");
-alert(zoomIn);
     google.maps.event.addDomListener(zoomIn, "click", function() {
         map.setZoom(map.getZoom() + 1);
     });

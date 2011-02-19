@@ -109,7 +109,7 @@ abstract class MapImageController
     }
 
     // overlays
-    public function addAnnotation($latitude, $longitude, $style=null, $title=null)
+    public function addAnnotation($coord, $style=null, $title=null)
     {
     }
 

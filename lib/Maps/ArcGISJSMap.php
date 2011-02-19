@@ -58,10 +58,8 @@ class ArcGISJSMap extends JavascriptMapImageController {
     
     // TODO make the following two functions more concise
 
-    public function addAnnotation($latitude, $longitude, $style=null, $title=null)
+    public function addAnnotation($marker, $style=null, $title=null)
     {
-        $marker = array('lon' => $longitude, 'lat' => $latitude);
-        
         $filteredStyles = array();
         if ($style !== null) {
             // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/simplemarkersymbol.htm
@@ -308,13 +306,13 @@ JS;
 
     function getFooterScript() {
         $imageWidth = $this->imageWidth;
-    	if (strpos($imageWidth, '%') === FALSE) {
-    	    $imageWidth = $imageWidth.'px';
-    	}
+        if (strpos($imageWidth, '%') === FALSE) {
+            $imageWidth = $imageWidth.'px';
+        }
         $imageHeight = $this->imageHeight;
-    	if (strpos($imageHeight, '%') === FALSE) {
-    	    $imageHeight = $imageWidth.'px';
-    	}
+        if (strpos($imageHeight, '%') === FALSE) {
+            $imageHeight = $imageHeight.'px';
+        }
 
         // put dojo stuff in the footer since the header script
         // gets loaded before the included script

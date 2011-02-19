@@ -97,7 +97,7 @@ class GoogleStaticMap extends StaticMapImageController {
     ////////////// overlays ///////////////
 
     // should expand to support addresses
-    public function addAnnotation($latitude, $longitude, $style=null, $title=null)
+    public function addAnnotation($marker, $style=null, $title=null)
     {
         if ($style === null) {
             $styleArgs = array('color:red');
@@ -115,7 +115,7 @@ class GoogleStaticMap extends StaticMapImageController {
 
         if (!array_key_exists($styleString, $this->markers))
             $this->markers[$styleString] = array();
-        $this->markers[$styleString][] = $latitude . ',' . $longitude;
+        $this->markers[$styleString][] = $marker['lat'] . ',' . $marker['lon'];
     }
 
     public function addPath($points, $style=null)
