@@ -108,9 +108,8 @@ class WMSStaticMap extends StaticMapImageController {
             'lon' => ($this->bbox['xmin'] + $this->bbox['xmax']) / 2,
             );
     }
-    
-    public function getImageURL()
-    {
+
+    private function getURLParameters() {
         $bboxStr = $this->bbox['xmin'].','.$this->bbox['ymin'].','
                   .$this->bbox['xmax'].','.$this->bbox['ymax'];
 
@@ -150,25 +149,18 @@ class WMSStaticMap extends StaticMapImageController {
             
         if (!isset($params['crs'])) $params['crs'] = $this->defaultProjection;
 
-        return $this->baseURL.'?'.http_build_query($params);
+        return $params;
+    }
+    
+    public function getImageURL()
+    {
+        return $this->baseURL.'?'.http_build_query($this->getURLParameters());
     }
 
     public function getJavascriptControlOptions() {
-        $params = array(
-            'request' => 'GetMap',
-            'version' => '1.3.0',  // TODO allow config
-            'format'  => 'png',    // TODO allow config
-            'width' => $this->imageWidth,
-            'height' => $this->imageHeight,
-            'crs' => $this->mapProjection,
-            'layers' => implode(',', $layers),
-            'styles' => implode(',', $styles),
-            );
-            
-        if (!isset($params['crs'])) $params['crs'] = $this->defaultProjection;
-
+        $params = $this->getURLParameters();
+        unset($params['bbox']);
         $baseURL = $this->baseURL.'?'.http_build_query($params);
-
         return json_encode(array(
             'bbox' => $this->bbox,
             'baseURL' => $baseURL,

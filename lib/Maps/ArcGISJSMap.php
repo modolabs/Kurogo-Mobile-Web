@@ -335,7 +335,7 @@ dojo.addOnLoad(loadMap);
 var map;
 
 function loadMap() {
-    var mapImage = document.getElementById("mapimage");
+    var mapImage = document.getElementById("{$this->mapElement}");
     mapImage.style.display = "inline-block";
     mapImage.style.width = "{$imageWidth}";
     mapImage.style.height = "{$imageHeight}";
@@ -345,6 +345,29 @@ function loadMap() {
     var basemap = new esri.layers.ArcGISTiledMapServiceLayer(basemapURL);
 
     map.addLayer(basemap);
+
+    {$this->getSpatialRefJS()}
+    var zoomIn = document.getElementById("zoomin");
+    zoomIn.onclick = function() {
+        var zoomLevel = map.getLevel();
+        var x = (map.extent.xmin + map.extent.xmax) / 2;
+        var y = (map.extent.ymin + map.extent.ymax) / 2;
+        map.centerAndZoom(new esri.geometry.Point(x, y, spatialRef), zoomLevel + 1);
+    };
+
+    var zoomOut = document.getElementById("zoomout");
+    zoomOut.onclick = function() {
+        var zoomLevel = map.getLevel();
+        var x = (map.extent.xmin + map.extent.xmax) / 2;
+        var y = (map.extent.ymin + map.extent.ymax) / 2;
+        map.centerAndZoom(new esri.geometry.Point(x, y, spatialRef), zoomLevel - 1);
+    };
+    
+    var recenter = document.getElementById("recenter");
+    recenter.onclick = function() {
+        map.centerAndZoom({$this->getCenterJS()}, {$zoomLevel});
+    };
+
     {$moreLayersJS}
 
     dojo.connect(map, "onLoad", plotFeatures);
@@ -357,7 +380,7 @@ function plotFeatures() {
 {$this->getPathJS()}
 {$this->getMarkerJS()}
 
-    map.centerAndZoom({$this->getCenterJS()}, {$zoomLevel})
+    map.centerAndZoom({$this->getCenterJS()}, {$zoomLevel});
 }
 
 JS;
