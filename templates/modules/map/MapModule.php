@@ -248,6 +248,90 @@ class MapModule extends Module {
         $this->assign('categories', $categories);
     }
 
+    // bookmarks -- shouldn't really be specific to this module
+
+    protected $bookmarkCookie = 'mapbookmarks';
+    protected $bookmarkLifespan = 25237;
+
+    protected function generateBookmarkOptions($cookieID) {
+        // compliant branch
+        $this->addOnLoad("setBookmarkStates('{$this->bookmarkCookie}', '{$cookieID}')");
+        $this->assign('cookieName', $this->bookmarkCookie);
+        $this->assign('expireDate', $this->bookmarkLifespan);
+        $this->assign('bookmarkItem', $cookieID);
+
+        // the rest of this is all touch and basic branch
+        if (isset($this->args['bookmark'])) {
+            if ($this->args['bookmark'] == 'add') {
+                $this->addBookmark($cookieID);
+                $status = 'on';
+                $bookmarkAction = 'remove';
+            } else {
+                $this->removeBookmark($cookieID);
+                $status = 'off';
+                $bookmarkAction = 'add';
+            }
+
+        } else {
+            if ($this->hasBookmark($cookieID)) {
+                $status = 'on';
+                $bookmarkAction = 'remove';
+            } else {
+                $status = 'off';
+                $bookmarkAction = 'add';
+            }
+        }
+
+        $this->assign('bookmarkStatus', $status);
+        $this->assign('bookmarkURL', $this->bookmarkURL($bookmarkAction));
+        $this->assign('bookmarkAction', $bookmarkAction);
+    }
+
+    private function bookmarkURL($toggle) {
+        $args = $this->args;
+        $args['bookmark'] = $toggle;
+        return $this->buildBreadcrumbURL($this->page, $args, false);
+    }
+
+    private function detailURLFOrBookmark($aBookmark) {
+        // TODO implement
+    }
+
+    protected function getBookmarks() {
+        $bookmarks = array();
+        if (isset($_COOKIE[$this->bookmarkCookie])) {
+            $bookmarks = explode(",", $_COOKIE[$this->bookmarkCookie]);
+        }
+        return $bookmarks;
+    }
+
+    protected function setBookmarks($bookmarks) {
+        $values = implode(",", $bookmarks);
+        $expireTime = time() + $this->bookmarkLifespan;
+        setcookie($this->bookmarkCookie, $values, $expireTime);
+    }
+
+    protected function addBookmark($aBookmark) {
+        $bookmarks = $this->getBookmarks();
+        if (!in_array($aBookmark, $bookmarks)) {
+            $bookmarks[] = $aBookmark;
+            $this->setBookmarks($bookmarks);
+        }
+    }
+
+    protected function removeBookmark($aBookmark) {
+        $bookmarks = $this->getBookmarks();
+        $index = array_search($aBookmark, $bookmarks);
+        if ($index !== false) {
+            array_splice($bookmarks, $index, 1);
+            $this->setBookmarks($bookmarks);
+        }
+    }
+
+    protected function hasBookmark($aBookmark) {
+        return in_array($aBookmark, $this->getBookmarks());
+    }
+
     protected function initializeForPage() {
         switch ($this->page) {
             case 'help':
@@ -264,13 +348,26 @@ class MapModule extends Module {
                             'url' => $this->campusURL($i),
                             );
                     }
-                    $this->assign('browseHint', 'Browse Campuses:');
+                    $this->assign('browseHint', 'Select a Location');
                     $this->assign('categories', $campusLinks);
+                    $this->assign('searchTip', NULL);
 
                 } else {
                     $this->assignCategoriesForCampus(NULL);
                     $this->assign('browseHint', 'Browse map by:');
+                    $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
                 }
+
+                $bookmarks = array();
+                foreach ($this->getBookmarks() as $aBookmark) {
+                    if ($aBookmark) { // prevent counting empty string
+                        $bookmarks[] = array(
+                            'title' => $aBookmark,
+                            'url' => '#',
+                            );
+                    }
+                }
+                $this->assign('bookmarks', $bookmarks);
         
                 break;
             
@@ -283,10 +380,14 @@ class MapModule extends Module {
                 $campus = $GLOBALS['siteConfig']->getSection('campus-'.$index);
                 $title = $campus['title'];
                 $id = $campus['id'];
-                
+
                 $this->assignCategoriesForCampus($id);
                 $this->assign('browseHint', "Browse {$title} by:");
-                
+
+                // TODO this will be problematic if any places have an id of _campus_$id
+                $cookieID = '_campus_'.$id;
+
+                $this->generateBookmarkOptions($cookieID);
                 break;
             
             case 'search':

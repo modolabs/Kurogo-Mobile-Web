@@ -4,6 +4,8 @@
   <h2>{$browseHint}</h2>
 </div>
 
+{include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+
 {include file="findInclude:common/results.tpl" results=$categories}
 
 <div class="nonfocal">
