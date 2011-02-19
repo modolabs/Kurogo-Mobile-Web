@@ -161,10 +161,6 @@ class MapModule extends Module {
         ), $addBreadcrumb);
     }
   
-    private function detailURLForFederatedSearchResult($result, $addBreadcrumb=true) {
-        return $this->buildBreadcrumbURL('detail', $this->detailURLArgsForResult($result), $addBreadcrumb);
-    }
-  
     private function detailURLForResult($urlArgs, $addBreadcrumb=true) {
         return $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
     }
