@@ -21,6 +21,41 @@ class ActiveDirectoryAuthentication extends LDAPAuthentication
 
 class ADUser extends LDAPUser
 {
+    protected $objectSID;
+    
+    protected function setObjectSID($value)
+    {
+        // All SID’s begin with S-
+        $sid = "S-";
+        // Convert Bin to Hex and split into byte chunks
+        $sidinhex = str_split(bin2hex($value), 2);
+        // Byte 0 = Revision Level
+        $sid = $sid.hexdec($sidinhex[0]).'-';
+        // Byte 1-7 = 48 Bit Authority
+        $sid = $sid.hexdec($sidinhex[6].$sidinhex[5].$sidinhex[4].$sidinhex[3].$sidinhex[2].$sidinhex[1]);
+        // Byte 8 count of sub authorities – Get number of sub-authorities
+        $subauths = hexdec($sidinhex[7]);
+        //Loop through Sub Authorities
+        for($i = 0; $i < $subauths; $i++) {
+            $start = 8 + (4 * $i);
+            // X amount of 32Bit (4 Byte) Sub Authorities
+            $sid = $sid.'-'.hexdec($sidinhex[$start+3].$sidinhex[$start+2].$sidinhex[$start+1].$sidinhex[$start]);
+        }
+        
+        $this->objectSID = $sid;
+    }
+    
+    public function getObjectSID() {
+        return $this->objectSID;
+    }
+    
+    protected function standardAttributes() {
+        return array_merge(parent::standardAttributes(), array(
+            'objectsid'
+        ));
+    }
+
+
     public function singleValueAttributes()
     {
         return array_merge(parent::singleValueAttributes(), 
