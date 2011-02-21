@@ -98,19 +98,23 @@ class HomeModule extends Module {
         
         $federatedResults = array();
      
-        foreach ($this->getNavigationModules(false) as $id => $info) {
-          $module = self::factory($id);
-          if ($module->getModuleVar('search')) {
-            $results = array();
-            $total = $module->federatedSearch($searchTerms, 2, $results);
-            $federatedResults[] = array(
-              'title'   => $info['title'],
-              'results' => $results,
-              'total'   => $total,
-              'url'     => $module->urlForFederatedSearch($searchTerms),
-            );
-            unset($module);
-          }
+        foreach ($this->getNavigationModules(false) as $type=>$modules) {
+        
+            foreach ($modules as $id => $info) {
+            
+              $module = self::factory($id);
+              if ($module->getModuleVar('search')) {
+                $results = array();
+                $total = $module->federatedSearch($searchTerms, 2, $results);
+                $federatedResults[] = array(
+                  'title'   => $info['title'],
+                  'results' => $results,
+                  'total'   => $total,
+                  'url'     => $module->urlForFederatedSearch($searchTerms),
+                );
+                unset($module);
+              }
+            }
         }
         //error_log(print_r($federatedResults, true));
         $this->assign('federatedResults', $federatedResults);
