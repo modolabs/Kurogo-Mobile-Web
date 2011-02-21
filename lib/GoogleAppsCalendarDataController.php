@@ -6,9 +6,7 @@ class GoogleAppsCalendarDataController extends CalendarDataController
     protected $cacheFolder = 'GoogleCalendar';
     protected $cacheFileSuffix = 'json';
     protected $user;
-    protected $calendar;
-    protected $calendarListController;
-    protected $oauth;
+    protected $authority;
     
     public function setUser(User $user) {
         if ($user instanceOf GoogleAppsUser) {
