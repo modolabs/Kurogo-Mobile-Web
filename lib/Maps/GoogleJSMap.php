@@ -14,6 +14,20 @@ class GoogleJSMap extends JavascriptMapImageController {
     protected $markers = array();
     protected $paths = array();
     protected $polygons = array();
+    
+    public function setImageWidth($width) {
+        if (strpos($width, '%') === FALSE) {
+            $width = $width.'px';
+        }
+        $this->imageWidth = $width;
+    }
+    
+    public function setImageHeight($height) {
+        if (strpos($height, '%') === FALSE) {
+            $height = $height.'px';
+        }
+        $this->imageHeight = $height;
+    }
 
     public function setLocatesUser($locatesUser) {
         $this->locatesUser = ($locatesUser == true);
@@ -149,16 +163,6 @@ JS;
     }
 
     public function getHeaderScript() {
-        $imageWidth = $this->imageWidth;
-        if (strpos($imageWidth, '%') === FALSE) {
-            $imageWidth = $imageWidth.'px';
-        }
-        $imageHeight = $this->imageHeight;
-        if (strpos($imageHeight, '%') === FALSE) {
-            // setting height as % won't actually work, but...
-            $imageHeight = $imageHeight.'px';
-        }
-
         $script = <<<JS
 
 var map;
@@ -168,8 +172,8 @@ var initLon = {$this->center['lon']};
 function loadMap() {
     var mapImage = document.getElementById("{$this->mapElement}");
     mapImage.style.display = "inline-block";
-    mapImage.style.width = "{$imageWidth}";
-    mapImage.style.height = "{$imageHeight}";
+    mapImage.style.width = "{$this->imageWidth}";
+    mapImage.style.height = "{$this->imageHeight}";
 
     var initCoord = new google.maps.LatLng({$this->center['lat']}, {$this->center['lon']});
     var options = {
@@ -210,7 +214,6 @@ JS;
 
         $script = <<<JS
 
-hideMapTabChildren();
 loadMap();
 
 JS;

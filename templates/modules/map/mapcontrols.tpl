@@ -8,7 +8,7 @@
   <a id="recenter">
     <img src="/common/images/blank.png" width="40" height="34" alt="Recenter" />
   </a>
-  <a id="fullscreen">
+  <a id="fullscreen" href="{$fullscreenURL}">
     <img src="/common/images/blank.png" width="40" height="34" alt="Full Screen" />
   </a>
 </div>

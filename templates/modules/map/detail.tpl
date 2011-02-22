@@ -5,7 +5,7 @@
 {capture name="mapPane" assign="mapPane"}
   <p class="image">
     <a name="map"> </a>
-    <img id="mapimage" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
+    <img id="staticmapimage" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
   </p>
   <div id="mapimage" style="display:none"></div>
   {if $hasMap}

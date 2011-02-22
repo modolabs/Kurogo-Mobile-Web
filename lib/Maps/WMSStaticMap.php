@@ -160,9 +160,12 @@ class WMSStaticMap extends StaticMapImageController {
     public function getJavascriptControlOptions() {
         $params = $this->getURLParameters();
         unset($params['bbox']);
+        unset($params['width']);
+        unset($params['height']);
         $baseURL = $this->baseURL.'?'.http_build_query($params);
         return json_encode(array(
             'bbox' => $this->bbox,
+            'dimensionFunction' => 'function(width, height) { return "&width="+width+"&height="+height; }',
             'baseURL' => $baseURL,
             ));
     }

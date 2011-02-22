@@ -176,7 +176,6 @@ class ArcGISStaticMap extends StaticMapImageController {
         
         $params = array(
             'f' => 'image',
-            'size' => $this->imageWidth.','.$this->imageHeight,
             'dpi' => null, // default 96
             'imageSR' => $this->mapProjection,
             'bboxSR' => $this->mapProjection,
@@ -191,6 +190,7 @@ class ArcGISStaticMap extends StaticMapImageController {
 
         return json_encode(array(
             'bbox' => $this->bbox,
+            'dimensionFunction' => 'function(width, height) { return "&size="+width+","+height; }',
             'baseURL' => $baseURL,
             ));
     }

@@ -49,6 +49,20 @@ class ArcGISJSMap extends JavascriptMapImageController {
     {
         $this->permanentZoomLevel = $zoomLevel;
     }
+    
+    public function setImageWidth($width) {
+        if (strpos($width, '%') === FALSE) {
+            $width = $width.'px';
+        }
+        $this->imageWidth = $width;
+    }
+    
+    public function setImageHeight($height) {
+        if (strpos($height, '%') === FALSE) {
+            $height = $height.'px';
+        }
+        $this->imageHeight = $height;
+    }
 
     ////////////// overlays ///////////////
     
@@ -305,15 +319,6 @@ JS;
     }
 
     function getFooterScript() {
-        $imageWidth = $this->imageWidth;
-        if (strpos($imageWidth, '%') === FALSE) {
-            $imageWidth = $imageWidth.'px';
-        }
-        $imageHeight = $this->imageHeight;
-        if (strpos($imageHeight, '%') === FALSE) {
-            $imageHeight = $imageHeight.'px';
-        }
-
         // put dojo stuff in the footer since the header script
         // gets loaded before the included script
         
@@ -327,8 +332,6 @@ JS;
 
         $script = <<<JS
 
-hideMapTabChildren();
-
 dojo.require("esri.map");
 dojo.addOnLoad(loadMap);
 
@@ -337,8 +340,8 @@ var map;
 function loadMap() {
     var mapImage = document.getElementById("{$this->mapElement}");
     mapImage.style.display = "inline-block";
-    mapImage.style.width = "{$imageWidth}";
-    mapImage.style.height = "{$imageHeight}";
+    mapImage.style.width = "{$this->imageWidth}";
+    mapImage.style.height = "{$this->imageHeight}";
     
     map = new esri.Map("{$this->mapElement}");
     var basemapURL = "{$this->baseURL}";
