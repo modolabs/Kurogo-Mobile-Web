@@ -32,6 +32,60 @@ class MapModule extends Module {
             && $this->platform != 'blackberry'
             && $this->platform != 'bbplus';
     }
+
+    protected function mapImageDimensions() {
+        switch ($this->pagetype) {
+            case 'tablet':
+                $imageWidth = 600; $imageHeight = 350;
+                break;
+            case 'compliant':
+                if ($GLOBALS['deviceClassifier']->getPlatform() == 'bbplus') {
+                    $imageWidth = 410; $imageHeight = 260;
+                } else {
+                    $imageWidth = 290; $imageHeight = 290;
+                }
+                break;
+            case 'touch':
+            case 'basic':
+                $imageWidth = 200; $imageHeight = 200;
+                break;
+        }
+        return array($imageWidth, $imageHeight);
+    }
+
+    protected function initializeMapElements($mapElement, $imgController, $imageWidth, $imageHeight){
+            $imgController->setImageHeight($imageHeight);
+
+            if ($imgController->isStatic()) {
+                $imgController->setImageWidth($imageWidth);
+
+                $this->assign('imageUrl', $imgController->getImageURL());
+
+                $this->assign('scrollNorth', $this->detailUrlForPan('n', $imgController));
+                $this->assign('scrollEast', $this->detailUrlForPan('e', $imgController));
+                $this->assign('scrollSouth', $this->detailUrlForPan('s', $imgController));
+                $this->assign('scrollWest', $this->detailUrlForPan('w', $imgController));
+
+                $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
+                $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
+
+                if ($this->pagetype == 'compliant') {
+                    $this->addOnLoad(
+                        "\nstaticMapOptions = "
+                        .$imgController->getJavascriptControlOptions()
+                        .";\n    addStaticMapControls();");
+                }
+
+            } else {
+                $imgController->setImageWidth('98%');
+                $imgController->setMapElement($mapElement);
+                foreach($imgController->getIncludeScripts() as $includeScript) {
+                    $this->addExternalJavascript($includeScript);
+                }
+                $this->addInlineJavascript($imgController->getHeaderScript());
+                $this->addInlineJavascriptFooter($imgController->getFooterScript());
+            }
+    }
     
     private function initializeMap(MapDataController $dataController, MapFeature $feature) {
         
@@ -54,24 +108,7 @@ class MapModule extends Module {
         }
 
         // image size
-        switch ($this->pagetype) {
-            case 'tablet':
-                $imageWidth = 600; $imageHeight = 350;
-                break;
-            case 'compliant':
-                if ($GLOBALS['deviceClassifier']->getPlatform() == 'bbplus') {
-                    $imageWidth = 410; $imageHeight = 260;
-                } else {
-                    $imageWidth = 290; $imageHeight = 290;
-                }
-                break;
-            case 'touch':
-            case 'basic':
-                $imageWidth = 200; $imageHeight = 200;
-                break;
-        }
-        $this->assign('imageHeight', $imageHeight);
-        $this->assign('imageWidth',  $imageWidth);
+        list($imageHeight, $imageWidth) = $this->mapImageDimensions();
 
         $imgControllers = array();
         $imgControllers[] = $dataController->getStaticMapController();
@@ -108,37 +145,7 @@ class MapModule extends Module {
                     break;
             }
 
-            $imgController->setImageHeight($imageHeight);
-
-            if ($imgController->isStatic()) {
-                $imgController->setImageWidth($imageWidth);
-
-                $this->assign('imageUrl', $imgController->getImageURL());
-
-                $this->assign('scrollNorth', $this->detailUrlForPan('n', $imgController));
-                $this->assign('scrollEast', $this->detailUrlForPan('e', $imgController));
-                $this->assign('scrollSouth', $this->detailUrlForPan('s', $imgController));
-                $this->assign('scrollWest', $this->detailUrlForPan('w', $imgController));
-
-                $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
-                $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
-
-                if ($this->pagetype == 'compliant') {
-                    $this->addOnLoad(
-                        "\nstaticMapOptions = "
-                        .$imgController->getJavascriptControlOptions()
-                        .";\n    addStaticMapControls();");
-                }
-
-            } else {
-                $imgController->setImageWidth('98%');
-                $imgController->setMapElement('mapimage');
-                foreach($imgController->getIncludeScripts() as $includeScript) {
-                    $this->addExternalJavascript($includeScript);
-                }
-                $this->addInlineJavascript($imgController->getHeaderScript());
-                $this->addInlineJavascriptFooter($imgController->getFooterScript());
-            }
+            $this->initializeMapElements('mapimage', $imgController, $imageWidth, $imageHeight);
         }
     }
 
