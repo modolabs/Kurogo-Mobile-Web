@@ -40,8 +40,7 @@ class ErrorModule extends Module {
       'linkText' => 'Click here to login'
     ),
     'protectedACL' => array(
-      'message' =>  'You are not permitted to use this module',
-      'linkText' => 'Click here to login'
+      'message' =>  'You are not permitted to use this module'
     ),
     'default' => array(
       'status'  => '500 Internal Server Error',
