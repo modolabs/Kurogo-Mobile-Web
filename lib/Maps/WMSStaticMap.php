@@ -165,7 +165,7 @@ class WMSStaticMap extends StaticMapImageController {
         $baseURL = $this->baseURL.'?'.http_build_query($params);
         return json_encode(array(
             'bbox' => $this->bbox,
-            'dimensionFunction' => 'function(width, height) { return "&width="+width+"&height="+height; }',
+            'stringFromDimensions' => 'return "&width="+width+"&height="+height;',
             'baseURL' => $baseURL,
             ));
     }

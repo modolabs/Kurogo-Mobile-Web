@@ -37,10 +37,21 @@ function loadImage(imageURL,imageID) {
     }
 }
 
+function loadMapImage() {
+    var mapImage = document.getElementById("staticmapimage");
+    var newSrc = constructMapURL();
+    if (newSrc != mapImage.src) {
+        show("loadingimage");
+        mapImage.src = constructMapURL();
+    }
+}
+
 function addStaticMapControls() {
     if (!staticMapOptions) {
         return;
     }
+    
+    staticMapOptions["stringFromDimensions"] = new Function("width", "height", staticMapOptions["stringFromDimensions"]);
 
     centerZoomBased = ("center" in staticMapOptions);
     
@@ -54,8 +65,6 @@ function addStaticMapControls() {
     } else {
         initBBox = staticMapOptions['bbox'];
     }
-    
-    var mapImage = document.getElementById("staticmapimage");
 
     var zoomIn = document.getElementById("zoomin");
     zoomIn.onclick = function() {
@@ -71,7 +80,7 @@ function addStaticMapControls() {
             bbox['xmin'] = bbox['xmin'] + dLon / 4;
             staticMapOptions['bbox'] = bbox;
         }
-        mapImage.src = constructMapURL();
+        loadMapImage();
     }
     
     var zoomOut = document.getElementById("zoomout");
@@ -88,7 +97,7 @@ function addStaticMapControls() {
             bbox['xmin'] = bbox['xmin'] - dLon / 2;
             staticMapOptions['bbox'] = bbox;
         }
-        mapImage.src = constructMapURL();
+        loadMapImage();
     }
     
     var recenter = document.getElementById("recenter");
@@ -99,15 +108,14 @@ function addStaticMapControls() {
         } else {
             staticMapOptions['bbox'] = initBBox;
         }
-        mapImage.src = constructMapURL();
+        loadMapImage();
     }
 }
 
 function constructMapURL() {
     var baseURL = staticMapOptions['baseURL'];
-    var dimensionFunction = eval(staticMapOptions['dimensionFunction']);
-    var dimensionString = dimensionFunction(mapWidth, mapHeight);
-    
+    var stringFromDimensions = staticMapOptions['stringFromDimensions'];
+    var dimensionString = stringFromDimensions(mapWidth, mapHeight);
     if (centerZoomBased) {
         var centerCoord = staticMapOptions['center']['lat'] + "," + staticMapOptions['center']['lon'];
         return baseURL + "&center=" + centerCoord + "&zoom=" + staticMapOptions['zoom'] + dimensionString;
@@ -119,7 +127,6 @@ function constructMapURL() {
 }
 
 function updateMapDimensions() {
-    
     if (!centerZoomBased) {
         // if width and height proprotions changed, we need to update the bbox
         var oldHeight = mapHeight;
@@ -159,15 +166,14 @@ function updateMapDimensions() {
             staticMapOptions['bbox'] = bbox;
         }
     }
-    
-    document.getElementById("staticmapimage").src = constructMapURL();
+    loadMapImage();
 }
 
 // north and east are sign arguments, e.g.:
 // northeast is (1, 1)
 // northwest is (1, -1)
 // south is (-1, 0)
-function scroll(north, east) {
+function scrollMap(north, east) {
 
     if (centerZoomBased) {
         var zoom = staticMapOptions['zoom'];

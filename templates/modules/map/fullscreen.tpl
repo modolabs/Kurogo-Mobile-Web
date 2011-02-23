@@ -1,13 +1,11 @@
 {include file="findInclude:common/header.tpl" customHeader="" scalable=false}
 
+<div id="mapimage" class="fullmap">
 {if $isStatic}
   {include file="findInclude:modules/map/mapscrollers.tpl"}
 {/if}
-
-<div id="mapimage" class="fullmap">
-<img id="staticmapimage" onload="hide('loadingimage')" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
+<img id="staticmapimage" onload="hide('loadingimage'); scrollTo(0, 1);" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
 </div>
-
 {include file="findInclude:modules/map/mapcontrols.tpl"}
 
 <!-- this section isn't being used currently, don't know if

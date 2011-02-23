@@ -162,6 +162,15 @@ h2 {
 	background-position: -80px 0;
 }
 
+/* copying the fullscreen style for now */
+#smallscreen {
+	top: 0;
+	bottom: auto;
+	right: 7%;
+	margin: 0 -19px 0 0;
+	background-position: -80px 0;
+}
+
 #viewoptions {
 	background-position: -160px 0;
 }
@@ -378,9 +387,6 @@ body.portrait #formbuttons {
 	left: 12px;
 	bottom: 14px;
 }
-
-
-
 
 /* Fullscreen mode in wide (landscape) orientation */
 

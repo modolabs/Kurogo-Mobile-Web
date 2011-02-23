@@ -190,7 +190,7 @@ class ArcGISStaticMap extends StaticMapImageController {
 
         return json_encode(array(
             'bbox' => $this->bbox,
-            'dimensionFunction' => 'function(width, height) { return "&size="+width+","+height; }',
+            'stringFromDimensions' => 'return "&size="+width+","+height;',
             'baseURL' => $baseURL,
             ));
     }

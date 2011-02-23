@@ -93,12 +93,13 @@ class MapModule extends Module {
             $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
             if ($this->pagetype == 'compliant') {
-                $this->addOnLoad("\n"
-                    ."mapWidth = $imageWidth;\n"
+                $this->addInlineJavascript(
+                    "mapWidth = $imageWidth;\n"
                     ."mapHeight = $imageHeight;\n"
                     ."staticMapOptions = "
                     .$imgController->getJavascriptControlOptions().";\n"
-                    .'addStaticMapControls();');
+                    );
+                $this->addOnLoad('addStaticMapControls();');
             }
 
         } else {
@@ -166,8 +167,7 @@ class MapModule extends Module {
         }
 
         if (!$fullscreen) {
-            $fullscreenURL = $this->buildBreadcrumbURL('fullscreen', $this->args, false);
-            $this->assign('fullscreenURL', $fullscreenURL);
+            $this->assign('fullscreenURL', $this->buildBreadcrumbURL('fullscreen', $this->args, false));
             $this->addInternalCSS('/modules/map/css/detail.css');
         
             if ($imgController->isStatic()) {
@@ -179,6 +179,7 @@ class MapModule extends Module {
             }
             
         } else {
+            $this->assign('detailURL', $this->buildBreadcrumbURL('detail', $this->args, false));
             if ($imgController->isStatic()) {
                 list($imageWidth, $imageHeight) = $this->staticMapImageDimensions();
 
@@ -187,14 +188,20 @@ class MapModule extends Module {
                 $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
             }
             $this->addInternalCSS('/modules/map/css/fullscreen.css');
+            $this->addOnLoad('rotateScreen();');
         }
         
+        $this->assign('fullscreen', $fullscreen);
         $this->assign('isStatic', $imgController->isStatic());
+        
         $this->initializeMapElements('mapimage', $imgController, $imageWidth, $imageHeight);
 
         // call the function that updates the image size        
-        if ($fullscreen && $imgController->isStatic())
-            $this->addOnLoad("\n    updateMapDimensions();\n");
+        if ($fullscreen && $imgController->isStatic()) {
+            $this->addOnLoad('updateMapDimensions();');
+            $this->addOnOrientationChange('updateMapDimensions();');
+            $this->addInlineJavascript('window.addEventListener("resize", updateMapDimensions, false);');
+        }
     }
     
     // url builders

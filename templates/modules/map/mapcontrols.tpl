@@ -8,7 +8,13 @@
   <a id="recenter">
     <img src="/common/images/blank.png" width="40" height="34" alt="Recenter" />
   </a>
+  {if $fullscreen}
+  <a id="smallscreen" href="{$detailURL}">
+    <img src="/common/images/blank.png" width="40" height="34" alt="Return to Detail" />
+  </a>
+  {else}
   <a id="fullscreen" href="{$fullscreenURL}">
     <img src="/common/images/blank.png" width="40" height="34" alt="Full Screen" />
   </a>
+  {/if}
 </div>

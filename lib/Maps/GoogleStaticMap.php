@@ -345,7 +345,7 @@ class GoogleStaticMap extends StaticMapImageController {
         return json_encode(array(
             'center' => $this->center,
             'zoom' => $this->zoomLevel,
-            'dimensionFunction' => 'function(width, height) { return "&size="+width+"x"+height; }',
+            'stringFromDimensions' => 'return "&size="+width+"x"+height;',
             'baseURL' => $baseURL,
             ));
     }
