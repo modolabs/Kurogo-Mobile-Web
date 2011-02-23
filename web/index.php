@@ -187,7 +187,7 @@ if (!strlen($path) || $path == '/') {
   } 
   
   if (!preg_match("/^http/", $url)) {
-    $url = URL_BASE . $url . "/";
+    $url = URL_PREFIX . $url . "/";
   }
   
   header("Location: $url");
@@ -204,7 +204,7 @@ if ($url_redirects = $GLOBALS['siteConfig']->getSection('urls', ConfigFile::SUPR
        $url = $url_redirects[$id];
     } else {
       $parts[0] = $url_redirects[$id];
-      $url = URL_BASE . implode("/", $parts);
+      $url = URL_PREFIX . implode("/", $parts);
     }
     header("Location: " . $url);
     exit;

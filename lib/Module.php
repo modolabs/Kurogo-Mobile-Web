@@ -284,7 +284,7 @@ abstract class Module {
     $url = self::buildURLForModule($id, $page, $args);
     //error_log('Redirecting to: '.$url);
     
-    header("Location: ". URL_BASE . ltrim($url,'/'));
+    header("Location: ". URL_PREFIX . ltrim($url, '/'));
     exit;
   }
 
@@ -299,7 +299,7 @@ abstract class Module {
     }
     
     //error_log('Redirecting to: '.$url);
-    header("Location: ". URL_BASE . ltrim($url,'/'));
+    header("Location: ". URL_PREFIX . ltrim($url, '/'));
     exit;
   }
     
