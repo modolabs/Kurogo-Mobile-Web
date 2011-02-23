@@ -193,7 +193,7 @@ class TemplateEngine extends Smarty {
   
   public static function smartyBlockAccessKeyLink($params, $content, &$smarty, &$repeat) {
     if (empty($params['href'])) {
-      $smarty->trigger_error("assign: missing 'href' parameter");
+      trigger_error("assign: missing 'href' parameter");
     }
     
     $html = '';
@@ -220,7 +220,7 @@ class TemplateEngine extends Smarty {
   
   public static function smartyTemplateAccessKeyReset($params, &$smarty) {
     if (!isset($params['index'])) {
-        $smarty->trigger_error("assign: missing 'index' parameter");
+        trigger_error("assign: missing 'index' parameter");
         return;
     }
     if (self::$accessKey == 0 || (isset($params['force']) && $params['force'])) {

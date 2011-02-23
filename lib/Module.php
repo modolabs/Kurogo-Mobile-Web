@@ -1036,14 +1036,14 @@ abstract class Module {
     
     $this->cleanBreadcrumbs(&$breadcrumbs);
     
-    if ($addBreadcrumb && $this->page != 'index') {
+    if ($addBreadcrumb) {
       $args = $this->args;
       unset($args[MODULE_BREADCRUMB_PARAM]);
       
       $breadcrumbs[] = array(
         't'  => $this->breadcrumbTitle,
         'lt' => $this->breadcrumbLongTitle,
-        'p'  => $this->page,
+        'p'  => $this->page != 'index' ? $this->page : './',
         'a'  => http_build_query($args),
       );
     }
@@ -1149,8 +1149,7 @@ abstract class Module {
   // Config files
   //
   
-  protected function getPageData()
-  {
+  protected function getPageData() {
      $pageConfig = $this->getConfig($this->id, 'nav');
      return $pageConfig->getSectionVars(true);
   }
