@@ -396,6 +396,26 @@ class MapModule extends Module {
     protected function hasBookmark($aBookmark) {
         return in_array($aBookmark, $this->getBookmarks());
     }
+    
+    protected function getTitleForBookmark($aBookmark) {
+        if (!$this->feeds)
+            $this->feeds = $this->loadFeedData();
+
+        parse_str($aBookmark, $params);
+        if (isset($params['featureindex'])) {
+            $index = $params['featureindex'];
+            $dataController = $this->getDataController($params['category']);
+            $subCategory = isset($params['subcategory']) ? $params['subcategory'] : null;
+            $feature = $dataController->getFeature($index, $subCategory);
+            return array($feature->getTitle(), $dataController->getTitle());
+        
+        } else if (isset($params['campus'])) {
+            $campus = $GLOBALS['siteConfig']->getSection('campus-'.$params['campus']);
+            return array($campus['title']);
+        } else {
+            return array($aBookmark);
+        }
+    }
 
     protected function initializeForPage() {
         switch ($this->page) {
@@ -426,8 +446,11 @@ class MapModule extends Module {
                 $bookmarks = array();
                 foreach ($this->getBookmarks() as $aBookmark) {
                     if ($aBookmark) { // prevent counting empty string
+                        $titles = $this->getTitleForBookmark($aBookmark);
+                        $subtitle = count($titles) > 1 ? $titles[1] : null;
                         $bookmarks[] = array(
-                            'title' => $aBookmark,
+                            'title' => $titles[0],
+                            'subtitle' => $subtitle,
                             'url' => $this->detailURLForBookmark($aBookmark),
                             );
                     }
@@ -560,7 +583,6 @@ class MapModule extends Module {
                     $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
                     $feature = $dataController->getFeature($index, $subCategory);
                     
-                    $campus = isset($this->args['campus']) ? $this->args['campus'] : null;
                     $cookieParams = array(
                         'category' => $this->args['category'],
                         'subcategory' => $subCategory,
