@@ -19,16 +19,13 @@
 {/capture}
 {$tabBodies['map'] = $mapPane}
 
-
-{capture name="photoPane" assign="photoPane"}
-  {block name="photoPane"}
-    <img id="loadingimage2" src="/common/images/loading2.gif" width="40" height="40" alt="Loading" />
-    <img id="photo" src="" width="99.9%" alt="{$name} Photo" onload="hide('loadingimage2')" />
-  {/block}
-{/capture}
-{$tabBodies['photo'] = $photoPane}
-
 {capture name="detailPane" assign="detailPane"}
+  {block name="photoPane"}
+    {if $photo}
+      <img id="loadingimage2" src="/common/images/loading2.gif" width="40" height="40" alt="Loading" />
+      <img id="photo" src="" width="99.9%" alt="{$name} Photo" onload="hide('loadingimage2')" />
+    {/if}
+  {/block}
   {block name="detailPane"}
     {if $displayDetailsAsList}
       {include file="findInclude:common/navlist.tpl" navlistItems=$details boldLabels=true accessKey=false}
@@ -37,7 +34,14 @@
     {/if}
   {/block}
 {/capture}
-{$tabBodies['detail'] = $detailPane}
+{$tabBodies['info'] = $detailPane}
+
+{if $hasNearby}
+  {capture name="nearbyPane" assign="nearbyPane"}
+    {include file="findInclude:common/navlist.tpl" navlistItems=$nearbyResults boldLabels=true accessKey=false}
+  {/capture}
+  {$tabBodies['nearby'] = $nearbyPane}
+{/if}
 
 {block name="tabView"}
   <a name="scrolldown"> </a>

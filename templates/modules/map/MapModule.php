@@ -348,17 +348,17 @@ class MapModule extends Module {
         }
 
         $this->assign('bookmarkStatus', $status);
-        $this->assign('bookmarkURL', $this->bookmarkURL($bookmarkAction));
+        $this->assign('bookmarkURL', $this->bookmarkToggleURL($bookmarkAction));
         $this->assign('bookmarkAction', $bookmarkAction);
     }
 
-    private function bookmarkURL($toggle) {
+    private function bookmarkToggleURL($toggle) {
         $args = $this->args;
         $args['bookmark'] = $toggle;
         return $this->buildBreadcrumbURL($this->page, $args, false);
     }
 
-    private function detailURLForBookmark($aBookmark) {
+    protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
         if (isset($params['featureindex'])) {
             return $this->buildBreadcrumbURL('detail', $params, true);
@@ -423,6 +423,25 @@ class MapModule extends Module {
             return array($aBookmark);
         }
     }
+    
+    private function bookmarkType($aBookmark) {
+        parse_str($aBookmark, $params);
+        if (isset($params['campus']))
+            return 'campus';
+        return 'place';
+    }
+    
+    private function generateBookmarkLink() {
+        $hasBookmarks = count($this->getBookmarks()) > 0;
+        if ($hasBookmarks) {
+            $bookmarkLink = array(array(
+                'title' => 'Bookmarked Locations',
+                'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
+                ));
+            $this->assign('bookmarkLink', $bookmarkLink);
+        }
+        $this->assign('hasBookmarks', $hasBookmarks);
+    }
 
     protected function initializeForPage() {
         switch ($this->page) {
@@ -449,21 +468,37 @@ class MapModule extends Module {
                     $this->assign('browseHint', 'Browse map by:');
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
                 }
+                
+                $this->generateBookmarkLink();
 
-                $bookmarks = array();
+                break;
+            
+            case 'bookmarks':
+                $campuses = array();
+                $places = array();
+
                 foreach ($this->getBookmarks() as $aBookmark) {
                     if ($aBookmark) { // prevent counting empty string
                         $titles = $this->getTitleForBookmark($aBookmark);
                         $subtitle = count($titles) > 1 ? $titles[1] : null;
-                        $bookmarks[] = array(
-                            'title' => $titles[0],
-                            'subtitle' => $subtitle,
-                            'url' => $this->detailURLForBookmark($aBookmark),
-                            );
+                        if ($this->bookmarkType($aBookmark) == 'campus') {
+                            $campuses[] = array(
+                                'title' => $titles[0],
+                                'subtitle' => $subtitle,
+                                'url' => $this->detailURLForBookmark($aBookmark),
+                                );
+                        } else {
+                            $places[] = array(
+                                'title' => $titles[0],
+                                'subtitle' => $subtitle,
+                                'url' => $this->detailURLForBookmark($aBookmark),
+                                );
+                        }                        
                     }
                 }
-                $this->assign('bookmarks', $bookmarks);
-        
+                $this->assign('campuses', $campuses);
+                $this->assign('places', $places);
+            
                 break;
             
             case 'campus':
@@ -482,6 +517,9 @@ class MapModule extends Module {
                 $cookieID = http_build_query(array('campus' => $index));
 
                 $this->generateBookmarkOptions($cookieID);
+
+                $this->generateBookmarkLink();
+
                 break;
             
             case 'search':
@@ -489,7 +527,6 @@ class MapModule extends Module {
                 if (isset($this->args['filter'])) {
                     $searchTerms = $this->args['filter'];
 
-                    // need more standardized var name for this config
                     $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
                     $mapSearch = new $mapSearchClass();
                     if (!$this->feeds)
@@ -617,16 +654,19 @@ class MapModule extends Module {
         
                 $this->assign('name', $feature->getTitle());
                 $this->assign('address', $feature->getSubtitle());
-        
-                // Photo Tab
+                
+                // Info Tab
+                $tabKeys[] = 'info';
+
+                // embedded photo
                 $photoServer = $GLOBALS['siteConfig']->getVar('MAP_PHOTO_SERVER');
                 // this method of getting photo url is harvard-specific and
                 // further only works on data for ArcGIS features.
-                // TODO allow map controllers to determine what to put in the tabs
+                // TODO rewrite this if we find an alternate way to server photos
                 if ($photoServer) {
                     $photoFile = $feature->getField('Photo');
                     if (isset($photoFile) && $photoFile != 'Null') {
-                        $tabKeys[] = 'photo';
+                        //$tabKeys[] = 'photo';
                         $tabJavascripts['photo'] = "loadImage(photoURL,'photo');";
                         $photoUrl = $photoServer.$photoFile;
                         $this->assign('photoUrl', $photoUrl);
@@ -634,8 +674,6 @@ class MapModule extends Module {
                     }
                 }
                 
-                // Details Tab
-                $tabKeys[] = 'detail';
                 if (is_subclass_of($dataController, 'ArcGISDataController')) {
                     $feature->setBlackList($detailConfig['details']['suppress']);
                 }
@@ -643,10 +681,39 @@ class MapModule extends Module {
                 $displayDetailsAsList = $feature->getDescriptionType() == MapFeature::DESCRIPTION_LIST;
                 $this->assign('displayDetailsAsList', $displayDetailsAsList);
                 $this->assign('details', $feature->getDescription());
+                
+                // Nearby tab
+                $geometry = $feature->getGeometry();
+                $center = $geometry->getCenterCoordinate();
+                
+                $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+                $mapSearch = new $mapSearchClass();
+                if (!$this->feeds)
+                    $this->feeds = $this->loadFeedData();
+                $mapSearch->setFeedData($this->feeds);
+                
+                $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
+                $places = array();
+                if ($searchResults) {
+                    foreach ($searchResults as $result) {
+                        // TODO eliminate current feature from results
+                        $title = $mapSearch->getTitleForSearchResult($result);
+                        $urlArgs = $mapSearch->getURLArgsForSearchResult($result);
+                        $place = array(
+                            'title' => $title,
+                            'subtitle' => isset($result['subtitle']) ? $result['subtitle'] : null,
+                            'url' => $this->detailURLForResult($urlArgs, false),
+                            );
+                        $places[] = $place;
+                    }
+                    $tabKeys[] = 'nearby';
+                    $this->assign('nearbyResults', $places);
+                }
+                $this->assign('hasNearby', count($places) > 0);
         
                 $this->enableTabs($tabKeys, null, $tabJavascripts);
                 break;
-            
+                
             case 'fullscreen':
                 if (!$this->feeds)
                     $this->feeds = $this->loadFeedData();

@@ -180,10 +180,10 @@ select {
 	padding: 4px 4px 8px 7px;
 	line-height: 24px;
 	border: 1px 0 1px 1px solid #666;
-	-webkit-border-bottom-left-radius: 11px;	
-	-webkit-border-top-left-radius: 11px;	
-	-webkit-border-bottom-right-radius: 0;	
-	-webkit-border-top-right-radius: 0;	
+	border-bottom-left-radius: 11px;	
+	border-top-left-radius: 11px;	
+	border-bottom-right-radius: 0;	
+	border-top-right-radius: 0;
 }
 
 .inputcombo .combobutton {
@@ -472,7 +472,6 @@ a.module img {
 	padding: 0;	   
 	margin: 9px; 
 	border: 1px solid #ccc;
-	-webkit-border-radius: 9px;	
 	border-radius: 9px;	
 }
 
@@ -654,7 +653,6 @@ ul.focal li:first-child {
 	margin: 10px; 
 	padding: 0;	   
 	border: 1px solid #ccc;
-	-webkit-border-radius: 8px;	
 	border-radius: 8px;	
 }
 
@@ -743,7 +741,7 @@ ul.focal li:first-child {
 	font-weight:normal;
 	line-height: 1.33em;
 	border: 1px solid #ccc;
-	-webkit-border-radius: 9px;	
+	border-radius: 9px;	
 }
 
 .nonfocal {

@@ -6,7 +6,11 @@
 
 {include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
 
-{include file="findInclude:common/results.tpl" results=$categories}
+{include file="findInclude:common/navlist.tpl" navlistItems=$categories}
+
+{if $hasBookmarks}
+{include file="findInclude:common/navlist.tpl" navlistItems=$bookmarkLink secondary=true}
+{/if}
 
 <div class="nonfocal">
   <form action="category.php" method="get">
