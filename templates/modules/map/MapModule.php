@@ -351,8 +351,15 @@ class MapModule extends Module {
         return $this->buildBreadcrumbURL($this->page, $args, false);
     }
 
-    private function detailURLFOrBookmark($aBookmark) {
-        // TODO implement
+    private function detailURLForBookmark($aBookmark) {
+        parse_str($aBookmark, $params);
+        if (isset($params['featureindex'])) {
+            return $this->buildBreadcrumbURL('detail', $params, true);
+        } else if (isset($params['campus'])) {
+            return $this->campusURL($params['campus']);
+        } else {
+            return '#';
+        }
     }
 
     protected function getBookmarks() {
@@ -421,7 +428,7 @@ class MapModule extends Module {
                     if ($aBookmark) { // prevent counting empty string
                         $bookmarks[] = array(
                             'title' => $aBookmark,
-                            'url' => '#',
+                            'url' => $this->detailURLForBookmark($aBookmark),
                             );
                     }
                 }
@@ -442,8 +449,7 @@ class MapModule extends Module {
                 $this->assignCategoriesForCampus($id);
                 $this->assign('browseHint', "Browse {$title} by:");
 
-                // TODO this will be problematic if any places have an id of _campus_$id
-                $cookieID = '_campus_'.$id;
+                $cookieID = http_build_query(array('campus' => $index));
 
                 $this->generateBookmarkOptions($cookieID);
                 break;
@@ -553,6 +559,16 @@ class MapModule extends Module {
                     $dataController = $this->getDataController($this->args['category']);
                     $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
                     $feature = $dataController->getFeature($index, $subCategory);
+                    
+                    $campus = isset($this->args['campus']) ? $this->args['campus'] : null;
+                    $cookieParams = array(
+                        'category' => $this->args['category'],
+                        'subcategory' => $subCategory,
+                        'featureindex' => $index,
+                        );
+                    $cookieID = http_build_query($cookieParams);
+                    $this->generateBookmarkOptions($cookieID);
+                    
                 } else { // this is a campus
                     $index = $this->args['campus'];
                     $campus = $GLOBALS['siteConfig']->getSection('campus-'.$index);
