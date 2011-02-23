@@ -46,13 +46,9 @@
 			  $items = $controller->search($searchTerms,$brightcoveToken);
 			 
 			  if ($items !== false) {
-			  	
-            	  $resultCount = count($items);
-			  	
 			  	  // TODO handle 0 or 1 result
-			  	
+            	  $resultCount = count($items);
              	  $videos = array();
-            	  
 			  }
 			  
 	        }
@@ -60,7 +56,6 @@
         case 'index':
         	
              $items = $controller->latest($accountid);
-			 //$items = $controller->search("funny",$brightcoveToken);  // TEST
 
              $videos = array();
 
@@ -108,8 +103,8 @@
              	if (is_array($prop_thumbnail)) {
              		$attr_url = $prop_thumbnail[0]->getAttrib("URL"); 
              	} else {
-             		$attr_url = ""; 
-             		//$attr_url = $prop_thumbnail->getAttrib("URL"); // FIXME
+             		$attr_url = "";
+             		//$attr_url = $prop_thumbnail->getAttrib("URL");
              	}
              	
              	$videos[] = array(
