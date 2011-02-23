@@ -179,8 +179,6 @@ class MapModule extends Module {
             }
             
         } else {
-
-            $this->assign('isStatic', $imgController->isStatic());
             if ($imgController->isStatic()) {
                 list($imageWidth, $imageHeight) = $this->staticMapImageDimensions();
 
@@ -191,6 +189,7 @@ class MapModule extends Module {
             $this->addInternalCSS('/modules/map/css/fullscreen.css');
         }
         
+        $this->assign('isStatic', $imgController->isStatic());
         $this->initializeMapElements('mapimage', $imgController, $imageWidth, $imageHeight);
 
         // call the function that updates the image size        

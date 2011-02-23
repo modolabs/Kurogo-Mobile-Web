@@ -3,11 +3,16 @@
 {$tabBodies = array()}
 
 {capture name="mapPane" assign="mapPane"}
+  {block name="mapImage"}
   <p class="image">
     <a name="map"> </a>
-    <img id="staticmapimage" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
+    {if $isStatic}
+      {include file="findInclude:modules/map/mapscrollers.tpl"}
+    {/if}
+    <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
   </p>
   <div id="mapimage" style="display:none"></div>
+  {/block}
   {if $hasMap}
     {include file="findInclude:modules/map/mapcontrols.tpl"}
   {/if}

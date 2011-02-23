@@ -4,12 +4,14 @@
   {include file="findInclude:modules/map/mapscrollers.tpl"}
 {/if}
 
-<div id="mapimage">
+<div id="mapimage" class="fullmap">
 <img id="staticmapimage" onload="hide('loadingimage')" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
 </div>
 
 {include file="findInclude:modules/map/mapcontrols.tpl"}
 
+<!-- this section isn't being used currently, don't know if
+     we use cases to keep it around for -->
 <div id="options">
   <form action="#" method="get" id="mapform" name="mapform">
     <h2>Labels for Fullscreen Map</h2>
