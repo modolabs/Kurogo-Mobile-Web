@@ -14,6 +14,7 @@ class OAuthRequest
     protected $curl;
     protected $consumerKey;
     protected $consumerSecret;
+    protected $token;
     protected $tokenSecret;
     protected $cert;
     protected $returnHeaders = array();
@@ -113,7 +114,7 @@ class OAuthRequest
 	protected function oauthSignature($method, $url, $parameters) {
 		// calculate the base string
 		$this->baseString = $this->calculateBaseString($method, $url, $parameters);
-		$key = rawurlencode($this->consumerSecret) .'&' . rawurlencode($this->tokenSecret);
+		$key = self::urlencode($this->consumerSecret) .'&' . self::urlencode($this->tokenSecret);
 		
 		switch ($this->signatureMethod)
 		{
@@ -180,6 +181,10 @@ class OAuthRequest
         
         $this->signatureMethod = $signatureMethod;
 	}
+
+	public function setToken($token) {
+	    $this->token = $token;
+	}
 	
 	public function setTokenSecret($tokenSecret) {
 	    $this->tokenSecret = $tokenSecret;
@@ -197,6 +202,7 @@ class OAuthRequest
             $params = array_merge($params, $this->parseQueryString($urlParts['query']));
         }
 
+        $fragment = isset($urlParts['fragment']) ? '#' . $urlParts['fragment'] : '';
 		$curl_url = $this->baseURL($url);
 		$curl_headers = $headers;
 
@@ -206,6 +212,10 @@ class OAuthRequest
 		$oauth['oauth_signature_method'] = $this->signatureMethod;
 		$oauth['oauth_timestamp'] = time();
 		$oauth['oauth_version'] = '1.0';
+		
+		if ($this->token) {
+		    $oauth['oauth_token'] = $this->token;
+		}
 
         switch ($method)
         {
@@ -234,7 +244,7 @@ class OAuthRequest
         $curl_headers[] = 'Expect:';
 
 		// set options
-		$options[CURLOPT_URL] = $curl_url;
+		$options[CURLOPT_URL] = $curl_url . $fragment;
 		$options[CURLOPT_FOLLOWLOCATION] = false;
 		$options[CURLOPT_RETURNTRANSFER] = true;
 		$options[CURLOPT_HTTPHEADER] = $curl_headers;

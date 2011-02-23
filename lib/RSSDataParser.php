@@ -16,17 +16,19 @@ require_once(LIB_DIR . '/RSS.php');
   * @package ExternalData
   * @subpackage RSS
   */
-class RSSDataParser extends DataParser
+class RSSDataParser extends XMLDataParser
 {
-    protected $root;
     protected $channel;
-    protected $elementStack = array();
     protected $channelClass='RSSChannel';
     protected $itemClass='RSSItem';
     protected $imageClass='RSSImage';
     protected $enclosureClass='RSSEnclosure';
     protected $items=array();
-    protected $data='';
+
+    protected static $startElements=array(
+        'RSS', 'RDF:RDF', 'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'ENCLOSURE', 'IMAGE');
+    protected static $endElements=array(
+        'CHANNEL', 'FEED', 'ITEM', 'ENTRY', 'DESCRIPTION');
     
     public function items()
     {
@@ -52,13 +54,16 @@ class RSSDataParser extends DataParser
         }
     }
 
-    protected function startElement($xml_parser, $name, $attribs)
+    protected function shouldHandleStartElement($name)
     {
-        $this->data = '';
+        return in_array($name, self::$startElements);
+    }
+
+    protected function handleStartElement($name, $attribs)
+    {
         switch ($name)
         {
             case 'RSS':
-                break;
             case 'RDF:RDF':
                 break;
             case 'CHANNEL':
@@ -76,8 +81,36 @@ class RSSDataParser extends DataParser
             case 'IMAGE':
                 $this->elementStack[] = new $this->imageClass($attribs);
                 break;
-            default:
-                $this->elementStack[] = new RSSElement($name, $attribs);
+        }
+    }
+
+    protected function shouldHandleEndElement($name)
+    {
+        return in_array($name, self::$endElements);
+    }
+
+    protected function handleEndElement($name, $element, $parent)
+    {
+        switch ($name)
+        {
+            case 'FEED': //for atom feeds
+            case 'CHANNEL':
+                $this->channel = $element;
+                break;
+            case 'ITEM':
+            case 'ENTRY': //for atom feeds
+                $this->items[] = $element;
+                break;
+            case 'DESCRIPTION':
+                /* dupe description to content if content is not defined */
+                if (is_a($parent, 'RSSItem') && !$parent->getContent()) {
+                    $contentElement = clone($element);
+                    $contentElement->setName('CONTENT');
+                    $contentElement->setValue($this->data, $this->shouldStripTags($contentElement));
+                    $parent->addElement($contentElement);
+                }
+                $parent->addElement($element);
+                break;
         }
     }
 
@@ -135,64 +168,5 @@ class RSSDataParser extends DataParser
         
         return $strip_tags;
     }
-
-    protected function endElement($xml_parser, $name)
-    {
-        if ($element = array_pop($this->elementStack)) {
-
-            $element->setValue($this->data, $this->shouldStripTags($element));
-            $parent = end($this->elementStack);
-            switch ($name)
-            {
-                case 'FEED': //for atom feeds
-                case 'CHANNEL':
-                    $this->channel = $element;
-                    break;
-                case 'ITEM':
-                case 'ENTRY': //for atom feeds
-                    $this->items[] = $element;
-                    break;
-                case 'DESCRIPTION':
-                    /* dupe description to content if content is not defined */
-                    if ($parent instanceOf RSSItem && !$parent->getContent()) {
-                        $contentElement = clone($element);
-                        $contentElement->setName('CONTENT');
-                        $contentElement->setValue($this->data, $this->shouldStripTags($contentElement));
-                        $parent->addElement($contentElement);
-                    }
-                default:
-                    if ($parent) {
-                        $parent->addElement($element);
-                    } else {
-                        $this->root = $element;
-                    }
-            }
-        }
-    }
-
-    protected function characterData($xml_parser, $data)
-    {
-        $this->data .= $data;
-    }
-    
-  public function parseData($contents) {
-        $xml_parser = xml_parser_create();
-        // use case-folding so we are sure to find the tag in $map_array
-        xml_parser_set_option($xml_parser, XML_OPTION_CASE_FOLDING, true);
-        xml_parser_set_option($xml_parser, XML_OPTION_SKIP_WHITE, true);
-
-        $this->setEncoding(xml_parser_get_option($xml_parser, XML_OPTION_TARGET_ENCODING));
-        
-        xml_set_element_handler($xml_parser, array($this,"startElement"), array($this,"endElement"));
-        xml_set_character_data_handler($xml_parser, array($this,"characterData"));
-        
-        if (!xml_parse($xml_parser, $contents)) {
-            throw new Exception(sprintf("XML error: %s at line %d",
-                        xml_error_string(xml_get_error_code($xml_parser)),
-                        xml_get_current_line_number($xml_parser)));
-        }
-        xml_parser_free($xml_parser);
-        return $this->items;
-       }
 }
 

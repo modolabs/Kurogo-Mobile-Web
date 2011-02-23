@@ -1,0 +1,69 @@
+<?php
+
+/**
+* @file
+* Implementation of hook_install().
+*/
+function emergency_info_install() {
+  error_log('emergency info installed');
+  drupal_load('module', 'content');
+  content_notify('install', 'emergency_info');
+}
+
+/**
+* Implementation of hook_uninstall().
+*/
+function emergency_info_uninstall() {
+  drupal_load('module', 'content');
+  content_notify('uninstall', 'emergency_info');
+}
+
+/**
+* Implementation of hook_enable().
+*
+* Notify content module when this module is enabled.
+*/
+function emergency_info_enable() {
+  error_log('emergency info enabled');
+  drupal_load('module', 'content');
+  content_notify('enable', 'emergency_info');
+
+  // import the emergency contacts list content-type
+  _import_content_type("emergency_contacts_list.content_type.export");
+  _import_content_type("emergency_notification.content_type.export");
+}
+
+function _import_content_type($filename) {
+  drupal_load('module', 'content_copy');
+
+  include_once './'. drupal_get_path('module', 'node') .'/content_types.inc'; 
+  include_once('./'. drupal_get_path('module', 'content') .'/includes/content.admin.inc');
+
+  ob_start();
+    require $filename;
+  $macro = ob_get_clean();
+
+
+  $form_state = array(
+	'values' => array(
+      'type_name' => '<create>',
+      'macro' => $macro,
+    )
+  );
+
+  drupal_execute("content_copy_import_form", $form_state);
+  $errors = form_get_errors();
+  if($errors != NULL) {
+    watchdog("emergency_info", "error importing content type", $errors);
+  }
+	
+}
+/**
+* Implementation of hook_disable().
+*
+* Notify content module when this module is disabled.
+*/
+function emergency_info_disable() {
+  drupal_load('module', 'content');
+  content_notify('disable', 'emergency_info');
+}

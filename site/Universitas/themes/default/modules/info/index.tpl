@@ -92,6 +92,17 @@
           </tr>
           <tr>
             <td>
+              <img src="/modules/info/images/icons/map.png" alt="Map" />
+            </td>
+            <td>
+            <h2>Campus Map</h2>
+            <p> 
+            Navigate around Universitas's campus by searching for classroom buildings, houses, and offices. The map will display the location, and you can zoom in, zoom out or scroll in any direction. You can also browse locations by type, such as libraries or museums.
+            </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <img src="/modules/info/images/icons/calendar.png" alt="Events" />
             </td>
             <td>
@@ -113,7 +124,17 @@
             </p>
             </td>
           </tr>
-
+          <tr>
+            <td>
+              <img src="/modules/info/images/icons/emergency.png" alt="Emergency" />
+            </td>
+            <td>
+            <h2>Emergency</h2>
+            <p> 
+            Be informed of critical information on the Universitas campus and get easy access to important emergency contact information.
+            </p>
+            </td>
+          </tr>
           <tr>
             <td>
               <img src="/modules/info/images/icons/search.png" alt="Search" />

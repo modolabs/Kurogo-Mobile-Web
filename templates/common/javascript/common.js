@@ -134,6 +134,29 @@ function setCookie(c_name, value, expiredays) {
     ((expiredays == null) ? "" : ";expires=" + exdate.toUTCString());
 }
 
+function hasClass(ele,cls) {
+    return ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)'));
+}
+        
+function addClass(ele,cls) {
+    if (!this.hasClass(ele,cls)) ele.className += " "+cls;
+}
+
+function removeClass(ele,cls) {
+    if (hasClass(ele,cls)) {
+        var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
+        ele.className=ele.className.replace(reg,' ');
+    }
+}
+        
+function toggleClass(ele, cls) {
+    if (hasClass(ele, cls)) {
+        removeClass(ele, cls);
+    } else {
+        addClass(ele, cls);
+    }
+}
+
 // Share-related functions
 function showShare() {
 	document.getElementById("sharesheet").style.display="block";
@@ -145,4 +168,45 @@ function hideShare() {
 }
 function doNotScroll( event ) {
 	event.preventDefault(); event.stopPropagation();
+}
+
+// Bookmarks
+function setBookmarkStates(bkName,itemId) {
+    var bookmark = document.getElementById("bookmark");
+    var bkItems = getCookie(bkName).split(",");
+    for (var i = 0; i < bkItems.length; i++) {
+        if (bkItems[i] == itemId) {
+            addClass(bookmark, "on");
+            break;
+        }
+    }
+    bookmark.addEventListener("touchstart", function() {
+        addClass(bookmark, "pressed");
+    }, false);
+    bookmark.addEventListener("touchend", function() {
+        removeClass(bookmark, "pressed");
+    }, false);
+}
+
+function toggleBookmark(bkName,itemId,expiredays) {
+    var bookmark = document.getElementById("bookmark");
+    toggleClass(bookmark, "on");
+    var bkItems = getCookie(bkName).split(",");
+    var newBkItems = new Array();
+    if (bkItems.length == 0) {
+        newBkItems[0] = bkItem;
+    } else {
+        var found = false;
+        for (var i = 0; i < bkItems.length; i++) {
+            if (bkItems[i] == itemId) {
+                found = true;
+            } else {
+                newBkItems.push(bkItems[i]);
+            }
+        }
+        if (!found) {
+            newBkItems.push(itemId);
+        }
+    }
+    setCookie(bkName, newBkItems.join(), expiredays);
 }

@@ -40,19 +40,24 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 	    return array();
 	}
 	
-	protected function oauthRequest($method, $url, $parameters = null) {
+	public function oauthRequest($method, $url, $parameters = null, $headers = null, $use_token=true) {
+        $parameters = is_array($parameters) ? $parameters : array();
 	    if (!$this->oauth) {
 	        $this->oauth = new OAuthRequest($this->consumer_key, $this->consumer_secret);
 	    }
 	    
-	    $this->oauth->setTokenSecret($this->tokenSecret);
-	    return $this->oauth->request($method, $url, $parameters);
+	    if ($use_token) {
+            $this->oauth->setToken($this->token);
+            $this->oauth->setTokenSecret($this->tokenSecret);
+        } else {
+            $this->oauth->setToken('');
+            $this->oauth->setTokenSecret('');
+        }
+	    return $this->oauth->request($method, $url, $parameters, $headers);
 	}
 	
-	protected function getAccessToken($token, $verifier='') {
-		$parameters = array_merge($this->getAccessTokenParameters(),array(
-		    'oauth_token'=>$token
-        ));
+	protected function getAccessToken($verifier='') {
+		$parameters = $this->getAccessTokenParameters();
         
         if (strlen($verifier)) {
             $parameters['oauth_verifier']=$verifier;
@@ -62,7 +67,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		$response = $this->oauthRequest($this->accessTokenMethod, $this->accessTokenURL,  $parameters);
 		parse_str($response, $return);
 
-		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
+		if (!isset($return['oauth_token'], $return['oauth_token_secret'])) {
+		    error_log('oauth_token not found in getAccessToken');
 		    return false;
 		}
 
@@ -93,6 +99,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 
 		// validate
 		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
+		    error_log('oauth_token not found in getRequestToken');
 		    return false;
 		}
 		
@@ -117,6 +124,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         //see if we already have a request token
         if ($startOver || !$this->token || !$this->tokenSecret) {
             if (!$this->getRequestToken(array('url'=>$url))) {
+                error_log("Error getting request token");
                 return AUTH_FAILED;
             }
         }
@@ -124,16 +132,18 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         //if oauth_verifier is set then we are in the callback
         if (isset($_GET[$this->verifierKey])) {
             //get an access token
-            if ($response = $this->getAccessToken($this->token, $_GET[$this->verifierKey])) {
+            if ($response = $this->getAccessToken($_GET[$this->verifierKey])) {
                 //we should now have the current user
                 if ($user = $this->getUserFromArray($response)) {
                     $session = $module->getSession();
                     $session->login($user);
                     return AUTH_OK;
                 } else {
+                    error_log("Unable to find user for $response");
                     return AUTH_FAILED;
                 }
             } else {
+                error_log("Error getting Access token");
                 return AUTH_FAILED;
             }
         } else {
@@ -148,6 +158,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     public function init($args) {
         parent::init($args);
         $args = is_array($args) ? $args : array();
+        $this->tokenSessionVar = sprintf("%s_token", $this->getAuthorityIndex());
+        $this->tokenSecretSessionVar = sprintf("%s_tokenSecret", $this->getAuthorityIndex());
 
         if (isset($_SESSION[$this->tokenSessionVar], $_SESSION[$this->tokenSecretSessionVar])) {
             $this->setToken($_SESSION[$this->tokenSessionVar]);
@@ -160,6 +172,14 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $this->setTokenSecret(null);
         unset($_SESSION[$this->tokenSessionVar]);
         unset($_SESSION[$this->tokenSecretSessionVar]);
+    }
+
+    public function getToken() {
+        return $this->token;
+    }
+    
+    public function getTokenSecret() {
+        return $this->tokenSecret;
     }
 
     public function setToken($token) {

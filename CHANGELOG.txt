@@ -1,0 +1,20 @@
+1.0 Beta 2 (February 16)
+
+* NEW FEATURE: (In testing): Tablet interface. Point device to /device/tablet/home to see iPad interface. Subject to change
+* NEW FEATURE: Internal device detection. You can now use an internal SQLite database to handle device detection. If you have a site, make sure you match up your config.ini with the Universitas config.ini
+* NEW FEATURE: (In development) Support for retrieving user calendars and resources from Google Apps domains
+* NEW MODULE: Content module. Allows you to grab external content (html/rss) and display it in the mobile site. See guide for configuration
+* NEW MODULE: Emergency module. See guide for configuration
+* INCOMPATIBLE CHANGE: DataController factory method signature has altered. Please see example video module in guide for more details.
+* INCOMPATIBLE CHANGE: Page title config files are now located in config/web/nav
+* System will attempt to copy the config-default.ini file to config.ini to aid in initial setup.
+* Added assets to support the "touch" branch classification of devices.
+* Added logic to turn on/off auto phone number detection (AUTODETECT_PHONE_NUMBERS)
+* Added ability to use external addresses in the [url] section
+* Updated Authentication code for Google Apps, Active Directory and others.
+* Updated developer documentation
+* Many other minor bug fixes
+
+1.0 Beta 1 (February 2)
+
+Initial public beta 

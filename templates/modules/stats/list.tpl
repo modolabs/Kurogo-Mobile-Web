@@ -9,6 +9,7 @@
      {else}
             {$item.name}
      {/if}
+     &nbsp;
      <span class="smallprint">({$item.count|number_format} {$statItem.label})</span> 
  </li>
 {/foreach}

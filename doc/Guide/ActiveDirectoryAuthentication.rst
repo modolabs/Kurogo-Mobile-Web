@@ -3,7 +3,7 @@ Active Directory Authentication
 ###############################
 
 The active directory authority allows you to easily configure your site to authenticate against an Active Directory
-domain. It is a subclass of the LDAP Controller and provides simpler configuration settings since AD
+domain. It is a subclass of :doc:`LDAP Authentication <LDAPAuthentication>` and provides simpler configuration settings since AD
 domains share similar basic characteristics. 
 
 =============

@@ -42,7 +42,7 @@ There are several methods that you should be familiar with to use this class app
   
 There are several other methods that can be overridden
 
-* *init($args) - this method is called after instantiation. It includes an array of key/values to initialize
+* *init($args)* - this method is called after instantiation. It includes an array of key/values to initialize
   the class. Make sure you call parent::init($args).
 * *url()* - Should return the complet url to use for the request. You can provide an interface to set various
   parameters that will then affect the building of the query to the web service. By default, this method

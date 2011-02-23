@@ -284,7 +284,7 @@ abstract class Module {
     $url = self::buildURLForModule($id, $page, $args);
     //error_log('Redirecting to: '.$url);
     
-    header("Location: $url");
+    header("Location: ". URL_BASE . ltrim($url,'/'));
     exit;
   }
 
@@ -299,7 +299,7 @@ abstract class Module {
     }
     
     //error_log('Redirecting to: '.$url);
-    header("Location: $url");
+    header("Location: ". URL_BASE . ltrim($url,'/'));
     exit;
   }
     
@@ -550,8 +550,7 @@ abstract class Module {
             $protected = self::argVal($moduleData, 'protected', false);
             if ($protected) {
                 if (!$this->isLoggedIn()) {
-                    $this->redirectToModule('error', '', array('code'=>'protected', 'url'=>URL_BASE . 'login/?' .
-                        http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
+                    $this->redirectToModule('login', '', array('url'=>$_SERVER['REQUEST_URI']));
                 }
             }
             
@@ -565,15 +564,17 @@ abstract class Module {
                         $allow = true;
                         break;
                     case AccessControlList::RULE_ACTION_DENY:
-                        $this->redirectToModule('error', '', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
-                            http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
+                        $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protectedACL'));
                         break;
                 }
             }
             
             if (!$allow) {
-                $this->redirectToModule('error', '', array('code'=>'protectedACL', 'url'=>URL_BASE . 'login/?' .
-                    http_build_query(array('url'=>$_SERVER['REQUEST_URI']))));
+                if ($this->isLoggedIn()) {  
+                    $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protectedACL'));
+                } else {
+                    $this->redirectToModule('login', '', array('url'=>$_SERVER['REQUEST_URI']));
+                }
             }
         }
         
@@ -1302,6 +1303,11 @@ abstract class Module {
         $this->assign('session', $this->getSession());
         $user = $this->getUser();
         $this->assign('session_user', $user);
+
+        if ($this->isLoggedIn()) {
+            $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', Config::SUPRESS_ERRORS)));
+        }
+        
         if ($authority = $user->getAuthenticationAuthority()) {
             $this->assign('session_authority_image', $authority->getAuthorityImage());
             $this->assign('session_authority_title', $authority->getAuthorityTitle());
