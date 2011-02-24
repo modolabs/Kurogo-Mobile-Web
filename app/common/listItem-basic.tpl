@@ -1,6 +1,7 @@
 {extends file="findExtends:common/listItem.tpl"}
 
 {block name="itemLink"}
+  {$listItemLabel}
   {if $item['url'] && $accessKey|default: true}
     {html_access_key_link href=$item['url'] class=$item['class']|default:null accessKey=false}
       {$item['title']}

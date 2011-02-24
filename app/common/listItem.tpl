@@ -1,12 +1,14 @@
-{if isset($item['label'])}
-  {if $boldLabels}
-    <strong>
+{capture name="listItemLabel" assign="listItemLabel"}
+  {if isset($item['label'])}
+    {if $boldLabels}
+      <strong>
+    {/if}
+      {$item['label']}{if $labelColon|default:true}: {/if}
+    {if $boldLabels}
+      </strong>
+    {/if}
   {/if}
-    {$item['label']}{if $labelColon|default:true}:&nbsp;{/if}
-  {if $boldLabels}
-    </strong>
-  {/if}
-{/if}
+{/capture}
 {block name="itemLink"}
   {if $item['url']}
     <a href="{$item['url']}" class="{$item['class']|default:''}"{if $linkTarget || $item['linkTarget']} target="{if $item['linkTarget']}{$item['linkTarget']}{else}{$linkTarget}{/if}"{/if}>
@@ -17,6 +19,7 @@
         height="{$item['imgHeight']}"{/if}{if $item['imgAlt']}
         alt="{$item['imgAlt']}"{/if} />
     {/if}
+    {$listItemLabel}
     {if $titleTruncate}
       {$item['title']|truncate:$titleTruncate}
     {else}
