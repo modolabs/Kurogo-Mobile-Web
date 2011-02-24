@@ -118,7 +118,7 @@ function getCookie(name) {
   var start = cookie.indexOf(name + "=");
   if (start > -1) {
     start += name.length + 1;
-    end = cookie.indexOf(";", start);
+    var end = cookie.indexOf(";", start);
     if (end < 0) {
       end = cookie.length;
     }
@@ -133,6 +133,23 @@ function setCookie(name, value, expireseconds, path) {
   var exdateclause = (expireseconds == 0) ? "" : "; expires=" + exdate.toGMTString();
   var pathclause = (path == null) ? "" : "; path=" + path;
   document.cookie = name + "=" + value + exdateclause + pathclause;
+}
+
+function getCookieArrayValue(name) {
+  var value = getCookie(name);
+  if (value && value.length) {
+    return value.split(',');
+  } else {
+    return new Array();
+  }
+}
+
+function setCookieArrayValue(name, values, expireseconds, path) {
+  var value = '';
+  if (values && values.length) {
+    value = values.join(',');
+  }
+  setCookie(name, value, expireseconds, path);
 }
 
 function hasClass(ele,cls) {
@@ -172,42 +189,42 @@ function doNotScroll( event ) {
 }
 
 // Bookmarks
-function setBookmarkStates(bkName,itemId) {
-    var bookmark = document.getElementById("bookmark");
-    var bkItems = getCookie(bkName).split(",");
-    for (var i = 0; i < bkItems.length; i++) {
-        if (bkItems[i] == itemId) {
-            addClass(bookmark, "on");
-            break;
-        }
+function setBookmarkStates(name, item) {
+  var bookmark = document.getElementById("bookmark");
+  var items = getCookieArrayValue(name);
+  for (var i = 0; i < items.length; i++) {
+    if (items[i] == item) {
+      addClass(bookmark, "on");
+      break;
     }
-    bookmark.addEventListener("touchstart", function() {
-        addClass(bookmark, "pressed");
-    }, false);
-    bookmark.addEventListener("touchend", function() {
-        removeClass(bookmark, "pressed");
-    }, false);
+  }
+  bookmark.addEventListener("touchstart", function() {
+      addClass(bookmark, "pressed");
+  }, false);
+  bookmark.addEventListener("touchend", function() {
+      removeClass(bookmark, "pressed");
+  }, false);
 }
 
-function toggleBookmark(bkName,itemId,expiredays) {
-    var bookmark = document.getElementById("bookmark");
-    toggleClass(bookmark, "on");
-    var bkItems = getCookie(bkName).split(",");
-    var newBkItems = new Array();
-    if (bkItems.length == 0) {
-        newBkItems[0] = bkItem;
-    } else {
-        var found = false;
-        for (var i = 0; i < bkItems.length; i++) {
-            if (bkItems[i] == itemId) {
-                found = true;
-            } else {
-                newBkItems.push(bkItems[i]);
-            }
-        }
-        if (!found) {
-            newBkItems.push(itemId);
-        }
+function toggleBookmark(name, item, expireseconds, path) {
+  var bookmark = document.getElementById("bookmark");
+  toggleClass(bookmark, "on");
+  var items = getCookieArrayValue(name);
+  var newItems = new Array();
+  if (items.length == 0) {
+    newItems[0] = item;
+  } else {
+    var found = false;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i] == item) {
+        found = true;
+      } else {
+        newItems.push(items[i]);
+      }
     }
-    setCookie(bkName, newBkItems.join(), expiredays);
+    if (!found) {
+      newItems.push(item);
+    }
+  }
+  setCookieArrayValue(name, newItems, expireseconds, path);
 }
