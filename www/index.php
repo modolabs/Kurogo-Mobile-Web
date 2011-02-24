@@ -51,7 +51,7 @@ function _outputTypeFile($matches) {
   $testDirs = array(
     THEME_DIR.'/'.$matches[1].$matches[2],
     SITE_DIR.'/'.$matches[1].$matches[2],
-    TEMPLATES_DIR.'/'.$matches[1].$matches[2],
+    APP_DIR.'/'.$matches[1].$matches[2],
   );
   
   $testFiles = array(
