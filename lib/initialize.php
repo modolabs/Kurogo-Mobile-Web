@@ -54,11 +54,11 @@ function Initialize(&$path=null) {
   // Constants which cannot be set by config file
   //
   
-  define('WEBROOT_DIR',       realpath(ROOT_DIR.'/web')); 
+  define('WEBROOT_DIR',       realpath(ROOT_DIR.'/www')); 
   define('LIB_DIR',           realpath(ROOT_DIR.'/lib'));
   define('MASTER_CONFIG_DIR', realpath(ROOT_DIR.'/config'));
-  define('TEMPLATES_DIR',     realpath(ROOT_DIR.'/templates'));
-  define('MODULES_DIR',       realpath(TEMPLATES_DIR.'/modules'));
+  define('APP_DIR',     realpath(ROOT_DIR.'/app'));
+  define('MODULES_DIR',       realpath(APP_DIR.'/modules'));
   
   define('MIN_FILE_PREFIX', 'file:');
   

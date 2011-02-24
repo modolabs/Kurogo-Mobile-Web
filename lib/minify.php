@@ -113,7 +113,7 @@ function getMinifyGroupsConfig() {
       'files' => array(
         THEME_DIR.$path,
         SITE_DIR.$path,
-        TEMPLATES_DIR.$path,
+        APP_DIR.$path,
       ),
     );
     
@@ -136,14 +136,14 @@ function getMinifyGroupsConfig() {
   } else {
     // CSS includes all in order.  JS prefers theme
     $cssDirs = array(
-      TEMPLATES_DIR, 
+      APP_DIR, 
       SITE_DIR, 
       THEME_DIR,
     );
     $jsDirs = array(
       THEME_DIR,
       SITE_DIR, 
-      TEMPLATES_DIR, 
+      APP_DIR, 
     );
     
     if ($pageOnly || $module == 'info') {
