@@ -12,6 +12,11 @@ Basic Layout
 
 There are several directories located in the root of the project folder:
 
+**app**
+  This directory contains the code and :ref:`templates <templates-tour>` for each module provided by the project. This also
+  includes shared templates used by every module (including headers and footers). As with the lib 
+  folder you should avoid adding or altering these files, but rather put new or altered files in the
+  :ref:`site-folder`
 **config**
   This directory contains the main configuration files for the entire project. Most notably it contains
   the main *config.ini* file which determines the active site.
@@ -22,12 +27,7 @@ There are several directories located in the root of the project folder:
   in the site/lib folder to avoid possible conflict with future project updates.
 **site**
   This directory contains an entry for each site. See :ref:`site-folder` for more detail
-**templates**
-  This directory contains the code and :ref:`templates <templates-tour>` for each module provided by the project. This also
-  includes shared templates used by every module (including headers and footers). As with the lib 
-  folder you should avoid adding or altering these files, but rather put new or altered files in the
-  :ref:`site-folder`
-**web**
+**www**
   This directory contains the DocumentRoot for the site. It contains the main script :ref:`index.php`
   which handles all incoming requests. It also contains the minify library for delivering optimized
   css and javascript to clients
@@ -47,7 +47,7 @@ in an environment that matches your production environment to discover any case-
 Provided vs. Site files
 =======================
 
-As noted in the layout section, there are files provided by the project (lib, templates, web) and files
+As noted in the layout section, there are files provided by the project (app, lib, www) and files
 for your use (site). As an open source project, you are certainly welcome to alter files in any way 
 that suits your needs. However, be aware that if you alter or add files in the project directories, it
 may create conflicts when you attempt to update future versions of the project. There are well known
@@ -168,13 +168,13 @@ Other
 Modules and Templates
 =====================
 
-Inside the templates folder you will find two folders that contain module and template files
+Inside the *app* folder you will find folders that contain module and template files
 
 ------
 Common
 ------
 
-Inside the common folder are template files that can be used by all modules. Each of these templates
+Inside the common folder are template and css files that are used by all modules. Each of these templates
 may have several variants for different devices. (see :doc:`template` for detailed information on the 
 template system and file naming) A non-exhaustive list of these templates include:
 
@@ -264,20 +264,20 @@ Each site folder contains the following directories:
   a web service, SQLite databases, or flat authentication files
 * *logs* - Log files
 * *modules* - Site specific modules. To promote ease when updating the framework to new versions,
-  it is usually best if you keep site specific modules in this folder rather than in the *templates/modules*
+  it is usually best if you keep site specific modules in this folder rather than in the *app/modules*
   folder. If you wish to include your work in the project, please see :doc:`github`. Also see :doc:`moduleextend`.
 * *themes* - Contains the themes available for this site. Each theme folder contains a *common* and *modules*
   folder that contains the CSS and image assets for the site. See :doc:`template` for more information.
 
 
 ==========
-Web Folder
+WWW Folder
 ==========
 
-The files and folders in the web folder represent the DocumentRoot, the base of the site. To keep the
+The files and folders in the www folder represent the DocumentRoot, the base of the site. To keep the
 structure clean, all requests are routed through the *index.php* file (the exception is for paths
 and folders that already exists, such as min, the minify url). It is important to note that if create
-additional files or folders in web folder that it may interfere with proper operation of the framework.
+additional files or folders in the www folder that it may interfere with proper operation of the framework.
 
 .. _index.php:
 
