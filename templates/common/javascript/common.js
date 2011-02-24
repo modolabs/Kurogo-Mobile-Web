@@ -112,26 +112,27 @@ function androidPlaceholderFix(searchbox) {
     }
 }
 
-function getCookie(c_name) {
-  if (document.cookie.length > 0) {
-    c_start = document.cookie.indexOf(c_name + "=");
-    if (c_start != -1) {
-      c_start = c_start + c_name.length + 1;
-      c_end = document.cookie.indexOf(";", c_start);
-      if (c_end == -1) {
-        c_end = document.cookie.length;
-      }
-      return unescape(document.cookie.substring(c_start,c_end));
+function getCookie(name) {
+  var cookie = document.cookie;
+  var result = null;
+  var start = cookie.indexOf(name + "=");
+  if (start > -1) {
+    start += name.length + 1;
+    end = cookie.indexOf(";", start);
+    if (end < 0) {
+      end = cookie.length;
     }
+    result = unescape(cookie.substring(start, end));
   }
-  return "";
+  return result;
 }
 
-function setCookie(c_name, value, expiredays) {
+function setCookie(name, value, expireseconds, path) {
   var exdate = new Date();
-  exdate.setDate(exdate.getDate() + expiredays);
-  document.cookie = c_name + "=" + escape(value) +
-    ((expiredays == null) ? "" : ";expires=" + exdate.toUTCString());
+  exdate.setTime(exdate.getTime() + (expireseconds * 1000));
+  var exdateclause = (expireseconds == 0) ? "" : "; expires=" + exdate.toGMTString();
+  var pathclause = (path == null) ? "" : "; path=" + path;
+  document.cookie = name + "=" + value + exdateclause + pathclause;
 }
 
 function hasClass(ele,cls) {

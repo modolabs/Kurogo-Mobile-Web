@@ -129,18 +129,9 @@ function isDisabledModule(module) {
 
 function writeCookies() {
   // null means never expire
-  writeCookie(MODULE_ORDER_COOKIE, modules.join(), MODULE_ORDER_COOKIE_LIFESPAN, COOKIE_PATH);
-  writeCookie(DISABLED_MODULES_COOKIE, disabledModules.join(), MODULE_ORDER_COOKIE_LIFESPAN, COOKIE_PATH);
+  setCookie(MODULE_ORDER_COOKIE, modules.join(), MODULE_ORDER_COOKIE_LIFESPAN, COOKIE_PATH);
+  setCookie(DISABLED_MODULES_COOKIE, disabledModules.join(), MODULE_ORDER_COOKIE_LIFESPAN, COOKIE_PATH);
 }
-
-function writeCookie(name, value, expireseconds, path) {
-  var exdate=new Date();
-  exdate.setTime(exdate.getTime() + (expireseconds*1000));
-  var exdateclause = (expireseconds == 0) ? "" : "; expires="+exdate.toGMTString();
-  var pathclause = (path == null) ? "" : "; path="+path;
-  document.cookie= name + "=" + value + exdateclause + pathclause;
-}
-
 
 function fadeUp(whichObjID,whichOpac) {
   document.getElementById(whichObjID).style.opacity=whichOpac;

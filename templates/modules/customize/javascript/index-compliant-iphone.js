@@ -274,29 +274,6 @@ function updateCookie() {
     }, 0);
 }
 
-function setCookie(name, value, expireseconds, path) {
-    var exdate=new Date();
-    exdate.setTime(exdate.getTime() + (expireseconds*1000));
-    var exdateclause = (expireseconds == 0) ? "" : "; expires="+exdate.toGMTString();
-    var pathclause = (path == null) ? "" : "; path="+path;
-    document.cookie= name + "=" + value + exdateclause + pathclause;
-}
-
-function getCookie(name) {
-    var cookie = document.cookie;
-    var result = null;
-    var start = cookie.indexOf(name + "=");
-    if (start > -1) {
-        start += name.length + 1;
-        end=cookie.indexOf(";", start);
-        if (end < 0) {
-            end = cookie.length;
-        }
-        result = unescape(cookie.substring(start, end));
-    }
-    return result;
-}
-
 function hasClass(ele,cls) {
     return (ele && ele.className && ele.className.match(new RegExp('(\\s|^)'+cls+'(\\s|$)')));
 }
