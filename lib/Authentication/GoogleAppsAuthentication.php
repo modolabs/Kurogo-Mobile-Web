@@ -6,196 +6,95 @@
 /**
   * @package Authentication
   */
-class GoogleAppsAuthentication extends AuthenticationAuthority
+class GoogleAppsAuthentication extends OAuthAuthentication
 {
     protected $domain;
-    protected $oauth = false;
+    protected $tokenSessionVar = 'googleapps_token';
+    protected $tokenSecretSessionVar = 'googleapps_token_secret';
+    protected $requestTokenURL = 'https://www.google.com/accounts/OAuthGetRequestToken';
+    protected $authorizeTokenURL = 'https://www.google.com/accounts/OAuthAuthorizeToken';
+    protected $accessTokenURL = 'https://www.google.com/accounts/OAuthGetAccessToken';
+    protected $useCache = true;
+    protected $cache;
 
-    public function getDomain()
-    {
+    public function getDomain() {
         return $this->domain;
     }
 
-    // auth is handled by openID
-    protected function auth($login, $password, &$user) {
-        return AUTH_FAILED;
-    }
+    protected function getUserFromArray(array $array) {
 
-    //does not support groups
-    public function getGroup($group) {
+        $url = 'https://www.googleapis.com/userinfo/email';
+    
+        $parameters = array(
+            'alt'=>'json'
+        );
+        
+        if (!$result = $this->oauthRequest('GET', $url, $parameters)) {
+            error_log("Error getting email from $url");
+            return false;
+        }
+
+        $data = json_decode($result, true);
+        if (isset($data['data']['email'])) {
+            return $this->getUser($data['data']['email']);
+        }
+        
         return false;
     }
 
-    //Not sure if we can get users or not...
-    public function getUser($login)
-    {
+    public function getUser($login) {
+
         if (empty($login)) {
             return new AnonymousUser();       
         }
         
-        if ($user = $this->loadUser($login)) {
+        /* right now there is no way to validate a user. We'll be looking into this */
+        //if the login is an email, trim off the domain part        
+        if (preg_match('/^(.*?)@'. $this->domain . '$/', $login, $bits)) {        
+
+            $user = new GoogleAppsUser($this);
+            $user->setUserID($login);
+            $user->setEmail($login);
+            $user->setFullname($login);
             return $user;
-        }
 
-        return false;
-    }
-    
-    private function loadUser($login)
-    {
-        $filename = $this->cacheFile($login) ;
-        if (file_exists($filename)) {
-            if ($array = unserialize(file_get_contents($filename))) {
-                return $this->getUserFromArray($array);
-            }
+            $login = $bits[1];
         }
         
         return false;
     }
     
-    protected function cacheUserArray($login, array $array)
-    {
-        return file_put_contents($this->cacheFile($login), serialize($array));
-    }
-    
-    protected function cacheFile($login)
-    {
-        $cacheDir = CACHE_DIR . '/OpenID' ;
-        if (!is_dir($cacheDir)) {
-            mkdir($cacheDir);
-        }
-        return $cacheDir . "/" . md5($login);
-    }
-    
-    protected function getUserFromArray(array $array)
-    {
-        $user = new GoogleAppsUser($this);
-        if ($user->setVars($array)) {
-            $this->cacheUserArray($user->getUserID(), $array);
-            return $user;
-        }
-        
-        return false;
-    }
-
-
-    /**
-     * Discovers the OpenID Endpoint for a Google Apps domain
-     * http://groups.google.com/group/google-federated-login-api/web/openid-discovery-for-hosted-domains?pli=1
-	 * @return string, a url for the OpenID endpoint (i.e the login page)
-     */
-    protected function getOpenIDEndpoint()
-    {
-        $url = "https://www.google.com/accounts/o8/.well-known/host-meta?hd=" . $this->domain;
-        if ($host_meta = file_get_contents($url)) {
-            if (preg_match("/Link: <(.*?)>/", $host_meta, $matches)) {
-                $url = $matches[1];
-                if ($xrds = file_get_contents($url)) {
-                    if (preg_match("#<URI>(.*?)</URI>#", $xrds, $matches)) {
-                        return $matches[1];
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-    
-    private function getOpenIDNameSpace($uri, $var)
-    {
-        if ($key = array_search($uri, $var)) {
-            if (preg_match("/^openid_ns_(.*)$/", $key, $ns)) {
-                return $ns[1];
-            }
-        }
-        
-        return false;
-    }
-
-    private function getOpenIDValue($value, $ns, $var)
-    {
-        return isset($var['openid_' . $ns . '_' . $value]) ? $var['openid_' . $ns . '_' . $value] : false;
-    }
-
-    public function login($login, $pass, Module $module)
-    {
-        $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
-        $url = isset($_GET['url']) ? urldecode($_GET['url']) : '';
-        //see if we already have a request token
-        if ($startOver) {
-            $this->reset();
-        }
-        
-        //if openid_identity is set then we are in the callback
-        $ARGS = $_SERVER['REQUEST_METHOD'] == 'GET' ? $_GET : $_POST;
-        if (isset($ARGS['openid_mode'])) {
-            if (isset($ARGS['openid_identity'])) {
-                if ($user = $this->getUserFromArray($ARGS)) {
-                    $session = $module->getSession();
-                    $session->login($user);
-                    return AUTH_OK;
-                } else {
-                    return AUTH_FAILED;
-                }
-            } else {
-                return AUTH_FAILED;
-            }
-        } else {
-        
-            //redirect to auth page
-            $url = $this->getAuthURL(array('url'=>$url));
-            header("Location: " . $url);
-            exit();
-        }
-    }
-    
-    protected function getAuthURL(array $params)
-    {
-        if (!$url = $this->getOpenIDEndpoint()) {
-            throw new Exception("Unable to get OpenID endpoint url for $this->domain.");
-        }
-        
-        $url_parts = parse_url(FULL_URL_BASE);
-
-        $realm = sprintf("http://%s%s", $this->domain != $url_parts['host'] ? '*.' : '', $this->domain);
-        if (!in_array($_SERVER['SERVER_PORT'], array(80,443))) {
-            $realm .= ":" . $_SERVER['SERVER_PORT'];
-        }
-
+    protected function getRequestTokenParameters() {
         $parameters = array(
-            'openid.mode'=>'checkid_setup',
-            'openid.ns'=>'http://specs.openid.net/auth/2.0',
-            'openid.claimed_id'=>'http://specs.openid.net/auth/2.0/identifier_select',
-            'openid.identity'=>'http://specs.openid.net/auth/2.0/identifier_select',
-            'openid.return_to'=>FULL_URL_BASE . 'login/login?' . http_build_query(array_merge($params,
-                array(
-                    'authority'=>$this->getAuthorityIndex()
-		        ))),
-            'openid.realm'=>$realm,
-            'openid.ns.ax'=>'http://openid.net/srv/ax/1.0',
-            'openid.ax.mode'=>'fetch_request',
-            'openid.ax.required'=>'email,firstname,lastname',
-            'openid.ax.type.email'=>'http://schema.openid.net/contact/email',
-            'openid.ax.type.firstname'=>'http://axschema.org/namePerson/first',
-            'openid.ax.type.lastname'=>'http://axschema.org/namePerson/last'
+            'scope'=>implode(' ', array(
+                'http://www.google.com/calendar/feeds',
+                'http://apps-apis.google.com/a/feeds/',
+                'https://www.googleapis.com/auth/userinfo#email',
+                'http://www.google.com/m8/feeds/'
+            ))
         );
+        
+        return $parameters;
+
+    }
+
+    protected function getAuthURL(array $params) {
+        $url = $this->authorizeTokenURL;
+        $parameters = array(
+            'oauth_token'=>$this->token,
+            'hd'=>$this->domain
+        );
+
+        if (!$GLOBALS['deviceClassifier']->isComputer()) {
+            $parameters['btmpl'] ='mobile';
+        }
         
 	    $url .= stripos($url, "?") ? '&' : '?';
         $url .= http_build_query($parameters);
         return $url;
     }
     
-    public function getConsumerKey()
-    {
-        return $this->consumer_key;
-    }
-
-    public function getConsumerSecret()
-    {
-        return $this->consumer_secret;
-    }
-
-    public function init($args)
-    {
+    public function init($args) {
         parent::init($args);
         $args = is_array($args) ? $args : array();
 
@@ -204,12 +103,7 @@ class GoogleAppsAuthentication extends AuthenticationAuthority
         }
 
         $this->domain = $args['DOMAIN'];
-
-        $url_parts = parse_url(FULL_URL_BASE);
-        if (!preg_match("#" . $this->domain . "$#", $url_parts['host'])) {
-            throw new Exception("This application must be run on a subdomain of $this->domain");
-        }
-
+        
         if (isset($args['OAUTH']) && $args['OAUTH']) {
             if (!isset($args['CONSUMER_KEY'], $args['CONSUMER_SECRET'])) {
                 throw new Exception("Consumer Key and secret must be set when OAuth is on");
@@ -229,55 +123,50 @@ class GoogleAppsUser extends BasicUser
 {
     protected $oauth_token;
     protected $oauth_token_secret;
+    protected $admin = false;
     
-    public function getDomain()
-    {
+    public function getDomain() {
         return $this->AuthenticationAuthority->getDomain();
     }
+    
+    public function __construct(GoogleAppsAuthentication $AuthenticationAuthority) {
+        parent::__construct($AuthenticationAuthority);
+        $this->oauth_token = $this->AuthenticationAuthority->getToken();
+        $this->oauth_token_secret = $this->AuthenticationAuthority->getTokenSecret();
+    }
 
-    protected function valueKeyForTypeKey($key) {
-        if (preg_match("/^openid_(.*?)_type_(.*?)$/", $key, $matches)) {
-            return sprintf("openid_%s_value_%s", $matches[1], $matches[2]);
-        }
-        
-        return null;
+    public function getAdmin() {
+        return $this->admin;
     }
     
-    public function setOAuthToken($token, $token_secret)
-    {
-        $this->oauth_token = $_SESSION['google_oauth_token'] = $token;
-        $this->oauth_token_secret = $_SESSION['google_oauth_token_secret'] = $token_secret;
+    private function setAdmin($admin) {
+        $this->admin = $admin ? true : false;
     }
     
-    public function setVars(array $array)
-    {
-        if (!isset($array['openid_identity'])) {
-            return false;
-        }
-        
-        $this->setUserID($array['openid_identity']);
-        
-        if (isset($array['oauth_token'], $array['oauth_token_secret'])) {
-            $this->setOAuthToken($array['oauth_token'], $array['oauth_token_secret']);
-        }
-        
-        if ( ($type_key = array_search('http://schema.openid.net/contact/email', $array)) !== false) {
-            if ( ($value_key = $this->valueKeyForTypeKey($type_key)) && isset($array[$value_key])) {
-                $this->setEmail($array[$value_key]);
-            }
-        }
+    public function setVars($data) {
+        if (isset($data['entry'])) {
+            if (isset($data['entry']['apps$name']['givenName'])) {
+                $this->setFirstName($data['entry']['apps$name']['givenName']);
+            } 
 
-        if ( ($type_key = array_search('http://axschema.org/namePerson/first', $array)) !== false) {
-            if ( ($value_key = $this->valueKeyForTypeKey($type_key)) && isset($array[$value_key])) {
-                $this->setFirstName($array[$value_key]);
+            if (isset($data['entry']['apps$name']['familyName'])) {
+                $this->setLastName($data['entry']['apps$name']['familyName']);
             }
-        }
 
-        if ( ($type_key = array_search('http://axschema.org/namePerson/last', $array)) !== false) {
-            if ( ($value_key = $this->valueKeyForTypeKey($type_key)) && isset($array[$value_key])) {
-                $this->setLastName($array[$value_key]);
+            if (isset($data['entry']['apps$login'])) {
+                if (!isset($data['entry']['apps$login']['userName'])) {
+                    error_log('$apps$login/userName not present');
+                }
+                $this->setUserID($data['entry']['apps$login']['userName']);                
+                $this->setEmail($data['entry']['apps$login']['userName'] . '@' . $this->getDomain());
+                $this->setAdmin($data['entry']['apps$login']['admin']);
+            } else {
+                error_log('$apps$login data not present');
             }
+
+            return $this->getUserID();
+        } else {
+            error_log("Entry value not present");
         }
-        return true;
-    }
+    }    
 }

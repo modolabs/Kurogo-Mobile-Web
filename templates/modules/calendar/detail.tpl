@@ -11,7 +11,9 @@
   {/block}
   
   {block name="fields"}
-    {include file="findInclude:common/navlist.tpl" navlistItems=$fields}
+    {if count($fields)}
+      {include file="findInclude:common/navlist.tpl" navlistItems=$fields}
+    {/if}
   {/block}
   
   <p class="legend">

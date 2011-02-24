@@ -76,6 +76,11 @@ class ConfigFile extends Config {
         case 'site':
             $pattern = sprintf("%s/%%s.ini", SITE_CONFIG_DIR);
             break;
+        case 'file-default':
+            $pathinfo = pathinfo($file);
+            $file = $pathinfo['filename'];
+            $pattern = sprintf("%s/%%s-default.%s", $pathinfo['dirname'], $pathinfo['extension']);
+            break;
         case 'file':
             if ($f = realpath($file)) {
                 $file = $f;
@@ -116,6 +121,15 @@ class ConfigFile extends Config {
             } else {
                 throw new Exception("Module $file not found");
             }
+            break;
+        case 'file':
+            $defaultFile = $this->getFileByType($file, $type.'-default');
+            if (file_exists($defaultFile)) {
+                $this->createDirIfNotExists(dirname($file));
+                return @copy($defaultFile, $file);
+            }
+
+            return false;            
             break;
     }
   }

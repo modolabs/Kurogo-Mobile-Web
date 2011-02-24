@@ -29,17 +29,6 @@ class ImageLoader {
     }
   }
   
-
-  public static function deleteLDAP($file) {
-  	// TODO
-  }
-  
-  public static function loadLDAP($file) {
-  	// TODO
-  } 
-  
-  
-  
   public static function load($file) {
     $filePath = AUTOLOAD_IMAGES_DIR."/$file";
     

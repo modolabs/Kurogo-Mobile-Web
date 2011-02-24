@@ -1,4 +1,3 @@
-{$titleTruncate = $titleTruncate|default:500}
 {if isset($item['label'])}
   {if $boldLabels}
     <strong>
@@ -18,7 +17,11 @@
         height="{$item['imgHeight']}"{/if}{if $item['imgAlt']}
         alt="{$item['imgAlt']}"{/if} />
     {/if}
-    {$item['title']|truncate:$titleTruncate}
+    {if $titleTruncate}
+      {$item['title']|truncate:$titleTruncate}
+    {else}
+      {$item['title']}
+    {/if}
     {if $item['subtitle']}
       {if $subTitleNewline|default:true}<div{else}&nbsp;<span{/if} class="smallprint">
         {$item['subtitle']}

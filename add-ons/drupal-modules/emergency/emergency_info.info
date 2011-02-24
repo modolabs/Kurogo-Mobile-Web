@@ -1,0 +1,9 @@
+; $Id$
+name = Emergency Info
+description = Allows users to enter information about an institutions emergencies
+dependencies[] = content
+dependencies[] = content_copy
+dependencies[] = views
+dependencies[] = views_export
+package = Mobile Web
+core = 6.x

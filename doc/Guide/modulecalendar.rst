@@ -52,7 +52,7 @@ Configuring the Initial Screen
 ==============================
 
 The index page can be configured to show a list of links to show views of the calendars you have configured.
-You can update the contents of this list by editing the *config/modules/web/calendar-index.ini*. Each entry
+You can update the contents of this list by editing the *config/web/calendar-index.ini*. Each entry
 is a section. Each section has values that map to the the values used by the *listItem* template. 
 
 * *title* - The Name of the entry as it's shown to the user
@@ -69,3 +69,14 @@ is a section. Each section has values that map to the the values used by the *li
     categories.
   
 * *class* - The CSS class of the item, such as *phone*, *map*, *email*
+
+==================================
+Configuring User Calendars (Alpha)
+==================================
+
+There is initial support for viewing user calendars. Currently the only supported calendar system is 
+Google Apps for Business or Education. To enable User Calendars, must first setup the :doc:`authority <GoogleAppsAuthentication>`
+for your Google Apps Domain. Then edit the *config/module/calendar.ini* and set *UserCalendarListController* 
+to *GoogleAppsCalendarListController*. When this setting is enabled, users who login to their 
+Google Apps account will see their calendars in the calendar module. Support for other types of calendars
+and public/shared calendars is being considered for future releases.

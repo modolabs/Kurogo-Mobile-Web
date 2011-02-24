@@ -22,7 +22,11 @@ define("LDAP_INSUFFICIENT_ACCESS", 0x32);
   */
 class LDAPDataController extends PeopleController {
   protected $personClass = 'LDAPPerson';
+  protected $port=389;
+  protected $ldapResource;
   protected $searchBase;
+  protected $adminDN;
+  protected $adminPassword;
   protected $filter;
   protected $errorNo;
   protected $errorMsg;
@@ -33,6 +37,22 @@ class LDAPDataController extends PeopleController {
   {
         return   sprintf("Using LDAP Server: %s", $this->host);
   }
+  
+    protected function connectToServer()
+    {
+        if (!$this->ldapResource) {
+            $this->ldapResource = ldap_connect($this->host, $this->port);
+            if ($this->ldapResource) {
+                ldap_set_option($this->ldapResource, LDAP_OPT_PROTOCOL_VERSION, 3);
+                ldap_set_option($this->ldapResource, LDAP_OPT_REFERRALS, 0);
+            } else {
+                error_log("Error connecting to LDAP Server $this->host using port $this->port");
+            }
+        }
+        
+        return $this->ldapResource;
+    }
+  
   
   public function setAttributes($attribs)
   {
@@ -158,10 +178,17 @@ class LDAPDataController extends PeopleController {
         return FALSE;
     }
     
-    $ds = ldap_connect($this->host);
+    $ds = $this->connectToServer();
     if (!$ds) {
       $this->errorMsg = "Could not connect to LDAP server";
       return FALSE;
+    }
+
+    if ($this->adminDN) {
+        if (!ldap_bind($ds, $this->adminDN, $this->adminPassword)) {
+            error_log("Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds));
+            return false;
+        }
     }
 
     // suppress warnings on non-dev servers
@@ -281,17 +308,24 @@ class LDAPDataController extends PeopleController {
     if (strstr($id, '=')) { 
       // assume we're looking up person by "dn" (distinct ldap name)
 
-      $ds = ldap_connect($this->host);
+      $ds = $this->connectToServer();
       if (!$ds) {
         $this->errorMsg = "Could not connect to LDAP server";
         return FALSE;
       }
-
+      
+      if ($this->adminDN) {
+          if (!ldap_bind($ds, $this->adminDN, $this->adminPassword)) {
+              error_log("Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds));
+              return false;
+          }
+    }
+      
       // get all attributes of the person identified by $id
       $sr = ldap_read($ds, $id, "(objectclass=*)", $this->attributes, 0, 0, 
         $GLOBALS['siteConfig']->getVar('PEOPLE_READ_TIMELIMIT'));
       if (!$sr) {
-        $this->errorMsg = "Search timed out";
+        $this->errorMsg = ldap_error($ds);
         return FALSE;
       }
 
@@ -348,17 +382,14 @@ protected function generateErrorMessage($ldap_resource) {
         return "Your request cannot be processed at this time.";
     }
 }
-    private function setSearchBase($searchBase)
-    {
-        $this->searchBase = $searchBase;
-    }
-
     protected function init($args)
     {
         parent::init($args);
-        if (isset($args['SEARCH_BASE'])) {
-            $this->setSearchBase($args['SEARCH_BASE']);
-        }
+
+        $this->port = isset($args['PORT']) ? $args['PORT'] : 389;
+        $this->searchBase = isset($args['SEARCH_BASE']) ? $args['SEARCH_BASE'] : '';
+        $this->adminDN = isset($args['ADMIN_DN']) ? $args['ADMIN_DN'] : null;
+        $this->adminPassword = isset($args['ADMIN_PASSWORD']) ? $args['ADMIN_PASSWORD'] : null;
     }
 
 }

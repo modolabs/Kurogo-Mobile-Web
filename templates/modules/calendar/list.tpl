@@ -7,11 +7,11 @@
 {capture name="sideNav" assign="sideNav"}
   <div class="{block name='sideNavClass'}sidenav{/block}">
     {if $prev}
-      <a href="{$prevUrl}">&lt; {$prev}</a> 
+      <a href="{$prevURL}">&lt; {$prev}</a> 
       {if $next}|{/if} 
     {/if}
     {if $next}
-      <a href="{$nextUrl}">{$next} &gt;</a>
+      <a href="{$nextURL}">{$next} &gt;</a>
     {/if}
   </div>
 {/capture}

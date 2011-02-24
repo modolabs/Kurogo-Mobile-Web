@@ -2,7 +2,7 @@
 Full Website Module
 ###################
 
-The full website module simply redirects the user to your full website. 
+The full website (/fullweb) module simply redirects the user to your full website. 
 
 =============
 Configuration

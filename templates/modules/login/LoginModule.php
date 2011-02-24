@@ -121,6 +121,10 @@ class LoginModule extends Module {
                 
                 $this->assign('url', $this->buildURL('logout'));
                 $this->assign('linkText', 'Logout');
+            } else {
+                $this->assign('loginMessage', $this->getModuleVar('LOGIN_MESSAGE'));
+                $this->assign('loginLabel', $this->getModuleVar('LOGIN_LABEL'));
+                $this->assign('passwordLabel', $this->getModuleVar('PASSWORD_LABEL'));
             }
             break;
     }

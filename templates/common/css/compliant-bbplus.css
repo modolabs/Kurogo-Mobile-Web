@@ -7,7 +7,6 @@
 }
 .springboard div a {	
 	padding: 4px 6px;
-	color: #333;
 }
 .springboard div.utility a {
 	font-size: 90%;
@@ -16,7 +15,6 @@
 	border: 2px solid #c00;
 	padding: 2px 4px;
 	text-decoration: none;
-	color: #333;
 }
 .springboard a:active {
 	border: 4px solid #c00;

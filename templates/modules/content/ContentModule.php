@@ -9,8 +9,8 @@ class ContentModule extends Module {
     {
         case 'feeds':
             $feeds = $this->loadFeedData();
-            $adminModule->addExternalJavascript(URL_BASE . "modules/{$this->id}/javascript/admin.js");
-            $adminModule->addExternalCSS(URL_BASE . "modules/{$this->id}/css/admin.css");
+            $adminModule->addExternalJavascript(URL_PREFIX . "modules/{$this->id}/javascript/admin.js");
+            $adminModule->addExternalCSS(URL_PREFIX . "modules/{$this->id}/css/admin.css");
             $adminModule->assign('feeds', $feeds);
             $adminModule->assign('showFeedLabels', true);
             $adminModule->assign('showNew', true);

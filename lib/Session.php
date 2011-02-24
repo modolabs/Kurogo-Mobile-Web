@@ -23,7 +23,7 @@ class Session
     {
         if (!isset($_SESSION)) {
             if (!is_dir(CACHE_DIR . "/session")) {
-                mkdir(CACHE_DIR . "/session",0700);
+                mkdir(CACHE_DIR . "/session",0700,true);
             }
             ini_set('session.save_path', CACHE_DIR . "/session");
             ini_set('session.name', SITE_KEY);
@@ -35,7 +35,14 @@ class Session
         $user = new AnonymousUser();
         
         if (isset($_SESSION['auth'])) {
-            if ($authority = AuthenticationAuthority::getAuthenticationAuthority($_SESSION['auth'])) {
+        
+            $maxIdleTime = intval($GLOBALS['siteConfig']->getVar('AUTHENTICATION_IDLE_TIMEOUT'));
+            $lastPing = isset($_SESSION['ping']) ? $_SESSION['ping'] : 0;
+            $diff = time() - $lastPing;
+            
+            if ( $maxIdleTime && ($diff > $maxIdleTime)) {
+                // right now nothing happens, but we could show and error if necessary.
+            } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($_SESSION['auth'])) {
 
                 $auth_userID = isset($_SESSION['auth_userID']) ? $_SESSION['auth_userID'] : '';
 
@@ -64,6 +71,7 @@ class Session
         $_SESSION['userID'] = $user->getUserID();
         $_SESSION['auth_userID'] = $user->getUserID();
         $_SESSION['auth'] = $user->getAuthenticationAuthorityIndex();
+        $_SESSION['ping'] = time();
     }
 
     public function getUser()
@@ -82,7 +90,7 @@ class Session
     {
         $user = new AnonymousUser();
         $this->setUser($user);
-		session_regenerate_id(true);
+		    session_regenerate_id(true);
         return true;
     }
 }

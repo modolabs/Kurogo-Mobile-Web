@@ -14,10 +14,12 @@ class OAuthRequest
     protected $curl;
     protected $consumerKey;
     protected $consumerSecret;
+    protected $token;
     protected $tokenSecret;
     protected $cert;
     protected $returnHeaders = array();
     protected $signatureMethod = 'HMAC-SHA1';
+    protected $baseString='';
 
 	protected function buildQuery(array $parameters) {
 
@@ -111,13 +113,13 @@ class OAuthRequest
     /* sign the request according to 3.1 of RFC 5849 */
 	protected function oauthSignature($method, $url, $parameters) {
 		// calculate the base string
-		$baseString = $this->calculateBaseString($method, $url, $parameters);
-		$key = rawurlencode($this->consumerSecret) .'&' . rawurlencode($this->tokenSecret);
+		$this->baseString = $this->calculateBaseString($method, $url, $parameters);
+		$key = self::urlencode($this->consumerSecret) .'&' . self::urlencode($this->tokenSecret);
 		
 		switch ($this->signatureMethod)
 		{
 		    case 'HMAC-SHA1':
-        		$sig = base64_encode(hash_hmac('SHA1', $baseString, $key, true));
+        		$sig = base64_encode(hash_hmac('SHA1', $this->baseString, $key, true));
         		break;
         	case 'RSA-SHA1':
 
@@ -126,7 +128,7 @@ class OAuthRequest
                 }
 
                 // Sign using the key
-                $ok = openssl_sign($base_string, $signature, $privatekeyid);
+                $ok = openssl_sign($this->base_string, $signature, $privatekeyid);
 
                 // Release the key resource
                 openssl_free_key($privatekeyid);
@@ -160,7 +162,7 @@ class OAuthRequest
 	    $vars = explode('&', $queryString);
 	    foreach ($vars as $value) {
 	        $bits = explode("=", $value);
-	        $return[$bits[0]] = $bits[1];
+	        $return[$bits[0]] = urldecode($bits[1]);
 	    }
 	    return $return;
 	}
@@ -179,6 +181,10 @@ class OAuthRequest
         
         $this->signatureMethod = $signatureMethod;
 	}
+
+	public function setToken($token) {
+	    $this->token = $token;
+	}
 	
 	public function setTokenSecret($tokenSecret) {
 	    $this->tokenSecret = $tokenSecret;
@@ -196,6 +202,7 @@ class OAuthRequest
             $params = array_merge($params, $this->parseQueryString($urlParts['query']));
         }
 
+        $fragment = isset($urlParts['fragment']) ? '#' . $urlParts['fragment'] : '';
 		$curl_url = $this->baseURL($url);
 		$curl_headers = $headers;
 
@@ -205,6 +212,10 @@ class OAuthRequest
 		$oauth['oauth_signature_method'] = $this->signatureMethod;
 		$oauth['oauth_timestamp'] = time();
 		$oauth['oauth_version'] = '1.0';
+		
+		if ($this->token) {
+		    $oauth['oauth_token'] = $this->token;
+		}
 
         switch ($method)
         {
@@ -233,7 +244,7 @@ class OAuthRequest
         $curl_headers[] = 'Expect:';
 
 		// set options
-		$options[CURLOPT_URL] = $curl_url;
+		$options[CURLOPT_URL] = $curl_url . $fragment;
 		$options[CURLOPT_FOLLOWLOCATION] = false;
 		$options[CURLOPT_RETURNTRANSFER] = true;
 		$options[CURLOPT_HTTPHEADER] = $curl_headers;
@@ -252,7 +263,7 @@ class OAuthRequest
 		// check for errors
         $http_code = curl_getinfo($this->curl, CURLINFO_HTTP_CODE);
         if (curl_errno($this->curl) || $http_code >= 400) {
-            error_log("There was an error $http_code retrieving $curl_url");
+            error_log("There was an error $http_code retrieving $curl_url: $response");
             return false;
         }
         

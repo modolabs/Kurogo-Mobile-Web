@@ -62,7 +62,16 @@ class HTMLPager {
   
   public function __construct($html, $encoding, $pageNumber, $paragraphsPerPage=HTMLPager::PARAGRAPH_LIMIT) {
     $dom = new DOMDocument();
+    
+    libxml_use_internal_errors(true);
+    libxml_clear_errors(); // clean up any errors belonging to other operations
     $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', $encoding));
+    foreach (libxml_get_errors() as $error) {
+      error_log("HTMLPager got loadHTML warning (line {$error->line}; column {$error->column}) {$error->message}");
+    }
+    libxml_clear_errors(); // free up memory associated with the errors
+    libxml_use_internal_errors(false);
+    
     $body = $dom->getElementsByTagName("body")->item(0);
 
     $currentPage = NULL;

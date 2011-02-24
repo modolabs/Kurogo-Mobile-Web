@@ -13,9 +13,9 @@ class NewsModule extends Module {
   protected $hasFeeds = true;
   protected $feeds = array();
   protected $feedFields = array('CACHE_LIFETIME'=>'Cache lifetime (seconds)','CONTROLLER_CLASS'=>'Controller Class','ITEM_CLASS'=>'Item Class', 'ENCLOSURE_CLASS'=>'Enclosure Class');
-  protected $feedIndex=0;
+  protected $feedIndex = 0;
   protected $feed;
-  protected $maxPerPage=10;
+  protected $maxPerPage = 10;
 
   protected function getModuleDefaultData() {
     return array_merge(parent::getModuleDefaultData(), array(
@@ -55,14 +55,20 @@ class NewsModule extends Module {
     ), $addBreadcrumb);
   }
 
-  private function storyURL($story, $addBreadcrumb=true) {
+  private function storyURL($story, $addBreadcrumb=true, $paneLink=false) {
     if ($storyID = $story->getGUID()) {
-        return $this->buildBreadcrumbURL('story', array(
+        $args = array(
           'storyID'   => $storyID,
           'section'   => $this->feedIndex,
           'start'     => self::argVal($this->args, 'start'),
           'filter'    => self::argVal($this->args, 'filter')
-        ), $addBreadcrumb);
+        );
+        
+        if ($paneLink) {
+          return $this->buildURL('story', $args);
+        } else {
+          return $this->buildBreadcrumbURL('story', $args, $addBreadcrumb);
+        }
     } elseif ($link = $story->getProperty('link')) {
         return $link;
     } else {
@@ -222,6 +228,9 @@ class NewsModule extends Module {
             'section' => $this->feedIndex
           );
 
+          $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+          $this->addOnLoad('setupNewsListing();');
+
           $this->assign('extraArgs',   $extraArgs);
           $this->assign('searchTerms', $searchTerms);
           $this->assign('stories',     $stories);
@@ -233,6 +242,23 @@ class NewsModule extends Module {
         }
         break;
         
+      case 'pane':
+        $start = 0;
+        $items = $this->feed->items($start, $this->maxPerPage, $totalItems);
+        $stories = array();
+        foreach ($items as $story) {
+          $item = array(
+            'title'       => $story->getTitle(),
+            'description' => $story->getDescription(),
+            'url'         => $this->storyURL($story, false, true),
+            'image'       => $this->getImageForStory($story),
+          );
+          $stories[] = $item;
+        }
+        
+        $this->assign('stories', $stories);
+        break;
+      
       case 'index':
         $start = $this->getArg('start', 0);
         $totalItems = 0;
@@ -279,6 +305,9 @@ class NewsModule extends Module {
           'section'=>$this->feedIndex
         );
         
+        $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+        $this->addOnLoad('setupNewsListing();');
+
         $this->assign('hiddenArgs',     $hiddenArgs);
         $this->assign('sections',       $sections);
         $this->assign('currentSection', $sections[$this->feedIndex]);

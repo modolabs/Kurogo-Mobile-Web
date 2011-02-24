@@ -27,12 +27,12 @@ the project.
    
    * :kbd:`git remote add upstream git://github.com/modolabs/Kurogo-Mobile-Web.git`
    * :kbd:`git fetch upstream`
-   * :kbd:`git checkout -b upstream/master`
+   * :kbd:`git checkout -b upstream upstream/master`
 
 #. When new changes come down you can run:
    
    * :kbd:`git checkout upstream` Change to upstream branch
-   * :kbd:`git pull upstream master` Pull down changes
+   * :kbd:`git pull` Pull down changes
    * :kbd:`git checkout master` Change to master branch
    * :kbd:`git merge upstream` Merge changes into master branch
 

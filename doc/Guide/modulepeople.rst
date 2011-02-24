@@ -30,6 +30,11 @@ In most cases, this will permit you to perform simple search and details views o
   such as a database.
 * PERSON_CLASS allows you to set a different class name for the returned user objects when searching. 
   This allows you to write custom behavior to handle the data in your directory service.
+* *PORT* - Optional (Default 389) The port to connect. Use 636 for SSL connections (recommended if available)
+* *ADMIN_DN* - Some servers do not permit anonymous queries. If necessary you will need to provide a full 
+  distinguished name for an account that has access to the directory. For security this account should
+  only have read access and be limited to the search bases to which it needs to access.
+* *ADMIN_PASSWORD* - The password for the *ADMIN_DN* account.
 
 =============================
 Configuring the Detail Fields
@@ -56,7 +61,7 @@ Configuring the Fixed Entries
 =============================
 
 This module supports the ability to show a list of directory entries on the module index page. You
-can update the contents of this list by editing the *config/modules/web/people-index.ini*. Each entry
+can update the contents of this list by editing the *config/web/people-index.ini*. Each entry
 is a numerically 0-indexed list of sections. Each section has 4 values that map to the the values used
 by the *listItem* template. Note that because it's displaying a list with URLs, the entries do not
 have to be phone numbers, but could be any URL.

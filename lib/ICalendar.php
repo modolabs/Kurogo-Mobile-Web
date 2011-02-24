@@ -317,31 +317,46 @@ class ICalEvent extends ICalObject {
     return array_merge($this->standardAttributes(), array_keys($this->properties));
   }
   
-  public function setRange(TimeRange $range)
-  {
+  public function setRange(TimeRange $range) {
     $this->range = $range;
   }
+  
+  public function setSummary($summary) {
+    $this->summary = $summary;
+  }
+  
+  public function setDescription($description) {
+    $this->description = $description;
+  }
 
+  public function setUID($uid) {
+    $this->uid = $uid;
+  }
+  
+  public function setLocation($location) {
+    $this->location = $location;
+  }
+  
   public function set_attribute($attr, $value, $params=NULL) {
     switch ($attr) {
     case 'UID':
       if (strpos($value, '@') !== FALSE) {
-        $this->uid .= substr($value, 0, strpos($value, '@'));
+        $this->setUID(substr($value, 0, strpos($value, '@')));
       } else {
-        $this->uid .= $value;
+        $this->setUID($value);
       }
       break;
     case 'RECURRENCE-ID':
       $this->recurid = $value;
       break;
     case 'DESCRIPTION':
-      $this->description = iCalendar::ical_unescape_text($value);
+      $this->setDescription(iCalendar::ical_unescape_text($value));
       break;
     case 'LOCATION':
-      $this->location = iCalendar::ical_unescape_text($value);
+      $this->setLocation(iCalendar::ical_unescape_text($value));
       break;
     case 'SUMMARY':
-      $this->summary = iCalendar::ical_unescape_text($value);
+      $this->setSummary(iCalendar::ical_unescape_text($value));
       break;
     case 'CATEGORIES':
         $categories = explode(',', $value);
@@ -434,7 +449,7 @@ class ICalEvent extends ICalObject {
             $datetime = new DateTime($value);
         }
 
-        $this->exdates[] = $datetime->format('U'); //start time
+        $this->exdates[] = $datetime->format('U'); // start time
       break;
     case 'TZID': // this only gets called by ICalendar::__construct
       $this->tzid = $value;
@@ -494,6 +509,7 @@ class ICalEvent extends ICalObject {
         if ($this->range) {
             if ($this->range instanceOf DayRange)  {
                 $this->addLine($output_string, "DTSTART", date('Ymd', $this->range->get_start()));
+                $this->addLine($output_string, "DTEND", date('Ymd', $this->range->get_end()));
             } else {
                 $this->addLine($output_string, "DTSTART", strftime('%Y%m%dT%H%M%S', $this->range->get_start()));
                 $this->addLine($output_string, "DTEND", strftime('%Y%m%dT%H%M%S', $this->range->get_end()));
