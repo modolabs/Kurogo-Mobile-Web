@@ -114,7 +114,7 @@ function androidPlaceholderFix(searchbox) {
 
 function getCookie(name) {
   var cookie = document.cookie;
-  var result = null;
+  var result = "";
   var start = cookie.indexOf(name + "=");
   if (start > -1) {
     start += name.length + 1;

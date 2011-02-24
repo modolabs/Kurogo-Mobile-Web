@@ -990,37 +990,57 @@ abstract class Module {
   }
   
   private function loadBreadcrumbs() {
+    $breadcrumbs = array();
+  
     if ($breadcrumbArg = $this->getArg(MODULE_BREADCRUMB_PARAM)) {
       $breadcrumbs = $this->decodeBreadcrumbParam($breadcrumbArg);
-      if (is_array($breadcrumbs)) {
-        for ($i = 0; $i < count($breadcrumbs); $i++) {
-          $b = $breadcrumbs[$i];
-          
-          $breadcrumbs[$i]['title'] = $b['t'];
-          $breadcrumbs[$i]['longTitle'] = $b['lt'];
-          
-          $breadcrumbs[$i]['url'] = "{$b['p']}";
-          if (strlen($b['a'])) {
-            $breadcrumbs[$i]['url'] .= "?{$b['a']}";
-          }
-          
-          $linkCrumbs = array_slice($breadcrumbs, 0, $i);
-          if (count($linkCrumbs)) { 
-            $this->cleanBreadcrumbs(&$linkCrumbs);
-            
-            $crumbParam = http_build_query(array(
-              MODULE_BREADCRUMB_PARAM => $this->encodeBreadcrumbParam($linkCrumbs),
-            ));
-            if (strlen($crumbParam)) {
-              $breadcrumbs[$i]['url'] .= (strlen($b['a']) ? '&' : '?').$crumbParam;
-            }
-          }
-        }
+      if (!is_array($breadcrumbs)) { $breadcrumbs = array(); }
+    }
 
-        $this->breadcrumbs = $breadcrumbs;
-        
+    if ($this->page != 'index') {
+      // Make sure a module homepage is first in the breadcrumb list
+      $addModuleHome = false;
+      if (!count($breadcrumbs)) {
+        $addModuleHome = true; // no breadrumbs
+      } else {
+        $firstBreadcrumb = reset($breadcrumbs);
+        if ($firstBreadcrumb['p'] && $firstBreadcrumb['p'] != 'index') {
+          $addModuleHome = true;
+        }
+      }
+      if ($addModuleHome) {
+        array_unshift($breadcrumbs, array(
+          't'  => $this->moduleName,
+          'lt' => $this->moduleName,
+          'p'  => 'index',
+          'a'  => '',        
+        ));
       }
     }
+          
+    foreach ($breadcrumbs as $i => $b) {
+      $breadcrumbs[$i]['title'] = $b['t'];
+      $breadcrumbs[$i]['longTitle'] = $b['lt'];
+          
+      $breadcrumbs[$i]['url'] = ($b['p'] != 'index') ? $b['p'] : './';
+      if (strlen($b['a'])) {
+        $breadcrumbs[$i]['url'] .= "?{$b['a']}";
+      }
+      
+      $linkCrumbs = array_slice($breadcrumbs, 0, $i);
+      if (count($linkCrumbs)) { 
+        $this->cleanBreadcrumbs(&$linkCrumbs);
+        
+        $crumbParam = http_build_query(array(
+          MODULE_BREADCRUMB_PARAM => $this->encodeBreadcrumbParam($linkCrumbs),
+        ));
+        if (strlen($crumbParam)) {
+          $breadcrumbs[$i]['url'] .= (strlen($b['a']) ? '&' : '?').$crumbParam;
+        }
+      }
+    }
+    
+    $this->breadcrumbs = $breadcrumbs;  
     //error_log(__FUNCTION__."(): loaded breadcrumbs ".print_r($this->breadcrumbs, true));
   }
   
@@ -1044,11 +1064,12 @@ abstract class Module {
       $breadcrumbs[] = array(
         't'  => $this->breadcrumbTitle,
         'lt' => $this->breadcrumbLongTitle,
-        'p'  => $this->page != 'index' ? $this->page : './',
+        'p'  => $this->page,
         'a'  => http_build_query($args),
       );
     }
-    //error_log(__FUNCTION__."(): saving breadcrumbs ".print_r($breadcrumbs, true));
+    
+    //error_log(__FUNCTION__."(): saving breadcrumbs for {$this->page} ".print_r($breadcrumbs, true));
     return $this->encodeBreadcrumbParam($breadcrumbs);
   }
   
