@@ -27,9 +27,9 @@ class TemplateEngine extends Smarty {
     if (strlen($subDir)) { $subDir .= '/'; }
   
     $checkDirs = array(
-      'THEME_DIR'     => THEME_DIR,
-      'SITE_DIR'     => SITE_DIR,
-      'APP_DIR' => APP_DIR
+      'THEME_DIR'    => THEME_DIR,
+      'SITE_APP_DIR' => SITE_APP_DIR,
+      'APP_DIR'      => APP_DIR
     );
     $checkFiles = array(
       "$subDir$page-$pagetype-$platform.tpl", // platform-specific
@@ -84,9 +84,9 @@ class TemplateEngine extends Smarty {
     $platform = $GLOBALS['deviceClassifier']->getPlatform();
     
     $checkDirs = array(
-      'APP_DIR' => APP_DIR,
-      'SITE_DIR'      => SITE_DIR,
-      'THEME_DIR'     => THEME_DIR
+      'APP_DIR'      => APP_DIR,
+      'SITE_APP_DIR' => SITE_APP_DIR,
+      'THEME_DIR'    => THEME_DIR
     );
     
     foreach ($checkDirs as $type => $dir) {

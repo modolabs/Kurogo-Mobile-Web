@@ -112,7 +112,7 @@ function getMinifyGroupsConfig() {
       'include' => 'all',
       'files' => array(
         THEME_DIR.$path,
-        SITE_DIR.$path,
+        SITE_APP_DIR.$path,
         APP_DIR.$path,
       ),
     );
@@ -137,12 +137,12 @@ function getMinifyGroupsConfig() {
     // CSS includes all in order.  JS prefers theme
     $cssDirs = array(
       APP_DIR, 
-      SITE_DIR, 
+      SITE_APP_DIR,
       THEME_DIR,
     );
     $jsDirs = array(
       THEME_DIR,
-      SITE_DIR, 
+      SITE_APP_DIR,
       APP_DIR, 
     );
     
