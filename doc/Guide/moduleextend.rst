@@ -21,7 +21,7 @@ Overriding a template is a very simple process. You simply provide an alternate 
 folder and that file will be loaded instead. 
 
 For example, if you want to extend the *story.tpl* of the news module you would create *story.tpl* 
-in *SITE_DIR/modules/news*. 
+in *SITE_DIR/app/modules/news*. 
 
 There are two approaches to updating a template. 
 
@@ -37,7 +37,7 @@ If you want to replace some of the PHP logic you can provide a subclass of the m
 you to override a method or property. It is important to understand the consequences of the method
 you override. In some cases you will want to call the *parent::* method to ensure that the base logic
 is executed. An example of this would be the *initializeForPage* method. If you wanted to override
-the people module you would create *SitePeopleModule.php* in *SITE_DIR/modules/people*::
+the people module you would create *SitePeopleModule.php* in *SITE_DIR/app/modules/people*::
 
     <?php 
     
@@ -65,7 +65,7 @@ Replacing a module completely
 This process is similar to extending the module except that you extend from the *Module* class rather than
 the original module. This is useful if you want to have a module that has a URL that is the same as an
 existing module. For instance, if you want to write a completely new *about* module you will create
-a *SiteAboutModule.php* file in the *SITE_DIR/modules/about* folder. It would look like this::
+a *SiteAboutModule.php* file in the *SITE_DIR/app/modules/about* folder. It would look like this::
 
     <?php 
     

@@ -13,8 +13,7 @@ Creating the initial files
 ==========================
 
 In order to ensure that your module does not conflict with current or future modules in the framework,
-you will want to create your files in the *SITE_DIR/modules/* folder. If you do not have a *modules*
-folder in your site directory you should create it. 
+you will want to create your files in the *SITE_DIR/app/modules/* folder. 
 
 Inside this folder is the module class file as well as all the template files used by your module.
 Each template file is named according to which *page* you are on, with the default page named *index*.
@@ -25,7 +24,7 @@ a property named *id* that indicates the module id and a implementation of *init
 -----
 Steps
 -----
-* Create a folder named *video* in the SITE_DIR/modules folder
+* Create a folder named *video* in the SITE_DIR/app/modules folder
 * Create *SiteVideoWebModule.php* with the following contents::
 
     <?php

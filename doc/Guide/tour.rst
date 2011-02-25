@@ -223,7 +223,7 @@ The naming conventions are very important (especially for case sensitive file sy
 * You may choose to place additional css style sheets in a folder named *css*
 * You may choose to place additional javascript scripts in a folder named *javascript*
 
-It is possible to override an included module's behavior by creating another module in the *sites*
+It is possible to override an included module's behavior by creating another module in the *site*
 folder. For more information, please see :doc:`moduleextend`
 
 .. _site-folder:
@@ -262,9 +262,13 @@ Each site folder contains the following directories:
   files cannot be safely deleted. Examples would include data that is not able to be generated from 
   a web service, SQLite databases, or flat authentication files
 * *logs* - Log files
-* *modules* - Site specific modules. To promote ease when updating the framework to new versions,
-  it is usually best if you keep site specific modules in this folder rather than in the *app/modules*
-  folder. If you wish to include your work in the project, please see :doc:`github`. Also see :doc:`moduleextend`.
+* *app* - Site specific templates and modules. Inside this folder you will find 2 folders
+
+  * *common* - Site specific common templates and css
+  * *modules* - Site specific modules. To promote ease when updating the framework to new versions, it 
+    is usually best if you keep site specific modules in this folder rather than in the root *app/modules*
+    folder. If you wish to include your work in the project, please see :doc:`github`. Also see :doc:`moduleextend`.
+
 * *themes* - Contains the themes available for this site. Each theme folder contains a *common* and *modules*
   folder that contains the CSS and image assets for the site. See :doc:`template` for more information.
 

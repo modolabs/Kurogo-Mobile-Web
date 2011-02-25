@@ -30,7 +30,7 @@ class SiteConfig extends ConfigGroup {
     define('SITE_DIR',             $siteDir);
     define('SITE_KEY',             md5($siteDir));
     define('SITE_LIB_DIR',         SITE_DIR.'/lib');
-    define('SITE_MODULES_DIR',     SITE_DIR.'/modules');
+    define('SITE_MODULES_DIR',     SITE_DIR.'/app/modules');
     define('DATA_DIR',             SITE_DIR.'/data');
     define('CACHE_DIR',            SITE_DIR.'/cache');
     define('LOG_DIR',              SITE_DIR.'/logs');

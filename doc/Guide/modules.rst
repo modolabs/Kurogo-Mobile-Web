@@ -52,10 +52,11 @@ Initialization
 
 * *factory* (string $id, string $page, array $args) - This static method is called by *index.php* to
   setup the module behavior. It will pass the page to load as well as the arguments that part of the 
-  request. In order to separate built-in modules from site specific modules, this method will search multiple locations for the module. It is important that the name of the class matches the name of the file. 
+  request. In order to separate built-in modules from site specific modules, this method will search multiple 
+  locations for the module. It is important that the name of the class matches the name of the file. 
 
-  * SITE_DIR/modules/example/SiteExampleWebModule.php 
-  * MODULES_DIR/example/ExampleModule.php 
+  * SITE_DIR/app/modules/example/SiteExampleWebModule.php 
+  * app/modules/example/ExampleModule.php 
   
 * *initialize* - This method is executed during the instantiation phase. It allows modules to perform
   initial configuration and setup before use

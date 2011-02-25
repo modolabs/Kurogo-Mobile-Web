@@ -57,7 +57,7 @@ function Initialize(&$path=null) {
   define('WEBROOT_DIR',       realpath(ROOT_DIR.'/www')); 
   define('LIB_DIR',           realpath(ROOT_DIR.'/lib'));
   define('MASTER_CONFIG_DIR', realpath(ROOT_DIR.'/config'));
-  define('APP_DIR',     realpath(ROOT_DIR.'/app'));
+  define('APP_DIR',           realpath(ROOT_DIR.'/app'));
   define('MODULES_DIR',       realpath(APP_DIR.'/modules'));
   
   define('MIN_FILE_PREFIX', 'file:');
