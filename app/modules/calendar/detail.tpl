@@ -12,7 +12,7 @@
   
   {block name="fields"}
     {if count($fields)}
-      {include file="findInclude:common/navlist.tpl" navlistItems=$fields}
+      {include file="findInclude:common/navlist.tpl" navlistItems=$fields accessKey=false}
     {/if}
   {/block}
   
