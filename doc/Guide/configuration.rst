@@ -121,7 +121,7 @@ presuming *CONFIG_IGNORE_LOCAL* is not enabled.
 Retrieving Configuration Values
 -------------------------------
 
-There are several methods in the :doc:`Module object <modules>` for retrieving values from configuration files:
+There are several methods in the :doc:`WebModule object <modules>` for retrieving values from configuration files:
 
 * getSiteVar - Retrieves a single value from the main site configuration
 * getSiteSection - Retrieves a section (as an array or key=>values) from the main site configuration

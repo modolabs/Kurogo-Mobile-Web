@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage Login
   */
-class LoginModule extends Module {
+class LoginWebModule extends WebModule {
   protected $id = 'login';
   
   protected function initialize() {

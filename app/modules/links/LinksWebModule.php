@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage Links
   */
-class LinksModule extends Module {
+class LinksWebModule extends WebModule {
   protected $id = 'links';
 
   protected function getModuleDefaultData() {

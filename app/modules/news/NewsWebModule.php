@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage News
   */
-class NewsModule extends Module {
+class NewsWebModule extends WebModule {
   protected $id = 'news';
   protected $hasFeeds = true;
   protected $feeds = array();

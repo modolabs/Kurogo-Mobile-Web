@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage Info
   */
-class InfoModule extends Module {
+class InfoWebModule extends WebModule {
   protected $id = 'info';
      
   protected function initializeForPage() {

@@ -116,7 +116,7 @@ class ConfigFile extends Config {
             if (file_exists($defaultFile)) {
                 $this->createDirIfNotExists(dirname($_file));
                 return @copy($defaultFile, $_file);
-            } elseif ($module = Module::factory($file)) {
+            } elseif ($module = WebModule::factory($file)) {
                 return $module->createDefaultConfigFile();
             } else {
                 throw new Exception("Module $file not found");

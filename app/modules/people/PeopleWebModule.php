@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage People
   */
-class PeopleModule extends Module {
+class PeopleWebModule extends WebModule {
   protected $id = 'people';
   
   private $detailFields = array();

@@ -1,6 +1,6 @@
 <?php
 
-class DownloadModule extends Module {
+class DownloadWebModule extends WebModule {
   protected $id = 'download';
   
   protected function initializeForPage() {

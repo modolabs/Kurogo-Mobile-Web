@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage Customize
   */
-class CustomizeModule extends Module {
+class CustomizeWebModule extends WebModule {
   protected $id = 'customize';
 
   private function handleRequest($args) {

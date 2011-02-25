@@ -18,19 +18,19 @@ folder in your site directory you should create it.
 
 Inside this folder is the module class file as well as all the template files used by your module.
 Each template file is named according to which *page* you are on, with the default page named *index*.
-The class file follows the format Site*MODULE_ID*Module.php. The prefix *Site* is used when creating
-your own modules. This file should be a sublcass of the *Module* class and at very least must contain
+The class file follows the format Site*MODULE_ID*WebModule.php. The prefix *Site* is used when creating
+your own modules. This file should be a sublcass of the *WebModule* class and at very least must contain
 a property named *id* that indicates the module id and a implementation of *initializeForPage()*
 
 -----
 Steps
 -----
 * Create a folder named *video* in the SITE_DIR/modules folder
-* Create *SiteVideoModule.php* with the following contents::
+* Create *SiteVideoWebModule.php* with the following contents::
 
     <?php
     
-    class SiteVideoModule extends Module
+    class SiteVideoWebModule extends WebModule
     {
       protected $id='video';
       protected function initializeForPage() {
@@ -133,7 +133,7 @@ Now that we have a controller, we can utilize it in our module. Here is an updat
 
     <?php
     
-    class SiteVideoModule extends Module
+    class SiteVideoWebModule extends WebModule
     {
       protected $id='video';
       protected function initializeForPage() {
@@ -201,11 +201,11 @@ Detail Page
 Most modules will have more than one page to show content. In this module we will allow the user to 
 drill down and see more detail for a video and then play it in the browser. In order to maintain the
 breadcrumb navigation properly, we use the *buildBreadcrumbURL($page, $args, $addBreadcrumb)* method
-which is part of the Module object. This method takes 3 parameters, the page name we wish to link to
+which is part of the WebModule object. This method takes 3 parameters, the page name we wish to link to
 (within the same module), and an array of arguments that get passed. The $addBreadcrumb parameter is
 a boolean to determine whether breadcrumbs should be generated. The default is true and this is
 typically what we want. Adding the url to the list is simple by adding another key to our item
-array in *SiteVideoModule.php*::
+array in *SiteVideoWebModule.php*::
 
     <?php
     
@@ -263,7 +263,7 @@ Preparing and displaying the detail view
 
 Now that we have this method, we can use it in our module. We extract the fields we need and assign
 them to our template. We simply add another entry to the our *switch* branch for our *detail* page
-in *SiteVideoModule.php*::
+in *SiteVideoWebModule.php*::
 
       <?php
       case 'detail':
@@ -425,7 +425,7 @@ unique to that module. The common values include:
 You can also add your own values to use in your module. In this case we have added a *SEARCH_QUERY*
 parameter that will hold the query to use for the list.
 
-We can now use it in our *SiteVideoModule.php* file when we call the search method:
+We can now use it in our *SiteVideoWebModule.php* file when we call the search method:
 
 .. code-block:: php
 

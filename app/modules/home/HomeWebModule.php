@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage Home
   */
-class HomeModule extends Module {
+class HomeWebModule extends WebModule {
   protected $id = 'home';
 
   protected function getModuleDefaultData() {

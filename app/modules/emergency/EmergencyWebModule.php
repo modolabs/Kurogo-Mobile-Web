@@ -7,7 +7,7 @@ require_once LIB_DIR . '/Emergency/INIFileContactsListDataController.php';
 require_once LIB_DIR . '/Emergency/DrupalContactsListDataController.php';
 require_once LIB_DIR . '/Emergency/DrupalContactsDataParser.php';
 
-class EmergencyModule extends Module 
+class EmergencyWebModule extends WebModule 
 {
     protected $id='emergency';
     

@@ -151,9 +151,6 @@ foreach ($url_patterns as $pattern_data) {
 
 // No pattern matches. Attempt to load a module
 
-require_once realpath(LIB_DIR.'/Module.php');
-require_once realpath(LIB_DIR.'/PageViews.php');
-
 $id = 'home';
 $page = 'index';
 
@@ -226,6 +223,6 @@ if (isset($parts[1])) {
 /* log this page view */
 PageViews::increment($id, $GLOBALS['deviceClassifier']->getPlatform());
 
-$module = Module::factory($id, $page, $args);
+$module = WebModule::factory($id, $page, $args);
 $module->displayPage();
 exit;

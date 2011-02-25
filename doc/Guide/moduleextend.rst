@@ -69,7 +69,7 @@ a *SiteAboutModule.php* file in the *SITE_DIR/modules/about* folder. It would lo
 
     <?php 
     
-    class SiteAboutModule extends Module
+    class SiteAboutWebModule extends WebModule
     {
         protected $id='about';
         protected function initializeForPage() {

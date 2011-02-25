@@ -18,7 +18,7 @@ define('DAY_SECONDS', 24*60*60);
   * @package Module
   * @subpackage Calendar
   */
-class CalendarModule extends Module {
+class CalendarWebModule extends WebModule {
   protected $id = 'calendar';
   protected $feeds = array();
   protected $hasFeeds = true;

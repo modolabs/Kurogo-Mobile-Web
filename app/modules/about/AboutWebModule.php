@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage About
   */
-class AboutModule extends Module {
+class AboutWebModule extends WebModule {
   protected $id = 'about';
 
   protected function getModuleItemForKey($key, $value) {

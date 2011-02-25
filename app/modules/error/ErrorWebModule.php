@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage Error
   */
-class ErrorModule extends Module {
+class ErrorWebModule extends WebModule {
   protected $id = 'error';
 
   private $errors = array(

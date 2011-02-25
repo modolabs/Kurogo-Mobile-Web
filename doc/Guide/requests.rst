@@ -37,7 +37,7 @@ to see if a url is found. If so, it will redirect to the indicated url.
 All other requests will attempt to load a module based on the first path component of the request. The
 contents before the first "/" will refer the *id* of the module, the contents after the slash will be the
 page to load. If there is no page specified, the *index* page will be loaded. The script attempts to
-instantiate a module  with the corresponding *id* using the *Module::factory* method (see :doc:`modules` for 
+instantiate a module  with the corresponding *id* using the *WebModule::factory* method (see :doc:`modules` for 
 information on how the module files are located) and includes the page and the contents of the 
 $_GET and $_POST variables as parameters. **Note:** the trailing .php for page names is optional.
 

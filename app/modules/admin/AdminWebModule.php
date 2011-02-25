@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage Admin
   */
-class AdminModule extends Module {
+class AdminWebModule extends WebModule {
   protected $id = 'admin';
   
   protected function initialize() {
@@ -117,7 +117,7 @@ class AdminModule extends Module {
                     $this->redirectTo('modules');
                 }
 
-                $module = Module::factory($moduleID);
+                $module = WebModule::factory($moduleID);
                 $moduleData = $module->getModuleData();
                 $moduleSections = array();
                 
@@ -272,7 +272,7 @@ class AdminModule extends Module {
                     $this->redirectTo('modules');
                 }
 
-                $module = Module::factory($moduleID);
+                $module = WebModule::factory($moduleID);
                 $pageData = $module->getPageData();
 
                 if ($this->getArg('submit')) {

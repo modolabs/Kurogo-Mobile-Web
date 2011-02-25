@@ -208,15 +208,14 @@ that are specific to that module. For more detailed information on module design
 The naming conventions are very important (especially for case sensitive file systems):
 
 * The folder **must** be lower case and be the same as the url of the module (/about, /home, /links)
-* The folder **must** contain a PHP file named *LocationModulenameModule.php*. If the module is located
-  in the *site* folder then it should be called *SiteModulenameModule.php*. If the module is located
-  in the *theme* folder then it should be called *ThemeModulenameModule.php*. Included modules are
-  called *ModulenameModule.php*.
-* The first (and ONLY) letter of the module **must** be capitalized and followed by Module.php. 
+* The folder **must** contain a PHP file named *ModulenameWebModule.php*. If the module is located
+  in the *site* folder then it should be called *SiteModulenameWebModule.php*. Included modules are
+  called *ModulenameWebModule.php*.
+* The first (and ONLY) letter of the module **must** be capitalized and followed by WebModule.php. 
   
-  * **AboutModule.php** (NOT aboutmodule.php or Aboutmodule.php)
-  * **FullwebModule.php** (NOT FullWebModule.php or Fullwebmodule.php)
-  * **SiteNewsModule.php** (NOT siteNewsModule.php or Sitenewsmodule.php)
+  * **AboutWebModule.php** (NOT aboutwebmodule.php or AboutWebmodule.php)
+  * **FullwebWebModule.php** (NOT FullWebModule.php or FullwebWebmodule.php)
+  * **SiteNewsWebModule.php** (NOT siteNewsWebModule.php or Sitenewswebmodule.php)
   
 * There should be a .tpl for each *page* of the module. At minimum there should be an *index.tpl* which 
   represents the default page (unless the module alters that behavior). Each page should be in all lower case

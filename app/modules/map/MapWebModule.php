@@ -22,7 +22,7 @@ require_once LIB_DIR . '/Maps/WMSDataParser.php';
 require_once LIB_DIR . '/Maps/WMSStaticMap.php';
 
 
-class MapModule extends Module {
+class MapWebModule extends WebModule {
 
     protected $id = 'map';
     protected $feeds;

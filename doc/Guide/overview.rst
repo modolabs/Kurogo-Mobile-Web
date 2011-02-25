@@ -65,7 +65,7 @@ DataParser are used in a request which can influence the structures that get use
 Code Customization
 ------------------
 
-Each module is a PHP object that inherits from the *Module* class. Developers can create their own
+Each module is a PHP object that inherits from the *WebModule* class. Developers can create their own
 modules or just subclass existing ones. When extending, you can choose only to override certain methods.
 This allows you to concentrate on the features and behaviors that make your module unique.
 

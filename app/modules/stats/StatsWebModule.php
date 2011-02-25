@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage Stats
   */
-class StatsModule extends Module {
+class StatsWebModule extends WebModule {
   protected $id = 'stats';
   protected $platforms = Array(
     'iphone' => 'iPhone',

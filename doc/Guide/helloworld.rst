@@ -32,11 +32,11 @@ does not exist, you will need to create it.
 Creating the module class file
 ==============================
    
-Inside the *hello* directory create a file named *SiteHelloModule.php* that contains the following contents::
+Inside the *hello* directory create a file named *SiteHelloWebModule.php* that contains the following contents::
 
     <?php
     
-    class SiteHelloModule extends Module
+    class SiteHelloWebModule extends WebModule
     {
       protected $id='hello';
       protected function initializeForPage() {

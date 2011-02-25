@@ -8,7 +8,7 @@
   * @package Module
   * @subpackage Fullweb
   */
-class FullwebModule extends Module {
+class FullwebWebModule extends WebModule {
   protected $id = 'fullweb';
   protected function getModuleDefaultData()
   {
