@@ -1,3 +1,14 @@
+1.0 Beta 3 (XXX)
+* NEW MODULE: Map Module.
+* INCOMPATIBLE CHANGE: the templates folder has been renamed "app"
+* INCOMPATIBLE CHANGE: the web folder has been renamed "www" Your servers will need to point to this folder for the document root
+* INCOMPATIBLE CHANGE: The base module class for mobile web is "WebModule" all modules should inherit from this class (or an existing WebModule class) 
+* INCOMPATIBLE CHANGE: Site modules should now be located in SITE_DIR/app/modules
+* INCOMPATIBLE CHANGE: Theme modules (PHP) are no longer searched for. You can still include CSS and JS in /themes/default/modules/X. Modules must either be in /app/modules or SITE_DIR/app/modules
+* NEW FEATURE: support for adding idle logoff
+* NEW FEATURE: support for adding descriptions to login screen
+
+
 1.0 Beta 2 (February 16)
 
 * NEW FEATURE: (In testing): Tablet interface. Point device to /device/tablet/home to see iPad interface. Subject to change
