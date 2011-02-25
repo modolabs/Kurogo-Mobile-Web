@@ -450,7 +450,7 @@ a.module img {
 	padding: 0;
 	float: none;
 }
-.springboard .badge {
+.springboard .badge img {
 	position: absolute;
 	right: 12px;
 	top: 5px;
@@ -463,6 +463,21 @@ a.module img {
 	font-weight: bold;
 	background-image: url(/common/images/badge.png);
 	background-repeat: no-repeat;
+}
+
+.springboard .secured {
+	position: absolute;
+	z-index: 100;
+	top: 45px;
+	right: 4px;
+	width: 18px;
+	height: 22px;
+	background: url(/common/images/secured.png) no-repeat;
+}
+
+.springboard .utility .secured {
+	top: 28px;
+	right: 14px;
 }
 
 /* Navigation and results listings */

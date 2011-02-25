@@ -19,6 +19,11 @@
                 <span class="badge">{$item['badge']}</span>
               {/if}
             {/block}
+            {block name="secured"}
+              {if isset($item['secured'])}
+          		<span class="secured"></span>
+              {/if}
+            {/block}
         {if $item['url']}
           </a>
         {/if}
