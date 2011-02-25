@@ -95,26 +95,41 @@
              	$prop_titleid  = $video->getProperty('bc:titleid');  
              	$prop_playerid  = $video->getProperty('bc:playerid');  // FIXME why null?
              	$prop_accountid = $video->getProperty('bc:accountid');
+             	$prop_length = $video->getProperty('bc:duration');
              	
-             	//$link = $video->getLink();  // FIXME blank?
-             	//$img = $video->getImage();  // also blank
              	
              	$prop_thumbnail = $video->getProperty('media:thumbnail');  
              	if (is_array($prop_thumbnail)) {
              		$attr_url = $prop_thumbnail[0]->getAttrib("URL"); 
              	} else {
-             		$attr_url = "";
-             		//$attr_url = $prop_thumbnail->getAttrib("URL");
+             		if ($prop_thumbnail) {
+             			$attr_url = $prop_thumbnail->getAttrib("URL");
+             		} else {
+             			//$attr_url = "/common/images/placeholder-image.png";  // TODO
+             			$attr_url = "/common/images/title-video.png";
+             		}
              	}
+             	
+             	$desc = $video->getDescription();
+             	if (strlen($desc)>75) {
+             		$desc = substr($desc,0,75) . "...";
+             	}
+             	
+             	$duration = $this->getDuration($prop_length);
+             	
+             	$subtitle = $desc . "<br/>" . $duration;
              	
              	$videos[] = array(
 			        'titleid'=>$prop_titleid,
 			        'playerid'=>$playerid,
 			        'title'=>$video->getTitle(),
+			        'subtitle'=>$subtitle,
 			        'img'=>$attr_url,  
+			        'imgWidth'=>100,  
+			        'imgHeight'=>80,  
 			        'url'=>$this->buildBreadcrumbURL('detail-brightcove', array(
 			            'videoTitle'=>$video->getTitle(),
-			            'videoDescription'=>$video->getDescription(),
+			            'videoDescription'=>$desc,
 			            'videoid'=>$prop_titleid,
 			            'playerid'=>$playerid,
 			            'accountid'=>$prop_accountid
@@ -123,37 +138,46 @@
              	);
              }
              
+             // TODO
+	         //$this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+	         //$this->addOnLoad('setupVideosListing();');
+        
              $this->assign('videos', $videos);
      }
      
   } 
-   
+
+  protected function getDuration($prop_length) {
+  	if (!$prop_length) {
+  		return "";
+  	} elseif ($prop_length<60) {
+  		return $prop_length . " secs";
+    } else {
+        $mins = intval($prop_length / 60);
+        $secs = $prop_length % 60;
+        return $mins . " mins, " . $secs . " secs";
+    }
+  }
+  
   protected function handleYouTube($controller) {
   	
-	 $q = $this->getModuleVar('SEARCH_QUERY');
-	 
    switch ($this->page)
      {
+     	    
+        case 'search':
+	        if ($filter = $this->getArg('filter')) {
+	          $searchTerms = trim($filter);
+			  $items = $controller->search($searchTerms);
+              $videos = array();
+	        }
+	    	break;
+	          
         case 'index':
-        	
-        	 //search for videos
+        	 // default search 
 			 $items = $controller->search($this->getModuleVar('SEARCH_QUERY'));
-			
              $videos = array();
-
-             //prepare the list
-             foreach ($items as $video) {
-             	$videos[] = array(
-			        'title'=>$video['title']['$t'],
-			        'img'=>$video['media$group']['media$thumbnail'][0]['url'],
-			        'url'=>$this->buildBreadcrumbURL('detail-youtube', array(
-			            'videoid'=>$video['media$group']['yt$videoid']['$t']
-             		))
-             	);
-             }
-
-             $this->assign('videos', $videos);
              break;
+             
         case 'detail-youtube':
 			   $videoid = $this->getArg('videoid');
 			   if ($video = $controller->getItem($videoid)) {
@@ -165,6 +189,38 @@
 			   }
 			   break;     
      }
+     
+     
+     if (isset($videos)) {
+
+             foreach ($items as $video) {
+             
+             	$desc = $video['media$group']['media$description']['$t'];
+             	if (strlen($desc)>75) {
+             		$desc = substr($desc,0,75) . "...";
+             	}
+             	
+             	$duration = $video['media$group']['yt$duration']['seconds'];
+             	
+             	$duration = $this->getDuration($duration);
+             	
+             	$subtitle = $desc . "<br/>" . $duration;
+             	
+             	$videos[] = array(
+			        'title'=>$video['title']['$t'], 
+			        'subtitle'=>$subtitle,
+			        'imgWidth'=>100,  
+			        'imgHeight'=>80,  
+			        'img'=>$video['media$group']['media$thumbnail'][0]['url'],
+			        'url'=>$this->buildBreadcrumbURL('detail-youtube', array(
+			            'videoid'=>$video['media$group']['yt$videoid']['$t']
+             		))
+             	);
+             }
+
+             $this->assign('videos', $videos);
+     }
+     
   } 
    
  }
