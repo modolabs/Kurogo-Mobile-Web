@@ -7,14 +7,19 @@ class APIResponse
     public $version;
     public $error;
     public $response;
+    public $context;
     
-    public function __construct($id=null, $command=null, $args=null) {
+    public function __construct($id=null, $command=null, $context=null) {
         if (isset($id)) {
             $this->id = $id;
         }
         
         if (isset($command)) {
             $this->command = $command;
+        }
+
+        if (isset($context)) {
+            $this->context = $context;
         }
 
         $this->response = new stdClass();
@@ -26,6 +31,10 @@ class APIResponse
 
     public function setVersion($version) {
         $this->version = intval($version);
+    }
+
+    public function setContext($context) {
+        $this->context = $context;
     }
     
     public function setError(KurogoError $error) {

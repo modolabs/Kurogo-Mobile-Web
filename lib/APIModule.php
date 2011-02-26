@@ -140,6 +140,12 @@ abstract class APIModule extends Module
     $this->response->setVersion($version);
     $this->responseVersion = $this->response->getVersion();
   }
+  
+  protected function setContext($context) {
+    $this->loadResponseIfNeeded();
+    $this->context = $context;
+    $this->response->setContext($context);
+  }
 
  /**
    * Initialize the request
@@ -148,6 +154,9 @@ abstract class APIModule extends Module
     parent::init();
     $this->setArgs($args);
     $this->setRequestedVersion($this->getArg('v', null), $this->getArg('vmin', null));
+    if ($context = $this->getArg('context', null)) {
+        $this->setContext($context);
+    }
     $this->setCommand($command);
   }
   
