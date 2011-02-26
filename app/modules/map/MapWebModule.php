@@ -302,7 +302,7 @@ class MapWebModule extends WebModule {
         $categories = array();
         foreach ($this->feeds as $id => $feed) {
             if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
-            if ($campusID && !isset($feed['CAMPUS']) || $feed['CAMPUS'] != $campusID) continue;
+            if ($campusID && (!isset($feed['CAMPUS']) || $feed['CAMPUS'] != $campusID)) continue;
             $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
             $categories[] = array(
                 'title' => $feed['TITLE'],
@@ -464,6 +464,9 @@ class MapWebModule extends WebModule {
                     $this->assign('searchTip', NULL);
 
                 } else {
+                    if (!$this->feeds)
+                        $this->feeds = $this->loadFeedData();
+                    
                     $this->assignCategoriesForCampus(NULL);
                     $this->assign('browseHint', 'Browse map by:');
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
