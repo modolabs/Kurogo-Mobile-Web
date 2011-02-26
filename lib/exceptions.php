@@ -20,7 +20,7 @@ class DeviceNotSupported extends Exception {
 /**
   * @package Exceptions
   */
-class PageNotFound extends Exception {
+class ModuleNotFound extends Exception {
 }
 
 /**
@@ -43,7 +43,7 @@ function getErrorURL($exception, $devError = false) {
   } else if ($exception instanceOf DeviceNotSupported) {
     $args['code'] = 'device_notsupported';
     
-  } else if ($exception instanceOf PageNotFound) {
+  } else if ($exception instanceOf ModuleNotFound) {
     $args['code'] = 'notfound';
     
   } else if ($exception instanceOf DisabledModuleException) {
@@ -166,4 +166,12 @@ function exceptionHandlerForProduction($exception) {
 
   header('Location: '.getErrorURL($exception));
   die(0);
+}
+
+function exceptionHandlerForAPI($exception) {
+    $error = KurogoError::errorFromException($exception);
+    $response = new APIResponse();
+    $response->setVersion(0);
+    $response->setError($error);
+    $response->display();
 }

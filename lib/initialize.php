@@ -2,6 +2,8 @@
 /**
   * @package Core
   */
+  
+  define('KUROGO_VERSION', '1.0b2');
 
 //
 // Initialization setup
@@ -61,7 +63,7 @@ function Initialize(&$path=null) {
   define('MODULES_DIR',       realpath(APP_DIR.'/modules'));
   
   define('MIN_FILE_PREFIX', 'file:');
-  
+  define('API_URL_PREFIX', 'rest');
   
   //
   // Pull in functions to deal with php version differences

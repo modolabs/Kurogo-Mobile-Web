@@ -15,12 +15,12 @@
 </select> <input id="addModule" type="image" src="/common/images/ok.png" />
 </div>
 <ul id="module_order" class="nav">
-{foreach $sectionModules as $_moduleID=>$moduleTitle}
+{foreach $sectionModules as $_moduleID=>$moduleData}
     <li>
         <div class="deletehandle"></div> 
         <label>{$_moduleID}</label> 
         <input type="hidden" name="_type[moduleData][{$section}][{$_moduleID}]" value="text" />
-        <input type="text" name="moduleData[{$section}][{$_moduleID}]" value="{$moduleTitle|escape}" />
+        <input type="text" name="moduleData[{$section}][{$_moduleID}]" value="{$moduleData.title|escape}" />
         <span class="movebuttons">
             <div class="moveup"></div>
             <div class="movedown"></div>

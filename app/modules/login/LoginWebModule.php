@@ -11,10 +11,6 @@
 class LoginWebModule extends WebModule {
   protected $id = 'login';
   
-  protected function initialize() {
-        
-  }
-
   protected function initializeForPage() {
     if (!$this->getSiteVar('AUTHENTICATION_ENABLED')) {
         throw new Exception("Authentication is not enabled on this site");

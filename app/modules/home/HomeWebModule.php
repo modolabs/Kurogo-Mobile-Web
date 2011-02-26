@@ -43,7 +43,7 @@ class HomeWebModule extends WebModule {
         }
         
         $adminModule->assign('allModules', $allModules);
-        $adminModule->assign('sectionModules', $navigationModules[$section]);
+        $adminModule->assign('sectionModules', $navigationModules[rtrim($section,'_modules')]);
         break;
       default:
         return parent::prepareAdminForSection($section, $adminModule);

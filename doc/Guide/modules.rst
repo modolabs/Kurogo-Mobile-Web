@@ -58,8 +58,6 @@ Initialization
   * SITE_DIR/app/modules/example/SiteExampleWebModule.php 
   * app/modules/example/ExampleModule.php 
   
-* *initialize* - This method is executed during the instantiation phase. It allows modules to perform
-  initial configuration and setup before use
 * *initializeForPage* - This method is called when viewing a page. It represents the main logic
   branch.
 

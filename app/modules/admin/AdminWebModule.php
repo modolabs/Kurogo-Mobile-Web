@@ -11,10 +11,6 @@
 class AdminWebModule extends WebModule {
   protected $id = 'admin';
   
-  protected function initialize() {
-
-  }
-  
   /* submit values are affected by the _type specifiers */
   protected function prepareSubmitData($key)
   {
@@ -249,7 +245,7 @@ class AdminWebModule extends WebModule {
             case 'modules':
                 $allModules = $this->getAllModules();
                 $moduleList = array();
-
+                
                 foreach ($allModules as $moduleID=>$moduleData) {
                     try {
                         $moduleList[] = array(

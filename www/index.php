@@ -192,37 +192,72 @@ if (!strlen($path) || $path == '/') {
 } 
 
 $parts = explode('/', ltrim($path, '/'), 2);
-$id = $parts[0];
 
-/* see if there's a redirect for this path */
-if ($url_redirects = $GLOBALS['siteConfig']->getSection('urls', ConfigFile::SUPRESS_ERRORS)) {
-  if (array_key_exists($id, $url_redirects)) {
-    if (preg_match("#^http(s)?://#", $url_redirects[$id])) {
-       $url = $url_redirects[$id];
-    } else {
-      $parts[0] = $url_redirects[$id];
-      $url = URL_PREFIX . implode("/", $parts);
-    }
-    header("Location: " . $url);
-    exit;
-  }
-}
+if ($parts[0]==API_URL_PREFIX) {
+    set_exception_handler("exceptionHandlerForAPI");
+    $parts = explode('/', ltrim($path, '/'));
 
-// find the page part
-if (isset($parts[1])) {
-  if (strlen($parts[1])) {
-    $page = basename($parts[1], '.php');
-  }
-  
+    switch (count($parts))
+    {
+        case 1:
+            throw new Exception("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
+
+        case 2: 
+            $id = 'core';
+            $command = $parts[1];
+            $module = CoreAPIModule::factory($command, $args);
+            break;
+            
+        case 3:
+            $id = isset($parts[1]) ? $parts[1] : '';
+            $command = isset($parts[2]) ? $parts[2] : '';
+            $module = APIModule::factory($id, $command, $args);
+            break;
+
+        default:
+            throw new Exception("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
+            break;
+    }    
+
+    /* log the api call */
+    PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
+    $module->executeCommand();
+
+    
 } else {
-  // redirect with trailing slash for completeness
-  header("Location: ./$id/");
-  exit;
+    $id = $parts[0];
+    
+    /* see if there's a redirect for this path */
+    if ($url_redirects = $GLOBALS['siteConfig']->getSection('urls', ConfigFile::SUPRESS_ERRORS)) {
+      if (array_key_exists($id, $url_redirects)) {
+        if (preg_match("#^http(s)?://#", $url_redirects[$id])) {
+           $url = $url_redirects[$id];
+        } else {
+          $parts[0] = $url_redirects[$id];
+          $url = URL_PREFIX . implode("/", $parts);
+        }
+        header("Location: " . $url);
+        exit;
+      }
+    }
+    
+    // find the page part
+    if (isset($parts[1])) {
+      if (strlen($parts[1])) {
+        $page = basename($parts[1], '.php');
+      }
+      
+    } else {
+      // redirect with trailing slash for completeness
+      header("Location: ./$id/");
+      exit;
+    }
+
+    $module = WebModule::factory($id, $page, $args);
+    
+    /* log this page view */
+    PageViews::increment($id, $GLOBALS['deviceClassifier']->getPlatform());
+    
+    $module->displayPage();
 }
-
-/* log this page view */
-PageViews::increment($id, $GLOBALS['deviceClassifier']->getPlatform());
-
-$module = WebModule::factory($id, $page, $args);
-$module->displayPage();
 exit;
