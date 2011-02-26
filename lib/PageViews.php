@@ -30,10 +30,16 @@ class PageViews {
     else // assume 'api'
       $logfile = $GLOBALS['siteConfig']->getVar('API_CURRENT_LOG_FILE');
       
+    if (empty($logfile)) {
+        error_log("Log file for $system not specified");
+        return false;
+    }
+      
     $dir = dirname($logfile);
     if (!file_exists($dir)) {
       if (!mkdir($dir, 0755, true))
         error_log("could not create $dir");
+        return false;
     }
     $fh = fopen($logfile, 'a+');
     fwrite($fh, sprintf("%s %s %s: %s\n",
