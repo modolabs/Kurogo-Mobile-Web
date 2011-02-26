@@ -36,7 +36,7 @@ h2 {
     margin: 0;
 }
 
-.tabbody #mapimage {
+.tabbody #staticmapimage {
     width: 292px;
     height: 292px;
     border: 1px solid #999;
@@ -52,7 +52,7 @@ h2 {
 }
 
 .tabbody #mapscrollers {
-	height: 292px;
+	height: 294px;
 }
 
 #mapscrollers div {
@@ -475,7 +475,7 @@ body.landscape #smallscreen {
 	background-position: -80px 0;
 }
 
-body.landscape #mapimage {
+body.landscape #staticmapimage {
 	position: absolute;
 	top: 0;
 	right: 0;

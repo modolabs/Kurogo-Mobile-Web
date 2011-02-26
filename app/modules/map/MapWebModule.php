@@ -28,7 +28,8 @@ class MapWebModule extends WebModule {
     protected $feeds;
     
     private function pageSupportsDynamicMap() {
-        return $this->pagetype == 'compliant'
+        return ($this->pagetype == 'compliant' ||
+                $this->pagetype == 'tablet')
             && $this->platform != 'blackberry'
             && $this->platform != 'bbplus';
     }
@@ -92,7 +93,7 @@ class MapWebModule extends WebModule {
             $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
             $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
-            if ($this->pagetype == 'compliant') {
+            if ($this->pagetype == 'compliant' || $this->pagetype == 'tablet') {
                 $this->addInlineJavascript(
                     "mapWidth = $imageWidth;\n"
                     ."mapHeight = $imageHeight;\n"
@@ -168,7 +169,6 @@ class MapWebModule extends WebModule {
 
         if (!$fullscreen) {
             $this->assign('fullscreenURL', $this->buildBreadcrumbURL('fullscreen', $this->args, false));
-            $this->addInternalCSS('/modules/map/css/detail.css');
         
             if ($imgController->isStatic()) {
                 list($imageWidth, $imageHeight) = $this->staticMapImageDimensions();
