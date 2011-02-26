@@ -4,14 +4,14 @@
 
 {capture name="mapPane" assign="mapPane"}
   {block name="mapImage"}
-  <p class="image">
     <a name="map"> </a>
-    {if $isStatic}
-      {include file="findInclude:modules/map/mapscrollers.tpl"}
-    {/if}
-    <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
-  </p>
-  <div id="mapimage" style="display:none"></div>
+    <div id="mapwrapper" class="image">
+      {if $isStatic}
+        {include file="findInclude:modules/map/mapscrollers.tpl"}
+        <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
+      {/if}
+    </div>
+    <div id="mapimage" style="display:none"></div>
   {/block}
   {if $hasMap}
     {include file="findInclude:modules/map/mapcontrols.tpl"}

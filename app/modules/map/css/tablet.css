@@ -27,7 +27,7 @@ h2 {
 	overflow: hidden;
 }
 
-#mapimage {
+#staticmapimage {
 	width: 600px;
 	height: 350px;
 	border: 1px solid #999;
@@ -464,7 +464,7 @@ body.landscape #smallscreen {
 	background-position: -80px 0;
 }
 
-body.landscape #mapimage {
+body.landscape #staticmapimage {
 	position: absolute;
 	top: 0;
 	right: 0;

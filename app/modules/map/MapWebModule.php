@@ -28,7 +28,8 @@ class MapWebModule extends WebModule {
     protected $feeds;
     
     private function pageSupportsDynamicMap() {
-        return $this->pagetype == 'compliant'
+        return ($this->pagetype == 'compliant' ||
+                $this->pagetype == 'tablet')
             && $this->platform != 'blackberry'
             && $this->platform != 'bbplus';
     }
@@ -92,7 +93,7 @@ class MapWebModule extends WebModule {
             $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
             $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
-            if ($this->pagetype == 'compliant') {
+            if ($this->pagetype == 'compliant' || $this->pagetype == 'tablet') {
                 $this->addInlineJavascript(
                     "mapWidth = $imageWidth;\n"
                     ."mapHeight = $imageHeight;\n"
@@ -168,7 +169,6 @@ class MapWebModule extends WebModule {
 
         if (!$fullscreen) {
             $this->assign('fullscreenURL', $this->buildBreadcrumbURL('fullscreen', $this->args, false));
-            $this->addInternalCSS('/modules/map/css/detail.css');
         
             if ($imgController->isStatic()) {
                 list($imageWidth, $imageHeight) = $this->staticMapImageDimensions();
@@ -302,7 +302,7 @@ class MapWebModule extends WebModule {
         $categories = array();
         foreach ($this->feeds as $id => $feed) {
             if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
-            if ($campusID && !isset($feed['CAMPUS']) || $feed['CAMPUS'] != $campusID) continue;
+            if ($campusID && (!isset($feed['CAMPUS']) || $feed['CAMPUS'] != $campusID)) continue;
             $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
             $categories[] = array(
                 'title' => $feed['TITLE'],
@@ -464,6 +464,9 @@ class MapWebModule extends WebModule {
                     $this->assign('searchTip', NULL);
 
                 } else {
+                    if (!$this->feeds)
+                        $this->feeds = $this->loadFeedData();
+                    
                     $this->assignCategoriesForCampus(NULL);
                     $this->assign('browseHint', 'Browse map by:');
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
