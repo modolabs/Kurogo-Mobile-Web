@@ -232,7 +232,7 @@ abstract class DataController
     public function getItemByIndex($index)
     {
         $items = $this->getParsedData();
-        return current($items);
+        return isset($items[$index]) ? $items[$index] : false;
     }
     
     public function items($start=0, $limit=null, &$totalItems)
