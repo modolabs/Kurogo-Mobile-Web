@@ -28,7 +28,7 @@ class XMLElement
 
     public function getAttrib($attrib)
     {
-        return isset($this->attribs[$attrib]) ? $this->attribs[$attrib] : null;
+        return isset($this->attribs[strtoupper($attrib)]) ? $this->attribs[strtoupper($attrib)] : null;
     }
     
     public function getAttribs()
