@@ -84,30 +84,6 @@ function _outputImageLoaderFile($matches) {
   _404();
 }
 
-function _outputAPICall() {
-  require_once realpath(LIB_DIR.'/PageViews.php');
-  
-  if (isset($_REQUEST['module']) && $_REQUEST['module']) {
-    $id = $_REQUEST['module'];
-    $api = realpath_exists(LIB_DIR."/api/$id.php");
-    
-    if ($id == 'shuttles') {
-      $id = 'transit';
-      $api = realpath_exists(LIB_DIR."/api/$id.php");
-    }
-    
-    if ($api) {
-      PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
-      
-      $GLOBALS['siteConfig']->loadAPIFile($id, true, true);
-      require_once($api);
-      exit;
-    }
-  }
-  
-  _404();
-}
-
 //
 // Handle page request
 //
@@ -134,11 +110,7 @@ $url_patterns = array(
   array(
     'pattern' => ';^.*(media)(/.*)$;',
     'func'    => '_outputSiteFile',
-  ),
-  array(
-    'pattern' => ';^.*api/$;',
-    'func'    => '_outputAPICall',
-  ),
+  )
 );
  
 // try the url patterns. Run the path through each pattern testing for a match
