@@ -90,11 +90,6 @@ class KMLStyle extends XMLElement implements MapStyle
                     MapStyle::WIDTH => $iconChild->getProperty('W'),
                     MapStyle::HEIGHT => $iconChild->getProperty('H'),
                     MapStyle::SCALE => $element->getProperty('SCALE'),
-
-//                    MapStyle::ICON => $element->getURL(),
-//                    MapStyle::WIDTH => $element->getWidth(),
-//                    MapStyle::HEIGHT => $element->getHeight(),
-//                    MapStyle::SCALE => $element->getScale(),
                     );
                 break;
             case 'BALLOONSTYLE':
@@ -193,6 +188,10 @@ class KMLPlacemark extends XMLElement implements MapFeature
     public function getGeometry() {
         return $this->geometry;
     }
+    
+    public function setGeometry(MapGeometry $geometry) {
+        $this->geometry = $geometry;
+    }
 
     public function getDescription() {
         return $this->description;
@@ -281,7 +280,7 @@ class KMLPoint extends XMLElement implements MapGeometry
     }
 }
 
-class KMLLineString extends XMLElement implements MapGeometry
+class KMLLineString extends XMLElement implements MapPolyline
 {
     private $coordinates = array();
 
@@ -307,11 +306,7 @@ class KMLLineString extends XMLElement implements MapGeometry
     }
 
     public function getPoints() {
-        $points = array();
-        foreach ($this->coordinates as $coordinate) {
-            $points[] = array($coordinate['lat'], $coordinate['lon']);
-        }
-        return $points;
+        return $this->coordinates;
     }
 
     public function addElement(XMLElement $element)
@@ -344,7 +339,7 @@ class KMLLineString extends XMLElement implements MapGeometry
 // basically the same thing as LineString but forms a closed loop
 class KMLLinearRing extends KMLLineString {}
 
-class KMLPolygon extends XMLElement implements MapGeometry
+class KMLPolygon extends XMLElement implements MapPolygon
 {
     private $outerBoundary;
     private $innerBoundaries;

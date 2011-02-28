@@ -1,7 +1,7 @@
 <?php
 
-require_once LIB_DIR . '/Maps/MapDataController.php';
 require_once LIB_DIR . '/Maps/MapFeature.php';
+require_once LIB_DIR . '/Maps/MapDataController.php';
 require_once LIB_DIR . '/Maps/MapImageController.php';
 require_once LIB_DIR . '/Maps/Polyline.php';
 
@@ -27,7 +27,7 @@ class MapWebModule extends WebModule {
     protected $id = 'map';
     protected $feeds;
     
-    protected function pageSupportsDynamicMap() {
+    private function pageSupportsDynamicMap() {
         return ($this->pagetype == 'compliant' ||
                 $this->pagetype == 'tablet')
             && $this->platform != 'blackberry'
@@ -119,14 +119,6 @@ class MapWebModule extends WebModule {
         $style = $feature->getStyle();
         $geometry = $feature->getGeometry();
 
-        // center
-        if (isset($this->args['center'])) {
-            $latlon = explode(",", $this->args['center']);
-            $center = array('lat' => $latlon[0], 'lon' => $latlon[1]);
-        } else {
-            $center = $geometry->getCenterCoordinate();
-        }
-
         // zoom
         if (isset($this->args['zoom'])) {
             $zoomLevel = $this->args['zoom'];
@@ -142,8 +134,25 @@ class MapWebModule extends WebModule {
 
         if ($imgController->supportsProjections()) {
             $imgController->setDataProjection($dataController->getProjection());
+        } else {
+            $dataProjection = $dataController->getProjection();
+            $outputProjection = $imgController->getMapProjection();
+            if ($dataProjection != $outputProjection) {
+                $projector = new MapProjector();
+                $projector->setSrcProj($dataProjection);
+                $projector->setDstProj($outputProjection);
+                $geometry = $projector->projectGeometry($geometry);
+            }
         }
         
+        // center
+        if (isset($this->args['center'])) {
+            $latlon = explode(",", $this->args['center']);
+            $center = array('lat' => $latlon[0], 'lon' => $latlon[1]);
+        } else {
+            $center = $geometry->getCenterCoordinate();
+        }
+
         $imgController->setCenter($center);
         $imgController->setZoomLevel($zoomLevel);
 
@@ -656,7 +665,10 @@ class MapWebModule extends WebModule {
                 $this->initializeMap($dataController, $feature);
         
                 $this->assign('name', $feature->getTitle());
-                $this->assign('address', $feature->getSubtitle());
+                // prevent infinite loop in smarty_modifier_replace
+                // TODO figure out why smarty gets in an infinite loop
+                $address = str_replace("\n", " ", $feature->getSubtitle());
+                $this->assign('address', $address);
                 
                 // Info Tab
                 $tabKeys[] = 'info';

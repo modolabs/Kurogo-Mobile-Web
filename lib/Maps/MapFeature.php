@@ -1,5 +1,7 @@
 <?php
 
+define('GEOGRAPHIC_PROJECTION', 4326);
+
 // implemented by map categories, which have no geometry
 interface MapListElement
 {
@@ -17,6 +19,7 @@ interface MapListElement
 interface MapFeature extends MapListElement
 {
     public function getGeometry();
+    public function setGeometry(MapGeometry $geometry);
     public function getDescription();
     public function getDescriptionType();
     public function getStyle();
@@ -24,6 +27,9 @@ interface MapFeature extends MapListElement
 
 interface MapGeometry
 {
+    // TODO deprecate getType() since we can tell what geometries
+    // things are based on whether they implement MapPoly(line|gon)
+
     const POINT = 'Point';
     const POLYGON = 'Polygon';
     const POLYLINE = 'Polyline';
@@ -32,6 +38,16 @@ interface MapGeometry
     public function getCenterCoordinate();
     
     public function getType();
+}
+
+interface MapPolyline extends MapGeometry
+{
+    public function getPoints();
+}
+
+interface MapPolygon extends MapGeometry
+{
+    public function getRings();
 }
 
 interface MapStyle
@@ -101,6 +117,10 @@ class EmptyMapFeature implements MapFeature {
         return $this->geometry;
     }
     
+    public function setGeometry(MapGeometry $geometry) {
+        $this->geometry = $geometry;
+    }
+    
     public function getDescription() {
         return $this->description;
     }
@@ -133,8 +153,75 @@ class EmptyMapPoint implements MapGeometry {
     }
 }
 
+class EmptyMapPolyline implements MapPolyline {
+    private $points;
+    public function __construct($points) {
+        $this->points = $points;
+    }
+
+    public function getCenterCoordinate()
+    {
+        $lat = 0;
+        $lon = 0;
+        $n = 0;
+        foreach ($this->points as $coordinate) {
+            $lat += $coordinate['lat'];
+            $lon += $coordinate['lon'];
+            $n += 1;
+        }
+        return array(
+            'lat' => $lat / $n,
+            'lon' => $lon / $n,
+            );
+    }
+
+    public function getPoints() {
+        return $this->points;
+    }
+
+    public function getType() {
+        return MapGeometry::POLYGON;
+    }
+}
+
+class EmptyMapPolygon implements MapPolygon {
+
+    private $outerBoundary;
+    private $innerBoundaries = array();
+
+    public function __construct(Array $rings) {
+        $this->outerBoundary = new EmptyMapPolyline($rings[0]);
+        if (count($rings) > 1) {
+            for ($i = 1; $i < count($rings); $i++) {
+                $this->innerBoundaries[] = new EmptyMapPolyline($rings[$i]);
+            }
+        }
+    }
+
+    public function getCenterCoordinate()
+    {
+    	return $this->outerBoundary->getCenterCoordinate();
+    }
+
+    public function getRings()
+    {
+        $outerRing = $this->outerBoundary->getPoints();
+        $result = array($outerRing);
+        if (isset($this->innerBoundaries) && count($this->innerBoundaries)) {
+            foreach ($this->innerBoundaries as $boundary) {
+                $result[] = $boundary->getPoints();
+            }
+        }
+        return $result;
+    }
+
+    public function getType() {
+        return MapGeometry::POLYGON;
+    }
+}
+
 class EmptyMapStyle implements MapStyle {
     public function getStyleForTypeAndParam($type, $param) {
-        return array();
+        return null;
     }
 }
