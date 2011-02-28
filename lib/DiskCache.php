@@ -144,7 +144,7 @@ class DiskCache {
 
   public function read($filename=NULL) {
     $path = $this->getFullPath($filename);
-    if (file_exists($path) && $this->isFresh($filename)) {
+    if (file_exists($path)) {
       if ($contents = file_get_contents($path)) {
         if ($this->serialize) {
           return unserialize($contents);
