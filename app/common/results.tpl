@@ -1,4 +1,4 @@
-<ul class="results">
+<ul class="results"{if $resultslistID} id="{$resultslistID}"{/if}>
   {foreach $results as $item}
     {if !isset($item['separator'])}
       <li{if $item['img']} class="icon"{/if}>

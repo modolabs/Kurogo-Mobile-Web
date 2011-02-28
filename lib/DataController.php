@@ -18,6 +18,7 @@ abstract class DataController
     protected $url;
     protected $cache;
     protected $baseURL;
+    protected $title;
     protected $filters=array();
     protected $debugMode=false;
     protected $useCache=true;
@@ -84,6 +85,14 @@ abstract class DataController
         $this->useCache = $useCache ? true : false;
     }
     
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+
+    public function getTitle() {
+        return $this->title;
+    }
+    
     public function setBaseURL($baseURL)
     {
         $this->baseURL = $baseURL;
@@ -100,6 +109,10 @@ abstract class DataController
         
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
+        }
+
+        if (isset($args['TITLE'])) {
+            $this->setTitle($args['TITLE']);
         }
 
         if (isset($args['CACHE_LIFETIME'])) {
@@ -232,7 +245,7 @@ abstract class DataController
     public function getItemByIndex($index)
     {
         $items = $this->getParsedData();
-        return current($items);
+        return isset($items[$index]) ? $items[$index] : false;
     }
     
     public function items($start=0, $limit=null, &$totalItems)

@@ -28,7 +28,7 @@ class XMLElement
 
     public function getAttrib($attrib)
     {
-        return isset($this->attribs[$attrib]) ? $this->attribs[$attrib] : null;
+        return isset($this->attribs[strtoupper($attrib)]) ? $this->attribs[strtoupper($attrib)] : null;
     }
     
     public function getAttribs()
@@ -38,7 +38,7 @@ class XMLElement
     
     public function setValue($value, $strip_tags=false)
     {
-        $this->value = $strip_tags ? strip_tags($value) : $value;
+        $this->value = $strip_tags ? strip_tags($value) : html_entity_decode($value);
     }
 
     public function appendValue($value)
