@@ -39,9 +39,18 @@ function CacheHeaders($file)
   * Outputs a 404 error message
   */
 function _404() {
-    header("HTTP/1.0 404 Not Found");
-    echo "<h1>404 Not Found</h1>\n";
-    echo "The page that you have requested could not be found.\n";
+    header("HTTP/1.1 404 Not Found");
+    $url = $_SERVER['REQUEST_URI'];
+    echo <<<html
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL $url was not found on this server.</p>
+</body></html>
+
+html;
     exit();
 }
 
