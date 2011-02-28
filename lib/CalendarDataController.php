@@ -102,6 +102,20 @@ class CalendarDataController extends DataController
         parent::init($args);
     }
     
+    public function getNextEvent($todayOnly=false) {
+        $start = new DateTime();
+        $start->setTime(date('H'), floor(date('i')/5)*5, 0);
+        $this->setStartDate($start);
+        if ($todayOnly) {
+            $end = new DateTime();
+            $end->setTime(23,59,59);
+            $this->setEndDate($end);
+        }
+
+        $event = $this->getItemByIndex(0);
+        return $event;
+    }
+    
     public function getItem($id, $time=null)
     {
         //use the time to limit the range of events to seek (necessary for recurring events)
