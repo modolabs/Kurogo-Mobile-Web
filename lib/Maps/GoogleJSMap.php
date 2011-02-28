@@ -46,6 +46,10 @@ class GoogleJSMap extends JavascriptMapImageController {
 
     public function addPath($points, $style=null)
     {
+        if ($style === null) {
+            $style = new EmptyMapStyle();
+        }
+        
         $path = array('coordinates' => $points);
         
         $pathStyle = array();
@@ -68,6 +72,10 @@ class GoogleJSMap extends JavascriptMapImageController {
     
     public function addPolygon($rings, $style=null)
     {
+        if ($style === null) {
+            $style = new EmptyMapStyle();
+        }
+        
     	$polygon = array('rings' => $rings);
 
         $pathStyle = array();
@@ -98,7 +106,9 @@ class GoogleJSMap extends JavascriptMapImageController {
     private static function coordsToGoogleArray($coords) {
         $gCoords = array();
         foreach ($coords as $coord) {
-            $gCoords[] .= 'new google.maps.LatLng('.$coord[0].','.$coord[1].')';
+            $lat = isset($coord['lat']) ? $coord['lat'] : $coord[0];
+            $lon = isset($coord['lon']) ? $coord['lon'] : $coord[1];
+            $gCoords[] .= "new google.maps.LatLng({$lat},{$lon})";
         }
         return implode(',', $gCoords);
     }

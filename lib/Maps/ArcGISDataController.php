@@ -15,10 +15,6 @@ class ArcGISDataController extends MapDataController
         return $GLOBALS['siteConfig']->getVar('ARCGIS_CACHE');
     }
     
-    public function projectsFeatures() {
-        return true;
-    }
-    
     public function getProjection() {
         return $this->parser->getProjection();
     }

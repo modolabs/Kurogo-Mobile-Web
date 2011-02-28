@@ -381,22 +381,8 @@ class CalendarWebModule extends WebModule {
         
         $this->assign('events', $events);
         break;
-
-      case 'index':
-        if ($userFeeds = $this->getFeeds('user')) {
-          $userCalendars = array();
-          foreach ($userFeeds as $id=>$calendar) {
-            $userCalendars[$id] = array(
-              'title' => $calendar['TITLE'],
-              'url'   => $this->buildBreadcrumbURL('day', array(
-                'type'     => 'user', 
-                'calendar' => $id
-              )),
-            );
-          }
-          $this->assign('userCalendars', $userCalendars);
-        }
-
+      
+      case 'resources':
         if ($resourceFeeds = $this->getFeeds('resource')) {
           $resources = array();
           foreach ($resourceFeeds as $id=>$resource) {
@@ -409,13 +395,74 @@ class CalendarWebModule extends WebModule {
             );
           }
           $this->assign('resources', $resources);
+        } else {
+            $this->redirectTo('index');
+        }
+        break;
+      case 'user':
+        if ($userFeeds = $this->getFeeds('user')) {
+          $userCalendars = array();
+          foreach ($userFeeds as $id=>$calendar) {
+            $userCalendars[$id] = array(
+              'title' => $calendar['TITLE'],
+              'url'   => $this->buildBreadcrumbURL('day', array(
+                'type'     => 'user', 
+                'calendar' => $id
+              )),
+            );
+          }
+          $this->assign('userCalendars', $userCalendars);
+        } else {
+            $this->redirectTo('index');
+        }
+      
+        break;
+
+      case 'index':
+        if ($userCalendar = $this->getDefaultFeed('user')) {
+            $feed = $this->getFeed($userCalendar, 'user');
+            $feeds = $this->getFeeds('user');
+            $upcomingEvents = array();
+            if ($event = $feed->getNextEvent(true)) {
+                $upcomingEvents[] = array(
+                    'title'=>$event->get_summary(),
+                    'subtitle'=>$this->timeText($event),
+                    'url'=>$this->detailURL($event, array(
+                        'type'=>'user',
+                        'calendar'=>$userCalendar
+                     ))
+                );
+            } else {
+                $upcomingEvents[] = array(
+                    'title'=>'No remaining events for today'
+                );
+            }
+            
+            $upcomingEvents[] = array(
+                'title'=>'My calendar',
+                'url'=>$this->dayURL(time(), 'user', $userCalendar)
+            );
+            if (count($feeds)>1) {
+                $upcomingEvents[] = array(
+                    'title'=>'Other calendars',
+                    'url'=>$this->buildBreadcrumbURL('user', array())
+                );
+            }
+            $this->assign('upcomingEvents', $upcomingEvents);
+        }
+        
+        if ($resourceFeeds = $this->getFeeds('resource')) {
+            $resources = array(
+                array(
+                    'title'=>'Resources',
+                    'url'  =>$this->buildBreadcrumbURL('resources', array())
+                )
+            );
+            $this->assign('resources', $resources);
         }
 
         $this->loadWebAppConfigFile('calendar-index','calendarPages');
-
-        $today = mktime(12,0,0);
-      
-        $this->assign('today',         $today);
+        $this->assign('today',         mktime(0,0,0));
         $this->assign('searchOptions', $this->searchOptions);
         break;
       

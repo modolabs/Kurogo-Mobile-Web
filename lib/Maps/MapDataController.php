@@ -3,8 +3,6 @@
 // for KML, each KML file is a category
 // for ArcGIS, each layer (or service instance?) is a category
 
-define('GEOGRAPHIC_PROJECTION', 4326);
-
 class MapDataController extends DataController
 {
     const SEARCH_RESULTS = -1;

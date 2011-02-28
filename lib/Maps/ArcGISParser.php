@@ -30,7 +30,7 @@ class ArcGISPoint implements MapGeometry
     }
 }
 
-class ArcGISPolygon implements MapGeometry
+class ArcGISPolygon implements MapPolygon
 {
     private $rings;
     private $centerCoordinate;
@@ -44,18 +44,27 @@ class ArcGISPolygon implements MapGeometry
         $currentRing = array();
         if (count($geometry['rings'])) {
             $currentRing = $geometry['rings'][0];
+            $currentRingInLatLon = array();
             $numVertices = count($currentRing);
             foreach ($currentRing as $xy) {
                 $totalX += $xy[0];
                 $totalY += $xy[1];
+                
+                $currentRingInLatLon[] = array('lon' => $xy[0], 'lat' => $xy[1]);
             }
             $this->centerCoordinate = array('lat' => $totalY / $numVertices,
                                             'lon' => $totalX / $numVertices);
-            $this->rings[] = $currentRing;
+            $this->rings[] = $currentRingInLatLon;
         }
 
         for ($i = 1; $i < count($geometry['rings']); $i++) {
-            $this->rings[] = $geometry['rings'][$i];
+            $currentRing = $geometry['rings'][$i];
+            $currentRingInLatLon = array();
+            foreach ($currentRing as $xy) {
+                $currentRingInLatLon[] = array('lon' => $xy[0], 'lat' => $xy[1]);
+            }
+            
+            $this->rings[] = $currentRingInLatLon;
         }
     }
 
@@ -166,6 +175,14 @@ class ArcGISFeature implements MapFeature
     public function readGeometry($json)
     {
         $this->geometry = $json;
+    }
+    
+    public function setGeometry(MapGeometry $geometry) {
+        if ($geometry instanceof MapPolygon) {
+            $this->geometry = $geometry->getRings();
+        } else {
+            $this->geometry = $geometry->getCenterCoordinate();
+        }
     }
     
     public function getDescriptionType()

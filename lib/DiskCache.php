@@ -98,13 +98,13 @@ class DiskCache {
     $suffix = $this->suffix ? $this->suffix : substr($filename, -4);
     switch ($suffix) {
      case '.png':
-       $success = imagecreatefrompng($image, $path);
+       return imagecreatefrompng($path);
        break;
      case '.jpg':
-       $success = imagecreatefromjpeg($image, $path);
+         return imagecreatefromjpeg($path);
        break;
      case '.gif':
-       $success = imagecreatefromgif($image, $path);
+       return imagecreatefromgif($path);
        break;
     }
   }
@@ -144,7 +144,7 @@ class DiskCache {
 
   public function read($filename=NULL) {
     $path = $this->getFullPath($filename);
-    if (file_exists($path) && $this->isFresh($filename)) {
+    if (file_exists($path)) {
       if ($contents = file_get_contents($path)) {
         if ($this->serialize) {
           return unserialize($contents);

@@ -30,6 +30,7 @@ class GoogleAppsCalendarDataController extends CalendarDataController
     protected function url() {
         $this->addFilter('orderby', 'starttime');
         $this->addFilter('sortorder', 'a');
+        $this->addFilter('singleevents', 'true');
 
         if ($this->startDate) {
             $this->addFilter('start-min', $this->startDate->format('c'));
