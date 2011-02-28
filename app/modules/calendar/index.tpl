@@ -4,6 +4,10 @@
   <h2>{$today|date_format:"%A %b %e, %Y"}</h2>
 </div>
 
+{if $upcomingEvents} 
+  {include file="findInclude:common/navlist.tpl" navlistItems=$upcomingEvents}
+{/if}
+
 {if count($userCalendars)}
   {include file="findInclude:common/navlist.tpl" navlistItems=$userCalendars}
 {/if}
