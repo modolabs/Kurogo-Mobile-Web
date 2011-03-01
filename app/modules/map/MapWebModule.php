@@ -206,6 +206,9 @@ class MapWebModule extends WebModule {
 
         // call the function that updates the image size        
         if ($fullscreen && $imgController->isStatic()) {
+            // Let Webkit figure out what the window size is and then hide the address bar
+            // and resize the map
+            $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
             $this->addOnOrientationChange('updateMapDimensions();');
         }
     }
