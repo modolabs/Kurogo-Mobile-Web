@@ -498,7 +498,6 @@ class MapWebModule extends WebModule {
                     $this->assign('nearbyResults', $places);
                 }
                 return count($places) > 0;
-                //break;
             }
             case 'info':
             {
@@ -523,11 +522,12 @@ class MapWebModule extends WebModule {
                 }
                 
                 $displayDetailsAsList = $feature->getDescriptionType() == MapFeature::DESCRIPTION_LIST;
-                $this->assign('displayDetailsAsList', $displayDetailsAsList);
-                $this->assign('details', $feature->getDescription());
+                $details = $feature->getDescription();
                 
-                return true;
-                //break;
+                $this->assign('displayDetailsAsList', $displayDetailsAsList);
+                $this->assign('details', $details);
+                
+                return count($details) > 0;
             }
             default:
                 break;
@@ -753,9 +753,10 @@ class MapWebModule extends WebModule {
                 $this->assign('address', $this->getArg('address', $address));
 
                 $possibleTabs = $detailConfig['tabs']['tabkeys'];
-                foreach ($possibleTabs as $tabKey)
-                if ($this->generateTabForKey($tabKey, $feature, $dataController, $tabJavascripts)) {
-                    $tabKeys[] = $tabKey;
+                foreach ($possibleTabs as $tabKey) {
+                    if ($this->generateTabForKey($tabKey, $feature, $dataController, $tabJavascripts)) {
+                        $tabKeys[] = $tabKey;
+                    }
                 }
         
                 $this->assign('tabKeys', $tabKeys);
