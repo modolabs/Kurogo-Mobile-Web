@@ -77,6 +77,57 @@ class ArcGISDataController extends MapDataController
         $this->addFilter('f', 'json');
     }
     
+    public function search($searchText) {
+        $this->initializeParser();
+        $this->initializeLayers();
+
+        $oldBaseURL = $this->baseURL;
+        $this->parser->setBaseURL($oldBaseURL);
+        $this->baseURL = $this->parser->getURLForLayerFeatures();
+        
+        $data = $this->getData();
+        $this->parseData($data);
+        
+        // restore previous state
+        $this->baseURL = $oldBaseURL;
+        
+        return $this->items();
+    }
+    
+    public function searchByProximity($center, $tolerance, $maxItems) {
+        
+        // TODO: these units are completely wrong (but work for harvard b/c
+        // their units are in feet); we should use MapProjector to get
+        // a decent range
+        $dLatDegrees = $tolerance;
+        $dLonDegrees = $tolerance;
+
+        $maxLat = $center['lat'] + $dLatDegrees;
+        $minLat = $center['lat'] - $dLatDegrees;
+        $maxLon = $center['lon'] + $dLonDegrees;
+        $minLon = $center['lon'] - $dLonDegrees;
+        
+        $this->initializeParser();
+        $this->initializeLayers();
+
+        $oldBaseURL = $this->baseURL;
+        $this->parser->setBaseURL($oldBaseURL);
+        $this->baseURL = $this->parser->getURLForLayerFeatures();
+        $this->addFilter('geometry', "$minLon,$minLat,$maxLon,$maxLat");
+        $this->addFilter('geometryType', 'esriGeometryEnvelope');
+        $this->addFilter('spatialRel', 'esriSpatialRelIntersects');
+        $this->addFilter('returnGeometry', 'false');
+        $data = $this->getData();
+        $this->parseData($data);
+        
+        // restore previous state
+        $this->baseURL = $oldBaseURL;
+        $this->removeAllFilters();
+        $this->addFilter('f', 'json');
+        
+        return $this->items();
+    }
+    
     // TODO make a standalone method in ArcGISParser that
     // that doesn't require us to create a throwaway controller
     public static function parserFactory($baseURL) {

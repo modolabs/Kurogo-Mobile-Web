@@ -487,10 +487,11 @@ class MapWebModule extends WebModule {
                     foreach ($searchResults as $result) {
                         // TODO eliminate current feature from results
                         $title = $mapSearch->getTitleForSearchResult($result);
+                        $subtitle = $mapSearch->getSubtitleForSearchResult($result);
                         $urlArgs = $mapSearch->getURLArgsForSearchResult($result);
                         $place = array(
                             'title' => $title,
-                            'subtitle' => isset($result['subtitle']) ? $result['subtitle'] : null,
+                            'subtitle' => $subtitle,
                             'url' => $this->detailURLForResult($urlArgs, false),
                             );
                         $places[] = $place;
@@ -637,9 +638,10 @@ class MapWebModule extends WebModule {
                         $places = array();
                         foreach ($searchResults as $result) {
                             $title = $mapSearch->getTitleForSearchResult($result);
+                            $subtitle = $mapSearch->getSubtitleForSearchResult($result);
                             $place = array(
                                 'title' => $title,
-                                'subtitle' => isset($result['subtitle']) ? $result['subtitle'] : null,
+                                'subtitle' => $subtitle,
                                 'url' => $this->detailURLForResult($mapSearch->getURLArgsForSearchResult($result)),
                             );
                             $places[] = $place;
