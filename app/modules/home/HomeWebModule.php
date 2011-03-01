@@ -77,7 +77,6 @@ class HomeWebModule extends WebModule {
         break;
               
       case 'index':
-        $this->addOnLoad('rotateScreen();');
         $this->addOnOrientationChange('rotateScreen();');
 
         if ($this->pagetype == 'tablet') {

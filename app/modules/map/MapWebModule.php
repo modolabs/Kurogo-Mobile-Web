@@ -196,7 +196,6 @@ class MapWebModule extends WebModule {
                 list($imageWidth, $imageHeight) = $this->fullscreenMapImageDimensions();
                 $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
             }
-            $this->addOnLoad('rotateScreen();');
             $this->addOnOrientationChange('rotateScreen();');
         }
         
@@ -207,7 +206,6 @@ class MapWebModule extends WebModule {
 
         // call the function that updates the image size        
         if ($fullscreen && $imgController->isStatic()) {
-            $this->addOnLoad('updateMapDimensions();');
             $this->addOnOrientationChange('updateMapDimensions();');
         }
     }
