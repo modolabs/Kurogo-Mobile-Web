@@ -527,7 +527,7 @@ class MapWebModule extends WebModule {
                 $this->assign('displayDetailsAsList', $displayDetailsAsList);
                 $this->assign('details', $details);
                 
-                return count($details) > 0;
+                return is_array($details) ? count($details) > 0 : strlen(trim($details));
             }
             default:
                 break;

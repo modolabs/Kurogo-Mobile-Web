@@ -24,6 +24,12 @@ function showTab(strID, objTrigger) {
 			objTriggerTab.className="active";
 		}
 	} 
+	
+	// fake resize event in case tab body was resized while hidden 
+	var e = document.createEvent('HTMLEvents');
+	e.initEvent('resize', true, true);
+	window.dispatchEvent(e);
+	
 	onDOMChange();
 }
 

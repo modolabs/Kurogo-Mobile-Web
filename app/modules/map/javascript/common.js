@@ -152,9 +152,16 @@ function constructMapURL() {
     }
 }
 
-function updateMapDimensions() {
-    console.log('updateMapDimensions() called');
+var updateMapDimensionsTimeoutId;
 
+// Prevent firebombing the browser with Ajax calls on browsers which fire lots
+// of resize events
+function updateMapDimensions() {
+    window.clearTimeout(updateMapDimensionsTimeoutId); 
+    updateMapDimensionsTimeoutId = window.setTimeout(doUpdateMapDimensions, 200);
+}
+
+function doUpdateMapDimensions() {
     if (!centerZoomBased) {
         // if width and height proprotions changed, we need to update the bbox
         var oldHeight = mapHeight;
