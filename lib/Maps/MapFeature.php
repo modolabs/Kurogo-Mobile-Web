@@ -85,7 +85,7 @@ class EmptyMapFeature implements MapFeature {
     private $index = 0;
     
     public function __construct($center) {
-        $this->geometry = new EmptyMapPoint();
+        $this->geometry = new EmptyMapPoint($center['lat'], $center['lon']);
         $this->style = new EmptyMapStyle();
     }
     
