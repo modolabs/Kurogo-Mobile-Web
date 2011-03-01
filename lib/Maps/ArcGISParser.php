@@ -413,9 +413,9 @@ class ArcGISLayer {
     }
     
     public function parseData($contents) {
+        $data = json_decode($contents, true);
+
         if (!$this->isInitialized) {
-            $data = json_decode($contents, true);
-        
             $this->name = $data['name'];
             $this->minScale = $data['minScale'];
             $this->maxScale = $data['maxScale'];
@@ -441,8 +441,6 @@ class ArcGISLayer {
     
             $this->isInitialized = true;
         } else if (!$this->isPopulated) {
-            $data = json_decode($contents, true);
-
             $result = array();
             foreach ($data['features'] as $featureInfo) {
                 $feature = $this->featureFromJSON($featureInfo);
@@ -467,10 +465,14 @@ class ArcGISLayer {
                 $name = $this->fieldNames[$name];
             $displayAttribs[$name] = $value;
         }
-        $geometry = $this->geometryType ? $featureInfo['geometry'] : null;
-        $feature = new ArcGISFeature($displayAttribs, $geometry);
+        if ($this->geometryType && isset($featureInfo['geometry'])) {
+            $geometry = $featureInfo['geometry'];
+            $feature = new ArcGISFeature($displayAttribs, $geometry);
+            $feature->setGeometryType($this->geometryType);
+        } else {
+            $feature = new ArcGISFeature($displayAttribs, null);
+        }
         $feature->setTitleField($this->fieldNames[$this->displayField]);
-        $feature->setGeometryType($this->geometryType);
         return $feature;
     }
 

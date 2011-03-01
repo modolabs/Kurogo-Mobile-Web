@@ -117,7 +117,11 @@ class MapWebModule extends WebModule {
     private function initializeMap(MapDataController $dataController, MapFeature $feature, $fullscreen=FALSE) {
         
         $style = $feature->getStyle();
-        $geometry = $feature->getGeometry();
+        if (isset($this->args['lat'], $this->args['lon'])) {
+            $geometry = new EmptyMapPoint($this->args['lat'], $this->args['lon']);
+        } else {
+            $geometry = $feature->getGeometry();
+        }
 
         // zoom
         if (isset($this->args['zoom'])) {
@@ -296,7 +300,7 @@ class MapWebModule extends WebModule {
         if ($index === NULL) {
             return MapDataController::factory('MapDataController', array(
                 'JS_MAP_CLASS' => 'GoogleJSMap',
-                'DEFAULT_ZOOM_LEVEL' => 10
+                'DEFAULT_ZOOM_LEVEL' => $this->getModuleVar('DEFAULT_ZOOM_LEVEL', 10)
                 ));
         
         } else if (isset($this->feeds[$index])) {
@@ -369,7 +373,7 @@ class MapWebModule extends WebModule {
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
-        if (isset($params['featureindex'])) {
+        if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
             return $this->buildBreadcrumbURL('detail', $params, true);
         } else if (isset($params['campus'])) {
             return $this->campusURL($params['campus']);
@@ -428,6 +432,12 @@ class MapWebModule extends WebModule {
         } else if (isset($params['campus'])) {
             $campus = $GLOBALS['siteConfig']->getSection('campus-'.$params['campus']);
             return array($campus['title']);
+        } else if (isset($params['title'])) {
+            $result = array($params['title']);
+            if (isset($params['address'])) {
+                $result[] = $params['address'];
+            }
+            return $result;
         } else {
             return array($aBookmark);
         }
@@ -450,6 +460,81 @@ class MapWebModule extends WebModule {
             $this->assign('bookmarkLink', $bookmarkLink);
         }
         $this->assign('hasBookmarks', $hasBookmarks);
+    }
+    
+    // return true on success, false on failure
+    protected function generateTabForKey($tabKey, $feature, $dataController, &$tabJavascripts) {
+        switch ($tabKey) {
+            case 'map':
+            {
+                $this->initializeMap($dataController, $feature);
+                return true;
+            }
+            case 'nearby':
+            {
+                $geometry = $feature->getGeometry();
+                $center = $geometry->getCenterCoordinate();
+                
+                $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+                $mapSearch = new $mapSearchClass();
+                if (!$this->feeds)
+                    $this->feeds = $this->loadFeedData();
+                $mapSearch->setFeedData($this->feeds);
+                
+                $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
+                $places = array();
+                if ($searchResults) {
+                    foreach ($searchResults as $result) {
+                        // TODO eliminate current feature from results
+                        $title = $mapSearch->getTitleForSearchResult($result);
+                        $subtitle = $mapSearch->getSubtitleForSearchResult($result);
+                        $urlArgs = $mapSearch->getURLArgsForSearchResult($result);
+                        $place = array(
+                            'title' => $title,
+                            'subtitle' => $subtitle,
+                            'url' => $this->detailURLForResult($urlArgs, false),
+                            );
+                        $places[] = $place;
+                    }
+                    $this->assign('nearbyResults', $places);
+                }
+                return count($places) > 0;
+            }
+            case 'info':
+            {
+                // embedded photo
+                $photoServer = $GLOBALS['siteConfig']->getVar('MAP_PHOTO_SERVER');
+                // this method of getting photo url is harvard-specific and
+                // further only works on data for ArcGIS features.
+                // TODO rewrite this if we find an alternate way to server photos
+                if ($photoServer) {
+                    $photoFile = $feature->getField('Photo');
+                    if (isset($photoFile) && $photoFile != 'Null') {
+                        $tabJavascripts[$tabKey] = "loadImage(photoURL,'photo');";
+                        $photoURL = $photoServer.$photoFile;
+                        $this->assign('photoURL', $photoURL);
+                        $this->addInlineJavascript("var photoURL = '{$photoURL}';");
+                    }
+                }
+                
+                if (is_subclass_of($dataController, 'ArcGISDataController')) {
+                    $detailConfig = $this->loadWebAppConfigFile('map-detail', 'detailConfig');   
+                    $feature->setBlackList($detailConfig['details']['suppress']);
+                }
+                
+                $displayDetailsAsList = $feature->getDescriptionType() == MapFeature::DESCRIPTION_LIST;
+                $details = $feature->getDescription();
+                
+                $this->assign('displayDetailsAsList', $displayDetailsAsList);
+                $this->assign('details', $details);
+                
+                return is_array($details) ? count($details) > 0 : strlen(trim($details));
+            }
+            default:
+                break;
+        }
+        
+        return false;
     }
 
     protected function initializeForPage() {
@@ -553,9 +638,10 @@ class MapWebModule extends WebModule {
                         $places = array();
                         foreach ($searchResults as $result) {
                             $title = $mapSearch->getTitleForSearchResult($result);
+                            $subtitle = $mapSearch->getSubtitleForSearchResult($result);
                             $place = array(
                                 'title' => $title,
-                                'subtitle' => isset($result['subtitle']) ? $result['subtitle'] : null,
+                                'subtitle' => $subtitle,
                                 'url' => $this->detailURLForResult($mapSearch->getURLArgsForSearchResult($result)),
                             );
                             $places[] = $place;
@@ -624,12 +710,6 @@ class MapWebModule extends WebModule {
                 $tabKeys = array();
                 $tabJavascripts = array();
                 
-                // Map Tab
-                $tabKeys[] = 'map';
-
-                $hasMap = true;
-                $this->assign('hasMap', $hasMap);
-
                 if (!$this->feeds)
                     $this->feeds = $this->loadFeedData();
                 
@@ -647,7 +727,7 @@ class MapWebModule extends WebModule {
                     $cookieID = http_build_query($cookieParams);
                     $this->generateBookmarkOptions($cookieID);
                     
-                } else { // this is a campus
+                } elseif (isset($this->args['campus'])) { // this is a campus
                     $index = $this->args['campus'];
                     $campus = $GLOBALS['siteConfig']->getSection('campus-'.$index);
                     $coordParts = explode(',', $campus['center']);
@@ -660,72 +740,28 @@ class MapWebModule extends WebModule {
                     $feature->setAddress($campus['address']);
                     $feature->setDescription($campus['description']);
                     $feature->setIndex($index);
+                } else {
+                    $center = array('lat' => 0, 'lon' => 0);
+                    $feature = new EmptyMapFeature($center);
+                    $dataController = $this->getDataController(NULL);
+                    $cookieID = http_build_query($this->args);
+                    $this->generateBookmarkOptions($cookieID);
                 }
                 
-                $this->initializeMap($dataController, $feature);
-        
-                $this->assign('name', $feature->getTitle());
+                $this->assign('name', $this->getArg('title', $feature->getTitle()));
                 // prevent infinite loop in smarty_modifier_replace
                 // TODO figure out why smarty gets in an infinite loop
                 $address = str_replace("\n", " ", $feature->getSubtitle());
-                $this->assign('address', $address);
-                
-                // Info Tab
-                $tabKeys[] = 'info';
+                $this->assign('address', $this->getArg('address', $address));
 
-                // embedded photo
-                $photoServer = $GLOBALS['siteConfig']->getVar('MAP_PHOTO_SERVER');
-                // this method of getting photo url is harvard-specific and
-                // further only works on data for ArcGIS features.
-                // TODO rewrite this if we find an alternate way to server photos
-                if ($photoServer) {
-                    $photoFile = $feature->getField('Photo');
-                    if (isset($photoFile) && $photoFile != 'Null') {
-                        //$tabKeys[] = 'photo';
-                        $tabJavascripts['photo'] = "loadImage(photoURL,'photo');";
-                        $photoUrl = $photoServer.$photoFile;
-                        $this->assign('photoUrl', $photoUrl);
-                        $this->addInlineJavascript("var photoURL = '{$photoUrl}';");
+                $possibleTabs = $detailConfig['tabs']['tabkeys'];
+                foreach ($possibleTabs as $tabKey) {
+                    if ($this->generateTabForKey($tabKey, $feature, $dataController, $tabJavascripts)) {
+                        $tabKeys[] = $tabKey;
                     }
                 }
-                
-                if (is_subclass_of($dataController, 'ArcGISDataController')) {
-                    $feature->setBlackList($detailConfig['details']['suppress']);
-                }
-                
-                $displayDetailsAsList = $feature->getDescriptionType() == MapFeature::DESCRIPTION_LIST;
-                $this->assign('displayDetailsAsList', $displayDetailsAsList);
-                $this->assign('details', $feature->getDescription());
-                
-                // Nearby tab
-                $geometry = $feature->getGeometry();
-                $center = $geometry->getCenterCoordinate();
-                
-                $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
-                $mapSearch = new $mapSearchClass();
-                if (!$this->feeds)
-                    $this->feeds = $this->loadFeedData();
-                $mapSearch->setFeedData($this->feeds);
-                
-                $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
-                $places = array();
-                if ($searchResults) {
-                    foreach ($searchResults as $result) {
-                        // TODO eliminate current feature from results
-                        $title = $mapSearch->getTitleForSearchResult($result);
-                        $urlArgs = $mapSearch->getURLArgsForSearchResult($result);
-                        $place = array(
-                            'title' => $title,
-                            'subtitle' => isset($result['subtitle']) ? $result['subtitle'] : null,
-                            'url' => $this->detailURLForResult($urlArgs, false),
-                            );
-                        $places[] = $place;
-                    }
-                    $tabKeys[] = 'nearby';
-                    $this->assign('nearbyResults', $places);
-                }
-                $this->assign('hasNearby', count($places) > 0);
         
+                $this->assign('tabKeys', $tabKeys);
                 $this->enableTabs($tabKeys, null, $tabJavascripts);
                 break;
                 

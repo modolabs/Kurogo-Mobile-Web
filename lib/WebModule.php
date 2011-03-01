@@ -96,7 +96,8 @@ abstract class WebModule extends Module {
       'current'    => $currentTab,
     );
 
-    $this->addInlineJavascriptFooter("showTab('{$currentTab}Tab');");
+    $currentJS = $tabs[$currentTab]['javascript'];
+    $this->addInlineJavascriptFooter("showTab('{$currentTab}Tab');{$currentJS}");
   }
   
   //
