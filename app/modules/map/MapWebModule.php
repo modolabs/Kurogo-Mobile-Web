@@ -745,18 +745,12 @@ class MapWebModule extends WebModule {
                 if (isset($this->args['lat'], $this->args['lon'])) {
                     $feature->setGeometry(new EmptyMapPoint($this->args['lat'], $this->args['lon']));
                 }
-                if (isset($this->args['title'])) {
-                    $feature->setTitle($this->args['title']);
-                }
-                if (isset($this->args['address'])) {
-                    $feature->setAddress($this->args['address']);
-                }
-        
-                $this->assign('name', $feature->getTitle());
+                
+                $this->assign('name', $this->getArg('title', $feature->getTitle()));
                 // prevent infinite loop in smarty_modifier_replace
                 // TODO figure out why smarty gets in an infinite loop
                 $address = str_replace("\n", " ", $feature->getSubtitle());
-                $this->assign('address', $address);
+                $this->assign('address', $this->getArg('address', $address));
 
                 $possibleTabs = $detailConfig['tabs']['tabkeys'];
                 foreach ($possibleTabs as $tabKey)
