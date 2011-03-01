@@ -64,39 +64,45 @@ class MapProjector {
 
     // TODO this is only supported for service-based projections right now
     public function projectPoints(Array $points, $outputXY=false) {
-        $geometries = array();
-        foreach ($points as $point) {
-            list($x, $y) = self::getXYFromPoint($point);
-            $geometries[] = array(
-                'x' => $x,
-                'y' => $y,
-                );
-        }
+        $result = array();
+
         if ($this->baseURL !== NULL) {
-            $params = array(
-                'inSR' => $this->srcProj,
-                'outSR' => $this->dstProj,
-                'geometries' => '{"geometryType":"esriGeometryPoint","geometries":'
+            $numberOfTries = (int)(count($points) / 20); // 20 points seems to be safely under the limit
+            for ($i = 0; $i <= $numberOfTries; $i++) {
+    
+                $geometries = array();
+                for ($j = $i * 20; $j < ($i + 1) * 20 && $j < count($points); $j++) {
+                    $point = $points[$j];
+                    list($x, $y) = self::getXYFromPoint($point);
+                    $geometries[] = array(
+                        'x' => $x,
+                        'y' => $y,
+                        );
+                }
+
+                $params = array(
+                    'inSR' => $this->srcProj,
+                    'outSR' => $this->dstProj,
+                    'geometries' => '{"geometryType":"esriGeometryPoint","geometries":'
                                 .json_encode($geometries).'}',
-                'f' => 'json',
-                );
-            $query = $this->baseURL.'?'.http_build_query($params);
-//var_dump($query);
-            $response = file_get_contents($query);
-            $json = json_decode($response, true);
-            if ($json && isset($json['geometries']) && is_array($json['geometries'])) {
-                if ($outputXY) {
-                    return $json['geometries'];
-                } else {
-                    $result = array();
-                    foreach ($json['geometries'] as $geometry) {
-                        $result[] = array('lat' => $geometry['y'], 'lon' => $geometry['x']);
+                    'f' => 'json',
+                    );
+                $query = $this->baseURL.'?'.http_build_query($params);
+                $response = file_get_contents($query);
+                $json = json_decode($response, true);
+                
+                if ($json && isset($json['geometries']) && is_array($json['geometries'])) {
+                    if ($outputXY) {
+                        $result = array_merge($result, $json['geometries']);
+                    } else {
+                        foreach ($json['geometries'] as $geometry) {
+                            $result[] = array('lat' => $geometry['y'], 'lon' => $geometry['x']);
+                        }
                     }
                 }
-                return $result;
             }
         }
-
+        return $result;
     }
     
     public function projectPoint($point) {
