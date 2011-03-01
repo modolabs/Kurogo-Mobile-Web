@@ -162,7 +162,7 @@ class LDAPDataController extends PeopleController {
     return $this->filter;
   }
 
-  private function getErrorNo() {
+  public function getErrorNo() {
     return $this->errorNo;
   }
 

@@ -70,7 +70,7 @@ function Initialize(&$path=null) {
   define('MASTER_CONFIG_DIR', realpath(ROOT_DIR.'/config'));
   define('APP_DIR',           realpath(ROOT_DIR.'/app'));
   define('MODULES_DIR',       realpath(APP_DIR.'/modules'));
-  
+  define('API_DIR',           realpath(APP_DIR.'/api'));
   define('MIN_FILE_PREFIX', 'file:');
   define('API_URL_PREFIX', 'rest');
   

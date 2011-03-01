@@ -170,6 +170,14 @@ abstract class APIModule extends Module
     $this->response->display();
   }
   
+  /**
+    * Load config vars from site/<site>/config/api/<name>.ini
+    */
+  public function loadAPIConfigFile($name, $opts=0) {
+      $config = $this->getConfig($name, 'api', $opts);
+      return $config->getSectionVars(true);
+  }
+  
  /**
    * All modules must implement this method to handle the logic of each command.
    */

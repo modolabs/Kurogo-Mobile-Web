@@ -41,11 +41,13 @@ abstract class Module
             throw new Exception("Invalid module type $type");
         }
     }
-    
+
     // possible module paths
     $modulePaths = array(
       SITE_MODULES_DIR."/$id/Site%s.php"=>"Site%s",
-      MODULES_DIR."/$id/%s.php"=>"%s"
+      MODULES_DIR."/$id/%s.php"=>"%s",
+      SITE_API_DIR."/Site%s.php" =>"Site%s",
+      API_DIR."/%s.php"=>"%s",
     );
     
     //cycle module paths and class names to find a valid module
