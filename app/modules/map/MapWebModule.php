@@ -459,7 +459,7 @@ class MapWebModule extends WebModule {
     }
     
     // return true on success, false on failure
-    protected function generateTabForKey($tabKey, $feature, $dataController) {
+    protected function generateTabForKey($tabKey, $feature, $dataController, &$tabJavascripts) {
         switch ($tabKey) {
             case 'map':
             {
@@ -506,11 +506,10 @@ class MapWebModule extends WebModule {
                 if ($photoServer) {
                     $photoFile = $feature->getField('Photo');
                     if (isset($photoFile) && $photoFile != 'Null') {
-                        //$tabKeys[] = 'photo';
-                        $tabJavascripts['photo'] = "loadImage(photoURL,'photo');";
-                        $photoUrl = $photoServer.$photoFile;
-                        $this->assign('photoUrl', $photoUrl);
-                        $this->addInlineJavascript("var photoURL = '{$photoUrl}';");
+                        $tabJavascripts[$tabKey] = "loadImage(photoURL,'photo');";
+                        $photoURL = $photoServer.$photoFile;
+                        $this->assign('photoURL', $photoURL);
+                        $this->addInlineJavascript("var photoURL = '{$photoURL}';");
                     }
                 }
                 
@@ -761,7 +760,7 @@ class MapWebModule extends WebModule {
 
                 $possibleTabs = $detailConfig['tabs']['tabkeys'];
                 foreach ($possibleTabs as $tabKey)
-                if ($this->generateTabForKey($tabKey, $feature, $dataController)) {
+                if ($this->generateTabForKey($tabKey, $feature, $dataController, $tabJavascripts)) {
                     $tabKeys[] = $tabKey;
                 }
         

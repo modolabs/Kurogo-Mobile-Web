@@ -22,7 +22,7 @@
 {if in_array('info', $tabKeys)}
   {capture name="detailPane" assign="detailPane"}
     {block name="photoPane"}
-      {if $photo}
+      {if $photoURL}
         <img id="loadingimage2" src="/common/images/loading2.gif" width="40" height="40" alt="Loading" />
         <img id="photo" src="" width="99.9%" alt="{$name} Photo" onload="hide('loadingimage2')" />
       {/if}
