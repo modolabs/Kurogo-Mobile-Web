@@ -4,7 +4,7 @@
 
 {if $campuses}
 <div class="nonfocal">
-  <a name="campuses"/>
+  <a name="campuses"> </a>
   <h3>Campuses</h3>
 </div>
 {include file="findInclude:common/navlist.tpl" navlistItems=$campuses}
@@ -12,7 +12,7 @@
 
 {if $places}
 <div class="nonfocal">
-  <a name="places"/>
+  <a name="places"> </a>
   <h3>Places</h3>
 </div>
 {include file="findInclude:common/navlist.tpl" navlistItems=$places}

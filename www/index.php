@@ -71,8 +71,8 @@ function _outputTypeFile($matches) {
   _404();
 }
 
-function _outputImageLoaderFile($matches) {
-  $fullPath = ImageLoader::load($matches[1]);
+function _outputFileLoaderFile($matches) {
+  $fullPath = FileLoader::load($matches[1]);
   
   if ($fullPath) {
     CacheHeaders($fullPath);    
@@ -104,8 +104,8 @@ $url_patterns = array(
     'func'    => '_outputTypeFile',
   ),
   array(
-    'pattern' => ';^.*'.ImageLoader::imageDir().'/(.+)$;',
-    'func'    => '_outputImageLoaderFile',
+    'pattern' => ';^.*'.FileLoader::fileDir().'/(.+)$;',
+    'func'    => '_outputFileLoaderFile',
   ),
   array(
     'pattern' => ';^.*(media)(/.*)$;',
