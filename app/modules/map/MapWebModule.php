@@ -461,6 +461,11 @@ class MapWebModule extends WebModule {
     // return true on success, false on failure
     protected function generateTabForKey($tabKey, $feature, $dataController) {
         switch ($tabKey) {
+            case 'map':
+            {
+                $this->initializeMap($dataController, $feature);
+                return true;
+            }
             case 'nearby':
             {
                 $geometry = $feature->getGeometry();
@@ -700,12 +705,6 @@ class MapWebModule extends WebModule {
                 $tabKeys = array();
                 $tabJavascripts = array();
                 
-                // Map Tab
-                $tabKeys[] = 'map';
-
-                $hasMap = true;
-                $this->assign('hasMap', $hasMap);
-
                 if (!$this->feeds)
                     $this->feeds = $this->loadFeedData();
                 
@@ -753,8 +752,6 @@ class MapWebModule extends WebModule {
                 if (isset($this->args['address'])) {
                     $feature->setAddress($this->args['address']);
                 }
-
-                $this->initializeMap($dataController, $feature);
         
                 $this->assign('name', $feature->getTitle());
                 // prevent infinite loop in smarty_modifier_replace

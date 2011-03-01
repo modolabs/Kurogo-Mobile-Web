@@ -2,22 +2,22 @@
 
 {$tabBodies = array()}
 
-{capture name="mapPane" assign="mapPane"}
-  {block name="mapImage"}
-    <a name="map"> </a>
-    <div id="mapwrapper" class="image">
-      {if $isStatic}
-        {include file="findInclude:modules/map/mapscrollers.tpl"}
-        <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
-      {/if}
-    </div>
-    <div id="mapimage" style="display:none"></div>
-  {/block}
-  {if $hasMap}
+{if in_array('map', $tabKeys)}
+  {capture name="mapPane" assign="mapPane"}
+    {block name="mapImage"}
+      <a name="map"> </a>
+      <div id="mapwrapper" class="image">
+        {if $isStatic}
+          {include file="findInclude:modules/map/mapscrollers.tpl"}
+          <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
+        {/if}
+      </div>
+      <div id="mapimage" style="display:none"></div>
+    {/block}
     {include file="findInclude:modules/map/mapcontrols.tpl"}
-  {/if}
-{/capture}
-{$tabBodies['map'] = $mapPane}
+  {/capture}
+  {$tabBodies['map'] = $mapPane}
+{/if}
 
 {if in_array('info', $tabKeys)}
   {capture name="detailPane" assign="detailPane"}
