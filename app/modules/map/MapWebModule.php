@@ -196,8 +196,7 @@ class MapWebModule extends WebModule {
                 list($imageWidth, $imageHeight) = $this->fullscreenMapImageDimensions();
                 $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
             }
-            $this->addInternalCSS('/modules/map/css/fullscreen.css');
-            $this->addOnLoad('rotateScreen();');
+            $this->addOnOrientationChange('rotateScreen();');
         }
         
         $this->assign('fullscreen', $fullscreen);
@@ -207,9 +206,10 @@ class MapWebModule extends WebModule {
 
         // call the function that updates the image size        
         if ($fullscreen && $imgController->isStatic()) {
-            $this->addOnLoad('updateMapDimensions();');
+            // Let Webkit figure out what the window size is and then hide the address bar
+            // and resize the map
+            $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
             $this->addOnOrientationChange('updateMapDimensions();');
-            $this->addInlineJavascript('window.addEventListener("resize", updateMapDimensions, false);');
         }
     }
     

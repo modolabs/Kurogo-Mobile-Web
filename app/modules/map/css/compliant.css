@@ -415,6 +415,9 @@ body.landscape #mapscrollers {
 	bottom: 0;
 	overflow: hidden;
 }
+body.landscape .fullmap #mapscrollers {
+  width: auto;
+}
 
 body.landscape #mapzoom {
 	position: relative;

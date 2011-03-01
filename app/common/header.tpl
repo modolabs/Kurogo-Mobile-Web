@@ -114,7 +114,12 @@
   {/block}
 {/capture}
 
-<body class="{$moduleID|capitalize}Module" {block name="onLoad"}{if count($onLoadBlocks)} onload="onLoad();"{/if}{/block}>
+<body class="{$moduleID|capitalize}Module" 
+  {block name="onLoad"}
+    {if count($onLoadBlocks) || count($onOrientationChangeBlocks)}
+      onload="{if count($onLoadBlocks)}onLoad();{/if}{if count($onOrientationChangeBlocks)}onOrientationChange();{/if}"
+    {/if}
+  {/block}>
   <div id="nonfooternav">
     <a name="top"></a>
     {if isset($customHeader)}
