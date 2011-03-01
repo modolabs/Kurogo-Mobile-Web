@@ -113,6 +113,13 @@ class EmptyMapFeature implements MapFeature {
         return $this->index;
     }
     
+    public function getField($fieldName) {
+        return null;
+    }
+    
+    public function setField($fieldName, $value) {
+    }
+    
     public function getGeometry() {
         return $this->geometry;
     }
