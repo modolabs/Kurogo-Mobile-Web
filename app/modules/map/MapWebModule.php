@@ -117,7 +117,11 @@ class MapWebModule extends WebModule {
     private function initializeMap(MapDataController $dataController, MapFeature $feature, $fullscreen=FALSE) {
         
         $style = $feature->getStyle();
-        $geometry = $feature->getGeometry();
+        if (isset($this->args['lat'], $this->args['lon'])) {
+            $geometry = new EmptyMapPoint($this->args['lat'], $this->args['lon']);
+        } else {
+            $geometry = $feature->getGeometry();
+        }
 
         // zoom
         if (isset($this->args['zoom'])) {
@@ -740,10 +744,6 @@ class MapWebModule extends WebModule {
                     $dataController = $this->getDataController(NULL);
                     $cookieID = http_build_query($this->args);
                     $this->generateBookmarkOptions($cookieID);
-                }
-
-                if (isset($this->args['lat'], $this->args['lon'])) {
-                    $feature->setGeometry(new EmptyMapPoint($this->args['lat'], $this->args['lon']));
                 }
                 
                 $this->assign('name', $this->getArg('title', $feature->getTitle()));
