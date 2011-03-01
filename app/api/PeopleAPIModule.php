@@ -9,7 +9,6 @@ class PeopleAPIModule extends APIModule
         $result = array();
 
         foreach ($this->fieldConfig as $returnField => $fieldOptions) {
-            $label = $fieldOptions['label'];
             $attributes = array();
             foreach ($fieldOptions['attributes'] as $attribute) {
                 $values = $person->getField($attribute);
@@ -24,11 +23,30 @@ class PeopleAPIModule extends APIModule
             if ($attributes) {
                 if (isset($fieldOptions['format'])) {
                     $value = vsprintf($fieldOptions['format'], $attributes);
+                } elseif (isset($fieldOptions['parse'])) {
+                    $formatFunction = create_function('$value', $fieldOptions['parse']);
+                    $value = $formatFunction($attributes);
                 } else {
                     $value = $attributes[0];
                 }
-                $result[$returnField] = $value;
+                if (isset($fieldOptions['section'])) {
+                    $section = $fieldOptions['section'];
+                    if (!isset($result[$section])) {
+                        $result[$section] = array();
+                    }
+                    $valueArray = array(
+                        'label' => $fieldOptions['label'], // TODO decide if/when label is required
+                        'value' => $value,
+                        );
+                    if (isset($fieldOptions['type'])) {
+                        $valueArray['type'] = $fieldOptions['type'];
+                    }
+                    $result[$section][] = $valueArray;
+                } else {
+                    $result[$returnField] = $value;
+                }
             }
+            
         }
         return $result;
     }
