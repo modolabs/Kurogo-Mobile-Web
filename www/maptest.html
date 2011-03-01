@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head><meta http-equiv="content-type" content="application/xhtml+xml" /><title>Building Map: Building Map</title><link rel="shortcut icon" href="/device/compliant/favicon.ico" /><link href="/device/compliant/min/g=css-indoorMaps-detail-compliant-unknown-c7a4661ed75f8aad2f510a920c0db5e4&debug=1" rel="stylesheet" media="all" type="text/css"/><script type="text/javascript">
+var mapDetails = {"zoomLevels":7,"mapID":"v2","columnsZoomZero":1,"rowsZoomZero":1,"tileSize":256,"frame":{"x":31,"y":3,"width":193,"height":250}};
+
+function loadMap() {
+    var mapImage = document.getElementById("mapimage");
+    mapImage.style.display = "inline-block";
+
+    initializeMap("mapimage", {"coordinates":{"x":157.1875,"y":65.0000000001},"initialZoom":"4"});
+
+    var mapzoom = document.getElementById("mapzoom");
+    if (mapzoom) { // if page has map controls bind the controls to map actions
+        var zoomIn = document.getElementById("zoomin");
+        zoomIn.onclick = OpenLayers.Function.bind(map.zoomIn, map);
+
+        var zoomOut = document.getElementById("zoomout");
+        zoomOut.onclick = OpenLayers.Function.bind(map.zoomOut, map);
+
+        var recenter = document.getElementById("recenter");
+        recenter.onclick = OpenLayers.Function.bind(map.recenter, map);
+    }
+
+    // load markers
+    markersLayer = new OpenLayers.Layer.Markers( "Markers" );
+    map.addLayer(markersLayer);
+    var markers = [{"coordinates":{"x":122.75,"y":91.7499999999},"style":{"size":{"width":21,"height":25},"icon":"http:\/\/www.openlayers.org\/dev\/img\/marker.png"},"title":""},{"coordinates":{"x":104.25,"y":188.5},"style":{"size":{"width":21,"height":25},"icon":"http:\/\/www.openlayers.org\/dev\/img\/marker.png"},"title":""},{"coordinates":{"x":91.3125,"y":18.875},"style":{"size":{"width":21,"height":25},"icon":"http:\/\/www.openlayers.org\/dev\/img\/marker.png"},"title":"Coders Cubicle #1"},{"coordinates":{"x":106.4375,"y":19},"style":{"size":{"width":21,"height":25},"icon":"http:\/\/www.openlayers.org\/dev\/img\/marker.png"},"title":"Coder Cubicle #2"},{"coordinates":{"x":157.1875,"y":65.0000000001},"style":{"size":{"width":21,"height":25},"icon":"http:\/\/www.openlayers.org\/dev\/img\/marker.png"},"title":"Conference Room"}];
+    for(var i=0; i < markers.length; i++) {
+        var marker = markers[i];
+        var style = marker.style;
+        var size = new OpenLayers.Size(style.size.width, style.size.height);
+        var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+        var icon = new OpenLayers.Icon(style.icon, size, offset);
+        var lonLat = lonLatFromCoords(marker.coordinates);
+        var featureMarker = new OpenLayers.Marker(lonLat, icon.clone());
+        markersLayer.addMarker(featureMarker);
+    }
+    map.recenter();
+}
+</script> <script src="http://www.openlayers.org/api/OpenLayers.js" type="text/javascript"></script> <script src="/device/compliant/min/g=file:/modules/indoorMaps/javascript/map.js&debug=1" type="text/javascript"></script> <script src="/device/compliant/min/g=file:/modules/indoorMaps/javascript/MobileDrag.js&debug=1" type="text/javascript"></script> <script src="/device/compliant/min/g=file:/modules/indoorMaps/javascript/MobileDragPan.js&debug=1" type="text/javascript"></script> <script src="/device/compliant/min/g=file:/modules/indoorMaps/javascript/MobilePinch.js&debug=1" type="text/javascript"></script> <script src="/device/compliant/min/g=file:/modules/indoorMaps/javascript/MobileZoom.js&debug=1" type="text/javascript"></script> <script src="/device/compliant/min/g=file:/modules/indoorMaps/javascript/MobilePanel.js&debug=1" type="text/javascript"></script> <script src="/device/compliant/min/g=file:/modules/indoorMaps/javascript/MobileZoomPanel.js&debug=1" type="text/javascript"></script> <script src="/device/compliant/min/g=js-indoorMaps-detail-compliant-unknown-c7a4661ed75f8aad2f510a920c0db5e4&debug=1" type="text/javascript"></script> <script type="text/javascript">
+        	function setHeight() {
+				document.getElementById("tabscontainer").style.height=(window.innerHeight-56) + "px";	
+			}
+			function onLoad() {
+                	  scrollTo(0,1);
+					  setHeight();
+					  //loadMap();
+                  }
+
+      </script>
+
+	<meta name="HandheldFriendly" content="true" /><meta name="viewport" id="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" /><link rel="apple-touch-icon" href="/device/compliant/common/images/icon-indoorMaps.png" />
+
+<style type="text/css">
+
+#tabscontainer {
+	position: absolute;
+	top: 44px;
+	right: 0;
+	left: 0;
+	height: 360px;
+	padding: 12px 12px 0 12px;
+}
+#tabbodies {
+	position: absolute;
+	top: 86px;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	border-radius:0; 
+	margin: 0;
+	z-index: -1;
+}
+.tabbody {
+	background-color: #fff;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+#mapimage {
+	border: 1px solid #999;
+	position: absolute;
+	top: 6px;
+	bottom: 6px;
+	right: 5px;
+	left: 5px;
+	min-height: none;
+	width: auto;
+	overflow: hidden;
+}
+#photoTab {
+	text-align: center;
+}
+#mapzoom {
+	position: absolute;
+	z-index:10;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 36px;
+}
+#mapzoom .scrim {
+	position: absolute;
+	z-index: -1;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 36px;
+	background-color: #000;
+	opacity: 0.0;
+}
+#mapzoom a {
+	display: block;
+	float: left;
+	width: 20%;
+	padding-bottom: 2px;
+	text-align: center;
+}
+#mapzoom a img {
+	border: none;
+}
+</style>
+
+</head>
+
+
+
+
+<body class="IndoorMapsModule" onload="onLoad();" onResize="onLoad();" onOrientationChange="onLoad()"><div id="nonfooternav"><a name="top"> </a><div id="navbar"><div class="breadcrumbs"><a name="top" href="/device/compliant/home/" class="homelink"><img src="/device/compliant/common/images/homelink.png" width="57" height="45" alt="Home" /></a><a href="./" class="module"><img src="/device/compliant/common/images/title-indoorMaps.png" width="28" height="28" alt="" /></a><a href="campus?id=cambridge&_b=%258B%25AEV%252AQ%25B2R%25F2%25CBW%2508%25C9%252C%25C9IU%25D2Q%25CAA%25E3%2517%2500%25B9%2599y%2529%25A9%2515%2540v%2522%2590%25ADT%251B%250B%2500" class="crumb3a"><span>Category</span></a><a href="building?id=stata&_b=%258B%25AEV%252AQ%25B2R%25F2%25CBW%2508%25C9%252C%25C9IU%25D2Q%25CAA%25E3%2517%2500%25B9%2599y%2529%25A9%2515%2540v%2522%2590%25ADT%25ABC%2594%259E%25E4%25C4%25DC%2582%25D2b%25A8%25A6%25CC%2514%255B%2B%253F%25A9%25283%2525%253DU%25A96%2516%2500" class="crumb3a"><span>Subcategory</span></a><a href="floorBrowseList?mapID=v2&featureType=conference_room&_b=%258B%25AEV%252AQ%25B2R%25F2%25CBW%2508%25C9%252C%25C9IU%25D2Q%25CAA%25E3%2517%2500%25B9%2599y%2529%25A9%2515%2540v%2522%2590%25ADT%25ABC%2594%259E%25E4%25C4%25DC%2582%25D2b%25A8%25A6%25CC%2514%255B%2B%253F%25A9%25283%2525%253D%2595X%2503%2592J3sR2%25F3%25D2%2511F%2514%2597%2524%2596%2524%2512%25AB%253D-%2527%253F%25BF%2508%25AA77%25B1%25C0%25D3%25C5%25B6%25CCH%25A96%2516%2500" class="crumb3c"><span>Cambridge, MA</span></a><span class="pagetitle">Building 102</span></div></div><div id="container"><a name="scrolldown"> </a>
+
+<div id="tabscontainer">
+<h2>Place Name</h2><ul id="tabs"><li class="active"><a href="#top" onclick="showTab('mapTab', this);setHeight();">Map</a></li><li><a href="#top" onclick="showTab('detailTab', this);setHeight();">Details</a></li><li><a href="#top" onclick="showTab('photoTab', this);loadPhoto(photoURL,'photo');setHeight();">Photo</a></li><li><a href="#top">Nearby</a></li></ul>
+
+<div id="tabbodies">
+	<div class="tabbody" id="mapTab">
+		<div id="mapimage">
+		<!--	<img src="http://maps.google.com/maps/api/staticmap?center=100+CambridgePark+Drive+Cambridge,MA&zoom=14&size=320x480&maptype=roadmap&sensor=false"/> -->
+			<img src="/map-fpo.png"/>
+			<div id="mapzoom"><div class="scrim"></div><a id="zoomin"><img src="/modules/map/images/button-zoom-in.png" width="60" height="34" alt="Zoom In" /></a><a id="zoomout"><img src="/modules/map/images/button-zoom-out.png" width="60" height="34" alt="Zoom Out" /></a><a id="recenter"><img src="/modules/map/images/button-recenter.png" width="60" height="34" alt="Recenter" /></a><a id="fullscreen" href=""><img src="/modules/map/images/button-fullscreen.png" width="60" height="34" alt="Fullscreen" /></a></div>
+		</div>
+	</div>
+	<div class="tabbody" id="photoTab" style="display:none"><img id="photo" src="http://farm5.static.flickr.com/4071/4626289601_d047b061f5.jpg" width="99.9%" alt="" /></div>
+	<div class="tabbody" id="detailTab" style="display:none"><ul class="nav"><li> <strong>Building:&nbsp;</strong>ADOLPHUS BUSCH HALL</li><li> <strong>Building Number:&nbsp;</strong>475</li><li> <strong>Library Name:&nbsp;</strong>Minda de Gunzburg Center for European Studies Library</li><li> <strong>Address:&nbsp;</strong>27-29 KIRKLAND ST</li><li> <strong>Affiliation:&nbsp;</strong>Center for European Studies</li><li> <strong>Website:&nbsp;</strong><a href="http://www.ces.fas.harvard.edu/about/library.html" class="external">http://www.ces.fas.harvard.edu/about/library.html</a></li><li> <strong>Building Name:&nbsp;</strong>ADOLPHUS BUSCH HALL</li><li> <strong>City:&nbsp;</strong>Cambridge</li><li> <strong>State:&nbsp;</strong>MA</li><li> <strong>Year Built:&nbsp;</strong>1917</li></ul></div></div><div class="clear"></div>
+</div>
+
+</div>
+
+      <script type="text/javascript">
+        showTab('mapTab'); 
+      </script></div></body></html>

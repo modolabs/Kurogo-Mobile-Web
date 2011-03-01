@@ -116,7 +116,7 @@
 
 <body class="{$moduleID|capitalize}Module" {block name="onLoad"}{if count($onLoadBlocks)} onload="onLoad();"{/if}{/block}>
   <div id="nonfooternav">
-    <a name="top"></a>
+    <a name="top"> </a>
     {if isset($customHeader)}
       {$customHeader|default:''}
     {else}

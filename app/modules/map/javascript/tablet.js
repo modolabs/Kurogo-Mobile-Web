@@ -201,6 +201,12 @@ function scrollMap(north, east) {
     document.getElementById("staticmapimage").src = constructMapURL();
 }
 
+function setTabsHeight() {
+	// Set the height of the tabs container to fill the browser window height
+	var tc = document.getElementById("tabscontainer");
+	if(tc) { tc.style.height=(window.innerHeight-56) + "px" }
+}
+
 /*
 function disable(strID) {
 // Visually dims and disables the anchor whose id is strID

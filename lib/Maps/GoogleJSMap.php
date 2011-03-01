@@ -182,8 +182,8 @@ var initLon = {$this->center['lon']};
 function loadMap() {
     var mapImage = document.getElementById("{$this->mapElement}");
     mapImage.style.display = "inline-block";
-    mapImage.style.width = "{$this->imageWidth}";
-    mapImage.style.height = "{$this->imageHeight}";
+//    mapImage.style.width = "{$this->imageWidth}";
+//    mapImage.style.height = "{$this->imageHeight}";
 
     var initCoord = new google.maps.LatLng({$this->center['lat']}, {$this->center['lon']});
     var options = {
@@ -213,6 +213,8 @@ function loadMap() {
     google.maps.event.addDomListener(recenter, "click", function() {
         map.setCenter(initCoord)
     });
+
+	setTabsHeight();
 }
 
 JS;

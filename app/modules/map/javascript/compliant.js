@@ -4,6 +4,8 @@ var staticMapOptions;
 var mapWidth;
 var mapHeight;
 
+document.body.addEventListener('orientationChange',function(){alert("foo")},false)
+
 function hideMapTabChildren() {
     var mapTab = document.getElementById("mapTab");
     for (var i = 0; i < mapTab.childNodes.length; i++) {
@@ -199,6 +201,17 @@ function scrollMap(north, east) {
         staticMapOptions['bbox'] = bbox;
     }
     document.getElementById("staticmapimage").src = constructMapURL();
+}
+
+function setTabsHeight() {
+	// Set the height of the tabs container to fill the browser window height
+	var tc = document.getElementById("tabscontainer");
+	if(tc) { 
+		// This little two-step is sadly necessary to force the mobile browsers to size correctly
+		tc.style.height="1000px";
+		scrollTo(0,1);
+		tc.style.height=(window.innerHeight-56) + "px";
+	}
 }
 
 /*

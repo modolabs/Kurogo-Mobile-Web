@@ -1,29 +1,64 @@
-h2 {
-	margin-bottom: 4px;
-}
+#footerlinks, #footer {display: none;}
 
-#photo {
+#tabscontainer {
+	position: absolute;
+	top: 44px;
+	right: 0;
+	left: 0;
+	height: 360px;
+	padding: 12px 12px 0 12px;
 }
-
-#phototab {
+#tabs {
+	position: absolute;
+	z-index: 2000;
+}
+#tabbodies {
+	position: absolute;
+	top: 86px;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	border-radius:0; 
+	margin: 0;
+	z-index: 500;
+	min-height: none;
+}
+.tabbody {
+	background-color: #fff;
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	height: auto;
+	padding-bottom: 2em;
+}
+#mapimage {
+	border: 1px solid #999;
+	position: absolute;
+	z-index: 1000;
+	top: 6px;
+	bottom: 6px;
+	right: 5px;
+	left: 5px;
+	width: auto;
+	overflow: hidden;
+}
+#photoTab {
 	text-align: center;
 }
-
-#phototab img {
-	margin-bottom: 8px
-}
-
 #mapTab {
-  text-align: center;
-  padding-left: 0;
-  padding-right: 0;
+	bottom: 0;
+	padding-bottom: 0;
 }
-
 #mapwrapper {
-  display: inline-block;
-	width: 294px;
-	height: 347px;
-	position: relative;
+	border: 1px solid #999;
+	position: absolute;
+	top: 6px;
+	bottom: 6px;
+	right: 5px;
+	left: 5px;
+	min-height: none;
+	width: auto;
 	overflow: hidden;
 }
 
@@ -119,16 +154,29 @@ h2 {
 }
 
 #mapzoom {
-	position: relative;
-	height: 34px;
-	margin: 7px 5px;
+	position: absolute;
+	z-index:2500;
+	bottom: 6px;
+	left: 6px;
+	right: 6px;
+	height: 40px;
 }
-
+#mapzoom .scrim {
+	position: absolute;
+	z-index: -1;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 40px;
+	background-color: #000;
+	opacity: 0.25;
+}
 #mapzoom a {
 	display: block;
 	position: absolute;
 	width: 40px;
 	height: 34px;
+	margin-top: 4px;
 	background-image: url(/modules/map/images/buttons.png);
 	background-repeat: no-repeat;
 }
@@ -162,7 +210,19 @@ h2 {
 	background-position: -80px 0;
 }
 
+#tabscontainer #bookmarkContainer {
+	margin: -42px -4px 0 8px;
+}
+
 /* copying the fullscreen style for now */
+
+body.portrait #mapimage, body.landscape #mapimage {
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
 #smallscreen {
 	top: 0;
 	bottom: auto;

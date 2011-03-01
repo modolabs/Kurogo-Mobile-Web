@@ -1,5 +1,5 @@
 {include file="findInclude:common/header.tpl" scalable=false}
-
+<a name="scrolldown"> </a>
 {$tabBodies = array()}
 
 {capture name="mapPane" assign="mapPane"}
@@ -44,12 +44,10 @@
 {/if}
 
 {block name="tabView"}
-  <a name="scrolldown"> </a>
-    <div class="focal shaded">
-        <h2>{$name}</h2>
-        <p class="address">{$address|replace:' ':'&shy; '}</p>
+<div id="tabscontainer">
+        <h2>{$name} <a href="#" onclick="updateMapDimensions()"></h2>
+        <!--<p class="address">{$address|replace:' ':'&shy; '}</p>-->
         {include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
-        <a name="scrolldown"></a>
     {include file="findInclude:common/tabs.tpl" tabBodies=$tabBodies}
   </div>
 {/block}

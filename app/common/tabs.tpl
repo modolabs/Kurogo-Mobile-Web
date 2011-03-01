@@ -9,7 +9,7 @@
         
         {block name="tab"}
           <li{if $tabKey == $tabbedView['current']} class="active"{/if}>
-            <a href="{block name='tabLink'}#scrolldown{/block}" onclick="showTab('{$tabKey}Tab', this);{$tabInfo['javascript']}">{$tabInfo['title']}</a>
+            <a href="{block name='tabLink'}#top{/block}" onclick="showTab('{$tabKey}Tab', this);{$tabInfo['javascript']}">{$tabInfo['title']}</a>
           </li>
         {/block}
         
