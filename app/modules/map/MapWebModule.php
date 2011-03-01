@@ -300,7 +300,7 @@ class MapWebModule extends WebModule {
         if ($index === NULL) {
             return MapDataController::factory('MapDataController', array(
                 'JS_MAP_CLASS' => 'GoogleJSMap',
-                'DEFAULT_ZOOM_LEVEL' => 10
+                'DEFAULT_ZOOM_LEVEL' => $this->getModuleVar('DEFAULT_ZOOM_LEVEL', 10)
                 ));
         
         } else if (isset($this->feeds[$index])) {
