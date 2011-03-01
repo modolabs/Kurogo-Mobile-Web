@@ -196,8 +196,8 @@ class MapWebModule extends WebModule {
                 list($imageWidth, $imageHeight) = $this->fullscreenMapImageDimensions();
                 $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
             }
-            $this->addInternalCSS('/modules/map/css/fullscreen.css');
             $this->addOnLoad('rotateScreen();');
+            $this->addOnOrientationChange('rotateScreen();');
         }
         
         $this->assign('fullscreen', $fullscreen);
@@ -209,7 +209,6 @@ class MapWebModule extends WebModule {
         if ($fullscreen && $imgController->isStatic()) {
             $this->addOnLoad('updateMapDimensions();');
             $this->addOnOrientationChange('updateMapDimensions();');
-            $this->addInlineJavascript('window.addEventListener("resize", updateMapDimensions, false);');
         }
     }
     

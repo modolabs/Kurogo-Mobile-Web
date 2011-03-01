@@ -39,11 +39,37 @@ function loadImage(imageURL,imageID) {
 
 function loadMapImage() {
     var mapImage = document.getElementById("staticmapimage");
+    var objMap = document.getElementById("mapimage");
+	  var objContainer = document.getElementById("container");
+	  var objScrollers = document.getElementById("mapscrollers");
+	  
     var newSrc = constructMapURL();
     if (newSrc != mapImage.src) {
         show("loadingimage");
         mapImage.src = constructMapURL();
     }
+    if (objContainer) {
+        objContainer.style.width = mapWidth+"px";
+        objContainer.style.height = mapHeight+"px";
+        objMap.style.width = mapWidth+"px";
+        objMap.style.height = mapHeight+"px";
+    }
+    if (objScrollers) {
+        switch(window.orientation) {
+            case 0:
+            case 180:
+              objScrollers.style.height = (mapHeight-42)+"px";
+              objScrollers.style.width = mapWidth+"px";
+            break;
+        
+            case -90:
+            case 90:
+              objScrollers.style.height = mapHeight+"px";
+              objScrollers.style.width = (mapWidth-42)+"px";
+            break;
+        }
+    }
+
 }
 
 function addStaticMapControls() {
@@ -127,6 +153,8 @@ function constructMapURL() {
 }
 
 function updateMapDimensions() {
+    console.log('updateMapDimensions() called');
+
     if (!centerZoomBased) {
         // if width and height proprotions changed, we need to update the bbox
         var oldHeight = mapHeight;
