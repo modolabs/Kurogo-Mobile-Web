@@ -27,7 +27,7 @@ class MapWebModule extends WebModule {
     protected $id = 'map';
     protected $feeds;
     
-    private function pageSupportsDynamicMap() {
+    protected function pageSupportsDynamicMap() {
         return ($this->pagetype == 'compliant' ||
                 $this->pagetype == 'tablet')
             && $this->platform != 'blackberry'
@@ -303,6 +303,9 @@ class MapWebModule extends WebModule {
     }
 
     private function getDataController($index) {
+        if (!$this->feeds)
+            $this->feeds = $this->loadFeedData();
+
         if ($index === NULL) {
             return MapDataController::factory('MapDataController', array(
                 'JS_MAP_CLASS' => 'GoogleJSMap',
@@ -716,9 +719,6 @@ class MapWebModule extends WebModule {
                 $tabKeys = array();
                 $tabJavascripts = array();
                 
-                if (!$this->feeds)
-                    $this->feeds = $this->loadFeedData();
-                
                 if (isset($this->args['featureindex'])) { // this is a regular place
                     $index = $this->args['featureindex'];
                     $dataController = $this->getDataController($this->args['category']);
@@ -772,13 +772,18 @@ class MapWebModule extends WebModule {
                 break;
                 
             case 'fullscreen':
-                if (!$this->feeds)
-                    $this->feeds = $this->loadFeedData();
-                
-                $index = $this->args['featureindex'];
-                $dataController = $this->getDataController($this->args['category']);
-                $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
-                $feature = $dataController->getFeature($index, $subCategory);
+                if (isset($this->args['featureindex'])) { // this is a regular place
+                    $index = $this->args['featureindex'];
+                    $dataController = $this->getDataController($this->args['category']);
+                    $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
+                    $feature = $dataController->getFeature($index, $subCategory);
+                } else {
+                    $center = array('lat' => 0, 'lon' => 0);
+                    $feature = new EmptyMapFeature($center);
+                    $dataController = $this->getDataController(NULL);
+                    $cookieID = http_build_query($this->args);
+                    $this->generateBookmarkOptions($cookieID);
+                }                 
 
                 $this->initializeMap($dataController, $feature, true);
                 break;
