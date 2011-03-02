@@ -32,7 +32,6 @@ class SiteConfig extends ConfigGroup {
     define('SITE_LIB_DIR',         SITE_DIR.'/lib');
     define('SITE_APP_DIR',         SITE_DIR.'/app');
     define('SITE_MODULES_DIR',     SITE_DIR.'/app/modules');
-    define('SITE_API_DIR',         SITE_DIR.'/app/api');
     define('DATA_DIR',             SITE_DIR.'/data');
     define('CACHE_DIR',            SITE_DIR.'/cache');
     define('LOG_DIR',              SITE_DIR.'/logs');
