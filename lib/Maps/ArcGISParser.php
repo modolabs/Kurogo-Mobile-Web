@@ -354,6 +354,10 @@ class ArcGISParser extends DataParser
         }
     }
     
+    public function getSelectedLayerId() {
+        return $this->selectedLayer->getId();
+    }
+    
     public function getSubLayerNames() {
         $result = array();
         foreach ($this->subLayers as $id => $sublayer) {

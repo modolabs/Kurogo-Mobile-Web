@@ -117,11 +117,9 @@ class MapWebModule extends WebModule {
     private function initializeMap(MapDataController $dataController, MapFeature $feature, $fullscreen=FALSE) {
         
         $style = $feature->getStyle();
-        if (isset($this->args['lat'], $this->args['lon'])) {
-            $geometry = new EmptyMapPoint($this->args['lat'], $this->args['lon']);
-        } else {
-            $geometry = $feature->getGeometry();
-        }
+        $geometries = array();
+        
+        $geometries[] = $feature->getGeometry();
 
         // zoom
         if (isset($this->args['zoom'])) {
@@ -145,8 +143,14 @@ class MapWebModule extends WebModule {
                 $projector = new MapProjector();
                 $projector->setSrcProj($dataProjection);
                 $projector->setDstProj($outputProjection);
-                $geometry = $projector->projectGeometry($geometry);
+                foreach ($geometries as $i => $geometry) {
+                    $geometries[$i] = $projector->projectGeometry($geometry);
+                }
             }
+        }
+        
+        if (isset($this->args['lat'], $this->args['lon'])) {
+            array_unshift($geometries, new EmptyMapPoint($this->args['lat'], $this->args['lon']));
         }
         
         // center
@@ -154,30 +158,32 @@ class MapWebModule extends WebModule {
             $latlon = explode(",", $this->args['center']);
             $center = array('lat' => $latlon[0], 'lon' => $latlon[1]);
         } else {
-            $center = $geometry->getCenterCoordinate();
+            $center = $geometries[0]->getCenterCoordinate();
         }
 
         $imgController->setCenter($center);
         $imgController->setZoomLevel($zoomLevel);
 
-        switch ($geometry->getType()) {
-            case MapGeometry::POINT:
-                if ($imgController->canAddAnnotations()) {
-                    $imgController->addAnnotation($geometry->getCenterCoordinate(), $style, $feature->getTitle());
-                }
-                break;
-            case MapGeometry::POLYLINE:
-                if ($imgController->canAddPaths()) {
-                    $imgController->addPath($geometry->getPoints(), $style);
-                }
-                break;
-            case MapGeometry::POLYGON:
-                if ($imgController->canAddPolygons()) {
-                    $imgController->addPolygon($geometry->getRings(), $style);
-                }
-                break;
-            default:
-                break;
+        foreach ($geometries as $i => $geometry) {
+          switch ($geometry->getType()) {
+              case MapGeometry::POINT:
+                  if ($imgController->canAddAnnotations()) {
+                      $imgController->addAnnotation($geometry->getCenterCoordinate(), $style, $feature->getTitle());
+                  }
+                  break;
+              case MapGeometry::POLYLINE:
+                  if ($imgController->canAddPaths()) {
+                      $imgController->addPath($geometry->getPoints(), $style);
+                  }
+                  break;
+              case MapGeometry::POLYGON:
+                  if ($imgController->canAddPolygons()) {
+                      $imgController->addPolygon($geometry->getRings(), $style);
+                  }
+                  break;
+              default:
+                  break;
+          }
         }
 
         if (!$fullscreen) {
@@ -393,7 +399,7 @@ class MapWebModule extends WebModule {
     protected function setBookmarks($bookmarks) {
         $values = implode(",", $bookmarks);
         $expireTime = time() + $this->bookmarkLifespan;
-        setcookie($this->bookmarkCookie, $values, $expireTime);
+        setcookie($this->bookmarkCookie, $values, $expireTime, COOKIE_PATH);
     }
 
     protected function addBookmark($aBookmark) {
