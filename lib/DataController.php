@@ -165,6 +165,10 @@ abstract class DataController
         return $this->parseData($data, $parser);
     }
     
+    protected function cacheTimestamp() {
+        return null;
+    }
+    
     public function getData()
     {
         if (!$url = $this->url()) {
@@ -188,7 +192,7 @@ abstract class DataController
                 }
                 
                 if ($data = $this->retrieveData($url)) {
-                    $this->cache->write($data, $cacheFilename);
+                    $this->cache->write($data, $cacheFilename, $this->cacheTimestamp());
                 }
                 
                 if ($this->debugMode) {
