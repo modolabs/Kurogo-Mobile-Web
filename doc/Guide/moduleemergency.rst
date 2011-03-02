@@ -5,7 +5,8 @@ Emergency Module
 The emergency module provides a mobile interface to a sites emergency information. 
 The module can display the latest emergency information and a list of emergency contacts.
 The data source for this module can come from a drupal server, running emergency drupal module
-which can be found in the add-ons at *add-ons/drupal-modules/emergency*.  Alternatively,
+which can be found in the add-ons at *add-ons/drupal-modules/emergency*, (Currently only
+supports Drupal 6).  Alternatively,
 a standard RSS feed can be used for the emergency notice, and the contacts list can be 
 configured with an ini file.
 
@@ -51,6 +52,7 @@ Using Drupal Emergency Module
 
 **Installation**
 
+This add on module requires Drupal 6, Drupal 7 is not yet supported.
 Follow the standard procedure for installing a drupal module, which is:  
 
 * In order to install this module you must first install the 
