@@ -7,25 +7,34 @@ class PeopleAPIModule extends APIModule
     
     private function formatPerson($person) {
         $result = array();
-
-        foreach ($this->fieldConfig as $returnField => $fieldOptions) {
+        foreach ($this->fieldConfig as $fieldID => $fieldOptions) {
             $attributes = array();
-            foreach ($fieldOptions['attributes'] as $attribute) {
+            for ($i = 0; $i < count($fieldOptions['attributes']); $i++) {
+                if (isset($fieldOptions['labels'])) {
+                    $label = $fieldOptions['labels'][$i];
+                } else {
+                    $label = $i;
+                }
+            
+                $attribute = $fieldOptions['attributes'][$i];
                 $values = $person->getField($attribute);
                 if ($values) {
                     if (is_array($values)) {
-                        $attributes[] = $values[0];
+                        $attributes[$label] = $values[0];
                     } else {
-                        $attributes[] = $values;
+                        $attributes[$label] = $values;
                     }
                 }
             }
+
             if ($attributes) {
                 if (isset($fieldOptions['format'])) {
                     $value = vsprintf($fieldOptions['format'], $attributes);
                 } elseif (isset($fieldOptions['parse'])) {
                     $formatFunction = create_function('$value', $fieldOptions['parse']);
                     $value = $formatFunction($attributes);
+                } elseif (isset($fieldOptions['labels'])) {
+                    $value = $attributes;
                 } else {
                     $value = $attributes[0];
                 }
@@ -35,15 +44,13 @@ class PeopleAPIModule extends APIModule
                         $result[$section] = array();
                     }
                     $valueArray = array(
-                        'label' => $fieldOptions['label'], // TODO decide if/when label is required
+                        'label' => $fieldOptions['label'],
+                        'type' => $fieldOptions['type'],
                         'value' => $value,
                         );
-                    if (isset($fieldOptions['type'])) {
-                        $valueArray['type'] = $fieldOptions['type'];
-                    }
                     $result[$section][] = $valueArray;
                 } else {
-                    $result[$returnField] = $value;
+                    $result[$fieldOptions['label']] = $value;
                 }
             }
             
