@@ -96,16 +96,19 @@ class PeopleAPIModule extends APIModule
                         $this->setResponseError($error);
                     }
                     
+                    $response = null;
                     if ($people !== false) {
                         $results = array();
                         $resultCount = count($people);
                         foreach ($people as $person) {
                             $results[] = $this->formatPerson($person);
                         }
-                        $response->total = $resultCount;
-                        $response->returned = $resultCount;
-                        $response->displayField = 'name';
-                        $response->results = $results;
+                        $response = array(
+                            'total' => $resultCount,
+                            'returned' => $resultCount,
+                            'displayField' => 'name',
+                            'results' => $results,
+                            );
                     }
                     
                     $this->setResponse($response);

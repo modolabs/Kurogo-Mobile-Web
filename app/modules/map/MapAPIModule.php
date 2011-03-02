@@ -1,0 +1,177 @@
+<?php
+
+require_once LIB_DIR . '/Maps/MapFeature.php';
+require_once LIB_DIR . '/Maps/MapDataController.php';
+
+require_once LIB_DIR . '/Maps/ArcGISDataController.php';
+require_once LIB_DIR . '/Maps/ArcGISParser.php';
+require_once LIB_DIR . '/Maps/KMLDataController.php';
+require_once LIB_DIR . '/Maps/KMLDataParser.php';
+require_once LIB_DIR . '/Maps/MapProjector.php';
+require_once LIB_DIR . '/Maps/MapSearch.php';
+
+class MapAPIModule extends APIModule
+{
+    protected $id = 'map';
+    protected $feeds = null;
+    
+    // from MapWebModule
+    private function getDataController($index) {
+        if (!$this->feeds) {
+            $this->feeds = $this->loadFeedData();
+        }
+    
+        if ($index === NULL) {
+            return MapDataController::factory('MapDataController', array(
+                'JS_MAP_CLASS' => 'GoogleJSMap',
+                'DEFAULT_ZOOM_LEVEL' => $this->getModuleVar('DEFAULT_ZOOM_LEVEL', 10)
+                ));
+        
+        } else if (isset($this->feeds[$index])) {
+            $feedData = $this->feeds[$index];
+            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+            return $controller;
+        }
+    }
+    
+    private function getCategoriesForCampus($campusID=NULL) {
+        $categories = array();
+        foreach ($this->feeds as $id => $feedData) {
+            if (isset($feedData['HIDDEN']) && $feedData['HIDDEN']) continue;
+            if ($campusID && (!isset($feedData['CAMPUS']) || $feedData['CAMPUS'] != $campusID)) continue;
+            
+            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $category = array(
+                'id' => $id,
+                'title' => $controller->getTitle(),
+                );
+
+            // TODO add these properties to the controller
+            if (isset($feedData['SUBTITLE'])) {
+                $category['subtitle'] = $feedData['SUBTITLE'];
+            }
+            if (isset($feedData['CAMPUS'])) {
+                $category['campus'] = $feedData['CAMPUS'];
+            }
+
+            $listItems = $controller->getListItems(null);
+            if (count($listItems)) {
+                $listItem = $listItems[0]; // listItem implements MapListElement
+                if (!($listItem instanceof MapFeature)) {
+                    $category['subcategories'] = array();
+                    foreach ($listItems as $listItem) {
+                        $subcategory = array(
+                            'id' => $listItem->getIndex(),
+                            'title' => $listItem->getTitle(),
+                            );
+                        $subtitle = $listItem->getSubtitle();
+                        //if ($subtitle) {
+                        //    $subcategory['subtitle'] = $subtitle;
+                        //}
+                        $category['subcategories'][] = $subcategory;
+                    }
+                    $category['subcategoryCount'] = count($category['subcategories']);
+                }
+            }
+
+            $categories[] = $category;
+        }
+        return $categories;
+    }
+
+    public function initializeForCommand() {
+        
+        switch ($this->command) {
+            case 'campuses':
+                // we need to move the list of campuses out of config 
+                // and into a feed so we can have a parser do this work
+                $numCampuses = $GLOBALS['siteConfig']->getVar('CAMPUS_COUNT');
+                $campuses = array();
+                for ($i = 0; $i < $numCampuses; $i++) {
+                    $campusInfo = $GLOBALS['siteConfig']->getSection('campus-'.$i);
+                    list($lat, $lon) = explode(',', $campusInfo['center']);
+                    $address = array('display' => $campusInfo['address']);
+                    $campus = array(
+                        'id' => $campusInfo['id'],
+                        'campus' => $campusInfo['id'],
+                        'title' => $campusInfo['title'],
+                        'lat' => $lat,
+                        'lon' => $lon,
+                        'address' => $address,
+                        'description' => $campusInfo['description'],
+                        );
+                    $campuses[] = $campus;
+                }
+                
+                $response = array(
+                    'total' => $numCampuses,
+                    'returned' => $numCampuses,
+                    'displayField' => 'title',
+                    'results' => $campuses,
+                    );
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+            
+                break;
+            case 'categories':
+                if (!$this->feeds) {
+                    $this->feeds = $this->loadFeedData();
+                }
+                
+                $campusIndex = $this->getArg('campus'); // if this is null, fetch everything
+                $categories = $this->getCategoriesForCampus($campusIndex);
+
+                $this->setResponse($categories);
+                $this->setResponseVersion(1);
+            
+                break;
+            case 'places':
+                $category = $this->getArg('category');
+                $subcategory = $this->getArg('subcategory', null);
+                $dataController = $this->getDataController($category);
+                $listItems = $dataController->getListItems($subcategory);
+                $places = array();
+                foreach ($listItems as $listItem) {
+                    if ($listItem instanceof MapFeature) {
+                        $geometry = $listItem->getGeometry();
+                        $center = $geometry->getCenterCoordinate();
+                        $place = array(
+                            'title'       => $listItem->getTitle(),
+                            'subtitle'    => $listItem->getSubtitle(),
+                            'category'    => $category,
+                            'lat'         => $center['lat'],
+                            'lon'         => $center['lon'],
+                            'description' => $listItem->getDescription(),
+                            );
+                        if ($subcategory) {
+                            $place['subcategory'] = $subcategory;
+                        }
+                        $places[] = $place;
+                    }
+                }
+                
+                $response = array(
+                    'total' => count($places),
+                    'returned' => count($places),
+                    'displayField' => 'title',
+                    'results' => $places,
+                    );
+                
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+                
+                break;
+            case 'search':
+                break;
+
+            // ajax calls
+            case 'staticImageURL':
+                break;
+            default:
+                $this->invalidCommand();
+                break;
+        }
+    }
+}
