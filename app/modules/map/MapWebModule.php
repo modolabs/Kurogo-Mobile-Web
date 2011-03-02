@@ -399,7 +399,7 @@ class MapWebModule extends WebModule {
     protected function setBookmarks($bookmarks) {
         $values = implode(",", $bookmarks);
         $expireTime = time() + $this->bookmarkLifespan;
-        setcookie($this->bookmarkCookie, $values, $expireTime);
+        setcookie($this->bookmarkCookie, $values, $expireTime, COOKIE_PATH);
     }
 
     protected function addBookmark($aBookmark) {
