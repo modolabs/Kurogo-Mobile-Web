@@ -5,6 +5,7 @@
      protected $cacheFolder = "Videos"; // set the cache folder
      protected $cacheSuffix = "json";   // set the suffix for cache files
      protected $DEFAULT_PARSER_CLASS='JSONDataParser';
+	 public $totalItems;
 
      public static function factory($args=null)
      {

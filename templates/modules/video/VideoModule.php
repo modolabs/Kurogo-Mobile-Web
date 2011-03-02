@@ -4,13 +4,46 @@
  {
  	
    protected $id='video';  // this affects which .ini is loaded
+   protected $maxPerPage = 10;
+   protected $start = 0;
+   protected $categories = 0;
+   protected $feedIndex = 0;
    
    protected function initializeForPage() {
    
-     if ($GLOBALS['deviceClassifier']->getPagetype()=='basic') {
-	     $this->assign('showUnsupported', true);
-	     return;
+   	if ($GLOBALS['deviceClassifier']->getPagetype()=='basic') {
+   		$this->assign('showUnsupported', true);
+   		return;
+   	}
+
+    if ($max = $this->getModuleVar('MAX_RESULTS')) {
+    	$this->maxPerPage = $max;
+    }
+
+   
+    // Categories / Sections
+    
+    $this->categories = $this->loadFeedData();
+    
+    $this->feedIndex = $this->getArg('section', 0);
+    if (!isset($this->categories[$this->feedIndex])) {
+      $this->feedIndex = 0;
+    }
+    
+     $sections = array();
+     foreach ($this->categories as $index => $feedData) {
+          $sections[] = array(
+            'value'    => $index,
+            'tag'    => $feedData['TAG'],
+            'selected' => ($this->feedIndex == $index),
+            'code'      => $feedData['TAG_CODE']
+          );
      }
+    
+     $this->assign('sections', $sections);
+     
+     
+     // Handle videos
      
    	 $doSearch = $this->getModuleVar('search');
      if ($doSearch==1) $this->assign('doSearch', $doSearch);
@@ -24,21 +57,57 @@
         $controller = DataController::factory('YouTubeDataController');
      	$this->handleYoutube($controller);
      }
+  
+     
+     // Previous / Next
+      
+     $this->totalItems = $controller->totalItems;
+      
+     $previousURL = null;
+     $nextURL = null;
+     if ($this->totalItems > $this->maxPerPage) {
+     	$args = $this->args;
+     	if ($start > 0) {
+     		//$args['start'] = --$start;
+     		$args['start'] = $start - $this->maxPerPage;
+     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
+     	}
+
+     	if (($this->totalItems - $start) > $this->maxPerPage) {
+     		//$args['start'] = ++$start;
+     		$args['start'] = $start + $this->maxPerPage;
+     		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+     	}
+     }
+      
+     $this->assign('start', $this->start);
+     $this->assign('previousURL', $previousURL);
+     $this->assign('nextURL',     $nextURL);
+     
      
    }
    
   protected function handleBrightcove($controller) {
   	  
 	 $brightcoveToken  = $this->getModuleVar('brightcoveToken');
-     $this->assign('token', $brightcoveToken);
+     $this->assign('token', $brightcoveToken);  // TODO drop?
              
 	 $playerid  = $this->getModuleVar('playerId');
 	 $accountid = $this->getModuleVar('accountId');
+
+	 // FIXME switch to json?
+	 // ** Paging issue! 
+	 // Brightcove bug: api doesn't return total_count when get_item_count is true and output is mrss (but works for json)
+     // **
+     $totalItems = 0;
+	 $start = $this->getArg('start',0);
+        
 	 
      switch ($this->page)
      {
-     	    
+
         case 'search':
+        	
 	        if ($filter = $this->getArg('filter')) {
 	          $searchTerms = trim($filter);
 	          
@@ -50,12 +119,15 @@
             	  $resultCount = count($items);
              	  $videos = array();
 			  }
-			  
 	        }
+	        
 	        break;
         case 'index':
         	
-             $items = $controller->latest($accountid);
+        	 // TODO drop for search()?
+             //$items = $controller->latest($accountid);
+             $searchTerms = "";
+			 $items = $controller->search($searchTerms,$brightcoveToken,$this->maxPerPage,$start);
 
              $videos = array();
 
@@ -124,9 +196,10 @@
 			        'playerid'=>$playerid,
 			        'title'=>$video->getTitle(),
 			        'subtitle'=>$subtitle,
+			        'class'=>'img',  // only applied to <a> ???
 			        'img'=>$attr_url,  
-			        'imgWidth'=>100,  
-			        'imgHeight'=>80,  
+			        'imgWidth'=>180,  
+			        'imgHeight'=>120,  
 			        'url'=>$this->buildBreadcrumbURL('detail-brightcove', array(
 			            'videoTitle'=>$video->getTitle(),
 			            'videoDescription'=>$desc,
@@ -143,6 +216,8 @@
 	         //$this->addOnLoad('setupVideosListing();');
         
              $this->assign('videos', $videos);
+             
+             
      }
      
   } 
@@ -209,8 +284,8 @@
              	$videos[] = array(
 			        'title'=>$video['title']['$t'], 
 			        'subtitle'=>$subtitle,
-			        'imgWidth'=>100,  
-			        'imgHeight'=>80,  
+			        'imgWidth'=>500,  
+			        'imgHeight'=>580,  
 			        'img'=>$video['media$group']['media$thumbnail'][0]['url'],
 			        'url'=>$this->buildBreadcrumbURL('detail-youtube', array(
 			            'videoid'=>$video['media$group']['yt$videoid']['$t']

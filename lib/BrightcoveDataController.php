@@ -5,7 +5,8 @@
      protected $cacheFolder = "Videos"; // set the cache folder
      protected $cacheSuffix = "xml";   // set the suffix for cache files
      protected $DEFAULT_PARSER_CLASS='RSSDataParser';
-
+	 public $totalItems;
+     
      public static function factory($args=null)
      {
          $args['CONTROLLER_CLASS'] =  __CLASS__;
@@ -21,18 +22,23 @@
          $url = "http://link.brightcove.com/services/mrss/$accountid/new";
          $this->setBaseUrl($url);  
      	
-         $data = $this->items(0,null,$total);
+         $data = $this->items(0,null,$totalItems);
          
          return $data;
      }
      
-     public function search($q,$token)
+     public function search($q,$token,$pageSize=10,$pageNumber=0,$category="")
      {
-     	 $url = "http://api.brightcove.com/services/library?command=search_videos&output=mrss&video_fields=id,name,shortDescription,thumbnailURL&page_size=20&get_item_count=true&sort_by=MODIFIED_DATE:DESC&any=$q&token=$token";
+     	
+     	 // TODO
+     	 //$all = "&all=tag:".$category;
+     	 //$url = "http://api.brightcove.com/services/library?command=search_videos&output=mrss&video_fields=tags,id,name,shortDescription,thumbnailURL&page_size=$pageSize&page_number=$pageNumber&get_item_count=true&sort_by=MODIFIED_DATE:DESC&any=$q&all=$all&token=$token";
+     	 
+     	 $url = "http://api.brightcove.com/services/library?command=search_videos&output=mrss&video_fields=id,name,shortDescription,thumbnailURL&page_size=$pageSize&page_number=$pageNumber&get_item_count=true&sort_by=MODIFIED_DATE:DESC&any=$q&token=$token";
      	 
      	 $this->setBaseUrl($url);
 	 
-         $data = $this->items(0,null,$total);
+         $data = $this->items(0,null,$this->totalItems);
          
          return $data;
      }
