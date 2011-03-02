@@ -181,6 +181,13 @@ class MapSearch {
         return $aResult['title'];
     }
     
+    public function getSubtitleForSearchResult($aResult) {
+        if (isset($aResult['subtitle'])) {
+            return $aResult['subtitle'];
+        }
+        return null;
+    }
+    
     public function getURLArgsForSearchResult($aResult) {
         return array(
             'featureindex' => $aResult['index'],
