@@ -27,7 +27,7 @@ class MapWebModule extends WebModule {
     protected $id = 'map';
     protected $feeds;
     
-    private function pageSupportsDynamicMap() {
+    protected function pageSupportsDynamicMap() {
         return ($this->pagetype == 'compliant' ||
                 $this->pagetype == 'tablet')
             && $this->platform != 'blackberry'
