@@ -2,7 +2,7 @@
 
 class GoogleAppsCalendarListController extends CalendarListController
 {
-    protected $cacheLifetime = 300;
+    protected $cacheLifetime = 900;
     
     public function getResources()
     {
