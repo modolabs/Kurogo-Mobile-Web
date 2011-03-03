@@ -7,9 +7,8 @@
 <input type="hidden" name="moduleID" value="{$module.id}">
 <input type="hidden" name="section" value="{$section}">
 <input type="hidden" name="merge" value="0">
-{include file="findInclude:modules/{$module.id}/feedList.tpl" formListItems=$feeds}
+{include file="findInclude:modules/content/feedList.tpl" formListItems=$feeds}
 <div class="nonfocal"><input type="submit" name="submit" value="Save" /></div>
 </form>
-
 
 {include file="findInclude:common/footer.tpl"}

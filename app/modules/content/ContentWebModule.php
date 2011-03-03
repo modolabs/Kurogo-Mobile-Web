@@ -1,38 +1,34 @@
 <?php
 
 class ContentWebModule extends WebModule {
-   protected $id = 'content';
-   protected $feedFields = array('CONTENT_TYPE'=>'Content Type');
+    protected $id = 'content';
+    protected $feedFields = array('CONTENT_TYPE'=>'Content Type');
+    protected $hasFeeds = true;
 
-  protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section)
-    {
-        case 'feeds':
-            $feeds = $this->loadFeedData();
-            $adminModule->addExternalJavascript(URL_PREFIX . "modules/{$this->id}/javascript/admin.js");
-            $adminModule->addExternalCSS(URL_PREFIX . "modules/{$this->id}/css/admin.css");
-            $adminModule->assign('feeds', $feeds);
-            $adminModule->assign('showFeedLabels', true);
-            $adminModule->assign('showNew', true);
-            $adminModule->assign('content_types', array(
-                'html'=>'HTML (editable)',
-                'html_url'=>'HTML (remote)',
-                'rss'=>'RSS (remote)'
-            ));
-            $adminModule->setTemplatePage('feedAdmin', $this->id);
-            break;
-        default:
-            return parent::prepareAdminForSection($section, $adminModule);
-    }
-  }
-
-   public function hasFeeds()
-   {
-      return true;
+    protected function prepareAdminForSection($section, &$adminModule) {
+        switch ($section)
+        {
+            case 'feeds':
+                $feeds = $this->loadFeedData();
+                $adminModule->addInternalJavascript("/modules/content/javascript/admin.js");
+//                $adminModule->addInternalCSS("/modules/content/css/admin.css");
+                $adminModule->assign('feeds', $feeds);
+                $adminModule->assign('showFeedLabels', true);
+                $adminModule->assign('showNew', true);
+                $adminModule->assign('content_types', array(
+                    'html'=>'HTML (editable)',
+                    'html_url'=>'HTML (remote)',
+                    'rss'=>'RSS (remote)'
+                ));
+                $adminModule->setTemplatePage('feedAdmin', 'content');
+                break;
+            default:
+                return parent::prepareAdminForSection($section, $adminModule);
+        }
    }
+
+   protected function getContent($feedData) {
    
-   protected function getContent($feedData)
-   {
         $content_type = isset($feedData['CONTENT_TYPE']) ? $feedData['CONTENT_TYPE'] : '';
         
         switch ($content_type)
@@ -42,6 +38,9 @@ class ContentWebModule extends WebModule {
                 return $content;
                 break;
             case 'html_url':
+                if (!isset($feedData['CONTROLLER_CLASS'])) {
+                    $feedData['CONTROLLER_CLASS'] = 'HTMLDataController';
+                }
                 $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
                 if (isset($feedData['HTML_ID'])) {
                     $content = $controller->getContentById($feedData['HTML_ID']);
@@ -52,6 +51,9 @@ class ContentWebModule extends WebModule {
                 return $content;
                 break;
             case 'rss':
+                if (!isset($feedData['CONTROLLER_CLASS'])) {
+                    $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
+                }
                 $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
                 if ($item = $controller->getItemByIndex(0)) {
                     return $item->getContent();
@@ -67,7 +69,9 @@ class ContentWebModule extends WebModule {
   
   protected function initializeForPage() {
     
-    $feeds = $this->loadFeedData();
+    if (!$feeds = $this->loadFeedData()) {
+        $feeds = array();
+    }
 
     switch ($this->page) {
         case 'index':
@@ -95,7 +99,10 @@ class ContentWebModule extends WebModule {
             
             $this->setPageTitle($feedData['TITLE']);
             $this->setTemplatePage('content');
-            $this->assign('contentTitle', $feedData['TITLE']);
+            $showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
+            if ($showTitle) {
+                $this->assign('contentTitle', $feedData['TITLE']);
+            }
             $this->assign('contentBody', $this->getContent($feedData));
             break;
     }
