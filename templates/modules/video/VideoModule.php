@@ -9,6 +9,15 @@
    protected $categories = 0;
    protected $feedIndex = 0;
    
+   protected $totalItems;
+   protected $tag;
+   protected $brightcove_or_youtube;
+   
+   
+   protected $brightcoveToken;
+   protected $playerid;   // currently only used by Brightcove
+   protected $accountid;  // currently only used by Brightcove
+   
    protected function initializeForPage() {
    
    	if ($GLOBALS['deviceClassifier']->getPagetype()=='basic') {
@@ -48,96 +57,68 @@
    	 $doSearch = $this->getModuleVar('search');
      if ($doSearch==1) $this->assign('doSearch', $doSearch);
          
-	 $brightcove_or_youtube = $this->getModuleVar('brightcove_or_youtube');
+	 $this->brightcove_or_youtube = $this->getModuleVar('brightcove_or_youtube');
+	 if ($this->brightcove_or_youtube) {
+		 $this->brightcoveToken  = $this->getModuleVar('brightcoveToken');
+	     //$this->assign('token', $this->$brightcoveToken); // DROP?
+		 $this->playerid  = $this->getModuleVar('playerId');
+		 $this->accountid = $this->getModuleVar('accountId');
+	 } 
 	 
-	 if ($brightcove_or_youtube==1) {
-        $controller = DataController::factory('BrightcoveDataController');
-	 	$this->handleBrightcove($controller);
+	 $xml_or_json = $this->getModuleVar('xml_or_json');
+	 if ($xml_or_json==1) {
+        $controller = DataController::factory('VideoXMLDataController');
 	 } else {
-        $controller = DataController::factory('YouTubeDataController');
-     	$this->handleYoutube($controller);
+        $controller = DataController::factory('VideoJsonDataController');
      }
   
-     
-     // Previous / Next
-      
-     $this->totalItems = $controller->totalItems;
-      
-     $previousURL = null;
-     $nextURL = null;
-     if ($this->totalItems > $this->maxPerPage) {
-     	$args = $this->args;
-     	if ($start > 0) {
-     		//$args['start'] = --$start;
-     		$args['start'] = $start - $this->maxPerPage;
-     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
-     	}
-
-     	if (($this->totalItems - $start) > $this->maxPerPage) {
-     		//$args['start'] = ++$start;
-     		$args['start'] = $start + $this->maxPerPage;
-     		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
-     	}
-     }
-      
-     $this->assign('start', $this->start);
-     $this->assign('previousURL', $previousURL);
-     $this->assign('nextURL',     $nextURL);
-     
-     
-   }
-   
-  protected function handleBrightcove($controller) {
-  	  
-	 $brightcoveToken  = $this->getModuleVar('brightcoveToken');
-     $this->assign('token', $brightcoveToken);  // TODO drop?
-             
-	 $playerid  = $this->getModuleVar('playerId');
-	 $accountid = $this->getModuleVar('accountId');
-
-	 // FIXME switch to json?
-	 // ** Paging issue! 
-	 // Brightcove bug: api doesn't return total_count when get_item_count is true and output is mrss (but works for json)
-     // **
-     $totalItems = 0;
-	 $start = $this->getArg('start',0);
-        
-	 
-     switch ($this->page)
-     {
-
+     	 
+   switch ($this->page)
+     {  
         case 'search':
-        	
 	        if ($filter = $this->getArg('filter')) {
 	          $searchTerms = trim($filter);
-	          
-        	  //search for videos
-			  $items = $controller->search($searchTerms,$brightcoveToken);
-			 
+			  $items = $controller->search($searchTerms, 20, 1, "", $this->brightcoveToken);
+			  
 			  if ($items !== false) {
 			  	  // TODO handle 0 or 1 result
             	  $resultCount = count($items);
              	  $videos = array();
 			  }
 	        }
-	        
-	        break;
+	    	break;
+	          
         case 'index':
         	
-        	 // TODO drop for search()?
-             //$items = $controller->latest($accountid);
-             $searchTerms = "";
-			 $items = $controller->search($searchTerms,$brightcoveToken,$this->maxPerPage,$start);
-
-             $videos = array();
-
+        	 // default search 
+	         $searchTerms = "";
+			 $items = $controller->search($searchTerms, 20, 1, "", $this->brightcoveToken);
+			 //$items = $controller->search($this->getModuleVar('SEARCH_QUERY'), 20, 1, "", $this->brightcoveToken);
+			 
+			 $videos = array();
              break;
+             
+        case 'detail-youtube':
+			   $videoid = $this->getArg('videoid');
+			   if ($video = $controller->getItem($videoid)) {
+			      $this->assign('videoid', $videoid);
+			      $this->assign('videoTitle', $video['title']['$t']);
+			      $this->assign('videoDescription', $video['media$group']['media$description']['$t']);
+			   } else {
+			      $this->redirectTo('index');
+			   }
+			   break;   
         case 'detail-brightcove':
 			   $videoid = $this->getArg('videoid');
 			   
-			   // IG: do we really need to query again?
-			   // #1
-			   /*
+			    $this->assign('playerid', $this->playerid);
+			    $this->assign('videoid', $videoid);
+			    $this->assign('accountid', $this->getArg('accountid'));
+			    $this->assign('videoTitle', $this->getArg('videoTitle'));
+			    $this->assign('videoDescription', $this->getArg('videoDescription'));
+			   
+     			/*
+     			 * bright
 			   if ($video = $controller->getItem($videoid)) {
 			      $this->assign('videoid', $videoid);
 			      //$this->assign('playerid', $playerid);
@@ -149,16 +130,57 @@
 			      $this->redirectTo('index');
 			   }
 			   */
-			   // #2
-			    $this->assign('playerid', $playerid);
-			    $this->assign('videoid', $videoid);
-			    $this->assign('accountid', $this->getArg('accountid'));
-			    $this->assign('videoTitle', $this->getArg('videoTitle'));
-			    $this->assign('videoDescription', $this->getArg('videoDescription'));
-			   
-			   break;     
+			    
+			   break;       
+     }
+
+     
+     $this->totalItems = 0;
+	 $this->start = $this->getArg('start',0);
+	 $this->tag = $this->categories[$this->feedIndex];
+	 
+	 
+     if (isset($videos)) {
+	     if ($xml_or_json) {
+	     	// FIXME currently only support Brightcive - check here
+		 	$this->handleBrightcoveRSS($controller,$videos,$items);
+		 } else {
+	     	$this->handleJSON($controller,$videos,$items);
+	     }
      }
      
+     // Previous / Next
+      
+     $this->totalItems = $controller->totalItems;
+      
+     $previousURL = null;
+     $nextURL = null;
+     if ($this->totalItems > $this->maxPerPage) {
+     	$args = $this->args;
+     	if ($this->start > 0) {
+     		//$args['start'] = --$start;
+     		$args['start'] = $this->start - $this->maxPerPage;
+     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
+     	}
+
+     	if (($this->totalItems - $this->start) > $this->maxPerPage) {
+     		//$args['start'] = ++$start;
+     		$args['start'] = $this->start + $this->maxPerPage;
+     		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+     	}
+     }
+      
+     $this->assign('start', $this->start);
+     $this->assign('previousURL', $previousURL);
+     $this->assign('nextURL',     $nextURL);
+     
+     
+   }
+   
+  protected function handleBrightcoveRSS($controller,$videos,$items) {
+  	  
+  	// TODO change to handleRSS() and add YouTube support
+  	
      if (isset($videos)) {
      	
              //prepare the list
@@ -193,7 +215,7 @@
              	
              	$videos[] = array(
 			        'titleid'=>$prop_titleid,
-			        'playerid'=>$playerid,
+			        'playerid'=>$this->playerid,
 			        'title'=>$video->getTitle(),
 			        'subtitle'=>$subtitle,
 			        'class'=>'img',  // only applied to <a> ???
@@ -204,19 +226,14 @@
 			            'videoTitle'=>$video->getTitle(),
 			            'videoDescription'=>$desc,
 			            'videoid'=>$prop_titleid,
-			            'playerid'=>$playerid,
+			            'playerid'=>$this->playerid,
 			            'accountid'=>$prop_accountid
              		))
              		
              	);
              }
              
-             // TODO
-	         //$this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
-	         //$this->addOnLoad('setupVideosListing();');
-        
              $this->assign('videos', $videos);
-             
              
      }
      
@@ -234,61 +251,48 @@
     }
   }
   
-  protected function handleYouTube($controller) {
-  	
-   switch ($this->page)
-     {
-     	    
-        case 'search':
-	        if ($filter = $this->getArg('filter')) {
-	          $searchTerms = trim($filter);
-			  $items = $controller->search($searchTerms);
-              $videos = array();
-	        }
-	    	break;
-	          
-        case 'index':
-        	 // default search 
-			 $items = $controller->search($this->getModuleVar('SEARCH_QUERY'));
-             $videos = array();
-             break;
-             
-        case 'detail-youtube':
-			   $videoid = $this->getArg('videoid');
-			   if ($video = $controller->getItem($videoid)) {
-			      $this->assign('videoid', $videoid);
-			      $this->assign('videoTitle', $video['title']['$t']);
-			      $this->assign('videoDescription', $video['media$group']['media$description']['$t']);
-			   } else {
-			      $this->redirectTo('index');
-			   }
-			   break;     
-     }
-     
-     
+  protected function handleJSON($controller,$videos,$items) {
+
      if (isset($videos)) {
 
              foreach ($items as $video) {
              
-             	$desc = $video['media$group']['media$description']['$t'];
-             	if (strlen($desc)>75) {
-             		$desc = substr($desc,0,75) . "...";
+             	if ($this->brightcove_or_youtube) {
+             		
+             		// FIXME Brightcove
+	             	$videoId = 0;
+	             	$img  = "";
+	             	$title = "title";
+	             	$desc = "desc";
+	             	
+	             	//$desc = $video['title'];
+	             	//$desc = $video['shortDescription'];
+	             	$duration = 0;
+	             	
+             	} else {
+	             	$desc = $video['media$group']['media$description']['$t'];
+	             	if (strlen($desc)>75) {
+	             		$desc = substr($desc,0,75) . "...";
+	             	}
+	             	
+	             	$duration = $video['media$group']['yt$duration']['seconds'];
+	             	$videoId = $video['media$group']['yt$videoid']['$t'];
+	             	$img = $video['media$group']['media$thumbnail'][0]['url'];
+	             	$title = $video['title']['$t'];
              	}
-             	
-             	$duration = $video['media$group']['yt$duration']['seconds'];
              	
              	$duration = $this->getDuration($duration);
              	
              	$subtitle = $desc . "<br/>" . $duration;
              	
              	$videos[] = array(
-			        'title'=>$video['title']['$t'], 
+			        'title'=>$title, 
 			        'subtitle'=>$subtitle,
 			        'imgWidth'=>500,  
 			        'imgHeight'=>580,  
-			        'img'=>$video['media$group']['media$thumbnail'][0]['url'],
+			        'img'=>$img,
 			        'url'=>$this->buildBreadcrumbURL('detail-youtube', array(
-			            'videoid'=>$video['media$group']['yt$videoid']['$t']
+			            'videoid'=>$videoId 
              		))
              	);
              }
