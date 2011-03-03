@@ -951,7 +951,7 @@ abstract class WebModule extends Module {
     }
   }
   protected function addJQuery() {
-    $this->addExternalJavascript(URL_BASE . 'common/javascript/jquery.js');
+    $this->addInternalJavascript('/common/javascript/jquery.js');
   }
   
   //
