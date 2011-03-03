@@ -133,15 +133,16 @@ class AdminWebModule extends WebModule {
                         }
 
                         $moduleData['feeds'] = $module->loadFeedData();
+                        if (!$moduleData['feeds']) {
+                            $moduleData['feeds'] = array();
+                        }
                         $this->assign('feedURL', $this->buildBreadcrumbURL('module', array(
                                 'moduleID'=>$moduleID,
                                 'section'=>$section),false
                             ));
                         $this->assign('feedFields', $module->getFeedFields());
-                    }
-                
-                    if (!isset($moduleData[$section])) {
-                        $section = null;
+                    } elseif (!isset($moduleData[$section])) {
+                        $this->redirectTo('module', array('moduleID'=>$moduleID), false);
                     }
                 }
 

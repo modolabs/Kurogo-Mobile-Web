@@ -248,14 +248,14 @@ abstract class DataController
 
     public function getItemByIndex($index)
     {
-        if ($items = $this->items($index,1, $totalItems)) {
+        if ($items = $this->items($index,1)) {
             return current($items); 
         } else {
             return false;
         }
     }
     
-    public function items($start=0, $limit=null, &$totalItems)
+    public function items($start=0, $limit=null, &$totalItems=0)
     {
         $items = $this->getParsedData();
         $totalItems = count($items);

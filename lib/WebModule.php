@@ -456,6 +456,17 @@ abstract class WebModule extends Module {
     $this->autoPhoneNumberDetection = $bool ? true : false;
     $this->assign('autoPhoneNumberDetection', $this->autoPhoneNumberDetection);
   }
+  
+  public function getSession()
+  {
+    if (!$this->session) {
+        $maxIdleTime = $this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT');
+        $sessionUseDB = $this->getSiteVar('AUTHENTICATION_USE_SESSION_DB');
+        $this->session = new Session($sessionUseDB, $maxIdleTime);
+    }
+
+    return $this->session;
+  }
     
   public function getModuleName() {
     return $this->moduleName;
@@ -742,7 +753,7 @@ abstract class WebModule extends Module {
     }
   }
   protected function addJQuery() {
-    $this->addExternalJavascript(URL_BASE . 'common/javascript/jquery.js');
+    $this->addInternalJavascript('/common/javascript/jquery.js');
   }
   
   //
@@ -1074,9 +1085,6 @@ abstract class WebModule extends Module {
     $accessKeyStart = count($this->breadcrumbs);
     if ($this->id != 'home') {
       $accessKeyStart++;  // Home link
-      if ($this->page != 'index') {
-        $accessKeyStart++;  // Module home link
-      }
     }
     $this->assign('accessKeyStart', $accessKeyStart);
 

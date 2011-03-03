@@ -385,13 +385,27 @@ class CalendarWebModule extends WebModule {
       case 'resources':
         if ($resourceFeeds = $this->getFeeds('resource')) {
           $resources = array();
-          foreach ($resourceFeeds as $id=>$resource) {
-            $resources[$id] = array(
+          foreach ($resourceFeeds as $calendar=>$resource) {
+
+            $feed = $this->getFeed($calendar, 'resource');
+            $availability = 'Available';
+            if ($event = $feed->getNextEvent()) {
+                $now = time();
+                if ($event->overlaps(new TimeRange($now, $now))) {
+                    $availability = 'In use';
+                } elseif ($event->overlaps(new TimeRange($now + 900, $now + 1800))) {
+                    $availability = 'In use from ' . $this->timeText($event, true);
+                }
+            } else {
+            }
+                
+            $resources[$calendar] = array(
               'title' => $resource['TITLE'],
+              'subtitle'=>$availability,
               'url'   => $this->buildBreadcrumbURL('day', array(
                 'type'     => 'resource', 
-                'calendar' => $id
-              )),
+                'calendar' => $calendar
+              ))
             );
           }
           $this->assign('resources', $resources);

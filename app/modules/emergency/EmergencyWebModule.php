@@ -10,6 +10,20 @@ require_once LIB_DIR . '/Emergency/DrupalContactsDataParser.php';
 class EmergencyWebModule extends WebModule 
 {
     protected $id='emergency';
+    protected $hasFeeds = true;
+
+    protected function prepareAdminForSection($section, &$adminModule) {
+        switch ($section)
+        {
+            case 'feeds':
+                $feeds = $this->loadFeedData();
+                $adminModule->assign('feeds', $feeds);
+                $adminModule->setTemplatePage('feedAdmin', $this->id);
+                break;
+            default:
+                return parent::prepareAdminForSection($section, $adminModule);
+        }
+   }
     
     protected function initializeForPage() {
         // construct controllers

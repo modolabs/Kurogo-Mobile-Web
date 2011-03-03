@@ -54,19 +54,19 @@ class db {
     }
 
     if (!$result = $this->connection->prepare($sql)) {
-        return $this->errorHandler($this->connection->errorInfo(), $ignoreErrors, $catchErrorCodes);
+        return $this->errorHandler($sql, $this->connection->errorInfo(), $ignoreErrors, $catchErrorCodes);
     }
 
     $result->setFetchMode(PDO::FETCH_ASSOC);
     
     if (!$result->execute($parameters)) {
-        return $this->errorHandler($result->errorInfo(), $ignoreErrors, $catchErrorCodes);
+        return $this->errorHandler($sql, $result->errorInfo(), $ignoreErrors, $catchErrorCodes);
     }
 
     return $result;
   }
 
-  private function errorHandler($errorInfo, $ignoreErrors, $catchErrorCodes) {
+  private function errorHandler($sql, $errorInfo, $ignoreErrors, $catchErrorCodes) {
         if ($ignoreErrors) {
             return;
         }
