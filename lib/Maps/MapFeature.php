@@ -27,17 +27,8 @@ interface MapFeature extends MapListElement
 
 interface MapGeometry
 {
-    // TODO deprecate getType() since we can tell what geometries
-    // things are based on whether they implement MapPoly(line|gon)
-
-    const POINT = 'Point';
-    const POLYGON = 'Polygon';
-    const POLYLINE = 'Polyline';
-
     // must return an array of the form {'lat' => 2.7182, 'lon' => -3.1415}
     public function getCenterCoordinate();
-    
-    public function getType();
 }
 
 interface MapPolyline extends MapGeometry
@@ -154,10 +145,6 @@ class EmptyMapPoint implements MapGeometry {
     public function getCenterCoordinate() {
         return $this->center;
     }
-    
-    public function getType() {
-        return MapGeometry::POINT;
-    }
 }
 
 class EmptyMapPolyline implements MapPolyline {
@@ -184,10 +171,6 @@ class EmptyMapPolyline implements MapPolyline {
 
     public function getPoints() {
         return $this->points;
-    }
-
-    public function getType() {
-        return MapGeometry::POLYGON;
     }
 }
 
@@ -220,10 +203,6 @@ class EmptyMapPolygon implements MapPolygon {
             }
         }
         return $result;
-    }
-
-    public function getType() {
-        return MapGeometry::POLYGON;
     }
 }
 

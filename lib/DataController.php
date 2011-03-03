@@ -165,6 +165,10 @@ abstract class DataController
         return $this->parseData($data, $parser);
     }
     
+    protected function cacheTimestamp() {
+        return null;
+    }
+    
     public function getData()
     {
         if (!$url = $this->url()) {
@@ -188,7 +192,7 @@ abstract class DataController
                 }
                 
                 if ($data = $this->retrieveData($url)) {
-                    $this->cache->write($data, $cacheFilename);
+                    $this->cache->write($data, $cacheFilename, $this->cacheTimestamp());
                 }
                 
                 if ($this->debugMode) {
@@ -251,7 +255,7 @@ abstract class DataController
         }
     }
     
-    public function items($start=0, $limit=null, &$totalItems)
+    public function items($start=0, $limit=null, &$totalItems=0)
     {
         $items = $this->getParsedData();
         $totalItems = count($items);

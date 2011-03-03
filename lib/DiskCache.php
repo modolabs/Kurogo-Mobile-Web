@@ -109,7 +109,7 @@ class DiskCache {
     }
   }
 
-  public function write($object, $filename=NULL) {
+  public function write($object, $filename=NULL, $date=null) {
     if (!$object) {
       $this->error = "tried to cache a non-object";
     }
@@ -123,6 +123,10 @@ class DiskCache {
         fwrite($fh, $object);
       }
       fclose($fh);
+      // set the modification time if present
+      if ($date) {
+        touch($this->getFullPath($filename), $date);
+      }
       return TRUE;
 
     } else {

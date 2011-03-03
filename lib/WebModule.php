@@ -601,7 +601,9 @@ abstract class WebModule extends Module {
   public function getSession()
   {
     if (!$this->session) {
-        $this->session = new Session();
+        $maxIdleTime = $this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT');
+        $sessionUseDB = $this->getSiteVar('AUTHENTICATION_USE_SESSION_DB');
+        $this->session = new Session($sessionUseDB, $maxIdleTime);
     }
     
     return $this->session;
@@ -949,7 +951,7 @@ abstract class WebModule extends Module {
     }
   }
   protected function addJQuery() {
-    $this->addExternalJavascript(URL_BASE . 'common/javascript/jquery.js');
+    $this->addInternalJavascript('/common/javascript/jquery.js');
   }
   
   //

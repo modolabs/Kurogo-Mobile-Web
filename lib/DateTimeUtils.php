@@ -133,12 +133,18 @@ class TimeRange {
     }
   }
 
+  /**
+    * Returns whether any part of the 2 ranges overlap
+    */
   public function overlaps(TimeRange $range) {
     if ($range->get_start() >= $this->end) return FALSE;
     elseif ($range->get_end() <= $this->start) return FALSE;
     else return TRUE;
   }
 
+  /**
+    * Returns whether the parameter is completely contained by the object 
+    */
   public function contains(TimeRange $range) {
     if (!$this->overlaps($range)) return FALSE;
     elseif ($range->get_start() < $this->start) return FALSE;
@@ -146,6 +152,9 @@ class TimeRange {
     else return TRUE;
   }
 
+  /**
+    * Returns whether the parameter completely surrounds the object 
+    */
   public function contained_by(TimeRange $range) {
     if (!$this->overlaps($range)) return FALSE;
     elseif ($range->get_start() > $this->start) return FALSE;
