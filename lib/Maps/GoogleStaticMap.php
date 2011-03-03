@@ -120,7 +120,11 @@ class GoogleStaticMap extends StaticMapImageController {
 
     public function addPath($points, $style=null)
     {
-        $polyline = Polyline::encodeFromArray($points);
+        $pointArr = array();
+        foreach ($points as $point) {
+            $pointArr[] = array($point['lat'], $point['lon']);
+        }
+        $polyline = Polyline::encodeFromArray($pointArr);
 
         if ($style === null) {
             // color can be 0xRRGGBB or

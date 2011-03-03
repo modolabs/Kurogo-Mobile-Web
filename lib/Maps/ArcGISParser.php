@@ -23,11 +23,6 @@ class ArcGISPoint implements MapGeometry
     {
         return array('lat' => $this->y, 'lon' => $this->x);
     }
-    
-    public function getType()
-    {
-        return MapGeometry::POINT;
-    }
 }
 
 class ArcGISPolygon implements MapPolygon
@@ -75,11 +70,6 @@ class ArcGISPolygon implements MapPolygon
     
     public function getRings() {
         return $this->rings;
-    }
-    
-    public function getType()
-    {
-        return MapGeometry::POLYGON;
     }
 }
 

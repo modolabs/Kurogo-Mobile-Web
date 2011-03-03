@@ -165,25 +165,19 @@ class MapWebModule extends WebModule {
         $imgController->setZoomLevel($zoomLevel);
 
         foreach ($geometries as $i => $geometry) {
-          switch ($geometry->getType()) {
-              case MapGeometry::POINT:
-                  if ($imgController->canAddAnnotations()) {
-                      $imgController->addAnnotation($geometry->getCenterCoordinate(), $style, $feature->getTitle());
-                  }
-                  break;
-              case MapGeometry::POLYLINE:
-                  if ($imgController->canAddPaths()) {
-                      $imgController->addPath($geometry->getPoints(), $style);
-                  }
-                  break;
-              case MapGeometry::POLYGON:
-                  if ($imgController->canAddPolygons()) {
-                      $imgController->addPolygon($geometry->getRings(), $style);
-                  }
-                  break;
-              default:
-                  break;
-          }
+            if ($geometry instanceof MapPolygon) {
+                if ($imgController->canAddPolygons()) {
+                    $imgController->addPolygon($geometry->getRings(), $style);
+                }
+            } elseif ($geometry instanceof MapPolyline) {
+                if ($imgController->canAddPaths()) {
+                    $imgController->addPath($geometry->getPoints(), $style);
+                }
+            } else {
+                if ($imgController->canAddAnnotations()) {
+                    $imgController->addAnnotation($geometry->getCenterCoordinate(), $style, $feature->getTitle());
+                }
+            }
         }
 
         if (!$fullscreen) {
@@ -205,6 +199,7 @@ class MapWebModule extends WebModule {
             } else {
                 list($imageWidth, $imageHeight) = $this->fullscreenMapImageDimensions();
                 $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
+                $this->addOnOrientationChange('updateContainerDimensions()');
             }
             $this->addOnOrientationChange('rotateScreen();');
         }
