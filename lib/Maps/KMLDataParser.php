@@ -251,11 +251,6 @@ class KMLPoint extends XMLElement implements MapGeometry
         return $this->coordinate;
     }
 
-    public function getType()
-    {
-        return MapGeometry::POINT;
-    }
-
     public function addElement(XMLElement $element)
     {
         $name = $element->name();
@@ -300,11 +295,6 @@ class KMLLineString extends XMLElement implements MapPolyline
             );
     }
 
-    public function getType()
-    {
-        return MapGeometry::POLYLINE;
-    }
-
     public function getPoints() {
         return $this->coordinates;
     }
@@ -347,11 +337,6 @@ class KMLPolygon extends XMLElement implements MapPolygon
     public function getCenterCoordinate()
     {
     	return $this->outerBoundary->getCenterCoordinate();
-    }
-
-    public function getType()
-    {
-        return MapGeometry::POLYGON;
     }
 
     public function getRings()

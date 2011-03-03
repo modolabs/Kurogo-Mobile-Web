@@ -85,8 +85,8 @@ class db {
         }
   }
 
-  public function escape($string) {
-    return $this->connection->real_escape_string($string);
+  public function quote($string) {
+    return $this->connection->quote($string);
   }
 
   public function ping() {

@@ -165,25 +165,19 @@ class MapWebModule extends WebModule {
         $imgController->setZoomLevel($zoomLevel);
 
         foreach ($geometries as $i => $geometry) {
-          switch ($geometry->getType()) {
-              case MapGeometry::POINT:
-                  if ($imgController->canAddAnnotations()) {
-                      $imgController->addAnnotation($geometry->getCenterCoordinate(), $style, $feature->getTitle());
-                  }
-                  break;
-              case MapGeometry::POLYLINE:
-                  if ($imgController->canAddPaths()) {
-                      $imgController->addPath($geometry->getPoints(), $style);
-                  }
-                  break;
-              case MapGeometry::POLYGON:
-                  if ($imgController->canAddPolygons()) {
-                      $imgController->addPolygon($geometry->getRings(), $style);
-                  }
-                  break;
-              default:
-                  break;
-          }
+            if ($geometry instanceof MapPolygon) {
+                if ($imgController->canAddPolygons()) {
+                    $imgController->addPolygon($geometry->getRings(), $style);
+                }
+            } elseif ($geometry instanceof MapPolyline) {
+                if ($imgController->canAddPaths()) {
+                    $imgController->addPath($geometry->getPoints(), $style);
+                }
+            } else {
+                if ($imgController->canAddAnnotations()) {
+                    $imgController->addAnnotation($geometry->getCenterCoordinate(), $style, $feature->getTitle());
+                }
+            }
         }
 
         if (!$fullscreen) {
@@ -205,6 +199,7 @@ class MapWebModule extends WebModule {
             } else {
                 list($imageWidth, $imageHeight) = $this->fullscreenMapImageDimensions();
                 $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
+                $this->addOnOrientationChange('updateContainerDimensions()');
             }
             $this->addOnOrientationChange('rotateScreen();');
         }
@@ -303,6 +298,9 @@ class MapWebModule extends WebModule {
     }
 
     private function getDataController($index) {
+        if (!$this->feeds)
+            $this->feeds = $this->loadFeedData();
+
         if ($index === NULL) {
             return MapDataController::factory('MapDataController', array(
                 'JS_MAP_CLASS' => 'GoogleJSMap',
@@ -716,9 +714,6 @@ class MapWebModule extends WebModule {
                 $tabKeys = array();
                 $tabJavascripts = array();
                 
-                if (!$this->feeds)
-                    $this->feeds = $this->loadFeedData();
-                
                 if (isset($this->args['featureindex'])) { // this is a regular place
                     $index = $this->args['featureindex'];
                     $dataController = $this->getDataController($this->args['category']);
@@ -772,13 +767,18 @@ class MapWebModule extends WebModule {
                 break;
                 
             case 'fullscreen':
-                if (!$this->feeds)
-                    $this->feeds = $this->loadFeedData();
-                
-                $index = $this->args['featureindex'];
-                $dataController = $this->getDataController($this->args['category']);
-                $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
-                $feature = $dataController->getFeature($index, $subCategory);
+                if (isset($this->args['featureindex'])) { // this is a regular place
+                    $index = $this->args['featureindex'];
+                    $dataController = $this->getDataController($this->args['category']);
+                    $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
+                    $feature = $dataController->getFeature($index, $subCategory);
+                } else {
+                    $center = array('lat' => 0, 'lon' => 0);
+                    $feature = new EmptyMapFeature($center);
+                    $dataController = $this->getDataController(NULL);
+                    $cookieID = http_build_query($this->args);
+                    $this->generateBookmarkOptions($cookieID);
+                }                 
 
                 $this->initializeMap($dataController, $feature, true);
                 break;

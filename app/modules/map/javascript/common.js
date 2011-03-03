@@ -152,6 +152,8 @@ function constructMapURL() {
     }
 }
 
+// assuming only one of updateMapDimensions or updateContainerDimensions
+// gets used so they can reference the same id
 var updateMapDimensionsTimeoutId;
 
 // Prevent firebombing the browser with Ajax calls on browsers which fire lots
@@ -202,6 +204,28 @@ function doUpdateMapDimensions() {
         }
     }
     loadMapImage();
+}
+
+// resizing counterpart for dynamic maps
+function updateContainerDimensions() {
+    window.clearTimeout(updateMapDimensionsTimeoutId); 
+    updateMapDimensionsTimeoutId = window.setTimeout(doUpdateContainerDimensions, 200);
+}
+
+function doUpdateContainerDimensions() {
+    var container = document.getElementById("container");
+    if (container) {
+        if (window.innerWidth !== undefined) {
+            container.style.width = window.innerWidth + "px";
+        } else {
+            container.style.width = document.documentElement.clientWidth + "px"; // ie7
+        }
+        if (window.innerHeight !== undefined) {
+            container.style.height = window.innerHeight + "px";
+        } else {
+            container.style.height = document.documentElement.clientHeight + "px"; // ie7
+        }
+    }
 }
 
 // north and east are sign arguments, e.g.:
