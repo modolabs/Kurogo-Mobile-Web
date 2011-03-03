@@ -199,6 +199,7 @@ class MapWebModule extends WebModule {
             } else {
                 list($imageWidth, $imageHeight) = $this->fullscreenMapImageDimensions();
                 $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
+                $this->addOnOrientationChange('updateContainerDimensions()');
             }
             $this->addOnOrientationChange('rotateScreen();');
         }
