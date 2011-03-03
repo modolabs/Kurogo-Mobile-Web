@@ -111,6 +111,14 @@ class LoginWebModule extends WebModule {
             }
 
             break;
+        case 'forgotpassword':
+            if ($forgetPasswordURL = $this->getModuleVar('FORGET_PASSWORD_URL')) {
+                header("Location: $forgetPasswordURL");
+                exit();
+            } else {
+                $this->redirectTo('index');
+            }
+            break;
         case 'index':
             if ($this->isLoggedIn()) {
                 $user = $this->getUser();
@@ -122,9 +130,9 @@ class LoginWebModule extends WebModule {
                 $this->assign('url', $this->buildURL('logout'));
                 $this->assign('linkText', 'Logout');
             } else {
-                $this->assign('loginMessage', $this->getModuleVar('LOGIN_MESSAGE'));
-                $this->assign('loginLabel', $this->getModuleVar('LOGIN_LABEL'));
-                $this->assign('passwordLabel', $this->getModuleVar('PASSWORD_LABEL'));
+                if ($forgetPasswordURL = $this->getModuleVar('FORGET_PASSWORD_URL')) {
+                    $this->assign('FORGET_PASSWORD_URL', $this->buildBreadcrumbURL('forgotpassword', array()));
+                }
             }
             break;
     }

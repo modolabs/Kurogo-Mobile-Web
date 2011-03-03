@@ -4,8 +4,8 @@
 <h2>Login</h2>
 </div>
 
-{if $loginMessage}
-<p class="nonfocal">{$loginMessage}</p>
+{if $moduleStrings.LOGIN_MESSAGE}
+<p class="nonfocal">{$moduleStrings.LOGIN_MESSAGE|escape}</p>
 {/if}
 
 {if $message}
@@ -15,8 +15,10 @@
 {if $authenticationAuthorities}
 <form method="POST" id="loginForm" action="login.php">
 <input type="hidden" name="url" value="{$url|escape}">
-<p class="focal"><label for="loginUser">{$loginLabel|default:'login'}:</label> <input type="text" name="loginUser" class="loginFormInput"></p>
-<p class="focal"><label for="loginUser">{$passwordLabel|default:'password'}:</label> <input type="password" name="loginPassword" class="loginFormInput"></p>
+<p class="focal"><label for="loginUser">{$moduleStrings.LOGIN_LABEL|default:'login'}:</label> <input type="text" name="loginUser" class="loginFormInput"></p>
+<p class="focal"><label for="loginUser">{$moduleStrings.PASSWORD_LABEL|default:'password'}:</label> <input type="password" name="loginPassword" class="loginFormInput"> 
+{if $FORGET_PASSWORD_URL}<span><a href="{$FORGET_PASSWORD_URL}">{$moduleStrings.FORGET_PASSWORD_TEXT|default:'Forget your password?'|escape}</a></span>{/if}
+</p>
 {if $authenticationAuthorities|@count>1}
 <p class="focal">
 <select name="authority">
@@ -27,14 +29,17 @@
 </p>
 {/if}
 {/if}
-<p class="focal">
+<div class="focal">
 {if $authenticationAuthorities}
     <input type="submit" name="login_submit" id="login_submit" value="Login">
 {/if}    
+    {if $authenticationAuthorityLinks}<ul>
     {foreach $authenticationAuthorityLinks as $authorityName=>$authorityData}
-    <a href="{$authorityData.LINK}">{if $authorityData.LOGIN_IMAGE_URL}<img src="{$authorityData.LOGIN_IMAGE_URL}" border="0" class="login_link_image" />{else}{$authorityData.TITLE|escape}{/if}</a>&nbsp;
+    <li><a href="{$authorityData.LINK}">{if $authorityData.LOGIN_IMAGE_URL}<img src="{$authorityData.LOGIN_IMAGE_URL}" border="0" class="login_link_image" />{else}{$authorityData.TITLE|escape}{/if}</a></li>
     {/foreach}
-</p>
+    </ul>
+    {/if}
+</div>
 {if $authenticationAuthorities}
 </form>
 {/if}
