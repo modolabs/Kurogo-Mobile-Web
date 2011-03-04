@@ -30,6 +30,7 @@ class MapAPIModule extends APIModule
         } else if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller->setCategoryId($index);
             $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
             return $controller;
         }
@@ -55,7 +56,7 @@ class MapAPIModule extends APIModule
                 $category['campus'] = $feedData['CAMPUS'];
             }
 
-            $listItems = $controller->getListItems(null);
+            $listItems = $controller->getListItems();
             if (count($listItems)) {
                 $listItem = $listItems[0]; // listItem implements MapListElement
                 if (!($listItem instanceof MapFeature)) {
@@ -66,9 +67,9 @@ class MapAPIModule extends APIModule
                             'title' => $listItem->getTitle(),
                             );
                         $subtitle = $listItem->getSubtitle();
-                        //if ($subtitle) {
-                        //    $subcategory['subtitle'] = $subtitle;
-                        //}
+                        if ($subtitle) {
+                            $subcategory['subtitle'] = $subtitle;
+                        }
                         $category['subcategories'][] = $subcategory;
                     }
                     $category['subcategoryCount'] = count($category['subcategories']);
@@ -116,10 +117,11 @@ class MapAPIModule extends APIModule
             
                 break;
             case 'categories':
+                // TODO get category tree working
                 if (!$this->feeds) {
                     $this->feeds = $this->loadFeedData();
                 }
-                
+
                 $campusIndex = $this->getArg('campus'); // if this is null, fetch everything
                 $categories = $this->getCategoriesForCampus($campusIndex);
 
@@ -128,46 +130,87 @@ class MapAPIModule extends APIModule
             
                 break;
             case 'places':
-                $category = $this->getArg('category');
-                $subcategory = $this->getArg('subcategory', null);
-                $dataController = $this->getDataController($category);
-                $listItems = $dataController->getListItems($subcategory);
-                $places = array();
-                foreach ($listItems as $listItem) {
-                    if ($listItem instanceof MapFeature) {
-                        $geometry = $listItem->getGeometry();
-                        $center = $geometry->getCenterCoordinate();
-                        $place = array(
-                            'title'       => $listItem->getTitle(),
-                            'subtitle'    => $listItem->getSubtitle(),
-                            'category'    => $category,
-                            'lat'         => $center['lat'],
-                            'lon'         => $center['lon'],
-                            'description' => $listItem->getDescription(),
-                            );
-                        if ($subcategory) {
-                            $place['subcategory'] = $subcategory;
-                        }
-                        $places[] = $place;
+                $categoryPath = $this->getArg('category');
+                if ($categoryPath) {
+                    if (is_array($categoryPath)) {
+                        $topCategory = array_shift($categoryPath);
+                    } else {
+                        $topCategory = $categoryPath;
+                        $categoryPath = array();
                     }
+                    $dataController = $this->getDataController($topCategory);
+                    $listItems = $dataController->getListItems($categoryPath);
+                    $places = array();
+                    foreach ($listItems as $listItem) {
+                        if ($listItem instanceof MapFeature) {
+                            $places[] = arrayFromMapFeature($listItem);
+                        }
+                    }
+                
+                    $response = array(
+                        'total' => count($places),
+                        'returned' => count($places),
+                        'displayField' => 'title',
+                        'results' => $places,
+                        );
+                
+                    $this->setResponse($response);
+                    $this->setResponseVersion(1);
                 }
-                
-                $response = array(
-                    'total' => count($places),
-                    'returned' => count($places),
-                    'displayField' => 'title',
-                    'results' => $places,
-                    );
-                
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-                
                 break;
             case 'search':
+                $searchTerms = $this->getArg('q');
+                if ($searchTerms) {
+
+                    $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+                    $mapSearch = new $mapSearchClass();
+                    if (!$this->feeds)
+                        $this->feeds = $this->loadFeedData();
+                    $mapSearch->setFeedData($this->feeds);
+        
+                    $searchResults = $mapSearch->searchCampusMap($searchTerms);
+        
+                    $places = array();
+                    foreach ($searchResults as $result) {
+                        $places[] = arrayFromMapFeature($result);
+                    }
+
+                    $response = array(
+                        'total' => count($places),
+                        'returned' => count($places),
+                        'displayField' => 'title',
+                        'results' => $places,
+                        );
+                
+                    $this->setResponse($response);
+                    $this->setResponseVersion(1);
+                }
+
                 break;
 
             // ajax calls
             case 'staticImageURL':
+                $baseURL = $this->getArg('baseURL');
+                $mapClass = $this->getArg('mapClass');
+
+                $pan = $this->getArg('pan');
+                $zoom = $this->getArg('zoom');
+                
+                $mapController = MapImageController::factory($baseURL, $mapClass);
+                if ($zoom) {
+                    $level = $mapController->getLevelForZooming($zoom);
+                    $mapController->setZoomLevel($level);
+                }
+                if ($pan) {
+                    $center = $mapController->getCenterForPanning($pan);
+                    $mapController->setCenter($center);
+                }
+                
+                $url = $mapController->getImageURL();
+                
+                $this->setResponse($url);
+                $this->setResponseVersion(1);
+            
                 break;
             default:
                 $this->invalidCommand();
