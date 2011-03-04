@@ -12,9 +12,9 @@
 <p class="focal error">{$message}</p>
 {/if}
 
-{if $authenticationAuthorities}
 <form method="POST" id="loginForm" action="login">
 <input type="hidden" name="url" value="{$url|escape}" />
+{if $authenticationAuthorities}
 <p class="focal"><label for="loginUser">{$moduleStrings.LOGIN_LABEL|default:'login'}:</label> <input type="text" name="loginUser" id="loginUser" class="loginFormInput" /></p>
 <p class="focal"><label for="loginPassword">{$moduleStrings.PASSWORD_LABEL|default:'password'}:</label> <input type="password" name="loginPassword" id="loginPassword" class="loginFormInput" /> 
 {if $FORGET_PASSWORD_URL}<span><a href="{$FORGET_PASSWORD_URL}">{$moduleStrings.FORGET_PASSWORD_TEXT|default:'Forget your password?'|escape}</a></span>{/if}
@@ -43,7 +43,5 @@
     </ul>
     {/if}
 </div>
-{if $authenticationAuthorities}
 </form>
-{/if}
 {include file="findInclude:common/footer.tpl"}
