@@ -1,6 +1,74 @@
 <?php
 
+// TODO move general map functions to a separate file
 define('GEOGRAPHIC_PROJECTION', 4326);
+define('EARTH_RADIUS_IN_METERS', 6378100);
+
+// http://en.wikipedia.org/wiki/Great-circle_distance
+// chosen for what the page said about numerical accuracy
+// but in practice the other formulas, i.e.
+// law of cosines and haversine
+// all yield pretty similar results
+function gcd($fromLat, $fromLon, $toLat, $toLon)
+{
+    $radiansPerDegree = M_PI / 180.0;
+    $y1 = $fromLat * $radiansPerDegree;
+    $x1 = $fromLon * $radiansPerDegree;
+    $y2 = $toLat * $radiansPerDegree;
+    $x2 = $toLon * $radiansPerDegree;
+
+    $dx = $x2 - $x1;
+    $cosDx = cos($dx);
+    $cosY1 = cos($y1);
+    $sinY1 = sin($y1);
+    $cosY2 = cos($y2);
+    $sinY2 = sin($y2);
+
+    $leg1 = $cosY2*sin($dx);
+    $leg2 = $cosY1*$sinY2 - $sinY1*$cosY2*$cosDx;
+    $denom = $sinY1*$sinY2 + $cosY1*$cosY2*$cosDx;
+    $angle = atan2(sqrt($leg1*$leg1+$leg2*$leg2), $denom);
+
+    return $angle * EARTH_RADIUS_IN_METERS;
+}
+
+function arrayFromMapFeature(MapFeature $feature) {
+    $result = array(
+        'title' => $feature->getTitle(),
+        'subtitle' => $feature->getSubtitle(),
+        'featureindex' => $feature->getIndex(),
+        'category' => $feature->getCategory(),
+        'description' => $feature->getDescription(),
+        );
+
+    $geometry = $feature->getGeometry();
+    if ($geometry) {
+        $center = $geometry->getCenterCoordinate();
+        if ($geometry instanceof MapPolygon) {
+            $serializedGeometry = $geometry->getRings();
+        } elseif ($geometry instanceof MapPolyline) {
+            $serializedGeometry = $geometry->getPoints();
+        } elseif ($geometry) {
+            $serializedGeometry = $geometry->getCenterCoordinate();
+        }
+        $result['geometry'] = $serializedGeometry;
+        $result['lat'] = $center['lat'];
+        $result['lon'] = $center['lon'];
+    }
+    
+    return $result;
+}
+
+function shortArrayFromMapFeature(MapFeature $feature) {
+    return array(
+        'featureindex' => $feature->getIndex(),
+        'category' => $feature->getCategory(),
+        );
+}
+
+function htmlColorForColorString($colorString) {
+    return substr($colorString, strlen($colorString)-6);
+}
 
 // implemented by map categories, which have no geometry
 interface MapListElement
@@ -13,16 +81,25 @@ interface MapListElement
     public function getTitle();
     public function getSubtitle();
     public function getIndex();
+    public function getCategory();
+}
+
+interface MapFolder
+{
+    public function getListItem($name);
+    public function getListItems();
 }
 
 // implemented by map data elements that can be displayed on a map
 interface MapFeature extends MapListElement
 {
     public function getGeometry();
-    public function setGeometry(MapGeometry $geometry);
     public function getDescription();
     public function getDescriptionType();
     public function getStyle();
+
+    public function getField($fieldName);
+    public function setField($fieldName, $value);
 }
 
 interface MapGeometry
@@ -71,60 +148,48 @@ class EmptyMapFeature implements MapFeature {
     private $style;
     
     private $title = '';
-    private $address = '';
     private $description = '';
     private $index = 0;
+    private $fields = array();
+    
+    private $category;
+    private $subcategory;
     
     public function __construct($center) {
         $this->geometry = new EmptyMapPoint($center['lat'], $center['lon']);
         $this->style = new EmptyMapStyle();
     }
     
+    // MapListElement interface
+    
     public function getTitle() {
         return $this->title;
     }
     
-    public function setTitle($title) {
-        $this->title = $title;
-    }
-    
     public function getSubtitle() {
-        return $this->address;
-    }
-    
-    public function setAddress($address) {
-        $this->address = $address;
+        return $this->getField('address');
     }
     
     public function getIndex() {
         return $this->index;
     }
     
-    public function setIndex($index) {
-        return $this->index;
+    public function getCategory() {
+        return $this->category;
     }
     
-    public function getField($fieldName) {
-        return null;
+    public function setCategory($category) {
+        $this->category = $category;
     }
     
-    public function setField($fieldName, $value) {
-    }
+    // MapFeature interface
     
     public function getGeometry() {
         return $this->geometry;
     }
     
-    public function setGeometry(MapGeometry $geometry) {
-        $this->geometry = $geometry;
-    }
-    
     public function getDescription() {
         return $this->description;
-    }
-    
-    public function setDescription($description) {
-        $this->description = $description;
     }
 
     public function getDescriptionType() {
@@ -133,6 +198,31 @@ class EmptyMapFeature implements MapFeature {
 
     public function getStyle() {
         return $this->style;
+    }
+    
+    public function getField($fieldName) {
+        if (isset($this->fields[$fieldName])) {
+            return $this->fields[$fieldName];
+        }
+        return null;
+    }
+    
+    public function setField($fieldName, $value) {
+        $this->fields[$fieldName] = $value;
+    }
+    
+    // setters that get used by MapWebModule when its detail page isn't called with a feature
+    
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+    
+    public function setIndex($index) {
+        return $this->index;
+    }
+    
+    public function setDescription($description) {
+        $this->description = $description;
     }
 }
 

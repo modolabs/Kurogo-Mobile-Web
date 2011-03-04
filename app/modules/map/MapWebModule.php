@@ -219,26 +219,25 @@ class MapWebModule extends WebModule {
     }
     
     // url builders
-  
-    private function categoryURL($category=NULL, $subCategory=NULL, $addBreadcrumb=true) {
+
+    // $category can be a string or array which specifies the drilldown path 
+    // if null, user will be redirected to index
+    private function categoryURL($category=null, $addBreadcrumb=true) {
         return $this->buildBreadcrumbURL('category', array(
             'category' => $category,
-            'subcategory' => $subCategory,
         ), $addBreadcrumb);
     }
     
     private function campusURL($campusIndex, $addBreadcrumb=true) {
-        return $this->buildBreadcrumbURL('campus', array(
-            'campus' => $campusIndex,
-        ), $addBreadcrumb);
+        $args = $this->args;
+        $args['campus'] = $campusIndex;
+        return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
     }
 
-    private function detailURL($name, $category, $subCategory=null, $info=null, $addBreadcrumb=true) {
+    private function detailURL($name, $categoryPath=null, $addBreadcrumb=true) {
         return $this->buildBreadcrumbURL('detail', array(
             'featureindex' => $name,
-            'category'     => $category,
-            'subcategory'  => $subCategory,
-            'info'         => $info,
+            'category'     => $categoryPath,
         ), $addBreadcrumb);
     }
   
@@ -259,22 +258,6 @@ class MapWebModule extends WebModule {
         return $this->buildBreadcrumbURL('detail', $args, false);
     }
 
-    private function detailUrlForBBox($bbox=null) {
-        $args = $this->args;
-        if (isset($bbox)) {
-            $args['bbox'] = $bbox;
-        }
-        return $this->buildBreadcrumbURL('detail', $args, false);
-    }
-  
-    private function fullscreenUrlForBBox($bbox=null) {
-        $args = $this->args;
-        if (isset($bbox)) {
-            $args['bbox'] = $bbox;
-        }
-        return $this->buildBreadcrumbURL('fullscreen', $args, false);
-    }
-
     public function federatedSearch($searchTerms, $maxCount, &$results) {
         $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
         $mapSearch = new $mapSearchClass();
@@ -286,10 +269,10 @@ class MapWebModule extends WebModule {
         $limit = min($maxCount, count($searchResults));
         for ($i = 0; $i < $limit; $i++) {
             $result = array(
-                'title' => $mapSearch->getTitleForSearchResult($searchResults[$i]),
+                'title' => $searchResults[$i]->getTitle(),
                 'url'   => $this->buildBreadcrumbURL(
                                "/{$this->id}/detail",
-                               $mapSearch->getURLArgsForSearchResult($searchResults[$i]), false),
+                               shortArrayFromMapFeature($searchResults[$i]), false),
               );
               $results[] = $result;
         }
@@ -310,12 +293,16 @@ class MapWebModule extends WebModule {
         } else if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller->setCategoryId($index);
             $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
             return $controller;
         }
     }
     
     private function assignCategoriesForCampus($campusID=NULL) {
+        if (!$this->feeds)
+            $this->feeds = $this->loadFeedData();
+
         $categories = array();
         foreach ($this->feeds as $id => $feed) {
             if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
@@ -428,20 +415,28 @@ class MapWebModule extends WebModule {
         parse_str($aBookmark, $params);
         if (isset($params['featureindex'])) {
             $index = $params['featureindex'];
-            $dataController = $this->getDataController($params['category']);
-            $subCategory = isset($params['subcategory']) ? $params['subcategory'] : null;
-            $feature = $dataController->getFeature($index, $subCategory);
+            $categoryPath = $params['category'];
+            if (is_array($categoryPath)) {
+                $topCategory = array_shift($categoryPath);
+            } else {
+                $topCategory = $categoryPath;
+                $categoryPath = array();
+            }
+            $dataController = $this->getDataController($topCategory);
+            $feature = $dataController->getFeature($index, $categoryPath);
             return array($feature->getTitle(), $dataController->getTitle());
         
         } else if (isset($params['campus'])) {
-            $campus = $GLOBALS['siteConfig']->getSection('campus-'.$params['campus']);
+            $campus = $this->getDataForCampus($params['campus']);
             return array($campus['title']);
+
         } else if (isset($params['title'])) {
             $result = array($params['title']);
             if (isset($params['address'])) {
                 $result[] = $params['address'];
             }
             return $result;
+
         } else {
             return array($aBookmark);
         }
@@ -490,12 +485,10 @@ class MapWebModule extends WebModule {
                 if ($searchResults) {
                     foreach ($searchResults as $result) {
                         // TODO eliminate current feature from results
-                        $title = $mapSearch->getTitleForSearchResult($result);
-                        $subtitle = $mapSearch->getSubtitleForSearchResult($result);
-                        $urlArgs = $mapSearch->getURLArgsForSearchResult($result);
+                        $urlArgs = shortArrayFromMapFeature($result);
                         $place = array(
-                            'title' => $title,
-                            'subtitle' => $subtitle,
+                            'title' => $result->getTitle(),
+                            'subtitle' => $result->getSubtitle(),
                             'url' => $this->detailURLForResult($urlArgs, false),
                             );
                         $places[] = $place;
@@ -540,6 +533,17 @@ class MapWebModule extends WebModule {
         
         return false;
     }
+    
+    private function getDataForCampus($campus) {
+        $numCampuses = $GLOBALS['siteConfig']->getVar('CAMPUS_COUNT');
+        for ($i = 0; $i < $numCampuses; $i++) {
+           $campusData = $GLOBALS['siteConfig']->getSection('campus-'.$i);
+           if ($campusData['id'] == $campus) {
+               return $campusData;
+           }
+       }
+       return NULL;
+    }
 
     protected function initializeForPage() {
         switch ($this->page) {
@@ -547,14 +551,16 @@ class MapWebModule extends WebModule {
                 break;
             
             case 'index':
+                $campus = $this->getArg('campus', NULL);
                 $numCampuses = $GLOBALS['siteConfig']->getVar('CAMPUS_COUNT');
-                if ($numCampuses > 1) {
+
+                if ($campus === NULL && $numCampuses > 1) {
                     $campusLinks = array();
                     for ($i = 0; $i < $numCampuses; $i++) {
-                        $aCampus = $GLOBALS['siteConfig']->getSection('campus-'.$i);
+                        $campusData = $GLOBALS['siteConfig']->getSection('campus-'.$i);
                         $campusLinks[] = array(
-                            'title' => $aCampus['title'],
-                            'url' => $this->campusURL($i),
+                            'title' => $campusData['title'],
+                            'url' => $this->campusURL($campusData['id']),
                             );
                     }
                     $this->assign('browseHint', 'Select a Location');
@@ -562,11 +568,18 @@ class MapWebModule extends WebModule {
                     $this->assign('searchTip', NULL);
 
                 } else {
-                    if (!$this->feeds)
-                        $this->feeds = $this->loadFeedData();
-                    
-                    $this->assignCategoriesForCampus(NULL);
-                    $this->assign('browseHint', 'Browse map by:');
+                    $browseBy = 'map';
+                    if ($campus !== null) {
+                        $campusData = $this->getDataForCampus($campus);
+                        if ($campusData) {
+                            $browseBy = $campusData['title'];
+                        }
+                        $cookieID = http_build_query(array('campus' => $campus));
+                        $this->generateBookmarkOptions($cookieID);
+                    }
+                
+                    $this->assignCategoriesForCampus($campus);
+                    $this->assign('browseHint', "Browse {$browseBy} by:");
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
                 }
                 
@@ -602,27 +615,6 @@ class MapWebModule extends WebModule {
             
                 break;
             
-            case 'campus':
-                // this is like the index page for single-campus organizations
-                if (!$this->feeds)
-                    $this->feeds = $this->loadFeedData();
-                
-                $index = $this->args['campus'];
-                $campus = $GLOBALS['siteConfig']->getSection('campus-'.$index);
-                $title = $campus['title'];
-                $id = $campus['id'];
-
-                $this->assignCategoriesForCampus($id);
-                $this->assign('browseHint', "Browse {$title} by:");
-
-                $cookieID = http_build_query(array('campus' => $index));
-
-                $this->generateBookmarkOptions($cookieID);
-
-                $this->generateBookmarkLink();
-
-                break;
-            
             case 'search':
           
                 if (isset($this->args['filter'])) {
@@ -637,16 +629,16 @@ class MapWebModule extends WebModule {
                     $searchResults = $mapSearch->searchCampusMap($searchTerms);
         
                     if (count($searchResults) == 1) {
-                        $this->redirectTo('detail', $mapSearch->getURLArgsForSearchResult($searchResults[0]));
+                        $this->redirectTo('detail', shortArrayFromMapFeature($searchResults[0]));
                     } else {
                         $places = array();
                         foreach ($searchResults as $result) {
-                            $title = $mapSearch->getTitleForSearchResult($result);
-                            $subtitle = $mapSearch->getSubtitleForSearchResult($result);
+                            $title = $result->getTitle();
+                            $subtitle = $result->getSubtitle();
                             $place = array(
                                 'title' => $title,
                                 'subtitle' => $subtitle,
-                                'url' => $this->detailURLForResult($mapSearch->getURLArgsForSearchResult($result)),
+                                'url' => $this->detailURLForResult(shortArrayFromMapFeature($result)),
                             );
                             $places[] = $place;
                         }
@@ -662,38 +654,35 @@ class MapWebModule extends WebModule {
             
             case 'category':
                 if (isset($this->args['category'])) {
-                    if (!$this->feeds)
-                      $this->feeds = $this->loadFeedData();
-        
                     // populate drop-down list at the bottom
-                    $categories = array();
-                    foreach ($this->feeds as $id => $feed) {
-                        $categories[] = array(
-                            'id' => $id,
-                            'title' => $feed['TITLE'],
-                            );
-                    }
-                    $this->assign('categories', $categories);
+                    $this->assignCategoriesForCampus($this->getArg('campus', NULL));
         
                     // build the drill-down list
-                    $category = $this->args['category'];
-                    $dataController = $this->getDataController($category);
-        
-                    if (isset($this->args['subcategory'])) {
-                        $subCategory = $this->args['subcategory'];
+                    $categoryPath = $this->args['category'];
+                    if (is_array($categoryPath)) {
+                        $topCategory = array_shift($categoryPath);
                     } else {
-                        $subCategory = null;
+                        $topCategory = $categoryPath;
+                        $categoryPath = array();
                     }
-        
-                    $listItems = $dataController->getListItems($subCategory);
-        
+                    $dataController = $this->getDataController($topCategory);
+                    $listItems = $dataController->getListItems($categoryPath);
+                    array_unshift($categoryPath, $topCategory); // restore the path since we still need it
+
+                    if (count($listItems) == 1 && $listItems[0] instanceof MapFeature) {
+                        $args = $this->args;
+                        $args['featureindex'] = $listItems[0]->getIndex();
+                        $this->redirectTo('detail', $args, true);
+                    }
+
                     $places = array();
                     foreach ($listItems as $listItem) {
                         if ($listItem instanceof MapFeature) {
-                            $url = $this->detailURL($listItem->getIndex(), $category, $subCategory);
+                            $url = $this->detailURL($listItem->getIndex(), $categoryPath);
                         } else {
                             // for folder objects, getIndex returns the subcategory ID
-                            $url = $this->categoryURL($category, $listItem->getIndex(), false); // don't add breadcrumb
+                            $drilldownPath = array_merge($categoryPath, array($listItem->getIndex()));
+                            $url = $this->categoryURL($drilldownPath, false); // don't add breadcrumb
                         }
                         $places[] = array(
                             'title'    => $listItem->getTitle(),
@@ -713,39 +702,20 @@ class MapWebModule extends WebModule {
                 $detailConfig = $this->loadWebAppConfigFile('map-detail', 'detailConfig');        
                 $tabKeys = array();
                 $tabJavascripts = array();
-                
+
+                $dataController = $this->getDataControllerForMap();
+                $feature = $this->getFeatureForMap($dataController);
+    
                 if (isset($this->args['featureindex'])) { // this is a regular place
-                    $index = $this->args['featureindex'];
-                    $dataController = $this->getDataController($this->args['category']);
-                    $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
-                    $feature = $dataController->getFeature($index, $subCategory);
-                    
                     $cookieParams = array(
                         'category' => $this->args['category'],
-                        'subcategory' => $subCategory,
-                        'featureindex' => $index,
+                        'featureindex' => $this->args['featureindex'],
                         );
                     $cookieID = http_build_query($cookieParams);
                     $this->generateBookmarkOptions($cookieID);
-                    
-                } elseif (isset($this->args['campus'])) { // this is a campus
-                    $index = $this->args['campus'];
-                    $campus = $GLOBALS['siteConfig']->getSection('campus-'.$index);
-                    $coordParts = explode(',', $campus['center']);
-                    $center = array('lat' => $coordParts[0], 'lon' => $coordParts[1]);
 
-                    $dataController = $this->getDataController(NULL);
-                    
-                    $feature = new EmptyMapFeature($center);
-                    $feature->setTitle($campus['title']);
-                    $feature->setAddress($campus['address']);
-                    $feature->setDescription($campus['description']);
-                    $feature->setIndex($index);
-                } else {
-                    $center = array('lat' => 0, 'lon' => 0);
-                    $feature = new EmptyMapFeature($center);
-                    $dataController = $this->getDataController(NULL);
-                    $cookieID = http_build_query($this->args);
+                } elseif (isset($this->args['campus'])) {
+                    $cookieID = http_build_query(array('campus' => $this->args['campus']));
                     $this->generateBookmarkOptions($cookieID);
                 }
                 
@@ -767,21 +737,53 @@ class MapWebModule extends WebModule {
                 break;
                 
             case 'fullscreen':
-                if (isset($this->args['featureindex'])) { // this is a regular place
-                    $index = $this->args['featureindex'];
-                    $dataController = $this->getDataController($this->args['category']);
-                    $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
-                    $feature = $dataController->getFeature($index, $subCategory);
-                } else {
-                    $center = array('lat' => 0, 'lon' => 0);
-                    $feature = new EmptyMapFeature($center);
-                    $dataController = $this->getDataController(NULL);
-                    $cookieID = http_build_query($this->args);
-                    $this->generateBookmarkOptions($cookieID);
-                }                 
-
+                $dataController = $this->getDataControllerForMap();
+                $feature = $this->getFeatureForMap($dataController);
                 $this->initializeMap($dataController, $feature, true);
                 break;
         }
+    }
+    
+    private function getDataControllerForMap() {
+        if (isset($this->args['featureindex'])) { // this is a regular place
+            $topCategory = $this->args['category'];
+            if (is_array($topCategory)) {
+                $topCategory = array_shift($topCategory);
+            }
+            $dataController = $this->getDataController($topCategory);
+                    
+        } else {
+            $dataController = $this->getDataController(NULL);
+        }
+        return $dataController;
+    }
+        
+    private function getFeatureForMap($dataController) {
+        if (isset($this->args['featureindex'])) { // this is a regular place
+            $index = $this->args['featureindex'];
+            $categoryPath = $this->args['category'];
+            if (is_array($categoryPath)) {
+                array_shift($categoryPath);
+            } else {
+                $categoryPath = array();
+            }
+            $feature = $dataController->getFeature($index, $categoryPath);
+                    
+        } elseif (isset($this->args['campus'])) { // this is a campus
+            $campusData = $this->getDataForCampus($this->args['campus']);
+            $coordParts = explode(',', $campusData['center']);
+            $center = array('lat' => $coordParts[0], 'lon' => $coordParts[1]);
+
+            $feature = new EmptyMapFeature($center);
+            // may get rid of these setters and only allow setting in the constructor
+            $feature->setTitle($campusData['title']);
+            $feature->setField('address', $campusData['address']);
+            $feature->setDescription($campusData['description']);
+            $feature->setIndex($this->args['campus']);
+        } else {
+            $center = array('lat' => 0, 'lon' => 0);
+            $feature = new EmptyMapFeature($center);
+        }
+        return $feature;
     }
 }
