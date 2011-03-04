@@ -155,7 +155,6 @@ class KMLPlacemark extends XMLElement implements MapFeature
     protected $style;
     protected $geometry;
     protected $category;
-    protected $subcategory;
     
     private $fields;
 
@@ -199,14 +198,6 @@ class KMLPlacemark extends XMLElement implements MapFeature
     
     public function setCategory($category) {
         $this->category = $category;
-    }
-    
-    public function getSubcategory() {
-        return $this->subcategory;
-    }
-    
-    public function setSubcategory($subcategory) {
-        $this->subcategory = $subcategory;
     }
     
     // MapFeature interface
