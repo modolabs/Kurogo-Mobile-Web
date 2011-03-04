@@ -1219,6 +1219,7 @@ abstract class WebModule extends Module {
     $this->assign('moduleName',   $this->moduleName);
     $this->assign('page',         $this->page);
     $this->assign('isModuleHome', $this->page == 'index');
+    $this->assign('request_uri' , $_SERVER['REQUEST_URI']);
     
     // Font size for template
     $this->assign('fontsizes',    $this->fontsizes);

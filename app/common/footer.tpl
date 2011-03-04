@@ -55,6 +55,7 @@
   {/block}
 {block name="containerEnd"}
 </div>
+</div> <!--nonfooternav -->
 {/block}
 
 {block name="belowContent"}
