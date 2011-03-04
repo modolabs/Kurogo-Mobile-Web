@@ -130,6 +130,17 @@ abstract class User
     {
         return $group->userIsMember($this);
     }
+    
+    public function getUserHash() {
+        return md5(SITE_KEY . $this->getAuthenticationAuthorityIndex() . $this->getUserID());
+    }
+    
+    public function getSessionData() {
+        return array();
+    }
+
+    public function setSessionData($data) {
+    }
 }
 
 /**
@@ -149,5 +160,10 @@ class AnonymousUser extends User
     public function __construct()
     {
     }
+
+    public function getUserHash() {
+        return '';
+    }
+    
 }
 

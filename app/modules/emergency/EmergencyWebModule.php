@@ -1,11 +1,6 @@
 <?php
 
-require_once LIB_DIR . '/Emergency/EmergencyNoticeDataController.php';
-require_once LIB_DIR . '/Emergency/EmergencyNoticeDataController.php';
-require_once LIB_DIR . '/Emergency/ContactsListDataController.php';
-require_once LIB_DIR . '/Emergency/INIFileContactsListDataController.php';
-require_once LIB_DIR . '/Emergency/DrupalContactsListDataController.php';
-require_once LIB_DIR . '/Emergency/DrupalContactsDataParser.php';
+includePackage('Emergency');
 
 class EmergencyWebModule extends WebModule 
 {

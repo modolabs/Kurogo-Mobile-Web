@@ -68,9 +68,9 @@ class TwitterAuthentication extends OAuthAuthentication
     
     protected function getAuthURL(array $params)
     {
-        $url = "https://api.twitter.com/oauth/authenticate?" . http_build_query(array_merge($params, array(
+        $url = "https://api.twitter.com/oauth/authenticate?" . http_build_query(array(
             'oauth_token'=>$this->token
-            ))
+            )
         );
         return $url;
     }
@@ -92,7 +92,7 @@ class TwitterAuthentication extends OAuthAuthentication
 /**
   * @package Authentication
   */
-class TwitterUser extends BasicUser
+class TwitterUser extends OAuthUser
 {
     protected $twitter_userID;
     

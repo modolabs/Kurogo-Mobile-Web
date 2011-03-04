@@ -12,11 +12,11 @@
 <p class="focal error">{$message}</p>
 {/if}
 
+<form method="POST" id="loginForm" action="login">
+<input type="hidden" name="url" value="{$url|escape}" />
 {if $authenticationAuthorities}
-<form method="POST" id="loginForm" action="login.php">
-<input type="hidden" name="url" value="{$url|escape}">
-<p class="focal"><label for="loginUser">{$moduleStrings.LOGIN_LABEL|default:'login'}:</label> <input type="text" name="loginUser" class="loginFormInput"></p>
-<p class="focal"><label for="loginUser">{$moduleStrings.PASSWORD_LABEL|default:'password'}:</label> <input type="password" name="loginPassword" class="loginFormInput"> 
+<p class="focal"><label for="loginUser">{$moduleStrings.LOGIN_LABEL|default:'login'}:</label> <input type="text" name="loginUser" id="loginUser" class="loginFormInput" /></p>
+<p class="focal"><label for="loginPassword">{$moduleStrings.PASSWORD_LABEL|default:'password'}:</label> <input type="password" name="loginPassword" id="loginPassword" class="loginFormInput" /> 
 {if $FORGET_PASSWORD_URL}<span><a href="{$FORGET_PASSWORD_URL}">{$moduleStrings.FORGET_PASSWORD_TEXT|default:'Forget your password?'|escape}</a></span>{/if}
 </p>
 {if $authenticationAuthorities|@count>1}
@@ -31,16 +31,17 @@
 {/if}
 <div class="focal">
 {if $authenticationAuthorities}
-    <input type="submit" name="login_submit" id="login_submit" value="Login">
+    <input type="submit" name="login_submit" id="login_submit" value="Login" /> 
 {/if}    
-    {if $authenticationAuthorityLinks}<ul>
+    {if $allowRemainLoggedIn}
+    <input type="checkbox" name="remainLoggedIn" value="1" /> Remember me
+    {/if}    {if $authenticationAuthorityLinks}<ul>
     {foreach $authenticationAuthorityLinks as $authorityName=>$authorityData}
-    <li><a href="{$authorityData.LINK}">{if $authorityData.LOGIN_IMAGE_URL}<img src="{$authorityData.LOGIN_IMAGE_URL}" border="0" class="login_link_image" />{else}{$authorityData.TITLE|escape}{/if}</a></li>
+    <li>{if $authorityData.LOGIN_IMAGE_URL}<input type="image" name="login_link[{$authorityName}]" src="{$authorityData.LOGIN_IMAGE_URL}" />{else}
+    <input type="submit" name="login_link[{$authorityName}]" value="{$authorityData.TITLE|escape}" />{/if}</li>
     {/foreach}
     </ul>
     {/if}
 </div>
-{if $authenticationAuthorities}
 </form>
-{/if}
 {include file="findInclude:common/footer.tpl"}

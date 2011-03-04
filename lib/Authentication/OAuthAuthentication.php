@@ -118,12 +118,11 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         return $this->consumer_secret;
     }
 
-    public function login($login, $pass, Module $module) {
+    public function login($login, $pass, Module $module, $options) {
         $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
-        $url = isset($_GET['url']) ? urldecode($_GET['url']) : '';
         //see if we already have a request token
         if ($startOver || !$this->token || !$this->tokenSecret) {
-            if (!$this->getRequestToken(array('url'=>$url))) {
+            if (!$this->getRequestToken($options)) {
                 error_log("Error getting request token");
                 return AUTH_FAILED;
             }
@@ -136,7 +135,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
                 //we should now have the current user
                 if ($user = $this->getUserFromArray($response)) {
                     $session = $module->getSession();
-                    $session->login($user);
+                    $remainLoggedIn = isset($options['remainLoggedIn']) ? $options['remainLoggedIn'] : false;
+                    $session->login($user, $remainLoggedIn);
                     return AUTH_OK;
                 } else {
                     error_log("Unable to find user for $response");
@@ -149,7 +149,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         } else {
         
             //redirect to auth page
-            $url = $this->getAuthURL(array('url'=>$url));
+            $url = $this->getAuthURL($options);
             header("Location: " . $url);
             exit();
         }
@@ -191,4 +191,33 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $this->tokenSecret = $tokenSecret;
         $_SESSION[$this->tokenSecretSessionVar] = $tokenSecret;
     }
+    
+    public function getSessionData(OAuthUser $user) {
+        return array(
+            $this->tokenSessionVar=>$this->token,
+            $this->tokenSecretSessionVar=>$this->tokenSecret
+        );
+    }
+
+    public function setSessionData($data) {
+        if (isset($data[$this->tokenSessionVar])) {
+            $this->setToken($data[$this->tokenSessionVar]);
+        }
+
+        if (isset($data[$this->tokenSecretSessionVar])) {
+            $this->setTokenSecret($data[$this->tokenSecretSessionVar]);
+        }
+    }        
+}
+
+class OAuthUser extends BasicUser
+{
+    public function getSessionData() {
+        return $this->AuthenticationAuthority->getSessionData($this);   
+    }
+
+    public function setSessionData($data) {
+        $this->AuthenticationAuthority->setSessionData($data);
+    }
+    
 }
