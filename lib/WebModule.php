@@ -188,9 +188,9 @@ abstract class WebModule extends Module {
   private function getMinifyUrls($pageOnly=false) {
     $page = preg_replace('/[\s-]+/', '+', $this->page);
     $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(SITE_DIR);
-    $minDebug = $this->getSiteVar('MINIFY_DEBUG') ? '&debug=1' : '';
+    $minDebug = $this->getSiteVar('MINIFY_DEBUG') ? '&amp;debug=1' : '';
     
-    $addArgString = $pageOnly ? '&pageOnly=true' : '';
+    $addArgString = $pageOnly ? '&amp;pageOnly=true' : '';
     
     return array(
       'css' => "/min/g=css-$minKey$minDebug$addArgString",
