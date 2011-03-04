@@ -119,22 +119,14 @@ class GoogleAppsAuthentication extends OAuthAuthentication
 /**
   * @package Authentication
   */
-class GoogleAppsUser extends BasicUser
+class GoogleAppsUser extends OAuthUser
 {
-    protected $oauth_token;
-    protected $oauth_token_secret;
     protected $admin = false;
     
     public function getDomain() {
         return $this->AuthenticationAuthority->getDomain();
     }
     
-    public function __construct(GoogleAppsAuthentication $AuthenticationAuthority) {
-        parent::__construct($AuthenticationAuthority);
-        $this->oauth_token = $this->AuthenticationAuthority->getToken();
-        $this->oauth_token_secret = $this->AuthenticationAuthority->getTokenSecret();
-    }
-
     public function getAdmin() {
         return $this->admin;
     }

@@ -5,7 +5,7 @@
 </div>
 
 {if $upcomingEvents} 
-  {include file="findInclude:common/navlist.tpl" navlistItems=$upcomingEvents}
+  {include file="findInclude:common/navlist.tpl" navlistItems=$upcomingEvents subTitleNewline=true}
 {/if}
 
 {if count($userCalendars)}

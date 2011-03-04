@@ -118,11 +118,13 @@ abstract class Module
     return $session->getUser();
   }
   
-  public function getSession() {
+  public function getSession()
+  {
     if (!$this->session) {
-        $this->session = new Session();
+        $args = $this->getSiteSection('authentication');
+        $this->session = new Session($args);
     }
-    
+
     return $this->session;
   }
   

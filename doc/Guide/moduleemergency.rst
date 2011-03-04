@@ -74,5 +74,7 @@ of this type the RSS feed will only show the most recently updated, you will pro
 not want to create more than one node of this type, but instead just update one single node
 with the most up-to-date contact information.
 
-
+If the RSS feed generated at *http://YOUR_DRUPAL_SERVER_DOMAIN/emergency-contacts-v1* is
+missing the contact information you entered you may need to go to `/admin/user/permissions`
+and enable anonymous user for view `field_primary_contacts` and `field_secondary_contacts` 
 

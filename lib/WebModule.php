@@ -179,9 +179,9 @@ abstract class WebModule extends Module {
   private function getMinifyUrls($pageOnly=false) {
     $page = preg_replace('/[\s-]+/', '+', $this->page);
     $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(SITE_DIR);
-    $minDebug = $this->getSiteVar('MINIFY_DEBUG') ? '&debug=1' : '';
+    $minDebug = $this->getSiteVar('MINIFY_DEBUG') ? '&amp;debug=1' : '';
     
-    $addArgString = $pageOnly ? '&pageOnly=true' : '';
+    $addArgString = $pageOnly ? '&amp;pageOnly=true' : '';
     
     return array(
       'css' => "/min/g=css-$minKey$minDebug$addArgString",
@@ -742,7 +742,7 @@ abstract class WebModule extends Module {
     }
   }
   protected function addJQuery() {
-    $this->addExternalJavascript(URL_BASE . 'common/javascript/jquery.js');
+    $this->addInternalJavascript('/common/javascript/jquery.js');
   }
   
   //
@@ -1003,6 +1003,7 @@ abstract class WebModule extends Module {
     $this->assign('moduleName',   $this->moduleName);
     $this->assign('page',         $this->page);
     $this->assign('isModuleHome', $this->page == 'index');
+    $this->assign('request_uri' , $_SERVER['REQUEST_URI']);
     
     // Font size for template
     $this->assign('fontsizes',    $this->fontsizes);
@@ -1074,9 +1075,6 @@ abstract class WebModule extends Module {
     $accessKeyStart = count($this->breadcrumbs);
     if ($this->id != 'home') {
       $accessKeyStart++;  // Home link
-      if ($this->page != 'index') {
-        $accessKeyStart++;  // Module home link
-      }
     }
     $this->assign('accessKeyStart', $accessKeyStart);
 

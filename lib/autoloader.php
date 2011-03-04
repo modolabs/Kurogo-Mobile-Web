@@ -13,8 +13,30 @@
  * 3. The LIB_DIR 
  * 
  */
+ 
+$GLOBALS['libDirs'] = array();
+
+function includePackage($packageName) {
+    
+    if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
+        throw new Exception("Invalid Package name $packageName");
+    }
+    
+    $dir = LIB_DIR . "/$packageName";
+
+    if (in_array($packageName, $GLOBALS['libDirs'])) {
+        return true;
+    }
+    
+    if (!is_dir($dir)) {
+        throw new Exception("Unable to find $dir");
+    }
+    
+    $GLOBALS['libDirs'][] = $dir;
+}
+
 function siteLibAutoloader($className) {
-  $paths = array();
+  $paths = $GLOBALS['libDirs'];
   
   // If the className has Authentication at the end try the  authentication dir
   if (preg_match("/(Authentication)$/", $className, $bits)) {

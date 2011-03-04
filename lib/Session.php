@@ -15,39 +15,76 @@ require_once(LIB_DIR . '/User.php');
   */
 class Session
 {
+    const SESSION_GC_TIME = 21600;  
+    const TOKEN_COOKIE='lt';
+    const USERHASH_COOKIE='lh';
+    protected $session_id;
     protected $user;
     protected $auth;
     protected $auth_userID;
+    protected $login_token;
+    protected $useDB = false;
+    protected $maxIdleTime=0;
+    protected $remainLoggedInTime=0;
+    protected $loginCookiePath;
     
-    public function __construct()
-    {
+    public function __construct($args) {
+
+        //load arguments
+        $this->useDB = isset($args['AUTHENTICATION_USE_SESSION_DB']) ? $args['AUTHENTICATION_USE_SESSION_DB'] : false;
+        $this->maxIdleTime = isset($args['AUTHENTICATION_IDLE_TIMEOUT']) ? intval($args['AUTHENTICATION_IDLE_TIMEOUT']) : 0;
+        $this->remainLoggedInTime = isset($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) ? intval($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) : 0;
+        $this->loginCookiePath = URL_BASE . 'login';
+        
         if (!isset($_SESSION)) {
-            if (!is_dir(CACHE_DIR . "/session")) {
-                mkdir(CACHE_DIR . "/session",0700,true);
-            }
-            ini_set('session.save_path', CACHE_DIR . "/session");
+            // set session ini values
             ini_set('session.name', SITE_KEY);
             ini_set('session.use_only_cookies', 1);
             ini_set('session.cookie_path', COOKIE_PATH);
+            ini_set('session.gc_maxlifetime', self::SESSION_GC_TIME);
+            
+            if ($this->useDB) {
+                // set the database session handlers
+                session_set_save_handler(
+                    array($this, 'sess_open'),
+                    array($this, 'sess_close'),
+                    array($this, 'sess_read'),
+                    array($this, 'sess_write'),
+                    array($this, 'sess_destroy'),
+                    array($this, 'sess_gc')
+                );
+            } else {
+                ini_set('session.save_handler', 'files');
+                
+                // make sure session directory exists
+                if (!is_dir(CACHE_DIR . "/session")) {
+                    mkdir(CACHE_DIR . "/session", 0700, true);
+                }
+                
+                ini_set('session.save_path', CACHE_DIR . "/session");
+            }
+            
             session_start();
+            $this->session_id = session_id();
         }
         
         $user = new AnonymousUser();
-        
+
+        // see if a user is active        
         if (isset($_SESSION['auth'])) {
         
-            $maxIdleTime = intval($GLOBALS['siteConfig']->getVar('AUTHENTICATION_IDLE_TIMEOUT'));
             $lastPing = isset($_SESSION['ping']) ? $_SESSION['ping'] : 0;
             $diff = time() - $lastPing;
             
-            if ( $maxIdleTime && ($diff > $maxIdleTime)) {
-                // right now nothing happens, but we could show and error if necessary.
+            // see if max idle time has been reached
+            if ( $this->maxIdleTime && ($diff > $this->maxIdleTime)) {
+                // right now the user is just logged off, but we could show and error if necessary.
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($_SESSION['auth'])) {
 
                 $auth_userID = isset($_SESSION['auth_userID']) ? $_SESSION['auth_userID'] : '';
 
+                //attempt to load the user
                 if ($auth_userID) {
-                
                     if ($_user = $authority->getUser($auth_userID)) {
                         $user = $_user;
                     } else {
@@ -55,18 +92,33 @@ class Session
                     } 
                 }
             }
+        } elseif ($_user = $this->getLoginCookie()) {
+            // valid login cookie was found
+            $this->setUser($_user);
+            
+            //regenerate new login cookie
+            $this->setLoginCookie();
+            return;
+        } else {
+            //anonymous user
         }
                     
         $this->setUser($user);
     }    
-
-    public function isLoggedIn()
-    {
+    
+    /**
+      * returns whether a user is logged in or not
+      * @return boolean
+      */
+    public function isLoggedIn() {
         return strlen($this->user->getUserID()) > 0;
     }
     
-    protected function setUser(User $user)
-    {
+    /**
+      * sets the active user
+      * @param User $user
+      */
+    private function setUser(User $user) {
         $this->user = $user;
         $_SESSION['userID'] = $user->getUserID();
         $_SESSION['auth_userID'] = $user->getUserID();
@@ -74,23 +126,361 @@ class Session
         $_SESSION['ping'] = time();
     }
 
-    public function getUser()
-    {
+    /**
+      * Return the active user
+      * @return User
+      */
+    public function getUser() {
         return $this->user;
     }
     
-    public function login(User $user)
-    {
+    /**
+      * Logs in the user
+      * @param User $user
+      * @return User
+      */
+    public function login(User $user, $remainLoggedIn=false) {
         session_regenerate_id(true);
         $this->setUser($user);
+        if ($remainLoggedIn) {
+            $this->setLoginCookie();
+        }
         return $user;
     }
 
-    public function logout()
-    {
+    /**
+      * Logout the current user
+      */
+    public function logout() {
         $user = new AnonymousUser();
         $this->setUser($user);
-		    session_regenerate_id(true);
+        $this->clearLoginCookie();
+        session_regenerate_id(true);
         return true;
     }
+
+    /**
+      * returns a list of logged in users
+      * @return array
+      */
+	public function getActiveSessions() {
+        $users = array();
+
+	    if ($this->useDB) {
+            $conn = SiteDB::connection();
+            $sql = "SELECT * FROM sessions
+                    WHERE length(userID)>0
+                    ORDER BY ts DESC";
+            
+            $result = $conn->query($sql);
+            while ($row = $result->fetch()) {
+                $users[$row['id']] = self::unserialize_session_data($row['data']);
+            }
+        } else {
+            $sessions = $this->getAllSessions();
+            foreach ($sessions as $id=>$data) {
+                if ($data['userID']) {
+                    $users[$id] = $data;
+                }
+            }
+        }
+        
+		return $users;
+	}
+
+    /**
+      * removes a session
+      * @param string $id
+      */
+	public function deleteSession($id) {
+	    if (!preg_match("^/[a-z0-9]{26}$/", $id)) {
+	        throw new Exception("Invalid session id $id");
+	    }
+	    
+	    if ($id==$this->session_id) {
+	        return false;
+	    }
+	    
+	    if ($this->useDB) {
+            $conn = SiteDB::connection();
+            $sql = "DELETE FROM sessions
+                    WHERE id=?";
+            $result = $conn->query($sql, array($id));
+            return true;
+        } else {
+            $dir = ini_get('session.save_path');
+            $file = $dir . '/sess_' . $id;
+            if (file_exists($file)) {
+                return unlink($file);
+            }
+            
+            return false;
+        }
+	}
+
+    /**
+      * returns a list of all sessions
+      * @return array
+      */
+	public function getAllSessions() {
+        $users = array();
+
+	    if ($this->useDB) {
+            $conn = SiteDB::connection();
+            $sql = "SELECT * FROM sessions
+                    ORDER BY ts DESC";
+            
+            $result = $conn->query($sql);
+            while ($row = $result->fetch()) {
+                $users[$row['id']] = self::unserialize_session_data($row['data']);
+            }
+        } else {
+            $dir = ini_get('session.save_path');
+            $d = dir($dir);
+            while (false !== ($entry = $d->read())) {
+                if (preg_match("/^sess_([a-z0-9]+)$/i", $entry, $bits)) {
+                    $data = file_get_contents($dir . "/" . $entry);
+                    $users[$bits[1]] = self::unserialize_session_data($data);
+                }
+            }
+        }
+		return $users;
+	}
+	
+    /**
+      * creates the session and login_tokens tables
+      */
+    protected function createDatabaseTables() {
+    
+        $sql = "SELECT 1 FROM sessions";
+        $conn = SiteDB::connection();
+        if (!$result = $conn->query($sql, array(), db::IGNORE_ERRORS)) {
+            $sqls[] = "CREATE TABLE sessions (
+                    id char(32) primary key, 
+                    data text, 
+                    auth text,
+                    userID text,
+                    ts int)";
+            $sqls[] = "CREATE TABLE login_tokens (
+                    token char(32) primary key, 
+                    auth text,
+                    userID text, 
+                    data text,
+                    timestamp int,
+                    expires int)";
+            
+            foreach ($sqls as $sql) {
+                $conn->query($sql);
+            }
+        }
+    }
+    
+    private function loginTokenFile($token) {
+        return ini_get('session.save_path') . "/login_" . $token;
+    }
+    
+    
+    /**
+      * sets the cookie that permits logins after the session has expired
+      */
+    private function setLoginCookie() {
+        if (!$this->remainLoggedInTime) {
+            $this->clearLoginCookie();
+        }
+    
+    	if ($this->isLoggedIn()) {
+    	    //generate a random value
+			$login_token = md5(uniqid(rand(), true));
+			$expires = time() + $this->remainLoggedInTime;
+			
+			if ($this->useDB) {
+			
+			    //if the token is already set, update it with the new value
+                if ($this->getLoginCookie()) {
+                    $sql = "UPDATE login_tokens SET token=?, timestamp=?, expires=?, data=? WHERE token=?";
+                    $params = array($login_token, time(), $expires, serialize($this->user->getSessionData()), $this->login_token);
+                } else {
+                    $sql = "INSERT INTO login_tokens (token, auth, userID, timestamp, expires, data) VALUES (?,?,?,?,?,?)";
+                    $params = array($login_token, $this->user->getAuthenticationAuthorityIndex(), $this->user->getUserID(), time(), $expires, serialize($this->user->getSessionData()));
+                }
+                
+                $conn = SiteDB::connection();
+                $result = $conn->query($sql, $params);
+            } else {
+                $params = array(
+                    'auth'=>$this->user->getAuthenticationAuthorityIndex(),
+                    'userID'=>$this->user->getUserID(),
+                    'timestamp'=>time(),
+                    'expires'=>$expires,
+                    'data'=>$this->user->getSessionData()
+                );
+
+                $file = $this->loginTokenFile($login_token);
+                if ($this->getLoginCookie()) {
+                    $oldfile = $this->loginTokenFile($this->login_token);
+                    unlink($oldfile);
+                }
+                
+                file_put_contents($file, serialize($params));
+            }
+
+            // set the values and the cookies
+			$this->login_token = $login_token;
+			setCookie(self::TOKEN_COOKIE, $this->login_token, $expires, $this->loginCookiePath);
+			setCookie(self::USERHASH_COOKIE, $this->user->getUserHash(), $expires, $this->loginCookiePath);
+		} else {
+		    //clean up just in case
+		    $this->clearLoginCookie();
+		}
+    }
+    
+    /**
+      * attempts to see if a valid login cookie is present. 
+      */
+    private function getLoginCookie() {
+    
+    	if (isset($_COOKIE[self::TOKEN_COOKIE], $_COOKIE[self::USERHASH_COOKIE])) {
+    	    if ($this->useDB) {
+                $conn = SiteDB::connection();
+                
+                // see if we have on record the token and it hasn't expired
+        		$sql = "SELECT auth, userID, data FROM login_tokens WHERE token=? and expires>?";
+                $result = $conn->query($sql,array($_COOKIE[self::TOKEN_COOKIE], time()));
+                
+                if ($data = $result->fetch()) {
+                    $data['data'] = unserialize($data['data']);
+                }
+
+    	    } else {
+                $file = $this->loginTokenFile($_COOKIE[self::TOKEN_COOKIE]);
+                $data = false;
+                if (file_exists($file)) {
+                    if ($data = file_get_contents($file)) {
+                        $data = unserialize($data);
+                    }
+                }
+    	    }
+    	    
+    	    if ($data) {
+                if ($authority = AuthenticationAuthority::getAuthenticationAuthority($data['auth'])) {
+                    if ($user = $authority->getUser($data['userID'])) {
+                    
+                        // see if the hash matches the user hash
+                        if ($user->getUserHash() == $_COOKIE[self::USERHASH_COOKIE]) {
+                            // matched
+                            $this->login_token = $_COOKIE[self::TOKEN_COOKIE];
+                            $user->setSessionData($data['data']);
+                            return $user;
+                        } else {
+                            error_log("Hash " . $user->getUserHash() . " does not match " . $_COOKIE[self::USERHASH_COOKIE]);
+                        }
+                    } else {
+                        error_log("Unable to load user " . $data['userID']  . " for " . $data['auth']);
+                    }
+                } else {
+                    error_log("Unable to load authority ".  $data['auth']);
+                }
+            }
+
+            // something did not match so clean up
+            $this->clearLoginCookie();
+        }
+        
+        return false;
+    }
+    	
+    /**
+      * clears any login cookies
+      */
+    private function clearLoginCookie() {
+    	if (isset($_COOKIE[self::TOKEN_COOKIE], $_COOKIE[self::USERHASH_COOKIE])) {
+    	    if ($this->useDB) {
+                $conn = SiteDB::connection();
+                $sql = "DELETE FROM login_tokens WHERE token=?"; 
+        		$result = $conn->query($sql,array($_COOKIE[self::TOKEN_COOKIE]));
+
+                // clean up expired cookies
+                $sql = "DELETE FROM login_tokens WHERE expires<?";
+        		$result = $conn->query($sql,array(time()));
+            } else {
+                $file = $this->loginTokenFile($_COOKIE[self::TOKEN_COOKIE]);
+                @unlink($file);
+            }
+
+            setCookie(self::TOKEN_COOKIE, false, 1225344860, $this->loginCookiePath);
+            setCookie(self::USERHASH_COOKIE, false, 1225344860, $this->loginCookiePath);
+            $this->login_token = '';   
+    	}
+    }
+    
+    /**
+      * reads in session data from the database. 
+      */
+	public function sess_read($id) {
+		$sql = "SELECT data FROM sessions WHERE id=?";
+        $conn = SiteDB::connection();
+		
+		$result = $conn->query($sql, array($id), db::IGNORE_ERRORS);
+		if (!$result) {
+		    self::createDatabaseTables();
+		    return '';
+		}
+
+		if ($row = $result->fetch()) {
+			$return = $row['data'];
+		} else {
+			$return = '';
+		}
+
+		return $return;
+	}
+
+	public function unserialize_session_data( $serialized_string ) {
+		$variables = array(  );
+		$a = preg_split( "/(\w+)\|/", $serialized_string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE );
+		
+		for( $i = 0; $i < count( $a ); $i = $i+2 ) {
+			$variables[$a[$i]] = unserialize( $a[$i+1] );
+		}
+		return( $variables );
+	}
+	
+	public function sess_open($path, $name) {
+		return true;
+	} 
+	 
+	public function sess_close() {
+		return true;
+	} 
+		 
+	public function sess_write($id, $data) {
+
+		$dataArr = self::unserialize_session_data($data);
+		
+		$userID = isset($dataArr['userID']) ? $dataArr['userID'] : '';
+		$auth = isset($dataArr['auth']) ? $dataArr['auth'] : '';
+		$timestamp = time();
+		
+        $conn = SiteDB::connection();
+		
+		$sql = "REPLACE INTO sessions (id, data, auth, userID, ts)
+				VALUES (?,?,?,?,?)";
+		$result = $conn->query($sql, array($id, $data, $auth, $userID, $timestamp), db::IGNORE_ERRORS);
+		return $result ? true : false;
+	}
+		 
+	public function sess_destroy($id) {
+        $conn = SiteDB::connection();
+		$sql = "DELETE FROM sessions WHERE id=?";
+		$result = $conn->query($sql, array($id), db::IGNORE_ERRORS);
+		return $result ? true : false;
+	}
+		 
+	public function sess_gc($max_time=null) {
+        $conn = SiteDB::connection();
+		$sql = "DELETE FROM sessions
+				WHERE ts < ?";
+		$result = $conn->query($sql, array(time() - $max_time), db::IGNORE_ERRORS);
+		return $result ? true : false;
+	}
 }

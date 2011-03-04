@@ -15,10 +15,11 @@ class DrupalContactsDataParser extends DrupalCCKDataParser
     }
 
     public function parseData($data) {
-        $items = parent::parseData($data);
-        return array(
-            'primary' => $items[0]->getCCKField('primary-contacts'),
-            'secondary' => $items[0]->getCCKField('secondary-contacts'),
-        );
+        if ($items = parent::parseData($data)) {
+            return array(
+                'primary' => $items[0]->getCCKField('primary-contacts'),
+                'secondary' => $items[0]->getCCKField('secondary-contacts'),
+            );
+        }
     }
 }

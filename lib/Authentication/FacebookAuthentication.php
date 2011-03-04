@@ -89,7 +89,7 @@ class FacebookAuthentication extends AuthenticationAuthority
         return false;
     }
     
-    public function login($login, $pass, Module $module)
+    public function login($login, $pass, Module $module, $options)
     {
         //if the code is present, then this is the callback that the user authorized the application
         if (isset($_GET['code'])) {
@@ -126,7 +126,8 @@ class FacebookAuthentication extends AuthenticationAuthority
                 // get the current user via API
                 if ($user = $this->getUser('me')) {
                     $session = $module->getSession();
-                    $session->login($user);
+                    $remainLoggedIn = isset($options['remainLoggedIn']) ? $options['remainLoggedIn'] : false;
+                    $session->login($user, $remainLoggedIn);
                     return AUTH_OK;
                 }  else {
                     return AUTH_FAILED; // something is amiss
@@ -156,7 +157,9 @@ class FacebookAuthentication extends AuthenticationAuthority
             
             
             //save the redirect_uri so we can use it later
-            $this->redirect_uri = $_SESSION['redirect_uri'] = FULL_URL_BASE . 'login/login?' . http_build_query(array('authority'=>$this->getAuthorityIndex()));
+            $this->redirect_uri = $_SESSION['redirect_uri'] = FULL_URL_BASE . 'login/login?' . http_build_query(
+                array_merge($options, 
+                array('authority'=>$this->getAuthorityIndex())));
 
             //show the authorization/login screen
             $url = "https://graph.facebook.com/oauth/authorize?" . http_build_query(array(
@@ -198,6 +201,18 @@ class FacebookAuthentication extends AuthenticationAuthority
             $this->access_token = $_SESSION['fb_access_token'];
         }
     }
+    
+    public function getSessionData(OAuthUser $user) {
+        return array(
+            'fb_access_token'=>$this->access_token
+        );
+    }
+
+    public function setSessionData($data) {
+        if (isset($data['fb_access_token'])) {
+            $this->access_token = $data['fb_access_token'];
+        }
+    }        
 }
 
 /**
@@ -206,4 +221,11 @@ class FacebookAuthentication extends AuthenticationAuthority
  */
 class FacebookUser extends BasicUser
 {
+    public function getSessionData() {
+        return $this->AuthenticationAuthority->getSessionData($this);   
+    }
+
+    public function setSessionData($data) {
+        $this->AuthenticationAuthority->setSessionData($data);
+    }
 }

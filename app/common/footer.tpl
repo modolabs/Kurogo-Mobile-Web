@@ -17,7 +17,7 @@
   {/capture}
 
   {capture name="loginHTML" assign="loginHTML"}
-    {if $session}<div id="loginInfo"><a href="../login">{if $session->isLoggedIn()}{$session_user->getFullName()}{if $session_authority_image} <img src="{$session_authority_image}" alt="{$session_authority_title|escape}" />{else} ({$session_authority_title}){/if}{else}Not{/if} logged in</a></div>{/if}
+    {if $session}<div id="loginInfo"><a href="../login/{if !$session->isLoggedIn()}?url={$request_uri}{/if}">{if $session->isLoggedIn()}{$session_user->getFullName()}{if $session_authority_image} <img src="{$session_authority_image}" alt="{$session_authority_title|escape}" />{else} ({$session_authority_title}){/if}{else}Not{/if} logged in</a></div>{/if}
   {/capture}
   
   {block name="footerNavLinks"}
@@ -55,6 +55,7 @@
   {/block}
 {block name="containerEnd"}
 </div>
+</div> <!--nonfooternav -->
 {/block}
 
 {block name="belowContent"}

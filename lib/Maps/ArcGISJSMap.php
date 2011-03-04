@@ -113,7 +113,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
             // TODO there isn't yet a good way to get valid values for this from outside
             $consistency = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::CONSISTENCY)
-                or $consistency = 'STYLE_SOLID';
+                or $consistency = 'esri.symbol.SimpleFillSymbol.STYLE_SOLID';
             $filteredStyles[] = 'style='.$consistency;
 
             $color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR)
@@ -122,7 +122,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
             $weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT)
                 or $weight = 4;
-            $filteredStyles[] = 'width='.strval($width);
+            $filteredStyles[] = 'weight='.strval($weight);
         }
         $styleString = implode('|', $filteredStyles);
         
@@ -214,7 +214,7 @@ JS;
                 'spatialReference' => array('wkid' => $this->mapProjection)
                 );
             
-            $json = json_decode($jsonObj);
+            $json = json_encode($jsonObj);
 
             $js .= <<<JS
 
