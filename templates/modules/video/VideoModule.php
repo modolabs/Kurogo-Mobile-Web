@@ -16,6 +16,7 @@
    
    protected $brightcoveToken;
    protected $playerid;   // currently only used by Brightcove
+   protected $playerKey;  // currently only used by Brightcove
    protected $accountid;  // currently only used by Brightcove
    
    protected function initializeForPage() {
@@ -60,7 +61,7 @@
 	 $this->brightcove_or_youtube = $this->getModuleVar('brightcove_or_youtube');
 	 if ($this->brightcove_or_youtube) {
 		 $this->brightcoveToken  = $this->getModuleVar('brightcoveToken');
-	     //$this->assign('token', $this->$brightcoveToken); // DROP?
+		 $this->playerKey = $this->getModuleVar('playerKey');
 		 $this->playerid  = $this->getModuleVar('playerId');
 		 $this->accountid = $this->getModuleVar('accountId');
 	 } 
@@ -93,7 +94,6 @@
         	 // default search 
 	         $searchTerms = "";
 			 $items = $controller->search($searchTerms, 20, 1, "", $this->brightcoveToken, $this->brightcove_or_youtube);
-			 //$items = $controller->search($this->getModuleVar('SEARCH_QUERY'), 20, 1, "", $this->brightcoveToken);
 			 
 			 $videos = array();
              break;
@@ -109,11 +109,12 @@
 			   }
 			   break;   
         case 'detail-brightcove':
-			   $videoid = $this->getArg('videoid');
-			   
+			    $videoid = $this->getArg('videoid');
+			    //$this->assign('flvurl', $this->getArg('flvurl'));
+			    $this->assign('playerKey', $this->playerKey);
 			    $this->assign('playerid', $this->playerid);
 			    $this->assign('videoid', $videoid);
-			    $this->assign('accountid', $this->getArg('accountid'));
+			    $this->assign('accountid', $this->accountid);
 			    $this->assign('videoTitle', $this->getArg('videoTitle'));
 			    $this->assign('videoDescription', $this->getArg('videoDescription'));
 			   
@@ -259,11 +260,13 @@
              foreach ($items as $video) {
              
              	if ($this->brightcove_or_youtube) {
+             		$flvurl  = $video['FLVURL'];
 	             	$videoId = $video['id'];
 	             	$img     = $video['thumbnailURL'];
 	             	$title = $video['name'];
 	             	$desc  = $video['shortDescription'];
 	             	$duration = $video['length'] / 1000;  // millisecs
+	             	$next = 'detail-brightcove';
              	} else {
 	             	$desc = $video['media$group']['media$description']['$t'];
 	             	if (strlen($desc)>75) {
@@ -274,6 +277,7 @@
 	             	$videoId = $video['media$group']['yt$videoid']['$t'];
 	             	$img = $video['media$group']['media$thumbnail'][0]['url'];
 	             	$title = $video['title']['$t'];
+	             	$next = 'detail-youtube';
              	}
              	
              	$duration = $this->getDuration($duration);
@@ -283,10 +287,11 @@
              	$videos[] = array(
 			        'title'=>$title, 
 			        'subtitle'=>$subtitle,
-			        'imgWidth'=>500,  
-			        'imgHeight'=>580,  
+			        'imgWidth'=>120,  
+			        'imgHeight'=>100,  
 			        'img'=>$img,
-			        'url'=>$this->buildBreadcrumbURL('detail-youtube', array(
+			        'url'=>$this->buildBreadcrumbURL($next, array(
+			            'flvurl'=>$flvurl, 
 			            'videoid'=>$videoId 
              		))
              	);
