@@ -110,7 +110,6 @@
 			   break;   
         case 'detail-brightcove':
 			    $videoid = $this->getArg('videoid');
-			    //$this->assign('flvurl', $this->getArg('flvurl'));
 			    $this->assign('playerKey', $this->playerKey);
 			    $this->assign('playerid', $this->playerid);
 			    $this->assign('videoid', $videoid);
@@ -260,7 +259,6 @@
              foreach ($items as $video) {
              
              	if ($this->brightcove_or_youtube) {
-             		$flvurl  = $video['FLVURL'];
 	             	$videoId = $video['id'];
 	             	$img     = $video['thumbnailURL'];
 	             	$title = $video['name'];
@@ -291,7 +289,6 @@
 			        'imgHeight'=>100,  
 			        'img'=>$img,
 			        'url'=>$this->buildBreadcrumbURL($next, array(
-			            'flvurl'=>$flvurl, 
 			            'videoid'=>$videoId 
              		))
              	);
