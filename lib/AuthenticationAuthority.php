@@ -351,15 +351,15 @@ abstract class AuthenticationAuthority
      * @param Module $module 
      * @see AuthenticationAuthority::reset()
      * 
-     * Subclasses should not need to override this, but instead provide additional behavior in reset()
      */
-    public function login($login, $password, Module $module)
+    public function login($login, $password, Module $module, $options)
     {
         $result = $this->auth($login, $password, $user);
         
         if ($result == AUTH_OK) {
             $session = $module->getSession();
-            $session->login($user);
+            $remainLoggedIn = isset($options['remainLoggedIn']) ? $options['remainLoggedIn'] : false;
+            $session->login($user, $remainLoggedIn);
         }
         
         return $result;

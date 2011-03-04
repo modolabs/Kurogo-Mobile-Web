@@ -601,9 +601,8 @@ abstract class WebModule extends Module {
   public function getSession()
   {
     if (!$this->session) {
-        $maxIdleTime = $this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT');
-        $sessionUseDB = $this->getSiteVar('AUTHENTICATION_USE_SESSION_DB');
-        $this->session = new Session($sessionUseDB, $maxIdleTime);
+        $args = $this->getSiteSection('authentication');
+        $this->session = new Session($args);
     }
     
     return $this->session;

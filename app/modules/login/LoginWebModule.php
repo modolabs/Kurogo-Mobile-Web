@@ -32,10 +32,6 @@ class LoginWebModule extends WebModule {
         if ($USER_LOGIN=='FORM') {
             $authenticationAuthorities[$authorityIndex] = $authorityData;
         } elseif ($USER_LOGIN=='LINK') {
-            $authorityData['LINK'] = $this->buildBreadcrumbURL('login', array(
-                'url'=>$url,
-                'authority'=>$authorityIndex, 
-                'startOver'=>true), false);
             $authenticationAuthorityLinks[$authorityIndex] = $authorityData;
         }
     }
@@ -46,6 +42,10 @@ class LoginWebModule extends WebModule {
     
     $this->assign('authenticationAuthorities', $authenticationAuthorities);
     $this->assign('authenticationAuthorityLinks', $authenticationAuthorityLinks);
+    $this->assign('allowRemainLoggedIn', $this->getSiteVar('AUTHENTICATION_REMAIN_LOGGED_IN_TIME'));
+    if ($forgetPasswordURL = $this->getModuleVar('FORGET_PASSWORD_URL')) {
+        $this->assign('FORGET_PASSWORD_URL', $this->buildBreadcrumbURL('forgotpassword', array()));
+    }
     
     $multipleAuthorities = count($authenticationAuthorities) + count($authenticationAuthorityLinks) > 1;
     
@@ -54,7 +54,7 @@ class LoginWebModule extends WebModule {
         case 'logout':
             $this->setTemplatePage('message');
             if (!$this->isLoggedIn()) {
-                $this->redirectTo('login');
+                $this->redirectTo('login', array());
             } else {
                 $user = $this->getUser();
                 $authority = $user->getAuthenticationAuthority();
@@ -65,25 +65,35 @@ class LoginWebModule extends WebModule {
             break;
             
         case 'login':
-            $login = $this->argVal($_POST, 'loginUser', '');
-            $password = $this->argVal($_POST, 'loginPassword', '');
+            $login          = $this->argVal($_POST, 'loginUser', '');
+            $password       = $this->argVal($_POST, 'loginPassword', '');
+            $options = array(
+                'url'=>$url,
+                'remainLoggedIn'=> $this->getArg('remainLoggedIn', false)
+            );
             
-            $authorityIndex = $this->getArg('authority', AuthenticationAuthority::getDefaultAuthenticationAuthorityIndex());
+            $referrer = $this->argVal($_SERVER, 'HTTP_REFERER', '');
+            
+            if ($this->argVal($_POST, 'login_link')) {
+                $authorityIndex = key($this->argVal($_POST, 'login_link'));
+            } else {
+                $authorityIndex = $this->getArg('authority', AuthenticationAuthority::getDefaultAuthenticationAuthorityIndex());
+            }
             $this->assign('authority', $authorityIndex);
 
             if ($this->isLoggedIn()) {
-                $this->redirectTo('index');
+                $this->redirectTo('index', $options);
             }                    
             
             if ($this->argVal($_POST, 'login_submit') && empty($login)) {
-                $this->redirectTo('index');
+                $this->redirectTo('index', $options);
             }
             
             if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
-                $result = $authority->login($login, $password, $this);
+                $result = $authority->login($login, $password, $this, $options);
             } else {
                 error_log("Invalid authority $authorityIndex");
-                $this->redirectTo('index');
+                $this->redirectTo('index', $options);
             }
 
             switch ($result)
@@ -116,11 +126,15 @@ class LoginWebModule extends WebModule {
                 header("Location: $forgetPasswordURL");
                 exit();
             } else {
-                $this->redirectTo('index');
+                $this->redirectTo('index', array());
             }
             break;
         case 'index':
             if ($this->isLoggedIn()) {
+                if ($url) {
+                    header("Location: $url");
+                    exit();
+                }
                 $user = $this->getUser();
                 $authority = $user->getAuthenticationAuthority();
                 $this->setTemplatePage('message');
@@ -129,10 +143,6 @@ class LoginWebModule extends WebModule {
                 
                 $this->assign('url', $this->buildURL('logout'));
                 $this->assign('linkText', 'Logout');
-            } else {
-                if ($forgetPasswordURL = $this->getModuleVar('FORGET_PASSWORD_URL')) {
-                    $this->assign('FORGET_PASSWORD_URL', $this->buildBreadcrumbURL('forgotpassword', array()));
-                }
             }
             break;
     }
