@@ -78,7 +78,7 @@
         case 'search':
 	        if ($filter = $this->getArg('filter')) {
 	          $searchTerms = trim($filter);
-			  $items = $controller->search($searchTerms, 20, 1, "", $this->brightcoveToken);
+			  $items = $controller->search($searchTerms, 20, 1, "", $this->brightcoveToken,$this->brightcove_or_youtube);
 			  
 			  if ($items !== false) {
 			  	  // TODO handle 0 or 1 result
@@ -92,7 +92,7 @@
         	
         	 // default search 
 	         $searchTerms = "";
-			 $items = $controller->search($searchTerms, 20, 1, "", $this->brightcoveToken);
+			 $items = $controller->search($searchTerms, 20, 1, "", $this->brightcoveToken, $this->brightcove_or_youtube);
 			 //$items = $controller->search($this->getModuleVar('SEARCH_QUERY'), 20, 1, "", $this->brightcoveToken);
 			 
 			 $videos = array();
@@ -141,11 +141,12 @@
 	 
 	 
      if (isset($videos)) {
-	     if ($xml_or_json) {
+	     if ($xml_or_json==1) {
 	     	// FIXME currently only support Brightcive - check here
 		 	$this->handleBrightcoveRSS($controller,$videos,$items);
 		 } else {
-	     	$this->handleJSON($controller,$videos,$items);
+	 		if ($this->brightcove_or_youtube) $this->handleJSON($controller,$videos,$items['items']);
+	 		else $this->handleJSON($controller,$videos,$items);
 	     }
      }
      
@@ -258,17 +259,11 @@
              foreach ($items as $video) {
              
              	if ($this->brightcove_or_youtube) {
-             		
-             		// FIXME Brightcove
-	             	$videoId = 0;
-	             	$img  = "";
-	             	$title = "title";
-	             	$desc = "desc";
-	             	
-	             	//$desc = $video['title'];
-	             	//$desc = $video['shortDescription'];
-	             	$duration = 0;
-	             	
+	             	$videoId = $video['id'];
+	             	$img     = $video['thumbnailURL'];
+	             	$title = $video['name'];
+	             	$desc  = $video['shortDescription'];
+	             	$duration = $video['length'] / 1000;  // millisecs
              	} else {
 	             	$desc = $video['media$group']['media$description']['$t'];
 	             	if (strlen($desc)>75) {
