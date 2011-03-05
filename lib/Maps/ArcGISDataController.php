@@ -19,12 +19,37 @@ class ArcGISDataController extends MapDataController
         return $this->parser->getProjection();
     }
 
-    public function getSubLayerNames() {
-        return $this->parser->getSubLayerNames();
-    }
-    
-    public function selectSubLayer($layerId) {
-        $this->parser->selectSubLayer($layerId);
+    // this is mostly the same as parent class
+    // but we want to eliminate categories with zero results
+    public function getListItems($categoryPath=array()) {
+        $container = $this;
+        while (count($categoryPath) > 0) {
+            $category = array_shift($categoryPath);
+            $container = $container->getListItem($category);
+        }
+        if ($container === $this) {
+            $items = $this->items();
+        } else {
+            $items = $container->getListItems();
+        }
+        
+        $results = array();
+        // eliminate empty categories
+        foreach ($items as $item) {
+            if (!($item instanceof MapFolder) || count($item->getListItems())) {
+                $results[] = $item;
+            }
+        }
+        
+        // fast forward for categories that only have one item
+        while (count($results) == 1) {
+            $container = $results[0];
+            if (!$container instanceof MapFolder) {
+                break;
+            }
+            $results = $container->getListItems();
+        }
+        return $results;
     }
 
     public function getTitle() {
@@ -36,7 +61,7 @@ class ArcGISDataController extends MapDataController
         $this->initializeParser();
         $this->initializeLayers();
         $this->initializeFeatures();
-        return $this->parser->getFeatureList();
+        return $this->parser->getListItems();
     }
     
     protected function initializeParser() {
@@ -125,7 +150,7 @@ class ArcGISDataController extends MapDataController
         $this->removeAllFilters();
         $this->addFilter('f', 'json');
         
-        return $this->items();
+        return $this->getAllLeafNodes();
     }
     
     // TODO make a standalone method in ArcGISParser that

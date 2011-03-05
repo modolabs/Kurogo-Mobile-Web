@@ -80,7 +80,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             // either all four of (color, size, outline, style) are set or zero
             $color = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::COLOR)
                 or $color = 'FF0000';
-            $filteredStyles[] = 'color=#'.substr($color, 0, 6);
+            $filteredStyles[] = 'color=#'.htmlColorForColorString($color);
 
             $size = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SIZE)
                 or $size = 12;
@@ -118,7 +118,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
             $color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR)
                 or $color = 'FF0000';
-            $filteredStyles[] = 'color=#'.substr($color, 0, 6);
+            $filteredStyles[] = 'color=#'.htmlColorForColorString($color);
 
             $weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT)
                 or $weight = 4;

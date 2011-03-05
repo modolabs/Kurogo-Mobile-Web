@@ -6,6 +6,10 @@
   <h3>{$browseHint}</h3>
 </div>
 
+{if isset($bookmarkStatus)}
+{include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+{/if}
+
 {include file="findInclude:common/navlist.tpl" navlistItems=$categories}
 
 {if $hasBookmarks}
