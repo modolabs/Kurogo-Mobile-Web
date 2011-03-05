@@ -135,6 +135,22 @@ class Session
     }
     
     /**
+      * Return the session id
+      * @return string
+      */
+    public function getSessionID() {    
+        return $this->session_id;
+    }
+
+    /**
+      * Return the session id
+      * @return string
+      */
+    public function getLoginToken() {
+        return $this->login_token;
+    }
+    
+    /**
       * Logs in the user
       * @param User $user
       * @return User
