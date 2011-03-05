@@ -3,6 +3,8 @@
 class PeopleAPIModule extends APIModule
 {
     protected $id = 'people';
+    protected $vmin = 1;
+    protected $vmax = 1;
     private $fieldConfig;
     
     private function formatPerson($person) {

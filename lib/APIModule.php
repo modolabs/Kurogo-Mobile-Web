@@ -2,11 +2,21 @@
 
 abstract class APIModule extends Module
 {
-  protected $responseVersion;
-  protected $requestedVersion;
-  protected $minimumVersion; 
-  protected $command = '';
-  protected $response; //response object
+    protected $responseVersion;
+    protected $requestedVersion;
+    protected $requestedVmin;
+    protected $vmin;
+    protected $vmax;
+    protected $command = '';
+    protected $response; //response object
+  
+    public function getVmin() {
+        return $this->vmin;
+    }
+
+    public function getVmax() {
+        return $this->vmax;
+    }
 
  /**
    * Set the command
@@ -23,6 +33,7 @@ abstract class APIModule extends Module
     $error = new KurogoError(2, 'Module Disabled', 'This module has been disabled');
     $this->throwError($error);
   }
+  
 
  /**
    * The module must be run securely (https)
@@ -87,21 +98,45 @@ abstract class APIModule extends Module
     $this->response->display();
   }
   
- /**
-   * Factory method
-   * @param string $id the module id to load
-   * @param string $command the command to execute
-   * @param array $args an array of arguments
-   * @return APIModule 
-   */
-  public static function factory($id, $command='', $args=array()) {
+   /**
+     * Factory method
+     * @param string $id the module id to load
+     * @param string $command the command to execute
+     * @param array $args an array of arguments
+     * @return APIModule 
+     */
+    public static function factory($id, $command='', $args=array()) {
 
-    $module = parent::factory($id, 'api');
-    if ($command) {
-        $module->init($command, $args);
+        $module = parent::factory($id, 'api');
+        if ($command) {
+            $module->init($command, $args);
+        }
+
+        return $module;
     }
-    return $module;
-   }
+   
+    protected function getAllModules() {
+        $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
+        $modules = array('core'=>CoreAPIModule::factory());
+        foreach ($dirs as $dir) {
+            if (is_dir($dir)) {
+                $d = dir($dir);
+                while (false !== ($entry = $d->read())) {
+                    if ($entry[0]!='.' && is_dir(sprintf("%s/%s", $dir, $entry))) {
+                       try {
+                            $module = APIModule::factory($entry);
+                            $modules[$entry] = $module;
+                        } catch (Exception $e) {
+                        }
+                    }
+                }
+                $d->close();
+            }
+        }
+        ksort($modules);    
+        return $modules;        
+      }
+
 
  /**
    * Lazy load the response object
@@ -120,13 +155,13 @@ abstract class APIModule extends Module
         $this->requestedVersion = intval($requestedVersion);
 
         if ($minimumVersion) {
-            $this->minimumVersion = intval($minimumVersion);
+            $this->requestedVmin = intval($minimumVersion);
         } else {
-            $this->minimumVersion = $this->requestedVersion;
+            $this->requestedVmin = $this->requestedVersion;
         }
     } else {
         $this->requestedVersion = null;
-        $this->minimumVersion = null;
+        $this->requestedVmin = null;
     }
   
   }
@@ -184,5 +219,6 @@ abstract class APIModule extends Module
   abstract protected function initializeForCommand();
 
 }
+
 
 
