@@ -307,10 +307,10 @@ abstract class WebModule extends Module {
   //
   // Configuration
   //
-  protected function getSiteVar($var, $opts=Config::LOG_ERRORS)
+  protected function getSiteVar($var, $default=null, $opts=Config::LOG_ERRORS)
   {
-    
-      return $GLOBALS['siteConfig']->getVar($var, $opts | Config::EXPAND_VALUE);
+      $value = $GLOBALS['siteConfig']->getVar($var, $opts | Config::EXPAND_VALUE);
+      return is_null($value) ? $default :$value;
   }
 
   protected function getSiteSection($var, $opts=Config::LOG_ERRORS)
@@ -1230,7 +1230,7 @@ abstract class WebModule extends Module {
     $this->assign('minify', $this->getMinifyUrls());
     
     // Google Analytics. This probably needs to be moved
-    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', Config::SUPRESS_ERRORS)) {
+    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', null, Config::SUPRESS_ERRORS)) {
         $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
         $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
     }
@@ -1300,7 +1300,7 @@ abstract class WebModule extends Module {
         $this->assign('session_user', $user);
 
         if ($this->isLoggedIn()) {
-            $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', Config::SUPRESS_ERRORS)));
+            $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0, Config::SUPRESS_ERRORS)));
         }
         
         if ($authority = $user->getAuthenticationAuthority()) {
