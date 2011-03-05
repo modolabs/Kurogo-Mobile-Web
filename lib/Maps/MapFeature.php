@@ -45,12 +45,16 @@ function arrayFromMapFeature(MapFeature $feature) {
     if ($geometry) {
         $center = $geometry->getCenterCoordinate();
         if ($geometry instanceof MapPolygon) {
+            $geometryType = 'polygon';
             $serializedGeometry = $geometry->getRings();
         } elseif ($geometry instanceof MapPolyline) {
+            $geometryType = 'polyline';
             $serializedGeometry = $geometry->getPoints();
         } elseif ($geometry) {
+            $geometryType = 'point';
             $serializedGeometry = $geometry->getCenterCoordinate();
         }
+        $result['geometryType'] = $geometryType;
         $result['geometry'] = $serializedGeometry;
         $result['lat'] = $center['lat'];
         $result['lon'] = $center['lon'];
