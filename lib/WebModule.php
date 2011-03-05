@@ -867,10 +867,13 @@ abstract class WebModule extends Module {
     return $moduleData;
   }
   
-  public function getAccessControlLists()
-  {
+  public function getAccessControlLists() {
     $acls = array();
-    $aclStrings = $this->getModuleVar('acl', array(), Config::SUPRESS_ERRORS);
+
+    $aclStrings = array_merge(
+        $this->getSiteVar('acl', array(), Config::SUPRESS_ERRORS),
+        $this->getModuleVar('acl', array(), Config::SUPRESS_ERRORS)
+    );
     foreach ($aclStrings as $aclString) {
         if ($acl = AccessControlList::createFromString($aclString)) {
             $acls[] = $acl;

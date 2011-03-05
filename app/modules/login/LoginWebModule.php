@@ -11,8 +11,10 @@
 class LoginWebModule extends WebModule {
   protected $id = 'login';
   
-  protected function initialize() {
-        
+  public function getAccessControlLists() {
+    return array(AccessControlList::factory(AccessControlList::RULE_ACTION_ALLOW, 
+                                            AccessControlList::RULE_TYPE_EVERYONE,
+                                            AccessControlList::RULE_VALUE_ALL));
   }
 
   protected function initializeForPage() {
