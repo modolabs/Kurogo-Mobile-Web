@@ -18,6 +18,8 @@ class Session
     const SESSION_GC_TIME = 21600;  
     const TOKEN_COOKIE='lt';
     const USERHASH_COOKIE='lh';
+    const API_TOKEN_COOKIE='alt';
+    const API_USERHASH_COOKIE='alh';
     protected $session_id;
     protected $user;
     protected $auth;
@@ -27,6 +29,7 @@ class Session
     protected $maxIdleTime=0;
     protected $remainLoggedInTime=0;
     protected $loginCookiePath;
+    protected $apiCookiePath;
     
     public function __construct($args) {
 
@@ -35,6 +38,7 @@ class Session
         $this->maxIdleTime = isset($args['AUTHENTICATION_IDLE_TIMEOUT']) ? intval($args['AUTHENTICATION_IDLE_TIMEOUT']) : 0;
         $this->remainLoggedInTime = isset($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) ? intval($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) : 0;
         $this->loginCookiePath = URL_BASE . 'login';
+        $this->apiCookiePath = URL_BASE . API_URL_PREFIX . '/login';
         
         if (!isset($_SESSION)) {
             // set session ini values
@@ -87,6 +91,7 @@ class Session
                 if ($auth_userID) {
                     if ($_user = $authority->getUser($auth_userID)) {
                         $user = $_user;
+                        $this->login_token = isset($_SESSION['login_token']) ? $_SESSION['login_token'] : null;
                     } else {
                         error_log("Error trying to load user $auth_userID");
                     } 
@@ -96,8 +101,8 @@ class Session
             // valid login cookie was found
             $this->setUser($_user);
             
-            //regenerate new login cookie
-            $this->setLoginCookie();
+            //regenerate new login token
+            $this->setLoginToken();
             return;
         } else {
             //anonymous user
@@ -159,7 +164,7 @@ class Session
         session_regenerate_id(true);
         $this->setUser($user);
         if ($remainLoggedIn) {
-            $this->setLoginCookie();
+            $this->setLoginToken();
         }
         return $user;
     }
@@ -170,7 +175,7 @@ class Session
     public function logout() {
         $user = new AnonymousUser();
         $this->setUser($user);
-        $this->clearLoginCookie();
+        $this->clearLoginToken();
         session_regenerate_id(true);
         return true;
     }
@@ -295,24 +300,19 @@ class Session
         return ini_get('session.save_path') . "/login_" . $token;
     }
     
-    
     /**
-      * sets the cookie that permits logins after the session has expired
+      * creates a login token that can be used for login later
       */
-    private function setLoginCookie() {
-        if (!$this->remainLoggedInTime) {
-            $this->clearLoginCookie();
-        }
-    
+    private function setLoginToken() {
     	if ($this->isLoggedIn()) {
     	    //generate a random value
 			$login_token = md5(uniqid(rand(), true));
-			$expires = time() + $this->remainLoggedInTime;
+			$expires = $this->remainLoggedInTime ? time() + $this->remainLoggedInTime : 0;
 			
 			if ($this->useDB) {
 			
 			    //if the token is already set, update it with the new value
-                if ($this->getLoginCookie()) {
+                if ($this->login_token) {
                     $sql = "UPDATE login_tokens SET token=?, timestamp=?, expires=?, data=? WHERE token=?";
                     $params = array($login_token, time(), $expires, serialize($this->user->getSessionData()), $this->login_token);
                 } else {
@@ -332,7 +332,7 @@ class Session
                 );
 
                 $file = $this->loginTokenFile($login_token);
-                if ($this->getLoginCookie()) {
+                if ($this->login_token) {
                     $oldfile = $this->loginTokenFile($this->login_token);
                     unlink($oldfile);
                 }
@@ -342,11 +342,15 @@ class Session
 
             // set the values and the cookies
 			$this->login_token = $login_token;
-			setCookie(self::TOKEN_COOKIE, $this->login_token, $expires, $this->loginCookiePath);
-			setCookie(self::USERHASH_COOKIE, $this->user->getUserHash(), $expires, $this->loginCookiePath);
+			$_SESSION['login_token'] = $login_token;
+			
+            setCookie(self::TOKEN_COOKIE, $this->login_token, $expires, $this->loginCookiePath);
+            setCookie(self::USERHASH_COOKIE, $this->user->getUserHash(), $expires, $this->loginCookiePath);
+            setCookie(self::API_TOKEN_COOKIE, $this->login_token, $expires, $this->apiCookiePath);
+            setCookie(self::API_USERHASH_COOKIE, $this->user->getUserHash(), $expires, $this->apiCookiePath);
 		} else {
 		    //clean up just in case
-		    $this->clearLoginCookie();
+		    $this->clearLoginToken();
 		}
     }
     
@@ -354,21 +358,30 @@ class Session
       * attempts to see if a valid login cookie is present. 
       */
     private function getLoginCookie() {
-    
+        $token ='';
+        $hash = '';
     	if (isset($_COOKIE[self::TOKEN_COOKIE], $_COOKIE[self::USERHASH_COOKIE])) {
+    	    $token = $_COOKIE[self::TOKEN_COOKIE];
+    	    $hash = $_COOKIE[self::USERHASH_COOKIE];
+    	} elseif (isset($_COOKIE[self::API_TOKEN_COOKIE], $_COOKIE[self::API_USERHASH_COOKIE])) {
+    	    $token = $_COOKIE[self::API_TOKEN_COOKIE];
+    	    $hash = $_COOKIE[self::API_USERHASH_COOKIE];
+    	}
+    	
+    	if ($token) {
     	    if ($this->useDB) {
                 $conn = SiteDB::connection();
                 
                 // see if we have on record the token and it hasn't expired
         		$sql = "SELECT auth, userID, data FROM login_tokens WHERE token=? and expires>?";
-                $result = $conn->query($sql,array($_COOKIE[self::TOKEN_COOKIE], time()));
+                $result = $conn->query($sql,array($token, time()));
                 
                 if ($data = $result->fetch()) {
                     $data['data'] = unserialize($data['data']);
                 }
 
     	    } else {
-                $file = $this->loginTokenFile($_COOKIE[self::TOKEN_COOKIE]);
+                $file = $this->loginTokenFile($token);
                 $data = false;
                 if (file_exists($file)) {
                     if ($data = file_get_contents($file)) {
@@ -382,13 +395,14 @@ class Session
                     if ($user = $authority->getUser($data['userID'])) {
                     
                         // see if the hash matches the user hash
-                        if ($user->getUserHash() == $_COOKIE[self::USERHASH_COOKIE]) {
+                        if ($user->getUserHash() == $hash) {
                             // matched
-                            $this->login_token = $_COOKIE[self::TOKEN_COOKIE];
+                            $this->login_token = $token;
+                            $_SESSION['login_token'] = $this->login_token;
                             $user->setSessionData($data['data']);
                             return $user;
                         } else {
-                            error_log("Hash " . $user->getUserHash() . " does not match " . $_COOKIE[self::USERHASH_COOKIE]);
+                            error_log("Hash " . $user->getUserHash() . " does not match " . $hash);
                         }
                     } else {
                         error_log("Unable to load user " . $data['userID']  . " for " . $data['auth']);
@@ -399,7 +413,7 @@ class Session
             }
 
             // something did not match so clean up
-            $this->clearLoginCookie();
+            $this->clearLoginToken();
         }
         
         return false;
@@ -408,24 +422,27 @@ class Session
     /**
       * clears any login cookies
       */
-    private function clearLoginCookie() {
-    	if (isset($_COOKIE[self::TOKEN_COOKIE], $_COOKIE[self::USERHASH_COOKIE])) {
+    private function clearLoginToken() {
+    	if ($this->login_token) {
     	    if ($this->useDB) {
                 $conn = SiteDB::connection();
                 $sql = "DELETE FROM login_tokens WHERE token=?"; 
-        		$result = $conn->query($sql,array($_COOKIE[self::TOKEN_COOKIE]));
+        		$result = $conn->query($sql,array($this->login_token));
 
                 // clean up expired cookies
                 $sql = "DELETE FROM login_tokens WHERE expires<?";
-        		$result = $conn->query($sql,array(time()));
+        		$result = $conn->query($sql,array($this->login_token));
             } else {
-                $file = $this->loginTokenFile($_COOKIE[self::TOKEN_COOKIE]);
+                $file = $this->loginTokenFile($this->login_token);
                 @unlink($file);
             }
 
             setCookie(self::TOKEN_COOKIE, false, 1225344860, $this->loginCookiePath);
             setCookie(self::USERHASH_COOKIE, false, 1225344860, $this->loginCookiePath);
+            setCookie(self::API_TOKEN_COOKIE, false, 1225344860, $this->apiCookiePath);
+            setCookie(self::API_USERHASH_COOKIE, false, 1225344860, $this->apiCookiePath);
             $this->login_token = '';   
+            $_SESSION['login_token'] = '';
     	}
     }
     
