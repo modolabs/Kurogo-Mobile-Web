@@ -9,6 +9,7 @@
   */
 class DeviceClassifier {
   const COOKIE_KEY='deviceClassification';
+  private $userAgent = '';
   private $pagetype = 'unknown';
   private $platform = 'unknown';
   private $certs = false;
@@ -51,13 +52,17 @@ class DeviceClassifier {
 
       if ($data = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_USE_EXTERNAL') ? 
         $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($user_agent) ) {
-        
+        $this->userAgent = $_SERVER['HTTP_USER_AGENT'];
         $this->pagetype = $data['pagetype'];
         $this->platform = $data['platform'];
         $this->certs = $data['supports_certificate'];
         $this->setDeviceCookie();
       }
     }
+  }
+  
+  public function getUserAgent() {
+    return $this->userAgent;
   }
     
   private function setDeviceCookie() {
