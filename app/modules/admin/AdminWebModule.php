@@ -423,20 +423,20 @@ class AdminWebModule extends WebModule {
                 $sessions = array();
 
                 foreach ($activeSessions as $sessionID=>$sessionData) {
-                    $session = array(
+                    $sessionItem = array(
                         'label'=>$sessionData['userID'] . " (" . $sessionData['auth'] . ")",
                         'subtitle'=>'Last Access: ' . date('m/d/y H:i:s', $sessionData['ping'])
                     );
                     
                     // you can't delete your own session
                     if ($sessionID != $session->getSessionID()) {
-                        $session['name'] ='deleteSession[' . $sessionID . ']';
-                        $session['type'] ='submit';
-                        $session['confirm'] = true;
-                        $session['value'] = 'Delete';
+                        $sessionItem['name'] ='deleteSession[' . $sessionID . ']';
+                        $sessionItem['type'] ='submit';
+                        $sessionItem['confirm'] = true;
+                        $sessionItem['value'] = 'Delete';
                     }
 
-                    $sessions[] = $session;
+                    $sessions[] = $sessionItem;
                 }
                 
                 $this->assign('sessions', $sessions);
