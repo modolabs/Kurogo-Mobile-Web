@@ -66,6 +66,9 @@ class Session
             
             session_start();
             $this->session_id = session_id();
+            $_SESSION['platform'] = $GLOBALS['deviceClassifier']->getPlatform();
+            $_SESSION['pagetype'] = $GLOBALS['deviceClassifier']->getPagetype();
+            $_SESSION['user_agent'] = $GLOBALS['deviceClassifier']->getUserAgent();
         }
         
         $user = new AnonymousUser();
@@ -135,6 +138,22 @@ class Session
     }
     
     /**
+      * Return the session id
+      * @return string
+      */
+    public function getSessionID() {    
+        return $this->session_id;
+    }
+
+    /**
+      * Return the session id
+      * @return string
+      */
+    public function getLoginToken() {
+        return $this->login_token;
+    }
+    
+    /**
       * Logs in the user
       * @param User $user
       * @return User
@@ -158,6 +177,11 @@ class Session
         session_regenerate_id(true);
         return true;
     }
+
+	public function getSessionByID($id) {
+	    $sessions = self::getAllSessions();
+	    return isset($sessions[$id]) ? $sessions[$id] : null;
+	}
 
     /**
       * returns a list of logged in users
@@ -193,7 +217,7 @@ class Session
       * @param string $id
       */
 	public function deleteSession($id) {
-	    if (!preg_match("^/[a-z0-9]{26}$/", $id)) {
+	    if (!preg_match("/^[a-z0-9]{26}$/", $id)) {
 	        throw new Exception("Invalid session id $id");
 	    }
 	    
@@ -238,7 +262,7 @@ class Session
             $dir = ini_get('session.save_path');
             $d = dir($dir);
             while (false !== ($entry = $d->read())) {
-                if (preg_match("/^sess_([a-z0-9]+)$/i", $entry, $bits)) {
+                if (preg_match("/^sess_([a-z0-9]{26})$/", $entry, $bits)) {
                     $data = file_get_contents($dir . "/" . $entry);
                     $users[$bits[1]] = self::unserialize_session_data($data);
                 }
