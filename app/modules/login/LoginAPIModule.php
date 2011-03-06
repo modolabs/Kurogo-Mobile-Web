@@ -15,7 +15,23 @@ class LoginAPIModule extends APIModule
         }
         
         switch ($this->command) {
-            case 'session':
+            case 'logout':
+                if (!$this->isLoggedIn()) {
+                    $this->redirectTo('session');
+                } else {
+                    $user = $this->getUser();
+                    $authority = $user->getAuthenticationAuthority();
+                    $authority->logout($this);
+                    $this->redirectTo('session');
+                }
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+                break;
+             case 'login':
+                
+                break;
+           case 'session':
                 $session = $this->getSession();
                 $user = $this->getUser();
                 

@@ -97,7 +97,19 @@ abstract class APIModule extends Module
     }
     $this->response->display();
   }
-  
+
+  protected function redirectTo($command, $args=array()) {
+    
+    $url = URL_BASE . API_URL_PREFIX . "/$this->id/$command";
+
+    if (count($args)) {
+      $url .= http_build_query($args);
+    }
+    
+    //error_log('Redirecting to: '.$url);
+    header("Location: $url");
+    exit;
+  }
    /**
      * Factory method
      * @param string $id the module id to load
