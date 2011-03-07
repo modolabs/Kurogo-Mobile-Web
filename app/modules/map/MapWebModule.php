@@ -1,26 +1,6 @@
 <?php
 
-require_once LIB_DIR . '/Maps/MapFeature.php';
-require_once LIB_DIR . '/Maps/MapDataController.php';
-require_once LIB_DIR . '/Maps/MapImageController.php';
-require_once LIB_DIR . '/Maps/Polyline.php';
-
-require_once LIB_DIR . '/Maps/JavascriptMapImageController.php';
-require_once LIB_DIR . '/Maps/StaticMapImageController.php';
-
-require_once LIB_DIR . '/Maps/ArcGISDataController.php';
-require_once LIB_DIR . '/Maps/ArcGISJSMap.php';
-require_once LIB_DIR . '/Maps/ArcGISParser.php';
-require_once LIB_DIR . '/Maps/ArcGISStaticMap.php';
-require_once LIB_DIR . '/Maps/GoogleJSMap.php';
-require_once LIB_DIR . '/Maps/GoogleStaticMap.php';
-require_once LIB_DIR . '/Maps/KMLDataController.php';
-require_once LIB_DIR . '/Maps/KMLDataParser.php';
-require_once LIB_DIR . '/Maps/MapProjector.php';
-require_once LIB_DIR . '/Maps/MapSearch.php';
-require_once LIB_DIR . '/Maps/WMSDataParser.php';
-require_once LIB_DIR . '/Maps/WMSStaticMap.php';
-
+includePackage('Maps');
 
 class MapWebModule extends WebModule {
 
