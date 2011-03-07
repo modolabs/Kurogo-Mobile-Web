@@ -33,6 +33,10 @@ function includePackage($packageName) {
     }
     
     $GLOBALS['libDirs'][] = $dir;
+    
+    if (is_file(LIB_DIR . "/$packageName.php")) {
+        require_once(LIB_DIR . "/$packageName.php");
+    }
 }
 
 function siteLibAutoloader($className) {
