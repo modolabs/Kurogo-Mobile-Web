@@ -24,7 +24,7 @@ function includePackage($packageName) {
     
     $dir = LIB_DIR . "/$packageName";
 
-    if (in_array($packageName, $GLOBALS['libDirs'])) {
+    if (in_array($dir, $GLOBALS['libDirs'])) {
         return true;
     }
     
