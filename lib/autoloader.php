@@ -35,7 +35,7 @@ function includePackage($packageName) {
     $GLOBALS['libDirs'][] = $dir;
     
     if (is_file(LIB_DIR . "/$packageName.php")) {
-        include(LIB_DIR . "/$packageName.php");
+        include_once(LIB_DIR . "/$packageName.php");
     }
 }
 
