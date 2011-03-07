@@ -2,10 +2,8 @@
 /**
   * @package Core
   */
-
-/**
-  */
-require_once realpath(LIB_DIR.'/db.php');
+  
+includePackage('db');
 
 /**
   * @package Core

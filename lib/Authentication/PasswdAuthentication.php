@@ -184,7 +184,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         }
 
         if ($userData = $this->getUserData($login)) {
-            $user = new BasicUser($this);
+            $user = new User($this);
             $user->setUserID($userData['userID']);
             $user->setEmail($userData['email']);
             $user->setFullName($userData['fullname']);
@@ -222,7 +222,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         
         if ($groupData = $this->getGroupData($group)) {
 
-            $group = new BasicUserGroup($this);
+            $group = new UserGroup($this);
             $group->setGroupID($groupData['gid']);
             $group->setGroupName($groupData['group']);
             $members = is_array($groupData['members']) ? $groupData['members'] : array();

@@ -3,6 +3,8 @@
  * Database Authentication
  * @package Authentication
  */
+ 
+ includePackage('db');
 
 /**
  * Authentication Authority based on values in a database

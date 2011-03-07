@@ -77,7 +77,7 @@ function Initialize(&$path=null) {
   // Pull in functions to deal with php version differences
   //
   
-  require_once(ROOT_DIR.'/lib/compat.php');
+  require_once(LIB_DIR . '/compat.php');
 
   //
   // Set up library autoloader
