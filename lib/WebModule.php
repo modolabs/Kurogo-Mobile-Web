@@ -529,6 +529,7 @@ abstract class WebModule extends Module {
         }
         
         if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
+            includePackage('Authentication');
             $user = $this->getUser();
             $session = $this->getSession();
             $protected = self::argVal($moduleData, 'protected', false);

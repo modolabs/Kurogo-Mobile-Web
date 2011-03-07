@@ -210,7 +210,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     }        
 }
 
-class OAuthUser extends BasicUser
+class OAuthUser extends User
 {
     public function getSessionData() {
         return $this->AuthenticationAuthority->getSessionData($this);   

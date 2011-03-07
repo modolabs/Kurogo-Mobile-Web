@@ -219,7 +219,7 @@ class FacebookAuthentication extends AuthenticationAuthority
  * Facebook user
  * @package Authentication
  */
-class FacebookUser extends BasicUser
+class FacebookUser extends User
 {
     public function getSessionData() {
         return $this->AuthenticationAuthority->getSessionData($this);   

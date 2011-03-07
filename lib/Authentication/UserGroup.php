@@ -111,10 +111,3 @@ abstract class UserGroup
     }
 }
 
-/**
-  * @package Authentication
-  */
-class BasicUserGroup extends UserGroup
-{
-}
-

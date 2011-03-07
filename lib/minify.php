@@ -3,10 +3,6 @@
  * @package Minify
  */
  
-/**
-  */
-require_once LIB_DIR.'/DiskCache.php';
-  
 //
 // Handle CSS and Javascript a little differently:
 //

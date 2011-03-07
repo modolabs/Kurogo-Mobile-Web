@@ -175,7 +175,7 @@ class GoogleAuthentication extends AuthenticationAuthority
 /**
   * @package Authentication
   */
-class GoogleUser extends BasicUser
+class GoogleUser extends User
 {
     protected function valueKeyForTypeKey($key) {
         if (preg_match("/^openid_(.*?)_type_(.*?)$/", $key, $matches)) {
