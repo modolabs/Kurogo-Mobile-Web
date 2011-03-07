@@ -324,7 +324,7 @@ class LDAPAuthentication extends AuthenticationAuthority
 /**
   * @package Authentication
   */
-class LDAPUser extends BasicUser
+class LDAPUser extends User
 {
     protected $dn;
     
@@ -381,7 +381,7 @@ class LDAPUser extends BasicUser
 /**
   * @package Authentication
   */
-class LDAPUserGroup extends BasicUserGroup
+class LDAPUserGroup extends UserGroup
 {
     protected $dn;
     

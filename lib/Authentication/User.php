@@ -142,28 +142,3 @@ abstract class User
     public function setSessionData($data) {
     }
 }
-
-/**
- * Basic user class
- * @package Authentication
- */
-class BasicUser extends User
-{
-}
-
-/**
- * Anonymous User
- * @package Authentication
- */
-class AnonymousUser extends User
-{
-    public function __construct()
-    {
-    }
-
-    public function getUserHash() {
-        return '';
-    }
-    
-}
-

@@ -4,13 +4,6 @@
   */
 
 /**
-  */
-require_once(LIB_DIR . '/AuthenticationAuthority.php');
-/**
-  */
-require_once(LIB_DIR . '/User.php');
-
-/**
   * @package Authentication
   */
 class Session
