@@ -37,6 +37,7 @@ class Session
             ini_set('session.gc_maxlifetime', self::SESSION_GC_TIME);
             
             if ($this->useDB) {
+                includePackage('db');
                 // set the database session handlers
                 session_set_save_handler(
                     array($this, 'sess_open'),
