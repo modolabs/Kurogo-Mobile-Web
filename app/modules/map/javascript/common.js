@@ -3,6 +3,7 @@ var centerZoomBased;
 var staticMapOptions;
 var mapWidth;
 var mapHeight;
+var apiURL = "http://localhost:8040/rest/map/staticImageURL"; // TODO get this value from module config
 
 function hideMapTabChildren() {
     var mapTab = document.getElementById("mapTab");
@@ -37,47 +38,28 @@ function loadImage(imageURL,imageID) {
     }
 }
 
-function loadMapImage() {
+function loadMapImage(newSrc) {
     var mapImage = document.getElementById("staticmapimage");
-    var objMap = document.getElementById("mapimage");
-	  var objContainer = document.getElementById("container");
-	  var objScrollers = document.getElementById("mapscrollers");
-	  
-    var newSrc = constructMapURL();
+
     if (newSrc != mapImage.src) {
         show("loadingimage");
-        mapImage.src = constructMapURL();
+        mapImage.src = newSrc;
     }
-    if (objContainer) {
-        objContainer.style.width = mapWidth+"px";
-        objContainer.style.height = mapHeight+"px";
-        objMap.style.width = mapWidth+"px";
-        objMap.style.height = mapHeight+"px";
-    }
-    if (objScrollers) {
-        switch(window.orientation) {
-            case 0:
-            case 180:
-              objScrollers.style.height = (mapHeight-42)+"px";
-              objScrollers.style.width = mapWidth+"px";
-            break;
-        
-            case -90:
-            case 90:
-              objScrollers.style.height = mapHeight+"px";
-              objScrollers.style.width = (mapWidth-42)+"px";
-            break;
-        }
-    }
+}
 
+function pixelsFromString(aString) {
+    if (aString.substring(aString.length - 2, aString.length) == "px") {
+        return aString.substring(0, aString.length - 2);
+    } else if (aString.substring(aString.length - 1, aString.length) == "%") {
+        return aString.substring(0, aString.length - 1);
+    }
+    return aString;
 }
 
 function addStaticMapControls() {
     if (!staticMapOptions) {
         return;
     }
-    
-    staticMapOptions["stringFromDimensions"] = new Function("width", "height", staticMapOptions["stringFromDimensions"]);
 
     centerZoomBased = ("center" in staticMapOptions);
     
@@ -91,6 +73,10 @@ function addStaticMapControls() {
     } else {
         initBBox = staticMapOptions['bbox'];
     }
+    
+    var objMap = document.getElementById("mapimage");
+    mapWidth = pixelsFromString(objMap.style.width);
+    mapHeight = pixelsFromString(objMap.style.height);
 
     var zoomIn = document.getElementById("zoomin");
     zoomIn.onclick = function() {
@@ -106,7 +92,7 @@ function addStaticMapControls() {
             bbox['xmin'] = bbox['xmin'] + dLon / 4;
             staticMapOptions['bbox'] = bbox;
         }
-        loadMapImage();
+        updateMapImage();
     }
     
     var zoomOut = document.getElementById("zoomout");
@@ -123,7 +109,7 @@ function addStaticMapControls() {
             bbox['xmin'] = bbox['xmin'] - dLon / 2;
             staticMapOptions['bbox'] = bbox;
         }
-        loadMapImage();
+        updateMapImage();
     }
     
     var recenter = document.getElementById("recenter");
@@ -134,22 +120,72 @@ function addStaticMapControls() {
         } else {
             staticMapOptions['bbox'] = initBBox;
         }
-        loadMapImage();
+        updateMapImage();
     }
 }
 
-function constructMapURL() {
-    var baseURL = staticMapOptions['baseURL'];
-    var stringFromDimensions = staticMapOptions['stringFromDimensions'];
-    var dimensionString = stringFromDimensions(mapWidth, mapHeight);
+// north and east are sign arguments, e.g.:
+// northeast is (1, 1)
+// northwest is (1, -1)
+// south is (-1, 0)
+function scrollMap(north, east) {
+
     if (centerZoomBased) {
-        var centerCoord = staticMapOptions['center']['lat'] + "," + staticMapOptions['center']['lon'];
-        return baseURL + "&center=" + centerCoord + "&zoom=" + staticMapOptions['zoom'] + dimensionString;
-    } else { // bbox-based maps
+        var zoom = staticMapOptions['zoom'];
+        var lat = staticMapOptions['center']['lat'];
+        var lon = staticMapOptions['center']['lon'];
+        var degreesCovered = 360 / Math.pow(2, parseInt(zoom) + 1);
+
+        lat = parseFloat(lat) + degreesCovered * north;
+        lon = parseFloat(lon) + degreesCovered * east;
+
+        // round to 4 decimal places (roughly 10 meters)
+        staticMapOptions['center']['lat'] = Math.round(lat * 10000) / 10000;
+        staticMapOptions['center']['lon'] = Math.round(lon * 10000) / 10000;
+
+    } else {
         var bbox = staticMapOptions['bbox'];
-        var bboxStr = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'] + dimensionString;
-        return baseURL + "&bbox=" + bboxStr;
+        var dLat = (bbox['ymax'] - bbox['ymin']) / 2;
+        var dLon = (bbox['xmax'] - bbox['xmin']) / 2;
+        bbox['ymax'] = bbox['ymax'] + dLat * north;
+        bbox['ymin'] = bbox['ymin'] + dLat * north;
+        bbox['xmax'] = bbox['xmax'] + dLon * east;
+        bbox['xmin'] = bbox['xmin'] + dLon * east;
+        staticMapOptions['bbox'] = bbox;
     }
+    updateMapImage();
+}
+
+function updateMapImage() {
+    var httpRequest = new XMLHttpRequest();
+    var baseURL = staticMapOptions['baseURL'];
+    var mapClass = staticMapOptions['mapClass'];
+    var objMap = document.getElementById("mapimage");
+    var url = apiURL + "?baseURL=" + baseURL + "&mapClass=" + mapClass + "&width=" + mapWidth + "&height=" + mapHeight;
+    if (centerZoomBased) {
+        var lat = staticMapOptions['center']['lat'];
+        var lon = staticMapOptions['center']['lon'];
+        var zoom = staticMapOptions['zoom'];
+        url = url + "&lat=" + lat + "&lon=" + lon + "&zoom=" + zoom;
+    } else {
+        var bbox = staticMapOptions['bbox'];
+        var bboxStr = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'];
+        url = url + "&bbox=" + bboxStr;
+    }
+    
+    if ("projection" in staticMapOptions) {
+        url = url + "&projection=" + staticMapOptions['projection'];
+    }
+    // code snippet from http://en.wikipedia.org/wiki/JSON#Use_in_Ajax
+    httpRequest.open("GET", url, true);
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            var obj = JSON.parse(httpRequest.responseText);
+            var newSrc = obj['response'];
+            loadMapImage(newSrc);
+        }
+    }
+    httpRequest.send(null);
 }
 
 // assuming only one of updateMapDimensions or updateContainerDimensions
@@ -184,11 +220,10 @@ function doUpdateMapDimensions() {
 
     if (!centerZoomBased) {
         // if width and height changed, we need to update the bbox
-        if (oldWidth != mapWidth || oldHeight != mapHeight) {
+        if ((oldWidth && oldWidth != mapWidth) || (oldHeight && oldHeight != mapHeight)) {
             var bbox = staticMapOptions['bbox'];
             var bboxWidth = bbox['xmax'] - bbox['xmin'];
             var bboxHeight = bbox['ymax'] - bbox['ymin'];
-
             var newBBoxWidth = bboxWidth * mapWidth / oldWidth;
             var newBBoxHeight = bboxHeight * mapHeight / oldHeight;
             
@@ -203,7 +238,33 @@ function doUpdateMapDimensions() {
             staticMapOptions['bbox'] = bbox;
         }
     }
-    loadMapImage();
+
+    var objMap = document.getElementById("mapimage");
+	var objContainer = document.getElementById("container");
+	var objScrollers = document.getElementById("mapscrollers");
+    if (objContainer && objMap.className == "fullmap") {
+        objContainer.style.width = mapWidth+"px";
+        objContainer.style.height = mapHeight+"px";
+        objMap.style.width = mapWidth+"px";
+        objMap.style.height = mapHeight+"px";
+    }
+    if (objScrollers) {
+        switch(window.orientation) {
+            case 0:
+            case 180:
+              objScrollers.style.height = (mapHeight-42)+"px";
+              objScrollers.style.width = mapWidth+"px";
+            break;
+        
+            case -90:
+            case 90:
+              objScrollers.style.height = mapHeight+"px";
+              objScrollers.style.width = (mapWidth-42)+"px";
+            break;
+        }
+    }
+    
+    updateMapImage();
 }
 
 // resizing counterpart for dynamic maps
@@ -226,38 +287,6 @@ function doUpdateContainerDimensions() {
             container.style.height = document.documentElement.clientHeight + "px"; // ie7
         }
     }
-}
-
-// north and east are sign arguments, e.g.:
-// northeast is (1, 1)
-// northwest is (1, -1)
-// south is (-1, 0)
-function scrollMap(north, east) {
-
-    if (centerZoomBased) {
-        var zoom = staticMapOptions['zoom'];
-        var lat = staticMapOptions['center']['lat'];
-        var lon = staticMapOptions['center']['lon'];
-        var degreesCovered = 360 / Math.pow(2, parseInt(zoom) + 1);
-
-        lat = parseFloat(lat) + degreesCovered * north;
-        lon = parseFloat(lon) + degreesCovered * east;
-
-        // round to 4 decimal places (roughly 10 meters)
-        staticMapOptions['center']['lat'] = Math.round(lat * 10000) / 10000;
-        staticMapOptions['center']['lon'] = Math.round(lon * 10000) / 10000;
-
-    } else {
-        var bbox = staticMapOptions['bbox'];
-        var dLat = (bbox['ymax'] - bbox['ymin']) / 2;
-        var dLon = (bbox['xmax'] - bbox['xmin']) / 2;
-        bbox['ymax'] = bbox['ymax'] + dLat * north;
-        bbox['ymin'] = bbox['ymin'] + dLat * north;
-        bbox['xmax'] = bbox['xmax'] + dLon * east;
-        bbox['xmin'] = bbox['xmin'] + dLon * east;
-        staticMapOptions['bbox'] = bbox;
-    }
-    document.getElementById("staticmapimage").src = constructMapURL();
 }
 
 /*

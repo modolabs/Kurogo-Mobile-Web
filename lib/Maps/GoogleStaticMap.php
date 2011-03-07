@@ -333,24 +333,11 @@ class GoogleStaticMap extends StaticMapImageController {
     }
 
     public function getJavascriptControlOptions() {
-        $params = array(
-            'mapType' => $this->mapType,
-            'markers' => $this->getMarkers(),
-            'path' => $this->getPaths(),
-            'style' => $this->getLayerStyles(),
-            'sensor' => ($this->sensor ? 'true' : 'false'),
-            'format' => $this->imageFormat,
-            );
-
-        $query = http_build_query($params);
-        $query = preg_replace('/%5B\d+%5D/', '', $query); // remove brackets
-        $baseURL = $this->baseURL . '?' . $query;
-
         return json_encode(array(
             'center' => $this->center,
             'zoom' => $this->zoomLevel,
-            'stringFromDimensions' => 'return "&size="+width+"x"+height;',
-            'baseURL' => $baseURL,
+            'mapClass' => get_class($this),
+            'baseURL' => $this->baseURL,
             ));
     }
     

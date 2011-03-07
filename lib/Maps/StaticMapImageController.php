@@ -72,6 +72,21 @@ abstract class StaticMapImageController extends MapImageController
 
     // setters
     
+    // use only for static maps that are don't use geographic coordinates
+    public function setBoundingBox($bbox)
+    {
+        if (!is_array($bbox)) {
+            list($xmin, $ymin, $xmax, $ymax) = explode(',', $bbox);
+            $this->bbox = array(
+                'xmin' => $xmin, 'ymin' => $ymin,
+                'xmax' => $xmax, 'ymax' => $ymax,
+                );
+
+        } else {
+            $this->bbox = $bbox;
+        }
+    }
+    
     public function setCenter($center)
     {
         if (is_array($center)

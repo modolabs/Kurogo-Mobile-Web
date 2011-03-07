@@ -186,18 +186,34 @@ class MapAPIModule extends APIModule
             case 'staticImageURL':
                 $baseURL = $this->getArg('baseURL');
                 $mapClass = $this->getArg('mapClass');
-
-                $pan = $this->getArg('pan');
-                $zoom = $this->getArg('zoom');
+                $mapController = MapImageController::factory($mapClass, $baseURL);
                 
-                $mapController = MapImageController::factory($baseURL, $mapClass);
-                if ($zoom) {
-                    $level = $mapController->getLevelForZooming($zoom);
-                    $mapController->setZoomLevel($level);
+                $projection = $this->getArg('projection');
+                if ($projection) {
+                    $mapController->setMapProjection($projection);
                 }
-                if ($pan) {
-                    $center = $mapController->getCenterForPanning($pan);
-                    $mapController->setCenter($center);
+                
+                $width = $this->getArg('width');
+                if ($width) {
+                    $mapController->setImageWidth($width);
+                }
+
+                $height = $this->getArg('height');
+                if ($height) {
+                    $mapController->setImageHeight($height);
+                }
+
+                $bbox = $this->getArg('bbox', null);
+                $lat = $this->getArg('lat');
+                $lon = $this->getArg('lon');
+                $zoom = $this->getArg('zoom');
+
+                if ($bbox) {
+                    $mapController->setBoundingBox($bbox);
+
+                } else if ($lat && $lon && $zoom !== null) {
+                    $mapController->setZoomLevel($zoom);
+                    $mapController->setCenter(array('lat' => $lat, 'lon' => $lon));
                 }
                 
                 $url = $mapController->getImageURL();
