@@ -1,6 +1,6 @@
 {include file="findInclude:common/header.tpl" scalable=false}
 
-{include file="findInclude:common/search.tpl" extraArgs=$hiddenArgs}
+{include file="findInclude:common/search.tpl" extraArgs=$extraArgs}
 
 {if count($stories)}
   {include file="findInclude:modules/{$moduleID}/common/stories.tpl"}
