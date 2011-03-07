@@ -8,6 +8,7 @@
    protected $start = 0;
    protected $categories = 0;
    protected $feedIndex = 0;
+   protected static $lastSearch;  
    
    protected $totalItems;
    protected $tag;
@@ -103,6 +104,18 @@
             	  $resultCount = count($items);
              	  $videos = array();
 			  }
+     		  
+			  
+			  $this->assign('searchTerms', $searchTerms);
+     		  
+			  // If search terms change then start anew, else page results
+			  if ($this->start>$defaultStart) {
+				  if (strcmp($searchTerms,self::$lastSearch) != 0) {
+				  	 $this->start = $defaultStart;  // restart indexing
+				  	 self::$lastSearch = $searchTerms;
+				  }
+			  }
+     		  
 	        }
 	    	break;
 	          
@@ -184,38 +197,27 @@
      $nextURL = null;
      if ($this->totalItems > $this->maxPerPage) {
      	$args = $this->args;
-     	/*
-     	// TODO "start" is item index in youtube and page in brightove
+     	
+     	// "start" is item index in youtube and page in brightove
  		if ($this->brightcove_or_youtube) {
  		    if ($this->start > 0) {
-	     		$args['start'] = --$start;
+	     		$args['start'] = $this->start-1;
 	     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
 	     	}
 	     	if (($this->totalItems/$this->maxPerPage) > $this->start) {
-	     		$args['start'] = ++$start;
+	     		$args['start'] = $this->start+1;
 	     		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
 	     	} 		
  		} else {
- 		    if ($this->start > 0) {
-	     		$args['start'] = $this->start - $this->maxPerPage;
-	     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
-	     	}
-	     	if (($this->totalItems - $this->start) > $this->maxPerPage) {
-	     		$args['start'] = $this->start + $this->maxPerPage;
-	     		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
-	     	} 		
+ 		    if ($this->start > $defaultStart) {
+     			$args['start'] = $this->start - $this->maxPerPage;
+     			$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
+     		}
+ 	    	if (($this->totalItems - $this->start) > $this->maxPerPage) {
+    	 		$args['start'] = $this->start + $this->maxPerPage;
+     			$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+     		}		
  		}
-     	*/
- 		
-     	if ($this->start > $defaultStart) {
-     		$args['start'] = $this->start - $this->maxPerPage;
-     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
-     	}
-
-     	if (($this->totalItems - $this->start) > $this->maxPerPage) {
-     		$args['start'] = $this->start + $this->maxPerPage;
-     		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
-     	}
      }
       
      $this->assign('start', $this->start);
