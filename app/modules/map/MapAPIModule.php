@@ -1,14 +1,6 @@
 <?php
 
-require_once LIB_DIR . '/Maps/MapFeature.php';
-require_once LIB_DIR . '/Maps/MapDataController.php';
-
-require_once LIB_DIR . '/Maps/ArcGISDataController.php';
-require_once LIB_DIR . '/Maps/ArcGISParser.php';
-require_once LIB_DIR . '/Maps/KMLDataController.php';
-require_once LIB_DIR . '/Maps/KMLDataParser.php';
-require_once LIB_DIR . '/Maps/MapProjector.php';
-require_once LIB_DIR . '/Maps/MapSearch.php';
+includePackage('Maps');
 
 class MapAPIModule extends APIModule
 {
