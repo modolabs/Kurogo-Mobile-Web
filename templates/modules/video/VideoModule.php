@@ -21,7 +21,13 @@
    protected $playerid;   
    protected $playerKey;  
    protected $accountid;  
-   
+ 
+  private function feedURL($feedIndex, $addBreadcrumb=true) {
+    return $this->buildBreadcrumbURL('index', array(
+      'section' => $feedIndex
+    ), $addBreadcrumb);
+  }
+    
    protected function initializeForPage() {
    
    	if ($GLOBALS['deviceClassifier']->getPagetype()=='basic') {
@@ -50,7 +56,8 @@
 	            'value'    => $index,
 	            'tag'    => $feedData['TAG'],
 	            'selected' => ($this->feedIndex == $index),
-	            'code'      => $feedData['TAG_CODE']
+	            'code'      => $feedData['TAG_CODE'],
+                'url'      => $this->feedURL($index, false)
 	          );
 	     }
 	     $this->assign('sections', $sections);
@@ -113,25 +120,47 @@
         case 'detail-youtube':
 			   $videoid = $this->getArg('videoid');
 			   if ($video = $controller->getItem($videoid)) {
+			   	
+        		  $body = $video['media$group']['media$description']['$t'];
+        		  $title = $video['title']['$t'];
+        		
+        		  $url = $this->getArg('url');
+		          $shareEmailURL = $this->buildMailToLink("", $title, $body);    
+		     
+		          $this->assign('shareEmailURL', $shareEmailURL);
+        		  $this->assign('videoURL',      urlencode($url));
+		          $this->assign('shareRemark',   urlencode($title));
+			   	
+			   	
 			      $this->assign('videoid', $videoid);
-			      $this->assign('videoTitle', $video['title']['$t']);
-			      $this->assign('videoDescription', $video['media$group']['media$description']['$t']);
+			      $this->assign('videoTitle', $title);
+			      $this->assign('videoDescription', $body);
 			   } else {
 			      $this->redirectTo('index');
 			   }
 			   break;   
         case 'detail-brightcove':
+        	
+        		$body = $this->getArg('videoDescription');
+        		$title = $this->getArg('videoTitle');
+        		
+        		$url = $this->getArg('url');
+		        $shareEmailURL = $this->buildMailToLink("", $title, $body);    
+		     
+		        $this->assign('shareEmailURL', $shareEmailURL);
+        		$this->assign('videoURL',      urlencode($url));
+		        $this->assign('shareRemark',   urlencode($title));
+        
 			    $videoid = $this->getArg('videoid');
 			    $this->assign('playerKey', $this->playerKey);
 			    $this->assign('playerid', $this->playerid);
 			    $this->assign('videoid', $videoid);
 			    $this->assign('accountid', $this->accountid);
 			    $this->assign('videoTitle', $this->getArg('videoTitle'));
-			    $this->assign('videoDescription', $this->getArg('videoDescription'));		   
+			    $this->assign('videoDescription', $body);		   
 			    break;       
      }
 
-     
 	 
      if (isset($videos)) {
 	     if ($xml_or_json==1) {
@@ -232,6 +261,8 @@
              	
              	$subtitle = $desc . "<br/>" . $duration;
              	
+             	$link = $video->getLink();
+             	
              	$videos[] = array(
 			        'titleid'=>$prop_titleid,
 			        'playerid'=>$this->playerid,
@@ -242,6 +273,7 @@
 			        'imgWidth'=>180,  
 			        'imgHeight'=>120,  
 			        'url'=>$this->buildBreadcrumbURL('detail-brightcove', array(
+			            'link'=>$link,
 			            'videoTitle'=>$video->getTitle(),
 			            'videoDescription'=>$desc,
 			            'videoid'=>$prop_titleid,
@@ -277,6 +309,8 @@
              foreach ($items as $video) {
              
              	if ($this->brightcove_or_youtube) {
+             	    //$link = $video['linkURL'];
+             	    $link = $video['FLVURL'];
 	             	$videoId = $video['id'];
 	             	$img     = $video['thumbnailURL'];
 	             	$title = $video['name'];
@@ -284,6 +318,8 @@
 	             	$duration = $video['length'] / 1000;  // millisecs
 	             	$next = 'detail-brightcove';
              	} else {
+             		$links = $video['link'];
+             		$link = $links[0]['href'];
 	             	$desc = $video['media$group']['media$description']['$t'];
 	             	if (strlen($desc)>75) {
 	             		$desc = substr($desc,0,75) . "...";
@@ -300,13 +336,16 @@
              	
              	$subtitle = $desc . "<br/>" . $duration;
              	
+             	
              	$videos[] = array(
 			        'title'=>$title, 
 			        'subtitle'=>$subtitle,
+			        'link'=>$link,
 			        'imgWidth'=>120,  
 			        'imgHeight'=>100,  
 			        'img'=>$img,
 			        'url'=>$this->buildBreadcrumbURL($next, array(
+			            'url'=>$link,
 			            'videoid'=>$videoId,
 			            'videoTitle'=>$title,
 			            'videoDescription'=>$desc

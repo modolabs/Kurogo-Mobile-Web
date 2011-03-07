@@ -2,6 +2,9 @@
 
 <h1 class="focal videoTitle">{$videoTitle}</h1>
 <p class="nonfocal">
+
+{include file="findInclude:common/share.tpl" shareURL={$videoURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
+
     <iframe class="youtube-player" type="text/html" width="298" height="200" src="http://www.youtube.com/embed/{$videoid}" frameborder="0">
     </iframe>
 </p>

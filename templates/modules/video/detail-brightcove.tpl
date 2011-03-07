@@ -2,8 +2,11 @@
 
 <h1 class="focal videoTitle">{$videoTitle}</h1>
 
+ 
 <p class="nonfocal">
 
+{include file="findInclude:common/share.tpl" shareURL={$videoURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
+ 
     <script type="text/javascript" src="http://admin.brightcove.com/js/BrightcoveExperiences.js"></script>
 	<script src="http://brightcove-swf-hosting.s3.amazonaws.com/MobileCompatibility.js" type="text/javascript"></script>
 
@@ -19,7 +22,7 @@
 	    <param name="isVid" value="true" />
 	    <param name="isUI" value="true" />
 	 </object>
- 
+
 	<script type="text/javascript">
 	  runMobileCompatibilityScript('myExperience{$videoid}');
 	</script>
