@@ -7,11 +7,6 @@
  */
 
 /**
-  * 
-  */
-require_once realpath(LIB_DIR.'/DateTimeUtils.php');
-
-/**
  * ICalendar
  * @package Exceptions
  */

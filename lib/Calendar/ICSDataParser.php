@@ -7,11 +7,6 @@
  */
 
 /**
-  * 
-  */
-require_once('ICalendar.php');
-
-/**
   * @package ExternalData
   * @subpackage Calendar
   */
