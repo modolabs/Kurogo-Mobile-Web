@@ -84,12 +84,6 @@ interface MapListElement
     public function getCategory();
 }
 
-interface MapFolder
-{
-    public function getListItem($name);
-    public function getListItems();
-}
-
 // implemented by map data elements that can be displayed on a map
 interface MapFeature extends MapListElement
 {
@@ -100,47 +94,6 @@ interface MapFeature extends MapListElement
 
     public function getField($fieldName);
     public function setField($fieldName, $value);
-}
-
-interface MapGeometry
-{
-    // must return an array of the form {'lat' => 2.7182, 'lon' => -3.1415}
-    public function getCenterCoordinate();
-}
-
-interface MapPolyline extends MapGeometry
-{
-    public function getPoints();
-}
-
-interface MapPolygon extends MapGeometry
-{
-    public function getRings();
-}
-
-interface MapStyle
-{
-    const POINT = 0;
-    const LINE = 1;
-    const POLYGON = 2;
-    const CALLOUT = 3;
-
-    // these just have to be unique within the enclosing style type
-    const COLOR = 'color';             // points
-    const FILLCOLOR = 'fillColor';     // polygons, callouts, list view
-    const STROKECOLOR = 'strokeColor'; // lines
-    const TEXTCOLOR = self::COLOR;     // callouts
-    const HEIGHT = 'height';           // points
-    const WIDTH = 'width';             // points and lines
-    const SIZE = self::WIDTH;          // points
-    const WEIGHT = self::WIDTH;        // lines
-    const ICON = 'icon';               // points, cell image in list view
-    const SCALE = 'scale';             // points, labels -- kml
-    const SHAPE = 'shape';             // points -- esri
-    const CONSISTENCY = 'consistency'; // lines -- dotted/dashed/etc
-    const SHOULD_OUTLINE = 'outline';  // polygons
-
-    public function getStyleForTypeAndParam($type, $param);
 }
 
 class EmptyMapFeature implements MapFeature {

@@ -211,7 +211,7 @@ class MapWebModule extends WebModule {
     private function campusURL($campusIndex, $addBreadcrumb=true) {
         $args = $this->args;
         $args['campus'] = $campusIndex;
-        return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
+        return $this->buildBreadcrumbURL('campus', $args, $addBreadcrumb);
     }
 
     private function detailURL($name, $categoryPath=null, $addBreadcrumb=true) {
@@ -531,6 +531,7 @@ class MapWebModule extends WebModule {
                 break;
             
             case 'index':
+            case 'campus':
                 $campus = $this->getArg('campus', NULL);
                 $numCampuses = $GLOBALS['siteConfig']->getVar('CAMPUS_COUNT');
 
