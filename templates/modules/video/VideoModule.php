@@ -68,8 +68,10 @@
 		 $this->playerKey = $this->getModuleVar('playerKey');
 		 $this->playerid  = $this->getModuleVar('playerId');
 		 $this->accountid = $this->getModuleVar('accountId');
+		 $defaultStart = 0;
 	 } else {
 		 $this->youtubeAuthor = $this->getModuleVar('youtubeAuthor');
+		 $defaultStart = 1;
 	 }
 	 
 	 $xml_or_json = $this->getModuleVar('xml_or_json');
@@ -78,14 +80,16 @@
 	 } else {
         $controller = DataController::factory('VideoJsonDataController');
      }
-  
+ 
+	 $this->start = $this->getArg('start',$defaultStart);
+	  
      	 
    switch ($this->page)
      {  
         case 'search':
 	        if ($filter = $this->getArg('filter')) {
 	          $searchTerms = trim($filter);
-			  $items = $controller->search($searchTerms, 20, 1, $this->tag, $this->brightcoveToken,$this->brightcove_or_youtube);
+			  $items = $controller->search($searchTerms, $this->maxPerPage, $this->start, $this->tag, $this->brightcoveToken,$this->brightcove_or_youtube);
 			  
 			  if ($items !== false) {
 			  	  // TODO handle 0 or 1 result
@@ -99,7 +103,7 @@
         	
         	 // default search 
 	         $searchTerms = "";
-			 $items = $controller->search($searchTerms, 20, 1, $this->tag, $this->brightcoveToken, $this->brightcove_or_youtube);
+			 $items = $controller->search($searchTerms, $this->maxPerPage, $this->start, $this->tag, $this->brightcoveToken, $this->brightcove_or_youtube);
 			 
 			 if ($items !== false) {
 			 	$videos = array();
@@ -128,8 +132,6 @@
      }
 
      
-	 $this->start = $this->getArg('start',0);
-	 
 	 
      if (isset($videos)) {
 	     if ($xml_or_json==1) {
@@ -176,7 +178,7 @@
  		}
      	*/
  		
-     	if ($this->start > 0) {
+     	if ($this->start > $defaultStart) {
      		$args['start'] = $this->start - $this->maxPerPage;
      		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
      	}

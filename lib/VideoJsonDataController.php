@@ -40,6 +40,10 @@
 		 
 	         $data = $this->items(0,null,$this->totalItems);
 	         
+         	 if (isset($data['total_count'])) {
+	         	$this->totalItems = $data['total_count'];
+         	 }
+	         
 	         return $data;    		
      		
      	}

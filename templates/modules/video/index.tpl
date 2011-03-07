@@ -26,8 +26,8 @@
 {/if}
 
 
-  {if $prevURL}
-      <a href="{$prevURL}">Previous <<<</a>
+  {if $previousURL}
+      <a href="{$previousURL}">Previous <<<</a>
   {/if}
  {*
 {include file="findInclude:common/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
