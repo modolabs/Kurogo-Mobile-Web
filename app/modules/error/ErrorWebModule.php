@@ -52,6 +52,12 @@ class ErrorWebModule extends WebModule {
       return;
   }
 
+  public function getAccessControlLists() {
+    return array(AccessControlList::factory(AccessControlList::RULE_ACTION_ALLOW, 
+                                            AccessControlList::RULE_TYPE_EVERYONE,
+                                            AccessControlList::RULE_VALUE_ALL));
+  }
+
   protected function initializeForPage() {
     $code = $this->getArg('code', 'default');
     $url  = $this->getArg('url', '');

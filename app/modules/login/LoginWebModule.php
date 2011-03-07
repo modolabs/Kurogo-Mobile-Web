@@ -11,6 +11,12 @@
 class LoginWebModule extends WebModule {
   protected $id = 'login';
   
+  public function getAccessControlLists() {
+    return array(AccessControlList::factory(AccessControlList::RULE_ACTION_ALLOW, 
+                                            AccessControlList::RULE_TYPE_EVERYONE,
+                                            AccessControlList::RULE_VALUE_ALL));
+  }
+
   protected function initializeForPage() {
     if (!$this->getSiteVar('AUTHENTICATION_ENABLED')) {
         throw new Exception("Authentication is not enabled on this site");

@@ -4,13 +4,8 @@
   * @subpackage Calendar
   */
 
-/**
-  */
-require_once realpath(LIB_DIR.'/DateTimeUtils.php');
 
-/**
-  */
-require_once realpath(LIB_DIR.'/ICalendar.php');
+includePackage('Calendar');
 
 define('DAY_SECONDS', 24*60*60);
 
@@ -279,7 +274,18 @@ class CalendarWebModule extends WebModule {
         return parent::prepareAdminForSection($section, $adminModule);
     }
   }
-  
+
+    protected function getFeedsByType() {  
+        $feeds = array();
+        foreach (array('static', 'user', 'resource') as $type) {
+            $typeFeeds = $this->getFeeds($type);
+            foreach ($typeFeeds as $feed=>$feedData) {
+                $feeds[$type][$type . '|' . $feed] = $feedData['TITLE'];
+            }
+        }
+        return $feeds;
+    }
+    
   protected function getFeeds($type) {
     if (isset($this->feeds[$type])) {
         return $this->feeds[$type];
@@ -396,7 +402,6 @@ class CalendarWebModule extends WebModule {
                 } elseif ($event->overlaps(new TimeRange($now + 900, $now + 1800))) {
                     $availability = 'In use from ' . $this->timeText($event, true);
                 }
-            } else {
             }
                 
             $resources[$calendar] = array(
@@ -478,6 +483,7 @@ class CalendarWebModule extends WebModule {
         $this->loadWebAppConfigFile('calendar-index','calendarPages');
         $this->assign('today',         mktime(0,0,0));
         $this->assign('searchOptions', $this->searchOptions);
+        $this->assign('feeds',  $this->getFeedsByType());
         break;
       
       case 'categories':
@@ -718,11 +724,19 @@ class CalendarWebModule extends WebModule {
         
       case 'search':
         if ($filter = $this->getArg('filter')) {
-          $searchTerms  = trim($filter);
-          $timeframeKey = $this->getArg('timeframe', 0);
-          $searchOption = $this->searchOptions[$timeframeKey];
-          $type         = $this->getArg('type', 'static');
-          $calendar     = $this->getArg('calendar', $this->getDefaultFeed($type));
+          $searchTerms    = trim($filter);
+          $timeframeKey   = $this->getArg('timeframe', 0);
+          $searchOption   = $this->searchOptions[$timeframeKey];
+          $type           = $this->getArg('type', 'static');
+          $searchCalendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+          
+          if (preg_match("/^(.*?)\|(.*?)$/", $searchCalendar, $bits)) {
+            $type     = $bits[1];
+            $calendar = $bits[2];
+          } else {
+            $calendar = $searchCalendar;
+          }
+          
           $feed         = $this->getFeed($calendar, $type);
           
           list($start, $end) = $this->getDatesForSearchOption($searchOption);          
@@ -739,18 +753,20 @@ class CalendarWebModule extends WebModule {
             }
         
             $events[] = array(
-              'url'      => $this->detailURL($iCalEvent, array(
-                'filter'    => $searchTerms, 
-                'timeframe' => $timeframeKey)),
-              'title'    => $iCalEvent->get_summary(),
-              'subtitle' => $subtitle
+              'url'       => $this->detailURL($iCalEvent, array(
+              'filter'    => $searchTerms, 
+              'timeframe' => $timeframeKey)),
+              'title'     => $iCalEvent->get_summary(),
+              'subtitle'  => $subtitle
             );
           }
                     
-          $this->assign('events',      $events);        
-          $this->assign('searchTerms', $searchTerms);        
+          $this->assign('events'        , $events);        
+          $this->assign('searchTerms'   , $searchTerms);        
           $this->assign('selectedOption', $timeframeKey);
-          $this->assign('searchOptions',  $this->searchOptions);
+          $this->assign('searchOptions' , $this->searchOptions);
+          $this->assign('feeds'         , $this->getFeedsByType());
+          $this->assign('searchCalendar', $searchCalendar);
 
         } else {
           $this->redirectTo('index');

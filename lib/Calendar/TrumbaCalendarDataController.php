@@ -5,10 +5,6 @@
   */
 
 /**
-  */
-require_once(LIB_DIR . '/ICalendar.php');
-
-/**
   * @package ExternalData
   * @subpackage Calendar
   */

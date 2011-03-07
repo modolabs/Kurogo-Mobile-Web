@@ -5,8 +5,6 @@
  * @subpackage Calendar
  */
 
-require_once realpath(LIB_DIR.'/DateTimeUtils.php');
-
 /**
  * Retrieves and parses calendar data
  * @package ExternalData
