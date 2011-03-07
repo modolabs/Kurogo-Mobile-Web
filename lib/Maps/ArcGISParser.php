@@ -235,8 +235,21 @@ class ArcGISParser extends DataParser implements MapFolder
     {
         if (!$this->isPopulated) { // initial parse
             $data = json_decode($contents, true);
-            if (!$data)
-                return false;
+            if (!$data) {
+                error_log("Failed to get JSON response from ArcGIS server at {$this->baseURL}";
+                throw new DataServerException("The map server for this category is temporarily down.  Please try again later.");
+            }
+            if (isset($data['error'])) {
+                $error = $data['error'];
+                $code = $error['code'];
+                $message = $error['message'];
+                $details = isset($error['details']) ? json_encode($error['details']) : '';
+                error_log("Error response from ArcGIS server at {$this->baseURL}:\n"
+                          ."Code: $code\n"
+                          ."Message: $message\n"
+                          ."Details: $details\n");
+                throw new DataServerException("The map server for this category is temporarily down.  Please try again later.");
+            }
 
             $this->serviceDescription = $data['serviceDescription'];
             $this->supportedImageFormats = explode(',', $data['supportedImageFormatTypes']);
