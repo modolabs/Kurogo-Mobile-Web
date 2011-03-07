@@ -522,8 +522,10 @@ abstract class WebModule extends Module {
         
         $secure = self::argVal($moduleData, 'secure', false);
         if ($secure && (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
+            $secure_host = $this->getSiteVar('SECURE_HOST', $_SERVER['SERVER_NAME']);
+            $secure_port = $this->getSiteVar('SECURE_PORT', 443);
             // redirect to https (at this time, we are assuming it's on the same host)
-             $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+             $redirect= sprintf("https://%s%s%s", $secure_host, $secure_port == 443 ? '': ":$secure_port", $_SERVER['REQUEST_URI']);
              header("Location: $redirect");    
              exit();
         }
