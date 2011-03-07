@@ -35,7 +35,7 @@ function arrayFromMapFeature(MapFeature $feature) {
     $result = array(
         'title' => $feature->getTitle(),
         'subtitle' => $feature->getSubtitle(),
-        'featureindex' => $feature->getIndex(),
+        'id' => $feature->getIndex(),
         'category' => $feature->getCategory(),
         'description' => $feature->getDescription(),
         );
