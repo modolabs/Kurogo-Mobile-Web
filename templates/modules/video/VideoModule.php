@@ -13,11 +13,14 @@
    protected $tag;
    protected $brightcove_or_youtube;
    
+   // currently only used by YouTube:
+   protected $youtubeAuthor;  
    
+   // currently only used by Brightcove:
    protected $brightcoveToken;
-   protected $playerid;   // currently only used by Brightcove
-   protected $playerKey;  // currently only used by Brightcove
-   protected $accountid;  // currently only used by Brightcove
+   protected $playerid;   
+   protected $playerKey;  
+   protected $accountid;  
    
    protected function initializeForPage() {
    
@@ -40,18 +43,19 @@
       $this->feedIndex = 0;
     }
     
-     $sections = array();
-     foreach ($this->categories as $index => $feedData) {
-          $sections[] = array(
-            'value'    => $index,
-            'tag'    => $feedData['TAG'],
-            'selected' => ($this->feedIndex == $index),
-            'code'      => $feedData['TAG_CODE']
-          );
-     }
-    
-     $this->assign('sections', $sections);
-     
+    if (isset($this->categories)) {
+	     $sections = array();
+	     foreach ($this->categories as $index => $feedData) {
+	          $sections[] = array(
+	            'value'    => $index,
+	            'tag'    => $feedData['TAG'],
+	            'selected' => ($this->feedIndex == $index),
+	            'code'      => $feedData['TAG_CODE']
+	          );
+	     }
+	     $this->assign('sections', $sections);
+	     $this->tag = $this->categories[$this->feedIndex]['TAG_CODE'];
+    }
      
      // Handle videos
      
@@ -64,7 +68,9 @@
 		 $this->playerKey = $this->getModuleVar('playerKey');
 		 $this->playerid  = $this->getModuleVar('playerId');
 		 $this->accountid = $this->getModuleVar('accountId');
-	 } 
+	 } else {
+		 $this->youtubeAuthor = $this->getModuleVar('youtubeAuthor');
+	 }
 	 
 	 $xml_or_json = $this->getModuleVar('xml_or_json');
 	 if ($xml_or_json==1) {
@@ -79,7 +85,7 @@
         case 'search':
 	        if ($filter = $this->getArg('filter')) {
 	          $searchTerms = trim($filter);
-			  $items = $controller->search($searchTerms, 20, 1, "", $this->brightcoveToken,$this->brightcove_or_youtube);
+			  $items = $controller->search($searchTerms, 20, 1, $this->tag, $this->brightcoveToken,$this->brightcove_or_youtube);
 			  
 			  if ($items !== false) {
 			  	  // TODO handle 0 or 1 result
@@ -93,9 +99,11 @@
         	
         	 // default search 
 	         $searchTerms = "";
-			 $items = $controller->search($searchTerms, 20, 1, "", $this->brightcoveToken, $this->brightcove_or_youtube);
+			 $items = $controller->search($searchTerms, 20, 1, $this->tag, $this->brightcoveToken, $this->brightcove_or_youtube);
 			 
-			 $videos = array();
+			 if ($items !== false) {
+			 	$videos = array();
+			 }
              break;
              
         case 'detail-youtube':
@@ -115,29 +123,12 @@
 			    $this->assign('videoid', $videoid);
 			    $this->assign('accountid', $this->accountid);
 			    $this->assign('videoTitle', $this->getArg('videoTitle'));
-			    $this->assign('videoDescription', $this->getArg('videoDescription'));
-			   
-     			/*
-     			 * bright
-			   if ($video = $controller->getItem($videoid)) {
-			      $this->assign('videoid', $videoid);
-			      //$this->assign('playerid', $playerid);
-			      //$this->assign('accountid', $accountid);
-			      //$this->assign('videoTitle', $title);
-			      $this->assign('videoLink', $video->getLink());  // UNUSED
-			      $this->assign('videoDescription', $video->getDescription());
-			   } else {
-			      $this->redirectTo('index');
-			   }
-			   */
-			    
-			   break;       
+			    $this->assign('videoDescription', $this->getArg('videoDescription'));		   
+			    break;       
      }
 
      
-     $this->totalItems = 0;
 	 $this->start = $this->getArg('start',0);
-	 $this->tag = $this->categories[$this->feedIndex];
 	 
 	 
      if (isset($videos)) {
@@ -145,7 +136,10 @@
 	     	// FIXME currently only support Brightcive - check here
 		 	$this->handleBrightcoveRSS($controller,$videos,$items);
 		 } else {
-	 		if ($this->brightcove_or_youtube) $this->handleJSON($controller,$videos,$items['items']);
+	 		if ($this->brightcove_or_youtube) {
+	 			if (isset($items['items'])) 
+	 				$this->handleJSON($controller,$videos,$items['items']);
+	 		}
 	 		else $this->handleJSON($controller,$videos,$items);
 	     }
      }
@@ -153,19 +147,41 @@
      // Previous / Next
       
      $this->totalItems = $controller->totalItems;
-      
+	 $this->assign('totalItems', $this->totalItems);
+	        
      $previousURL = null;
      $nextURL = null;
      if ($this->totalItems > $this->maxPerPage) {
      	$args = $this->args;
+     	/*
+     	// TODO "start" is item index in youtube and page in brightove
+ 		if ($this->brightcove_or_youtube) {
+ 		    if ($this->start > 0) {
+	     		$args['start'] = --$start;
+	     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
+	     	}
+	     	if (($this->totalItems/$this->maxPerPage) > $this->start) {
+	     		$args['start'] = ++$start;
+	     		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+	     	} 		
+ 		} else {
+ 		    if ($this->start > 0) {
+	     		$args['start'] = $this->start - $this->maxPerPage;
+	     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
+	     	}
+	     	if (($this->totalItems - $this->start) > $this->maxPerPage) {
+	     		$args['start'] = $this->start + $this->maxPerPage;
+	     		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+	     	} 		
+ 		}
+     	*/
+ 		
      	if ($this->start > 0) {
-     		//$args['start'] = --$start;
      		$args['start'] = $this->start - $this->maxPerPage;
      		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
      	}
 
      	if (($this->totalItems - $this->start) > $this->maxPerPage) {
-     		//$args['start'] = ++$start;
      		$args['start'] = $this->start + $this->maxPerPage;
      		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
      	}
@@ -289,7 +305,9 @@
 			        'imgHeight'=>100,  
 			        'img'=>$img,
 			        'url'=>$this->buildBreadcrumbURL($next, array(
-			            'videoid'=>$videoId 
+			            'videoid'=>$videoId,
+			            'videoTitle'=>$title,
+			            'videoDescription'=>$desc
              		))
              	);
              }

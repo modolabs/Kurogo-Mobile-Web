@@ -21,16 +21,26 @@
   </select>
 {/capture}
 
+{if isset($sections)}
 <div id="video-category-select">{$categorySelect}</div>
+{/if}
 
 
   {if $prevURL}
       <a href="{$prevURL}">Previous <<<</a>
   {/if}
-  {include file="findInclude:common/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
+ {*
+{include file="findInclude:common/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
+*}
+{include file="findInclude:modules/{$moduleID}/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
   {if $nextURL}
       <a href="{$nextURL}">Next >>></a>
   {/if}
+
+{if isset($totalItems)}
+<p class="total_results"> Total: {$totalItems}</p>
+{/if}
+
 
 
 {/if}
