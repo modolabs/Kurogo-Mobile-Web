@@ -12,15 +12,11 @@ define('MODULE_ORDER_COOKIE', 'moduleorder');
 
 abstract class WebModule extends Module {
 
-  protected $id = 'none';
   protected $moduleName = '';
   protected $hasFeeds = false;
   protected $feedFields = array();
   
-  protected $session;
-  
   protected $page = 'index';
-  protected $args = array();
 
   protected $templateModule = 'none'; 
   protected $templatePage = 'index';
@@ -53,7 +49,6 @@ abstract class WebModule extends Module {
   private $fontsizes = array('small', 'medium', 'large', 'xlarge');
   
   private $templateEngine = null;
-  private $siteVars = null;
   
   private $htmlPager = null;
   private $inPagedMode = true;
@@ -63,10 +58,6 @@ abstract class WebModule extends Module {
   protected $cacheMaxAge = 0;
   
   protected $autoPhoneNumberDetection = true;
-  
-  public function getID() {
-    return $this->id;
-  }
   
   //
   // Tabbed View support
@@ -240,18 +231,6 @@ abstract class WebModule extends Module {
   //
   // URL helper functions
   //
-  protected static function argVal($args, $key, $default=null) {
-    if (isset($args[$key])) {
-      return $args[$key];
-    } else {
-      return $default;
-    }
-  }
-  
-  protected function getArg($key, $default='') {
-    return self::argVal($this->args, $key, $default);
-  }
-
   protected function buildURL($page, $args=array()) {
     return self::buildURLForModule($this->id, $page, $args);
   }
@@ -304,68 +283,15 @@ abstract class WebModule extends Module {
     exit;
   }
     
-  //
-  // Configuration
-  //
-  protected function getSiteVar($var, $default=null, $opts=Config::LOG_ERRORS)
-  {
-      $value = $GLOBALS['siteConfig']->getVar($var, $opts | Config::EXPAND_VALUE);
-      return is_null($value) ? $default :$value;
-  }
-
-  protected function getSiteSection($var, $opts=Config::LOG_ERRORS)
-  {
-      return $GLOBALS['siteConfig']->getSection($var, $opts);
-  }
-
-  protected function getModuleVar($var, $default=null, $opts=Config::LOG_ERRORS)
-  {
-     $config = $this->getModuleConfig();
-     $value = $config->getVar($var, Config::EXPAND_VALUE| $opts);
-     return is_null($value) ? $default :$value;
-  }
-
-  protected function getModuleSection($section, $default=array(), $opts=Config::LOG_ERRORS)
-  {
-     $config = $this->getModuleConfig();
-     if (!$section = $config->getSection($section, $opts)) {
-        $section = $default;
-     }
-     return $section;
-  }
-
-  protected function getModuleArray($section)
-  {
-     $config = $this->getModuleConfig();
-     $return = array();
-     
-     if ($data = $config->getSection($section)) {
-        $fields = array_keys($data);
-        
-        for ($i=0; $i<count($data[$fields[0]]); $i++) {
-            $item = array();
-            foreach ($fields as $field) {
-                $item[$field] = $data[$field][$i];
-            }
-            $return[] = $item;
-        }
-     } 
-     
-     return $return;
-  }
-
-  public function hasFeeds()
-  {
+  public function hasFeeds() {
      return $this->hasFeeds;
   }
   
-  public function getFeedFields()
-  {
+  public function getFeedFields() {
      return $this->feedFields;
   }
   
-  public function removeFeed($index)
-  {
+  public function removeFeed($index) {
        $feedData = $this->loadFeedData();
        if (isset($feedData[$index])) {
            unset($feedData[$index]);
@@ -374,12 +300,10 @@ abstract class WebModule extends Module {
            }
            
            $this->saveConfig(array('feeds'=>$feedData), 'feeds');
-           
        }
   }
   
-  public function addFeed($newFeedData, &$error=null)
-  {
+  public function addFeed($newFeedData, &$error=null) {
        $feedData = $this->loadFeedData();
        if (!isset($newFeedData['TITLE']) || empty($newFeedData['TITLE'])) {
          $error = "Feed Title cannot be blank";
@@ -400,17 +324,6 @@ abstract class WebModule extends Module {
        }
        
        return $this->saveConfig(array('feeds'=>$feedData), 'feeds');
-       
-  }
-  
-  protected function loadFeedData() {
-    $data = null;
-    $feedConfigFile = realpath_exists(sprintf("%s/feeds/%s.ini", SITE_CONFIG_DIR, $this->id));
-    if ($feedConfigFile) {
-        $data = parse_ini_file($feedConfigFile, true);
-    } 
-    
-    return $data;
   }
   
   //
@@ -440,15 +353,7 @@ abstract class WebModule extends Module {
     }
   }
   
-  public function createDefaultConfigFile()
-  {
-    $moduleConfig = $this->getConfig($this->id, 'module', ConfigFile::OPTION_CREATE_EMPTY);
-    $moduleConfig->addSectionVars($this->getModuleDefaultData());
-    return $moduleConfig->saveFile();
-  }
-  
-  protected function saveConfig($moduleData, $section=null)
-  {
+  protected function saveConfig($moduleData, $section=null) {
         switch ($section)
         {
             case 'feeds':
@@ -484,92 +389,47 @@ abstract class WebModule extends Module {
         $moduleConfigFile->saveFile();
   }
   
+  protected function unauthorizedAccess() {
+        if ($this->isLoggedIn()) {  
+            $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protected'));
+        } else {
+            $this->redirectToModule('login', '', array('url'=>$_SERVER['REQUEST_URI']));
+        }
+  }
+  
   //
   // Factory function
   // instantiates objects for the different modules
   //
   public static function factory($id, $page='', $args=array()) {
-    $className = ucfirst($id).'WebModule';
-
-    $modulePaths = array(
-      SITE_MODULES_DIR."/$id/Site{$className}.php"=>"Site" .$className,
-      MODULES_DIR."/$id/$className.php"=>$className
-    );
-    
-    foreach($modulePaths as $path=>$className){ 
-      $moduleFile = realpath_exists($path);
-      if ($moduleFile && include_once($moduleFile)) {
-        $module = new $className();
-        if ($page) {
-            $module->factoryInit($page, $args);
-        }
-        $module->initialize();
-        return $module;
-      }
+  
+    $module = parent::factory($id, 'web');
+    if ($page) {
+        $module->init($page, $args);
     }
-    throw new PageNotFound("Module '$id' not found while handling '{$_SERVER['REQUEST_URI']}'");
-   }
-   
-   private function factoryInit($page, $args)
-   {
+
+      return $module;
+    }
+    
+    public function __construct() {
         $moduleData = $this->getModuleData();
         $this->moduleName = $moduleData['title'];
-        
-        $disabled = self::argVal($moduleData, 'disabled', false);
-        if ($disabled) {
-            $this->redirectToModule('error', '', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
-        }
-        
-        $secure = self::argVal($moduleData, 'secure', false);
-        if ($secure && (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
-            // redirect to https (at this time, we are assuming it's on the same host)
-             $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-             header("Location: $redirect");    
-             exit();
-        }
-        
-        if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
-            $user = $this->getUser();
-            $session = $this->getSession();
-            $protected = self::argVal($moduleData, 'protected', false);
-            if ($protected) {
-                if (!$this->isLoggedIn()) {
-                    $this->redirectToModule('login', '', array('url'=>$_SERVER['REQUEST_URI']));
-                }
-            }
-            
-            $acls = $this->getAccessControlLists();
-            $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
-            foreach ($acls as $acl) {
-                $result = $acl->evaluateForUser($user);
-                switch ($result)
-                {
-                    case AccessControlList::RULE_ACTION_ALLOW:
-                        $allow = true;
-                        break;
-                    case AccessControlList::RULE_ACTION_DENY:
-                        $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protectedACL'));
-                        break;
-                }
-            }
-            
-            if (!$allow) {
-                if ($this->isLoggedIn()) {  
-                    $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protectedACL'));
-                } else {
-                    $this->redirectToModule('login', '', array('url'=>$_SERVER['REQUEST_URI']));
-                }
-            }
-        }
-        
+    }
+    
+   
+    protected function init($page='', $args=array()) {
+      
+        parent::init();
+
+        $this->setArgs($args);
         $this->setPage($page);
         $this->setTemplatePage($this->page, $this->id);
-        $this->args = $args;
-        $this->setAutoPhoneNumberDetection($GLOBALS['siteConfig']->getVar('AUTODETECT_PHONE_NUMBERS'));
-        
+
         $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
         $this->platform      = $GLOBALS['deviceClassifier']->getPlatform();
         $this->supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
+
+        $this->setAutoPhoneNumberDetection($GLOBALS['siteConfig']->getVar('AUTODETECT_PHONE_NUMBERS'));
         
         // Pull in fontsize
         if (isset($args['font'])) {
@@ -590,42 +450,18 @@ abstract class WebModule extends Module {
             $this->imageExt = '.gif';
             break;
         }
-  }
+    }
   
-  protected function setAutoPhoneNumberDetection($bool)
-  {
+  protected function setAutoPhoneNumberDetection($bool) {
     $this->autoPhoneNumberDetection = $bool ? true : false;
     $this->assign('autoPhoneNumberDetection', $this->autoPhoneNumberDetection);
   }
-  
-  public function getSession()
-  {
-    if (!$this->session) {
-        $args = $this->getSiteSection('authentication');
-        $this->session = new Session($args);
-    }
     
-    return $this->session;
-  }
-  
-  public function getModuleName()
-  {
+  public function getModuleName() {
     return $this->moduleName;
   }
-  
-  protected function getModuleDefaultData()
-  {
-    return array(
-        'title'=>$this->moduleName,
-        'disabled'=>0,
-        'protected'=>0,
-        'search'=>0,
-        'secure'=>0
-    );
-  }
-  
-  protected function getSectionTitleForKey($key)
-  {
+    
+  protected function getSectionTitleForKey($key) {
      switch ($key)
      {
             case 'strings':
@@ -634,8 +470,7 @@ abstract class WebModule extends Module {
      return $key;
   }
 
-  protected function getModuleItemForKey($key, $value)
-  {
+  protected function getModuleItemForKey($key, $value) {
     $item = array(
         'label'=>implode(" ", array_map("ucfirst", explode("_", strtolower($key)))),
         'name'=>"moduleData[$key]",
@@ -698,24 +533,15 @@ abstract class WebModule extends Module {
     return $item;
   }
 
-                    
-  function __construct() {
-     $this->moduleName = ucfirst($this->id);
+  protected function moduleDisabled() {
+    $this->redirectToModule('error', '', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
   }
   
-  //
-  // User functions
-  //
-  
-  public function isLoggedIn()
-  {
-    $session = $this->getSession();
-    return $session->isLoggedIn();
-  }
-  public function getUser()
-  {
-    $session = $this->getSession();
-    return $session->getUser();
+  protected function secureModule() {
+      // redirect to https (at this time, we are assuming it's on the same host)
+     $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+     header("Location: $redirect");    
+     exit();
   }
 
   //
@@ -740,14 +566,6 @@ abstract class WebModule extends Module {
     return $modules;        
   }
 
-  public function getModuleConfig() {
-    static $moduleConfig;
-    if (!$moduleConfig) {
-        $moduleConfig = $this->getConfig($this->id, 'module', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
-    }
-
-    return $moduleConfig;
-  }
 
   //
   // Module list control functions
@@ -855,36 +673,7 @@ abstract class WebModule extends Module {
     $_COOKIE[DISABLED_MODULES_COOKIE] = $value;
     //error_log(__FUNCTION__.'(): '.print_r($value, true));
   }
-
-  public function getModuleData() {
-    static $moduleData;
-    if (!$moduleData) {
-        $moduleData = $this->getModuleDefaultData();
-        $config = $this->getModuleConfig();
-        $moduleData = array_merge($moduleData, $config->getSectionVars(true));
-    }
-    
-    return $moduleData;
-  }
   
-  public function getAccessControlLists() {
-    $acls = array();
-
-    $aclStrings = array_merge(
-        $this->getSiteVar('acl', array(), Config::SUPRESS_ERRORS),
-        $this->getModuleVar('acl', array(), Config::SUPRESS_ERRORS)
-    );
-    foreach ($aclStrings as $aclString) {
-        if ($acl = AccessControlList::createFromString($aclString)) {
-            $acls[] = $acl;
-        } else {
-            throw new Exception("Invalid ACL $aclString in $this->id");
-        }
-    }
-    
-    return $acls;
-  }
-
   //
   // Functions to add inline blocks of text
   // Call these from initializeForPage()
@@ -1108,8 +897,7 @@ abstract class WebModule extends Module {
     }
   }
   
-  protected function setTemplatePage($page, $moduleID=null)
-  {
+  protected function setTemplatePage($page, $moduleID=null) {
     $moduleID = is_null($moduleID) ? $this->id : $moduleID;
     $this->templatePage = $page;
     $this->templateModule = $moduleID;
@@ -1155,12 +943,6 @@ abstract class WebModule extends Module {
      return $pageConfig->getSectionVars(true);
   }
   
-  protected function getConfig($name, $type, $opts=0) {
-    $config = ConfigFile::factory($name, $type, $opts);
-    $GLOBALS['siteConfig']->addConfig($config);
-    return $config;
-  }
-
   protected function loadSiteConfigFile($name, $keyName=null, $opts=0) {
     $config = $this->getConfig($name, 'site', $opts);
     if ($keyName === null) { $keyName = $name; }
@@ -1233,7 +1015,7 @@ abstract class WebModule extends Module {
     $this->assign('minify', $this->getMinifyUrls());
     
     // Google Analytics. This probably needs to be moved
-    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', null, Config::SUPRESS_ERRORS)) {
+    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', Config::SUPRESS_ERRORS)) {
         $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
         $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
     }
@@ -1303,7 +1085,7 @@ abstract class WebModule extends Module {
         $this->assign('session_user', $user);
 
         if ($this->isLoggedIn()) {
-            $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0, Config::SUPRESS_ERRORS)));
+            $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', Config::SUPRESS_ERRORS)));
         }
         
         if ($authority = $user->getAuthenticationAuthority()) {
@@ -1349,11 +1131,6 @@ abstract class WebModule extends Module {
   // Subclass this function to set up variables for each template page
   //
   abstract protected function initializeForPage();
-
-  //
-  // Subclass this function to perform initialization just after __construct()
-  //
-  protected function initialize() {} 
   
   //
   // Subclass these functions for federated search support
