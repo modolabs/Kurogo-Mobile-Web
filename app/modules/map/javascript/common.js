@@ -43,11 +43,12 @@ function loadMapImage() {
 	  var objContainer = document.getElementById("container");
 	  var objScrollers = document.getElementById("mapscrollers");
 	  
-    var newSrc = constructMapURL();
-    if (newSrc != mapImage.src) {
+    var oldSrc = mapImage.src;
+    mapImage.src = constructMapURL();
+    newSrc = mapImage.src;
+    if(oldSrc != newSrc) {
         show("loadingimage");
-        mapImage.src = constructMapURL();
-    }
+    }    
     if (objContainer) {
         objContainer.style.width = mapWidth+"px";
         objContainer.style.height = mapHeight+"px";
