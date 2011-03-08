@@ -31,4 +31,9 @@
 
 <p class="focal">{$videoDescription}</p>
 
+{*
+<div class="focal shaded">
+   {include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+</div>
+ *} 
 {include file="findInclude:common/footer.tpl"}

@@ -84,4 +84,8 @@
 
 {/if}
 
+{if $hasBookmarks}
+{include file="findInclude:common/navlist.tpl" navlistItems=$bookmarkLink secondary=true}
+{/if}
+
 {include file="findInclude:common/footer.tpl"}

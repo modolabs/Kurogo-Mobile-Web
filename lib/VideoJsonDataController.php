@@ -17,7 +17,7 @@
          return $controller;
      }
 
-     public function search($q,$pageSize=20,$startIndex=1,$category=null,$token=null,$bright_or_youtube=true)
+     public function search($q,$pageSize=20,$startIndex=1,$category=null,$token=null,$bright_or_youtube=true,$author=null)
      {
      	
      	$self->token = $token;
@@ -28,15 +28,11 @@
 	     	 $url = "http://api.brightcove.com/services/library?command=search_videos&output=json&video_fields=id,name,shortDescription,thumbnailURL,length,FLVURL,linkURL";
 	     	 $url = $url."&page_size=$pageSize&page_number=$startIndex&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$token";
 	     	 
-	     	 // TODO
 	     	 if (isset($category)) {
-     	 	    //$url = "&all=tag:".$category;
+     	 	    $url = $url."&all=tag:".$category;
 	     	 }
 	     	 
 	     	 $this->setBaseUrl($url);
-         	 //$this->addFilter('token', $token); 
-         	 //$this->addFilter('page_size', $pageSize); 
-         	 //$this->addFilter('page_number', $startIndex); 
 		 
 	         $data = $this->items(0,null,$this->totalItems);
 	         
@@ -56,6 +52,7 @@
          $this->addFilter('v', 2); // version 2
          $this->addFilter('max-results', $pageSize);
          $this->addFilter('start-index', $startIndex);
+         if ($author) $this->addFilter('author', $author);
 
          $data = $this->getParsedData();
          $results = $data['feed']['entry'];
@@ -91,5 +88,18 @@
 		    return isset($data['entry']) ? $data['entry'] : false;
      	}
 	}
+	
+ 
+    public function getFeature($name, $subCategory=null) {
+        if ($subCategory !== null) {
+            $folder = $this->getItem($subCategory);
+            $itemList = $folder->getItems();
+            if (isset($itemList[$name])) {
+                return $itemList[$name];
+            }
+        }
+        return $this->getItem($name);
+    }
+    
 
  }
