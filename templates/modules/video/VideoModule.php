@@ -318,15 +318,24 @@
         	
         		$body = $this->getArg('videoDescription');
         		$title = $this->getArg('videoTitle');
-        		
+			    $videoid = $this->getArg('videoid');
         		$url = $this->getArg('url');
+        		
+        		
+			    $bkmId = $this->getArg('bkmId');
+			    if ($bkmId) {
+			        $videoid = $bkmId;
+	        		$body = $this->getArg('bkmBody');
+	        		$title = $this->getArg('subcategory');
+			    }
+        		
+			    
 		        $shareEmailURL = $this->buildMailToLink("", $title, $body);    
 		     
 		        $this->assign('shareEmailURL', $shareEmailURL);
         		$this->assign('videoURL',      urlencode($url));
 		        $this->assign('shareRemark',   urlencode($title));
         
-			    $videoid = $this->getArg('videoid');
 			    $this->assign('playerKey', $this->playerKey);
 			    $this->assign('playerid', $this->playerid);
 			    $this->assign('videoid', $videoid);
@@ -339,6 +348,8 @@
                         'category' => $cat,
                         'subcategory' => $title,
                         'featureindex' => $this->feedIndex,
+                        'bkmBody' => $body,
+                        'bkmId' => $videoid,
 			    );
 			    
 			    $cookieID = http_build_query($cookieParams);
