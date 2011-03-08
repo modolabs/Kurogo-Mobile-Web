@@ -36,10 +36,6 @@ class ErrorWebModule extends WebModule {
       'message' =>  'This module has been disabled'
     ),
     'protected' => array(
-      'message' =>  'This module requires you to login',
-      'linkText' => 'Click here to login'
-    ),
-    'protectedACL' => array(
       'message' =>  'You are not permitted to use this module'
     ),
     'default' => array(
@@ -48,7 +44,7 @@ class ErrorWebModule extends WebModule {
     )
   );
 
-  protected function factoryInit($page, $args) {
+  protected function init($page, $args) {
       $this->pagetype = $GLOBALS['deviceClassifier']->getPagetype();
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);

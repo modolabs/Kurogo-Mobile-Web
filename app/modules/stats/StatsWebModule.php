@@ -43,10 +43,6 @@ class StatsWebModule extends WebModule {
     }
   }
   
-  protected function initialize() {
-
-  }
-
 protected function compare_content($content1, $content2) {
   if($content1['count'] < $content2['count']) {
     return 1;

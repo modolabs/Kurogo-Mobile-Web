@@ -11,10 +11,6 @@
 class AdminWebModule extends WebModule {
   protected $id = 'admin';
   
-  protected function initialize() {
-
-  }
-  
   /* submit values are affected by the _type specifiers */
   protected function prepareSubmitData($key)
   {

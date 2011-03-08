@@ -358,11 +358,9 @@ class CalendarWebModule extends WebModule {
     }
   }
  
-  protected function initialize() {
-    $this->timezone = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
-  }
-
   protected function initializeForPage() {
+    $this->timezone = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
+
     switch ($this->page) {
       case 'help':
         break;
