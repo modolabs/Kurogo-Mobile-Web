@@ -131,24 +131,14 @@
         parse_str($aBookmark, $params);
         if (isset($params['featureindex'])) {
             $index = $params['featureindex'];
-            
-            // #1
-            //$controller = $this->getDataController($params['category']);
-            // #2
-            $xml_or_json = $this->getModuleVar('xml_or_json');
-            if ($xml_or_json==1) {
-            	$controller = DataController::factory('VideoXMLDataController');
-            } else {
-            	$controller = DataController::factory('VideoJsonDataController');
-            }
-            
-            $subCategory = isset($params['subcategory']) ? $params['subcategory'] : null;
-            //$feature = $controller->getFeature($index, $subCategory);  // FIXME
-            $feature = false;
-            if ($feature) $title = $feature->getTitle();
-            else $title = "video title";
-            return array($title, "ctrl title");
+         
+            //$title = $feature->getTitle();
             //return array($title, $controller->getTitle());
+       
+            $title = $params['category'];
+            $subtitle = $params['subcategory'];
+            
+            return array($title, $subtitle);
         
         } else {
             return array($aBookmark);
@@ -194,6 +184,7 @@
     $this->feedIndex = $this->getArg('section', 0);
     if (!isset($this->categories[$this->feedIndex])) {
       $this->feedIndex = 0;
+      $cat = "";
     }
     
     if (isset($this->categories)) {
@@ -206,6 +197,9 @@
 	            'code'      => $feedData['TAG_CODE'],
                 'url'      => $this->feedURL($index, false)
 	          );
+	          if ($this->feedIndex == $index) {
+	          	$cat = $feedData['TAG'];
+	          }
 	     }
 	     $this->assign('sections', $sections);
 	     $this->tag = $this->categories[$this->feedIndex]['TAG_CODE'];
@@ -337,19 +331,16 @@
 			    $this->assign('playerid', $this->playerid);
 			    $this->assign('videoid', $videoid);
 			    $this->assign('accountid', $this->accountid);
-			    $this->assign('videoTitle', $this->getArg('videoTitle'));
+			    $this->assign('videoTitle', $title);
 			    $this->assign('videoDescription', $body);	
 
 			    // Bookmark
-			    $category = null;
-			    //$category = $this->args['category'];
-			    $subCategory = isset($this->args['subcategory']) ? $this->args['subcategory'] : null;
-                //$feature = $controller->getFeature($index, $subCategory);  // FIXME
 			    $cookieParams = array(
-                        'category' => $category,
-                        'subcategory' => $subCategory,
-                        'featureindex' => $index,
+                        'category' => $cat,
+                        'subcategory' => $title,
+                        'featureindex' => $this->feedIndex,
 			    );
+			    
 			    $cookieID = http_build_query($cookieParams);
 			    $this->generateBookmarkOptions($cookieID);
 			     
