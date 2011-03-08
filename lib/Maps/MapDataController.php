@@ -125,6 +125,31 @@ class MapDataController extends DataController implements MapFolder
         return $results;
     }
     
+    public function getAllCategoryNodes() {
+        return self::getCategoryNodesForItem($this);
+    }
+    
+    protected static function getCategoryNodesForItem(MapFolder $item) {
+        $nodes = array();
+        foreach ($item->getListItems() as $innerItem) {
+            if ($innerItem instanceof MapFolder && $innerItem instanceof MapListElement) {
+                $node = array(
+                    'title' => $innerItem->getTitle(),
+                    'id' => $innerItem->getCategory(),
+                    //'subtitle' => $innerItem->getSubtitle(),
+                    );
+
+                $subcategories = self::getCategoryNodesForItem($innerItem);
+                if ($subcategories) {
+                    $node['subcategories'] = $subcategories;
+                }
+
+                $nodes[] = $node;
+            }
+        }
+        return $nodes;
+    }
+    
     protected function getAllLeafNodes() {
         $leafNodes = array();
         foreach ($this->items() as $item) {

@@ -37,39 +37,13 @@ class MapAPIModule extends APIModule
             if ($campusID && (!isset($feedData['CAMPUS']) || $feedData['CAMPUS'] != $campusID)) continue;
             
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller->setCategoryId($id);
             $category = array(
                 'id' => $id,
                 'title' => $controller->getTitle(),
                 );
-
-            // TODO add these properties to the controller
-            if (isset($feedData['SUBTITLE'])) {
-                $category['subtitle'] = $feedData['SUBTITLE'];
-            }
-            if (isset($feedData['CAMPUS'])) {
-                $category['campus'] = $feedData['CAMPUS'];
-            }
-
-            $listItems = $controller->getListItems();
-            if (count($listItems)) {
-                $listItem = $listItems[0]; // listItem implements MapListElement
-                if (!($listItem instanceof MapFeature)) {
-                    $category['subcategories'] = array();
-                    foreach ($listItems as $listItem) {
-                        $subcategory = array(
-                            'id' => $listItem->getIndex(),
-                            'title' => $listItem->getTitle(),
-                            );
-                        $subtitle = $listItem->getSubtitle();
-                        if ($subtitle) {
-                            $subcategory['subtitle'] = $subtitle;
-                        }
-                        $category['subcategories'][] = $subcategory;
-                    }
-                    $category['subcategoryCount'] = count($category['subcategories']);
-                }
-            }
-
+            $category['subcategories'] = $controller->getAllCategoryNodes();
+            
             $categories[] = $category;
         }
         return $categories;
