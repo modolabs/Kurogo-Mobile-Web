@@ -3,8 +3,8 @@
 <div id="mapimage" class="fullmap">
 {if $isStatic}
   {include file="findInclude:modules/map/mapscrollers.tpl"}
+  <img id="staticmapimage" onload="hide('loadingimage'); scrollTo(0, 1);" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
 {/if}
-<img id="staticmapimage" onload="hide('loadingimage'); scrollTo(0, 1);" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
 </div>
 {include file="findInclude:modules/map/mapcontrols.tpl"}
 
