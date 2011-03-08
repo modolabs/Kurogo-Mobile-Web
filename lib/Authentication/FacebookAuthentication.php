@@ -18,6 +18,10 @@ class FacebookAuthentication extends AuthenticationAuthority
     protected $useCache = true;
     protected $cache;
     protected $cacheLifetime = 900;
+    protected $perms = array(
+        'user_about_me',
+        'email',
+    );
     
     protected function validUserLogins()
     {
@@ -165,7 +169,7 @@ class FacebookAuthentication extends AuthenticationAuthority
             $url = "https://graph.facebook.com/oauth/authorize?" . http_build_query(array(
                 'client_id'=>$this->api_key,
                 'redirect_uri'=>$this->redirect_uri,
-                'scope'=>'user_about_me,email',
+                'scope'=>implode(',', $this->perms),
                 'display'=>$display
             ));
             
@@ -200,9 +204,13 @@ class FacebookAuthentication extends AuthenticationAuthority
         if (isset($_SESSION['fb_access_token'])) {
             $this->access_token = $_SESSION['fb_access_token'];
         }
+
+        if (isset($args['API_PERMS'])) {
+            $this->perms = array_unique(array_merge($this->perms, $args['API_PERMS']));
+        }
     }
     
-    public function getSessionData(OAuthUser $user) {
+    public function getSessionData(FacebookUser $user) {
         return array(
             'fb_access_token'=>$this->access_token
         );
