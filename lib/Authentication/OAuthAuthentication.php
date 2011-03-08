@@ -118,7 +118,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         return $this->consumer_secret;
     }
 
-    public function login($login, $pass, Module $module, $options) {
+    public function login($login, $pass, Session $session, $options) {
         $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
         //see if we already have a request token
         if ($startOver || !$this->token || !$this->tokenSecret) {
@@ -132,11 +132,10 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         if (isset($_GET[$this->verifierKey])) {
             //get an access token
             if ($response = $this->getAccessToken($_GET[$this->verifierKey])) {
+            
                 //we should now have the current user
                 if ($user = $this->getUserFromArray($response)) {
-                    $session = $module->getSession();
-                    $remainLoggedIn = isset($options['remainLoggedIn']) ? $options['remainLoggedIn'] : false;
-                    $session->login($user, $remainLoggedIn);
+                    $session->login($user);
                     return AUTH_OK;
                 } else {
                     error_log("Unable to find user for $response");

@@ -317,10 +317,8 @@ abstract class AuthenticationAuthority
      * 
      * Subclasses should not need to override this, but instead provide additional behavior in reset()
      */
-    public function logout(Module $module)
+    public function logout(Session $session)
     {
-        $session = $module->getSession();
-        $session->logout();
         $this->reset();
     }
     
@@ -332,14 +330,12 @@ abstract class AuthenticationAuthority
      * @see AuthenticationAuthority::reset()
      * 
      */
-    public function login($login, $password, Module $module, $options)
+    public function login($login, $password, Session $session, $options)
     {
         $result = $this->auth($login, $password, $user);
         
         if ($result == AUTH_OK) {
-            $session = $module->getSession();
-            $remainLoggedIn = isset($options['remainLoggedIn']) ? $options['remainLoggedIn'] : false;
-            $session->login($user, $remainLoggedIn);
+            $session->login($user);
         }
         
         return $result;

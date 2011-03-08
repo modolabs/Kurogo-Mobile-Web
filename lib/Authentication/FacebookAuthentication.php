@@ -93,7 +93,7 @@ class FacebookAuthentication extends AuthenticationAuthority
         return false;
     }
     
-    public function login($login, $pass, Module $module, $options)
+    public function login($login, $pass, Session $session, $options)
     {
         //if the code is present, then this is the callback that the user authorized the application
         if (isset($_GET['code'])) {
@@ -129,9 +129,7 @@ class FacebookAuthentication extends AuthenticationAuthority
 
                 // get the current user via API
                 if ($user = $this->getUser('me')) {
-                    $session = $module->getSession();
-                    $remainLoggedIn = isset($options['remainLoggedIn']) ? $options['remainLoggedIn'] : false;
-                    $session->login($user, $remainLoggedIn);
+                    $session->login($user);
                     return AUTH_OK;
                 }  else {
                     return AUTH_FAILED; // something is amiss
