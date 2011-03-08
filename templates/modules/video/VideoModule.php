@@ -143,8 +143,12 @@
             }
             
             $subCategory = isset($params['subcategory']) ? $params['subcategory'] : null;
-            $feature = $controller->getFeature($index, $subCategory);
-            return array($feature->getTitle(), $controller->getTitle());
+            //$feature = $controller->getFeature($index, $subCategory);  // FIXME
+            $feature = false;
+            if ($feature) $title = $feature->getTitle();
+            else $title = "video title";
+            return array($title, "ctrl title");
+            //return array($title, $controller->getTitle());
         
         } else {
             return array($aBookmark);
