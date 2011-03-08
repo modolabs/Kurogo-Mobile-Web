@@ -13,7 +13,7 @@
 	 <script src="http://admin.brightcove.com/js/APIModules_all.js"> </script> 
 	 <object id="myExperience" class="BrightcoveExperience">
 	    <param name="bgcolor" value="#FFFFFF" />
-	    <param name="width" value="250" />
+	    <param name="width" value="300" />
 	    <param name="height" value="250" />
 	    <param name="publisherID" value="{$accountid}"/>
 	    <param name="playerID" value="{$playerid}" />
