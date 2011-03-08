@@ -191,13 +191,17 @@ class PeopleWebModule extends WebModule {
     }
   }
   
-  protected function initializeForPage() {
+    protected function initialize() {
     $this->feeds = $this->loadFeedData();
     $this->detailFields = $this->loadWebAppConfigFile('people-detail', 'detailFields');
     foreach($this->detailFields as $field => $info) {
       $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
     }
     $this->detailAttributes = array_unique($this->detailAttributes);
+    }
+
+  protected function initializeForPage() {
+
     $PeopleController = $this->getFeed('people');
     
     if ($this->getSiteVar('MODULE_DEBUG')) {

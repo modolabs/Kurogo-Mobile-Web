@@ -404,6 +404,7 @@ abstract class WebModule extends Module {
   public static function factory($id, $page='', $args=array()) {
   
     $module = parent::factory($id, 'web');
+    $module->initialize();
     if ($page) {
         $module->init($page, $args);
     }
@@ -452,6 +453,9 @@ abstract class WebModule extends Module {
         }
     }
   
+    protected function initialize() {
+    
+    }
   protected function setAutoPhoneNumberDetection($bool) {
     $this->autoPhoneNumberDetection = $bool ? true : false;
     $this->assign('autoPhoneNumberDetection', $this->autoPhoneNumberDetection);
