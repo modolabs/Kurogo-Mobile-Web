@@ -60,7 +60,7 @@ abstract class Module
         }
     }
    
-    throw new ModuleNotFound("Module $id not found");
+    throw new Exception("Module $id not found");
    }
    
    protected function init() {
@@ -92,18 +92,17 @@ abstract class Module
   // User functions
   //
   
-  public function isLoggedIn() {
+  public function isLoggedIn($authority=null) {
     $session = $this->getSession();
-    return $session->isLoggedIn();
+    return $session->isLoggedIn($authority);
   }
 
-  public function getUser() {
+  public function getUser($authority=null) {
     $session = $this->getSession();
-    return $session->getUser();
+    return $session->getUser($authority);
   }
   
-  public function getSession()
-  {
+  public function getSession() {
     if (!$this->session) {
         $args = $this->getSiteSection('authentication');
         $this->session = new Session($args);

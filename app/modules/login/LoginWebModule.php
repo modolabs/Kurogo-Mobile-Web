@@ -53,16 +53,35 @@ class LoginWebModule extends WebModule {
     
     switch ($this->page)
     {
+        case 'logoutConfirm':
+            $authorityIndex = $this->getArg('authority');
+            
+            if (!$this->isLoggedIn($authorityIndex)) {
+                $this->redirectTo('index', array());
+            } elseif ($user = $this->getUser($authorityIndex)) {
+                $authority = $user->getAuthenticationAuthority();
+                $this->assign('message', sprintf("You are logged in as %s %s", $user->getFullName(), $multipleAuthorities ? '(' . $authority->getAuthorityTitle() . ')' : ''));
+                $this->assign('url', $this->buildURL('logout', array('authority'=>$authorityIndex)));
+                $this->assign('linkText', 'Logout');
+                $this->setTemplatePage('message');
+            } else {
+                $this->redirectTo('index', array());
+            }
+            
+            break;
         case 'logout':
             $this->setTemplatePage('message');
-            if (!$this->isLoggedIn()) {
-                $this->redirectTo('login', array());
+            $authorityIndex = $this->getArg('authority');
+
+            if (!$this->isLoggedIn($authorityIndex)) {
+                $this->redirectTo('index', array());
+            } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
+                $result = $session->logout($authority);
             } else {
-                $user = $this->getUser();
-                $authority = $user->getAuthenticationAuthority();
-                $authority->logout($this);
-                $this->assign('message', 'Logout Successful');
+                $this->redirectTo('index', array());
             }
+                
+            $this->assign('message', $result ? 'Logout Successful' : 'Logout failed');
         
             break;
             
@@ -70,11 +89,12 @@ class LoginWebModule extends WebModule {
             $login          = $this->argVal($_POST, 'loginUser', '');
             $password       = $this->argVal($_POST, 'loginPassword', '');
             $options = array(
-                'url'=>$url,
-                'remainLoggedIn'=> $this->getArg('remainLoggedIn', false)
+                'url'=>$url
             );
             
             $referrer = $this->argVal($_SERVER, 'HTTP_REFERER', '');
+            $session  = $this->getSession();
+            $session->setRemainLoggedIn($this->getArg('remainLoggedIn', 0));
             
             if ($this->argVal($_POST, 'login_link')) {
                 $authorityIndex = key($this->argVal($_POST, 'login_link'));
@@ -83,7 +103,7 @@ class LoginWebModule extends WebModule {
             }
             $this->assign('authority', $authorityIndex);
 
-            if ($this->isLoggedIn()) {
+            if ($this->isLoggedIn($authorityIndex)) {
                 $this->redirectTo('index', $options);
             }                    
             
@@ -92,7 +112,7 @@ class LoginWebModule extends WebModule {
             }
             
             if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
-                $result = $authority->login($login, $password, $this, $options);
+                $result = $authority->login($login, $password, $session, $options);
             } else {
                 error_log("Invalid authority $authorityIndex");
                 $this->redirectTo('index', $options);
@@ -112,17 +132,18 @@ class LoginWebModule extends WebModule {
                 case AUTH_FAILED:
                 case AUTH_USER_NOT_FOUND:
                 
-                    $this->setTemplatePage('index');
+                    $this->setTemplatePage('login');
                     $this->assign('message', 'Login Failed. Please check your login and password');
                     break;
                 default:
-                    $this->setTemplatePage('index');
+                    $this->setTemplatePage('login');
                     $this->assign('message', "Login Failed. An unknown error occurred $result");
                     
 
             }
 
             break;
+            
         case 'forgotpassword':
             if ($forgetPasswordURL = $this->getModuleVar('FORGET_PASSWORD_URL')) {
                 header("Location: $forgetPasswordURL");
@@ -131,20 +152,44 @@ class LoginWebModule extends WebModule {
                 $this->redirectTo('index', array());
             }
             break;
+            
         case 'index':
             if ($this->isLoggedIn()) {
                 if ($url) {
                     header("Location: $url");
                     exit();
                 }
-                $user = $this->getUser();
-                $authority = $user->getAuthenticationAuthority();
-                $this->setTemplatePage('message');
-                
-                $this->assign('message', sprintf("You are logged in as %s %s", $user->getFullName(), $multipleAuthorities ? '(' . $authority->getAuthorityTitle() . ')' : ''));
-                
-                $this->assign('url', $this->buildURL('logout'));
-                $this->assign('linkText', 'Logout');
+
+                if (!$multipleAuthorities) {
+                    $user = $this->getUser();
+                    $this->redirectTo('logoutConfirm', array('authority'=>$user->getAuthenticationAuthorityIndex()));
+                }
+
+                $sessionUsers = $session->getUsers();
+                $users = array();
+
+                foreach ($sessionUsers as $authority=>$user) {
+                    $users[] = array(
+                        'title'=>sprintf("%s", $user->getFullName()),
+                        'subtitle'=>$user->getAuthenticationAuthorityIndex(),
+                        'url'  =>$this->buildBreadcrumbURL('logoutConfirm', array('authority'=>$user->getAuthenticationAuthorityIndex()), false)
+                    );
+                    if (isset($authenticationAuthorities[$authority])) {
+                        unset($authenticationAuthorities[$authority]);
+                    }
+
+                    if (isset($authenticationAuthorityLinks[$authority])) {
+                        unset($authenticationAuthorityLinks[$authority]);
+                    }
+                }
+
+                $this->assign('users', $users);
+                $this->assign('authenticationAuthorities', $authenticationAuthorities);
+                $this->assign('authenticationAuthorityLinks', $authenticationAuthorityLinks);
+
+                $this->setTemplatePage('loggedin');
+            } else {
+                $this->setTemplatePage('login');
             }
             break;
     }

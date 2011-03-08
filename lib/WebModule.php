@@ -1081,17 +1081,12 @@ abstract class WebModule extends Module {
     if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
         includePackage('Authentication');
         $this->setCacheMaxAge(0);
-        $this->assign('session', $this->getSession());
-        $user = $this->getUser();
-        $this->assign('session_user', $user);
+        $session = $this->getSession();
+        $this->assign('session', $session);
+        $this->assign('session_isLoggedIn', $this->isLoggedIn());
 
         if ($this->isLoggedIn()) {
             $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0, Config::SUPRESS_ERRORS)));
-        }
-        
-        if ($authority = $user->getAuthenticationAuthority()) {
-            $this->assign('session_authority_image', $authority->getAuthorityImage());
-            $this->assign('session_authority_title', $authority->getAuthorityTitle());
         }
     }
 

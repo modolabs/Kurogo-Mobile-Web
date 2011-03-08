@@ -1,17 +1,4 @@
-{include file="findInclude:common/header.tpl"}
-
-<div class="nonfocal">
-<h2>Login</h2>
-</div>
-
-{if $moduleStrings.LOGIN_MESSAGE}
-<p class="nonfocal">{$moduleStrings.LOGIN_MESSAGE|escape}</p>
-{/if}
-
-{if $message}
-<p class="focal error">{$message}</p>
-{/if}
-
+{if $authenticationAuthorities || $authenticationAuthorityLinks}
 <form method="POST" id="loginForm" action="login">
 <input type="hidden" name="url" value="{$url|escape}" />
 {if $authenticationAuthorities}
@@ -44,4 +31,4 @@
     {/if}
 </div>
 </form>
-{include file="findInclude:common/footer.tpl"}
+{/if}

@@ -116,7 +116,7 @@ class AccessControlList
                 } else { 
                     /* user values are specified as AUTHORITY|userID */
                     $values = explode("|", $this->ruleValue);
-                    switch ($count($values)) {
+                    switch (count($values)) {
                         case 1:
                             $authority = AuthenticationAuthority::getDefaultAuthenticationAuthorityIndex();
                             $userID = $values[0];
@@ -130,7 +130,11 @@ class AccessControlList
                     /* see if the userID/email and authority match */
                     if ($user->getAuthenticationAuthorityIndex()==$authority) {
                         /* can match either userID or email */
-                        if  ($user->getUserID()==$userID ||
+                        if ($userID==self::RULE_VALUE_ALL) {
+                            if ($user->getUserID()) {
+                                return $this->ruleAction;
+                            }
+                        } else if ($user->getUserID()==$userID ||
                             (Validator::isValidEmail($userID) && $user->getEmail()==$userID)) { 
                             return $this->ruleAction;
                         }

@@ -104,7 +104,7 @@ class GoogleAuthentication extends AuthenticationAuthority
         return isset($var['openid_' . $ns . '_' . $value]) ? $var['openid_' . $ns . '_' . $value] : false;
     }
 
-    public function login($login, $pass, Module $module, $options)
+    public function login($login, $pass, Session $session, $options)
     {
         $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
         //see if we already have a request token
@@ -118,7 +118,6 @@ class GoogleAuthentication extends AuthenticationAuthority
             if (isset($ARGS['openid_identity'])) {
                 if ($user = $this->getUserFromArray($ARGS)) {
     
-                    $session = $module->getSession();
                     $session->login($user);
                     return AUTH_OK;
                 } else {
