@@ -532,8 +532,6 @@ abstract class WebModule extends Module {
         
         if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
             includePackage('Authentication');
-            $user = $this->getUser();
-            $session = $this->getSession();
             $protected = self::argVal($moduleData, 'protected', false);
             if ($protected) {
                 if (!$this->isLoggedIn()) {
@@ -541,22 +539,7 @@ abstract class WebModule extends Module {
                 }
             }
             
-            $acls = $this->getAccessControlLists();
-            $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
-            foreach ($acls as $acl) {
-                $result = $acl->evaluateForUser($user);
-                switch ($result)
-                {
-                    case AccessControlList::RULE_ACTION_ALLOW:
-                        $allow = true;
-                        break;
-                    case AccessControlList::RULE_ACTION_DENY:
-                        $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protectedACL'));
-                        break;
-                }
-            }
-            
-            if (!$allow) {
+            if (!$this->evaluateACLS()) {
                 if ($this->isLoggedIn()) {  
                     $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protectedACL'));
                 } else {
@@ -593,7 +576,28 @@ abstract class WebModule extends Module {
             $this->imageExt = '.gif';
             break;
         }
-  }
+    }
+    
+    protected function evaluateACLS($admin=false) {
+        $acls = $this->getAccessControlLists($admin);
+        $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
+        $user = $this->getUser();
+        foreach ($acls as $acl) {
+            $result = $acl->evaluateForUser($user);
+            switch ($result)
+            {
+                case AccessControlList::RULE_ACTION_ALLOW:
+                    $allow = true;
+                    break;
+                case AccessControlList::RULE_ACTION_DENY:
+                    return false;
+                    break;
+            }
+        }
+        
+        return $allow;
+    }
+
   
   protected function setAutoPhoneNumberDetection($bool)
   {
@@ -715,11 +719,22 @@ abstract class WebModule extends Module {
     $session = $this->getSession();
     return $session->isLoggedIn();
   }
+  
   public function getUser()
   {
     $session = $this->getSession();
     return $session->getUser();
   }
+  
+    protected function requiresAdmin() {
+        if (!$this->evaluateACLS(true)) {
+            if ($this->isLoggedIn()) {  
+                $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protectedACL'));
+            } else {
+                $this->redirectToModule('login', '', array('url'=>$_SERVER['REQUEST_URI']));
+            }
+        }
+    }
 
   //
   // Module control functions
@@ -870,18 +885,20 @@ abstract class WebModule extends Module {
     return $moduleData;
   }
   
-  public function getAccessControlLists() {
+  public function getAccessControlLists($admin=false) {
     $acls = array();
+    $var = $admin ? 'adminacl' : 'acl';
 
     $aclStrings = array_merge(
-        $this->getSiteVar('acl', array(), Config::SUPRESS_ERRORS),
-        $this->getModuleVar('acl', array(), Config::SUPRESS_ERRORS)
+        $this->getSiteVar($var, array(), Config::SUPRESS_ERRORS),
+        $this->getModuleVar($var, array(), Config::SUPRESS_ERRORS)
     );
+
     foreach ($aclStrings as $aclString) {
         if ($acl = AccessControlList::createFromString($aclString)) {
             $acls[] = $acl;
         } else {
-            throw new Exception("Invalid ACL $aclString in $this->id");
+            throw new Exception("Invalid $var $aclString in $this->id");
         }
     }
     
