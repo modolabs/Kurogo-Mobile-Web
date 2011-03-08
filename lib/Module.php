@@ -75,30 +75,14 @@ abstract class Module
         }
         
         if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
-            $user = $this->getUser();
-            $session = $this->getSession();
+            includePackage('Authentication');
             if ($moduleData['protected']) {
                 if (!$this->isLoggedIn()) {
                     $this->unauthorizedAccess();
                 }
             }
             
-            $acls = $this->getAccessControlLists();
-            $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
-            foreach ($acls as $acl) {
-                $result = $acl->evaluateForUser($user);
-                switch ($result)
-                {
-                    case AccessControlList::RULE_ACTION_ALLOW:
-                        $allow = true;
-                        break;
-                    case AccessControlList::RULE_ACTION_DENY:
-                        $this->unauthorizedAccess();
-                        break;
-                }
-            }
-            
-            if (!$allow) {
+            if (!$this->evaluateACLS()) {
                 $this->unauthorizedAccess();
             }
         }
@@ -185,8 +169,10 @@ abstract class Module
   //
   // Configuration
   //
-  protected function getSiteVar($var, $opts=Config::LOG_ERRORS) {
-      return $GLOBALS['siteConfig']->getVar($var, $opts | Config::EXPAND_VALUE);
+  protected function getSiteVar($var, $default=null, $opts=Config::LOG_ERRORS)
+  {
+      $value = $GLOBALS['siteConfig']->getVar($var, $opts | Config::EXPAND_VALUE);
+      return is_null($value) ? $default :$value;
   }
 
   protected function getSiteSection($var, $opts=Config::LOG_ERRORS) {
@@ -228,23 +214,59 @@ abstract class Module
      return $return;
   }
 
-  public function getAccessControlLists() {
-    $acls = array();
-    $aclStrings = $this->getModuleVar('acl', array(), Config::SUPRESS_ERRORS);
-    foreach ($aclStrings as $aclString) {
-        if ($acl = AccessControlList::createFromString($aclString)) {
-            $acls[] = $acl;
-        } else {
-            throw new Exception("Invalid ACL $aclString in $this->id");
+    protected function requiresAdmin() {
+        if (!$this->evaluateACLS(true)) {
+            if ($this->isLoggedIn()) {  
+                $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protectedACL'));
+            } else {
+                $this->redirectToModule('login', '', array('url'=>$_SERVER['REQUEST_URI']));
+            }
         }
     }
-    
-    return $acls;
-  }
+
+    protected function evaluateACLS($admin=false) {
+        $acls = $this->getAccessControlLists($admin);
+        $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
+        $user = $this->getUser();
+        foreach ($acls as $acl) {
+            $result = $acl->evaluateForUser($user);
+            switch ($result)
+            {
+                case AccessControlList::RULE_ACTION_ALLOW:
+                    $allow = true;
+                    break;
+                case AccessControlList::RULE_ACTION_DENY:
+                    return false;
+                    break;
+            }
+        }
+        
+        return $allow;
+    }
+
+    public function getAccessControlLists($admin=false) {
+        $acls = array();
+        $var = $admin ? 'adminacl' : 'acl';
+        
+        $aclStrings = array_merge(
+            $this->getSiteVar($var, array(), Config::SUPRESS_ERRORS),
+            $this->getModuleVar($var, array(), Config::SUPRESS_ERRORS)
+        );
+        
+        foreach ($aclStrings as $aclString) {
+            if ($acl = AccessControlList::createFromString($aclString)) {
+                $acls[] = $acl;
+            } else {
+                throw new Exception("Invalid $var $aclString in $this->id");
+            }
+        }
+        
+        return $acls;
+    }
   
   
-  abstract protected function moduleDisabled();
-  abstract protected function secureModule();
-  abstract protected function unauthorizedAccess();
+    abstract protected function moduleDisabled();
+    abstract protected function secureModule();
+    abstract protected function unauthorizedAccess();
 
 }

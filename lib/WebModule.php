@@ -1015,7 +1015,7 @@ abstract class WebModule extends Module {
     $this->assign('minify', $this->getMinifyUrls());
     
     // Google Analytics. This probably needs to be moved
-    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', Config::SUPRESS_ERRORS)) {
+    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', null, Config::SUPRESS_ERRORS)) {
         $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
         $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
     }
@@ -1079,13 +1079,14 @@ abstract class WebModule extends Module {
     $this->assign('accessKeyStart', $accessKeyStart);
 
     if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
+        includePackage('Authentication');
         $this->setCacheMaxAge(0);
         $this->assign('session', $this->getSession());
         $user = $this->getUser();
         $this->assign('session_user', $user);
 
         if ($this->isLoggedIn()) {
-            $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', Config::SUPRESS_ERRORS)));
+            $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0, Config::SUPRESS_ERRORS)));
         }
         
         if ($authority = $user->getAuthenticationAuthority()) {
