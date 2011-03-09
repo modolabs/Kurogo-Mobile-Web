@@ -318,8 +318,9 @@ abstract class AuthenticationAuthority
      * 
      * Resets the authority and returns it to a fresh state.
      * Called by the logout method to clean up any authority specific data (caches etc). Not all authorities will need this
+     * @param bool $hard if true a hard reset is done 
      */
-    protected function reset()
+    protected function reset($hard=false)
     {
     }
     
@@ -329,9 +330,9 @@ abstract class AuthenticationAuthority
      * 
      * Subclasses should not need to override this, but instead provide additional behavior in reset()
      */
-    public function logout(Session $session)
+    public function logout(Session $session, $hard=false)
     {
-        $this->reset();
+        $this->reset($hard);
     }
     
     /**

@@ -166,7 +166,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         }
     }
 
-    protected function reset() {
+    protected function reset($hard=false) {
         $this->setToken(null);
         $this->setTokenSecret(null);
         unset($_SESSION[$this->tokenSessionVar]);

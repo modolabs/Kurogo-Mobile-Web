@@ -214,12 +214,12 @@ class Session
     /**
       * Logout the current user
       */
-    public function logout(AuthenticationAuthority $authority) {
+    public function logout(AuthenticationAuthority $authority, $hard=false) {
         if (!$this->isLoggedIn($authority)) {
             return false;
         }
         
-        $authority->logout($this);
+        $authority->logout($this, $hard);
         unset($this->users[$authority->getAuthorityIndex()]);
         $this->setSessionVars();
         $this->setLoginCookie();

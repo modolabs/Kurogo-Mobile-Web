@@ -72,11 +72,12 @@ class LoginWebModule extends WebModule {
         case 'logout':
             $this->setTemplatePage('message');
             $authorityIndex = $this->getArg('authority');
+            $hard = $this->getArg('hard', false);
 
             if (!$this->isLoggedIn($authorityIndex)) {
                 $this->redirectTo('index', array());
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
-                $result = $session->logout($authority);
+                $result = $session->logout($authority, $hard);
             } else {
                 $this->redirectTo('index', array());
             }

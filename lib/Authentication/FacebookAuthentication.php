@@ -177,10 +177,14 @@ class FacebookAuthentication extends AuthenticationAuthority
         }
     }
     
-    protected function reset()
+    protected function reset($hard=false)
     {
+        parent::reset($hard);
         unset($_SESSION['fb_expires']);
         unset($_SESSION['fb_access_token']);
+        if ($hard) {
+            // this where we would log out of facebook
+        }
     }
     
     //does not support groups
