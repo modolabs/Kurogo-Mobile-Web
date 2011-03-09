@@ -1,12 +1,16 @@
 {include file="findInclude:common/header.tpl"}
 
-<h1 class="focal videoTitle">{$videoTitle}</h1>
-
+<h1 class="focal videoTitle">{$videoTitle}
+<div class="actionbutton"> 
+  {include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
+</div>
+<div class="actionbutton"> 
+  {include file="findInclude:common/share.tpl" shareURL={$videoURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
+</div>
+</h1>
  
 <p class="nonfocal">
 
-{include file="findInclude:common/share.tpl" shareURL={$videoURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
- 
     <script type="text/javascript" src="http://admin.brightcove.com/js/BrightcoveExperiences.js"></script>
 	<script src="http://brightcove-swf-hosting.s3.amazonaws.com/MobileCompatibility.js" type="text/javascript"></script>
 
@@ -31,8 +35,4 @@
 
 <p class="focal">{$videoDescription}</p>
 
-<div class="focal shaded">
-   {include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
-</div>
- 
 {include file="findInclude:common/footer.tpl"}

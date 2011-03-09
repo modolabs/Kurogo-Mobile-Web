@@ -526,9 +526,6 @@
              		$links = $video['link'];
              		$link = $links[0]['href'];
 	             	$desc = $video['media$group']['media$description']['$t'];
-	             	if (strlen($desc)>75) {
-	             		$desc = substr($desc,0,75) . "...";
-	             	}
 	             	
 	             	$duration = $video['media$group']['yt$duration']['seconds'];
 	             	$videoId = $video['media$group']['yt$videoid']['$t'];
@@ -538,7 +535,11 @@
              	}
              	
              	$duration = $this->getDuration($duration);
-             	
+             	 
+             	if (strlen($desc)>100) {
+             		$desc = substr($desc,0,100) . "...";
+             	}
+             	 
              	$subtitle = $desc . "<br/>" . $duration;
              	
              	

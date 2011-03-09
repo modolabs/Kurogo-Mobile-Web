@@ -1,7 +1,15 @@
+
 videoList-li {
- height: 75px;
- padding: 0 10px 0 0;
- overflow: hidden;
+    height: 5.5em;
+	margin: 0;
+    padding: 1px;
+    overflow: hidden;
+    position: relative;
+}
+
+img.image {
+	float:left;
+    padding:0 8px 0 0;
 }
 
 #videoList a {
@@ -16,16 +24,6 @@ videoList-li {
   padding: 5px 5px 5px 5px;
 }
 
-/*
-.image {float:left;margin: 4px 0 6px 8px;}
-
-.results ul img {
- height: 175px;
- width: 100px;
- left: -100px;
- top: 0;
-}
-*/
 .videoTitle {
     font-size: 20px;
     line-height: auto;
