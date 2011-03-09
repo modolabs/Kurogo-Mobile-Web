@@ -6,40 +6,21 @@
 /**
   * @package Authentication
   */
-class GoogleAppsAuthentication extends OAuthAuthentication
+class GoogleAppsAuthentication extends GoogleAuthentication
 {
+    protected $userClass='GoogleAppsUser';
     protected $domain;
-    protected $tokenSessionVar = 'googleapps_token';
-    protected $tokenSecretSessionVar = 'googleapps_token_secret';
-    protected $requestTokenURL = 'https://www.google.com/accounts/OAuthGetRequestToken';
-    protected $authorizeTokenURL = 'https://www.google.com/accounts/OAuthAuthorizeToken';
-    protected $accessTokenURL = 'https://www.google.com/accounts/OAuthGetAccessToken';
-    protected $useCache = true;
-    protected $cache;
 
     public function getDomain() {
         return $this->domain;
     }
-
-    protected function getUserFromArray(array $array) {
-
-        $url = 'https://www.googleapis.com/userinfo/email';
     
-        $parameters = array(
-            'alt'=>'json'
-        );
-        
-        if (!$result = $this->oauthRequest('GET', $url, $parameters)) {
-            error_log("Error getting email from $url");
-            return false;
+    protected function reset($hard=false)
+    {
+        parent::reset($hard);
+        if ($hard) {
+            // this where we would log out of google apps
         }
-
-        $data = json_decode($result, true);
-        if (isset($data['data']['email'])) {
-            return $this->getUser($data['data']['email']);
-        }
-        
-        return false;
     }
 
     public function getUser($login) {
@@ -57,27 +38,11 @@ class GoogleAppsAuthentication extends OAuthAuthentication
             $user->setEmail($login);
             $user->setFullname($login);
             return $user;
-
-            $login = $bits[1];
         }
         
         return false;
     }
     
-    protected function getRequestTokenParameters() {
-        $parameters = array(
-            'scope'=>implode(' ', array(
-                'http://www.google.com/calendar/feeds',
-                'http://apps-apis.google.com/a/feeds/',
-                'https://www.googleapis.com/auth/userinfo#email',
-                'http://www.google.com/m8/feeds/'
-            ))
-        );
-        
-        return $parameters;
-
-    }
-
     protected function getAuthURL(array $params) {
         $url = $this->authorizeTokenURL;
         $parameters = array(
@@ -103,62 +68,15 @@ class GoogleAppsAuthentication extends OAuthAuthentication
         }
 
         $this->domain = $args['DOMAIN'];
-        
-        if (isset($args['OAUTH']) && $args['OAUTH']) {
-            if (!isset($args['CONSUMER_KEY'], $args['CONSUMER_SECRET'])) {
-                throw new Exception("Consumer Key and secret must be set when OAuth is on");
-            }
-            
-            $this->oauth = true;
-            $this->consumer_key = $args['CONSUMER_KEY'];
-            $this->consumer_secret = $args['CONSUMER_SECRET'];
-        }
     }
 }
 
 /**
   * @package Authentication
   */
-class GoogleAppsUser extends OAuthUser
+class GoogleAppsUser extends GoogleUser
 {
-    protected $admin = false;
-    
     public function getDomain() {
         return $this->AuthenticationAuthority->getDomain();
     }
-    
-    public function getAdmin() {
-        return $this->admin;
-    }
-    
-    private function setAdmin($admin) {
-        $this->admin = $admin ? true : false;
-    }
-    
-    public function setVars($data) {
-        if (isset($data['entry'])) {
-            if (isset($data['entry']['apps$name']['givenName'])) {
-                $this->setFirstName($data['entry']['apps$name']['givenName']);
-            } 
-
-            if (isset($data['entry']['apps$name']['familyName'])) {
-                $this->setLastName($data['entry']['apps$name']['familyName']);
-            }
-
-            if (isset($data['entry']['apps$login'])) {
-                if (!isset($data['entry']['apps$login']['userName'])) {
-                    error_log('$apps$login/userName not present');
-                }
-                $this->setUserID($data['entry']['apps$login']['userName']);                
-                $this->setEmail($data['entry']['apps$login']['userName'] . '@' . $this->getDomain());
-                $this->setAdmin($data['entry']['apps$login']['admin']);
-            } else {
-                error_log('$apps$login data not present');
-            }
-
-            return $this->getUserID();
-        } else {
-            error_log("Entry value not present");
-        }
-    }    
 }
