@@ -1,6 +1,7 @@
 {if $authenticationAuthorities || $authenticationAuthorityLinks}
 <form method="POST" id="loginForm" action="login">
 <input type="hidden" name="url" value="{$url|escape}" />
+<input type="hidden" name="startOver" value="1" />
 {if $authenticationAuthorities}
 <p class="focal"><label for="loginUser">{$moduleStrings.LOGIN_LABEL|default:'login'}:</label> <input type="text" name="loginUser" id="loginUser" class="loginFormInput" /></p>
 <p class="focal"><label for="loginPassword">{$moduleStrings.PASSWORD_LABEL|default:'password'}:</label> <input type="password" name="loginPassword" id="loginPassword" class="loginFormInput" /> 

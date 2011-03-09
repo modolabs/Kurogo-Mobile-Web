@@ -119,7 +119,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     }
 
     public function login($login, $pass, Session $session, $options) {
-        $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
+        $startOver = isset($_REQUEST['startOver']) ? $_REQUEST['startOver'] : false;
         //see if we already have a request token
         if ($startOver || !$this->token || !$this->tokenSecret) {
             if (!$this->getRequestToken($options)) {
