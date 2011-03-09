@@ -34,6 +34,18 @@ abstract class AuthenticationAuthority
       */
     protected $userLogin;
     
+    /** 
+      * Class for user objects. Most subclasses will override this
+      * @var string
+      */
+    protected $userClass='User';
+
+    /** 
+      * Class for group objects. Most subclasses will override this
+      * @var string
+      */
+    protected $groupClass='UserGroup';
+    
     /**
      * Attempts to authenticate the user using the included credentials
      * @param string $login the userid to login (this will be blank for OAUTH based authorities)

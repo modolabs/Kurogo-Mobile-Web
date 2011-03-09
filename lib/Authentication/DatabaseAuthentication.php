@@ -13,6 +13,8 @@
  */
 class DatabaseAuthentication extends AuthenticationAuthority
 {
+    protected $userClass='DatabaseUser';
+    protected $groupClass='DatabaseUserGroup';
     protected $connection;
     protected $tableMap=array();
     protected $fieldMap=array();
@@ -49,7 +51,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
         $sql = sprintf("SELECT * FROM `%s` WHERE (`%s`=? or `%s`=?)", $this->getTable('user'), $this->getField('user_userid'), $this->getField('user_email'));
         $result = $this->connection->query($sql, array($login, $login));
         if ($row = $result->fetch()) {
-            $user = new DatabaseUser($this);
+            $user = new $this->userClass($this);
             $user->setUserID($row[$this->getField('user_userid')]);
             $user->setEmail($row[$this->getField('user_email')]);
             if (isset($row[$this->getField('user_fullname')])) {
@@ -77,7 +79,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
         $sql = sprintf("SELECT * FROM `%s` WHERE `%s`=?", $this->getTable('group'), $this->getField('group_groupname'));
         $result = $this->connection->query($sql, array($group));
         if ($row = $result->fetch()) {
-            $group = new DatabaseUserGroup($this);
+            $group = new $this->groupClass($this);
             $group->setGroupID($row[$this->getField('group_gid')]);
             $group->setGroupName($row[$this->getField('group_groupname')]);
             return $group;

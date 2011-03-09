@@ -10,6 +10,7 @@
  */
 class FacebookAuthentication extends AuthenticationAuthority
 {
+    protected $userClass='FacebookUser'
     protected $api_key;
     protected $api_secret;
     protected $redirect_uri;
@@ -79,7 +80,7 @@ class FacebookAuthentication extends AuthenticationAuthority
             $json = @json_decode($data, true);
 
             if (isset($json['id'])) {
-                $user = new FacebookUser($this);
+                $user = new $this->userClass($this);
                 $user->setUserID($json['id']);
                 $user->setFirstName($json['first_name']);
                 $user->setLastName($json['last_name']);
