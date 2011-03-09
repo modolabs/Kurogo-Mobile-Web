@@ -303,7 +303,7 @@ class CalendarWebModule extends WebModule {
         $sectionData = $this->getModuleSection('calendar_list');
         $listController = isset($sectionData[$typeController]) ? $sectionData[$typeController] : '';
         if (strlen($listController)) {
-            $sectionData = array_merge($sectionData, array('USER'=>$this->getUser()));
+            $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
             $controller = CalendarListController::factory($listController, $sectionData);
             switch ($type)
             {
