@@ -39,9 +39,18 @@ function CacheHeaders($file)
   * Outputs a 404 error message
   */
 function _404() {
-    header("HTTP/1.0 404 Not Found");
-    echo "<h1>404 Not Found</h1>\n";
-    echo "The page that you have requested could not be found.\n";
+    header("HTTP/1.1 404 Not Found");
+    $url = $_SERVER['REQUEST_URI'];
+    echo <<<html
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL $url was not found on this server.</p>
+</body></html>
+
+html;
     exit();
 }
 
@@ -54,11 +63,11 @@ function Initialize(&$path=null) {
   // Constants which cannot be set by config file
   //
   
-  define('WEBROOT_DIR',       realpath(ROOT_DIR.'/web')); 
+  define('WEBROOT_DIR',       realpath(ROOT_DIR.'/www')); 
   define('LIB_DIR',           realpath(ROOT_DIR.'/lib'));
   define('MASTER_CONFIG_DIR', realpath(ROOT_DIR.'/config'));
-  define('TEMPLATES_DIR',     realpath(ROOT_DIR.'/templates'));
-  define('MODULES_DIR',       realpath(TEMPLATES_DIR.'/modules'));
+  define('APP_DIR',           realpath(ROOT_DIR.'/app'));
+  define('MODULES_DIR',       realpath(APP_DIR.'/modules'));
   
   define('MIN_FILE_PREFIX', 'file:');
   
@@ -67,7 +76,7 @@ function Initialize(&$path=null) {
   // Pull in functions to deal with php version differences
   //
   
-  require_once(ROOT_DIR.'/lib/compat.php');
+  require_once(LIB_DIR . '/compat.php');
 
   //
   // Set up library autoloader

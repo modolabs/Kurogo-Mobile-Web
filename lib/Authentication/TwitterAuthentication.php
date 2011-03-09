@@ -11,6 +11,14 @@ class TwitterAuthentication extends OAuthAuthentication
     protected $requestTokenURL = 'https://api.twitter.com/oauth/request_token';
     protected $accessTokenURL = 'https://api.twitter.com/oauth/access_token';
 	protected $API_URL = 'https://api.twitter.com/1';
+
+    protected function reset($hard=false)
+    {
+        parent::reset($hard);
+        if ($hard) {
+            // this where we would log out of twitter
+        }
+    }
 	
     protected function getUserFromArray(array $array)
     {
@@ -68,9 +76,9 @@ class TwitterAuthentication extends OAuthAuthentication
     
     protected function getAuthURL(array $params)
     {
-        $url = "https://api.twitter.com/oauth/authenticate?" . http_build_query(array_merge($params, array(
+        $url = "https://api.twitter.com/oauth/authenticate?" . http_build_query(array(
             'oauth_token'=>$this->token
-            ))
+            )
         );
         return $url;
     }
@@ -92,7 +100,7 @@ class TwitterAuthentication extends OAuthAuthentication
 /**
   * @package Authentication
   */
-class TwitterUser extends BasicUser
+class TwitterUser extends OAuthUser
 {
     protected $twitter_userID;
     

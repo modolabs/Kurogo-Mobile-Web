@@ -12,6 +12,11 @@ Basic Layout
 
 There are several directories located in the root of the project folder:
 
+**app**
+  This directory contains the code and :ref:`templates <templates-tour>` for each module provided by the project. This also
+  includes shared templates used by every module (including headers and footers). As with the lib 
+  folder you should avoid adding or altering these files, but rather put new or altered files in the
+  :ref:`site-folder`
 **config**
   This directory contains the main configuration files for the entire project. Most notably it contains
   the main *config.ini* file which determines the active site.
@@ -22,12 +27,7 @@ There are several directories located in the root of the project folder:
   in the site/lib folder to avoid possible conflict with future project updates.
 **site**
   This directory contains an entry for each site. See :ref:`site-folder` for more detail
-**templates**
-  This directory contains the code and :ref:`templates <templates-tour>` for each module provided by the project. This also
-  includes shared templates used by every module (including headers and footers). As with the lib 
-  folder you should avoid adding or altering these files, but rather put new or altered files in the
-  :ref:`site-folder`
-**web**
+**www**
   This directory contains the DocumentRoot for the site. It contains the main script :ref:`index.php`
   which handles all incoming requests. It also contains the minify library for delivering optimized
   css and javascript to clients
@@ -47,7 +47,7 @@ in an environment that matches your production environment to discover any case-
 Provided vs. Site files
 =======================
 
-As noted in the layout section, there are files provided by the project (lib, templates, web) and files
+As noted in the layout section, there are files provided by the project (app, lib, www) and files
 for your use (site). As an open source project, you are certainly welcome to alter files in any way 
 that suits your needs. However, be aware that if you alter or add files in the project directories, it
 may create conflicts when you attempt to update future versions of the project. There are well known
@@ -168,13 +168,13 @@ Other
 Modules and Templates
 =====================
 
-Inside the templates folder you will find two folders that contain module and template files
+Inside the *app* folder you will find folders that contain module and template files
 
 ------
 Common
 ------
 
-Inside the common folder are template files that can be used by all modules. Each of these templates
+Inside the common folder are template and css files that are used by all modules. Each of these templates
 may have several variants for different devices. (see :doc:`template` for detailed information on the 
 template system and file naming) A non-exhaustive list of these templates include:
 
@@ -208,15 +208,14 @@ that are specific to that module. For more detailed information on module design
 The naming conventions are very important (especially for case sensitive file systems):
 
 * The folder **must** be lower case and be the same as the url of the module (/about, /home, /links)
-* The folder **must** contain a PHP file named *LocationModulenameModule.php*. If the module is located
-  in the *site* folder then it should be called *SiteModulenameModule.php*. If the module is located
-  in the *theme* folder then it should be called *ThemeModulenameModule.php*. Included modules are
-  called *ModulenameModule.php*.
-* The first (and ONLY) letter of the module **must** be capitalized and followed by Module.php. 
+* The folder **must** contain a PHP file named *ModulenameWebModule.php*. If the module is located
+  in the *site* folder then it should be called *SiteModulenameWebModule.php*. Included modules are
+  called *ModulenameWebModule.php*.
+* The first (and ONLY) letter of the module **must** be capitalized and followed by WebModule.php. 
   
-  * **AboutModule.php** (NOT aboutmodule.php or Aboutmodule.php)
-  * **FullwebModule.php** (NOT FullWebModule.php or Fullwebmodule.php)
-  * **SiteNewsModule.php** (NOT siteNewsModule.php or Sitenewsmodule.php)
+  * **AboutWebModule.php** (NOT aboutwebmodule.php or AboutWebmodule.php)
+  * **FullwebWebModule.php** (NOT FullWebModule.php or FullwebWebmodule.php)
+  * **SiteNewsWebModule.php** (NOT siteNewsWebModule.php or Sitenewswebmodule.php)
   
 * There should be a .tpl for each *page* of the module. At minimum there should be an *index.tpl* which 
   represents the default page (unless the module alters that behavior). Each page should be in all lower case
@@ -224,7 +223,7 @@ The naming conventions are very important (especially for case sensitive file sy
 * You may choose to place additional css style sheets in a folder named *css*
 * You may choose to place additional javascript scripts in a folder named *javascript*
 
-It is possible to override an included module's behavior by creating another module in the *sites*
+It is possible to override an included module's behavior by creating another module in the *site*
 folder. For more information, please see :doc:`moduleextend`
 
 .. _site-folder:
@@ -263,21 +262,25 @@ Each site folder contains the following directories:
   files cannot be safely deleted. Examples would include data that is not able to be generated from 
   a web service, SQLite databases, or flat authentication files
 * *logs* - Log files
-* *modules* - Site specific modules. To promote ease when updating the framework to new versions,
-  it is usually best if you keep site specific modules in this folder rather than in the *templates/modules*
-  folder. If you wish to include your work in the project, please see :doc:`github`. Also see :doc:`moduleextend`.
+* *app* - Site specific templates and modules. Inside this folder you will find 2 folders
+
+  * *common* - Site specific common templates and css
+  * *modules* - Site specific modules. To promote ease when updating the framework to new versions, it 
+    is usually best if you keep site specific modules in this folder rather than in the root *app/modules*
+    folder. If you wish to include your work in the project, please see :doc:`github`. Also see :doc:`moduleextend`.
+
 * *themes* - Contains the themes available for this site. Each theme folder contains a *common* and *modules*
   folder that contains the CSS and image assets for the site. See :doc:`template` for more information.
 
 
 ==========
-Web Folder
+WWW Folder
 ==========
 
-The files and folders in the web folder represent the DocumentRoot, the base of the site. To keep the
+The files and folders in the www folder represent the DocumentRoot, the base of the site. To keep the
 structure clean, all requests are routed through the *index.php* file (the exception is for paths
 and folders that already exists, such as min, the minify url). It is important to note that if create
-additional files or folders in web folder that it may interfere with proper operation of the framework.
+additional files or folders in the www folder that it may interfere with proper operation of the framework.
 
 .. _index.php:
 

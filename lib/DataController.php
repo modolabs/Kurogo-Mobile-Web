@@ -18,6 +18,7 @@ abstract class DataController
     protected $url;
     protected $cache;
     protected $baseURL;
+    protected $title;
     protected $filters=array();
     protected $debugMode=false;
     protected $useCache=true;
@@ -84,6 +85,14 @@ abstract class DataController
         $this->useCache = $useCache ? true : false;
     }
     
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+
+    public function getTitle() {
+        return $this->title;
+    }
+    
     public function setBaseURL($baseURL)
     {
         $this->baseURL = $baseURL;
@@ -100,6 +109,10 @@ abstract class DataController
         
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
+        }
+
+        if (isset($args['TITLE'])) {
+            $this->setTitle($args['TITLE']);
         }
 
         if (isset($args['CACHE_LIFETIME'])) {
@@ -152,6 +165,10 @@ abstract class DataController
         return $this->parseData($data, $parser);
     }
     
+    protected function cacheTimestamp($data) {
+        return null;
+    }
+    
     public function getData()
     {
         if (!$url = $this->url()) {
@@ -175,7 +192,7 @@ abstract class DataController
                 }
                 
                 if ($data = $this->retrieveData($url)) {
-                    $this->cache->write($data, $cacheFilename);
+                    $this->cache->write($data, $cacheFilename, $this->cacheTimestamp($data));
                 }
                 
                 if ($this->debugMode) {
@@ -231,11 +248,14 @@ abstract class DataController
 
     public function getItemByIndex($index)
     {
-        $items = $this->getParsedData();
-        return current($items);
+        if ($items = $this->items($index,1)) {
+            return current($items); 
+        } else {
+            return false;
+        }
     }
     
-    public function items($start=0, $limit=null, &$totalItems)
+    public function items($start=0, $limit=null, &$totalItems=0)
     {
         $items = $this->getParsedData();
         $totalItems = count($items);

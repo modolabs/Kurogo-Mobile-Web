@@ -14,6 +14,7 @@ you can learn more about these modules, what they do and how to configure them.
    modulecalendar
    modulenews
    moduleemergency
+   modulemap
    modulelinks
    modulecontent
    modulefullweb

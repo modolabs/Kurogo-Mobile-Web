@@ -104,7 +104,7 @@ class GoogleStaticMap extends StaticMapImageController {
         } else {
             $styleArgs = array();
             $color = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::COLOR);
-            if ($color) $styleArgs[] = 'color:'.$color;
+            if ($color) $styleArgs[] = 'color:'.htmlColorForColorString($color);
             $size = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SIZE);
             if ($size) $styleArgs[] = 'size:'.$size;
             $icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON);
@@ -120,7 +120,11 @@ class GoogleStaticMap extends StaticMapImageController {
 
     public function addPath($points, $style=null)
     {
-        $polyline = Polyline::encodeFromArray($points);
+        $pointArr = array();
+        foreach ($points as $point) {
+            $pointArr[] = array($point['lat'], $point['lon']);
+        }
+        $polyline = Polyline::encodeFromArray($pointArr);
 
         if ($style === null) {
             // color can be 0xRRGGBB or
@@ -129,7 +133,7 @@ class GoogleStaticMap extends StaticMapImageController {
         } else {
             $styleArgs = array();
             $color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR);
-            if ($color) $styleArgs[] = 'color:0x'.$color;
+            if ($color) $styleArgs[] = 'color:0x'.htmlColorForColorString($color);
             $weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT);
             if ($weight) $styleArgs[] = 'weight:'.$weight;
         }

@@ -3,9 +3,7 @@
 // for KML, each KML file is a category
 // for ArcGIS, each layer (or service instance?) is a category
 
-define('GEOGRAPHIC_PROJECTION', 4326);
-
-class MapDataController extends DataController
+class MapDataController extends DataController implements MapFolder
 {
     const SEARCH_RESULTS = -1;
 
@@ -79,60 +77,118 @@ class MapDataController extends DataController
                 }
             }
             if (count($validTokens)) {
-                $id = 0;
-                foreach ($this->items() as $id => $item) {
-                    if ($item instanceof MapFeature) {
-                        if (self::featureMatchesTokens($item, $validTokens)) {
-                            $results[$id] = $item;
-                        }
-                    } else {
-                        $subCategoryResults = array();
-                        foreach ($item->getItems() as $featureID => $feature) {
-                            if (self::featureMatchesTokens($feature, $validTokens)) {
-                                $subCategoryResults[$featureID] = $feature;
-                            }
-                            if (count($subCategoryResults)) {
-                                $results[$id] = $subCategoryResults;
-                            }
-                        }
+                foreach ($this->getAllLeafNodes() as $item) {
+                    if (self::featureMatchesTokens($item, $validTokens)) {
+                        $results[] = $item;
                     }
                 }
             }
         }
         return $results;
     }
+    
+    public function searchByProximity($center, $tolerance, $maxItems) {
+        // approximate upper/lower bounds for lat/lon before calculating GCD
+        $dLatRadians = $tolerance / EARTH_RADIUS_IN_METERS;
+        // by haversine formula
+        $dLonRadians = 2 * asin(sin($dLatRadians / 2) / cos($center['lat'] * M_PI / 180));
 
-    public function getListItems($subCategory=null) {
-        if ($subCategory === null) {
-            return $this->items();
+        $dLatDegrees = $dLatRadians * 180 / M_PI;
+        $dLonDegrees = $dLonRadians * 180 / M_PI;
+
+        $maxLat = $center['lat'] + $dLatDegrees;
+        $minLat = $center['lat'] - $dLatDegrees;
+        $maxLon = $center['lon'] + $dLonDegrees;
+        $minLon = $center['lon'] - $dLonDegrees;
+
+        $results = array();
+        foreach ($this->getAllLeafNodes() as $item) {
+            $geometry = $item->getGeometry();
+            if ($geometry) {
+                $featureCenter = $geometry->getCenterCoordinate();
+                if ($featureCenter['lat'] <= $maxLat && $featureCenter['lat'] >= $minLat
+                    && $featureCenter['lon'] <= $maxLon && $featureCenter['lon'] >= $minLon
+                ) {
+                    $distance = gcd($center['lat'], $center['lon'], $featureCenter['lat'], $featureCenter['lon']);
+                    if ($distance > $tolerance) continue;
+
+                    // keep keys unique; give priority to whatever came first
+                    $intDist = intval($distance * 1000);
+                    while (array_key_exists($intDist, $results)) {
+                        $intDist += 1; // one centimeter
+                    }
+                    $item->setField('distance', $distance);
+                    $results[$intDist] = $item;
+                }
+            }
+        }
+        return $results;
+    }
+    
+    protected function getAllLeafNodes() {
+        $leafNodes = array();
+        foreach ($this->items() as $item) {
+            self::getLeafNodesForListItem($item, $leafNodes);
+        }
+        return $leafNodes;
+    }
+    
+    protected static function getLeafNodesForListItem(MapListElement $listItem, Array &$results) {
+        if ($listItem instanceof MapFolder) {
+            foreach ($listItem->getListItems() as $innerItem) {
+                self::getLeafNodesForListItem($innerItem, $results);
+            }
         } else {
-            $folder = $this->getItem($subCategory);
-            return $folder->getItems();
+            $results[] = $listItem;
         }
     }
 
-    public function getFeature($name, $subCategory=null) {
-        if ($subCategory !== null) {
-            $folder = $this->getItem($subCategory);
-            $itemList = $folder->getItems();
-            if (isset($itemList[$name])) {
-                return $itemList[$name];
-            }
-        }
+    // MapFolder interface
+    
+    public function getListItem($name) {
         return $this->getItem($name);
+    }
+    
+    public function getListItems($categoryPath=array()) {
+        $container = $this;
+        while (count($categoryPath) > 0) {
+            $category = array_shift($categoryPath);
+            $container = $container->getListItem($category);
+        }
+        if ($container === $this) {
+            $items = $this->items();
+        } else {
+            $items = $container->getListItems();
+        }
+        // fast forward for categories that only have one item
+        while (count($items) == 1) {
+            $container = $items[0];
+            if (!$container instanceof MapFolder) {
+                break;
+            }
+            $items = $container->getListItems();
+        }
+        return $items;
+    }
+    
+    // End MapFolder interface
+
+    public function getFeature($name, $categoryPath=array()) {
+        $items = $this->getListItems($categoryPath);
+        if (isset($items[$name])) {
+            return $items[$name];
+        }
+        return null;
     }
     
     public function getProjection() {
         return GEOGRAPHIC_PROJECTION;
     }
 
+    // implemented for compatibility with DataController
     public function getItem($name)
     {
-        $items = $this->items();
-        if (isset($items[$name]))
-            return $items[$name];
-
-        return null;
+        return $this->getFeature($name);
     }
 
     public function getTitle() {
@@ -161,7 +217,6 @@ class MapDataController extends DataController
     }
 
     public function supportsDynamicMap() {
-        //return false;
         return ($this->dynamicMapClass !== null);
     }
 
@@ -182,6 +237,11 @@ class MapDataController extends DataController
             }
         }
         return $controller;
+    }
+    
+    public function setCategoryId($categoryId) {
+        // TODO: enforce setCategoryId on map parser objects
+        $this->parser->setCategoryId($categoryId);
     }
 
     protected function init($args)

@@ -39,7 +39,7 @@ the `Apache Documentation <http://httpd.apache.org/docs/2.2/>`_. For development
 recommend `MAMP <http://mamp.info/>`_ on Mac OS X.
 
 #. Extract the files to a location accessible by your web server
-#. Set the DocumentRoot of your web server to the *web* folder.
+#. Set the DocumentRoot of your web server to the *www* folder.
 #. Ensure that .htaccess files are enabled. `AllowOverride <http://httpd.apache.org/docs/2.2/mod/core.html#allowoverride>`_ must be set to at least *FileInfo*.
 #. In the *site* directory, make a copy of the *Universitas* folder, including all its contents. The name of this site is up to you, but it would be prudent for it to refer to your site's name. We will refer to this folder as *SITE_FOLDER* 
 

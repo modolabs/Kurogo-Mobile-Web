@@ -15,20 +15,41 @@ class ArcGISDataController extends MapDataController
         return $GLOBALS['siteConfig']->getVar('ARCGIS_CACHE');
     }
     
-    public function projectsFeatures() {
-        return true;
-    }
-    
     public function getProjection() {
         return $this->parser->getProjection();
     }
 
-    public function getSubLayerNames() {
-        return $this->parser->getSubLayerNames();
-    }
-    
-    public function selectSubLayer($layerId) {
-        $this->parser->selectSubLayer($layerId);
+    // this is mostly the same as parent class
+    // but we want to eliminate categories with zero results
+    public function getListItems($categoryPath=array()) {
+        $container = $this;
+        while (count($categoryPath) > 0) {
+            $category = array_shift($categoryPath);
+            $container = $container->getListItem($category);
+        }
+        if ($container === $this) {
+            $items = $this->items();
+        } else {
+            $items = $container->getListItems();
+        }
+        
+        $results = array();
+        // eliminate empty categories
+        foreach ($items as $item) {
+            if (!($item instanceof MapFolder) || count($item->getListItems())) {
+                $results[] = $item;
+            }
+        }
+        
+        // fast forward for categories that only have one item
+        while (count($results) == 1) {
+            $container = $results[0];
+            if (!$container instanceof MapFolder) {
+                break;
+            }
+            $results = $container->getListItems();
+        }
+        return $results;
     }
 
     public function getTitle() {
@@ -40,7 +61,7 @@ class ArcGISDataController extends MapDataController
         $this->initializeParser();
         $this->initializeLayers();
         $this->initializeFeatures();
-        return $this->parser->getFeatureList();
+        return $this->parser->getListItems();
     }
     
     protected function initializeParser() {
@@ -79,6 +100,57 @@ class ArcGISDataController extends MapDataController
     protected function init($args) {
         parent::init($args);
         $this->addFilter('f', 'json');
+    }
+    
+    public function search($searchText) {
+        $this->initializeParser();
+        $this->initializeLayers();
+
+        $oldBaseURL = $this->baseURL;
+        $this->parser->setBaseURL($oldBaseURL);
+        $this->baseURL = $this->parser->getURLForLayerFeatures();
+        
+        $data = $this->getData();
+        $this->parseData($data);
+        
+        // restore previous state
+        $this->baseURL = $oldBaseURL;
+        
+        return $this->items();
+    }
+    
+    public function searchByProximity($center, $tolerance, $maxItems) {
+        
+        // TODO: these units are completely wrong (but work for harvard b/c
+        // their units are in feet); we should use MapProjector to get
+        // a decent range
+        $dLatDegrees = $tolerance;
+        $dLonDegrees = $tolerance;
+
+        $maxLat = $center['lat'] + $dLatDegrees;
+        $minLat = $center['lat'] - $dLatDegrees;
+        $maxLon = $center['lon'] + $dLonDegrees;
+        $minLon = $center['lon'] - $dLonDegrees;
+        
+        $this->initializeParser();
+        $this->initializeLayers();
+
+        $oldBaseURL = $this->baseURL;
+        $this->parser->setBaseURL($oldBaseURL);
+        $this->baseURL = $this->parser->getURLForLayerFeatures();
+        $this->addFilter('geometry', "$minLon,$minLat,$maxLon,$maxLat");
+        $this->addFilter('geometryType', 'esriGeometryEnvelope');
+        $this->addFilter('spatialRel', 'esriSpatialRelIntersects');
+        $this->addFilter('returnGeometry', 'false');
+        $data = $this->getData();
+        $this->parseData($data);
+        
+        // restore previous state
+        $this->baseURL = $oldBaseURL;
+        $this->removeAllFilters();
+        $this->addFilter('f', 'json');
+        
+        return $this->getAllLeafNodes();
     }
     
     // TODO make a standalone method in ArcGISParser that

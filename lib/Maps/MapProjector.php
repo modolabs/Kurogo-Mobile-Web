@@ -24,12 +24,91 @@ class MapProjector {
         }
     }
     
-    public function projectPoint($point) {
-        $x = isset($point['lon']) ? $point['lon'] : $point['x'];
-        $y = isset($point['lat']) ? $point['lat'] : $point['y'];
+    public static function getXYFromPoint(Array $point) {
+        if (isset($point['lon']) && $point['lat']) {
+            $x = $point['lon'];
+            $y = $point['lat'];
+        } elseif (isset($point['x'])) {
+            $x = $point['x'];
+            $y = $point['y'];
+        } else {
+            $x = $point[1];
+            $y = $point[0];
+        }
+        return array($x, $y);
+    }
     
+    public function projectGeometry(MapGeometry $geometry) {
+        if ($geometry instanceof MapPolygon) {
+             $rings = $geometry->getRings();
+             $projectedRings = array();
+             foreach ($rings as $ring) {
+                 if ($ring instanceof MapPolyline) {
+                     $ring = $ring->getPoints();
+                 }
+                 $projectedRings[] = $this->projectPoints($ring);
+             }
+             return new EmptyMapPolygon($projectedRings);
+            
+        } elseif ($geometry instanceof MapPolyline) {
+             $points = $geometry->getPoints();
+             $projectedPoints = $this->projectPoints($points);
+             return new EmptyMapPolyline($projectedPoints);
+
+        } else { // point
+             $point = $geometry->getCenterCoordinate();
+             $projectedPoint = $this->projectPoint($point);
+             return new EmptyMapPoint($projectedPoint['lat'], $projectedPoint['lon']);
+        }
+    }
+
+    // TODO this is only supported for service-based projections right now
+    public function projectPoints(Array $points, $outputXY=false) {
+        $result = array();
+
+        if ($this->baseURL !== NULL) {
+            $numberOfTries = (int)(count($points) / 20); // 20 points seems to be safely under the limit
+            for ($i = 0; $i <= $numberOfTries; $i++) {
+    
+                $geometries = array();
+                for ($j = $i * 20; $j < ($i + 1) * 20 && $j < count($points); $j++) {
+                    $point = $points[$j];
+                    list($x, $y) = self::getXYFromPoint($point);
+                    $geometries[] = array(
+                        'x' => $x,
+                        'y' => $y,
+                        );
+                }
+
+                $params = array(
+                    'inSR' => $this->srcProj,
+                    'outSR' => $this->dstProj,
+                    'geometries' => '{"geometryType":"esriGeometryPoint","geometries":'
+                                .json_encode($geometries).'}',
+                    'f' => 'json',
+                    );
+                $query = $this->baseURL.'?'.http_build_query($params);
+                $response = file_get_contents($query);
+                $json = json_decode($response, true);
+                
+                if ($json && isset($json['geometries']) && is_array($json['geometries'])) {
+                    if ($outputXY) {
+                        $result = array_merge($result, $json['geometries']);
+                    } else {
+                        foreach ($json['geometries'] as $geometry) {
+                            $result[] = array('lat' => $geometry['y'], 'lon' => $geometry['x']);
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+    
+    public function projectPoint($point) {
+        list($x, $y) = self::getXYFromPoint($point);
         if ($this->srcProj == $this->dstProj) {
-            return array('x' => $x, 'y' => $y);
+            return array('lon' => $x, 'lat' => $y);
         }
     
         if ($this->baseURL !== NULL) {
@@ -45,8 +124,9 @@ class MapProjector {
             $json = json_decode($response, true);
             if ($json && isset($json['geometries']) && is_array($json['geometries'])) {
                 $geometry = $json['geometries'][0];
-                return array('x' => $geometry['x'], 'y' => $geometry['y']);
+                return array('lat' => $geometry['y'], 'lon' => $geometry['x']);
             }
+            var_dump($response);
         }
         else {
             if ($this->srcProj != 4326) {
@@ -59,7 +139,7 @@ class MapProjector {
                 $x = $xy[0]; // point x
                 $y = $xy[1]; // point y
             }
-            return array('x' => $x, 'y' => $y);
+            return array('lon' => $x, 'lat' => $y);
         }
     }
     

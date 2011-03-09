@@ -80,7 +80,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             // either all four of (color, size, outline, style) are set or zero
             $color = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::COLOR)
                 or $color = 'FF0000';
-            $filteredStyles[] = 'color=#'.substr($color, 0, 6);
+            $filteredStyles[] = 'color=#'.htmlColorForColorString($color);
 
             $size = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SIZE)
                 or $size = 12;
@@ -113,28 +113,32 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
             // TODO there isn't yet a good way to get valid values for this from outside
             $consistency = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::CONSISTENCY)
-                or $consistency = 'STYLE_SOLID';
+                or $consistency = 'esri.symbol.SimpleFillSymbol.STYLE_SOLID';
             $filteredStyles[] = 'style='.$consistency;
 
             $color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR)
                 or $color = 'FF0000';
-            $filteredStyles[] = 'color=#'.substr($color, 0, 6);
+            $filteredStyles[] = 'color=#'.htmlColorForColorString($color);
 
             $weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT)
                 or $weight = 4;
-            $filteredStyles[] = 'width='.strval($width);
+            $filteredStyles[] = 'weight='.strval($weight);
         }
         $styleString = implode('|', $filteredStyles);
         
         if (!isset($this->paths[$styleString])) {
         	$this->paths[$styleString] = array();
         }
-        $this->paths[$styleString][] = $points;
+        $this->paths[$styleString][] = $this->collapseAssociativePoints($points);
     }
     
     public function addPolygon($rings, $style=null) {
+        $collapsedRings = array();
+        foreach ($rings as $ring) {
+            $collapsedRings[] = $this->collapseAssociativePoints($ring);
+        }
         // no style support for now
-        $this->polygons[] = $rings;
+        $this->polygons[] = $collapsedRings;
     }
 
     ////////////// output ///////////////
@@ -173,6 +177,17 @@ JS;
 
         return $js;
     }
+    
+    private function collapseAssociativePoints($points)
+    {
+        $result = array();
+        foreach ($points as $point) {
+            if (isset($point['lat']) && isset($point['lon'])) {
+                $result[] = array($point['lat'], $point['lon']);
+            }
+        }
+        return $result;
+    }
 
     private function getPathJS()
     {
@@ -199,7 +214,7 @@ JS;
                 'spatialReference' => array('wkid' => $this->mapProjection)
                 );
             
-            $json = json-decode($jsonObj);
+            $json = json_encode($jsonObj);
 
             $js .= <<<JS
 
@@ -257,6 +272,8 @@ JS;
             foreach ($points as $point) {
                 if ($this->mapProjector) {
                     $point = $this->mapProjector->projectPoint($point);
+                    list($x, $y) = MapProjector::getXYFromPoint($point);
+                    $point = array('x' => $x, 'y' => $y);
                 }
                 else {
                     $point = array('x' => $point['lat'], 'y' => $point['lon']);
@@ -288,8 +305,9 @@ JS;
     private function getCenterJS() {
         if ($this->mapProjector) {
             $xy = $this->mapProjector->projectPoint($this->center);
-        }
-        else {
+            list($x, $y) = MapProjector::getXYFromPoint($xy);
+            $xy = array('x' => $x, 'y' => $y);
+        } else {
             $xy = array('x' => $this->center['lat'], 'y' => $this->center['lon']);
         }
     

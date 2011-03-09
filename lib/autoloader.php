@@ -13,19 +13,38 @@
  * 3. The LIB_DIR 
  * 
  */
-function siteLibAutoloader($className) {
-  $paths = array();
-  
-  // If the className has Authentication at the end try the  authentication dir
-  if (preg_match("/(Authentication)$/", $className, $bits)) {
-    if (defined('SITE_LIB_DIR')) {
-      $paths[] = SITE_LIB_DIR . "/" . $bits[1];
+ 
+$GLOBALS['libDirs'] = array();
+
+function includePackage($packageName) {
+    
+    if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
+        throw new Exception("Invalid Package name $packageName");
     }
-    $paths[] = LIB_DIR . "/" . $bits[1];
-  }
+    
+    $dir = LIB_DIR . "/$packageName";
+
+    if (in_array($dir, $GLOBALS['libDirs'])) {
+        return true;
+    }
+    
+    if (!is_dir($dir)) {
+        throw new Exception("Unable to find $dir");
+    }
+    
+    $GLOBALS['libDirs'][] = $dir;
+    
+    if (is_file(LIB_DIR . "/$packageName.php")) {
+        include_once(LIB_DIR . "/$packageName.php");
+    }
+}
+
+function siteLibAutoloader($className) {
+  $paths = $GLOBALS['libDirs'];
+  
 
   // If the className has Module in it then use the modules dir
-  if (defined('MODULES_DIR') && preg_match("/(.*)Module/", $className, $bits)) {
+  if (defined('MODULES_DIR') && preg_match("/(.*)WebModule/", $className, $bits)) {
     $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
   }
 
@@ -40,7 +59,7 @@ function siteLibAutoloader($className) {
     $file = realpath_exists("$path/$className.php");
     if ($file) {
       //error_log("Autoloader found $file for $className");
-      include $file;
+      include($file);
       return;
     }
   }

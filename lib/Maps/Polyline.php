@@ -67,8 +67,9 @@ class Polyline {
     for($i=0; $i<count($points); $i++) {
       if(isset($dists[$i]) || $i == 0 || $i == count($points)-1) {
         $point = $points[$i];
-        $lat = $point[0];
-        $lng = $point[1];
+        // modified to support geometries passed as associative arrays
+        $lat = isset($point['lat']) ? $point['lat'] : $point[0];
+        $lng = isset($point['lon']) ? $point['lon'] : $point[1];
         $late5 = floor($lat * 1e5);
         $lnge5 = floor($lng * 1e5);
         $dlat = $late5 - $plat;

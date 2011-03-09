@@ -7,14 +7,14 @@ web application without modifying the core libraries.  The advantage of using th
 that site changes are isolated from the framework sources and can be more easily moved to a new 
 version of the framework.
 
-The core visual interface of the Modo Mobile Framework lives in "templates/".  It is made up of 
+The core visual interface of Kurogo lives in "app/".  It is made up of 
 HTML templates, CSS and Javascript files.  All HTML, CSS and Javascript in the core interface can be 
 overridden by a theme.  
 
 Each theme is contained within a directory inside the *SITE_DIR/themes* folder.  By convention the default 
 theme is named *default*.
 
-Themes have the same directory structure as the core visual interface directory (templates/).  
+Themes have the same directory structure as the core visual interface directory (app/).  
 This allows paths in the CSS and HTML to be the same for the core interface and the theme interface. 
 
 ******************
@@ -34,7 +34,7 @@ CSS search paths from least specific to most specific.  All matching CSS files a
 together from least specific to most specific.  This allows you to override styles for specific 
 pages or devices.
 
-Check common core files in */templates/common/css/* for:
+Check common core files in */app/common/css/* for:
 
 * common.css
 * [PAGETYPE].css
@@ -43,7 +43,7 @@ Check common core files in */templates/common/css/* for:
 * [PAGE]-[PAGETYPE].css
 * [PAGE]-[PAGETYPE]-[PLATFORM].css
   
-Check module core files in */templates/modules/[current module]/css/* for:
+Check module core files in */app/modules/[current module]/css/* for:
 
 * common.css
 * [PAGETYPE].css
@@ -87,7 +87,7 @@ Check common theme files in *SITE_DIR/themes/[ACTIVE_THEME]/common/javascript/* 
 * [PAGE]-common.js
 * [PAGE]-[PAGETYPE]-[PLATFORM].js or if not check [PAGE]-[PAGETYPE].js
 
-If there are no common theme files, check common core files in */templates/common/javascript/* for:
+If there are no common theme files, check common core files in /app/common/javascript/* for:
 
 * common.js
 * [PAGETYPE]-[PLATFORM].js or if not check [PAGETYPE].js
@@ -101,7 +101,7 @@ Check module theme files in *SITE_DIR/themes/[ACTIVE_THEME]/modules/[current mod
 * [PAGE]-common.js
 * [PAGE]-[PAGETYPE]-[PLATFORM].js or if not check [PAGE]-[PAGETYPE].js
 
-If there are no module theme files, check module core files in */templates/modules/[current module]/javascript/* for:
+If there are no module theme files, check module core files in */app/modules/[current module]/javascript/* for:
 
 * common.js
 * [PAGETYPE]-[PLATFORM].js or if not check [PAGETYPE].js
@@ -135,7 +135,7 @@ Check theme images in *SITE_DIR/themes/[ACTIVE_THEME]/common/images/* for:
 * [PAGETYPE]/[IMAGE_NAME].[EXT]
 * [IMAGE_NAME].[EXT]
 
-Check core images in */templates/common/images/* for:
+Check core images in */app/common/images/* for:
 
 * [PAGETYPE]-[PLATFORM]/[IMAGE_NAME].[EXT]
 * [PAGETYPE]/[IMAGE_NAME].[EXT]
@@ -149,7 +149,7 @@ Check theme images in *SITE_DIR/themes/[ACTIVE_THEME]/modules/links/images/* for
 * [PAGETYPE]/[IMAGE_NAME].[EXT]
 * [IMAGE_NAME].[EXT]
 
-Check core images in */templates/modules/[MODULE_ID]/images/[PAGETYPE]-[PLATFORM]/* for:
+Check core images in */app/modules/[MODULE_ID]/images/[PAGETYPE]-[PLATFORM]/* for:
 
 * [PAGETYPE]-[PLATFORM]/[IMAGE_NAME].[EXT]
 * [PAGETYPE]/[IMAGE_NAME].[EXT]

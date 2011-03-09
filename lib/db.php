@@ -13,6 +13,8 @@ define('DB_NOT_SUPPORTED', 1);
 class db {
   protected $connection;
   const IGNORE_ERRORS=true;
+
+  const CONSTRAINT_VIOLATION_ERROR=23000;
   
   public function __construct($config=null)
   {
@@ -45,44 +47,46 @@ class db {
     $this->connection = call_user_func(array("db_$db_type", 'connection'), $config);
   }
   
-  public function query($sql, $parameters=array(), $ignoreErrors=false)
+  public function query($sql, $parameters=array(), $ignoreErrors=false, $catchErrorCodes=array())
   {
     if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
         error_log("Query Log: $sql");
     }
 
     if (!$result = $this->connection->prepare($sql)) {
-        if ($ignoreErrors) {
-            return;
-        }
-        $errorInfo = $this->connection->errorInfo();
-        if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
-            throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
-        } else {
-            error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
-        }
-        return;
+        return $this->errorHandler($sql, $this->connection->errorInfo(), $ignoreErrors, $catchErrorCodes);
     }
 
     $result->setFetchMode(PDO::FETCH_ASSOC);
     
     if (!$result->execute($parameters)) {
-        if ($ignoreErrors) {
-            return;
-        }
-        $errorInfo = $result->errorInfo();
-        if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
-            throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
-        } else {
-            error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
-        }
+        return $this->errorHandler($sql, $result->errorInfo(), $ignoreErrors, $catchErrorCodes);
     }
 
     return $result;
   }
 
-  public function escape($string) {
-    return $this->connection->real_escape_string($string);
+  private function errorHandler($sql, $errorInfo, $ignoreErrors, $catchErrorCodes) {
+        if ($ignoreErrors) {
+            return;
+        }
+
+        // prevent the default error handling mechanism
+        // from triggerring in the rare case of expected
+        // errors such as unique field violations
+        if(in_array($errorInfo[0], $catchErrorCodes)) {
+            return $errorInfo;
+        }
+
+        if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
+            throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+        } else {
+            error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+        }
+  }
+
+  public function quote($string) {
+    return $this->connection->quote($string);
   }
 
   public function ping() {
@@ -116,6 +120,4 @@ class db {
       return $this->connection->lastInsertId();
   }
 }
-
-
 

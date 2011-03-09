@@ -5,11 +5,11 @@ Modules
 The Kurogo framework is based around modules. Each module provides a distinct set of data and 
 services shown to the user. 
 
-=================
-The Module Object
-=================
+====================
+The WebModule Object
+====================
 
-Each module is a subclass of the Module object. Much of the core logic is located within this
+Each module is a subclass of the WebModule object. Much of the core logic is located within this
 class including:
 
 * Initialization of the template system
@@ -21,7 +21,7 @@ class including:
 Properties
 ----------
 
-Most of the properties used in the Module object exist merely to maintain state and should not be
+Most of the properties used in the WebModule object exist merely to maintain state and should not be
 directly referenced, but rather use an accessor method to ensure future compatibility. There are some
 properties that you will need to use if creating your own module. These include:
 
@@ -43,7 +43,7 @@ properties that you will need to use if creating your own module. These include:
 Methods
 -------
 
-There are 90 methods in the module object. Many of them are used internally and don't require any discussion.
+There are 90 methods in the WebModule object. Many of them are used internally and don't require any discussion.
 There are several methods that you should be aware of. 
 
 ^^^^^^^^^^^^^^
@@ -52,11 +52,11 @@ Initialization
 
 * *factory* (string $id, string $page, array $args) - This static method is called by *index.php* to
   setup the module behavior. It will pass the page to load as well as the arguments that part of the 
-  request. In order to separate built-in modules from site specific modules, this method will search multiple locations for the module. It is important that the name of the class matches the name of the file. 
+  request. In order to separate built-in modules from site specific modules, this method will search multiple 
+  locations for the module. It is important that the name of the class matches the name of the file. 
 
-  * THEME_DIR/modules/example/ThemeExampleModule.php 
-  * SITE_DIR/modules/example/SiteExampleModule.php 
-  * MODULES_DIR/example/ExampleModule.php 
+  * SITE_DIR/app/modules/example/SiteExampleWebModule.php 
+  * app/modules/example/ExampleModule.php 
   
 * *initialize* - This method is executed during the instantiation phase. It allows modules to perform
   initial configuration and setup before use

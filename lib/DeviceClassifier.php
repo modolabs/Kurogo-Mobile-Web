@@ -9,6 +9,7 @@
   */
 class DeviceClassifier {
   const COOKIE_KEY='deviceClassification';
+  private $userAgent = '';
   private $pagetype = 'unknown';
   private $platform = 'unknown';
   private $certs = false;
@@ -39,6 +40,7 @@ class DeviceClassifier {
   function __construct($device = null) {
   
     $this->version = intval($GLOBALS['siteConfig']->getVar('MOBI_SERVICE_VERSION'));
+    $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
     
     if ($device && strlen($device)) {
       $this->setDevice($device); // user override of device detection
@@ -47,17 +49,19 @@ class DeviceClassifier {
       $this->setDevice($_COOKIE[self::COOKIE_KEY]);
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
-      $user_agent = $_SERVER['HTTP_USER_AGENT'];
-
+      
       if ($data = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_USE_EXTERNAL') ? 
-        $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($user_agent) ) {
-        
+        $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($this->userAgent) ) {
         $this->pagetype = $data['pagetype'];
         $this->platform = $data['platform'];
         $this->certs = $data['supports_certificate'];
         $this->setDeviceCookie();
       }
     }
+  }
+  
+  public function getUserAgent() {
+    return $this->userAgent;
   }
     
   private function setDeviceCookie() {
@@ -66,6 +70,7 @@ class DeviceClassifier {
   }
   
   private function detectDeviceInternal($user_agent) {
+    includePackage('db');
     if (!$user_agent) {
       return;
     }

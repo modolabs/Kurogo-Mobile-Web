@@ -128,7 +128,7 @@ class ArcGISStaticMap extends StaticMapImageController {
     // features from other coordinate systems
     public function setCenter($center) {
         $newCenter = $this->mapProjector->projectPoint($center);
-        parent::setCenter(array('lat' => $newCenter['y'], 'lon' => $newCenter['x']));
+        parent::setCenter($newCenter);
     }
 
     ////////////// overlays ///////////////
