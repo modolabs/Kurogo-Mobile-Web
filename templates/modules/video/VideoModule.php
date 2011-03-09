@@ -14,6 +14,7 @@
    protected $totalItems;
    protected $tag;
    protected $brightcove_or_youtube;
+   protected $detailScreen;
    
    // currently only used by YouTube:
    protected $youtubeAuthor;  
@@ -30,9 +31,6 @@
     ), $addBreadcrumb);
   }
     
-  
-  
-  
  
     // bookmarks -- copied from Maps
 
@@ -83,7 +81,7 @@
         parse_str($aBookmark, $params);
         if (isset($params['featureindex'])) {
             //return $this->buildBreadcrumbURL('detail', $params, true);  // FIXME
-            return $this->buildBreadcrumbURL('detail-brightcove', $params, true);
+            return $this->buildBreadcrumbURL($this->detailScreen, $params, true);
         } else {
             return '#';
         }
@@ -163,8 +161,6 @@
     }  
   
   
-  
-  
    protected function initializeForPage() {
    
    	if ($GLOBALS['deviceClassifier']->getPagetype()=='basic') {
@@ -217,9 +213,11 @@
 		 $this->playerid  = $this->getModuleVar('playerId');
 		 $this->accountid = $this->getModuleVar('accountId');
 		 $defaultStart = 0;
+		 $this->detailScreen='detail-brightcove';
 	 } else {
 		 $this->youtubeAuthor = $this->getModuleVar('youtubeAuthor');
 		 $defaultStart = 1;
+		 $this->detailScreen='detail-youtube';
 	 }
 	 
 	 $xml_or_json = $this->getModuleVar('xml_or_json');
@@ -293,7 +291,15 @@
                 break;
                         
         case 'detail-youtube':
-			   $videoid = $this->getArg('videoid');
+	        	$videoid = $this->getArg('videoid');
+	        	 
+	        	$bkmId = $this->getArg('bkmId');
+	        	if ($bkmId) {
+	        		$videoid = $bkmId;
+	        		$body = $this->getArg('bkmBody');
+	        		$title = $this->getArg('subcategory');
+	        	}
+	        	 
 			   if ($video = $controller->getItem($videoid)) {
 			   	
         		  $body = $video['media$group']['media$description']['$t'];
@@ -310,6 +316,19 @@
 			      $this->assign('videoid', $videoid);
 			      $this->assign('videoTitle', $title);
 			      $this->assign('videoDescription', $body);
+			      
+			      // Bookmark
+			      $cookieParams = array(
+	                        'category' => $cat,
+	                        'subcategory' => $title,
+	                        'featureindex' => $this->feedIndex,
+	                        'bkmBody' => $body,
+	                        'bkmId' => $videoid,
+			      );
+
+			      $cookieID = http_build_query($cookieParams);
+			      $this->generateBookmarkOptions($cookieID);
+			    
 			   } else {
 			      $this->redirectTo('index');
 			   }
