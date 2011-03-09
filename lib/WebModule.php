@@ -412,15 +412,12 @@ abstract class WebModule extends Module {
       return $module;
     }
     
-    public function __construct() {
-        $moduleData = $this->getModuleData();
-        $this->moduleName = $moduleData['title'];
-    }
-    
-   
     protected function init($page='', $args=array()) {
       
         parent::init();
+
+        $moduleData = $this->getModuleData();
+        $this->moduleName = $moduleData['title'];
 
         $this->setArgs($args);
         $this->setPage($page);
