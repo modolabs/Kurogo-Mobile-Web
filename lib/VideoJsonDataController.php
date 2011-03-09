@@ -42,26 +42,28 @@
 	         
 	         return $data;    		
      		
-     	}
+     	} else {
      	
-         // set the base url to YouTube
-         $this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
-         $this->addFilter('alt', 'json'); //set the output format to json
-         $this->addFilter('q', $q); //set the query
-         $this->addFilter('format', 6); //only return mobile videos
-         $this->addFilter('v', 2); // version 2
-         $this->addFilter('max-results', $pageSize);
-         $this->addFilter('start-index', $startIndex);
-         if ($author) $this->addFilter('author', $author);
-
-         $data = $this->getParsedData();
-         $results = $data['feed']['entry'];
-
-         if (isset($results)) {
-         	$this->totalItems = $data['feed']['openSearch$totalResults']['$t'];
-         }
-         
-         return $results;
+	         // set the base url to YouTube
+	         $this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
+	         $this->addFilter('alt', 'json'); //set the output format to json
+	         $this->addFilter('q', $q); //set the query
+	         $this->addFilter('format', 6); //only return mobile videos
+	         $this->addFilter('v', 2); // version 2
+	         $this->addFilter('max-results', $pageSize);
+	         $this->addFilter('start-index', $startIndex);
+	         if ($author) $this->addFilter('author', $author);
+	         if ($category) $this->addFilter('category', $category); 
+	
+	         $data = $this->getParsedData();
+	         $results = $data['feed']['entry'];
+	
+	         if (isset($results)) {
+	         	$this->totalItems = $data['feed']['openSearch$totalResults']['$t'];
+	         }
+	         
+	         return $results;
+     	}
      }
 
 	 // retrieves video based on its id
