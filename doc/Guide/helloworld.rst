@@ -51,11 +51,11 @@ Inside the *hello* directory create a file named *index.tpl* that contains the f
 
 .. code-block:: html
 
-      {include file="findInclude:common/header.tpl"}
+      {include file="findInclude:common/templates/header.tpl"}
     
       <h1 class="focal">Hello World!</h1>
     
-      {include file="findInclude:common/footer.tpl"}
+      {include file="findInclude:common/templates/footer.tpl"}
 
 Your folder structure should look similar to this:
 

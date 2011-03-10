@@ -1066,7 +1066,7 @@ abstract class WebModule extends Module {
       $template = 'common/'.$this->page;
     } else {
       $this->assign('hasHelp', isset($moduleStrings['help']));
-      $template = 'modules/'.$this->templateModule.'/'.$this->templatePage;
+      $template = 'modules/'.$this->templateModule.'/templates/'.$this->templatePage;
     }
     
     // Pager support
