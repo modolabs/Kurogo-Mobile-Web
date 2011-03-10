@@ -50,7 +50,7 @@ class APIResponse
             throw new Exception('APIResponse version must be set before display');
         }
     
-        echo json_encode($this, true);
+        echo json_encode($this);
         exit();
     }
 }
