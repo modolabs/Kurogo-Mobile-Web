@@ -45,6 +45,7 @@ abstract class Module
     // possible module paths
     $modulePaths = array(
       SITE_MODULES_DIR."/$id/Site%s.php"=>"Site%s",
+      SITE_MODULES_DIR."/$id/%s.php"=>"%s",
       MODULES_DIR."/$id/%s.php"=>"%s",
     );
     
