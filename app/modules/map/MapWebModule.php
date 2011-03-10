@@ -507,7 +507,7 @@ class MapWebModule extends WebModule {
                 }
                 
                 if (is_subclass_of($dataController, 'ArcGISDataController')) {
-                    $detailConfig = $this->loadWebAppConfigFile('map-detail', 'detailConfig');   
+                    $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');   
                     $feature->setBlackList($detailConfig['details']['suppress']);
                 }
                 
@@ -692,7 +692,7 @@ class MapWebModule extends WebModule {
                 break;
           
             case 'detail':
-                $detailConfig = $this->loadWebAppConfigFile('map-detail', 'detailConfig');        
+                $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');        
                 $tabKeys = array();
                 $tabJavascripts = array();
 

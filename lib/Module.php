@@ -12,12 +12,11 @@ abstract class Module
   }
   
   protected function loadFeedData() {
-    $data = null;
-    $feedConfigFile = realpath_exists(sprintf("%s/feeds/%s.ini", SITE_CONFIG_DIR, $this->id));
-    if ($feedConfigFile) {
-        $data = parse_ini_file($feedConfigFile, true);
-    } 
+    $data = array();
     
+    if ($feedConfigFile = $this->getConfig($this->id, 'feeds')) {
+        $data = $feedConfigFile->getSectionVars();
+    }
     return $data;
   }
   
@@ -127,7 +126,7 @@ abstract class Module
   public function getModuleConfig() {
     static $moduleConfig;
     if (!$moduleConfig) {
-        $moduleConfig = $this->getConfig($this->id, 'module', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
+        $moduleConfig = $this->getConfig($this->id, 'module', ConfigFile::OPTION_CREATE_WITH_DEFAULT | ConfigFile::OPTION_DIE_ON_FAILURE);
     }
 
     return $moduleConfig;

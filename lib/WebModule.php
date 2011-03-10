@@ -939,8 +939,14 @@ abstract class WebModule extends Module {
   // Config files
   //
   
+  protected function getPageConfig($name, $opts) {
+    $config = ConfigFile::factory($this->id, "page-$name", $opts);
+    $GLOBALS['siteConfig']->addConfig($config);
+    return $config;
+  }
+  
   protected function getPageData() {
-     $pageConfig = $this->getConfig($this->id, 'nav');
+     $pageConfig = $this->getConfig($this->id, 'pages');
      return $pageConfig->getSectionVars(true);
   }
   
@@ -951,8 +957,9 @@ abstract class WebModule extends Module {
     return $this->loadConfigFile($config, $keyName);
   }
 
-  protected function loadWebAppConfigFile($name, $keyName=null, $opts=0) {
-    $config = $this->getConfig($name, 'web', $opts);
+  protected function loadPageConfigFile($page, $keyName=null, $opts=0) {
+    $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
+    $config = $this->getPageConfig($page, $opts);
     if ($keyName === null) { $keyName = $name; }
     return $this->loadConfigFile($config, $keyName);
   }

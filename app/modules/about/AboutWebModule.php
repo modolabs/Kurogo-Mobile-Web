@@ -56,7 +56,7 @@ class AboutWebModule extends WebModule {
   protected function initializeForPage() {
     switch ($this->page) {
       case 'index':
-        $this->loadWebAppConfigFile('about-index', 'aboutPages');
+        $this->loadPageConfigFile('index', 'aboutPages');
         break;
         
       case 'about_site':

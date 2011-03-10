@@ -482,7 +482,7 @@ class CalendarWebModule extends WebModule {
             $this->assign('resources', $resources);
         }
 
-        $this->loadWebAppConfigFile('calendar-index','calendarPages');
+        $this->loadPageConfigFile('index','calendarPages');
         $this->assign('today',         mktime(0,0,0));
         $this->assign('searchOptions', $this->searchOptions);
         $this->assign('feeds',  $this->getFeedsByType());
@@ -647,7 +647,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'detail':  
-        $calendarFields = $this->loadWebAppConfigFile('calendar-detail', 'detailFields');
+        $calendarFields = $this->loadPageConfigFile('detail', 'detailFields');
         $type = $this->getArg('type', 'static');
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
         
