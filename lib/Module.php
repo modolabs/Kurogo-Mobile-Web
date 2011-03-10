@@ -126,7 +126,7 @@ abstract class Module
   public function getModuleConfig() {
     static $moduleConfig;
     if (!$moduleConfig) {
-        $moduleConfig = $this->getConfig($this->id, 'module', ConfigFile::OPTION_CREATE_WITH_DEFAULT | ConfigFile::OPTION_DIE_ON_FAILURE);
+        $moduleConfig = $this->getConfig($this->id, 'module', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
     }
 
     return $moduleConfig;
