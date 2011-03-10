@@ -26,28 +26,29 @@ The Kurogo Framework looks in a variety of locations for module data (see :doc:`
 you will want to create your module in your site's *app/modules* folder. 
 
 * Create a folder named *hello* inside *SITE_DIR/app/modules*
+* Inside the *SITE_DIR/app/modules/hello* folder, create a folder named *templates*
 
 ==============================
 Creating the module class file
 ==============================
    
-Inside the *hello* directory create a file named *SiteHelloWebModule.php* that contains the following contents::
+Inside the *hello* directory create a file named *HelloWebModule.php* that contains the following contents::
 
     <?php
     
-    class SiteHelloWebModule extends WebModule
+    class HelloWebModule extends WebModule
     {
       protected $id='hello';
       protected function initializeForPage() {
         $this->assign('message', 'Hello World!');
       }
     }
-    
+
 ==========================
 Creating the template file
 ==========================
 
-Inside the *hello* directory create a file named *index.tpl* that contains the following contents:
+Inside the *hello/templates* directory create a file named *index.tpl* that contains the following contents:
 
 .. code-block:: html
 
