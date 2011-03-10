@@ -66,6 +66,20 @@ as possible so that they can function in a variety of uses and contexts (even if
 currently used in only one context). Nearly all the libraries exist as PHP classes and currently fall
 into one of several categories:
 
+--------
+Packages
+--------
+
+In order to assist developers with including the proper class files, libraries can be grouped into *packages*.
+This allows you to include necessary functionality without worrying about which files to include in your
+module (use: *includePackage('PackageName')* in your module code). Currently the following packages are available:
+
+* Authentication (included automatically when authentication is enabled)
+* Calendar - includes classes to deal with date and time
+* db - used when you wish to interact with a database
+* Emergency - used by the emergency module
+* Maps - used by the maps module
+
 --------------------
 Core / Support Files
 --------------------

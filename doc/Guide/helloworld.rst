@@ -23,10 +23,9 @@ Creating the module folder structure
 a site folder.
 
 The Kurogo Framework looks in a variety of locations for module data (see :doc:`tour`). In most cases
-you will want to create your module in your site's *modules* folder. 
+you will want to create your module in your site's *app/modules* folder. 
 
-Create a folder named *hello* inside the *modules* folder of your *SITE_FOLDER*. Note: if the folder
-does not exist, you will need to create it.
+* Create a folder named *hello* inside *SITE_DIR/app/modules*
 
 ==============================
 Creating the module class file
@@ -49,7 +48,6 @@ Creating the template file
 ==========================
 
 Inside the *hello* directory create a file named *index.tpl* that contains the following contents:
-
 
 .. code-block:: html
 
