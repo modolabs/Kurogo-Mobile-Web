@@ -176,7 +176,8 @@ abstract class Module
       * @return ConfigFile object
       */
     protected function getConfig($id, $type, $opts=0) {
-        $config = ConfigFile::factory($id, $type, $opts);
+        $opts = $opts | ModuleConfigFile::OPTION_CREATE_WITH_DEFAULT;
+        $config = ModuleConfigFile::factory($id, $type, $opts); 
         $GLOBALS['siteConfig']->addConfig($config);
         return $config;
     }
@@ -188,7 +189,7 @@ abstract class Module
     protected function getModuleConfig() {
         static $moduleConfig;
         if (!$moduleConfig) {
-            $moduleConfig = $this->getConfig($this->id, 'module', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
+            $moduleConfig = $this->getConfig($this->id, 'module');
         }
         
         return $moduleConfig;

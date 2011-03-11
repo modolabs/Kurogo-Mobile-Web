@@ -46,9 +46,7 @@ class ConfigFile extends Config {
     $config = new ConfigFile();
     
     if (!$result = $config->loadFileType($file, $type, $options)) {
-        if ($options & ConfigFile::OPTION_DIE_ON_FAILURE) {
-          die("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
-        }
+       die("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
     }
     
     return $config;
@@ -58,20 +56,6 @@ class ConfigFile extends Config {
   {
     switch ($type)
     {
-        case 'api-default':
-        case 'feeds-default':
-        case 'module-default':
-        case 'pages-default':
-            $pattern = sprintf('%s/%s/config/%%1$s.ini', MODULES_DIR, $file);
-            $file = $type;
-            break;
-        case 'api':
-        case 'feeds':
-        case 'module':
-        case 'pages':
-            $pattern = sprintf('%s/%s/%%s.ini', SITE_CONFIG_DIR, $file);
-            $file = $type;
-            break;
         case 'site':
             $pattern = sprintf("%s/%%s.ini", SITE_CONFIG_DIR);
             break;
@@ -96,15 +80,7 @@ class ConfigFile extends Config {
             $pattern = sprintf('%s/%%s-default.ini', MASTER_CONFIG_DIR);
             break;
         default:
-            if (preg_match("/^page-[a-z0-9]+$/", $type, $bits)) {
-                $pattern = sprintf('%s/%s/%%s.ini', SITE_CONFIG_DIR, $file);
-                $file = $type;
-            } elseif (preg_match("/^page-[a-z0-9-_]+-default$/", $type, $bits)) {
-                $pattern = sprintf('%s/%s/config/%%1$s.ini', MODULES_DIR, $file);
-                $file = $type;
-            } else {
-                return false;
-            }
+            throw new Exception("Unknown config type $type");
     }
     
     return sprintf($pattern, $file);
