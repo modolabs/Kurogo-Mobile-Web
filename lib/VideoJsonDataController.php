@@ -6,7 +6,7 @@
      protected $cacheSuffix = "json";   // set the suffix for cache files
      protected $DEFAULT_PARSER_CLASS='JSONDataParser';
 	 public $totalItems;
-	 public static $bright_or_youtube;
+	 public static $video_source;
 	 public static $token;
 
      public static function factory($args=null)
@@ -17,13 +17,13 @@
          return $controller;
      }
 
-     public function search($q,$pageSize=20,$startIndex=1,$category=null,$token=null,$bright_or_youtube=true,$author=null)
+     public function search($q,$pageSize=20,$startIndex=1,$category=null,$token=null,$video_source=null,$author=null)
      {
      	
-     	$self->token = $token;
-     	$self->bright_or_youtube = $bright_or_youtube;
+     	self::$token = $token;
+     	self::$video_source = $video_source;
      	
-     	if ($bright_or_youtube) {
+     	if ($video_source == VideoWebModule::SOURCE_BRIGHTCOVE) {
      		
 	     	 $url = "http://api.brightcove.com/services/library?command=search_videos&output=json&video_fields=id,name,shortDescription,thumbnailURL,length,FLVURL,linkURL";
 	     	 $url = $url."&page_size=$pageSize&page_number=$startIndex&get_item_count=true&sort_by=MODIFIED_DATE:DESC&token=$token";
@@ -65,13 +65,15 @@
 	         return $results;
      	}
      }
-
+     
 	 // retrieves video based on its id
 	public function getItem($id)
 	{
 		
-     	if (self::$bright_or_youtube) {
-     		$token = self::$token;
+     	$video_source = VideoWebModule::$video_source;
+     	
+     	if ($video_source == VideoWebModule::SOURCE_BRIGHTCOVE) {
+     		$token = VideoWebModule::$token;
 			$url = "http://api.brightcove.com/services/library?command=find_video_by_id&video_id=$id&token=$token";
 			$data = $this->items(0,null,$total);   
 	        foreach ($data as $item) {

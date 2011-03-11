@@ -2,6 +2,10 @@
 
  class VideoWebModule extends WebModule
  {
+
+   const SOURCE_BRIGHTCOVE = 0;
+   const SOURCE_YOUTUBE = 1;
+   const SOURCE_KALTURA = 2;
  	
    protected $id='video';  // this affects which .ini is loaded
    protected $maxPerPage = 10;
@@ -13,7 +17,7 @@
    
    protected $totalItems;
    protected $tag;
-   protected $brightcove_or_youtube;
+   public static $video_source;
    protected $detailScreen;
    
    // currently only used by YouTube:
@@ -30,8 +34,7 @@
       'section' => $feedIndex
     ), $addBreadcrumb);
   }
-    
- 
+
     // bookmarks -- copied from Maps
 
     protected $bookmarkCookie = 'videobookmarks';
@@ -206,15 +209,17 @@
    	 $doSearch = $this->getModuleVar('search');
      if ($doSearch==1) $this->assign('doSearch', $doSearch);
          
-	 $this->brightcove_or_youtube = $this->getModuleVar('brightcove_or_youtube');
-	 if ($this->brightcove_or_youtube) {
+	 $this->video_source = $this->getModuleVar('video_source');
+	 if ($this->video_source == self::SOURCE_BRIGHTCOVE) {
+	     self::$video_source = self::SOURCE_BRIGHTCOVE;
 		 $this->brightcoveToken  = $this->getModuleVar('brightcoveToken');
 		 $this->playerKey = $this->getModuleVar('playerKey');
 		 $this->playerid  = $this->getModuleVar('playerId');
 		 $this->accountid = $this->getModuleVar('accountId');
 		 $defaultStart = 0;
 		 $this->detailScreen='detail-brightcove';
-	 } else {
+	 } else if ($this->video_source == self::SOURCE_YOUTUBE) {
+	     self::$video_source = self::SOURCE_YOUTUBE;
 		 $this->youtubeAuthor = $this->getModuleVar('youtubeAuthor');
 		 $defaultStart = 1;
 		 $this->detailScreen='detail-youtube';
@@ -235,7 +240,7 @@
         case 'search':
 	        if ($filter = $this->getArg('filter')) {
 	          $searchTerms = trim($filter);
-			  $items = $controller->search($searchTerms, $this->maxPerPage, $this->start, $this->tag, $this->brightcoveToken,$this->brightcove_or_youtube);
+			  $items = $controller->search($searchTerms, $this->maxPerPage, $this->start, $this->tag, $this->brightcoveToken,$this->video_source);
 			  
 			  if ($items !== false) {
 			  	  // TODO handle 0 or 1 result
@@ -261,7 +266,7 @@
         	
         	 // default search 
 	         $searchTerms = "";
-			 $items = $controller->search($searchTerms, $this->maxPerPage, $this->start, $this->tag, $this->brightcoveToken, $this->brightcove_or_youtube);
+			 $items = $controller->search($searchTerms, $this->maxPerPage, $this->start, $this->tag, $this->brightcoveToken, $this->video_source);
 			 
 			 if ($items !== false) {
 			 	$videos = array();
@@ -299,7 +304,7 @@
 	        		$body = $this->getArg('bkmBody');
 	        		$title = $this->getArg('subcategory');
 	        	}
-	        	 
+
 			   if ($video = $controller->getItem($videoid)) {
 			   	
         		  $body = $video['media$group']['media$description']['$t'];
@@ -383,7 +388,7 @@
 	     	// FIXME currently only support Brightcive - check here
 		 	$this->handleBrightcoveRSS($controller,$videos,$items);
 		 } else {
-	 		if ($this->brightcove_or_youtube) {
+	 		if ($this->video_source == self::SOURCE_BRIGHTCOVE) {
 	 			if (isset($items['items'])) 
 	 				$this->handleJSON($controller,$videos,$items['items']);
 	 		}
@@ -402,7 +407,7 @@
      	$args = $this->args;
      	
      	// "start" is item index in youtube and page in brightove
- 		if ($this->brightcove_or_youtube) {
+ 		if ($this->video_source == self::SOURCE_BRIGHTCOVE) {
  		    if ($this->start > 0) {
 	     		$args['start'] = $this->start-1;
 	     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
@@ -513,7 +518,7 @@
 
              foreach ($items as $video) {
              
-             	if ($this->brightcove_or_youtube) {
+             	if ($this->video_source == self::SOURCE_BRIGHTCOVE) {
              	    //$link = $video['linkURL'];
              	    $link = $video['FLVURL'];
 	             	$videoId = $video['id'];
