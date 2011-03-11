@@ -3,9 +3,9 @@
     {if !isset($item['separator'])}
       <li{if $item['img']} class="videoList-li"{/if}>  
        {*
-      	{include file="findInclude:common/listItem.tpl" subTitleNewline=true}
+      	{include file="findInclude:common/templates/listItem.tpl" subTitleNewline=true}
         *}
-      	{include file="findInclude:modules/{$moduleID}/listItem.tpl" subTitleNewline=$subTitleNewline|default:true} 	
+      	{include file="findInclude:modules/$moduleID/templates/listItem.tpl" subTitleNewline=$subTitleNewline|default:true} 	
       </li>
     {/if}
   {/foreach}

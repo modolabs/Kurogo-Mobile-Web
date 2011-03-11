@@ -1,11 +1,11 @@
-{include file="findInclude:common/header.tpl"}
+{include file="findInclude:common/templates/header.tpl"}
 
 <h1 class="focal videoTitle">{$videoTitle}
 <div class="actionbutton"> 
-  {include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
+  {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
 </div>
 <div class="actionbutton"> 
-  {include file="findInclude:common/share.tpl" shareURL={$videoURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
+  {include file="findInclude:common/templates/share.tpl" shareURL={$videoURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
 </div>
 </h1>
  
@@ -35,4 +35,4 @@
 
 <p class="focal">{$videoDescription}</p>
 
-{include file="findInclude:common/footer.tpl"}
+{include file="findInclude:common/templates/footer.tpl"}

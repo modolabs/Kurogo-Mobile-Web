@@ -1,4 +1,4 @@
-{include file="findInclude:common/header.tpl"}
+{include file="findInclude:common/templates/header.tpl"}
 
 {if isset($showUnsupported)}
  Sorry, unsupported device.
@@ -64,7 +64,7 @@
       </div>
     </div>
   {else}
-    {include file="findInclude:common/search.tpl" placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
+    {include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
   {/if}
 {/block}
 
@@ -72,7 +72,7 @@
       <a href="{$previousURL}">Previous <<<</a>
   {/if}
 
-{include file="findInclude:modules/{$moduleID}/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
+{include file="findInclude:modules/$moduleID/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
 
   {if $nextURL}
       <a href="{$nextURL}">Next >>></a>
@@ -85,7 +85,7 @@
 {/if}
 
 {if $hasBookmarks}
-{include file="findInclude:common/navlist.tpl" navlistItems=$bookmarkLink secondary=true}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$bookmarkLink secondary=true}
 {/if}
 
-{include file="findInclude:common/footer.tpl"}
+{include file="findInclude:common/templates/footer.tpl"}
