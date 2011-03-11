@@ -190,14 +190,17 @@ class PeopleWebModule extends WebModule {
         throw new Exception("Error getting people feed for index $index");
     }
   }
-
-  protected function initializeForPage() {
+  
+    protected function initialize() {
     $this->feeds = $this->loadFeedData();
-    $this->detailFields = $this->loadWebAppConfigFile('people-detail', 'detailFields');
+    $this->detailFields = $this->loadPageConfigFile('detail', 'detailFields');
     foreach($this->detailFields as $field => $info) {
       $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
     }
     $this->detailAttributes = array_unique($this->detailAttributes);
+    }
+
+  protected function initializeForPage() {
 
     $PeopleController = $this->getFeed('people');
     
@@ -284,7 +287,7 @@ class PeopleWebModule extends WebModule {
           $this->redirectTo('search');
         }
         
-        $this->loadWebAppConfigFile('people-index', 'contacts');
+        $this->loadPageConfigFile('index', 'contacts');
         break;
     }  
   }

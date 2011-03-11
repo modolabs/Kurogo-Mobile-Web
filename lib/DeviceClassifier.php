@@ -40,6 +40,7 @@ class DeviceClassifier {
   function __construct($device = null) {
   
     $this->version = intval($GLOBALS['siteConfig']->getVar('MOBI_SERVICE_VERSION'));
+    $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
     
     if ($device && strlen($device)) {
       $this->setDevice($device); // user override of device detection
@@ -48,11 +49,9 @@ class DeviceClassifier {
       $this->setDevice($_COOKIE[self::COOKIE_KEY]);
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
-      $user_agent = $_SERVER['HTTP_USER_AGENT'];
-
+      
       if ($data = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_USE_EXTERNAL') ? 
-        $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($user_agent) ) {
-        $this->userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($this->userAgent) ) {
         $this->pagetype = $data['pagetype'];
         $this->platform = $data['platform'];
         $this->certs = $data['supports_certificate'];

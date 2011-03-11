@@ -34,6 +34,18 @@ abstract class AuthenticationAuthority
       */
     protected $userLogin;
     
+    /** 
+      * Class for user objects. Most subclasses will override this
+      * @var string
+      */
+    protected $userClass='User';
+
+    /** 
+      * Class for group objects. Most subclasses will override this
+      * @var string
+      */
+    protected $groupClass='UserGroup';
+    
     /**
      * Attempts to authenticate the user using the included credentials
      * @param string $login the userid to login (this will be blank for OAUTH based authorities)
@@ -306,8 +318,9 @@ abstract class AuthenticationAuthority
      * 
      * Resets the authority and returns it to a fresh state.
      * Called by the logout method to clean up any authority specific data (caches etc). Not all authorities will need this
+     * @param bool $hard if true a hard reset is done 
      */
-    protected function reset()
+    protected function reset($hard=false)
     {
     }
     
@@ -317,11 +330,9 @@ abstract class AuthenticationAuthority
      * 
      * Subclasses should not need to override this, but instead provide additional behavior in reset()
      */
-    public function logout(Module $module)
+    public function logout(Session $session, $hard=false)
     {
-        $session = $module->getSession();
-        $session->logout();
-        $this->reset();
+        $this->reset($hard);
     }
     
     /**
@@ -332,14 +343,12 @@ abstract class AuthenticationAuthority
      * @see AuthenticationAuthority::reset()
      * 
      */
-    public function login($login, $password, Module $module, $options)
+    public function login($login, $password, Session $session, $options)
     {
         $result = $this->auth($login, $password, $user);
         
         if ($result == AUTH_OK) {
-            $session = $module->getSession();
-            $remainLoggedIn = isset($options['remainLoggedIn']) ? $options['remainLoggedIn'] : false;
-            $session->login($user, $remainLoggedIn);
+            $session->login($user);
         }
         
         return $result;

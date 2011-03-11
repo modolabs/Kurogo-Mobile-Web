@@ -12,6 +12,8 @@ Basic Layout
 
 There are several directories located in the root of the project folder:
 
+**add-ons**
+  This directory contains additional scripts or code that be used to interact with other applications
 **app**
   This directory contains the code and :ref:`templates <templates-tour>` for each module provided by the project. This also
   includes shared templates used by every module (including headers and footers). As with the lib 
@@ -65,6 +67,20 @@ encourage code reuse. The design goal behind the libraries is to ensure that the
 as possible so that they can function in a variety of uses and contexts (even if, in practice, they are
 currently used in only one context). Nearly all the libraries exist as PHP classes and currently fall
 into one of several categories:
+
+--------
+Packages
+--------
+
+In order to assist developers with including the proper class files, libraries can be grouped into *packages*.
+This allows you to include necessary functionality without worrying about which files to include in your
+module (use: *includePackage('PackageName')* in your module code). Currently the following packages are available:
+
+* Authentication (included automatically when authentication is enabled)
+* Calendar - includes classes to deal with date and time
+* db - used when you wish to interact with a database
+* Emergency - used by the emergency module
+* Maps - used by the maps module
 
 --------------------
 Core / Support Files
@@ -209,16 +225,16 @@ The naming conventions are very important (especially for case sensitive file sy
 
 * The folder **must** be lower case and be the same as the url of the module (/about, /home, /links)
 * The folder **must** contain a PHP file named *ModulenameWebModule.php*. If the module is located
-  in the *site* folder then it should be called *SiteModulenameWebModule.php*. Included modules are
-  called *ModulenameWebModule.php*.
+  in the *site* folder and it extends an existing module then it should be called *SiteModulenameWebModule.php*. 
 * The first (and ONLY) letter of the module **must** be capitalized and followed by WebModule.php. 
   
   * **AboutWebModule.php** (NOT aboutwebmodule.php or AboutWebmodule.php)
   * **FullwebWebModule.php** (NOT FullWebModule.php or FullwebWebmodule.php)
   * **SiteNewsWebModule.php** (NOT siteNewsWebModule.php or Sitenewswebmodule.php)
-  
-* There should be a .tpl for each *page* of the module. At minimum there should be an *index.tpl* which 
-  represents the default page (unless the module alters that behavior). Each page should be in all lower case
+
+* Template files go into the *templates* folder. There should be a .tpl for each *page* of the module. 
+  At minimum there should be an *index.tpl* which represents the default page (unless the module 
+  alters that behavior). Each page should be in all lower case.
 * If you are overriding a project module you only need to include the pages that you are overriding.
 * You may choose to place additional css style sheets in a folder named *css*
 * You may choose to place additional javascript scripts in a folder named *javascript*
@@ -244,31 +260,33 @@ typically have only one site folder in a production environment.
 
 Each site folder contains the following directories:
 
-* *cache* - Contains server generated files that are cached for performance. This folder is created 
-  if needed, but must be writable by the web server process. 
-* *config* - Contains the site specific configuration files in .ini format. Many of these files can 
-  be managed using the :ref:`admin-module`
-
-  * *config.ini* - The general configuration file that affects all site behavior such as timezone, log file locations,
-    database configuration, and more
-  * *feeds* - a folder containing files for modules that require configuration to access remote data
-  * *module* - a folder containing files for each module's basic configuration including enabled, federated
-    search, and strings. See :doc:`modules`
-  * *page* - a folder containing files for each modules's pages containing title and breadcrumb information
-  * *strings.ini* - a configuration file containing strings used by the site
-  * *web* - a folder containing files used by modules for page specific configuration 
-  
-* *data* - a folder that contains data files meant to be used by the server. Unlike cache folders, these
-  files cannot be safely deleted. Examples would include data that is not able to be generated from 
-  a web service, SQLite databases, or flat authentication files
-* *logs* - Log files
 * *app* - Site specific templates and modules. Inside this folder you will find 2 folders
 
   * *common* - Site specific common templates and css
   * *modules* - Site specific modules. To promote ease when updating the framework to new versions, it 
     is usually best if you keep site specific modules in this folder rather than in the root *app/modules*
     folder. If you wish to include your work in the project, please see :doc:`github`. Also see :doc:`moduleextend`.
+    
+* *cache* - Contains server generated files that are cached for performance. This folder is created 
+  if needed, but must be writable by the web server process. 
+* *config* - Contains the site specific configuration files in .ini format. Many of these files can 
+  be managed using the :ref:`admin-module`
 
+  * *config.ini* - The general configuration file that affects all site behavior such as timezone, 
+    log file locations, database configuration, and more.
+  * *authentication.ini* - The configuration for user :doc:`authentication`. 
+  * *strings.ini* - a configuration file containing strings used by the site
+  * Each module's configuration is contained a folder named by its module id. There are several standard
+    files for each module:
+    
+    * module.ini - Settings for disabling, access control, search and module variables and strings
+    * feeds.ini - Specifies external data connections
+    * pages.ini - Titles for each page
+  
+* *data* - a folder that contains data files meant to be used by the server. Unlike cache folders, these
+  files cannot be safely deleted. Examples would include data that is not able to be generated from 
+  a web service, SQLite databases, or flat authentication files
+* *logs* - Log files
 * *themes* - Contains the themes available for this site. Each theme folder contains a *common* and *modules*
   folder that contains the CSS and image assets for the site. See :doc:`template` for more information.
 

@@ -23,41 +23,40 @@ Creating the module folder structure
 a site folder.
 
 The Kurogo Framework looks in a variety of locations for module data (see :doc:`tour`). In most cases
-you will want to create your module in your site's *modules* folder. 
+you will want to create your module in your site's *app/modules* folder. 
 
-Create a folder named *hello* inside the *modules* folder of your *SITE_FOLDER*. Note: if the folder
-does not exist, you will need to create it.
+* Create a folder named *hello* inside *SITE_DIR/app/modules*
+* Inside the *SITE_DIR/app/modules/hello* folder, create a folder named *templates*
 
 ==============================
 Creating the module class file
 ==============================
    
-Inside the *hello* directory create a file named *SiteHelloWebModule.php* that contains the following contents::
+Inside the *hello* directory create a file named *HelloWebModule.php* that contains the following contents::
 
     <?php
     
-    class SiteHelloWebModule extends WebModule
+    class HelloWebModule extends WebModule
     {
       protected $id='hello';
       protected function initializeForPage() {
         $this->assign('message', 'Hello World!');
       }
     }
-    
+
 ==========================
 Creating the template file
 ==========================
 
-Inside the *hello* directory create a file named *index.tpl* that contains the following contents:
-
+Inside the *hello/templates* directory create a file named *index.tpl* that contains the following contents:
 
 .. code-block:: html
 
-      {include file="findInclude:common/header.tpl"}
+      {include file="findInclude:common/templates/header.tpl"}
     
       <h1 class="focal">Hello World!</h1>
     
-      {include file="findInclude:common/footer.tpl"}
+      {include file="findInclude:common/templates/footer.tpl"}
 
 Your folder structure should look similar to this:
 

@@ -303,7 +303,7 @@ class CalendarWebModule extends WebModule {
         $sectionData = $this->getModuleSection('calendar_list');
         $listController = isset($sectionData[$typeController]) ? $sectionData[$typeController] : '';
         if (strlen($listController)) {
-            $sectionData = array_merge($sectionData, array('USER'=>$this->getUser()));
+            $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
             $controller = CalendarListController::factory($listController, $sectionData);
             switch ($type)
             {
@@ -358,8 +358,11 @@ class CalendarWebModule extends WebModule {
     }
   }
  
-  protected function initializeForPage() {
+  protected function initialize() {
     $this->timezone = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
+  }
+
+  protected function initializeForPage() {
     switch ($this->page) {
       case 'help':
         break;
@@ -480,7 +483,7 @@ class CalendarWebModule extends WebModule {
             $this->assign('resources', $resources);
         }
 
-        $this->loadWebAppConfigFile('calendar-index','calendarPages');
+        $this->loadPageConfigFile('index','calendarPages');
         $this->assign('today',         mktime(0,0,0));
         $this->assign('searchOptions', $this->searchOptions);
         $this->assign('feeds',  $this->getFeedsByType());
@@ -645,7 +648,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'detail':  
-        $calendarFields = $this->loadWebAppConfigFile('calendar-detail', 'detailFields');
+        $calendarFields = $this->loadPageConfigFile('detail', 'detailFields');
         $type = $this->getArg('type', 'static');
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
         

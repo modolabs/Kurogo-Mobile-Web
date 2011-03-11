@@ -404,6 +404,7 @@ abstract class WebModule extends Module {
   public static function factory($id, $page='', $args=array()) {
   
     $module = parent::factory($id, 'web');
+    $module->initialize();
     if ($page) {
         $module->init($page, $args);
     }
@@ -411,15 +412,12 @@ abstract class WebModule extends Module {
       return $module;
     }
     
-    public function __construct() {
-        $moduleData = $this->getModuleData();
-        $this->moduleName = $moduleData['title'];
-    }
-    
-   
     protected function init($page='', $args=array()) {
       
         parent::init();
+
+        $moduleData = $this->getModuleData();
+        $this->moduleName = $moduleData['title'];
 
         $this->setArgs($args);
         $this->setPage($page);
@@ -452,6 +450,9 @@ abstract class WebModule extends Module {
         }
     }
   
+    protected function initialize() {
+    
+    }
   protected function setAutoPhoneNumberDetection($bool) {
     $this->autoPhoneNumberDetection = $bool ? true : false;
     $this->assign('autoPhoneNumberDetection', $this->autoPhoneNumberDetection);
@@ -938,8 +939,14 @@ abstract class WebModule extends Module {
   // Config files
   //
   
+  protected function getPageConfig($name, $opts) {
+    $config = ConfigFile::factory($this->id, "page-$name", $opts);
+    $GLOBALS['siteConfig']->addConfig($config);
+    return $config;
+  }
+  
   protected function getPageData() {
-     $pageConfig = $this->getConfig($this->id, 'nav');
+     $pageConfig = $this->getConfig($this->id, 'pages');
      return $pageConfig->getSectionVars(true);
   }
   
@@ -950,8 +957,9 @@ abstract class WebModule extends Module {
     return $this->loadConfigFile($config, $keyName);
   }
 
-  protected function loadWebAppConfigFile($name, $keyName=null, $opts=0) {
-    $config = $this->getConfig($name, 'web', $opts);
+  protected function loadPageConfigFile($page, $keyName=null, $opts=0) {
+    $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
+    $config = $this->getPageConfig($page, $opts);
     if ($keyName === null) { $keyName = $name; }
     return $this->loadConfigFile($config, $keyName);
   }
@@ -1058,7 +1066,7 @@ abstract class WebModule extends Module {
       $template = 'common/'.$this->page;
     } else {
       $this->assign('hasHelp', isset($moduleStrings['help']));
-      $template = 'modules/'.$this->templateModule.'/'.$this->templatePage;
+      $template = 'modules/'.$this->templateModule.'/templates/'.$this->templatePage;
     }
     
     // Pager support
@@ -1081,17 +1089,12 @@ abstract class WebModule extends Module {
     if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
         includePackage('Authentication');
         $this->setCacheMaxAge(0);
-        $this->assign('session', $this->getSession());
-        $user = $this->getUser();
-        $this->assign('session_user', $user);
+        $session = $this->getSession();
+        $this->assign('session', $session);
+        $this->assign('session_isLoggedIn', $this->isLoggedIn());
 
         if ($this->isLoggedIn()) {
             $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0, Config::SUPRESS_ERRORS)));
-        }
-        
-        if ($authority = $user->getAuthenticationAuthority()) {
-            $this->assign('session_authority_image', $authority->getAuthorityImage());
-            $this->assign('session_authority_title', $authority->getAuthorityTitle());
         }
     }
 

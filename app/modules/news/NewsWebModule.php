@@ -130,7 +130,7 @@ class NewsWebModule extends WebModule {
     return count($items);
   }
   
-  protected function initializeForPage() {
+    protected function initialize() {
 
     $this->feeds      = $this->loadFeedData();
     if ($max = $this->getModuleVar('NEWS_MAX_RESULTS')) {
@@ -143,6 +143,9 @@ class NewsWebModule extends WebModule {
     }
     
     $this->feed = $this->getFeed($this->feedIndex);
+    }    
+    
+    protected function initializeForPage() {
 
     switch ($this->page) {
       case 'story':

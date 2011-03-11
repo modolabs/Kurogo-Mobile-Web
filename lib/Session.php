@@ -14,12 +14,16 @@ class Session
     const API_TOKEN_COOKIE='alt';
     const API_USERHASH_COOKIE='alh';
     protected $session_id;
+    protected $users = array();
+    protected $login_token;
+    /*
     protected $user;
     protected $auth;
     protected $auth_userID;
-    protected $login_token;
+    */
     protected $useDB = false;
     protected $maxIdleTime=0;
+    protected $remainLoggedIn = false;
     protected $remainLoggedInTime=0;
     protected $loginCookiePath;
     protected $apiCookiePath;
@@ -69,51 +73,58 @@ class Session
             $_SESSION['user_agent'] = $GLOBALS['deviceClassifier']->getUserAgent();
         }
         
-        $user = new AnonymousUser();
-
         // see if a user is active        
-        if (isset($_SESSION['auth'])) {
-        
+        if (isset($_SESSION['users']) && is_array($_SESSION['users'])) {
+            
             $lastPing = isset($_SESSION['ping']) ? $_SESSION['ping'] : 0;
             $diff = time() - $lastPing;
             
             // see if max idle time has been reached
             if ( $this->maxIdleTime && ($diff > $this->maxIdleTime)) {
                 // right now the user is just logged off, but we could show and error if necessary.
-            } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($_SESSION['auth'])) {
+            } else {
+                $ok = false;
+                foreach ($_SESSION['users'] as $userData) {
+                    if ($authority = AuthenticationAuthority::getAuthenticationAuthority($userData['auth'])) {
 
-                $auth_userID = isset($_SESSION['auth_userID']) ? $_SESSION['auth_userID'] : '';
-
-                //attempt to load the user
-                if ($auth_userID) {
-                    if ($_user = $authority->getUser($auth_userID)) {
-                        $user = $_user;
-                        $this->login_token = isset($_SESSION['login_token']) ? $_SESSION['login_token'] : null;
-                    } else {
-                        error_log("Error trying to load user $auth_userID");
-                    } 
+                        if ($user = $authority->getUser($userData['auth_userID'])) {
+                            $ok = true;
+                            $this->setUser($user);
+                        } else {
+                            error_log("Error trying to load user " . $userData['auth_userID']);
+                        }
+                    }
+                }
+                
+                if ($ok) {
+                    return;
                 }
             }
-        } elseif ($_user = $this->getLoginCookie()) {
-            // valid login cookie was found
-            $this->setUser($_user);
-            
-            //regenerate new login token
-            $this->setLoginToken();
+        } elseif ($users = $this->getLoginCookie()) {
+            $this->login_cookie = $_COOKIE[self::TOKEN_COOKIE];
+            foreach ($users as $user) {
+                $this->setUser($user);
+            }
+
+            //regenerate new login cookie
+            $this->setLoginCookie();
             return;
         } else {
             //anonymous user
         }
-                    
-        $this->setUser($user);
     }    
     
     /**
       * returns whether a user is logged in or not
       * @return boolean
       */
-    public function isLoggedIn() {
-        return strlen($this->user->getUserID()) > 0;
+    public function isLoggedIn($authority=null) {
+        if ($authority) {
+            $user = $this->getUser($authority);
+            return strlen($user->getUserID())>0 ? true : false;
+        } else {
+            return count($this->users) > 0;
+        }
     }
     
     /**
@@ -121,19 +132,59 @@ class Session
       * @param User $user
       */
     private function setUser(User $user) {
-        $this->user = $user;
-        $_SESSION['userID'] = $user->getUserID();
-        $_SESSION['auth_userID'] = $user->getUserID();
-        $_SESSION['auth'] = $user->getAuthenticationAuthorityIndex();
+        if ($auth = $user->getAuthenticationAuthorityIndex()) {
+            $this->users[$auth] = $user;
+            $this->setSessionVars();
+        }
+    }
+    
+    public function setRemainLoggedIn($remainLoggedIn) {
+        $this->remainLoggedIn = $remainLoggedIn ? true : false;
+    }
+    
+    private function setSessionVars() {
+        $users = array();
+        foreach ($this->users as $user) {
+            $users[] = array(
+                'userID'=>$user->getUserID(),
+                'auth_userID'=>$user->getUserID(),
+                'auth'=>$user->getAuthenticationAuthorityIndex(),
+            );
+        }
+        $_SESSION['users'] = $users;
         $_SESSION['ping'] = time();
+    }
+    
+    public function getUsers() {
+        return $this->users;
     }
 
     /**
       * Return the active user
       * @return User
       */
-    public function getUser() {
-        return $this->user;
+    public function getUser($authority='User') {
+        if (!$authority) {
+            $authority = 'User';
+        } elseif ($authority instanceOf AuthenticationAuthority) {
+            $authority = $authority->getAuthorityIndex();
+        } elseif (!is_scalar($authority)) {
+            throw new Exception("Invalid authority $authority");
+        }
+        
+        /* will check for the authority index or user or authority class. */
+        if (isset($this->users[$authority])) {
+            return $this->users[$authority];
+        }  else {
+            foreach ($this->users as $user) {
+                if ($user instanceOf $authority) {
+                    return $user;
+                } elseif ($user->getAuthenticationAuthority() instanceOf $authority) {
+                    return $user;
+                }
+            }
+            return new AnonymousUser();
+        }
     }
     
     /**
@@ -157,22 +208,25 @@ class Session
       * @param User $user
       * @return User
       */
-    public function login(User $user, $remainLoggedIn=false) {
+    public function login(User $user) {
         session_regenerate_id(true);
         $this->setUser($user);
-        if ($remainLoggedIn) {
-            $this->setLoginToken();
-        }
+        $this->setLoginCookie();
         return $user;
     }
 
     /**
       * Logout the current user
       */
-    public function logout() {
-        $user = new AnonymousUser();
-        $this->setUser($user);
-        $this->clearLoginToken();
+    public function logout(AuthenticationAuthority $authority, $hard=false) {
+        if (!$this->isLoggedIn($authority)) {
+            return false;
+        }
+        
+        $authority->logout($this, $hard);
+        unset($this->users[$authority->getAuthorityIndex()]);
+        $this->setSessionVars();
+        $this->setLoginCookie();
         session_regenerate_id(true);
         return true;
     }
@@ -275,64 +329,101 @@ class Session
       */
     protected function createDatabaseTables() {
     
-        $sql = "SELECT 1 FROM sessions";
         $conn = SiteDB::connection();
+
+        $sql = "SELECT 1 FROM sessions";
         if (!$result = $conn->query($sql, array(), db::IGNORE_ERRORS)) {
-            $sqls[] = "CREATE TABLE sessions (
+            $sql = "CREATE TABLE sessions (
                     id char(32) primary key, 
                     data text, 
                     auth text,
                     userID text,
                     ts int)";
-            $sqls[] = "CREATE TABLE login_tokens (
+            $conn->query($sql);
+        }
+        
+        $sql = "SELECT 1 FROM login_tokens";
+        if (!$result = $conn->query($sql, array(), db::IGNORE_ERRORS)) {
+            $sql = "CREATE TABLE login_tokens (
                     token char(32) primary key, 
-                    auth text,
-                    userID text, 
                     data text,
                     timestamp int,
                     expires int)";
-            
-            foreach ($sqls as $sql) {
-                $conn->query($sql);
-            }
+            $conn->query($sql);
         }
+    }
+
+    private function loginTokenFolder() {
+        return ini_get('session.save_path');
     }
     
     private function loginTokenFile($token) {
-        return ini_get('session.save_path') . "/login_" . $token;
+        return $this->loginTokenFolder() . "/login_" . $token;
+    }
+    
+    private function getSessionData() {
+        $data = array();
+
+        foreach ($this->users as $auth=>$user) {
+            $data[] = array(
+                'auth'  => $user->getAuthenticationAuthorityIndex(),
+                'userID'=> $user->getUserID(),
+                'data'  => $user->getSessionData(),
+                'hash'  => $user->getUserHash()
+            );
+        }
+        
+        return $data;
+    }
+    
+    private function getUserHash($users) {
+        $hash = '';
+
+        foreach ($users as $user) {
+            $hash .= $user['hash'];
+        }
+        
+        return md5($hash);
     }
     
     /**
       * creates a login token that can be used for login later
       */
-    private function setLoginToken() {
+    private function setLoginCookie() {
+
     	if ($this->isLoggedIn()) {
     	    //generate a random value
 			$login_token = md5(uniqid(rand(), true));
-			$expires = $this->remainLoggedInTime ? time() + $this->remainLoggedInTime : 0;
-			
+			if ($this->remainLoggedIn) {
+                $expires = time() + $this->remainLoggedInTime;
+            } else {
+                $expires = 0;
+            }
+            
+            $data = $this->getSessionData();
+            
 			if ($this->useDB) {
 			
 			    //if the token is already set, update it with the new value
                 if ($this->login_token) {
                     $sql = "UPDATE login_tokens SET token=?, timestamp=?, expires=?, data=? WHERE token=?";
-                    $params = array($login_token, time(), $expires, serialize($this->user->getSessionData()), $this->login_token);
+                    $params = array($login_token, time(), $expires, serialize($data), $this->login_token);
                 } else {
-                    $sql = "INSERT INTO login_tokens (token, auth, userID, timestamp, expires, data) VALUES (?,?,?,?,?,?)";
-                    $params = array($login_token, $this->user->getAuthenticationAuthorityIndex(), $this->user->getUserID(), time(), $expires, serialize($this->user->getSessionData()));
+                    $sql = "INSERT INTO login_tokens (token, timestamp, expires, data) VALUES (?,?,?,?)";
+                    $params = array($login_token, time(), $expires, serialize($data));
                 }
                 
                 $conn = SiteDB::connection();
                 $result = $conn->query($sql, $params);
             } else {
+                $users = array();
+                
                 $params = array(
-                    'auth'=>$this->user->getAuthenticationAuthorityIndex(),
-                    'userID'=>$this->user->getUserID(),
                     'timestamp'=>time(),
                     'expires'=>$expires,
-                    'data'=>$this->user->getSessionData()
+                    'data'=>$data
                 );
-
+                
                 $file = $this->loginTokenFile($login_token);
                 if ($this->login_token) {
                     $oldfile = $this->loginTokenFile($this->login_token);
@@ -340,16 +431,13 @@ class Session
                 }
                 
                 file_put_contents($file, serialize($params));
+                chmod($file, 0600);
             }
 
             // set the values and the cookies
 			$this->login_token = $login_token;
-			$_SESSION['login_token'] = $login_token;
-			
-            setCookie(self::TOKEN_COOKIE, $this->login_token, $expires, $this->loginCookiePath);
-            setCookie(self::USERHASH_COOKIE, $this->user->getUserHash(), $expires, $this->loginCookiePath);
-            setCookie(self::API_TOKEN_COOKIE, $this->login_token, $expires, $this->apiCookiePath);
-            setCookie(self::API_USERHASH_COOKIE, $this->user->getUserHash(), $expires, $this->apiCookiePath);
+			setCookie(self::TOKEN_COOKIE, $this->login_token, $expires, $this->loginCookiePath);
+			setCookie(self::USERHASH_COOKIE, $this->getUserHash($data), $expires, $this->loginCookiePath);
 		} else {
 		    //clean up just in case
 		    $this->clearLoginToken();
@@ -375,8 +463,8 @@ class Session
                 $conn = SiteDB::connection();
                 
                 // see if we have on record the token and it hasn't expired
-        		$sql = "SELECT auth, userID, data FROM login_tokens WHERE token=? and expires>?";
-                $result = $conn->query($sql,array($token, time()));
+        		$sql = "SELECT data FROM login_tokens WHERE token=? and expires>?";
+                $result = $conn->query($sql,array($_COOKIE[self::TOKEN_COOKIE], time()));
                 
                 if ($data = $result->fetch()) {
                     $data['data'] = unserialize($data['data']);
@@ -388,29 +476,33 @@ class Session
                 if (file_exists($file)) {
                     if ($data = file_get_contents($file)) {
                         $data = unserialize($data);
+                        if ($data['expires']<time()) {
+                            $data = false;
+                        }
                     }
                 }
     	    }
     	    
     	    if ($data) {
-                if ($authority = AuthenticationAuthority::getAuthenticationAuthority($data['auth'])) {
-                    if ($user = $authority->getUser($data['userID'])) {
-                    
-                        // see if the hash matches the user hash
-                        if ($user->getUserHash() == $hash) {
-                            // matched
-                            $this->login_token = $token;
-                            $_SESSION['login_token'] = $this->login_token;
-                            $user->setSessionData($data['data']);
-                            return $user;
+    	        $users = array();
+                if ($this->getUserHash($data['data']) == $_COOKIE[self::USERHASH_COOKIE]) {
+                    foreach ($data['data'] as $userData) {
+
+                        if ($authority = AuthenticationAuthority::getAuthenticationAuthority($userData['auth'])) {
+                            if ($user = $authority->getUser($userData['userID'])) {
+                                $user->setSessionData($userData['data']);
+                                $users[] = $user;
+                            } else {
+                                error_log("Unable to load user " . $userData['userID']  . " for " . $userData['auth']);
+                            }
                         } else {
-                            error_log("Hash " . $user->getUserHash() . " does not match " . $hash);
+                            error_log("Unable to load authority ".  $userData['auth']);
                         }
-                    } else {
-                        error_log("Unable to load user " . $data['userID']  . " for " . $data['auth']);
                     }
-                } else {
-                    error_log("Unable to load authority ".  $data['auth']);
+                    
+                    if (count($users)>0) {
+                        return $users;
+                    }
                 }
             }
 
@@ -437,6 +529,17 @@ class Session
             } else {
                 $file = $this->loginTokenFile($this->login_token);
                 @unlink($file);
+
+                // clean up expired cookies
+                $files = glob($this->loginTokenFolder() . "/login_*");
+                foreach ($files as $file) {
+                    if ($data = file_get_contents($file)) {
+                        $data = unserialize($data);
+                        if ($data['expires']<time()) {
+                            unlink($file);
+                        }
+                    }
+                }
             }
 
             setCookie(self::TOKEN_COOKIE, false, 1225344860, $this->loginCookiePath);

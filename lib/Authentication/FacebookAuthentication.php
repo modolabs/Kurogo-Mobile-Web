@@ -10,6 +10,7 @@
  */
 class FacebookAuthentication extends AuthenticationAuthority
 {
+    protected $userClass='FacebookUser';
     protected $api_key;
     protected $api_secret;
     protected $redirect_uri;
@@ -18,6 +19,10 @@ class FacebookAuthentication extends AuthenticationAuthority
     protected $useCache = true;
     protected $cache;
     protected $cacheLifetime = 900;
+    protected $perms = array(
+        'user_about_me',
+        'email',
+    );
     
     protected function validUserLogins()
     {
@@ -75,7 +80,7 @@ class FacebookAuthentication extends AuthenticationAuthority
             $json = @json_decode($data, true);
 
             if (isset($json['id'])) {
-                $user = new FacebookUser($this);
+                $user = new $this->userClass($this);
                 $user->setUserID($json['id']);
                 $user->setFirstName($json['first_name']);
                 $user->setLastName($json['last_name']);
@@ -89,7 +94,7 @@ class FacebookAuthentication extends AuthenticationAuthority
         return false;
     }
     
-    public function login($login, $pass, Module $module, $options)
+    public function login($login, $pass, Session $session, $options)
     {
         //if the code is present, then this is the callback that the user authorized the application
         if (isset($_GET['code'])) {
@@ -125,9 +130,7 @@ class FacebookAuthentication extends AuthenticationAuthority
 
                 // get the current user via API
                 if ($user = $this->getUser('me')) {
-                    $session = $module->getSession();
-                    $remainLoggedIn = isset($options['remainLoggedIn']) ? $options['remainLoggedIn'] : false;
-                    $session->login($user, $remainLoggedIn);
+                    $session->login($user);
                     return AUTH_OK;
                 }  else {
                     return AUTH_FAILED; // something is amiss
@@ -165,7 +168,7 @@ class FacebookAuthentication extends AuthenticationAuthority
             $url = "https://graph.facebook.com/oauth/authorize?" . http_build_query(array(
                 'client_id'=>$this->api_key,
                 'redirect_uri'=>$this->redirect_uri,
-                'scope'=>'user_about_me,email',
+                'scope'=>implode(',', $this->perms),
                 'display'=>$display
             ));
             
@@ -174,10 +177,14 @@ class FacebookAuthentication extends AuthenticationAuthority
         }
     }
     
-    protected function reset()
+    protected function reset($hard=false)
     {
+        parent::reset($hard);
         unset($_SESSION['fb_expires']);
         unset($_SESSION['fb_access_token']);
+        if ($hard) {
+            // this where we would log out of facebook
+        }
     }
     
     //does not support groups
@@ -200,9 +207,13 @@ class FacebookAuthentication extends AuthenticationAuthority
         if (isset($_SESSION['fb_access_token'])) {
             $this->access_token = $_SESSION['fb_access_token'];
         }
+
+        if (isset($args['API_PERMS'])) {
+            $this->perms = array_unique(array_merge($this->perms, $args['API_PERMS']));
+        }
     }
     
-    public function getSessionData(OAuthUser $user) {
+    public function getSessionData(FacebookUser $user) {
         return array(
             'fb_access_token'=>$this->access_token
         );

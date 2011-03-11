@@ -58,6 +58,22 @@ class MapWebModule extends WebModule {
         return array($imageWidth, $imageHeight);
     }
 
+    protected function addJavascriptFullscreenStaticMap() {
+        // Let Webkit figure out what the window size is and then hide the address bar
+        // and resize the map
+        $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
+        $this->addOnOrientationChange('updateMapDimensions();');
+    }
+
+    protected function addJavascriptFullscreenDynamicMap() {
+        $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
+        $this->addOnOrientationChange('updateContainerDimensions()');
+    }
+
+    protected function addJavascriptFullscreenRotateScreen() {
+        $this->addOnOrientationChange('rotateScreen();');
+    }
+
     protected function initializeMapElements($mapElement, $imgController, $imageWidth, $imageHeight) {
         $imgController->setImageWidth($imageWidth);
         $imgController->setImageHeight($imageHeight);
@@ -178,10 +194,9 @@ class MapWebModule extends WebModule {
 
             } else {
                 list($imageWidth, $imageHeight) = $this->fullscreenMapImageDimensions();
-                $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
-                $this->addOnOrientationChange('updateContainerDimensions()');
+                $this->addJavascriptFullscreenDynamicMap();
             }
-            $this->addOnOrientationChange('rotateScreen();');
+            $this->addJavascriptFullscreenRotateScreen();
         }
         
         $this->assign('fullscreen', $fullscreen);
@@ -191,10 +206,7 @@ class MapWebModule extends WebModule {
 
         // call the function that updates the image size        
         if ($fullscreen && $imgController->isStatic()) {
-            // Let Webkit figure out what the window size is and then hide the address bar
-            // and resize the map
-            $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
-            $this->addOnOrientationChange('updateMapDimensions();');
+            $this->addJavascriptFullscreenStaticMap();
         }
     }
     
@@ -495,7 +507,7 @@ class MapWebModule extends WebModule {
                 }
                 
                 if (is_subclass_of($dataController, 'ArcGISDataController')) {
-                    $detailConfig = $this->loadWebAppConfigFile('map-detail', 'detailConfig');   
+                    $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');   
                     $feature->setBlackList($detailConfig['details']['suppress']);
                 }
                 
@@ -680,7 +692,7 @@ class MapWebModule extends WebModule {
                 break;
           
             case 'detail':
-                $detailConfig = $this->loadWebAppConfigFile('map-detail', 'detailConfig');        
+                $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');        
                 $tabKeys = array();
                 $tabJavascripts = array();
 

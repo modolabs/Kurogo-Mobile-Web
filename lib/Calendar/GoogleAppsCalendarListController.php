@@ -3,6 +3,10 @@
 class GoogleAppsCalendarListController extends CalendarListController
 {
     protected $cacheLifetime = 900;
+
+    protected function setSession(Session $session) {
+        $this->setUser($session->getUser('GoogleAppsUser'));
+    }
     
     public function getResources()
     {

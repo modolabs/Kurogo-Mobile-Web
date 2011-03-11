@@ -40,10 +40,10 @@ function loadImage(imageURL,imageID) {
 
 function loadMapImage(newSrc) {
     var mapImage = document.getElementById("staticmapimage");
-
-    if (newSrc != mapImage.src) {
+    var oldSrc = mapImage.src;
+    mapImage.src = newSrc;
+    if (oldSrc != newSrc) {
         show("loadingimage");
-        mapImage.src = newSrc;
     }
 }
 

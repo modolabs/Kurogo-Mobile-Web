@@ -12,12 +12,11 @@ abstract class Module
   }
   
   protected function loadFeedData() {
-    $data = null;
-    $feedConfigFile = realpath_exists(sprintf("%s/feeds/%s.ini", SITE_CONFIG_DIR, $this->id));
-    if ($feedConfigFile) {
-        $data = parse_ini_file($feedConfigFile, true);
-    } 
+    $data = array();
     
+    if ($feedConfigFile = $this->getConfig($this->id, 'feeds')) {
+        $data = $feedConfigFile->getSectionVars();
+    }
     return $data;
   }
   
@@ -45,6 +44,7 @@ abstract class Module
     // possible module paths
     $modulePaths = array(
       SITE_MODULES_DIR."/$id/Site%s.php"=>"Site%s",
+      SITE_MODULES_DIR."/$id/%s.php"=>"%s",
       MODULES_DIR."/$id/%s.php"=>"%s",
     );
     
@@ -60,7 +60,7 @@ abstract class Module
         }
     }
    
-    throw new ModuleNotFound("Module $id not found");
+    throw new Exception("Module $id not found");
    }
    
    protected function init() {
@@ -92,18 +92,17 @@ abstract class Module
   // User functions
   //
   
-  public function isLoggedIn() {
+  public function isLoggedIn($authority=null) {
     $session = $this->getSession();
-    return $session->isLoggedIn();
+    return $session->isLoggedIn($authority);
   }
 
-  public function getUser() {
+  public function getUser($authority=null) {
     $session = $this->getSession();
-    return $session->getUser();
+    return $session->getUser($authority);
   }
   
-  public function getSession()
-  {
+  public function getSession() {
     if (!$this->session) {
         $args = $this->getSiteSection('authentication');
         $this->session = new Session($args);

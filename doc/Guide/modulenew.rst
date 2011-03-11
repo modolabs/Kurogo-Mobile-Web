@@ -40,11 +40,11 @@ Steps
 
 .. code-block:: html
 
-      {include file="findInclude:common/header.tpl"}
+      {include file="findInclude:common/templates/header.tpl"}
     
       <h1 class="focal">Video</h1>
     
-      {include file="findInclude:common/footer.tpl"}
+      {include file="findInclude:common/templates/footer.tpl"}
 
 * Create a 56x56 PNG image named *title-video.png* and place it in 
   *SITE_DIR/themes/default/common/images/compliant*. This will be the image that will show up in the
@@ -175,11 +175,11 @@ Finally we update the *index.tpl* file to utilize a results list to show the lis
 
 .. code-block:: html
 
-    {include file="findInclude:common/header.tpl"}
+    {include file="findInclude:common/templates/header.tpl"}
     
-    {include file="findInclude:common/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
+    {include file="findInclude:common/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
     
-    {include file="findInclude:common/footer.tpl"}
+    {include file="findInclude:common/templates/footer.tpl"}
     
 * We include the results.tpl file which expects an array of items set in the results variable. We set
   a titleTruncate value to cut off lengthy video titles
@@ -287,7 +287,7 @@ Now it is time to write our *detail.tpl* template
 
 .. code-block:: html
 
-    {include file="findInclude:common/header.tpl"}
+    {include file="findInclude:common/templates/header.tpl"}
     
     <h1 class="focal videoTitle">{$videoTitle}</h1>
     <p class="nonfocal">
@@ -296,7 +296,7 @@ Now it is time to write our *detail.tpl* template
     </p>
     <p class="focal">{$videoDescription}</p>
     
-    {include file="findInclude:common/footer.tpl"}
+    {include file="findInclude:common/templates/footer.tpl"}
     
 * This template uses simple variable substitution to create a few elements for the title and 
   description. We then use an iframe to `embed the YouTube player <http://apiblog.youtube.com/2010/07/new-way-to-embed-youtube-videos.html>`_

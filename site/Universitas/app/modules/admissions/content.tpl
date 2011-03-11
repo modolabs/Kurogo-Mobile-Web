@@ -1,1 +1,0 @@
-{extends file="findExtends:common/staticContent.tpl"}

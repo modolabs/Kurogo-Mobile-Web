@@ -342,6 +342,7 @@ a.module img {
 
 .homepage .moduleicon {
     padding: 8px 5px 8px 6px;
+    vertical-align: top; /* for firefox */
 }
 
 *:first-child+html .homepage .moduleicon {
