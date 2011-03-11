@@ -251,7 +251,7 @@ class MapWebModule extends WebModule {
     }
 
     public function federatedSearch($searchTerms, $maxCount, &$results) {
-        $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+        $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS');
         $mapSearch = new $mapSearchClass();
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
@@ -286,7 +286,7 @@ class MapWebModule extends WebModule {
             $feedData = $this->feeds[$index];
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setCategoryId($index);
-            $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+            $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
             return $controller;
         }
     }
@@ -466,7 +466,7 @@ class MapWebModule extends WebModule {
                 $geometry = $feature->getGeometry();
                 $center = $geometry->getCenterCoordinate();
                 
-                $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+                $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS');
                 $mapSearch = new $mapSearchClass();
                 if (!$this->feeds)
                     $this->feeds = $this->loadFeedData();
@@ -492,7 +492,7 @@ class MapWebModule extends WebModule {
             case 'info':
             {
                 // embedded photo
-                $photoServer = $GLOBALS['siteConfig']->getVar('MAP_PHOTO_SERVER');
+                $photoServer = $this->getModuleVar('MAP_PHOTO_SERVER');
                 // this method of getting photo url is harvard-specific and
                 // further only works on data for ArcGIS features.
                 // TODO rewrite this if we find an alternate way to server photos
@@ -527,9 +527,9 @@ class MapWebModule extends WebModule {
     }
     
     private function getDataForCampus($campus) {
-        $numCampuses = $GLOBALS['siteConfig']->getVar('CAMPUS_COUNT');
+        $numCampuses = $this->getModuleVar('CAMPUS_COUNT');
         for ($i = 0; $i < $numCampuses; $i++) {
-           $campusData = $GLOBALS['siteConfig']->getSection('campus-'.$i);
+           $campusData = $this->getModuleSection('campus-'.$i);
            if ($campusData['id'] == $campus) {
                return $campusData;
            }
@@ -545,12 +545,12 @@ class MapWebModule extends WebModule {
             case 'index':
             case 'campus':
                 $campus = $this->getArg('campus', NULL);
-                $numCampuses = $GLOBALS['siteConfig']->getVar('CAMPUS_COUNT');
+                $numCampuses = $this->getModuleVar('CAMPUS_COUNT');
 
                 if ($campus === NULL && $numCampuses > 1) {
                     $campusLinks = array();
                     for ($i = 0; $i < $numCampuses; $i++) {
-                        $campusData = $GLOBALS['siteConfig']->getSection('campus-'.$i);
+                        $campusData = $this->getModuleSection('campus-'.$i);
                         $campusLinks[] = array(
                             'title' => $campusData['title'],
                             'url' => $this->campusURL($campusData['id']),
@@ -613,7 +613,7 @@ class MapWebModule extends WebModule {
                 if (isset($this->args['filter'])) {
                     $searchTerms = $this->args['filter'];
 
-                    $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+                    $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS');
                     $mapSearch = new $mapSearchClass();
                     if (!$this->feeds)
                         $this->feeds = $this->loadFeedData();

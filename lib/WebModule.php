@@ -427,7 +427,7 @@ abstract class WebModule extends Module {
         $this->platform      = $GLOBALS['deviceClassifier']->getPlatform();
         $this->supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
 
-        $this->setAutoPhoneNumberDetection($GLOBALS['siteConfig']->getVar('AUTODETECT_PHONE_NUMBERS'));
+        $this->setAutoPhoneNumberDetection($this->getSiteVar('AUTODETECT_PHONE_NUMBERS'));
         
         // Pull in fontsize
         if (isset($args['font'])) {

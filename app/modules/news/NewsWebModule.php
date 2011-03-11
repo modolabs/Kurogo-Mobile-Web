@@ -100,7 +100,7 @@ class NewsWebModule extends WebModule {
             $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
         }
         $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+        $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
         return $controller;
     } else {
         throw new Exception("Error getting news feed for index $index");
