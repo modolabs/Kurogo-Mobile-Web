@@ -49,8 +49,3 @@ recommend `MAMP <http://mamp.info/>`_ on Mac OS X.
 #. Edit the new config.ini file and change the *ACTIVE_SITE* option to match the name of *SITE_FOLDER*
 #. (re)Start your webserver and direct your web browser to the server/port that you specified.
 
-====================
-What Could Go Wrong?
-====================
-
-TBA.....

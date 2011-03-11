@@ -193,7 +193,7 @@ class PeopleWebModule extends WebModule {
   
     protected function initialize() {
     $this->feeds = $this->loadFeedData();
-    $this->detailFields = $this->loadWebAppConfigFile('people-detail', 'detailFields');
+    $this->detailFields = $this->loadPageConfigFile('detail', 'detailFields');
     foreach($this->detailFields as $field => $info) {
       $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
     }
@@ -287,7 +287,7 @@ class PeopleWebModule extends WebModule {
           $this->redirectTo('search');
         }
         
-        $this->loadWebAppConfigFile('people-index', 'contacts');
+        $this->loadPageConfigFile('index', 'contacts');
         break;
     }  
   }

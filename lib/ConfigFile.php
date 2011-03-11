@@ -46,9 +46,7 @@ class ConfigFile extends Config {
     $config = new ConfigFile();
     
     if (!$result = $config->loadFileType($file, $type, $options)) {
-        if ($options & ConfigFile::OPTION_DIE_ON_FAILURE) {
-          die("FATAL ERROR: cannot load $type configuration file: $file");
-        }
+       die("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
     }
     
     return $config;
@@ -58,28 +56,11 @@ class ConfigFile extends Config {
   {
     switch ($type)
     {
-        case 'site-default':
-            $pattern = sprintf('%s/%%s-default.ini', MASTER_CONFIG_DIR);
-            break;
-        case 'module-default':
-            $pattern = sprintf('%s/%%1$s/config/%%1$s-default.ini', MODULES_DIR);
-            break;
-        case 'nav':
-            $pattern = sprintf("%s/web/%s/%%s.ini", SITE_CONFIG_DIR, $type);
-            break;
-        case 'api':
-        case 'web':
-        case 'module':
-        case 'feeds':
-            $pattern = sprintf("%s/%s/%%s.ini", SITE_CONFIG_DIR, $type);
-            break;
         case 'site':
             $pattern = sprintf("%s/%%s.ini", SITE_CONFIG_DIR);
             break;
-        case 'file-default':
-            $pathinfo = pathinfo($file);
-            $file = $pathinfo['filename'];
-            $pattern = sprintf("%s/%%s-default.%s", $pathinfo['dirname'], $pathinfo['extension']);
+        case 'site-default':
+            $pattern = sprintf('%s/site-%%s-default.ini', MASTER_CONFIG_DIR);
             break;
         case 'file':
             if ($f = realpath($file)) {
@@ -87,8 +68,19 @@ class ConfigFile extends Config {
             }
             $pattern = "%s";
             break;
+        case 'file-default':
+            $pathinfo = pathinfo($file);
+            $file = $pathinfo['filename'];
+            $pattern = sprintf("%s/%%s-default.%s", $pathinfo['dirname'], $pathinfo['extension']);
+            break;
+        case 'project':
+            $pattern = sprintf('%s/%%s.ini', MASTER_CONFIG_DIR);
+            break;
+        case 'project-default':
+            $pattern = sprintf('%s/%%s-default.ini', MASTER_CONFIG_DIR);
+            break;
         default:
-            return false;
+            throw new Exception("Unknown config type $type");
     }
     
     return sprintf($pattern, $file);
@@ -98,30 +90,6 @@ class ConfigFile extends Config {
   {
     switch ($type)
     {
-        case 'site':
-            $_file = $this->getFileByType($file, $type);
-            $defaultFile = $this->getFileByType($file, $type.'-default');
-            if (file_exists($defaultFile)) {
-                $this->createDirIfNotExists(dirname($_file));
-                return @copy($defaultFile, $_file);
-            }
-            
-            return false;
-            break;
-            
-        case 'module':
-            //check to see if the module has a default config file first
-            $_file = $this->getFileByType($file, $type);
-            $defaultFile = $this->getFileByType($file, $type.'-default');
-            if (file_exists($defaultFile)) {
-                $this->createDirIfNotExists(dirname($_file));
-                return @copy($defaultFile, $_file);
-            } elseif ($module = WebModule::factory($file)) {
-                return $module->createDefaultConfigFile();
-            } else {
-                throw new Exception("Module $file not found");
-            }
-            break;
         case 'file':
             $defaultFile = $this->getFileByType($file, $type.'-default');
             if (file_exists($defaultFile)) {
@@ -130,6 +98,17 @@ class ConfigFile extends Config {
             }
 
             return false;            
+            break;
+            
+        default:
+            $_file = $this->getFileByType($file, $type);
+            $defaultFile = $this->getFileByType($file, $type.'-default');
+            if (file_exists($defaultFile)) {
+                $this->createDirIfNotExists(dirname($_file));
+                return @copy($defaultFile, $_file);
+            }
+            
+            return false;
             break;
     }
   }

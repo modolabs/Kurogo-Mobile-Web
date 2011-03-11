@@ -251,7 +251,7 @@ class MapWebModule extends WebModule {
     }
 
     public function federatedSearch($searchTerms, $maxCount, &$results) {
-        $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+        $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS');
         $mapSearch = new $mapSearchClass();
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
@@ -286,7 +286,7 @@ class MapWebModule extends WebModule {
             $feedData = $this->feeds[$index];
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setCategoryId($index);
-            $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+            $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
             return $controller;
         }
     }
@@ -466,7 +466,7 @@ class MapWebModule extends WebModule {
                 $geometry = $feature->getGeometry();
                 $center = $geometry->getCenterCoordinate();
                 
-                $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+                $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS');
                 $mapSearch = new $mapSearchClass();
                 if (!$this->feeds)
                     $this->feeds = $this->loadFeedData();
@@ -492,7 +492,7 @@ class MapWebModule extends WebModule {
             case 'info':
             {
                 // embedded photo
-                $photoServer = $GLOBALS['siteConfig']->getVar('MAP_PHOTO_SERVER');
+                $photoServer = $this->getModuleVar('MAP_PHOTO_SERVER');
                 // this method of getting photo url is harvard-specific and
                 // further only works on data for ArcGIS features.
                 // TODO rewrite this if we find an alternate way to server photos
@@ -507,7 +507,7 @@ class MapWebModule extends WebModule {
                 }
                 
                 if (is_subclass_of($dataController, 'ArcGISDataController')) {
-                    $detailConfig = $this->loadWebAppConfigFile('map-detail', 'detailConfig');   
+                    $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');   
                     $feature->setBlackList($detailConfig['details']['suppress']);
                 }
                 
@@ -527,14 +527,14 @@ class MapWebModule extends WebModule {
     }
     
     private function getDataForCampus($campus) {
-        $numCampuses = $GLOBALS['siteConfig']->getVar('CAMPUS_COUNT');
-        for ($i = 0; $i < $numCampuses; $i++) {
-           $campusData = $GLOBALS['siteConfig']->getSection('campus-'.$i);
-           if ($campusData['id'] == $campus) {
-               return $campusData;
-           }
-       }
-       return NULL;
+        $campuses = $this->getCampuses();
+        return isset($campuses[$campus]) ? $campuses[$campus] : null;
+    }
+    
+    protected function getCampuses() {
+        $campuses = array();
+        $config = $this->getConfig($this->id, 'campus');
+        return $config->getSectionVars();
     }
 
     protected function initializeForPage() {
@@ -544,36 +544,38 @@ class MapWebModule extends WebModule {
             
             case 'index':
             case 'campus':
-                $campus = $this->getArg('campus', NULL);
-                $numCampuses = $GLOBALS['siteConfig']->getVar('CAMPUS_COUNT');
-
-                if ($campus === NULL && $numCampuses > 1) {
-                    $campusLinks = array();
-                    for ($i = 0; $i < $numCampuses; $i++) {
-                        $campusData = $GLOBALS['siteConfig']->getSection('campus-'.$i);
+                $campuses = $this->getCampuses();
+                if (count($campuses)==1) {
+                    $campus = key($campuses);
+                } else {
+                    $campus = $this->getArg('campus', NULL);
+                }
+                
+                if (empty($campus) && count($campuses)>1) {
+                    // show the list of campuses
+                    foreach ($campuses as $id=>$campusData) {
                         $campusLinks[] = array(
                             'title' => $campusData['title'],
-                            'url' => $this->campusURL($campusData['id']),
+                            'url' => $this->campusURL($id),
                             );
                     }
                     $this->assign('browseHint', 'Select a Location');
                     $this->assign('categories', $campusLinks);
                     $this->assign('searchTip', NULL);
 
-                } else {
-                    $browseBy = 'map';
-                    if ($campus !== null) {
-                        $campusData = $this->getDataForCampus($campus);
-                        if ($campusData) {
-                            $browseBy = $campusData['title'];
-                        }
-                        $cookieID = http_build_query(array('campus' => $campus));
-                        $this->generateBookmarkOptions($cookieID);
-                    }
-                
+                } elseif ($campusData = $this->getDataForCampus($campus)) {
+                    $browseBy = $campusData['title'];
+                    $cookieID = http_build_query(array('campus' => $campus));
+                    $this->generateBookmarkOptions($cookieID);
                     $this->assignCategoriesForCampus($campus);
                     $this->assign('browseHint', "Browse {$browseBy} by:");
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
+                } else {
+                    if (count($campuses)==0) {
+                        throw new Exception("No campuses defined");
+                    } else {
+                        throw new Exception("Invalid campus $campus");
+                    }
                 }
                 
                 $this->generateBookmarkLink();
@@ -613,7 +615,7 @@ class MapWebModule extends WebModule {
                 if (isset($this->args['filter'])) {
                     $searchTerms = $this->args['filter'];
 
-                    $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+                    $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS');
                     $mapSearch = new $mapSearchClass();
                     if (!$this->feeds)
                         $this->feeds = $this->loadFeedData();
@@ -692,7 +694,7 @@ class MapWebModule extends WebModule {
                 break;
           
             case 'detail':
-                $detailConfig = $this->loadWebAppConfigFile('map-detail', 'detailConfig');        
+                $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');        
                 $tabKeys = array();
                 $tabJavascripts = array();
 

@@ -365,7 +365,7 @@ abstract class WebModule extends Module {
                 break;
         }
 
-        $moduleConfigFile = ConfigFile::factory($this->id, $type, ConfigFile::OPTION_CREATE_EMPTY);
+        $moduleConfigFile = ModuleConfigFile::factory($this->id, $type, ConfigFile::OPTION_CREATE_EMPTY);
         
         switch ($section)
         {
@@ -427,7 +427,7 @@ abstract class WebModule extends Module {
         $this->platform      = $GLOBALS['deviceClassifier']->getPlatform();
         $this->supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
 
-        $this->setAutoPhoneNumberDetection($GLOBALS['siteConfig']->getVar('AUTODETECT_PHONE_NUMBERS'));
+        $this->setAutoPhoneNumberDetection($this->getSiteVar('AUTODETECT_PHONE_NUMBERS'));
         
         // Pull in fontsize
         if (isset($args['font'])) {
@@ -574,7 +574,7 @@ abstract class WebModule extends Module {
   private function getModuleNavigationConfig() {
     static $moduleNavConfig;
     if (!$moduleNavConfig) {
-        $moduleNavConfig = $this->getConfig('home', 'module', ConfigFile::OPTION_CREATE_WITH_DEFAULT);
+        $moduleNavConfig = $this->getConfig('home', 'module');
     }
     
     return $moduleNavConfig;
@@ -939,20 +939,28 @@ abstract class WebModule extends Module {
   // Config files
   //
   
+  protected function getPageConfig($name, $opts) {
+    $config = ModuleConfigFile::factory($this->id, "page-$name", $opts);
+    $GLOBALS['siteConfig']->addConfig($config);
+    return $config;
+  }
+  
   protected function getPageData() {
-     $pageConfig = $this->getConfig($this->id, 'nav');
+     $pageConfig = $this->getConfig($this->id, 'pages');
      return $pageConfig->getSectionVars(true);
   }
   
   protected function loadSiteConfigFile($name, $keyName=null, $opts=0) {
-    $config = $this->getConfig($name, 'site', $opts);
+    $config = ConfigFile::factory($name, 'site', $opts);
+    $GLOBALS['siteConfig']->addConfig($config);
     if ($keyName === null) { $keyName = $name; }
 
     return $this->loadConfigFile($config, $keyName);
   }
 
-  protected function loadWebAppConfigFile($name, $keyName=null, $opts=0) {
-    $config = $this->getConfig($name, 'web', $opts);
+  protected function loadPageConfigFile($page, $keyName=null, $opts=0) {
+    $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
+    $config = $this->getPageConfig($page, $opts);
     if ($keyName === null) { $keyName = $name; }
     return $this->loadConfigFile($config, $keyName);
   }
@@ -1059,7 +1067,7 @@ abstract class WebModule extends Module {
       $template = 'common/'.$this->page;
     } else {
       $this->assign('hasHelp', isset($moduleStrings['help']));
-      $template = 'modules/'.$this->templateModule.'/'.$this->templatePage;
+      $template = 'modules/'.$this->templateModule.'/templates/'.$this->templatePage;
     }
     
     // Pager support

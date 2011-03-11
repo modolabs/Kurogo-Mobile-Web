@@ -146,11 +146,11 @@ header.tpl / footer.tpl
 The header and footer files should generally appear at the top and bottom respectively of your main
 template files. This ensures that the site navigation and other wrapper content::
 
-  {include file="findInclude:common/header.tpl" scalable=false}
+  {include file="findInclude:common/templates/header.tpl" scalable=false}
   
   Content goes here....
   
-  {include file="findInclude:common/footer.tpl"}
+  {include file="findInclude:common/templates/footer.tpl"}
   
 -----------
 navlist.tpl

@@ -29,8 +29,6 @@ properties that you will need to use if creating your own module. These include:
   This property **must** be set by all modules. 
 * *moduleName* (string) - This property represents the canonical name of the module and is shown at
   on the nav bar. It can be overridden using the configuration file.
-* *hasFeeds* (boolean) - used by the :ref:`admin-module` to indicate that the module has configurable
-  data feeds. This should be set to true if the module uses feeds.
 * *page* (string) - This property is set when the module initializes and represents the current page the 
   user is viewing (based on the :doc:`request <requests>`). 
 * *pagetype* (string) - contains the pagetype property used in :doc:`device detection <devicedetection>`
@@ -105,8 +103,8 @@ Template
 
 * *assign(string $var, mixed $value)* - Assigns a variable to the template. In order to use variable 
   values in your template files, you must assign them.
-* *loadWebAppConfigFile($name, $keyName)* - Loads a configuration file named *name* located in the 
-  *config/web* and assigns the values to the template. 
+* *loadPageConfigFile($name, $keyName)* - Loads a configuration file named *page-name* located in the 
+  *config/MODULEID/* folder and assigns the values to the template. 
 * *buildBreadcrumbURL($page, $args, $addBreadcrumb)* - This method will return a url to another page in the module.
   The *page* parameter is a string to the destination page. *args* is an associative array of arguments
   to pass to the page. *addBreadcrumb* is a boolean (default true) whether to add the entry

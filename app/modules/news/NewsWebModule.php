@@ -60,8 +60,8 @@ class NewsWebModule extends WebModule {
         $args = array(
           'storyID'   => $storyID,
           'section'   => $this->feedIndex,
-          'start'     => self::argVal($this->args, 'start'),
-          'filter'    => self::argVal($this->args, 'filter')
+          'start'     => $this->getArg('start'),
+          'filter'    => $this->getArg('filter')
         );
         
         if ($paneLink) {
@@ -100,7 +100,7 @@ class NewsWebModule extends WebModule {
             $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
         }
         $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+        $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
         return $controller;
     } else {
         throw new Exception("Error getting news feed for index $index");
