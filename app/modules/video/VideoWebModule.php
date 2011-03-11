@@ -540,9 +540,16 @@
              	}
              	
              	$duration = $this->getDuration($duration);
-             	 
-             	if (strlen($desc)>100) {
-             		$desc = substr($desc,0,100) . "...";
+
+             	// FIXME proper fix is either determine if desktop or adjust in javascript 
+                if (strlen($title)>30) {             	
+                	if (strlen($desc)>30) {
+             			$desc = substr($desc,0,30) . "...";
+             		}
+             	}
+             	
+             	if (strlen($desc)>75) {
+             		$desc = substr($desc,0,75) . "...";
              	}
              	 
              	$subtitle = $desc . "<br/>" . $duration;

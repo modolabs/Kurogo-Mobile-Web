@@ -1,10 +1,10 @@
 {include file="findInclude:common/templates/header.tpl"}
 
 <h1 class="focal videoTitle">{$videoTitle}
-<div>
+<p>
   {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
   {include file="findInclude:common/templates/share.tpl" shareURL={$videoURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
-</div>
+</p>
 </h1>
 
 <p class="nonfocal">

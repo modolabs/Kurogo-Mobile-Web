@@ -1,6 +1,11 @@
 
-videoList-li {
-    height: 5.5em;
+#share {
+	float: right;
+	margin: 0 0 0 8px;
+}
+
+.videoList-li {
+    height: 6.5em;
 	margin: 0;
     padding: 1px;
     overflow: hidden;
@@ -25,6 +30,6 @@ img.image {
 }
 
 .videoTitle {
-    font-size: 20px;
+    font-size: 15pxpx;
     line-height: auto;
 }
