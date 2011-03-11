@@ -103,8 +103,8 @@ Template
 
 * *assign(string $var, mixed $value)* - Assigns a variable to the template. In order to use variable 
   values in your template files, you must assign them.
-* *loadWebAppConfigFile($name, $keyName)* - Loads a configuration file named *name* located in the 
-  *config/web* and assigns the values to the template. 
+* *loadPageConfigFile($name, $keyName)* - Loads a configuration file named *page-name* located in the 
+  *config/MODULEID/* folder and assigns the values to the template. 
 * *buildBreadcrumbURL($page, $args, $addBreadcrumb)* - This method will return a url to another page in the module.
   The *page* parameter is a string to the destination page. *args* is an associative array of arguments
   to pass to the page. *addBreadcrumb* is a boolean (default true) whether to add the entry
