@@ -151,8 +151,12 @@ class Session
         $_SESSION['ping'] = time();
     }
     
-    public function getUsers() {
-        return $this->users;
+    public function getUsers($returnAnonymous=false) {
+        if ( count($this->users)>0 || !$returnAnonymous) {
+            return $this->users;
+        } else {
+            return array(new AnonymousUser());
+        }
     }
 
     /**

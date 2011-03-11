@@ -60,8 +60,8 @@ class NewsWebModule extends WebModule {
         $args = array(
           'storyID'   => $storyID,
           'section'   => $this->feedIndex,
-          'start'     => self::argVal($this->args, 'start'),
-          'filter'    => self::argVal($this->args, 'filter')
+          'start'     => $this->getArg('start'),
+          'filter'    => $this->getArg('filter')
         );
         
         if ($paneLink) {
