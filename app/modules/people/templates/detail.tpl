@@ -17,6 +17,16 @@
               {if isset($item['url'])}
                 </a>
               {/if}
+              
+              
+              {if $item['img']}
+			      <img src="{$item['img']}" alt="{$item['title']}"{if $item['imgWidth']}
+			        width="{$item['imgWidth']}"{/if}{if $item['imgHeight']}
+			        height="{$item['imgHeight']}"{/if}{if $item['imgAlt']}
+			        alt="{$item['imgAlt']}"{/if} />
+    		  {/if}
+              
+              
             </li>
           {/block}
         {/foreach}    

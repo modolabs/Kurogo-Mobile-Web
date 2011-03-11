@@ -1,0 +1,35 @@
+
+#share {
+	float: right;
+	margin: 0 0 0 8px;
+}
+
+.videoList-li {
+    height: 6.5em;
+	margin: 0;
+    padding: 1px;
+    overflow: hidden;
+    position: relative;
+}
+
+img.image {
+	float:left;
+    padding:0 8px 0 0;
+}
+
+#videoList a {
+  margin-left: 100px;
+  padding: 5px 18px 5px 10px;
+  height: 100px;
+  line-height: 22px;
+}
+
+#video-category-select {
+  margin: 5px 5px 5px 5px;
+  padding: 5px 5px 5px 5px;
+}
+
+.videoTitle {
+    font-size: 15pxpx;
+    line-height: auto;
+}

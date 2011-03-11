@@ -28,10 +28,10 @@ class RSSChannel extends XMLElement
     {
         return $this->items;
     }
-    
+  
     public function addElement(XMLElement $element)
     {
-        $name = $element->name();
+    	$name = $element->name();
         $value = $element->value();
         
         switch ($name)
@@ -43,7 +43,6 @@ class RSSChannel extends XMLElement
                 parent::addElement($element);
                 break;
         }
-        
     }
     
     public function getTitle()

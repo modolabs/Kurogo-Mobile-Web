@@ -10,6 +10,7 @@
   */
 class ErrorWebModule extends WebModule {
   protected $id = 'error';
+  protected $moduleName = 'Error';
 
   private $errors = array(
     'data' => array(
@@ -52,7 +53,7 @@ class ErrorWebModule extends WebModule {
       return;
   }
 
-  public function getAccessControlLists() {
+  protected function getAccessControlLists($type) {
     return array(AccessControlList::factory(AccessControlList::RULE_ACTION_ALLOW, 
                                             AccessControlList::RULE_TYPE_EVERYONE,
                                             AccessControlList::RULE_VALUE_ALL));

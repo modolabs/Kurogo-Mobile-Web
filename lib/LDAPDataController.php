@@ -235,6 +235,72 @@ class LDAPDataController extends PeopleController {
     
     } 
   
+    
+    private function showLdapJpeg( $conn, $dn, $entry) {
+    	
+    	//http://msdn.microsoft.com/en-us/library/ms676813
+    	
+		$search_result = ldap_search( $conn, $dn, 'objectClass=*', array( 'jpegPhoto' ) );
+		$entry = ldap_first_entry( $conn, $search_result );
+	
+		for ($i=0; $i<$info["count"]; $i++) {
+	
+			$values = ldap_get_values_len($ldap, $entry, "jpegphoto");
+			$jpeg_filename = $jpeg_temp_dir . basename( tempnam ('.', 'djp') );
+			$outjpeg = fopen($jpeg_filename, "wb");
+			
+			if( ! $outjpeg ) echo "error <br>";
+			
+			fwrite($outjpeg, $values[$i]);
+			fclose ($outjpeg);
+			
+		}
+		
+		$jpeg_dimensions = getimagesize ($jpeg_filename);
+		$width = $jpeg_dimensions[0];
+		$height = $jpeg_dimensions[1];
+		if( $width > 300 ) {
+			$scale_factor = 300 / $width;
+			$img_width = 300;
+			$img_height = $height * $scale_factor; 
+		} else {
+			$img_width = $width;
+			$img_height = $height;
+		}
+		//echo "<img width=\"$img_width\" height=\"$img_height\"
+
+		echo "<img src=\"PhotoJpeg.php?file=" . basename($jpeg_filename) . "\">";
+    
+    }
+    
+ public static function getImageLoaderURL($url, &$width, &$height) {
+        if ($url && strpos($url, '/photo-placeholder.gif') !== FALSE) {
+            $url = ''; // skip empty placeholder image 
+        }
+        
+        if ($url) {
+            switch ($GLOBALS['deviceClassifier']->getPagetype()) {
+                case 'compliant':
+                    $width = 140;
+                    $height = 140;
+                    break;
+                case 'basic':
+                case 'touch':
+                default:
+                    $width = 70;
+                    $height = 70;
+                    break;
+            }
+          
+            $extension = pathinfo($url, PATHINFO_EXTENSION);
+            if ($extension) { $extension = ".$extension"; }
+  
+            $url = ImageLoader::precache($url, $width, $height, 'LDAP_'.md5($url).$extension);
+        }
+        
+        return $url;
+    }
+        
   /* returns a person object on success
    * FALSE on failure
    */
@@ -269,6 +335,23 @@ class LDAPDataController extends PeopleController {
         return FALSE;
       }
 
+      // IG: move
+      //showLdapJpeg($ds, $id, $entries[0]);
+      
+      // FIXME set "item" fields
+      /*
+    	$url = getImageLoaderURL($img->getAttribute('src'), $w, $h);
+                  if ($newSrc) {
+                    $img->setAttribute('src', $newSrc);
+                    $img->setAttribute('width', 300);
+                    $img->setAttribute('height', 'auto');
+        
+                  } else {
+                    $img->parentNode->removeChild($img);
+                  }
+      
+      */
+      
       return new $this->personClass($entries[0]);
 
     } else {
