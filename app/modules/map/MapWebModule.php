@@ -527,14 +527,14 @@ class MapWebModule extends WebModule {
     }
     
     private function getDataForCampus($campus) {
-        $numCampuses = $this->getModuleVar('CAMPUS_COUNT');
-        for ($i = 0; $i < $numCampuses; $i++) {
-           $campusData = $this->getModuleSection('campus-'.$i);
-           if ($campusData['id'] == $campus) {
-               return $campusData;
-           }
-       }
-       return NULL;
+        $campuses = $this->getCampuses();
+        return isset($campuses[$campus]) ? $campuses[$campus] : null;
+    }
+    
+    protected function getCampuses() {
+        $campuses = array();
+        $config = $this->getConfig($this->id, 'campus');
+        return $config->getSectionVars();
     }
 
     protected function initializeForPage() {
@@ -544,36 +544,38 @@ class MapWebModule extends WebModule {
             
             case 'index':
             case 'campus':
-                $campus = $this->getArg('campus', NULL);
-                $numCampuses = $this->getModuleVar('CAMPUS_COUNT');
-
-                if ($campus === NULL && $numCampuses > 1) {
-                    $campusLinks = array();
-                    for ($i = 0; $i < $numCampuses; $i++) {
-                        $campusData = $this->getModuleSection('campus-'.$i);
+                $campuses = $this->getCampuses();
+                if (count($campuses)==1) {
+                    $campus = key($campuses);
+                } else {
+                    $campus = $this->getArg('campus', NULL);
+                }
+                
+                if (empty($campus) && count($campuses)>1) {
+                    // show the list of campuses
+                    foreach ($campuses as $id=>$campusData) {
                         $campusLinks[] = array(
                             'title' => $campusData['title'],
-                            'url' => $this->campusURL($campusData['id']),
+                            'url' => $this->campusURL($id),
                             );
                     }
                     $this->assign('browseHint', 'Select a Location');
                     $this->assign('categories', $campusLinks);
                     $this->assign('searchTip', NULL);
 
-                } else {
-                    $browseBy = 'map';
-                    if ($campus !== null) {
-                        $campusData = $this->getDataForCampus($campus);
-                        if ($campusData) {
-                            $browseBy = $campusData['title'];
-                        }
-                        $cookieID = http_build_query(array('campus' => $campus));
-                        $this->generateBookmarkOptions($cookieID);
-                    }
-                
+                } elseif ($campusData = $this->getDataForCampus($campus)) {
+                    $browseBy = $campusData['title'];
+                    $cookieID = http_build_query(array('campus' => $campus));
+                    $this->generateBookmarkOptions($cookieID);
                     $this->assignCategoriesForCampus($campus);
                     $this->assign('browseHint', "Browse {$browseBy} by:");
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
+                } else {
+                    if (count($campuses)==0) {
+                        throw new Exception("No campuses defined");
+                    } else {
+                        throw new Exception("Invalid campus $campus");
+                    }
                 }
                 
                 $this->generateBookmarkLink();
