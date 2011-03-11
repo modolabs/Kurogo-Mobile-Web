@@ -69,14 +69,14 @@ When running a module, the following config files are loaded automatically:
 * *SITE_DIR/config/config.ini* - The site configuration file. It contains properties shared by all
   modules and sets up the basic environment
 * *SITE_DIR/config/strings.ini* - Strings table. Includes various strings used throughout the site
-* *SITE_DIR/config/module/MODULEID.ini* - Basic configuration file for the current module. Specifies properties
+* *SITE_DIR/config/MODULEID/module.ini* - Basic configuration file for the current module. Specifies properties
   regarding the module including disabled status, protected, secure and authorization. Also includes
   any unique module configurable parameters
-* *SITE_DIR/config/web/nav/MODULEID.ini* - Title/navigation configuration for the current module. 
+* *SITE_DIR/config/MODULEID/pages.ini* - Title/navigation configuration for the current module. 
 
-
-Other modules may also load files from the *SITE_DIR/config/feeds* folder for external data configuration,
-and *SITE_DIR/config/web* folder for specific configuration for module output and formatting.
+Other modules may also load files from the *SITE_DIR/config/MODULEID* folder for external data configuration,
+and specific configuration for module output and formatting. Refer to the documentation for a particular
+module to know the composition of those files.
 
 -----------
 Local Files
@@ -86,7 +86,7 @@ The framework supports overriding configuration files for local server customiza
 the configuration value *CONFIG_IGNORE_LOCAL* (defined in *config/config.ini*) is set to 1, the
 framework will also load files with a -local in the file name for each configuration file loaded.
 I.e. *SITE_DIR/config/config.ini* can be overridden with *SITE_DIR/config/config-local.ini*. 
-*SITE_DIR/config/module/home.ini* can be overridden with *SITE_DIR/config/module/home-local.ini*.
+*SITE_DIR/config/home/module.ini* can be overridden with *SITE_DIR/config/home/module-local.ini*.
 It is **not** necessary to duplicate the entire file. Only the values that are different need to be 
 in the -local file. It could also include additional values that are not present in the base config.
 
@@ -167,6 +167,8 @@ with an appropriate developer email address.
 Site settings
 -------------
 
+* *SECURE_HOST* - Alternate hostname to use for secure (https) connections. If not included it will use the same host name.
+* *SECURE_PORT* - Alternate port to use for secure connections. Typically you should leave it at the default of 443
 * *LOCAL_TIMEZONE* - Set this to your environment's time zone. See http://php.net/manual/en/timezones.php
   for a list of valid time zones
 * *LOCAL_AREA_CODE* - Set this to your environment's primary area code
@@ -271,6 +273,11 @@ The main database connection can be used by a variety of modules for storing and
 Authentication
 --------------
 * *AUTHENTICATION_ENABLED* - Set to 1 to enable :doc:`authentication <authentication>`
+* *AUTHENTICATION_IDLE_TIMEOUT* - Idle Timeout in seconds before users are logged off Use 0 to disable
+* *AUTHENTICATION_USE_SESSION_DB* - If 1 then session data will be saved to the site database
+* *AUTHENTICATION_REMAIN_LOGGED_IN_TIME* - Time in seconds where users can choose to remain logged in
+  even if closing their browser. If this is set to 0 then user's cannot remain logged in. Typical
+  times are 604800 (7 days) or 1209600 (14 days).
 
 ---------
 Log Files
@@ -297,6 +304,7 @@ contains values common to all modules, as well as module specific values.
 * *secure* - Whether or not the module requires a secure (https) connection. Configuring secure
   sites is beyond the scope of this document.
 * *acl[]*  - a series of access control list entries. See :doc:`authentication`.
+* *adminacl[]*  - a series of access control list entries for administrative tasks. See :doc:`authentication`.
 
 It is important to turn on the disabled flag for any modules you do not wish to use. It is *very* 
 important to make sure that the *admin* module is either disabled or protected appropriately to prevent
@@ -358,23 +366,5 @@ You can edit all the strings from the *SITE_DIR/config/strings.ini* file.
 Providing an administration interface to your module
 ====================================================
 
-In most cases, you can add values to your module's configuration file and they will appear on the
-administration page. In some cases, however, you want to provide a custom interface to manage the
-settings. There are some guidelines you can follow to have a good default interface as well as methods
-you can override to customize it.
+This section is being rewritten...
 
-* Each value not within a section is displayed along side the basic module settings (disabled, protected, etc)
-* The admin module module will call *getModuleItemForKey($key, $value)* for each property for your module. 
-  This method should return and array that contains the following keys
-  
-  * *type* indicates the type of value. Values include: boolean, text, paragraph, radio or select
-  * *label* the label to include next to the input control
-  * *subtitle* explanation string
-  * *options* - used by radio and select types to display possible options as value=>label pairs.
-  * For more information see *common/formListItem.tpl*
-
-* It is critical to call parent:: in your implementation of *getModuleItemForKey*
-* The admin module will call *getSectionTitleForKey($key)* foreach section in the config file. This
-  should return a string that represents the section name in a more human readable format
-* The admin module will call *hasFeeds*. You should set your module's hasFeeds property to true
-  if your module has configurable data sources.
