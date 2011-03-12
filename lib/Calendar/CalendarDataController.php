@@ -156,7 +156,7 @@ class CalendarDataController extends DataController
         parent::clearInternalCache();
     }
     
-    public function items($start=0, $limit=null, &$totalItems=0) 
+    public function items($start=0, $limit=null) 
     {
         $items = $this->events($limit);
         $events = array();

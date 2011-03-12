@@ -112,7 +112,7 @@ class NewsWebModule extends WebModule {
     $feedIndex       = 0; // currently it only searches the first feed. TO DO: search all feeds
     
     $this->feed->addFilter('search', $searchTerms);
-    $items = $this->feed->items($start, $maxCount+1, $totalItems);
+    $items = $this->feed->items($start, $maxCount+1);
     
     $limit = min($maxCount, count($items));
     for ($i = 0; $i < $limit; $i++) {
@@ -196,7 +196,8 @@ class NewsWebModule extends WebModule {
           $this->setPageTitle('Search');
 
           $this->feed->addFilter('search', $searchTerms);
-          $items = $this->feed->items($start, $this->maxPerPage, $totalItems);
+          $items = $this->feed->items($start, $this->maxPerPage);
+          $totalItems = $this->feed->getTotalItems();
           $stories = array();
           foreach ($items as $story) {
             $item = array(
@@ -244,7 +245,7 @@ class NewsWebModule extends WebModule {
         
       case 'pane':
         $start = 0;
-        $items = $this->feed->items($start, $this->maxPerPage, $totalItems);
+        $items = $this->feed->items($start, $this->maxPerPage);
         $stories = array();
         foreach ($items as $story) {
           $item = array(
@@ -261,9 +262,9 @@ class NewsWebModule extends WebModule {
       
       case 'index':
         $start = $this->getArg('start', 0);
-        $totalItems = 0;
       
-        $items = $this->feed->items($start, $this->maxPerPage, $totalItems);
+        $items = $this->feed->items($start, $this->maxPerPage);
+        $totalItems = $this->feed->getTotalItems();
        
         $previousURL = null;
         $nextURL = null;

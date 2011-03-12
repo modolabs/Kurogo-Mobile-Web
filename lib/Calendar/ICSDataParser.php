@@ -138,7 +138,8 @@ class ICSDataParser extends DataParser
                 break;
             }
         }
-        
+
+        $this->setTotalItems(count($calendar->getEvents()));        
         return $calendar;
     }
 

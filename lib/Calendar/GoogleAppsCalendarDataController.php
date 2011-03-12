@@ -101,6 +101,7 @@ class GoogleCalendarDataParser extends DataParser
 
         $data = json_decode($data, true);
         $items = isset($data['data']['items']) ? $data['data']['items'] : array();
+        $total = 0;
 
         foreach ($items as $item) {
             if (!isset($item['when'])) {
@@ -129,7 +130,10 @@ class GoogleCalendarDataParser extends DataParser
             
             $event->setRange($range);
             $calendar->add_event($event);
+            $total++;
         }
+        
+        $this->setTotalItems($total);
 
         return $calendar;
     }

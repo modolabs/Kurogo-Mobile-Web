@@ -20,6 +20,7 @@ abstract class DataController
     protected $baseURL;
     protected $title;
     protected $filters=array();
+    protected $totalItems = null;
     protected $debugMode=false;
     protected $useCache=true;
     protected $cacheLifetime=900;
@@ -63,6 +64,7 @@ abstract class DataController
 
     protected function clearInternalCache()
     {
+        $this->setTotalItems(null);
     }
 
     protected function cacheFilename()
@@ -92,11 +94,21 @@ abstract class DataController
     public function getTitle() {
         return $this->title;
     }
+
+    protected function setTotalItems($totalItems) {
+        $this->totalItems = $totalItems;
+    }
     
-    public function setBaseURL($baseURL)
+    public function getTotalItems() {
+        return $this->totalItems;
+    }
+    
+    public function setBaseURL($baseURL, $clearFilters=true)
     {
         $this->baseURL = $baseURL;
-        $this->removeAllFilters();
+        if ($clearFilters) {
+            $this->removeAllFilters();
+        }
         $this->clearInternalCache();
     }
     
@@ -156,7 +168,9 @@ abstract class DataController
         if (!$parser) {
             $parser = $this->parser;
         }
-        return $parser->parseData($data);
+        $parsedData = $parser->parseData($data);
+        $this->setTotalItems($parser->getTotalItems());
+        return $parsedData;
     }
     
     public function getParsedData(DataParser $parser=null)
@@ -176,6 +190,7 @@ abstract class DataController
         }
 
         $this->url = $url;
+        $this->totalItems = 0;
         if ($this->useCache) {
             $cacheFilename = $this->cacheFilename();
             if ($this->cache === NULL) {
@@ -255,10 +270,9 @@ abstract class DataController
         }
     }
     
-    public function items($start=0, $limit=null, &$totalItems=0)
+    public function items($start=0, $limit=null)
     {
         $items = $this->getParsedData();
-        $totalItems = count($items);
         return $this->limitItems($items,$start, $limit);
     }
 }

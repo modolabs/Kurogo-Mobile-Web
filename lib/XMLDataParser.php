@@ -70,7 +70,7 @@ abstract class XMLDataParser extends DataParser
                         xml_get_current_line_number($xml_parser)));
         }
         xml_parser_free($xml_parser);
-
+        $this->setTotalItems(count($this->items));
         return $this->items;
     }
 }
