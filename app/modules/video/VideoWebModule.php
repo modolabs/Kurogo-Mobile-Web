@@ -1,45 +1,15 @@
 <?php
 
- class VideoWebModule extends WebModule
- {
+includePackage('Video');
 
-   const SOURCE_BRIGHTCOVE = 0;
-   const SOURCE_YOUTUBE = 1;
-   const SOURCE_KALTURA = 2;
- 	
-   protected $id='video';  // this affects which .ini is loaded
-   protected $maxPerPage = 10;
-   protected $start = 0;
-   protected $categories = 0;
-   protected $feedIndex = 0;
-   protected $feeds = 0;
-   protected static $lastSearch;  
-   
-   protected $totalItems;
-   protected $tag;
-   public static $video_source;
-   protected $detailScreen;
-   
-   // currently only used by YouTube:
-   protected $youtubeAuthor;  
-   
-   // currently only used by Brightcove:
-   protected $brightcoveToken;
-   protected $playerid;   
-   protected $playerKey;  
-   protected $accountid;  
- 
-  private function feedURL($feedIndex, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('index', array(
-      'section' => $feedIndex
-    ), $addBreadcrumb);
-  }
-
-    // bookmarks -- copied from Maps
-
+class VideoWebModule extends WebModule
+{
+    protected $id='video';  // this affects which .ini is loaded
+    protected $feeds = array();
     protected $bookmarkCookie = 'videobookmarks';
     protected $bookmarkLifespan = 25237;
-
+   
+    // bookmarks -- copied from Maps
     protected function generateBookmarkOptions($cookieID) {
         // compliant branch
         $this->addOnLoad("setBookmarkStates('{$this->bookmarkCookie}', '{$cookieID}')");
@@ -82,12 +52,7 @@
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
-        if (isset($params['featureindex'])) {
-            //return $this->buildBreadcrumbURL('detail', $params, true);  // FIXME
-            return $this->buildBreadcrumbURL($this->detailScreen, $params, true);
-        } else {
-            return '#';
-        }
+        return $this->buildBreadcrumbURL('detail', $params, true);
     }
 
     protected function getBookmarks() {
@@ -130,20 +95,12 @@
         //    $this->feeds = $this->loadFeedData();
 
         parse_str($aBookmark, $params);
-        if (isset($params['featureindex'])) {
-            $index = $params['featureindex'];
-         
-            //$title = $feature->getTitle();
-            //return array($title, $controller->getTitle());
-       
-            $title = $params['category'];
-            $subtitle = $params['subcategory'];
-            
-            return array($title, $subtitle);
-        
-        } else {
-            return array($aBookmark);
+        $titles = array($params['title']);
+        if (isset($params['subtitle'])) {
+            $titles[] = $params['subtitle'];
         }
+        return $titles;
+        
     }
     
     private function bookmarkType($aBookmark) {
@@ -163,118 +120,144 @@
         $this->assign('hasBookmarks', $hasBookmarks);
     }  
   
-  
-   protected function initializeForPage() {
-   
-   	if ($GLOBALS['deviceClassifier']->getPagetype()=='basic') {
-   		$this->assign('showUnsupported', true);
-   		return;
-   	}
-
-    if ($max = $this->getModuleVar('MAX_RESULTS')) {
-    	$this->maxPerPage = $max;
-    }
-
-   
-    // Categories / Sections
-    
-    $this->categories = $this->loadFeedData();
-    
-    $this->feedIndex = $this->getArg('section', 0);
-    if (!isset($this->categories[$this->feedIndex])) {
-      $this->feedIndex = 0;
-      $cat = "";
+    protected function initialize() {
+        $this->feeds = $this->loadFeedData();
     }
     
-    if (isset($this->categories)) {
-	     $sections = array();
-	     foreach ($this->categories as $index => $feedData) {
-	          $sections[] = array(
-	            'value'    => $index,
-	            'tag'    => $feedData['TAG'],
-	            'selected' => ($this->feedIndex == $index),
-	            'code'      => $feedData['TAG_CODE'],
-                'url'      => $this->feedURL($index, false)
-	          );
-	          if ($this->feedIndex == $index) {
-	          	$cat = $feedData['TAG'];
-	          }
-	     }
-	     $this->assign('sections', $sections);
-	     $this->tag = $this->categories[$this->feedIndex]['TAG_CODE'];
-    }
-     
-     // Handle videos
-     
-   	 $doSearch = $this->getModuleVar('search');
-     if ($doSearch==1) $this->assign('doSearch', $doSearch);
+    protected function getSections() {
+         $sections = array();
+         foreach ($this->feeds as $index => $feedData) {
+              $sections[] = array(
+                'value'    => $index,
+                'title'    => $feedData['TITLE']
+              );
+         }
          
-	 $this->video_source = $this->getModuleVar('video_source');
-	 if ($this->video_source == self::SOURCE_BRIGHTCOVE) {
-	     self::$video_source = self::SOURCE_BRIGHTCOVE;
-		 $this->brightcoveToken  = $this->getModuleVar('brightcoveToken');
-		 $this->playerKey = $this->getModuleVar('playerKey');
-		 $this->playerid  = $this->getModuleVar('playerId');
-		 $this->accountid = $this->getModuleVar('accountId');
-		 $defaultStart = 0;
-		 $this->detailScreen='detail-brightcove';
-	 } else if ($this->video_source == self::SOURCE_YOUTUBE) {
-	     self::$video_source = self::SOURCE_YOUTUBE;
-		 $this->youtubeAuthor = $this->getModuleVar('youtubeAuthor');
-		 $defaultStart = 1;
-		 $this->detailScreen='detail-youtube';
-	 }
-	 
-	 $xml_or_json = $this->getModuleVar('xml_or_json');
-	 if ($xml_or_json==1) {
-        $controller = DataController::factory('VideoXMLDataController');
-	 } else {
-        $controller = DataController::factory('VideoJsonDataController');
-     }
- 
-	 $this->start = $this->getArg('start',$defaultStart);
-	  
-     	 
-   switch ($this->page)
-     {  
-        case 'search':
-	        if ($filter = $this->getArg('filter')) {
-	          $searchTerms = trim($filter);
-			  $items = $controller->search($searchTerms, $this->maxPerPage, $this->start, $this->tag, $this->brightcoveToken,$this->video_source);
-			  
-			  if ($items !== false) {
-			  	  // TODO handle 0 or 1 result
-            	  $resultCount = count($items);
-             	  $videos = array();
-			  }
-     		  
-			  
-			  $this->assign('searchTerms', $searchTerms);
-     		  
-			  // If search terms change then start anew, else page results
-			  if ($this->start>$defaultStart) {
-				  if (strcmp($searchTerms,self::$lastSearch) != 0) {
-				  	 $this->start = $defaultStart;  // restart indexing
-				  	 self::$lastSearch = $searchTerms;
-				  }
-			  }
-     		  
-	        }
-	    	break;
-	          
-        case 'index':
-        	
-        	 // default search 
-	         $searchTerms = "";
-			 $items = $controller->search($searchTerms, $this->maxPerPage, $this->start, $this->tag, $this->brightcoveToken, $this->video_source);
-			 
-			 if ($items !== false) {
-			 	$videos = array();
-			 }
-			 
-             $this->generateBookmarkLink();
+         return $sections;
+    }
+    
+    protected function getListItemForVideo(VideoObject $video, $section) {
+        // FIXME proper fix is either determine if desktop or adjust in javascript 
+        $desc = $video->getDescription();
+        if (strlen($video->getTitle())>30) {             	
+            if (strlen($desc)) {
+                $desc = substr($desc,0,30) . "...";
+            }
+        }
+        
+        if (strlen($desc)>75) {
+            $desc = substr($desc,0,75) . "...";
+        }
+
+        return array(
+            'title'=>$video->getTitle(),
+            'subtitle'=>$desc . "<br />" . $this->getDuration($video->getDuration()),
+            'imgWidth'=>120,  
+            'imgHeight'=>100,  
+            'img'=>$video->getImage(),
+            'url'=>$this->buildBreadcrumbURL('detail', array(
+                'section'=>$section,
+                'videoid'=>$video->getID()
+            )));
+    }
+
+    protected function getDuration($prop_length) {
+        if (!$prop_length) {
+            return "";
+        } elseif ($prop_length<60) {
+            return $prop_length . " secs";
+        } else {
+            $mins = intval($prop_length / 60);
+            $secs = $prop_length % 60;
+            return $mins . " mins, " . $secs . " secs";
+        }
+    }
+    
+    protected function initializeForPage() {
+   
+        if ($this->pagetype=='basic') {
+            $this->assign('showUnsupported', true);
+            return;
+        }
+        
+        if (count($this->feeds)==0) {
+            throw new Exception("No video feeds configured");
+        }
+    
+       
+        // Categories / Sections
+        
+        $section = $this->getArg('section');
+
+        if (!isset($this->feeds[$section])) {
+            $section = key($this->feeds);
+        }
+        
+        $feedData = $this->feeds[$section];
+        $this->assign('currentSection', $section);
+        $this->assign('sections'      , $this->getSections());
+        $this->assign('feedData'      , $feedData);
+        
+        $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+        switch ($this->page)
+        {  
+            case 'search':
+            case 'index':
+        
+                $maxPerPage = $this->getModuleVar('MAX_RESULTS', 10);
+        	    $start = $this->getArg('start', 0);
+        	    
+                if ($this->page == 'search') {
+                    if ($filter = $this->getArg('filter')) {
+                        $searchTerms = trim($filter);
+                        $items = $controller->search($searchTerms, $start, $maxPerPage);
+                        $this->assign('searchTerms', $searchTerms);
+                    } else {
+                        $this->redirect('index', array('section'=>$section), false);
+                    }
+                } else {
+                     $items = $controller->items($start, $maxPerPage);
+                }
+                             
+                $totalItems = $controller->getTotalItems();
+                $videos = array();
+                foreach ($items as $video) {
+                    $videos[] = $this->getListItemForVideo($video, $section);
+                }
                 
-             break;
+                $this->assign('videos', $videos);
+                $this->assign('totalItems', $totalItems);
+                
+                $previousURL = null;
+                $nextURL = null;
+    
+                if ($totalItems > $maxPerPage) {
+                    $args = $this->args;
+                 
+                    if ($start > 0) {
+                        $args['start'] = $start - $maxPerPage;
+                        $previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
+                    }
+                    
+                    if (($totalItems - $start) > $maxPerPage) {
+                        $args['start'] = $start + $maxPerPage;
+                        $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
+                    }		
+                }
+    
+                $hiddenArgs = array(
+                  'section'=>$section
+                );
+          
+                $this->assign('start',       $start);
+                $this->assign('previousURL', $previousURL);
+                $this->assign('nextURL',     $nextURL);
+                $this->assign('hiddenArgs',  $hiddenArgs);
+                 
+                $this->generateBookmarkLink();
+                    
+                break;
  
             case 'bookmarks':
             	
@@ -294,286 +277,39 @@
                 $this->assign('videos', $videos_bkms);
             
                 break;
-                        
-        case 'detail-youtube':
-	        	$videoid = $this->getArg('videoid');
-	        	 
-	        	$bkmId = $this->getArg('bkmId');
-	        	if ($bkmId) {
-	        		$videoid = $bkmId;
-	        		$body = $this->getArg('bkmBody');
-	        		$title = $this->getArg('subcategory');
-	        	}
-
-			   if ($video = $controller->getItem($videoid)) {
-			   	
-        		  $body = $video['media$group']['media$description']['$t'];
-        		  $title = $video['title']['$t'];
-        		
-        		  $url = $this->getArg('url');
-		          $shareEmailURL = $this->buildMailToLink("", $title, $body);    
-		     
-		          $this->assign('shareEmailURL', $shareEmailURL);
-        		  $this->assign('videoURL',      urlencode($url));
-		          $this->assign('shareRemark',   urlencode($title));
-			   	
-			   	
-			      $this->assign('videoid', $videoid);
-			      $this->assign('videoTitle', $title);
-			      $this->assign('videoDescription', $body);
-			      
-			      // Bookmark
-			      $cookieParams = array(
-	                        'category' => $cat,
-	                        'subcategory' => $title,
-	                        'featureindex' => $this->feedIndex,
-	                        'bkmBody' => $body,
-	                        'bkmId' => $videoid,
-			      );
-
-			      $cookieID = http_build_query($cookieParams);
-			      $this->generateBookmarkOptions($cookieID);
-			    
-			   } else {
-			      $this->redirectTo('index');
-			   }
-			   break;   
-        case 'detail-brightcove':
-        	
-        		$body = $this->getArg('videoDescription');
-        		$title = $this->getArg('videoTitle');
-			    $videoid = $this->getArg('videoid');
-        		$url = $this->getArg('url');
-        		
-        		
-			    $bkmId = $this->getArg('bkmId');
-			    if ($bkmId) {
-			        $videoid = $bkmId;
-	        		$body = $this->getArg('bkmBody');
-	        		$title = $this->getArg('subcategory');
-			    }
-        		
-			    
-		        $shareEmailURL = $this->buildMailToLink("", $title, $body);    
-		     
-		        $this->assign('shareEmailURL', $shareEmailURL);
-        		$this->assign('videoURL',      urlencode($url));
-		        $this->assign('shareRemark',   urlencode($title));
+                
+            case 'detail':
         
-			    $this->assign('playerKey', $this->playerKey);
-			    $this->assign('playerid', $this->playerid);
-			    $this->assign('videoid', $videoid);
-			    $this->assign('accountid', $this->accountid);
-			    $this->assign('videoTitle', $title);
-			    $this->assign('videoDescription', $body);	
-
-			    // Bookmark
-			    $cookieParams = array(
-                        'category' => $cat,
-                        'subcategory' => $title,
-                        'featureindex' => $this->feedIndex,
-                        'bkmBody' => $body,
-                        'bkmId' => $videoid,
-			    );
-			    
-			    $cookieID = http_build_query($cookieParams);
-			    $this->generateBookmarkOptions($cookieID);
-			     
-			    break;       
-     }
-
-	 
-     if (isset($videos)) {
-	     if ($xml_or_json==1) {
-	     	// FIXME currently only support Brightcive - check here
-		 	$this->handleBrightcoveRSS($controller,$videos,$items);
-		 } else {
-	 		if ($this->video_source == self::SOURCE_BRIGHTCOVE) {
-	 			if (isset($items['items'])) 
-	 				$this->handleJSON($controller,$videos,$items['items']);
-	 		}
-	 		else $this->handleJSON($controller,$videos,$items);
-	     }
-     }
-     
-     // Previous / Next
-      
-     $this->totalItems = $controller->totalItems;
-	 $this->assign('totalItems', $this->totalItems);
-	        
-     $previousURL = null;
-     $nextURL = null;
-     if ($this->totalItems > $this->maxPerPage) {
-     	$args = $this->args;
-     	
-     	// "start" is item index in youtube and page in brightove
- 		if ($this->video_source == self::SOURCE_BRIGHTCOVE) {
- 		    if ($this->start > 0) {
-	     		$args['start'] = $this->start-1;
-	     		$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
-	     	}
-	     	if (($this->totalItems/$this->maxPerPage) > $this->start) {
-	     		$args['start'] = $this->start+1;
-	     		$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
-	     	} 		
- 		} else {
- 		    if ($this->start > $defaultStart) {
-     			$args['start'] = $this->start - $this->maxPerPage;
-     			$previousURL = $this->buildBreadcrumbURL($this->page, $args, false);
-     		}
- 	    	if (($this->totalItems - $this->start) > $this->maxPerPage) {
-    	 		$args['start'] = $this->start + $this->maxPerPage;
-     			$nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
-     		}		
- 		}
-     }
-      
-     $this->assign('start', $this->start);
-     $this->assign('previousURL', $previousURL);
-     $this->assign('nextURL',     $nextURL);
-     
-     
-   }
-   
-  protected function handleBrightcoveRSS($controller,$videos,$items) {
-  	  
-  	// TODO change to handleRSS() and add YouTube support
-  	
-     if (isset($videos)) {
-     	
-             //prepare the list
-             foreach ($items as $video) {
-             	
-             	$prop_titleid  = $video->getProperty('bc:titleid');  
-             	$prop_playerid  = $video->getProperty('bc:playerid');  // FIXME why null?
-             	$prop_accountid = $video->getProperty('bc:accountid');
-             	$prop_length = $video->getProperty('bc:duration');
-             	
-             	
-             	$prop_thumbnail = $video->getProperty('media:thumbnail');  
-             	if (is_array($prop_thumbnail)) {
-             		$attr_url = $prop_thumbnail[0]->getAttrib("URL"); 
-             	} else {
-             		if ($prop_thumbnail) {
-             			$attr_url = $prop_thumbnail->getAttrib("URL");
-             		} else {
-             			//$attr_url = "/common/images/placeholder-image.png";  // TODO
-             			$attr_url = "/common/images/title-video.png";
-             		}
-             	}
-             	
-             	$desc = $video->getDescription();
-             	if (strlen($desc)>75) {
-             		$desc = substr($desc,0,75) . "...";
-             	}
-             	
-             	$duration = $this->getDuration($prop_length);
-             	
-             	$subtitle = $desc . "<br/>" . $duration;
-             	
-             	$link = $video->getLink();
-             	
-             	$videos[] = array(
-			        'titleid'=>$prop_titleid,
-			        'playerid'=>$this->playerid,
-			        'title'=>$video->getTitle(),
-			        'subtitle'=>$subtitle,
-			        'class'=>'img',  // only applied to <a> ???
-			        'img'=>$attr_url,  
-			        'imgWidth'=>180,  
-			        'imgHeight'=>120,  
-			        'url'=>$this->buildBreadcrumbURL('detail-brightcove', array(
-			            'link'=>$link,
-			            'videoTitle'=>$video->getTitle(),
-			            'videoDescription'=>$desc,
-			            'videoid'=>$prop_titleid,
-			            'playerid'=>$this->playerid,
-			            'accountid'=>$prop_accountid
-             		))
-             		
-             	);
-             }
-             
-             $this->assign('videos', $videos);
-             
-     }
-     
-  } 
-
-  protected function getDuration($prop_length) {
-  	if (!$prop_length) {
-  		return "";
-  	} elseif ($prop_length<60) {
-  		return $prop_length . " secs";
-    } else {
-        $mins = intval($prop_length / 60);
-        $secs = $prop_length % 60;
-        return $mins . " mins, " . $secs . " secs";
+                $videoid = $this->getArg('videoid');
+            
+                if ($video = $controller->getItem($videoid)) {
+                    $this->setTemplatePage('detail-' . $video->getType());
+                    $this->assign('videoTitle',       $video->getTitle());
+                    $this->assign('videoURL',         $video->getURL());
+                    $this->assign('videoid',          $video->getID());
+                    $this->assign('videoDescription', $video->getDescription());
+                    
+                    $body = $video->getDescription() . "\n\n" . $video->getURL();
+                    
+                    $this->assign('shareEmailURL',    $this->buildMailToLink("", $video->getTitle(), $body));
+                    $this->assign('videoURL',         $video->getURL());
+                    $this->assign('shareRemark',      $video->getTitle());
+    
+                      // Bookmark
+                      $cookieParams = array(
+                        'section' => $section,
+                        'title'   => $video->getTitle(),
+                        'videoid' => $videoid
+                      );
+    
+                      $cookieID = http_build_query($cookieParams);
+                      $this->generateBookmarkOptions($cookieID);
+    
+    
+                } else {
+                    $this->redirectTo('index', array('section'=>$section),false);
+                }
+                break;
+        }
     }
-  }
-  
-  protected function handleJSON($controller,$videos,$items) {
-
-     if (isset($videos)) {
-
-             foreach ($items as $video) {
-             
-             	if ($this->video_source == self::SOURCE_BRIGHTCOVE) {
-             	    //$link = $video['linkURL'];
-             	    $link = $video['FLVURL'];
-	             	$videoId = $video['id'];
-	             	$img     = $video['thumbnailURL'];
-	             	$title = $video['name'];
-	             	$desc  = $video['shortDescription'];
-	             	$duration = $video['length'] / 1000;  // millisecs
-	             	$next = 'detail-brightcove';
-             	} else {
-             		$links = $video['link'];
-             		$link = $links[0]['href'];
-	             	$desc = $video['media$group']['media$description']['$t'];
-	             	
-	             	$duration = $video['media$group']['yt$duration']['seconds'];
-	             	$videoId = $video['media$group']['yt$videoid']['$t'];
-	             	$img = $video['media$group']['media$thumbnail'][0]['url'];
-	             	$title = $video['title']['$t'];
-	             	$next = 'detail-youtube';
-             	}
-             	
-             	$duration = $this->getDuration($duration);
-
-             	// FIXME proper fix is either determine if desktop or adjust in javascript 
-                if (strlen($title)>30) {             	
-                	if (strlen($desc)>30) {
-             			$desc = substr($desc,0,30) . "...";
-             		}
-             	}
-             	
-             	if (strlen($desc)>75) {
-             		$desc = substr($desc,0,75) . "...";
-             	}
-             	 
-             	$subtitle = $desc . "<br/>" . $duration;
-             	
-             	
-             	$videos[] = array(
-			        'title'=>$title, 
-			        'subtitle'=>$subtitle,
-			        'link'=>$link,
-			        'imgWidth'=>120,  
-			        'imgHeight'=>100,  
-			        'img'=>$img,
-			        'url'=>$this->buildBreadcrumbURL($next, array(
-			            'url'=>$link,
-			            'videoid'=>$videoId,
-			            'videoTitle'=>$title,
-			            'videoDescription'=>$desc
-             		))
-             	);
-             }
-
-             $this->assign('videos', $videos);
-     }
-     
-  } 
-   
  }

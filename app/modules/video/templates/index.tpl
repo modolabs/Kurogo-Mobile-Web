@@ -7,10 +7,10 @@
 {capture name="categorySelect" assign="categorySelect"}
   <select class="input" id="section" name="section" onchange="loadSection(this);">
     {foreach $sections as $section}
-      {if $section['selected']}
-        <option value="{$section['value']}" selected="true">{$section['tag']}</option>
+      {if $section['value']==$currentSection}
+        <option value="{$section['value']}" selected="true">{$section['title']}</option>
       {else}
-        <option value="{$section['value']}">{$section['tag']}</option>
+        <option value="{$section['value']}">{$section['title']}</option>
       {/if}
     {/foreach}
   </select>
