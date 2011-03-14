@@ -9,27 +9,27 @@ such as Brightcove and YouTube.
 Configuring the Sources
 =================================
 
-In order to use the video module, you must first select your video source. Currently, either 
-Brightcove or YouTube are the possible choices. Brightcove also requires a read `token` and a player `key`
-for searching and playing videos.  You can set these values by either using the :ref:`admin-module` or 
-by editing the `config/module/video.ini` file directly.
+The module allows you to organize your videos by section using a distinct feed for each section. Each
+section contains information on the service provider and can either filter by tag or author, in addition
+to full textual searches. Depending on the source there are other options to configure. Feeds are 
+configured in the *SITE_DIR/config/video/feeds.ini* file. Each feed is contained in a section. 
+The name of each section is generally not important, but must be unique. 
 
-* video_source - (required) Set to 0 for Brightcove or 1 for YouTube.
+Within each feed you use the following options:
 
-**Brightcove** These required fields for Brightcove are accessible from the admin console on their website:
+* *CONTROLLER_CLASS* - The DataController to use. Currently supported controllers include the *YouTubeVideoControler*
+  and *BrightcoveVideoController*. 
+* *TITLE* - The textual label used when showing the section list
+* *TAG* - optional, used to limit the results by tag
+* *AUTHOR* - optional, used to limit the results by author
 
-* brightcoveToken - (required)  Read token to search Brightcove website.  
-* playerKey - (required) Key to desired video player.   
+-------------------------
+BrightcoveVideoController
+-------------------------
 
-**YouTube** Currently we only access public feeds so no token/key required.
+In order to to use the Brightcove service, you must also include several other parameters. These 
+values are available from Brightcove`
 
-
-=============================
-Configuring Feeds/Categories
-=============================
-
-One can further limit returned videos by creating search categories and setting these in `config/feeds/video.ini`.
-Each category requires this pair of information:
-
-* *TAG* - This is what is displayed in the categories drop-down list.
-* *TAG_CODE* - This is what is actually used in the search query.
+* token
+* playerKey
+* playerId 
