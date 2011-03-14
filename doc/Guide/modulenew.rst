@@ -17,7 +17,7 @@ you will want to create your files in the *SITE_DIR/app/modules/* folder.
 
 Inside this folder is the module class file as well as a folders for templates, css and javascript.
 Each template file is placed in the *templates* named according to which *page* you are on, 
-with the default page named *index*. The class file follows the format *MODULE_ID*WebModule.php. 
+with the default page named *index*. The class file follows the format (ModuleID)WebModule.php. 
 This file should be a sublcass of the *WebModule* class and at very least must contain
 a property named *id* that indicates the module id and a implementation of *initializeForPage()*
 
@@ -127,7 +127,7 @@ Some notes on this listing:
   considered a robust solution
 
 
-Now that we have a controller, we can utilize it in our module. Here is an updated *SiteVideoModule.php*
+Now that we have a controller, we can utilize it in our module. Here is an updated *VideoWebModule.php*
 
 .. code-block:: php
    :linenos:
@@ -206,7 +206,7 @@ which is part of the WebModule object. This method takes 3 parameters, the page 
 (within the same module), and an array of arguments that get passed. The $addBreadcrumb parameter is
 a boolean to determine whether breadcrumbs should be generated. The default is true and this is
 typically what we want. Adding the url to the list is simple by adding another key to our item
-array in *SiteVideoWebModule.php*::
+array in *VideoWebModule.php*::
 
     <?php
     
@@ -264,7 +264,7 @@ Preparing and displaying the detail view
 
 Now that we have this method, we can use it in our module. We extract the fields we need and assign
 them to our template. We simply add another entry to the our *switch* branch for our *detail* page
-in *SiteVideoWebModule.php*::
+in *VideoWebModule.php*::
 
       <?php
       case 'detail':
@@ -379,7 +379,7 @@ Page configuration
 Each module should have a configuration file that determines the name of each page. These names are 
 used in the title and navigation bar. 
 
-Create a file named *video.ini* in *SITE_DIR/config/page* with the following contents:
+Create a file named *pages.ini* in *SITE_DIR/config/video/* with the following contents:
 
 .. code-block:: ini
 
@@ -403,7 +403,7 @@ Module Configuration
 The first implementation used a fixed string to search for videos. In order to include a more flexible
 solution, you can utilize a configuration parameter to set the string to search. 
 
-Create (or edit) a file named *video.ini* in *SITE_DIR/config/module* with the following contents:
+Create (or edit) a file named *module.ini* in *SITE_DIR/config/video/* with the following contents:
 
 .. code-block:: ini
 
@@ -426,7 +426,7 @@ unique to that module. The common values include:
 You can also add your own values to use in your module. In this case we have added a *SEARCH_QUERY*
 parameter that will hold the query to use for the list.
 
-We can now use it in our *SiteVideoWebModule.php* file when we call the search method:
+We can now use it in our *VideoWebModule.php* file when we call the search method:
 
 .. code-block:: php
 
@@ -435,7 +435,7 @@ We can now use it in our *SiteVideoWebModule.php* file when we call the search m
     //search for videos
     $items = $controller->search($this->getModuleVar('SEARCH_QUERY'));
 
-The method *getModuleVar* will attempt to retrieve a value from the *config/module/MODULEID.ini* file.
+The method *getModuleVar* will attempt to retrieve a value from the *config/MODULEID/module.ini* file.
 You can also use the *getSiteVar* method to retrive a value from *config/config.ini* which is used by
 all modules
 
