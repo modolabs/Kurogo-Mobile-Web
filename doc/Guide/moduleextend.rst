@@ -21,7 +21,7 @@ Overriding a template is a very simple process. You simply provide an alternate 
 folder and that file will be loaded instead. 
 
 For example, if you want to extend the *story.tpl* of the news module you would create *story.tpl* 
-in *SITE_DIR/app/modules/news*. 
+in *SITE_DIR/app/modules/news/templates*. 
 
 There are two approaches to updating a template. 
 

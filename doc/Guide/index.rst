@@ -44,4 +44,3 @@ reaches 1.0 status
    modulenew
    moduleextend
    authenticationintro
-   glossary   
