@@ -512,6 +512,12 @@ class ArcGISLayer implements MapFolder, MapListElement {
     }
     
     public function featureFromJSON($featureInfo) {
+        if (isset($featureInfo['foundFieldName'])) { // will be set if we got here from a search
+            $displayField = $featureInfo['foundFieldName'];
+        } else {
+            $displayField = $this->displayField;
+        }
+
         $attribs = $featureInfo['attributes'];
         $displayAttribs = array();
         // use human-readable field alias to construct feature details
@@ -534,7 +540,7 @@ class ArcGISLayer implements MapFolder, MapListElement {
         
         // doing this assumes the display names for buildings are unique
         // this is because we have no way of figuring out the object's actual ID
-        $index = $attribs[$this->displayField];
+        $index = $attribs[$displayField];
         $feature = new ArcGISFeature($displayAttribs, $geometry, $index, $this->getCategory());
         if ($this->geometryType) {
             $feature->setGeometryType($this->geometryType);
