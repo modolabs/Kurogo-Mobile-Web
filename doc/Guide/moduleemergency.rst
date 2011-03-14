@@ -16,7 +16,7 @@ Configuring the Server Connection
 
 In order to use the emergency module, you must first setup the connection to your data.
 If you want to display an emergency notice you will need to include a `notice` section
-in *config/feeds/emergency.ini*.  In the `notice` section you will need to configure
+in *config/emergency/feeds.ini*.  In the `notice` section you will need to configure
 the url for the emergency notice RSS feed.
 
 * If you are using the add-on emergency drupal module, you can set the BASE_URL to
@@ -24,7 +24,7 @@ the url for the emergency notice RSS feed.
   Otherwise just set the BASE_URL to the appropriate RSS feed.
 
 If you also want to include emergency contact phone numbers, you will need to include
-a `contacts` section in *config/feeds/emergency.ini*
+a `contacts` section in *config/emergency/feeds.ini*
 
 **Configure Contacts List**
 

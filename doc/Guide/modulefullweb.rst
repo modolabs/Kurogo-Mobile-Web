@@ -8,6 +8,6 @@ The full website (/fullweb) module simply redirects the user to your full websit
 Configuration
 =============
 
-It has one configuration  parameter in *SITE_DIR/module/fullweb.ini* 
+It has one configuration  parameter in *SITE_DIR/fullweb/module.ini* 
 
 *url* - A url to the full website 

@@ -11,10 +11,10 @@ Configuration
 
 You can configure the values for the menu list as well as the content in the pages.
 
-In the *config/web/about-index.ini* file you can configure the list items that appear in the
+In the *config/about/page-index.ini* file you can configure the list items that appear in the
 module. These values map to the :ref:`listitem` template. 
 
-There are 2 strings defined in the *[strings]* section of the *config/module/about.ini* file. The
+There are 2 strings defined in the *[strings]* section of the *config/about/module.ini* file. The
 *SITE_ABOUT_HTML* value is shown in the *About this website* section. The *ABOUT_HTML* value is
 shown in the *About {Organization}* section. Each of those values are represented by arrays. Each
 element of the array represents a paragraph of text. 

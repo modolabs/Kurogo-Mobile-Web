@@ -12,7 +12,7 @@ Configuring the Server Connection
 
 In order to use the people module, you must first setup the connection to your LDAP server. There are
 2 required values that must be set and a few optional ones. You can set these values by either using
-the :ref:`admin-module` or by editing the `config/feeds/people.ini` file 
+the :ref:`admin-module` or by editing the *SITE_DIR/config/people/feeds.ini* file 
 directly.
 
 * The HOST value should match the address of your LDAP server. Keep in mind that this server must
@@ -25,10 +25,10 @@ In most cases, this will permit you to perform simple search and details views o
 
 **Optional values**
 
-* CONTROLLER_CLASS allows you to set a different class name for the controller. The default is LDAPDataController.
+* *CONTROLLER_CLASS* allows you to set a different class name for the controller. The default is LDAPDataController.
   You could write your own subclass of PeopleController to retrieve the values from a different source,
   such as a database.
-* PERSON_CLASS allows you to set a different class name for the returned user objects when searching. 
+* *PERSON_CLASS* allows you to set a different class name for the returned user objects when searching. 
   This allows you to write custom behavior to handle the data in your directory service.
 * *PORT* - Optional (Default 389) The port to connect. Use 636 for SSL connections (recommended if available)
 * *ADMIN_DN* - Some servers do not permit anonymous queries. If necessary you will need to provide a full 
@@ -44,7 +44,8 @@ Once you have configured the server settings, you need to configure the field ma
 server and the detail view. If your LDAP directory uses standard fields, then most fields should
 map automatically, however, you may still want to customize how it displays or the order of the fields.
 
-Each field is configured in a section (the section name should be unique, but it otherwise irrelevant).
+The fields are configured in the *SITE_DIR/config/people/page-detail.ini* file. Each field is 
+configured in a section (the section name should be unique, but it otherwise irrelevant).
 The order of the sections controls its order in the detail view. Within each section there are several 
 possible values to influence how a field is displayed:
 
@@ -61,7 +62,7 @@ Configuring the Fixed Entries
 =============================
 
 This module supports the ability to show a list of directory entries on the module index page. You
-can update the contents of this list by editing the *config/web/people-index.ini*. Each entry
+can update the contents of this list by editing the *SITE_DIR/config/people/page-index.ini*. Each entry
 is a numerically 0-indexed list of sections. Each section has 4 values that map to the the values used
 by the *listItem* template. Note that because it's displaying a list with URLs, the entries do not
 have to be phone numbers, but could be any URL.

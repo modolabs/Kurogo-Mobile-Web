@@ -14,7 +14,7 @@ of the list.
 Configuring Content Feeds
 =========================
 
-You can specify any number of pages to show in the *SITE_DIR/config/feeds/content.ini* file. Each
+You can specify any number of pages to show in the *SITE_DIR/config/content/feeds.ini* file. Each
 feed is represented by a section, the name of that section represents the "page" of the module. There
 are several properties to configure:
 

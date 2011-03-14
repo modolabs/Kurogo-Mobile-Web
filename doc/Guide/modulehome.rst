@@ -5,7 +5,7 @@ Home Module
 The home module represents the main portal to your application. It provides a unified list of modules
 available to users. It can be configured to show the list in a variety of styles.
 
-The *SITE_DIR/config/module/home.ini* file contains the standard module configuration, but also has
+The *SITE_DIR/config/home/module.ini* file contains the standard module configuration, but also has
 several other keys for controlling the configuration of the home screen.
 
 ----------------
