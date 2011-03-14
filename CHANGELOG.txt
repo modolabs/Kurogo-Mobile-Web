@@ -1,12 +1,26 @@
-1.0 Beta 3 (XXX)
+1.0 Beta 3 (March 14) 
+* NEW MODULE: Video Module.
 * NEW MODULE: Map Module.
+* INCOMPATIBLE CHANGE: 
 * INCOMPATIBLE CHANGE: the templates folder has been renamed "app"
 * INCOMPATIBLE CHANGE: the web folder has been renamed "www" Your servers will need to point to this folder for the document root
 * INCOMPATIBLE CHANGE: The base module class for mobile web is "WebModule" all modules should inherit from this class (or an existing WebModule class) 
 * INCOMPATIBLE CHANGE: Site modules should now be located in SITE_DIR/app/modules
 * INCOMPATIBLE CHANGE: Theme modules (PHP) are no longer searched for. You can still include CSS and JS in /themes/default/modules/X. Modules must either be in /app/modules or SITE_DIR/app/modules
+* INCOMPATIBLE CHANGE: module configuration files are now located in SITE_DIR/config/(moduleid)/xxx.ini
+* INCOMPATIBLE CHANGE: module template files are now located in the templates folder of the module folder
 * NEW FEATURE: support for adding idle logoff
 * NEW FEATURE: support for adding descriptions to login screen
+* NEW FEATURE (in development): preliminary support for REST API (used by native applications)
+* NEW FEATURE: support for Google Apps calendars and resources
+* NEW FEATURE: added ability to add a forget password text and url to the login screen
+* NEW FEATURE: added ability for users to remember their login credentials (when permitted by the site admins)
+* NEW FEATURE: added ability to apply access control lists for the entire site
+* NEW FEATURE: support for multiple logins to different authorities (eg. LDAP & Facebook, AD & Twitter)
+* NEW FEATURE: added class "packages" to group class library files by type (calendar, map, etc)
+* NEW FEATURE: classes in the SITE_DIR/app/modules folder do not have to be prefixed with "Site" if they are direct subclasses of WebModule
+* System will automatically redirect to login screen when viewing a protected module
+* Many other minor bug fixes
 
 
 1.0 Beta 2 (February 16)
