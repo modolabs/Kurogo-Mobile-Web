@@ -22,39 +22,9 @@ DataController
 A class that handles the retrieval of data from a data source. You set a URL,
 and a parser (a subclass of DataParser). The class will retrieve the data, cache it based on a 
 provided cache lifetime, and then run the data through the parser to generate a PHP data structure.
-Typically the DataController is the public interface to a web service. There is one method 
-that all subclasses *must* provide:
-  
-* *getItem($id)* - Should return a single object based on its id. 
+Typically the DataController is the public interface to a web service. 
 
-You should also override the default value of several properties:
-
-* $DEFAULT_PARSER_CLASS to the name of the default parser class you wish to use. Should be subclass of DataParser
-* $cacheFolder - the name of the folder within the CACHE_DIR where downloaded files will be cached
-* $cacheFileSuffix - a suffix to use for the cached files
-
-There are several methods that you should be familiar with to use this class appropriately:
-
-* *addFilter($filter,$value)*/*removeFilter($filter)* - Maintains a internal array of key/value filters that your controller can
-  use to generate a filtered result set
-* *setBaseURL($url)* - Sets the base url to use. You will have the opportunity to manipulate the url
-  that gets used if you subclass the *url()* method.
-  
-There are several other methods that can be overridden
-
-* *init($args)* - this method is called after instantiation. It includes an array of key/values to initialize
-  the class. Make sure you call parent::init($args).
-* *url()* - Should return the complet url to use for the request. You can provide an interface to set various
-  parameters that will then affect the building of the query to the web service. By default, this method
-  will simply return the base url.
-* *items($start=0,$limit=null, &$totalItems=0)* - should return an array of items based on the current
-  settings
-
-Currently there are 2 included DataController implementations
-
-* *CalendarDataController* - has parameters for start and ending time and content filtering to limit
-  the returned items in the feed
-* *RSSDataController* - adds content filtering
+This class is discussed in further depth in :doc:`datacontroller`
 
 ----------
 DataParser

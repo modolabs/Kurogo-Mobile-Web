@@ -40,6 +40,7 @@ reaches 1.0 status
    template
    themes
    libs
+   datacontroller
    modulenew
    moduleextend
    authenticationintro

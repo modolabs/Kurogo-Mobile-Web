@@ -15,28 +15,29 @@ Creating the initial files
 In order to ensure that your module does not conflict with current or future modules in the framework,
 you will want to create your files in the *SITE_DIR/app/modules/* folder. 
 
-Inside this folder is the module class file as well as all the template files used by your module.
-Each template file is named according to which *page* you are on, with the default page named *index*.
-The class file follows the format Site*MODULE_ID*WebModule.php. The prefix *Site* is used when creating
-your own modules. This file should be a sublcass of the *WebModule* class and at very least must contain
+Inside this folder is the module class file as well as a folders for templates, css and javascript.
+Each template file is placed in the *templates* named according to which *page* you are on, 
+with the default page named *index*. The class file follows the format *MODULE_ID*WebModule.php. 
+This file should be a sublcass of the *WebModule* class and at very least must contain
 a property named *id* that indicates the module id and a implementation of *initializeForPage()*
 
 -----
 Steps
 -----
 * Create a folder named *video* in the SITE_DIR/app/modules folder
-* Create *SiteVideoWebModule.php* with the following contents::
+* Create a templates folder inside the SITE_DIR/app/modules/video folders
+* Create *VideoWebModule.php* with the following contents::
 
     <?php
     
-    class SiteVideoWebModule extends WebModule
+    class VideoWebModule extends WebModule
     {
       protected $id='video';
       protected function initializeForPage() {
       }
     }
 
-* Create *index.tpl* with the following contents:
+* Create *templates/index.tpl* with the following contents:
 
 .. code-block:: html
 
@@ -125,6 +126,7 @@ Some notes on this listing:
 * Note that to keep this entry short, we are not utilizing any error control. This should not be 
   considered a robust solution
 
+
 Now that we have a controller, we can utilize it in our module. Here is an updated *SiteVideoModule.php*
 
 .. code-block:: php
@@ -132,7 +134,7 @@ Now that we have a controller, we can utilize it in our module. Here is an updat
 
     <?php
     
-    class SiteVideoWebModule extends WebModule
+    class VideoWebModule extends WebModule
     {
       protected $id='video';
       protected function initializeForPage() {
