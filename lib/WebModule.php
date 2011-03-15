@@ -404,15 +404,13 @@ abstract class WebModule extends Module {
   public static function factory($id, $page='', $args=array()) {
   
     $module = parent::factory($id, 'web');
+    $module->init($page, $args);
     $module->initialize();
-    if ($page) {
-        $module->init($page, $args);
-    }
 
       return $module;
     }
     
-    protected function init($page='', $args=array()) {
+    private function init($page='', $args=array()) {
       
         parent::init();
 
@@ -420,15 +418,11 @@ abstract class WebModule extends Module {
         $this->moduleName = $moduleData['title'];
 
         $this->setArgs($args);
-        $this->setPage($page);
-        $this->setTemplatePage($this->page, $this->id);
 
         $this->pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
         $this->platform      = $GLOBALS['deviceClassifier']->getPlatform();
         $this->supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
 
-        $this->setAutoPhoneNumberDetection($this->getSiteVar('AUTODETECT_PHONE_NUMBERS'));
-        
         // Pull in fontsize
         if (isset($args['font'])) {
           $this->fontsize = $args['font'];
@@ -447,6 +441,12 @@ abstract class WebModule extends Module {
           case 'basic':
             $this->imageExt = '.gif';
             break;
+        }
+        
+        if ($page) {
+          $this->setPage($page);
+          $this->setTemplatePage($this->page, $this->id);
+          $this->setAutoPhoneNumberDetection($this->getSiteVar('AUTODETECT_PHONE_NUMBERS'));
         }
     }
   
