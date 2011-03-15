@@ -21,22 +21,33 @@ function includePackage($packageName) {
     if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
         throw new Exception("Invalid Package name $packageName");
     }
-    
-    $dir = LIB_DIR . "/$packageName";
 
-    if (in_array($dir, $GLOBALS['libDirs'])) {
-        return true;
+    $found = false;
+    
+    $dirs = array(LIB_DIR . "/$packageName");
+    if (defined('SITE_LIB_DIR')) {  
+        $dirs[] = SITE_LIB_DIR . "/$packageName";
+    }
+
+    foreach ($dirs as $dir) {
+        if (in_array($dir, $GLOBALS['libDirs'])) {
+            $found = true;
+        }
+
+        if (is_dir($dir)) {
+            $found = true;
+            $GLOBALS['libDirs'][] = $dir;
+
+            if (is_file("$dir.php")) {
+                include_once("$dir.php");
+            }
+        }
     }
     
-    if (!is_dir($dir)) {
-        throw new Exception("Unable to find $dir");
+    if (!$found) {
+        throw new Exception("Unable to load package $packageName");
     }
     
-    $GLOBALS['libDirs'][] = $dir;
-    
-    if (is_file(LIB_DIR . "/$packageName.php")) {
-        include_once(LIB_DIR . "/$packageName.php");
-    }
 }
 
 function siteLibAutoloader($className) {
