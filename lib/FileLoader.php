@@ -39,14 +39,20 @@ class FileLoader {
                 if (isset($loaderInfo, $loaderInfo['url'])) {
                     $data = file_get_contents($loaderInfo['url']);
                     if ($data) {
-                        if ($data && file_put_contents($filePath, $data)) {
-                            $path = realpath_exists($path);
+                        if (file_put_contents($filePath, $data)) {
+                            $path = realpath_exists($filePath);
                             unlink($loaderInfoPath);
                         } else {
-                            error_log("FileLoader failed to load '{$loaderInfo['url']}'");
+                            error_log("FileLoader failed to save data to '$filePath'");
                         }
+                    } else {
+                        error_log("FileLoader failed to load '{$loaderInfo['url']}'");
                     }
+                } else {
+                    error_log("FileLoader got invalid loader info");
                 }
+            } else {
+                error_log("FileLoader could not find loader info at '$loaderInfoPath'");
             }
         }
         return $path;
