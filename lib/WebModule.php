@@ -410,7 +410,7 @@ abstract class WebModule extends Module {
       return $module;
     }
     
-    private function init($page='', $args=array()) {
+    protected function init($page='', $args=array()) {
       
         parent::init();
 
