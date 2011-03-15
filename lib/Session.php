@@ -3,6 +3,8 @@
   * @package Authentication
   */
 
+includePackage('Authentication');
+
 /**
   * @package Authentication
   */
