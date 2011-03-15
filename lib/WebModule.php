@@ -1064,7 +1064,7 @@ abstract class WebModule extends Module {
     // Module Help
     if ($this->page == 'help') {
       $this->assign('hasHelp', false);
-      $template = 'common/'.$this->page;
+      $template = 'common/templates/'.$this->page;
     } else {
       $this->assign('hasHelp', isset($moduleStrings['help']));
       $template = 'modules/'.$this->templateModule.'/templates/'.$this->templatePage;
