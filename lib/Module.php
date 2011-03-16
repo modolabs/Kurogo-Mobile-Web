@@ -106,8 +106,9 @@ abstract class Module
         if ($moduleData['disabled']) {
             $this->moduleDisabled();
         }
-        
-        if ($moduleData['secure'] && (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
+
+        if (($this->getSiteVar('SECURE_REQUIRED', 0, Config::SUPRESS_ERRORS) || $moduleData['secure']) && 
+            (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
             $this->secureModule();
         }
         
