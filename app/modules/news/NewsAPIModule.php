@@ -52,7 +52,7 @@ class NewsAPIModule extends APIModule {
             case 'categories':
                 $response = array();
                 foreach ($feeds as $index => $feedData) {
-                    $response[] = $feedData['TITLE'];
+                    $response[] = array('id' => strval($index), 'title' => $feedData['TITLE']);
                 }
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
