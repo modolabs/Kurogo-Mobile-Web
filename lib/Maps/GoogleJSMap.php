@@ -214,7 +214,7 @@ function loadMap() {
         map.setCenter(initCoord)
     });
 
-	setTabsHeight();
+	setMapHeights();
 }
 
 JS;

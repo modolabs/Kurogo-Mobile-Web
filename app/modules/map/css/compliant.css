@@ -1,62 +1,41 @@
 #footerlinks, #footer {display: none;}
 
-#tabscontainer {
-	position: absolute;
-	top: 44px;
-	right: 0;
-	left: 0;
-	height: 360px;
-	padding: 12px 12px 0 12px;
+#bookmarkContainer {
+	margin-top: -2px;
+	margin-right: -6px;
 }
-#tabs {
-	position: absolute;
-	z-index: 2000;
+
+#tabscontainer {
+	position: relative;
+	padding: 0 12px;
+}
+#tabs li a {
+	line-height: 1em;
 }
 #tabbodies {
-	position: absolute;
-	top: 86px;
-	right: 0;
-	bottom: 0;
-	left: 0;
 	border-radius:0; 
-	margin: 0;
-	z-index: 500;
 	min-height: none;
 }
 .tabbody {
-	background-color: #fff;
-	position: absolute;
-	top: 0;
-	right: 0;
-	left: 0;
-	height: auto;
+	min-height: none;
 	padding-bottom: 2em;
 }
 #mapimage {
+	width: 100%;
+	min-height: 200px;
 	border: 1px solid #999;
-	position: absolute;
-	z-index: 1000;
-	top: 6px;
-	bottom: 6px;
-	right: 5px;
-	left: 5px;
-	width: auto;
+	margin: -1px;
 	overflow: hidden;
+	margin-bottom: 40px;
 }
 #photoTab {
 	text-align: center;
 }
 #mapTab {
-	bottom: 0;
 	padding-bottom: 0;
+	height: 100%;
 }
 #mapwrapper {
-	border: 1px solid #999;
-	position: absolute;
-	top: 6px;
-	bottom: 6px;
-	right: 5px;
-	left: 5px;
 	min-height: none;
 	width: auto;
 	overflow: hidden;
@@ -155,28 +134,18 @@
 
 #mapzoom {
 	position: absolute;
-	z-index:2500;
-	bottom: 6px;
+	bottom: 0px;
 	left: 6px;
 	right: 6px;
-	height: 40px;
+	height: 56px;
 }
-#mapzoom .scrim {
-	position: absolute;
-	z-index: -1;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 40px;
-	background-color: #000;
-	opacity: 0.25;
-}
+
 #mapzoom a {
 	display: block;
 	position: absolute;
 	width: 40px;
 	height: 34px;
-	margin-top: 4px;
+	margin-top: 16px;
 	background-image: url(/modules/map/images/buttons.png);
 	background-repeat: no-repeat;
 }
@@ -210,10 +179,6 @@
 	background-position: -80px 0;
 }
 
-#tabscontainer #bookmarkContainer {
-	margin: -42px -4px 0 8px;
-}
-
 /* copying the fullscreen style for now */
 
 body.portrait #mapimage, body.landscape #mapimage {
@@ -221,6 +186,8 @@ body.portrait #mapimage, body.landscape #mapimage {
 	right: 0;
 	bottom: 0;
 	left: 0;
+	width: 100%;
+	height: 100%;
 }
 
 #smallscreen {

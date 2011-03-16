@@ -45,9 +45,9 @@
 
 {block name="tabView"}
 <div id="tabscontainer">
-        <h2>{$name} <a href="#" onclick="updateMapDimensions()"></h2>
+    {include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+        <h2>{$name}</h2>
         <!--<p class="address">{$address|replace:' ':'&shy; '}</p>-->
-        {include file="findInclude:common/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
     {include file="findInclude:common/tabs.tpl" tabBodies=$tabBodies}
   </div>
 {/block}

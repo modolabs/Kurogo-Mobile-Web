@@ -1,5 +1,4 @@
 <div id="mapzoom">
-  <div class="scrim"></div>
   <a id="zoomin">
     <img src="/common/images/blank.png" width="40" height="34" alt="Zoom In" />
   </a>

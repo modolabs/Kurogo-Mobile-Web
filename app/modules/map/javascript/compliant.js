@@ -4,8 +4,6 @@ var staticMapOptions;
 var mapWidth;
 var mapHeight;
 
-document.body.addEventListener('orientationChange',function(){alert("foo")},false)
-
 function hideMapTabChildren() {
     var mapTab = document.getElementById("mapTab");
     for (var i = 0; i < mapTab.childNodes.length; i++) {
@@ -203,16 +201,50 @@ function scrollMap(north, east) {
     document.getElementById("staticmapimage").src = constructMapURL();
 }
 
-function setTabsHeight() {
+function setMapHeights() {
 	// Set the height of the tabs container to fill the browser window height
-	var tc = document.getElementById("tabscontainer");
-	if(tc) { 
-		// This little two-step is sadly necessary to force the mobile browsers to size correctly
-		tc.style.height="1000px";
-		scrollTo(0,1);
-		tc.style.height=(window.innerHeight-56) + "px";
+	var mapimage = document.getElementById("mapimage");
+	var maptab = document.getElementById("mapTab");
+	if(mapimage) { 
+		mapimage.style.height="50%";
+	}
+	if(maptab) {
+		maptab.style.height="1000px";
+	}
+	setTimeout("scrollTo(0,1)",500);
+	setTimeout("setHeight()",600);
+}
+
+function setHeight() {
+	var mapimage = document.getElementById("mapimage");
+	var maptab = document.getElementById("mapTab");
+	if(mapimage) { 
+		var topoffset = findPosY(document.getElementById("tabbodies"));
+		var bottomoffset = 56;
+		document.getElementById("mapzoom").style.height=bottomoffset + "px";
+		mapimage.style.height=(window.innerHeight - topoffset- bottomoffset) + "px";
+	}
+	if(maptab) {
+		maptab.style.height="auto";
 	}
 }
+
+function findPosY(obj) {
+// Function for finding the y coordinate of the object passed as an argument.
+// Returns the y coordinate as an integer, relative to the top left origin of the document.
+	var intCurlTop = 0;
+	if (obj.offsetParent)
+	{
+		while (obj.offsetParent)
+		{
+			intCurlTop += obj.offsetTop;
+			obj = obj.offsetParent;
+		}
+	}
+	return intCurlTop;
+}	
+
+
 
 /*
 function disable(strID) {
