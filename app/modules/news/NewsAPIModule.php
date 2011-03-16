@@ -14,10 +14,10 @@ class NewsAPIModule extends APIModule {
                 $categoryID = $this->getArg('categoryID');
                 $start = $this->getArg('start');
                 $limit = $this->getArg('limit');
-                $totalItems = 0;
 
                 $feed = $this->getFeed($categoryID);
-                $items = $feed->items($start, $limit, $totalItems);
+                $items = $feed->items($start, $limit);
+                $totalItems = $feed->getTotalItems();
 
                 $stories = array();
                 foreach ($items as $story) {
