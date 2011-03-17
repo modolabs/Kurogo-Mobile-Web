@@ -116,12 +116,12 @@ dt, .label, .legend {
 }
 
 .bottomnav {
-	/* Navigation at bottom of page -- e.g., "Back to top" */
 	background-color: #4a4c4f;	
 	font-size: 93%;
 }
 
 .bottomnav a, .bottomnav a:visited {
+	/* Navigation at bottom of page -- e.g., "Back to top" */
 	color: #fff; 
 }
 

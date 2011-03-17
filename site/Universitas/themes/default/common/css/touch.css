@@ -7,17 +7,18 @@ body {
 }
 
 body, th, td, li, option, select, input {
-	/* Primary font */
+	/* Primary font color */
 	color: #222;
 }
 
 .focal, .nav, .results {
-	/* Border color for many container elements */
+	/* Color of border, if any, for many container elements */
+	/* border-color: #bbb; */
 	border-color: #ccc;
 }
 
 .nav li, .results li, .secondary li, ul.focal li  {
-	/* Border color for list items */
+	/* Color of border between list items */
 	border-color: #ccc;
 }
 
@@ -65,6 +66,7 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 
 
 
+
 /* Major content blocks */
 
 .focal {   
@@ -77,6 +79,7 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 	/* Shaded subclass of focal content - e.g., background for tabbed focal div */
 	background-color: #edeef0;
 }
+
 
 
 
@@ -94,6 +97,8 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 }
 
 
+
+
 /* Footer */
 
 #footer {
@@ -109,6 +114,7 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 }
 
 
+
 /* Text input fields, e.g., search fields */
 .forminput {
 	border-color: #666; 	
@@ -118,6 +124,9 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 	background-color: #666;	/* Background color of form submit buttons that have text labels */
 	color: #fff;
 }
+
+
+
 
 /* Springboards */
 
@@ -157,6 +166,9 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 	height: 20px;
 }
 
+
+
+
 /* Navigation and results lists */
 
 .nav, .results {
@@ -189,6 +201,9 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 	line-height: 1.462em;
 	color: #202020;
 }
+
+
+
 
 
 /* Next/previous navigation - e.g., going from day to day in events calendar */

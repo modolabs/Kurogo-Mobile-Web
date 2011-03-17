@@ -7,23 +7,23 @@ body {
 }
 
 body, th, td, li, option, select, input {
-	/* Primary font */
-	color: #222;
+	/* Primary font color */
+	color: #333;
 }
 
 .focal, .nav, .results {
-	/* Border color for many container elements */
+	/* Color of border, if any, for many container elements */
 	/* border-color: #bbb; */
 	border: none;
 }
 
 .secondary {
-	/* Border color override specific to this theme */
+	/* Color of border, if any, for secondary lists */
 	border-color: #ccc;
 }
 
 .nav li, .results li, .secondary li, ul.focal li  {
-	/* Border color for list items */
+	/* Color of border between list items */
 	border-color: #ccc;
 }
 
@@ -69,6 +69,9 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 }
 
 
+
+
+
 /* Major content blocks */
 
 .focal {   
@@ -81,6 +84,8 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	/* Shaded subclass of focal content - e.g., background for tabbed focal div */
 	background-color: #edeef0;
 }
+
+
 
 
 
@@ -127,6 +132,10 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	color: #fff
 }
 
+
+
+
+
 /* Text input fields, e.g., search fields */
 
 .forminput {
@@ -148,6 +157,10 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	-webkit-border-bottom-left-radius: 10px; 		
 	-webkit-border-top-left-radius: 10px;	
 }
+
+
+
+
 
 /* Springboards */
 
@@ -198,6 +211,9 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 }
 
 
+
+
+
 /* Navigation and results lists */
 
 .nav, .results {
@@ -230,6 +246,9 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	line-height: 19px;
 	color: #202020;
 }
+
+
+
 
 
 /* Next/previous navigation - e.g., going from day to day in events calendar */
@@ -284,6 +303,46 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	/* Navigation list inside a tab body needs a bit of background color to contrast from tab body background */
 	background-color: #ecedef;
 }
+
+
+
+
+/* Freeform content module */
+
+
+.staticContentBody {
+	margin: 10px;
+	border-radius: 10px;
+	background-color: #fff;
+	padding: 10px;
+	color: #333;
+}
+
+.staticContentBody h2 {
+	font-size: 123%;
+	font-weight: normal;
+	color: #333;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody h3 {
+	font-size: 100%;
+	font-weight: bold;
+	color: #000;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody h4 {
+	font-size: 100%;
+	font-weight: bold;
+	color: #666;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody ul {
+	margin-bottom: 1.5em;
+}
+
 
 
 
