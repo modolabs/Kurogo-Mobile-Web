@@ -442,6 +442,7 @@ class CalendarWebModule extends WebModule {
 
       case 'index':
         if ($userCalendar = $this->getDefaultFeed('user')) {
+            $this->assign('selectedFeed', 'user|' . $userCalendar);
             $feed = $this->getFeed($userCalendar, 'user');
             $feeds = $this->getFeeds('user');
             $upcomingEvents = array();

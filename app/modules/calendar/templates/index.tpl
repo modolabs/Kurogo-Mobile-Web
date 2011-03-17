@@ -23,7 +23,7 @@
   {foreach $feeds as $type=>$typeFeeds}
   <optgroup label="{$type}">
   {foreach $typeFeeds as $feed=>$title}
-      <option value="{$feed}">in {$title|escape}</option>
+      <option value="{$feed}"{if $selectedFeed==$feed} selected="selected"{/if}>in {$title|escape}</option>
   {/foreach}
   </optgroup>
   {/foreach}
