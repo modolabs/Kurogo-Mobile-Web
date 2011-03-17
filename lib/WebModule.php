@@ -1084,7 +1084,7 @@ abstract class WebModule extends Module {
     
     // Access Key Start
     $accessKeyStart = count($this->breadcrumbs);
-    if ($this->configID != 'home') {
+    if ($this->configModule != 'home') {
       $accessKeyStart++;  // Home link
     }
     $this->assign('accessKeyStart', $accessKeyStart);
