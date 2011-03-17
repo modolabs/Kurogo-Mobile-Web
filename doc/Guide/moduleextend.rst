@@ -41,7 +41,7 @@ the people module you would create *SitePeopleModule.php* in *SITE_DIR/app/modul
 
     <?php 
     
-    class SitePeopleModule extends PeopleModule
+    class SitePeopleWebModule extends PeopleWebModule
     {
         protected function initializeForPage() {
             switch ($this->page)
@@ -78,3 +78,22 @@ a *AboutModule.php* file in the *SITE_DIR/app/modules/about* folder. It would lo
     }
     
 It is important to include the *$id* property like you would with a :doc:`new module <modulenew>`.
+
+=======================================
+Copying a Module 
+=======================================
+
+In some cases you may want to have multiple modules that exist under different URLs that share the
+same logic, but have different configurations. An example of this would be the :doc:`modulecontent.rst`
+In this case you simply subclass the parent modul and provide a different *$configModule* property.
+
+    <?php 
+    
+    class SomethingWebModule extends ContentModule
+    {
+        protected $configModule = 'something';
+    }
+    
+This module would use the same logic and templates as its parent module, but it would use its
+own set of configuration files, in this case in the *SITE_DIR/config/something* folder. Make sure
+that the class name prefix matches the configModule value.
