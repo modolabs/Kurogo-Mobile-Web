@@ -9,10 +9,12 @@
   {foreach $stories as $story}
     <li class="story">
       <a href="{$story['url']}">
+      {if $showImages}
         {if $story['image']}
           <img class="thumbnail" src="{$story['image']['src']}" />
         {else}
           <img class="thumbnail" src="/modules/{$moduleID}/images/news-placeholder.png" />
+        {/if}
         {/if}
         <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
           <div class="title">{$story["title"]}</div>

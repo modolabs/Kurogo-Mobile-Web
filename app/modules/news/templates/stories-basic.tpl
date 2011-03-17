@@ -1,7 +1,7 @@
 <div class="focal">
   {foreach $stories as $story}
     <p>
-      {if $story@first && isset($story['image'])}
+      {if $story@first && $story['image']}
         <img class="thumbnail" src="{$story['image']['src']}" width="{$story['image']['width']}" height="{$story['image']['height']}" />
       {/if}
       <a class="story-link" href="{$story['url']}">{$story["title"]|escape}</a>
