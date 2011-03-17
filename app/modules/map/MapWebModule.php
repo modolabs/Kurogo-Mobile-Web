@@ -263,7 +263,7 @@ class MapWebModule extends WebModule {
             $result = array(
                 'title' => $searchResults[$i]->getTitle(),
                 'url'   => $this->buildBreadcrumbURL(
-                               "/{$this->id}/detail",
+                               "/{$this->configModule}/detail",
                                shortArrayFromMapFeature($searchResults[$i]), false),
               );
               $results[] = $result;
@@ -533,7 +533,7 @@ class MapWebModule extends WebModule {
     
     protected function getCampuses() {
         $campuses = array();
-        $config = $this->getConfig($this->id, 'campus');
+        $config = $this->getConfig($this->configModule, 'campus');
         return $config->getSectionVars();
     }
 

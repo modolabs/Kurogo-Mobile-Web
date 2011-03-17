@@ -10,6 +10,7 @@
   */
 class ErrorWebModule extends WebModule {
   protected $id = 'error';
+  protected $configModule = 'error';
   protected $moduleName = 'Error';
 
   private $errors = array(

@@ -4,9 +4,9 @@
 {block name="onLoad"}{/block}
 
 {block name="breadcrumbs"}
-  {if !$isModuleHome && $moduleID != 'home'}
+  {if !$isModuleHome && $configModule != 'home'}
     <a href="./" class="moduleicon">
-      <img src="/common/images/title-{$navImageID|default:$moduleID}.gif" width="28" height="28" alt="" />
+      <img src="/common/images/title-{$navImageID|default:$configModule}.gif" width="28" height="28" alt="" />
     </a>
   {/if}
 {/block}
@@ -19,7 +19,7 @@
       </a>
       {$breadcrumbHTML}
         {if $isModuleHome}
-          <img src="/common/images/title-{$navImageID|default:$moduleID}.gif" width="28" height="28" alt="" class="moduleicon" />
+          <img src="/common/images/title-{$navImageID|default:$configModule}.gif" width="28" height="28" alt="" class="moduleicon" />
         {/if}
       <span class="pagetitle">
         {$pageTitle}

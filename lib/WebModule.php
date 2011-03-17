@@ -232,7 +232,7 @@ abstract class WebModule extends Module {
   // URL helper functions
   //
   protected function buildURL($page, $args=array()) {
-    return self::buildURLForModule($this->id, $page, $args);
+    return self::buildURLForModule($this->configModule, $page, $args);
   }
 
   public static function buildURLForModule($id, $page, $args=array()) {
@@ -365,7 +365,7 @@ abstract class WebModule extends Module {
                 break;
         }
 
-        $moduleConfigFile = ModuleConfigFile::factory($this->id, $type, ConfigFile::OPTION_CREATE_EMPTY);
+        $moduleConfigFile = ModuleConfigFile::factory($this->configModule, $type, ConfigFile::OPTION_CREATE_EMPTY);
         
         switch ($section)
         {
@@ -617,7 +617,7 @@ abstract class WebModule extends Module {
         $disabled = in_array($id, $disabledIDs);
         
         if ($includeDisabled || !$disabled) {
-          $selected = $this->id == $id;
+          $selected = $this->configModule == $id;
           $primary = $type == 'primary';
   
           $classes = array();
@@ -849,7 +849,7 @@ abstract class WebModule extends Module {
   }
 
   protected function buildBreadcrumbURL($page, $args, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURLForModule($this->id, $page, $args, $addBreadcrumb);
+    return $this->buildBreadcrumbURLForModule($this->configModule, $page, $args, $addBreadcrumb);
   }
   
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
@@ -940,13 +940,13 @@ abstract class WebModule extends Module {
   //
   
   protected function getPageConfig($name, $opts) {
-    $config = ModuleConfigFile::factory($this->id, "page-$name", $opts);
+    $config = ModuleConfigFile::factory($this->configModule, "page-$name", $opts);
     $GLOBALS['siteConfig']->addConfig($config);
     return $config;
   }
   
   protected function getPageData() {
-     $pageConfig = $this->getConfig($this->id, 'pages');
+     $pageConfig = $this->getConfig($this->configModule, 'pages');
      return $pageConfig->getSectionVars(true);
   }
   
@@ -1009,6 +1009,8 @@ abstract class WebModule extends Module {
     
     // Set variables common to all modules
     $this->assign('moduleID',     $this->id);
+    $this->assign('configModule',  $this->configModule);
+    $this->assign('templateModule', $this->templateModule);
     $this->assign('moduleName',   $this->moduleName);
     $this->assign('page',         $this->page);
     $this->assign('isModuleHome', $this->page == 'index');
@@ -1082,7 +1084,7 @@ abstract class WebModule extends Module {
     
     // Access Key Start
     $accessKeyStart = count($this->breadcrumbs);
-    if ($this->id != 'home') {
+    if ($this->configModule != 'home') {
       $accessKeyStart++;  // Home link
     }
     $this->assign('accessKeyStart', $accessKeyStart);

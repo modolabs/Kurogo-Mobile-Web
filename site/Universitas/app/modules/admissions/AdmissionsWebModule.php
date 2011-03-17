@@ -1,6 +1,6 @@
 <?php
 
 class AdmissionsWebModule extends ContentWebModule {
-    protected $id = 'admissions';
+    protected $configModule = 'admissions';
     
 }

@@ -74,7 +74,7 @@
     <meta name="viewport" id="viewport" 
       content="width=device-width, {if $scalable|default:true}user-scalable=yes{else}user-scalable=no, initial-scale=1.0, maximum-scale=1.0{/if}" />
   {/block}
-  <link rel="apple-touch-icon" href="/common/images/icon-{$moduleID}.png" />
+  <link rel="apple-touch-icon" href="/common/images/icon-{$configModule}.png" />
   {block name="additionalHeadTags"}{/block}
 </head>
 
@@ -104,7 +104,7 @@
         {/if}
         <a href="{$breadcrumb['url']}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
           {if $breadcrumb@first}
-            <img src="/common/images/title-{$navImageID|default:$moduleID}.png" width="28" height="28" alt="" />
+            <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="28" height="28" alt="" />
           {else}
             <span>{$breadcrumb['title']}</span>
           {/if}
@@ -114,7 +114,7 @@
   {/block}
 {/capture}
 
-<body class="{$moduleID|capitalize}Module" 
+<body class="{$configModule|capitalize}Module" 
   {block name="onLoad"}
     {if count($onLoadBlocks) || count($onOrientationChangeBlocks)}
       onload="{if count($onLoadBlocks)}onLoad();{/if}{if count($onOrientationChangeBlocks)}onOrientationChange();{/if}"
@@ -135,7 +135,7 @@
             {$breadcrumbHTML}
             <span class="pagetitle">
               {if $isModuleHome}
-                <img src="/common/images/title-{$navImageID|default:$moduleID}.png" width="28" height="28" alt="" class="moduleicon" />
+                <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="28" height="28" alt="" class="moduleicon" />
               {/if}
               {$pageTitle}
             </span>

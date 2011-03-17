@@ -16,6 +16,7 @@ class NewsWebModule extends WebModule {
   protected $feedIndex = 0;
   protected $feed;
   protected $maxPerPage = 10;
+  protected $showImages = true;
 
   protected function getModuleDefaultData() {
     return array_merge(parent::getModuleDefaultData(), array(
@@ -30,14 +31,16 @@ class NewsWebModule extends WebModule {
   }
   
   private function getImageForStory($story) {
-    $image = $story->getImage();
-    
-    if ($image) {
-      return array(
-        'src'    => $image->getURL(),
-        'width'  => $image->getProperty('width'),
-        'height' => $image->getProperty('height'),
-      );
+    if ($this->showImages) {
+        $image = $story->getImage();
+        
+        if ($image) {
+          return array(
+            'src'    => $image->getURL(),
+            'width'  => $image->getProperty('width'),
+            'height' => $image->getProperty('height'),
+          );
+        }
     }
     
     return null;
@@ -118,7 +121,7 @@ class NewsWebModule extends WebModule {
     for ($i = 0; $i < $limit; $i++) {
       $results[] = array(
         'title' => $items[$i]->getTitle(),
-        'url'   => $this->buildBreadcrumbURL("/{$this->id}/story", array(
+        'url'   => $this->buildBreadcrumbURL("/{$this->configModule}/story", array(
           'storyID' => $items[$i]->getGUID(),
           'section' => $feedIndex,
           'start'   => $start,
@@ -132,17 +135,19 @@ class NewsWebModule extends WebModule {
   
     protected function initialize() {
 
-    $this->feeds      = $this->loadFeedData();
-    if ($max = $this->getModuleVar('NEWS_MAX_RESULTS')) {
-        $this->maxPerPage = $max;
-    }
-    
-    $this->feedIndex = $this->getArg('section', 0);
-    if (!isset($this->feeds[$this->feedIndex])) {
-      $this->feedIndex = 0;
-    }
-    
-    $this->feed = $this->getFeed($this->feedIndex);
+        $this->feeds      = $this->loadFeedData();
+        if ($max = $this->getModuleVar('NEWS_MAX_RESULTS')) {
+            $this->maxPerPage = $max;
+        }
+        
+        $this->feedIndex = $this->getArg('section', 0);
+        if (!isset($this->feeds[$this->feedIndex])) {
+          $this->feedIndex = 0;
+        }
+
+        $feedData = $this->feeds[$this->feedIndex];
+        $this->feed = $this->getFeed($this->feedIndex);
+        $this->showImages = isset($feedData['SHOW_IMAGES']) ? $feedData['SHOW_IMAGES'] : true;
     }    
     
     protected function initializeForPage() {
@@ -237,6 +242,7 @@ class NewsWebModule extends WebModule {
           $this->assign('stories',     $stories);
           $this->assign('previousURL', $previousURL);
           $this->assign('nextURL',     $nextURL);
+          $this->assign('showImages',  $this->showImages);
           
         } else {
           $this->redirectTo('index'); // search was blank
@@ -316,6 +322,7 @@ class NewsWebModule extends WebModule {
         $this->assign('isHome',         true);
         $this->assign('previousURL',    $previousURL);
         $this->assign('nextURL',        $nextURL);
+        $this->assign('showImages',  $this->showImages);
         break;
     }
   }

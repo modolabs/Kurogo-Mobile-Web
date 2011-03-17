@@ -442,6 +442,7 @@ class CalendarWebModule extends WebModule {
 
       case 'index':
         if ($userCalendar = $this->getDefaultFeed('user')) {
+            $this->assign('selectedFeed', 'user|' . $userCalendar);
             $feed = $this->getFeed($userCalendar, 'user');
             $feeds = $this->getFeeds('user');
             $upcomingEvents = array();
@@ -777,10 +778,14 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'year':
-        $year      = $this->getArg('year', date('Y'));
+        $year      = $this->getArg('year', null);
         $type      = $this->getArg('type', 'static');
         $calendar  = $this->getArg('calendar', $this->getDefaultFeed($type));
         $month     = $this->getArg('month', 1); // default to january
+        
+        if (!$year) {
+            $year = date('m') < $month ? date('Y') - 1 : date('Y');
+        }
         
         $start = new DateTime(sprintf("%d%02d01", $year, $month), $this->timezone);
         $end   = new DateTime(sprintf("%d%02d01", $year+1, $month), $this->timezone);
