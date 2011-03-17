@@ -12,6 +12,7 @@ abstract class Module
     const ACL_ADMIN='acladmin';
     const ACL_USER ='acl';
     protected $id='none';
+    protected $configModule;
     protected $args = array();
     protected $session;
     protected $moduleData;
@@ -23,6 +24,22 @@ abstract class Module
     public function getID() {
         return $this->id;
     }
+
+    /**
+      * Returns the id used for config (typically the id)
+      * @return string
+      */
+    public function getConfigModule() {
+        return $this->configModule;
+    }
+
+    /**
+      * Sets the id used for config
+      * @param string $id
+      */
+    public function setConfigModule($id) {
+        return $this->configModule = $id;
+    }
   
     /**
       * Loads the data in the feeds configuration file
@@ -31,7 +48,7 @@ abstract class Module
     protected function loadFeedData() {
         $data = array();
         
-        if ($feedConfigFile = $this->getConfig($this->id, 'feeds')) {
+        if ($feedConfigFile = $this->getConfig($this->configModule, 'feeds')) {
             $data = $feedConfigFile->getSectionVars();
         }
         return $data;
@@ -101,6 +118,9 @@ abstract class Module
       * Common initialization. Checks access.
       */
     protected function init() {
+        if (!$this->configModule) {
+            $this->configModule = $this->id;
+        }
         $moduleData = $this->getModuleData();
 
         if ($moduleData['disabled']) {
@@ -190,7 +210,7 @@ abstract class Module
     protected function getModuleConfig() {
         static $moduleConfig;
         if (!$moduleConfig) {
-            $moduleConfig = $this->getConfig($this->id, 'module');
+            $moduleConfig = $this->getConfig($this->configModule, 'module');
         }
         
         return $moduleConfig;
@@ -217,7 +237,7 @@ abstract class Module
       */
     protected function getModuleDefaultData() {
         return array(
-            'title'=>ucfirst($this->id),
+            'title'=>ucfirst($this->configModule),
             'disabled'=>0,
             'protected'=>0,
             'search'=>0,
@@ -378,7 +398,7 @@ abstract class Module
             if ($acl = AccessControlList::createFromString($aclString)) {
                 $acls[] = $acl;
             } else {
-                throw new Exception("Invalid $var $aclString in $this->id");
+                throw new Exception("Invalid $var $aclString in $this->configModule");
             }
         }
         

@@ -118,7 +118,7 @@ class NewsWebModule extends WebModule {
     for ($i = 0; $i < $limit; $i++) {
       $results[] = array(
         'title' => $items[$i]->getTitle(),
-        'url'   => $this->buildBreadcrumbURL("/{$this->id}/story", array(
+        'url'   => $this->buildBreadcrumbURL("/{$this->configModule}/story", array(
           'storyID' => $items[$i]->getGUID(),
           'section' => $feedIndex,
           'start'   => $start,
