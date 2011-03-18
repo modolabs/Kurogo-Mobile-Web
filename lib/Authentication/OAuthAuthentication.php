@@ -53,6 +53,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
             $this->oauth->setToken('');
             $this->oauth->setTokenSecret('');
         }
+
+	    $this->oauth->setDebugMode($this->debugMode);
 	    return $this->oauth->request($method, $url, $parameters, $headers);
 	}
 	

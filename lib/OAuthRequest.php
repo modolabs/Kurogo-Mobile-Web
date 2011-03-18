@@ -20,6 +20,7 @@ class OAuthRequest
     protected $returnHeaders = array();
     protected $signatureMethod = 'HMAC-SHA1';
     protected $baseString='';
+    protected $debugMode;
 
 	protected function buildQuery(array $parameters) {
 
@@ -182,6 +183,10 @@ class OAuthRequest
         $this->signatureMethod = $signatureMethod;
 	}
 
+	public function setDebugMode($debugMode) {
+	    $this->debugMode = $debugMode ? true : false;
+	}
+
 	public function setToken($token) {
 	    $this->token = $token;
 	}
@@ -256,6 +261,11 @@ class OAuthRequest
 		
 		// set options
 		curl_setopt_array($this->curl, $options);
+		
+		if ($this->debugMode) {
+		    error_log("Retrieving $method $curl_url$fragment");
+		    error_log("Headers: " . implode("\n", $curl_headers));
+		}
 
 		// execute
 		$response = curl_exec($this->curl);

@@ -47,6 +47,12 @@ abstract class AuthenticationAuthority
     protected $groupClass='UserGroup';
     
     /**
+      * Whether debug mode is on or off. See setDebugMode
+      * @var bool
+      */
+    protected $debugMode = false;
+    
+    /**
      * Attempts to authenticate the user using the included credentials
      * @param string $login the userid to login (this will be blank for OAUTH based authorities)
      * @param string $password password (this will be blank for OAUTH based authorities)
@@ -294,6 +300,14 @@ abstract class AuthenticationAuthority
         }
                 
         return $authorities;
+    }
+    
+    /**
+     * Sets debug mode
+     * @param bool 
+     */
+    public function setDebugMode($debugMode) {
+        $this->debugMode = $debugMode ? true : false;
     }
     
     /**
