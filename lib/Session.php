@@ -29,6 +29,7 @@ class Session
     protected $remainLoggedInTime=0;
     protected $loginCookiePath;
     protected $apiCookiePath;
+    protected $debugMode = false;
     
     public function __construct($args) {
 
@@ -38,6 +39,8 @@ class Session
         $this->remainLoggedInTime = isset($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) ? intval($args['AUTHENTICATION_REMAIN_LOGGED_IN_TIME']) : 0;
         $this->loginCookiePath = URL_BASE . 'login';
         $this->apiCookiePath = URL_BASE . API_URL_PREFIX . '/login';
+        $this->debugMode = isset($args['DEBUG_MODE']) ? $args['DEBUG_MODE'] : false;
+        
         
         if (!isset($_SESSION)) {
             // set session ini values
@@ -88,6 +91,7 @@ class Session
                 $ok = false;
                 foreach ($_SESSION['users'] as $userData) {
                     if ($authority = AuthenticationAuthority::getAuthenticationAuthority($userData['auth'])) {
+                        $authority->setDebugMode($this->debugMode);
 
                         if ($user = $authority->getUser($userData['auth_userID'])) {
                             $ok = true;
@@ -157,6 +161,10 @@ class Session
         $_SESSION['ping'] = time();
     }
     
+    public function setDebugMode($debugMode) {
+        $this->debugMode = $debugMode ? true : false;
+    }
+
     public function getUsers($returnAnonymous=false) {
         if ( count($this->users)>0 || !$returnAnonymous) {
             return $this->users;

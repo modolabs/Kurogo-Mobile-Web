@@ -113,6 +113,7 @@ class LoginWebModule extends WebModule {
             }
             
             if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
+                $authority->setDebugMode($this->getSiteVar('DATA_DEBUG'));
                 $result = $authority->login($login, $password, $session, $options);
             } else {
                 error_log("Invalid authority $authorityIndex");

@@ -183,6 +183,7 @@ abstract class Module
     protected function getSession() {
         if (!$this->session) {
             $args = $this->getSiteSection('authentication');
+            $args['DEBUG_MODE'] = $this->getSiteVar('DATA_DEBUG');
             $this->session = new Session($args);
         }
     
