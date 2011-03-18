@@ -180,7 +180,7 @@ class PeopleWebModule extends WebModule {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
         if (!isset($feedData['CONTROLLER_CLASS'])) {
-            $feedData['CONTROLLER_CLASS'] = 'LDAPDataController';
+            $feedData['CONTROLLER_CLASS'] = 'LDAPPeopleController';
         }
         $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         $controller->setAttributes($this->detailAttributes);

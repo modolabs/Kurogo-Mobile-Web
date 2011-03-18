@@ -25,7 +25,7 @@ In most cases, this will permit you to perform simple search and details views o
 
 **Optional values**
 
-* *CONTROLLER_CLASS* allows you to set a different class name for the controller. The default is LDAPDataController.
+* *CONTROLLER_CLASS* allows you to set a different class name for the controller. The default is LDAPPeopleController.
   You could write your own subclass of PeopleController to retrieve the values from a different source,
   such as a database.
 * *PERSON_CLASS* allows you to set a different class name for the returned user objects when searching. 

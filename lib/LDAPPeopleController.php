@@ -3,10 +3,6 @@
   * @package Directory
   */
 
-/**
-  */
-require_once(LIB_DIR . '/LDAP.php');
-
 if (!function_exists('ldap_connect')) {
     die('LDAP Functions not available');
 }
@@ -20,8 +16,9 @@ define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 /**
   * @package Directory
   */
-class LDAPDataController extends PeopleController {
+class LDAPPeopleController extends PeopleController {
   protected $personClass = 'LDAPPerson';
+  protected $host;
   protected $port=389;
   protected $ldapResource;
   protected $searchBase;
@@ -386,6 +383,10 @@ protected function generateErrorMessage($ldap_resource) {
     {
         parent::init($args);
 
+        if (isset($args['HOST'])) {
+            $this->setHost($args['HOST']);
+        }
+
         $this->port = isset($args['PORT']) ? $args['PORT'] : 389;
         $this->searchBase = isset($args['SEARCH_BASE']) ? $args['SEARCH_BASE'] : '';
         $this->adminDN = isset($args['ADMIN_DN']) ? $args['ADMIN_DN'] : null;
@@ -497,4 +498,42 @@ class LDAPCompoundFilter extends LDAPFilter
         $stringValue = sprintf("(%s%s)", $this->joinType, implode("", $this->filters));
         return $stringValue;
     }
+}
+
+class LDAPPerson extends Person {
+
+  protected $dn;
+  
+  public function getDn() {
+    return $this->dn;
+  }
+
+  public function getId() {
+    $uid = $this->getFieldSingle('uid');
+    return $uid ? $uid : $this->getDn();
+  }
+  
+  private function getFieldSingle($field) {
+    $values = $this->getField($field);
+    if ($values) {
+      return $values[0];
+    }
+    return NULL;
+  }
+
+  public function __construct($ldapEntry) {
+    $this->dn = $ldapEntry['dn'];
+    $this->attributes = array();
+
+    for ($i=0; $i<$ldapEntry['count']; $i++) {
+        $attribute = $ldapEntry[$i];
+        $count = $ldapEntry[$attribute]['count'];
+        $this->attributes[$attribute] = array();
+        for ($j=0; $j<$count; $j++) {
+            if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attribute])) {
+                $this->attributes[$attribute][] = $ldapEntry[$attribute][$j];
+            }
+        }
+    }
+  }
 }

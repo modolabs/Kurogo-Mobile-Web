@@ -115,7 +115,7 @@ Included examples of DataControllers/Parsers include:
   and *TimeRange* class. The *TrumbaCalendarDataController* is a specific subclass for feeds that 
   utilize the `Trumba <http://www.trumba.com/>`_ calendar service.
 * *PeopleController* - access directory/person data. The only included implementation at this time 
-  is the *LDAPDataController* which queries information from an LDAP directory. Note this is distinct
+  is the *LDAPPeopleController* which queries information from an LDAP directory. Note this is distinct
   from authenticating users.
 
 These classes also use the *DiskCache* class to cache the retrieved data.
