@@ -288,6 +288,7 @@ class PeopleWebModule extends WebModule {
         }
         
         $this->loadPageConfigFile('index', 'contacts');
+        $this->setAutoPhoneNumberDetection(false);
         break;
     }  
   }
