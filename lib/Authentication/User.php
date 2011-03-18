@@ -141,4 +141,10 @@ abstract class User
 
     public function setSessionData($data) {
     }
+
+    public function setUserData($key, $value) {
+    }
+
+    public function getUserData($key) {
+    }
 }
