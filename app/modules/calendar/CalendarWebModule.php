@@ -373,8 +373,10 @@ class CalendarWebModule extends WebModule {
         $end = clone $start;
         $end->setTime(23,59,59);
         
-        $type = $this->getArg('type', 'static');
-        $feed = $this->getFeed('events', $type);
+        $type     = $this->getArg('type', 'static');
+        $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+
+        $feed = $this->getFeed($calendar, $type);
         $feed->setStartDate($start);
         $feed->setEndDate($end);
         $iCalEvents = $feed->items();
