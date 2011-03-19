@@ -16,6 +16,7 @@ abstract class User
     protected $FirstName;
     protected $LastName;
     protected $FullName;
+    protected $userData;
     
     protected $attributes=array();
     
@@ -140,11 +141,41 @@ abstract class User
     }
 
     public function setSessionData($data) {
+    
     }
 
+    private function getUserDataFolder() {
+        return CACHE_DIR . "/UserData";
+    }
+    
+    private function getUserDataFile() {
+        return $this->getUserDataFolder() . "/" . $this->getUserHash();
+    }
+    
     public function setUserData($key, $value) {
+        if (!is_dir($this->getUserDataFolder())) {
+            mkdir($this->getUserDataFolder());
+        }
+
+        $userData = $this->getUserData();
+        $userData[$key] = $value;
+        file_put_contents($this->getUserDataFile(), serialize($userData));
+        $this->userData = $userData;
     }
 
-    public function getUserData($key) {
+    public function getUserData($key=null) {
+        if (is_null($this->userData)) {
+            if (is_file($this->getUserDataFile())) {
+                $this->userData = unserialize(file_get_contents($this->getUserDataFile()));
+            } else {
+                $this->userData = array();
+            }
+        }
+        
+        if (strlen($key)) {
+            return isset($this->userData[$key]) ? $this->userData[$key] : null;
+        } else {
+            return $this->userData;
+        }
     }
 }

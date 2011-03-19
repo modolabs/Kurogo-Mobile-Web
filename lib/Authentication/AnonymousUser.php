@@ -13,6 +13,14 @@ class AnonymousUser extends User
     public function getUserHash() {
         return '';
     }
-    
+ 
+    public function setUserData($key, $value) {
+        return false;
+    }
+
+    public function getUserData($key) {
+        return null;
+    }
+ 
 }
 
