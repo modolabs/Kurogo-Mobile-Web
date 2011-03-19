@@ -939,6 +939,24 @@ abstract class WebModule extends Module {
   // Config files
   //
   
+    protected function getThemeVars() {
+        $config = ConfigFile::factory('config', 'theme', ConfigFile::OPTION_CREATE_EMPTY);
+        $sections = array(
+            'common',
+            $this->pagetype,
+            $this->pagetype . '-' . $this->platform
+        );
+        
+        $vars = array();
+        foreach ($sections as $section) {
+            if ($sectionVars = $config->getSection($section, Config::SUPRESS_ERRORS)) {
+                $vars = array_merge($vars, $sectionVars);
+            }
+        }
+        
+        return $vars;
+    }
+  
   protected function getPageConfig($name, $opts) {
     $config = ModuleConfigFile::factory($this->configModule, "page-$name", $opts);
     $GLOBALS['siteConfig']->addConfig($config);
@@ -990,7 +1008,7 @@ abstract class WebModule extends Module {
     $this->templateEngine->assignByRef($var, $value);
   }
   
-  public function assign($var, $value) {
+  public function assign($var, $value=null) {
     $this->loadTemplateEngineIfNeeded();
         
     $this->templateEngine->assign($var, $value);
@@ -1081,6 +1099,9 @@ abstract class WebModule extends Module {
     if (isset($this->tabbedView)) {
       $this->assign('tabbedView', $this->tabbedView);
     }
+    
+    $this->assign('imageExt', $this->imageExt);
+    $this->assign($this->getThemeVars());
     
     // Access Key Start
     $accessKeyStart = count($this->breadcrumbs);

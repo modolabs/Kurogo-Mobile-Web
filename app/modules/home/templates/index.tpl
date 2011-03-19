@@ -1,15 +1,7 @@
 {capture name="banner" assign="banner"}
-  {$bannerImg = array()}
-  {$bannerImg['src'] = "/modules/{$moduleID}/images/logo-home"}
-  
-  {block name="bannerImageDetails"}
-    {$bannerImg['src'] = $bannerImg['src']|cat:".png"}
-    {$bannerImg['width'] = 265}
-    {$bannerImg['height'] = 45}
-  {/block}
 
   <h1 id="homelogo"{if isset($topItem)} class="roomfornew"{/if}>
-    <img src="{$bannerImg['src']}" width="{$bannerImg['width']}" height="{$bannerImg['height']}" alt="{$SITE_NAME}" />
+    <img src="/modules/{$moduleID}/images/logo-home{$imageExt}" width="{$banner_width|default:265}" height="{$banner_height|default:45}" alt="{$SITE_NAME|escape}" />
   </h1>
   {block name="topItem"} 
     {if isset($topItem)}

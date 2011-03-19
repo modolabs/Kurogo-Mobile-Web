@@ -79,6 +79,9 @@ class ConfigFile extends Config {
         case 'project-default':
             $pattern = sprintf('%s/%%s-default.ini', MASTER_CONFIG_DIR);
             break;
+        case 'theme':
+            $pattern = sprintf('%s/%%s.ini', THEME_DIR);
+            break;
         default:
             throw new Exception("Unknown config type $type");
     }
