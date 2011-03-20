@@ -372,7 +372,8 @@ JS;
             if ($this->numGroups > 0) {
                 if (count($categoryPath) < 2) {
                     $path = implode(MAP_CATEGORY_DELIMITER, $categoryPath);
-                    throw new Exception("invalid category path $path for multiple feed groups");
+var_dump($categoryPath);die();
+                    //throw new Exception("invalid category path $path for multiple feed groups");
                 }
                 $feedIndex = array_shift($listItemPath).MAP_CATEGORY_DELIMITER.array_shift($listItemPath);
             } else {
@@ -380,7 +381,7 @@ JS;
             }
             $feedData = $this->feeds[$feedIndex];
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $controller->setCategoryId($feedIndex);
+            $controller->setCategory($feedIndex);
             $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
             return $controller;
         }
@@ -417,6 +418,8 @@ JS;
     protected $bookmarkLifespan = 25237;
 
     protected function generateBookmarkOptions($cookieID) {
+        $cookieID = urldecode($cookieID);
+
         // compliant branch
         $this->addOnLoad("setBookmarkStates('{$this->bookmarkCookie}', '{$cookieID}')");
         $this->assign('cookieName', $this->bookmarkCookie);
@@ -506,7 +509,7 @@ JS;
         parse_str($aBookmark, $params);
         if (isset($params['featureindex'])) {
             $index = $params['featureindex'];
-            $categoryPath = $params['category'];
+            $categoryPath = explode(MAP_CATEGORY_DELIMITER, $params['category']);
             $dataController = $this->getDataController($categoryPath, $listItemPath);
             $feature = $dataController->getFeature($index, $listItemPath);
             return array($feature->getTitle(), $dataController->getTitle());

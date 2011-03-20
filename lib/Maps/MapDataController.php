@@ -195,7 +195,23 @@ class MapDataController extends DataController implements MapFolder
         }
         return $items;
     }
+
+    // TODO find some way to require that MapFolder objects include
+    // setCategory and getCategory, even though the MapListElement
+    // interface includes getCategory and would conflict with classes
+    // that implement both
     
+    public function setCategory($categoryPath) {
+        if (!is_array($categoryPath)) {
+            $categoryPath = explode(MAP_CATEGORY_DELIMITER, $categoryPath);
+        }
+        $this->parser->setCategory($categoryPath);
+    }
+
+    public function getCategory() {
+        return $this->parser->getCategory();
+    }
+
     // End MapFolder interface
 
     public function getFeature($name, $categoryPath=array()) {
@@ -264,11 +280,6 @@ class MapDataController extends DataController implements MapFolder
         return $controller;
     }
     
-    public function setCategoryId($categoryId) {
-        // TODO: enforce setCategoryId on map parser objects
-        $this->parser->setCategoryId($categoryId);
-    }
-
     protected function init($args)
     {
         parent::init($args);

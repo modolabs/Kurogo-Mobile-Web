@@ -479,7 +479,7 @@ class KMLDataParser extends XMLDataParser
     protected $document;
     protected $folders = array();
     protected $title;
-    protected $categoryId;
+    protected $category;
 
     // whitelists
     protected static $startElements=array(
@@ -503,8 +503,12 @@ class KMLDataParser extends XMLDataParser
         return $this->title;
     }
     
-    public function setCategoryId($categoryId) {
-        $this->categoryId = $categoryId;
+    public function setCategory($category) {
+        $this->category = $category;
+    }
+
+    public function getCategory() {
+        return $this->category;
     }
 
     public function getStyle($id) {
@@ -537,11 +541,11 @@ class KMLDataParser extends XMLDataParser
                 if ($parent instanceof KMLFolder) {
                     $newFolderIndex = count($parent->getListItems());
                     $categoryPath = $parent->getCategory();
-                    $categoryPath[] = $newFolderIndex;
                 } elseif ($parent instanceof KMLDocument) { // child of root element
                     $newFolderIndex = count($this->items);
-                    $categoryPath = array($this->categoryId, $newFolderIndex);
+                    $categoryPath = $this->category;
                 }
+                $categoryPath[] = $newFolderIndex;
                 $folder->setIndex($newFolderIndex);
                 $folder->setCategory($categoryPath);
                 $this->elementStack[] = $folder;
@@ -558,7 +562,7 @@ class KMLDataParser extends XMLDataParser
                 $placemark = new KMLPlacemark($name, $attribs);
                 $parent = end($this->elementStack);
                 if (!($parent instanceof KMLFolder)) { // child of root element
-                    $placemark->setCategory($this->categoryId);
+                    $placemark->setCategory($this->category);
                 }
                 $this->elementStack[] = $placemark;
                 break;

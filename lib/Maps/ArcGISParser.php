@@ -222,7 +222,7 @@ class ArcGISParser extends DataParser implements MapFolder
     private $baseURL;
     
     private $mapName;
-    private $categoryId;
+    private $category;
     private $defaultLayerId = 0;
     
     // sublayers are known to arcgis as layers
@@ -270,7 +270,7 @@ class ArcGISParser extends DataParser implements MapFolder
             foreach ($data['layers'] as $layerData) {
                 $id = $layerData['id'];
                 $name = $layerData['name'];
-                $this->subLayers[$id] = new ArcGISLayer($id, $name, $this->categoryId);
+                $this->subLayers[$id] = new ArcGISLayer($id, $name, $this->category);
             }
             
             $this->selectDefaultLayer();
@@ -309,8 +309,12 @@ class ArcGISParser extends DataParser implements MapFolder
         $this->baseURL = $baseURL;
     }
     
-    public function setCategoryId($categoryId) {
-        $this->categoryId = $categoryId;
+    public function setCategory($category) {
+        $this->category = $category;
+    }
+
+    public function getCategory() {
+        return $this->category;
     }
     
     //// MapFolder interface
@@ -405,7 +409,7 @@ class ArcGISParser extends DataParser implements MapFolder
 class ArcGISLayer implements MapFolder, MapListElement {
     private $id;
     private $name;
-    private $parentId;
+    private $parentCategory;
     
     private $fieldNames;
     private $extent;
@@ -419,10 +423,10 @@ class ArcGISLayer implements MapFolder, MapListElement {
     private $features = array();
     private $isPopulated = false;
     
-    public function __construct($id, $name, $parentId) {
+    public function __construct($id, $name, $parentCategory) {
         $this->id = $id;
         $this->name = $name;
-        $this->parentId = $parentId;
+        $this->parentCategory = $parentCategory;
     }
     
     // MapListElement interface
@@ -440,7 +444,9 @@ class ArcGISLayer implements MapFolder, MapListElement {
     }
     
     public function getCategory() {
-        return array($this->parentId, $this->id);
+        $categoryPath = $this->parentCategory;
+        $categoryPath[] = $this->id;
+        return $categoryPath;
     }
     
     //// MapFolder interface
