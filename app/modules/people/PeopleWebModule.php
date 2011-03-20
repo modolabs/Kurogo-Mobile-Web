@@ -137,7 +137,7 @@ class PeopleWebModule extends WebModule {
         $section = $this->formatPersonDetail($people[$i], $this->detailFields['name']);
         
         $results[] = array(
-          'url' => $this->buildBreadcrumbURL("/{$this->configModule}/detail", array(
+          'url' => $this->buildBreadcrumbURL('detail', array(
              'uid'    => $people[$i]->getId(),
              'filter' => $searchTerms
           ), false),

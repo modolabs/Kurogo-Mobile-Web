@@ -348,8 +348,7 @@ JS;
         for ($i = 0; $i < $limit; $i++) {
             $result = array(
                 'title' => $searchResults[$i]->getTitle(),
-                'url'   => $this->buildBreadcrumbURL(
-                               "/{$this->configModule}/detail",
+                'url'   => $this->buildBreadcrumbURL('detail',
                                shortArrayFromMapFeature($searchResults[$i]), false),
               );
               $results[] = $result;
