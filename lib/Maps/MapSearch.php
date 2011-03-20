@@ -5,9 +5,18 @@ class MapSearch {
     protected $searchResults;
     protected $resultCount;
     protected $feeds;
+    protected $feedGroup;
+    
+    public function __construct($feeds) {
+        $this->setFeedData($feeds);
+    }
     
     public function setFeedData($feeds) {
         $this->feeds = $feeds;
+    }
+    
+    public function setFeedGroup($feedGroup) {
+        $this->feedGroup = $feedGroup;
     }
 
     public function getSearchResults() {

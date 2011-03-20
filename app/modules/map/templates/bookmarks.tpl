@@ -2,10 +2,10 @@
 
 {include file="findInclude:common/templates/search.tpl" placeholder="Search Map" tip=$searchTip}
 
-{if $campuses}
+{if $groups}
 <div class="nonfocal">
-  <a name="campuses"> </a>
-  <h3>Campuses</h3>
+  <a name="groups"> </a>
+  <h3>{$groupAlias}</h3>
 </div>
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$campuses}
 {/if}

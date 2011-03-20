@@ -2,10 +2,86 @@
 
 includePackage('Maps');
 
+define('MAP_GROUP_COOKIE', 'mapgroup');
+
 class MapWebModule extends WebModule {
 
     protected $id = 'map';
+    protected $feedGroup = null;
+    protected $feedGroups = null;
+    protected $numGroups = 1;
     protected $feeds;
+    
+    private function getDataForGroup($group) {
+        if (!$this->feedGroups) {
+             $this->feedGroups = $this->getFeedGroups();
+        }
+        return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
+    }
+    
+    protected function getFeedGroups() {
+        $config = $this->getConfig($this->configModule, 'feedgroups');
+        return $config->getSectionVars();
+    }
+    
+    private function getCategoriesAsArray() {
+        $category = $this->getArg('category', null);
+        if ($category !== null) {
+            return explode(MAP_CATEGORY_DELIMITER, $category);
+        }
+        return array();
+    }
+    
+    // overrides function in Module.php
+    protected function loadFeedData() {
+        $data = array();
+        $feedConfigFile = NULL;
+        
+        if ($this->feedGroup !== NULL) {
+            if ($this->numGroups === 1) {
+                $this->feedGroup = key($this->feedGroups);
+            }
+        }
+
+        if ($this->numGroups === 0) {
+            $feedConfigFile = $this->getConfig($this->configModule, 'feeds');
+            $data = $feedConfigFile->getSectionVars();
+
+        } elseif ($this->feedGroup !== NULL) {
+            $configName = "feeds-{$this->feedGroup}";
+            $feedConfigFile = $this->getConfig($this->configModule, $configName);
+            foreach ($feedConfigFile->getSectionVars() as $id => $feedData) {
+                $data[$this->feedGroup.MAP_CATEGORY_DELIMITER.$id] = $feedData;;
+            }
+
+        } else {
+            foreach ($this->feedGroups as $groupID => $groupData) {
+                $aConfig = $this->getConfig($this->configModule, "feeds-$groupID");
+                foreach ($aConfig->getSectionVars() as $id => $feedData) {
+                    $data[$groupID.MAP_CATEGORY_DELIMITER.$id] = $feedData;
+                }
+            }
+        }
+
+        return $data;
+    }
+    
+    protected function initialize() {
+        $this->feedGroup = $this->getArg('group', NULL);
+        if ($this->feedGroup === NULL) {
+            if (isset($_COOKIE[MAP_GROUP_COOKIE])) {
+                $this->feedGroup = $_COOKIE[MAP_GROUP_COOKIE];
+            }
+        }
+
+        $this->feedGroups = $this->getFeedGroups();
+        $this->numGroups = count($this->feedGroups);
+
+        // clear out invalid feed group argument
+        if ($this->feedGroup !== NULL && $this->getDataForGroup($this->feedGroup) === NULL) {
+            $this->feedGroup = NULL;
+        }
+    }
     
     protected function pageSupportsDynamicMap() {
         return ($this->pagetype == 'compliant' ||
@@ -90,12 +166,15 @@ class MapWebModule extends WebModule {
             $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
             if ($this->pagetype == 'compliant' || $this->pagetype == 'tablet') {
-                $this->addInlineJavascript(
-                    "mapWidth = $imageWidth;\n"
-                    ."mapHeight = $imageHeight;\n"
-                    ."staticMapOptions = "
-                    .$imgController->getJavascriptControlOptions().";\n"
-                    );
+                $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}/staticImageURL";
+                $js = <<<JS
+                    mapWidth = {$imageWidth};
+                    mapHeight = {$imageHeight};
+                    staticMapOptions = {$imgController->getJavascriptControlOptions()};
+                    apiURL = "{$apiURL}";
+JS;
+
+                $this->addInlineJavascript($js);
                 $this->addOnLoad('addStaticMapControls();');
             }
 
@@ -215,22 +294,33 @@ class MapWebModule extends WebModule {
     // $category can be a string or array which specifies the drilldown path 
     // if null, user will be redirected to index
     private function categoryURL($category=null, $addBreadcrumb=true) {
-        return $this->buildBreadcrumbURL('category', array(
-            'category' => $category,
-        ), $addBreadcrumb);
+        $args = array();
+        if ($category !== NULL) {
+            if (is_array($category)) {
+                $category = implode(MAP_CATEGORY_DELIMITER, $category);
+            }
+            $args['category'] = $category;
+        }
+        return $this->buildBreadcrumbURL('category', $args, $addBreadcrumb);
     }
     
-    private function campusURL($campusIndex, $addBreadcrumb=true) {
+    private function groupURL($group, $addBreadcrumb=false) {
         $args = $this->args;
-        $args['campus'] = $campusIndex;
-        return $this->buildBreadcrumbURL('campus', $args, $addBreadcrumb);
+        $args['group'] = $group;
+        $args['action'] = ($group == '') ? 'remove' : 'add';
+        return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
     }
 
-    private function detailURL($name, $categoryPath=null, $addBreadcrumb=true) {
-        return $this->buildBreadcrumbURL('detail', array(
-            'featureindex' => $name,
-            'category'     => $categoryPath,
-        ), $addBreadcrumb);
+    private function detailURL($name, $category=null, $addBreadcrumb=true) {
+        $args = array();
+        $args['featureindex'] = $name;
+        if ($category) {
+            if (is_array($category)) {
+                $category = implode(MAP_CATEGORY_DELIMITER, $category);
+            }
+            $args['category'] = $category;
+        }
+        return $this->buildBreadcrumbURL('detail', $args, $addBreadcrumb);
     }
   
     private function detailURLForResult($urlArgs, $addBreadcrumb=true) {
@@ -251,11 +341,7 @@ class MapWebModule extends WebModule {
     }
 
     public function federatedSearch($searchTerms, $maxCount, &$results) {
-        $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS');
-        $mapSearch = new $mapSearchClass();
-        if (!$this->feeds)
-            $this->feeds = $this->loadFeedData();
-        $mapSearch->setFeedData($this->feeds);
+        $mapSearch = $this->getSearchClass();
         $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
         
         $limit = min($maxCount, count($searchResults));
@@ -272,33 +358,50 @@ class MapWebModule extends WebModule {
         return count($searchResults);
     }
 
-    private function getDataController($index) {
+    private function getDataController($categoryPath, &$listItemPath) {
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
 
-        if ($index === NULL) {
+        if ($categoryPath === NULL) {
             return MapDataController::factory('MapDataController', array(
                 'JS_MAP_CLASS' => 'GoogleJSMap',
                 'DEFAULT_ZOOM_LEVEL' => $this->getModuleVar('DEFAULT_ZOOM_LEVEL', 10)
                 ));
         
-        } else if (isset($this->feeds[$index])) {
-            $feedData = $this->feeds[$index];
+        } else {
+            $listItemPath = $categoryPath;
+            if ($this->numGroups > 0) {
+                if (count($categoryPath) < 2) {
+                    $path = implode(MAP_CATEGORY_DELIMITER, $categoryPath);
+                    throw new Exception("invalid category path $path for multiple feed groups");
+                }
+                $feedIndex = array_shift($listItemPath).MAP_CATEGORY_DELIMITER.array_shift($listItemPath);
+            } else {
+                $feedIndex = array_shift($listItemPath);
+            }
+            $feedData = $this->feeds[$feedIndex];
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $controller->setCategoryId($index);
+            $controller->setCategoryId($feedIndex);
             $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
             return $controller;
         }
     }
+
+    protected function getSearchClass() {
+        $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
+        if (!$this->feeds)
+            $this->feeds = $this->loadFeedData();
+        $mapSearch = new $mapSearchClass($this->feeds);
+        return $mapSearch;
+    }
     
-    private function assignCategoriesForCampus($campusID=NULL) {
+    private function assignCategories() {
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
 
         $categories = array();
         foreach ($this->feeds as $id => $feed) {
             if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
-            if ($campusID && (!isset($feed['CAMPUS']) || $feed['CAMPUS'] != $campusID)) continue;
             $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
             $categories[] = array(
                 'title' => $feed['TITLE'],
@@ -358,8 +461,8 @@ class MapWebModule extends WebModule {
         parse_str($aBookmark, $params);
         if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
             return $this->buildBreadcrumbURL('detail', $params, true);
-        } else if (isset($params['campus'])) {
-            return $this->campusURL($params['campus']);
+        } else if (isset($params['group'])) {
+            return $this->groupURL($params['group']);
         } else {
             return '#';
         }
@@ -401,26 +504,17 @@ class MapWebModule extends WebModule {
     }
     
     protected function getTitleForBookmark($aBookmark) {
-        if (!$this->feeds)
-            $this->feeds = $this->loadFeedData();
-
         parse_str($aBookmark, $params);
         if (isset($params['featureindex'])) {
             $index = $params['featureindex'];
             $categoryPath = $params['category'];
-            if (is_array($categoryPath)) {
-                $topCategory = array_shift($categoryPath);
-            } else {
-                $topCategory = $categoryPath;
-                $categoryPath = array();
-            }
-            $dataController = $this->getDataController($topCategory);
-            $feature = $dataController->getFeature($index, $categoryPath);
+            $dataController = $this->getDataController($categoryPath, $listItemPath);
+            $feature = $dataController->getFeature($index, $listItemPath);
             return array($feature->getTitle(), $dataController->getTitle());
         
-        } else if (isset($params['campus'])) {
-            $campus = $this->getDataForCampus($params['campus']);
-            return array($campus['title']);
+        } else if (isset($params['group'])) {
+            $groupData = $this->getDataForGroup($params['group']);
+            return array($groupData['title']);
 
         } else if (isset($params['title'])) {
             $result = array($params['title']);
@@ -436,8 +530,8 @@ class MapWebModule extends WebModule {
     
     private function bookmarkType($aBookmark) {
         parse_str($aBookmark, $params);
-        if (isset($params['campus']))
-            return 'campus';
+        if (isset($params['group']))
+            return 'group';
         return 'place';
     }
     
@@ -452,7 +546,7 @@ class MapWebModule extends WebModule {
         }
         $this->assign('hasBookmarks', $hasBookmarks);
     }
-    
+
     // return true on success, false on failure
     protected function generateTabForKey($tabKey, $feature, $dataController, &$tabJavascripts) {
         switch ($tabKey) {
@@ -466,12 +560,7 @@ class MapWebModule extends WebModule {
                 $geometry = $feature->getGeometry();
                 $center = $geometry->getCenterCoordinate();
                 
-                $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS');
-                $mapSearch = new $mapSearchClass();
-                if (!$this->feeds)
-                    $this->feeds = $this->loadFeedData();
-                $mapSearch->setFeedData($this->feeds);
-                
+                $mapSearch = $this->getSearchClass();
                 $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
                 $places = array();
                 if ($searchResults) {
@@ -492,7 +581,7 @@ class MapWebModule extends WebModule {
             case 'info':
             {
                 // embedded photo
-                $photoServer = $this->getModuleVar('MAP_PHOTO_SERVER');
+                $photoServer = $this->getModuleVar('MAP_PHOTO_SERVER', null);
                 // this method of getting photo url is harvard-specific and
                 // further only works on data for ArcGIS features.
                 // TODO rewrite this if we find an alternate way to server photos
@@ -525,73 +614,72 @@ class MapWebModule extends WebModule {
         
         return false;
     }
-    
-    private function getDataForCampus($campus) {
-        $campuses = $this->getCampuses();
-        return isset($campuses[$campus]) ? $campuses[$campus] : null;
-    }
-    
-    protected function getCampuses() {
-        $campuses = array();
-        $config = $this->getConfig($this->configModule, 'campus');
-        return $config->getSectionVars();
-    }
 
     protected function initializeForPage() {
+
         switch ($this->page) {
             case 'help':
                 break;
-            
+
             case 'index':
-            case 'campus':
-                $campuses = $this->getCampuses();
-                if (count($campuses)==1) {
-                    $campus = key($campuses);
-                } else {
-                    $campus = $this->getArg('campus', NULL);
+
+                if ($action = $this->getArg('action', false)) {
+                    if ($this->feedGroup && $action == 'add') {
+                        // TODO have config for different types of cookie expiration times
+                        $expireTime = time() + 897298;
+                        setcookie(MAP_GROUP_COOKIE, $this->feedGroup, $expireTime, COOKIE_PATH);
+                    } else if ($action == 'remove') {
+                        $expireTime = time() - 4096;
+                        setcookie(MAP_GROUP_COOKIE, '', $expireTime, COOKIE_PATH);
+                    }
                 }
-                
-                if (empty($campus) && count($campuses)>1) {
-                    // show the list of campuses
-                    foreach ($campuses as $id=>$campusData) {
-                        $campusLinks[] = array(
-                            'title' => $campusData['title'],
-                            'url' => $this->campusURL($id),
+
+                if ($this->feedGroup === null && $this->numGroups > 1) {
+                    // show the list of groups
+                    foreach ($this->feedGroups as $id => $groupData) {
+                        $categories[] = array(
+                            'title' => $groupData['title'],
+                            'url' => $this->groupURL($id),
                             );
                     }
-                    $this->assign('browseHint', 'Select a Location');
-                    $this->assign('categories', $campusLinks);
+                    $groupAlias = $this->getModuleVar('GROUP_ALIAS', 'Campus');
+                    $this->assign('browseHint', "Select a $groupAlias");
+                    $this->assign('categories', $categories);
                     $this->assign('searchTip', NULL);
+                    
+                } else {
+                    $groupData = $this->getDataForGroup($this->feedGroup);
+                    $browseBy = $groupData['title'];
+                    if ($this->numGroups > 1) {
+                        $cookieID = http_build_query(array('group' => $this->feedGroup));
+                        $this->generateBookmarkOptions($cookieID);
 
-                } elseif ($campusData = $this->getDataForCampus($campus)) {
-                    $browseBy = $campusData['title'];
-                    $cookieID = http_build_query(array('campus' => $campus));
-                    $this->generateBookmarkOptions($cookieID);
-                    $this->assignCategoriesForCampus($campus);
+                        $groupAlias = $this->getModuleVar('GROUP_ALIAS_PLURAL', 'Campuses');
+                        $clearLink = array(array(
+                            'title' => "All $groupAlias",
+                            'url' => $this->groupURL(''),
+                            ));
+                        $this->assign('clearLink', $clearLink);
+                    }
+                    $this->assignCategories();
                     $this->assign('browseHint', "Browse {$browseBy} by:");
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
-                } else {
-                    if (count($campuses)==0) {
-                        throw new Exception("No campuses defined");
-                    } else {
-                        throw new Exception("Invalid campus $campus");
-                    }
                 }
-                
+
                 $this->generateBookmarkLink();
 
                 break;
             
             case 'bookmarks':
-                $campuses = array();
+                $feedGroups = array();
                 $places = array();
 
                 foreach ($this->getBookmarks() as $aBookmark) {
                     if ($aBookmark) { // prevent counting empty string
                         $titles = $this->getTitleForBookmark($aBookmark);
                         $subtitle = count($titles) > 1 ? $titles[1] : null;
-                        if ($this->bookmarkType($aBookmark) == 'campus') {
-                            $campuses[] = array(
+                        if ($this->bookmarkType($aBookmark) == 'group') {
+                            $feedGroups[] = array(
                                 'title' => $titles[0],
                                 'subtitle' => $subtitle,
                                 'url' => $this->detailURLForBookmark($aBookmark),
@@ -605,7 +693,8 @@ class MapWebModule extends WebModule {
                         }                        
                     }
                 }
-                $this->assign('campuses', $campuses);
+                $this->assign('groupAlias', $this->getModuleVar('GROUP_ALIAS_PLURAL', 'Campuses'));
+                $this->assign('groups', $feedGroups);
                 $this->assign('places', $places);
             
                 break;
@@ -614,13 +703,7 @@ class MapWebModule extends WebModule {
           
                 if (isset($this->args['filter'])) {
                     $searchTerms = $this->args['filter'];
-
-                    $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS');
-                    $mapSearch = new $mapSearchClass();
-                    if (!$this->feeds)
-                        $this->feeds = $this->loadFeedData();
-                    $mapSearch->setFeedData($this->feeds);
-        
+                    $mapSearch = $this->getSearchClass();
                     $searchResults = $mapSearch->searchCampusMap($searchTerms);
         
                     if (count($searchResults) == 1) {
@@ -648,22 +731,15 @@ class MapWebModule extends WebModule {
                 break;
             
             case 'category':
-                if (isset($this->args['category'])) {
+
+                $categoryPath = $this->getCategoriesAsArray();
+                if ($categoryPath) {
                     // populate drop-down list at the bottom
-                    $this->assignCategoriesForCampus($this->getArg('campus', NULL));
+                    $this->assignCategories();
         
                     // build the drill-down list
-                    $categoryPath = $this->args['category'];
-                    if (is_array($categoryPath)) {
-                        $topCategory = array_shift($categoryPath);
-                    } else {
-                        $topCategory = $categoryPath;
-                        $categoryPath = array();
-                    }
-                    $dataController = $this->getDataController($topCategory);
-                    $listItems = $dataController->getListItems($categoryPath);
-                    array_unshift($categoryPath, $topCategory); // restore the path since we still need it
-
+                    $dataController = $this->getDataController($categoryPath, $listItemPath);
+                    $listItems = $dataController->getListItems($listItemPath);
                     if (count($listItems) == 1 && $listItems[0] instanceof MapFeature) {
                         $args = $this->args;
                         $args['featureindex'] = $listItems[0]->getIndex();
@@ -698,8 +774,8 @@ class MapWebModule extends WebModule {
                 $tabKeys = array();
                 $tabJavascripts = array();
 
-                $dataController = $this->getDataControllerForMap();
-                $feature = $this->getFeatureForMap($dataController);
+                $dataController = $this->getDataControllerForMap($listItemPath);
+                $feature = $this->getFeatureForMap($dataController, $listItemPath);
     
                 if (isset($this->args['featureindex'])) { // this is a regular place
                     $cookieParams = array(
@@ -709,8 +785,8 @@ class MapWebModule extends WebModule {
                     $cookieID = http_build_query($cookieParams);
                     $this->generateBookmarkOptions($cookieID);
 
-                } elseif (isset($this->args['campus'])) {
-                    $cookieID = http_build_query(array('campus' => $this->args['campus']));
+                } elseif (isset($this->args['group'])) {
+                    $cookieID = http_build_query(array('group' => $this->args['group']));
                     $this->generateBookmarkOptions($cookieID);
                 }
                 
@@ -739,33 +815,28 @@ class MapWebModule extends WebModule {
         }
     }
     
-    private function getDataControllerForMap() {
+    private function getDataControllerForMap(&$listItemPath=array()) {
         if (isset($this->args['featureindex'])) { // this is a regular place
-            $topCategory = $this->args['category'];
-            if (is_array($topCategory)) {
-                $topCategory = array_shift($topCategory);
+            $topCategory = NULL;
+            $categoryPath = $this->getCategoriesAsArray();
+            if (count($categoryPath)) {
+                $topCategory = $categoryPath[0];
             }
-            $dataController = $this->getDataController($topCategory);
+            $dataController = $this->getDataController($categoryPath, $listItemPath);
                     
         } else {
-            $dataController = $this->getDataController(NULL);
+            $dataController = $this->getDataController(NULL, $listItemPath);
         }
         return $dataController;
     }
         
-    private function getFeatureForMap($dataController) {
+    private function getFeatureForMap($dataController, $categoryPath=array()) {
         if (isset($this->args['featureindex'])) { // this is a regular place
             $index = $this->args['featureindex'];
-            $categoryPath = $this->args['category'];
-            if (is_array($categoryPath)) {
-                array_shift($categoryPath);
-            } else {
-                $categoryPath = array();
-            }
             $feature = $dataController->getFeature($index, $categoryPath);
                     
-        } elseif (isset($this->args['campus'])) { // this is a campus
-            $campusData = $this->getDataForCampus($this->args['campus']);
+        } elseif (isset($this->args['group'])) { // this is a campus
+            $campusData = $this->getDataForGroup($this->args['group']);
             $coordParts = explode(',', $campusData['center']);
             $center = array('lat' => $coordParts[0], 'lon' => $coordParts[1]);
 
