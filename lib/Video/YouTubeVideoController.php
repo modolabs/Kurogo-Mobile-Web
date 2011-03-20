@@ -11,6 +11,7 @@
         $this->addFilter('q', $q); //set the query
         $this->addFilter('max-results', $limit);
         $this->addFilter('start-index', $start+1);
+        $this->addFilter('orderby', 'relevance');
     
         $items = parent::items(0, $limit);
         return $items;
@@ -20,9 +21,10 @@
         parent::init($args);
 
         $this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
-        $this->addFilter('alt', 'json'); //set the output format to json
+        $this->addFilter('alt', 'jsonc'); //set the output format to json
         $this->addFilter('format', 6); //only return mobile videos
         $this->addFilter('v', 2); // version 2
+        $this->addFilter('orderby', 'published');
         
         if (isset($args['TAG'])) {
             $this->addFilter('category', $args['TAG']);
@@ -46,7 +48,7 @@
 	public function getItem($id)
 	{
         $this->setBaseUrl("http://gdata.youtube.com/feeds/mobile/videos/$id");
-        $this->addFilter('alt', 'json'); //set the output format to json
+        $this->addFilter('alt', 'jsonc'); //set the output format to json
         $this->addFilter('format', 6); //only return mobile videos
         $this->addFilter('v', 2); // version 2
 
@@ -58,19 +60,15 @@ class YouTubeDataParser extends DataParser
 {
     protected function parseEntry($entry) {
         $video = new YouTubeVideoObject();
-        $video->setURL($entry['link'][0]['href']);
-        $video->setTitle($entry['title']['$t']);
-        $video->setDescription($entry['media$group']['media$description']['$t']);
-        $video->setDuration($entry['media$group']['yt$duration']['seconds']);
-        $video->setID($entry['media$group']['yt$videoid']['$t']);
-        $video->setImage($entry['media$group']['media$thumbnail'][0]['url']);
-        
-        if ($entry['media$group']['media$keywords']) {
-            $tags = explode(', ', $entry['media$group']['media$keywords']['$t']);
-            $video->setTags($tags);
-        }
-        $video->setAuthor($entry['author'][0]['name']['$t']);
-        $published = new DateTime($entry['published']['$t']);
+        $video->setURL($entry['player']['default']);
+        $video->setTitle($entry['title']);
+        $video->setDescription($entry['description']);
+        $video->setDuration($entry['duration']);
+        $video->setID($entry['id']);
+        $video->setImage($entry['thumbnail']['sqDefault']);
+        $video->setTags($entry['tags']);
+        $video->setAuthor($entry['uploader']);
+        $published = new DateTime($entry['uploaded']);
         $video->setPublished($published);
         return $video;
     }
@@ -78,19 +76,20 @@ class YouTubeDataParser extends DataParser
     public function parseData($data) {
         if ($data = json_decode($data, true)) {
             
-            if (isset($data['feed']['entry'])) {
+            if (isset($data['data']['items'])) {
                 $videos = array();  
-                $this->setTotalItems($data['feed']['openSearch$totalResults']['$t']);
+                $this->setTotalItems($data['data']['totalItems']);
 
-                foreach ($data['feed']['entry'] as $entry) {
+                foreach ($data['data']['items'] as $entry) {
                     $videos[] = $this->parseEntry($entry);
                 }
                 
                 return $videos;
-            } elseif (isset($data['entry'])) {
-                $video = $this->parseEntry($data['entry']);
+            } elseif (isset($data['data'])) {
+                $video = $this->parseEntry($data['data']);
                 return $video;
             } else {
+                Debug::die_here($data);
                 return array();
             }
         } 
