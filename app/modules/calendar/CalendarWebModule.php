@@ -405,7 +405,7 @@ class CalendarWebModule extends WebModule {
                 if ($event->overlaps(new TimeRange($now, $now))) {
                     $availability = 'In use';
                 } elseif ($event->overlaps(new TimeRange($now + 900, $now + 1800))) {
-                    $availability = 'In use from ' . $this->timeText($event, true);
+                    $availability = 'In use at ' . $this->timeText($event, true);
                 }
             }
                 
