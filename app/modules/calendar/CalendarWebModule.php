@@ -601,7 +601,7 @@ class CalendarWebModule extends WebModule {
           );
         }
 
-        $this->assign('feedTitle', $this->getFeedTitle($type, $user));
+        $this->assign('feedTitle', $this->getFeedTitle($calendar, $type));
         $this->assign('calendar', $calendar);
         $this->assign('current', $current);
         $this->assign('events',  $events);        
