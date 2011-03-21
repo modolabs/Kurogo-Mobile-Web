@@ -9,11 +9,6 @@
    overflow: visible;
 }
 
-#mapzoom {
-   //position: absolute;
-   //top: -10px;
-}
-
 #staticmapimage {
   width: 100%;
   height: 100%;
