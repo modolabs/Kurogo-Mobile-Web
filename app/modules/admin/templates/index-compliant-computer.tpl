@@ -22,11 +22,14 @@
 <body>
 <div id="pagewrap">
 <header>
-	<img src="/modules/admin/images/logo.png" alt="Modo Labs, Inc." width="80" height="80" id="logo" />
+	<img src="/modules/admin/images/kurogo-logo.png" alt="Kurogo" width="90" height="90" id="logo" />
 	<h1>	
 		Kurogo&trade; Adminstration Console
 		<span id="sitename">{$SITE_NAME}</span>
 	</h1>
+	<div id="utility">
+		<div id="user">Signed in as <span id="username">Pete Akins</span><a id="signout" href="" onclick="confirmSignout()">Sign out</a></div>
+	</div>
 </header>
 
 <div id="contentwrap">
@@ -36,7 +39,7 @@
 				<a href="">Site Configuration</a>
 				<ul>
 					<li><a class="current" href="setup.html">Site Setup</a></li>
-					<li><a href="">Default URLs</a></li>
+					<li><a href="">Default Modules</a></li>
 					<li><a href="">Theme</a></li>
 					<li><a href="">Device Detection</a></li>
 					<li><a href="error.html">Error Handling and Debugging</a></li>
@@ -48,7 +51,7 @@
 				</ul>
 			</li>
 			<li>
-				<a href="">Modules</a>
+				<a href="">Module Configuration</a>
 			</li>
 			<li>
 				<a href="">Text Strings</a>
@@ -146,7 +149,7 @@
 </div> <!-- id="contentwrap" -->
 
 <footer>
-	&copy;2011 <a href="http://www.modolabs.com" class="external">Modo Labs, Inc.</a> All rights reserved. 
+	<a href="http://www.modolabs.com"><img src="/modules/admin/images/modo-logo.png" alt="Modo Labs, Inc." width="50" height="50" id="footerlogo" />&copy;2011 Modo Labs, Inc. All rights reserved.</a>
 </footer>
 </div> <!-- id="pagewrap" -->
 </body>
