@@ -10,6 +10,7 @@
   {/if}
   <title>{$moduleName}{if !$isModuleHome}: {$pageTitle}{/if}</title>
   <link rel="shortcut icon" href="/favicon.ico" />
+  <link href="{$minify['css']}" rel="stylesheet" media="all" type="text/css"/>
   {foreach $inlineCSSBlocks as $css}
     <style type="text/css" media="screen">
       {$css}
@@ -18,7 +19,15 @@
   {foreach $cssURLs as $cssURL}
     <link href="{$cssURL}" rel="stylesheet" media="all" type="text/css"/>
   {/foreach}
-  <link href="/modules/admin/admin.css" rel="stylesheet" media="all" type="text/css"/>
+    {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
+      <script type="text/javascript">{$inlineJavascriptBlock}</script>
+    {/foreach}
+    
+    {foreach $javascriptURLs as $url}
+      <script src="{$url}" type="text/javascript"></script>
+    {/foreach}
+    
+    <script src="{$minify['js']}" type="text/javascript"></script>
 </head>
 <body>
 <div id="pagewrap">
