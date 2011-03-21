@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Kurogo Administration Console</title>
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<link rel="stylesheet" rev="stylesheet" href="../css/compliant-computer.css" type="text/css" media="all" />
+</head>
+<body>
+<div id="pagewrap">
+<header>
+	<img src="../images/kurogo-logo.png" alt="Kurogo" width="90" height="90" id="logo" />
+	<h1>	
+		Kurogo&trade; Adminstration Console
+		<span id="sitename">Universitas Mobile Web</span>
+	</h1>
+	<div id="utility">
+		<div id="user">Signed in as <span id="username">Pete Akins</span><a id="signout" href="" onclick="confirmSignout()">Sign out</a></div>
+	</div>
+</header>
+
+<div id="contentwrap">
+	<nav>
+		<ul>
+			<li>
+				<a href="setup.html">Site Configuration</a>
+			</li>
+			<li>
+				<a href="modules-overview.html">Module Configuration</a>
+				<ul>
+					<li><a class="current" href="modules-overview.html">Modules Overview</a></li>
+					<li><a href="module-about.html">About</a></li>
+					<li><a href="module-admin.html">Admin</a></li>
+					<li><a href="calendar.html">Calendar</a></li>
+					<li><a href="content.html">Content (Static)</a></li>
+					<li><a href="customize.html">Customize Homescreen</a></li>
+					<li><a href="download.html">Download</a></li>
+					<li><a href="emergency.html">Emergency Info</a></li>
+					<li><a href="error.html">Error</a></li>
+					<li><a href="fullweb.html">Full Website (Link)</a></li>
+					<li><a href="home.html">Home</a></li>
+					<li><a href="indoormaps.html">Indoor Maps</a></li>
+					<li><a href="info.html">Info</a></li>
+					<li><a href="links.html">Links</a></li>
+					<li><a href="login.html">Login</a></li>
+					<li><a href="map.html">Map</a></li>
+					<li><a href="news.html">News</a></li>
+					<li><a href="people.html">People Directory</a></li>
+					<li><a href="stats.html">Statistics</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="text.html">Text Strings</a>
+			</li>
+		</ul>
+	</nav>
+	
+	<div id="content">
+		<form method="post">
+			<input name="submit" id="submit" type="submit" value="Save" />
+			<h1>Module Overview</h1>
+			<table class="configtable" summary="Overview table of modules and their high-level configuration">
+				<thead>
+					<tr>
+						<th colspan="2">Module name</th>
+						<th>ID</th>
+						<th>Enable</th>
+						<th>Home<br/>Screen</th>
+						<th>Protect</th>
+						<th>SSL</th>
+						<th>Search</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/about.png" width="30" height="30" alt="" /></td>
+						<td><a href="module-about.html">About</a></td>
+						<td>about</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/admin.png" width="30" height="30" alt="" /></td>
+						<td><a href="module-admin.html">Admin</a></td>
+						<td>admin</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/calendar.png" width="30" height="30" alt="" /></td>
+						<td><a href="calendar.html">Calendar</a></td>
+						<td>calendar</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" checked /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/content.png" width="30" height="30" alt="" /></td>
+						<td><a href="content.html">Content (Static)</a></td>
+						<td>content</td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/customize.png" width="30" height="30" alt="" /></td>
+						<td><a href="configure.html">Customize Homescreen</a></td>
+						<td>customize</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/download.png" width="30" height="30" alt="" /></td>
+						<td><a href="download.html">Download</a></td>
+						<td>download</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/emergency.png" width="30" height="30" alt="" /></td>
+						<td><a href="emergency.html">Emergency Info</a></td>
+						<td>emergency</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/error.png" width="30" height="30" alt="" /></td>
+						<td><a href="error.html">Error</a></td>
+						<td>error</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/fullweb.png" width="30" height="30" alt="" /></td>
+						<td><a href="fullweb.html">Full Website (Link)</a></td>
+						<td>fullweb</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/home.png" width="30" height="30" alt="" /></td>
+						<td><a href="home.html">Home</a></td>
+						<td>home</td>
+						<td><input type="checkbox" checked /></td>
+						<td>N/A</td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/indoorMaps.png" width="30" height="30" alt="" /></td>
+						<td><a href="indoormaps.html">Indoor Maps</a></td>
+						<td>indoorMaps</td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/info.png" width="30" height="30" alt="" /></td>
+						<td><a href="info.html">Info</a></td>
+						<td>info</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/links.png" width="30" height="30" alt="" /></td>
+						<td><a href="links.html">Links</a></td>
+						<td>links</td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/login.png" width="30" height="30" alt="" /></td>
+						<td><a href="login.html">Login</a></td>
+						<td>login</td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/map.png" width="30" height="30" alt="" /></td>
+						<td><a href="map.html">Map</a></td>
+						<td>map</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" checked /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/news.png" width="30" height="30" alt="" /></td>
+						<td><a href="news.html">News</a></td>
+						<td>news</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" checked /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/people.png" width="30" height="30" alt="" /></td>
+						<td><a href="people.html">People Directory</a></td>
+						<td>people</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" checked /></td>
+					</tr>
+					<tr>
+						<td><img src="http://demo.modolabs.com/forhoon/modules/home/images/compliant/stats.png" width="30" height="30" alt="" /></td>
+						<td><a href="stats.html">Statistics</a></td>
+						<td>stats</td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" checked /></td>
+						<td><input type="checkbox" /></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>		
+	</div>
+
+</div> <!-- id="contentwrap" -->
+
+<footer>
+	<a href="http://www.modolabs.com" class="external"><img src="../images/modo-logo.png" alt="Modo Labs, Inc." width="50" height="50" id="footerlogo" />&copy;2011 Modo Labs, Inc. All rights reserved.</a>
+</footer>
+</div> <!-- id="pagewrap" -->
+</body>
+</html>

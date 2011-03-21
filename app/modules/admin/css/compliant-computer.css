@@ -6,6 +6,15 @@ body, select, input, option {
 	font: 13px/1.5em 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	color: #555;
 }
+a {
+	color: #555;
+}
+a:visited {
+	color: #555;
+}
+a:hover {
+	color: #88a900;
+}
 #pagewrap {
 	position: relative;
 	width: 980px;
@@ -200,7 +209,7 @@ label {
 	color: #777;
 }
 .checkitem input[type="checkbox"] {
-	margin-left: 148px;
+	margin-left: 150px;
 }
 .checkitem label {
 	position: absolute;
@@ -227,4 +236,26 @@ footer a {
 	padding-left: 12px;
 	height: 50px;
 	width: 50px;
+}
+.configtable {
+	width: 100%;
+	line-height: 1.25em;
+	border: none;
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+.configtable th, .configtable td {
+	padding: 2px;
+	margin: 0;
+	border: none;
+	min-width: 40px;
+}
+.configtable th {
+	background-color: #e9e9e9;
+}
+.configtable td {
+	border-bottom: 1px solid #e3e3e3;
+}
+.configtable td:first-child {
+	min-width: 20px;
 }

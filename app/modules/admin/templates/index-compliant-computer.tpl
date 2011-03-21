@@ -18,13 +18,14 @@
   {foreach $cssURLs as $cssURL}
     <link href="{$cssURL}" rel="stylesheet" media="all" type="text/css"/>
   {/foreach}
+  <link href="/modules/admin/admin.css" rel="stylesheet" media="all" type="text/css"/>
 </head>
 <body>
 <div id="pagewrap">
 <header>
 	<img src="/modules/admin/images/kurogo-logo.png" alt="Kurogo" width="90" height="90" id="logo" />
 	<h1>	
-		Kurogo&trade; Adminstration Console
+		Kurogo&trade; Adminstration Console: 
 		<span id="sitename">{$SITE_NAME}</span>
 	</h1>
 	<div id="utility">
@@ -80,21 +81,6 @@
 						<option value="en" selected>English</option>
 					</select>
 					<span class="helptext">Sets the default text encoding for the entire site</span>
-				</li>
-				<li>
-					<label for="copyright">Copyright text:</label>
-					<input type="text" id="copyright" name="copyright" value="&copy;2011 Modo Labs, Inc." />
-					<span class="helptext">As it appears in the sitewide footer</span>
-				</li>
-				<li>
-					<label for="copyright-url">Copyright link:</label>
-					<input type="url" id="copyright-url" name="copyright-url" value="http://www.modolabs.com" />
-					<span class="helptext">URL to which the copyright text should link</span>
-				</li>
-				<li>
-					<label for="feedback">Feedback email:</label>
-					<input type="email" id="feedback" name="feedback" value="help@modolabs.com" />
-					<span class="helptext">Email address to which feedback from site users should be sent</span>
 				</li>
 				<li>
 					<label for="time-zone">Local time zone:</label>
