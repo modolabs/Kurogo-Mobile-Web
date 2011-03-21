@@ -142,7 +142,7 @@ function getMinifyGroupsConfig() {
       APP_DIR, 
     );
     
-    if ($pageOnly || (in_array($module, array('info', 'admin')))) {
+    if ($pageOnly || ($platform=='computer' && in_array($module, array('info', 'admin')))) {
       // Info module does not inherit from common files
       $subDirs = array(
         '/modules/'.$module,
