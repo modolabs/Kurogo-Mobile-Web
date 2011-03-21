@@ -2,8 +2,8 @@ body {
 	background-color: #eee; 
 	text-align: center
 }
-body, select, input, option {
-	font: 13px/1.5em 'Helvetica Neue', Helvetica, Arial, sans-serif;
+body, select, input, option, textarea {
+	font: 13px/1.333em 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	color: #555;
 }
 a {
@@ -17,7 +17,7 @@ a:hover {
 }
 #pagewrap {
 	position: relative;
-	width: 980px;
+	width: 960px;
 	margin: 0 auto;
 	text-align: left;
 }
@@ -114,7 +114,7 @@ nav a {
 	display: block;
 	text-decoration: none;
 	color: #555;
-	padding: 10px 10px 10px 35px;
+	padding: 8px 8px 8px 34px;
 	line-height: 1.1em;
 }
 nav a:hover {
@@ -167,12 +167,13 @@ ul.formfields li {
 input {
 	color: #000;
 }
-input[type="text"], input[type="email"], input[type="url"], input[type="password"], select {
+input[type="text"], input[type="email"], input[type="url"], input[type="password"], select, textarea {
 	width: 440px;
+	color: #333;
 }
 input[type="submit"] {
 	float: right;
-	background-color: #B5CF4B;
+	background-color: #b5cf4b;
 	color: #fff;
 	border: none;
 	margin-top: 3px;
@@ -193,32 +194,61 @@ input[type="submit"]:active {
 }
 label {	
 	display: inline-block;
-	width: 160px;
+	width: 140px;
 	padding-right: 10px;
 	text-align: right;
 	font-size: 100%;
 	line-height: 1.6em;
 	font-weight: bold;
 }
+.helptext, .checkitem label, .tallfield textarea, table.subtable {
+	margin-left: 150px;		/* same as width plus padding-right of label */
+}
 .helptext {
 	display: block;
-	margin-left: 170px;		/* same as width plus padding-right of label */
-	padding: 1px 4px;
+	padding: 2px 0 0 4px;
 	font-size: 85%;
-	line-height: 1.25em;
+	line-height: 1.33em;
 	color: #777;
 }
 .checkitem input[type="checkbox"] {
-	margin-left: 150px;
+	margin-left: 130px;
+	position: relative;
+	top: 2px;
 }
 .checkitem label {
 	position: absolute;
-	left: 170px;		/* same as width plus padding-right of label */
 	padding-left: 4px;
 	width: auto;
 	text-align: left;
 }
-footer {
+.tallfield label {
+	position: absolute;
+}
+.fullwidth label {
+	position: relative;
+	text-align: left;
+}
+input.field1 {
+	width: 140px;
+}
+input.field1s {
+	width: 120px;
+}
+input.field2 {
+	width: 280px;
+}
+input.field2 {
+	width: 260px;
+}
+input.field3 {
+	width: 420px;
+}
+input.field3s {
+	width: 400px;
+}
+footer {	
+	float: right;
 	clear: both;
 	padding: 10px 0;
 	text-align: right;
@@ -237,25 +267,126 @@ footer a {
 	height: 50px;
 	width: 50px;
 }
-.configtable {
+table {
 	width: 100%;
 	line-height: 1.25em;
 	border: none;
 	border-collapse: collapse;
 	border-spacing: 0;
 }
-.configtable th, .configtable td {
+table.subtable {
+	border: 1px solid #e0e0e0;
+	width: 455px;
+}
+th, td {
 	padding: 2px;
 	margin: 0;
 	border: none;
 	min-width: 40px;
 }
-.configtable th {
+th {
+	padding: 4px;
 	background-color: #e9e9e9;
+	line-height: 1.1em;
 }
-.configtable td {
-	border-bottom: 1px solid #e3e3e3;
+td {
+	border-bottom: 1px solid #e0e0e0;
 }
-.configtable td:first-child {
+td:first-child {
 	min-width: 20px;
+}
+table.subtable td:first-child {
+	padding-left: 6px;
+}
+table.subtable ul.formfields li {
+	margin: 6px 0 12px 0;
+}
+table.subtable label {
+	width: 120px;
+	top: 0.25em;
+	font-weight: normal;
+}
+table.subtable input, table.subtable select, table.subtable .helptext {
+	margin-left: 125px;
+	width: 310px;
+}
+.editrow {
+	background-color: #ffecbf;
+	border: 1px solid #ffe16a;
+	color: #000;
+	padding-bottom: 6px;
+}
+.rowbuttons {
+	text-align: right;
+}
+.tablebuttons {
+	margin: 4px 0;
+	text-align: right;
+}
+a.textbutton {
+	display: inline-block;
+	text-align: center;
+	min-width: 50px;
+	margin: 2px;
+	padding: 4px 6px;
+	line-height: 1.2em;
+	text-decoration: none;
+	border: 1px solid #ddd;
+	background-color: #f6f6f6;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+a.textbutton:hover {
+	color: #fff;
+	background-color: #666;
+	border-color: #666
+}
+a.textbutton:active {
+	color: #fff;
+	background-color: #333;
+	border-color: #333
+}
+a.textbutton.save {
+	color: #fff;
+	font-weight: bold;
+	background-color: #b5cf4b;
+	border-color: #a9c82a;
+}
+a.textbutton.save:hover {
+	color: #000;
+}
+a.textbutton.save:active {
+	color: #000;
+	background-color: #88a900;
+	border-color: #88a900;
+}
+a.textbutton.add:hover {
+	color: #000;
+	background-color: #b5cf4b;
+	border-color: #a9c82a;
+}
+a.textbutton.add:active {
+	background-color: #88a900;
+	border-color: #88a900;
+}
+a.textbutton.edit:hover {
+	color: #000;
+	background-color: #fce99d;
+	border-color: #ffe16a;
+}
+a.textbutton.edit:active {
+	color: #000;
+	background-color: #f8c704;
+	border-color: #f8c704;
+}
+a.textbutton.delete:hover {
+	color: #fff;
+	background-color: #a22;
+	border-color: #a00;
+}
+a.textbutton.delete:active {
+	color: #fff;
+	background-color: #700;
+	border-color: #700;
 }
