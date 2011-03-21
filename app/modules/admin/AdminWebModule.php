@@ -105,6 +105,7 @@ class AdminWebModule extends WebModule {
   
   protected function initializeForPage() {
         $this->addJQuery();
+        $this->addInternalCSS('/modules/admin/css/compliant-computer.css');
         switch ($this->page)
         {
              case 'module':

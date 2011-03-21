@@ -10,7 +10,6 @@
   {/if}
   <title>{$moduleName}{if !$isModuleHome}: {$pageTitle}{/if}</title>
   <link rel="shortcut icon" href="/favicon.ico" />
-  <link href="{$minify['css']}" rel="stylesheet" media="all" type="text/css"/>
   {foreach $inlineCSSBlocks as $css}
     <style type="text/css" media="screen">
       {$css}
