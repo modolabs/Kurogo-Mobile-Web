@@ -1116,8 +1116,16 @@ abstract class WebModule extends Module {
         $session = $this->getSession();
         $this->assign('session', $session);
         $this->assign('session_isLoggedIn', $this->isLoggedIn());
-
         if ($this->isLoggedIn()) {
+            $user = $session->getUser();
+            $this->assign('session_userID', $user->getUserID());
+            $this->assign('session_fullName', $user->getFullname());
+            if (count($session->getUsers())==1) {
+                $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array('authority'=>$user->getAuthenticationAuthorityIndex())));
+            } else {
+                $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array()));
+            }
+
             $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0, Config::SUPRESS_ERRORS)));
         }
     }
