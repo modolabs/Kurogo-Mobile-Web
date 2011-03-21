@@ -9,7 +9,6 @@ input[type=text] {
 
 input[type=submit] {
     display: block;
-    width: 240px;
     margin: 0 auto;
 }
 
