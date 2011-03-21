@@ -53,6 +53,12 @@ function handleWindowResize(e) {
 } 
 
 function tabletInit() {
+    if(!document.getElementById('navbar')) {
+        // page has no footer so do not attempt
+        // to use fancy tablet container
+        return;
+    }
+
   setContainerWrapperHeight();
   
   // Adjust wrapper height on orientation change or resize
