@@ -4,7 +4,6 @@
 <h2>Admin</h2>
 </div>
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$adminList}
-
+<p class="focal">The administration interface must be run from a desktop computer.</p>
 
 {include file="findInclude:common/templates/footer.tpl"}
