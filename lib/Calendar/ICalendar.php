@@ -121,6 +121,7 @@ class ICalEvent extends ICalObject {
   protected $sequence;
   protected $recurid = NULL;
   protected $range;
+  protected $starttime;
   protected $summary;
   protected $description;
   protected $location;
@@ -238,18 +239,19 @@ class ICalEvent extends ICalObject {
 
     /* check the "base" event */    
     if ($this->range->overlaps($range)) {
-        $occurrences[] = $this;
+        $occurrences[$this->get_start()] = $this;
     }
     
     foreach ($this->rrules as $rrule) {
         foreach ($rrule->occurrences($this, $range, $limit) as $occurrence) {
             if (!in_array($occurrence->get_start(), $this->exdates)) {
-                $occurrences[] = $occurrence;
+                $occurrences[$occurrence->get_start()] = $occurrence;
             }
         }
     }
-
-    return $occurrences;
+    
+    ksort($occurrences);
+    return array_values($occurrences);
   }
 
   protected function compare_ranges(TimeRange $range, $compare_type) {
@@ -314,6 +316,7 @@ class ICalEvent extends ICalObject {
   
   public function setRange(TimeRange $range) {
     $this->range = $range;
+    $this->starttime = $range->get_start();
   }
   
   public function setSummary($summary) {
@@ -405,9 +408,9 @@ class ICalEvent extends ICalObject {
 
       if (!$this->range) {
         if (strpos($value, 'T')!== FALSE) {
-            $this->range = new TimeRange($timestamp);
+            $this->setRange(new TimeRange($timestamp));
         } else {
-            $this->range = new DayRange($timestamp);
+            $this->setRange(new DayRange($timestamp));
         }
       } else {
         if ($attr=='DTEND' && ($timestamp > $this->get_start()) && (($timestamp - $this->get_start()) % 86400 == 0)) {
@@ -419,6 +422,7 @@ class ICalEvent extends ICalObject {
          {
             case 'DTSTART':
                 $this->range->set_start($timestamp);
+                $this->starttime= $timestamp;
                 break;
             case 'DTEND':
                 $this->range->set_end($timestamp);
@@ -678,26 +682,31 @@ class ICalendar extends ICalObject implements CalendarInterface {
   protected $properties;
   public $timezone = NULL;
   protected $events;
-  protected $occurrences;
+  protected $eventStartTimes;
 
   public function add_event(ICalEvent $event) {
     $uid = $event->get_uid();
     $this->events[$uid] = $event;
+
+    // use event start times so we can return events in starting order
+    $this->eventStartTimes[$uid] = $event->get_start();
   }
   
-  public function getEvents()
-  {
+  public function getEvents() {
     return $this->events;
   }
   
   /* returns an array of events keyed by uid containing an array of occurrences keyed by start time */
-  public function getEventsInRange(TimeRange $range=null, $limit=null)
-  {
+  public function getEventsInRange(TimeRange $range=null, $limit=null) {
     $events = $this->events;
+    
+    // sort event times
+    asort($this->eventStartTimes);
+    
     $occurrences = array();
 
-    foreach ($events as $id => $event) {
-        
+    foreach ($this->eventStartTimes as $id => $startTime) {
+        $event = $this->events[$id];
         $eventOccurrences = $event->getOccurrencesInRange($range, $limit);
         
         foreach ($eventOccurrences as $occurrence) {
@@ -710,7 +719,7 @@ class ICalendar extends ICalObject implements CalendarInterface {
             $occurrences[$uid][$occurrence->get_start()] = $occurrence;
         }
     }
-        
+    
     return $occurrences;
   }
   
