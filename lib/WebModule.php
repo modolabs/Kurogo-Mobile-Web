@@ -804,7 +804,7 @@ abstract class WebModule extends Module {
       
       $linkCrumbs = array_slice($breadcrumbs, 0, $i);
       if (count($linkCrumbs)) { 
-        $this->cleanBreadcrumbs(&$linkCrumbs);
+        $this->cleanBreadcrumbs($linkCrumbs);
         
         $crumbParam = http_build_query(array(
           MODULE_BREADCRUMB_PARAM => $this->encodeBreadcrumbParam($linkCrumbs),
