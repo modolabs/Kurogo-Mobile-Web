@@ -50,19 +50,36 @@ class AdminWebModule extends WebModule {
                     $subNavSections[$id] = array(
                         'id'=>$id,
                         'title'=>$data['title'],
-                        'description'=>'',
                         'url'=>$this->buildURL($section, array('section'=>$id))
                     );
                 }
  
                 break;
             case 'modules':
-                $subNavSections[$id] = array(
+                $subNavSections['overview'] = array(
                     'id'=>'overview',
                     'title'=>'Modules Overview',
-                    'description'=>'',
                     'url'=>$this->buildURL($section, array('section'=>'overview'))
                 );
+                $modules = array();
+                foreach ($this->getAllModules() as $module) {
+                    $subNavSections[$module->getConfigModule()] = array(
+                        'id'=>$module->getConfigModule(),
+                        'title'=>$module->getModuleName(),
+                        'url'=>self::buildURLForModule($module->getConfigModule(), 'admin', array())
+                    );
+                    $modules[$module->getConfigModule()] = array(
+                        'id'=>$module->getConfigModule(),
+                        'title'=>$module->getModuleName(),
+                        'home'=>false,
+                        'disabled'=>$module->getModuleVar('disabled'),
+                        'protected'=>$module->getModuleVar('protected'),
+                        'secure'=>$module->getModuleVar('secure'),
+                        'search'=>$module->getModuleVar('search')
+                    );
+                    
+                }
+                $this->assign('modules', $modules);
                 break;
         }
 
