@@ -8,6 +8,29 @@ class AdminAPIModule extends APIModule
     public function availableVersions() {
         return array(1);
     }
+    
+    private function getUnconstantedValue($value) {
+        $constCheck = array(
+            'FULL_URL_BASE'=>FULL_URL_BASE,
+            'LOG_DIR'=>LOG_DIR,
+            'LIB_DIR'=>LIB_DIR,
+            'CACHE_DIR'=>CACHE_DIR,
+            'DATA_DIR'=>DATA_DIR,
+            'SITE_DIR'=>SITE_DIR,
+            'ROOT_DIR'=>ROOT_DIR
+        );
+        
+        foreach ($constCheck as $const=>$constValue) {
+            $i = strpos($value, $constValue);
+            if ($i !== false) {
+                if ($i==0) {
+                    $value = substr($value, $i+strlen($constValue)+1);
+                }
+            }
+        }
+        
+        return $value;
+    }
 
     private function getSiteAdminConfig() {
         static $configData;
@@ -22,7 +45,7 @@ class AdminAPIModule extends APIModule
                     switch ($field['config'])
                     {
                         case 'config':
-                            $field['value'] = $this->getSiteVar($field['key']);
+                            $field['value'] = $this->getUnconstantedValue($this->getSiteVar($field['key']));
                             break;
                         case 'strings':
                             $field['value'] = $this->getSiteString($field['key']);
