@@ -35,7 +35,7 @@ class AdminWebModule extends WebModule {
         if (!$configFile) {
             $configFile = ConfigFile::factory(MODULES_DIR . "/admin/config/admin-site.ini", 'file');
         }
-        
+
         return $configFile;
     }
     
@@ -46,7 +46,7 @@ class AdminWebModule extends WebModule {
                 $config = $this->getSiteAdminConfig();
                 $sections = $config->getSection('sections');
                 foreach ($sections as $id=>$title) {
-                    $subNavSections[] = array(
+                    $subNavSections[$id] = array(
                         'id'=>$id,
                         'title'=>$title,
                         'description'=>'',
@@ -56,7 +56,7 @@ class AdminWebModule extends WebModule {
  
                 break;
             case 'modules':
-                $subNavSections[] = array(
+                $subNavSections[$id] = array(
                     'id'=>'overview',
                     'title'=>'Modules Overview',
                     'description'=>'',
@@ -66,6 +66,10 @@ class AdminWebModule extends WebModule {
         }
 
         return $subNavSections;
+    }
+
+    protected function initialize() {
+        $this->requiresAdmin();
     }
   
     protected function initializeForPage() {
@@ -77,28 +81,32 @@ class AdminWebModule extends WebModule {
         $this->addJQuery();
         $navSections = $this->getNavSections();
         $this->assign('navSections', $navSections);
+
         $subNavSections = $this->getSubNavSections($this->page);
         $this->assign('subNavSections', $subNavSections);
+
         $defaultSubNavSection = isset($subNavSections[0]) ? $subNavSections[0]['id'] : '';
         $section = $this->getArg('section', $defaultSubNavSection);
+        
+        if (!isset($subNavSections[$section])) {
+            $this->redirectTo($this->page, array());
+        }
 
         switch ($this->page)
         {
             case 'modules':
-                $section = $this->getArg('section', '');
-                break;                
-            case 'site':
+            case 'site':            
                 break;
                 
             case 'index':
                 //redirect desktop devices to the "default page"
                 if ($GLOBALS['deviceClassifier']->isComputer()) {
                     $defaultSection = current($navSections);
-                    $this->redirectTo($defaultSection['id']);
+                    $this->redirectTo($defaultSection['id'], array());
                 }
                 break;
             default:
-                $this->redirectTo('index');
+                $this->redirectTo('index', array());
                 break;
   
         }  
