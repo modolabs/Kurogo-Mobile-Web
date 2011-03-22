@@ -106,7 +106,12 @@ abstract class Module
                 $moduleFile = realpath_exists($path);
                 if ($moduleFile && include_once($moduleFile)) {
                     //found it
-                    return new $className();
+                    $info = new ReflectionClass($className);
+                    if (!$info->isAbstract()) {
+                        $module = new $className();
+                        return $module;
+                    }
+                    return false;
                 }
             }
         }

@@ -1,6 +1,6 @@
 <?php
 
-class ContentWebModule extends WebModule {
+abstract class ContentWebModule extends WebModule {
     protected $id = 'content';
     protected $feedFields = array('CONTENT_TYPE'=>'Content Type');
     protected $hasFeeds = true;
