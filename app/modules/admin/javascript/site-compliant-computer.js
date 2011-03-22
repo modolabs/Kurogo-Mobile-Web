@@ -7,26 +7,15 @@ $(document).ready(function() {
         return false;
     });
     
-    $('nav ul li a').click(function(e) {
-        var href = $(this).attr('href');
-        if (href.indexOf('?section')>-1) {
-            var qs = href.substr(href.indexOf('?')+1);
-            var params = qs.split('&');
-            for (key in params) {
-                var param = params[key].split('=');
-                if (param[0]=='section') {
-                    if (adminSection != param[1]) {
-                        adminSection = param[1];
-                        $('nav ul li a[class=current]').attr('class','');
-                        $(this).attr('class','current');
-                        makeAPICall('admin','getsectiondata', { 'v':1,'type':'site', 'section':adminSection}, processAdminSectionData);
-                    }
-                }
-            }
-
-            return false;
-        } else {
+    $('nav a[section]').click(function(e) {
+        var section = $(this).attr('section');
+        if (adminSection != section) {
+            adminSection = section;
+            $('nav ul li a[class=current]').attr('class','');
+            $(this).attr('class','current');
+            makeAPICall('admin','getsectiondata', { 'v':1,'type':'site', 'section':adminSection}, processAdminSectionData);
         }
+        return false;
     });
 });
 

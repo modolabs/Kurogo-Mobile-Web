@@ -52,7 +52,7 @@
         {if $page==$navSection.id}
         <ul>
 		{foreach $subNavSections as $subNavSection}
-            <li><a{if $subNavSection.id==$section} class="current"{/if} href="{$subNavSection.url}">{$subNavSection.title|escape}</a></li>
+            <li><a{if $subNavSection.id==$section} class="current"{/if} href="{$subNavSection.url}" section="{$subNavSection.id}">{$subNavSection.title|escape}</a></li>
         {/foreach}
         </ul>
         {/if}

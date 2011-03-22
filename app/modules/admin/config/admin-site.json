@@ -6,7 +6,7 @@
             {"label":"Site name","type":"text","config":"strings","description":"Name of this website as it appears in the website, including in the &quot;Return to [site-name] home&quot; link in the footer","key":"SITE_NAME"},
             {"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site. Appears in the title of the &quot;About [organization-name]&quot; link in the &quot;About&quot; module", "key":"ORGANIZATION_NAME"},
             {"label":"Default language","type":"text","config":"config","description":"Sets the default text encoding for the entire site", "key":"LANGUAGE"},
-            {"label":"Local time zone","type":"select","config":"config","key":"LOCAL_TIMEZONE","options":[]},
+            {"label":"Local time zone","type":"select","config":"config","key":"LOCAL_TIMEZONE","optionsMethod":["Calendar","getTimeZones"]},
             {"label":"Local area code","type":"text","config":"config","description":"Area code for local phone numbers. [Add note as to where this is used]","key":"LOCAL_AREA_CODE"},
             {"label":"Enable auto-detection of phone numbers","type":"checkbox","config":"config","description":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.","key":"AUTODETECT_PHONE_NUMBERS"}
         ]
@@ -28,7 +28,7 @@
         "title":"Device Detection", 
         "description":"e device detection service recognizes and categorizes each user's web browser so that the appropriate class of web UI can be delivered. You can run this service on your own web server, or use an externally hosted one such as the reference service provided by Modo Labs.",
         "fields":[
-            {"label":"Mobi service version","type":"select","config":"config","description":"Version of the Kurogo device detection service","key":"MOBI_SERVICE_VERSION"},
+            {"label":"Mobi service version","type":"select","config":"config","options":{"1":"1"},"description":"Version of the Kurogo device detection service","key":"MOBI_SERVICE_VERSION"},
             {"label":"Use external mobi-service","type":"checkbox","config":"config","description":"Use the external version of the Kurogo device detection service hosted by Modo Labs. This introduces a new external dependecy for your website but ensures that your system will always be accessing the latest device detection database.","key":"MOBI_SERVICE_USE_EXTERNAL"},
             {"label":"Device detection DB","type":"file","config":"config","description":"Path to the mobi-service device database file within your site","key":"MOBI_SERVICE_FILE"},
             {"label":"Device detection URL","type":"text","config":"config","description":"URL of the externally hosted device-detection service","key":"MOBI_SERVICE_URL"},
@@ -94,6 +94,15 @@
             {"label":"Log date format","type":"text","config":"config","description":"","key":"LOG_DATE_FORMAT"},
             {"label":"Log date pattern","type":"text","config":"config","description":"","key":"LOG_DATE_PATTERN"},
             {"label":"Temporary Directory","type":"file","config":"config","description":"","key":"TMP_DIR"}
+        ]
+    },
+    "strings":{
+        "title":"Text strings",
+        "description":"These string values are used throughout the site",
+        "fields":[
+            {"label":"Copyright link","type":"text","config":"strings","description":"","key":"COPYRIGHT_LINK"},
+            {"label":"Copyright notice","type":"text","config":"strings","description":"","key":"COPYRIGHT_NOTICE"},
+            {"label":"Feedback email","type":"text","config":"strings","description":"","key":"FEEDBACK_EMAIL"}
         ]
     }
     

@@ -56,7 +56,17 @@ class AdminAPIModule extends APIModule
                             $field['value'] = $this->getSiteString($field['key']);
                             break;
                     }
+                    
+                    switch ($field['type']) 
+                    {
+                        case 'select':
+                            if (isset($field['optionsMethod'])) {
+                                $field['options'] = call_user_func($field['optionsMethod']);
+                                unset($field['optionsMethod']);
+                            }
+                    }
                 }
+                
             }
         }
         
