@@ -310,6 +310,17 @@ table.subtable input, table.subtable select, table.subtable .helptext {
 	margin-left: 125px;
 	width: 310px;
 }
+select.filePrefix {
+    width: 100px;
+}
+input.fileData{ 
+    margin-left: 10px;
+    width: 330px;
+}
+input.timeData {
+    width: 100px;
+    margin-right: 10px;
+}
 .editrow {
 	background-color: #ffecbf;
 	border: 1px solid #ffe16a;
