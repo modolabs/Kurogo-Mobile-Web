@@ -9,7 +9,7 @@ class AdminAPIModule extends APIModule
         return array(1);
     }
     
-    private function getUnconstantedValue($value) {
+    private function getUnconstantedValue($value, &$constant) {
         $constCheck = array(
             'FULL_URL_BASE'=>FULL_URL_BASE,
             'LOG_DIR'=>LOG_DIR,
@@ -20,11 +20,13 @@ class AdminAPIModule extends APIModule
             'ROOT_DIR'=>ROOT_DIR
         );
         
+        $constant = '';
         foreach ($constCheck as $const=>$constValue) {
             $i = strpos($value, $constValue);
             if ($i !== false) {
                 if ($i==0) {
                     $value = substr($value, $i+strlen($constValue)+1);
+                    $constant = $const;
                 }
             }
         }
@@ -45,7 +47,10 @@ class AdminAPIModule extends APIModule
                     switch ($field['config'])
                     {
                         case 'config':
-                            $field['value'] = $this->getUnconstantedValue($this->getSiteVar($field['key']));
+                            $field['value'] = $this->getUnconstantedValue($this->getSiteVar($field['key']), $constant);
+                            if ($constant) {
+                                $field['constant'] = $constant;
+                            }
                             break;
                         case 'strings':
                             $field['value'] = $this->getSiteString($field['key']);
