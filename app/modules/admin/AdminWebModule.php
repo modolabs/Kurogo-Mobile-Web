@@ -69,7 +69,7 @@ class AdminWebModule extends WebModule {
                     $subNavSections[$module->getConfigModule()] = array(
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
-                        'url'=>$this->buildURL('modules', array('section'=>$module->getConfigModule()))
+                        'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
                     );
                     $modules[$module->getConfigModule()] = array(
                         'id'=>$module->getConfigModule(),
@@ -79,7 +79,7 @@ class AdminWebModule extends WebModule {
                         'protected'=>$module->getModuleVar('protected'),
                         'secure'=>$module->getModuleVar('secure'),
                         'search'=>$module->getModuleVar('search'),
-                        'url'=>$this->buildURL('modules', array('section'=>$module->getConfigModule()))
+                        'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
                     );
                     
                 }
@@ -112,19 +112,23 @@ class AdminWebModule extends WebModule {
         
                 $defaultSubNavSection = key($subNavSections);
                 $section = $this->getArg('section', $defaultSubNavSection);
+                $moduleID = $this->getArg('module');
                 
-                if ($section != $defaultSubNavSection) {
+                if ($moduleID) {
                     $modulePage = 'module';
                     try {
-                        if ($module = WebModule::factory($section)) {
+                        if ($module = WebModule::factory($moduleID)) {
                             $this->assign('moduleName', $module->getModuleName());
                             $this->assign('moduleID', $module->getConfigModule());
                         }
                     } catch (Exception $e) {
                         $this->redirectTo($this->page, array());
                     }
-                } else {
+                
+                } elseif ($section == $defaultSubNavSection) {
                     $modulePage = $defaultSubNavSection;
+                } else {
+                    $this->redirectTo($this->page, array());
                 }
                 
                 $this->assign('modulePage', $modulePage);
