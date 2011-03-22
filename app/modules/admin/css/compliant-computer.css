@@ -313,6 +313,17 @@ table.subtable label {
 table.subtable th {
 	border-bottom: 2px solid #999;
 }
+select.filePrefix {
+    width: 100px;
+}
+input.fileData{ 
+    margin-left: 10px;
+    width: 330px;
+}
+input.timeData {
+    width: 100px;
+    margin-right: 10px;
+}
 .editrow {
 	background-color: #ffecbf;
 	border: 1px solid #ffe16a;

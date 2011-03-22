@@ -95,9 +95,9 @@ function addStaticMapControls() {
         return;
     }
 
-    var objMap = document.getElementById("mapimage");
-    mapWidth = pixelsFromString(objMap.style.width);
-    mapHeight = pixelsFromString(objMap.style.height);
+    var objMap = document.getElementById("staticmapimage");
+    mapWidth = objMap.clientWidth;
+    mapHeight = objMap.clientHeight;
 
     var zoomIn = document.getElementById("zoomin");
     var zoomOut = document.getElementById("zoomout");
@@ -165,7 +165,7 @@ function updateMapImage() {
     var httpRequest = new XMLHttpRequest();
     var baseURL = staticMapOptions['baseURL'];
     var mapClass = staticMapOptions['mapClass'];
-    var objMap = document.getElementById("mapimage");
+    var objMap = document.getElementById("staticmapimage");
     var url = apiURL + "?baseURL=" + baseURL + "&mapClass=" + mapClass + "&width=" + mapWidth + "&height=" + mapHeight;
     if (centerZoomBased) {
         var lat = staticMapOptions['center']['lat'];

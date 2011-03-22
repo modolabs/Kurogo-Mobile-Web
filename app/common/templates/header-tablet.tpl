@@ -5,7 +5,9 @@
     content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0" />
 {/block}
 
-{block name="onLoad"} onload="tabletInit(); {if count($onLoadBlocks)}onLoad();{/if}"{/block}
+{block name="onLoad"}
+  onload="tabletInit();{if count($onLoadBlocks)}onLoad();{/if}{if count($onOrientationChangeBlocks)}onOrientationChange();{/if}"
+{/block}
 
 {block name="navbar"}
   <div id="navbar">

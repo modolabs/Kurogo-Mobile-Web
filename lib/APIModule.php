@@ -212,6 +212,9 @@ abstract class APIModule extends Module
    * values appropriately
    */
   public function executeCommand() {
+    if (empty($this->command)) {
+        throw new Exception("Command not specified");
+    }
     $this->loadResponseIfNeeded();
     $this->initializeForCommand();
     $this->response->display();

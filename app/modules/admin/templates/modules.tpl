@@ -1,10 +1,3 @@
-{include file="findInclude:common/templates/header.tpl"}
-
-<div class="nonfocal">
-<h2>Module Configuration</h2>
-</div>
-
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$moduleList}
-
-
-{include file="findInclude:common/templates/footer.tpl"}
+{include file="findInclude:modules/admin/templates/header.tpl"}
+<h1>Module Configuration</h1>
+{include file="findInclude:modules/admin/templates/footer.tpl"}
