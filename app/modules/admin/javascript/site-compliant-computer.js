@@ -1,6 +1,6 @@
     
 $(document).ready(function() {
-    makeAPICall('admin','getsectiondata', { 'v':1,'type':'site', 'section':adminSection}, processAdminSectionData);
+    makeAPICall('admin','getsitedata', { 'v':1,'section':adminSection}, processAdminSectionData);
     
     $('#adminForm').submit(function(e) {
         alert("You didn't think I actually got it all done, did you?");
@@ -13,7 +13,7 @@ $(document).ready(function() {
             adminSection = section;
             $('nav ul li a[class=current]').attr('class','');
             $(this).attr('class','current');
-            makeAPICall('admin','getsectiondata', { 'v':1,'type':'site', 'section':adminSection}, processAdminSectionData);
+            makeAPICall('admin','getsitedata', { 'v':1,'section':adminSection}, processAdminSectionData);
         }
         return false;
     });

@@ -324,6 +324,11 @@ abstract class Module
       * @return mixed the value of the or the default 
       */
     protected function getModuleVar($var, $default=null, $opts=Config::LOG_ERRORS) {
+        switch ($var)
+        {
+            case 'id':
+                return $this->configModule;
+        }
         $config = $this->getModuleConfig();
         $value = $config->getVar($var, Config::EXPAND_VALUE| $opts);
         return is_null($value) ? $default :$value;
@@ -427,6 +432,28 @@ abstract class Module
         }
         
         return $acls;
+    }
+    
+    protected function getModuleAdminConfig() {
+        static $configData;
+        if (!$configData) {
+            $configData = array();
+            $files = array(
+                sprintf("%s/common/config/admin-module.json", APP_DIR),
+                sprintf("%s/%s/config/admin-module.json", MODULES_DIR, $this->id)
+            );
+
+            foreach ($files as $file) {                
+                if (is_file($file)) {
+                    if (!$data = json_decode(file_get_contents($file),true)) {
+                        throw new Exception("Error parsing $file");
+                    }
+                    $configData = array_merge_recursive($configData, $data);
+                }
+            }
+        }
+        
+        return $configData;
     }
 
     abstract protected function moduleDisabled();

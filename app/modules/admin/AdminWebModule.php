@@ -33,9 +33,11 @@ class AdminWebModule extends WebModule {
     private function getSiteAdminConfig() {
         static $configData;
         if (!$configData) {
-            if (!$configData = json_decode(file_get_contents(MODULES_DIR . "/admin/config/admin-site.json"), true)) {
-                throw new Exception("Error parsing " . MODULES_DIR . "/admin/config/admin-site.json");
+            $file = APP_DIR . "/common/config/admin-site.json";
+            if (!$configData = json_decode(file_get_contents($file), true)) {
+                throw new Exception("Error parsing $file");
             }
+            
         }
         
         return $configData;
@@ -55,6 +57,7 @@ class AdminWebModule extends WebModule {
                 }
  
                 break;
+                
             case 'modules':
                 $subNavSections['overview'] = array(
                     'id'=>'overview',

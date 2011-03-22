@@ -1,0 +1,10 @@
+{
+    "strings": {
+        "title":"Strings",
+        "description":"Text strings used in this module",
+        "fields":[
+         {"label":"About this site","type":"paragraph","config":"module","description":"","key":"SITE_ABOUT_HTML"},
+         {"label":"About this organization","type":"paragraph","config":"module","description":"","key":"ABOUT_HTML"}
+       ]
+    }
+}

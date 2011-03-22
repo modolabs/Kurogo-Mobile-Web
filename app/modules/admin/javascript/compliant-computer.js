@@ -4,6 +4,9 @@ function createFormFieldListItem(fieldData) {
         case 'checkbox':
             listClass='checkitem';
             break;
+        case 'paragraph':
+            listClass='tallfield';
+            break;
     }
 
     var li = $('<li>').attr('class', listClass);
@@ -35,6 +38,12 @@ function createFormFieldListItem(fieldData) {
         case 'select':
             var options = 'options' in fieldData ? fieldData.options : [];
             li.append(createSelectBox(options, fieldData.value).attr('name',fieldData.key));
+            break;
+        case 'paragraph':
+            li.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',fieldData.key).attr('rows','5'));
+            break;
+        case 'label':
+            li.append(fieldData.value);
             break;
     }
 
