@@ -17,11 +17,20 @@
         "fields":[
         ]
     },
+    "security":{
+        "title":"SSL",
+        "description":"Configure secure socket layer connections",
+        "fields":[
+            {"label":"Require https","type":"checkbox","config":"config","description":"Require a secure (https) connection on all requests. It is also possible to configure secure connections on a per module basis","key":"SECURE_REQUIRED"},
+            {"label":"Secure host","type":"text","config":"config","description":"Alternate host name to use for secure connections. Default is the name hostname","key":"SECURE_HOST"},
+            {"label":"Secure port","type":"text","config":"config","description":"Alternate port to use for secure connections. Default is 443","key":"SECURE_PORT"}
+        ]
+    },
     "theme":{
         "title":"Theme", 
         "description":"Select the visual theme for the site. For more information about creating and modifying themes, see the developer documentation.",
         "fields":[
-            {"label":"Active Theme","type":"text","config":"config","description":"Active theme used by this site","key":"ACTIVE_THEME"}
+            {"label":"Active Theme","type":"select","config":"config","optionsMethod":["WebModule","getAllThemes"],"description":"Active theme used by this site","key":"ACTIVE_THEME"}
         ]
     },
     "detection":{
@@ -53,7 +62,7 @@
         "title":"Database Configuration", 
         "description":"",
         "fields":[
-            {"label":"Database type","type":"select","config":"config","description":"The database backend","key":"DB_TYPE"},
+            {"label":"Database type","type":"select","config":"config","optionsMethod":["db","getDBTypes"],"description":"The database backend","key":"DB_TYPE"},
             {"label":"Database host","type":"text","config":"config","description":"Host name of the database server","key":"DB_HOST"},
             {"label":"Database user","type":"text","config":"config","description":"User name to access the database server","key":"DB_USER"},
             {"label":"Database password","type":"password","config":"config","description":"Password to access the database server","key":"DB_PASS"},
@@ -72,15 +81,22 @@
     },
     "authentication":{
         "title":"Authentication", 
-        "description":"",
+        "description":"Still have to work on this section...",
         "fields":[
+            {"label":"Authentication Enabled","type":"checkbox","config":"config","description":"Enable user logins and authentication. Required to protect modules","key":"AUTHENTICATION_ENABLED"},
+            {"label":"Idle Timeout","type":"time","config":"config","description":"Number of seconds before idle users are logged off. Set to 0 to disable idle logoff","key":"AUTHENTICATION_IDLE_TIMEOUT"},
+            {"label":"Session storage method","type":"select","config":"config","options":{"0":"Flat files","1":"Database"},"description":"Method used to store session data","key":"AUTHENTICATION_USE_SESSION_DB"},
+            {"label":"Permit saving of userID","type":"checkbox","config":"config","description":"Allow users to save their userID in a local cookie for subsequent logins (NOTE: currently not used)","key":"AUTHENTICATION_ALLOW_SAVE_USERID"},
+            {"label":"Allow users to be remembered","type":"time","config":"config","description":"Number of seconds to allow users to be remained logged in, even if closing their browser.","key":"AUTHENTICATION_REMAIN_LOGGED_IN_TIME"}
         ]
     },
     "analytics":{
         "title":"Analytics", 
         "description":"",
         "fields":[
-            {"label":"Google Analytics ID","type":"text","config":"config","description":"If included, pages will be logged to Google Analytics.","key":"GOOGLE_ANALYTICS_ID"}
+            {"label":"Google Analytics ID","type":"text","config":"config","description":"If included, pages will be logged to Google Analytics.","key":"GOOGLE_ANALYTICS_ID"},
+            {"label":"Page Views Table","type":"text","config":"config","description":"Database table used by the internal statistics engine to log web page views","key":"PAGE_VIEWS_TABLE"},
+            {"label":"API Requests Table","type":"text","config":"config","description":"Database table used by the internal statistics engine to log API requests","key":"API_STATS_TABLE"}
         ]
     },
     "files":{

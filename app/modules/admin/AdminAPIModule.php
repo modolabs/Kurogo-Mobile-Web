@@ -41,9 +41,22 @@ class AdminAPIModule extends APIModule
                 throw new Exception("Error parsing " . MODULES_DIR . "/admin/config/admin-site.json");
             }
             
-            foreach ($configData as $section=>&$data) {
-                $data['fields'] = isset($data['fields']) ? $data['fields'] : array();
-                foreach ($data['fields'] as &$field) {
+        }
+        
+        return $configData;
+    }
+    
+    private function getSection($type, $section) {
+        switch ($type)
+        {
+            case 'site':
+                $configData = $this->getSiteAdminConfig();
+                if (!isset($configData[$section])) {
+                    throw new Exception("Invalid section $section");
+                }
+                
+                $sectionData = $configData[$section];
+                foreach ($sectionData['fields'] as &$field) {
                     switch ($field['config'])
                     {
                         case 'config':
@@ -66,27 +79,7 @@ class AdminAPIModule extends APIModule
                             }
                     }
                 }
-                
-            }
-        }
-        
-        return $configData;
-    }
-    
-    private function getSection($type, $section) {
-        switch ($type)
-        {
-            case 'site':
-                $configData = $this->getSiteAdminConfig();
-                if (!isset($configData[$section])) {
-                    throw new Exception("Invalid section $section");
-                }
-                
-                $sectionData = $configData[$section];
-                foreach ($sectionData['fields'] as $key=>$data) {
-                    
-                }
-                
+
                 return $sectionData;
                 break;
                 

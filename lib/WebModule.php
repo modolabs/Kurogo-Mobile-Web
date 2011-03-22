@@ -544,6 +544,18 @@ abstract class WebModule extends Module {
      header("Location: $redirect");    
      exit();
   }
+  
+    public static function getAllThemes() {
+        $themes = array();
+        $d = dir(SITE_DIR . "/themes");
+        while (false !== ($entry = $d->read())) {
+            if ($entry[0]!='.' && is_dir(SITE_DIR . "/themes/$entry")) {
+                $themes[$entry] = $entry;
+            }
+        }
+        $d->close();
+        return $themes;
+    }
 
   //
   // Module control functions
