@@ -275,6 +275,21 @@ abstract class Module
     }
 
     /**
+      * Returns a string from the site configuration (strings.ini)
+      * @param string $var the key to retrieve
+      * @param string $default an optional default value if the key is not present
+      * @return string the value of the string or the default 
+      */
+    protected function getSiteString($var, $default='') {
+        static $config;
+        if (!$config) {
+            $config = ConfigFile::factory('strings', 'site');
+        }
+        
+        return $config->getVar($var, $opts | Config::EXPAND_VALUE);
+    }
+
+    /**
       * Returns a key from the site configuration
       * @param string $var the key to retrieve
       * @param mixed $default an optional default value if the key is not present
