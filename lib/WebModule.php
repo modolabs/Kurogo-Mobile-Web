@@ -403,7 +403,9 @@ abstract class WebModule extends Module {
   //
   public static function factory($id, $page='', $args=array()) {
   
-    $module = parent::factory($id, 'web');
+    if (!$module = parent::factory($id, 'web')) {
+        return false;
+    }
     $module->init($page, $args);
     $module->initialize();
 
@@ -568,8 +570,12 @@ abstract class WebModule extends Module {
             $d = dir($dir);
             while (false !== ($entry = $d->read())) {
                 if ($entry[0]!='.' && is_dir(sprintf("%s/%s", $dir, $entry))) {
-                   $module = WebModule::factory($entry);
-                   $modules[$entry] = $module;
+                    try {
+                        if ($module = WebModule::factory($entry)) {
+                           $modules[$entry] = $module;
+                        }
+                    } catch (Exception $e) {
+                    }
                 }
             }
             $d->close();

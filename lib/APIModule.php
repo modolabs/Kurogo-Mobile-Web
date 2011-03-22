@@ -119,7 +119,9 @@ abstract class APIModule extends Module
      */
     public static function factory($id, $command='', $args=array()) {
 
-        $module = parent::factory($id, 'api');
+        if (!$module = parent::factory($id, 'api')) {
+            return false;
+        }
         if ($command) {
             $module->init($command, $args);
         }
@@ -135,9 +137,10 @@ abstract class APIModule extends Module
                 $d = dir($dir);
                 while (false !== ($entry = $d->read())) {
                     if ($entry[0]!='.' && is_dir(sprintf("%s/%s", $dir, $entry))) {
-                       try {
-                            $module = APIModule::factory($entry);
-                            $modules[$entry] = $module;
+                        try {
+                            if ($module = APIModule::factory($entry)) {
+                                $modules[$entry] = $module;
+                            }
                         } catch (Exception $e) {
                         }
                     }

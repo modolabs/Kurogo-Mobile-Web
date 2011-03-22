@@ -177,13 +177,17 @@ if ($parts[0]==API_URL_PREFIX) {
         case 2: 
             $id = 'core';
             $command = $parts[1];
-            $module = CoreAPIModule::factory($command, $args);
+            if (!$module = CoreAPIModule::factory($command, $args)) {
+                throw new Exception("Module $id cannot be loaded");
+            }
             break;
             
         case 3:
             $id = isset($parts[1]) ? $parts[1] : '';
             $command = isset($parts[2]) ? $parts[2] : '';
-            $module = APIModule::factory($id, $command, $args);
+            if (!$module = APIModule::factory($id, $command, $args)) {
+                throw new Exception("Module $id cannot be loaded");
+            }
             break;
 
         default:
@@ -225,11 +229,13 @@ if ($parts[0]==API_URL_PREFIX) {
       exit;
     }
 
-    $module = WebModule::factory($id, $page, $args);
-    
-    /* log this page view */
-    PageViews::increment($id, $GLOBALS['deviceClassifier']->getPlatform());
-    
-    $module->displayPage();
+    if ($module = WebModule::factory($id, $page, $args)) {
+        /* log this page view */
+        PageViews::increment($id, $GLOBALS['deviceClassifier']->getPlatform());
+        
+        $module->displayPage();
+    } else {
+        throw new Exception("Module $id cannot be loaded");
+    }
 }
 exit;
