@@ -113,14 +113,17 @@ abstract class Module
        
         throw new Exception("Module $id not found");
     }
+    
+    public function __construct() {
+        if (!$this->configModule) {
+            $this->configModule = $this->id;
+        }
+    }
    
     /**
       * Common initialization. Checks access.
       */
     protected function init() {
-        if (!$this->configModule) {
-            $this->configModule = $this->id;
-        }
         $moduleData = $this->getModuleData();
 
         if ($moduleData['disabled']) {
