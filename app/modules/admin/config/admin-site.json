@@ -1,0 +1,58 @@
+{
+    "setup":{
+        "title":"Site Setup",
+        "fields":[
+            {"label":"Site name","type":"text","config":"strings","description":"Name of this website as it appears in the website, including in the &quot;Return to [site-name] home&quot; link in the footer","key":"SITE_NAME"},
+            {"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site. Appears in the title of the &quot;About [organization-name]&quot; link in the &quot;About&quot; module", "key":"ORGANIZATION_NAME"},
+            {"label":"Default language","type":"text","config":"config","description":"Sets the default text encoding for the entire site", "key":"LANGUAGE"},
+            {"label":"Local time zone","type":"select","config":"config","key":"LOCAL_TIMEZONE","options":[]},
+            {"label":"Local area code","type":"text","config":"config","description":"Area code for local phone numbers. [Add note as to where this is used]","key":"LOCAL_AREA_CODE"},
+            {"label":"Enable auto-detection of phone numbers","type":"checkbox","config":"config","description":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.","key":"AUTODETECT_PHONE_NUMBERS"}
+        ]
+    },
+    "modules":{
+        "title":"Default Modules", 
+        "fields":[
+        ]
+    },
+    "theme":{
+        "title":"Theme", 
+        "fields":[
+        ]
+    },
+    "detection":{
+        "title":"Device Detection", 
+        "fields":[
+        ]
+    },
+    "error":{
+        "title":"Error Handling and Debugging", 
+        "fields":[
+        ]
+    },
+    "database":{
+        "title":"Database Configuration", 
+        "fields":[
+        ]
+    },
+    "cookies":{
+        "title":"Cookies", 
+        "fields":[
+        ]
+    },
+    "authentication":{
+        "title":"Authentication", 
+        "fields":[
+        ]
+    },
+    "analytics":{
+        "title":"Analytics", 
+        "fields":[
+        ]
+    },
+    "files":{
+        "title":"File Paths and Locations", 
+        "fields":[
+        ]
+    }
+}

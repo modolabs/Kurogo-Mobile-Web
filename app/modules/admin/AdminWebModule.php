@@ -31,24 +31,25 @@ class AdminWebModule extends WebModule {
     }
     
     private function getSiteAdminConfig() {
-        static $configFile;
-        if (!$configFile) {
-            $configFile = ConfigFile::factory(MODULES_DIR . "/admin/config/admin-site.ini", 'file');
+        static $configData;
+        if (!$configData) {
+            if (!$configData = json_decode(file_get_contents(MODULES_DIR . "/admin/config/admin-site.json"), true)) {
+                throw new Exception("Error parsing " . MODULES_DIR . "/admin/config/admin-site.json");
+            }
         }
-
-        return $configFile;
+        
+        return $configData;
     }
     
     private function getSubNavSections($section) {
         $subNavSections = array();
         switch ($section) {
             case 'site':
-                $config = $this->getSiteAdminConfig();
-                $sections = $config->getSection('sections');
-                foreach ($sections as $id=>$title) {
+                $configData = $this->getSiteAdminConfig();
+                foreach ($configData as $id=>$data) {
                     $subNavSections[$id] = array(
                         'id'=>$id,
-                        'title'=>$title,
+                        'title'=>$data['title'],
                         'description'=>'',
                         'url'=>$this->buildURL($section, array('section'=>$id))
                     );
@@ -78,24 +79,24 @@ class AdminWebModule extends WebModule {
             $this->redirectTo('index');
         }
 
-        $this->addJQuery();
         $navSections = $this->getNavSections();
-        $this->assign('navSections', $navSections);
-
-        $subNavSections = $this->getSubNavSections($this->page);
-        $this->assign('subNavSections', $subNavSections);
-
-        $defaultSubNavSection = isset($subNavSections[0]) ? $subNavSections[0]['id'] : '';
-        $section = $this->getArg('section', $defaultSubNavSection);
-        
-        if (!isset($subNavSections[$section])) {
-            $this->redirectTo($this->page, array());
-        }
 
         switch ($this->page)
         {
             case 'modules':
             case 'site':            
+                $this->addJQuery();
+                $this->assign('navSections', $navSections);
+        
+                $subNavSections = $this->getSubNavSections($this->page);
+                $this->assign('subNavSections', $subNavSections);
+        
+                $defaultSubNavSection = key($subNavSections);
+                $section = $this->getArg('section', $defaultSubNavSection);
+                
+                if (!isset($subNavSections[$section])) {
+                    $this->redirectTo($this->page, array());
+                }
                 break;
                 
             case 'index':

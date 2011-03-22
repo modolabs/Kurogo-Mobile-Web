@@ -19,6 +19,7 @@
   {foreach $cssURLs as $cssURL}
     <link href="{$cssURL}" rel="stylesheet" media="all" type="text/css"/>
   {/foreach}
+    <script type="text/javascript">var URL_BASE='{$smarty.const.URL_BASE}';</script>
     {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
       <script type="text/javascript">{$inlineJavascriptBlock}</script>
     {/foreach}

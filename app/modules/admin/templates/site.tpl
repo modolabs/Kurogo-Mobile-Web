@@ -1,8 +1,8 @@
 {include file="findInclude:modules/admin/templates/header.tpl"}
 <form method="post" id="adminForm">
 <input name="submit" id="submit" type="submit" value="Save" />
-<h1 id="sectionTitle">{$sectionTitle|default:'Loading...'}</h1>
-<ul id="adminFields" class="formFields">
+<h1 id="sectionTitle">&nbsp;</h1>
+<ul id="adminFields" class="formfields">
 
 </ul>
 </form>
