@@ -75,7 +75,8 @@ class AdminWebModule extends WebModule {
                         'disabled'=>$module->getModuleVar('disabled'),
                         'protected'=>$module->getModuleVar('protected'),
                         'secure'=>$module->getModuleVar('secure'),
-                        'search'=>$module->getModuleVar('search')
+                        'search'=>$module->getModuleVar('search'),
+                        'url'=>self::buildURLForModule($module->getConfigModule(), 'admin', array())
                     );
                     
                 }
