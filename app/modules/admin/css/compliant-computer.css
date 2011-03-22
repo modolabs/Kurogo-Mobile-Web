@@ -422,3 +422,6 @@ dt {
 dt:after {
 	content:": ";
 }
+h1 img {
+    vertical-align: middle;
+}

@@ -66,7 +66,7 @@ class AdminWebModule extends WebModule {
                     $subNavSections[$module->getConfigModule()] = array(
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
-                        'url'=>self::buildURLForModule($module->getConfigModule(), 'admin', array())
+                        'url'=>$this->buildURL('modules', array('section'=>$module->getConfigModule()))
                     );
                     $modules[$module->getConfigModule()] = array(
                         'id'=>$module->getConfigModule(),
@@ -76,7 +76,7 @@ class AdminWebModule extends WebModule {
                         'protected'=>$module->getModuleVar('protected'),
                         'secure'=>$module->getModuleVar('secure'),
                         'search'=>$module->getModuleVar('search'),
-                        'url'=>self::buildURLForModule($module->getConfigModule(), 'admin', array())
+                        'url'=>$this->buildURL('modules', array('section'=>$module->getConfigModule()))
                     );
                     
                 }
@@ -98,13 +98,36 @@ class AdminWebModule extends WebModule {
         }
 
         $navSections = $this->getNavSections();
+        $this->assign('navSections', $navSections);
+        $this->addJQuery();
 
         switch ($this->page)
         {
             case 'modules':
+                $subNavSections = $this->getSubNavSections($this->page);
+                $this->assign('subNavSections', $subNavSections);
+        
+                $defaultSubNavSection = key($subNavSections);
+                $section = $this->getArg('section', $defaultSubNavSection);
+                
+                if ($section != $defaultSubNavSection) {
+                    $modulePage = 'module';
+                    try {
+                        if ($module = WebModule::factory($section)) {
+                            $this->assign('moduleName', $module->getModuleName());
+                            $this->assign('moduleID', $module->getConfigModule());
+                        }
+                    } catch (Exception $e) {
+                        $this->redirectTo($this->page, array());
+                    }
+                } else {
+                    $modulePage = $defaultSubNavSection;
+                }
+                
+                $this->assign('modulePage', $modulePage);
+                
+                break;
             case 'site':            
-                $this->addJQuery();
-                $this->assign('navSections', $navSections);
         
                 $subNavSections = $this->getSubNavSections($this->page);
                 $this->assign('subNavSections', $subNavSections);
