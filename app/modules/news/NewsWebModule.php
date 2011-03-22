@@ -17,6 +17,8 @@ class NewsWebModule extends WebModule {
   protected $feed;
   protected $maxPerPage = 10;
   protected $showImages = true;
+  protected $showPubDate = false;
+  protected $showAuthor = false;
 
   protected function getModuleDefaultData() {
     return array_merge(parent::getModuleDefaultData(), array(
@@ -148,6 +150,8 @@ class NewsWebModule extends WebModule {
         $feedData = $this->feeds[$this->feedIndex];
         $this->feed = $this->getFeed($this->feedIndex);
         $this->showImages = isset($feedData['SHOW_IMAGES']) ? $feedData['SHOW_IMAGES'] : true;
+        $this->showPubDate = isset($feedData['SHOW_PUBDATE']) ? $feedData['SHOW_PUBDATE'] : false;
+        $this->showAuthor = isset($feedData['SHOW_AUTHOR']) ? $feedData['SHOW_AUTHOR'] : false;
     }    
     
     protected function initializeForPage() {
@@ -205,8 +209,12 @@ class NewsWebModule extends WebModule {
           $totalItems = $this->feed->getTotalItems();
           $stories = array();
           foreach ($items as $story) {
+            $pubDate = strtotime($story->getProperty("pubDate"));
+            $date = date("M d, Y", $pubDate);
             $item = array(
               'title'       => $story->getTitle(),
+              'pubDate'     => $date,
+              'author'      => $story->getAuthor(),
               'description' => $story->getDescription(),
               'url'         => $this->storyURL($story),
               'image'       => $this->getImageForStory($story),
@@ -243,6 +251,8 @@ class NewsWebModule extends WebModule {
           $this->assign('previousURL', $previousURL);
           $this->assign('nextURL',     $nextURL);
           $this->assign('showImages',  $this->showImages);
+          $this->assign('showPubDate', $this->showPubDate);
+          $this->assign('showAuthor', $this->showAuthor);
           
         } else {
           $this->redirectTo('index'); // search was blank
@@ -289,8 +299,12 @@ class NewsWebModule extends WebModule {
         
         $stories = array();
         foreach ($items as $story) {
+            $pubDate = strtotime($story->getProperty("pubDate"));
+            $date = date("M d, Y", $pubDate);
           $item = array(
             'title'       => $story->getTitle(),
+            'pubDate'     => $date,
+            'author'      => $story->getAuthor(),
             'description' => $story->getDescription(),
             'url'         => $this->storyURL($story),
             'image'       => $this->getImageForStory($story),
@@ -322,7 +336,9 @@ class NewsWebModule extends WebModule {
         $this->assign('isHome',         true);
         $this->assign('previousURL',    $previousURL);
         $this->assign('nextURL',        $nextURL);
-        $this->assign('showImages',  $this->showImages);
+        $this->assign('showImages',     $this->showImages);
+        $this->assign('showPubDate',    $this->showPubDate);
+        $this->assign('showAuthor',     $this->showAuthor);
         break;
     }
   }
