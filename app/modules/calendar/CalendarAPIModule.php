@@ -101,7 +101,7 @@ class CalendarAPIModule extends APIModule
     private function getStartArg($currentTime) {
         $startTime = $this->getArg('start', null);
         if ($startTime) {
-            $start = new DateTime(date('Y-m-d H:i:s', $startTime, $this->timezone));
+            $start = new DateTime(date('Y-m-d H:i:s', $startTime), $this->timezone);
         } else {
             $start = new DateTime(date('Y-m-d H:i:s', $currentTime), $this->timezone);
             $start->setTime(0, 0, 0);
@@ -109,12 +109,12 @@ class CalendarAPIModule extends APIModule
         return $start;
     }
 
-    private function getEndArg($currentTime) {
+    private function getEndArg($startTime) {
         $endTime = $this->getArg('end', null);
         if ($endTime) {
-            $end = new DateTime(date('Y-m-d H:i:s', $endTime, $this->timezone));
+            $end = new DateTime(date('Y-m-d H:i:s', $endTime), $this->timezone);
         } else {
-            $end = new DateTime(date('Y-m-d H:i:s', $currentTime), $this->timezone);
+            $end = new DateTime(date('Y-m-d H:i:s', $startTime), $this->timezone);
             $end->setTime(23, 59, 59);
         }
         return $end;
@@ -159,16 +159,17 @@ class CalendarAPIModule extends APIModule
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
                 // default to the full day that includes current time
-                $current  = $this->getArg('time', time());
-                $start = $this->getStartArg($current);
-                $end = $this->getEndArg($current);
-                $feed = $this->getFeed($calendar, $type);
+                $current = $this->getArg('time', time());
+                $start   = $this->getStartArg($current);
+                $end     = $this->getEndArg($start);
+                $feed    = $this->getFeed($calendar, $type);
+
                 $feed->setStartDate($start);
                 $feed->setEndDate($end);
                 $iCalEvents = $feed->items();
 
                 $events = array();
-                $count = 0;
+                $count  = 0;
 
                 foreach ($iCalEvents as $iCalEvent) {
                     $events[] = $this->apiArrayFromEvent($iCalEvent);
@@ -197,13 +198,12 @@ class CalendarAPIModule extends APIModule
                     $this->throwError($error);
                 }
 
-                $type = $this->getArg('type', 'static');
-                $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-
                 // default to the full day that includes current time
                 $current  = $this->getArg('time', time());
-                $start = $this->getStartArg($current);
-                $end = $this->getEndArg($current);
+                $start    = $this->getStartArg($current);
+                $end      = $this->getEndArg($start);
+                $type     = $this->getArg('type', 'static');
+                $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
                 $feed = $this->getFeed($calendar, $type);
                 $feed->setStartDate($start);
@@ -233,44 +233,46 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'search':
-                break;
+                $filter = $this->getArg('q', null);
+                if ($filter) {
+                    $searchTerms = trim($filter);
 
-            case 'year':
-                $year     = $this->getArg('year', null);
-                $type     = $this->getArg('type', 'static');
-                $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-                $month    = $this->getArg('month', 1); // default to january
+                    $current  = $this->getArg('time', time());
+                    $start    = $this->getStartArg($current);
+                    $end      = $this->getEndArg($start);
+                    $type     = $this->getArg('type', 'static');
+                    $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
-                if (!$year) {
-                    $year = date('m') < $month ? date('Y') - 1 : date('Y');
+                    $feed     = $this->getFeed($calendar, $type);
+
+                    $feed->setStartDate($start);
+                    $feed->setEndDate($end);
+                    $feed->addFilter('search', $searchTerms);
+                    $iCalEvents = $feed->items();
+
+                    $count = 0;
+                    foreach ($iCalEvents as $iCalEvent) {
+                        $events[] = $this->apiArrayFromEvent($iCalEvent);
+                        $count++;
+                    }
+
+                    $response = array(
+                        'total' => $count,
+                        'returned' => $count,
+                        'displayField' => 'title',
+                        'results' => $events,
+                        );
+
+                    $this->setResponse($response);
+                    $this->setResponseVersion(1);
+
+                } else {
+                    $error = new KurogoError(
+                            5,
+                            'Invalid Request',
+                            'Invalid search parameter');
+                    $this->throwError($error);
                 }
-
-                $start = new DateTime(sprintf("%d%02d01", $year, $month), $this->timezone);
-                $end   = new DateTime(sprintf("%d%02d01", $year+1, $month), $this->timezone);
-
-                $feed = $this->getFeed($calendar, $type);
-                $feed->setStartDate($start);
-                $feed->setEndDate($end);
-                $feed->addFilter('year', $year);
-                $iCalEvents = $feed->items();
-
-                $count = 0;
-                foreach ($iCalEvents as $iCalEvent) {
-                    $events[] = $this->apiArrayFromEvent($iCalEvent);
-                    $count++;
-                }
-
-                $response = array(
-                    'total' => $count,
-                    'returned' => $count,
-                    'displayField' => 'title',
-                    'results' => $events,
-                    );
-
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-
-
                 break;
 
             case 'resources':
