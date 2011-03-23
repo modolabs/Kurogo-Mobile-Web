@@ -98,7 +98,27 @@ class CalendarAPIModule extends APIModule
         return $result;
     }
 
+    private function getStartArg($currentTime) {
+        $startTime = $this->getArg('start', null);
+        if ($startTime) {
+            $start = new DateTime(date('Y-m-d H:i:s', $startTime, $this->timezone));
+        } else {
+            $start = new DateTime(date('Y-m-d H:i:s', $currentTime), $this->timezone);
+            $start->setTime(0, 0, 0);
+        }
+        return $start;
+    }
 
+    private function getEndArg($currentTime) {
+        $endTime = $this->getArg('end', null);
+        if ($endTime) {
+            $end = new DateTime(date('Y-m-d H:i:s', $endTime, $this->timezone));
+        } else {
+            $end = new DateTime(date('Y-m-d H:i:s', $currentTime), $this->timezone);
+            $end->setTime(23, 59, 59);
+        }
+        return $end;
+    }
 
     public function  initializeForCommand() {
 
@@ -134,24 +154,14 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'events':
-            case 'day':
                 $type     = $this->getArg('type', 'static');
                 // the calendar argument needs to be urlencoded
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
+
+                // default to the full day that includes current time
                 $current  = $this->getArg('time', time());
-                if ($this->command == 'events') {
-                    $startTime = $this->getArg('start', $current);
-                    $start = new DateTime(date('Y-m-d H:i:s', $startTime), $this->timezone);
-                    $endTime = $this->getArg('end', $current);
-                    $end = new DateTime(date('Y-m-d H:i:s', $endTime), $this->timezone);
-
-                    } else if ($this->command == 'day') {
-                    $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
-                    $start->setTime(0, 0, 0);
-                    $end = clone $start;
-                    $end->setTime(23, 59, 59);
-                }
-
+                $start = $this->getStartArg($current);
+                $end = $this->getEndArg($current);
                 $feed = $this->getFeed($calendar, $type);
                 $feed->setStartDate($start);
                 $feed->setEndDate($end);
@@ -190,8 +200,14 @@ class CalendarAPIModule extends APIModule
                 $type = $this->getArg('type', 'static');
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
+                // default to the full day that includes current time
+                $current  = $this->getArg('time', time());
+                $start = $this->getStartArg($current);
+                $end = $this->getEndArg($current);
+
                 $feed = $this->getFeed($calendar, $type);
-                $time = $this->getArg('time', time());
+                $feed->setStartDate($start);
+                $feed->setEndDate($end);
 
                 if ($filter = $this->getArg('q')) {
                     $feed->addFilter('search', $filter);
@@ -201,7 +217,7 @@ class CalendarAPIModule extends APIModule
                     $feed->addFilter('category', $catid);
                 }
 
-                if ($event = $feed->getItem($this->getArg('id'), $time)) {
+                if ($event = $feed->getEvent($this->getArg('id'))) {
                     $eventArray = $this->apiArrayFromEvent($event);
                     $this->setResponse($eventArray);
                     $this->setResponseVersion(1);
