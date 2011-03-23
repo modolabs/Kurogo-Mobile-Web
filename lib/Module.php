@@ -291,7 +291,7 @@ abstract class Module
             $config = ConfigFile::factory('strings', 'site');
         }
         
-        return $config->getVar($var, $opts | Config::EXPAND_VALUE);
+        return $config->getVar($var, Config::EXPAND_VALUE);
     }
 
     /**
