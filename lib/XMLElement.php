@@ -7,16 +7,18 @@ class XMLElement
     protected $value;
     protected $debugMode = false;
     protected $properties = array();
+    protected $encoding;
     
     public function setDebugMode($debugMode)
     {
         $this->debugMode = $debugMode ? true : false;
     }
     
-    public function __construct($name, $attribs)
+    public function __construct($name, $attribs, $encoding='UTF-8')
     {
         $this->setName($name);
         $this->setAttribs($attribs);
+        $this->encoding = $encoding;
     }
     
     public function setAttribs($attribs)
@@ -38,7 +40,7 @@ class XMLElement
     
     public function setValue($value, $strip_tags=false)
     {
-        $this->value = $strip_tags ? strip_tags($value) : html_entity_decode($value);
+        $this->value = $strip_tags ? strip_tags($value) : html_entity_decode($value, ENT_COMPAT, $this->encoding);
     }
 
     public function appendValue($value)
