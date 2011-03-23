@@ -22,7 +22,6 @@ $(document).ready(function() {
 function processAdminSectionData(data) {
     $('#sectionTitle').html(data.title);
     $('#sectionDescription').html(data.description);
-    var items = [];
     $("#adminFields").html('');
     $.each(data.fields, function(i, data) {
         $("#adminFields").append(createFormFieldListItem(data));

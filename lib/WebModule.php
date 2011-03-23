@@ -562,6 +562,15 @@ abstract class WebModule extends Module {
   //
   // Module control functions
   //
+    public static function getAllModuleNames() {
+        $modules = array();
+        foreach (self::getAllModules() as $module) {
+            $modules[$module->getID()] = $module->getModuleName();
+        }
+        
+        return $modules;
+    }
+  
   protected function getAllModules() {
     $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
     $modules = array();

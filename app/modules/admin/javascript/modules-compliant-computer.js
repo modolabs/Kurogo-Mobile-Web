@@ -1,6 +1,6 @@
     
 $(document).ready(function() {
-    if (moduleID) {
+    if (typeof moduleID != 'undefined') {
         makeAPICall('admin','getmoduledata', { 'v':1,'module':moduleID}, processModuleData);
     }
     
@@ -16,8 +16,9 @@ $(document).ready(function() {
 function processModuleData(data) {
     $('#moduleDescription').html(data.description);
     $("#adminFields").html('');
-    $.each(data, function(i, sectionData) {
+    $.each(data, function(section, sectionData) {
         $.each(sectionData.fields, function(i, data) {
+            data.section = section;
             $("#adminFields").append(createFormFieldListItem(data));
         });
     });

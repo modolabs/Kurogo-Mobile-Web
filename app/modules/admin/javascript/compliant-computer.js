@@ -9,6 +9,7 @@ function createFormFieldListItem(fieldData) {
             break;
     }
 
+    var section = typeof fieldData.section == 'undefined' ? '' : fieldData.section;
     var li = $('<li>').attr('class', listClass);
 
     if (fieldData.label) {
