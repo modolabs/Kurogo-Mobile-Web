@@ -27,6 +27,7 @@ class NewsAPIModule extends APIModule {
                         'title'       => $story->getTitle(),
                         'description' => $story->getDescription(),
                         'pubDate'     => self::getPubDateUnixtime($story),
+                        'body'        => $story->getContent(),
                     );
 
                     $image = $story->getImage();
