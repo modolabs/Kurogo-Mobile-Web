@@ -1,6 +1,7 @@
 {
     "": {
         "fields":[
-       ]
+            {"label":"URL","type":"text","config":"module","description":"Full url (including http://) of the address to redirect to.","key":"url"}
+      ]
     }
 }

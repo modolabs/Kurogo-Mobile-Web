@@ -1,6 +1,7 @@
 {
     "": {
         "fields":[
+            {"label":"Module Display","type":"select","config":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the home screen modules","key":"display_type"}
        ]
     }
 }
