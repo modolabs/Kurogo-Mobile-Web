@@ -120,6 +120,7 @@ class AdminWebModule extends WebModule {
                         if ($module = WebModule::factory($moduleID)) {
                             $this->assign('moduleName', $module->getModuleName());
                             $this->assign('moduleID', $module->getConfigModule());
+                            $section = $moduleID;
                         }
                     } catch (Exception $e) {
                         $this->redirectTo($this->page, array());
