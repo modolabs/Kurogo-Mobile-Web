@@ -128,6 +128,27 @@ class AdminAPIModule extends APIModule
                 $this->setResponseVersion(1);
                 break;
                 
+            case 'setconfigdata':
+                $type = $this->getArg('type');
+                $data = $this->getArg('data');
+                
+                switch ($type)
+                {
+                    case 'site':
+                        $section = $this->getArg('section');
+                        break;
+                    case 'module':
+                        break;
+                    default:
+                        throw new Exception("Invalid type $type");
+                }
+                
+                $this->setResponse($data);
+                $this->throwError(new KurogoError(0, "Error", "Not yet implemented"));
+                $this->setResponseVersion(1);
+                
+                break;
+                
             case 'getsitedata':
                 $section = $this->getArg('section');
                 $sectionData = $this->getSiteAdminData($section);                

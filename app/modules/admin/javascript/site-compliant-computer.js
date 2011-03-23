@@ -1,9 +1,21 @@
     
 $(document).ready(function() {
-    makeAPICall('admin','getsitedata', { 'v':1,'section':adminSection}, processAdminSectionData);
+    makeAPICall('GET', 'admin','getsitedata', { 'v':1,'section':adminSection}, processAdminSectionData);
     
     $('#adminForm').submit(function(e) {
-        alert("You didn't think I actually got it all done, did you?");
+        var params = { 'v':1, 'type':'site', 'section':'', 'data':{}};
+        $.each($(this).serializeArray(), function(index,value) {
+            switch (value.name) {
+                case 'section':
+                    params[value.name] = value.value;
+                    break;
+                default:
+                    params.data[value.name] = value.value;
+                    break;
+            }
+        });        
+        
+        makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
         return false;
     });
     
@@ -13,7 +25,7 @@ $(document).ready(function() {
             adminSection = section;
             $('nav ul li a[class=current]').attr('class','');
             $(this).attr('class','current');
-            makeAPICall('admin','getsitedata', { 'v':1,'section':adminSection}, processAdminSectionData);
+            makeAPICall('GET','admin','getsitedata', { 'v':1,'section':adminSection}, processAdminSectionData);
         }
         return false;
     });
@@ -22,6 +34,7 @@ $(document).ready(function() {
 function processAdminSectionData(data) {
     $('#sectionTitle').html(data.title);
     $('#sectionDescription').html(data.description);
+    $('#section').val(data.section);
     $("#adminFields").html('');
     $.each(data.fields, function(i, data) {
         $("#adminFields").append(createFormFieldListItem(data));

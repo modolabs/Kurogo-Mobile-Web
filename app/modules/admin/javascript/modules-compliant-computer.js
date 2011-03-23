@@ -1,11 +1,21 @@
     
 $(document).ready(function() {
     if (typeof moduleID != 'undefined') {
-        makeAPICall('admin','getmoduledata', { 'v':1,'module':moduleID}, processModuleData);
+        makeAPICall('GET', 'admin','getmoduledata', { 'v':1,'module':moduleID}, processModuleData);
     }
     
     $('#adminForm').submit(function(e) {
-        alert("You didn't think I actually got it all done, did you?");
+        var params = { 'v':1, 'type':'module', 'module':moduleID, 'data':{}};
+        $.each($(this).serializeArray(), function(index,value) {
+            console.log('' + value.name + ' = ' + value.value);
+            switch (value.name) {
+                default:
+                    params.data[value.name] = value.value;
+                    break;
+            }
+        });        
+        
+        makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
         return false;
     });
     
