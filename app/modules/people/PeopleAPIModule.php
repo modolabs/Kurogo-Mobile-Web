@@ -80,7 +80,7 @@ class PeopleAPIModule extends APIModule
     public function initializeForCommand() {  
         $this->feeds = $this->loadFeedData();
         $peopleController = $this->getFeed('people');
-        $this->fieldConfig = $this->loadAPIConfigFile('people');
+        $this->fieldConfig = $this->getAPIConfigData('detail');
         
         switch ($this->command) {
             case 'search':
