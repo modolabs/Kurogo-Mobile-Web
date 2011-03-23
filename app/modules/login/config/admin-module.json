@@ -1,8 +1,4 @@
 {
-    "": {
-        "fields":[
-       ]
-    },
     "strings":{
         "fields":[
             {"label":"Login message","type":"text","config":"module","description":"Message to show at the header of the login module","key":"LOGIN_MESSAGE"},

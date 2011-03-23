@@ -1,8 +1,4 @@
 {
-    "": {
-        "fields":[
-       ]
-    },
     "strings":{
         "fields":[
             {"label":"More Contacts","type":"text","config":"module","description":"Text to show for &quot;More Emergency Contacts&quot; link","key":"MORE_CONTACTS"},

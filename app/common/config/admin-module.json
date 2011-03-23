@@ -1,5 +1,5 @@
 {
-    "": {
+    "module": {
         "title":"General Information",
         "description":"Settings common to all modules",
         "fields":[
