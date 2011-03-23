@@ -128,6 +128,17 @@ abstract class APIModule extends Module
 
         return $module;
     }
+
+    protected function getAPIConfig($name, $opts=0) {
+        $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
+        $config = ModuleConfigFile::factory($this->configModule, "api-$name", $opts);
+        return $config;
+    }
+
+    protected function getAPIConfigData($name) {
+        $config = $this->getAPIConfig($name);
+        return $config->getSectionVars(true);
+    }
    
     protected function getAllModules() {
         $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
@@ -222,15 +233,7 @@ abstract class APIModule extends Module
     $this->initializeForCommand();
     $this->response->display();
   }
-  
-  /**
-    * Load config vars from site/<site>/config/api/<name>.ini
-    */
-  public function loadAPIConfigFile($name, $opts=0) {
-      $config = $this->getConfig($name, 'api', $opts);
-      return $config->getSectionVars(true);
-  }
-  
+    
  /**
    * All modules must implement this method to handle the logic of each command.
    */

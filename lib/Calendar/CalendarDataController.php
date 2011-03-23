@@ -136,6 +136,15 @@ class CalendarDataController extends DataController
         return false;
     }
     
+    public function getEvent($id) {
+        if (!$this->calendar) {
+            $data = $this->getData();
+            $this->calendar = $this->parseData($data);
+        }
+        
+        return $this->calendar->getEvent($id);
+    }
+    
     protected function events($limit=null)
     {
         if (!$this->calendar) {

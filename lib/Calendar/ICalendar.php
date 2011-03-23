@@ -696,6 +696,10 @@ class ICalendar extends ICalObject implements CalendarInterface {
     return $this->events;
   }
   
+  public function getEvent($id) {
+    return isset($this->events[$id]) ? $this->events[$id] : null;
+  }
+  
   /* returns an array of events keyed by uid containing an array of occurrences keyed by start time */
   public function getEventsInRange(TimeRange $range=null, $limit=null) {
     $events = $this->events;
