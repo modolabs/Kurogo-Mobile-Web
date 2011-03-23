@@ -128,6 +128,11 @@ abstract class APIModule extends Module
 
         return $module;
     }
+
+    protected function getAPIConfig($name, $opts) {
+        $config = ModuleConfigFile::factory($this->configModule, "api-$name", $opts);
+        return $config;
+    }
    
     protected function getAllModules() {
         $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
