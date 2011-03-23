@@ -7,7 +7,7 @@
 
   {$ellipsisCount=0}
   {foreach $stories as $story}
-    <li class="story">
+    <li class="story{if !$showImages} noimage{/if}">
       <a href="{$story['url']}">
       {if $showImages}
         {if $story['image']}
@@ -18,6 +18,8 @@
         {/if}
         <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
           <div class="title">{$story["title"]}</div>
+          {if $showAuthor}<div class="author">{$story['author']}</div>{/if}
+          {if $showPubDate}<div class="pubdate">{$story['pubDate']}</div>{/if}
           {$story['description']}
         </div>
       </a>
