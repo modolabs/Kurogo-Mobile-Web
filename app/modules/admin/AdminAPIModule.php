@@ -81,6 +81,8 @@ class AdminAPIModule extends APIModule
         }
         
         $sectionData = $configData[$section];
+        $sectionData['section'] = $section;
+        
         foreach ($sectionData['fields'] as &$field) {
             switch ($field['config'])
             {
