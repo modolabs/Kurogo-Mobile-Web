@@ -51,11 +51,12 @@ class AdminAPIModule extends APIModule
         $configData = $module->getModuleAdminConfig();
 
         foreach ($configData as $section=>&$sectionData) {
+            $sectionVars = $module->getModuleSection($section);
             foreach ($sectionData['fields'] as &$field) {
                 switch ($field['config'])
                 {
                     case 'module':
-                        $field['value'] = $module->getModuleVar($field['key']);
+                        $field['value'] = isset($sectionVars[$field['key']]) ? $sectionVars[$field['key']] : $module->getModuleVar($field['key']);
                         break;
                 }
                 

@@ -2,5 +2,14 @@
     "": {
         "fields":[
        ]
+    },
+    "strings":{
+        "fields":[
+            {"label":"Login message","type":"text","config":"module","description":"Message to show at the header of the login module","key":"LOGIN_MESSAGE"},
+            {"label":"Login label","type":"text","config":"module","description":"Label for the userID/login field","key":"LOGIN_LABEL"},
+            {"label":"Password label","type":"text","config":"module","description":"Label for the password field","key":"PASSWORD_LABEL"},
+            {"label":"Forgot password text","type":"text","config":"module","description":"Optional text to show to users to direct them towards a forgotten password page","key":"FORGET_PASSWORD_TEXT"},
+            {"label":"Forgot password URL","type":"text","config":"module","description":"Optional URL (include http://) of a url users can go to if they have forgotten their password.","key":"FORGET_PASSWORD_URL"}
+        ]
     }
 }

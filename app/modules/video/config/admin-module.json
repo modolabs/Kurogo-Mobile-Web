@@ -1,6 +1,7 @@
 {
     "": {
         "fields":[
+            {"label":"Videos per page","type":"number","config":"module","description":"Maximum number of videos to show per page","key":"MAX_RESULTS"}
        ]
     }
 }

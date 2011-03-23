@@ -27,6 +27,9 @@ function createFormFieldListItem(fieldData) {
             li.append(createSelectBox(fileListTypes(), fieldData.constant).attr('class','filePrefix'));
             li.append($('<input/>').attr('type','text').attr('name', fieldData.key).attr('value', fieldData.value).attr('class','fileData'));
             break;
+        case 'number':
+            li.append($('<input/>').attr('type','text').attr('name', fieldData.key).attr('value', fieldData.value));
+            break;
         case 'password':
         case 'text':
             li.append($('<input/>').attr('type',fieldData.type).attr('name', fieldData.key).attr('value', fieldData.value));

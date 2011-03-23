@@ -1,6 +1,12 @@
 {
     "": {
         "fields":[
-       ]
+             {"label":"Link Display","type":"select","config":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the links","key":"display_type"}
+      ]
+    },
+    "strings":{
+        "fields":[
+             {"label":"Header text","type":"text","config":"module","description":"Text to display in the header of the module","key":"description"}
+      ]
     }
 }
