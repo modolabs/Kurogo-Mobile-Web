@@ -1,23 +1,44 @@
     
 $(document).ready(function() {
     if (typeof moduleID != 'undefined') {
-        makeAPICall('GET', 'admin','getmoduledata', { 'v':1,'module':moduleID}, processModuleData);
-    }
+        makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID}, processModuleData);
     
-    $('#adminForm').submit(function(e) {
-        var params = { 'v':1, 'type':'module', 'module':moduleID, 'data':{}};
-        $.each($(this).serializeArray(), function(index,value) {
-            console.log('' + value.name + ' = ' + value.value);
-            switch (value.name) {
-                default:
-                    params.data[value.name] = value.value;
-                    break;
-            }
-        });        
-        
-        makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
-        return false;
-    });
+        $('#adminForm').submit(function(e) {
+            var params = { 'v':1, 'type':'module', 'module':moduleID, 'data':{}};
+            
+            $('#adminForm [section]').map(function() { 
+                var section = $(this).attr('section');
+                if (typeof params.data[section] == 'undefined') {
+                    params.data[section] = {};
+                }
+                
+                if ($(this).attr('type')!='checkbox' || this.checked) {
+                    params.data[section][$(this).attr('name')] = $(this).val();
+                }
+            });
+            
+            makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
+            return false;
+        });
+    } else {
+        //overview
+        $('#adminForm').submit(function(e) {
+            var params = { 'v':1, 'type':'module', 'section':'overview', 'data':{}};
+            var re;
+            var formValues = {};
+            $.each($(this).serializeArray(), function(index,value) {
+                if (re = value.name.match(/(.*)\[(.*)\]/)) {
+                    if (typeof params.data[re[1]]=='undefined') {
+                        params.data[re[1]] = {}
+                    }
+                    params.data[re[1]][re[2]] = $(this).val();                    
+                }
+            });
+
+            makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
+            return false;
+        });
+    }
     
 });
 

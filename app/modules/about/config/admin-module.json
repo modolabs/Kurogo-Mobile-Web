@@ -1,10 +1,8 @@
 {
-    "strings": {
-        "title":"Strings",
-        "description":"Text strings used in this module",
+    "strings":{
         "fields":{
-         "SITE_ABOUT_HTML":{"label":"About this site","type":"paragraph","config":"module","description":""},
-         "SITE_ABOUT_HTML":{"label":"About this organization","type":"paragraph","config":"module","description":""}
+         "SITE_ABOUT_HTML":{"label":"About this site","type":"paragraph","config":"module","section":"strings","description":""},
+         "SITE_ABOUT_HTML":{"label":"About this organization","type":"paragraph","config":"module","section":"strings","description":""}
        }
     }
 }

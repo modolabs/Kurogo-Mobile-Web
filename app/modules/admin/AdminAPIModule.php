@@ -57,7 +57,7 @@ class AdminAPIModule extends APIModule
                 if (isset($field['valueMethod'])) {
                     $field['value'] = call_user_func(array($module, $field['valueMethod']));
                 } else {
-                    $field['value'] = $module->getOptionalModuleVar($key,'', $section, $field['config']);
+                    $field['value'] = $module->getOptionalModuleVar($key,'', $field['section'], $field['config']);
                 }
                 
                 switch ($field['type']) 
@@ -74,22 +74,6 @@ class AdminAPIModule extends APIModule
         return $configData;
     }
     
-    private function setSiteVar($config, $section, $var, $value) {
-        if (!isset($this->configs[$config])) {
-            $this->configs[$config] = ConfigFile::factory($config, 'site', ConfigFile::OPTION_IGNORE_LOCAL | ConfigFile::OPTION_IGNORE_MODE);
-        }
-        
-        if (!$this->configs[$config]->setVar($section, $var, $value, $changed)) {
-            throw new Exception("Error setting $config $section $var $value");
-        }
-
-        if ($changed) {    
-            $this->changedConfigs[$config] = $this->configs[$config];
-        }
-        
-        return true;
-    }
-
     private function getSiteAdminData($section) {
         $configData = $this->getSiteAdminConfig();
         if (!isset($configData[$section])) {
@@ -126,85 +110,135 @@ class AdminAPIModule extends APIModule
         return $sectionData;
     }
     
+    private function setConfigVar($type, $subType, $section, $key, $value) {
+        switch ($type)
+        {
+            case 'site':
+                $adminData = array($subType=>$this->getSiteAdminData($subType));
+                break;
+            case 'module':
+                $adminData = $this->getModuleAdminData($subType);
+                break;
+            default:
+                throw new Exception("Invalid type $type");
+        }
+        
+    
+        if (!isset($adminData[$section]['fields'][$key])) {
+            throw new Exception("Invalid key $key for $type section $section");
+        }
+    
+        $fieldData = $adminData[$section]['fields'][$key];
+        $configKey = $type . '-' . $fieldData['config'];
+
+        if (!isset($this->configs[$configKey])) {
+            switch ($type) 
+            {
+                case 'site':
+                    $this->configs[$configKey] = ConfigFile::factory($fieldData['config'], 'site', ConfigFile::OPTION_IGNORE_LOCAL | ConfigFile::OPTION_IGNORE_MODE);
+                    break;
+                    
+                case 'module':
+                    $this->configs[$configKey] = ModuleConfigFile::factory($subType->getConfigModule(), $fieldData['config'], ConfigFile::OPTION_IGNORE_LOCAL | ConfigFile::OPTION_IGNORE_MODE);
+                    break;
+            
+            }
+        }
+
+        if (!$this->configs[$configKey]->setVar($fieldData['section'], $key, $value, $changed)) {
+            throw new Exception("Error setting $config $section $var $value");
+        }
+
+        if ($changed) {    
+            $this->changedConfigs[$configKey] = $this->configs[$configKey];
+        }
+    }
+    
     public function initializeForCommand() {  
         $this->requiresAdmin();
         
         switch ($this->command) {
-            case 'getmoduledata':
-                $moduleID = $this->getArg('module','');
-                try {
-                    $module = WebModule::factory($moduleID);
-                } catch (Exception $e) {
-                    throw new Exception('Module ' . $moduleID . ' not found');
-                }
-
-                $moduleData = $this->getModuleAdminData($module);
+            case 'getconfigdata':
+                $type = $this->getArg('type');
                 
-                $this->setResponse($moduleData);
+                switch ($type) 
+                {
+                    case 'module':
+                        $moduleID = $this->getArg('module','');
+                        try {
+                            $module = WebModule::factory($moduleID);
+                        } catch (Exception $e) {
+                            throw new Exception('Module ' . $moduleID . ' not found');
+                        }
+        
+                        $adminData = $this->getModuleAdminData($module);
+                        break;
+                    case 'site':
+                        $section = $this->getArg('section');
+                        $adminData = $this->getSiteAdminData($section);                
+                }
+                
+                $this->setResponse($adminData);
                 $this->setResponseVersion(1);
                 break;
                 
             case 'setconfigdata':
                 $type = $this->getArg('type');
                 $data = $this->getArg('data', array());
+                $section = $this->getArg('section','');
                 
                 switch ($type)
                 {
-                    case 'site':
-                        $section = $this->getArg('section');
-                        if (!$sectionData = $this->getSiteAdminData($section)) {
-                            throw new Exception("Invalid site section $section");
-                        }
-                        
-                        foreach ($data as $key=>$value) {
-
-                            // ignore filePrefix values. We'll put it back together later
-                            if (preg_match("/^(.*?)_filePrefix$/", $key,$bits)) {
-                                continue;
-                            } 
-                            
-                            if (!isset($sectionData['fields'][$key])) {
-                                throw new Exception("Invalid key $key for site section $section");
-                            }
-                            
-                            $fieldData = $sectionData['fields'][$key];
-                            switch ($fieldData['type'])
-                            {
-                                // see if there's a file prefix
-                                case 'file':
-                                    $prefix = isset($data[$key . '_filePrefix']) ? $data[$key . '_filePrefix'] : '';
-                                    if ($prefix && defined($prefix)) {
-                                        $value = constant($prefix) . '/' . $value;
-                                    }
-                                    break;
-                            }
-                            
-                            
-                            $this->setSiteVar($fieldData['config'], $fieldData['section'], $key, $value);
-                        }
-                        
-                        foreach ($this->changedConfigs as $config) {
-                            $config->saveFile();
-                        }
-                        break;
                     case 'module':
-                        $this->throwError(new KurogoError(0, "Error", "Not yet implemented"));
+                    
+                        if ($section == 'overview') {
+                            throw new Exception("Not written yet");
+                        } else {
+
+                            $moduleID = $this->getArg('module','');
+                            try {
+                                $module = WebModule::factory($moduleID);
+                            } catch (Exception $e) {
+                                throw new Exception('Module ' . $moduleID . ' not found');
+                            }
+    
+                            $subType = $module;
+                        }
+
+                        break;
+        
+                    case 'site':
+                        $subType = $section;
                         break;
                     default:
                         throw new Exception("Invalid type $type");
                 }
                 
+                foreach ($data as $section=>$fields) {
+                    foreach ($fields as $key=>$value) {
+
+                        // ignore prefix values. We'll put it back together later
+                        if (preg_match("/^(.*?)_prefix$/", $key,$bits)) {
+                            continue;
+                        } 
+
+                        $prefix = isset($fields[$key . '_prefix']) ? $fields[$key . '_prefix'] : '';
+                        if ($prefix && defined($prefix)) {
+                            $value = constant($prefix) . '/' . $value;
+                        }
+                        
+                        $this->setConfigVar($type, $subType, $section, $key, $value);
+                    }
+
+                }
+
+                foreach ($this->changedConfigs as $config) {
+                    $config->saveFile();
+                }
+                
                 $this->setResponse(true);
                 $this->setResponseVersion(1);
                 
-                break;
-                
-            case 'getsitedata':
-                $section = $this->getArg('section');
-                $sectionData = $this->getSiteAdminData($section);                
-                
-                $this->setResponse($sectionData);
-                $this->setResponseVersion(1);
                 break;
                 
             default:

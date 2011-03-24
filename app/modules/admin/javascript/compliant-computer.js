@@ -25,7 +25,7 @@ function createFormFieldListItem(key, fieldData) {
             li.append('seconds');
             break;
         case 'file':
-            li.append(createSelectBox(fileListTypes(), fieldData.constant).attr('class','filePrefix').attr('name', key+'_filePrefix'));
+            li.append(createSelectBox(fileListTypes(), fieldData.constant).attr('class','filePrefix').attr('name', key+'_filePrefix').attr('section',section));
             li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value).attr('class','fileData'));
             break;
         case 'number':

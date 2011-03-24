@@ -1,19 +1,14 @@
     
 $(document).ready(function() {
-    makeAPICall('GET', 'admin','getsitedata', { 'v':1,'section':adminSection}, processAdminSectionData);
+    makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
     
     $('#adminForm').submit(function(e) {
-        var params = { 'v':1, 'type':'site', 'section':'', 'data':{}};
-        $.each($(this).serializeArray(), function(index,value) {
-            switch (value.name) {
-                case 'section':
-                    params[value.name] = value.value;
-                    break;
-                default:
-                    params.data[value.name] = value.value;
-                    break;
-            }
-        });        
+        var params = { 'v':1, 'type':'site', 'section':adminSection, 'data':{}}
+
+        params.data[adminSection] = {};
+        $('#adminForm [section]').map(function() {
+            params.data[adminSection][$(this).attr('name')] = $(this).val();
+        });
         
         makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
         return false;
@@ -25,7 +20,7 @@ $(document).ready(function() {
             adminSection = section;
             $('nav ul li a[class=current]').attr('class','');
             $(this).attr('class','current');
-            makeAPICall('GET','admin','getsitedata', { 'v':1,'section':adminSection}, processAdminSectionData);
+            makeAPICall('GET','admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
         }
         return false;
     });

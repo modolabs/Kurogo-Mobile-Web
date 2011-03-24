@@ -1,7 +1,7 @@
 {
     "module": {
         "fields":{
-            "MAX_RESULTS":{"label":"Videos per page","type":"number","config":"module","description":"Maximum number of videos to show per page"}
+            "MAX_RESULTS":{"label":"Videos per page","type":"number","config":"module","section":"module","description":"Maximum number of videos to show per page"}
        }
     }
 }

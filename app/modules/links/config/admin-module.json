@@ -1,12 +1,12 @@
 {
     "module": {
         "fields":{
-             "display_type":{"label":"Link Display","type":"select","config":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the links"}
+             "display_type":{"label":"Link Display","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the links"}
       }
     },
     "strings":{
         "fields":{
-             "description":{"label":"Header text","type":"text","config":"module","description":"Text to display in the header of the module"}
+             "description":{"label":"Header text","type":"text","config":"module","section":"module","description":"Text to display in the header of the module"}
       }
     }
 }
