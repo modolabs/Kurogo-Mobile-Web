@@ -9,18 +9,35 @@
  * @package Config
  */
 abstract class Config {
-  const NO_EXPAND_VALUE = 0;
-  const EXPAND_VALUE = 1;
-  const LOG_ERRORS = 2;
-  const SUPRESS_ERRORS = 0;
-  protected $vars = array();
-  protected $sectionVars = array();
+    const NO_EXPAND_VALUE = 0;
+    const EXPAND_VALUE = 1;
+    const LOG_ERRORS = 2;
+    const SUPRESS_ERRORS = 0;
+    protected $vars = array();
+    protected $sectionVars = array();
   
-  abstract protected function replaceCallback($matches);
+    abstract protected function replaceCallback($matches);
 
-  public function addVars($vars) {
-    $this->vars = array_merge($this->vars, $vars);
-  }
+    public function addVars($vars) {
+        $this->vars = array_merge($this->vars, $vars);
+    }
+  
+    public function setVar($section, $var, $value, &$changed) {
+        
+        if (isset($this->sectionVars[$section])) {
+            if (isset($this->sectionVars[$section][$var])) {
+                if ($this->sectionVars[$section][$var] == $value) {
+                    $changed = false;
+                    return true;
+                }                
+            }
+        }
+
+        $changed = true;
+        $this->sectionVars[$section][$var] = $value;
+        $this->vars[$var] = $value;
+        return true;
+    }
 
   /* used when you completely want to replace all sections */
   public function setSectionVars($sectionVars)

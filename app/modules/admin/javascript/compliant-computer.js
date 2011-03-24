@@ -1,4 +1,4 @@
-function createFormFieldListItem(fieldData) {
+function createFormFieldListItem(key, fieldData) {
     var listClass='';
     switch (fieldData.type) {
         case 'checkbox':
@@ -21,30 +21,30 @@ function createFormFieldListItem(fieldData) {
     switch (fieldData.type) {
     
         case 'time':
-            li.append($('<input/>').attr('type','text').attr('name', fieldData.key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value).attr('class','timeData'));
+            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value).attr('class','timeData'));
             li.append('seconds');
             break;
         case 'file':
-            li.append(createSelectBox(fileListTypes(), fieldData.constant).attr('class','filePrefix'));
-            li.append($('<input/>').attr('type','text').attr('name', fieldData.key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value).attr('class','fileData'));
+            li.append(createSelectBox(fileListTypes(), fieldData.constant).attr('class','filePrefix').attr('name', key+'_filePrefix'));
+            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value).attr('class','fileData'));
             break;
         case 'number':
-            li.append($('<input/>').attr('type','text').attr('name', fieldData.key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value));
+            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value));
             break;
         case 'password':
         case 'text':
-            li.append($('<input/>').attr('type',fieldData.type).attr('name', fieldData.key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value));
+            li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value));
             break;
         case 'checkbox':
-            li.append($('<input/>').attr('type','hidden').attr('name', fieldData.key).attr('section', section).attr('config', fieldData.config).attr('value', '0'));
-            li.append($('<input/>').attr('type',fieldData.type).attr('name', fieldData.key).attr('section', section).attr('config', fieldData.config).attr('value', '1').attr('checked', parseInt(fieldData.value) ? 'checked':''));
+            li.append($('<input/>').attr('type','hidden').attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', '0'));
+            li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', '1').attr('checked', parseInt(fieldData.value) ? 'checked':''));
             break;
         case 'select':
             var options = 'options' in fieldData ? fieldData.options : [];
-            li.append(createSelectBox(options, fieldData.value).attr('name',fieldData.key).attr('section', section).attr('config', fieldData.config));
+            li.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).attr('config', fieldData.config));
             break;
         case 'paragraph':
-            li.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',fieldData.key).attr('rows','5').attr('section', section).attr('config', fieldData.config));
+            li.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows','5').attr('section', section).attr('config', fieldData.config));
             break;
         case 'label':
             li.append(fieldData.value);
@@ -78,7 +78,7 @@ function makeAPICall(type, module, command, data, callback) {
         url: url,
         data: data, 
         dataType: 'json',
-        success: function(data) {
+        success: function(data, textStatus, jqXHR) {
             if (data.error) {
                 alert(data.error.message);
                return;
@@ -87,6 +87,9 @@ function makeAPICall(type, module, command, data, callback) {
             if (callback) {
                 callback(data.response);
             }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert("Error saving: " + textStatus);
         }
     });
 }

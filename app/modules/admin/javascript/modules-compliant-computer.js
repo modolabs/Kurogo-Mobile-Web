@@ -27,9 +27,9 @@ function processModuleData(data) {
     $('#moduleDescription').html(data.description);
     $("#adminFields").html('');
     $.each(data, function(section, sectionData) {
-        $.each(sectionData.fields, function(i, data) {
+        $.each(sectionData.fields, function(key, data) {
             data.section = section;
-            $("#adminFields").append(createFormFieldListItem(data));
+            $("#adminFields").append(createFormFieldListItem(key, data));
         });
     });
     

@@ -5,6 +5,8 @@ class AdminAPIModule extends APIModule
     protected $id = 'admin';
     protected $vmin = 1;
     protected $vmax = 1;
+    private $configs = array();
+    private $changedConfigs = array();
     public function availableVersions() {
         return array(1);
     }
@@ -74,6 +76,22 @@ class AdminAPIModule extends APIModule
         return $configData;
     }
     
+    private function setSiteVar($config, $section, $var, $value) {
+        if (!isset($this->configs[$config])) {
+            $this->configs[$config] = ConfigFile::factory($config, 'site', ConfigFile::OPTION_IGNORE_LOCAL | ConfigFile::OPTION_IGNORE_MODE);
+        }
+        
+        if (!$this->configs[$config]->setVar($section, $var, $value, $changed)) {
+            throw new Exception("Error setting $config $section $var $value");
+        }
+
+        if ($changed) {    
+            $this->changedConfigs[$config] = $this->configs[$config];
+        }
+        
+        return true;
+    }
+
     private function getSiteAdminData($section) {
         $configData = $this->getSiteAdminConfig();
         if (!isset($configData[$section])) {
@@ -83,17 +101,17 @@ class AdminAPIModule extends APIModule
         $sectionData = $configData[$section];
         $sectionData['section'] = $section;
         
-        foreach ($sectionData['fields'] as &$field) {
+        foreach ($sectionData['fields'] as $key=>&$field) {
             switch ($field['config'])
             {
                 case 'config':
-                    $field['value'] = $this->getUnconstantedValue($this->getSiteVar($field['key']), $constant);
+                    $field['value'] = $this->getUnconstantedValue($this->getSiteVar($key), $constant);
                     if ($constant) {
                         $field['constant'] = $constant;
                     }
                     break;
                 case 'strings':
-                    $field['value'] = $this->getSiteString($field['key']);
+                    $field['value'] = $this->getSiteString($key);
                     break;
             }
             
@@ -106,7 +124,7 @@ class AdminAPIModule extends APIModule
                     }
             }
         }
-
+        
         return $sectionData;
     }
     
@@ -130,21 +148,55 @@ class AdminAPIModule extends APIModule
                 
             case 'setconfigdata':
                 $type = $this->getArg('type');
-                $data = $this->getArg('data');
+                $data = $this->getArg('data', array());
                 
                 switch ($type)
                 {
                     case 'site':
                         $section = $this->getArg('section');
+                        if (!$sectionData = $this->getSiteAdminData($section)) {
+                            throw new Exception("Invalid site section $section");
+                        }
+                        
+                        foreach ($data as $key=>$value) {
+
+                            // ignore filePrefix values. We'll put it back together later
+                            if (preg_match("/^(.*?)_filePrefix$/", $key,$bits)) {
+                                continue;
+                            } 
+                            
+                            if (!isset($sectionData['fields'][$key])) {
+                                throw new Exception("Invalid key $key for site section $section");
+                            }
+                            
+                            $fieldData = $sectionData['fields'][$key];
+                            switch ($fieldData['type'])
+                            {
+                                // see if there's a file prefix
+                                case 'file':
+                                    $prefix = isset($data[$key . '_filePrefix']) ? $data[$key . '_filePrefix'] : '';
+                                    if ($prefix && defined($prefix)) {
+                                        $value = constant($prefix) . '/' . $value;
+                                    }
+                                    break;
+                            }
+                            
+                            
+                            $this->setSiteVar($fieldData['config'], $fieldData['section'], $key, $value);
+                        }
+                        
+                        foreach ($this->changedConfigs as $config) {
+                            $config->saveFile();
+                        }
                         break;
                     case 'module':
+                        $this->throwError(new KurogoError(0, "Error", "Not yet implemented"));
                         break;
                     default:
                         throw new Exception("Invalid type $type");
                 }
                 
-                $this->setResponse($data);
-                $this->throwError(new KurogoError(0, "Error", "Not yet implemented"));
+                $this->setResponse(true);
                 $this->setResponseVersion(1);
                 
                 break;
