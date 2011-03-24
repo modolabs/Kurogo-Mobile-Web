@@ -416,8 +416,7 @@ abstract class WebModule extends Module {
       
         parent::init();
 
-        $moduleData = $this->getModuleData();
-        $this->moduleName = $moduleData['title'];
+        $this->moduleName = $this->getModuleVar('title','module');
 
         $this->setArgs($args);
 
@@ -540,13 +539,6 @@ abstract class WebModule extends Module {
     $this->redirectToModule('error', '', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
   }
   
-  protected function secureModule() {
-      // redirect to https (at this time, we are assuming it's on the same host)
-     $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-     header("Location: $redirect");    
-     exit();
-  }
-  
     public static function getAllThemes() {
         $themes = array();
         $d = dir(SITE_DIR . "/themes");
@@ -557,6 +549,21 @@ abstract class WebModule extends Module {
         }
         $d->close();
         return $themes;
+    }
+    
+    protected function secureModule() {
+        $secure_host = Kurogo::getOptionalSiteVar('SECURE_HOST', $_SERVER['SERVER_NAME']);
+        if (empty($secure_host)) {
+            $secure_host = $_SERVER['SERVER_NAME'];
+        }
+        $secure_port = Kurogo::getOptionalSiteVar('SECURE_PORT', 443);
+        if (empty($secure_port)) {
+            $secure_port = 443;
+        }
+
+        $redirect= sprintf("https://%s%s%s", $secure_host, $secure_port == 443 ? '': ":$secure_port", $_SERVER['REQUEST_URI']);
+        header("Location: $redirect");          
+        exit();
     }
 
   //

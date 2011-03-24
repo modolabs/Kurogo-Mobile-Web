@@ -124,20 +124,19 @@ abstract class Module
       * Common initialization. Checks access.
       */
     protected function init() {
-        $moduleData = $this->getModuleData();
 
-        if ($moduleData['disabled']) {
+        if ($this->getModuleVar('disabled','module')) {
             $this->moduleDisabled();
         }
 
-        if ((Kurogo::getOptionalSiteVar('SECURE_REQUIRED') || $moduleData['secure']) && 
+        if ((Kurogo::getOptionalSiteVar('SECURE_REQUIRED') || $this->getModuleVar('secure','module')) && 
             (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
             $this->secureModule();
         }
         
         if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
             includePackage('Authentication');
-            if ($moduleData['protected']) {
+            if ($this->getModuleVar('protected','module')) {
                 if (!$this->isLoggedIn()) {
                     $this->unauthorizedAccess();
                 }
@@ -228,11 +227,13 @@ abstract class Module
       */
     protected function getModuleDefaultData() {
         return array(
-            'title'=>ucfirst($this->configModule),
-            'disabled'=>0,
-            'protected'=>0,
-            'search'=>0,
-            'secure'=>0
+            'module'=>array(
+                'title'=>ucfirst($this->configModule),
+                'disabled'=>0,
+                'protected'=>0,
+                'search'=>0,
+                'secure'=>0
+            )
         );
     }
 
