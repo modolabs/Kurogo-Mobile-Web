@@ -9,7 +9,7 @@
   </p>
   <p>
     We value your feedback! Please email your questions and suggestions 
-    to <a href="mailto:{$FEEDBACK_EMAIL}">{$FEEDBACK_EMAIL}</a>.
+    to <a href="mailto:{$strings.FEEDBACK_EMAIL}">{$strings.FEEDBACK_EMAIL}</a>.
   </p> 
 </div> 
 

@@ -2,7 +2,7 @@
 
 {if isset($instructions) && isset($downloadUrl)}
   <p class="nonfocal">
-    Add a shortcut to your {$deviceName}'s home screen to get one-click access to {$SITE_NAME}.
+    Add a shortcut to your {$deviceName}'s home screen to get one-click access to {$strings.SITE_NAME}.
   </p>
   
   <div class="focal">

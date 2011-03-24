@@ -1,7 +1,7 @@
 {capture name="banner" assign="banner"}
 
   <h1 id="homelogo"{if isset($topItem)} class="roomfornew"{/if}>
-    <img src="/modules/{$moduleID}/images/logo-home{$imageExt}" width="{$banner_width|default:265}" height="{$banner_height|default:45}" alt="{$SITE_NAME|escape}" />
+    <img src="/modules/{$moduleID}/images/logo-home{$imageExt}" width="{$banner_width|default:265}" height="{$banner_height|default:45}" alt="{$strings.SITE_NAME|escape}" />
   </h1>
   {block name="topItem"} 
     {if isset($topItem)}
@@ -12,7 +12,7 @@
 
 {include file="findInclude:common/templates/header.tpl" customHeader=$banner scalable=false}
 
-{include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$SITE_NAME}
+{include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$strings.SITE_NAME}
 
 {if $displayType == 'springboard'}
   {include file="findInclude:common/templates/springboard.tpl" springboardItems=$modules springboardID="homegrid"}

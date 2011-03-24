@@ -12,7 +12,7 @@
     <p class="bottomnav">
       <a href="#top">Back to top</a>
       <br />
-      {html_access_key_link href="/home/"}{$SITE_NAME} Home{/html_access_key_link}
+      {html_access_key_link href="/home/"}{$strings.SITE_NAME} Home{/html_access_key_link}
       {if !$isModuleHome}
         {foreach $breadcrumbs as $breadcrumb}
           <br/>
