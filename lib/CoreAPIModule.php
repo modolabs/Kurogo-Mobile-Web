@@ -20,12 +20,14 @@ class CoreAPIModule extends APIModule
             
                 $allmodules = $this->getAllModules();
                 foreach ($allmodules as $moduleID=>$module) {
-                    $modules[] = array(
-                        'id'=>$moduleID,
-                        'title'=>$module->getModuleVar('title'),
-                        'vmin'=>$module->getVmin(),
-                        'vmax'=>$module->getVmax()
-                    );
+                    if (!$module->getModuleVar('disabled', 'module')) {
+                        $modules[] = array(
+                            'id'=>$moduleID,
+                            'title'=>$module->getModuleVar('title','module'),
+                            'vmin'=>$module->getVmin(),
+                            'vmax'=>$module->getVmax()
+                        );
+                    }
                 }
                 $response = array(
                     'version'=>KUROGO_VERSION,

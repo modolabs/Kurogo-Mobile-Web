@@ -56,7 +56,7 @@ class LinksWebModule extends WebModule {
     }
     
     $this->assign('displayType', $this->getModuleVar('display_type'));
-    $this->assign('description', $this->getModuleVar('description'));
+    $this->assign('description', $this->getModuleVar('description','strings'));
     $this->assign('links',       $links);
   }
 }

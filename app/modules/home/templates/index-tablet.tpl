@@ -4,7 +4,7 @@
     <span class="pagetitle">
       {$pageTitle}
     </span>        
-    {include file="findInclude:common/templates/search.tpl" inNavbar=true placeholder="Search "|cat:$SITE_NAME}
+    {include file="findInclude:common/templates/search.tpl" inNavbar=true placeholder="Search "|cat:$strings.SITE_NAME}
   </div>
 {/capture}
 

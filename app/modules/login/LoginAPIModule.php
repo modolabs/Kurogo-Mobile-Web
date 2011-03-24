@@ -10,7 +10,7 @@ class LoginAPIModule extends APIModule
     }
     
     public function initializeForCommand() {  
-        if (!$this->getSiteVar('AUTHENTICATION_ENABLED')) {
+        if (!Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
             throw new Exception("Authentication is not enabled on this site");
         }
         

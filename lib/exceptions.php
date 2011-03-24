@@ -153,7 +153,7 @@ function exceptionHandlerForDevelopment($exception) {
   */
 function exceptionHandlerForProduction($exception) {
   if(!$GLOBALS['deviceClassifier']->isSpider()) {
-    mail($GLOBALS['siteConfig']->getVar('DEVELOPER_EMAIL'), 
+    mail(Kurogo::getSiteVar('DEVELOPER_EMAIL'), 
       "Mobile web page experiencing problems",
       "The following page is throwing exceptions:\n\n" .
       "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .

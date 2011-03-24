@@ -22,7 +22,7 @@ class MapAPIModule extends APIModule
         if ($categoryPath === NULL) {
             return MapDataController::factory('MapDataController', array(
                 'JS_MAP_CLASS' => 'GoogleJSMap',
-                'DEFAULT_ZOOM_LEVEL' => $this->getModuleVar('DEFAULT_ZOOM_LEVEL', 10)
+                'DEFAULT_ZOOM_LEVEL' => $this->getOptionalModuleVar('DEFAULT_ZOOM_LEVEL', 10)
                 ));
 
         } else {
@@ -39,14 +39,13 @@ class MapAPIModule extends APIModule
             $feedData = $this->feeds[$feedIndex];
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setCategory($feedIndex);
-            $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         }
     }
 
     protected function getFeedGroups() {
-        $config = $this->getConfig($this->configModule, 'feedgroups');
-        return $config->getSectionVars();
+        return $this->getModuleSections('feedgroups');
     }
 
     protected function loadFeedData() {
@@ -60,20 +59,18 @@ class MapAPIModule extends APIModule
         }
 
         if ($this->numGroups === 0) {
-            $feedConfigFile = $this->getConfig($this->configModule, 'feeds');
-            $data = $feedConfigFile->getSectionVars();
+            $data = $this->getModuleSections('feeds');
 
         } elseif ($this->feedGroup !== NULL) {
             $configName = "feeds-{$this->feedGroup}";
-            $feedConfigFile = $this->getConfig($this->configModule, $configName);
-            foreach ($feedConfigFile->getSectionVars() as $id => $feedData) {
+            foreach ($this->getModuleSections($configName) as $id => $feedData) {
                 $data[$this->feedGroup.MAP_CATEGORY_DELIMITER.$id] = $feedData;;
             }
 
         } else {
             foreach ($this->feedGroups as $groupID => $groupData) {
-                $aConfig = $this->getConfig($this->configModule, "feeds-$groupID");
-                foreach ($aConfig->getSectionVars() as $id => $feedData) {
+                $configName = "feeds-$groupID";
+                foreach ($this->getModuleSections($configName) as $id => $feedData) {
                     $data[$groupID.MAP_CATEGORY_DELIMITER.$id] = $feedData;
                 }
             }
@@ -166,7 +163,7 @@ class MapAPIModule extends APIModule
                         $this->feedGroup = NULL;
                     }
 
-                    $mapSearchClass = $GLOBALS['siteConfig']->getVar('MAP_SEARCH_CLASS');
+                    $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
                     if (!$this->feeds)
                         $this->feeds = $this->loadFeedData();
                     $mapSearch = new $mapSearchClass($this->feeds);

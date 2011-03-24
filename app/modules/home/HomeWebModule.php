@@ -85,9 +85,8 @@ class HomeWebModule extends WebModule {
         $this->addOnOrientationChange('rotateScreen();');
 
         if ($this->pagetype == 'tablet') {
-          $config = $this->getModuleConfig();
           
-          $this->assign('modulePanes', $this->getTabletModulePanes($config->getSection('tablet_panes')));
+          $this->assign('modulePanes', $this->getTabletModulePanes($this->getModuleSection('tablet_panes')));
           $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
           $this->addOnLoad('moduleHandleWindowResize();');
         } else {

@@ -80,7 +80,7 @@ class CustomizeWebModule extends WebModule {
           'var disabledModules = '.json_encode($disabledModuleIDs).';'.
           'var MODULE_ORDER_COOKIE = "'.MODULE_ORDER_COOKIE.'";'.
           'var DISABLED_MODULES_COOKIE = "'.DISABLED_MODULES_COOKIE.'";'.
-          'var MODULE_ORDER_COOKIE_LIFESPAN = '.$this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN').';'.
+          'var MODULE_ORDER_COOKIE_LIFESPAN = '.Kurogo::getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN').';'.
           'var COOKIE_PATH = "'.COOKIE_PATH.'";'
         );
         $this->addInlineJavascriptFooter('init();');

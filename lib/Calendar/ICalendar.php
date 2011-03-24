@@ -681,8 +681,8 @@ class ICalRecurrenceRule extends ICalObject {
 class ICalendar extends ICalObject implements CalendarInterface {
   protected $properties;
   public $timezone = NULL;
-  protected $events;
-  protected $eventStartTimes;
+  protected $events=array();
+  protected $eventStartTimes=array();
 
   public function add_event(ICalEvent $event) {
     $uid = $event->get_uid();

@@ -105,7 +105,7 @@ class NewsWebModule extends WebModule {
             $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
         }
         $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+        $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
         return $controller;
     } else {
         throw new Exception("Error getting news feed for index $index");
@@ -138,9 +138,7 @@ class NewsWebModule extends WebModule {
     protected function initialize() {
 
         $this->feeds      = $this->loadFeedData();
-        if ($max = $this->getModuleVar('NEWS_MAX_RESULTS')) {
-            $this->maxPerPage = $max;
-        }
+        $this->maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
         
         $this->feedIndex = $this->getArg('section', 0);
         if (!isset($this->feeds[$this->feedIndex])) {

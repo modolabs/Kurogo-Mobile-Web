@@ -24,9 +24,9 @@ class PageViews {
       $time = time();
 
     if ($system == 'web')
-      $logfile = $GLOBALS['siteConfig']->getVar('WEB_CURRENT_LOG_FILE');
+      $logfile = Kurogo::getSiteVar('WEB_CURRENT_LOG_FILE');
     else // assume 'api'
-      $logfile = $GLOBALS['siteConfig']->getVar('API_CURRENT_LOG_FILE');
+      $logfile = Kurogo::getSiteVar('API_CURRENT_LOG_FILE');
       
     if (empty($logfile)) {
         error_log("Log file for $system not specified");
@@ -41,7 +41,7 @@ class PageViews {
     }
     $fh = fopen($logfile, 'a+');
     fwrite($fh, sprintf("%s %s %s: %s\n",
-                        date($GLOBALS['siteConfig']->getVar('LOG_DATE_FORMAT'), $time),
+                        date(Kurogo::getSiteVar('LOG_DATE_FORMAT'), $time),
                         $platform, $module, $extra));
     fclose($fh);      
   }
@@ -61,13 +61,13 @@ class PageViews {
   public static function export_stats($system) {
     PageViews::createDatabaseTables();
     if ($system == 'web') {
-      $table   = $GLOBALS['siteConfig']->getVar('PAGE_VIEWS_TABLE');
-      $logfile = $GLOBALS['siteConfig']->getVar('WEB_CURRENT_LOG_FILE');
-      $target  = $GLOBALS['siteConfig']->getVar('WEB_LOG_FILE');
+      $table   = Kurogo::getSiteVar('PAGE_VIEWS_TABLE');
+      $logfile = Kurogo::getSiteVar('WEB_CURRENT_LOG_FILE');
+      $target  = Kurogo::getSiteVar('WEB_LOG_FILE');
     } else {// assume 'api'
-      $table   = $GLOBALS['siteConfig']->getVar('API_STATS_TABLE');
-      $logfile = $GLOBALS['siteConfig']->getVar('API_CURRENT_LOG_FILE');
-      $target  = $GLOBALS['siteConfig']->getVar('API_LOG_FILE');
+      $table   = Kurogo::getSiteVar('API_STATS_TABLE');
+      $logfile = Kurogo::getSiteVar('API_CURRENT_LOG_FILE');
+      $target  = Kurogo::getSiteVar('API_LOG_FILE');
     }
     
     // Create directories if needed
@@ -85,7 +85,11 @@ class PageViews {
     if (file_exists($target) && date('Ymd', filemtime($target)) == $today)
       return; // we have already exported today
 
-    $logfilecopy = $GLOBALS['siteConfig']->getVar('TMP_DIR') . "/mobi_log_copy.$today";
+    $logFolder = Kurogo::getSiteVar('TMP_DIR');    
+    $logfilecopy = $logFolder . "/mobi_log_copy.$today";
+    if (!is_writable($logFolder)) {
+        throw new Exception("Unable to write to TMP_DIR $logFolder");
+    }
 
     if (!$outfile = fopen($target, 'a')) {
       error_log("could not open $target for writing");
@@ -113,12 +117,12 @@ class PageViews {
     }
 
     $infile = fopen($logfilecopy, 'r');
-    $date_length = strlen(date($GLOBALS['siteConfig']->getVar('LOG_DATE_FORMAT')));
+    $date_length = strlen(date(Kurogo::getSiteVar('LOG_DATE_FORMAT')));
     while (!feof($infile)) {
       $line = fgets($infile, 1024);
       fwrite($outfile, $line);
 
-      if (preg_match($GLOBALS['siteConfig']->getVar('LOG_DATE_PATTERN'), $line, $matches) == 0)
+      if (preg_match(Kurogo::getSiteVar('LOG_DATE_PATTERN'), $line, $matches) == 0)
         continue;
 
       // the following match positions should also be defined where
@@ -176,9 +180,9 @@ class PageViews {
       $sql_criteria = Array();
 
       if ($system == 'web')
-        $table = $GLOBALS['siteConfig']->getVar('PAGE_VIEWS_TABLE');
+        $table = Kurogo::getSiteVar('PAGE_VIEWS_TABLE');
       else // assume 'api'
-        $table = $GLOBALS['siteConfig']->getVar('API_STATS_TABLE');
+        $table = Kurogo::getSiteVar('API_STATS_TABLE');
 
       if (($end === NULL) || (strtotime($end) - strtotime($start) == 86400)) {
         $sql_criteria[] = "day='$start'";

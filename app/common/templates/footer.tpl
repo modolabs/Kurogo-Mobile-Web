@@ -7,11 +7,11 @@
   {/if}
   
   {capture name="footerHTML" assign="footerHTML"}
-    {if $COPYRIGHT_LINK}
-      <a href="{$COPYRIGHT_LINK}" class="copyright">
+    {if $strings.COPYRIGHT_LINK}
+      <a href="{$strings.COPYRIGHT_LINK}" class="copyright">
     {/if}
-        {$COPYRIGHT_NOTICE}
-    {if $COPYRIGHT_LINK}
+        {$strings.COPYRIGHT_NOTICE}
+    {if $strings.COPYRIGHT_LINK}
       </a>
     {/if}
   {/capture}
@@ -25,7 +25,7 @@
   {block name="footerNavLinks"}
     {if $moduleID != 'home'}
       <div id="footerlinks">
-        <a href="#top">Back to top</a> | <a href="../home/">{$SITE_NAME} home</a>
+        <a href="#top">Back to top</a> | <a href="../home/">{$strings.SITE_NAME} home</a>
         {$loginHTML}
       </div>
     {/if}

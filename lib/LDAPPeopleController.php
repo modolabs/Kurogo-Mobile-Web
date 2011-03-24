@@ -27,6 +27,8 @@ class LDAPPeopleController extends PeopleController {
   protected $filter;
   protected $errorNo;
   protected $errorMsg;
+  protected $searchTimelimit=30;
+  protected $readTimelimit=30;
   protected $attributes=array();
   protected $fieldMap=array();
   
@@ -190,7 +192,7 @@ class LDAPPeopleController extends PeopleController {
 
     // suppress warnings on non-dev servers
     // about searches that go over the result limit
-    if (!$GLOBALS['siteConfig']->getVar('DATA_DEBUG')) {
+    if (!Kurogo::getSiteVar('DATA_DEBUG')) {
       $error_reporting = ini_get('error_reporting');
       error_reporting($error_reporting & ~E_WARNING);
     }
@@ -198,7 +200,7 @@ class LDAPPeopleController extends PeopleController {
     $filter = strval($this->filter);
     $sr = ldap_search($ds, $this->searchBase,
       $filter, $this->attributes, 0, 0, 
-      $GLOBALS['siteConfig']->getVar('PEOPLE_SEARCH_TIMELIMIT'));
+      $this->searchTimelimit);
     if (!$sr) {
         if($ds) {
             $this->errorMsg = self::generateErrorMessage($ds);
@@ -210,7 +212,7 @@ class LDAPPeopleController extends PeopleController {
         $this->errorMsg = $this->generateErrorMessage($ds);
     }
     
-    if (!$GLOBALS['siteConfig']->getVar('DATA_DEBUG')) {
+    if (!Kurogo::getSiteVar('DATA_DEBUG')) {
       error_reporting($error_reporting);
     }
 
@@ -319,8 +321,8 @@ class LDAPPeopleController extends PeopleController {
     }
       
       // get all attributes of the person identified by $id
-      $sr = ldap_read($ds, $id, "(objectclass=*)", $this->attributes, 0, 0, 
-        $GLOBALS['siteConfig']->getVar('PEOPLE_READ_TIMELIMIT'));
+      $sr = ldap_read($ds, $id, "(objectclass=*)", $this->attributes, 0, 0, $this->readTimelimit);
+
       if (!$sr) {
         $this->errorMsg = ldap_error($ds);
         return FALSE;
@@ -391,6 +393,8 @@ protected function generateErrorMessage($ldap_resource) {
         $this->searchBase = isset($args['SEARCH_BASE']) ? $args['SEARCH_BASE'] : '';
         $this->adminDN = isset($args['ADMIN_DN']) ? $args['ADMIN_DN'] : null;
         $this->adminPassword = isset($args['ADMIN_PASSWORD']) ? $args['ADMIN_PASSWORD'] : null;
+        $this->searchTimelimit = isset($args['SEARCH_TIMELIMIT']) ? $args['SEARCH_TIMELIMIT'] : 30;
+        $this->readTimelimit = isset($args['READ_TIMELIMIT']) ? $args['READ_TIMELIMIT'] : 30;
     }
 
 }
