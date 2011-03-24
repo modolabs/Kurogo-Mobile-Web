@@ -60,7 +60,7 @@ class CalendarAPIModule extends APIModule
             return current($indexes);
         }
     }
-
+    
     public function getFeed($index, $type) {
         $feeds = $this->getFeeds($type);
         if (isset($feeds[$index])) {
@@ -126,6 +126,70 @@ class CalendarAPIModule extends APIModule
         $this->fieldConfig = $this->getAPIConfigData('detail');
 
         switch ($this->command) {
+            case 'groups':
+                // special cases for two configs:
+                // type = group
+                // calendar = __USER__
+
+                $groupConfig = $this->getAPIConfigData('groups');
+                $groups = array();
+                foreach ($groupConfig as $groupID => $groupData) {
+                    $type = $groupData['type'];
+                    $groupResult = array(
+                        'title' => $groupData['title'],
+                        'type'  => $groupData['type'],
+                        'id'    => $groupData['id'],
+                        );
+
+                    if ($type == 'group') {
+                        if (isset($groupData['categories'])) {
+                            $categories = $groupData['categories'];
+
+                        } elseif (isset($groupData['all']) && $groupData['all']) {
+                            // TODO implement categories
+                            $categories = array();
+                        }
+
+                        $groupResult['categories'] = $categories;
+
+                    } else {
+
+                        if (isset($groupData['calendars'])) {
+                            $calendars = array();
+                            $calendarIDs = $groupData['calendars'];
+
+                            foreach ($calendarIDs as $calID) {
+                                if ($calID == '__USER__') {
+                                    $calendar = $this->getDefaultFeed('user');
+                                    $calendars[] = $calendar;
+                                } else {
+                                    $calendars[] = $calID;
+                                }
+                            }
+
+                        } elseif (isset($groupData['all']) && $groupData['all']) {
+                            $feeds = $this->getFeeds($type);
+                            $calendars = array_keys($feeds);
+                        }
+
+                        $groupResult['calendars'] = $calendars;
+                    }
+
+                    $groups[] = $groupResult;
+                }
+
+                $response = array(
+                    'total' => count($groups),
+                    'returned' => count($groups),
+                    'displayField' => 'title',
+                    'results' => $groups,
+                    );
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+                
+                break;
+
             case 'calendars':
 
                 $feeds = array();
