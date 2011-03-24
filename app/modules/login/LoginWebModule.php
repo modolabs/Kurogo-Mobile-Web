@@ -18,7 +18,7 @@ class LoginWebModule extends WebModule {
   }
 
   protected function initializeForPage() {
-    if (!$this->getSiteVar('AUTHENTICATION_ENABLED')) {
+    if (!Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
         throw new Exception("Authentication is not enabled on this site");
     }
     
@@ -44,8 +44,8 @@ class LoginWebModule extends WebModule {
     
     $this->assign('authenticationAuthorities', $authenticationAuthorities);
     $this->assign('authenticationAuthorityLinks', $authenticationAuthorityLinks);
-    $this->assign('allowRemainLoggedIn', $this->getSiteVar('AUTHENTICATION_REMAIN_LOGGED_IN_TIME'));
-    if ($forgetPasswordURL = $this->getModuleVar('FORGET_PASSWORD_URL')) {
+    $this->assign('allowRemainLoggedIn', Kurogo::getOptionalSiteVar('AUTHENTICATION_REMAIN_LOGGED_IN_TIME'));
+    if ($forgetPasswordURL = $this->getOptionalModuleVar('FORGET_PASSWORD_URL')) {
         $this->assign('FORGET_PASSWORD_URL', $this->buildBreadcrumbURL('forgotpassword', array()));
     }
     
@@ -113,7 +113,7 @@ class LoginWebModule extends WebModule {
             }
             
             if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
-                $authority->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+                $authority->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
                 $result = $authority->login($login, $password, $session, $options);
             } else {
                 error_log("Invalid authority $authorityIndex");
@@ -147,7 +147,7 @@ class LoginWebModule extends WebModule {
             break;
             
         case 'forgotpassword':
-            if ($forgetPasswordURL = $this->getModuleVar('FORGET_PASSWORD_URL')) {
+            if ($forgetPasswordURL = $this->getOptionalModuleVar('FORGET_PASSWORD_URL')) {
                 header("Location: $forgetPasswordURL");
                 exit();
             } else {

@@ -75,7 +75,7 @@ class NewsAPIModule extends APIModule {
                 $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
             }
             $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         } else {
             throw new Exception("Error getting news feed for index $index");

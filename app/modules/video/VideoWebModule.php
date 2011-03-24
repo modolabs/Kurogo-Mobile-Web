@@ -205,7 +205,7 @@ class VideoWebModule extends WebModule
             case 'search':
             case 'index':
         
-                $maxPerPage = $this->getModuleVar('MAX_RESULTS', 10);
+                $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
         	    $start = $this->getArg('start', 0);
         	    
                 if ($this->page == 'search') {

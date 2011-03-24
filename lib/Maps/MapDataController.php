@@ -35,7 +35,7 @@ class MapDataController extends DataController implements MapFolder
     protected function cacheLifespan()
     {
         // TODO add config so the following line works instead
-        //return $GLOBALS['siteConfig']->getVar('MAP_CACHE_LIFESPAN');
+        //return Kurogo::getSiteVar('MAP_CACHE_LIFESPAN');
         return 86400;
     }
 

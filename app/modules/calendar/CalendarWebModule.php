@@ -124,7 +124,7 @@ class CalendarWebModule extends WebModule {
       case 'phone':
         // add the local area code if missing
         if (preg_match('/^\d{3}-\d{4}/', $value)) {
-          $valueForType = $this->getSiteVar('LOCAL_AREA_CODE').$value;
+          $valueForType = Kurogo::getSiteVar('LOCAL_AREA_CODE').$value;
         }
         $valueForType = str_replace('-', '-&shy;', str_replace('.', '-', $value));
         break;
@@ -155,7 +155,7 @@ class CalendarWebModule extends WebModule {
       case 'phone':
         // add the local area code if missing
         if (preg_match('/^\d{3}-\d{4}/', $value)) {
-          $urlForType = $this->getSiteVar('LOCAL_AREA_CODE').$value;
+          $urlForType = Kurogo::getSiteVar('LOCAL_AREA_CODE').$value;
         }
     
         // remove all non-word characters from the number
@@ -300,7 +300,7 @@ class CalendarWebModule extends WebModule {
       case 'user':
       case 'resource':
         $typeController = $type=='user' ? 'UserCalendarListController' :'ResourceListController';
-        $sectionData = $this->getModuleSection('calendar_list');
+        $sectionData = $this->getOptionalModuleSection('calendar_list');
         $listController = isset($sectionData[$typeController]) ? $sectionData[$typeController] : '';
         if (strlen($listController)) {
             $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
@@ -351,7 +351,7 @@ class CalendarWebModule extends WebModule {
         $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
       }
       $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
-      $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+      $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
       return $controller;
     } else {
       throw new Exception("Error getting calendar feed for index $index");
@@ -359,7 +359,7 @@ class CalendarWebModule extends WebModule {
   }
  
   protected function initialize() {
-    $this->timezone = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
+    $this->timezone = new DateTimeZone(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
   }
 
   protected function initializeForPage() {

@@ -49,7 +49,7 @@ class db {
   
   public function query($sql, $parameters=array(), $ignoreErrors=false, $catchErrorCodes=array())
   {
-    if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
+    if (Kurogo::getSiteVar('DB_DEBUG')) {
         error_log("Query Log: $sql");
     }
 
@@ -78,7 +78,7 @@ class db {
             return $errorInfo;
         }
 
-        if ($GLOBALS['siteConfig']->getVar('DB_DEBUG')) {
+        if (Kurogo::getSiteVar('DB_DEBUG')) {
             throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
         } else {
             error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));

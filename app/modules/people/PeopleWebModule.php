@@ -184,7 +184,7 @@ class PeopleWebModule extends WebModule {
         }
         $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         $controller->setAttributes($this->detailAttributes);
-        $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+        $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
         return $controller;
     } else {
         throw new Exception("Error getting people feed for index $index");
@@ -204,7 +204,7 @@ class PeopleWebModule extends WebModule {
 
     $PeopleController = $this->getFeed('people');
     
-    if ($this->getSiteVar('MODULE_DEBUG')) {
+    if (Kurogo::getSiteVar('MODULE_DEBUG')) {
       $this->addModuleDebugString($PeopleController->debugInfo());
     }
     

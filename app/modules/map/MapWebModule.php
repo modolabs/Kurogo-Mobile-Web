@@ -20,8 +20,7 @@ class MapWebModule extends WebModule {
     }
     
     protected function getFeedGroups() {
-        $config = $this->getConfig($this->configModule, 'feedgroups');
-        return $config->getSectionVars();
+        return $this->getModuleSections('feedgroups');
     }
     
     private function getCategoriesAsArray() {
@@ -43,21 +42,20 @@ class MapWebModule extends WebModule {
             }
         }
 
+
         if ($this->numGroups === 0) {
-            $feedConfigFile = $this->getConfig($this->configModule, 'feeds');
-            $data = $feedConfigFile->getSectionVars();
+            $data = $this->getModuleSections('feeds');
 
         } elseif ($this->feedGroup !== NULL) {
             $configName = "feeds-{$this->feedGroup}";
-            $feedConfigFile = $this->getConfig($this->configModule, $configName);
-            foreach ($feedConfigFile->getSectionVars() as $id => $feedData) {
+            foreach ($this->getModuleSections($configName) as $id => $feedData) {
                 $data[$this->feedGroup.MAP_CATEGORY_DELIMITER.$id] = $feedData;;
             }
 
         } else {
             foreach ($this->feedGroups as $groupID => $groupData) {
-                $aConfig = $this->getConfig($this->configModule, "feeds-$groupID");
-                foreach ($aConfig->getSectionVars() as $id => $feedData) {
+                $configName = "feeds-$groupID";
+                foreach ($this->getModuleSections($configName) as $id => $feedData) {
                     $data[$groupID.MAP_CATEGORY_DELIMITER.$id] = $feedData;
                 }
             }
@@ -96,7 +94,7 @@ class MapWebModule extends WebModule {
                 $imageWidth = 600; $imageHeight = 350;
                 break;
             case 'compliant':
-                if ($GLOBALS['deviceClassifier']->getPlatform() == 'bbplus') {
+                if ($this->platform == 'bbplus') {
                     $imageWidth = 410; $imageHeight = 260;
                 } else {
                     $imageWidth = 290; $imageHeight = 290;
@@ -364,7 +362,7 @@ JS;
         if ($categoryPath === NULL) {
             return MapDataController::factory('MapDataController', array(
                 'JS_MAP_CLASS' => 'GoogleJSMap',
-                'DEFAULT_ZOOM_LEVEL' => $this->getModuleVar('DEFAULT_ZOOM_LEVEL', 10)
+                'DEFAULT_ZOOM_LEVEL' => $this->getOptionalModuleVar('DEFAULT_ZOOM_LEVEL', 10)
                 ));
         
         } else {
@@ -382,13 +380,13 @@ var_dump($categoryPath);die();
             $feedData = $this->feeds[$feedIndex];
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setCategory($feedIndex);
-            $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         }
     }
 
     protected function getSearchClass() {
-        $mapSearchClass = $this->getModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
+        $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
         $mapSearch = new $mapSearchClass($this->feeds);
@@ -583,7 +581,7 @@ var_dump($categoryPath);die();
             case 'info':
             {
                 // embedded photo
-                $photoServer = $this->getModuleVar('MAP_PHOTO_SERVER', null);
+                $photoServer = $this->getOptionalModuleVar('MAP_PHOTO_SERVER');
                 // this method of getting photo url is harvard-specific and
                 // further only works on data for ArcGIS features.
                 // TODO rewrite this if we find an alternate way to server photos
@@ -644,7 +642,7 @@ var_dump($categoryPath);die();
                             'url' => $this->groupURL($id),
                             );
                     }
-                    $groupAlias = $this->getModuleVar('GROUP_ALIAS', 'Campus');
+                    $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS', 'Campus');
                     $this->assign('browseHint', "Select a $groupAlias");
                     $this->assign('categories', $categories);
                     $this->assign('searchTip', NULL);
@@ -656,7 +654,7 @@ var_dump($categoryPath);die();
                         $cookieID = http_build_query(array('group' => $this->feedGroup));
                         $this->generateBookmarkOptions($cookieID);
 
-                        $groupAlias = $this->getModuleVar('GROUP_ALIAS_PLURAL', 'Campuses');
+                        $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS_PLURAL', 'Campuses');
                         $clearLink = array(array(
                             'title' => "All $groupAlias",
                             'url' => $this->groupURL(''),
@@ -695,7 +693,7 @@ var_dump($categoryPath);die();
                         }                        
                     }
                 }
-                $this->assign('groupAlias', $this->getModuleVar('GROUP_ALIAS_PLURAL', 'Campuses'));
+                $this->assign('groupAlias', $this->getOptionalModuleVar('GROUP_ALIAS_PLURAL', 'Campuses'));
                 $this->assign('groups', $feedGroups);
                 $this->assign('places', $places);
             

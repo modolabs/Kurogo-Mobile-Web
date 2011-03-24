@@ -11,13 +11,13 @@ class MapProjector {
     private $baseURL; // ESRI geometry service, if any
     
     public function __construct() {
-        $useServer = $GLOBALS['siteConfig']->getVar('GEOMETRY_SERVICE_ENABLED');
+        $useServer = Kurogo::getSiteVar('GEOMETRY_SERVICE_ENABLED');
         if ($useServer) {
-            $this->baseURL = $GLOBALS['siteConfig']->getVar('GEOMETRY_SERVICE');
+            $this->baseURL = Kurogo::getSiteVar('GEOMETRY_SERVICE');
         }
         
         if (!$this->baseURL) {
-            $projEnabled = $GLOBALS['siteConfig']->getVar('PROJ_EXTENSION_ENABLED');
+            $projEnabled = Kurogo::getSiteVar('PROJ_EXTENSION_ENABLED');
             if (!$projEnabled || !function_exists('project_from_latlon')) {
                 die('No projection support found.');
             }
@@ -186,7 +186,7 @@ class MapProjector {
     public static function getProjSpecs($wkid) {
         $wkid = self::convertWkid($wkid);
     
-        $projCache = new DiskCache($GLOBALS['siteConfig']->getVar('PROJ_CACHE'), null, true);
+        $projCache = new DiskCache(Kurogo::getSiteVar('PROJ_CACHE'), null, true);
         $projCache->setSuffix('.proj4');
         $projCache->preserveFormat();
         $filename = $wkid;

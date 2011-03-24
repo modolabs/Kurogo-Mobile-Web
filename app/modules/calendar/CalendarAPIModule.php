@@ -28,7 +28,7 @@ class CalendarAPIModule extends APIModule
             case 'user':
             case 'resource':
                 $typeController = $type=='user' ? 'UserCalendarListController' :'ResourceListController';
-                $sectionData = $this->getModuleSection('calendar_list');
+                $sectionData = $this->getOptionalModuleSection('calendar_list');
                 $listController = isset($sectionData[$typeController]) ? $sectionData[$typeController] : '';
                 if (strlen($listController)) {
                     $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
@@ -60,7 +60,7 @@ class CalendarAPIModule extends APIModule
             return current($indexes);
         }
     }
-
+    
     public function getFeed($index, $type) {
         $feeds = $this->getFeeds($type);
         if (isset($feeds[$index])) {
@@ -69,7 +69,7 @@ class CalendarAPIModule extends APIModule
                 $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
             }
             $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
-            $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         } else {
             throw new Exception("Error getting calendar feed for index $index");
@@ -98,14 +98,98 @@ class CalendarAPIModule extends APIModule
         return $result;
     }
 
+    private function getStartArg($currentTime) {
+        $startTime = $this->getArg('start', null);
+        if ($startTime) {
+            $start = new DateTime(date('Y-m-d H:i:s', $startTime), $this->timezone);
+        } else {
+            $start = new DateTime(date('Y-m-d H:i:s', $currentTime), $this->timezone);
+            $start->setTime(0, 0, 0);
+        }
+        return $start;
+    }
 
+    private function getEndArg($startTime) {
+        $endTime = $this->getArg('end', null);
+        if ($endTime) {
+            $end = new DateTime(date('Y-m-d H:i:s', $endTime), $this->timezone);
+        } else {
+            $end = new DateTime(date('Y-m-d H:i:s', $startTime), $this->timezone);
+            $end->setTime(23, 59, 59);
+        }
+        return $end;
+    }
 
     public function  initializeForCommand() {
 
-        $this->timezone = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
+        $this->timezone = new DateTimeZone(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
         $this->fieldConfig = $this->getAPIConfigData('detail');
 
         switch ($this->command) {
+            case 'groups':
+                // special cases for two configs:
+                // type = group
+                // calendar = __USER__
+
+                $groupConfig = $this->getAPIConfigData('groups');
+                $groups = array();
+                foreach ($groupConfig as $groupID => $groupData) {
+                    $type = $groupData['type'];
+                    $groupResult = array(
+                        'title' => $groupData['title'],
+                        'type'  => $groupData['type'],
+                        'id'    => $groupData['id'],
+                        );
+
+                    if ($type == 'group') {
+                        if (isset($groupData['categories'])) {
+                            $categories = $groupData['categories'];
+
+                        } elseif (isset($groupData['all']) && $groupData['all']) {
+                            // TODO implement categories
+                            $categories = array();
+                        }
+
+                        $groupResult['categories'] = $categories;
+
+                    } else {
+
+                        if (isset($groupData['calendars'])) {
+                            $calendars = array();
+                            $calendarIDs = $groupData['calendars'];
+
+                            foreach ($calendarIDs as $calID) {
+                                if ($calID == '__USER__') {
+                                    $calendar = $this->getDefaultFeed('user');
+                                    $calendars[] = $calendar;
+                                } else {
+                                    $calendars[] = $calID;
+                                }
+                            }
+
+                        } elseif (isset($groupData['all']) && $groupData['all']) {
+                            $feeds = $this->getFeeds($type);
+                            $calendars = array_keys($feeds);
+                        }
+
+                        $groupResult['calendars'] = $calendars;
+                    }
+
+                    $groups[] = $groupResult;
+                }
+
+                $response = array(
+                    'total' => count($groups),
+                    'returned' => count($groups),
+                    'displayField' => 'title',
+                    'results' => $groups,
+                    );
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+                
+                break;
+
             case 'calendars':
 
                 $feeds = array();
@@ -134,31 +218,22 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'events':
-            case 'day':
                 $type     = $this->getArg('type', 'static');
                 // the calendar argument needs to be urlencoded
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-                $current  = $this->getArg('time', time());
-                if ($this->command == 'events') {
-                    $startTime = $this->getArg('start', $current);
-                    $start = new DateTime(date('Y-m-d H:i:s', $startTime), $this->timezone);
-                    $endTime = $this->getArg('end', $current);
-                    $end = new DateTime(date('Y-m-d H:i:s', $endTime), $this->timezone);
 
-                    } else if ($this->command == 'day') {
-                    $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
-                    $start->setTime(0, 0, 0);
-                    $end = clone $start;
-                    $end->setTime(23, 59, 59);
-                }
+                // default to the full day that includes current time
+                $current = $this->getArg('time', time());
+                $start   = $this->getStartArg($current);
+                $end     = $this->getEndArg($start);
+                $feed    = $this->getFeed($calendar, $type);
 
-                $feed = $this->getFeed($calendar, $type);
                 $feed->setStartDate($start);
                 $feed->setEndDate($end);
                 $iCalEvents = $feed->items();
 
                 $events = array();
-                $count = 0;
+                $count  = 0;
 
                 foreach ($iCalEvents as $iCalEvent) {
                     $events[] = $this->apiArrayFromEvent($iCalEvent);
@@ -187,11 +262,16 @@ class CalendarAPIModule extends APIModule
                     $this->throwError($error);
                 }
 
-                $type = $this->getArg('type', 'static');
+                // default to the full day that includes current time
+                $current  = $this->getArg('time', time());
+                $start    = $this->getStartArg($current);
+                $end      = $this->getEndArg($start);
+                $type     = $this->getArg('type', 'static');
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
                 $feed = $this->getFeed($calendar, $type);
-                $time = $this->getArg('time', time());
+                $feed->setStartDate($start);
+                $feed->setEndDate($end);
 
                 if ($filter = $this->getArg('q')) {
                     $feed->addFilter('search', $filter);
@@ -201,7 +281,7 @@ class CalendarAPIModule extends APIModule
                     $feed->addFilter('category', $catid);
                 }
 
-                if ($event = $feed->getItem($this->getArg('id'), $time)) {
+                if ($event = $feed->getEvent($this->getArg('id'))) {
                     $eventArray = $this->apiArrayFromEvent($event);
                     $this->setResponse($eventArray);
                     $this->setResponseVersion(1);
@@ -217,44 +297,46 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'search':
-                break;
+                $filter = $this->getArg('q', null);
+                if ($filter) {
+                    $searchTerms = trim($filter);
 
-            case 'year':
-                $year     = $this->getArg('year', null);
-                $type     = $this->getArg('type', 'static');
-                $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-                $month    = $this->getArg('month', 1); // default to january
+                    $current  = $this->getArg('time', time());
+                    $start    = $this->getStartArg($current);
+                    $end      = $this->getEndArg($start);
+                    $type     = $this->getArg('type', 'static');
+                    $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
-                if (!$year) {
-                    $year = date('m') < $month ? date('Y') - 1 : date('Y');
+                    $feed     = $this->getFeed($calendar, $type);
+
+                    $feed->setStartDate($start);
+                    $feed->setEndDate($end);
+                    $feed->addFilter('search', $searchTerms);
+                    $iCalEvents = $feed->items();
+
+                    $count = 0;
+                    foreach ($iCalEvents as $iCalEvent) {
+                        $events[] = $this->apiArrayFromEvent($iCalEvent);
+                        $count++;
+                    }
+
+                    $response = array(
+                        'total' => $count,
+                        'returned' => $count,
+                        'displayField' => 'title',
+                        'results' => $events,
+                        );
+
+                    $this->setResponse($response);
+                    $this->setResponseVersion(1);
+
+                } else {
+                    $error = new KurogoError(
+                            5,
+                            'Invalid Request',
+                            'Invalid search parameter');
+                    $this->throwError($error);
                 }
-
-                $start = new DateTime(sprintf("%d%02d01", $year, $month), $this->timezone);
-                $end   = new DateTime(sprintf("%d%02d01", $year+1, $month), $this->timezone);
-
-                $feed = $this->getFeed($calendar, $type);
-                $feed->setStartDate($start);
-                $feed->setEndDate($end);
-                $feed->addFilter('year', $year);
-                $iCalEvents = $feed->items();
-
-                $count = 0;
-                foreach ($iCalEvents as $iCalEvent) {
-                    $events[] = $this->apiArrayFromEvent($iCalEvent);
-                    $count++;
-                }
-
-                $response = array(
-                    'total' => $count,
-                    'returned' => $count,
-                    'displayField' => 'title',
-                    'results' => $events,
-                    );
-
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-
-
                 break;
 
             case 'resources':

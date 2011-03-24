@@ -45,9 +45,8 @@ class EmergencyWebModule extends WebModule
                     }
 
                     if($contactsController->hasSecondaryContacts()) {
-                        $moduleStrings = $this->getModuleSection('strings');
                         $contactNavListItems[] = array(
-                            'title' => $moduleStrings['MORE_CONTACTS'],
+                            'title' => $this->getModuleVar('MORE_CONTACTS'),
                             'url' => $this->buildBreadcrumbURL('contacts', array()),
                         );
                     }

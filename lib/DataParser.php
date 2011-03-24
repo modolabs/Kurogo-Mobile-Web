@@ -39,7 +39,7 @@ abstract class DataParser
     }
     
     public function init($args) {
-        $this->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+        $this->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
     }
 
     public function setDebugMode($debugMode) {

@@ -93,7 +93,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
         parent::init($args);
         $args = is_array($args) ? $args : array();
         if (!isset($args['DB_TYPE'])) {
-            $args = array_merge($GLOBALS['siteConfig']->getSection('database'), $args);
+            $args = array_merge(Kurogo::getSiteSection('database'), $args);
         }
         
         $this->connection = new db($args);
