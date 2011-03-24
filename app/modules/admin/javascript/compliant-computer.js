@@ -89,7 +89,7 @@ function makeAPICall(type, module, command, data, callback) {
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            alert("Error saving: " + textStatus);
+            alert("Error: " + textStatus);
         }
     });
 }

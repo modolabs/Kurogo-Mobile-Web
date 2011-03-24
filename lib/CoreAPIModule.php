@@ -22,7 +22,7 @@ class CoreAPIModule extends APIModule
                 foreach ($allmodules as $moduleID=>$module) {
                     $modules[] = array(
                         'id'=>$moduleID,
-                        'title'=>$module->getModuleVar('title'),
+                        'title'=>$module->getModuleVar('title','module'),
                         'vmin'=>$module->getVmin(),
                         'vmax'=>$module->getVmax()
                     );

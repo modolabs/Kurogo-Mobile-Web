@@ -37,12 +37,6 @@ abstract class Config {
         return true;
     }
 
-  /* used when you completely want to replace all sections */
-  public function setSectionVars($sectionVars)
-  {
-     $this->sectionVars = $sectionVars;
-  }
-  
     /* used when you completely want to replace all sections */
     public function setSectionVars($sectionVars) {
         $this->sectionVars = $sectionVars;
@@ -55,15 +49,10 @@ abstract class Config {
         foreach ($sectionVars as $var=>$value) {
         
             if (!is_array($value)) {
-                $_var = $var;
-                $var = 'No Section';
-                $value = array($_var=>$value);
-                if ($first && !$merge) {
-                    $this->sectionVars['No Section'] = array();
-                }
+                throw new Exception("Found value that wasn't in a section. Config needs to be updated");
             }
             
-            if ($merge || $var=='No Section') {
+            if ($merge) {
                 if (isset($this->sectionVars[$var]) && is_array($this->sectionVars[$var])) {
                     $this->sectionVars[$var] = array_merge($this->sectionVars[$var], $value);
                 } else {
@@ -81,13 +70,6 @@ abstract class Config {
 
         if ($opts & Config::EXPAND_VALUE) {
             $sectionVars = $this->sectionVars;
-            // flatten the "No Section" section *
-            if (isset($sectionVars['No Section'])) {
-                foreach ($sectionVars['No Section'] as $var=>$value) {
-                    $sectionVars[$var] = $value;
-                }
-                unset($sectionVars['No Section']);
-            }
             return array_map(array($this, 'replaceVariable'), $sectionVars);
         } else {
             return $this->sectionVars;
@@ -103,10 +85,6 @@ abstract class Config {
     }
 
     public function getSection($key) {
-        if (strlen($key)==0) {
-            $key = 'No Section';
-        }
-
         if (isset($this->sectionVars[$key])) {
             return $this->sectionVars[$key];
         } else {

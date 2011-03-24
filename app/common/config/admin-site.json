@@ -5,7 +5,7 @@
         "fields":{
             "SITE_NAME":{"label":"Site name","type":"text","config":"strings","description":"Name of this website as it appears in the website, including in the &quot;Return to [site-name] home&quot; link in the footer","section":"strings"},
             "ORGANIZATION_NAME":{"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site. Appears in the title of the &quot;About [organization-name]&quot; link in the &quot;About&quot; module","section":"strings"},
-            "LANGUAGE":{"label":"Default language","type":"text","config":"config","description":"Sets the default text encoding for the entire site","section":"site settings"},
+            "LANGUAGE":{"label":"Default language","type":"select","config":"config","optionsMethod":["Kurogo","getLanguages"],"description":"Sets the default language used for the entire site","section":"site settings"},
             "LOCAL_TIMEZONE":{"label":"Local time zone","type":"select","config":"config","optionsMethod":["Calendar","getTimeZones"],"section":"site settings"},
             "LOCAL_AREA_CODE":{"label":"Local area code","type":"text","config":"config","description":"Area code for local phone numbers. [Add note as to where this is used]","section":"site settings"},
             "AUTODETECT_PHONE_NUMBERS":{"label":"Enable auto-detection of phone numbers","type":"checkbox","config":"config","description":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.","section":"site settings"}
