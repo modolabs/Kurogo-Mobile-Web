@@ -278,7 +278,7 @@ abstract class Module
         return $config->getVar($var, $section);
     }
 
-    protected function getOptionalModuleVar($key, $default='', $section=null, $config='module') {
+    protected function getOptionalModuleVar($var, $default='', $section=null, $config='module') {
         $config = $this->getConfig($config);
         return $config->getOptionalVar($var, $default, $section);
     }
