@@ -82,6 +82,9 @@ abstract class Config {
   }
 
   public function getSection($key, $opts=Config::LOG_ERRORS) {
+    if (strlen($key)==0) {
+        $key = 'No Section';
+    }
 
     if (isset($this->sectionVars[$key])) {
       return $this->sectionVars[$key];

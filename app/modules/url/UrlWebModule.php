@@ -3,21 +3,8 @@
   * @package Module
   * @subpackage Fullweb
   */
-
-/**
-  * @package Module
-  * @subpackage Fullweb
-  */
-class FullwebWebModule extends WebModule {
-  protected $id = 'fullweb';
-  protected function getModuleDefaultData()
-  {
-    return array_merge(parent::getModuleDefaultData(), array(
-        'url'=>''
-        )
-    );
-  }
-  
+abstract class UrlWebModule extends WebModule {
+  protected $id = 'url';
   
   protected function initializeForPage() {
      if ($url = $this->getModuleVar('url')) {
