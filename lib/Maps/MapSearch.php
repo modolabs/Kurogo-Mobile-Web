@@ -35,7 +35,7 @@ class MapSearch {
         foreach ($this->feeds as $categoryID => $feedData) {
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setCategory($categoryID);
-            $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             if ($controller->canSearch()) { // respect config settings
                 $results = $controller->searchByProximity($center, $tolerance, $maxItems);
                 // this runs a risk of eliminating search results that are the
@@ -60,7 +60,7 @@ class MapSearch {
     	foreach ($this->feeds as $id => $feedData) {
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setCategory($id);
-            $controller->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             
             if ($controller->canSearch()) {
                 $results = $controller->search($query);

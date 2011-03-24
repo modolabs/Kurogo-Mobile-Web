@@ -137,7 +137,7 @@ abstract class APIModule extends Module
 
     protected function getAPIConfigData($name) {
         $config = $this->getAPIConfig($name);
-        return $config->getSectionVars(true);
+        return $config->getSectionVars(Config::EXPAND_VALUE);
     }
    
     protected function getAllModules() {

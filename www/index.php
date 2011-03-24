@@ -147,11 +147,9 @@ if (!strlen($path) || $path == '/') {
   $platform = strtoupper($GLOBALS['deviceClassifier']->getPlatform());
   $pagetype = strtoupper($GLOBALS['deviceClassifier']->getPagetype());
 
-  if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT-{$pagetype}-{$platform}", Config::SUPRESS_ERRORS)) {
-    if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT-{$pagetype}", Config::SUPRESS_ERRORS)) {
-      if (!$url = $GLOBALS['siteConfig']->getVar("DEFAULT", Config::SUPRESS_ERRORS)) {
-        $url = 'home';
-      }
+  if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'urls')) {
+    if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'urls')) {
+        $url = Kurogo::getOptionalSiteVar("DEFAULT",'urls','home');
     }
   } 
   
@@ -204,7 +202,7 @@ if ($parts[0]==API_URL_PREFIX) {
     $id = $parts[0];
     
     /* see if there's a redirect for this path */
-    if ($url_redirects = $GLOBALS['siteConfig']->getSection('urls', ConfigFile::SUPRESS_ERRORS)) {
+    if ($url_redirects = Kurogo::getSiteSection('urls')) {
       if (array_key_exists($id, $url_redirects)) {
         if (preg_match("#^http(s)?://#", $url_redirects[$id])) {
            $url = $url_redirects[$id];

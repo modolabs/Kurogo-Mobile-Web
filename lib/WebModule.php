@@ -179,7 +179,7 @@ abstract class WebModule extends Module {
   private function getMinifyUrls($pageOnly=false) {
     $page = preg_replace('/[\s-]+/', '+', $this->page);
     $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(SITE_DIR);
-    $minDebug = $this->getSiteVar('MINIFY_DEBUG') ? '&amp;debug=1' : '';
+    $minDebug = Kurogo::getSiteVar('MINIFY_DEBUG') ? '&amp;debug=1' : '';
     
     $addArgString = $pageOnly ? '&amp;pageOnly=true' : '';
     
@@ -335,7 +335,7 @@ abstract class WebModule extends Module {
     switch ($section)
     {
         case 'strings':
-            $strings = $this->getModuleSection('strings');
+            $strings = $this->getOptionalModuleSection('strings');
             $formListItems = array();
             foreach ($strings as $string=>$value) {
                 $item = array(
@@ -428,7 +428,7 @@ abstract class WebModule extends Module {
         // Pull in fontsize
         if (isset($args['font'])) {
           $this->fontsize = $args['font'];
-          setcookie('fontsize', $this->fontsize, time() + $this->getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
+          setcookie('fontsize', $this->fontsize, time() + Kurogo::getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);      
         
         } else if (isset($_COOKIE['fontsize'])) { 
           $this->fontsize = $_COOKIE['fontsize'];
@@ -448,7 +448,7 @@ abstract class WebModule extends Module {
         if ($page) {
           $this->setPage($page);
           $this->setTemplatePage($this->page, $this->id);
-          $this->setAutoPhoneNumberDetection($this->getSiteVar('AUTODETECT_PHONE_NUMBERS'));
+          $this->setAutoPhoneNumberDetection(Kurogo::getSiteVar('AUTODETECT_PHONE_NUMBERS'));
         }
     }
   
@@ -580,7 +580,7 @@ abstract class WebModule extends Module {
   private function getModuleNavigationConfig() {
     static $moduleNavConfig;
     if (!$moduleNavConfig) {
-        $moduleNavConfig = $this->getConfig('home', 'module');
+        $moduleNavConfig = ModuleConfigFile::factory('home', 'module', ModuleConfigFile::OPTION_CREATE_WITH_DEFAULT);
     }
     
     return $moduleNavConfig;
@@ -602,10 +602,10 @@ abstract class WebModule extends Module {
     
     $moduleConfig = array();
     
-    $moduleConfig['primary'] = $moduleNavConfig->getSection('primary_modules', Config::LOG_ERRORS);
+    $moduleConfig['primary'] = $moduleNavConfig->getSection('primary_modules');
     if (!$moduleConfig['primary']) { $moduleConfig['primary'] = array(); }
 
-    $moduleConfig['secondary'] = $moduleNavConfig->getSection('secondary_modules', Config::LOG_ERRORS);
+    $moduleConfig['secondary'] = $moduleNavConfig->getSection('secondary_modules');
     if (!$moduleConfig['secondary']) { $moduleConfig['secondary'] = array(); }
 
     $disabledIDs = array();
@@ -664,7 +664,7 @@ abstract class WebModule extends Module {
   }
   
   protected function setNavigationModuleOrder($moduleIDs) {
-    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $lifespan = Kurogo::getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
     $value = implode(",", $moduleIDs);
     
     setcookie(MODULE_ORDER_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
@@ -673,7 +673,7 @@ abstract class WebModule extends Module {
   }
   
   protected function setNavigationHiddenModules($moduleIDs) {
-    $lifespan = $this->getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
+    $lifespan = Kurogo::getSiteVar('MODULE_ORDER_COOKIE_LIFESPAN');
     $value = count($moduleIDs) ? implode(",", $moduleIDs) : 'NONE';
     
     setcookie(DISABLED_MODULES_COOKIE, $value, time() + $lifespan, COOKIE_PATH);
@@ -955,7 +955,7 @@ abstract class WebModule extends Module {
         
         $vars = array();
         foreach ($sections as $section) {
-            if ($sectionVars = $config->getSection($section, Config::SUPRESS_ERRORS)) {
+            if ($sectionVars = $config->getOptionalSection($section)) {
                 $vars = array_merge($vars, $sectionVars);
             }
         }
@@ -970,8 +970,7 @@ abstract class WebModule extends Module {
   }
   
   protected function getPageData() {
-     $pageConfig = $this->getConfig($this->configModule, 'pages');
-     return $pageConfig->getSectionVars(true);
+     return $this->getModuleSections('pages');
   }
   
   protected function loadSiteConfigFile($name, $keyName=null, $opts=0) {
@@ -992,7 +991,7 @@ abstract class WebModule extends Module {
   protected function loadConfigFile(Config $config, $keyName=null) {
     $this->loadTemplateEngineIfNeeded();
 
-    $themeVars = $config->getSectionVars(true);
+    $themeVars = $config->getSectionVars(Config::EXPAND_VALUE);
     
     if ($keyName === false) {
       foreach($themeVars as $key => $value) {
@@ -1050,7 +1049,7 @@ abstract class WebModule extends Module {
     $this->assign('minify', $this->getMinifyUrls());
     
     // Google Analytics. This probably needs to be moved
-    if ($gaID = $this->getSiteVar('GOOGLE_ANALYTICS_ID', null, Config::SUPRESS_ERRORS)) {
+    if ($gaID = Kurogo::getOptionalSiteVar('GOOGLE_ANALYTICS_ID')) {
         $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
         $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
     }
@@ -1084,7 +1083,7 @@ abstract class WebModule extends Module {
 
     $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
     
-    $moduleStrings = $this->getModuleSection('strings', array(), Config::SUPRESS_ERRORS);
+    $moduleStrings = $this->getOptionalModuleSection('strings');
     $this->assign('moduleStrings', $moduleStrings);
 
     // Module Help
@@ -1116,7 +1115,7 @@ abstract class WebModule extends Module {
     }
     $this->assign('accessKeyStart', $accessKeyStart);
 
-    if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
+    if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
         includePackage('Authentication');
         $this->setCacheMaxAge(0);
         $session = $this->getSession();
@@ -1132,7 +1131,7 @@ abstract class WebModule extends Module {
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array()));
             }
 
-            $this->assign('session_max_idle', intval($this->getSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0, Config::SUPRESS_ERRORS)));
+            $this->assign('session_max_idle', intval(Kurogo::getOptionalSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0)));
         }
     }
 

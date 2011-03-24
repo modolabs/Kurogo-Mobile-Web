@@ -87,7 +87,7 @@ class ErrorWebModule extends WebModule {
   protected function devError() {
     
     // production
-    if($this->getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+    if(Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
       return false;
     }
       

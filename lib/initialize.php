@@ -143,7 +143,7 @@ function Initialize(&$path=null) {
   //    
   
   $GLOBALS['siteConfig'] = new SiteConfig();
-  ini_set('display_errors', $GLOBALS['siteConfig']->getVar('DISPLAY_ERRORS'));
+  ini_set('display_errors', Kurogo::getSiteVar('DISPLAY_ERRORS'));
   if (!ini_get('error_log')) {
      ini_set('error_log', LOG_DIR . '/php_error.log');
   }
@@ -152,7 +152,7 @@ function Initialize(&$path=null) {
   // Set timezone
   //
   
-  date_default_timezone_set($GLOBALS['siteConfig']->getVar('LOCAL_TIMEZONE'));
+  date_default_timezone_set(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
   
   //
   // Install exception handlers
@@ -160,7 +160,7 @@ function Initialize(&$path=null) {
   
   require_once realpath(LIB_DIR.'/exceptions.php');
   
-  if($GLOBALS['siteConfig']->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+  if(Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
     set_exception_handler("exceptionHandlerForProduction");
   } else {
     set_exception_handler("exceptionHandlerForDevelopment");
@@ -186,7 +186,7 @@ function Initialize(&$path=null) {
   $urlDeviceDebugPrefix = '/';
   
   // Check for device classification in url and strip it if present
-  if ($GLOBALS['siteConfig']->getVar('DEVICE_DEBUG') && 
+  if (Kurogo::getSiteVar('DEVICE_DEBUG') && 
       preg_match(';^device/([^/]+)/(.*)$;', $path, $matches)) {
     $device = $matches[1];  // layout forced by url
     $path = $matches[2];

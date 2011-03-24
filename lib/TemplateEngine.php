@@ -143,7 +143,7 @@ class TemplateEngine extends Smarty {
     $source = preg_replace(
       ';(url\("?\'?|href\s*=\s*"|src\s*=\s*")('.URL_PREFIX.'|'.URL_DEVICE_DEBUG_PREFIX.'|/);', '\1'.URL_PREFIX, $source);
     
-    if ($GLOBALS['siteConfig']->getVar('DEVICE_DEBUG')) {
+    if (Kurogo::getSiteVar('DEVICE_DEBUG')) {
       // if we are in debugging mode we need to also rewrite full paths with hostnames
       $source = preg_replace(
         ';(url\("?\'?|href\s*=\s*"|src\s*=\s*")('.FULL_URL_PREFIX.'|'.FULL_URL_BASE.');', '\1'.FULL_URL_PREFIX, $source);
@@ -274,8 +274,8 @@ class TemplateEngine extends Smarty {
     $this->assign('pagetype', $pagetype);
     $this->assign('platform', $platform);
     $this->assign('supportsCerts', $supportsCerts ? 1 : 0);
-    $this->assign('showDeviceDetection', $GLOBALS['siteConfig']->getVar('DEVICE_DETECTION_DEBUG'));
-    $this->assign('moduleDebug', $GLOBALS['siteConfig']->getVar('MODULE_DEBUG'));
+    $this->assign('showDeviceDetection', Kurogo::getSiteVar('DEVICE_DETECTION_DEBUG'));
+    $this->assign('moduleDebug', Kurogo::getSiteVar('MODULE_DEBUG'));
   }
   
   //

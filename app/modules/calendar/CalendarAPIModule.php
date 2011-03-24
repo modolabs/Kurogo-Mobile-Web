@@ -28,7 +28,7 @@ class CalendarAPIModule extends APIModule
             case 'user':
             case 'resource':
                 $typeController = $type=='user' ? 'UserCalendarListController' :'ResourceListController';
-                $sectionData = $this->getModuleSection('calendar_list');
+                $sectionData = $this->getOptionalModuleSection('calendar_list');
                 $listController = isset($sectionData[$typeController]) ? $sectionData[$typeController] : '';
                 if (strlen($listController)) {
                     $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
@@ -69,7 +69,7 @@ class CalendarAPIModule extends APIModule
                 $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
             }
             $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
-            $controller->setDebugMode($this->getSiteVar('DATA_DEBUG'));
+            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         } else {
             throw new Exception("Error getting calendar feed for index $index");
@@ -122,7 +122,7 @@ class CalendarAPIModule extends APIModule
 
     public function  initializeForCommand() {
 
-        $this->timezone = new DateTimeZone($this->getSiteVar('LOCAL_TIMEZONE'));
+        $this->timezone = new DateTimeZone(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
         $this->fieldConfig = $this->getAPIConfigData('detail');
 
         switch ($this->command) {

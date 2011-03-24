@@ -34,12 +34,12 @@ class DeviceClassifier {
   }
 
   private function cacheLifetime() {
-    return $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_CACHE_LIFETIME');
+    return Kurogo::getSiteVar('MOBI_SERVICE_CACHE_LIFETIME');
   }
   
   function __construct($device = null) {
   
-    $this->version = intval($GLOBALS['siteConfig']->getVar('MOBI_SERVICE_VERSION'));
+    $this->version = intval(Kurogo::getSiteVar('MOBI_SERVICE_VERSION'));
     $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
     
     if ($device && strlen($device)) {
@@ -50,7 +50,7 @@ class DeviceClassifier {
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
       
-      if ($data = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_USE_EXTERNAL') ? 
+      if ($data = Kurogo::getSiteVar('MOBI_SERVICE_USE_EXTERNAL') ? 
         $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($this->userAgent) ) {
         $this->pagetype = $data['pagetype'];
         $this->platform = $data['platform'];
@@ -66,7 +66,7 @@ class DeviceClassifier {
     
   private function setDeviceCookie() {
     setcookie(self::COOKIE_KEY, $this->getDevice(), 
-      time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
+      time() + Kurogo::getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
   }
   
   private function detectDeviceInternal($user_agent) {
@@ -75,7 +75,7 @@ class DeviceClassifier {
       return;
     }
      
-     if (!$db_file =  $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_FILE')) {
+     if (!$db_file =  Kurogo::getSiteVar('MOBI_SERVICE_FILE')) {
         error_log('MOBI_SERVICE_FILE not specified in site config.');
         die("MOBI_SERVICE_FILE not specified in site config.");
      }
@@ -115,7 +115,7 @@ class DeviceClassifier {
         'version'=> $this->version
       ));
       
-      $url = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_URL').'?'.$query;
+      $url = Kurogo::getSiteVar('MOBI_SERVICE_URL').'?'.$query;
       $json = file_get_contents($url);
 
       $cache->write($json, $cacheFilename);

@@ -455,7 +455,7 @@ class AdminWebModule extends WebModule {
                     'url'=>$this->buildBreadcrumbURL('strings', array()),
                     'subtitle'=>'Update textual strings used throughout the site'
                 );
-                if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
+                if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
                     $adminList[] = array(
                         'title'=>'User Sessions',
                         'url'=>$this->buildBreadcrumbURL('sessions', array()),

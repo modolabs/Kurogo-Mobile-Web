@@ -46,12 +46,7 @@ abstract class Module
       * @return array
       */
     protected function loadFeedData() {
-        $data = array();
-        
-        if ($feedConfigFile = $this->getConfig($this->configModule, 'feeds')) {
-            $data = $feedConfigFile->getSectionVars();
-        }
-        return $data;
+        return $this->getModuleSections('feeds');
     }
   
     /**
@@ -135,12 +130,12 @@ abstract class Module
             $this->moduleDisabled();
         }
 
-        if (($this->getSiteVar('SECURE_REQUIRED', 0, Config::SUPRESS_ERRORS) || $moduleData['secure']) && 
+        if ((Kurogo::getOptionalSiteVar('SECURE_REQUIRED') || $moduleData['secure']) && 
             (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
             $this->secureModule();
         }
         
-        if ($this->getSiteVar('AUTHENTICATION_ENABLED')) {
+        if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
             includePackage('Authentication');
             if ($moduleData['protected']) {
                 if (!$this->isLoggedIn()) {
@@ -190,8 +185,8 @@ abstract class Module
       */
     protected function getSession() {
         if (!$this->session) {
-            $args = $this->getSiteSection('authentication');
-            $args['DEBUG_MODE'] = $this->getSiteVar('DATA_DEBUG');
+            $args = Kurogo::getSiteSection('authentication');
+            $args['DEBUG_MODE'] = Kurogo::getSiteVar('DATA_DEBUG');
             $this->session = new Session($args);
         }
     
@@ -205,26 +200,13 @@ abstract class Module
       * @param int $opts bitfield of ConfigFile options
       * @return ConfigFile object
       */
-    protected function getConfig($id, $type, $opts=0) {
+    protected function getConfig($type, $opts=0) {
         $opts = $opts | ModuleConfigFile::OPTION_CREATE_WITH_DEFAULT;
-        $config = ModuleConfigFile::factory($id, $type, $opts); 
+        $config = ModuleConfigFile::factory($this->configModule, $type, $opts); 
         $GLOBALS['siteConfig']->addConfig($config);
         return $config;
     }
 
-    /**
-      * Returns the main module configuration file
-      * @return ConfigFile object
-      */
-    protected function getModuleConfig() {
-        static $moduleConfig;
-        if (!$moduleConfig) {
-            $moduleConfig = $this->getConfig($this->configModule, 'module');
-        }
-        
-        return $moduleConfig;
-    }
- 
     /**
       * Returns the main module configuration
       * @return array. Dictionary of module keys and values
@@ -232,8 +214,8 @@ abstract class Module
     public function getModuleData() {
         if (!$this->moduleData) {
             $moduleData = $this->getModuleDefaultData();
-            $config = $this->getModuleConfig();
-            $moduleData = array_merge($moduleData, $config->getSectionVars(true));
+            $config = $this->getConfig('module');
+            $moduleData = array_merge($moduleData, $config->getSectionVars());
             $this->moduleData = $moduleData;
         }
     
@@ -280,53 +262,25 @@ abstract class Module
     }
 
     /**
-      * Returns a string from the site configuration (strings.ini)
-      * @param string $var the key to retrieve
-      * @param string $default an optional default value if the key is not present
-      * @return string the value of the string or the default 
-      */
-    protected function getSiteString($var, $default='') {
-        static $config;
-        if (!$config) {
-            $config = ConfigFile::factory('strings', 'site');
-        }
-        
-        return $config->getVar($var, Config::EXPAND_VALUE);
-    }
-
-    /**
-      * Returns a key from the site configuration
-      * @param string $var the key to retrieve
-      * @param mixed $default an optional default value if the key is not present
-      * @param int $opts
-      * @return mixed the value of the or the default 
-      */
-    protected function getSiteVar($var, $default=null, $opts=Config::LOG_ERRORS) {
-        $value = $GLOBALS['siteConfig']->getVar($var, $opts | Config::EXPAND_VALUE);
-        return is_null($value) ? $default :$value;
-    }
-
-    /**
-      * Returns a section from the site configuration
-      * @param string $section the key to retrieve
-      * @param int $opts
-      * @return array the section
-      */
-    protected function getSiteSection($section, $opts=Config::LOG_ERRORS) {
-        return $GLOBALS['siteConfig']->getSection($section, $opts);
-    }
-
-    /**
       * Returns a key from the module configuration
       * @param string $var the key to retrieve
       * @param mixed $default an optional default value if the key is not present
       * @param int $opts
       * @return mixed the value of the or the default 
       */
-    protected function getModuleVar($var, $default=null, $opts=Config::LOG_ERRORS) {
-        $config = $this->getModuleConfig();
-        $value = $config->getVar($var, Config::EXPAND_VALUE| $opts);
-        return is_null($value) ? $default :$value;
+    protected function getModuleVar($var, $section=null, $config='module') {
+        switch ($var) {
+            case 'id':
+                return $this->configModule;
+        }
+        
+        $config = $this->getConfig($config);
+        return $config->getVar($var, $section);
+    }
+
+    protected function getOptionalModuleVar($key, $default='', $section=null, $config='module') {
+        $config = $this->getConfig($config);
+        return $config->getOptionalVar($var, $default, $section);
     }
 
     /**
@@ -336,12 +290,19 @@ abstract class Module
       * @param int $opts
       * @return mixed the value of the or the default 
       */
-    protected function getModuleSection($section, $default=array(), $opts=Config::LOG_ERRORS) {
-        $config = $this->getModuleConfig();
-        if (!$section = $config->getSection($section, $opts)) {
-            $section = $default;
-        }
-        return $section;
+    protected function getModuleSection($section, $config='module') {
+        $config = $this->getConfig($config);
+        return $config->getSection($section);
+    }
+
+    protected function getOptionalModuleSection($section, $config='module') {
+        $config = $this->getConfig($config);
+        return $config->getOptionalSection($section);
+    }
+
+    protected function getModuleSections($config) {
+        $config = $this->getConfig($config);
+        return $config->getSectionVars(Config::EXPAND_VALUE);
     }
 
     /**
@@ -350,10 +311,9 @@ abstract class Module
       * @return array
       */
     protected function getModuleArray($section) {
-        $config = $this->getModuleConfig();
         $return = array();
 
-        if ($data = $config->getSection($section)) {
+        if ($data = $this->getModuleSection($section)) {
             $fields = array_keys($data);
         
             for ($i=0; $i<count($data[$fields[0]]); $i++) {
@@ -414,8 +374,8 @@ abstract class Module
         $acls = array();
         
         $aclStrings = array_merge(
-            $this->getSiteVar($type, array(), Config::SUPRESS_ERRORS),
-            $this->getModuleVar($type, array(), Config::SUPRESS_ERRORS)
+            Kurogo::getOptionalSiteVar($type, array(), 'authentication'),
+            $this->getOptionalModuleVar($type, array(), 'authentication')
         );
         
         foreach ($aclStrings as $aclString) {

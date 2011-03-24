@@ -27,7 +27,7 @@ class TrumbaCalendarDataController extends CalendarDataController
         switch ($var)
         {
             case 'category':
-                $this->addTrumbaFilter($GLOBALS['siteConfig']->getVar('CALENDAR_CATEGORY_FILTER_FIELD'), $value);
+                $this->addTrumbaFilter(Kurogo::getSiteVar('CALENDAR_CATEGORY_FILTER_FIELD'), $value);
                 break;
             default:
                 return parent::addFilter($var, $value);

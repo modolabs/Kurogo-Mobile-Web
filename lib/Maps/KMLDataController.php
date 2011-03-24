@@ -13,9 +13,12 @@ class KMLDataController extends MapDataController
     {
     	if (strpos($url, 'kmz') !== false) {
     	    if (!class_exists('ZipArchive')) {
-    	        die("class ZipArchive (php-zip) not supported");
+    	        throw new Exception("class ZipArchive (php-zip) not available");
     	    }
-            $tmpDir = $GLOBALS['siteConfig']->getVar('TMP_DIR');
+            $tmpDir = Kurogo::getSiteVar('TMP_DIR');
+            if (!is_writable($tmpDir)) {
+    	        throw new Exception("Temporary directory $tmpDir not available");
+            }
     	    $tmpFile = $tmpDir.'/tmp.kmz';
 
     	    copy($url, $tmpFile);
