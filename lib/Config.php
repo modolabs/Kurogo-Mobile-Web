@@ -131,7 +131,7 @@ abstract class Config {
             } else {
                 throw new Exception("Config variable '$key' not set in section $section");
             }
-        } if (isset($this->vars[$key])) {
+        } elseif (isset($this->vars[$key])) {
             $value = $this->vars[$key];
         } else {
             throw new Exception("Config variable '$key' not set");
