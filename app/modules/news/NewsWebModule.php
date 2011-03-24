@@ -15,6 +15,7 @@ class NewsWebModule extends WebModule {
   protected $feedFields = array('CACHE_LIFETIME'=>'Cache lifetime (seconds)','CONTROLLER_CLASS'=>'Controller Class','ITEM_CLASS'=>'Item Class', 'ENCLOSURE_CLASS'=>'Enclosure Class');
   protected $feedIndex = 0;
   protected $feed;
+  protected $maxPerPage = 10;
   protected $showImages = true;
   protected $showPubDate = false;
   protected $showAuthor = false;
