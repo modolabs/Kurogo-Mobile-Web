@@ -416,8 +416,7 @@ abstract class WebModule extends Module {
       
         parent::init();
 
-        $moduleData = $this->getModuleData();
-        $this->moduleName = $moduleData['title'];
+        $this->moduleName = $this->getModuleVar('title','module');
 
         $this->setArgs($args);
 
