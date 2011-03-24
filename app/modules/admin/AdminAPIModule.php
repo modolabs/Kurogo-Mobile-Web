@@ -53,14 +53,8 @@ class AdminAPIModule extends APIModule
         $configData = $module->getModuleAdminConfig();
 
         foreach ($configData as $section=>&$sectionData) {
-            $sectionVars = $module->getModuleSection($section);
-            foreach ($sectionData['fields'] as &$field) {
-                switch ($field['config'])
-                {
-                    case 'module':
-                        $field['value'] = isset($sectionVars[$field['key']]) ? $sectionVars[$field['key']] : $module->getModuleVar($field['key']);
-                        break;
-                }
+            foreach ($sectionData['fields'] as $key=>&$field) {
+                $field['value'] = $module->getOptionalModuleVar($key,'', $section, $field['config']);
                 
                 switch ($field['type']) 
                 {
@@ -105,13 +99,13 @@ class AdminAPIModule extends APIModule
             switch ($field['config'])
             {
                 case 'config':
-                    $field['value'] = $this->getUnconstantedValue($this->getSiteVar($key), $constant);
+                    $field['value'] = $this->getUnconstantedValue(Kurogo::getOptionalSiteVar($key), $constant);
                     if ($constant) {
                         $field['constant'] = $constant;
                     }
                     break;
                 case 'strings':
-                    $field['value'] = $this->getSiteString($key);
+                    $field['value'] = Kurogo::getOptionalSiteString($key);
                     break;
             }
             

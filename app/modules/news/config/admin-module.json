@@ -1,7 +1,7 @@
 {
     "module": {
-        "fields":[
-            {"label":"Stories per page","type":"number","config":"module","description":"Maximum number of news stories to show per page","key":"NEWS_MAX_RESULTS"}
-       ]
+        "fields":{
+            "MAX_RESULTS":{"label":"Stories per page","type":"number","config":"module","description":"Maximum number of news stories to show per page"}
+       }
     }
 }

@@ -1,8 +1,8 @@
 {
     "strings":{
-        "fields":[
-            {"label":"More Contacts","type":"text","config":"module","description":"Text to show for &quot;More Emergency Contacts&quot; link","key":"MORE_CONTACTS"},
-            {"label":"No Emergency","type":"text","config":"module","description":"Text to show when there is no emergency","key":"NO_EMERGENCY"}
-        ]
+        "fields":{
+            "MORE_CONTACTS":{"label":"More Contacts","type":"text","config":"module","description":"Text to show for &quot;More Emergency Contacts&quot; link"},
+            "NO_EMERGENCY":{"label":"No Emergency","type":"text","config":"module","description":"Text to show when there is no emergency"}
+        }
     }
 }
