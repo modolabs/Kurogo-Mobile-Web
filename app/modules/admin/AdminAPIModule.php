@@ -54,7 +54,11 @@ class AdminAPIModule extends APIModule
 
         foreach ($configData as $section=>&$sectionData) {
             foreach ($sectionData['fields'] as $key=>&$field) {
-                $field['value'] = $module->getOptionalModuleVar($key,'', $section, $field['config']);
+                if (isset($field['valueMethod'])) {
+                    $field['value'] = call_user_func(array($module, $field['valueMethod']));
+                } else {
+                    $field['value'] = $module->getOptionalModuleVar($key,'', $section, $field['config']);
+                }
                 
                 switch ($field['type']) 
                 {
