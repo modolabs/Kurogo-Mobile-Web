@@ -278,18 +278,11 @@ abstract class Module
         return $config->getVar($var, $section);
     }
 
-    protected function getOptionalModuleVar($key, $default='', $section=null, $config='module') {
+    protected function getOptionalModuleVar($var, $default='', $section=null, $config='module') {
         $config = $this->getConfig($config);
         return $config->getOptionalVar($var, $default, $section);
     }
 
-    /**
-      * Returns a section from the site configuration
-      * @param string $var the key to retrieve
-      * @param mixed $default an optional default value if the key is not present
-      * @param int $opts
-      * @return mixed the value of the or the default 
-      */
     protected function getModuleSection($section, $config='module') {
         $config = $this->getConfig($config);
         return $config->getSection($section);
