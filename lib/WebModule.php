@@ -414,7 +414,9 @@ abstract class WebModule extends Module {
     
     protected function init($page='', $args=array()) {
       
-        parent::init();
+        if ($page) {
+            parent::init();
+        }
 
         $this->moduleName = $this->getModuleVar('title','module');
 
