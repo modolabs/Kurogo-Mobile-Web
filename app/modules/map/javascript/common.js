@@ -185,7 +185,12 @@ function updateMapImage() {
     httpRequest.open("GET", url, true);
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var obj = JSON.parse(httpRequest.responseText);
+            var obj;
+            if(window.JSON) {
+                obj = JSON.parse(httpRequest.responseText);
+            } else {
+                obj = eval('(' + httpRequest.responseText + ')');
+            }
             var newSrc = obj['response'];
             loadMapImage(newSrc);
         }
