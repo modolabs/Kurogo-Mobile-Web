@@ -147,9 +147,9 @@ if (!strlen($path) || $path == '/') {
   $platform = strtoupper($GLOBALS['deviceClassifier']->getPlatform());
   $pagetype = strtoupper($GLOBALS['deviceClassifier']->getPagetype());
 
-  if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'urls')) {
-    if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'urls')) {
-        $url = Kurogo::getOptionalSiteVar("DEFAULT",'urls','home');
+  if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
+    if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
+        $url = Kurogo::getOptionalSiteVar("DEFAULT",'home','urls');
     }
   } 
   
