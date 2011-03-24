@@ -2,126 +2,126 @@
     "setup":{
         "title":"Site Setup",
         "description":"",
-        "fields":[
-            {"label":"Site name","type":"text","config":"strings","description":"Name of this website as it appears in the website, including in the &quot;Return to [site-name] home&quot; link in the footer","key":"SITE_NAME"},
-            {"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site. Appears in the title of the &quot;About [organization-name]&quot; link in the &quot;About&quot; module", "key":"ORGANIZATION_NAME","section":""},
-            {"label":"Default language","type":"text","config":"config","description":"Sets the default text encoding for the entire site", "key":"LANGUAGE","section":"site settings"},
-            {"label":"Local time zone","type":"select","config":"config","key":"LOCAL_TIMEZONE","optionsMethod":["Calendar","getTimeZones"],"section":"site settings"},
-            {"label":"Local area code","type":"text","config":"config","description":"Area code for local phone numbers. [Add note as to where this is used]","key":"LOCAL_AREA_CODE","section":"site settings"},
-            {"label":"Enable auto-detection of phone numbers","type":"checkbox","config":"config","description":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.","key":"AUTODETECT_PHONE_NUMBERS","section":"site settings"}
-        ]
+        "fields":{
+            "SITE_NAME":{"label":"Site name","type":"text","config":"strings","description":"Name of this website as it appears in the website, including in the &quot;Return to [site-name] home&quot; link in the footer","section":"strings"},
+            "ORGANIZATION_NAME":{"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site. Appears in the title of the &quot;About [organization-name]&quot; link in the &quot;About&quot; module","section":"strings"},
+            "LANGUAGE":{"label":"Default language","type":"text","config":"config","description":"Sets the default text encoding for the entire site","section":"site settings"},
+            "LOCAL_TIMEZONE":{"label":"Local time zone","type":"select","config":"config","optionsMethod":["Calendar","getTimeZones"],"section":"site settings"},
+            "LOCAL_AREA_CODE":{"label":"Local area code","type":"text","config":"config","description":"Area code for local phone numbers. [Add note as to where this is used]","section":"site settings"},
+            "AUTODETECT_PHONE_NUMBERS":{"label":"Enable auto-detection of phone numbers","type":"checkbox","config":"config","description":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.","section":"site settings"}
+        }
     },
     "modules":{
         "title":"Default Modules", 
         "description":"Select the modules which mobile and desktop users should see when they first enter the site.",
-        "fields":[
-            {"label":"Default mobile","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"config","description":"Initial module to which mobile users are sent","key":"DEFAULT","section":"urls"},
-            {"label":"Default desktop","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"config","description":"Initial module to which non-mobile users are sent","key":"DEFAULT-COMPLIANT-COMPUTER","section":"urls"}
-        ]
+        "fields":{
+            "DEFAULT":{"label":"Default mobile","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"config","description":"Initial module to which mobile users are sent","section":"urls"},
+            "DEFAULT-COMPLIANT-COMPUTER":{"label":"Default desktop","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"config","description":"Initial module to which non-mobile users are sent","section":"urls"}
+        }
     },
     "security":{
         "title":"SSL",
         "description":"Configure secure socket layer connections",
-        "fields":[
-            {"label":"Require https","type":"checkbox","config":"config","description":"Require a secure (https) connection on all requests. It is also possible to configure secure connections on a per module basis","key":"SECURE_REQUIRED","section":"site settings"},
-            {"label":"Secure host","type":"text","config":"config","description":"Alternate host name to use for secure connections. Default is the name hostname","key":"SECURE_HOST","section":"site settings"},
-            {"label":"Secure port","type":"text","config":"config","description":"Alternate port to use for secure connections. Default is 443","key":"SECURE_PORT","section":"site settings"}
-        ]
+        "fields":{
+            "SECURE_REQUIRED":{"label":"Require https","type":"checkbox","config":"config","description":"Require a secure (https) connection on all requests. It is also possible to configure secure connections on a per module basis","section":"site settings"},
+            "SECURE_HOST":{"label":"Secure host","type":"text","config":"config","description":"Alternate host name to use for secure connections. Default is the name hostname","section":"site settings"},
+            "SECURE_PORT":{"label":"Secure port","type":"text","config":"config","description":"Alternate port to use for secure connections. Default is 443","section":"site settings"}
+        }
     },
     "theme":{
         "title":"Theme", 
         "description":"Select the visual theme for the site. For more information about creating and modifying themes, see the developer documentation.",
-        "fields":[
-            {"label":"Active Theme","type":"select","config":"config","optionsMethod":["WebModule","getAllThemes"],"description":"Active theme used by this site","key":"ACTIVE_THEME","section":"themes"}
-        ]
+        "fields":{
+            "ACTIVE_THEME":{"label":"Active Theme","type":"select","config":"config","optionsMethod":["WebModule","getAllThemes"],"description":"Active theme used by this site","section":"themes"}
+        }
     },
     "detection":{
         "title":"Device Detection", 
         "description":"e device detection service recognizes and categorizes each user's web browser so that the appropriate class of web UI can be delivered. You can run this service on your own web server, or use an externally hosted one such as the reference service provided by Modo Labs.",
-        "fields":[
-            {"label":"Mobi service version","type":"select","config":"config","options":{"1":"1"},"description":"Version of the Kurogo device detection service","key":"MOBI_SERVICE_VERSION","section":"device_detection"},
-            {"label":"Use external mobi-service","type":"checkbox","config":"config","description":"Use the external version of the Kurogo device detection service hosted by Modo Labs. This introduces a new external dependency for your website but ensures that your system will always be accessing the latest device detection database.","key":"MOBI_SERVICE_USE_EXTERNAL","section":"device_detection"},
-            {"label":"Device detection DB","type":"file","config":"config","description":"Path to the mobi-service device database file within your site","key":"MOBI_SERVICE_FILE","section":"device_detection"},
-            {"label":"Device detection URL","type":"text","config":"config","description":"URL of the externally hosted device-detection service","key":"MOBI_SERVICE_URL","section":"device_detection"},
-            {"label":"Service cache lifetime","type":"time","config":"config","description":"Time (in seconds) that the device detection service should be cached on the server","key":"MOBI_SERVICE_CACHE_LIFETIME","section":"device_detection"}
-        ]
+        "fields":{
+            "MOBI_SERVICE_VERSION":{"label":"Mobi service version","type":"select","config":"config","options":{"1":"1"},"description":"Version of the Kurogo device detection service","section":"device_detection"},
+            "MOBI_SERVICE_USE_EXTERNAL":{"label":"Use external mobi-service","type":"checkbox","config":"config","description":"Use the external version of the Kurogo device detection service hosted by Modo Labs. This introduces a new external dependency for your website but ensures that your system will always be accessing the latest device detection database.","section":"device_detection"},
+            "MOBI_SERVICE_FILE":{"label":"Device detection DB","type":"file","config":"config","description":"Path to the mobi-service device database file within your site","section":"device_detection"},
+            "MOBI_SERVICE_URL":{"label":"Device detection URL","type":"text","config":"config","description":"URL of the externally hosted device-detection service","section":"device_detection"},
+            "MOBI_SERVICE_CACHE_LIFETIME":{"label":"Service cache lifetime","type":"time","config":"config","description":"Time (in seconds) that the device detection service should be cached on the server","section":"device_detection"}
+        }
     },
     "error":{
         "title":"Error Handling and Debugging", 
         "description":"For optimal runtime performance and security, disable as many types of debugging as possible.",
-        "fields":[
-            {"label":"Show error messages","type":"checkbox","config":"config","description":"Show error messages generated by PHP scripts","key":"DISPLAY_ERRORS","section":"error_handling_and_debugging"},
-            {"label":"Enable device override","type":"checkbox","config":"config","description":"Allow overriding device classification using /device/xxx prefix urls","key":"DEVICE_DEBUG","section":"error_handling_and_debugging"},
-            {"label":"Enable module-level debugging","type":"checkbox","config":"config","description":"Show debugging messages generated by modules","key":"MODULE_DEBUG","section":"error_handling_and_debugging"},
-            {"label":"Enable debugging mode for Minify functions","type":"checkbox","config":"config","description":"Include verbose output in minify CSS and JavaScript data","key":"MINIFY_DEBUG","section":"error_handling_and_debugging"},
-            {"label":"Enable data debugging","type":"checkbox","config":"config","description":"Verbose logging of data retrieval and database queries","key":"DATA_DEBUG","section":"error_handling_and_debugging"},
-            {"label":"Enable debugging of device detection services","type":"checkbox","config":"config","description":"Show device detection in footer","key":"DEVICE_DETECTION_DEBUG","section":"error_handling_and_debugging"},
-            {"label":"Enable production exception handler","type":"checkbox","config":"config","description":"When enabled, the production exception handler will email details of code exceptions to the developer email. If disabled, exceptions will be shown in detail on the screen.","key":"PRODUCTION_ERROR_HANDLER_ENABLED","section":"error_handling_and_debugging"},
-            {"label":"Developer Email","type":"text","config":"config","description":"Address to which system-generated error messages should be sent when production exception handler is enabled. If blank, no error-message emails will be generated.","key":"DEVELOPER_EMAIL","section":"error_handling_and_debugging"}
-        ]
+        "fields":{
+            "DISPLAY_ERRORS":{"label":"Show error messages","type":"checkbox","config":"config","description":"Show error messages generated by PHP scripts","section":"error_handling_and_debugging"},
+            "DEVICE_DEBUG":{"label":"Enable device override","type":"checkbox","config":"config","description":"Allow overriding device classification using /device/xxx prefix urls","section":"error_handling_and_debugging"},
+            "MODULE_DEBUG":{"label":"Enable module-level debugging","type":"checkbox","config":"config","description":"Show debugging messages generated by modules","section":"error_handling_and_debugging"},
+            "MINIFY_DEBUG":{"label":"Enable debugging mode for Minify functions","type":"checkbox","config":"config","description":"Include verbose output in minify CSS and JavaScript data","section":"error_handling_and_debugging"},
+            "MINIFY_DEBUG":{"label":"Enable data debugging","type":"checkbox","config":"config","description":"Verbose logging of data retrieval and database queries","section":"error_handling_and_debugging"},
+            "DEVICE_DETECTION_DEBUG":{"label":"Enable debugging of device detection services","type":"checkbox","config":"config","description":"Show device detection in footer","section":"error_handling_and_debugging"},
+            "PRODUCTION_ERROR_HANDLER_ENABLED":{"label":"Enable production exception handler","type":"checkbox","config":"config","description":"When enabled, the production exception handler will email details of code exceptions to the developer email. If disabled, exceptions will be shown in detail on the screen.","section":"error_handling_and_debugging"},
+            "DEVELOPER_EMAIL":{"label":"Developer Email","type":"text","config":"config","description":"Address to which system-generated error messages should be sent when production exception handler is enabled. If blank, no error-message emails will be generated.","section":"error_handling_and_debugging"}
+        }
     },
     "database":{
         "title":"Database Configuration", 
         "description":"",
-        "fields":[
-            {"label":"Database type","type":"select","config":"config","optionsMethod":["db","getDBTypes"],"description":"The database backend","key":"DB_TYPE","section":"database"},
-            {"label":"Database host","type":"text","config":"config","description":"Host name of the database server","key":"DB_HOST","section":"database"},
-            {"label":"Database user","type":"text","config":"config","description":"User name to access the database server","key":"DB_USER","section":"database"},
-            {"label":"Database password","type":"password","config":"config","description":"Password to access the database server","key":"DB_PASS","section":"database"},
-            {"label":"Database","type":"text","config":"config","description":"Name of database to store the tables","key":"DB_DBNAME","section":"database"},
-            {"label":"File location","type":"file","config":"config","description":"Location of SQLite database file","key":"DB_FILE","section":"database"}
-        ]
+        "fields":{
+            "DB_TYPE":{"label":"Database type","type":"select","config":"config","optionsMethod":["db","getDBTypes"],"description":"The database backend","section":"database"},
+            "DB_HOST":{"label":"Database host","type":"text","config":"config","description":"Host name of the database server","section":"database"},
+            "DB_USER":{"label":"Database user","type":"text","config":"config","description":"User name to access the database server","section":"database"},
+            "DB_PASS":{"label":"Database password","type":"password","config":"config","description":"Password to access the database server","section":"database"},
+            "DB_DBNAME":{"label":"Database","type":"text","config":"config","description":"Name of database to store the tables","section":"database"},
+            "DB_FILE":{"label":"File location","type":"file","config":"config","description":"Location of SQLite database file","section":"database"}
+        }
     },
 
     "cookies":{
         "title":"Cookies", 
         "description":" Specify how long different types of cookies will be set to persist in each user's browser.",
-        "fields":[
-            {"label":"Module order lifespan","type":"time","config":"config","description":"User-customized order of modules to be displayed on the homescreen","key":"MODULE_ORDER_COOKIE_LIFESPAN","section":"cookies"},
-            {"label":"Layout cookie lifespan","type":"time","config":"config","description":"Time (in seconds) that the device detection service should be cached on the server","key":"LAYOUT_COOKIE_LIFESPAN","section":"cookies"}
-        ]
+        "fields":{
+            "MODULE_ORDER_COOKIE_LIFESPAN":{"label":"Module order lifespan","type":"time","config":"config","description":"User-customized order of modules to be displayed on the homescreen","section":"cookies"},
+            "LAYOUT_COOKIE_LIFESPAN":{"label":"Layout cookie lifespan","type":"time","config":"config","description":"Time (in seconds) that the device detection service should be cached on the server","section":"cookies"}
+        }
     },
     "authentication":{
         "title":"Authentication", 
         "description":"Still have to work on this section...",
-        "fields":[
-            {"label":"Authentication Enabled","type":"checkbox","config":"config","description":"Enable user logins and authentication. Required to protect modules","key":"AUTHENTICATION_ENABLED","section":"authentication"},
-            {"label":"Idle Timeout","type":"time","config":"config","description":"Number of seconds before idle users are logged off. Set to 0 to disable idle logoff","key":"AUTHENTICATION_IDLE_TIMEOUT","section":"authentication"},
-            {"label":"Session storage method","type":"select","config":"config","options":{"0":"Flat files","1":"Database"},"description":"Method used to store session data","key":"AUTHENTICATION_USE_SESSION_DB","section":"authentication"},
-            {"label":"Permit saving of userID","type":"checkbox","config":"config","description":"Allow users to save their userID in a local cookie for subsequent logins (NOTE: currently not used)","key":"AUTHENTICATION_ALLOW_SAVE_USERID","section":"authentication"},
-            {"label":"Allow users to be remembered","type":"time","config":"config","description":"Number of seconds to allow users to be remained logged in, even if closing their browser.","key":"AUTHENTICATION_REMAIN_LOGGED_IN_TIME","section":"authentication"}
-        ]
+        "fields":{
+            "AUTHENTICATION_ENABLED":{"label":"Authentication Enabled","type":"checkbox","config":"config","description":"Enable user logins and authentication. Required to protect modules","section":"authentication"},
+            "AUTHENTICATION_IDLE_TIMEOUT":{"label":"Idle Timeout","type":"time","config":"config","description":"Number of seconds before idle users are logged off. Set to 0 to disable idle logoff","section":"authentication"},
+            "AUTHENTICATION_USE_SESSION_DB":{"label":"Session storage method","type":"select","config":"config","options":{"0":"Flat files","1":"Database"},"description":"Method used to store session data","section":"authentication"},
+            "AUTHENTICATION_ALLOW_SAVE_USERID":{"label":"Permit saving of userID","type":"checkbox","config":"config","description":"Allow users to save their userID in a local cookie for subsequent logins (NOTE: currently not used)","section":"authentication"},
+            "AUTHENTICATION_REMAIN_LOGGED_IN_TIME":{"label":"Allow users to be remembered","type":"time","config":"config","description":"Number of seconds to allow users to be remained logged in, even if closing their browser.","section":"authentication"}
+        }
     },
     "analytics":{
         "title":"Analytics", 
         "description":"",
-        "fields":[
-            {"label":"Google Analytics ID","type":"text","config":"config","description":"If included, pages will be logged to Google Analytics.","key":"GOOGLE_ANALYTICS_ID","section":"analytics"},
-            {"label":"Page Views Table","type":"text","config":"config","description":"Database table used by the internal statistics engine to log web page views","key":"PAGE_VIEWS_TABLE","section":"analytics"},
-            {"label":"API Requests Table","type":"text","config":"config","description":"Database table used by the internal statistics engine to log API requests","key":"API_STATS_TABLE","section":"analytics"}
-        ]
+        "fields":{
+            "GOOGLE_ANALYTICS_ID":{"label":"Google Analytics ID","type":"text","config":"config","description":"If included, pages will be logged to Google Analytics.","section":"analytics"},
+            "PAGE_VIEWS_TABLE":{"label":"Page Views Table","type":"text","config":"config","description":"Database table used by the internal statistics engine to log web page views","section":"analytics"},
+            "API_STATS_TABLE":{"label":"API Requests Table","type":"text","config":"config","description":"Database table used by the internal statistics engine to log API requests","section":"analytics"}
+        }
     },
     "files":{
         "title":"File Paths and Locations", 
         "description":"",
-        "fields":[
-            {"label":"Web log file","type":"file","config":"config","description":"","key":"WEB_LOG_FILE","section":"log_files"},
-            {"label":"Web current log file","type":"file","config":"config","description":"","key":"WEB_CURRENT_LOG_FILE","section":"log_files"},
-            {"label":"API log file","type":"file","config":"config","description":"","key":"API_LOG_FILE","section":"log_files"},
-            {"label":"API Current log file","type":"file","config":"config","description":"","key":"API_CURRENT_LOG_FILE","section":"log_files"},
-            {"label":"Log date format","type":"text","config":"config","description":"","key":"LOG_DATE_FORMAT","section":"log_files"},
-            {"label":"Log date pattern","type":"text","config":"config","description":"","key":"LOG_DATE_PATTERN","section":"log_files"},
-            {"label":"Temporary Directory","type":"file","config":"config","description":"","key":"TMP_DIR","section":"log_files"}
-        ]
+        "fields":{
+            "WEB_LOG_FILE":{"label":"Web log file","type":"file","config":"config","description":"","section":"log_files"},
+            "WEB_CURRENT_LOG_FILE":{"label":"Web current log file","type":"file","config":"config","description":"","section":"log_files"},
+            "API_LOG_FILE":{"label":"API log file","type":"file","config":"config","description":"","section":"log_files"},
+            "API_CURRENT_LOG_FILE":{"label":"API Current log file","type":"file","config":"config","description":"","section":"log_files"},
+            "LOG_DATE_FORMAT":{"label":"Log date format","type":"text","config":"config","description":"","section":"log_files"},
+            "LOG_DATE_PATTERN":{"label":"Log date pattern","type":"text","config":"config","description":"","section":"log_files"},
+            "TMP_DIR":{"label":"Temporary Directory","type":"file","config":"config","description":"","section":"log_files"}
+        }
     },
     "strings":{
         "title":"Text strings",
         "description":"These string values are used throughout the site",
-        "fields":[
-            {"label":"Copyright link","type":"text","config":"strings","description":"","key":"COPYRIGHT_LINK"},
-            {"label":"Copyright notice","type":"text","config":"strings","description":"","key":"COPYRIGHT_NOTICE"},
-            {"label":"Feedback email","type":"text","config":"strings","description":"","key":"FEEDBACK_EMAIL"}
-        ]
+        "fields":{
+            "COPYRIGHT_LINK":{"label":"Copyright link","type":"text","config":"strings","description":"","section":"strings"},
+            "COPYRIGHT_NOTICE":{"label":"Copyright notice","type":"text","config":"strings","description":"","section":"strings"},
+            "FEEDBACK_EMAIL":{"label":"Feedback email","type":"text","config":"strings","description":"","section":"strings"}
+        }
     }
     
 }

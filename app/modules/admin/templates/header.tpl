@@ -36,7 +36,7 @@
 	<img src="/modules/admin/images/kurogo-logo.png" alt="Kurogo" width="90" height="90" id="logo" />
 	<h1>	
 		Kurogo&trade; Adminstration Console: 
-		<span id="sitename">{$SITE_NAME|escape}</span>
+		<span id="sitename">{$strings.SITE_NAME|escape}</span>
 	</h1>
 	<div id="utility">
         {if $session}<div id="user">Signed in as <span id="username">{$session_fullName}.</span><a id="signout" href="{$session_logout_url}" onclick="confirmSignout();">Sign out</a>
