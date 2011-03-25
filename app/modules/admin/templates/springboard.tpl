@@ -1,0 +1,10 @@
+<div class="springboard" {if $springboardID} id="{$springboardID}"{/if}{if $section} section="{$section}"{/if}>
+  {foreach $springboardItems as $key=>$item}
+  <div id="module_{$key}">
+    <img src="{$item['img']}" alt="{$item['title']|escape}" />
+    <input type="hidden" name="{$key}" value="{$item['title']|escape}"{if $section} section="{$section}"{/if} />
+    <br/>{$item['title']}
+  </div>
+  {/foreach}
+</div>
+<div class="springboard_clear"></div>

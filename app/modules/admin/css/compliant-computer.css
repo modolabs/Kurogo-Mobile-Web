@@ -518,3 +518,10 @@ h1 img {
 	top: 28px;
 	right: 14px;
 }
+
+.springboard_clear {
+    clear: left;
+}
+
+.ui-sortable-helper {
+}

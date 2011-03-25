@@ -31,7 +31,10 @@ $(document).ready(function() {
     } else {
         //overview
         $('#homescreen_layout .springboard').sortable({
-            connectWith: ".springboard"
+            connectWith: ".springboard",
+            opacity: 0.6,
+            update: function() {
+            }
         }).disableSelection();
         
         
