@@ -37,7 +37,7 @@
     },
     "detection":{
         "title":"Device Detection", 
-        "description":"e device detection service recognizes and categorizes each user's web browser so that the appropriate class of web UI can be delivered. You can run this service on your own web server, or use an externally hosted one such as the reference service provided by Modo Labs.",
+        "description":"The device detection service recognizes and categorizes each user's web browser so that the appropriate class of web UI can be delivered. You can run this service on your own web server, or use an externally hosted one such as the reference service provided by Modo Labs.",
         "fields":{
             "MOBI_SERVICE_VERSION":{"label":"Mobi service version","type":"select","config":"config","options":{"1":"1"},"description":"Version of the Kurogo device detection service","section":"device_detection"},
             "MOBI_SERVICE_USE_EXTERNAL":{"label":"Use external mobi-service","type":"checkbox","config":"config","description":"Use the external version of the Kurogo device detection service hosted by Modo Labs. This introduces a new external dependency for your website but ensures that your system will always be accessing the latest device detection database.","section":"device_detection"},
