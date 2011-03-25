@@ -580,7 +580,7 @@ abstract class WebModule extends Module {
     public static function getAllModuleNames() {
         $modules = array();
         foreach (self::getAllModules() as $module) {
-            $modules[$module->getID()] = $module->getModuleName();
+            $modules[$module->getConfigModule()] = $module->getModuleName();
         }
         
         return $modules;

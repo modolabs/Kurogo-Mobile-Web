@@ -314,6 +314,27 @@ class AdminAPIModule extends APIModule
                 
                 break;
                 
+            case 'setmodulelayout':
+                
+                $data = $this->getArg('data', array());
+                $config = ModuleConfigFile::factory('home', 'module');
+                if (!isset($data['primary_modules'])) {
+                    $data['primary_modules'] = array();
+                }
+                
+                $config->setSection('primary_modules', $data['primary_modules']);
+
+                if (!isset($data['secondary_modules'])) {
+                    $data['secondary_modules'] = array();
+                }
+
+                $config->setSection('secondary_modules', $data['secondary_modules']);
+
+                $config->saveFile();
+                $this->setResponse(true);
+                $this->setResponseVersion(1);
+                
+                break;
             default:
                 $this->invalidCommand();
                 break;

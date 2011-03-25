@@ -36,6 +36,15 @@ abstract class Config {
         $this->vars[$var] = $value;
         return true;
     }
+    
+    public function setSection($section, $values) {
+        if (!is_array($values)) {
+            throw new Exception("Invalid values for section $section");
+        }
+        
+        $this->sectionVars[$section] = $values;
+        return true;
+    }
 
     public function clearVar($section, $var) {
         

@@ -468,12 +468,6 @@ h1 img {
 	vertical-align: top;
 }
 
-.springboard a {
-	display: block;
-	text-decoration: none;
-	word-wrap: normal;
-}
-
 .springboard img {
 	height: 50px;
 	width: 50px;
@@ -521,6 +515,11 @@ h1 img {
 
 .springboard_clear {
     clear: left;
+}
+
+.springboard input {
+    display:block;
+    width: 80px;
 }
 
 .ui-sortable-helper {

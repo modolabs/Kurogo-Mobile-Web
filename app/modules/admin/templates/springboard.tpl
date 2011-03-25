@@ -1,9 +1,8 @@
-<div class="springboard" {if $springboardID} id="{$springboardID}"{/if}{if $section} section="{$section}"{/if}>
+<div class="springboard" {if $springboardID} id="{$springboardID}"{/if} section="{$section}">
   {foreach $springboardItems as $key=>$item}
   <div id="module_{$key}">
     <img src="{$item['img']}" alt="{$item['title']|escape}" />
-    <input type="hidden" name="{$key}" value="{$item['title']|escape}"{if $section} section="{$section}"{/if} />
-    <br/>{$item['title']}
+    <input type="text" name="{$key}" value="{$item['title']|escape}"{if $section} section="{$section}"{/if} />
   </div>
   {/foreach}
 </div>

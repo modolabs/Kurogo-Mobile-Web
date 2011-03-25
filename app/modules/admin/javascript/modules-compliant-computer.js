@@ -34,12 +34,27 @@ $(document).ready(function() {
             connectWith: ".springboard",
             opacity: 0.6,
             update: function() {
+                updateModuleLayoutSections();
             }
         }).disableSelection();
         
         
         $('#adminForm.homescreen').submit(function(e) {
-            alert('not written yet');
+            var params = { 'v':1, 'data':{}};
+            var re;
+            
+            $('#adminForm input[section]').map(function() { 
+                var section = $(this).attr('section');
+                if (section) {
+                    if (typeof params.data[section] == 'undefined') {
+                        params.data[section] = {};
+                    }
+    
+                    params.data[section][$(this).attr('name')] = $(this).val();
+                }
+            });
+  
+            makeAPICall('POST','admin','setmodulelayout', params, function() { alert('Configuration saved') });
             return false;
         });
         
@@ -63,6 +78,9 @@ $(document).ready(function() {
     
 });
 
+function updateModuleLayoutSections() {
+    $('.springboard input').each(function(i) { $(this).attr('section', $(this).parents('.springboard').attr('section')) });
+}
 
     
 function processModuleData(data) {

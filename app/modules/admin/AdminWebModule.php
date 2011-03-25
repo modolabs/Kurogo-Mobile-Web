@@ -99,12 +99,20 @@ class AdminWebModule extends WebModule {
         $moduleNavConfig = $this->getModuleNavigationConfig();
         $modules = array(
             'primary'=>$moduleNavConfig->getOptionalSection('primary_modules'), 
-            'secondary'=>$moduleNavConfig->getOptionalSection('secondary_modules')
+            'secondary'=>$moduleNavConfig->getOptionalSection('secondary_modules'),
+            'unused'=>array()
+            
         );
+        
 
         $usedModules = array_merge($modules['primary'], $modules['secondary']);
-        $modules['unused'] = array_diff($this->getAllModuleNames(), $usedModules);
+        $allModules = $this->getAllModuleNames();
+        $unusedModules = array_diff(array_keys($allModules), array_keys($usedModules));
         
+        foreach ($unusedModules as $moduleID) {
+            $modules['unused'][$moduleID] = $allModules[$moduleID];
+        }
+                
         $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '-selected' : '';
 
         foreach ($modules as $type=>&$m) {
