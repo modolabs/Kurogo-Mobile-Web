@@ -1,8 +1,35 @@
-#loginForm label {
-    display: block;
-    font-weight: bold;
+#loginForm {
+	margin: 0;
 }
 
-.loginFormInput {
-    width: 260px;
+#loginForm label {
+    float: left;
+	width: 95px;
+	line-height: 38px;
+	margin-right: 5px;
+	text-align: right;
 }
+
+#loginForm input {
+    width: 160px;
+	border: 1px solid #999;
+	padding: 2px 5px;
+}
+
+.formbuttons {
+	margin: 1.5em 0;
+}
+
+a.loginbutton {
+	cursor: default;
+	text-align: center;
+	display: inline-block;
+	background-image: url(/modules/login/images/loginbutton.png);
+	background-repeat: no-repeat;
+	background-position: right;
+	margin: 0 5px;
+	height: 36px;
+	text-decoration: none;
+	width: 200px;
+}
+
