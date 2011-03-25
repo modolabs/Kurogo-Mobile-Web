@@ -106,10 +106,10 @@ class PeopleAPIModule extends APIModule
                             $results[] = $this->formatPerson($person);
                         }
                         $response = array(
-                            'total' => $resultCount,
-                            'returned' => $resultCount,
+                            'total'        => $resultCount,
+                            'returned'     => $resultCount,
                             'displayField' => 'name',
-                            'results' => $results,
+                            'results'      => $results,
                             );
                     }
                     
@@ -121,9 +121,20 @@ class PeopleAPIModule extends APIModule
                     $this->setResponseVersion(1);
                 }
                 break;
-            case 'displayfields':
-                //break;
             case 'contacts':
+                $results = $this->getAPIConfigData('contacts');
+                $response = array(
+                    'total'        => count($contacts),
+                    'returned'     => count($contacts),
+                    'displayField' => 'title',
+                    'results'      => $results,
+                    );
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+
+                break;
+            case 'displayfields':
                 //break;
             default:
                 $this->invalidCommand();
