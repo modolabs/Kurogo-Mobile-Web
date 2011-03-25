@@ -12,7 +12,7 @@ outlined as follows:
    
 #. Presuming the file does not exist it will be sent to index.php for processing
 #. Certain paths will map to a file in the file system and be returned or a 404 will be returned
-#. You can map URLs to other URLs by updating *SITE_DIR/config/config.ini*
+#. You can map URLs to other URLs by updating *SITE_DIR/config/site.ini*
 #. Otherwise a module based on the path is instantiated and will forward further processing.
    to that module. An exception is raised if the url maps to a module that does not exist
 
@@ -31,7 +31,7 @@ The index.php script will analyze the path for several patterns
 * requests with a path of /media will be searched for in the indicated subfolder of the 
   current site folder: i.e. /media/file will map to *SITE_DIR*/media/file
 
-If no pattern has been found, the script will then look at the *[urls]* section of *SITE_DIR/config/config.ini*
+If no pattern has been found, the script will then look at the *[urls]* section of *SITE_DIR/config/site.ini*
 to see if a url is found. If so, it will redirect to the indicated url. 
 
 All other requests will attempt to load a module based on the first path component of the request. The

@@ -10,7 +10,7 @@ class SiteConfig extends ConfigGroup {
 
   function __construct() {
     // Load main configuration file
-    $config = ConfigFile::factory('config', 'project', ConfigFile::OPTION_DIE_ON_FAILURE | ConfigFile::OPTION_CREATE_WITH_DEFAULT | ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
+    $config = ConfigFile::factory('kurogo', 'project', ConfigFile::OPTION_DIE_ON_FAILURE | ConfigFile::OPTION_CREATE_WITH_DEFAULT | ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
     $this->addConfig($config);
 
     define('CONFIG_MODE', $config->getVar('CONFIG_MODE'));
@@ -38,7 +38,7 @@ class SiteConfig extends ConfigGroup {
     define('SITE_CONFIG_DIR',      SITE_DIR.'/config');
 
     //load in the site config file (required);
-    $config = ConfigFile::factory('config', 'site', ConfigFile::OPTION_DIE_ON_FAILURE);
+    $config = ConfigFile::factory('site', 'site', ConfigFile::OPTION_DIE_ON_FAILURE);
     $this->addConfig($config);
 
     // Set up theme define

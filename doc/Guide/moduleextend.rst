@@ -84,8 +84,8 @@ Copying a Module
 =======================================
 
 In some cases you may want to have multiple modules that exist under different URLs that share the
-same logic, but have different configurations. An example of this would be the :doc:`modulecontent.rst`
-In this case you simply subclass the parent modul and provide a different *$configModule* property.
+same logic, but have different configurations. An example of this would be the :doc:`modulecontent`
+In this case you simply subclass the parent module and provide a different *$configModule* property::
 
     <?php 
     

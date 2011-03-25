@@ -9,7 +9,7 @@ matches the brand and styling of your site.
 
 If you would prefer to have users see the home page and not the info module from a desktop browser,
 you can change the *DEFAULT-COMPLIANT-COMPUTER* value in the *[urls]* section of your site's
-*config.ini* to *home*
+*site.ini* to *home*
 
 .. code-block:: ini
 

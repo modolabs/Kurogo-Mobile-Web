@@ -21,7 +21,7 @@ There are several directories located in the root of the project folder:
   :ref:`site-folder`
 **config**
   This directory contains the main configuration files for the entire project. Most notably it contains
-  the main *config.ini* file which determines the active site.
+  the *kurogo.ini* file which determines the active site.
 **lib**
   This directory contains libraries that are provided by the project. This includes libraries for data
   retrieval and parsing, authentication, database access and configuration. Generally speaking only
@@ -250,9 +250,9 @@ Site folder
 
 The site folder contains a series of folders for each *site*. This allows each site to
 have specific configuration, design and custom code. At any given time there is only one **active site**.
-You can enable the active site in the *config/config.ini* file found in the the root of the project 
+You can enable the active site in the *config/kurogo.ini* file found in the the root of the project 
 directory. It is important the that case used in naming the folder matches the ACTIVE_SITE
-case in the config.ini file.
+case in the kurogo.ini file.
 
 Multiple site folders exist to assist developers who might be working on different versions of their site
 or who want to refer to the reference implementation. Because only one site can be active, you would
@@ -272,7 +272,7 @@ Each site folder contains the following directories:
 * *config* - Contains the site specific configuration files in .ini format. Many of these files can 
   be managed using the :ref:`admin-module`
 
-  * *config.ini* - The general configuration file that affects all site behavior such as timezone, 
+  * *site.ini* - The general configuration file that affects all site behavior such as timezone, 
     log file locations, database configuration, and more.
   * *authentication.ini* - The configuration for user :doc:`authentication`. 
   * *strings.ini* - a configuration file containing strings used by the site
