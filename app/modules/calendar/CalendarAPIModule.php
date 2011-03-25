@@ -60,6 +60,13 @@ class CalendarAPIModule extends APIModule
             return current($indexes);
         }
     }
+
+    private function getFeedData($index, $type) {
+        $feeds = $this->getFeeds($type);
+        if (isset($feeds[$index])) {
+            return $feeds[$index];
+        }
+    }
     
     public function getFeed($index, $type) {
         $feeds = $this->getFeeds($type);
@@ -137,39 +144,47 @@ class CalendarAPIModule extends APIModule
                     $type = $groupData['type'];
                     $groupResult = array(
                         'title' => $groupData['title'],
-                        'type'  => $groupData['type'],
                         'id'    => $groupData['id'],
                         );
 
                     if ($type == 'group') {
+                        // TODO unimplemented API
+
                         if (isset($groupData['categories'])) {
                             $categories = $groupData['categories'];
 
                         } elseif (isset($groupData['all']) && $groupData['all']) {
-                            // TODO implement categories
                             $categories = array();
                         }
 
                         $groupResult['categories'] = $categories;
 
                     } else {
+                        $calendars = array();
 
                         if (isset($groupData['calendars'])) {
-                            $calendars = array();
                             $calendarIDs = $groupData['calendars'];
-
                             foreach ($calendarIDs as $calID) {
                                 if ($calID == '__USER__') {
-                                    $calendar = $this->getDefaultFeed('user');
-                                    $calendars[] = $calendar;
-                                } else {
-                                    $calendars[] = $calID;
+                                    $calID = $this->getDefaultFeed('user');
                                 }
+                                $feedData = $this->getFeedData($calID, $groupData['type']);
+                                $calendars[] = array(
+                                    'id'    => $calID,
+                                    'type'  => $groupData['type'],
+                                    'title' => $feedData['TITLE'],
+                                    );
                             }
 
                         } elseif (isset($groupData['all']) && $groupData['all']) {
                             $feeds = $this->getFeeds($type);
-                            $calendars = array_keys($feeds);
+                            foreach ($feeds as $id => $feedData) {
+                                $calendars[] = array(
+                                    'id'    => $id,
+                                    'type'  => $groupData['type'],
+                                    'title' => $feedData['TITLE'],
+                                    );
+                            }
                         }
 
                         $groupResult['calendars'] = $calendars;
@@ -179,42 +194,15 @@ class CalendarAPIModule extends APIModule
                 }
 
                 $response = array(
-                    'total' => count($groups),
-                    'returned' => count($groups),
+                    'total'        => count($groups),
+                    'returned'     => count($groups),
                     'displayField' => 'title',
-                    'results' => $groups,
+                    'results'      => $groups,
                     );
 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 
-                break;
-
-            case 'calendars':
-
-                $feeds = array();
-                foreach (array('static', 'user', 'resource') as $type) {
-                    $typeFeeds = $this->getFeeds($type);
-                    foreach ($typeFeeds as $feedID=>$feedData) {
-                        $feeds[] = array(
-                            'id'    => $feedID,
-                            'type'  => $type,
-                            'title' => $feedData['TITLE'],
-                            );
-                    }
-                }
-
-                $count = count($feeds);
-                $response = array(
-                    'total' => $count,
-                    'returned' => $count,
-                    'displayField' => 'title',
-                    'results' => $feeds,
-                    );
-
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-
                 break;
 
             case 'events':
@@ -225,7 +213,7 @@ class CalendarAPIModule extends APIModule
                 // default to the full day that includes current time
                 $current = $this->getArg('time', time());
                 $start   = $this->getStartArg($current);
-                $end     = $this->getEndArg($start);
+                $end     = $this->getEndArg($start->getTimestamp());
                 $feed    = $this->getFeed($calendar, $type);
 
                 $feed->setStartDate($start);
@@ -241,10 +229,10 @@ class CalendarAPIModule extends APIModule
                 }
 
                 $response = array(
-                    'total' => $count,
-                    'returned' => $count,
+                    'total'        => $count,
+                    'returned'     => $count,
                     'displayField' => 'title',
-                    'results' => $events,
+                    'results'      => $events,
                     );
 
                 $this->setResponse($response);
@@ -265,7 +253,7 @@ class CalendarAPIModule extends APIModule
                 // default to the full day that includes current time
                 $current  = $this->getArg('time', time());
                 $start    = $this->getStartArg($current);
-                $end      = $this->getEndArg($start);
+                $end      = $this->getEndArg($start->getTimestamp());
                 $type     = $this->getArg('type', 'static');
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
@@ -303,7 +291,7 @@ class CalendarAPIModule extends APIModule
 
                     $current  = $this->getArg('time', time());
                     $start    = $this->getStartArg($current);
-                    $end      = $this->getEndArg($start);
+                    $end      = $this->getEndArg($start->getTimestamp());
                     $type     = $this->getArg('type', 'static');
                     $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
@@ -339,46 +327,38 @@ class CalendarAPIModule extends APIModule
                 }
                 break;
 
-            case 'resources':
-                $resources = array();
-                $resourceFeeds = $this->getFeeds('resource');
-                if ($resourceFeeds) {
-                    foreach ($resourceFeeds as $calendar=>$resource) {
-                        $feed = $this->getFeed($calendar, 'resource');
-                        $availability = 'Available';
-                        if ($event = $feed->getNextEvent()) {
-                            $now = time();
-                            if ($event->overlaps(new TimeRange($now, $now))) {
-                                $availability = 'In use';
-                            } elseif ($event->overlaps(new TimeRange($now + 900, $now + 1800))) {
-                                $availability = 'In use at ' . $this->timeText($event, true);
-                            }
-                        }
+            case 'calendars':
 
-                        $resources[$calendar] = array(
-                            'title'        => $resource['TITLE'],
-                            'availability' => $availability,
-                            'type'         => 'resource',
-                            'calendar'     => $calendar,
+                $feeds = array();
+                foreach (array('static', 'user', 'resource') as $type) {
+                    $typeFeeds = $this->getFeeds($type);
+                    foreach ($typeFeeds as $feedID=>$feedData) {
+                        $feeds[] = array(
+                            'id'    => $feedID,
+                            'type'  => $type,
+                            'title' => $feedData['TITLE'],
                             );
                     }
                 }
 
+                $count = count($feeds);
                 $response = array(
-                    'total' => count($resources),
-                    'returned' => count($resources),
+                    'total'        => $count,
+                    'returned'     => $count,
                     'displayField' => 'title',
-                    'results' => $resources,
+                    'results'      => $feeds,
                     );
 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
 
-
                 break;
+
+            case 'resources':
+                //break;
 
             case 'user':
-                break;
+                //break;
 
             case 'categories':
                 //break;
