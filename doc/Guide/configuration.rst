@@ -64,9 +64,9 @@ Configuration files
 
 When running a module, the following config files are loaded automatically:
 
-* *config/config.ini* The framework config file. It's primary role is to indicate the active site and
+* *config/site.ini* The framework config file. It's primary role is to indicate the active site and
   configuration mode
-* *SITE_DIR/config/config.ini* - The site configuration file. It contains properties shared by all
+* *SITE_DIR/config/site.ini* - The site configuration file. It contains properties shared by all
   modules and sets up the basic environment
 * *SITE_DIR/config/strings.ini* - Strings table. Includes various strings used throughout the site
 * *SITE_DIR/config/MODULEID/module.ini* - Basic configuration file for the current module. Specifies properties
@@ -83,9 +83,9 @@ Local Files
 -----------
 
 The framework supports overriding configuration files for local server customization. Unless
-the configuration value *CONFIG_IGNORE_LOCAL* (defined in *config/config.ini*) is set to 1, the
+the configuration value *CONFIG_IGNORE_LOCAL* (defined in *config/kurogo.ini*) is set to 1, the
 framework will also load files with a -local in the file name for each configuration file loaded.
-I.e. *SITE_DIR/config/config.ini* can be overridden with *SITE_DIR/config/config-local.ini*. 
+I.e. *SITE_DIR/config/site.ini* can be overridden with *SITE_DIR/config/config-local.ini*. 
 *SITE_DIR/config/home/module.ini* can be overridden with *SITE_DIR/config/home/module-local.ini*.
 It is **not** necessary to duplicate the entire file. Only the values that are different need to be 
 in the -local file. It could also include additional values that are not present in the base config.
@@ -105,7 +105,7 @@ Configuration Mode
 In addition to -local files. There is also an option to include configuration override files by
 specifying a mode string. This string is like -local but can be set to any value. This will allow
 you to create multiple versions of configuration files, with slightly different versions of certain
-values and instantly switch between them. This option is set in the *CONFIG_MODE* value of *config/config.ini*
+values and instantly switch between them. This option is set in the *CONFIG_MODE* value of *config/kurogo.ini*
 These files are not ignored by git.
 
 One use of this would be to create development and production versions of some of your configuration files. 
@@ -132,7 +132,7 @@ There are several methods in the :doc:`WebModule object <modules>` for retrievin
 Site Configuration
 ==================
 
-The *SITE_DIR/config/config.ini* file configures the basic site configuration. It is broken
+The *SITE_DIR/config/site.ini* file configures the basic site configuration. It is broken
 up into several sections
 
 ----------------------------
@@ -354,7 +354,7 @@ module.
 Site configuration
 ------------------
 
-You can edit all the sections of the *SITE_DIR/config/config.ini* file.
+You can edit all the sections of the *SITE_DIR/config/site.ini* file.
 
 --------------------
 String Configuration

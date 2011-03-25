@@ -34,7 +34,7 @@ Enabling Authentication
 =======================
 
 In order to support authenticating users you must set the *AUTHENTICATION_ENABLED* setting in 
-*SITE_DIR/config/config.ini* to 1. This setting is disabled by default because if all your modules
+*SITE_DIR/config/site.ini* to 1. This setting is disabled by default because if all your modules
 are public there is no need to involve the overhead of PHP session management to determine if a user
 is logged in or not.
 

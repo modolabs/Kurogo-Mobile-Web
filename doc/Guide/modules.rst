@@ -65,8 +65,8 @@ Accessors
 
 * *getArg($key, $default)* - Retrieves an argument sent via GET/POST, if the *$key* is not present, then
   it will return the value specified in *$default*
-* *getSiteVar($key, $log_errors)* - Retrieves a site configuration value (i.e. a value stored in SITE_DIR/config/config.ini)
-* *getSiteSection($section, $log_errors)* - Retrieves a site configuration section (i.e. a section stored in SITE_DIR/config/config.ini)
+* *getSiteVar($key, $log_errors)* - Retrieves a site configuration value (i.e. a value stored in SITE_DIR/config/site.ini)
+* *getSiteSection($section, $log_errors)* - Retrieves a site configuration section (i.e. a section stored in SITE_DIR/config/site.ini)
 * *getModuleVar($key, $default, $log_errors)* - Retrieves a module configuration value (i.e. a value stored in SITE_DIR/config/module/MODULEID.ini)
 * *getModuleSection($section, $log_errors)* - Retrieves a module configuration section (i.e. a section stored in SITE_DIR/config/module/MODULEID.ini)
 * *isLoggedIn()* returns whether a user is logged in or not (see :doc:`authentication`)

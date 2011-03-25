@@ -27,7 +27,7 @@ are optional. The following values affect the connectivity to the database syste
 * DB_DBNAME - used by db systems that require a database
 * DB_FILE - used by db systems the use a file (i.e. sqlite).
 
-If you omit any of the above values, it will default to the settings in *SITE_DIR/config/config.ini*
+If you omit any of the above values, it will default to the settings in *SITE_DIR/config/site.ini*
 In addition to the connectivity settings, there are several options that tell the authority how to 
 query the database. It is not necessary to include both user and group information if you only need
 one.
