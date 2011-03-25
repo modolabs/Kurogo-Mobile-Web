@@ -64,6 +64,11 @@ class AdminWebModule extends WebModule {
                     'title'=>'Modules Overview',
                     'url'=>$this->buildURL($section, array('section'=>'overview'))
                 );
+                $subNavSections['homescreen'] = array(
+                    'id'=>'homescreen',
+                    'title'=>'Home screen layout',
+                    'url'=>$this->buildURL($section, array('section'=>'homescreen'))
+                );
                 $modules = array();
                 foreach ($this->getAllModules() as $module) {
                     $subNavSections[$module->getConfigModule()] = array(
@@ -90,6 +95,30 @@ class AdminWebModule extends WebModule {
         return $subNavSections;
     }
 
+    private function getModules() {
+        $moduleNavConfig = $this->getModuleNavigationConfig();
+        $modules = array(
+            'primary'=>$moduleNavConfig->getOptionalSection('primary_modules'), 
+            'secondary'=>$moduleNavConfig->getOptionalSection('secondary_modules')
+        );
+
+        $usedModules = array_merge($modules['primary'], $modules['secondary']);
+        $modules['unused'] = array_diff($this->getAllModuleNames(), $usedModules);
+        
+        $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '-selected' : '';
+
+        foreach ($modules as $type=>&$m) {
+            foreach ($m as $id=>$title) {
+                $modules[$type][$id] = array(
+                    'title'       => $title,
+                    'img'         => "/modules/home/images/{$id}{$imgSuffix}".$this->imageExt,
+                );
+            }
+        }
+                
+        return $modules;
+    }
+
     protected function initialize() {
         $this->requiresAdmin();
     }
@@ -103,6 +132,7 @@ class AdminWebModule extends WebModule {
         $navSections = $this->getNavSections();
         $this->assign('navSections', $navSections);
         $this->addJQuery();
+        $this->addJQueryUI();
 
         switch ($this->page)
         {
@@ -128,6 +158,13 @@ class AdminWebModule extends WebModule {
                 
                 } elseif ($section == $defaultSubNavSection) {
                     $modulePage = $defaultSubNavSection;
+                } elseif ($section == 'homescreen') {
+                    $modulePage = $section;
+                    
+                    $homeModule = WebModule::factory('home');
+                    $modules = $this->getModules();
+                    $this->assign('modules', $modules);                    
+                    
                 } else {
                     $this->redirectTo($this->page, array());
                 }

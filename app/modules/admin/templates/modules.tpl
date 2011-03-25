@@ -1,5 +1,5 @@
 {include file="findInclude:modules/admin/templates/header.tpl"}
-<form method="post" id="adminForm">
+<form method="post" id="adminForm" class="{$section}">
 <input name="submit" id="adminSubmit" type="submit" value="Save" />
 {include file="findInclude:modules/admin/templates/$modulePage.tpl"}
 </form>

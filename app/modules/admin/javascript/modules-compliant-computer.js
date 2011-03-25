@@ -30,7 +30,17 @@ $(document).ready(function() {
         });
     } else {
         //overview
-        $('#adminForm').submit(function(e) {
+        $('#homescreen_layout .springboard').sortable({
+            connectWith: ".springboard"
+        }).disableSelection();
+        
+        
+        $('#adminForm.homescreen').submit(function(e) {
+            alert('not written yet');
+            return false;
+        });
+        
+        $('#adminForm.overview').submit(function(e) {
             var params = { 'v':1, 'type':'module', 'section':'overview', 'data':{}};
             var re;
             var formValues = {};
