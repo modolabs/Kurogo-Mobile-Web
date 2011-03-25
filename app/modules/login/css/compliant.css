@@ -16,20 +16,21 @@
 	padding: 2px 5px;
 }
 
+.loginbuttons {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.loginbuttons li a {
+	height: 30px;
+	line-height: 30px;
+}
+
+.loginbuttons a img {
+	vertical-align: middle;
+	margin-left: 2px;
+}
+
 .formbuttons {
-	margin: 1.5em 0;
+	margin: 1.2em 0;
 }
-
-a.loginbutton {
-	cursor: default;
-	text-align: center;
-	display: inline-block;
-	background-image: url(/modules/login/images/loginbutton.png);
-	background-repeat: no-repeat;
-	background-position: right;
-	margin: 0 5px;
-	height: 36px;
-	text-decoration: none;
-	width: 200px;
-}
-
