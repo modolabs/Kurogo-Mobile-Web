@@ -999,7 +999,7 @@ abstract class WebModule extends Module {
     return $config;
   }
   
-  protected function getPageData() {
+  public function getPageData() {
      return $this->getModuleSections('pages');
   }
   
