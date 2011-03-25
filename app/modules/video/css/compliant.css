@@ -1,7 +1,7 @@
 .results li.video {
-    height: 5.2em;
-	margin: 0 0 0 -6px;
-    padding: 0;
+    height: 5.1em;
+	margin: 0;
+    padding: 1px;
     overflow: hidden;
 	border-color: #666;
 }
@@ -9,10 +9,10 @@ li.noimage {
     padding-left: .4em;
 }
 .results li.video a {
-    overflow: hidden;
+   	overflow: hidden;
     margin: 0;
     padding: .4em 25px .4em 0;
-    height: 5.2em;
+    height: 4.4em;
 	border-radius: 0;
 	line-height: 1.15em;
 }
@@ -24,27 +24,31 @@ li.noimage {
     line-height: 1.3em;
     height: 5.2em;
 }
-
-.results li.video a .title {
-    font-size: 114.29%;
-    padding: 0 0 .25em 0;
-}
-.results li.video a .author {
-    font-size: 90%;
-}
-.results li.video a .pubdate {
-    font-size: 90%;
-}
 .thumbnail {
     float:left;
     margin:-0.4em 0.5em -0.4em 0;
-    width: 6.5em;
+    width: 6.4em;
     height: 5.2em;
     background: transparent url('/modules/video/images/video-placeholder.png') no-repeat top left;
     background-size: 5.2em;
 }
 
-#share {
+.video {
+	margin: -9px 0;
+	padding: 10px;
+	background-color: #fff;
+}
+
+.videoplayer {
+	margin: 1em 0;
+}
+
+.videobuttons {
 	float: right;
-	margin: 0 0 0 8px;
+	margin: 0 0 0.6em 0.5em;
+}
+
+.videobuttons #share, .videobuttons #bookmarkContainer {
+	float: right;
+	margin: 0 0 0 0.5em;
 }
