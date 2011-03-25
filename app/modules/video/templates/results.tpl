@@ -1,7 +1,7 @@
-<ul class="results videoList">
+<ul class="results">
   {foreach $results as $item}
     {if !isset($item['separator'])}
-      <li{if $item['img']} class="videoList-li"{/if}>  
+      <li class="video{if $item['img']} noimage{/if}">  
        {*
       	{include file="findInclude:common/templates/listItem.tpl" subTitleNewline=true}
         *}
