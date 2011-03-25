@@ -11,7 +11,14 @@ class CoreAPIModule extends APIModule
         $module = new CoreAPIModule();
         $module->init($command, $args);
         return $module;
-   }
+    }
+ 
+    //always allow access
+    protected function getAccessControlLists($type) {
+        return array(AccessControlList::factory(AccessControlList::RULE_ACTION_ALLOW, 
+                                                AccessControlList::RULE_TYPE_EVERYONE,
+                                                AccessControlList::RULE_VALUE_ALL));
+    }
     
     public function initializeForCommand() {  
     
