@@ -120,9 +120,11 @@ class AdminAPIModule extends APIModule
         {
             case 'site':
                 $adminData = array($subType=>$this->getSiteAdminData($subType));
+                $typeKey = 'site';
                 break;
             case 'module':
                 $adminData = $this->getModuleAdminData($subType);
+                $typeKey = 'module-' . $subType->getConfigModule();
                 break;
             default:
                 throw new Exception("Invalid type $type");
@@ -144,7 +146,7 @@ class AdminAPIModule extends APIModule
             throw new Exception("don't know how to handle $type $section");
         }
         
-        $configKey = $type . '-' . $fieldData['config'];
+        $configKey = $typeKey . '-' . $fieldData['config'];
 
         if (!isset($this->configs[$configKey])) {
             switch ($type) 
@@ -226,13 +228,43 @@ class AdminAPIModule extends APIModule
                 $type = $this->getArg('type');
                 $data = $this->getArg('data', array());
                 $section = $this->getArg('section','');
+                if (!is_array($data)) {
+                    throw new Exception("Invalid data for $type $section");
+                }
                 
                 switch ($type)
                 {
                     case 'module':
                     
                         if ($section == 'overview') {
-                            throw new Exception("Not written yet");
+                            foreach ($data as $moduleID=>$props) {
+                                try {
+                                    $module = WebModule::factory($moduleID);
+                                } catch (Exception $e) {
+                                    throw new Exception('Module ' . $moduleID . ' not found');
+                                }
+                                
+                                if (!is_array($props)) {
+                                    throw new Exception("Invalid properties for $type $section");
+                                }
+                                
+                                $valid_props = array('protected','secure','disabled','search');
+                                foreach ($props as $key=>$value) {
+                                    if (!in_array($key, $valid_props)) {
+                                        throw new Exception("Invalid property $key for module $module");
+                                    }
+                                    
+                                    $this->setConfigVar($type, $module, 'general', $key, $value);
+                                }
+                            }
+                            
+                            foreach ($this->changedConfigs as $config) {
+                                $config->saveFile();
+                            }
+                            
+                            $this->setResponse(true);
+                            $this->setResponseVersion(1);
+                            break 2;
                         } else {
 
                             $moduleID = $this->getArg('module','');
@@ -271,6 +303,7 @@ class AdminAPIModule extends APIModule
                     }
 
                 }
+                
 
                 foreach ($this->changedConfigs as $config) {
                     $config->saveFile();
