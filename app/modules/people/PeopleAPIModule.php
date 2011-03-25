@@ -124,8 +124,8 @@ class PeopleAPIModule extends APIModule
             case 'contacts':
                 $results = $this->getAPIConfigData('contacts');
                 $response = array(
-                    'total'        => count($contacts),
-                    'returned'     => count($contacts),
+                    'total'        => count($results),
+                    'returned'     => count($results),
                     'displayField' => 'title',
                     'results'      => $results,
                     );

@@ -16,14 +16,19 @@
 	padding: 2px 5px;
 }
 
+.rememberme {
+	margin-top: 1em;
+	margin-bottom: 1.5em;
+}
+
 .loginbuttons {
 	margin-top: 1em;
 	margin-bottom: 1em;
 }
 
 .loginbuttons li a {
-	height: 30px;
-	line-height: 30px;
+	height: 26px;
+	line-height: 26px;
 }
 
 .loginbuttons a img {
