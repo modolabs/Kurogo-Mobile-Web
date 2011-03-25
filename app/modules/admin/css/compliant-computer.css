@@ -520,6 +520,7 @@ h1 img {
 .springboard input {
     display:block;
     width: 80px;
+    text-align: center;
 }
 
 .ui-sortable-helper {
