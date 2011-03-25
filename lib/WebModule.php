@@ -607,7 +607,7 @@ abstract class WebModule extends Module {
   //
   // Module list control functions
   //
-  private function getModuleNavigationConfig() {
+  protected function getModuleNavigationConfig() {
     static $moduleNavConfig;
     if (!$moduleNavConfig) {
         $moduleNavConfig = ModuleConfigFile::factory('home', 'module', ModuleConfigFile::OPTION_CREATE_WITH_DEFAULT);
@@ -631,12 +631,8 @@ abstract class WebModule extends Module {
     $moduleNavConfig = $this->getModuleNavigationConfig();
     
     $moduleConfig = array();
-    
-    $moduleConfig['primary'] = $moduleNavConfig->getSection('primary_modules');
-    if (!$moduleConfig['primary']) { $moduleConfig['primary'] = array(); }
-
-    $moduleConfig['secondary'] = $moduleNavConfig->getSection('secondary_modules');
-    if (!$moduleConfig['secondary']) { $moduleConfig['secondary'] = array(); }
+    $moduleConfig['primary'] = $moduleNavConfig->getOptionalSection('primary_modules');
+    $moduleConfig['secondary'] = $moduleNavConfig->getOptionalSection('secondary_modules');
 
     $disabledIDs = array();
     if (isset($_COOKIE[DISABLED_MODULES_COOKIE]) && $_COOKIE[DISABLED_MODULES_COOKIE] != "NONE") {
@@ -645,7 +641,7 @@ abstract class WebModule extends Module {
     
     $modules = array(
       'primary' => array(),
-      'secondary' => array(),
+      'secondary' => array()
     );
     
     foreach ($moduleConfig as $type => $modulesOfType) {
@@ -737,10 +733,15 @@ abstract class WebModule extends Module {
     $this->onLoadBlocks[] = $onLoad;
   }
   protected function addInternalJavascript($path) {
-    $this->javascriptURLs[] = '/min/g='.MIN_FILE_PREFIX.$path;
+    $path = '/min/g='.MIN_FILE_PREFIX.$path;
+    if (!in_array($path, $this->javascriptURLs)) {
+        $this->javascriptURLs[] = $path;
+    }
   }
   protected function addExternalJavascript($url) {
-    $this->javascriptURLs[] = $url;
+    if (!in_array($url, $this->javascriptURLs)) {
+        $this->javascriptURLs[] = $url;
+    }
   }
   
   public function exportCSSAndJavascript() {
@@ -780,6 +781,11 @@ abstract class WebModule extends Module {
   }
   protected function addJQuery() {
     $this->addInternalJavascript('/common/javascript/jquery.js');
+  }
+
+  protected function addJQueryUI() {
+    $this->addJQuery();
+    $this->addInternalJavascript('/common/javascript/jquery-ui.js');
   }
   
   //

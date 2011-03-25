@@ -12,16 +12,11 @@
     <a href="{$item['url']}" class="{$item['class']|default:''}"{if $linkTarget || $item['linkTarget']} target="{if $item['linkTarget']}{$item['linkTarget']}{else}{$linkTarget}{/if}"{/if}>
   {/if}
     {if $item['img']}
-      <img src="{$item['img']}" class="image" alt="{$item['title']}"{if $item['imgWidth']}
-        width="{$item['imgWidth']}"{/if}{if $item['imgHeight']}
-        height="{$item['imgHeight']}"{/if}{if $item['imgAlt']}
-        alt="{$item['imgAlt']}"{/if} />
+      <img src="{$item['img']}" class="thumbnail" alt="{$item['title']}" />
     {/if}
 
-        <div>
-          <div class="title">{$item['title']}</div>
-          <div class="subtitle smallprint">{$item['subtitle']}</div>
-        </div>
+        {$item['title']}<br/>
+        <span class="smallprint">{$item['subtitle']}</span>
   {*
     {if $titleTruncate}
       {$item['title']|truncate:$titleTruncate}
