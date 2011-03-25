@@ -34,8 +34,8 @@ function gcd($fromLat, $fromLon, $toLat, $toLon)
 
 function arrayFromMapFeature(MapFeature $feature) {
     $category = $feature->getCategory();
-    if (is_array($category)) {
-        $category = implode(MAP_CATEGORY_DELIMITER, $category);
+    if (!is_array($category)) {
+        $category = explode(MAP_CATEGORY_DELIMITER, $category);
     }
     $result = array(
         'title' => $feature->getTitle(),

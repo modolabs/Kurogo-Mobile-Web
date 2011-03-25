@@ -66,7 +66,9 @@ class YouTubeDataParser extends DataParser
         $video->setDuration($entry['duration']);
         $video->setID($entry['id']);
         $video->setImage($entry['thumbnail']['sqDefault']);
-        $video->setTags($entry['tags']);
+        if (isset($entry['tags'])) {
+            $video->setTags($entry['tags']);
+        }
         $video->setAuthor($entry['uploader']);
         $published = new DateTime($entry['uploaded']);
         $video->setPublished($published);
