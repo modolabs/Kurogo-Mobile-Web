@@ -8,16 +8,15 @@
   margin: 0;
 }
 #searchformcontainer fieldset:first-child {
-  margin: 0 14em 0 0;
+  margin: 0 12em 0 0;
 }
 #searchformcontainer fieldset + fieldset {
   position: absolute;
-  top: 18px;
+  top: 14px;
   right: 12px;
-  width: 12em;
+  width: 14em;
   margin: 0;
   text-align: right;
   height: 40px;
   line-height: 36px;
 }
-
