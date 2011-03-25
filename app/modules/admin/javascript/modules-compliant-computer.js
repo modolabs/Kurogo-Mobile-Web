@@ -87,15 +87,9 @@ function processModuleData(data) {
     $('#moduleDescription').html(data.description);
     $("#adminFields").html('');
     $.each(data, function(section, sectionData) {
-        if (sectionData.fields) {
-            $.each(sectionData.fields, function(key, data) {
-                data.section = section;
-                $("#adminFields").append(createFormFieldListItem(key, data));
-            });
-        } else if (sectionData.tablefields) {
-            $("#adminFields").append(createFormTable(section, sectionData));
-        }
+        $.each(createFormSectionListItems(section, sectionData), function(k,element) {
+            $("#adminFields").append(element);
+        });
     });
-    
 }
     

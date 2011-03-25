@@ -32,7 +32,9 @@ function processAdminSectionData(data) {
     $('#section').val(data.section);
     $("#adminFields").html('');
     $.each(data.fields, function(key, data) {
-        $("#adminFields").append(createFormFieldListItem(key, data));
+        $.each(createFormFieldListItems(key, data), function(k,element) {
+            $("#adminFields").append(element);
+        });
     });
 }
     
