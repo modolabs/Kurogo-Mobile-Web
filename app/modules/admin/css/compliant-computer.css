@@ -458,6 +458,7 @@ h1 img {
 }
 
 .springboard div {
+    cursor: move;
 	position: relative;
 	margin: 0;
 	padding: 8px 5px;
