@@ -137,17 +137,8 @@ class VideoWebModule extends WebModule
     }
     
     protected function getListItemForVideo(VideoObject $video, $section) {
-        // FIXME proper fix is either determine if desktop or adjust in javascript 
+
         $desc = $video->getDescription();
-        if (strlen($video->getTitle())>30) {             	
-            if (strlen($desc)) {
-                $desc = substr($desc,0,30) . "...";
-            }
-        }
-        
-        if (strlen($desc)>75) {
-            $desc = substr($desc,0,75) . "...";
-        }
 
         return array(
             'title'=>$video->getTitle(),
@@ -253,6 +244,9 @@ class VideoWebModule extends WebModule
                 $hiddenArgs = array(
                   'section'=>$section
                 );
+          
+          		$this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+          		$this->addOnLoad('setupVideosListing();');
           
                 $this->assign('start',       $start);
                 $this->assign('previousURL', $previousURL);
