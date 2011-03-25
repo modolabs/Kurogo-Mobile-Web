@@ -90,7 +90,8 @@ class LoginWebModule extends WebModule {
             $login          = $this->argVal($_POST, 'loginUser', '');
             $password       = $this->argVal($_POST, 'loginPassword', '');
             $options = array(
-                'url'=>$url
+                'url'=>$url,
+                'remainLoggedIn'=>$this->getArg('remainLoggedIn', 0)
             );
             
             $referrer = $this->argVal($_SERVER, 'HTTP_REFERER', '');
