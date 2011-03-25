@@ -140,3 +140,25 @@ dt, .label, .legend {
 	color: #000;
 }
 
+
+
+/* Freeform content module - basic styles to format unstyled raw HTML */
+
+.staticContentBody {
+	background-color: #fff;
+	color: #333;
+}
+
+.staticContentBody h2 {
+	color: #333;
+}
+
+.staticContentBody h3 {
+	color: #000;
+}
+
+.staticContentBody h4 {
+	color: #666;
+}
+
+

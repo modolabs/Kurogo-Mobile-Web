@@ -261,42 +261,24 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 
 
 
-/* Freeform content module */
-
+/* Freeform content module - basic styles to format unstyled raw HTML */
 
 .staticContentBody {
-	margin: 10px;
-	border-radius: 10px;
 	background-color: #fff;
-	padding: 10px;
 	color: #333;
 }
 
 .staticContentBody h2 {
-	font-size: 123%;
-	font-weight: normal;
 	color: #333;
-	margin: 0 0 1em 0;
 }
 
 .staticContentBody h3 {
-	font-size: 100%;
-	font-weight: bold;
 	color: #000;
-	margin: 0 0 1em 0;
 }
 
 .staticContentBody h4 {
-	font-size: 100%;
-	font-weight: bold;
 	color: #666;
-	margin: 0 0 1em 0;
 }
-
-.staticContentBody ul {
-	margin-bottom: 1.5em;
-}
-
 
 
 
