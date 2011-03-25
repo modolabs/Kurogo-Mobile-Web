@@ -10,11 +10,11 @@
 {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
 {/if}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories}
-
 {if $hasBookmarks}
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$bookmarkLink secondary=true}
 {/if}
+
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories}
 
 {if $clearLink}
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$clearLink secondary=true}

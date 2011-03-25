@@ -1,8 +1,41 @@
-#loginForm label {
-    display: block;
-    font-weight: bold;
+#loginForm {
+	margin: 0;
 }
 
-.loginFormInput {
-    width: 260px;
+#loginForm label {
+    float: left;
+	width: 95px;
+	line-height: 38px;
+	margin-right: 5px;
+	text-align: right;
+}
+
+#loginForm input {
+    width: 160px;
+	border: 1px solid #999;
+	padding: 2px 5px;
+}
+
+.rememberme {
+	margin-top: 1em;
+	margin-bottom: 1.5em;
+}
+
+.loginbuttons {
+	margin-top: 1em;
+	margin-bottom: 1em;
+}
+
+.loginbuttons li a {
+	height: 26px;
+	line-height: 26px;
+}
+
+.loginbuttons a img {
+	vertical-align: middle;
+	margin-left: 2px;
+}
+
+.formbuttons {
+	margin: 1.2em 0;
 }

@@ -1,0 +1,10 @@
+a.loginbutton {
+	line-height: 34px;
+	border: 1px solid red;
+}
+
+a.loginbutton img {
+	position: relative;
+	top: 3px;
+}
+
