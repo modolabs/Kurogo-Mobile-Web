@@ -151,6 +151,11 @@ class TemplateEngine extends Smarty {
     
     // Most of the following code comes from the stripwhitespace filter:
     
+    // Pull out the style blocks
+    preg_match_all("!<style[^>]*?>.*?</style>!is", $source, $match);
+    $styleBlocks = $match[0];
+    $source = preg_replace("!<style[^>]*?>.*?</style>!is", '@@@SMARTY:TRIM:STYLE@@@', $source);
+    
     // Pull out the script blocks
     preg_match_all("!<script[^>]*?>.*?</script>!is", $source, $match);
     $scriptBlocks = $match[0];
@@ -179,10 +184,11 @@ class TemplateEngine extends Smarty {
     // replace runs of spaces with a single space.
     $source = preg_replace('/\s+/m', ' ', $source);
 
-    // restore textarea, pre and script blocks
+    // restore textarea, pre, script and style blocks
     self::stripWhitespaceReplace("@@@SMARTY:TRIM:TEXTAREA@@@", $textareaBlocks, $source);
     self::stripWhitespaceReplace("@@@SMARTY:TRIM:PRE@@@", $preBlocks, $source);
     self::stripWhitespaceReplace("@@@SMARTY:TRIM:SCRIPT@@@", $scriptBlocks, $source);
+    self::stripWhitespaceReplace("@@@SMARTY:TRIM:STYLE@@@", $styleBlocks, $source);
     
     return $source;
   }

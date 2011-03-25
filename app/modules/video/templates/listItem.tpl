@@ -14,23 +14,10 @@
     {if $item['img']}
       <img src="{$item['img']}" class="thumbnail" alt="{$item['title']}" />
     {/if}
-
-        {$item['title']}<br/>
-        <span class="smallprint">{$item['subtitle']}</span>
-  {*
-    {if $titleTruncate}
-      {$item['title']|truncate:$titleTruncate}
-    {else}
-      {$item['title']}
-    {/if}
-    {if $item['subtitle']}
-      {if $subTitleNewline|default:true}<div{else}&nbsp;<span{/if} class="smallprint">
-        {$item['subtitle']}
-      {if $subTitleNewline|default:true}</div>{else}</span>{/if}
-    {/if}
-    *}
-    
-    
+	    <div class="ellipsis smallprint" id="ellipsis_{$ellipsisId}">
+	          <div class="title">{$item['title']}</div>
+	          {$item['subtitle']}
+	    </div>
     {if $item['badge']}
       <span class="badge">{$item['badge']}</span>
     {/if}

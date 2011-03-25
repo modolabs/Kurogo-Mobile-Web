@@ -88,7 +88,7 @@ class HomeWebModule extends WebModule {
           
           $this->assign('modulePanes', $this->getTabletModulePanes($this->getModuleSection('tablet_panes')));
           $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
-          $this->addOnLoad('moduleHandleWindowResize();');
+          $this->addOnOrientationChange('moduleHandleWindowResize();');
         } else {
           $this->assign('modules', $this->getModuleNavList());
         }
