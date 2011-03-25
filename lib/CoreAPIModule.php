@@ -29,7 +29,7 @@ class CoreAPIModule extends APIModule
                 foreach ($allmodules as $moduleID=>$module) {
                     if (!$module->getModuleVar('disabled', 'module')) {
                         $modules[] = array(
-                            'class'=>$moduleID,
+                            'id'=>$moduleID,
                             'tag'=>$module->getConfigModule(),
                             'title'=>$module->getModuleVar('title','module'),
                             'vmin'=>$module->getVmin(),
