@@ -179,13 +179,19 @@ abstract class WebModule extends Module {
   private function getMinifyUrls($pageOnly=false) {
     $page = preg_replace('/[\s-]+/', '+', $this->page);
     $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(SITE_DIR);
-    $minDebug = Kurogo::getSiteVar('MINIFY_DEBUG') ? '&amp;debug=1' : '';
     
-    $addArgString = $pageOnly ? '&amp;pageOnly=true' : '';
+    $minifyArgs = array();
+    if (Kurogo::getSiteVar('MINIFY_DEBUG')) {
+      $minifyArgs['debug'] = 1;
+    }
+    if ($pageOnly) {
+      $minifyArgs['pageOnly'] = 'true';
+    }
+    $minifyArgString = http_build_query($minifyArgs);
     
     return array(
-      'css' => "/min/g=css-$minKey$minDebug$addArgString",
-      'js'  => "/min/g=js-$minKey$minDebug$addArgString",
+      'css' => "/min/g=css-$minKey".($minifyArgString ? "&$minifyArgString" : ''),
+      'js'  => "/min/g=js-$minKey". ($minifyArgString ? "&$minifyArgString" : ''),
     );
   }
 
@@ -740,12 +746,12 @@ abstract class WebModule extends Module {
     // Add page Javascript and CSS if any
     $minifyURLs = $this->getMinifyUrls(true);
     
-    $javascript = @file_get_contents(FULL_URL_PREFIX.$minifyURLs['js']);
+    $javascript = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['js'], '/'));
     if ($javascript) {
       array_unshift($data['inlineJavascriptBlocks'], $javascript);
     }
 
-    $css = @file_get_contents(FULL_URL_PREFIX.$minifyURLs['css']);
+    $css = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['css'], '/'));
     if ($css) {
       array_unshift($data['inlineCSSBlocks'], $css);
     }
