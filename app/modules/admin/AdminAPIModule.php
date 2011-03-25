@@ -53,21 +53,26 @@ class AdminAPIModule extends APIModule
         $configData = $module->getModuleAdminConfig();
 
         foreach ($configData as $section=>&$sectionData) {
-            foreach ($sectionData['fields'] as $key=>&$field) {
-                if (isset($field['valueMethod'])) {
-                    $field['value'] = call_user_func(array($module, $field['valueMethod']));
-                } else {
-                    $field['value'] = $module->getOptionalModuleVar($key,'', $field['section'], $field['config']);
+            if (isset($sectionData['fields'])) {
+                foreach ($sectionData['fields'] as $key=>&$field) {
+                    if (isset($field['valueMethod'])) {
+                        $field['value'] = call_user_func(array($module, $field['valueMethod']));
+                    } else {
+                        $field['value'] = $module->getOptionalModuleVar($key,'', $field['section'], $field['config']);
+                    }
+                    
+                    switch ($field['type']) 
+                    {
+                        case 'select':
+                            if (isset($field['optionsMethod'])) {
+                                $field['options'] = call_user_func($field['optionsMethod']);
+                                unset($field['optionsMethod']);
+                            }
+                    }
                 }
-                
-                switch ($field['type']) 
-                {
-                    case 'select':
-                        if (isset($field['optionsMethod'])) {
-                            $field['options'] = call_user_func($field['optionsMethod']);
-                            unset($field['optionsMethod']);
-                        }
-                }
+            } elseif (isset($sectionData['tablerowsmethod'])) {
+                $sectionData['tablerows'] = $module->$sectionData['tablerowsmethod']();
+                unset($sectionData['tablerowsmethod']);
             }
         }
     
@@ -123,12 +128,22 @@ class AdminAPIModule extends APIModule
                 throw new Exception("Invalid type $type");
         }
         
-    
-        if (!isset($adminData[$section]['fields'][$key])) {
-            throw new Exception("Invalid key $key for $type section $section");
+        if (!isset($adminData[$section])) {
+            throw new Exception("Invalid section $section for $type");
         }
-    
-        $fieldData = $adminData[$section]['fields'][$key];
+        
+        if (isset($adminData[$section]['fields'])) {
+            if (!isset($adminData[$section]['fields'][$key])) {
+                throw new Exception("Invalid key $key for $type section $section");
+            }
+            
+            $fieldData = $adminData[$section]['fields'][$key];
+        } elseif (isset($adminData[$section]['tablefields'])) {
+            $fieldData = $adminData[$section];
+        } else {
+            throw new Exception("don't know how to handle $type $section");
+        }
+        
         $configKey = $type . '-' . $fieldData['config'];
 
         if (!isset($this->configs[$configKey])) {
@@ -145,8 +160,33 @@ class AdminAPIModule extends APIModule
             }
         }
 
-        if (!$this->configs[$configKey]->setVar($fieldData['section'], $key, $value, $changed)) {
-            throw new Exception("Error setting $config $section $var $value");
+        if (is_array($value)) {
+            $result = true;
+            $changed = false;
+            foreach ($value as $k=>$v) {
+                if (!isset($fieldData['tablefields'][$k])) {
+                    throw new Exception("Invalid key $k for $type:" . $fieldData['config'] . " section $key");
+                }
+                
+                if (isset($fieldData['tablefields'][$k]['omitBlankValue']) && $fieldData['tablefields'][$k]['omitBlankValue'] && strlen($v)==0) {
+                    $changed = $changed || $this->configs[$configKey]->clearVar($key, $k);
+                    continue;
+                } else {
+                    if (!$this->configs[$configKey]->setVar($key, $k, $v, $c)) {
+                        $result = false;
+                    }
+                    $changed = $changed || $c;
+                }
+            }
+        } else {
+            if (isset($fieldData['omitBlankValue']) && $fieldData['omitBlankValue'] && strlen($value)==0) {
+                return true;
+            }
+            $result = $this->configs[$configKey]->setVar($fieldData['section'], $key, $value, $changed);
+        }
+        
+        if (!$result) {
+            throw new Exception("Error setting $config $section $key $value");
         }
 
         if ($changed) {    

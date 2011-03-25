@@ -8,6 +8,10 @@ class Kurogo
         );
     }
     
+    public static function isNotEmptyString($val) {
+        return strlen($val)>0;
+    }
+    
     public static function getSiteVar($var, $section=null) {
         return $GLOBALS['siteConfig']->getVar($var, $section);
     }

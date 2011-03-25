@@ -5,18 +5,26 @@ $(document).ready(function() {
     
         $('#adminForm').submit(function(e) {
             var params = { 'v':1, 'type':'module', 'module':moduleID, 'data':{}};
+            var re;
             
             $('#adminForm [section]').map(function() { 
                 var section = $(this).attr('section');
                 if (typeof params.data[section] == 'undefined') {
                     params.data[section] = {};
                 }
-                
+
                 if ($(this).attr('type')!='checkbox' || this.checked) {
-                    params.data[section][$(this).attr('name')] = $(this).val();
+                    if (re = $(this).attr('name').match(/(.*)\[(.*)\]/)) {
+                        if (typeof params.data[section][re[1]]=='undefined') {
+                            params.data[section][re[1]] = {}
+                        }
+                        params.data[section][re[1]][re[2]] = $(this).val();                    
+                    } else {
+                        params.data[section][$(this).attr('name')] = $(this).val();
+                    }
                 }
             });
-            
+                        
             makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
             return false;
         });
@@ -48,10 +56,14 @@ function processModuleData(data) {
     $('#moduleDescription').html(data.description);
     $("#adminFields").html('');
     $.each(data, function(section, sectionData) {
-        $.each(sectionData.fields, function(key, data) {
-            data.section = section;
-            $("#adminFields").append(createFormFieldListItem(key, data));
-        });
+        if (sectionData.fields) {
+            $.each(sectionData.fields, function(key, data) {
+                data.section = section;
+                $("#adminFields").append(createFormFieldListItem(key, data));
+            });
+        } else if (sectionData.tablefields) {
+            $("#adminFields").append(createFormTable(section, sectionData));
+        }
     });
     
 }

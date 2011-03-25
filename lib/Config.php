@@ -37,6 +37,18 @@ abstract class Config {
         return true;
     }
 
+    public function clearVar($section, $var) {
+        
+        if (isset($this->sectionVars[$section])) {
+            if (isset($this->sectionVars[$section][$var])) {
+                unset($this->sectionVars[$section][$var]);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     /* used when you completely want to replace all sections */
     public function setSectionVars($sectionVars) {
         $this->sectionVars = $sectionVars;
@@ -49,7 +61,7 @@ abstract class Config {
         foreach ($sectionVars as $var=>$value) {
         
             if (!is_array($value)) {
-                throw new Exception("Found value that wasn't in a section. Config needs to be updated");
+                throw new Exception("Found value $var = $value that wasn't in a section. Config needs to be updated");
             }
             
             if ($merge) {

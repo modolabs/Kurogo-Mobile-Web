@@ -13,7 +13,7 @@ function createFormFieldListItem(key, fieldData) {
     var li = $('<li>').attr('class', listClass);
 
     if (fieldData.label) {
-        li.append('<label>' + fieldData.label + ':</label>');
+        li.append('<label>' + fieldData.label + '</label>');
     }
     
     fieldData.value = 'value' in fieldData ? fieldData.value : '';
@@ -21,30 +21,30 @@ function createFormFieldListItem(key, fieldData) {
     switch (fieldData.type) {
     
         case 'time':
-            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value).attr('class','timeData'));
+            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).attr('class','timeData'));
             li.append('seconds');
             break;
         case 'file':
             li.append(createSelectBox(fileListTypes(), fieldData.constant).attr('class','filePrefix').attr('name', key+'_filePrefix').attr('section',section));
-            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value).attr('class','fileData'));
+            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).attr('class','fileData'));
             break;
         case 'number':
-            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value));
+            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value));
             break;
         case 'password':
         case 'text':
-            li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', fieldData.value));
+            li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', fieldData.value));
             break;
         case 'checkbox':
-            li.append($('<input/>').attr('type','hidden').attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', '0'));
-            li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('config', fieldData.config).attr('value', '1').attr('checked', parseInt(fieldData.value) ? 'checked':''));
+            li.append($('<input/>').attr('type','hidden').attr('name', key).attr('section', section).attr('value', '0'));
+            li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', '1').attr('checked', parseInt(fieldData.value) ? 'checked':''));
             break;
         case 'select':
             var options = 'options' in fieldData ? fieldData.options : [];
-            li.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).attr('config', fieldData.config));
+            li.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section));
             break;
         case 'paragraph':
-            li.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows','5').attr('section', section).attr('config', fieldData.config));
+            li.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows','5').attr('section', section));
             break;
         case 'label':
             li.append(fieldData.value);
@@ -53,6 +53,57 @@ function createFormFieldListItem(key, fieldData) {
 
     if (fieldData.description) {
         li.append('<span class="helptext">' + fieldData.description + '</span>');
+    }
+
+    return li;
+}
+
+function createFormTable(section, data) {
+
+    var li = $('<li>').attr('class', 'tallfield');
+    if (data.label) {
+        li.append('<label>' + data.label + '</label>');
+    }
+    
+    var table = $('<table />').attr('id', section).attr('class','subtable');
+    var head = '<thead><tr>';
+    var fields = [];
+    $.each(data.tablefields, function(key, fieldData) {
+        fields.push(key);
+        head+='<th>' + fieldData.heading + '</th>';
+    });
+    table.append(head + '</thead');
+
+    var body = $('<tbody>');
+    $.each(data.tablerows, function(rowKey, rowValues) {
+        var row = $('<tr />'); 
+        $.each(fields, function(j, key) {
+            var cell = $('<td />');
+            if (key=='section') {
+                var value = rowKey;
+            } else {
+                var value = typeof rowValues[key] != 'undefined' ? rowValues[key] : '';
+            }
+            switch (data.tablefields[key].type) {
+                case 'label':
+                    cell.append(value);
+                    break;
+                case 'text':
+                    var inputClass = typeof data.tablefields[key]['class'] !='undefined' ? data.tablefields[key]['class'] :'';
+                    var name = rowKey + '[' + key + ']';
+                    cell.append($('<input />').attr('type','text').attr('name',name).attr('value',value).attr('class',inputClass).attr('section',section));
+                    break;
+            }
+            row.append(cell);
+        });
+        body.append(row);
+    });
+    
+    table.append(body);
+    li.append(table);
+
+    if (data.description) {
+        li.append('<span class="helptext">' + data.description + '</span>');
     }
 
     return li;

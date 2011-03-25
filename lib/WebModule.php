@@ -912,17 +912,17 @@ abstract class WebModule extends Module {
       if (isset($pageData[$this->page])) {
         $pageConfig = $pageData[$this->page];
         
-        if (isset($pageConfig['pageTitle'])) {
+        if (isset($pageConfig['pageTitle']) && strlen($pageConfig['pageTitle'])) {
           $this->pageTitle = $pageConfig['pageTitle'];
         }
           
-        if (isset($pageConfig['breadcrumbTitle'])) {
+        if (isset($pageConfig['breadcrumbTitle'])  && strlen($pageConfig['breadcrumbTitle'])) {
           $this->breadcrumbTitle = $pageConfig['breadcrumbTitle'];
         } else {
           $this->breadcrumbTitle = $this->pageTitle;
         }
           
-        if (isset($pageConfig['breadcrumbLongTitle'])) {
+        if (isset($pageConfig['breadcrumbLongTitle']) && strlen($pageConfig['breadcrumbLongTitle'])) {
           $this->breadcrumbLongTitle = $pageConfig['breadcrumbLongTitle'];
         } else {
           $this->breadcrumbLongTitle = $this->pageTitle;
