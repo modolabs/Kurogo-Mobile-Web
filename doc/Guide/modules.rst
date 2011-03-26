@@ -26,7 +26,10 @@ directly referenced, but rather use an accessor method to ensure future compatib
 properties that you will need to use if creating your own module. These include:
 
 * *id* (string) - This property should be set to the same name and capitalization as the module directory. 
-  This property **must** be set by all modules. 
+  This property **must** be set by all modules. For modules that are duplicates of others, the id should
+  be the id of the parent module.
+* *configModule* (string) - This property should be set to the same name and capitalization as the module directory. 
+  If not set, it will use the *id* property
 * *moduleName* (string) - This property represents the canonical name of the module and is shown at
   on the nav bar. It can be overridden using the configuration file.
 * *page* (string) - This property is set when the module initializes and represents the current page the 
@@ -53,9 +56,13 @@ Initialization
   request. In order to separate built-in modules from site specific modules, this method will search multiple 
   locations for the module. It is important that the name of the class matches the name of the file. 
 
+  * SITE_DIR/app/modules/example/ExampleWebModule.php 
   * SITE_DIR/app/modules/example/SiteExampleWebModule.php 
   * app/modules/example/ExampleModule.php 
   
+* *initialize* - This method is called first when the module is instantiated. It should contain general
+  initialization code. If your module provides federated search capabilities than you can use this method
+  to properly setup any data sources.
 * *initializeForPage* - This method is called when viewing a page. It represents the main logic
   branch.
 
@@ -65,10 +72,44 @@ Accessors
 
 * *getArg($key, $default)* - Retrieves an argument sent via GET/POST, if the *$key* is not present, then
   it will return the value specified in *$default*
-* *getSiteVar($key, $log_errors)* - Retrieves a site configuration value (i.e. a value stored in SITE_DIR/config/site.ini)
-* *getSiteSection($section, $log_errors)* - Retrieves a site configuration section (i.e. a section stored in SITE_DIR/config/site.ini)
-* *getModuleVar($key, $default, $log_errors)* - Retrieves a module configuration value (i.e. a value stored in SITE_DIR/config/module/MODULEID.ini)
-* *getModuleSection($section, $log_errors)* - Retrieves a module configuration section (i.e. a section stored in SITE_DIR/config/module/MODULEID.ini)
+
+
+^^^^^^^^^^^^^
+Configuration
+^^^^^^^^^^^^^
+
+There are a number of methods to load configuration data. Configuration allows you to keep certain details
+such as server locations, urls, and other values out of source code. Each module has a folder of configuration
+files. The primary configuration data is located in the *module.ini* file. Page data is located in *pages.ini*
+Modules can use whatever configuration structure that suits their needs. In many cases, complex data structures
+will need to exist in different files. 
+
+You can retrieve values either by key or by entire section (you'll get an array of values). The following methods
+exist on the Module object.
+
+* *getModuleVar($key, $section=null, $config='module')* - Gets a required module variable $key. If you specify $section it will only look in that section. Will throw an exception if the value is not present
+* *getOptionalModuleVar($key, $default='', $section=null, $config='module')* - Gets an optional module variable $key. If you specify $section it will only look in that section. If it is not present, $default will be used (empty string by default)
+* *getModuleSection($section, $config='module')* returns an array of values in a module section.  Will throw an exception if the section is not present
+* *getOptionalModuleSection($section, $config='module')* returns an array of values in a module section.  Will return an empty array if the section is not present
+* *getModuleSections($config)* - Returns a complete dictionary of sections=>vars=>values for a particular config file. Very handy when you basically want the array structure of an entire file
+
+You can also retrieve values from the site configuration (site.ini). These are for values used by all modules. They are
+static methods on the Kurogo object.
+
+* *Kurogo::getSiteVar($key, $section=null)* - similar to getModuleVar
+* *Kurogo::getOptionalSiteVar($key, $default='', $section=null)* - similar to getOptionalModule Var
+* *Kurogo::getSiteSection($section)* - similar to getModuleSection
+* *Kurogo::getOptionalSiteSection($section)* similar to getOptionalModuleSection
+
+There are also 2 other methods for getting site strings (strings.ini). 
+
+* *Kurogo::getSiteString($key)* - returns a site string. Will throw an exception if not present
+* *Kurogo::getOptionalSiteString($key, $default='')* - returns a site string. Will return $default if not present
+
+^^^^^^^^^^^^^
+User Sessions
+^^^^^^^^^^^^^
+
 * *isLoggedIn()* returns whether a user is logged in or not (see :doc:`authentication`)
 * *getUser()*  returns a User object of the current user (or AnonymousUser if the user is not logged in)
 
