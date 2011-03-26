@@ -79,13 +79,17 @@ a *AboutModule.php* file in the *SITE_DIR/app/modules/about* folder. It would lo
     
 It is important to include the *$id* property like you would with a :doc:`new module <modulenew>`.
 
+.. _copy-module:
+
+
 =======================================
 Copying a Module 
 =======================================
 
 In some cases you may want to have multiple modules that exist under different URLs that share the
-same logic, but have different configurations. An example of this would be the :doc:`modulecontent`
-In this case you simply subclass the parent module and provide a different *$configModule* property::
+same logic, but have different configurations. An example of this would be the :doc:`modulecontent` 
+or :doc:`moduleurl`. In this case you simply subclass the parent module and provide a different 
+*$configModule* property::
 
     <?php 
     
