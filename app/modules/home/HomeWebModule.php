@@ -27,34 +27,6 @@ class HomeWebModule extends WebModule {
     }
   }
   
-  protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section) {
-      case 'primary_modules':
-      case 'secondary_modules':
-        
-        $adminModule->setTemplatePage('module_order', $this->id);
-        $adminModule->addInternalJavascript("/modules/{$this->id}/javascript/admin.js");
-        $adminModule->addInternalCSS("/modules/{$this->id}/css/admin.css");
-
-        $allModules = $this->getAllModules();
-        $navigationModules = $this->getNavigationModules();
-
-        foreach ($allModules as $moduleID=>$module) {
-          $allModules[$moduleID] = $module->getModuleName();
-        }
-
-        foreach ($navigationModules[rtrim($section,'_modules')] as $moduleID=>$module) {
-          $sectionModules[$moduleID] = $module['title'];
-        }
-        
-        $adminModule->assign('allModules', $allModules);
-        $adminModule->assign('sectionModules', $sectionModules);
-        break;
-      default:
-        return parent::prepareAdminForSection($section, $adminModule);
-    }
-  }
-  
   private function getTabletModulePanes($tabletConfig) {
     $modulePanes = array();
     

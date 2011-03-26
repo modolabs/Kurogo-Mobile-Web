@@ -16,9 +16,7 @@ define('DAY_SECONDS', 24*60*60);
 class CalendarWebModule extends WebModule {
   protected $id = 'calendar';
   protected $feeds = array();
-  protected $hasFeeds = true;
   protected $timezone;
-  protected $feedFields = array('CACHE_LIFETIME'=>'Cache lifetime (seconds)', 'CONTROLLER_CLASS'=>'Controller Class','PARSER_CLASS'=>'Parser Class','EVENT_CLASS'=>'Event Class');
   protected $defaultSearchOption = 0;
 
   public function timezone() {
@@ -262,19 +260,6 @@ class CalendarWebModule extends WebModule {
     return count($iCalEvents);
   }
   
-  protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section) {
-      case 'feeds':
-        $feeds = $this->loadFeedData();
-        $adminModule->assign('feeds', $feeds);
-        $adminModule->assign('showFeedLabels', true);
-        $adminModule->setTemplatePage('feedAdmin', $this->id);
-        break;
-      default:
-        return parent::prepareAdminForSection($section, $adminModule);
-    }
-  }
-
     protected function getFeedsByType() {  
         $feeds = array();
         foreach (array('static', 'user', 'resource') as $type) {

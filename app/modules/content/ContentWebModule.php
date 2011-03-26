@@ -2,30 +2,6 @@
 
 abstract class ContentWebModule extends WebModule {
     protected $id = 'content';
-    protected $feedFields = array('CONTENT_TYPE'=>'Content Type');
-    protected $hasFeeds = true;
-
-    protected function prepareAdminForSection($section, &$adminModule) {
-        switch ($section)
-        {
-            case 'feeds':
-                $feeds = $this->loadFeedData();
-                $adminModule->addInternalJavascript("/modules/content/javascript/admin.js");
-//                $adminModule->addInternalCSS("/modules/content/css/admin.css");
-                $adminModule->assign('feeds', $feeds);
-                $adminModule->assign('showFeedLabels', true);
-                $adminModule->assign('showNew', true);
-                $adminModule->assign('content_types', array(
-                    'html'=>'HTML (editable)',
-                    'html_url'=>'HTML (remote)',
-                    'rss'=>'RSS (remote)'
-                ));
-                $adminModule->setTemplatePage('feedAdmin', 'content');
-                break;
-            default:
-                return parent::prepareAdminForSection($section, $adminModule);
-        }
-   }
 
    protected function getContent($feedData) {
    

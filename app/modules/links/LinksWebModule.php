@@ -29,21 +29,6 @@ class LinksWebModule extends WebModule {
     }
   }
   
-  protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section) {
-      case 'links':
-        $adminModule->setTemplatePage('admin_links', $this->id);
-        $adminModule->addInternalJavascript("/modules/{$this->id}/javascript/admin.js");
-        $adminModule->addInternalCSS("/modules/{$this->id}/css/admin.css");
-        $links = $this->getModuleArray('links');
-        $adminModule->assign('links', $links);
-        break;
-      default:
-        return parent::prepareAdminForSection($section, $adminModule);
-        break;
-    }
-  }
-  
   protected function initializeForPage() {
     $links = $this->getModuleArray('links');
         
