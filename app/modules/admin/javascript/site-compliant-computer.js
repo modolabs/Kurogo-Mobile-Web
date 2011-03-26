@@ -7,7 +7,9 @@ $(document).ready(function() {
 
         params.data[adminSection] = {};
         $('#adminForm [section]').map(function() {
-            params.data[adminSection][$(this).attr('name')] = $(this).val();
+            if ($(this).attr('type')!='checkbox' || this.checked) {
+                params.data[adminSection][$(this).attr('name')] = $(this).val();
+            }
         });
         
         makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
