@@ -16,7 +16,18 @@
 	padding: 2px 5px;
 }
 
-.rememberme {
+#rememberme label {
+    float: none;
+    width: auto;
+}
+
+#rememberme input {
+    width: auto;
+    border: none;
+    padding :0;
+}
+
+#rememberme {
 	margin-top: 1em;
 	margin-bottom: 1.5em;
 }

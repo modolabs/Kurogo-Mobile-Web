@@ -62,7 +62,7 @@ class LoginWebModule extends WebModule {
                 $authority = $user->getAuthenticationAuthority();
                 $this->assign('message', sprintf("You are logged in as %s %s", $user->getFullName(), $multipleAuthorities ? '(' . $authority->getAuthorityTitle() . ')' : ''));
                 $this->assign('url', $this->buildURL('logout', array('authority'=>$authorityIndex)));
-                $this->assign('linkText', 'Logout');
+                $this->assign('linkText', 'Sign out');
                 $this->setTemplatePage('message');
             } else {
                 $this->redirectTo('index', array());
