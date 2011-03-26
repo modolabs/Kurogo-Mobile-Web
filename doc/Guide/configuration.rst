@@ -182,9 +182,7 @@ Analytics
 * *GOOGLE_ANALYTICS_ID* - set this to your google analytics id and the framework will utilize the google 
   analytics server
 * *PAGE_VIEWS_TABLE* - Used by the stats module to store page view summaries
-
-..
-    * *API_STATS_TABLE* - Used by the stats module to store API request summaries
+* *API_STATS_TABLE* - Used by the stats module to store API request summaries
 
 --------------
 Temp Directory
