@@ -34,6 +34,10 @@ class DiskCache {
             }
         }
         
+        if (!is_writable($path)) {
+            throw new Exception("Path $path is not writable");
+        }
+        
         if ($timeout !== NULL) {
             $this->timeout = $timeout;
         }

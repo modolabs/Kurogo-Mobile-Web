@@ -18,7 +18,7 @@ you can learn more about these modules, what they do and how to configure them.
    modulemap
    modulelinks
    modulecontent
-   modulefullweb
+   moduleurl
    modulecustomize
    moduleabout
    modulelogin
