@@ -8,9 +8,13 @@ to early generation smart phones, to modern devices and tablets. It currently in
 * People directory
 * News/RSS feeds
 * Event Calendar
+* Maps
+* Video
+* Emergency
 * Links
 * Statistics
 * About
+* HTML Content
 
 ## Online Guide
 
@@ -21,22 +25,18 @@ We strongly recommend developers read the (in progress) framework guide:
 
 Please contact kurogo@modolabs.com for more information.
 
-## NOTICE: Pre-release version
+## NOTICE: Release candidate version
 
-This project is still in a beta stage with a final release in March 2011. Please be aware that certain
-conventions, API and file locations may change. We will strive to provide detailed release notes 
-when critical core behavior has been altered.
+This project has entered Release candidate stage. There may be additional features and bug fixes, however there should no longer be any incompatible
+changes that would affect the mobile web product. 
 
 ## Version 1.0
 
 The following is planned before the official 1.0 release:
 
-* A generalized, configurable Map module
-* Updated UI and templates for the "Touch" branch which includes certain BlackBerry devices
-* A UI and templates for tablet form factor devices
-* A module for retrieving Emergency information
-* An abstract module to ease displaying a variety of free form text content from      other sources
-* API Support for the soon to be released open source iOS native   application 
+* Cosmetic updates to the login module
+* Additional features to the revamped admin console (/admin)
+* Completion of the REST API
 
 ## History
 

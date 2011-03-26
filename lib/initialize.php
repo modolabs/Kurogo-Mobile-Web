@@ -3,7 +3,7 @@
   * @package Core
   */
   
-  define('KUROGO_VERSION', '1.0b2');
+  define('KUROGO_VERSION', '1.0.RC1');
 
 //
 // Initialization setup
