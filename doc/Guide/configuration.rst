@@ -280,10 +280,9 @@ Authentication
 ---------
 Log Files
 ---------
-..
-  * *API_LOG_FILE* - Location of the processed API log file
-  * *API_CURRENT_LOG_FILE* - Location of the active API log file
-  
+
+* *API_LOG_FILE* - Location of the processed API log file
+* *API_CURRENT_LOG_FILE* - Location of the active API log file
 * *WEB_LOG_FILE* - Location of the processed page view log file
 * *WEB_CURRENT_LOG_FILE* - Location of the active page view log file
 * *LOG_DATE_FORMAT* - Date format for log files
