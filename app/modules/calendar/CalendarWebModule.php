@@ -251,7 +251,10 @@ class CalendarWebModule extends WebModule {
       }
   
       $results[] = array(
-        'url'      => $this->detailURL($iCalEvents[$i], array(), false, false),
+        'url'      => $this->detailURL($iCalEvents[$i], array(
+            'calendar'=>$calendar,
+            'type'=>$type
+        ), false, false),
         'title'    => $iCalEvents[$i]->get_summary(),
         'subtitle' => $subtitle,
       );
@@ -745,6 +748,8 @@ class CalendarWebModule extends WebModule {
         
             $events[] = array(
               'url'       => $this->detailURL($iCalEvent, array(
+              'calendar'  => $calendar,
+              'type'      => $type,
               'filter'    => $searchTerms, 
               'timeframe' => $timeframeKey)),
               'title'     => $iCalEvent->get_summary(),
