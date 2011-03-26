@@ -91,7 +91,7 @@ class AdminAPIModule extends APIModule
         foreach ($sectionData['fields'] as $key=>&$field) {
             switch ($field['config'])
             {
-                case 'config':
+                case 'site':
                     $field['value'] = $this->getUnconstantedValue(Kurogo::getOptionalSiteVar($key), $constant);
                     if ($constant) {
                         $field['constant'] = $constant;
@@ -99,6 +99,9 @@ class AdminAPIModule extends APIModule
                     break;
                 case 'strings':
                     $field['value'] = Kurogo::getOptionalSiteString($key);
+                    break;
+                default: 
+                    throw new Exception("Unknown config " . $field['config']);
                     break;
             }
             
