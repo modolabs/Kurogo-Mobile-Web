@@ -176,10 +176,7 @@ abstract class WebModule extends Module {
   //
   // Minify URLs
   //
-  private function getMinifyUrls($pageOnly=false) {
-    $page = preg_replace('/[\s-]+/', '+', $this->page);
-    $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(SITE_DIR);
-    
+  private function getMinifyArgString($pageOnly=false) {
     $minifyArgs = array();
     if (Kurogo::getSiteVar('MINIFY_DEBUG')) {
       $minifyArgs['debug'] = 1;
@@ -189,9 +186,16 @@ abstract class WebModule extends Module {
     }
     $minifyArgString = http_build_query($minifyArgs);
     
+    return ($minifyArgString ? "&$minifyArgString" : '');
+  }
+  
+  private function getMinifyUrls($pageOnly=false) {
+    $page = preg_replace('/[\s-]+/', '+', $this->page);
+    $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(SITE_DIR);
+    
     return array(
-      'css' => "/min/g=css-$minKey".($minifyArgString ? "&$minifyArgString" : ''),
-      'js'  => "/min/g=js-$minKey". ($minifyArgString ? "&$minifyArgString" : ''),
+      'css' => "/min/g=css-$minKey".$this->getMinifyArgString($pageOnly),
+      'js'  => "/min/g=js-$minKey".$this->getMinifyArgString($pageOnly),
     );
   }
 
@@ -615,7 +619,7 @@ abstract class WebModule extends Module {
     $this->inlineCSSBlocks[] = $inlineCSS;
   }
   protected function addInternalCSS($path) {
-    $this->cssURLs[] = '/min/g='.MIN_FILE_PREFIX.$path;
+    $this->cssURLs[] = '/min/g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
   }
   protected function addExternalCSS($url) {
     $this->cssURLs[] = $url;
@@ -633,7 +637,7 @@ abstract class WebModule extends Module {
     $this->onLoadBlocks[] = $onLoad;
   }
   protected function addInternalJavascript($path) {
-    $path = '/min/g='.MIN_FILE_PREFIX.$path;
+    $path = '/min/g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
     if (!in_array($path, $this->javascriptURLs)) {
         $this->javascriptURLs[] = $path;
     }
@@ -766,7 +770,7 @@ abstract class WebModule extends Module {
   private function getBreadcrumbString($addBreadcrumb=true) {
     $breadcrumbs = $this->breadcrumbs;
     
-    $this->cleanBreadcrumbs(&$breadcrumbs);
+    $this->cleanBreadcrumbs($breadcrumbs);
     
     if ($addBreadcrumb) {
       $args = $this->args;
