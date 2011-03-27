@@ -72,7 +72,9 @@ abstract class ContentWebModule extends WebModule {
     if (!$feeds = $this->loadFeedData()) {
         $feeds = array();
     }
-
+    //print("here");
+    //print_r($feeds);
+    //print("\n");
     switch ($this->page) {
         case 'index':
             if (count($feeds)==1) {
