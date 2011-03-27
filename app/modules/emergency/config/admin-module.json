@@ -1,0 +1,8 @@
+{
+    "strings":{
+        "fields":{
+            "MORE_CONTACTS":{"label":"More Contacts","type":"text","config":"module","section":"strings","description":"Text to show for &quot;More Emergency Contacts&quot; link"},
+            "NO_EMERGENCY":{"label":"No Emergency","type":"text","config":"module","section":"strings","description":"Text to show when there is no emergency"}
+        }
+    }
+}

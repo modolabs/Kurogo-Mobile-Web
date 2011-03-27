@@ -10,9 +10,7 @@
   */
 class NewsWebModule extends WebModule {
   protected $id = 'news';
-  protected $hasFeeds = true;
   protected $feeds = array();
-  protected $feedFields = array('CACHE_LIFETIME'=>'Cache lifetime (seconds)','CONTROLLER_CLASS'=>'Controller Class','ITEM_CLASS'=>'Item Class', 'ENCLOSURE_CLASS'=>'Enclosure Class');
   protected $feedIndex = 0;
   protected $feed;
   protected $maxPerPage = 10;
@@ -81,19 +79,6 @@ class NewsWebModule extends WebModule {
     }
   }
 
-  protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section)
-    {
-        case 'feeds':
-            $feeds = $this->loadFeedData();
-            $adminModule->assign('feeds', $feeds);
-            $adminModule->setTemplatePage('feedAdmin', $this->id);
-            break;
-        default:
-            return parent::prepareAdminForSection($section, $adminModule);
-    }
-  }
-  
   public function getFeeds() {
     return $this->feeds;
   }

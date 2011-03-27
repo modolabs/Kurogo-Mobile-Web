@@ -119,5 +119,12 @@ class db {
   {
       return $this->connection->lastInsertId();
   }
+  
+  public static function getDBTypes() {
+    return array(
+        'mysql'=>'MySQL',
+        'sqlite'=>'SQLite'
+    );
+  }
 }
 

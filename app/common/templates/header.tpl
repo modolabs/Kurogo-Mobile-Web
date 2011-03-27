@@ -19,6 +19,7 @@
   {/foreach}
   
   {block name="javascript"}
+      <script type="text/javascript">var URL_BASE='{$smarty.const.URL_BASE}';</script>
     {if strlen($GOOGLE_ANALYTICS_ID)}
       <script type="text/javascript">
         var _gaq = _gaq || [];

@@ -14,8 +14,6 @@ class PeopleWebModule extends WebModule {
   private $detailFields = array();
   private $detailAttributes = array();
   protected $feeds=array();
-  protected $feedFields = array('CONTROLLER_CLASS'=>'Controller Class','PERSON_CLASS'=>'Person Class');
-  protected $hasFeeds = true;
   
   private function formatValues($values, $info) {
     if (isset($info['parse'])) {
@@ -146,33 +144,6 @@ class PeopleWebModule extends WebModule {
       }
     }
     return count($people);
-  }
-
-  protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section)
-    {
-        case 'feeds':
-            $feeds = $this->loadFeedData();
-            $adminModule->assign('feeds', $feeds);
-            $adminModule->setTemplatePage('feedAdmin', $this->id);
-            $formListItems = array();
-            foreach ($feeds as $feed=>$data) {
-                foreach ($data as $key=>$value) {
-                    $formListItems[] = array(
-                        'label'=>$key,
-                        'type'=>'text',
-                        'name'=>sprintf("moduleData[feeds][%s][%s]", $feed, $key),
-                        'value'=>$value
-                    );
-                }
-            }
-            
-            $adminModule->assign('peopleAdminListItems', $formListItems);
-            break;
-        default:
-            return parent::prepareAdminForSection($section, $adminModule);
-        
-    }
   }
   
   protected function getFeed($index)

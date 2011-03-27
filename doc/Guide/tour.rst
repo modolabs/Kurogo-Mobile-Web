@@ -81,6 +81,7 @@ module (use: *includePackage('PackageName')* in your module code). Currently the
 * db - used when you wish to interact with a database
 * Emergency - used by the emergency module
 * Maps - used by the maps module
+* Video - used by the video module
 
 --------------------
 Core / Support Files
@@ -160,6 +161,7 @@ See :doc:`configuration` for more information on configuring Kurogo.
 * *ConfigFile* - Provides an interface for reading and writing an ini configuration file
 * *ConfigGroup* - Provides an interface for coalescing multiple configuration files to provide a single
   key/value store
+* *ModuleConfigFile* - A specific config file class to load module config files.
 * *SiteConfig* - A specific ConfigGroup that loads the critical site and project-wide configuration files.
 
 ---------------------
@@ -168,6 +170,8 @@ Modules and Templates
 
 * *Module* - The core class that all modules inherit from. Provides a variety of necessary services
   and behavior to module subclasses. See :doc:`modules`.
+* *APIModule* - The core class that all api modules inherit from.
+* *WebModule* - The core class that all web modules inherit from.
 * *HTMLPager* - A support class used to paginate content
 * *smarty* - The `Smarty Template System <http://www.smarty.net/>`_
 * *TemplateEngine* - An subclass of the smarty object used by the framework
@@ -225,7 +229,7 @@ The naming conventions are very important (especially for case sensitive file sy
 
 * The folder **must** be lower case and be the same as the url of the module (/about, /home, /links)
 * The folder **must** contain a PHP file named *ModulenameWebModule.php*. If the module is located
-  in the *site* folder and it extends an existing module then it should be called *SiteModulenameWebModule.php*. 
+  in the *site* folder *and* it extends an existing module then it should be called *SiteModulenameWebModule.php*. 
 * The first (and ONLY) letter of the module **must** be capitalized and followed by WebModule.php. 
   
   * **AboutWebModule.php** (NOT aboutwebmodule.php or AboutWebmodule.php)
@@ -238,6 +242,7 @@ The naming conventions are very important (especially for case sensitive file sy
 * If you are overriding a project module you only need to include the pages that you are overriding.
 * You may choose to place additional css style sheets in a folder named *css*
 * You may choose to place additional javascript scripts in a folder named *javascript*
+* You can provide default configuration files in a folder named *config*
 
 It is possible to override an included module's behavior by creating another module in the *site*
 folder. For more information, please see :doc:`moduleextend`
@@ -268,7 +273,7 @@ Each site folder contains the following directories:
     folder. If you wish to include your work in the project, please see :doc:`github`. Also see :doc:`moduleextend`.
     
 * *cache* - Contains server generated files that are cached for performance. This folder is created 
-  if needed, but must be writable by the web server process. 
+  if needed, but *must* be writable by the web server process. 
 * *config* - Contains the site specific configuration files in .ini format. Many of these files can 
   be managed using the :ref:`admin-module`
 
@@ -282,6 +287,7 @@ Each site folder contains the following directories:
     * module.ini - Settings for disabling, access control, search and module variables and strings
     * feeds.ini - Specifies external data connections
     * pages.ini - Titles for each page
+    * Modules may have other config files as needed
   
 * *data* - a folder that contains data files meant to be used by the server. Unlike cache folders, these
   files cannot be safely deleted. Examples would include data that is not able to be generated from 

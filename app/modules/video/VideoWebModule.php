@@ -137,21 +137,12 @@ class VideoWebModule extends WebModule
     }
     
     protected function getListItemForVideo(VideoObject $video, $section) {
-        // FIXME proper fix is either determine if desktop or adjust in javascript 
+
         $desc = $video->getDescription();
-        if (strlen($video->getTitle())>30) {             	
-            if (strlen($desc)) {
-                $desc = substr($desc,0,30) . "...";
-            }
-        }
-        
-        if (strlen($desc)>75) {
-            $desc = substr($desc,0,75) . "...";
-        }
 
         return array(
             'title'=>$video->getTitle(),
-            'subtitle'=>$desc . "<br />" . $this->getDuration($video->getDuration()),
+            'subtitle'=> "(" . $this->getDuration($video->getDuration()) . ") " . $desc,
             'imgWidth'=>120,  
             'imgHeight'=>100,  
             'img'=>$video->getImage(),
@@ -165,12 +156,16 @@ class VideoWebModule extends WebModule
         if (!$prop_length) {
             return "";
         } elseif ($prop_length<60) {
-            return $prop_length . " secs";
+            return "0:". $prop_length;
         } else {
             $mins = intval($prop_length / 60);
             $secs = $prop_length % 60;
-            return $mins . " mins, " . $secs . " secs";
-        }
+            if($secs<10) {
+				return $mins . ":0" . $secs;
+			} else { 
+				return $mins . ":" . $secs;
+        	}
+		}
     }
     
     protected function initializeForPage() {
@@ -249,6 +244,9 @@ class VideoWebModule extends WebModule
                 $hiddenArgs = array(
                   'section'=>$section
                 );
+          
+          		$this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+          		$this->addOnLoad('setupVideosListing();');
           
                 $this->assign('start',       $start);
                 $this->assign('previousURL', $previousURL);

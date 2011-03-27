@@ -1,16 +1,8 @@
-{include file="findInclude:common/templates/header.tpl"}
+<h1 id="moduleTitle"><img src="/modules/home/images/compliant/{$moduleID}.png" width="50" height="50" alt="{$moduleName|escape}" id="moduleImage" /> {$moduleName}</h1>
+<p id="moduleDescription" class="preamble">&nbsp;</p>
+<ul id="adminFields" class="formfields">
 
-<div class="nonfocal">
-<h2>{$pageTitle}</h2>
-</div>
-<form method="POST">
-<input type="hidden" name="moduleID" value="{$module.id}">
-{if $section}
-<input type="hidden" name="section" value="{$section}">
-{/if}
-{include file="findInclude:common/templates/formList.tpl" formListItems=$formListItems}
-<div class="nonfocal"><input type="submit" name="submit" value="Save" /></div>
-</form>
-
-
-{include file="findInclude:common/templates/footer.tpl"}
+</ul>
+<script type="text/javascript">
+    var moduleID = '{$moduleID}';
+</script>

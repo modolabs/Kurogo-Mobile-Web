@@ -20,8 +20,8 @@ Within each feed you use the following options:
 * *CONTROLLER_CLASS* - The DataController to use. Currently supported controllers include the *YouTubeVideoControler*
   and *BrightcoveVideoController*. 
 * *TITLE* - The textual label used when showing the section list
-* *TAG* - optional, used to limit the results by tag
 * *AUTHOR* - optional, used to limit the results by author
+* *TAG* - optional, used to limit the results by tag
 
 -------------------------
 BrightcoveVideoController

@@ -169,7 +169,7 @@ abstract class APIModule extends Module
    */
   private function loadResponseIfNeeded() {
     if (!isset($this->response)) {
-      $this->response = new APIResponse($this->id, $this->command);
+      $this->response = new APIResponse($this->id, $this->configModule, $this->command);
     }
   }
   

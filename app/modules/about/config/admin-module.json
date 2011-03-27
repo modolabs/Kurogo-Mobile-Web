@@ -1,0 +1,8 @@
+{
+    "strings":{
+        "fields":{
+         "SITE_ABOUT_HTML":{"label":"About this site","type":"paragraph","config":"module","section":"strings","description":""},
+         "SITE_ABOUT_HTML":{"label":"About this organization","type":"paragraph","config":"module","section":"strings","description":""}
+       }
+    }
+}

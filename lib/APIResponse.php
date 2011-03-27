@@ -3,15 +3,20 @@
 class APIResponse
 {
     public $id='';
+    public $tag;
     public $command;
     public $version;
     public $error;
     public $response;
     public $context;
     
-    public function __construct($id=null, $command=null, $context=null) {
+    public function __construct($id=null, $tag=null, $command=null, $context=null) {
         if (isset($id)) {
             $this->id = $id;
+        }
+
+        if (isset($tag)) {
+            $this->tag = $tag;
         }
         
         if (isset($command)) {

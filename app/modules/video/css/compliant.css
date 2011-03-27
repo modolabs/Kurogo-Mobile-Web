@@ -1,35 +1,60 @@
-
-#share {
-	float: right;
-	margin: 0 0 0 8px;
-}
-
-.videoList-li {
-    height: 6.5em;
+.results li.video {
+    height: 5.1em;
 	margin: 0;
     padding: 1px;
     overflow: hidden;
-    position: relative;
+	border-color: #666;
+}
+li.noimage {
+    padding-left: .4em;
+}
+.results li.video a {
+   	overflow: hidden;
+    margin: 0;
+    padding: .4em 25px .4em 0;
+    height: 4.4em;
+	border-radius: 0;
+	line-height: 1.15em;
+}
+.results li.video a .ellipsis {
+    overflow: hidden;
+    margin: 0;
+    padding: .4em 25px .4em 0;
+    font-size: 82.35%;
+    line-height: 1.3em;
+    height: 5.2em;
 }
 
-img.image {
-	float:left;
-    padding:0 8px 0 0;
+.results li.video a .title {
+    font-size: 114.29%;
+    padding: 0 0 .25em 0;
 }
 
-#videoList a {
-  margin-left: 100px;
-  padding: 5px 18px 5px 10px;
-  height: 100px;
-  line-height: 22px;
+.thumbnail {
+    float:left;
+    margin:-0.4em 0.5em -0.4em 0;
+    width: 6.4em;
+    height: 5.2em;
+    background: transparent url('/modules/video/images/video-placeholder.png') no-repeat top left;
+    background-size: 5.2em;
 }
 
-#video-category-select {
-  margin: 5px 5px 5px 5px;
-  padding: 5px 5px 5px 5px;
+.video {
+	margin: -9px 0;
+	padding: 10px;
+	background-color: #fff;
 }
 
-.videoTitle {
-    font-size: 15pxpx;
-    line-height: auto;
+.videoplayer {
+	margin: 1em 0;
+}
+
+.videobuttons {
+	float: right;
+	margin: 0 0 0.6em 0.5em;
+}
+
+.videobuttons #share, .videobuttons #bookmarkContainer {
+	float: right;
+	margin: 0 0 0 0.5em;
 }

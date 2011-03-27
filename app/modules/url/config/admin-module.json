@@ -1,0 +1,7 @@
+{
+    "module": {
+        "fields":{
+            "url":{"label":"URL","type":"text","config":"module","section":"strings","description":"Full url (including http://) of the address to redirect to."}
+      }
+    }
+}

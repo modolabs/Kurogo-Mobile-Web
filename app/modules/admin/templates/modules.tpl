@@ -1,10 +1,6 @@
-{include file="findInclude:common/templates/header.tpl"}
-
-<div class="nonfocal">
-<h2>Module Configuration</h2>
-</div>
-
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$moduleList}
-
-
-{include file="findInclude:common/templates/footer.tpl"}
+{include file="findInclude:modules/admin/templates/header.tpl"}
+<form method="post" id="adminForm" class="{$section}">
+<input name="submit" id="adminSubmit" type="submit" value="Save" />
+{include file="findInclude:modules/admin/templates/$modulePage.tpl"}
+</form>
+{include file="findInclude:modules/admin/templates/footer.tpl"}

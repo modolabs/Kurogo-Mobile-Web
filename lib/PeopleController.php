@@ -12,6 +12,14 @@ abstract class PeopleController
     abstract public function search($searchTerms);
     abstract public function getError();
     abstract public function setAttributes($attributes);
+    
+    public static function getPeopleControllers() {
+        return array(
+            ''=>'-',
+            'LDAPPeopleController'=>'LDAP',
+            'GoogleAppsPeopleController'=>'Google Apps'
+        );
+    }
 
     protected $debugMode=false;
     protected $personClass = 'Person';

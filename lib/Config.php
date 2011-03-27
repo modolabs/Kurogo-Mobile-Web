@@ -20,6 +20,44 @@ abstract class Config {
         $this->vars = array_merge($this->vars, $vars);
     }
   
+    public function setVar($section, $var, $value, &$changed) {
+        
+        if (isset($this->sectionVars[$section])) {
+            if (isset($this->sectionVars[$section][$var])) {
+                if ($this->sectionVars[$section][$var] == $value) {
+                    $changed = false;
+                    return true;
+                }                
+            }
+        }
+
+        $changed = true;
+        $this->sectionVars[$section][$var] = $value;
+        $this->vars[$var] = $value;
+        return true;
+    }
+    
+    public function setSection($section, $values) {
+        if (!is_array($values)) {
+            throw new Exception("Invalid values for section $section");
+        }
+        
+        $this->sectionVars[$section] = $values;
+        return true;
+    }
+
+    public function clearVar($section, $var) {
+        
+        if (isset($this->sectionVars[$section])) {
+            if (isset($this->sectionVars[$section][$var])) {
+                unset($this->sectionVars[$section][$var]);
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     /* used when you completely want to replace all sections */
     public function setSectionVars($sectionVars) {
         $this->sectionVars = $sectionVars;
@@ -32,15 +70,10 @@ abstract class Config {
         foreach ($sectionVars as $var=>$value) {
         
             if (!is_array($value)) {
-                $_var = $var;
-                $var = 'No Section';
-                $value = array($_var=>$value);
-                if ($first && !$merge) {
-                    $this->sectionVars['No Section'] = array();
-                }
+                throw new Exception("Found value $var = $value that wasn't in a section. Config needs to be updated");
             }
             
-            if ($merge || $var=='No Section') {
+            if ($merge) {
                 if (isset($this->sectionVars[$var]) && is_array($this->sectionVars[$var])) {
                     $this->sectionVars[$var] = array_merge($this->sectionVars[$var], $value);
                 } else {
@@ -58,13 +91,6 @@ abstract class Config {
 
         if ($opts & Config::EXPAND_VALUE) {
             $sectionVars = $this->sectionVars;
-            // flatten the "No Section" section *
-            if (isset($sectionVars['No Section'])) {
-                foreach ($sectionVars['No Section'] as $var=>$value) {
-                    $sectionVars[$var] = $value;
-                }
-                unset($sectionVars['No Section']);
-            }
             return array_map(array($this, 'replaceVariable'), $sectionVars);
         } else {
             return $this->sectionVars;
@@ -80,10 +106,6 @@ abstract class Config {
     }
 
     public function getSection($key) {
-        if (strlen($key)==0) {
-            $key = 'No Section';
-        }
-
         if (isset($this->sectionVars[$key])) {
             return $this->sectionVars[$key];
         } else {

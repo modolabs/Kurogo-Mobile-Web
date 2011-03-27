@@ -1,14 +1,19 @@
-{if $authenticationAuthorities || $authenticationAuthorityLinks}
 <form method="POST" id="loginForm" action="login">
+<div class="focal">
+<p>{if $message}{$message|escape}{else}{$moduleStrings.LOGIN_MESSAGE|escape}{/if}</p>
+{if $authenticationAuthorities || $authenticationAuthorityLinks}
 <input type="hidden" name="url" value="{$url|escape}" />
 <input type="hidden" name="startOver" value="1" />
 {if $authenticationAuthorities}
-<p class="focal"><label for="loginUser">{$moduleStrings.LOGIN_LABEL|default:'login'}:</label> <input type="text" name="loginUser" id="loginUser" class="loginFormInput" /></p>
-<p class="focal"><label for="loginPassword">{$moduleStrings.PASSWORD_LABEL|default:'password'}:</label> <input type="password" name="loginPassword" id="loginPassword" class="loginFormInput" /> 
-{if $FORGET_PASSWORD_URL}<span><a href="{$FORGET_PASSWORD_URL}">{$moduleStrings.FORGET_PASSWORD_TEXT|default:'Forget your password?'|escape}</a></span>{/if}
+<p><label for="loginUser">{$moduleStrings.LOGIN_LABEL|default:'login'}:</label> <input type="text" name="loginUser" id="loginUser" class="loginFormInput" /></p>
+<p><label for="loginPassword">{$moduleStrings.PASSWORD_LABEL|default:'password'}:</label> <input type="password" name="loginPassword" id="loginPassword" class="loginFormInput" /> 
+<div class="formbuttons"><input type="submit" name="login_submit" id="login_submit" value="Sign in" /></div>   
+
+
+{if $FORGET_PASSWORD_URL}<p class="smallprint"><a href="{$FORGET_PASSWORD_URL}">{$moduleStrings.FORGET_PASSWORD_TEXT|default:'Forget your password?'|escape}</a></p>{/if}
 </p>
 {if $authenticationAuthorities|@count>1}
-<p class="focal">
+<p>
 <select name="authority">
 {foreach $authenticationAuthorities as $authorityName=>$authorityData}
 <option value="{$authorityName}"{if $authority==$authorityName} selected{/if}>{$authorityData.TITLE|escape}</option>
@@ -17,19 +22,22 @@
 </p>
 {/if}
 {/if}
-<div class="focal">
+<div>
 {if $authenticationAuthorities}
-    <input type="submit" name="login_submit" id="login_submit" value="Login" /> 
 {/if}    
-    {if $allowRemainLoggedIn}
-    <input type="checkbox" name="remainLoggedIn" value="1" /> Remember me
-    {/if}    {if $authenticationAuthorityLinks}<ul>
+{if $authenticationAuthorityLinks}<div>
     {foreach $authenticationAuthorityLinks as $authorityName=>$authorityData}
-    <li>{if $authorityData.LOGIN_IMAGE_URL}<input type="image" name="login_link[{$authorityName}]" src="{$authorityData.LOGIN_IMAGE_URL}" />{else}
-    <input type="submit" name="login_link[{$authorityName}]" value="{$authorityData.TITLE|escape}" />{/if}</li>
+    <div>{if $authorityData.LOGIN_IMAGE_URL}<input type="image" name="login_link[{$authorityName}]" src="{$authorityData.LOGIN_IMAGE_URL}" />{else}
+    <input type="submit" name="login_link[{$authorityName}]" value="{$authorityData.TITLE|escape}" />{/if}</div>
     {/foreach}
-    </ul>
+    </div>
     {/if}
 </div>
-</form>
 {/if}
+</div>
+{if $allowRemainLoggedIn}
+<div class="nonfocal" id="rememberme">
+    <input type="checkbox" id="remember" name="remainLoggedIn" /> <label for="remember">Remember me</label>
+</div>
+{/if}
+</form>

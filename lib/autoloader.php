@@ -55,7 +55,7 @@ function siteLibAutoloader($className) {
   
 
   // If the className has Module in it then use the modules dir
-  if (defined('MODULES_DIR') && preg_match("/(.*)WebModule/", $className, $bits)) {
+  if (defined('MODULES_DIR') && preg_match("/(.*)(Web|API)Module/", $className, $bits)) {
     $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
   }
 

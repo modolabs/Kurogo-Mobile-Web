@@ -9,6 +9,8 @@
   */
 class PasswdAuthentication extends AuthenticationAuthority
 {
+    protected $userClass='PasswdUser';
+    protected $groupClass='PasswdUserGroup';
     private $userFile;
     private $groupFile;
     private $users = array();
@@ -184,7 +186,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         }
 
         if ($userData = $this->getUserData($login)) {
-            $user = new User($this);
+            $user = new $this->userClass($this);
             $user->setUserID($userData['userID']);
             $user->setEmail($userData['email']);
             $user->setFullName($userData['fullname']);
@@ -222,7 +224,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         
         if ($groupData = $this->getGroupData($group)) {
 
-            $group = new UserGroup($this);
+            $group = new $this->groupClass($this);
             $group->setGroupID($groupData['gid']);
             $group->setGroupName($groupData['group']);
             $members = is_array($groupData['members']) ? $groupData['members'] : array();
@@ -263,4 +265,20 @@ class PasswdAuthentication extends AuthenticationAuthority
             }
         }
     }
+}
+
+/**
+ * PasswdUser
+ * @package Authentication
+ */
+class PasswdUser extends User
+{
+}
+
+/**
+ * PasswdUserGroup
+ * @package Authentication
+ */
+class PasswdUserGroup extends UserGroup
+{
 }

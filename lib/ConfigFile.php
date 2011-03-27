@@ -213,6 +213,7 @@ class ConfigFile extends Config {
         'FULL_URL_BASE'=>FULL_URL_BASE,
         'LOG_DIR'=>LOG_DIR,
         'CACHE_DIR'=>CACHE_DIR,
+        'LIB_DIR'=>LIB_DIR,
         'DATA_DIR'=>DATA_DIR,
         'SITE_DIR'=>SITE_DIR,
         'ROOT_DIR'=>ROOT_DIR

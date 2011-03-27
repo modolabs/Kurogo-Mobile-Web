@@ -1,11 +1,16 @@
-<ul class="results videoList">
+<ul class="results">
+  {$ellipsisCount=0}
   {foreach $results as $item}
     {if !isset($item['separator'])}
-      <li{if $item['img']} class="videoList-li"{/if}>  
-       {*
-      	{include file="findInclude:common/templates/listItem.tpl" subTitleNewline=true}
-        *}
-      	{include file="findInclude:modules/$moduleID/templates/listItem.tpl" subTitleNewline=$subTitleNewline|default:true} 	
+      <li class="video{if $item['img']} noimage{/if}">  
+  
+        {include file="findInclude:modules/$moduleID/templates/listItem.tpl" ellipsisId=$ellipsisCount++ subTitleNewline=$subTitleNewline|default:true} 
+       
+        {*
+        <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
+      	{include file="findInclude:modules/$moduleID/templates/listItem.tpl" subTitleNewline=$subTitleNewline|default:true} 
+        </div>
+        *}	
       </li>
     {/if}
   {/foreach}

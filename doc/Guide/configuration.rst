@@ -182,9 +182,7 @@ Analytics
 * *GOOGLE_ANALYTICS_ID* - set this to your google analytics id and the framework will utilize the google 
   analytics server
 * *PAGE_VIEWS_TABLE* - Used by the stats module to store page view summaries
-
-..
-    * *API_STATS_TABLE* - Used by the stats module to store API request summaries
+* *API_STATS_TABLE* - Used by the stats module to store API request summaries
 
 --------------
 Temp Directory
@@ -282,10 +280,9 @@ Authentication
 ---------
 Log Files
 ---------
-..
-  * *API_LOG_FILE* - Location of the processed API log file
-  * *API_CURRENT_LOG_FILE* - Location of the active API log file
-  
+
+* *API_LOG_FILE* - Location of the processed API log file
+* *API_CURRENT_LOG_FILE* - Location of the active API log file
 * *WEB_LOG_FILE* - Location of the processed page view log file
 * *WEB_CURRENT_LOG_FILE* - Location of the active page view log file
 * *LOG_DATE_FORMAT* - Date format for log files
@@ -337,34 +334,10 @@ Administration Module
 =====================
 
 In addition to editing these files, you can use the administration module to manage the configuration.
-The admin module is located at */admin* and does not have an icon on the home screen. It has several 
-sections
-
--------
-Modules 
--------
-
-Use this section to manage the settings for each module. You can edit availability settings (common
-to all modules), Strings and Data Feeds (if present), Page titles, and other module specific settings.
-For instance, you can mange the home screen icons by editing the Primary and Secondary modules settings
-of the home module. You could also edit the content of the About module, or the list of links in the links
-module.
-
-------------------
-Site configuration
-------------------
-
-You can edit all the sections of the *SITE_DIR/config/site.ini* file.
-
---------------------
-String Configuration
---------------------
-
-You can edit all the strings from the *SITE_DIR/config/strings.ini* file.
+The admin module is located at */admin* and does not have an icon on the home screen. 
 
 ====================================================
 Providing an administration interface to your module
 ====================================================
 
 This section is being rewritten...
-

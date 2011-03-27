@@ -1,7 +1,32 @@
+1.0 Release Candidate 1 (March 25)
+* NOTE: There will be no more incompatible changes for the 1.0 Version of Kurogo Mobile Web. API Modules may have further changes.
+* MAJOR INCOMPATIBLE CHANGE: The base project config.ini file has been renamed to kurogo.ini
+* MAJOR INCOMPATIBLE CHANGE: The base site config.ini file has been renamed to site.ini
+* MAJOR INCOMPATIBLE CHANGE: All configuration values MUST be located in a ini section. 
+    * Site strings have been moved to the [strings] section, if you have an existing site, please update this 
+    * Basic module config values have been moved to the [module] section
+* NEW MODULE/FEATURE: The admin console has been overhauled. It is only viewable on modern desktop browsers. It will be updated with new capabilities before final 1.0 release.
+* NEW MODULE: Admissions module is an example of using the content module to grab content from an HTML site
+* NEW ABSTRACT MODULE: Url module. Fullweb module has been updated to be an instance of the URL module
+* INCOMPATIBLE CHANGE: Retrieving configuration values has been updated. Please see the configuration section of the developer documentation for details if you are writing modules.
+* NEW FEATURE: Various API modules for support for REST based API calls (used by native apps)
+* NEW FEATURE: Added ability to duplicate a module's behavior while using a separate url/config folder. See developer documentation for details
+* NEW FEATURE: Themes now have a config file to store certain values (like image dimensions)
+* Content module has standard CSS
+* Packages can now be loaded from site folders
+* Various fixes for tablet UI
+* Events are returned in start time order
+* Video results are now sorted by publish date (for tags and authors) or relevance (searches)
+* Added SHOW_IMAGES config value for news feeds to allow suppression of thumbnail images.
+* Added setUserData() method on user objects to allow storing of persistent data
+* LDAPDataController has been renamed to LDAPPeopleController
+* Added SECURE_REQUIRED site configuration to require https for the entire site
+* Added SECURE_HOST and SECURE_PORT site configuration to redirect secure requests to another dns name/port
+* Many other bug fixes and visual improvements
+
 1.0 Beta 3 (March 14) 
 * NEW MODULE: Video Module.
 * NEW MODULE: Map Module.
-* INCOMPATIBLE CHANGE: 
 * INCOMPATIBLE CHANGE: the templates folder has been renamed "app"
 * INCOMPATIBLE CHANGE: the web folder has been renamed "www" Your servers will need to point to this folder for the document root
 * INCOMPATIBLE CHANGE: The base module class for mobile web is "WebModule" all modules should inherit from this class (or an existing WebModule class) 

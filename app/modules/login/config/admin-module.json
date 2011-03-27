@@ -1,0 +1,11 @@
+{
+    "strings":{
+        "fields":{
+            "LOGIN_MESSAGE":{"label":"Login message","type":"text","config":"module","section":"strings","description":"Message to show at the header of the login module"},
+            "LOGIN_LABEL":{"label":"Login label","type":"text","config":"module","section":"strings","description":"Label for the userID/login field"},
+            "PASSWORD_LABEL":{"label":"Password label","type":"text","config":"module","section":"strings","description":"Label for the password field"},
+            "FORGET_PASSWORD_TEXT":{"label":"Forgot password text","type":"text","config":"module","section":"strings","description":"Optional text to show to users to direct them towards a forgotten password page"},
+            "FORGET_PASSWORD_URL":{"label":"Forgot password URL","type":"text","config":"module","section":"strings","description":"Optional URL (include http://) of a url users can go to if they have forgotten their password."}
+        }
+    }
+}
