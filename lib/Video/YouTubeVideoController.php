@@ -6,8 +6,18 @@
     protected $cacheFolder='Video';
     protected $cacheFileSuffix='json';
     
+ 	private function setStandardFilters() {
+        $this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
+        $this->addFilter('alt', 'jsonc'); //set the output format to json
+        $this->addFilter('format', 6); //only return mobile videos
+        $this->addFilter('v', 2); // version 2
+        $this->addFilter('orderby', 'published');
+    }
+    
     public function search($q, $start=0, $limit=null) {
     
+        $this->setStandardFilters();
+    	
         $this->addFilter('q', $q); //set the query
         $this->addFilter('max-results', $limit);
         $this->addFilter('start-index', $start+1);
@@ -20,11 +30,7 @@
     protected function init($args) {
         parent::init($args);
 
-        $this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
-        $this->addFilter('alt', 'jsonc'); //set the output format to json
-        $this->addFilter('format', 6); //only return mobile videos
-        $this->addFilter('v', 2); // version 2
-        $this->addFilter('orderby', 'published');
+        $this->setStandardFilters();
         
         if (isset($args['TAG'])) {
             $this->addFilter('category', $args['TAG']);
