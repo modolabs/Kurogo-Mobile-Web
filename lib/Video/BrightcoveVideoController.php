@@ -116,7 +116,6 @@ class BrightCoveDataParser extends DataParser
                 $video = $this->parseEntry($data);
                 return $video;
             } else {
-                DEbug::die_here($data);
                 return array();
             }
         } 

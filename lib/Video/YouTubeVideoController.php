@@ -97,7 +97,6 @@ class YouTubeDataParser extends DataParser
                 $video = $this->parseEntry($data['data']);
                 return $video;
             } else {
-                Debug::die_here($data);
                 return array();
             }
         } 
