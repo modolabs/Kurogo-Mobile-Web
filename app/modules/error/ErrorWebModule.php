@@ -47,6 +47,9 @@ class ErrorWebModule extends WebModule {
   );
 
   protected function init($page, $args) {
+      if(!Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+        set_exception_handler("exceptionHandlerForError");
+      }
       $this->pagetype = $GLOBALS['deviceClassifier']->getPagetype();
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);

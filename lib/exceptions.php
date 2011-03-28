@@ -1,4 +1,5 @@
 <?php
+
 /**
   * @package Exceptions
   *
@@ -142,6 +143,11 @@ function developmentErrorLog($exception){
 /**
   * Exception Handler set in initialize.php
   */
+function exceptionHandlerForError($exception) {
+    $error = print_r($exception, TRUE);
+    die("There was a serious error: $error");
+}
+
 function exceptionHandlerForDevelopment($exception) {
   $errtime = developmentErrorLog($exception);
   error_log(print_r($exception, TRUE));
