@@ -10,9 +10,8 @@
 class ConfigFile extends Config {
   const OPTION_CREATE_EMPTY=1;
   const OPTION_CREATE_WITH_DEFAULT=2;
-  const OPTION_DIE_ON_FAILURE=4;
-  const OPTION_IGNORE_LOCAL=8;
-  const OPTION_IGNORE_MODE=16;
+  const OPTION_IGNORE_LOCAL=4;
+  const OPTION_IGNORE_MODE=8;
   protected $configs = array();
   protected $file;
   protected $type;
@@ -44,9 +43,10 @@ class ConfigFile extends Config {
   // loads a config object from a file/type combination  
   public static function factory($file, $type='file', $options=0) {
     $config = new ConfigFile();
+    $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
     
     if (!$result = $config->loadFileType($file, $type, $options)) {
-       die("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
+       throw new Exception("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
     }
     
     return $config;
@@ -60,7 +60,7 @@ class ConfigFile extends Config {
             $pattern = sprintf("%s/%%s.ini", SITE_CONFIG_DIR);
             break;
         case 'site-default':
-            $pattern = sprintf('%s/site-%%s-default.ini', MASTER_CONFIG_DIR);
+            $pattern = sprintf('%s/common/config/%%s-default.ini', APP_DIR);
             break;
         case 'file':
             if ($f = realpath($file)) {
@@ -97,21 +97,28 @@ class ConfigFile extends Config {
             $defaultFile = $this->getFileByType($file, $type.'-default');
             if (file_exists($defaultFile)) {
                 $this->createDirIfNotExists(dirname($file));
-                return @copy($defaultFile, $file);
+                if (!is_writable(dirname($file))) {
+                    throw new Exception("Unable to create file $file, directory not writable");
+                }
+                return copy($defaultFile, $file);
             }
 
-            return false;            
+            throw new Exception("Default file $defaultFile ($file/$type) not found");
             break;
             
         default:
             $_file = $this->getFileByType($file, $type);
             $defaultFile = $this->getFileByType($file, $type.'-default');
+            
             if (file_exists($defaultFile)) {
                 $this->createDirIfNotExists(dirname($_file));
-                return @copy($defaultFile, $_file);
+                if (!is_writable(dirname($file))) {
+                    throw new Exception("Unable to create file $file, directory not writable");
+                }
+                return copy($defaultFile, $_file);
             }
             
-            return false;
+            throw new Exception("Default file $defaultFile ($file/$type) not found");
             break;
     }
   }
@@ -169,7 +176,10 @@ class ConfigFile extends Config {
   private function createDirIfNotExists($dir)
   {
     if (!is_dir($dir)) {
-        return @mkdir($dir, 0700, true);
+        if (!@mkdir($dir, 0700, true)) {
+            throw new Exception("Unable to create $dir");
+        }
+        return true;
     }
     
     return true;

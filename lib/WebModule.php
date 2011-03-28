@@ -514,7 +514,7 @@ abstract class WebModule extends Module {
   protected function getModuleNavigationConfig() {
     static $moduleNavConfig;
     if (!$moduleNavConfig) {
-        $moduleNavConfig = ModuleConfigFile::factory('home', 'module', ModuleConfigFile::OPTION_CREATE_WITH_DEFAULT);
+        $moduleNavConfig = ModuleConfigFile::factory('home', 'module');
     }
     
     return $moduleNavConfig;
@@ -814,7 +814,7 @@ abstract class WebModule extends Module {
       $this->setPageTitle($this->moduleName);
 
       // Load site configuration and help text
-      $this->loadSiteConfigFile('strings', false, ConfigFile::OPTION_CREATE_WITH_DEFAULT);
+      $this->loadSiteConfigFile('strings', false);
   
       // load module config file
       $pageData = $this->getPageData();
@@ -903,7 +903,7 @@ abstract class WebModule extends Module {
         return $vars;
     }
   
-  protected function getPageConfig($name, $opts) {
+  protected function getPageConfig($name, $opts=0) {
     $config = ModuleConfigFile::factory($this->configModule, "page-$name", $opts);
     $GLOBALS['siteConfig']->addConfig($config);
     return $config;
@@ -922,7 +922,6 @@ abstract class WebModule extends Module {
   }
 
   protected function loadPageConfigFile($page, $keyName=null, $opts=0) {
-    $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
     $config = $this->getPageConfig($page, $opts);
     if ($keyName === null) { $keyName = $name; }
     return $this->loadConfigFile($config, $keyName);

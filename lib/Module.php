@@ -199,9 +199,8 @@ abstract class Module
       * @param int $opts bitfield of ConfigFile options
       * @return ConfigFile object
       */
-    protected function getConfig($type, $opts=0) {
-        $opts = $opts | ModuleConfigFile::OPTION_CREATE_WITH_DEFAULT;
-        $config = ModuleConfigFile::factory($this->configModule, $type, $opts); 
+    protected function getConfig($type) {
+        $config = ModuleConfigFile::factory($this->configModule, $type); 
         $GLOBALS['siteConfig']->addConfig($config);
         return $config;
     }
