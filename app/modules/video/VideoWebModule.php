@@ -310,4 +310,27 @@ class VideoWebModule extends WebModule
                 break;
         }
     }
+    
+  public function federatedSearch($searchTerms, $maxCount, &$results) {
+  	 
+    $section = key($this->feeds);
+    if (!$section) return 0;
+    $feedData = $this->feeds[$section];
+    if (!$feedData) return 0;
+    $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+  	$items = $controller->search($searchTerms, 0, $maxCount);
+  	 
+  	if ($items) {
+  		$results = array();
+  		foreach ($items as $video) {
+  			$results[] = $this->getListItemForVideo($video, $section);
+  		}
+  		return count($items);
+  	} else {
+  		return 0;
+  	}
+  	
+  }
+  
  }
