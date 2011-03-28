@@ -26,7 +26,8 @@ class EmergencyNoticeDataController extends DataController
                 $this->emergencyNotice = array(
                    'title' => $items[0]->getTitle(),
                    'text' => $items[0]->getDescription(),
-                   'date' => $items[0]->getPubDate()
+                   'date' => $items[0]->getPubDate(),
+                   'unixtime' => strtotime($items[0]->getPubDate()),
                 );
             } 
         }
