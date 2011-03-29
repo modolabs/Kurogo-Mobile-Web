@@ -144,6 +144,7 @@ class AdminWebModule extends WebModule {
         }
 
         $navSections = $this->getNavSections();
+        $section = '';
         $this->assign('navSections', $navSections);
         $this->addJQuery();
         $this->addJQueryUI();
