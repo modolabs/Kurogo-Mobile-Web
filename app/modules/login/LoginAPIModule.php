@@ -28,9 +28,15 @@ class LoginAPIModule extends APIModule
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;
-             case 'login':
                 
+           case 'getuserdata':
+                $key = $this->getArg('key', null);
+                $user = $this->getUser();
+                $response = $user->getUserData($key);
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
                 break;
+                
            case 'session':
                 $session = $this->getSession();
                 $user = $this->getUser();
@@ -41,7 +47,8 @@ class LoginAPIModule extends APIModule
                     'user'=>array(
                         'authority'=>$user->getAuthenticationAuthorityIndex(),
                         'userID'=>$user->getUserID(),
-                        'name'=>$user->getFullName()
+                        'name'=>$user->getFullName(),
+                        'sessiondata'=>$user->getSessionData()
                     )
                         
                 );
