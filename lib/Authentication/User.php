@@ -154,7 +154,13 @@ abstract class User
     
     public function setUserData($key, $value) {
         if (!is_dir($this->getUserDataFolder())) {
-            mkdir($this->getUserDataFolder());
+            if (!mkdir($this->getUserDataFolder(), 0700, true)) {
+                throw new Execption("Error creating userData Folder" , $this->getUserDataFolder());
+            }
+        }
+        
+        if (!preg_match("/^[A-Za-z0-9_-]+$/", $key)) {
+            throw new Execption("Invalid key $key. Keys must be alphanumeric");
         }
 
         $userData = $this->getUserData();
