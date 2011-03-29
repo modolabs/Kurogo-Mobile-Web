@@ -220,6 +220,13 @@ abstract class APIModule extends Module
     }
     $this->setCommand($command);
   }
+
+  protected function loadSiteConfigFile($name, $opts=0) {
+    $config = ConfigFile::factory($name, 'site', $opts);
+    $GLOBALS['siteConfig']->addConfig($config);
+
+    return $config->getSectionVars(true);
+  }
   
  /**
    * Execute the command. Will call initializeForCommand() which should set the version, error and response
@@ -230,6 +237,8 @@ abstract class APIModule extends Module
         throw new Exception("Command not specified");
     }
     $this->loadResponseIfNeeded();
+    $this->loadSiteConfigFile('strings');
+
     $this->initializeForCommand();
     $this->response->display();
   }
