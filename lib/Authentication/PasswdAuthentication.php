@@ -139,7 +139,7 @@ class PasswdAuthentication extends AuthenticationAuthority
             return AUTH_FAILED;
         }
         
-        if ($userData = $this->getUserData($login)) {
+        if ($userData = $this->getPasswdUserData($login)) {
             if (md5($password) == $userData['md5']) {
                 $user = $this->getUser($login);
                 return AUTH_OK;
@@ -156,7 +156,7 @@ class PasswdAuthentication extends AuthenticationAuthority
      * @param string $login a userID or email address
      * @return array an array of userData or false if the user could not be found
      */
-    private function getUserData($login)
+    private function getPasswdUserData($login)
     {
         if (strlen($login)==0) {
             return false;
@@ -169,7 +169,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         }
         
         if (Validator::isValidEmail($login) && (($userID = array_search($login, $this->userEmails)) !== false)) {
-            return $this->getUserData($userID);
+            return $this->getPasswdUserData($userID);
         } 
         
         return false;
@@ -185,7 +185,7 @@ class PasswdAuthentication extends AuthenticationAuthority
             return new AnonymousUser();       
         }
 
-        if ($userData = $this->getUserData($login)) {
+        if ($userData = $this->getPasswdUserData($login)) {
             $user = new $this->userClass($this);
             $user->setUserID($userData['userID']);
             $user->setEmail($userData['email']);
