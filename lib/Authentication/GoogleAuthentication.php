@@ -104,6 +104,6 @@ class GoogleAuthentication extends OAuthAuthentication
 /**
   * @package Authentication
   */
-class GoogleUser extends User
+class GoogleUser extends OAuthUser
 {
 }
