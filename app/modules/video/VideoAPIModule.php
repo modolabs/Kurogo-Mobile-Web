@@ -46,9 +46,7 @@ class VideoAPIModule extends APIModule {
                 }
                 
                 foreach ($items as $video) {
-                    $videoItem = VideoModuleUtils::getListItemForVideo($video, $section);
-                    $videoItem['video'] = VideoAPIModule::cleanVideoArray((array)$video);
-                    $videos[] = $videoItem;
+                    $videos[] = VideoAPIModule::cleanVideoArray((array)$video);
                 }
                 $this->setResponse($videos);
                 $this->setResponseVersion(1);                
