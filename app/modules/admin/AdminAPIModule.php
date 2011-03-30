@@ -58,11 +58,16 @@ class AdminAPIModule extends APIModule
                     if (isset($field['valueMethod'])) {
                         $field['value'] = call_user_func(array($module, $field['valueMethod']));
                     } else {
-                        $field['value'] = $module->getOptionalModuleVar($key,'', $field['section'], $field['config']);
+                        $field['value'] = $module->getOptionalModuleVar($key, isset($field['default']) ? $field['default'] : '', $field['section'], $field['config']);
                     }
                     
                     switch ($field['type']) 
                     {
+                        case 'paragraph':
+                            if (is_array($field['value'])) {
+                                $field['value'] = implode("\n\n", $field['value']);
+                            }
+                            break;
                         case 'select':
                             if (isset($field['optionsMethod'])) {
                                 $field['options'] = call_user_func($field['optionsMethod']);
@@ -73,6 +78,25 @@ class AdminAPIModule extends APIModule
             } elseif (isset($sectionData['tablerowsmethod'])) {
                 $sectionData['tablerows'] = $module->$sectionData['tablerowsmethod']();
                 unset($sectionData['tablerowsmethod']);
+            } elseif (isset($sectionData['sectionsmethod'])) {
+                $sectionData['sections'] = $module->$sectionData['sectionsmethod']();
+                unset($sectionData['sectionsmethod']);
+
+                foreach ($sectionData['sectionfields'] as $key=>&$field) {
+                    switch ($field['type']) 
+                    {
+                        case 'paragraph':
+                            if (is_array($field['value'])) {
+                                $field['value'] = implode("\n\n", $field['value']);
+                            }
+                            break;
+                        case 'select':
+                            if (isset($field['optionsMethod'])) {
+                                $field['options'] = call_user_func($field['optionsMethod']);
+                                unset($field['optionsMethod']);
+                            }
+                    }
+                }
             }
         }
     
@@ -145,6 +169,10 @@ class AdminAPIModule extends APIModule
             $fieldData = $adminData[$section]['fields'][$key];
         } elseif (isset($adminData[$section]['tablefields'])) {
             $fieldData = $adminData[$section];
+            $arrayFieldsKey = 'tablefields';
+        } elseif (isset($adminData[$section]['sectionfields'])) {
+            $fieldData = $adminData[$section];
+            $arrayFieldsKey = 'sectionfields';
         } else {
             throw new Exception("don't know how to handle $type $section");
         }
@@ -165,18 +193,22 @@ class AdminAPIModule extends APIModule
             }
         }
 
+        
         if (is_array($value)) {
             $result = true;
             $changed = false;
             foreach ($value as $k=>$v) {
-                if (!isset($fieldData['tablefields'][$k])) {
+                if (!isset($fieldData[$arrayFieldsKey][$k])) {
                     throw new Exception("Invalid key $k for $type:" . $fieldData['config'] . " section $key");
                 }
                 
-                if (isset($fieldData['tablefields'][$k]['omitBlankValue']) && $fieldData['tablefields'][$k]['omitBlankValue'] && strlen($v)==0) {
+                if (isset($fieldData[$arrayFieldsKey][$k]['omitBlankValue']) && $fieldData[$arrayFieldsKey][$k]['omitBlankValue'] && strlen($v)==0) {
                     $changed = $changed || $this->configs[$configKey]->clearVar($key, $k);
                     continue;
                 } else {
+                    if ($fieldData[$arrayFieldsKey][$k]['type']=='paragraph') {
+                        $v = explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $v));
+                    }
                     if (!$this->configs[$configKey]->setVar($key, $k, $v, $c)) {
                         $result = false;
                     }
@@ -185,14 +217,20 @@ class AdminAPIModule extends APIModule
             }
         } else {
             if (isset($fieldData['omitBlankValue']) && $fieldData['omitBlankValue'] && strlen($value)==0) {
-                return true;
+                $changed = $this->configs[$configKey]->clearVar($fieldData['section'], $key);
+            } else {
+                if ($fieldData['type']=='paragraph') {
+                    $value = explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $value));
+                }
+            
+                $result = $this->configs[$configKey]->setVar($fieldData['section'], $key, $value, $changed);
+
+                if (!$result) {
+                    throw new Exception("Error setting $config $section $key $value");
+                }
             }
-            $result = $this->configs[$configKey]->setVar($fieldData['section'], $key, $value, $changed);
         }
         
-        if (!$result) {
-            throw new Exception("Error setting $config $section $key $value");
-        }
 
         if ($changed) {    
             $this->changedConfigs[$configKey] = $this->configs[$configKey];
@@ -317,6 +355,58 @@ class AdminAPIModule extends APIModule
                 
                 break;
                 
+            case 'removeconfigsection':
+                $type = $this->getArg('type');
+                $section = $this->getArg('section','');
+                
+                switch ($type)
+                {
+                    case 'site':
+                        throw new Exception("No sections in site config. This part is not written");
+                        break;
+                    case 'module':
+                        $moduleID = $this->getArg('module','');
+                        $key = $this->getArg('key', null);
+                        try {
+                            $module = WebModule::factory($moduleID);
+                        } catch (Exception $e) {
+                            throw new Exception('Module ' . $moduleID . ' not found');
+                        }
+                        
+                        $data = $this->getModuleAdminData($module);
+                        if (!isset($data[$section])) {
+                            throw new Exception("Config section $section not found in module $moduleID");
+                        }
+                        
+                        $sectionData = $data[$section];
+                        if (!isset($sectionData['sections']) || (!isset($sectionData['sectiondelete']) || !$sectionData['sectiondelete'])) {
+                            throw new Exception("Config '$section' of module '$moduleID' does not permit removal of items");
+                        }
+
+                        if (!isset($sectionData['sections'][$key])) {
+                            throw new Exception("Section $key not found in config '$section' of module '$moduleID'");
+                        }
+
+                        $sectionIndex = isset($sectionData['sectionindex']) ? $sectionData['sectionindex'] : 'string';
+                        $config = ModuleConfigFile::factory($moduleID, $sectionData['config']);
+                        
+                        if (!$result = $config->removeSection($key)) {
+                            throw new Exception("Error removing item $key from config '$section' of module '$moduleID'");
+                        } else {
+                            $config->saveFile();
+                        }
+                        
+                        $this->setResponse(true);
+                        $this->setResponseVersion(1);
+                        break;
+                    default:
+                        throw new Exception("Invalid type $type");
+                }
+                
+                $this->setResponse(true);
+                $this->setResponseVersion(1);
+                break;
+
             case 'setmodulelayout':
                 
                 $data = $this->getArg('data', array());

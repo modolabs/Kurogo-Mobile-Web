@@ -8,13 +8,6 @@ function createFormFieldListItems(key, fieldData) {
                 items.push(createFormFieldListItem(field, fd));
             })
         });
-
-        /*
-        select.change(function() {
-            $(selectDiv).find('.selectGroup').hide();
-            $(selectDiv).find('div[selectValue="'+$(this).val()+'"]').show();
-        }).change();
-        */
     }    
     
     return items;
@@ -31,6 +24,8 @@ function createFormSectionListItems(section, sectionData) {
         });
     } else if (sectionData.tablefields) {
         $.merge(items, [createFormTable(section, sectionData)]);
+    } else if (sectionData.sectionfields) {
+        $.merge(items, [createFormSectionTable(section, sectionData)]);
     }
     
     return items;
@@ -55,7 +50,7 @@ function createFormFieldListItem(key, fieldData) {
         li.append('<label>' + fieldData.label + '</label>');
     }
     
-    fieldData.value = 'value' in fieldData ? fieldData.value : '';
+    fieldData.value = 'value' in fieldData ? fieldData.value : ('default' in fieldData ? fieldData['default'] : '');
     
     switch (fieldData.type) {
     
@@ -68,11 +63,19 @@ function createFormFieldListItem(key, fieldData) {
             li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).attr('class','fileData').attr('id',id));
             break;
         case 'number':
-            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).attr('id',id));
+            var input = $('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).attr('id',id);
+            if ('placeholder' in fieldData) {
+                input.attr('placeholder', fieldData.placeholder)
+            }
+            li.append(input);
             break;
         case 'password':
         case 'text':
-            li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', fieldData.value).attr('id',id));
+            var input = $('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', fieldData.value).attr('id',id);
+            if ('placeholder' in fieldData) {
+                input.attr('placeholder', fieldData.placeholder)
+            }
+            li.append(input);
             break;
         case 'checkbox':
             li.append($('<input/>').attr('type','hidden').attr('name', key).attr('section', section).attr('value', '0'));
@@ -92,6 +95,151 @@ function createFormFieldListItem(key, fieldData) {
 
     if (fieldData.description) {
         li.append('<span class="helptext">' + fieldData.description + '</span>');
+    }
+
+    return li;
+}
+
+function stopSectionEditing() {
+    $('tr.editing .sectiontitle').html($('.editrow.editing input[name*="[TITLE]"]').val());
+    $('.editrow.editing').hide();
+    $('.editing').removeClass('editing');
+}
+
+function createSectionTableRow(section, data, sectionID, sectionData) {
+    var rows = [];
+    var row = $('<tr />'); 
+    
+    //use TITLE if present
+    var title = typeof sectionData.TITLE != 'undefined' ? sectionData.TITLE : sectionID;
+    row.append($('<td class="sectiontitle">' + title + '</td>'));
+
+    var rowbuttons = $('<td class="rowbuttons" />');
+
+    rowbuttons.append($('<a href="" class="textbutton edit">Edit</span>').click(function() {
+        stopSectionEditing();
+        $(this).parents('tr').addClass('editing');
+        $(this).parents('tr').next('.editrow').addClass('editing').show();
+        return false;
+    }));
+
+    if (data.sectiondelete) {
+        rowbuttons.append($('<a href="" class="textbutton delete">Remove</span>').click(function() {
+            if (confirm("Do you want to remove this item? Removal will occur immediately and cannot be undone.")) {
+                if ($(this).parents('tr').hasClass('notsaved')) {
+                    $(this).parents('tr').next('.editrow').remove();
+                    $(this).parents('tr').remove();
+                    return false;
+                }
+                
+                params = {
+                    v: '1',
+                    type: adminType,
+                    section: section,
+                    key: sectionID
+                }
+                
+                switch (adminType) 
+                {
+                    case 'site':
+                        params.section = adminSection;
+                        break;
+                    case 'module':
+                        params.module = moduleID,
+                        break;
+                }
+                
+                var button = this;
+                
+                makeAPICall('GET', 'admin','removeconfigsection', params, function() {
+                    $(button).parents('tr').next('.editrow').remove();
+                    $(button).parents('tr').remove();
+                });
+
+            }
+            return false;
+        }));
+        
+    }
+    row.append(rowbuttons);
+    rows.push(row);
+    
+    var row = $('<tr class="editrow" />');
+    var cell = $('<td colspan="2" />');
+
+    var list = $('<ul class="formfields" />');
+    $.each(data.sectionfields, function(field, _fieldData) {
+        var fieldData = jQuery.extend(true, {}, _fieldData);
+        if (typeof sectionData[field] != 'undefined') {
+            fieldData.value = sectionData[field];
+        }
+        fieldData.section = section;
+        field = sectionID +'['+field+']';
+        list.append(createFormFieldListItem(field, fieldData));
+    });
+    cell.append(list);
+    var div = $('<div class="rowbuttons" />');
+    div.append($('<a href="" class="textbutton save">Done</a>').click(function() {
+        stopSectionEditing();
+        return false;
+    }));
+    cell.append(div);
+    row.hide();
+    row.append(cell);
+    rows.push(row);
+    return rows;
+}
+
+function createFormSectionTable(section, data) {
+    //create main list item
+    var li = $('<li>').attr('class', 'tallfield');
+    if (data.label) {
+        li.append('<label>' + data.label + '</label>');
+    }
+    
+    //table
+    var table = $('<table />').attr('id', section).attr('class','subtable');
+    var body = $('<tbody>');
+
+    //go through each item in the sections array
+    $.each(data.sections, function(sectionID, sectionData) {
+        $.each(createSectionTableRow(section, data, sectionID, sectionData), function(i,row) {
+            body.append(row);
+        });
+    });
+    
+    table.append(body);
+    li.append(table);
+    
+    //add the "Add" button if specified
+    if (data.sectionaddnew) {
+        var div = $('<div class="tablebuttons" />');
+        div.append($('<a href="" class="textbutton add">Add</span>').click(function() {
+            stopSectionEditing();
+            if (data.sectionindex =='numeric') {
+                sectionID = data.sections.length;
+            } else {
+                alert("Can't handle non numeric sections yet");
+                return false;
+            }
+            
+            var sectionData = { 'TITLE':'New Item'}
+            $.each(createSectionTableRow(section, data, sectionID, sectionData), function(i,row) {
+                body.append(row);
+                row.addClass('notsaved').addClass('editing');
+                if (row.hasClass('editrow')) {
+                    row.show();
+                }
+            });
+
+            return false;
+        }));
+        li.append(div);
+    }
+
+    //add the description if specified
+    if (data.description) {
+        li.append('<span class="helptext">' + data.description + '</span>');
     }
 
     return li;

@@ -1,5 +1,6 @@
-    
+var adminType='site';
 $(document).ready(function() {
+    
     makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
     
     $('#adminForm').submit(function(e) {
