@@ -58,6 +58,32 @@ abstract class Config {
         return false;
     }
 
+    public function removeSection($section) {
+        
+        if (isset($this->sectionVars[$section])) {
+            $numeric = false;
+            
+            //if this is a numerically basic section then we need to reindex afterwards
+            if (preg_match("/^\d+$/", $section)) {
+                $numeric = true;
+                for ($i=0;$i<count($this->sectionVars);$i++) {
+                    if (!isset($this->sectionVars[$i])) {
+                        $numeric = false;
+                    }
+                }
+            }
+            
+            unset($this->sectionVars[$section]);
+            if ($numeric) {
+                $this->sectionVars = array_values($this->sectionVars);
+            }
+
+            return true;            
+        }
+        
+        return false;
+    }
+
     /* used when you completely want to replace all sections */
     public function setSectionVars($sectionVars) {
         $this->sectionVars = $sectionVars;

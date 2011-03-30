@@ -1,5 +1,9 @@
-    
+var adminType='module';    
 $(document).ready(function() {
+    $('#adminCancel').click(function(e) {
+        window.location.reload();
+    });
+    
     if (typeof moduleID != 'undefined') {
         makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID}, processModuleData);
     
@@ -25,7 +29,9 @@ $(document).ready(function() {
                 }
             });
                         
-            makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
+            makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved'); 
+               makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID}, processModuleData); 
+            });
             return false;
         });
     } else {

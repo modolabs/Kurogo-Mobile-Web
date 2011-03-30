@@ -1,7 +1,25 @@
 {
     "module": {
         "fields":{
-            "MAX_RESULTS":{"label":"Stories per page","type":"number","config":"module","section":"strings","description":"Maximum number of news stories to show per page"}
+            "MAX_RESULTS":{"label":"Stories per page","type":"number","config":"module","section":"module","description":"Maximum number of news stories to show per page","placeholder":10}
        }
+    },
+    "feeds": {
+        "label":"Feeds",
+        "description":"",
+        "config":"feeds",
+        "sectionfields":{
+            "TITLE":{"label":"Title", "description":"Label for this feed", "type":"text"},
+            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"text","placeholder":"RSSDataController","omitBlankValue":true},
+            "BASE_URL":{"label":"URL","description":"The url for the feed or web service","type":"text"},
+            "CACHE_LIFETIME":{"label":"Cache lifetime","description":"The length of time to cache the feed from the server","type":"select","optionsMethod":["DataController","getCacheLifetimeOptions"],"default":900},
+            "ITEM_CLASS":{"label":"Item Class","description":"The class used to parse RSS items. Rarely needs to be changed","type":"text","placeholder":"RSSItem","omitBlankValue":true},
+            "ENCLOSURE_CLASS":{"label":"Enclosure Class","description":"The class used to parse RSS enclosures. Rarely needs to be changed","type":"text","placeholder":"RSSEnclosure","omitBlankValue":true}
+        },
+        "sectionindex":"numeric",
+        "sectionsmethod":"loadFeedData",
+        "sectionaddnew":true,
+        "sectiondelete":true
     }
+    
 }

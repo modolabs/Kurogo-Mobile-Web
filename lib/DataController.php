@@ -49,6 +49,25 @@ abstract class DataController
         return $this->cacheFileSuffix ? '.' . $this->cacheFileSuffix : '';
     }
     
+    public static function getCacheLifetimeOptions() {
+        return array(
+            0     =>'No Cache',
+            10    =>'10 seconds',
+            30    =>'30 seconds',
+            60    =>'1 minute',
+            300   =>'5 minutes',
+            600   =>'10 minutes',
+            900   =>'15 minutes',
+            1800  =>'30 minutes',
+            3600  =>'1 hour',
+            7200  =>'2 hours',
+            10800 =>'3 hours',
+            21600 =>'6 hours',
+            43200 =>'12 hours',
+            86400 =>'1 day'
+        );
+    }
+    
     /**
      * Turns on or off debug mode. In debug mode, URL requests and information are logged to the php error log
      * @param bool 

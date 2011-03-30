@@ -171,6 +171,31 @@ input[type="text"], input[type="email"], input[type="url"], input[type="password
 	width: 440px;
 	color: #333;
 }
+input#adminCancel {
+	background-color: #a22;
+	float: right;
+	color: #fff;
+	border: none;
+	margin-top: 3px;
+	height: 32px;
+	padding: 0 18px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	font-size: 14px;
+	font-weight: bold;
+	line-height: 30px;
+	cursor: pointer;
+}
+input#adminCancel:hover {
+	color: #fff;
+	background-color: #622;
+	border-color: #a00;
+}
+input#adminCancel:active {
+	color: #000;
+	background-color: #88a900;
+}
+
 input[type="submit"] {
 	float: right;
 	background-color: #b5cf4b;
@@ -184,6 +209,7 @@ input[type="submit"] {
 	font-size: 14px;
 	font-weight: bold;
 	line-height: 30px;
+	cursor: pointer;
 }
 input[type="submit"]:hover {
 	color: #000;
@@ -324,13 +350,16 @@ input.timeData {
     width: 100px;
     margin-right: 10px;
 }
+.editing {
+    display: none;
+}
 .editrow {
 	background-color: #ffecbf;
 	border: 1px solid #ffe16a;
 	color: #000;
 	padding-bottom: 6px;
 }
-.editrow input, .editrow select, .editrow .helptext {
+.editrow input, .editrow select, .editrow .helptext, .editrow span {
 	margin-left: 125px;
 	width: 310px;
 }

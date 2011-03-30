@@ -125,9 +125,13 @@ class NewsWebModule extends WebModule {
         $this->feeds      = $this->loadFeedData();
         $this->maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
         
+        if (count($this->feeds)==0) {
+            return;
+        }
+        
         $this->feedIndex = $this->getArg('section', 0);
         if (!isset($this->feeds[$this->feedIndex])) {
-          $this->feedIndex = 0;
+          $this->feedIndex = key($this->feeds);
         }
 
         $feedData = $this->feeds[$this->feedIndex];
@@ -138,6 +142,9 @@ class NewsWebModule extends WebModule {
     }    
     
     protected function initializeForPage() {
+        if (!$this->feed) {
+            throw new Exception("News Feed not configured");
+        }
 
     switch ($this->page) {
       case 'story':

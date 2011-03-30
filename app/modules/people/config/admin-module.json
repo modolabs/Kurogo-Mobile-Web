@@ -1,0 +1,24 @@
+{
+    "feeds": {
+        "label":"Data Configuration",
+        "description":"",
+        "config":"feeds",
+        "sectionfields":{
+            "section":{"label":"Section", "description":"Programmatic id for this section", "type":"label"},
+            "TITLE":{"label":"Title", "description":"Label for this connection", "type":"text","omitIfBlank":"true"},
+            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of directory service. Should be a PeopleController class", "type":"select","optionsMethod":["PeopleController","getPeopleControllers"]},
+            "HOST":{"label":"Host","description":"LDAP Server host name","type":"text"},
+            "PORT":{"label":"Port","description":"LDAP port. Default is 389. Use 636 for SSL","type":"number","omitBlankValue": true, "placeholder":"389"},
+            "SEARCH_BASE":{"label":"Search Base","description":"LDAP search base","type":"text"},
+            "ADMIN_DN":{"label":"Admin DN","description":"Some LDAP servers do not permit anonymous access. If necessary, provide an full DN for an administrative service account that has read-only access.","type":"text", "omitBlankValue": true},
+            "ADMIN_PASSWORD":{"label":"Admin Password","type":"password", "description":"If using a admin service account, include the password", "omitBlankValue": true},
+            "SEARCH_TIMELIMIT":{"label":"Search timeout","type":"number","description":"Timeout (in seconds) for search queries","omitBlankValue": true,"placeholder":"30"},
+            "READ_TIMELIMIT":{"label":"Read timeout","type":"text", "description":"Timeout (in seconds) for read operations (operations that read the data from a specific record","omitBlankValue": true,"placeholder":"30"}
+        },
+        "sectionindex":"string",
+        "sectionsmethod":"loadFeedData",
+        "sectionaddnew":false,
+        "sectiondelete":false
+    }
+}
+
