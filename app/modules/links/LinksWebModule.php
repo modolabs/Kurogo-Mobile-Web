@@ -10,27 +10,13 @@
   */
 class LinksWebModule extends WebModule {
   protected $id = 'links';
-
-  protected function getModuleDefaultData() {
-    return array_merge(parent::getModuleDefaultData(), array(
-      'display_type' => 'springboard',
-      'strings' => array(
-          'description' => ''
-      ),
-      'links' => array()
-      )
-    );
-  }
-
-  protected function getSectionTitleForKey($key) {
-    switch ($key) {
-      case 'links': return 'Links';
-      default: return parent::getSectionTitleForKey($key);
-    }
-  }
   
+  public function getLinks() {
+    return $this->getModuleSections('links');
+  }
+
   protected function initializeForPage() {
-    $links = $this->getModuleSections('links');
+    $links = $this->getLinks();
     
     foreach ($links as $index => &$link) {
         if (self::argVal($link, 'icon', false)) {

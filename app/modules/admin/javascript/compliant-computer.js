@@ -100,8 +100,10 @@ function createFormFieldListItem(key, fieldData) {
     return li;
 }
 
-function stopSectionEditing() {
-    $('tr.editing .sectiontitle').html($('.editrow.editing input[name*="[TITLE]"]').val());
+function stopSectionEditing(titleField) {
+    if (titleField) {
+        $('tr.editing .sectiontitle').html($('.editrow.editing input[name*="['+titleField+']"]').val());
+    }
     $('.editrow.editing').hide();
     $('.editing').removeClass('editing');
 }
@@ -111,13 +113,15 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
     var row = $('<tr />'); 
     
     //use TITLE if present
-    var title = typeof sectionData.TITLE != 'undefined' ? sectionData.TITLE : sectionID;
+    var titleField = 'sectiontitlefield' in data ? data.sectiontitlefield : 'TITLE';
+    
+    var title = titleField in sectionData ? sectionData[titleField] : sectionID;
     row.append($('<td class="sectiontitle">' + title + '</td>'));
 
     var rowbuttons = $('<td class="rowbuttons" />');
 
     rowbuttons.append($('<a href="" class="textbutton edit">Edit</span>').click(function() {
-        stopSectionEditing();
+        stopSectionEditing(titleField);
         $(this).parents('tr').addClass('editing');
         $(this).parents('tr').next('.editrow').addClass('editing').show();
         return false;
@@ -183,7 +187,7 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
     cell.append(list);
     var div = $('<div class="rowbuttons" />');
     div.append($('<a href="" class="textbutton save">Done</a>').click(function() {
-        stopSectionEditing();
+        stopSectionEditing(titleField);
         return false;
     }));
     cell.append(div);
