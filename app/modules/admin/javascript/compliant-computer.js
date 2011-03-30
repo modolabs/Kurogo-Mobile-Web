@@ -89,7 +89,7 @@ function createFormFieldListItem(key, fieldData) {
             li.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows','5').attr('section', section).attr('id',id));
             break;
         case 'label':
-            li.append(fieldData.value);
+            li.append('<span class="labeltext">'+fieldData.value+'</span>');
             break;
     }
 
@@ -172,6 +172,9 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
         var fieldData = jQuery.extend(true, {}, _fieldData);
         if (typeof sectionData[field] != 'undefined') {
             fieldData.value = sectionData[field];
+        }
+        if (field=='section') {
+            fieldData.value = sectionID;
         }
         fieldData.section = section;
         field = sectionID +'['+field+']';

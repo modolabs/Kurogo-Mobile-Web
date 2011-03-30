@@ -359,7 +359,7 @@ input.timeData {
 	color: #000;
 	padding-bottom: 6px;
 }
-.editrow input, .editrow select, .editrow .helptext {
+.editrow input, .editrow select, .editrow .helptext, .editrow span {
 	margin-left: 125px;
 	width: 310px;
 }
