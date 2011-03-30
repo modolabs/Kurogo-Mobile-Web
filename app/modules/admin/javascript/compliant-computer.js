@@ -219,11 +219,13 @@ function createFormSectionTable(section, data) {
         var div = $('<div class="tablebuttons" />');
         div.append($('<a href="" class="textbutton add">Add</span>').click(function() {
             stopSectionEditing();
+            var sectionID;
             if (data.sectionindex =='numeric') {
                 sectionID = data.sections.length;
             } else {
-                alert("Can't handle non numeric sections yet");
-                return false;
+                if (!(sectionID = prompt("Enter id of new section"))) {
+                    return false;
+                }
             }
             
             var sectionData = { 'TITLE':'New Item'}
