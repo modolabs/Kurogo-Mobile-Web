@@ -24,23 +24,27 @@ Strings
 Links
 -----
 
-Links are described using array syntax. There are 3 keys that each link has: *title*, *url* and *icon*.
-For each link you declare the title, url and icon properties. It is important to include the property
-even if it is not available (i.e. if there is no icon, just include an empty string)
+Links are editing in the *links.ini* configuration file. Each link is represented by a configuration
+section. Within each section, there are 3 possible keys:
 
-The title and url represent the link text and url respectively. The icon represents an optional icon
-that is displayed in the *springboard* display type. These files should be placed in the 
-*SITE_DIR/themes/default/modules/links/images/compliant* folder. You may need to create this folder.
+* *title* - The title of the link
+* *url* - The url of the link
+* *icon* - a optional icon that is displayed in the *springboard* display type. These files should 
+  be placed in the  *SITE_DIR/themes/default/modules/links/images/compliant* folder. 
 
 .. code-block:: ini
 
-    [links]
-    title[] = "This is link 1"
-    url[]   = "http://example.com/urlforlink1"
-    icon[]  = "link1_icon.png"
-    title[] = "This is link 2"
-    url[]   = "http://example.com/urlforlink2"
-    icon[]  = "" ; link 2 does not have an icon
-    title[] = "This is link 3"
-    url[]   = "http://example.com/urlforlink3"
-    icon[]  = "link3_icon.png"
+    [0]
+    title = "This is link 1"
+    url   = "http://example.com/urlforlink1"
+    icon  = "link1_icon.png"
+    
+    [1]
+    title = "This is link 2"
+    url   = "http://example.com/urlforlink2"
+    icon  = "" ; link 2 does not have an icon
+    
+    [2]
+    title = "This is link 3"
+    url   = "http://example.com/urlforlink3"
+    icon  = "link3_icon.png"
