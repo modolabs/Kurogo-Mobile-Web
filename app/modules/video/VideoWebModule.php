@@ -124,48 +124,15 @@ class VideoWebModule extends WebModule
         $this->feeds = $this->loadFeedData();
     }
     
-    protected function getSections() {
-         $sections = array();
-         foreach ($this->feeds as $index => $feedData) {
-              $sections[] = array(
-                'value'    => $index,
-                'title'    => $feedData['TITLE']
-              );
-         }
-         
-         return $sections;
-    }
-    
     protected function getListItemForVideo(VideoObject $video, $section) {
 
-        $desc = $video->getDescription();
-
-        return array(
-            'title'=>$video->getTitle(),
-            'subtitle'=> "(" . $this->getDuration($video->getDuration()) . ") " . $desc,
-            'imgWidth'=>120,  
-            'imgHeight'=>100,  
-            'img'=>$video->getImage(),
-            'url'=>$this->buildBreadcrumbURL('detail', array(
-                'section'=>$section,
-                'videoid'=>$video->getID()
-            )));
-    }
-
-    protected function getDuration($prop_length) {
-        if (!$prop_length) {
-            return "";
-        } elseif ($prop_length<60) {
-            return "0:". $prop_length;
-        } else {
-            $mins = intval($prop_length / 60);
-            $secs = $prop_length % 60;
-            if($secs<10) {
-				return $mins . ":0" . $secs;
-			} else { 
-				return $mins . ":" . $secs;
-        	}
-		}
+        $listItemArray = VideoModuleUtils::getListItemForVideo($video, $section, $this);
+        // Add breadcrumb.
+        $listItemArray['url'] = $this->buildBreadcrumbURL('detail', array(
+            'section'=>$section,
+            'videoid'=>$video->getID()));
+            
+        return $listItemArray;
     }
     
     protected function initializeForPage() {
@@ -190,7 +157,7 @@ class VideoWebModule extends WebModule
         
         $feedData = $this->feeds[$section];
         $this->assign('currentSection', $section);
-        $this->assign('sections'      , $this->getSections());
+        $this->assign('sections'      , VideoModuleUtils::getSectionsFromFeeds($this->feeds));
         $this->assign('feedData'      , $feedData);
         
         $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
