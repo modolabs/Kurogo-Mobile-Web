@@ -241,6 +241,15 @@ class AdminAPIModule extends APIModule
         $this->requiresAdmin();
         
         switch ($this->command) {
+            case 'checkversion':
+                $data = array(
+                    'current'=>Kurogo::checkCurrentVersion(),
+                    'local'  =>KUROGO_VERSION
+                );
+                $this->setResponse($data);
+                $this->setResponseVersion(1);
+                
+                break;
             case 'getconfigdata':
                 $type = $this->getArg('type');
                 
