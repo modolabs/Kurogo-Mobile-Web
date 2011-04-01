@@ -142,13 +142,12 @@ error_log("result: $x, $y");
         $filename = $wkid;
         if (!$projCache->isFresh($filename)) {
             $file = fopen(DATA_DIR.'/maps/proj_list.txt', 'r');
+            $wkidID = "<$wkid>";
+            $strlen = strlen($wkidID);
             while ($line = fgets($file)) {
-                $parts = explode("\t", $line);
-                if ($parts[0] == $wkid) {
-                    if (count($parts) < 2) {
-                        throw new Exception("can't get proj4 specs for $wkid");
-                    }
-                    $contents = trim($parts[1]);
+                if (substr($line, 0, $strlen) == $wkidID) {
+                    preg_match("/<\d+> (.+) <>/", $line, $matches);
+                    $contents = $matches[1];
                     break;
                 }
             }
