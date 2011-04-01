@@ -227,9 +227,14 @@ label {
 	line-height: 1.6em;
 	font-weight: bold;
 }
-.helptext, .checkitem label, .tallfield textarea, table.subtable {
+.helptext, .checkitem label, .tallfield textarea, table.subtable, .infotext {
 	margin-left: 150px;		/* same as width plus padding-right of label */
 }
+
+.infotext {
+    margin-top: -18px;
+}
+
 .helptext {
 	display: block;
 	padding: 2px 0 0 4px;

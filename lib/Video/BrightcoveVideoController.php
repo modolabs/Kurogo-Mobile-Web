@@ -1,9 +1,8 @@
 <?php
 
- class BrightCoveVideoController extends DataController
+ class BrightCoveVideoController extends VideoDataController
  {
     protected $DEFAULT_PARSER_CLASS='BrightCoveDataParser';
-    protected $cacheFolder='Video';
     protected $cacheFileSuffix='json';
     protected $token;
     protected $playerKey;

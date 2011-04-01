@@ -2,11 +2,10 @@
 
     //require_once("KalturaClient.php");  // FIXME
     
- class KalturaVideoController extends DataController
+ class KalturaVideoController extends VideoDataController
  {
  	
     protected $DEFAULT_PARSER_CLASS='KalturaDataParser';
-    protected $cacheFolder='Video';
     protected $cacheFileSuffix='xml';
     protected $token;
     protected $category;

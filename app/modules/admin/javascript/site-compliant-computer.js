@@ -1,7 +1,13 @@
 var adminType='site';
+var KUROGO_LOCAL_VERSION;
+var KUROGO_CURRENT_VERSION;
 $(document).ready(function() {
     
     makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
+    
+    if (adminSection=='setup') {
+        checkVersion();
+    }
     
     $('#adminForm').submit(function(e) {
         var params = { 'v':1, 'type':'site', 'section':adminSection, 'data':{}}
@@ -24,10 +30,32 @@ $(document).ready(function() {
             $('nav ul li a[class=current]').attr('class','');
             $(this).attr('class','current');
             makeAPICall('GET','admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
+            if (adminSection=='setup') {
+                checkVersion();
+            }
         }
         return false;
     });
 });
+
+function checkVersion() {
+    makeAPICall('GET', 'admin','checkversion', { 'v':1}, processCheckVersion);
+}
+
+function processCheckVersion(data) {
+    KUROGO_LOCAL_VERSION=data.local;
+    KUROGO_CURRENT_VERSION = data.current;
+    
+    var li = $('<li />');
+    li.append('<label>Kurogo Version</label>');
+    if (KUROGO_LOCAL_VERSION != KUROGO_CURRENT_VERSION) {
+        li.append('<div class="infotext">Your version of Kurogo is not the most recent version. The most recent version is <b>' + KUROGO_CURRENT_VERSION +'</b>. Your version is <b>' + KUROGO_LOCAL_VERSION + '</b>. Please visit <a href="http://modolabs.com/kurogo">http://modolabs.com/kurogo</a>.</div>');
+    } else {
+        li.append('<div class="infotext">Your version of Kurogo is up to date (' + KUROGO_LOCAL_VERSION +')</div>');
+    }
+
+    $('#adminFields').append(li);
+}
 
 function processAdminSectionData(data) {
     $('#sectionTitle').html(data.title);

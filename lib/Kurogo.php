@@ -1,5 +1,7 @@
 <?php
 
+define('KUROGO_VERSION', '1.0.rc2');
+
 class Kurogo
 {
     public static function getLanguages() {
@@ -50,6 +52,11 @@ class Kurogo
         }
         
         return $config->getOptionalVar($var, $default);
+    }
+    
+    public static function checkCurrentVersion() {
+        $url = "http://modolabs.com/kurogo/version?version="  . KUROGO_VERSION;
+        return trim(file_get_contents($url));
     }
 }
 

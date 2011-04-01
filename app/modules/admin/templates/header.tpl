@@ -62,3 +62,4 @@
 	</nav>
 	
 	<div id="content">
+    <div id="message"></div>

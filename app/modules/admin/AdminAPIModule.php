@@ -74,6 +74,12 @@ class AdminAPIModule extends APIModule
                                 unset($field['optionsMethod']);
                             }
                     }
+
+                    $field['value'] = $this->getUnconstantedValue($field['value'], $constant);
+                    if ($constant) {
+                        $field['constant'] = $constant;
+                    }
+
                 }
             } elseif (isset($sectionData['tablerowsmethod'])) {
                 $sectionData['tablerows'] = $module->$sectionData['tablerowsmethod']();
@@ -85,11 +91,6 @@ class AdminAPIModule extends APIModule
                 foreach ($sectionData['sectionfields'] as $key=>&$field) {
                     switch ($field['type']) 
                     {
-                        case 'paragraph':
-                            if (is_array($field['value'])) {
-                                $field['value'] = implode("\n\n", $field['value']);
-                            }
-                            break;
                         case 'select':
                             if (isset($field['optionsMethod'])) {
                                 $field['options'] = call_user_func($field['optionsMethod']);
@@ -241,6 +242,15 @@ class AdminAPIModule extends APIModule
         $this->requiresAdmin();
         
         switch ($this->command) {
+            case 'checkversion':
+                $data = array(
+                    'current'=>Kurogo::checkCurrentVersion(),
+                    'local'  =>KUROGO_VERSION
+                );
+                $this->setResponse($data);
+                $this->setResponseVersion(1);
+                
+                break;
             case 'getconfigdata':
                 $type = $this->getArg('type');
                 

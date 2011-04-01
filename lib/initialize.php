@@ -3,8 +3,6 @@
   * @package Core
   */
   
-  define('KUROGO_VERSION', '1.0.RC2');
-
 //
 // Initialization setup
 // 
@@ -77,6 +75,7 @@ function Initialize(&$path=null) {
   // Pull in functions to deal with php version differences
   //
   
+  require_once(LIB_DIR . '/Kurogo.php');
   require_once(LIB_DIR . '/compat.php');
 
   //
