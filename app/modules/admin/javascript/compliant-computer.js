@@ -1,3 +1,7 @@
+$(document).ready(function() {
+    $('#message').hide();
+});
+
 function createFormFieldListItems(key, fieldData) {
     var items = [createFormFieldListItem(key,fieldData)];
     
@@ -315,6 +319,15 @@ function createSelectBox(options, selected) {
 
 function fileListTypes() {  
     return {'':'-','FULL_URL_BASE':'FULL_URL_BASE','LOG_DIR':'LOG_DIR','LIB_DIR':'LIB_DIR','CACHE_DIR':'CACHE_DIR','DATA_DIR':'DATA_DIR','SITE_DIR':'SITE_DIR','ROOT_DIR':'ROOT_DIR'};
+}
+
+function showMessage(message, error) {
+    if (error) {
+        $('#message').addClass('error');
+    } else {
+        $('#message').removeClass('error');
+    }
+    $('#message').html(message).slideDown('fast').delay(3000).slideUp('slow');
 }
 
 function makeAPICall(type, module, command, data, callback) {

@@ -13,7 +13,7 @@ $(document).ready(function() {
             }
         });
         
-        makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
+        makeAPICall('POST','admin','setconfigdata', params, function() { showMessage('Configuration saved') });
         return false;
     });
     

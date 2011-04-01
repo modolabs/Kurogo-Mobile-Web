@@ -12,7 +12,7 @@ Configuring Campus Locations
 If an institution specifies multiple campuses, the home screen will show a list of campus locations.
 If there is a single campus, the home screen will show a list of categories to browse by.
 
-Campuses are configured in the *SITE_DIR/config/map/campus.ini* file. Each separate campus has an section as follows:::
+Campuses are configured in the *SITE_DIR/config/map/feedgroups.ini* file. Each separate campus has an section as follows:::
 
     [boston]
     title = "Boston Maps"
@@ -50,7 +50,8 @@ The map module currently supports two types of data sources for getting location
 (KML is recommended, although support for other data source types will be added in the future).
 Each data feed is represented as a *category* that a user may browse by from the home screen or within a campus.
 
-The feed configuration file is in *SITE_DIR/config/map/feeds.ini*. Each feed has the following fields:
+The feed configuration file is in *SITE_DIR/config/map/feeds-CAMPUS.ini* (where CAMPUS is the name of the campus section
+in the feedgroups.ini file). Each feed has the following fields:
 
 * *TITLE* is a descriptive name of the category that shows up on the map home screen (for single campuses) 
   or in the campus home screen
