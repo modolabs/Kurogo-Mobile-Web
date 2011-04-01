@@ -9,7 +9,7 @@
 {if $displayType == 'springboard'}
   {include file="findInclude:common/templates/springboard.tpl" springboardItems=$links springboardID="links"}
 {elseif $displayType == 'list'}
-  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$links}
+  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$links subTitleNewline=true}
 {/if}
 
 <p class="clear"> </p>
