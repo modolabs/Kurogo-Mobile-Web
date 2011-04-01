@@ -115,7 +115,7 @@
         }
     },
     "strings":{
-        "title":"Text strings",
+        "title":"Text Strings",
         "description":"These string values are used throughout the site",
         "fields":{
             "COPYRIGHT_LINK":{"label":"Copyright link","type":"text","config":"strings","description":"","section":"strings"},
