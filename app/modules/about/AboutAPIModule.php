@@ -5,6 +5,9 @@ class AboutAPIModule extends APIModule {
     protected $id = 'about';
     protected $vmin = 1;
     protected $vmax = 1;
+    public function availableVersions() {
+        return array(1);
+    }
 
      protected function initializeForCommand()  {
 
@@ -18,6 +21,23 @@ class AboutAPIModule extends APIModule {
          $textArray['copyright'] = Kurogo::getSiteString('COPYRIGHT_NOTICE');
          
         switch ($this->command) {
+
+            case 'index':
+                $response = $this->getModuleSections('api-index');
+                break;
+
+            case 'about_site':
+                $response = "<p>" . implode("</p><p>", $this->getModuleVar('SITE_ABOUT_HTML', 'strings')) . "</p>";
+                break;
+
+            case 'about':
+                $response = "<p>" . implode("</p><p>", $this->getModuleVar('ABOUT_HTML', 'strings')) . "</p>";
+                break;
+
+            case 'credits':
+                $response = file_get_contents(MODULES_DIR . "/{$this->id}/templates/credits_html.tpl");
+                break;
+
             case 'orgname':
                 $response = array('orgName' => $textArray['orgName']);
                 //print_r($response);
