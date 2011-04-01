@@ -29,7 +29,7 @@ $(document).ready(function() {
                 }
             });
                         
-            makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved'); 
+            makeAPICall('POST','admin','setconfigdata', params, function() { showMessage('Configuration saved'); 
                makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID}, processModuleData); 
             });
             return false;
@@ -60,7 +60,7 @@ $(document).ready(function() {
                 }
             });
   
-            makeAPICall('POST','admin','setmodulelayout', params, function() { alert('Configuration saved') });
+            makeAPICall('POST','admin','setmodulelayout', params, function() { showMessage('Configuration saved') });
             return false;
         });
         
@@ -77,7 +77,7 @@ $(document).ready(function() {
                 }
             });
 
-            makeAPICall('POST','admin','setconfigdata', params, function() { alert('Configuration saved') });
+            makeAPICall('POST','admin','setconfigdata', params, function() { showMessage('Configuration saved') });
             return false;
         });
     }
