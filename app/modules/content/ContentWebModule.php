@@ -11,6 +11,9 @@ abstract class ContentWebModule extends WebModule {
         {
             case 'html':
                 $content = isset($feedData['CONTENT_HTML']) ? $feedData['CONTENT_HTML'] : '';
+                if (is_array($content)) {
+                    $content = implode("\n", $content);
+                }
                 return $content;
                 break;
             case 'html_url':
@@ -41,49 +44,55 @@ abstract class ContentWebModule extends WebModule {
                 throw new Exception("Invalid content type $content_type");
         }
         
-   }
-  
-  protected function initializeForPage() {
+    }
     
-    if (!$feeds = $this->loadFeedData()) {
-        $feeds = array();
+    public static function getContentTypes() {
+        return array(
+            'html'=>'Static HTML',
+            'html_url'=>'External HTML',
+            'rss'=>'External RSS'
+        );
     }
-    //print("here");
-    //print_r($feeds);
-    //print("\n");
-    switch ($this->page) {
-        case 'index':
-            if (count($feeds)==1) {
-                $this->redirectTo(key($feeds));
-            } 
-            
-            $pages = array();
-            foreach ($feeds as $page=>$feedData) {
-                $pages[] = array(
-                    'title'=>$feedData['TITLE'],
-                    'subtitle'=>isset($feedData['SUBTITLE']) ? $feedData['SUBTITLE'] : '',
-                    'url'=>$this->buildBreadCrumbURL($page, array())
-                );
-            }
-            
-            $this->assign('contentPages', $pages);
-            break;
-        default:
-            if (!isset($feeds[$this->page])) {
-                $this->redirectTo('index');
-            } 
-            
-            $feedData = $feeds[$this->page];
-            
-            $this->setPageTitle($feedData['TITLE']);
-            $this->setTemplatePage('content');
-            $showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
-            if ($showTitle) {
-                $this->assign('contentTitle', $feedData['TITLE']);
-            }
-            $this->assign('contentBody', $this->getContent($feedData));
-            break;
+  
+    protected function initializeForPage() {
+    
+        if (!$feeds = $this->loadFeedData()) {
+            $feeds = array();
+        }
+        
+        switch ($this->page) {
+            case 'index':
+                if (count($feeds)==1) {
+                    $this->redirectTo(key($feeds));
+                } 
+                
+                $pages = array();
+                foreach ($feeds as $page=>$feedData) {
+                    $pages[] = array(
+                        'title'=>$feedData['TITLE'],
+                        'subtitle'=>isset($feedData['SUBTITLE']) ? $feedData['SUBTITLE'] : '',
+                        'url'=>$this->buildBreadCrumbURL($page, array())
+                    );
+                }
+                
+                $this->assign('contentPages', $pages);
+                break;
+            default:
+                if (!isset($feeds[$this->page])) {
+                    $this->redirectTo('index');
+                } 
+                
+                $feedData = $feeds[$this->page];
+                
+                $this->setPageTitle($feedData['TITLE']);
+                $this->setTemplatePage('content');
+                $showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
+                if ($showTitle) {
+                    $this->assign('contentTitle', $feedData['TITLE']);
+                }
+                $this->assign('contentBody', $this->getContent($feedData));
+                break;
+        }
     }
-  }
   
 }
