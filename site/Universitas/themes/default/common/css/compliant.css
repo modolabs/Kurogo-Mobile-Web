@@ -167,7 +167,7 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 .springboard div {
 	/* Overall size of one cell in the springboard */
 	width: 77px;
-	height: 100px;
+	height: 98px;
 	font-size: 13px;
 	line-height: 14px;
 }
@@ -180,6 +180,11 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	/* Size of actual item icon in springboard */
 	width: 60px;
 	height: 60px;
+}
+
+.springboard .separator {
+	/* Height of extra gap between main and utility-class springboard items */
+	height: 10px;
 }
 
 .springboard div.utility {
@@ -339,4 +344,61 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 .average {
 	border-color: #c00;
 }
+
+
+
+/* Login-related buttons */
+
+.loginbuttons {
+	margin-top: 0.75em;
+	margin-bottom: 0.75em;
+}
+
+.loginbuttons li {
+	padding-left: 42px;
+	background-size: 24px;
+	background-position: 10px;
+	background-repeat: no-repeat;
+}
+
+.loginbuttons a {
+	margin-left: -39px;
+	padding-left: 39px;
+}
+
+.loginbuttons li.facebook {
+	background-image: url(/common/images/button-facebook.png);
+}
+
+.loginbuttons li.google {
+	background-image: url(/common/images/button-google.png);
+}
+
+.loginbuttons li.oauth {
+	background-image: url(/common/images/button-oauth.png);
+}
+
+.loginbuttons li.openid {
+	background-image: url(/common/images/button-openid.png);
+}
+
+.loginbuttons li.twitter {
+	background-image: url(/common/images/button-twitter.png);
+}
+
+.loginbuttons li.windows {
+	background-image: url(/common/images/button-windows.png);
+}
+
+.loginbuttons li.noauth {
+	background-image: none;
+	padding-left: 10px;
+}
+
+.loginbuttons li.noauth a {
+	margin-left: -8px;
+	padding-left: 8px;
+}
+
+
 
