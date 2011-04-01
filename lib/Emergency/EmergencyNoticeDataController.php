@@ -9,6 +9,12 @@ class EmergencyNoticeDataController extends DataController
 
     protected $cacheLifetime = 60; // emergency notice should have a short cache time
 
+    public static function getEmergencyNoticeDataControllers() {
+        return array(
+            'EmergencyNoticeDataController'=>'Default'
+        );
+    }
+
     /*
      *   Not sure this should be used
      */
