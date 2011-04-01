@@ -1,9 +1,8 @@
 <?php
 
- class YouTubeVideoController extends DataController
+ class YouTubeVideoController extends VideoDataController
  {
     protected $DEFAULT_PARSER_CLASS='YouTubeDataParser';
-    protected $cacheFolder='Video';
     protected $cacheFileSuffix='json';
     
  	private function setStandardFilters() {
@@ -93,7 +92,7 @@ class YouTubeDataParser extends DataParser
                 }
                 
                 return $videos;
-            } elseif (isset($data['data'])) {
+            } elseif (isset($data['data']['id'])) {
                 $video = $this->parseEntry($data['data']);
                 return $video;
             } else {
