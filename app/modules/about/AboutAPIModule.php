@@ -6,7 +6,7 @@ class AboutAPIModule extends APIModule {
     protected $vmin = 1;
     protected $vmax = 1;
 
-     protected function initializeForCommand()  {}
+     protected function initializeForCommand()  {
 
         // retrieve all Data for the About screen
          $stringArray = ($this->getModuleArray('strings'));
