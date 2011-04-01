@@ -51,7 +51,7 @@ class DeviceClassifier {
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
       
       if ($data = Kurogo::getSiteVar('MOBI_SERVICE_USE_EXTERNAL') ? 
-        $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($this->userAgent) ) {
+        $this->detectDeviceExternal($this->userAgent) : $this->detectDeviceInternal($this->userAgent) ) {
         $this->pagetype = $data['pagetype'];
         $this->platform = $data['platform'];
         $this->certs = $data['supports_certificate'];
