@@ -44,3 +44,4 @@ reaches final 1.0 status
    modulenew
    moduleextend
    authenticationintro
+   credits
