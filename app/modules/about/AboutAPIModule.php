@@ -19,6 +19,7 @@ class AboutAPIModule extends APIModule {
          $textArray['email'] = Kurogo::getSiteString('FEEDBACK_EMAIL');
          $textArray['website'] = Kurogo::getSiteString('COPYRIGHT_LINK');
          $textArray['copyright'] = Kurogo::getSiteString('COPYRIGHT_NOTICE');
+         $textArray['credits'] = file_get_contents(MODULES_DIR . "/{$this->id}/templates/credits_html.tpl");
          
         switch ($this->command) {
 
