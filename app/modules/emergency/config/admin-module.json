@@ -10,9 +10,9 @@
         "description":"Configures the source to edit emergency contacts",
         "fields":{
             "CONTROLLER_CLASS":{"label":"Contacts type","description":"Source for contacts list. <b>Drupal Module</b>: Use the included Drupal 6 module (in the add-ons folder) to create contacts on a drupal server. <b>INI File</b> store the contacts in a standard INI file located on this server.","type":"select","optionsMethod":["ContactsListDataController","getContactsListDataControllers"],"config":"feeds","section":"contacts"},
-            "DRUPAL_SERVER_URL":{"label":"Drupal Server URL","description":"URL of Drupal server","type":"text","config":"feeds","section":"contacts"},
-            "FEED_VERSION":{"label":"Drupal module version","description":"Version of Drupal Emergency module to use","type":"select","options":{"1":"1"},"config":"feeds","section":"contacts"},
-            "BASE_URL":{"label":"Contacts Location","description":"Location of ini file","type":"file","config":"feeds","section":"contacts"}
+            "DRUPAL_SERVER_URL":{"label":"Drupal Server URL","description":"URL of Drupal server","type":"text","config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","DrupalContactsListDataController"]},
+            "FEED_VERSION":{"label":"Drupal module version","description":"Version of Drupal Emergency module to use","type":"select","options":{"1":"1"},"config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","DrupalContactsListDataController"]},
+            "BASE_URL":{"label":"Contacts Location","description":"Location of ini file","type":"file","config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","INIFileContactsListDataController"]}
         }
     },
     "notice":{

@@ -12,19 +12,43 @@ function createFormFieldListItems(key, fieldData) {
                 items.push(createFormFieldListItem(field, fd));
             })
         });
-    }    
+    }
     
     return items;
 }
 
+function showIfCheck(element, items, value) {
+    var show = false;
+    if ($.isArray(value)) {
+        show = ($.inArray($(element).val(), value) != -1);
+    } else  {
+        show = $(element).val() == value;
+    }
+
+    $(items)[show?'show':'hide']();
+    if (show) {
+        $(items).find(':input').removeAttr('disabled');
+    } else {
+        $(items).find(':input').attr('disabled', 'true');
+    }
+}
 
 function createFormSectionListItems(section, sectionData) {
     var items = [];
+    var sectionItems = {};
     
     if (sectionData.fields) {
         $.each(sectionData.fields, function(key, data) {
             data.section = section;
-            $.merge(items, createFormFieldListItems(key, data));
+            var _items = createFormFieldListItems(key, data);
+            sectionItems[key] = _items;
+            $.merge(items, _items);
+            if (data.showIf && data.showIf[0] in sectionData.fields) {
+                $(sectionItems[data.showIf[0]]).find('.changeElement').change(function() {
+                    showIfCheck(this, _items, data.showIf[1]);
+                });
+                showIfCheck($(sectionItems[data.showIf[0]]).find('.changeElement'), _items, data.showIf[1]);
+            }
         });
     } else if (sectionData.tablefields) {
         $.merge(items, [createFormTable(section, sectionData)]);
@@ -59,12 +83,12 @@ function createFormFieldListItem(key, fieldData) {
     switch (fieldData.type) {
     
         case 'time':
-            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).attr('class','timeData').attr('id',id));
+            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).addClass('timeData').attr('id',id));
             li.append('seconds');
             break;
         case 'file':
-            li.append(createSelectBox(fileListTypes(), fieldData.constant).attr('class','filePrefix').attr('name', key+'_prefix').attr('section',section));
-            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).attr('class','fileData').attr('id',id));
+            li.append(createSelectBox(fileListTypes(), fieldData.constant).addClass('filePrefix').attr('name', key+'_prefix').attr('section',section));
+            li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).addClass('fileData').attr('id',id));
             break;
         case 'number':
             var input = $('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).attr('id',id);
@@ -83,11 +107,11 @@ function createFormFieldListItem(key, fieldData) {
             break;
         case 'checkbox':
             li.append($('<input/>').attr('type','hidden').attr('name', key).attr('section', section).attr('value', '0'));
-            li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', '1').attr('checked', parseInt(fieldData.value) ? 'checked':'').attr('id',id));
+            li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', '1').addClass('changeElement').attr('checked', parseInt(fieldData.value) ? 'checked':'').attr('id',id));
             break;
         case 'select':
             var options = 'options' in fieldData ? fieldData.options : [];
-            li.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).attr('id',id));
+            li.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).addClass('changeElement').attr('id',id));
             break;
         case 'paragraph':
             li.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows','5').attr('section', section).attr('id',id));
@@ -101,7 +125,8 @@ function createFormFieldListItem(key, fieldData) {
         li.append('<span class="helptext">' + fieldData.description + '</span>');
     }
 
-    return li;
+    //return a dom element
+    return li.get(0);
 }
 
 function stopSectionEditing(titleField) {
@@ -153,7 +178,7 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
                         params.section = adminSection;
                         break;
                     case 'module':
-                        params.module = moduleID,
+                        params.module = moduleID;
                         break;
                 }
                 
@@ -176,8 +201,10 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
     var cell = $('<td colspan="2" />');
 
     var list = $('<ul class="formfields" />');
+    var items = [];
     $.each(data.sectionfields, function(field, _fieldData) {
         var fieldData = jQuery.extend(true, {}, _fieldData);
+
         if (typeof sectionData[field] != 'undefined') {
             fieldData.value = sectionData[field];
         }
@@ -185,8 +212,17 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
             fieldData.value = sectionID;
         }
         fieldData.section = section;
-        field = sectionID +'['+field+']';
-        list.append(createFormFieldListItem(field, fieldData));
+        fieldName = sectionID +'['+field+']';
+        var item = createFormFieldListItem(fieldName, fieldData);
+        items[field] = item;
+        list.append(item);
+        
+        if (fieldData.showIf && fieldData.showIf[0] in data.sectionfields) {
+            $(items[fieldData.showIf[0]]).find('.changeElement').change(function() {
+                showIfCheck(this, item, fieldData.showIf[1]);
+            });
+            showIfCheck($(items[fieldData.showIf[0]]).find('.changeElement'), item, fieldData.showIf[1]);
+        }
     });
     cell.append(list);
     var div = $('<div class="rowbuttons" />');
@@ -209,7 +245,7 @@ function createFormSectionTable(section, data) {
     }
     
     //table
-    var table = $('<table />').attr('id', section).attr('class','subtable');
+    var table = $('<table />').attr('id', section).addClass('subtable');
     var body = $('<tbody>');
 
     //go through each item in the sections array
@@ -239,7 +275,7 @@ function createFormSectionTable(section, data) {
             var sectionData = { 'TITLE':'New Item'}
             $.each(createSectionTableRow(section, data, sectionID, sectionData), function(i,row) {
                 body.append(row);
-                row.addClass('notsaved').addClass('editing');
+                row.addClass('notsaved editing');
                 if (row.hasClass('editrow')) {
                     row.show();
                 }
@@ -265,7 +301,7 @@ function createFormTable(section, data) {
         li.append('<label>' + data.label + '</label>');
     }
     
-    var table = $('<table />').attr('id', section).attr('class','subtable');
+    var table = $('<table />').attr('id', section).addClass('subtable');
     var head = '<thead><tr>';
     var fields = [];
     $.each(data.tablefields, function(key, fieldData) {

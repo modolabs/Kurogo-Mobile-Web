@@ -9,10 +9,10 @@
             "SUBTITLE":{"label":"Subtitle","description":"(Optional) Subtitle for this page","type":"text"},
             "SHOW_TITLE":{"label":"Show title","description":"Show the title in the detail view. You should suppress the title if it is present in the actual content","type":"checkbox","default":1},
             "CONTENT_TYPE":{"label":"Content type", "description":"The type of content to retrieve","type":"select","optionsMethod":["ContentWebModule","getContentTypes"]},
-            "BASE_URL":{"label":"URL","description":"URL of external content","type":"text"},
-            "CONTROLLER_CLASS":{"label":"Controller","description":"","type":"text","placeholder":"HTMLDataController"},
-            "CONTENT_HTML":{"label":"Content","description":"HTML of content for this page","type":"paragraph"},
-            "HTML_ID":{"label":"HTML ID","description":"ID of html element to use in document","type":"text"}
+            "BASE_URL":{"label":"URL","description":"URL of external content","type":"text","showIf":["CONTENT_TYPE",["html_url","rss"]]},
+            "CONTROLLER_CLASS":{"label":"Controller","description":"","type":"text","placeholder":"HTMLDataController", "showIf":["CONTENT_TYPE","html_url"]},
+            "CONTENT_HTML":{"label":"Content","description":"HTML of content for this page","type":"paragraph","showIf":["CONTENT_TYPE","html"]},
+            "HTML_ID":{"label":"HTML ID","description":"ID of html element to use in document","type":"text","showIf":["CONTENT_TYPE","html_url"]}
         },
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",
