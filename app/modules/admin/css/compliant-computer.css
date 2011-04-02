@@ -142,7 +142,7 @@ nav a.current {
 	font-weight: 300;
 	line-height: 1.2em;
 	color: #555;
-	margin: 0 0 20px 0;
+	margin: 0 0 10px 0;
 	padding: 0 0 8px 0;
 	border-bottom: 1px solid #ddd;
 }
@@ -227,8 +227,12 @@ label {
 	line-height: 1.6em;
 	font-weight: bold;
 }
-.helptext, .checkitem label, .tallfield textarea, table.subtable, .infotext {
+.helptext, .checkitem label, .tallfield textarea, .infotext {
 	margin-left: 150px;		/* same as width plus padding-right of label */
+}
+
+.tallfield .helptext {
+/*    margin-left: 0; */
 }
 
 .infotext {
@@ -261,10 +265,10 @@ label {
 	text-align: left;
 }
 input.field0 {
-	width: 90px;
+	width: 130px;
 }
 input.field1 {
-	width: 140px;
+	width: 150px;
 }
 input.field1s {
 	width: 120px;
@@ -310,7 +314,6 @@ table {
 }
 table.subtable {
 	border: 1px solid #e0e0e0;
-	width: 455px;
 }
 th, td {
 	padding: 3px;
@@ -581,4 +584,36 @@ h1 img {
 #message.errormessage {
     background-color: #A00;
     color: white;
+}
+
+#moduleSections {
+    height: 30px;
+    margin: 0;
+    padding: 0 0 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+#moduleDescription {
+}
+
+
+#moduleSections li {
+    text-align: center;
+    float:left;
+    list-style: none;
+    padding: 0 10px 0 10px;
+    line-height: 30px;
+}
+
+#moduleSections li.selected {
+    background-color: #ccc;
+    border-radius: 8px;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px;
+}
+
+
+#moduleSections li a {
+    text-decoration:none;
+    display: block;
 }

@@ -1,10 +1,13 @@
 {
-    "module": {
+    "options": {
+        "title":"Options",
+        "description":"",
         "fields":{
             "MAX_RESULTS":{"label":"Videos per page","type":"number","config":"module","section":"module","description":"Maximum number of videos to show per page"}
        }
     },
     "feeds": {
+        "title":"Data configuration",
         "label":"Video feeds",
         "description":"",
         "config":"feeds",

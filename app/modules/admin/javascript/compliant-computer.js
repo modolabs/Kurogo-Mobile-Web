@@ -240,9 +240,6 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
 function createFormSectionTable(section, data) {
     //create main list item
     var li = $('<li>').attr('class', 'tallfield');
-    if (data.label) {
-        li.append('<label>' + data.label + '</label>');
-    }
     
     //table
     var table = $('<table />').attr('id', section).addClass('subtable');
@@ -297,9 +294,6 @@ function createFormSectionTable(section, data) {
 function createFormTable(section, data) {
 
     var li = $('<li>').attr('class', 'tallfield');
-    if (data.label) {
-        li.append('<label>' + data.label + '</label>');
-    }
     
     var table = $('<table />').attr('id', section).addClass('subtable');
     var head = '<thead><tr>';
@@ -337,10 +331,6 @@ function createFormTable(section, data) {
     
     table.append(body);
     li.append(table);
-
-    if (data.description) {
-        li.append('<span class="helptext">' + data.description + '</span>');
-    }
 
     return li;
 }

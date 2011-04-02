@@ -13,11 +13,14 @@
        }
     },
     "strings": {
+        "title":"Text strings",
+        "description":"",
         "fields": {
             "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module."}
         }
     },
     "pages": {
+        "title":"Page titles",
         "label":"Page titles",
         "config":"pages",
         "description":"<strong>Page title</strong>: displayed at the top of the page. <strong>Breadcrumb</strong>: Displayed in drill-up navigation, if any, within lower pages. <strong>Breadcrumb (long)</strong>: Displayed in drill-up navigation within lower pages on devices (e.g., tablets) with significantly larger screens. Any blank field will be left in its default/system-generated state.",

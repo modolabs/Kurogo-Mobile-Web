@@ -1,5 +1,6 @@
 {
     "feeds": {
+        "title":"Data Configuration",
         "label":"Data Configuration",
         "description":"",
         "config":"feeds",

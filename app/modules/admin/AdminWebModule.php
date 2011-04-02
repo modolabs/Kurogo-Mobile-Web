@@ -166,6 +166,8 @@ class AdminWebModule extends WebModule {
                             $this->assign('moduleName', $module->getModuleName());
                             $this->assign('moduleID', $module->getConfigModule());
                             $section = $moduleID;
+                            $moduleSection = $this->getArg('section','general');
+                            $this->assign('moduleSection',$moduleSection);
                         }
                     } catch (Exception $e) {
                         $this->redirectTo($this->page, array());

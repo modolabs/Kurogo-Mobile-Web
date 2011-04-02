@@ -5,7 +5,8 @@ $(document).ready(function() {
     });
     
     if (typeof moduleID != 'undefined') {
-        makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID}, processModuleData);
+        makeAPICall('GET', 'admin','getconfigsections', { 'v':1,'type':'module','module':moduleID}, processModuleSections);
+        makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID,'section':adminSection}, processModuleData); 
     
         $('#adminForm').submit(function(e) {
             var params = { 'v':1, 'type':'module', 'module':moduleID, 'data':{}};
@@ -30,7 +31,7 @@ $(document).ready(function() {
             });
                         
             makeAPICall('POST','admin','setconfigdata', params, function() { showMessage('Configuration saved'); 
-               makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID}, processModuleData); 
+               makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID,'section':adminSection}, processModuleData); 
             });
             return false;
         });
@@ -88,14 +89,28 @@ function updateModuleLayoutSections() {
     $('.springboard input').each(function(i) { $(this).attr('section', $(this).parents('.springboard').attr('section')) });
 }
 
+function processModuleSections(data) {
+    $("#moduleSections").html('');
+    $.each(data, function(section, sectionTitle) {
+        var li = $('<li />').append('<a href="?module='+moduleID+'&section='+section+'">'+sectionTitle+'</a>').click(function() {
+            $('#moduleSections .selected').removeClass('selected');
+            adminSection=section;
+            $(this).addClass('selected');
+            makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID,'section':adminSection}, processModuleData); 
+            return false;
+        });
+        if (section==adminSection) {
+            li.addClass('selected');
+        }
+        $("#moduleSections").append(li);
+    });
+}
     
 function processModuleData(data) {
     $('#moduleDescription').html(data.description);
     $("#adminFields").html('');
-    $.each(data, function(section, sectionData) {
-        $.each(createFormSectionListItems(section, sectionData), function(k,element) {
-            $("#adminFields").append(element);
-        });
+    $.each(createFormSectionListItems(data.section, data), function(k,element) {
+        $("#adminFields").append(element);
     });
 }
     

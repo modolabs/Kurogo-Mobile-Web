@@ -1,10 +1,13 @@
 {
-    "module": {
+    "options": {
+        "title":"Options",
+        "description":"",
         "fields":{
             "MAX_RESULTS":{"label":"Stories per page","type":"number","config":"module","section":"module","description":"Maximum number of news stories to show per page","placeholder":10}
        }
     },
     "feeds": {
+        "title":"Data Configuration",
         "label":"Feeds",
         "description":"",
         "config":"feeds",

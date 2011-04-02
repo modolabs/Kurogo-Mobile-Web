@@ -1,5 +1,7 @@
 {
-    "module": {
+    "options": {
+        "title":"Options",
+        "description":"",
         "fields":{
              "display_type":{"label":"Link Display","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the links"}
       }
@@ -10,6 +12,7 @@
       }
     },
     "links": {
+        "title":"Links",
         "label":"Links",
         "description":"",
         "config":"links",
