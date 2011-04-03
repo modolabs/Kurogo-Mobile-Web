@@ -4,8 +4,7 @@
     <tr>
         <th colspan="2">Module name</th>
         <th>ID</th>
-        <th>Disabled</th>
-<!--        <th>Home<br/>Screen</th> -->
+        <th>Enabled</th>
         <th>Protect</th>
         <th>SSL</th>
         <th>Federated<br/>Search</th>
@@ -17,8 +16,7 @@
     <td><img src="/modules/home/images/compliant/{$moduleData.id}.png" width="30" height="30" alt="{$moduleData.title|escape}" /></td>
     <td><a href="{$moduleData.url}">{$moduleData.title|escape}</a></td>
     <td>{$moduleData.id}</td>
-    <td><input type="hidden" name="{$moduleData.id}[disabled]" value="0" /> <input type="checkbox" name="{$moduleData.id}[disabled]" value="1"{if $moduleData.disabled} checked{/if} /></td>
-<!--     <td>x</td> -->
+    <td><input type="hidden" name="{$moduleData.id}[disabled]" value="1" /> <input type="checkbox" name="{$moduleData.id}[disabled]" value="0"{if !$moduleData.disabled} checked{/if} /></td>
     <td><input type="hidden" name="{$moduleData.id}[protected]" value="0" /> <input type="checkbox" name="{$moduleData.id}[protected]" value="1"{if $moduleData.protected} checked{/if} /></td>
     <td><input type="hidden" name="{$moduleData.id}[secure]" value="0" /> <input type="checkbox" name="{$moduleData.id}[secure]" value="1"{if $moduleData.secure} checked{/if} /></td>
     <td><input type="hidden" name="{$moduleData.id}[search]" value="0" /> <input type="checkbox" name="{$moduleData.id}[search]" value="1"{if $moduleData.search} checked{/if} /></td>
