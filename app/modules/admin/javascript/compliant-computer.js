@@ -19,10 +19,14 @@ function createFormFieldListItems(key, fieldData) {
 
 function showIfCheck(element, items, value) {
     var show = false;
+    var val = $(element).val();
+    if (element.type=='checkbox') {
+        var val = element.checked ? val : '0';
+    }
     if ($.isArray(value)) {
-        show = ($.inArray($(element).val(), value) != -1);
+        show = ($.inArray(val, value) != -1);
     } else  {
-        show = $(element).val() == value;
+        show = val == value;
     }
 
     $(items)[show?'show':'hide']();
@@ -47,7 +51,7 @@ function createFormSectionListItems(section, sectionData) {
                 $(sectionItems[data.showIf[0]]).find('.changeElement').change(function() {
                     showIfCheck(this, _items, data.showIf[1]);
                 });
-                showIfCheck($(sectionItems[data.showIf[0]]).find('.changeElement'), _items, data.showIf[1]);
+                showIfCheck($(sectionItems[data.showIf[0]]).find('.changeElement').get(0), _items, data.showIf[1]);
             }
         });
     } else if (sectionData.tablefields) {

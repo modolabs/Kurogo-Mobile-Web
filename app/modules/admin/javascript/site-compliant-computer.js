@@ -62,10 +62,8 @@ function processAdminSectionData(data) {
     $('#sectionDescription').html(data.description);
     $('#section').val(data.section);
     $("#adminFields").html('');
-    $.each(data.fields, function(key, data) {
-        $.each(createFormFieldListItems(key, data), function(k,element) {
-            $("#adminFields").append(element);
-        });
+    $.each(createFormSectionListItems(data.section, data), function(k,element) {
+        $("#adminFields").append(element);
     });
 }
     
