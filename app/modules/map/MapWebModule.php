@@ -370,8 +370,7 @@ JS;
             if ($this->numGroups > 0) {
                 if (count($categoryPath) < 2) {
                     $path = implode(MAP_CATEGORY_DELIMITER, $categoryPath);
-var_dump($categoryPath);die();
-                    //throw new Exception("invalid category path $path for multiple feed groups");
+                    throw new Exception("invalid category path $path for multiple feed groups");
                 }
                 $feedIndex = array_shift($listItemPath).MAP_CATEGORY_DELIMITER.array_shift($listItemPath);
             } else {

@@ -16,6 +16,7 @@ class ArcGISDataController extends MapDataController
     }
     
     public function getProjection() {
+        $this->initializeParser();
         return $this->parser->getProjection();
     }
 

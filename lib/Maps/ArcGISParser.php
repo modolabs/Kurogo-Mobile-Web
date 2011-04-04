@@ -85,8 +85,8 @@ class ArcGISFeature implements MapFeature
     // if we want to turn off display for certain fields
     // TODO put this in a more accessible place
     private $blackList = array();
-    
-    public function __construct($attributes, $geometry=null, $index=null, $category=null)
+
+    public function __construct($attributes, $geometry, $index, $category)
     {
         $this->index = $index;
         $this->category = $category;
