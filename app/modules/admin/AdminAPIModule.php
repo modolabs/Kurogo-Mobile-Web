@@ -221,6 +221,7 @@ class AdminAPIModule extends APIModule
                 }
                 
                 $fieldData = $sectionData['fields'][$key];
+                break;
             
             case 'table':
             case 'section':
