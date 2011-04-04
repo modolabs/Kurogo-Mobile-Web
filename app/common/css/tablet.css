@@ -1476,6 +1476,12 @@ html, body, #nonfooternav {
 	width: 45px;
   margin-top: 5px;
 }
+#footernav a div {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
 
 #slideleft,
 #slideright {

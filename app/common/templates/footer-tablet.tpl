@@ -27,7 +27,7 @@
             <div class="module{if $item['class']} {$item['class']}{/if}">
               <a href="{$item['url']}">
                 <img src="{$item['img']}" alt="{$item['title']}" />
-                <br/>{$item['shortTitle']}
+                <div>{$item['shortTitle']}</div>
                 {if isset($item['badge'])}
                   <span class="badge">{$item['badge']}</span>
                 {/if}
