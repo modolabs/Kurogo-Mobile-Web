@@ -252,7 +252,7 @@ abstract class DataController
         }
         
         $controller->init($args);
-        
+
         return $controller;
     }
     
@@ -279,7 +279,7 @@ abstract class DataController
      * @param DataParser $parser optional, a alternative data parser to use. 
      * @return mixed the parsed data. This value is data dependent
      */
-    protected function parseData($data, DataParser $parser=null) {
+    protected function parseData($data, DataParser $parser=null) {       
         if (!$parser) {
             $parser = $this->parser;
         }
