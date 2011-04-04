@@ -55,7 +55,12 @@ class Kurogo
     }
     
     public static function checkCurrentVersion() {
-        $url = "http://modolabs.com/kurogo/version?version="  . KUROGO_VERSION;
+        $url = "http://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(
+            'version'=>KUROGO_VERSION,
+            'base'=>FULL_URL_BASE,
+            'site'=>SITE_KEY,
+            
+        ));
         return trim(file_get_contents($url));
     }
 }

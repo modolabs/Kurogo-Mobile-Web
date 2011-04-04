@@ -239,6 +239,11 @@ label {
     margin-top: -18px;
 }
 
+.error {
+    background-color: #fdd7de;
+    padding: .5em;
+}
+
 .helptext {
 	display: block;
 	padding: 2px 0 0 4px;
