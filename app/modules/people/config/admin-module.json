@@ -4,7 +4,8 @@
         "label":"Data Configuration",
         "description":"",
         "config":"feeds",
-        "sectionfields":{
+        "sectiontype":"section",
+        "fields":{
             "section":{"label":"Section", "description":"Programmatic id for this section", "type":"label"},
             "TITLE":{"label":"Title", "description":"Label for this connection", "type":"text","omitIfBlank":"true"},
             "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of directory service. Should be a PeopleController class", "type":"select","optionsMethod":["PeopleController","getPeopleControllers"]},

@@ -2,6 +2,7 @@
     "options": {
         "title":"Options",
         "description":"",
+        "sectiontype":"fields",
         "fields":{
             "UserCalendarListController":{"label":"User Calendars","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getUserCalendarListController"],"description":"Certain services can support personal calendars. If you use an authentication service that has personal calendars, you can use it in the calendar module."},
             "ResourceListController":{"label":"Resource Calendars","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getResourceListController"],"description":"Certain services can support shared resource calendars. If you use an authentication service that has resources, you can use it in the calendar module."}
@@ -12,7 +13,8 @@
         "label":"Calendar feeds",
         "description":"",
         "config":"feeds",
-        "sectionfields":{
+        "sectiontype":"section",
+        "fields":{
             "section":{"label":"ID", "description":"Programmatic id for this calendar", "type":"label"},
             "TITLE":{"label":"Title", "description":"Label for this feed", "type":"text"},
             "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"text","placeholder":"RSSDataController","omitBlankValue":true},

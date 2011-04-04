@@ -2,6 +2,7 @@
     "options": {
         "title":"Options",
         "description":"",
+        "sectiontype":"fields",
         "fields":{
              "display_type":{"label":"Link Display","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the links"}
       }
@@ -16,7 +17,8 @@
         "label":"Links",
         "description":"",
         "config":"links",
-        "sectionfields":{
+        "sectiontype":"section",
+        "fields":{
             "title":{"label":"Title", "description":"Label for this link", "type":"text"},
             "url":{"label":"URL","description":"Full URL for the link","type":"text"},
             "icon":{"label":"Icon","description":"(Optional) Name of icon file (located in links theme folder)","type":"text"}

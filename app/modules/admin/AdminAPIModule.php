@@ -77,100 +77,122 @@ class AdminAPIModule extends APIModule
         $sectionData = $configData[$section];
         $sectionData['section'] = $section;
 
-        if (isset($sectionData['fields'])) {
-            foreach ($sectionData['fields'] as $key=>&$field) {
-                if (isset($field['valueMethod'])) {
-                    $field['value'] = call_user_func(array($module, $field['valueMethod']));
-                } elseif ($type=='site') {
-                    switch ($field['config'])
-                    {
-                        case 'site':
-                            $field['value'] = $this->getUnconstantedValue(Kurogo::getOptionalSiteVar($key, $field['section']), $constant);
-                            if ($constant) {
-                                $field['constant'] = $constant;
-                            }
-                            break;
-                        case 'strings':
-                            $field['value'] = Kurogo::getOptionalSiteString($key);
-                            break;
-                        default: 
-                            throw new Exception("Unknown config " . $field['config']);
-                            break;
-                    }
-                } else {
-                    $field['value'] = $module->getOptionalModuleVar($key, isset($field['default']) ? $field['default'] : '', $field['section'], $field['config']);
-                }
-                
-                switch ($field['type']) 
-                {
-                    case 'paragraph':
-                        if (is_array($field['value'])) {
-                            $field['value'] = implode("\n\n", $field['value']);
+        switch ($sectionData['sectiontype'])
+        {
+            case 'fields':
+                foreach ($sectionData['fields'] as $key=>&$field) {
+                    if (isset($field['valueMethod'])) {
+                        $field['value'] = call_user_func(array($module, $field['valueMethod']));
+                    } elseif ($type=='site') {
+                        switch ($field['config'])
+                        {
+                            case 'site':
+                                $field['value'] = $this->getUnconstantedValue(Kurogo::getOptionalSiteVar($key, $field['section']), $constant);
+                                if ($constant) {
+                                    $field['constant'] = $constant;
+                                }
+                                break;
+                            case 'strings':
+                                $field['value'] = Kurogo::getOptionalSiteString($key);
+                                break;
+                            default: 
+                                throw new Exception("Unknown config " . $field['config']);
+                                break;
                         }
-                        break;
-                    case 'select':
-                        if (isset($field['optionsMethod'])) {
-                            if (is_array($field['optionsMethod'])) {
-                                $field['options'] = call_user_func($field['optionsMethod']);
-                            } else {
-                                $field['options'] = $module->$field['optionsMethod']();
+                    } else {
+                        $field['value'] = $module->getOptionalModuleVar($key, isset($field['default']) ? $field['default'] : '', $field['section'], $field['config']);
+                    }
+                    
+                    switch ($field['type']) 
+                    {
+                        case 'paragraph':
+                            if (is_array($field['value'])) {
+                                $field['value'] = implode("\n\n", $field['value']);
                             }
-                            unset($field['optionsMethod']);
+                            break;
+                        case 'select':
+                            if (isset($field['optionsMethod'])) {
+                                if (is_array($field['optionsMethod'])) {
+                                    $field['options'] = call_user_func($field['optionsMethod']);
+                                } else {
+                                    $field['options'] = $module->$field['optionsMethod']();
+                                }
+                                unset($field['optionsMethod']);
+                            }
+                            
+                            if (isset($field['optionsFirst'])) {
+                                $field['options'] = array_merge(array(''=>$field['optionsFirst']), $field['options']);    
+                                unset($field['optionsFirst']);
+                            }
+                    }
+    
+                    $field['value'] = $this->getUnconstantedValue($field['value'], $constant);
+                    if ($constant) {
+                        $field['constant'] = $constant;
+                    }
+                }
+                break;
+                
+            case 'table':
+                if (isset($sectionData['tablerowsmethod'])) {   
+                    if (is_array($sectionData['tablerowsmethod'])) {
+                        $sectionData['tablerows'] = call_user_func($sectionData['tablerowsmethod']);
+                    } else {
+                        $sectionData['tablerows'] = $module->$sectionData['tablerowsmethod']();
+                    }
+                    unset($sectionData['tablerowsmethod']);
+                }
+                break;
+            case 'section':
+                if (isset($sectionData['sectionsmethod'])) {
+                    if (is_array($sectionData['sectionsmethod'])) {
+                        $sectionData['sections'] = call_user_func($sectionData['sectionsmethod']);
+                    } else {
+                        $sectionData['sections'] = $module->$sectionData['sectionsmethod']();
+                    }
+                    unset($sectionData['sectionsmethod']);
+        
+                    foreach ($sectionData['fields'] as $key=>&$field) {
+                        switch ($field['type']) 
+                        {
+                            case 'select':
+                                if (isset($field['optionsMethod'])) {
+                                    $field['options'] = call_user_func($field['optionsMethod']);
+                                    unset($field['optionsMethod']);
+                                }
+        
+                                if (isset($field['optionsFirst'])) {
+                                    $field['options'] = array_merge(array(''=>$field['optionsFirst']), $field['options']);    
+                                    unset($field['optionsFirst']);
+                                }
                         }
                         
-                        if (isset($field['optionsFirst'])) {
-                            $field['options'] = array_merge(array(''=>$field['optionsFirst']), $field['options']);    
-                            unset($field['optionsFirst']);
+                    }
+                    
+                    foreach ($sectionData['sections'] as $section=>&$sectionFields) {
+                        foreach($sectionFields as $key=>&$value) {
+                            $value = $this->getUnconstantedValue($value, $constant);
+                            if ($constant) {
+                                $value = array($constant, $value);
+                            }
                         }
-                }
-
-                $field['value'] = $this->getUnconstantedValue($field['value'], $constant);
-                if ($constant) {
-                    $field['constant'] = $constant;
-                }
-            }
-            
-        } elseif (isset($sectionData['tablerowsmethod'])) {
-            if (is_array($sectionData['tablerowsmethod'])) {
-                $sectionData['tablerows'] = call_user_func($sectionData['tablerowsmethod']);
-            } else {
-                $sectionData['tablerows'] = $module->$sectionData['tablerowsmethod']();
-            }
-            unset($sectionData['tablerowsmethod']);
-        } elseif (isset($sectionData['sectionsmethod'])) {
-            if (is_array($sectionData['sectionsmethod'])) {
-                $sectionData['sections'] = call_user_func($sectionData['sectionsmethod']);
-            } else {
-                $sectionData['sections'] = $module->$sectionData['sectionsmethod']();
-            }
-            unset($sectionData['sectionsmethod']);
-
-            foreach ($sectionData['sectionfields'] as $key=>&$field) {
-                switch ($field['type']) 
-                {
-                    case 'select':
-                        if (isset($field['optionsMethod'])) {
-                            $field['options'] = call_user_func($field['optionsMethod']);
-                            unset($field['optionsMethod']);
-                        }
-
-                        if (isset($field['optionsFirst'])) {
-                            $field['options'] = array_merge(array(''=>$field['optionsFirst']), $field['options']);    
-                            unset($field['optionsFirst']);
-                        }
-                }
-                
-            }
-            
-            foreach ($sectionData['sections'] as $section=>&$sectionFields) {
-                foreach($sectionFields as $key=>&$value) {
-                    $value = $this->getUnconstantedValue($value, $constant);
-                    if ($constant) {
-                        $value = array($constant, $value);
                     }
                 }
-            }
-        }
+                break;
+            case 'acl':
+
+                if ($type=='site') {
+                    $sectionData['acls'] = Kurogo::getOptionalSiteVar('acl', array(), 'authentication');
+                    $sectionData['adminacls'] = Kurogo::getOptionalSiteVar('adminacl', array(), 'authentication');
+                } else {
+                    $sectionData['acls'] = $module->getOptionalModuleVar('acl', array(), 'authentication');
+                    $sectionData['adminacls'] = $module->getOptionalModuleVar('acl', array(), 'authentication');
+                }
+                break;
+            default:
+                throw new Exception("Section type " . $sectionData['sectiontype'] . " not understood for section $section");
+            
+        }         
     
         return $sectionData;
     }
@@ -179,31 +201,37 @@ class AdminAPIModule extends APIModule
         switch ($type)
         {
             case 'site':
-                $adminData = $this->getAdminData('site', $subType);
+                $sectionData = $this->getAdminData('site', $subType);
                 $typeKey = 'site';
                 break;
             case 'module':
-                $adminData = $this->getAdminData($subType, $section);
+                $sectionData = $this->getAdminData($subType, $section);
                 $typeKey = 'module-' . $subType->getConfigModule();
                 break;
             default:
                 throw new Exception("Invalid type $type");
         }
-                
-        if (isset($adminData['fields'])) {
-            if (!isset($adminData['fields'][$key])) {
-                throw new Exception("Invalid key $key for $type section $section");
-            }
             
-            $fieldData = $adminData['fields'][$key];
-        } elseif (isset($adminData['tablefields'])) {
-            $fieldData = $adminData;
-            $arrayFieldsKey = 'tablefields';
-        } elseif (isset($adminData['sectionfields'])) {
-            $fieldData = $adminData;
-            $arrayFieldsKey = 'sectionfields';
-        } else {
-            throw new Exception("Unable to handle $type ($subType) $section. No fields, no tablefields, no sectionfields");
+        switch ($sectionData['sectiontype'])
+        {
+            case 'fields':
+            
+                if (!isset($sectionData['fields'][$key])) {
+                    throw new Exception("Invalid key $key for $type section $section");
+                }
+                
+                $fieldData = $sectionData['fields'][$key];
+            
+            case 'table':
+            case 'section':
+                $fieldData = $sectionData;
+                break;
+            case 'acl':
+                throw new Exception("Haven't handled ACL saving yet");
+                break;
+
+            default:
+                throw new Exception("Unable to handle $type ($subType) $section. No fields, no tablefields, no sectionfields");
         }
         
         $configKey = $typeKey . '-' . $fieldData['config'];
@@ -230,11 +258,11 @@ class AdminAPIModule extends APIModule
                     continue;
                 } 
 
-                if (!isset($fieldData[$arrayFieldsKey][$k])) {
+                if (!isset($fieldData['fields'][$k])) {
                     throw new Exception("Invalid key $k for $type:" . $fieldData['config'] . " section $key");
                 }
                 
-                if (isset($fieldData[$arrayFieldsKey][$k]['omitBlankValue']) && $fieldData[$arrayFieldsKey][$k]['omitBlankValue'] && strlen($v)==0) {
+                if (isset($fieldData['fields'][$k]['omitBlankValue']) && $fieldData['fields'][$k]['omitBlankValue'] && strlen($v)==0) {
                     $changed = $changed || $this->configs[$configKey]->clearVar($key, $k);
                     continue;
                 } else {
@@ -243,7 +271,7 @@ class AdminAPIModule extends APIModule
                         $v = constant($prefix) . '/' . $v;
                     }
                     
-                    if ($fieldData[$arrayFieldsKey][$k]['type']=='paragraph') {
+                    if ($fieldData['fields'][$k]['type']=='paragraph') {
                         $v = explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $v));
                     }
                     if (!$this->configs[$configKey]->setVar($key, $k, $v, $c)) {

@@ -2,6 +2,7 @@
     "general": {
         "title":"General Information",
         "description":"Settings common to all modules",
+        "sectiontype":"fields",
         "fields":{
             "id": {"label":"Module ID","type":"label","config":"module","section":"module","description":"The unique internal ID for this module. This can only be changed in the source code.", "valueMethod":"getID"},
             "configModule": {"label":"Config ID","type":"label","config":"module","section":"module","description":"The configuration ID for this module. It represents the configuration folder for this module's data. This can only be changed in the source code.", "valueMethod":"getConfigModule"},
@@ -15,6 +16,7 @@
     "strings": {
         "title":"Text strings",
         "description":"",
+        "sectiontype":"fields",
         "fields": {
             "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module."}
         }
@@ -24,7 +26,8 @@
         "label":"Page titles",
         "config":"pages",
         "description":"<strong>Page title</strong>: displayed at the top of the page. <strong>Breadcrumb</strong>: Displayed in drill-up navigation, if any, within lower pages. <strong>Breadcrumb (long)</strong>: Displayed in drill-up navigation within lower pages on devices (e.g., tablets) with significantly larger screens. Any blank field will be left in its default/system-generated state.",
-        "tablefields":{
+        "sectiontype":"table",
+        "fields":{
             "section":{"heading":"Page","type":"label"},
             "pageTitle":{"heading":"Page title","type":"text","class":"field0","omitBlankValue":true},
             "breadcrumbTitle":{"heading":"Breadcrumb","type":"text","class":"field0","omitBlankValue":true},

@@ -9,6 +9,7 @@
         "title":"Contacts",
         "label":"Emergency Contacts",
         "description":"Configures the source to edit emergency contacts",
+        "sectiontype":"fields",
         "fields":{
             "CONTROLLER_CLASS":{"label":"Contacts type","description":"Source for contacts list. <b>Drupal Module</b>: Use the included Drupal 6 module (in the add-ons folder) to create contacts on a drupal server. <b>INI File</b> store the contacts in a standard INI file located on this server.","type":"select","optionsMethod":["ContactsListDataController","getContactsListDataControllers"],"config":"feeds","section":"contacts"},
             "DRUPAL_SERVER_URL":{"label":"Drupal Server URL","description":"URL of Drupal server","type":"text","config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","DrupalContactsListDataController"]},
@@ -20,6 +21,7 @@
         "title":"Notice",
         "label":"Emergency Notice",
         "description":"Configures the source to retrieve emergency notices",
+        "sectiontype":"fields",
         "fields":{
             "CONTROLLER_CLASS":{"label":"Notice type","description":"Source for emergency notices.","type":"select","optionsMethod":["EmergencyNoticeDataController","getEmergencyNoticeDataControllers"],"config":"feeds","section":"notice"},
             "BASE_URL":{"label":"Notice Location","description":"URL of Emergency Notice Feed. Should be a standard RSS feed","type":"text","config":"feeds","section":"notice"}

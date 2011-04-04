@@ -2,6 +2,7 @@
     "url": {
         "title":"URL",
         "description":"",
+        "sectiontype":"fields",
         "fields":{
             "url":{"label":"URL","type":"text","config":"module","section":"module","description":"Full url (including http://) of the address to redirect to."}
       }
