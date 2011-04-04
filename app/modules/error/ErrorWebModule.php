@@ -51,6 +51,7 @@ class ErrorWebModule extends WebModule {
         set_exception_handler("exceptionHandlerForError");
       }
       $this->pagetype = $GLOBALS['deviceClassifier']->getPagetype();
+      $this->platform = $GLOBALS['deviceClassifier']->getPlatform();
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);
       $this->args = $args;
