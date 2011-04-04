@@ -18,7 +18,7 @@ $(document).ready(function() {
                     params.data[section] = {};
                 }
 
-                if ($(this).attr('type')!='checkbox' || this.checked) {
+                if ( !this.disabled &&  (this.type !='checkbox' || this.checked)) {
                     if (re = $(this).attr('name').match(/(.*)\[(.*)\]/)) {
                         if (typeof params.data[section][re[1]]=='undefined') {
                             params.data[section][re[1]] = {}
