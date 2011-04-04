@@ -348,7 +348,7 @@ table.subtable th {
 	border-bottom: 2px solid #999;
 }
 select.filePrefix {
-    width: 100px;
+    width: 100px !important;
 }
 input.fileData{ 
     margin-left: 10px;
