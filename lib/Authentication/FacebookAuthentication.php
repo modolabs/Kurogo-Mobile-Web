@@ -159,6 +159,14 @@ class FacebookAuthentication extends AuthenticationAuthority
             }
             
             
+
+            // facebook does not like empty options
+            foreach ($options as $option=>$value) {
+                if (strlen($value)==0) {
+                    unset($options[$option]);
+                }
+            }
+
             //save the redirect_uri so we can use it later
             $this->redirect_uri = $_SESSION['redirect_uri'] = FULL_URL_BASE . 'login/login?' . http_build_query(
                 array_merge($options, 
