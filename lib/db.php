@@ -44,7 +44,11 @@ class db {
     }
     
     require_once(LIB_DIR . "/db/db_$db_type.php");
-    $this->connection = call_user_func(array("db_$db_type", 'connection'), $config);
+    try {
+        $this->connection = call_user_func(array("db_$db_type", 'connection'), $config);
+    } catch (Exception $e) {
+        throw new Exception("Error connecting to database");
+    }
   }
   
   public function query($sql, $parameters=array(), $ignoreErrors=false, $catchErrorCodes=array())
