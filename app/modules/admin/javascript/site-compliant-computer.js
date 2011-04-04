@@ -11,11 +11,20 @@ $(document).ready(function() {
     
     $('#adminForm').submit(function(e) {
         var params = { 'v':1, 'type':'site', 'section':adminSection, 'data':{}}
+        var re;
 
         params.data[adminSection] = {};
         $('#adminForm [section]').map(function() {
-            if ($(this).attr('type')!='checkbox' || this.checked) {
-                params.data[adminSection][$(this).attr('name')] = $(this).val();
+            if ( !this.disabled &&  (this.type !='checkbox' || this.checked)) {
+
+                if (re = $(this).attr('name').match(/(.*)\[(.*)\]/)) {
+                    if (typeof params.data[adminSection][re[1]]=='undefined') {
+                        params.data[adminSection][re[1]] = {}
+                    }
+                    params.data[adminSection][re[1]][re[2]] = $(this).val();                    
+                } else {
+                    params.data[adminSection][$(this).attr('name')] = $(this).val();
+                }
             }
         });
         
