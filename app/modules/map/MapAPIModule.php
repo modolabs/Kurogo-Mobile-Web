@@ -15,7 +15,7 @@ class MapAPIModule extends APIModule
     
     // functions duped from MapWebModule
 
-    private function getDataController($categoryPath, &$listItemPath) {
+    protected function getDataController($categoryPath, &$listItemPath) {
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
 
@@ -79,7 +79,7 @@ class MapAPIModule extends APIModule
         return $data;
     }
 
-    private function getCategoriesAsArray() {
+    protected function getCategoriesAsArray() {
         $category = $this->getArg('category', null);
         if ($category !== null) {
             return explode(MAP_CATEGORY_DELIMITER, $category);
