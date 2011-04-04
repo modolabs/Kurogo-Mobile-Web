@@ -228,6 +228,37 @@ class MapAPIModule extends APIModule
                 $this->setResponseVersion(1);
             
                 break;
+
+                case 'geocode':
+                    $locationSearchTerms = $this->getArg('q');
+                    
+                    $geocodingDataControllerClass = 'GeocodingSearchDataController';
+                    $geocodingDataParserClass = 'GeocodingSearchDataParser';
+                    $geocoding_base_url = $this->getOptionalModuleVar('GEOCODING_BASE_URL');
+
+                    $arguments = array('BASE_URL' => $geocoding_base_url,
+                                  'CACHE_LIFETIME' => 86400,
+                                  'PARSER_CLASS' => $geocodingDataParserClass);
+
+                    $controller = DataController::factory($geocodingDataControllerClass, $arguments);
+                    $controller->addCustomFilters($locationSearchTerms);
+                    $response = $controller->getParsedData();
+
+                    // checking for Geocoding service error
+                    if ($response['errorCode'] == 0) {
+
+                        unset($response['errorCode']);
+                        unset($response['errorMessage']);
+                        $this->setResponse($response);
+                        $this->setResponseVersion(1);
+                    }
+                    else {
+                        $kurogoError = new KurogoError($response['errorCode'], "Geocoding service Erroe", $response['errorMessage']);
+                        $this->setResponseError($kurogoError);
+                        $this->setResponseVersion(1);
+                    }
+                    break;
+                    
             default:
                 $this->invalidCommand();
                 break;
