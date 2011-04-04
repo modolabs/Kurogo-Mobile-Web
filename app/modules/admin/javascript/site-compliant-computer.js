@@ -5,10 +5,6 @@ $(document).ready(function() {
     
     makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
     
-    if (adminSection=='setup') {
-        checkVersion();
-    }
-    
     $('#adminForm').submit(function(e) {
         var params = { 'v':1, 'type':'site', 'section':adminSection, 'data':{}}
         var re;
@@ -39,9 +35,6 @@ $(document).ready(function() {
             $('nav ul li a[class=current]').attr('class','');
             $(this).attr('class','current');
             makeAPICall('GET','admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
-            if (adminSection=='setup') {
-                checkVersion();
-            }
         }
         return false;
     });
@@ -52,7 +45,7 @@ function checkVersion() {
 }
 
 function processCheckVersion(data) {
-    KUROGO_LOCAL_VERSION=data.local;
+    KUROGO_LOCAL_VERSION = data.local;
     KUROGO_CURRENT_VERSION = data.current;
     
     var li = $('<li />');
@@ -74,5 +67,8 @@ function processAdminSectionData(data) {
     $.each(createFormSectionListItems(data.section, data), function(k,element) {
         $("#adminFields").append(element);
     });
+    if (adminSection=='setup') {
+        checkVersion();
+    }
 }
     
