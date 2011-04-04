@@ -29,12 +29,12 @@ class CoreAPIModule extends APIModule
                 foreach ($allmodules as $moduleID=>$module) {
                     if (!$module->getModuleVar('disabled', 'module')) {
                         $modules[] = array(
-                            'id'     =>$moduleID,
-                            'tag'    =>$module->getConfigModule(),
-                            'title'  =>$module->getModuleVar('title','module'),
-                            'secure' =>$module->getModuleVar('secure', 'module'),
-                            'vmin'   =>$module->getVmin(),
-                            'vmax'   =>$module->getVmax()
+                            'id'        =>$moduleID,
+                            'tag'       =>$module->getConfigModule(),
+                            'title'     =>$module->getModuleVar('title','module'),
+                            'protected' =>$module->getModuleVar('protected', 'module'),
+                            'vmin'      =>$module->getVmin(),
+                            'vmax'      =>$module->getVmax()
                         );
                     }
                 }
