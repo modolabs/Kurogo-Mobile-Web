@@ -222,8 +222,8 @@ class MapProjection
         }
 
         return array(
-            'x' => $this->adjustedX,
-            'y' => $this->adjustedY,
+            'lon' => $this->adjustedX,
+            'lat' => $this->adjustedY,
             );
     }
 
