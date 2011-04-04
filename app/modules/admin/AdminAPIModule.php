@@ -93,9 +93,6 @@ class AdminAPIModule extends APIModule
                         case 'strings':
                             $field['value'] = Kurogo::getOptionalSiteString($key);
                             break;
-                        case 'authentication':
-                            throw new Exception("Authentication not handled yet");
-                            break;
                         default: 
                             throw new Exception("Unknown config " . $field['config']);
                             break;
@@ -119,6 +116,11 @@ class AdminAPIModule extends APIModule
                                 $field['options'] = $module->$field['optionsMethod']();
                             }
                             unset($field['optionsMethod']);
+                        }
+                        
+                        if (isset($field['optionsFirst'])) {
+                            $field['options'] = array_merge(array(''=>$field['optionsFirst']), $field['options']);    
+                            unset($field['optionsFirst']);
                         }
                 }
 
@@ -151,6 +153,21 @@ class AdminAPIModule extends APIModule
                             $field['options'] = call_user_func($field['optionsMethod']);
                             unset($field['optionsMethod']);
                         }
+
+                        if (isset($field['optionsFirst'])) {
+                            $field['options'] = array_merge(array(''=>$field['optionsFirst']), $field['options']);    
+                            unset($field['optionsFirst']);
+                        }
+                }
+                
+            }
+            
+            foreach ($sectionData['sections'] as $section=>&$sectionFields) {
+                foreach($sectionFields as $key=>&$value) {
+                    $value = $this->getUnconstantedValue($value, $constant);
+                    if ($constant) {
+                        $value = array($constant, $value);
+                    }
                 }
             }
         }
@@ -209,6 +226,10 @@ class AdminAPIModule extends APIModule
             $result = true;
             $changed = false;
             foreach ($value as $k=>$v) {
+                if (preg_match("/^(.*?)_prefix$/", $k,$bits)) {
+                    continue;
+                } 
+
                 if (!isset($fieldData[$arrayFieldsKey][$k])) {
                     throw new Exception("Invalid key $k for $type:" . $fieldData['config'] . " section $key");
                 }
@@ -217,6 +238,11 @@ class AdminAPIModule extends APIModule
                     $changed = $changed || $this->configs[$configKey]->clearVar($key, $k);
                     continue;
                 } else {
+                    $prefix = isset($value[$k . '_prefix']) ? $value[$k . '_prefix'] : '';
+                    if ($prefix && defined($prefix)) {
+                        $v = constant($prefix) . '/' . $v;
+                    }
+                    
                     if ($fieldData[$arrayFieldsKey][$k]['type']=='paragraph') {
                         $v = explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $v));
                     }
@@ -389,7 +415,6 @@ class AdminAPIModule extends APIModule
 
                 }
                 
-
                 foreach ($this->changedConfigs as $config) {
                     $config->saveFile();
                 }
@@ -402,45 +427,40 @@ class AdminAPIModule extends APIModule
             case 'removeconfigsection':
                 $type = $this->getArg('type');
                 $section = $this->getArg('section','');
+                $key = $this->getArg('key', null);
                 
                 switch ($type)
                 {
                     case 'site':
-                        throw new Exception("No sections in site config. This part is not written");
+                        $sectionData = $this->getAdminData($type, $section);
+                        $config = ConfigFile::factory($sectionData['config'],'site');
                         break;
                     case 'module':
                         $moduleID = $this->getArg('module','');
-                        $key = $this->getArg('key', null);
                         try {
                             $module = WebModule::factory($moduleID);
                         } catch (Exception $e) {
                             throw new Exception('Module ' . $moduleID . ' not found');
                         }
-                        
                         $sectionData = $this->getAdminData($module, $section);
-
-                        if (!isset($sectionData['sections']) || (!isset($sectionData['sectiondelete']) || !$sectionData['sectiondelete'])) {
-                            throw new Exception("Config '$section' of module '$moduleID' does not permit removal of items");
-                        }
-
-                        if (!isset($sectionData['sections'][$key])) {
-                            throw new Exception("Section $key not found in config '$section' of module '$moduleID'");
-                        }
-
-                        $sectionIndex = isset($sectionData['sectionindex']) ? $sectionData['sectionindex'] : 'string';
                         $config = ModuleConfigFile::factory($moduleID, $sectionData['config']);
-                        
-                        if (!$result = $config->removeSection($key)) {
-                            throw new Exception("Error removing item $key from config '$section' of module '$moduleID'");
-                        } else {
-                            $config->saveFile();
-                        }
-                        
-                        $this->setResponse(true);
-                        $this->setResponseVersion(1);
                         break;
                     default:
                         throw new Exception("Invalid type $type");
+                }
+                        
+                if (!isset($sectionData['sections']) || (!isset($sectionData['sectiondelete']) || !$sectionData['sectiondelete'])) {
+                    throw new Exception("Config '$section' of module '$moduleID' does not permit removal of items");
+                }
+
+                if (!isset($sectionData['sections'][$key])) {
+                    throw new Exception("Section $key not found in config '$section' of module '$moduleID'");
+                }
+
+                if (!$result = $config->removeSection($key)) {
+                    throw new Exception("Error removing item $key from config '$section' of module '$moduleID'");
+                } else {
+                    $config->saveFile();
                 }
                 
                 $this->setResponse(true);

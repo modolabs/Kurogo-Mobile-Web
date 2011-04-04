@@ -77,6 +77,7 @@ function createFormFieldListItem(key, fieldData) {
     var section = typeof fieldData.section == 'undefined' ? '' : fieldData.section;
     var id = typeof fieldData.id == 'undefined' ? null : fieldData.id;
     var li = $('<li>').attr('class', listClass);
+    var re;
 
     if (fieldData.label) {
         li.append('<label>' + fieldData.label + '</label>');
@@ -91,7 +92,12 @@ function createFormFieldListItem(key, fieldData) {
             li.append('seconds');
             break;
         case 'file':
-            li.append(createSelectBox(fileListTypes(), fieldData.constant).addClass('filePrefix').attr('name', key+'_prefix').attr('section',section));
+            var prefixKey = key + '_prefix';
+            if (re = key.match(/(.*)\[(.*)\]/)) {
+                prefixKey = re[1] + '[' + re[2] + '_prefix]';
+            }
+        
+            li.append(createSelectBox(fileListTypes(), fieldData.constant).addClass('filePrefix').attr('name', prefixKey).attr('section',section));
             li.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).addClass('fileData').attr('id',id));
             break;
         case 'number':
@@ -112,6 +118,12 @@ function createFormFieldListItem(key, fieldData) {
         case 'checkbox':
             li.append($('<input/>').attr('type','hidden').attr('name', key).attr('section', section).attr('value', '0'));
             li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', '1').addClass('changeElement').attr('checked', parseInt(fieldData.value) ? 'checked':'').attr('id',id));
+            break;
+        case 'radio':
+            $.each(fieldData.options, function(value,label) {
+                li.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', value).attr('checked', fieldData.value==value));
+                li.append(label);
+            });
             break;
         case 'select':
             var options = 'options' in fieldData ? fieldData.options : [];
@@ -210,7 +222,12 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
         var fieldData = jQuery.extend(true, {}, _fieldData);
 
         if (typeof sectionData[field] != 'undefined') {
-            fieldData.value = sectionData[field];
+            if ($.isArray(sectionData[field])) {
+                fieldData.constant = sectionData[field][0];
+                fieldData.value = sectionData[field][1];
+            } else {
+                fieldData.value = sectionData[field];
+            }
         }
         if (field=='section') {
             fieldData.value = sectionID;
