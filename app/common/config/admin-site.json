@@ -36,7 +36,8 @@
         "description":"Select the visual theme for the site. For more information about creating and modifying themes, see the developer documentation.",
         "sectiontype":"fields",
         "fields":{
-            "ACTIVE_THEME":{"label":"Active Theme","type":"select","config":"site","optionsMethod":["WebModule","getAllThemes"],"description":"Active theme used by this site","section":"themes"}
+            "ACTIVE_THEME":{"label":"Active Theme","type":"select","config":"site","optionsMethod":["WebModule","getAllThemes"],"description":"Active theme used by this site","section":"themes"},
+            "TABLET_ENABLED":{"label":"Tablet UI Enabled","type":"checkbox","config":"site","description":"If enabled, the Tablet UI will be shown for compatible devices, otherwise tablet devices will use \"compliant\" page types.","section":"themes"}
         }
     },
     "detection":{
