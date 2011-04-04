@@ -12,9 +12,9 @@ Configuration
 
 The *PasswdAuthentication* authority has only 2 additional values beyond the standard:
 
-* *USER_FILE* - a path to the user file. This file can be placed anywhere, but it is recommended to place it in the DATA_DIR
+* *PASSWD_USER_FILE* - a path to the user file. This file can be placed anywhere, but it is recommended to place it in the DATA_DIR
   folder which is mapped to *SITE_DIR/data*. i.e. If you use the DATA_DIR constant it should not be in quotes: *DATA_DIR"/users"*
-* *GROUP_FILE* -  a path to the group file. This file can be placed anywhere, but it is recommended to place it in the DATA_DIR
+* *PASSWD_GROUP_FILE* -  a path to the group file. This file can be placed anywhere, but it is recommended to place it in the DATA_DIR
   folder which is mapped to *SITE_DIR/data*. i.e. If you use the DATA_DIR constant it should not be in quotes: *DATA_DIR"/groups"*
 
 =======================

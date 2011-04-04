@@ -5,7 +5,7 @@ Google Apps Authentication
 The Google Apps authority allows you to authenticate users in your Google Apps Domain. Because it is
 a limited access system, it is well suited to control access to modules to people in your organization.
 
-Google Apps uses a hybrid form of *OpenID* and *OAuth*. Instead of authenticating directly to Google, 
+Google Apps uses *OAuth*. Instead of authenticating directly to Google, 
 the user gets redirected to the Google Apps login page. Then they must authenticate and then 
 authorize access to the application. Your application has no access to the user's login or password.
 
@@ -23,12 +23,12 @@ Configuration
 To configure authentication, you only need to add a few parameters:
 
 * *USER_LOGIN* - Should be set to *LINK*
-* *DOMAIN* - should be set to your Google Apps domain (example.com)
+* *GOOGLEAPPS_DOMAIN* - should be set to your Google Apps domain (example.com)
 
 To allow access to domain data (like calendars)
 
-* *CONSUMER_KEY* - Consumer key provided by google (typically your domain example.com)
-* *CONSUMER_SECRET* - Consumer secret provided by google (see below on how to obtain this value)
+* *OAUTH_CONSUMER_KEY* - Consumer key provided by google (typically your domain example.com)
+* *OAUTH_CONSUMER_SECRET* - Consumer secret provided by google (see below on how to obtain this value)
 
 
 ============

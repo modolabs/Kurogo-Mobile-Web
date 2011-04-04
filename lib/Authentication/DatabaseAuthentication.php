@@ -120,12 +120,12 @@ class DatabaseAuthentication extends AuthenticationAuthority
         );
         
         foreach ($args as $arg=>$value) {
-            if (preg_match("/^(user|group|groupmember)_(.*?)_field$/", strtolower($arg), $bits)) {
+            if (preg_match("/^db_(user|group|groupmember)_(.*?)_field$/", strtolower($arg), $bits)) {
                 $key = sprintf("%s_%s", $bits[1], $bits[2]);
                 if (isset($this->fieldMap[$key])) {
                     $this->fieldMap[$key] = $value;
                 }
-            } elseif (preg_match("/^(.*?)_table$/", strtolower($arg), $bits)) {
+            } elseif (preg_match("/^db_(.*?)_table$/", strtolower($arg), $bits)) {
                 $key = $bits[1];
                 if (isset($this->tableMap[$key])) {
                     $this->tableMap[$key] = $value;
@@ -133,18 +133,18 @@ class DatabaseAuthentication extends AuthenticationAuthority
             } else {
                 switch ($arg)
                 {
-                    case 'USER_PASSWORD_HASH':
+                    case 'DB_USER_PASSWORD_HASH':
                         if (!in_array($value, hash_algos())) {
                             throw new Exception ("Hashing algorithm $value not available");
                         }
                         $this->hashAlgo = $value;
                         break;
-                    case 'USER_PASSWORD_SALT':
+                    case 'DB_USER_PASSWORD_SALT':
                         $this->hashSalt = $value;
                         break;
-                    case 'GROUP_GROUPMEMBER_PROPERTY':
+                    case 'DB_GROUP_GROUPMEMBER_PROPERTY':
                         if (in_array($value, array('group','gid'))) {
-                            throw new Exception("Invalid value for GROUP_GROUPMEMBER_PROPERTY $value. Should be gid or group");
+                            throw new Exception("Invalid value for DB_GROUP_GROUPMEMBER_PROPERTY $value. Should be gid or group");
                         }
                         $this->fieldMap['group_groupmember'] = $value;
                         break;

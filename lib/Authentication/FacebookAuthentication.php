@@ -197,19 +197,19 @@ class FacebookAuthentication extends AuthenticationAuthority
     {
         parent::init($args);
         $args = is_array($args) ? $args : array();
-        if (!isset($args['API_KEY'], $args['API_SECRET']) ||
-            strlen($args['API_KEY'])==0 || strlen($args['API_SECRET'])==0) {
+        if (!isset($args['FACEBOOK_API_KEY'], $args['FACEBOOK_API_SECRET']) ||
+            strlen($args['FACEBOOK_API_KEY'])==0 || strlen($args['FACEBOOK_API_SECRET'])==0) {
             throw new Exception("API key and secret not set");
         }
 
-        $this->api_key = $args['API_KEY'];
-        $this->api_secret = $args['API_SECRET'];
+        $this->api_key = $args['FACEBOOK_API_KEY'];
+        $this->api_secret = $args['FACEBOOK_API_SECRET'];
         if (isset($_SESSION['fb_access_token'])) {
             $this->access_token = $_SESSION['fb_access_token'];
         }
 
-        if (isset($args['API_PERMS'])) {
-            $this->perms = array_unique(array_merge($this->perms, $args['API_PERMS']));
+        if (isset($args['FACEBOOK_API_PERMS'])) {
+            $this->perms = array_unique(array_merge($this->perms, $args['FACEBOOK_API_PERMS']));
         }
     }
     

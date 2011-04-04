@@ -91,13 +91,13 @@ class GoogleAuthentication extends OAuthAuthentication
         parent::init($args);
         $args = is_array($args) ? $args : array();
 
-        if (!isset($args['CONSUMER_KEY'], $args['CONSUMER_SECRET'])) {
-            $args['CONSUMER_KEY']='anonymous';
-            $args['CONSUMER_SECRET']='anonymous';
+        if (!isset($args['OAUTH_CONSUMER_KEY'], $args['OAUTH_CONSUMER_SECRET'])) {
+            $args['OAUTH_CONSUMER_KEY']='anonymous';
+            $args['OAUTH_CONSUMER_SECRET']='anonymous';
         }
         
-        $this->consumer_key = $args['CONSUMER_KEY'];
-        $this->consumer_secret = $args['CONSUMER_SECRET'];
+        $this->consumer_key = $args['OAUTH_CONSUMER_KEY'];
+        $this->consumer_secret = $args['OAUTH_CONSUMER_SECRET'];
     }
 }
 

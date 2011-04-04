@@ -87,13 +87,13 @@ class TwitterAuthentication extends OAuthAuthentication
     {
         parent::init($args);
         $args = is_array($args) ? $args : array();
-        if (!isset($args['CONSUMER_KEY'], $args['CONSUMER_SECRET']) || 
-            strlen($args['CONSUMER_KEY'])==0 || strlen($args['CONSUMER_SECRET'])==0) {
+        if (!isset($args['OAUTH_CONSUMER_KEY'], $args['OAUTH_CONSUMER_SECRET']) || 
+            strlen($args['OAUTH_CONSUMER_KEY'])==0 || strlen($args['OAUTH_CONSUMER_SECRET'])==0) {
             throw new Exception("Twitter Consumer key and secret not set");
         }
         
-        $this->consumer_key = $args['CONSUMER_KEY'];
-        $this->consumer_secret = $args['CONSUMER_SECRET'];
+        $this->consumer_key = $args['OAUTH_CONSUMER_KEY'];
+        $this->consumer_secret = $args['OAUTH_CONSUMER_SECRET'];
     }
 }
 

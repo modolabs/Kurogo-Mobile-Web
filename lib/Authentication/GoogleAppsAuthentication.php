@@ -63,11 +63,11 @@ class GoogleAppsAuthentication extends GoogleAuthentication
         parent::init($args);
         $args = is_array($args) ? $args : array();
 
-        if (!isset($args['DOMAIN']) || strlen($args['DOMAIN'])==0) {
+        if (!isset($args['GOOGLEAPPS_DOMAIN']) || strlen($args['GOOGLEAPPS_DOMAIN'])==0) {
             throw new Exception("Google Apps Domain not set");
         }
 
-        $this->domain = $args['DOMAIN'];
+        $this->domain = $args['GOOGLEAPPS_DOMAIN'];
     }
 }
 

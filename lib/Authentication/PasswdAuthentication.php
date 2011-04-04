@@ -256,8 +256,8 @@ class PasswdAuthentication extends AuthenticationAuthority
     {
         parent::init($args);
         $args = is_array($args) ? $args : array();
-        $this->userFile = isset($args['USER_FILE']) ? $args['USER_FILE'] : null;
-        $this->groupFile = isset($args['GROUP_FILE']) ? $args['GROUP_FILE'] : null;
+        $this->userFile = isset($args['PASSWD_USER_FILE']) ? $args['PASSWD_USER_FILE'] : null;
+        $this->groupFile = isset($args['PASSWD_GROUP_FILE']) ? $args['PASSWD_GROUP_FILE'] : null;
         
         if ($this->userLogin != 'NONE') {        
             if (!is_readable($this->userFile)) {

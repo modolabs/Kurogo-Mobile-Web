@@ -29,8 +29,8 @@ Configuration
 There are a few parameters you need to configure:
 
 * *USER_LOGIN* - Must be set to LINK, which will show a link to the facebook login page.
-* *API_KEY* - Set this to the *Application ID* provided by Facebook
-* *API_SECRET* - Set this to the *Application Secret* provided by Facebook
+* *FACEBOOK_API_KEY* - Set this to the *Application ID* provided by Facebook
+* *FACEBOOK_API_SECRET* - Set this to the *Application Secret* provided by Facebook
 
 You should keep your API key and secret protected since they represent your application's identity. 
 Do not place these values in a public source code repository.
