@@ -167,7 +167,7 @@ abstract class AuthenticationAuthority
         return $this->AuthorityIndex;
     }
     
-    public function getaAthorityClass() {
+    public function getAuthorityClass() {
         return $this->authorityClass;
     }
 
@@ -266,6 +266,15 @@ abstract class AuthenticationAuthority
         return key($authorities);
     }
 
+    public static function getAuthenticationAuthorityData($index) {
+        static $configFile;
+        if (!$configFile) {
+            $configFile = self::getAuthorityConfigFile();
+        }
+        
+        return $configFile->getOptionalSection($index);
+    }
+
     /**
      * Retrieves an authentication authority by its index. This is the preferred way to retrieve an authority
      * @param string $index the index/tag of the authority to retrieve
@@ -273,12 +282,7 @@ abstract class AuthenticationAuthority
     */
     public static function getAuthenticationAuthority($index)
     {
-        static $configFile;
-        if (!$configFile) {
-            $configFile = self::getAuthorityConfigFile();
-        }
-        
-        if ($authorityData = $configFile->getOptionalSection($index)) {
+        if ($authorityData = self::getAuthenticationAuthorityData($index)) {
             $authorityClass = $authorityData['CONTROLLER_CLASS'];
             $authorityData['INDEX'] = $index;
             $authority = self::factory($authorityClass, $authorityData);
