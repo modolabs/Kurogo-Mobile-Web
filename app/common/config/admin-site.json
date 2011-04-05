@@ -102,24 +102,6 @@
             "AUTHENTICATION_REMAIN_LOGGED_IN_TIME":{"label":"Allow users to be remembered","type":"time","config":"site","description":"Number of seconds to allow users to be remained logged in, even if closing their browser.","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]}
         }
     },
-    "authorization":{
-        "title":"Authorization",
-        "description":"You can control access to the entire site through this section",
-        "config":"acls",
-        "sectiontype":"section",
-        "fields":  {
-            "type":{"label":"Type","type":"select","options":{"U":"Access","A":"Admin"}},
-            "action":{"label":"Action","type":"select","options":{"A":"Allow","D":"Deny"}},
-            "scope":{"label":"Scope","type":"select","options":{"U":"User","G":"Group","E":"Everyone"}},
-            "authority":{"label":"Authority","type":"select","optionsMethod":["AuthenticationAuthority","getDefinedAuthenticationAuthorityNames"],"optionsFirst":"Any","showIf":["scope",["U","G"]]},
-            "value":{"label":"Value","type":"text","showIf":["scope",["U","G"]]}
-        },
-        "sectionclearvalues":true,
-        "sectionindex":"numeric",
-        "sectionsmethod":["Kurogo","getSiteAccessControlListArrays"],
-        "sectionaddnew":true,
-        "sectiondelete":true
-    },
     "authorities": {
         "title":"Authentication Authorities",
         "config":"authentication",
@@ -178,6 +160,24 @@
         "sectionaddnew":true,
         "sectiondelete":true
     },    
+    "authorization":{
+        "title":"Authorization",
+        "description":"You can control access to the entire site through this section",
+        "config":"acls",
+        "sectiontype":"section",
+        "fields":  {
+            "type":{"label":"Type","type":"select","options":{"U":"Access","A":"Admin"}},
+            "action":{"label":"Action","type":"select","options":{"A":"Allow","D":"Deny"}},
+            "scope":{"label":"Scope","type":"select","options":{"U":"User","G":"Group","E":"Everyone"}},
+            "authority":{"label":"Authority","type":"select","optionsMethod":["AuthenticationAuthority","getDefinedAuthenticationAuthorityNames"],"optionsFirst":"Any","showIf":["scope",["U","G"]]},
+            "value":{"label":"Value","type":"text","showIf":["scope",["U","G"]]}
+        },
+        "sectionclearvalues":true,
+        "sectionindex":"numeric",
+        "sectionsmethod":["Kurogo","getSiteAccessControlListArrays"],
+        "sectionaddnew":true,
+        "sectiondelete":true
+    },
     "analytics":{
         "title":"Analytics", 
         "description":"",
