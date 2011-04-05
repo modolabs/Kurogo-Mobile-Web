@@ -1401,6 +1401,11 @@ h2.icon {
 	margin-bottom: 1.5em;
 }
 
+.loginstatus {
+    clear: both;
+    font-size: 80%;
+    padding-top: 5px;
+}
 
 
 /* firefox adds these a tags when you edit the dom */

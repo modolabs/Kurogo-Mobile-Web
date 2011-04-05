@@ -1070,6 +1070,9 @@ abstract class WebModule extends Module {
         $this->assign('session_isLoggedIn', $this->isLoggedIn());
         if ($this->isLoggedIn()) {
             $user = $session->getUser();
+            $authority = $user->getAuthenticationAuthority();
+            $this->assign('session_authority_class', $authority->getAuthorityClass());
+            $this->assign('session_authority_title', $authority->getAuthorityTitle());
             $this->assign('session_userID', $user->getUserID());
             $this->assign('session_fullName', $user->getFullname());
             if (count($session->getUsers())==1) {

@@ -17,17 +17,24 @@
   {/capture}
 
   {capture name="loginHTML" assign="loginHTML"}
-    {if $session}<div id="loginInfo">{if $session_isLoggedIn}
-    <a href="../login/">Logged in</a>{else}<a href="../login/?url={$request_uri}">Not logged in</a>{/if}
-    </div>{/if}
+	<div class="loginstatus">
+		<ul class="nav secondary loginbuttons">
+        {if $session_isLoggedIn}
+			<li class="{$session_authority_class}"><a href="../login/">Signed in via {$session_authority_title} as {$session_fullName}</a></li>
+		{else}
+			<li class="noauth"><a href="../login">Sign in to {$strings.SITE_NAME}</a></li>
+		{/if}
+		</ul>
+	</div>
   {/capture}
   
   {block name="footerNavLinks"}
     {if $moduleID != 'home'}
       <div id="footerlinks">
         <a href="#top">Back to top</a> | <a href="../home/">{$strings.SITE_NAME} home</a>
-        {$loginHTML}
       </div>
+    {else}
+    {$loginHTML}
     {/if}
   {/block}
 
