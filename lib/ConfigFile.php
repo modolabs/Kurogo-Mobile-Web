@@ -11,8 +11,8 @@ class ConfigFile extends Config {
   const OPTION_CREATE_EMPTY=1;
   const OPTION_CREATE_WITH_DEFAULT=2;
   const OPTION_DO_NOT_CREATE=4;
-  const OPTION_IGNORE_LOCAL=4;
-  const OPTION_IGNORE_MODE=8;
+  const OPTION_IGNORE_LOCAL=8;
+  const OPTION_IGNORE_MODE=16;
   protected $configs = array();
   protected $file;
   protected $type;

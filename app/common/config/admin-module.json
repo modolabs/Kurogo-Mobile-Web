@@ -34,5 +34,23 @@
             "breadcrumbLongTitle":{"heading":"Breadcrumb (long)","type":"text","class":"field1","omitBlankValue":true}
         },
         "tablerowsmethod":"getPageData"
+    },
+    "authorization":{
+        "title":"Authorization",
+        "description":"You can control access to the module through this section",
+        "config":"acls",
+        "sectiontype":"section",
+        "fields":  {
+            "type":{"label":"Type","type":"select","options":{"U":"Access","A":"Admin"}},
+            "action":{"label":"Action","type":"select","options":{"A":"Allow","D":"Deny"}},
+            "scope":{"label":"Scope","type":"select","options":{"U":"User","G":"Group","E":"Everyone"}},
+            "authority":{"label":"Authority","type":"select","optionsMethod":["AuthenticationAuthority","getDefinedAuthenticationAuthorityNames"],"optionsFirst":"Any","showIf":["type",["U","G"]]},
+            "value":{"label":"Value","type":"text","showIf":["scope",["U","G"]]}
+        },
+        "sectionindex":"numeric",
+        "sectionsmethod":"getModuleAccessControlListArrays",
+        "sectionaddnew":true,
+        "sectiondelete":true
+            
     }
 }
