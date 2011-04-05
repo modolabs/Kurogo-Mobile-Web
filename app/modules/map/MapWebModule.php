@@ -19,7 +19,7 @@ class MapWebModule extends WebModule {
         return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
     }
     
-    protected function getFeedGroups() {
+    public function getFeedGroups() {
         return $this->getModuleSections('feedgroups');
     }
     

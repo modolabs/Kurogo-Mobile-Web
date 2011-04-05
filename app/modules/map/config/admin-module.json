@@ -1,0 +1,28 @@
+{
+    "options": {
+        "title":"Options",
+        "description":"",
+        "sectiontype":"fields",
+        "fields":{
+            "display_type":{"label":"Module Display","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the home screen modules"}
+        }
+    },    
+    "feeds": {
+        "title":"Campuses",
+        "description":"",
+        "config":"feedgroups",
+        "sectiontype":"section",
+        "sectiontitlefield":"title",
+        "fields":{
+            "section":{"label":"id", "description":"Programmatic id for this campus", "type":"label"},
+            "title":{"label":"Title", "description":"Title for this campus", "type":"text"},
+            "center":{"label":"Center","description":"Lat,Long of the center of this campus","type":"text"},
+            "address":{"label":"Address","description":"Address for the campus","type":"text"},
+            "description":{"label":"Description","description":"Description for the campus","type":"text"}
+        },
+        "sectionindex":"string",
+        "sectionsmethod":"getFeedGroups",
+        "sectionaddnew":true,
+        "sectiondelete":true
+    }
+}
