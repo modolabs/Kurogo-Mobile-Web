@@ -16,7 +16,7 @@
             "title":{"label":"Title","description":"The title of the entry","type":"text"},
             "subtitle":{"label":"Subtitle","description":"The subtitle of the entry","type":"text","omitBlankValue":true},
             "url":{"label":"URL","description":"URL of entry.","type":"text"},
-            "class":{"label":"Type","description":"Type of link","type":"select","options":{"":"Normal","email":"Email"},"omitBlankValue":true}
+            "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
         },
         "sectiontitlefield":"title",
         "sectionindex":"string",

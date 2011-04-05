@@ -198,6 +198,14 @@ abstract class WebModule extends Module {
       'js'  => "/min/g=js-$minKey".$this->getMinifyArgString($pageOnly),
     );
   }
+  
+  public static function getListItemClasses() {
+    return array(
+        'email'=>'Email',
+        'phone'=>'Phone',
+        'map'=>'Map'
+    );
+  }
 
   //
   // Google Analytics for non-Javascript devices
