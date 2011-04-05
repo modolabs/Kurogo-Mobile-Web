@@ -345,9 +345,11 @@ function createFormSectionTable(section, data) {
             var sectionData = { 'TITLE': '(not saved)' }
             $.each(createSectionTableRow(section, data, sectionID, sectionData), function(i,row) {
                 body.append(row);
-                row.addClass('notsaved editing');
-                if (row.hasClass('editrow')) {
-                    row.show();
+                if (!data.sectiontable) {
+                    row.addClass('notsaved editing');
+                    if (row.hasClass('editrow')) {
+                        row.show();
+                    }
                 }
             });
 

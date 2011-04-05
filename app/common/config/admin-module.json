@@ -35,7 +35,7 @@
         },
         "sectionindex":"string",
         "sectionsmethod":"getPageData",
-        "sectionaddnew":false,
+        "sectionaddnew":true,
         "sectiontable":true,
         "sectiondelete":true
     },
