@@ -300,8 +300,6 @@ contains values common to all modules, as well as module specific values.
 * *search* - Whether or not the module provides search in the federated search feature.
 * *secure* - Whether or not the module requires a secure (https) connection. Configuring secure
   sites is beyond the scope of this document.
-* *acl[]*  - a series of access control list entries. See :doc:`authentication`.
-* *adminacl[]*  - a series of access control list entries for administrative tasks. See :doc:`authentication`.
 
 It is important to turn on the disabled flag for any modules you do not wish to use. It is *very* 
 important to make sure that the *admin* module is either disabled or protected appropriately to prevent
@@ -336,8 +334,3 @@ Administration Module
 In addition to editing these files, you can use the administration module to manage the configuration.
 The admin module is located at */admin* and does not have an icon on the home screen. 
 
-====================================================
-Providing an administration interface to your module
-====================================================
-
-This section is being rewritten...
