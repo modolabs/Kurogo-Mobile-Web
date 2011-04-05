@@ -18,7 +18,7 @@
         "description":"",
         "sectiontype":"fields",
         "fields": {
-            "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module."}
+            "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module.","omitBlankValue":true}
         }
     },
     "pages": {
