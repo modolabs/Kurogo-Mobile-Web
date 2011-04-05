@@ -292,9 +292,9 @@ abstract class Module
         return $config->getOptionalSection($section);
     }
 
-    protected function getModuleSections($config) {
+    protected function getModuleSections($config, $expand=Config::EXPAND_VALUE) {
         $config = $this->getConfig($config);
-        return $config->getSectionVars(Config::EXPAND_VALUE);
+        return $config->getSectionVars($expand);
     }
 
     /**

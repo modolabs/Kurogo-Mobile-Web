@@ -141,30 +141,34 @@ class AdminAPIModule extends APIModule
                         $sectionData['sections'] = $module->$sectionData['sectionsmethod']();
                     }
                     unset($sectionData['sectionsmethod']);
+                } elseif ($type=='site') {
+                    throw new Exception("Can't get sections for site");
+                } else {
+                    $sectionData['sections'] = $module->getModuleSections($sectionData['config'], Config::NO_EXPAND_VALUE);
+                }
         
-                    foreach ($sectionData['fields'] as $key=>&$field) {
-                        switch ($field['type']) 
-                        {
-                            case 'select':
-                                if (isset($field['optionsMethod'])) {
-                                    $field['options'] = call_user_func($field['optionsMethod']);
-                                    unset($field['optionsMethod']);
-                                }
-        
-                                if (isset($field['optionsFirst'])) {
-                                    $field['options'] = array_merge(array(''=>$field['optionsFirst']), $field['options']);    
-                                    unset($field['optionsFirst']);
-                                }
-                        }
-                        
+                foreach ($sectionData['fields'] as $key=>&$field) {
+                    switch ($field['type']) 
+                    {
+                        case 'select':
+                            if (isset($field['optionsMethod'])) {
+                                $field['options'] = call_user_func($field['optionsMethod']);
+                                unset($field['optionsMethod']);
+                            }
+    
+                            if (isset($field['optionsFirst'])) {
+                                $field['options'] = array_merge(array(''=>$field['optionsFirst']), $field['options']);    
+                                unset($field['optionsFirst']);
+                            }
                     }
                     
-                    foreach ($sectionData['sections'] as $section=>&$sectionFields) {
-                        foreach($sectionFields as $key=>&$value) {
-                            $value = $this->getUnconstantedValue($value, $constant);
-                            if ($constant) {
-                                $value = array($constant, $value);
-                            }
+                }
+                    
+                foreach ($sectionData['sections'] as $section=>&$sectionFields) {
+                    foreach($sectionFields as $key=>&$value) {
+                        $value = $this->getUnconstantedValue($value, $constant);
+                        if ($constant) {
+                            $value = array($constant, $value);
                         }
                     }
                 }
