@@ -133,16 +133,6 @@ class AdminAPIModule extends APIModule
                 }
                 break;
                 
-            case 'table':
-                if (isset($sectionData['tablerowsmethod'])) {   
-                    if (is_array($sectionData['tablerowsmethod'])) {
-                        $sectionData['tablerows'] = call_user_func($sectionData['tablerowsmethod']);
-                    } else {
-                        $sectionData['tablerows'] = $module->$sectionData['tablerowsmethod']();
-                    }
-                    unset($sectionData['tablerowsmethod']);
-                }
-                break;
             case 'section':
                 if (isset($sectionData['sectionsmethod'])) {
                     if (is_array($sectionData['sectionsmethod'])) {
@@ -238,12 +228,11 @@ class AdminAPIModule extends APIModule
                 $fieldData = $sectionData['fields'][$key];
                 break;
             
-            case 'table':
             case 'section':
                 $fieldData = $sectionData;
                 break;
             default:
-                throw new Exception("Unable to handle $type $section. No fields, no tablefields, no sectionfields");
+                throw new Exception("Unable to handle $type $section. Invalid section type " . $sectionData['sectiontype']);
         }
         
         $config = $this->getAdminConfig($type, $fieldData['config'], ConfigFile::OPTION_CREATE_EMPTY);
@@ -428,7 +417,7 @@ class AdminAPIModule extends APIModule
                     
                     foreach ($fields as $key=>$value) {
                         
-                        if ($adminData['sectiontype']=='section') {
+                        if ($adminData['sectiontype']=='section' && isset($adminData['sectionclearvalues']) && $adminData['sectionclearvalues']) {
                             if ($config = $this->getAdminConfig($type, $adminData['config'], ConfigFile::OPTION_DO_NOT_CREATE)) {
                                 $config->removeSection($key);
                             }

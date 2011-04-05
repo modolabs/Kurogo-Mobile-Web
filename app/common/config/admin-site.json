@@ -114,6 +114,7 @@
             "authority":{"label":"Authority","type":"select","optionsMethod":["AuthenticationAuthority","getDefinedAuthenticationAuthorityNames"],"optionsFirst":"Any","showIf":["scope",["U","G"]]},
             "value":{"label":"Value","type":"text","showIf":["scope",["U","G"]]}
         },
+        "sectionclearvalues":true,
         "sectionindex":"numeric",
         "sectionsmethod":["Kurogo","getSiteAccessControlListArrays"],
         "sectionaddnew":true,
