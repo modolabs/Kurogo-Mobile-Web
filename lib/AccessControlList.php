@@ -213,7 +213,15 @@ class AccessControlList
         switch($this->ruleScope)
         {
             case self::RULE_SCOPE_USER:
-                $str .= " User \"$this->ruleValue\"";
+                if ($this->ruleValue == self::RULE_VALUE_ALL) {
+                    if ($this->ruleAuthority) {
+                        $str .= " All Users";
+                    } else {
+                        $str .= " All Logged In Users";
+                    }
+            } else {
+                    $str .= " User \"$this->ruleValue\"";
+                }
                 break;
             case self::RULE_SCOPE_GROUP:
                 $str .= " Group \"$this->ruleValue\"";
