@@ -1081,7 +1081,9 @@ abstract class WebModule extends Module {
             $this->assign('session_fullName', $user->getFullname());
             if (count($session->getUsers())==1) {
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array('authority'=>$user->getAuthenticationAuthorityIndex())));
+                $this->assign('session_multiple_logins', false);
             } else {
+                $this->assign('session_multiple_logins', true);
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array()));
             }
 
