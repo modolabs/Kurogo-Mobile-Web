@@ -8,6 +8,7 @@
   */
 class LDAPAuthentication extends AuthenticationAuthority
 {
+    protected $authorityClass = 'ldap';
     protected $userClass='LDAPUser';
     protected $groupClass='LDAPUserGroup';
     protected $ldapServer;

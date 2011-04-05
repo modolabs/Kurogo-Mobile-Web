@@ -33,6 +33,12 @@ abstract class AuthenticationAuthority
       * @var string
       */
     protected $userLogin;
+
+    /** 
+      * CSS class for showing this authority
+      * @var string
+      */
+    protected $authorityClass = '';
     
     /** 
       * Class for user objects. Most subclasses will override this
@@ -159,6 +165,10 @@ abstract class AuthenticationAuthority
     public function getAuthorityIndex()
     {
         return $this->AuthorityIndex;
+    }
+    
+    public function getaAthorityClass() {
+        return $this->authorityClass;
     }
 
     /**

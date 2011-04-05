@@ -13,6 +13,7 @@
  */
 class DatabaseAuthentication extends AuthenticationAuthority
 {
+    protected $authorityClass = 'database';
     protected $userClass='DatabaseUser';
     protected $groupClass='DatabaseUserGroup';
     protected $connection;

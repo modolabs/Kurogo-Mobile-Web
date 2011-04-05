@@ -8,6 +8,7 @@
   */
 class GoogleAuthentication extends OAuthAuthentication
 {
+    protected $authorityClass = 'google';
     protected $userClass='GoogleUser';
     protected $requestTokenURL = 'https://www.google.com/accounts/OAuthGetRequestToken';
     protected $authorizeTokenURL = 'https://www.google.com/accounts/OAuthAuthorizeToken';

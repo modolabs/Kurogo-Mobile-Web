@@ -10,6 +10,7 @@
  */
 class FacebookAuthentication extends AuthenticationAuthority
 {
+    protected $authorityClass = 'facebook';
     protected $userClass='FacebookUser';
     protected $api_key;
     protected $api_secret;
