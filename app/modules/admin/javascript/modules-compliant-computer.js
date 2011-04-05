@@ -6,7 +6,7 @@ $(document).ready(function() {
     
     if (typeof moduleID != 'undefined') {
         makeAPICall('GET', 'admin','getconfigsections', { 'v':1,'type':'module','module':moduleID}, processModuleSections);
-        makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID,'section':adminSection}, processModuleData); 
+       reloadSection();
     
         $('#adminForm').submit(function(e) {
             var params = { 'v':1, 'type':'module', 'module':moduleID, 'data':{}};
@@ -30,8 +30,10 @@ $(document).ready(function() {
                 }
             });
                         
-            makeAPICall('POST','admin','setconfigdata', params, function() { showMessage('Configuration saved'); 
-               makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID,'section':adminSection}, processModuleData); 
+            makeAPICall('POST','admin','setconfigdata', params, function() { 
+                showMessage('Configuration saved'); 
+                reloadSection();
+
             });
             return false;
         });
@@ -89,6 +91,10 @@ function updateModuleLayoutSections() {
     $('.springboard input').each(function(i) { $(this).attr('section', $(this).parents('.springboard').attr('section')) });
 }
 
+function reloadSection() {
+    makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID,'section':adminSection}, processModuleData); 
+}
+
 function processModuleSections(data) {
     $("#moduleSections").html('');
     $.each(data, function(section, sectionTitle) {
@@ -96,7 +102,7 @@ function processModuleSections(data) {
             $('#moduleSections .selected').removeClass('selected');
             adminSection=section;
             $(this).addClass('selected');
-            makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID,'section':adminSection}, processModuleData); 
+            reloadSection();
             return false;
         });
         if (section==adminSection) {

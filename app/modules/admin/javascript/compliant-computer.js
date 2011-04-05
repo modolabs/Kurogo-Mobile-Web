@@ -59,12 +59,10 @@ function createFormSectionListItems(section, sectionData) {
             });
             break;
         case 'table':
-            $.merge(items, [createFormTable(section, sectionData)]);
+            items.push(createFormTable(section, sectionData));
             break;
         case 'section':
-            $.merge(items, [createFormSectionTable(section, sectionData)]);
-            break;
-        case 'acl':
+            items.push(createFormSectionTable(section, sectionData));
             break;
         default:
             alert('Section type ' + sectionData.sectiontype + ' not handled for section ' + section);
@@ -172,6 +170,7 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
     var titleField = 'sectiontitlefield' in data ? data.sectiontitlefield : 'TITLE';
     
     var title = titleField in sectionData ? sectionData[titleField] : sectionID;
+    row.append($('<td>' + sectionID + '</td>'));
     row.append($('<td class="sectiontitle">' + title + '</td>'));
 
     var rowbuttons = $('<td class="rowbuttons" />');
@@ -212,8 +211,7 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
                 var button = this;
                 
                 makeAPICall('GET', 'admin','removeconfigsection', params, function() {
-                    $(button).parents('tr').next('.editrow').remove();
-                    $(button).parents('tr').remove();
+                   reloadSection();
                 });
 
             }
@@ -225,7 +223,7 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
     rows.push(row);
     
     var row = $('<tr class="editrow" />');
-    var cell = $('<td colspan="2" />');
+    var cell = $('<td colspan="3" />');
 
     var list = $('<ul class="formfields" />');
     var items = [];
@@ -301,7 +299,7 @@ function createFormSectionTable(section, data) {
                 }
             }
             
-            var sectionData = { 'TITLE':'New Item'}
+            var sectionData = { 'TITLE': '(not saved)' }
             $.each(createSectionTableRow(section, data, sectionID, sectionData), function(i,row) {
                 body.append(row);
                 row.addClass('notsaved editing');
