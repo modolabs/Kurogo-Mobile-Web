@@ -213,13 +213,13 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
 
     if (data.sectiondelete) {
         rowbuttons.append($('<a href="" class="textbutton delete">Remove</a>').click(function() {
+            if ($(this).parents('tr').hasClass('notsaved')) {
+                reloadSection();
+                return false;
+            }
+            
             if (confirm("Do you want to remove this item? Removal will occur immediately and cannot be undone.")) {
-                if ($(this).parents('tr').hasClass('notsaved')) {
-                    $(this).parents('tr').next('.editrow').remove();
-                    $(this).parents('tr').remove();
-                    return false;
-                }
-                
+
                 params = {
                     v: '1',
                     type: adminType,
@@ -345,8 +345,9 @@ function createFormSectionTable(section, data) {
             var sectionData = { 'TITLE': '(not saved)' }
             $.each(createSectionTableRow(section, data, sectionID, sectionData), function(i,row) {
                 body.append(row);
+                row.addClass('notsaved');
                 if (!data.sectiontable) {
-                    row.addClass('notsaved editing');
+                    row.addClass('editing');
                     if (row.hasClass('editrow')) {
                         row.show();
                     }
@@ -356,11 +357,6 @@ function createFormSectionTable(section, data) {
             return false;
         }));
         li.append(div);
-    }
-
-    //add the description if specified
-    if (data.description) {
-        li.append('<span class="helptext">' + data.description + '</span>');
     }
 
     return li;
