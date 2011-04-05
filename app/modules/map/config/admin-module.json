@@ -12,7 +12,7 @@
             "DEFAULT_ZOOM_LEVEL":{"label":"Default Zoom Level", "description":"","config":"module","section":"module","type":"text","placeholder":"10"}
         }
     },    
-    "feeds": {
+    "feedgroups": {
         "title":"Campuses",
         "description":"",
         "config":"feedgroups",
