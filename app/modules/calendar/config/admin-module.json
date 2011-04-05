@@ -8,6 +8,24 @@
             "ResourceListController":{"label":"Resource Calendars","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getResourceListController"],"description":"Certain services can support shared resource calendars. If you use an authentication service that has resources, you can use it in the calendar module."}
        }
     },
+    "index": {
+        "title":"Index Page",
+        "label":"Index Page",
+        "config":"page-index",
+        "description":"Entries for about index page",
+        "sectiontype":"section",
+        "fields":{
+            "section":{"label":"Entry","type":"label"},
+            "title":{"label":"Title","description":"The title of the entry","type":"text"},
+            "subtitle":{"label":"Subtitle","description":"The subtitle of the entry","type":"text","omitBlankValue":true},
+            "url":{"label":"URL","description":"URL of entry.","type":"text"},
+            "class":{"label":"Type","description":"Type of link","type":"select","options":{"":"Normal","email":"Email"},"omitBlankValue":true}
+        },
+        "sectiontitlefield":"title",
+        "sectionindex":"string",
+        "sectionaddnew":true,
+        "sectiondelete":true
+    },
     "feeds": {
         "title":"Data configuration",
         "label":"Calendar feeds",
