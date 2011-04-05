@@ -228,6 +228,17 @@ abstract class AuthenticationAuthority
         
         return $configFile->getSectionVars();
     }
+
+    public static function getDefinedAuthenticationAuthorityNames()
+    {
+        $authorities = self::getDefinedAuthenticationAuthorities();
+        $authorityNames = array();
+        foreach ($authorities as $authority=>$data) {
+            $authorityNames[$authority]= $data['TITLE'];
+        }
+
+        return $authorityNames;
+    }
     
     /**
      * Returns the default (i.e. the first) authentication authority in the config file. 
