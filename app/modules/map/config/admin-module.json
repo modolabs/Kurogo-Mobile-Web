@@ -29,6 +29,25 @@
         "sectionsmethod":"getFeedGroups",
         "sectionaddnew":true,
         "sectiondelete":true
+    },
+    "feed": {
+        "title":"Feed",
+        "description":"",
+        "config":"feeds-",
+        "sectiontype":"section",
+        "fields":{
+            "TITLE":{"label":"Title","description":"","type":"text"},
+            "SUBTITLE":{"label":"Subtitle","description":"","type":"text"},
+            "BASE_URL":{"label":"URL","description":"","type":"text"},
+            "CONTROLLER_CLASS":{"label":"Controller Class","description":"","type":"text","placeholder":"KMLDataController"},
+            "STATIC_MAP_CLASS":{"label":"Static Map Class","description":"","type":"text","placeholder":"GoogleStaticMap"},
+            "JS_MAP_CLASS":{"label":"JavaScript Map Class","description":"","type":"text","placeholder":"GoogleJSMap"},
+            "SEARCHABLE":{"label":"Searchable","description":"Whether this feed is searchable","type":"checkbox"},
+            "DEFAULT_ZOOM_LEVEL":{"label":"Initial zoom level","description":"","type":"number","placeholder":"15"}
+        },
+        "sectionindex":"numeric",
+        "sectionaddnew":true,
+        "sectiondelete":true
     }
 }
 

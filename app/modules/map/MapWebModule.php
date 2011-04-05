@@ -63,6 +63,31 @@ class MapWebModule extends WebModule {
 
         return $data;
     }
+
+    protected function getModuleAdminSections() {
+        $sections = parent::getModuleAdminSections();
+        
+        foreach ($this->getFeedGroups() as $feedgroup=>$data) {
+            $sections['feeds-'.$feedgroup] = $data['title'];
+        }
+        
+        return $sections;
+    }
+    
+    protected function getModuleAdminConfig() {
+        $configData = parent::getModuleAdminConfig();
+        
+        foreach ($this->getFeedGroups() as $feedgroup=>$data) {
+            $feedData = $configData['feed'];
+            $feedData['title'] = $data['title'];
+            $feedData['config'] = 'feeds-' . $feedgroup;
+            $configData['feeds-'.$feedgroup] = $feedData;
+        }
+        unset($configData['feed']);
+        
+        return $configData;
+    }
+
     
     protected function initialize() {
         $this->feedGroup = $this->getArg('group', NULL);

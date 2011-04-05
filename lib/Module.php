@@ -297,17 +297,6 @@ abstract class Module
         return $config->getSectionVars($expand);
     }
 
-    protected function getModuleAdminSections() {
-        $configData = $this->getModuleAdminConfig();
-        $sections = array();
-        foreach ($configData as $section=>$sectionData) {
-            $sections[$section] = $sectionData['title'];
-        }
-        
-        return $sections;
-    }
-    
-
     /**
       * Returns a section as an array where the each element contains the various keys of the section
       * @param string $section the section to retrieve
@@ -406,6 +395,16 @@ abstract class Module
         }
         
         return $acls;
+    }
+
+    protected function getModuleAdminSections() {
+        $configData = $this->getModuleAdminConfig();
+        $sections = array();
+        foreach ($configData as $section=>$sectionData) {
+            $sections[$section] = $sectionData['title'];
+        }
+        
+        return $sections;
     }
     
     protected function getModuleAdminConfig() {
