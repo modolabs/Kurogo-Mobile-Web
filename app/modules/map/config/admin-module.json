@@ -4,7 +4,12 @@
         "description":"",
         "sectiontype":"fields",
         "fields":{
-            "display_type":{"label":"Module Display","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the home screen modules"}
+            "MAP_SEARCH_CLASS":{"label":"Map Search Class", "description":"","config":"module","section":"module","type":"text","placeholder":"MapSearch"},
+            "ARCGIS_CACHE":{"label":"ArcGIS Cache Folder", "description":"","config":"module","section":"module","type":"file"},
+            "ARCGIS_FEATURE_CACHE":{"label":"ArcGIS Feature Cache Folder","description":"","config":"module","section":"module","type":"file"},
+            "WMS_CACHE":{"label":"WMS Cache Folder", "description":"","config":"module","section":"module","type":"file"},
+            "PROJ_CACHE":{"label":"PROJ Cache Folder", "description":"","config":"module","section":"module","type":"file"},
+            "DEFAULT_ZOOM_LEVEL":{"label":"Default Zoom Level", "description":"","config":"module","section":"module","type":"text","placeholder":"10"}
         }
     },    
     "feeds": {
@@ -26,3 +31,4 @@
         "sectiondelete":true
     }
 }
+
