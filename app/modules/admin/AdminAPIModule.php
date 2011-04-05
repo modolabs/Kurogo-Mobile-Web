@@ -49,16 +49,6 @@ class AdminAPIModule extends APIModule
         return $configData;
     }
     
-    private function getModuleAdminSections(Module $module) {
-        $configData = $module->getModuleAdminConfig();
-        $sections = array();
-        foreach ($configData as $section=>$sectionData) {
-            $sections[$section] = $sectionData['title'];
-        }
-        
-        return $sections;
-    }
-    
     private function getAdminData($type, $section) {
         if ($type=='site') {
             $configData = $this->getSiteAdminConfig();
@@ -320,7 +310,7 @@ class AdminAPIModule extends APIModule
                             throw new Exception('Module ' . $moduleID . ' not found');
                         }
         
-                        $sections = $this->getModuleAdminSections($module);
+                        $sections = $module->getModuleAdminSections();
                         break;
                     case 'site':
                         throw new Exception("getconfigsections for site not handled yet");
@@ -384,7 +374,7 @@ class AdminAPIModule extends APIModule
                                         throw new Exception("Invalid property $key for module $module");
                                     }
                                     
-                                    $this->setConfigVar($type, $module, 'general', $key, $value);
+                                    $this->setConfigVar($module, 'general', $key, $value);
                                 }
                             }
                             

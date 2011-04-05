@@ -5,7 +5,6 @@ $(document).ready(function() {
     });
     
     if (typeof moduleID != 'undefined') {
-        makeAPICall('GET', 'admin','getconfigsections', { 'v':1,'type':'module','module':moduleID}, processModuleSections);
        reloadSection();
     
         $('#adminForm').submit(function(e) {
@@ -92,6 +91,7 @@ function updateModuleLayoutSections() {
 }
 
 function reloadSection() {
+    makeAPICall('GET', 'admin','getconfigsections', { 'v':1,'type':'module','module':moduleID}, processModuleSections);
     makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID,'section':adminSection}, processModuleData); 
 }
 
