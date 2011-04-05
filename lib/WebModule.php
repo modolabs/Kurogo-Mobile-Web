@@ -530,7 +530,11 @@ abstract class WebModule extends Module {
 
   protected function getModuleNavlist() {
     $navModules = $this->getNavigationModules(false);
-    $separator = array('separator' => array('separator' => true));
+    if (count($navModules['primary']) && count($navModules['secondary'])) {
+      $separator = array('separator' => array('separator' => true));
+    } else {
+      $separator = array();
+    }
     return array_merge($navModules['primary'], $separator, $navModules['secondary']);
   }
   
