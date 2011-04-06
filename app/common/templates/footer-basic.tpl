@@ -35,7 +35,7 @@
 {/block}
 
   {block name="loginHTML"}
-    {if $moduleID == 'home'}
+    {if $session && $moduleID == 'home'}
 	<div class="loginstatus">
         {if $session_isLoggedIn}
         {if $session_multiple_logins}

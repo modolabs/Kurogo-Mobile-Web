@@ -26,7 +26,7 @@
   {/block}
 
   {block name="loginHTML"}
-    {if $moduleID == 'home'}
+    {if $session && $moduleID == 'home'}
 	<div class="loginstatus">
 		<ul class="nav secondary loginbuttons">
         {if $session_isLoggedIn}
