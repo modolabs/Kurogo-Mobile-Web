@@ -10,8 +10,9 @@
 class ConfigFile extends Config {
   const OPTION_CREATE_EMPTY=1;
   const OPTION_CREATE_WITH_DEFAULT=2;
-  const OPTION_IGNORE_LOCAL=4;
-  const OPTION_IGNORE_MODE=8;
+  const OPTION_DO_NOT_CREATE=4;
+  const OPTION_IGNORE_LOCAL=8;
+  const OPTION_IGNORE_MODE=16;
   protected $configs = array();
   protected $file;
   protected $type;
@@ -43,9 +44,14 @@ class ConfigFile extends Config {
   // loads a config object from a file/type combination  
   public static function factory($file, $type='file', $options=0) {
     $config = new ConfigFile();
-    $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
+    if (!($options & self::OPTION_DO_NOT_CREATE)) {
+        $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
+    }
     
     if (!$result = $config->loadFileType($file, $type, $options)) {
+        if ($options & self::OPTION_DO_NOT_CREATE) {
+            return false;
+        }
        throw new Exception("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
     }
     

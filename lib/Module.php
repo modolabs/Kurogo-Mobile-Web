@@ -9,8 +9,6 @@
  */ 
 abstract class Module
 {
-    const ACL_ADMIN='acladmin';
-    const ACL_USER ='acl';
     protected $id='none';
     protected $configModule;
     protected $args = array();
@@ -142,7 +140,7 @@ abstract class Module
                 }
             }
             
-            if (!$this->evaluateACLS(self::ACL_USER)) {
+            if (!$this->evaluateACLS(AccessControlList::RULE_TYPE_ACCESS)) {
                 $this->unauthorizedAccess();
             }
         }
@@ -199,9 +197,10 @@ abstract class Module
       * @param int $opts bitfield of ConfigFile options
       * @return ConfigFile object
       */
-    protected function getConfig($type) {
-        $config = ModuleConfigFile::factory($this->configModule, $type); 
-        $GLOBALS['siteConfig']->addConfig($config);
+    protected function getConfig($type, $opts=0) {
+        if ($config = ModuleConfigFile::factory($this->configModule, $type, $opts)) {
+            $GLOBALS['siteConfig']->addConfig($config);
+        }
         return $config;
     }
 
@@ -293,9 +292,9 @@ abstract class Module
         return $config->getOptionalSection($section);
     }
 
-    protected function getModuleSections($config) {
+    protected function getModuleSections($config, $expand=Config::EXPAND_VALUE) {
         $config = $this->getConfig($config);
-        return $config->getSectionVars(Config::EXPAND_VALUE);
+        return $config->getSectionVars($expand);
     }
 
     /**
@@ -325,7 +324,7 @@ abstract class Module
       * Indicates that administrative access is necessary. Admin access is granted through the adminacl key
       */
     protected function requiresAdmin() {
-        if (!$this->evaluateACLS(self::ACL_ADMIN)) {
+        if (!$this->evaluateACLS(AccessControlList::RULE_TYPE_ADMIN)) {
             $this->unauthorizedAccess();
         }
     }
@@ -339,7 +338,6 @@ abstract class Module
         $acls = $this->getAccessControlLists($type);
         $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
         $users = $this->getUsers(true);
-
         foreach ($acls as $acl) {
             foreach ($users as $user) {
                 $result = $acl->evaluateForUser($user);
@@ -358,28 +356,55 @@ abstract class Module
         return $allow;
     }
 
+    public function getModuleAccessControlListArrays() {
+        $acls = array();
+        foreach (self::getModuleAccessControlLists() as $acl) {
+            $acls[] = $acl->toArray();
+        }
+        return $acls;
+    }
+
+    public function getModuleAccessControlLists() {
+        $acls = array();
+
+        if ($config = $this->getConfig('acls', ConfigFile::OPTION_DO_NOT_CREATE)) {
+            foreach ($config->getSectionVars() as $aclArray) {
+                if ($acl = AccessControlList::createFromArray($aclArray)) {
+                    $acls[] = $acl;
+                }
+            }
+        }
+        
+        return $acls;
+    }
+
     /**
       * Retrieves the access control lists 
       * @param bool $admin if true evaluate the admin acls
       * @return array of access control lists
       */
     protected function getAccessControlLists($type) {
+                
+        $allACLS = array_merge(Kurogo::getSiteAccessControlLists(), $this->getModuleAccessControlLists());
         $acls = array();
         
-        $aclStrings = array_merge(
-            Kurogo::getOptionalSiteVar($type, array(), 'authentication'),
-            $this->getOptionalModuleVar($type, array(), 'authentication')
-        );
-        
-        foreach ($aclStrings as $aclString) {
-            if ($acl = AccessControlList::createFromString($aclString)) {
+        foreach ($allACLS as $acl) {
+            if ($acl->getType()==$type) {
                 $acls[] = $acl;
-            } else {
-                throw new Exception("Invalid $var $aclString in $this->configModule");
             }
         }
         
         return $acls;
+    }
+
+    protected function getModuleAdminSections() {
+        $configData = $this->getModuleAdminConfig();
+        $sections = array();
+        foreach ($configData as $section=>$sectionData) {
+            $sections[$section] = $sectionData['title'];
+        }
+        
+        return $sections;
     }
     
     protected function getModuleAdminConfig() {

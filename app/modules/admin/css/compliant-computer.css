@@ -239,7 +239,7 @@ label {
     margin-top: -18px;
 }
 
-.error {
+.formfields .error {
     background-color: #fdd7de;
     padding: .5em;
 }

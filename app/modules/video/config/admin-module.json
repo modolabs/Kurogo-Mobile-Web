@@ -2,16 +2,17 @@
     "options": {
         "title":"Options",
         "description":"",
+        "sectiontype":"fields",
         "fields":{
             "MAX_RESULTS":{"label":"Videos per page","type":"number","config":"module","section":"module","description":"Maximum number of videos to show per page"}
        }
     },
     "feeds": {
-        "title":"Data configuration",
-        "label":"Video feeds",
+        "title":"Data Configuration",
         "description":"",
         "config":"feeds",
-        "sectionfields":{
+        "sectiontype":"section",
+        "fields":{
             "section":{"label":"ID", "description":"Programmatic id for this feed", "type":"label"},
             "TITLE":{"label":"Title","description":"Label for this feed", "type":"text"},
             "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"select","optionsMethod":["VideoDataController","getVideoDataControllers"]},

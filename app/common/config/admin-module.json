@@ -2,6 +2,7 @@
     "general": {
         "title":"General Information",
         "description":"Settings common to all modules",
+        "sectiontype":"fields",
         "fields":{
             "id": {"label":"Module ID","type":"label","config":"module","section":"module","description":"The unique internal ID for this module. This can only be changed in the source code.", "valueMethod":"getID"},
             "configModule": {"label":"Config ID","type":"label","config":"module","section":"module","description":"The configuration ID for this module. It represents the configuration folder for this module's data. This can only be changed in the source code.", "valueMethod":"getConfigModule"},
@@ -13,23 +14,47 @@
        }
     },
     "strings": {
-        "title":"Text strings",
+        "title":"Text Strings",
         "description":"",
+        "sectiontype":"fields",
         "fields": {
-            "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module."}
+            "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module.","omitBlankValue":true}
         }
     },
     "pages": {
-        "title":"Page titles",
-        "label":"Page titles",
+        "title":"Page Titles",
         "config":"pages",
         "description":"<strong>Page title</strong>: displayed at the top of the page. <strong>Breadcrumb</strong>: Displayed in drill-up navigation, if any, within lower pages. <strong>Breadcrumb (long)</strong>: Displayed in drill-up navigation within lower pages on devices (e.g., tablets) with significantly larger screens. Any blank field will be left in its default/system-generated state.",
-        "tablefields":{
-            "section":{"heading":"Page","type":"label"},
-            "pageTitle":{"heading":"Page title","type":"text","class":"field0","omitBlankValue":true},
-            "breadcrumbTitle":{"heading":"Breadcrumb","type":"text","class":"field0","omitBlankValue":true},
-            "breadcrumbLongTitle":{"heading":"Breadcrumb (long)","type":"text","class":"field1","omitBlankValue":true}
+        "sectiontype":"section",
+        "fields":{
+            "section":{"label":"Page","type":"label"},
+            "pageTitle":{"label":"Page title","type":"text","class":"field0","omitBlankValue":true},
+            "breadcrumbTitle":{"label":"Breadcrumb","type":"text","class":"field0","omitBlankValue":true},
+            "breadcrumbLongTitle":{"label":"Breadcrumb (long)","type":"text","class":"field1","omitBlankValue":true}
         },
-        "tablerowsmethod":"getPageData"
+        "sectionindex":"string",
+        "sectionsmethod":"getPageData",
+        "sectionaddnew":true,
+        "sectiontable":true,
+        "sectiondelete":true
+    },
+    "authorization":{
+        "title":"Authorization",
+        "description":"You can control access to the module through this section",
+        "config":"acls",
+        "sectiontype":"section",
+        "fields":  {
+            "type":{"label":"Type","type":"select","options":{"U":"Access","A":"Admin"}},
+            "action":{"label":"Action","type":"select","options":{"A":"Allow","D":"Deny"}},
+            "scope":{"label":"Scope","type":"select","options":{"U":"User","G":"Group","E":"Everyone"}},
+            "authority":{"label":"Authority","type":"select","optionsMethod":["AuthenticationAuthority","getDefinedAuthenticationAuthorityNames"],"optionsFirst":"Any","showIf":["type",["U","G"]]},
+            "value":{"label":"Value","type":"text","showIf":["scope",["U","G"]]}
+        },
+        "sectionclearvalues":true,
+        "sectionindex":"numeric",
+        "sectionsmethod":"getModuleAccessControlListArrays",
+        "sectionaddnew":true,
+        "sectiondelete":true
+            
     }
 }

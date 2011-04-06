@@ -7,7 +7,6 @@
     protected $token;
     protected $playerKey;
     protected $playerId;
-    protected $category;
     
     private function setStandardFilters() {
         $this->removeAllFilters();
@@ -17,8 +16,8 @@
 	    $this->addFilter('get_item_count', 'true');
 	    $this->addFilter('sort_by', 'MODIFIED_DATE');
 	    $this->addFilter('sort_order', 'DESC');
-	    if ($this->category) {
-	        $this->addFilter('all', 'tag:' . $this->category);
+	    if ($this->tag) {
+	        $this->addFilter('all', 'tag:' . $this->tag);
 	    }
     }
     
@@ -53,9 +52,6 @@
 
 	    $this->setBaseURL("http://api.brightcove.com/services/library");
         
-        if (isset($args['TAG'])) {
-            $this->category = $args['TAG'];
-        }
     }
     
     public function items($start=0, $limit=null) {

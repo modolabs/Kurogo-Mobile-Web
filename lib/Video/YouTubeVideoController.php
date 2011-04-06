@@ -11,6 +11,13 @@
         $this->addFilter('format', 6); //only return mobile videos
         $this->addFilter('v', 2); // version 2
         $this->addFilter('orderby', 'published');
+        if ($this->tag) {
+            $this->addFilter('category', $this->tag);
+        }
+
+        if ($this->author) {
+            $this->addFilter('author', $this->author);
+        }
     }
     
     public function search($q, $start=0, $limit=null) {
@@ -30,14 +37,6 @@
         parent::init($args);
 
         $this->setStandardFilters();
-        
-        if (isset($args['TAG'])) {
-            $this->addFilter('category', $args['TAG']);
-        }
-        
-        if (isset($args['AUTHOR'])) {
-            $this->addFilter('author', $args['AUTHOR']);
-        }
     }
     
     public function items($start=0, $limit=null) {
@@ -66,11 +65,14 @@ class YouTubeDataParser extends DataParser
     protected function parseEntry($entry) {
         $video = new YouTubeVideoObject();
         $video->setURL($entry['player']['default']);
+        $video->setMobileURL($entry['content']['1']);
         $video->setTitle($entry['title']);
         $video->setDescription($entry['description']);
         $video->setDuration($entry['duration']);
         $video->setID($entry['id']);
         $video->setImage($entry['thumbnail']['sqDefault']);
+        $video->setStillFrameImage($entry['thumbnail']['hqDefault']);
+        
         if (isset($entry['tags'])) {
             $video->setTags($entry['tags']);
         }

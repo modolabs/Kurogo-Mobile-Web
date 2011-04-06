@@ -12,9 +12,14 @@ class ModuleConfigFile extends ConfigFile {
     // loads a config object from a file/type combination  
     public static function factory($id, $type, $options=0) {
         $config = new ModuleConfigFile();
-        $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
+        if (!($options & self::OPTION_DO_NOT_CREATE)) {
+            $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
+        }
         
         if (!$result = $config->loadFileType($id, $type, $options)) {
+            if ($options & self::OPTION_DO_NOT_CREATE) {
+                return false;
+            }
             throw new Exception("FATAL ERROR: cannot load $type configuration file for module $id: " . self::getfileByType($id, $type));
         }
     

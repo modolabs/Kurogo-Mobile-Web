@@ -1110,6 +1110,12 @@ h2.icon {
     color: #888;
 }
 
+.loginstatus {
+    clear: both;
+    font-size: 80%;
+    padding-top: 5px;
+}
+
 
 /* Freeform content module - basic styles to format unstyled raw HTML */
 

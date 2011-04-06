@@ -1,11 +1,12 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-<div class="nonfocal">
-<h3>You are logged in under the following accounts</h3>
-</div>
+<div class="focal">You are signed in to {$strings.SITE_NAME}
+{if $users|@count==1}
+via {$session_authority_title} as {$session_fullName}</div>
+{else}
+via the following accounts</div>
+{/if}
 
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$users subTitleNewline=true navlistID="loggedInUsers"}
-
-{include file="findInclude:modules/login/templates/loginForm.tpl"}
 
 {include file="findInclude:common/templates/footer.tpl"}

@@ -52,7 +52,8 @@ ellipsizer.prototype = {
     switch (e.type) {
       case 'orientationchange':
 			case 'resize':
-				this.refresh();
+			    var self = this;
+			    setTimeout(function() { self.refresh(); }, 0);
 				break;
 		}
   },

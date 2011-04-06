@@ -198,6 +198,14 @@ abstract class WebModule extends Module {
       'js'  => "/min/g=js-$minKey".$this->getMinifyArgString($pageOnly),
     );
   }
+  
+  public static function getListItemClasses() {
+    return array(
+        'email'=>'Email',
+        'phone'=>'Phone',
+        'map'=>'Map'
+    );
+  }
 
   //
   // Google Analytics for non-Javascript devices
@@ -522,7 +530,11 @@ abstract class WebModule extends Module {
 
   protected function getModuleNavlist() {
     $navModules = $this->getNavigationModules(false);
-    $separator = array('separator' => array('separator' => true));
+    if (count($navModules['primary']) && count($navModules['secondary'])) {
+      $separator = array('separator' => array('separator' => true));
+    } else {
+      $separator = array();
+    }
     return array_merge($navModules['primary'], $separator, $navModules['secondary']);
   }
   
@@ -1062,11 +1074,16 @@ abstract class WebModule extends Module {
         $this->assign('session_isLoggedIn', $this->isLoggedIn());
         if ($this->isLoggedIn()) {
             $user = $session->getUser();
+            $authority = $user->getAuthenticationAuthority();
+            $this->assign('session_authority_class', $authority->getAuthorityClass());
+            $this->assign('session_authority_title', $authority->getAuthorityTitle());
             $this->assign('session_userID', $user->getUserID());
             $this->assign('session_fullName', $user->getFullname());
             if (count($session->getUsers())==1) {
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array('authority'=>$user->getAuthenticationAuthorityIndex())));
+                $this->assign('session_multiple_logins', false);
             } else {
+                $this->assign('session_multiple_logins', true);
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array()));
             }
 

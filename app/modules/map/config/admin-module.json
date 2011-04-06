@@ -1,0 +1,53 @@
+{
+    "options": {
+        "title":"Options",
+        "description":"",
+        "sectiontype":"fields",
+        "fields":{
+            "MAP_SEARCH_CLASS":{"label":"Map Search Class", "description":"","config":"module","section":"module","type":"text","placeholder":"MapSearch"},
+            "ARCGIS_CACHE":{"label":"ArcGIS Cache Folder", "description":"","config":"module","section":"module","type":"file"},
+            "ARCGIS_FEATURE_CACHE":{"label":"ArcGIS Feature Cache Folder","description":"","config":"module","section":"module","type":"file"},
+            "WMS_CACHE":{"label":"WMS Cache Folder", "description":"","config":"module","section":"module","type":"file"},
+            "PROJ_CACHE":{"label":"PROJ Cache Folder", "description":"","config":"module","section":"module","type":"file"},
+            "DEFAULT_ZOOM_LEVEL":{"label":"Default Zoom Level", "description":"","config":"module","section":"module","type":"text","placeholder":"10"}
+        }
+    },    
+    "feedgroups": {
+        "title":"Campuses",
+        "description":"",
+        "config":"feedgroups",
+        "sectiontype":"section",
+        "sectiontitlefield":"title",
+        "fields":{
+            "section":{"label":"id", "description":"Programmatic id for this campus", "type":"label"},
+            "title":{"label":"Title", "description":"Title for this campus", "type":"text"},
+            "center":{"label":"Center","description":"Lat,Long of the center of this campus","type":"text"},
+            "address":{"label":"Address","description":"Address for the campus","type":"text"},
+            "description":{"label":"Description","description":"Description for the campus","type":"text"}
+        },
+        "sectionindex":"string",
+        "sectionsmethod":"getFeedGroups",
+        "sectionaddnew":true,
+        "sectiondelete":true
+    },
+    "feed": {
+        "title":"Feed",
+        "description":"",
+        "config":"feeds-",
+        "sectiontype":"section",
+        "fields":{
+            "TITLE":{"label":"Title","description":"","type":"text"},
+            "SUBTITLE":{"label":"Subtitle","description":"","type":"text"},
+            "BASE_URL":{"label":"URL","description":"","type":"text"},
+            "CONTROLLER_CLASS":{"label":"Controller Class","description":"","type":"text","placeholder":"KMLDataController"},
+            "STATIC_MAP_CLASS":{"label":"Static Map Class","description":"","type":"text","placeholder":"GoogleStaticMap"},
+            "JS_MAP_CLASS":{"label":"JavaScript Map Class","description":"","type":"text","placeholder":"GoogleJSMap"},
+            "SEARCHABLE":{"label":"Searchable","description":"Whether this feed is searchable","type":"checkbox"},
+            "DEFAULT_ZOOM_LEVEL":{"label":"Initial zoom level","description":"","type":"number","placeholder":"15"}
+        },
+        "sectionindex":"numeric",
+        "sectionaddnew":true,
+        "sectiondelete":true
+    }
+}
+

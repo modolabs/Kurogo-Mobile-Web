@@ -53,6 +53,27 @@ class Kurogo
         
         return $config->getOptionalVar($var, $default);
     }
+
+    public static function getSiteAccessControlListArrays() {
+        $acls = array();
+        foreach (self::getSiteAccessControlLists() as $acl) {
+            $acls[] = $acl->toArray();
+        }
+        return $acls;
+    }
+
+    public static function getSiteAccessControlLists() {
+        $config = ConfigFile::factory('acls', 'site', ConfigFile::OPTION_CREATE_EMPTY);
+        $acls = array();
+        
+        foreach ($config->getSectionVars() as $aclArray) {
+            if ($acl = AccessControlList::createFromArray($aclArray)) {
+                $acls[] = $acl;
+            }
+        }
+        
+        return $acls;
+    }
     
     public static function checkCurrentVersion() {
         $url = "http://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(

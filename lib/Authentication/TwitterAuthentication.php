@@ -8,6 +8,7 @@
   */
 class TwitterAuthentication extends OAuthAuthentication
 {
+    protected $authorityClass = 'twitter';
     protected $requestTokenURL = 'https://api.twitter.com/oauth/request_token';
     protected $accessTokenURL = 'https://api.twitter.com/oauth/access_token';
 	protected $API_URL = 'https://api.twitter.com/1';

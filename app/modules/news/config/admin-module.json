@@ -2,6 +2,7 @@
     "options": {
         "title":"Options",
         "description":"",
+        "sectiontype":"fields",
         "fields":{
             "MAX_RESULTS":{"label":"Stories per page","type":"number","config":"module","section":"module","description":"Maximum number of news stories to show per page","placeholder":10}
        }
@@ -11,7 +12,8 @@
         "label":"Feeds",
         "description":"",
         "config":"feeds",
-        "sectionfields":{
+        "sectiontype":"section",
+        "fields":{
             "TITLE":{"label":"Title", "description":"Label for this feed", "type":"text"},
             "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"text","placeholder":"RSSDataController","omitBlankValue":true},
             "BASE_URL":{"label":"URL","description":"The url for the feed or web service","type":"text"},

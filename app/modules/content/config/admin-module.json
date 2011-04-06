@@ -1,10 +1,11 @@
 {
     "feeds": {
-        "title":"Content configuration",
+        "title":"Content Configuration",
         "label":"Content pages",
         "description":"",
         "config":"feeds",
-        "sectionfields":{
+        "sectiontype":"section",
+        "fields":{
             "section":{"label":"ID", "description":"Programmatic name for this page", "type":"label"},
             "TITLE":{"label":"Title","description":"Title for this page","type":"text"},
             "SUBTITLE":{"label":"Subtitle","description":"(Optional) Subtitle for this page","type":"text"},

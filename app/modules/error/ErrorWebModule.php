@@ -51,6 +51,7 @@ class ErrorWebModule extends WebModule {
         set_exception_handler("exceptionHandlerForError");
       }
       $this->pagetype = $GLOBALS['deviceClassifier']->getPagetype();
+      $this->platform = $GLOBALS['deviceClassifier']->getPlatform();
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);
       $this->args = $args;
@@ -58,9 +59,7 @@ class ErrorWebModule extends WebModule {
   }
 
   protected function getAccessControlLists($type) {
-    return array(AccessControlList::factory(AccessControlList::RULE_ACTION_ALLOW, 
-                                            AccessControlList::RULE_TYPE_EVERYONE,
-                                            AccessControlList::RULE_VALUE_ALL));
+    return array(AccessControlList::allAccess());
   }
 
   protected function initializeForPage() {

@@ -291,9 +291,11 @@ class VideoWebModule extends WebModule
   	if ($items) {
   		$results = array();
   		foreach ($items as $video) {
-  			$results[] = $this->getListItemForVideo($video, $section);
+  		    $listItem = $this->getListItemForVideo($video, $section);
+  		    unset($listItem['subtitle']);
+  			$results[] = $listItem;
   		}
-  		return count($items);
+  		return $controller->getTotalItems();
   	} else {
   		return 0;
   	}

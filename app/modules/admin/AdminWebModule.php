@@ -72,7 +72,7 @@ class AdminWebModule extends WebModule {
                 );
                 $subNavSections['homescreen'] = array(
                     'id'=>'homescreen',
-                    'title'=>'Home screen layout',
+                    'title'=>'Home Screen Layout',
                     'url'=>$this->buildURL($section, array('section'=>'homescreen'))
                 );
                 $modules = array();

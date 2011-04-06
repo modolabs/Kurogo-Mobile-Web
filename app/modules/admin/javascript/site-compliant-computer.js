@@ -2,8 +2,8 @@ var adminType='site';
 var KUROGO_LOCAL_VERSION;
 var KUROGO_CURRENT_VERSION;
 $(document).ready(function() {
-    
-    makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
+
+    reloadSection();    
     
     $('#adminForm').submit(function(e) {
         var params = { 'v':1, 'type':'site', 'section':adminSection, 'data':{}}
@@ -24,7 +24,10 @@ $(document).ready(function() {
             }
         });
         
-        makeAPICall('POST','admin','setconfigdata', params, function() { showMessage('Configuration saved') });
+        makeAPICall('POST','admin','setconfigdata', params, function() { 
+            showMessage('Configuration saved');
+            reloadSection();
+        });
         return false;
     });
     
@@ -34,7 +37,7 @@ $(document).ready(function() {
             adminSection = section;
             $('nav ul li a[class=current]').attr('class','');
             $(this).attr('class','current');
-            makeAPICall('GET','admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
+            reloadSection();
         }
         return false;
     });
@@ -57,6 +60,10 @@ function processCheckVersion(data) {
     }
 
     $('#adminFields').append(li);
+}
+
+function reloadSection() {
+    makeAPICall('GET','admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
 }
 
 function processAdminSectionData(data) {

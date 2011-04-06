@@ -9,6 +9,10 @@
   {/if}
 {/foreach}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$primaryItems}
+{if count($primaryItems)}
+  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$primaryItems}
+{/if}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$utilityItems accessKey=false secondary=true}
+{if count($utilityItems)}
+  {include file="findInclude:common/templates/navlist.tpl" navlistItems=$utilityItems accessKey=false secondary=true}
+{/if}

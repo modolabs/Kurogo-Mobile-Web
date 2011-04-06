@@ -185,10 +185,19 @@ function toggleClass(ele, cls) {
 function showShare() {
 	document.getElementById("sharesheet").style.display="block";
 	document.addEventListener('touchmove', doNotScroll, true);
+	var iframes = document.getElementsByTagName('iframe');
+	for (var i=0; i<iframes.length; i++) {
+	    iframes[i].style.visibility = 'hidden';
+	}
+	window.scrollTo(0,0);
 }
 function hideShare() {
 	document.getElementById("sharesheet").style.display="none";
 	document.removeEventListener('touchmove', doNotScroll, true);
+	var iframes = document.getElementsByTagName('iframe');
+	for (var i=0; i<iframes.length; i++) {
+	    iframes[i].style.visibility = 'visible';
+	}
 }
 function doNotScroll( event ) {
 	event.preventDefault(); event.stopPropagation();

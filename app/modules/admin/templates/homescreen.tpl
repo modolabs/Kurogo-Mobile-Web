@@ -1,4 +1,4 @@
-<h1>Home screen layout</h1>
+<h1>Home Screen Layout</h1>
 
 <div id="homescreen_layout">
 <div class="section_wrapper">

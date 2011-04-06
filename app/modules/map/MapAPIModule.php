@@ -87,6 +87,89 @@ class MapAPIModule extends APIModule
         return array();
     }
 
+    protected function initializeForSearch() {
+        $this->feedGroup = $this->getArg('group', null);
+        if ($this->feedGroup !== NULL && !isset($this->feedGroups[$this->feedGroup])) {
+            $this->feedGroup = NULL;
+        }
+
+        $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
+        if (!$this->feeds)
+            $this->feeds = $this->loadFeedData();
+        $mapSearch = new $mapSearchClass($this->feeds);
+
+        $searchType = $this->getArg('type', '');
+        switch ($searchType) {
+            case 'detail':
+                $identifier = $this->getArg('identifier');
+                if ($identifier) {
+                    $feature = $this->dataController->getFeature($identifier, $categoryPath);
+
+                    $response = array(
+                        'total' => 1,
+                        'returned' => 1,
+                        'displayField' => 'title',
+                        'results' => array(arrayFromMapFeature($feature)),
+                        );
+
+                    $this->setResponse($response);
+                    $this->setResponseVersion(1);
+
+                } else {
+                    // TODO return a more informative error
+                    $this->invalidCommand();
+                }
+
+                break;
+
+            case 'nearby':
+                $lat = $this->getArg('lat', 0);
+                $lon = $this->getArg('lon', 0);
+
+                $center = array('lat' => $lat, 'lon' => $lon);
+                $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
+                
+                $places = array();
+                foreach ($searchResults as $result) {
+                    $places[] = arrayFromMapFeature($result);
+                }
+
+                $response = array(
+                    'total' => count($places),
+                    'returned' => count($places),
+                    'displayField' => 'title',
+                    'results' => $places,
+                    );
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+
+                break;
+
+            default:
+                $searchTerms = $this->getArg('q');
+                if ($searchTerms) {
+
+                    $searchResults = $mapSearch->searchCampusMap($searchTerms);
+
+                    $places = array();
+                    foreach ($searchResults as $result) {
+                        $places[] = arrayFromMapFeature($result);
+                    }
+
+                    $response = array(
+                        'total' => count($places),
+                        'returned' => count($places),
+                        'displayField' => 'title',
+                        'results' => $places,
+                        );
+
+                    $this->setResponse($response);
+                    $this->setResponseVersion(1);
+                }
+        }
+    }
+
     // end of functions duped from mapwebmodule
 
     public function initializeForCommand() {
@@ -156,35 +239,7 @@ class MapAPIModule extends APIModule
                 }
                 break;
             case 'search':
-                $searchTerms = $this->getArg('q');
-                if ($searchTerms) {
-                    $this->feedGroup = $this->getArg('group', null);
-                    if ($this->feedGroup !== NULL && !isset($this->feedGroups[$this->feedGroup])) {
-                        $this->feedGroup = NULL;
-                    }
-
-                    $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
-                    if (!$this->feeds)
-                        $this->feeds = $this->loadFeedData();
-                    $mapSearch = new $mapSearchClass($this->feeds);
-        
-                    $searchResults = $mapSearch->searchCampusMap($searchTerms);
-        
-                    $places = array();
-                    foreach ($searchResults as $result) {
-                        $places[] = arrayFromMapFeature($result);
-                    }
-
-                    $response = array(
-                        'total' => count($places),
-                        'returned' => count($places),
-                        'displayField' => 'title',
-                        'results' => $places,
-                        );
-                
-                    $this->setResponse($response);
-                    $this->setResponseVersion(1);
-                }
+                $this->initializeForSearch();
 
                 break;
 

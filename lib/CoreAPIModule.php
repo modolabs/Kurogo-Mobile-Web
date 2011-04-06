@@ -15,9 +15,7 @@ class CoreAPIModule extends APIModule
  
     //always allow access
     protected function getAccessControlLists($type) {
-        return array(AccessControlList::factory(AccessControlList::RULE_ACTION_ALLOW, 
-                                                AccessControlList::RULE_TYPE_EVERYONE,
-                                                AccessControlList::RULE_VALUE_ALL));
+        return array(AccessControlList::allAccess());
     }
     
     public function initializeForCommand() {  
@@ -29,12 +27,12 @@ class CoreAPIModule extends APIModule
                 foreach ($allmodules as $moduleID=>$module) {
                     if (!$module->getModuleVar('disabled', 'module')) {
                         $modules[] = array(
-                            'id'     =>$moduleID,
-                            'tag'    =>$module->getConfigModule(),
-                            'title'  =>$module->getModuleVar('title','module'),
-                            'secure' =>$module->getModuleVar('secure', 'module'),
-                            'vmin'   =>$module->getVmin(),
-                            'vmax'   =>$module->getVmax()
+                            'id'        =>$module->getID(),
+                            'tag'       =>$module->getConfigModule(),
+                            'title'     =>$module->getModuleVar('title','module'),
+                            'protected' =>$module->getModuleVar('protected', 'module'),
+                            'vmin'      =>$module->getVmin(),
+                            'vmax'      =>$module->getVmax()
                         );
                     }
                 }

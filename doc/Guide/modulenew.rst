@@ -365,7 +365,7 @@ Home Screen
 -----------
 
 Adding the module to the home screen is simple. You can either use the :ref:`admin-module`
-or by editing the *SITE_DIR/config/module/home.ini* file. 
+or by editing the *SITE_DIR/config/home/module.ini* file. 
 
 #. In the *[primary_modules]* section, add an entry that says :kbd:`video="Video"`
 #. Create a 72x72 PNG image named *video.png* and place it in the *SITE_DIR/themes/default/modules/home/images/compliant*

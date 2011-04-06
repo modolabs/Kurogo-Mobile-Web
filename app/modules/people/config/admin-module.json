@@ -4,7 +4,8 @@
         "label":"Data Configuration",
         "description":"",
         "config":"feeds",
-        "sectionfields":{
+        "sectiontype":"section",
+        "fields":{
             "section":{"label":"Section", "description":"Programmatic id for this section", "type":"label"},
             "TITLE":{"label":"Title", "description":"Label for this connection", "type":"text","omitIfBlank":"true"},
             "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of directory service. Should be a PeopleController class", "type":"select","optionsMethod":["PeopleController","getPeopleControllers"]},
@@ -20,6 +21,24 @@
         "sectionsmethod":"loadFeedData",
         "sectionaddnew":false,
         "sectiondelete":false
+    },
+    "index": {
+        "title":"Index Page",
+        "label":"Index Page",
+        "config":"page-index",
+        "description":"Entries for about index page",
+        "sectiontype":"section",
+        "fields":{
+            "section":{"label":"Entry","type":"label"},
+            "title":{"label":"Title","description":"The title of the entry","type":"text"},
+            "subtitle":{"label":"Subtitle","description":"The subtitle of the entry","type":"text","omitBlankValue":true},
+            "url":{"label":"URL","description":"URL of entry.","type":"text"},
+            "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
+        },
+        "sectiontitlefield":"title",
+        "sectionindex":"string",
+        "sectionaddnew":true,
+        "sectiondelete":true
     }
 }
 
