@@ -265,7 +265,7 @@ class CalendarWebModule extends WebModule {
   
     protected function getFeedsByType() {  
         $feeds = array();
-        foreach (array('static', 'user', 'resource') as $type) {
+        foreach (array('user','resource','static') as $type) {
             $typeFeeds = $this->getFeeds($type);
             foreach ($typeFeeds as $feed=>$feedData) {
                 $feeds[$type][$type . '|' . $feed] = $feedData['TITLE'];
