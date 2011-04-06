@@ -41,7 +41,7 @@ class TemplateEngine extends Smarty {
       foreach ($checkFiles as $file) {
         $test = realpath_exists("$dir/$file");
         if ($test) {
-          //error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file' for '$name'");
+          //error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file'");
           return $test;
         }
       }
@@ -79,44 +79,20 @@ class TemplateEngine extends Smarty {
   // Extends file resource plugin
   //
   
-  static private function getExtendsFile($name, $smarty) {
+  static private function getExtendsFile($name) {
     $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
     $platform = $GLOBALS['deviceClassifier']->getPlatform();
     
     $checkDirs = array(
-      'THEME_DIR'    => THEME_DIR,
-      'SITE_APP_DIR' => SITE_APP_DIR,
       'APP_DIR'      => APP_DIR,
+      'SITE_APP_DIR' => SITE_APP_DIR,
+      'THEME_DIR'    => THEME_DIR
     );
-    
-    // Warning: _current_file is ONLY AVAILABLE AT COMPILE TIME
-    // This means you cannot use it for findIncludes, since each include
-    // is a separate cache file.  Extends are merged at compile time so
-    // it works here, but only if we also modify the timestamp code to
-    // return the timestamp of the newest file in the search path
-    if (isset($smarty, $smarty->_current_file)) {
-      $parent = $smarty->_current_file;
-      
-      $ext = '.tpl';
-      if ((strpos($parent, 'findInclude:') === 0) &&
-          (strrpos($parent, $ext) !== (strlen($parent) - strlen($ext)))) {
-        $parent .= $ext; // findInclude resources don't require extension
-      }
-      
-      // If we are extending a file of the same name as our own
-      if (strpos($parent, $name) === (strlen($parent) - strlen($name))) {
-        //error_log(__FUNCTION__."($pagetype-$platform) EXTENDING SAME FILE $name");
-        $checkDirs = array(
-          'APP_DIR'      => APP_DIR,
-          'SITE_APP_DIR' => SITE_APP_DIR,
-        );
-      }
-    }
     
     foreach ($checkDirs as $type => $dir) {
         $test = realpath_exists("$dir/$name");
         if ($test) {
-          //error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name' for '$name'");
+          //error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name'");
           return $test;
         }
     }
@@ -124,7 +100,7 @@ class TemplateEngine extends Smarty {
   }
   
   public static function smartyResourceExtendsGetSource($name, &$source, $smarty) {
-    $file = self::getExtendsFile($name, $smarty);
+    $file = self::getExtendsFile($name);
     if ($file !== false) {
       $source = file_get_contents($file);
       return true;
@@ -133,27 +109,9 @@ class TemplateEngine extends Smarty {
   }
 
   public static function smartyResourceExtendsGetTimestamp($name, &$timestamp, $smarty) {
-    // See comments in self::getExtendsFile() for why we search all files for the newest
-    $checkDirs = array(
-      'THEME_DIR'    => THEME_DIR,
-      'SITE_APP_DIR' => SITE_APP_DIR,
-      'APP_DIR'      => APP_DIR,
-    );
-
-    $maxTimestamp = 0;
-    foreach ($checkDirs as $type => $dir) {
-      $test = realpath_exists("$dir/$name");
-      if ($test) {
-        $testTimestamp = filemtime($test);
-        if ($testTimestamp > $maxTimestamp) {
-          //error_log(__FUNCTION__." '$type/$name' has latest timestamp $testTimestamp for $name");
-          $maxTimestamp = $testTimestamp;
-        }
-      }
-    }
-
-    if ($maxTimestamp) {
-      $timestamp = $maxTimestamp;
+    $file = self::getExtendsFile($name);
+    if ($file !== false) {
+      $timestamp = filemtime($file);
       return true;
     }
     return false;
