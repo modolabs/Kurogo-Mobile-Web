@@ -251,6 +251,7 @@ class NewsWebModule extends WebModule {
           $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
           $this->addOnLoad('setupNewsListing();');
 
+          $this->assign('maxPerPage',  $this->maxPerPage);
           $this->assign('extraArgs',   $extraArgs);
           $this->assign('searchTerms', $searchTerms);
           $this->assign('stories',     $stories);
@@ -335,6 +336,7 @@ class NewsWebModule extends WebModule {
         $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
         $this->addOnLoad('setupNewsListing();');
 
+        $this->assign('maxPerPage',     $this->maxPerPage);
         $this->assign('hiddenArgs',     $hiddenArgs);
         $this->assign('sections',       $sections);
         $this->assign('currentSection', $sections[$this->feedIndex]);
