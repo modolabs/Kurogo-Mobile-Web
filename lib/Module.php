@@ -134,16 +134,25 @@ abstract class Module
         
         if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
             includePackage('Authentication');
-            if ($this->getModuleVar('protected','module')) {
-                if (!$this->isLoggedIn()) {
-                    $this->unauthorizedAccess();
-                }
-            }
-            
-            if (!$this->evaluateACLS(AccessControlList::RULE_TYPE_ACCESS)) {
+            if (!$this->getAccess()) {
                 $this->unauthorizedAccess();
             }
         }
+    }
+    
+    protected function getAccess() {
+
+        if ($this->getModuleVar('protected','module')) {
+            if (!$this->isLoggedIn()) {
+                return false;
+            }
+        }
+                
+        if (!$this->evaluateACLS(AccessControlList::RULE_TYPE_ACCESS)) {
+            return false;
+        }
+    
+        return true;
     }
 
 
@@ -334,7 +343,7 @@ abstract class Module
       * @param bool $admin if true evaluate the admin acls
       * @return bool true if the access is granted, false if it is not
       */
-    protected function evaluateACLS($type) {
+    protected function evaluateACLS($type=AccessControlList::RULE_TYPE_ACCESS) {
         $acls = $this->getAccessControlLists($type);
         $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
         $users = $this->getUsers(true);

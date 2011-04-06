@@ -30,7 +30,7 @@ class CoreAPIModule extends APIModule
                             'id'        =>$module->getID(),
                             'tag'       =>$module->getConfigModule(),
                             'title'     =>$module->getModuleVar('title','module'),
-                            'protected' =>$module->getModuleVar('protected', 'module'),
+                            'access'    =>$module->getAccess(AccessControlList::RULE_TYPE_ACCESS),
                             'vmin'      =>$module->getVmin(),
                             'vmax'      =>$module->getVmax()
                         );
