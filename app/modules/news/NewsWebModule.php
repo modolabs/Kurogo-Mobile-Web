@@ -195,10 +195,10 @@ class NewsWebModule extends WebModule {
         $this->enablePager($content, $this->feed->getEncoding(), $storyPage);
         
         $this->assign('date',          $date);
-        $this->assign('storyURL',      urlencode($story->getLink()));
+        $this->assign('storyURL',      $story->getLink());
         $this->assign('shareEmailURL', $shareEmailURL);
         $this->assign('title',         $story->getTitle());
-        $this->assign('shareRemark',   urlencode($story->getTitle()));
+        $this->assign('shareRemark',   $story->getTitle());
         $this->assign('author',        $story->getAuthor());
         $this->assign('image',         $this->getImageForStory($story));
         break;
