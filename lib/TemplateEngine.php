@@ -89,6 +89,11 @@ class TemplateEngine extends Smarty {
       'APP_DIR'      => APP_DIR,
     );
     
+    // Warning: _current_file is ONLY AVAILABLE AT COMPILE TIME
+    // This means you cannot use it for findIncludes, since each include
+    // is a separate cache file.  Extends are merged at compile time so
+    // it works here, but only if we also modify the timestamp code to
+    // return the timestamp of the newest file in the search path
     if (isset($smarty, $smarty->_current_file)) {
       $parent = $smarty->_current_file;
       
@@ -128,9 +133,27 @@ class TemplateEngine extends Smarty {
   }
 
   public static function smartyResourceExtendsGetTimestamp($name, &$timestamp, $smarty) {
-    $file = self::getExtendsFile($name, $smarty);
-    if ($file !== false) {
-      $timestamp = filemtime($file);
+    // See comments in self::getExtendsFile() for why we search all files for the newest
+    $checkDirs = array(
+      'THEME_DIR'    => THEME_DIR,
+      'SITE_APP_DIR' => SITE_APP_DIR,
+      'APP_DIR'      => APP_DIR,
+    );
+
+    $maxTimestamp = 0;
+    foreach ($checkDirs as $type => $dir) {
+      $test = realpath_exists("$dir/$name");
+      if ($test) {
+        $testTimestamp = filemtime($test);
+        if ($testTimestamp > $maxTimestamp) {
+          //error_log(__FUNCTION__." '$type/$name' has latest timestamp $testTimestamp for $name");
+          $maxTimestamp = $testTimestamp;
+        }
+      }
+    }
+
+    if ($maxTimestamp) {
+      $timestamp = $maxTimestamp;
       return true;
     }
     return false;
