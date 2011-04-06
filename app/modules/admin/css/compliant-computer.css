@@ -126,6 +126,10 @@ nav a.current {
 	font-weight: bold;
 	background: url(/modules/admin/images/nav-bullet.png) 14px no-repeat;
 }
+nav ul ul a {
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
 #content {
 	min-height: 600px;
 	margin-left: 320px;
@@ -592,7 +596,7 @@ h1 img {
 }
 
 #moduleSections {
-    height: 30px;
+    height:30px;
     margin: 0;
     padding: 0 0 10px 0;
     border-bottom: 1px solid #ddd;
@@ -601,24 +605,33 @@ h1 img {
 #moduleDescription {
 }
 
+#moduleImage {
+	margin-top: -8px;
+}
 
 #moduleSections li {
     text-align: center;
-    float:left;
+    float: left;
     list-style: none;
-    padding: 0 10px 0 10px;
-    line-height: 30px;
+    padding: 0 10px;
+    line-height: 28px;
+	margin: 1px;
 }
 
 #moduleSections li.selected {
-    background-color: #ccc;
-    border-radius: 8px;
-	-webkit-border-radius: 8px;
-	-moz-border-radius: 8px;
+    background-color: #e3e3e3;
+	border: 1px solid #ccc;
+	margin: 0;
+    border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
 }
-
 
 #moduleSections li a {
     text-decoration:none;
     display: block;
+}
+
+#moduleSections li.selected a {
+	color: #000;
 }

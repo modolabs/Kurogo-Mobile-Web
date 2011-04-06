@@ -1,7 +1,7 @@
 <ul class="results">
   {if $previousURL}
     <li class="pagerlink">
-      <a href="{$previousURL}">Previous 10 stories...</a>
+      <a href="{$previousURL}">Previous {$maxPerPage} stories...</a>
     </li>
   {/if}
 
@@ -28,7 +28,7 @@
 
   {if $nextURL}
     <li class="pagerlink">
-      <a href="{$nextURL}">Next 10 stories...</a>
+      <a href="{$nextURL}">Next {$maxPerPage} stories...</a>
     </li>
   {/if}
 </ul>

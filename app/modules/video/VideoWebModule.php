@@ -219,6 +219,7 @@ class VideoWebModule extends WebModule
                 $this->assign('previousURL', $previousURL);
                 $this->assign('nextURL',     $nextURL);
                 $this->assign('hiddenArgs',  $hiddenArgs);
+                $this->assign('maxPerPage',  $maxPerPage);
                  
                 $this->generateBookmarkLink();
                     

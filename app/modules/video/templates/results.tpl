@@ -1,16 +1,16 @@
 <ul class="results">
   {$ellipsisCount=0}
+  {if $previousURL}
+    <li class="pagerlink">
+      <a href="{$previousURL}">Previous {$maxPerPage} videos...</a>
+    </li>
+  {/if}
   {foreach $results as $item}
     {if !isset($item['separator'])}
       <li class="video{if $item['img']} noimage{/if}">  
   
         {include file="findInclude:modules/$moduleID/templates/listItem.tpl" ellipsisId=$ellipsisCount++ subTitleNewline=$subTitleNewline|default:true} 
        
-        {*
-        <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
-      	{include file="findInclude:modules/$moduleID/templates/listItem.tpl" subTitleNewline=$subTitleNewline|default:true} 
-        </div>
-        *}	
       </li>
     {/if}
   {/foreach}
@@ -18,5 +18,10 @@
     {block name="noResults"}
       <li>{$noResultsText|default:"No results found"}</li>
     {/block}
+  {/if}
+  {if $nextURL}
+    <li class="pagerlink">
+      <a href="{$nextURL}">Next {$maxPerPage} videos...</a>
+    </li>
   {/if}
 </ul>
