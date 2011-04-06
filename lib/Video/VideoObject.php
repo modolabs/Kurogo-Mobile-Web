@@ -17,6 +17,8 @@ class VideoObject
     protected $height;
     protected $duration;
     protected $tags;
+    protected $mobileURL;
+    protected $stillFrameImage;
     
     public function getType() {
         return $this->type;
@@ -70,6 +72,14 @@ class VideoObject
         return $this->url;
     }
 
+    public function setMobileURL($url) {
+        $this->mobileURL = $url;
+    }
+    
+    public function getMobileURL() {
+        return $this->mobileURL;
+    }
+
     public function setImage($image) {
         $this->image = $image;
     }
@@ -108,5 +118,13 @@ class VideoObject
     
     public function getTags() {
         return $this->tags;
+    }
+    
+    public function setStillFrameImage($imageURL) {
+        $this->stillFrameImage = $imageURL;
+    }
+        
+    public function getStillFrameImage() {
+        return $this->stillFrameImage;
     }
 }

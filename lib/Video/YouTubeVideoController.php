@@ -66,11 +66,14 @@ class YouTubeDataParser extends DataParser
     protected function parseEntry($entry) {
         $video = new YouTubeVideoObject();
         $video->setURL($entry['player']['default']);
+        $video->setMobileURL($entry['content']['1']);
         $video->setTitle($entry['title']);
         $video->setDescription($entry['description']);
         $video->setDuration($entry['duration']);
         $video->setID($entry['id']);
         $video->setImage($entry['thumbnail']['sqDefault']);
+        $video->setStillFrameImage($entry['thumbnail']['hqDefault']);
+        
         if (isset($entry['tags'])) {
             $video->setTags($entry['tags']);
         }
