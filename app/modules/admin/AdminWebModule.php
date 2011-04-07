@@ -112,11 +112,14 @@ class AdminWebModule extends WebModule {
         
 
         $usedModules = array_merge($modules['primary'], $modules['secondary']);
-        $allModules = $this->getAllModuleNames();
+        $allModules = $this->getAllModules();
         $unusedModules = array_diff(array_keys($allModules), array_keys($usedModules));
         
         foreach ($unusedModules as $moduleID) {
-            $modules['unused'][$moduleID] = $allModules[$moduleID];
+            $module = $allModules[$moduleID];
+            if ($module->canBeAddedToHomeScreen()) {
+                $modules['unused'][$moduleID] = $module->getModuleName();
+            }
         }
                 
         $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '-selected' : '';

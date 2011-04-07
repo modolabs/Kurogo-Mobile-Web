@@ -421,6 +421,10 @@ abstract class WebModule extends Module {
         
         return $modules;
     }
+    
+    public function canBeAddedToHomeScreen() {
+        return $this->canBeAddedToHomeScreen;
+    }
   
   protected function getAllModules() {
     $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
