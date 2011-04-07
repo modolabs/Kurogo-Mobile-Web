@@ -89,7 +89,6 @@ class MapWebModule extends WebModule {
         return $configData;
     }
 
-    
     protected function initialize() {
         $this->feedGroup = $this->getArg('group', NULL);
         if ($this->feedGroup === NULL) {
@@ -107,57 +106,6 @@ class MapWebModule extends WebModule {
         }
     }
     
-    protected function pageSupportsDynamicMap() {
-        return ($this->pagetype == 'compliant' ||
-                $this->pagetype == 'tablet')
-            && $this->platform != 'blackberry'
-            && $this->platform != 'bbplus';
-    }
-
-    protected function staticMapImageDimensions() {
-        switch ($this->pagetype) {
-            case 'tablet':
-                $imageWidth = 600; $imageHeight = 350;
-                break;
-            case 'compliant':
-                if ($this->platform == 'bbplus') {
-                    $imageWidth = 410; $imageHeight = 260;
-                } else {
-                    $imageWidth = 290; $imageHeight = 290;
-                }
-                break;
-            case 'touch':
-            case 'basic':
-                $imageWidth = 200; $imageHeight = 200;
-                break;
-        }
-        return array($imageWidth, $imageHeight);
-    }
-    
-    protected function dynamicMapImageDimensions() {
-        $imageWidth = '98%';
-        switch ($this->pagetype) {
-            case 'tablet':
-                $imageHeight = 350;
-                break;
-            case 'compliant':
-            default:
-                if ($this->platform == 'bbplus') {
-                    $imageHeight = 260;
-                } else {
-                    $imageHeight = 290;
-                }
-                break;
-        }
-        return array($imageWidth, $imageHeight);
-    }
-    
-    protected function fullscreenMapImageDimensions() {
-        $imageWidth = '100%';
-        $imageHeight = '100%';
-        return array($imageWidth, $imageHeight);
-    }
-
     protected function addJavascriptFullscreenStaticMap() {
         // Let Webkit figure out what the window size is and then hide the address bar
         // and resize the map
@@ -215,6 +163,7 @@ JS;
     
     private function initializeMap(MapDataController $dataController, MapFeature $feature, $fullscreen=FALSE) {
         
+        $MapDevice = new MapDevice($this->pagetype, $this->platform);
         $style = $feature->getStyle();
         $geometries = array();
         
@@ -227,7 +176,7 @@ JS;
             $zoomLevel = $dataController->getDefaultZoomLevel();
         }
 
-        if ($this->pageSupportsDynamicMap() && $dataController->supportsDynamicMap()) {
+        if ($MapDevice->pageSupportsDynamicMap() && $dataController->supportsDynamicMap()) {
             $imgController = $dataController->getDynamicMapController();
         } else {
             $imgController = $dataController->getStaticMapController();
@@ -283,20 +232,20 @@ JS;
             $this->assign('fullscreenURL', $this->buildBreadcrumbURL('fullscreen', $this->args, false));
         
             if ($imgController->isStatic()) {
-                list($imageWidth, $imageHeight) = $this->staticMapImageDimensions();
+                list($imageWidth, $imageHeight) = $MapDevice->staticMapImageDimensions();
 
             } else {
-                list($imageWidth, $imageHeight) = $this->dynamicMapImageDimensions();
+                list($imageWidth, $imageHeight) = $MapDevice->dynamicMapImageDimensions();
                 $this->addInlineJavascriptFooter("\n hideMapTabChildren();\n");
             }
             
         } else {
             $this->assign('detailURL', $this->buildBreadcrumbURL('detail', $this->args, false));
             if ($imgController->isStatic()) {
-                list($imageWidth, $imageHeight) = $this->staticMapImageDimensions();
+                list($imageWidth, $imageHeight) = $MapDevice->staticMapImageDimensions();
 
             } else {
-                list($imageWidth, $imageHeight) = $this->fullscreenMapImageDimensions();
+                list($imageWidth, $imageHeight) = $MapDevice->fullscreenMapImageDimensions();
                 $this->addJavascriptFullscreenDynamicMap();
             }
             $this->addJavascriptFullscreenRotateScreen();
