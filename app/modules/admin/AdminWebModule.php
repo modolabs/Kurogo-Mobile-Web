@@ -85,7 +85,7 @@ class AdminWebModule extends WebModule {
                     $modules[$module->getConfigModule()] = array(
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
-                        'home'=>false,
+                        'home'=>$module->isOnHomeScreen(),
                         'disabled'=>$module->getModuleVar('disabled'),
                         'protected'=>$module->getModuleVar('protected'),
                         'secure'=>$module->getModuleVar('secure'),

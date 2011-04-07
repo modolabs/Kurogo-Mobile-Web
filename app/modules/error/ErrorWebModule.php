@@ -12,6 +12,7 @@ class ErrorWebModule extends WebModule {
   protected $id = 'error';
   protected $configModule = 'error';
   protected $moduleName = 'Error';
+  protected $canBeAddedToHomeScreen = false;
 
   private $errors = array(
     'data' => array(

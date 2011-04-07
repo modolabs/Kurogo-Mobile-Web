@@ -18,13 +18,6 @@ class NewsWebModule extends WebModule {
   protected $showPubDate = false;
   protected $showAuthor = false;
 
-  protected function getModuleDefaultData() {
-    return array_merge(parent::getModuleDefaultData(), array(
-        'NEWS_MAX_RESULTS'=>10
-        )
-    );
-  }
-  
   private function feedURLForFeed($feedIndex) {
     return isset($this->feeds[$feedIndex]) ? 
       $this->feeds[$feedIndex]['baseURL'] : null;

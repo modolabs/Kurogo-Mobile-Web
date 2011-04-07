@@ -6,9 +6,8 @@
         "fields":{
             "id": {"label":"Module ID","type":"label","config":"module","section":"module","description":"The unique internal ID for this module. This can only be changed in the source code.", "valueMethod":"getID"},
             "configModule": {"label":"Config ID","type":"label","config":"module","section":"module","description":"The configuration ID for this module. It represents the configuration folder for this module's data. This can only be changed in the source code.", "valueMethod":"getConfigModule"},
-            "title":{"label":"Display title","type":"text","config":"module","section":"module","description":"The name by which this module will be presented to the user (e.g., on the home screen)."},
+            "title":{"label":"Display title","type":"text","config":"module","section":"module","description":"The name by which this module will be presented to the user."},
             "disabled":{"label":"Disabled","type":"checkbox","config":"module","section":"module","description":"If selected, the module cannot be used by any user"},
-            "protected":{"label":"Protected","type":"checkbox","config":"module","section":"module","description":"Require that users authenticate before being able to access this module."},
             "secure":{"label":"SSL","type":"checkbox","config":"module","section":"module","description":"Require that this module only be accessed using an SSL connection. Note: Maintaining a proper SSL site is the responsibility of the site administrator."},
             "search":{"label":"Include in federated search","type":"checkbox","config":"module","section":"module","description":"Include this module's content in the site-wide federated search accessible from the home screen."},
             "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module.","omitBlankValue":true}

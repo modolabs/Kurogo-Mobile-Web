@@ -214,37 +214,6 @@ abstract class Module
     }
 
     /**
-      * Returns the main module configuration
-      * @return array. Dictionary of module keys and values
-      */
-    public function getModuleData() {
-        if (!$this->moduleData) {
-            $moduleData = $this->getModuleDefaultData();
-            $config = $this->getConfig('module');
-            $moduleData = array_merge($moduleData, $config->getSectionVars());
-            $this->moduleData = $moduleData;
-        }
-    
-        return $this->moduleData;
-    }
-  
-    /**
-      * Returns default module configuration data
-      * @return array
-      */
-    protected function getModuleDefaultData() {
-        return array(
-            'module'=>array(
-                'title'=>ucfirst($this->configModule),
-                'disabled'=>0,
-                'protected'=>0,
-                'search'=>0,
-                'secure'=>0
-            )
-        );
-    }
-
-    /**
       * Convenience method for retrieving a key from an array
       * @param array $args an array to search
       * @param string $key the key to retrieve

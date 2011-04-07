@@ -10,23 +10,8 @@
   */
 class HomeWebModule extends WebModule {
   protected $id = 'home';
+  protected $canBeAddedToHomeScreen = false;
 
-  protected function getModuleDefaultData() {
-    return array_merge(parent::getModuleDefaultData(), array(
-      'display_type'      => 'springboard',
-      'primary_modules'   => array(),
-      'secondary_modules' => array()
-    ));
-  }
-  
-  protected function getSectionTitleForKey($key) {
-    switch ($key) {
-      case 'primary_modules': return 'Primary Modules';
-      case 'secondary_modules': return 'Secondary Modules';
-      default: return parent::getSectionTitleForKey($key);
-    }
-  }
-  
   private function getTabletModulePanes($tabletConfig) {
     $modulePanes = array();
     

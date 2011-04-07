@@ -5,7 +5,7 @@
         <th colspan="2">Module name</th>
         <th>ID</th>
         <th>Enabled</th>
-        <th>Protect</th>
+        <th>Home</th>
         <th>SSL</th>
         <th>Federated<br/>Search</th>
     </tr>
@@ -17,7 +17,7 @@
     <td><a href="{$moduleData.url}">{$moduleData.title|escape}</a></td>
     <td>{$moduleData.id}</td>
     <td><input type="hidden" name="{$moduleData.id}[disabled]" value="1" /> <input type="checkbox" name="{$moduleData.id}[disabled]" value="0"{if !$moduleData.disabled} checked{/if} /></td>
-    <td><input type="hidden" name="{$moduleData.id}[protected]" value="0" /> <input type="checkbox" name="{$moduleData.id}[protected]" value="1"{if $moduleData.protected} checked{/if} /></td>
+    <td>{if $moduleData.home}<img src="/common/images/available.png" alt="Yes" />{/if}</td>
     <td><input type="hidden" name="{$moduleData.id}[secure]" value="0" /> <input type="checkbox" name="{$moduleData.id}[secure]" value="1"{if $moduleData.secure} checked{/if} /></td>
     <td><input type="hidden" name="{$moduleData.id}[search]" value="0" /> <input type="checkbox" name="{$moduleData.id}[search]" value="1"{if $moduleData.search} checked{/if} /></td>
 </tr>
@@ -27,12 +27,10 @@
 <dl class="legend">
     <dt>ID</dt>
     <dd>The unique internal module ID. This can only be changed in the source code.</dd>
-    <dt>Enable</dt>
+    <dt>Enabled</dt>
     <dd>Module is active for this site.</dd>
-<!--    <dt>Home screen</dt>
-    <dd>Module is featured on the home screen.</dd> -->
-    <dt>Protect</dt>
-    <dd>Module requires authentication.</dd>
+    <dt>Home</dt>
+    <dd>Module is featured on the home screen.</dd>
     <dt>SSL</dt>
     <dd>Module requires a secure connection.</dd>
     <dt>Federated Search</dt>

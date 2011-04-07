@@ -2,8 +2,6 @@
 abstract class ContentAPIModule extends APIModule {
 
     protected $id = 'content';
-   // protected $feedFields = array('CONTENT_TYPE'=>'Content Type');
-    //protected $hasFeeds = true;
     protected $vmin = 1;
     protected $vmax = 1;
 
