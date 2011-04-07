@@ -287,8 +287,8 @@ class MapAPIModule extends APIModule
                 case 'geocode':
                     $locationSearchTerms = $this->getArg('q');
                     
-                    $geocodingDataControllerClass = 'GeocodingSearchDataController';
-                    $geocodingDataParserClass = 'GeocodingSearchDataParser';
+                    $geocodingDataControllerClass = $this->getOptionalModuleVar('GEOCODING_DATA_CONTROLLER_CLASS');
+                    $geocodingDataParserClass = $this->getOptionalModuleVar('GEOCODING_DATA_PARSER_CLASS');
                     $geocoding_base_url = $this->getOptionalModuleVar('GEOCODING_BASE_URL');
 
                     $arguments = array('BASE_URL' => $geocoding_base_url,
