@@ -87,7 +87,8 @@
         "sectiontype":"fields",
         "fields":{
             "MODULE_ORDER_COOKIE_LIFESPAN":{"label":"Module order lifespan","type":"time","config":"site","description":"User-customized order of modules to be displayed on the homescreen","section":"cookies"},
-            "LAYOUT_COOKIE_LIFESPAN":{"label":"Layout cookie lifespan","type":"time","config":"site","description":"Time (in seconds) that the device detection service should be cached on the server","section":"cookies"}
+            "LAYOUT_COOKIE_LIFESPAN":{"label":"Layout cookie lifespan","type":"time","config":"site","description":"Time (in seconds) that the device detection service should be cached on the server","section":"cookies"},
+            "BOOKMARK_COOKIE_LIFESPAN":{"label":"Bookmark cookie lifespan","type":"time","config":"site","description":"Time (in seconds) that bookmark cookies are saved. Used by modules that have bookmarks","section":"cookies"}
         }
     },
     "authentication":{
