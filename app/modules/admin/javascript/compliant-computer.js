@@ -147,7 +147,7 @@ function appendFormField(parent, key, fieldData) {
             parent.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).addClass('changeElement').addClass(inputClass).attr('id',id));
             break;
         case 'paragraph':
-            parent.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows','5').attr('section', section).addClass(inputClass).attr('id',id));
+            parent.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows','8').attr('section', section).addClass(inputClass).attr('id',id));
             break;
         case 'label':
             parent.append('<span class="labeltext">'+fieldData.value+'</span>');

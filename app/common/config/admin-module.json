@@ -10,19 +10,12 @@
             "disabled":{"label":"Disabled","type":"checkbox","config":"module","section":"module","description":"If selected, the module cannot be used by any user"},
             "protected":{"label":"Protected","type":"checkbox","config":"module","section":"module","description":"Require that users authenticate before being able to access this module."},
             "secure":{"label":"SSL","type":"checkbox","config":"module","section":"module","description":"Require that this module only be accessed using an SSL connection. Note: Maintaining a proper SSL site is the responsibility of the site administrator."},
-            "search":{"label":"Include in federated search","type":"checkbox","config":"module","section":"module","description":"Include this module's content in the site-wide federated search accessible from the home screen."}
+            "search":{"label":"Include in federated search","type":"checkbox","config":"module","section":"module","description":"Include this module's content in the site-wide federated search accessible from the home screen."},
+            "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module.","omitBlankValue":true}
        }
     },
-    "strings": {
-        "title":"Text Strings",
-        "description":"",
-        "sectiontype":"fields",
-        "fields": {
-            "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module.","omitBlankValue":true}
-        }
-    },
     "pages": {
-        "title":"Page Titles",
+        "title":"Pages",
         "config":"pages",
         "description":"<strong>Page title</strong>: displayed at the top of the page. <strong>Breadcrumb</strong>: Displayed in drill-up navigation, if any, within lower pages. <strong>Breadcrumb (long)</strong>: Displayed in drill-up navigation within lower pages on devices (e.g., tablets) with significantly larger screens. Any blank field will be left in its default/system-generated state.",
         "sectiontype":"section",

@@ -1,5 +1,8 @@
 {
     "strings":{
+        "title":"Text Strings",
+        "description":"",
+        "sectiontype":"fields",
         "fields":{
             "LOGIN_MESSAGE":{"label":"Login message","type":"text","config":"module","section":"strings","description":"Message to show at the header of the login module"},
             "LOGIN_LABEL":{"label":"Login label","type":"text","config":"module","section":"strings","description":"Label for the userID/login field"},
