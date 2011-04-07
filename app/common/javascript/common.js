@@ -138,13 +138,13 @@ function setCookie(name, value, expireseconds, path) {
   exdate.setTime(exdate.getTime() + (expireseconds * 1000));
   var exdateclause = (expireseconds == 0) ? "" : "; expires=" + exdate.toGMTString();
   var pathclause = (path == null) ? "" : "; path=" + path;
-  document.cookie = name + "=" + value + exdateclause + pathclause;
+  document.cookie = name + "=" + escape(value) + exdateclause + pathclause;
 }
 
 function getCookieArrayValue(name) {
   var value = getCookie(name);
   if (value && value.length) {
-    return value.split(',');
+    return value.split('@@');
   } else {
     return new Array();
   }

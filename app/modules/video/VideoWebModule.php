@@ -6,94 +6,14 @@ class VideoWebModule extends WebModule
 {
     protected $id='video';  // this affects which .ini is loaded
     protected $feeds = array();
-    protected $bookmarkCookie = 'videobookmarks';
-    protected $bookmarkLifespan = 25237;
+    protected $bookmarkLinkTitle = 'Bookmarked Videos';
    
-    // bookmarks -- copied from Maps
-    protected function generateBookmarkOptions($cookieID) {
-        // compliant branch
-        $this->addOnLoad("setBookmarkStates('{$this->bookmarkCookie}', '{$cookieID}')");
-        $this->assign('cookieName', $this->bookmarkCookie);
-        $this->assign('expireDate', $this->bookmarkLifespan);
-        $this->assign('bookmarkItem', $cookieID);
-
-        // the rest of this is all touch and basic branch
-        if (isset($this->args['bookmark'])) {
-            if ($this->args['bookmark'] == 'add') {
-                $this->addBookmark($cookieID);
-                $status = 'on';
-                $bookmarkAction = 'remove';
-            } else {
-                $this->removeBookmark($cookieID);
-                $status = 'off';
-                $bookmarkAction = 'add';
-            }
-
-        } else {
-            if ($this->hasBookmark($cookieID)) {
-                $status = 'on';
-                $bookmarkAction = 'remove';
-            } else {
-                $status = 'off';
-                $bookmarkAction = 'add';
-            }
-        }
-
-        $this->assign('bookmarkStatus', $status);
-        $this->assign('bookmarkURL', $this->bookmarkToggleURL($bookmarkAction));
-        $this->assign('bookmarkAction', $bookmarkAction);
-    }
-
-    private function bookmarkToggleURL($toggle) {
-        $args = $this->args;
-        $args['bookmark'] = $toggle;
-        return $this->buildBreadcrumbURL($this->page, $args, false);
-    }
-
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
         return $this->buildBreadcrumbURL('detail', $params, true);
     }
 
-    protected function getBookmarks() {
-        $bookmarks = array();
-        if (isset($_COOKIE[$this->bookmarkCookie])) {
-            $bookmarks = explode(",", $_COOKIE[$this->bookmarkCookie]);
-        }
-        return $bookmarks;
-    }
-
-    protected function setBookmarks($bookmarks) {
-        $values = implode(",", $bookmarks);
-        $expireTime = time() + $this->bookmarkLifespan;
-        setcookie($this->bookmarkCookie, $values, $expireTime);
-    }
-
-    protected function addBookmark($aBookmark) {
-        $bookmarks = $this->getBookmarks();
-        if (!in_array($aBookmark, $bookmarks)) {
-            $bookmarks[] = $aBookmark;
-            $this->setBookmarks($bookmarks);
-        }
-    }
-
-    protected function removeBookmark($aBookmark) {
-        $bookmarks = $this->getBookmarks();
-        $index = array_search($aBookmark, $bookmarks);
-        if ($index !== false) {
-            array_splice($bookmarks, $index, 1);
-            $this->setBookmarks($bookmarks);
-        }
-    }
-
-    protected function hasBookmark($aBookmark) {
-        return in_array($aBookmark, $this->getBookmarks());
-    }
-    
     protected function getTitleForBookmark($aBookmark) {
-        //if (!$this->feeds)  // TODO drop
-        //    $this->feeds = $this->loadFeedData();
-
         parse_str($aBookmark, $params);
         $titles = array($params['title']);
         if (isset($params['subtitle'])) {
@@ -103,23 +23,6 @@ class VideoWebModule extends WebModule
         
     }
     
-    private function bookmarkType($aBookmark) {
-        //parse_str($aBookmark, $params);  // TODO drop
-        return 'video';
-    }
-    
-    private function generateBookmarkLink() {
-        $hasBookmarks = count($this->getBookmarks()) > 0;
-        if ($hasBookmarks) {
-            $bookmarkLink = array(array(
-                'title' => 'Bookmarked Videos',
-                'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
-                ));
-            $this->assign('bookmarkLink', $bookmarkLink);
-        }
-        $this->assign('hasBookmarks', $hasBookmarks);
-    }  
-  
     protected function initialize() {
         $this->feeds = $this->loadFeedData();
     }

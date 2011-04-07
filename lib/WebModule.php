@@ -9,6 +9,7 @@
 define('MODULE_BREADCRUMB_PARAM', '_b');
 define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
+define('BOOKMARK_COOKIE_DELIMITER', '@@');
 
 abstract class WebModule extends Module {
 
@@ -47,6 +48,8 @@ abstract class WebModule extends Module {
 
   private $fontsize = 'medium';
   private $fontsizes = array('small', 'medium', 'large', 'xlarge');
+  
+  protected $bookmarkLinkTitle = 'Bookmarks';
   
   private $templateEngine = null;
   
@@ -703,6 +706,109 @@ abstract class WebModule extends Module {
     $this->addJQuery();
     $this->addInternalJavascript('/common/javascript/jquery-ui.js');
   }
+  
+  //
+  // Bookmarks 
+  //
+    
+    protected function getBookmarkCookie() {
+        return $this->configModule . 'bookmarks';
+    }
+
+    protected function getBookmarkLifespan() {
+        return Kurogo::getOptionalSiteVar('BOOKMARK_COOKIE_LIFESPAN', 3600);
+    }
+
+    protected function hasBookmark($aBookmark) {
+        return in_array($aBookmark, $this->getBookmarks());
+    }
+
+    private function bookmarkToggleURL($toggle) {
+        $args = $this->args;
+        $args['bookmark'] = $toggle;
+        return $this->buildBreadcrumbURL($this->page, $args, false);
+    }
+
+    protected function setBookmarks($bookmarks) {
+        $values = implode(BOOKMARK_COOKIE_DELIMITER, $bookmarks);
+        $expireTime = time() + $this->getBookmarkLifespan();
+        setcookie($this->getBookmarkCookie(), $values, $expireTime, COOKIE_PATH);
+    }
+
+    protected function addBookmark($aBookmark) {
+        $bookmarks = $this->getBookmarks();
+        if (!in_array($aBookmark, $bookmarks)) {
+            $bookmarks[] = $aBookmark;
+            $this->setBookmarks($bookmarks);
+        }
+    }
+
+    protected function removeBookmark($aBookmark) {
+        $bookmarks = $this->getBookmarks();
+        $index = array_search($aBookmark, $bookmarks);
+        if ($index !== false) {
+            array_splice($bookmarks, $index, 1);
+            $this->setBookmarks($bookmarks);
+        }
+    }
+    
+    protected function generateBookmarkOptions($cookieID) {
+        $cookieID = urldecode($cookieID);
+        $bookmarkCookie = $this->getBookmarkCookie();
+
+        // compliant branch
+        $this->addOnLoad("setBookmarkStates('{$bookmarkCookie}', '{$cookieID}')");
+        $this->assign('cookieName', $bookmarkCookie);
+        $this->assign('expireDate', $this->getBookmarkLifespan());
+        $this->assign('bookmarkItem', $cookieID);
+
+        // the rest of this is all touch and basic branch
+        if ($bookmark = $this->getArg('bookmark')) {
+            if ($bookmark == 'add') {
+                $this->addBookmark($cookieID);
+                $status = 'on';
+                $bookmarkAction = 'remove';
+            } else {
+                $this->removeBookmark($cookieID);
+                $status = 'off';
+                $bookmarkAction = 'add';
+            }
+
+        } else {
+            if ($this->hasBookmark($cookieID)) {
+                $status = 'on';
+                $bookmarkAction = 'remove';
+            } else {
+                $status = 'off';
+                $bookmarkAction = 'add';
+            }
+        }
+
+        $this->assign('bookmarkStatus', $status);
+        $this->assign('bookmarkURL'   , $this->bookmarkToggleURL($bookmarkAction));
+        $this->assign('bookmarkAction', $bookmarkAction);
+    }  
+    
+    protected function getBookmarks() {
+        $bookmarks = array();
+        $bookmarkCookie = $this->getBookmarkCookie();
+        if (isset($_COOKIE[$bookmarkCookie]) && strlen($_COOKIE[$bookmarkCookie])) {
+            $bookmarks = explode(BOOKMARK_COOKIE_DELIMITER, $_COOKIE[$bookmarkCookie]);
+        }
+        return $bookmarks;
+    }
+    
+    protected function generateBookmarkLink() {
+        $hasBookmarks = count($this->getBookmarks()) > 0;
+        if ($hasBookmarks) {
+            $bookmarkLink = array(array(
+                'title' => $this->bookmarkLinkTitle,
+                'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
+                ));
+            $this->assign('bookmarkLink', $bookmarkLink);
+        }
+        $this->assign('hasBookmarks', $hasBookmarks);
+    }    
   
   //
   // Breadcrumbs

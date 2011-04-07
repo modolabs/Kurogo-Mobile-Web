@@ -7,6 +7,7 @@ define('MAP_GROUP_COOKIE', 'mapgroup');
 class MapWebModule extends WebModule {
 
     protected $id = 'map';
+    protected $bookmarkLinkTitle = 'Bookmarked Locations';
     protected $feedGroup = null;
     protected $feedGroups = null;
     protected $numGroups = 1;
@@ -434,53 +435,6 @@ JS;
         $this->assign('categories', $categories);
     }
 
-    // bookmarks -- shouldn't really be specific to this module
-
-    protected $bookmarkCookie = 'mapbookmarks';
-    protected $bookmarkLifespan = 25237;
-
-    protected function generateBookmarkOptions($cookieID) {
-        $cookieID = urldecode($cookieID);
-
-        // compliant branch
-        $this->addOnLoad("setBookmarkStates('{$this->bookmarkCookie}', '{$cookieID}')");
-        $this->assign('cookieName', $this->bookmarkCookie);
-        $this->assign('expireDate', $this->bookmarkLifespan);
-        $this->assign('bookmarkItem', $cookieID);
-
-        // the rest of this is all touch and basic branch
-        if (isset($this->args['bookmark'])) {
-            if ($this->args['bookmark'] == 'add') {
-                $this->addBookmark($cookieID);
-                $status = 'on';
-                $bookmarkAction = 'remove';
-            } else {
-                $this->removeBookmark($cookieID);
-                $status = 'off';
-                $bookmarkAction = 'add';
-            }
-
-        } else {
-            if ($this->hasBookmark($cookieID)) {
-                $status = 'on';
-                $bookmarkAction = 'remove';
-            } else {
-                $status = 'off';
-                $bookmarkAction = 'add';
-            }
-        }
-
-        $this->assign('bookmarkStatus', $status);
-        $this->assign('bookmarkURL', $this->bookmarkToggleURL($bookmarkAction));
-        $this->assign('bookmarkAction', $bookmarkAction);
-    }
-
-    private function bookmarkToggleURL($toggle) {
-        $args = $this->args;
-        $args['bookmark'] = $toggle;
-        return $this->buildBreadcrumbURL($this->page, $args, false);
-    }
-
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
         if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
@@ -492,41 +446,6 @@ JS;
         }
     }
 
-    protected function getBookmarks() {
-        $bookmarks = array();
-        if (isset($_COOKIE[$this->bookmarkCookie])) {
-            $bookmarks = explode(",", $_COOKIE[$this->bookmarkCookie]);
-        }
-        return $bookmarks;
-    }
-
-    protected function setBookmarks($bookmarks) {
-        $values = implode(",", $bookmarks);
-        $expireTime = time() + $this->bookmarkLifespan;
-        setcookie($this->bookmarkCookie, $values, $expireTime, COOKIE_PATH);
-    }
-
-    protected function addBookmark($aBookmark) {
-        $bookmarks = $this->getBookmarks();
-        if (!in_array($aBookmark, $bookmarks)) {
-            $bookmarks[] = $aBookmark;
-            $this->setBookmarks($bookmarks);
-        }
-    }
-
-    protected function removeBookmark($aBookmark) {
-        $bookmarks = $this->getBookmarks();
-        $index = array_search($aBookmark, $bookmarks);
-        if ($index !== false) {
-            array_splice($bookmarks, $index, 1);
-            $this->setBookmarks($bookmarks);
-        }
-    }
-
-    protected function hasBookmark($aBookmark) {
-        return in_array($aBookmark, $this->getBookmarks());
-    }
-    
     protected function getTitleForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
         if (isset($params['featureindex'])) {
@@ -557,18 +476,6 @@ JS;
         if (isset($params['group']))
             return 'group';
         return 'place';
-    }
-    
-    private function generateBookmarkLink() {
-        $hasBookmarks = count($this->getBookmarks()) > 0;
-        if ($hasBookmarks) {
-            $bookmarkLink = array(array(
-                'title' => 'Bookmarked Locations',
-                'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
-                ));
-            $this->assign('bookmarkLink', $bookmarkLink);
-        }
-        $this->assign('hasBookmarks', $hasBookmarks);
     }
 
     // return true on success, false on failure
