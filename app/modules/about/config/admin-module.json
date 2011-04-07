@@ -7,7 +7,6 @@
     },
     "index": {
         "title":"Index Page",
-        "label":"Index Page",
         "config":"page-index",
         "description":"Entries for about index page",
         "sectiontype":"section",

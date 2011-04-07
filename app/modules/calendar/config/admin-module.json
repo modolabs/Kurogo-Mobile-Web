@@ -10,7 +10,6 @@
     },
     "index": {
         "title":"Index Page",
-        "label":"Index Page",
         "config":"page-index",
         "description":"Entries for about index page",
         "sectiontype":"section",
@@ -27,8 +26,7 @@
         "sectiondelete":true
     },
     "feeds": {
-        "title":"Data configuration",
-        "label":"Calendar feeds",
+        "title":"Calendars",
         "description":"",
         "config":"feeds",
         "sectiontype":"section",

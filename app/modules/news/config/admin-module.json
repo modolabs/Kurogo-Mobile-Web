@@ -8,9 +8,8 @@
        }
     },
     "feeds": {
-        "title":"Data Configuration",
-        "label":"Feeds",
-        "description":"",
+        "title":"Feeds",
+        "description":"You can have as many external data feeds as you need",
         "config":"feeds",
         "sectiontype":"section",
         "fields":{

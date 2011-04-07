@@ -1,8 +1,7 @@
 {
     "feeds": {
-        "title":"Content Configuration",
-        "label":"Content pages",
-        "description":"",
+        "title":"Pages",
+        "description":"Configure the content pages this module uses. Content can either come from external HTML, RSS or by static HTML.",
         "config":"feeds",
         "sectiontype":"section",
         "fields":{

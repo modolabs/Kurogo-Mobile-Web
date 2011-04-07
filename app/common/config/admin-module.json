@@ -1,6 +1,6 @@
 {
     "general": {
-        "title":"General Information",
+        "title":"General",
         "description":"Settings common to all modules",
         "sectiontype":"fields",
         "fields":{

@@ -1,7 +1,6 @@
 {
     "feeds": {
         "title":"Data Configuration",
-        "label":"Data Configuration",
         "description":"",
         "config":"feeds",
         "sectiontype":"section",
@@ -24,7 +23,6 @@
     },
     "index": {
         "title":"Index Page",
-        "label":"Index Page",
         "config":"page-index",
         "description":"Entries for about index page",
         "sectiontype":"section",

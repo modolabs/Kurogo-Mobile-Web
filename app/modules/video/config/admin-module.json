@@ -8,8 +8,8 @@
        }
     },
     "feeds": {
-        "title":"Data Configuration",
-        "description":"",
+        "title":"Feeds",
+        "description":"Configure the external data feeds from a variety of video sources",
         "config":"feeds",
         "sectiontype":"section",
         "fields":{

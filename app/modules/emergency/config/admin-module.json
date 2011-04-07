@@ -7,7 +7,6 @@
     },
     "contacts":{
         "title":"Contacts",
-        "label":"Emergency Contacts",
         "description":"Configures the source to edit emergency contacts",
         "sectiontype":"fields",
         "fields":{
@@ -19,7 +18,6 @@
     },
     "notice":{
         "title":"Notice",
-        "label":"Emergency Notice",
         "description":"Configures the source to retrieve emergency notices",
         "sectiontype":"fields",
         "fields":{
