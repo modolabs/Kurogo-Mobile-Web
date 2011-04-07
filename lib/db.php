@@ -18,7 +18,7 @@ class db {
   
   public function __construct($config=null)
   {
-    if (!is_array($config)) {
+    if (!is_array($config) || empty($config)) {
         if (!$config instanceOf Config) {
            $config = $GLOBALS['siteConfig'];
         }
@@ -47,7 +47,7 @@ class db {
     try {
         $this->connection = call_user_func(array("db_$db_type", 'connection'), $config);
     } catch (Exception $e) {
-        throw new Exception("Error connecting to database");
+        throw new Exception("Error connecting to database", 0, $e);
     }
   }
   
