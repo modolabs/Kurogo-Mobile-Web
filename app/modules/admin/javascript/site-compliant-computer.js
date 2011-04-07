@@ -10,19 +10,29 @@ $(document).ready(function() {
         var re;
 
         params.data[adminSection] = {};
+        
+        var data = {};
+        
         $('#adminForm [section]').map(function() {
             if ( !this.disabled &&  (this.type !='checkbox' || this.checked)) {
 
                 if (re = $(this).attr('name').match(/(.*)\[(.*)\]/)) {
-                    if (typeof params.data[adminSection][re[1]]=='undefined') {
-                        params.data[adminSection][re[1]] = {}
+                    if (typeof data[re[1]]=='undefined') {
+                        data[re[1]] = {}
                     }
-                    params.data[adminSection][re[1]][re[2]] = $(this).val();                    
+                    data[re[1]][re[2]] = $(this).val();                    
                 } else {
-                    params.data[adminSection][$(this).attr('name')] = $(this).val();
+                    data[$(this).attr('name')] = $(this).val();
                 }
             }
         });
+        
+        if (adminSubsection) {
+            params.subsection = adminSubsection;
+            params.data[adminSection][adminSubsection] = data;
+        } else {
+            params.data[adminSection] = data;
+        }
         
         makeAPICall('POST','admin','setconfigdata', params, function() { 
             showMessage('Configuration saved');
@@ -35,6 +45,7 @@ $(document).ready(function() {
         var section = $(this).attr('section');
         if (adminSection != section) {
             adminSection = section;
+            adminSubsection = '';
             $('nav ul li a[class=current]').attr('class','');
             $(this).attr('class','current');
             reloadSection();
@@ -66,14 +77,44 @@ function reloadSection() {
     makeAPICall('GET','admin','getconfigdata', { 'v':1,'type':'site','section':adminSection}, processAdminSectionData);
 }
 
+function selectSubsection(subsection, subsectionData) {
+    $('#sectionDescription').html(subsectionData.description);
+    $("#adminFields").html('');
+    $.each(createFormSectionListItems(subsectionData.section, subsectionData), function(k,element) {
+        $("#adminFields").append(element);
+    });
+    adminSubsection = subsection;
+}
+
 function processAdminSectionData(data) {
     $('#sectionTitle').html(data.title);
     $('#sectionDescription').html(data.description);
     $('#section').val(data.section);
     $("#adminFields").html('');
-    $.each(createFormSectionListItems(data.section, data), function(k,element) {
-        $("#adminFields").append(element);
-    });
+    $("#adminSections").html("");
+    if (data.sectiontype=='sections') {
+        $("#adminSections").html('').show();
+        var first = true;
+        $.each(data.sections, function(subsection, subsectionData) {
+            var li = $('<li />').append('<a href="?section='+adminSection+'&subsection='+subsection+'">'+subsectionData.title+'</a>').addClass(subsectionData.type).click(function() {
+                $('#adminSections .selected').removeClass('selected');
+                $(this).addClass('selected');
+                selectSubsection(subsection, subsectionData);
+                return false;
+            });
+            if ((!adminSubsection && first) || (adminSubsection==subsection)) {
+                li.addClass('selected');
+                selectSubsection(subsection, subsectionData);
+                first = false;
+            }
+            $("#adminSections").append(li);
+        });
+    } else {
+        $("#adminSections").hide();
+        $.each(createFormSectionListItems(data.section, data), function(k,element) {
+            $("#adminFields").append(element);
+        });
+    }
     if (adminSection=='setup') {
         checkVersion();
     }

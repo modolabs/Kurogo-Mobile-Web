@@ -49,7 +49,7 @@ class AdminAPIModule extends APIModule
         return $configData;
     }
     
-    private function getAdminData($type, $section) {
+    private function getAdminData($type, $section, $subsection=null) {
         if ($type=='site') {
             $configData = $this->getSiteAdminConfig();
             $module = $this;
@@ -65,6 +65,14 @@ class AdminAPIModule extends APIModule
         }
         
         $sectionData = $configData[$section];
+        if ($subsection) {
+            if (!isset($configData[$section]['sections'][$subsection])) {
+                throw new Exception("Invalid subsection $subsection for section $section");
+            }
+
+           $sectionData = $configData[$section]['sections'][$subsection];
+        }
+        
         $sectionData['section'] = $section;
 
         switch ($sectionData['sectiontype'])
@@ -163,14 +171,9 @@ class AdminAPIModule extends APIModule
                     }
                 }
                 break;
-            case 'acl':
-
-                if ($type=='site') {
-                    $sectionData['acls'] = Kurogo::getOptionalSiteVar('acl', array(), 'authentication');
-                    $sectionData['adminacls'] = Kurogo::getOptionalSiteVar('adminacl', array(), 'authentication');
-                } else {
-                    $sectionData['acls'] = $module->getOptionalModuleVar('acl', array(), 'authentication');
-                    $sectionData['adminacls'] = $module->getOptionalModuleVar('acl', array(), 'authentication');
+            case 'sections':
+                foreach ($sectionData['sections'] as $subsection=>&$_sectionData) {
+                    $sectionData['sections'][$subsection] = $this->getAdminData($type, $section, $subsection);
                 }
                 break;
             default:
@@ -208,9 +211,9 @@ class AdminAPIModule extends APIModule
         return $config;
     }
     
-    private function setConfigVar($type, $section, $key, $value) {
+    private function setConfigVar($type, $section, $subsection, $key, $value) {
 
-        $sectionData = $this->getAdminData($type, $section);
+        $sectionData = $this->getAdminData($type, $section, $subsection);
             
         switch ($sectionData['sectiontype'])
         {
@@ -338,6 +341,7 @@ class AdminAPIModule extends APIModule
                         break;
                     case 'site':
                         $adminData = $this->getAdminData('site', $section);
+                        break;
                 }
                 
                 $this->setResponse($adminData);
@@ -348,7 +352,10 @@ class AdminAPIModule extends APIModule
                 $type = $this->getArg('type');
                 $data = $this->getArg('data', array());
                 $section = $this->getArg('section','');
-                if (!is_array($data)) {
+                $subsection = null;
+                if (empty($data)) {
+                    $data = array();
+                } elseif (!is_array($data)) {
                     throw new Exception("Invalid data for $type $section");
                 }
                 
@@ -374,7 +381,7 @@ class AdminAPIModule extends APIModule
                                         throw new Exception("Invalid property $key for module $module");
                                     }
                                     
-                                    $this->setConfigVar($module, 'general', $key, $value);
+                                    $this->setConfigVar($module, 'general', $subsection, $key, $value);
                                 }
                             }
                             
@@ -407,6 +414,11 @@ class AdminAPIModule extends APIModule
                 
                 foreach ($data as $section=>$fields) {
                     $adminData = $this->getAdminData($type, $section);
+                    if ($adminData['sectiontype']=='sections') {
+                        $subsection = key($fields);
+                        $fields = current($fields);
+                        $adminData = $this->getAdminData($type, $section, $subsection);
+                    }
                     $fields = is_array($fields) ? $fields : array();
                     
                     foreach ($fields as $key=>$value) {
@@ -427,7 +439,7 @@ class AdminAPIModule extends APIModule
                             $value = constant($prefix) . '/' . $value;
                         }
                         
-                        $this->setConfigVar($type, $section, $key, $value);
+                        $this->setConfigVar($type, $section, $subsection, $key, $value);
                     }
 
                 }

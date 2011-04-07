@@ -101,10 +101,10 @@ function reloadSection() {
 }
 
 function processModuleSections(data) {
-    $("#moduleSections").html('');
+    $("#adminSections").html('');
     $.each(data, function(section, sectionData) {
         var li = $('<li />').append('<a href="?module='+moduleID+'&section='+section+'">'+sectionData.title+'</a>').addClass(sectionData.type).click(function() {
-            $('#moduleSections .selected').removeClass('selected');
+            $('#adminSections .selected').removeClass('selected');
             $(this).addClass('selected');
             selectSection(section);
             return false;
@@ -112,7 +112,7 @@ function processModuleSections(data) {
         if (section==adminSection) {
             li.addClass('selected');
         }
-        $("#moduleSections").append(li);
+        $("#adminSections").append(li);
     });
 }
     
