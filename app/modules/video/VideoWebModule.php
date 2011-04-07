@@ -112,7 +112,7 @@ class VideoWebModule extends WebModule
         $hasBookmarks = count($this->getBookmarks()) > 0;
         if ($hasBookmarks) {
             $bookmarkLink = array(array(
-                'title' => 'Bookmarked Locations',
+                'title' => 'Bookmarked Videos',
                 'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
                 ));
             $this->assign('bookmarkLink', $bookmarkLink);
