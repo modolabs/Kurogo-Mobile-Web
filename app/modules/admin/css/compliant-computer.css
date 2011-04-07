@@ -235,6 +235,12 @@ label {
 	margin-left: 150px;		/* same as width plus padding-right of label */
 }
 
+td .labeltext {
+    margin: auto;
+    line-height: 1.6em;
+}
+
+
 .tallfield .helptext {
 /*    margin-left: 0; */
 }
@@ -262,6 +268,7 @@ label {
 	position: relative;
 	top: 2px;
 }
+
 .checkitem label {
 	position: absolute;
 	padding-left: 4px;
@@ -654,3 +661,12 @@ h1 img {
 	color: #000;
 }
 
+.sectionsnone {
+    font-weight: bold;
+    text-align: center;
+}
+
+table .labelfield label {
+    font-weight: bold;
+    top: 0;
+}

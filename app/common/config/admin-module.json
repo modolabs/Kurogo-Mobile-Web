@@ -44,6 +44,8 @@
         },
         "sectionclearvalues":true,
         "sectionindex":"numeric",
+        "showIfSiteVar":["AUTHENTICATION_ENABLED","1"],
+        "sectionvalidatemethod":["AccessControlList","validateACL"],
         "sectionsmethod":"getModuleAccessControlListArrays",
         "sectionaddnew":true,
         "sectiondelete":true

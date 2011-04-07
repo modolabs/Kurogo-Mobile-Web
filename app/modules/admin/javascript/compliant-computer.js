@@ -25,7 +25,9 @@ function showIfCheck(element, items, value) {
     }
     if ($.isArray(value)) {
         show = ($.inArray(val, value) != -1);
-    } else  {
+    } else if (value=='*') {
+        show = val.length>0;
+    } else {
         show = val == value;
     }
 
@@ -168,6 +170,7 @@ function stopSectionEditing(titleField) {
     }
     $('.editrow.editing').hide();
     $('.editing').removeClass('editing');
+    
 }
 
 function createSectionTableRow(section, data, sectionID, sectionData) {
@@ -334,6 +337,10 @@ function createFormSectionTable(section, data) {
     
     table.append(body);
     li.append(table);
+
+    if (data.sections.length==0 && data.sectionsnone) {
+        li.append('<div class="sectionsnone">' + data.sectionsnone + '</div>');
+    }
     
     //add the "Add" button if specified
     if (data.sectionaddnew) {
@@ -344,16 +351,18 @@ function createFormSectionTable(section, data) {
             if (data.sectionindex =='numeric') {
                 sectionID = data.sections.length;
             } else {
-                if (!(sectionID = prompt("Enter id of new section"))) {
+                var sectionaddprompt = 'sectionaddprompt' in data ? data.sectionaddprompt : 'Enter id of new section';
+                if (!(sectionID = prompt(sectionaddprompt))) {
                     return false;
                 }
             }
             
-            var sectionData = { 'TITLE': '(not saved)' }
+            var sectionData = {  }
             $.each(createSectionTableRow(section, data, sectionID, sectionData), function(i,row) {
                 body.append(row);
                 row.addClass('notsaved');
                 if (!data.sectiontable) {
+                    $(".sectionsnone").hide();
                     row.addClass('editing');
                     if (row.hasClass('editrow')) {
                         row.show();

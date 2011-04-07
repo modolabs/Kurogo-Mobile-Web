@@ -177,7 +177,24 @@ class AdminAPIModule extends APIModule
                 break;
             case 'sections':
                 foreach ($sectionData['sections'] as $subsection=>&$_sectionData) {
-                    $sectionData['sections'][$subsection] = $this->getAdminData($type, $section, $subsection);
+
+                    $subsectionData = $this->getAdminData($type, $section, $subsection);
+                    if (isset($subsectionData['showIfSiteVar'])) {
+                        if (Kurogo::getOptionalSiteVar($subsectionData['showIfSiteVar'][0], '') != $subsectionData['showIfSiteVar'][1]) {
+                            unset($sectionData['sections'][$subsection]);
+                            continue;
+                        }
+                    }
+
+                    if (isset($subsectionData['showIfModuleVar'])) {
+                        if ($type->getOptionalModuleVar($subsectionData['showIfModuleVar'][0], '') != $subsectionData['showIfModuleVar'][1]) {
+                            unset($sectionData['sections'][$subsection]);
+                            continue;
+                        }
+                    }
+
+                    $sectionData['sections'][$subsection] = $subsectionData;
+
                 }
                 break;
             default:

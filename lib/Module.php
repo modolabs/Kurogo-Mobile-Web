@@ -379,6 +379,18 @@ abstract class Module
         $configData = $this->getModuleAdminConfig();
         $sections = array();
         foreach ($configData as $section=>$sectionData) {
+            if (isset($sectionData['showIfSiteVar'])) {
+                if (Kurogo::getOptionalSiteVar($sectionData['showIfSiteVar'][0], '') != $sectionData['showIfSiteVar'][1]) {
+                    continue;
+                }
+            }
+
+            if (isset($sectionData['showIfModuleVar'])) {
+                if ($this->getOptionalModuleVar($sectionData['showIfModuleVar'][0], '') != $sectionData['showIfModuleVar'][1]) {
+                    continue;
+                }
+            }
+            
             $sections[$section] = array(
                 'title'=>$sectionData['title'],
                 'type'=>$sectionData['type']

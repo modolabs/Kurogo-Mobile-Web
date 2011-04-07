@@ -95,7 +95,9 @@ function processAdminSectionData(data) {
     if (data.sectiontype=='sections') {
         $("#adminSections").html('').show();
         var first = true;
+        var sectionCount = 0;
         $.each(data.sections, function(subsection, subsectionData) {
+            sectionCount++;
             var li = $('<li />').append('<a href="?section='+adminSection+'&subsection='+subsection+'">'+subsectionData.title+'</a>').addClass(subsectionData.type).click(function() {
                 $('#adminSections .selected').removeClass('selected');
                 $(this).addClass('selected');
@@ -109,6 +111,9 @@ function processAdminSectionData(data) {
             }
             $("#adminSections").append(li);
         });
+        if (sectionCount<2) {
+            $("#adminSections").hide();
+        }
     } else {
         $("#adminSections").hide();
         $.each(createFormSectionListItems(data.section, data), function(k,element) {
