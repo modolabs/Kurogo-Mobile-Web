@@ -627,6 +627,22 @@ h1 img {
 	-moz-border-radius: 6px;
 }
 
+#moduleSections li.common {
+}
+
+#moduleSections li.module {
+}
+
+#moduleSections li.module a {
+    color: black;
+    font-weight: bold;
+}
+
+#moduleSections li.hidden {
+/*    display: none; */
+}
+
+
 #moduleSections li a {
     text-decoration:none;
     display: block;
@@ -635,3 +651,4 @@ h1 img {
 #moduleSections li.selected a {
 	color: #000;
 }
+

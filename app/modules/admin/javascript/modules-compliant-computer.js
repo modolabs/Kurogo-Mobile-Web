@@ -90,6 +90,11 @@ function updateModuleLayoutSections() {
     $('.springboard input').each(function(i) { $(this).attr('section', $(this).parents('.springboard').attr('section')) });
 }
 
+function selectSection(section) {
+    adminSection=section;
+    reloadSection();
+}
+
 function reloadSection() {
     makeAPICall('GET', 'admin','getconfigsections', { 'v':1,'type':'module','module':moduleID}, processModuleSections);
     makeAPICall('GET', 'admin','getconfigdata', { 'v':1,'type':'module','module':moduleID,'section':adminSection}, processModuleData); 
@@ -97,12 +102,11 @@ function reloadSection() {
 
 function processModuleSections(data) {
     $("#moduleSections").html('');
-    $.each(data, function(section, sectionTitle) {
-        var li = $('<li />').append('<a href="?module='+moduleID+'&section='+section+'">'+sectionTitle+'</a>').click(function() {
+    $.each(data, function(section, sectionData) {
+        var li = $('<li />').append('<a href="?module='+moduleID+'&section='+section+'">'+sectionData.title+'</a>').addClass(sectionData.type).click(function() {
             $('#moduleSections .selected').removeClass('selected');
-            adminSection=section;
             $(this).addClass('selected');
-            reloadSection();
+            selectSection(section);
             return false;
         });
         if (section==adminSection) {

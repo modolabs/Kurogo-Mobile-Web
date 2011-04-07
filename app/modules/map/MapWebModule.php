@@ -69,7 +69,10 @@ class MapWebModule extends WebModule {
         $sections = parent::getModuleAdminSections();
         
         foreach ($this->getFeedGroups() as $feedgroup=>$data) {
-            $sections['feeds-'.$feedgroup] = $data['title'];
+            $sections['feeds-'.$feedgroup] = array(
+                'title'=>$data['title'],
+                'type'=>'module hidden'
+            );
         }
         
         return $sections;
