@@ -231,7 +231,7 @@ label {
 	line-height: 1.6em;
 	font-weight: bold;
 }
-.helptext, .checkitem label, .tallfield textarea, .infotext {
+.helptext, .checkitem label, .tallfield textarea, .infotext, .labeltext {
 	margin-left: 150px;		/* same as width plus padding-right of label */
 }
 
@@ -239,8 +239,10 @@ label {
 /*    margin-left: 0; */
 }
 
-.infotext {
+.infotext,
+.labeltext {
     margin-top: -18px;
+    display:block;
 }
 
 .formfields .error {

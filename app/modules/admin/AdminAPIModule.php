@@ -82,20 +82,22 @@ class AdminAPIModule extends APIModule
                     if (isset($field['valueMethod'])) {
                         $field['value'] = call_user_func(array($module, $field['valueMethod']));
                     } elseif ($type=='site') {
-                        switch ($field['config'])
-                        {
-                            case 'site':
-                                $field['value'] = $this->getUnconstantedValue(Kurogo::getOptionalSiteVar($key, $field['section']), $constant);
-                                if ($constant) {
-                                    $field['constant'] = $constant;
-                                }
-                                break;
-                            case 'strings':
-                                $field['value'] = Kurogo::getOptionalSiteString($key);
-                                break;
-                            default: 
-                                throw new Exception("Unknown config " . $field['config']);
-                                break;
+                        if (isset($field['config'])) {
+                            switch ($field['config'])
+                            {
+                                case 'site':
+                                    $field['value'] = $this->getUnconstantedValue(Kurogo::getOptionalSiteVar($key, $field['section']), $constant);
+                                    if ($constant) {
+                                        $field['constant'] = $constant;
+                                    }
+                                    break;
+                                case 'strings':
+                                    $field['value'] = Kurogo::getOptionalSiteString($key);
+                                    break;
+                                default: 
+                                    throw new Exception("Unknown config " . $field['config']);
+                                    break;
+                            }
                         }
                     } else {
                         $field['value'] = $module->getOptionalModuleVar($key, isset($field['default']) ? $field['default'] : '', $field['section'], $field['config']);
@@ -124,9 +126,11 @@ class AdminAPIModule extends APIModule
                             }
                     }
     
-                    $field['value'] = $this->getUnconstantedValue($field['value'], $constant);
-                    if ($constant) {
-                        $field['constant'] = $constant;
+                    if (isset($field['value'])) {
+                        $field['value'] = $this->getUnconstantedValue($field['value'], $constant);
+                        if ($constant) {
+                            $field['constant'] = $constant;
+                        }
                     }
                 }
                 break;

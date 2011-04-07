@@ -35,7 +35,7 @@
             "TITLE":{"label":"Title", "description":"Label for this feed", "type":"text"},
             "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"text","placeholder":"RSSDataController","omitBlankValue":true},
             "BASE_URL":{"label":"URL","description":"The url for the feed or web service","type":"text"},
-            "CACHE_LIFETIME":{"label":"Cache lifetime","description":"The length of time to cache the feed from the server","type":"select","optionsMethod":["DataController","getCacheLifetimeOptions"],"default":900},
+            "CACHE_LIFETIME":{"label":"Cache lifetime","description":"The length of time to cache the feed from the server","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"]},
             "PARSER_CLASS":{"label":"Parser Class","description":"The class used to parse calendar data. Rarely needs to be changed","type":"text","placeholder":"ICSDataParser","omitBlankValue":true},
             "EVENT_CLASS":{"label":"Event Class","description":"The class used to parse calendar events. Rarely needs to be changed","type":"text","placeholder":"ICalEvent","omitBlankValue":true}
         },

@@ -9,6 +9,33 @@ class Kurogo
             'en'=>'English'
         );
     }
+
+    public static function getLifetimeOptions() {
+        return array(
+            ""    =>'Default',
+            0     =>'None',
+            10    =>'10 seconds',
+            30    =>'30 seconds',
+            60    =>'1 minute',
+            120   =>'2 minutes',
+            300   =>'5 minutes',
+            600   =>'10 minutes',
+            900   =>'15 minutes',
+            1800  =>'30 minutes',
+            3600  =>'1 hour',
+            7200  =>'2 hours',
+            10800 =>'3 hours',
+            21600 =>'6 hours',
+            43200 =>'12 hours',
+            86400 =>'1 day',
+            604800 =>'1 week',
+            1209600=>'2 weeks',
+            2419200=>'4 weeks',
+            15552000=>'180 days',
+            31536000=>'1 year'
+        );
+    }
+    
     
     public static function isNotEmptyString($val) {
         return strlen($val)>0;

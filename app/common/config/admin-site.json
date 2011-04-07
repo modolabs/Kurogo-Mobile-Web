@@ -1,14 +1,14 @@
 {
     "setup":{
         "title":"Site Setup",
-        "description":"",
+        "description":"The following values affect basic site behavior.",
         "sectiontype":"fields",
         "fields":{
             "SITE_NAME":{"label":"Site name","type":"text","config":"strings","description":"Name of this website as it appears in the website, including in the &quot;Return to [site-name] home&quot; link in the footer","section":"strings"},
-            "ORGANIZATION_NAME":{"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site. Appears in the title of the &quot;About [organization-name]&quot; link in the &quot;About&quot; module","section":"strings"},
+            "ORGANIZATION_NAME":{"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site.","section":"strings"},
             "LANGUAGE":{"label":"Default language","type":"select","config":"site","optionsMethod":["Kurogo","getLanguages"],"description":"Sets the default language used for the entire site","section":"site settings"},
             "LOCAL_TIMEZONE":{"label":"Local time zone","type":"select","config":"site","optionsMethod":["Calendar","getTimeZones"],"section":"site settings"},
-            "LOCAL_AREA_CODE":{"label":"Local area code","type":"text","config":"site","description":"Area code for local phone numbers. [Add note as to where this is used]","section":"site settings"},
+            "LOCAL_AREA_CODE":{"label":"Local area code","type":"text","config":"site","description":"Area code for local phone numbers. Added to phone numbers that are missing an area code.","section":"site settings"},
             "AUTODETECT_PHONE_NUMBERS":{"label":"Enable auto-detection of phone numbers","type":"checkbox","config":"site","description":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.","section":"site settings"}
         }
     },
@@ -17,8 +17,8 @@
         "description":"Select the modules which mobile and desktop users should see when they first enter the site.",
         "sectiontype":"fields",
         "fields":{
-            "DEFAULT":{"label":"Default mobile","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module to which mobile users are sent","section":"urls"},
-            "DEFAULT-COMPLIANT-COMPUTER":{"label":"Default desktop","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module to which non-mobile users are sent","section":"urls"}
+            "DEFAULT":{"label":"Default mobile","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for mobile devices","section":"urls"},
+            "DEFAULT-COMPLIANT-COMPUTER":{"label":"Default desktop","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for non-mobile devices","section":"urls"}
         }
     },
     "security":{
@@ -26,9 +26,9 @@
         "description":"Configure secure socket layer connections",
         "sectiontype":"fields",
         "fields":{
-            "SECURE_REQUIRED":{"label":"Require https","type":"checkbox","config":"site","description":"Require a secure (https) connection on all requests. It is also possible to configure secure connections on a per module basis","section":"site settings"},
-            "SECURE_HOST":{"label":"Secure host","type":"text","config":"site","description":"Alternate host name to use for secure connections. Default is the name hostname","section":"site settings"},
-            "SECURE_PORT":{"label":"Secure port","type":"text","config":"site","description":"Alternate port to use for secure connections. Default is 443","section":"site settings"}
+            "SECURE_REQUIRED":{"label":"Require https","type":"checkbox","config":"site","description":"Require a secure (https) connection on all requests. It is also possible to configure secure connections on a per module basis. Note: It is the responsibility of the server administrator to ensure this site can handle secure connections.","section":"site settings"},
+            "SECURE_HOST":{"label":"Secure host","type":"text","config":"site","description":"Alternate host name to use for secure connections. Default is the server hostname","section":"site settings"},
+            "SECURE_PORT":{"label":"Secure port","type":"text","config":"site","description":"Alternate port to use for secure connections. Default is the standard https port (443)","section":"site settings"}
         }
     },
     "theme":{
@@ -46,10 +46,10 @@
         "sectiontype":"fields",
         "fields":{
             "MOBI_SERVICE_VERSION":{"label":"Mobi service version","type":"select","config":"site","options":{"1":"1"},"description":"Version of the Kurogo device detection service","section":"device_detection"},
-            "MOBI_SERVICE_USE_EXTERNAL":{"label":"Use external mobi-service","type":"checkbox","config":"site","description":"Use the external version of the Kurogo device detection service hosted by Modo Labs. This introduces a new external dependency for your website but ensures that your system will always be accessing the latest device detection database.","section":"device_detection"},
-            "MOBI_SERVICE_FILE":{"label":"Device detection DB","type":"file","config":"site","description":"Path to the mobi-service device database file within your site","section":"device_detection"},
-            "MOBI_SERVICE_URL":{"label":"Device detection URL","type":"text","config":"site","description":"URL of the externally hosted device-detection service","section":"device_detection"},
-            "MOBI_SERVICE_CACHE_LIFETIME":{"label":"Service cache lifetime","type":"time","config":"site","description":"Time (in seconds) that the device detection service should be cached on the server","section":"device_detection"}
+            "MOBI_SERVICE_USE_EXTERNAL":{"label":"Device detection type","type":"select","options":{"0":"Internal","1":"External"},"config":"site","description":"<b>Internal:</b> use the included SQLite database for device detection.<br /><b>External:</b> Use the external version of the Kurogo device detection service hosted by Modo Labs. This introduces a new external dependency for your website but ensures that your system will always be accessing the latest device detection database.","section":"device_detection"},
+            "MOBI_SERVICE_FILE":{"label":"Device detection DB","type":"file","config":"site","description":"Path to the mobi-service device database file within your site","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","0"]},
+            "MOBI_SERVICE_URL":{"label":"Device detection URL","type":"text","config":"site","description":"URL of the externally hosted device-detection service","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]},
+            "MOBI_SERVICE_CACHE_LIFETIME":{"label":"Service cache lifetime","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time that the device detection service should be cached on the server","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]}
         }
     },
     "error":{
@@ -64,7 +64,7 @@
             "MINIFY_DEBUG":{"label":"Enable data debugging","type":"checkbox","config":"site","description":"Verbose logging of data retrieval and database queries","section":"error_handling_and_debugging"},
             "DEVICE_DETECTION_DEBUG":{"label":"Enable debugging of device detection services","type":"checkbox","config":"site","description":"Show device detection in footer","section":"error_handling_and_debugging"},
             "PRODUCTION_ERROR_HANDLER_ENABLED":{"label":"Enable production exception handler","type":"checkbox","config":"site","description":"When enabled, the production exception handler will email details of code exceptions to the developer email. If disabled, exceptions will be shown in detail on the screen.","section":"error_handling_and_debugging"},
-            "DEVELOPER_EMAIL":{"label":"Developer Email","type":"text","config":"site","description":"Address to which system-generated error messages should be sent when production exception handler is enabled. If blank, no error-message emails will be generated.","section":"error_handling_and_debugging"}
+            "DEVELOPER_EMAIL":{"label":"Developer Email","type":"text","config":"site","description":"Address to which system-generated error messages should be sent when production exception handler is enabled. If blank, no error-message emails will be generated.","section":"error_handling_and_debugging","showIf":["PRODUCTION_ERROR_HANDLER_ENABLED","1"]}
         }
     },
     "database":{
@@ -83,12 +83,12 @@
 
     "cookies":{
         "title":"Cookies", 
-        "description":" Specify how long different types of cookies will be set to persist in each user's browser.",
+        "description":" Specify how long different types of cookies will be set to persist in each user's browser. By default these cookies are short lived. For production sites, you should increase the time so users' preferences persist longer.",
         "sectiontype":"fields",
         "fields":{
-            "MODULE_ORDER_COOKIE_LIFESPAN":{"label":"Module order lifespan","type":"time","config":"site","description":"User-customized order of modules to be displayed on the homescreen","section":"cookies"},
-            "LAYOUT_COOKIE_LIFESPAN":{"label":"Layout cookie lifespan","type":"time","config":"site","description":"Time (in seconds) that the device detection service should be cached on the server","section":"cookies"},
-            "BOOKMARK_COOKIE_LIFESPAN":{"label":"Bookmark cookie lifespan","type":"time","config":"site","description":"Time (in seconds) that bookmark cookies are saved. Used by modules that have bookmarks","section":"cookies"}
+            "MODULE_ORDER_COOKIE_LIFESPAN":{"label":"Module order","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to remember user's preferences for home screen module order.","section":"cookies"},
+            "LAYOUT_COOKIE_LIFESPAN":{"label":"Device classification","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to save results of device detection.","section":"cookies"},
+            "BOOKMARK_COOKIE_LIFESPAN":{"label":"Bookmark cookie lifespan","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to save user's bookmarks. Used by modules that have bookmarks","section":"cookies"}
         }
     },
     "authentication": {
@@ -98,21 +98,21 @@
         "sections": {
             "authentication":{
                 "title":"Authentication", 
-                "description":"Basic settings for authentication and login",
+                "description":"Basic settings for authentication and login.",
                 "sectiontype":"fields",
                 "fields":{
                     "AUTHENTICATION_ENABLED":{"label":"Authentication Enabled","type":"checkbox","config":"site","description":"Enable user logins and authentication. Required to protect modules","section":"authentication"},
-                    "AUTHENTICATION_IDLE_TIMEOUT":{"label":"Idle Timeout","type":"time","config":"site","description":"Number of seconds before idle users are logged off. Set to 0 to disable idle logoff","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
-                    "AUTHENTICATION_USE_SESSION_DB":{"label":"Session storage method","type":"select","config":"site","options":{"0":"Flat files","1":"Database"},"description":"Method used to store session data","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
-                    "AUTHENTICATION_ALLOW_SAVE_USERID":{"label":"Permit saving of userID","type":"checkbox","config":"site","description":"Allow users to save their userID in a local cookie for subsequent logins (NOTE: currently not used)","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
-                    "AUTHENTICATION_REMAIN_LOGGED_IN_TIME":{"label":"Allow users to be remembered","type":"time","config":"site","description":"Number of seconds to allow users to be remained logged in, even if closing their browser.","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]}
+                    "AUTHENTIATION_ADMIN_WARNING":{"label":"Warning","type":"label","value":"If you do not use authentication in your site than you should disable the administration module to prevent unauthorized changes.","showIf":["AUTHENTICATION_ENABLED","0"]},
+                    "AUTHENTICATION_IDLE_TIMEOUT":{"label":"Idle Timeout","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time before idle users are logged off. Set to None to disable idle logoff","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
+                    "AUTHENTICATION_USE_SESSION_DB":{"label":"Session storage method","type":"select","config":"site","options":{"0":"Flat files","1":"Database"},"description":"Method used to store session data. <b>Flat files:</b> data is stored as files in the cache/session folder. <b>Database:</b> session data stored in site database","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
+                    "AUTHENTICATION_REMAIN_LOGGED_IN_TIME":{"label":"Stay logged in time","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time to allow users to be remained logged in, even if closing their browser. Set to none to force users to log in every time.","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]}
                 }
             },
             "authorities": {
                 "title":"Authentication Authorities",
                 "config":"authentication",
                 "sectiontype":"section",
-                "description":"Configure the authentication systems for this site.",
+                "description":"Authentication authorities are backend systems used to authenticate users. Kurogo includes variety of classes to authenticate users to a variety of standards based systems as well as popular external services.",
                 "fields":{
                     "TITLE":{"label":"Title", "description":"Title for this authority.", "type":"text"},
                     "CONTROLLER_CLASS":{"label":"Authentication Type", "description":"The type of data feed", "type":"select","optionsFirst":"-- Choose --","optionsMethod":["AuthenticationAuthority","getInstalledAuthentiationAuthorities"]},

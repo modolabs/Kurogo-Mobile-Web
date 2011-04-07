@@ -78,6 +78,9 @@ function createFormFieldListItem(key, fieldData) {
         case 'paragraph':
             listClass='tallfield';
             break;
+        case 'label':
+            listClass='labelfield';
+            break;
     }
 
     var li = $('<li>').attr('class', listClass);
@@ -98,17 +101,13 @@ function createFormFieldListItem(key, fieldData) {
 
 function appendFormField(parent, key, fieldData) {
     fieldData.value = 'value' in fieldData ? fieldData.value : ('default' in fieldData ? fieldData['default'] : '');
-    var section = typeof fieldData.section == 'undefined' ? '' : fieldData.section;
+    var section = typeof fieldData.section == 'undefined' ? null : fieldData.section;
     var inputClass = typeof fieldData['class'] == 'undefined' ? '' : fieldData['class'];
     var id = typeof fieldData.id == 'undefined' ? null : fieldData.id;
     var re;
     
     switch (fieldData.type) {
     
-        case 'time':
-            parent.append($('<input/>').attr('type','text').attr('name', key).attr('section', section).attr('value', fieldData.value).addClass('timeData').addClass(inputClass).attr('id',id));
-            parent.append('seconds');
-            break;
         case 'file':
             var prefixKey = key + '_prefix';
             if (re = key.match(/(.*)\[(.*)\]/)) {
@@ -156,6 +155,9 @@ function appendFormField(parent, key, fieldData) {
             break;
         case 'label':
             parent.append('<span class="labeltext">'+fieldData.value+'</span>');
+            break;
+        default:
+            alert("Don't know how to handle field of type '" + fieldData.type + "' for key '" + key +"'");
             break;
     }
 }
