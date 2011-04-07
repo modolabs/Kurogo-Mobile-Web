@@ -11,6 +11,15 @@ body, th, td, li, option, select, input {
 	color: #222;
 }
 
+#containerinset {
+  overflow: hidden;
+  margin: 0;
+  border: none;
+  border-width: 0 1px;
+  height: 100%;
+  background-color: #f3f3f3;
+}
+
 .focal, .nav, .results {
 	/* Border color for many container elements */
 	/* border-color: #bbb; */
@@ -89,15 +98,18 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 #navbar {
 	height: 50px; 
 	background: url(/common/images/navback.png) repeat-x;
-	font-size: 16px;
+	font-size: 18px;
+	font-weight: bold;
 }
 
 /* Uncomment this rule and comment out the previous one to use a background gradient rather than image
 #navbar {
-	height: 45px;
+	height: 50px;
 	background: #800;	
 	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#d02023), to(#400006));
-	font-size: 16px;
+	font-size: 18px;
+	font-size: 18px;
+	font-weight: bold;
 }
 */
 

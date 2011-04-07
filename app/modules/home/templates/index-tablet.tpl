@@ -2,7 +2,7 @@
   <div id="navbar">
     <img src="/modules/{$moduleID}/images/home.png" width="40" height="40" alt="" class="moduleicon" />
     <span class="pagetitle">
-      {$pageTitle}
+      {$strings.SITE_NAME}
     </span>        
     {include file="findInclude:common/templates/search.tpl" inNavbar=true placeholder="Search "|cat:$strings.SITE_NAME}
   </div>
