@@ -72,6 +72,7 @@ function createFormFieldListItem(key, fieldData) {
     var listClass='';
     switch (fieldData.type) {
         case 'checkbox':
+        case 'inversecheckbox':
             listClass='checkitem';
             break;
         case 'paragraph':
