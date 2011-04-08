@@ -6,6 +6,10 @@ class KurogoError
 	public $title;
 	public $message;
 	
+	public function __toString() {
+	    return $this->message;
+	}
+	
 	public function __construct($code, $title, $message) {
         $this->setCode($code);
         $this->setTitle($title);

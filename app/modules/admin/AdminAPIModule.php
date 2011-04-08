@@ -482,7 +482,8 @@ class AdminAPIModule extends APIModule
                 switch ($type)
                 {
                     case 'site':
-                        $sectionData = $this->getAdminData($type, $section);
+                        $subsection = $this->getArg('subsection',null);
+                        $sectionData = $this->getAdminData($type, $section, $subsection);
                         $config = ConfigFile::factory($sectionData['config'],'site');
                         break;
                     case 'module':

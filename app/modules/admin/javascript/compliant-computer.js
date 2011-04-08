@@ -241,6 +241,9 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
                 {
                     case 'site':
                         params.section = adminSection;
+                        if (adminSubsection) {
+                            params.subsection = adminSubsection;
+                        }
                         break;
                     case 'module':
                         params.module = moduleID;

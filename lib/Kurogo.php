@@ -36,6 +36,10 @@ class Kurogo
         );
     }
     
+    public static function getHashAlgos() {
+        return array_combine(hash_algos(), hash_algos());
+    }
+    
     
     public static function isNotEmptyString($val) {
         return strlen($val)>0;
