@@ -16,6 +16,9 @@
             "TITLE":{"label":"Title", "description":"Label for this feed", "type":"text"},
             "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"text","placeholder":"RSSDataController","omitBlankValue":true},
             "BASE_URL":{"label":"URL","description":"The url for the feed or web service","type":"text"},
+            "SHOW_IMAGES":{"label":"Show Images","description":"Show images from feed or placeholder image if no image is available in news list.","type":"checkbox","default":1},
+            "SHOW_PUBDATE":{"label":"Show Date","description":"Show date in news list","type":"checkbox"},
+            "SHOW_AUTHOR":{"label":"Show Author","description":"Show author in news list.","type":"checkbox"},
             "CACHE_LIFETIME":{"label":"Cache lifetime","description":"The length of time to cache the feed from the server","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"]},
             "ITEM_CLASS":{"label":"Item Class","description":"The class used to parse RSS items. Rarely needs to be changed","type":"text","placeholder":"RSSItem","omitBlankValue":true},
             "ENCLOSURE_CLASS":{"label":"Enclosure Class","description":"The class used to parse RSS enclosures. Rarely needs to be changed","type":"text","placeholder":"RSSEnclosure","omitBlankValue":true}
