@@ -2,6 +2,23 @@
 Authentication
 ##############
 
+
+While many services are suitable for a public audience, there are instances where you want to restrict
+access to certain modules or data to authenticated users. You may also want to provide personalized 
+content or allow users to participate in feedback.
+
+The Kurogo framework provides a robust system for authenticating users and authorizing access to content.
+You can provide the ability to authenticate against private or public services and authorize access or
+administration based on the user's identity or membership in a particular group. 
+
+Kurogo is designed to integrate with existing identity systems such as Active Directory, MySQL databases,
+Twitter, Facebook and Google. You can supplement this information by creating groups managed by the
+framework independent of the user's original identity.
+
+*************************
+Setting up Authentication
+*************************
+
 Authentication is the process that establishes the users' identity. Typically this occurs when the
 user provides a username and password. The framework then tests those credentials against a central
 authority. If the authority validates the credentials, the user is logged in and can now consume
@@ -71,3 +88,15 @@ To allow the Kurogo framework to operate in a wide variety of settings, the proj
 several classes that can connect to various types of authentication and authorization services. Each
 one has its own unique instructions for setup and use. Please read these documents carefully and be 
 aware of important requirements for development and deployment.
+
+.. toctree::
+   :maxdepth: 1
+
+   PasswdAuthentication
+   DatabaseAuthentication
+   LDAPAuthentication
+   ActiveDirectoryAuthentication
+   FacebookAuthentication
+   TwitterAuthentication
+   GoogleAuthentication
+   GoogleAppsAuthentication

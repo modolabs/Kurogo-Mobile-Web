@@ -20,10 +20,12 @@ Creating the module folder structure
 ====================================
 
 *Note*: Please make sure you have followed the :doc:`installation steps <setup>` and have created
-a site folder.
+a site folder. *SITE_DIR* refers to *site/YOURSITE* where YOURSITE is the name of the site folder
+you have created. 
 
-The Kurogo Framework looks in a variety of locations for module data (see :doc:`tour`). In most cases
-you will want to create your module in your site's *app/modules* folder. 
+The Kurogo Framework looks in a variety of locations for module data (see :doc:`tour`). You should
+create your modules in your site's *app/modules* folder. Do **not** place new modules in the root
+/app/modules folder as these are reserved for included Kurogo modules.
 
 * Create a folder named *hello* inside *SITE_DIR/app/modules*
 * Inside the *SITE_DIR/app/modules/hello* folder, create a folder named *templates*

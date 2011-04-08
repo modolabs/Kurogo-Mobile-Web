@@ -1,6 +1,6 @@
-######################
-DatabaseAuthentication
-######################
+#######################
+Database Authentication
+#######################
 
 The *DatabaseAuthentication* class provides authentication and user/group information in a relational
 database. It can either use the default database setup by the main configuration file or use a different

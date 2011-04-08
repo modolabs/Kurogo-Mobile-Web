@@ -1,6 +1,6 @@
-#############
-Authorization
-#############
+################################
+Access Control and Authorization
+################################
 
 Once a user's identity has been established, it is possible to authorize use of protected modules and
 tasks based on their identity. Authorization is accomplished through *access control lists*. Developers
