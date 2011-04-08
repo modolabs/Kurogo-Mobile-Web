@@ -33,3 +33,7 @@ li.story {
     width: 5.5em;
     height: 5.5em;
 }
+
+li.noimage {
+    padding-left: .4em;
+}
