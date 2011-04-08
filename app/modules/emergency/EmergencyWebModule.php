@@ -23,6 +23,23 @@ class EmergencyWebModule extends WebModule
         }        
 
         switch($this->page) {
+            case 'pane':
+                $hasEmergencyFeed = ($emergencyNoticeController !== NULL);
+                $this->assign('hasEmergencyFeed', $hasEmergencyFeed);
+                if($hasEmergencyFeed) {
+                    $emergencyNotice = $emergencyNoticeController->getLatestEmergencyNotice();
+                    
+                    if($emergencyNotice !== NULL) {
+                        $this->assign('emergencyFeedEmpty', FALSE);             
+                        $this->assign('title', $emergencyNotice['title']);
+                        $this->assign('content', $emergencyNotice['text']);
+                        $this->assign('date', $emergencyNotice['date']);
+                    } else {
+                        $this->assign('emergencyFeedEmpty', TRUE);
+                    }
+                }
+                break;
+                
             case 'index':
                 $contactNavListItems = array();
                 if($contactsController !== NULL) {

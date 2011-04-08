@@ -129,6 +129,10 @@ form {
   background-image: url(/common/images/pane-video.png);
 }
 
+.emergency .blockheader .icon {
+  background-image: url(/common/images/pane-emergency.png);
+}
+
 .news .blockheader .icon {
   background-image: url(/common/images/pane-news.png);
 }
