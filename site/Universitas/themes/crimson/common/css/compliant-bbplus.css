@@ -1,0 +1,68 @@
+/* Springboards */
+
+.springboard {
+	padding: 0 5px;
+}
+
+.springboard div, .springboard div.utility {
+	/* Overall size of one cell in the springboard; for this device branch, this is the same for primary and utility-class springboard items */
+	font-size: 100%;
+	width: 5.1em;
+	height: 6.7em;
+}
+
+.springboard div a, .springboard div.utility a {	
+	/* Color and size of text label below each springboard icon; for this device branch, this is the same for primary and utility-class springboard items */
+	font-size: 90%;
+	line-height: 1.1em;
+}
+
+.springboard a img, .springboard div.utility a img {
+	/* Size of actual item icon in springboard; for this device branch, this is the same for primary and utility-class springboard items - for best results make actual PNGs match this size */
+	width: 64px;
+	height: 64px;
+}
+
+.springboard .secured {
+	/* Overlay image to indicate that a module is password-protected; adjust size to fit /common/images/secured.png, and adjust position to fit springboard icon size */
+	top: 45px;
+	right: 0;
+	width: 18px;
+	height: 22px;
+}
+
+.springboard .utility .secured {
+	/* Unlike regular Compliant, position should match that of regular .secured */
+	top: 45px;
+	right: 0;
+}
+
+
+
+
+/* Login-related buttons */
+
+.loginbuttons li.facebook {
+	background-image: url(/common/images/button-facebook-24.png);
+}
+
+.loginbuttons li.google {
+	background-image: url(/common/images/button-google-24.png);
+}
+
+.loginbuttons li.oauth {
+	background-image: url(/common/images/button-oauth-24.png);
+}
+
+.loginbuttons li.openid {
+	background-image: url(/common/images/button-openid-24.png);
+}
+
+.loginbuttons li.twitter {
+	background-image: url(/common/images/button-twitter-24.png);
+}
+
+.loginbuttons li.windows {
+	background-image: url(/common/images/button-windows-24.png);
+}
+
