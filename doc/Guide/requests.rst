@@ -1,6 +1,6 @@
-=================
+#################
 Handling Requests
-=================
+#################
 
 This section outlines how the framework processes HTTP requests. Generally speaking, this can be
 outlined as follows:
@@ -17,9 +17,10 @@ outlined as follows:
    to that module. An exception is raised if the url maps to a module that does not exist
 
 
--------------
+=============
 Path patterns
--------------
+=============
+
 The index.php script will analyze the path for several patterns
 
 * favicon.ico if a favicon.ico file exists in the CURRENT_THEME/common/images folder it will be 
@@ -54,9 +55,9 @@ Pages are discussed in more detail in the :doc:`modules` section.
 
 .. _pageandplatform:
 
--------------------------
+=========================
 Pagetype & Platform Files
--------------------------
+=========================
 
 There are a variety of circumstances when you want to have alternate content be delivered based on the 
 characteristics of the device making the request. The :doc:`device detection service <devicedetection>` 

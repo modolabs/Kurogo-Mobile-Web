@@ -170,26 +170,38 @@ Important Assets to customize
 *****************************
 
 With the understanding of how assets are loaded, there are several file locations you should be
-aware of.
+aware of. All customization should be done in *SITE_DIR/themes/[ACTIVE_THEME]*. By convention the default 
+theme is named *default*. The active theme folder will be referred to as *THEME_DIR* in this section.
 
--------------------
-Background and Text
--------------------
+--------------------
+Base CSS Theme files
+--------------------
 
-* background
-* text classes
+Most of the standard color and font information is found in THEME_DIR/css/PAGETYPE.css. (i.e. compliant.css,
+touch.css, basic.css and tablet.css). These files will form the basic style for your site. This includes
+*body* background, color and typeface. You can also adjust color and size of standard elements such as 
+headings (h1,h2).
 
 ----------
 Navigation
 ----------
 
-* home icon
-* module icons
-* nav background
+There are several files to update in order to customize your navigation bar
+
+* home icon - update *THEME_DIR/common/images/PAGETYPE/homelink.png* (or gif for touch). This is the 
+  logo image that returns the user to the home screen
+* module icons - each module should have a file named *title-ID.png* (or gif for touch) in *THEME_DIR/common/images/PAGETYPE/*
+  that is displayed next to the home icon when you using the module.
+* nav background - *THEME_DIR/common/images/PAGETYPE/navback.png* (or jpg for touch) is the background
+  image used to at the top of the screen. It should safely repeat in the x direction.
 
 -----------
 Home Screen
 -----------
 
-* header graphic
-* module icons
+In order to customize the home screen, you'll need to update a few images.
+
+* header logo - This image is shown at the top of the home screen. *THEME_DIR/modules/home/images/basic/logo-home.png* (gif for basic and touch).
+  You can change the dimensions of this image, but then you must update *THEME_DIR/config.ini* and update *banner_width* and *banner_height* for each pagetype.
+* module icons - each module should have a file named *MODULEID.png* (or gif for touch) in *THEME_DIR/common/images/PAGETYPE/*
+  that is displayed on the home screen.
