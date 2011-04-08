@@ -1,13 +1,17 @@
 <?php
 
 class DownloadWebModule extends WebModule {
-  protected $id = 'download';
+    protected $id = 'download';
+    
+    public static function hasApp($platform) {
+        $config = ModuleConfigFile::factory('download', 'module');
+        return $config->getOptionalVar($platform, null, 'deviceApps');
+    }
   
-  protected function initializeForPage() {
-    $downloadInfo = $this->loadPageConfigFile('index', 'download');
+    protected function initializeForPage() {
 
-    $this->assign('deviceName',   self::argVal(Kurogo::getSiteSection('deviceNames'),$this->platform, null));
-    $this->assign('instructions', self::argVal($downloadInfo['deviceInstructions'], $this->platform, null));
-    $this->assign('downloadUrl',  self::argVal($downloadInfo['deviceApps'],         $this->platform, null));
-  }
+        $this->assign('deviceName',   Kurogo::getOptionalSiteVar($this->platform, null, 'deviceNames'));
+        $this->assign('instructions', $this->getOptionalModuleVar($this->platform, null, 'deviceInstructions', 'module'));
+        $this->assign('downloadUrl',  $this->getOptionalModuleVar($this->platform, null, 'deviceApps', 'module'));
+    }
 }
