@@ -77,3 +77,25 @@ function shortArrayFromMapFeature(MapFeature $feature) {
 function htmlColorForColorString($colorString) {
     return substr($colorString, strlen($colorString)-6);
 }
+
+function getMapControllerClasses() {
+    return array(
+        'KMLDataController'=>'KML',
+        'ArcGISDataController'=>'ArcGIS'
+    );
+}
+
+function getStaticMapClasses() {
+    return array(
+        'GoogleStaticMap'=>'Google',
+        'ArcGISStaticMap'=>'ArcGIS',
+        'WMSStaticMap'=>'WMS'
+    );
+}
+
+function getDynamicControllerClasses() {
+    return array(
+        'GoogleJSMap'=>'Google',
+        'ArcGISJSMap'=>'ArcGIS'
+    );
+}

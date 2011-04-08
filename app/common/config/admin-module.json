@@ -1,7 +1,7 @@
 {
     "general": {
         "title":"General",
-        "description":"Settings common to all modules",
+        "description":"",
         "sectiontype":"fields",
         "fields":{
             "id": {"label":"Module ID","type":"label","config":"module","section":"module","description":"The unique internal ID for this module. This can only be changed in the source code.", "valueMethod":"getID"},

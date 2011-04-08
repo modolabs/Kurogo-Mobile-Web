@@ -11,14 +11,14 @@
     "index": {
         "title":"Index Page",
         "config":"page-index",
-        "description":"Entries for about index page",
+        "description":"This section contains the items that show up on the main calendar index page. Each entry can a title, url and other information.",
         "sectiontype":"section",
         "fields":{
             "section":{"label":"Entry","type":"label"},
             "title":{"label":"Title","description":"The title of the entry","type":"text"},
             "subtitle":{"label":"Subtitle","description":"The subtitle of the entry","type":"text","omitBlankValue":true},
-            "url":{"label":"URL","description":"URL of entry.","type":"text"},
-            "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
+            "url":{"label":"URL","description":"URL of entry. For calendar feeds, use either <i>day</i>, <i>list</i> or <i>year</i> followed by a <i>type=static</i> and <i>calendar=calendarID</i> where calendarID is the name of a calendar feed.","type":"text"},
+            "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"description":"You can include different icons that represent various types of data","optionsFirst":"Normal","omitBlankValue":true}
         },
         "sectiontitlefield":"title",
         "sectionindex":"string",
@@ -27,7 +27,7 @@
     },
     "feeds": {
         "title":"Calendars",
-        "description":"",
+        "description":"Use this section to manage external calendar feeds.",
         "config":"feeds",
         "sectiontype":"section",
         "fields":{

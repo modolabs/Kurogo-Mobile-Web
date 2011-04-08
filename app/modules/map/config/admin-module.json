@@ -4,26 +4,26 @@
         "description":"",
         "sectiontype":"fields",
         "fields":{
-            "MAP_SEARCH_CLASS":{"label":"Map Search Class", "description":"","config":"module","section":"module","type":"text","placeholder":"MapSearch"},
-            "ARCGIS_CACHE":{"label":"ArcGIS Cache Folder", "description":"","config":"module","section":"module","type":"file"},
-            "ARCGIS_FEATURE_CACHE":{"label":"ArcGIS Feature Cache Folder","description":"","config":"module","section":"module","type":"file"},
-            "WMS_CACHE":{"label":"WMS Cache Folder", "description":"","config":"module","section":"module","type":"file"},
-            "PROJ_CACHE":{"label":"PROJ Cache Folder", "description":"","config":"module","section":"module","type":"file"},
-            "DEFAULT_ZOOM_LEVEL":{"label":"Default Zoom Level", "description":"","config":"module","section":"module","type":"text","placeholder":"10"}
+            "MAP_SEARCH_CLASS":{"label":"Map Search Class", "description":"Class used to search map feeds","config":"module","section":"module","type":"text","placeholder":"MapSearch"},
+            "ARCGIS_CACHE":{"label":"ArcGIS Cache Folder", "description":"Location of ArcGIS cache data","config":"module","section":"module","type":"file"},
+            "ARCGIS_FEATURE_CACHE":{"label":"ArcGIS Feature Cache Folder","description":"Location of ArcGIS feature cache data","config":"module","section":"module","type":"file"},
+            "WMS_CACHE":{"label":"WMS Cache Folder", "description":"Location of WMS cache data","config":"module","section":"module","type":"file"},
+            "PROJ_CACHE":{"label":"Projector Cache Folder", "description":"Location of Projector cache data","config":"module","section":"module","type":"file"},
+            "DEFAULT_ZOOM_LEVEL":{"label":"Default Zoom Level", "description":"Default zoom level for maps when not specified by the feed","config":"module","section":"module","type":"text","placeholder":"10"}
         }
     },    
     "feedgroups": {
         "title":"Groups",
-        "description":"",
+        "description":"The map module organizes geographic data by groups. Each group may have multiple categories and subcategories defined by the feed. Groups might represent campuses or geographically distinct areas (such as cities or regions)",
         "config":"feedgroups",
         "sectiontype":"section",
         "sectiontitlefield":"title",
         "fields":{
-            "section":{"label":"id", "description":"Programmatic id for this campus", "type":"label"},
-            "title":{"label":"Title", "description":"Title for this campus", "type":"text"},
-            "center":{"label":"Center","description":"Lat,Long of the center of this campus","type":"text"},
-            "address":{"label":"Address","description":"Address for the campus","type":"text"},
-            "description":{"label":"Description","description":"Description for the campus","type":"text"}
+            "section":{"label":"id", "description":"Programmatic id for this group", "type":"label"},
+            "title":{"label":"Title", "description":"Title for this group", "type":"text"},
+            "center":{"label":"Center","description":"Lat,Long of the center of this group","type":"text"},
+            "address":{"label":"Address","description":"Address for the group","type":"text"},
+            "description":{"label":"Description","description":"Description for the group","type":"text"}
         },
         "sectionindex":"string",
         "sectionsmethod":"getFeedGroups",
@@ -32,18 +32,18 @@
     },
     "feed": {
         "title":"Feed",
-        "description":"",
+        "description":"Each group has a series of feeds, external data that represents the places, categories and data for the points of interest in that particular set. For each feed you define a location where the data is hosted and then a variety of options regarding map generation and display",
         "config":"feeds-",
         "sectiontype":"section",
         "fields":{
-            "TITLE":{"label":"Title","description":"","type":"text"},
-            "SUBTITLE":{"label":"Subtitle","description":"","type":"text"},
-            "BASE_URL":{"label":"URL","description":"","type":"text"},
-            "CONTROLLER_CLASS":{"label":"Controller Class","description":"","type":"text","placeholder":"KMLDataController"},
-            "STATIC_MAP_CLASS":{"label":"Static Map Class","description":"","type":"text","placeholder":"GoogleStaticMap"},
-            "JS_MAP_CLASS":{"label":"JavaScript Map Class","description":"","type":"text","placeholder":"GoogleJSMap"},
+            "TITLE":{"label":"Title","description":"Title for this feed.","type":"text"},
+            "SUBTITLE":{"label":"Subtitle","description":"An optional subtitle for this feed","type":"text"},
+            "BASE_URL":{"label":"URL","description":"URL for the location of the feed data. Can be a file path location","type":"text"},
+            "CONTROLLER_CLASS":{"label":"Controller Class","description":"Class used to parse the feed data","type":"select","optionsMethod":"getMapControllerClasses","optionsFirst":"-"},
+            "STATIC_MAP_CLASS":{"label":"Static Map Class","description":"Class used to generate the static map image","type":"select","optionsMethod":"getStaticMapClasses","optionsFirst":"-"},
+            "JS_MAP_CLASS":{"label":"JavaScript Map Class","description":"Class used to generate the dynamic map interface","type":"select","optionsMethod":"getDynamicControllerClasses","optionsFirst":"-"},
             "SEARCHABLE":{"label":"Searchable","description":"Whether this feed is searchable","type":"checkbox"},
-            "DEFAULT_ZOOM_LEVEL":{"label":"Initial zoom level","description":"","type":"number","placeholder":"15"}
+            "DEFAULT_ZOOM_LEVEL":{"label":"Zoom level","description":"Initial zoom level of this map","type":"number","placeholder":"15"}
         },
         "sectionindex":"numeric",
         "sectionaddnew":true,
