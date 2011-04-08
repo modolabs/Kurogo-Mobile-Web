@@ -1,4 +1,19 @@
 <h1>Modules Overview</h1>
+<p id="moduleDescription" class="preamble">Use this section to view and manage the overall properties of each module.
+
+</p>
+<dl class="legend">
+    <dt>ID</dt>
+    <dd>The unique internal module ID. This can only be changed in the source code.</dd>
+    <dt>Enabled</dt>
+    <dd>Module is active for this site.</dd>
+    <dt>Home</dt>
+    <dd>Module is featured on the home screen.</dd>
+    <dt>SSL</dt>
+    <dd>Module requires a secure connection.</dd>
+    <dt>Federated Search</dt>
+    <dd>Module's contents are included in site-wide federated search.</dd>
+</dl>
 <table class="configtable" summary="Overview table of modules and their high-level configuration">
 <thead>
     <tr>
@@ -24,15 +39,3 @@
 {/foreach}
 </tbody>
 </table>
-<dl class="legend">
-    <dt>ID</dt>
-    <dd>The unique internal module ID. This can only be changed in the source code.</dd>
-    <dt>Enabled</dt>
-    <dd>Module is active for this site.</dd>
-    <dt>Home</dt>
-    <dd>Module is featured on the home screen.</dd>
-    <dt>SSL</dt>
-    <dd>Module requires a secure connection.</dd>
-    <dt>Federated Search</dt>
-    <dd>Module's contents are included in site-wide federated search.</dd>
-</dl>

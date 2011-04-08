@@ -15,6 +15,10 @@ class GoogleAuthentication extends OAuthAuthentication
     protected $accessTokenURL = 'https://www.google.com/accounts/OAuthGetAccessToken';
     protected $useCache = true;
     protected $cache;
+    
+    public function validate(&$error) {
+        return true;
+    }
 
     protected function reset($hard=false)
     {

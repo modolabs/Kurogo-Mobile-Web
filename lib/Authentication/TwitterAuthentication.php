@@ -20,7 +20,11 @@ class TwitterAuthentication extends OAuthAuthentication
             // this where we would log out of twitter
         }
     }
-	
+    
+    public function validate(&$error) {
+        return true;
+    }
+    
     protected function getUserFromArray(array $array)
     {
         if (isset($array['screen_name'])) {

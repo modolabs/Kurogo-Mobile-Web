@@ -45,6 +45,7 @@ class LDAPAuthentication extends AuthenticationAuthority
                 ldap_set_option($this->ldapResource, LDAP_OPT_REFERRALS, 0);
             } else {
                 error_log("Error connecting to LDAP Server $this->ldadServer using port $this->ldapPort");
+                return false;
             }
         }
         
@@ -316,9 +317,46 @@ class LDAPAuthentication extends AuthenticationAuthority
             }
         }
         
-        if ( empty($this->ldapServer) || empty($this->ldapPort)) {
-            throw new Exception("Invalid LDAP Options");
+        if ( empty($this->ldapServer)) {
+            throw new Exception("Invalid LDAP Server");
         }
+        
+        if ( empty($this->ldapPort)) {
+            throw new Exception("Invalid LDAP Port");
+        }
+    }
+    
+    public function validate(&$error) {
+        $ldap = $this->connectToServer();
+        if (!$ldap) {
+            $error = new KurogoError(-1, "Error connecting", "Error connecting to $this->ldapServer");
+            return false;
+        }
+        
+        ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, 5);
+        if (defined('LDAP_OPT_NETWORK_TIMEOUT')) {
+            ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, 5);
+        }
+
+        if ($this->ldapAdminDN) {
+            if (!@ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
+                $error = new KurogoError(ldap_errno($ldap), "Error connecting", ldap_error($ldap));
+                return false;
+            }
+        } else {
+            if (!@ldap_bind($ldap)) {
+                $error = new KurogoError(ldap_errno($ldap), "Error connecting", ldap_error($ldap));
+                return false;
+            }
+        }
+        
+        if (!$search = @ldap_search($ldap, $this->ldapSearchBase('user'), '(objectclass=*)')) {
+            $error = new KurogoError(ldap_errno($ldap), "Error connecting", "Error validating: " . ldap_error($ldap) . " (" . ldap_errno($ldap) . ")");
+            return false;
+        }
+        
+        //might need to test other things.... 
+        return true;
     }
 }
 

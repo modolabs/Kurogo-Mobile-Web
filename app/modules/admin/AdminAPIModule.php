@@ -208,7 +208,6 @@ class AdminAPIModule extends APIModule
     private function getAdminConfig($type, $config, $opts=0) {
 
         $opts = $opts | ConfigFile::OPTION_IGNORE_LOCAL | ConfigFile::OPTION_IGNORE_MODE;
-        error_log("$config $opts");
 
         if ($type=='site') {
             $configKey = "site-$config";
@@ -254,6 +253,21 @@ class AdminAPIModule extends APIModule
         }
         
         $config = $this->getAdminConfig($type, $fieldData['config'], ConfigFile::OPTION_CREATE_EMPTY);
+
+        if (is_array($value)) {
+            foreach ($value as $k=>$v) {
+                if (isset($fieldData['fields'][$k]['omitBlankValue']) && $fieldData['fields'][$k]['omitBlankValue'] && strlen($v)==0) {
+                    unset($value[$k]);
+                }
+            }
+        }
+        
+        if (isset($sectionData['sectionvalidatemethod'])) {
+            $result = call_user_func($sectionData['sectionvalidatemethod'], $key, $value);
+            if (KurogoError::isError($result)) {
+                throw new Exception($result->getMessage());
+            }
+        }
         
         if (is_array($value)) {
             $result = true;
@@ -267,23 +281,18 @@ class AdminAPIModule extends APIModule
                     throw new Exception("Invalid key $k for $type:" . $fieldData['config'] . " section $key");
                 }
                 
-                if (isset($fieldData['fields'][$k]['omitBlankValue']) && $fieldData['fields'][$k]['omitBlankValue'] && strlen($v)==0) {
-                    $changed = $changed || $config->clearVar($key, $k);
-                    continue;
-                } else {
-                    $prefix = isset($value[$k . '_prefix']) ? $value[$k . '_prefix'] : '';
-                    if ($prefix && defined($prefix)) {
-                        $v = constant($prefix) . '/' . $v;
-                    }
-                    
-                    if ($fieldData['fields'][$k]['type']=='paragraph') {
-                        $v = explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $v));
-                    }
-                    if (!$config->setVar($key, $k, $v, $c)) {
-                        $result = false;
-                    }
-                    $changed = $changed || $c;
+                $prefix = isset($value[$k . '_prefix']) ? $value[$k . '_prefix'] : '';
+                if ($prefix && defined($prefix)) {
+                    $v = constant($prefix) . '/' . $v;
                 }
+                
+                if ($fieldData['fields'][$k]['type']=='paragraph') {
+                    $v = explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $v));
+                }
+                if (!$config->setVar($key, $k, $v, $c)) {
+                    $result = false;
+                }
+                $changed = $changed || $c;
             }
         } else {
             if (isset($fieldData['omitBlankValue']) && $fieldData['omitBlankValue'] && strlen($value)==0) {

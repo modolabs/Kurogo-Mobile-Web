@@ -202,6 +202,10 @@ class FacebookAuthentication extends AuthenticationAuthority
         return false;
     }
 
+    public function validate(&$error) {
+        return true;
+    }
+
     public function init($args)
     {
         parent::init($args);

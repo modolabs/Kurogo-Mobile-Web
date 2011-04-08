@@ -259,6 +259,16 @@ class AccessControlList
         );
     }
     
+    public static function validateACL($key, $aclArray) {
+        $aclArray = array_merge(array(
+            'type'=>'','action'=>'','scope'=>'','authority'=>'','value'=>''), 
+            $aclArray
+        );
+            
+        $acl = new AccessControlList($aclArray['type'], $aclArray['action'], $aclArray['scope'], $aclArray['authority'], $aclArray['value']);
+        return true;
+    }
+    
     /**
      * Instantiates an AccessControlList 
      * @param $ruleType  string @see AccessControlList::ruleTypes()

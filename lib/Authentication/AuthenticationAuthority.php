@@ -83,6 +83,12 @@ abstract class AuthenticationAuthority
 	 * @see UserGroup object
      */
     abstract public function getGroup($group);
+    
+    /**
+     * Validates an authority for connectivity
+	 * @return boolean. True if connectivity is established or false if it is not. Authorities may also set an error object to provide more information.
+     */
+    abstract public function validate(&$error);
 
     /**
      * Initializes the authority objects based on an associative array of arguments
@@ -103,8 +109,12 @@ abstract class AuthenticationAuthority
     public function init($args)
     {
         $args = is_array($args) ? $args : array();
-        if (!isset($args['TITLE'], $args['INDEX'])) {
-            throw new Exception("Title and index must be set");
+        if (!isset($args['TITLE']) || empty($args['TITLE'])) {
+            throw new Exception("Invalid authority title");
+        }
+        
+        if (!isset($args['INDEX']) || empty($args['INDEX'])) {
+            throw new Exception("Invalid authority index");
         }
         
         $this->setAuthorityIndex($args['INDEX']);
@@ -274,6 +284,20 @@ abstract class AuthenticationAuthority
         
         return $configFile->getOptionalSection($index);
     }
+    
+    public static function validateAuthority($index, $authorityData) {
+
+        $authorityData['INDEX'] = $index;
+        $authorityClass = $authorityData['CONTROLLER_CLASS'];
+        $authority = self::factory($authorityClass, $authorityData);
+        if (!$result = $authority->validate($error)) {
+            return $error;
+        }
+        
+        return true;
+    }
+    
+    
 
     /**
      * Retrieves an authentication authority by its index. This is the preferred way to retrieve an authority

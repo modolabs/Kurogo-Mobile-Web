@@ -144,7 +144,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
                         $this->hashSalt = $value;
                         break;
                     case 'DB_GROUP_GROUPMEMBER_PROPERTY':
-                        if (in_array($value, array('group','gid'))) {
+                        if (!in_array($value, array('group','gid'))) {
                             throw new Exception("Invalid value for DB_GROUP_GROUPMEMBER_PROPERTY $value. Should be gid or group");
                         }
                         $this->fieldMap['group_groupmember'] = $value;
@@ -153,6 +153,17 @@ class DatabaseAuthentication extends AuthenticationAuthority
             }
         }
         
+    }
+    
+    public function validate(&$error) {
+        if ($this->userLogin !='NONE') {
+            if (!$result = $this->connection->query(sprintf("SELECT %s, %s, %s FROM %s", $this->getField('user_password'), $this->getField('user_email'), $this->getField('user_userid'), $this->getTable('user')), array(), true)) {
+                $error = new KurogoError(1, "Error connecting", "Error validating user table (" . $this->connection->getLastError() . ")");
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     public function getTable($table)

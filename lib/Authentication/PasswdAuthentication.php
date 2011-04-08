@@ -23,6 +23,10 @@ class PasswdAuthentication extends AuthenticationAuthority
         return array('FORM', 'NONE');
     }
     
+    public function validate(&$error) {
+        return true;
+    }
+    
     private function loadUserData()
     {
         if ($this->users) {
