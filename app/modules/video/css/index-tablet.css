@@ -1,0 +1,88 @@
+#videoHeader {
+  width: 100%;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+#videoHeader fieldset {
+  display: block;
+  padding: 0;
+  margin: 0;
+  height: auto;
+}
+
+#videoHeader tr td {
+  padding: 1em .5em 0 0;
+  height: 40px;
+  line-height: 40px;
+}
+
+#videoHeader tr #categoryformcontainer {
+  width: 19em;
+  padding-left: .5em;
+}
+
+#videoHeader #categoryformcontainer label {
+  padding-right: .5em;
+  font-size: 89%;
+}
+#videoHeader #categoryformcontainer select {
+  width: auto;
+  min-width: 250px;
+}
+
+#videoHeader tr #searchformcontainer form,
+#videoHeader #searchformcontainer fieldset {
+  height: 40px;
+  width: 100%;
+  position: relative;
+}
+#videoHeader #searchformcontainer fieldset .forminput {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 89%;
+}
+
+form {
+	margin: -8px 0 0 0;
+	padding: 0;
+}
+.formlabel {
+	width: 62px;
+    text-align: right;
+	font-size: 89%;
+}
+.header form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+.header form input {
+    line-height: normal;
+}
+.header form select {
+    line-height: normal;
+    padding: 4px 6px;
+    font-size: 88.23%;
+}
+
+.header {
+    padding: 10px 0 2px 0;
+}
+
+.header button {
+    display: inline;
+}
+
+.results li.pagerlink {
+	padding: 9px;
+}
+
+.results li.pagerlink a {
+  color: #1A1611;
+  font-weight: bold;
+  background-image: none;
+  font-size: 90%;
+}

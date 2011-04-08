@@ -41,7 +41,6 @@ class VideoWebModule extends WebModule
     protected function initializeForPage() {
    
         if ($this->pagetype=='basic') {
-            $this->assign('showUnsupported', true);
             return;
         }
         

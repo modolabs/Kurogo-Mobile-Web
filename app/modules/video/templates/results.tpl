@@ -7,7 +7,7 @@
   {/if}
   {foreach $results as $item}
     {if !isset($item['separator'])}
-      <li class="video{if $item['img']} noimage{/if}">  
+      <li class="video{if !$item['img']} noimage{/if}">  
   
         {include file="findInclude:modules/$moduleID/templates/listItem.tpl" ellipsisId=$ellipsisCount++ subTitleNewline=$subTitleNewline|default:true} 
        

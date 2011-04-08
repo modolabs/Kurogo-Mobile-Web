@@ -1,9 +1,5 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{if isset($showUnsupported)}
- Sorry, unsupported device.
-{else}
-
 {capture name="categorySelect" assign="categorySelect"}
   <select class="input" id="section" name="section" onchange="loadSection(this);">
     {foreach $sections as $section}
@@ -73,8 +69,5 @@
 {/if}
 
 {include file="findInclude:modules/$moduleID/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
-
-{/if}
-
 
 {include file="findInclude:common/templates/footer.tpl"}
