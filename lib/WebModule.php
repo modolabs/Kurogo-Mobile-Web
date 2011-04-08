@@ -193,7 +193,7 @@ abstract class WebModule extends Module {
   
   private function getMinifyUrls($pageOnly=false) {
     $page = preg_replace('/[\s-]+/', '+', $this->page);
-    $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(SITE_DIR);
+    $minKey = "{$this->id}-{$page}-{$this->pagetype}-{$this->platform}-".md5(THEME_DIR);
     
     return array(
       'css' => "/min/g=css-$minKey".$this->getMinifyArgString($pageOnly),
