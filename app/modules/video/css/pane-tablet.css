@@ -1,0 +1,94 @@
+
+#videos {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+#videos > * {
+  margin: 12px;
+  display: none;
+  list-style-type: none;
+  overflow: hidden;
+}
+
+#videos > .current {
+  display: list-item;
+}
+
+#videos a,
+#videos a:visited {
+  color: #222;
+  text-decoration: none;
+}
+
+#videos .thumbnail {
+  float: left;
+  margin: 0 12px 6px 0;
+  height: 6.5em;
+  width: 6.5em;
+  line-height: 6.5em;
+  line-height: 6.5em;
+  overflow: hidden;
+}
+#videos .thumbnail img {
+  width: 100%;
+  vertical-align: middle;
+}
+
+#videos .title {
+  font-size: 110%;
+  font-weight: bold;
+  padding-bottom: 6px;
+}
+
+#videoPager {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: right;
+  height: 45px;
+}
+
+#videoPager .dots {
+  display: block;
+  margin-right: 108px;
+  text-align: center;
+  overflow: hidden;
+  height: 38px;
+  white-space: nowrap;
+}
+
+#videoPager .dots > * {
+  display: inline-block;
+  height: 38px;
+  width: 12px;
+  margin: 0 0 0 12px;
+  background: transparent url(/common/images/page-dot.png) no-repeat center left;
+}
+#videoPager .dots > *:first-child {
+  margin-left: 0;
+}
+#videoPager .dots .current {
+  background-image: url(/common/images/page-dot-current.png);
+}
+
+#videoNext, #videoPrev {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 61px;
+  height: 38px;
+  width: 47px;
+  background: transparent url(/common/images/page-prev.png) no-repeat top left;
+}
+#videoNext {
+  background-image: url(/common/images/page-next.png);
+  right: 7px;
+}
+#videoNext.disabled,
+#videoPrev.disabled {
+  cursor: default;
+}

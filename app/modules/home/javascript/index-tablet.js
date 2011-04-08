@@ -1,4 +1,6 @@
+// this needs to change in the future...
 var newsEllipsizer = null;
+var videoEllipsizer = null;
 
 function getNewsStories() {
   return document.getElementById('newsStories').childNodes;
@@ -6,6 +8,15 @@ function getNewsStories() {
 
 function getNewsDots() {
   return document.getElementById('newsPagerDots').childNodes;
+}
+
+
+function getVideos() {
+  return document.getElementById('videos').childNodes;
+}
+
+function getVideoDots() {
+  return document.getElementById('videoPagerDots').childNodes;
 }
 
 function moduleHandleWindowResize() {
@@ -120,6 +131,33 @@ function moduleHandleWindowResize() {
       newsEllipsizer.refresh();
     }, 1);
   }
+
+  // set the size on the videos
+  var videos = getVideos();
+  if (videos.length) {
+    var pager = document.getElementById('videoPager');
+    var videoClipHeight = getCSSHeight(document.getElementById('videos'))
+      - pager.offsetHeight
+      - parseFloat(getCSSValue(videos[0], 'border-top-width')) 
+      - parseFloat(getCSSValue(videos[0], 'border-bottom-width'))
+      - parseFloat(getCSSValue(videos[0], 'padding-top'))
+      - parseFloat(getCSSValue(videos[0], 'padding-bottom'))
+      - parseFloat(getCSSValue(videos[0], 'margin-top'))
+      - parseFloat(getCSSValue(videos[0], 'margin-bottom'));
+      
+    for (var i = 0; i < videos.length; i++) {
+      videos[i].style.height = videoClipHeight+'px';
+    }
+  }
+  
+  if (videoEllipsizer == null) {
+    videoEllipsizer = new ellipsizer({refreshOnResize: false});
+    videoEllipsizer.addElements(getVideos());
+  } else {
+    setTimeout(function () {
+      videoEllipsizer.refresh();
+    }, 1);
+  }
 }
 
 function newsPaneSwitchStory(elem, direction) {
@@ -146,6 +184,40 @@ function newsPaneSwitchStory(elem, direction) {
         next.className = (j == (stories.length-1)) ? 'disabled' : '';
         
         newsEllipsizer.refresh();
+      }
+      
+      break;
+    }
+  }
+  
+  return false;
+}
+
+function videoPaneSwitchVideo(elem, direction) {
+  if (elem.className.match(/disabled/)) { return false; }
+
+  var videos = getVideos();
+  
+  var dots = getVideoDots();
+  var prev = document.getElementById('videoPrev');
+  var next = document.getElementById('videoNext');
+  
+  for (var i = 0; i < videos.length; i++) {
+    if (videos[i].className == 'current') {
+      var j = direction == 'next' ? i+1 : i-1;
+      
+      if (j >= 0 || j < videos.length) {
+        videos[i].className = '';
+        videos[j].className = 'current';
+        
+        dots[i].className = '';
+        dots[j].className = 'current';
+        
+        prev.className = (j == 0) ? 'disabled' : '';
+        next.className = (j == (videos.length-1)) ? 'disabled' : '';
+
+        videoEllipsizer.refresh();
+        
       }
       
       break;

@@ -27,14 +27,23 @@ class VideoWebModule extends WebModule
         $this->feeds = $this->loadFeedData();
     }
     
-    protected function getListItemForVideo(VideoObject $video, $section) {
+    protected function getListItemForVideo(VideoObject $video, $section, $paneLink=false) {
 
         $listItemArray = VideoModuleUtils::getListItemForVideo($video, $section, $this);
-        // Add breadcrumb.
-        $listItemArray['url'] = $this->buildBreadcrumbURL('detail', array(
+        
+        $args = array(
             'section'=>$section,
-            'videoid'=>$video->getID()));
-            
+            'videoid'=>$video->getID()
+        );
+
+        // Add breadcrumb.
+        
+        if ($paneLink) {
+          $listItemArray['url'] = $this->buildURL('detail', $args);
+        } else {
+          $listItemArray['url'] = $this->buildBreadcrumbURL('detail', $args);
+        }
+        
         return $listItemArray;
     }
     
@@ -66,6 +75,18 @@ class VideoWebModule extends WebModule
 
         switch ($this->page)
         {  
+              case 'pane':
+                $start = 0;
+                $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
+
+                $items = $controller->items($start, $maxPerPage);
+                $videos = array();
+                foreach ($items as $video) {
+                    $videos[] = $this->getListItemForVideo($video, $section, true);
+                }
+                
+                $this->assign('videos', $videos);
+                break;
             case 'search':
             case 'index':
         
