@@ -1533,3 +1533,22 @@ html, body, #nonfooternav {
 .staticContentBody ul {
 	margin-bottom: 1.5em;
 }
+
+#bookmarkContainer {
+    float: right;
+	margin: -44px 0 0 8px;
+}
+#bookmark {
+    width: 44px;
+    height: 38px;
+    background: url(/common/images/bookmark.png) no-repeat 0 -38px;
+}
+#bookmark.pressed {
+    background-position: 0 1px;
+}
+#bookmark.on {
+    background-position: -44px -38px;
+}
+#bookmark.pressed.on {
+    background-position: -44px 1px;
+}

@@ -156,6 +156,8 @@ class VideoWebModule extends WebModule
                     $this->assign('videoURL',         $video->getURL());
                     $this->assign('videoid',          $video->getID());
                     $this->assign('videoDescription', $video->getDescription());
+                    $this->assign('videoAuthor'     , $video->getAuthor());
+                    $this->assign('videoDate'       , $video->getPublished()->format('M n, Y'));
                     
                     $body = $video->getDescription() . "\n\n" . $video->getURL();
                     

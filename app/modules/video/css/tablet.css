@@ -37,3 +37,17 @@ li.video {
 	  color: #000;
     padding: 0 0 .25em 0;
 }
+
+.slugline {
+    font: 22px/26px Georgia, serif;
+    color:#1a1611;
+}
+
+.videoplayer {
+	margin: 1em 0;
+}
+
+.videobuttons #share, .videobuttons #bookmarkContainer {
+	float: right;
+	margin: 0 0 0 0.5em;
+}
