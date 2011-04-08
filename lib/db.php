@@ -12,9 +12,14 @@ define('DB_NOT_SUPPORTED', 1);
  */
 class db {
   protected $connection;
+  protected $lastError;
   const IGNORE_ERRORS=true;
 
   const CONSTRAINT_VIOLATION_ERROR=23000;
+  
+  public function getLastError() {
+    return $this->lastError;
+  }
   
   public function __construct($config=null)
   {
@@ -38,21 +43,30 @@ class db {
   
   public function init($config=null) 
   {
+    $this->lastError = null;
     $db_type = isset($config['DB_TYPE']) ? $config['DB_TYPE'] : null;
     if (!file_exists(LIB_DIR . "/db/db_$db_type.php")) {
-        throw new Exception("Database type $db_type not found");
+        $e = new Exception("Database type $db_type not found");
+        $this->lastError = KurogoError::errorFromException($e);
+        throw $e;
     }
     
     require_once(LIB_DIR . "/db/db_$db_type.php");
     try {
         $this->connection = call_user_func(array("db_$db_type", 'connection'), $config);
     } catch (Exception $e) {
-        throw new Exception("Error connecting to database", 0, $e);
+        $this->lastError = KurogoError::errorFromException($e);
+        if (Kurogo::getSiteVar('DB_DEBUG')) {
+            throw new Exception("Error connecting to database: " . $e->getMessage(), 0, $e);
+        } else {
+            throw new Exception("Error connecting to database", 0, $e);
+        }
     }
   }
   
   public function query($sql, $parameters=array(), $ignoreErrors=false, $catchErrorCodes=array())
   {
+    $this->lastError = null;
     if (Kurogo::getSiteVar('DB_DEBUG')) {
         error_log("Query Log: $sql");
     }
@@ -71,7 +85,13 @@ class db {
   }
 
   private function errorHandler($sql, $errorInfo, $ignoreErrors, $catchErrorCodes) {
+
+        if (Kurogo::getSiteVar('DB_DEBUG')) {
+           $e = new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]), $errorInfo[1]);
+        }
+        
         if ($ignoreErrors) {
+            $this->lastError = KurogoError::errorFromException($e);
             return;
         }
 
@@ -83,7 +103,7 @@ class db {
         }
 
         if (Kurogo::getSiteVar('DB_DEBUG')) {
-            throw new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]));
+            throw $e;
         } else {
             error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
         }
