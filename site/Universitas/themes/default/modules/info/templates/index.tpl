@@ -16,7 +16,7 @@
     </div><!--/utility_nav-->
     
     <div id="logo">
-    	<img src="/modules/info/images/site_logo.png" alt="Universitas Mobile Internet" border="0" />
+    	<img src="/modules/info/images/logo-home.png" alt="Universitas Mobile Internet" border="0" />
     </div>
     
     <h1>m.universitas.edu</h1>
