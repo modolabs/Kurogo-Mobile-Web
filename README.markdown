@@ -18,31 +18,30 @@ to early generation smart phones, to modern devices and tablets. It currently in
 
 ## Online Guide
 
-We strongly recommend developers read the (in progress) framework guide:
+We strongly recommend developers read the developer's guide:
 
 * [HTML](http://modolabs.com/kurogo/guide)
 * [PDF](http://modolabs.com/kurogo/guide.pdf)
 
 Please contact kurogo@modolabs.com for more information.
 
-## NOTICE: Release candidate version
+## Quick Setup and Requirements
 
-This project has entered Release candidate stage. There may be additional features and bug fixes, however there should no longer be any incompatible
-changes that would affect the mobile web product. 
+Kurogo is a PHP application. It is currently qualified for use with
+* Apache 2.x on unix systems (Windows system may also work, but has not been fully test. IIS is not supported)
+    * mod_rewrite, and .htaccess support (AllowOverride)
+* PHP 5.2 or higher with the following modules
+    * xml, dom, json, pdo (SQLite/MySQL), mbstring, LDAP, curl
 
-## Version 1.0
-
-The following is planned before the official 1.0 release:
-
-* Cosmetic updates to the login module
-* Additional features to the revamped admin console (/admin)
-* Completion of the REST API
+To install, simply copy the files to your webserver, and point your site's document root to the included www
+folder. For more detailed setup information, please see the developer's guide.
 
 ## History
 
 This project is based off the original [MIT Mobile Framework](https://github.com/MIT-Mobile/MIT-Mobile-Web) and was adapted for use at [Harvard University](https://github.com/modolabs/Harvard-Mobile-Web).
 If you have followed the progress of the Harvard project you will notice some improvements and differences:
 
+* Newer modules including video and HTML content
 * An overhauled configuration system with web-based administration interface
 * A robust authentication system with support for many types of authentication authorities
 * Authorization support to restrict access to content by user or group
@@ -51,6 +50,3 @@ If you have followed the progress of the Harvard project you will notice some im
 There are some parts of the project that are not present:
 
 * Modules that have not been generalized are not included. Please refer to the [Harvard Mobile Web Repository](https://github.com/modolabs/Harvard-Mobile-Web) for modules that you do not find here. Some modules will eventually be generalized and folded into this project.
-* Native API support. The API for native apps will be changing.
-
-

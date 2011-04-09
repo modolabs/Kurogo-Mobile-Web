@@ -1,3 +1,26 @@
+1.0 (April 8)
+* KNOWN ISSUE: YouTube Videos may appear stretched on iOS devices in the detail page. This is not code contained in Kurogo, but has been acknowledged by Google.
+* INCOMPATIBLE CHANGE: Access Control List files and format has changed. See documentation for more info.  
+* Fixed issue with external device detection
+* Numerous updates to documentation
+* Added additional API modules and updates
+* Numerous updates and refinements to Admin console. 
+* Updated login UX
+* Fixed an issue when there are 0 search results in YouTube
+* Fixed an issue with Facebook authentication
+* Make sure platform is set on error message
+* You can now use navListClass to add a css class to nav lists and listClass to add class to individual li's in a navlist
+* Fixed issues with Video searching that would not use tag/author settings
+* <pre> tags are now stripped from News content
+* Refined video search results
+* Consolidated bookmarking code
+* Fixed an issue with Twitter sharing
+* Various visual updates for Tablet UI
+* Do not show blackberry download link if it has not been defined in the download module
+* Added tablet interfaces for Video and Emergency
+* Added new "crimson" theme to demonstrate color changes
+* Updated icon set 
+
 1.0 Release Candidate 2 (March 30)
 * INCOMPATIBLE CHANGE: The format of the links configuration has changed to be more compatibile with the admin console. See example site for details
 * fixed bug when searching calendars
