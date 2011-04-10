@@ -498,6 +498,69 @@ JS;
         return false;
     }
 
+
+    protected function sortCategoriesForCurrentLocation($categoriesArray, $currentLat, $currentLon){
+        $distanceArray = array();
+        
+        foreach ($categoriesArray as $categoryItem){
+
+            $lat = $categoryItem['loc'][0];
+            $lon = $categoryItem['loc'][1];
+
+            $distance = $this->getDistanceFromLatLon($currentLon, $currentLat, $lon, $lat);
+
+            $distanceArray[] = $distance;
+        }
+
+        array_multisort($distanceArray, SORT_ASC, $categoriesArray);
+
+        // return the categories array sorted based on distance
+        return $categoriesArray;
+    }
+
+    function convertToRadians($coord) {
+        return $coord * Math.PI / 180;
+    }
+    
+    protected function getDistanceFromLatLon($currentLon, $currentLat, $otherLon, $otherLat){
+
+        $earthRadius = 6371; // km
+        $milesPerKM = 0.621371192;
+
+
+      // law of haversines
+      $dLat = deg2rad($otherLat - $currentLat);
+      $dLon = deg2rad($otherLon - $currentLon);
+      $a = sin($dLat/2) * sin($dLat/2) +
+              cos(deg2rad($currentLat)) * cos(deg2rad($otherLat)) *
+              sin($dLon/2) * sin($dLon/2);
+
+      $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+      $distInKm = $earthRadius * $c;
+
+      return $distInKm;
+    }
+
+    // TODO: move this to the common.js file
+    protected function getJavascriptStringForLocationRedirection() {
+        return 'if (typeof navigator.geolocation == \'undefined\') {'.
+                            'document.location.replace(\'index?redirected=yes\') }' .
+                            'else {' .
+                            'navigator.geolocation.getCurrentPosition(foundLocation, noLocation);
+                             }' .
+
+
+                    'function foundLocation(location) {' .
+                             'var curLat = location.coords.latitude;' .
+                             'var curLon = location.coords.longitude;' .
+                              'document.location.replace(\'index?redirected=yes&' .
+                                  'lon=\' + escape(curLon) + \'&lat=\' + escape(curLat))};' .
+
+                    'function noLocation() {' .
+                        'document.location.replace(\'index?redirected=yes\');
+                    }';
+    }
+
     protected function initializeForPage() {
 
         switch ($this->page) {
@@ -506,7 +569,11 @@ JS;
 
             case 'index':
 
+                $redirectedWithLocation = $this->getArg('redirected');
+
+
                 if ($action = $this->getArg('action', false)) {
+                   // print_r("does it even get here??");
                     if ($this->feedGroup && $action == 'add') {
                         // TODO have config for different types of cookie expiration times
                         $expireTime = time() + 897298;
@@ -518,17 +585,41 @@ JS;
                 }
 
                 if ($this->feedGroup === null && $this->numGroups > 1) {
+                    //print_r("does it even get here2222??");
                     // show the list of groups
                     foreach ($this->feedGroups as $id => $groupData) {
                         $categories[] = array(
                             'title' => $groupData['title'],
                             'url' => $this->groupURL($id),
+                            'loc' => explode("," ,$groupData['center'])
                             );
                     }
+
+                // only display categories in a list if the current location attempt has been made
+                // and a redirection has occured.
+                if ($redirectedWithLocation) {
                     $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS', 'Campus');
                     $this->assign('browseHint', "Select a $groupAlias");
                     $this->assign('categories', $categories);
                     $this->assign('searchTip', NULL);
+
+                    $latitude = $this->getArg('lat');
+                    $longitude = $this->getArg('lon');
+
+                    // if current lat/lon were found and valid, sort the categories based on that.
+                    if (is_numeric($latitude) && is_numeric($longitude)) {
+                        $sorted_categories = $this->sortCategoriesForCurrentLocation($categories, $latitude, $longitude);
+                        $this->assign('categories', $sorted_categories);
+                        $this->assign('browseHint', "Select a $groupAlias (Closest first)");
+                    }
+                    $this->generateBookmarkLink();
+                }
+
+                else{
+
+                   $js = $this->getJavascriptStringForLocationRedirection();
+                   $this->addInlineJavascript($js);
+                }
                     
                 } else {
                     $groupData = $this->getDataForGroup($this->feedGroup);
@@ -547,9 +638,8 @@ JS;
                     $this->assignCategories();
                     $this->assign('browseHint', "Browse {$browseBy} by:");
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
+                    $this->generateBookmarkLink();
                 }
-
-                $this->generateBookmarkLink();
 
                 break;
             

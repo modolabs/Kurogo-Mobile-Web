@@ -299,6 +299,7 @@ function doUpdateContainerDimensions() {
     }
 }
 
+
 /*
 function disable(strID) {
 // Visually dims and disables the anchor whose id is strID
