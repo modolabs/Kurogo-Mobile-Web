@@ -180,7 +180,7 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
     //use TITLE if present
     var titleField = 'sectiontitlefield' in data ? data.sectiontitlefield : 'TITLE';
     
-    var title = titleField in sectionData ? sectionData[titleField] : sectionID;
+    var title = titleField in sectionData ? sectionData[titleField] : '';
     
     if (data.sectiontable) {
 
@@ -208,8 +208,14 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
     
     } else {
     
-        row.append($('<td>' + sectionID + '</td>'));
-        row.append($('<td class="sectiontitle">' + title + '</td>'));
+        if (data.sectionindex =='numeric') {
+            row.append($('<td>' + (sectionID+1) + '.</td>'));
+        } else {
+            row.append($('<td>' + sectionID + '</td>'));
+        }
+        if (title) {
+            row.append($('<td class="sectiontitle">' + title + '</td>'));
+        }
     
         var rowbuttons = $('<td class="rowbuttons" />');
     
