@@ -272,34 +272,6 @@ class LDAPPeopleController extends PeopleController {
     
     }
     
- public static function getImageLoaderURL($url, &$width, &$height) {
-        if ($url && strpos($url, '/photo-placeholder.gif') !== FALSE) {
-            $url = ''; // skip empty placeholder image 
-        }
-        
-        if ($url) {
-            switch ($GLOBALS['deviceClassifier']->getPagetype()) {
-                case 'compliant':
-                    $width = 140;
-                    $height = 140;
-                    break;
-                case 'basic':
-                case 'touch':
-                default:
-                    $width = 70;
-                    $height = 70;
-                    break;
-            }
-          
-            $extension = pathinfo($url, PATHINFO_EXTENSION);
-            if ($extension) { $extension = ".$extension"; }
-  
-            $url = ImageLoader::precache($url, $width, $height, 'LDAP_'.md5($url).$extension);
-        }
-        
-        return $url;
-    }
-        
   /* returns a person object on success
    * FALSE on failure
    */
@@ -334,23 +306,6 @@ class LDAPPeopleController extends PeopleController {
         return FALSE;
       }
 
-      // IG: move
-      //showLdapJpeg($ds, $id, $entries[0]);
-      
-      // FIXME set "item" fields
-      /*
-    	$url = getImageLoaderURL($img->getAttribute('src'), $w, $h);
-                  if ($newSrc) {
-                    $img->setAttribute('src', $newSrc);
-                    $img->setAttribute('width', 300);
-                    $img->setAttribute('height', 'auto');
-        
-                  } else {
-                    $img->parentNode->removeChild($img);
-                  }
-      
-      */
-      
       return new $this->personClass($entries[0]);
 
     } else {

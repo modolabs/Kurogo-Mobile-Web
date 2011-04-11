@@ -3,6 +3,8 @@
   * @package Module
   * @subpackage People
   */
+includePackage('People');
+
 
 /**
   * @package Module

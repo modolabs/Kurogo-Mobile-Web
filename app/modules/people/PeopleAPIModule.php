@@ -1,5 +1,7 @@
 <?php
 
+includePackage('People');
+
 class PeopleAPIModule extends APIModule
 {
     protected $id = 'people';
