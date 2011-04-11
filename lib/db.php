@@ -57,9 +57,9 @@ class db {
     } catch (Exception $e) {
         $this->lastError = KurogoError::errorFromException($e);
         if (Kurogo::getSiteVar('DB_DEBUG')) {
-            throw new Exception("Error connecting to database: " . $e->getMessage(), 0, $e);
+            throw new Exception("Error connecting to database: " . $e->getMessage(), 0);
         } else {
-            throw new Exception("Error connecting to database", 0, $e);
+            throw new Exception("Error connecting to database");
         }
     }
   }
