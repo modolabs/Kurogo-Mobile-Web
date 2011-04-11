@@ -3,8 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
   <meta http-equiv="content-type" content="application/xhtml+xml" />
-  {if $session_max_idle}
-    <meta http-equiv="refresh" content="{$session_max_idle+2}" />
+  {if $refreshPage}
+    <meta http-equiv="refresh" content="{$refreshPage}" />
   {/if}
   <title>{$moduleName}{if !$isModuleHome}: {$pageTitle}{/if}</title>
   <link rel="shortcut icon" href="/favicon.ico" />

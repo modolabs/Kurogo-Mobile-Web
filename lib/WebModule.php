@@ -56,6 +56,7 @@ abstract class WebModule extends Module {
   
   private $tabbedView = null;
   
+  protected $refreshTime = 0;
   protected $cacheMaxAge = 0;
   
   protected $autoPhoneNumberDetection = true;
@@ -1019,6 +1020,16 @@ abstract class WebModule extends Module {
     return $this->templateEngine->getTemplateVars($key);
   }
   
+    public function setRefresh($time) {
+    
+        if (!$time || ($this->refreshTime && $time > $this->refreshTime)) {
+            return;
+        }
+
+        $this->refreshTime = $time;
+        $this->assign('refreshPage', $this->refreshTime);
+    }
+  
   private function setPageVariables() {
     $this->loadTemplateEngineIfNeeded();
         
@@ -1130,7 +1141,9 @@ abstract class WebModule extends Module {
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array()));
             }
 
-            $this->assign('session_max_idle', intval(Kurogo::getOptionalSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0)));
+            if ($session_max_idle = intval(Kurogo::getOptionalSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0))) {
+                $this->setRefresh($session_max_idle+2);
+            }
         }
     }
 
