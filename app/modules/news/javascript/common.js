@@ -1,6 +1,5 @@
 // Initalize the ellipsis event handlers
 function setupNewsListing() {
-    document.write('I see Paris');
     var newsEllipsizer = new ellipsizer();
     
     // cap at 100 divs to avoid overloading phone
