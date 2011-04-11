@@ -1,0 +1,17 @@
+{
+    "download": {
+        "title":"Downloads",
+        "description":"",
+        "config":"apps",
+        "sectiontype":"section",
+        "fields":{
+            "section":{"label":"Platform","type":"label"},
+            "url":{"label":"URL","description":"URL of platform application","type":"text"},
+            "downloadText":{"label":"Download Text","description":"Text shown on the home screen if a download is available for this platform","type":"text"},
+            "instructions":{"label":"Download Instructions","description":"Text shown in the download module to instruct users about the download for this platform","type":"text"}
+        },
+        "sectionindex":"string",
+        "sectionaddnew":true,
+        "sectiondelete":true
+    }
+}
