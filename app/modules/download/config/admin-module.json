@@ -1,7 +1,7 @@
 {
     "download": {
         "title":"Downloads",
-        "description":"",
+        "description":"With the download module you can create links to external applications for certain platforms. This could shortcut applications with BlackBerry devices, and native applications for iOS and Android devices.",
         "config":"apps",
         "sectiontype":"section",
         "fields":{
