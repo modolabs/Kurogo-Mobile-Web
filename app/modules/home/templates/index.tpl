@@ -36,6 +36,16 @@
 {/if}
 
 {block name="homeFooter"}
+{if $SHOW_DOWNLOAD_TEXT}
+  <div id="download">
+    <a href="/download/">
+      <img src="/modules/{$moduleID}/images/download.png"
+      alt="Download" align="absmiddle" />
+      {$SHOW_DOWNLOAD_TEXT}
+    </a>
+    <br />
+  </div>
+{/if}  
 {/block}
 
 {include file="findInclude:common/templates/footer.tpl"}

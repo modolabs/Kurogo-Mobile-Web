@@ -1,0 +1,11 @@
+#download {
+	text-align: left;
+	clear: both;
+	padding: 20px 10px 20px 10px;
+}
+#download a {
+	text-decoration: none;
+}
+#download a:hover {
+	color: #a00;
+}

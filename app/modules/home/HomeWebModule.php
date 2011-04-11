@@ -50,10 +50,7 @@ class HomeWebModule extends WebModule {
           $this->assign('modules', $this->getModuleNavList());
         }
         
-        // to save some cycles, we'll only check on certain platforms. 
-        if (in_array($this->platform, array('bbplus','blackberry'))) {
-            $this->assign('SHOW_DOWNLOAD', DownloadWebModule::hasApp($this->platform));
-        }
+        $this->assign('SHOW_DOWNLOAD_TEXT', DownloadWebModule::appDownloadText($this->platform));
         $this->assign('displayType', $this->getModuleVar('display_type'));
         $this->assign('topItem', null);
         break;

@@ -3,11 +3,11 @@
 class DownloadWebModule extends WebModule {
     protected $id = 'download';
     
-    public static function hasApp($platform) {
+    public static function appDownloadText($platform) {
         $config = ModuleConfigFile::factory('download', 'module');
-        return $config->getOptionalVar($platform, null, 'deviceApps');
+        return $config->getOptionalVar($platform, null, 'deviceDownloadText');
     }
-  
+    
     protected function initializeForPage() {
 
         $this->assign('deviceName',   Kurogo::getOptionalSiteVar($this->platform, null, 'deviceNames'));

@@ -7,12 +7,12 @@
 {block name="homeFooter"}
   <p class="bb"> </p>
 
-{if $SHOW_DOWNLOAD}
+{if $SHOW_DOWNLOAD_TEXT}
   <div id="download">
     <a href="../download/">
       <img src="/modules/home/images/download.gif" 
       alt="Download" align="absmiddle" />
-      Add the BlackBerry shortcut to your home screen
+      {$SHOW_DOWNLOAD_TEXT}
     </a>
     <br />
   </div>
