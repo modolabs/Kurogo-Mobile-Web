@@ -10,6 +10,7 @@
             "downloadText":{"label":"Download Text","description":"Text shown on the home screen if a download is available for this platform","type":"text"},
             "instructions":{"label":"Download Instructions","description":"Text shown in the download module to instruct users about the download for this platform","type":"text"}
         },
+        "sectionaddprompt":"Enter platform to add new download link (blackberry, bbplus, iphone, etc)",
         "sectionindex":"string",
         "sectionaddnew":true,
         "sectiondelete":true
