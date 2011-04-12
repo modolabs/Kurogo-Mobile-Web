@@ -2,9 +2,9 @@
 
 {block name="detailsStart"}
 {/block}
-  {foreach $personDetails as $section}
+  {foreach $personDetails as $sectionName=>$section}
     {block name="sectionStart"}
-      <ul class="nav">
+      <ul class="nav {$sectionName}">
     {/block}        
         {foreach $section as $item}
           {block name="detail"}
@@ -20,7 +20,7 @@
               
               
               {if $item['img']}
-			      <img src="{$item['img']}" alt="{$item['title']}"{if $item['imgWidth']}
+			      <img src="{$item['img']}" class="image" alt="{$item['title']}"{if $item['imgWidth']}
 			        width="{$item['imgWidth']}"{/if}{if $item['imgHeight']}
 			        height="{$item['imgHeight']}"{/if}{if $item['imgAlt']}
 			        alt="{$item['imgAlt']}"{/if} />

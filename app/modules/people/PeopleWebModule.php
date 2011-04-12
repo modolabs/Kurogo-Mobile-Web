@@ -36,7 +36,7 @@ class PeopleWebModule extends WebModule {
         }
     
         $detail = array(
-            'label' => $info['label'],
+            'label' => isset($info['label']) ? $info['label'] : '',
             'title' => $value
         );
     
@@ -119,7 +119,7 @@ class PeopleWebModule extends WebModule {
                         $details[$info['section']] = array_merge($details[$info['section']], $section);
                     }
                 } else {
-                    $details[] = $section;
+                    $details[$key] = $section;
                 }
             }
         }
