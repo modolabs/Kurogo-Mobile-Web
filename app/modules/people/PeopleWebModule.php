@@ -14,6 +14,7 @@ class PeopleWebModule extends WebModule {
     protected $id = 'people';
     private $detailFields = array();
     private $detailAttributes = array();
+    protected $defaultController = 'LDAPPeopleController';
     protected $feeds=array();
   
     private function formatValues($values, $info) {
@@ -27,7 +28,7 @@ class PeopleWebModule extends WebModule {
         return $values;
     }
   
-    private function formatDetail($values, $info) {
+    private function formatDetail($values, $info, Person $person) {
         if (isset($info['format'])) {
             $value = vsprintf($info['format'], $values);
         } else {
@@ -79,7 +80,7 @@ class PeopleWebModule extends WebModule {
         if (count($info['attributes']) == 1) {
             $values = (array)$person->getField($info['attributes'][0]);
             if (count($values)) {
-                $section[] = $this->formatDetail($this->formatValues($values, $info), $info);
+                $section[] = $this->formatDetail($this->formatValues($values, $info), $info, $person);
             }      
         } else {
             $valueGroups = array();
@@ -95,7 +96,7 @@ class PeopleWebModule extends WebModule {
             }
           
             foreach ($valueGroups as $valueGroup) {
-                $section[] = $this->formatDetail($valueGroup, $info);
+                $section[] = $this->formatDetail($valueGroup, $info, $person);
             }
         }
         
@@ -157,7 +158,7 @@ class PeopleWebModule extends WebModule {
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
             if (!isset($feedData['CONTROLLER_CLASS'])) {
-                $feedData['CONTROLLER_CLASS'] = 'LDAPPeopleController';
+                $feedData['CONTROLLER_CLASS'] = $this->defaultController;
             }
             $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setAttributes($this->detailAttributes);
