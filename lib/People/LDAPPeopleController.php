@@ -36,6 +36,14 @@ class LDAPPeopleController extends PeopleController {
         return   sprintf("Using LDAP Server: %s", $this->host);
     }
 
+    public function setHost($host) {
+        $this->host = $host;
+    }
+
+    public function host() {
+        return $this->host;
+    }
+
     protected function connectToServer() {
         if (!$this->ldapResource) {
             if ($this->ldapResource = ldap_connect($this->host, $this->port)) {
@@ -48,7 +56,6 @@ class LDAPPeopleController extends PeopleController {
 
         return $this->ldapResource;
     }
-
 
     public function setAttributes($attribs) {
         if (is_array($attribs)) {

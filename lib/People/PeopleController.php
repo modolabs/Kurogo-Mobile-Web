@@ -13,6 +13,10 @@ abstract class PeopleController
     abstract public function getError();
     abstract public function setAttributes($attributes);
     
+    protected $debugMode=false;
+    protected $personClass = 'Person';
+    protected $capabilities=0;
+
     public static function getPeopleControllers() {
         return array(
             ''=>'-',
@@ -20,49 +24,41 @@ abstract class PeopleController
         );
     }
 
-    protected $debugMode=false;
-    protected $personClass = 'Person';
-    
-    public function debugInfo()
-    {
+    public function debugInfo() {
         return '';
     }
 
-    public function host()
-    {
-        return $this->host;
+    public function getCapabilities() {
+        return $this->capabilties;
     }
 
-    public function setHost($host)
-    {
-        $this->host = $host;
-    }
-
-    public function setDebugMode($debugMode)
-    {
+    public function setDebugMode($debugMode) {
         $this->debugMode = $debugMode ? true : false;
     }
     
-    public function setPersonClass($className)
-    {
+    public function setPersonClass($className) {
     	if ($className) {
     		if (!class_exists($className)) {
     			throw new Exception("Cannot load class $className");
     		}
+
+            $class = new ReflectionClass($className); 
+            if (!$class->isSubclassOf('Person')) {
+                throw new Exception("$className is not a subclass of Person");
+            }
 			$this->personClass = $className;
 		}
     }
     
-    protected function init($args)
-    {
+    protected function init($args) {
 
         if (isset($args['PERSON_CLASS'])) {
             $this->setPersonClass($args['PERSON_CLASS']);
         }
     }
 
-    public static function factory($controllerClass, $args)
-    {
+    public static function factory($controllerClass, $args) {
+
         if (!class_exists($controllerClass)) {
             throw new Exception("Controller class $controllerClass not defined");
         }
@@ -85,10 +81,9 @@ abstract class Person
     abstract public function getId();
     
     public function getField($field) {
-    if (array_key_exists($field, $this->attributes)) {
-      return $this->attributes[$field];
+        if (array_key_exists($field, $this->attributes)) {
+          return $this->attributes[$field];
+        }
+        return array();
     }
-    return array();
-  }
 }
-
