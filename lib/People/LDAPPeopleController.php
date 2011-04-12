@@ -187,7 +187,7 @@ class LDAPPeopleController extends PeopleController {
         }
         
         $filter = strval($this->filter);
-        $sr = ldap_search($ds, $this->searchBase,
+        $sr = @ldap_search($ds, $this->searchBase,
             $filter, $this->attributes, 0, 0, 
             $this->searchTimelimit);
         
@@ -206,20 +206,19 @@ class LDAPPeopleController extends PeopleController {
             error_reporting($error_reporting);
         }
         
-        $entries = ldap_get_entries($ds, $sr);
+        $entry = ldap_first_entry($ds, $sr);
         
-        if (!$entries) {
-            $this->errorMsg = "Could not get result entries";
+        if (!$entry) {
             return FALSE;
         }
         
         $results = array();
-        for ($i = 0; $i < $entries["count"]; $i++) {
-            if ($person = new $this->personClass($entries[$i])) {
-                $results[] = $person;
-            }
+        $results[] = new $this->personClass($ds, $entry);
+
+        while ($entry = ldap_next_entry($ds, $entry)) {
+            $results[] = new $this->personClass($ds, $entry);
         }
-    
+            
         return $results;
     
     } 
@@ -252,13 +251,12 @@ class LDAPPeopleController extends PeopleController {
                 return FALSE;
             }
 
-            $entries = ldap_get_entries($ds, $sr);
-            if (!$entries) {
-                $this->errorMsg = "Could not get result entries";
+            $entry = ldap_first_entry($ds, $sr);
+            if ($entry === false) {
                 return FALSE;
             }
-    
-            return new $this->personClass($entries[0]);
+
+            return new $this->personClass($ds, $entry);
 
         } else {
 
@@ -279,7 +277,6 @@ class LDAPPeopleController extends PeopleController {
             // LDAP error codes.
             LDAP_SIZELIMIT_EXCEEDED => "There are more results than can be displayed. Please refine your search.",
             LDAP_PARTIAL_RESULTS => "There are more results than can be displayed. Please refine your search.",
-            /*       	LDAP_INSUFFICIENT_ACCESS => "Too many results to display (more than 50). Please refine your search.", */
             LDAP_TIMELIMIT_EXCEEDED => "The directory service is not responding. Please try again later.",
         );
 
@@ -437,17 +434,19 @@ class LDAPPerson extends Person {
         return NULL;
     }
     
-    public function __construct($ldapEntry) {
-        $this->dn = $ldapEntry['dn'];
+    public function __construct($ldap, $entry) {
+        $ldapEntry = ldap_get_attributes($ldap, $entry);
+        $this->dn = ldap_get_dn($ldap, $entry);
         $this->attributes = array();
     
         for ($i=0; $i<$ldapEntry['count']; $i++) {
             $attribute = $ldapEntry[$i];
+            $attrib = strtolower($attribute);
             $count = $ldapEntry[$attribute]['count'];
-            $this->attributes[$attribute] = array();
+            $this->attributes[$attrib] = array();
             for ($j=0; $j<$count; $j++) {
-                if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attribute])) {
-                    $this->attributes[$attribute][] = $ldapEntry[$attribute][$j];
+                if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attrib])) {
+                    $this->attributes[$attrib][] = $ldapEntry[$attribute][$j];
                 }
             }
         }
