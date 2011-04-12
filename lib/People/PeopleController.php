@@ -29,7 +29,7 @@ abstract class PeopleController
     }
 
     public function getCapabilities() {
-        return $this->capabilties;
+        return $this->capabilities;
     }
 
     public function setDebugMode($debugMode) {
