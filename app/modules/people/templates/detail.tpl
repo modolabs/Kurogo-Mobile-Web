@@ -4,17 +4,17 @@
 {/block}
   {foreach $personDetails as $sectionName=>$section}
     {block name="sectionStart"}
-      <ul class="nav {$sectionName}">
+      <ul class="nav section_{$sectionName}">
     {/block}        
-        {foreach $section as $item}
+        {foreach $section as $key=>$item}
           {block name="detail"}
-            <li>
-              {if isset($item['url'])}
-                <a href="{$item['url']}" class="{$item['class']|default:''}">
+            <li class="detail_{$key}{if !$item['label']} nolabel{/if}">
+              {if $item['url']}
+                <a href="{$item['url']}" class="{$item['class']}">
               {/if}
-                  <div class="label">{$item['label']}</div>
-                  <div class="value">{$item['title']}</div>
-              {if isset($item['url'])}
+                  {if $item['label']}<div class="label">{$item['label']}</div>{/if}
+                  {if $item['title']}<div class="value">{$item['title']}</div>{/if}
+              {if $item['url']}
                 </a>
               {/if}
               
