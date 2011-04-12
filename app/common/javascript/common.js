@@ -153,7 +153,7 @@ function getCookieArrayValue(name) {
 function setCookieArrayValue(name, values, expireseconds, path) {
   var value = '';
   if (values && values.length) {
-    value = values.join(',');
+    value = values.join('@@');
   }
   setCookie(name, value, expireseconds, path);
 }
