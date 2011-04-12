@@ -174,54 +174,55 @@ class LDAPPeopleController extends PeopleController {
 
         if ($this->adminDN) {
             if (!ldap_bind($ds, $this->adminDN, $this->adminPassword)) {
-            error_log("Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds));
-            return false;
+                error_log("Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds));
+                return false;
+            }
         }
-    }
 
-// suppress warnings on non-dev servers
-// about searches that go over the result limit
-if (!Kurogo::getSiteVar('DATA_DEBUG')) {
-$error_reporting = ini_get('error_reporting');
-error_reporting($error_reporting & ~E_WARNING);
-}
-
-$filter = strval($this->filter);
-$sr = ldap_search($ds, $this->searchBase,
-$filter, $this->attributes, 0, 0, 
-$this->searchTimelimit);
-if (!$sr) {
-if($ds) {
-$this->errorMsg = self::generateErrorMessage($ds);
-}
-return FALSE;
-}
-
-if ($this->errorNo = ldap_errno($ds)) {
-$this->errorMsg = $this->generateErrorMessage($ds);
-}
-
-if (!Kurogo::getSiteVar('DATA_DEBUG')) {
-error_reporting($error_reporting);
-}
-
-$entries = ldap_get_entries($ds, $sr);
-
-if (!$entries) {
-$this->errorMsg = "Could not get result entries";
-return FALSE;
-}
-
-$results = array();
-for ($i = 0; $i < $entries["count"]; $i++) {
-if ($person = new $this->personClass($entries[$i])) {
-$results[] = $person;
-}
-}
-
-return $results;
-
-} 
+        // suppress warnings on non-dev servers
+        // about searches that go over the result limit
+        if (!Kurogo::getSiteVar('DATA_DEBUG')) {
+            $error_reporting = ini_get('error_reporting');
+            error_reporting($error_reporting & ~E_WARNING);
+        }
+        
+        $filter = strval($this->filter);
+        $sr = ldap_search($ds, $this->searchBase,
+            $filter, $this->attributes, 0, 0, 
+            $this->searchTimelimit);
+        
+        if (!$sr) {
+            if($ds) {
+                $this->errorMsg = self::generateErrorMessage($ds);
+            }
+            return FALSE;
+        }
+        
+        if ($this->errorNo = ldap_errno($ds)) {
+            $this->errorMsg = $this->generateErrorMessage($ds);
+        }
+        
+        if (!Kurogo::getSiteVar('DATA_DEBUG')) {
+            error_reporting($error_reporting);
+        }
+        
+        $entries = ldap_get_entries($ds, $sr);
+        
+        if (!$entries) {
+            $this->errorMsg = "Could not get result entries";
+            return FALSE;
+        }
+        
+        $results = array();
+        for ($i = 0; $i < $entries["count"]; $i++) {
+            if ($person = new $this->personClass($entries[$i])) {
+                $results[] = $person;
+            }
+        }
+    
+        return $results;
+    
+    } 
 
     /* returns a person object on success
     * FALSE on failure
