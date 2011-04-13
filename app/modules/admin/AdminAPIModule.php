@@ -234,6 +234,7 @@ class AdminAPIModule extends APIModule
     private function setConfigVar($type, $section, $subsection, $key, $value) {
 
         $sectionData = $this->getAdminData($type, $section, $subsection);
+        $changed = false;
             
         switch ($sectionData['sectiontype'])
         {
@@ -254,9 +255,11 @@ class AdminAPIModule extends APIModule
         
         $config = $this->getAdminConfig($type, $fieldData['config'], ConfigFile::OPTION_CREATE_EMPTY);
 
+        //remove blank values before validation
         if (is_array($value)) {
             foreach ($value as $k=>$v) {
                 if (isset($fieldData['fields'][$k]['omitBlankValue']) && $fieldData['fields'][$k]['omitBlankValue'] && strlen($v)==0) {
+                    $changed = $changed || $config->clearVar($key, $k);
                     unset($value[$k]);
                 }
             }
@@ -271,7 +274,6 @@ class AdminAPIModule extends APIModule
         
         if (is_array($value)) {
             $result = true;
-            $changed = false;
             foreach ($value as $k=>$v) {
                 if (preg_match("/^(.*?)_prefix$/", $k,$bits)) {
                     continue;
