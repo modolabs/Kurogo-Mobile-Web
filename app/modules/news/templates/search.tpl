@@ -3,7 +3,7 @@
 {include file="findInclude:common/templates/search.tpl" extraArgs=$extraArgs}
 
 {if count($stories)}
-  {include file="findInclude:modules/{$moduleID}/templates/stories.tpl"}
+  {include file="findInclude:modules/news/templates/stories.tpl"}
 {else}
   <div class="nonfocal">
     No stories found

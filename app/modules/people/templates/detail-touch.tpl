@@ -1,4 +1,4 @@
-{extends file="findExtends:modules/{$moduleID}/templates/detail.tpl"}
+{extends file="findExtends:modules/people/templates/detail.tpl"}
 
 {block name="detail"}
   <li class="detail_{$key}{if !$item['label']} nolabel{/if}">

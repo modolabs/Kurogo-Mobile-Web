@@ -1,4 +1,4 @@
-{extends file="findExtends:modules/{$moduleID}/templates/index.tpl"}
+{extends file="findExtends:modules/stats/templates/index.tpl"}
 
 {block name="statHeader"}
 <h2>{$statsName} Statistics for the Past {$statsDuration} {$statsInterval}s</h2>

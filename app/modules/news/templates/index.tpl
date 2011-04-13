@@ -65,7 +65,7 @@
   {/if}
 {/block}
 
-{include file="findInclude:modules/{$moduleID}/templates/stories.tpl"}
+{include file="findInclude:modules/news/templates/stories.tpl"}
 
 {block name="newsFooter"}
   {include file="findInclude:common/templates/footer.tpl"}

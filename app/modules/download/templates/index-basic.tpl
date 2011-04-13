@@ -1,4 +1,4 @@
-{extends file="findExtends:modules/{$moduleID}/templates/index.tpl"}
+{extends file="findExtends:modules/download/templates/index.tpl"}
 
 {block name="downloadLink"}
   <br/>
