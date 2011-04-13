@@ -15,8 +15,9 @@
         "fields":{
             "section":{"label":"ID", "description":"Programmatic id for this feed", "type":"label"},
             "TITLE":{"label":"Title","description":"Label for this feed", "type":"text"},
-            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"select","optionsMethod":["VideoDataController","getVideoDataControllers"]},
+            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"select","optionsMethod":["VideoDataController","getVideoDataControllers"],"optionsFirst":"-- Choose a video provider --"},
             "AUTHOR":{"label":"Author","description":"(Optional) Include only videos from this author.","type":"text","omitBlankValue":true},
+            "CHANNEL":{"label":"Channel","description":"(Optional) Include only videos from this channel","type":"text","omitBlankValue":true,"showIf":["CONTROLLER_CLASS",["VimeoVideoController"]]},
             "TAG":{"label":"Tag","description":"(Optional) Include only videos with this tag","type":"text","omitBlankValue":true}
         },
         "sectionindex":"string",

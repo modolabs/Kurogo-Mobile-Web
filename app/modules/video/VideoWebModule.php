@@ -99,7 +99,7 @@ class VideoWebModule extends WebModule
                         $items = $controller->search($searchTerms, $start, $maxPerPage);
                         $this->assign('searchTerms', $searchTerms);
                     } else {
-                        $this->redirect('index', array('section'=>$section), false);
+                        $this->redirectTo('index', array('section'=>$section), false);
                     }
                 } else {
                      $items = $controller->items($start, $maxPerPage);
