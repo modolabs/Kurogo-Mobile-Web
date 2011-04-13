@@ -29,16 +29,14 @@
  *          - basedir = base directory for absolute paths, default
  *                      is environment variable DOCUMENT_ROOT
  *          - path_prefix = prefix for path output (optional, default empty)
- * @param object $smarty Smarty object
  * @param object $template template object
  * @return string 
  * @uses smarty_function_escape_special_chars()
  */
-function smarty_function_html_image($params, $smarty, $template)
+function smarty_function_html_image($params, $template)
 {
     require_once(SMARTY_PLUGINS_DIR . 'shared.escape_special_chars.php');
-    //$smarty->loadPlugin('Smarty_shared_escape_special_chars');
-
+ 
     $alt = '';
     $file = '';
     $height = '';
@@ -47,7 +45,7 @@ function smarty_function_html_image($params, $smarty, $template)
     $prefix = '';
     $suffix = '';
     $path_prefix = '';
-    $server_vars = ($smarty->request_use_auto_globals) ? $_SERVER : $GLOBALS['HTTP_SERVER_VARS'];
+    $server_vars = $_SERVER;
     $basedir = isset($server_vars['DOCUMENT_ROOT']) ? $server_vars['DOCUMENT_ROOT'] : '';
     foreach($params as $_key => $_val) {
         switch ($_key) {
@@ -108,8 +106,8 @@ function smarty_function_html_image($params, $smarty, $template)
                 return;
             } 
         } 
-        if ($template->security) {
-            if (!$smarty->security_handler->isTrustedResourceDir($_image_path)) {
+        if (isset($template->security_policy)) {
+            if (!$template->security_policy->isTrustedResourceDir($_image_path)) {
                 return;
             } 
         } 
