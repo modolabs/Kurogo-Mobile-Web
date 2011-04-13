@@ -1,3 +1,6 @@
+{include file="findInclude:modules/admin/templates/header.tpl"}
+<form method="post" id="adminForm" class="{$section}">
+<input id="adminSubmit" type="submit" value="Save" /> 
 <h1>Home Screen Layout</h1>
 <p id="moduleDescription" class="preamble">Use this section to manage the modules that appear on the
 home screen. Primary modules appear larger and can be hidden by users using the Customize module. Secondary
@@ -21,3 +24,5 @@ each module as it appears on the home screen. To remove a module, drag it to the
 </div>
 </div><!-- #homescreen layout -->
 <div class="springboard_clear"></div>
+</form>
+{include file="findInclude:modules/admin/templates/footer.tpl"}

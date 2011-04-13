@@ -1,3 +1,6 @@
+{include file="findInclude:modules/admin/templates/header.tpl"}
+<form method="post" id="adminForm" class="{$section}">
+<input id="adminSubmit" type="submit" value="Save" /> 
 <h1>Modules Overview</h1>
 <p id="moduleDescription" class="preamble">Use this section to view and manage the overall properties of each module.
 
@@ -39,3 +42,5 @@
 {/foreach}
 </tbody>
 </table>
+</form>
+{include file="findInclude:modules/admin/templates/footer.tpl"}
