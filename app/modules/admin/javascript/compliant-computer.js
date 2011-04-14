@@ -60,7 +60,7 @@ function createFormSectionListItems(section, sectionData) {
             });
             break;
         case 'section':
-            items.push(createFormSectionTable(section, sectionData));
+            items.push(createFormSectionList(section, sectionData));
             break;
         default:
             alert('Section type ' + sectionData.sectiontype + ' not handled for section ' + section);
@@ -166,16 +166,13 @@ function appendFormField(parent, key, fieldData) {
 
 function stopSectionEditing(titleField) {
     if (titleField) {
-        $('tr.editing .sectiontitle').html($('.editrow.editing input[name*="['+titleField+']"]').val());
+        $('.editing .sectiontitle').html($('.editing .editrow input[name*="['+titleField+']"]').val());
     }
-    $('.editrow.editing').hide();
     $('.editing').removeClass('editing');
-    
 }
 
-function createSectionTableRow(section, data, sectionID, sectionData) {
-    var rows = [];
-    var row = $('<tr />'); 
+function createSectionListRow(section, data, sectionID, sectionData) {
+    var row;
     
     //use TITLE if present
     var titleField = 'sectiontitlefield' in data ? data.sectiontitlefield : 'TITLE';
@@ -184,6 +181,7 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
     
     if (data.sectiontable) {
 
+        row = $('<tr />'); 
         $.each(data.fields, function(field, _fieldData) {
             var cell = $('<td />');
             var fieldData = jQuery.extend(true, {}, _fieldData);
@@ -208,28 +206,29 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
     
     } else {
     
+        var row = $('<li />'); 
+        var listhead = $('<div class="edithead" />');
+        row.append(listhead);
         if (data.sectionindex =='numeric') {
-            row.append($('<td>' + (sectionID+1) + '.</td>'));
+            listhead.append($('<span class="sectionid numeric" />').html((sectionID+1) + '.'));
         } else {
-            row.append($('<td>' + sectionID + '</td>'));
+            listhead.append($('<span class="sectionid" />').html(sectionID));
         }
-        if (title) {
-            row.append($('<td class="sectiontitle">' + title + '</td>'));
-        }
+
+        listhead.append($('<span class="sectiontitle" />').html(title));
     
-        var rowbuttons = $('<td class="rowbuttons" />');
+        var rowbuttons = $('<div class="rowbuttons" />');
     
         rowbuttons.append($('<a href="" class="textbutton edit">Edit</a>').click(function() {
             stopSectionEditing(titleField);
-            $(this).parents('tr').addClass('editing');
-            $(this).parents('tr').next('.editrow').addClass('editing').show();
+            $(this).closest('li').addClass('editing');
             return false;
         }));
     }
 
     if (data.sectiondelete) {
         rowbuttons.append($('<a href="" class="textbutton delete">Remove</a>').click(function() {
-            if ($(this).parents('tr').hasClass('notsaved')) {
+            if ($(this).closest('li').hasClass('notsaved')) {
                 reloadSection();
                 return false;
             }
@@ -267,14 +266,12 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
         }));
         
     }
-    row.append(rowbuttons);
-    rows.push(row);
     
-    if (!data.sectiontable) {
-    
-        var row = $('<tr class="editrow" />');
-        var cell = $('<td colspan="3" />');
-    
+    if (data.sectiontable) {
+        row.append(rowbuttons);
+    } else {
+        listhead.append(rowbuttons);
+        var editrow = $('<div class="editrow" />');
         var list = $('<ul class="formfields" />');
         var items = [];
         $.each(data.fields, function(field, _fieldData) {
@@ -304,27 +301,25 @@ function createSectionTableRow(section, data, sectionID, sectionData) {
                 showIfCheck($(items[fieldData.showIf[0]]).find('.changeElement'), item, fieldData.showIf[1]);
             }
         });
-        cell.append(list);
+        editrow.append(list);
         var div = $('<div class="rowbuttons" />');
         div.append($('<a href="" class="textbutton save">Done</a>').click(function() {
             stopSectionEditing(titleField);
             return false;
         }));
-        cell.append(div);
-        row.hide();
-        row.append(cell);
-        rows.push(row);
+        editrow.append(div);
+        row.append(editrow);
+        
     }
-    return rows;
+    return row;
 }
 
-function createFormSectionTable(section, data) {
+function createFormSectionList(section, data) {
     //create main list item
     var li = $('<li>').attr('class', 'tallfield');
     
-    //table
-    var table = $('<table />').attr('id', section).addClass('subtable');
     if (data.sectiontable) {
+        var table = $('<table />').attr('id', section).addClass('subtable');
         var head = '<thead><tr>';
         $.each(data.fields, function(key, fieldData) {
             head+='<th>' + fieldData.label + '</th>';
@@ -333,20 +328,21 @@ function createFormSectionTable(section, data) {
             head+='<th></th>';
         }
         table.append(head + '</thead');
+        var body = $('<tbody>');
+        table.append(body);
+        li.append(table);
+    } else {
+        var body = $('<ul>').addClass('sublist');
+        li.append(body);
     }
-
-    var body = $('<tbody>');
 
     //go through each item in the sections array
     $.each(data.sections, function(sectionID, sectionData) {
-        $.each(createSectionTableRow(section, data, sectionID, sectionData), function(i,row) {
+        $.each(createSectionListRow(section, data, sectionID, sectionData), function(i,row) {
             body.append(row);
         });
     });
     
-    table.append(body);
-    li.append(table);
-
     if (data.sections.length==0 && data.sectionsnone) {
         li.append('<div class="sectionsnone">' + data.sectionsnone + '</div>');
     }
@@ -366,18 +362,14 @@ function createFormSectionTable(section, data) {
                 }
             }
             
-            var sectionData = {  }
-            $.each(createSectionTableRow(section, data, sectionID, sectionData), function(i,row) {
-                body.append(row);
-                row.addClass('notsaved');
-                if (!data.sectiontable) {
-                    $(".sectionsnone").hide();
-                    row.addClass('editing');
-                    if (row.hasClass('editrow')) {
-                        row.show();
-                    }
-                }
-            });
+            var sectionData = { }
+            var row = createSectionListRow(section, data, sectionID, sectionData);
+            body.append(row);
+            row.addClass('notsaved');
+            if (!data.sectiontable) {
+                $(".sectionsnone").hide();
+                row.addClass('editing');
+            }
 
             return false;
         }));
