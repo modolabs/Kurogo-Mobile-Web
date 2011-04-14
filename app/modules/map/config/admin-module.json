@@ -28,7 +28,8 @@
         "sectionindex":"string",
         "sectionsmethod":"getFeedGroups",
         "sectionaddnew":true,
-        "sectiondelete":true
+        "sectiondelete":true,
+        "sectionreorder":true
     },
     "feed": {
         "title":"Feed",
@@ -47,7 +48,8 @@
         },
         "sectionindex":"numeric",
         "sectionaddnew":true,
-        "sectiondelete":true
+        "sectiondelete":true,
+        "sectionreorder":true
     }
 }
 

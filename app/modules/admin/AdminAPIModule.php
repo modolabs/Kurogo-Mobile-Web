@@ -231,6 +231,25 @@ class AdminAPIModule extends APIModule
         return $config;
     }
     
+    private function setSectionOrder($type, $section, $subsection, $order) {
+
+        $sectionData = $this->getAdminData($type, $section, $subsection);
+        if ($sectionData['sectiontype']!='section') {
+            throw new Exception("Cannot set the order of $section $subsection");
+        }
+        
+        $config = $this->getAdminConfig($type, $sectionData['config'], ConfigFile::OPTION_CREATE_EMPTY);
+        if (!$config->setSectionOrder($order, $changed)) {
+            throw new Exception("Error setting the order of " . $sectionData['config']);
+        }
+        
+        if ($changed) {    
+            if (!in_array($config, $this->changedConfigs)) {
+                $this->changedConfigs[] = $config;
+            }
+        }
+    }
+    
     private function setConfigVar($type, $section, $subsection, $key, $value) {
 
         $sectionData = $this->getAdminData($type, $section, $subsection);
@@ -474,6 +493,12 @@ class AdminAPIModule extends APIModule
                         $this->setConfigVar($type, $section, $subsection, $key, $value);
                     }
 
+                }
+                
+                if ($sectionorder = $this->getArg('sectionorder')) {
+                    foreach ($sectionorder as $section=>$order) {
+                        $this->setSectionOrder($type, $section, $subsection, $order);
+                    }
                 }
                 
                 foreach ($this->changedConfigs as $config) {

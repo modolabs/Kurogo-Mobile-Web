@@ -181,7 +181,10 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     
     if (data.sectiontable) {
 
-        row = $('<tr />'); 
+        row = $('<tr />').attr('sectionID',sectionID);
+        if (data.sectionreorder) {
+            row.append($('<td />').addClass('handle'));
+        }
         $.each(data.fields, function(field, _fieldData) {
             var cell = $('<td />');
             var fieldData = jQuery.extend(true, {}, _fieldData);
@@ -206,12 +209,15 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     
     } else {
     
-        var row = $('<li />'); 
+        var row = $('<li />').attr('sectionID',sectionID); 
         var listhead = $('<div class="edithead" />');
         row.append(listhead);
-        if (data.sectionindex =='numeric') {
-            listhead.append($('<span class="sectionid numeric" />').html((sectionID+1) + '.'));
-        } else {
+
+        if (data.sectionreorder) {
+            listhead.append($('<div />').addClass('handle'));
+        }
+
+        if (data.sectionindex =='string') {
             listhead.append($('<span class="sectionid" />').html(sectionID));
         }
 
@@ -225,6 +231,8 @@ function createSectionListRow(section, data, sectionID, sectionData) {
             return false;
         }));
     }
+
+    rowbuttons.append($("<input />").attr('type','hidden').addClass('sectionorder').attr('name','sectionorder['+section+'][]').attr('value',sectionID));
 
     if (data.sectiondelete) {
         rowbuttons.append($('<a href="" class="textbutton delete">Remove</a>').click(function() {
@@ -321,6 +329,9 @@ function createFormSectionList(section, data) {
     if (data.sectiontable) {
         var table = $('<table />').attr('id', section).addClass('subtable');
         var head = '<thead><tr>';
+        if (data.sectionreorder) {
+            head+='<th />';
+        }
         $.each(data.fields, function(key, fieldData) {
             head+='<th>' + fieldData.label + '</th>';
         });
@@ -332,7 +343,7 @@ function createFormSectionList(section, data) {
         table.append(body);
         li.append(table);
     } else {
-        var body = $('<ul>').addClass('sublist');
+        var body = $('<ul>').addClass('sublist').addClass(data.sectionindex);
         li.append(body);
     }
 
@@ -375,6 +386,30 @@ function createFormSectionList(section, data) {
         }));
         li.append(div);
     }
+    
+    if (data.sectionreorder) {
+        body.sortable({
+            opacity: 0.6
+            /*
+            update: function(e,sortable) {
+                if (data.sectionindex=='numeric') {
+                    var re;
+                    $(this).children().each(function(index,listel) {
+                        $(listel).find('[section]').each(function(i,formel) {
+                            if (re = formel.name.match(/(\d+)(\[.*)/)) {
+                                formel.name=""+index+re[2];
+                                if (!('oldindex' in formel)) {
+                                    formel.oldindex = re[1];
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+            */
+        });
+    }
+    
 
     return li;
 }

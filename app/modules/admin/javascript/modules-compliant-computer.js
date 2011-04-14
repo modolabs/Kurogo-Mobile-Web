@@ -28,7 +28,20 @@ $(document).ready(function() {
                     }
                 }
             });
-                        
+            
+            $('#adminForm .sectionorder').map(function() { 
+                if (!('sectionorder' in params)) {
+                    params.sectionorder = {}
+                }
+                if (re = $(this).attr('name').match(/sectionorder\[(.*?)\]/)) {
+                    console.log(re[1]);
+                    if (!(re[1] in params.sectionorder)) {
+                        params.sectionorder[re[1]] = [];
+                    }
+                    params.sectionorder[re[1]].push($(this).val());
+                }
+            });
+
             makeAPICall('POST','admin','setconfigdata', params, function() { 
                 showMessage('Configuration saved'); 
                 reloadSection();
