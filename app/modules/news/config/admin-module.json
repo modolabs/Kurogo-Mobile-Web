@@ -26,7 +26,8 @@
         "sectionindex":"numeric",
         "sectionsmethod":"loadFeedData",
         "sectionaddnew":true,
-        "sectiondelete":true
+        "sectiondelete":true,
+        "sectionreorder":true
     }
     
 }

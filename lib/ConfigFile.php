@@ -118,8 +118,8 @@ class ConfigFile extends Config {
             
             if (file_exists($defaultFile)) {
                 $this->createDirIfNotExists(dirname($_file));
-                if (!is_writable(dirname($file))) {
-                    throw new Exception("Unable to create file $file, directory not writable");
+                if (!is_writable(dirname($_file))) {
+                    throw new Exception("Unable to create " . basename($_file) . ", directory " . dirname($_file) . " not writable");
                 }
                 return copy($defaultFile, $_file);
             }

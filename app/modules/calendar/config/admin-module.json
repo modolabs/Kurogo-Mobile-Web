@@ -23,7 +23,8 @@
         "sectiontitlefield":"title",
         "sectionindex":"string",
         "sectionaddnew":true,
-        "sectiondelete":true
+        "sectiondelete":true,
+        "sectionreorder":true
     },
     "feeds": {
         "title":"Calendars",

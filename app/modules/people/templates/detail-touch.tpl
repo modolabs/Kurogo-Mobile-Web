@@ -1,13 +1,13 @@
-{extends file="findExtends:modules/{$moduleID}/templates/detail.tpl"}
+{extends file="findExtends:modules/people/templates/detail.tpl"}
 
 {block name="detail"}
-  <li>
-    {if isset($item['url'])}
+  <li class="detail_{$key}{if !$item['label']} nolabel{/if}">
+    {if $item['url']}
       <a href="{$item['url']}" class="{$item['class']|default:''}">
     {/if}
         <div class="label">{$item['label']}</div>
         <div class="value">{$item['title']}</div>
-    {if isset($item['url'])}
+    {if $item['url']}
       </a>
     {/if}
   </li>

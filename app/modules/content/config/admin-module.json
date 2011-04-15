@@ -18,6 +18,7 @@
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",
         "sectionaddnew":true,
-        "sectiondelete":true
+        "sectiondelete":true,
+        "sectionreorder":true
     }
 }

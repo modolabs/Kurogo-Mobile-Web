@@ -544,6 +544,9 @@ class KMLDataParser extends XMLDataParser
                 } elseif ($parent instanceof KMLDocument) { // child of root element
                     $newFolderIndex = count($this->items);
                     $categoryPath = $this->category;
+                } else { // no document
+                    $newFolderIndex = count($this->items);
+                    $categoryPath = $this->category;
                 }
                 $categoryPath[] = $newFolderIndex;
                 $folder->setIndex($newFolderIndex);

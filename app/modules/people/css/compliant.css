@@ -5,3 +5,17 @@
 .value {
   margin-left: 3.75em;
 }
+
+li.nolabel .value {
+    margin-top: 0;
+    margin-left: 0;
+}
+
+li.nolabel .image {
+    margin-left: 0;
+}
+
+.image {
+  margin-left: 3.75em;
+}
+

@@ -31,6 +31,7 @@ class LDAPPeopleController extends PeopleController {
     protected $readTimelimit=30;
     protected $attributes=array();
     protected $fieldMap=array();
+    protected $sortFields=array('sn','givenname');
   
     public function debugInfo() {
         return   sprintf("Using LDAP Server: %s", $this->host);
@@ -225,6 +226,28 @@ class LDAPPeopleController extends PeopleController {
         while ($entry = ldap_next_entry($ds, $entry)) {
             $results[] = new $this->personClass($ds, $entry);
         }
+
+        //sort results by sort fields        
+        if (count($results)>1) {
+            $sprintf = implode(" ", array_fill(0, count($this->sortFields), '%s'));
+            $sortTemp = array();
+            foreach ($results as $key=>$person) {
+                $sortFields = $this->sortFields;
+                foreach ($sortFields as &$field) {
+                    $field = $person->getFieldSingle($field);
+                }
+                $sortValue = vsprintf($sprintf, $sortFields);
+                $sortTemp[$key] = $sortValue;
+            }
+            
+            asort($sortTemp);
+            
+            foreach ($sortTemp as $key=>$sort) {
+                $return[] = $results[$key];
+            }
+            $results = $return;
+        }
+        
             
         return $results;
     
@@ -307,6 +330,10 @@ class LDAPPeopleController extends PeopleController {
         $this->adminPassword = isset($args['ADMIN_PASSWORD']) ? $args['ADMIN_PASSWORD'] : null;
         $this->searchTimelimit = isset($args['SEARCH_TIMELIMIT']) ? $args['SEARCH_TIMELIMIT'] : 30;
         $this->readTimelimit = isset($args['READ_TIMELIMIT']) ? $args['READ_TIMELIMIT'] : 30;
+        
+        if (isset($args['SORTFIELDS']) && is_array($args['SORTFIELDS'])) {
+            $this->sortFields = $args['SORTFIELDS'];
+        }
     }
 }
 
@@ -433,7 +460,7 @@ class LDAPPerson extends Person {
         return $uid ? $uid : $this->getDn();
     }
     
-    protected function getFieldSingle($field) {
+    public function getFieldSingle($field) {
         $values = $this->getField($field);
         if ($values) {
             return $values[0];

@@ -74,13 +74,13 @@ class PeopleWebModule extends WebModule {
         return $detail;
     }
   
-    private function formatPersonDetail($person, $info) {
+    private function formatPersonDetail($person, $info, $key=0) {
         $section = array();
         
         if (count($info['attributes']) == 1) {
             $values = (array)$person->getField($info['attributes'][0]);
             if (count($values)) {
-                $section[] = $this->formatDetail($this->formatValues($values, $info), $info, $person);
+                $section[$key] = $this->formatDetail($this->formatValues($values, $info), $info, $person);
             }      
         } else {
             $valueGroups = array();
@@ -96,7 +96,7 @@ class PeopleWebModule extends WebModule {
             }
           
             foreach ($valueGroups as $valueGroup) {
-                $section[] = $this->formatDetail($valueGroup, $info, $person);
+                $section[$key] = $this->formatDetail($valueGroup, $info, $person);
             }
         }
         
@@ -109,8 +109,8 @@ class PeopleWebModule extends WebModule {
         $details = array();    
         
         foreach($this->detailFields as $key => $info) {
-            $section = $this->formatPersonDetail($person, $info);
-          
+            $section = $this->formatPersonDetail($person, $info, $key);
+            
             if (count($section)) {
                 if (isset($info['section'])) {
                     if (!isset($details[$info['section']])) {

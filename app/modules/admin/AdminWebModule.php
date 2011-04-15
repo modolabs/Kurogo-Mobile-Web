@@ -163,7 +163,7 @@ class AdminWebModule extends WebModule {
                 $moduleID = $this->getArg('module');
                 
                 if ($moduleID) {
-                    $modulePage = 'module';
+                    $this->setTemplatePage('module');
                     try {
                         if ($module = WebModule::factory($moduleID)) {
                             $this->assign('moduleName', $module->getModuleName());
@@ -177,9 +177,9 @@ class AdminWebModule extends WebModule {
                     }
                 
                 } elseif ($section == $defaultSubNavSection) {
-                    $modulePage = $defaultSubNavSection;
+                    $this->setTemplatePage($section);
                 } elseif ($section == 'homescreen') {
-                    $modulePage = $section;
+                    $this->setTemplatePage($section);
                     
                     $homeModule = WebModule::factory('home');
                     $modules = $this->getModules();
@@ -188,9 +188,7 @@ class AdminWebModule extends WebModule {
                 } else {
                     $this->redirectTo($this->page, array());
                 }
-                
-                $this->assign('modulePage', $modulePage);
-                
+                                
                 break;
             case 'site':            
         

@@ -26,7 +26,7 @@ $(document).ready(function() {
                 }
             }
         });
-        
+
         if (adminSubsection) {
             params.subsection = adminSubsection;
             params.data[adminSection][adminSubsection] = data;

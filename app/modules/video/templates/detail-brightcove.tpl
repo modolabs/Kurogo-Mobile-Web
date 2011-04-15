@@ -1,4 +1,4 @@
-{extends file="findExtends:modules/{$moduleID}/templates/detail.tpl"}
+{extends file="findExtends:modules/video/templates/detail.tpl"}
 
 {block name="videoPlayer"}
     <script type="text/javascript" src="http://admin.brightcove.com/js/BrightcoveExperiences.js"></script>
@@ -9,7 +9,6 @@
 	    <param name="bgcolor" value="#FFFFFF" />
 	    <param name="width" value="300" />
 	    <param name="height" value="250" />
-{*	    <param name="publisherID" value="{$accountid}"/> *}
 	    <param name="playerID" value="{$feedData.playerid}" />
 	    <param name="playerKey" value="{$feedData.playerKey}" />  
 	    <param name="@videoPlayer" value="{$videoid}" />

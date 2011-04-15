@@ -57,24 +57,26 @@ abstract class Config {
         
         return false;
     }
+    
+    protected function isNumeric() {
+        if (isset($this->sectionVars[0])) {
+            for ($i=0;$i<count($this->sectionVars);$i++) {
+                if (!isset($this->sectionVars[$i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        return false;
+    }
 
     public function removeSection($section) {
         
         if (isset($this->sectionVars[$section])) {
-            $numeric = false;
-            
-            //if this is a numerically basic section then we need to reindex afterwards
-            if (preg_match("/^\d+$/", $section)) {
-                $numeric = true;
-                for ($i=0;$i<count($this->sectionVars);$i++) {
-                    if (!isset($this->sectionVars[$i])) {
-                        $numeric = false;
-                    }
-                }
-            }
             
             unset($this->sectionVars[$section]);
-            if ($numeric) {
+            if ($this->isNumeric()) {
                 $this->sectionVars = array_values($this->sectionVars);
             }
 
@@ -82,6 +84,35 @@ abstract class Config {
         }
         
         return false;
+    }
+    
+    public function setSectionOrder($order, &$changed) {
+        if (!is_array($order)) {
+            throw new Exception("Invalid order array");
+        }
+        
+        if (array_keys($this->sectionVars)==$order) {
+            $changed = false;
+            return true;
+        }
+
+        $sections = array();
+        $numeric = $this->isNumeric();
+        $i = 0;
+        
+        foreach ($order as $section) {
+            if (isset($this->sectionVars[$section])) {
+                $id = $numeric ? $i : $section;
+                $sections[$id] = $this->sectionVars[$section];
+            } else {
+                throw new Exception("Can't find section $section");
+            }
+            $i++;
+        }
+         
+        $this->sectionVars = $sections;
+        $changed = true;
+        return true;
     }
 
     /* used when you completely want to replace all sections */

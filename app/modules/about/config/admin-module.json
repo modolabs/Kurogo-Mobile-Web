@@ -23,6 +23,7 @@
         "sectiontitlefield":"title",
         "sectionindex":"string",
         "sectionaddnew":true,
-        "sectiondelete":true
+        "sectiondelete":true,
+        "sectionreorder":true
     }
 }

@@ -231,9 +231,29 @@ class AdminAPIModule extends APIModule
         return $config;
     }
     
+    private function setSectionOrder($type, $section, $subsection, $order) {
+
+        $sectionData = $this->getAdminData($type, $section, $subsection);
+        if ($sectionData['sectiontype']!='section') {
+            throw new Exception("Cannot set the order of $section $subsection");
+        }
+        
+        $config = $this->getAdminConfig($type, $sectionData['config'], ConfigFile::OPTION_CREATE_EMPTY);
+        if (!$config->setSectionOrder($order, $changed)) {
+            throw new Exception("Error setting the order of " . $sectionData['config']);
+        }
+        
+        if ($changed) {    
+            if (!in_array($config, $this->changedConfigs)) {
+                $this->changedConfigs[] = $config;
+            }
+        }
+    }
+    
     private function setConfigVar($type, $section, $subsection, $key, $value) {
 
         $sectionData = $this->getAdminData($type, $section, $subsection);
+        $changed = false;
             
         switch ($sectionData['sectiontype'])
         {
@@ -254,9 +274,11 @@ class AdminAPIModule extends APIModule
         
         $config = $this->getAdminConfig($type, $fieldData['config'], ConfigFile::OPTION_CREATE_EMPTY);
 
+        //remove blank values before validation
         if (is_array($value)) {
             foreach ($value as $k=>$v) {
                 if (isset($fieldData['fields'][$k]['omitBlankValue']) && $fieldData['fields'][$k]['omitBlankValue'] && strlen($v)==0) {
+                    $changed = $changed || $config->clearVar($key, $k);
                     unset($value[$k]);
                 }
             }
@@ -271,7 +293,6 @@ class AdminAPIModule extends APIModule
         
         if (is_array($value)) {
             $result = true;
-            $changed = false;
             foreach ($value as $k=>$v) {
                 if (preg_match("/^(.*?)_prefix$/", $k,$bits)) {
                     continue;
@@ -329,6 +350,17 @@ class AdminAPIModule extends APIModule
                 $this->setResponse($data);
                 $this->setResponseVersion(1);
                 
+                break;
+            
+            case 'clearcaches':
+
+                $result = Kurogo::clearCaches();                
+                if ($result===0) {
+                    $this->setResponse(true);
+                    $this->setResponseVersion(1);
+                } else {
+                    $this->throwError(KurogoError(1, "Error clearing caches", "There was an error ($result) clearing the caches"));
+                }
                 break;
                 
             case 'getconfigsections':
@@ -472,6 +504,12 @@ class AdminAPIModule extends APIModule
                         $this->setConfigVar($type, $section, $subsection, $key, $value);
                     }
 
+                }
+                
+                if ($sectionorder = $this->getArg('sectionorder')) {
+                    foreach ($sectionorder as $section=>$order) {
+                        $this->setSectionOrder($type, $section, $subsection, $order);
+                    }
                 }
                 
                 foreach ($this->changedConfigs as $config) {

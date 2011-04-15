@@ -29,7 +29,8 @@
         "sectionindex":"numeric",
         "sectionsmethod":"getLinks",
         "sectionaddnew":true,
-        "sectiondelete":true
+        "sectiondelete":true,
+        "sectionreorder":true
     }
     
 }

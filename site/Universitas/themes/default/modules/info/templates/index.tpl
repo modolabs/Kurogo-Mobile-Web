@@ -1,4 +1,4 @@
-{extends file="findExtends:modules/{$moduleID}/templates/index.tpl"}
+{extends file="findExtends:modules/info/templates/index.tpl"}
 
 {block name="pageTitle"}Universitas Mobile Internet{/block}
 

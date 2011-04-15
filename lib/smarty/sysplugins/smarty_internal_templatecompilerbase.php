@@ -33,7 +33,7 @@ class Smarty_Internal_TemplateCompilerBase {
     {
         $this->nocache_hash = str_replace('.', '-', uniqid(rand(), true));
     } 
-    // abstract function doCompile($_content);
+
     /**
      * Methode to compile a Smarty template
      * 
@@ -67,7 +67,7 @@ class Smarty_Internal_TemplateCompilerBase {
             $_content = $template->getTemplateSource(); 
             // run prefilter if required
             if (isset($this->smarty->autoload_filters['pre']) || isset($this->smarty->registered_filters['pre'])) {
-                $_content = Smarty_Internal_Filter_Handler::runFilter('pre', $_content, $this->smarty, $template);
+                $template->template_source = $_content = Smarty_Internal_Filter_Handler::runFilter('pre', $_content, $template);
             } 
             // on empty template just return header
             if ($_content == '') {
@@ -89,7 +89,7 @@ class Smarty_Internal_TemplateCompilerBase {
         } 
         // run postfilter if required
         if (isset($this->smarty->autoload_filters['post']) || isset($this->smarty->registered_filters['post'])) {
-            $template->compiled_template = Smarty_Internal_Filter_Handler::runFilter('post', $template->compiled_template, $this->smarty, $template);
+            $template->compiled_template = Smarty_Internal_Filter_Handler::runFilter('post', $template->compiled_template, $template);
         } 
     } 
 
@@ -193,10 +193,15 @@ class Smarty_Internal_TemplateCompilerBase {
                 } 
                 // check plugins from plugins folder
                 foreach ($this->smarty->plugin_search_order as $plugin_type) {
-                    if ($plugin_type == Smarty::PLUGIN_BLOCK && Smarty_Internal_Plugin_Loader::loadPlugin('smarty_compiler_' . $tag, $this->smarty->plugins_dir)) {
+                    if ($plugin_type == Smarty::PLUGIN_BLOCK && $this->smarty->loadPlugin('smarty_compiler_' . $tag)) {
                         $plugin = 'smarty_compiler_' . $tag;
                         if (is_callable($plugin)) {
-                            return $plugin($args, $this->smarty);
+                        	// convert arguments format for old compiler plugins
+                            $new_args = array();
+                            foreach ($args as $mixed) {
+                                $new_args = array_merge($new_args, $mixed);
+                            } 
+                            return $plugin($new_args, $this->smarty);
                         } 
                         if (class_exists($plugin, false)) {
                             $plugin_object = new $plugin;
@@ -231,7 +236,7 @@ class Smarty_Internal_TemplateCompilerBase {
                 if ($function = $this->getPlugin($base_tag, Smarty::PLUGIN_BLOCK)) {
                     return $this->callTagCompiler('private_block_plugin', $args, $parameter, $tag, $function);
                 } 
-                if (Smarty_Internal_Plugin_Loader::loadPlugin('smarty_compiler_' . $tag, $this->smarty->plugins_dir)) {
+                if ($this->smarty->loadPlugin('smarty_compiler_' . $tag)) {
                     $plugin = 'smarty_compiler_' . $tag;
                     if (is_callable($plugin)) {
                         return $plugin($args, $this->smarty);
@@ -272,7 +277,7 @@ class Smarty_Internal_TemplateCompilerBase {
         } 
         // lazy load internal compiler plugin
         $class_name = 'Smarty_Internal_Compile_' . $tag;
-        if (Smarty_Internal_Plugin_Loader::loadPlugin($class_name, $this->smarty->plugins_dir)) {
+        if ($this->smarty->loadPlugin($class_name)) {
             // use plugin if found
             self::$_tag_objects[$tag] = new $class_name; 
             // compile this tag
@@ -364,6 +369,7 @@ class Smarty_Internal_TemplateCompilerBase {
                     ($this->nocache || $this->tag_nocache || $this->template->forceNocache == 2)) {
                 $this->template->has_nocache_code = true;
                 $_output = str_replace("'", "\'", $content);
+                $_output = str_replace("^#^", "'", $_output);
                 $_output = "<?php echo '/*%%SmartyNocache:{$this->nocache_hash}%%*/" . $_output . "/*/%%SmartyNocache:{$this->nocache_hash}%%*/';?>"; 
                 // make sure we include modifer plugins for nocache code
                 if (isset($this->template->saved_modifier)) {
@@ -401,24 +407,26 @@ class Smarty_Internal_TemplateCompilerBase {
             $line = $this->lex->line;
         } 
         $match = preg_split("/\n/", $this->lex->data);
-        $error_text = 'Syntax Error in template "' . $this->template->getTemplateFilepath() . '"  on line ' . $line . ' "' . htmlspecialchars($match[$line-1]) . '" ';
+        $error_text = 'Syntax Error in template "' . $this->template->getTemplateFilepath() . '"  on line ' . $line . ' "' . htmlspecialchars(trim(preg_replace('![\t\r\n]+!',' ',$match[$line-1]))) . '" ';
         if (isset($args)) {
             // individual error message
             $error_text .= $args;
         } else {
             // expected token from parser
-            foreach ($this->parser->yy_get_expected_tokens($this->parser->yymajor) as $token) {
-                $exp_token = $this->parser->yyTokenName[$token];
-                if (isset($this->lex->smarty_token_names[$exp_token])) {
-                    // token type from lexer
-                    $expect[] = '"' . $this->lex->smarty_token_names[$exp_token] . '"';
-                } else {
-                    // otherwise internal token name
-                    $expect[] = $this->parser->yyTokenName[$token];
-                } 
-            } 
-            // output parser error message
-            $error_text .= ' - Unexpected "' . $this->lex->value . '", expected one of: ' . implode(' , ', $expect);
+            $error_text .= ' - Unexpected "' . $this->lex->value.'"';
+            if (count($this->parser->yy_get_expected_tokens($this->parser->yymajor)) <= 4 ) {
+            	foreach ($this->parser->yy_get_expected_tokens($this->parser->yymajor) as $token) {
+            	    $exp_token = $this->parser->yyTokenName[$token];
+            	    if (isset($this->lex->smarty_token_names[$exp_token])) {
+            	        // token type from lexer
+            	        $expect[] = '"' . $this->lex->smarty_token_names[$exp_token] . '"';
+            	    } else {
+            	        // otherwise internal token name
+            	        $expect[] = $this->parser->yyTokenName[$token];
+            	    } 
+            	} 
+            	$error_text .= ', expected one of: ' . implode(' , ', $expect);
+        	}
         } 
         throw new SmartyCompilerException($error_text);
     } 
