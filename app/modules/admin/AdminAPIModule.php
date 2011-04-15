@@ -351,6 +351,17 @@ class AdminAPIModule extends APIModule
                 $this->setResponseVersion(1);
                 
                 break;
+            
+            case 'clearcaches':
+
+                $result = Kurogo::clearCaches();                
+                if ($result===0) {
+                    $this->setResponse(true);
+                    $this->setResponseVersion(1);
+                } else {
+                    $this->throwError(KurogoError(1, "Error clearing caches", "There was an error ($result) clearing the caches"));
+                }
+                break;
                 
             case 'getconfigsections':
                 $type = $this->getArg('type');

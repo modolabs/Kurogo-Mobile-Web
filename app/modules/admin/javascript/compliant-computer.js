@@ -158,6 +158,13 @@ function appendFormField(parent, key, fieldData) {
         case 'label':
             parent.append('<span class="labeltext">'+fieldData.value+'</span>');
             break;
+        case 'action':
+            parent.append($('<a class="formbutton"">').append($('<div>').html(fieldData.value)).click(function() {
+                makeAPICall('GET','admin',fieldData.action, fieldData.params, function() { 
+                    showMessage(fieldData.message ? fieldData.message : 'Action Successful'); 
+                });
+            }));
+            break;
         default:
             alert("Don't know how to handle field of type '" + fieldData.type + "' for key '" + key +"'");
             break;
@@ -390,23 +397,6 @@ function createFormSectionList(section, data) {
     if (data.sectionreorder) {
         body.sortable({
             opacity: 0.6
-            /*
-            update: function(e,sortable) {
-                if (data.sectionindex=='numeric') {
-                    var re;
-                    $(this).children().each(function(index,listel) {
-                        $(listel).find('[section]').each(function(i,formel) {
-                            if (re = formel.name.match(/(\d+)(\[.*)/)) {
-                                formel.name=""+index+re[2];
-                                if (!('oldindex' in formel)) {
-                                    formel.oldindex = re[1];
-                                }
-                            }
-                        });
-                    });
-                }
-            }
-            */
         });
     }
     
