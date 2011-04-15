@@ -34,7 +34,7 @@
             "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
         },
         "sectiontitlefield":"title",
-        "sectionindex":"string",
+        "sectionindex":"numeric",
         "sectionaddnew":true,
         "sectiondelete":true,
         "sectionreorder":true
