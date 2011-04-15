@@ -107,37 +107,52 @@ class Kurogo
     }
     
     public static function checkCurrentVersion() {
-        $uname = php_uname("a");
         $url = "http://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(
             'version'=>KUROGO_VERSION,
             'base'=>FULL_URL_BASE,
             'site'=>SITE_KEY,
-            'uname'=>$uname
+            'php'=>phpversion(),
+            'uname'=>php_uname("a")
             
         ));
         return trim(file_get_contents($url));
     }
     
-    public static function clearCaches() {
-        //don't clear session folder
+    private static function rmdir($dir) {
+        if (strlen($dir) && is_dir($dir)) {
+            if (is_file('/bin/rm')) {
+                $exec = sprintf("%s -rf %s", '/bin/rm', escapeshellarg($dir));
+                exec($exec, $output, $retval);
+                return $retval;
+            } else {
+                throw new Exception("Cannot find a folder removal tool for this platform. Please report this and include your server operating system and version");
+            }
+        } else {
+            return 1;
+        }
+    }
+    
+    public static function clearCaches($type=null) {
+
+        if (strlen($type)>0) {
+            return self::rmdir(CACHE_DIR . "/" . $type);
+        }
+    
+        //clear all folders
+        
+        //exclue session folder
         $excludeDirs = array('session','.','..');
         $dirs = scandir(CACHE_DIR);
         foreach ($dirs as $dir) {
             if ( is_dir(CACHE_DIR."/$dir") && !in_array($dir, $excludeDirs)) {
-                if (is_file('/bin/rm')) {
-                    $exec = sprintf("%s -rf %s", '/bin/rm', escapeshellarg(CACHE_DIR . "/" .$dir));
-                    exec($exec, $output, $retval);
-                    if ($retval !== 0) {
-                        return $retval;
-                    }
-                } else {
-                    throw new Exception("Cannot find a folder removal tool for this platform. Please report this and include your server operating system and version");
+                $result = self::rmdir(CACHE_DIR . "/" . $dir);
+                if ($result !==0) {
+                    return $result;
                 }
             }
         }
         
         return 0;
-
     }
 }
 
