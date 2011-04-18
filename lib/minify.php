@@ -178,7 +178,7 @@ function minifyPostProcess($content, $type) {
           
     if (Kurogo::getSiteVar('DEVICE_DEBUG') && URL_PREFIX == URL_BASE) {
       // if device debugging is on, always append device classification
-      $urlPrefix .= 'device/'.$GLOBALS['deviceClassifier']->getDevice().'/';
+      $urlPrefix .= 'device/'.Kurogo::deviceClassifier()->getDevice().'/';
     }
 
     $content = "/* Adding url prefix '".$urlPrefix."' */\n\n".

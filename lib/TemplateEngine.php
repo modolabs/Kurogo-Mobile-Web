@@ -80,8 +80,8 @@ class TemplateEngine extends Smarty {
     $subDir = dirname($name);
     $page = basename($name, '.tpl');
     
-    $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
-    $platform = $GLOBALS['deviceClassifier']->getPlatform();
+    $pagetype = Kurogo::deviceClassifier()->getPagetype();
+    $platform = Kurogo::deviceClassifier()->getPlatform();
 
     if (strlen($subDir)) { $subDir .= '/'; }
   
@@ -115,8 +115,8 @@ class TemplateEngine extends Smarty {
   //
   
   static private function getExtendsFile($name, $template) {
-    $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
-    $platform = $GLOBALS['deviceClassifier']->getPlatform();
+    $pagetype = Kurogo::deviceClassifier()->getPagetype();
+    $platform = Kurogo::deviceClassifier()->getPlatform();
     
     $checkDirs = array(
       'THEME_DIR'    => THEME_DIR,
@@ -327,9 +327,9 @@ class TemplateEngine extends Smarty {
     $this->error_reporting = E_ALL & ~E_NOTICE;
 
     // Device info
-    $pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
-    $platform      = $GLOBALS['deviceClassifier']->getPlatform();
-    $supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
+    $pagetype      = Kurogo::deviceClassifier()->getPagetype();
+    $platform      = Kurogo::deviceClassifier()->getPlatform();
+    $supportsCerts = Kurogo::deviceClassifier()->getSupportsCerts();
     
     // Smarty configuration
     $this->setCompileDir (CACHE_DIR.'/smarty/templates');

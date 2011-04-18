@@ -73,9 +73,9 @@ class Session
             
             session_start();
             $this->session_id = session_id();
-            $_SESSION['platform'] = $GLOBALS['deviceClassifier']->getPlatform();
-            $_SESSION['pagetype'] = $GLOBALS['deviceClassifier']->getPagetype();
-            $_SESSION['user_agent'] = $GLOBALS['deviceClassifier']->getUserAgent();
+            $_SESSION['platform'] = Kurogo::deviceClassifier()->getPlatform();
+            $_SESSION['pagetype'] = Kurogo::deviceClassifier()->getPagetype();
+            $_SESSION['user_agent'] = Kurogo::deviceClassifier()->getUserAgent();
         }
         
         // see if a user is active        

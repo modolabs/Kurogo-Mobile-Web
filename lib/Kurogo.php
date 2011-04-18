@@ -11,6 +11,7 @@ class Kurogo
     private function __clone() {}
     protected $libDirs = array();
     protected $config;
+    protected $deviceClassifier;
     
     public static function sharedInstance() {
         if (!isset(self::$_instance)) {
@@ -96,6 +97,14 @@ class Kurogo
     
     public static function siteConfig() {
         return Kurogo::sharedInstance()->getConfig();        
+    }
+
+    public function getDeviceClassifier() {
+        return $this->deviceClassifier;
+    }
+
+    public static function deviceClassifier() {
+        return Kurogo::sharedInstance()->getDeviceClassifier();        
     }
     
     public function initialize(&$path=null) {
@@ -224,7 +233,10 @@ class Kurogo
     
       //error_log(__FUNCTION__."(): prefix: $urlPrefix");
       //error_log(__FUNCTION__."(): path: $path");
-      $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
+      $this->deviceClassifier = new DeviceClassifier($device);
+      
+      //preserved for compatibility
+      $GLOBALS['deviceClassifier'] = $this->deviceClassifier;
     }
     
     public static function getLanguages() {

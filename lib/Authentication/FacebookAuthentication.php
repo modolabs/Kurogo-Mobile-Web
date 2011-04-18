@@ -147,7 +147,7 @@ class FacebookAuthentication extends AuthenticationAuthority
         } else {
             
             //find out which "display" to use based on the device
-            $deviceClassifier = $GLOBALS['deviceClassifier'];
+            $deviceClassifier = Kurogo::deviceClassifier();
             $display = 'page';
             switch ($deviceClassifier->getPagetype())
             {

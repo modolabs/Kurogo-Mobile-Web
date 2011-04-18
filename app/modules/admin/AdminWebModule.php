@@ -142,7 +142,7 @@ class AdminWebModule extends WebModule {
   
     protected function initializeForPage() {
         //make sure that only desktop devices can use the module
-        if (!$GLOBALS['deviceClassifier']->isComputer() && $this->page !='index') {
+        if (!Kurogo::deviceClassifier()->isComputer() && $this->page !='index') {
             $this->redirectTo('index');
         }
 
@@ -228,7 +228,7 @@ class AdminWebModule extends WebModule {
                 
             case 'index':
                 //redirect desktop devices to the "default page"
-                if ($GLOBALS['deviceClassifier']->isComputer()) {
+                if (Kurogo::deviceClassifier()->isComputer()) {
                     $defaultSection = current($navSections);
                     $this->redirectTo($defaultSection['id'], array());
                 }

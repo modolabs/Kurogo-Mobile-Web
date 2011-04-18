@@ -46,8 +46,8 @@ function _outputSiteFile($matches) {
 function _outputTypeFile($matches) { 
   $file = $matches[3];
 
-  $platform = $GLOBALS['deviceClassifier']->getPlatform();
-  $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
+  $platform = Kurogo::deviceClassifier()->getPlatform();
+  $pagetype = Kurogo::deviceClassifier()->getPagetype();
   
   $testDirs = array(
     THEME_DIR.'/'.$matches[1].$matches[2],
@@ -180,8 +180,8 @@ if (get_magic_quotes_gpc()) {
  * home is the default
  */
 if (!strlen($path) || $path == '/') {
-  $platform = strtoupper($GLOBALS['deviceClassifier']->getPlatform());
-  $pagetype = strtoupper($GLOBALS['deviceClassifier']->getPagetype());
+  $platform = strtoupper(Kurogo::deviceClassifier()->getPlatform());
+  $pagetype = strtoupper(Kurogo::deviceClassifier()->getPagetype());
 
   if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}-{$platform}",'','urls')) {
     if (!$url = Kurogo::getOptionalSiteVar("DEFAULT-{$pagetype}",'', 'urls')) {
@@ -230,7 +230,7 @@ if ($parts[0]==API_URL_PREFIX) {
     }    
 
     /* log the api call */
-    PageViews::log_api($id, $GLOBALS['deviceClassifier']->getPlatform());
+    PageViews::log_api($id, Kurogo::deviceClassifier()->getPlatform());
     $module->executeCommand();
 
     
@@ -266,7 +266,7 @@ if ($parts[0]==API_URL_PREFIX) {
 
     if ($module = WebModule::factory($id, $page, $args)) {
         /* log this page view */
-        PageViews::increment($id, $GLOBALS['deviceClassifier']->getPlatform());
+        PageViews::increment($id, Kurogo::deviceClassifier()->getPlatform());
         
         $module->displayPage();
     } else {

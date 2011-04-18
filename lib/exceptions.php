@@ -158,7 +158,7 @@ function exceptionHandlerForDevelopment($exception) {
   * Exception Handler set in initialize.php
   */
 function exceptionHandlerForProduction($exception) {
-  if(!$GLOBALS['deviceClassifier']->isSpider()) {
+  if(!Kurogo::deviceClassifier()->isSpider()) {
     mail(Kurogo::getSiteVar('DEVELOPER_EMAIL'), 
       "Mobile web page experiencing problems",
       "The following page is throwing exceptions:\n\n" .

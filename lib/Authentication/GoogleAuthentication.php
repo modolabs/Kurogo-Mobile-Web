@@ -83,7 +83,7 @@ class GoogleAuthentication extends OAuthAuthentication
             'oauth_token'=>$this->token
         );
 
-        if (!$GLOBALS['deviceClassifier']->isComputer()) {
+        if (!Kurogo::deviceClassifier()->isComputer()) {
             $parameters['btmpl'] ='mobile';
         }
         

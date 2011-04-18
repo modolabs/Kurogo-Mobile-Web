@@ -50,7 +50,7 @@ class GoogleAppsAuthentication extends GoogleAuthentication
             'hd'=>$this->domain
         );
 
-        if (!$GLOBALS['deviceClassifier']->isComputer()) {
+        if (!Kurogo::deviceClassifier()->isComputer()) {
             $parameters['btmpl'] ='mobile';
         }
         
