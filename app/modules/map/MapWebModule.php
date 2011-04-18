@@ -130,6 +130,10 @@ class MapWebModule extends WebModule {
         $imgController->setImageHeight($imageHeight);
             
         if ($imgController->isStatic()) {
+            if ($this->pagetype == 'basic' || $this->pagetype == 'touch') {
+                $imgController->setImageFormat('gif');
+            }
+
             $this->assign('imageUrl', $imgController->getImageURL());
 
             $this->assign('scrollNorth', $this->detailUrlForPan('n', $imgController));
