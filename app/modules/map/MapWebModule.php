@@ -383,6 +383,7 @@ JS;
             if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
             $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
             $categories[] = array(
+                'id'=>$id,
                 'title' => $feed['TITLE'],
                 'subtitle' => $subtitle,
                 'url' => $this->categoryURL($id),
