@@ -123,9 +123,6 @@ foreach ($url_patterns as $pattern_data) {
 
 // No pattern matches. Attempt to load a module
 
-$id = 'home';
-$page = 'index';
-
 $args = array_merge($_GET, $_POST);
 unset($args['_path']);
 
@@ -200,6 +197,7 @@ if ($parts[0]==API_URL_PREFIX) {
     
 } else {
     $id = $parts[0];
+    $page = 'index';
     
     /* see if there's a redirect for this path */
     if ($url_redirects = Kurogo::getSiteSection('urls')) {
