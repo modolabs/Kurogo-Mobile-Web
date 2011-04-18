@@ -344,7 +344,7 @@ class AdminAPIModule extends APIModule
         switch ($this->command) {
             case 'checkversion':
                 $data = array(
-                    'current'=>Kurogo::checkCurrentVersion(),
+                    'current'=>Kurogo::sharedInstance()->checkCurrentVersion(),
                     'local'  =>KUROGO_VERSION
                 );
                 $this->setResponse($data);
@@ -354,7 +354,7 @@ class AdminAPIModule extends APIModule
             
             case 'clearcaches':
 
-                $result = Kurogo::clearCaches();                
+                $result = Kurogo::sharedInstance()->clearCaches();
                 if ($result===0) {
                     $this->setResponse(true);
                     $this->setResponseVersion(1);

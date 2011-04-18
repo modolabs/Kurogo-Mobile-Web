@@ -2,8 +2,92 @@
 
 define('KUROGO_VERSION', '1.0');
 
+/* this is a singleton class */
 class Kurogo
 {
+    private static $_instance = NULL;
+    private function __construct() {}
+    private function __clone() {}
+    private $libDirs = array();
+    
+    public static function sharedInstance() {
+        if (!isset(self::$_instance)) {
+            $c = __CLASS__;
+            self::$_instance = new $c;
+        }
+
+        return self::$_instance;
+    }
+
+    public function includePackage($packageName) {
+
+        if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
+            throw new Exception("Invalid Package name $packageName");
+        }
+    
+        $found = false;
+        
+        $dirs = array(LIB_DIR . "/$packageName");
+        if (defined('SITE_LIB_DIR')) {  
+            $dirs[] = SITE_LIB_DIR . "/$packageName";
+        }
+    
+        foreach ($dirs as $dir) {
+            if (in_array($dir, $this->libDirs)) {
+                $found = true;
+            }
+    
+            if (is_dir($dir)) {
+                $found = true;
+                $this->libDirs[] = $dir;
+    
+                if (is_file("$dir.php")) {
+                    include_once("$dir.php");
+                }
+            }
+        }
+        
+        if (!$found) {
+            throw new Exception("Unable to load package $packageName");
+        }
+    }    
+    
+   /**
+     * This function defines a autoloader that is run when a class needs to be instantiated but the corresponding
+     * file has not been loaded. Files MUST be named with the same name as its class
+     * currently it will search:
+     * 1. If the className has Module in it, it will search the MODULES_DIR
+     * 2. The SITE_LIB_DIR  (keep in mind that some files may manually include the LIB_DIR class
+     * 3. The LIB_DIR 
+     * 
+     */
+    public function siteLibAutoloader($className) {
+        //error_log("Attempting to autoload $className");
+        $paths = $this->libDirs;
+        
+        // If the className has Module in it then use the modules dir
+        if (defined('MODULES_DIR') && preg_match("/(.*)(Web|API)Module/", $className, $bits)) {
+            $paths[] = MODULES_DIR . '/' . strtolower($bits[1]);
+        }
+        
+        // use the site lib dir if it's been defined
+        if (defined('SITE_LIB_DIR')) {
+            $paths[] = SITE_LIB_DIR;
+        }
+        
+        $paths[] = LIB_DIR;
+        
+        foreach ($paths as $path) {
+            $file = "$path/$className.php";
+            if (file_exists($file)) {
+              //error_log("Autoloader found $file for $className");
+              include($file);
+              return;
+            }
+        }
+        return;
+    }
+    
     public static function getLanguages() {
         return array(
             'en'=>'English'
@@ -38,11 +122,6 @@ class Kurogo
     
     public static function getHashAlgos() {
         return array_combine(hash_algos(), hash_algos());
-    }
-    
-    
-    public static function isNotEmptyString($val) {
-        return strlen($val)>0;
     }
     
     public static function getSiteVar($var, $section=null) {
@@ -106,8 +185,8 @@ class Kurogo
         return $acls;
     }
     
-    public static function checkCurrentVersion() {
-        $url = "http://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(
+    public function checkCurrentVersion() {
+        $url = "https://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(
             'version'=>KUROGO_VERSION,
             'base'=>FULL_URL_BASE,
             'site'=>SITE_KEY,
@@ -118,7 +197,7 @@ class Kurogo
         return trim(file_get_contents($url));
     }
     
-    private static function rmdir($dir) {
+    private function rmdir($dir) {
         if (strlen($dir) && is_dir($dir)) {
             if (is_file('/bin/rm')) {
                 $exec = sprintf("%s -rf %s", '/bin/rm', escapeshellarg($dir));
@@ -132,10 +211,10 @@ class Kurogo
         }
     }
     
-    public static function clearCaches($type=null) {
+    public function clearCaches($type=null) {
 
         if (strlen($type)>0) {
-            return self::rmdir(CACHE_DIR . "/" . $type);
+            return $this->rmdir(CACHE_DIR . "/" . $type);
         }
     
         //clear all folders
@@ -145,7 +224,7 @@ class Kurogo
         $dirs = scandir(CACHE_DIR);
         foreach ($dirs as $dir) {
             if ( is_dir(CACHE_DIR."/$dir") && !in_array($dir, $excludeDirs)) {
-                $result = self::rmdir(CACHE_DIR . "/" . $dir);
+                $result = $this->rmdir(CACHE_DIR . "/" . $dir);
                 if ($result !==0) {
                     return $result;
                 }
@@ -156,5 +235,7 @@ class Kurogo
     }
 }
 
-
-
+/* retained for compatibility */
+function includePackage($packageName) {
+    Kurogo::sharedInstance()->includePackage($packageName);
+}

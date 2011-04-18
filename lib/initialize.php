@@ -75,17 +75,23 @@ function Initialize(&$path=null) {
   // Pull in functions to deal with php version differences
   //
   
-  require_once(LIB_DIR . '/Kurogo.php');
-  require_once(LIB_DIR . '/compat.php');
+  require(LIB_DIR . '/Kurogo.php');
+  require(LIB_DIR . '/compat.php');
 
-  //
-  // Set up library autoloader
-  //
+  $Kurogo = Kurogo::sharedInstance();
+  spl_autoload_register(array($Kurogo, "siteLibAutoloader"));
   
-  require_once realpath(LIB_DIR.'/autoloader.php');
+  //
+  // Load configuration files
+  //    
   
-  spl_autoload_register("siteLibAutoloader");
+  $GLOBALS['siteConfig'] = new SiteConfig();
+  ini_set('display_errors', Kurogo::getSiteVar('DISPLAY_ERRORS'));
+  if (!ini_get('error_log')) {
+     ini_set('error_log', LOG_DIR . '/php_error.log');
+  }
 
+  date_default_timezone_set(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
 
   //
   // Set up host define for server name and port
@@ -111,21 +117,19 @@ function Initialize(&$path=null) {
   // Get URL base
   //
   
-  define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
-  
   $pathParts = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $_SERVER['REQUEST_URI'])));
   
-  $testPath = DOCUMENT_ROOT.DIRECTORY_SEPARATOR;
+  $testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
   $urlBase = '/';
   $foundPath = false;
-  if (realpath($testPath) != realpath(WEBROOT_DIR)) {
+  if (realpath($testPath) != WEBROOT_DIR) {
     foreach ($pathParts as $dir) {
       $test = $testPath.$dir.DIRECTORY_SEPARATOR;
       
       if (realpath_exists($test)) {
         $testPath = $test;
         $urlBase .= $dir.'/';
-        if (realpath($test) == realpath(WEBROOT_DIR)) {
+        if (realpath($test) == WEBROOT_DIR) {
           $foundPath = true;
           break;
         }
@@ -138,26 +142,9 @@ function Initialize(&$path=null) {
   define('COOKIE_PATH', URL_BASE); // We are installed under URL_BASE
 
   //
-  // Load configuration files
-  //    
-  
-  $GLOBALS['siteConfig'] = new SiteConfig();
-  ini_set('display_errors', Kurogo::getSiteVar('DISPLAY_ERRORS'));
-  if (!ini_get('error_log')) {
-     ini_set('error_log', LOG_DIR . '/php_error.log');
-  }
-
-  //
-  // Set timezone
-  //
-  
-  date_default_timezone_set(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
-  
-  //
   // Install exception handlers
   //
-  
-  require_once realpath(LIB_DIR.'/exceptions.php');
+  require(LIB_DIR.'/exceptions.php');
   
   if(Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
     set_exception_handler("exceptionHandlerForProduction");
@@ -199,9 +186,5 @@ function Initialize(&$path=null) {
 
   //error_log(__FUNCTION__."(): prefix: $urlPrefix");
   //error_log(__FUNCTION__."(): path: $path");
-  
   $GLOBALS['deviceClassifier'] = new DeviceClassifier($device);
-  
-  
-
 }
