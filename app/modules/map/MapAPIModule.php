@@ -12,6 +12,37 @@ class MapAPIModule extends APIModule
     protected $feedGroup = null;
     protected $feedGroups = null;
     protected $numGroups = 1;
+
+    protected function arrayFromMapFeature(MapFeature $feature) {
+        $category = $feature->getCategory();
+        if (!is_array($category)) {
+            $category = explode(MAP_CATEGORY_DELIMITER, $category);
+        }
+        $result = array(
+            'title' => $feature->getTitle(),
+            'subtitle' => $feature->getSubtitle(),
+            'id' => $feature->getIndex(),
+            'category' => $category,
+            'description' => $feature->getDescription(),
+            );
+
+        $geometry = $feature->getGeometry();
+        if ($geometry) {
+            $center = $geometry->getCenterCoordinate();
+            if ($geometry instanceof MapPolygon) {
+                $serializedGeometry = $geometry->getRings();
+            } elseif ($geometry instanceof MapPolyline) {
+                $serializedGeometry = $geometry->getPoints();
+            } elseif ($geometry) {
+                $serializedGeometry = $geometry->getCenterCoordinate();
+            }
+            $result['geometry'] = $serializedGeometry;
+            $result['lat'] = $center['lat'];
+            $result['lon'] = $center['lon'];
+        }
+
+        return $result;
+    }
     
     // functions duped from MapWebModule
 
@@ -109,7 +140,7 @@ class MapAPIModule extends APIModule
                         'total' => 1,
                         'returned' => 1,
                         'displayField' => 'title',
-                        'results' => array(arrayFromMapFeature($feature)),
+                        'results' => array($this->arrayFromMapFeature($feature)),
                         );
 
                     $this->setResponse($response);
@@ -131,7 +162,7 @@ class MapAPIModule extends APIModule
                 
                 $places = array();
                 foreach ($searchResults as $result) {
-                    $places[] = arrayFromMapFeature($result);
+                    $places[] = $this->arrayFromMapFeature($result);
                 }
 
                 $response = array(
@@ -154,7 +185,7 @@ class MapAPIModule extends APIModule
 
                     $places = array();
                     foreach ($searchResults as $result) {
-                        $places[] = arrayFromMapFeature($result);
+                        $places[] = $this->arrayFromMapFeature($result);
                     }
 
                     $response = array(
@@ -178,19 +209,6 @@ class MapAPIModule extends APIModule
         $this->numGroups = count($this->feedGroups);
 
         switch ($this->command) {
-            case 'groups':
-
-                $response = array(
-                    'total' => $this->numGroups,
-                    'returned' => $this->numGroups,
-                    'displayField' => 'title',
-                    'results' => $this->feedGroups,
-                    );
-
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
-            
-                break;
             case 'categories':
                 $this->feedGroup = $this->getArg('group', null);
                 if ($this->feedGroup !== NULL && !isset($this->feedGroups[$this->feedGroup])) {
@@ -223,7 +241,9 @@ class MapAPIModule extends APIModule
                     $places = array();
                     foreach ($listItems as $listItem) {
                         if ($listItem instanceof MapFeature) {
-                            $places[] = arrayFromMapFeature($listItem);
+                            $aPlace = $this->arrayFromMapFeature($listItem);
+                            $aPlace['category'] = $categoryPath;
+                            $places[] = $aPlace;
                         }
                     }
                 
