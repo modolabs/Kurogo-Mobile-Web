@@ -13,7 +13,7 @@ class SiteDB
   public static function connection()
   {
     if (!$connection = self::$db) {
-        self::$db = new db($GLOBALS['siteConfig']);
+        self::$db = new db();
         $connection = self::$db;
     }
     

@@ -9,7 +9,8 @@ class Kurogo
     private static $_instance = NULL;
     private function __construct() {}
     private function __clone() {}
-    private $libDirs = array();
+    protected $libDirs = array();
+    protected $config;
     
     public static function sharedInstance() {
         if (!isset(self::$_instance)) {
@@ -88,7 +89,15 @@ class Kurogo
         }
         return;
     }
-
+    
+    public function getConfig() {
+        return $this->config;
+    }
+    
+    public static function siteConfig() {
+        return Kurogo::sharedInstance()->getConfig();        
+    }
+    
     public function initialize(&$path=null) {
       //
       // Constants which cannot be set by config file
@@ -114,13 +123,13 @@ class Kurogo
       // Load configuration files
       //    
       
-      $GLOBALS['siteConfig'] = new SiteConfig();
-      ini_set('display_errors', Kurogo::getSiteVar('DISPLAY_ERRORS'));
+      $this->config = new SiteConfig();
+      ini_set('display_errors', $this->config->getVar('DISPLAY_ERRORS'));
       if (!ini_get('error_log')) {
          ini_set('error_log', LOG_DIR . '/php_error.log');
       }
     
-      date_default_timezone_set(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
+      date_default_timezone_set($this->config->getVar('LOCAL_TIMEZONE'));
     
       //
       // Set up host define for server name and port
@@ -175,7 +184,7 @@ class Kurogo
       //
       require(LIB_DIR.'/exceptions.php');
       
-      if(Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+      if ($this->config->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
         set_exception_handler("exceptionHandlerForProduction");
       } else {
         set_exception_handler("exceptionHandlerForDevelopment");
@@ -201,7 +210,7 @@ class Kurogo
       $urlDeviceDebugPrefix = '/';
       
       // Check for device classification in url and strip it if present
-      if (Kurogo::getSiteVar('DEVICE_DEBUG') && 
+      if ($this->config->getVar('DEVICE_DEBUG') && 
           preg_match(';^device/([^/]+)/(.*)$;', $path, $matches)) {
         $device = $matches[1];  // layout forced by url
         $path = $matches[2];
@@ -255,19 +264,19 @@ class Kurogo
     }
     
     public static function getSiteVar($var, $section=null) {
-        return $GLOBALS['siteConfig']->getVar($var, $section);
+        return Kurogo::siteConfig()->getVar($var, $section);
     }
 
     public static function getOptionalSiteVar($var, $default='', $section=null) {
-        return $GLOBALS['siteConfig']->getOptionalVar($var, $default, $section);
+        return Kurogo::siteConfig()->getOptionalVar($var, $default, $section);
     }
 
     public static function getSiteSection($section) {
-        return $GLOBALS['siteConfig']->getSection($section);
+        return Kurogo::siteConfig()->getSection($section);
     }
 
     public static function getOptionalSiteSection($section) {
-        return $GLOBALS['siteConfig']->getOptionalSection($section);
+        return Kurogo::siteConfig()->getOptionalSection($section);
     }
 
     /**

@@ -961,7 +961,7 @@ abstract class WebModule extends Module {
   
   protected function getPageConfig($name, $opts=0) {
     $config = ModuleConfigFile::factory($this->configModule, "page-$name", $opts);
-    $GLOBALS['siteConfig']->addConfig($config);
+    Kurogo::siteConfig()->addConfig($config);
     return $config;
   }
   
@@ -971,7 +971,7 @@ abstract class WebModule extends Module {
   
   protected function loadSiteConfigFile($name, $keyName=null, $opts=0) {
     $config = ConfigFile::factory($name, 'site', $opts);
-    $GLOBALS['siteConfig']->addConfig($config);
+    Kurogo::siteConfig()->addConfig($config);
     if ($keyName === null) { $keyName = $name; }
 
     return $this->loadConfigFile($config, $keyName);

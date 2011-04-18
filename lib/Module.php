@@ -208,7 +208,7 @@ abstract class Module
       */
     protected function getConfig($type, $opts=0) {
         if ($config = ModuleConfigFile::factory($this->configModule, $type, $opts)) {
-            $GLOBALS['siteConfig']->addConfig($config);
+            Kurogo::siteConfig()->addConfig($config);
         }
         return $config;
     }

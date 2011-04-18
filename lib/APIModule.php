@@ -223,7 +223,7 @@ abstract class APIModule extends Module
 
   protected function loadSiteConfigFile($name, $opts=0) {
     $config = ConfigFile::factory($name, 'site', $opts);
-    $GLOBALS['siteConfig']->addConfig($config);
+    Kurogo::siteConfig()->addConfig($config);
 
     return $config->getSectionVars(true);
   }

@@ -25,7 +25,7 @@ class db {
   {
     if (!is_array($config) || empty($config)) {
         if (!$config instanceOf Config) {
-           $config = $GLOBALS['siteConfig'];
+           $config = Kurogo::siteConfig();
         }
         
         $config = array(
