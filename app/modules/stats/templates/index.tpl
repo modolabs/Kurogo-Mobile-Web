@@ -11,10 +11,18 @@
 {/block}
 </div>
 
-{foreach $statsItems as $item}
-{$type = $item.type}
-{include file="findInclude:modules/stats/templates/$type.tpl" statItem=$item}
-{/foreach}
+{if $statsItems.total}
+{include file="findInclude:modules/stats/templates/total.tpl" statItem=$statsItems.total}
+{/if}
+{if $statsItems.trend}
+{include file="findInclude:modules/stats/templates/trend.tpl" statItem=$statsItems.trend}
+{/if}
+{if $statsItems.bar_percentage}
+{include file="findInclude:modules/stats/templates/bar_percentage.tpl" statItem=$statsItems.bar_percentage}
+{/if}
+{if $statsItems.total}
+{include file="findInclude:modules/stats/templates/list.tpl" statItem=$statsItems.list}
+{/if}
 
 {block name="statService"}
 <ul class="secondary">
