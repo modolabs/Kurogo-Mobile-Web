@@ -6,11 +6,12 @@
 
 /**
   */
-require_once realpath(dirname(__FILE__).'/../../lib/initialize.php');
+require_once realpath(dirname(__FILE__).'/../../lib/Kurogo.php');
+$Kurogo = Kurogo::sharedInstance();
 
 // Configure web application
 $path = $_SERVER['REQUEST_URI'];
-Initialize($path);
+$Kurogo->initialize($path);
 
 require_once LIB_DIR.'/minify.php';
 

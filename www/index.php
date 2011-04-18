@@ -5,9 +5,10 @@
   */
 
 /**
-  * The initialize library sets up the environment
+  * The Kurogo library sets up the environment
   */
-require_once realpath(dirname(__FILE__).'/../lib/initialize.php');
+require_once realpath(dirname(__FILE__).'/../lib/Kurogo.php');
+$Kurogo = Kurogo::sharedInstance();
 
 //
 // Configure web application
@@ -16,7 +17,7 @@ require_once realpath(dirname(__FILE__).'/../lib/initialize.php');
 
 $path = isset($_GET['_path']) ? $_GET['_path'] : '';
 
-Initialize($path); 
+$Kurogo->initialize($path); 
 
 function _phpFile($_file) {
     if ($file = realpath_exists($_file)) {
