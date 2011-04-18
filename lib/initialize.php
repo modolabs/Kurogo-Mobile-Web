@@ -17,42 +17,6 @@
   */
 define('ROOT_DIR', dirname(__FILE__).'/..'); 
 
-/**
-  * Will see if there is a HTTP_IF_MODIFIED_SINCE header and if the dates match it will return a 304
-  * otherwise will set the Last-Modified header
-  */
-function CacheHeaders($file)
-{
-    $mtime = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
-    if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-        if ($_SERVER['HTTP_IF_MODIFIED_SINCE'] == $mtime) {
-            header('HTTP/1.1 304 Not Modified');
-            exit();
-        }
-    }
-    
-    header("Last-Modified: $mtime");
-    return;
-}
-
-/**
-  * Outputs a 404 error message
-  */
-function _404() {
-    header("HTTP/1.1 404 Not Found");
-    $url = $_SERVER['REQUEST_URI'];
-    echo <<<html
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<html><head>
-<title>404 Not Found</title>
-</head><body>
-<h1>Not Found</h1>
-<p>The requested URL $url was not found on this server.</p>
-</body></html>
-
-html;
-    exit();
-}
 
 
 /**
