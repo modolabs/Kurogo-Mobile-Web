@@ -3,8 +3,6 @@
   * @package Core
   */
   
-includePackage('db');
-
 /**
   * @package Core
   */
@@ -59,6 +57,7 @@ class PageViews {
   }
 
   public static function export_stats($system) {
+    includePackage('db');
     PageViews::createDatabaseTables();
     if ($system == 'web') {
       $table   = Kurogo::getSiteVar('PAGE_VIEWS_TABLE');
@@ -172,6 +171,7 @@ class PageViews {
    * between dates $start and $end (any string compatible with strtotime)
    */
   private static function getTimeSeries($system, $start, $platform=NULL, $module=NULL, $end=NULL) {
+    includePackage('db');
     $output = Array();
     
     $result = self::export_stats($system);
@@ -233,6 +233,7 @@ class PageViews {
   
   protected function createDatabaseTables()
   {
+    includePackage('db');
     $sql = "SELECT 1 FROM mobi_web_page_views";
     $conn = SiteDB::connection();
     if (!$result = $conn->query($sql, array(), db::IGNORE_ERRORS)) {
@@ -343,13 +344,4 @@ class PageViews {
     }
     return $views;
   }
-
-  public static function count_iphone_tokens() {
-    $sql = "SELECT count(*) FROM AppleDevice WHERE device_token IS NOT NULL and active = 1";
-    $conn = SiteDB::connection();
-    $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
-    return $row;
-  }
-
 }
