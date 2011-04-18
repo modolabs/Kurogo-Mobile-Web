@@ -472,7 +472,7 @@ JS;
                     $photoFile = $feature->getField('Photo');
                     if (isset($photoFile) && $photoFile != 'Null') {
                         $tabJavascripts[$tabKey] = "loadImage(photoURL,'photo');";
-                        $photoURL = $photoServer.$photoFile;
+                        $photoURL = $photoServer.rawurlencode($photoFile);
                         $this->assign('photoURL', $photoURL);
                         $this->addInlineJavascript("var photoURL = '{$photoURL}';");
                     }
