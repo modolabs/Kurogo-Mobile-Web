@@ -13,7 +13,8 @@
             "BASE_URL":{"label":"URL","description":"URL of external content","type":"text","showIf":["CONTENT_TYPE",["html_url","rss"]]},
             "CONTROLLER_CLASS":{"label":"Controller","description":"","type":"text","placeholder":"HTMLDataController", "showIf":["CONTENT_TYPE","html_url"], "omitBlankValue":true},
             "CONTENT_HTML":{"label":"Content","description":"HTML of content for this page","type":"paragraph","showIf":["CONTENT_TYPE","html"]},
-            "HTML_ID":{"label":"HTML ID","description":"ID of html element to use in document","type":"text","showIf":["CONTENT_TYPE","html_url"]}
+            "HTML_ID":{"label":"HTML ID","description":"This will grab the element with an HTML id attribute that matches the value indicated. Will be used instead of HTML tag","type":"text","showIf":["CONTENT_TYPE","html_url"],"omitBlankValue":true},
+            "HTML_TAG":{"label":"HTML Tag","description":"HTML element to use in document. Will grab all HTML elements with the indicated tag name (do not include < >). Is superseded by HTML ID. If blank then it will include the entire document. You should only include the entire document if it is a document fragment, that is it does not contain <html> or <body> tags. If you simply want to retrieve the body contents, use body for the HTML tag.","type":"text","showIf":["CONTENT_TYPE","html_url"],"omitBlankValue":true}
         },
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",

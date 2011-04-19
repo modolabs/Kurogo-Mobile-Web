@@ -23,6 +23,8 @@ abstract class ContentWebModule extends WebModule {
                 $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
                 if (isset($feedData['HTML_ID']) && strlen($feedData['HTML_ID'])>0) {
                     $content = $controller->getContentById($feedData['HTML_ID']);
+                } elseif (isset($feedData['HTML_TAG']) && strlen($feedData['HTML_TAG'])>0) {
+                    $content = $controller->getContentByTag($feedData['HTML_TAG']);
                 } else {
                     $content = $controller->getContent();
                 }
