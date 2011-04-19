@@ -222,7 +222,7 @@ class TemplateEngine extends Smarty {
     // rewrite urls for the device classifier in case  our root is not / 
     // also handles debugging mode for paths without hostnames
     $source = preg_replace(
-      ';(url\("?\'?|href\s*=\s*"|src\s*=\s*")('.URL_PREFIX.'|'.URL_DEVICE_DEBUG_PREFIX.'|/);', '\1'.URL_PREFIX, $source);
+      ';(url\("?\'?|href\s*=\s*"|src\s*=\s*"|action\s*=\s*")('.URL_PREFIX.'|'.URL_DEVICE_DEBUG_PREFIX.'|/);', '\1'.URL_PREFIX, $source);
     
     if (Kurogo::getSiteVar('DEVICE_DEBUG')) {
       // if we are in debugging mode we need to also rewrite full paths with hostnames

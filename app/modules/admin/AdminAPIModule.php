@@ -86,10 +86,7 @@ class AdminAPIModule extends APIModule
                             switch ($field['config'])
                             {
                                 case 'site':
-                                    $field['value'] = $this->getUnconstantedValue(Kurogo::getOptionalSiteVar($key, $field['section']), $constant);
-                                    if ($constant) {
-                                        $field['constant'] = $constant;
-                                    }
+                                    $field['value'] = Kurogo::getOptionalSiteVar($key, $field['section']);
                                     break;
                                 case 'strings':
                                     $field['value'] = Kurogo::getOptionalSiteString($key);
@@ -127,8 +124,9 @@ class AdminAPIModule extends APIModule
                     }
     
                     if (isset($field['value'])) {
-                        $field['value'] = $this->getUnconstantedValue($field['value'], $constant);
+                        $value = $this->getUnconstantedValue($field['value'], $constant);
                         if ($constant) {
+                            $field['value'] = $value;
                             $field['constant'] = $constant;
                         }
                     }
@@ -168,9 +166,9 @@ class AdminAPIModule extends APIModule
                     
                 foreach ($sectionData['sections'] as $section=>&$sectionFields) {
                     foreach($sectionFields as $key=>&$value) {
-                        $value = $this->getUnconstantedValue($value, $constant);
+                        $v = $this->getUnconstantedValue($value, $constant);
                         if ($constant) {
-                            $value = array($constant, $value);
+                            $value = array($constant, $v, $value);
                         }
                     }
                 }
@@ -276,7 +274,15 @@ class AdminAPIModule extends APIModule
 
         //remove blank values before validation
         if (is_array($value)) {
-            foreach ($value as $k=>$v) {
+            foreach ($value as $k=>&$v) {
+                $prefix = isset($value[$k . '_prefix']) ? $value[$k . '_prefix'] : '';
+                if ($prefix && defined($prefix)) {
+                    $v = constant($prefix) . '/' . $v;
+                }
+                if (isset($value[$k . '_prefix'])) {
+                    unset($value[$k . '_prefix']);
+                }
+
                 if (isset($fieldData['fields'][$k]['omitBlankValue']) && $fieldData['fields'][$k]['omitBlankValue'] && strlen($v)==0) {
                     $changed = $changed || $config->clearVar($key, $k);
                     unset($value[$k]);

@@ -21,6 +21,23 @@ class HTMLDataController extends DataController
         return $content;
     }
 
+    public function getContentByTag($tag) {
+        $content = '';
+        if ($dom = $this->getParsedData()) {
+            $elements = $dom->getElementsByTagName($tag);
+            for ($i=0; $i < $elements->length; $i++) {
+                $element = $elements->item($i);
+                $content .= $dom->saveXML($element);
+            }
+            if (strtolower($tag)=='body') {
+                //strip body tag
+                $content = preg_replace("#</?body.*?>#", "", $content);
+            }
+        }
+        
+        return $content;
+    }
+
     public function getContent()
     {
         $content = '';

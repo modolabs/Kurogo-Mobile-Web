@@ -32,37 +32,6 @@ function gcd($fromLat, $fromLon, $toLat, $toLon)
     return $angle * EARTH_RADIUS_IN_METERS;
 }
 
-function arrayFromMapFeature(MapFeature $feature) {
-    $category = $feature->getCategory();
-    if (!is_array($category)) {
-        $category = explode(MAP_CATEGORY_DELIMITER, $category);
-    }
-    $result = array(
-        'title' => $feature->getTitle(),
-        'subtitle' => $feature->getSubtitle(),
-        'id' => $feature->getIndex(),
-        'category' => $category,
-        'description' => $feature->getDescription(),
-        );
-
-    $geometry = $feature->getGeometry();
-    if ($geometry) {
-        $center = $geometry->getCenterCoordinate();
-        if ($geometry instanceof MapPolygon) {
-            $serializedGeometry = $geometry->getRings();
-        } elseif ($geometry instanceof MapPolyline) {
-            $serializedGeometry = $geometry->getPoints();
-        } elseif ($geometry) {
-            $serializedGeometry = $geometry->getCenterCoordinate();
-        }
-        $result['geometry'] = $serializedGeometry;
-        $result['lat'] = $center['lat'];
-        $result['lon'] = $center['lon'];
-    }
-    
-    return $result;
-}
-
 function shortArrayFromMapFeature(MapFeature $feature) {
     $category = $feature->getCategory();
     if (is_array($category)) {

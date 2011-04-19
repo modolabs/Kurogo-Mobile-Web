@@ -412,6 +412,11 @@ class ICalEvent extends ICalObject {
         } else {
             $this->setRange(new DayRange($timestamp));
         }
+        
+        if (isset($this->properties['duration'])) {
+              $this->range->set_end($this->get_start() + $this->properties['duration']);
+              unset($this->properties['duration']);
+        }
       } else {
         if ($attr=='DTEND' && ($timestamp > $this->get_start()) && (($timestamp - $this->get_start()) % 86400 == 0)) {
             // make all day events end at 11:59:59 so they don't overlap next day
@@ -436,7 +441,28 @@ class ICalEvent extends ICalObject {
     case 'DURATION':
       // todo:
       // if this tag comes before DTSTART we will break
-      $this->range->set_end($this->get_start() + $value);
+      if (preg_match('/^P([0-9]{1,2}[W])?([0-9]{1,3}[D])?([T]{0,1})?([0-9]{1,2}[H])?([0-9]{1,2}[M])?([0-9]{1,2}[S])?/', $value, $bits)) {
+            $value = 0;
+            switch (count($bits)) {
+                case 7:
+                    $value += $bits[6]; //seconds
+                case 6:
+                    $value += (60*$bits[5]); //minutes
+                case 5:
+                    $value += (3600*$bits[4]); //hours
+                case 4:
+                case 3:
+                    $value += (86400*$bits[2]); //days
+                case 2:
+                   $value += (604800*$bits[1]);  //weeks
+            }
+      }
+
+      if ($this->range) {
+          $this->range->set_end($this->get_start() + $value);
+      } else {      
+          $this->properties['duration'] = $value;
+      }
       break;
     case 'RRULE':
       $this->add_rrule($value);

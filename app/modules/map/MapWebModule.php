@@ -93,6 +93,7 @@ class MapWebModule extends WebModule {
     }
 
     protected function initialize() {
+        // this is in the wrong place
         $this->feedGroup = $this->getArg('group', NULL);
         if ($this->feedGroup === NULL) {
             if (isset($_COOKIE[MAP_GROUP_COOKIE])) {
@@ -383,12 +384,14 @@ JS;
             if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
             $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
             $categories[] = array(
+                'id'=>$id,
                 'title' => $feed['TITLE'],
                 'subtitle' => $subtitle,
                 'url' => $this->categoryURL($id),
                 );
         }
         $this->assign('categories', $categories);
+        return $categories;
     }
 
     protected function detailURLForBookmark($aBookmark) {
@@ -577,7 +580,6 @@ JS;
 
 
                 if ($action = $this->getArg('action', false)) {
-                   // print_r("does it even get here??");
                     if ($this->feedGroup && $action == 'add') {
                         // TODO have config for different types of cookie expiration times
                         $expireTime = time() + 897298;
@@ -589,7 +591,6 @@ JS;
                 }
 
                 if ($this->feedGroup === null && $this->numGroups > 1) {
-                    //print_r("does it even get here2222??");
                     // show the list of groups
                     foreach ($this->feedGroups as $id => $groupData) {
                         $categories[] = array(
@@ -599,31 +600,29 @@ JS;
                             );
                     }
 
-                // only display categories in a list if the current location attempt has been made
-                // and a redirection has occured.
-                if ($redirectedWithLocation) {
-                    $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS', 'Campus');
-                    $this->assign('browseHint', "Select a $groupAlias");
-                    $this->assign('categories', $categories);
-                    $this->assign('searchTip', NULL);
+                    // only display categories in a list if the current location attempt has been made
+                    // and a redirection has occured.
+                    if ($redirectedWithLocation) {
+                        $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS', 'Campus');
+                        $this->assign('browseHint', "Select a $groupAlias");
+                        $this->assign('categories', $categories);
+                        $this->assign('searchTip', NULL);
+                            
+                        $latitude = $this->getArg('lat');
+                        $longitude = $this->getArg('lon');
+    
+                        // if current lat/lon were found and valid, sort the categories based on that.
+                        if (is_numeric($latitude) && is_numeric($longitude)) {
+                            $sorted_categories = $this->sortCategoriesForCurrentLocation($categories, $latitude, $longitude);
+                            $this->assign('categories', $sorted_categories);
+                            $this->assign('browseHint', "Select a $groupAlias (Closest first)");
+                        }
+                        $this->generateBookmarkLink();
+                    } else{
 
-                    $latitude = $this->getArg('lat');
-                    $longitude = $this->getArg('lon');
-
-                    // if current lat/lon were found and valid, sort the categories based on that.
-                    if (is_numeric($latitude) && is_numeric($longitude)) {
-                        $sorted_categories = $this->sortCategoriesForCurrentLocation($categories, $latitude, $longitude);
-                        $this->assign('categories', $sorted_categories);
-                        $this->assign('browseHint', "Select a $groupAlias (Closest first)");
+                       $js = $this->getJavascriptStringForLocationRedirection();
+                       $this->addInlineJavascript($js);
                     }
-                    $this->generateBookmarkLink();
-                }
-
-                else{
-
-                   $js = $this->getJavascriptStringForLocationRedirection();
-                   $this->addInlineJavascript($js);
-                }
                     
                 } else {
                     $groupData = $this->getDataForGroup($this->feedGroup);
@@ -639,7 +638,13 @@ JS;
                             ));
                         $this->assign('clearLink', $clearLink);
                     }
-                    $this->assignCategories();
+                    
+                    $categories = $this->assignCategories();
+                    
+                    if (count($categories)==1) {
+                        $category = current($categories);
+                        $this->redirectTo('category', array('category'=>$category['id']));
+                    }
                     $this->assign('browseHint', "Browse {$browseBy} by:");
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
                     $this->generateBookmarkLink();
