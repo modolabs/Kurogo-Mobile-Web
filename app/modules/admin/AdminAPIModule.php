@@ -276,7 +276,15 @@ class AdminAPIModule extends APIModule
 
         //remove blank values before validation
         if (is_array($value)) {
-            foreach ($value as $k=>$v) {
+            foreach ($value as $k=>&$v) {
+                $prefix = isset($value[$k . '_prefix']) ? $value[$k . '_prefix'] : '';
+                if ($prefix && defined($prefix)) {
+                    $v = constant($prefix) . '/' . $v;
+                }
+                if (isset($value[$k . '_prefix'])) {
+                    unset($value[$k . '_prefix']);
+                }
+
                 if (isset($fieldData['fields'][$k]['omitBlankValue']) && $fieldData['fields'][$k]['omitBlankValue'] && strlen($v)==0) {
                     $changed = $changed || $config->clearVar($key, $k);
                     unset($value[$k]);
