@@ -198,8 +198,12 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     
             if (typeof sectionData[field] != 'undefined') {
                 if ($.isArray(sectionData[field])) {
-                    fieldData.constant = sectionData[field][0];
-                    fieldData.value = sectionData[field][1];
+                    if (fieldData.type=='file') {
+                        fieldData.constant = sectionData[field][0];
+                        fieldData.value = sectionData[field][1];
+                    } else {
+                        fieldData.value = sectionData[field][2];
+                    }
                 } else {
                     fieldData.value = sectionData[field];
                 }
@@ -294,8 +298,12 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     
             if (typeof sectionData[field] != 'undefined') {
                 if ($.isArray(sectionData[field])) {
-                    fieldData.constant = sectionData[field][0];
-                    fieldData.value = sectionData[field][1];
+                    if (fieldData.type=='file') {
+                        fieldData.constant = sectionData[field][0];
+                        fieldData.value = sectionData[field][1];
+                    } else {
+                        fieldData.value = sectionData[field][2];
+                    }
                 } else {
                     fieldData.value = sectionData[field];
                 }
