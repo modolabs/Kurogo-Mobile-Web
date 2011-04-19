@@ -9,6 +9,6 @@
 
 {block name="photoPane"}
   <p class="image">
-    <img src="{$photoUrl}" width="{$photoWidth}" alt="Photo" />
+    <img src="{$photoURL}" width="{$photoWidth}" alt="Photo" />
   </p>
 {/block}
