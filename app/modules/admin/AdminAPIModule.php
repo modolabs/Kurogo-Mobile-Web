@@ -274,10 +274,10 @@ class AdminAPIModule extends APIModule
 
         //remove blank values before validation
         if (is_array($value)) {
-            foreach ($value as $k=>&$v) {
+            foreach ($value as $k=>$v) {
                 $prefix = isset($value[$k . '_prefix']) ? $value[$k . '_prefix'] : '';
                 if ($prefix && defined($prefix)) {
-                    $v = constant($prefix) . '/' . $v;
+                    $value[$k] = constant($prefix) . '/' . $v;
                 }
                 if (isset($value[$k . '_prefix'])) {
                     unset($value[$k . '_prefix']);
