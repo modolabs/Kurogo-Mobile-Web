@@ -113,6 +113,7 @@ class Session
             }
 
             //regenerate new login cookie
+            $this->remainLoggedIn = true;
             $this->setLoginCookie();
             return;
         } else {
@@ -478,7 +479,7 @@ class Session
                 
                 // see if we have on record the token and it hasn't expired
         		$sql = "SELECT data FROM login_tokens WHERE token=? and expires>?";
-                $result = $conn->query($sql,array($_COOKIE[self::TOKEN_COOKIE], time()));
+                $result = $conn->query($sql,array($token, time()));
                 
                 if ($data = $result->fetch()) {
                     $data['data'] = unserialize($data['data']);
@@ -498,8 +499,9 @@ class Session
     	    }
     	    
     	    if ($data) {
+    	        $this->login_token = $token;
     	        $users = array();
-                if ($this->getUserHash($data['data']) == $_COOKIE[self::USERHASH_COOKIE]) {
+                if ($this->getUserHash($data['data']) == $hash) {
                     foreach ($data['data'] as $userData) {
 
                         if ($authority = AuthenticationAuthority::getAuthenticationAuthority($userData['auth'])) {
