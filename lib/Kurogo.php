@@ -371,7 +371,7 @@ class Kurogo
         //clear all folders
         
         //exclue session folder
-        $excludeDirs = array('session','.','..');
+        $excludeDirs = array('session','UserData','.','..');
         $dirs = scandir(CACHE_DIR);
         foreach ($dirs as $dir) {
             if ( is_dir(CACHE_DIR."/$dir") && !in_array($dir, $excludeDirs)) {
