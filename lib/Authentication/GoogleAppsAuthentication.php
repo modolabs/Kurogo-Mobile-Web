@@ -15,50 +15,28 @@ class GoogleAppsAuthentication extends GoogleAuthentication
         return $this->domain;
     }
     
-    protected function reset($hard=false)
+ /**
+     * Discovers the OpenID Endpoint for a Google Apps domain
+     * http://groups.google.com/group/google-federated-login-api/web/openid-discovery-for-hosted-domains?pli=1
+	 * @return string, a url for the OpenID endpoint (i.e the login page)
+     */
+    protected function getOpenIDEndpoint()
     {
-        parent::reset($hard);
-        if ($hard) {
-            // this where we would log out of google apps
-        }
-    }
-
-    public function getUser($login) {
-
-        if (empty($login)) {
-            return new AnonymousUser();       
-        }
-        
-        /* right now there is no way to validate a user. We'll be looking into this */
-        //if the login is an email, trim off the domain part        
-        if (preg_match('/^(.*?)@'. $this->domain . '$/', $login, $bits)) {        
-
-            $user = new GoogleAppsUser($this);
-            $user->setUserID($login);
-            $user->setEmail($login);
-            $user->setFullname($login);
-            return $user;
+        $url = "https://www.google.com/accounts/o8/.well-known/host-meta?hd=" . $this->domain;
+        if ($host_meta = file_get_contents($url)) {
+            if (preg_match("/Link: <(.*?)>/", $host_meta, $matches)) {
+                $url = $matches[1];
+                if ($xrds = file_get_contents($url)) {
+                    if (preg_match("#<URI>(.*?)</URI>#", $xrds, $matches)) {
+                        return $matches[1];
+                    }
+                }
+            }
         }
         
         return false;
     }
-    
-    protected function getAuthURL(array $params) {
-        $url = $this->authorizeTokenURL;
-        $parameters = array(
-            'oauth_token'=>$this->token,
-            'hd'=>$this->domain
-        );
 
-        if (!Kurogo::deviceClassifier()->isComputer()) {
-            $parameters['btmpl'] ='mobile';
-        }
-        
-	    $url .= stripos($url, "?") ? '&' : '?';
-        $url .= http_build_query($parameters);
-        return $url;
-    }
-    
     public function init($args) {
         parent::init($args);
         $args = is_array($args) ? $args : array();
