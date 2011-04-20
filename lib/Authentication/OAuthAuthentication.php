@@ -213,6 +213,17 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 
 class OAuthUser extends User
 {
+    protected $token;
+    protected $tokenSecret;
+    
+    public function setToken($token) {
+        $this->token = $token;
+    }
+
+    public function setTokenSecret($tokenSecret) {
+        $this->tokenSecret = $tokenSecret;
+    }
+
     public function getSessionData() {
         return $this->AuthenticationAuthority->getSessionData($this);   
     }
