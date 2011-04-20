@@ -164,6 +164,10 @@ abstract class User
         }
 
         $userData = $this->getUserData();
+        if (isset($userData[$key]) && $userData[$key]===$value) {
+            //no change
+            return true;
+        }
         $userData[$key] = $value;
         file_put_contents($this->getUserDataFile(), serialize($userData));
         $this->userData = $userData;
