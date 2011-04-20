@@ -120,6 +120,9 @@ function getMinifyGroupsConfig() {
   // Page request
   //
   $pageOnly = isset($_GET['pageOnly']) && $_GET['pageOnly'];
+  
+  // if this is a copied module also pull in files from that module
+  $configModule = isset($_GET['config']) ? $_GET['config'] : '';
 
   list($ext, $module, $page, $pagetype, $platform, $pathHash) = explode('-', $key);
 
@@ -145,7 +148,7 @@ function getMinifyGroupsConfig() {
     if ($pageOnly || ($platform=='computer' && in_array($module, array('info', 'admin')))) {
       // Info module does not inherit from common files
       $subDirs = array(
-        '/modules/'.$module,
+        '/modules/'.$module
       );
     } else {
       $subDirs = array(
@@ -154,6 +157,10 @@ function getMinifyGroupsConfig() {
       );
     }
     
+    if ($configModule) {
+        $subDirs[] = '/modules/' . $configModule;
+    }
+
     $checkFiles = array(
       'css' => getCSSFileConfigForDirs(
           $page, $pagetype, $platform, $cssDirs, $subDirs, $pageOnly),

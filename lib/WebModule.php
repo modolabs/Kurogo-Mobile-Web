@@ -187,6 +187,11 @@ abstract class WebModule extends Module {
     if ($pageOnly) {
       $minifyArgs['pageOnly'] = 'true';
     }
+    
+    if ($this->id != $this->configModule) {
+      $minifyArgs['config'] = $this->configModule;
+    }
+    
     $minifyArgString = http_build_query($minifyArgs);
     
     return ($minifyArgString ? "&$minifyArgString" : '');
