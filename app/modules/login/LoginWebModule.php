@@ -34,6 +34,8 @@ class LoginWebModule extends WebModule {
         'indirect'=>array()
     );
     
+    $invalidAuthorities = array();
+    
     foreach (AuthenticationAuthority::getDefinedAuthenticationAuthorities() as $authorityIndex=>$authorityData) {
         $USER_LOGIN = $this->argVal($authorityData, 'USER_LOGIN', 'NONE');
         
@@ -52,12 +54,21 @@ class LoginWebModule extends WebModule {
                 $authenticationAuthorities['indirect'][$authorityIndex] = $authorityData;
             }
         } catch (Exception $e) {
-        
+            error_log(sprintf("Invalid authority data for %s: %s", $authorityIndex, $e->getMessage()));
+            $invalidAuthorities[$authorityIndex] = $e->getMessage();
         }
     }
                     
     if (count($authenticationAuthorities['direct'])==0 && count($authenticationAuthorities['indirect'])==0) {
-        throw new Exception("No authentication authorities have been defined");
+        $message = "No authentication authorities have been defined.";
+        if (count($invalidAuthorities)>0) {
+            $message .= sprintf(" %s invalid authorit%s found:\n", count($invalidAuthorities), count($invalidAuthorities)>1 ?'ies':'y');
+            foreach ($invalidAuthorities as $authorityIndex=>$invalidAuthority) {
+                $message .= sprintf("%s: %s\n", $authorityIndex, $invalidAuthority);
+            }
+        }
+        throw new Exception($message);
+        
     }
     
     $this->assign('authenticationAuthorities', $authenticationAuthorities);
