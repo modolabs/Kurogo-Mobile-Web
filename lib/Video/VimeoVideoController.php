@@ -97,7 +97,6 @@ class VimeoDataParser extends DataParser
             $videos = array();
             if (is_array($data)) {
                 if (isset($data['id'])) {
-                    Debug::die_here($data);
                 } else {
                     $this->setTotalItems(count($data));
                     foreach ($data as $entry) {
