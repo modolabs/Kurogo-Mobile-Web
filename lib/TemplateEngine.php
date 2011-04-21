@@ -315,6 +315,10 @@ class TemplateEngine extends Smarty {
     }
   }
   
+  public function nosecure($string) {
+    return str_replace('https://','http://',$string);
+  }
+  
   
   //
   // Constructor
@@ -350,6 +354,9 @@ class TemplateEngine extends Smarty {
       'TemplateEngine::smartyBlockAccessKeyLink');
     $this->registerPlugin('function', 'html_access_key_reset', 
       'TemplateEngine::smartyTemplateAccessKeyReset');
+
+    $this->registerPlugin('modifier', 'nosecure', 
+      array($this,'nosecure'));
       
     // variables common to all modules
     $this->assign('pagetype', $pagetype);

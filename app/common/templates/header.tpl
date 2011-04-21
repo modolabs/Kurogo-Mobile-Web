@@ -76,8 +76,8 @@
       content="width=device-width, {if $scalable|default:true}user-scalable=yes{else}user-scalable=no, initial-scale=1.0, maximum-scale=1.0{/if}" />
   {/block}
   {block name="homeScreenIcon"}
-  <link rel="apple-touch-icon" href="/common/images/icon.png" />
-  <link rel="apple-touch-icon-precomposed" href="/common/images/icon.png" />
+  <link rel="apple-touch-icon" href="{$smarty.const.FULL_URL_BASE|nosecure}common/images/icon.png" />
+  <link rel="apple-touch-icon-precomposed" href="{$smarty.const.FULL_URL_BASE|nosecure}common/images/icon.png" />
   {/block}
   {block name="additionalHeadTags"}{/block}
 </head>
