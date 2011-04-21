@@ -166,6 +166,10 @@ class AdminAPIModule extends APIModule
                     
                 foreach ($sectionData['sections'] as $section=>&$sectionFields) {
                     foreach($sectionFields as $key=>&$value) {
+                        if ($sectionData['fields'][$key]['type']=='paragraph') {
+                            $value = implode("\n\n", $value);
+                        }
+
                         $v = $this->getUnconstantedValue($value, $constant);
                         if ($constant) {
                             $value = array($constant, $v, $value);
