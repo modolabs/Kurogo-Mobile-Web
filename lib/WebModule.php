@@ -919,6 +919,12 @@ abstract class WebModule extends Module {
   protected function getPageTitle() {
     return $this->pageTitle;
   }
+  protected function setPageTitles($title) {
+    $this->setPageTitle($title);
+    $this->setBreadcrumbTitle($title);
+    $this->setBreadcrumbLongTitle($title);
+  }
+
   protected function setPageTitle($title) {
     $this->pageTitle = $title;
   }
