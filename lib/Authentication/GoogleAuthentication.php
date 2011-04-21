@@ -165,7 +165,7 @@ class GoogleAuthentication extends OAuthAuthentication
             }
             
         } else {
-            $realm = sprintf("http://%s", $url_parts['host']);
+            $realm = sprintf("%s://%s", $url_parts['scheme'], $url_parts['host']);
             if (!in_array($_SERVER['SERVER_PORT'], array(80,443))) {
                 $realm .= ":" . $_SERVER['SERVER_PORT'];
             }
@@ -196,7 +196,8 @@ class GoogleAuthentication extends OAuthAuthentication
         }
         
         if ($this->oauth) {
-            if ($realm != ("http://". $this->consumer_key)) {
+            
+            if ($realm != ($url_parts['scheme'].'://'.$this->consumer_key)) {
                 throw new Exception("Google OpenID + OAuth will only work if the realm ($realm) and consumer key ($this->consumer_key) are the same");
             }
             
