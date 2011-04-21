@@ -291,6 +291,10 @@ class AdminAPIModule extends APIModule
                     $changed = $changed || $config->clearVar($key, $k);
                     unset($value[$k]);
                 }
+
+                if ($fieldData['fields'][$k]['type']=='paragraph') {
+                    $value[$k] = explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $v));
+                }
             }
         }
         
@@ -317,9 +321,6 @@ class AdminAPIModule extends APIModule
                     $v = constant($prefix) . '/' . $v;
                 }
                 
-                if ($fieldData['fields'][$k]['type']=='paragraph') {
-                    $v = explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $v));
-                }
                 if (!$config->setVar($key, $k, $v, $c)) {
                     $result = false;
                 }
