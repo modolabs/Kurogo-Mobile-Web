@@ -339,3 +339,29 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 
 #footernav a img {
 }
+
+.loginbuttons li.facebook {
+	background-image: url(/common/images/button-facebook.png);
+}
+
+.loginbuttons li.google {
+	background-image: url(/common/images/button-google.png);
+}
+
+.loginbuttons li.twitter {
+	background-image: url(/common/images/button-twitter.png);
+}
+
+.loginbuttons li.windows {
+	background-image: url(/common/images/button-windows.png);
+}
+
+.loginbuttons li.noauth {
+	background-image: none;
+	padding-left: 10px;
+}
+
+.loginbuttons li.noauth a {
+	margin-left: -8px;
+	padding-left: 8px;
+}
