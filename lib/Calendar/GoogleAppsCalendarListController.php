@@ -63,7 +63,7 @@ class GoogleAppsCalendarListController extends CalendarListController
         $cache->setSuffix('.json');
         $cache->preserveFormat();
         
-        $cacheURL = $url . count($parameters) ? '?' . http_build_query($parameters) : $url;
+        $cacheURL = count($parameters) ? $url . '?' . http_build_query($parameters) : $url;
         
         $cacheFilename = $unique ? md5($cacheURL. $this->user->getEmail()) : md5($cacheURL);
         
