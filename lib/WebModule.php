@@ -641,13 +641,13 @@ abstract class WebModule extends Module {
       $this->$memberName = array_unique(array_merge($this->$memberName, $arrays));
     }
   }
-  protected function addJQuery() {
-    $this->addInternalJavascript('/common/javascript/jquery.js');
+  protected function addJQuery($version='1.5.1') {
+    $this->addInternalJavascript("/common/javascript/lib/jquery-{$version}.js");
   }
 
-  protected function addJQueryUI() {
+  protected function addJQueryUI($version='1.8.11') {
     $this->addJQuery();
-    $this->addInternalJavascript('/common/javascript/jquery-ui.js');
+    $this->addInternalJavascript("/common/javascript/lib/jquery-ui-{$version}.js");
   }
   
   //
