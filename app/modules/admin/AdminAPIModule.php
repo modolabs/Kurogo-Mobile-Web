@@ -166,7 +166,7 @@ class AdminAPIModule extends APIModule
                     
                 foreach ($sectionData['sections'] as $section=>&$sectionFields) {
                     foreach($sectionFields as $key=>&$value) {
-                        if ($sectionData['fields'][$key]['type']=='paragraph') {
+                        if (isset($sectionData['fields'][$key]['type']) && $sectionData['fields'][$key]['type']=='paragraph') {
                             $value = implode("\n\n", $value);
                         }
 
