@@ -67,7 +67,7 @@ function tabletInit() {
 
   document.addEventListener('touchmove', function(e) { e.preventDefault(); });
   
-  containerScroller = new iScroll('container', { 
+  containerScroller = new iScroll('wrapper', { 
     checkDOMChanges: false, 
     hScrollbar: false,
     desktopCompatibility: true,
@@ -76,7 +76,7 @@ function tabletInit() {
   });
 
 
-  navScroller = new iScroll('navslider', { 
+  navScroller = new iScroll('navsliderwrapper', { 
     checkDOMChanges: false, 
     hScrollbar: false,
     vScrollbar: false,
@@ -87,7 +87,13 @@ function tabletInit() {
     onScrollEnd: updateNavSlider
   });
 
-  updateNavSlider();
+    handleWindowResize();
+    updateNavSlider();
+
+  //run module init if present
+  if (typeof moduleInit != 'undefined') {
+    moduleInit();
+  }
 }
 
 function scrollToTop() {

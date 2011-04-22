@@ -1075,7 +1075,7 @@ abstract class WebModule extends Module {
     
     // Tablet module nav list
     if ($this->pagetype == 'tablet') {
-      $this->addInternalJavascript('/common/javascript/lib/iscroll.js');
+      $this->addInternalJavascript('/common/javascript/lib/iscroll-4.0.js');
       $this->assign('moduleNavList', $this->getModuleNavlist());
     }
             
