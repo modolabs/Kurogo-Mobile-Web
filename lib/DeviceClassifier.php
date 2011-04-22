@@ -59,6 +59,9 @@ class DeviceClassifier {
             //@TODO make this less hard coded
             switch ($data['platform'])
             {
+                case 'android':
+                    $data['pagetype'] = 'compliant';  
+                    break;
                 case 'ipad':
                     $data['pagetype'] = 'compliant';  
                     $data['platform'] = 'iphone';
@@ -177,6 +180,10 @@ class DeviceClassifier {
   
   public function isComputer() {
     return $this->platform == 'computer';
+  }
+
+  public function isTablet() {
+    return $this->platform == 'tablet';
   }
 
   public function isSpider() {
