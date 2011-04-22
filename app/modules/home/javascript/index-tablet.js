@@ -3,7 +3,7 @@ var newsEllipsizer = null;
 var videoEllipsizer = null;
 
 function getNewsStories() {
-  return document.getElementById('newsStories').childNodes;
+    return document.getElementById('newsStories') ? document.getElementById('newsStories').childNodes : [];
 }
 
 function getNewsDots() {
@@ -12,7 +12,7 @@ function getNewsDots() {
 
 
 function getVideos() {
-  return document.getElementById('videos').childNodes;
+  return document.getElementById('videos') ? document.getElementById('videos').childNodes : [];
 }
 
 function getVideoDots() {
