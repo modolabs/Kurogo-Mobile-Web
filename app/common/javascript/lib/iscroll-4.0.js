@@ -133,13 +133,15 @@ iScroll.prototype = {
 		var that = this;
 
 		// don't handle input elements
-		switch (e.target.nodeName.toLowerCase()) 
-		{
-		    case 'select':
-		    case 'input':
-		    case 'textarea':
-                return;
-		}
+		if (e.target && e.target.nodeName) {
+            switch (e.target.nodeName.toLowerCase()) 
+            {
+                case 'select':
+                case 'input':
+                case 'textarea':
+                    return;
+            }
+        }
 		
 		switch(e.type) {
 			case START_EV: that._start(e); break;
