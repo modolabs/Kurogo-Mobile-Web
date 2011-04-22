@@ -1,14 +1,17 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-
 {capture name="selectSection" assign="selectSection"}
   <select id="calendars" name="calendar">
   {foreach $feeds as $type=>$typeFeeds}
+  {if $feeds|@count>1}
   <optgroup label="{$type}">
+  {/if}
   {foreach $typeFeeds as $feed=>$title}
       <option value="{$feed}"{if $searchCalendar==$feed} selected{/if}>in {$title|escape}</option>
   {/foreach}
+  {if $feeds|@count>1}
   </optgroup>
+  {/if}
   {/foreach}
   </select>
   <select id="timeframe" name="timeframe">
