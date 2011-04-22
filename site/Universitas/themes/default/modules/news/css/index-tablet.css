@@ -5,3 +5,22 @@
 	color: white;
 	font-weight: bold;
 }
+
+
+.results .newsSelected {
+    background: #002558 url(/common/images/footernav-bg.png) repeat-x top left;
+    color: white;
+}
+
+
+.results li.story a.newsSelected .ellipsis {
+    color: #999;
+}
+
+.results li.story a.newsSelected .title {
+    color: #ddd;
+}
+
+#storyDetail h1 {
+    color: black;
+}

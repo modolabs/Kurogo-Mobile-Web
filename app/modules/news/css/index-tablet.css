@@ -76,6 +76,33 @@ form {
     display: inline;
 }
 
+#tabletNews {
+    -webkit-box-orient: horizontal;
+    display: -webkit-box;
+    height: 400px;
+    position: relative;
+}
+
+#stories {
+    position: relative;
+    width: 342px;
+    border: 1px solid;
+    border-left: none;
+    border-bottom: none;
+}
+
+#storyDetailWrapper {
+    padding: .5em;
+    position: relative;
+    border-top: 1px solid;
+	-webkit-box-flex:1;
+}
+
+#stories .results {
+    margin: 0;
+    margin-top: -1px;
+}
+
 .results li.pagerlink {
 	padding: 9px;
 }
@@ -85,4 +112,8 @@ form {
   font-weight: bold;
   background-image: none;
   font-size: 90%;
+}
+
+#footer {
+    display:none;
 }

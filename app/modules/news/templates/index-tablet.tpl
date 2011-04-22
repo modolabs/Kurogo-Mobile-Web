@@ -27,3 +27,15 @@
     {include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
   {/if}
 {/block}
+
+{block name="stories"}
+<div id="tabletNews">
+<div id="stories">
+{include file="findInclude:modules/news/templates/stories.tpl"}
+</div>
+<div id="storyDetailWrapper">
+<div id="storyDetail">
+</div><!-- storyDetail -->
+</div><!-- storyDetailWrapper -->
+</div><!-- tabletNews -->
+{/block}

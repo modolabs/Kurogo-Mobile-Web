@@ -194,6 +194,7 @@ class NewsWebModule extends WebModule {
         $this->assign('shareRemark',   $story->getTitle());
         $this->assign('author',        $story->getAuthor());
         $this->assign('image',         $this->getImageForStory($story));
+        $this->assign('ajax',          $this->getArg('ajax'));
         break;
         
       case 'search':
