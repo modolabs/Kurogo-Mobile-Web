@@ -10,12 +10,12 @@ abstract class PeopleController
 {
     abstract public function lookupUser($id);
     abstract public function search($searchTerms);
-    abstract public function getError();
-    abstract public function setAttributes($attributes);
     
     protected $debugMode=false;
     protected $personClass = 'Person';
     protected $capabilities=0;
+    protected $errorNo;
+    protected $errorMsg;
 
     public static function getPeopleControllers() {
         return array(
@@ -26,6 +26,24 @@ abstract class PeopleController
 
     public function debugInfo() {
         return '';
+    }
+
+    public function getErrorNo() {
+        return $this->errorNo;
+    }
+
+    public function getError() {
+        return $this->errorMsg;
+    }
+
+    public function setAttributes($attribs) {
+        if (is_array($attribs)) {
+            $this->attributes =$attribs;
+        } elseif ($attribs) {
+            throw new Exception('Invalid attributes');
+        } else {
+            $this->attributes = array();
+        }
     }
 
     public function getCapabilities() {
