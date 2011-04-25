@@ -46,10 +46,10 @@
 
     <script type="text/javascript">
       function onOrientationChange() {ldelim}
+        rotateScreen();
         {foreach $onOrientationChangeBlocks as $script}
           {$script}
         {/foreach}
-        rotateScreen();
       {rdelim}
       window.addEventListener("orientationchange", onOrientationChange, false);
       
