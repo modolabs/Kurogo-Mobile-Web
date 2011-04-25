@@ -122,10 +122,6 @@ class MapWebModule extends WebModule {
         $this->addOnOrientationChange('updateContainerDimensions()');
     }
 
-    protected function addJavascriptFullscreenRotateScreen() {
-        $this->addOnOrientationChange('rotateScreen();');
-    }
-
     protected function initializeMapElements($mapElement, $imgController, $imageWidth, $imageHeight) {
         $imgController->setImageWidth($imageWidth);
         $imgController->setImageHeight($imageHeight);
@@ -256,7 +252,6 @@ JS;
                 list($imageWidth, $imageHeight) = $MapDevice->fullscreenMapImageDimensions();
                 $this->addJavascriptFullscreenDynamicMap();
             }
-            $this->addJavascriptFullscreenRotateScreen();
         }
         
         $this->assign('fullscreen', $fullscreen);
