@@ -54,7 +54,14 @@ function rotateScreen() {
 
     default: 
         setOrientation('portrait');
-		    break;
+        if (!('orientation' in window)) {
+            if (document.documentElement.clientWidth > document.documentElement.clientHeight) {
+                setOrientation('landscape');
+            } else {
+                setOrientation('portrait');
+            }
+        }
+        break;
 	}
 	setTimeout(scrollToTop, 500);
 }

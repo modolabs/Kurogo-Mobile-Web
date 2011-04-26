@@ -42,8 +42,11 @@ function setContainerWrapperHeight() {
 	}
 }
 
-function handleWindowResize(e) { 
-  setContainerWrapperHeight();
+function handleWindowResize(e) {
+    if (!('orientation' in window)) {
+        rotateScreen();
+    }
+    setContainerWrapperHeight();
   
   setTimeout(updateNavSlider, 0);
   

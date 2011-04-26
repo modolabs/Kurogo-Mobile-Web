@@ -1,26 +1,9 @@
-// this needs to change in the future...
-var newsEllipsizer = null;
-var videoEllipsizer = null;
-
-function getNewsStories() {
-    return document.getElementById('newsStories') ? document.getElementById('newsStories').childNodes : [];
+var paneResizeHandlers = [];
+function addPaneResizeHandler(handler) {
+    paneResizeHandlers.push(handler);
 }
 
-function getNewsDots() {
-  return document.getElementById('newsPagerDots').childNodes;
-}
-
-
-function getVideos() {
-  return document.getElementById('videos') ? document.getElementById('videos').childNodes : [];
-}
-
-function getVideoDots() {
-  return document.getElementById('videoPagerDots').childNodes;
-}
-
-function moduleHandleWindowResize() {
-  function getCSSValue(element, key) {
+function getCSSValue(element, key) {
     if (window.getComputedStyle) {
       return document.defaultView.getComputedStyle(element, null).getPropertyValue(key);
         
@@ -38,15 +21,17 @@ function moduleHandleWindowResize() {
       return element.currentStyle[key] ? element.currentStyle[key] : null;
     }
     return '';
-  }
+}
 
-  function getCSSHeight(element) {
+function getCSSHeight(element) {
     return element.offsetHeight
       - parseFloat(getCSSValue(element, 'border-top-width')) 
       - parseFloat(getCSSValue(element, 'border-bottom-width'))
       - parseFloat(getCSSValue(element, 'padding-top'))
       - parseFloat(getCSSValue(element, 'padding-bottom'));
-  }
+}
+
+function moduleHandleWindowResize() {
 
   var blocks = document.getElementById('fillscreen').childNodes;
   
@@ -105,124 +90,7 @@ function moduleHandleWindowResize() {
     blockcontent.style.height = contentClipHeight+'px'; // set block content height
   }
   
-  // set the size on the news stories
-  var stories = getNewsStories();
-  if (stories.length) {
-    var pager = document.getElementById('newsPager');
-    var storyClipHeight = getCSSHeight(document.getElementById('newsStories'))
-      - pager.offsetHeight
-      - parseFloat(getCSSValue(stories[0], 'border-top-width')) 
-      - parseFloat(getCSSValue(stories[0], 'border-bottom-width'))
-      - parseFloat(getCSSValue(stories[0], 'padding-top'))
-      - parseFloat(getCSSValue(stories[0], 'padding-bottom'))
-      - parseFloat(getCSSValue(stories[0], 'margin-top'))
-      - parseFloat(getCSSValue(stories[0], 'margin-bottom'));
-      
-    for (var i = 0; i < stories.length; i++) {
-      stories[i].style.height = storyClipHeight+'px';
+    for (var i=0; i < paneResizeHandlers.length; i++) {
+        paneResizeHandlers[i]();
     }
-  }
-  
-  if (newsEllipsizer == null) {
-    newsEllipsizer = new ellipsizer({refreshOnResize: false});
-    newsEllipsizer.addElements(getNewsStories());
-  } else {
-    setTimeout(function () {
-      newsEllipsizer.refresh();
-    }, 1);
-  }
-
-  // set the size on the videos
-  var videos = getVideos();
-  if (videos.length) {
-    var pager = document.getElementById('videoPager');
-    var videoClipHeight = getCSSHeight(document.getElementById('videos'))
-      - pager.offsetHeight
-      - parseFloat(getCSSValue(videos[0], 'border-top-width')) 
-      - parseFloat(getCSSValue(videos[0], 'border-bottom-width'))
-      - parseFloat(getCSSValue(videos[0], 'padding-top'))
-      - parseFloat(getCSSValue(videos[0], 'padding-bottom'))
-      - parseFloat(getCSSValue(videos[0], 'margin-top'))
-      - parseFloat(getCSSValue(videos[0], 'margin-bottom'));
-      
-    for (var i = 0; i < videos.length; i++) {
-      videos[i].style.height = videoClipHeight+'px';
-    }
-  }
-  
-  if (videoEllipsizer == null) {
-    videoEllipsizer = new ellipsizer({refreshOnResize: false});
-    videoEllipsizer.addElements(getVideos());
-  } else {
-    setTimeout(function () {
-      videoEllipsizer.refresh();
-    }, 1);
-  }
-}
-
-function newsPaneSwitchStory(elem, direction) {
-  if (elem.className.match(/disabled/)) { return false; }
-
-  var stories = getNewsStories();
-  
-  var dots = getNewsDots();
-  var prev = document.getElementById('newsStoryPrev');
-  var next = document.getElementById('newsStoryNext');
-  
-  for (var i = 0; i < stories.length; i++) {
-    if (stories[i].className == 'current') {
-      var j = direction == 'next' ? i+1 : i-1;
-      
-      if (j >= 0 || j < stories.length) {
-        stories[i].className = '';
-        stories[j].className = 'current';
-        
-        dots[i].className = '';
-        dots[j].className = 'current';
-        
-        prev.className = (j == 0) ? 'disabled' : '';
-        next.className = (j == (stories.length-1)) ? 'disabled' : '';
-        
-        newsEllipsizer.refresh();
-      }
-      
-      break;
-    }
-  }
-  
-  return false;
-}
-
-function videoPaneSwitchVideo(elem, direction) {
-  if (elem.className.match(/disabled/)) { return false; }
-
-  var videos = getVideos();
-  
-  var dots = getVideoDots();
-  var prev = document.getElementById('videoPrev');
-  var next = document.getElementById('videoNext');
-  
-  for (var i = 0; i < videos.length; i++) {
-    if (videos[i].className == 'current') {
-      var j = direction == 'next' ? i+1 : i-1;
-      
-      if (j >= 0 || j < videos.length) {
-        videos[i].className = '';
-        videos[j].className = 'current';
-        
-        dots[i].className = '';
-        dots[j].className = 'current';
-        
-        prev.className = (j == 0) ? 'disabled' : '';
-        next.className = (j == (videos.length-1)) ? 'disabled' : '';
-
-        videoEllipsizer.refresh();
-        
-      }
-      
-      break;
-    }
-  }
-  
-  return false;
 }
