@@ -1,0 +1,9 @@
+
+.portrait #videos {
+    width: 342px;
+}
+
+.portrait #videos .thumbnail {
+    display: block;
+}
+

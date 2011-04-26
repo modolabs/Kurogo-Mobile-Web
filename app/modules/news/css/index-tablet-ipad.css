@@ -5,3 +5,11 @@
   left: 0; /* webkit only */
   width: auto;
 }
+
+.portrait #stories .thumbnail {
+    display: block;
+}
+
+#stories {
+    width: 342px;
+}

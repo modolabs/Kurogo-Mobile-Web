@@ -91,11 +91,28 @@ form {
     border-bottom: none;
 }
 
+.portrait #stories {
+    width: 257px;
+}
+
+
 #storyDetailWrapper {
-    padding: .5em;
     position: relative;
     border-top: 1px solid;
 	-webkit-box-flex:1;
+}
+
+#storyDetail {
+    padding: .5em;
+}
+
+
+.portrait #stories .thumbnail {
+    display: none;
+}
+
+.portrait #stories li {
+    padding-left: .4em;
 }
 
 #stories .results {

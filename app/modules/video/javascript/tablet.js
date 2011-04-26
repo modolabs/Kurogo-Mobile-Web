@@ -1,23 +1,23 @@
 function moduleInit() {
-    newsListScroller = new iScroll('stories');
-    newsDetailScroller = new iScroll('storyDetailWrapper', {checkDOMChange: true});
+    videoListScroller = new iScroll('videos');
+    videoDetailScroller = new iScroll('videoDetailWrapper', {checkDOMChange: true} );
     
-    var links = document.querySelectorAll("#stories .results a");
+    var links = document.querySelectorAll("#videos .results a");
     for (var i=0;i<links.length;i++) {
         links[i].onclick = function(e) {
-            var selected = document.querySelectorAll("#stories .results .newsSelected");
+            var selected = document.querySelectorAll("#videos .results .videoSelected");
             for (var j=0;j<selected.length;j++) {
                 selected[j].className=selected[j].oldclass;
             }
             this.oldclass = this.className;
-            this.className += ' newsSelected';
+            this.className += ' videoSelected';
             var httpRequest = new XMLHttpRequest();
             httpRequest.open("GET", this.href+'&ajax=1', true);
             httpRequest.onreadystatechange = function() {
                 if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-                    document.getElementById('storyDetail').innerHTML = httpRequest.responseText;
-                    newsDetailScroller.scrollTo(0,0);
-                    newsDetailScroller.refresh();
+                    document.getElementById('videoDetail').innerHTML = httpRequest.responseText;
+                    videoDetailScroller.scrollTo(0,0);
+                    videoDetailScroller.refresh();
                     moduleHandleWindowResize();
                 }
             }
@@ -30,17 +30,17 @@ function moduleInit() {
             links[i].onclick();
         }
     }
-
+    
     moduleHandleWindowResize();
     
 }
 
 function moduleHandleWindowResize() {
-    document.getElementById('stories').style.height = 'auto';
-    document.getElementById('storyDetailWrapper').style.height = 'auto';
+    document.getElementById('videos').style.height = 'auto';
+    document.getElementById('videoDetailWrapper').style.height = 'auto';
 	var wrapperHeight = document.getElementById('wrapper').offsetHeight;
-    var headerHeight = document.getElementById('newsHeader').offsetHeight;
+    var headerHeight = document.getElementById('videoHeader').offsetHeight;
     var contentHeight = wrapperHeight - headerHeight;
-	document.getElementById('stories').style.height = contentHeight + 'px';
-	document.getElementById('storyDetailWrapper').style.height = contentHeight + 'px';
+	document.getElementById('videos').style.height = contentHeight + 'px';
+	document.getElementById('videoDetailWrapper').style.height = contentHeight + 'px';
 }

@@ -5,3 +5,21 @@
 	color: white;
 	font-weight: bold;
 }
+
+.results .videoSelected {
+    background: #002558 url(/common/images/footernav-bg.png) repeat-x top left;
+    color: white;
+}
+
+
+.results li.video a.videoSelected .ellipsis {
+    color: #999;
+}
+
+.results li.video a.videoSelected .title {
+    color: #ddd;
+}
+
+#videoDetail h1 {
+    color: black;
+}

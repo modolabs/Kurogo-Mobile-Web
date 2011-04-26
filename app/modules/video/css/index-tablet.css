@@ -86,3 +86,62 @@ form {
   background-image: none;
   font-size: 90%;
 }
+
+
+#tabletVideos {
+    -webkit-box-orient: horizontal;
+    display: -webkit-box;
+    height: 400px;
+    position: relative;
+}
+
+#videos {
+    position: relative;
+    width: 342px;
+    border: 1px solid;
+    border-left: none;
+    border-bottom: none;
+}
+
+.portrait #videos {
+    width: 257px;
+}
+
+
+#videoDetailWrapper {
+    position: relative;
+    border-top: 1px solid;
+	-webkit-box-flex:1;
+}
+
+#videoDetail {
+    padding: .5em;
+}
+
+.portrait #videos .thumbnail {
+    display: none;
+}
+
+.portrait #videos li {
+    padding-left: .4em;
+}
+
+#videos .results {
+    margin: 0;
+    margin-top: -1px;
+}
+
+.results li.pagerlink {
+	padding: 9px;
+}
+
+.results li.pagerlink a {
+  color: #1A1611;
+  font-weight: bold;
+  background-image: none;
+  font-size: 90%;
+}
+
+#footer {
+    display:none;
+}
