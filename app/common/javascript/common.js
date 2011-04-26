@@ -26,9 +26,15 @@ function showTab(strID, objTrigger) {
 	} 
 	
 	// fake resize event in case tab body was resized while hidden 
-	var e = document.createEvent('HTMLEvents');
-	e.initEvent('resize', true, true);
-	window.dispatchEvent(e);
+  if (document.createEvent) {
+    var e = document.createEvent('HTMLEvents');
+    e.initEvent('resize', true, true);
+    window.dispatchEvent(e);
+  
+  } else if( document.createEventObject ) {
+    var e = document.createEventObject();
+    document.documentElement.fireEvent('onresize', e);
+  }
 	
 	onDOMChange();
 }
@@ -213,12 +219,22 @@ function setBookmarkStates(name, item) {
       break;
     }
   }
-  bookmark.addEventListener("touchstart", function() {
-      addClass(bookmark, "pressed");
-  }, false);
-  bookmark.addEventListener("touchend", function() {
-      removeClass(bookmark, "pressed");
-  }, false);
+  if (bookmark.addEventListener) {
+    bookmark.addEventListener("touchstart", function() {
+        addClass(bookmark, "pressed");
+    }, false);
+    bookmark.addEventListener("touchend", function() {
+        removeClass(bookmark, "pressed");
+    }, false);
+    
+  } else if (bookmark.attachEvent) {
+    bookmark.attachEvent("ontouchstart", function() {
+        addClass(bookmark, "pressed");
+    });
+    bookmark.attachEvent("ontouchend", function() {
+        removeClass(bookmark, "pressed");
+    });
+  }
 }
 
 function toggleBookmark(name, item, expireseconds, path) {

@@ -39,8 +39,6 @@ class HomeWebModule extends WebModule {
         break;
               
       case 'index':
-        $this->addOnOrientationChange('rotateScreen();');
-
         if ($this->pagetype == 'tablet') {
           
           $this->assign('modulePanes', $this->getTabletModulePanes($this->getModuleSection('tablet_panes')));

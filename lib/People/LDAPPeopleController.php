@@ -58,16 +58,6 @@ class LDAPPeopleController extends PeopleController {
         return $this->ldapResource;
     }
 
-    public function setAttributes($attribs) {
-        if (is_array($attribs)) {
-            $this->attributes =$attribs;
-        } elseif ($attribs) {
-            throw new Exception('Invalid attributes');
-        } else {
-            $this->attributes = array();
-        }
-    }
-
     public function search($searchString) {
         $this->buildQuery($searchString);
         return $this->doQuery();
@@ -156,14 +146,6 @@ class LDAPPeopleController extends PeopleController {
         }
 
         return $this->filter;
-    }
-
-    public function getErrorNo() {
-        return $this->errorNo;
-    }
-
-    public function getError() {
-        return $this->errorMsg;
     }
 
     /* return results, or FALSE on error.
