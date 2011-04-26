@@ -51,15 +51,22 @@
           {$script}
         {/foreach}
       {rdelim}
-      window.addEventListener("orientationchange", onOrientationChange, false);
-      
+      if (window.addEventListener) {ldelim}
+        window.addEventListener("orientationchange", onOrientationChange, false);
+      {rdelim} else if (window.attachEvent) {ldelim}
+        window.attachEvent("onorientationchange", onOrientationChange);
+      {rdelim}
       {if count($onOrientationChangeBlocks)}
         function onResize() {ldelim}
           {foreach $onOrientationChangeBlocks as $script}
             {$script}
           {/foreach}
         {rdelim}
-        window.addEventListener("resize", onResize, false);
+        if (window.addEventListener) {ldelim}
+          window.addEventListener("resize", onResize, false);
+        {rdelim} else if (window.attachEvent) {ldelim}
+          window.attachEvent("onresize", onResize);
+        {rdelim}
       {/if}
     </script>
     

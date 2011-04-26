@@ -97,7 +97,7 @@ function getCSSValue(element, key) {
   if (window.getComputedStyle) {
     return document.defaultView.getComputedStyle(element, null).getPropertyValue(key);
       
-  } else if (elelementem.currentStyle) {
+  } else if (element.currentStyle) {
     if (key == 'float') { 
       key = 'styleFloat'; 
     } else {
