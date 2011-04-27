@@ -7,8 +7,11 @@
 }
 
 .results .videoSelected {
-    background: #002558 url(/common/images/footernav-bg.png) repeat-x top left;
+    background: #002558 url(/common/images/selected.png) repeat-x top left;
     color: white;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
 }
 
 
@@ -23,3 +26,16 @@
 #videoDetail h1 {
     color: black;
 }
+
+.slugline {
+    font: 22px/26px Georgia, serif;
+    color:#1a1611;
+}
+
+.byline {
+    font-size: 11px;
+    line-height: 14px;
+    border-bottom: 1px dotted #999;
+}
+
+
