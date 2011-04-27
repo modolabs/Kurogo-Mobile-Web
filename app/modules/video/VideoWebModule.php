@@ -185,6 +185,7 @@ class VideoWebModule extends WebModule
                     $this->assign('shareEmailURL',    $this->buildMailToLink("", $video->getTitle(), $body));
                     $this->assign('videoURL',         $video->getURL());
                     $this->assign('shareRemark',      $video->getTitle());
+                    $this->assign('ajax'      ,       $this->getArg('ajax', null));
     
                       // Bookmark
                       $cookieParams = array(
