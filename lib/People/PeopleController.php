@@ -102,6 +102,6 @@ abstract class Person
         if (array_key_exists($field, $this->attributes)) {
           return $this->attributes[$field];
         }
-        return array();
+        return NULL;
     }
 }

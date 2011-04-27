@@ -25,16 +25,54 @@ In most cases, this will permit you to perform simple search and details views o
 
 **Optional values**
 
-* *CONTROLLER_CLASS* allows you to set a different class name for the controller. The default is LDAPPeopleController.
-  You could write your own subclass of PeopleController to retrieve the values from a different source,
-  such as a database.
+* *CONTROLLER_CLASS* allows you to set a different class name for the controller. Current options are
+  LDAPPeopleController and DatabasePeopleController.
 * *PERSON_CLASS* allows you to set a different class name for the returned user objects when searching. 
   This allows you to write custom behavior to handle the data in your directory service.
+
+--------------------------------
+Options for LDAPPeopleController
+--------------------------------
+
 * *PORT* - Optional (Default 389) The port to connect. Use 636 for SSL connections (recommended if available)
 * *ADMIN_DN* - Some servers do not permit anonymous queries. If necessary you will need to provide a full 
   distinguished name for an account that has access to the directory. For security this account should
   only have read access and be limited to the search bases to which it needs to access.
 * *ADMIN_PASSWORD* - The password for the *ADMIN_DN* account.
+
+------------------------------------
+Options for DatabasePeopleController
+------------------------------------
+
+The *DatabasePeopleController* has a number of possible configuration values, all of which
+are optional. The following values affect the connectivity to the database system:
+
+* DB_TYPE - The database system currently supports 2 types of connections *mysql* or *sqlite* through PDO
+* DB_HOST - used by db systems that are hosted on a server
+* DB_USER - used by db systems that require a user to authenticate
+* DB_PASS - used by db systems that require a password
+* DB_DBNAME - used by db systems that require a database
+* DB_FILE - used by db systems the use a file (i.e. sqlite).
+
+If you omit any of the above values, it will default to the settings in :ref:`database_config`
+In addition to the connectivity settings, there are several options that tell the controller how to 
+query the database. 
+
+The following value inform the controller which table the data is located:
+
+* *DB_USER_TABLE* - (users) The name of the table that stores the user records. This table should at 
+  least have fields for userID, name and email. Each row should contain a single user entry. 
+
+The following values inform the controller which fields to use for critical fields. These values would only
+need to be altered if the values differ from the defaults in parentheses.
+
+* *DB_USERID_FIELD* (userID)- stores the userID in the user table. You can use any unique column for the userID
+  field. Do not use sensitive values as they are easily viewed by users.
+* *DB_EMAIL_FIELD* (email) - stores the email in the user table
+* *DB_FIRSTNAME_FIELD* (firstname) - stores the first name of user.
+* *DB_LASTNAME_FIELD* (firstname) - stores the last name of user.
+
+The other fields are shown by configuring the detail fields below.
 
 =============================
 Configuring the Detail Fields

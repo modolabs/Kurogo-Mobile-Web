@@ -74,7 +74,7 @@ class PeopleWebModule extends WebModule {
         return $detail;
     }
   
-    private function formatPersonDetail($person, $info, $key=0) {
+    private function formatPersonDetail(Person $person, $info, $key=0) {
         $section = array();
         
         if (count($info['attributes']) == 1) {
@@ -103,7 +103,7 @@ class PeopleWebModule extends WebModule {
         return $section;
     }
   
-    private function formatPersonDetails($person) {
+    private function formatPersonDetails(Person $person) {
         //error_log(print_r($this->detailFields, true));
         
         $details = array();    
