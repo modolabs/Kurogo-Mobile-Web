@@ -19,3 +19,15 @@ li.nolabel .image {
   margin-left: 3.75em;
 }
 
+
+.peoplebuttons {
+    position: absolute;
+    right: 10px;
+	margin: 0 0 0.6em 0.5em;
+	z-index: 100;
+}
+
+.peoplebuttons #bookmarkContainer {
+    float: none;
+    margin: 0;
+}
