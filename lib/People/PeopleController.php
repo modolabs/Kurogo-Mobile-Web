@@ -20,7 +20,8 @@ abstract class PeopleController
     public static function getPeopleControllers() {
         return array(
             ''=>'-',
-            'LDAPPeopleController'=>'LDAP'
+            'LDAPPeopleController'=>'LDAP',
+            'DatabasePeopleController'=>'Database'
         );
     }
 

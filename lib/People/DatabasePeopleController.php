@@ -155,12 +155,12 @@ class DatabasePerson extends Person
     }
     
     public function getId() {
-        return $this->getField($this->fieldMap['userid']);
+        return $this->getField(strtolower($this->fieldMap['userid']));
     }
 
     public function setAttributes($data) {
         foreach ($data as $field=>$value) {
-            $this->attributes[$field] = $value;
+            $this->attributes[strtolower($field)] = $value;
         }
     }    
 
