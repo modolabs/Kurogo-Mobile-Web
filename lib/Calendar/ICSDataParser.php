@@ -59,8 +59,8 @@ class ICSDataParser extends DataParser
     {
     	if ($eventClass) {
     		if (!class_exists($eventClass)) {
-                throw new Exception("Event class $eventClass not defined");
-    		}
+                throw new ICalendarException("Event class $eventClass not defined");
+    		} 
 			$this->eventClass = $eventClass;
 		}
     }
@@ -80,8 +80,8 @@ class ICSDataParser extends DataParser
             case 'BEGIN':
                 switch ($value) {
                 case 'VEVENT':
+                    $addEvent = true;
                     $nesting[] = new $this->eventClass;
-
                     break;
                 case 'VCALENDAR':
                     $nesting[] = $calendar;
@@ -108,7 +108,11 @@ class ICSDataParser extends DataParser
                     $nesting[] = new ICalAlarm();
                     break;
                 default:
-                    throw new ICalendarException('unknown component type ' . $value);
+                    if ($this->haltOnParseErrors) {
+                        throw new ICalendarException('unknown component type ' . $value);
+                    } else {
+                        error_log('unknown component type ' . $value);
+                    }
                     break;
                 }
                 break;
@@ -116,25 +120,39 @@ class ICSDataParser extends DataParser
                 $last_object = array_pop($nesting);
                 $last_obj_name = $last_object->get_name();
                 if ($last_obj_name != $value) {
-                    throw new ICalendarException("BEGIN $last_obj_name ended by END $value");
+                    if ($this->haltOnParseErrors) {
+                        throw new ICalendarException("BEGIN $last_obj_name ended by END $value");
+                    } else {
+                        error_log("BEGIN $last_obj_name ended by END $value");
+                        $value = null; //throw it away
+                    }
                 }
                 switch ($value) {
-                case 'VEVENT':
-                    if ($calendar->timezone) {
-                        $last_object->set_attribute('TZID', $calendar->timezone->tzid);
-                    }
-
-                    $calendar->add_event($last_object);
-                    break;
-                case 'VTIMEZONE':
-                    $calendar->timezone = $last_object;
-                    break;
-                case 'VCALENDAR':
-                    break 3;
+                    case 'VEVENT':
+                        if ($calendar->timezone) {
+                            $last_object->set_attribute('TZID', $calendar->timezone->tzid);
+                        }
+                        if ($addEvent) {
+                            $calendar->add_event($last_object);
+                        }
+                        break;
+                    case 'VTIMEZONE':
+                        $calendar->timezone = $last_object;
+                        break;
+                    case 'VCALENDAR':
+                        break 3;
                 }
                 break;
             default:
-                end($nesting)->set_attribute($contentname, $value, $params);
+                try {
+                    end($nesting)->set_attribute($contentname, $value, $params);
+                } catch (Exception $e) {
+                    if ($this->haltOnParseErrors) {
+                        throw $e;
+                    }
+                    error_log($e->getMessage());
+                    $addEvent = false;
+                }
                 break;
             }
         }
