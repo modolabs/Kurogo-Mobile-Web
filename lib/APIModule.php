@@ -47,7 +47,7 @@ abstract class APIModule extends Module
    * The user cannot access this module
    */
   protected function unauthorizedAccess() {
-    $error = new KurogoError(4, 'Unauthorized', 'You are not permitted to use this module');
+    $error = new KurogoError(4, 'Unauthorized', 'You are not permitted to use the '.$this->getModuleVar('title', 'module').' module');
     $this->throwError($error);
   }
 
