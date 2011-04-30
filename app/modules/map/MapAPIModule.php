@@ -232,7 +232,7 @@ class MapAPIModule extends APIModule
                     $category['subcategories'] = $controller->getAllCategoryNodes();
                     $categories[] = $category;
                 }
-                uasort($categories, array(get_class($this), 'titleSort'));
+                usort($categories, array(get_class($this), 'titleSort'));
 
                 $this->setResponse($categories);
                 $this->setResponseVersion(1);

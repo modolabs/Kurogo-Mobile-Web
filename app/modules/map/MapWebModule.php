@@ -389,7 +389,7 @@ JS;
                 'url' => $this->categoryURL($id),
                 );
         }
-        uasort($categories, array(get_class($this), 'titleSort'));
+        usort($categories, array(get_class($this), 'titleSort'));
         
         $this->assign('categories', $categories);
         return $categories;
