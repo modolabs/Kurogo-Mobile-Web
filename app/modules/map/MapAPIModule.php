@@ -223,7 +223,7 @@ class MapAPIModule extends APIModule
                     $controller->setCategory($id);
                     $category = array(
                         'id' => $controller->getCategory(),
-                        'title' => $controller->getTitle(),
+                        'title' => self::argVal($feedData, 'TITLE', $controller->getTitle()),
                         );
                     $category['subcategories'] = $controller->getAllCategoryNodes();
                     $categories[] = $category;
