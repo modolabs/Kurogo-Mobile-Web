@@ -370,6 +370,10 @@ JS;
         return $mapSearch;
     }
     
+    private function titleSort($a, $b) {
+      return strnatcasecmp($a['title'], $b['title']);
+    }
+    
     private function assignCategories() {
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
@@ -385,6 +389,8 @@ JS;
                 'url' => $this->categoryURL($id),
                 );
         }
+        uasort($categories, array(get_class($this), 'titleSort'));
+        
         $this->assign('categories', $categories);
         return $categories;
     }
