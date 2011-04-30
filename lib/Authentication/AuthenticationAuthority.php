@@ -282,7 +282,24 @@ abstract class AuthenticationAuthority
             $configFile = self::getAuthorityConfigFile();
         }
         
-        return $configFile->getOptionalSection($index);
+        $sections = $configFile->getSectionVars();
+        
+        //check and see if $index is a authority index
+        if (isset($sections[$index])) {
+            return $sections[$index];
+        }
+        
+        // check and see if an authority that is a class or subclass of $index has been defined
+        foreach ($sections as $sectionIndex=>$sectionData) {
+            $className = $sectionData['CONTROLLER_CLASS'];
+            $class = new ReflectionClass($className);
+            if ($className==$index || $class->isSubclassOf($index)) {
+                return $sectionData;
+            }
+        }
+        
+        //nothing found
+        return false;
     }
     
     public static function validateAuthority($index, $authorityData) {
@@ -301,7 +318,7 @@ abstract class AuthenticationAuthority
 
     /**
      * Retrieves an authentication authority by its index. This is the preferred way to retrieve an authority
-     * @param string $index the index/tag of the authority to retrieve
+     * @param string $index the index/tag or the Authentication Authority Class to retrieve
      * @return AuthenticationAuthority object initialized based on the values in the authentication config file or false if the index was not found
     */
     public static function getAuthenticationAuthority($index)

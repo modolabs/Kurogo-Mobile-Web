@@ -254,37 +254,6 @@ class ICalEvent extends ICalObject {
     return array_values($occurrences);
   }
 
-  protected function compare_ranges(TimeRange $range, $compare_type) {
-    throw new Exception("compare_range Not handled yet");
-    if ($this->recur) {
-      // check if $range is within this series at all
-      $event_range = new TimeRange($this->get_start(), $this->get_end());
-      if (!$event_range->$compare_type($range)) {
-    return Array();
-      } else {
-    $duration = $this->range->get_end() - $this->range->get_start();
-    $results = Array();
-    $starts = $this->occurrences;
-    while ($starts[0] < $this->until) {
-      foreach ($starts as $start) {
-        if ($start > $this->until)
-          break 2;
-        if (in_array($start, $this->exdates))
-          continue;
-        $event_range = new TimeRange($start, $start + $duration);
-        if ($event_range->$compare_type($range)) {
-          $results[] = new ICalEvent($this->summary, $event_range);
-        }
-      }
-      $starts = $this->increment_set($starts);
-    }
-      }
-      return $results;
-    } else {
-      return $this->range->$compare_type($range);
-    }
-  }
-
   public function overlaps(TimeRange $range) {
     return $this->range->overlaps($range);
   }
@@ -609,8 +578,11 @@ class ICalRecurrenceRule extends ICalObject {
         $this->limit = $rulevalue;
         break;
       case (substr($rulename, 0, 2) == 'BY'):
-        throw new Exception("BY* rules Not handled yet");
+        throw new Exception("$rulename rules not handled yet ($rule_string)");
         $occurs_by_list[$rulename] = explode(',', $rulevalue);
+        break;
+      default:
+        throw new Exception("Unknown recurrence rule property $rulename found");
         break;
       }
     }

@@ -13,7 +13,8 @@ abstract class DataParser
     protected $encoding='utf-8';
     protected $debugMode=false;
     protected $totalItems = null;
-    
+    protected $haltOnParseErrors = true;
+
     public function getTotalItems() {
         return $this->totalItems;
     }
@@ -37,8 +38,16 @@ abstract class DataParser
         $parser->init($args);
         return $parser;
     }
+
+    public function haltOnParseErrors($bool) {
+        $this->haltOnParseErrors = (bool) $bool;
+    }
     
     public function init($args) {
+        if (isset($args['HALT_ON_PARSE_ERRORS'])) {
+            $this->haltOnParseErrors($args['HALT_ON_PARSE_ERRORS']);
+        }
+        
         $this->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
     }
 
