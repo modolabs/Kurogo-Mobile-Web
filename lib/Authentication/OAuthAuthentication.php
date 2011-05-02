@@ -15,8 +15,10 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     protected $useCache = true;
     protected $cache;
     protected $cacheLifetime = 900;
+    protected $signatureMethod = 'HMAC-SHA1';
     protected $verifierKey = 'oauth_verifier';
     protected $verifierErrorKey = '';
+    protected $manualVerify=false;
     private $oauth;
     
     abstract protected function getAuthURL(array $params);
@@ -44,6 +46,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $parameters = is_array($parameters) ? $parameters : array();
 	    if (!$this->oauth) {
 	        $this->oauth = new OAuthRequest($this->consumer_key, $this->consumer_secret);
+	        $this->oauth->setSignatureMethod($this->signatureMethod);
 	    }
 	    
 	    if ($use_token) {
@@ -62,7 +65,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		$parameters = $this->getAccessTokenParameters();
         
         if (strlen($verifier)) {
-            $parameters['oauth_verifier']=$verifier;
+            $parameters[$this->verifierKey]=$verifier;
         }
         
 		// make the call
@@ -80,6 +83,10 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		
 		// return
 		return $return;
+	}
+	
+	public function getVerifierKey() {
+	    return $this->verifierKey;
 	}
 
 	protected function getRequestTokenParameters() {
@@ -124,6 +131,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $startOver = isset($_REQUEST['startOver']) ? $_REQUEST['startOver'] : false;
         //see if we already have a request token
         if ($startOver || !$this->token || !$this->tokenSecret) {
+            $this->setToken(null);
+            $this->setTokenSecret(null);
             if (!$this->getRequestToken($options)) {
                 error_log("Error getting request token");
                 return AUTH_FAILED;
@@ -131,9 +140,9 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         }
         
         //if oauth_verifier is set then we are in the callback
-        if (isset($_GET[$this->verifierKey])) {
+        if (isset($_REQUEST[$this->verifierKey])) {
             //get an access token
-            if ($response = $this->getAccessToken($_GET[$this->verifierKey])) {
+            if ($response = $this->getAccessToken($_REQUEST[$this->verifierKey])) {
             
                 //we should now have the current user
                 if ($user = $this->getUserFromArray($response)) {
@@ -147,6 +156,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
                 error_log("Error getting Access token");
                 return AUTH_FAILED;
             }
+        } elseif (!$startOver && $this->token && $this->manualVerify) {
+            return AUTH_OAUTH_VERIFY;
         } else {
         
             //redirect to auth page

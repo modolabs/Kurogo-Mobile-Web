@@ -277,6 +277,10 @@ abstract class AuthenticationAuthority
     }
 
     public static function getAuthenticationAuthorityData($index) {
+        if (strlen($index)==0) {
+            return false;
+        }
+        
         static $configFile;
         if (!$configFile) {
             $configFile = self::getAuthorityConfigFile();
