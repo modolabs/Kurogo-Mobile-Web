@@ -1,6 +1,8 @@
 function moduleInit() {
     newsListScroller = new iScroll('stories');
     newsDetailScroller = new iScroll('storyDetailWrapper', {checkDOMChange: true});
+    containerScroller.destroy();
+    containerScroller = null;    
     
     var links = document.querySelectorAll("#stories .results a");
     var first = true;

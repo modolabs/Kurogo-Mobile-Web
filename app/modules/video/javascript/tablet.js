@@ -1,6 +1,8 @@
 function moduleInit() {
     videoListScroller = new iScroll('videos');
     videoDetailScroller = new iScroll('videoDetailWrapper', {checkDOMChange: true} );
+    containerScroller.destroy();
+    containerScroller = null;    
     
     var links = document.querySelectorAll("#videos .results a");
     var first = true;
