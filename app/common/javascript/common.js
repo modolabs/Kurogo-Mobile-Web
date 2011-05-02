@@ -41,26 +41,28 @@ function showTab(strID, objTrigger) {
 
 function rotateScreen() {
   // Switch stylesheet and viewport based on screen orientation
-	switch(window.orientation) {
-		case 0:
-		case 180:
-        setOrientation('portrait');
-		    break;
+  var width = document.documentElement.clientWidth || document.body.clientWidth;
+  var height = document.documentElement.clientHeight || document.body.clientHeight;
+  
+  if (width > height) {
+    setOrientation('landscape');
+  } else {
+    setOrientation('portrait');
+  }
 
-		case -90:
-		case 90:
-        setOrientation('landscape');
-		    break;
-
-    default: 
-        setOrientation('portrait');
-		    break;
-	}
-	setTimeout(scrollToTop, 500);
+  setTimeout(scrollToTop, 500);
 }
 
 function setOrientation(orientation) {
-    document.getElementsByTagName("body")[0].className = orientation;
+    var body = document.getElementsByTagName("body")[0];
+ 
+ //remove existing portrait/landscape class if there
+    if (body.className.match(new RegExp("(^|\\s)(portrait|landscape)(\\s|$)"))) {
+        body.className = body.className.replace(
+          new RegExp("(^|\\s+)(portrait|landscape)(\\s+|$)"), ' ');
+    }
+    
+    body.className += ' ' + orientation;
 }
 
 
