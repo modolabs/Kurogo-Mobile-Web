@@ -5,3 +5,16 @@
 .value {
   margin-left: 3.75em;
 }
+
+.peoplebuttons {
+    position: absolute;
+    top: 11px;
+    right: 13px;
+	margin: 0;
+	z-index: 100;
+}
+
+.peoplebuttons #bookmarkContainer {
+    float: none;
+    margin: 0;
+}

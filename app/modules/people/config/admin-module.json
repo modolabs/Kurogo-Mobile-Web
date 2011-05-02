@@ -1,25 +1,29 @@
 {
     "feeds": {
         "title":"Data Configuration",
-        "description":"",
-        "config":"feeds",
-        "sectiontype":"section",
+        "description":"You can configure the source of your directory information.",
+        "sectiontype":"fields",
         "fields":{
-            "section":{"label":"Section", "description":"Programmatic id for this section", "type":"label"},
-            "TITLE":{"label":"Title", "description":"Label for this connection", "type":"text","omitIfBlank":"true"},
-            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of directory service. Should be a PeopleController class", "type":"select","optionsMethod":["PeopleController","getPeopleControllers"]},
-            "HOST":{"label":"Host","description":"LDAP Server host name","type":"text"},
-            "PORT":{"label":"Port","description":"LDAP port. Default is 389. Use 636 for SSL","type":"number","omitBlankValue": true, "placeholder":"389"},
-            "SEARCH_BASE":{"label":"Search Base","description":"LDAP search base","type":"text"},
-            "ADMIN_DN":{"label":"Admin DN","description":"Some LDAP servers do not permit anonymous access. If necessary, provide an full DN for an administrative service account that has read-only access.","type":"text", "omitBlankValue": true},
-            "ADMIN_PASSWORD":{"label":"Admin Password","type":"password", "description":"If using a admin service account, include the password", "omitBlankValue": true},
-            "SEARCH_TIMELIMIT":{"label":"Search timeout","type":"number","description":"Timeout (in seconds) for search queries","omitBlankValue": true,"placeholder":"30"},
-            "READ_TIMELIMIT":{"label":"Read timeout","type":"text", "description":"Timeout (in seconds) for read operations (operations that read the data from a specific record","omitBlankValue": true,"placeholder":"30"}
-        },
-        "sectionindex":"string",
-        "sectionsmethod":"loadFeedData",
-        "sectionaddnew":false,
-        "sectiondelete":false
+            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of directory service. Should be a PeopleController class", "type":"select","config":"feeds","section":"people","optionsMethod":["PeopleController","getPeopleControllers"]},
+            "HOST":{"label":"Host","description":"LDAP Server host name","type":"text","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
+            "PORT":{"label":"Port","description":"LDAP port. Default is 389. Use 636 for SSL","type":"number","omitBlankValue": true, "placeholder":"389","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
+            "SEARCH_BASE":{"label":"Search Base","description":"LDAP search base","type":"text","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
+            "ADMIN_DN":{"label":"Admin DN","description":"Some LDAP servers do not permit anonymous access. If necessary, provide an full DN for an administrative service account that has read-only access.","type":"text","config":"feeds","section":"people","omitBlankValue": true,"showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
+            "ADMIN_PASSWORD":{"label":"Admin Password","type":"password", "description":"If using a admin service account, include the password", "omitBlankValue": true,"config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
+            "SEARCH_TIMELIMIT":{"label":"Search timeout","type":"number","description":"Timeout (in seconds) for search queries","omitBlankValue": true,"placeholder":"30","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
+            "READ_TIMELIMIT":{"label":"Read timeout","type":"text", "description":"Timeout (in seconds) for read operations (operations that read the data from a specific record","omitBlankValue": true,"placeholder":"30","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
+            "DB_TYPE":{"label":"Database type","type":"select","description":"The type of database system to connect to. If <b>Default</b> then it will use the same values specified in the Site \"Database Configuration\" section","config":"feeds","section":"people","options":{"":"Default","mysql":"MySQL","sqlite":"SQLite"},"showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"omitBlankValue":true},
+            "DB_HOST":{"label":"Database host","type":"text","description":"The fully qualified hostname of the database server","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"omitBlankValue":true,"config":"feeds","section":"people"},
+            "DB_USER":{"label":"Database user","type":"text","description":"The username used to connect to the database server","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"omitBlankValue":true,"config":"feeds","section":"people"},
+            "DB_PASS":{"label":"Database password","type":"password","description":"The password used to connect to the database server","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"omitBlankValue":true,"config":"feeds","section":"people"},
+            "DB_DBNAME":{"label":"Database","type":"text","description":"The database used to store the user data on the database server","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"placeholder":"default","omitBlankValue":true,"config":"feeds","section":"people"},
+            "DB_FILE":{"label":"Database file","type":"file","description":"The location of the SQLite database file.","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","sqlite"],"omitBlankValue":true,"config":"feeds","section":"people"},
+            "DB_USER_TABLE":{"label":"User table","type":"text","description":"The table used to store user records.","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"users","omitBlankValue":true,"config":"feeds","section":"people"},
+            "DB_USERID_FIELD":{"label":"UserID field","type":"text","description":"Field used in the user table that contains usernames","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"userID","omitBlankValue":true,"config":"feeds","section":"people"},
+            "DB_EMAIL_FIELD":{"label":"User email field","type":"text","description":"Field used in the user table that contains email addresses","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"email","omitBlankValue":true,"config":"feeds","section":"people"},
+            "DB_FIRSTNAME_FIELD":{"label":"User first name field","type":"text","description":"Field used in the user table that contains user's first name","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"firstname","omitBlankValue":true,"config":"feeds","section":"people"},
+            "DB_LASTNAME_FIELD":{"label":"User last name field","type":"text","description":"Field used in the user table that contains user's last name","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"lastname","omitBlankValue":true,"config":"feeds","section":"people"}
+        }
     },
     "index": {
         "title":"Index Page",

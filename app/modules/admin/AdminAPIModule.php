@@ -96,7 +96,7 @@ class AdminAPIModule extends APIModule
                                     break;
                             }
                         }
-                    } else {
+                    } elseif (isset($field['config'], $field['section'])) {
                         $field['value'] = $module->getOptionalModuleVar($key, isset($field['default']) ? $field['default'] : '', $field['section'], $field['config']);
                     }
                     

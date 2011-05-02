@@ -119,6 +119,9 @@ class OAuthRequest
 		
 		switch ($this->signatureMethod)
 		{
+		    case 'PLAINTEXT':
+		        $sig = $key;
+		        break;
 		    case 'HMAC-SHA1':
         		$sig = base64_encode(hash_hmac('SHA1', $this->baseString, $key, true));
         		break;
@@ -175,7 +178,8 @@ class OAuthRequest
 	public function setSignatureMethod($signatureMethod) {
 	    if (!in_array($signatureMethod, array(
 	        'HMAC-SHA1',
-	        'RSA-SHA1'
+	        'RSA-SHA1',
+	        'PLAINTEXT'
             ))) {
             throw new Exception ("Invalid signature method $signatureMethod");
         }

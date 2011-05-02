@@ -1,4 +1,7 @@
 {include file="findInclude:common/templates/header.tpl"}
+<div class="peoplebuttons">
+{include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}  
+</div>
 
 {block name="detailsStart"}
 {/block}

@@ -385,6 +385,7 @@ JS;
                 'url' => $this->categoryURL($id),
                 );
         }
+        
         $this->assign('categories', $categories);
         return $categories;
     }

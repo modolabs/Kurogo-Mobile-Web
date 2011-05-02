@@ -46,7 +46,8 @@ class LoginWebModule extends WebModule {
             $authorityData['url'] = $this->buildURL('login', array(
                 'authority'=>$authorityIndex,
                 'url'=>$url,
-                'remainLoggedIn'=>$remainLoggedIn
+                'remainLoggedIn'=>$remainLoggedIn,
+                'startOver'=>1
             ));
             if ($USER_LOGIN=='FORM') {
                 $authenticationAuthorities['direct'][$authorityIndex] = $authorityData;
@@ -124,6 +125,15 @@ class LoginWebModule extends WebModule {
             }
         
             break;
+
+        case 'forgotpassword':
+            if ($forgetPasswordURL = $this->getOptionalModuleVar('FORGET_PASSWORD_URL')) {
+                header("Location: $forgetPasswordURL");
+                exit();
+            } else {
+                $this->redirectTo('index', array());
+            }
+            break;            
             
         case 'login':
             $login          = $this->argVal($_POST, 'loginUser', '');
@@ -147,9 +157,9 @@ class LoginWebModule extends WebModule {
 
             $this->assign('authority', $authorityIndex);
             $this->assign('remainLoggedIn', $remainLoggedIn);
+            $this->assign('authorityTitle', $authorityData['TITLE']);
 
             if ($authorityData['USER_LOGIN']=='FORM' && empty($login)) {
-                $this->assign('authorityTitle', $authorityData['TITLE']);
                 break;
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
                 $authority->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
@@ -169,23 +179,27 @@ class LoginWebModule extends WebModule {
                     }
                     break;
 
-                default:
-                    $this->assign('message', "We're sorry, but there was a problem with your sign-in. Please check your username and password and try again.");
+                case AUTH_OAUTH_VERIFY:
+                    $this->assign('verifierKey',$authority->getVerifierKey());
+                    $this->setTemplatePage('oauth_verify.tpl');
                     break;
+                    
+                default:
+                    if ($authorityData['USER_LOGIN']=='FORM') {
+                        $this->assign('message', "We're sorry, but there was a problem with your sign-in. Please check your username and password and try again.");
+                        $this->setTemplatePage('index');
+                    } else {
+                        $this->redirectTo('index', array_merge(
+                            array('message'=>"We're sorry, but there was a problem with your sign-in."),
+                            $options));
+                    }
             }
-
-            break;
-            
-        case 'forgotpassword':
-            if ($forgetPasswordURL = $this->getOptionalModuleVar('FORGET_PASSWORD_URL')) {
-                header("Location: $forgetPasswordURL");
-                exit();
-            } else {
-                $this->redirectTo('index', array());
-            }
-            break;
             
         case 'index':
+            if ($message = $this->getArg('message')) {
+                $this->assign('message', $message);
+            }
+            
             if ($this->isLoggedIn()) {
                 
                 if ($url) {

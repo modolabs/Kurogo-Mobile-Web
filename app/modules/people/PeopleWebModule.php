@@ -12,10 +12,26 @@ includePackage('People');
   */
 class PeopleWebModule extends WebModule {
     protected $id = 'people';
+    protected $bookmarkLinkTitle = 'Bookmarked People';
     private $detailFields = array();
     private $detailAttributes = array();
     protected $defaultController = 'LDAPPeopleController';
     protected $feeds=array();
+
+    protected function detailURLForBookmark($aBookmark) {
+        parse_str($aBookmark, $params);
+        return $this->buildBreadcrumbURL('detail', $params, true);
+    }
+
+    protected function getTitleForBookmark($aBookmark) {
+        parse_str($aBookmark, $params);
+        $titles = array($params['title']);
+        if (isset($params['subtitle'])) {
+            $titles[] = $params['subtitle'];
+        }
+        return $titles;
+        
+    }
   
     private function formatValues($values, $info) {
         if (isset($info['parse'])) {
@@ -74,7 +90,7 @@ class PeopleWebModule extends WebModule {
         return $detail;
     }
   
-    private function formatPersonDetail($person, $info, $key=0) {
+    private function formatPersonDetail(Person $person, $info, $key=0) {
         $section = array();
         
         if (count($info['attributes']) == 1) {
@@ -103,7 +119,7 @@ class PeopleWebModule extends WebModule {
         return $section;
     }
   
-    private function formatPersonDetails($person) {
+    private function formatPersonDetails(Person $person) {
         //error_log(print_r($this->detailFields, true));
         
         $details = array();    
@@ -168,6 +184,7 @@ class PeopleWebModule extends WebModule {
             throw new Exception("Error getting people feed for index $index");
         }
     }
+
   
     protected function initialize() {
         $this->feeds = $this->loadFeedData();
@@ -194,13 +211,22 @@ class PeopleWebModule extends WebModule {
           
                     if ($person) {
                         $this->assign('personDetails', $this->formatPersonDetails($person));
+                        $section = $this->formatPersonDetail($person, $this->detailFields['name']);
+                        // Bookmark
+                        $cookieParams = array(
+                            'title'   => htmlentities($section[0]['title']),
+                            'uid' => urlencode($uid)
+                        );
+        
+                        $cookieID = http_build_query($cookieParams);
+                        $this->generateBookmarkOptions($cookieID);
+                        break;
                     } else {
                         $this->assign('searchError', $PeopleController->getError());
                     }          
                 } else {
                     $this->assign('searchError', 'No username specified');
                 }
-                break;
         
             case 'search':
                 if ($filter = $this->getArg('filter')) {
@@ -254,10 +280,30 @@ class PeopleWebModule extends WebModule {
                   $this->redirectTo('index');
                 }
                 break;
+
+            case 'bookmarks':
+            	
+                $bookmarks = array();
+
+                foreach ($this->getBookmarks() as $aBookmark) {
+                    if ($aBookmark) { // prevent counting empty string
+                        $titles = $this->getTitleForBookmark($aBookmark);
+                        $subtitle = count($titles) > 1 ? $titles[1] : null;
+                        $bookmarks[] = array(
+                                'title' => $titles[0],
+                                'subtitle' => $subtitle,
+                                'url' => $this->detailURLForBookmark($aBookmark),
+                        );
+                    }
+                }
+                $this->assign('bookmarks', $bookmarks);
+            
+                break;
         
             case 'index':
                 $this->loadPageConfigFile('index', 'contacts');
                 $this->setAutoPhoneNumberDetection(false);
+                $this->generateBookmarkLink();
                 break;
         }  
     }

@@ -17,3 +17,6 @@ define('AUTH_USER_DISABLED', -3);
 /** Unknown server or i/o error */
 define('AUTH_ERROR', -4); // 
 
+/** Requires OAuth Verification code */
+define('AUTH_OAUTH_VERIFY', -5);
+

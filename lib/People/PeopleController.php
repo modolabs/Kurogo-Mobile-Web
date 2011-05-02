@@ -20,7 +20,8 @@ abstract class PeopleController
     public static function getPeopleControllers() {
         return array(
             ''=>'-',
-            'LDAPPeopleController'=>'LDAP'
+            'LDAPPeopleController'=>'LDAP',
+            'DatabasePeopleController'=>'Database'
         );
     }
 
@@ -102,6 +103,6 @@ abstract class Person
         if (array_key_exists($field, $this->attributes)) {
           return $this->attributes[$field];
         }
-        return array();
+        return NULL;
     }
 }

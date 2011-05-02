@@ -48,7 +48,13 @@ class CalendarDataController extends DataController
     
     public function setStartDate(DateTime $time)
     {
+        $clearCache = $this->startDate && $time->format('U') < $this->startTimestamp();
+        
         $this->startDate = $time;
+        
+        if ($clearCache) {
+          $this->clearInternalCache();
+        }
     }
     
     public function startTimestamp()
@@ -58,7 +64,13 @@ class CalendarDataController extends DataController
 
     public function setEndDate(DateTime $time)
     {
+        $clearCache = $this->endDate && $time->format('U') > $this->endTimestamp();
+        
         $this->endDate = $time;
+        
+        if ($clearCache) {
+          $this->clearInternalCache();
+        }
     }
 
     public function endTimestamp()
@@ -86,6 +98,7 @@ class CalendarDataController extends DataController
             case 'day':
             case 'month':
                 $this->endDate->modify(sprintf("%s%s %s", $duration>=0 ? '+' : '', $duration, $duration_units));
+                $this->clearInternalCache();
                 break;
             default:
                 throw new Exception("Invalid duration unit $duration_units");

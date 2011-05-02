@@ -12,6 +12,7 @@ class MapAPIModule extends APIModule
     protected $feedGroup = null;
     protected $feedGroups = null;
     protected $numGroups = 1;
+    protected $dataController;
 
     protected function arrayFromMapFeature(MapFeature $feature) {
         $category = $feature->getCategory();
@@ -223,7 +224,7 @@ class MapAPIModule extends APIModule
                     $controller->setCategory($id);
                     $category = array(
                         'id' => $controller->getCategory(),
-                        'title' => $controller->getTitle(),
+                        'title' => self::argVal($feedData, 'TITLE', $controller->getTitle()),
                         );
                     $category['subcategories'] = $controller->getAllCategoryNodes();
                     $categories[] = $category;
@@ -236,8 +237,8 @@ class MapAPIModule extends APIModule
             case 'places':
                 $categoryPath = $this->getCategoriesAsArray();
                 if ($categoryPath) {
-                    $dataController = $this->getDataController($categoryPath, $listItemPath);
-                    $listItems = $dataController->getListItems($listItemPath);
+                    $this->dataController = $this->getDataController($categoryPath, $listItemPath);
+                    $listItems = $this->dataController->getListItems($listItemPath);
                     $places = array();
                     foreach ($listItems as $listItem) {
                         if ($listItem instanceof MapFeature) {
@@ -258,6 +259,25 @@ class MapAPIModule extends APIModule
                     $this->setResponseVersion(1);
                 }
                 break;
+                
+            case 'detail':
+                $categoryPath = $this->getCategoriesAsArray();
+                $identifier = $this->getArg('id', null);
+                if ($categoryPath && $identifier) {
+                    $this->dataController = $this->getDataController($categoryPath, $listItemPath);
+                    $listItem = $this->dataController->getListItem($identifier);
+                    if ($listItem !== null) {
+                        $details = $this->arrayFromMapFeature($listItem);
+                        $this->setResponse($details);
+                    } else {
+                        // TODO define an error code for no results
+                        $error = new KurogoError(0, 'Place not found', null);
+                        $this->setResponseError($error);
+                    }
+                    $this->setResponseVersion(1);
+                }
+                break;
+                
             case 'search':
                 $this->initializeForSearch();
 

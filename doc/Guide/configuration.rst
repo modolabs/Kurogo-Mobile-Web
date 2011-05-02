@@ -252,6 +252,8 @@ Cookies
 * *LAYOUT_COOKIE_LIFESPAN* = How long to remember the device detection results for pagetype and platform.
   In production sites this should be set to a long time, like 1209600 (14 days)
 
+.. _database_config:
+
 --------
 Database
 --------

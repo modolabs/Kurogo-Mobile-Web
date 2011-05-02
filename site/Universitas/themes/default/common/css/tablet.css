@@ -340,6 +340,23 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 #footernav a img {
 }
 
+.loginbuttons {
+	margin-top: 0.75em;
+	margin-bottom: 0.75em;
+}
+
+.loginbuttons li {
+	padding-left: 42px;
+	background-size: 24px;
+	background-position: 10px;
+	background-repeat: no-repeat;
+}
+
+.loginbuttons a {
+	margin-left: -39px;
+	padding-left: 39px;
+}
+
 .loginbuttons li.facebook {
 	background-image: url(/common/images/button-facebook.png);
 }
