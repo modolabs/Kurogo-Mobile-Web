@@ -31,7 +31,7 @@ class LoginAPIModule extends APIModule
                     if ($authorityIndex) {
                       $authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex);
                     } else {
-                      $authority = $user->getAuthenticationAuthority());
+                      $authority = $user->getAuthenticationAuthority();
                     }
                     
                     $session->logout($authority, $hard);
