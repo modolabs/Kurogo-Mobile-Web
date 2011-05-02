@@ -23,9 +23,18 @@ class LoginAPIModule extends APIModule
                 if (!$this->isLoggedIn()) {
                     $this->redirectTo('session');
                 } else {
+                    $session = $this->getSession();
                     $user = $this->getUser();
-                    $authority = $user->getAuthenticationAuthority();
-                    $authority->logout($this);
+
+                    $hard = $this->getArg('hard', false);
+                    $authorityIndex = $this->getArg('authority', false);
+                    if ($authorityIndex) {
+                      $authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex);
+                    } else {
+                      $authority = $user->getAuthenticationAuthority());
+                    }
+                    
+                    $session->logout($authority, $hard);
                     $this->redirectTo('session');
                 }
 
