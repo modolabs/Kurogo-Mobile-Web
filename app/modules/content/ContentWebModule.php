@@ -65,20 +65,21 @@ abstract class ContentWebModule extends WebModule {
         switch ($this->page) {
             case 'index':
                 if (count($feeds)==1) {
-                    $this->redirectTo(key($feeds));
-                } 
+                    $this->page = key($feeds);
+                } else {
                 
-                $pages = array();
-                foreach ($feeds as $page=>$feedData) {
-                    $pages[] = array(
-                        'title'=>$feedData['TITLE'],
-                        'subtitle'=>isset($feedData['SUBTITLE']) ? $feedData['SUBTITLE'] : '',
-                        'url'=>$this->buildBreadCrumbURL($page, array())
-                    );
+                    $pages = array();
+                    foreach ($feeds as $page=>$feedData) {
+                        $pages[] = array(
+                            'title'=>$feedData['TITLE'],
+                            'subtitle'=>isset($feedData['SUBTITLE']) ? $feedData['SUBTITLE'] : '',
+                            'url'=>$this->buildBreadCrumbURL($page, array())
+                        );
+                    }
+                    
+                    $this->assign('contentPages', $pages);
+                    break;
                 }
-                
-                $this->assign('contentPages', $pages);
-                break;
             default:
                 if (!isset($feeds[$this->page])) {
                     $this->redirectTo('index');
