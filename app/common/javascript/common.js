@@ -1,5 +1,9 @@
 var currentTab;
 
+String.prototype.strip = function() {
+    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+}
+
 function showTab(strID, objTrigger) {
 // Displays the tab with ID strID
 	var objTab = document.getElementById(strID);
@@ -57,12 +61,9 @@ function setOrientation(orientation) {
     var body = document.getElementsByTagName("body")[0];
  
  //remove existing portrait/landscape class if there
-    if (body.className.match(new RegExp("(^|\\s)(portrait|landscape)(\\s|$)"))) {
-        body.className = body.className.replace(
-          new RegExp("(^|\\s+)(portrait|landscape)(\\s+|$)"), ' ');
-    }
-    
-    body.className += ' ' + orientation;
+    removeClass(body, 'portrait');
+    removeClass(body, 'landscape');
+    addClass(body, orientation);
 }
 
 
@@ -177,7 +178,7 @@ function addClass(ele,cls) {
 function removeClass(ele,cls) {
     if (hasClass(ele,cls)) {
         var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
-        ele.className=ele.className.replace(reg,' ');
+        ele.className=ele.className.replace(reg,' ').strip();
     }
 }
         
