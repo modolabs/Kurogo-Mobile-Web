@@ -104,3 +104,94 @@ function scrollToTop() {
   	containerScroller.scrollTo(0,0,0); 
   }
 }
+
+(function(window) {
+
+    function splitView (options) {
+      // set caller options
+        if (typeof options == 'object') {
+            for (var i in options) {
+                this.options[i] = options[i];
+            }
+        }
+      
+        if (window.addEventListener) {
+          window.addEventListener(RESIZE_EVENT, this, false);
+        } else if (window.attachEvent) {
+          window.attachEvent(RESIZE_EVENT, this);
+        }
+        
+        if (!document.getElementById(this.options.list) || !document.getElementById(this.options.detail)) {
+            return;
+        }
+
+        this.list = document.getElementById(this.options.list);
+        this.listScroller = new iScroll(this.options.list);
+        this.detail = document.getElementById(this.options.detail);
+        this.detailScroller = new iScroll(this.options.detail, {checkDOMChange: true});
+        
+        if ('content' in this.options) {
+            this.content = document.getElementById(this.options.content);
+        } else {
+            this.options.content = this.options.detail;
+            this.content = this.detail;
+        }
+        
+        var self = this;
+        
+        var links = this.list.getElementsByTagName('a');
+            var first = true;
+            for (var i=0;i<links.length;i++) {
+                if (!links[i].parentNode.className.match(/pagerlink/)) {
+                    links[i].onclick = function(e) {
+                        var selected = self.list.getElementsByTagName('a');
+                        for (var j=0;j<selected.length;j++) {
+                            removeClass(selected[j],'listSelected');
+                        }                    
+                        addClass(this,'listSelected');
+                        self.detailScroller.scrollTo(0,0);
+                        var httpRequest = new XMLHttpRequest();
+                        httpRequest.open("GET", this.href+'&ajax=1', true);
+                        httpRequest.onreadystatechange = function() {
+                            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                                self.content.innerHTML = httpRequest.responseText;
+                                self.detailScroller.refresh();
+                                moduleHandleWindowResize();
+                            }
+                        }
+                        showLoadingMsg(self.options.content);
+                        httpRequest.send(null);
+                        if (e) {
+                            e.preventDefault();
+                        }
+                    }
+                    if (first) {
+                        links[i].onclick();
+                        first = false;
+                    }
+                }
+            }
+    }
+
+    splitView.prototype = {
+        options: {},
+        listScroller: null,
+        detailScroller: null,
+        handleEvent: function (e) {
+            switch (e.type) {
+                case 'orientationchange':
+                case 'resize':
+                    break;
+            }
+        }
+    }
+
+    var RESIZE_EVENT = window.addEventListener ? 
+    ('onorientationchange' in window ? 
+    'orientationchange' :  // touch device
+    'resize')              // desktop browser
+    : ('onresize');          // IE
+    
+    window.splitView = splitView;
+
+})(window)

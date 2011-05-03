@@ -71,8 +71,7 @@ function showLoadingMsg(strID) {
 // Show a temporary loading message in the element with ID strID
 	var objToStuff = document.getElementById(strID);
 	if(objToStuff) {
-		objToStuff.style.height = objToStuff.offsetHeight + "px";
-		objToStuff.innerHTML = "<div class=\"loading\"><img src=\"../Webkit/images/loading.gif\" width=\"27\" height=\"21\" alt=\"\" align=\"absmiddle\" />Loading data...</div >";
+		objToStuff.innerHTML = "<div class=\"loading\"><img src=\"../common/images/loading.gif\" width=\"27\" height=\"21\" alt=\"\" align=\"absmiddle\" />Loading data...</div >";
 	}
 	onDOMChange();
 }

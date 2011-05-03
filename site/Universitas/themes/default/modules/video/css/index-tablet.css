@@ -6,7 +6,7 @@
 	font-weight: bold;
 }
 
-.results .videoSelected {
+.results .listSelected {
     background: #002558 url(/common/images/selected.png) repeat-x top left;
     color: white;
     border-radius: 0;
@@ -15,11 +15,11 @@
 }
 
 
-.results li.video a.videoSelected .ellipsis {
+.results li.video a.listSelected .ellipsis {
     color: #999;
 }
 
-.results li.video a.videoSelected .title {
+.results li.video a.listSelected .title {
     color: #ddd;
 }
 

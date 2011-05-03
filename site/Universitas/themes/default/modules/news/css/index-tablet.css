@@ -7,7 +7,7 @@
 }
 
 
-.results .newsSelected {
+.results .listSelected {
     background: #002558 url(/common/images/selected.png) repeat-x top left;
     color: white;
     border-radius: 0;
@@ -16,11 +16,11 @@
 }
 
 
-.results li.story a.newsSelected .ellipsis {
+.results li.story a.listSelected .ellipsis {
     color: #999;
 }
 
-.results li.story a.newsSelected .title {
+.results li.story a.listSelected .title {
     color: #ddd;
 }
 
