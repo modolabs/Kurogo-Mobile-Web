@@ -25,6 +25,7 @@ function moduleInit() {
                         moduleHandleWindowResize();
                     }
                 }
+                showLoadingMsg('storyDetail');
                 httpRequest.send(null);
                 if (e) {
                     e.preventDefault();
