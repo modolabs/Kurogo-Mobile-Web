@@ -76,7 +76,7 @@ form {
     display: inline;
 }
 
-#tabletNews {
+.landscape #tabletNews {
     -webkit-box-orient: horizontal;
     display: -webkit-box;
     height: 400px;
@@ -92,11 +92,25 @@ form {
 }
 
 .portrait #stories {
-    width: 257px;
+    width: auto;
+    height: 93px;
+    white-space: nowrap;
+    border: none;
+    border-bottom: 1px solid;
 }
 
+.portrait #stories .results {
+    white-space: nowrap;
+    position: absolute;
+    overflow: visible;
+    width: auto;
+    height: 93px;
+    margin: 0;
+    top: 0;
+    left: 0;
+}
 
-#storyDetailWrapper {
+.landscape #storyDetailWrapper {
     position: relative;
     border-top: 1px solid;
 	-webkit-box-flex:1;
@@ -112,8 +126,26 @@ form {
 }
 
 .portrait #stories li {
-    padding-left: .4em;
+    white-space: normal;
+    width: 200px;
+    display: block;
+    float: left;
+    border: none;
+    padding: 0;
 }
+
+.portrait #stories li a {
+    background-image: none;
+}
+
+.portrait #stories li .title {
+    padding: 0;
+}
+
+.portrait #stories li .ellipsis {
+    margin: .4em;
+}
+
 
 #stories .results {
     margin: 0;

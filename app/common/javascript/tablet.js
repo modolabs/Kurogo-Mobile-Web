@@ -56,6 +56,7 @@ function handleWindowResize(e) {
 } 
 
 function tabletInit() {
+   setOrientation(getOrientation());
     if(!document.getElementById('navbar')) {
         // page has no footer so do not attempt
         // to use fancy tablet container
@@ -125,8 +126,8 @@ function scrollToTop() {
             return;
         }
 
+        this.orientation = getOrientation();
         this.list = document.getElementById(this.options.list);
-        this.listScroller = new iScroll(this.options.list);
         this.detail = document.getElementById(this.options.detail);
         this.detailScroller = new iScroll(this.options.detail, {checkDOMChange: true});
         
@@ -140,40 +141,43 @@ function scrollToTop() {
         var self = this;
         
         var links = this.list.getElementsByTagName('a');
-            var first = true;
-            for (var i=0;i<links.length;i++) {
-                if (!links[i].parentNode.className.match(/pagerlink/)) {
-                    links[i].onclick = function(e) {
-                        var selected = self.list.getElementsByTagName('a');
-                        for (var j=0;j<selected.length;j++) {
-                            removeClass(selected[j],'listSelected');
-                        }                    
-                        addClass(this,'listSelected');
-                        self.detailScroller.scrollTo(0,0);
-                        var httpRequest = new XMLHttpRequest();
-                        httpRequest.open("GET", this.href+'&ajax=1', true);
-                        httpRequest.onreadystatechange = function() {
-                            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-                                self.content.innerHTML = httpRequest.responseText;
-                                self.detailScroller.refresh();
-                                moduleHandleWindowResize();
-                            }
-                        }
-                        showLoadingMsg(self.options.content);
-                        httpRequest.send(null);
-                        if (e) {
-                            e.preventDefault();
+        var first = true;
+        for (var i=0;i<links.length;i++) {
+            if (!links[i].parentNode.className.match(/pagerlink/)) {
+                links[i].onclick = function(e) {
+                    var selected = self.list.getElementsByTagName('a');
+                    for (var j=0;j<selected.length;j++) {
+                        removeClass(selected[j],'listSelected');
+                    }                    
+                    addClass(this,'listSelected');
+                    self.detailScroller.scrollTo(0,0);
+                    var httpRequest = new XMLHttpRequest();
+                    httpRequest.open("GET", this.href+'&ajax=1', true);
+                    httpRequest.onreadystatechange = function() {
+                        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                            self.content.innerHTML = httpRequest.responseText;
+                            self.detailScroller.refresh();
+                            moduleHandleWindowResize();
                         }
                     }
-                    if (first) {
-                        links[i].onclick();
-                        first = false;
+                    showLoadingMsg(self.options.content);
+                    httpRequest.send(null);
+                    if (e) {
+                        e.preventDefault();
                     }
                 }
+                if (first) {
+                    links[i].onclick();
+                    first = false;
+                }
             }
+        }
+
+        this.updateListScroller();
     }
 
     splitView.prototype = {
+        orientation: '',
         options: {},
         listScroller: null,
         detailScroller: null,
@@ -181,8 +185,46 @@ function scrollToTop() {
             switch (e.type) {
                 case 'orientationchange':
                 case 'resize':
+                    if (this.orientation != getOrientation()) {
+                        this.orientation = getOrientation();
+                        this.updateListScroller();
+                    }
                     break;
             }
+        },
+        updateListScroller: function() {
+            var self = this, options={};
+            switch (getOrientation()) {
+                case 'portrait':
+                    options.vScrollbar = false;
+                    options.hScrollbar = true;
+                    options.vScroll = false;
+                    options.hScroll = true;
+                    break;
+                case 'landscape':
+                    options.vScrollbar = true;
+                    options.hScrollbar = false;
+                    options.hScroll = false;
+                    options.vScroll = true;
+                    break;
+            }
+
+            if (this.listScroller) {
+                for (var i in options) {
+                    this.listScroller.options[i] = options[i];
+                }
+                
+                setTimeout(function() {
+                    self.listScroller.refresh();
+                    var selected = this.list.querySelector('.listSelected');
+                    if (selected) {
+                        self.listScroller.scrollToElement(selected.parentNode,0);
+                    }
+                },0);
+                return;
+            }
+            
+            this.listScroller = new iScroll(this.options.list, options);
         }
     }
 

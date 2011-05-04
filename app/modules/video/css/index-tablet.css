@@ -88,7 +88,7 @@ form {
 }
 
 
-#tabletVideos {
+.landscape #tabletVideos {
     -webkit-box-orient: horizontal;
     display: -webkit-box;
     height: 400px;
@@ -104,11 +104,25 @@ form {
 }
 
 .portrait #videos {
-    width: 257px;
+    width: auto;
+    height: 93px;
+    white-space: nowrap;
+    border: none;
+    border-bottom: 1px solid;
 }
 
+.portrait #videos .results {
+    white-space: nowrap;
+    position: absolute;
+    overflow: visible;
+    width: auto;
+    height: 93px;
+    margin: 0;
+    top: 0;
+    left: 0;
+}
 
-#videoDetailWrapper {
+.landscape #videoDetailWrapper {
     position: relative;
     border-top: 1px solid;
 	-webkit-box-flex:1;
@@ -123,7 +137,24 @@ form {
 }
 
 .portrait #videos li {
-    padding-left: .4em;
+    white-space: normal;
+    width: 200px;
+    display: block;
+    float: left;
+    border: none;
+    padding: 0;
+}
+
+.portrait #videos li a {
+    background-image: none;
+}
+
+.portrait #videos li .title {
+    padding: 0;
+}
+
+.portrait #videos li .ellipsis {
+    margin: .4em;
 }
 
 #videos .results {

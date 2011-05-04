@@ -44,17 +44,19 @@ function showTab(strID, objTrigger) {
 }
 
 function rotateScreen() {
-  // Switch stylesheet and viewport based on screen orientation
+  setOrientation(getOrientation());
+  setTimeout(scrollToTop, 500);
+}
+
+function getOrientation() {
   var width = document.documentElement.clientWidth || document.body.clientWidth;
   var height = document.documentElement.clientHeight || document.body.clientHeight;
   
   if (width > height) {
-    setOrientation('landscape');
+    return 'landscape';
   } else {
-    setOrientation('portrait');
+    return 'portrait';
   }
-
-  setTimeout(scrollToTop, 500);
 }
 
 function setOrientation(orientation) {
