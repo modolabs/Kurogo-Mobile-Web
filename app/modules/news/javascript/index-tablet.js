@@ -23,6 +23,8 @@ function moduleHandleWindowResize() {
         case 'landscape':
             document.getElementById('stories').style.height = contentHeight + 'px';
             document.getElementById('storyDetailWrapper').style.height = contentHeight + 'px';
+            var list = document.getElementById('stories').getElementsByTagName('li')[0].parentNode;
+            list.style.width = '';
             break;
         case 'portrait':
             document.getElementById('stories').style.height = '';
