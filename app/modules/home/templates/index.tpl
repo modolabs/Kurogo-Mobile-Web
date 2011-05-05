@@ -12,7 +12,11 @@
 
 {include file="findInclude:common/templates/header.tpl" customHeader=$banner scalable=false}
 
+{if $showFederatedSearch}
+{block name="federatedSearch"}
 {include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$strings.SITE_NAME}
+{/block}
+{/if}
 
 {if $displayType == 'springboard'}
   {include file="findInclude:common/templates/springboard.tpl" springboardItems=$modules springboardID="homegrid"}
