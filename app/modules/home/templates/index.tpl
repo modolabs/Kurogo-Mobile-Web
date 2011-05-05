@@ -36,7 +36,9 @@
   {/foreach}
 
   {include file="findInclude:common/templates/navlist.tpl" navlistItems=$primaryModules}
+  {if $secondaryModules}
   {include file="findInclude:common/templates/navlist.tpl" navlistItems=$secondaryModules accessKeyLink=false}
+  {/if}
 {/if}
 
 {block name="homeFooter"}
