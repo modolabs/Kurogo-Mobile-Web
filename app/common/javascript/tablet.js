@@ -166,7 +166,7 @@ function scrollToTop() {
                         e.preventDefault();
                     }
                 }
-                if (first) {
+                if (first && this.options.selectFirst) {
                     links[i].onclick();
                     first = false;
                 }
@@ -178,7 +178,9 @@ function scrollToTop() {
 
     splitView.prototype = {
         orientation: '',
-        options: {},
+        options: {
+            selectFirst: true
+        },
         listScroller: null,
         detailScroller: null,
         handleEvent: function (e) {
