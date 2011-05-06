@@ -4,7 +4,8 @@
         "description":"",
         "sectiontype":"fields",
         "fields":{
-            "MAX_RESULTS":{"label":"Stories per page","type":"number","config":"module","section":"module","description":"Maximum number of news stories to show per page","placeholder":10}
+            "MAX_RESULTS":{"label":"Stories per page","type":"number","config":"module","section":"module","description":"Maximum number of news stories to show per page","placeholder":10},
+            "SHARING_ENABLED":{"label":"Sharing Enabled", "description":"Enable sharing of items","config":"module","section":"module","type":"checkbox","default":1}
        }
     },
     "feeds": {

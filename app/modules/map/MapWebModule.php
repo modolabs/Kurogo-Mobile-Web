@@ -613,7 +613,9 @@ JS;
                             $this->assign('categories', $sorted_categories);
                             $this->assign('browseHint', "Select a $groupAlias (Closest first)");
                         }
-                        $this->generateBookmarkLink();
+                        if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                            $this->generateBookmarkLink();
+                        }
                     } else{
 
                        $js = $this->getJavascriptStringForLocationRedirection();
@@ -643,12 +645,17 @@ JS;
                     }
                     $this->assign('browseHint', "Browse {$browseBy} by:");
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
-                    $this->generateBookmarkLink();
+                    if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                        $this->generateBookmarkLink();
+                    }
                 }
 
                 break;
             
             case 'bookmarks':
+                if (!$this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    $this->redirectTo('index', array());
+                }
                 $feedGroups = array();
                 $places = array();
 
@@ -755,17 +762,19 @@ JS;
                 $dataController = $this->getDataControllerForMap($listItemPath);
                 $feature = $this->getFeatureForMap($dataController, $listItemPath);
     
-                if (isset($this->args['featureindex'])) { // this is a regular place
-                    $cookieParams = array(
-                        'category' => $this->args['category'],
-                        'featureindex' => $this->args['featureindex'],
-                        );
-                    $cookieID = http_build_query($cookieParams);
-                    $this->generateBookmarkOptions($cookieID);
-
-                } elseif (isset($this->args['group'])) {
-                    $cookieID = http_build_query(array('group' => $this->args['group']));
-                    $this->generateBookmarkOptions($cookieID);
+                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    if (isset($this->args['featureindex'])) { // this is a regular place
+                        $cookieParams = array(
+                            'category' => $this->args['category'],
+                            'featureindex' => $this->args['featureindex'],
+                            );
+                        $cookieID = http_build_query($cookieParams);
+                        $this->generateBookmarkOptions($cookieID);
+    
+                    } elseif (isset($this->args['group'])) {
+                        $cookieID = http_build_query(array('group' => $this->args['group']));
+                        $this->generateBookmarkOptions($cookieID);
+                    }
                 }
                 
                 $this->assign('name', $this->getArg('title', $feature->getTitle()));
