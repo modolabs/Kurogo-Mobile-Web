@@ -1,3 +1,4 @@
+{if $shareEmailURL || $shareURL}
 {if $shareEmailURL}
   <a href="{$shareEmailURL}">Email this article</a>
   {if $shareURL}&nbsp;|&nbsp;{/if}
@@ -8,3 +9,4 @@
   <a href="http://m.twitter.com/share?url={$shareURL}&amp;text={$shareRemark}&amp;Via=Harvard">Twitter</a>
 {/if}
 <br />
+{/if}

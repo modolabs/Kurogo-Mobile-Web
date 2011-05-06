@@ -1,3 +1,4 @@
+{if $shareEmailURL || $shareURL}
 <div id="share">
   <a onclick="showShare()"><img src="/common/images/share.png"/></a>
   <div id="sharesheet" style="display:none">
@@ -25,3 +26,4 @@
 		</div>
 	</div>
 </div>
+{/if}
