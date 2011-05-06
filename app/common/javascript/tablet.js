@@ -112,7 +112,15 @@ function scrollToTop() {
       // set caller options
         if (typeof options == 'object') {
             for (var i in options) {
-                this.options[i] = options[i];
+                switch (i) {
+                    case 'linkSelect':
+                    case 'actionForLink':
+                        this[i] = options[i];
+                        break;
+                    default:
+                        this.options[i] = options[i];
+                        break;
+                }
             }
         }
       
@@ -143,34 +151,15 @@ function scrollToTop() {
         var links = this.list.getElementsByTagName('a');
         var first = true;
         for (var i=0;i<links.length;i++) {
-            if (!links[i].parentNode.className.match(/pagerlink/)) {
-                links[i].onclick = function(e) {
-                    var selected = self.list.getElementsByTagName('a');
-                    for (var j=0;j<selected.length;j++) {
-                        removeClass(selected[j],'listSelected');
-                    }                    
-                    addClass(this,'listSelected');
-                    self.detailScroller.scrollTo(0,0);
-                    var httpRequest = new XMLHttpRequest();
-                    httpRequest.open("GET", this.href+'&ajax=1', true);
-                    httpRequest.onreadystatechange = function() {
-                        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-                            self.content.innerHTML = httpRequest.responseText;
-                            self.detailScroller.refresh();
-                            moduleHandleWindowResize();
-                        }
-                    }
-                    showLoadingMsg(self.options.content);
-                    httpRequest.send(null);
-                    if (e) {
-                        e.preventDefault();
-                    }
-                }
-                if (first && this.options.selectFirst) {
-                    links[i].onclick();
-                    first = false;
-                }
+            links[i].onclick = function(e) {
+                var action = self.actionForLink(this);
+                self[action](e, this);
             }
+
+            if (first && this.options.selectFirst) {
+                links[i].onclick();
+                first = false;
+            }        
         }
 
         this.updateListScroller();
@@ -180,6 +169,42 @@ function scrollToTop() {
         orientation: '',
         options: {
             selectFirst: true
+        },
+        baseActionForLink: function(link) {
+            if (link.parentNode.className.match(/pagerlink/)) {
+                return 'linkFollow';
+            }
+            
+            return 'linkSelect';
+        },
+        actionForLink: function(link) {
+            return this.baseActionForLink(link);
+        },
+        linkFollow: function(e, link) {
+            //just follow the link
+        },
+        linkSelect: function(e, link) {
+            //ajax fun
+            var self = this;
+            var selected = this.list.getElementsByTagName('a');
+            for (var j=0;j<selected.length;j++) {
+                removeClass(selected[j],'listSelected');
+            }
+            addClass(link,'listSelected');
+            this.detailScroller.scrollTo(0,0);
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.open("GET", link.href+'&ajax=1', true);
+            httpRequest.onreadystatechange = function() {
+                if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                    self.content.innerHTML = httpRequest.responseText;
+                    self.detailScroller.refresh();
+                    moduleHandleWindowResize();
+                }
+            }
+            showLoadingMsg(this.options.content);
+            httpRequest.send(null);
+            e && e.preventDefault();
+            return false;
         },
         listScroller: null,
         detailScroller: null,
