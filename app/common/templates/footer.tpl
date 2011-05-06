@@ -14,6 +14,8 @@
     {if $strings.COPYRIGHT_LINK}
       </a>
     {/if}
+   <br />
+   {block name="footerKurogo"}Powered by Kurogo{/block}
   {/capture}
 
   
