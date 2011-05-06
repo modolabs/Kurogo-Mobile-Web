@@ -17,7 +17,14 @@ body, th, td, li, option, select, input {
   border: none;
   border-width: 0 1px;
   height: 100%;
-  background-color: #f3f3f3;
+}
+
+#container {
+	background:none;
+}
+
+.inputcombo {
+	border-color:#999;
 }
 
 .focal, .nav, .results {
@@ -322,6 +329,9 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 
 #footernav {
   background: transparent url(/common/images/footernav-bg.png) repeat-x top left;
+  -webkit-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
 }
 
 #footernav .module {

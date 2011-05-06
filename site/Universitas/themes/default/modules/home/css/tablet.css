@@ -1,0 +1,15 @@
+.HomeModule #containerinset {
+	background-color:#cfd1d3;
+}
+
+.HomeModule .blockborder {
+	background-color: #fafbfc;
+}
+
+.HomeModule #navbar {
+	background: url(/common/images/navback-home.png) repeat-x;
+}
+
+.HomeModule .pagetitle {
+	color: #fff;
+}
