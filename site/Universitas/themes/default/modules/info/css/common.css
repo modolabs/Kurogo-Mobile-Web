@@ -154,11 +154,11 @@ table#features td h2 {
 #footer {
 	font-size: 11px;
 	padding: 5px 0 15px;
-	color: #fff;
+	color: #666;
 }
 
 #footer a, #footer a:visited {
-	color: #fff;
+	color: #666;
 	text-decoration: none;
 }
 

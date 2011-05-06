@@ -6,9 +6,9 @@
 
 {block name="header"}
   	<div id="utility_nav">
-    	<a href="http://www.universitas.edu" target="_blank">Universitas.edu</a>
+    	<a href="http://modolabs.com" target="_blank">Universitas.edu</a>
         &nbsp;|&nbsp;
-        <a href="http://news.universitas.edu/contact/#dComm" target="_blank">Contact</a>
+        <a href="http://modolabs.com/" target="_blank">Contact</a>
         &nbsp;|&nbsp;
         Share &nbsp; <a href="http://facebook.com/universitas" title="Facebook" target="_blank"><img src="/modules/info/images/facebook.png" alt="facebook"></a>  
 		&nbsp;
@@ -49,7 +49,7 @@
         	Download iPhone app 
             </td>
             <td>
-            <a href="http://itunes.apple.com/us/app/universitas-mobile/id389199460" target="_blank"><img src="/modules/info/images/AppStoreBadge.png" alt="Universitas Mobile iPhone App Download" width="90" height="31" /></a>
+            <a href="http://modolabs.com/framework" target="_blank"><img src="/modules/info/images/AppStoreBadge.png" alt="Universitas Mobile iPhone App Download" width="90" height="31" /></a>
             </td>
           </tr>
         </table>
@@ -64,12 +64,12 @@
         </p>
         
         <p>
-          <a id="feedback" href="mailto:dev@modolabs.edu">
+          <a id="feedback" href="mailto:dev@modolabs.com">
             <strong>Feedback</strong>
             <br />
             Find a bug? Want to recommend a feature? Your ideas and usage will 
             help inform future development. Please send your feedback to 
-            <span class="address">dev@modolabs.edu</span>.
+            <span class="address">dev@modolabs.com</span>.
           </a>
         </p>
         
@@ -126,6 +126,17 @@
           </tr>
           <tr>
             <td>
+              <img src="/modules/info/images/icons/video.png" alt="Video" />
+            </td>
+            <td>
+            <h2>Video</h2>
+            <p>
+            View YouTube videos posted by Universitas including special events, athletics and student organizations. 
+            </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <img src="/modules/info/images/icons/emergency.png" alt="Emergency" />
             </td>
             <td>
@@ -154,36 +165,8 @@
 {/block}
     
 {block name="footer"}
-  <span class="copyright">&copy; 2010 <a href="http://www.universitas.edu" target="_blank">Modo Labs, Inc.</a></span>
+  <span class="copyright">&copy; 2010 <a href="http://www.modolabs.com" target="_blank">Modo Labs, Inc.</a> Powered by Kurogo</span>
 {/block}
 
 {block name="footerJavascript"}
-  {literal}
-    var _sf_async_config={uid:2327,domain:"m.universitas.edu"};
-    (function(){
-      function loadChartbeat() {
-        window._sf_endpt=(new Date()).getTime();
-        var e = document.createElement('script');
-        e.setAttribute('language', 'javascript');
-        e.setAttribute('type', 'text/javascript');
-        e.setAttribute('src',
-           (("https:" == document.location.protocol) ? "https://s3.amazonaws.com/" : "http://") +
-           "static.chartbeat.com/js/chartbeat.js");
-        document.body.appendChild(e);
-      }
-      var oldonload = window.onload;
-      window.onload = (typeof window.onload != 'function') ?
-         loadChartbeat : function() { oldonload(); loadChartbeat(); };
-    })();
-    
-      // Google master profile start
-      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' 				type='text/javascript'%3E%3C/script%3E"));
-    
-      try {
-      var pageTracker = _gat._getTracker("UA-2923555-18");
-      pageTracker._trackPageview();
-      } catch(err) {}
-      // Google master profile end
-  {/literal}
 {/block}
