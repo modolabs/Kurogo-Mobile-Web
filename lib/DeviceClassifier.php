@@ -101,6 +101,9 @@ class DeviceClassifier {
          $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
          $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
      } catch (Exception $e) {
+        if (!in_array('sqlite', PDO::getAvailableDrivers())) {
+            die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
+        }
         error_log("Error with device detection");
         return false;
      }
