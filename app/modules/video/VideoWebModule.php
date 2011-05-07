@@ -144,12 +144,18 @@ class VideoWebModule extends WebModule
                 $this->assign('hiddenArgs',  $hiddenArgs);
                 $this->assign('maxPerPage',  $maxPerPage);
                  
-                $this->generateBookmarkLink();
+                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    $this->generateBookmarkLink();
+                }
                     
                 break;
  
             case 'bookmarks':
             	
+                if (!$this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    $this->redirectTo('index');
+                }
+                
                 $videos_bkms = array();
 
                 foreach ($this->getBookmarks() as $aBookmark) {
@@ -173,21 +179,23 @@ class VideoWebModule extends WebModule
             
                 if ($video = $controller->getItem($videoid)) {
                     $this->setTemplatePage('detail-' . $video->getType());
+                    $this->assign('ajax'      ,       $this->getArg('ajax', null));
                     $this->assign('videoTitle',       $video->getTitle());
-                    $this->assign('videoURL',         $video->getURL());
                     $this->assign('videoid',          $video->getID());
                     $this->assign('videoDescription', $video->getDescription());
                     $this->assign('videoAuthor'     , $video->getAuthor());
                     $this->assign('videoDate'       , $video->getPublished()->format('M n, Y'));
                     
                     $body = $video->getDescription() . "\n\n" . $video->getURL();
-                    
-                    $this->assign('shareEmailURL',    $this->buildMailToLink("", $video->getTitle(), $body));
-                    $this->assign('videoURL',         $video->getURL());
-                    $this->assign('shareRemark',      $video->getTitle());
-                    $this->assign('ajax'      ,       $this->getArg('ajax', null));
+
+                    if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
+                        $this->assign('shareEmailURL',    $this->buildMailToLink("", $video->getTitle(), $body));
+                        $this->assign('videoURL',         $video->getURL());
+                        $this->assign('shareRemark',      $video->getTitle());
+                    }
     
                       // Bookmark
+                    if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                       $cookieParams = array(
                         'section' => $section,
                         'title'   => $video->getTitle(),
@@ -196,6 +204,7 @@ class VideoWebModule extends WebModule
     
                       $cookieID = http_build_query($cookieParams);
                       $this->generateBookmarkOptions($cookieID);
+                    }
     
     
                 } else {

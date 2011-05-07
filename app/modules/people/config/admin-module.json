@@ -1,4 +1,12 @@
 {
+    "options": {
+        "title":"Options",
+        "description":"",
+        "sectiontype":"fields",
+        "fields":{
+            "BOOKMARKS_ENABLED":{"label":"Bookmarks Enabled", "description":"Enable bookmarking of people","config":"module","section":"module","type":"checkbox","default":1}
+       }
+    },
     "feeds": {
         "title":"Data Configuration",
         "description":"You can configure the source of your directory information.",

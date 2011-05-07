@@ -40,7 +40,8 @@ class XMLElement
     
     public function setValue($value, $strip_tags=false)
     {
-        $this->value = $strip_tags ? strip_tags($value) : html_entity_decode($value, ENT_COMPAT, $this->encoding);
+        $encoding = ($this->encoding !== null) ? $this->encoding : 'UTF-8';
+        $this->value = $strip_tags ? strip_tags($value) : html_entity_decode($value, ENT_COMPAT, $encoding);
     }
 
     public function appendValue($value)

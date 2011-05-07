@@ -179,8 +179,13 @@ class NewsWebModule extends WebModule {
           }
         }
 
-        $body = $story->getDescription()."\n\n".$story->getLink();
-        $shareEmailURL = $this->buildMailToLink("", $story->getTitle(), $body);
+        if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
+            $body = $story->getDescription()."\n\n".$story->getLink();
+            $shareEmailURL = $this->buildMailToLink("", $story->getTitle(), $body);
+            $this->assign('shareEmailURL', $shareEmailURL);
+            $this->assign('shareRemark',   $story->getTitle());
+            $this->assign('storyURL',      $story->getLink());
+        }
 
         $pubDate = strtotime($story->getProperty("pubDate"));
         $date = date("M d, Y", $pubDate);
@@ -188,10 +193,7 @@ class NewsWebModule extends WebModule {
         $this->enablePager($content, $this->feed->getEncoding(), $storyPage);
         
         $this->assign('date',          $date);
-        $this->assign('storyURL',      $story->getLink());
-        $this->assign('shareEmailURL', $shareEmailURL);
         $this->assign('title',         $story->getTitle());
-        $this->assign('shareRemark',   $story->getTitle());
         $this->assign('author',        $story->getAuthor());
         $this->assign('image',         $this->getImageForStory($story));
         $this->assign('ajax',          $this->getArg('ajax'));

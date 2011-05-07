@@ -9,7 +9,8 @@
             "ARCGIS_FEATURE_CACHE":{"label":"ArcGIS Feature Cache Folder","description":"Location of ArcGIS feature cache data","config":"module","section":"module","type":"file"},
             "WMS_CACHE":{"label":"WMS Cache Folder", "description":"Location of WMS cache data","config":"module","section":"module","type":"file"},
             "PROJ_CACHE":{"label":"Projector Cache Folder", "description":"Location of Projector cache data","config":"module","section":"module","type":"file"},
-            "DEFAULT_ZOOM_LEVEL":{"label":"Default Zoom Level", "description":"Default zoom level for maps when not specified by the feed","config":"module","section":"module","type":"text","placeholder":"10"}
+            "DEFAULT_ZOOM_LEVEL":{"label":"Default Zoom Level", "description":"Default zoom level for maps when not specified by the feed","config":"module","section":"module","type":"text","placeholder":"10"},
+            "BOOKMARKS_ENABLED":{"label":"Bookmarks Enabled", "description":"Enable bookmarking of places","config":"module","section":"module","type":"checkbox","default":1}
         }
     },    
     "feedgroups": {

@@ -34,7 +34,8 @@ class db {
             'DB_USER'=>$config->getVar('DB_USER'),
             'DB_PASS'=>$config->getVar('DB_PASS'),
             'DB_DBNAME'=>$config->getVar('DB_DBNAME'),   
-            'DB_FILE'=>$config->getVar('DB_FILE')
+            'DB_FILE'=>$config->getVar('DB_FILE'),
+            'DB_CREATE'=>$config->getOptionalVar('DB_CREATE')
         );
     }
 

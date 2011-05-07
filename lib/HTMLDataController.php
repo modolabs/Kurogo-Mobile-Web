@@ -44,8 +44,10 @@ class HTMLDataController extends DataController
         if ($dom = $this->getParsedData()) {
             if ($element = $dom->getElementsByTagName('body')->item(0)) {
                 $content = $dom->saveXML($element);
+                $content = preg_replace("#</?body.*?>#", "", $content);
+            } else {
+                $content = $this->getData();
             }
-            
         }
         
         return $content;

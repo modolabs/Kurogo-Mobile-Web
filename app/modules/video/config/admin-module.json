@@ -4,7 +4,9 @@
         "description":"",
         "sectiontype":"fields",
         "fields":{
-            "MAX_RESULTS":{"label":"Videos per page","type":"number","config":"module","section":"module","description":"Maximum number of videos to show per page"}
+            "MAX_RESULTS":{"label":"Videos per page","type":"number","config":"module","section":"module","description":"Maximum number of videos to show per page"},
+            "SHARING_ENABLED":{"label":"Sharing Enabled", "description":"Enable sharing of videos","config":"module","section":"module","type":"checkbox","default":1},
+            "BOOKMARKS_ENABLED":{"label":"Bookmarks Enabled", "description":"Enable bookmarking of videos","config":"module","section":"module","type":"checkbox","default":1}
        }
     },
     "feeds": {

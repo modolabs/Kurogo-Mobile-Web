@@ -213,13 +213,15 @@ class PeopleWebModule extends WebModule {
                         $this->assign('personDetails', $this->formatPersonDetails($person));
                         $section = $this->formatPersonDetail($person, $this->detailFields['name']);
                         // Bookmark
-                        $cookieParams = array(
-                            'title'   => htmlentities($section[0]['title']),
-                            'uid' => urlencode($uid)
-                        );
-        
-                        $cookieID = http_build_query($cookieParams);
-                        $this->generateBookmarkOptions($cookieID);
+                        if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                            $cookieParams = array(
+                                'title'   => htmlentities($section[0]['title']),
+                                'uid' => urlencode($uid)
+                            );
+            
+                            $cookieID = http_build_query($cookieParams);
+                            $this->generateBookmarkOptions($cookieID);
+                        }
                         break;
                     } else {
                         $this->assign('searchError', $PeopleController->getError());
@@ -282,7 +284,9 @@ class PeopleWebModule extends WebModule {
                 break;
 
             case 'bookmarks':
-            	
+                if (!$this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {            	
+                    $this->redirectTo('index');
+                }
                 $bookmarks = array();
 
                 foreach ($this->getBookmarks() as $aBookmark) {
@@ -303,7 +307,9 @@ class PeopleWebModule extends WebModule {
             case 'index':
                 $this->loadPageConfigFile('index', 'contacts');
                 $this->setAutoPhoneNumberDetection(false);
-                $this->generateBookmarkLink();
+                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    $this->generateBookmarkLink();
+                }
                 break;
         }  
     }
