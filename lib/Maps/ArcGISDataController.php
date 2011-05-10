@@ -100,6 +100,10 @@ class ArcGISDataController extends MapDataController
     
     protected function init($args) {
         parent::init($args);
+
+        if (isset($args['ARCGIS_LAYER_ID']))
+            $this->parser->setDefaultLayer($args['ARCGIS_LAYER_ID']);
+
         $this->addFilter('f', 'json');
     }
     
