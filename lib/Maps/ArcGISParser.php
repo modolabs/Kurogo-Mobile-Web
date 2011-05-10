@@ -576,7 +576,7 @@ class ArcGISLayer implements MapFolder, MapListElement {
             'where'          => '',
             'returnGeometry' => 'true',
             'outSR'          => '',
-            'outFields'      => implode(',', array_keys($this->fieldNames)),
+            //'outFields'      => implode(',', array_keys($this->fieldNames)),
             'f'              => 'json',
         );
         
