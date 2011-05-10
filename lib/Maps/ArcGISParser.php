@@ -415,7 +415,11 @@ class ArcGISLayer implements MapFolder, MapListElement {
     private $extent;
     private $minScale;
     private $maxScale;
+
+    private $idField;
+    private $geometryField;
     private $displayField;
+
     private $spatialRef;
     private $geometryType;
     private $isInitialized = false;
@@ -490,6 +494,14 @@ class ArcGISLayer implements MapFolder, MapListElement {
             $this->spatialRef = $data['extent']['spatialReference']['wkid'];
 
             foreach ($data['fields'] as $fieldInfo) {
+                if ($fieldInfo['type'] == 'esriFieldTypeOID') {
+                    $this->idField = $fieldInfo['name'];
+                    continue;
+                } else if ($fieldInfo['type'] == 'esriFieldTypeGeometry') {
+                    $this->geometryField = $fieldInfo['name'];
+                    continue;
+                }
+
                 // often the field names will be full paths to SQL tables,
                 // as in database.table or server.scheme.database.table
                 //$nameRefParts = explode('.', $fieldInfo['name']);
@@ -576,7 +588,7 @@ class ArcGISLayer implements MapFolder, MapListElement {
             'where'          => '',
             'returnGeometry' => 'true',
             'outSR'          => '',
-            //'outFields'      => implode(',', array_keys($this->fieldNames)),
+            'outFields'      => implode(',', array_values($this->fieldNames)),
             'f'              => 'json',
         );
         
