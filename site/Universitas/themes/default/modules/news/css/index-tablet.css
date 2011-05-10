@@ -50,6 +50,7 @@
 	padding: 0 0 0 10px;
 }
 
+
 .portrait #stories .results .pagerlink a {
 	height: 60%;
 	padding: 45px 10px 0 10px;
@@ -87,6 +88,12 @@
 	-webkit-box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
 	-moz-box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
 	box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
+}
+
+
+.landscape #stories .results .pagerlink {
+	padding-top: 15px;
+	padding-bottom: 15px;
 }
 
 .landscape #stories .results .story {

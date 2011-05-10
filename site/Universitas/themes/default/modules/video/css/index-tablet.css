@@ -91,6 +91,11 @@
 	box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
 }
 
+.landscape #videos .results .pagerlink {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
 .landscape #videos .results .video {
 	height: 6.6em;
 }
