@@ -187,7 +187,7 @@ class LoginWebModule extends WebModule {
                 default:
                     if ($authorityData['USER_LOGIN']=='FORM') {
                         $this->assign('message', "We're sorry, but there was a problem with your sign-in. Please check your username and password and try again.");
-                        $this->setTemplatePage('index');
+                        break 2;
                     } else {
                         $this->redirectTo('index', array_merge(
                             array('message'=>"We're sorry, but there was a problem with your sign-in."),

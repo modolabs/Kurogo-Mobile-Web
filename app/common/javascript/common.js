@@ -193,6 +193,9 @@ function toggleClass(ele, cls) {
 
 // Share-related functions
 function showShare() {
+    if (!document.getElementById("sharesheet")) {
+        return;
+    }
 	document.getElementById("sharesheet").style.display="block";
 	document.addEventListener('touchmove', doNotScroll, true);
 	var iframes = document.getElementsByTagName('iframe');
@@ -202,6 +205,9 @@ function showShare() {
 	window.scrollTo(0,0);
 }
 function hideShare() {
+    if (!document.getElementById("sharesheet")) {
+        return;
+    }
 	document.getElementById("sharesheet").style.display="none";
 	document.removeEventListener('touchmove', doNotScroll, true);
 	var iframes = document.getElementsByTagName('iframe');

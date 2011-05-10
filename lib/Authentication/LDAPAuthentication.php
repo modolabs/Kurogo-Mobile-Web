@@ -126,6 +126,61 @@ class LDAPAuthentication extends AuthenticationAuthority
         }
     }
 
+    public function findUsers($filter) {
+
+        $ldap = $this->connectToServer();
+        if (!$ldap) {
+            return array();
+        }
+        
+        /*
+            some servers don't permit anonymous searches so we need to bind as a valid user 
+             Note: it does not, and should not be an account with administrative privilages. 
+                    Usually a regular service account will suffice
+        */
+        if ($this->ldapAdminDN) {
+            if (!ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
+                error_log("Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap));
+                return array();
+            }
+        }
+        
+        $search = ldap_search($ldap, $this->ldapSearchBase('user'), $filter);
+        $users = array();
+        if ($search) {
+            $result = ldap_get_entries($ldap, $search);
+            for ($u=0; $u<$result['count']; $u++) {
+
+                $entry = $result[$u];
+                $user = new $this->userClass($this);
+                $user->setDN($entry['dn']);
+
+                // single value attributes expect a maximum of one value
+                $singleValueAttributes = $user->singleValueAttributes();
+                for ($i=0; $i<$entry['count']; $i++) {
+                    $attrib = $entry[$i];
+                    
+                    if (in_array($attrib, $singleValueAttributes)) {
+                        $value = $entry[$attrib][0];
+                    } else {
+                        $value = $entry[$attrib];
+                        unset($value['count']);
+                    }
+                    
+                    $user->setAttribute($attrib, $value);
+                }
+                
+                $users[] = $user;
+            }
+
+        } else {
+            error_log("Error searching LDAP Server $this->ldapServer for $filter");
+        }
+        
+        return $users;
+    
+    }
+
     public function getUser($login)
     {
         // don't try if it's empty
