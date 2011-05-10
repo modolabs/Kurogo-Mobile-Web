@@ -156,7 +156,7 @@ function scrollToTop() {
                 self[action](e, this);
             }
 
-            if (first && this.options.selectFirst) {
+            if (first && this.options.selectFirst && this.actionForLink(links[i])=='linkSelect') {
                 links[i].onclick();
                 first = false;
             }        
@@ -185,6 +185,7 @@ function scrollToTop() {
         },
         linkSelect: function(e, link) {
             //ajax fun
+            hideShare();
             var self = this;
             var selected = this.list.getElementsByTagName('a');
             for (var j=0;j<selected.length;j++) {
