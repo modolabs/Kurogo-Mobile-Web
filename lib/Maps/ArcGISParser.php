@@ -252,7 +252,9 @@ class ArcGISParser extends DataParser implements MapFolder
             }
 
             $this->serviceDescription = $data['serviceDescription'];
-            $this->supportedImageFormats = explode(',', $data['supportedImageFormatTypes']);
+            if (isset($data['supportedImageFormatTypes'])) {
+                $this->supportedImageFormats = explode(',', $data['supportedImageFormatTypes']);
+            }
             $this->units = $data['units'];
             $this->mapName = $data['mapName'];
 
