@@ -81,6 +81,11 @@ class PeopleWebModule extends WebModule {
                 $detail['class'] = 'map';
                 break;
         }
+        
+        if (isset($info['urlfunc'])) {
+            $urlFunction = create_function('$value,$person', $info['urlfunc']);
+            $detail['url'] = $urlFunction($value, $person);
+        }
     
         $detail['title'] = str_replace('$', '<br />', $detail['title']); // $ is the LDAP multiline char
         return $detail;
