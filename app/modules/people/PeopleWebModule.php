@@ -188,7 +188,7 @@ class PeopleWebModule extends WebModule {
         foreach($this->detailFields as $field => $info) {
             $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
         }
-        $this->detailAttributes = array_unique($this->detailAttributes);
+        $this->detailAttributes = array_values(array_unique($this->detailAttributes));
     }
 
     protected function initializeForPage() {
