@@ -75,12 +75,8 @@ class PeopleWebModule extends WebModule {
                 break;
         
             case 'map':
-                // Only send the next-to-last line of the address to the map module
-                $lines = explode('$', $value);
-                $count = count($lines);
-                $linkAddress = ($count > 1) ? $lines[$count - 2] : $value;
                 $detail['url'] = self::buildURLForModule('map', 'search', array(
-                      'filter' => $linkAddress
+                      'filter' => $value
                 ));
                 $detail['class'] = 'map';
                 break;
