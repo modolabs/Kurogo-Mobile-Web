@@ -1,4 +1,25 @@
 var currentTab;
+var orientationMethod;
+var orientationIsFlipped=false;
+
+// detect how we are detecting orientation
+(function (window) {
+    if (!('orientation' in window)) {
+        window.orientationMethod = 'size';
+        return;
+    }
+
+    window.orientationMethod = 'orientation';
+    var width = document.documentElement.clientWidth || document.body.clientWidth;
+    var height = document.documentElement.clientHeight || document.body.clientHeight;
+  
+    // check if window dimensions matches traditional definition of window.orientation
+    if (width < height) { // portrait
+        if (window.orientation != 0 && window.orientation != 180) {
+            window.orientationIsFlipped = true;
+        }
+    }
+})(window);
 
 String.prototype.strip = function() {
     return this.replace(/^\s+/, '').replace(/\s+$/, '');
@@ -49,14 +70,27 @@ function rotateScreen() {
 }
 
 function getOrientation() {
-  var width = document.documentElement.clientWidth || document.body.clientWidth;
-  var height = document.documentElement.clientHeight || document.body.clientHeight;
-  
-  if (width > height) {
-    return 'landscape';
-  } else {
-    return 'portrait';
-  }
+    switch (window.orientationMethod) {
+        case 'size':
+            var width = document.documentElement.clientWidth || document.body.clientWidth;
+            var height = document.documentElement.clientHeight || document.body.clientHeight;
+
+            return (width > height) ? 'landscape' : 'portrait';
+            break;
+
+        case 'orientation':
+            switch (window.orientation) {
+                case 0:
+                case 180:
+                    return window.orientationIsFlipped ? 'landscape' : 'portrait';
+                    break;
+                
+                case 90:
+                case -90:
+                    return window.orientationIsFlipped ? 'portrait': 'landscape';
+                    break;
+            }
+    }
 }
 
 function setOrientation(orientation) {
