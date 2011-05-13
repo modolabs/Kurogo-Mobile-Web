@@ -25,6 +25,7 @@ abstract class DataController
     protected $debugMode=false;
     protected $useCache=true;
     protected $cacheLifetime=900;
+    protected $proxyContext = null;
     
     /**
      * This method should return a single item based on the id
@@ -209,6 +210,21 @@ abstract class DataController
         if (isset($args['CACHE_LIFETIME'])) {
             $this->setCacheLifetime($args['CACHE_LIFETIME']);
         }
+
+        // configure http and https proxy
+        if(Kurogo::getOptionalSiteSection('data_controller')) {
+            $proxyConfigs = array_merge(Kurogo::getOptionalSiteSection('data_controller'), $args);
+        } else {
+            $proxyConfigs = $args;
+        }
+        $opts = array();
+        if(isset($proxyConfigs['HTTP_PROXY_URL'])) {
+            $opts['http'] = array('proxy' => $proxyConfigs['HTTP_PROXY_URL'], 'request_fulluri'=> TRUE);
+        }
+        if(isset($proxyConfigs['HTTPS_PROXY_URL'])) {
+            $opts['https'] = array('proxy' => $proxyConfigs['HTTPS_PROXY_URL'], 'request_fulluri'=> TRUE);
+        }
+        $this->proxyContext = stream_context_create($opts);
     }
 
     /**
@@ -380,8 +396,9 @@ abstract class DataController
         if ($this->debugMode) {
             error_log(sprintf(__CLASS__ . " Retrieving %s", $url));
         }
-        
-        $data = file_get_contents($url); 
+
+
+        $data = file_get_contents($url, false, $this->proxyContext);
 
         if ($this->debugMode) {
             file_put_contents($this->cacheMetaFile(), $url);
