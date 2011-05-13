@@ -195,6 +195,26 @@ class PeopleWebModule extends WebModule {
         }
         $this->detailAttributes = array_values(array_unique($this->detailAttributes));
     }
+    
+    public function getPeopleController($feed='people') {
+        return $this->getFeed($feed);
+    }
+
+    public function getPersonURL(Person $person) {
+    
+        return $this->buildBreadcrumbURL('detail', array(
+                                            'uid'    => $person->getId(),
+                                            'filter' => $this->getArg('filter')
+                                        
+        ));
+    }
+
+    public function getPersonTitle(Person $person) {
+        $section = $this->formatPersonDetail($person, $this->detailFields['name']);
+                                  
+        return htmlentities($section[0]['title']);
+    }
+    
 
     protected function initializeForPage() {
 
@@ -302,7 +322,6 @@ class PeopleWebModule extends WebModule {
                     }
                 }
                 $this->assign('bookmarks', $bookmarks);
-            
                 break;
         
             case 'index':
