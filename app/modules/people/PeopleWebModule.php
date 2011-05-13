@@ -75,15 +75,16 @@ class PeopleWebModule extends WebModule {
                 break;
         
             case 'map':
-                // Only send the next-to-last line of the address to the map module
-                $lines = explode('$', $value);
-                $count = count($lines);
-                $linkAddress = ($count > 1) ? $lines[$count - 2] : $value;
                 $detail['url'] = self::buildURLForModule('map', 'search', array(
-                      'filter' => $linkAddress
+                      'filter' => $value
                 ));
                 $detail['class'] = 'map';
                 break;
+        }
+        
+        if (isset($info['urlfunc'])) {
+            $urlFunction = create_function('$value,$person', $info['urlfunc']);
+            $detail['url'] = $urlFunction($value, $person);
         }
     
         $detail['title'] = str_replace('$', '<br />', $detail['title']); // $ is the LDAP multiline char
@@ -192,7 +193,7 @@ class PeopleWebModule extends WebModule {
         foreach($this->detailFields as $field => $info) {
             $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
         }
-        $this->detailAttributes = array_unique($this->detailAttributes);
+        $this->detailAttributes = array_values(array_unique($this->detailAttributes));
     }
 
     protected function initializeForPage() {

@@ -544,26 +544,6 @@ JS;
       return $distInKm;
     }
 
-    // TODO: move this to the common.js file
-    protected function getJavascriptStringForLocationRedirection() {
-        return 'if (typeof navigator.geolocation == \'undefined\') {'.
-                            'document.location.replace(\'index?redirected=yes\') }' .
-                            'else {' .
-                            'navigator.geolocation.getCurrentPosition(foundLocation, noLocation);
-                             }' .
-
-
-                    'function foundLocation(location) {' .
-                             'var curLat = location.coords.latitude;' .
-                             'var curLon = location.coords.longitude;' .
-                              'document.location.replace(\'index?redirected=yes&' .
-                                  'lon=\' + escape(curLon) + \'&lat=\' + escape(curLat))};' .
-
-                    'function noLocation() {' .
-                        'document.location.replace(\'index?redirected=yes\');
-                    }';
-    }
-
     protected function initializeForPage() {
 
         switch ($this->page) {
@@ -598,14 +578,15 @@ JS;
 
                     // only display categories in a list if the current location attempt has been made
                     // and a redirection has occured.
-                    if ($redirectedWithLocation) {
+                    if (isset($_COOKIE['map_lat'], $_COOKIE['map_long'])) {
                         $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS', 'Campus');
                         $this->assign('browseHint', "Select a $groupAlias");
                         $this->assign('categories', $categories);
                         $this->assign('searchTip', NULL);
-                            
-                        $latitude = $this->getArg('lat');
-                        $longitude = $this->getArg('lon');
+                        
+                        
+                        $latitude = $_COOKIE['map_lat'];
+                        $longitude = $_COOKIE['map_long'];
     
                         // if current lat/lon were found and valid, sort the categories based on that.
                         if (is_numeric($latitude) && is_numeric($longitude)) {
@@ -616,10 +597,8 @@ JS;
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                             $this->generateBookmarkLink();
                         }
-                    } else{
-
-                       $js = $this->getJavascriptStringForLocationRedirection();
-                       $this->addInlineJavascript($js);
+                    } else {
+                        $this->assign('gettingLocation', true);
                     }
                     
                 } else {
@@ -748,6 +727,19 @@ JS;
                     }
                     $this->assign('title',  $dataController->getTitle());
                     $this->assign('places', $places);          
+                    
+                    if ($this->numGroups > 1) {
+                        $categories = $this->assignCategories();
+                        if (count($categories)==1) {
+                            $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS_PLURAL', 'Campuses');
+                            $clearLink = array(array(
+                                'title' => "All $groupAlias",
+                                'url' => $this->groupURL(''),
+                                ));
+                            $this->assign('clearLink', $clearLink);
+                        }
+                    }
+                    
                   
                 } else {
                       $this->redirectTo('index');

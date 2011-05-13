@@ -523,7 +523,7 @@ class CalendarWebModule extends WebModule {
         $events = array();
         
         if (strlen($catid) > 0) {
-            $feed = $this->getFeed($type, $user); // this allows us to have multiple feeds in the future
+            $feed = $this->getFeed($calendar, $type); // this allows us to have multiple feeds in the future
             $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
             $start->setTime(0,0,0);
             $end = clone $start;

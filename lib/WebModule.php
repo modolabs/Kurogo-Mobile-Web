@@ -746,6 +746,7 @@ abstract class WebModule extends Module {
     
     protected function generateBookmarkLink() {
         $hasBookmarks = count($this->getBookmarks()) > 0;
+        $bookmarkLink = array();
         if ($hasBookmarks) {
             $bookmarkLink = array(array(
                 'title' => $this->bookmarkLinkTitle,
@@ -754,6 +755,7 @@ abstract class WebModule extends Module {
             $this->assign('bookmarkLink', $bookmarkLink);
         }
         $this->assign('hasBookmarks', $hasBookmarks);
+        return $bookmarkLink;
     }    
   
   //

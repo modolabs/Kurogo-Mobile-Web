@@ -128,6 +128,9 @@ function getMinifyGroupsConfig() {
 
   $cache = new DiskCache(CACHE_DIR.'/minify', 30, true);
   $cacheName = "group_$key";
+  if ($configModule) {
+    $cacheName .= "-$configModule";
+  }
   
   if ($cache->isFresh($cacheName)) {
     $minifyConfig = $cache->read($cacheName);
