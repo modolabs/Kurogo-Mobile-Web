@@ -128,7 +128,7 @@ abstract class Module
         }
 
         if ((Kurogo::getOptionalSiteVar('SECURE_REQUIRED') || $this->getModuleVar('secure','module')) && 
-            (!isset($_SERVER['HTTPS']) || ($_SERVER['HTTPS'] !='on'))) { 
+            (!isset($_SERVER['HTTPS']) || (strtolower($_SERVER['HTTPS']) !='on'))) { 
             $this->secureModule();
         }
         
