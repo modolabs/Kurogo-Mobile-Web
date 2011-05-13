@@ -114,14 +114,14 @@ class ArcGISDataController extends MapDataController
         $oldBaseURL = $this->baseURL;
         $this->parser->setBaseURL($oldBaseURL);
         $this->baseURL = $this->parser->getURLForLayerFeatures();
-        
+        $this->addFilter('text', $searchText);
         $data = $this->getData();
         $this->parseData($data);
         
         // restore previous state
         $this->baseURL = $oldBaseURL;
         
-        return $this->items();
+        return $this->getAllLeafNodes();
     }
     
     public function searchByProximity($center, $tolerance, $maxItems) {
