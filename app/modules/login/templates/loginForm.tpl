@@ -3,7 +3,7 @@
 <input type="hidden" name="startOver" value="1" />
 {if $authority}
 {if !$message}
-<p class="nonfocal">To access {$strings.SITE_NAME}, please sign in.</p>
+<p class="nonfocal">{if $moduleStrings.LOGIN_DIRECT_MESSAGE}{$moduleStrings.LOGIN_DIRECT_MESSAGE}{else}To access {$strings.SITE_NAME}, please sign in.{/if}</p>
 {/if}
 <input type="hidden" name="authority" value="{$authority}" />
 <div class="focal">
@@ -32,7 +32,7 @@
 <p class="nonfocal">or</p>
 <h3 class="nonfocal">Use your account with an external service</h3>
 {/if}
-<p class="smallprint nonfocal">Once you've signed in, you'll be returned to {$strings.SITE_NAME}.</p>
+<p class="smallprint nonfocal">{if $moduleStrings.LOGIN_INDIRECT_MESSAGE}{$moduleStrings.LOGIN_INDIRECT_MESSAGE}{else}Once you've signed in, you'll be returned to {$strings.SITE_NAME}.{/if}</p>
 
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$authenticationAuthorities.indirect  navlistClass="loginbuttons" navlistID="indirectList"}
 {/if}
