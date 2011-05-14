@@ -244,9 +244,11 @@ function scrollToTop() {
                 
                 setTimeout(function() {
                     self.listScroller.refresh();
-                    var selected = this.list.querySelector('.listSelected');
-                    if (selected) {
-                        self.listScroller.scrollToElement(selected.parentNode,0);
+                    var items = self.list.getElementsByTagName('a');
+                    for (var i=0;i<items.length; i++) {
+                        if (hasClass(items[i],'listSelected')) {
+                            self.listScroller.scrollToElement(items[i].parentNode,0);
+                        }
                     }
                 },0);
                 return;

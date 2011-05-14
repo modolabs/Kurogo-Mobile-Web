@@ -18,6 +18,10 @@ var orientationIsFlipped=false;
         if (window.orientation != 0 && window.orientation != 180) {
             window.orientationIsFlipped = true;
         }
+    } else {
+        if (window.orientation != 90 && window.orientation != 90) {
+            window.orientationIsFlipped = true;
+        }
     }
 })(window);
 
