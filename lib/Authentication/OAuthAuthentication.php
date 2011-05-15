@@ -173,6 +173,16 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $this->tokenSessionVar = sprintf("%s_token", $this->getAuthorityIndex());
         $this->tokenSecretSessionVar = sprintf("%s_tokenSecret", $this->getAuthorityIndex());
 
+        // fixed token
+        if (isset($args['OAUTH_TOKEN'])) {
+            $this->setToken($args['OAUTH_TOKEN']);
+        }
+        
+        // fixed token secret
+        if (isset($args['OAUTH_TOKEN_SECRET'])) {
+            $this->setTokenSecret($args['OAUTH_TOKEN_SECRET']);
+        }
+
         if (isset($_SESSION[$this->tokenSessionVar], $_SESSION[$this->tokenSecretSessionVar])) {
             $this->setToken($_SESSION[$this->tokenSessionVar]);
             $this->setTokenSecret($_SESSION[$this->tokenSecretSessionVar]);
