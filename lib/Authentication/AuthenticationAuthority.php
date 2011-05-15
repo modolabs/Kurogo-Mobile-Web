@@ -276,7 +276,7 @@ abstract class AuthenticationAuthority
         return key($authorities);
     }
 
-    public static function getAuthenticationAuthorityData($index) {
+    public static function getAuthenticationAuthorityData(&$index) {
         if (strlen($index)==0) {
             return false;
         }
@@ -298,6 +298,7 @@ abstract class AuthenticationAuthority
             $className = $sectionData['CONTROLLER_CLASS'];
             $class = new ReflectionClass($className);
             if ($className==$index || $class->isSubclassOf($index)) {
+                $index = $sectionIndex;
                 return $sectionData;
             }
         }
