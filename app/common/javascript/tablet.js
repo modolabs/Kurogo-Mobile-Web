@@ -67,7 +67,7 @@ function tabletInit() {
   
   // Adjust wrapper height on orientation change or resize
   var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
-  window.addEventListener(resizeEvent, handleWindowResize, false);
+  window.addEventListener(resizeEvent, function() {setTimeout(handleWindowResize,0)}, false);
 
   document.addEventListener('touchmove', function(e) { e.preventDefault(); });
   
