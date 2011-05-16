@@ -18,6 +18,9 @@
 {block name="deviceDetection"}
 {/block}
 
+{block name="loginHTML"}
+{/block}
+
 {block name="belowContent"}
   <div id="footernav">
     <div id="navsliderwrapper">
