@@ -454,8 +454,8 @@ JS;
             {
                 $geometry = $feature->getGeometry();
                 $center = $geometry->getCenterCoordinate();
-                
-                $mapSearch = $this->getSearchClass();
+
+                $mapSearch = $this->getSearchClass();              
                 $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
                 $places = array();
                 if ($searchResults) {
@@ -467,7 +467,9 @@ JS;
                             'subtitle' => $result->getSubtitle(),
                             'url' => $this->detailURLForResult($urlArgs, false),
                             );
-                        $places[] = $place;
+
+                        if ($feature->getTitle() != $result->getTitle())
+                            $places[] = $place;
                     }
                     $this->assign('nearbyResults', $places);
                 }
