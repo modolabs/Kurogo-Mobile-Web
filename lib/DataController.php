@@ -24,6 +24,7 @@ abstract class DataController
     protected $totalItems = null;
     protected $debugMode=false;
     protected $useCache=true;
+    protected $useStaleCache=true;
     protected $cacheLifetime=900;
     protected $proxyContext = null;
     
@@ -374,8 +375,10 @@ abstract class DataController
 
                 if ($data = $this->retrieveData($url)) {
                     $this->writeCache($data); 
+                } elseif ($this->useStaleCache) {
+                    // return stale cache if the data is unavailable
+                    $data = $this->getCacheData();
                 }
-                // should we return the stale cache if the data is unavailable ? 
             }
         } else {
             $data = $this->retrieveData($url);
