@@ -109,10 +109,11 @@ function addStaticMapControls() {
         zoomIn.onclick = zoomInFromCenter;
         zoomOut.onclick = zoomOutFromCenter;
         
-        var initCenter = staticMapOptions['center'];
+        var initCenterLat = staticMapOptions['center']['lat'];
+        var initCenterLon = staticMapOptions['center']['lon'];
         var initZoom = staticMapOptions['zoom'];
         recenter.onclick = function() {
-            staticMapOptions['center'] = initCenter;
+            staticMapOptions['center'] = {'lat': initCenterLat, 'lon': initCenterLon};
             staticMapOptions['zoom'] = initZoom;
             updateMapImage();
         }
@@ -177,7 +178,7 @@ function updateMapImage() {
         var bboxStr = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'];
         url = url + "&bbox=" + bboxStr;
     }
-    
+
     if ("projection" in staticMapOptions) {
         url = url + "&projection=" + staticMapOptions['projection'];
     }
