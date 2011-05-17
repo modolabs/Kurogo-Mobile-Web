@@ -684,6 +684,7 @@ JS;
             case 'search':
           
                 if (isset($this->args['filter'])) {
+                    $this->feedGroup = null;
                     $searchTerms = $this->args['filter'];
                     $mapSearch = $this->getSearchClass();
                     $searchResults = $mapSearch->searchCampusMap($searchTerms);
