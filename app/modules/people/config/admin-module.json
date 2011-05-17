@@ -4,7 +4,8 @@
         "description":"",
         "sectiontype":"fields",
         "fields":{
-            "BOOKMARKS_ENABLED":{"label":"Bookmarks Enabled", "description":"Enable bookmarking of people","config":"module","section":"module","type":"checkbox","default":1}
+            "BOOKMARKS_ENABLED":{"label":"Bookmarks Enabled", "description":"Enable bookmarking of people","config":"module","section":"module","type":"checkbox","default":1},
+            "SEARCH_TIP":{"label":"Search tip","type":"text","config":"module","section":"strings","description":"The text to show as the search tip"}
        }
     },
     "feeds": {

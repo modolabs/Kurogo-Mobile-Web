@@ -709,6 +709,11 @@ class CalendarWebModule extends WebModule {
             }
           }
           
+          if (isset($info['urlfunc'])) {
+            $urlFunction = create_function('$value,$event', $info['urlfunc']);
+            $field['url'] = $urlFunction($value, $event);
+          }
+          
           $fields[] = $field;
         }        
 

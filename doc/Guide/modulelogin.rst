@@ -12,7 +12,9 @@ Configuration
 There are several configuration values that affect the display of the login module. They are all
 in the *strings* section of *SITE_DIR/config/login/module.ini*
 
-* *LOGIN_MESSAGE* - A message shown at the header of the login page
+* *LOGIN_INDEX_MESSAGE* - A message shown at the top of the authority choose screen (index). Not shown if there is only 1 direct authority.
+* *LOGIN_INDIRECT_MESSAGE*  - A message shown at the heading of the indirect authorities. Typically explains that the user will be redirected to another site and then returned.
+* *LOGIN_DIRECT_MESSAGE* - A message shown at the top of the login form for direct authorities
 * *LOGIN_LABEL* - The label used for the user name field of the login form. This only shows up for logins to direct authorities.
 * *PASSWORD_LABEL* - The label used for the password field of the login form. This only shows up for logins to direct authorities.
 * *FORGET_PASSWORD_URL* - If specified, a url that is included in the footer of the login form. This only shows up for logins to direct authorities.

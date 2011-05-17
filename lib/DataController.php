@@ -24,8 +24,9 @@ abstract class DataController
     protected $totalItems = null;
     protected $debugMode=false;
     protected $useCache=true;
+    protected $useStaleCache=true;
     protected $cacheLifetime=900;
-    protected $proxyContext = null;
+    protected $streamContext = null;
     
     /**
      * This method should return a single item based on the id
@@ -211,20 +212,23 @@ abstract class DataController
             $this->setCacheLifetime($args['CACHE_LIFETIME']);
         }
 
-        // configure http and https proxy
-        if(Kurogo::getOptionalSiteSection('data_controller')) {
-            $proxyConfigs = array_merge(Kurogo::getOptionalSiteSection('data_controller'), $args);
-        } else {
-            $proxyConfigs = $args;
+        $streamContextOpts = array();
+        
+        if (isset($args['HTTP_PROXY_URL'])) {
+            $streamContextOpts['http'] = array(
+                'proxy'          => $args['HTTP_PROXY_URL'], 
+                'request_fulluri'=> TRUE
+            );
         }
-        $opts = array();
-        if(isset($proxyConfigs['HTTP_PROXY_URL'])) {
-            $opts['http'] = array('proxy' => $proxyConfigs['HTTP_PROXY_URL'], 'request_fulluri'=> TRUE);
+        
+        if (isset($args['HTTPS_PROXY_URL'])) {
+            $streamContextOpts['https'] = array(
+                'proxy'          => $proxyConfigs['HTTPS_PROXY_URL'], 
+                'request_fulluri'=> TRUE
+            );
         }
-        if(isset($proxyConfigs['HTTPS_PROXY_URL'])) {
-            $opts['https'] = array('proxy' => $proxyConfigs['HTTPS_PROXY_URL'], 'request_fulluri'=> TRUE);
-        }
-        $this->proxyContext = stream_context_create($opts);
+        
+        $this->streamContext = stream_context_create($streamContextOpts);
     }
 
     /**
@@ -247,7 +251,9 @@ abstract class DataController
         if (!$controller instanceOf DataController) {
             throw new Exception("$controllerClass is not a subclass of DataController");
         }
-        
+
+        //get global options from the site data_controller section
+        $args = array_merge(Kurogo::getOptionalSiteSection('data_controller'), $args);
         $controller->init($args);
 
         return $controller;
@@ -374,8 +380,10 @@ abstract class DataController
 
                 if ($data = $this->retrieveData($url)) {
                     $this->writeCache($data); 
+                } elseif ($this->useStaleCache) {
+                    // return stale cache if the data is unavailable
+                    $data = $this->getCacheData();
                 }
-                // should we return the stale cache if the data is unavailable ? 
             }
         } else {
             $data = $this->retrieveData($url);
@@ -398,7 +406,7 @@ abstract class DataController
         }
 
 
-        $data = file_get_contents($url, false, $this->proxyContext);
+        $data = file_get_contents($url, false, $this->streamContext);
 
         if ($this->debugMode) {
             file_put_contents($this->cacheMetaFile(), $url);

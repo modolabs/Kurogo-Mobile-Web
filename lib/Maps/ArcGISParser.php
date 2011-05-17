@@ -510,6 +510,9 @@ class ArcGISLayer implements MapFolder, MapListElement {
                 //var_dump($fieldInfo);
                 //$name = end($nameRefParts);
                 $name = $fieldInfo['name'];
+                if (strtoupper($name) == strtoupper($this->displayField)) {
+                    $name = $this->displayField;
+                }
                 $this->fieldNames[$name] = $fieldInfo['alias'];
             }
     
@@ -542,6 +545,9 @@ class ArcGISLayer implements MapFolder, MapListElement {
         $displayAttribs = array();
         // use human-readable field alias to construct feature details
         foreach ($attribs as $name => $value) {
+            if (strtoupper($name) == strtoupper($displayField)) {
+                $index = $value;
+            }
             if ($value !== null && trim($value) !== '') {
                 if (isset($this->fieldNames[$name]))
                     $name = $this->fieldNames[$name];
@@ -558,9 +564,6 @@ class ArcGISLayer implements MapFolder, MapListElement {
             return NULL;
         }
         
-        // doing this assumes the display names for buildings are unique
-        // this is because we have no way of figuring out the object's actual ID
-        $index = $attribs[$displayField];
         $feature = new ArcGISFeature($displayAttribs, $geometry, $index, $this->getCategory());
         if ($this->geometryType) {
             $feature->setGeometryType($this->geometryType);

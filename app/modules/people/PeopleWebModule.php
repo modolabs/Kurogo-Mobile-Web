@@ -330,6 +330,7 @@ class PeopleWebModule extends WebModule {
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->generateBookmarkLink();
                 }
+                $this->assign('searchTip', $this->getOptionalModuleVar('SEARCH_TIP'));
                 break;
         }  
     }

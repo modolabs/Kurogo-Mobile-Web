@@ -20,20 +20,17 @@ class ArcGISDataController extends MapDataController
         return $this->parser->getProjection();
     }
 
-    // this is mostly the same as parent class
-    // but we want to eliminate categories with zero results
     public function getListItems($categoryPath=array()) {
-        $container = $this;
-        while (count($categoryPath) > 0) {
+        // TODO: this only works for servers that have simple layers
+        // i.e. no layer contains additional sublayers
+        if (count($categoryPath) > 0) {
             $category = array_shift($categoryPath);
-            $container = $container->getListItem($category);
+            $this->initializeParser();
+            $this->initializeLayers();
+            $this->parser->selectSubLayer($category);
         }
-        if ($container === $this) {
-            $items = $this->items();
-        } else {
-            $items = $container->getListItems();
-        }
-        
+        $items = $this->items();
+
         $results = array();
         // eliminate empty categories
         foreach ($items as $item) {
@@ -44,7 +41,7 @@ class ArcGISDataController extends MapDataController
         
         // fast forward for categories that only have one item
         while (count($results) == 1) {
-            $container = $results[0];
+            $container = current($results);
             if (!$container instanceof MapFolder) {
                 break;
             }

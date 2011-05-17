@@ -182,7 +182,7 @@ class LoginWebModule extends WebModule {
                 case AUTH_OAUTH_VERIFY:
                     $this->assign('verifierKey',$authority->getVerifierKey());
                     $this->setTemplatePage('oauth_verify.tpl');
-                    break;
+                    break 2;
                     
                 default:
                     if ($authorityData['USER_LOGIN']=='FORM') {

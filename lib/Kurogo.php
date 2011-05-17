@@ -12,6 +12,23 @@ class Kurogo
     protected $libDirs = array();
     protected $config;
     protected $deviceClassifier;
+    protected $session;
+
+    public static function getSession() {    
+        $Kurogo = self::sharedInstance();
+        return $Kurogo->session();  
+    }
+        
+    public function session() {
+        if (!$this->session) {
+            $args = Kurogo::getSiteSection('authentication');
+            $args['DEBUG_MODE'] = Kurogo::getSiteVar('DATA_DEBUG');
+            $this->session = new Session($args);
+        }
+        
+        return $this->session;
+    }    
+
     
     public static function sharedInstance() {
         if (!isset(self::$_instance)) {

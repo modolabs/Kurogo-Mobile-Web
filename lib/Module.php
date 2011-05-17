@@ -187,16 +187,9 @@ abstract class Module
       
     /**
       * Returns the current login session
-      * @param string $type, the type of module to load (web/api)
       */
     protected function getSession() {
-        if (!$this->session) {
-            $args = Kurogo::getSiteSection('authentication');
-            $args['DEBUG_MODE'] = Kurogo::getSiteVar('DATA_DEBUG');
-            $this->session = new Session($args);
-        }
-    
-        return $this->session;
+        return Kurogo::getSession();
     }
   
     /**
