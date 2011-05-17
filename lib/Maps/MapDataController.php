@@ -71,14 +71,14 @@ class MapDataController extends DataController implements MapFolder
             foreach ($tokens as $token) {
                 if (strlen($token) <= 1)
                     continue;
-                $pattern = "/\b$token\b/i";
+                $pattern = "/\b" . preg_quote($token) . "\b/i";
                 if (!preg_match($pattern, self::COMMON_WORDS)) {
                     $validTokens[] = $pattern;
                 }
             }
             if (count($validTokens)) {
                 foreach ($this->getAllLeafNodes() as $item) {
-                    if (self::featureMatchesTokens($item, $validTokens)) {
+                    if ( ($item->getTitle()==$searchText) || self::featureMatchesTokens($item, $validTokens)) {
                         $results[] = $item;
                     }
                 }
