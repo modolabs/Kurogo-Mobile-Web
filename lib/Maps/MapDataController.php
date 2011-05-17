@@ -187,7 +187,7 @@ class MapDataController extends DataController implements MapFolder
         }
         // fast forward for categories that only have one item
         while (count($items) == 1) {
-            var_dump($container);
+            $container = $items[0];
             if (!$container instanceof MapFolder) {
                 break;
             }
