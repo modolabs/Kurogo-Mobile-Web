@@ -587,6 +587,12 @@ JS;
                             'loc' => explode("," ,$groupData['center'])
                             );
                     }
+                    
+                    //don't do device detection on older devices
+                    if (!in_array($this->pagetype, array('compliant','tablet'))) {
+                        $_COOKIE['map_lat']=='na';
+                        $_COOKIE['map_long']=='na';
+                    }
 
                     // only display categories in a list if the current location attempt has been made
                     // and a redirection has occured.
