@@ -104,11 +104,13 @@ class MapWebModule extends WebModule {
     protected function initialize() {
         // this is in the wrong place
         $this->feedGroup = $this->getArg('group', NULL);
+        /* don't save feed group anymore because it has some flaws
         if ($this->feedGroup === NULL) {
             if (isset($_COOKIE[MAP_GROUP_COOKIE])) {
                 $this->feedGroup = $_COOKIE[MAP_GROUP_COOKIE];
             }
         }
+        */
 
         $this->feedGroups = $this->getFeedGroups();
         $this->numGroups = count($this->feedGroups);
