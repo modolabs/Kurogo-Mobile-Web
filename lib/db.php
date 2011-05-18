@@ -87,9 +87,7 @@ class db {
 
   private function errorHandler($sql, $errorInfo, $ignoreErrors, $catchErrorCodes) {
 
-        if (Kurogo::getSiteVar('DB_DEBUG')) {
-           $e = new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]), $errorInfo[1]);
-        }
+        $e = new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]), $errorInfo[1]);
         
         if ($ignoreErrors) {
             $this->lastError = KurogoError::errorFromException($e);
