@@ -202,7 +202,7 @@ JS;
         } else {
             $dataProjection = $dataController->getProjection();
             $outputProjection = $imgController->getMapProjection();
-            if ($dataProjection != $outputProjection) {
+            if (MapProjector::needsConversion($dataProjection, $outputProjection)) {
                 $projector = new MapProjector();
                 $projector->setSrcProj($dataProjection);
                 $projector->setDstProj($outputProjection);
@@ -523,7 +523,7 @@ JS;
             $lat = $categoryItem['loc'][0];
             $lon = $categoryItem['loc'][1];
 
-            $distance = $this->getDistanceFromLatLon($currentLon, $currentLat, $lon, $lat);
+            $distance = gcd($currentLat, $currentLon, $lat, $lon);
 
             $distanceArray[] = $distance;
         }
@@ -532,29 +532,6 @@ JS;
 
         // return the categories array sorted based on distance
         return $categoriesArray;
-    }
-
-    function convertToRadians($coord) {
-        return $coord * Math.PI / 180;
-    }
-    
-    protected function getDistanceFromLatLon($currentLon, $currentLat, $otherLon, $otherLat){
-
-        $earthRadius = 6371; // km
-        $milesPerKM = 0.621371192;
-
-
-      // law of haversines
-      $dLat = deg2rad($otherLat - $currentLat);
-      $dLon = deg2rad($otherLon - $currentLon);
-      $a = sin($dLat/2) * sin($dLat/2) +
-              cos(deg2rad($currentLat)) * cos(deg2rad($otherLat)) *
-              sin($dLon/2) * sin($dLon/2);
-
-      $c = 2 * atan2(sqrt($a), sqrt(1-$a));
-      $distInKm = $earthRadius * $c;
-
-      return $distInKm;
     }
 
     protected function initializeForPage() {

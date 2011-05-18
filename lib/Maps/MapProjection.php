@@ -245,58 +245,82 @@ class MapProjection
             );
     }
 
-    public function __construct($proj4String)
+    public function __construct($projString, $format='proj4')
     {
-        $params = self::parseProj4String($proj4String);
+        switch ($format) {
+            case 'wkt':
+                $params = WKTParser::parseWKTString($projString);
+                $this->initFromWKTParams($params);
+                break;
+            case 'proj4':
+            default:
+                $params = self::parseProj4String($projString);
+                $this->initFromProj4Params($params);
+                break;
+        }
+    }
+
+    protected function setSpheroid($spheroid) {
+        switch ($spheroid) {
+            case 'GRS80': case 'GRS_1980':
+                // 1252 SRIDs; http://en.wikipedia.org/wiki/GRS_80
+                $this->semiMajorAxis = 6378137;
+                $this->semiMinorAxis = 6356752.31414;
+                $this->eccentricity = 0.08181919;
+                break;
+            case 'krass': // 562
+            case 'intl': // 379
+                break;
+            case 'WGS84': // 322
+                $this->semiMajorAxis = 6378137;
+                $this->semiMinorAxis = 6378137;
+                break;
+            case 'clrk66': // 263
+            case 'WGS72': // 248
+            case 'bessel': // 155
+            case 'clrk80': //128
+            case 'aust': // 46
+            case 'GRS67': // 19
+            case 'helmert': // 13
+            case 'evrstSS': // 7
+            case 'airy': // 7
+            case 'bess': // 3
+            case 'WGS66': // 3
+                break;
+        }
+    }
+
+    protected function setDatum($datum) {
+        switch ($datum) {
+            case 'NAD83': case 'D_North_American_1983': // 322
+                $this->semiMajorAxis = 6378137;
+                $this->semiMinorAxis = 6356752.31414;
+                $this->eccentricity = 0.08181919;
+                break;
+            case 'WGS84': // 246
+                $this->semiMajorAxis = 6378137;
+                $this->semiMinorAxis = 6378137;
+                break;
+            case 'NAD27': // 177
+            case 'nzgd49': // 35
+            case 'potsdam': // 11
+            case 'OSGB36': // 1
+                break;
+        }
+    }
+
+    protected function initFromProj4Params($params) {
+
         $this->proj = $params['+proj'];
 
         // plug in pre-calculated values for eccentricity
-        // which is just sqrt((a^2 - b^2) / a^2) where a is major axis and b is minor axis 
+        // which is just sqrt((a^2 - b^2) / a^2) where a is major axis
+        // and b is minor axis 
         if (isset($params['+ellps'])) {
-            switch ($params['+ellps']) {
-                case 'GRS80': // 1252 SRIDs; http://en.wikipedia.org/wiki/GRS_80
-                    $this->semiMajorAxis = 6378137;
-                    $this->semiMinorAxis = 6356752.31414;
-                    $this->eccentricity = 0.08181919;
-                    break;
-                case 'krass': // 562
-                case 'intl': // 379
-                    break;
-                case 'WGS84': // 322
-                    $this->semiMajorAxis = 6378137;
-                    $this->semiMinorAxis = 6378137;
-                    break;
-                case 'clrk66': // 263
-                case 'WGS72': // 248
-                case 'bessel': // 155
-                case 'clrk80': //128
-                case 'aust': // 46
-                case 'GRS67': // 19
-                case 'helmert': // 13
-                case 'evrstSS': // 7
-                case 'airy': // 7
-                case 'bess': // 3
-                case 'WGS66': // 3
-                    break;
-            }
+            $this->setSpheroid($params['+ellps']);
 
         } elseif (isset($params['+datum'])) {
-            switch ($params['+datum']) {
-                case 'NAD83': // 322
-                    $this->semiMajorAxis = 6378137;
-                    $this->semiMinorAxis = 6356752.31414;
-                    $this->eccentricity = 0.08181919;
-                    break;
-                case 'WGS84': // 246
-                    $this->semiMajorAxis = 6378137;
-                    $this->semiMinorAxis = 6378137;
-                    break;
-                case 'NAD27': // 177
-                case 'nzgd49': // 35
-                case 'potsdam': // 11
-                case 'OSGB36': // 1
-                    break;
-            }
+            $this->setDatum($params['+datum']);
 
         } else {
             if (isset($params['+a'])) {
@@ -338,7 +362,6 @@ class MapProjection
             $this->centralMeridian = $params['+lon_0'] / 180 * M_PI;
         }
 
-
         if (isset($params['+x_0'])) { // these are always in meters
             $this->falseEasting = $params['+x_0'];
         }
@@ -350,6 +373,7 @@ class MapProjection
             $this->scaleFactor = $params['+k'];
         }
         */
+
     }
 
     public static function parseProj4String($proj4String)
@@ -363,6 +387,57 @@ class MapProjection
             }
         }
         return $params;
+    }
+
+    private function initFromWKTParams($params) {
+        if (isset($params['PROJCS'])) {
+            $projcs = $params['PROJCS'];
+            if (isset($projcs['GEOGCS'])) {
+                $geogcs = $projcs['GEOGCS'];
+                if (isset($geogcs['DATUM'])) {
+                    $datum = $geogcs['DATUM'];
+                    if (isset($datum['name'])) {
+                        $this->setDatum($datum['name']);
+                    }
+                    if (isset($datum['SPHEROID'], $datum['SPHEROID']['semiMajorAxis'])) {
+                        $this->semiMajorAxis = $datum['SPHEROID']['semiMajorAxis'];
+                    }
+                }
+            }
+
+            if (isset($projcs['PROJECTION'], $projcs['PROJECTION']['name'])) {
+                $projMap = array(
+                    'Lambert_Conformal_Conic' => 'lcc',
+                    );
+                $this->proj = $projMap[$projcs['PROJECTION']['name']];
+            }
+
+            if (isset($projcs['UNIT'], $projcs['UNIT']['unitsPerMeter'])) {
+                $this->unitsPerMeter = $projcs['UNIT']['unitsPerMeter'];
+            }
+
+            if (isset($projcs['PARAMETER'])) {
+                $parameters = $projcs['PARAMETER'];
+                if (isset($parameters['False_Easting'])) {
+                    $this->falseEasting = $parameters['False_Easting'];
+                }
+                if (isset($parameters['False_Northing'])) {
+                    $this->falseNorthing = $parameters['False_Northing'];
+                }
+                if (isset($parameters['Central_Meridian'])) {
+                    $this->centralMeridian = $parameters['Central_Meridian'] / 180 * M_PI;
+                }
+                if (isset($parameters['Latitude_Of_Origin'])) {
+                    $this->originLatitude = $parameters['Latitude_Of_Origin'] / 180 * M_PI;
+                }
+                if (isset($parameters['Standard_Parallel_1'])) {
+                    $this->standardParallel1 = $parameters['Standard_Parallel_1'] / 180 * M_PI;
+                }
+                if (isset($parameters['Standard_Parallel_2'])) {
+                    $this->standardParallel2 = $parameters['Standard_Parallel_2'] / 180 * M_PI;
+                }
+            }
+        }
     }
     
     private function logResults() {
