@@ -103,7 +103,7 @@ class TemplateEngine extends Smarty {
           if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
             error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file' for '$name'");
           }
-          return $test;
+          return addslashes($test);
         }
       }
     }
@@ -131,7 +131,7 @@ class TemplateEngine extends Smarty {
           error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name' for '$name'");
         }
         $template->smarty->extendsTrackerAddFile($test);
-        return $test;
+        return addslashes($test);
       }
     }
     return false;
