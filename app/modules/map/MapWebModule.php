@@ -808,8 +808,8 @@ JS;
                 break;
                 
             case 'fullscreen':
-                $dataController = $this->getDataControllerForMap();
-                $feature = $this->getFeatureForMap($dataController);
+                $dataController = $this->getDataControllerForMap($listItemPath);
+                $feature = $this->getFeatureForMap($dataController, $listItemPath);
                 $this->initializeMap($dataController, $feature, true);
                 break;
         }
