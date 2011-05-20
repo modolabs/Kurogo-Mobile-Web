@@ -1012,6 +1012,10 @@ abstract class WebModule extends Module {
     return $themeVars;
   }
   
+  protected function showLogin() {
+    return $this->getOptionalModuleVar('SHOW_LOGIN', false);
+  }
+  
   //
   // Convenience functions
   //
@@ -1139,6 +1143,7 @@ abstract class WebModule extends Module {
         $session = $this->getSession();
         $this->assign('session', $session);
         $this->assign('session_isLoggedIn', $this->isLoggedIn());
+        $this->assign('showLogin', Kurogo::getSiteVar('AUTHENTICATION_ENABLED') && $this->showLogin());
         if ($this->isLoggedIn()) {
             $user = $session->getUser();
             $authority = $user->getAuthenticationAuthority();

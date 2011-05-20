@@ -12,6 +12,10 @@ class HomeWebModule extends WebModule {
   protected $id = 'home';
   protected $canBeAddedToHomeScreen = false;
 
+  protected function showLogin() {
+    return $this->getOptionalModuleVar('SHOW_LOGIN', true);
+  }
+
   private function getTabletModulePanes($tabletConfig) {
     $modulePanes = array();
     
