@@ -178,13 +178,19 @@ class MapDataController extends DataController implements MapFolder
         $container = $this;
         while (count($categoryPath) > 0) {
             $category = array_shift($categoryPath);
-            $container = $container->getListItem($category);
+            $testContainer = $container->getListItem($category);
+            if (!$testContainer instanceof MapFolder) {
+                break;
+            }
+            $container = $testContainer;
         }
+
         if ($container === $this) {
             $items = $this->items();
         } else {
             $items = $container->getListItems();
         }
+
         // fast forward for categories that only have one item
         while (count($items) == 1) {
             $container = $items[0];
