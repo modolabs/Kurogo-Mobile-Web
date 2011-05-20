@@ -72,7 +72,9 @@ class DeviceClassifier {
         $this->pagetype = $data['pagetype'];
         $this->platform = $data['platform'];
         $this->certs = $data['supports_certificate'];
-        $this->setDeviceCookie();
+        if (!KUROGO_IS_API) {
+            $this->setDeviceCookie();
+        }
       }
     }
   }
