@@ -76,6 +76,82 @@ form {
     display: inline;
 }
 
+.landscape #tabletNews {
+    -webkit-box-orient: horizontal;
+    display: -webkit-box;
+    height: 400px;
+    position: relative;
+}
+
+#stories {
+    position: relative;
+    width: 342px;
+    border: 1px solid;
+    border-left: none;
+    border-bottom: none;
+}
+
+.portrait #stories {
+    width: auto;
+    height: 93px;
+    white-space: nowrap;
+    border: none;
+    border-bottom: 1px solid;
+}
+
+.portrait #stories .results {
+    white-space: nowrap;
+    position: absolute;
+    overflow: visible;
+    width: auto;
+    height: 93px;
+    margin: 0;
+    top: 0;
+    left: 0;
+}
+
+.landscape #storyDetailWrapper {
+    position: relative;
+    border-top: 1px solid;
+	-webkit-box-flex:1;
+}
+
+#storyDetail {
+    padding: .5em;
+}
+
+
+.portrait #stories .thumbnail {
+    display: none;
+}
+
+.portrait #stories li {
+    white-space: normal;
+    width: 200px;
+    display: block;
+    float: left;
+    border: none;
+    padding: 0;
+}
+
+.portrait #stories li a {
+    background-image: none;
+}
+
+.portrait #stories li .title {
+    padding: 0;
+}
+
+.portrait #stories li .ellipsis {
+    margin: .4em;
+}
+
+
+#stories .results {
+    margin: 0;
+    margin-top: -1px;
+}
+
 .results li.pagerlink {
 	padding: 9px;
 }
@@ -85,4 +161,8 @@ form {
   font-weight: bold;
   background-image: none;
   font-size: 90%;
+}
+
+#footer {
+    display:none;
 }

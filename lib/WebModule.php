@@ -475,7 +475,8 @@ abstract class WebModule extends Module {
     } else {
       $separator = array();
     }
-    return array_merge($navModules['primary'], $separator, $navModules['secondary']);
+        
+    return array_merge($navModules['home'], $navModules['primary'], $separator, $navModules['secondary']);
   }
   
   protected function isOnHomeScreen($includeDisabled=true) {
@@ -493,6 +494,7 @@ abstract class WebModule extends Module {
     $moduleNavConfig = $this->getModuleNavigationConfig();
     
     $moduleConfig = array();
+    $moduleConfig['home'] = $this->pagetype == 'tablet' ? array('home'=>'Home') : array();
     $moduleConfig['primary'] = $moduleNavConfig->getOptionalSection('primary_modules');
     $moduleConfig['secondary'] = $moduleNavConfig->getOptionalSection('secondary_modules');
 
@@ -502,6 +504,7 @@ abstract class WebModule extends Module {
     }
     
     $modules = array(
+      'home'    => array(),
       'primary' => array(),
       'secondary' => array()
     );
@@ -1080,7 +1083,7 @@ abstract class WebModule extends Module {
     $this->loadBreadcrumbs();
     
     // Tablet module nav list
-    if ($this->pagetype == 'tablet') {
+    if ($this->pagetype == 'tablet' && $this->page != 'pane') {
       $this->addInternalJavascript('/common/javascript/lib/iscroll-4.0.js');
       $this->assign('moduleNavList', $this->getModuleNavlist());
     }

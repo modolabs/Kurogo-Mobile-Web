@@ -179,6 +179,7 @@ class VideoWebModule extends WebModule
             
                 if ($video = $controller->getItem($videoid)) {
                     $this->setTemplatePage('detail-' . $video->getType());
+                    $this->assign('ajax'      ,       $this->getArg('ajax', null));
                     $this->assign('videoTitle',       $video->getTitle());
                     $this->assign('videoid',          $video->getID());
                     $this->assign('videoDescription', $video->getDescription());

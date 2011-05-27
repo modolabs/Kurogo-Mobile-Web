@@ -15,6 +15,9 @@
   {/if}
 {/block}
 
+{block name="footerNavLinks"}
+{/block}
+
 {block name="deviceDetection"}
 {/block}
 

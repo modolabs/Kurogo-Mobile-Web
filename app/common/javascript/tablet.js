@@ -42,8 +42,11 @@ function setContainerWrapperHeight() {
 	}
 }
 
-function handleWindowResize(e) { 
-  setContainerWrapperHeight();
+function handleWindowResize(e) {
+    if (!('orientation' in window)) {
+        rotateScreen();
+    }
+    setContainerWrapperHeight();
   
   setTimeout(updateNavSlider, 0);
   
@@ -53,6 +56,7 @@ function handleWindowResize(e) {
 } 
 
 function tabletInit() {
+   setOrientation(getOrientation());
     if(!document.getElementById('navbar')) {
         // page has no footer so do not attempt
         // to use fancy tablet container
@@ -63,7 +67,7 @@ function tabletInit() {
   
   // Adjust wrapper height on orientation change or resize
   var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
-  window.addEventListener(resizeEvent, handleWindowResize, false);
+  window.addEventListener(resizeEvent, function() {setTimeout(handleWindowResize,0)}, false);
 
   document.addEventListener('touchmove', function(e) { e.preventDefault(); });
   
@@ -101,3 +105,165 @@ function scrollToTop() {
   	containerScroller.scrollTo(0,0,0); 
   }
 }
+
+(function(window) {
+
+    function splitView (options) {
+      // set caller options
+        if (typeof options == 'object') {
+            for (var i in options) {
+                switch (i) {
+                    case 'linkSelect':
+                    case 'actionForLink':
+                        this[i] = options[i];
+                        break;
+                    default:
+                        this.options[i] = options[i];
+                        break;
+                }
+            }
+        }
+      
+        if (window.addEventListener) {
+          window.addEventListener(RESIZE_EVENT, this, false);
+        } else if (window.attachEvent) {
+          window.attachEvent(RESIZE_EVENT, this);
+        }
+        
+        if (!document.getElementById(this.options.list) || !document.getElementById(this.options.detail)) {
+            return;
+        }
+
+        this.orientation = getOrientation();
+        this.list = document.getElementById(this.options.list);
+        this.detail = document.getElementById(this.options.detail);
+        this.detailScroller = new iScroll(this.options.detail, {checkDOMChange: true});
+        
+        if ('content' in this.options) {
+            this.content = document.getElementById(this.options.content);
+        } else {
+            this.options.content = this.options.detail;
+            this.content = this.detail;
+        }
+        
+        var self = this;
+        
+        var links = this.list.getElementsByTagName('a');
+        var first = true;
+        for (var i=0;i<links.length;i++) {
+            links[i].onclick = function(e) {
+                var action = self.actionForLink(this);
+                self[action](e, this);
+            }
+
+            if (first && this.options.selectFirst && this.actionForLink(links[i])=='linkSelect') {
+                links[i].onclick();
+                first = false;
+            }        
+        }
+
+        this.updateListScroller();
+    }
+
+    splitView.prototype = {
+        orientation: '',
+        options: {
+            selectFirst: true
+        },
+        baseActionForLink: function(link) {
+            if (link.parentNode.className.match(/pagerlink/)) {
+                return 'linkFollow';
+            }
+            
+            return 'linkSelect';
+        },
+        actionForLink: function(link) {
+            return this.baseActionForLink(link);
+        },
+        linkFollow: function(e, link) {
+            //just follow the link
+        },
+        linkSelect: function(e, link) {
+            //ajax fun
+            hideShare();
+            var self = this;
+            var selected = this.list.getElementsByTagName('a');
+            for (var j=0;j<selected.length;j++) {
+                removeClass(selected[j],'listSelected');
+            }
+            addClass(link,'listSelected');
+            this.detailScroller.scrollTo(0,0);
+            var httpRequest = new XMLHttpRequest();
+            httpRequest.open("GET", link.href+'&ajax=1', true);
+            httpRequest.onreadystatechange = function() {
+                if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+                    self.content.innerHTML = httpRequest.responseText;
+                    self.detailScroller.refresh();
+                    moduleHandleWindowResize();
+                }
+            }
+            showLoadingMsg(this.options.content);
+            httpRequest.send(null);
+            e && e.preventDefault();
+            return false;
+        },
+        listScroller: null,
+        detailScroller: null,
+        handleEvent: function (e) {
+            switch (e.type) {
+                case 'orientationchange':
+                case 'resize':
+                    if (this.orientation != getOrientation()) {
+                        this.orientation = getOrientation();
+                        this.updateListScroller();
+                    }
+                    break;
+            }
+        },
+        updateListScroller: function() {
+            var self = this, options={};
+            switch (getOrientation()) {
+                case 'portrait':
+                    options.vScrollbar = false;
+                    options.hScrollbar = true;
+                    options.vScroll = false;
+                    options.hScroll = true;
+                    break;
+                case 'landscape':
+                    options.vScrollbar = true;
+                    options.hScrollbar = false;
+                    options.hScroll = false;
+                    options.vScroll = true;
+                    break;
+            }
+
+            if (this.listScroller) {
+                for (var i in options) {
+                    this.listScroller.options[i] = options[i];
+                }
+                
+                setTimeout(function() {
+                    self.listScroller.refresh();
+                    var items = self.list.getElementsByTagName('a');
+                    for (var i=0;i<items.length; i++) {
+                        if (hasClass(items[i],'listSelected')) {
+                            self.listScroller.scrollToElement(items[i].parentNode,0);
+                        }
+                    }
+                },0);
+                return;
+            }
+            
+            this.listScroller = new iScroll(this.options.list, options);
+        }
+    }
+
+    var RESIZE_EVENT = window.addEventListener ? 
+    ('onorientationchange' in window ? 
+    'orientationchange' :  // touch device
+    'resize')              // desktop browser
+    : ('onresize');          // IE
+    
+    window.splitView = splitView;
+
+})(window)

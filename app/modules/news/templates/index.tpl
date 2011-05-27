@@ -64,8 +64,9 @@
     {include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
   {/if}
 {/block}
-
+{block name="stories"}
 {include file="findInclude:modules/news/templates/stories.tpl"}
+{/block}
 
 {block name="newsFooter"}
   {include file="findInclude:common/templates/footer.tpl"}
