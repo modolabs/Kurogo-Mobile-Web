@@ -238,10 +238,10 @@ class ConfigFile extends Config {
     if (preg_match("/^\d+$/", $value)) {
         //it's numeric
         return $value;
-    } elseif (strpos($value, '"')!==false) {
-        //not sure what to do if there is a double quote
-        trigger_error("Double quote found in $value", E_USER_ERROR);
     } else {
+
+        //replace double quotes with a constant
+        $value = str_replace('"', '"_QQ_"', $value);
         //quote the values
         $return = sprintf('"%s"', $value);
 
