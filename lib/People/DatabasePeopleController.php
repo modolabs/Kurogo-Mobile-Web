@@ -25,16 +25,16 @@ class DatabasePeopleController extends PeopleController {
             $this->errorMsg = "Query was blank";
             return;
         } elseif (Validator::isValidEmail($searchString)) {
-            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE '%%?%%'", '*', $this->table, $this->getField('email'));
-            $parameters = array($searchString);
+            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('email'));
+            $parameters = array('%'.$searchString.'%');
         } elseif ($this->getField('phone') && Validator::isValidPhone($searchString, $phone_bits)) {
             array_shift($phone_bits);
             $searchString = implode("", $phone_bits); // remove any separators. This might be an issue for people with formatted numbers in their directory
-            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE '%%?%%'", '*', $this->table, $this->getField('phone'));
-            $parameters = array($searchString);
+            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('phone'));
+            $parameters = array($searchString.'%');
         } elseif ($this->getField('phone') && preg_match('/^[0-9]+/', $searchString)) { //partial phone number
-            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE '%%?%%'", '*', $this->table, $this->getField('phone'));
-            $parameters = array($searchString);
+            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('phone'));
+            $parameters = array($searchString.'%');
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
 
             $names = preg_split("/\s+/", $searchString);
@@ -46,7 +46,7 @@ class DatabasePeopleController extends PeopleController {
                 case 1:
                     //try first name, last name and email
                     $where = sprintf("(%s LIKE ? OR %s LIKE ? OR %s LIKE ?)", $this->getField('firstname'), $this->getField('lastname'), $this->getField('email'));
-                    $parameters = array($searchString.'%', $searchString.'%', $searchString.'%');
+                    $parameters = array($searchString.'%', $searchString.'%', '%'.$searchString.'%');
                     break;
                 case 2:
                     $where = sprintf("((%s LIKE ? AND %s LIKE ?) OR (%s LIKE ? AND %s LIKE ?))",
@@ -81,12 +81,12 @@ class DatabasePeopleController extends PeopleController {
                     $where = implode(" OR ", $where);
             }
 
+            $sql = sprintf("SELECT %s FROM %s WHERE %s ORDER BY %s", '*', $this->table, $where, implode(",", array_map(array($this,'getField'),$this->sortFields)));
+
         } else {
             $this->errorMsg = "Invalid query";
             return array();
         }
-
-        $sql = sprintf("SELECT %s FROM %s WHERE %s ORDER BY %s", '*', $this->table, $where, implode(",", array_map(array($this,'getField'),$this->sortFields)));
         
         $results = array();
         if ($result = $this->connection->query($sql, $parameters)) {
