@@ -27,9 +27,12 @@ class DatabasePeopleController extends PeopleController {
         } elseif (Validator::isValidEmail($searchString)) {
             $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE '%%?%%'", '*', $this->table, $this->getField('email'));
             $parameters = array($searchString);
-        } elseif (Validator::isValidPhone($searchString, $phone_bits)) {
+        } elseif ($this->getField('phone') && Validator::isValidPhone($searchString, $phone_bits)) {
             array_shift($phone_bits);
             $searchString = implode("", $phone_bits); // remove any separators. This might be an issue for people with formatted numbers in their directory
+            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE '%%?%%'", '*', $this->table, $this->getField('phone'));
+            $parameters = array($searchString);
+        } elseif ($this->getField('phone') && preg_match('/^[0-9]+/', $searchString)) { //partial phone number
             $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE '%%?%%'", '*', $this->table, $this->getField('phone'));
             $parameters = array($searchString);
         } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
@@ -141,7 +144,8 @@ class DatabasePeopleController extends PeopleController {
             'userid'=>isset($args['DB_USERID_FIELD']) ? $args['DB_USERID_FIELD'] : 'userID',
             'email'=>isset($args['DB_EMAIL_FIELD']) ? $args['DB_EMAIL_FIELD'] : 'email',
             'firstname'=>isset($args['DB_FIRSTNAME_FIELD']) ? $args['DB_FIRSTNAME_FIELD'] : 'firstname',
-            'lastname'=>isset($args['DB_LASTNAME_FIELD']) ? $args['DB_LASTNAME_FIELD'] : 'lastname'
+            'lastname'=>isset($args['DB_LASTNAME_FIELD']) ? $args['DB_LASTNAME_FIELD'] : 'lastname',
+            'phone'=>isset($args['DB_PHONE_FIELD']) ? $args['DB_PHONE_FIELD'] : ''
         );
     }
 }
