@@ -77,7 +77,7 @@ class VideoWebModule extends WebModule
         {  
               case 'pane':
                 $start = 0;
-                $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
+                $maxPerPage = $this->getOptionalModuleVar('MAX_PANE_RESULTS', 5);
 
                 $items = $controller->items($start, $maxPerPage);
                 $videos = array();
