@@ -12,17 +12,12 @@ var orientationIsFlipped=false;
     window.orientationMethod = 'orientation';
     var width = document.documentElement.clientWidth || document.body.clientWidth;
     var height = document.documentElement.clientHeight || document.body.clientHeight;
-  
-    // check if window dimensions matches traditional definition of window.orientation
-    if (width < height) { // portrait
-        if (window.orientation != 0 && window.orientation != 180) {
-            window.orientationIsFlipped = true;
-        }
-    } else {
-        if (window.orientation != 90 && window.orientation != 90) {
-            window.orientationIsFlipped = true;
-        }
+    
+    /* at this point the method of orientation detection is not perfect */
+    if (navigator.userAgent.match(/(PlayBook.+RIM Tablet|Android 3\.\d)/)) {
+        window.orientationIsFlipped = true;
     }
+    
 })(window);
 
 String.prototype.strip = function() {

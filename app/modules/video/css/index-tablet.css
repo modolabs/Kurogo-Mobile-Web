@@ -3,42 +3,44 @@
   border: none;
   margin: 0;
   padding: 0;
+  position: relative;
+  overflow: hidden;
 }
 
-#videoHeader fieldset {
+table#videoHeader fieldset {
   display: block;
   padding: 0;
   margin: 0;
   height: auto;
 }
 
-#videoHeader tr td {
+table#videoHeader tr td {
   padding: 1em .5em 0 0;
   height: 40px;
   line-height: 40px;
 }
 
-#videoHeader tr #categoryformcontainer {
+table#videoHeader tr #categoryformcontainer {
   width: 19em;
   padding-left: .5em;
 }
 
-#videoHeader #categoryformcontainer label {
+table#videoHeader #categoryformcontainer label {
   padding-right: .5em;
   font-size: 89%;
 }
-#videoHeader #categoryformcontainer select {
+table#videoHeader #categoryformcontainer select {
   width: auto;
   min-width: 250px;
 }
 
-#videoHeader tr #searchformcontainer form,
-#videoHeader #searchformcontainer fieldset {
+table#videoHeader tr #searchformcontainer form,
+table#videoHeader #searchformcontainer fieldset {
   height: 40px;
   width: 100%;
   position: relative;
 }
-#videoHeader #searchformcontainer fieldset .forminput {
+table#videoHeader #searchformcontainer fieldset .forminput {
   position: absolute;
   top: 0;
   right: 0;
@@ -46,9 +48,14 @@
 }
 
 form {
-	margin: -8px 0 0 0;
+	margin: 0;
 	padding: 0;
 }
+
+table form {
+    margin-top: -8px;
+}
+
 .formlabel {
 	width: 62px;
     text-align: right;
@@ -122,14 +129,13 @@ form {
     left: 0;
 }
 
-.landscape #videoDetailWrapper {
+#videoDetailWrapper {
     position: relative;
-    border-top: 1px solid;
-	-webkit-box-flex:1;
 }
 
-#videoDetail {
-    padding: 10px;
+.landscape #videoDetailWrapper {
+    border-top: 1px solid;
+	-webkit-box-flex:1;
 }
 
 .portrait #videos .thumbnail {
@@ -143,6 +149,7 @@ form {
     float: left;
     border: none;
     padding: 0;
+    border-right: 1px dotted;
 }
 
 .portrait #videos li a {
@@ -189,4 +196,8 @@ form {
 	padding-bottom: 0.33em;
 	margin-bottom: 1.33em;
     border-bottom: 1px dotted #999;
+}
+
+.video {
+    padding: 12px;
 }

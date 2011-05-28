@@ -24,7 +24,9 @@
       </td></tr>
     </table>
   {else}
+  <div id="newsHeader">
     {include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
+  </div>
   {/if}
 {/block}
 

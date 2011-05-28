@@ -3,42 +3,44 @@
   border: none;
   margin: 0;
   padding: 0;
+  position: relative;
+  overflow: hidden;
 }
 
-#newsHeader fieldset {
+table#newsHeader fieldset {
   display: block;
   padding: 0;
   margin: 0;
   height: auto;
 }
 
-#newsHeader tr td {
+table#newsHeader tr td {
   padding: 1em .5em 0 0;
   height: 40px;
   line-height: 40px;
 }
 
-#newsHeader tr #categoryformcontainer {
+table#newsHeader tr #categoryformcontainer {
   width: 19em;
   padding-left: .5em;
 }
 
-#newsHeader #categoryformcontainer label {
+table#newsHeader #categoryformcontainer label {
   padding-right: .5em;
   font-size: 89%;
 }
-#newsHeader #categoryformcontainer select {
+table#newsHeader #categoryformcontainer select {
   width: auto;
   min-width: 250px;
 }
 
-#newsHeader tr #searchformcontainer form,
-#newsHeader #searchformcontainer fieldset {
+table#newsHeader tr #searchformcontainer form,
+table#newsHeader #searchformcontainer fieldset {
   height: 40px;
   width: 100%;
   position: relative;
 }
-#newsHeader #searchformcontainer fieldset .forminput {
+table#newsHeader #searchformcontainer fieldset .forminput {
   position: absolute;
   top: 0;
   right: 0;
@@ -46,9 +48,14 @@
 }
 
 form {
-	margin: -8px 0 0 0;
+	margin: 0;
 	padding: 0;
 }
+
+table form {
+    margin-top: -8px;
+}
+
 .formlabel {
 	width: 62px;
     text-align: right;
@@ -110,16 +117,14 @@ form {
     left: 0;
 }
 
-.landscape #storyDetailWrapper {
+#storyDetailWrapper {
     position: relative;
+}
+
+.landscape #storyDetailWrapper {
     border-top: 1px solid;
 	-webkit-box-flex:1;
 }
-
-#storyDetail {
-    padding: .5em;
-}
-
 
 .portrait #stories .thumbnail {
     display: none;
@@ -132,6 +137,7 @@ form {
     float: left;
     border: none;
     padding: 0;
+    border-right: 1px dotted;
 }
 
 .portrait #stories li a {
@@ -165,4 +171,8 @@ form {
 
 #footer {
     display:none;
+}
+
+.news {
+    padding: 12px;
 }

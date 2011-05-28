@@ -67,6 +67,7 @@
 }
 
 .portrait #videos .results .video {
+	border-right: 1px dotted #999;
 	height: 100%;
 }
 
@@ -105,7 +106,7 @@
 	padding: 10px 10px 0 10px;
 }
 
-#videoHeader {
+table#videoHeader {
 	background-color:#cfd1d3;
 }
 
@@ -117,17 +118,11 @@
 
 .landscape #videoDetailWrapper {
 	background-color:#ffffff;
-	/*-webkit-box-shadow: 0px 5px 10px rgba(0,0,0,0.3) inset;
-	-moz-box-shadow: 0px 5px 10px rgba(0,0,0,0.3) inset;
-	box-shadow: 0px 5px 10px rgba(0,0,0,0.3) inset;*/
 	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
 	background: -moz-linear-gradient(#B0B0B0, #E8E8E8 30%, #FFFFFF 30%);
-	padding:12px 12px 0 12px;
 }
 
 .portrait #videoDetailWrapper {
 	background-color:#ffffff;
 	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
-	padding:12px 22px 0 12px;
-	height: 523px;
 }

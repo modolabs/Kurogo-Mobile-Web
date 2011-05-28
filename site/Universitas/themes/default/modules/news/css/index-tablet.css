@@ -65,6 +65,7 @@
 }
 
 .portrait #stories .results .story {
+	border-right: 1px dotted #999;
 	height: 100%;
 }
 
@@ -105,7 +106,7 @@
 	padding: 10px 10px 0 10px;
 }
 
-#newsHeader {
+table#newsHeader {
 	background-color:#cfd1d3;
 }
 
@@ -116,12 +117,9 @@
 .landscape #storyDetailWrapper {
 	background-color:#ffffff;
 	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
-	padding:12px 12px 0 12px;
 }
 
 .portrait #storyDetailWrapper {
 	background-color:#ffffff;
 	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
-	padding:12px 22px 0 12px;
-	height: 523px;
 }
