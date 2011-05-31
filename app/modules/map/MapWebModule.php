@@ -367,6 +367,9 @@ JS;
             }
             $feedData = $this->feeds[$feedIndex];
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            if (isset($feedData['TITLE'])) {
+                $controller->setTitle($feedData['TITLE']);
+            }
             $controller->setCategory($feedIndex);
             $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
@@ -523,7 +526,7 @@ JS;
             $lat = $categoryItem['loc'][0];
             $lon = $categoryItem['loc'][1];
 
-            $distance = gcd($currentLat, $currentLon, $lat, $lon);
+            $distance = greatCircleDistance($currentLat, $currentLon, $lat, $lon);
 
             $distanceArray[] = $distance;
         }

@@ -9,7 +9,7 @@ define('MAP_CATEGORY_DELIMITER', ':');
 // but in practice the other formulas, i.e.
 // law of cosines and haversine
 // all yield pretty similar results
-function gcd($fromLat, $fromLon, $toLat, $toLon)
+function greatCircleDistance($fromLat, $fromLon, $toLat, $toLon)
 {
     $radiansPerDegree = M_PI / 180.0;
     $y1 = $fromLat * $radiansPerDegree;

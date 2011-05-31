@@ -15,6 +15,7 @@ class MapDataController extends DataController implements MapFolder
     protected $dynamicMapBaseURL = null;
     protected $searchable = false;
     protected $defaultZoomLevel = 16;
+    protected $title = null;
     
     // in theory all map images controllers should use the same
     // zoom level, but if certain image servers (e.g. Harvard ArcGIS)
@@ -109,7 +110,7 @@ class MapDataController extends DataController implements MapFolder
                 if ($featureCenter['lat'] <= $maxLat && $featureCenter['lat'] >= $minLat
                     && $featureCenter['lon'] <= $maxLon && $featureCenter['lon'] >= $minLon
                 ) {
-                    $distance = gcd($center['lat'], $center['lon'], $featureCenter['lat'], $featureCenter['lon']);
+                    $distance = greatCircleDistance($center['lat'], $center['lon'], $featureCenter['lat'], $featureCenter['lon']);
                     if ($distance > $tolerance) continue;
 
                     // keep keys unique; give priority to whatever came first
@@ -238,7 +239,16 @@ class MapDataController extends DataController implements MapFolder
         return $this->getFeature($name);
     }
 
+    // override what the feed says
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+
     public function getTitle() {
+        if ($this->title !== null) {
+            return $this->title;
+        }
+
         if (!$this->items) {
             $data = $this->getData();
             $this->items = $this->parseData($data);
