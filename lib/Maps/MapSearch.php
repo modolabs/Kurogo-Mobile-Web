@@ -37,10 +37,16 @@ class MapSearch {
             $controller->setCategory($categoryID);
             $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             if ($controller->canSearch()) { // respect config settings
-                $results = $controller->searchByProximity($center, $tolerance, $maxItems);
-                // this runs a risk of eliminating search results that are the
-                // same distance away (within 1 meter) in different feeds
-                $resultsByDistance = array_merge($resultsByDistance, $results);
+                try {
+                    $results = $controller->searchByProximity($center, $tolerance, $maxItems);
+                    // this runs a risk of eliminating search results that are the
+                    // same distance away (within 1 meter) in different feeds
+                    $resultsByDistance = array_merge($resultsByDistance, $results);
+                } catch (DataServerException $e) {
+                    error_log('encountered DataServerException for feed config:');
+                    error_log(print_r($feedData, true));
+                    error_log('message: '.$e->getMessage());
+                }
             }
         }
 
@@ -63,9 +69,15 @@ class MapSearch {
             $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             
             if ($controller->canSearch()) {
-                $results = $controller->search($query);
-                $this->resultCount += count($results);
-                $this->searchResults = array_merge($this->searchResults, $results);
+                try {
+                    $results = $controller->search($query);
+                    $this->resultCount += count($results);
+                    $this->searchResults = array_merge($this->searchResults, $results);
+                } catch (DataServerException $e) {
+                    error_log('encountered DataServerException for feed config:');
+                    error_log(print_r($feedData, true));
+                    error_log('message: '.$e->getMessage());
+                }
             }
     	}
     	
