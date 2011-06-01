@@ -87,9 +87,8 @@ class PeopleAPIModule extends APIModule
         switch ($this->command) {
             case 'search':
                 if ($filter = $this->getArg('q')) {
-    
-                    $searchTerms = trim($filter);
-                    $people = $peopleController->search($searchTerms);
+                    
+                    $people = $peopleController->search($filter);
                     
                     $errorCode = $peopleController->getErrorNo();
                     if ($errorCode) {
