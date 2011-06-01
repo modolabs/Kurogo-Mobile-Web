@@ -14,6 +14,9 @@ abstract class ContentAPIModule extends APIModule {
         {
             case 'html':
                 $content = isset($feedData['CONTENT_HTML']) ? $feedData['CONTENT_HTML'] : '';
+                if (is_array($content)) {
+                    $content = implode("\n", $content);
+                }
                 return $content;
                 break;
             case 'html_url':
@@ -21,12 +24,14 @@ abstract class ContentAPIModule extends APIModule {
                     $feedData['CONTROLLER_CLASS'] = 'HTMLDataController';
                 }
                 $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-                if (isset($feedData['HTML_ID'])) {
+                if (isset($feedData['HTML_ID']) && strlen($feedData['HTML_ID'])>0) {
                     $content = $controller->getContentById($feedData['HTML_ID']);
+                } elseif (isset($feedData['HTML_TAG']) && strlen($feedData['HTML_TAG'])>0) {
+                    $content = $controller->getContentByTag($feedData['HTML_TAG']);
                 } else {
                     $content = $controller->getContent();
                 }
-
+                
                 return $content;
                 break;
             case 'rss':
@@ -37,14 +42,13 @@ abstract class ContentAPIModule extends APIModule {
                 if ($item = $controller->getItemByIndex(0)) {
                     return $item->getContent();
                 }
-
+                
                 return '';
                 break;
             default:
                 throw new Exception("Invalid content type $content_type");
         }
-        
-   }
+    }
 
      protected function initializeForCommand() {
         if (!$feeds = $this->loadFeedData()) {
