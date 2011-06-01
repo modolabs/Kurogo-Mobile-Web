@@ -17,8 +17,12 @@ The name of each section is generally not important, but must be unique.
 
 Within each feed you use the following options:
 
-* *CONTROLLER_CLASS* - The DataController to use. Currently supported controllers include the *YouTubeVideoControler*
-  and *BrightcoveVideoController*. 
+* *CONTROLLER_CLASS* - The DataController to use. Currently supported controllers include:
+  
+  * *YouTubeVideoControler*
+  * *VimeoVideoController*
+  * *BrightcoveVideoController*
+  
 * *TITLE* - The textual label used when showing the section list
 * *AUTHOR* - optional, used to limit the results by author
 * *TAG* - optional, used to limit the results by tag

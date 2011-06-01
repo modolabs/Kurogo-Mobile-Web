@@ -26,10 +26,9 @@ directly referenced, but rather use an accessor method to ensure future compatib
 properties that you will need to use if creating your own module. These include:
 
 * *id* (string) - This property should be set to the same name and capitalization as the module directory. 
-  This property **must** be set by all modules. For modules that are duplicates of others, the id should
-  be the id of the parent module.
+  This property **must** be set by all modules. 
 * *configModule* (string) - This property should be set to the same name and capitalization as the module directory. 
-  If not set, it will use the *id* property
+  If not set, it will use the *id* property. Generally this is only used when you are :ref:`copying a module <copy-module>`
 * *moduleName* (string) - This property represents the canonical name of the module and is shown at
   on the nav bar. It can be overridden using the configuration file.
 * *page* (string) - This property is set when the module initializes and represents the current page the 
@@ -73,6 +72,7 @@ Accessors
 * *getArg($key, $default)* - Retrieves an argument sent via GET/POST, if the *$key* is not present, then
   it will return the value specified in *$default*
 
+.. _modules_configuration:
 
 ^^^^^^^^^^^^^
 Configuration
