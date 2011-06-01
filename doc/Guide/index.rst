@@ -25,6 +25,7 @@ This guide serves as a tour of the project source code and its features.
    :maxdepth: 1
 
    overview
+   support
    github
    setup
    helloworld
