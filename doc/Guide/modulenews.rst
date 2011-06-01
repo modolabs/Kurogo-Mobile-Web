@@ -6,6 +6,16 @@ The news module shows a list of stories/articles from an RSS feed. If the feed p
 content, the article is shown to the user in a mobile friendly format. If the feed does not contain
 full text then the module will redirect the browser to the URL of the article.
 
+===============
+General Options
+===============
+
+There are a few options in *SITE_DIR/config/news/module.ini* that can configure basic operations of
+the news module
+
+* *MAX_RESULTS* (10) - The number of items to show in the news list
+
+
 ======================
 Configuring News Feeds
 ======================
@@ -24,12 +34,16 @@ is 1, etc). The following values are required:
 
 **Optional values**
 
-* CONTROLLER_CLASS - allows you to set a different class name for the controller. The default is 
+* *CONTROLLER_CLASS* - allows you to set a different class name for the controller. The default is 
   RSSDataController. You could write your own subclass to adjust the URL if your source is a 
   web service. 
-* PARSER_CLASS set this to a subclass of *DataParser*. You would only need to change it if your data
+* *PARSER_CLASS* set this to a subclass of *DataParser*. You would only need to change it if your data
   source returns data in a format other than RSS/Atom or RDF. The default is RSSDataParser.
-* ITEM_CLASS allows you to set a different class name for each item in the feed. This would allow
+* *ITEM_CLASS* allows you to set a different class name for each item in the feed. This would allow
   you to handle a feed that has custom fields
-* ENCLOSURE_CLASS allows you to set a different class name for enclosures. This would allow you
+* *ENCLOSURE_CLASS* allows you to set a different class name for enclosures. This would allow you
   to handle custom behavior for enclosures, including images, video and audio.
+* *SHOW_IMAGES* - Show the image thumbnails for this feed. If an image is not available, it will show
+  a placeholder image. If the entire feed does not have images, you may wish to set SHOW_IMAGES=0 
+* *SHOW_PUBDATE* - Show the publish date in the news list (the published date is always showed in the detail page)
+* *SHOW_AUTHOR* - Show the author in the news list (the author is always showed in the detail page)

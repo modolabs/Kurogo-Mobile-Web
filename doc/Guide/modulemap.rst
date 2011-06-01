@@ -3,16 +3,15 @@ Map Module
 ##########
 
 The map module allows you to browse and search for places and view them on a map.
-Places may be grouped by campus, category, and subcategory.
+Places may be grouped by feed groups, category, and subcategory.
 
-============================
-Configuring Campus Locations
-============================
+========================
+Configuring Feed Groups
+========================
 
-If an institution specifies multiple campuses, the home screen will show a list of campus locations.
-If there is a single campus, the home screen will show a list of categories to browse by.
+Feed groups are a way to organize map sources logically (i.e. by campus/location)
 
-Campuses are configured in the *SITE_DIR/config/map/feedgroups.ini* file. Each separate campus has an section as follows:::
+Groups are configured in the *SITE_DIR/config/map/feedgroups.ini* file. Each separate group has an section as follows:::
 
     [boston]
     title = "Boston Maps"

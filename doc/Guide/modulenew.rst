@@ -28,6 +28,8 @@ Steps
 * Create a templates folder inside the SITE_DIR/app/modules/video folders
 * Create *VideoWebModule.php* with the following contents::
 
+.. code-block:: php
+
     <?php
     
     class VideoWebModule extends WebModule

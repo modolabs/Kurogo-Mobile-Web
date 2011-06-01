@@ -2,8 +2,14 @@
 URL Module
 ###################
 
-The url module simply redirects the user to an external url. This is an *abstract* module and in
-order to use it, you must :ref:`copy-module`
+The url module simply redirects the user to an external url. 
+
+--------
+Abstract
+--------
+The URL module cannot be instantiated directly. It is an *abstract* module. In order to create
+a module that utilizes its features you should :ref:`copy the module <copy-module>`.
+
 
 =============
 Configuration
