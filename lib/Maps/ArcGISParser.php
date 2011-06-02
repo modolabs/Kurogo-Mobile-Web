@@ -502,18 +502,30 @@ class ArcGISLayer implements MapFolder, MapListElement {
                 } else if ($fieldInfo['type'] == 'esriFieldTypeGeometry') {
                     $this->geometryField = $fieldInfo['name'];
                     continue;
+                } else if (!isset($possibleDisplayField)
+                    && $fieldInfo['type'] == 'esriFieldTypeString'
+                ) {
+                    $possibleDisplayField = $fieldInfo['name'];
                 }
 
-                // often the field names will be full paths to SQL tables,
-                // as in database.table or server.scheme.database.table
-                //$nameRefParts = explode('.', $fieldInfo['name']);
-                //var_dump($fieldInfo);
-                //$name = end($nameRefParts);
                 $name = $fieldInfo['name'];
                 if (strtoupper($name) == strtoupper($this->displayField)) {
+                    // handle case where display field is returned in
+                    // a different capitalization from return fields
                     $name = $this->displayField;
                 }
                 $this->fieldNames[$name] = $fieldInfo['alias'];
+            }
+
+            if (!isset($this->fieldNames[$this->displayField])
+                && isset($possibleDisplayField)
+            ) {
+                // if the display field is still problematic (e.g. the
+                // OID field was returned as the display field), just
+                // choose the first string field that shows up.
+                // obviously if there are no other string fields then
+                // this will also fail.
+                $this->displayField = $possibleDisplayField;
             }
     
             $this->isInitialized = true;

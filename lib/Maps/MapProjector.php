@@ -2,14 +2,24 @@
 
 class MapProjector {
 
-    private $srcProj = 4326;
-    private $dstProj = 4326;
+    private $srcProjId = 4326;
+    private $dstProjId = 4326;
     
     private $srcProjSpec;
     private $dstProjSpec;
+
+    private $fromProjection;
+    private $toProjection;
     
     public function __construct() {
 
+    }
+
+    public static function needsConversion($a, $b) {
+        // this will return true if either projection is 
+        // wkt-based.  TODO: be able to determine equality of
+        // wkt-based projections.
+        return !is_int($a) || !is_int($b) || $a != $b;
     }
     
     public static function getXYFromPoint(Array $point) {
@@ -53,25 +63,30 @@ class MapProjector {
     public function projectPoints(Array $points, $outputXY=false) {
         $result = $points;
         if ($this->srcProjSpec) {
-            $fromProjection = new MapProjection($this->srcProjSpec);
-            if (!$fromProjection->isGeographic()) {
+            if (!isset($this->fromProjection)) {
+                $this->fromProjection = new MapProjection($this->srcProjSpec);
+            }
+            if (!$this->fromProjection->isGeographic()) {
                 $newPoints = array();
                 foreach ($result as $point) {
                     list($x, $y) = self::getXYFromPoint($point);
-                    $fromProjection->setXY(array('x' => $x, 'y' => $y));
-                    $newPoints[] = $fromProjection->getLatLon();
+                    $this->fromProjection->setXY(array('x' => $x, 'y' => $y));
+                    $newPoints[] = $this->fromProjection->getLatLon();
                 }
                 $result = $newPoints;
             }
         }
+
         if ($this->dstProjSpec) {
-            $toProjection = new MapProjection($this->dstProjSpec);
-            if (!$toProjection->isGeographic()) {
+            if (!isset($this->toProjection)) {
+                $this->toProjection = new MapProjection($this->dstProjSpec);
+            }
+            if (!$this->toProjection->isGeographic()) {
                 $newPoints = array();
                 foreach ($result as $point) {
                     list($x, $y) = self::getXYFromPoint($point);
-                    $toProjection->setLatLon(array('lon' => $x, 'lat' => $y));
-                    $newPoints[] = $toProjection->getXY();
+                    $this->toProjection->setLatLon(array('lon' => $x, 'lat' => $y));
+                    $newPoints[] = $this->toProjection->getXY();
                 }
                 $result = $newPoints;
             }
@@ -84,54 +99,69 @@ class MapProjector {
         list($x, $y) = self::getXYFromPoint($point);
         error_log("projecting $x, $y");
 
-        if ($this->srcProj == $this->dstProj) {
+        if (isset($this->srcProjId, $this->dstProjId)
+            && $this->srcProjId == $this->dstProjId
+        ) {
             return array('lon' => $x, 'lat' => $y);
         }
 
         $result = $point;
-        if ($this->srcProjSpec) {
-            $fromProjection = new MapProjection($this->srcProjSpec);
-            if (!$fromProjection->isGeographic()) {
-                $fromProjection->setXY(array('x' => $x, 'y' => $y));
-                $result = $fromProjection->getLatLon();
-            }
+        if ($this->srcProjSpec && !isset($this->fromProjection)) {
+            $this->fromProjection = new MapProjection($this->srcProjSpec);
         }
-        if ($this->dstProjSpec) {
-            $toProjection = new MapProjection($this->dstProjSpec);
-            if (!$toProjection->isGeographic()) {
-                list($x, $y) = self::getXYFromPoint($result);
-                $toProjection->setLatLon(array('lon' => $x, 'lat' => $y));
-                $result = $toProjection->getXY();
-            }
+        if (isset($this->fromProjection) && !$this->fromProjection->isGeographic()) {
+            $this->fromProjection->setXY(array('x' => $x, 'y' => $y));
+            $result = $this->fromProjection->getLatLon();
         }
 
-list($x, $y) = self::getXYFromPoint($result);
-error_log("result: $x, $y");
+        if ($this->dstProjSpec && !isset($this->toProjection)) {
+            $this->toProjection = new MapProjection($this->dstProjSpec);
+        }
+        if (isset($this->toProjection) && !$this->toProjection->isGeographic()) {
+            list($x, $y) = self::getXYFromPoint($result);
+            $this->toProjection->setLatLon(array('lon' => $x, 'lat' => $y));
+            $result = $this->toProjection->getXY();
+        }
+
+        list($x, $y) = self::getXYFromPoint($result);
+        error_log("result: $x, $y");
 
         return $result;
     }
-    
+
     public function getSrcProj() {
-        return $this->srcProj;
-    }
-    
-    public function getDstProj() {
-        return $this->dstProj;
+        return $this->srcProjId;
     }
     
     public function setSrcProj($proj) {
-        $projspecs = self::getProjSpecs($proj);
-        if ($projspecs) {
-            $this->srcProjSpec = trim($projspecs);
-            $this->srcProj = $proj;
+        if ($proj instanceof MapProjection) {
+            $this->fromProjection = $proj;
+            $this->srcProjId = null;
+
+        } else {
+            $projspecs = self::getProjSpecs($proj);
+            if ($projspecs) {
+                $this->srcProjSpec = trim($projspecs);
+                $this->srcProjId = $proj;
+            }
         }
+    }
+
+    public function getDstProj() {
+        return $this->dstProjId;
     }
     
     public function setDstProj($proj) {
-        $projspecs = self::getProjSpecs($proj);
-        if ($projspecs) {
-            $this->dstProjSpec = trim($projspecs);
-            $this->dstProj = $proj;
+        if ($proj instanceof MapProjection) {
+            $this->toProjection = $proj;
+            $this->dstProjId = null;
+
+        } else {
+            $projspecs = self::getProjSpecs($proj);
+            if ($projspecs) {
+                $this->dstProjSpec = trim($projspecs);
+                $this->dstProjId = $proj;
+            }
         }
     }
     

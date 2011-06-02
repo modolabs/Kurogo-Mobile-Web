@@ -1,4 +1,28 @@
 var currentTab;
+var orientationMethod;
+var orientationIsFlipped=false;
+
+// detect how we are detecting orientation
+(function (window) {
+    if (!('orientation' in window)) {
+        window.orientationMethod = 'size';
+        return;
+    }
+
+    window.orientationMethod = 'orientation';
+    var width = document.documentElement.clientWidth || document.body.clientWidth;
+    var height = document.documentElement.clientHeight || document.body.clientHeight;
+    
+    /* at this point the method of orientation detection is not perfect */
+    if (navigator.userAgent.match(/(PlayBook.+RIM Tablet|Android 3\.\d)/)) {
+        window.orientationIsFlipped = true;
+    }
+    
+})(window);
+
+String.prototype.strip = function() {
+    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+}
 
 function showTab(strID, objTrigger) {
 // Displays the tab with ID strID
@@ -40,29 +64,41 @@ function showTab(strID, objTrigger) {
 }
 
 function rotateScreen() {
-  // Switch stylesheet and viewport based on screen orientation
-  var width = document.documentElement.clientWidth || document.body.clientWidth;
-  var height = document.documentElement.clientHeight || document.body.clientHeight;
-  
-  if (width > height) {
-    setOrientation('landscape');
-  } else {
-    setOrientation('portrait');
-  }
-
+  setOrientation(getOrientation());
   setTimeout(scrollToTop, 500);
+}
+
+function getOrientation() {
+    switch (window.orientationMethod) {
+        case 'size':
+            var width = document.documentElement.clientWidth || document.body.clientWidth;
+            var height = document.documentElement.clientHeight || document.body.clientHeight;
+
+            return (width > height) ? 'landscape' : 'portrait';
+            break;
+
+        case 'orientation':
+            switch (window.orientation) {
+                case 0:
+                case 180:
+                    return window.orientationIsFlipped ? 'landscape' : 'portrait';
+                    break;
+                
+                case 90:
+                case -90:
+                    return window.orientationIsFlipped ? 'portrait': 'landscape';
+                    break;
+            }
+    }
 }
 
 function setOrientation(orientation) {
     var body = document.getElementsByTagName("body")[0];
  
  //remove existing portrait/landscape class if there
-    if (body.className.match(new RegExp("(^|\\s)(portrait|landscape)(\\s|$)"))) {
-        body.className = body.className.replace(
-          new RegExp("(^|\\s+)(portrait|landscape)(\\s+|$)"), ' ');
-    }
-    
-    body.className += ' ' + orientation;
+    removeClass(body, 'portrait');
+    removeClass(body, 'landscape');
+    addClass(body, orientation);
 }
 
 
@@ -70,8 +106,7 @@ function showLoadingMsg(strID) {
 // Show a temporary loading message in the element with ID strID
 	var objToStuff = document.getElementById(strID);
 	if(objToStuff) {
-		objToStuff.style.height = objToStuff.offsetHeight + "px";
-		objToStuff.innerHTML = "<div class=\"loading\"><img src=\"../Webkit/images/loading.gif\" width=\"27\" height=\"21\" alt=\"\" align=\"absmiddle\" />Loading data...</div >";
+		objToStuff.innerHTML = "<div class=\"loading\"><img src=\"../common/images/loading.gif\" width=\"27\" height=\"21\" alt=\"\" align=\"absmiddle\" />Loading data...</div >";
 	}
 	onDOMChange();
 }
@@ -177,7 +212,7 @@ function addClass(ele,cls) {
 function removeClass(ele,cls) {
     if (hasClass(ele,cls)) {
         var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
-        ele.className=ele.className.replace(reg,' ');
+        ele.className=ele.className.replace(reg,' ').strip();
     }
 }
         

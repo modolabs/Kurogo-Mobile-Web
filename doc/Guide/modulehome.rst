@@ -75,3 +75,5 @@ particular pane:
     medium2 = "emergency"
     tall = "calendar"
 
+If you do not want to show the tablet interface you can change *TABLET_ENABLED* to 0 in *SITE_DIR/config/site.ini*.
+When the tablet interface has been disabled, tablet devices will receive the *compliant* page type.

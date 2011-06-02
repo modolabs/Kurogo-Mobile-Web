@@ -81,7 +81,6 @@ It is important to include the *$id* property like you would with a :doc:`new mo
 
 .. _copy-module:
 
-
 =======================================
 Copying a Module 
 =======================================

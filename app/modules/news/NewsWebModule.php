@@ -14,6 +14,7 @@ class NewsWebModule extends WebModule {
   protected $feedIndex = 0;
   protected $feed;
   protected $maxPerPage = 10;
+  protected $maxPerPane = 5;
   protected $showImages = true;
   protected $showPubDate = false;
   protected $showAuthor = false;
@@ -196,6 +197,7 @@ class NewsWebModule extends WebModule {
         $this->assign('title',         $story->getTitle());
         $this->assign('author',        $story->getAuthor());
         $this->assign('image',         $this->getImageForStory($story));
+        $this->assign('ajax',          $this->getArg('ajax'));
         break;
         
       case 'search':
@@ -263,7 +265,7 @@ class NewsWebModule extends WebModule {
         
       case 'pane':
         $start = 0;
-        $items = $this->feed->items($start, $this->maxPerPage);
+        $items = $this->feed->items($start, $this->maxPerPane);
         $stories = array();
         foreach ($items as $story) {
           $item = array(

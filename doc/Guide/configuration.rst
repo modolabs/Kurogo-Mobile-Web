@@ -64,7 +64,7 @@ Configuration files
 
 When running a module, the following config files are loaded automatically:
 
-* *config/site.ini* The framework config file. It's primary role is to indicate the active site and
+* *config/kurogo.ini* The framework config file. It's primary role is to indicate the active site and
   configuration mode
 * *SITE_DIR/config/site.ini* - The site configuration file. It contains properties shared by all
   modules and sets up the basic environment
@@ -85,7 +85,7 @@ Local Files
 The framework supports overriding configuration files for local server customization. Unless
 the configuration value *CONFIG_IGNORE_LOCAL* (defined in *config/kurogo.ini*) is set to 1, the
 framework will also load files with a -local in the file name for each configuration file loaded.
-I.e. *SITE_DIR/config/site.ini* can be overridden with *SITE_DIR/config/config-local.ini*. 
+I.e. *SITE_DIR/config/site.ini* can be overridden with *SITE_DIR/config/site-local.ini*. 
 *SITE_DIR/config/home/module.ini* can be overridden with *SITE_DIR/config/home/module-local.ini*.
 It is **not** necessary to duplicate the entire file. Only the values that are different need to be 
 in the -local file. It could also include additional values that are not present in the base config.
@@ -109,7 +109,7 @@ values and instantly switch between them. This option is set in the *CONFIG_MODE
 These files are not ignored by git.
 
 One use of this would be to create development and production versions of some of your configuration files. 
-You can have *SITE_DIR/config-development.ini* and *SITE_DIR/config-production.ini* with differing
+You can have *SITE_DIR/site-development.ini* and *SITE_DIR/site-production.ini* with differing
 values for debugging. Then you can set *CONFIG_MODE* to **development** or **production**. If *CONFIG_MODE*
 is empty (the default), than no files will be searched. Another example would be to include authorization values
 for certain modules in a production environment. 
@@ -121,12 +121,8 @@ presuming *CONFIG_IGNORE_LOCAL* is not enabled.
 Retrieving Configuration Values
 -------------------------------
 
-There are several methods in the :doc:`WebModule object <modules>` for retrieving values from configuration files:
-
-* getSiteVar - Retrieves a single value from the main site configuration
-* getSiteSection - Retrieves a section (as an array or key=>values) from the main site configuration
-* getModuleVar - Retrieves a single value from the module configuration
-* getModuleSection - Retrieves a section (as an array or key=>values) from the module configuration
+There are a variety of methods that are used to retrieve values from the configuration files. Please
+see :ref:`Module Configuration <modules_configuration>` for more information on how to retrieve these values in your module.
 
 ==================
 Site Configuration

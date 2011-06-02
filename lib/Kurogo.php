@@ -1,7 +1,7 @@
 <?php
 
 define('ROOT_DIR', dirname(__FILE__).'/..'); 
-define('KUROGO_VERSION', '1.0');
+define('KUROGO_VERSION', '1.1');
 
 /* this is a singleton class */
 class Kurogo
@@ -255,7 +255,8 @@ class Kurogo
       define('URL_DEVICE_DEBUG_PREFIX', $urlDeviceDebugPrefix);
       define('URL_PREFIX', $urlPrefix);
       define('FULL_URL_PREFIX', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_PREFIX);
-    
+      define('KUROGO_IS_API', preg_match("#^" .API_URL_PREFIX . "/#", $path));
+          
       //error_log(__FUNCTION__."(): prefix: $urlPrefix");
       //error_log(__FUNCTION__."(): path: $path");
       $this->deviceClassifier = new DeviceClassifier($device);

@@ -77,7 +77,7 @@ class VideoWebModule extends WebModule
         {  
               case 'pane':
                 $start = 0;
-                $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
+                $maxPerPage = $this->getOptionalModuleVar('MAX_PANE_RESULTS', 5);
 
                 $items = $controller->items($start, $maxPerPage);
                 $videos = array();
@@ -179,6 +179,7 @@ class VideoWebModule extends WebModule
             
                 if ($video = $controller->getItem($videoid)) {
                     $this->setTemplatePage('detail-' . $video->getType());
+                    $this->assign('ajax'      ,       $this->getArg('ajax', null));
                     $this->assign('videoTitle',       $video->getTitle());
                     $this->assign('videoid',          $video->getID());
                     $this->assign('videoDescription', $video->getDescription());

@@ -24,6 +24,20 @@
       </td></tr>
     </table>
   {else}
+  <div id="videoHeader">
     {include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
+  </div>
   {/if}
+{/block}
+
+{block name="videos"}
+<div id="tabletVideos">
+<div id="videos">
+{include file="findInclude:modules/$moduleID/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
+</div>
+<div id="videoDetailWrapper">
+<div id="videoDetail">
+</div><!-- videoDetail -->
+</div><!-- videoDetailWrapper -->
+</div><!-- tabletVideos -->
 {/block}

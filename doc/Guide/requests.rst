@@ -23,7 +23,7 @@ Path patterns
 
 The index.php script will analyze the path for several patterns
 
-* favicon.ico if a favicon.ico file exists in the CURRENT_THEME/common/images folder it will be 
+* favicon.ico if a favicon.ico file exists in the *CURRENT_THEME/common/images* folder it will be 
   sent to the client
 * ga.php will be sent from the lib folder
 * requests with a path of *common* or *modules* with a subpath of *images*, *css* or *javascript* are 
@@ -63,7 +63,7 @@ There are a variety of circumstances when you want to have alternate content be 
 characteristics of the device making the request. The :doc:`device detection service <devicedetection>` 
 will contain 2 important properties that can influence which content is loaded.
 
-* pagetype - The basic type of device, is either *basic* or *compliant*. 
+* pagetype - The basic type of device, is *basic*, *touch*, *compliant* or *tablet*.
 * platform - The specific device type. Examples include: *android*, *bbplus*, *blackberry*, *computer*, 
   *featurephone*, *iphone*, *palmos*, *spider*, *symbian*, *webos*, *winmo*
 

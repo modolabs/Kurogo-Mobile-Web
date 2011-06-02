@@ -31,11 +31,11 @@ After instantiation, the DataController class will call the *init($args)* method
 DataParser and sets the properties of the controller based on the options. There are several 
 common options you can include (some may be required by the class you are creating):
 
-    * *PARSER_CASS* - The class name of the parser to use. If not present it will use the value of the 
-      Controller class' DEFAULT_PARSER_CLASS property.
-    * *BASE_URL* - Sets the base url of the request
-    * *TITLE* - Sets the title of the controller
-    * *CACHE_LIFETIME* - Sets the cache lifetime, in seconds
+* *PARSER_CASS* - The class name of the parser to use. If not present it will use the value of the 
+  Controller class' DEFAULT_PARSER_CLASS property.
+* *BASE_URL* - Sets the base url of the request
+* *TITLE* - Sets the title of the controller
+* *CACHE_LIFETIME* - Sets the cache lifetime, in seconds
 
 Each subclass can define its own set of options and handle those in its *init* method. Just make sure
 to call *parent::init($args)* first. These arguments are also sent to the *init* method of the 

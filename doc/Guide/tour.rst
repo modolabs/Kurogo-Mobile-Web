@@ -22,6 +22,9 @@ There are several directories located in the root of the project folder:
 **config**
   This directory contains the main configuration files for the entire project. Most notably it contains
   the *kurogo.ini* file which determines the active site.
+**doc** (only included in source distribution)
+  This directory contains various documentation files including this guide. This guide is built using
+  the `Sphinx <http://sphinx.pocoo.org/>`_ documentation system. 
 **lib**
   This directory contains libraries that are provided by the project. This includes libraries for data
   retrieval and parsing, authentication, database access and configuration. Generally speaking only
@@ -52,7 +55,7 @@ Provided vs. Site files
 As noted in the layout section, there are files provided by the project (app, lib, www) and files
 for your use (site). As an open source project, you are certainly welcome to alter files in any way 
 that suits your needs. However, be aware that if you alter or add files in the project directories, it
-may create conflicts when you attempt to update future versions of the project. There are well known
+may create conflicts when you attempt to update future versions of the project. There are supported
 methods to :doc:`add additional functionality <moduleextend>` to existing code while maintaining upgradability. 
 
 That being said, if you have improvements that others would benefit from, we encourage you to :ref:`submit your
@@ -81,20 +84,33 @@ module (use: *includePackage('PackageName')* in your module code). Currently the
 * db - used when you wish to interact with a database
 * Emergency - used by the emergency module
 * Maps - used by the maps module
+* People - used by the people module
 * Video - used by the video module
 
 --------------------
 Core / Support Files
 --------------------
 
-* autoloader - Defines a function that finds and loads class files on demand
 * compat - defines several functions that normalize behavior throughout PHP versions
 * exceptions - defines exception subclasses and sets up exception handling behavior
-* initialize - called by :ref:`index.php` to setup the runtime environment
+* Kurogo - a singleton class used to consolidate common operations like initialization, site configuration, and administration
 * minify - interface between the framework and the included open source minify library
 * *DeviceClassifier* - An interface between the frame work and the :doc:`Device Detection Service <devicedetection>`
+* *deviceData.db* - A SQLite database that contains entires used by the internal device detection system.
 * *PageViews* - A class to log and retrieve page view information for statistics
 * *Validator* - A utility class to validate certain types of data
+
+--------------------
+Native API Functions
+--------------------
+
+These functions deal with the REST API interface that permits access to certain module functions. These
+interfaces are used primarily by the native applications (i.e. iOS) but is also used by certain modules
+for AJAX like functionality where supported.
+
+* APIModule - The base class for API modules, inherits from Module
+* APIResponse - A class that encapsulates the common response message for API requests
+* CoreAPIModule - Class used to handle site wide API functions (API requests not assigned to a specific module)
 
 -----------------------
 External Data Retrieval
@@ -118,6 +134,8 @@ Included examples of DataControllers/Parsers include:
 * *PeopleController* - access directory/person data. The only included implementation at this time 
   is the *LDAPPeopleController* which queries information from an LDAP directory. Note this is distinct
   from authenticating users.
+* *HTMLDataController* - retrieves a remote HTML document and optionally extracts a specific HTML ID
+  or element. It uses the *DOMDataParser*.
 
 These classes also use the *DiskCache* class to cache the retrieved data.
 
@@ -145,6 +163,8 @@ User Access and Authentication
   for more information about the included authorities. 
 * *AccessControlList* - A class used by the authorization system to restrict access to modules based on
   user or group membership. This is especially useful for the :ref:`admin-module`.
+* *OAuthRequest* - A class that handles remote data using OAuth keys and tokens. Used by a variety of 
+  services.
 * *Session* - Handles the saving and restoration of user state. This is currently implemented using 
   PHP session variables.
 * *User* - The base class for identifying logged in users
@@ -170,7 +190,6 @@ Modules and Templates
 
 * *Module* - The core class that all modules inherit from. Provides a variety of necessary services
   and behavior to module subclasses. See :doc:`modules`.
-* *APIModule* - The core class that all api modules inherit from.
 * *WebModule* - The core class that all web modules inherit from.
 * *HTMLPager* - A support class used to paginate content
 * *smarty* - The `Smarty Template System <http://www.smarty.net/>`_
@@ -292,6 +311,8 @@ Each site folder contains the following directories:
 * *data* - a folder that contains data files meant to be used by the server. Unlike cache folders, these
   files cannot be safely deleted. Examples would include data that is not able to be generated from 
   a web service, SQLite databases, or flat authentication files
+* *lib* - an optional folder that contains code libraries used by site modules. The Kurogo autoloader 
+  will discover and find classes and packages in this folder.
 * *logs* - Log files
 * *themes* - Contains the themes available for this site. Each theme folder contains a *common* and *modules*
   folder that contains the CSS and image assets for the site. See :doc:`template` for more information.

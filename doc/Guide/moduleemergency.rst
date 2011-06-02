@@ -2,7 +2,7 @@
 Emergency Module
 #################
 
-The emergency module provides a mobile interface to a sites emergency information. 
+The emergency module provides a mobile interface to a site's emergency information. 
 The module can display the latest emergency information and a list of emergency contacts.
 The data source for this module can come from a drupal server, running emergency drupal module
 which can be found in the add-ons at *add-ons/drupal-modules/emergency*, (Currently only
@@ -30,14 +30,14 @@ a `contacts` section in *config/emergency/feeds.ini*
 
 Configure contacts list to connect to the drupal emergency module:
 
-* CONTROLLER_CLASS = "DrupalContactsListDataController"  
-* DRUPAL_SERVER_URL = "http://YOUR_DRUPAL_SERVER_DOMAIN"  
-* FEED_VERSION = 1
+* *CONTROLLER_CLASS* = "DrupalContactsListDataController"  
+* *DRUPAL_SERVER_URL* = "http://YOUR_DRUPAL_SERVER_DOMAIN"  
+* *FEED_VERSION* = 1
 
 Otherwise you can configure the contacts list directly in an ini file with:  
 
-* CONTROLLER_CLASS = "INIFileContactsListDataController"
-* BASE_URL must point to the appropriate ini file
+* *CONTROLLER_CLASS* = "INIFileContactsListDataController"
+* *BASE_URL* must point to the appropriate ini file
 
 The ini file will need a `primary` section for primary contacts and 
 a `secondary` section for secondary contacts. Each contact is formatted as follows::

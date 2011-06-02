@@ -8,12 +8,15 @@
   * @package Core
   */
 class DeviceClassifier {
-  const COOKIE_KEY='deviceClassification';
   private $userAgent = '';
   private $pagetype = 'unknown';
   private $platform = 'unknown';
   private $certs = false;
   protected $version = 1;
+  
+  private function cookieKey() {
+    return KUROGO_IS_API ? 'apiDeviceClassification': 'deviceClassification';
+  }
 
   public function getDevice() {
     return implode('-', array(
@@ -45,8 +48,8 @@ class DeviceClassifier {
     if ($device && strlen($device)) {
       $this->setDevice($device); // user override of device detection
       
-    } elseif (isset($_COOKIE[self::COOKIE_KEY])) {
-      $this->setDevice($_COOKIE[self::COOKIE_KEY]);
+    } elseif (isset($_COOKIE[$this->cookieKey()])) {
+      $this->setDevice($_COOKIE[$this->cookieKey()]);
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
       
@@ -82,7 +85,7 @@ class DeviceClassifier {
   }
     
   private function setDeviceCookie() {
-    setcookie(self::COOKIE_KEY, $this->getDevice(), 
+    setcookie($this->cookieKey(), $this->getDevice(), 
       time() + Kurogo::getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
   }
   

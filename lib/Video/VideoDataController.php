@@ -27,5 +27,5 @@ abstract class VideoDataController extends DataController
         }
     }
 
-    abstract public function search($q, $start, $limit);
+    abstract public function search($q, $start=0, $limit=null);
 }

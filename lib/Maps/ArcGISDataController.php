@@ -51,6 +51,10 @@ class ArcGISDataController extends MapDataController
     }
 
     public function getTitle() {
+        if ($this->title !== null) {
+            return $this->title;
+        }
+
         $this->initializeParser();
         return $this->parser->getTitle();
     }

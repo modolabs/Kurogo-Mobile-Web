@@ -4,41 +4,53 @@ People Module
 
 The people module enables sites to provide mobile access to their directory. With a few short configuration
 parameters you enable searching and detailed information to users on their mobile device. The built-in
-module supports connecting to LDAP based directories (including Active Directory)
+module supports connecting to either LDAP based directories (including Active Directory), and database
+(MySQL/SQLite) backed directories. 
 
 =================================
 Configuring the Server Connection
 =================================
 
-In order to use the people module, you must first setup the connection to your LDAP server. There are
-2 required values that must be set and a few optional ones. You can set these values by either using
-the :ref:`admin-module` or by editing the *SITE_DIR/config/people/feeds.ini* file 
-directly.
+The configuration for this module is accomplished by using the :ref:`admin-module` or by editing 
+the *SITE_DIR/config/people/feeds.ini* file. There are a variety of values to set in order to connect
+to your directory system.
 
-* The HOST value should match the address of your LDAP server. Keep in mind that this server must
-  be accessible from the web server the framework is hosted on. Managing network and firewall 
-  settings is the responsibility of your network administrator.
-* The SEARCH_BASE value should manage the LDAP search base of your directory. You can get this 
-  value from the administrator of your LDAP directory. Examples would include "dc=example,dc=com"
+* *CONTROLLER_CLASS* allows you to set a different class name for the controller. Current options include
+
+  * LDAPPeopleController - uses a standard LDAP server. You can configure the various fields if your values
+    differ from defaults
+  * DatabasePeopleController - connects to an external database server (MySQL/SQLite). This controller assumes
+    that people are mapped to a single row and that the various fields are stored in single (definable) columns 
   
-In most cases, this will permit you to perform simple search and details views of your data.
-
-**Optional values**
-
-* *CONTROLLER_CLASS* allows you to set a different class name for the controller. Current options are
-  LDAPPeopleController and DatabasePeopleController.
 * *PERSON_CLASS* allows you to set a different class name for the returned user objects when searching. 
-  This allows you to write custom behavior to handle the data in your directory service.
+  This allows you to write custom behavior to handle the data in your directory service. The default 
+  value is *Person*
 
 --------------------------------
 Options for LDAPPeopleController
 --------------------------------
 
+* *HOST* - should match the address of your server. Keep in mind that this server must
+  be accessible from the web server the framework is hosted on. Managing network and firewall 
+  settings is the responsibility of your network administrator.
+* *SEARCH_BASE* - should manage the LDAP search base of your directory. You can get this 
+  value from the administrator of your LDAP directory. Examples would include "dc=example,dc=com"
 * *PORT* - Optional (Default 389) The port to connect. Use 636 for SSL connections (recommended if available)
 * *ADMIN_DN* - Some servers do not permit anonymous queries. If necessary you will need to provide a full 
   distinguished name for an account that has access to the directory. For security this account should
   only have read access and be limited to the search bases to which it needs to access.
 * *ADMIN_PASSWORD* - The password for the *ADMIN_DN* account.
+
+
+The following values inform the controller which attributes to use when searching. These values would only
+need to be altered if the values differ from the defaults in parentheses.
+
+* *LDAP_USERID_FIELD* (uid)- Stores the user name for this user. Do not choose an attribute that is sensitiveas
+  they are easily viewed by users.
+* *LDAP_EMAIL_FIELD* (mail) - The attribute of the user's email address
+* *LDAP_FIRSTNAME_FIELD* (givenname) - The attribute of the user's first name
+* *LDAP_LASTNAME_FIELD* (sn) - The attribute of the user's last name
+* *LDAP_PHONE_FIELD* (telephonenumber) - The attribute of the user's phone number
 
 ------------------------------------
 Options for DatabasePeopleController
@@ -71,6 +83,7 @@ need to be altered if the values differ from the defaults in parentheses.
 * *DB_EMAIL_FIELD* (email) - stores the email in the user table
 * *DB_FIRSTNAME_FIELD* (firstname) - stores the first name of user.
 * *DB_LASTNAME_FIELD* (firstname) - stores the last name of user.
+* *DB_PHONE_FIELD* (no default) - stores the user's phone number. If empty then the search will not use the phone number
 
 The other fields are shown by configuring the detail fields below.
 

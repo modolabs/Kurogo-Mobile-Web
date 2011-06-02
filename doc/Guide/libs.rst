@@ -39,12 +39,12 @@ needs may vary.
 
 Currently there are 4 included DataParser implementations
 
+* *DOMDataParser* - Parses HTML content. Will return a DOMDocument object.
 * *ICSDataParser* - Parses data within an iCalendar (ICS) file. Will return an iCalendar object. (see lib/iCalendar.php)
 * *JSONDataParser* - Parses the string as JSON. Will return the string decoded into its PHP equivalent data type.
 * *PassthroughDataParser* - Does no processing, simply returns the string as is. This is useful when you want
   to use the data controller, but no parsing is necessary.
 * *RSSDataParser* - Parses data within a RSS/Atom/RDF feed using the XML parser. Will return an array of RSSItem objects (see lib/RSS.php)
-
 
 ===============
 Data Validation

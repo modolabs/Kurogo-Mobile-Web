@@ -36,6 +36,21 @@ Kurogo is a PHP application. It is currently qualified for use with
 To install, simply copy the files to your webserver, and point your site's document root to the included www
 folder. For more detailed setup information, please see the developer's guide.
 
+## Version 1.1
+
+This version includes a number of fixes and improvements, including:
+
+* An updated Tablet UI for News and Video modules
+* Updated Smarty template engine 
+* Support for Vimeo videos
+* Various improvements to calendar parsing
+* Improvements to the admin module
+* Various bug fixes
+* Many other small improvements and fixes outlined in the CHANGELOG
+
+Important note: You MUST delete all your server caches due to underlying changes in the template engine.
+Cache files in the minify and smarty folders must be removed.
+
 ## History
 
 This project is based off the original [MIT Mobile Framework](https://github.com/MIT-Mobile/MIT-Mobile-Web) and was adapted for use at [Harvard University](https://github.com/modolabs/Harvard-Mobile-Web).
