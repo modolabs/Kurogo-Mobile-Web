@@ -318,6 +318,11 @@ class PageViews {
     for ($i = 0; $i < $duration; $i++) {
       $sql_start_date = date('Y-m-d', $begin);
       $end = $begin + $increments[$i];
+      // never include data from the current day (since it is not complete)
+      $yesterday = strtotime("-1 day", $time);
+      if ($end > $yesterday) {
+        $end = $yesterday;
+      }
       $sql_end_date = date('Y-m-d', $end);
 
       $new_view = Array('date' => $begin, 'total' => 0);
