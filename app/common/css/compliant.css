@@ -1083,7 +1083,7 @@ h2.icon {
 }
 
 #tabbodies {
-	margin: -12px -12px 0 -12px;
+	margin: 0 -12px 0 -12px;
 	clear: both;
 	border-top: 1px solid #bbb;
 	-webkit-border-bottom-right-radius: 8px;	
