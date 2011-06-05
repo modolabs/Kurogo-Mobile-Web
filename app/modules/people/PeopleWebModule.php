@@ -17,6 +17,7 @@ class PeopleWebModule extends WebModule {
     private $detailAttributes = array();
     protected $defaultController = 'LDAPPeopleController';
     protected $feeds=array();
+    protected $contactGroups = array();
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -215,6 +216,47 @@ class PeopleWebModule extends WebModule {
         return htmlentities($section[0]['title']);
     }
     
+    protected function getContactGroup($group) {
+        if (!$this->contactGroups) {
+            $this->contactGroups = $this->getModuleSections('contact-groups');
+        }
+        
+        if (isset($this->contactGroups[$group])) {
+            if (!isset($this->contactGroups[$group]['contacts'])) {
+                $this->contactGroups[$group]['contacts'] = $this->getModuleSections('contacts-' . $group);
+            }
+
+            if (!isset($this->contactGroups[$group]['description'])) {
+                $this->contactGroups[$group]['description'] = '';
+            }
+            
+            return $this->contactGroups[$group];            
+        } else {
+            throw new Exception("Unable to find contact group information for $group");
+        }
+    }
+    
+    protected function getContacts() {
+        //try version -1.1 page-index version first for backwards compatibility
+        try { 
+            $contacts = $this->loadPageConfigFile('index', 'contacts');
+        } catch (Exception $e) {
+            $contacts = $this->getModuleSections('contacts');
+        }
+        
+        foreach ($contacts as &$contact) {
+            if (isset($contact['group']) && strlen($contact['group'])) {
+                $group = $this->getContactGroup($contact['group']);
+                if (!isset($contact['title']) && isset($group['title'])) {
+                    $contact['title'] = $group['title'];
+                }
+                $contact['url'] = $this->buildBreadcrumbURL('group', array('group'=>$contact['group']));
+            }
+        }
+        
+        return $contacts;
+    }
+    
 
     protected function initializeForPage() {
 
@@ -323,9 +365,21 @@ class PeopleWebModule extends WebModule {
                 }
                 $this->assign('bookmarks', $bookmarks);
                 break;
+                
+            case 'group':
+                $group = $this->getContactGroup($this->getArg('group'));
+                if (isset($group['title'])) {
+                    $this->setPageTitles($group['title']);
+                }
+                
+                $this->assign('contacts', $group['contacts']);
+                $this->assign('description', $group['description']);
+                break;
         
             case 'index':
-                $this->loadPageConfigFile('index', 'contacts');
+                $contacts = $this->getContacts();
+                $this->assign('contacts', $contacts);
+                
                 $this->setAutoPhoneNumberDetection(false);
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->generateBookmarkLink();
