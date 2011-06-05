@@ -268,6 +268,14 @@ abstract class Module
         return $config->getSectionVars($expand);
     }
 
+    protected function getOptionalModuleSections($config, $expand=Config::EXPAND_VALUE) {
+        if ($config = $this->getConfig($config, ConfigFile::OPTION_DO_NOT_CREATE)) {
+            return $config->getSectionVars($expand);
+        } else {
+            return false;
+        }
+    }
+
     /**
       * Returns a section as an array where the each element contains the various keys of the section
       * @param string $section the section to retrieve

@@ -92,6 +92,7 @@ exist on the Module object.
 * *getModuleSection($section, $config='module')* returns an array of values in a module section.  Will throw an exception if the section is not present
 * *getOptionalModuleSection($section, $config='module')* returns an array of values in a module section.  Will return an empty array if the section is not present
 * *getModuleSections($config)* - Returns a complete dictionary of sections=>vars=>values for a particular config file. Very handy when you basically want the array structure of an entire file
+* *getOptionalModuleSections($config)* - Like getModuleSections(), but if the config file does not exist it will return false
 
 You can also retrieve values from the site configuration (site.ini). These are for values used by all modules. They are
 static methods on the Kurogo object.
