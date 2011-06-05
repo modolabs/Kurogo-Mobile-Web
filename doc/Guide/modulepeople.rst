@@ -130,17 +130,17 @@ Creating groups of contacts
 If you have a number of fixed contacts and need to categorize them you can place them into groups. 
 Creating contact groups involves the following steps:
 
-#. If it does not exist, create a file named *SITE_DIR/config/people/config-groups.ini*
-#. Add a section to config-groups.ini with a short name of your group. This should be a lowercase 
+#. If it does not exist, create a file named *SITE_DIR/config/people/contacts-groups.ini*
+#. Add a section to contacts-groups.ini with a short name of your group. This should be a lowercase 
    alpha numeric value without spaces or special characters
 #. This section should contain a "title" option that represents the title of the group. Optionally
    you can include a *description* value that will show at the top of the contacts list for the group
-#. Create a file named *SITE_DIR/config/people/config-groupname.ini* where *groupname* is the short name
-   of the group you created in *config-groups.ini*. This file should be formatted like contacts.ini with
+#. Create a file named *SITE_DIR/config/people/contacts-groupname.ini* where *groupname* is the short name
+   of the group you created in *contacts-groups.ini*. This file should be formatted like contacts.ini with
    each entry being a numerically indexed section
 #. To use this group, assign it to a entry in *contacts.ini*. Do not include a url, but rather add 
    a value *group* with a value of the short name of the group. You can optionally add a title that will
-   be used instead of the group title indicated in *config-groups.ini*
+   be used instead of the group title indicated in *contacts-groups.ini*
   
 This is an example *SITE_DIR/config/people/contacts-groups.ini*. Each group is a section that contains title (and optional description).
 You can have any number of groups::

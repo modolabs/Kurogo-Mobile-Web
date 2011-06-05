@@ -218,7 +218,7 @@ class PeopleWebModule extends WebModule {
     
     protected function getContactGroup($group) {
         if (!$this->contactGroups) {
-            $this->contactGroups = $this->getModuleSections('contact-groups');
+            $this->contactGroups = $this->getModuleSections('contacts-groups');
         }
         
         if (isset($this->contactGroups[$group])) {
