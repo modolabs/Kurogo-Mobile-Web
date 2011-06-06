@@ -292,6 +292,7 @@ class PeopleWebModule extends WebModule {
                 } else {
                     $this->assign('searchError', 'No username specified');
                 }
+                break;
         
             case 'search':
                 if ($filter = $this->getArg('filter')) {

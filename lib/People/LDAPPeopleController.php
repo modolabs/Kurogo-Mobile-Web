@@ -292,12 +292,13 @@ class LDAPPeopleController extends PeopleController {
             LDAP_SIZELIMIT_EXCEEDED => "There are more results than can be displayed. Please refine your search.",
             LDAP_PARTIAL_RESULTS => "There are more results than can be displayed. Please refine your search.",
             LDAP_TIMELIMIT_EXCEEDED => "The directory service is not responding. Please try again later.",
+            LDAP_INSUFFICIENT_ACCESS => "Insufficient permissions to view the results.  Please try a different search.",
         );
 
         if(isset($error_codes[$error_code])) {
             return $error_codes[$error_code];
         } else { // return a generic error message
-            return "Your request cannot be processed at this time.";
+            return "Your request cannot be processed at this time. ($error_name)";
         }
     }
 
