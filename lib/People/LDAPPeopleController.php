@@ -185,7 +185,7 @@ class LDAPPeopleController extends PeopleController {
         
         if (!$sr) {
             if($ds) {
-                $this->errorMsg = self::generateErrorMessage($ds);
+                $this->errorMsg = $this->generateErrorMessage($ds);
             }
             return FALSE;
         }
