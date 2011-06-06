@@ -189,7 +189,7 @@ class DeviceClassifier {
   }
 
   public function isTablet() {
-    return $this->platform == 'tablet';
+    return $this->pagetype == 'tablet';
   }
 
   public function isSpider() {
