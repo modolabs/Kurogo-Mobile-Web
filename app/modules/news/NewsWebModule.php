@@ -320,7 +320,7 @@ class NewsWebModule extends WebModule {
         foreach ($this->feeds as $index => $feedData) {
           $sections[] = array(
             'value'    => $index,
-            'title'    => htmlentities($feedData['TITLE']),
+            'title'    => $feedData['TITLE'],
             'selected' => ($this->feedIndex == $index),
             'url'      => $this->feedURL($index, false),
           );
