@@ -261,7 +261,9 @@ class LDAPPeopleController extends PeopleController {
             $sr = ldap_read($ds, $id, "(objectclass=*)", $this->attributes, 0, 0, $this->readTimelimit);
 
             if (!$sr) {
-                $this->errorMsg = ldap_error($ds);
+                if($ds) {
+                    $this->errorMsg = $this->generateErrorMessage($ds);
+                }
                 return FALSE;
             }
 
@@ -292,7 +294,7 @@ class LDAPPeopleController extends PeopleController {
             LDAP_SIZELIMIT_EXCEEDED => "There are more results than can be displayed. Please refine your search.",
             LDAP_PARTIAL_RESULTS => "There are more results than can be displayed. Please refine your search.",
             LDAP_TIMELIMIT_EXCEEDED => "The directory service is not responding. Please try again later.",
-            LDAP_INSUFFICIENT_ACCESS => "Insufficient permissions to view the results.  Please try a different search.",
+            LDAP_INSUFFICIENT_ACCESS => "Insufficient permission to view this information.",
         );
 
         if(isset($error_codes[$error_code])) {
