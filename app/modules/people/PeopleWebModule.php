@@ -34,7 +34,7 @@ class PeopleWebModule extends WebModule {
         
     }
   
-    private function formatValues($values, $info) {
+    protected function formatValues($values, $info) {
         if (isset($info['parse'])) {
             $formatFunction = create_function('$value', $info['parse']);
             foreach ($values as &$value) {
@@ -45,7 +45,7 @@ class PeopleWebModule extends WebModule {
         return $values;
     }
   
-    private function formatDetail($values, $info, Person $person) {
+    protected function formatDetail($values, $info, Person $person) {
         if (isset($info['format'])) {
             $value = vsprintf($info['format'], $values);
         } else {
@@ -77,7 +77,7 @@ class PeopleWebModule extends WebModule {
         
             case 'map':
                 $detail['url'] = self::buildURLForModule('map', 'search', array(
-                      'filter' => $value
+                    'filter' => str_replace('$', ', ', $value),
                 ));
                 $detail['class'] = 'map';
                 break;
@@ -92,7 +92,7 @@ class PeopleWebModule extends WebModule {
         return $detail;
     }
   
-    private function formatPersonDetail(Person $person, $info, $key=0) {
+    protected function formatPersonDetail(Person $person, $info, $key=0) {
         $section = array();
         
         if (count($info['attributes']) == 1) {
@@ -121,7 +121,7 @@ class PeopleWebModule extends WebModule {
         return $section;
     }
   
-    private function formatPersonDetails(Person $person) {
+    protected function formatPersonDetails(Person $person) {
         //error_log(print_r($this->detailFields, true));
         
         $details = array();    
