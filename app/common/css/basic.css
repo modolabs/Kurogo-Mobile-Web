@@ -96,7 +96,7 @@ fieldset {
 	padding: 0;
 }
 
-.combobutton {
+.combobutton, .submitbutton {
 	font-size: x-small;
 }
 
@@ -107,11 +107,13 @@ fieldset {
 	padding: .2em;
 }
 
-.inputcombo .combobutton {
-	font-size: 100%;
+.inputcombo .combobutton, .inputcombo .submitbutton {
+	font-size: 93.75%;
 	padding: 0 .2em;
 	margin-left: .3em
 }
+
+
 
 /* Navigation and results lists */
 /* Many smartphones don't correctly interpret "display:block" for inline elements like <a> */
@@ -357,7 +359,8 @@ span.icon {
 }
 .devicedetection th,
 .devicedetection td {
-  font-size: 10px;
+  font-size: 70.6%;
+  line-height: 1.33em;
   padding: 0 .25em;
   margin: 0;
   text-align: left;

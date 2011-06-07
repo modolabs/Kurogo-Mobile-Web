@@ -1,4 +1,4 @@
-.video {
+body.VideoModule #navbar, .video {
 	/* Background color for news listing and story */
     background-color: #fff;
 }

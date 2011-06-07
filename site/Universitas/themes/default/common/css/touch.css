@@ -1,85 +1,8 @@
 /* Overall font and colors */
 
 body {
-	background-color: #dcdddf;
-	background-image: none;
-	font: 12pt/1.33em Helvetica, Arial, sans-serif;
+	font: 16px/1.33em sans-serif;
 }
-
-body, th, td, li, option, select, input {
-	/* Primary font color */
-	color: #222;
-}
-
-.focal, .nav, .results {
-	/* Color of border, if any, for many container elements */
-	/* border-color: #bbb; */
-	border-color: #ccc;
-}
-
-.nav li, .results li, .secondary li, ul.focal li  {
-	/* Color of border between list items */
-	border-color: #ccc;
-}
-
-
-a, a:visited {
-	color: #036;
-}
-
-h1 {
-	font-family: Georgia, serif;
-	font-size: 180%;
-	font-weight: normal;
-	color: #036;
-}
-
-h2 {
-	font-family: Georgia, serif;
-	font-size: 133%;
-	font-weight: normal;
-	color: #036;
-}
-
-h3 {
-	font-size: 100%;
-	font-weight: bold;
-	color: #036;
-}
-
-h4 {
-	font-size: 100%;
-	font-weight: normal;
-	color: #333;
-}
-
-dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smallprint, .fineprint, .dek {
-	/* Accent text color for several types of secondary text that appears on white backgrounds, e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
-	/* Often the same as the secondary text color defined in the next rule */
-	color: #404649;
-}
-
-.foundat, .address, #footer, #footer a, .copyright, #footerlinks a, #footerlinks a:visited {
-	/* Secondary text color for several types of secondary text that typically appear on the colored background */
-	color: #555;
-}
-
-
-
-
-/* Major content blocks */
-
-.focal {   
-	/* Focal content div */
-	color: #222;
-	background-color: #fff;
-}
-
-.shaded {
-	/* Shaded subclass of focal content - e.g., background for tabbed focal div */
-	background-color: #edeef0;
-}
-
 
 
 
@@ -87,44 +10,9 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 
 #navbar {
 	height: 48px; 
-	background: url(/common/images/navback.jpg) repeat-x;
+	background: url(/common/images/navback.jpg) repeat-x;	/* Usually a JPG or GIF where compliant and tablet may use PNG */
 	font-size: 100%;
 }
-
-.breadcrumbs, .breadcrumbs a, .breadcrumbs a:visited, .pagetitle {
- 	/* All text and links in nav bar area */
-	color: #036;
-}
-
-
-
-
-/* Footer */
-
-#footer {
-	font-size: 75%;
-}
-
-#footer .copyright {
-	text-decoration: none;
-}
-
-#footerlinks {
-	color: #fff
-}
-
-
-
-/* Text input fields, e.g., search fields */
-.forminput {
-	border-color: #666; 	
-}
-
-.submitbutton {
-	background-color: #666;	/* Background color of form submit buttons that have text labels */
-	color: #fff;
-}
-
 
 
 
@@ -137,9 +25,9 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 }
 
 .springboard a {	
-	/* Color and size of text label below each springboard icon */
-	color: #404355;
+	/* Size of text label below each springboard icon */
 	font-size: 75%;
+	line-height: 1.1em;
 }
 
 .springboard a img { 
@@ -163,124 +51,6 @@ dt, .label, .longlabel, .legend, .legend.nonfocal, .legend h2, .legend h3, .smal
 }
 
 .springboard .separator {
+	clear: both;
 	height: 20px;
 }
-
-
-
-
-/* Navigation and results lists */
-
-.nav, .results {
-	/* Main navigation lists and search-results lists */
-	background-color: #fff; 	
-}
-
-.secondary {
-	/* Secondary navigation or action lists; typically have slightly smaller font size and slightly darker/tinted backgrounds */
-	font-size: 95%;
-	background-color: #edeef0;
-}
-
-.nav, .results, .secondary, .nav a, .nav a:visited, .nav span.nolink, .results a, .results a:visited, .secondary, .secondary a, .secondary a:visited  {
-	color: #333;
-}
-
-.nav .badge {
-	/* Badge shown within a navigation list, e.g., unread count for messages */
-	color: #fff;
-	background-color: #c00;
-}
-
-.announcements {	   
-	background-color: #edeef0;
-}
-
-.announcements li {	
-	font-size: 83.353%;
-	line-height: 1.462em;
-	color: #202020;
-}
-
-
-
-
-
-/* Next/previous navigation - e.g., going from day to day in events calendar */
-
-.sidenav {
-	/* Divider between next/previous links */
-	color: #aaa;
-}
-
-.sidenav a {
-	/* Next/previous links */
-	color: #222;
-}
-
-
-
-
-
-/* Tabs */
-
-#tabs li {
-	border: 1px solid #bbb;	/* Should match #tabbodies border-color */
-	background-color: #bbb;	/* Should match #tabbodies border-color */
-}
-
-#tabs li.active {
-	border-bottom: 1px solid #fff;	/* Should match #tabbodies background-color */
-	background-color: #fff;	/* Should match #tabbodies background-color */
-}
-
-#tabs li a {
-	/* Text label of unselected tab */
-	color: #404040;
-}
-
-#tabs li.active a {
-	/* Text label of currently selected tab */
-	color: #000;
-}
-
-#tabs li.greyedout {
-	/* Text label of disabled tab */
-  	color: #666;
-}
-
-#tabbodies {
-	border-color: #bbb;
-	background-color: #fff;
-}
-
-.tabbody .nested {
-	/* Navigation list inside a tab body needs a bit of background color to contrast from tab body background */
-	background-color: #ecedef;
-}
-
-
-
-/* Freeform content module - basic styles to format unstyled raw HTML */
-
-.staticContentBody {
-	background-color: #fff;
-	color: #333;
-}
-
-.staticContentBody h2 {
-	color: #333;
-}
-
-.staticContentBody h3 {
-	color: #000;
-}
-
-.staticContentBody h4 {
-	color: #666;
-}
-
-
-
-
-

@@ -1,4 +1,4 @@
-.news {
+body.NewsModule #navbar, .news {
 	/* Background color for news listing and story */
     background-color: #fff;
 }
