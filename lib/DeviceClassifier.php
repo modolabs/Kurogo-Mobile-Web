@@ -141,7 +141,15 @@ class DeviceClassifier {
       $url = Kurogo::getSiteVar('MOBI_SERVICE_URL').'?'.$query;
       $json = file_get_contents($url);
 
-      $cache->write($json, $cacheFilename);
+      $test = json_decode($json, true); // make sure the response is valid
+      
+      if ($json && isset($test['pagetype'], $test['platform'], $test['supports_certificate'])) {
+        $cache->write($json, $cacheFilename);
+        
+      } else {
+        error_log("Device detection server not responding.  Reading expired cache.");
+        $json = $cache->read($cacheFilename);
+      }
     }            
 
     $data = json_decode($json, true);
