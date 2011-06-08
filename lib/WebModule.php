@@ -490,6 +490,27 @@ abstract class WebModule extends Module {
     return $navModules['primary'];
   }
 
+  protected function getNavigationModuleAttributes($id, $title, $type, $disabled){
+    $selected  = $this->configModule == $id;
+    $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '-selected' : '';
+    $primary   = $type == 'primary';
+    $classes   = array();
+    
+    if ($selected) { $classes[] = 'selected'; }
+    if (!$primary) { $classes[] = 'utility'; }
+    
+    return array(
+      'title'       => $title,
+      'shortTitle'  => $title,
+      'url'         => "/$id/",
+      'primary'     => $primary,
+      'disableable' => true,
+      'disabled'    => $disabled,
+      'img'         => "/modules/home/images/{$id}{$imgSuffix}".$this->imageExt,
+      'class'       => implode(' ', $classes),
+    );
+  }
+
   protected function getNavigationModules($includeDisabled=true) {
     $moduleNavConfig = $this->getModuleNavigationConfig();
     
@@ -514,24 +535,11 @@ abstract class WebModule extends Module {
         $disabled = in_array($id, $disabledIDs);
         
         if ($includeDisabled || !$disabled) {
-          $selected = $this->configModule == $id;
-          $primary = $type == 'primary';
-  
-          $classes = array();
-          if ($selected) { $classes[] = 'selected'; }
-          if (!$primary) { $classes[] = 'utility'; }
-    
-          $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '-selected' : '';
-
-          $modules[$type][$id] = array(
-            'title'       => $title,
-            'shortTitle'  => $title,
-            'url'         => "/$id/",
-            'primary'     => $primary,
-            'disableable' => true,
-            'disabled'    => $disabled,
-            'img'         => "/modules/home/images/{$id}{$imgSuffix}".$this->imageExt,
-            'class'       => implode(' ', $classes),
+          $modules[$type][$id] = $this->getNavigationModuleAttributes(
+            $id,
+            $title,
+            $type,
+            $disabled
           );
         }
       }
