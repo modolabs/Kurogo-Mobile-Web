@@ -178,6 +178,76 @@ abstract class MapImageController
     {
         $this->zoomLevel = $zoomLevel;
     }
+
+    // below is a generic javascript template populating thing
+    // that we're putting in maps for now as an experiment
+
+    public function prepareJavascriptTemplate($filename) {
+        // TODO better way to search for package-specific templates
+        $path = __DIR__.'/javascript/'.$filename.'.js';
+        $path = realpath_exists($path);
+        if ($path) {
+            return new JavascriptTemplate($path);
+        }
+    }
+}
+
+class JavascriptTemplate
+{
+    private $repeating = false;
+    private $template;
+    private $values = array();
+
+    public function __construct($path) {
+        $this->template = file_get_contents($path);
+    }
+
+    public function setRepeating($repeating) {
+        $this->repeating = $repeating;
+    }
+
+    public function setValues(Array $values) {
+        if (count($this->values) == 0) {
+            $this->values[] = array();
+        }
+        $existingValues = end($this->values);
+        foreach ($values as $placeholder => $value) {
+            $existingValues[$placeholder] = $value;
+        }
+        $this->values[count($this->values) - 1] = $existingValues;
+    }
+
+    public function setValue($placeholder, $value) {
+        $this->setValues(array($placeholder => $value));
+    }
+
+    public function appendValues(Array $values) {
+        $this->values[] = array();
+        $this->setValues($values);
+    }
+
+    public function getScript() {
+        $script = "\n";
+        foreach ($this->values as $values) {
+            $template = $this->template;
+            foreach ($values as $placeholder => $value) {
+                error_log($placeholder);
+                $template = preg_replace('/\[?'.$placeholder.'\]?/', $value, $template);
+            }
+
+            while (preg_match('/\[___\w+___\]/', $template, $matches)) {
+                $template = str_replace($matches[0], '', $template);
+            }
+
+            //if (preg_match('/(___\w+___)/', $template, $matches)) {
+            //    throw new Exception("required placeholder {$matches[1]} not used");
+
+            //} else {
+                $script .= $template;
+            //}
+        }
+        return $script;
+    }
 }
 
 
