@@ -85,7 +85,7 @@ strong {
 /* Major layout blocks */
 
 #container {
-	min-height: 320px;
+	min-height: 550px;
 }
 
 #footer {
@@ -253,7 +253,7 @@ input.formbutton {
 	text-decoration: none;
 	padding: 5px 5px 5px 12px;
 	margin-right: 0;
-  border: none;
+	border: none;
 	height: 36px;
 	background-color: transparent;
 	background-image: url(/common/images/button-sd-l.png);
@@ -342,6 +342,7 @@ a.module img {
 
 .homepage .moduleicon {
     padding: 8px 5px 8px 6px;
+    vertical-align: top; /* for firefox */
 }
 
 *:first-child+html .homepage .moduleicon {
@@ -1082,7 +1083,7 @@ h2.icon {
 }
 
 #tabbodies {
-	margin: -12px -12px 0 -12px;
+	margin: 0 -12px 0 -12px;
 	clear: both;
 	border-top: 1px solid #bbb;
 	-webkit-border-bottom-right-radius: 8px;	
@@ -1364,6 +1365,48 @@ h2.icon {
 #bookmark.pressed.on {
     background-position: -44px 1px;
 }
+
+
+/* Freeform content module - basic styles to format unstyled raw HTML */
+
+.staticContentBody {
+	margin: 10px;
+	border-radius: 10px;
+	background-color: #fff;
+	padding: 10px;
+}
+
+.staticContentBody h2 {
+	font-size: 123%;
+	font-weight: normal;
+	color: #000;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody h3 {
+	font-size: 100%;
+	font-weight: bold;
+	color: #000;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody h4 {
+	font-size: 100%;
+	font-weight: bold;
+	color: #333;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody ul {
+	margin-bottom: 1.5em;
+}
+
+.loginstatus {
+    clear: both;
+    font-size: 80%;
+    padding-top: 5px;
+}
+
 
 /* firefox adds these a tags when you edit the dom */
 .ellipsis a[xmlns] {

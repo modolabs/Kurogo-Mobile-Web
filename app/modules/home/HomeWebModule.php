@@ -10,46 +10,12 @@
   */
 class HomeWebModule extends WebModule {
   protected $id = 'home';
+  protected $canBeAddedToHomeScreen = false;
 
-  protected function getModuleDefaultData() {
-    return array_merge(parent::getModuleDefaultData(), array(
-      'display_type'      => 'springboard',
-      'primary_modules'   => array(),
-      'secondary_modules' => array()
-    ));
+  protected function showLogin() {
+    return $this->getOptionalModuleVar('SHOW_LOGIN', true);
   }
-  
-  protected function getSectionTitleForKey($key) {
-    switch ($key) {
-      case 'primary_modules': return 'Primary Modules';
-      case 'secondary_modules': return 'Secondary Modules';
-      default: return parent::getSectionTitleForKey($key);
-    }
-  }
-  
-  protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section) {
-      case 'primary_modules':
-      case 'secondary_modules':
-        $adminModule->setTemplatePage('module_order', $this->id);
-        $adminModule->addInternalJavascript("/modules/{$this->id}/javascript/admin.js");
-        $adminModule->addInternalCSS("/modules/{$this->id}/css/admin.css");
 
-        $allModules = $this->getAllModules();
-        $navigationModules = $this->getNavigationModules();
-
-        foreach ($allModules as $moduleID=>$module) {
-          $allModules[$moduleID] = $module->getModuleName();
-        }
-        
-        $adminModule->assign('allModules', $allModules);
-        $adminModule->assign('sectionModules', $navigationModules[$section]);
-        break;
-      default:
-        return parent::prepareAdminForSection($section, $adminModule);
-    }
-  }
-  
   private function getTabletModulePanes($tabletConfig) {
     $modulePanes = array();
     
@@ -77,18 +43,18 @@ class HomeWebModule extends WebModule {
         break;
               
       case 'index':
-        $this->addOnLoad('rotateScreen();');
-        $this->addOnOrientationChange('rotateScreen();');
-
         if ($this->pagetype == 'tablet') {
-          $config = $this->getModuleConfig();
           
-          $this->assign('modulePanes', $this->getTabletModulePanes($config->getSection('tablet_panes')));
+          $this->assign('modulePanes', $this->getTabletModulePanes($this->getModuleSection('tablet_panes')));
           $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
-          $this->addOnLoad('moduleHandleWindowResize();');
+          $this->addOnOrientationChange('moduleHandleWindowResize();');
         } else {
           $this->assign('modules', $this->getModuleNavList());
+          $this->assign('hideImages', $this->getOptionalModuleVar('HIDE_IMAGES', false));
         }
+        
+        $this->assign('showFederatedSearch', $this->getOptionalModuleVar('SHOW_FEDERATED_SEARCH', true));
+        $this->assign('SHOW_DOWNLOAD_TEXT', DownloadWebModule::appDownloadText($this->platform));
         $this->assign('displayType', $this->getModuleVar('display_type'));
         $this->assign('topItem', null);
         break;

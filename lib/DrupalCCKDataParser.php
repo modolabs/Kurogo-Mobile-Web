@@ -175,6 +175,15 @@ abstract class DrupalCCKDataParser extends RSSDataParser
         return trim($fieldValueNode->nodeValue);
     }
 
+    protected function parseFieldNumberInteger($fieldValueNode) {
+        $text = trim($fieldValueNode->nodeValue);
+        if(is_numeric($text)) {
+            return intval($text);
+        } else {
+            return ($text == 'no') ? 0 : 1;
+        }
+    }
+
     protected function parseFieldDate($fieldValueNode) {
         return trim(self::getValue($fieldValueNode, 'span'));
     }

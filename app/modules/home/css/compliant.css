@@ -53,3 +53,23 @@ form {
 	margin: 0 0 -7px 0;
 }
 
+#download {
+	text-align: left;
+	clear: both;
+	padding: 10px 10px 10px 10px;
+	font-size: 76.47%;
+}
+
+#download a {
+	color: #333;
+	text-decoration: none;
+}
+
+#download a:hover {
+	color: #a00;
+}
+
+#download img {
+    width: 32px;
+    height: 26px;
+}

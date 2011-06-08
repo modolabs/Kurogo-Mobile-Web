@@ -17,11 +17,10 @@
  *          (Smarty online manual)
  * @author   Monte Ohrt <monte at ohrt dot com>
  * @param array $params parameters
- * @param object $smarty Smarty object
  * @param object $template template object
  * @return string|null
  */
-function smarty_function_math($params, $smarty, $template)
+function smarty_function_math($params, $template)
 {
     // be sure equation parameter is present
     if (empty($params['equation'])) {

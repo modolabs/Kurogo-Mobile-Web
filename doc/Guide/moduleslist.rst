@@ -11,13 +11,14 @@ you can learn more about these modules, what they do and how to configure them.
    modulehome
    moduleinfo
    modulepeople
+   modulevideo
    modulecalendar
    modulenews
    moduleemergency
    modulemap
    modulelinks
    modulecontent
-   modulefullweb
+   moduleurl
    modulecustomize
    moduleabout
    modulelogin

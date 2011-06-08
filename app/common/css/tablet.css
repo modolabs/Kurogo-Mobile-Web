@@ -221,7 +221,7 @@ select {
   border-width: 1px;
 	height: 20px;
 	line-height: 20px;
-	font-size: 105%;
+	font-size: 90%%;
 	width: 90%;
 	float: right;
 }
@@ -364,6 +364,7 @@ a.module img {
 
 .homepage .moduleicon {
     padding: 10px 7px 8px 6px;
+    vertical-align: top; /* for firefox */
 }
 
 *:first-child+html .homepage .moduleicon {
@@ -418,10 +419,6 @@ a.module img {
 	display: inline;
 	max-width: 210px;
 	margin-left: -8px;	
-}
-
-.homepage .pagetitle {
-	max-width: 210px;
 }
 
 .help {
@@ -1475,6 +1472,12 @@ html, body, #nonfooternav {
 	width: 45px;
   margin-top: 5px;
 }
+#footernav a div {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 4px;
+}
 
 #slideleft,
 #slideright {
@@ -1493,4 +1496,59 @@ html, body, #nonfooternav {
 #slideright {
   right: -4px;
   background: transparent url(/common/images/footernav-slideright.png) no-repeat 50% right;
+}
+
+
+
+/* Freeform content module - basic styles to format unstyled raw HTML */
+
+.staticContentBody {
+	margin: 10px;
+	border-radius: 10px;
+	background-color: #fff;
+	padding: 10px;
+}
+
+.staticContentBody h2 {
+	font-size: 123%;
+	font-weight: normal;
+	color: #000;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody h3 {
+	font-size: 100%;
+	font-weight: bold;
+	color: #000;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody h4 {
+	font-size: 100%;
+	font-weight: bold;
+	color: #333;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody ul {
+	margin-bottom: 1.5em;
+}
+
+#bookmarkContainer {
+    float: right;
+	margin: -44px 0 0 8px;
+}
+#bookmark {
+    width: 44px;
+    height: 38px;
+    background: url(/common/images/bookmark.png) no-repeat 0 -38px;
+}
+#bookmark.pressed {
+    background-position: 0 1px;
+}
+#bookmark.on {
+    background-position: -44px -38px;
+}
+#bookmark.pressed.on {
+    background-position: -44px 1px;
 }

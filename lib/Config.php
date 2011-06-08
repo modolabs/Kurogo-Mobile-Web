@@ -9,138 +9,217 @@
  * @package Config
  */
 abstract class Config {
-  const NO_EXPAND_VALUE = 0;
-  const EXPAND_VALUE = 1;
-  const LOG_ERRORS = 2;
-  const SUPRESS_ERRORS = 0;
-  protected $vars = array();
-  protected $sectionVars = array();
+    const NO_EXPAND_VALUE = 0;
+    const EXPAND_VALUE = 1;
+    protected $vars = array();
+    protected $sectionVars = array();
   
-  abstract protected function replaceCallback($matches);
+    abstract protected function replaceCallback($matches);
 
-  public function addVars($vars) {
-    $this->vars = array_merge($this->vars, $vars);
-  }
-
-  /* used when you completely want to replace all sections */
-  public function setSectionVars($sectionVars)
-  {
-     $this->sectionVars = $sectionVars;
-  }
+    public function addVars($vars) {
+        $this->vars = array_merge($this->vars, $vars);
+    }
   
-  /* merges together config variables by section */
-  public function addSectionVars($sectionVars, $merge=true) {
-    $first = true;
+    public function setVar($section, $var, $value, &$changed) {
+        
+        if (isset($this->sectionVars[$section])) {
+            if (isset($this->sectionVars[$section][$var])) {
+                if ($this->sectionVars[$section][$var] == $value) {
+                    $changed = false;
+                    return true;
+                }                
+            }
+        }
+
+        $changed = true;
+        $this->sectionVars[$section][$var] = $value;
+        $this->vars[$var] = $value;
+        return true;
+    }
     
-    foreach ($sectionVars as $var=>$value) {
-        if (!is_array($value)) {
-            $_var = $var;
-            $var = 'No Section';
-            $value = array($_var=>$value);
-            if ($first && !$merge) {
-                $this->sectionVars['No Section'] = array();
+    public function setSection($section, $values) {
+        if (!is_array($values)) {
+            throw new Exception("Invalid values for section $section");
+        }
+        
+        $this->sectionVars[$section] = $values;
+        return true;
+    }
+
+    public function clearVar($section, $var) {
+        
+        if (isset($this->sectionVars[$section])) {
+            if (isset($this->sectionVars[$section][$var])) {
+                unset($this->sectionVars[$section][$var]);
+                return true;
             }
         }
         
-        if ($merge || $var=='No Section') {
-            if (isset($this->sectionVars[$var]) && is_array($this->sectionVars[$var])) {
-                $this->sectionVars[$var] = array_merge($this->sectionVars[$var], $value);
+        return false;
+    }
+    
+    protected function isNumeric() {
+        if (isset($this->sectionVars[0])) {
+            for ($i=0;$i<count($this->sectionVars);$i++) {
+                if (!isset($this->sectionVars[$i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        return false;
+    }
+
+    public function removeSection($section) {
+        
+        if (isset($this->sectionVars[$section])) {
+            
+            unset($this->sectionVars[$section]);
+            if ($this->isNumeric()) {
+                $this->sectionVars = array_values($this->sectionVars);
+            }
+
+            return true;            
+        }
+        
+        return false;
+    }
+    
+    public function setSectionOrder($order, &$changed) {
+        if (!is_array($order)) {
+            throw new Exception("Invalid order array");
+        }
+        
+        if (array_keys($this->sectionVars)==$order) {
+            $changed = false;
+            return true;
+        }
+
+        $sections = array();
+        $numeric = $this->isNumeric();
+        $i = 0;
+        
+        foreach ($order as $section) {
+            if (isset($this->sectionVars[$section])) {
+                $id = $numeric ? $i : $section;
+                $sections[$id] = $this->sectionVars[$section];
+            } else {
+                throw new Exception("Can't find section $section");
+            }
+            $i++;
+        }
+         
+        $this->sectionVars = $sections;
+        $changed = true;
+        return true;
+    }
+
+    /* used when you completely want to replace all sections */
+    public function setSectionVars($sectionVars) {
+        $this->sectionVars = $sectionVars;
+    }
+  
+    /* merges together config variables by section */
+    public function addSectionVars($sectionVars, $merge=true) {
+        $first = true;
+                
+        foreach ($sectionVars as $var=>$value) {
+        
+            if (!is_array($value)) {
+                throw new Exception("Found value $var = $value that wasn't in a section. Config needs to be updated");
+            }
+            
+            if ($merge) {
+                if (isset($this->sectionVars[$var]) && is_array($this->sectionVars[$var])) {
+                    $this->sectionVars[$var] = array_merge($this->sectionVars[$var], $value);
+                } else {
+                    $this->sectionVars[$var] = $value;
+                }
             } else {
                 $this->sectionVars[$var] = $value;
             }
+            
+            $first = false;
+        }
+    }
+
+    public function getSectionVars($opts = Config::NO_EXPAND_VALUE) {
+
+        if ($opts & Config::EXPAND_VALUE) {
+            $sectionVars = $this->sectionVars;
+            return array_map(array($this, 'replaceVariable'), $sectionVars);
         } else {
-            $this->sectionVars[$var] = $value;
+            return $this->sectionVars;
         }
-        
-        $first = false;
     }
-  }
 
-  public function getSectionVars($opts = Config::NO_EXPAND_VALUE) {
+    public function getVars($opts = Config::NO_EXPAND_VALUE) {
+        if ($opts & Config::EXPAND_VALUE) {
+            return array_map(array($this, 'replaceVariable'), $this->vars);
+        } else {
+            return $this->vars;
+        }
+    }
 
-    if ($opts & Config::EXPAND_VALUE) {
-        $sectionVars = $this->sectionVars;
-        // flatten the "No Section" section *
-        if (isset($sectionVars['No Section'])) {
-            foreach ($sectionVars['No Section'] as $var=>$value) {
-                $sectionVars[$var] = $value;
+    public function getSection($key) {
+        if (isset($this->sectionVars[$key])) {
+            return $this->sectionVars[$key];
+        } else {
+            throw new Exception("Config section '$key' not set");
+        }
+    }
+
+    public function getOptionalSection($key) {
+    
+        try {
+            $section = $this->getSection($key);
+            return $section;
+        } catch (Exception $e) {
+            return array();
+        }
+    }
+
+    /* values with {XXX} in the config are replaced with other config values */
+    protected function replaceVariable($value) {
+    
+        if (is_scalar($value)) {
+            $value = preg_replace_callback('/\{([A-Za-z_]+)\}/', array($this, 'replaceCallback'), $value);
+        } else {
+            $value = array_map(array($this, 'replaceVariable'), $value);
+        }
+    
+        return $value;
+    }
+
+    public function getOptionalVar($key, $default='', $section=null, $opts = Config::EXPAND_VALUE) {
+
+        try {
+            $value = $this->getVar($key, $section, $opts);
+            return $value;
+        } catch (Exception $e) {
+            return $default;
+        }
+    }
+  
+    public function getVar($key, $section=null, $opts = Config::EXPAND_VALUE) {
+  
+        if (!is_null($section)) {
+            if (isset($this->sectionVars[$section][$key])) {
+                $value = $this->sectionVars[$section][$key];
+            } else {
+                throw new Exception("Config variable '$key' not set in section $section");
             }
-            unset($sectionVars['No Section']);
+        } elseif (isset($this->vars[$key])) {
+            $value = $this->vars[$key];
+        } else {
+            throw new Exception("Config variable '$key' not set");
         }
-        return array_map(array($this, 'replaceVariable'), $sectionVars);
-    } else {
-        return $this->sectionVars;
-    }
-  }
 
-  public function getVars($opts = Config::NO_EXPAND_VALUE) {
-    if ($opts & Config::EXPAND_VALUE) {
-        return array_map(array($this, 'replaceVariable'), $this->vars);
-    } else {
-        return $this->vars;
-    }
-  }
-
-  public function getSection($key, $opts=Config::LOG_ERRORS) {
-
-    if (isset($this->sectionVars[$key])) {
-      return $this->sectionVars[$key];
-    }
-    
-    if ($opts & Config::LOG_ERRORS) {
-        $bt = debug_backtrace();
-        $call = sprintf("%s:%s", $bt[0]['file'], $bt[0]['line']);
-        error_log(__FUNCTION__."(): config section '$key' not set (Called $call)");
-    }
-    
-    return null;
-  }
-
-  /* values with {XXX} in the config are replaced with other config values */
-  protected function replaceVariable($value) {
-
-      if (is_scalar($value)) {
-         $value = preg_replace_callback('/\{([A-Za-z_]+)\}/', array($this, 'replaceCallback'), $value);
-      } else {
-        $value = array_map(array($this, 'replaceVariable'), $value);
-      }
-      return $value;
-  }
-  
-  public function getVar($key, $opts = Config::EXPAND_VALUE) {
-  
-    if (isset($this->vars[$key])) {
-        $value = $this->vars[$key];
         if ($opts & Config::EXPAND_VALUE) {
            $value = preg_replace_callback('/\{([A-Za-z_]+)\}/', array($this, 'replaceCallback'), $value);
         }
         
         return $value;
     }
-    
-    if ($opts & Config::LOG_ERRORS) {
-        $bt = debug_backtrace();
-        $call = sprintf("%s:%s", $bt[0]['file'], $bt[0]['line']);
-        error_log(__FUNCTION__."(): config variable '$key' not set (Called $call)");
-    }
-    
-    return null;
-  }
-  
-  // -------------------------------------------------------------------------
-  
-  protected static function getPathOrDie($path) {
-    $file = realpath_exists($path);
-    if (!$file) {
-      die("Missing config file at '$path'");
-    }
-    return $file;
-  }
-  
-  protected static function getVarOrDie($file, $vars, $key) {
-    if (!isset($vars[$key])) {
-      die("Missing '$key' definition in '$file'");
-    }
-    return $vars[$key];
-  }
 }

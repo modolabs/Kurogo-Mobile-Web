@@ -2,6 +2,7 @@
 
 class ActiveDirectoryAuthentication extends LDAPAuthentication
 {
+    protected $authorityClass = 'ad';
     protected $userClass='ADUser';
     protected $groupClass='ADUserGroup';
     protected function defaultFieldMap() {

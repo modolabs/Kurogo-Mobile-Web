@@ -21,7 +21,7 @@ Overriding a template is a very simple process. You simply provide an alternate 
 folder and that file will be loaded instead. 
 
 For example, if you want to extend the *story.tpl* of the news module you would create *story.tpl* 
-in *SITE_DIR/app/modules/news*. 
+in *SITE_DIR/app/modules/news/templates*. 
 
 There are two approaches to updating a template. 
 
@@ -41,7 +41,7 @@ the people module you would create *SitePeopleModule.php* in *SITE_DIR/app/modul
 
     <?php 
     
-    class SitePeopleModule extends PeopleModule
+    class SitePeopleWebModule extends PeopleWebModule
     {
         protected function initializeForPage() {
             switch ($this->page)
@@ -65,11 +65,11 @@ Replacing a module completely
 This process is similar to extending the module except that you extend from the *Module* class rather than
 the original module. This is useful if you want to have a module that has a URL that is the same as an
 existing module. For instance, if you want to write a completely new *about* module you will create
-a *SiteAboutModule.php* file in the *SITE_DIR/app/modules/about* folder. It would look like this::
+a *AboutModule.php* file in the *SITE_DIR/app/modules/about* folder. It would look like this::
 
     <?php 
     
-    class SiteAboutWebModule extends WebModule
+    class AboutWebModule extends WebModule
     {
         protected $id='about';
         protected function initializeForPage() {
@@ -78,3 +78,25 @@ a *SiteAboutModule.php* file in the *SITE_DIR/app/modules/about* folder. It woul
     }
     
 It is important to include the *$id* property like you would with a :doc:`new module <modulenew>`.
+
+.. _copy-module:
+
+=======================================
+Copying a Module 
+=======================================
+
+In some cases you may want to have multiple modules that exist under different URLs that share the
+same logic, but have different configurations. An example of this would be the :doc:`modulecontent` 
+or :doc:`moduleurl`. In this case you simply subclass the parent module and provide a different 
+*$configModule* property::
+
+    <?php 
+    
+    class SomethingWebModule extends ContentModule
+    {
+        protected $configModule = 'something';
+    }
+    
+This module would use the same logic and templates as its parent module, but it would use its
+own set of configuration files, in this case in the *SITE_DIR/config/something* folder. Make sure
+that the class name prefix matches the configModule value.

@@ -9,6 +9,8 @@
   */
 class PasswdAuthentication extends AuthenticationAuthority
 {
+    protected $userClass='PasswdUser';
+    protected $groupClass='PasswdUserGroup';
     private $userFile;
     private $groupFile;
     private $users = array();
@@ -19,6 +21,10 @@ class PasswdAuthentication extends AuthenticationAuthority
     protected function validUserLogins()
     {
         return array('FORM', 'NONE');
+    }
+    
+    public function validate(&$error) {
+        return true;
     }
     
     private function loadUserData()
@@ -137,7 +143,7 @@ class PasswdAuthentication extends AuthenticationAuthority
             return AUTH_FAILED;
         }
         
-        if ($userData = $this->getUserData($login)) {
+        if ($userData = $this->getPasswdUserData($login)) {
             if (md5($password) == $userData['md5']) {
                 $user = $this->getUser($login);
                 return AUTH_OK;
@@ -154,7 +160,7 @@ class PasswdAuthentication extends AuthenticationAuthority
      * @param string $login a userID or email address
      * @return array an array of userData or false if the user could not be found
      */
-    private function getUserData($login)
+    private function getPasswdUserData($login)
     {
         if (strlen($login)==0) {
             return false;
@@ -167,7 +173,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         }
         
         if (Validator::isValidEmail($login) && (($userID = array_search($login, $this->userEmails)) !== false)) {
-            return $this->getUserData($userID);
+            return $this->getPasswdUserData($userID);
         } 
         
         return false;
@@ -183,8 +189,8 @@ class PasswdAuthentication extends AuthenticationAuthority
             return new AnonymousUser();       
         }
 
-        if ($userData = $this->getUserData($login)) {
-            $user = new BasicUser($this);
+        if ($userData = $this->getPasswdUserData($login)) {
+            $user = new $this->userClass($this);
             $user->setUserID($userData['userID']);
             $user->setEmail($userData['email']);
             $user->setFullName($userData['fullname']);
@@ -222,7 +228,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         
         if ($groupData = $this->getGroupData($group)) {
 
-            $group = new BasicUserGroup($this);
+            $group = new $this->groupClass($this);
             $group->setGroupID($groupData['gid']);
             $group->setGroupName($groupData['group']);
             $members = is_array($groupData['members']) ? $groupData['members'] : array();
@@ -254,8 +260,8 @@ class PasswdAuthentication extends AuthenticationAuthority
     {
         parent::init($args);
         $args = is_array($args) ? $args : array();
-        $this->userFile = isset($args['USER_FILE']) ? $args['USER_FILE'] : null;
-        $this->groupFile = isset($args['GROUP_FILE']) ? $args['GROUP_FILE'] : null;
+        $this->userFile = isset($args['PASSWD_USER_FILE']) ? $args['PASSWD_USER_FILE'] : null;
+        $this->groupFile = isset($args['PASSWD_GROUP_FILE']) ? $args['PASSWD_GROUP_FILE'] : null;
         
         if ($this->userLogin != 'NONE') {        
             if (!is_readable($this->userFile)) {
@@ -263,4 +269,20 @@ class PasswdAuthentication extends AuthenticationAuthority
             }
         }
     }
+}
+
+/**
+ * PasswdUser
+ * @package Authentication
+ */
+class PasswdUser extends User
+{
+}
+
+/**
+ * PasswdUserGroup
+ * @package Authentication
+ */
+class PasswdUserGroup extends UserGroup
+{
 }

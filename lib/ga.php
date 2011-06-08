@@ -138,7 +138,7 @@
     }
 
     // Try and get visitor cookie from the request.
-    $cookie = $_COOKIE[COOKIE_NAME];
+    $cookie = isset($_COOKIE[COOKIE_NAME]) ? $_COOKIE[COOKIE_NAME] : '';
 
     $dcmguid = isset($_SERVER["HTTP_X_DCMGUID"]) ? $_SERVER["HTTP_X_DCMGUID"] : '';
     $visitorId = getVisitorId(

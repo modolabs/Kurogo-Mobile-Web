@@ -12,6 +12,16 @@ abstract class DataParser
     abstract public function parseData($data);
     protected $encoding='utf-8';
     protected $debugMode=false;
+    protected $totalItems = null;
+    protected $haltOnParseErrors = true;
+
+    public function getTotalItems() {
+        return $this->totalItems;
+    }
+
+    protected function setTotalItems($total) {
+        $this->totalItems = $total;
+    }
     
     public static function factory($parserClass, $args)
     {
@@ -28,31 +38,33 @@ abstract class DataParser
         $parser->init($args);
         return $parser;
     }
+
+    public function haltOnParseErrors($bool) {
+        $this->haltOnParseErrors = (bool) $bool;
+    }
     
-    public function init($args)
-    {
-        $this->setDebugMode($GLOBALS['siteConfig']->getVar('DATA_DEBUG'));
+    public function init($args) {
+        if (isset($args['HALT_ON_PARSE_ERRORS'])) {
+            $this->haltOnParseErrors($args['HALT_ON_PARSE_ERRORS']);
+        }
+        
+        $this->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
     }
 
-    public function setDebugMode($debugMode)
-    {
+    public function setDebugMode($debugMode) {
         $this->debugMode = $debugMode ? true : false;
     }
 
-    public function setEncoding($encoding)
-    {
+    public function setEncoding($encoding) {
         $this->encoding = $encoding;
     }
     
-    public function getEncoding()
-    {
+    public function getEncoding() {
         return $this->encoding;
     }
 
-    public function parseFile($filename) 
-    {
+    public function parseFile($filename) {
         return $this->parseData(file_get_contents($filename));
     }
     
 }
-

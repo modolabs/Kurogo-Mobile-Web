@@ -2,11 +2,7 @@
 /**
   * @package Core
   */
-
-/**
-  */
-require_once realpath(LIB_DIR.'/db.php');
-
+  
 /**
   * @package Core
   */
@@ -26,18 +22,24 @@ class PageViews {
       $time = time();
 
     if ($system == 'web')
-      $logfile = $GLOBALS['siteConfig']->getVar('WEB_CURRENT_LOG_FILE');
+      $logfile = Kurogo::getSiteVar('WEB_CURRENT_LOG_FILE');
     else // assume 'api'
-      $logfile = $GLOBALS['siteConfig']->getVar('API_CURRENT_LOG_FILE');
+      $logfile = Kurogo::getSiteVar('API_CURRENT_LOG_FILE');
+      
+    if (empty($logfile)) {
+        error_log("Log file for $system not specified");
+        return false;
+    }
       
     $dir = dirname($logfile);
     if (!file_exists($dir)) {
       if (!mkdir($dir, 0755, true))
         error_log("could not create $dir");
+        return false;
     }
     $fh = fopen($logfile, 'a+');
     fwrite($fh, sprintf("%s %s %s: %s\n",
-                        date($GLOBALS['siteConfig']->getVar('LOG_DATE_FORMAT'), $time),
+                        date(Kurogo::getSiteVar('LOG_DATE_FORMAT'), $time),
                         $platform, $module, $extra));
     fclose($fh);      
   }
@@ -55,15 +57,16 @@ class PageViews {
   }
 
   public static function export_stats($system) {
+    includePackage('db');
     PageViews::createDatabaseTables();
     if ($system == 'web') {
-      $table   = $GLOBALS['siteConfig']->getVar('PAGE_VIEWS_TABLE');
-      $logfile = $GLOBALS['siteConfig']->getVar('WEB_CURRENT_LOG_FILE');
-      $target  = $GLOBALS['siteConfig']->getVar('WEB_LOG_FILE');
+      $table   = Kurogo::getSiteVar('PAGE_VIEWS_TABLE');
+      $logfile = Kurogo::getSiteVar('WEB_CURRENT_LOG_FILE');
+      $target  = Kurogo::getSiteVar('WEB_LOG_FILE');
     } else {// assume 'api'
-      $table   = $GLOBALS['siteConfig']->getVar('API_STATS_TABLE');
-      $logfile = $GLOBALS['siteConfig']->getVar('API_CURRENT_LOG_FILE');
-      $target  = $GLOBALS['siteConfig']->getVar('API_LOG_FILE');
+      $table   = Kurogo::getSiteVar('API_STATS_TABLE');
+      $logfile = Kurogo::getSiteVar('API_CURRENT_LOG_FILE');
+      $target  = Kurogo::getSiteVar('API_LOG_FILE');
     }
     
     // Create directories if needed
@@ -81,7 +84,11 @@ class PageViews {
     if (file_exists($target) && date('Ymd', filemtime($target)) == $today)
       return; // we have already exported today
 
-    $logfilecopy = $GLOBALS['siteConfig']->getVar('TMP_DIR') . "/mobi_log_copy.$today";
+    $logFolder = Kurogo::getSiteVar('TMP_DIR');    
+    $logfilecopy = $logFolder . "/mobi_log_copy.$today";
+    if (!is_writable($logFolder)) {
+        throw new Exception("Unable to write to TMP_DIR $logFolder");
+    }
 
     if (!$outfile = fopen($target, 'a')) {
       error_log("could not open $target for writing");
@@ -109,12 +116,12 @@ class PageViews {
     }
 
     $infile = fopen($logfilecopy, 'r');
-    $date_length = strlen(date($GLOBALS['siteConfig']->getVar('LOG_DATE_FORMAT')));
+    $date_length = strlen(date(Kurogo::getSiteVar('LOG_DATE_FORMAT')));
     while (!feof($infile)) {
       $line = fgets($infile, 1024);
       fwrite($outfile, $line);
 
-      if (preg_match($GLOBALS['siteConfig']->getVar('LOG_DATE_PATTERN'), $line, $matches) == 0)
+      if (preg_match(Kurogo::getSiteVar('LOG_DATE_PATTERN'), $line, $matches) == 0)
         continue;
 
       // the following match positions should also be defined where
@@ -164,6 +171,7 @@ class PageViews {
    * between dates $start and $end (any string compatible with strtotime)
    */
   private static function getTimeSeries($system, $start, $platform=NULL, $module=NULL, $end=NULL) {
+    includePackage('db');
     $output = Array();
     
     $result = self::export_stats($system);
@@ -172,9 +180,9 @@ class PageViews {
       $sql_criteria = Array();
 
       if ($system == 'web')
-        $table = $GLOBALS['siteConfig']->getVar('PAGE_VIEWS_TABLE');
+        $table = Kurogo::getSiteVar('PAGE_VIEWS_TABLE');
       else // assume 'api'
-        $table = $GLOBALS['siteConfig']->getVar('API_STATS_TABLE');
+        $table = Kurogo::getSiteVar('API_STATS_TABLE');
 
       if (($end === NULL) || (strtotime($end) - strtotime($start) == 86400)) {
         $sql_criteria[] = "day='$start'";
@@ -225,6 +233,7 @@ class PageViews {
   
   protected function createDatabaseTables()
   {
+    includePackage('db');
     $sql = "SELECT 1 FROM mobi_web_page_views";
     $conn = SiteDB::connection();
     if (!$result = $conn->query($sql, array(), db::IGNORE_ERRORS)) {
@@ -309,6 +318,11 @@ class PageViews {
     for ($i = 0; $i < $duration; $i++) {
       $sql_start_date = date('Y-m-d', $begin);
       $end = $begin + $increments[$i];
+      // never include data from the current day (since it is not complete)
+      $yesterday = strtotime("-1 day", $time);
+      if ($end > $yesterday) {
+        $end = $yesterday;
+      }
       $sql_end_date = date('Y-m-d', $end);
 
       $new_view = Array('date' => $begin, 'total' => 0);
@@ -335,13 +349,4 @@ class PageViews {
     }
     return $views;
   }
-
-  public static function count_iphone_tokens() {
-    $sql = "SELECT count(*) FROM AppleDevice WHERE device_token IS NOT NULL and active = 1";
-    $conn = SiteDB::connection();
-    $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
-    return $row;
-  }
-
 }

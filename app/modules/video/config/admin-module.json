@@ -1,0 +1,31 @@
+{
+    "options": {
+        "title":"Options",
+        "description":"",
+        "sectiontype":"fields",
+        "fields":{
+            "MAX_RESULTS":{"label":"Videos per page","type":"number","config":"module","section":"module","description":"Maximum number of videos to show per page"},
+            "SHARING_ENABLED":{"label":"Sharing Enabled", "description":"Enable sharing of videos","config":"module","section":"module","type":"checkbox","default":1},
+            "BOOKMARKS_ENABLED":{"label":"Bookmarks Enabled", "description":"Enable bookmarking of videos","config":"module","section":"module","type":"checkbox","default":1}
+       }
+    },
+    "feeds": {
+        "title":"Feeds",
+        "description":"Configure the external data feeds from a variety of video sources",
+        "config":"feeds",
+        "sectiontype":"section",
+        "fields":{
+            "section":{"label":"ID", "description":"Programmatic id for this feed", "type":"label"},
+            "TITLE":{"label":"Title","description":"Label for this feed", "type":"text"},
+            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"select","optionsMethod":["VideoDataController","getVideoDataControllers"],"optionsFirst":"-- Choose a video provider --"},
+            "AUTHOR":{"label":"Author","description":"(Optional) Include only videos from this author.","type":"text","omitBlankValue":true},
+            "CHANNEL":{"label":"Channel","description":"(Optional) Include only videos from this channel","type":"text","omitBlankValue":true,"showIf":["CONTROLLER_CLASS",["VimeoVideoController"]]},
+            "TAG":{"label":"Tag","description":"(Optional) Include only videos with this tag","type":"text","omitBlankValue":true}
+        },
+        "sectionindex":"string",
+        "sectionsmethod":"loadFeedData",
+        "sectionaddnew":true,
+        "sectiondelete":true,
+        "sectionreorder":true
+    }
+}

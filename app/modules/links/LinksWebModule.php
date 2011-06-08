@@ -9,54 +9,71 @@
   * @subpackage Links
   */
 class LinksWebModule extends WebModule {
-  protected $id = 'links';
+    protected $id = 'links';
+    protected $linkGroups;
 
-  protected function getModuleDefaultData() {
-    return array_merge(parent::getModuleDefaultData(), array(
-      'display_type' => 'springboard',
-      'strings' => array(
-          'description' => ''
-      ),
-      'links' => array()
-      )
-    );
-  }
-
-  protected function getSectionTitleForKey($key) {
-    switch ($key) {
-      case 'links': return 'Links';
-      default: return parent::getSectionTitleForKey($key);
-    }
-  }
-  
-  protected function prepareAdminForSection($section, &$adminModule) {
-    switch ($section) {
-      case 'links':
-        $adminModule->setTemplatePage('admin_links', $this->id);
-        $adminModule->addInternalJavascript("/modules/{$this->id}/javascript/admin.js");
-        $adminModule->addInternalCSS("/modules/{$this->id}/css/admin.css");
-        $links = $this->getModuleArray('links');
-        $adminModule->assign('links', $links);
-        break;
-      default:
-        return parent::prepareAdminForSection($section, $adminModule);
-        break;
-    }
-  }
-  
-  protected function initializeForPage() {
-    $links = $this->getModuleArray('links');
+    protected function getLinkGroup($group) {
+        if (!$this->linkGroups) {
+            $this->linkGroups = $this->getModuleSections('links-groups');
+        }
         
-    foreach ($links as $index => $link) {
-      if (!is_array($link)) {
-        unset($links[$index]);
-      } else if (self::argVal($link, 'icon', false)) {
-        $links[$index]['img'] = "/modules/{$this->id}/images/{$link['icon']}{$this->imageExt}";
-      }
+        if (isset($this->linkGroups[$group])) {
+            if (!isset($this->linkGroups[$group]['links'])) {
+                $this->linkGroups[$group]['links'] = $this->getModuleSections('links-' . $group);
+            }
+
+            if (!isset($this->linkGroups[$group]['description'])) {
+                $this->linkGroups[$group]['description'] = $this->getModuleVar('description','strings');
+            }
+            
+            return $this->linkGroups[$group];            
+        } else {
+            throw new Exception("Unable to find link group information for $group");
+        }
     }
     
-    $this->assign('displayType', $this->getModuleVar('display_type'));
-    $this->assign('description', $this->getModuleVar('description'));
-    $this->assign('links',       $links);
-  }
+    protected function getLinks() {
+        $links = $this->getModuleSections('links');
+                
+        foreach ($links as &$link) {
+            if (isset($link['icon']) && strlen($link['icon'])) {
+                $link['img'] = "/modules/{$this->configModule}/images/{$link['icon']}{$this->imageExt}";
+            }
+
+            if (isset($link['group']) && strlen($link['group'])) {
+                $group = $this->getLinkGroup($link['group']);
+                if (!isset($link['title']) && isset($group['title'])) {
+                    $link['title'] = $group['title'];
+                }
+                $link['url'] = $this->buildBreadcrumbURL('group', array('group'=>$link['group']));
+            }
+        }
+        
+        return $links;
+    }
+    
+    protected function initializeForPage() {
+    
+        switch ($this->page) {
+        
+            case 'group':
+                $group = $this->getLinkGroup($this->getArg('group'));
+                if (isset($group['title'])) {
+                    $this->setPageTitles($group['title']);
+                }
+                
+                $displayType = isset($group['display_type']) ? $group['display_type'] : $this->getModuleVar('display_type');
+                $this->assign('links', $group['links']);
+                $this->assign('displayType', $displayType);
+                $this->assign('description', $group['description']);
+                break;
+            
+            case 'index':
+            
+                $links = $this->getLinks();
+                $this->assign('description', $this->getModuleVar('description','strings'));
+                $this->assign('displayType', $this->getModuleVar('display_type'));
+                $this->assign('links',       $links);
+        }
+    }
 }

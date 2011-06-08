@@ -53,3 +53,32 @@
 	margin-right: -2px;
 }
 
+
+
+
+
+/* Login-related buttons */
+
+.loginbuttons li.facebook {
+	background-image: url(/common/images/button-facebook-24.png);
+}
+
+.loginbuttons li.google {
+	background-image: url(/common/images/button-google-24.png);
+}
+
+.loginbuttons li.oauth {
+	background-image: url(/common/images/button-oauth-24.png);
+}
+
+.loginbuttons li.openid {
+	background-image: url(/common/images/button-openid-24.png);
+}
+
+.loginbuttons li.twitter {
+	background-image: url(/common/images/button-twitter-24.png);
+}
+
+.loginbuttons li.windows {
+	background-image: url(/common/images/button-windows-24.png);
+}

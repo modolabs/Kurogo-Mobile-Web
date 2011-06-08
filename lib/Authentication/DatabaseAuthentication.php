@@ -3,6 +3,8 @@
  * Database Authentication
  * @package Authentication
  */
+ 
+ includePackage('db');
 
 /**
  * Authentication Authority based on values in a database
@@ -11,6 +13,9 @@
  */
 class DatabaseAuthentication extends AuthenticationAuthority
 {
+    protected $authorityClass = 'database';
+    protected $userClass='DatabaseUser';
+    protected $groupClass='DatabaseUserGroup';
     protected $connection;
     protected $tableMap=array();
     protected $fieldMap=array();
@@ -47,7 +52,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
         $sql = sprintf("SELECT * FROM `%s` WHERE (`%s`=? or `%s`=?)", $this->getTable('user'), $this->getField('user_userid'), $this->getField('user_email'));
         $result = $this->connection->query($sql, array($login, $login));
         if ($row = $result->fetch()) {
-            $user = new DatabaseUser($this);
+            $user = new $this->userClass($this);
             $user->setUserID($row[$this->getField('user_userid')]);
             $user->setEmail($row[$this->getField('user_email')]);
             if (isset($row[$this->getField('user_fullname')])) {
@@ -75,7 +80,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
         $sql = sprintf("SELECT * FROM `%s` WHERE `%s`=?", $this->getTable('group'), $this->getField('group_groupname'));
         $result = $this->connection->query($sql, array($group));
         if ($row = $result->fetch()) {
-            $group = new DatabaseUserGroup($this);
+            $group = new $this->groupClass($this);
             $group->setGroupID($row[$this->getField('group_gid')]);
             $group->setGroupName($row[$this->getField('group_groupname')]);
             return $group;
@@ -89,7 +94,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
         parent::init($args);
         $args = is_array($args) ? $args : array();
         if (!isset($args['DB_TYPE'])) {
-            $args = array_merge($GLOBALS['siteConfig']->getSection('database'), $args);
+            $args = array_merge(Kurogo::getSiteSection('database'), $args);
         }
         
         $this->connection = new db($args);
@@ -116,12 +121,12 @@ class DatabaseAuthentication extends AuthenticationAuthority
         );
         
         foreach ($args as $arg=>$value) {
-            if (preg_match("/^(user|group|groupmember)_(.*?)_field$/", strtolower($arg), $bits)) {
+            if (preg_match("/^db_(user|group|groupmember)_(.*?)_field$/", strtolower($arg), $bits)) {
                 $key = sprintf("%s_%s", $bits[1], $bits[2]);
                 if (isset($this->fieldMap[$key])) {
                     $this->fieldMap[$key] = $value;
                 }
-            } elseif (preg_match("/^(.*?)_table$/", strtolower($arg), $bits)) {
+            } elseif (preg_match("/^db_(.*?)_table$/", strtolower($arg), $bits)) {
                 $key = $bits[1];
                 if (isset($this->tableMap[$key])) {
                     $this->tableMap[$key] = $value;
@@ -129,18 +134,18 @@ class DatabaseAuthentication extends AuthenticationAuthority
             } else {
                 switch ($arg)
                 {
-                    case 'USER_PASSWORD_HASH':
+                    case 'DB_USER_PASSWORD_HASH':
                         if (!in_array($value, hash_algos())) {
                             throw new Exception ("Hashing algorithm $value not available");
                         }
                         $this->hashAlgo = $value;
                         break;
-                    case 'USER_PASSWORD_SALT':
+                    case 'DB_USER_PASSWORD_SALT':
                         $this->hashSalt = $value;
                         break;
-                    case 'GROUP_GROUPMEMBER_PROPERTY':
-                        if (in_array($value, array('group','gid'))) {
-                            throw new Exception("Invalid value for GROUP_GROUPMEMBER_PROPERTY $value. Should be gid or group");
+                    case 'DB_GROUP_GROUPMEMBER_PROPERTY':
+                        if (!in_array($value, array('group','gid'))) {
+                            throw new Exception("Invalid value for DB_GROUP_GROUPMEMBER_PROPERTY $value. Should be gid or group");
                         }
                         $this->fieldMap['group_groupmember'] = $value;
                         break;
@@ -148,6 +153,17 @@ class DatabaseAuthentication extends AuthenticationAuthority
             }
         }
         
+    }
+    
+    public function validate(&$error) {
+        if ($this->userLogin !='NONE') {
+            if (!$result = $this->connection->query(sprintf("SELECT %s, %s, %s FROM %s", $this->getField('user_password'), $this->getField('user_email'), $this->getField('user_userid'), $this->getTable('user')), array(), true)) {
+                $error = new KurogoError(1, "Error connecting", "Error validating user table (" . $this->connection->getLastError() . ")");
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     public function getTable($table)

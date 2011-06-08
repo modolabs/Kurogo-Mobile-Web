@@ -24,7 +24,7 @@ abstract class XMLDataParser extends DataParser
         if ($this->shouldHandleStartElement($name)) {
             $this->handleStartElement($name, $attribs);
         } else {
-            $this->elementStack[] = new XMLElement($name, $attribs);
+            $this->elementStack[] = new XMLElement($name, $attribs, $this->getEncoding());
         }
     }
 
@@ -70,7 +70,7 @@ abstract class XMLDataParser extends DataParser
                         xml_get_current_line_number($xml_parser)));
         }
         xml_parser_free($xml_parser);
-
+        $this->setTotalItems(count($this->items));
         return $this->items;
     }
 }

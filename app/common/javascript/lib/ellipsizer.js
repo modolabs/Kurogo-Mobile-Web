@@ -52,7 +52,8 @@ ellipsizer.prototype = {
     switch (e.type) {
       case 'orientationchange':
 			case 'resize':
-				this.refresh();
+			    var self = this;
+			    setTimeout(function() { self.refresh(); }, 0);
 				break;
 		}
   },
@@ -96,7 +97,7 @@ function getCSSValue(element, key) {
   if (window.getComputedStyle) {
     return document.defaultView.getComputedStyle(element, null).getPropertyValue(key);
       
-  } else if (elelementem.currentStyle) {
+  } else if (element.currentStyle) {
     if (key == 'float') { 
       key = 'styleFloat'; 
     } else {

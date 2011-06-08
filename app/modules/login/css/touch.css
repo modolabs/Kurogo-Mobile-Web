@@ -1,0 +1,45 @@
+#loginForm {
+	margin: 0;
+}
+
+#loginForm label {
+    float: left;
+	width: 95px;
+	line-height: 38px;
+	margin-right: 5px;
+	text-align: right;
+}
+
+#loginForm input {
+    width: 160px;
+	border: 1px solid #999;
+	padding: 2px 5px;
+}
+
+.formbuttons {
+	margin: 1.2em 0;
+}
+
+a.loginbutton {
+	cursor: default;
+	text-align: left;
+	display: block;
+	margin: 1em 0;
+	height: 40px;
+	line-height: 40px;
+	background: #ddd  url(/modules/login/images/loginbutton2.png) repeat-x;
+	border-radius: 7px;
+	text-decoration: none;
+	color: #000;
+	padding: 0 0 0 8px;
+}
+
+a.loginbutton div {
+	background: url(/common/images/action-arrow.png) no-repeat right; 
+}
+
+a.loginbutton img {
+	vertical-align: middle;
+	margin: 0 2px;
+}
+

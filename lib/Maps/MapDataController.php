@@ -3,7 +3,7 @@
 // for KML, each KML file is a category
 // for ArcGIS, each layer (or service instance?) is a category
 
-class MapDataController extends DataController
+class MapDataController extends DataController implements MapFolder
 {
     const SEARCH_RESULTS = -1;
 
@@ -15,6 +15,7 @@ class MapDataController extends DataController
     protected $dynamicMapBaseURL = null;
     protected $searchable = false;
     protected $defaultZoomLevel = 16;
+    protected $title = null;
     
     // in theory all map images controllers should use the same
     // zoom level, but if certain image servers (e.g. Harvard ArcGIS)
@@ -35,7 +36,7 @@ class MapDataController extends DataController
     protected function cacheLifespan()
     {
         // TODO add config so the following line works instead
-        //return $GLOBALS['siteConfig']->getVar('MAP_CACHE_LIFESPAN');
+        //return Kurogo::getSiteVar('MAP_CACHE_LIFESPAN');
         return 86400;
     }
 
@@ -71,69 +72,183 @@ class MapDataController extends DataController
             foreach ($tokens as $token) {
                 if (strlen($token) <= 1)
                     continue;
-                $pattern = "/\b$token\b/i";
+                $pattern = "/\b" . preg_quote($token) . "\b/i";
                 if (!preg_match($pattern, self::COMMON_WORDS)) {
                     $validTokens[] = $pattern;
                 }
             }
             if (count($validTokens)) {
-                $id = 0;
-                foreach ($this->items() as $id => $item) {
-                    if ($item instanceof MapFeature) {
-                        if (self::featureMatchesTokens($item, $validTokens)) {
-                            $results[$id] = $item;
-                        }
-                    } else {
-                        $subCategoryResults = array();
-                        foreach ($item->getItems() as $featureID => $feature) {
-                            if (self::featureMatchesTokens($feature, $validTokens)) {
-                                $subCategoryResults[$featureID] = $feature;
-                            }
-                            if (count($subCategoryResults)) {
-                                $results[$id] = $subCategoryResults;
-                            }
-                        }
+                foreach ($this->getAllLeafNodes() as $item) {
+                    if ( ($item->getTitle()==$searchText) || self::featureMatchesTokens($item, $validTokens)) {
+                        $results[] = $item;
                     }
                 }
             }
         }
         return $results;
     }
+    
+    public function searchByProximity($center, $tolerance, $maxItems) {
+        // approximate upper/lower bounds for lat/lon before calculating GCD
+        $dLatRadians = $tolerance / EARTH_RADIUS_IN_METERS;
+        // by haversine formula
+        $dLonRadians = 2 * asin(sin($dLatRadians / 2) / cos($center['lat'] * M_PI / 180));
 
-    public function getListItems($subCategory=null) {
-        if ($subCategory === null) {
-            return $this->items();
+        $dLatDegrees = $dLatRadians * 180 / M_PI;
+        $dLonDegrees = $dLonRadians * 180 / M_PI;
+
+        $maxLat = $center['lat'] + $dLatDegrees;
+        $minLat = $center['lat'] - $dLatDegrees;
+        $maxLon = $center['lon'] + $dLonDegrees;
+        $minLon = $center['lon'] - $dLonDegrees;
+
+        $results = array();
+        foreach ($this->getAllLeafNodes() as $item) {
+            $geometry = $item->getGeometry();
+            if ($geometry) {
+                $featureCenter = $geometry->getCenterCoordinate();
+                if ($featureCenter['lat'] <= $maxLat && $featureCenter['lat'] >= $minLat
+                    && $featureCenter['lon'] <= $maxLon && $featureCenter['lon'] >= $minLon
+                ) {
+                    $distance = greatCircleDistance($center['lat'], $center['lon'], $featureCenter['lat'], $featureCenter['lon']);
+                    if ($distance > $tolerance) continue;
+
+                    // keep keys unique; give priority to whatever came first
+                    $intDist = intval($distance * 1000);
+                    while (array_key_exists($intDist, $results)) {
+                        $intDist += 1; // one centimeter
+                    }
+                    $item->setField('distance', $distance);
+                    $results[$intDist] = $item;
+                }
+            }
+        }
+        return $results;
+    }
+    
+    public function getAllCategoryNodes() {
+        return self::getCategoryNodesForItem($this);
+    }
+    
+    protected static function getCategoryNodesForItem(MapFolder $item) {
+        $nodes = array();
+        foreach ($item->getListItems() as $innerItem) {
+            if ($innerItem instanceof MapFolder && $innerItem instanceof MapListElement) {
+                $node = array(
+                    'title' => $innerItem->getTitle(),
+                    'id' => $innerItem->getCategory(),
+                    //'subtitle' => $innerItem->getSubtitle(),
+                    );
+
+                $subcategories = self::getCategoryNodesForItem($innerItem);
+                if ($subcategories) {
+                    $node['subcategories'] = $subcategories;
+                }
+
+                $nodes[] = $node;
+            }
+        }
+        return $nodes;
+    }
+    
+    protected function getAllLeafNodes() {
+        $leafNodes = array();
+        foreach ($this->items() as $item) {
+            self::getLeafNodesForListItem($item, $leafNodes);
+        }
+        return $leafNodes;
+    }
+    
+    protected static function getLeafNodesForListItem(MapListElement $listItem, Array &$results) {
+        if ($listItem instanceof MapFolder) {
+            foreach ($listItem->getListItems() as $innerItem) {
+                self::getLeafNodesForListItem($innerItem, $results);
+            }
         } else {
-            $folder = $this->getItem($subCategory);
-            return $folder->getItems();
+            $results[] = $listItem;
         }
     }
 
-    public function getFeature($name, $subCategory=null) {
-        if ($subCategory !== null) {
-            $folder = $this->getItem($subCategory);
-            $itemList = $folder->getItems();
-            if (isset($itemList[$name])) {
-                return $itemList[$name];
-            }
-        }
+    // MapFolder interface
+    
+    public function getListItem($name) {
         return $this->getItem($name);
+    }
+    
+    public function getListItems($categoryPath=array()) {
+        $container = $this;
+        while (count($categoryPath) > 0) {
+            $category = array_shift($categoryPath);
+            $testContainer = $container->getListItem($category);
+            if (!$testContainer instanceof MapFolder) {
+                break;
+            }
+            $container = $testContainer;
+        }
+
+        if ($container === $this) {
+            $items = $this->items();
+        } else {
+            $items = $container->getListItems();
+        }
+
+        // fast forward for categories that only have one item
+        while (count($items) == 1) {
+            $container = $items[0];
+            if (!$container instanceof MapFolder) {
+                break;
+            }
+            $items = $container->getListItems();
+        }
+        return $items;
+    }
+
+    // TODO find some way to require that MapFolder objects include
+    // setCategory and getCategory, even though the MapListElement
+    // interface includes getCategory and would conflict with classes
+    // that implement both
+    
+    public function setCategory($categoryPath) {
+        if (!is_array($categoryPath)) {
+            $categoryPath = explode(MAP_CATEGORY_DELIMITER, $categoryPath);
+        }
+        $this->parser->setCategory($categoryPath);
+    }
+
+    public function getCategory() {
+        return $this->parser->getCategory();
+    }
+
+    // End MapFolder interface
+
+    public function getFeature($name, $categoryPath=array()) {
+        $items = $this->getListItems($categoryPath);
+        if (isset($items[$name])) {
+            return $items[$name];
+        }
+        return null;
     }
     
     public function getProjection() {
         return GEOGRAPHIC_PROJECTION;
     }
 
+    // implemented for compatibility with DataController
     public function getItem($name)
     {
-        $items = $this->items();
-        if (isset($items[$name]))
-            return $items[$name];
+        return $this->getFeature($name);
+    }
 
-        return null;
+    // override what the feed says
+    public function setTitle($title) {
+        $this->title = $title;
     }
 
     public function getTitle() {
+        if ($this->title !== null) {
+            return $this->title;
+        }
+
         if (!$this->items) {
             $data = $this->getData();
             $this->items = $this->parseData($data);
@@ -159,7 +274,6 @@ class MapDataController extends DataController
     }
 
     public function supportsDynamicMap() {
-        //return false;
         return ($this->dynamicMapClass !== null);
     }
 
@@ -181,7 +295,7 @@ class MapDataController extends DataController
         }
         return $controller;
     }
-
+    
     protected function init($args)
     {
         parent::init($args);

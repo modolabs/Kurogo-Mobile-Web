@@ -1,4 +1,5 @@
 <?php
+
 /**
   * @package Exceptions
   *
@@ -20,7 +21,7 @@ class DeviceNotSupported extends Exception {
 /**
   * @package Exceptions
   */
-class PageNotFound extends Exception {
+class ModuleNotFound extends Exception {
 }
 
 /**
@@ -43,7 +44,7 @@ function getErrorURL($exception, $devError = false) {
   } else if ($exception instanceOf DeviceNotSupported) {
     $args['code'] = 'device_notsupported';
     
-  } else if ($exception instanceOf PageNotFound) {
+  } else if ($exception instanceOf ModuleNotFound) {
     $args['code'] = 'notfound';
     
   } else if ($exception instanceOf DisabledModuleException) {
@@ -142,6 +143,11 @@ function developmentErrorLog($exception){
 /**
   * Exception Handler set in initialize.php
   */
+function exceptionHandlerForError($exception) {
+    $error = print_r($exception, TRUE);
+    die("There was a serious error: $error");
+}
+
 function exceptionHandlerForDevelopment($exception) {
   $errtime = developmentErrorLog($exception);
   error_log(print_r($exception, TRUE));
@@ -152,8 +158,8 @@ function exceptionHandlerForDevelopment($exception) {
   * Exception Handler set in initialize.php
   */
 function exceptionHandlerForProduction($exception) {
-  if(!$GLOBALS['deviceClassifier']->isSpider()) {
-    mail($GLOBALS['siteConfig']->getVar('DEVELOPER_EMAIL'), 
+  if(!Kurogo::deviceClassifier()->isSpider()) {
+    mail(Kurogo::getSiteVar('DEVELOPER_EMAIL'), 
       "Mobile web page experiencing problems",
       "The following page is throwing exceptions:\n\n" .
       "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
@@ -166,4 +172,12 @@ function exceptionHandlerForProduction($exception) {
 
   header('Location: '.getErrorURL($exception));
   die(0);
+}
+
+function exceptionHandlerForAPI($exception) {
+    $error = KurogoError::errorFromException($exception);
+    $response = new APIResponse();
+    $response->setVersion(0);
+    $response->setError($error);
+    $response->display();
 }

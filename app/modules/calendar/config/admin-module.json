@@ -1,0 +1,49 @@
+{
+    "options": {
+        "title":"Options",
+        "description":"",
+        "sectiontype":"fields",
+        "fields":{
+            "UserCalendarListController":{"label":"User Calendars","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getUserCalendarListController"],"description":"Certain services can support personal calendars. If you use an authentication service that has personal calendars, you can use it in the calendar module."},
+            "ResourceListController":{"label":"Resource Calendars","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getResourceListController"],"description":"Certain services can support shared resource calendars. If you use an authentication service that has resources, you can use it in the calendar module."}
+       }
+    },
+    "index": {
+        "title":"Index Page",
+        "config":"page-index",
+        "description":"This section contains the items that show up on the main calendar index page. Each entry can a title, url and other information.",
+        "sectiontype":"section",
+        "fields":{
+            "section":{"label":"Entry","type":"label"},
+            "title":{"label":"Title","description":"The title of the entry","type":"text"},
+            "subtitle":{"label":"Subtitle","description":"The subtitle of the entry","type":"text","omitBlankValue":true},
+            "url":{"label":"URL","description":"URL of entry. For calendar feeds, use either <i>day</i>, <i>list</i> or <i>year</i> followed by a <i>type=static</i> and <i>calendar=calendarID</i> where calendarID is the name of a calendar feed.","type":"text"},
+            "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"description":"You can include different icons that represent various types of data","optionsFirst":"Normal","omitBlankValue":true}
+        },
+        "sectiontitlefield":"title",
+        "sectionindex":"string",
+        "sectionaddnew":true,
+        "sectiondelete":true,
+        "sectionreorder":true
+    },
+    "feeds": {
+        "title":"Calendars",
+        "description":"Use this section to manage external calendar feeds.",
+        "config":"feeds",
+        "sectiontype":"section",
+        "fields":{
+            "section":{"label":"ID", "description":"Programmatic id for this calendar", "type":"label"},
+            "TITLE":{"label":"Title", "description":"Label for this feed", "type":"text"},
+            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"text","placeholder":"CalendarDataController","omitBlankValue":true},
+            "BASE_URL":{"label":"URL","description":"The url for the feed or web service","type":"text"},
+            "CACHE_LIFETIME":{"label":"Cache lifetime","description":"The length of time to cache the feed from the server","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"]},
+            "PARSER_CLASS":{"label":"Parser Class","description":"The class used to parse calendar data. Rarely needs to be changed","type":"text","placeholder":"ICSDataParser","omitBlankValue":true},
+            "EVENT_CLASS":{"label":"Event Class","description":"The class used to parse calendar events. Rarely needs to be changed","type":"text","placeholder":"ICalEvent","omitBlankValue":true}
+        },
+        "sectionindex":"string",
+        "sectionsmethod":"loadFeedData",
+        "sectionaddnew":true,
+        "sectiondelete":true
+    }
+    
+}

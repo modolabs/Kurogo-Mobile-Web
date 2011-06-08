@@ -3,10 +3,6 @@
  * @package Minify
  */
  
-/**
-  */
-require_once LIB_DIR.'/DiskCache.php';
-  
 //
 // Handle CSS and Javascript a little differently:
 //
@@ -124,11 +120,17 @@ function getMinifyGroupsConfig() {
   // Page request
   //
   $pageOnly = isset($_GET['pageOnly']) && $_GET['pageOnly'];
+  
+  // if this is a copied module also pull in files from that module
+  $configModule = isset($_GET['config']) ? $_GET['config'] : '';
 
   list($ext, $module, $page, $pagetype, $platform, $pathHash) = explode('-', $key);
 
   $cache = new DiskCache(CACHE_DIR.'/minify', 30, true);
   $cacheName = "group_$key";
+  if ($configModule) {
+    $cacheName .= "-$configModule";
+  }
   
   if ($cache->isFresh($cacheName)) {
     $minifyConfig = $cache->read($cacheName);
@@ -146,10 +148,10 @@ function getMinifyGroupsConfig() {
       APP_DIR, 
     );
     
-    if ($pageOnly || $module == 'info') {
+    if ($pageOnly || (($pagetype=='tablet' || $platform=='computer') && in_array($module, array('info', 'admin')))) {
       // Info module does not inherit from common files
       $subDirs = array(
-        '/modules/'.$module,
+        '/modules/'.$module
       );
     } else {
       $subDirs = array(
@@ -158,6 +160,10 @@ function getMinifyGroupsConfig() {
       );
     }
     
+    if ($configModule) {
+        $subDirs[] = '/modules/' . $configModule;
+    }
+
     $checkFiles = array(
       'css' => getCSSFileConfigForDirs(
           $page, $pagetype, $platform, $cssDirs, $subDirs, $pageOnly),
@@ -180,9 +186,9 @@ function minifyPostProcess($content, $type) {
   if ($type === Minify::TYPE_CSS) {
     $urlPrefix = URL_PREFIX;
           
-    if ($GLOBALS['siteConfig']->getVar('DEVICE_DEBUG') && URL_PREFIX == URL_BASE) {
+    if (Kurogo::getSiteVar('DEVICE_DEBUG') && URL_PREFIX == URL_BASE) {
       // if device debugging is on, always append device classification
-      $urlPrefix .= 'device/'.$GLOBALS['deviceClassifier']->getDevice().'/';
+      $urlPrefix .= 'device/'.Kurogo::deviceClassifier()->getDevice().'/';
     }
 
     $content = "/* Adding url prefix '".$urlPrefix."' */\n\n".

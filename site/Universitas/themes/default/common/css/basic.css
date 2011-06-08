@@ -116,12 +116,12 @@ dt, .label, .legend {
 }
 
 .bottomnav {
-	/* Navigation at bottom of page -- e.g., "Back to top" */
 	background-color: #4a4c4f;	
 	font-size: 93%;
 }
 
 .bottomnav a, .bottomnav a:visited {
+	/* Navigation at bottom of page -- e.g., "Back to top" */
 	color: #fff; 
 }
 
@@ -139,4 +139,26 @@ dt, .label, .legend {
 	font-weight: bold;
 	color: #000;
 }
+
+
+
+/* Freeform content module - basic styles to format unstyled raw HTML */
+
+.staticContentBody {
+	background-color: #fff;
+	color: #333;
+}
+
+.staticContentBody h2 {
+	color: #333;
+}
+
+.staticContentBody h3 {
+	color: #000;
+}
+
+.staticContentBody h4 {
+	color: #666;
+}
+
 

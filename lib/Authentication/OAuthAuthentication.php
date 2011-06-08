@@ -15,8 +15,10 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
     protected $useCache = true;
     protected $cache;
     protected $cacheLifetime = 900;
+    protected $signatureMethod = 'HMAC-SHA1';
     protected $verifierKey = 'oauth_verifier';
     protected $verifierErrorKey = '';
+    protected $manualVerify=false;
     private $oauth;
     
     abstract protected function getAuthURL(array $params);
@@ -44,6 +46,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $parameters = is_array($parameters) ? $parameters : array();
 	    if (!$this->oauth) {
 	        $this->oauth = new OAuthRequest($this->consumer_key, $this->consumer_secret);
+	        $this->oauth->setSignatureMethod($this->signatureMethod);
 	    }
 	    
 	    if ($use_token) {
@@ -53,6 +56,8 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
             $this->oauth->setToken('');
             $this->oauth->setTokenSecret('');
         }
+
+	    $this->oauth->setDebugMode($this->debugMode);
 	    return $this->oauth->request($method, $url, $parameters, $headers);
 	}
 	
@@ -60,7 +65,7 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		$parameters = $this->getAccessTokenParameters();
         
         if (strlen($verifier)) {
-            $parameters['oauth_verifier']=$verifier;
+            $parameters[$this->verifierKey]=$verifier;
         }
         
 		// make the call
@@ -78,6 +83,10 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 		
 		// return
 		return $return;
+	}
+	
+	public function getVerifierKey() {
+	    return $this->verifierKey;
 	}
 
 	protected function getRequestTokenParameters() {
@@ -118,24 +127,25 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         return $this->consumer_secret;
     }
 
-    public function login($login, $pass, Module $module) {
-        $startOver = isset($_GET['startOver']) ? $_GET['startOver'] : false;
-        $url = isset($_GET['url']) ? urldecode($_GET['url']) : '';
+    public function login($login, $pass, Session $session, $options) {
+        $startOver = isset($_REQUEST['startOver']) ? $_REQUEST['startOver'] : false;
         //see if we already have a request token
         if ($startOver || !$this->token || !$this->tokenSecret) {
-            if (!$this->getRequestToken(array('url'=>$url))) {
+            $this->setToken(null);
+            $this->setTokenSecret(null);
+            if (!$this->getRequestToken($options)) {
                 error_log("Error getting request token");
                 return AUTH_FAILED;
             }
         }
         
         //if oauth_verifier is set then we are in the callback
-        if (isset($_GET[$this->verifierKey])) {
+        if (isset($_REQUEST[$this->verifierKey])) {
             //get an access token
-            if ($response = $this->getAccessToken($_GET[$this->verifierKey])) {
+            if ($response = $this->getAccessToken($_REQUEST[$this->verifierKey])) {
+            
                 //we should now have the current user
                 if ($user = $this->getUserFromArray($response)) {
-                    $session = $module->getSession();
                     $session->login($user);
                     return AUTH_OK;
                 } else {
@@ -146,10 +156,12 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
                 error_log("Error getting Access token");
                 return AUTH_FAILED;
             }
+        } elseif (!$startOver && $this->token && $this->manualVerify) {
+            return AUTH_OAUTH_VERIFY;
         } else {
         
             //redirect to auth page
-            $url = $this->getAuthURL(array('url'=>$url));
+            $url = $this->getAuthURL($options);
             header("Location: " . $url);
             exit();
         }
@@ -161,13 +173,23 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $this->tokenSessionVar = sprintf("%s_token", $this->getAuthorityIndex());
         $this->tokenSecretSessionVar = sprintf("%s_tokenSecret", $this->getAuthorityIndex());
 
+        // fixed token
+        if (isset($args['OAUTH_TOKEN'])) {
+            $this->setToken($args['OAUTH_TOKEN']);
+        }
+        
+        // fixed token secret
+        if (isset($args['OAUTH_TOKEN_SECRET'])) {
+            $this->setTokenSecret($args['OAUTH_TOKEN_SECRET']);
+        }
+
         if (isset($_SESSION[$this->tokenSessionVar], $_SESSION[$this->tokenSecretSessionVar])) {
             $this->setToken($_SESSION[$this->tokenSessionVar]);
             $this->setTokenSecret($_SESSION[$this->tokenSecretSessionVar]);
         }
     }
 
-    protected function reset() {
+    protected function reset($hard=false) {
         $this->setToken(null);
         $this->setTokenSecret(null);
         unset($_SESSION[$this->tokenSessionVar]);
@@ -191,4 +213,44 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         $this->tokenSecret = $tokenSecret;
         $_SESSION[$this->tokenSecretSessionVar] = $tokenSecret;
     }
+    
+    public function getSessionData(OAuthUser $user) {
+        return array(
+            $this->tokenSessionVar=>$this->token,
+            $this->tokenSecretSessionVar=>$this->tokenSecret
+        );
+    }
+
+    public function setSessionData($data) {
+        if (isset($data[$this->tokenSessionVar])) {
+            $this->setToken($data[$this->tokenSessionVar]);
+        }
+
+        if (isset($data[$this->tokenSecretSessionVar])) {
+            $this->setTokenSecret($data[$this->tokenSecretSessionVar]);
+        }
+    }        
+}
+
+class OAuthUser extends User
+{
+    protected $token;
+    protected $tokenSecret;
+    
+    public function setToken($token) {
+        $this->token = $token;
+    }
+
+    public function setTokenSecret($tokenSecret) {
+        $this->tokenSecret = $tokenSecret;
+    }
+
+    public function getSessionData() {
+        return $this->AuthenticationAuthority->getSessionData($this);   
+    }
+
+    public function setSessionData($data) {
+        $this->AuthenticationAuthority->setSessionData($data);
+    }
+    
 }

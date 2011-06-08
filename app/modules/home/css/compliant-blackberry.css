@@ -46,19 +46,7 @@ h1 {
 	padding: 2px;
 	border: 2px solid #554c41;
 }
-#download {
-	text-align: left;
-	clear: both;
-	padding: 10px 10px 10px 10px;
-	font-size: 76.47%;
-}
-#download a {
-	color: #333;
-	text-decoration: none;
-}
-#download a:hover {
-	color: #a00;
-}
+
 #footer {
 	text-align: center;
 	clear: both;

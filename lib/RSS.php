@@ -28,10 +28,10 @@ class RSSChannel extends XMLElement
     {
         return $this->items;
     }
-    
+  
     public function addElement(XMLElement $element)
     {
-        $name = $element->name();
+    	$name = $element->name();
         $value = $element->value();
         
         switch ($name)
@@ -43,7 +43,6 @@ class RSSChannel extends XMLElement
                 parent::addElement($element);
                 break;
         }
-        
     }
     
     public function getTitle()
@@ -199,7 +198,7 @@ class RSSItem extends XMLElement
             case 'LINK':
                 if (!$value) {
                     if ($link = $element->getAttrib('HREF')) {
-                        $element->setValue($link);
+                        $element->setValue($link, true);
                     }
                 }
                 parent::addElement($element);
@@ -254,6 +253,7 @@ class RSSItem extends XMLElement
             'BODY'=>'content',
             'DC:DATE'=>'pubDate',
             'PUBLISHED'=>'pubDate',
+            'UPDATED'=>'pubDate',
             'AUTHOR'=>'author'
             
         );

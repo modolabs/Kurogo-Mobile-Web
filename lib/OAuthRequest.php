@@ -20,6 +20,7 @@ class OAuthRequest
     protected $returnHeaders = array();
     protected $signatureMethod = 'HMAC-SHA1';
     protected $baseString='';
+    protected $debugMode;
 
 	protected function buildQuery(array $parameters) {
 
@@ -118,6 +119,9 @@ class OAuthRequest
 		
 		switch ($this->signatureMethod)
 		{
+		    case 'PLAINTEXT':
+		        $sig = $key;
+		        break;
 		    case 'HMAC-SHA1':
         		$sig = base64_encode(hash_hmac('SHA1', $this->baseString, $key, true));
         		break;
@@ -174,12 +178,17 @@ class OAuthRequest
 	public function setSignatureMethod($signatureMethod) {
 	    if (!in_array($signatureMethod, array(
 	        'HMAC-SHA1',
-	        'RSA-SHA1'
+	        'RSA-SHA1',
+	        'PLAINTEXT'
             ))) {
             throw new Exception ("Invalid signature method $signatureMethod");
         }
         
         $this->signatureMethod = $signatureMethod;
+	}
+
+	public function setDebugMode($debugMode) {
+	    $this->debugMode = $debugMode ? true : false;
 	}
 
 	public function setToken($token) {
@@ -256,6 +265,11 @@ class OAuthRequest
 		
 		// set options
 		curl_setopt_array($this->curl, $options);
+		
+		if ($this->debugMode) {
+		    error_log("Retrieving $method $curl_url$fragment");
+		    error_log("Headers: " . implode("\n", $curl_headers));
+		}
 
 		// execute
 		$response = curl_exec($this->curl);

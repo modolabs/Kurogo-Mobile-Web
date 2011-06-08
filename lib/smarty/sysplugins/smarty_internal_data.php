@@ -184,7 +184,7 @@ class Smarty_Internal_Data {
     function getTemplateVars($varname = null, $_ptr = null, $search_parents = true)
     {
         if (isset($varname)) {
-            $_var = $this->getVariable($varname, $_ptr, $search_parents);
+            $_var = $this->getVariable($varname, $_ptr, $search_parents, false);
             if (is_object($_var)) {
                 return $_var->value;
             } else {
@@ -196,7 +196,9 @@ class Smarty_Internal_Data {
                 $_ptr = $this;
             } while ($_ptr !== null) {
                 foreach ($_ptr->tpl_vars AS $key => $var) {
-                    $_result[$key] = $var->value;
+                    if (!array_key_exists($key, $_result)) {
+                        $_result[$key] = $var->value;
+                    }
                 } 
                 // not found, try at parent
                 if ($search_parents) {
@@ -207,7 +209,9 @@ class Smarty_Internal_Data {
             } 
             if ($search_parents && isset(Smarty::$global_tpl_vars)) {
                 foreach (Smarty::$global_tpl_vars AS $key => $var) {
-                    $_result[$key] = $var->value;
+                    if (!array_key_exists($key, $_result)) {
+                        $_result[$key] = $var->value;
+                    }
                 } 
             } 
             return $_result;
@@ -247,8 +251,8 @@ class Smarty_Internal_Data {
     public function configLoad($config_file, $sections = null)
     { 
         // load Config class
-        $config = new Smarty_Internal_Config($config_file, $this->smarty);
-        $config->loadConfigVars($sections, $this);
+        $config = new Smarty_Internal_Config($config_file, $this->smarty, $this);
+        $config->loadConfigVars($sections);
     } 
 
     /**
@@ -259,14 +263,14 @@ class Smarty_Internal_Data {
      * @param boolean $search_parents search also in parent data
      * @return object the object of the variable
      */
-    public function getVariable($variable, $_ptr = null, $search_parents = true, $error_enable = true)
+    public function getVariable($_variable, $_ptr = null, $search_parents = true, $error_enable = true)
     {
         if ($_ptr === null) {
             $_ptr = $this;
         } while ($_ptr !== null) {
-            if (isset($_ptr->tpl_vars[$variable])) {
+            if (isset($_ptr->tpl_vars[$_variable])) {
                 // found it, return it
-                return $_ptr->tpl_vars[$variable];
+                return $_ptr->tpl_vars[$_variable];
             } 
             // not found, try at parent
             if ($search_parents) {
@@ -275,13 +279,17 @@ class Smarty_Internal_Data {
                 $_ptr = null;
             } 
         } 
-        if (isset(Smarty::$global_tpl_vars[$variable])) {
+        if (isset(Smarty::$global_tpl_vars[$_variable])) {
             // found it, return it
-            return Smarty::$global_tpl_vars[$variable];
+            return Smarty::$global_tpl_vars[$_variable];
         } 
         if ($this->smarty->error_unassigned && $error_enable) {
-            throw new SmartyException('Undefined Smarty variable "' . $variable . '"');
+            throw new SmartyException('Undefined Smarty variable "' . $_variable . '"');
         } else {
+        	if ($error_enable) {
+				// force a notice
+				$x = $$_variable;
+        	}
             return new Undefined_Smarty_Variable;
         } 
     } 
@@ -291,23 +299,26 @@ class Smarty_Internal_Data {
      * @param string $variable the name of the config variable
      * @return mixed the value of the config variable
      */
-    public function getConfigVariable($variable)
+    public function getConfigVariable($_variable)
     {
         $_ptr = $this;
         while ($_ptr !== null) {
-            if (isset($_ptr->config_vars[$variable])) {
+            if (isset($_ptr->config_vars[$_variable])) {
                 // found it, return it
-                return $_ptr->config_vars[$variable];
+                return $_ptr->config_vars[$_variable];
             } 
             // not found, try at parent
             $_ptr = $_ptr->parent;
         } 
         if ($this->smarty->error_unassigned) {
-            throw new SmartyException('Undefined config variable "' . $variable . '"');
+            throw new SmartyException('Undefined config variable "' . $_variable . '"');
         } else {
+			// force a notice
+			$x = $$_variable;
             return null;
         } 
     } 
+
     /**
      * gets  a stream variable
      * 
@@ -338,16 +349,30 @@ class Smarty_Internal_Data {
      * @param string $varname variable name or null
      * @return string variable value or or array of variables
      */
-    function getConfigVars($varname = null)
+    function getConfigVars($varname = null, $search_parents = true)
     {
-        if (isset($varname)) {
-            if (isset($this->config_vars[$varname])) {
-                return $this->config_vars[$varname];
+ //   	var_dump($this);
+        $_ptr = $this;
+        $var_array = array();
+        while ($_ptr !== null) {
+        	if (isset($varname)) {
+            	if (isset($_ptr->config_vars[$varname])) {
+                	return $_ptr->config_vars[$varname];
+                }
             } else {
-                return '';
+            	$var_array = array_merge($_ptr->config_vars, $var_array);
+        	} 
+             // not found, try at parent
+            if ($search_parents) {
+                $_ptr = $_ptr->parent;
+            } else {
+                $_ptr = null;
             } 
+    	} 
+        if (isset($varname)) {
+    		return '';
         } else {
-            return $this->config_vars;
+            return $var_array;
         } 
     } 
 

@@ -104,7 +104,7 @@ class GoogleStaticMap extends StaticMapImageController {
         } else {
             $styleArgs = array();
             $color = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::COLOR);
-            if ($color) $styleArgs[] = 'color:'.$color;
+            if ($color) $styleArgs[] = 'color:'.htmlColorForColorString($color);
             $size = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SIZE);
             if ($size) $styleArgs[] = 'size:'.$size;
             $icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON);
@@ -120,7 +120,11 @@ class GoogleStaticMap extends StaticMapImageController {
 
     public function addPath($points, $style=null)
     {
-        $polyline = Polyline::encodeFromArray($points);
+        $pointArr = array();
+        foreach ($points as $point) {
+            $pointArr[] = array($point['lat'], $point['lon']);
+        }
+        $polyline = Polyline::encodeFromArray($pointArr);
 
         if ($style === null) {
             // color can be 0xRRGGBB or
@@ -129,7 +133,7 @@ class GoogleStaticMap extends StaticMapImageController {
         } else {
             $styleArgs = array();
             $color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR);
-            if ($color) $styleArgs[] = 'color:0x'.$color;
+            if ($color) $styleArgs[] = 'color:0x'.htmlColorForColorString($color);
             $weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT);
             if ($weight) $styleArgs[] = 'weight:'.$weight;
         }
@@ -329,24 +333,11 @@ class GoogleStaticMap extends StaticMapImageController {
     }
 
     public function getJavascriptControlOptions() {
-        $params = array(
-            'mapType' => $this->mapType,
-            'markers' => $this->getMarkers(),
-            'path' => $this->getPaths(),
-            'style' => $this->getLayerStyles(),
-            'sensor' => ($this->sensor ? 'true' : 'false'),
-            'format' => $this->imageFormat,
-            );
-
-        $query = http_build_query($params);
-        $query = preg_replace('/%5B\d+%5D/', '', $query); // remove brackets
-        $baseURL = $this->baseURL . '?' . $query;
-
         return json_encode(array(
             'center' => $this->center,
             'zoom' => $this->zoomLevel,
-            'stringFromDimensions' => 'return "&size="+width+"x"+height;',
-            'baseURL' => $baseURL,
+            'mapClass' => get_class($this),
+            'baseURL' => $this->baseURL,
             ));
     }
     

@@ -8,11 +8,15 @@
   * @package Core
   */
 class DeviceClassifier {
-  const COOKIE_KEY='deviceClassification';
+  private $userAgent = '';
   private $pagetype = 'unknown';
   private $platform = 'unknown';
   private $certs = false;
   protected $version = 1;
+  
+  private function cookieKey() {
+    return KUROGO_IS_API ? 'apiDeviceClassification': 'deviceClassification';
+  }
 
   public function getDevice() {
     return implode('-', array(
@@ -33,24 +37,40 @@ class DeviceClassifier {
   }
 
   private function cacheLifetime() {
-    return $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_CACHE_LIFETIME');
+    return Kurogo::getSiteVar('MOBI_SERVICE_CACHE_LIFETIME');
   }
   
   function __construct($device = null) {
   
-    $this->version = intval($GLOBALS['siteConfig']->getVar('MOBI_SERVICE_VERSION'));
+    $this->version = intval(Kurogo::getSiteVar('MOBI_SERVICE_VERSION'));
+    $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
     
     if ($device && strlen($device)) {
       $this->setDevice($device); // user override of device detection
       
-    } elseif (isset($_COOKIE[self::COOKIE_KEY])) {
-      $this->setDevice($_COOKIE[self::COOKIE_KEY]);
+    } elseif (isset($_COOKIE[$this->cookieKey()])) {
+      $this->setDevice($_COOKIE[$this->cookieKey()]);
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
-      $user_agent = $_SERVER['HTTP_USER_AGENT'];
+      
+      if ($data = Kurogo::getSiteVar('MOBI_SERVICE_USE_EXTERNAL') ? 
+        $this->detectDeviceExternal($this->userAgent) : $this->detectDeviceInternal($this->userAgent) ) {
+        
 
-      if ($data = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_USE_EXTERNAL') ? 
-        $this->detectDeviceExternal($user_agent) : $this->detectDeviceInternal($user_agent) ) {
+        if ($data['pagetype']=='tablet' && !Kurogo::getOptionalSiteVar('TABLET_ENABLED', 1)) {
+            
+            //@TODO make this less hard coded
+            switch ($data['platform'])
+            {
+                case 'android':
+                    $data['pagetype'] = 'compliant';  
+                    break;
+                case 'ipad':
+                    $data['pagetype'] = 'compliant';  
+                    $data['platform'] = 'iphone';
+                    break;
+            }
+        }        
         
         $this->pagetype = $data['pagetype'];
         $this->platform = $data['platform'];
@@ -59,18 +79,23 @@ class DeviceClassifier {
       }
     }
   }
+  
+  public function getUserAgent() {
+    return $this->userAgent;
+  }
     
   private function setDeviceCookie() {
-    setcookie(self::COOKIE_KEY, $this->getDevice(), 
-      time() + $GLOBALS['siteConfig']->getVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
+    setcookie($this->cookieKey(), $this->getDevice(), 
+      time() + Kurogo::getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
   }
   
   private function detectDeviceInternal($user_agent) {
+    includePackage('db');
     if (!$user_agent) {
       return;
     }
      
-     if (!$db_file =  $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_FILE')) {
+     if (!$db_file =  Kurogo::getSiteVar('MOBI_SERVICE_FILE')) {
         error_log('MOBI_SERVICE_FILE not specified in site config.');
         die("MOBI_SERVICE_FILE not specified in site config.");
      }
@@ -79,6 +104,9 @@ class DeviceClassifier {
          $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
          $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
      } catch (Exception $e) {
+        if (!in_array('sqlite', PDO::getAvailableDrivers())) {
+            die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
+        }
         error_log("Error with device detection");
         return false;
      }
@@ -110,10 +138,18 @@ class DeviceClassifier {
         'version'=> $this->version
       ));
       
-      $url = $GLOBALS['siteConfig']->getVar('MOBI_SERVICE_URL').'?'.$query;
+      $url = Kurogo::getSiteVar('MOBI_SERVICE_URL').'?'.$query;
       $json = file_get_contents($url);
 
-      $cache->write($json, $cacheFilename);
+      $test = json_decode($json, true); // make sure the response is valid
+      
+      if ($json && isset($test['pagetype'], $test['platform'], $test['supports_certificate'])) {
+        $cache->write($json, $cacheFilename);
+        
+      } else {
+        error_log("Device detection server not responding.  Reading expired cache.");
+        $json = $cache->read($cacheFilename);
+      }
     }            
 
     $data = json_decode($json, true);
@@ -144,7 +180,7 @@ class DeviceClassifier {
             $data['pagetype'] = 'touch';
           }
           break;
-          
+        
         case 'compliant':
         case 'webkit':
         default:
@@ -158,6 +194,10 @@ class DeviceClassifier {
   
   public function isComputer() {
     return $this->platform == 'computer';
+  }
+
+  public function isTablet() {
+    return $this->pagetype == 'tablet';
   }
 
   public function isSpider() {

@@ -1,6 +1,6 @@
-=================
+#################
 Handling Requests
-=================
+#################
 
 This section outlines how the framework processes HTTP requests. Generally speaking, this can be
 outlined as follows:
@@ -12,17 +12,18 @@ outlined as follows:
    
 #. Presuming the file does not exist it will be sent to index.php for processing
 #. Certain paths will map to a file in the file system and be returned or a 404 will be returned
-#. You can map URLs to other URLs by updating *SITE_DIR/config/config.ini*
+#. You can map URLs to other URLs by updating *SITE_DIR/config/site.ini*
 #. Otherwise a module based on the path is instantiated and will forward further processing.
    to that module. An exception is raised if the url maps to a module that does not exist
 
 
--------------
+=============
 Path patterns
--------------
+=============
+
 The index.php script will analyze the path for several patterns
 
-* favicon.ico if a favicon.ico file exists in the CURRENT_THEME/common/images folder it will be 
+* favicon.ico if a favicon.ico file exists in the *CURRENT_THEME/common/images* folder it will be 
   sent to the client
 * ga.php will be sent from the lib folder
 * requests with a path of *common* or *modules* with a subpath of *images*, *css* or *javascript* are 
@@ -31,7 +32,7 @@ The index.php script will analyze the path for several patterns
 * requests with a path of /media will be searched for in the indicated subfolder of the 
   current site folder: i.e. /media/file will map to *SITE_DIR*/media/file
 
-If no pattern has been found, the script will then look at the *[urls]* section of *SITE_DIR/config/config.ini*
+If no pattern has been found, the script will then look at the *[urls]* section of *SITE_DIR/config/site.ini*
 to see if a url is found. If so, it will redirect to the indicated url. 
 
 All other requests will attempt to load a module based on the first path component of the request. The
@@ -54,15 +55,15 @@ Pages are discussed in more detail in the :doc:`modules` section.
 
 .. _pageandplatform:
 
--------------------------
+=========================
 Pagetype & Platform Files
--------------------------
+=========================
 
 There are a variety of circumstances when you want to have alternate content be delivered based on the 
 characteristics of the device making the request. The :doc:`device detection service <devicedetection>` 
 will contain 2 important properties that can influence which content is loaded.
 
-* pagetype - The basic type of device, is either *basic* or *compliant*. 
+* pagetype - The basic type of device, is *basic*, *touch*, *compliant* or *tablet*.
 * platform - The specific device type. Examples include: *android*, *bbplus*, *blackberry*, *computer*, 
   *featurephone*, *iphone*, *palmos*, *spider*, *symbian*, *webos*, *winmo*
 

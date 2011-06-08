@@ -15,19 +15,24 @@
 class AccessControlList
 {
     /* enums for rule types */
+
+    /** Rule for user access */
+    const RULE_TYPE_ACCESS='U';
+
+    /** Rule for admin access */
+    const RULE_TYPE_ADMIN='A';
+
+    /* enums for rule scopes */
     /** matches any user within the specified authority */
-    const RULE_TYPE_AUTHORITY='A'; 
-    
-    /** matches any user within the specified authority */
-    const RULE_TYPE_USER='U'; 
+    const RULE_SCOPE_USER='U'; 
     
     /** matches a group/authority combo */
-    const RULE_TYPE_GROUP='G'; 
+    const RULE_SCOPE_GROUP='G'; 
     
     /** matches everyone (including anonymous) */
-    const RULE_TYPE_EVERYONE='E'; 
+    const RULE_SCOPE_EVERYONE='E'; 
     
-    /** special constant to match all values of a particular type */
+    /** special constant to match all values of a particular scope */
     const RULE_VALUE_ALL='*'; 
     
     /* enums for rule actions */
@@ -41,13 +46,25 @@ class AccessControlList
       * Rule Action
       * @var string 
     */
+    protected $ruleType;
+
+    /**
+      * Rule Action
+      * @var string 
+    */
     protected $ruleAction;
 
     /**
-      * Rule type
+      * Rule scope
       * @var string 
     */
-    protected $ruleType;
+    protected $ruleScope;
+
+    /**
+      * Rule authority
+      * @var string 
+    */
+    protected $ruleAuthority;
 
     /**
       * Rule value
@@ -62,10 +79,21 @@ class AccessControlList
     public static function ruleTypes()
     {
         return array(
-            AccessControlList::RULE_TYPE_AUTHORITY,
-            AccessControlList::RULE_TYPE_USER,
-            AccessControlList::RULE_TYPE_GROUP,
-            AccessControlList::RULE_TYPE_EVERYONE
+            AccessControlList::RULE_TYPE_ACCESS,
+            AccessControlList::RULE_TYPE_ADMIN
+        );
+    }
+    
+    /**
+     * Returns a list of valid rule scopes
+	 * @return array
+     */
+    public static function ruleScopes()
+    {
+        return array(
+            AccessControlList::RULE_SCOPE_USER,
+            AccessControlList::RULE_SCOPE_GROUP,
+            AccessControlList::RULE_SCOPE_EVERYONE
         );
     }
 
@@ -88,75 +116,40 @@ class AccessControlList
      */
     public function evaluateForUser(User $user)
     {
-        switch ($this->ruleType)
+        switch ($this->ruleScope)
         {
-            case self::RULE_TYPE_AUTHORITY:
-                /* if the value is all then see if the userID and authority are set and it's a MATCH
+            case self::RULE_SCOPE_USER:
+                /* if the value is all then see if the userID is set
                    this will NOT match an anonymous user 
                 */
-                if ($this->ruleValue==self::RULE_VALUE_ALL) {
-                    if ($user->getUserID() && $user->getAuthenticationAuthority()) {
-                        return $this->ruleAction;
+                if ($this->ruleAuthority) {
+                    if ($user->getAuthenticationAuthorityIndex()==$this->ruleAuthority) {
+                        /* can match either userID or email */
+                        if ($this->ruleValue==self::RULE_VALUE_ALL) {
+                            if ($user->getUserID()) {
+                                return $this->ruleAction;
+                            }
+                        } else if ($user->getUserID()==$this->ruleValue ||
+                            (Validator::isValidEmail($this->ruleValue) && $user->getEmail()==$this->ruleValue)) { 
+                            return $this->ruleAction;
+                        }
                     }
 
-                /* Otherwise see if the userID is set and the authority matches the rule value */
-                } elseif ($user->getUserID() && $user->getAuthenticationAuthorityIndex()==$this->ruleValue) {
+                } elseif ($this->ruleValue==self::RULE_VALUE_ALL) {
+                    if ($user->getUserID()) {
+                        return $this->ruleAction;
+                    }
+                } else if ($user->getUserID()==$this->ruleValue ||
+                    (Validator::isValidEmail($this->ruleValue) && $user->getEmail()==$this->ruleValue)) { 
                     return $this->ruleAction;
                 }
                 
                 break;
-            case self::RULE_TYPE_USER:
-                /* if the value is all then see if the userID is set
-                   this will NOT match an anonymous user 
-                */
-                if ($this->ruleValue==self::RULE_VALUE_ALL) {
-                    if ($user->getUserID()) {
-                        return $this->ruleAction;
-                    }
-                } else { 
-                    /* user values are specified as AUTHORITY|userID */
-                    $values = explode("|", $this->ruleValue);
-                    switch ($count($values)) {
-                        case 1:
-                            $authority = AuthenticationAuthority::getDefaultAuthenticationAuthorityIndex();
-                            $userID = $values[0];
-                            break;
-                        case 2:
-                            $authority = $values[0];
-                            $userID = $values[1];
-                            break;
-                    }
-                    
-                    /* see if the userID/email and authority match */
-                    if ($user->getAuthenticationAuthorityIndex()==$authority) {
-                        /* can match either userID or email */
-                        if  ($user->getUserID()==$userID ||
-                            (Validator::isValidEmail($userID) && $user->getEmail()==$userID)) { 
-                            return $this->ruleAction;
-                        }
-                    }
-                }
-                break;
-            case self::RULE_TYPE_GROUP:
+            case self::RULE_SCOPE_GROUP:
                 /* Note: a group value of ALL is not valid */
 
-                /* group values are specified as AUTHORITY|group */
-                $values = explode("|", $this->ruleValue);
-                switch (count($values)) {
-                    case 1:
-                        $authority = AuthenticationAuthority::getDefaultAuthenticationAuthorityIndex();
-                        $group = $values[0];
-                        break;
-                    case 2:
-                        $authority = $values[0];
-                        $group = $values[1];
-                        break;
-                }
-
-
-                /* attempt to load the authority, then get the group */
-                if ($authority = AuthenticationAuthority::getAuthenticationAuthority($authority)) {
-                    if ($group = $authority->getGroup($group)) {
+                if ($authority = AuthenticationAuthority::getAuthenticationAuthority($this->ruleAuthority)) {
+                    if ($group = $authority->getGroup($this->ruleValue)) {
 
                         /* see if the user is a member of the group */
                         if ($group->userIsMember($user)) {
@@ -166,7 +159,7 @@ class AccessControlList
                 }
                 
                 break;
-            case self::RULE_TYPE_EVERYONE:
+            case self::RULE_SCOPE_EVERYONE:
                 /* always matches */
                 return $this->ruleAction;
                 break;
@@ -180,27 +173,114 @@ class AccessControlList
       * @param string Should be in format ACTION:RULE:VALUE
       * @return AccessControlList or false if the string is invalid
       */
-    public static function createFromString($aclString)
-    {
-        $values = explode(':', $aclString);
-        if (count($values)==3) {
-            return AccessControlList::factory($values[0], $values[1], $values[2]);
-        } else {
-            return false;
+    public static function createFromArray($aclArray) {
+        $aclArray = array_merge(array(
+            'type'=>'','action'=>'','scope'=>'','authority'=>'','value'=>''), 
+            $aclArray
+        );
+            
+        $acl = self::factory($aclArray['type'], $aclArray['action'], $aclArray['scope'], $aclArray['authority'], $aclArray['value']);
+        return $acl;
+    }
+    
+    public function getType() {
+        return $this->ruleType;
+    }
+    
+    public function __toString() {
+        $str = '(';
+        switch($this->ruleType)
+        {
+            case self::RULE_TYPE_ACCESS:
+                $str .= 'Access';
+                break;
+            case self::RULE_TYPE_ADMIN:
+                $str .= 'Admin';
+                break;
         }
+        $str .= ") ";
+
+        switch($this->ruleAction)
+        {
+            case self::RULE_ACTION_ALLOW:
+                $str .= 'Allow ';
+                break;
+            case self::RULE_ACTION_DENY:
+                $str .= 'Deny ';
+                break;
+        }
+
+        switch($this->ruleScope)
+        {
+            case self::RULE_SCOPE_USER:
+                if ($this->ruleValue == self::RULE_VALUE_ALL) {
+                    if ($this->ruleAuthority) {
+                        $str .= " All Users";
+                    } else {
+                        $str .= " All Logged In Users";
+                    }
+            } else {
+                    $str .= " User \"$this->ruleValue\"";
+                }
+                break;
+            case self::RULE_SCOPE_GROUP:
+                $str .= " Group \"$this->ruleValue\"";
+                break;
+            case self::RULE_SCOPE_EVERYONE:
+                $str .= ' Everyone ';
+                break;
+        }
+        
+        if ($this->ruleAuthority) {
+            $str .= " from \"$this->ruleAuthority\"";
+        }
+        
+        return $str;
+    }
+    
+    public function toArray() {
+        return array(
+            'TITLE'=>strval($this),
+            'type'=>$this->ruleType,
+            'action'=>$this->ruleAction,
+            'scope'=>$this->ruleScope,
+            'authority'=>$this->ruleAuthority,
+            'value'=>$this->ruleValue
+        );
+    }
+
+    public static function allAccess() {
+        return self::factory(
+            self::RULE_TYPE_ACCESS,
+            self::RULE_ACTION_ALLOW,
+            self::RULE_SCOPE_EVERYONE,
+            null,
+            null
+        );
+    }
+    
+    public static function validateACL($key, $aclArray) {
+        $aclArray = array_merge(array(
+            'type'=>'','action'=>'','scope'=>'','authority'=>'','value'=>''), 
+            $aclArray
+        );
+            
+        $acl = new AccessControlList($aclArray['type'], $aclArray['action'], $aclArray['scope'], $aclArray['authority'], $aclArray['value']);
+        return true;
     }
     
     /**
      * Instantiates an AccessControlList 
+     * @param $ruleType  string @see AccessControlList::ruleTypes()
      * @param $ruleAction string @see AccessControlList::ruleActions() 
-     * @param $ruleType string @see AccessControlList::ruleTypes() 
+     * @param $ruleScope string @see AccessControlList::ruleScopes() 
      * @param $ruleValue string 
 	 * @return AccessControlList or false if there was an error
      */
-    public static function factory($ruleAction, $ruleType, $ruleValue)
+    public static function factory($ruleType, $ruleAction, $ruleScope, $ruleAuthority, $ruleValue)
     {
         try {
-            $AccessControlList = new AccessControlList($ruleAction, $ruleType, $ruleValue);
+            $AccessControlList = new AccessControlList($ruleType, $ruleAction, $ruleScope, $ruleAuthority, $ruleValue);
         } catch (Exception $e) {
             $AccessControlList = false;
         }
@@ -209,32 +289,39 @@ class AccessControlList
     
     /**
      * Constructor
+     * @param $ruleType  string @see AccessControlList::ruleTypes()
      * @param $ruleAction string @see AccessControlList::ruleActions() 
-     * @param $ruleType string @see AccessControlList::ruleTypes() 
+     * @param $ruleScope string @see AccessControlList::ruleScopes() 
      * @param $ruleValue string 
      *
      * Will throw an exception if invalid values are present
      */
-    public function __construct($ruleAction, $ruleType, $ruleValue)
+    public function __construct($ruleType, $ruleAction, $ruleScope, $ruleAuthority, $ruleValue)
     {
-        if (!in_array($ruleAction, self::ruleActions())) {
-            throw new Exception("Invalid rule action $ruleAction");
-        }
-
         if (!in_array($ruleType, self::ruleTypes())) {
             throw new Exception("Invalid rule type $ruleType");
         }
 
-        if ($ruleType==self::RULE_TYPE_GROUP && $ruleValue == self::RULE_VALUE_ALL) {
+        if (!in_array($ruleAction, self::ruleActions())) {
+            throw new Exception("Invalid rule action $ruleAction");
+        }
+
+        if (!in_array($ruleScope, self::ruleScopes())) {
+            throw new Exception("Invalid rule scope $ruleScope");
+        }
+
+        if ($ruleScope==self::RULE_SCOPE_GROUP && $ruleValue == self::RULE_VALUE_ALL) {
             throw new Exception("Rule of type Group cannot contain ALL");
         }
         
-        if ($ruleType != self::RULE_TYPE_EVERYONE && empty($ruleValue)) {
+        if ($ruleScope != self::RULE_SCOPE_EVERYONE && empty($ruleValue)) {
             throw new Exception("Rule value cannot be empty");
         }
 
-        $this->ruleAction = $ruleAction;
         $this->ruleType = $ruleType;
+        $this->ruleAction = $ruleAction;
+        $this->ruleScope = $ruleScope;
+        $this->ruleAuthority = $ruleAuthority;
         $this->ruleValue = $ruleValue;
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-define('GEOGRAPHIC_PROJECTION', 4326);
-
 // implemented by map categories, which have no geometry
 interface MapListElement
 {
@@ -13,66 +11,19 @@ interface MapListElement
     public function getTitle();
     public function getSubtitle();
     public function getIndex();
+    public function getCategory();
 }
 
 // implemented by map data elements that can be displayed on a map
 interface MapFeature extends MapListElement
 {
     public function getGeometry();
-    public function setGeometry(MapGeometry $geometry);
     public function getDescription();
     public function getDescriptionType();
     public function getStyle();
-}
 
-interface MapGeometry
-{
-    // TODO deprecate getType() since we can tell what geometries
-    // things are based on whether they implement MapPoly(line|gon)
-
-    const POINT = 'Point';
-    const POLYGON = 'Polygon';
-    const POLYLINE = 'Polyline';
-
-    // must return an array of the form {'lat' => 2.7182, 'lon' => -3.1415}
-    public function getCenterCoordinate();
-    
-    public function getType();
-}
-
-interface MapPolyline extends MapGeometry
-{
-    public function getPoints();
-}
-
-interface MapPolygon extends MapGeometry
-{
-    public function getRings();
-}
-
-interface MapStyle
-{
-    const POINT = 0;
-    const LINE = 1;
-    const POLYGON = 2;
-    const CALLOUT = 3;
-
-    // these just have to be unique within the enclosing style type
-    const COLOR = 'color';             // points
-    const FILLCOLOR = 'fillColor';     // polygons, callouts, list view
-    const STROKECOLOR = 'strokeColor'; // lines
-    const TEXTCOLOR = self::COLOR;     // callouts
-    const HEIGHT = 'height';           // points
-    const WIDTH = 'width';             // points and lines
-    const SIZE = self::WIDTH;          // points
-    const WEIGHT = self::WIDTH;        // lines
-    const ICON = 'icon';               // points, cell image in list view
-    const SCALE = 'scale';             // points, labels -- kml
-    const SHAPE = 'shape';             // points -- esri
-    const CONSISTENCY = 'consistency'; // lines -- dotted/dashed/etc
-    const SHOULD_OUTLINE = 'outline';  // polygons
-
-    public function getStyleForTypeAndParam($type, $param);
+    public function getField($fieldName);
+    public function setField($fieldName, $value);
 }
 
 class EmptyMapFeature implements MapFeature {
@@ -80,53 +31,48 @@ class EmptyMapFeature implements MapFeature {
     private $style;
     
     private $title = '';
-    private $address = '';
     private $description = '';
     private $index = 0;
+    private $fields = array();
+    
+    private $category;
+    private $subcategory;
     
     public function __construct($center) {
-        $this->geometry = new EmptyMapPoint();
+        $this->geometry = new EmptyMapPoint($center['lat'], $center['lon']);
         $this->style = new EmptyMapStyle();
     }
+    
+    // MapListElement interface
     
     public function getTitle() {
         return $this->title;
     }
     
-    public function setTitle($title) {
-        $this->title = $title;
-    }
-    
     public function getSubtitle() {
-        return $this->address;
-    }
-    
-    public function setAddress($address) {
-        $this->address = $address;
+        return $this->getField('address');
     }
     
     public function getIndex() {
         return $this->index;
     }
     
-    public function setIndex($index) {
-        return $this->index;
+    public function getCategory() {
+        return $this->category;
     }
+    
+    public function setCategory($category) {
+        $this->category = $category;
+    }
+    
+    // MapFeature interface
     
     public function getGeometry() {
         return $this->geometry;
     }
     
-    public function setGeometry(MapGeometry $geometry) {
-        $this->geometry = $geometry;
-    }
-    
     public function getDescription() {
         return $this->description;
-    }
-    
-    public function setDescription($description) {
-        $this->description = $description;
     }
 
     public function getDescriptionType() {
@@ -135,6 +81,31 @@ class EmptyMapFeature implements MapFeature {
 
     public function getStyle() {
         return $this->style;
+    }
+    
+    public function getField($fieldName) {
+        if (isset($this->fields[$fieldName])) {
+            return $this->fields[$fieldName];
+        }
+        return null;
+    }
+    
+    public function setField($fieldName, $value) {
+        $this->fields[$fieldName] = $value;
+    }
+    
+    // setters that get used by MapWebModule when its detail page isn't called with a feature
+    
+    public function setTitle($title) {
+        $this->title = $title;
+    }
+    
+    public function setIndex($index) {
+        return $this->index;
+    }
+    
+    public function setDescription($description) {
+        $this->description = $description;
     }
 }
 
@@ -146,10 +117,6 @@ class EmptyMapPoint implements MapGeometry {
     
     public function getCenterCoordinate() {
         return $this->center;
-    }
-    
-    public function getType() {
-        return MapGeometry::POINT;
     }
 }
 
@@ -177,10 +144,6 @@ class EmptyMapPolyline implements MapPolyline {
 
     public function getPoints() {
         return $this->points;
-    }
-
-    public function getType() {
-        return MapGeometry::POLYGON;
     }
 }
 
@@ -213,10 +176,6 @@ class EmptyMapPolygon implements MapPolygon {
             }
         }
         return $result;
-    }
-
-    public function getType() {
-        return MapGeometry::POLYGON;
     }
 }
 

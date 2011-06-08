@@ -12,7 +12,7 @@ Configuring the Calendar Feed
 
 In order to use the calendar module, you must first setup the connection to your data. There are
 2 required values that must be set and a few optional ones. You can set these values by either using
-the :ref:`admin-module` or by editing the `config/feeds/calendar.ini` file 
+the :ref:`admin-module` or by editing the *SITE_DIR/config/calendar/feeds.ini* file 
 directly.
 
 The module supports multiple calendars. Each calendar is indicated by a section in the configuration
@@ -29,9 +29,9 @@ the type parameter is not indicated in a url, the first calendar is used.
   CalendarDataController. You could write your own subclass to adjust the URL if your source is a 
   web service. The framework also includes an implementation suitable for users who host their calendar
   data on the Trumba event service. 
-* PARSER_CLASS set this to a subclass of *DataParser*. You would only need to change it if your data
+* PARSER_CLASS (default ICSDataParser) set this to a subclass of *DataParser*. You would only need to change it if your data
   source returns data in a format other than iCalendar (ICS). 
-* EVENT_CLASS allows you to set a different class name for the returned event objects when searching. 
+* EVENT_CLASS (default ICalEvent) allows you to set a different class name for the returned event objects when searching. 
   This allows you to write custom behavior to handle custom fields in your feed.
 
 =============================
@@ -52,7 +52,7 @@ Configuring the Initial Screen
 ==============================
 
 The index page can be configured to show a list of links to show views of the calendars you have configured.
-You can update the contents of this list by editing the *config/web/calendar-index.ini*. Each entry
+You can update the contents of this list by editing the *SITE_DIR/config/calendar/page-index.ini*. Each entry
 is a section. Each section has values that map to the the values used by the *listItem* template. 
 
 * *title* - The Name of the entry as it's shown to the user
@@ -71,12 +71,15 @@ is a section. Each section has values that map to the the values used by the *li
 * *class* - The CSS class of the item, such as *phone*, *map*, *email*
 
 ==================================
-Configuring User Calendars (Alpha)
+Configuring User Calendars
 ==================================
 
 There is initial support for viewing user calendars. Currently the only supported calendar system is 
-Google Apps for Business or Education. To enable User Calendars, must first setup the :doc:`authority <GoogleAppsAuthentication>`
-for your Google Apps Domain. Then edit the *config/module/calendar.ini* and set *UserCalendarListController* 
-to *GoogleAppsCalendarListController*. When this setting is enabled, users who login to their 
-Google Apps account will see their calendars in the calendar module. Support for other types of calendars
-and public/shared calendars is being considered for future releases.
+Google Apps for Business or Education. To enable User Calendars:
+
+* Setup the :doc:`authority <GoogleAppsAuthentication>` for your Google Apps Domain. 
+* Edit the *config/calendar/module.ini* and set *UserCalendarListController* to *GoogleAppsCalendarListController*. 
+* If you wish to show resource availability you can set *ResourceListController* to *GoogleAppsCalendarListController*
+
+When this setting is enabled, users who login to their Google Apps account will see their calendars in the 
+calendar module. 

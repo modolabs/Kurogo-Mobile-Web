@@ -43,10 +43,6 @@ class StatsWebModule extends WebModule {
     }
   }
   
-  protected function initialize() {
-
-  }
-
 protected function compare_content($content1, $content2) {
   if($content1['count'] < $content2['count']) {
     return 1;
@@ -242,21 +238,20 @@ protected function determine_scale($values, $field) {
          
         if ($service=='web') {
           $statItems = array(
-            $this->summary_total($statData, "total", "total page views"),
-            $this->trend($statData, "total", 
+            'total'=>$this->summary_total($statData, "total", "total page views"),
+            'trend'=>$this->trend($statData, "total", 
                 'Page Views by ' . ucfirst($interval), 
                 $interval),
-            $this->bar_percentage( $this->platform_data($statData), "Traffic by Platform"),
-            $this->list_items($this->generate_popular_content('web', $statData), "Most Popular Content", "page views"),
+            'bar_percentage'=>$this->bar_percentage( $this->platform_data($statData), "Traffic by Platform"),
+            'list'=>$this->list_items($this->generate_popular_content('web', $statData), "Most Popular Content", "page views"),
             );
         } else { // api
           $statItems = array(
-            //summary_total(PageViews::count_iphone_tokens(), "total", "active users"),
-            $this->summary_total($statData, "total", "total API requests"),
-            $this->trend($statData, "total", 
+            'total'=>$this->summary_total($statData, "total", "total API requests"),
+            'trend'=>$this->trend($statData, "total", 
                 'API Requests by ' . ucfirst($interval), 
                 $interval),
-            $this->list_items($this->generate_popular_content('api', $statData), "Most Popular Modules", "requests"),
+            'list'=>$this->list_items($this->generate_popular_content('api', $statData), "Most Popular Modules", "requests"),
             );
         }
 

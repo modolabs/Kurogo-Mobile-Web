@@ -10,6 +10,9 @@
   */
 class ErrorWebModule extends WebModule {
   protected $id = 'error';
+  protected $configModule = 'error';
+  protected $moduleName = 'Error';
+  protected $canBeAddedToHomeScreen = false;
 
   private $errors = array(
     'data' => array(
@@ -36,10 +39,6 @@ class ErrorWebModule extends WebModule {
       'message' =>  'This module has been disabled'
     ),
     'protected' => array(
-      'message' =>  'This module requires you to login',
-      'linkText' => 'Click here to login'
-    ),
-    'protectedACL' => array(
       'message' =>  'You are not permitted to use this module'
     ),
     'default' => array(
@@ -48,12 +47,20 @@ class ErrorWebModule extends WebModule {
     )
   );
 
-  protected function factoryInit($page, $args) {
-      $this->pagetype = $GLOBALS['deviceClassifier']->getPagetype();
+  protected function init($page, $args) {
+      if(!Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+        set_exception_handler("exceptionHandlerForError");
+      }
+      $this->pagetype = Kurogo::deviceClassifier()->getPagetype();
+      $this->platform = Kurogo::deviceClassifier()->getPlatform();
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);
       $this->args = $args;
       return;
+  }
+
+  protected function getAccessControlLists($type) {
+    return array(AccessControlList::allAccess());
   }
 
   protected function initializeForPage() {
@@ -83,7 +90,7 @@ class ErrorWebModule extends WebModule {
   protected function devError() {
     
     // production
-    if($this->getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+    if(Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
       return false;
     }
       

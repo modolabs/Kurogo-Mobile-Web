@@ -21,7 +21,7 @@ class WMSStaticMap extends StaticMapImageController {
 
     public function __construct($baseURL) {
         $this->baseURL = $baseURL;
-        $this->diskCache = new DiskCache($GLOBALS['siteConfig']->getVar('WMS_CACHE'), 86400 * 7, true);
+        $this->diskCache = new DiskCache(Kurogo::getSiteVar('WMS_CACHE'), 86400 * 7, true);
         $this->diskCache->preserveFormat();
         $filename = md5($this->baseURL);
         $metafile = $filename.'-meta.txt';
@@ -41,7 +41,7 @@ class WMSStaticMap extends StaticMapImageController {
         $this->wmsParser = new WMSDataParser();
         $this->wmsParser->parseData($contents);
         $this->enableAllLayers();
-        $this->setMapProjection(GEOGRAPHIC_PROJECTION); // currently defined in MapDataController.php
+        $this->setMapProjection(GEOGRAPHIC_PROJECTION);
     }
 
     // http://wiki.openstreetmap.org/wiki/MinScaleDenominator
@@ -158,15 +158,11 @@ class WMSStaticMap extends StaticMapImageController {
     }
 
     public function getJavascriptControlOptions() {
-        $params = $this->getURLParameters();
-        unset($params['bbox']);
-        unset($params['width']);
-        unset($params['height']);
-        $baseURL = $this->baseURL.'?'.http_build_query($params);
         return json_encode(array(
             'bbox' => $this->bbox,
-            'stringFromDimensions' => 'return "&width="+width+"&height="+height;',
-            'baseURL' => $baseURL,
+            'mapClass' => get_class($this),
+            'projection' => $this->mapProjection,
+            'baseURL' => $this->baseURL,
             ));
     }
     

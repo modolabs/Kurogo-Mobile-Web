@@ -7,23 +7,23 @@ body {
 }
 
 body, th, td, li, option, select, input {
-	/* Primary font */
-	color: #222;
+	/* Primary font color */
+	color: #333;
 }
 
 .focal, .nav, .results {
-	/* Border color for many container elements */
+	/* Color of border, if any, for many container elements */
 	/* border-color: #bbb; */
 	border: none;
 }
 
 .secondary {
-	/* Border color override specific to this theme */
+	/* Color of border, if any, for secondary lists */
 	border-color: #ccc;
 }
 
 .nav li, .results li, .secondary li, ul.focal li  {
-	/* Border color for list items */
+	/* Color of border between list items */
 	border-color: #ccc;
 }
 
@@ -69,6 +69,9 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 }
 
 
+
+
+
 /* Major content blocks */
 
 .focal {   
@@ -81,6 +84,8 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	/* Shaded subclass of focal content - e.g., background for tabbed focal div */
 	background-color: #edeef0;
 }
+
+
 
 
 
@@ -127,6 +132,10 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	color: #fff
 }
 
+
+
+
+
 /* Text input fields, e.g., search fields */
 
 .forminput {
@@ -149,12 +158,16 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	-webkit-border-top-left-radius: 10px;	
 }
 
+
+
+
+
 /* Springboards */
 
 .springboard div {
 	/* Overall size of one cell in the springboard */
 	width: 77px;
-	height: 100px;
+	height: 98px;
 	font-size: 13px;
 	line-height: 14px;
 }
@@ -167,6 +180,11 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	/* Size of actual item icon in springboard */
 	width: 60px;
 	height: 60px;
+}
+
+.springboard .separator {
+	/* Height of extra gap between main and utility-class springboard items */
+	height: 10px;
 }
 
 .springboard div.utility {
@@ -196,6 +214,9 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	top: 26px;
 	right: 12px;
 }
+
+
+
 
 
 /* Navigation and results lists */
@@ -230,6 +251,9 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 	line-height: 19px;
 	color: #202020;
 }
+
+
+
 
 
 /* Next/previous navigation - e.g., going from day to day in events calendar */
@@ -287,6 +311,28 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 
 
 
+/* Freeform content module - basic styles to format unstyled raw HTML */
+
+.staticContentBody {
+	background-color: #fff;
+	color: #333;
+}
+
+.staticContentBody h2 {
+	color: #333;
+}
+
+.staticContentBody h3 {
+	color: #000;
+}
+
+.staticContentBody h4 {
+	color: #666;
+}
+
+
+
+
 /* Data charts */
 
 .rowbar {
@@ -298,4 +344,61 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend, .s
 .average {
 	border-color: #c00;
 }
+
+
+
+/* Login-related buttons */
+
+.loginbuttons {
+	margin-top: 0.75em;
+	margin-bottom: 0.75em;
+}
+
+.loginbuttons li {
+	padding-left: 42px;
+	background-size: 24px;
+	background-position: 10px;
+	background-repeat: no-repeat;
+}
+
+.loginbuttons a {
+	margin-left: -39px;
+	padding-left: 39px;
+}
+
+.loginbuttons li.facebook {
+	background-image: url(/common/images/button-facebook.png);
+}
+
+.loginbuttons li.google {
+	background-image: url(/common/images/button-google.png);
+}
+
+.loginbuttons li.oauth {
+	background-image: url(/common/images/button-oauth.png);
+}
+
+.loginbuttons li.openid {
+	background-image: url(/common/images/button-openid.png);
+}
+
+.loginbuttons li.twitter {
+	background-image: url(/common/images/button-twitter.png);
+}
+
+.loginbuttons li.windows {
+	background-image: url(/common/images/button-windows.png);
+}
+
+.loginbuttons li.noauth {
+	background-image: none;
+	padding-left: 10px;
+}
+
+.loginbuttons li.noauth a {
+	margin-left: -8px;
+	padding-left: 8px;
+}
+
+
 

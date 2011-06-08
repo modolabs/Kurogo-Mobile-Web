@@ -21,13 +21,11 @@ At a high level, the Kurogo Framework includes:
 
 This guide serves as a tour of the project source code and its features.
 
-**Note:** This is documentation for a Beta product. Please be aware that certain details may change before it 
-reaches 1.0 status
-
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    overview
+   support
    github
    setup
    helloworld
@@ -40,7 +38,9 @@ reaches 1.0 status
    template
    themes
    libs
+   datacontroller
    modulenew
    moduleextend
-   authenticationintro
-   glossary   
+   authentication
+   authorization
+   credits

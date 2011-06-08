@@ -1,0 +1,66 @@
+.results li.video {
+    height: 86px;
+	margin: 0;
+    padding: 1px;
+    overflow: hidden;
+	border-color: #666;
+}
+li.noimage {
+    padding-left: .4em;
+}
+.results li.video a {
+   	overflow: hidden;
+    margin: 0;
+    padding: 3px 24px 3px 0;
+    height: 80px;
+	border-radius: 0;
+	line-height: 19px;
+}
+.results li.video a .ellipsis {
+    overflow: hidden;
+    margin: 0;
+    padding: 3px 24px 3px 0;
+    height: 80px;
+	border-radius: 0;
+	line-height: 19px;
+    font-size: 82.35%;
+}
+
+.results li.video a .title {
+    font-size: 114.29%;
+    padding: 0 0 2px 0;
+}
+
+.thumbnail {
+    float:left;
+    margin:-3px 7px -3px 0;
+    width: 110px;
+    height: 86px;
+    background: transparent url('/modules/video/images/video-placeholder.png') no-repeat top left;
+    background-size: 110px;
+}
+
+.video {
+	margin: -9px 0;
+	padding: 10px;
+	background-color: #fff;
+}
+
+.videoplayer {
+	margin: 1em 0;
+}
+
+.videobuttons {
+	float: right;
+	margin: 0 0 0.6em 0.5em;
+}
+
+.videobuttons #share, .videobuttons #bookmarkContainer {
+	float: right;
+	margin: 0 0 0 0.5em;
+}
+
+.slugline {
+    font: 22px/26px Georgia, serif;
+    color:#1a1611;
+}

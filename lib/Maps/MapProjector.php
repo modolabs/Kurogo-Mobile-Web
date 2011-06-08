@@ -2,26 +2,24 @@
 
 class MapProjector {
 
-    private $srcProj = 4326;
-    private $dstProj = 4326;
+    private $srcProjId = 4326;
+    private $dstProjId = 4326;
     
     private $srcProjSpec;
     private $dstProjSpec;
-    
-    private $baseURL; // ESRI geometry service, if any
+
+    private $fromProjection;
+    private $toProjection;
     
     public function __construct() {
-        $useServer = $GLOBALS['siteConfig']->getVar('GEOMETRY_SERVICE_ENABLED');
-        if ($useServer) {
-            $this->baseURL = $GLOBALS['siteConfig']->getVar('GEOMETRY_SERVICE');
-        }
-        
-        if (!$this->baseURL) {
-            $projEnabled = $GLOBALS['siteConfig']->getVar('PROJ_EXTENSION_ENABLED');
-            if (!$projEnabled || !function_exists('project_from_latlon')) {
-                die('No projection support found.');
-            }
-        }
+
+    }
+
+    public static function needsConversion($a, $b) {
+        // this will return true if either projection is 
+        // wkt-based.  TODO: be able to determine equality of
+        // wkt-based projections.
+        return !is_int($a) || !is_int($b) || $a != $b;
     }
     
     public static function getXYFromPoint(Array $point) {
@@ -62,147 +60,135 @@ class MapProjector {
         }
     }
 
-    // TODO this is only supported for service-based projections right now
     public function projectPoints(Array $points, $outputXY=false) {
-        $geometries = array();
-        foreach ($points as $point) {
-            list($x, $y) = self::getXYFromPoint($point);
-            $geometries[] = array(
-                'x' => $x,
-                'y' => $y,
-                );
-        }
-        if ($this->baseURL !== NULL) {
-            $params = array(
-                'inSR' => $this->srcProj,
-                'outSR' => $this->dstProj,
-                'geometries' => '{"geometryType":"esriGeometryPoint","geometries":'
-                                .json_encode($geometries).'}',
-                'f' => 'json',
-                );
-            $query = $this->baseURL.'?'.http_build_query($params);
-//var_dump($query);
-            $response = file_get_contents($query);
-            $json = json_decode($response, true);
-            if ($json && isset($json['geometries']) && is_array($json['geometries'])) {
-                if ($outputXY) {
-                    return $json['geometries'];
-                } else {
-                    $result = array();
-                    foreach ($json['geometries'] as $geometry) {
-                        $result[] = array('lat' => $geometry['y'], 'lon' => $geometry['x']);
-                    }
+        $result = $points;
+        if ($this->srcProjSpec) {
+            if (!isset($this->fromProjection)) {
+                $this->fromProjection = new MapProjection($this->srcProjSpec);
+            }
+            if (!$this->fromProjection->isGeographic()) {
+                $newPoints = array();
+                foreach ($result as $point) {
+                    list($x, $y) = self::getXYFromPoint($point);
+                    $this->fromProjection->setXY(array('x' => $x, 'y' => $y));
+                    $newPoints[] = $this->fromProjection->getLatLon();
                 }
-                return $result;
+                $result = $newPoints;
             }
         }
 
+        if ($this->dstProjSpec) {
+            if (!isset($this->toProjection)) {
+                $this->toProjection = new MapProjection($this->dstProjSpec);
+            }
+            if (!$this->toProjection->isGeographic()) {
+                $newPoints = array();
+                foreach ($result as $point) {
+                    list($x, $y) = self::getXYFromPoint($point);
+                    $this->toProjection->setLatLon(array('lon' => $x, 'lat' => $y));
+                    $newPoints[] = $this->toProjection->getXY();
+                }
+                $result = $newPoints;
+            }
+        }
+
+        return $result;
     }
     
     public function projectPoint($point) {
         list($x, $y) = self::getXYFromPoint($point);
-        if ($this->srcProj == $this->dstProj) {
+        error_log("projecting $x, $y");
+
+        if (isset($this->srcProjId, $this->dstProjId)
+            && $this->srcProjId == $this->dstProjId
+        ) {
             return array('lon' => $x, 'lat' => $y);
         }
-    
-        if ($this->baseURL !== NULL) {
-            $params = array(
-                'inSR' => $this->srcProj,
-                'outSR' => $this->dstProj,
-                'geometries' => '{"geometryType":"esriGeometryPoint","geometries":[{"x":'.$x.',"y":'.$y.'}]}',
-                'f' => 'json',
-                );
-            $query = $this->baseURL.'?'.http_build_query($params);
-//var_dump($query);
-            $response = file_get_contents($query);
-            $json = json_decode($response, true);
-            if ($json && isset($json['geometries']) && is_array($json['geometries'])) {
-                $geometry = $json['geometries'][0];
-                return array('lat' => $geometry['y'], 'lon' => $geometry['x']);
-            }
-            var_dump($response);
+
+        $result = $point;
+        if ($this->srcProjSpec && !isset($this->fromProjection)) {
+            $this->fromProjection = new MapProjection($this->srcProjSpec);
         }
-        else {
-            if ($this->srcProj != 4326) {
-                $latlon = project_to_latlon($this->srcProjSpec, $x, $y);
-                $x = $latlon[1]; // lon
-                $y = $latlon[0]; // lat
-            }
-            if ($this->dstProj != 4326) {
-                $xy = project_from_latlon($this->dstProjSpec, $y, $x); // they will have passed in lat, lon
-                $x = $xy[0]; // point x
-                $y = $xy[1]; // point y
-            }
-            return array('lon' => $x, 'lat' => $y);
+        if (isset($this->fromProjection) && !$this->fromProjection->isGeographic()) {
+            $this->fromProjection->setXY(array('x' => $x, 'y' => $y));
+            $result = $this->fromProjection->getLatLon();
         }
+
+        if ($this->dstProjSpec && !isset($this->toProjection)) {
+            $this->toProjection = new MapProjection($this->dstProjSpec);
+        }
+        if (isset($this->toProjection) && !$this->toProjection->isGeographic()) {
+            list($x, $y) = self::getXYFromPoint($result);
+            $this->toProjection->setLatLon(array('lon' => $x, 'lat' => $y));
+            $result = $this->toProjection->getXY();
+        }
+
+        list($x, $y) = self::getXYFromPoint($result);
+        error_log("result: $x, $y");
+
+        return $result;
     }
-    
+
     public function getSrcProj() {
-        return $this->srcProj;
-    }
-    
-    public function getDstProj() {
-        return $this->dstProj;
+        return $this->srcProjId;
     }
     
     public function setSrcProj($proj) {
-        if ($proj != $this->srcProj) {
-            if ($this->baseURL === NULL) {
-//var_dump('setting src '.$proj);
-                $projspecs = self::getProjSpecs($proj);
-                if ($projspecs) {
-                    $this->srcProjSpec = trim($projspecs);
-                    $this->srcProj = $proj;
-                }
-            }
-            else {
-                $this->srcProj = $proj;
+        if ($proj instanceof MapProjection) {
+            $this->fromProjection = $proj;
+            $this->srcProjId = null;
+
+        } else {
+            $projspecs = self::getProjSpecs($proj);
+            if ($projspecs) {
+                $this->srcProjSpec = trim($projspecs);
+                $this->srcProjId = $proj;
             }
         }
     }
+
+    public function getDstProj() {
+        return $this->dstProjId;
+    }
     
     public function setDstProj($proj) {
-        if ($proj != $this->dstProj) {
-            if ($this->baseURL === NULL) {
-//var_dump('setting dst '.$proj);
-                $projspecs = self::getProjSpecs($proj);
-                if ($projspecs) {
-                    $this->dstProjSpec = trim($projspecs);
-                    $this->dstProj = $proj;
-                }
-            }
-            else {
-                $this->dstProj = $proj;
+        if ($proj instanceof MapProjection) {
+            $this->toProjection = $proj;
+            $this->dstProjId = null;
+
+        } else {
+            $projspecs = self::getProjSpecs($proj);
+            if ($projspecs) {
+                $this->dstProjSpec = trim($projspecs);
+                $this->dstProjId = $proj;
             }
         }
     }
     
     public static function getProjSpecs($wkid) {
-        $wkid = self::convertWkid($wkid);
-    
-        $projCache = new DiskCache($GLOBALS['siteConfig']->getVar('PROJ_CACHE'), null, true);
+        $projCache = new DiskCache(Kurogo::getSiteVar('PROJ_CACHE'), null, true);
         $projCache->setSuffix('.proj4');
         $projCache->preserveFormat();
         $filename = $wkid;
         if (!$projCache->isFresh($filename)) {
-            $url = 'http://spatialreference.org/ref/epsg/'.$wkid.'/proj4/';
-            $contents = file_get_contents($url);
+            $file = fopen(DATA_DIR.'/maps/proj_list.txt', 'r');
+            $wkidID = "<$wkid>";
+            $strlen = strlen($wkidID);
+            while ($line = fgets($file)) {
+                if (substr($line, 0, $strlen) == $wkidID) {
+                    preg_match("/<\d+> (.+) <>/", $line, $matches);
+                    $contents = $matches[1];
+                    break;
+                }
+            }
+            fclose($file);
+
             if ($contents)
                 $projCache->write($contents, $filename);
         } else {
             $contents = $projCache->read($filename);
         }
-        
         return $contents;
-    }
-    
-    private static function convertWkid($wkid) {
-        
-        // hack to convert ESRI-specific web mercator code
-        // to standard code with the same spec.
-        if ($wkid == 102113) $wkid = 3785;
-        
-        return $wkid;
     }
 
 }

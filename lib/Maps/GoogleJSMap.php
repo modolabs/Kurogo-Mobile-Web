@@ -54,9 +54,9 @@ class GoogleJSMap extends JavascriptMapImageController {
         
         $pathStyle = array();
         if (($color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR)) !== null) {
-            $pathStyle['strokeColor'] = '"#'.substr($color, 0, 6).'"';
+            $pathStyle['strokeColor'] = '"#'.htmlColorForColorString($color).'"';
             if (strlen($color) == 8) {
-                $alphaHex = substr($color, 6);
+                $alphaHex = substr($color, 0, 2);
                 $alpha = hexdec($alphaHex) / 256;
                 $pathStyle['strokeOpacity'] = round($alpha, 2);
             }
@@ -80,17 +80,17 @@ class GoogleJSMap extends JavascriptMapImageController {
 
         $pathStyle = array();
         if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::COLOR)) !== null) {
-            $pathStyle['strokeColor'] = '"#'.substr($color, 0, 6).'"';
+            $pathStyle['strokeColor'] = '"#'.htmlColorForColorString($color).'"';
             if (strlen($color) == 8) {
-                $alphaHex = substr($color, 6);
+                $alphaHex = substr($color, 0, 2);
                 $alpha = hexdec($alphaHex) / 256;
                 $pathStyle['strokeOpacity'] = round($alpha, 2);
             }
         }
         if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::FILLCOLOR)) !== null) {
-            $pathStyle['fillColor'] = '"#'.substr($color, 0, 6).'"';
+            $pathStyle['fillColor'] = '"#'.htmlColorForColorString($color).'"';
             if (strlen($color) == 8) {
-                $alphaHex = substr($color, 6);
+                $alphaHex = substr($color, 0, 2);
                 $alpha = hexdec($alphaHex) / 256;
                 $pathStyle['fillOpacity'] = round($alpha, 2);
             }

@@ -27,8 +27,8 @@ Configuration
 There are a few parameters you need to configure:
 
 * *USER_LOGIN* - Must be set to LINK, which will show a link to the Twitter login page.
-* *CONSUMER_KEY* - Set this to the *Consumer Key* provided by Twitter
-* *CONSUMER_SECRET* - Set this to the *Consumer Secret* provided by Twitter
+* *OAUTH_CONSUMER_KEY* - Set this to the *Consumer Key* provided by Twitter
+* *OAUTH_CONSUMER_SECRET* - Set this to the *Consumer Secret* provided by Twitter
 
 You should keep your consumer key and secret protected since they represent your application's identity. 
 Do not place these values in a public source code repository.

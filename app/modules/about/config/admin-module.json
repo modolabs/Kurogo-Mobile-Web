@@ -1,0 +1,29 @@
+{
+    "strings":{
+        "title":"Text Strings",
+        "description":"",
+        "sectiontype":"fields",
+        "fields":{
+         "SITE_ABOUT_HTML":{"label":"About this site","type":"paragraph","config":"module","section":"strings","description":""},
+         "ABOUT_HTML":{"label":"About this organization","type":"paragraph","config":"module","section":"strings","description":""}
+       }
+    },
+    "index": {
+        "title":"Index Page",
+        "config":"page-index",
+        "description":"Entries for about index page",
+        "sectiontype":"section",
+        "fields":{
+            "section":{"label":"Entry","type":"label"},
+            "title":{"label":"Title","description":"The title of the entry","type":"text"},
+            "subtitle":{"label":"Subtitle","description":"The subtitle of the entry","type":"text","omitBlankValue":true},
+            "url":{"label":"URL","description":"URL of entry.","type":"text"},
+            "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
+        },
+        "sectiontitlefield":"title",
+        "sectionindex":"string",
+        "sectionaddnew":true,
+        "sectiondelete":true,
+        "sectionreorder":true
+    }
+}

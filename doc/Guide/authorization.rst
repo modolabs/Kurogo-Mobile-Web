@@ -1,6 +1,6 @@
-#############
-Authorization
-#############
+################################
+Access Control and Authorization
+################################
 
 Once a user's identity has been established, it is possible to authorize use of protected modules and
 tasks based on their identity. Authorization is accomplished through *access control lists*. Developers
@@ -11,55 +11,63 @@ Access Control Lists
 ====================
 
 An access control list is a series of rules that defines who is permitted to access the resource (ALLOW rules), and who is expressly
-denied to access the resource (DENY rules). Rules can be defined for users, groups or entire authorities.
+denied to access the resource (DENY rules). Rules can be defined for users and groups.
 You can mix and match rules to tune the authorization to meet your site's needs.
 
-Access control lists are defined in the module's configuration file *SITE_DIR/config/modules/MODULE.ini* Each 
-entry is entered as a series of *acl[]* entries. The brackets indicates to PHP that the acl attribute is
-an array of values.
+Access control lists are defined in either *SITE_DIR/config/acls.ini* (for site authorization) or *SITE_DIR/config/MODULE/acls.ini* 
+(for module authorization). Each entry is entered as a numerically indexed section.
 
-If a module has an access control list entry it will be protected and only users matching the acl rules
-will be granted access. A user will only be granted access if:
+If the *site* has an access control list entry (in SITE_DIR/config/acls.ini), then it will be used for ALL modules. This
+would protect the entire site. If a *module* has an access control list entry (in SITE_DIR/config/MODULE/acls.ini) it will be protected and only users matching the acl rules
+will be granted access. 
+
+For A user will only be granted access if:
 
     * They match an ALLOW rule, AND
     * They do NOT match a DENY rule
 
 If a user is part of a DENY rule, they will be immediately be denied access.
 
+Access control lists can also be edited in the Administration Console.
+
 ------------------------------
 Syntax of Access Control Lists
 ------------------------------
 
-Each access control list contains 3 parts, separated by a colon ":". The parts represent:
+Each ACL is a section in an acls.ini file. The first ACL will be section 0, the second will be section 1 and so on. Each section has a number of keys:
 
-#. The action of the rule. This is either *A* (allow) or *D* (deny).
-#. The rule type. Current types include *U* (user), *G* group or *A* authority
-#. The rule value. If you have multiple authorities use "AUTHORITY|value". The default authority is
-   the one defined first in the *SITE_DIR/config/authentication.ini* file
-   
-   * For users: use the userID or email address. 
-   * For groups: use the short name or gid for the group. 
-   * For authorities: use the *authority index* 
-      
+* *type*: Either U (for user access, i.e. who can use the module), or A (for admin access, who can administer the module). 
+* *action*: Either A (allow) or D (deny). Deny rules always take precedence. 
+* *scope*: Either U (user), G (group) or E (everyone, i.e. ALL users, including anonymous users),
+* *authority*: The index of the authority. For user scope this can be blank and would match a user from any authority.
+* *value*: The particular user/group to match. For user scope this can be "*" which would match all authenticated users.
+
 To better illustrate the syntax, consider the following examples:
-
-* *A:U:admin* - Allow the user with the userID of *admin* from the default authority
-* *A:G:staff* - Allow the group with the short name of *admin* from the default authority
-* *A:A:ldap* - Allow all users from the authority with the index of *ldap*
-* *D:G:ldap|students* - Deny users from the group *students* from the *ldap* authority
-* *A:U:google|user@gmail.com* - Allow a user with the email user@gmail.com from the *google* authority 
 
 A typical configuration file for the *admin* module might look like this:
 
 .. code-block:: ini
 
-    title = "Admin"
-    disabled = 0
-    search = 0
-    secure = 0
-    acl[] = "A:G:ldap|admin"
-    acl[] = "A:G:ad|domainadmins"
-    acl[] = "D:U:ad|Administrator"
+    [0]
+    type = "U"
+    action = "A"
+    scope = "G"
+    authority = "ldap"
+    value = "admin"
+    
+    [1]
+    type = "U"
+    action = "A"
+    scope = "G"
+    authority = "ad"
+    value = "domainadmins"
+
+    [2]
+    type = "U"
+    action = "D"
+    scope = "U"
+    authority = "ad"
+    value = "Administrator"
     
 This would allow members of the group *admin* of the ldap authority and members of the *domainadmins* group
 in the ad authority to access this module, but specifically deny the *Administrator* user in the ad authority.

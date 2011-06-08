@@ -23,11 +23,6 @@ class ArcGISPoint implements MapGeometry
     {
         return array('lat' => $this->y, 'lon' => $this->x);
     }
-    
-    public function getType()
-    {
-        return MapGeometry::POINT;
-    }
 }
 
 class ArcGISPolygon implements MapPolygon
@@ -76,11 +71,6 @@ class ArcGISPolygon implements MapPolygon
     public function getRings() {
         return $this->rings;
     }
-    
-    public function getType()
-    {
-        return MapGeometry::POLYGON;
-    }
 }
 
 class ArcGISFeature implements MapFeature
@@ -90,13 +80,16 @@ class ArcGISFeature implements MapFeature
     private $geometry;
     private $titleField;
     private $geometryType;
+    private $category;
     
     // if we want to turn off display for certain fields
     // TODO put this in a more accessible place
     private $blackList = array();
-    
-    public function __construct($attributes, $geometry=null)
+
+    public function __construct($attributes, $geometry, $index, $category)
     {
+        $this->index = $index;
+        $this->category = $category;
         $this->attributes = $attributes;
         $this->geometry = $geometry;
     }
@@ -109,11 +102,6 @@ class ArcGISFeature implements MapFeature
     public function setIndex($index)
     {
         $this->index = $index;
-    }
-
-    public function getIndex()
-    {
-        return $this->index;
     }
     
     public function setGeometryType($geomType)
@@ -143,7 +131,21 @@ class ArcGISFeature implements MapFeature
         $this->blackList = $fields;
     }
     
+    public function readGeometry($json)
+    {
+        $this->geometry = $json;
+    }
+    
     //////// MapFeature interface
+    
+    public function getCategory() {
+        return $this->category;
+    }
+
+    public function getIndex()
+    {
+        return $this->index;
+    }
 
     public function getTitle()
     {
@@ -170,11 +172,6 @@ class ArcGISFeature implements MapFeature
             }
         }
         return $geometry;
-    }
-    
-    public function readGeometry($json)
-    {
-        $this->geometry = $json;
     }
     
     public function setGeometry(MapGeometry $geometry) {
@@ -213,7 +210,7 @@ class ArcGISFeature implements MapFeature
     }
 }
 
-class ArcGISParser extends DataParser
+class ArcGISParser extends DataParser implements MapFolder
 {
     private $singleFusedMapCache; // indicates whether we have map tiles
     private $initialExtent;
@@ -225,7 +222,7 @@ class ArcGISParser extends DataParser
     private $baseURL;
     
     private $mapName;
-    private $id;
+    private $category;
     private $defaultLayerId = 0;
     
     // sublayers are known to arcgis as layers
@@ -238,11 +235,26 @@ class ArcGISParser extends DataParser
     {
         if (!$this->isPopulated) { // initial parse
             $data = json_decode($contents, true);
-            if (!$data)
-                return false;
+            if (!$data) {
+                error_log("Failed to get JSON response from ArcGIS server at {$this->baseURL}");
+                throw new DataServerException("The map server for this category is temporarily down.  Please try again later.");
+            }
+            if (isset($data['error'])) {
+                $error = $data['error'];
+                $code = $error['code'];
+                $message = $error['message'];
+                $details = isset($error['details']) ? json_encode($error['details']) : '';
+                error_log("Error response from ArcGIS server at {$this->baseURL}:\n"
+                          ."Code: $code\n"
+                          ."Message: $message\n"
+                          ."Details: $details\n");
+                throw new DataServerException("The map server for this category is temporarily down.  Please try again later.");
+            }
 
             $this->serviceDescription = $data['serviceDescription'];
-            $this->supportedImageFormats = explode(',', $data['supportedImageFormatTypes']);
+            if (isset($data['supportedImageFormatTypes'])) {
+                $this->supportedImageFormats = explode(',', $data['supportedImageFormatTypes']);
+            }
             $this->units = $data['units'];
             $this->mapName = $data['mapName'];
 
@@ -260,7 +272,7 @@ class ArcGISParser extends DataParser
             foreach ($data['layers'] as $layerData) {
                 $id = $layerData['id'];
                 $name = $layerData['name'];
-                $this->subLayers[$id] = new ArcGISLayer($id, $name);
+                $this->subLayers[$id] = new ArcGISLayer($id, $name, $this->category);
             }
             
             $this->selectDefaultLayer();
@@ -271,8 +283,7 @@ class ArcGISParser extends DataParser
         }
     }
     
-    public function getProjection()
-    {
+    public function getProjection() {
         return $this->spatialRef;
     }
     
@@ -299,6 +310,24 @@ class ArcGISParser extends DataParser
     public function setBaseURL($baseURL) {
         $this->baseURL = $baseURL;
     }
+    
+    public function setCategory($category) {
+        $this->category = $category;
+    }
+
+    public function getCategory() {
+        return $this->category;
+    }
+    
+    //// MapFolder interface
+    
+    public function getListItems() {
+        return array_values($this->subLayers);
+    }
+    
+    public function getListItem($name) {
+        return $this->getSubLayer($name);
+    }
 
     ////// functions dispatched to selected layer
     
@@ -310,9 +339,9 @@ class ArcGISParser extends DataParser
         return $this->selectedLayer->query($text);
     }
 
-    public function getFeatureList() {
-        return $this->selectedLayer->getFeatureList();
-    }
+    //public function getFeatureList() {
+    //    return $this->selectedLayer->getFeatureList();
+    //}
 
     public function getDefaultSearchField() {
         return $this->selectedLayer->getDisplayField();
@@ -323,7 +352,7 @@ class ArcGISParser extends DataParser
     }
     
     public function getURLForSelectedLayer() {
-        return $this->baseURL.'/'.$this->selectedLayer->getId();
+        return $this->baseURL.'/'.$this->selectedLayer->getIndex();
     }
     
     public function selectedLayerIsInitialized() {
@@ -331,7 +360,7 @@ class ArcGISParser extends DataParser
     }
     
     public function getURLForLayerFeatures() {
-        return $this->baseURL.'/'.$this->selectedLayer->getId().'/query';
+        return $this->baseURL.'/'.$this->selectedLayer->getIndex().'/query';
     }
     
     public function getFiltersForLayer() {
@@ -352,6 +381,10 @@ class ArcGISParser extends DataParser
         if (isset($this->subLayers[$layerId])) {
             $this->selectedLayer = $this->getSubLayer($layerId);
         }
+    }
+    
+    public function getSelectedLayerId() {
+        return $this->selectedLayer->getIndex();
     }
     
     public function getSubLayerNames() {
@@ -375,15 +408,20 @@ class ArcGISParser extends DataParser
 
 }
 
-class ArcGISLayer {
+class ArcGISLayer implements MapFolder, MapListElement {
     private $id;
     private $name;
-
+    private $parentCategory;
+    
     private $fieldNames;
     private $extent;
     private $minScale;
     private $maxScale;
+
+    private $idField;
+    private $geometryField;
     private $displayField;
+
     private $spatialRef;
     private $geometryType;
     private $isInitialized = false;
@@ -391,18 +429,46 @@ class ArcGISLayer {
     private $features = array();
     private $isPopulated = false;
     
-    public function __construct($id, $name) {
+    public function __construct($id, $name, $parentCategory) {
         $this->id = $id;
         $this->name = $name;
+        $this->parentCategory = $parentCategory;
     }
     
-    public function getId() {
+    // MapListElement interface
+    
+    public function getIndex() {
         return $this->id;
     }
     
     public function getTitle() {
         return $this->name;
     }
+    
+    public function getSubtitle() {
+        return null;
+    }
+    
+    public function getCategory() {
+        $categoryPath = $this->parentCategory;
+        $categoryPath[] = $this->id;
+        return $categoryPath;
+    }
+    
+    //// MapFolder interface
+    
+    public function getListItems() {
+        return $this->features;
+    }
+    
+    public function getListItem($name) {
+        if (isset($this->features[$name])) {
+            return $this->features[$name];
+        }
+        return null;
+    }
+    
+    // end MapFolder interface
     
     public function isPopulated() {
         return $this->isPopulated;
@@ -413,9 +479,9 @@ class ArcGISLayer {
     }
     
     public function parseData($contents) {
+        $data = json_decode($contents, true);
+
         if (!$this->isInitialized) {
-            $data = json_decode($contents, true);
-        
             $this->name = $data['name'];
             $this->minScale = $data['minScale'];
             $this->maxScale = $data['maxScale'];
@@ -430,28 +496,50 @@ class ArcGISLayer {
             $this->spatialRef = $data['extent']['spatialReference']['wkid'];
 
             foreach ($data['fields'] as $fieldInfo) {
-                // often the field names will be full paths to SQL tables,
-                // as in database.table or server.scheme.database.table
-                //$nameRefParts = explode('.', $fieldInfo['name']);
-                //var_dump($fieldInfo);
-                //$name = end($nameRefParts);
+                if ($fieldInfo['type'] == 'esriFieldTypeOID') {
+                    $this->idField = $fieldInfo['name'];
+                    continue;
+                } else if ($fieldInfo['type'] == 'esriFieldTypeGeometry') {
+                    $this->geometryField = $fieldInfo['name'];
+                    continue;
+                } else if (!isset($possibleDisplayField)
+                    && $fieldInfo['type'] == 'esriFieldTypeString'
+                ) {
+                    $possibleDisplayField = $fieldInfo['name'];
+                }
+
                 $name = $fieldInfo['name'];
+                if (strtoupper($name) == strtoupper($this->displayField)) {
+                    // handle case where display field is returned in
+                    // a different capitalization from return fields
+                    $name = $this->displayField;
+                }
                 $this->fieldNames[$name] = $fieldInfo['alias'];
+            }
+
+            if (!isset($this->fieldNames[$this->displayField])
+                && isset($possibleDisplayField)
+            ) {
+                // if the display field is still problematic (e.g. the
+                // OID field was returned as the display field), just
+                // choose the first string field that shows up.
+                // obviously if there are no other string fields then
+                // this will also fail.
+                $this->displayField = $possibleDisplayField;
             }
     
             $this->isInitialized = true;
         } else if (!$this->isPopulated) {
-            $data = json_decode($contents, true);
-
             $result = array();
             foreach ($data['features'] as $featureInfo) {
                 $feature = $this->featureFromJSON($featureInfo);
-                $result[] = $feature;
+                if ($feature) {
+                    $result[] = $feature;
+                }
             }
             usort($result, array($this, 'compareFeatures'));
             foreach ($result as $feature) {
-                $feature->setIndex(count($this->features));
-                $this->features[$feature->getIndex()] = $feature;
+                $this->features[$feature->getTitle()] = $feature;
             }
 
             $this->isPopulated = true;
@@ -459,18 +547,40 @@ class ArcGISLayer {
     }
     
     public function featureFromJSON($featureInfo) {
+        if (isset($featureInfo['foundFieldName'])) { // will be set if we got here from a search
+            $displayField = $featureInfo['foundFieldName'];
+        } else {
+            $displayField = $this->displayField;
+        }
+
         $attribs = $featureInfo['attributes'];
         $displayAttribs = array();
         // use human-readable field alias to construct feature details
         foreach ($attribs as $name => $value) {
-            if (isset($this->fieldNames[$name]))
-                $name = $this->fieldNames[$name];
-            $displayAttribs[$name] = $value;
+            if (strtoupper($name) == strtoupper($displayField)) {
+                $index = $value;
+            }
+            if ($value !== null && trim($value) !== '') {
+                if (isset($this->fieldNames[$name]))
+                    $name = $this->fieldNames[$name];
+                $displayAttribs[$name] = $value;
+            }
         }
-        $geometry = $this->geometryType ? $featureInfo['geometry'] : null;
-        $feature = new ArcGISFeature($displayAttribs, $geometry);
+        if ($this->geometryType && isset($featureInfo['geometry'])) {
+            $geometry = $featureInfo['geometry'];
+        } else {
+            $geometry = NULL;
+        }
+        
+        if (!$displayAttribs && !$geometry) { // we basically got empty JSON, so don't create anything
+            return NULL;
+        }
+        
+        $feature = new ArcGISFeature($displayAttribs, $geometry, $index, $this->getCategory());
+        if ($this->geometryType) {
+            $feature->setGeometryType($this->geometryType);
+        }
         $feature->setTitleField($this->fieldNames[$this->displayField]);
-        $feature->setGeometryType($this->geometryType);
         return $feature;
     }
 
@@ -480,10 +590,6 @@ class ArcGISLayer {
 
     public function getDisplayField() {
         return $this->displayField;
-    }
-    
-    public function getFeatureList() {
-        return $this->features;
     }
     
     public function getFilters() {

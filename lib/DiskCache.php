@@ -12,26 +12,36 @@
   */
 class DiskCache {
 
-  private $path;
-  private $timeout = PHP_INT_MAX;
-  private $error;
-  private $prefix = "";
-  private $suffix = "";
-  private $serialize = TRUE;
+    private $path;
+    private $timeout = PHP_INT_MAX;
+    private $error;
+    private $prefix = "";
+    private $suffix = "";
+    private $serialize = TRUE;
 
-  public function __construct($path, $timeout=NULL, $mkdir=FALSE) {
-    $this->path = $path;
-
-    if ($mkdir) {
-      if (!file_exists($path)) {
-        if (!mkdir($path, 0755, true))
-          error_log("could not create $path");
-      }
+    public function __construct($path, $timeout=NULL, $mkdir=FALSE) {
+        if (empty($path)) {
+            throw new Exception("Invalid path");
+        }
+    
+        $this->path = $path;
+    
+        if ($mkdir) {
+            if (!file_exists($path)) {
+                if (!mkdir($path, 0755, true)) {
+                    throw new Exception("Could not create $path");
+                }
+            }
+        }
+        
+        if (!is_writable($path)) {
+            throw new Exception("Path $path is not writable");
+        }
+        
+        if ($timeout !== NULL) {
+            $this->timeout = $timeout;
+        }
     }
-
-    if ($timeout !== NULL)
-      $this->timeout = $timeout;
-  }
 
   public function preserveFormat() {
     $this->serialize = FALSE;
@@ -109,7 +119,7 @@ class DiskCache {
     }
   }
 
-  public function write($object, $filename=NULL) {
+  public function write($object, $filename=NULL, $date=null) {
     if (!$object) {
       $this->error = "tried to cache a non-object";
     }
@@ -123,6 +133,10 @@ class DiskCache {
         fwrite($fh, $object);
       }
       fclose($fh);
+      // set the modification time if present
+      if ($date) {
+        touch($this->getFullPath($filename), $date);
+      }
       return TRUE;
 
     } else {

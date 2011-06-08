@@ -40,17 +40,12 @@ recommend `MAMP <http://mamp.info/>`_ on Mac OS X.
 
 #. Extract the files to a location accessible by your web server
 #. Set the DocumentRoot of your web server to the *www* folder.
-#. Ensure that .htaccess files are enabled. `AllowOverride <http://httpd.apache.org/docs/2.2/mod/core.html#allowoverride>`_ must be set to at least *FileInfo*.
+#. Ensure that .htaccess files are enabled. `AllowOverride <http://httpd.apache.org/docs/2.2/mod/core.html#allowoverride>`_ must be set to at least *FileInfo*. (MAMP on OS X has this option enabled by default)
 #. In the *site* directory, make a copy of the *Universitas* folder, including all its contents. The name of this site is up to you, but it would be prudent for it to refer to your site's name. We will refer to this folder as *SITE_FOLDER* 
 
    * **Critical:** Make sure the web server user (typically *apache* or *www*) has write access to all the contents *SITE_FOLDER*. 
    
-#. In the *config* directory, make a copy of the *config-default.ini* file called *config.ini*
-#. Edit the new config.ini file and change the *ACTIVE_SITE* option to match the name of *SITE_FOLDER*
+#. In the *config* directory, make a copy of the *kurogo-default.ini* file called *kurogo.ini*
+#. Edit the new kurogo.ini file and change the *ACTIVE_SITE* option to match the name of *SITE_FOLDER*
 #. (re)Start your webserver and direct your web browser to the server/port that you specified.
 
-====================
-What Could Go Wrong?
-====================
-
-TBA.....

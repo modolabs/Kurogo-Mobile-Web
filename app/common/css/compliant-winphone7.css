@@ -1,0 +1,55 @@
+.nav li {
+  position: static; /* IE7 doesn't like relative positioned list elements */
+}
+
+/* IE7 is dumb and positions the background relative to the real size of the
+ * element, not the clipped-by-overflow size.  clip the inner span */
+.breadcrumbs a span {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* also specify the outer widths to avoid getting out of sync */
+.crumb1 {
+	max-width: 120px;
+}
+.crumb1 span {
+  max-width: 120px;
+}
+
+.crumb2a  {
+	max-width: 45px;
+}
+.crumb2a span {
+  max-width: 45px;
+}
+
+.crumb2b  {
+	max-width: 50px;
+}
+.crumb2b span {
+  max-width: 50px;
+}
+
+.crumb3a {
+	max-width: 40px;
+}
+.crumb3a span {
+  max-width: 40px;
+}
+
+.crumb3b {
+	max-width: 45px;
+}
+.crumb3b span {
+  max-width: 45px;
+}
+
+.crumb3c {
+	max-width: 50px;
+}
+.crumb3c span {
+  max-width: 50px;
+}

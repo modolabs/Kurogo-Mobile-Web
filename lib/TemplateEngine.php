@@ -12,24 +12,83 @@ require_once realpath(LIB_DIR.'/smarty/Smarty.class.php');
   */
 class TemplateEngine extends Smarty {
   static $accessKey = 0;
+  public $extendsTrackerCurrentInclude = '';
+  public $extendsTrackerSeenFiles = array();
+
+  //
+  // Extends file tracking
+  //
+  
+  // The following functions track {extends} files used for device templates.
+  // The purpose is to allow us to have extends relationships between files 
+  // with the same name in different directories, but to be able to know
+  // which directories have already been used so we don't loop.
+  //
+  // Fortunately for us, Smarty handles each extends chain as a unit
+  // keeping the template resource_name the name of the include file 
+  // throughout the entire process.
+  //
+  // So our basic technique is to track all the files used for a given resource_name
+  // and to toss the array either when the resource_name file changes or when we
+  // leave the template via the postfilter below.
+
+  
+  private function extendsTrackerReset($templateToMatch=null) {
+    if (!$templateToMatch || $this->extendsTrackerUsingTemplate($templateToMatch)) {
+      if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
+        error_log('**** RESETTING TRACKER'.($this->extendsTrackerCurrentInclude ? " (old include {$this->extendsTrackerCurrentInclude})" : ''));
+      }
+      $this->extendsTrackerCurrentInclude = '';
+      $this->extendsTrackerSeenFiles = array();
+    }
+  }
+  
+  private function extendsTrackerCheckTemplate($template) {
+    if ($template->resource_type == 'file' && !$this->extendsTrackerUsingTemplate($template)) {
+      if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
+        error_log("**** RESETTING TRACKER (new include {$template->resource_name})");
+      }
+      $this->extendsTrackerCurrentInclude = $template->resource_name;
+      $this->extendsTrackerSeenFiles = array();
+      
+      $this->extendsTrackerAddFile($template->resource_name);
+    }
+  }
+  
+  private function extendsTrackerUsingTemplate($template) {
+    return 
+      ($template->resource_type == 'file') && 
+      ($template->resource_name == $this->extendsTrackerCurrentInclude);
+  }
+  
+  private function extendsTrackerSeenFile($file) {
+    return isset($this->extendsTrackerSeenFiles[$file]);
+  }
+  
+  private function extendsTrackerAddFile($file) {
+    if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
+      error_log("**** ADDING TO TRACKER -- {$file}");
+    }
+    $this->extendsTrackerSeenFiles[$file] = true;
+  }
   
   //
-  // Include file resource plugin
+  // Finding include files
   //
   
   static private function getIncludeFile($name) {
     $subDir = dirname($name);
     $page = basename($name, '.tpl');
     
-    $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
-    $platform = $GLOBALS['deviceClassifier']->getPlatform();
+    $pagetype = Kurogo::deviceClassifier()->getPagetype();
+    $platform = Kurogo::deviceClassifier()->getPlatform();
 
     if (strlen($subDir)) { $subDir .= '/'; }
   
     $checkDirs = array(
       'THEME_DIR'    => THEME_DIR,
       'SITE_APP_DIR' => SITE_APP_DIR,
-      'APP_DIR'      => APP_DIR
+      'APP_DIR'      => APP_DIR,
     );
     $checkFiles = array(
       "$subDir$page-$pagetype-$platform.tpl", // platform-specific
@@ -37,92 +96,114 @@ class TemplateEngine extends Smarty {
       "$subDir$page.tpl"                      // default
     );
     
-    foreach ($checkDirs as $type => $dir) {
-      foreach ($checkFiles as $file) {
+    foreach ($checkFiles as $file) {
+      foreach ($checkDirs as $type => $dir) {
         $test = realpath_exists("$dir/$file");
         if ($test) {
-          //error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file'");
-          return $test;
+          if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
+            error_log(__FUNCTION__."($pagetype-$platform) choosing '$type/$file' for '$name'");
+          }
+          return addslashes($test);
         }
       }
     }
     return $name;
   }
   
-  public static function smartyResourceIncludeGetSource($name, &$source, $smarty) {
-    $file = self::getIncludeFile($name);
-    if ($file !== false) {
-      $source = file_get_contents($file);
-      return true;
-    }
-    return false;
-  }
-
-  public static function smartyResourceIncludeGetTimestamp($name, &$timestamp, $smarty) {
-    $file = self::getIncludeFile($name);
-    if ($file !== false) {
-      $timestamp = filemtime($file);
-      return true;
-    }
-    return false;
-  }
-
-  public static function smartyResourceIncludeGetSecure($name, $smarty) {
-    return true;
-  }
-
-  public static function smartyResourceIncludeGetTrusted($name, $smarty) {
-    return true;
-  }
-  
   //
-  // Extends file resource plugin
+  // Finding extends files
   //
   
-  static private function getExtendsFile($name) {
-    $pagetype = $GLOBALS['deviceClassifier']->getPagetype();
-    $platform = $GLOBALS['deviceClassifier']->getPlatform();
+  static private function getExtendsFile($name, $template) {
+    $pagetype = Kurogo::deviceClassifier()->getPagetype();
+    $platform = Kurogo::deviceClassifier()->getPlatform();
     
     $checkDirs = array(
-      'APP_DIR'      => APP_DIR,
+      'THEME_DIR'    => THEME_DIR,
       'SITE_APP_DIR' => SITE_APP_DIR,
-      'THEME_DIR'    => THEME_DIR
+      'APP_DIR'      => APP_DIR,
     );
-    
+        
     foreach ($checkDirs as $type => $dir) {
-        $test = realpath_exists("$dir/$name");
-        if ($test) {
-          //error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name'");
-          return $test;
+      $test = realpath_exists("$dir/$name");
+      if ($test && !$template->smarty->extendsTrackerSeenFile($test)) {
+        if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
+          error_log(__FUNCTION__."($pagetype-$platform) choosing     '$type/$name' for '$name'");
         }
+        $template->smarty->extendsTrackerAddFile($test);
+        return addslashes($test);
+      }
     }
     return false;
   }
   
-  public static function smartyResourceExtendsGetSource($name, &$source, $smarty) {
-    $file = self::getExtendsFile($name);
-    if ($file !== false) {
-      $source = file_get_contents($file);
-      return true;
+  //
+  // Prefilter to map include and extend directives to real files
+  //
+  
+  private static function replaceVariables($string, $variables) {
+    $search = array();
+    $replace = array();
+
+    // TODO: fix this so it doesn't match on single { or }
+    if (preg_match_all(';{?\$([A-za-z]\w*)}?;', $string, $matches, PREG_PATTERN_ORDER)) {
+      foreach ($matches[1] as $i => $variable) {
+        if (isset($variables[$variable]) && is_string($variables[$variable])) {
+          $search[] = $matches[0][$i];
+          $replace[] = $variables[$variable];
+        }
+      }
     }
-    return false;
+    return $search ? str_replace($search, $replace, $string) : $string;
   }
-
-  public static function smartyResourceExtendsGetTimestamp($name, &$timestamp, $smarty) {
-    $file = self::getExtendsFile($name);
-    if ($file !== false) {
-      $timestamp = filemtime($file);
-      return true;
+  
+  public static function smartyPrefilterHandleIncludeAndExtends($source, $template) {
+    $template->smarty->extendsTrackerCheckTemplate($template);
+    
+    $variables = $template->smarty->getTemplateVars();
+    
+    // findIncludes
+    $search = array();
+    $replace = array();
+    if (preg_match_all(';file\s*=\s*"findInclude:([^"]+)";', $source, $matches, PREG_PATTERN_ORDER)) {
+      foreach ($matches[1] as $i => $name) {
+        $path = self::getIncludeFile(self::replaceVariables($name, $variables));
+        if ($path) {
+          $search[] = $matches[0][$i];
+          $replace[] = 'file="file:'.$path.'"';
+          if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
+            error_log(__FUNCTION__." replacing include $name with $path");
+          }
+        } else {
+          trigger_error(__FUNCTION__." FAILED to find INCLUDE for $name", E_USER_ERROR);
+        }
+      }
     }
-    return false;
+    if (preg_match_all(';file\s*=\s*"findExtends:([^"]+)";', $source, $matches, PREG_PATTERN_ORDER)) {
+      foreach ($matches[1] as $i => $name) {
+        $path = self::getExtendsFile(self::replaceVariables($name, $variables), $template);
+        if ($path) {
+          $search[] = $matches[0][$i];
+          $replace[] = 'file="file:'.$path.'"';
+          if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
+            error_log(__FUNCTION__." replacing extends $name with $path");
+          }
+        } else {
+          trigger_error(__FUNCTION__." FAILED to find EXTENDS for $name", E_USER_ERROR);
+        }
+      }
+    }
+    
+    return $search ? str_replace($search, $replace, $source) : $source;
   }
+  
+  //
+  // Postfilter to detect when we are leaving an extends dependency chain
+  //
 
-  public static function smartyResourceExtendsGetSecure($name, $smarty) {
-    return true;
-  }
-
-  public static function smartyResourceExtendsGetTrusted($name, $smarty) {
-    return true;
+  public static function smartyPostfilterHandleIncludeAndExtends($source, $template) {
+    $template->smarty->extendsTrackerReset($template);
+    return $source;
   }
   
   private static function stripWhitespaceReplace($search, $replace, &$subject) {
@@ -141,15 +222,20 @@ class TemplateEngine extends Smarty {
     // rewrite urls for the device classifier in case  our root is not / 
     // also handles debugging mode for paths without hostnames
     $source = preg_replace(
-      ';(url\("?\'?|href\s*=\s*"|src\s*=\s*")('.URL_PREFIX.'|'.URL_DEVICE_DEBUG_PREFIX.'|/);', '\1'.URL_PREFIX, $source);
+      ';(url\("?\'?|href\s*=\s*"|src\s*=\s*"|action\s*=\s*")('.URL_PREFIX.'|'.URL_DEVICE_DEBUG_PREFIX.'|/);', '\1'.URL_PREFIX, $source);
     
-    if ($GLOBALS['siteConfig']->getVar('DEVICE_DEBUG')) {
+    if (Kurogo::getSiteVar('DEVICE_DEBUG')) {
       // if we are in debugging mode we need to also rewrite full paths with hostnames
       $source = preg_replace(
         ';(url\("?\'?|href\s*=\s*"|src\s*=\s*")('.FULL_URL_PREFIX.'|'.FULL_URL_BASE.');', '\1'.FULL_URL_PREFIX, $source);
     }
     
     // Most of the following code comes from the stripwhitespace filter:
+    
+    // Pull out the style blocks
+    preg_match_all("!<style[^>]*?>.*?</style>!is", $source, $match);
+    $styleBlocks = $match[0];
+    $source = preg_replace("!<style[^>]*?>.*?</style>!is", '@@@SMARTY:TRIM:STYLE@@@', $source);
     
     // Pull out the script blocks
     preg_match_all("!<script[^>]*?>.*?</script>!is", $source, $match);
@@ -179,10 +265,11 @@ class TemplateEngine extends Smarty {
     // replace runs of spaces with a single space.
     $source = preg_replace('/\s+/m', ' ', $source);
 
-    // restore textarea, pre and script blocks
+    // restore textarea, pre, script and style blocks
     self::stripWhitespaceReplace("@@@SMARTY:TRIM:TEXTAREA@@@", $textareaBlocks, $source);
     self::stripWhitespaceReplace("@@@SMARTY:TRIM:PRE@@@", $preBlocks, $source);
     self::stripWhitespaceReplace("@@@SMARTY:TRIM:SCRIPT@@@", $scriptBlocks, $source);
+    self::stripWhitespaceReplace("@@@SMARTY:TRIM:STYLE@@@", $styleBlocks, $source);
     
     return $source;
   }
@@ -228,6 +315,10 @@ class TemplateEngine extends Smarty {
     }
   }
   
+  public function nosecure($string) {
+    return str_replace('https://','http://',$string);
+  }
+  
   
   //
   // Constructor
@@ -236,30 +327,24 @@ class TemplateEngine extends Smarty {
   function __construct() {
     parent::__construct();
 
+    // Fix this in a later release -- currently generates lots of warnings
+    $this->error_reporting = E_ALL & ~E_NOTICE;
+
     // Device info
-    $pagetype      = $GLOBALS['deviceClassifier']->getPagetype();
-    $platform      = $GLOBALS['deviceClassifier']->getPlatform();
-    $supportsCerts = $GLOBALS['deviceClassifier']->getSupportsCerts();
+    $pagetype      = Kurogo::deviceClassifier()->getPagetype();
+    $platform      = Kurogo::deviceClassifier()->getPlatform();
+    $supportsCerts = Kurogo::deviceClassifier()->getSupportsCerts();
     
     // Smarty configuration
     $this->setCompileDir (CACHE_DIR.'/smarty/templates');
     $this->setCacheDir   (CACHE_DIR.'/smarty/html');
     $this->setCompileId  ("$pagetype-$platform");
     
-    // Theme and device detection for includes and extends
-    $this->registerResource('findExtends', array(
-      array('TemplateEngine','smartyResourceExtendsGetSource'),
-      array('TemplateEngine','smartyResourceExtendsGetTimestamp'),
-      array('TemplateEngine','smartyResourceExtendsGetSecure'),
-      array('TemplateEngine','smartyResourceExtendsGetTrusted')
-    ));
-    $this->registerResource('findInclude', array(
-      array('TemplateEngine','smartyResourceIncludeGetSource'),
-      array('TemplateEngine','smartyResourceIncludeGetTimestamp'),
-      array('TemplateEngine','smartyResourceIncludeGetSecure'),
-      array('TemplateEngine','smartyResourceIncludeGetTrusted')
-    ));
-    
+    $this->registerFilter('pre', array('TemplateEngine', 
+      'smartyPrefilterHandleIncludeAndExtends'));
+    $this->registerFilter('post', array('TemplateEngine', 
+      'smartyPostfilterHandleIncludeAndExtends'));
+
     // Postfilter to add url prefix to absolute urls and
     // strip unnecessary whitespace (ignores <pre>, <script>, etc)
     $this->registerFilter('output', array('TemplateEngine', 
@@ -269,13 +354,16 @@ class TemplateEngine extends Smarty {
       'TemplateEngine::smartyBlockAccessKeyLink');
     $this->registerPlugin('function', 'html_access_key_reset', 
       'TemplateEngine::smartyTemplateAccessKeyReset');
+
+    $this->registerPlugin('modifier', 'nosecure', 
+      array($this,'nosecure'));
       
     // variables common to all modules
     $this->assign('pagetype', $pagetype);
     $this->assign('platform', $platform);
     $this->assign('supportsCerts', $supportsCerts ? 1 : 0);
-    $this->assign('showDeviceDetection', $GLOBALS['siteConfig']->getVar('DEVICE_DETECTION_DEBUG'));
-    $this->assign('moduleDebug', $GLOBALS['siteConfig']->getVar('MODULE_DEBUG'));
+    $this->assign('showDeviceDetection', Kurogo::getSiteVar('DEVICE_DETECTION_DEBUG'));
+    $this->assign('moduleDebug', Kurogo::getSiteVar('MODULE_DEBUG'));
   }
   
   //
@@ -283,6 +371,8 @@ class TemplateEngine extends Smarty {
   //
   
   function displayForDevice($page, $cacheID = null, $compileID = null) {
+    $this->extendsTrackerReset();
+  
     $this->display(self::getIncludeFile($page), $cacheID, $compileID);
   }
   
@@ -291,6 +381,8 @@ class TemplateEngine extends Smarty {
   //
   
   function fetchForDevice($page, $cacheID = null, $compileID = null) {
+    $this->extendsTrackerReset();
+
     return $this->fetch(self::getIncludeFile($page), $cacheID, $compileID);
   }
 }

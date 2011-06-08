@@ -64,29 +64,29 @@ Configuration files
 
 When running a module, the following config files are loaded automatically:
 
-* *config/config.ini* The framework config file. It's primary role is to indicate the active site and
+* *config/kurogo.ini* The framework config file. It's primary role is to indicate the active site and
   configuration mode
-* *SITE_DIR/config/config.ini* - The site configuration file. It contains properties shared by all
+* *SITE_DIR/config/site.ini* - The site configuration file. It contains properties shared by all
   modules and sets up the basic environment
 * *SITE_DIR/config/strings.ini* - Strings table. Includes various strings used throughout the site
-* *SITE_DIR/config/module/MODULEID.ini* - Basic configuration file for the current module. Specifies properties
+* *SITE_DIR/config/MODULEID/module.ini* - Basic configuration file for the current module. Specifies properties
   regarding the module including disabled status, protected, secure and authorization. Also includes
   any unique module configurable parameters
-* *SITE_DIR/config/web/nav/MODULEID.ini* - Title/navigation configuration for the current module. 
+* *SITE_DIR/config/MODULEID/pages.ini* - Title/navigation configuration for the current module. 
 
-
-Other modules may also load files from the *SITE_DIR/config/feeds* folder for external data configuration,
-and *SITE_DIR/config/web* folder for specific configuration for module output and formatting.
+Other modules may also load files from the *SITE_DIR/config/MODULEID* folder for external data configuration,
+and specific configuration for module output and formatting. Refer to the documentation for a particular
+module to know the composition of those files.
 
 -----------
 Local Files
 -----------
 
 The framework supports overriding configuration files for local server customization. Unless
-the configuration value *CONFIG_IGNORE_LOCAL* (defined in *config/config.ini*) is set to 1, the
+the configuration value *CONFIG_IGNORE_LOCAL* (defined in *config/kurogo.ini*) is set to 1, the
 framework will also load files with a -local in the file name for each configuration file loaded.
-I.e. *SITE_DIR/config/config.ini* can be overridden with *SITE_DIR/config/config-local.ini*. 
-*SITE_DIR/config/module/home.ini* can be overridden with *SITE_DIR/config/module/home-local.ini*.
+I.e. *SITE_DIR/config/site.ini* can be overridden with *SITE_DIR/config/site-local.ini*. 
+*SITE_DIR/config/home/module.ini* can be overridden with *SITE_DIR/config/home/module-local.ini*.
 It is **not** necessary to duplicate the entire file. Only the values that are different need to be 
 in the -local file. It could also include additional values that are not present in the base config.
 
@@ -105,11 +105,11 @@ Configuration Mode
 In addition to -local files. There is also an option to include configuration override files by
 specifying a mode string. This string is like -local but can be set to any value. This will allow
 you to create multiple versions of configuration files, with slightly different versions of certain
-values and instantly switch between them. This option is set in the *CONFIG_MODE* value of *config/config.ini*
+values and instantly switch between them. This option is set in the *CONFIG_MODE* value of *config/kurogo.ini*
 These files are not ignored by git.
 
 One use of this would be to create development and production versions of some of your configuration files. 
-You can have *SITE_DIR/config-development.ini* and *SITE_DIR/config-production.ini* with differing
+You can have *SITE_DIR/site-development.ini* and *SITE_DIR/site-production.ini* with differing
 values for debugging. Then you can set *CONFIG_MODE* to **development** or **production**. If *CONFIG_MODE*
 is empty (the default), than no files will be searched. Another example would be to include authorization values
 for certain modules in a production environment. 
@@ -121,18 +121,14 @@ presuming *CONFIG_IGNORE_LOCAL* is not enabled.
 Retrieving Configuration Values
 -------------------------------
 
-There are several methods in the :doc:`WebModule object <modules>` for retrieving values from configuration files:
-
-* getSiteVar - Retrieves a single value from the main site configuration
-* getSiteSection - Retrieves a section (as an array or key=>values) from the main site configuration
-* getModuleVar - Retrieves a single value from the module configuration
-* getModuleSection - Retrieves a section (as an array or key=>values) from the module configuration
+There are a variety of methods that are used to retrieve values from the configuration files. Please
+see :ref:`Module Configuration <modules_configuration>` for more information on how to retrieve these values in your module.
 
 ==================
 Site Configuration
 ==================
 
-The *SITE_DIR/config/config.ini* file configures the basic site configuration. It is broken
+The *SITE_DIR/config/site.ini* file configures the basic site configuration. It is broken
 up into several sections
 
 ----------------------------
@@ -167,6 +163,8 @@ with an appropriate developer email address.
 Site settings
 -------------
 
+* *SECURE_HOST* - Alternate hostname to use for secure (https) connections. If not included it will use the same host name.
+* *SECURE_PORT* - Alternate port to use for secure connections. Typically you should leave it at the default of 443
 * *LOCAL_TIMEZONE* - Set this to your environment's time zone. See http://php.net/manual/en/timezones.php
   for a list of valid time zones
 * *LOCAL_AREA_CODE* - Set this to your environment's primary area code
@@ -180,9 +178,7 @@ Analytics
 * *GOOGLE_ANALYTICS_ID* - set this to your google analytics id and the framework will utilize the google 
   analytics server
 * *PAGE_VIEWS_TABLE* - Used by the stats module to store page view summaries
-
-..
-    * *API_STATS_TABLE* - Used by the stats module to store API request summaries
+* *API_STATS_TABLE* - Used by the stats module to store API request summaries
 
 --------------
 Temp Directory
@@ -252,6 +248,8 @@ Cookies
 * *LAYOUT_COOKIE_LIFESPAN* = How long to remember the device detection results for pagetype and platform.
   In production sites this should be set to a long time, like 1209600 (14 days)
 
+.. _database_config:
+
 --------
 Database
 --------
@@ -271,14 +269,18 @@ The main database connection can be used by a variety of modules for storing and
 Authentication
 --------------
 * *AUTHENTICATION_ENABLED* - Set to 1 to enable :doc:`authentication <authentication>`
+* *AUTHENTICATION_IDLE_TIMEOUT* - Idle Timeout in seconds before users are logged off Use 0 to disable
+* *AUTHENTICATION_USE_SESSION_DB* - If 1 then session data will be saved to the site database
+* *AUTHENTICATION_REMAIN_LOGGED_IN_TIME* - Time in seconds where users can choose to remain logged in
+  even if closing their browser. If this is set to 0 then user's cannot remain logged in. Typical
+  times are 604800 (7 days) or 1209600 (14 days).
 
 ---------
 Log Files
 ---------
-..
-  * *API_LOG_FILE* - Location of the processed API log file
-  * *API_CURRENT_LOG_FILE* - Location of the active API log file
-  
+
+* *API_LOG_FILE* - Location of the processed API log file
+* *API_CURRENT_LOG_FILE* - Location of the active API log file
 * *WEB_LOG_FILE* - Location of the processed page view log file
 * *WEB_CURRENT_LOG_FILE* - Location of the active page view log file
 * *LOG_DATE_FORMAT* - Date format for log files
@@ -296,7 +298,6 @@ contains values common to all modules, as well as module specific values.
 * *search* - Whether or not the module provides search in the federated search feature.
 * *secure* - Whether or not the module requires a secure (https) connection. Configuring secure
   sites is beyond the scope of this document.
-* *acl[]*  - a series of access control list entries. See :doc:`authentication`.
 
 It is important to turn on the disabled flag for any modules you do not wish to use. It is *very* 
 important to make sure that the *admin* module is either disabled or protected appropriately to prevent
@@ -329,52 +330,5 @@ Administration Module
 =====================
 
 In addition to editing these files, you can use the administration module to manage the configuration.
-The admin module is located at */admin* and does not have an icon on the home screen. It has several 
-sections
+The admin module is located at */admin* and does not have an icon on the home screen. 
 
--------
-Modules 
--------
-
-Use this section to manage the settings for each module. You can edit availability settings (common
-to all modules), Strings and Data Feeds (if present), Page titles, and other module specific settings.
-For instance, you can mange the home screen icons by editing the Primary and Secondary modules settings
-of the home module. You could also edit the content of the About module, or the list of links in the links
-module.
-
-------------------
-Site configuration
-------------------
-
-You can edit all the sections of the *SITE_DIR/config/config.ini* file.
-
---------------------
-String Configuration
---------------------
-
-You can edit all the strings from the *SITE_DIR/config/strings.ini* file.
-
-====================================================
-Providing an administration interface to your module
-====================================================
-
-In most cases, you can add values to your module's configuration file and they will appear on the
-administration page. In some cases, however, you want to provide a custom interface to manage the
-settings. There are some guidelines you can follow to have a good default interface as well as methods
-you can override to customize it.
-
-* Each value not within a section is displayed along side the basic module settings (disabled, protected, etc)
-* The admin module module will call *getModuleItemForKey($key, $value)* for each property for your module. 
-  This method should return and array that contains the following keys
-  
-  * *type* indicates the type of value. Values include: boolean, text, paragraph, radio or select
-  * *label* the label to include next to the input control
-  * *subtitle* explanation string
-  * *options* - used by radio and select types to display possible options as value=>label pairs.
-  * For more information see *common/formListItem.tpl*
-
-* It is critical to call parent:: in your implementation of *getModuleItemForKey*
-* The admin module will call *getSectionTitleForKey($key)* foreach section in the config file. This
-  should return a string that represents the section name in a more human readable format
-* The admin module will call *hasFeeds*. You should set your module's hasFeeds property to true
-  if your module has configurable data sources.

@@ -10,7 +10,7 @@
 class ConfigFile extends Config {
   const OPTION_CREATE_EMPTY=1;
   const OPTION_CREATE_WITH_DEFAULT=2;
-  const OPTION_DIE_ON_FAILURE=4;
+  const OPTION_DO_NOT_CREATE=4;
   const OPTION_IGNORE_LOCAL=8;
   const OPTION_IGNORE_MODE=16;
   protected $configs = array();
@@ -44,11 +44,15 @@ class ConfigFile extends Config {
   // loads a config object from a file/type combination  
   public static function factory($file, $type='file', $options=0) {
     $config = new ConfigFile();
+    if (!($options & self::OPTION_DO_NOT_CREATE)) {
+        $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
+    }
     
     if (!$result = $config->loadFileType($file, $type, $options)) {
-        if ($options & ConfigFile::OPTION_DIE_ON_FAILURE) {
-          die("FATAL ERROR: cannot load $type configuration file: $file");
+        if ($options & self::OPTION_DO_NOT_CREATE) {
+            return false;
         }
+       throw new Exception("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
     }
     
     return $config;
@@ -58,28 +62,11 @@ class ConfigFile extends Config {
   {
     switch ($type)
     {
-        case 'site-default':
-            $pattern = sprintf('%s/%%s-default.ini', MASTER_CONFIG_DIR);
-            break;
-        case 'module-default':
-            $pattern = sprintf('%s/%%1$s/config/%%1$s-default.ini', MODULES_DIR);
-            break;
-        case 'nav':
-            $pattern = sprintf("%s/web/%s/%%s.ini", SITE_CONFIG_DIR, $type);
-            break;
-        case 'api':
-        case 'web':
-        case 'module':
-        case 'feeds':
-            $pattern = sprintf("%s/%s/%%s.ini", SITE_CONFIG_DIR, $type);
-            break;
         case 'site':
             $pattern = sprintf("%s/%%s.ini", SITE_CONFIG_DIR);
             break;
-        case 'file-default':
-            $pathinfo = pathinfo($file);
-            $file = $pathinfo['filename'];
-            $pattern = sprintf("%s/%%s-default.%s", $pathinfo['dirname'], $pathinfo['extension']);
+        case 'site-default':
+            $pattern = sprintf('%s/common/config/%%s-default.ini', APP_DIR);
             break;
         case 'file':
             if ($f = realpath($file)) {
@@ -87,8 +74,22 @@ class ConfigFile extends Config {
             }
             $pattern = "%s";
             break;
+        case 'file-default':
+            $pathinfo = pathinfo($file);
+            $file = $pathinfo['filename'];
+            $pattern = sprintf("%s/%%s-default.%s", $pathinfo['dirname'], $pathinfo['extension']);
+            break;
+        case 'project':
+            $pattern = sprintf('%s/%%s.ini', MASTER_CONFIG_DIR);
+            break;
+        case 'project-default':
+            $pattern = sprintf('%s/%%s-default.ini', MASTER_CONFIG_DIR);
+            break;
+        case 'theme':
+            $pattern = sprintf('%s/%%s.ini', THEME_DIR);
+            break;
         default:
-            return false;
+            throw new Exception("Unknown config type $type");
     }
     
     return sprintf($pattern, $file);
@@ -98,38 +99,32 @@ class ConfigFile extends Config {
   {
     switch ($type)
     {
-        case 'site':
-            $_file = $this->getFileByType($file, $type);
-            $defaultFile = $this->getFileByType($file, $type.'-default');
-            if (file_exists($defaultFile)) {
-                $this->createDirIfNotExists(dirname($_file));
-                return @copy($defaultFile, $_file);
-            }
-            
-            return false;
-            break;
-            
-        case 'module':
-            //check to see if the module has a default config file first
-            $_file = $this->getFileByType($file, $type);
-            $defaultFile = $this->getFileByType($file, $type.'-default');
-            if (file_exists($defaultFile)) {
-                $this->createDirIfNotExists(dirname($_file));
-                return @copy($defaultFile, $_file);
-            } elseif ($module = WebModule::factory($file)) {
-                return $module->createDefaultConfigFile();
-            } else {
-                throw new Exception("Module $file not found");
-            }
-            break;
         case 'file':
             $defaultFile = $this->getFileByType($file, $type.'-default');
             if (file_exists($defaultFile)) {
                 $this->createDirIfNotExists(dirname($file));
-                return @copy($defaultFile, $file);
+                if (!is_writable(dirname($file))) {
+                    throw new Exception("Unable to create file $file, directory not writable");
+                }
+                return copy($defaultFile, $file);
             }
 
-            return false;            
+            throw new Exception("Default file $defaultFile ($file/$type) not found");
+            break;
+            
+        default:
+            $_file = $this->getFileByType($file, $type);
+            $defaultFile = $this->getFileByType($file, $type.'-default');
+            
+            if (file_exists($defaultFile)) {
+                $this->createDirIfNotExists(dirname($_file));
+                if (!is_writable(dirname($_file))) {
+                    throw new Exception("Unable to create " . basename($_file) . ", directory " . dirname($_file) . " not writable");
+                }
+                return copy($defaultFile, $_file);
+            }
+            
+            throw new Exception("Default file $defaultFile ($file/$type) not found");
             break;
     }
   }
@@ -187,7 +182,10 @@ class ConfigFile extends Config {
   private function createDirIfNotExists($dir)
   {
     if (!is_dir($dir)) {
-        return @mkdir($dir, 0700, true);
+        if (!@mkdir($dir, 0700, true)) {
+            throw new Exception("Unable to create $dir");
+        }
+        return true;
     }
     
     return true;
@@ -231,6 +229,7 @@ class ConfigFile extends Config {
         'FULL_URL_BASE'=>FULL_URL_BASE,
         'LOG_DIR'=>LOG_DIR,
         'CACHE_DIR'=>CACHE_DIR,
+        'LIB_DIR'=>LIB_DIR,
         'DATA_DIR'=>DATA_DIR,
         'SITE_DIR'=>SITE_DIR,
         'ROOT_DIR'=>ROOT_DIR
@@ -239,10 +238,10 @@ class ConfigFile extends Config {
     if (preg_match("/^\d+$/", $value)) {
         //it's numeric
         return $value;
-    } elseif (strpos($value, '"')!==false) {
-        //not sure what to do if there is a double quote
-        trigger_error("Double quote found in $value", E_USER_ERROR);
     } else {
+
+        //replace double quotes with a constant
+        $value = str_replace('"', '"_QQ_"', $value);
         //quote the values
         $return = sprintf('"%s"', $value);
 

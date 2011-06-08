@@ -8,6 +8,12 @@ abstract class ContactsListDataController extends DataController
     protected $primaryContacts = NULL;
     protected $secondaryContects = NULL;
 
+    public static function getContactsListDataControllers() {
+        return array(
+            'DrupalContactsListDataController'=>'Drupal Module',
+            'INIFileContactsListDataController'=>'INI File'
+        );
+    }
 
     public function getItem($id)
     {

@@ -35,15 +35,17 @@ class Smarty_Internal_Compile_Function extends Smarty_Internal_CompileBase {
         if ($_attr['nocache'] === true) {
         	$this->compiler->trigger_template_error('nocache option not allowed', $this->compiler->lex->taglineno);
         }
-
+		unset($_attr['nocache']);
         $save = array($_attr, $compiler->parser->current_buffer,
             $compiler->template->has_nocache_code, $compiler->template->required_plugins);
         $this->_open_tag('function', $save);
         $_name = trim($_attr['name'], "'\"");
         unset($_attr['name']);
         $compiler->template->properties['function'][$_name]['parameter'] = array();
+		$_smarty_tpl = $compiler->template;
         foreach ($_attr as $_key => $_data) {
-            $compiler->template->properties['function'][$_name]['parameter'][$_key] = $_data;
+        	eval ('$tmp='.$_data.';');
+            $compiler->template->properties['function'][$_name]['parameter'][$_key] = $tmp;
         } 
         $compiler->smarty->template_functions[$_name]['parameter'] = $compiler->template->properties['function'][$_name]['parameter'];
         if ($compiler->template->caching) {
@@ -52,7 +54,7 @@ class Smarty_Internal_Compile_Function extends Smarty_Internal_CompileBase {
             $output = "<?php if (!function_exists('smarty_template_function_{$_name}')) {
     function smarty_template_function_{$_name}(\$_smarty_tpl,\$params) {
     \$saved_tpl_vars = \$_smarty_tpl->tpl_vars;
-    foreach (\$_smarty_tpl->smarty->template_functions['{$_name}']['parameter'] as \$key => \$value) {\$_smarty_tpl->tpl_vars[\$key] = new Smarty_variable(trim(\$value,'\''));};
+    foreach (\$_smarty_tpl->template_functions['{$_name}']['parameter'] as \$key => \$value) {\$_smarty_tpl->tpl_vars[\$key] = new Smarty_variable(\$value);};
     foreach (\$params as \$key => \$value) {\$_smarty_tpl->tpl_vars[\$key] = new Smarty_variable(\$value);}?>";
         } 
         // Init temporay context
@@ -104,6 +106,11 @@ class Smarty_Internal_Compile_Functionclose extends Smarty_Internal_CompileBase 
             } 
             $plugins_string .= "?>/*/%%SmartyNocache:{$compiler->template->properties['nocache_hash']}%%*/';?>\n";
         } 
+ 		// remove last line break from function definition
+ 		$last = count($compiler->parser->current_buffer->subtrees) - 1;
+ 		if ($compiler->parser->current_buffer->subtrees[$last] instanceof _smarty_linebreak) {
+ 			unset($compiler->parser->current_buffer->subtrees[$last]);
+ 		}
         // if caching save template function for possible nocache call
         if ($compiler->template->caching) {
             $compiler->template->properties['function'][$_name]['compiled'] .= $plugins_string

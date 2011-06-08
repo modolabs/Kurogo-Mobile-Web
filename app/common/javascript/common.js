@@ -1,4 +1,28 @@
 var currentTab;
+var orientationMethod;
+var orientationIsFlipped=false;
+
+// detect how we are detecting orientation
+(function (window) {
+    if (!('orientation' in window)) {
+        window.orientationMethod = 'size';
+        return;
+    }
+
+    window.orientationMethod = 'orientation';
+    var width = document.documentElement.clientWidth || document.body.clientWidth;
+    var height = document.documentElement.clientHeight || document.body.clientHeight;
+    
+    /* at this point the method of orientation detection is not perfect */
+    if (navigator.userAgent.match(/(PlayBook.+RIM Tablet|Android 3\.\d)/)) {
+        window.orientationIsFlipped = true;
+    }
+    
+})(window);
+
+String.prototype.strip = function() {
+    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+}
 
 function showTab(strID, objTrigger) {
 // Displays the tab with ID strID
@@ -24,31 +48,57 @@ function showTab(strID, objTrigger) {
 			objTriggerTab.className="active";
 		}
 	} 
+	
+	// fake resize event in case tab body was resized while hidden 
+  if (document.createEvent) {
+    var e = document.createEvent('HTMLEvents');
+    e.initEvent('resize', true, true);
+    window.dispatchEvent(e);
+  
+  } else if( document.createEventObject ) {
+    var e = document.createEventObject();
+    document.documentElement.fireEvent('onresize', e);
+  }
+	
 	onDOMChange();
 }
 
 function rotateScreen() {
-  // Switch stylesheet and viewport based on screen orientation
-	switch(window.orientation) {
-		case 0:
-		case 180:
-        setOrientation('portrait');
-		    break;
+  setOrientation(getOrientation());
+  setTimeout(scrollToTop, 500);
+}
 
-		case -90:
-		case 90:
-        setOrientation('landscape');
-		    break;
+function getOrientation() {
+    switch (window.orientationMethod) {
+        case 'size':
+            var width = document.documentElement.clientWidth || document.body.clientWidth;
+            var height = document.documentElement.clientHeight || document.body.clientHeight;
 
-    default: 
-        setOrientation('portrait');
-		    break;
-	}
-	setTimeout(scrollToTop, 500);
+            return (width > height) ? 'landscape' : 'portrait';
+            break;
+
+        case 'orientation':
+            switch (window.orientation) {
+                case 0:
+                case 180:
+                    return window.orientationIsFlipped ? 'landscape' : 'portrait';
+                    break;
+                
+                case 90:
+                case -90:
+                    return window.orientationIsFlipped ? 'portrait': 'landscape';
+                    break;
+            }
+    }
 }
 
 function setOrientation(orientation) {
-    document.getElementsByTagName("body")[0].className = orientation;
+    var body = document.getElementsByTagName("body")[0];
+ 
+ //remove existing portrait/landscape class if there
+    removeClass(body, 'portrait');
+    removeClass(body, 'landscape');
+    addClass(body, orientation);
 }
 
 
@@ -56,8 +106,7 @@ function showLoadingMsg(strID) {
 // Show a temporary loading message in the element with ID strID
 	var objToStuff = document.getElementById(strID);
 	if(objToStuff) {
-		objToStuff.style.height = objToStuff.offsetHeight + "px";
-		objToStuff.innerHTML = "<div class=\"loading\"><img src=\"../Webkit/images/loading.gif\" width=\"27\" height=\"21\" alt=\"\" align=\"absmiddle\" />Loading data...</div >";
+		objToStuff.innerHTML = "<div class=\"loading\"><img src=\"../common/images/loading.gif\" width=\"27\" height=\"21\" alt=\"\" align=\"absmiddle\" />Loading data...</div >";
 	}
 	onDOMChange();
 }
@@ -132,13 +181,13 @@ function setCookie(name, value, expireseconds, path) {
   exdate.setTime(exdate.getTime() + (expireseconds * 1000));
   var exdateclause = (expireseconds == 0) ? "" : "; expires=" + exdate.toGMTString();
   var pathclause = (path == null) ? "" : "; path=" + path;
-  document.cookie = name + "=" + value + exdateclause + pathclause;
+  document.cookie = name + "=" + escape(value) + exdateclause + pathclause;
 }
 
 function getCookieArrayValue(name) {
   var value = getCookie(name);
   if (value && value.length) {
-    return value.split(',');
+    return value.split('@@');
   } else {
     return new Array();
   }
@@ -147,7 +196,7 @@ function getCookieArrayValue(name) {
 function setCookieArrayValue(name, values, expireseconds, path) {
   var value = '';
   if (values && values.length) {
-    value = values.join(',');
+    value = values.join('@@');
   }
   setCookie(name, value, expireseconds, path);
 }
@@ -163,7 +212,7 @@ function addClass(ele,cls) {
 function removeClass(ele,cls) {
     if (hasClass(ele,cls)) {
         var reg = new RegExp('(\\s|^)'+cls+'(\\s|$)');
-        ele.className=ele.className.replace(reg,' ');
+        ele.className=ele.className.replace(reg,' ').strip();
     }
 }
         
@@ -177,12 +226,27 @@ function toggleClass(ele, cls) {
 
 // Share-related functions
 function showShare() {
+    if (!document.getElementById("sharesheet")) {
+        return;
+    }
 	document.getElementById("sharesheet").style.display="block";
 	document.addEventListener('touchmove', doNotScroll, true);
+	var iframes = document.getElementsByTagName('iframe');
+	for (var i=0; i<iframes.length; i++) {
+	    iframes[i].style.visibility = 'hidden';
+	}
+	window.scrollTo(0,0);
 }
 function hideShare() {
+    if (!document.getElementById("sharesheet")) {
+        return;
+    }
 	document.getElementById("sharesheet").style.display="none";
 	document.removeEventListener('touchmove', doNotScroll, true);
+	var iframes = document.getElementsByTagName('iframe');
+	for (var i=0; i<iframes.length; i++) {
+	    iframes[i].style.visibility = 'visible';
+	}
 }
 function doNotScroll( event ) {
 	event.preventDefault(); event.stopPropagation();
@@ -198,12 +262,22 @@ function setBookmarkStates(name, item) {
       break;
     }
   }
-  bookmark.addEventListener("touchstart", function() {
-      addClass(bookmark, "pressed");
-  }, false);
-  bookmark.addEventListener("touchend", function() {
-      removeClass(bookmark, "pressed");
-  }, false);
+  if (bookmark.addEventListener) {
+    bookmark.addEventListener("touchstart", function() {
+        addClass(bookmark, "pressed");
+    }, false);
+    bookmark.addEventListener("touchend", function() {
+        removeClass(bookmark, "pressed");
+    }, false);
+    
+  } else if (bookmark.attachEvent) {
+    bookmark.attachEvent("ontouchstart", function() {
+        addClass(bookmark, "pressed");
+    });
+    bookmark.attachEvent("ontouchend", function() {
+        removeClass(bookmark, "pressed");
+    });
+  }
 }
 
 function toggleBookmark(name, item, expireseconds, path) {

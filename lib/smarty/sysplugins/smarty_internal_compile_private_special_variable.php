@@ -31,7 +31,7 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
             case 'section':
                 return "\$_smarty_tpl->getVariable('smarty')->value$parameter";
             case 'capture':
-                return "\$_smarty_tpl->smarty->_smarty_vars$parameter";
+                return "Smarty::\$_smarty_vars$parameter";
             case 'now':
                 return 'time()';
             case 'cookies':
@@ -56,22 +56,10 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
                 break;
 
             case 'template':
-                if ($compiler->smarty->inheritance) {
-                	$ptr = $compiler->template->parent;
-                } else {
-                	$ptr = $compiler->template;
-                }
-                $_template_name = $ptr->template_resource;
-                return "'$_template_name'";
+                return 'basename($_smarty_tpl->getTemplateFilepath())';
 
             case 'current_dir':
-                if ($compiler->smarty->inheritance) {
-                	$ptr = $compiler->template->parent;
-                } else {
-                	$ptr = $compiler->template;
-                }
-                $_template_dir_name = dirname($ptr->getTemplateFilepath());
-                return "'$_template_dir_name'";
+                return 'dirname($_smarty_tpl->getTemplateFilepath())';
 
             case 'version':
                 $_version = Smarty::SMARTY_VERSION;
@@ -104,7 +92,7 @@ class Smarty_Internal_Compile_Private_Special_Variable extends Smarty_Internal_C
                 $compiled_ref = $compiled_ref . "[$_ind]";
             } 
         } 
-        return "(isset($compiled_ref)? $compiled_ref : null)";
+        return $compiled_ref;
     } 
 } 
 

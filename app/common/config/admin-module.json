@@ -1,0 +1,54 @@
+{
+    "general": {
+        "title":"General",
+        "description":"",
+        "sectiontype":"fields",
+        "fields":{
+            "id": {"label":"Module ID","type":"label","config":"module","section":"module","description":"The unique internal ID for this module. This can only be changed in the source code.", "valueMethod":"getID"},
+            "configModule": {"label":"Config ID","type":"label","config":"module","section":"module","description":"The configuration ID for this module. It represents the configuration folder for this module's data. This can only be changed in the source code.", "valueMethod":"getConfigModule"},
+            "title":{"label":"Display title","type":"text","config":"module","section":"module","description":"The name by which this module will be presented to the user."},
+            "disabled":{"label":"Enabled","type":"inversecheckbox","config":"module","section":"module","description":"If unselected, the module cannot be used by any user"},
+            "secure":{"label":"SSL","type":"checkbox","config":"module","section":"module","description":"Require that this module only be accessed using an SSL connection. Note: Maintaining a proper SSL site is the responsibility of the site administrator."},
+            "search":{"label":"Include in federated search","type":"checkbox","config":"module","section":"module","description":"Include this module's content in the site-wide federated search accessible from the home screen."},
+            "help":{"label":"Help text","type":"paragraph","config":"module","section":"strings","description":"Optional. If this field is empty, the Help button/link will not be shown for this module.","omitBlankValue":true}
+       }
+    },
+    "pages": {
+        "title":"Pages",
+        "config":"pages",
+        "description":"<strong>Page title</strong>: displayed at the top of the page. <strong>Breadcrumb</strong>: Displayed in drill-up navigation, if any, within lower pages. <strong>Breadcrumb (long)</strong>: Displayed in drill-up navigation within lower pages on devices (e.g., tablets) with significantly larger screens. Any blank field will be left in its default/system-generated state.",
+        "sectiontype":"section",
+        "fields":{
+            "section":{"label":"Page","type":"label"},
+            "pageTitle":{"label":"Page title","type":"text","class":"field0","omitBlankValue":true},
+            "breadcrumbTitle":{"label":"Breadcrumb","type":"text","class":"field0","omitBlankValue":true},
+            "breadcrumbLongTitle":{"label":"Breadcrumb (long)","type":"text","class":"field1","omitBlankValue":true}
+        },
+        "sectionindex":"string",
+        "sectionsmethod":"getPageData",
+        "sectionaddnew":true,
+        "sectiontable":true,
+        "sectiondelete":true
+    },
+    "authorization":{
+        "title":"Access Control",
+        "description":"Once a user’s identity has been established, it is possible to authorize use of modules based on their identity. Authorization is accomplished through access control lists. This section manages access control lists for this module. If you want to protect the entire site, please use the Authorization section of Site Configuration. If there are no ACL entries (including site ACLs) then this module is open to anyone without logging in",
+        "config":"acls",
+        "sectiontype":"section",
+        "fields":  {
+            "type":{"label":"Type","type":"select","options":{"U":"Access","A":"Admin"}, "description":"<b>Access</b>: restrict access to this module. <b>Admin</b> restrict administrative access to this module"},
+            "action":{"label":"Action","type":"select","options":{"A":"Allow","D":"Deny"},"description":"<b>Allow</b> grant access to this module. <b>Deny</b> deny access to this module. Any user who matches a deny rule will be denied access."},
+            "scope":{"label":"Scope","type":"select","options":{"U":"User","G":"Group","E":"Everyone"},"description":"<b>User</b> matches a user with the user name specified in <i>Value</i> below. <b>Group</b> matches a group with the group name specified in <i>Value</i> below. <b>Everyone</b> matches all users, including not logged in users."},
+            "authority":{"label":"Authority","type":"select","description":"Specify the authority to use for the user/group value. You can either select a specific authority or <i>Any</i> which will match a user/group from any authority.","optionsMethod":["AuthenticationAuthority","getDefinedAuthenticationAuthorityNames"],"optionsFirst":"Any","showIf":["scope",["U","G"]]},
+            "value":{"label":"Value","type":"text","showIf":["scope",["U","G"]],"description":"The specific user/group to match. To match all users enter *"}
+        },
+        "showIfSiteVar":["AUTHENTICATION_ENABLED","1"],
+        "sectionclearvalues":true,
+        "sectionsnone":"There are no ACLs defined for this module.",
+        "sectionindex":"numeric",
+        "sectionvalidatemethod":["AccessControlList","validateACL"],
+        "sectionsmethod":"getModuleAccessControlListArrays",
+        "sectionaddnew":true,
+        "sectiondelete":true
+    }
+}
