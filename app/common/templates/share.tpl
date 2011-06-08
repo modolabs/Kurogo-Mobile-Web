@@ -13,10 +13,10 @@
         {/if}
         {if $shareURL}
           <li>
-            <a class="sharelink" href="http://m.facebook.com/sharer.php?u={$shareURL|escape:url}&t={$shareRemark|escape:url}"><img src="/common/images/button-facebook.png" alt="" width="32" height="32" />Facebook</a>
+            <a class="sharelink" href="http://m.facebook.com/sharer.php?u={$shareURL|escape:'url'}&t={$shareRemark|escape:'url'}"><img src="/common/images/button-facebook.png" alt="" width="32" height="32" />Facebook</a>
           </li>
           <li>
-            <a class="sharelink" href="http://twitter.com/intent/tweet?url={$shareURL|escape:url}&amp;text={$shareRemark|escape:url}"><img src="/common/images/button-twitter.png" alt="" width="32" height="32" />Twitter</a>
+            <a class="sharelink" href="http://twitter.com/intent/tweet?url={$shareURL|escape:'url'}&text={$shareRemark|escape:'url'}"><img src="/common/images/button-twitter.png" alt="" width="32" height="32" />Twitter</a>
           </li>
         {/if}
 			</ul>

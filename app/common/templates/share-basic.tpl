@@ -4,9 +4,9 @@
   {if $shareURL}&nbsp;|&nbsp;{/if}
 {/if}
 {if $shareURL}
-  <a href="http://m.facebook.com/sharer.php?u={$shareURL}&t={$shareRemark}">Facebook</a>
+  <a href="http://m.facebook.com/sharer.php?u={$shareURL|escape:'url'}&t={$shareRemark|escape:'url'}">Facebook</a>
   &nbsp;|&nbsp;
-  <a href="http://m.twitter.com/share?url={$shareURL}&amp;text={$shareRemark}&amp;Via=Harvard">Twitter</a>
+  <a href="http://m.twitter.com/share?url={$shareURL|escape:'url'}&text={$shareRemark|escape:'url'}">Twitter</a>
 {/if}
 <br />
 {/if}
