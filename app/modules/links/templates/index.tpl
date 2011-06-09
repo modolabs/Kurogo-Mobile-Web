@@ -1,8 +1,8 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{if isset($moduleStrings.description) && strlen($moduleStrings.description)}
+{if isset($description) && strlen($description)}
   <p class="{block name='headingClass'}nonfocal smallprint{/block}">
-    {$moduleStrings.description|escape}
+    {$description|escape}
   </p>
 {/if}
 

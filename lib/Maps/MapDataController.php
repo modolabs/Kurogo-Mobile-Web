@@ -72,7 +72,7 @@ class MapDataController extends DataController implements MapFolder
             foreach ($tokens as $token) {
                 if (strlen($token) <= 1)
                     continue;
-                $pattern = "/\b" . preg_quote($token) . "\b/i";
+                $pattern = "/\b" . preg_quote($token, '/') . "\b/i";
                 if (!preg_match($pattern, self::COMMON_WORDS)) {
                     $validTokens[] = $pattern;
                 }

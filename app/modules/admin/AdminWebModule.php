@@ -141,8 +141,9 @@ class AdminWebModule extends WebModule {
     }
   
     protected function initializeForPage() {
-        //make sure that only desktop devices can use the module
-        if (!Kurogo::deviceClassifier()->isComputer() && $this->page !='index') {
+        //make sure that only desktop/tablet devices can use the module
+        $deviceClassifier = Kurogo::deviceClassifier();
+        if ($this->page != 'index' && !($deviceClassifier->isComputer() || $deviceClassifier->isTablet())) {
             $this->redirectTo('index');
         }
 
@@ -228,7 +229,8 @@ class AdminWebModule extends WebModule {
                 
             case 'index':
                 //redirect desktop devices to the "default page"
-                if (Kurogo::deviceClassifier()->isComputer()) {
+                $deviceClassifier = Kurogo::deviceClassifier();
+                if ($deviceClassifier->isComputer() || $deviceClassifier->isTablet()) {
                     $defaultSection = current($navSections);
                     $this->redirectTo($defaultSection['id'], array());
                 }

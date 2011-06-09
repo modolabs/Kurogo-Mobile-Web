@@ -4,9 +4,9 @@
   <select class="newsinput" id="section" name="section" onchange="loadSection(this);">
     {foreach $sections as $section}
       {if $section['selected']}
-        <option value="{$section['value']}" selected="true">{$section['title']}</option>
+        <option value="{$section['value']}" selected="true">{$section['title']|escape}</option>
       {else}
-        <option value="{$section['value']}">{$section['title']}</option>
+        <option value="{$section['value']}">{$section['title']|escape}</option>
       {/if}
     {/foreach}
   </select>

@@ -1,0 +1,128 @@
+#footernav {
+  -webkit-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+}
+
+#search-form .toggle-search-button {
+	font-size: 90%;
+	background: #036;
+	border-color: #036;
+	color: white;
+	font-weight: bold;
+}
+
+.results .listSelected {
+    background: #002558 url(/common/images/selected.png) repeat-x top left;
+    color: white;
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+}
+
+
+.results li.video a.listSelected .ellipsis {
+    color: #999;
+}
+
+.results li.video a.listSelected .title {
+    color: #ddd;
+}
+
+#videoDetail h1 {
+    color: black;
+}
+
+.slugline {
+    font: 22px/26px Georgia, serif;
+    color:#1a1611;
+}
+
+.byline {
+    font-size: 11px;
+    line-height: 14px;
+    border-bottom: 1px dotted #999;
+}
+
+.portrait #videos {
+	height:113px;
+	/*-webkit-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+	-moz-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+	box-shadow: 0px 5px 7px rgba(0,0,0,0.3);*/
+}
+
+.portrait #videos .results .pagerlink {
+	width: 120px;
+	height: 100%;
+	padding: 0 0 0 10px;
+}
+
+.portrait #videos .results .pagerlink a {
+	height: 60%;
+	padding: 45px 10px 0 10px;
+}
+
+.portrait #videos .results {
+	height:100%;
+}
+
+.portrait #videos .results .video {
+	border-right: 1px dotted #999;
+	height: 100%;
+}
+
+.portrait #videos .results .video a {
+	height: 100%;
+	padding:10px 0 0 10px;
+}
+
+.portrait #videos .results .video .listSelected {
+	padding-top:10px;
+	background-color:#2f3133;
+	-webkit-box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
+	-moz-box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
+	box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
+}
+
+.landscape #videos .results .video .listSelected {
+	background-color:#2f3133;
+	background-image:none;
+	-webkit-box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
+	-moz-box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
+	box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
+}
+
+.landscape #videos .results .pagerlink {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.landscape #videos .results .video {
+	height: 6.6em;
+}
+
+.landscape #videos .results .video a {
+	height: 100%;
+	padding: 10px 10px 0 10px;
+}
+
+table#videoHeader {
+	background-color:#cfd1d3;
+}
+
+.landscape #videoHeader {
+	-webkit-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+	-moz-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+	box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+}
+
+.landscape #videoDetailWrapper {
+	background-color:#ffffff;
+	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
+	background: -moz-linear-gradient(#B0B0B0, #E8E8E8 30%, #FFFFFF 30%);
+}
+
+.portrait #videoDetailWrapper {
+	background-color:#ffffff;
+	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
+}

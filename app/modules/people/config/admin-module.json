@@ -42,8 +42,8 @@
     },
     "index": {
         "title":"Index Page",
-        "config":"page-index",
-        "description":"Entries for about index page",
+        "config":"contacts",
+        "description":"Static contact entries for the index page",
         "sectiontype":"section",
         "fields":{
             "section":{"label":"Entry","type":"label"},

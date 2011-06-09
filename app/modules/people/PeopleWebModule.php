@@ -16,7 +16,9 @@ class PeopleWebModule extends WebModule {
     private $detailFields = array();
     private $detailAttributes = array();
     protected $defaultController = 'LDAPPeopleController';
+    protected $encoding = 'UTF-8';
     protected $feeds=array();
+    protected $contactGroups = array();
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -33,7 +35,7 @@ class PeopleWebModule extends WebModule {
         
     }
   
-    private function formatValues($values, $info) {
+    protected function formatValues($values, $info) {
         if (isset($info['parse'])) {
             $formatFunction = create_function('$value', $info['parse']);
             foreach ($values as &$value) {
@@ -44,7 +46,7 @@ class PeopleWebModule extends WebModule {
         return $values;
     }
   
-    private function formatDetail($values, $info, Person $person) {
+    protected function formatDetail($values, $info, Person $person) {
         if (isset($info['format'])) {
             $value = vsprintf($info['format'], $values);
         } else {
@@ -76,7 +78,7 @@ class PeopleWebModule extends WebModule {
         
             case 'map':
                 $detail['url'] = self::buildURLForModule('map', 'search', array(
-                      'filter' => $value
+                    'filter' => str_replace('$', ', ', $value),
                 ));
                 $detail['class'] = 'map';
                 break;
@@ -91,7 +93,7 @@ class PeopleWebModule extends WebModule {
         return $detail;
     }
   
-    private function formatPersonDetail(Person $person, $info, $key=0) {
+    protected function formatPersonDetail(Person $person, $info, $key=0) {
         $section = array();
         
         if (count($info['attributes']) == 1) {
@@ -120,7 +122,7 @@ class PeopleWebModule extends WebModule {
         return $section;
     }
   
-    private function formatPersonDetails(Person $person) {
+    protected function formatPersonDetails(Person $person) {
         //error_log(print_r($this->detailFields, true));
         
         $details = array();    
@@ -143,7 +145,11 @@ class PeopleWebModule extends WebModule {
         //error_log(print_r($details, true));
         return $details;
     }
-  
+
+    protected function htmlEncodeString($string) {
+        return mb_convert_encoding($string, 'HTML-ENTITIES', $this->encoding);
+    }
+    
     public function federatedSearch($searchTerms, $maxCount, &$results) {
         $total = 0;
         $results = array();
@@ -162,7 +168,7 @@ class PeopleWebModule extends WebModule {
                         'uid'    => $people[$i]->getId(),
                         'filter' => $searchTerms
                     ), false),
-                    'title' => htmlentities($section[0]['title']),
+                    'title' => $this->htmlEncodeString($section[0]['title'])
                 );
             }
         }
@@ -215,6 +221,47 @@ class PeopleWebModule extends WebModule {
         return htmlentities($section[0]['title']);
     }
     
+    protected function getContactGroup($group) {
+        if (!$this->contactGroups) {
+            $this->contactGroups = $this->getModuleSections('contacts-groups');
+        }
+        
+        if (isset($this->contactGroups[$group])) {
+            if (!isset($this->contactGroups[$group]['contacts'])) {
+                $this->contactGroups[$group]['contacts'] = $this->getModuleSections('contacts-' . $group);
+            }
+
+            if (!isset($this->contactGroups[$group]['description'])) {
+                $this->contactGroups[$group]['description'] = '';
+            }
+            
+            return $this->contactGroups[$group];            
+        } else {
+            throw new Exception("Unable to find contact group information for $group");
+        }
+    }
+    
+    protected function getContacts() {
+        //try version -1.1 page-index version first for backwards compatibility
+        try { 
+            $contacts = $this->loadPageConfigFile('index', 'contacts');
+        } catch (Exception $e) {
+            $contacts = $this->getModuleSections('contacts');
+        }
+        
+        foreach ($contacts as &$contact) {
+            if (isset($contact['group']) && strlen($contact['group'])) {
+                $group = $this->getContactGroup($contact['group']);
+                if (!isset($contact['title']) && isset($group['title'])) {
+                    $contact['title'] = $group['title'];
+                }
+                $contact['url'] = $this->buildBreadcrumbURL('group', array('group'=>$contact['group']));
+            }
+        }
+        
+        return $contacts;
+    }
+    
 
     protected function initializeForPage() {
 
@@ -236,7 +283,7 @@ class PeopleWebModule extends WebModule {
                         // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                             $cookieParams = array(
-                                'title'   => htmlentities($section[0]['title']),
+                                'title'   => $this->htmlEncodeString($section[0]['title']),
                                 'uid' => urlencode($uid)
                             );
             
@@ -250,6 +297,7 @@ class PeopleWebModule extends WebModule {
                 } else {
                     $this->assign('searchError', 'No username specified');
                 }
+                break;
         
             case 'search':
                 if ($filter = $this->getArg('filter')) {
@@ -287,7 +335,7 @@ class PeopleWebModule extends WebModule {
                                             'uid'    => $person->getId(),
                                             'filter' => $this->getArg('filter')
                                         )),
-                                        'title' => htmlentities($section[0]['title']),
+                                        'title' => $this->htmlEncodeString($section[0]['title']),
                                     );
                                 }
                                 //error_log(print_r($results, true));
@@ -323,9 +371,21 @@ class PeopleWebModule extends WebModule {
                 }
                 $this->assign('bookmarks', $bookmarks);
                 break;
+                
+            case 'group':
+                $group = $this->getContactGroup($this->getArg('group'));
+                if (isset($group['title'])) {
+                    $this->setPageTitles($group['title']);
+                }
+                
+                $this->assign('contacts', $group['contacts']);
+                $this->assign('description', $group['description']);
+                break;
         
             case 'index':
-                $this->loadPageConfigFile('index', 'contacts');
+                $contacts = $this->getContacts();
+                $this->assign('contacts', $contacts);
+                
                 $this->setAutoPhoneNumberDetection(false);
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->generateBookmarkLink();

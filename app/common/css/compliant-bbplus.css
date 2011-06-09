@@ -11,6 +11,10 @@
 .springboard div.utility a {
 	font-size: 90%;
 }
+.springboard a img, .springboard div.utility a img {
+	width: 64px;
+	height: 64px;
+}
 .springboard a:hover {
 	border: 2px solid #c00;
 	padding: 2px 4px;
@@ -219,5 +223,14 @@
 
 .loginbuttons li.windows {
 	background-image: url(/common/images/button-windows-24.png);
+}
+
+#shareback {
+  /* for now hide this because height 100% doesn't work right on BB */
+	display: none;
+}
+
+#sharedialog {
+  border: solid 1px #333;
 }
 

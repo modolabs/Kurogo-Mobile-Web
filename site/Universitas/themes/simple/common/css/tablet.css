@@ -1,0 +1,68 @@
+/* Extra container for tablets */
+
+#containerinset {
+  overflow: hidden;
+  margin: 0;
+  border: none;
+  border-width: 0 1px;
+  height: 100%;
+}
+
+#wrapper {
+  background: #aaa; /* background color for bounce when scrolling */
+}
+#container {
+  background-color: #b8c1d2;
+}
+
+#scroller {
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+
+
+/* Nav bar at top of all screens other than home screen */
+
+#navbar {
+	height: 50px;
+	font-size: 105.9%;
+	font-weight: bold;
+}
+
+
+
+/* Form elements */
+
+.forminput {
+	-webkit-border-radius: 5px;
+	background: white url(/common/images/action-search.png) no-repeat 50% right;
+}
+
+#navbar .forminput {
+  border-color: #036;
+}
+
+
+
+/* Tablet-specific bottom nav bar */
+
+#footernav {
+  background: transparent url(/common/images/footernav-bg.png) repeat-x top left;
+  /*-webkit-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0px -4px 10px rgba(0,0,0,0.3);*/
+}
+
+#footernav .module {
+  background: transparent url(/common/images/footernav-spacer.png) no-repeat top left;
+}
+
+#footernav a {
+  /* Text color of module icon labels */
+  color: white;
+}
+
+#footernav .selected a {
+  background: transparent url(/common/images/footernav-selected.png) repeat-x top left;
+  color: #404355;
+}
