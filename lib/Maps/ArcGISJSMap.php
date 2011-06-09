@@ -333,9 +333,17 @@ JS;
     }
 
     function getHeaderScript() {
-        return '';
+        $script = <<<JS
+function resizeMapOnContainerResize() {
+    if (map && map.loaded) {
+        map.reposition();
+        map.resize();
     }
-
+}
+JS;
+        return $script;
+    }
+    
     function getFooterScript() {
         // put dojo stuff in the footer since the header script
         // gets loaded before the included script
@@ -361,7 +369,10 @@ function loadMap() {
     mapImage.style.width = "{$this->imageWidth}";
     mapImage.style.height = "{$this->imageHeight}";
     
-    map = new esri.Map("{$this->mapElement}");
+    map = new esri.Map("{$this->mapElement}", {
+        'logo' : false,
+        'slider' : false
+    });
     var basemapURL = "{$this->baseURL}";
     var basemap = new esri.layers.ArcGISTiledMapServiceLayer(basemapURL);
 
@@ -397,11 +408,12 @@ function loadMap() {
 function plotFeatures() {
 
     {$this->getSpatialRefJS()}
-{$this->getPolygonJS()}
-{$this->getPathJS()}
-{$this->getMarkerJS()}
+    {$this->getPolygonJS()}
+    {$this->getPathJS()}
+    {$this->getMarkerJS()}
 
     map.centerAndZoom({$this->getCenterJS()}, {$zoomLevel});
+    resizeMapOnContainerResize();
 }
 
 JS;
@@ -410,4 +422,3 @@ JS;
     }
 
 }
-

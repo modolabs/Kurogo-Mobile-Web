@@ -215,6 +215,12 @@ function loadMap() {
     });
 }
 
+function resizeMapOnContainerResize() {
+    if (map) {
+        google.maps.event.trigger(map, 'resize');
+    }
+}
+
 JS;
 
         return $script;
