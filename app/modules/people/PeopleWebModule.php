@@ -16,6 +16,7 @@ class PeopleWebModule extends WebModule {
     private $detailFields = array();
     private $detailAttributes = array();
     protected $defaultController = 'LDAPPeopleController';
+    protected $encoding = 'UTF-8';
     protected $feeds=array();
     protected $contactGroups = array();
 
@@ -144,7 +145,11 @@ class PeopleWebModule extends WebModule {
         //error_log(print_r($details, true));
         return $details;
     }
-  
+
+    protected function htmlEncodeString($string) {
+        return mb_convert_encoding($string, 'HTML-ENTITIES', $this->encoding);
+    }
+    
     public function federatedSearch($searchTerms, $maxCount, &$results) {
         $total = 0;
         $results = array();
@@ -163,7 +168,7 @@ class PeopleWebModule extends WebModule {
                         'uid'    => $people[$i]->getId(),
                         'filter' => $searchTerms
                     ), false),
-                    'title' => htmlentities($section[0]['title']),
+                    'title' => $this->htmlEncodeString($section[0]['title'])
                 );
             }
         }
@@ -278,7 +283,7 @@ class PeopleWebModule extends WebModule {
                         // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                             $cookieParams = array(
-                                'title'   => htmlentities($section[0]['title']),
+                                'title'   => $this->htmlEncodeString($section[0]['title']),
                                 'uid' => urlencode($uid)
                             );
             
@@ -330,7 +335,7 @@ class PeopleWebModule extends WebModule {
                                             'uid'    => $person->getId(),
                                             'filter' => $this->getArg('filter')
                                         )),
-                                        'title' => htmlentities($section[0]['title']),
+                                        'title' => $this->htmlEncodeString($section[0]['title']),
                                     );
                                 }
                                 //error_log(print_r($results, true));
