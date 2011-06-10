@@ -1,3 +1,30 @@
 #sharedialog {
 	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#d0d0d0)); /* Webkit browsers */
 }
+
+/* Login-related buttons */
+/* Pixel-doubled versions to take advantage of high-density displays */
+
+.loginbuttons li.facebook {
+	background-image: url(/common/images/button-facebook.png);
+}
+
+.loginbuttons li.google {
+	background-image: url(/common/images/button-google.png);
+}
+
+.loginbuttons li.oauth {
+	background-image: url(/common/images/button-oauth.png);
+}
+
+.loginbuttons li.openid {
+	background-image: url(/common/images/button-openid.png);
+}
+
+.loginbuttons li.twitter {
+	background-image: url(/common/images/button-twitter.png);
+}
+
+.loginbuttons li.windows {
+	background-image: url(/common/images/button-windows.png);
+}

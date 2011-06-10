@@ -130,9 +130,8 @@
 	text-decoration: none;
 	color: #fff;
 	background: url(/common/images/tabstrip.jpg) repeat-x;
-	-webkit-background-origin: padding-box; -webkit-background-clip: content-box; 
-	border-right: 1px solid #9fb8d3;
-	-webkit-border-radius: 1px;	
+	border-right: 1px solid #999;
+	border-radius: 1px;
 }	
 
 #tabstrip li.active a {
