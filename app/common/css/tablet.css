@@ -88,6 +88,18 @@ strong {
 	min-height: 320px;
 }
 
+#containerinset {
+  overflow: hidden;
+  margin: 0;
+  border: none;
+  height: 100%;
+}
+
+#scroller {
+    /* 'Active' (pressed) color of the scrolling tablet nav bar. Set to alpha zero to suppress this state */
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
 #footer {
 	clear: both;
 	min-height: 22px;
@@ -157,6 +169,9 @@ select {
 	height: 30px;
 	padding: 4px 6px;
 	-webkit-appearance:textfield;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	background: white url(/common/images/action-search.png) no-repeat 50% right;
 }
 
 *:first-child+html .forminput {
@@ -215,7 +230,7 @@ select {
 #navbar .inputcombo {
   margin: 0;
   padding: 0;
-	height: 34px;
+  height: 34px;
 }
 #navbar .inputcombo .forminput {
   border-width: 1px;
@@ -348,7 +363,7 @@ input.formbutton {
 
 a.homelink {
     background-image: none;
-    margin-left: -2px;
+    margin-left: 0;
     margin-right: -5px;
     padding: 0!important;	/* !important necessitated by IE for WP7 grrr */
     width: 74px;
@@ -1373,9 +1388,6 @@ html, body, #nonfooternav {
 
 #containerinset {
   overflow: hidden;
-  margin: 0 10px;
-  border: solid 1px #666;
-  border-width: 0 1px;
   height: 100%;
 }
 

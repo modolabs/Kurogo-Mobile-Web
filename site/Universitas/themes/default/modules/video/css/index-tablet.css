@@ -106,10 +106,6 @@
 	padding: 10px 10px 0 10px;
 }
 
-table#videoHeader {
-	background-color:#cfd1d3;
-}
-
 .landscape #videoHeader {
 	-webkit-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
 	-moz-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);

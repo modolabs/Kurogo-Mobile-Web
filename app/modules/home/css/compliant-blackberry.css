@@ -46,7 +46,9 @@ h1 {
 	padding: 2px;
 	border: 2px solid #554c41;
 }
-
+#homegrid {
+	margin-top: 12px;
+}
 #footer {
 	text-align: center;
 	clear: both;

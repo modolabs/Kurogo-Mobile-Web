@@ -46,6 +46,9 @@ h1 {
 	padding: 2px;
 	border: 2px solid #554c41;
 }
+#homegrid {
+	margin-top: 24px;
+}
 #download {
 	text-align: left;
 	clear: both;

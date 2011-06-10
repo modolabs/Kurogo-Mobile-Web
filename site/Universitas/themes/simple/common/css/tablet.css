@@ -1,34 +1,9 @@
-/* Extra containers for tablets */
-
-#containerinset {
-  overflow: hidden;
-  margin: 0;
-  border: none;
-  height: 100%;
-}
-
-#scroller {
-    /* 'Active' (pressed) color of the scrolling tablet nav bar. Set to alpha zero to suppress this state */
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-}
-
-
-
 /* Nav bar at top of all screens other than home screen */
 
 #navbar {
 	height: 50px;
 	font-size: 105.9%;
 	font-weight: bold;
-}
-
-
-
-/* Form elements */
-
-.forminput {
-	-webkit-border-radius: 5px;
-	background: white url(/common/images/action-search.png) no-repeat 50% right;
 }
 
 #navbar .forminput {
@@ -56,6 +31,47 @@
 }
 
 #footernav .selected a {
+  /* Background and label text color of selected module icon */
   background: transparent url(/common/images/footernav-selected.png) repeat-x top left;
   color: #404355;
+}
+
+
+
+
+/* Springboards */
+
+/* Overall size of one cell in a springboard (grid of icons) */
+.springboard div {	
+	font-size: 76.5%;	/* Font size of text label below icon */
+	line-height: 1.1em;
+	width: 77px;
+	height: 98px;
+}
+
+.springboard a img {
+	/* Size of each standard icon image in a springboard */
+	width: 60px;
+	height: 60px;
+}
+
+.springboard .separator {
+	/* Height of extra gap between main and utility-class springboard items */
+	height: 10px;
+}
+
+
+.springboard .secured {
+	/* Overlay image to indicate that a module is password-protected */
+	/* Adjust size to fit /common/images/secured.png, and adjust position to fit springboard icon size */
+	top: 45px;
+	right: 4px;
+	width: 18px;
+	height: 22px;
+}
+
+.springboard .utility .secured {
+	/* Adjust position to fit springboard icon size for utility-class module icons */
+	top: 26px;
+	right: 12px;
 }

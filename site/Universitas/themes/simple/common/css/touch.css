@@ -55,3 +55,18 @@ body {
 	clear: both;
 	height: 20px;
 }
+
+.springboard .secured {
+	/* Overlay image to indicate that a module is password-protected */
+	/* Adjust size to fit /common/images/secured.gif, and adjust position to fit springboard icon size */
+	top: 25px;
+	right: 2px;
+	width: 16px;
+	height: 16px;
+}
+
+.springboard .utility .secured {
+	/* Adjust position to fit springboard icon size for utility-class module icons */
+	top: 20px;
+	right: 2px;
+}
