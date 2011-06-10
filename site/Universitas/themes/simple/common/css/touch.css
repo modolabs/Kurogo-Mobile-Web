@@ -1,6 +1,7 @@
 /* Overall font and colors */
 
 body {
+	/* Touch uses a slightly different base font size */
 	font: 16px/1.33em sans-serif;
 }
 

@@ -332,7 +332,6 @@ input.formbutton {
 
 a.homelink {
     background-image: none;
-    margin-left: -2px;
     margin-right: -5px;
     padding: 0!important;	/* !important necessitated by IE for WP7 grrr */
     width: 62px;
