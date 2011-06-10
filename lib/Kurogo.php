@@ -175,7 +175,13 @@ class Kurogo
       // And a double quote define for ini files (php 5.1 can't escape them)
       //
       define('_QQ_', '"');
-      
+
+      //
+      // everything after this point only applies to network requests 
+      //
+      if (PHP_SAPI == 'cli') {
+          return;
+      }
     
       //
       // Get URL base
