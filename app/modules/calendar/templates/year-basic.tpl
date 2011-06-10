@@ -1,3 +1,3 @@
-{extends file="findExtends:modules/$moduleID/templates/academic.tpl"}
+{extends file="findExtends:modules/$moduleID/templates/year.tpl"}
 
 {block name='sideNavClass'}nonfocal{/block}
