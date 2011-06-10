@@ -1358,10 +1358,8 @@ html, body, #nonfooternav {
 	top: 50px;
 	left: 0;
 	z-index: 1;			/* it seems that recent webkit is less picky and works anyway. */
-
 	width: 100%;
-  overflow: hidden;
-  background: #aaa; /* background color for bounce when scrolling */
+    overflow: hidden;
 }
 
 #container {
@@ -1376,10 +1374,9 @@ html, body, #nonfooternav {
 #containerinset {
   overflow: hidden;
   margin: 0 10px;
-  border: solid 1px #6b717c;
+  border: solid 1px #666;
   border-width: 0 1px;
   height: 100%;
-  background-color: #f2f4f7;
 }
 
 #footernav {
