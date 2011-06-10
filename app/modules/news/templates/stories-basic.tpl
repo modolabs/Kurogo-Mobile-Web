@@ -4,9 +4,9 @@
       {if $story@first && $story['image']}
         <img class="thumbnail" src="{$story['image']['src']}" width="{$story['image']['width']}" height="{$story['image']['height']}" />
       {/if}
-      <a class="story-link" href="{$story['url']}">{$story["title"]|escape}</a>
+      <a class="story-link" href="{$story['url']}">{$story["title"]}</a>
       <br />
-      <span class="smallprint">{$story['description']|truncate:75|escape}</span>
+      <span class="smallprint">{$story['description']|truncate:75}</span>
     </p>
   {/foreach}
 </div>
