@@ -281,7 +281,7 @@ function doUpdateMapDimensions() {
 // resizing counterpart for dynamic maps
 function updateContainerDimensions() {
     window.clearTimeout(updateMapDimensionsTimeoutId); 
-    updateMapDimensionsTimeoutId = window.setTimeout(doUpdateContainerDimensions, 200);
+    updateMapDimensionsTimeoutId = window.setTimeout(doUpdateContainerDimensions, 250);
 }
 
 function doUpdateContainerDimensions() {
@@ -296,6 +296,9 @@ function doUpdateContainerDimensions() {
             container.style.height = window.innerHeight + "px";
         } else {
             container.style.height = document.documentElement.clientHeight + "px"; // ie7
+        }
+        if (typeof resizeMapOnContainerResize == 'function') {
+            resizeMapOnContainerResize();
         }
     }
 }
