@@ -16,7 +16,7 @@
     </div><!--/utility_nav-->
     
     <div id="logo">
-    	<img src="/modules/info/images/logo-home.png" alt="Universitas Mobile Internet" border="0" />
+    	<img src="/modules/home/images/logo-home.png" alt="Universitas Mobile Internet" border="0" />
     </div>
     
     <h1>m.universitas.edu</h1>
@@ -81,7 +81,7 @@
     	<table cellpadding="0" cellspacing="0" id="features">
           <tr>
             <td>
-              <img src="/modules/info/images/icons/people.png" alt="People Directory" />
+              <img src="/modules/home/images/people.png" alt="People Directory" />
             </td>
             <td>
             <h2>People Directory</h2>
@@ -92,7 +92,7 @@
           </tr>
           <tr>
             <td>
-              <img src="/modules/info/images/icons/map.png" alt="Map" />
+              <img src="/modules/home/images/map.png" alt="Map" />
             </td>
             <td>
             <h2>Campus Map</h2>
@@ -103,7 +103,7 @@
           </tr>
           <tr>
             <td>
-              <img src="/modules/info/images/icons/calendar.png" alt="Events" />
+              <img src="/modules/home/images/calendar.png" alt="Events" />
             </td>
             <td>
             <h2>Events</h2>
@@ -115,7 +115,7 @@
 
           <tr>
             <td>
-              <img src="/modules/info/images/icons/news.png" alt="News" />
+              <img src="/modules/home/images/news.png" alt="News" />
             </td>
             <td>
             <h2>News</h2>
@@ -126,7 +126,7 @@
           </tr>
           <tr>
             <td>
-              <img src="/modules/info/images/icons/video.png" alt="Video" />
+              <img src="/modules/home/images/video.png" alt="Video" />
             </td>
             <td>
             <h2>Video</h2>
@@ -137,7 +137,7 @@
           </tr>
           <tr>
             <td>
-              <img src="/modules/info/images/icons/emergency.png" alt="Emergency" />
+              <img src="/modules/home/images/emergency.png" alt="Emergency" />
             </td>
             <td>
             <h2>Emergency</h2>
@@ -148,7 +148,7 @@
           </tr>
           <tr>
             <td>
-              <img src="/modules/info/images/icons/search.png" alt="Search" />
+              <img src="/modules/home/images/info.png" alt="Search" />
             </td>
             <td>
             <h2>Search</h2>
