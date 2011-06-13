@@ -703,7 +703,10 @@ abstract class WebModule extends Module {
         $bookmarkCookie = $this->getBookmarkCookie();
 
         // compliant branch
-        $this->addOnLoad("setBookmarkStates('{$bookmarkCookie}', '{$cookieID}')");
+        $this->addOnLoad("setBookmarkStates('{$bookmarkCookie}', '".
+          strtr($cookieID, array(
+            '\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', '</' => '<\/'
+          ))."')");
         $this->assign('cookieName', $bookmarkCookie);
         $this->assign('expireDate', $this->getBookmarkLifespan());
         $this->assign('bookmarkItem', $cookieID);

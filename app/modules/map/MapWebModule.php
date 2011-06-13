@@ -152,7 +152,7 @@ class MapWebModule extends WebModule {
             $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
             $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
-            if ($this->pagetype == 'compliant' || $this->pagetype == 'tablet') {
+            if (($this->pagetype == 'compliant' && $this->platform != 'bbplus') || $this->pagetype == 'tablet') {
                 $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}/staticImageURL";
                 $js = <<<JS
                     mapWidth = {$imageWidth};

@@ -117,7 +117,7 @@ class NewsWebModule extends WebModule {
     $limit = min($maxCount, count($items));
     for ($i = 0; $i < $limit; $i++) {
       $results[] = array(
-        'title' => $items[$i]->getTitle(),
+        'title' => $this->htmlEncodeFeedString($items[$i]->getTitle()),
         'url'   => $this->buildBreadcrumbURL('story', array(
           'storyID' => $items[$i]->getGUID(),
           'section' => $feedIndex,

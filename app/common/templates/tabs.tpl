@@ -9,8 +9,14 @@
           {$isLastTab = $tabBody@last}
           
           {block name="tab"}
+            {if strlen($GOOGLE_ANALYTICS_ID)}
+              {$gaArgs = $smarty.get}
+              {$gaArgs['_b'] = null}
+              {$gaArgs['_path'] = null}
+              {$gaLabel = http_build_query($gaArgs, '', '&')}
+            {/if}
             <li{if $tabKey == $tabbedView['current']} class="active"{/if}>
-              <a href="{block name='tabLink'}#scrolldown{/block}" onclick="showTab('{$tabKey}Tab', this);{$tabInfo['javascript']}">{$tabInfo['title']}</a>
+              <a href="{block name='tabLink'}#scrolldown{/block}" onclick="{if strlen($GOOGLE_ANALYTICS_ID)}_gaq.push(['_trackEvent', '{$configModule}', '{$tabKey} tab', '{$gaLabel}']);{/if}showTab('{$tabKey}Tab', this);{$tabInfo['javascript']}">{$tabInfo['title']}</a>
             </li>
           {/block}
           

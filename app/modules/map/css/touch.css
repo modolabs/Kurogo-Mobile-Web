@@ -9,3 +9,7 @@
 p.image {
 	text-align: center;
 }
+
+select {
+  width: auto;
+}

@@ -15,6 +15,7 @@
         <option value="{$category['id']}">{$category['title']}</option>
       {/foreach}
     </select>
+    {block name="categorysubmit"}{/block}
   </form>
 </div>
 {/if}
