@@ -1,1 +1,1 @@
-{extends file="findExtends:common/templates/share-basic.tpl"}
+{extends file="findExtends:common/templates/share-compliant-blackberry.tpl"}
