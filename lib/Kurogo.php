@@ -156,19 +156,6 @@ class Kurogo
       }
     
       date_default_timezone_set($this->config->getVar('LOCAL_TIMEZONE'));
-    
-      //
-      // Set up host define for server name and port
-      //
-      
-      $host = $_SERVER['SERVER_NAME'];
-      if (isset($_SERVER['HTTP_HOST']) && strlen($_SERVER['HTTP_HOST'])) {
-        $host = $_SERVER['HTTP_HOST'];
-        
-      } else if (isset($_SERVER['SERVER_PORT'])) {
-        $host .= ":{$_SERVER['SERVER_PORT']}";
-      }
-      define('SERVER_HOST', $host);
       
       
       //
@@ -182,6 +169,19 @@ class Kurogo
       if (PHP_SAPI == 'cli') {
           return;
       }
+    
+      //
+      // Set up host define for server name and port
+      //
+      
+      $host = $_SERVER['SERVER_NAME'];
+      if (isset($_SERVER['HTTP_HOST']) && strlen($_SERVER['HTTP_HOST'])) {
+        $host = $_SERVER['HTTP_HOST'];
+        
+      } else if (isset($_SERVER['SERVER_PORT'])) {
+        $host .= ":{$_SERVER['SERVER_PORT']}";
+      }
+      define('SERVER_HOST', $host);
     
       //
       // Get URL base
