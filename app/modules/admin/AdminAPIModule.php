@@ -144,7 +144,8 @@ class AdminAPIModule extends APIModule
                 } elseif ($type=='site') {
                     throw new Exception("Can't get sections for site");
                 } else {
-                    $sectionData['sections'] = $module->getModuleSections($sectionData['config'], Config::NO_EXPAND_VALUE);
+                    $configMode = isset($sectionData['configMode']) ? $sectionData['configMode'] : 0;
+                    $sectionData['sections'] = $module->getModuleSections($sectionData['config'], Config::NO_EXPAND_VALUE, $configMode);
                 }
         
                 foreach ($sectionData['fields'] as $key=>&$field) {

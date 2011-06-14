@@ -94,6 +94,7 @@ class MapWebModule extends WebModule {
             $feedData = $configData['feed'];
             $feedData['title'] = $data['title'];
             $feedData['config'] = 'feeds-' . $feedgroup;
+            $feedData['configMode'] = ConfigFile::OPTION_CREATE_EMPTY;
             $configData['feeds-'.$feedgroup] = $feedData;
         }
         unset($configData['feed']);
