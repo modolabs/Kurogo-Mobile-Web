@@ -1,5 +1,9 @@
 /* Fullscreen in portrait (tall) orientation */
 
+#container {
+  min-height: 320px;
+}
+
 body.portrait {
 	width: 100%;
 	height: 100%;

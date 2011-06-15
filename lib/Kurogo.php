@@ -156,6 +156,19 @@ class Kurogo
       }
     
       date_default_timezone_set($this->config->getVar('LOCAL_TIMEZONE'));
+      
+      
+      //
+      // And a double quote define for ini files (php 5.1 can't escape them)
+      //
+      define('_QQ_', '"');
+
+      //
+      // everything after this point only applies to network requests 
+      //
+      if (PHP_SAPI == 'cli') {
+          return;
+      }
     
       //
       // Set up host define for server name and port
@@ -169,13 +182,6 @@ class Kurogo
         $host .= ":{$_SERVER['SERVER_PORT']}";
       }
       define('SERVER_HOST', $host);
-      
-      
-      //
-      // And a double quote define for ini files (php 5.1 can't escape them)
-      //
-      define('_QQ_', '"');
-      
     
       //
       // Get URL base

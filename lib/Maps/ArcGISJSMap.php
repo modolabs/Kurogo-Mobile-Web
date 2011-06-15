@@ -149,7 +149,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
         foreach ($this->polygons as $rings) {
             $jsonParams = array(
                 'rings' => $rings,
-                'spatialReference' => array('wkid' => $this->mapProjection),
+                'spatialReference' => array('wkid' => $this->this->mapProjector->getDstProj()),
                 );
             $json = json_encode($jsonParams);
 
@@ -162,17 +162,9 @@ class ArcGISJSMap extends JavascriptMapImageController {
     {
         $result = array();
         // TODO: figure out when the arguments should be lon first
-        if ($this->mapProjector) {
-            foreach ($points as $point) {
-                if (isset($point['lat']) && isset($point['lon'])) {
-                    $result[] = array($point['lon'], $point['lat']);
-                }
-            }
-        } else {
-            foreach ($points as $point) {
-                if (isset($point['lat']) && isset($point['lon'])) {
-                    $result[] = array($point['lat'], $point['lon']);
-                }
+        foreach ($points as $point) {
+            if (isset($point['lat']) && isset($point['lon'])) {
+                $result[] = array($point['lon'], $point['lat']);
             }
         }
         return $result;
@@ -274,11 +266,6 @@ class ArcGISJSMap extends JavascriptMapImageController {
     
         return $js;
     }
-    
-    private function getSpatialRefJS() {
-        $wkid = $this->mapProjector->getDstProj();
-        return "var spatialRef = new esri.SpatialReference({ wkid: $wkid });";
-    }
 
     // url of script to include in <script src="...
     function getIncludeScripts() {
@@ -292,9 +279,10 @@ class ArcGISJSMap extends JavascriptMapImageController {
     }
 
     function getHeaderScript() {
-        return '';
+        $header = $this->prepareJavascriptTemplate('ArcGISJSMapFooter');
+        return $header->getScript();
     }
-
+    
     function getFooterScript() {
         // put dojo stuff in the footer since the header script
         // gets loaded before the included script
@@ -334,4 +322,3 @@ JS;
     }
 
 }
-

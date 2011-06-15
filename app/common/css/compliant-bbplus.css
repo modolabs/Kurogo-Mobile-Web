@@ -193,3 +193,12 @@
 	float: left;
 }
 
+#shareback {
+  /* for now hide this because height 100% doesn't work right on BB */
+	display: none;
+}
+
+#sharedialog {
+  border: solid 1px #333;
+}
+
