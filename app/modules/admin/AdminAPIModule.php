@@ -153,7 +153,12 @@ class AdminAPIModule extends APIModule
                     {
                         case 'select':
                             if (isset($field['optionsMethod'])) {
-                                $field['options'] = call_user_func($field['optionsMethod']);
+                                if (is_array($field['optionsMethod'])) {
+                                    $field['options'] = call_user_func($field['optionsMethod']);
+                                } else {
+                                    $field['options'] = $module->$field['optionsMethod']();
+                                }
+
                                 unset($field['optionsMethod']);
                             }
     
