@@ -31,9 +31,13 @@ class LinksWebModule extends WebModule {
             throw new Exception("Unable to find link group information for $group");
         }
     }
+
+    public function getLinks() {
+        return $this->getModuleSections('links');
+    }
     
-    protected function getLinks() {
-        $links = $this->getModuleSections('links');
+    protected function getLinkData() {
+        $links = $this->getLinks();
                 
         foreach ($links as &$link) {
             if (isset($link['icon']) && strlen($link['icon'])) {
