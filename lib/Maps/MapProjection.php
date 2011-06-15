@@ -70,6 +70,11 @@ class MapProjection
     // with k < 1.0
     private $scaleFactor;
 
+    public function getUnitsPerMeter()
+    {
+        return $this->unitsPerMeter;
+    }
+
     public function isGeographic()
     {
         return $this->proj == 'longlat';
@@ -247,7 +252,16 @@ class MapProjection
 
     public function __construct($projString, $format='proj4')
     {
+        if (preg_match('/^\d+$/', $projString)) {
+            $format = 'wkid';
+        }
+
         switch ($format) {
+            case 'wkid':
+                $projString = MapProjector::getProjSpecs($projString);
+                $params = self::parseProj4String($projString);
+                $this->initFromProj4Params($params);
+                break;
             case 'wkt':
                 $params = WKTParser::parseWKTString($projString);
                 $this->initFromWKTParams($params);
