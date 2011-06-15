@@ -74,7 +74,7 @@ class LinksWebModule extends WebModule {
             
             case 'index':
             
-                $links = $this->getLinks();
+                $links = $this->getLinkData();
                 $this->assign('description', $this->getModuleVar('description','strings'));
                 $this->assign('displayType', $this->getModuleVar('display_type'));
                 $this->assign('links',       $links);
