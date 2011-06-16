@@ -1,3 +1,8 @@
+/* Compensate for extra IE7 space, works on IE8 despite IE8 not having the problem */
+.nonfocal #tabbodies {
+  margin-top: -12px; 
+}
+
 .nav li {
   position: static; /* IE7 doesn't like relative positioned list elements */
 }
