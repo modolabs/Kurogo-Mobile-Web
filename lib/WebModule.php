@@ -317,6 +317,18 @@ abstract class WebModule extends Module {
         }
   }
   
+    public function linkForItem($object) {
+       throw new Exception("linkForItem must be subclassed if it is going to be used");    
+    }
+
+    public function linkForValue($value, $otherValues) {
+        return $this->buildURLForModule(
+            $this->configModule, 
+            'search', 
+            array('filter'=>$value)
+        );
+    }
+  
   //
   // Factory function
   // instantiates objects for the different modules
@@ -1208,18 +1220,37 @@ abstract class WebModule extends Module {
   // Subclass this function to set up variables for each template page
   //
   abstract protected function initializeForPage();
+
+    //
+    // Subclass this function and return an array of items for a given search term and feed
+    //
+    public function searchItems($searchTerms, $feed=null) {  
+        return array();
+    }
   
-  //
-  // Subclass these functions for federated search support
-  // Return 2 items and a link to get more
-  //
-  public function federatedSearch($searchTerms, $maxCount, &$results) {
-    return 0;
-  }
+    //
+    // Subclass these functions for federated search support
+    // Return 2 items and a link to get more
+    //
   
-  protected function urlForFederatedSearch($searchTerms) {
+    public function federatedSearch($searchTerms, $maxCount, &$results) {
+        $total = 0;
+        $results = array();
+      
+        $items = $this->searchItems($searchTerms);
+    
+        $limit = min($maxCount, count($items));
+        for ($i = 0; $i < $limit; $i++) {
+        
+            $results[] = $this->linkforItem($items[$i]);
+        }
+        
+        return count($items);
+    }
+  
+    protected function urlForFederatedSearch($searchTerms) {
     return $this->buildBreadcrumbURL('search', array(
       'filter' => $searchTerms,
     ), false);
-  }
+    }
 }
