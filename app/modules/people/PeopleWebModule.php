@@ -83,6 +83,10 @@ class PeopleWebModule extends WebModule {
                 $detail['class'] = 'map';
                 break;
         }
+
+        if (isset($info['module'])) {
+            $detail = array_merge($detail, Kurogo::moduleLinkForValue($value, array('person'=>$person)));
+        }
         
         if (isset($info['urlfunc'])) {
             $urlFunction = create_function('$value,$person', $info['urlfunc']);
@@ -150,32 +154,12 @@ class PeopleWebModule extends WebModule {
         return mb_convert_encoding($string, 'HTML-ENTITIES', $this->encoding);
     }
     
-    public function federatedSearch($searchTerms, $maxCount, &$results) {
-        $total = 0;
-        $results = array();
-      
-        $PeopleController = $this->getFeed('people');
-        
+    public function searchItems($searchTerms, $feed='people') {
+        $PeopleController = $this->getFeed($feed);
         $people = $PeopleController->search($searchTerms);
-    
-        if ($people !== false) {
-            $limit = min($maxCount, count($people));
-            for ($i = 0; $i < $limit; $i++) {
-                $section = $this->formatPersonDetail($people[$i], $this->detailFields['name']);
-            
-                $results[] = array(
-                    'url' => $this->buildBreadcrumbURL('detail', array(
-                        'uid'    => $people[$i]->getId(),
-                        'filter' => $searchTerms
-                    ), false),
-                    'title' => $this->htmlEncodeString($section[0]['title'])
-                );
-            }
-        }
-        
-        return count($people);
+        return $people;
     }
-  
+    
     protected function getFeed($index) {
 
         if (isset($this->feeds[$index])) {
@@ -202,25 +186,18 @@ class PeopleWebModule extends WebModule {
         $this->detailAttributes = array_values(array_unique($this->detailAttributes));
     }
     
-    public function getPeopleController($feed='people') {
-        return $this->getFeed($feed);
-    }
-
-    public function getPersonURL(Person $person) {
+    public function linkforItem(Person $person) {
+        $section = $this->formatPersonDetail($person, $this->detailFields['name']);
     
-        return $this->buildBreadcrumbURL('detail', array(
+        return array(
+            'title'=>$this->htmlEncodeString($section[0]['title']),
+            'url'  =>$this->buildBreadcrumbURL('detail', array(
                                             'uid'    => $person->getId(),
                                             'filter' => $this->getArg('filter')
-                                        
-        ));
+                    ))
+        );
     }
 
-    public function getPersonTitle(Person $person) {
-        $section = $this->formatPersonDetail($person, $this->detailFields['name']);
-                                  
-        return htmlentities($section[0]['title']);
-    }
-    
     protected function getContactGroup($group) {
         if (!$this->contactGroups) {
             $this->contactGroups = $this->getModuleSections('contacts-groups');
@@ -313,9 +290,6 @@ class PeopleWebModule extends WebModule {
             
                         switch ($resultCount) 
                         {
-                            case 0:
-                                break;
-                          
                             case 1:
                                 $person = $people[0];
                                 $this->redirectTo('detail', array(
@@ -328,15 +302,7 @@ class PeopleWebModule extends WebModule {
                                 $results = array();
                                 
                                 foreach ($people as $person) {
-                                    $section = $this->formatPersonDetail($person, $this->detailFields['name']);
-                                  
-                                    $results[] = array(
-                                        'url' => $this->buildBreadcrumbURL('detail', array(
-                                            'uid'    => $person->getId(),
-                                            'filter' => $this->getArg('filter')
-                                        )),
-                                        'title' => $this->htmlEncodeString($section[0]['title']),
-                                    );
+                                    $results[] = $this->linkforItem($person);
                                 }
                                 //error_log(print_r($results, true));
                                 $this->assign('resultCount', $resultCount);

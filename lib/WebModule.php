@@ -1249,8 +1249,8 @@ abstract class WebModule extends Module {
     }
   
     protected function urlForFederatedSearch($searchTerms) {
-    return $this->buildBreadcrumbURL('search', array(
-      'filter' => $searchTerms,
-    ), false);
+        return $this->buildBreadcrumbURL('search', array(
+          'filter' => $searchTerms,
+        ), false);
     }
 }

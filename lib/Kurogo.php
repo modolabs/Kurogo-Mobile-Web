@@ -38,6 +38,16 @@ class Kurogo
 
         return self::$_instance;
     }
+    
+    public function moduleLinkForItem($moduleID, $object) {
+        $module = WebModule::factory($moduleID);
+        return $module->linkForItem($object);
+    }
+
+    public function moduleLinkForValue($moduleID, $value, $otherValues) {
+        $module = WebModule::factory($moduleID);
+        return $module->linkForValue($value, $otherValues);
+    }
 
     public function includePackage($packageName) {
 
