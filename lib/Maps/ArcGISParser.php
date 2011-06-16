@@ -93,11 +93,6 @@ class ArcGISFeature implements MapFeature
         $this->attributes = $attributes;
         $this->geometry = $geometry;
     }
-    
-    public function setId($id) {
-        $this->attributes['modolabs:_id'] = $id;
-        $this->setIdField('modolabs:_id');
-    }
 
     public function setIndex($index)
     {
@@ -149,7 +144,9 @@ class ArcGISFeature implements MapFeature
 
     public function getTitle()
     {
-        return $this->attributes[$this->titleField];
+        if (isset($this->attributes[$this->titleField])) {
+            return $this->attributes[$this->titleField];
+        }
     }
     
     public function getSubtitle()
@@ -220,6 +217,7 @@ class ArcGISParser extends DataParser implements MapFolder
     private $supportedImageFormats;
     private $units;
     private $baseURL;
+    private $idField;
     
     private $mapName;
     private $category;
@@ -330,13 +328,24 @@ class ArcGISParser extends DataParser implements MapFolder
     }
 
     ////// functions dispatched to selected layer
+
+    public function clearCache() {
+        $this->selectedLayer->clearCache();
+    }
     
     public function featureFromJSON($json) {
         return $this->selectedLayer->featureFromJSON($json);
     }
 
-    public function query($text='') {
-        return $this->selectedLayer->query($text);
+    //public function query($text='') {
+    //    return $this->selectedLayer->query($text);
+    //}
+
+    public function setIdField($field) {
+        $this->idField = $field;
+        if ($this->selectedLayer) {
+            $this->selectedLayer->setIdField($field);
+        }
     }
 
     //public function getFeatureList() {
@@ -380,6 +389,9 @@ class ArcGISParser extends DataParser implements MapFolder
     public function selectSubLayer($layerId) {
         if (isset($this->subLayers[$layerId])) {
             $this->selectedLayer = $this->getSubLayer($layerId);
+            if (isset($this->idField)) {
+                $this->selectedLayer->setIdField($this->idField);
+            }
         }
     }
     
@@ -434,6 +446,10 @@ class ArcGISLayer implements MapFolder, MapListElement {
         $this->name = $name;
         $this->parentCategory = $parentCategory;
     }
+
+    public function setIdField($field) {
+        $this->idField = $field;
+    }
     
     // MapListElement interface
     
@@ -477,10 +493,14 @@ class ArcGISLayer implements MapFolder, MapListElement {
     public function isInitialized() {
         return $this->isInitialized;
     }
+
+    public function clearCache() {
+        $this->features = array();
+        $this->isPopulated = false;
+    }
     
     public function parseData($contents) {
         $data = json_decode($contents, true);
-
         if (!$this->isInitialized) {
             $this->name = $data['name'];
             $this->minScale = $data['minScale'];
@@ -494,10 +514,11 @@ class ArcGISLayer implements MapFolder, MapListElement {
                 'ymax' => $data['extent']['ymax'],
             );
             $this->spatialRef = $data['extent']['spatialReference']['wkid'];
-
             foreach ($data['fields'] as $fieldInfo) {
                 if ($fieldInfo['type'] == 'esriFieldTypeOID') {
-                    $this->idField = $fieldInfo['name'];
+                    if (!isset($this->idField)) {
+                        $this->idField = $fieldInfo['name'];
+                    }
                     continue;
                 } else if ($fieldInfo['type'] == 'esriFieldTypeGeometry') {
                     $this->geometryField = $fieldInfo['name'];
@@ -529,7 +550,14 @@ class ArcGISLayer implements MapFolder, MapListElement {
             }
     
             $this->isInitialized = true;
+
         } else if (!$this->isPopulated) {
+            if (isset($data['fieldAliases'])) {
+                foreach ($data['fieldAliases'] as $field => $alias) {
+                    $this->fieldNames[$field] = $alias;
+                }
+            }
+
             $result = array();
             foreach ($data['features'] as $featureInfo) {
                 $feature = $this->featureFromJSON($featureInfo);
@@ -539,7 +567,7 @@ class ArcGISLayer implements MapFolder, MapListElement {
             }
             usort($result, array($this, 'compareFeatures'));
             foreach ($result as $feature) {
-                $this->features[$feature->getTitle()] = $feature;
+                $this->features[$feature->getIndex()] = $feature;
             }
 
             $this->isPopulated = true;
@@ -555,6 +583,7 @@ class ArcGISLayer implements MapFolder, MapListElement {
 
         $attribs = $featureInfo['attributes'];
         $displayAttribs = array();
+
         // use human-readable field alias to construct feature details
         foreach ($attribs as $name => $value) {
             if (strtoupper($name) == strtoupper($displayField)) {
@@ -571,9 +600,12 @@ class ArcGISLayer implements MapFolder, MapListElement {
         } else {
             $geometry = NULL;
         }
-        
-        if (!$displayAttribs && !$geometry) { // we basically got empty JSON, so don't create anything
-            return NULL;
+
+        if (!isset($displayAttribs[$this->idField])
+            && !isset($displayAttribs[$this->fieldNames[$this->displayField]]))
+        {
+            // no usable data was included with this result
+                return NULL;
         }
         
         $feature = new ArcGISFeature($displayAttribs, $geometry, $index, $this->getCategory());
@@ -581,6 +613,11 @@ class ArcGISLayer implements MapFolder, MapListElement {
             $feature->setGeometryType($this->geometryType);
         }
         $feature->setTitleField($this->fieldNames[$this->displayField]);
+        if (isset($this->idField) && isset($attribs[$this->idField])) {
+            $feature->setIndex($attribs[$this->idField]);
+        } else {
+            $feature->setIndex($feature->getTitle());
+        }
         return $feature;
     }
 

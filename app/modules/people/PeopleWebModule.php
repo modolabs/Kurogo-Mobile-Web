@@ -89,7 +89,7 @@ class PeopleWebModule extends WebModule {
             $detail['url'] = $urlFunction($value, $person);
         }
     
-        $detail['title'] = str_replace('$', '<br />', $detail['title']); // $ is the LDAP multiline char
+        $detail['title'] = nl2br($detail['title']); // $ is the LDAP multiline char
         return $detail;
     }
   

@@ -19,9 +19,12 @@ class WMSLayer extends XMLElement
     
     public function canDrawAtScale($scale)
     {
-        if ($this->minScaleDenom !== null && $scale < $this->minScaleDenom)
+        // add a small buffer for rounding errors
+        // TODO figure out if this is necessary
+        // 0.752 is the largest value that works for Harvard's WMS server
+        if ($this->minScaleDenom !== null && $scale < $this->minScaleDenom * 0.752)
             return false;
-        if ($this->maxScaleDenom !== null && $scale > $this->maxScaleDenom)
+        if ($this->maxScaleDenom !== null && $scale > $this->maxScaleDenom * 1.1)
             return false;
         return true;
     }
@@ -82,22 +85,28 @@ class WMSLayer extends XMLElement
                 break;
             case 'CRS':
                 $projNumber = end(explode(':', $value));
-                $this->projections[$projNumber] = $value;
+                if ($projNumber == '4326') {
+                    // 4326 flips x and y cooordinates (x = lat, y = lon)
+                    // TODO we need a better way to deal with this special case
+                    $this->projections[$projNumber] = self::GEOGRAPHIC_PROJECTION;
+                } else {
+                    $this->projections[$projNumber] = $value;
+                }
                 break;
             case 'EX_GEOGRAPHICBOUNDINGBOX':
                 $this->bboxes[self::GEOGRAPHIC_PROJECTION] = array(
-                    'xmin' => $element->getProperty('WESTBOUNDLONGITUDE'),
-                    'xmax' => $element->getProperty('EASTBOUNDLONGITUDE'),
-                    'ymin' => $element->getProperty('SOUTHBOUNDLATITUDE'),
-                    'ymax' => $element->getProperty('NORTHBOUNDLATITUDE'),
+                    'xmin' => floatval($element->getProperty('WESTBOUNDLONGITUDE')),
+                    'xmax' => floatval($element->getProperty('EASTBOUNDLONGITUDE')),
+                    'ymin' => floatval($element->getProperty('SOUTHBOUNDLATITUDE')),
+                    'ymax' => floatval($element->getProperty('NORTHBOUNDLATITUDE')),
                     );
                 break;
             case 'BOUNDINGBOX':
                 $this->bboxes[$element->getAttrib('CRS')] = array(
-                    'xmin' => $element->getAttrib('MINX'),
-                    'xmax' => $element->getAttrib('MAXX'),
-                    'ymin' => $element->getAttrib('MINY'),
-                    'ymax' => $element->getAttrib('MAXY'),
+                    'xmin' => floatval($element->getAttrib('MINX')),
+                    'xmax' => floatval($element->getAttrib('MAXX')),
+                    'ymin' => floatval($element->getAttrib('MINY')),
+                    'ymax' => floatval($element->getAttrib('MAXY')),
                     );
                 break;
             case 'STYLE':
