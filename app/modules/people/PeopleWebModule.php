@@ -187,10 +187,10 @@ class PeopleWebModule extends WebModule {
     }
     
     public function linkforItem(Person $person) {
-        $section = $this->formatPersonDetail($person, $this->detailFields['name']);
+        $personDetails =  $this->formatPersonDetails($person);
     
         return array(
-            'title'=>$this->htmlEncodeString($section[0]['title']),
+            'title'=>$this->htmlEncodeString($personDetails['name']['name']['title']),
             'url'  =>$this->buildBreadcrumbURL('detail', array(
                                             'uid'    => $person->getId(),
                                             'filter' => $this->getArg('filter')
@@ -255,18 +255,18 @@ class PeopleWebModule extends WebModule {
                     $person = $PeopleController->lookupUser($uid);
           
                     if ($person) {
-                        $this->assign('personDetails', $this->formatPersonDetails($person));
-                        $section = $this->formatPersonDetail($person, $this->detailFields['name']);
+                        $personDetails =  $this->formatPersonDetails($person);
                         // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                             $cookieParams = array(
-                                'title'   => $this->htmlEncodeString($section[0]['title']),
+                                'title'   => $personDetails['name']['name']['title'],
                                 'uid' => urlencode($uid)
                             );
             
                             $cookieID = http_build_query($cookieParams);
                             $this->generateBookmarkOptions($cookieID);
                         }
+                        $this->assign('personDetails', $personDetails);
                         break;
                     } else {
                         $this->assign('searchError', $PeopleController->getError());
