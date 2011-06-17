@@ -212,6 +212,10 @@ abstract class DataController
             $this->setCacheLifetime($args['CACHE_LIFETIME']);
         }
 
+        $this->initStreamContext($args);
+    }
+
+    protected function initStreamContext($args) {
         $streamContextOpts = array();
         
         if (isset($args['HTTP_PROXY_URL'])) {
