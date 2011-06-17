@@ -634,7 +634,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'detail':  
-        $calendarFields = $this->loadPageConfigFile('detail', 'detailFields');
+        $calendarFields = $this->getModuleSections('page-detail');
         $type = $this->getArg('type', 'static');
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
         
