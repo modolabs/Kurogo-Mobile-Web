@@ -77,15 +77,12 @@ class PeopleWebModule extends WebModule {
                 break;
         
             case 'map':
-                $detail['url'] = self::buildURLForModule('map', 'search', array(
-                    'filter' => str_replace('$', ', ', $value),
-                ));
-                $detail['class'] = 'map';
+                $info['module'] = 'map';
                 break;
         }
 
         if (isset($info['module'])) {
-            $detail = array_merge($detail, Kurogo::moduleLinkForValue($value, array('person'=>$person)));
+            $detail = array_merge($detail, Kurogo::moduleLinkForValue($info['module'], $value, array('person'=>$person)));
         }
         
         if (isset($info['urlfunc'])) {
