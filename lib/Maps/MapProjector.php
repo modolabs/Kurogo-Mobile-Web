@@ -10,6 +10,10 @@ class MapProjector {
 
     private $fromProjection;
     private $toProjection;
+
+    const FORMAT_LATLON = 0;
+    const FORMAT_XY = 1;
+    const FORMAT_ARRAY = 2;
     
     public function __construct() {
 
@@ -26,14 +30,17 @@ class MapProjector {
         if (isset($point['lon']) && $point['lat']) {
             $x = $point['lon'];
             $y = $point['lat'];
+            $fmt = self::FORMAT_LATLON;
         } elseif (isset($point['x'])) {
             $x = $point['x'];
             $y = $point['y'];
+            $fmt = self::FORMAT_XY;
         } else {
             $x = $point[1];
             $y = $point[0];
+            $fmt = self::FORMAT_ARRAY;
         }
-        return array($x, $y);
+        return array($x, $y, $fmt);
     }
     
     public function projectGeometry(MapGeometry $geometry) {
@@ -60,7 +67,23 @@ class MapProjector {
         }
     }
 
-    public function projectPoints(Array $points, $outputXY=false) {
+    private function formatLatLon($latlon, $fmt) {
+        switch ($fmt) {
+            case self::FORMAT_XY:
+                return array('x' => $latlon['lon'], 'y' => $latlon['lat']);
+            case self::FORMAT_ARRAY:
+                return array($latlon['lat'], $latlon['lon']);
+            case self::FORMAT_LATLON:
+            default:
+                return $latlon;
+        }
+    }
+
+    public function projectPoints(Array $points) {
+        if ($this->srcProjSpec === $this->dstProjSpec) {
+            return $points;
+        }
+
         $result = $points;
         if ($this->srcProjSpec) {
             if (!isset($this->fromProjection)) {
@@ -69,9 +92,10 @@ class MapProjector {
             if (!$this->fromProjection->isGeographic()) {
                 $newPoints = array();
                 foreach ($result as $point) {
-                    list($x, $y) = self::getXYFromPoint($point);
+                    list($x, $y, $fmt) = self::getXYFromPoint($point);
                     $this->fromProjection->setXY(array('x' => $x, 'y' => $y));
-                    $newPoints[] = $this->fromProjection->getLatLon();
+                    $newPoints[] = $this->formatLatLon(
+                        $this->fromProjection->getLatLon(), $fmt);
                 }
                 $result = $newPoints;
             }
@@ -84,9 +108,10 @@ class MapProjector {
             if (!$this->toProjection->isGeographic()) {
                 $newPoints = array();
                 foreach ($result as $point) {
-                    list($x, $y) = self::getXYFromPoint($point);
+                    list($x, $y, $fmt) = self::getXYFromPoint($point);
                     $this->toProjection->setLatLon(array('lon' => $x, 'lat' => $y));
-                    $newPoints[] = $this->toProjection->getXY();
+                    $newPoints[] = $this->formatLatLon(
+                        $this->toProjection->getXY(), $fmt);
                 }
                 $result = $newPoints;
             }
@@ -96,13 +121,19 @@ class MapProjector {
     }
     
     public function projectPoint($point) {
-        list($x, $y) = self::getXYFromPoint($point);
-        error_log("projecting $x, $y");
+        if ($this->srcProjSpec === $this->dstProjSpec) {
+            return $point;
+        }
+
+        list($x, $y, $fmt) = self::getXYFromPoint($point);
+        if (Kurogo::getSiteVar('MODULE_DEBUG')) {
+            error_log("projecting $x, $y");
+        }
 
         if (isset($this->srcProjId, $this->dstProjId)
             && $this->srcProjId == $this->dstProjId
         ) {
-            return array('lon' => $x, 'lat' => $y);
+            return $point;
         }
 
         $result = $point;
@@ -111,20 +142,22 @@ class MapProjector {
         }
         if (isset($this->fromProjection) && !$this->fromProjection->isGeographic()) {
             $this->fromProjection->setXY(array('x' => $x, 'y' => $y));
-            $result = $this->fromProjection->getLatLon();
+            $result = $this->formatLatLon($this->fromProjection->getLatLon(), $fmt);
         }
 
         if ($this->dstProjSpec && !isset($this->toProjection)) {
             $this->toProjection = new MapProjection($this->dstProjSpec);
         }
         if (isset($this->toProjection) && !$this->toProjection->isGeographic()) {
-            list($x, $y) = self::getXYFromPoint($result);
+            list($x, $y, $fmt) = self::getXYFromPoint($result);
             $this->toProjection->setLatLon(array('lon' => $x, 'lat' => $y));
-            $result = $this->toProjection->getXY();
+            $result = $this->formatLatLon($this->toProjection->getXY(), $fmt);
         }
 
-        list($x, $y) = self::getXYFromPoint($result);
-        error_log("result: $x, $y");
+        if (Kurogo::getSiteVar('MODULE_DEBUG')) {
+            list($x, $y, $fmt) = self::getXYFromPoint($result);
+            error_log("result: $x, $y");
+        }
 
         return $result;
     }

@@ -10,7 +10,7 @@ class WMSStaticMap extends StaticMapImageController {
     protected $canAddAnnotations = false;
     protected $canaddPaths = false;
     protected $canAddLayers = true;
-    protected $supportsProjections = true;
+    //protected $supportsProjections = true;
 
     protected $availableLayers = null;
     private $wmsParser;
@@ -41,6 +41,7 @@ class WMSStaticMap extends StaticMapImageController {
         $this->wmsParser = new WMSDataParser();
         $this->wmsParser->parseData($contents);
         $this->enableAllLayers();
+        // TODO make sure this projection is supported by the server
         $this->setMapProjection(GEOGRAPHIC_PROJECTION);
     }
 
@@ -48,42 +49,67 @@ class WMSStaticMap extends StaticMapImageController {
     protected function getCurrentScale()
     {
         if ($this->unitsPerMeter === null) {
-            $contents = MapProjector::getProjSpecs($this->mapProjection);
-
-            if (preg_match('/to_meter=([\d\.]+)/', $contents, $matches)) {
-                $this->unitsPerMeter = 1 / $matches[1];
-            } else {
-                $this->unitsPerMeter = self::NO_PROJECTION;
+            $this->unitsPerMeter = self::NO_PROJECTION;
+            $projRep = new MapProjection($this->mapProjection);
+            if (!$projRep->isGeographic()) {
+                $unitsPerMeter = $projRep->getUnitsPerMeter();
+                if ($unitsPerMeter) {
+                    $this->unitsPerMeter = $unitsPerMeter;
+                }
             }
+            
+            //$contents = MapProjector::getProjSpecs($this->mapProjection);
+
+            //if (preg_match('/to_meter=([\d\.]+)/', $contents, $matches)) {
+            //    $this->unitsPerMeter = 1 / $matches[1];
+            //} else {
+            //    $this->unitsPerMeter = self::NO_PROJECTION;
+            //}
         }
+
         if ($this->unitsPerMeter != self::NO_PROJECTION) {
             $metersPerPixel = $this->getHorizontalRange() / $this->imageWidth / $this->unitsPerMeter;
             return $metersPerPixel / self::LIFE_SIZE_METERS_PER_PIXEL;
         } else {
             // TODO this isn't quite right, this won't allow us to use
             // maxScaleDenom and minScaleDenom in any layers
-            return self::NO_PROJECTION;
+            //return self::NO_PROJECTION;
+
+            $range = $this->getHorizontalRange();
+            $zoomLevel = ceil(log(360 / $range, 2));
+            return $this->scaleForZoomLevel($zoomLevel);
         }
+        
     }
     
     protected function zoomLevelForScale($scale)
     {
         // not sure if ceil is the right rounding in both cases
-        if ($scale == self::NO_PROJECTION) {
-            $range = $this->getHorizontalRange();
-            return ceil(log(360 / $range, 2));
-        } else {
+        //if ($scale == self::NO_PROJECTION) {
+        //    $range = $this->getHorizontalRange();
+        //    return ceil(log(360 / $range, 2));
+        //} else {
             // http://wiki.openstreetmap.org/wiki/MinScaleDenominator
             return ceil(log(559082264 / $scale, 2));
-        }
+        //}
     }
 
+    protected function scaleForZoomLevel($zoomLevel) {
+        //if ($scale == self::NO_PROJECTION) {
+        //    return 360 / pow(2, $zoomLevel);
+        //} else {
+        return 559082264 / pow(2, $zoomLevel);
+        //}
+    }
+
+    /*
     // just pass this to setMapProjection since the WMS server
     // itself can support multiple projections.
     // TODO add a check to make sure the projection is supported via WMS capabilities
     public function setDataProjection($proj) {
         $this->setMapProjection($proj);
     }
+    */
     
     // currently the map will recenter as a side effect if projection is reset
     public function setMapProjection($proj)
@@ -92,7 +118,6 @@ class WMSStaticMap extends StaticMapImageController {
     
         $this->mapProjection = $proj;
         $this->unitsPerMeter = null;
-
         // arbitrarily set initial bounding box to the center (1/10)^2 of the containing map
         $bbox = $this->wmsParser->getBBoxForProjection($this->mapProjection);
         $xrange = $bbox['xmax'] - $bbox['xmin'];
@@ -128,7 +153,6 @@ class WMSStaticMap extends StaticMapImageController {
                 || $bbox['ymin'] > $this->center['lat']
                 || $bbox['ymax'] < $this->center['lat'])
                 continue;
-
             if (!$aLayer->canDrawAtScale($currentScale) )
                 continue;
             $layers[] = $aLayer->getLayerName();

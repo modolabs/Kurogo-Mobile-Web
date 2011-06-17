@@ -475,7 +475,7 @@ class LDAPPerson extends Person {
             $this->attributes[$attrib] = array();
             for ($j=0; $j<$count; $j++) {
                 if (!in_array($ldapEntry[$attribute][$j], $this->attributes[$attrib])) {
-                    $this->attributes[$attrib][] = $ldapEntry[$attribute][$j];
+                    $this->attributes[$attrib][] = str_replace('$', "\n", $ldapEntry[$attribute][$j]);
                 }
             }
         }

@@ -44,6 +44,11 @@ class ArcGISJSMap extends JavascriptMapImageController {
     {
         $this->mapProjector->setSrcProj($proj);
     }
+
+    public function getMapProjection()
+     {
+        return $this->mapProjector->getDstProj();
+    }
     
     public function setPermanentZoomLevel($zoomLevel)
     {
@@ -149,7 +154,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
         foreach ($this->polygons as $rings) {
             $jsonParams = array(
                 'rings' => $rings,
-                'spatialReference' => array('wkid' => $this->this->mapProjector->getDstProj()),
+                'spatialReference' => array('wkid' => $this->mapProjector->getDstProj()),
                 );
             $json = json_encode($jsonParams);
 
@@ -163,9 +168,8 @@ class ArcGISJSMap extends JavascriptMapImageController {
         $result = array();
         // TODO: figure out when the arguments should be lon first
         foreach ($points as $point) {
-            if (isset($point['lat']) && isset($point['lon'])) {
-                $result[] = array($point['lon'], $point['lat']);
-            }
+            $latlon = $this->mapProjector->projectPoint($point);
+            $result[] = array($latlon['lon'], $latlon['lat']);
         }
         return $result;
     }
@@ -177,7 +181,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/polyline.htm
             $jsonObj = array(
                 'points' => $paths,
-                'spatialReference' => array('wkid' => $this->mapProjection)
+                'spatialReference' => array('wkid' => $this->mapProjector->getDstProj())
                 );
             
             $json = json_encode($jsonObj);
