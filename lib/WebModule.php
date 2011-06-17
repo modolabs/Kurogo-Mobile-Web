@@ -322,10 +322,13 @@ abstract class WebModule extends Module {
     }
 
     public function linkForValue($value, $otherValues) {
-        return $this->buildURLForModule(
-            $this->configModule, 
-            'search', 
-            array('filter'=>$value)
+        return array(
+            'title'=>$value, 
+            'url'  =>$this->buildBreadcrumbURL(
+                'search', 
+                array('filter'=>$value),
+                false
+            )
         );
     }
   

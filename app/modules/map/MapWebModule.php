@@ -102,6 +102,13 @@ class MapWebModule extends WebModule {
         return $configData;
     }
 
+    public function linkForValue($value, $otherValues) {
+        return array_merge(
+            parent::linkForValue($value, $otherValues),
+            array('class'=>'map')
+        );
+    }
+
     protected function initialize() {
         // this is in the wrong place
         $this->feedGroup = $this->getArg('group', NULL);
