@@ -425,6 +425,11 @@ abstract class DataController
             if ($this->cacheIsFresh()) {
                 $data = $this->getCacheData();
                 $this->responseHeaders = $this->getCacheHeaders();
+
+                if ($this->debugMode) {
+                    error_log(sprintf(__CLASS__ . " Using cache for %s", $url));
+                }
+
             } else {
 
                 if ($data = $this->retrieveData($url)) {
