@@ -334,7 +334,6 @@ class CalendarWebModule extends WebModule {
         $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
       }
       $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
-      $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
       return $controller;
     } else {
       throw new Exception("Error getting calendar feed for index $index");
@@ -634,7 +633,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'detail':  
-        $calendarFields = $this->loadPageConfigFile('detail', 'detailFields');
+        $calendarFields = $this->getModuleSections('page-detail');
         $type = $this->getArg('type', 'static');
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
         

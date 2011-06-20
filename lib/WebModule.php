@@ -613,7 +613,7 @@ abstract class WebModule extends Module {
     $this->onLoadBlocks[] = $onLoad;
   }
   protected function addInternalJavascript($path) {
-    $path = '/min/g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    $path = '/min/?g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
     if (!in_array($path, $this->javascriptURLs)) {
         $this->javascriptURLs[] = $path;
     }
