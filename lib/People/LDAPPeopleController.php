@@ -173,7 +173,7 @@ class LDAPPeopleController extends PeopleController {
 
         // suppress warnings on non-dev servers
         // about searches that go over the result limit
-        if (!Kurogo::getSiteVar('DATA_DEBUG')) {
+        if (!$this->debugMode) {
             $error_reporting = ini_get('error_reporting');
             error_reporting($error_reporting & ~E_WARNING);
         }
@@ -194,7 +194,7 @@ class LDAPPeopleController extends PeopleController {
             $this->errorMsg = $this->generateErrorMessage($ds);
         }
         
-        if (!Kurogo::getSiteVar('DATA_DEBUG')) {
+        if (!$this->debugMode) {
             error_reporting($error_reporting);
         }
         

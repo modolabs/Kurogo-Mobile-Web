@@ -372,7 +372,6 @@ JS;
                 $controller->setTitle($feedData['TITLE']);
             }
             $controller->setCategory($feedIndex);
-            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         }
     }

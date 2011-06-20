@@ -197,6 +197,10 @@ abstract class DataController
      */
     protected function init($args) {
 
+        if (isset($args['DEBUG_MODE'])) {
+            $this->setDebugMode($args['DEBUG_MODE']);
+        }
+
         // use a parser class if set, otherwise use the default parser class from the controller
         $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
 
@@ -290,6 +294,8 @@ abstract class DataController
         if (!$controller instanceOf DataController) {
             throw new Exception("$controllerClass is not a subclass of DataController");
         }
+
+        $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
 
         //get global options from the site data_controller section
         $args = array_merge(Kurogo::getOptionalSiteSection('data_controller'), $args);
@@ -459,11 +465,14 @@ abstract class DataController
         if ($this->debugMode) {
             error_log(sprintf(__CLASS__ . " Retrieving %s", $url));
         }
-
-
+        
         $data = file_get_contents($url, false, $this->streamContext);
         if (isset($http_response_header)) {
             $this->parseHTTPResponseHeaders($http_response_header);
+            if ($this->debugMode) {
+                error_log(sprintf(__CLASS__ . " Returned status %d and %d bytes", $this->responseCode, strlen($data)));
+            }
+            
             $this->responseHeaders['X-Kurogo-URL'] = $url;
             file_put_contents($this->cacheMetaFile($url), serialize($this->responseHeaders));
         }
