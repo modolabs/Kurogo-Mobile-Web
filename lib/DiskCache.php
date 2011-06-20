@@ -193,12 +193,20 @@ class DiskCache {
     return file_exists($path) && filesize($path) == 0;
   }
 
-  public function getAge($filename=NULL) {
+  public function getModified($filename) {
     if ($this->exists($filename)) {
       $path = $this->getFullPath($filename);
-      clearstatcache();
-      return time() - filemtime($path);
+      clearstatcache(true, $path);
+      return filemtime($path);
     }
+    return null;
+  }
+
+  public function getAge($filename=NULL) {
+    if ($modified = $this->getModified($filename)) {
+        return time() - $modified;    
+    }
+
     return PHP_INT_MAX;
   }
 

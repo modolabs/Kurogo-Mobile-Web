@@ -76,7 +76,6 @@ class CalendarAPIModule extends APIModule
                 $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
             }
             $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
-            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         } else {
             throw new Exception("Error getting calendar feed for index $index");

@@ -72,7 +72,7 @@ class VideoWebModule extends WebModule
         $this->assign('feedData'      , $feedData);
         
         $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-
+        
         switch ($this->page)
         {  
               case 'pane':

@@ -20,7 +20,10 @@ abstract class DataController
     protected $baseURL;
     protected $title;
     protected $filters=array();
-    protected $headers=array();
+    protected $requestHeaders=array();
+    protected $responseHeaders=array();
+    protected $responseStatus;
+    protected $responseCode;
     protected $totalItems = null;
     protected $debugMode=false;
     protected $useCache=true;
@@ -102,20 +105,21 @@ abstract class DataController
 
     /**
      * Returns a base filename for the cache file that will be used. The default implementation uses
-     * a hash of the value returned from the url() method
+     * a hash of the value returned from the url
      * @return string
      */
-    protected function cacheFilename() {
-        return md5($this->url());
+    protected function cacheFilename($url = null) {
+        $url = $url ? $url : $this->url();
+        return md5($url);
     }
 
     /**
-     * Returns a full path to the cacheMetaFile, a file used when debug mode is on to include information
-     * about the request.
+     * Returns a full path to the cacheMetaFile, a file used to include information about the request.
      * @return string
      */
-    protected function cacheMetaFile() {
-        return sprintf("%s/%s-meta.txt", $this->cacheFolder(), md5($this->url()));
+    protected function cacheMetaFile($url = null) {
+        $url = $url ? $url : $this->url();
+        return sprintf("%s/%s-meta.txt", $this->cacheFolder(), md5($url));
     }
     
    /**
@@ -193,6 +197,10 @@ abstract class DataController
      */
     protected function init($args) {
 
+        if (isset($args['DEBUG_MODE'])) {
+            $this->setDebugMode($args['DEBUG_MODE']);
+        }
+
         // use a parser class if set, otherwise use the default parser class from the controller
         $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
 
@@ -212,6 +220,41 @@ abstract class DataController
             $this->setCacheLifetime($args['CACHE_LIFETIME']);
         }
 
+        $this->initStreamContext($args);
+    }
+
+    public function getResponseHeaders() {
+        return $this->responseHeaders;
+    }
+
+    public function getResponseStatus() {
+        return $this->responseStatus;
+    }
+
+    public function getResponseCode() {
+        return $this->responseCode;
+    }
+
+    public function getResponseHeader($header) {
+        return isset($this->responseHeaders[$header]) ? $this->responseHeaders[$header] : null;
+    }
+
+    public function setHeader($header, $value) {
+        $this->requestHeaders[$header] = $value;
+        $headers = array();
+        //@TODO: Might need to escape this
+        foreach ($this->requestHeaders as $header=>$value) {
+            $headers[] = "$header: $value";
+        }
+            
+        stream_context_set_option($this->streamContext, 'http', 'header', implode("\r\n", $headers));
+    }
+
+    public function setTimeout($timeout) {
+        stream_context_set_option($this->streamContext, 'http', 'timeout', $timeout);
+    }
+    
+    protected function initStreamContext($args) {
         $streamContextOpts = array();
         
         if (isset($args['HTTP_PROXY_URL'])) {
@@ -251,6 +294,8 @@ abstract class DataController
         if (!$controller instanceOf DataController) {
             throw new Exception("$controllerClass is not a subclass of DataController");
         }
+
+        $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
 
         //get global options from the site data_controller section
         $args = array_merge(Kurogo::getOptionalSiteSection('data_controller'), $args);
@@ -331,6 +376,15 @@ abstract class DataController
         $cache = $this->getCache();
         return $cache->read($this->cacheFilename());
     }
+
+    protected function getCacheHeaders() {
+        $file = $this->cacheMetaFile();
+        $headers = array();
+        if ($contents = @file_get_contents($file)) {
+            $headers = unserialize($contents);
+        }
+        return $headers;
+    }
     
     /**
      * Writes the included data to the file based on cacheFilename(). Subclasses could override 
@@ -376,6 +430,12 @@ abstract class DataController
         if ($this->useCache) {
             if ($this->cacheIsFresh()) {
                 $data = $this->getCacheData();
+                $this->responseHeaders = $this->getCacheHeaders();
+
+                if ($this->debugMode) {
+                    error_log(sprintf(__CLASS__ . " Using cache for %s", $url));
+                }
+
             } else {
 
                 if ($data = $this->retrieveData($url)) {
@@ -383,6 +443,7 @@ abstract class DataController
                 } elseif ($this->useStaleCache) {
                     // return stale cache if the data is unavailable
                     $data = $this->getCacheData();
+                    $this->responseHeaders = $this->getCacheHeaders();
                 }
             }
         } else {
@@ -404,15 +465,40 @@ abstract class DataController
         if ($this->debugMode) {
             error_log(sprintf(__CLASS__ . " Retrieving %s", $url));
         }
-
-
+        
         $data = file_get_contents($url, false, $this->streamContext);
-
-        if ($this->debugMode) {
-            file_put_contents($this->cacheMetaFile(), $url);
+        if (isset($http_response_header)) {
+            $this->parseHTTPResponseHeaders($http_response_header);
+            if ($this->debugMode) {
+                error_log(sprintf(__CLASS__ . " Returned status %d and %d bytes", $this->responseCode, strlen($data)));
+            }
+            
+            $this->responseHeaders['X-Kurogo-URL'] = $url;
+            file_put_contents($this->cacheMetaFile($url), serialize($this->responseHeaders));
         }
         
         return $data;
+    }
+    
+    protected function parseHTTPResponseHeaders($http_response_header) {
+        foreach ($http_response_header as $http_header) {
+            list($header, $value) = $this->parseHTTPHeader($http_header);
+            if ($header) {
+                $this->responseHeaders[$header] = $value;
+            } elseif (preg_match("#^(HTTP/1.\d) (\d\d\d) (.+)$#", $http_header, $bits)) {
+                $this->responseCode = $bits[2];
+                $this->responseStatus = $bits[3];
+            }
+        }
+    }
+    
+    protected function parseHTTPHeader($header) {
+        if (preg_match("/(.*?):\s*(.*)/", $header, $bits)) {
+            return array(
+                trim($bits[1]),
+                trim($bits[2])
+            );
+        }
     }
 
     /**
