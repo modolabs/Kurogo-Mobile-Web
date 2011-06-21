@@ -44,7 +44,7 @@ class Kurogo
         return $module->linkForItem($object);
     }
 
-    public function moduleLinkForValue($moduleID, $value, $callingModule, $otherValue) {
+    public function moduleLinkForValue($moduleID, $value, Module $callingModule, KurogoObject $otherValue) {
         $module = WebModule::factory($moduleID);
         return $module->linkForValue($value, $callingModule, $otherValue);
     }

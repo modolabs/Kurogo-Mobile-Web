@@ -317,11 +317,13 @@ abstract class WebModule extends Module {
         }
   }
   
+    /* This method would be called by other modules to get a valid link from a model object */
     public function linkForItem($object) {
        throw new Exception("linkForItem must be subclassed if it is going to be used");    
     }
 
-    public function linkForValue($value, $callingModule, $otherValue) {
+    /* default implmentation. Subclasses may wish to override this */
+    public function linkForValue($value, Module $callingModule, KurogoObject $otherValue) {
         return array(
             'title'=>$value, 
             'url'  =>$this->buildBreadcrumbURL(
