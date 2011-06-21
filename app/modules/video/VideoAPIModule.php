@@ -15,7 +15,7 @@ class VideoAPIModule extends APIModule {
             $cleanKey = ltrim($key, "\0*");
             $cleanArray[$cleanKey] = $value;
             if($cleanKey == 'published') {
-                $cleanArray['publishedTimestamp'] = $value->getTimestamp(); 
+                $cleanArray['publishedTimestamp'] = intval($value->format('U'));
             } 
         }
         //error_log(print_r($cleanArray, true));
