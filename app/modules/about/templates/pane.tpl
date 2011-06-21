@@ -1,3 +1,5 @@
 <div class="nonfocal">
-  New tablet interface added!
+  {foreach $moduleStrings.SITE_ABOUT_HTML as $paragraph}
+    <p>{$paragraph}</p>
+  {/foreach}
 </div>
