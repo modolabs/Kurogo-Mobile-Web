@@ -698,6 +698,8 @@ class CalendarWebModule extends WebModule {
             if (isset($info['type'])) {
               $field['title'] = $this->valueForType($info['type'], $value);
               $field['url']   = $this->urlForType($info['type'], $value);
+            } elseif (isset($info['module'])) {
+                $field = array_merge($field, Kurogo::moduleLinkForValue($info['module'], $value, array($this->configModule=>$event)));
             } else {
               $field['title'] = nl2br($value);
             }
