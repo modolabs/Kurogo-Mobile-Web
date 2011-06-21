@@ -83,7 +83,7 @@ class PeopleWebModule extends WebModule {
         }
 
         if (isset($info['module'])) {
-            $detail = array_merge($detail, Kurogo::moduleLinkForValue($info['module'], $value, array($this->configModule=>$person)));
+            $detail = array_merge($detail, Kurogo::moduleLinkForValue($info['module'], $value, $this->configModule, $person));
         }
         
         if (isset($info['urlfunc'])) {

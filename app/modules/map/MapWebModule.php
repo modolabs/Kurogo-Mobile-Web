@@ -102,9 +102,9 @@ class MapWebModule extends WebModule {
         return $configData;
     }
 
-    public function linkForValue($value, $otherValues) {
+    public function linkForValue($value, $callingModule, $otherValue) {
         return array_merge(
-            parent::linkForValue($value, $otherValues),
+            parent::linkForValue($value, $callingModule, $otherValue),
             array('class'=>'map')
         );
     }

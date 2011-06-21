@@ -321,7 +321,7 @@ abstract class WebModule extends Module {
        throw new Exception("linkForItem must be subclassed if it is going to be used");    
     }
 
-    public function linkForValue($value, $otherValues) {
+    public function linkForValue($value, $callingModule, $otherValue) {
         return array(
             'title'=>$value, 
             'url'  =>$this->buildBreadcrumbURL(
