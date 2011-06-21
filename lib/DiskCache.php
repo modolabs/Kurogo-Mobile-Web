@@ -156,6 +156,14 @@ class DiskCache {
     return array($width, $height);
   }
 
+  public function readIfFresh($filename=NULL) {
+    if ($this->isFresh($filename)) {
+        return $this->read($filename);
+    } 
+    
+    return FALSE;
+  }
+
   public function read($filename=NULL) {
     $path = $this->getFullPath($filename);
     if (file_exists($path)) {
