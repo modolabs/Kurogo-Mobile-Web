@@ -208,7 +208,6 @@ class NewsWebModule extends WebModule {
         $start       = $this->getArg('start', 0);
         
         if ($searchTerms) {
-          $this->setPageTitle('Search');
 
           $this->feed->addFilter('search', $searchTerms);
           $items = $this->feed->items($start, $this->maxPerPage);
