@@ -45,10 +45,14 @@ class PeopleWebModule extends WebModule {
         
         return $values;
     }
+    
+    private function replaceFormat($format) {
+        return str_replace(array('\n','\t'),array("\n","\t"), $format);
+    }
   
     protected function formatDetail($values, $info, Person $person) {
         if (isset($info['format'])) {
-            $value = vsprintf($info['format'], $values);
+            $value = vsprintf($this->replaceFormat($info['format']), $values);
         } else {
             $value = implode(' ', $values);
         }
