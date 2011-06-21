@@ -29,6 +29,13 @@ abstract class Session
     abstract protected function clearLoginTokenData($token);
     abstract protected function saveLoginTokenData($new_login_token, $expires, $data);
     
+    public static function getSessionClasses() {
+        return array(
+            'SessionFiles'=>"Flat files",
+            'SessionDB'=>'Database'
+        );
+    }
+    
     public static function factory($sessionClass, $args=array()) {
         $args = is_array($args) ? $args : array();
 
@@ -57,7 +64,7 @@ abstract class Session
 
         if ($user = $this->getCurrentSessionUser()) {
             $this->setUser($user);
-        } elseif ($user = $this->getUsersFromLoginCookie()) {
+        } elseif ($user = $this->getUserFromLoginCookie()) {
             $this->setUser($user);
             $this->remainLoggedIn = true;
             $this->setLoginCookie();
