@@ -75,14 +75,15 @@ class PeopleWebModule extends WebModule {
                 $detail['url'] = 'tel:'.strtr($value, '-', '');
                 $detail['class'] = 'phone';
                 break;
-        
+ 
+            // compatibility
             case 'map':
                 $info['module'] = 'map';
                 break;
         }
 
         if (isset($info['module'])) {
-            $detail = array_merge($detail, Kurogo::moduleLinkForValue($info['module'], $value, array('person'=>$person)));
+            $detail = array_merge($detail, Kurogo::moduleLinkForValue($info['module'], $value, array($this->configModule=>$person)));
         }
         
         if (isset($info['urlfunc'])) {
@@ -90,7 +91,7 @@ class PeopleWebModule extends WebModule {
             $detail['url'] = $urlFunction($value, $person);
         }
     
-        $detail['title'] = nl2br($detail['title']); // $ is the LDAP multiline char
+        $detail['title'] = nl2br($detail['title']); 
         return $detail;
     }
   
