@@ -428,6 +428,10 @@ class Kurogo
     }
 }
 
+interface KurogoObject 
+{
+}
+
 /* retained for compatibility */
 function includePackage($packageName) {
     Kurogo::sharedInstance()->includePackage($packageName);

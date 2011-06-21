@@ -95,7 +95,7 @@ abstract class PeopleController
     }
 }
 
-abstract class Person
+abstract class Person implements KurogoObject
 {
     protected $attributes = array();
     abstract public function getId();
