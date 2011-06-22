@@ -20,15 +20,27 @@ class Kurogo
     }
         
     public function session() {
+        $this->includePackage('Session');
         if (!$this->session) {
             $args = Kurogo::getSiteSection('authentication');
-            $args['DEBUG_MODE'] = Kurogo::getSiteVar('DATA_DEBUG');
-            $this->session = new Session($args);
+        
+            //default session class
+            $controllerClass = 'SessionFiles';
+            
+            //maintain previous config compatibility
+            if (isset($args['AUTHENTICATION_USE_SESSION_DB']) && $args['AUTHENTICATION_USE_SESSION_DB']) {
+                $controllerClass = 'SessionDB';
+            }
+            
+            if (isset($args['AUTHENTICATION_SESSION_CLASS'])) {
+                $controllerClass = $args['AUTHENTICATION_SESSION_CLASS'];
+            }
+            
+            $this->session = Session::factory($controllerClass, $args);
         }
         
         return $this->session;
     }    
-
     
     public static function sharedInstance() {
         if (!isset(self::$_instance)) {
