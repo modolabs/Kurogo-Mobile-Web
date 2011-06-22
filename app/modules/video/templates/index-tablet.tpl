@@ -18,7 +18,7 @@
           </fieldset>
         </form>
       </td><td id="searchformcontainer">
-        <form method="get" action="search.php">
+        <form method="get" action="search">
           {include file="findInclude:common/templates/search.tpl" insideForm=true placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
         </form>
       </td></tr>

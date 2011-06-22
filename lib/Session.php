@@ -77,11 +77,11 @@ abstract class Session
     
     protected function getCurrentSessionUser() {
         
+        $users = array();
         if (isset($_SESSION['users']) && is_array($_SESSION['users'])) {
             
             $lastPing = isset($_SESSION['ping']) ? $_SESSION['ping'] : 0;
             $diff = time() - $lastPing;
-            $users = array();
             
             // see if max idle time has been reached
             if ( $this->maxIdleTime && ($diff > $this->maxIdleTime)) {

@@ -130,6 +130,14 @@ class Kurogo
         return;
     }
     
+    public static function siteTimezone() {
+        return Kurogo::sharedInstance()->getTimezone();        
+    }
+
+    public function getTimezone() {
+        return $this->timezone;
+    }
+    
     public function getConfig() {
         return $this->config;
     }
@@ -177,8 +185,9 @@ class Kurogo
          ini_set('error_log', LOG_DIR . '/php_error.log');
       }
     
-      date_default_timezone_set($this->config->getVar('LOCAL_TIMEZONE'));
-      
+      $timezone = $this->config->getVar('LOCAL_TIMEZONE');
+      date_default_timezone_set($timezone);
+      $this->timezone = new DateTimeZone($timezone);
       
       //
       // And a double quote define for ini files (php 5.1 can't escape them)
