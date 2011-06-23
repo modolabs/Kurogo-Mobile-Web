@@ -37,7 +37,7 @@ class VideoWebModule extends WebModule
             'videoid'=>$video->getID()
         );
         
-        foreach (array('section') as $field) {
+        foreach (array('section','filter') as $field) {
             if (isset($data[$field])) {
                 $options[$field] = $data[$field];
             }
@@ -53,8 +53,9 @@ class VideoWebModule extends WebModule
         }
 
         $desc = $video->getDescription();
-        $subtitle = '';
-        if (isset($data['showSubtitle']) && $data['showSubtitle']) {
+        if (isset($data['federatedSearch']) && $data['federatedSearch']) {
+            $subtitle = '';
+        } else {
             $subtitle = "(" . VideoModuleUtils::getDuration($video->getDuration()) . ") " . $desc;
         }
 
@@ -110,7 +111,6 @@ class VideoWebModule extends WebModule
                 $maxPerPage = $this->getOptionalModuleVar('MAX_PANE_RESULTS', 5);
                 $data = array(
                     'noBreadcrumbs'=>true,
-                    'showSubtitle'=>true,
                     'section'=>$section
                 );
 
@@ -144,7 +144,7 @@ class VideoWebModule extends WebModule
                 $totalItems = $controller->getTotalItems();
                 $videos = array();
                 foreach ($items as $video) {
-                    $videos[] = $this->linkForItem($video, array('section'=>$section,'showSubtitle'=>true));
+                    $videos[] = $this->linkForItem($video, array('section'=>$section));
                 }
                 
                 $this->assign('videos', $videos);
