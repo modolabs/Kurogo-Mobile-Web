@@ -114,13 +114,15 @@
           {/if}
           
         {/if}
-        <a href="{$breadcrumb['url']}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
-          {if $breadcrumb@first}
-            <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="28" height="28" alt="" />
-          {else}
-            <span>{$breadcrumb['title']}</span>
-          {/if}
-        </a>
+        {if $moduleID != 'home' || !$breadcrumb@first}
+          <a href="{$breadcrumb['url']}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
+            {if $breadcrumb@first}
+              <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="28" height="28" alt="" />
+            {else}
+              <span>{$breadcrumb['title']}</span>
+            {/if}
+          </a>
+        {/if}
       {/foreach}
     {/if}
   {/block}
