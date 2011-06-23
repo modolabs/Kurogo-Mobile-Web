@@ -37,7 +37,6 @@ ul {
     display: inline-block;
     width: 9.1em;
     margin: 0.35em 0;
-    padding-left: 40px;
     font-size: 88.24%;
     line-height: 2em;
     /* display, width, overflow, text-overflow, and white-space combine to enable ellipsis truncation */

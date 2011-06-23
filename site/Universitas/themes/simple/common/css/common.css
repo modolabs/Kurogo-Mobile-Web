@@ -19,7 +19,7 @@ a, a:visited {
 }
 
 a:hover {
-	/* Mouseover color; only respected on certain cursor-driven phones */
+	/* Mouseover color; only respected on certain cursor-driven devices */
 	color: #07d;
 }
 
@@ -79,8 +79,8 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
 	border-color: #fff;
 }
 
-.shaded {
-	/* Shaded subclass of focal content - e.g., background for tabbed focal div */
+.shaded, .HomeModule .blockborder {
+	/* Shaded subclass of focal content - e.g., background for tabbed focal div, portlets in Tablet device class */
 	background-color: #edeef0;
 }
 
