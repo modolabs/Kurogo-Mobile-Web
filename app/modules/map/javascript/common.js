@@ -260,15 +260,13 @@ function doUpdateMapDimensions() {
         objMap.style.height = mapHeight+"px";
     }
     if (objScrollers) {
-        switch(window.orientation) {
-            case 0:
-            case 180:
+        switch (getOrientation()) {
+            case 'portrait':
               objScrollers.style.height = (mapHeight-42)+"px";
               objScrollers.style.width = mapWidth+"px";
             break;
         
-            case -90:
-            case 90:
+            case 'landscape':
               objScrollers.style.height = mapHeight+"px";
               objScrollers.style.width = (mapWidth-42)+"px";
             break;

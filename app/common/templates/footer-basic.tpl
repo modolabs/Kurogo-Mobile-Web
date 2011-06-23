@@ -7,7 +7,7 @@
     </p>
   {/if}
   
-  {if $moduleID != 'home'}
+  {if $moduleID != 'home' || $page != 'index'}
     {html_access_key_reset index=0 force=true}
     <p class="bottomnav">
       <a href="#top">Back to top</a>
@@ -15,14 +15,16 @@
       {html_access_key_link href="/home/"}{$strings.SITE_NAME} Home{/html_access_key_link}
       {if !$isModuleHome}
         {foreach $breadcrumbs as $breadcrumb}
-          <br/>
-          {html_access_key_link href=$breadcrumb['url']}
-            {if $breadcrumb@first}
-              {$moduleName} Home
-            {else}
-              {$breadcrumb['longTitle']}
-            {/if}
-          {/html_access_key_link}
+          {if $moduleID != 'home' || !$breadcrumb@first}
+            <br/>
+            {html_access_key_link href=$breadcrumb['url']}
+              {if $breadcrumb@first}
+                {$moduleName} Home
+              {else}
+                {$breadcrumb['longTitle']}
+              {/if}
+            {/html_access_key_link}
+          {/if}
         {/foreach}
       {/if}
       {foreach $additionalLinks as $link}

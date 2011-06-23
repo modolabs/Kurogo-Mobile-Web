@@ -94,6 +94,7 @@ class MapWebModule extends WebModule {
             $feedData = $configData['feed'];
             $feedData['title'] = $data['title'];
             $feedData['config'] = 'feeds-' . $feedgroup;
+            $feedData['configMode'] = ConfigFile::OPTION_CREATE_EMPTY;
             $configData['feeds-'.$feedgroup] = $feedData;
         }
         unset($configData['feed']);
@@ -151,6 +152,9 @@ class MapWebModule extends WebModule {
 
             $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
             $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
+
+            $this->assign('imageWidth',  $imageWidth);
+            $this->assign('imageHeight', $imageHeight);
 
             if (($this->pagetype == 'compliant' && $this->platform != 'bbplus') || $this->pagetype == 'tablet') {
                 $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}/staticImageURL";
@@ -371,7 +375,6 @@ JS;
                 $controller->setTitle($feedData['TITLE']);
             }
             $controller->setCategory($feedIndex);
-            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         }
     }

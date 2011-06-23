@@ -83,6 +83,7 @@ abstract class PeopleController
         }
         
         $controller = new $controllerClass;
+        $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
 
         if (!$controller instanceOf PeopleController) {
             throw new Exception("$controller class is not a subclass of PeopleController");

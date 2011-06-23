@@ -102,8 +102,13 @@ class ArcGISDataController extends MapDataController
     protected function init($args) {
         parent::init($args);
 
-        if (isset($args['ARCGIS_LAYER_ID']))
+        if (isset($args['ARCGIS_LAYER_ID'])) {
             $this->parser->setDefaultLayer($args['ARCGIS_LAYER_ID']);
+        }
+
+        if (isset($args['ID_FIELD'])) {
+            $this->parser->setIdFIeld($args['ID_FIELD']);
+        }
 
         $this->addFilter('f', 'json');
     }
@@ -113,8 +118,10 @@ class ArcGISDataController extends MapDataController
         $this->initializeLayers();
 
         $oldBaseURL = $this->baseURL;
+        $this->parser->clearCache();
         $this->parser->setBaseURL($oldBaseURL);
         $this->baseURL = $this->parser->getURLForLayerFeatures();
+        $this->filters = $this->parser->getFiltersForLayer();
         $this->addFilter('text', $searchText);
         $data = $this->getData();
         $this->parseData($data);

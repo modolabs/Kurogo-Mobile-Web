@@ -76,7 +76,6 @@ class CalendarAPIModule extends APIModule
                 $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
             }
             $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
-            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         } else {
             throw new Exception("Error getting calendar feed for index $index");
@@ -129,7 +128,7 @@ class CalendarAPIModule extends APIModule
 
     public function  initializeForCommand() {
 
-        $this->timezone = new DateTimeZone(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
+        $this->timezone = Kurogo::siteTimezone();
         $this->fieldConfig = $this->getAPIConfigData('detail');
 
         switch ($this->command) {

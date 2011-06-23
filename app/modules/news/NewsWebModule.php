@@ -100,7 +100,6 @@ class NewsWebModule extends WebModule {
             $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
         }
         $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
         return $controller;
     } else {
         throw new Exception("Error getting news feed for index $index");
@@ -209,7 +208,6 @@ class NewsWebModule extends WebModule {
         $start       = $this->getArg('start', 0);
         
         if ($searchTerms) {
-          $this->setPageTitle('Search');
 
           $this->feed->addFilter('search', $searchTerms);
           $items = $this->feed->items($start, $this->maxPerPage);
