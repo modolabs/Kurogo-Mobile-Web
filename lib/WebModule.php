@@ -1242,11 +1242,11 @@ abstract class WebModule extends Module {
         $total = 0;
         $results = array();
       
-        $items = $this->searchItems($searchTerms, $maxCount);
+        $items = $this->searchItems($searchTerms, $maxCount, array('federatedSearch'=>true));
         $limit = is_array($items) ? min($maxCount, count($items)) : 0;
 
         for ($i = 0; $i < $limit; $i++) {
-            $results[] = $this->linkforItem($items[$i]);
+            $results[] = $this->linkforItem($items[$i], array('federatedSearch'=>true, 'filter'=>$searchTerms));
         }
         
         return count($items);
