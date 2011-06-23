@@ -76,7 +76,7 @@ class NewsWebModule extends WebModule {
     private function cleanContent($content) {
     
         //deal with pre tags. strip out pre tags and add <br> for newlines
-        $bits = preg_split( '#(<pre.*?>)(.*?)(</pre>)#s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $bits = preg_split( '#(<pre.*?'.'>)(.*?)(</pre>)#s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
         $content = array_shift($bits);
         $i=0;
         while ($i<count($bits)) {
