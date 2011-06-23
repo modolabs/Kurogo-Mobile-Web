@@ -15,6 +15,11 @@ ul.iconic li {
   padding-left: 44px;
 }
 
+img.homeicon {
+  vertical-align: middle;
+  margin: -5px 5px 0 0;
+}
+
 ul.iconic li:first-child {
   -webkit-border-top-left-radius: 9px;	
   -webkit-border-top-right-radius: 9px;	
@@ -47,7 +52,6 @@ ul.iconic li:last-child .movedown {
 
 ul.iconic span.nolink { 
   position: relative;
-  padding-left: 37px;
   background-position: 3px 3px;
   font-size: 94.112%;
   margin-right: 85px; /* don't overlap buttons */
