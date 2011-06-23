@@ -13,19 +13,6 @@ class VideoModuleUtils
          return $sections;
     }
     
-    public static function getListItemForVideo(VideoObject $video, $section) {
-
-        $desc = $video->getDescription();
-
-        return array(
-            'title'=>$video->getTitle(),
-            'subtitle'=> "(" . VideoModuleUtils::getDuration($video->getDuration()) . ") " . $desc,
-            'imgWidth'=>120,  
-            'imgHeight'=>100,  
-            'img'=>$video->getImage()
-            );
-    }
-    
     public static function getDuration($prop_length) {
         if (!$prop_length) {
             return "";

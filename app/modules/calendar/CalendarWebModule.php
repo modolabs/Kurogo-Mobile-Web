@@ -378,7 +378,6 @@ class CalendarWebModule extends WebModule {
             'end'=>$end
         );
         
-        
         $iCalEvents = $this->searchItems('', null, $options);
         $options['noBreadcrumbs'] = true;
         $events = array();
