@@ -1229,7 +1229,7 @@ abstract class WebModule extends Module {
     //
     // Subclass this function and return an array of items for a given search term and feed
     //
-    public function searchItems($searchTerms, $options=null) {  
+    public function searchItems($searchTerms, $limit=null, $options=null) {  
         return array();
     }
   
@@ -1242,7 +1242,7 @@ abstract class WebModule extends Module {
         $total = 0;
         $results = array();
       
-        $items = $this->searchItems($searchTerms);
+        $items = $this->searchItems($searchTerms, $maxCount);
         $limit = is_array($items) ? min($maxCount, count($items)) : 0;
 
         for ($i = 0; $i < $limit; $i++) {

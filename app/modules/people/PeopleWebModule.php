@@ -156,7 +156,7 @@ class PeopleWebModule extends WebModule {
         return mb_convert_encoding($string, 'HTML-ENTITIES', $this->encoding);
     }
     
-    public function searchItems($searchTerms, $options=null) {
+    public function searchItems($searchTerms, $limit=null, $options=null) {
         $feed = isset($options['feed']) ? $options['feed'] : 'people';
         $PeopleController = $this->getFeed($feed);
         $people = $PeopleController->search($searchTerms);

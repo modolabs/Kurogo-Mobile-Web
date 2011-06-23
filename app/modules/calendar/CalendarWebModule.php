@@ -210,7 +210,7 @@ class CalendarWebModule extends WebModule {
     ), $addBreadcrumb);
   }
   
-    public function searchItems($searchTerms, $options=null) {  
+    public function searchItems($searchTerms, $limit=null, $options=null) {  
 
         $type     = isset($options['type']) ? $options['type'] : 'static';
         $calendar = isset($options['calendar']) ? $options['calendar'] : $this->getDefaultFeed($type);
@@ -379,7 +379,7 @@ class CalendarWebModule extends WebModule {
         );
         
         
-        $iCalEvents = $this->searchItems('', $options);
+        $iCalEvents = $this->searchItems('', null, $options);
         $options['noBreadcrumbs'] = true;
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
@@ -729,7 +729,7 @@ class CalendarWebModule extends WebModule {
             'timeframe'=>$timeframe
           );
           
-          $iCalEvents = $this->searchItems($searchTerms, $options);
+          $iCalEvents = $this->searchItems($searchTerms, null, $options);
           $events = array();
           foreach($iCalEvents as $iCalEvent) {
 
