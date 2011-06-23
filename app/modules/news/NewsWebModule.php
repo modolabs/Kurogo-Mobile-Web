@@ -99,11 +99,11 @@ class NewsWebModule extends WebModule {
         $image = $this->showImages ? $story->getImage() : false;
         
         $link = array(
-            'title'       => $this->htmlEncodeFeedString($story->getTitle()),
-            'pubDate'     => $date,
-            'author'      => $this->htmlEncodeFeedString($story->getAuthor()),
-            'subtitle' => $this->htmlEncodeFeedString($story->getDescription()),
-            'img'         => $image ? $image->getURL() : ''
+            'title'   => $this->htmlEncodeFeedString($story->getTitle()),
+            'pubDate' => $date,
+            'author'  => $this->htmlEncodeFeedString($story->getAuthor()),
+            'subtitle'=> $this->htmlEncodeFeedString($story->getDescription()),
+            'img'     => $image ? $image->getURL() : ''
         );
         
         if ($storyID = $story->getGUID()) {
@@ -263,8 +263,12 @@ class NewsWebModule extends WebModule {
         $start = 0;
         $items = $this->feed->items($start, $this->maxPerPane);
         $stories = array();
+        $data = array(
+            'noBreadcrumbs'=>true
+        );
+        
         foreach ($items as $story) {
-            $stories[] = $this->linkForItem($story);
+            $stories[] = $this->linkForItem($story, $data);
         }
         
         $this->assign('stories', $stories);
