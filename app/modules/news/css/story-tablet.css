@@ -1,3 +1,7 @@
+body.NewsModule #navbar, .news {
+	/* Background color for news listing and story; should be white in most cases */
+    background-color: #fff;
+}
 .news {
     padding: 10px;
 }
