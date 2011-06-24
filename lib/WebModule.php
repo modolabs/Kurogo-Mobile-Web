@@ -485,11 +485,6 @@ abstract class WebModule extends Module {
     return in_array($this->configModule, $allModules);    
   }
   
-  protected function getModuleCustomizeList() {    
-    $navModules = $this->getNavigationModules(true);
-    return $navModules['primary'];
-  }
-
   protected function getNavigationModules($includeDisabled=true) {
     $moduleNavConfig = $this->getModuleNavigationConfig();
     
