@@ -61,6 +61,11 @@ class Kurogo
         return $module->linkForValue($value, $callingModule, $otherValue);
     }
 
+    public function searchItems($moduleID, $searchTerms, $limit=null, $options=null) {
+        $module = WebModule::factory($moduleID);
+        return $module->searchItems($searchTerms, $limit, $options);
+    }
+
     public function includePackage($packageName) {
 
         if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
