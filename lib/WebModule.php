@@ -470,6 +470,7 @@ abstract class WebModule extends Module {
 
   protected function getModuleNavlist() {
     $navModules = $this->getNavigationModules(false);
+
     if (count($navModules['primary']) && count($navModules['secondary'])) {
       $separator = array('separator' => array('separator' => true));
     } else {
@@ -485,6 +486,16 @@ abstract class WebModule extends Module {
     return in_array($this->configModule, $allModules);    
   }
   
+    protected function getDisabledModuleIDs() {
+    
+        $disabledIDs = array();
+        if (isset($_COOKIE[DISABLED_MODULES_COOKIE]) && $_COOKIE[DISABLED_MODULES_COOKIE] != "NONE") {
+            $disabledIDs = explode(",", $_COOKIE[DISABLED_MODULES_COOKIE]);
+        }
+        
+        return $disabledIDs;
+    }
+
   protected function getNavigationModules($includeDisabled=true) {
     $moduleNavConfig = $this->getModuleNavigationConfig();
     
@@ -492,12 +503,9 @@ abstract class WebModule extends Module {
     $moduleConfig['home'] = $this->pagetype == 'tablet' ? array('home'=>'Home') : array();
     $moduleConfig['primary'] = $moduleNavConfig->getOptionalSection('primary_modules');
     $moduleConfig['secondary'] = $moduleNavConfig->getOptionalSection('secondary_modules');
-
-    $disabledIDs = array();
-    if (isset($_COOKIE[DISABLED_MODULES_COOKIE]) && $_COOKIE[DISABLED_MODULES_COOKIE] != "NONE") {
-      $disabledIDs = explode(",", $_COOKIE[DISABLED_MODULES_COOKIE]);
-    }
     
+    $disabledIDs = $this->getDisabledModuleIDs();
+
     $modules = array(
       'home'    => array(),
       'primary' => array(),
@@ -532,6 +540,12 @@ abstract class WebModule extends Module {
       }
     }
     
+    $modules = $this->getSortedModules($modules);
+    //error_log('$modules(): '.print_r(array_keys($modules), true));
+    return $modules;
+  }
+  
+  protected function getSortedModules($modules) {
     // sort primary modules if sort cookie is set
     if (isset($_COOKIE[MODULE_ORDER_COOKIE])) {
       $sortedIDs = array_merge(array('home'), explode(",", $_COOKIE[MODULE_ORDER_COOKIE]));
