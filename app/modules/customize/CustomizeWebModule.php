@@ -12,7 +12,7 @@ class CustomizeWebModule extends WebModule {
     protected $id = 'customize';
 
     private function getModuleCustomizeList() {    
-        $navModules = $this->getNavigationModules(true);
+        $navModules = $this->getAllModuleNavigationData(self::INCLUDE_DISABLED_MODULES);
         return $navModules['primary'];
     }
 
