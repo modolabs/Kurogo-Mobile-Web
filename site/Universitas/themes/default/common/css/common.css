@@ -4,13 +4,13 @@
 /* Overall colors and fonts */
 
 body {
+	/* Site-wide page background color, and base font family, size and line spacing */
 	background-color: #dcdddf;
-	/* background-image: url(/common/images/background-tile.jpg) */
 	font: 17px/1.33em sans-serif;
 }
 
 body, th, td, li, option, select, input {
-	/* Primary font color */
+	/* Primary text color */
 	color: #333;
 }
 
@@ -19,7 +19,7 @@ a, a:visited {
 }
 
 a:hover {
-	/* Mouseover color; only respected on certain cursor-driven devices */
+	/* Mouseover text color; only respected on certain cursor-driven devices */
 	color: #07d;
 }
 
@@ -90,7 +90,7 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
 
 #navbar {
 	height: 48px; 
-	background: url(/common/images/navback.png) repeat-x;
+	background: #ccc url(/common/images/navback.png) repeat-x;
 	font-size: 94.1%;
 }
 
@@ -110,7 +110,7 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
 }
 
 .secondary {
-	/* Secondary navigation or action lists; typically have slightly smaller font size and slightly darker/tinted backgrounds */
+	/* Secondary navigation or action lists; typically have slightly smaller font size and slightly darker/tinted backgrounds, often the same as .shaded specified above */
 	font-size: 95%;
 	background-color: #edeef0;
 	border-color: #ddd;

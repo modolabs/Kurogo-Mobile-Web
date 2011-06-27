@@ -37,6 +37,7 @@ This guide serves as a tour of the project source code and its features.
    moduleslist
    template
    themes
+   themes2
    libs
    datacontroller
    modulenew
