@@ -367,6 +367,8 @@ abstract class WebModule extends Module {
         }
 
         $this->moduleName    = $this->getModuleVar('title','module');
+        $this->setArgs($args);
+
         $this->pagetype      = $this->getPagetype();
         $this->platform      = $this->getPlatform();
         $this->supportsCerts = $this->getSupportsCerts();
