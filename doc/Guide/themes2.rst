@@ -49,10 +49,35 @@ It's recommended that you build a new theme by duplicating the default theme, ed
 	Other styles may be modified as well, but the nine listed above are essential for any theme.
 
 3. **Add your logo or other branding artwork:** Your organization's logo (or other identifying/branding image to be used in your mobile web app) will typically appear in several places:
-	a. On the homepage: You'll need to create a version of the logo to appear on the homescreen for each of the major device classes. These images must be placed in the *SITE_DIR/themes/modules/home/images/* directory, as follows:
-		* *logo-home.gif* must be a GIF image typically with a transparent background and transparency matte color matching the background color of your web app's homepage, for use on Basic- and Touch-class devices. This image will be centered horizontally within the screen. The default size is 208x35px, cropped tight to the actual artwork. [1]
-		* *logo-home.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is 280x60px, cropped tight the actual artwork. [1] [2]
-		[1] *THEME_DIR/config.ini* stores the height and width of the homescreen logo/banner image for different device classes. The values defined in this config file are written into the actual HTML as attributes on the <img> tag. The reason these image dimensions are handled this way, rather than in CSS, is that many browsers will not apply a CSS height and width until the image is loaded, but will always reserve the space defined in the <img> object's *height* and *width* attributes. The CSS-driven approach will cause the items on the home screen to jump vertically as soon as the logo image finishes loading, causing a usability problem, especially on touchscreen devices. 
+	a. Homepage: You'll need to create a version of the logo to appear on the homepage:
+		* *THEME_DIR/modules/home/images/logo-home.gif* must be a GIF image typically with a transparent background and transparency matte color matching the background color of your web app's homepage, for use on Basic- and Touch-class devices. This image will be centered horizontally within the screen. The default size is 208x35px, cropped tight to the actual artwork. [1]
+		* *THEME_DIR/modules/home/images/logo-home.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is 280x60px, cropped tight the actual artwork. [1] [2]
 		
-		[2] If you create a home-page design a full-bleed focal image at the top of the page (e.g., a large photograph with your logo superimposed on it), you can set the image dimensions in *THEME_DIR/config.ini* to *banner-width = 100%* and *banner-height = auto*. This approach is only recommended for the Compliant device class, as the GIF image(s) used for the Basic and Touch device classes will render very poorly when scaled.
-
+			[1] *THEME_DIR/config.ini* stores the height and width of the homescreen logo/banner image for different device classes. The values defined in this config file are written into the actual HTML as attributes on the <img> tag. The reason these image dimensions are handled this way, rather than in CSS, is that many browsers will not apply a CSS height and width until the image is loaded, but will always reserve the space defined in the <img> object's *height* and *width* attributes. The CSS-driven approach will cause the items on the home screen to jump vertically as soon as the logo image finishes loading, causing a usability problem, especially on touchscreen devices. 
+		
+			[2] If you create a home-page design a full-bleed focal image at the top of the page (e.g., a large photograph with your logo superimposed on it), you can set the image dimensions in *THEME_DIR/config.ini* to *banner-width = 100%* and *banner-height = auto*. You should create the artwork at a minimum width of 320px, with a recommended maximum height of 240px. Note that this approach is only recommended for the Compliant device class, as the GIF image(s) used for the Basic and Touch device classes will render very poorly when scaled.
+		
+	b. Site-wide header images: The top left corner of every screen for every device class includes a logo/branding image. This image appears to the left of the page title on the Basic device class, and as the leftmost part of the header/navigation bar on all other device classes.
+		* Basic device class: *THEME_DIR/common/images/basic/logo.gif* must be a GIF image, typically with a transparent background and transparency matte color matching the background color. The default size is 35x35px.
+		* Compliant device class: *THEME_DIR/common/images/compliant/homelink.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is 57x45px, though you can choose to use a pixel-doubled version (114x90px) for increased visual quality on high-density screens (e.g., Retina Displays, HDPI Android devices). It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (navback.png, in the same directory).
+		* Tablet device class: *THEME_DIR/common/images/tablet/homelink.png* must be a PNG image, typically 24-bit with transparency, for use on Tablet-class devices. The default size is 66x52px; there is currently no benefit to using a pixel-doubled version. This be designed in such a way that it appears seamlessly on top of the header/navigation bar background (navback.png, in the same directory). **NEED TO CLEAN UP AND DOCUMENT TABLET HOMESCREEN ICON IMAGE, AND HOME MODULE ICON IMAGE**
+	
+	c. Favicon and bookmark icons: 
+		* *THEME_DIR/common/images/favicon.ico* must be a 16x16px ICO file, which is variously used by different browsers as the favicon, bookmarks and history icon, and in the screen title bar.
+		* *THEME_DIR/common/images/icon.png* must be a 57x57 (or pixel-doubled 114x114px) PNG, used as the homescreen shortcut icon for iOS devices and some Android devices.  
+		
+4. **Customize or replace the module icons:** 
+	a. Main module icons:
+	b. Breadcrumb module icons:
+	c. Tablet module icons:
+	
+5. **Customize or replace supporting graphics:** The following secondary and support graphics should be color-adjusted or replaced to match your overall theme design:
+	a. Help buttons: Buttons in the top right of the screen for Compliant and Tablet device classes: 
+		* Compliant device class: *THEME_DIR/common/images/compliant/help.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is 46x45px, though you can choose to use a pixel-doubled version (92x90px) for increased visual quality on high-density screens. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (navback.png, in the same directory).
+		* Tablet device class: *THEME_DIR/common/images/tablet/help.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is 52x52px. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (navback.png, in the same directory).
+	b. Header/navigation bar backgrounds: 
+	c. Breadcrumb (drill-up) images: 	
+	d. Color-adjust or replace with images of the same size and format:
+		* Bullet images: *THEME_DIR/common/images/compliant/bullet.png* and *THEME_DIR/common/images/tablet/bullet.png* (identical), and *THEME_DIR/common/images/touch/bullet.gif*
+		* Search buttons: *THEME_DIR/common/images/compliant/search_button.png* and *THEME_DIR/common/images/tablet/bullet.png* (identical)
+	
