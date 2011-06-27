@@ -124,6 +124,7 @@ Setters
   file, but you can use this method to set it dynamically.
 * *setBreadcrumbLongTitle* - Sets the breadcrumb long title for this page. Normally this value comes from the *SITE_DIR/config/page/MODULE.ini*
   file, but you can use this method to set it dynamically.
+* *setPageTitles* - Sets all 3 titles (pageTitle, breadcrumbTitle and breadcrumbLongTitle) to the same value
 * *setTemplatePage* - Sets the nane of the page template to use. Normally the template is derived from the url, but you can
   use this method to set it dynamically.
 
