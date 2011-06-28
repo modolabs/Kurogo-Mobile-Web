@@ -37,7 +37,7 @@
           {/foreach}
         </form>
   
-        <form method="get" action="search.php" id="search-form">
+        <form method="get" action="search" id="search-form">
           <table border="0" cellspacing="0" cellpadding="0">
             <tr>
               <td class="formlabel">Search:</td>

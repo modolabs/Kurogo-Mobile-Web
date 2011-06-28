@@ -19,10 +19,6 @@ class CalendarWebModule extends WebModule {
   protected $timezone;
   protected $defaultSearchOption = 0;
 
-  public function timezone() {
-    return $this->timezone;
-  }
-
   private $searchOptions = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
     array("phrase" => "in the next 15 days",  "offset" => 15),
@@ -340,9 +336,9 @@ class CalendarWebModule extends WebModule {
     }
   }
  
-  protected function initialize() {
-    $this->timezone = new DateTimeZone(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
-  }
+    protected function initialize() {
+        $this->timezone = Kurogo::siteTimezone();
+    }
 
   protected function initializeForPage() {
     switch ($this->page) {

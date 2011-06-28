@@ -128,7 +128,7 @@ class CalendarAPIModule extends APIModule
 
     public function  initializeForCommand() {
 
-        $this->timezone = new DateTimeZone(Kurogo::getSiteVar('LOCAL_TIMEZONE'));
+        $this->timezone = Kurogo::siteTimezone();
         $this->fieldConfig = $this->getAPIConfigData('detail');
 
         switch ($this->command) {

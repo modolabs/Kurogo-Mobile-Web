@@ -64,7 +64,7 @@ class HomeWebModule extends WebModule {
         
         $federatedResults = array();
      
-        foreach ($this->getNavigationModules(false) as $type=>$modules) {
+        foreach ($this->getAllModuleNavigationData(self::EXCLUDE_DISABLED_MODULES) as $type=>$modules) {
         
             foreach ($modules as $id => $info) {
             

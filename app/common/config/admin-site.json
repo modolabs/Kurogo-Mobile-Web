@@ -13,12 +13,13 @@
         }
     },
     "modules":{
-        "title":"Default Modules", 
-        "description":"Select the modules which mobile and desktop users should see when they first enter the site.",
+        "title":"Module Behavior", 
+        "description":"Behavior related to the loading of modules",
         "sectiontype":"fields",
         "fields":{
             "DEFAULT":{"label":"Default mobile","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for mobile devices","section":"urls"},
-            "DEFAULT-COMPLIANT-COMPUTER":{"label":"Default desktop","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for non-mobile devices","section":"urls"}
+            "DEFAULT-COMPLIANT-COMPUTER":{"label":"Default desktop","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for non-mobile devices","section":"urls"},
+            "DYNAMIC_MODULE_NAV_DATA":{"label":"Dynamic Module Data","type":"checkbox","config":"site","description":"When enabled, module's navigation data can be dynamic by using a subclass method. This only has effect if you have subclassed the built in modules. See Developer's Guide for more information. This is an advanced option and should be left off for performance reasons if you do not utilize this feature.","section":"modules"}
         }
     },
     "security":{
@@ -105,7 +106,7 @@
                     "AUTHENTICATION_ENABLED":{"label":"Authentication Enabled","type":"checkbox","config":"site","description":"Enable user logins and authentication. Required to protect modules","section":"authentication"},
                     "AUTHENTIATION_ADMIN_WARNING":{"label":"Warning","type":"label","value":"If you do not use authentication in your site than you should disable the administration module to prevent unauthorized changes.","showIf":["AUTHENTICATION_ENABLED","0"]},
                     "AUTHENTICATION_IDLE_TIMEOUT":{"label":"Idle Timeout","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time before idle users are logged off. Set to None to disable idle logoff","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
-                    "AUTHENTICATION_USE_SESSION_DB":{"label":"Session storage method","type":"select","config":"site","options":{"0":"Flat files","1":"Database"},"description":"Method used to store data of logged in users. <b>Flat files:</b> data is stored as files in the cache/session folder. <b>Database:</b> session data stored in site database","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
+                    "AUTHENTICATION_SESSION_CLASS":{"label":"Session storage method","type":"select","config":"site","optionsMethod":["Session","getSessionClasses"],"description":"Method used to store data of logged in users. <b>Flat files:</b> data is stored as files in the cache/session folder. <b>Database:</b> session data stored in site database","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
                     "AUTHENTICATION_REMAIN_LOGGED_IN_TIME":{"label":"Stay logged in time","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time to allow users to be remained logged in, even if closing their browser. Set to none to force users to log in every time.","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]}
                 }
             },
