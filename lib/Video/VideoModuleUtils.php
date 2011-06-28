@@ -26,20 +26,62 @@ class VideoModuleUtils
             );
     }
     
-    public static function getDuration($prop_length) {
-        if (!$prop_length) {
-            return "";
-        } elseif ($prop_length<60) {
-            return "0:". $prop_length;
-        } else {
-            $mins = intval($prop_length / 60);
-            $secs = $prop_length % 60;
-            if($secs<10) {
-				return $mins . ":0" . $secs;
-			} else { 
-				return $mins . ":" . $secs;
-        	}
-		}
+    // Valid formats are:
+    //    long  - a long format for a detail view
+    //           ("1 hour 32 minutes", "5 minutes 36 seconds", "12 seconds")
+    //    short - a short format for left justified lists
+    //            ("1h 32m", "5m 36s", "12s")
+    //    time  - a time-like format for right-justified lists
+    //            ("1:32:16", "5:36", "0:12")
+    public static function getDuration($prop_length, $format='time') {
+        if (!$prop_length) { $prop_length = 0; }
+        $hours = intval($prop_length / 3600);
+        $minutes = intval($prop_length / 60) % 60;
+        $seconds = $prop_length % 60;
+        
+        $duration = '';
+        switch ($format) {
+            case 'short':
+            case 'long':
+                $suffixes = array(
+                    'long' => array(
+                        'h' => ' hour',
+                        'm' => ' minute',
+                        's' => ' second',
+                        'plural' => 's',
+                    ),
+                    'short' => array(
+                        'h' => 'h',
+                        'm' => 'm',
+                        's' => 's',
+                        'plural' => '',
+                    ),
+                );
+                $suffix = $suffixes[$format];
+                
+                $parts = array();
+                if ($hours > 0) {
+                    $parts[] = $hours.$suffix['h'].($hours > 1 ? $suffix['plural']: '');
+                }
+                if ($minutes > 0) {
+                    $parts[] = $minutes.$suffix['m'].($minutes > 1 ? $suffix['plural']: '');
+                }
+                if ($seconds > 0 && $hours <= 0) {
+                    $parts[] = $seconds.$suffix['s'].($seconds > 1 ? $suffix['plural']: '');
+                }
+                $duration = implode(' ', $parts);
+                break;
+            
+            case 'time':
+            default:
+                if ($hours > 0) {
+                    $duration = sprintf('%d:%02d:%02d', $hours, $minutes, $seconds);
+                } else {
+                    $duration = sprintf('%d:%02d', $minutes, $seconds);
+                }
+                break;
+        }
+        
+        return $duration;
     }
-    
 }
