@@ -142,7 +142,7 @@ class KMLStyle extends XMLElement implements MapStyle
     }
 }
 
-class KMLPlacemark extends XMLElement implements MapFeature
+class KMLPlacemark extends XMLElement implements Placemark
 {
     protected $name = 'Placemark';
     // placemarks have no guaranteed unique identifiers (id is optional)
@@ -200,7 +200,15 @@ class KMLPlacemark extends XMLElement implements MapFeature
         $this->category = $category;
     }
     
-    // MapFeature interface
+    // Placemark interface
+
+    public function getAddress() {
+        return null;
+    }
+
+    public function getCategoryIds() {
+        return array($this->category);
+    }
 
     public function getGeometry() {
         return $this->geometry;
@@ -211,7 +219,7 @@ class KMLPlacemark extends XMLElement implements MapFeature
     }
     
     public function getDescriptionType() {
-    	return MapFeature::DESCRIPTION_TEXT;
+    	return Placemark::DESCRIPTION_TEXT;
     }
 
     public function getStyle() {
@@ -427,7 +435,7 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
     protected $category;
 
     public function addItem(MapListElement $item) {
-        if ($item instanceof MapFeature) {
+        if ($item instanceof Placemark) {
             $item->setIndex(count($this->items));
             $item->setCategory($this->category);
         }

@@ -190,8 +190,7 @@ class ArcGISFeature implements MapFeature
         foreach ($this->attributes as $name => $value) {
             if (!in_array($name, $this->blackList)) {
                 $aDetail = array('label' => $name, 'title' => $value);
-                // There is a bug in some versions of filter_var where it can't handle hyphens in hostnames
-                if (filter_var(strtr($value, '-', '.'), FILTER_VALIDATE_URL)) {
+                if (isValidURL($value)) {
                     $aDetail['url'] = $value;
                     $aDetail['class'] = 'external';
                 }

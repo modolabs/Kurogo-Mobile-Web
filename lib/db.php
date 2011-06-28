@@ -64,6 +64,19 @@ class db {
         }
     }
   }
+
+  // http://en.wikipedia.org/wiki/Select_%28SQL%29#Limiting_result_rows
+  public function limitQuery($sql, $parameters=array(), $ignoreErrors=false, 
+    $catchErrorCodes=array(), $limit=1)
+  {
+    if ($this instanceof db_mysql || $this instanceof db_sqlite
+      || ($this instanceof db_pgsql && $this->pgVersion() >= 8.4)
+    ) {
+      $sql .= ' LIMIT ?';
+      $parameters[] = $limit;
+    }
+    return $this->query($sql, $parameters, $ignoreErrors, $catchErrorCodes);
+  }
   
   public function query($sql, $parameters=array(), $ignoreErrors=false, $catchErrorCodes=array())
   {

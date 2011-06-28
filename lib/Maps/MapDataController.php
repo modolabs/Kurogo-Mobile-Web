@@ -256,6 +256,7 @@ class MapDataController extends DataController implements MapFolder
         return $this->parser->getTitle();
     }
 
+    /*
     public function items() {
         if (!$this->items) {
             $data = $this->getData();
@@ -263,6 +264,7 @@ class MapDataController extends DataController implements MapFolder
         }
         return $this->items;
     }
+    */
     
     public function getDefaultZoomLevel() {
         return $this->defaultZoomLevel;

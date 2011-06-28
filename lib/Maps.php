@@ -47,6 +47,12 @@ function htmlColorForColorString($colorString) {
     return substr($colorString, strlen($colorString)-6);
 }
 
+function isValidURL($urlString)
+{
+    // There is a bug in some versions of filter_var where it can't handle hyphens in hostnames
+    return filter_var(strtr($urlString, '-', '.'), FILTER_VALIDATE_URL);
+}
+
 class MapsAdmin
 {
     public static function getMapControllerClasses() {
