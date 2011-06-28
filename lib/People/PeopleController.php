@@ -21,6 +21,7 @@ abstract class PeopleController
         return array(
             ''=>'-',
             'LDAPPeopleController'=>'LDAP',
+            'ADPeopleController'=>'Active Directory',
             'DatabasePeopleController'=>'Database'
         );
     }
@@ -83,6 +84,7 @@ abstract class PeopleController
         }
         
         $controller = new $controllerClass;
+        $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
 
         if (!$controller instanceOf PeopleController) {
             throw new Exception("$controller class is not a subclass of PeopleController");

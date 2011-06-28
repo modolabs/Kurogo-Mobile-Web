@@ -20,15 +20,27 @@ class Kurogo
     }
         
     public function session() {
+        $this->includePackage('Session');
         if (!$this->session) {
             $args = Kurogo::getSiteSection('authentication');
-            $args['DEBUG_MODE'] = Kurogo::getSiteVar('DATA_DEBUG');
-            $this->session = new Session($args);
+        
+            //default session class
+            $controllerClass = 'SessionFiles';
+            
+            //maintain previous config compatibility
+            if (isset($args['AUTHENTICATION_USE_SESSION_DB']) && $args['AUTHENTICATION_USE_SESSION_DB']) {
+                $controllerClass = 'SessionDB';
+            }
+            
+            if (isset($args['AUTHENTICATION_SESSION_CLASS'])) {
+                $controllerClass = $args['AUTHENTICATION_SESSION_CLASS'];
+            }
+            
+            $this->session = Session::factory($controllerClass, $args);
         }
         
         return $this->session;
     }    
-
     
     public static function sharedInstance() {
         if (!isset(self::$_instance)) {
@@ -108,6 +120,14 @@ class Kurogo
         return;
     }
     
+    public static function siteTimezone() {
+        return Kurogo::sharedInstance()->getTimezone();        
+    }
+
+    public function getTimezone() {
+        return $this->timezone;
+    }
+    
     public function getConfig() {
         return $this->config;
     }
@@ -155,8 +175,9 @@ class Kurogo
          ini_set('error_log', LOG_DIR . '/php_error.log');
       }
     
-      date_default_timezone_set($this->config->getVar('LOCAL_TIMEZONE'));
-      
+      $timezone = $this->config->getVar('LOCAL_TIMEZONE');
+      date_default_timezone_set($timezone);
+      $this->timezone = new DateTimeZone($timezone);
       
       //
       // And a double quote define for ini files (php 5.1 can't escape them)

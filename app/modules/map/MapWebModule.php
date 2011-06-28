@@ -153,6 +153,9 @@ class MapWebModule extends WebModule {
             $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
             $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
+            $this->assign('imageWidth',  $imageWidth);
+            $this->assign('imageHeight', $imageHeight);
+
             if (($this->pagetype == 'compliant' && $this->platform != 'bbplus') || $this->pagetype == 'tablet') {
                 $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}/staticImageURL";
                 $js = <<<JS
@@ -372,7 +375,6 @@ JS;
                 $controller->setTitle($feedData['TITLE']);
             }
             $controller->setCategory($feedIndex);
-            $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
             return $controller;
         }
     }

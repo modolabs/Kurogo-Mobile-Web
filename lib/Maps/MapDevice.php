@@ -14,7 +14,8 @@ class MapDevice
         return ($this->pagetype == 'compliant' ||
                 $this->pagetype == 'tablet')
             && $this->platform != 'blackberry'
-            && $this->platform != 'bbplus';
+            && $this->platform != 'bbplus'
+            && $this->platform != 'webos';
     }
 
     public function staticMapImageDimensions() {
