@@ -19,6 +19,7 @@ abstract class DataController
     protected $cache;
     protected $baseURL;
     protected $title;
+    protected $method='GET';
     protected $filters=array();
     protected $requestHeaders=array();
     protected $responseHeaders=array();
@@ -248,6 +249,15 @@ abstract class DataController
         }
             
         stream_context_set_option($this->streamContext, 'http', 'header', implode("\r\n", $headers));
+    }
+
+    public function setMethod($method) {
+        if (!in_array($method, array('POST','GET','DELETE','PUT'))) {
+            throw new Exception("Invalid method $method");
+        }
+        
+        $this->method = $method;
+        stream_context_set_option($this->streamContext, 'http', 'method', $method);
     }
 
     public function setTimeout($timeout) {
