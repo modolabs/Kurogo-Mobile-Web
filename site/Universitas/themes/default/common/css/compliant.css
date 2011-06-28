@@ -5,9 +5,9 @@
 	font-size: 76.5%;	/* Font size of text label below icon */
 	line-height: 1.1em;
 	/* width: 102px; */   	/* For springboard grid that is 3 icons wide */
-	/* height: 100px; */   	/* For springboard grid that is 3 icons wide */
+	/* height: 90px; */   	/* For springboard grid that is 3 icons wide */
 	width: 77px;	/* For springboard grid that is 4 icons wide */
-	height: 98px;	/* For springboard grid that is 4 icons wide */
+	height: 96px;	/* For springboard grid that is 4 icons wide */
 }
 
 .springboard a img {
