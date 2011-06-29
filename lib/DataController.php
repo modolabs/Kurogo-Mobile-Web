@@ -208,6 +208,7 @@ abstract class DataController
         // instantiate the parser class and add it to the controller
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
         $this->setParser($parser);
+        $parser->setDataController($this);
         
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
