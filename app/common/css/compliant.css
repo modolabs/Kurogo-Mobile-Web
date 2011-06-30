@@ -394,6 +394,10 @@ a.module img {
 	margin-left: -3px;	
 }
 
+.homelink + .pagetitle {
+  margin-left: 0px;
+}
+
 .homepage .pagetitle {
 	display: inline;
 	max-width: 210px;
