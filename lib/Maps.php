@@ -32,7 +32,7 @@ function greatCircleDistance($fromLat, $fromLon, $toLat, $toLon)
     return $angle * EARTH_RADIUS_IN_METERS;
 }
 
-function shortArrayFromMapFeature(MapFeature $feature) {
+function shortArrayFromMapFeature(Placemark $feature) {
     $category = $feature->getCategory();
     if (is_array($category)) {
         $category = implode(MAP_CATEGORY_DELIMITER, $category);

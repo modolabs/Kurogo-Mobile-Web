@@ -31,9 +31,6 @@ abstract class MapImageController
     protected $layerStyles = array(); // id => styleName
 
     // capabilities
-    protected $canAddAnnotations = false;
-    protected $canAddPaths = false;
-    protected $canAddPolygons = false;
     protected $canAddLayers = false;
     protected $supportsProjections = false;
     
@@ -78,21 +75,6 @@ abstract class MapImageController
         return array();
     }
 
-    public function canAddAnnotations()
-    {
-        return $this->canAddAnnotations;
-    }
-
-    public function canAddPaths()
-    {
-        return $this->canAddPaths;
-    }
-    
-    public function canAddPolygons()
-    {
-        return $this->canAddPolygons;
-    }
-
     public function canAddLayers()
     {
         return $this->canAddlayers;
@@ -119,6 +101,27 @@ abstract class MapImageController
 
     public function addPath($points, $style=null)
     {
+    }
+
+    public function addPolygon($rings, $style=null)
+    {
+    }
+
+    public function addPlacemark(Placemark $placemark)
+    {
+        $geometry = $placemark->getGeometry();
+        $style = $placemark->getStyle();
+
+        if ($geometry instanceof MapPolygon) {
+            $this->addPolygon($geometry->getRings(), $style);
+        } elseif ($geometry instanceof MapPolyline) {
+            $this->addPath($geometry->getPoints(), $style);
+        } else {
+            $this->addAnnotation(
+                $geometry->getCenterCoordinate(),
+                $style,
+                $placemark->getTitle());
+        }
     }
 
     public function enableLayer($layer)

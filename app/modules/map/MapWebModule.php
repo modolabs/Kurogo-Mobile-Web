@@ -24,7 +24,30 @@ class MapWebModule extends WebModule {
     public function getFeedGroups() {
         return $this->getModuleSections('feedgroups');
     }
-    
+
+    private function getCategory() {
+        $category = $this->getArg('category', null);
+
+        $result = array();
+        if ($category !== null) {
+            if (strpos($category, BOOKMARK_COOKIE_DELIMITER) !== false) {
+                $result = explode(BOOKMARK_COOKIE_DELIMITER, $category);
+            } else {
+                $result = explode(MAP_CATEGORY_DELIMITER, $category);
+            }
+        }
+        return $result;
+    }
+
+    private function getDrillDownPath() {
+        $path = $this->getArg('path', array());
+        if ($path !== array()) {
+            $path = explode(MAP_CATEGORY_DELIMITER, $path);
+        }
+        return $path;
+    }
+
+    /*
     private function getCategoriesAsArray() {
         $category = $this->getArg('category', null);
         // this is not robust, but we need to figure out what happens
@@ -39,6 +62,27 @@ class MapWebModule extends WebModule {
             }
         }
         return $result;
+    }
+    */
+
+    protected function sortCategoriesForCurrentLocation($categoriesArray, $currentLat, $currentLon)
+    {
+        $distanceArray = array();
+        
+        foreach ($categoriesArray as $categoryItem) {
+
+            $lat = $categoryItem['loc'][0];
+            $lon = $categoryItem['loc'][1];
+
+            $distance = greatCircleDistance($currentLat, $currentLon, $lat, $lon);
+
+            $distanceArray[] = $distance;
+        }
+
+        array_multisort($distanceArray, SORT_ASC, $categoriesArray);
+
+        // return the categories array sorted based on distance
+        return $categoriesArray;
     }
     
     // overrides function in Module.php
@@ -122,6 +166,186 @@ class MapWebModule extends WebModule {
         }
     }
     
+    ///////////// url builders
+
+    // $category can be a string or array which specifies the drilldown path 
+    // if null, user will be redirected to index
+    private function categoryURL($category=null, $path=array(), $addBreadcrumb=true) {
+        $args = array();
+        if ($category !== NULL) {
+            if (is_array($category)) {
+                $category = implode(MAP_CATEGORY_DELIMITER, $category);
+            }
+            $args['category'] = $category;
+            $args['path'] = implode(MAP_CATEGORY_DELIMITER, $path);
+        }
+        return $this->buildBreadcrumbURL('category', $args, $addBreadcrumb);
+    }
+    
+    private function groupURL($group, $addBreadcrumb=false) {
+        $args = $this->args;
+        $args['group'] = $group;
+        $args['action'] = ($group == '') ? 'remove' : 'add';
+        return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
+    }
+
+    private function detailURL($name, $category=null, $addBreadcrumb=true) {
+        $args = array();
+        $args['featureindex'] = $name;
+        if ($category) {
+            if (is_array($category)) {
+                $category = implode(MAP_CATEGORY_DELIMITER, $category);
+            }
+            $args['category'] = $category;
+        }
+        return $this->buildBreadcrumbURL('detail', $args, $addBreadcrumb);
+    }
+  
+    private function detailURLForResult($urlArgs, $addBreadcrumb=true) {
+        return $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
+    }
+  
+    private function detailUrlForPan($direction, $imgController) {
+        $args = $this->args;
+        $center = $imgController->getCenterForPanning($direction);
+        $args['center'] = $center['lat'] .','. $center['lon'];
+        return $this->buildBreadcrumbURL('detail', $args, false);
+    }
+
+    private function detailUrlForZoom($direction, $imgController) {
+        $args = $this->args;
+        $args['zoom'] = $imgController->getLevelForZooming($direction);
+        return $this->buildBreadcrumbURL('detail', $args, false);
+    }
+
+    public function federatedSearch($searchTerms, $maxCount, &$results) {
+        $mapSearch = $this->getSearchClass();
+        $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
+        
+        $limit = min($maxCount, count($searchResults));
+        for ($i = 0; $i < $limit; $i++) {
+            $result = array(
+                'title' => $searchResults[$i]->getTitle(),
+                'url'   => $this->buildBreadcrumbURL('detail',
+                               shortArrayFromMapFeature($searchResults[$i]), false),
+              );
+              $results[] = $result;
+        }
+    
+        return count($searchResults);
+    }
+
+    private function getDataController() {
+        //$categoryPath, &$listItemPath) {
+        //$categoryPath = $this->getCategoriesAsArray();
+        $categoryPath = $this->getCategory();
+        if (!$categoryPath) {
+            return MapDataController::defaultDataController();
+        }
+
+        if (!$this->feeds) {
+            $this->feeds = $this->loadFeedData();
+        }
+
+        //$listItemPath = $categoryPath;
+        if ($this->numGroups > 0) {
+            if (count($categoryPath) < 2) {
+                $path = implode(MAP_CATEGORY_DELIMITER, $categoryPath);
+                throw new Exception("invalid category path $path for multiple feed groups");
+            }
+            //$feedIndex = array_shift($listItemPath).MAP_CATEGORY_DELIMITER.array_shift($listItemPath);
+            $feedIndex = array_shift($categoryPath).MAP_CATEGORY_DELIMITER.array_shift($categoryPath);
+        } else {
+            //$feedIndex = array_shift($listItemPath);
+            $feedIndex = array_shift($categoryPath);
+        }
+        $feedData = $this->feeds[$feedIndex];
+        $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        /*
+        // this should be handled by the base DataController class
+        if (isset($feedData['TITLE'])) {
+            $controller->setTitle($feedData['TITLE']);
+        }
+        */
+        //$controller->setCategory($feedIndex);
+        return $controller;
+    }
+
+    protected function getSearchClass() {
+        $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
+        if (!$this->feeds)
+            $this->feeds = $this->loadFeedData();
+        $mapSearch = new $mapSearchClass($this->feeds);
+        return $mapSearch;
+    }
+    
+    private function assignCategories() {
+        if (!$this->feeds)
+            $this->feeds = $this->loadFeedData();
+
+        $categories = array();
+        foreach ($this->feeds as $id => $feed) {
+            if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
+            $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
+            $categories[] = array(
+                'id'=>$id,
+                'title' => $feed['TITLE'],
+                'subtitle' => $subtitle,
+                'url' => $this->categoryURL($id),
+                );
+        }
+        
+        $this->assign('categories', $categories);
+        return $categories;
+    }
+
+    protected function detailURLForBookmark($aBookmark) {
+        parse_str($aBookmark, $params);
+        if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
+            return $this->buildBreadcrumbURL('detail', $params, true);
+        } else if (isset($params['group'])) {
+            return $this->groupURL($params['group']);
+        } else {
+            return '#';
+        }
+    }
+
+    protected function getTitleForBookmark($aBookmark) {
+        parse_str($aBookmark, $params);
+        if (isset($params['featureindex'])) {
+            $index = $params['featureindex'];
+            $categoryPath = explode(MAP_CATEGORY_DELIMITER, $params['category']);
+            //$dataController = $this->getDataController($categoryPath, $listItemPath);
+            $dataController = $this->getDataController();
+            $feature = $dataController->selectFeature($index);
+            //$feature = $dataController->getFeature($index, $listItemPath);
+            return array($feature->getTitle(), $dataController->getTitle());
+        
+        } else if (isset($params['group'])) {
+            $groupData = $this->getDataForGroup($params['group']);
+            return array($groupData['title']);
+
+        } else if (isset($params['title'])) {
+            $result = array($params['title']);
+            if (isset($params['address'])) {
+                $result[] = $params['address'];
+            }
+            return $result;
+
+        } else {
+            return array($aBookmark);
+        }
+    }
+    
+    private function bookmarkType($aBookmark) {
+        parse_str($aBookmark, $params);
+        if (isset($params['group']))
+            return 'group';
+        return 'place';
+    }
+
+    /////// UI functions
+    
     protected function addJavascriptFullscreenStaticMap() {
         // Let Webkit figure out what the window size is and then hide the address bar
         // and resize the map
@@ -180,72 +404,37 @@ JS;
         }
     }
     
-    private function initializeMap(MapDataController $dataController, MapFeature $feature, $fullscreen=FALSE) {
+    private function initializeMap(MapDataController $dataController, $fullscreen=FALSE) {
         
         $MapDevice = new MapDevice($this->pagetype, $this->platform);
-        $style = $feature->getStyle();
-        $geometries = array();
-        
-        $geometries[] = $feature->getGeometry();
 
-        // zoom
+        $imgController = $dataController->getMapImageController($MapDevice);
+
+        // override point for where annotation should be drawn
+        if (isset($this->args['lat'], $this->args['lon'])) {
+            $customPlacemark = new MapBasePoint(
+                $this->args['lat'], $this->args['lon']);
+        }
+        
+        // override point for current zoom level
         if (isset($this->args['zoom'])) {
             $zoomLevel = $this->args['zoom'];
         } else {
             $zoomLevel = $dataController->getDefaultZoomLevel();
         }
-
-        if ($MapDevice->pageSupportsDynamicMap() && $dataController->supportsDynamicMap()) {
-            $imgController = $dataController->getDynamicMapController();
-        } else {
-            $imgController = $dataController->getStaticMapController();
-        }
-
-        if ($imgController->supportsProjections()) {
-            $imgController->setDataProjection($dataController->getProjection());
-        } else {
-            $dataProjection = $dataController->getProjection();
-            $outputProjection = $imgController->getMapProjection();
-            if (MapProjector::needsConversion($dataProjection, $outputProjection)) {
-                $projector = new MapProjector();
-                $projector->setSrcProj($dataProjection);
-                $projector->setDstProj($outputProjection);
-                foreach ($geometries as $i => $geometry) {
-                    $geometries[$i] = $projector->projectGeometry($geometry);
-                }
-            }
-        }
         
-        if (isset($this->args['lat'], $this->args['lon'])) {
-            array_unshift($geometries, new EmptyMapPoint($this->args['lat'], $this->args['lon']));
-        }
-        
-        // center
+        // override point for where map should be centered
         if (isset($this->args['center'])) {
             $latlon = explode(",", $this->args['center']);
             $center = array('lat' => $latlon[0], 'lon' => $latlon[1]);
-        } else {
-            $center = $geometries[0]->getCenterCoordinate();
+        } elseif (isset($customPlacemark)) {
+            $center = $customPlacemark->getCenterCoordinate();
         }
 
-        $imgController->setCenter($center);
+        if (isset($center)) {
+            $imgController->setCenter($center);
+        }
         $imgController->setZoomLevel($zoomLevel);
-
-        foreach ($geometries as $i => $geometry) {
-            if ($geometry instanceof MapPolygon) {
-                if ($imgController->canAddPolygons()) {
-                    $imgController->addPolygon($geometry->getRings(), $style);
-                }
-            } elseif ($geometry instanceof MapPolyline) {
-                if ($imgController->canAddPaths()) {
-                    $imgController->addPath($geometry->getPoints(), $style);
-                }
-            } else {
-                if ($imgController->canAddAnnotations()) {
-                    $imgController->addAnnotation($geometry->getCenterCoordinate(), $style, $feature->getTitle());
-                }
-            }
-        }
 
         if (!$fullscreen) {
             $this->assign('fullscreenURL', $this->buildBreadcrumbURL('fullscreen', $this->args, false));
@@ -279,191 +468,30 @@ JS;
             $this->addJavascriptFullscreenStaticMap();
         }
     }
-    
-    // url builders
-
-    // $category can be a string or array which specifies the drilldown path 
-    // if null, user will be redirected to index
-    private function categoryURL($category=null, $addBreadcrumb=true) {
-        $args = array();
-        if ($category !== NULL) {
-            if (is_array($category)) {
-                $category = implode(MAP_CATEGORY_DELIMITER, $category);
-            }
-            $args['category'] = $category;
-        }
-        return $this->buildBreadcrumbURL('category', $args, $addBreadcrumb);
-    }
-    
-    private function groupURL($group, $addBreadcrumb=false) {
-        $args = $this->args;
-        $args['group'] = $group;
-        $args['action'] = ($group == '') ? 'remove' : 'add';
-        return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
-    }
-
-    private function detailURL($name, $category=null, $addBreadcrumb=true) {
-        $args = array();
-        $args['featureindex'] = $name;
-        if ($category) {
-            if (is_array($category)) {
-                $category = implode(MAP_CATEGORY_DELIMITER, $category);
-            }
-            $args['category'] = $category;
-        }
-        return $this->buildBreadcrumbURL('detail', $args, $addBreadcrumb);
-    }
-  
-    private function detailURLForResult($urlArgs, $addBreadcrumb=true) {
-        return $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
-    }
-  
-    private function detailUrlForPan($direction, $imgController) {
-        $args = $this->args;
-        $center = $imgController->getCenterForPanning($direction);
-        $args['center'] = $center['lat'] .','. $center['lon'];
-        return $this->buildBreadcrumbURL('detail', $args, false);
-    }
-
-    private function detailUrlForZoom($direction, $imgController) {
-        $args = $this->args;
-        $args['zoom'] = $imgController->getLevelForZooming($direction);
-        return $this->buildBreadcrumbURL('detail', $args, false);
-    }
-
-    public function federatedSearch($searchTerms, $maxCount, &$results) {
-        $mapSearch = $this->getSearchClass();
-        $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
-        
-        $limit = min($maxCount, count($searchResults));
-        for ($i = 0; $i < $limit; $i++) {
-            $result = array(
-                'title' => $searchResults[$i]->getTitle(),
-                'url'   => $this->buildBreadcrumbURL('detail',
-                               shortArrayFromMapFeature($searchResults[$i]), false),
-              );
-              $results[] = $result;
-        }
-    
-        return count($searchResults);
-    }
-
-    private function getDataController($categoryPath, &$listItemPath) {
-        if (!$this->feeds)
-            $this->feeds = $this->loadFeedData();
-
-        if ($categoryPath === NULL) {
-            return MapDataController::factory('MapDataController', array(
-                'JS_MAP_CLASS' => 'GoogleJSMap',
-                'DEFAULT_ZOOM_LEVEL' => $this->getOptionalModuleVar('DEFAULT_ZOOM_LEVEL', 10)
-                ));
-        
-        } else {
-            $listItemPath = $categoryPath;
-            if ($this->numGroups > 0) {
-                if (count($categoryPath) < 2) {
-                    $path = implode(MAP_CATEGORY_DELIMITER, $categoryPath);
-                    throw new Exception("invalid category path $path for multiple feed groups");
-                }
-                $feedIndex = array_shift($listItemPath).MAP_CATEGORY_DELIMITER.array_shift($listItemPath);
-            } else {
-                $feedIndex = array_shift($listItemPath);
-            }
-            $feedData = $this->feeds[$feedIndex];
-            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            if (isset($feedData['TITLE'])) {
-                $controller->setTitle($feedData['TITLE']);
-            }
-            $controller->setCategory($feedIndex);
-            return $controller;
-        }
-    }
-
-    protected function getSearchClass() {
-        $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
-        if (!$this->feeds)
-            $this->feeds = $this->loadFeedData();
-        $mapSearch = new $mapSearchClass($this->feeds);
-        return $mapSearch;
-    }
-    
-    private function assignCategories() {
-        if (!$this->feeds)
-            $this->feeds = $this->loadFeedData();
-
-        $categories = array();
-        foreach ($this->feeds as $id => $feed) {
-            if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
-            $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
-            $categories[] = array(
-                'id'=>$id,
-                'title' => $feed['TITLE'],
-                'subtitle' => $subtitle,
-                'url' => $this->categoryURL($id),
-                );
-        }
-        
-        $this->assign('categories', $categories);
-        return $categories;
-    }
-
-    protected function detailURLForBookmark($aBookmark) {
-        parse_str($aBookmark, $params);
-        if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
-            return $this->buildBreadcrumbURL('detail', $params, true);
-        } else if (isset($params['group'])) {
-            return $this->groupURL($params['group']);
-        } else {
-            return '#';
-        }
-    }
-
-    protected function getTitleForBookmark($aBookmark) {
-        parse_str($aBookmark, $params);
-        if (isset($params['featureindex'])) {
-            $index = $params['featureindex'];
-            $categoryPath = explode(MAP_CATEGORY_DELIMITER, $params['category']);
-            $dataController = $this->getDataController($categoryPath, $listItemPath);
-            $feature = $dataController->getFeature($index, $listItemPath);
-            return array($feature->getTitle(), $dataController->getTitle());
-        
-        } else if (isset($params['group'])) {
-            $groupData = $this->getDataForGroup($params['group']);
-            return array($groupData['title']);
-
-        } else if (isset($params['title'])) {
-            $result = array($params['title']);
-            if (isset($params['address'])) {
-                $result[] = $params['address'];
-            }
-            return $result;
-
-        } else {
-            return array($aBookmark);
-        }
-    }
-    
-    private function bookmarkType($aBookmark) {
-        parse_str($aBookmark, $params);
-        if (isset($params['group']))
-            return 'group';
-        return 'place';
-    }
 
     // return true on success, false on failure
     protected function generateTabForKey($tabKey, $feature, $dataController, &$tabJavascripts) {
         switch ($tabKey) {
             case 'map':
             {
-                $this->initializeMap($dataController, $feature);
+                $this->initializeMap($dataController);
                 return true;
             }
             case 'nearby':
             {
-                $geometry = $feature->getGeometry();
-                $center = $geometry->getCenterCoordinate();
+                if ($feature) {
+                    $geometry = $feature->getGeometry();
+                    $center = $geometry->getCenterCoordinate();
+                    $dupeTitle = $feature->getTitle();
+                } elseif (isset($this->args['lat'], $this->args['lon'])) {
+                    $center = array(
+                        'lat' => $this->args['lat'],
+                        'lon' => $this->args['lon']);
+                } else {
+                    return false;
+                }
 
-                $mapSearch = $this->getSearchClass();              
+                $mapSearch = $this->getSearchClass();          
                 $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
                 $places = array();
                 if ($searchResults) {
@@ -476,7 +504,7 @@ JS;
                             'url' => $this->detailURLForResult($urlArgs, false),
                             );
 
-                        if ($feature->getTitle() != $result->getTitle())
+                        if ($dupeTitle != $result->getTitle())
                             $places[] = $place;
                     }
                     $this->assign('nearbyResults', $places);
@@ -485,6 +513,10 @@ JS;
             }
             case 'info':
             {
+                if (!$feature) {
+                    return false;
+                }
+
                 // embedded photo
                 $photoServer = $this->getOptionalModuleVar('MAP_PHOTO_SERVER');
                 // this method of getting photo url is harvard-specific and
@@ -500,12 +532,13 @@ JS;
                     }
                 }
                 
+                // TODO this should be done on all placemarks except KML
                 if (is_subclass_of($dataController, 'ArcGISDataController')) {
                     $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');   
                     $feature->setBlackList($detailConfig['details']['suppress']);
                 }
                 
-                $displayDetailsAsList = $feature->getDescriptionType() == MapFeature::DESCRIPTION_LIST;
+                $displayDetailsAsList = $feature->getDescriptionType() == Placemark::DESCRIPTION_LIST;
                 $details = $feature->getDescription();
                 
                 $this->assign('displayDetailsAsList', $displayDetailsAsList);
@@ -520,25 +553,6 @@ JS;
         return false;
     }
 
-
-    protected function sortCategoriesForCurrentLocation($categoriesArray, $currentLat, $currentLon){
-        $distanceArray = array();
-        
-        foreach ($categoriesArray as $categoryItem){
-
-            $lat = $categoryItem['loc'][0];
-            $lon = $categoryItem['loc'][1];
-
-            $distance = greatCircleDistance($currentLat, $currentLon, $lat, $lon);
-
-            $distanceArray[] = $distance;
-        }
-
-        array_multisort($distanceArray, SORT_ASC, $categoriesArray);
-
-        // return the categories array sorted based on distance
-        return $categoriesArray;
-    }
 
     protected function initializeForPage() {
         $this->featureIndex = $this->getArg('featureindex', null);
@@ -621,10 +635,12 @@ JS;
                     
                     $categories = $this->assignCategories();
                     
+                    /*
                     if (count($categories)==1) {
                         $category = current($categories);
                         $this->redirectTo('category', array('category'=>$category['id']));
                     }
+                    */
                     $this->assign('browseHint', "Browse {$browseBy} by:");
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
                     if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
@@ -700,15 +716,20 @@ JS;
             
             case 'category':
 
-                $categoryPath = $this->getCategoriesAsArray();
+                //$categoryPath = $this->getCategoriesAsArray();
+                $categoryPath = $this->getCategory();
                 if ($categoryPath) {
                     // populate drop-down list at the bottom
                     $this->assignCategories();
-        
                     // build the drill-down list
+                    $dataController = $this->getDataController();
+                    $dataController->addDisplayFilter('category', $this->getDrillDownPath());
+                    $listItems = $dataController->getListItems();
+                    /*
                     $dataController = $this->getDataController($categoryPath, $listItemPath);
                     $listItems = $dataController->getListItems($listItemPath);
-                    if (count($listItems) == 1 && current($listItems) instanceof MapFeature) {
+                    */
+                    if (count($listItems) == 1 && current($listItems) instanceof Placemark) {
                         $args = $this->args;
                         $args['featureindex'] = current($listItems)->getIndex();
                         $this->redirectTo('detail', $args, true);
@@ -716,12 +737,13 @@ JS;
 
                     $places = array();
                     foreach ($listItems as $listItem) {
-                        if ($listItem instanceof MapFeature) {
+                        if ($listItem instanceof Placemark) {
                             $url = $this->detailURL($listItem->getIndex(), $categoryPath);
                         } else {
                             // for folder objects, getIndex returns the subcategory ID
-                            $drilldownPath = array_merge($categoryPath, array($listItem->getIndex()));
-                            $url = $this->categoryURL($drilldownPath, false); // don't add breadcrumb
+                            //$drilldownPath = array_merge($categoryPath, array($listItem->getId()));
+                            $drilldownPath = array_merge($this->getDrillDownPath(), array($listItem->getId()));
+                            $url = $this->categoryURL($categoryPath, $drilldownPath, false);
                         }
                         $places[] = array(
                             'title'    => $listItem->getTitle(),
@@ -755,9 +777,10 @@ JS;
                 $tabKeys = array();
                 $tabJavascripts = array();
 
-                $dataController = $this->getDataControllerForMap($listItemPath);
-                $feature = $this->getFeatureForMap($dataController, $listItemPath);
-    
+                $dataController = $this->getDataController();
+                //$dataController = $this->getDataControllerForMap($listItemPath);
+                //$feature = $this->getFeatureForMap($dataController, $listItemPath);
+                $feature = $dataController->selectFeature($this->featureIndex);
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     if (isset($this->args['featureindex'])) { // this is a regular place
                         $cookieParams = array(
@@ -773,10 +796,17 @@ JS;
                     }
                 }
                 
-                $this->assign('name', $this->getArg('title', $feature->getTitle()));
-                // prevent infinite loop in smarty_modifier_replace
-                // TODO figure out why smarty gets in an infinite loop
-                $address = str_replace("\n", " ", $feature->getSubtitle());
+                if ($feature) {
+                    $title = $feature->getTitle();
+                    // prevent infinite loop in smarty_modifier_replace
+                    // TODO figure out why smarty gets in an infinite loop
+                    $address = str_replace("\n", " ", $feature->getSubtitle());
+                } else {
+                    // TODO put something reasonable here
+                    $title = '';
+                    $address = '';
+                }
+                $this->assign('name', $this->getArg('title', $title));
                 $this->assign('address', $this->getArg('address', $address));
 
                 $possibleTabs = $detailConfig['tabs']['tabkeys'];
@@ -791,48 +821,12 @@ JS;
                 break;
                 
             case 'fullscreen':
-                $dataController = $this->getDataControllerForMap($listItemPath);
-                $feature = $this->getFeatureForMap($dataController, $listItemPath);
-                $this->initializeMap($dataController, $feature, true);
+                //$dataController = $this->getDataControllerForMap($listItemPath);
+                //$feature = $this->getFeatureForMap($dataController, $listItemPath);
+                $dataController = $this->getDataController();
+                $dataController->selectFeature($this->featureIndex);
+                $this->initializeMap($dataController, true);
                 break;
         }
-    }
-    
-    private function getDataControllerForMap(&$listItemPath=array()) {
-        if (isset($this->featureIndex)) { // this is a regular place
-            $topCategory = NULL;
-            $categoryPath = $this->getCategoriesAsArray();
-            if (count($categoryPath)) {
-                $topCategory = $categoryPath[0];
-            }
-            $dataController = $this->getDataController($categoryPath, $listItemPath);
-
-        } else {
-            $dataController = $this->getDataController(NULL, $listItemPath);
-        }
-        return $dataController;
-    }
-        
-    private function getFeatureForMap($dataController, $categoryPath=array()) {
-        if (isset($this->featureIndex)) { // this is a regular place
-            $index = $this->featureIndex;
-            $feature = $dataController->getFeature($index, $categoryPath);
-                    
-        } elseif (isset($this->args['group'])) { // this is a campus
-            $campusData = $this->getDataForGroup($this->args['group']);
-            $coordParts = explode(',', $campusData['center']);
-            $center = array('lat' => $coordParts[0], 'lon' => $coordParts[1]);
-
-            $feature = new EmptyMapFeature($center);
-            // may get rid of these setters and only allow setting in the constructor
-            $feature->setTitle($campusData['title']);
-            $feature->setField('address', $campusData['address']);
-            $feature->setDescription($campusData['description']);
-            $feature->setIndex($this->args['campus']);
-        } else {
-            $center = array('lat' => 0, 'lon' => 0);
-            $feature = new EmptyMapFeature($center);
-        }
-        return $feature;
     }
 }

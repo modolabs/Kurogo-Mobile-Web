@@ -434,10 +434,16 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
     protected $index;
     protected $category;
 
+    protected $folders = array();
+    protected $features = array();
+
     public function addItem(MapListElement $item) {
         if ($item instanceof Placemark) {
-            $item->setIndex(count($this->items));
-            $item->setCategory($this->category);
+            //$item->setIndex(count($this->items));
+            //$item->setCategory($this->category);
+            $this->features[] = $item;
+        } elseif ($item instanceof MapFolder) {
+            $this->folders[] = $item;
         }
         $this->items[] = $item;
     }
@@ -447,6 +453,16 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
     }
     
     // MapFolder interface
+
+    public function getChildCategories()
+    {
+        return $this->folders;
+    }
+
+    public function getAllFeatures()
+    {
+        return $this->features;
+    }
     
     public function getListItems() {
         return $this->items;
@@ -465,7 +481,7 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
         return $this->description;
     }
 
-    public function getIndex() {
+    public function getId() {
         return $this->index;
     }
     
@@ -478,7 +494,7 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
     }
 }
 
-class KMLDataParser extends XMLDataParser
+class KMLDataParser extends XMLDataParser implements MapDataParser
 {
     protected $root;
     protected $elementStack = array();
@@ -486,6 +502,7 @@ class KMLDataParser extends XMLDataParser
 
     protected $document;
     protected $folders = array();
+    protected $features = array();
     protected $title;
     protected $category;
 
@@ -501,11 +518,27 @@ class KMLDataParser extends XMLDataParser
         'PLACEMARK'
         );
 
-    /*    
-    public function init($args)
+    /////// MapDataParser
+
+    public function getAllFeatures()
+    {
+        return $this->features;
+    }
+
+    public function getChildCategories()
+    {
+        return $this->folders;
+    }
+
+    public function getListItems()
     {
     }
-    */
+
+    public function getListItem($listItem)
+    {
+    }
+
+    /////
 
     public function getTitle() {
         return $this->title;
@@ -547,7 +580,7 @@ class KMLDataParser extends XMLDataParser
                 // we need to do this before the element is completed
                 // since this info needs to be available for nested children
                 if ($parent instanceof KMLFolder) {
-                    $newFolderIndex = count($parent->getListItems());
+                    $newFolderIndex = count($parent->getChildCategories());
                     $categoryPath = $parent->getCategory();
                 } elseif ($parent instanceof KMLDocument) { // child of root element
                     $newFolderIndex = count($this->items);
@@ -618,6 +651,7 @@ class KMLDataParser extends XMLDataParser
                     $parent->addItem($element);
                 } else {
                     $this->items[] = $element;
+                    $this->folders[] = $element;
                 }
                 break;
             case 'STYLE':
@@ -629,9 +663,11 @@ class KMLDataParser extends XMLDataParser
                 if ($parent instanceof KMLFolder) {
                     $parent->addItem($element);
                 } else {
-                    $element->setIndex(count($this->items));
                     $this->items[] = $element;
                 }
+                $element->setIndex(count($this->features));
+                $this->features[] = $element;
+
                 break;
             case 'STYLEURL':
                 $value = $element->value();

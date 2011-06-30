@@ -73,7 +73,7 @@ class ArcGISPolygon implements MapPolygon
     }
 }
 
-class ArcGISFeature implements MapFeature
+class ArcGISFeature implements Placemark
 {
     private $index;
     private $attributes;
@@ -142,6 +142,16 @@ class ArcGISFeature implements MapFeature
         return $this->index;
     }
 
+    public function getAddress()
+    {
+        return $this->getField('Address');
+    }
+
+    public function getCategoryIds()
+    {
+        // TODO
+    }
+
     public function getTitle()
     {
         if (isset($this->attributes[$this->titleField])) {
@@ -206,7 +216,7 @@ class ArcGISFeature implements MapFeature
     }
 }
 
-class ArcGISParser extends DataParser implements MapFolder
+class ArcGISParser extends DataParser implements MapDataParser
 {
     private $singleFusedMapCache; // indicates whether we have map tiles
     private $initialExtent;
@@ -317,6 +327,14 @@ class ArcGISParser extends DataParser implements MapFolder
     }
     
     //// MapFolder interface
+
+    public function getAllFeatures() {
+        return $this->selectedLayer->getListItems();
+    }
+
+    public function getChildCategories() {
+        return array_values($this->subLayers);
+    }
     
     public function getListItems() {
         return array_values($this->subLayers);
@@ -422,6 +440,10 @@ class ArcGISParser extends DataParser implements MapFolder
 class ArcGISLayer implements MapFolder, MapListElement {
     private $id;
     private $name;
+
+    // TODO start using this
+    private $parent; // ArcGISParser that created us
+
     private $parentCategory;
     
     private $fieldNames;
@@ -481,6 +503,17 @@ class ArcGISLayer implements MapFolder, MapListElement {
             return $this->features[$name];
         }
         return null;
+    }
+
+    public function getAllFeatures()
+    {
+        return $this->features;
+    }
+
+    public function getChildCategories()
+    {
+        // TODO support arcgis sublayers
+        return array();
     }
     
     // end MapFolder interface

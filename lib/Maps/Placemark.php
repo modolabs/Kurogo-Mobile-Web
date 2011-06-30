@@ -28,7 +28,8 @@ interface Placemark extends MapListElement
     public function setField($fieldName, $value);
 }
 
-class MapBaseStyle implements MapStyle {
+class MapBaseStyle implements MapStyle
+{
     public function getStyleForTypeAndParam($type, $param) {
         return null;
     }

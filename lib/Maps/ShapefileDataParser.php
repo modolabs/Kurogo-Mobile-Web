@@ -1,12 +1,16 @@
 <?php
 
-class ShapefileGeometry implements MapGeometry, MapFeature
+class ShapefileGeometry extends BasePlacemark implements MapGeometry
 {
     protected $index;
     protected $geometry;
     protected $bbox;
     protected $properties;
     protected $category;
+
+    // parent requires a geometry parameter
+    // we don't because we are geometry
+    public function __construct() { }
 
     // TODO: these are placeholder implementations of
     // getTitle and getSubtitle.  the title and subtitle
@@ -30,28 +34,9 @@ class ShapefileGeometry implements MapGeometry, MapFeature
         }
         return null;
     }
-    
-    public function getField($fieldName) {
-        if (isset($this->properties[$fieldName])) {
-            return $this->properties[$fieldName];
-        }
-        return null;
-    }
 
-    public function setField($field, $value) {
-        $this->properties[$field] = $value;
-    }
-
-    public function getCategory() {
-        return $this->category;
-    }
-
-    public function setCategory($category) {
-        $this->category = $category;
-    }
-
-    public function getStyle() {
-        return null;
+    public function setFields($properties) {
+        $this->properties = $properties;
     }
 
     public function setIndex($index) {
@@ -74,10 +59,6 @@ class ShapefileGeometry implements MapGeometry, MapFeature
         $this->bbox = $bbox;
     }
 
-    public function setProperties($properties) {
-        $this->properties = $properties;
-    }
-
     public function getCenterCoordinate() {
         if (isset($this->bbox)) {
             $point = array(
@@ -88,22 +69,6 @@ class ShapefileGeometry implements MapGeometry, MapFeature
         }
 
         return null;
-    }
-    
-    public function getDescriptionType()
-    {
-        return MapFeature::DESCRIPTION_LIST;
-    }
-    
-    // we could probably make this really similar to ArcGISFeature
-    public function getDescription()
-    {
-        $details = array();
-        foreach ($this->properties as $name => $value) {
-            $aDetail = array('label' => $name, 'title' => $value);
-            $details[] = $aDetail;
-        }
-        return $details;
     }
 }
 
@@ -275,7 +240,7 @@ abstract class BinaryFileParser
     }
 }
 
-class ShapefileDataParser extends BinaryFileParser
+class ShapefileDataParser extends BinaryFileParser implements MapDataParser
 {
     private $features = array();
     private $dbfParser;
@@ -300,6 +265,25 @@ class ShapefileDataParser extends BinaryFileParser
         //'28' => 'addMultiPointM',
         //'31' => 'addMultiPatch',
         );
+
+    public function getListItem($item)
+    {
+    }
+
+    public function getListItems()
+    {
+        return $this->features;
+    }
+
+    public function getAllFeatures()
+    {
+        return $this->features;
+    }
+
+    public function getChildCategories()
+    {
+        return array();
+    }
 
     public function getParsedData() {
         return $this->features;
@@ -363,8 +347,8 @@ class ShapefileDataParser extends BinaryFileParser
             $feature = $this->$readFunction();
         }
         $feature->setIndex($recordNumber);
-        $feature->setProperties($this->dbfParser->readRecord());
-        $feature->setCategory($this->category);
+        $feature->setFields($this->dbfParser->readRecord());
+        //$feature->setCategory($this->category);
 
         return $feature;
     }

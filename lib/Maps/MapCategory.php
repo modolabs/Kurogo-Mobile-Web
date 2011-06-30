@@ -3,12 +3,12 @@
 abstract class MapCategory implements MapFolder, MapListElement
 {
     protected $id;
-    protected $name;
+    protected $title;
     protected $description;
 
     public function getTitle()
     {
-        return $this->name;
+        return $this->title;
     }
 
     public function getSubtitle()
@@ -26,4 +26,6 @@ abstract class MapCategory implements MapFolder, MapListElement
         return $this->id;
     }
 }
+
+
 

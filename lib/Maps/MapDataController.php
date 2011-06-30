@@ -1,32 +1,45 @@
 <?php
 
-// for KML, each KML file is a category
-// for ArcGIS, each layer (or service instance?) is a category
+// represents a top level map category
+// for KML, each KML file is a top level category
+// for ArcGIS, each layer (or service instance?) is a top level category
 
 class MapDataController extends DataController implements MapFolder
 {
     const SEARCH_RESULTS = -1;
 
-    protected $parser = null;
+    const SELECTED_FEATURES = 1;
+    const FILTERED_FEATURES = 2;
+    const NO_FEATURES = 3;
+
+    // data source config options
     protected $DEFAULT_PARSER_CLASS = 'KMLDataParser';
-    protected $DEFAULT_MAP_CLASS = 'GoogleStaticMap';
-    protected $items = null;
-    protected $staticMapBaseURL = null;
-    protected $dynamicMapBaseURL = null;
+    protected $parser = null;
     protected $searchable = false;
-    protected $defaultZoomLevel = 16;
     protected $title = null;
-    
+
+    // base map config options
+    protected $DEFAULT_MAP_CLASS = 'GoogleStaticMap';
+    protected $staticMapClass;
+    protected $staticMapBaseURL = null;
+    protected $dynamicMapClass = null;
+    protected $dynamicMapBaseURL = null;
+    protected $defaultZoomLevel = 16;
+
     // in theory all map images controllers should use the same
     // zoom level, but if certain image servers (e.g. Harvard ArcGIS)
     // have different definitions for zoom level, we need another
     // field to specify this
     protected $dynamicZoomLevel = null;
+
+    // not config variables    
+    protected $items = null;
+    protected $projection = GEOGRAPHIC_PROJECTION;
+    protected $selectedFeatures = array();
+    protected $displaySetId = self::SELECTED_FEATURES;
+    protected $drillDownPath = array();
     
     const COMMON_WORDS = 'the of to and in is it you that he was for on are with as his they be at one have this from or had by hot but some what there we can out other were all your when up use word how said an each she which do their time if will way about many then them would write like so these her long make thing see him two has look more day could go come did my no most who over know than call first people may down been now find any new take get place made where after back only me our under';
-
-    protected $staticMapClass;
-    protected $dynamicMapClass = null;
 
     protected function cacheFolder()
     {
@@ -169,12 +182,144 @@ class MapDataController extends DataController implements MapFolder
         }
     }
 
+    public function getChildCategories()
+    {
+        return $this->parser->getChildCategories();
+    }
+
+    public function getAllFeatures()
+    {
+        $this->items(); // make sure we're populated
+        return $this->parser->getAllFeatures();
+    }
+
+    public function selectFeature($featureId)
+    {
+        $result = null;
+        foreach ($this->getAllFeatures() as $feature) {
+            if ($feature->getIndex() == $featureId) {
+                $result = $feature;
+                break;
+            }
+        }
+        if ($result) {
+            $this->selectedFeatures[] = $result;
+        }
+        return $result;
+    }
+
+    public function setSelectedFeatures($features)
+    {
+        $this->selectedFeatures = $features;
+    }
+
+    public function getSelectedFeature()
+    {
+        return end($this->selectedFeatures);
+    }
+
+    public function getAllSelectedFeatures()
+    {
+        return $this->selectedFeatures;
+    }
+
+    public function addDisplayFilter($type, $value)
+    {
+        if ($type == 'category') {
+            if ($value && !is_array($value)) {
+                $value = array($value);
+            }
+            $this->drillDownPath = $value;
+        }
+    }
+
+    public function clearDisplayFilters()
+    {
+        $this->drillDownPath = null;
+    }
+
+    public function getAllFilteredFeatures()
+    {
+        $features = array();
+        foreach ($this->getAllFeatures() as $feature) {
+            if (!$this->drillDownPath 
+                || in_array($this->drillDownPath, $feature->getCategories()))
+            {
+                $features[] = $feature;
+            }
+        }
+        return $features;
+    }
+
+    public function setDisplaySet($set=self::SELECTED_FEATURES)
+    {
+        $this->displaySetId = $set;
+    }
+
+    public function items()
+    {
+        if (!$this->items) {
+            $this->items = parent::items();
+        }
+        return $this->items;
+    }
+
     // MapFolder interface
+
+    private static function listItemsAtPath(array $items, array $path=array())
+    {
+        if (count($path)) {
+            $firstItem = array_shift($path);
+        }
+        $folders = array();
+        $features = array();
+        foreach ($items as $item) {
+            if ($item instanceof MapFolder) {
+                $folders[] = $item;
+            } elseif ($item instanceof Placemark) {
+                $features[] = $item;
+            }
+        }
+
+        if (count($folders) && count($features)) {
+            $otherCategory = new MapBaseCategory(count($folders), 'Other places');
+            $folders[] = $otherCategory;
+            $otherCategory->setFeatures($features);
+        }
+
+        if (count($folders) > 1) {
+            if (isset($firstItem)) {
+                if (count($folders) > $firstItem) {
+                    return self::listItemsAtPath(
+                        $folders[$firstItem]->getListItems(), $path);
+                }
+            }
+
+            return $folders;
+        }
+
+        if (isset($firstItem)) {
+            if (count($features) > $firstItem) {
+                return $features[$firstItem];
+            }
+            return null;
+        }
+
+        return $features;
+    }
+
+    public function getListItems()
+    {
+        var_dump($this->drillDownPath);
+        return self::listItemsAtPath($this->items(), $this->drillDownPath);
+    }
     
-    public function getListItem($name) {
+    public function getListItem($name)
+    {
         return $this->getItem($name);
     }
     
+    /*
     public function getListItems($categoryPath=array()) {
         $container = $this;
         while (count($categoryPath) > 0) {
@@ -202,6 +347,7 @@ class MapDataController extends DataController implements MapFolder
         }
         return $items;
     }
+    */
 
     // TODO find some way to require that MapFolder objects include
     // setCategory and getCategory, even though the MapListElement
@@ -230,7 +376,7 @@ class MapDataController extends DataController implements MapFolder
     }
     
     public function getProjection() {
-        return GEOGRAPHIC_PROJECTION;
+        return $this->projection;
     }
 
     // implemented for compatibility with DataController
@@ -270,14 +416,56 @@ class MapDataController extends DataController implements MapFolder
         return $this->defaultZoomLevel;
     }
 
+    public function getMapImageController(MapDevice $mapDevice)
+    {
+        if ($mapDevice->pageSupportsDynamicMap() && $this->dynamicMapClass !== null) {
+            $imgController = $this->getDynamicMapController();
+        } else {
+            $imgController = $this->getStaticMapController();
+        }
+
+        // TODO pass projection info on to map image controller
+
+        $placemarks = array();
+
+        switch ($this->displaySetId) {
+            case self::SELECTED_FEATURES:
+                // add annotations via selectFeature()
+                $placemarks = $this->getAllSelectedFeatures();
+                break;
+            case self::FILTERED_FEATURES:
+                // add annotations that match displayFilters
+                $placemarks = $this->getAllFilteredFeatures();
+                break;
+            case self::NO_FEATURES:
+            default:
+                // don't add any annotations, this will be done in the view
+                break;
+        }
+
+        foreach ($placemarks as $placemark) {
+            $imgController->addPlacemark($placemark);
+        }
+
+        // TODO better way to set default center coordinate
+        if (count($placemarks)) {
+            $lastPlacemark = end($placemarks);
+            $imgController->setCenter($lastPlacemark->getGeometry()->getCenterCoordinate());
+        }
+
+        return $imgController;
+    }
+
     public function getStaticMapController() {
         $controller = MapImageController::factory($this->staticMapClass, $this->staticMapBaseURL);
         return $controller;
     }
 
+    /*
     public function supportsDynamicMap() {
         return ($this->dynamicMapClass !== null);
     }
+    */
 
     public function getDynamicMapController() {
         if (is_array($this->dynamicMapBaseURL)) {
@@ -296,6 +484,17 @@ class MapDataController extends DataController implements MapFolder
             }
         }
         return $controller;
+    }
+
+    public static function defaultDataController()
+    {
+        $args = array(
+            'JS_MAP_CLASS' => 'GoogleJSMap',
+            'DEFAULT_ZOOM_LEVEL' => $module->getOptionalModuleVar(
+                'DEFAULT_ZOOM_LEVEL', 10)
+            );
+        
+        return self::factory('MapDataController', $args);
     }
     
     protected function init($args)

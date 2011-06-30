@@ -12,105 +12,6 @@
 // http://en.wikipedia.org/wiki/Well-known_text#Geometric_objects
 // http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/opt/rsbp4120.htm
 
-
-// right now these objects must be constructed via WKTParser since the
-// parser reverses x and y coordinates prior to calling the constructor
-/*
-class WKTGeometry implements MapGeometry
-{
-    private $centroid;
-    private $coordinates;
-
-    public function getWKT()
-    {
-        // x, y
-        return "POINT({$this->centroid['lon']}, {$this->centroid['lat']})";
-    }
-
-    public function getCenterCoordinate() {
-        return $this->centroid;
-    }
-
-    public function __construct($coordinates, $centroid=null) {
-        $this->coordinates = $coordinates;
-        if ($centroid) {
-            $this->centroid = $centroid;
-        } else if (count($this->coordinates) == 2) {
-            $this->centroid = $this->coordinates;
-        }
-    }
-
-    protected function implodePoint($point)
-    {
-        return $point[1].' '.$point[0];
-    }
-}
-
-class WKTPolyline extends WKTGeometry implements MapPolyline
-{
-    private $points;
-
-    public function getPoints()
-    {
-        return $this->points;
-    }
-
-    public function getWKT()
-    {
-        $points = array_map(array($this, 'implodePoint'), $this->points);
-        return 'LINESTRING('.implode(',', $points).')';
-    }
-
-    public function __construct($coordinates, $centroid=null)
-    {
-        $this->points = $coordinates;
-        if ($centroid) {
-            $this->centroid = $centroid;
-        } else if (count($this->points)) {
-            $sumLon = 0;
-            $sumLat = 0;
-            $n = count($this->points);
-            foreach ($this->points as $point) {
-                $sumLat += $point[0];
-                $sumLon += $point[1];
-            }
-            $this->centroid = array(
-                'lat' => $sumLat / $n,
-                'lon' => $sumLon / $n);
-        }
-    }
-}
-
-class WKTPolygon extends WKTGeometry implements MapPolygon
-{
-    private $rings;
-
-    public function getRings()
-    {
-        return $this->rings;
-    }
-
-    public function __construct($coordinates, $centroid=null)
-    {
-        $this->rings = $coordinates;
-        if ($centroid) {
-            $this->centroid = $centroid;
-        } else if (count($this->rings)) {
-            $outerRing = $this->rings[0];
-            $sumLon = 0;
-            $sumLat = 0;
-            $n = count($outerRing);
-            foreach ($outerRing as $point) {
-                $sumLon += $point[0];
-                $sumLat += $point[1];
-            }
-            $this->centroid = array(
-                'lat' => $sumLat / $n,
-                'lon' => $sumLon / $n);
-        }
-    }
-}
-*/
 class WKTParser
 {
     // WKT for geometry and tranformations don't seem to really
@@ -242,7 +143,7 @@ class WKTParser
                 case 'POLYGON':
                     $result = array();
                     $arg = $matches[2];
-                    if (preg_match_all("/\((.+)\)/", $arg, $matches) {
+                    if (preg_match_all("/\((.+)\)/", $arg, $matches)) {
                         foreach ($matches[1] as $ring) {
                             $ringArray = array();
                             $ringParts = explode(',', $ring);

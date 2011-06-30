@@ -231,6 +231,16 @@ class MapDBCategory extends MapCategory
         return $fields;
     }
 
+    public function getChildCategories()
+    {
+        return $this->childCategories;
+    }
+
+    public function getAllFeatures()
+    {
+        return $this->features;
+    }
+
     public function getListItems()
     {
         if ($this->childCategories) {
@@ -280,6 +290,8 @@ class MapDBDataController extends MapDataController implements MapFolder
         return $this->subtitle;
     }
 
+    //////// DataController overrides
+
     protected function initStreamContext($args)
     {
         // no stream is required if:
@@ -323,6 +335,22 @@ class MapDBDataController extends MapDataController implements MapFolder
             $this->db->updateControllerCategory($this, $items);
         }
         return $items;
+    }
+
+    ////// MapDataController methods
+
+    // TODO allow config of searchable fields
+    public function search($searchText)
+    {
+        $this->setSelectedFeatures($this->search($searchText));
+        return $this->getAllSelectedFeatures();
+    }
+
+    public function searchByProximity($center, $tolerance, $maxItems)
+    {
+        $this->setSelectedFeatures(
+            $this->db->searchByProximity($center, $tolerance, $maxItems));
+        return $this->getAllSelectedFeatures();
     }
 }
 
@@ -397,6 +425,64 @@ class MapDBDataParser extends DataParser
                 self::updateFeature($item, $this->categoryId);
             }
         }
+    }
+
+    public function search($searchText)
+    {
+        $sql = 'SELECT p.* FROM '
+              .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
+              .' WHERE p.placemark_id = pc.placemark_id'
+              .'   AND pc.category_id = ?'
+              // TODO this substring pattern might need tweaking
+              .'   AND (p.name like ? OR p.name like ?)';
+
+        $params = array($this->categoryId, "$searchText%", "% $searchText%");
+
+        $placemarks = array();
+        while ($row = $result->fetch()) {
+             $placemarks[] = new MapPlacemark($row, true);
+        }
+        return $placemarks;
+    }
+
+    public function searchByProximity($center, $tolerance, $maxItems)
+    {
+        // approximate upper/lower bounds for lat/lon before calculating GCD
+        $dLatRadians = $tolerance / EARTH_RADIUS_IN_METERS;
+        // by haversine formula
+        $dLonRadians = 2 * asin(sin($dLatRadians / 2) / cos($center['lat'] * M_PI / 180));
+
+        $dLatDegrees = $dLatRadians * 180 / M_PI;
+        $dLonDegrees = $dLonRadians * 180 / M_PI;
+
+        $maxLat = $center['lat'] + $dLatDegrees;
+        $minLat = $center['lat'] - $dLatDegrees;
+        $maxLon = $center['lon'] + $dLonDegrees;
+        $minLon = $center['lon'] - $dLonDegrees;
+
+        $sql = 'SELECT p.* FROM '
+              .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
+              .' WHERE p.placemark_id = pc.placemark_id'
+              .'   AND pc.category_id = ?'
+              .'   AND lat >= ? AND lat < ? AND lon >= ? AND lon < ?'
+              .' ORDER BY (lat - ?)*(lat - ?) + (lon - ?)*(lon - ?)';
+        $params = array(
+            $this->categoryId,
+            $minLat, $maxLat, $minLon, $maxLon,
+            $center['lat'], $center['lon']);
+
+        if ($maxItems) {
+            $result = self::connection()->limitQuery(
+                $sql, $params, false, array(), $maxItems);
+        } else {
+            $result = self::connection()->query($sql, $params);
+        }
+
+        $placemarks = array();
+        while ($row = $result->fetch()) {
+             $placemarks[] = new MapPlacemark($row, true);
+        }
+        return $placemarks;
     }
 
     // static functions
