@@ -50,7 +50,6 @@ class GoogleAppsCalendarDataController extends CalendarDataController
         }
         
         $parameters = array(
-            'xoauth_requestor_id'=>$this->user->getEmail(),
             'alt'=>'jsonc'
         );
         
@@ -58,8 +57,13 @@ class GoogleAppsCalendarDataController extends CalendarDataController
             'GData-Version: 2'
         );
 
-        $result = $this->authority->oauthRequest('GET', $url, $parameters, $headers);
+        $oauth = $this->oauth();
+        $result = $oauth->oauthRequest('GET', $url, $parameters, $headers);
         return $result;
+    }
+    
+    protected function oauth() {
+        return $this->authority->oauth();
     }
     
     protected function init($args)

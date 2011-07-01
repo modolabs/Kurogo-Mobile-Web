@@ -71,15 +71,20 @@ class GoogleAppsCalendarListController extends CalendarListController
             $data = $cache->read($cacheFilename);
         } else {
 
-            $authority = $this->user->getAuthenticationAuthority();
+            $oauth = $this->oauth();
             $method = 'GET';        
         
-            if ($data = $authority->oAuthRequest($method, $url, $parameters, $headers)) {
+            if ($data = $oauth->oAuthRequest($method, $url, $parameters, $headers)) {
                 $cache->write($data, $cacheFilename);
             }
         }
         
         return $data;
+    }
+    
+    protected function oauth() {
+        $authority = $this->user->getAuthenticationAuthority();
+        return $authority->oauth();
     }
     
     public function getUserCalendars() {
