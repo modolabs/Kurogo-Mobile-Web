@@ -34,10 +34,16 @@ class ArcGISJSMap extends JavascriptMapImageController {
     public function __construct($baseURL)
     {
         $this->baseURL = $baseURL;
-        $arcgisParser = ArcGISDataController::parserFactory($this->baseURL);
-        $wkid = $arcgisParser->getProjection();
         $this->mapProjector = new MapProjector();
-        $this->mapProjector->setDstProj($wkid);
+
+        // TODO find a better way to reuse JSON parsing code for ArcGIS-related data
+        $url = $this->baseURL.'?'.http_build_query(array('f' => 'json'));
+        $content = file_get_contents($url);
+        $data = json_decode($content);
+        if (isset($data['spatialReference'], $data['spatialReference']['wkid'])) {
+            $wkid = $data['spatialReference']['wkid'];
+            $this->mapProjector->setDstProj($wkid);
+        }
     }
     
     public function setDataProjection($proj)

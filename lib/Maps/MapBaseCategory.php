@@ -30,8 +30,4 @@ class MapBaseCategory extends MapCategory
     {
         return array_merge($this->folders, $this->features);
     }
-
-    public function getListItem($path)
-    {
-    }
 }

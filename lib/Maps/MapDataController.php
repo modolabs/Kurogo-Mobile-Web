@@ -34,7 +34,7 @@ class MapDataController extends DataController implements MapFolder
 
     // not config variables    
     protected $items = null;
-    protected $projection = GEOGRAPHIC_PROJECTION;
+    //protected $projection = GEOGRAPHIC_PROJECTION;
     protected $selectedFeatures = array();
     protected $displaySetId = self::SELECTED_FEATURES;
     protected $drillDownPath = array();
@@ -256,6 +256,16 @@ class MapDataController extends DataController implements MapFolder
         $this->displaySetId = $set;
     }
 
+    // DataController overrides
+
+    public function getData()
+    {
+        if ($this->parser instanceof ArcGISParser) {
+            $this->addFilter('f', 'json');
+        }
+        return parent::getData();
+    }
+
     public function items()
     {
         if (!$this->items) {
@@ -313,41 +323,14 @@ class MapDataController extends DataController implements MapFolder
         var_dump($this->drillDownPath);
         return self::listItemsAtPath($this->items(), $this->drillDownPath);
     }
-    
-    public function getListItem($name)
+
+    public function getProjection()
     {
-        return $this->getItem($name);
+        if ($this->parser instanceof MapFolder) {
+            return $this->parser->getProjection();
+        }
+        return null;
     }
-    
-    /*
-    public function getListItems($categoryPath=array()) {
-        $container = $this;
-        while (count($categoryPath) > 0) {
-            $category = array_shift($categoryPath);
-            $testContainer = $container->getListItem($category);
-            if (!$testContainer instanceof MapFolder) {
-                break;
-            }
-            $container = $testContainer;
-        }
-
-        if ($container === $this) {
-            $items = $this->items();
-        } else {
-            $items = $container->getListItems();
-        }
-
-        // fast forward for categories that only have one item
-        while (count($items) == 1) {
-            $container = $items[0];
-            if (!$container instanceof MapFolder) {
-                break;
-            }
-            $items = $container->getListItems();
-        }
-        return $items;
-    }
-    */
 
     // TODO find some way to require that MapFolder objects include
     // setCategory and getCategory, even though the MapListElement
@@ -373,10 +356,6 @@ class MapDataController extends DataController implements MapFolder
             return $items[$name];
         }
         return null;
-    }
-    
-    public function getProjection() {
-        return $this->projection;
     }
 
     // implemented for compatibility with DataController
@@ -460,12 +439,6 @@ class MapDataController extends DataController implements MapFolder
         $controller = MapImageController::factory($this->staticMapClass, $this->staticMapBaseURL);
         return $controller;
     }
-
-    /*
-    public function supportsDynamicMap() {
-        return ($this->dynamicMapClass !== null);
-    }
-    */
 
     public function getDynamicMapController() {
         if (is_array($this->dynamicMapBaseURL)) {

@@ -467,11 +467,8 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
     public function getListItems() {
         return $this->items;
     }
-    
-    public function getListItem($name) {
-        if (isset($this->items[$name])) {
-            return $this->items[$name];
-        }
+
+    public function getProjection() {
         return null;
     }
     
@@ -520,6 +517,10 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
 
     /////// MapDataParser
 
+    public function getProjection() {
+        return null;
+    }
+
     public function getAllFeatures()
     {
         return $this->features;
@@ -531,10 +532,6 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
     }
 
     public function getListItems()
-    {
-    }
-
-    public function getListItem($listItem)
     {
     }
 

@@ -2,10 +2,10 @@
 
 interface MapFolder
 {
-    public function getListItem($name);
     public function getListItems();
     public function getAllFeatures();
     public function getChildCategories();
+    public function getProjection();
 }
 
 interface MapDataParser extends MapFolder

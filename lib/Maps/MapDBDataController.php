@@ -193,6 +193,7 @@ class MapDBCategory extends MapCategory
     private $features;
     private $childCategories = array();
     private $stored = false;
+    private $projection;
 
     public function __construct($dbFields, $fromDB=false)
     {
@@ -206,6 +207,9 @@ class MapDBCategory extends MapCategory
         }
         if (isset($dbFields['description'])) {
             $this->description = $dbFields['description'];
+        }
+        if (isset($dbFields['projection'])) {
+            $this->projection = $dbFields['projection'];
         }
     }
 
@@ -225,10 +229,16 @@ class MapDBCategory extends MapCategory
             'category_id' => $this->id,
             'parent_category_id' => $this->parentCategoryId,
             'name' => $this->name,
+            'projection' => $this->projection,
             'description' => $this->description,
             );
 
         return $fields;
+    }
+
+    public function getProjection()
+    {
+        return $this->projection;
     }
 
     public function getChildCategories()
@@ -260,11 +270,6 @@ class MapDBCategory extends MapCategory
             return $this->features;
         }
     }
-
-    public function getListItem($item)
-    {
-        return MapDBDataParser::getChildForCategory($this->id);
-    }
 }
 
 
@@ -278,11 +283,6 @@ class MapDBDataController extends MapDataController implements MapFolder
     public function getListItems()
     {
         return $this->items();
-    }
-
-    public function getListItem($item)
-    {
-        return $this->getChild($item);
     }
 
     public function getSubtitle()
@@ -767,6 +767,7 @@ class MapDBDataParser extends DataParser
                 category_id CHAR(32) NOT NULL,
                 name VARCHAR(128),
                 description TEXT,
+                projection CHAR(16),
                 parent_category_id CHAR(32),
                 CONSTRAINT category_id_pk PRIMARY KEY (category_id),
                 CONSTRAINT category_id_fk FOREIGN KEY (parent_category_id)

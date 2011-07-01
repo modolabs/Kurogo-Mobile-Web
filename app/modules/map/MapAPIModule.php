@@ -323,35 +323,35 @@ class MapAPIModule extends APIModule
             
                 break;
 
-                case 'geocode':
-                    $locationSearchTerms = $this->getArg('q');
-                    
-                    $geocodingDataControllerClass = $this->getOptionalModuleVar('GEOCODING_DATA_CONTROLLER_CLASS');
-                    $geocodingDataParserClass = $this->getOptionalModuleVar('GEOCODING_DATA_PARSER_CLASS');
-                    $geocoding_base_url = $this->getOptionalModuleVar('GEOCODING_BASE_URL');
+            case 'geocode':
+                $locationSearchTerms = $this->getArg('q');
+                
+                $geocodingDataControllerClass = $this->getOptionalModuleVar('GEOCODING_DATA_CONTROLLER_CLASS');
+                $geocodingDataParserClass = $this->getOptionalModuleVar('GEOCODING_DATA_PARSER_CLASS');
+                $geocoding_base_url = $this->getOptionalModuleVar('GEOCODING_BASE_URL');
 
-                    $arguments = array('BASE_URL' => $geocoding_base_url,
-                                  'CACHE_LIFETIME' => 86400,
-                                  'PARSER_CLASS' => $geocodingDataParserClass);
+                $arguments = array('BASE_URL' => $geocoding_base_url,
+                              'CACHE_LIFETIME' => 86400,
+                              'PARSER_CLASS' => $geocodingDataParserClass);
 
-                    $controller = DataController::factory($geocodingDataControllerClass, $arguments);
-                    $controller->addCustomFilters($locationSearchTerms);
-                    $response = $controller->getParsedData();
+                $controller = DataController::factory($geocodingDataControllerClass, $arguments);
+                $controller->addCustomFilters($locationSearchTerms);
+                $response = $controller->getParsedData();
 
-                    // checking for Geocoding service error
-                    if ($response['errorCode'] == 0) {
+                // checking for Geocoding service error
+                if ($response['errorCode'] == 0) {
 
-                        unset($response['errorCode']);
-                        unset($response['errorMessage']);
-                        $this->setResponse($response);
-                        $this->setResponseVersion(1);
-                    }
-                    else {
-                        $kurogoError = new KurogoError($response['errorCode'], "Geocoding service Erroe", $response['errorMessage']);
-                        $this->setResponseError($kurogoError);
-                        $this->setResponseVersion(1);
-                    }
-                    break;
+                    unset($response['errorCode']);
+                    unset($response['errorMessage']);
+                    $this->setResponse($response);
+                    $this->setResponseVersion(1);
+                }
+                else {
+                    $kurogoError = new KurogoError($response['errorCode'], "Geocoding service Erroe", $response['errorMessage']);
+                    $this->setResponseError($kurogoError);
+                    $this->setResponseVersion(1);
+                }
+                break;
                     
             default:
                 $this->invalidCommand();

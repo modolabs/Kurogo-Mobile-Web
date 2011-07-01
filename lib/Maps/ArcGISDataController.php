@@ -9,17 +9,18 @@ class ArcGISDataController extends MapDataController
     {
         return '.js'; // json
     }
-    
+
     protected function cacheFolder() 
     {
         return Kurogo::getSiteVar('ARCGIS_CACHE');
     }
     
+    /*    
     public function getProjection() {
         $this->initializeParser();
         return $this->parser->getProjection();
     }
-
+    */
     public function getListItems($categoryPath=array()) {
         // TODO: this only works for servers that have simple layers
         // i.e. no layer contains additional sublayers
@@ -50,6 +51,7 @@ class ArcGISDataController extends MapDataController
         return $results;
     }
 
+    /*    
     public function getTitle() {
         if ($this->title !== null) {
             return $this->title;
@@ -61,7 +63,7 @@ class ArcGISDataController extends MapDataController
     
     public function items() {
         $this->initializeParser();
-        $this->initializeLayers();
+        //$this->initializeLayers();
         $this->initializeFeatures();
         return $this->parser->getListItems();
     }
@@ -86,7 +88,7 @@ class ArcGISDataController extends MapDataController
             $this->baseURL = $oldBaseURL;
         }
     }
-    
+
     protected function initializeLayers() {
         if (!$this->parser->selectedLayerIsInitialized()) {
             // set this directly so we don't interfere with cache
@@ -109,27 +111,28 @@ class ArcGISDataController extends MapDataController
         if (isset($args['ID_FIELD'])) {
             $this->parser->setIdFIeld($args['ID_FIELD']);
         }
-
-        $this->addFilter('f', 'json');
     }
-    
-    public function search($searchText) {
-        $this->initializeParser();
-        $this->initializeLayers();
+    */
 
-        $oldBaseURL = $this->baseURL;
-        $this->parser->clearCache();
-        $this->parser->setBaseURL($oldBaseURL);
-        $this->baseURL = $this->parser->getURLForLayerFeatures();
-        $this->filters = $this->parser->getFiltersForLayer();
-        $this->addFilter('text', $searchText);
-        $data = $this->getData();
-        $this->parseData($data);
+    public function search($searchText) {
+        //$this->initializeParser();
+        //$this->initializeLayers();
+
+        //$oldBaseURL = $this->baseURL;
+        //$this->parser->clearCache();
+        //$this->parser->setBaseURL($oldBaseURL);
+        //$this->baseURL = $this->parser->getURLForLayerFeatures();
+        //$this->filters = $this->parser->getFiltersForLayer();
+        $this->parser->addSearchFilter('text', $searchText);
+        //$data = $this->getData();
+        //$this->parseData($data);
         
         // restore previous state
-        $this->baseURL = $oldBaseURL;
+        //$this->baseURL = $oldBaseURL;
         
-        return $this->getAllLeafNodes();
+        //return $this->getAllLeafNodes();
+        $this->parser->clearSearchFilters();
+        return $this->items();
     }
     
     public function searchByProximity($center, $tolerance, $maxItems) {
@@ -145,27 +148,31 @@ class ArcGISDataController extends MapDataController
         $maxLon = $center['lon'] + $dLonDegrees;
         $minLon = $center['lon'] - $dLonDegrees;
         
-        $this->initializeParser();
-        $this->initializeLayers();
+        //$this->initializeParser();
+        //$this->initializeLayers();
 
-        $oldBaseURL = $this->baseURL;
-        $this->parser->setBaseURL($oldBaseURL);
-        $this->baseURL = $this->parser->getURLForLayerFeatures();
-        $this->addFilter('geometry', "$minLon,$minLat,$maxLon,$maxLat");
-        $this->addFilter('geometryType', 'esriGeometryEnvelope');
-        $this->addFilter('spatialRel', 'esriSpatialRelIntersects');
-        $this->addFilter('returnGeometry', 'false');
-        $data = $this->getData();
-        $this->parseData($data);
+        //$oldBaseURL = $this->baseURL;
+        //$this->parser->setBaseURL($oldBaseURL);
+        //$this->baseURL = $this->parser->getURLForLayerFeatures();
+        $this->parser->addSearchFilter('geometry', "$minLon,$minLat,$maxLon,$maxLat");
+        $this->parser->addSearchFilter('geometryType', 'esriGeometryEnvelope');
+        $this->parser->addSearchFilter('spatialRel', 'esriSpatialRelIntersects');
+        $this->parser->addSearchFilter('returnGeometry', 'false');
+        //$data = $this->getData();
+        //$this->parseData($data);
         
         // restore previous state
-        $this->baseURL = $oldBaseURL;
-        $this->removeAllFilters();
-        $this->addFilter('f', 'json');
+        //$this->baseURL = $oldBaseURL;
+        //$this->removeAllFilters();
+        //$this->addFilter('f', 'json');
         
-        return $this->getAllLeafNodes();
+        //return $this->getAllLeafNodes();
+        $items = $this->items();
+        $this->parser->clearSearchFilters();
+
+        return $items;
     }
-    
+    /*
     // TODO make a standalone method in ArcGISParser that
     // that doesn't require us to create a throwaway controller
     public static function parserFactory($baseURL) {
@@ -175,6 +182,6 @@ class ArcGISDataController extends MapDataController
         $throwawayController->parseData($data);
         return $throwawayController->parser;
     }
-    
+    */
 }
 

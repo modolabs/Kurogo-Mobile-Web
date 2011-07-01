@@ -266,10 +266,6 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         //'31' => 'addMultiPatch',
         );
 
-    public function getListItem($item)
-    {
-    }
-
     public function getListItems()
     {
         return $this->features;
@@ -283,6 +279,11 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     public function getChildCategories()
     {
         return array();
+    }
+
+    public function getProjection() {
+        // TODO move WKTParser from ShapeFileDataController to here
+        return null;
     }
 
     public function getParsedData() {
