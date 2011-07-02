@@ -26,13 +26,13 @@ abstract class OAuthProvider
 
     abstract protected function getAuthURL(array $options);
     
-    public function getToken($tokenType) {
+    public function getToken($tokenType=self::TOKEN_TYPE_ACCESS) {
         if ($this->tokenType == $tokenType) {
             return $this->token;
         }
     }
 
-    public function getTokenSecret($tokenType) {
+    public function getTokenSecret($tokenType=self::TOKEN_TYPE_ACCESS) {
         if ($this->tokenType == $tokenType) {
             return $this->tokenSecret;
         }
