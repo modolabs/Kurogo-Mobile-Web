@@ -35,13 +35,16 @@ class GoogleAuthentication extends OAuthAuthentication
     }
 
     protected function cacheUserArray($login, array $array) {
-        return file_put_contents($this->cacheFile($login), serialize($array));
+        $umask = umask(0077);
+        $return = file_put_contents($this->cacheFile($login), serialize($array));
+        umask($umask);
+        return $return;
     }
 
     protected function cacheFile($login) {
         $cacheDir = CACHE_DIR . '/GoogleOpenID' ;
         if (!is_dir($cacheDir)) {
-            mkdir($cacheDir);
+            mkdir($cacheDir, 0700, true);
         }
         return $cacheDir . "/" . md5($login);
     }
