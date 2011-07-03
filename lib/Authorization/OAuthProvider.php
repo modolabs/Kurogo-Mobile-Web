@@ -265,7 +265,9 @@ abstract class OAuthProvider
         $this->tokenType = $type;
         $this->token = $token;
         $this->tokenSecret = $tokenSecret;
-        error_log("Setting $this->index $type to $token - $tokenSecret");
+        if ($this->debugMode) {
+            error_log("Setting $this->index $type to $token - $tokenSecret");
+        }
         $_SESSION[$this->tokenSessionVar()] = array(
             $type, $token, $tokenSecret
         );
