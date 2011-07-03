@@ -241,7 +241,7 @@ abstract class DataController
         return isset($this->responseHeaders[$header]) ? $this->responseHeaders[$header] : null;
     }
 
-    public function setHeader($header, $value) {
+    public function addHeader($header, $value) {
         $this->requestHeaders[$header] = $value;
         $headers = array();
         //@TODO: Might need to escape this
@@ -250,6 +250,10 @@ abstract class DataController
         }
             
         stream_context_set_option($this->streamContext, 'http', 'header', implode("\r\n", $headers));
+    }
+    
+    public function getHeaders() {
+        return $this->requestHeaders;
     }
 
     public function setMethod($method) {
