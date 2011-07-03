@@ -402,10 +402,12 @@ abstract class OAuthProvider
         $response = file_get_contents($url, false, $streamContext);
         
         //parse the response
-        $DataResponse = new DataResponse($response, $http_response_header);
+        $this->response = new DataResponse();
+        $this->response->setRequest($method, $url, $parameters, $headers);
+        $this->response->setResponse($response, $http_response_header);
 
         //if there is a location header we need to re-sign before redirecting
-        if ($redirectURL = $DataResponse->getHeader("Location")) {
+        if ($redirectURL = $this->response->getHeader("Location")) {
 		    $redirectParts = parse_url($redirectURL);
 		    if (isset($redirectParts['query'])) {
 		        $newParameters = array_merge($parameters, $this->parseQueryString($redirectParts['query']));
@@ -416,6 +418,10 @@ abstract class OAuthProvider
         }
         
         return $response;
+	}
+	
+	public function getResponse() {
+	    return $this->response;
 	}
 
     protected function getRequestToken(array $options) {

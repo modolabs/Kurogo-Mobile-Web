@@ -4,7 +4,6 @@ class GoogleAppsCalendarDataController extends CalendarDataController
 {
     protected $DEFAULT_PARSER_CLASS='GoogleCalendarDataParser';
     protected $cacheFolder = 'GoogleCalendar';
-    protected $cacheFileSuffix = 'json';
     protected $authority;
     
     public function addFilter($var, $value) {
@@ -45,6 +44,7 @@ class GoogleAppsCalendarDataController extends CalendarDataController
         $parameters = array(); //set in query string
         $headers = $this->getHeaders();
         $result = $oauth->oauthRequest('GET', $url, $parameters, $headers);
+        $this->response = $oauth->getResponse();
         return $result;
     }
     

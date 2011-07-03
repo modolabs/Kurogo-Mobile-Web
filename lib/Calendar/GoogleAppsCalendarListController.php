@@ -9,8 +9,7 @@ class GoogleAppsCalendarListController extends CalendarListController
         return $this->authority ? $this->authority->getDomain() : false;
     }
 
-    public function getResources()
-    {
+    public function getResources() {
         $url = 'https://apps-apis.google.com/a/feeds/calendar/resource/2.0/' . $this->getDomain() .'/' ;
         $parameters = array(
             'alt'=>'json'
@@ -52,39 +51,6 @@ class GoogleAppsCalendarListController extends CalendarListController
         return $feeds;
     }
 
-    protected function calendarQuery($url, $parameters, $headers=null, $unique=true) {
-        $oauth = $this->oauth();
-        if (!$token = $oauth->getToken()) {
-            return false;
-        }
-
-        $cache = new DiskCache(CACHE_DIR . '/GoogleCalendar' . ($unique ? '/' . md5($token) :''), $this->cacheLifetime, TRUE);
-        $cache->setSuffix('.json');
-        $cache->preserveFormat();
-        
-        $cacheURL = count($parameters) ? $url . '?' . http_build_query($parameters) : $url;
-        
-        $cacheFilename = md5($cacheURL);
-        
-        if ($cache->isFresh($cacheFilename)) {
-            $data = $cache->read($cacheFilename);
-        } else {
-
-            $oauth = $this->oauth();
-            $method = 'GET';        
-        
-            if ($data = $oauth->oAuthRequest($method, $url, $parameters, $headers)) {
-                $cache->write($data, $cacheFilename);
-            }
-        }
-        
-        return $data;
-    }
-    
-    protected function oauth() {
-        return $this->authority->oauth();
-    }
-    
     public function getUserCalendars() {
 
         $url = 'https://www.google.com/calendar/feeds/default';
@@ -115,7 +81,42 @@ class GoogleAppsCalendarListController extends CalendarListController
 
         return $feeds;
     }
+
+    protected function calendarQuery($url, $parameters, $headers=null, $unique=true) {
+        $oauth = $this->oauth();
+        if (!$token = $oauth->getToken()) {
+            return false;
+        }
+
+        $cache = new DiskCache(CACHE_DIR . '/GoogleCalendar' . ($unique ? '/' . md5($token) :''), $this->cacheLifetime, TRUE);
+        $cache->setSuffix('.cache');
+        $cache->preserveFormat();
+        
+        $cacheURL = count($parameters) ? $url . '?' . http_build_query($parameters) : $url;
+        
+        $cacheFilename = md5($cacheURL);
+        
+        if ($cache->isFresh($cacheFilename)) {
+            $response = unserialize($cache->read($cacheFilename));
+            $data = $response->getResponse();
+        } else {
+
+            $oauth = $this->oauth();
+            $method = 'GET';        
+        
+            if ($data = $oauth->oAuthRequest($method, $url, $parameters, $headers)) {
+                $response = $oauth->getResponse();
+                $cache->write(serialize($response), $cacheFilename);
+            }
+        }
+        
+        return $data;
+    }
     
+    protected function oauth() {
+        return $this->authority->oauth();
+    }
+        
     protected function init($args) {
         //either get the specified authority or attempt to get a GoogleApps authority
         $authorityIndex = isset($args['AUTHORITY']) ? $args['AUTHORITY'] : 'GoogleAppsAuthentication';
