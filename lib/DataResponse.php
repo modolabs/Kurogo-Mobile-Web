@@ -2,14 +2,24 @@
 
 class DataResponse
 {
+    protected $requestMethod;
+    protected $requestURL;
+    protected $requestParameters=array();
+    protected $requestHeaders=array();
     protected $response;
     protected $responseCode;
     protected $responseStatus;
-    protected $responseHeaders;
+    protected $responseHeaders=array();
     
-    public function __construct($response, $http_response_header) {
+    public function setRequest($method, $url, $parameters, $headers) {
+        $this->requestMethod = $method;
+        $this->requestURL = $url;
+        $this->requestParameters = $parameters;
+        $this->requestHeaders = $headers;
+    }
+    
+    public function setResponse($response, $http_response_header) {
         $this->response = $response;
-        $this->responseRawHeaders = $http_response_header;
         $this->parseHTTPResponseHeaders($http_response_header);
     }
     
