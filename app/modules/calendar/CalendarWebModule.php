@@ -278,11 +278,10 @@ class CalendarWebModule extends WebModule {
        
       case 'user':
       case 'resource':
-        $typeController = $type=='user' ? 'UserCalendarListController' :'ResourceListController';
-        $sectionData = $this->getOptionalModuleSection('calendar_list');
-        $listController = isset($sectionData[$typeController]) ? $sectionData[$typeController] : '';
+        $section = $type=='user' ?  'user_calendars' :'resources';
+        $sectionData = $this->getOptionalModuleSection($section);
+        $listController = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : '';
         if (strlen($listController)) {
-            $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
             $controller = CalendarListController::factory($listController, $sectionData);
             switch ($type)
             {

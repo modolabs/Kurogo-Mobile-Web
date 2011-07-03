@@ -5,19 +5,9 @@ class GoogleAppsCalendarDataController extends CalendarDataController
     protected $DEFAULT_PARSER_CLASS='GoogleCalendarDataParser';
     protected $cacheFolder = 'GoogleCalendar';
     protected $cacheFileSuffix = 'json';
-    protected $user;
     protected $authority;
     
-    public function setUser(User $user) {
-        if ($user instanceOf GoogleAppsUser) {
-            $this->user = $user;
-            $this->authority = $user->getAuthenticationAuthority();
-            return true;
-        }
-    }
-
-    public function addFilter($var, $value)
-    {
+    public function addFilter($var, $value) {
         switch ($var)
         {
             case 'search':
@@ -42,24 +32,25 @@ class GoogleAppsCalendarDataController extends CalendarDataController
 
         return parent::url();
     }
-    
+
+    protected function cacheFolder() {
+        $oauth = $this->oauth();
+        $token = $oauth->getToken();
+        return CACHE_DIR . "/" . $this->cacheFolder . ($token ? "/" . md5($token) : '');
+    }
     
     protected function retrieveData($url) {
-        if (!$this->authority) {
-            throw new Exception("Authority not set");
-        }
-        
-        $parameters = array(
-            'alt'=>'jsonc'
-        );
-        
-        $headers = array(
-            'GData-Version: 2'
-        );
-
+    
         $oauth = $this->oauth();
+        $parameters = array(); //set in query string
+        $headers = $this->getHeaders();
         $result = $oauth->oauthRequest('GET', $url, $parameters, $headers);
         return $result;
+    }
+    
+    protected function addStandardFilters() {
+        $this->addFilter('alt','jsonc');
+        $this->addHeader('GData-Version', '2');
     }
     
     protected function oauth() {
@@ -69,9 +60,16 @@ class GoogleAppsCalendarDataController extends CalendarDataController
     protected function init($args)
     {
         parent::init($args);
-        if (isset($args['USER'])) {
-            $this->setUser($args['USER']);
+        //either get the specified authority or attempt to get a GoogleApps authority
+        $authorityIndex = isset($args['AUTHORITY']) ? $args['AUTHORITY'] : 'GoogleAppsAuthentication';
+        $authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex);
+        
+        //make sure we're getting a google apps authority
+        if ($authority instanceOf GoogleAppsAuthentication) {
+            $this->authority = $authority;
         }
+        
+        $this->addStandardFilters();
     }
 }
 

@@ -3,18 +3,15 @@
 class GoogleAppsCalendarListController extends CalendarListController
 {
     protected $cacheLifetime = 900;
-
-    protected function setSession(Session $session) {
-        $this->setUser($session->getUser('GoogleAppsUser'));
-    }
+    protected $authority;
     
+    protected function getDomain() {
+        return $this->authority ? $this->authority->getDomain() : false;
+    }
+
     public function getResources()
     {
-        if (!$this->user instanceOf GoogleAppsUser) {
-            return array();
-        }
-        
-        $url = 'https://apps-apis.google.com/a/feeds/calendar/resource/2.0/' . $this->user->getDomain() .'/' ;
+        $url = 'https://apps-apis.google.com/a/feeds/calendar/resource/2.0/' . $this->getDomain() .'/' ;
         $parameters = array(
             'alt'=>'json'
         );
@@ -25,10 +22,12 @@ class GoogleAppsCalendarListController extends CalendarListController
         $feeds = array();
 
         if (isset($data['feed']['entry'])) {
+            $authority = $this->authority->getAuthorityIndex();
+
             foreach ($data['feed']['entry'] as $resource) {
                 $feed = array(
                     'CONTROLLER_CLASS'=>'GoogleAppsCalendarDataController',
-                    'USER'=>$this->user
+                    'AUTHORITY'=>$authority
                 );
 
                 foreach ($resource['apps$property'] as $property) {
@@ -54,18 +53,18 @@ class GoogleAppsCalendarListController extends CalendarListController
     }
 
     protected function calendarQuery($url, $parameters, $headers=null, $unique=true) {
-
-        if (!$this->user instanceOf GoogleAppsUser) {
-            return array();
+        $oauth = $this->oauth();
+        if (!$token = $oauth->getToken()) {
+            return false;
         }
-        
-        $cache = new DiskCache(CACHE_DIR . "/" . 'GoogleCalendar', $this->cacheLifetime, TRUE);
+
+        $cache = new DiskCache(CACHE_DIR . '/GoogleCalendar' . ($unique ? '/' . md5($token) :''), $this->cacheLifetime, TRUE);
         $cache->setSuffix('.json');
         $cache->preserveFormat();
         
         $cacheURL = count($parameters) ? $url . '?' . http_build_query($parameters) : $url;
         
-        $cacheFilename = $unique ? md5($cacheURL. $this->user->getEmail()) : md5($cacheURL);
+        $cacheFilename = md5($cacheURL);
         
         if ($cache->isFresh($cacheFilename)) {
             $data = $cache->read($cacheFilename);
@@ -83,14 +82,10 @@ class GoogleAppsCalendarListController extends CalendarListController
     }
     
     protected function oauth() {
-        $authority = $this->user->getAuthenticationAuthority();
-        return $authority->oauth();
+        return $this->authority->oauth();
     }
     
     public function getUserCalendars() {
-        if (!$this->user instanceOf GoogleAppsUser) {
-            return array();
-        }
 
         $url = 'https://www.google.com/calendar/feeds/default';
         $parameters = array(
@@ -107,10 +102,11 @@ class GoogleAppsCalendarListController extends CalendarListController
         $feeds = array();
 
         if (isset($data['data']['items'])) {
+            $authority = $this->authority->getAuthorityIndex();
             foreach ($data['data']['items'] as $calendar) {
                 $feeds[$calendar['id']] = array(
                     'CONTROLLER_CLASS'=>'GoogleAppsCalendarDataController',
-                    'USER'=>$this->user, 
+                    'AUTHORITY'=>$authority,
                     'BASE_URL'=>$calendar['eventFeedLink'],
                     'TITLE'=>$calendar['title']
                 );
@@ -118,6 +114,17 @@ class GoogleAppsCalendarListController extends CalendarListController
         }
 
         return $feeds;
+    }
+    
+    protected function init($args) {
+        //either get the specified authority or attempt to get a GoogleApps authority
+        $authorityIndex = isset($args['AUTHORITY']) ? $args['AUTHORITY'] : 'GoogleAppsAuthentication';
+        $authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex);
+        
+        //make sure we're getting a google apps authority
+        if ($authority instanceOf GoogleAppsAuthentication) {
+            $this->authority = $authority;
+        }
     }
 
 }
