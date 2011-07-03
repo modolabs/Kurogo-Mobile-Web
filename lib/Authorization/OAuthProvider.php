@@ -4,7 +4,7 @@ abstract class OAuthProvider
 {
     const TOKEN_TYPE_REQUEST='R';
     const TOKEN_TYPE_ACCESS='A';
-    protected $version=1;
+    protected $oauthVersion='1.0';
     protected $title;
     protected $index;
 
@@ -23,7 +23,7 @@ abstract class OAuthProvider
     protected $verifierKey = 'oauth_verifier';
     protected $verifierErrorKey = '';
     protected $manualVerify=false;
-
+    
     abstract protected function getAuthURL(array $options);
     
     public function getToken($tokenType=self::TOKEN_TYPE_ACCESS) {
@@ -289,7 +289,7 @@ abstract class OAuthProvider
 		$oauth['oauth_nonce'] = md5(microtime() . rand());
 		$oauth['oauth_signature_method'] = $this->signatureMethod;
 		$oauth['oauth_timestamp'] = time();
-		$oauth['oauth_version'] = '1.0';
+		$oauth['oauth_version'] = $this->oauthVersion;
 		
 		if ($this->token) {
 		    $oauth['oauth_token'] = $this->token;
@@ -359,12 +359,17 @@ abstract class OAuthProvider
         );
 	}
 	
-    public function oauthRequest($method, $url, $parameters = null, $headers = null, $use_token=true) {
+    public function oauthRequest($method, $url, $parameters = null, $headers = null) {
         $contextOpts = array(
             'http'=>array(
-                'method'=>$method
+                'method'=>$method,
+                'follow_location'=>false,
+                'max_redirects'=>0
             )
         );
+        
+        $requestParameters = $parameters;
+        $requestHeaders = $headers;
         
         switch ($method) 
         {
@@ -372,12 +377,12 @@ abstract class OAuthProvider
                 if (count($parameters)>0) {
                     $glue = strpos($url, '?') !== false ? '&' : '?';
                     $url .= $glue . http_build_query($parameters);
-                    $parameters = array();
+                    $requestParameters = array();
                 }
                 break;
                 
             case 'POST':
-                $headers[] = "Content-type: application/x-www-form-urlencoded";
+                $requestHeaders[] = "Content-type: application/x-www-form-urlencoded";
                 $contextOpts['http']['content'] = '';
                 break;
                 
@@ -385,17 +390,32 @@ abstract class OAuthProvider
                 throw new Exception("Invalid method $method");
         }
 
-	    $headers[] = 'Authorization: ' . $this->getAuthorizationHeader($method, $url, $parameters, $headers);
-	    $headers[] = 'Expect:';
-        $contextOpts['http']['header'] = implode("\r\n", $headers) . "\r\n";
+	    $requestHeaders[] = 'Authorization: ' . $this->getAuthorizationHeader($method, $url, $requestParameters, $requestHeaders);
+	    $requestHeaders[] = 'Expect:';
+        $contextOpts['http']['header'] = implode("\r\n", $requestHeaders) . "\r\n";
         
         $streamContext = stream_context_create($contextOpts);
-        error_log(sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret));
+        //error_log(sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret));
 
         $response = file_get_contents($url, false, $streamContext);
+        
+        //parse the response
+        $DataResponse = new DataResponse($response, $http_response_header);
+
+        //if there is a location header we need to re-sign before redirecting
+        if ($redirectURL = $DataResponse->getHeader("Location")) {
+		    $redirectParts = parse_url($redirectURL);
+		    if (isset($redirectParts['query'])) {
+		        $newParameters = array_merge($parameters, $this->parseQueryString($redirectParts['query']));
+		    }
+		    $newURL = $this->baseURL($redirectURL);
+		    //error_log("Redirecting to $newURL");
+    		return $this->oauthRequest($method, $newURL, $newParameters, $headers);
+        }
+        
         return $response;
 	}
-	
+
     protected function getRequestToken(array $options) {
     
         list($method, $url, $parameters) = $this->getRequestTokenURL($options);
@@ -440,7 +460,6 @@ abstract class OAuthProvider
 	protected function getAccessToken($options) {
 
         list($method, $url, $parameters) = $this->getAccessTokenURL($options);
-		// make the call
 		$response = $this->oauthRequest($method, $url,  $parameters);
 		parse_str($response, $return);
 
@@ -449,10 +468,7 @@ abstract class OAuthProvider
 		    return false;
 		}
 		
-		// set some properties
 		$this->setToken(self::TOKEN_TYPE_ACCESS, $return['oauth_token'], $return['oauth_token_secret']);
-		
-		// return
 		return $return;
 	}
 	
