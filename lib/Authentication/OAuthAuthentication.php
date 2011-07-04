@@ -42,11 +42,6 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
         }
         return $this->oauth;
     }
-
-    public function init($args) {
-        parent::init($args);
-        $this->initArgs = $args;
-    }
 }
 
 class OAuthUser extends User

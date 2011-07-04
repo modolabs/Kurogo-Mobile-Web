@@ -11,6 +11,12 @@ abstract class AuthenticationAuthority
 {
     
     /** 
+      * The arguments used to initialize this authority
+      * @var array
+      */
+    protected $initArgs = array();
+
+    /** 
       * The tag used to identify this authority 
       * @var string
       */
@@ -109,6 +115,7 @@ abstract class AuthenticationAuthority
     public function init($args)
     {
         $args = is_array($args) ? $args : array();
+        $this->initArgs = $args;
         if (!isset($args['TITLE']) || empty($args['TITLE'])) {
             throw new Exception("Invalid authority title");
         }

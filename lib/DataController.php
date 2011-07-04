@@ -12,6 +12,7 @@
 abstract class DataController
 {
     protected $DEFAULT_PARSER_CLASS='PassthroughDataParser';
+    protected $initArgs=array();
     protected $cacheFolder='Data';
     protected $parser;
     protected $url;
@@ -177,6 +178,7 @@ abstract class DataController
      * @param array $args an associative array of arguments and paramters
      */
     protected function init($args) {
+        $this->initArgs = $args;
 
         if (isset($args['DEBUG_MODE'])) {
             $this->setDebugMode($args['DEBUG_MODE']);
