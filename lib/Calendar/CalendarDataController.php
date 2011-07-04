@@ -17,7 +17,6 @@ class CalendarDataController extends DataController
     const START_TIME_LIMIT=-2147483647; 
     const END_TIME_LIMIT=2147483647; 
     protected $cacheFolder = 'Calendar';
-    protected $cacheFileSuffix = 'ics';
     protected $startDate;
     protected $endDate;
     protected $calendar;

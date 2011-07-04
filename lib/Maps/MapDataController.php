@@ -40,11 +40,6 @@ class MapDataController extends DataController implements MapFolder
         return 86400;
     }
 
-    protected function cacheFileSuffix()
-    {
-        return null;
-    }
-
     public function canSearch()
     {
         return $this->searchable;

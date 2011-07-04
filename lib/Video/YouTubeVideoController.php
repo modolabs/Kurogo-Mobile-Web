@@ -3,7 +3,6 @@
  class YouTubeVideoController extends VideoDataController
  {
     protected $DEFAULT_PARSER_CLASS='YouTubeDataParser';
-    protected $cacheFileSuffix='json';
     
  	private function setStandardFilters() {
         $this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
