@@ -14,9 +14,14 @@ abstract class DataParser
     protected $debugMode=false;
     protected $totalItems = null;
     protected $haltOnParseErrors = true;
+    protected $dataController;
 
     public function getTotalItems() {
         return $this->totalItems;
+    }
+
+    public function setDataController(DataController $dataController) {
+        $this->dataController = $dataController;
     }
 
     protected function setTotalItems($total) {

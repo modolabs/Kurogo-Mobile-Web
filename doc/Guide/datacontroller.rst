@@ -74,7 +74,6 @@ You may wish to override the default value of several properties:
 
 * $DEFAULT_PARSER_CLASS to the name of the default parser class you wish to use. Should be subclass of DataParser
 * $cacheFolder - the name of the folder within the CACHE_DIR where downloaded files will be cached
-* $cacheFileSuffix - a suffix to use for the cached files
 
 There are several methods that you should be familiar with to use this class appropriately:
 

@@ -169,7 +169,9 @@ abstract class User
             return true;
         }
         $userData[$key] = $value;
+        $umask = umask(0077);
         file_put_contents($this->getUserDataFile(), serialize($userData));
+        umask($umask);
         $this->userData = $userData;
     }
 

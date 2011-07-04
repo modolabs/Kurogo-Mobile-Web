@@ -5,7 +5,6 @@ class EmergencyNoticeDataController extends DataController
     protected $DEFAULT_PARSER_CLASS = 'RSSDataParser';
     protected $emergencyNotice = NULL;
     protected $cacheFolder = "Emergency";
-    protected $cacheFileSuffix = "rss";
 
     protected $cacheLifetime = 60; // emergency notice should have a short cache time
 

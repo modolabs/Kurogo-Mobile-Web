@@ -21,6 +21,7 @@ abstract class PeopleController
         return array(
             ''=>'-',
             'LDAPPeopleController'=>'LDAP',
+            'ADPeopleController'=>'Active Directory',
             'DatabasePeopleController'=>'Database'
         );
     }
