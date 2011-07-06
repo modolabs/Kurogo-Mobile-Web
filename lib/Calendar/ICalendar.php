@@ -115,7 +115,7 @@ class ICalAlarm extends ICalObject {
   * @package ExternalData
   * @subpackage Calendar
  */
-class ICalEvent extends ICalObject {
+class ICalEvent extends ICalObject implements KurogoObject {
 
   protected $uid;
   protected $sequence;

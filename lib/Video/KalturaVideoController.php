@@ -6,7 +6,6 @@
  {
  	
     protected $DEFAULT_PARSER_CLASS='KalturaDataParser';
-    protected $cacheFileSuffix='xml';
     protected $token;
     protected $category;
     protected $partnerUserID;

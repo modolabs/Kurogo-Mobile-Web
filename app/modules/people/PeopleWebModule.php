@@ -45,10 +45,14 @@ class PeopleWebModule extends WebModule {
         
         return $values;
     }
+    
+    private function replaceFormat($format) {
+        return str_replace(array('\n','\t'),array("\n","\t"), $format);
+    }
   
     protected function formatDetail($values, $info, Person $person) {
         if (isset($info['format'])) {
-            $value = vsprintf($info['format'], $values);
+            $value = vsprintf($this->replaceFormat($info['format']), $values);
         } else {
             $value = implode(' ', $values);
         }
@@ -75,13 +79,15 @@ class PeopleWebModule extends WebModule {
                 $detail['url'] = 'tel:'.strtr($value, '-', '');
                 $detail['class'] = 'phone';
                 break;
-        
+ 
+            // compatibility
             case 'map':
-                $detail['url'] = self::buildURLForModule('map', 'search', array(
-                    'filter' => str_replace('$', ', ', $value),
-                ));
-                $detail['class'] = 'map';
+                $info['module'] = 'map';
                 break;
+        }
+
+        if (isset($info['module'])) {
+            $detail = array_merge($detail, Kurogo::moduleLinkForValue($info['module'], $value, $this, $person));
         }
         
         if (isset($info['urlfunc'])) {
@@ -89,7 +95,7 @@ class PeopleWebModule extends WebModule {
             $detail['url'] = $urlFunction($value, $person);
         }
     
-        $detail['title'] = nl2br($detail['title']); // $ is the LDAP multiline char
+        $detail['title'] = nl2br($detail['title']); 
         return $detail;
     }
   
@@ -150,32 +156,13 @@ class PeopleWebModule extends WebModule {
         return mb_convert_encoding($string, 'HTML-ENTITIES', $this->encoding);
     }
     
-    public function federatedSearch($searchTerms, $maxCount, &$results) {
-        $total = 0;
-        $results = array();
-      
-        $PeopleController = $this->getFeed('people');
-        
+    public function searchItems($searchTerms, $limit=null, $options=null) {
+        $feed = isset($options['feed']) ? $options['feed'] : 'people';
+        $PeopleController = $this->getFeed($feed);
         $people = $PeopleController->search($searchTerms);
-    
-        if ($people !== false) {
-            $limit = min($maxCount, count($people));
-            for ($i = 0; $i < $limit; $i++) {
-                $section = $this->formatPersonDetail($people[$i], $this->detailFields['name']);
-            
-                $results[] = array(
-                    'url' => $this->buildBreadcrumbURL('detail', array(
-                        'uid'    => $people[$i]->getId(),
-                        'filter' => $searchTerms
-                    ), false),
-                    'title' => $this->htmlEncodeString($section[0]['title'])
-                );
-            }
-        }
-        
-        return count($people);
+        return $people;
     }
-  
+    
     protected function getFeed($index) {
 
         if (isset($this->feeds[$index])) {
@@ -201,25 +188,18 @@ class PeopleWebModule extends WebModule {
         $this->detailAttributes = array_values(array_unique($this->detailAttributes));
     }
     
-    public function getPeopleController($feed='people') {
-        return $this->getFeed($feed);
-    }
-
-    public function getPersonURL(Person $person) {
+    public function linkforItem(Person $person) {
+        $personDetails =  $this->formatPersonDetails($person);
     
-        return $this->buildBreadcrumbURL('detail', array(
+        return array(
+            'title'=>$this->htmlEncodeString($personDetails['name']['name']['title']),
+            'url'  =>$this->buildBreadcrumbURL('detail', array(
                                             'uid'    => $person->getId(),
                                             'filter' => $this->getArg('filter')
-                                        
-        ));
+                    ))
+        );
     }
 
-    public function getPersonTitle(Person $person) {
-        $section = $this->formatPersonDetail($person, $this->detailFields['name']);
-                                  
-        return htmlentities($section[0]['title']);
-    }
-    
     protected function getContactGroup($group) {
         if (!$this->contactGroups) {
             $this->contactGroups = $this->getModuleSections('contacts-groups');
@@ -277,18 +257,18 @@ class PeopleWebModule extends WebModule {
                     $person = $PeopleController->lookupUser($uid);
           
                     if ($person) {
-                        $this->assign('personDetails', $this->formatPersonDetails($person));
-                        $section = $this->formatPersonDetail($person, $this->detailFields['name']);
+                        $personDetails =  $this->formatPersonDetails($person);
                         // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                             $cookieParams = array(
-                                'title'   => $this->htmlEncodeString($section[0]['title']),
+                                'title'   => $personDetails['name']['name']['title'],
                                 'uid' => urlencode($uid)
                             );
             
                             $cookieID = http_build_query($cookieParams);
                             $this->generateBookmarkOptions($cookieID);
                         }
+                        $this->assign('personDetails', $personDetails);
                         break;
                     } else {
                         $this->assign('searchError', $PeopleController->getError());
@@ -304,7 +284,7 @@ class PeopleWebModule extends WebModule {
           
                     $this->assign('searchTerms', $searchTerms);
           
-                    $people = $PeopleController->search($searchTerms);
+                    $people = $this->searchItems($searchTerms);
                     $this->assign('searchError', $PeopleController->getError());
 
                     if ($people !== false) {
@@ -312,9 +292,6 @@ class PeopleWebModule extends WebModule {
             
                         switch ($resultCount) 
                         {
-                            case 0:
-                                break;
-                          
                             case 1:
                                 $person = $people[0];
                                 $this->redirectTo('detail', array(
@@ -327,15 +304,7 @@ class PeopleWebModule extends WebModule {
                                 $results = array();
                                 
                                 foreach ($people as $person) {
-                                    $section = $this->formatPersonDetail($person, $this->detailFields['name']);
-                                  
-                                    $results[] = array(
-                                        'url' => $this->buildBreadcrumbURL('detail', array(
-                                            'uid'    => $person->getId(),
-                                            'filter' => $this->getArg('filter')
-                                        )),
-                                        'title' => $this->htmlEncodeString($section[0]['title']),
-                                    );
+                                    $results[] = $this->linkforItem($person);
                                 }
                                 //error_log(print_r($results, true));
                                 $this->assign('resultCount', $resultCount);

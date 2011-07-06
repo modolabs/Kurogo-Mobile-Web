@@ -10,17 +10,17 @@
     <li class="story{if !$showImages} noimage{/if}">
       <a href="{$story['url']}">
       {if $showImages}
-        {if $story['image']}
-          <img class="thumbnail" src="{$story['image']['src']}" />
+        {if $story['img']}
+          <img class="thumbnail" src="{$story['img']}" />
         {else}
-          <img class="thumbnail" src="/modules/{$moduleID}/images/news-placeholder.png" />
+          <img class="thumbnail" src="/modules/{$moduleID}/images/news-placeholder{$imageExt}" />
         {/if}
         {/if}
         <div class="ellipsis" id="ellipsis_{$ellipsisCount++}">
           <div class="title">{$story["title"]}</div>
           {if $showAuthor}<div class="author">{$story['author']}</div>{/if}
           {if $showPubDate}<div class="pubdate">{$story['pubDate']}</div>{/if}
-          {$story['description']}
+          {$story['subtitle']}
         </div>
       </a>
     </li>

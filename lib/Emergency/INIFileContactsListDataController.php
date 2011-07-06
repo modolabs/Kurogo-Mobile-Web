@@ -4,6 +4,7 @@ require_once LIB_DIR . "/ContactsList.php";
 
 class INIFileContactsListDataController extends ContactsListDataController
 {
+    protected $DEFAULT_PARSER_CLASS = 'INIFileParser';
     protected $primarySection;
     protected $secondarySection;
 
@@ -25,10 +26,7 @@ class INIFileContactsListDataController extends ContactsListDataController
 
     protected function loadContacts() {
         if(!$this->contactsLoaded) {
-            $this->getData();
-            // have to read from the cache file directly
-            // because parse_ini_string is not supported in PHP 5.2
-            $iniData = parse_ini_file($this->cache->getFullPath($this->cacheFilename()), TRUE);
+            $iniData = $this->getParsedData();
             $this->primaryContacts = isset($iniData['primary']) ? self::createContactsList($iniData['primary']) : array();
             $this->secondaryContacts = isset($iniData['secondary']) ? self::createContactsList($iniData['secondary']) : array();
             $this->contactsLoaded = TRUE;

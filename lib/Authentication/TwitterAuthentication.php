@@ -8,13 +8,14 @@
   */
 class TwitterAuthentication extends OAuthAuthentication
 {
+    protected $OAuthProviderClass='TwitterOAuthProvider';
     protected $authorityClass = 'twitter';
-    protected $requestTokenURL = 'https://api.twitter.com/oauth/request_token';
-    protected $accessTokenURL = 'https://api.twitter.com/oauth/access_token';
 	protected $API_URL = 'https://api.twitter.com/1';
+	protected $useCache = true;
+	protected $cacheLifetime = 900;
+	protected $cache;
 
-    protected function reset($hard=false)
-    {
+    protected function reset($hard=false) {
         parent::reset($hard);
         if ($hard) {
             // this where we would log out of twitter
@@ -25,17 +26,16 @@ class TwitterAuthentication extends OAuthAuthentication
         return true;
     }
     
-    protected function getUserFromArray(array $array)
-    {
+    protected function getUserFromArray(array $array) {
+        $user = false;
         if (isset($array['screen_name'])) {
-            return $this->getUser($array['screen_name']);
+            $user = $this->getUser($array['screen_name']);
         }
         
-        return false;
+        return $user;
     }
 	
-    public function getUser($login)
-    {
+    public function getUser($login) {
         if (empty($login)) {
             return new AnonymousUser();       
         }
@@ -52,15 +52,17 @@ class TwitterAuthentication extends OAuthAuthentication
             if ($this->cache->isFresh($cacheFilename)) {
                 $data = $this->cache->read($cacheFilename);
             } else {
+                $oauth = $this->oauth();
                 //cache isn't fresh, load the data
-                if ($data = $this->oauthRequest('GET', $this->API_URL .'/users/show.json', array('screen_name'=>$login))) {
+                if ($data = $oauth->oauthRequest('GET', $this->API_URL .'/users/show.json', array('screen_name'=>$login))) {
                     $this->cache->write($data, $cacheFilename);
                 }
                 
             }
         } else {
             //load the data
-            $data = $this->oauthRequest('GET', $this->API_URL . '/users/show.json', array('screen_name'=>$login));
+            $oauth = $this->oauth();
+            $data = $oauth->oauthRequest('GET', $this->API_URL . '/users/show.json', array('screen_name'=>$login));
         }
         
 		// make the call
@@ -69,36 +71,12 @@ class TwitterAuthentication extends OAuthAuthentication
 
             if (isset($json['screen_name'])) {
                 $user = new TwitterUser($this);
-                $user->setTwitterUserID($json['id']);
-                $user->setUserID($json['screen_name']);
-                $user->setFullName($json['name']);
+                $user->setVars($json);
                 return $user;
-            }        
+            }
         }
 
         return false;
-    }
-    
-    protected function getAuthURL(array $params)
-    {
-        $url = "https://api.twitter.com/oauth/authenticate?" . http_build_query(array(
-            'oauth_token'=>$this->token
-            )
-        );
-        return $url;
-    }
-    
-    public function init($args)
-    {
-        parent::init($args);
-        $args = is_array($args) ? $args : array();
-        if (!isset($args['OAUTH_CONSUMER_KEY'], $args['OAUTH_CONSUMER_SECRET']) || 
-            strlen($args['OAUTH_CONSUMER_KEY'])==0 || strlen($args['OAUTH_CONSUMER_SECRET'])==0) {
-            throw new Exception("Twitter Consumer key and secret not set");
-        }
-        
-        $this->consumer_key = $args['OAUTH_CONSUMER_KEY'];
-        $this->consumer_secret = $args['OAUTH_CONSUMER_SECRET'];
     }
 }
 
@@ -109,19 +87,22 @@ class TwitterUser extends OAuthUser
 {
     protected $twitter_userID;
     
-    public function setTwitterUserID($userID)
-    {
+    public function setTwitterUserID($userID) {
         $this->twitter_userID = $userID;
     }
 
-    public function getTwitterUserID()
-    {
+    public function getTwitterUserID() {
         return $this->twitter_userID;
     }
 
-    protected function standardAttributes()
-    {
+    protected function standardAttributes() {
         return array_merge(parent::standardAttributes(), array('twitter_userID'));
+    }
+    
+    public function setVars(array $array) {
+        $this->setTwitterUserID($array['id']);
+        $this->setUserID($array['screen_name']);
+        $this->setFullName($array['name']);
     }
     
 }
