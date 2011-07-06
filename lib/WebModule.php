@@ -500,6 +500,29 @@ abstract class WebModule extends Module {
     return $modules;        
   }
 
+    protected function elapsedTime($timestamp, $date_format='%b %e, %Y @ %l:%M %p') {
+        $now = time();
+        $diff = $now - $timestamp;
+        $today = mktime(0,0,0);
+        $today_timestamp = mktime(0, 0, 0, date('m', $timestamp), date('d', $timestamp), date('Y', $timestamp));
+    
+        if ($diff > 0) {
+            if ($today - $today_timestamp > 86400) {
+                return sprintf("%d days ago", $diff/86400);
+            } elseif ($today - $today_timestamp > 0) {
+                return strftime('Yesterday @ %l:%M %p', $timestamp);
+            } elseif ($diff > 3600) {
+                return sprintf("%d hour%s ago", $diff/3600, intval($diff/3600)>1?'s':'');
+            } elseif ($diff > 60) {
+                return sprintf("%d minute%s ago", $diff/60, intval($diff/60)>1?'s':'');
+            } else {
+                return sprintf("%d second%s ago", $diff, $diff>1 ?'s':'');
+            }
+        
+        } else {
+            return strftime($date_format, $timestamp);
+        }    
+    }
 
   //
   // Module list control functions
