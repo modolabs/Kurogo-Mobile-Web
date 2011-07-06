@@ -199,6 +199,7 @@ class MapProjector {
     }
     
     public static function getProjSpecs($wkid) {
+        $contents = null;
         $projCache = new DiskCache(Kurogo::getSiteVar('PROJ_CACHE'), null, true);
         $projCache->setSuffix('.proj4');
         $projCache->preserveFormat();
@@ -216,8 +217,13 @@ class MapProjector {
             }
             fclose($file);
 
-            if ($contents)
+            if ($contents) {
                 $projCache->write($contents, $filename);
+            } else {
+                // TODO get config for logging
+                error_log("$wkid is not a known projection");
+            }
+
         } else {
             $contents = $projCache->read($filename);
         }

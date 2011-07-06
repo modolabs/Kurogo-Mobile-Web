@@ -182,22 +182,11 @@ class MapDataController extends DataController implements MapFolder
         }
     }
 
-    public function getChildCategories()
-    {
-        return $this->parser->getChildCategories();
-    }
-
-    public function getAllFeatures()
-    {
-        $this->items(); // make sure we're populated
-        return $this->parser->getAllFeatures();
-    }
-
     public function selectFeature($featureId)
     {
         $result = null;
         foreach ($this->getAllFeatures() as $feature) {
-            if ($feature->getIndex() == $featureId) {
+            if ($feature->getId() == $featureId) {
                 $result = $feature;
                 break;
             }
@@ -318,9 +307,22 @@ class MapDataController extends DataController implements MapFolder
         return $features;
     }
 
+    public function getChildCategories()
+    {
+        return $this->parser->getChildCategories();
+    }
+
+    public function getAllFeatures()
+    {
+        $this->getListItems(); // make sure we're populated
+        var_dump(get_class($this));
+        var_dump(get_class($this->parser));
+        return $this->parser->getAllFeatures();
+    }
+
     public function getListItems()
     {
-        var_dump($this->drillDownPath);
+var_dump($this->drillDownPath);
         return self::listItemsAtPath($this->items(), $this->drillDownPath);
     }
 

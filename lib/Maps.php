@@ -33,12 +33,12 @@ function greatCircleDistance($fromLat, $fromLon, $toLat, $toLon)
 }
 
 function shortArrayFromMapFeature(Placemark $feature) {
-    $category = $feature->getCategory();
+    $category = $feature->getCategoryIds();
     if (is_array($category)) {
         $category = implode(MAP_CATEGORY_DELIMITER, $category);
     }
     return array(
-        'featureindex' => $feature->getIndex(),
+        'featureindex' => $feature->getId(),
         'category' => $category,
         );
 }

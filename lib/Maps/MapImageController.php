@@ -3,18 +3,6 @@
 abstract class MapImageController
 {
     protected $baseURL = null;
-
-    const STYLE_LINE_WEIGHT = 'weight';
-    const STYLE_LINE_ALPHA = 'alpha';
-    const STYLE_LINE_COLOR = 'color';
-    const STYLE_LINE_CONSISTENCY = 'consistency'; // dotted, dashed, etc
-    
-    const STYLE_POINT_COLOR = 'color';
-    const STYLE_POINT_SIZE = 'size';
-    const STYLE_POINT_ICON = 'icon';
-    
-    const STYLE_FILL_COLOR = 'fillColor';
-    const STYLE_FILL_ALPHA = 'fillAlpha';
     
     protected $center = null; // array('lat' => 0.0, 'lon' => 0.0), or address
 
@@ -30,32 +18,16 @@ abstract class MapImageController
     protected $enabledLayers = array(); // array of map layers to show
     protected $layerStyles = array(); // id => styleName
 
-    // capabilities
-    protected $canAddLayers = false;
-    protected $supportsProjections = false;
-    
     protected $dataProjection; // projection that source data is provided in
     protected $mapProjection = GEOGRAPHIC_PROJECTION; // projection to pass to map image generator
+    protected $mapProjector;
 
     public static function factory($imageClass, $baseURL)
     {
-        switch ($imageClass) {
-            case 'WMSStaticMap':
-                $controller = new WMSStaticMap($baseURL);
-                break;
-            case 'ArcGISStaticMap':
-                $controller = new ArcGISStaticMap($baseURL);
-                break;
-            case 'GoogleJSMap':
-                $controller = new GoogleJSMap();
-                break;
-            case 'ArcGISJSMap':
-                $controller = new ArcGISJSMap($baseURL);
-                break;
-            case 'GoogleStaticMap':
-            default:
-                $controller = new GoogleStaticMap();
-                break;
+        if (isset($baseURL)) {
+            $controller = new $imageClass($baseURL);
+        } else {
+            $controller = new $imageClass();
         }
         return $controller;
     }
@@ -75,23 +47,33 @@ abstract class MapImageController
         return array();
     }
 
-    public function canAddLayers()
-    {
-        return $this->canAddlayers;
-    }
-    
-    public function supportsProjections()
-    {
-        return $this->supportsProjections;
-    }
-    
     public function setDataProjection($proj)
     {
-        $this->dataProjection = $proj;
+        if ($proj && $this->dataProjection != $proj) {
+            $this->dataProjection = $proj;
+
+            if (isset($this->dataProjection, $this->mapProjection) && $this->dataProjection != $this->mapProjection) {
+                if (!isset($this->mapProjector)) {
+                    $this->mapProjector = new MapProjector();
+                    $this->mapProjector->setDstProj($this->mapProjection);
+                }
+                $this->mapProjector->setSrcProj($this->dataProjection);
+            }
+        }
     }
     
-    public function getMapProjection() {
-        return $this->mapProjection;
+    public function setMapProjection($proj) {
+        if ($proj && $this->mapProjection != $proj) {
+            $this->mapProjection = $proj;
+
+            if (isset($this->dataProjection, $this->mapProjection) && $this->dataProjection != $this->mapProjection) {
+                if (!isset($this->mapProjector)) {
+                    $this->mapProjector = new MapProjector();
+                    $this->mapProjector->setSrcProj($this->dataProjection);
+                }
+                $this->mapProjector->setDstProj($this->mapProjection);
+            }
+        }
     }
 
     // overlays
@@ -161,11 +143,12 @@ abstract class MapImageController
     }
 
     public function setCenter($center) {
-        if (is_array($center)
-            && isset($center['lat'])
-            && isset($center['lon']))
-        {
-            $this->center = $center;
+        if (is_array($center) && isset($center['lat'], $center['lon'])) {
+            if (isset($this->mapProjector)) {
+                $this->center = $this->mapProjector->projectPoint($center);
+            } else {
+                $this->center = $center;
+            }
         }
     }
 

@@ -18,14 +18,14 @@ interface MapListElement
 interface Placemark extends MapListElement
 {
     public function getGeometry();
-    public function getDescription();
-    public function getDescriptionType();
     public function getStyle();
     public function getAddress();
     public function getCategoryIds();
+    public function getId();
 
     public function getField($fieldName);
     public function setField($fieldName, $value);
+    public function getFields();
 }
 
 class MapBaseStyle implements MapStyle

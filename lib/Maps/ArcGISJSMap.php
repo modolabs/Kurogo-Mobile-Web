@@ -3,18 +3,7 @@
 // http://help.arcgis.com/EN/webapi/javascript/arcgis/help/jshelp_start.htm
 // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi_start.htm
 
-require_once 'MapProjector.php';
-
 class ArcGISJSMap extends JavascriptMapImageController {
-    
-    const DEFAULT_PROJECTION = 4326;
-    
-    // capabilities
-    protected $canAddAnnotations = true;
-    protected $canAddPaths = true;
-    protected $canAddLayers = true;
-    protected $canAddPolygons = true;
-    protected $supportsProjections = true;
     
     protected $markers = array();
     protected $paths = array();
@@ -27,35 +16,20 @@ class ArcGISJSMap extends JavascriptMapImageController {
     
     private $permanentZoomLevel = null;
     
-    // map image projection data
-    private $projspec = NULL;
-    private $mapProjector;
-    
     public function __construct($baseURL)
     {
         $this->baseURL = $baseURL;
-        $this->mapProjector = new MapProjector();
 
         // TODO find a better way to reuse JSON parsing code for ArcGIS-related data
         $url = $this->baseURL.'?'.http_build_query(array('f' => 'json'));
         $content = file_get_contents($url);
-        $data = json_decode($content);
+        $data = json_decode($content, true);
         if (isset($data['spatialReference'], $data['spatialReference']['wkid'])) {
             $wkid = $data['spatialReference']['wkid'];
-            $this->mapProjector->setDstProj($wkid);
+            $this->setMapProjection($wkid);
         }
     }
-    
-    public function setDataProjection($proj)
-    {
-        $this->mapProjector->setSrcProj($proj);
-    }
 
-    public function getMapProjection()
-     {
-        return $this->mapProjector->getDstProj();
-    }
-    
     public function setPermanentZoomLevel($zoomLevel)
     {
         $this->permanentZoomLevel = $zoomLevel;
@@ -161,7 +135,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
         foreach ($this->polygons as $rings) {
             $jsonParams = array(
                 'rings' => $rings,
-                'spatialReference' => array('wkid' => $this->mapProjector->getDstProj()),
+                'spatialReference' => array('wkid' => $this->mapProjection),
                 );
             $json = json_encode($jsonParams);
 
@@ -194,7 +168,11 @@ JS;
         $result = array();
         // TODO: figure out when the arguments should be lon first
         foreach ($points as $point) {
-            $latlon = $this->mapProjector->projectPoint($point);
+            if (isset($this->mapProjector)) {
+                $latlon = $this->mapProjector->projectPoint($point);
+            } else {
+                $latlon = $point;
+            }
             $result[] = array($latlon['lon'], $latlon['lat']);
         }
         return $result;
@@ -222,7 +200,7 @@ JS;
             // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/polyline.htm
             $jsonObj = array(
                 'points' => $paths,
-                'spatialReference' => array('wkid' => $this->mapProjector->getDstProj())
+                'spatialReference' => array('wkid' => $this->mapProjection)
                 );
             
             $json = json_encode($jsonObj);
@@ -281,7 +259,7 @@ JS;
             }
 
             foreach ($points as $point) {
-                if ($this->mapProjector) {
+                if (isset($this->mapProjector)) {
                     $point = $this->mapProjector->projectPoint($point);
                     list($x, $y) = MapProjector::getXYFromPoint($point);
                     $point = array('x' => $x, 'y' => $y);
@@ -319,7 +297,7 @@ JS;
             list($x, $y) = MapProjector::getXYFromPoint($xy);
             $xy = array('x' => $x, 'y' => $y);
         } else {
-            $xy = array('x' => $this->center['lat'], 'y' => $this->center['lon']);
+            $xy = array('x' => $this->center['lon'], 'y' => $this->center['lat']);
         }
     
         $js = 'new esri.geometry.Point('.$xy['x'].', '.$xy['y'].', spatialRef)';
@@ -328,7 +306,7 @@ JS;
     }
     
     private function getSpatialRefJS() {
-        $wkid = $this->mapProjector->getDstProj();
+        $wkid = $this->mapProjection;
         return "var spatialRef = new esri.SpatialReference({ wkid: $wkid });";
     }
 

@@ -17,7 +17,7 @@ class MapDBPlacemark extends BasePlacemark
         }
 
         if (isset($dbFields['name'])) {
-            $this->name = $dbFields['name'];
+            $this->title = $dbFields['name'];
         }
 
         if (isset($dbFields['address'])) {
@@ -42,13 +42,22 @@ class MapDBPlacemark extends BasePlacemark
         }
     }
 
+    public function getGeometry()
+    {
+        if (isset($this->geometry)) {
+            return $this->geometry;
+        } else {
+            return new MapBasePoint($this->centroid);
+        }
+    }
+
     public function dbFields()
     {
         $styleId = isset($this->style) ? $this->style->getId() : null;
 
         $fields = array(
             'placemark_id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->title,
             'address' => $this->address,
             'lat' => $this->centroid['lat'],
             'lon' => $this->centroid['lon'],
@@ -57,6 +66,14 @@ class MapDBPlacemark extends BasePlacemark
             );
 
         return $fields;
+    }
+
+    public function getFields()
+    {
+        if (!$this->fields) {
+            $this->fields = MapDBDataParser::propertiesForFeature($this);
+        }
+        return $this->fields;
     }
 
     public function addCategoryId($id)
@@ -280,10 +297,12 @@ class MapDBDataController extends MapDataController implements MapFolder
     private $db;
     private $subtitle;
 
+    /*
     public function getListItems()
     {
         return $this->items();
     }
+    */
 
     public function getSubtitle()
     {
@@ -331,13 +350,23 @@ class MapDBDataController extends MapDataController implements MapFolder
             $items = $this->db->getCategory()->getListItems();
         }
         if (!$items) {
-            $items = parent::parseData($data, $parser);
+            $items = parent::parseData($data, $this->parser);
             $this->db->updateControllerCategory($this, $items);
         }
+
         return $items;
     }
 
     ////// MapDataController methods
+
+    public function getAllFeatures()
+    {
+        $this->getListItems(); // make sure we're populated
+        if ($this->hasDBData) {
+            return $this->db->getCategory()->getListItems();
+        }
+        return $this->parser->getAllFeatures();
+    }
 
     // TODO allow config of searchable fields
     public function search($searchText)
@@ -421,7 +450,7 @@ class MapDBDataParser extends DataParser
         foreach ($items as $item) {
             if ($item instanceof MapCategory) {
                 self::updateCategory($item, $this->categoryId);
-            } elseif ($item instanceof MapFeature) {
+            } elseif ($item instanceof Placemark) {
                 self::updateFeature($item, $this->categoryId);
             }
         }
@@ -440,7 +469,7 @@ class MapDBDataParser extends DataParser
 
         $placemarks = array();
         while ($row = $result->fetch()) {
-             $placemarks[] = new MapPlacemark($row, true);
+             $placemarks[] = new MapDBPlacemark($row, true);
         }
         return $placemarks;
     }
@@ -464,8 +493,8 @@ class MapDBDataParser extends DataParser
               .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
               .' WHERE p.placemark_id = pc.placemark_id'
               .'   AND pc.category_id = ?'
-              .'   AND lat >= ? AND lat < ? AND lon >= ? AND lon < ?'
-              .' ORDER BY (lat - ?)*(lat - ?) + (lon - ?)*(lon - ?)';
+              .'   AND p.lat >= ? AND p.lat < ? AND p.lon >= ? AND p.lon < ?'
+              .' ORDER BY (p.lat - ?)*(p.lat - ?) + (p.lon - ?)*(p.lon - ?)';
         $params = array(
             $this->categoryId,
             $minLat, $maxLat, $minLon, $maxLon,
@@ -480,14 +509,14 @@ class MapDBDataParser extends DataParser
 
         $placemarks = array();
         while ($row = $result->fetch()) {
-             $placemarks[] = new MapPlacemark($row, true);
+             $placemarks[] = new MapDBPlacemark($row, true);
         }
         return $placemarks;
     }
 
     // static functions
 
-    public static function updateFeature(MapFeature $feature, $parentCategoryId) {
+    public static function updateFeature(Placemark $feature, $parentCategoryId) {
         $style = $feature->getStyle();
         if (method_exists($style, 'getId')) {
             $styleId = $style->getId();
@@ -507,7 +536,7 @@ class MapDBDataParser extends DataParser
         $placemarkId = $feature->getId();
 
         // placemark table
-        if ($feature->isStored()) {
+        if (!($feature instanceof MapDBPlacemark) || !$feature->isStored()) {
             $sql = 'INSERT INTO '.self::PLACEMARK_TABLE
                   .' (placemark_id, name, address, style_id, lat, lon, geometry)'
                   .' VALUES (?, ?, ?, ?, ?, ?, ?)';
@@ -546,6 +575,9 @@ class MapDBDataParser extends DataParser
 
         // categories
         $categories = $feature->getCategoryIds();
+        if (!is_array($categories)) {
+            $categories = array();
+        }
         if (!in_array($parentCategoryId, $categories)) {
             $categories[] = $parentCategoryId;
         }
@@ -566,9 +598,9 @@ class MapDBDataParser extends DataParser
         $properties = $feature->getFields();
         foreach ($properties as $name => $value) {
             $sql = 'INSERT INTO '.self::PLACEMARK_PROPERTIES_TABLE
-                  .' (placemark_id, property_name, property_value)'
-                  .' VALUES (?, ?, ?)';
-            $params = array($placemarkId, $name, $value);
+                  .' (placemark_id, lat, lon, property_name, property_value)'
+                  .' VALUES (?, ?, ?, ?, ?)';
+            $params = array($placemarkId, $centroid['lat'], $centroid['lon'], $name, $value);
             self::connection()->query($sql, $params);
         }
     }
@@ -595,7 +627,7 @@ class MapDBDataParser extends DataParser
         foreach ($category->getListItems() as $item) {
             if ($item instanceof MapFolder) {
                 self::updateCategory($item, $categoryId);
-            } elseif ($item instanceof MapFeature) {
+            } elseif ($item instanceof Placemark) {
                 self::updateFeature($item, $categoryId);
             }
         }
@@ -708,6 +740,18 @@ class MapDBDataParser extends DataParser
         }
         return $features;
     }
+    
+    public static function propertiesForFeature(MapDBPlacemark $feature) {
+        $sql = 'SELECT property_name, property_value FROM '.self::PLACEMARK_PROPERTIES_TABLE
+              .' WHERE placemark_id = ? AND lat = ? AND lon = ?';
+        $center = $feature->getGeometry()->getCenterCoordinate();
+        $params = array($feature->getId(), $center['lat'], $center['lon']);
+        $results = self::connection()->query($sql, $params);
+        if ($results) {
+            return $results->fetchAll();
+        }
+        return array();
+    }
 
     private static function connection()
     {
@@ -728,8 +772,7 @@ class MapDBDataParser extends DataParser
                 lon DOUBLE,
                 geometry_type VARCHAR(16),
                 geometry TEXT,
-                CONSTRAINT placemark_id_pk PRIMARY KEY (placemark_id),
-                CONSTRAINT unique_placemark UNIQUE (placemark_id) )';
+                CONSTRAINT placemark_id_pk PRIMARY KEY (placemark_id, lat, lon) )';
             $conn->query($sql);
         }
 
@@ -746,18 +789,19 @@ class MapDBDataParser extends DataParser
                 scale DOUBLE,
                 shape VARCHAR(32),
                 consistency VARCHAR(32),
-                CONSTRAINT style_id_pk PRIMARY KEY (style_id),
-                CONSTRAINT unique_style UNIQUE (style_id) )';
+                CONSTRAINT style_id_pk PRIMARY KEY (style_id) )';
             $conn->query($sql);
         }
 
         if (!self::checkTableExists(self::PLACEMARK_PROPERTIES_TABLE)) {
             $sql = 'CREATE TABLE '.self::PLACEMARK_PROPERTIES_TABLE.' (
                 placemark_id CHAR(32) NOT NULL,
+                lat DOUBLE,
+                lon DOUBLE,
                 property_name VARCHAR(32),
                 property_value TEXT,
-                CONSTRAINT placemark_id_fk FOREIGN KEY (placemark_id)
-                  REFERENCES '.self::PLACEMARK_TABLE.' (placemark_id)
+                CONSTRAINT placemark_id_fk FOREIGN KEY (placemark_id, lat, lon)
+                  REFERENCES '.self::PLACEMARK_TABLE.' (placemark_id, lat, lon)
                   ON UPDATE CASCADE ON DELETE CASCADE )';
             $conn->query($sql);
         }
@@ -772,17 +816,18 @@ class MapDBDataParser extends DataParser
                 CONSTRAINT category_id_pk PRIMARY KEY (category_id),
                 CONSTRAINT category_id_fk FOREIGN KEY (parent_category_id)
                   REFERENCES '.self::CATEGORY_TABLE.' (category_id)
-                  ON UPDATE CASCADE ON DELETE SET NULL,
-                CONSTRAINT unique_category UNIQUE (category_id) )';
+                  ON UPDATE CASCADE ON DELETE SET NULL )';
             $conn->query($sql);
         }
 
         if (!self::checkTableExists(self::PLACEMARK_CATEGORY_TABLE)) {
             $sql = 'CREATE TABLE '.self::PLACEMARK_CATEGORY_TABLE.' (
                 placemark_id CHAR(32) NOT NULL,
+                lat DOUBLE,
+                lon DOUBLE,
                 category_id CHAR(32) NOT NULL,
-                CONSTRAINT placemark_category_fk_placemark FOREIGN KEY (placemark_id)
-                  REFERENCES '.self::PLACEMARK_TABLE.' (placemark_id)
+                CONSTRAINT placemark_category_fk_placemark FOREIGN KEY (placemark_id, lat, lon)
+                  REFERENCES '.self::PLACEMARK_TABLE.' (placemark_id, lat, lon)
                   ON UPDATE CASCADE ON DELETE CASCADE,
                 CONSTRAINT placemark_category_fk_category FOREIGN KEY (category_id)
                   REFERENCES '.self::CATEGORY_TABLE.' (category_id)

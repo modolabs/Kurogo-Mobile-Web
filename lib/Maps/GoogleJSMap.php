@@ -6,11 +6,6 @@ class GoogleJSMap extends JavascriptMapImageController {
 
     private $locatesUser = false;
 
-    protected $canAddAnnotations = true;
-    protected $canAddPaths = true;
-    protected $canAddPolygons = true;
-    protected $canAddLayers = true;
-
     protected $markers = array();
     protected $paths = array();
     protected $polygons = array();

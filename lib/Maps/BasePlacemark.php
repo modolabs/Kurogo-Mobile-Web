@@ -3,7 +3,7 @@
 class BasePlacemark implements Placemark
 {
     protected $id;
-    protected $name;
+    protected $title;
     protected $address;
     protected $subtitle; // defaults to address if not present
     protected $geometry;
@@ -51,10 +51,13 @@ class BasePlacemark implements Placemark
         return $this->geometry;
     }
 
+    /*
     public function getDescription()
     {
-        if (count($this->fields) == 1) {
-            return current(array_values($this->fields));
+        $fields = $this->getFields();
+
+        if (count($fields) == 1) {
+            return current(array_values($fields));
         }
 
         $details = array();
@@ -68,14 +71,7 @@ class BasePlacemark implements Placemark
         }
         return $details;
     }
-
-    public function getDescriptionType()
-    {
-        if (count($this->fields) == 1) {
-            return MapFeature::DESCRIPTION_TEXT;
-        }
-        return MapFeature::DESCRIPTON_LIST;
-    }
+    */
 
     public function getFields()
     {

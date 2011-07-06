@@ -11,17 +11,11 @@ class ArcGISStaticMap extends StaticMapImageController {
     
     private $layerFilters = array();
 
-    protected $canAddAnnotations = false;
-    protected $canaddPaths = false;
-    protected $canAddLayers = true;
-    protected $supportsProjections = true;
-
     protected $availableLayers = null;
     protected $unitsPerMeter = null;
     
-    private $mapProjector;
-    
     private $transparent = false;
+
     public function setTransparent($tranparent) {
         $this->transparent = ($transparent == true);
     }
@@ -29,15 +23,12 @@ class ArcGISStaticMap extends StaticMapImageController {
     public function __construct($baseURL, $parser=null) {
         $this->baseURL = $baseURL;
 
-        $this->mapProjector = new MapProjector();
-        
         // TODO find a better way to reuse JSON parsing code for ArcGIS-related data
         $url = $this->baseURL.'?'.http_build_query(array('f' => 'json'));
         $content = file_get_contents($url);
-        $data = json_decode($content);
+        $data = json_decode($content, true);
         if (isset($data['spatialReference'], $data['spatialReference']['wkid'])) {
-            $this->mapProjection = $data['spatialReference']['wkid'];
-            $this->mapProjector->setDstProj($this->mapProjection);
+            $this->setMapProjection($data['spatialReference']['wkid']);
         }
 
         $this->unitsPerMeter = self::getScaleForEsriUnits($data['units']);
@@ -71,28 +62,29 @@ class ArcGISStaticMap extends StaticMapImageController {
 
     public static function getScaleForEsriUnits($units) {
         switch ($units) {
-        case 'esriCentimeters':
-            return 100;
-        case 'esriDecimeters':
-            return 0.1;
-        case 'esriFeet':
-            return 3.2808399;
-        case 'esriInches':
-            return 39.3700787;
-        case 'esriKilometers':
-            return 0.001;
-        case 'esriMeters':
-            return 1;
-        case 'esriMiles':
-            return 0.000621371192;
-        case 'esriMillimeters':
-            return 1000;
-        case 'esriNauticalMiles':
-            return 0.000539956803;
-        case 'esriYards':
-            return 1.0936133;
-        default:
-            return self::NO_PROJECTION;
+            case 'esriCentimeters':
+                return 100;
+            case 'esriDecimeters':
+                return 0.1;
+            case 'esriFeet':
+                return 3.2808399;
+            case 'esriInches':
+                return 39.3700787;
+            case 'esriKilometers':
+                return 0.001;
+            case 'esriMeters':
+                return 1;
+            case 'esriMiles':
+                return 0.000621371192;
+            case 'esriMillimeters':
+                return 1000;
+            case 'esriNauticalMiles':
+                return 0.000539956803;
+            case 'esriYards':
+                return 1.0936133;
+            default:
+                return self::NO_PROJECTION;
+        }
     }
 
     // http://wiki.openstreetmap.org/wiki/MinScaleDenominator
@@ -101,11 +93,8 @@ class ArcGISStaticMap extends StaticMapImageController {
         if ($this->unitsPerMeter != self::NO_PROJECTION) {
             $metersPerPixel = $this->getHorizontalRange() / $this->imageWidth / $this->unitsPerMeter;
             return $metersPerPixel / self::LIFE_SIZE_METERS_PER_PIXEL;
-        } else {
-            // TODO this isn't quite right, this won't allow us to use
-            // maxScaleDenom and minScaleDenom in any layers
-            return self::NO_PROJECTION;
         }
+        return null;
     }
     
     protected function zoomLevelForScale($scale)
@@ -118,18 +107,6 @@ class ArcGISStaticMap extends StaticMapImageController {
             // http://wiki.openstreetmap.org/wiki/MinScaleDenominator
             return ceil(log(559082264 / $scale, 2));
         }
-    }
-    
-    public function setDataProjection($proj) {
-        $this->mapProjector->setSrcProj($proj);
-    }
-    
-    // do conversion here since this and ArcGISJSMap are the
-    // only map image controllers that can project input
-    // features from other coordinate systems
-    public function setCenter($center) {
-        $newCenter = $this->mapProjector->projectPoint($center);
-        parent::setCenter($newCenter);
     }
 
     ////////////// overlays ///////////////

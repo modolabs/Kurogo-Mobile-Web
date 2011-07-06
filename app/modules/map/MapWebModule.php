@@ -44,6 +44,10 @@ class MapWebModule extends WebModule {
         if ($path !== array()) {
             $path = explode(MAP_CATEGORY_DELIMITER, $path);
         }
+        // remove empty strings from beginning of array
+        while (count($path) && !strlen($path[0])) {
+            array_shift($path);
+        }
         return $path;
     }
 
@@ -190,14 +194,16 @@ class MapWebModule extends WebModule {
     }
 
     private function detailURL($name, $category=null, $addBreadcrumb=true) {
-        $args = array();
+        $args = $this->args;
         $args['featureindex'] = $name;
+        /*
         if ($category) {
             if (is_array($category)) {
                 $category = implode(MAP_CATEGORY_DELIMITER, $category);
             }
             $args['category'] = $category;
         }
+        */
         return $this->buildBreadcrumbURL('detail', $args, $addBreadcrumb);
     }
   
@@ -537,9 +543,24 @@ JS;
                     $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');   
                     $feature->setBlackList($detailConfig['details']['suppress']);
                 }
-                
-                $displayDetailsAsList = $feature->getDescriptionType() == Placemark::DESCRIPTION_LIST;
-                $details = $feature->getDescription();
+
+                $fields = $feature->getFields();
+                if (count($fields) == 1) {
+                    $details = current(array_values($fields));
+                    $displayDetailsAsList = false;
+
+                } else {
+                    $details = array();
+                    foreach ($fields as $name => $value) {
+                        $aDetail = array('label' => $name, 'title' => $value);
+                        if (isValidURL($value)) {
+                            $aDetail['url'] = $value;
+                            $aDetail['class'] = 'external';
+                        }
+                        $details[] = $aDetail;
+                    }
+                    $displayDetailsAsList = true;
+                }
                 
                 $this->assign('displayDetailsAsList', $displayDetailsAsList);
                 $this->assign('details', $details);
@@ -731,14 +752,14 @@ JS;
                     */
                     if (count($listItems) == 1 && current($listItems) instanceof Placemark) {
                         $args = $this->args;
-                        $args['featureindex'] = current($listItems)->getIndex();
+                        $args['featureindex'] = current($listItems)->getId();
                         $this->redirectTo('detail', $args, true);
                     }
 
                     $places = array();
                     foreach ($listItems as $listItem) {
                         if ($listItem instanceof Placemark) {
-                            $url = $this->detailURL($listItem->getIndex(), $categoryPath);
+                            $url = $this->detailURL($listItem->getId(), $categoryPath);
                         } else {
                             // for folder objects, getIndex returns the subcategory ID
                             //$drilldownPath = array_merge($categoryPath, array($listItem->getId()));
@@ -780,6 +801,10 @@ JS;
                 $dataController = $this->getDataController();
                 //$dataController = $this->getDataControllerForMap($listItemPath);
                 //$feature = $this->getFeatureForMap($dataController, $listItemPath);
+                $drilldownPath = $this->getDrillDownPath();
+                if ($drilldownPath) {
+                    $dataController->addDisplayFilter('category', $drilldownPath);
+                }
                 $feature = $dataController->selectFeature($this->featureIndex);
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     if (isset($this->args['featureindex'])) { // this is a regular place

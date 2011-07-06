@@ -155,8 +155,8 @@ class KMLPlacemark extends XMLElement implements Placemark
     protected $style;
     protected $geometry;
     protected $category;
-    
-    private $fields;
+
+    private $fields = array();
 
     private static $elementMap = array(
         'NAME' => 'title',
@@ -188,8 +188,12 @@ class KMLPlacemark extends XMLElement implements Placemark
         return $this->snippet;
     }
     
-    public function getIndex() {
+    public function getId() {
         return $this->index;
+    }
+
+    public function getFields() {
+        return array('description' => $this->description);
     }
     
     public function getCategory() {
@@ -212,14 +216,6 @@ class KMLPlacemark extends XMLElement implements Placemark
 
     public function getGeometry() {
         return $this->geometry;
-    }
-
-    public function getDescription() {
-        return $this->description;
-    }
-    
-    public function getDescriptionType() {
-    	return Placemark::DESCRIPTION_TEXT;
     }
 
     public function getStyle() {

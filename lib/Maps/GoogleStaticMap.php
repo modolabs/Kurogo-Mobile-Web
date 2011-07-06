@@ -7,12 +7,6 @@ class GoogleStaticMap extends StaticMapImageController {
 
     protected $baseURL = 'http://maps.google.com/maps/api/staticmap';
 
-    // capabilities
-    protected $canAddAnnotations = true;
-    protected $canAddPaths = true;
-    protected $canAddLayers = true;
-    //protected $canAddPolygons = true;
-
     protected $maxZoomLevel = 21;
     protected $minZoomLevel = 0;
 

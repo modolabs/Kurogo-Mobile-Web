@@ -21,6 +21,8 @@ class ArcGISDataController extends MapDataController
         return $this->parser->getProjection();
     }
     */
+    
+    /*
     public function getListItems($categoryPath=array()) {
         // TODO: this only works for servers that have simple layers
         // i.e. no layer contains additional sublayers
@@ -50,6 +52,7 @@ class ArcGISDataController extends MapDataController
         }
         return $results;
     }
+    */
 
     /*    
     public function getTitle() {

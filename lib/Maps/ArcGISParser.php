@@ -137,7 +137,7 @@ class ArcGISFeature implements Placemark
         return $this->category;
     }
 
-    public function getIndex()
+    public function getId()
     {
         return $this->index;
     }
@@ -189,11 +189,7 @@ class ArcGISFeature implements Placemark
         }
     }
     
-    public function getDescriptionType()
-    {
-    	return MapFeature::DESCRIPTION_LIST;
-    }
-    
+    /*
     public function getDescription()
     {
     	$details = array();
@@ -208,6 +204,12 @@ class ArcGISFeature implements Placemark
             }
         }
         return $details;
+    }
+    */
+
+    public function getFields()
+    {
+        return $this->attributes;
     }
 
     public function getStyle()
@@ -248,6 +250,7 @@ class ArcGISParser extends DataParser implements MapDataParser
 
         if (isset($args['ARCGIS_LAYER_ID'])) {
             $this->defaultLayerId = $args['ARCGIS_LAYER_ID'];
+        var_dump($this->defaultLayerId);
         }
 
         if (isset($args['ID_FIELD'])) {
@@ -366,6 +369,8 @@ class ArcGISParser extends DataParser implements MapDataParser
     //// MapFolder interface
 
     public function getAllFeatures() {
+        //if (!isset($this->selectedLayer))
+        //    throw new Exception("g");
         return $this->selectedLayer->getAllFeatures();
     }
 
@@ -684,7 +689,7 @@ class ArcGISLayer implements MapFolder, MapListElement {
         }
         usort($result, array($this, 'compareFeatures'));
         foreach ($result as $feature) {
-            $this->features[$feature->getIndex()] = $feature;
+            $this->features[$feature->getId()] = $feature;
         }
 
         $this->isPopulated = true;
