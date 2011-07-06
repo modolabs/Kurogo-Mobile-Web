@@ -20,7 +20,9 @@ class DataResponse
     
     public function setResponse($response, $http_response_header) {
         $this->response = $response;
-        $this->parseHTTPResponseHeaders($http_response_header);
+        if (is_array($http_response_header)) {
+            $this->parseHTTPResponseHeaders($http_response_header);
+        }
     }
     
     protected function parseHTTPResponseHeaders($http_response_header) {
