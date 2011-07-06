@@ -118,6 +118,7 @@ class GoogleAppsCalendarListController extends CalendarListController
     }
         
     protected function init($args) {
+        parent::init($args);
         //either get the specified authority or attempt to get a GoogleApps authority
         $authorityIndex = isset($args['AUTHORITY']) ? $args['AUTHORITY'] : 'GoogleAppsAuthentication';
         $authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex);
