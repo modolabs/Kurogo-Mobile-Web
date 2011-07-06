@@ -217,8 +217,13 @@ class NewsWebModule extends WebModule {
             $items = $this->feed->items($start, $this->maxPerPage);
             $totalItems = $this->feed->getTotalItems();
             $stories = array();
+
+            $options = array(
+                'section' => $this->feedIndex
+            );
+
             foreach ($items as $story) {
-                $stories[] = $this->linkForItem($story);
+                $stories[] = $this->linkForItem($story, $options);
             }
 
             $previousURL = '';
@@ -237,15 +242,11 @@ class NewsWebModule extends WebModule {
             }
           }
 
-          $extraArgs = array(
-            'section' => $this->feedIndex
-          );
-
           $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
           $this->addOnLoad('setupNewsListing();');
 
           $this->assign('maxPerPage',  $this->maxPerPage);
-          $this->assign('extraArgs',   $extraArgs);
+          $this->assign('extraArgs',   $options);
           $this->assign('searchTerms', $searchTerms);
           $this->assign('stories',     $stories);
           $this->assign('previousURL', $previousURL);
@@ -263,12 +264,13 @@ class NewsWebModule extends WebModule {
         $start = 0;
         $items = $this->feed->items($start, $this->maxPerPane);
         $stories = array();
-        $data = array(
-            'noBreadcrumbs'=>true
+        $options = array(
+            'noBreadcrumbs'=>true,
+            'section' => $this->feedIndex
         );
-        
+
         foreach ($items as $story) {
-            $stories[] = $this->linkForItem($story, $data);
+            $stories[] = $this->linkForItem($story, $options);
         }
         
         $this->assign('stories', $stories);
@@ -294,10 +296,14 @@ class NewsWebModule extends WebModule {
             $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
           }
         }
+
+        $options = array(
+            'section' => $this->feedIndex
+        );
         
         $stories = array();
         foreach ($items as $story) {
-            $stories[] = $this->linkForItem($story);
+            $stories[] = $this->linkForItem($story, $options);
         }
         
         $sections = array();
