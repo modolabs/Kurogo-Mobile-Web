@@ -315,14 +315,11 @@ class MapDataController extends DataController implements MapFolder
     public function getAllFeatures()
     {
         $this->getListItems(); // make sure we're populated
-        var_dump(get_class($this));
-        var_dump(get_class($this->parser));
         return $this->parser->getAllFeatures();
     }
 
     public function getListItems()
     {
-var_dump($this->drillDownPath);
         return self::listItemsAtPath($this->items(), $this->drillDownPath);
     }
 

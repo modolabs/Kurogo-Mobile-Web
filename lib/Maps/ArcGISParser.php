@@ -188,24 +188,6 @@ class ArcGISFeature implements Placemark
             $this->geometry = $geometry->getCenterCoordinate();
         }
     }
-    
-    /*
-    public function getDescription()
-    {
-    	$details = array();
-        foreach ($this->attributes as $name => $value) {
-            if (!in_array($name, $this->blackList)) {
-                $aDetail = array('label' => $name, 'title' => $value);
-                if (isValidURL($value)) {
-                    $aDetail['url'] = $value;
-                    $aDetail['class'] = 'external';
-                }
-            	$details[] = $aDetail;
-            }
-        }
-        return $details;
-    }
-    */
 
     public function getFields()
     {
@@ -250,7 +232,6 @@ class ArcGISParser extends DataParser implements MapDataParser
 
         if (isset($args['ARCGIS_LAYER_ID'])) {
             $this->defaultLayerId = $args['ARCGIS_LAYER_ID'];
-        var_dump($this->defaultLayerId);
         }
 
         if (isset($args['ID_FIELD'])) {

@@ -51,28 +51,6 @@ class BasePlacemark implements Placemark
         return $this->geometry;
     }
 
-    /*
-    public function getDescription()
-    {
-        $fields = $this->getFields();
-
-        if (count($fields) == 1) {
-            return current(array_values($fields));
-        }
-
-        $details = array();
-        foreach ($this->fields as $name => $value) {
-            $aDetail = array('label' => $name, 'title' => $value);
-            if (isValidURL($value)) {
-                $aDetail['url'] = $value;
-                $aDetail['class'] = 'external';
-            }
-            $details[] = $aDetail;
-        }
-        return $details;
-    }
-    */
-
     public function getFields()
     {
         return $this->fields;

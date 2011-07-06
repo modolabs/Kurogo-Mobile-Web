@@ -71,7 +71,10 @@ class MapDBPlacemark extends BasePlacemark
     public function getFields()
     {
         if (!$this->fields) {
-            $this->fields = MapDBDataParser::propertiesForFeature($this);
+            $results = MapDBDataParser::propertiesForFeature($this);
+            foreach ($results as $row) {
+                $this->fields[$row['property_name']] = $row['property_value'];
+            }
         }
         return $this->fields;
     }
@@ -536,41 +539,36 @@ class MapDBDataParser extends DataParser
         $placemarkId = $feature->getId();
 
         // placemark table
-        if (!($feature instanceof MapDBPlacemark) || !$feature->isStored()) {
-            $sql = 'INSERT INTO '.self::PLACEMARK_TABLE
-                  .' (placemark_id, name, address, style_id, lat, lon, geometry)'
-                  .' VALUES (?, ?, ?, ?, ?, ?, ?)';
-            $params = array(
-                $placemarkId,
-                $feature->getTitle(),
-                $feature->getAddress(),
-                $styleId,
-                $centroid['lat'],
-                $centroid['lon'],
-                $wkt
-                );
-            
-            self::connection()->query($sql, $params);
-            if ($placemarkId === null) {
-                // TODO: check db compatibility for this function
-                $placemarkId = self::connection()->lastInsertId();
+        $isStored = $feature instanceof MapDBPlacemark && $feature->isStored();
+        if (!$isStored) {
+            $sql = 'SELECT * FROM '.self::PLACEMARK_TABLE
+                  .' WHERE placemark_id=? AND lat=? AND lon=?';
+            $params = array($placemarkId, $centroid['lat'], $centroid['lon']);
+            $results = self::connection()->query($sql, $params);
+            if ($results) {
+                $isStored = true;
             }
+        }
 
-        } else {
+        $params = array(
+            $feature->getTitle(), $feature->getAddress(), $styleId,
+            $centroid['lat'], $centroid['lon'], $wkt, $placemarkId,
+            );
+
+        if ($isStored) {
             $sql = 'UPDATE '.self::PLACEMARK_TABLE
                   .'   SET name=?, address=?, style_id=?,  lat=?, lon=?, geometry=?'
                   .' WHERE placemark_id=?';
-
-            $params = array(
-                $feature->getTitle(),
-                $feature->getAddress(),
-                $styleId,
-                $centroid['lat'],
-                $centroid['lon'],
-                $wkt,
-                $placemarkId,
-                );
-            self::connection()->query($sql, $params);
+        } else {
+            $sql = 'INSERT INTO '.self::PLACEMARK_TABLE
+                  .' (name, address, style_id, lat, lon, geometry, placemark_id)'
+                  .' VALUES (?, ?, ?, ?, ?, ?, ?)';
+        }
+            
+        self::connection()->query($sql, $params);
+        if ($placemarkId === null) {
+            // TODO: check db compatibility for this function
+            $placemarkId = self::connection()->lastInsertId();
         }
 
         // categories

@@ -179,13 +179,13 @@ class WKTParser
             $ringStrings = array();
             $rings = $geometry->getRings();
             foreach ($rings as $ring) {
-                $points = array_map(array(WKTParser, 'implodeLatLon'), $geometry->getPoints());
+                $points = array_map(array(get_class(self), 'implodeLatLon'), $geometry->getPoints());
                 $ringStrings[] = '('.implode(',', $points).')';
             }
             return 'POLYGON('.implode(',', $ringStrings).')';
 
         } elseif ($geometry instanceof MapPolyline) {
-            $points = array_map(array(WKTParser, 'implodeLatLon'), $geometry->getPoints());
+            $points = array_map(array(get_class(self), 'implodeLatLon'), $geometry->getPoints());
             return 'LINESTRING('.implode(',', $points).')';
 
         } else { // this should be a point, but it will work for any MapGeometry
