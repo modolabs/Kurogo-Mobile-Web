@@ -1,5 +1,7 @@
 {include file="findInclude:common/templates/header.tpl" scalable=false}
 
+<a name="scrolldown"> </a>
+
 {$tabBodies = array()}
 
 {if in_array('map', $tabKeys)}
@@ -46,11 +48,10 @@
 {/if}
 
 {block name="tabView"}
-  <a name="scrolldown"> </a>
-  <div class="focal shaded">
-    <h2>{$name}</h2>
-    <p class="address">{$address|replace:' ':'&shy; '}</p>
+  <div id="tabscontainer">
     {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
+    <h2>{$name}</h2>
+    <!--<p class="address">{$address|replace:' ':'&shy; '}</p>-->
     {include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies}
   </div>
 {/block}

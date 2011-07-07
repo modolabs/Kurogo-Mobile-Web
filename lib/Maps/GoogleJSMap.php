@@ -115,6 +115,10 @@ class GoogleJSMap extends JavascriptMapImageController {
     }
     
     private function getPolygonJS() {
+        if (!$this->polygons) {
+            return '';
+        }
+
         $js = "var polypaths;\nvar polygon;";
 
         foreach ($this->polygons as $polygon) {
@@ -143,6 +147,10 @@ JS;
     }
 
     private function getPathJS() {
+        if (!$this->paths) {
+            return '';
+        }
+
         $js = "var coordinates;\nvar path;";
         foreach ($this->paths as $path) {
             $coordString = self::coordsToGoogleArray($path['coordinates']);
@@ -180,75 +188,23 @@ JS;
             $center = $this->center;
         }
 
-        $script = <<<JS
-
-var map;
-var initLat = {$center['lat']};
-var initLon = {$center['lon']};
-
-function loadMap() {
-    var mapImage = document.getElementById("{$this->mapElement}");
-    mapImage.style.display = "inline-block";
-    mapImage.style.width = "{$this->imageWidth}";
-    mapImage.style.height = "{$this->imageHeight}";
-
-    var initCoord = new google.maps.LatLng({$center['lat']}, {$center['lon']});
-    var options = {
-        zoom: {$this->zoomLevel},
-        center: initCoord,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        mapTypeControl: false,
-        panControl: false,
-        zoomControl: false,
-        scaleControl: false,
-        streetViewControl: false
-    };
-
-    map = new google.maps.Map(mapImage, options);
-
-    var zoomIn = document.getElementById("zoomin");
-    google.maps.event.addDomListener(zoomIn, "click", function() {
-        map.setZoom(map.getZoom() + 1);
-    });
-    
-    var zoomOut = document.getElementById("zoomout");
-    google.maps.event.addDomListener(zoomOut, "click", function() {
-        map.setZoom(map.getZoom() - 1);
-    });
-    
-    var recenter = document.getElementById("recenter");
-    google.maps.event.addDomListener(recenter, "click", function() {
-        map.setCenter(initCoord)
-    });
-}
-
-function resizeMapOnContainerResize() {
-    if (map) {
-        google.maps.event.trigger(map, 'resize');
-    }
-}
-
-JS;
-
-        return $script;
+        $template = $this->prepareJavascriptTemplate('GoogleJSMapHeader');
+        $template->setValues(array(
+            '___INITIAL_LATITUDE___' => $center['lat'],
+            '___INITIAL_LONGITUDE___' => $center['lon'],
+            '___MAPELEMENT___' => $this->mapElement,
+            '___CENTER_LATITUDE___' => $center['lat'],
+            '___CENTER_LONGITUDE___' => $center['lon'],
+            '___IMAGE_WIDTH___' => $this->imageWidth,
+            '___IMAGE_HEIGHT___' => $this->imageHeight,
+            '___ZOOMLEVEL___' => $this->zoomLevel,
+            ));
+        
+        return $template->getScript();
     }
 
     public function getFooterScript() {
-
-        $script = <<<JS
-
-loadMap();
-
-JS;
-
-        if ($this->polygons) {
-            $script .= $this->getPolygonJS();
-        }
-
-        if ($this->paths) {
-            $script .= $this->getPathJS();
-        }
-
+        $markers = $this->prepareJavascriptTemplate('GoogleJSMapMarkers');
         foreach ($this->markers as $index => $marker) {
             $title = 'marker';
             if (isset($marker['title'])) {
@@ -261,18 +217,19 @@ JS;
                 $coord = $marker;
             }
 
-            $script .= <<<JS
-
-var marker{$index} = new google.maps.Marker({
-    position: new google.maps.LatLng({$coord['lat']},{$coord['lon']}),
-    map: map,
-    title: "{$title}"
-});
-
-JS;
+            $markers->appendValues(array(
+                '___IDENTIFIER___' => $index,
+                '___LATITUDE___' => $coord['lat'],
+                '___LONGITUDE___' => $coord['lon'],
+                '___TITLE___' => $title));
         }
 
-        return $script;
+        $footer = $this->prepareJavascriptTemplate('GoogleJSMapFooter');
+        $footer->setValues(array(
+            '___MARKER_SCRIPT___', $markers->getScript(),
+            '___POLYGON_SCRIPT___', $this->getPolygonJS(),
+            '___PATH_SCRIPT___', $this->getPathJS()));
+        return $footer->getScript();
     }
 
 }

@@ -130,8 +130,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
     private function getPolygonJS()
     {
-        $js = '';
-    
+        $template = $this->prepareJavascriptTemplate('ArcGISPolygons');
         foreach ($this->polygons as $rings) {
             $jsonParams = array(
                 'rings' => $rings,
@@ -139,28 +138,9 @@ class ArcGISJSMap extends JavascriptMapImageController {
                 );
             $json = json_encode($jsonParams);
 
-            $js .= <<<JS
-
-    polygon = new esri.geometry.Polygon({$json});
-    map.graphics.add(new esri.Graphic(polygon, fillSymbol));
-
-JS;
+            $template->appendValues(array('___POLYGON_SPEC___' => $json));
         }
-        
-        if ($js) {
-    
-            $js = <<<JS
-
-    var strokeSymbol = new esri.symbol.SimpleLineSymbol();
-    var color = new dojo.Color([255, 0, 0, 0.5]);
-    var fillSymbol = new esri.symbol.SimpleFillSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID, strokeSymbol, color);
-    var polygon;
-    $js
-
-JS;
-        }
-
-        return $js;
+        return $template->getScript();
     }
     
     private function collapseAssociativePoints($points)
@@ -180,23 +160,8 @@ JS;
 
     private function getPathJS()
     {
-        $js = '';
-    
+        $template = $this->prepareJavascriptTemplate('ArcGISPaths');
         foreach ($this->paths as $styleString => $paths) {
-            $styleParams = explode('|', $styleString);
-            $styles = array();
-            foreach ($styleParams as $styleParam) {
-                $styleParts = explode('=', $styleParam);
-                $styles[$styleParts[0]] = $styleParts[1];
-            }
-            if (count($styles)) {
-                $symbolArgs = $styles['style'].','
-                             .'new dojo.Color("'.$styles['color'].'"),'
-                             .$styles['weight'];
-            } else {
-                $symbolArgs = '';
-            }
-            
             // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/polyline.htm
             $jsonObj = array(
                 'points' => $paths,
@@ -205,34 +170,30 @@ JS;
             
             $json = json_encode($jsonObj);
 
-            $js .= <<<JS
+            $templateValues = array('___POLYLINE_SPEC___' => $json);
 
-    lineSymbol = new esri.symbol.SimpleLineSymbol({$symbolArgs});
-    polyline = new esri.geometry.Polyline({$json});
-    map.graphics.add(new esri.Graphic(polyline, lineSymbol));
-
-JS;
-
-        }
-        
-        if ($js) {
-    
-            $js = <<<JS
-
-    var lineSymbol;
-    var polyline;
-    $js
-
-JS;
+            $styleParams = explode('|', $styleString);
+            $styles = array();
+            foreach ($styleParams as $styleParam) {
+                $styleParts = explode('=', $styleParam);
+                $styles[$styleParts[0]] = $styleParts[1];
+            }
+            if (count($styles)) {
+                $templateValues['___SYMBOL_SPEC___']
+                    = $styles['style'].','
+                     .'new dojo.Color("'.$styles['color'].'"),'
+                     .$styles['weight'];
+            }
+            
+            $template->appendValues($templateValues);
         }
 
-        return $js;
+        return $template->getScript();
     }
     
     private function getMarkerJS()
     {
-        $js = '';
-    
+        $template = $this->prepareJavascriptTemplate('ArcGISPoints');
         foreach ($this->markers as $styleString => $points) {
             $styles = array();
             if ($styleString) {
@@ -242,19 +203,21 @@ JS;
                     $styles[$styleParts[0]] = $styleParts[1];
                 }
             }
+
             if (isset($styles['icon'])) {
-                $symbolType = 'PictureMarkerSymbol';
-                $symbolArgs = '"'.$styles['icon'].'",20,20'; // TODO allow size to be set
+                $templateValues = array(
+                    '___SYMBOL_TYPE___' => 'PictureMarkerSymbol',
+                    '___SYMBOL_ARGS___' => '"'.$styles['icon'].'",20,20'
+                    ); // TODO allow size (20, 20) above to be set
             
             } else {
-                $symbolType = 'SimpleMarkerSymbol';
+                $templateValues = array('___SYMBOL_TYPE___' => 'SimpleMarkerSymbol');
+
                 if (count($styles)) {
-                    $symbolArgs = $styles['style'].','
-                                 .$styles['size'].','
-                                 .'new dojo.Color("'.$styles['color'].'"),'
-                                 .'new esri.symbol.SimpleLineSymbol()';
-                } else {
-                    $symbolArgs = '';
+                    $templateValues['___SYMBOL_ARGS___']
+                        = $styles['style'].','.$styles['size'].','
+                         .'new dojo.Color("'.$styles['color'].'"),'
+                         .'new esri.symbol.SimpleLineSymbol()';
                 }
             }
 
@@ -262,33 +225,19 @@ JS;
                 if (isset($this->mapProjector)) {
                     $point = $this->mapProjector->projectPoint($point);
                     list($x, $y) = MapProjector::getXYFromPoint($point);
-                    $point = array('x' => $x, 'y' => $y);
-                }
-                else {
-                    $point = array('x' => $point['lat'], 'y' => $point['lon']);
-                }
-            
-                $js .= <<<JS
+                    $templateValues['___X___'] = $x;
+                    $templateValues['___Y___'] = $y;
 
-    point = new esri.geometry.Point({$point['x']}, {$point['y']}, spatialRef);
-    pointSymbol = new esri.symbol.{$symbolType}({$symbolArgs});
-    map.graphics.add(new esri.Graphic(point, pointSymbol));
+                } else {
+                    $templateValues['___X___'] = $point['lat'];
+                    $templateValues['___Y___'] = $point['lon'];
+                }
 
-JS;
+                $template->appendValues($templateValues);
             }
         }
-        
-        if ($js) {
-            $js = <<<JS
-    var pointSymbol;
-    var point;
-    $js
 
-JS;
-        }
-    
-        
-        return $js;
+        return $template->getScript();
     }
     
     private function getCenterJS() {
@@ -304,11 +253,6 @@ JS;
     
         return $js;
     }
-    
-    private function getSpatialRefJS() {
-        $wkid = $this->mapProjection;
-        return "var spatialRef = new esri.SpatialReference({ wkid: $wkid });";
-    }
 
     // url of script to include in <script src="...
     function getIncludeScripts() {
@@ -322,15 +266,8 @@ JS;
     }
 
     function getHeaderScript() {
-        $script = <<<JS
-function resizeMapOnContainerResize() {
-    if (map && map.loaded) {
-        map.reposition();
-        map.resize();
-    }
-}
-JS;
-        return $script;
+        $header = $this->prepareJavascriptTemplate('ArcGISJSMapHeader');
+        return $header->getScript();
     }
     
     function getFooterScript() {
@@ -345,69 +282,30 @@ JS;
 JS;
         }
 
-        $script = <<<JS
+        $footer = $this->prepareJavascriptTemplate('ArcGISJSMapFooter');
+        $footer->setValues(array(
+            '___WKID___' => $this->mapProjector->getDstProj(),
+            '___MAPELEMENT___' => $this->mapElement,
+            '___IMAGE_WIDTH___' => $this->imageWidth,
+            '___IMAGE_HEIGHT___' => $this->imageHeight,
+            '___ZOOMLEVEL___' => $zoomLevel,
+            '___BASE_URL___' => $this->baseURL,
+            '___MORE_LAYER_SCRIPT___' => $moreLayersJS,
+            '___MARKER_SCRIPT___' => $this->getMarkerJS(),
+            '___POLYGON_SCRIPT___' => $this->getPolygonJS(),
+            '___PATH_SCRIPT___' => $this->getPathJS()));
 
-dojo.require("esri.map");
-dojo.addOnLoad(loadMap);
+        if ($this->mapProjector) {
+            $xy = $this->mapProjector->projectPoint($this->center);
+            list($x, $y) = MapProjector::getXYFromPoint($xy);
+            $footer->setValues(array('___X___' => $x, '___Y___' => $y));
+        } else {
+            $footer->setValues(array(
+                '___X___' => $this->center['lat'],
+                '___Y___' => $this->center['lon']));
+        }
 
-var map;
-
-function loadMap() {
-    var mapImage = document.getElementById("{$this->mapElement}");
-    mapImage.style.display = "inline-block";
-    mapImage.style.width = "{$this->imageWidth}";
-    mapImage.style.height = "{$this->imageHeight}";
-    
-    map = new esri.Map("{$this->mapElement}", {
-        'logo' : false,
-        'slider' : false
-    });
-    var basemapURL = "{$this->baseURL}";
-    var basemap = new esri.layers.ArcGISTiledMapServiceLayer(basemapURL);
-
-    map.addLayer(basemap);
-
-    {$this->getSpatialRefJS()}
-    var zoomIn = document.getElementById("zoomin");
-    zoomIn.onclick = function() {
-        var zoomLevel = map.getLevel();
-        var x = (map.extent.xmin + map.extent.xmax) / 2;
-        var y = (map.extent.ymin + map.extent.ymax) / 2;
-        map.centerAndZoom(new esri.geometry.Point(x, y, spatialRef), zoomLevel + 1);
-    };
-
-    var zoomOut = document.getElementById("zoomout");
-    zoomOut.onclick = function() {
-        var zoomLevel = map.getLevel();
-        var x = (map.extent.xmin + map.extent.xmax) / 2;
-        var y = (map.extent.ymin + map.extent.ymax) / 2;
-        map.centerAndZoom(new esri.geometry.Point(x, y, spatialRef), zoomLevel - 1);
-    };
-    
-    var recenter = document.getElementById("recenter");
-    recenter.onclick = function() {
-        map.centerAndZoom({$this->getCenterJS()}, {$zoomLevel});
-    };
-
-    {$moreLayersJS}
-
-    dojo.connect(map, "onLoad", plotFeatures);
-}
-
-function plotFeatures() {
-
-    {$this->getSpatialRefJS()}
-    {$this->getPolygonJS()}
-    {$this->getPathJS()}
-    {$this->getMarkerJS()}
-
-    map.centerAndZoom({$this->getCenterJS()}, {$zoomLevel});
-    resizeMapOnContainerResize();
-}
-
-JS;
-
-        return $script;
+        return $footer->getScript();
     }
 
 }
