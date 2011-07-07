@@ -84,10 +84,10 @@ class PageViews {
     if (file_exists($target) && date('Ymd', filemtime($target)) == $today)
       return; // we have already exported today
 
-    $logFolder = Kurogo::getSiteVar('TMP_DIR');    
+    $logFolder = Kurogo::tempDirectory();
     $logfilecopy = $logFolder . "/mobi_log_copy.$today";
     if (!is_writable($logFolder)) {
-        throw new Exception("Unable to write to TMP_DIR $logFolder");
+        throw new Exception("Unable to write to Temporary Directory $logFolder");
     }
 
     if (!$outfile = fopen($target, 'a')) {

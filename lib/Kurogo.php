@@ -51,6 +51,10 @@ class Kurogo
         return self::$_instance;
     }
     
+    public static function tempDirectory() {
+        return Kurogo::getOptionalSiteVar('TMP_DIR', sys_get_temp_dir());
+    }
+    
     public function moduleLinkForItem($moduleID, $object, $options=null) {
         $module = WebModule::factory($moduleID);
         return $module->linkForItem($object, $options);
