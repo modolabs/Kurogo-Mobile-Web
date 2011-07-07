@@ -80,6 +80,7 @@ This allows you to include necessary functionality without worrying about which 
 module (use: *includePackage('PackageName')* in your module code). Currently the following packages are available:
 
 * Authentication (included automatically when authentication is enabled)
+* Authorization - for connecting to various OAuth based web services
 * Calendar - includes classes to deal with date and time
 * db - used when you wish to interact with a database
 * Emergency - used by the emergency module
@@ -117,10 +118,10 @@ External Data Retrieval
 -----------------------
 
 The main class is *DataController*. It provides functionality to retrieve URL based data (this could include
-both local and remote data), cache this data, and parse it using a subclass of *DataParser* to prepare it
-into a structure suitable for use. In its optimal design, a data controller will abstract the details
-of building the URL, and return a structure that is normalized, allowing the module code to be as generic
-as possible.
+both local and remote data), cache this data using the *DataResponse* class, and parse it using a subclass 
+of *DataParser* to prepare it into a structure suitable for use. In its optimal design, a data controller 
+will abstract the details of building the URL, and return a structure that is normalized, allowing the module 
+code to be as generic as possible.
 
 Included examples of DataControllers/Parsers include: 
 
@@ -144,6 +145,7 @@ Other included Data Parsers:
 * *PassthroughDataParser* - A no-op parser. Passes the data as is.
 * *JSONDataParser* - Parses JSON content into a PHP structure.
 * *DOMDataParser* - Parses HTML content into a DOM Object
+* *INIFileParser* - Parses INI files
    
 ---------------
 Database Access
@@ -163,8 +165,6 @@ User Access and Authentication
   for more information about the included authorities. 
 * *AccessControlList* - A class used by the authorization system to restrict access to modules based on
   user or group membership. This is especially useful for the :ref:`admin-module`.
-* *OAuthRequest* - A class that handles remote data using OAuth keys and tokens. Used by a variety of 
-  services.
 * *Session* - Handles the saving and restoration of user state. This is currently implemented using 
   PHP session variables.
 * *User* - The base class for identifying logged in users
