@@ -2,10 +2,10 @@
   {foreach $stories as $story}
     <a id="newsStory_{$story@index}" href="{$story['url']}"{if $story@first} class="current"{/if}>
       <div class="thumbnail">
-        <img src="{if $story['image']}{$story['image']['src']}{else}/modules/{$moduleID}/images/news-placeholder.png{/if}" />
+        <img src="{if $story['img']}{$story['img']}{else}/modules/{$moduleID}/images/news-placeholder.png{/if}" />
       </div>
       <div class="title">{$story["title"]}</div>
-      {$story['description']}
+      {$story['subtitle']}
     </a>
   {/foreach}
 </div>

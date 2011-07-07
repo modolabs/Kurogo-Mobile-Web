@@ -163,6 +163,13 @@ class LoginWebModule extends WebModule {
                 break;
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
                 $authority->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
+                if ($authorityData['USER_LOGIN']=='LINK') {
+                    $options['return_url'] = FULL_URL_BASE . $this->configModule . '/login?' . http_build_query(array_merge($options, array(
+                            'authority'=>$authorityIndex
+                    )));
+                }
+                $options['startOver'] = $this->getArg('startOver', 0);
+
                 $result = $authority->login($login, $password, $session, $options);
             } else {
                 $this->redirectTo('index', $options);

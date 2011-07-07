@@ -3,7 +3,7 @@
 /* 
  * Class to abstract video data
  */
-class VideoObject
+class VideoObject implements KurogoObject
 {
     protected $type;
     protected $id;

@@ -3,7 +3,6 @@
  class VimeoVideoController extends VideoDataController
  {
     protected $DEFAULT_PARSER_CLASS='VimeoDataParser';
-    protected $cacheFileSuffix='json';
     protected $channel;
     
     protected function init($args) {

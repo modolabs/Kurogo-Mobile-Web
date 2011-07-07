@@ -50,6 +50,21 @@ class Kurogo
 
         return self::$_instance;
     }
+    
+    public function moduleLinkForItem($moduleID, $object, $options=null) {
+        $module = WebModule::factory($moduleID);
+        return $module->linkForItem($object, $options);
+    }
+
+    public function moduleLinkForValue($moduleID, $value, Module $callingModule, KurogoObject $otherValue=null) {
+        $module = WebModule::factory($moduleID);
+        return $module->linkForValue($value, $callingModule, $otherValue);
+    }
+
+    public function searchItems($moduleID, $searchTerms, $limit=null, $options=null) {
+        $module = WebModule::factory($moduleID);
+        return $module->searchItems($searchTerms, $limit, $options);
+    }
 
     public function includePackage($packageName) {
 
@@ -437,6 +452,10 @@ class Kurogo
         
         return 0;
     }
+}
+
+interface KurogoObject 
+{
 }
 
 /* retained for compatibility */

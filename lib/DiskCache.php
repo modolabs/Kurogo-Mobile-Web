@@ -28,7 +28,7 @@ class DiskCache {
     
         if ($mkdir) {
             if (!file_exists($path)) {
-                if (!mkdir($path, 0755, true)) {
+                if (!mkdir($path, 0700, true)) {
                     throw new Exception("Could not create $path");
                 }
             }
@@ -125,6 +125,7 @@ class DiskCache {
     }
 
     $path = $this->getFullPath($filename);
+    $umask = umask(0077);
     $fh = fopen($path, 'w');
     if ($fh !== FALSE) {
       if ($this->serialize) {
@@ -137,6 +138,7 @@ class DiskCache {
       if ($date) {
         touch($this->getFullPath($filename), $date);
       }
+      umask($umask);
       return TRUE;
 
     } else {
@@ -147,6 +149,7 @@ class DiskCache {
     if ($this->error)
       error_log($this->error);
 
+    umask($umask);
     return FALSE;
   }
 
