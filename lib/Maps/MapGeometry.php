@@ -74,8 +74,8 @@ class MapBasePolygon extends MapBasePoint implements MapPolygon {
     private $outerBoundary;
     private $innerBoundaries = array();
 
-    public function __construct(Array $rings) {
-        $this->outerBoundary = new BasePolyline($rings[0]);
+    public function __construct(Array $rings, $centroid=null) {
+        $this->outerBoundary = new MapBasePolyline($rings[0]);
         if (count($rings) > 1) {
             for ($i = 1; $i < count($rings); $i++) {
                 $this->innerBoundaries[] = new MapBasePolyline($rings[$i]);

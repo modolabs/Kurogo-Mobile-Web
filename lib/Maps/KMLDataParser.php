@@ -360,7 +360,7 @@ class KMLLinearRing extends KMLLineString {}
 class KMLPolygon extends XMLElement implements MapPolygon
 {
     private $outerBoundary;
-    private $innerBoundaries;
+    private $innerBoundaries = array();
 
     public function getCenterCoordinate()
     {
@@ -369,14 +369,7 @@ class KMLPolygon extends XMLElement implements MapPolygon
 
     public function getRings()
     {
-        $outerRing = $this->outerBoundary->getPoints();
-        $result = array($outerRing);
-        if (isset($this->innerBoundaries) && count($this->innerBoundaries)) {
-            foreach ($this->innerBoundaries as $boundary) {
-                $result[] = $boundary->getPoints();
-            }
-        }
-        return $result;
+        return array_merge(array($this->outerBoundary), $this->innerBoundaries);
     }
 
     public function addElement(XMLElement $element)
@@ -392,7 +385,7 @@ class KMLPolygon extends XMLElement implements MapPolygon
                 $this->outerBoundary = $element->getChildElement('LINEARRING');
                 break;
             case 'INNERBOUNDARYIS':
-                $this->innerBoundaries = $element->getChildElement('LINEARRING');
+                $this->innerBoundaries[] = $element->getChildElement('LINEARRING');
                 break;
             default:
                 parent::addElement($element);
