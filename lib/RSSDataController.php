@@ -14,7 +14,6 @@ class RSSDataController extends DataController
     protected $items;
     protected $contentFilter;
     protected $cacheFolder = 'RSS';
-    protected $cacheFileSuffix = 'rss';
 
     public function addFilter($var, $value)
     {

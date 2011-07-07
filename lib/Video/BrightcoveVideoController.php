@@ -3,7 +3,6 @@
  class BrightCoveVideoController extends VideoDataController
  {
     protected $DEFAULT_PARSER_CLASS='BrightCoveDataParser';
-    protected $cacheFileSuffix='json';
     protected $token;
     protected $playerKey;
     protected $playerId;

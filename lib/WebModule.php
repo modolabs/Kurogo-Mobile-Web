@@ -321,6 +321,23 @@ abstract class WebModule extends Module {
         }
   }
   
+    /* This method would be called by other modules to get a valid link from a model object */
+    public function linkForItem($object, $options=null) {
+       throw new Exception("linkForItem must be subclassed if it is going to be used");
+    }
+
+    /* default implmentation. Subclasses may wish to override this */
+    public function linkForValue($value, Module $callingModule, KurogoObject $otherValue=null) {
+        return array(
+            'title'=>$value, 
+            'url'  =>$this->buildBreadcrumbURL(
+                'search', 
+                array('filter'=>$value),
+                false
+            )
+        );
+    }
+  
     //
     // Factory function
     // instantiates objects for the different modules
@@ -483,6 +500,29 @@ abstract class WebModule extends Module {
     return $modules;        
   }
 
+    protected function elapsedTime($timestamp, $date_format='%b %e, %Y @ %l:%M %p') {
+        $now = time();
+        $diff = $now - $timestamp;
+        $today = mktime(0,0,0);
+        $today_timestamp = mktime(0, 0, 0, date('m', $timestamp), date('d', $timestamp), date('Y', $timestamp));
+    
+        if ($diff > 0) {
+            if ($today - $today_timestamp > 86400) {
+                return sprintf("%d days ago", $diff/86400);
+            } elseif ($today - $today_timestamp > 0) {
+                return strftime('Yesterday @ %l:%M %p', $timestamp);
+            } elseif ($diff > 3600) {
+                return sprintf("%d hour%s ago", $diff/3600, intval($diff/3600)>1?'s':'');
+            } elseif ($diff > 60) {
+                return sprintf("%d minute%s ago", $diff/60, intval($diff/60)>1?'s':'');
+            } else {
+                return sprintf("%d second%s ago", $diff, $diff>1 ?'s':'');
+            }
+        
+        } else {
+            return strftime($date_format, $timestamp);
+        }    
+    }
 
   //
   // Module list control functions
@@ -1273,18 +1313,36 @@ abstract class WebModule extends Module {
   // Subclass this function to set up variables for each template page
   //
   abstract protected function initializeForPage();
+
+    //
+    // Subclass this function and return an array of items for a given search term and feed
+    //
+    public function searchItems($searchTerms, $limit=null, $options=null) {  
+        return array();
+    }
   
-  //
-  // Subclass these functions for federated search support
-  // Return 2 items and a link to get more
-  //
-  public function federatedSearch($searchTerms, $maxCount, &$results) {
-    return 0;
-  }
+    //
+    // Subclass these functions for federated search support
+    // Return 2 items and a link to get more
+    //
   
-  protected function urlForFederatedSearch($searchTerms) {
-    return $this->buildBreadcrumbURL('search', array(
-      'filter' => $searchTerms,
-    ), false);
-  }
+    public function federatedSearch($searchTerms, $maxCount, &$results) {
+        $total = 0;
+        $results = array();
+      
+        $items = $this->searchItems($searchTerms, $maxCount, array('federatedSearch'=>true));
+        $limit = is_array($items) ? min($maxCount, count($items)) : 0;
+
+        for ($i = 0; $i < $limit; $i++) {
+            $results[] = $this->linkforItem($items[$i], array('federatedSearch'=>true, 'filter'=>$searchTerms));
+        }
+        
+        return count($items);
+    }
+  
+    protected function urlForFederatedSearch($searchTerms) {
+        return $this->buildBreadcrumbURL('search', array(
+          'filter' => $searchTerms,
+        ), false);
+    }
 }

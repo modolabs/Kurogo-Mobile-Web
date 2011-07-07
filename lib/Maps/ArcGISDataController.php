@@ -5,11 +5,6 @@ class ArcGISDataController extends MapDataController
     protected $DEFAULT_PARSER_CLASS = 'ArcGISParser';
     protected $filters = array('f' => 'json');
 
-    protected function cacheFileSuffix()
-    {
-        return '.js'; // json
-    }
-
     protected function cacheFolder() 
     {
         return Kurogo::getSiteVar('ARCGIS_CACHE');

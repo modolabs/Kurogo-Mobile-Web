@@ -44,7 +44,12 @@ abstract class Module
       * @return array
       */
     protected function loadFeedData() {
-        return $this->getModuleSections('feeds');
+        $feeds = $this->getModuleSections('feeds');
+        foreach ($feeds as $index=>&$feedData) {
+            $feedData['INDEX'] = $index;
+        }
+        reset($feeds);
+        return $feeds;
     }
   
     /**
