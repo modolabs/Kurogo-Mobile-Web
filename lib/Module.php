@@ -114,7 +114,7 @@ abstract class Module
             }
         }
        
-        throw new Exception("Module $id not found");
+        throw new ModuleNotFound("Module $id not found");
     }
     
     public function __construct() {
