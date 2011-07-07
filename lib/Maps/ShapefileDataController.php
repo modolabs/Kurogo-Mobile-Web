@@ -16,38 +16,32 @@ class ShapefileDataController extends MapDataController
     protected $dbfParser;
     protected $mapProjection;
 
-    protected function parseData($data, DataParser $parser=null) {}
+    protected $DEFAULT_PARSER_CLASS = 'ShapefileDataParser';
 
+    protected function initStreamContext($args)
+    {
+        // do nothing
+    }
+
+    /*
     public function getParsedData(DataParser $parser=null) {
         // TODO if these are over the network, retrieve them to
         // a local cache file before opening
-        $this->shpParser = new ShapefileDataParser($this->baseURL . '.shp');
+        $this->shpParser = new ShapefileDataParser($this->baseURL);
         $this->shpParser->setCategory($this->getCategory());
-        $this->dbfParser = new DBase3FileParser($this->baseURL . '.dbf');
-
-        $prjFile = $this->baseURL . '.prj';
-        if (file_exists($prjFile)) {
-            $prjData = file_get_contents($prjFile);
-            $this->mapProjection = new MapProjection($prjData, 'wkt');
-        }
 
         $this->shpParser->setDBFParser($this->dbfParser);
         $this->shpParser->parseData();
 
         return $this->shpParser->getParsedData();
     }
-
-    public function getProjection() {
-        if (isset($this->mapProjection)) {
-            return $this->mapProjection;
-        }
-        return parent::getProjection();
-    }
-
+    */
+    /*
     public function items($start=0, $limit=null) {
         $items = $this->getParsedData();
         return $this->limitItems($items,$start, $limit);
     }
+    */
 
     public function getData() {
         // do nothing

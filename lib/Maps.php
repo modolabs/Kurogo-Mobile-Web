@@ -58,7 +58,8 @@ class MapsAdmin
     public static function getMapControllerClasses() {
         return array(
             'KMLDataController'=>'KML',
-            'ArcGISDataController'=>'ArcGIS'
+            'ArcGISDataController'=>'ArcGIS',
+            'ShapefileDataController'=>'Shapefile'
         );
     }
     

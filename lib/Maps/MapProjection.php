@@ -250,10 +250,16 @@ class MapProjection
             );
     }
 
-    public function __construct($projString, $format='proj4')
+    public function __construct($projString, $format=null)
     {
-        if (preg_match('/^\d+$/', $projString)) {
-            $format = 'wkid';
+        if ($format === null) {
+            if (preg_match('/^\d+$/', $projString)) {
+                $format = 'wkid';
+            } elseif (preg_match('/^\w+\[/', $projString)) {
+                $format = 'wkt';
+            } elseif (preg_match('/^\+/', $projString)) {
+                $format = 'proj4';
+            }
         }
 
         switch ($format) {

@@ -34,30 +34,14 @@ class MapDataController extends DataController implements MapFolder
 
     // not config variables    
     protected $items = null;
-    //protected $projection = GEOGRAPHIC_PROJECTION;
     protected $selectedFeatures = array();
     protected $displaySetId = self::SELECTED_FEATURES;
     protected $drillDownPath = array();
     
+    ////// default, slow search implementation
+    
     const COMMON_WORDS = 'the of to and in is it you that he was for on are with as his they be at one have this from or had by hot but some what there we can out other were all your when up use word how said an each she which do their time if will way about many then them would write like so these her long make thing see him two has look more day could go come did my no most who over know than call first people may down been now find any new take get place made where after back only me our under';
-
-    protected function cacheFolder()
-    {
-        return CACHE_DIR . "/Maps";
-    }
-
-    protected function cacheLifespan()
-    {
-        // TODO add config so the following line works instead
-        //return Kurogo::getSiteVar('MAP_CACHE_LIFESPAN');
-        return 86400;
-    }
-
-    protected function cacheFileSuffix()
-    {
-        return null;
-    }
-
+    
     public function canSearch()
     {
         return $this->searchable;
@@ -75,7 +59,6 @@ class MapDataController extends DataController implements MapFolder
         return $matched;
     }
 
-    // default search implementation loops through all relevant features
     public function search($searchText)
     {
         $results = array();
@@ -101,7 +84,13 @@ class MapDataController extends DataController implements MapFolder
         return $results;
     }
     
-    public function searchByProximity($center, $tolerance, $maxItems) {
+    public function searchByProximity($center, $tolerance, $maxItems, $projection=null) {
+        if (isset($projection)) {
+            $projector = new MapProjector();
+            $projector->setSrcProj($projection);
+            $center = $projector->projectPoint($center);
+        }
+
         // approximate upper/lower bounds for lat/lon before calculating GCD
         $dLatRadians = $tolerance / EARTH_RADIUS_IN_METERS;
         // by haversine formula
@@ -110,18 +99,24 @@ class MapDataController extends DataController implements MapFolder
         $dLatDegrees = $dLatRadians * 180 / M_PI;
         $dLonDegrees = $dLonRadians * 180 / M_PI;
 
-        $maxLat = $center['lat'] + $dLatDegrees;
-        $minLat = $center['lat'] - $dLatDegrees;
-        $maxLon = $center['lon'] + $dLonDegrees;
-        $minLon = $center['lon'] - $dLonDegrees;
+        $min = array('lat' => $center['lat'] - $dLatDegrees, 'lon' => $center['lon'] - $dLonDegrees);
+        $max = array('lat' => $center['lat'] + $dLatDegrees, 'lon' => $center['lon'] + $dLonDegrees);
+
+        if ($this->getProjection()) {
+            $projector = new MapProjector();
+            $projector->setDstProj($this->getProjection());
+
+            $min = $projector->projectPoint($min);
+            $max = $projector->projectPoint($max);
+        }
 
         $results = array();
         foreach ($this->getAllLeafNodes() as $item) {
             $geometry = $item->getGeometry();
             if ($geometry) {
                 $featureCenter = $geometry->getCenterCoordinate();
-                if ($featureCenter['lat'] <= $maxLat && $featureCenter['lat'] >= $minLat
-                    && $featureCenter['lon'] <= $maxLon && $featureCenter['lon'] >= $minLon
+                if ($featureCenter['lat'] <= $max['lat'] && $featureCenter['lat'] >= $min['lat']
+                    && $featureCenter['lon'] <= $max['lon'] && $featureCenter['lon'] >= $min['lon']
                 ) {
                     $distance = greatCircleDistance($center['lat'], $center['lon'], $featureCenter['lat'], $featureCenter['lon']);
                     if ($distance > $tolerance) continue;
@@ -137,31 +132,6 @@ class MapDataController extends DataController implements MapFolder
             }
         }
         return $results;
-    }
-    
-    public function getAllCategoryNodes() {
-        return self::getCategoryNodesForItem($this);
-    }
-    
-    protected static function getCategoryNodesForItem(MapFolder $item) {
-        $nodes = array();
-        foreach ($item->getListItems() as $innerItem) {
-            if ($innerItem instanceof MapFolder && $innerItem instanceof MapListElement) {
-                $node = array(
-                    'title' => $innerItem->getTitle(),
-                    'id' => $innerItem->getCategory(),
-                    //'subtitle' => $innerItem->getSubtitle(),
-                    );
-
-                $subcategories = self::getCategoryNodesForItem($innerItem);
-                if ($subcategories) {
-                    $node['subcategories'] = $subcategories;
-                }
-
-                $nodes[] = $node;
-            }
-        }
-        return $nodes;
     }
     
     protected function getAllLeafNodes() {
@@ -181,6 +151,8 @@ class MapDataController extends DataController implements MapFolder
             $results[] = $listItem;
         }
     }
+    
+    /////// view functions
 
     public function selectFeature($featureId)
     {
@@ -245,25 +217,7 @@ class MapDataController extends DataController implements MapFolder
         $this->displaySetId = $set;
     }
 
-    // DataController overrides
-
-    public function getData()
-    {
-        if ($this->parser instanceof ArcGISParser) {
-            $this->addFilter('f', 'json');
-        }
-        return parent::getData();
-    }
-
-    public function items()
-    {
-        if (!$this->items) {
-            $this->items = parent::items();
-        }
-        return $this->items;
-    }
-
-    // MapFolder interface
+    ////// MapFolder interface
 
     private static function listItemsAtPath(array $items, array $path=array())
     {
@@ -379,16 +333,6 @@ class MapDataController extends DataController implements MapFolder
         }
         return $this->parser->getTitle();
     }
-
-    /*
-    public function items() {
-        if (!$this->items) {
-            $data = $this->getData();
-            $this->items = $this->parseData($data);
-        }
-        return $this->items;
-    }
-    */
     
     public function getDefaultZoomLevel() {
         return $this->defaultZoomLevel;
@@ -402,7 +346,7 @@ class MapDataController extends DataController implements MapFolder
             $imgController = $this->getStaticMapController();
         }
 
-        // TODO pass projection info on to map image controller
+        $imgController->setDataProjection($this->getProjection());
 
         $placemarks = array();
 
@@ -434,12 +378,12 @@ class MapDataController extends DataController implements MapFolder
         return $imgController;
     }
 
-    public function getStaticMapController() {
+    protected function getStaticMapController() {
         $controller = MapImageController::factory($this->staticMapClass, $this->staticMapBaseURL);
         return $controller;
     }
 
-    public function getDynamicMapController() {
+    protected function getDynamicMapController() {
         if (is_array($this->dynamicMapBaseURL)) {
             $baseURL = $this->dynamicMapBaseURL[0];
             $moreLayers = $this->dynamicMapBaseURL;
@@ -468,6 +412,26 @@ class MapDataController extends DataController implements MapFolder
         
         return self::factory('MapDataController', $args);
     }
+
+    // DataController overrides
+
+    public function getData()
+    {
+        if ($this->parser instanceof ArcGISParser) {
+            $this->addFilter('f', 'json');
+        }
+        return parent::getData();
+    }
+
+    protected function cacheFolder()
+    {
+        return CACHE_DIR . "/Maps";
+    }
+
+    protected function cacheFileSuffix()
+    {
+        return null;
+    }
     
     protected function init($args)
     {
@@ -492,6 +456,29 @@ class MapDataController extends DataController implements MapFolder
 
         if (isset($args['DEFAULT_ZOOM_LEVEL']))
             $this->defaultZoomLevel = $args['DEFAULT_ZOOM_LEVEL'];
+    }
+    
+    protected function retrieveData($url)
+    {
+        if (strpos($url, 'kmz') !== false) {
+            if (!class_exists('ZipArchive')) {
+                throw new Exception("class ZipArchive (php-zip) not available");
+            }
+            $tmpDir = Kurogo::getSiteVar('TMP_DIR');
+            if (!is_writable($tmpDir)) {
+                throw new Exception("Temporary directory $tmpDir not available");
+            }
+            $tmpFile = $tmpDir.'/tmp.kmz';
+
+            copy($url, $tmpFile);
+            $zip = new ZipArchive();
+            $zip->open($tmpFile);
+            $contents = $zip->getFromIndex(0);
+            unlink($tmpFile);
+            return $contents; // this is false on failure, same as file_get_contents
+        } else {
+            return parent::retrieveData($url);
+        }
     }
 }
 

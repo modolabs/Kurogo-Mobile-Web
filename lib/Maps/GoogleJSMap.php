@@ -9,6 +9,8 @@ class GoogleJSMap extends JavascriptMapImageController {
     protected $markers = array();
     protected $paths = array();
     protected $polygons = array();
+
+    protected $mapProjection = 4326;
     
     public function setImageWidth($width) {
         if (strpos($width, '%') === FALSE) {
@@ -101,6 +103,10 @@ class GoogleJSMap extends JavascriptMapImageController {
     private static function coordsToGoogleArray($coords) {
         $gCoords = array();
         foreach ($coords as $coord) {
+            if (isset($this->mapProjector)) {
+                $coord = $this->mapProjector->projectPoint($coord);
+            }
+
             $lat = isset($coord['lat']) ? $coord['lat'] : $coord[0];
             $lon = isset($coord['lon']) ? $coord['lon'] : $coord[1];
             $gCoords[] .= "new google.maps.LatLng({$lat},{$lon})";
@@ -168,11 +174,17 @@ JS;
     }
 
     public function getHeaderScript() {
+        if (isset($this->mapProjector)) {
+            $center = $this->mapProjector->projectPoint($this->center);
+        } else {
+            $center = $this->center;
+        }
+
         $script = <<<JS
 
 var map;
-var initLat = {$this->center['lat']};
-var initLon = {$this->center['lon']};
+var initLat = {$center['lat']};
+var initLon = {$center['lon']};
 
 function loadMap() {
     var mapImage = document.getElementById("{$this->mapElement}");
@@ -180,7 +192,7 @@ function loadMap() {
     mapImage.style.width = "{$this->imageWidth}";
     mapImage.style.height = "{$this->imageHeight}";
 
-    var initCoord = new google.maps.LatLng({$this->center['lat']}, {$this->center['lon']});
+    var initCoord = new google.maps.LatLng({$center['lat']}, {$center['lon']});
     var options = {
         zoom: {$this->zoomLevel},
         center: initCoord,
@@ -243,10 +255,16 @@ JS;
                 $title = $marker['title'];
             }
 
+            if (isset($this->mapProjector)) {
+                $coord = $this->mapProjector->projectPoint($marker);
+            } else {
+                $coord = $marker;
+            }
+
             $script .= <<<JS
 
 var marker{$index} = new google.maps.Marker({
-    position: new google.maps.LatLng({$marker['lat']},{$marker['lon']}),
+    position: new google.maps.LatLng({$coord['lat']},{$coord['lon']}),
     map: map,
     title: "{$title}"
 });

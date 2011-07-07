@@ -25,6 +25,36 @@ class ArcGISPoint implements MapGeometry
     }
 }
 
+class ArcGISPolyline implements MapPolyline
+{
+    private $points;
+
+    public function getPoints()
+    {
+        return $this->points;
+    }
+
+    public function __construct($geometry)
+    {
+        $this->points = $geometry;
+
+        $totalLat = 0;
+        $totalLon = 0;
+        $n = count($this->points);
+        foreach ($this->points as $point) {
+            $totalLat += $point['lat'];
+            $totalLon += $point['lon'];
+        }
+        $this->centerCoordinate = array('lat' => $totalLat / $n,
+                                        'lon' => $totalLon / $n);
+    }
+
+    public function getCenterCoordinate()
+    {
+        return $this->centerCoordinate;
+    }
+}
+
 class ArcGISPolygon implements MapPolygon
 {
     private $rings;
@@ -32,40 +62,20 @@ class ArcGISPolygon implements MapPolygon
 
     public function __construct($geometry)
     {
-        // for center, just use outermost ring
-        $numVertices = 0;
-        $totalX = 0;
-        $totalY = 0;
-        $currentRing = array();
-        if (count($geometry['rings'])) {
-            $currentRing = $geometry['rings'][0];
-            $currentRingInLatLon = array();
-            $numVertices = count($currentRing);
-            foreach ($currentRing as $xy) {
-                $totalX += $xy[0];
-                $totalY += $xy[1];
-                
-                $currentRingInLatLon[] = array('lon' => $xy[0], 'lat' => $xy[1]);
-            }
-            $this->centerCoordinate = array('lat' => $totalY / $numVertices,
-                                            'lon' => $totalX / $numVertices);
-            $this->rings[] = $currentRingInLatLon;
-        }
-
-        for ($i = 1; $i < count($geometry['rings']); $i++) {
-            $currentRing = $geometry['rings'][$i];
+        foreach ($geometry['rings'] as $currentRing) {
             $currentRingInLatLon = array();
             foreach ($currentRing as $xy) {
                 $currentRingInLatLon[] = array('lon' => $xy[0], 'lat' => $xy[1]);
             }
             
-            $this->rings[] = $currentRingInLatLon;
+            $this->rings[] = new ArcGISPolyline($currentRingInLatLon);
         }
     }
 
     public function getCenterCoordinate()
     {
-        return $this->centerCoordinate;
+        $outerRing = current($this->rings);
+        return $outerRing->getCenterCoordinate();
     }
     
     public function getRings() {
@@ -73,35 +83,28 @@ class ArcGISPolygon implements MapPolygon
     }
 }
 
-class ArcGISFeature implements Placemark
+class ArcGISFeature extends BasePlacemark
 {
-    private $index;
-    private $attributes;
-    private $geometry;
     private $titleField;
     private $geometryType;
     private $category;
-    
-    // if we want to turn off display for certain fields
-    // TODO put this in a more accessible place
-    private $blackList = array();
+    private $rawGeometry;
 
-    public function __construct($attributes, $geometry, $index, $category)
+    public function __construct($fields, $geometry, $index, $category)
     {
         $this->index = $index;
         $this->category = $category;
-        $this->attributes = $attributes;
-        $this->geometry = $geometry;
-    }
-
-    public function setIndex($index)
-    {
-        $this->index = $index;
+        $this->fields = $fields;
+        $this->rawGeometry = $geometry;
     }
     
     public function setGeometryType($geomType)
     {
         $this->geometryType = $geomType;
+        if (isset($this->rawGeometry) && !isset($this->geometry)) {
+            $this->readGeometry($this->rawGeometry);
+            unset($this->rawGeometry);
+        }
     }
     
     public function setTitleField($field)
@@ -109,53 +112,31 @@ class ArcGISFeature implements Placemark
         $this->titleField = $field;
     }
     
-    public function getField($fieldName)
-    {
-        if (isset($this->attributes[$fieldName])) {
-            return $this->attributes[$fieldName];
-        }
-        return null;
-    }
-    
-    public function setField($fieldName, $value)
-    {
-        $this->attributes[$fieldName] = $value;
-    }
-    
-    public function setBlackList($fields) {
-        $this->blackList = $fields;
-    }
-    
     public function readGeometry($json)
     {
-        $this->geometry = $json;
+        if (isset($this->geometryType)) {
+            switch ($this->geometryType) {
+                case 'esriGeometryPoint':
+                    $this->geometry = new ArcGISPoint($json);
+                    break;
+                case 'esriGeometryPolygon':
+                    $this->geometry = new ArcGISPolygon($json);
+                    break;
+            }
+        }
     }
     
-    //////// MapFeature interface
+    //////// BasePlacemark overrides
     
-    public function getCategory() {
-        return $this->category;
-    }
-
-    public function getId()
-    {
-        return $this->index;
-    }
-
     public function getAddress()
     {
         return $this->getField('Address');
     }
 
-    public function getCategoryIds()
-    {
-        // TODO
-    }
-
     public function getTitle()
     {
-        if (isset($this->attributes[$this->titleField])) {
-            return $this->attributes[$this->titleField];
+        if (isset($this->fields[$this->titleField])) {
+            return $this->fields[$this->titleField];
         }
     }
     
@@ -163,40 +144,6 @@ class ArcGISFeature implements Placemark
     {
     	// TODO make this a config field
         return $this->getField('Address');
-    }
-    
-    public function getGeometry()
-    {
-        $geometry = null;
-        if ($this->geometry !== null) {
-            switch ($this->geometryType) {
-            case 'esriGeometryPoint':
-                $geometry = new ArcGISPoint($this->geometry);
-                break;
-            case 'esriGeometryPolygon':
-                $geometry = new ArcGISPolygon($this->geometry);
-                break;
-            }
-        }
-        return $geometry;
-    }
-    
-    public function setGeometry(MapGeometry $geometry) {
-        if ($geometry instanceof MapPolygon) {
-            $this->geometry = $geometry->getRings();
-        } else {
-            $this->geometry = $geometry->getCenterCoordinate();
-        }
-    }
-
-    public function getFields()
-    {
-        return $this->attributes;
-    }
-
-    public function getStyle()
-    {
-        return null;
     }
 }
 
@@ -314,7 +261,7 @@ class ArcGISParser extends DataParser implements MapDataParser
     public function getProjection() {
         return $this->spatialRef;
     }
-    
+
     public function getSupportedImageFormats() {
         return $this->supportedImageFormats;
     }
@@ -716,9 +663,9 @@ class ArcGISLayer implements MapFolder, MapListElement {
         }
         $feature->setTitleField($this->fieldNames[$this->displayField]);
         if (isset($this->idField) && isset($attribs[$this->idField])) {
-            $feature->setIndex($attribs[$this->idField]);
+            $feature->setId($attribs[$this->idField]);
         } else {
-            $feature->setIndex($feature->getTitle());
+            $feature->setId($feature->getTitle());
         }
         return $feature;
     }

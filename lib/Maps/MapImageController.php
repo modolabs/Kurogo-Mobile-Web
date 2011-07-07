@@ -52,7 +52,7 @@ abstract class MapImageController
         if ($proj && $this->dataProjection != $proj) {
             $this->dataProjection = $proj;
 
-            if (isset($this->dataProjection, $this->mapProjection) && $this->dataProjection != $this->mapProjection) {
+            if (isset($this->dataProjection, $this->mapProjection) && $this->dataProjection !== $this->mapProjection) {
                 if (!isset($this->mapProjector)) {
                     $this->mapProjector = new MapProjector();
                     $this->mapProjector->setDstProj($this->mapProjection);
@@ -66,7 +66,7 @@ abstract class MapImageController
         if ($proj && $this->mapProjection != $proj) {
             $this->mapProjection = $proj;
 
-            if (isset($this->dataProjection, $this->mapProjection) && $this->dataProjection != $this->mapProjection) {
+            if (isset($this->dataProjection, $this->mapProjection) && $this->dataProjection !== $this->mapProjection) {
                 if (!isset($this->mapProjector)) {
                     $this->mapProjector = new MapProjector();
                     $this->mapProjector->setSrcProj($this->dataProjection);

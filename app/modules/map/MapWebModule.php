@@ -169,6 +169,20 @@ class MapWebModule extends WebModule {
             $this->feedGroup = NULL;
         }
     }
+
+    // TODO this is an example implementation based on Harvard.
+    protected function photoFileForPlacemark(Placemark $placemark)
+    {
+        $photoFile = null;
+        $photoServer = $this->getOptionalModuleVar('MAP_PHOTO_SERVER');
+        if ($photoServer) {
+            $photoFile = $feature->getField('Photo');
+            if ($photoFile == 'Null') {
+                $photoFile = null;
+            }
+        }
+        return $photoFile;
+    }
     
     ///////////// url builders
 
@@ -497,8 +511,8 @@ JS;
                     return false;
                 }
 
-                $mapSearch = $this->getSearchClass();          
-                $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
+                $mapSearch = $this->getSearchClass();
+                $searchResults = $mapSearch->searchByProximity($center, 1000, 10, $dataController->getProjection());
                 $places = array();
                 if ($searchResults) {
                     foreach ($searchResults as $result) {
@@ -523,25 +537,12 @@ JS;
                     return false;
                 }
 
-                // embedded photo
-                $photoServer = $this->getOptionalModuleVar('MAP_PHOTO_SERVER');
-                // this method of getting photo url is harvard-specific and
-                // further only works on data for ArcGIS features.
-                // TODO rewrite this if we find an alternate way to server photos
-                if ($photoServer) {
-                    $photoFile = $feature->getField('Photo');
-                    if (isset($photoFile) && $photoFile != 'Null') {
-                        $tabJavascripts[$tabKey] = "loadImage(photoURL,'photo');";
-                        $photoURL = $photoServer.rawurlencode($photoFile);
-                        $this->assign('photoURL', $photoURL);
-                        $this->addInlineJavascript("var photoURL = '{$photoURL}';");
-                    }
-                }
-                
-                // TODO this should be done on all placemarks except KML
-                if (is_subclass_of($dataController, 'ArcGISDataController')) {
-                    $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');   
-                    $feature->setBlackList($detailConfig['details']['suppress']);
+                $photoFile = $this->photoFileForPlacemark($feature);
+                if ($photoFile) {
+                    $tabJavascripts[$tabKey] = "loadImage(photoURL,'photo');";
+                    $photoURL = $photoServer.rawurlencode($photoFile);
+                    $this->assign('photoURL', $photoURL);
+                    $this->addInlineJavascript("var photoURL = '{$photoURL}';");
                 }
 
                 $fields = $feature->getFields();
@@ -551,13 +552,21 @@ JS;
 
                 } else {
                     $details = array();
+
+                    $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');
+                    if (isset($detailConfig['details'], $detailConfig['details']['suppress'])) {
+                        $suppress = $detailConfig['details']['suppress'];
+                    }
+
                     foreach ($fields as $name => $value) {
-                        $aDetail = array('label' => $name, 'title' => $value);
-                        if (isValidURL($value)) {
-                            $aDetail['url'] = $value;
-                            $aDetail['class'] = 'external';
+                        if (!isset($suppress) || !in_array($name, $suppress)) {
+                            $aDetail = array('label' => $name, 'title' => $value);
+                            if (isValidURL($value)) {
+                                $aDetail['url'] = $value;
+                                $aDetail['class'] = 'external';
+                            }
+                            $details[] = $aDetail;
                         }
-                        $details[] = $aDetail;
                     }
                     $displayDetailsAsList = true;
                 }
@@ -566,6 +575,10 @@ JS;
                 $this->assign('details', $details);
                 
                 return is_array($details) ? count($details) > 0 : strlen(trim($details));
+            }
+            case 'categories':
+            {
+                // TODO generate a list of categories related to this placemark
             }
             default:
                 break;

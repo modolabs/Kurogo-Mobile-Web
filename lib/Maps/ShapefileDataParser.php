@@ -107,7 +107,7 @@ function ieee64FromLong($arg) {
     return $sign * pow(2, $exponent) * $mantissa;
 }
 
-abstract class BinaryFileParser
+abstract class BinaryFileParser extends DataParser
 {
     protected $filename;
     protected $wordSize = 4;
@@ -123,7 +123,7 @@ abstract class BinaryFileParser
     abstract public function readBody();
     abstract public function readRecord();
 
-    public function __construct($filename) {
+    public function setFilename($filename) {
         $this->filename = $filename;
     }
 
@@ -223,7 +223,7 @@ abstract class BinaryFileParser
         $this->skip($position - $this->position);
     }
 
-    public function parseData() {
+    public function parseData($data) {
         $this->setup();
         $this->readHeader();
         $this->readBody();
@@ -232,7 +232,9 @@ abstract class BinaryFileParser
 
     public function setup() {
         $this->position = 0;
-        $this->handle = fopen($this->filename, 'rb');
+        if (!$this->handle = fopen($this->filename, 'rb')) {
+            throw new Exception("unable to open file {$this->filename}");
+        }
     }
 
     public function cleanup() {
@@ -246,6 +248,7 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     private $dbfParser;
     private $bbox; // global bbox for file
     private $category;
+    private $mapProjection;
 
     protected $bigEndian = false;
 
@@ -266,6 +269,23 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         //'31' => 'addMultiPatch',
         );
 
+    public function init($args) {
+        parent::init($args);
+
+        $filename = $args['BASE_URL'];
+
+        $this->setFilename($filename . '.shp');
+        $this->dbfParser = new DBase3FileParser();
+        $this->dbfParser->setFilename($filename . '.dbf');
+        $this->dbfParser->setup();
+
+        $prjFile = $filename . '.prj';
+        if (file_exists($prjFile)) {
+            $prjData = file_get_contents($prjFile);
+            $this->mapProjection = new MapProjection($prjData, 'wkt');
+        }
+    }
+
     public function getListItems()
     {
         return $this->features;
@@ -282,17 +302,12 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     }
 
     public function getProjection() {
-        // TODO move WKTParser from ShapeFileDataController to here
-        return null;
+        return $this->mapProjection;
     }
 
-    public function getParsedData() {
+    public function parseData($data) {
+        parent::parseData($data);
         return $this->features;
-    }
-
-    public function setDBFParser(DBase3FileParser $parser) {
-        $this->dbfParser = $parser;
-        $this->dbfParser->setup();
     }
 
     public function setCategory($category) {

@@ -7,7 +7,7 @@ class BasePlacemark implements Placemark
     protected $address;
     protected $subtitle; // defaults to address if not present
     protected $geometry;
-    protected $style;
+    protected $style = null;
     protected $fields = array();
     protected $categories = array();
     
@@ -77,8 +77,8 @@ class BasePlacemark implements Placemark
         $this->title = $title;
     }
     
-    public function setIndex($index) {
-        return $this->index;
+    public function setId($id) {
+        $this->id = $id;
     }
     
     public function setSubtitle($subtitle) {

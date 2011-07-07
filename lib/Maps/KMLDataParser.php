@@ -241,7 +241,7 @@ class KMLPlacemark extends XMLElement implements Placemark
     
     // this is set to the sequence where the placemark is found in the KML file
     // because KML has no unique id's
-    public function setIndex($index) {
+    public function setId($index) {
         $this->index = $index;
     }
 
@@ -435,8 +435,6 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
 
     public function addItem(MapListElement $item) {
         if ($item instanceof Placemark) {
-            //$item->setIndex(count($this->items));
-            //$item->setCategory($this->category);
             $this->features[] = $item;
         } elseif ($item instanceof MapFolder) {
             $this->folders[] = $item;
@@ -444,7 +442,7 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
         $this->items[] = $item;
     }
 
-    public function setIndex($index) {
+    public function setId($index) {
         $this->index = $index;
     }
     
@@ -583,7 +581,7 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
                     $categoryPath = $this->category;
                 }
                 $categoryPath[] = $newFolderIndex;
-                $folder->setIndex($newFolderIndex);
+                $folder->setId($newFolderIndex);
                 $folder->setCategory($categoryPath);
                 $this->elementStack[] = $folder;
                 break;
@@ -652,13 +650,13 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
                 $this->styles[$element->getAttrib('ID')] = $element;
                 break;
             case 'PLACEMARK':
-                $element->setIndex(count($this->items));
+                $element->setId(count($this->items));
                 if ($parent instanceof KMLFolder) {
                     $parent->addItem($element);
                 } else {
                     $this->items[] = $element;
                 }
-                $element->setIndex(count($this->features));
+                $element->setId(count($this->features));
                 $this->features[] = $element;
 
                 break;

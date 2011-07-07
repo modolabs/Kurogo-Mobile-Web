@@ -300,13 +300,6 @@ class MapDBDataController extends MapDataController implements MapFolder
     private $db;
     private $subtitle;
 
-    /*
-    public function getListItems()
-    {
-        return $this->items();
-    }
-    */
-
     public function getSubtitle()
     {
         return $this->subtitle;
@@ -338,6 +331,13 @@ class MapDBDataController extends MapDataController implements MapFolder
         $this->db->init($args);
     }
 
+    public function getData() {
+        if ($this->parser instanceof ShapefileDataParser) {
+            return;
+        }
+        return parent::getData();
+    }
+
     protected function getCacheData() {
         if ($this->db->isPopulated() && $this->db->getCategory()->getListItems()) {
             // make sure this category was populated before skipping
@@ -353,10 +353,9 @@ class MapDBDataController extends MapDataController implements MapFolder
             $items = $this->db->getCategory()->getListItems();
         }
         if (!$items) {
-            $items = parent::parseData($data, $this->parser);
+            $items = parent::parseData($data, $parser);
             $this->db->updateControllerCategory($this, $items);
         }
-
         return $items;
     }
 
@@ -366,7 +365,7 @@ class MapDBDataController extends MapDataController implements MapFolder
     {
         $this->getListItems(); // make sure we're populated
         if ($this->hasDBData) {
-            return $this->db->getCategory()->getListItems();
+            return $this->db->getCategory()->getAllFeatures();
         }
         return $this->parser->getAllFeatures();
     }
@@ -380,6 +379,12 @@ class MapDBDataController extends MapDataController implements MapFolder
 
     public function searchByProximity($center, $tolerance, $maxItems)
     {
+        if (isset($projection)) {
+            $projector = new MapProjector();
+            $projector->setSrcProj($projection);
+            $center = $projector->projectPoint($center);
+        }
+
         $this->setSelectedFeatures(
             $this->db->searchByProximity($center, $tolerance, $maxItems));
         return $this->getAllSelectedFeatures();
@@ -387,7 +392,7 @@ class MapDBDataController extends MapDataController implements MapFolder
 }
 
 
-class MapDBDataParser extends DataParser
+class MapDBDataParser extends DataParser //implements MapDataParser
 {
     const PLACEMARK_TABLE = 'map_placemarks';
     const PLACEMARK_STYLES_TABLE = 'map_styles';
@@ -431,6 +436,10 @@ class MapDBDataParser extends DataParser
         return $this->category;
     }
 
+    public function getProjection() {
+        return $this->getCategory()->getProjection();
+    }
+
     public function updateControllerCategory(MapDBDataController $controller, $items) {
         $params = array(
             $controller->getTitle(),
@@ -472,7 +481,9 @@ class MapDBDataParser extends DataParser
 
         $placemarks = array();
         while ($row = $result->fetch()) {
-             $placemarks[] = new MapDBPlacemark($row, true);
+            $placemark = new MapDBPlacemark($row, true);
+            $placemark->addCategoryId($this->categoryId);
+            $placemarks[] = $placemark;
         }
         return $placemarks;
     }
@@ -487,10 +498,16 @@ class MapDBDataParser extends DataParser
         $dLatDegrees = $dLatRadians * 180 / M_PI;
         $dLonDegrees = $dLonRadians * 180 / M_PI;
 
-        $maxLat = $center['lat'] + $dLatDegrees;
-        $minLat = $center['lat'] - $dLatDegrees;
-        $maxLon = $center['lon'] + $dLonDegrees;
-        $minLon = $center['lon'] - $dLonDegrees;
+        $min = array('lat' => $center['lat'] - $dLatDegrees, 'lon' => $center['lon'] - $dLonDegrees);
+        $max = array('lat' => $center['lat'] + $dLatDegrees, 'lon' => $center['lon'] + $dLonDegrees);
+
+        if ($this->getProjection()) {
+            $projector = new MapProjector();
+            $projector->setDstProj($this->getProjection());
+
+            $min = $projector->projectPoint($min);
+            $max = $projector->projectPoint($max);
+        }
 
         $sql = 'SELECT p.* FROM '
               .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
@@ -500,7 +517,8 @@ class MapDBDataParser extends DataParser
               .' ORDER BY (p.lat - ?)*(p.lat - ?) + (p.lon - ?)*(p.lon - ?)';
         $params = array(
             $this->categoryId,
-            $minLat, $maxLat, $minLon, $maxLon,
+            $min['lat'], $max['lat'], $min['lon'], $max['lon'],
+            //$minLat, $maxLat, $minLon, $maxLon,
             $center['lat'], $center['lon']);
 
         if ($maxItems) {
@@ -512,7 +530,9 @@ class MapDBDataParser extends DataParser
 
         $placemarks = array();
         while ($row = $result->fetch()) {
-             $placemarks[] = new MapDBPlacemark($row, true);
+            $placemark = new MapDBPlacemark($row, true);
+            $placemark->addCategoryId($this->categoryId);
+            $placemarks[] = $placemark;
         }
         return $placemarks;
     }
