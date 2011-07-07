@@ -681,7 +681,7 @@ class MapDBDataParser extends DataParser //implements MapDataParser
         $params = $featureId;
         $results = self::connection()->query($sql, $params);
         if ($results && $row = $results->fetch()) {
-            return new MapPlacemark($row, true);
+            return new MapDBPlacemark($row, true);
         } else {
             return new MapDBPlacemark(array('placemark_id' => $featureId));
         }

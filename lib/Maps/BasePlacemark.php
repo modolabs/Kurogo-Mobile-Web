@@ -45,7 +45,7 @@ class BasePlacemark implements Placemark
         return $this->category;
     }
     
-    // MapFeature interface
+    // Placemark interface
     
     public function getGeometry() {
         return $this->geometry;

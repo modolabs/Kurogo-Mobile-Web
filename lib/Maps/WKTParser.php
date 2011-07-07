@@ -112,7 +112,7 @@ class WKTParser
     ////// geometry
 
     public static function parseWKTGeometry($string) {
-        if (preg_match("/^([\w ]) *\((.+)\)$/", $string, $matches)) {
+        if (preg_match("/^([\w ]+) *\((.+)\)$/", $string, $matches)) {
             $type = $matches[1];
             switch ($type) {
                 case 'POINT':
@@ -190,7 +190,7 @@ class WKTParser
 
         } else { // this should be a point, but it will work for any MapGeometry
             $point = $geometry->getCenterCoordinate();
-            return "POINT({$point['lon']}, {$point['lat']})";
+            return 'POINT('.self::implodeLatLon($point).')';
         }
         return $wkt;
     }
@@ -198,7 +198,6 @@ class WKTParser
     private static function implodeLatLon($point) {
         return $point['lon'].' '.$point['lat'];
     }
-
 
 }
 

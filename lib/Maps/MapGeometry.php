@@ -39,7 +39,7 @@ class MapBasePolyline extends MapBasePoint implements MapPolyline {
     private $points;
     private $centroid;
 
-    public function __construct($points) {
+    public function __construct($points, $centroid=null) {
         $this->points = $points;
         if ($centroid) {
             $this->centroid = $centroid;

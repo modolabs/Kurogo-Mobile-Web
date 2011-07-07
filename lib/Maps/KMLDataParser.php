@@ -3,8 +3,6 @@
 // http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd
 // http://portal.opengeospatial.org/files/?artifact_id=27810
 
-require_once(LIB_DIR . '/XMLDataParser.php');
-
 class KMLStyle extends XMLElement implements MapStyle
 {
     protected $styleID;
