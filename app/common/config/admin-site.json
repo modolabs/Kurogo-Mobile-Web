@@ -229,7 +229,7 @@
             "API_CURRENT_LOG_FILE":{"label":"API Current log file","type":"file","config":"site","description":"Location of the active API log file","section":"log_files"},
             "LOG_DATE_FORMAT":{"label":"Log date format","type":"text","config":"site","description":"Date format for log files","section":"log_files"},
             "LOG_DATE_PATTERN":{"label":"Log date pattern","type":"text","config":"site","description":"regex pattern of log dates, should match output from Log Date Format","section":"log_files"},
-            "TMP_DIR":{"label":"Temporary Directory","type":"file","config":"site","description":"Temporary Directory","section":"log_files"}
+            "TMP_DIR":{"label":"Temporary Directory","type":"file","config":"site","description":"Temporary Directory. Will use system default if not specified","section":"log_files","omitBlankValue":true}
         }
     },
     "strings":{
