@@ -90,7 +90,7 @@ class DeviceClassifier {
   }
   
   private function detectDeviceInternal($user_agent) {
-    includePackage('db');
+    Kurogo::includePackage('db');
     if (!$user_agent) {
       return;
     }

@@ -4,7 +4,7 @@
  * @package Authentication
  */
  
- includePackage('db');
+ Kurogo::includePackage('db');
 
 /**
  * Authentication Authority based on values in a database

@@ -3,7 +3,7 @@
   * @package Authentication
   */
 
-includePackage('Authentication');
+Kurogo::includePackage('Authentication');
 
 /**
   * @package Authentication

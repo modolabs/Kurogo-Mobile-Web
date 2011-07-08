@@ -3,7 +3,7 @@
   * @package Module
   * @subpackage People
   */
-includePackage('People');
+Kurogo::includePackage('People');
 
 
 /**

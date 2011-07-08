@@ -140,7 +140,7 @@ abstract class Module
         }
         
         if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
-            includePackage('Authentication');
+            Kurogo::includePackage('Authentication');
             if (!$this->getAccess()) {
                 $this->unauthorizedAccess();
             }

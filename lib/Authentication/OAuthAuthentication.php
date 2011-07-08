@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Authorization');
+Kurogo::includePackage('Authorization');
 
 abstract class OAuthAuthentication extends AuthenticationAuthority
 {

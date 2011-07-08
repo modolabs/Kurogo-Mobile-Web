@@ -1,6 +1,6 @@
 <?php
 
-includePackage('People');
+Kurogo::includePackage('People');
 
 class PeopleAPIModule extends APIModule
 {

@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Emergency');
+Kurogo::includePackage('Emergency');
 
 class EmergencyWebModule extends WebModule 
 {

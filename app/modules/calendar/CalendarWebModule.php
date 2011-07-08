@@ -5,7 +5,7 @@
   */
 
 
-includePackage('Calendar');
+Kurogo::includePackage('Calendar');
 
 define('DAY_SECONDS', 24*60*60);
 

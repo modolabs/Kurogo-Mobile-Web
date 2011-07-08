@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Video');
+Kurogo::includePackage('Video');
 
 class VideoWebModule extends WebModule
 {
