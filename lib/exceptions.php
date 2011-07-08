@@ -141,7 +141,7 @@ function developmentErrorLog($exception){
 }
 
 /**
-  * Exception Handler set in initialize.php
+  * Exception Handler set in Kurogo::initialize()
   */
 function exceptionHandlerForError($exception) {
     $error = print_r($exception, TRUE);
@@ -155,23 +155,24 @@ function exceptionHandlerForDevelopment($exception) {
 }
 
 /**
-  * Exception Handler set in initialize.php
+  * Exception Handler set in Kurogo::initialize()
   */
 function exceptionHandlerForProduction($exception) {
-  if(!Kurogo::deviceClassifier()->isSpider()) {
-    mail(Kurogo::getSiteVar('DEVELOPER_EMAIL'), 
-      "Mobile web page experiencing problems",
-      "The following page is throwing exceptions:\n\n" .
-      "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
-      "User-Agent: \"{$_SERVER['HTTP_USER_AGENT']}\"\n" .
-      "Referrer URL: \"{$_SERVER['HTTP_REFERER']}\"\n" .
-      "Exception:\n\n" . 
-      var_export($exception, true)
-    );
-  }
+    $to = Kurogo::getSiteVar('DEVELOPER_EMAIL');
+    if (!Kurogo::deviceClassifier()->isSpider() && $to) {
+        mail($to, 
+          "Mobile web page experiencing problems",
+          "The following page is throwing exceptions:\n\n" .
+          "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
+          "User-Agent: \"{$_SERVER['HTTP_USER_AGENT']}\"\n" .
+          "Referrer URL: \"{$_SERVER['HTTP_REFERER']}\"\n" .
+          "Exception:\n\n" . 
+          var_export($exception, true)
+        );
+    }
 
-  header('Location: '.getErrorURL($exception));
-  die(0);
+    header('Location: '.getErrorURL($exception));
+    die(0);
 }
 
 function exceptionHandlerForAPI($exception) {
