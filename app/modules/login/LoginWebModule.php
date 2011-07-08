@@ -245,7 +245,7 @@ class LoginWebModule extends WebModule {
                 $this->setTemplatePage('loggedin');
             } else {
                 if (!$multipleAuthorities && count($authenticationAuthorities['direct'])) {
-                    $this->redirectTo('login', array('authority'=>AuthenticationAuthority::getDefaultAuthenticationAuthorityIndex()));
+                    $this->redirectTo('login', array('authority'=>key($authenticationAuthorities['direct'])));
                 }
                 $this->assign('multipleAuthorities', $multipleAuthorities);
             }
