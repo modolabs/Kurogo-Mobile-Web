@@ -94,7 +94,7 @@ Core / Support Files
 
 * compat - defines several functions that normalize behavior throughout PHP versions
 * exceptions - defines exception subclasses and sets up exception handling behavior
-* Kurogo - a singleton class used to consolidate common operations like initialization, site configuration, and administration
+* *Kurogo* - a singleton class used to consolidate common operations like initialization, site configuration, and administration. :doc:`See more <kurogoobject>`
 * minify - interface between the framework and the included open source minify library
 * *DeviceClassifier* - An interface between the frame work and the :doc:`Device Detection Service <devicedetection>`
 * *deviceData.db* - A SQLite database that contains entires used by the internal device detection system.
@@ -109,9 +109,9 @@ These functions deal with the REST API interface that permits access to certain 
 interfaces are used primarily by the native applications (i.e. iOS) but is also used by certain modules
 for AJAX like functionality where supported.
 
-* APIModule - The base class for API modules, inherits from Module
-* APIResponse - A class that encapsulates the common response message for API requests
-* CoreAPIModule - Class used to handle site wide API functions (API requests not assigned to a specific module)
+* *APIModule* - The base class for API modules, inherits from Module
+* *APIResponse* - A class that encapsulates the common response message for API requests
+* *CoreAPIModule* - Class used to handle site wide API functions (API requests not assigned to a specific module)
 
 -----------------------
 External Data Retrieval
@@ -146,13 +146,18 @@ Other included Data Parsers:
 * *JSONDataParser* - Parses JSON content into a PHP structure.
 * *DOMDataParser* - Parses HTML content into a DOM Object
 * *INIFileParser* - Parses INI files
+
+Read more about the :doc:`datacontroller`
    
 ---------------
 Database Access
 ---------------
 
+Kurogo Includes 
+
 * *db* - A database access library based on `PDO <http://php.net/pdo>`_. It includes abstractions for
-  MySQL and SQLite
+  MySQL, SQLite, PostgreSQL and MS SQL. This support is dependent on support in your PHP installation. The
+  setting up and maintaining of databases and their associated extensions is beyond the scope of this document.
 * *SiteDB* - Uses the main database configuration for access.
 
 ------------------------------
@@ -165,10 +170,16 @@ User Access and Authentication
   for more information about the included authorities. 
 * *AccessControlList* - A class used by the authorization system to restrict access to modules based on
   user or group membership. This is especially useful for the :ref:`admin-module`.
-* *Session* - Handles the saving and restoration of user state. This is currently implemented using 
-  PHP session variables.
 * *User* - The base class for identifying logged in users
 * *UserGroup* - The base class for identifying groups
+
+------------------
+Session Management
+------------------
+* *Session* - Handles the saving and restoration of user state. There are 2 current implementation:
+
+  * *SessionFiles* - Save and restore session data using the built in file handler 
+  * *SessionDB* - Save and restore session data using a database
 
 -------------
 Configuration

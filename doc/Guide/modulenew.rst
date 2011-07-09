@@ -91,7 +91,6 @@ Steps
     class YouTubeDataController extends DataController
     {
         protected $cacheFolder = "Videos"; // set the cache folder
-        protected $cacheSuffix = "json";   // set the suffix for cache files
         protected $DEFAULT_PARSER_CLASS='JSONDataParser'; // the default parser
         
         public function search($q)
@@ -116,7 +115,7 @@ Steps
 
 Some notes on this listing:
 
-* The *cacheFolder* and *cacheSuffix* properties set the cache settings.
+* The *cacheFolder* property sets the cache location
 * The *DEFAULT_PARSER_CLASS* property sets which parser will be used (it can be overridden by setting the
   *PARSER_CLASS* key when using the factory method.
 * The *search* method sets the base URL and adds filters. Filters work as parameters that are added to 
@@ -127,7 +126,6 @@ Some notes on this listing:
   structure
 * Note that to keep this entry short, we are not utilizing any error control. This should not be 
   considered a robust solution
-
 
 Now that we have a controller, we can utilize it in our module. Here is an updated *VideoWebModule.php*
 

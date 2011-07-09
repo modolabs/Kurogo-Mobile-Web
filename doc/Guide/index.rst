@@ -1,8 +1,3 @@
-.. Kurogo documentation master file, created by
-   sphinx-quickstart on Thu Jan  6 09:09:26 2011.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Kurogo Developer's Guide
 ************************
 
@@ -35,12 +30,15 @@ This guide serves as a tour of the project source code and its features.
    requests
    modules
    moduleslist
+   kurogoobject
+   moduleinteraction
    template
    themes
    libs
    datacontroller
    modulenew
    moduleextend
+   database
    authentication
    authorization
    credits
