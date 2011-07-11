@@ -15,8 +15,6 @@ abstract class WebModule extends Module {
 
     const INCLUDE_DISABLED_MODULES=true;
     const EXCLUDE_DISABLED_MODULES=false;
-
-  protected $moduleName = '';
       
   protected $page = 'index';
 
@@ -425,11 +423,7 @@ abstract class WebModule extends Module {
     $this->autoPhoneNumberDetection = $bool ? true : false;
     $this->assign('autoPhoneNumberDetection', $this->autoPhoneNumberDetection);
   }
-    
-  public function getModuleName() {
-    return $this->moduleName;
-  }
-    
+        
   protected function moduleDisabled() {
     $this->redirectToModule('error', '', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
   }
@@ -477,7 +471,7 @@ abstract class WebModule extends Module {
         return $this->canBeAddedToHomeScreen;
     }
   
-  protected static function getAllModules() {
+  public static function getAllModules() {
     $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
     $modules = array();
     foreach ($dirs as $dir) {
