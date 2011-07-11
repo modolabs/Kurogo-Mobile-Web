@@ -322,7 +322,7 @@ abstract class WebModule extends Module {
   }
   
     /* This method would be called by other modules to get a valid link from a model object */
-    public function linkForItem($object, $options=null) {
+    public function linkForItem(KurogoObject $object, $options=null) {
        throw new Exception("linkForItem must be subclassed if it is going to be used");
     }
 
@@ -477,7 +477,7 @@ abstract class WebModule extends Module {
         return $this->canBeAddedToHomeScreen;
     }
   
-  protected function getAllModules() {
+  protected static function getAllModules() {
     $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
     $modules = array();
     foreach ($dirs as $dir) {

@@ -251,7 +251,7 @@ class MapDataController extends DataController implements MapFolder
         return $this->parser->getTitle();
     }
 
-    public function items() {
+    public function items($start=0, $limit=null) {
         if (!$this->items) {
             $data = $this->getData();
             $this->items = $this->parseData($data);

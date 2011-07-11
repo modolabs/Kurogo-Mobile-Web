@@ -107,7 +107,7 @@ class RSSChannel extends XMLElement
   * @package ExternalData
   * @subpackage RSS
   */
-class RSSItem extends XMLElement
+class RSSItem extends XMLElement implements KurogoObject
 {
     protected $name='item';
     protected $title;
