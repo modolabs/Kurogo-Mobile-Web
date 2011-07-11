@@ -82,26 +82,26 @@ Your organization's logo (or other identifying/branding image to be used in your
 
 Homepage
 ~~~~~~~~
-You'll need to create a version of the logo to appear on the homepage: [#f2]_ [#f3]_
+You'll need to create a version of the logo to appear on the homepage: [#f1]_ [#f2]_
 
-* Basic and Touch device classes: *THEME_DIR/modules/home/images/logo-home.gif* must be a GIF image [#f4]_. This image will be centered horizontally within the screen. The default size is 208x35px, cropped tight to the actual artwork.
-* Compliant device class: *THEME_DIR/modules/home/images/logo-home.png* must be a PNG image [#f4]_. The default size is 280x60px [#f1]_, cropped tight the actual artwork. 
+* Basic and Touch device classes: *THEME_DIR/modules/home/images/logo-home.gif* must be a GIF image [#f3]_. This image will be centered horizontally within the screen. The default size is 208x35px, cropped tight to the actual artwork.
+* Compliant device class: *THEME_DIR/modules/home/images/logo-home.png* must be a PNG image [#f3]_. The default size is 280x60px, cropped tight the actual artwork. 
 	
 
 Header logos
 ~~~~~~~~~~~~
 The top left corner of every screen for every device class includes a logo/branding image. This image appears to the left of the page title on the Basic device class, and as the leftmost part of the header/navigation bar on all other device classes.
 
-* Basic device class: *THEME_DIR/common/images/basic/logo.gif* must be a GIF image [#f4]_. The default size is 35x35px.
-* Compliant device class: *THEME_DIR/common/images/compliant/homelink.png* must be a PNG image [#f4]_. The default size is 57x45px [#f1]_. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.png*, in, in the same directory).
-* Touch device class: *THEME_DIR/common/images/touch/homelink.gif* must be a GIF image [#f4]_. The default size is 40x30px. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.jpg*, in, in the same directory). Typically it should incorporate some visual indication of a drilldown (e.g., right-facing arrow) to the right of the actual logo.
-* Tablet device class: *THEME_DIR/common/images/tablet/homelink.png* must be a PNG image [#f4]_. The default size is 66x52px. This be designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.png*, in the same directory). **NEED TO CLEAN UP AND DOCUMENT TABLET HOMESCREEN ICON IMAGE, AND HOME MODULE ICON IMAGE**
+* Basic device class: *THEME_DIR/common/images/basic/logo.gif* must be a GIF image [#f3]_. The default size is 35x35px.
+* Compliant device class: *THEME_DIR/common/images/compliant/homelink.png* must be a PNG image [#f3]_. The default size is 57x45px. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.png*, in, in the same directory). The Compliant header logo is one item that benefits from :ref:`hdpi`.
+* Touch device class: *THEME_DIR/common/images/touch/homelink.gif* must be a GIF image [#f3]_. The default size is 40x30px. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.jpg*, in, in the same directory). Typically it should incorporate some visual indication of a drilldown (e.g., right-facing arrow) to the right of the actual logo.
+* Tablet device class: *THEME_DIR/common/images/tablet/homelink.png* must be a PNG image [#f3]_. The default size is 66x52px. This be designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.png*, in the same directory).
 	
 	
 Favicon and bookmark icons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 * *THEME_DIR/common/images/favicon.ico* must be a 16x16px ICO file, which is variously used by different browsers as the favicon, bookmarks and history icon, and in the screen title bar.
-* *THEME_DIR/common/images/icon.png* must be a 57x57 (or pixel-doubled 114x114px [#f1]_ [#f4]_) PNG, used as the homescreen shortcut icon for iOS devices and some Android devices.  
+* *THEME_DIR/common/images/icon.png* must be a 57x57 (or pixel-doubled 114x114px; see :ref:`hdpi` [#f3]_) PNG, used as the homescreen shortcut icon for iOS devices and some Android devices.  
 	
 	
 ----------------------------------------
@@ -116,26 +116,29 @@ Homepage module icons
 ~~~~~~~~~~~~~~~~~~~~~
 These appear on the homepage, as well as the Customize Homescreen module and the desktop-oriented Info module. 
 
-* Compliant device class: The module icons in *THEME_DIR/modules/home/images/complaint/[MODULE_ID].png* must be PNG images [#f4]_. They should be the same size as the springboard images for modern BlackBerry devices (as set in *THEME_DIR/common/css/compliant-bbplus.css*, lines 26-27, and *THEME_DIR/common/css/compliant-blackberry.css*, lines 17-18). By default this is 64x64px, which is slightly larger than the default size for other Compliant devices [#f1]_. The file names must be exactly in the format *[MODULE_ID].png* (e.g., calendar.png, map.png, news.png, etc.) [#f5]_
-* Touch device class: The module icons in *THEME_DIR/modules/home/images/touch/[MODULE_ID].gif* must be GIF images [#f4]_. The default size is 44x44px. The file names must be exactly *[MODULE_ID].gif* (e.g., calendar.gif, map.gif, news.gif, etc.) [#f5]_
+* Compliant device class: The module icons in *THEME_DIR/modules/home/images/complaint/[MODULE_ID].png* must be PNG images [#f3]_. They should be the same size as the springboard images for modern BlackBerry devices (as set in *THEME_DIR/common/css/compliant-bbplus.css*, lines 26-27, and *THEME_DIR/common/css/compliant-blackberry.css*, lines 17-18). By default this is 64x64px, which is slightly larger than the default size for other Compliant devices. The file names must be exactly in the format *[MODULE_ID].png* (e.g., calendar.png, map.png, news.png, etc.)[#f4]_. For Compliant devices, the homepage icons may notably benefit from :ref:`hdpi`.
+* Touch device class: The module icons in *THEME_DIR/modules/home/images/touch/[MODULE_ID].gif* must be GIF images [#f3]_. The default size is 44x44px. The file names must be exactly *[MODULE_ID].gif* (e.g., calendar.gif, map.gif, news.gif, etc.) [#f4]_
+
+
 
 
 Breadcrumb module icons
 ~~~~~~~~~~~~~~~~~~~~~~~
 These appear in the header/navigation bar at the top of every module page in all device classes other than Basic. On each module's main screen, the icon is used to identify the module but is not tappable; in all subsequent drilldown screens, the icon is incorporated into a tappable/clickable breadcrumb by which the user can navigate back to the module home screen.
 
-* Compliant device class: The icons in *THEME_DIR/common/images/complaint/title_[MODULE_ID].png* must be PNG images [#f4]_, generally transparent, colored and styled to look good on the background color/image for the navigation bar (this background is specified in the *#navbar* rule in *THEME_DIR/common/css/compliant.css*). The default size is 28x28px [#f1]_.
-* Touch device class: The icons in *THEME_DIR/common/images/touch/title_[MODULE_ID].gif* must be GIF images [#f4]_, generally transparent, colored and styled to look good on the background color/image for the navigation bar (this background is specified in the *#navbar* rule in *THEME_DIR/common/css/touch.css*).. The default size is 28x28px [#f1]_.
-* Tablet device class: The icons in *THEME_DIR/common/images/tablet/title_[MODULE_ID].png* must be PNG images [#f4]_, generally transparent, colored and styled to look good on the background color/image for the navigation bar (this background is specified in the *#navbar* rule in *THEME_DIR/common/css/tablet.css*).. The default size is 28x28px.
+* Compliant device class: The icons in *THEME_DIR/common/images/complaint/title_[MODULE_ID].png* must be PNG images [#f3]_, generally transparent, colored and styled to look good on the background color/image for the navigation bar (this background is specified in the *#navbar* rule in *THEME_DIR/common/css/compliant.css*). The default size is 28x28px. For Compliant devices, the breadcrumb module icons may notably benefit from :ref:`hdpi`.
+* Touch device class: The icons in *THEME_DIR/common/images/touch/title_[MODULE_ID].gif* must be GIF images [#f3]_, generally transparent, colored and styled to look good on the background color/image for the navigation bar (this background is specified in the *#navbar* rule in *THEME_DIR/common/css/touch.css*).. The default size is 28x28px.
+* Tablet device class: The icons in *THEME_DIR/common/images/tablet/title_[MODULE_ID].png* must be PNG images [#f3]_, generally transparent, colored and styled to look good on the background color/image for the navigation bar (this background is specified in the *#navbar* rule in *THEME_DIR/common/css/tablet.css*).. The default size is 28x28px.
+
 
 
 Tablet tab-bar module icons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-The Tablet device class uses a site-wide tab bar at the bottom of the screen to provide quick navigation between modules. Though not technically part of the Tablet homepage, these images are in the *THEME_DIR/modules/home/images/tablet/* directory, to keep them grouped with the other module icons of similar size and format. The Tablet's tab bar uses two variations of the module icons. Both variations must be transparent PNGs [#f4]_ at 45x45px. Larger sizes will work fine, but with no visible benefit. [#f1]_.
+The Tablet device class uses a site-wide tab bar at the bottom of the screen to provide quick navigation between modules. Though not technically part of the Tablet homepage, these images are in the *THEME_DIR/modules/home/images/tablet/* directory, to keep them grouped with the other module icons of similar size and format. The Tablet's tab bar uses two variations of the module icons. Both variations must be transparent PNGs [#f3]_ at 45x45px. Larger sizes will work fine, but with no visible benefit..
 
-* Normal/unselected: Should be colored and styled for good contrast and legibility against the background for the Tablet tab bar. This background is specified in the *#footernav* rule in *THEME_DIR/common/css/tablet.css*. The file names must be exactly *[MODULE_ID].png* (e.g., calendar.png, map.png, news.png, etc.) [#f5]_
+* Normal/unselected: Should be colored and styled for good contrast and legibility against the background for the Tablet tab bar. This background is specified in the *#footernav* rule in *THEME_DIR/common/css/tablet.css*. The file names must be exactly *[MODULE_ID].png* (e.g., calendar.png, map.png, news.png, etc.) [#f4]_
 
-* Selected: Should be colored and styled for good contrast and legibility against the background for the selected state of the Tablet tab bar. This background is specified in the *#footernav .selected a* rule in *THEME_DIR/common/css/tablet.css*. The file names must be exactly *[MODULE_ID]-selected.png* (e.g., calendar.png, map.png, news.png, etc.) [#f5]_
+* Selected: Should be colored and styled for good contrast and legibility against the background for the selected state of the Tablet tab bar. This background is specified in the *#footernav .selected a* rule in *THEME_DIR/common/css/tablet.css*. The file names must be exactly *[MODULE_ID]-selected.png* (e.g., calendar.png, map.png, news.png, etc.) [#f4]_
 
 	
 -------------------------------------------	
@@ -147,18 +150,27 @@ Help buttons
 ~~~~~~~~~~~~
 Buttons in the top right of the screen for Compliant and Tablet device classes: 
 
-* Compliant device class: *THEME_DIR/common/images/compliant/help.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is 46x45px [#f1]_. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (navback.png, in the same directory).
+* Compliant device class: *THEME_DIR/common/images/compliant/help.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is 46x45px. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (navback.png, in the same directory).
 * Tablet device class: *THEME_DIR/common/images/tablet/help.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is 52x52px. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (navback.png, in the same directory).
 
 
 Header bar backgrounds
 ~~~~~~~~~~~~~~~~~~~~~~
-Content coming soon.
+Tiling background image for the header bar (navigation and breadrcrumbs) at the top of every screen in most device classes:
+
+* Compliant device class: *THEME_DIR/common/images/compliant/navback.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is any width by 48px tall, of which the bottom 3px is typically a drop shadow fading to transparent.
+* Touch device class: *THEME_DIR/common/images/touch/navback.jpg* must be a JPG image, for use on Touch-class devices. The default size is any width by 48px tall, of which the bottom 3px is typically a drop shadow fading to the body background color.
+* Tablet device class: *THEME_DIR/common/images/tablet/navback.png* must be a PNG image, typically 24-bit with transparency, for use on Tablet-class devices. The default size is any width by 50px tall.
 
 
-Breadcrumb images
-~~~~~~~~~~~~~~~~~
-Content coming soon.
+
+Breadcrumb separator images
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Separator image between elements of the breadcrumb (drill-up) links in the header bar for Compliant and Tablet device classes:
+
+* Compliant device class: *THEME_DIR/common/images/compliant/drillup-r.png* must be a PNG image, typically 24-bit with or without transparency, for use on Compliant-class devices. The default size is 18x45px, and it should be designed to sit seamlessly on top of the header bar background (*THEME_DIR/common/images/compliant/navback.png*).
+* Compliant device class: *THEME_DIR/common/images/tablet/drillup-r.png* must be a PNG image, typically 24-bit with transparency, for use on Compliant-class devices. The default size is 18x50px, and it should be designed to sit seamlessly on top of the header bar background (*THEME_DIR/common/images/tablet/navback.png*).
+
 
 
 Other graphics
@@ -167,6 +179,46 @@ Color-adjust or replace any or all of the following with images of the same size
 
 * Bullet images: *THEME_DIR/common/images/compliant/bullet.png* and *THEME_DIR/common/images/tablet/bullet.png* (identical), and *THEME_DIR/common/images/touch/bullet.gif*
 * Search buttons: *THEME_DIR/common/images/compliant/search_button.png* and *THEME_DIR/common/images/tablet/bullet.png* (identical)
+
+
+
+.. _hdpi:
+
+************************************
+Optimizing for High-Density Displays
+************************************
+All modern smartphones have displays with a pixel density (number of pixels per physical inch) higher than a typical desktop or laptop computer. For example, the first three generations of iPhones and iPod Touches, and the first generation of Android and webOS devices, all had displays with 150-170 pixels per inch (ppi).
+
+A growing number of high-end devices have significantly higher-density displays, to further improve clarity and legibility. iOS devices with Retina Displays (iPhone 4, iPod Touch 4) have twice the pixel density of older iOS devices. Android devices with HDPI displays (e.g., with the common 480x800px or 480x854px screens), Windows Phone 7 devices, and some recent webOS devices have 1.5 times (or more) the pixel density of earlier/lower-end smartphones. Because these devices have more physical screen pixels in the same space, text and images can look sharper and more legible, especially for small text and detailed graphics. 
+
+On such devices, web pages that provide a higher-resolution image while retaining the display size (through HTML attributes or CSS) can yield images that are visibly sharper and more legible on-screen. For instance, substituting a pixel-doubled homescreen logo (*THEME_DIR/modules/home/images/logo-home.png*) at 560x120px (twice the default 280x60px size) while retaining the *width=280, height=60* attributes in HTML will make that image have maximum possible visual quality on high-density displays. However, this comes at the cost of larger file size. You need to evaluate whether the increased visual quality and legibility are worth the tradeoff. In many cases, 1.5x assets (e.g., 420x90px version of *THEME_DIR/modules/home/images/logo-home.png*) will offer a good tradeoff between increased visual quality and file-size. You may want to experiment with different multipliers, viewing the results on different devices, to find the best tradeoff on an image-by-image basis. 
+
+Generally, logos, highly detailed images, and images incorporating text will benefit most from using high-density versions. Note that BlackBerry devices running any OS prior to 6.0 do not scale images well, so it's best to use images sized exactly for them. Currently there are no tablet devices that take advantage of high-density images.
+
+The following items will benefit the most from using higher-resolution images. The general technique is the add the higher-than-default-resolution images to the *[IMAGE_DIR]/compliant/* directory, and default-resolution images to the *[IMAGE_DIR/compliant-blackberry]* and *[IMAGE_DIR/compliant-bbplus]* directories.
+
+----------------
+Home-screen logo
+----------------
+Assuming you've created your standard-resolution *THEME_DIR/modules/home/images/logo-home.png* image, make duplicates of it into *THEME_DIR/modules/home/images/compliant-bbplus* and *THEME_DIR/modules/home/images/compliant-blackberry* directories. Then replace *THEME_DIR/modules/home/images/logo-home.png* with a higher-resolution version.
+
+------------------
+Header logo images
+------------------
+Assuming you've created your standard-resolution *THEME_DIR/common/images/compliant/homelink.png* image, make duplicates of it into *THEME_DIR/common/images/compliant-bbplus* and *THEME_DIR/common/images/compliant-blackberry* directories. Then replace *THEME_DIR/common/images/compliant/homelink.png* with a higher-resolution version, making sure that this higher-resolution version mates well with the navbar background image (*THEME_DIR/common/images/compliant/navback.png*).
+
+---------------------
+Homepage module icons
+---------------------
+Assuming you've created your standard-resolution module icons at *THEME_DIR/modules/home/images/compliant/[MODULE_ID].png*, make duplicates of all of them into *THEME_DIR/modules/home/images/compliant-bbplus* and *THEME_DIR/modules/home/images/compliant-blackberry* directories. Then replace the module icons in *THEME_DIR/modules/home/images/compliant* with higher-resolution versions, being sure to name them exactly *[MODULE_ID].png* [#f4]_. **Caution:** This can quickly make the total filesize of your homepage quite large, especially if you have a lot of modules. Try 1.5x versions of these images first, rather than 2x (Retina Display) versions.
+
+-----------------------
+Breadcrumb module icons
+-----------------------
+Assuming you've created your standard-resolution breadcrumb module icons at *THEME_DIR/common/images/compliant/title_[MODULE_ID].png*, make duplicates of all of them into *THEME_DIR/common/images/compliant/compliant-bbplus* and *THEME_DIR/common/images/compliant-blackberry* directories. Then replace the module icons in *THEME_DIR/common/images/compliant* with higher-resolution versions, being sure to name them exactly *title_[MODULE_ID].png* [#f4]_.
+
+
+
 
 
 *****************************
@@ -324,8 +376,7 @@ will be prepended automatically by the framework.
 
 	
 .. rubric:: Footnotes
-.. [#f1] **Support for high-density device displays:** iOS devices with Retina Displays (iPhone 4, iPod Touch 4) have twice the number of pixels per inch (pixel density) that older iPhone and iPod Touch did. Android devices with HDPI displays (e.g., with the common 480x800px or 480x854px screens), Windows Phone 7 devices, and some recent webOS devices have 1.5 times (or more) the pixel density of earlier and lower-end smartphones. Because these devices have more physical screen pixels in the same space, text and images can look sharper and more legible, especially for small text and detailed graphics. On web pages, providing a higher-resolution image while retaining the display size (through HTML attributes or CSS) can yield images that are visibly sharper and more legible on-screen. For instance, substituting a Compliant *home_logo.png* at 560x120px (twice the default 280x60px size) while retaining the *width=280, height=60* attributes in HTML will make that image have maximum possible visual quality on high-density displays. However, this comes at the cost of larger file size. You need to evaluate whether the increased visual quality and legibility are worth the tradeoff. Generally, logos, highly detailed images, and images incorporating text will benefit most from using high-density versions; the home-screen logo, Compliant and Tablet *homelink.png* images, and module icons are usually good candidates. In many cases, 1.5x assets (e.g., 420x90px version of the Compliant *home_logo.png*) will offer a good tradeoff between increased visual quality and file-size. You may want to experiment with different multipliers, viewing the results on different devices, to find the best tradeoff on an image-by-image basis. **Notes:** BlackBerry devices running any OS prior to 6.0 do not scale images well, so it's best to use images sized exactly for them. Currently there are no tablet devices that take advantage of high-density images.
-.. [#f2] **Custom homepage logo/banner image sizes:** *THEME_DIR/config.ini* stores the height and width of the homescreen logo/banner image for different device classes. The values defined in this config file are written into the actual HTML as attributes on the <img> tag. The reason these image dimensions are handled this way, rather than in CSS, is that many browsers will not apply a CSS height and width until the image is loaded, but will always reserve the space defined in the <img> object's *height* and *width* attributes. The CSS-driven approach will cause the items on the home screen to jump vertically as soon as the logo image finishes loading, causing a usability problem, especially on touchscreen devices. 
-.. [#f3] **Homepage with full-bleed banner image:** If you create a home-page design a full-bleed focal image at the top of the page (e.g., a large photograph with your logo superimposed on it), you can set the image dimensions in *THEME_DIR/config.ini* to *banner-width = 100%* and *banner-height = auto*. You should create the artwork at a minimum width of 320px, with a recommended maximum height of 240px. Note that this approach is only recommended for the Compliant device class, as the GIF image(s) used for the Basic and Touch device classes will render very poorly when scaled.
-.. [#f4] **Transparent GIFs and PNGs:** Assets for the Basic and Touch device classes are often GIFs. These should typically be transparent with a transparency matte color matching your homepage background color (except for images that are meant exclusively to sit on focal content areas, in which case the transparency matte color should be white). Assets for the Compliant and Tablet device classes are often PNGs. When tranparent PNGs are used, 24-bit with transparency will work best; 8-bit with transparency can be used to minimize file-size, but the background matte color will need to be set similarly to that of the transparent GIFs.
-.. [#f5] **Module IDs:** All of the variations of the module icons need to have filenames based on the relevant module ID. Generally, you'll be safe just replacing existing files with new ones with the same name. If you want to be sure of the module ID, you can go to you r
+.. [#f1] **Custom homepage logo/banner image sizes:** *THEME_DIR/config.ini* stores the height and width of the homescreen logo/banner image for different device classes. The values defined in this config file are written into the actual HTML as attributes on the <img> tag. The reason these image dimensions are handled this way, rather than in CSS, is that many browsers will not apply a CSS height and width until the image is loaded, but will always reserve the space defined in the <img> object's *height* and *width* attributes. The CSS-driven approach will cause the items on the home screen to jump vertically as soon as the logo image finishes loading, causing a usability problem, especially on touchscreen devices. 
+.. [#f2] **Homepage with full-bleed banner image:** If you create a home-page design a full-bleed focal image at the top of the page (e.g., a large photograph with your logo superimposed on it), you can set the image dimensions in *THEME_DIR/config.ini* to *banner-width = 100%* and *banner-height = auto*. You should create the artwork at a minimum width of 320px, with a recommended maximum height of 240px. Note that this approach is only recommended for the Compliant device class, as the GIF image(s) used for the Basic and Touch device classes will render very poorly when scaled.
+.. [#f3] **Transparent GIFs and PNGs:** Assets for the Basic and Touch device classes are often GIFs. These should typically be transparent with a transparency matte color matching your homepage background color (except for images that are meant exclusively to sit on focal content areas, in which case the transparency matte color should be white). Assets for the Compliant and Tablet device classes are often PNGs. When tranparent PNGs are used, 24-bit with transparency will work best; 8-bit with transparency can be used to minimize file-size, but the background matte color will need to be set similarly to that of the transparent GIFs.
+.. [#f4] **Module IDs:** All of the variations of the module icons need to have filenames based on the relevant module ID. Generally, you'll be safe just replacing existing files with new ones with the same name. If you want to be sure of the module ID, you can go to you r

@@ -1,1 +1,0 @@
-Place high-density module icons here to support HDPI (high-density) Android devices. These PNGs should be 1.5x the width and height specified for the springboard module-icon images in your theme CSS. For instance, if the springboard img size is set in CSS as 60x60px, the PNGs in this folder  should be 90x90px.

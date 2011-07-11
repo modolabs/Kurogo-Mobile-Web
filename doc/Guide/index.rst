@@ -34,7 +34,6 @@ This guide serves as a tour of the project source code and its features.
    moduleinteraction
    template
    themes
-   themes2
    libs
    datacontroller
    modulenew
