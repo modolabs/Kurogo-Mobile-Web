@@ -2,7 +2,7 @@
 
 .HomeModule #navbar {
 	/* Use only if the tablet homepage has a different nav bar background than interior pages */
-	background: #247 url(/common/images/navback-home.png) repeat-x;
+	background: transparent url(/common/images/navback-home.png) repeat-x;
 }
 
 .HomeModule .pagetitle {

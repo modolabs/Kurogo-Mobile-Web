@@ -532,11 +532,9 @@ ul.focal li:first-child {
 
 .sidenav {
 	margin: 12px 8px;
-	color: #a0a09f;
 }
 
 .sidenav a {
-	color: #1a1611;
 	padding: 6px 2px;
 	text-decoration: none;
 }

@@ -744,11 +744,9 @@ ul.focal li:first-child {
 
 .sidenav {
 	margin: 12px 8px;
-	color: #fff;
 }
 
 .sidenav a {
-	color: #333;
 	padding: 6px 2px;
 	text-decoration: none;
 }
@@ -1479,6 +1477,12 @@ html, body, #nonfooternav {
   background: transparent url(/common/images/footernav-slideright.png) no-repeat 50% right;
 }
 
+.results .listSelected {
+ 	/* Suppress corner radius for tablet-specific split-view styles, e.g., News and Video */
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+   border-radius: 0px;
+}
 
 
 /* Freeform content module - basic styles to format unstyled raw HTML */

@@ -3,7 +3,7 @@
 {block name="form"}
   {if !$insideForm}
     <form method="get" action="{$searchPage|default:'search'}">
-      <p id="search">
+      <p id="search" class="nonfocal">
   {/if}
         {if isset($placeholder) && strlen($placeholder)}
           {if $emphasized|default:$isModuleHome}

@@ -14,11 +14,22 @@ body, th, td, li, option, select, input {
 	color: #333;
 }
 
-a, a:visited {
+a, a:visited, .focal a, .focal a:visited, .tabbodies a, .tabbodies a:visited {
+	/* Primary text link color */
 	color: #036;
 }
 
-a:hover {
+a:hover, .focal a:hover, .tabbodies a:hover {
+	/* Mouseover text color; only respected on certain cursor-driven devices */
+	color: #07d;
+}
+
+.nonfocal a, .nonfocal a:visited {
+	/* Text link color on body background */
+	color: #036;
+}
+
+.nonfocal a:hover {
 	/* Mouseover text color; only respected on certain cursor-driven devices */
 	color: #07d;
 }
@@ -52,23 +63,30 @@ h4 {
 	color: #333;
 }
 
-dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
+dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 	/* Accent text color for several types of secondary text that appears on white backgrounds */
 	/* e.g., label in label/value pairs, e.g., People Directory detail screen and for labels in certain calendar listing screens */
 	/* Often the same as the secondary text color defined in the next rule */
 	color: #404649;
 }
 
-.address, .smallprint, .fineprint, .dek, #footer, .copyright, #footerlinks a, #footerlinks a:visited {
+.address, .smallprint, .fineprint, .dek {
 	/* Secondary text color for several types of secondary text */
 	color: #555;
 }
 
-.sidenav, .footerlinks {
-	/* Color of divider between links */
-	color: #fff;
+
+
+/* Text labels for springboards (grids of icons, e.g., homescreen) */
+
+.springboard a, .springboard a:visited {
+	color: #036;
 }
 
+.springboard a:hover {
+	/* Mouseover text color; only respected on certain cursor-driven devices */
+	color: #07d;
+}
 
 
 /* Major content blocks */
@@ -79,9 +97,26 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
 	border-color: #fff;
 }
 
+.nonfocal, .nonfocal .legend, .formlabel {
+	/* Text color for elements that sit on the overall body background */
+	color: #555;
+}
+
+.nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4 {
+	/* Color for headings that sit on the overall body background */
+	color: #036;
+}
+
 .shaded, .HomeModule .blockborder {
 	/* Shaded subclass of focal content - e.g., background for tabbed focal div, portlets in Tablet device class */
+	/* Typically very close to, but distinguishable from, body background */
 	background-color: #edeef0;
+	color: #333;
+}
+
+.shaded h1, .shaded h2, .shaded h3, .shaded h4 {
+	/* Color for headings that sit on the shaded divs */
+	color: #036;
 }
 
 
@@ -90,7 +125,7 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
 
 #navbar {
 	height: 48px; 
-	background: #ccc url(/common/images/navback.png) repeat-x;
+	background: transparent url(/common/images/navback.png) repeat-x;
 	font-size: 94.1%;
 }
 
@@ -109,6 +144,16 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
 	border-color: #fff;
 }
 
+.nav, .results, .nav a, .nav a:visited, .nav span.nolink, .results a, .results a:visited  {
+	/* Text color for all navigation and results lists */
+	color: #333;
+}
+
+.nav li, .results li, ul.focal li  {
+	/* Color of border between list items */
+	border-color: #ccc;
+}
+
 .secondary {
 	/* Secondary navigation or action lists; typically have slightly smaller font size and slightly darker/tinted backgrounds, often the same as .shaded specified above */
 	font-size: 95%;
@@ -116,14 +161,16 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
 	border-color: #ddd;
 }
 
-.nav, .results, .secondary, .nav a, .nav a:visited, .nav span.nolink, .results a, .results a:visited, .secondary, .secondary a, .secondary a:visited  {
-	/* Text color for all navigation and results lists */
-	color: #333;
+.secondary, .secondary a, .secondary a:visited {
+	color: #444;
 }
 
-.nav li, .results li, .secondary li, ul.focal li  {
-	/* Color of border between list items */
-	border-color: #ccc;
+.secondary .smallprint {
+	color: #666;
+}
+
+.secondary li {
+	border-color: #ddd;
 }
 
 .nav .badge {
@@ -134,15 +181,38 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
 
 
 
-/* Next/previous navigation - e.g., going from day to day in events calendar */
+/* Sitewide footer */
 
-.sidenav {
-	font-size: 93%;
+#footer {
+	font-size: 70.6%;
+	line-height: 1.167em;
 }
 
-.paging {
+#footer .copyright {
+	text-decoration: none;
+}
+
+#footerlinks {
+	/* Divider between footer links */
+	color: #fff;
+}
+
+#footer, #footerlinks a, #footerlinks a:visited, a.copyright, a.copyright:visited {
+	/* Color of actual text and text links in sitewide footers */
+	color: #555;
+}
+
+
+
+/* Next/previous navigation (e.g., going from day to day in events calendar) and paging navigation (for content or lists spread across multiple pages) */
+
+.sidenav, paging {
 	font-size: 93%;
-	margin: 0.5em 0;
+	color: #fff;
+}
+
+.sidenav a, .sidenav a:visited, .paging a:visited {
+	color: #333;
 }
 
 
@@ -222,22 +292,9 @@ dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend {
 
 
 
-/* Footer */
+/* Headlines and bylines */
 
-#footer {
-	font-size: 70.6%;
-	line-height: 1.167em;
-}
-
-#footer .copyright {
-	text-decoration: none;
-}
-
-
-
-/* News and video headlines and bylines */
-
-h1.slugline {
+h1.slugline, h2.itemtitle {
 	/* Special headline style used in news, videos, and other modules with story-type content detail */
 	font-family: sans-serif;
     font-size: 129.4%;
@@ -249,6 +306,8 @@ h1.slugline {
 
 .byline {
     min-height:40px;
+    font-size: 64.7%;
+    line-height: 1.25em;
 	padding-bottom: 0.33em;
 	margin-bottom: 1.33em;
     border-bottom: 1px dotted #999;
@@ -262,12 +321,16 @@ h1.slugline {
 	color: #333;
 }
 
+.staticContentBody h1 {
+	color: #333;
+}
+
 .staticContentBody h2 {
 	color: #333;
 }
 
 .staticContentBody h3 {
-	color: #000;
+	color: #333;
 }
 
 .staticContentBody h4 {

@@ -1,41 +1,5 @@
-#search-form .toggle-search-button {
-	font-size: 90%;
-	background: #036;
-	border-color: #036;
-	color: white;
-	font-weight: bold;
-}
-
-
-.results .listSelected {
-    background: #002558 url(/common/images/selected.png) repeat-x top left;
-    color: white;
-    border-radius: 0;
-    -moz-border-radius: 0;
-    -webkit-border-radius: 0;
-}
-
-.results li.story a.listSelected .ellipsis {
-    color: #999;
-}
-
-.results li.story a.listSelected .title {
-    color: #ddd;
-}
-
-#storyDetail h1 {
-    color: black;
-}
-
-.slugline {
-    font: 22px/26px Georgia, serif;
-    color:#1a1611;
-}
-
-.byline {
-    font-size: 11px;
-    line-height: 14px;
-    border-bottom: 1px dotted #999;
+.story {
+	background-color:#fff;
 }
 
 .portrait #stories .results .pagerlink {
@@ -43,7 +7,6 @@
 	height: 100%;
 	padding: 0 0 0 10px;
 }
-
 
 .portrait #stories .results .pagerlink a {
 	height: 60%;
@@ -68,24 +31,6 @@
 	padding:10px 0 0 10px;
 }
 
-.portrait #stories .results .story .listSelected {
-	height: 113px;
-	padding-top:10px;
-	background-color:#2f3133;
-	-webkit-box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
-	-moz-box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
-	box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
-}
-
-.landscape #stories .results .story .listSelected {
-	background-color:#2f3133;
-	background-image:none;
-	-webkit-box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
-	-moz-box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
-	box-shadow: -5px 5px 10px rgba(0,0,0,0.8) inset;
-}
-
-
 .landscape #stories .results .pagerlink {
 	padding-top: 15px;
 	padding-bottom: 15px;
@@ -98,10 +43,6 @@
 .landscape #stories .results .story a {
 	height: 100%;
 	padding: 10px 10px 0 10px;
-}
-
-.story {
-	background-color:#fff;
 }
 
 .landscape #storyDetailWrapper {

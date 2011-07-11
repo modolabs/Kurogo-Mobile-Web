@@ -15,11 +15,19 @@
 /* Tablet-specific bottom nav bar */
 
 #footernav {
-  background: #247 url(/common/images/footernav-bg.png) repeat-x top left;
+  background: transparent url(/common/images/footernav-bg.png) repeat-x top left;
 }
 
 #footernav .module {
   background: transparent url(/common/images/footernav-spacer.png) no-repeat top left;
+}
+
+#footernav {
+/*
+  -webkit-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0px -4px 10px rgba(0,0,0,0.3);
+*/
 }
 
 #footernav a {
@@ -33,6 +41,28 @@
   color: #404355;
 }
 
+
+
+/* Tablet-specific split-view styles, e.g., News and Video */
+/* Note: only the selected list item is styled here. The normal/unselected list item styles inherit from the overall theme */
+
+.results .listSelected {
+	/* Selected item in the master pane in the split view */
+	background-color:#2f3133;
+	-webkit-box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
+	-moz-box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
+	box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
+}
+
+.results li a.listSelected .ellipsis {
+   /* Description/dek within the selected item in the master pane in the split view */
+   color: #999;
+}
+
+.results li a.listSelected .title {
+    /* Title within the selected item in the master pane in the split view */
+	color: #ddd;
+}
 
 
 

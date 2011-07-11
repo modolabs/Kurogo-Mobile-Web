@@ -69,7 +69,7 @@
             <br />
             Find a bug? Want to recommend a feature? Your ideas and usage will 
             help inform future development. Please send your feedback to 
-            <span class="address">dev@modolabs.com</span>.
+            dev@modolabs.com.
           </a>
         </p>
         
