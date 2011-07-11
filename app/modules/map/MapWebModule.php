@@ -27,7 +27,9 @@ class MapWebModule extends WebModule {
 
     private function getCategory() {
         $category = $this->getArg('category', null);
+        return $category;
 
+        /*
         $result = array();
         if ($category !== null) {
             if (strpos($category, BOOKMARK_COOKIE_DELIMITER) !== false) {
@@ -37,6 +39,7 @@ class MapWebModule extends WebModule {
             }
         }
         return $result;
+        */
     }
 
     private function getDrillDownPath() {
@@ -107,14 +110,15 @@ class MapWebModule extends WebModule {
         } elseif ($this->feedGroup !== NULL) {
             $configName = "feeds-{$this->feedGroup}";
             foreach ($this->getModuleSections($configName) as $id => $feedData) {
-                $data[$this->feedGroup.MAP_CATEGORY_DELIMITER.$id] = $feedData;;
+                $feedId = mapIdForFeedData($feedData);
+                $data[$feedId] = $feedData;
             }
-
         } else {
             foreach ($this->feedGroups as $groupID => $groupData) {
                 $configName = "feeds-$groupID";
                 foreach ($this->getModuleSections($configName) as $id => $feedData) {
-                    $data[$groupID.MAP_CATEGORY_DELIMITER.$id] = $feedData;
+                    $feedId = mapIdForFeedData($feedData);
+                    $data[$feedId] = $feedData;
                 }
             }
         }
@@ -263,38 +267,25 @@ class MapWebModule extends WebModule {
     }
 
     private function getDataController() {
-        //$categoryPath, &$listItemPath) {
-        //$categoryPath = $this->getCategoriesAsArray();
-        $categoryPath = $this->getCategory();
-        if (!$categoryPath) {
-            return MapDataController::defaultDataController();
-        }
-
-        if (!$this->feeds) {
-            $this->feeds = $this->loadFeedData();
-        }
-
-        //$listItemPath = $categoryPath;
-        if ($this->numGroups > 0) {
-            if (count($categoryPath) < 2) {
-                $path = implode(MAP_CATEGORY_DELIMITER, $categoryPath);
-                throw new Exception("invalid category path $path for multiple feed groups");
+        $category = $this->getCategory();
+        if ($category) {
+            if (!$this->feeds) {
+                $this->feeds = $this->loadFeedData();
             }
-            //$feedIndex = array_shift($listItemPath).MAP_CATEGORY_DELIMITER.array_shift($listItemPath);
-            $feedIndex = array_shift($categoryPath).MAP_CATEGORY_DELIMITER.array_shift($categoryPath);
-        } else {
-            //$feedIndex = array_shift($listItemPath);
-            $feedIndex = array_shift($categoryPath);
+
+            if (isset($this->feeds[$category])) {
+                $feedData = $this->feeds[$category];
+                $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+            } else {
+                error_log("Warning: unable to find feed data for category $category -- loading default controller");
+            }
         }
-        $feedData = $this->feeds[$feedIndex];
-        $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        /*
-        // this should be handled by the base DataController class
-        if (isset($feedData['TITLE'])) {
-            $controller->setTitle($feedData['TITLE']);
+
+        if (!isset($controller)) {
+            $controller = MapDataController::defaultDataController();
         }
-        */
-        //$controller->setCategory($feedIndex);
+
         return $controller;
     }
 
@@ -829,7 +820,7 @@ JS;
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     if (isset($this->args['featureindex'])) { // this is a regular place
                         $cookieParams = array(
-                            'category' => $this->args['category'],
+                            'category' => $this->getCategory(),
                             'featureindex' => $this->featureIndex,
                             );
                         $cookieID = http_build_query($cookieParams);

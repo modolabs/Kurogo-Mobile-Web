@@ -32,11 +32,16 @@ function greatCircleDistance($fromLat, $fromLon, $toLat, $toLon)
     return $angle * EARTH_RADIUS_IN_METERS;
 }
 
-function shortArrayFromMapFeature(Placemark $feature) {
-    $category = $feature->getCategoryIds();
-    if (is_array($category)) {
-        $category = implode(MAP_CATEGORY_DELIMITER, $category);
+function mapIdForFeedData(Array $feedData) {
+    if (!isset($feedData['BASE_URL'])) {
+        throw new Exception("missing BASE_URL for map feed");
     }
+    $baseURL = $feedData['BASE_URL'];
+    return substr(md5($baseURL), 0, 10);
+}
+
+function shortArrayFromMapFeature(Placemark $feature) {
+    $category = current($feature->getCategoryIds());
     return array(
         'featureindex' => $feature->getId(),
         'category' => $category,

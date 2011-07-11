@@ -47,7 +47,7 @@ class MapDataController extends DataController implements MapFolder
         return $this->searchable;
     }
 
-    private static function featureMatchesTokens(MapFeature $feature, Array $tokens)
+    private static function featureMatchesTokens(Placemark $feature, Array $tokens)
     {
         $matched = true;
         $title = $feature->getTitle();
@@ -76,6 +76,7 @@ class MapDataController extends DataController implements MapFolder
             if (count($validTokens)) {
                 foreach ($this->getAllLeafNodes() as $item) {
                     if ( ($item->getTitle()==$searchText) || self::featureMatchesTokens($item, $validTokens)) {
+                        $item->addCategoryId($this->categoryId);
                         $results[] = $item;
                     }
                 }
@@ -127,6 +128,7 @@ class MapDataController extends DataController implements MapFolder
                         $intDist += 1; // one centimeter
                     }
                     $item->setField('distance', $distance);
+                    //$item->addCategoryId($this->categoryId);
                     $results[$intDist] = $item;
                 }
             }
@@ -285,20 +287,9 @@ class MapDataController extends DataController implements MapFolder
         return null;
     }
 
-    // TODO find some way to require that MapFolder objects include
-    // setCategory and getCategory, even though the MapListElement
-    // interface includes getCategory and would conflict with classes
-    // that implement both
-    
-    public function setCategory($categoryPath) {
-        if (!is_array($categoryPath)) {
-            $categoryPath = explode(MAP_CATEGORY_DELIMITER, $categoryPath);
-        }
-        $this->parser->setCategory($categoryPath);
-    }
-
-    public function getCategory() {
-        return $this->parser->getCategory();
+    public function getCategoryId()
+    {
+        return $this->categoryId;
     }
 
     // End MapFolder interface
@@ -406,8 +397,9 @@ class MapDataController extends DataController implements MapFolder
     {
         $args = array(
             'JS_MAP_CLASS' => 'GoogleJSMap',
-            'DEFAULT_ZOOM_LEVEL' => $module->getOptionalModuleVar(
-                'DEFAULT_ZOOM_LEVEL', 10)
+            'DEFAULT_ZOOM_LEVEL' => 10, // need better way to set this value
+            'PARSER_CLASS' => 'GooglePlacesParser',
+            'BASE_URL' => 'https://maps.googleapis.com/maps/api/place/search/json', // change this if we search multiple services
             );
         
         return self::factory('MapDataController', $args);
@@ -419,6 +411,9 @@ class MapDataController extends DataController implements MapFolder
     {
         if ($this->parser instanceof ArcGISParser) {
             $this->addFilter('f', 'json');
+        } elseif ($this->parser instanceof GooglePlacesParser) {
+            // FIXME
+            return;
         }
         return parent::getData();
     }
@@ -451,6 +446,8 @@ class MapDataController extends DataController implements MapFolder
 
         if (isset($args['DEFAULT_ZOOM_LEVEL']))
             $this->defaultZoomLevel = $args['DEFAULT_ZOOM_LEVEL'];
+        
+        $this->categoryId = mapIdForFeedData($args);
     }
     
     protected function retrieveData($url)

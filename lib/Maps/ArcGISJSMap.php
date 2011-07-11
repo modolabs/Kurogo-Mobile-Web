@@ -284,7 +284,7 @@ JS;
 
         $footer = $this->prepareJavascriptTemplate('ArcGISJSMapFooter');
         $footer->setValues(array(
-            '___WKID___' => $this->mapProjector->getDstProj(),
+            '___WKID___' => $this->mapProjection,
             '___MAPELEMENT___' => $this->mapElement,
             '___IMAGE_WIDTH___' => $this->imageWidth,
             '___IMAGE_HEIGHT___' => $this->imageHeight,

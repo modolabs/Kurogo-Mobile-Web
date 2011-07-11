@@ -40,11 +40,11 @@ class BasePlacemark implements Placemark
     public function getCategoryIds() {
         return $this->categories;
     }
-    
-    public function getCategory() {
-        return $this->category;
+
+    public function addCategoryId($id) {
+        $this->categories[] = $id;
     }
-    
+
     // Placemark interface
     
     public function getGeometry() {

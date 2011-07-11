@@ -226,9 +226,9 @@ JS;
 
         $footer = $this->prepareJavascriptTemplate('GoogleJSMapFooter');
         $footer->setValues(array(
-            '___MARKER_SCRIPT___', $markers->getScript(),
-            '___POLYGON_SCRIPT___', $this->getPolygonJS(),
-            '___PATH_SCRIPT___', $this->getPathJS()));
+            '___MARKER_SCRIPT___' => $markers->getScript(),
+            '___POLYGON_SCRIPT___' => $this->getPolygonJS(),
+            '___PATH_SCRIPT___' => $this->getPathJS()));
         return $footer->getScript();
     }
 

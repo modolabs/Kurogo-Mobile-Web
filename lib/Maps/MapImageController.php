@@ -217,7 +217,6 @@ class JavascriptTemplate
         foreach ($this->values as $values) {
             $template = $this->template;
             foreach ($values as $placeholder => $value) {
-                error_log($placeholder);
                 $template = preg_replace('/\[?'.$placeholder.'\]?/', $value, $template);
             }
 

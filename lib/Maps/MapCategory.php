@@ -20,11 +20,6 @@ abstract class MapCategory implements MapFolder, MapListElement
     {
         return $this->id;
     }
-
-    public function getCategory()
-    {
-        return $this->id;
-    }
 }
 
 

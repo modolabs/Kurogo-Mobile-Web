@@ -300,6 +300,11 @@ class MapDBDataController extends MapDataController implements MapFolder
     private $db;
     private $subtitle;
 
+    public function getCategoryId()
+    {
+        return $this->db->getCategoryId();
+    }
+
     public function getSubtitle()
     {
         return $this->subtitle;
@@ -373,7 +378,7 @@ class MapDBDataController extends MapDataController implements MapFolder
     // TODO allow config of searchable fields
     public function search($searchText)
     {
-        $this->setSelectedFeatures($this->search($searchText));
+        $this->setSelectedFeatures($this->db->search($searchText));
         return $this->getAllSelectedFeatures();
     }
 
@@ -407,10 +412,8 @@ class MapDBDataParser extends DataParser //implements MapDataParser
     
     public function init($args) {
         parent::init($args);
-
         self::createTables();
-
-        $this->categoryId = md5($args['BASE_URL']);
+        $this->categoryId = mapIdForFeedData($args);
     }
 
     public function parseData($data) {
@@ -421,9 +424,16 @@ class MapDBDataParser extends DataParser //implements MapDataParser
         return $this->getCategory()->isStored();
     }
 
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
+
+    /*
     public function setCategoryId($categoryId) {
         $this->categoryId = $categoryId;
     }
+    */
 
     public function getChild($childId) {
         return self::getChildForCategory($childId, $this->categoryId);
@@ -478,6 +488,7 @@ class MapDBDataParser extends DataParser //implements MapDataParser
               .'   AND (p.name like ? OR p.name like ?)';
 
         $params = array($this->categoryId, "$searchText%", "% $searchText%");
+        $result = self::connection()->query($sql, $params);
 
         $placemarks = array();
         while ($row = $result->fetch()) {

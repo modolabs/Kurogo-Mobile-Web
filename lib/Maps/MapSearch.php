@@ -34,7 +34,6 @@ class MapSearch {
         $resultsByDistance = array();
         foreach ($this->feeds as $categoryID => $feedData) {
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $controller->setCategory($categoryID);
             if ($controller->canSearch()) { // respect config settings
                 try {
                     $results = $controller->searchByProximity($center, $tolerance, $maxItems);
@@ -64,7 +63,6 @@ class MapSearch {
     
     	foreach ($this->feeds as $id => $feedData) {
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $controller->setCategory($id);
             
             if ($controller->canSearch()) {
                 try {

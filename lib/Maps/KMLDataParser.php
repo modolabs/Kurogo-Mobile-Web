@@ -152,7 +152,8 @@ class KMLPlacemark extends XMLElement implements Placemark
     protected $snippet;
     protected $style;
     protected $geometry;
-    protected $category;
+    //protected $category;
+    protected $categories;
 
     private $fields = array();
 
@@ -193,7 +194,7 @@ class KMLPlacemark extends XMLElement implements Placemark
     public function getFields() {
         return array('description' => $this->description);
     }
-    
+    /*
     public function getCategory() {
         return $this->category;
     }
@@ -201,7 +202,7 @@ class KMLPlacemark extends XMLElement implements Placemark
     public function setCategory($category) {
         $this->category = $category;
     }
-    
+    */
     // Placemark interface
 
     public function getAddress() {
@@ -209,7 +210,11 @@ class KMLPlacemark extends XMLElement implements Placemark
     }
 
     public function getCategoryIds() {
-        return array($this->category);
+        return $this->categories;
+    }
+
+    public function addCategoryId($id) {
+        $this->categories[] = $id;
     }
 
     public function getGeometry() {
@@ -466,7 +471,7 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
     public function getId() {
         return $this->index;
     }
-    
+    /*
     public function getCategory() {
         return $this->category;
     }
@@ -474,6 +479,7 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
     public function setCategory($category) {
         $this->category = $category;
     }
+    */
 }
 
 class KMLDataParser extends XMLDataParser implements MapDataParser
@@ -525,7 +531,7 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
     public function getTitle() {
         return $this->title;
     }
-    
+    /*
     public function setCategory($category) {
         $this->category = $category;
     }
@@ -533,7 +539,7 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
     public function getCategory() {
         return $this->category;
     }
-
+    */
     public function getStyle($id) {
         if (substr($id, 0, 1) == '#') {
             $id = substr($id, 1);
@@ -563,17 +569,17 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
                 // since this info needs to be available for nested children
                 if ($parent instanceof KMLFolder) {
                     $newFolderIndex = count($parent->getChildCategories());
-                    $categoryPath = $parent->getCategory();
+                    //$categoryPath = $parent->getCategory();
                 } elseif ($parent instanceof KMLDocument) { // child of root element
                     $newFolderIndex = count($this->items);
-                    $categoryPath = $this->category;
+                    //$categoryPath = $this->category;
                 } else { // no document
                     $newFolderIndex = count($this->items);
-                    $categoryPath = $this->category;
+                    //$categoryPath = $this->category;
                 }
-                $categoryPath[] = $newFolderIndex;
+                //$categoryPath[] = $newFolderIndex;
                 $folder->setId($newFolderIndex);
-                $folder->setCategory($categoryPath);
+                //$folder->setCategory($categoryPath);
                 $this->elementStack[] = $folder;
                 break;
             case 'STYLE':
@@ -587,9 +593,10 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
             case 'PLACEMARK':
                 $placemark = new KMLPlacemark($name, $attribs);
                 $parent = end($this->elementStack);
-                if (!($parent instanceof KMLFolder)) { // child of root element
-                    $placemark->setCategory($this->category);
-                }
+                $placemark->addCategoryId($this->dataController->getCategoryId());
+                //if (!($parent instanceof KMLFolder)) { // child of root element
+                //    $placemark->setCategory($this->category);
+                //}
                 $this->elementStack[] = $placemark;
                 break;
             case 'POINT':

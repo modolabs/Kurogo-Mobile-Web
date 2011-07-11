@@ -13,7 +13,12 @@ interface Placemark extends MapListElement
     public function getGeometry();
     public function getStyle();
     public function getAddress();
+
+    // we don't currently have placemarks that belong in multiple categories
+    // but there are some kml-like formats that do 
     public function getCategoryIds();
+    public function addCategoryId($id);
+
     public function getId();
 
     public function getField($fieldName);
