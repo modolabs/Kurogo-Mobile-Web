@@ -8,11 +8,6 @@ the design included with the reference site is merely an example. You should cre
 matches the brand and styling of your site.
 
 If you would prefer to have users see the home page and not the info module from a desktop browser,
-you can change the *DEFAULT-COMPLIANT-COMPUTER* value in the *[urls]* section of your site's
-*site.ini* to *home*
+you can remove the *DEFAULT-COMPLIANT-COMPUTER* value in the *[urls]* section of your site's
+*site.ini* file and ensure the *DEFAULT* value is set to home.
 
-.. code-block:: ini
-
-    [urls]
-    DEFAULT-COMPLIANT-COMPUTER = home
-    

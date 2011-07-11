@@ -55,29 +55,18 @@ protected function compare_content($content1, $content2) {
 
 protected function generate_popular_content($system, $data) {
   $viewcounts = array();
+  $modules = array();
+
   if ($system == 'web') {
-    $modules = array();
     $moduleData = $this->getAllModules();
-    
-    foreach ($moduleData as $moduleID => $module) {
-      $modules[$moduleID] = $module->getModuleName();
-    }
   } else { // api
-    $modules = array(
-      "people" => "Directory",
-      "map" => "Map", 
-      "calendar" => "Events",
-      "courses" => "Courses", 
-      "news" => "News",
-      "dining" => "Dining",
-      "transit" => "ShuttleTracker",
-      "libraries" => "Libraries",
-      );
+    $moduleData = APIModule::getAllModules();
   }
 
-  foreach ($modules as $module => $title) {
-    $viewcounts[$module] = 0;
-  }
+    foreach ($moduleData as $moduleID => $module) {
+      $modules[$moduleID] = $module->getModuleName();
+      $viewcounts[$moduleID] = 0;
+    }
 
   foreach($data as $datum) {
     foreach ($datum as $field => $count) {

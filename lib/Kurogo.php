@@ -20,7 +20,7 @@ class Kurogo
     }
         
     public function session() {
-        $this->includePackage('Session');
+        $this->addPackage('Session');
         if (!$this->session) {
             $args = Kurogo::getSiteSection('authentication');
         
@@ -51,22 +51,31 @@ class Kurogo
         return self::$_instance;
     }
     
-    public function moduleLinkForItem($moduleID, $object, $options=null) {
+    public static function tempDirectory() {
+        return Kurogo::getOptionalSiteVar('TMP_DIR', sys_get_temp_dir());
+    }
+    
+    public static function moduleLinkForItem($moduleID, $object, $options=null) {
         $module = WebModule::factory($moduleID);
         return $module->linkForItem($object, $options);
     }
 
-    public function moduleLinkForValue($moduleID, $value, Module $callingModule, KurogoObject $otherValue=null) {
+    public static function moduleLinkForValue($moduleID, $value, Module $callingModule, KurogoObject $otherValue=null) {
         $module = WebModule::factory($moduleID);
         return $module->linkForValue($value, $callingModule, $otherValue);
     }
 
-    public function searchItems($moduleID, $searchTerms, $limit=null, $options=null) {
+    public static function searchItems($moduleID, $searchTerms, $limit=null, $options=null) {
         $module = WebModule::factory($moduleID);
         return $module->searchItems($searchTerms, $limit, $options);
     }
 
-    public function includePackage($packageName) {
+    public static function includePackage($packageName) {
+        $Kurogo = self::sharedInstance();
+        return $Kurogo->addPackage($packageName);
+    }
+    
+    public function addPackage($packageName) {
 
         if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
             throw new Exception("Invalid Package name $packageName");
@@ -82,6 +91,7 @@ class Kurogo
         foreach ($dirs as $dir) {
             if (in_array($dir, $this->libDirs)) {
                 $found = true;
+                continue;
             }
     
             if (is_dir($dir)) {
@@ -460,5 +470,5 @@ interface KurogoObject
 
 /* retained for compatibility */
 function includePackage($packageName) {
-    Kurogo::sharedInstance()->includePackage($packageName);
+    Kurogo::includePackage($packageName);
 }

@@ -38,8 +38,8 @@ Each authority can provide various services including:
 * User attributes - At minimum authorities should supply id, name and email information. Some authorities
   can provide this information to any user in their system, however others can only provide this information
   on the logged in user
-* Group information and membership - Some authorities will also contain information on groups which all
-  you to logically organize users. Some authorities are design to only contain users from their
+* Group information and membership - Some authorities will also contain information on groups which allow
+  you to logically organize users. Some authorities are designed to only contain users from their
   own domains, while others have the ability to utilize users from other authorities in their membership
   
 It is not necessary for an authority to provide all services. It is possible to have one authority

@@ -14,7 +14,8 @@ There are a few options in *SITE_DIR/config/news/module.ini* that can configure 
 the news module
 
 * *MAX_RESULTS* (10) - The number of items to show in the news list
-
+* *SHARING_ENABLED* (1) - Whether or not to enable the sharing link on news entries. Set to 0 to disable
+  the sharing link
 
 ======================
 Configuring News Feeds

@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Maps');
+Kurogo::includePackage('Maps');
 
 class MapAPIModule extends APIModule
 {

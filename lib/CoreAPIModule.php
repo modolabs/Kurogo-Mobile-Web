@@ -7,7 +7,7 @@ class CoreAPIModule extends APIModule
     protected $vmax = 1;
 
     // special factory method for core
-    public static function factory($command='', $args=array()) {
+    public static function factory($id='core', $command='', $args=array()) {
         $module = new CoreAPIModule();
         $module->init($command, $args);
         return $module;

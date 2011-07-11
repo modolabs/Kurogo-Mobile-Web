@@ -3,7 +3,7 @@
   * @package Module
   * @subpackage People
   */
-includePackage('People');
+Kurogo::includePackage('People');
 
 
 /**
@@ -188,7 +188,7 @@ class PeopleWebModule extends WebModule {
         $this->detailAttributes = array_values(array_unique($this->detailAttributes));
     }
     
-    public function linkforItem(Person $person) {
+    public function linkforItem(KurogoObject $person, $options=null) {
         $personDetails =  $this->formatPersonDetails($person);
     
         return array(

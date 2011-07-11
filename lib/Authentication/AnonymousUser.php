@@ -18,7 +18,7 @@ class AnonymousUser extends User
         return false;
     }
 
-    public function getUserData($key) {
+    public function getUserData($key=null) {
         return null;
     }
  

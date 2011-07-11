@@ -3,11 +3,11 @@ Video Module
 #################
 
 The video module enables sites to provide mobile access to their video content on 3rd party websites
-such as Brightcove and YouTube. 
+such as YouTube, Vimeo and Brightcove
 
-=================================
+=======================
 Configuring the Sources
-=================================
+=======================
 
 The module allows you to organize your videos by section using a distinct feed for each section. Each
 section contains information on the service provider and can either filter by tag or author, in addition

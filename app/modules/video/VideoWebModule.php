@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Video');
+Kurogo::includePackage('Video');
 
 class VideoWebModule extends WebModule
 {
@@ -31,7 +31,7 @@ class VideoWebModule extends WebModule
         return key($this->feeds);
     }
 
-    public function linkForItem(VideoObject $video, $data=null) {
+    public function linkForItem(KurogoObject $video, $data=null) {
     
         $options = array(
             'videoid'=>$video->getID()

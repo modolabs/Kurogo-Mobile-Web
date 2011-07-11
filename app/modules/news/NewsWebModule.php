@@ -92,7 +92,7 @@ class NewsWebModule extends WebModule {
         return $items;
     }
 
-    public function linkForItem($story, $data=null) {
+    public function linkForItem(KurogoObject $story, $data=null) {
         
         $pubDate = strtotime($story->getProperty("pubDate"));
         $date = date("M d, Y", $pubDate);

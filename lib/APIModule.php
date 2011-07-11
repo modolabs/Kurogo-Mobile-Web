@@ -140,7 +140,7 @@ abstract class APIModule extends Module
         return $config->getSectionVars(Config::EXPAND_VALUE);
     }
    
-    protected function getAllModules() {
+    public static function getAllModules() {
         $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
         $modules = array('core'=>CoreAPIModule::factory());
         foreach ($dirs as $dir) {

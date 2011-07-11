@@ -248,22 +248,12 @@ Cookies
 * *LAYOUT_COOKIE_LIFESPAN* = How long to remember the device detection results for pagetype and platform.
   In production sites this should be set to a long time, like 1209600 (14 days)
 
-.. _database_config:
-
 --------
 Database
 --------
 
 The main database connection can be used by a variety of modules for storing and retrieving values.
-
-* *DB_DEBUG* - When on, queries are logged and errors are shown on the browser. You should turn this
-  off for production sites or you risk exposing SQL queries when there is a database error.
-* *DB_TYPE* - The database system currently supports 2 types of connections *mysql* or *sqlite* through PDO
-* *DB_HOST* - used by db systems that are hosted on a server
-* *DB_USER* - used by db systems that require a user to authenticate
-* *DB_PASS* - used by db systems that require a password
-* *DB_DBNAME* - used by db systems that require a database
-* *DB_FILE* - used by db systems the use a file (i.e. sqlite).
+See the :doc:`database <database>` section for specific information on configuration values.
 
 --------------
 Authentication
@@ -304,6 +294,14 @@ important to make sure that the *admin* module is either disabled or protected a
 exposure of critically important data and configuration. If you utilize logins you should make sure
 the *login* module requires *secure* connections if you have a valid certificate.
 
+-------------------------------
+Optional Common Module Settings
+-------------------------------
+
+* *SHOW_LOGIN* - By default the login link only appears on the home module. If you wish for it to
+  show up on other modules, you can set this value to 1 on any module you wish to see it. You could
+  also set this to 0 on the home module to suppress its showing.
+  
 ===========
 Home Screen
 ===========
