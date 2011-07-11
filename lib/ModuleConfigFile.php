@@ -10,7 +10,7 @@
 class ModuleConfigFile extends ConfigFile {
 
     // loads a config object from a file/type combination  
-    public static function factory($id, $type, $options=0) {
+    public static function factory($id, $type='file', $options=0) {
         $config = new ModuleConfigFile();
         if (!($options & self::OPTION_DO_NOT_CREATE)) {
             $options = $options | self::OPTION_CREATE_WITH_DEFAULT;

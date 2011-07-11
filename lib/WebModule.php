@@ -373,7 +373,7 @@ abstract class WebModule extends Module {
     }
     
     protected function loadDeviceClassifierIfNeeded() {
-        $this->deviceClassifier =& Kurogo::deviceClassifier();
+        $this->deviceClassifier = Kurogo::deviceClassifier();
     }
         
     protected function init($page='', $args=array()) {
