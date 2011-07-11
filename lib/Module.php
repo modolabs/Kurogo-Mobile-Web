@@ -12,8 +12,6 @@ abstract class Module
     protected $id='none';
     protected $configModule;
     protected $args = array();
-    protected $session;
-    protected $moduleData;
 
     /**
       * Returns the module id
@@ -114,10 +112,14 @@ abstract class Module
             }
         }
        
-        throw new Exception("Module $id not found");
+        throw new ModuleNotFound("Module $id not found");
     }
     
+    /**
+      * Constructor
+      */
     public function __construct() {
+        //set the config module if it's not defined in the class definition
         if (!$this->configModule) {
             $this->configModule = $this->id;
         }
@@ -138,13 +140,17 @@ abstract class Module
         }
         
         if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
-            includePackage('Authentication');
+            Kurogo::includePackage('Authentication');
             if (!$this->getAccess()) {
                 $this->unauthorizedAccess();
             }
         }
     }
     
+    /**
+      * Evaluates whether the current user has access to this Module
+      * @return boolean
+      */
     protected function getAccess() {
 
         if ($this->getModuleVar('protected','module')) {
@@ -237,11 +243,11 @@ abstract class Module
     }
 
     /**
-      * Returns a key from the module configuration
+      * Returns a key from the module configuration. If the value does not exist an exception will be thrown
       * @param string $var the key to retrieve
-      * @param mixed $default an optional default value if the key is not present
-      * @param int $opts
-      * @return mixed the value of the or the default 
+      * @param string $section the section of the config file to check. 
+      * @param string $config the module file to check. Default is module (would check module.ini)
+      * @return mixed
       */
     protected function getModuleVar($var, $section=null, $config='module') {
         switch ($var) {
@@ -253,26 +259,58 @@ abstract class Module
         return $config->getVar($var, $section);
     }
 
+    /**
+      * Returns a key from the module configuration. If it does not exist it will return a default value
+      * @param string $var the key to retrieve
+      * @param mixed $default the default value if the key does not exist
+      * @param string $section the section of the config file to check. 
+      * @param string $config the module file to check. Default is module (would check module.ini)
+      * @return mixed
+      */
     protected function getOptionalModuleVar($var, $default='', $section=null, $config='module') {
         $config = $this->getConfig($config);
         return $config->getOptionalVar($var, $default, $section);
     }
 
+    /**
+      * Returns a section as an array from a module configuration. If it does not exist an exception will be thrown
+      * @param string $section the section of the config file to check. 
+      * @param string $config the module file to check. Default is module (would check module.ini)
+      * @return array
+      */
     protected function getModuleSection($section, $config='module') {
         $config = $this->getConfig($config);
         return $config->getSection($section);
     }
 
+    /**
+      * Returns a section as an array from a module configuration. If it does not exist an empty array will be returned
+      * @param string $section the section of the config file to check. 
+      * @param string $config the module file to check. Default is module (would check module.ini)
+      * @return array
+      */
     protected function getOptionalModuleSection($section, $config='module') {
         $config = $this->getConfig($config);
         return $config->getOptionalSection($section);
     }
 
+    /**
+      * Returns the contents of a config file as a multi-dimensional array. If the file does not exist an exception will be thrown
+      * @param string $config the module file to check.
+      * @param int $expand whether to expand the values, default is to expand, use Config class constants
+      * @return array
+      */
     protected function getModuleSections($config, $expand=Config::EXPAND_VALUE, $opts=0) {
         $config = $this->getConfig($config, $opts);
         return $config->getSectionVars($expand);
     }
 
+    /**
+      * Returns the contents of a config file as a multi-dimensional array. If the file does not exist return false
+      * @param string $config the module file to check.
+      * @param int $expand whether to expand the values, default is to expand, use Config class constants
+      * @return array
+      */
     protected function getOptionalModuleSections($config, $expand=Config::EXPAND_VALUE) {
         if ($config = $this->getConfig($config, ConfigFile::OPTION_DO_NOT_CREATE)) {
             return $config->getSectionVars($expand);
@@ -305,7 +343,7 @@ abstract class Module
     }
 
     /**
-      * Indicates that administrative access is necessary. Admin access is granted through the adminacl key
+      * Indicates that administrative access is necessary. 
       */
     protected function requiresAdmin() {
         if (!$this->evaluateACLS(AccessControlList::RULE_TYPE_ADMIN)) {
@@ -315,7 +353,7 @@ abstract class Module
 
     /**
       * Evaluates the access control lists 
-      * @param bool $admin if true evaluate the admin acls
+      * @param string $type the type of acl to evaluate (see AccessControlList::RULE_TYPE_*)
       * @return bool true if the access is granted, false if it is not
       */
     protected function evaluateACLS($type=AccessControlList::RULE_TYPE_ACCESS) {
@@ -340,6 +378,10 @@ abstract class Module
         return $allow;
     }
 
+    /**
+      * Returns the access control lists as a series of arrays. Used by admin module
+      * @return array
+      */
     public function getModuleAccessControlListArrays() {
         $acls = array();
         foreach (self::getModuleAccessControlLists() as $acl) {
@@ -348,7 +390,11 @@ abstract class Module
         return $acls;
     }
 
-    public function getModuleAccessControlLists() {
+    /**
+      * Returns the access control lists
+      * @return array
+      */
+    protected function getModuleAccessControlLists() {
         $acls = array();
 
         if ($config = $this->getConfig('acls', ConfigFile::OPTION_DO_NOT_CREATE)) {
@@ -364,8 +410,8 @@ abstract class Module
 
     /**
       * Retrieves the access control lists 
-      * @param bool $admin if true evaluate the admin acls
-      * @return array of access control lists
+      * @param string $type the type of acl to evaluate (see AccessControlList::RULE_TYPE_*)
+      * @return array of access control list objects
       */
     protected function getAccessControlLists($type) {
                 
@@ -381,6 +427,10 @@ abstract class Module
         return $acls;
     }
 
+    /**
+      * Retrieves a list of sections for the module admin. Subclasses could override this if the list was dynamic
+      * @return array
+      */
     protected function getModuleAdminSections() {
         $configData = $this->getModuleAdminConfig();
         $sections = array();
@@ -406,6 +456,10 @@ abstract class Module
         return $sections;
     }
     
+    /**
+      * Returns the admin console definitions.
+      * @return array
+      */
     protected function getModuleAdminConfig() {
         static $configData;
         if (!$configData) {
@@ -433,8 +487,19 @@ abstract class Module
         return $configData;
     }
 
+    /**
+      * Action to take when the module is disabled
+      */
     abstract protected function moduleDisabled();
+
+    /**
+      * Action to take when the module must be viewed under https
+      */
     abstract protected function secureModule();
+
+    /**
+      * Action to take when access to the module is restricted
+      */
     abstract protected function unauthorizedAccess();
 
 }

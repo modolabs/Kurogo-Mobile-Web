@@ -36,6 +36,8 @@ The service will then return a series of properties based on the device:
 * *supports_certificates* - Boolean. Whether this devices supports certificate based authentication
 * *description* - a textual description of the device
 
+The *pagetype* and *platform* properties are assigned to the :doc:`module object <modules>` as properties. 
+
 =================
 Debugging Options
 =================
@@ -46,4 +48,9 @@ There are 2 debugging options that can help you with development. They are both 
   on the bottom of the home screen. This is useful if you wish to see how a particular device is classified.
   If you feel a device is improperly classified, please send a note to kurogo-dev@googlegroups.com with 
   the user agent of the device/browser. 
-* DEVICE_DEBUG
+* DEVICE_DEBUG - When turned on, this permits you to change the device pagetype and platform used for a
+  given request. This is useful to test behavior and style for other devices that you do not have in
+  your desktop browser. Simply prepend /device/pagetype-platform/ to your request:
+  
+  * http://server/device/basic/home
+  * http://server/device/tablet-ipad/news

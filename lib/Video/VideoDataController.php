@@ -9,7 +9,6 @@ abstract class VideoDataController extends DataController
     public static function getVideoDataControllers() {
         return array(
             'BrightcoveVideoController'=>'Brightcove',
-            'KalturaVideoController'=>'Kaltura',
             'VimeoVideoController'=>'Vimeo',
             'YouTubeVideoController'=>'YouTube'
         );

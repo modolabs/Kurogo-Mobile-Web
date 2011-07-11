@@ -335,10 +335,16 @@ abstract class AuthenticationAuthority
     */
     public static function getAuthenticationAuthority($index)
     {
+        static $cache;
+        if (isset($cache[$index])) {
+            return $cache[$index];
+        }
+        
         if ($authorityData = self::getAuthenticationAuthorityData($index)) {
             $authorityClass = $authorityData['CONTROLLER_CLASS'];
             $authorityData['INDEX'] = $index;
             $authority = self::factory($authorityClass, $authorityData);
+            $cache[$index] = $authority;
             return $authority;
         }
         

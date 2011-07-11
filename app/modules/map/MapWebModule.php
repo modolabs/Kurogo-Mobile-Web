@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Maps');
+Kurogo::includePackage('Maps');
 
 define('MAP_GROUP_COOKIE', 'mapgroup');
 

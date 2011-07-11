@@ -1,6 +1,6 @@
 <?php
 
-includePackage('db');
+Kurogo::includePackage('db');
 
 /**
   * @package Authentication

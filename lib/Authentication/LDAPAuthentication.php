@@ -20,6 +20,7 @@ class LDAPAuthentication extends AuthenticationAuthority
     protected $ldapAdminPassword;
     protected $fieldMap=array();
     protected $ldapResource;
+    protected $usersCache=array();
     
     public static function ldapEscape($str) 
     { 
@@ -187,6 +188,10 @@ class LDAPAuthentication extends AuthenticationAuthority
         if (empty($login)) {
             return new AnonymousUser();       
         }
+        
+        if (isset($this->usersCache[$login])) {
+            return $this->usersCache[$login];
+        }
 
         $ldap = $this->connectToServer();
         if (!$ldap) {
@@ -252,6 +257,7 @@ class LDAPAuthentication extends AuthenticationAuthority
                     $user->setAttribute($attrib, $value);
                 }
 
+                $this->usersCache[$login] = $user;
                 return $user;
             } else {
                 return false;

@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Video');
+Kurogo::includePackage('Video');
 
 class VideoAPIModule extends APIModule {    
     protected $id='video';  // this affects which .ini is loaded

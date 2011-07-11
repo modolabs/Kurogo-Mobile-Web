@@ -57,7 +57,7 @@ class PageViews {
   }
 
   public static function export_stats($system) {
-    includePackage('db');
+    Kurogo::includePackage('db');
     PageViews::createDatabaseTables();
     if ($system == 'web') {
       $table   = Kurogo::getSiteVar('PAGE_VIEWS_TABLE');
@@ -84,10 +84,10 @@ class PageViews {
     if (file_exists($target) && date('Ymd', filemtime($target)) == $today)
       return; // we have already exported today
 
-    $logFolder = Kurogo::getSiteVar('TMP_DIR');    
+    $logFolder = Kurogo::tempDirectory();
     $logfilecopy = $logFolder . "/mobi_log_copy.$today";
     if (!is_writable($logFolder)) {
-        throw new Exception("Unable to write to TMP_DIR $logFolder");
+        throw new Exception("Unable to write to Temporary Directory $logFolder");
     }
 
     if (!$outfile = fopen($target, 'a')) {
@@ -171,7 +171,7 @@ class PageViews {
    * between dates $start and $end (any string compatible with strtotime)
    */
   private static function getTimeSeries($system, $start, $platform=NULL, $module=NULL, $end=NULL) {
-    includePackage('db');
+    Kurogo::includePackage('db');
     $output = Array();
     
     $result = self::export_stats($system);
@@ -233,7 +233,7 @@ class PageViews {
   
   protected function createDatabaseTables()
   {
-    includePackage('db');
+    Kurogo::includePackage('db');
     $sql = "SELECT 1 FROM mobi_web_page_views";
     $conn = SiteDB::connection();
     if (!$result = $conn->query($sql, array(), db::IGNORE_ERRORS)) {

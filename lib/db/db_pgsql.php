@@ -1,11 +1,11 @@
 <?php
 /**
-  * MySQL database abstraction
+  * PostgreSQL database abstraction
   * @package Database
   */
 
 /**
-  * MySQL database abstraction
+  * PostgreSQL database abstraction
   * @package Database
   */
 class db_pgsql extends db

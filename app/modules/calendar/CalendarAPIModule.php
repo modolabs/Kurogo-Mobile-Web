@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Calendar');
+Kurogo::includePackage('Calendar');
 
 class CalendarAPIModule extends APIModule
 {

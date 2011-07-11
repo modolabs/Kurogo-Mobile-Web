@@ -1249,7 +1249,7 @@ abstract class WebModule extends Module {
     $this->assign('accessKeyStart', $accessKeyStart);
 
     if (Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
-        includePackage('Authentication');
+        Kurogo::includePackage('Authentication');
         $this->setCacheMaxAge(0);
         $session = $this->getSession();
         $this->assign('session', $session);
