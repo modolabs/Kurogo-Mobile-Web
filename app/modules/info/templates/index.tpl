@@ -6,7 +6,7 @@
 <title>{block name="pageTitle"}{/block}</title>
 <link type="text/css" href="{$minify['css']}" rel="stylesheet" />
 <link rel="shortcut icon" href="/favicon.ico" />
-<meta name="description" http-equiv="description" content="{block name='desription'}{/block}" />
+<meta name="description" http-equiv="description" content="{block name='desription'}{/block}{block name='description'}{/block}" />
 </head>
 
 <body>
