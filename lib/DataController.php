@@ -207,6 +207,10 @@ abstract class DataController
         $this->initStreamContext($args);
     }
 
+    public function getResponse() {
+        return $this->response->getResponse();
+    }
+
     public function getResponseHeaders() {
         return $this->response->getHeaders();
     }
