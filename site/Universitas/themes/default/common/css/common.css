@@ -96,7 +96,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 .shaded, .HomeModule .blockborder {
 	/* Shaded subclass of focal content - e.g., background for tabbed focal div, portlets in Tablet device class */
 	/* Typically very close to, but distinguishable from, body background */
-	background-color: #edeef0;
+	background-color: #f3f3f3;
 	color: #333;
 }
 
@@ -328,10 +328,10 @@ h1.slugline, h2.itemtitle {
 /* Data charts - compliant, tablet */
 
 .rowbar {
-	background: #6499cb url(/common/images/rowbar.png) repeat-x;
+	background: #333 url(/common/images/rowbar.png) repeat-x;
 }
 .colbar {
-	background: #6499cb url(/common/images/colbar.png) repeat-y;
+	background: #333 url(/common/images/colbar.png) repeat-y;
 }
 .average {
 	border-color: #c00;

@@ -23,13 +23,6 @@ Each theme is contained within a directory inside the *SITE_DIR/themes* folder. 
 Themes have the same directory structure as the core visual interface directory (app/). This allows paths in the CSS and HTML to be the same for the core interface and the theme interface.
 
 
-***************************
-Theme Design Considerations
-***************************
-
-Content coming soon!
-
-
 
 **********************************
 Tutorial: Implement a Simple Theme
@@ -42,7 +35,9 @@ Because of Kurogo's breadth and depth, implementing a simple theme is a multi-st
 -----------------------------------
 It's recommended that you build a new theme by duplicating the default theme, editing its theme CSS, and replacing key image files. This allows you to quickly switch back to the default theme to check the effect of changes you're making in your new theme, or to revert to a working theme if you run into trouble.
 
-In *SITE_DIR/themes*, duplicate the *default* directory and give the new directory a descriptive name.
+The first decision to make is whether you want to make the extra effort to create high-resolution assets as part of :ref:`hdpi`. This extra effort (consisting of several extra versions of up to dozens of image files) can yield noticeably sharper-looking images on high-end devices. Don't worry if you're not sure or change your mind; you can always start with the default (simpler) theme structure and refine later with as much or as little high-density optimization as you like.
+
+In *SITE_DIR/themes*, duplicate either the *default* (simpler) or *hi-def* (optimized for high-density displays) directory and give the new directory a descriptive name.
 
 In your site's Kurogo administration console, go to the *Site Configuration > Theme* page and select your new theme, and click the "Save" button.
 
@@ -62,15 +57,21 @@ As you make the changes detailed below, come back to your browser and refresh th
 -----------------------------
 In your theme directory (which we'll refer to from now on as *THEME_DIR*), open *common/css/common.css*. This is the base theme CSS file. The essential rules you'll need to edit include:
 
-* *body*: Set the background color (and tiling image, if you so desire) and base text size, line height, and font family. Almost all of the other font sizes throughout your web app will be calculated as percentages of this base font size, which can be specified in points (preferred) or pixels. (lines 8-9)
+* *body*: Body background color (and tiling image, if you so desire) and base text size, line height, and font family. Almost all of the other font sizes throughout your web app will be calculated as percentages of this base font size, which can be specified in points (preferred) or pixels. (lines 8-9)
 * *body, th, td, li, option, select, input*: Primary text color (line 14)
-* *a, a:visited*: Default link text color (line 18)
-* *a:hover*: Mouseover text color (only used on certain cursor-driven devices, such as BlackBerries and some feature phones) (line 21)
-* *dt, .label, .legend, .legend.nonfocal, .legend h2, .legend h3, .searchlegend*: Accent/highlight text color used in a variety of places (line 59)
-* *.address, .smallprint, .fineprint, .dek, #footer, .copyright, #footerlinks a, #footerlinks a:visited*: Secondary text color used for less important text (line 64)
-* *.shaded, .HomeModule .blockborder*: Shaded content backgrounds, used in the header of certain tabbed screens and in homescreen portlets on tablets (line 84)
-* *#navbar*: Size, background color/image, and base font size for the navigation bar at the top of every screen other than the home screen. Does not apply to Basic device class. It is recommended that the height not be modified. (lines 93-94)
-* *.breadcrumbs, .breadcrumbs a, .breadcrumbs a:visited, .pagetitle*: Breadcrumbs and page titles at the top of every screen other than the home screen. Does not apply to Basic device class. This text color should contrast with the background color or image specified in *#navbar* for legibility. (line 99)
+* *a, a:visited, .focal a, .focal a:visited, .tabbody a, .tabbody a:visited*: Default link text color (line 19)
+* *.nonfocal a, .nonfocal a:visited*: Link text color in areas that use the body background color; for themes with a light background, this may be the same as (or close to) line 19, but for themes with dark backgrounds it should be reversed out for contrast and legibility (line 24)
+* Header styles: relative font sizes and colors for *h1* through *h4* in focal content areas, which usually have white or light backgrounds (lines 27-54)
+* *dt, .label, .legend, .legend h2, .legend h3, .searchlegend*: Accent/highlight text color used in focal content areas, which usually have white or light backgrounds (line 60)
+* *.address, .smallprint, .fineprint, .dek*: Secondary text color used for less important text (line 64)
+* *.springboard a, .springboard a:visited*: Text color of labels below icons in springboards (grids of icons), e.g., the homescreen (line 73)
+* *.nonfocal, .nonfocal .legend, .formlabel* and *.nonfocal h1, .nonfocal h2, .nonfocal h3, .nonfocal h4*: Text color and heading color, respectively, in areas that use the body background color; for themes with a light background, these may be the same as (or close to) the primary text color set in line 14, but for themes with dark backgrounds they should be reversed out for contrast and legibility. Note that the heading styles can be broken apart if you want to style them separately.
+* *.shaded, .HomeModule .blockborder*: Shaded containers used to contain the tabs in many tabbed screens and in homescreen portlets on tablets (lines 99-100)
+* *.shaded h1, .shaded h2, .shaded h3, .shaded h4*: Text color for headings that sit on the shaded containers. Should have legible contrast from the background color set in line 99.
+* *#navbar*: Size, background color/image, and base font size for the navigation bar at the top of every screen other than the home screen. Does not apply to Basic device class. It is recommended that the height not be modified. (lines 114-115)
+* *.breadcrumbs, .breadcrumbs a, .breadcrumbs a:visited, .pagetitle*: Breadcrumbs and page titles at the top of every screen other than the home screen. Does not apply to Basic device class. This text color should contrast with the background color or image specified in *#navbar* (line 114) for legibility. (line 120)
+* *#footer, #footerlinks a, #footerlinks a:visited, a.copyright, a.copyright:visited*: Text and links that appear in the sitewide footers. Usually slightly less contrast than the primary text and link colors, but should still be legible against the body background set in line 8.
+* *.sidenav a, .sidenav a:visited, .paging a:visited*: Color of paging navigation links used in the Calendar module (to move from day to day) and certain paged content displays; for themes with a light background, these may be the same as (or close to) the primary text color set in line 14, but for themes with dark backgrounds they should be reversed out for contrast and legibility. Note that the heading styles can be broken apart if you want to style them separately. 
 
 Other styles may be modified as well, but the ones listed above are essential for any theme.
 
@@ -85,7 +86,7 @@ Homepage
 You'll need to create a version of the logo to appear on the homepage: [#f1]_ [#f2]_
 
 * Basic and Touch device classes: *THEME_DIR/modules/home/images/logo-home.gif* must be a GIF image [#f3]_. This image will be centered horizontally within the screen. The default size is 208x35px, cropped tight to the actual artwork.
-* Compliant device class: *THEME_DIR/modules/home/images/logo-home.png* must be a PNG image [#f3]_. The default size is 280x60px, cropped tight the actual artwork. 
+* Compliant device class: *THEME_DIR/modules/home/images/logo-home.png* must be a PNG image [#f3]_. The default size is 280x60px, cropped tight the actual artwork. The Compliant home logo/banner image is one that benefits noticeably from :ref:`hdpi`.
 	
 
 Header logos
