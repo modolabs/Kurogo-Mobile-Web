@@ -14,17 +14,17 @@ body, th, td, li, option, select, input {
 	color: #333;
 }
 
-a, a:visited, .focal a, .focal a:visited, .tabbodies a, .tabbodies a:visited {
+a, a:visited, a:active, .focal a, .focal a:visited, .focal a:active, .tabbody a, .tabbody a:visited, .tabbody a:active {
 	/* Primary text link color */
 	color: #036;
 }
 
-a:hover, .focal a:hover, .tabbodies a:hover {
+a:hover, .focal a:hover, .tabbody a:hover {
 	/* Mouseover text color; only respected on certain cursor-driven devices */
 	color: #07d;
 }
 
-.nonfocal a, .nonfocal a:visited {
+.nonfocal a, .nonfocal a:visited, .nonfocal a:active {
 	/* Text link color on body background */
 	color: #036;
 }
@@ -79,7 +79,7 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 /* Text labels for springboards (grids of icons, e.g., homescreen) */
 
-.springboard a, .springboard a:visited {
+.springboard a, .springboard a:visited, .springboard a:active {
 	color: #036;
 }
 

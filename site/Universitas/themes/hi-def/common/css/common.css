@@ -14,24 +14,14 @@ body, th, td, li, option, select, input {
 	color: #333;
 }
 
-a, a:visited, .focal a, .focal a:visited, .tabbodies a, .tabbodies a:visited {
+a, a:visited, .focal a, .focal a:visited, .tabbody a, .tabbody a:visited {
 	/* Primary text link color */
 	color: #036;
-}
-
-a:hover, .focal a:hover, .tabbodies a:hover {
-	/* Mouseover text color; only respected on certain cursor-driven devices */
-	color: #07d;
 }
 
 .nonfocal a, .nonfocal a:visited {
 	/* Text link color on body background */
 	color: #036;
-}
-
-.nonfocal a:hover {
-	/* Mouseover text color; only respected on certain cursor-driven devices */
-	color: #07d;
 }
 
 h1 {
@@ -83,10 +73,6 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 	color: #036;
 }
 
-.springboard a:hover {
-	/* Mouseover text color; only respected on certain cursor-driven devices */
-	color: #07d;
-}
 
 
 /* Major content blocks */
