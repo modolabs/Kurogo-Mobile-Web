@@ -28,7 +28,9 @@ There are two approaches to updating a template.
 * You can completely replace it. This will rewrite the entire template
 * You can extend it. If the template provides {blocks} you can use the {extends} tag to replace only
   certain parts of the template
-  
+
+.. _extend-module:  
+
 =======================================
 Providing alternative logic (extension)
 =======================================
@@ -36,8 +38,9 @@ Providing alternative logic (extension)
 If you want to replace some of the PHP logic you can provide a subclass of the module. This allows 
 you to override a method or property. It is important to understand the consequences of the method
 you override. In some cases you will want to call the *parent::* method to ensure that the base logic
-is executed. An example of this would be the *initializeForPage* method. If you wanted to override
-the people module you would create *SitePeopleModule.php* in *SITE_DIR/app/modules/people*::
+is executed. An example of this would be the *initializeForPage* or *linkForValue* methods. 
+If you wanted to override the people module you would create *SitePeopleModule.php* in 
+*SITE_DIR/app/modules/people*::
 
     <?php 
     
@@ -57,6 +60,8 @@ the people module you would create *SitePeopleModule.php* in *SITE_DIR/app/modul
     
 This would allow you to override the logic for the index page, but keep the other pages the same.
 You can include alternate page templates for whatever pages you need to replace.
+
+.. _replace-module:
 
 =============================
 Replacing a module completely
