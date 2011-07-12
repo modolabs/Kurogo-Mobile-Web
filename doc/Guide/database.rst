@@ -12,14 +12,14 @@ Supported Database Backends
 ===========================
 
 Kurogo includes support for the following database backends. Keep in mind that utilizing these systems
-requires the appropriate PHP extension. Installing and configuration extensions is beyond the scope
-of this document.
+requires the appropriate PHP extension. Installing and configuring the database server and the PHP extensions
+is beyond the scope of this document.
 
 * MySQL
 * SQLite
 * PostgreSQL
 * Microsoft SQLServer. Note that support for SQL Server is limited to servers running Microsoft Windows and requires
-  the Microsoft Library found at: XXX
+  the Microsoft Library found at: http://msdn.microsoft.com/en-us/sqlserver/ff657782.aspx
 
 --------------------------------------
 An important note about SQL statements

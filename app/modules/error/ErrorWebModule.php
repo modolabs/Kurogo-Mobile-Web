@@ -47,7 +47,7 @@ class ErrorWebModule extends WebModule {
     )
   );
 
-  protected function init($page, $args) {
+    protected function init($page='', $args=array()) {
       if(!Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
         set_exception_handler("exceptionHandlerForError");
       }

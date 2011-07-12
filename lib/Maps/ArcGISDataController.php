@@ -54,7 +54,7 @@ class ArcGISDataController extends MapDataController
         return $this->parser->getTitle();
     }
     
-    public function items() {
+    public function items($start=0, $limit=null) {
         $this->initializeParser();
         $this->initializeLayers();
         $this->initializeFeatures();

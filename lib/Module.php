@@ -11,6 +11,7 @@ abstract class Module
 {
     protected $id='none';
     protected $configModule;
+    protected $moduleName = '';
     protected $args = array();
 
     /**
@@ -486,6 +487,18 @@ abstract class Module
         
         return $configData;
     }
+    
+    /**
+      * Return the module's descriptive name
+      * @return string
+      */
+    public function getModuleName() {
+        if (!$this->moduleName) {
+            $this->moduleName    = $this->getModuleVar('title','module');
+        }
+        return $this->moduleName;
+    }
+    
 
     /**
       * Action to take when the module is disabled

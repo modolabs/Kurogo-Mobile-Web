@@ -44,7 +44,7 @@ class PageViews {
     fclose($fh);      
   }
 
-  private function increment_array(&$array, $day, $platform, $module) {
+  private static function increment_array(&$array, $day, $platform, $module) {
 
     if (!array_key_exists($day, $array))
       $array[$day] = array();
@@ -231,7 +231,7 @@ class PageViews {
     return $output;
   }
   
-  protected function createDatabaseTables()
+  protected static function createDatabaseTables()
   {
     Kurogo::includePackage('db');
     $sql = "SELECT 1 FROM mobi_web_page_views";

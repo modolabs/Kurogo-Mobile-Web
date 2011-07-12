@@ -211,7 +211,7 @@ if ($parts[0]==API_URL_PREFIX) {
         case 2: 
             $id = 'core';
             $command = $parts[1];
-            if (!$module = CoreAPIModule::factory($command, $args)) {
+            if (!$module = CoreAPIModule::factory($id, $command, $args)) {
                 throw new Exception("Module $id cannot be loaded");
             }
             break;

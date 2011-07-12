@@ -15,8 +15,6 @@ abstract class WebModule extends Module {
 
     const INCLUDE_DISABLED_MODULES=true;
     const EXCLUDE_DISABLED_MODULES=false;
-
-  protected $moduleName = '';
       
   protected $page = 'index';
 
@@ -322,7 +320,7 @@ abstract class WebModule extends Module {
   }
   
     /* This method would be called by other modules to get a valid link from a model object */
-    public function linkForItem($object, $options=null) {
+    public function linkForItem(KurogoObject $object, $options=null) {
        throw new Exception("linkForItem must be subclassed if it is going to be used");
     }
 
@@ -373,7 +371,7 @@ abstract class WebModule extends Module {
     }
     
     protected function loadDeviceClassifierIfNeeded() {
-        $this->deviceClassifier =& Kurogo::deviceClassifier();
+        $this->deviceClassifier = Kurogo::deviceClassifier();
     }
         
     protected function init($page='', $args=array()) {
@@ -425,11 +423,7 @@ abstract class WebModule extends Module {
     $this->autoPhoneNumberDetection = $bool ? true : false;
     $this->assign('autoPhoneNumberDetection', $this->autoPhoneNumberDetection);
   }
-    
-  public function getModuleName() {
-    return $this->moduleName;
-  }
-    
+        
   protected function moduleDisabled() {
     $this->redirectToModule('error', '', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
   }
@@ -477,7 +471,7 @@ abstract class WebModule extends Module {
         return $this->canBeAddedToHomeScreen;
     }
   
-  protected function getAllModules() {
+  public static function getAllModules() {
     $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
     $modules = array();
     foreach ($dirs as $dir) {

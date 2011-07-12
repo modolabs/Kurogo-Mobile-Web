@@ -69,7 +69,8 @@ function mime_type($filename) {
     'cod' => 'application/vnd.rim.cod',
   );
   
-  $ext = strtolower(array_pop(explode('.', $filename)));
+  $filebits = explode('.', $filename);
+  $ext = strtolower(array_pop($filebits));
   
   if (array_key_exists($ext, $mime_types)) {
     return $mime_types[$ext];

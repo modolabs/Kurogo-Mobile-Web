@@ -237,7 +237,7 @@ class CalendarWebModule extends WebModule {
         return $feed->items();
     }
 
-    public function linkforItem(ICalEvent $event, $data=null) {
+    public function linkforItem(KurogoObject $event, $data=null) {
     
         $subtitle = $this->timeText($event);
         if ($briefLocation = $event->get_location()) {
