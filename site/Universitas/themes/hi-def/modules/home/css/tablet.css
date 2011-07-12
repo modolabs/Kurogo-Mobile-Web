@@ -1,0 +1,11 @@
+/* Any special formatting for the generic Tablet device class */
+
+.HomeModule #navbar {
+	/* Use only if the tablet homepage has a different nav bar background than interior pages */
+	background: transparent url(/common/images/navback-home.png) repeat-x;
+}
+
+.HomeModule .pagetitle {
+	/* Use only if the tablet homepage has a different nav bar background than interior pages */
+	color: #fff;
+}

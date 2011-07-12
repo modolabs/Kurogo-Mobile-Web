@@ -1,0 +1,62 @@
+.portrait #videos {
+	height:113px;
+	/*-webkit-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+	-moz-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+	box-shadow: 0px 5px 7px rgba(0,0,0,0.3);*/
+}
+
+.portrait #videos .results .pagerlink {
+	width: 120px;
+	height: 100%;
+	padding: 0 0 0 10px;
+}
+
+.portrait #videos .results .pagerlink a {
+	height: 60%;
+	padding: 45px 10px 0 10px;
+}
+
+.portrait #videos .results {
+	height:100%;
+}
+
+.portrait #videos .results .video {
+	border-right: 1px dotted #999;
+	height: 100%;
+}
+
+.portrait #videos .results .video a {
+	height: 100%;
+	padding:10px 0 0 10px;
+}
+
+.landscape #videos .results .pagerlink {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.landscape #videos .results .video {
+	height: 6.6em;
+}
+
+.landscape #videos .results .video a {
+	height: 100%;
+	padding: 10px 10px 0 10px;
+}
+
+.landscape #videoHeader {
+	-webkit-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+	-moz-box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+	box-shadow: 0px 5px 7px rgba(0,0,0,0.3);
+}
+
+.landscape #videoDetailWrapper {
+	background-color:#ffffff;
+	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
+	background: -moz-linear-gradient(#B0B0B0, #E8E8E8 30%, #FFFFFF 30%);
+}
+
+.portrait #videoDetailWrapper {
+	background-color:#ffffff;
+	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
+}

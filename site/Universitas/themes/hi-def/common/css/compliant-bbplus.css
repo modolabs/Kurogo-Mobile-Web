@@ -1,0 +1,37 @@
+/* Springboard adjustments specific for BlackBerry Plus device class */
+
+.springboard {
+	padding: 0 5px;
+}
+
+.springboard div, .springboard div.utility {
+	/* Overall size of one cell in the springboard */
+	/* For this device branch, this is the same for primary and utility-class springboard items */
+	font-size: 100%;
+	width: 5.1em;
+	height: 6.7em;
+}
+
+.springboard div a, .springboard div.utility a {	
+	/* Color and size of text label below each springboard icon */
+	/* For this device branch, this is the same for primary and utility-class springboard items */
+	font-size: 90%;
+	line-height: 1.1em;
+}
+
+.springboard a img, .springboard div.utility a img {
+	/* Size of actual item icon in springboard */
+	/* For this device branch, this is the same for primary and utility-class springboard items */
+	/* For best results on BlackBerries, make actual PNGs match this size */
+	width: 64px;
+	height: 64px;
+}
+.springboard .secured, .springboard .utility .secured {
+	/* Overlay image to indicate that a module is password-protected */
+	/* Adjust size to fit /common/images/secured.png, and adjust position to fit springboard icon size */
+	/* Unlike regular Compliant, the position of the secured badge should be the same for normal and utility-class icons */
+	top: 45px;
+	right: 0;
+	width: 18px;
+	height: 22px;
+}

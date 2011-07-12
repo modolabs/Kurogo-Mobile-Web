@@ -1,0 +1,12 @@
+/* Any special formatting for the Compliant device class */
+
+/* Un-comment the following two rules if you're using a full-bleed logo/banner image that should touch the top, left and right edges of the screen */
+/*
+#homelogo {
+	margin: 0;
+}
+#homelogo img {
+	width: 100%;
+	height: auto;
+}
+*/

@@ -1,0 +1,72 @@
+/* Overall font and colors */
+
+body {
+	/* Touch uses a slightly different base font size */
+	font: 16px/1.33em sans-serif;
+}
+
+
+
+/* Nav bar at top of all screens other than home screen */
+
+#navbar {
+	height: 48px; 
+	background: url(/common/images/navback.jpg) repeat-x;	/* Usually a JPG or GIF where compliant and tablet may use PNG */
+	font-size: 100%;
+}
+
+
+
+/* Springboards */
+
+.springboard div {
+	/* Overall size of one cell in the springboard */
+	width: 57px;
+	height: 82px;
+}
+
+.springboard a {	
+	/* Size of text label below each springboard icon */
+	font-size: 75%;
+	line-height: 1.1em;
+}
+
+.springboard a img { 
+	/* Size of actual item icon in springboard - for best results make actual PNGs match this size */
+	width: 44px;
+	height: 44px;
+}
+
+.springboard div.utility {
+	/* Overall size of one cell in the springboard's fixed utility-type items */
+	width: 57px;
+	height: 72px;
+	font-size: 75%;
+	line-height: 1.1em;
+}
+
+.springboard div.utility a img {
+	/* Size of actual item icon in the springboard's fixed utility-type items - for best results make actual PNGs match this size */
+	width: 32px;
+	height: 32px;
+}
+
+.springboard .separator {
+	clear: both;
+	height: 20px;
+}
+
+.springboard .secured {
+	/* Overlay image to indicate that a module is password-protected */
+	/* Adjust size to fit /common/images/secured.gif, and adjust position to fit springboard icon size */
+	top: 25px;
+	right: 2px;
+	width: 16px;
+	height: 16px;
+}
+
+.springboard .utility .secured {
+	/* Adjust position to fit springboard icon size for utility-class module icons */
+	top: 20px;
+	right: 2px;
+}

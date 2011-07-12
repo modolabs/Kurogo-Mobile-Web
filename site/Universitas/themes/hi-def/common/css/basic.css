@@ -1,0 +1,60 @@
+/* Overall font and colors */
+
+body {
+	/* Primary font */
+	font: 14px/1.25em sans-serif;
+}
+
+h1 {
+	font-size: 142%; 
+	color: #036;
+}
+
+h2 {
+	font-size: 133%; 
+	font-weight: normal;
+	color: #036;
+}
+
+h3 {
+	font-size: 100%; 
+	font-weight: bold;
+	color: #333;
+}
+
+h4 {
+	font-size: 100%; 
+	font-weight: bold;
+	color: #333;
+}
+
+
+
+/* Standard navigation at bottom of all Basic pages */
+
+.bottomnav {
+	/* Usually set apart in a foreground/background color combination different from normal and secondary nav lists  */
+	background-color: #4a4c4f;	
+	font-size: 93%;
+}
+
+.bottomnav a, .bottomnav a:visited {
+	/* Navigation at bottom of page -- e.g., "Back to top" */
+	color: #fff; 
+}
+
+
+
+/* Tabs */
+
+.tabs {
+	/* Text labels of unselected tab */
+	color: #999;
+}
+
+.tabs .active {
+	/* Text label of currently selected tabs */
+	font-weight: bold;
+	color: #000;
+}
+
