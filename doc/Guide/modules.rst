@@ -17,6 +17,28 @@ class including:
 * Creation of internal URLs
 * Authorization
 
+
+---------------------------
+Instantiation and execution
+---------------------------
+
+Once a :doc:`request <requests>` has been made, the loading system determines which module to load
+and creates and instance of it using the *factory* method. The URL determines which module to load,
+which page to assign and any parameters that are included. If there is no page indicated, then the
+page will be set to *index*.
+
+After instantiating the object, the *init* method is called. This does several things:
+
+* Assigns the necessary properties including *page*, *args*, *pagetype* and *platform*
+* Calls the *initialize()* method that is used for setting up data structures that are used both
+  inside a page and outside (for instance in the federated search)
+* Calls the *initializeForPage()* method. This method represents the primary entry point for the
+  module's logic. Typically the module would handle different logic based on the value of the *page*
+  property.
+  
+Finally the template based on the value of the *templatePage* property is displayed. Initially this 
+is set to the page property, but can be overridden if necessary for more dynamic template display.
+
 ----------
 Properties
 ----------
@@ -51,6 +73,9 @@ Initialization
   * SITE_DIR/app/modules/example/ExampleWebModule.php 
   * SITE_DIR/app/modules/example/SiteExampleWebModule.php 
   * app/modules/example/ExampleModule.php 
+  
+  
+  
 
 ==============
 Methods to use
@@ -168,6 +193,29 @@ Output
   javascript at the bottom of the page. 
 * *addInternalJavascript($path)* - Similar to addInternalCSS except for javascript
 * *addExternalJavascript($url)* - Similar to addExternalCSS except for javascript
+
+=============
+The Help Page
+=============
+
+There is a page called *help* that has special meaning in Kurogo. For each module, you can define
+a string in the *strings* section of the *module.ini* file named *help* that will allow you to provide
+a help text for end users. If this value is present then a help link will show up on the page and
+this will link to the help page containing this text.
+
+.. code-block:: ini
+
+  [module]
+  title = "Module Name"
+  disabled = 0
+  protected = 0
+  search = 1
+  secure = 0
+
+  [strings]
+  help[] = "This module provides services related to lorem ipsum"
+  help[] = "Additional help entries indicate additional paragraphs"
+  help[] = "You can have as many paragraphs as you need"
 
 ===================
 Methods to override
