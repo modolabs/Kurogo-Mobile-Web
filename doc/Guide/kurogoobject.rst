@@ -56,7 +56,7 @@ search paths:
 * *SITE_DIR/lib/Maps/*
 * *KurogoRoot/lib/Maps/*
 
-And the file *lib/Maps.php* will attempted to be loaded. 
+And the autoloader will attempt to load *lib/Maps.php*.
 
 You can create your own packages by simply creating a folder in your site's lib folder. The following
 packages are part of the Kurogo distribution:
