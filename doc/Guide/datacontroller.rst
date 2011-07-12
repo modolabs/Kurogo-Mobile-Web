@@ -36,6 +36,11 @@ common options you can include (some may be required by the class you are creati
 * *BASE_URL* - Sets the base url of the request
 * *TITLE* - Sets the title of the controller
 * *CACHE_LIFETIME* - Sets the cache lifetime, in seconds
+* *HTTP_PROXY_URL* - Use an HTTP proxy for the request. Should be in `URI <http://en.wikipedia.org/wiki/URI_scheme#Examples>`_ format. I.e: *tcp://user:password@proxy.example.com:port*
+
+These options can also be defined in the *[data_controller]* section of *SITE_DIR/config/site.ini* any
+options specified here will be used by all connections (unless they are overridden in their specific configuration)
+This would be a good place to include a global HTTP proxy.
 
 Each subclass can define its own set of options and handle those in its *init* method. Just make sure
 to call *parent::init($args)* first. These arguments are also sent to the *init* method of the 
@@ -120,7 +125,17 @@ you gain the benefits of caching and reduce the amount of code you need to imple
 * *retrieveData($url)* if the data cannot be retrieved using the PHP *file_get_contents()* function
   then you'll need to override this method. This would primarily be in cases where you cannot use a
   GET method or if specific HTTP headers must be set. You still will benefit from caching.
-   
+  
+---------------------
+Getting response data
+---------------------
+
+* *getResponse()* - Returns the (unparsed) response body from the request
+* *getResponseHeaders()* - Returns an array of response headers after the request has been made
+* *getResponseHeader($header)* - Returns a specific response header based on its name ('Content-Length', etc). This is currently case sensitive
+* *getResponseStatus()* - Returns the HTTP response message ('OK', etc)
+* *getResponseCode()* - Returns the most recent HTTP code from the response (200, 404, etc)
+
 ----------------
 Internal methods
 ----------------
@@ -134,3 +149,8 @@ Internal methods
 * *removeAllFilters()* - Removes all filters from the query string
 * *setTotalItems($total)* - This value is typically set by the parseData() method by querying the DataParser
   for the total number of items.
+* *addHeader($header, $value)* - sets a header to be included in the request. 
+* *setMethod($method)* - Sets the HTTP method to use in the request. Values include *GET*, *POST*, *PUT*, *DELETE*. 
+  Support for other methods requires support from the remote server. The default method is *GET*
+* *setTimeout($timeout)* - sets the timeout (in seconds) for the remote request. 
+

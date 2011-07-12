@@ -1,6 +1,6 @@
-#################
-Modules
-#################
+###############
+Writing Modules
+###############
 
 The Kurogo framework is based around modules. Each module provides a distinct set of data and 
 services shown to the user. 
@@ -81,7 +81,7 @@ Initialization
 Methods to use
 ==============
 
-There are 90 methods in the WebModule object. Many of them are used internally and don't require any discussion.
+There are many methods in the WebModule object. Many of them are used internally and don't require any discussion.
 There are several methods that you should be aware of when developing new modules
 
 ---------
@@ -134,9 +134,13 @@ User Sessions
 * *getUser()*  returns a User object of the current user (or AnonymousUser if the user is not logged in)
 
 -------
-Setters
+Pages
 -------
 
+The following methods handle the templates and titles for pages
+
+* *setTemplatePage($page)* - Sets the name of the page template file to use. Normally the template is derived from the url, but you can
+  use this method to set it dynamically. This will cause $page.tpl to be loaded.
 * *setPageTitle($title)* - Sets the page title for this page. Normally this value comes from the *SITE_DIR/config/page/MODULE.ini*
   file, but you can use this method to set it dynamically.
 * *setBreadcrumbTitle($title)* - Sets the breadcrumb title for this page. Normally this value comes from the *SITE_DIR/config/page/MODULE.ini*
@@ -144,8 +148,6 @@ Setters
 * *setBreadcrumbLongTitle($title)* - Sets the breadcrumb long title for this page. Normally this value comes from the *SITE_DIR/config/page/MODULE.ini*
   file, but you can use this method to set it dynamically.
 * *setPageTitles($title)* - Sets all 3 titles (pageTitle, breadcrumbTitle and breadcrumbLongTitle) to the same value
-* *setTemplatePage($page)* - Sets the name of the page template file to use. Normally the template is derived from the url, but you can
-  use this method to set it dynamically. This will cause $page.tpl to be loaded.
 
 -------
 Actions
@@ -220,13 +222,28 @@ this will link to the help page containing this text.
 ===================
 Methods to override
 ===================
+
+* *initializeForPage* - This method is called when viewing a page. It represents the main logic
+  branch. All modules will have this code.
 * *initialize* - This method is called first when the module is instantiated. It should contain general
   initialization code. If your module provides federated search capabilities than you can use this method
-  to properly setup any data sources.
-* *initializeForPage* - This method is called when viewing a page. It represents the main logic
-  branch.
-
-* *linkForItem($object, $options=null)*
-* *linkForValue($value, Module $callingModule, KurogoObject $otherValue=null)*
-* *searchItems($searchTerms, $limit=null, $options=null)*
+  to properly setup any data sources. It is not needed in all cases.
+* *searchItems($searchTerms, $limit=null, $options=null)* - This method is called by other modules 
+  (including the default federated search implementation) to retrieve a list of items that meet the
+  included search terms. A limit value will be passed that will include a maximum number of items to
+  return (or null if there is no limit). There is also an optional associative array that is sent that
+  contain options specific to that module. The federated search implementation will add a "federatedSearch"=>true
+  value to allow this method to behave specifically for this situation. This method should return an
+  array of objects the conform to the KurogoObject interface. 
+* *linkForItem($object, $options=null)* - This method should return an array suitable for showing in
+  a list item. This would include items such as *title* and *url*. The options array may be used to
+  include other information
+* *linkForValue($value, Module $callingModule, KurogoObject $otherValue=null)* - This method is used
+  to format a value in another module. It is mostly used by subclasses of the standard module to perform
+  site specific formatting or linking. The call includes the calling module and an optional object that
+  may contain other values. This allows your implementation to consider all values of the object when
+  building the link. This function should return an array that is suitable for a list item, including
+  *title* and *url* values. The default implementation uses the value as the title and uses a url like
+  *moduleID/search?filter=value*.
+  
 
