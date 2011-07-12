@@ -38,3 +38,30 @@
 .loginbuttons li.windows {
 	background-image: url(/common/images/button-windows.png);
 }
+
+/* Pixel-doubled action arrows */
+
+nav a, results a, .secondary a, a.arrow {  
+	background-image: url(/common/images/action-arrow@2x.png); 
+	background-size: 14px 17px;
+}
+
+a.phone {  
+	background-image: url(/common/images/action-phone@2x.png); 
+	background-size: 26px 19px;
+}
+
+a.email {  
+	background-image: url(/common/images/action-email@2x.png); 
+	background-size: 26px 19px;
+}
+
+a.map {  
+	background-image: url(/common/images/action-map@2x.png); 
+	background-size: 26px 19px;
+}
+
+a.people {  
+	background-image: url(/common/images/action-people@2x.png); 
+	background-size: 19px 19px;
+}
