@@ -92,7 +92,7 @@ or :doc:`moduleurl`. In this case you simply subclass the parent module and prov
 
     <?php 
     
-    class SomethingWebModule extends ContentModule
+    class SomethingWebModule extends ContenWebModule
     {
         protected $configModule = 'something';
     }
