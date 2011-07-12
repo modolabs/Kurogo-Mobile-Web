@@ -196,6 +196,8 @@ On such devices, web pages that provide a higher-resolution image while retainin
 
 Generally, logos, highly detailed images, and images incorporating text will benefit most from using high-density versions. Note that BlackBerry devices running any OS prior to 6.0 do not scale images well, so it's best to use images sized exactly for them. Currently there are no tablet devices that take advantage of high-density images.
 
+Kurogo ships with two reference themes: default (simple, standard-resolution) and "hi-def" (with optimizations for high-density displays). By switching between these themes in your site admin console and viewing it on a high-density device (e.g., iPhone 4, iPod Touch 4, high-end Android device, Pre3, etc.), you can see for yourself the difference that such optimizations make, and decide for yourself the degree to which you want to make such optimizations for your own site.
+
 The following items will benefit the most from using higher-resolution images. The general technique is the add the higher-than-default-resolution images to the *[IMAGE_DIR]/compliant/* directory, and default-resolution images to the *[IMAGE_DIR/compliant-blackberry]* and *[IMAGE_DIR/compliant-bbplus]* directories.
 
 ----------------
