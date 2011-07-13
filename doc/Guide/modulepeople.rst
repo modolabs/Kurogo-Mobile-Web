@@ -4,8 +4,8 @@ People Module
 
 The people module enables sites to provide mobile access to their directory. With a few short configuration
 parameters you enable searching and detailed information to users on their mobile device. The built-in
-module supports connecting to either LDAP based directories (including Active Directory), and database
-(MySQL/SQLite) backed directories. 
+module supports connecting to either LDAP based directories (including Active Directory), and 
+:doc:`database <database>` backed directories. 
 
 =================================
 Configuring the Server Connection
@@ -20,7 +20,7 @@ to your directory system.
   * LDAPPeopleController - uses a standard LDAP server. You can configure the various fields if your values
     differ from defaults
   * ADPeopleController - a subclass of the LDAP controller that has preconfigured mappings for Active Directory
-  * DatabasePeopleController - connects to an external database server (MySQL/SQLite). This controller assumes
+  * DatabasePeopleController - connects to an external database server. This controller assumes
     that people are mapped to a single row and that the various fields are stored in single (definable) columns 
   
 * *PERSON_CLASS* allows you to set a different class name for the returned user objects when searching.
@@ -58,18 +58,9 @@ Options for DatabasePeopleController
 ------------------------------------
 
 The *DatabasePeopleController* has a number of possible configuration values, all of which
-are optional. The following values affect the connectivity to the database system:
+are optional. See :doc:`database` for a full detail on configuring database connections
 
-* DB_TYPE - The type of database backend. 
-* DB_HOST - used by db systems that are hosted on a server
-* DB_USER - used by db systems that require a user to authenticate
-* DB_PASS - used by db systems that require a password
-* DB_DBNAME - used by db systems that require a database
-* DB_FILE - used by db systems the use a file (i.e. sqlite).
-
-See :doc:`database` for a full detail on configuring database connections
-
-If you omit any of the above values, it will default to the settings in :ref:`database_config`
+If you omit any of the values, it will default to the settings in :ref:`database_config`
 In addition to the connectivity settings, there are several options that tell the controller how to 
 query the database. 
 
@@ -95,8 +86,9 @@ Configuring the Detail Fields
 =============================
 
 Once you have configured the server settings, you need to configure the field mappings between your
-server and the detail view. If your LDAP directory uses standard fields, then most fields should
-map automatically, however, you may still want to customize how it displays or the order of the fields.
+server and the detail view. The default configuration is setup for an LDAP directory. If you use 
+a nonstandard directory, or you utilize the database connector with its own fields, then you will
+need to customize how this displays. 
 
 The fields are configured in the *SITE_DIR/config/people/page-detail.ini* file. Each field is 
 configured in a section (the section name should be unique, but it otherwise irrelevant).
@@ -110,7 +102,7 @@ possible values to influence how a field is displayed:
 * *module* - (optional) Creates a link to a another module and uses that module's linkForValue method to format the result.
   See the section on :doc:`moduleinteraction` for more details.
 * *section* - (optional) If this field belongs to a section, the name of that section
-* *parse* - (optional) A function which will be run on the LDAP results before display. Generated with 
+* *parse* - (optional) A function which will be run on the value before display. Generated with 
   *create_function*. Gets the argument "$value" and returns the formatted output.
 
 =============================
