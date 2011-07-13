@@ -10,6 +10,7 @@ class TwitterAuthentication extends OAuthAuthentication
 {
     protected $OAuthProviderClass='TwitterOAuthProvider';
     protected $authorityClass = 'twitter';
+    protected $userClass='TwitterOAuthUser';
 	protected $API_URL = 'https://api.twitter.com/1';
 	protected $useCache = true;
 	protected $cacheLifetime = 900;
@@ -70,7 +71,7 @@ class TwitterAuthentication extends OAuthAuthentication
             $json = @json_decode($data, true);
 
             if (isset($json['screen_name'])) {
-                $user = new TwitterUser($this);
+                $user = new $this->userClass($this);
                 $user->setVars($json);
                 return $user;
             }
@@ -83,7 +84,7 @@ class TwitterAuthentication extends OAuthAuthentication
 /**
   * @package Authentication
   */
-class TwitterUser extends OAuthUser
+class TwitterOAuthUser extends OAuthUser
 {
     protected $twitter_userID;
     
