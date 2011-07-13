@@ -28,7 +28,7 @@ Themes have the same directory structure as the core visual interface directory 
 Tutorial: Implement a Simple Theme
 **********************************
 
-Because of Kurogo's breadth and depth, implementing a simple theme is a multi-step process. However, each step can be broken down into fairly discrete tasks, and with Kurogo v1.2 there are far fewer CSS files and image assets that need to be revised or replaced. Of course, theming can be as deep and extensive as you desire (part of Kurogo's scalable )
+Because of Kurogo's breadth and depth, implementing a simple theme is a multi-step process. However, each step can be broken down into fairly discrete tasks, and with Kurogo v1.2 there are significantly fewer CSS files and image assets that need to be revised or replaced to create a workable theme. Of course, theming can be as deep and extensive as you desire. This is part of Kurogo's underlying philosophy of flexibility and scalability -- making it easy to get up and running while supporting potentially limitless customization and extension to meet your organization's specific mobile needs now and in the future.
 
 -----------------------------------
 1. Create a working theme directory
@@ -96,7 +96,7 @@ The top left corner of every screen for every device class includes a logo/brand
 * Basic device class: *THEME_DIR/common/images/basic/logo.gif* must be a GIF image [#f3]_. The default size is 35x35px.
 * Compliant device class: *THEME_DIR/common/images/compliant/homelink.png* must be a PNG image [#f3]_. The default size is 57x45px. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.png*, in, in the same directory). The Compliant header logo is one item that benefits from :ref:`hdpi`.
 * Touch device class: *THEME_DIR/common/images/touch/homelink.gif* must be a GIF image [#f3]_. The default size is 40x30px. It should be designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.jpg*, in, in the same directory). Typically it should incorporate some visual indication of a drilldown (e.g., right-facing arrow) to the right of the actual logo.
-* Tablet device class: *THEME_DIR/common/images/tablet/homelink.png* must be a PNG image [#f3]_. The default size is 66x52px. This be designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.png*, in the same directory).
+* Tablet device class: *THEME_DIR/common/images/tablet/homelink.png* must be a PNG image [#f3]_. The default size is 66x52px. This is designed in such a way that it appears seamlessly on top of the header/navigation bar background (*navback.png*, in the same directory).
 	
 	
 Favicon and bookmark icons
