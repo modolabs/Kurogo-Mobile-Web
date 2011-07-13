@@ -15,6 +15,7 @@ to early generation smart phones, to modern devices and tablets. It currently in
 * Statistics
 * About
 * HTML Content
+* Administration Console
 
 ## Online Guide
 
@@ -28,23 +29,28 @@ Please contact kurogo@modolabs.com for more information.
 ## Quick Setup and Requirements
 
 Kurogo is a PHP application. It is currently qualified for use with
-* Apache 2.x on unix systems (Windows system may also work, but has not been fully test. IIS is not supported)
+* Apache 2.x
     * mod_rewrite, and .htaccess support (AllowOverride)
+* IIS 7.5
+   * URL Rewrite Module 2.0
 * PHP 5.2 or higher with the following modules
     * xml, dom, json, pdo (SQLite/MySQL), mbstring, LDAP, curl
 
 To install, simply copy the files to your webserver, and point your site's document root to the included www
 folder. For more detailed setup information, please see the developer's guide.
 
-## Version 1.1
+## Version 1.2
 
 This version includes a number of fixes and improvements, including:
 
-* An updated Tablet UI for News and Video modules
-* Updated Smarty template engine 
-* Support for Vimeo videos
-* Various improvements to calendar parsing
-* Improvements to the admin module
+* Vastly streamlined default theme with updated theme documentation
+* Support for grouping static contacts in the People module
+* Support for grouping links in the Links module
+* Added established pattern for linking to and receiving data from other modules (See Dev guide for more info)
+* Modules can now present dynamic data on the home screen. (See Dev guide for more info)
+* Support for different HTTP methods and headers in the DataController class
+* Significant documentation improvements and updates.
+* The admin module (/admin) can be used on tablets (with certain issues)
 * Various bug fixes
 * Many other small improvements and fixes outlined in the CHANGELOG
 
