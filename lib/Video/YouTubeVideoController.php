@@ -46,10 +46,17 @@
         $items = parent::items(0, $limit);
         return $items;
     }
+
+    protected function isValidID($id) {
+        return preg_match("/^[A-Za-z0-9_-]+$/", $id);
+    }
     
 	 // retrieves video based on its id
 	public function getItem($id)
 	{
+	    if (!$this->isValidID($id)) {
+	        return false;
+	    }
         $this->setBaseUrl("http://gdata.youtube.com/feeds/mobile/videos/$id");
         $this->addFilter('alt', 'jsonc'); //set the output format to json
         $this->addFilter('format', 6); //only return mobile videos
