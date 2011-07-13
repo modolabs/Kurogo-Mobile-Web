@@ -114,7 +114,7 @@ exist on the Module object.
 * *getOptionalModuleSections($config)* - Like getModuleSections(), but if the config file does not exist it will return false
 
 You can also retrieve values from the site configuration (site.ini). These are for values used by all modules. They are
-static methods on the Kurogo object.
+static methods of the Kurogo object.
 
 * *Kurogo::getSiteVar($key, $section=null)* - similar to getModuleVar
 * *Kurogo::getOptionalSiteVar($key, $default='', $section=null)* - similar to getOptionalModule Var
@@ -246,4 +246,71 @@ Methods to override
   *title* and *url* values. The default implementation uses the value as the title and uses a url like
   *moduleID/search?filter=value*.
   
+.. _dynamic_nav_data:
 
+-------------------------------
+Dynamic Home Screen Information
+-------------------------------
+
+The :doc:`Home Module <modulehome>` is used to show the available modules to the users. In the default
+implementation, the list of modules and their titles and images is specified statically in the home/module.ini
+file. In this case the information presented on the home screen is always the same.
+
+In some scenarios it may be necessary to have that information be more dynamic. This would permit custom
+titles or subtitles, images, and even display based on any conditions that are appropriate. In order
+to utilize this you must do the following:
+
+* change *DYNAMIC_MODULE_NAV_DATA* to *1*. This option is normally turned off due to increased overhead
+* create a subclass of the module you wish to provide dynamic data. I.e. If you wish to have dynamic data
+  for the People module, then create a *SitePeopleWebModule.php* file in *SITE_DIR/app/modules/people* .
+  This step is only necessary if you're providing this behavior to included modules.
+* Implement the *getModuleNavigationData($moduleNavData)* method. This method will include an associative
+  array of information for each module suitable for the *springboard* or *list item* templates. It
+  will include keys such as:
+
+  * *title* - The title of the module.
+  * *subtitle* - The subtitle of the module. Currently only used in the list view display mode
+  * *url* - The url to the module. Defaults to /moduleid. Should only be changed in unusual circumstances
+  * *selected* - Whether this module is selected. This is used by the tablet interface since the nav bar
+    is persistent.
+  * *img* - A URL to the module icon. The default is /modules/home/images/{moduleID}.{$this->imageExt}. 
+  * *class* - The CSS class (space delimited) 
+  
+  Your implementation should alter the values as necessary and return the updated associative array.   
+  If you wish the module to be hidden, return FALSE rather than the array.
+  
+The following is an example of a module that shows a different title based on the time of day, and
+will be invisible during the early morning and nighttime hours.
+  
+.. code-block:: php
+
+    <?php
+    
+    class MyWebModule
+    {
+        protected function getModuleNavigationData($moduleNavData) {
+            //get the current hour
+            $hour = date('H');
+        
+            if ($hour >= 9 && $hour < 12) {
+                //it's between 9 am and noon 
+                $moduleNavData['title'] = 'Good Morning';
+            } elseif ($hour >=12 && $hour < 18) {
+                //it's between noon and 6pm
+               $moduleNavData['title'] = 'Good Afternoon';
+            } elseif ($hour < 21) {
+                //it's between 6pm and 9pm
+                $moduleNavData['title'] = 'Good Evening';
+            } else {
+                //it's in the evening or early morning. make the module invisible
+                return false;
+            }
+            
+            //you must return the updated array
+            return $moduleNavData;
+        }
+    }
+    
+It is very important that any logic you handle in this method complete quickly as this method
+is run very frequently and would be run on EVERY page in the tablet interface. It may be useful to
+cache information if it is based on external data.

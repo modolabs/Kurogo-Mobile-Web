@@ -174,6 +174,18 @@ Site settings
 * *AUTODETECT_PHONE_NUMBERS* - Turn this off to prevent the auto detection of telephone numbers in 
   content. This is primarily only supported in iOS devices at this time.
   
+  
+-------
+Modules
+-------
+
+* *DYNAMIC_MODULE_NAV_DATA*  - This value determines whether
+  modules can present dynamic data on the navigation home screen. This could include dynamic titles, 
+  images or other information. If you are not providing dynamic data, then you should turn off this
+  option. It is off by default.
+  
+See :ref:`dynamic_nav_data` for more information
+  
 ---------
 Analytics
 ---------
