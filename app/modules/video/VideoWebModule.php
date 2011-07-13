@@ -99,6 +99,10 @@ class VideoWebModule extends WebModule
         // Categories / Sections
         
         $section = $this->getArg('section', $this->getDefaultSection());
+        if (!isset($this->feeds[$section])) {
+            $section = $this->getDefaultSection();
+        }
+        
         $this->assign('currentSection', $section);
         $this->assign('sections'      , VideoModuleUtils::getSectionsFromFeeds($this->feeds));
         
