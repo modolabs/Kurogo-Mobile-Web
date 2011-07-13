@@ -154,3 +154,8 @@ Internal methods
   Support for other methods requires support from the remote server. The default method is *GET*
 * *setTimeout($timeout)* - sets the timeout (in seconds) for the remote request. 
 
+.. _kurogoobject_interface:
+
+======================
+KurogoObject Interface
+======================

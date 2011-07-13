@@ -4,12 +4,12 @@ Overview
 
 Kurogo is a PHP framework for delivering high quality, data driven customizable content to a wide 
 range of mobile devices. Its strengths lie in the customizable system that allows you to adapt 
-content from a variety of sources and easily present that to mobile devices from feature phones, 
-to early generation smart phones, to modern devices and tablets.The mobile web component exists 
-as a based web application served using PHP. This application is hosted on a web server and users 
+content from a variety of sources, and easily present that to a range of mobile devices from feature phones, 
+early generation smart phones, to modern devices and tablets. The mobile web component exists 
+as a web based application served using PHP. This application is hosted on a web server and users 
 access it using the web browser on their mobile device.
  
-It is available under a liberal open source MIT license. This mean you are free to download, install,
+It is available under a liberal open source MIT license. This means you are free to download, install,
 copy, modify and use the software as you see fit. 
 
 =======
@@ -36,8 +36,8 @@ An important feature of Kurogo is the ability to detect the device being used. B
 have different capabilities and performance characteristics, classifying devices is critical to 
 giving the user the best experience possible while still supporting a wide variety of devices. 
 
-Kurogo classifies devices by *type* and *platform*. The type is a generic bucket of devices that
-outlines the device's basic capabilities: it's level of CSS support, javascript, image handling,etc.
+Kurogo classifies devices by *pagetype* and *platform*. The pagetype is a generic classification that
+outlines the device's basic capabilities: its level of CSS support, javascript, image handling, etc.
 The platform is the specific operating system/browser used. Each of these values can be used to 
 provide a customized experience for devices. Kurogo already has a series of templates and css
 files that provides this experience for the included modules and common user interface elements.
@@ -59,7 +59,8 @@ data into your application. By abstracting the details of retrieving and parsing
 can respond to a variety of data sources. Most modules will use a subclass of *DataController*. Each
 data controller has an object that is a subclass of *DataParser* that takes the resulting data and
 creates an appropriate PHP structure. Through configuration you can customize which DataController and
-DataParser are used in a request which can influence the structures that get used.
+DataParser are used in a request which can influence the structures that get used. You can also create
+your own Data Controllers and Data Parsers to handle the unique qualities of your site's data.
 
 ------------------
 Code Customization

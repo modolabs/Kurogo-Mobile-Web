@@ -56,7 +56,7 @@ Inside the *hello/templates* directory create a file named *index.tpl* that cont
 
       {include file="findInclude:common/templates/header.tpl"}
     
-      <h1 class="focal">Hello World!</h1>
+      <h1 class="focal">{$message}</h1>
     
       {include file="findInclude:common/templates/footer.tpl"}
 
@@ -81,10 +81,3 @@ on your local machine go to :kbd:`http://localhost:8888/hello`. If successful yo
 
 Congratulations! You've just built a simple module.
 
-.. seealso::
-
-  :doc:`modulenew`
-    Detailed explanation of creating a new module.
-
-  :doc:`moduleextend`
-    Detailed explanation of extending an existing module

@@ -3,7 +3,7 @@ Getting Support
 ###############
 
 As an open source project, Kurogo does not include formal support. There are a number of outlets to
-receive informal support, as well as options for paid formal support.
+receive informal support, as well as options for paid support.
 
 ===================
 Kurogo Google Group
@@ -39,6 +39,6 @@ available in the following areas:
 Professional Services
 =====================
 
-Modo Labs is also pleased to offer professional development and design services for helping companies
+Modo Labs is also pleased to offer professional development and design services for helping users
 with more advanced needs including new modules, integration, or user experience and interface design.
 Please contact *sales@modolabs.com* for more information

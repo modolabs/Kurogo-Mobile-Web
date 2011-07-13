@@ -2,7 +2,7 @@
 Device Detection
 #################
 
-One of the strong features of the Kurogo framework is the ability to detect various devices and 
+One of the powerful features of the Kurogo framework is the ability to detect various devices and 
 format content based on that device's capabilities. To support the classification of devices, the 
 framework uses a Device Detection Server that contains a database of devices and outputs a normalized
 set of properties.
@@ -17,10 +17,10 @@ that contains a series of patterns and will return the values that match that pa
 you to control the entire process of detecting devices. 
 
 There is also an external device detection service available. The advantage of this service is that it
-will contain a more up to date database of new devices. There are 2 urls available. One is suitable for
+will contain a more up-to-date database of new devices. There are 2 urls available. One is suitable for
 development and one for production. 
 
-See :ref:`Device Detection Configuration <devicedetection_config>`  for specific configuration values.
+See :ref:`Device Detection Configuration <devicedetection_config>` for specific configuration values.
 
 ===========
 Data Format
@@ -48,7 +48,7 @@ are located in *SITE_DIR/config/site.ini*:
 * *MOBI_SERVICE_VERSION* - Includes the version of device detection to use. Provided for compatibility.
 * *MOBI_SERVICE_USE_EXTERNAL* - Boolean. If 0, Kurogo will use the internal device detection server. If 1 it will use an external server
 * *MOBI_SERVICE_FILE* - Location of device detection SQLite database if using internal detection. (typically located in LIB_DIR/deviceData.db)
-* *MOBI_SERVICE_URL* - Url of device detection server if using external detection
+* *MOBI_SERVICE_URL* - URL of device detection server if using external detection
 
   * (Development) https://modolabs-device-test.appspot.com/api/
   * (Production) https://modolabs-device.appspot.com/api/
@@ -64,8 +64,9 @@ Debugging Options
   If you feel a device is improperly classified, please send a note to kurogo-dev@googlegroups.com with 
   the user agent of the device/browser. 
 * *DEVICE_DEBUG* - When turned on, this permits you to change the device pagetype and platform used for a
-  given request. This is useful to test behavior and style for other devices that you do not have in
-  your desktop browser. Simply prepend /device/pagetype-platform/ to your request:
+  given request. This is useful to test behavior and style for other devices that you do not have in your
+  possession using your desktop browser. Simply prepend /device/pagetype-platform/ to your request:
   
   * http://server/device/basic/home
   * http://server/device/tablet-ipad/news
+  

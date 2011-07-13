@@ -117,6 +117,9 @@ for certain modules in a production environment.
 Keep in mind that this setting is independent of -local files. -local files will override any option
 presuming *CONFIG_IGNORE_LOCAL* is not enabled. 
 
+Kurogo has included a series of example -production.ini files to indicate recommended values for production 
+servers
+
 -------------------------------
 Retrieving Configuration Values
 -------------------------------
@@ -183,7 +186,8 @@ Analytics
 --------------
 Temp Directory
 --------------
-* *TMP_DIR* - This should be set to your system's temporary directory (usually /tmp)
+* *TMP_DIR* - This should be set to your a writable temporary directory. If this entry is blank, it
+  will use the system default temporary directory.
 
 ------
 Themes
