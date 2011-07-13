@@ -159,3 +159,9 @@ Internal methods
 ======================
 KurogoObject Interface
 ======================
+
+In order to present a common interface for retrieving data, the KurogoObject interface has been created.
+Currently this interface contains no methods. It's presence exists to ensure that any module that
+exposes a search mechanism and participates in :doc:`module interaction <moduleinteraction>` uses
+objects. In the future, this interface may have required methods to promote certain object oriented
+design principles. 
