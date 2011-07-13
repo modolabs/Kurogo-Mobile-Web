@@ -37,6 +37,14 @@ abstract class OAuthProvider
             return $this->tokenSecret;
         }
     }
+    
+    public function canRetrieve() {
+        return strlen($this->getToken(self::TOKEN_TYPE_ACCESS))>0;
+    }
+
+    public function canPost() {
+        return strlen($this->getToken(self::TOKEN_TYPE_ACCESS))>0;
+    }
 
     public function reset() {
         $this->setToken(null, null, null);
