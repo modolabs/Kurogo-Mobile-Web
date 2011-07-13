@@ -622,7 +622,10 @@ abstract class WebModule extends Module {
 
                 if (Kurogo::getOptionalSiteVar('DYNAMIC_MODULE_NAV_DATA', false)) {
                     $module = WebModule::factory($moduleID, false, array(), false); // do not initialize
-                    $modules[$type][$moduleID] = $module->getModuleNavigationData($moduleNavData);
+                    
+                    if ($moduleNavData = $module->getModuleNavigationData($moduleNavData)) {
+                        $modules[$moduleNavData['type']][$moduleID] = $moduleNavData;
+                    }
                 } else {
                     $modules[$type][$moduleID] = $moduleNavData;
                 }
