@@ -43,7 +43,8 @@ abstract class OAuthProvider
     }
     
     public function auth($options, &$userArray) {
-        if (isset($options['startOver']) && $options['startOver']) {
+        $startOver = isset($options['startOver']) && $options['startOver'];
+        if ($startOver) {
             $this->reset();
         }
         
@@ -64,6 +65,8 @@ abstract class OAuthProvider
                 error_log("Error getting Access token");
                 return AUTH_FAILED;
             }
+        } elseif ($this->manualVerify && !$startOver) {
+            return AUTH_OAUTH_VERIFY;
         } else {
         
             //redirect to auth page
