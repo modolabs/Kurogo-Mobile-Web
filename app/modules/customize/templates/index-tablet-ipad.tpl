@@ -30,8 +30,8 @@
       <li>
         <a name="{$id}"></a>
         <input type="checkbox" name="{$id}" checked="true" value="" {if !$info['disableable']}class="required prefs_{$moduleID}"{/if} />
-        <a class="title" href="../{$id}/" style="background: url('/modules/{$moduleID}/images/{$id}-tiny.png') no-repeat left;">
-          {$info['title']}
+        <a class="title" href="../{$id}/">
+          <img src="/modules/home/images/{$id}.png" width="30" height="30" class="homeicon">{$info['title']}
         </a>
         <div class="draghandle"></div>
       </li>

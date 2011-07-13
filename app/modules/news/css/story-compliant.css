@@ -1,25 +1,16 @@
+body.NewsModule #navbar, .news {
+	/* Background color for news listing and story; should be white in most cases */
+    background-color: #fff;
+}
 .news {
     margin-top: -9px;
     padding: 10px;
 }
+
 #storybody div img {
   width: auto !important;
   height: auto !important;
   max-width: 100% !important;
-}
-
-.slugline {
-    margin: 0;
-    margin-bottom: 20px;
-    padding: 0;
-}
-
-.byline {
-    min-height:40px;
-	margin-top: -6px;
-	padding-bottom: 0.33em;
-	margin-bottom: 1.33em;
-    border-bottom: 1px dotted #999;
 }
 
 #storysubhead

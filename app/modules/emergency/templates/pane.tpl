@@ -1,7 +1,7 @@
 {if $hasEmergencyFeed}
 <div id="emergencyNotice">
     {if !$emergencyFeedEmpty}
-      <h2>{$title}</h2>
+      <h2 class="title">{$title}</h2>
       <p class="smallprint">{$date|date_format:"%l:%M %p, %a %b %e, %Y"}</p>
       {$content}
     {else}

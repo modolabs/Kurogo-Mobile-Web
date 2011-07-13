@@ -1,5 +1,5 @@
 {if $bookmarkURL}
-<span id="bookmark">
+<span id="bookmark" class="nonfocal">
     Bookmark
     <span class="fineprint">
         (<a href="{$bookmarkURL}">{$bookmarkAction}</a>)

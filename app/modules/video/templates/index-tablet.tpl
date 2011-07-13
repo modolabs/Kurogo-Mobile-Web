@@ -6,7 +6,7 @@
       <tr><td id="categoryformcontainer">
         <form method="get" action="index.php">
           <fieldset>
-            <label for="section">Section:</label>
+            <label for="section" class="formlabel">Section:</label>
             {$categorySelect}
             
             {foreach $hiddenArgs as $arg => $value}

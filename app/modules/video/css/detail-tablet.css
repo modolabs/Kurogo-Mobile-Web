@@ -1,11 +1,10 @@
-.video {
-    padding: 10px;
+body.VideoModule #navbar, .video {
+	/* Background color for video listing and detail; should be white in most cases */
+    background-color: #fff;
 }
 
-.slugline {
-    margin: 0;
-    margin-bottom: 20px;
-    padding: 0;
+.video {
+    padding: 10px;
 }
 
 .byline {

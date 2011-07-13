@@ -152,7 +152,8 @@ select {
 	margin: 0 0.2em 0 0;
 }
 
-.submitbutton {
+.combobuttom, .submitbutton {
+	/* Form submit buttons with text label. Duplicate classes to support Kurogo pre-v1.2 */
 	font-size: 100%;
 	line-height: 1em;
 	height: 1.8em;
@@ -529,28 +530,11 @@ ul.focal li:first-child {
 	padding: 4px 9px 4px 7px;
 }
 
-.announcements {	   
-	padding: 0;	   
-	margin: 4px 10px; 
-	font-weight: normal;
-	background-color: #d8e3f2;
-	border-bottom: none;
-}
-
-.announcements li {	
-	padding: 8px;
-	font-size: 82.353%;
-	line-height: 1.357em;
-	color: #202020;
-}
-
 .sidenav {
 	margin: 12px 8px;
-	color: #a0a09f;
 }
 
 .sidenav a {
-	color: #1a1611;
 	padding: 6px 2px;
 	text-decoration: none;
 }

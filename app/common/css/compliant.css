@@ -264,6 +264,7 @@ input.formbutton {
 	background-repeat: no-repeat;
 	background-position: center left;
 	-webkit-border-radius: 0px;
+	border-radius: 0px;
 }
 .formbuttonclose {
   display: inline-block;
@@ -284,6 +285,7 @@ input.formbutton {
 	margin-bottom: 8px;
 	vertical-align: -12%;
 	-webkit-border-radius: 12px;
+	border-radius: 12px;
 }
 
 .required {
@@ -330,7 +332,7 @@ input.formbutton {
 
 a.homelink {
     background-image: none;
-    margin-left: -2px;
+    margin-left: 0;
     margin-right: -5px;
     padding: 0!important;	/* !important necessitated by IE for WP7 grrr */
     width: 62px;
@@ -445,8 +447,8 @@ a.module img {
 }
 
 .springboard a img {
-	height: 50px;
-	width: 50px;
+	height: 60px;
+	width: 60px;
 	margin-bottom: 1px;
 }
 
@@ -495,6 +497,7 @@ a.module img {
 	padding: 0;	   
 	margin: 9px; 
 	border: 1px solid #ccc;
+	-webkit-border-radius: 9px;	
 	border-radius: 9px;	
 }
 
@@ -522,6 +525,7 @@ a.module img {
 	line-height: 1.2em;
 	text-decoration: none;
 	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
 }
 
 .nav a  {
@@ -534,6 +538,7 @@ a.module img {
 	line-height: 1.2em;
 	text-decoration: none;
 	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
 }
 
 .nav li.icon {
@@ -561,6 +566,7 @@ a.module img {
 .focal .nav {
 	margin: 10px -13px;
 	-webkit-border-radius: 0px;	
+	border-radius: 0px;	
 }
 
 ul.focal {
@@ -584,6 +590,8 @@ ul.focal li:first-child {
 	border: none;
 	-webkit-border-bottom-right-radius: 8px;	
 	-webkit-border-bottom-left-radius: 8px;	
+	bottom-right-radius: 8px;	
+	bottom-left-radius: 8px;	
 }
 
 .tabbody .results {
@@ -591,6 +599,8 @@ ul.focal li:first-child {
 	border-width: 1px 0 0 0;
 	-webkit-border-bottom-right-radius: 8px;	
 	-webkit-border-bottom-left-radius: 8px;	
+	border-bottom-right-radius: 8px;	
+	border-bottom-left-radius: 8px;	
 }
 
 .tabbody .nested {
@@ -629,6 +639,7 @@ ul.focal li:first-child {
 	line-height: 1.2em;
 	text-decoration: none;
 	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
 }
 
 .results a:visited {
@@ -676,6 +687,7 @@ ul.focal li:first-child {
 	margin: 10px; 
 	padding: 0;	   
 	border: 1px solid #ccc;
+	-webkit-border-radius: 8px;	
 	border-radius: 8px;	
 }
 
@@ -701,6 +713,7 @@ ul.focal li:first-child {
 	text-decoration: none;
 	color: #333;
 	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
 }
 
 .secondary a:visited {
@@ -723,32 +736,14 @@ ul.focal li:first-child {
 	line-height: 1em;
 	padding: 4px 9px 4px 7px;
 	-webkit-border-radius: 10px;
-}
-
-.announcements {	   
-	padding: 0;	   
-	margin: 4px 10px; 
-	font-weight: normal;
-	background-color: #d8e3f2;
-	border-bottom: none;
-	-webkit-border-radius: 9px;	
-	border-radius: 9px;	
-}
-
-.announcements li {	
-	padding: 8px;
-	font-size: 83.353%;
-	line-height: 1.357em;
-	color: #202020;
+	border-radius: 10px;
 }
 
 .sidenav {
 	margin: 12px 8px;
-	color: #a0a09f;
 }
 
 .sidenav a {
-	color: #1a1611;
 	padding: 6px 2px;
 	text-decoration: none;
 }
@@ -1061,6 +1056,8 @@ h2.icon {
 	margin-right: 4px;
 	-webkit-border-top-right-radius: 7px;	
 	-webkit-border-top-left-radius: 7px;	
+	border-top-right-radius: 7px;	
+	border-top-left-radius: 7px;	
 	text-align: center;
 }
 
@@ -1096,6 +1093,8 @@ h2.icon {
 	border-top: 1px solid #bbb;
 	-webkit-border-bottom-right-radius: 8px;	
 	-webkit-border-bottom-left-radius: 8px;	
+	border-bottom-right-radius: 8px;	
+	border-bottom-left-radius: 8px;	
 }
 
 .shaded #tabbodies {
@@ -1125,6 +1124,7 @@ h2.icon {
 	list-style-type: none;
 	height: 32px;
 	-webkit-border-radius: 10px;	
+	border-radius: 10px;	
 	margin: 0;
 	padding: 0;
 	left: 0;
@@ -1146,8 +1146,9 @@ h2.icon {
 	color: #fff;
 	background: url(/common/images/tabstrip.jpg) repeat-x;
 	-webkit-background-origin: padding-box; -webkit-background-clip: content-box; 
-	border-right: 1px solid #9fb8d3;
+	border-right: 1px solid #999;
 	-webkit-border-radius: 1px;	
+	border-radius: 1px;	
 }	
 
 #tabstrip li.active a {
@@ -1157,11 +1158,15 @@ h2.icon {
 #tabstrip li:first-child a {
 	-webkit-border-bottom-left-radius: 10px;	
 	-webkit-border-top-left-radius: 10px;	
+	border-bottom-left-radius: 10px;	
+	border-top-left-radius: 10px;	
 }
 
 #tabstrip li:last-child a {
 	-webkit-border-bottom-right-radius: 10px;	
 	-webkit-border-top-right-radius: 10px;	
+	border-bottom-right-radius: 10px;	
+	border-top-right-radius: 10px;	
 }
 
 .twotabs li {
@@ -1233,45 +1238,6 @@ h2.icon {
 	bottom: 0px;
 }
 
-/*
-#scrim {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-	z-index: 10000;
-	opacity: 0.65;
-	background-color: #212b34
-}
-*/
-#message {
-	position: absolute;
-	z-index: 100001;
-	top: 50%;
-	left: 50%;
-	font-size: 83.236%;
-	line-height: 1.2em;
-	padding: 20px 10px;
-	width: 230px;
-	margin-left: -125px;
-	margin-top: -50px;
-	background-color: #fff;
-	color: #000;
-	opacity: 0.8;
-	-webkit-border-radius: 10px;
-	text-align: center;
-	display: table-cell;
-	vertical-align: middle;
-}
-
-#message img.busybox {
-	display: block;
-	position: relative;
-	left: 50%;
-	margin-left: -13px;
-	margin-top: 16px;
-}
 
 .devicedetection {
   border: none;
@@ -1324,6 +1290,7 @@ h2.icon {
 	width: 220px;
 	margin-left: -130px;
 	-webkit-border-radius: 10px;
+	border-radius: 10px;
 	padding: 10px 20px;
 	background: #eee; /* Non-CSS3 browsers */
 	/* This doesn't work with the Palm Pre: 
@@ -1415,6 +1382,61 @@ h2.icon {
     font-size: 80%;
     padding-top: 5px;
 }
+
+
+/* Login-related buttons */
+
+.loginbuttons {
+	margin-top: 0.75em;
+	margin-bottom: 0.75em;
+}
+
+.loginbuttons li {
+	padding-left: 42px;
+	background-size: 24px;
+	background-position: 10px;
+	background-repeat: no-repeat;
+}
+
+.loginbuttons a {
+	margin-left: -39px;
+	padding-left: 39px;
+}
+
+.loginbuttons li.facebook {
+	background-image: url(/common/images/button-facebook-24.png);
+}
+
+.loginbuttons li.google {
+	background-image: url(/common/images/button-google-24.png);
+}
+
+.loginbuttons li.oauth {
+	background-image: url(/common/images/button-oauth-24.png);
+}
+
+.loginbuttons li.openid {
+	background-image: url(/common/images/button-openid-24.png);
+}
+
+.loginbuttons li.twitter {
+	background-image: url(/common/images/button-twitter-24.png);
+}
+
+.loginbuttons li.windows {
+	background-image: url(/common/images/button-windows-24.png);
+}
+
+.loginbuttons li.noauth {
+	background-image: none;
+	padding-left: 10px;
+}
+
+.loginbuttons li.noauth a {
+	margin-left: -8px;
+	padding-left: 8px;
+}
+
 
 
 /* firefox adds these a tags when you edit the dom */

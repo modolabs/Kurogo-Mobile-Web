@@ -14,7 +14,7 @@
     {if $item['img']}
       <img src="{$item['img']}" class="thumbnail" alt="{$item['title']}" />
     {/if}
-	    <div class="ellipsis smallprint" id="ellipsis_{$ellipsisId}">
+	    <div class="ellipsis" id="ellipsis_{$ellipsisId}">
 	          <div class="title">{$item['title']}</div>
 	          {$item['subtitle']}
 	    </div>

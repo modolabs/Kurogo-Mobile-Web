@@ -1,15 +1,6 @@
-.slugline {
-    margin: 0;
-    margin-bottom: 20px;
-    padding: 0;
-}
-
-.byline {
-    min-height:40px;
-	margin-top: -6px;
-	padding-bottom: 0.33em;
-	margin-bottom: 1.33em;
-    border-bottom: 1px dotted #999;
+body.VideoModule #navbar, .video {
+	/* Background color for video listing and detail; should be white in most cases */
+    background-color: #fff;
 }
 
 #storysubhead
