@@ -1,7 +1,7 @@
 <?php
 
 define('ROOT_DIR', dirname(__FILE__).'/..'); 
-define('KUROGO_VERSION', '1.2');
+define('KUROGO_VERSION', '1.2 RC1');
 
 /* this is a singleton class */
 class Kurogo
