@@ -336,6 +336,22 @@ abstract class DataController
         $this->setTotalItems($parser->getTotalItems());
         return $parsedData;
     }
+
+    /**
+     * Parse a file. This method will also attempt to set the total items in a request by calling the
+     * data parser's getTotalItems() method
+     * @param string $file a file containing the contents of the data
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    protected function parseFile($file, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        $parsedData = $parser->parseFile($file);
+        $this->setTotalItems($parser->getTotalItems());
+        return $parsedData;
+    }
     
     /**
      * Return the parsed data. The default implementation will retrive the data and return value of
@@ -344,8 +360,24 @@ abstract class DataController
      * @return mixed the parsed data. This value is data dependent
      */
     public function getParsedData(DataParser $parser=null) {
-        $data = $this->getData();
-        return $this->parseData($data, $parser);
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+
+        switch ($parser->getParseMode()) 
+        {
+            case DataParser::PARSE_MODE_STRING:
+                $data = $this->getData();
+                return $this->parseData($data, $parser);
+                break;
+        
+           case DataParser::PARSE_MODE_FILE:
+                $file = $this->getDataFile();
+                return $this->parseFile($file, $parser);
+                break;
+            default:
+                throw new Exception("Unknown parse mode");
+        }
     }
     
     /**
@@ -409,11 +441,38 @@ abstract class DataController
     }
     
     /**
+     * Retrieves the data and saves it to a file. 
+     * @return string a file containing the data
+     */
+    public function getDataFile() {
+        $dataFile = $this->cacheFilename() . '-data';
+        $cache = $this->getCache();
+        if ($this->useCache) {
+            if ($cache->isFresh($dataFile)) {
+                $data = $cache->read($dataFile);
+
+            } else {
+                if ($data = $this->getData()) {
+                    $cache->write($data, $dataFile);
+                } elseif ($this->useStaleCache) {
+                    // return stale cache if the data is unavailable
+                    $data = $this->read($dataFile);
+                }
+            }
+        } else {
+            $data = $this->getData();
+            $cache->write($data, $dataFile);
+        }
+        
+        return $cache->getFullPath($dataFile);
+    }
+    
+    /**
      * Retrieves the data.  The default implementation will use the url returned by the url() 
      * function. If the cache is still fresh than it will return the data saved in the cache,
      * otherwise it will retrieve the data using the retrieveData() method and save the cache.
-     * Subclasses should only need to override this method if an alternative caching scheme is
-     * @param int a unix timestamp or null to use the current time
+     * Subclasses should only need to override this method if an alternative caching scheme is needed.
+     * @return string the data
      */
     public function getData() {
 
