@@ -150,8 +150,7 @@ class CalendarDataController extends DataController
     
     public function getEvent($id) {
         if (!$this->calendar) {
-            $data = $this->getData();
-            $this->calendar = $this->parseData($data);
+            $this->calendar = $this->getParsedData();
         }
         
         return $this->calendar->getEvent($id);
@@ -160,8 +159,7 @@ class CalendarDataController extends DataController
     protected function events($limit=null)
     {
         if (!$this->calendar) {
-            $data = $this->getData();
-            $this->calendar = $this->parseData($data);
+            $this->calendar = $this->getParsedData();
         }
 
         $startTimestamp = $this->startTimestamp() ? $this->startTimestamp() : CalendarDataController::START_TIME_LIMIT;
