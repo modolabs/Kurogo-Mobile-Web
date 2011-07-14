@@ -61,13 +61,14 @@ function checkVersion() {
 function processCheckVersion(data) {
     KUROGO_LOCAL_VERSION = data.local;
     KUROGO_CURRENT_VERSION = data.current;
+    var upToDate = data.uptodate;
     
     var li = $('<li />');
     li.append('<label>Kurogo Version</label>');
-    if (KUROGO_LOCAL_VERSION != KUROGO_CURRENT_VERSION) {
-        li.append('<div class="infotext error">Your version of Kurogo is not the most recent version. The most recent version is <b>' + KUROGO_CURRENT_VERSION +'</b>. Your version is <b>' + KUROGO_LOCAL_VERSION + '</b>. Please visit <a href="http://modolabs.com/kurogo">http://modolabs.com/kurogo</a>.</div>');
+    if (upToDate) {
+        li.append('<div class="infotext">Your version of Kurogo (' + KUROGO_LOCAL_VERSION +') is up to date (' + KUROGO_CURRENT_VERSION +')</div>');
     } else {
-        li.append('<div class="infotext">Your version of Kurogo is up to date (' + KUROGO_LOCAL_VERSION +')</div>');
+        li.append('<div class="infotext error">Your version of Kurogo is not the most recent version. The most recent version is <b>' + KUROGO_CURRENT_VERSION +'</b>. Your version is <b>' + KUROGO_LOCAL_VERSION + '</b>. Please visit <a href="http://modolabs.com/kurogo">http://modolabs.com/kurogo</a>.</div>');
     }
 
     $('#adminFields').append(li);
