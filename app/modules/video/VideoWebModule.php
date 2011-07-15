@@ -136,7 +136,7 @@ class VideoWebModule extends WebModule
                 if ($this->page == 'search') {
                     if ($filter = $this->getArg('filter')) {
                         $searchTerms = trim($filter);
-                        $controller->search($searchTerms, $start, $maxPerPage);
+                        $items = $controller->search($searchTerms, $start, $maxPerPage);
                         $this->assign('searchTerms', $searchTerms);
                     } else {
                         $this->redirectTo('index', array('section'=>$section), false);
