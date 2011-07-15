@@ -207,7 +207,13 @@ class DiskCache {
   public function getModified($filename) {
     if ($this->exists($filename)) {
       $path = $this->getFullPath($filename);
-      clearstatcache(true, $path);
+
+      //clear_realpath_cache and filename parameters valid starting in 5.3
+      if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+          clearstatcache(true, $path);
+      } else {
+          clearstatcache(); 
+      }
       return filemtime($path);
     }
     return null;
