@@ -129,7 +129,7 @@ class CalendarDataController extends DataController
     public function getItem($id, $time=null)
     {
         //use the time to limit the range of events to seek (necessary for recurring events)
-        if ($time) {
+        if ($time = filter_var($time, FILTER_VALIDATE_INT)) {
             $start = new DateTime(date('Y-m-d H:i:s', $time));
             $start->setTime(0,0,0);
             $end = clone $start;
