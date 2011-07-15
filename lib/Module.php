@@ -125,13 +125,19 @@ abstract class Module
             $this->configModule = $this->id;
         }
     }
+    
+    protected function isDisabled() {
+        return 
+            Kurogo::getOptionalSiteVar($this->configModule, false, 'disabled_modules') ||
+            $this->getModuleVar('disabled','module');
+    }    
    
     /**
       * Common initialization. Checks access.
       */
     protected function init() {
 
-        if ($this->getModuleVar('disabled','module')) {
+        if ($this->isDisabled()) {
             $this->moduleDisabled();
         }
 
