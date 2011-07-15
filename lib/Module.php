@@ -219,17 +219,25 @@ abstract class Module
     }
 
     /**
-      * Convenience method for retrieving a key from an array
+      * Convenience method for retrieving a key from an array. It can also optionally apply a filter to the value
       * @param array $args an array to search
       * @param string $key the key to retrieve
       * @param mixed $default an optional default value if the key is not present
+      * @param int $filter a valid filter type from filter_var. Default applies no filter. If the filter fails it will return the default value
+      * @param mixed $filterOptions options, the options for the filter (see filter_var)
       * @return mixed the value of the or the default 
       */
-    protected static function argVal($args, $key, $default=null) {
+    protected static function argVal($args, $key, $default=null, $filter=null, $filterOptions=null) {
         if (isset($args[$key])) {
-          return $args[$key];
+            $value = $args[$key];
+            if ($filter) {
+                if (($value = filter_var($value, $filter, $filterOptions))===FALSE) {
+                    $value = $default;
+                }
+            }
+            return $value;
         } else {
-          return $default;
+            return $default;
         }
     }
   
@@ -237,10 +245,12 @@ abstract class Module
       * Returns a key from the request arguments
       * @param string $key the key to retrieve
       * @param mixed $default an optional default value if the key is not present
+      * @param int $filter a valid filter type from filter_var. Default applies no filter 
+      * @param mixed $filterOptions options, the options for the filter (see filter_var)
       * @return mixed the value of the or the default 
       */
-    protected function getArg($key, $default='') {
-        return self::argVal($this->args, $key, $default);
+    protected function getArg($key, $default='', $filter=null, $filterOptions=null) {
+        return self::argVal($this->args, $key, $default, $filter, $filterOptions);
     }
 
     /**
