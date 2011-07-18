@@ -18,6 +18,24 @@ class NewsWebModule extends WebModule {
   protected $showImages = true;
   protected $showPubDate = false;
   protected $showAuthor = false;
+  
+  public static function validateFeed($section, $feedData) {
+        if (!self::argVal($feedData, 'TITLE')) {
+            return new KurogoError(1, 'Title not specified','Feed title cannot be blank');
+        }
+
+        if (!isset($feedData['CONTROLLER_CLASS'])) {
+            $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
+        }
+        
+        try {
+            $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        } catch (Exception $e) {
+            return KurogoError::errorFromException($e);
+        }
+        
+        return true;
+  }
 
   private function feedURLForFeed($feedIndex) {
     return isset($this->feeds[$feedIndex]) ? 
