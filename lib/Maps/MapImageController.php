@@ -42,23 +42,10 @@ abstract class MapImageController
 
     public static function factory($imageClass, $baseURL)
     {
-        switch ($imageClass) {
-            case 'WMSStaticMap':
-                $controller = new WMSStaticMap($baseURL);
-                break;
-            case 'ArcGISStaticMap':
-                $controller = new ArcGISStaticMap($baseURL);
-                break;
-            case 'GoogleJSMap':
-                $controller = new GoogleJSMap();
-                break;
-            case 'ArcGISJSMap':
-                $controller = new ArcGISJSMap($baseURL);
-                break;
-            case 'GoogleStaticMap':
-            default:
-                $controller = new GoogleStaticMap();
-                break;
+        if (isset($baseURL)) {
+            $controller = new $imageClass($baseURL);
+        } else {
+            $controller = new $imageClass();
         }
         return $controller;
     }
