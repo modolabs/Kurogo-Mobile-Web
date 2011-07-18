@@ -1,6 +1,7 @@
 {if $shareEmailURL || $shareURL}
+{$shareTitle|default:'Share this item'}:&nbsp;
   {if $shareEmailURL}
-    <a href="{$shareEmailURL}">Email this article</a>
+    <a href="{$shareEmailURL}">Email</a>
   {/if}
   {if $shareURL}
     &nbsp;|&nbsp;
