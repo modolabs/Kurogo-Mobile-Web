@@ -230,6 +230,7 @@ class VideoWebModule extends WebModule
 
                     if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
                         $this->assign('shareEmailURL',    $this->buildMailToLink("", $video->getTitle(), $body));
+                        $this->assign('shareTitle','Share this video');
                         $this->assign('videoURL',         $video->getURL());
                         $this->assign('shareRemark',      $video->getTitle());
                     }

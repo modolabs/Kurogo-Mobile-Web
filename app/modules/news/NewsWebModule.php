@@ -190,6 +190,7 @@ class NewsWebModule extends WebModule {
         if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
             $body = $story->getDescription()."\n\n".$story->getLink();
             $shareEmailURL = $this->buildMailToLink("", $story->getTitle(), $body);
+            $this->assign('shareTitle','Share this story');
             $this->assign('shareEmailURL', $shareEmailURL);
             $this->assign('shareRemark',   $story->getTitle());
             $this->assign('storyURL',      $story->getLink());
