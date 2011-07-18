@@ -250,7 +250,7 @@ class VideoWebModule extends WebModule
                           $this->generateBookmarkOptions($cookieID);
                         }
                     } else {
-                        $this->setTemplatePage('videoError');
+                        $this->setTemplatePage('videoError.tpl');
                     }
     
     
