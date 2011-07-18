@@ -4,7 +4,7 @@
   <div id="sharesheet" style="display:none">
     <div id="shareback"> </div>
     <div id="sharedialog">
-      <h1>Share this story</h1>
+      <h1>{$shareTitle|default:'Share this item'}</h1>
       <ul>
         {if $shareEmailURL}
           <li>
