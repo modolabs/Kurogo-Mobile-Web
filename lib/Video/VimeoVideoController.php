@@ -122,4 +122,12 @@ class VimeoDataParser extends DataParser
 class VimeoVideoObject extends VideoObject
 {
     protected $type = 'vimeo';
+
+    public function canPlay(DeviceClassifier $deviceClassifier) {
+        if (in_array($deviceClassifier->getPlatform(), array('blackberry','bbplus'))) {
+            return false;
+        }
+
+        return true;
+    }
 }
