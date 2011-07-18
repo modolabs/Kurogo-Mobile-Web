@@ -71,6 +71,9 @@ class YouTubeDataParser extends DataParser
     protected function parseEntry($entry) {
         $video = new YouTubeVideoObject();
         $video->setURL($entry['player']['default']);
+        if (isset($entry['content'][6])) {
+            $video->setStreamingURL($entry['content'][6]);
+        }
         $video->setMobileURL($entry['content']['1']);
         $video->setTitle($entry['title']);
         $video->setDescription($entry['description']);
@@ -116,4 +119,12 @@ class YouTubeDataParser extends DataParser
 class YouTubeVideoObject extends VideoObject
 {
     protected $type = 'youtube';
+    
+    public function canPlay(DeviceClassifier $deviceClassifier) {
+        if (in_array($deviceClassifier->getPlatform(), array('blackberry','bbplus'))) {
+            return $this->getStreamingURL();
+        }
+
+        return true;
+    }
 }

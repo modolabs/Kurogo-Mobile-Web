@@ -18,6 +18,7 @@ class VideoObject implements KurogoObject
     protected $duration;
     protected $tags;
     protected $mobileURL;
+    protected $streamingURL;
     protected $stillFrameImage;
     
     public function getType() {
@@ -80,6 +81,14 @@ class VideoObject implements KurogoObject
         return $this->mobileURL;
     }
 
+    public function setStreamingURL($url) {
+        $this->streamingURL = $url;
+    }
+
+    public function getStreamingURL() {
+        return $this->streamingURL;
+    }
+
     public function setImage($image) {
         $this->image = $image;
     }
@@ -126,5 +135,10 @@ class VideoObject implements KurogoObject
         
     public function getStillFrameImage() {
         return $this->stillFrameImage;
+    }
+
+    /* subclasses should return true or false based on pagetype, platform */    
+    public function canPlay(DeviceClassifier $deviceClassifier) {
+        return true;
     }
 }
