@@ -144,7 +144,6 @@ class MapProjector {
             $this->fromProjection->setXY(array('x' => $x, 'y' => $y));
             $result = $this->formatLatLon($this->fromProjection->getLatLon(), $fmt);
         }
-
         if ($this->dstProjSpec && !isset($this->toProjection)) {
             $this->toProjection = new MapProjection($this->dstProjSpec);
         }

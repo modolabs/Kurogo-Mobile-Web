@@ -430,6 +430,8 @@ class MapProjection
                     'Lambert_Conformal_Conic' => 'lcc',
                     );
                 $this->proj = $projMap[$projcs['PROJECTION']['name']];
+            } else {
+                $this->proj = 'longlat';
             }
 
             if (isset($projcs['UNIT'], $projcs['UNIT']['unitsPerMeter'])) {

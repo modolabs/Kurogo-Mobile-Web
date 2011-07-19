@@ -10,8 +10,6 @@ class GoogleJSMap extends JavascriptMapImageController {
     protected $paths = array();
     protected $polygons = array();
 
-    protected $mapProjection = 4326;
-    
     public function setImageWidth($width) {
         if (strpos($width, '%') === FALSE) {
             $width = $width.'px';
@@ -187,7 +185,6 @@ JS;
         } else {
             $center = $this->center;
         }
-
         $template = $this->prepareJavascriptTemplate('GoogleJSMapHeader');
         $template->setValues(array(
             '___INITIAL_LATITUDE___' => $center['lat'],

@@ -77,7 +77,7 @@ class Kurogo
     
     public function addPackage($packageName) {
 
-        if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
+        if (!preg_match("/^[a-zA-Z0-9\/]+$/", $packageName)) {
             throw new Exception("Invalid Package name $packageName");
         }
     

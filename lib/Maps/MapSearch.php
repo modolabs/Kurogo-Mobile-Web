@@ -28,7 +28,7 @@ class MapSearch {
     }
 
     // tolerance specified in meters
-    public function searchByProximity($center, $tolerance=1000, $maxItems=0) {
+    public function searchByProximity($center, $tolerance=1000, $projection=null, $maxItems=0) {
         $this->searchResults = array();
 
         $resultsByDistance = array();
@@ -36,7 +36,7 @@ class MapSearch {
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             if ($controller->canSearch()) { // respect config settings
                 try {
-                    $results = $controller->searchByProximity($center, $tolerance, $maxItems);
+                    $results = $controller->searchByProximity($center, $tolerance, $projection, $maxItems);
                     // this runs a risk of eliminating search results that are the
                     // same distance away (within 1 meter) in different feeds
                     $resultsByDistance = array_merge($resultsByDistance, $results);

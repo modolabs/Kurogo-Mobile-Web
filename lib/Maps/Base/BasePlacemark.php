@@ -41,8 +41,11 @@ class BasePlacemark implements Placemark
         return $this->categories;
     }
 
-    public function addCategoryId($id) {
-        $this->categories[] = $id;
+    public function addCategoryId($id)
+    {
+        if (!in_array($id, $this->categories)) {
+            $this->categories[] = $id;
+        }
     }
 
     // Placemark interface
@@ -69,6 +72,11 @@ class BasePlacemark implements Placemark
 
     public function getStyle() {
         return $this->style;
+    }
+
+    public function setStyle(MapStyle $style)
+    {
+        $this->style = $style;
     }
     
     // setters that get used by MapWebModule when its detail page isn't called with a feature

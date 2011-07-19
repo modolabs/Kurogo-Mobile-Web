@@ -85,41 +85,26 @@ class MapDataController extends DataController implements MapFolder
         return $results;
     }
     
-    public function searchByProximity($center, $tolerance, $maxItems, $projection=null) {
-        if (isset($projection)) {
-            $projector = new MapProjector();
-            $projector->setSrcProj($projection);
-            $center = $projector->projectPoint($center);
-        }
-
-        // approximate upper/lower bounds for lat/lon before calculating GCD
-        $dLatRadians = $tolerance / EARTH_RADIUS_IN_METERS;
-        // by haversine formula
-        $dLonRadians = 2 * asin(sin($dLatRadians / 2) / cos($center['lat'] * M_PI / 180));
-
-        $dLatDegrees = $dLatRadians * 180 / M_PI;
-        $dLonDegrees = $dLonRadians * 180 / M_PI;
-
-        $min = array('lat' => $center['lat'] - $dLatDegrees, 'lon' => $center['lon'] - $dLonDegrees);
-        $max = array('lat' => $center['lat'] + $dLatDegrees, 'lon' => $center['lon'] + $dLonDegrees);
-
-        if ($this->getProjection()) {
-            $projector = new MapProjector();
-            $projector->setDstProj($this->getProjection());
-
-            $min = $projector->projectPoint($min);
-            $max = $projector->projectPoint($max);
-        }
+    public function searchByProximity($center, $tolerance, $projection, $maxItems=null)
+    {
+        $bbox = normalizedBoundingBox($center, $tolerance, $projection, $this->getProjection());
 
         $results = array();
         foreach ($this->getAllLeafNodes() as $item) {
             $geometry = $item->getGeometry();
             if ($geometry) {
                 $featureCenter = $geometry->getCenterCoordinate();
-                if ($featureCenter['lat'] <= $max['lat'] && $featureCenter['lat'] >= $min['lat']
-                    && $featureCenter['lon'] <= $max['lon'] && $featureCenter['lon'] >= $min['lon']
+                if ($featureCenter['lat'] <= $bbox['max']['lat']
+                    && $featureCenter['lat'] >= $bbox['min']['lat']
+                    && $featureCenter['lon'] <= $bbox['max']['lon']
+                    && $featureCenter['lon'] >= $bbox['min']['lon']
                 ) {
-                    $distance = greatCircleDistance($center['lat'], $center['lon'], $featureCenter['lat'], $featureCenter['lon']);
+                    // use Euclidean distance since it's hard to tell whether
+                    // we have a distorting projection or not and Euclid
+                    // is alright at small distances
+                    $distance = euclideanDistance(
+                        $bbox['center']['lat'], $bbox['center']['lon'],
+                        $featureCenter['lat'], $featureCenter['lon']);
                     if ($distance > $tolerance) continue;
 
                     // keep keys unique; give priority to whatever came first
@@ -128,7 +113,7 @@ class MapDataController extends DataController implements MapFolder
                         $intDist += 1; // one centimeter
                     }
                     $item->setField('distance', $distance);
-                    //$item->addCategoryId($this->categoryId);
+                    $item->addCategoryId($this->categoryId);
                     $results[$intDist] = $item;
                 }
             }
@@ -188,6 +173,7 @@ class MapDataController extends DataController implements MapFolder
 
     public function addDisplayFilter($type, $value)
     {
+var_dump($value);
         if ($type == 'category') {
             if ($value && !is_array($value)) {
                 $value = array($value);
@@ -221,8 +207,9 @@ class MapDataController extends DataController implements MapFolder
 
     ////// MapFolder interface
 
-    private static function listItemsAtPath(array $items, array $path=array())
+    private function listItemsAtPath(array $items, array $path=array())
     {
+var_dump($path);
         if (count($path)) {
             $firstItem = array_shift($path);
         }
@@ -230,26 +217,24 @@ class MapDataController extends DataController implements MapFolder
         $features = array();
         foreach ($items as $item) {
             if ($item instanceof MapFolder) {
-                $folders[] = $item;
+                $folders[$item->getId()] = $item;
             } elseif ($item instanceof Placemark) {
                 $features[] = $item;
             }
         }
 
         if (count($folders) && count($features)) {
-            $otherCategory = new MapBaseCategory(count($folders), 'Other places');
-            $folders[] = $otherCategory;
+            $someUniqueId = substr(md5($this->categoryId.count($folders)), 0, strlen($this->categoryId)-1);
+            $otherCategory = new MapBaseCategory($someUniqueId, 'Other places');
+            $folders[$otherCategory->getId()] = $otherCategory;
             $otherCategory->setFeatures($features);
         }
 
         if (count($folders) > 1) {
-            if (isset($firstItem)) {
-                if (count($folders) > $firstItem) {
-                    return self::listItemsAtPath(
-                        $folders[$firstItem]->getListItems(), $path);
-                }
+            if (isset($firstItem) && isset($folders[$firstItem])) {
+                return $this->listItemsAtPath(
+                    $folders[$firstItem]->getListItems(), $path);
             }
-
             return $folders;
         }
 
@@ -276,15 +261,12 @@ class MapDataController extends DataController implements MapFolder
 
     public function getListItems()
     {
-        return self::listItemsAtPath($this->items(), $this->drillDownPath);
+        return $this->listItemsAtPath($this->items(), $this->drillDownPath);
     }
 
     public function getProjection()
     {
-        if ($this->parser instanceof MapFolder) {
-            return $this->parser->getProjection();
-        }
-        return null;
+        return $this->parser->getProjection();
     }
 
     public function getCategoryId()
@@ -338,7 +320,6 @@ class MapDataController extends DataController implements MapFolder
         }
 
         $imgController->setDataProjection($this->getProjection());
-
         $placemarks = array();
 
         switch ($this->displaySetId) {
@@ -359,13 +340,12 @@ class MapDataController extends DataController implements MapFolder
         foreach ($placemarks as $placemark) {
             $imgController->addPlacemark($placemark);
         }
-
         // TODO better way to set default center coordinate
         if (count($placemarks)) {
             $lastPlacemark = end($placemarks);
             $imgController->setCenter($lastPlacemark->getGeometry()->getCenterCoordinate());
         }
-
+else { var_dump(get_class($this)." was unable to find any matching placemarks"); }
         return $imgController;
     }
 
@@ -402,7 +382,7 @@ class MapDataController extends DataController implements MapFolder
             'BASE_URL' => 'https://maps.googleapis.com/maps/api/place/search/json', // change this if we search multiple services
             );
         
-        return self::factory('MapDataController', $args);
+        return self::factory('GooglePlacesDataController', $args);
     }
 
     // DataController overrides

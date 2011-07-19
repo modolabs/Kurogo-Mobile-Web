@@ -120,6 +120,11 @@ class ArcGISJSMap extends JavascriptMapImageController {
     public function addPolygon($rings, $style=null) {
         $collapsedRings = array();
         foreach ($rings as $ring) {
+            // TODO: change addPlacemark, addPoint, etc. to make the
+            // incoming arguments more consistent
+            if ($ring instanceof MapPolyline) {
+                $ring = $ring->getPoints();
+            }
             $collapsedRings[] = $this->collapseAssociativePoints($ring);
         }
         // no style support for now
@@ -301,8 +306,8 @@ JS;
             $footer->setValues(array('___X___' => $x, '___Y___' => $y));
         } else {
             $footer->setValues(array(
-                '___X___' => $this->center['lat'],
-                '___Y___' => $this->center['lon']));
+                '___X___' => $this->center['lon'],
+                '___Y___' => $this->center['lat']));
         }
 
         return $footer->getScript();

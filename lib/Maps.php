@@ -4,6 +4,9 @@ define('GEOGRAPHIC_PROJECTION', 4326);
 define('EARTH_RADIUS_IN_METERS', 6378100);
 define('MAP_CATEGORY_DELIMITER', ':');
 
+includePackage('Maps/Abstract');
+includePackage('Maps/Base');
+
 // http://en.wikipedia.org/wiki/Great-circle_distance
 // chosen for what the page said about numerical accuracy
 // but in practice the other formulas, i.e.
@@ -30,6 +33,46 @@ function greatCircleDistance($fromLat, $fromLon, $toLat, $toLon)
     $angle = atan2(sqrt($leg1*$leg1+$leg2*$leg2), $denom);
 
     return $angle * EARTH_RADIUS_IN_METERS;
+}
+
+function euclideanDistance($fromLat, $fromLon, $toLat, $toLon)
+{
+    $dx = $toLon - $fromLon;
+    $dy = $toLat - $fromLat;
+    return sqrt($dx*$dx + $dy*$dy);
+}
+
+function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null)
+{
+    if ($fromProj !== null || $toProj !== null) {
+        $projector = new MapProjector();
+    }
+
+    // create the bounding box in lat/lon first
+    if ($fromProj !== null) {
+        $projector->setSrcProj($fromProj);
+        $center = $projector->projectPoint($center);
+    }
+
+    // approximate upper/lower bounds for lat/lon before calculating GCD
+    $dLatRadians = $tolerance / EARTH_RADIUS_IN_METERS;
+    // by haversine formula
+    $dLonRadians = 2 * asin(sin($dLatRadians / 2) / cos($center['lat'] * M_PI / 180));
+
+    $dLatDegrees = $dLatRadians * 180 / M_PI;
+    $dLonDegrees = $dLonRadians * 180 / M_PI;
+
+    $min = array('lat' => $center['lat'] - $dLatDegrees, 'lon' => $center['lon'] - $dLonDegrees);
+    $max = array('lat' => $center['lat'] + $dLatDegrees, 'lon' => $center['lon'] + $dLonDegrees);
+
+    if ($toProj !== null) {
+        $projector->setSrcProj(GEOGRAPHIC_PROJECTION);
+        $projector->setDstProj($toProj);
+        $min = $projector->projectPoint($min);
+        $max = $projector->projectPoint($max);
+    }
+
+    return array('min' => $min, 'max' => $max, 'center' => $center);
 }
 
 function mapIdForFeedData(Array $feedData) {

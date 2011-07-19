@@ -6,8 +6,3 @@ interface MapFolder
     public function getAllFeatures();
     public function getChildCategories();
 }
-
-interface MapDataParser extends MapFolder
-{
-    public function getProjection();
-}
