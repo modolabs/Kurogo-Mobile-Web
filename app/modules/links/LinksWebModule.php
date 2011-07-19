@@ -18,9 +18,6 @@ class LinksWebModule extends WebModule {
         }
         
         if (isset($this->linkGroups[$group])) {
-            if (!isset($this->linkGroups[$group]['links'])) {
-                $this->linkGroups[$group]['links'] = $this->getModuleSections('links-' . $group);
-            }
 
             if (!isset($this->linkGroups[$group]['description'])) {
                 $this->linkGroups[$group]['description'] = $this->getModuleVar('description','strings');
@@ -32,12 +29,12 @@ class LinksWebModule extends WebModule {
         }
     }
 
-    public function getLinks() {
-        return $this->getModuleSections('links');
+    public function getLinks($group=null) {
+        return $group ? $this->getModuleSections('links-' . $group) : $this->getModuleSections('links');
     }
     
-    protected function getLinkData() {
-        $links = $this->getLinks();
+    protected function getLinkData($group=null) {
+        $links = $this->getLinks($group);
                 
         foreach ($links as &$link) {
             if (isset($link['icon']) && strlen($link['icon'])) {
@@ -61,13 +58,15 @@ class LinksWebModule extends WebModule {
         switch ($this->page) {
         
             case 'group':
-                $group = $this->getLinkGroup($this->getArg('group'));
+                $groupSection = $this->getArg('group');
+                $group = $this->getLinkGroup($groupSection);
                 if (isset($group['title'])) {
                     $this->setPageTitles($group['title']);
                 }
-                
+                                
                 $displayType = isset($group['display_type']) ? $group['display_type'] : $this->getModuleVar('display_type');
-                $this->assign('links', $group['links']);
+
+                $this->assign('links', $this->getLinkData($groupSection));
                 $this->assign('displayType', $displayType);
                 $this->assign('description', $group['description']);
                 break;
