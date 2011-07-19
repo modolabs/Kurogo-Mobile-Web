@@ -37,13 +37,22 @@ abstract class OAuthProvider
             return $this->tokenSecret;
         }
     }
+    
+    public function canRetrieve() {
+        return strlen($this->getToken(self::TOKEN_TYPE_ACCESS))>0;
+    }
+
+    public function canPost() {
+        return strlen($this->getToken(self::TOKEN_TYPE_ACCESS))>0;
+    }
 
     public function reset() {
         $this->setToken(null, null, null);
     }
     
     public function auth($options, &$userArray) {
-        if (isset($options['startOver']) && $options['startOver']) {
+        $startOver = isset($options['startOver']) && $options['startOver'];
+        if ($startOver) {
             $this->reset();
         }
         
@@ -64,6 +73,8 @@ abstract class OAuthProvider
                 error_log("Error getting Access token");
                 return AUTH_FAILED;
             }
+        } elseif ($this->manualVerify && !$startOver) {
+            return AUTH_OAUTH_VERIFY;
         } else {
         
             //redirect to auth page

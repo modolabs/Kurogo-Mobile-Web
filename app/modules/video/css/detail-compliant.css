@@ -1,18 +1,49 @@
-.slugline {
-    margin: 0;
-    margin-bottom: 20px;
-    padding: 0;
-}
-
-.byline {
-    min-height:40px;
-	margin-top: -6px;
-	padding-bottom: 0.33em;
-	margin-bottom: 1.33em;
-    border-bottom: 1px dotted #999;
+body.VideoModule #navbar, .video {
+	/* Background color for video listing and detail; should be white in most cases */
+    background-color: #fff;
 }
 
 #storysubhead
 {
     display: block;
+}
+
+a.videoLink, a.videoLink:visited {
+  position: relative;
+  display: block;
+  text-decoration: none;
+}
+.videoLink img {
+  height: auto;
+  width: auto;
+  width: 100%;
+  max-height: 100%;
+}
+.videoLink .playButton {
+  background: transparent url('/common/images/playvideo-button-bg.png') repeat 0% 0%;
+  border-bottom-left-radius: 5px 5px;
+  border-bottom-left-radius: 5px 5px;
+  border-bottom-right-radius: 5px 5px;
+  border-bottom-right-radius: 5px 5px;
+  border-top-left-radius: 5px 5px;
+  border-top-left-radius: 5px 5px;
+  border-top-right-radius: 5px 5px;
+  border-top-right-radius: 5px 5px;
+  color: white;
+  display: inline-block;
+  font-size: 30px;
+  text-decoration: none;
+  text-align: center;
+  line-height: 60px;
+  height: 60px;
+  width: 100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -30px 0px 0px -50px;
+  z-index: 100;
+}
+.videoLink .playButton > div {
+  background: transparent url('/common/images/playvideo.png') no-repeat 50% 50%;
+  height: 60px;
 }

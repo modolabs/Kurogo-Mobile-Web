@@ -4,7 +4,7 @@
       <div class="thumbnail">
         <img src="{if $video['img']}{$video['img']}{else}/modules/{$moduleID}/images/video-placeholder.png{/if}" />
       </div>
-      <div class="title">{$video["title"]}</div>
+      <h2 class="title">{$video["title"]}</h2>
       {$video['subtitle']}
     </a>
   {/foreach}

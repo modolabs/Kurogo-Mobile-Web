@@ -3,19 +3,19 @@ Source code tour
 #################
 
 This section will give you a tour of the various files and directories in the Kurogo source code
-directory. Knowing the layout of the project will help you understand some of the decisions behind
+project. Knowing the layout of the project will help you understand some of the decisions behind the
 code and where to place your own files so upgrading to newer versions is as seamless as possible.
 
 ============
 Basic Layout
 ============
 
-There are several directories located in the root of the project folder:
+There are several directories located in the root of the Kurogo folder:
 
 **add-ons**
   This directory contains additional scripts or code that be used to interact with other applications
 **app**
-  This directory contains the code and :ref:`templates <templates-tour>` for each module provided by the project. This also
+  This directory contains the code and :ref:`templates <templates-tour>` for each module provided by Kurogo. This also
   includes shared templates used by every module (including headers and footers). As with the lib 
   folder you should avoid adding or altering these files, but rather put new or altered files in the
   :ref:`site-folder`
@@ -26,16 +26,17 @@ There are several directories located in the root of the project folder:
   This directory contains various documentation files including this guide. This guide is built using
   the `Sphinx <http://sphinx.pocoo.org/>`_ documentation system. 
 **lib**
-  This directory contains libraries that are provided by the project. This includes libraries for data
-  retrieval and parsing, authentication, database access and configuration. Generally speaking only
-  libraries provided by the project should be in this directory. You should place your libraries
-  in the site/lib folder to avoid possible conflict with future project updates.
+  This directory contains libraries that are provided by Kurogo. This includes libraries for data
+  retrieval and parsing, authentication, database access and configuration. Generally speaking, only
+  libraries provided by Kurogo should be in this directory. You should place your libraries
+  in the SITE_FOLDER/lib folder to avoid possible conflict with future project updates.
 **site**
   This directory contains an entry for each site. See :ref:`site-folder` for more detail
 **www**
   This directory contains the DocumentRoot for the site. It contains the main script :ref:`index.php`
   which handles all incoming requests. It also contains the minify library for delivering optimized
-  css and javascript to clients
+  css and javascript to clients. The .htaccess and web.config files provide the URL redirection
+  support for Apache and IIS.
   
 ================
 Case Sensitivity
@@ -52,10 +53,10 @@ in an environment that matches your production environment to discover any case-
 Provided vs. Site files
 =======================
 
-As noted in the layout section, there are files provided by the project (app, lib, www) and files
+As noted in the layout section, there are files provided by Kurogo (app, lib, www) and files
 for your use (site). As an open source project, you are certainly welcome to alter files in any way 
 that suits your needs. However, be aware that if you alter or add files in the project directories, it
-may create conflicts when you attempt to update future versions of the project. There are supported
+may create conflicts when you attempt to update future versions of Kurogo. There are supported
 methods to :doc:`add additional functionality <moduleextend>` to existing code while maintaining upgradability. 
 
 That being said, if you have improvements that others would benefit from, we encourage you to :ref:`submit your
@@ -68,8 +69,7 @@ Libraries
 The framework utilizes a number of code libraries to modularize and abstract certain processes and 
 encourage code reuse. The design goal behind the libraries is to ensure that they operate as generically
 as possible so that they can function in a variety of uses and contexts (even if, in practice, they are
-currently used in only one context). Nearly all the libraries exist as PHP classes and currently fall
-into one of several categories:
+currently used in only one context). Nearly all the libraries exist as PHP classes.
 
 --------
 Packages
@@ -77,7 +77,7 @@ Packages
 
 In order to assist developers with including the proper class files, libraries can be grouped into *packages*.
 This allows you to include necessary functionality without worrying about which files to include in your
-module (use: *includePackage('PackageName')* in your module code). Currently the following packages are available:
+module (use: *Kurogo::includePackage('PackageName')* in your module code). Currently the following packages are available:
 
 * Authentication (included automatically when authentication is enabled)
 * Authorization - for connecting to various OAuth based web services
@@ -96,8 +96,8 @@ Core / Support Files
 * exceptions - defines exception subclasses and sets up exception handling behavior
 * *Kurogo* - a singleton class used to consolidate common operations like initialization, site configuration, and administration. :doc:`See more <kurogoobject>`
 * minify - interface between the framework and the included open source minify library
-* *DeviceClassifier* - An interface between the frame work and the :doc:`Device Detection Service <devicedetection>`
-* *deviceData.db* - A SQLite database that contains entires used by the internal device detection system.
+* *DeviceClassifier* - An interface between the framework and the :doc:`Device Detection Service <devicedetection>`
+* *deviceData.db* - A SQLite database that contains browser entries used by the internal device detection system.
 * *PageViews* - A class to log and retrieve page view information for statistics
 * *Validator* - A utility class to validate certain types of data
 
@@ -105,7 +105,7 @@ Core / Support Files
 Native API Functions
 --------------------
 
-These functions deal with the REST API interface that permits access to certain module functions. These
+These functions deal with the API interface that permits access to certain module functions. These
 interfaces are used primarily by the native applications (i.e. iOS) but is also used by certain modules
 for AJAX like functionality where supported.
 
@@ -120,8 +120,8 @@ External Data Retrieval
 The main class is *DataController*. It provides functionality to retrieve URL based data (this could include
 both local and remote data), cache this data using the *DataResponse* class, and parse it using a subclass 
 of *DataParser* to prepare it into a structure suitable for use. In its optimal design, a data controller 
-will abstract the details of building the URL, and return a structure that is normalized, allowing the module 
-code to be as generic as possible.
+will abstract the details of building the URL, and return objects that conform to the :ref:`KurogoObject <kurogoobject_interface>` interface, 
+allowing the module code to be as generic as possible.
 
 Included examples of DataControllers/Parsers include: 
 
@@ -132,9 +132,8 @@ Included examples of DataControllers/Parsers include:
   class takes the resulting data and builds a structure of events in the feed. Also uses the *ICalendar*
   and *TimeRange* class. The *TrumbaCalendarDataController* is a specific subclass for feeds that 
   utilize the `Trumba <http://www.trumba.com/>`_ calendar service.
-* *PeopleController* - access directory/person data. The only included implementation at this time 
-  is the *LDAPPeopleController* which queries information from an LDAP directory. Note this is distinct
-  from authenticating users.
+* *PeopleController* - access directory/person data. Included implementations include the *LDAPPeopleController* 
+  and *DatabasePeopleController*. Note this is distinct from authenticating users.
 * *HTMLDataController* - retrieves a remote HTML document and optionally extracts a specific HTML ID
   or element. It uses the *DOMDataParser*.
 
@@ -147,18 +146,21 @@ Other included Data Parsers:
 * *DOMDataParser* - Parses HTML content into a DOM Object
 * *INIFileParser* - Parses INI files
 
-Read more about the :doc:`datacontroller`
+See :doc:`datacontroller` for more information
    
 ---------------
 Database Access
 ---------------
 
-Kurogo Includes 
+Kurogo includes a database connection abstraction library to assist in the configuration of database
+connections.
 
 * *db* - A database access library based on `PDO <http://php.net/pdo>`_. It includes abstractions for
   MySQL, SQLite, PostgreSQL and MS SQL. This support is dependent on support in your PHP installation. The
   setting up and maintaining of databases and their associated extensions is beyond the scope of this document.
 * *SiteDB* - Uses the main database configuration for access.
+
+See :doc:`database` for more information
 
 ------------------------------
 User Access and Authentication
@@ -173,19 +175,20 @@ User Access and Authentication
 * *User* - The base class for identifying logged in users
 * *UserGroup* - The base class for identifying groups
 
+See :doc:`authentication` for more information
+
 ------------------
 Session Management
 ------------------
+
 * *Session* - Handles the saving and restoration of user state. There are 2 current implementation:
 
   * *SessionFiles* - Save and restore session data using the built in file handler 
   * *SessionDB* - Save and restore session data using a database
-
+  
 -------------
 Configuration
 -------------
-
-See :doc:`configuration` for more information on configuring Kurogo.
 
 * *Config* - An abstract class that stores key/value data and has logic for handling replacement values
   (i.e referencing other keys' values within a value) 
@@ -194,6 +197,8 @@ See :doc:`configuration` for more information on configuring Kurogo.
   key/value store
 * *ModuleConfigFile* - A specific config file class to load module config files.
 * *SiteConfig* - A specific ConfigGroup that loads the critical site and project-wide configuration files.
+
+See :doc:`configuration` for more information on configuring Kurogo.
 
 ---------------------
 Modules and Templates
@@ -205,6 +210,8 @@ Modules and Templates
 * *HTMLPager* - A support class used to paginate content
 * *smarty* - The `Smarty Template System <http://www.smarty.net/>`_
 * *TemplateEngine* - An subclass of the smarty object used by the framework
+
+See :doc:`modules` for more information
 
 -----
 Other
@@ -224,7 +231,7 @@ Inside the *app* folder you will find folders that contain module and template f
 Common
 ------
 
-Inside the common folder are template and css files that are used by all modules. Each of these templates
+Inside the *common* folder are template and css files that are used by all modules. Each of these templates
 may have several variants for different devices. (see :doc:`template` for detailed information on the 
 template system and file naming) A non-exhaustive list of these templates include:
 
@@ -251,7 +258,7 @@ template system and file naming) A non-exhaustive list of these templates includ
 Modules
 -------
 
-The modules folder contains all the modules that are bundled with the project. Each module contains
+The modules folder contains all the modules that are bundled with Kurogo. Each module contains
 the PHP code and template files needed for its use. It also can include CSS and Javascript files
 that are specific to that module. For more detailed information on module design, please see :doc:`modules`
 
@@ -259,7 +266,7 @@ The naming conventions are very important (especially for case sensitive file sy
 
 * The folder **must** be lower case and be the same as the url of the module (/about, /home, /links)
 * The folder **must** contain a PHP file named *ModulenameWebModule.php*. If the module is located
-  in the *site* folder *and* it extends an existing module then it should be called *SiteModulenameWebModule.php*. 
+  in the *site* folder **and** it extends an existing module then it should be called *SiteModulenameWebModule.php*. 
 * The first (and ONLY) letter of the module **must** be capitalized and followed by WebModule.php. 
   
   * **AboutWebModule.php** (NOT aboutwebmodule.php or AboutWebmodule.php)
@@ -285,11 +292,11 @@ Site folder
 
 The site folder contains a series of folders for each *site*. This allows each site to
 have specific configuration, design and custom code. At any given time there is only one **active site**.
-You can enable the active site in the *config/kurogo.ini* file found in the the root of the project 
+You can enable the active site in the *config/kurogo.ini* file found in the root Kurogo 
 directory. It is important the that case used in naming the folder matches the ACTIVE_SITE
 case in the kurogo.ini file.
 
-Multiple site folders exist to assist developers who might be working on different versions of their site
+Multiple site folders exist to assist developers who might be working on different versions of their site,
 or who want to refer to the reference implementation. Because only one site can be active, you would
 typically have only one site folder in a production environment.
 
@@ -299,16 +306,17 @@ Each site folder contains the following directories:
 
   * *common* - Site specific common templates and css
   * *modules* - Site specific modules. To promote ease when updating the framework to new versions, it 
-    is usually best if you keep site specific modules in this folder rather than in the root *app/modules*
-    folder. If you wish to include your work in the project, please see :doc:`github`. Also see :doc:`moduleextend`.
+    is important that you keep site specific modules in this folder rather than in the root *app/modules*
+    folder. If you wish to include your work in Kurogo, please see :doc:`github`. Also see :doc:`moduleextend`.
     
 * *cache* - Contains server generated files that are cached for performance. This folder is created 
-  if needed, but *must* be writable by the web server process. 
+  as needed, but *must* be writable by the web server process. 
 * *config* - Contains the site specific configuration files in .ini format. Many of these files can 
   be managed using the :ref:`admin-module`
 
   * *site.ini* - The general configuration file that affects all site behavior such as timezone, 
     log file locations, database configuration, and more.
+  * *acls.ini* - Site wide :doc:`access control lists <authorization>` 
   * *authentication.ini* - The configuration for user :doc:`authentication`. 
   * *strings.ini* - a configuration file containing strings used by the site
   * Each module's configuration is contained a folder named by its module id. There are several standard
@@ -321,13 +329,13 @@ Each site folder contains the following directories:
   
 * *data* - a folder that contains data files meant to be used by the server. Unlike cache folders, these
   files cannot be safely deleted. Examples would include data that is not able to be generated from 
-  a web service, SQLite databases, or flat authentication files
-* *lib* - an optional folder that contains code libraries used by site modules. The Kurogo autoloader 
+  a web service, SQLite databases, or flat authentication files. It is also possible that certain
+  deployments would have nothing in the data folder.
+* *lib* - an optional folder that contains code libraries used by site modules. The Kurogo :ref:`autoloader <autoloader>` 
   will discover and find classes and packages in this folder.
 * *logs* - Log files
 * *themes* - Contains the themes available for this site. Each theme folder contains a *common* and *modules*
   folder that contains the CSS and image assets for the site. See :doc:`template` for more information.
-
 
 ==========
 WWW Folder
@@ -335,7 +343,7 @@ WWW Folder
 
 The files and folders in the www folder represent the DocumentRoot, the base of the site. To keep the
 structure clean, all requests are routed through the *index.php* file (the exception is for paths
-and folders that already exists, such as min, the minify url). It is important to note that if create
+and folders that already exist, such as min, the minify url). It is important to note that if you create
 additional files or folders in the www folder that it may interfere with proper operation of the framework.
 
 .. _index.php:
@@ -345,8 +353,8 @@ index.php
 ---------
 
 The index script is the main controller for the framework. All requests are handled through it using
-an .htaccess override and `mod_rewrite <http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html>`_. The
+an .htaccess override and `mod_rewrite <http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html>`_ for Apache or
+the `URL Rewrite extension for IIS <http://www.iis.net/download/URLRewrite>`_. The
 .htaccess file rewrites all requests to include a $_GET variable *_path* which includes the path requested.
 I.e. *http://server/module/page* becomes *http://server/index.php?_page=module/page*. Any additional
 data in the $_GET or $_POST variables will be available. For greater detail see :doc:`requests`
-

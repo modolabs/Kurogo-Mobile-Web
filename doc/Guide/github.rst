@@ -44,16 +44,15 @@ Creating your site
 ==================
 
 Because your own project will contain elements that are not part of the master project (i.e. your
-own site's image and css assets), we recommend you keep a separate **upstream** branch. This branch
+own site's images and css assets), we recommend you keep a separate **upstream** branch. This branch
 will remain clean and can be merged into your master branch. By creating an upstream branch it also
 allows you to more cleanly handle submitting changes back to the project.
 
 From your master branch, make a copy of the *site/Universitas* folder. This is the template site. You
 should rename this to match a concise name for your site. Most, if not all, of your coding will take
 place in this folder. You can read more about :doc:`creating additional modules <modulenew>`, 
-:doc:`extending existing modules <moduleextend>` and :doc:`theming your site <themes>`. Unless you have the
-need to change core libraries, you should not need to edit any files in the *lib* or *templates* files
-of the root project directory. 
+:doc:`extending existing modules <moduleextend>` and :doc:`theming your site <themes>`. Unless you 
+have unique needs, you should not need to edit any files outside of your site's directory.
 
 .. _github-submit:
 

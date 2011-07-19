@@ -505,7 +505,7 @@ class CalendarWebModule extends WebModule {
         $calendar= $this->getArg('calendar', $this->getDefaultFeed($type));
         $catid   = $this->getArg('catid', '');
         $name    = $this->getArg('name', '');
-        $current = $this->getArg('time', time());
+        $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
         $next    = $current + DAY_SECONDS;
         $prev    = $current - DAY_SECONDS;
 
@@ -551,7 +551,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'list':
-        $current  = $this->getArg('time', time());
+        $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
         $type     = $this->getArg('type', 'static');
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
         $limit    = $this->getArg('limit', 20);
@@ -583,7 +583,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'day':  
-        $current = $this->getArg('time', time());
+        $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
         $type    = $this->getArg('type', 'static');
         $calendar= $this->getArg('calendar', $this->getDefaultFeed($type));
         $next    = strtotime("+1 day", $current);
@@ -635,7 +635,7 @@ class CalendarWebModule extends WebModule {
             $feed->addFilter('category', $catid);
         }
         
-        $time = $this->getArg('time', time());
+        $time = $this->getArg('time', time(), FILTER_VALIDATE_INT);
 
         if ($event = $feed->getItem($this->getArg('id'), $time)) {
           $this->assign('event', $event);
@@ -719,8 +719,6 @@ class CalendarWebModule extends WebModule {
             $calendar = $searchCalendar;
           }
           
-          list($start, $end) = $this->getDatesForSearchOption($searchOption);          
-
           $options = array(
             'type'    =>$type,
             'calendar'=>$calendar,
@@ -742,7 +740,7 @@ class CalendarWebModule extends WebModule {
                     
           $this->assign('events'        , $events);        
           $this->assign('searchTerms'   , $searchTerms);        
-          $this->assign('selectedOption', $timeframeKey);
+          $this->assign('selectedOption', $timeframe);
           $this->assign('searchOptions' , $this->searchOptions);
           $this->assign('feeds'         , $this->getFeedsByType());
           $this->assign('searchCalendar', $searchCalendar);

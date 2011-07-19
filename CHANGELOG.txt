@@ -1,4 +1,39 @@
-1.1 (XXX)
+1.2 (July 13)
+* IMPORTANT NOTE: After upgrading to 1.2, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
+* (People) Added support for categorizing static contacts into groups 
+* (Links) Added support for categorizing links into groups
+* Vastly streamlined default theme with updated theme documentation.
+* Significant documentation improvements and updates
+* Added established pattern for linking to and receiving data from other modules (See Dev guide for more info)
+* Added support for adding custom headers to DataController subclasses
+* Added support for custom timeouts for DataController subclasses
+* Added support for alternate HTTP methods (POST, etc) in DataController subclasses
+* Added readIfFresh method to DiskCache class
+* Session handling is now abstracted to ease with custom session handling
+* Modules can now present dynamic data on the home screen when DYNAMIC_MODULE_NAV_DATA is enabled (see Dev guide for more info)
+* Added DataResponse object which encapsulates the HTTP response to ease Data Controllers to parse response headers or status codes
+* INCOMPATIBLE CHANGE: If you use the Google calendar controllers to show person calendars or resources, the config format has been updated. (See Dev guide for more info)
+* Various fixes to css and templates for minor rendering issues
+* Cache files now have more restrictive permissions
+* Refactored OAuth flow to permit authorization independently of the authentication authority.
+* DataParsers now have a reference to their parent data controller
+* Added ADPeopleController to simplify active directory searching.
+* Added Kurogo::siteTimezone() method to centralize timezone handling
+* Fix for Admin module in Windows servers (due to bad url in addInternalJavascript)
+* Fix for twitter sharing
+* Various fixes for encoding and escaping HTML values
+* Handle error conditions with external device detection
+* The admin interface can (mostly) be used with tablets. There are some known issues.
+* Fixed issues with stats module reporting inconsistent stats (#18)
+* quote the delimiter in map search tokens (#22)
+* Added Kurogo::tempDirectory() that falls back on system temp directory if not defined
+* Use Kurogo::includePackage() to include packages
+* Added a example site-production.ini file to show example production values
+* Various issues that were present with E_STRICT on have been fixed
+* A XSS Vulnerability in the video module has been fixed
+* The Stats module now reports the list of API modules properly
+
+1.1 (June 1)
 * IMPORTANT NOTE: After upgrading to 1.1, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
 * Added location services to Map Module so closest campus appears on the top
 * Fixed an issue with exception handling and PHP 5.2

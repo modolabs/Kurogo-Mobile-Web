@@ -117,6 +117,9 @@ for certain modules in a production environment.
 Keep in mind that this setting is independent of -local files. -local files will override any option
 presuming *CONFIG_IGNORE_LOCAL* is not enabled. 
 
+Kurogo has included a series of example -production.ini files to indicate recommended values for production 
+servers
+
 -------------------------------
 Retrieving Configuration Values
 -------------------------------
@@ -171,6 +174,18 @@ Site settings
 * *AUTODETECT_PHONE_NUMBERS* - Turn this off to prevent the auto detection of telephone numbers in 
   content. This is primarily only supported in iOS devices at this time.
   
+  
+-------
+Modules
+-------
+
+* *DYNAMIC_MODULE_NAV_DATA*  - This value determines whether
+  modules can present dynamic data on the navigation home screen. This could include dynamic titles, 
+  images or other information. If you are not providing dynamic data, then you should turn off this
+  option. It is off by default.
+  
+See :ref:`dynamic_nav_data` for more information
+  
 ---------
 Analytics
 ---------
@@ -183,7 +198,8 @@ Analytics
 --------------
 Temp Directory
 --------------
-* *TMP_DIR* - This should be set to your system's temporary directory (usually /tmp)
+* *TMP_DIR* - This should be set to your a writable temporary directory. If this entry is blank, it
+  will use the system default temporary directory.
 
 ------
 Themes
@@ -284,12 +300,28 @@ Each module contains an configuration file in *SITE_DIR/config/modules/MODULEID.
 contains values common to all modules, as well as module specific values. 
 
 * *title* - The module title. Used in the title bar and other locations
-* *disabled* - Whether or not the module is disabled. A disabled module cannot be used by anyone
+* *disabled* - Whether or not the module is disabled. A disabled module cannot be used by anyone. Use
+  this value for temporarily disabling modules.
 * *search* - Whether or not the module provides search in the federated search feature.
 * *secure* - Whether or not the module requires a secure (https) connection. Configuring secure
   sites is beyond the scope of this document.
+  
+-----------------------------
+Permanently disabling modules
+-----------------------------
 
-It is important to turn on the disabled flag for any modules you do not wish to use. It is *very* 
+If there are modules that you will not use in your site at all, you can completely disable them by editing
+the *SITE_DIR/config/site.ini* file. In the *[disabled_modules]* section you can add a list of modules
+that should be disabled. By adding the disabled flag in this location, you can completely remove the 
+configuration folder and it will not get recreated.
+
+.. code-block:: ini
+
+    [disabled_modules]
+    admin = 1 ; disable the admin module
+    stats = 1 ; disable the stats module
+  
+It is important to disable any modules you do not wish to use. It is *very* 
 important to make sure that the *admin* module is either disabled or protected appropriately to prevent
 exposure of critically important data and configuration. If you utilize logins you should make sure
 the *login* module requires *secure* connections if you have a valid certificate.

@@ -622,7 +622,10 @@ abstract class WebModule extends Module {
 
                 if (Kurogo::getOptionalSiteVar('DYNAMIC_MODULE_NAV_DATA', false)) {
                     $module = WebModule::factory($moduleID, false, array(), false); // do not initialize
-                    $modules[$type][$moduleID] = $module->getModuleNavigationData($moduleNavData);
+                    
+                    if ($moduleNavData = $module->getModuleNavigationData($moduleNavData)) {
+                        $modules[$moduleNavData['type']][$moduleID] = $moduleNavData;
+                    }
                 } else {
                     $modules[$type][$moduleID] = $moduleNavData;
                 }
@@ -869,7 +872,11 @@ abstract class WebModule extends Module {
   }
   
   private function decodeBreadcrumbParam($breadcrumbs) {
-    return json_decode(gzinflate(urldecode($breadcrumbs)), true);
+    if ($json = @gzinflate(urldecode($breadcrumbs))) {
+        return json_decode($json, true);
+    }
+
+    return null;
   }
   
   private function loadBreadcrumbs() {

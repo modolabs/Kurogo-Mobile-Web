@@ -26,7 +26,7 @@ table#newsHeader tr #categoryformcontainer {
 }
 
 table#newsHeader #categoryformcontainer label {
-  padding-right: .5em;
+  padding-right: .25em;
   font-size: 89%;
 }
 table#newsHeader #categoryformcontainer select {
@@ -55,8 +55,7 @@ form {
 table form {
     margin-top: -8px;
 }
-
-.formlabel {
+#category-switcher .formlabel {
 	width: 62px;
     text-align: right;
 	font-size: 89%;

@@ -11,6 +11,10 @@
 .springboard div.utility a {
 	font-size: 90%;
 }
+.springboard a img, .springboard div.utility a img {
+	width: 64px;
+	height: 64px;
+}
 .springboard div.separator {
 	clear: both;
 	float: none;
@@ -37,10 +41,6 @@
 .homelink {
     float: left;
 }
-/*.pagetitle {
-    margin-top:-2.7em;
-    margin-left: 0.2em;
-}*/
 
 
 
@@ -120,9 +120,8 @@
 	text-decoration: none;
 	color: #fff;
 	background: url(/common/images/tabstrip.jpg) repeat-x;
-	-webkit-background-origin: padding-box; -webkit-background-clip: content-box; 
-	border-right: 1px solid #9fb8d3;
-	-webkit-border-radius: 1px;	
+	border-right: 1px solid #999;
+	border-radius: 1px;
 }	
 
 #tabstrip li.active a {
@@ -156,8 +155,9 @@
 }
 
 .fontsize {
+	clear: both;
 	font-size: 75%;
-	margin: 20px 10px;
+	padding: 20px 10px;
 }
 
 .fontsize a, .fontsize span {
@@ -185,6 +185,33 @@
 	margin-right: 8px;
 	margin-left: -2px;
 	float: left;
+}
+
+
+/* Login-related buttons */
+
+.loginbuttons li.facebook {
+	background-image: url(/common/images/button-facebook-24.png);
+}
+
+.loginbuttons li.google {
+	background-image: url(/common/images/button-google-24.png);
+}
+
+.loginbuttons li.oauth {
+	background-image: url(/common/images/button-oauth-24.png);
+}
+
+.loginbuttons li.openid {
+	background-image: url(/common/images/button-openid-24.png);
+}
+
+.loginbuttons li.twitter {
+	background-image: url(/common/images/button-twitter-24.png);
+}
+
+.loginbuttons li.windows {
+	background-image: url(/common/images/button-windows-24.png);
 }
 
 #shareback {

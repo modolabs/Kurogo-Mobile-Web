@@ -3,7 +3,7 @@
 {block name="newsHeader"}
   {if count($sections) > 1}
     <form method="get" action="index.php" id="category-form">
-      <label for="section">Section:</label>
+      <label for="section" class="formlabel">Section:</label>
       {$categorySelect}
       <input type="submit" id="cat_btn" value="Go" />
       

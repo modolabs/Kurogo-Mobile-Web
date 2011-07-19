@@ -1,6 +1,11 @@
+body.NewsModule #navbar, .news {
+	/* Background color for news listing and story; should be white in most cases */
+    background-color: #fff;
+}
 .news {
     margin-top: -9px;
     padding: 10px;
+    background-color: #fff;
 }
 #storybody div img {
   width: auto !important;

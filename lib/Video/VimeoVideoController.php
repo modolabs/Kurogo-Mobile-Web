@@ -52,9 +52,16 @@
         return $items;
     }
         
+    protected function isValidID($id) {
+        return preg_match("/^[0-9]+$/", $id);
+    }
     
 	 // retrieves video based on its id
 	public function getItem($id) {
+	    if (!$this->isValidID($id)) {
+	        return false;
+	    }
+
         $url = 'http://vimeo.com/api/v2/video/' . $id . '.json';
         $this->setBaseURL($url);
         if ($items = $this->getParsedData()) {
@@ -115,4 +122,12 @@ class VimeoDataParser extends DataParser
 class VimeoVideoObject extends VideoObject
 {
     protected $type = 'vimeo';
+
+    public function canPlay(DeviceClassifier $deviceClassifier) {
+        if (in_array($deviceClassifier->getPlatform(), array('blackberry','bbplus'))) {
+            return false;
+        }
+
+        return true;
+    }
 }

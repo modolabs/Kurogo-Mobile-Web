@@ -301,8 +301,7 @@ var_dump($path);
         }
 
         if (!$this->items) {
-            $data = $this->getData();
-            $this->items = $this->parseData($data);
+            $this->items = $this->getParsedData();
         }
         return $this->parser->getTitle();
     }

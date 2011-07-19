@@ -2,7 +2,7 @@ form {
 	margin: -8px 0 0 0;
 	padding: 0;
 }
-.formlabel {
+#category-switcher .formlabel {
 	width: 62px;
     text-align: right;
 	font-size: 89%;

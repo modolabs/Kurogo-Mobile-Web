@@ -3,7 +3,7 @@
 {if $hasEmergencyFeed}
   <div class="focal">
     {if !$emergencyFeedEmpty}
-      <h2>{$title}</h2>
+      <h2 class="itemtitle">{$title}</h2>
       <p class="smallprint">{$date|date_format:"%l:%M %p, %a %b %e, %Y"}</p>
       {$content}
     {else}

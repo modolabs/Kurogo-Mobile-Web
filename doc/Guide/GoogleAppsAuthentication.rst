@@ -5,7 +5,7 @@ Google Apps Authentication
 The Google Apps authority allows you to authenticate users in your Google Apps Domain. Because it is
 a limited access system, it is well suited to control access to modules to people in your organization.
 
-Google Apps uses *OAuth*. Instead of authenticating directly to Google, 
+Google Apps uses a form of *OpenID*. Instead of authenticating directly to Google, 
 the user gets redirected to the Google Apps login page. Then they must authenticate and then 
 authorize access to the application. Your application has no access to the user's login or password.
 
@@ -13,8 +13,7 @@ This authority also has the ability through OAuth to access protected data in yo
 (Only for paid Google Apps for Business or Google Apps for Education accounts).
 This allows you to use Kurogo to display your domain's calendars, documents or other protected files
 in the mobile browser. This is handled without requiring you to divulge sensitive usernames or passwords.
-All access is handled through revokable keys. Implementations for accessing calendar and other data
-is forthcoming.
+All access is handled through revokable keys. 
 
 =============
 Configuration
@@ -25,19 +24,71 @@ To configure authentication, you only need to add a few parameters:
 * *USER_LOGIN* - Should be set to *LINK*
 * *GOOGLEAPPS_DOMAIN* - should be set to your Google Apps domain (example.com)
 
-To allow access to domain data (like calendars)
+.. code-block:: ini
 
-* *OAUTH_CONSUMER_KEY* - Consumer key provided by google (typically your domain example.com)
-* *OAUTH_CONSUMER_SECRET* - Consumer secret provided by google (see below on how to obtain this value)
+    [googleapps]
+    CONTROLLER_CLASS        = "GoogleAppsAuthentication" 
+    TITLE                   = "Our Domain"
+    USER_LOGIN              = "LINK"
+    GOOGLEAPPS_DOMAIN       = "example.com"
 
-
-============
+------------
 How it Works
-============
+------------
 
-OpenID systems work by redirecting the user to an authentication page hosted by the service. The 
-application sends a series of values including a URL callback with the request. Once the request 
-is complete, the service redirects back to the callback URL and the user is logged in. 
+The Google Apps Authentication system uses OpenID  by redirecting the user to an authentication page
+provided by Google. The application sends a series of values including a URL callback with the request. 
+Once the request  is complete, the service redirects back to the callback URL and the user is logged in. 
+Google requires that the user authorize the ability for the application to view the user's email address. 
+
+=====================
+Accessing Domain data
+=====================
+
+If you have the need to access Google Apps Data on behalf of the user, then you will need to provide a
+consumer key, secret, and scope. These are values that identify the application to Google (and the
+user as a result) and identify the types of data you wish to access. If you have no need to access
+data, then you do not need to enter these values. You must first `register your application's domain <https://www.google.com/accounts/ManageDomains>`_.
+The domain *must* match exactly the fully qualified domain name of the web application's host name. 
+OAuth requires the registered domain and the callback URL (which is built using the domain of the kurogo instance) to match exactly.
+If you need to have an alternate domain name for development, you will need to register that domain as well.
+Once you have completed that process you will have an OAuth consumer key and secret you can use. 
+This data will be included in the authentication declaration:
+
+* *OAUTH_CONSUMER_KEY* - Consumer key provided by google
+* *OAUTH_CONSUMER_SECRET* - Consumer secret provided by google
+* *GOOGLE_SCOPE[]* - A repeatable list of scope URLs that indicate which services you wish to access.
+  These are defined by Google and shown at http://code.google.com/apis/gdata/faq.html#AuthScopes. 
+  Common examples used by Kurogo include:
+  
+  * http://www.google.com/calendar/feeds - User calendar data
+  * https://apps-apis.google.com/a/feeds/calendar/resource/ - Calendar resources (Google Apps for Business/Edu only)
+  * http://www.google.com/m8/feeds - Contacts
+  * http://docs.google.com/feeds, http://spreadsheets.google.com/feeds, http://docs.googleusercontent.com - Google docs
+
+.. code-block:: ini
+
+    [googleapps]
+    CONTROLLER_CLASS        = "GoogleAppsAuthentication" 
+    TITLE                   = "Our Domain"
+    USER_LOGIN              = "LINK"
+    GOOGLEAPPS_DOMAIN       = "example.com"
+    OAUTH_CONSUMER_KEY      = "mobile.example.com"
+    OAUTH_CONSUMER_SECRET   = "abcdABCD1234ABCD"  ; provided by google
+    GOOGLE_SCOPE[]          = "http://www.google.com/calendar/feeds"
+    GOOGLE_SCOPE[]          = "https://apps-apis.google.com/a/feeds/calendar/resource/"
+    GOOGLE_SCOPE[]          = "http://www.google.com/m8/feeds"
+    GOOGLE_SCOPE[]          = "http://docs.google.com/feeds"
+    GOOGLE_SCOPE[]          = "http://spreadsheets.google.com/feeds"
+    GOOGLE_SCOPE[]          = "http://docs.googleusercontent.com"
+
+You should only include scopes for data that you plan on accessing. If you have no need to access
+data, then you do not need to enter these values.
+
+
+--------------------------------
+The Callback URL and development
+--------------------------------
 
 The callback URL is generated by Kurogo based on the domain of server you are connecting to. Google
 *requires* that the callback url must be in the same domain (or subdomain) as your Google Apps domain.
@@ -54,30 +105,3 @@ whatever your domain is). You can also include the port if your server is listen
 than 80. Thus when Google redirects back to *dev.example.com* your computer will use the local
 ip address of 127.0.0.1. 
 
-=============================
-Accessing Domain data (Alpha)
-=============================
-
-Google Apps for Business and Education have the ability to perform retrieval of domain data using *OAuth*.
-This includes retrieving calendars and other data from your organization's users. This feature, however
-is not automatically enabled. To enable this feature, you must enable *2-legged OAuth access control*.
-
-* Log into your domain's administration panel (you must be an administrator for your domain to accomplish this task)
-
-  * Go to http://google.com/a
-  * Click sign in.
-  * Enter your domain and choose Domain Management. 
-  * Log in with a domain administrator's account
-
-* Click on the *Advanced tools* section of the domain management application
-* In the authentication section choose *Manage OAuth domain key*
-* In the OAuth consumer key section, ensure that *Enable this consumer key* is selected
-* Take note of the consumer key and consumer secret
-* In the *Two-legged OAuth access control* section, ensure that *Allow access to all APIs is selected*
-
-This permits Kurogo to use the consumer key and secret to retrieve data for your organization. It is VERY
-important to keep this consumer secret in a protected location. If it has been compromised, you can click
-*Regenerate OAuth consumer secret*.
-
-Once you have this data you can utilize the features of the :doc:`Calendar Module <modulecalendar>` and
-enable user calendars

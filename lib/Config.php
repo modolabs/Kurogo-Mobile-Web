@@ -75,8 +75,9 @@ abstract class Config {
         
         if (isset($this->sectionVars[$section])) {
             
+            $numeric = $this->isNumeric();
             unset($this->sectionVars[$section]);
-            if ($this->isNumeric()) {
+            if ($numeric) {
                 $this->sectionVars = array_values($this->sectionVars);
             }
 

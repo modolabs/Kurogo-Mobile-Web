@@ -4,7 +4,7 @@
       <div class="thumbnail">
         <img src="{if $story['img']}{$story['img']}{else}/modules/{$moduleID}/images/news-placeholder.png{/if}" />
       </div>
-      <div class="title">{$story["title"]}</div>
+      <h2 class="title">{$story["title"]}</h2>
       {$story['subtitle']}
     </a>
   {/foreach}

@@ -99,6 +99,10 @@ class VideoWebModule extends WebModule
         // Categories / Sections
         
         $section = $this->getArg('section', $this->getDefaultSection());
+        if (!isset($this->feeds[$section])) {
+            $section = $this->getDefaultSection();
+        }
+        
         $this->assign('currentSection', $section);
         $this->assign('sections'      , VideoModuleUtils::getSectionsFromFeeds($this->feeds));
         
@@ -132,7 +136,7 @@ class VideoWebModule extends WebModule
                 if ($this->page == 'search') {
                     if ($filter = $this->getArg('filter')) {
                         $searchTerms = trim($filter);
-                        $controller->search($searchTerms, $start, $maxPerPage);
+                        $items = $controller->search($searchTerms, $start, $maxPerPage);
                         $this->assign('searchTerms', $searchTerms);
                     } else {
                         $this->redirectTo('index', array('section'=>$section), false);
@@ -215,31 +219,38 @@ class VideoWebModule extends WebModule
             
                 if ($video = $controller->getItem($videoid)) {
                     $this->setTemplatePage('detail-' . $video->getType());
-                    $this->assign('ajax'      ,       $this->getArg('ajax', null));
-                    $this->assign('videoTitle',       $video->getTitle());
-                    $this->assign('videoid',          $video->getID());
-                    $this->assign('videoDescription', $video->getDescription());
-                    $this->assign('videoAuthor'     , $video->getAuthor());
-                    $this->assign('videoDate'       , $video->getPublished()->format('M n, Y'));
-                    
-                    $body = $video->getDescription() . "\n\n" . $video->getURL();
-
-                    if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
-                        $this->assign('shareEmailURL',    $this->buildMailToLink("", $video->getTitle(), $body));
-                        $this->assign('videoURL',         $video->getURL());
-                        $this->assign('shareRemark',      $video->getTitle());
-                    }
+                    if ($video->canPlay(Kurogo::deviceClassifier())) {
+                        $this->assign('ajax'      ,       $this->getArg('ajax', null));
+                        $this->assign('videoTitle',       $video->getTitle());
+                        $this->assign('videoid',          $video->getID());
+                        $this->assign('videoStreamingURL',$video->getStreamingURL());
+                        $this->assign('videoStillImage',  $video->getStillFrameImage());
+                        $this->assign('videoDescription', $video->getDescription());
+                        $this->assign('videoAuthor'     , $video->getAuthor());
+                        $this->assign('videoDate'       , $video->getPublished()->format('M n, Y'));
+                        
+                        $body = $video->getDescription() . "\n\n" . $video->getURL();
     
-                      // Bookmark
-                    if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
-                      $cookieParams = array(
-                        'section' => $section,
-                        'title'   => $video->getTitle(),
-                        'videoid' => $videoid
-                      );
-    
-                      $cookieID = http_build_query($cookieParams);
-                      $this->generateBookmarkOptions($cookieID);
+                        if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
+                            $this->assign('shareEmailURL',    $this->buildMailToLink("", $video->getTitle(), $body));
+                            $this->assign('shareTitle','Share this video');
+                            $this->assign('videoURL',         $video->getURL());
+                            $this->assign('shareRemark',      $video->getTitle());
+                        }
+        
+                          // Bookmark
+                        if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                          $cookieParams = array(
+                            'section' => $section,
+                            'title'   => $video->getTitle(),
+                            'videoid' => $videoid
+                          );
+        
+                          $cookieID = http_build_query($cookieParams);
+                          $this->generateBookmarkOptions($cookieID);
+                        }
+                    } else {
+                        $this->setTemplatePage('videoError.tpl');
                     }
     
     

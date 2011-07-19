@@ -2,8 +2,8 @@
 Setup and Installation
 ######################
 
-Kurogo is a PHP web application. As such it must be installed on a web server. As of this version,
-the only web server that has been qualified for use is Apache version 2.x on a unix based system.
+Kurogo is a PHP web application. As such it must be installed on a web server. In version 1.2, there
+are 2 supported web servers.
 
 ===================
 System Requirements
@@ -14,11 +14,13 @@ System Requirements
 
     * Requires mod_rewrite module
     * Requires .htaccess support (AllowOverride)
+    * Subfolder support using symlinks, see :ref:`setup_subfolder`
 
   * IIS (tested on 7.5)
 
     * Requires URL Rewrite Module 2.0 - http://www.iis.net/download/URLRewrite
     * Tested using x86 Non Thread Safe version using FastCGI on IIS.
+    * Virtual Directories not supported, must be the site root
     
 * PHP 5.2 or higher with the following extensions:
 
@@ -50,7 +52,7 @@ web server.
 
    * **Critical:** Make sure the web server user (Apache typically: *apache* or *www*, IUSR on IIS) has write access to all the contents *SITE_FOLDER*. 
    
-#. In the *config* directory, make a copy of the *kurogo-default.ini* file called *kurogo.ini*
+#. In the root *config* directory, make a copy of the *kurogo-default.ini* file called *kurogo.ini*
 #. Edit the new kurogo.ini file and change the *ACTIVE_SITE* option to match the name of *SITE_FOLDER*
 #. (re)Start your webserver and direct your web browser to the server/port that you specified.
 
@@ -66,7 +68,6 @@ than the root of a domain. Currently this is supported under the following circu
 
 * Using the Apache webserver in a unix based environment (Linux, Mac OS X, etc)
 * Apache is enabled to follow symbolic links (Options FollowSymlinks)
-* It is possible to create a symbolic link in the website's 
 
 If these conditions are true, you can create a symbolic link that points to the *www* folder and place
 it in your site's root folder.

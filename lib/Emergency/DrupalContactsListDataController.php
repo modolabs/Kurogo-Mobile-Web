@@ -7,8 +7,7 @@ class DrupalContactsListDataController extends ContactsListDataController
 
     protected function loadContacts() {
         if(!$this->contactsLoaded) {
-            $data = $this->getData();
-            $contacts = $this->parseData($data);
+            $contacts = $this->getParsedData();
             $this->primaryContacts = $contacts['primary'];
             $this->secondaryContacts = $contacts['secondary'];
             $this->contactsLoaded = TRUE;

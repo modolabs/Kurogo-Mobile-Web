@@ -1,4 +1,5 @@
 <IfModule mod_rewrite.c>
 RewriteEngine on
+RewriteRule web.config - [F,L]
 RewriteRule ^([a-z]=.*)  index.php?$1  [L,NE,QSA]
 </IfModule>

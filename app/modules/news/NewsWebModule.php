@@ -18,6 +18,24 @@ class NewsWebModule extends WebModule {
   protected $showImages = true;
   protected $showPubDate = false;
   protected $showAuthor = false;
+  
+  public static function validateFeed($section, $feedData) {
+        if (!self::argVal($feedData, 'TITLE')) {
+            return new KurogoError(1, 'Title not specified','Feed title cannot be blank');
+        }
+
+        if (!isset($feedData['CONTROLLER_CLASS'])) {
+            $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
+        }
+        
+        try {
+            $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        } catch (Exception $e) {
+            return KurogoError::errorFromException($e);
+        }
+        
+        return true;
+  }
 
   private function feedURLForFeed($feedIndex) {
     return isset($this->feeds[$feedIndex]) ? 
@@ -190,6 +208,7 @@ class NewsWebModule extends WebModule {
         if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
             $body = $story->getDescription()."\n\n".$story->getLink();
             $shareEmailURL = $this->buildMailToLink("", $story->getTitle(), $body);
+            $this->assign('shareTitle','Share this story');
             $this->assign('shareEmailURL', $shareEmailURL);
             $this->assign('shareRemark',   $story->getTitle());
             $this->assign('storyURL',      $story->getLink());

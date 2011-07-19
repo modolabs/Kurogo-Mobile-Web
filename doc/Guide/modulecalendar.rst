@@ -19,19 +19,19 @@ The module supports multiple calendars. Each calendar is indicated by a section 
 file. The name of the section becomes the *type*, used in URLs to indicate which calendar to use. When
 the type parameter is not indicated in a url, the first calendar is used. 
 
-* The TITLE value is a label used to name your calendar feed. It will be used in the heading when 
+* The *TITLE* value is a label used to name your calendar feed. It will be used in the heading when 
   browsing and viewing events. 
-* The BASE_URL is set to the url of your ICS feed. It can be either a static file or a web service. 
+* The *BASE_URL* is set to the url of your ICS feed. It can be either a static file or a web service. 
 
 **Optional values**
 
-* CONTROLLER_CLASS - allows you to set a different class name for the controller. The default is 
+* *CONTROLLER_CLASS* - allows you to set a different class name for the controller. The default is 
   CalendarDataController. You could write your own subclass to adjust the URL if your source is a 
   web service. The framework also includes an implementation suitable for users who host their calendar
   data on the Trumba event service. 
-* PARSER_CLASS (default ICSDataParser) set this to a subclass of *DataParser*. You would only need to change it if your data
+* *PARSER_CLASS* (default ICSDataParser) set this to a subclass of *DataParser*. You would only need to change it if your data
   source returns data in a format other than iCalendar (ICS). 
-* EVENT_CLASS (default ICalEvent) allows you to set a different class name for the returned event objects when searching. 
+* *EVENT_CLASS* (default ICalEvent) allows you to set a different class name for the returned event objects when searching. 
   This allows you to write custom behavior to handle custom fields in your feed.
 
 =============================

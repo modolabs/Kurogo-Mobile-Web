@@ -1,3 +1,8 @@
+body.VideoModule #navbar, .video {
+	/* Background color for video listing and detail; should be white in most cases */
+    background-color: #fff;
+}
+
 .video {
     margin-top: -9px;
     padding: 10px;

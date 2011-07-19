@@ -25,8 +25,7 @@ class EmergencyNoticeDataController extends DataController
     public function getLatestEmergencyNotice()
     {
         if($this->emergencyNotice === NULL) {
-            $data = $this->getData();
-            $items = $this->parseData($data);
+            $items = $this->getParsedData();
             if(count($items) > 0) {
                 $this->emergencyNotice = array(
                    'title' => $items[0]->getTitle(),

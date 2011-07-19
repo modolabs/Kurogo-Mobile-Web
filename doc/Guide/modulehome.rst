@@ -26,7 +26,7 @@ Module list and order
 There are 2 sections *[primary_modules]* and *[secondary_modules]* that indicate which modules are
 shown on the home screen.
 
-Each section has a list of values that represent the order of the modules and their labels. The order
+Each section has a list of values that represent the order of the modules and their titles. The order
 of these values affects the order of the modules. Each value is the format:
 
 .. code-block:: ini
@@ -77,3 +77,12 @@ particular pane:
 
 If you do not want to show the tablet interface you can change *TABLET_ENABLED* to 0 in *SITE_DIR/config/site.ini*.
 When the tablet interface has been disabled, tablet devices will receive the *compliant* page type.
+
+===============================
+Dynamic Home Screen Information
+===============================
+
+In some scenarios it may be necessary to have the information show on the home screen (or tablet nav bar)
+to be more dynamic. This would permit custom titles or subtitles, images, and even display based on any 
+conditions that are appropriate. In order to utilize this please read the section on :ref:`Dynamic Home Screen Information 
+<dynamic_nav_data>`. 

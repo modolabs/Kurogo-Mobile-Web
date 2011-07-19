@@ -205,7 +205,7 @@ JS;
         foreach ($this->markers as $index => $marker) {
             $title = 'marker';
             if (isset($marker['title'])) {
-                $title = $marker['title'];
+                $title = json_encode($marker['title']);
             }
 
             if (isset($this->mapProjector)) {

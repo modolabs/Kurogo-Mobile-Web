@@ -19,6 +19,7 @@ class PeopleWebModule extends WebModule {
     protected $encoding = 'UTF-8';
     protected $feeds=array();
     protected $contactGroups = array();
+    protected $controllers = array();
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -164,7 +165,10 @@ class PeopleWebModule extends WebModule {
     }
     
     protected function getFeed($index) {
-
+        if (isset($this->controllers[$index])) {
+            return $this->controllers[$index];
+        }
+        
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
             if (!isset($feedData['CONTROLLER_CLASS'])) {
@@ -172,6 +176,7 @@ class PeopleWebModule extends WebModule {
             }
             $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller->setAttributes($this->detailAttributes);
+            $this->controllers[$index] = $controller;
             return $controller;
         } else {
             throw new Exception("Error getting people feed for index $index");
