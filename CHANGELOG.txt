@@ -1,7 +1,8 @@
-1.2 (July 13)
+1.2 (July 19)
 * IMPORTANT NOTE: After upgrading to 1.2, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
 * (People) Added support for categorizing static contacts into groups 
 * (Links) Added support for categorizing links into groups
+* Added support and instructions for installation under IIS Web Server
 * Vastly streamlined default theme with updated theme documentation.
 * Significant documentation improvements and updates
 * Added established pattern for linking to and receiving data from other modules (See Dev guide for more info)
@@ -32,6 +33,22 @@
 * Various issues that were present with E_STRICT on have been fixed
 * A XSS Vulnerability in the video module has been fixed
 * The Stats module now reports the list of API modules properly
+Since 1.2RC1:
+* Added option for Data Parsers to receive a file string and use parseFile instead of parseData
+* Sanitize breadcrumb parameters
+* getArg method will now accept filter_var() filters and options to filter/sanitize user input
+* Fixed an issue with removing a news feed that isn't the last in the admin console
+* Fixed an issue where errors in LDAP searching don't show
+* Fixed a regression in video search
+* Fixed an issue with clearstatcache() under PHP 5.2
+* Added option to disable modules using the site.ini file. This allows you to permanently disable modules and remove their config folders
+* Fixed a title mismatch when sharing videos
+* (Video) Use HTML5 for YouTube viewing on Android devices
+* (Video) Use streaming URL for YouTube viewing on Blackberry devices
+* (Video) Added ability for video provider controllers to specify playability based on device classification
+* (Video) Fixed an issue with selecting feeds on Windows Phone 7
+* (Links) You can reference a link group in a group
+* (Map) Fixed CSS for tablet devices
 
 1.1 (June 1)
 * IMPORTANT NOTE: After upgrading to 1.1, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 

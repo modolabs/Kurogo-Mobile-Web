@@ -43,6 +43,7 @@ folder. For more detailed setup information, please see the developer's guide.
 
 This version includes a number of fixes and improvements, including:
 
+* Support for IIS Web Server
 * Vastly streamlined default theme with updated theme documentation
 * Support for grouping static contacts in the People module
 * Support for grouping links in the Links module

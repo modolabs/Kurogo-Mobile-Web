@@ -53,6 +53,8 @@ section. Within each section, there are 3 possible keys:
 Creating groups of links
 ---------------------------
 
+* NOTE - Creation of link groups is not supported in the admin console at this time.
+
 You can create a group of links in order to organize large amounts of links into categories.
 Creating link groups involves the following steps:
 
