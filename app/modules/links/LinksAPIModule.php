@@ -43,7 +43,8 @@ class LinksAPIModule extends APIModule {
 
         foreach ($links as &$link) {
             if (isset($link['icon']) && strlen($link['icon'])) {
-                $link['img'] = "/modules/{$this->configModule}/images/{$link['icon']}{$this->imageExt}";
+                
+                $link['iconURL'] = FULL_URL_BASE . "modules/{$this->configModule}/images/{$link['icon']}.png";
             }
 
             if (isset($link['group']) && strlen($link['group'])) {
@@ -51,7 +52,6 @@ class LinksAPIModule extends APIModule {
                 if (!isset($link['title']) && isset($group['title'])) {
                     $link['title'] = $group['title'];
                 }
-                $link['url'] = $this->buildBreadcrumbURL('group', array('group'=>$link['group']));
             }
         }
 
@@ -64,15 +64,11 @@ class LinksAPIModule extends APIModule {
         switch ($this->command) {
             case 'group':
                 $group = $this->getLinkGroup($this->getArg('group'));
-                if (isset($group['title'])) {
-                    $this->setPageTitles($group['title']);
-                }
                 $response = array();
                 $displayType = isset($group['display_type']) ? $group['display_type'] : $this->getModuleVar('display_type');
-                $response['links'] = $group['links'];
+                $response['links'] = array_values($group['links']);
                 $response['displayType'] = $displayType;
                 $response['description'] = $group['description'];
-                break;
 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
@@ -83,7 +79,7 @@ class LinksAPIModule extends APIModule {
                $response = array();
                 $response['description'] = $this->getModuleVar('description','strings');
                 $response['displayType'] =  $this->getModuleVar('display_type');
-                $response['links'] =  $links;
+                $response['links'] =  array_values($links);
                 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
