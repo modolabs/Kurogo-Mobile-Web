@@ -165,12 +165,12 @@ class TemplateEngine extends Smarty {
     // findIncludes
     $search = array();
     $replace = array();
-    if (preg_match_all(';file\s*=\s*"findInclude:([^"]+)";', $source, $matches, PREG_PATTERN_ORDER)) {
+    if (preg_match_all(';=\s*"findInclude:([^"]+)";', $source, $matches, PREG_PATTERN_ORDER)) {
       foreach ($matches[1] as $i => $name) {
         $path = self::getIncludeFile(self::replaceVariables($name, $variables));
         if ($path) {
           $search[] = $matches[0][$i];
-          $replace[] = 'file="file:'.$path.'"';
+          $replace[] = '="file:'.$path.'"';
           if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
             error_log(__FUNCTION__." replacing include $name with $path");
           }
@@ -179,12 +179,12 @@ class TemplateEngine extends Smarty {
         }
       }
     }
-    if (preg_match_all(';file\s*=\s*"findExtends:([^"]+)";', $source, $matches, PREG_PATTERN_ORDER)) {
+    if (preg_match_all(';=\s*"findExtends:([^"]+)";', $source, $matches, PREG_PATTERN_ORDER)) {
       foreach ($matches[1] as $i => $name) {
         $path = self::getExtendsFile(self::replaceVariables($name, $variables), $template);
         if ($path) {
           $search[] = $matches[0][$i];
-          $replace[] = 'file="file:'.$path.'"';
+          $replace[] = '="file:'.$path.'"';
           if (Kurogo::getOptionalSiteVar('TEMPLATE_DEBUG')) {
             error_log(__FUNCTION__." replacing extends $name with $path");
           }
