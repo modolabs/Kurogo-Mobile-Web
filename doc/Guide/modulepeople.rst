@@ -124,6 +124,8 @@ have to be phone numbers, but could be any URL.
 Creating groups of contacts
 ---------------------------
 
+* NOTE - Creation of contact groups is not supported in the admin console at this time.
+
 If you have a number of fixed contacts and need to categorize them you can place them into groups. 
 Creating contact groups involves the following steps:
 
