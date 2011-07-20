@@ -4,8 +4,6 @@ if (!function_exists('xml_parser_create')) {
     die('XML Parser commands not available.');
 }
 
-require_once realpath(LIB_DIR.'/XMLElement.php');
-
 abstract class XMLDataParser extends DataParser
 {
     protected $root;
