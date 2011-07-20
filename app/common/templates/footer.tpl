@@ -80,7 +80,9 @@
     {/if}
     {if strlen($PERCENT_MOBILE_ID)}
         <script>
+           <!--
             percent_mobile_track('{$PERCENT_MOBILE_ID}', '{$pageTitle}');
+            -->
         </script>
         <noscript>
             <img src="{$pmImageURLJS}" width="2" height="2" alt="" />
