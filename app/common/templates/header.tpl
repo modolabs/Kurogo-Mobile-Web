@@ -27,6 +27,9 @@
         _gaq.push(['_trackPageview']);
       </script>
     {/if}
+    {if strlen($PERCENT_MOBILE_ID)}
+        <script src="{$PERCENT_MOBILE_URL}" type="text/javascript" charset="utf-8"></script>
+    {/if}
     
     {foreach $inlineJavascriptBlocks as $inlineJavascriptBlock}
       <script type="text/javascript">{$inlineJavascriptBlock}</script>

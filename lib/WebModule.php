@@ -248,6 +248,34 @@ abstract class WebModule extends Module {
   }
 
   //
+  // Percent Mobile Analytic for non-Javascript devices
+  //
+  private function percentMobileAnalyticsGetImageUrl($pmID){
+      if (isset($pmID) && strlen($pmID)){
+       return ""; // empty for now
+      }
+      else {
+          return "";
+      }
+  }
+
+   //
+  // Percent Mobile Analytic for Javascript devices
+  //
+  private function percentMobileAnalyticsGetImageUrlJS($pmID){
+      if (isset($pmID) && strlen($pmID)){
+       $url = Kurogo::getOptionalSiteVar('PERCENT_MOBILE_TRACKING_BASE_URL') .
+          $pmID .
+          Kurogo::getOptionalSiteVar('PERCENT_MOBILE_TRACKING_END_OF_URL');
+       
+       return $url;
+      }
+      else {
+          return "";
+      }
+  }
+
+  //
   // Lazy load
   //
   private function loadTemplateEngineIfNeeded() {
@@ -1186,6 +1214,17 @@ abstract class WebModule extends Module {
     if ($gaID = Kurogo::getOptionalSiteVar('GOOGLE_ANALYTICS_ID')) {
         $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
         $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
+    }
+
+    // Percent Mobile Analytics
+    if ($pmID = Kurogo::getOptionalSiteVar('PERCENT_MOBILE_ID')){
+        $this->assign('PERCENT_MOBILE_ID', $pmID);
+        
+        if ($pmBASEURL = Kurogo::getOptionalSiteVar('PERCENT_MOBILE_URL'))
+            $this->assign('PERCENT_MOBILE_URL', $pmBASEURL);
+        
+        $this->assign('pmImageURLJS', $this->percentMobileAnalyticsGetImageUrlJS($pmID));
+        $this->assign('pmImageURL', $this->percentMobileAnalyticsGetImageUrl($pmID));
     }
     
     // Breadcrumbs
