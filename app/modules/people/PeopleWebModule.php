@@ -13,8 +13,8 @@ Kurogo::includePackage('People');
 class PeopleWebModule extends WebModule {
     protected $id = 'people';
     protected $bookmarkLinkTitle = 'Bookmarked People';
-    private $detailFields = array();
-    private $detailAttributes = array();
+    protected $detailFields = array();
+    protected $detailAttributes = array();
     protected $defaultController = 'LDAPPeopleController';
     protected $encoding = 'UTF-8';
     protected $feeds=array();
@@ -47,7 +47,7 @@ class PeopleWebModule extends WebModule {
         return $values;
     }
     
-    private function replaceFormat($format) {
+    protected function replaceFormat($format) {
         return str_replace(array('\n','\t'),array("\n","\t"), $format);
     }
   
