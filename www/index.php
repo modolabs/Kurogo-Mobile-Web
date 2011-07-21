@@ -246,6 +246,9 @@ if ($parts[0]==API_URL_PREFIX) {
         } else {
           $parts[0] = $url_redirects[$id];
           $url = URL_PREFIX . implode("/", $parts);
+          if ($args) {
+          	$url .= "?" . http_build_query($args);
+          }
         }
         header("Location: " . $url);
         exit;
