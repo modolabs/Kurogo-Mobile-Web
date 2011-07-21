@@ -205,10 +205,14 @@ class LDAPPeopleController extends PeopleController {
         }
         
         $results = array();
-        $results[] = new $this->personClass($ds, $entry);
+        $person = new $this->personClass($ds, $entry);
+        $person->setFieldMap($this->fieldMap);
+        $results[] = $person;
 
         while ($entry = ldap_next_entry($ds, $entry)) {
-            $results[] = new $this->personClass($ds, $entry);
+			$person = new $this->personClass($ds, $entry);
+			$person->setFieldMap($this->fieldMap);
+			$results[] = $person;
         }
 
         //sort results by sort fields        
@@ -272,7 +276,9 @@ class LDAPPeopleController extends PeopleController {
                 return FALSE;
             }
 
-            return new $this->personClass($ds, $entry);
+			$person = new $this->personClass($ds, $entry);
+			$person->setFieldMap($this->fieldMap);
+            return $person;
 
         } else {
 
@@ -445,9 +451,20 @@ class LDAPCompoundFilter extends LDAPFilter
 class LDAPPerson extends Person {
     
     protected $dn;
+    protected $fieldMap=array();
     
     public function getDn() {
         return $this->dn;
+    }
+
+    public function setFieldMap(array $fieldMap) {
+        $this->fieldMap = $fieldMap;
+    }
+    
+    public function getName() {
+    	return sprintf("%s %s", 
+    			$this->getFieldSingle($this->fieldMap['firstname']), 
+    			$this->getFieldSingle($this->fieldMap['lastname']));
     }
     
     public function getId() {

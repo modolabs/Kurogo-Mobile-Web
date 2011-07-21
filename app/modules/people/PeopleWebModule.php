@@ -193,11 +193,9 @@ class PeopleWebModule extends WebModule {
         $this->detailAttributes = array_values(array_unique($this->detailAttributes));
     }
     
-    public function linkforItem(KurogoObject $person, $options=null) {
-        $personDetails =  $this->formatPersonDetails($person);
-    
+    public function linkforItem(KurogoObject $person, $options=null) {    
         return array(
-            'title'=>$this->htmlEncodeString($personDetails['name']['name']['title']),
+            'title'=>$this->htmlEncodeString($person->getName()),
             'url'  =>$this->buildBreadcrumbURL('detail', array(
                                             'uid'    => $person->getId(),
                                             'filter' => $this->getArg('filter')
@@ -266,7 +264,7 @@ class PeopleWebModule extends WebModule {
                         // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                             $cookieParams = array(
-                                'title'   => $personDetails['name']['name']['title'],
+                                'title' => $person->getName(),
                                 'uid' => urlencode($uid)
                             );
             

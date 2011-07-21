@@ -158,6 +158,12 @@ class DatabasePerson extends Person
         $this->fieldMap = $fieldMap;
     }
     
+    public function getName() {
+    	return sprintf("%s %s", 
+    			$this->getField($this->fieldMap['firstname']), 
+    			$this->getField($this->fieldMap['lastname']));
+    }
+
     public function getId() {
         return $this->getField(strtolower($this->fieldMap['userid']));
     }
