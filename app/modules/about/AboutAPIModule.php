@@ -25,18 +25,26 @@ class AboutAPIModule extends APIModule {
 
             case 'index':
                 $response = $this->getModuleSections('api-index');
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
                 break;
 
             case 'about_site':
                 $response = "<p>" . implode("</p><p>", $this->getModuleVar('SITE_ABOUT_HTML', 'strings')) . "</p>";
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
                 break;
 
             case 'about':
                 $response = "<p>" . implode("</p><p>", $this->getModuleVar('ABOUT_HTML', 'strings')) . "</p>";
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
                 break;
 
             case 'credits':
                 $response = file_get_contents(MODULES_DIR . "/{$this->id}/templates/credits_html.tpl");
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
                 break;
 
             case 'orgname':
