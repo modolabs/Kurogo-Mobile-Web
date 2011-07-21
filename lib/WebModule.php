@@ -247,22 +247,11 @@ abstract class WebModule extends Module {
     }
   }
 
-  //
-  // Percent Mobile Analytic for non-Javascript devices
-  //
-  private function percentMobileAnalyticsGetImageUrl($pmID){
-      if (isset($pmID) && strlen($pmID)){
-       return ""; // empty for now
-      }
-      else {
-          return "";
-      }
-  }
 
    //
-  // Percent Mobile Analytic for Javascript devices
+  // Percent Mobile Analytics
   //
-  private function percentMobileAnalyticsGetImageUrlJS($pmID){
+  private function percentMobileAnalyticsGetImageUrl($pmID){
       if (isset($pmID) && strlen($pmID)){
        $url = "http://tracking.percentmobile.com/pixel/" .
           $pmID .
@@ -1223,7 +1212,7 @@ abstract class WebModule extends Module {
         $pmBASEURL = "http://assets.percentmobile.com/percent_mobile.js";
         $this->assign('PERCENT_MOBILE_URL', $pmBASEURL);
         
-        $this->assign('pmImageURLJS', $this->percentMobileAnalyticsGetImageUrlJS($pmID));
+        //$this->assign('pmImageURLJS', $this->percentMobileAnalyticsGetImageUrlJS($pmID));
         $this->assign('pmImageURL', $this->percentMobileAnalyticsGetImageUrl($pmID));
     }
     

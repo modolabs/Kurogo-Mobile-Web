@@ -78,4 +78,8 @@
   {if strlen($gaImageURL)}
     <img src="{$gaImageURL}" />
   {/if}
+  {if strlen($pmImageURL)}
+    <img src="{$pmImageURL}" width="2" height="2" alt="" />
+  {/if}
+
 {/block}
