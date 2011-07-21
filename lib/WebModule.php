@@ -264,9 +264,9 @@ abstract class WebModule extends Module {
   //
   private function percentMobileAnalyticsGetImageUrlJS($pmID){
       if (isset($pmID) && strlen($pmID)){
-       $url = Kurogo::getOptionalSiteVar('PERCENT_MOBILE_TRACKING_BASE_URL') .
+       $url = "http://tracking.percentmobile.com/pixel/" .
           $pmID .
-          Kurogo::getOptionalSiteVar('PERCENT_MOBILE_TRACKING_END_OF_URL');
+          "/pixel.gif?v=271009_js";
        
        return $url;
       }
@@ -1220,8 +1220,8 @@ abstract class WebModule extends Module {
     if ($pmID = Kurogo::getOptionalSiteVar('PERCENT_MOBILE_ID')){
         $this->assign('PERCENT_MOBILE_ID', $pmID);
         
-        if ($pmBASEURL = Kurogo::getOptionalSiteVar('PERCENT_MOBILE_URL'))
-            $this->assign('PERCENT_MOBILE_URL', $pmBASEURL);
+        $pmBASEURL = "http://assets.percentmobile.com/percent_mobile.js";
+        $this->assign('PERCENT_MOBILE_URL', $pmBASEURL);
         
         $this->assign('pmImageURLJS', $this->percentMobileAnalyticsGetImageUrlJS($pmID));
         $this->assign('pmImageURL', $this->percentMobileAnalyticsGetImageUrl($pmID));
