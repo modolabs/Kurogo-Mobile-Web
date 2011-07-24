@@ -232,26 +232,30 @@ class Kurogo
       //
       // Get URL base
       //
-      
-      $pathParts = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $_SERVER['REQUEST_URI'])));
-      
-      $testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
-      $urlBase = '/';
-      $foundPath = false;
-      if (realpath($testPath) != WEBROOT_DIR) {
-        foreach ($pathParts as $dir) {
-          $test = $testPath.$dir.DIRECTORY_SEPARATOR;
-          
-          if (realpath_exists($test)) {
-            $testPath = $test;
-            $urlBase .= $dir.'/';
-            if (realpath($test) == WEBROOT_DIR) {
-              $foundPath = true;
-              break;
-            }
-          }
-        }
-      }
+      if ($urlBase = self::getOptionalSiteVar('URL_BASE','','urls')) {
+      	$foundPath = true;
+      	$urlBase = rtrim($urlBase,'/').'/';
+      } else {
+		  $pathParts = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $_SERVER['REQUEST_URI'])));
+		  
+		  $testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
+		  $urlBase = '/';
+		  $foundPath = false;
+		  if (realpath($testPath) != WEBROOT_DIR) {
+			foreach ($pathParts as $dir) {
+			  $test = $testPath.$dir.DIRECTORY_SEPARATOR;
+			  
+			  if (realpath_exists($test)) {
+				$testPath = $test;
+				$urlBase .= $dir.'/';
+				if (realpath($test) == WEBROOT_DIR) {
+				  $foundPath = true;
+				  break;
+				}
+			  }
+			}
+		  }
+		}
       define('URL_BASE', $foundPath ? $urlBase : '/');
       define('IS_SECURE', isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
       define('FULL_URL_BASE', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_BASE);
