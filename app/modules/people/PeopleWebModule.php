@@ -13,8 +13,8 @@ Kurogo::includePackage('People');
 class PeopleWebModule extends WebModule {
     protected $id = 'people';
     protected $bookmarkLinkTitle = 'Bookmarked People';
-    private $detailFields = array();
-    private $detailAttributes = array();
+    protected $detailFields = array();
+    protected $detailAttributes = array();
     protected $defaultController = 'LDAPPeopleController';
     protected $encoding = 'UTF-8';
     protected $feeds=array();
@@ -47,7 +47,7 @@ class PeopleWebModule extends WebModule {
         return $values;
     }
     
-    private function replaceFormat($format) {
+    protected function replaceFormat($format) {
         return str_replace(array('\n','\t'),array("\n","\t"), $format);
     }
   
@@ -193,11 +193,9 @@ class PeopleWebModule extends WebModule {
         $this->detailAttributes = array_values(array_unique($this->detailAttributes));
     }
     
-    public function linkforItem(KurogoObject $person, $options=null) {
-        $personDetails =  $this->formatPersonDetails($person);
-    
+    public function linkforItem(KurogoObject $person, $options=null) {    
         return array(
-            'title'=>$this->htmlEncodeString($personDetails['name']['name']['title']),
+            'title'=>$this->htmlEncodeString($person->getName()),
             'url'  =>$this->buildBreadcrumbURL('detail', array(
                                             'uid'    => $person->getId(),
                                             'filter' => $this->getArg('filter')
@@ -266,7 +264,7 @@ class PeopleWebModule extends WebModule {
                         // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                             $cookieParams = array(
-                                'title'   => $personDetails['name']['name']['title'],
+                                'title' => $person->getName(),
                                 'uid' => urlencode($uid)
                             );
             

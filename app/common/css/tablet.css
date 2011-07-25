@@ -1052,6 +1052,7 @@ h2.icon {
 }
 
 #tabs li {
+	position: relative;
 	float: left;
 	margin-bottom: -1px;
 	margin-right: 4px;
@@ -1060,6 +1061,21 @@ h2.icon {
 	text-align: center;
 }
 
+#tabs li .badge {
+	position: absolute;
+	top: -8px;
+	right: -6px;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	text-align: center;
+	color: #fff;
+	font-size:70.59%;
+	font-weight: bold;
+	background-image: url(/common/images/badge.png);
+	background-repeat: no-repeat;
+}
+ 
 #tabs li a {
 	display: block;
 	text-decoration: none;

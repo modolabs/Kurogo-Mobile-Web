@@ -233,6 +233,19 @@ function updateMapImage() {
     if ("projection" in staticMapOptions) {
         url = url + "&projection=" + staticMapOptions['projection'];
     }
+    if ('markers' in staticMapOptions && staticMapOptions['markers']) {
+        url += '&markers=' + staticMapOptions['markers'];
+    }
+    if ('polygons' in staticMapOptions) {
+        for (arg in staticMapOptions['polygons']) {
+            url += '&'+arg+'='+staticMapOptions['polygons'][arg];
+        }
+    }
+    if ('paths' in staticMapOptions) {
+        for (arg in staticMapOptions['paths']) {
+            url += '&'+arg+'='+staticMapOptions['paths'][arg];
+        }
+    }
     // code snippet from http://en.wikipedia.org/wiki/JSON#Use_in_Ajax
     httpRequest.open("GET", url, true);
     httpRequest.onreadystatechange = function() {

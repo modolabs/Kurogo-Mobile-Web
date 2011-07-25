@@ -3,9 +3,14 @@
  class YouTubeVideoController extends VideoDataController
  {
     protected $DEFAULT_PARSER_CLASS='YouTubeDataParser';
+    protected $playlist;
     
  	private function setStandardFilters() {
-        $this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
+ 		if ($this->playlist) {
+			$this->setBaseUrl('http://gdata.youtube.com/feeds/api/playlists/' . $this->playlist);
+ 		} else {
+			$this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
+		}
         $this->addFilter('alt', 'jsonc'); //set the output format to json
         $this->addFilter('format', 6); //only return mobile videos
         $this->addFilter('v', 2); // version 2
@@ -34,6 +39,10 @@
     
     protected function init($args) {
         parent::init($args);
+
+        if (isset($args['PLAYLIST']) && strlen($args['PLAYLIST'])) {
+            $this->playlist = $args['PLAYLIST'];
+        }
 
         $this->setStandardFilters();
     }
@@ -69,6 +78,9 @@
 class YouTubeDataParser extends DataParser
 {
     protected function parseEntry($entry) {
+    	if (isset($entry['video']['id'])) {
+    		$entry = array_merge($entry, $entry['video']);
+    	}
         $video = new YouTubeVideoObject();
         $video->setURL($entry['player']['default']);
         if (isset($entry['content'][6])) {
