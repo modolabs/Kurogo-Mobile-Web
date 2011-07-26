@@ -17,8 +17,8 @@ class MapDBSearch extends MapSearch
             );
 
 
-        $sql = 'SELECT p.* pc.category_id FROM '
-              .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
+        $sql = 'SELECT p.*, pc.category_id FROM '
+              .MapDB::PLACEMARK_TABLE.' p, '.MapDB::PLACEMARK_CATEGORY_TABLE.' pc'
               .' WHERE p.placemark_id = pc.placemark_id'
               .'   AND p.lat >= ? AND p.lat < ? AND p.lon >= ? AND p.lon < ?'
               .' ORDER BY (p.lat - ?)*(p.lat - ?) + (p.lon - ?)*(p.lon - ?)';
@@ -32,7 +32,7 @@ class MapDBSearch extends MapSearch
 
         while ($row = $result->fetch()) {
             $placemark = new MapDBPlacemark($row, true);
-            $placemark->addCategoryId($row['categoryId']);
+            $placemark->addCategoryId($row['category_id']);
             $this->searchResults[] = $placemark;
         }
         return $this->searchResults;
@@ -43,13 +43,13 @@ class MapDBSearch extends MapSearch
         $this->searchResults = array();
 
         $sql = 'SELECT p.*, pc.category_id FROM '
-              .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
+              .MapDB::PLACEMARK_TABLE.' p, '.MapDB::PLACEMARK_CATEGORY_TABLE.' pc'
               .' WHERE p.placemark_id = pc.placemark_id'
               // TODO this substring pattern might need tweaking
               .'   AND (p.name like ? OR p.name like ?)';
         $params = array("$query%", "% $query%");
 
-        $result = self::connection()->query($sql, $params);
+        $result = MapDB::connection()->query($sql, $params);
 
         while ($row = $result->fetch()) {
             $placemark = new MapDBPlacemark($row, true);

@@ -218,7 +218,7 @@ var_dump($params);
         return array();
     }
 
-    private static function connection()
+    public static function connection()
     {
         if (self::$db === null) {
             // TODO: get other db config values

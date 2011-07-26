@@ -568,10 +568,10 @@ JS;
                     }
                     $displayDetailsAsList = true;
                 }
-                
+
                 $this->assign('displayDetailsAsList', $displayDetailsAsList);
                 $this->assign('details', $details);
-                
+
                 return is_array($details) ? count($details) > 0 : strlen(trim($details));
             }
             case 'categories':
@@ -844,7 +844,6 @@ JS;
                 }
                 $this->assign('name', $this->getArg('title', $title));
                 $this->assign('address', $this->getArg('address', $address));
-
                 $possibleTabs = $detailConfig['tabs']['tabkeys'];
                 foreach ($possibleTabs as $tabKey) {
                     if ($this->generateTabForKey($tabKey, $feature, $dataController, $tabJavascripts)) {

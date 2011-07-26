@@ -86,6 +86,7 @@ var_dump($featureId);
         if ($feature) {
             $this->setSelectedFeatures(array($feature));
         }
+        return $feature;
     }
 
     public function getAllFeatures()
