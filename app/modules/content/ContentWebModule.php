@@ -1,6 +1,6 @@
 <?php
 
-abstract class ContentWebModule extends WebModule {
+class ContentWebModule extends WebModule {
     protected $id = 'content';
 
    protected function getContent($feedData) {

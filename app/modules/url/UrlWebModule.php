@@ -3,7 +3,7 @@
   * @package Module
   * @subpackage Fullweb
   */
-abstract class UrlWebModule extends WebModule {
+class UrlWebModule extends WebModule {
   protected $id = 'url';
   
   protected function initializeForPage() {
