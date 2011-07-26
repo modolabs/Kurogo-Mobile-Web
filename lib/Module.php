@@ -13,6 +13,7 @@ abstract class Module
     protected $configModule;
     protected $moduleName = '';
     protected $args = array();
+    protected $configs = array();
 
     /**
       * Returns the module id
@@ -218,10 +219,19 @@ abstract class Module
       * @return ConfigFile object
       */
     protected function getConfig($type, $opts=0) {
+    	if (isset($this->configs[$type])) {
+    		return $this->configs[$type];
+    	}
+    	
         if ($config = ModuleConfigFile::factory($this->configModule, $type, $opts)) {
             Kurogo::siteConfig()->addConfig($config);
+            $this->setConfig($type, $config);
         }
         return $config;
+    }
+    
+    protected function setConfig($type, ConfigFile $config) {
+    	$this->configs[$type] = $config;
     }
 
     /**
