@@ -92,16 +92,25 @@ Copying a Module
 
 In some cases you may want to have multiple modules that exist under different URLs that share the
 same logic, but have different configurations. An example of this would be the :doc:`modulecontent` 
-or :doc:`moduleurl`. In this case you simply subclass the parent module and provide a different 
-*$configModule* property::
+or :doc:`moduleurl`. The process is simple:
 
-    <?php 
-    
-    class SomethingWebModule extends ContenWebModule
-    {
-        protected $configModule = 'something';
-    }
-    
-This module would use the same logic and templates as its parent module, but it would use its
-own set of configuration files, in this case in the *SITE_DIR/config/something* folder. Make sure
-that the class name prefix matches the configModule value.
+* Create a new folder in the *SITE_DIR/config* folder named with the url
+* Create a module.ini file that has an *id* property that matches the name of the module
+  you wish to load. (news, content, url, etc)
+
+Here is an example of the :doc:`moduleurl` for the address */fullweb*. This file would be located at 
+*config/fullweb/module.ini*
+
+.. code-block:: ini
+
+  [module]
+  id = "url"
+  title = "Full Website"
+  disabled = 0
+  protected = 0
+  search = 0
+  secure = 0
+  url = "http://example.com"
+
+This module would use the same logic and templates as the module indicated by *id*, but it would use its
+own set of configuration files, in this case in the *SITE_DIR/config/fullweb* folder. 

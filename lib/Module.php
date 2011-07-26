@@ -67,6 +67,16 @@ abstract class Module
       */
     public static function factory($id, $type=null) {
   
+		$configModule = $id;
+		//attempt to load config/$id/module.ini  
+        if ($config = ModuleConfigFile::factory($id, 'module', ModuleConfigFile::OPTION_DO_NOT_CREATE)) {
+        	//use the ID parameter if it's present, otherwise use the included id
+        	$id = $config->getOptionalVar('id', $id);
+        } elseif (!Kurogo::getOptionalSiteVar('CREATE_DEFAULT_CONFIG', false, 'modules')) {
+			throw new ModuleNotFound("Module $id not found");
+        }
+        
+
         // when run without a type it will find either
         $classNames = array(
             'web'=>ucfirst($id).'WebModule',
@@ -107,6 +117,10 @@ abstract class Module
                     $info = new ReflectionClass($className);
                     if (!$info->isAbstract()) {
                         $module = new $className();
+                        $module->setConfigModule($configModule);
+                        if ($config) {
+                        	$module->setConfig('module', $config);
+                        }
                         return $module;
                     }
                     return false;

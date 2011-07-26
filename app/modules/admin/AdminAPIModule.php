@@ -5,7 +5,7 @@ class AdminAPIModule extends APIModule
     protected $id = 'admin';
     protected $vmin = 1;
     protected $vmax = 1;
-    private $configs = array();
+    private $loadedConfigs = array();
     private $changedConfigs = array();
     public function availableVersions() {
         return array(1);
@@ -219,18 +219,18 @@ class AdminAPIModule extends APIModule
 
         if ($type=='site') {
             $configKey = "site-$config";
-            if (isset($this->configs[$configKey])) {
-                $config = $this->configs[$configKey];
+            if (isset($this->loadedConfigs[$configKey])) {
+                $config = $this->loadedConfigs[$configKey];
             } elseif ($config = ConfigFile::factory($config, 'site', $opts)) {
-                $this->configs[$configKey] = $config;
+                $this->loadedConfigs[$configKey] = $config;
             }
             
         } elseif ($type instanceOf Module) {
             $configKey = 'module-' . $type->getConfigModule() . '-' . $config;
-            if (isset($this->configs[$configKey])) {
-                $config = $this->configs[$configKey];
+            if (isset($this->loadedConfigs[$configKey])) {
+                $config = $this->loadedConfigs[$configKey];
             } elseif ($config = $type->getConfig($config, $opts)) {
-                $this->configs[$configKey] = $config;
+                $this->loadedConfigs[$configKey] = $config;
             }
         } else {
             throw new Exception("Invalid type $type");
