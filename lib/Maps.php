@@ -71,3 +71,6 @@ class MapsAdmin
         );
     }
 }
+
+$config = ConfigFile::factory('maps', 'site');
+Kurogo::siteConfig()->addConfig($config);

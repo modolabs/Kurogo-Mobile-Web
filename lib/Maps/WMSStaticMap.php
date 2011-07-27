@@ -21,7 +21,7 @@ class WMSStaticMap extends StaticMapImageController {
 
     public function __construct($baseURL) {
         $this->baseURL = $baseURL;
-        $this->diskCache = new DiskCache(Kurogo::getSiteVar('WMS_CACHE'), 86400 * 7, true);
+        $this->diskCache = new DiskCache(Kurogo::getSiteVar('WMS_CACHE','maps'), 86400 * 7, true);
         $this->diskCache->preserveFormat();
         $filename = md5($this->baseURL);
         $metafile = $filename.'-meta.txt';

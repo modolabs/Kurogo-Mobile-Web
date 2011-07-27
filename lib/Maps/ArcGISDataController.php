@@ -7,7 +7,7 @@ class ArcGISDataController extends MapDataController
 
     protected function cacheFolder() 
     {
-        return Kurogo::getSiteVar('ARCGIS_CACHE');
+        return Kurogo::getSiteVar('ARCGIS_CACHE','maps');
     }
     
     public function getProjection() {
