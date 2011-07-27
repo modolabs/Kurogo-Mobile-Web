@@ -13,6 +13,7 @@ class TrumbaCalendarDataController extends CalendarDataController
     const DEFAULT_EVENT_CLASS='TrumbaEvent';
     protected $trumbaFilters=array();
     protected $supportsSearch = true;
+    protected $categoryFilter = '';
     
     public function addTrumbaFilter($var, $value)
     {
@@ -27,7 +28,9 @@ class TrumbaCalendarDataController extends CalendarDataController
         switch ($var)
         {
             case 'category':
-                $this->addTrumbaFilter(Kurogo::getSiteVar('CALENDAR_CATEGORY_FILTER_FIELD'), $value);
+                if ($this->categoryFilter) {
+                    $this->addTrumbaFilter($this->categoryFilter, $value);
+                }
                 break;
             default:
                 return parent::addFilter($var, $value);
@@ -84,6 +87,13 @@ class TrumbaCalendarDataController extends CalendarDataController
         throw new Exception("Can't load event without a time");
     }
     
+    protected function init($args)
+    {
+        parent::init($args);
+        if (isset($args['CATEGORY_FILTER_FIELD'])) {
+          $this->categoryFilter = $args['CATEGORY_FILTER_FIELD'];
+        }
+    }
 }
 
 /**
