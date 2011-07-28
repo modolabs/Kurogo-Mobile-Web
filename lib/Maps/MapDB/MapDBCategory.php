@@ -3,7 +3,7 @@
 class MapDBCategory extends MapCategory
 {
     private $parentCategoryId;
-    private $features;
+    private $features = array();
     private $childCategories = array();
     private $stored = false;
     private $projection;
@@ -92,5 +92,7 @@ class MapDBCategory extends MapCategory
         if ($this->features) {
             return $this->features;
         }
+
+        return array();
     }
 }

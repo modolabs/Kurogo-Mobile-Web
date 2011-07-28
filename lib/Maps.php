@@ -126,3 +126,21 @@ class MapsAdmin
         );
     }
 }
+
+function debug_dump($variable=null, $message='') {
+    $backtrace = debug_backtrace();
+    $currentCall = current($backtrace); // who is calling debug_dump
+    $lastCall = next($backtrace); // what debug_dump is being called in
+    $file = end(explode('/', $currentCall['file']));
+    $line = $currentCall['line'];
+    $function = $lastCall['function'];
+
+    if ($variable !== null) {
+        $trace = "$file($line):$function [".get_class($variable).' '.spl_object_hash($variable)."] $message";
+    } else {
+        $trace = "$file($line):$function $message";
+    }
+    error_log($trace);
+}
+
+

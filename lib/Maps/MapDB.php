@@ -1,5 +1,7 @@
 <?php
 
+includePackage('db');
+
 class MapDB
 {
     const PLACEMARK_TABLE = 'map_placemarks';
@@ -10,18 +12,19 @@ class MapDB
 
     private static $db = null;
 
-    public static function updateCategory(MapDBCategory $category, $items, $parentCategoryId=null) {
+    public static function updateCategory(MapFolder $category, $items, $parentCategoryId=null) {
         $categoryId = $category->getId();
+var_dump("MapDB ".__LINE__.": categoryid ".$categoryId);
         $name = $category->getTitle();
         $description = $category->getSubtitle();
 
-        if (!$category->isStored()) {
+        if (!$category instanceof MapDBCategory || !$category->isStored()) {
             if ($parentCategoryId === null) {
                 $sql = 'INSERT INTO '.self::CATEGORY_TABLE.' (category_id, name, description) VALUES (?, ?, ?)';
                 $params = array($categoryId, $name, $description);
             } else {
-                $sql = 'INSERT INTO '.self::CATEGORY_TABLE.' (category_id, name, description) VALUES (?, ?, ?, ?)';
-                $params = array($categoryId, $name, $description, $parent);
+                $sql = 'INSERT INTO '.self::CATEGORY_TABLE.' (category_id, name, description, parent_category_id) VALUES (?, ?, ?, ?)';
+                $params = array($categoryId, $name, $description, $parentCategoryId);
             }
 
         } else {
@@ -30,14 +33,16 @@ class MapDB
                 $params = array($name, $description, $categoryId);
             } else {
                 $sql = 'UPDATE '.self::CATEGORY_TABLE.'   SET name=?, description=?, parent_category_id=? WHERE category_id=?';
-                $params = array($name, $description, $parent, $categoryId);
+                $params = array($name, $description, $parentCategoryId, $categoryId);
             }
         }
+error_log(print_r($params, true));
 
-        self::connection()->query($sql, $params);  
-
+        self::connection()->query($sql, $params);
+debug_dump($category);
         foreach ($items as $item) {
-            if ($item instanceof MapCategory) {
+debug_dump($item);
+            if ($item instanceof MapFolder) {
                 self::updateCategory($item, $item->getListItems(), $categoryId);
             } elseif ($item instanceof Placemark) {
                 self::updateFeature($item, $categoryId);
@@ -76,20 +81,21 @@ class MapDB
         }
 
         $params = array(
-            $feature->getTitle(), $feature->getAddress(), $styleId,
-            $centroid['lat'], $centroid['lon'], $wkt, $placemarkId,
+            $feature->getTitle(), $feature->getAddress(), $styleId, $wkt,
+            $placemarkId, $centroid['lat'], $centroid['lon'],
             );
 
+error_log(print_r($params, true));
         if ($isStored) {
             $sql = 'UPDATE '.self::PLACEMARK_TABLE
-                  .'   SET name=?, address=?, style_id=?,  lat=?, lon=?, geometry=?'
-                  .' WHERE placemark_id=?';
+                  .'   SET name=?, address=?, style_id=?, geometry=?'
+                  .' WHERE placemark_id=? AND lat=? AND lon=?';
         } else {
             $sql = 'INSERT INTO '.self::PLACEMARK_TABLE
-                  .' (name, address, style_id, lat, lon, geometry, placemark_id)'
+                  .' (name, address, style_id, geometry, placemark_id, lat, lon, placemark_id)'
                   .' VALUES (?, ?, ?, ?, ?, ?, ?)';
         }
-            
+
         self::connection()->query($sql, $params);
         if ($placemarkId === null) {
             // TODO: check db compatibility for this function
@@ -108,7 +114,7 @@ class MapDB
         }
         if (!in_array($parentCategoryId, $categories)) {
             $categories[] = $parentCategoryId;
-var_dump($categories);
+var_dump("setting feature categories to: ".print_r($categories, true));
         }
         foreach ($categories as $categoryId) {
             $sql = 'INSERT INTO '.self::PLACEMARK_CATEGORY_TABLE
@@ -133,16 +139,43 @@ var_dump($categories);
         }
     }
 
-    public static function getFeatureByIdAndCategory($featureId, $categoryId)
+    public static function getFeatureByIdAndCategory($featureId, $categoryIds)
     {
+var_dump("MapDB getFeatureByIdAndCategory($featureId, ".implode(', ',$categoryIds).')');
         $sql = 'SELECT p.*, pc.category_id FROM '
               .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
               .' WHERE p.placemark_id = ?'
-              .'   AND p.placemark_id = pc.placemark_id'
-              .'   AND pc.category_id = ?';
-        $params = array($featureId, $categoryId);
+              .'   AND p.placemark_id = pc.placemark_id';
+
+        $orClauses = array();
+        $params = array($featureId);
+        foreach ($categoryIds as $categoryId) {
+            $orClauses[] = ' pc.category_id = ?';
+            $params[] = $categoryId;
+        }
+        if ($orClauses) {
+            $sql .= ' AND ('.implode(' OR ', $orClauses).')';
+        }
+        //$sql .= implode(' AND ', $andClauses);
+        //
+        //
+        //      .'   AND pc.category_id = ?';
+        //$params = array($featureId, $categoryId);
         $result = self::connection()->query($sql, $params);
-var_dump($params);
+
+$sql = 'SELECT p.*, pc.category_id FROM '
+      .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
+      .' WHERE p.placemark_id = \''.$featureId
+      .'\'   AND p.placemark_id = pc.placemark_id';
+      $orClauses = array();
+      foreach ($categoryIds as $categoryId) {
+          $orClauses[] = ' pc.category_id = \''.$categoryId.'\'';
+      }
+      if ($orClauses) {
+          $sql .= ' AND ('.implode(' OR ', $orClauses).')';
+      }
+var_dump($sql);
+
         $placemark = null;
         $row = $result->fetch();
         if ($row) {
@@ -163,7 +196,9 @@ var_dump($params);
         }
     }
 
-    public static function categoryForId($categoryId) {
+    public static function categoryForId($categoryId)
+    {
+var_dump("MapDB categoryForId($categoryId)");
         $sql = 'SELECT * FROM '.self::CATEGORY_TABLE
               .' WHERE category_id = ?';
         $params = array($categoryId);

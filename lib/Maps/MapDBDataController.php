@@ -1,18 +1,17 @@
 <?php
 
-includePackage('db');
 includePackage('Maps/MapDB');
 
 class MapDBDataController extends MapDataController implements MapFolder
 {
     protected $DEFAULT_PARSER_CLASS = "MapDBDataParser";
     private $hasDBData = false;
-    private $db;
+    private $dbParser;
     private $subtitle;
 
     public function getCategoryId()
     {
-        return $this->db->getCategoryId();
+        return $this->dbParser->getCategoryId();
     }
 
     public function getSubtitle()
@@ -25,11 +24,6 @@ class MapDBDataController extends MapDataController implements MapFolder
     protected function initStreamContext($args)
     {
         // no stream is required if:
-        
-        // data is embedded
-        if (isset($args['DATA_CONTAINED']) && $args['DATA_CONTAINED']) {
-            return;
-        }
 
         // we don't need to refresh our cache
         if ($this->cacheIsFresh()) {
@@ -42,8 +36,8 @@ class MapDBDataController extends MapDataController implements MapFolder
     protected function init($args)
     {
         parent::init($args);
-        $this->db = new MapDBDataParser();
-        $this->db->init($args);
+        $this->dbParser = new MapDBDataParser();
+        $this->dbParser->init($args);
     }
 
     public function getData() {
@@ -54,7 +48,7 @@ class MapDBDataController extends MapDataController implements MapFolder
     }
 
     protected function getCacheData() {
-        if ($this->db->isStored() && $this->db->getCategory()->getListItems()) {
+        if ($this->dbParser->isStored() && $this->dbParser->getCategory()->getListItems()) {
             // make sure this category was populated before skipping
             $this->hasDBData = true;
         } else {
@@ -65,14 +59,16 @@ class MapDBDataController extends MapDataController implements MapFolder
     protected function parseData($data, DataParser $parser=null) {
         $items = null;
         if ($this->cacheIsFresh() && $this->hasDBData) {
-            $items = $this->db->getCategory()->getListItems();
+            $items = $this->dbParser->getCategory()->getListItems();
         }
         if (!$items) {
             $items = parent::parseData($data, $parser);
-            $category = $this->db->getCategory();
+            $category = $this->dbParser->getCategory();
+debug_dump($category, "Parent category");
             $category->setTitle($this->getTitle());
             $category->setSubtitle($this->getSubtitle());
             MapDB::updateCategory($category, $items);
+            //$items = $category->getListItems();
         }
         return $items;
     }
@@ -81,8 +77,8 @@ class MapDBDataController extends MapDataController implements MapFolder
 
     public function selectFeature($featureId)
     {
-var_dump($featureId);
-        $feature = $this->db->getFeatureById($featureId);
+debug_dump($featureId, "selectFeature");
+        $feature = $this->dbParser->getFeatureById($featureId, $this->drillDownPath);
         if ($feature) {
             $this->setSelectedFeatures(array($feature));
         }
@@ -93,7 +89,7 @@ var_dump($featureId);
     {
         $this->getListItems(); // make sure we're populated
         if ($this->hasDBData) {
-            return $this->db->getCategory()->getAllFeatures();
+            return $this->dbParser->getCategory()->getAllFeatures();
         }
         return $this->parser->getAllFeatures();
     }

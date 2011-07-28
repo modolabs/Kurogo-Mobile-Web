@@ -173,7 +173,7 @@ class MapDataController extends DataController implements MapFolder
 
     public function addDisplayFilter($type, $value)
     {
-var_dump($value);
+var_dump("adding display filter for ".print_r($type, true).": ".print_r($value, true));
         if ($type == 'category') {
             if ($value && !is_array($value)) {
                 $value = array($value);
@@ -207,9 +207,9 @@ var_dump($value);
 
     ////// MapFolder interface
 
-    private function listItemsAtPath(array $items, array $path=array())
+    private static function listItemsAtPath(array $items, array $path=array(), $otherCateogryId='something_unique')
     {
-var_dump($path);
+var_dump("getting listItemsAtPath for: (".implode(', ',$path).'), number of candidates: '.count($items));
         if (count($path)) {
             $firstItem = array_shift($path);
         }
@@ -217,6 +217,7 @@ var_dump($path);
         $features = array();
         foreach ($items as $item) {
             if ($item instanceof MapFolder) {
+debug_dump($item);var_dump($item->getId());
                 $folders[$item->getId()] = $item;
             } elseif ($item instanceof Placemark) {
                 $features[] = $item;
@@ -224,7 +225,9 @@ var_dump($path);
         }
 
         if (count($folders) && count($features)) {
-            $someUniqueId = substr(md5($this->categoryId.count($folders)), 0, strlen($this->categoryId)-1);
+            // put dangling placemarks at this level into a folder called "Other"
+            // since we don't have UI to handle mixed folders and placemarks
+            $someUniqueId = substr(md5($otherCateogryId.count($folders)), 0, strlen($otherCateogryId)-1);
             $otherCategory = new MapBaseCategory($someUniqueId, 'Other places');
             $folders[$otherCategory->getId()] = $otherCategory;
             $otherCategory->setFeatures($features);
@@ -232,7 +235,7 @@ var_dump($path);
 
         if (count($folders) > 1) {
             if (isset($firstItem) && isset($folders[$firstItem])) {
-                return $this->listItemsAtPath(
+                return self::listItemsAtPath(
                     $folders[$firstItem]->getListItems(), $path);
             }
             return $folders;
@@ -261,7 +264,7 @@ var_dump($path);
 
     public function getListItems()
     {
-        return $this->listItemsAtPath($this->items(), $this->drillDownPath);
+        return self::listItemsAtPath($this->items(), $this->drillDownPath, $this->categoryId);
     }
 
     public function getProjection()

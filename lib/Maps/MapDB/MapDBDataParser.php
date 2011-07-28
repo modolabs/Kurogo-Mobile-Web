@@ -19,12 +19,12 @@ class MapDBDataParser extends DataParser implements MapDataParser
 
     public function getAllFeatures()
     {
-        return $this->db->featuresForCategory($this->categoryId);
+        return MapDB::featuresForCategory($this->categoryId);
     }
 
     public function getChildCategories()
     {
-        return $this->db->childrenForCategory($this->categoryId);
+        return MapDB::childrenForCategory($this->categoryId);
     }
 
     // overrides
@@ -60,8 +60,9 @@ class MapDBDataParser extends DataParser implements MapDataParser
         return $this->category;
     }
 
-    public function getFeatureById($featureId)
+    public function getFeatureById($featureId, $possibleCategories=array())
     {
-        return MapDB::getFeatureByIdAndCategory($featureId, $this->categoryId);
+        $possibleCategories[] = $this->categoryId;
+        return MapDB::getFeatureByIdAndCategory($featureId, $possibleCategories);
     }
 }

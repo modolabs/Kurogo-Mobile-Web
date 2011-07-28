@@ -78,27 +78,21 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
                 $this->elementStack[] = new KMLDocument($name, $attribs);
                 break;
             case 'FOLDER':
-                $folder = new KMLFolder($name, $attribs);
                 $parent = end($this->elementStack);
+
+                $folder = new KMLFolder($name, $attribs);
+                $this->elementStack[] = $folder;
+
                 // we need to do this before the element is completed
                 // since this info needs to be available for nested children
                 if ($parent instanceof KMLFolder) {
                     $parentCategory = $parent->getId();
                     $newFolderIndex = count($parent->getChildCategories());
-                    //$categoryPath = $parent->getCategory();
-                //} elseif ($parent instanceof KMLDocument) { // child of root element
-                //    $newFolderIndex = count($this->items);
-                    //$categoryPath = $this->category;
                 } else {
                     $parentCategory = $this->dataController->getCategoryId();
                     $newFolderIndex = count($this->items);
-                    //$categoryPath = $this->category;
                 }
-                //$categoryPath[] = $newFolderIndex;
                 $folder->setId(substr(md5($parentCategory.$newFolderIndex), 0, strlen($parentCategory)-1)); // something unique
-              //  $folder->setId($newFolderIndex);
-                //$folder->setCategory($categoryPath);
-                $this->elementStack[] = $folder;
                 break;
             case 'STYLE':
                 $this->elementStack[] = new KMLStyle($name, $attribs);
@@ -116,9 +110,6 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
                 } else {
                     $placemark->addCategoryId($this->dataController->getCategoryId());
                 }
-                //if (!($parent instanceof KMLFolder)) { // child of root element
-                //    $placemark->setCategory($this->category);
-                //}
                 $this->elementStack[] = $placemark;
                 break;
             case 'POINT':
