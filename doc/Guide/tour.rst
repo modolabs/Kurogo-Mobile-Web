@@ -264,7 +264,8 @@ that are specific to that module. For more detailed information on module design
 
 The naming conventions are very important (especially for case sensitive file systems):
 
-* The folder **must** be lower case and be the same as the url of the module (/about, /home, /links)
+* The folder **must** be lower case and be the same as the url of the module (/about, /home, /links). You
+  can create modules at other urls by :ref:`copying the module <copy-module>`
 * The folder **must** contain a PHP file named *ModulenameWebModule.php*. If the module is located
   in the *site* folder **and** it extends an existing module then it should be called *SiteModulenameWebModule.php*. 
 * The first (and ONLY) letter of the module **must** be capitalized and followed by WebModule.php. 

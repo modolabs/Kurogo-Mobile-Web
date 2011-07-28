@@ -182,9 +182,12 @@ Modules
 * *DYNAMIC_MODULE_NAV_DATA*  - This value determines whether
   modules can present dynamic data on the navigation home screen. This could include dynamic titles, 
   images or other information. If you are not providing dynamic data, then you should turn off this
-  option. It is off by default.
+  option. It is off by default. See :ref:`dynamic_nav_data` for more information
+* *CREATE_DEFAULT_CONFIG* - This value determines whether config folders will be automatically
+  created if they don't exist. This can be convienient for development when you want to populate
+  a config folder with the default values, but should be turned off for production to ensure
+  modules that you don't use don't create configuration folders.
   
-See :ref:`dynamic_nav_data` for more information
   
 ---------
 Analytics
@@ -296,9 +299,12 @@ Log Files
 Module Visibility and protection
 ================================
 
-Each module contains an configuration file in *SITE_DIR/config/modules/MODULEID.ini*. This file
+Each module contains an configuration file in *SITE_DIR/config/moduleID/module.ini*. This file
 contains values common to all modules, as well as module specific values. 
 
+* *id* - The module id to use. By default this will be the same name as the moduleID. You can 
+  change this to create a :ref:`copied module <copy-module>` or to use another module's code
+  at this url. 
 * *title* - The module title. Used in the title bar and other locations
 * *disabled* - Whether or not the module is disabled. A disabled module cannot be used by anyone. Use
   this value for temporarily disabling modules.
@@ -310,21 +316,8 @@ contains values common to all modules, as well as module specific values.
 Permanently disabling modules
 -----------------------------
 
-If there are modules that you will not use in your site at all, you can completely disable them by editing
-the *SITE_DIR/config/site.ini* file. In the *[disabled_modules]* section you can add a list of modules
-that should be disabled. By adding the disabled flag in this location, you can completely remove the 
-configuration folder and it will not get recreated.
-
-.. code-block:: ini
-
-    [disabled_modules]
-    admin = 1 ; disable the admin module
-    stats = 1 ; disable the stats module
-  
-It is important to disable any modules you do not wish to use. It is *very* 
-important to make sure that the *admin* module is either disabled or protected appropriately to prevent
-exposure of critically important data and configuration. If you utilize logins you should make sure
-the *login* module requires *secure* connections if you have a valid certificate.
+When *CREATE_DEFAULT_CONFIG* is set to 0, if you remove a module's config folder it will
+be permanently disabled and will not be accessible. 
 
 -------------------------------
 Optional Common Module Settings

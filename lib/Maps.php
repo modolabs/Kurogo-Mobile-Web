@@ -127,6 +127,9 @@ class MapsAdmin
     }
 }
 
+$config = ConfigFile::factory('maps', 'site');
+Kurogo::siteConfig()->addConfig($config);
+
 function debug_dump($variable=null, $message='') {
     $backtrace = debug_backtrace();
     $currentCall = current($backtrace); // who is calling debug_dump
@@ -142,5 +145,4 @@ function debug_dump($variable=null, $message='') {
     }
     error_log($trace);
 }
-
 

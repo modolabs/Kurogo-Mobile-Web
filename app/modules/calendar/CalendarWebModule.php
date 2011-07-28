@@ -756,8 +756,8 @@ class CalendarWebModule extends WebModule {
 
         // Figure out when the calendar year starts; default to January 1
         // Allow setting either per-calendar with config or override with url parameter
-        $defaultStartMonth = Kurogo::getOptionalSiteVar(strtoupper($calendar).'_CALENDAR_START_MONTH', 1);
-        $defaultStartDay   = Kurogo::getOptionalSiteVar(strtoupper($calendar).'_CALENDAR_START_DAY', 1);
+        $defaultStartMonth = $this->getOptionalModuleVar(strtoupper($calendar).'_CALENDAR_START_MONTH', 1);
+        $defaultStartDay   = $this->getOptionalModuleVar(strtoupper($calendar).'_CALENDAR_START_DAY', 1);
 
         $month = intval($this->getArg('month', $defaultStartMonth));
         $day   = intval($this->getArg('day', $defaultStartDay));
@@ -794,8 +794,8 @@ class CalendarWebModule extends WebModule {
         $prev    = ($year-1).'&nbsp;-&nbsp;'. $year;
 
         // How many years into the future and past to page:
-        $maxNextYears = Kurogo::getOptionalSiteVar(strtoupper($calendar).'_CALENDAR_MAX_NEXT_YEARS', 1);
-        $maxPrevYears = Kurogo::getOptionalSiteVar(strtoupper($calendar).'_CALENDAR_MAX_PREV_YEARS', 1);
+        $maxNextYears = $this->getOptionalModuleVar(strtoupper($calendar).'_CALENDAR_MAX_NEXT_YEARS', 1);
+        $maxPrevYears = $this->getOptionalModuleVar(strtoupper($calendar).'_CALENDAR_MAX_PREV_YEARS', 1);
 
         if ($year < $currentYear + $maxNextYears) {
           $this->assign('next',    $next);

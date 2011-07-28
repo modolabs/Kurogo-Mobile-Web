@@ -13,6 +13,7 @@ abstract class Module
     protected $configModule;
     protected $moduleName = '';
     protected $args = array();
+    protected $configs = array();
 
     /**
       * Returns the module id
@@ -66,6 +67,16 @@ abstract class Module
       */
     public static function factory($id, $type=null) {
   
+		$configModule = $id;
+		//attempt to load config/$id/module.ini  
+        if ($config = ModuleConfigFile::factory($id, 'module', ModuleConfigFile::OPTION_DO_NOT_CREATE)) {
+        	//use the ID parameter if it's present, otherwise use the included id
+        	$id = $config->getOptionalVar('id', $id);
+        } elseif (!Kurogo::getOptionalSiteVar('CREATE_DEFAULT_CONFIG', false, 'modules')) {
+			throw new ModuleNotFound("Module $id not found");
+        }
+        
+
         // when run without a type it will find either
         $classNames = array(
             'web'=>ucfirst($id).'WebModule',
@@ -106,6 +117,10 @@ abstract class Module
                     $info = new ReflectionClass($className);
                     if (!$info->isAbstract()) {
                         $module = new $className();
+                        $module->setConfigModule($configModule);
+                        if ($config) {
+                        	$module->setConfig('module', $config);
+                        }
                         return $module;
                     }
                     return false;
@@ -218,10 +233,19 @@ abstract class Module
       * @return ConfigFile object
       */
     protected function getConfig($type, $opts=0) {
+    	if (isset($this->configs[$type])) {
+    		return $this->configs[$type];
+    	}
+    	
         if ($config = ModuleConfigFile::factory($this->configModule, $type, $opts)) {
             Kurogo::siteConfig()->addConfig($config);
+            $this->setConfig($type, $config);
         }
         return $config;
+    }
+    
+    protected function setConfig($type, ConfigFile $config) {
+    	$this->configs[$type] = $config;
     }
 
     /**

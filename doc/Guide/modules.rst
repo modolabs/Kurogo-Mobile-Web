@@ -24,8 +24,23 @@ Instantiation and execution
 
 Once a :doc:`request <requests>` has been made, the loading system determines which module to load
 and creates and instance of it using the *factory* method. The URL determines which module to load,
-which page to assign and any parameters that are included. If there is no page indicated, then the
-page will be set to *index*.
+which page to assign and any parameters that are included. 
+
+The first path component of the url is the module's *id*, this determines which module is loaded.
+The factory method will look for a config folder at *SITE_DIR/config/ID/* and load the *module.ini*
+file. It will look for an *id* value in that file and load the module that matches that ID.
+If there is no ID property then it will load module with the id as the config folder.
+
+If there is no config folder for that URL then it will look at the value of the CREATE_DEFAULT_CONFIG
+value in *site.ini*:
+
+* If it is true then it will attempt to load a module based on that ID and then create the config
+  folder automatically if the module is found.
+* If it is false (the default) OR if no module can be found with that ID, then it will fail with a module
+  not found.
+
+The second path component is the *page*. This will determine the code path and template file to load.
+If there is no page indicated, then the page will be set to *index*.
 
 After instantiating the object, the *init* method is called. This does several things:
 
@@ -51,8 +66,6 @@ Values the module developer should set in the class declaration:
 
 * *id* (string) - This property should be set to the same name and capitalization as the module directory. 
   This property **must** be set by all modules. 
-* *configModule* (string) - This property only needs to be set if you are :ref:`copying a module <copy-module>`.
-  It should be set to the url/config folder of the copied module.
 
 Values set by the parent class:
 

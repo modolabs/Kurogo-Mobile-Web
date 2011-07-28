@@ -199,7 +199,7 @@ class MapProjector {
     
     public static function getProjSpecs($wkid) {
         $contents = null;
-        $projCache = new DiskCache(Kurogo::getSiteVar('PROJ_CACHE'), null, true);
+        $projCache = new DiskCache(Kurogo::getSiteVar('PROJ_CACHE','maps'), null, true);
         $projCache->setSuffix('.proj4');
         $projCache->preserveFormat();
         $filename = $wkid;

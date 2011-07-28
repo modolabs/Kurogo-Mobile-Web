@@ -489,24 +489,20 @@ abstract class WebModule extends Module {
     }
   
   public static function getAllModules() {
-    $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
+  	$configFiles = glob(SITE_CONFIG_DIR . "/*/module.ini");
     $modules = array();
-    foreach ($dirs as $dir) {
-        if (is_dir($dir)) {
-            $d = dir($dir);
-            while (false !== ($entry = $d->read())) {
-                if ($entry[0]!='.' && is_dir(sprintf("%s/%s", $dir, $entry))) {
-                    try {
-                        if ($module = WebModule::factory($entry)) {
-                           $modules[$entry] = $module;
-                        }
-                    } catch (Exception $e) {
-                    }
-                }
-            }
-            $d->close();
-        }
-    }
+
+  	foreach ($configFiles as $file) {
+  		if (preg_match("#" . preg_quote(SITE_CONFIG_DIR,"#") . "/([^/]+)/module.ini$#", $file, $bits)) {
+  			$id = $bits[1];
+			try {
+				if ($module = WebModule::factory($id)) {
+				   $modules[$id] = $module;
+				}
+			} catch (Exception $e) {
+			}
+  		}
+  	}
     ksort($modules);    
     return $modules;        
   }

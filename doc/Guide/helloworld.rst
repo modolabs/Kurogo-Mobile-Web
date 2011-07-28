@@ -64,11 +64,30 @@ Your folder structure should look similar to this:
 
 .. image:: images/helloworld_files.png
 
---------------------------
+==========================
 Creating the nav bar image
---------------------------
+==========================
 
 Create a 56 x 56 PNG file named *title-hello.png* and place it in *SITE_FOLDER/themes/default/common/images/compliant*.
+
+==========================
+Creating the config folder
+==========================
+
+A configuration folder is required to load the module.
+
+* Create a folder named *hello* in *SITE_FOLDER/config*
+* Create a file named *SITE_FOLDER/config/hello/module.ini* with the following contents:
+
+.. code-block:: ini
+
+  [module]
+  title="Hello"
+  disabled = 0
+  protected = 0
+  search = 0
+  secure = 0
+
 
 ==================
 Viewing the module

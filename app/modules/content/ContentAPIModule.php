@@ -1,5 +1,6 @@
 <?php
-abstract class ContentAPIModule extends APIModule {
+
+class ContentAPIModule extends APIModule {
 
     protected $id = 'content';
     protected $vmin = 1;
