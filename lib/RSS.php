@@ -149,7 +149,11 @@ class RSSItem extends XMLElement implements KurogoObject
 
     public function getGUID()
     {
-        return $this->guid;
+    	if ($this->guid) {
+			return $this->guid;
+		} elseif ($this->link) {
+			return $this->link;
+		}
     }
 
     public function getPubDate()
