@@ -29,49 +29,57 @@ function getCSSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs, $
   return $config;
 }
 
-// Javascript does not support overrides so include common files
-// and the most specific platform file.  Themes override js.
+// Javascript overrides appear to work for all the platforms we support
+// Code to do overrides commented out below
 function getJSFileConfigForDirs($page, $pagetype, $platform, $dirs, $subDirs, $pageOnly=false) {
   $config = array(
     'include' => 'all',
     'files' => array()
   );
   
-  foreach ($subDirs as $subDir) {
-    $dirConfig = array(
-      'include' => 'any',
-      'files' => array()
-    );
-    foreach ($dirs as $dir) {
-      $files = array(
-        'include' => 'all',
-        'files'   => array(),
-      );
-
+  foreach ($dirs as $dir) {
+    foreach ($subDirs as $subDir) {
       if (!$pageOnly) {
-        $files['files'][] = "$dir$subDir/javascript/common.js";
-        $files['files'][] = array(
-          'include' => 'any',
-          'files'   => array(
-            "$dir$subDir/javascript/$pagetype-$platform.js", 
-            "$dir$subDir/javascript/$pagetype.js",
-          ),
-        );
+        $config['files'][] = "$dir$subDir/javascript/common.js";
+        $config['files'][] = "$dir$subDir/javascript/$pagetype.js";
+        $config['files'][] = "$dir$subDir/javascript/$pagetype-$platform.js";
       }
-
-      $files['files'][] = "$dir$subDir/javascript/$page-common.js";
-      $files['files'][] = array(
-        'include' => 'any',
-        'files'   => array(
-          "$dir$subDir/javascript/$page-$pagetype-$platform.js", 
-          "$dir$subDir/javascript/$page-$pagetype.js",
-        ),
-      );
-      
-      $dirConfig['files'][] = $files;
+      $config['files'][] = "$dir$subDir/javascript/$page-common.js";
+      $config['files'][] = "$dir$subDir/javascript/$page-$pagetype.js";
+      $config['files'][] = "$dir$subDir/javascript/$page-$pagetype-$platform.js";
     }
-    $config['files'][] = $dirConfig;
   }
+  /*
+  foreach ($subDirs as $subDir) {
+    $files = array(
+      "common.js",
+      "$pagetype-$platform.js",
+      "$pagetype.js",
+    );
+    
+    foreach ($files as $file) {
+      if (!$pageOnly) {
+        $dirConfig = array(
+          'include' => 'any',
+          'files' => array()
+        );
+        foreach ($dirs as $dir) {
+          $dirConfig['files'][] = "$dir$subDir/javascript/$file";
+        }
+      }
+      $config['files'][] = $dirConfig;
+      
+      $dirConfig = array(
+        'include' => 'any',
+        'files' => array()
+      );
+      foreach ($dirs as $dir) {
+        $dirConfig['files'][] = "$dir$subDir/javascript/$page-$file";
+      }
+      $config['files'][] = $dirConfig;
+    }
+  }
+  */
   return $config;
 }
 
