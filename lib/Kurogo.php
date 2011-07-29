@@ -205,11 +205,21 @@ class Kurogo
 			ini_set('error_log', LOG_DIR . DIRECTORY_SEPARATOR . 'php_error.log');
 		}
 
+		//
+        // Install exception handlers
+        //
+        require(LIB_DIR.'/exceptions.php');
+      
+        if ($this->config->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
+			set_exception_handler("exceptionHandlerForProduction");
+        } else {
+			set_exception_handler("exceptionHandlerForDevelopment");
+        }
+        
 		//get timezone from config and set    
 		$timezone = $this->config->getVar('LOCAL_TIMEZONE');
 		date_default_timezone_set($timezone);
 		$this->timezone = new DateTimeZone($timezone);
-      
 
 		//
 		// everything after this point only applies to http requests 
@@ -270,18 +280,7 @@ class Kurogo
         	header("Location: $url");
         	exit();
       	}
-    
-        //
-        // Install exception handlers
-        //
-        require(LIB_DIR.'/exceptions.php');
-      
-        if ($this->config->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
-			set_exception_handler("exceptionHandlerForProduction");
-        } else {
-			set_exception_handler("exceptionHandlerForDevelopment");
-        }
-      
+      		
 		// Strips out the leading part of the url for sites where 
 		// the base is not located at the document root, ie.. /mobile or /m 
 		// Also strips off the leading slash (needed by device debug below)
