@@ -33,6 +33,10 @@ class DisabledModuleException extends Exception {
 /**
   */
 function getErrorURL($exception, $devError = false) {
+	if (!defined('URL_PREFIX')) {
+		return false; //the error occurred VERY early in the init process
+	}
+	
   $args = array(
     'code' => 'internal',
     'url' => $_SERVER['REQUEST_URI'],
@@ -149,9 +153,17 @@ function exceptionHandlerForError($exception) {
 }
 
 function exceptionHandlerForDevelopment($exception) {
-  $errtime = developmentErrorLog($exception);
-  error_log(print_r($exception, TRUE));
-  header('Location: '.getErrorURL($exception, $errtime));
+    $errtime = developmentErrorLog($exception);
+    $error = print_r($exception, TRUE);
+    error_log($error);
+	
+	if ($url = getErrorURL($exception, $errtime)) {
+    	header('Location: ' . $url);
+    	die(0);
+    } else {
+    	header('Content-type: text/plain');
+		die("A serious error has occurred: \n\n" . $error);
+    }
 }
 
 /**
@@ -171,8 +183,12 @@ function exceptionHandlerForProduction($exception) {
         );
     }
 
-    header('Location: '.getErrorURL($exception));
-    die(0);
+    if ($url = getErrorURL($exception)) {
+		header('Location: ' . $url);
+		die(0);
+	} else {
+		die("A serious error has occurred");
+	}
 }
 
 function exceptionHandlerForAPI($exception) {
