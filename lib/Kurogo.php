@@ -1,6 +1,6 @@
 <?php
 
-define('ROOT_DIR', dirname(__FILE__).'/..'); 
+define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
 define('KUROGO_VERSION', '1.2');
 
 /* this is a singleton class */
@@ -173,14 +173,14 @@ class Kurogo
       //
       // Constants which cannot be set by config file
       //
-      
-      define('WEBROOT_DIR',       realpath(ROOT_DIR.'/www')); 
-      define('LIB_DIR',           realpath(ROOT_DIR.'/lib'));
-      define('MASTER_CONFIG_DIR', realpath(ROOT_DIR.'/config'));
-      define('APP_DIR',           realpath(ROOT_DIR.'/app'));
-      define('MODULES_DIR',       realpath(APP_DIR.'/modules'));
-      define('MIN_FILE_PREFIX', 'file:');
-      define('API_URL_PREFIX', 'rest');
+
+      define('WEBROOT_DIR',       ROOT_DIR . DIRECTORY_SEPARATOR . 'www'); 
+      define('LIB_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'lib');
+      define('MASTER_CONFIG_DIR', ROOT_DIR . DIRECTORY_SEPARATOR . 'config');
+      define('APP_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'app');
+      define('MODULES_DIR',       APP_DIR  . DIRECTORY_SEPARATOR . 'modules');
+      define('MIN_FILE_PREFIX',  'file:');
+      define('API_URL_PREFIX',   'rest');
       
       //
       // Pull in functions to deal with php version differences
@@ -197,7 +197,7 @@ class Kurogo
       $this->config = new SiteConfig();
       ini_set('display_errors', $this->config->getVar('DISPLAY_ERRORS'));
       if (!ini_get('error_log')) {
-         ini_set('error_log', LOG_DIR . '/php_error.log');
+         ini_set('error_log', LOG_DIR . DIRECTORY_SEPARATOR . 'php_error.log');
       }
     
       $timezone = $this->config->getVar('LOCAL_TIMEZONE');
@@ -241,6 +241,7 @@ class Kurogo
 		  $testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
 		  $urlBase = '/';
 		  $foundPath = false;
+
 		  if (realpath($testPath) != WEBROOT_DIR) {
 			foreach ($pathParts as $dir) {
 			  $test = $testPath.$dir.DIRECTORY_SEPARATOR;
