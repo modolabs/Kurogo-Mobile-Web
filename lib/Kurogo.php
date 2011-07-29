@@ -174,6 +174,10 @@ class Kurogo
         return Kurogo::sharedInstance()->getDeviceClassifier();        
     }
     
+    public static function isWindows() {
+    	return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+    }
+    
     public function initialize(&$path=null) {
 		//
 		// Constants which cannot be set by config file
