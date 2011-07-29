@@ -18,6 +18,7 @@ class Kurogo
     protected $config;
     protected $deviceClassifier;
     protected $session;
+    protected $locale;    
 
     public static function getSession() {    
         $Kurogo = self::sharedInstance();
@@ -177,6 +178,45 @@ class Kurogo
     public static function isWindows() {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
+
+    public static function getAvailableLocales() {
+        static $locales=array();
+        if ($locales) {
+            return $locales;
+        }
+        
+        if (file_exists('/usr/bin/locale')) {
+            exec('/usr/bin/locale -a', $locales, $retval);
+            if ($retval!==0) {
+                throw new Exception("Error retrieving locale values");
+            }
+        } else {
+            throw new Exception("Unable to find list of locales on this platform");
+        }
+        
+        return $locales;
+    }
+    
+    public function getLocale() {
+        return $this->locale;
+    }
+
+    public function getSystemLocale() {
+        return setLocale(LC_ALL,"");
+    }
+
+    public function setLocale($locale) {
+        if ($this->isWindows()) {
+            throw new Exception("Setting locale in Windows is not supported at this time");
+        }
+
+        // this is platform dependent.        
+        if (!$return = setLocale(LC_ALL, $locale)) {
+            throw new Exception("Unknown locale setting $locale");
+        }
+        $this->locale = $return;
+        return $this->locale;
+    }
     
     public function initialize(&$path=null) {
         //
@@ -224,7 +264,13 @@ class Kurogo
         $timezone = $this->config->getVar('LOCAL_TIMEZONE');
         date_default_timezone_set($timezone);
         $this->timezone = new DateTimeZone($timezone);
-
+        
+        if ($locale = $this->config->getOptionalVar('LOCALE')) {
+            $this->setLocale($locale);
+        } else {
+            $this->locale = $this->getSystemLocale();
+        }
+        
         //
         // everything after this point only applies to http requests 
         //
