@@ -175,103 +175,103 @@ class Kurogo
     }
     
     public static function isWindows() {
-    	return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+        return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
     
     public function initialize(&$path=null) {
-		//
-		// Constants which cannot be set by config file
-		//
-		
-		define('WEBROOT_DIR',       ROOT_DIR . DIRECTORY_SEPARATOR . 'www'); 
-		define('LIB_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'lib');
-		define('MASTER_CONFIG_DIR', ROOT_DIR . DIRECTORY_SEPARATOR . 'config');
-		define('APP_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'app');
-		define('MODULES_DIR',       APP_DIR  . DIRECTORY_SEPARATOR . 'modules');
-		define('MIN_FILE_PREFIX',  'file:');
-		define('API_URL_PREFIX',   'rest');
-		
-		//
-		// Pull in functions to deal with php version differences
-		//
-		
-		require(LIB_DIR . '/compat.php');
+        //
+        // Constants which cannot be set by config file
+        //
+        
+        define('WEBROOT_DIR',       ROOT_DIR . DIRECTORY_SEPARATOR . 'www'); 
+        define('LIB_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'lib');
+        define('MASTER_CONFIG_DIR', ROOT_DIR . DIRECTORY_SEPARATOR . 'config');
+        define('APP_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'app');
+        define('MODULES_DIR',       APP_DIR  . DIRECTORY_SEPARATOR . 'modules');
+        define('MIN_FILE_PREFIX',  'file:');
+        define('API_URL_PREFIX',   'rest');
+        
+        //
+        // Pull in functions to deal with php version differences
+        //
+        
+        require(LIB_DIR . '/compat.php');
 
-		// add autoloader		
-		spl_autoload_register(array($this, "siteLibAutoloader"));
-		
-		//
-		// Load configuration files
-		//    
-		$this->config = new SiteConfig();
-		ini_set('display_errors', $this->config->getVar('DISPLAY_ERRORS'));
-		if (!ini_get('error_log')) {
-			ini_set('error_log', LOG_DIR . DIRECTORY_SEPARATOR . 'php_error.log');
-		}
+        // add autoloader        
+        spl_autoload_register(array($this, "siteLibAutoloader"));
+        
+        //
+        // Load configuration files
+        //    
+        $this->config = new SiteConfig();
+        ini_set('display_errors', $this->config->getVar('DISPLAY_ERRORS'));
+        if (!ini_get('error_log')) {
+            ini_set('error_log', LOG_DIR . DIRECTORY_SEPARATOR . 'php_error.log');
+        }
 
-		//
+        //
         // Install exception handlers
         //
         require(LIB_DIR.'/exceptions.php');
       
         if ($this->config->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
-			set_exception_handler("exceptionHandlerForProduction");
+            set_exception_handler("exceptionHandlerForProduction");
         } else {
-			set_exception_handler("exceptionHandlerForDevelopment");
+            set_exception_handler("exceptionHandlerForDevelopment");
         }
         
-		//get timezone from config and set    
-		$timezone = $this->config->getVar('LOCAL_TIMEZONE');
-		date_default_timezone_set($timezone);
-		$this->timezone = new DateTimeZone($timezone);
+        //get timezone from config and set    
+        $timezone = $this->config->getVar('LOCAL_TIMEZONE');
+        date_default_timezone_set($timezone);
+        $this->timezone = new DateTimeZone($timezone);
 
-		//
-		// everything after this point only applies to http requests 
-		//
-		if (PHP_SAPI == 'cli') {
-		    return;
-		}
+        //
+        // everything after this point only applies to http requests 
+        //
+        if (PHP_SAPI == 'cli') {
+            return;
+        }
     
         //
         // Set up host define for server name and port
         //
         $host = $_SERVER['SERVER_NAME'];
         if (isset($_SERVER['HTTP_HOST']) && strlen($_SERVER['HTTP_HOST'])) {
-			$host = $_SERVER['HTTP_HOST'];
+            $host = $_SERVER['HTTP_HOST'];
         } else if (isset($_SERVER['SERVER_PORT'])) {
-  	        $host .= ":{$_SERVER['SERVER_PORT']}";
-    	}
+              $host .= ":{$_SERVER['SERVER_PORT']}";
+        }
         define('SERVER_HOST', $host);
     
-		//
-		// Get URL base
-		//
-		if ($urlBase = self::getOptionalSiteVar('URL_BASE','','urls')) {
-			$foundPath = true;
-			$urlBase = rtrim($urlBase,'/').'/';
-		} else {
-			//extract the path parts from the url
-		    $pathParts = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $_SERVER['REQUEST_URI'])));
-			$testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
-			$urlBase = '/';
-			$foundPath = false;
+        //
+        // Get URL base
+        //
+        if ($urlBase = self::getOptionalSiteVar('URL_BASE','','urls')) {
+            $foundPath = true;
+            $urlBase = rtrim($urlBase,'/').'/';
+        } else {
+            //extract the path parts from the url
+            $pathParts = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $_SERVER['REQUEST_URI'])));
+            $testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
+            $urlBase = '/';
+            $foundPath = false;
 
-			//once the path equals the WEBROOT_DIR we've found the base. This only works with symlinks
-  		    if (realpath($testPath) != WEBROOT_DIR) {
-				foreach ($pathParts as $dir) {
-  				    $test = $testPath.$dir.DIRECTORY_SEPARATOR;
-				  
-				    if (realpath_exists($test)) {
-						$testPath = $test;
-						$urlBase .= $dir.'/';
-						if (realpath($test) == WEBROOT_DIR) {
-					   		$foundPath = true;
-						    break;
-					    }
-				    }
-				}
-			}
-		}
+            //once the path equals the WEBROOT_DIR we've found the base. This only works with symlinks
+              if (realpath($testPath) != WEBROOT_DIR) {
+                foreach ($pathParts as $dir) {
+                      $test = $testPath.$dir.DIRECTORY_SEPARATOR;
+                  
+                    if (realpath_exists($test)) {
+                        $testPath = $test;
+                        $urlBase .= $dir.'/';
+                        if (realpath($test) == WEBROOT_DIR) {
+                               $foundPath = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
         define('URL_BASE', $foundPath ? $urlBase : '/');
         define('IS_SECURE', isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
@@ -280,50 +280,50 @@ class Kurogo
 
         // make sure host is all lower case
         if ($host != strtolower($host)) {
-        	$url = 'http'.(IS_SECURE ? 's' : '').'://' . strtolower($host) . $path;
-        	header("Location: $url");
-        	exit();
-      	}
-      		
-		// Strips out the leading part of the url for sites where 
-		// the base is not located at the document root, ie.. /mobile or /m 
-		// Also strips off the leading slash (needed by device debug below)
-		if (isset($path)) {
-			// Strip the URL_BASE off the path
-			$baseLen = strlen(URL_BASE);
-			if ($baseLen && strpos($path, URL_BASE) === 0) {
-				$path = substr($path, $baseLen);
-			}
-		}  
+            $url = 'http'.(IS_SECURE ? 's' : '').'://' . strtolower($host) . $path;
+            header("Location: $url");
+            exit();
+          }
+              
+        // Strips out the leading part of the url for sites where 
+        // the base is not located at the document root, ie.. /mobile or /m 
+        // Also strips off the leading slash (needed by device debug below)
+        if (isset($path)) {
+            // Strip the URL_BASE off the path
+            $baseLen = strlen(URL_BASE);
+            if ($baseLen && strpos($path, URL_BASE) === 0) {
+                $path = substr($path, $baseLen);
+            }
+        }  
     
-		//
-		// Initialize global device classifier
-		//
-		
-		$device = null;
-		$urlPrefix = URL_BASE;
-		$urlDeviceDebugPrefix = '/';
-		
-		// Check for device classification in url and strip it if present
-		if ($this->config->getVar('DEVICE_DEBUG') && 
-			preg_match(';^device/([^/]+)/(.*)$;', $path, $matches)) {
-			$device = $matches[1];  // layout forced by url
-			$path = $matches[2];
-			$urlPrefix .= "device/$device/";
-			$urlDeviceDebugPrefix .= "device/$device/";
-		}
+        //
+        // Initialize global device classifier
+        //
+        
+        $device = null;
+        $urlPrefix = URL_BASE;
+        $urlDeviceDebugPrefix = '/';
+        
+        // Check for device classification in url and strip it if present
+        if ($this->config->getVar('DEVICE_DEBUG') && 
+            preg_match(';^device/([^/]+)/(.*)$;', $path, $matches)) {
+            $device = $matches[1];  // layout forced by url
+            $path = $matches[2];
+            $urlPrefix .= "device/$device/";
+            $urlDeviceDebugPrefix .= "device/$device/";
+        }
       
-		define('URL_DEVICE_DEBUG_PREFIX', $urlDeviceDebugPrefix);
-		define('URL_PREFIX', $urlPrefix);
-		define('FULL_URL_PREFIX', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_PREFIX);
-		define('KUROGO_IS_API', preg_match("#^" .API_URL_PREFIX . "/#", $path));
+        define('URL_DEVICE_DEBUG_PREFIX', $urlDeviceDebugPrefix);
+        define('URL_PREFIX', $urlPrefix);
+        define('FULL_URL_PREFIX', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_PREFIX);
+        define('KUROGO_IS_API', preg_match("#^" .API_URL_PREFIX . "/#", $path));
           
-		//error_log(__FUNCTION__."(): prefix: $urlPrefix");
-		//error_log(__FUNCTION__."(): path: $path");
-		$this->deviceClassifier = new DeviceClassifier($device);
+        //error_log(__FUNCTION__."(): prefix: $urlPrefix");
+        //error_log(__FUNCTION__."(): path: $path");
+        $this->deviceClassifier = new DeviceClassifier($device);
       
-		//preserved for compatibility
-		$GLOBALS['deviceClassifier'] = $this->deviceClassifier;
+        //preserved for compatibility
+        $GLOBALS['deviceClassifier'] = $this->deviceClassifier;
     }
     
     public static function getLanguages() {
