@@ -16,7 +16,7 @@ class MapDBCategory extends MapCategory
             $this->parentCategoryId = $dbFields['parent_category_id'];
         }
         if (isset($dbFields['name'])) {
-            $this->name = $dbFields['name'];
+            $this->title = $dbFields['name'];
         }
         if (isset($dbFields['description'])) {
             $this->description = $dbFields['description'];
@@ -33,7 +33,7 @@ class MapDBCategory extends MapCategory
 
     public function setTitle($title)
     {
-        $this->name = $title;
+        $this->title = $title;
     }
 
     public function setSubtitle($subtitle)
@@ -51,7 +51,7 @@ class MapDBCategory extends MapCategory
         $fields = array(
             'category_id' => $this->id,
             'parent_category_id' => $this->parentCategoryId,
-            'name' => $this->name,
+            'name' => $this->title,
             'projection' => $this->projection,
             'description' => $this->description,
             );

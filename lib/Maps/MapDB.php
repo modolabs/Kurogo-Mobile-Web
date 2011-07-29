@@ -14,11 +14,21 @@ class MapDB
 
     public static function updateCategory(MapFolder $category, $items, $parentCategoryId=null) {
         $categoryId = $category->getId();
-var_dump("MapDB ".__LINE__.": categoryid ".$categoryId);
         $name = $category->getTitle();
         $description = $category->getSubtitle();
 
-        if (!$category instanceof MapDBCategory || !$category->isStored()) {
+        $isStored = $category instanceof MapDBCategory && $category->isStored();
+        if (!$isStored) {
+            $sql = 'SELECT * FROM '.self::CATEGORY_TABLE.' WHERE category_id=?';
+            $params = array($categoryId);
+            $results = self::connection()->query($sql, $params);
+            if ($results->fetch()) {
+                $isStored = true;
+            }
+        }
+
+        if (!$isStored) {
+debug_dump($category, "inserting category: ".$category->getTitle());
             if ($parentCategoryId === null) {
                 $sql = 'INSERT INTO '.self::CATEGORY_TABLE.' (category_id, name, description) VALUES (?, ?, ?)';
                 $params = array($categoryId, $name, $description);
@@ -36,10 +46,9 @@ var_dump("MapDB ".__LINE__.": categoryid ".$categoryId);
                 $params = array($name, $description, $parentCategoryId, $categoryId);
             }
         }
-error_log(print_r($params, true));
 
         self::connection()->query($sql, $params);
-debug_dump($category);
+
         foreach ($items as $item) {
 debug_dump($item);
             if ($item instanceof MapFolder) {
@@ -92,7 +101,7 @@ error_log(print_r($params, true));
                   .' WHERE placemark_id=? AND lat=? AND lon=?';
         } else {
             $sql = 'INSERT INTO '.self::PLACEMARK_TABLE
-                  .' (name, address, style_id, geometry, placemark_id, lat, lon, placemark_id)'
+                  .' (name, address, style_id, geometry, placemark_id, lat, lon)'
                   .' VALUES (?, ?, ?, ?, ?, ?, ?)';
         }
 
@@ -141,11 +150,11 @@ var_dump("setting feature categories to: ".print_r($categories, true));
 
     public static function getFeatureByIdAndCategory($featureId, $categoryIds)
     {
-var_dump("MapDB getFeatureByIdAndCategory($featureId, ".implode(', ',$categoryIds).')');
         $sql = 'SELECT p.*, pc.category_id FROM '
               .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
               .' WHERE p.placemark_id = ?'
-              .'   AND p.placemark_id = pc.placemark_id';
+              .'   AND p.placemark_id = pc.placemark_id'
+              .'   AND p.lat = pc.lat AND p.lon = pc.lon';
 
         $orClauses = array();
         $params = array($featureId);
@@ -156,17 +165,14 @@ var_dump("MapDB getFeatureByIdAndCategory($featureId, ".implode(', ',$categoryId
         if ($orClauses) {
             $sql .= ' AND ('.implode(' OR ', $orClauses).')';
         }
-        //$sql .= implode(' AND ', $andClauses);
-        //
-        //
-        //      .'   AND pc.category_id = ?';
-        //$params = array($featureId, $categoryId);
+
         $result = self::connection()->query($sql, $params);
 
 $sql = 'SELECT p.*, pc.category_id FROM '
       .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
       .' WHERE p.placemark_id = \''.$featureId
-      .'\'   AND p.placemark_id = pc.placemark_id';
+      .'\'   AND p.placemark_id = pc.placemark_id'
+      .'   AND p.lat = pc.lat AND p.lon = pc.lon';
       $orClauses = array();
       foreach ($categoryIds as $categoryId) {
           $orClauses[] = ' pc.category_id = \''.$categoryId.'\'';
@@ -198,7 +204,6 @@ var_dump($sql);
 
     public static function categoryForId($categoryId)
     {
-var_dump("MapDB categoryForId($categoryId)");
         $sql = 'SELECT * FROM '.self::CATEGORY_TABLE
               .' WHERE category_id = ?';
         $params = array($categoryId);

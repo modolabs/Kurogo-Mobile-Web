@@ -98,7 +98,7 @@ class GoogleJSMap extends JavascriptMapImageController {
     	$this->polygons[] = $polygon;
     }
 
-    private static function coordsToGoogleArray($coords) {
+    private function coordsToGoogleArray($coords) {
         $gCoords = array();
         foreach ($coords as $coord) {
             if (isset($this->mapProjector)) {
@@ -122,7 +122,7 @@ class GoogleJSMap extends JavascriptMapImageController {
         foreach ($this->polygons as $polygon) {
             $polyStrings = array();
             foreach ($polygon['rings'] as $ring) {
-                $polyString[] = '['.self::coordsToGoogleArray($ring).']';
+                $polyString[] = '['.$this->coordsToGoogleArray($ring).']';
             }
             $multiPathString = implode(',', $polyString);
 
@@ -151,7 +151,7 @@ JS;
 
         $js = "var coordinates;\nvar path;";
         foreach ($this->paths as $path) {
-            $coordString = self::coordsToGoogleArray($path['coordinates']);
+            $coordString = $this->coordsToGoogleArray($path['coordinates']);
 
             $properties = array('path: coordinates');
             foreach ($path['style'] as $attrib => $value) {

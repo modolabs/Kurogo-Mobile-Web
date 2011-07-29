@@ -222,7 +222,7 @@ var_dump("getting listItemsAtPath for: (".implode(', ',$path).'), number of cand
         $features = array();
         foreach ($items as $item) {
             if ($item instanceof MapFolder) {
-debug_dump($item);var_dump($item->getId());
+debug_dump($item);
                 $folders[$item->getId()] = $item;
             } elseif ($item instanceof Placemark) {
                 $features[] = $item;
@@ -238,19 +238,19 @@ debug_dump($item);var_dump($item->getId());
             $otherCategory->setFeatures($features);
         }
 
+        if (count($folders) == 1) {
+debug_dump(null, "auto expanding folder ".$item->getId());
+            // auto expand folder if we only have 1
+            return self::listItemsAtPath(current($folders)->getListItems(), $path);
+        }
+
         if (count($folders) > 1) {
+            // attempt to drill down if we are given a "subdirectory"
             if (isset($firstItem) && isset($folders[$firstItem])) {
                 return self::listItemsAtPath(
                     $folders[$firstItem]->getListItems(), $path);
             }
             return $folders;
-        }
-
-        if (isset($firstItem)) {
-            if (count($features) > $firstItem) {
-                return $features[$firstItem];
-            }
-            return null;
         }
 
         return $features;

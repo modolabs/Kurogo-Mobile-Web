@@ -137,9 +137,9 @@ function debug_dump($variable=null, $message='') {
     $file = end(explode('/', $currentCall['file']));
     $line = $currentCall['line'];
     $function = $lastCall['function'];
-
     if ($variable !== null) {
-        $trace = "$file($line):$function [".get_class($variable).' '.spl_object_hash($variable)."] $message";
+        $varRep = spl_object_hash($variable);
+        $trace = "$file($line):$function [".get_class($variable)." $varRep] $message";
     } else {
         $trace = "$file($line):$function $message";
     }
