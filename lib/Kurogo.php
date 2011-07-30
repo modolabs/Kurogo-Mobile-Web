@@ -547,6 +547,61 @@ class Kurogo
         
         return $acls;
     }
+
+    private function getStringsForLanguage($lang) {
+        $stringFiles = array(
+            APP_DIR . "/common/strings/".$lang . '.json',
+            SITE_APP_DIR . "/common/strings/".$lang . '.json'
+        );
+        
+        $strings = array();
+        foreach ($stringFiles as $stringFile) {
+            if (is_file($stringFile)) {
+                $_strings = json_decode(file_get_contents($stringFile), true);
+                $strings = array_merge($strings, $_strings);
+            }
+        }
+        
+        return $strings;
+    }
+    
+    private function processString($string, $opts) {
+        if (is_null($opts)) {
+            return $string;
+        } elseif (is_array($opts)) {
+            return vsprintf($string, $opts);
+        } else {
+            return sprintf($string, $opts);
+        }
+    }
+    
+    private function getStringForLanguage($key, $lang, $opts) {
+        if (!isset($this->strings[$lang])) {
+            $this->strings[$lang] = $this->getStringsForLanguage($lang);
+        }
+        
+        return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
+    }
+    
+    public function localizedString($key, $opts=null) {
+        if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
+            throw new Exception("Invalid string key $key");
+        }
+        
+        $languages = $this->getLanguages();
+        foreach ($languages as $language) {
+            $val = $this->getStringForLanguage($key, $language, $opts);
+            if ($val !== null) {
+                return $val;
+            }
+        }
+        
+        throw new Exception("Unable to find site string $key");
+    }
+    
+    public static function getLocalizedString($key, $opts=null) {
+        return Kurogo::sharedInstance()->localizedString($key, $opts);
+    }    
     
     public function checkCurrentVersion() {
         $url = "https://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(
