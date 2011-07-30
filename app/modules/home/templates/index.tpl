@@ -3,11 +3,6 @@
   <h1 id="homelogo"{if isset($topItem)} class="roomfornew"{/if}>
     <img src="/modules/{$moduleID}/images/logo-home{$imageExt}" width="{$banner_width|default:265}" height="{$banner_height|default:45}" alt="{$strings.SITE_NAME|escape}" />
   </h1>
-  {block name="topItem"} 
-    {if isset($topItem)}
-      <div id="new"><a href="/about/new.php"><span class="newlabel">NEW:</span>{$topItem}</a></div>
-    {/if}
-  {/block}
 {/capture}
 
 {include file="findInclude:common/templates/header.tpl" customHeader=$banner scalable=false}
@@ -42,15 +37,18 @@
 {/if}
 
 {block name="homeFooter"}
+{/block}
+
+{block name="downloadText"}
 {if $SHOW_DOWNLOAD_TEXT}
-  <div id="download">
+<p id="download">
     <a href="/download/">
-      <img src="/modules/{$moduleID}/images/download.png"
-      alt="Download" align="absmiddle" />
+      <img src="/modules/{$moduleID}/images/download{$imageExt}"
+      alt="" align="absmiddle" />
       {$SHOW_DOWNLOAD_TEXT}
     </a>
     <br />
-  </div>
+</p>
 {/if}  
 {/block}
 

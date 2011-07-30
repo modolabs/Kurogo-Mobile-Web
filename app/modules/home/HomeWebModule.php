@@ -59,7 +59,6 @@ class HomeWebModule extends WebModule {
         }
         $this->assign('SHOW_DOWNLOAD_TEXT', DownloadWebModule::appDownloadText($this->platform));
         $this->assign('displayType', $this->getModuleVar('display_type'));
-        $this->assign('topItem', null);
         break;
         
      case 'search':
