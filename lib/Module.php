@@ -14,6 +14,7 @@ abstract class Module
     protected $moduleName = '';
     protected $args = array();
     protected $configs = array();
+    private $strings = array();
 
     /**
       * Returns the module id
@@ -526,6 +527,57 @@ abstract class Module
         }
         
         return $configData;
+    }
+
+    private function getStringsForLanguage($lang) {
+        $stringFiles = array(
+            MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.json',
+            SITE_MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.json'
+        );
+        
+        $strings = array();
+        foreach ($stringFiles as $stringFile) {
+            if (is_file($stringFile)) {
+                $_strings = json_decode(file_get_contents($stringFile), true);
+                $strings = array_merge($strings, $_strings);
+            }
+        }
+        
+        return $strings;
+    }
+    
+    private function processString($string, $opts) {
+        if (is_null($opts)) {
+            return $string;
+        } elseif (is_array($opts)) {
+            return vsprintf($string, $opts);
+        } else {
+            return sprintf($string, $opts);
+        }
+    }
+    
+    private function getStringForLanguage($key, $lang, $opts) {
+        if (!isset($this->strings[$lang])) {
+            $this->strings[$lang] = $this->getStringsForLanguage($lang);
+        }
+        
+        return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
+    }
+    
+    public function getLocalizedString($key, $opts=null) {
+        if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
+            throw new Exception("Invalid string key $key");
+        }
+        
+        $languages = Kurogo::sharedInstance()->getLanguages();
+        foreach ($languages as $language) {
+            $val = $this->getStringForLanguage($key, $language, $opts);
+            if ($val !== null) {
+                return $val;
+            }
+        }
+        
+        throw new Exception("Unable to find string $key for Module $this->id");
     }
     
     /**
