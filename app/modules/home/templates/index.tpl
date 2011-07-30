@@ -14,7 +14,7 @@
 
 {if $showFederatedSearch}
 {block name="federatedSearch"}
-{include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$strings.SITE_NAME}
+{include file="findInclude:common/templates/search.tpl"}
 {/block}
 {/if}
 
