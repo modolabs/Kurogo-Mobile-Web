@@ -272,6 +272,12 @@ class Kurogo
             $this->locale = $this->getSystemLocale();
         }
         
+        if ($languages = $this->config->getOptionalVar('LANGUAGES')) {
+        	$this->setLanguages($languages);
+        } else {
+        	$this->setLanguages(array('en_US'));
+        }
+        
         //
         // everything after this point only applies to http requests 
         //
@@ -375,6 +381,23 @@ class Kurogo
     
     public function getLanguages() {
     	return $this->languages;
+    }
+
+    public function setLanguages($languages) {
+    	$validLanguages = self::getAvailableLanguages();
+    	if (is_array($languages)) {
+    		$this->languages = array();
+    		foreach ($languages as $language) {
+    			if (!array_key_exists($language, $validLanguages)) {
+    				throw new Exception("Invalid language $language");
+    			}
+    			$this->languages[] = $language;
+    		}
+    	} elseif (array_key_exists($languages, $validLanguages)) {
+			$this->languages[] = $languages;
+    	} else {
+			throw new Exception("Invalid language $languages");
+		}
     }
     
     public static function getAvailableLanguages() {
