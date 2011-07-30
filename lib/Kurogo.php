@@ -19,6 +19,7 @@ class Kurogo
     protected $deviceClassifier;
     protected $session;
     protected $locale;    
+    protected $languages=array('en_US');
 
     public static function getSession() {    
         $Kurogo = self::sharedInstance();
@@ -372,11 +373,66 @@ class Kurogo
         $GLOBALS['deviceClassifier'] = $this->deviceClassifier;
     }
     
-    public static function getLanguages() {
-        return array(
-            'en'=>'English'
-        );
+    public function getLanguages() {
+    	return $this->languages;
     }
+    
+    public static function getAvailableLanguages() {
+		return array(
+			'af_ZA'=>'Afrikaans',
+			'am_ET'=>'አማርኛ',
+			'be_BY'=>'Беларуская',
+			'bg_BG'=>'български език',
+			'ca_ES'=>'Català',
+			'cs_CZ'=>'čeština',
+			'da_DK'=>'Dansk',
+			'de_AT'=>'Deutsch (Österreich)',
+			'de_CH'=>'Deutsch (Schweiz)',
+			'de_DE'=>'Deutsch (Deutschland)',
+			'el_GR'=>'Ελληνικά',
+			'en_AU'=>'English (Australia)',
+			'en_CA'=>'English (Canada)',
+			'en_GB'=>'English (United Kingdom)',
+			'en_IE'=>'English (Ireland)',
+			'en_NZ'=>'English (New Zealand)',
+			'en_US'=>'English (United States)',
+			'es_ES'=>'Español',
+			'et_EE'=>'Eesti',
+			'eu_ES'=>'Euskara',
+			'fi_FI'=>'Suomi',
+			'fr_BE'=>'Français (Belgique)',
+			'fr_CA'=>'Français (Canada)',
+			'fr_CH'=>'Français (Suisse)',
+			'fr_FR'=>'Français (France)',
+			'he_IL'=>'עברית',
+			'hr_HR'=>'Hrvatski',
+			'hu_HU'=>'Magyar',
+			'hy_AM'=>'Հայերեն',
+			'is_IS'=>'Íslenska',
+			'it_CH'=>'Italiano (Svizzera)',
+			'it_IT'=>'Italiano (Italia)',
+			'ja_JP'=>'日本語',
+			'kk_KZ'=>'Қазақ тілі',
+			'ko_KR'=>'한국어',
+			'lt_LT'=>'Lietuvių',
+			'nl_BE'=>'Vlaams',
+			'nl_NL'=>'Nederlands',
+			'no_NO'=>'Norsk',
+			'pl_PL'=>'Polski',
+			'pt_BR'=>'Português (Brasil)',
+			'pt_PT'=>'Português',
+			'ro_RO'=>'Română',
+			'ru_RU'=>'Pусский',
+			'sk_SK'=>'Slovenčina',
+			'sl_SI'=>'Slovenščina',
+			'sr_YU'=>'Cрпски',
+			'sv_SE'=>'Svenska',
+			'tr_TR'=>'Türkçe',
+			'uk_UA'=>'Yкраїнська',
+			'zh_CN'=>'简体中文',
+			'zh_TW'=>'繁體中文'
+		);    
+	}
 
     public static function getLifetimeOptions() {
         return array(

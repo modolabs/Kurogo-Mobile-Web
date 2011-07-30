@@ -6,7 +6,6 @@
         "fields":{
             "SITE_NAME":{"label":"Site name","type":"text","config":"strings","description":"Name of this website as it appears in the website, including in the &quot;Return to [site-name] home&quot; link in the footer","section":"strings"},
             "ORGANIZATION_NAME":{"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site.","section":"strings"},
-            "LANGUAGE":{"label":"Default language","type":"select","config":"site","optionsMethod":["Kurogo","getLanguages"],"description":"Sets the default language used for the entire site","section":"site settings"},
             "LOCAL_TIMEZONE":{"label":"Local time zone","type":"select","config":"site","optionsMethod":["Calendar","getTimeZones"],"section":"site settings"},
             "LOCAL_AREA_CODE":{"label":"Local area code","type":"text","config":"site","description":"Area code for local phone numbers. Added to phone numbers that are missing an area code.","section":"site settings"},
             "AUTODETECT_PHONE_NUMBERS":{"label":"Enable auto-detection of phone numbers","type":"checkbox","config":"site","description":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.","section":"site settings"}
