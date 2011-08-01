@@ -57,6 +57,9 @@ abstract class MapImageController
                     $this->mapProjector->setDstProj($this->mapProjection);
                 }
                 $this->mapProjector->setSrcProj($this->dataProjection);
+
+            } else { // if source and dest are the same, we don't need projector
+                $this->mapProjector = null;
             }
         }
     }
@@ -71,6 +74,9 @@ abstract class MapImageController
                     $this->mapProjector->setSrcProj($this->dataProjection);
                 }
                 $this->mapProjector->setDstProj($this->mapProjection);
+
+            } else { // if source and dest are the same, we don't need projector
+                $this->mapProjector = null;
             }
         }
     }

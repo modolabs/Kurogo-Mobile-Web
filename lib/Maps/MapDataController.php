@@ -90,9 +90,9 @@ class MapDataController extends DataController implements MapFolder
         return $results;
     }
     
-    public function searchByProximity($center, $tolerance, $projection, $maxItems=null)
+    public function searchByProximity($center, $tolerance, $maxItems=null)
     {
-        $bbox = normalizedBoundingBox($center, $tolerance, $projection, $this->getProjection());
+        $bbox = normalizedBoundingBox($center, $tolerance, $maxItems, $this->getProjection());
 
         $results = array();
         foreach ($this->getAllLeafNodes() as $item) {
@@ -341,7 +341,6 @@ class MapDataController extends DataController implements MapFolder
         // TODO better way to set default center coordinate
         if (count($placemarks)) {
             $lastPlacemark = end($placemarks);
-debug_dump();
             $imgController->setCenter($lastPlacemark->getGeometry()->getCenterCoordinate());
         } else {
             error_log(get_class($this)." was unable to find any matching placemarks");
@@ -391,6 +390,10 @@ debug_dump();
     {
         if ($this->parser instanceof ArcGISParser) {
             $this->addFilter('f', 'json');
+
+        } elseif ($this->parser instanceof ShapefileDataParser) {
+            return; // do nothing
+
         } elseif ($this->parser instanceof GooglePlacesParser) {
             // FIXME
             return;
@@ -437,6 +440,14 @@ debug_dump();
             $this->defaultZoomLevel = $args['DEFAULT_ZOOM_LEVEL'];
         
         $this->categoryId = mapIdForFeedData($args);
+    }
+
+    protected function initStreamContext($args)
+    {
+        if ($this->parser instanceof ShapefileDataParser) {
+            return;
+        }
+        parent::initStreamContext($args);
     }
     
     protected function retrieveData($url)

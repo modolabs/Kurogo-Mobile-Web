@@ -117,17 +117,8 @@ class MapDBDataController extends MapDataController implements MapFolder
 
     public function searchByProximity($center, $tolerance, $maxItems)
     {
-        /*
-        if (isset($projection)) {
-            $projector = new MapProjector();
-            $projector->setSrcProj($projection);
-            $center = $projector->projectPoint($center);
-        }
-
-        $this->setSelectedFeatures(
-            $this->db->searchByProximity($center, $tolerance, $maxItems));
-        return $this->getAllSelectedFeatures();
-        */
+        $mapSearch = new MapDBSearch();
+        return $mapSearch->searchByProximity($center, $tolerance, $maxItems, $this);
     }
 }
 

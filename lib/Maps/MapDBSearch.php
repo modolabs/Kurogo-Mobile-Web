@@ -5,7 +5,7 @@ includePackage('Maps/MapDB');
 class MapDBSearch extends MapSearch
 {
     // tolerance specified in meters
-    public function searchByProximity($center, $tolerance=1000, $maxItems=0)
+    public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataController=null)
     {
         $this->searchResults = array();
 

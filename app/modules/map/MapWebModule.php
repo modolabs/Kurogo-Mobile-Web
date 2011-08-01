@@ -510,7 +510,7 @@ JS;
                 }
 
                 $mapSearch = $this->getSearchClass();
-                $searchResults = $mapSearch->searchByProximity($center, 1000, 10, $dataController->getProjection());
+                $searchResults = $mapSearch->searchByProximity($center, 1000, 10, $dataController);
                 $places = array();
                 if ($searchResults) {
                     foreach ($searchResults as $result) {

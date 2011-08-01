@@ -28,23 +28,33 @@ class MapSearch {
     }
 
     // tolerance specified in meters
-    public function searchByProximity($center, $tolerance=1000, $maxItems=0, $projection=null) {
+    public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataController=null) {
         $this->searchResults = array();
 
         $resultsByDistance = array();
-        foreach ($this->feeds as $categoryID => $feedData) {
-            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            if ($controller->canSearch()) { // respect config settings
-                try {
-                    $results = $controller->searchByProximity($center, $tolerance, $maxItems, $projection);
-                    // this runs a risk of eliminating search results that are the
-                    // same distance away (within 1 meter) in different feeds
-                    $resultsByDistance = array_merge($resultsByDistance, $results);
-                } catch (DataServerException $e) {
-                    error_log('encountered DataServerException for feed config:');
-                    error_log(print_r($feedData, true));
-                    error_log('message: '.$e->getMessage());
+
+        $controllers = array();
+        if ($dataController !== null) {
+            $controllers[] = $dataController;
+        } else {
+            foreach ($this->feeds as $categoryID => $feedData) {
+                $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                if ($controller->canSearch()) { // respect config settings
+                    $controllers[] = $controller;
                 }
+            }
+        }
+
+        foreach ($controllers as $controller) {
+            try {
+                $results = $controller->searchByProximity($center, $tolerance, $maxItems);
+                // this runs a risk of eliminating search results that are the
+                // same distance away (within 1 meter) in different feeds
+                $resultsByDistance = array_merge($resultsByDistance, $results);
+            } catch (DataServerException $e) {
+                error_log('encountered DataServerException for feed config:');
+                error_log(print_r($feedData, true));
+                error_log('message: '.$e->getMessage());
             }
         }
 

@@ -33,7 +33,7 @@ class GooglePlacesDataController extends MapDataController
         return $this->items();
     }
 
-    public function searchByProximity($center, $tolerance, $maxItems, $projection=null)
+    public function searchByProximity($center, $tolerance, $maxItems)
     {
         $this->removeAllFilters();
         $this->addFilter('key', $this->apiKey);
