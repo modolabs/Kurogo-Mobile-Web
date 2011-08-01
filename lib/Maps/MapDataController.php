@@ -237,14 +237,14 @@ debug_dump($item);
             $folders[$otherCategory->getId()] = $otherCategory;
             $otherCategory->setFeatures($features);
         }
-
+/*
         if (count($folders) == 1) {
 debug_dump(null, "auto expanding folder ".$item->getId());
             // auto expand folder if we only have 1
             return self::listItemsAtPath(current($folders)->getListItems(), $path);
         }
-
-        if (count($folders) > 1) {
+*/
+        if (count($folders) >= 1) {
             // attempt to drill down if we are given a "subdirectory"
             if (isset($firstItem) && isset($folders[$firstItem])) {
                 return self::listItemsAtPath(

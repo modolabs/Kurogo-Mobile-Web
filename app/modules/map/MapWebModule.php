@@ -627,6 +627,7 @@ JS;
 
                     // only display categories in a list if the current location attempt has been made
                     // and a redirection has occured.
+                    // TODO: make this work for browsers that don't give location
                     if (isset($_COOKIE['map_lat'], $_COOKIE['map_long'])) {
                         $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS', 'Campus');
                         $this->assign('browseHint', "Select a $groupAlias");
@@ -639,8 +640,8 @@ JS;
     
                         // if current lat/lon were found and valid, sort the categories based on that.
                         if (is_numeric($latitude) && is_numeric($longitude)) {
-                            $sorted_categories = $this->sortCategoriesForCurrentLocation($categories, $latitude, $longitude);
-                            $this->assign('categories', $sorted_categories);
+                            $sortedCategories = $this->sortCategoriesForCurrentLocation($categories, $latitude, $longitude);
+                            $this->assign('categories', $sortedCategories);
                             $this->assign('browseHint', "Select a $groupAlias (Closest first)");
                         }
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
@@ -761,11 +762,28 @@ JS;
                     $dataController = $this->getDataController($categoryPath, $listItemPath);
                     $listItems = $dataController->getListItems($listItemPath);
                     */
+
+                    /*
                     if (count($listItems) == 1 && current($listItems) instanceof Placemark) {
                         $args = $this->args;
                         $args['featureindex'] = current($listItems)->getId();
                         $this->redirectTo('detail', $args, true);
                     }
+                    */
+
+                    if (count($listItems) == 1) {
+                        $args = $this->args;
+                        if (current($listItems) instanceof Placemark) {
+                            $args['featureindex'] = current($listItems)->getId();
+                            $this->redirectTo('detail', $args, true);
+                        } else { // assume MapFolder
+                            $path = $this->getDrillDownPath();
+                            $path[] = current($listItems)->getId();
+                            $args['path'] = implode(MAP_CATEGORY_DELIMITER, $path);
+                            $this->redirectTo('category', $args, false);
+                        }
+                    }
+
 
                     $places = array();
                     foreach ($listItems as $listItem) {
