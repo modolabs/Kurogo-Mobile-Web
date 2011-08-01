@@ -7,7 +7,7 @@
   {$results = $federatedResult['results']}
   {if !count($results)}
     {$noResults = array()}
-    {$noResults['title'] = "No results"}
+    {$noResults['title'] = $noResultsText}
     {$results[] = $noResults}
     
   {elseif $federatedResult['total'] > count($results)}
