@@ -53,17 +53,17 @@ class MapProjector {
                  }
                  $projectedRings[] = $this->projectPoints($ring);
              }
-             return new EmptyMapPolygon($projectedRings);
+             return new MapBasePolygon($projectedRings);
             
         } elseif ($geometry instanceof MapPolyline) {
              $points = $geometry->getPoints();
              $projectedPoints = $this->projectPoints($points);
-             return new EmptyMapPolyline($projectedPoints);
+             return new MapBasePolyline($projectedPoints);
 
         } else { // point
              $point = $geometry->getCenterCoordinate();
              $projectedPoint = $this->projectPoint($point);
-             return new EmptyMapPoint($projectedPoint['lat'], $projectedPoint['lon']);
+             return new MapBasePoint($projectedPoint);
         }
     }
 
@@ -124,7 +124,6 @@ class MapProjector {
         if ($this->srcProjSpec === $this->dstProjSpec) {
             return $point;
         }
-
         list($x, $y, $fmt) = self::getXYFromPoint($point);
         if (Kurogo::getSiteVar('MODULE_DEBUG')) {
             error_log("projecting $x, $y");
@@ -168,6 +167,7 @@ class MapProjector {
     public function setSrcProj($proj) {
         if ($proj instanceof MapProjection) {
             $this->fromProjection = $proj;
+            $this->srcProjSpec = $proj->getSpecs();
             $this->srcProjId = null;
 
         } else {
@@ -186,6 +186,7 @@ class MapProjector {
     public function setDstProj($proj) {
         if ($proj instanceof MapProjection) {
             $this->toProjection = $proj;
+            $this->dstProjSpec = $proj->getSpecs();
             $this->dstProjId = null;
 
         } else {

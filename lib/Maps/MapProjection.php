@@ -36,6 +36,7 @@ http://trac.osgeo.org/proj/wiki/GenParms
 class MapProjection
 {
     private $proj;
+    private $specs; // string used to create this object
 
     // raw cartesian points (-pi, pi), intermediate products between
     // adjustedX, adjustedY and phi, lambda
@@ -252,6 +253,8 @@ class MapProjection
 
     public function __construct($projString, $format=null)
     {
+        $this->specs = $projString;
+
         if ($format === null) {
             if (preg_match('/^\d+$/', $projString)) {
                 $format = 'wkid';
@@ -278,6 +281,11 @@ class MapProjection
                 $this->initFromProj4Params($params);
                 break;
         }
+    }
+
+    public function getSpecs()
+    {
+        return $this->specs;
     }
 
     protected function setSpheroid($spheroid) {
