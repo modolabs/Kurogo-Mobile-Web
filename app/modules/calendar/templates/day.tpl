@@ -10,12 +10,12 @@
 </div>
 
 {capture name="sideNav" assign="sideNav"}
-  <div class="{block name='sideNavClass'}sidenav{/block}">
-    <a href="{$prevURL}">
-      &lt; {$prev|date_format:"%a %b %e"}
-    </a> | 
-    <a href="{$nextURL}">
-      {$next|date_format:"%a %b %e"} &gt;
+  <div class="{block name='sideNavClass'}sidenav2{/block}">
+    <a href="{$prevURL}" class="sidenav-prev">
+      {$prev|date_format:"%a %b %e"}
+    </a>
+    <a href="{$nextURL}" class="sidenav-next">
+      {$next|date_format:"%a %b %e"}
     </a>
   </div>
 {/capture}
