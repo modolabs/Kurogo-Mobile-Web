@@ -748,6 +748,55 @@ ul.focal li:first-child {
 	text-decoration: none;
 }
 
+.sidenav2 {
+	margin: 0;
+	position: relative;
+	height: 29px;
+}
+.sidenav2 a {
+	display: block;
+	position: absolute;
+	background: transparent url(/common/images/sidenav-arrows.png) no-repeat;
+	height: 29px;
+	line-height: 29px;
+	padding: 0 10px;
+	text-decoration: none;
+	font-size: 88.3%;
+}
+a.sidenav-prev {
+	left: 0;
+	background-position: top left;
+	padding-left: 44px;
+}
+a.sidenav-next {
+	right: 0;
+	background-position: bottom right;
+	padding-right: 44px;
+}
+.sidenav3 {
+	float: right;
+	width: 90px;
+	height: 34px;
+	margin: -4px 0 4px 5px;
+}
+.sidenav3 a {
+	display: block;
+	position: absolute;
+	background: transparent url(/common/images/sidenav-segmented.png) no-repeat;
+	height: 34px;
+	width: 45px;
+}
+.sidenav3 a.sidenav-prev {
+	right: 45px;
+	left: auto;
+	background-position: left;
+	padding: 0;
+}
+.sidenav3 a.sidenav-next {
+	right: 0;
+	background-position: right;
+	padding: 0;
+}
 
 
 /* Specific content formatting */
