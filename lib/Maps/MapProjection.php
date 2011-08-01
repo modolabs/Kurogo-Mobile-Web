@@ -86,6 +86,8 @@ class MapProjection
         if (isset($xy['x'], $xy['y'])) {
             $this->adjustedX = $xy['x'];
             $this->adjustedY = $xy['y'];
+            $this->phi = null;
+            $this->lambda = null;
         }
     }
 
@@ -94,6 +96,8 @@ class MapProjection
         if (isset($latlon['lat'], $latlon['lon'])) {
             $this->phi = $latlon['lat'] / 180 * M_PI;
             $this->lambda = $latlon['lon'] / 180 * M_PI;
+            $this->adjustedX = null;
+            $this->adjustedY = null;
         }
     }
     
