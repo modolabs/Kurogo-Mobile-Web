@@ -55,7 +55,7 @@ class MapDBPlacemark extends BasePlacemark
 
     public function dbFields()
     {
-        $styleId = isset($this->style) ? $this->style->getId() : null;
+        $styleId = (isset($this->style) && $this->style instanceof MapDBStyle) ? $this->style->getId() : null;
 
         $fields = array(
             'placemark_id' => $this->id,

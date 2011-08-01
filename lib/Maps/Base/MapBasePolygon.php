@@ -24,13 +24,8 @@ class MapBasePolygon extends MapBasePoint implements MapPolygon {
 
     public function getRings()
     {
-        $outerRing = $this->outerBoundary->getPoints();
-        $result = array($outerRing);
-        if (isset($this->innerBoundaries) && count($this->innerBoundaries)) {
-            foreach ($this->innerBoundaries as $boundary) {
-                $result[] = $boundary->getPoints();
-            }
-        }
+        $result = $this->innerBoundaries;
+        array_unshift($result, $this->outerBoundary);
         return $result;
     }
 }

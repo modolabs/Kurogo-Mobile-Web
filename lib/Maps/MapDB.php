@@ -12,7 +12,7 @@ class MapDB
 
     private static $db = null;
 
-    public static function updateCategory(MapFolder $category, $items, $parentCategoryId=null) {
+    public static function updateCategory(MapFolder $category, $items, $projection=null, $parentCategoryId=null) {
         $categoryId = $category->getId();
         $name = $category->getTitle();
         $description = $category->getSubtitle();
@@ -49,17 +49,24 @@ debug_dump($category, "inserting category: ".$category->getTitle());
 
         self::connection()->query($sql, $params);
 
+        if ($projection === null || $projection instanceof MapProjector) {
+            $projector = $projection;
+        } else {
+            $projector = new MapProjector();
+            $projector->setSrcProj($projection);
+        }
+debug_dump($projector);
         foreach ($items as $item) {
 debug_dump($item);
             if ($item instanceof MapFolder) {
-                self::updateCategory($item, $item->getListItems(), $categoryId);
+                self::updateCategory($item, $item->getListItems(), $projector, $categoryId);
             } elseif ($item instanceof Placemark) {
-                self::updateFeature($item, $categoryId);
+                self::updateFeature($item, $categoryId, $projector);
             }
         }
     }
 
-    public static function updateFeature(Placemark $feature, $parentCategoryId) {
+    public static function updateFeature(Placemark $feature, $parentCategoryId, $projector=null) {
         $style = $feature->getStyle();
         if (method_exists($style, 'getId')) {
             $styleId = $style->getId();
@@ -69,6 +76,9 @@ debug_dump($item);
 
         $geometry = $feature->getGeometry();
         if ($geometry) {
+            if ($projector) {
+                $geometry = $projector->projectGeometry($geometry);
+            }
             $centroid = $geometry->getCenterCoordinate();
             $wkt = WKTParser::wktFromGeometry($geometry);
         } else {
@@ -123,7 +133,6 @@ error_log(print_r($params, true));
         }
         if (!in_array($parentCategoryId, $categories)) {
             $categories[] = $parentCategoryId;
-var_dump("setting feature categories to: ".print_r($categories, true));
         }
         foreach ($categories as $categoryId) {
             $sql = 'INSERT INTO '.self::PLACEMARK_CATEGORY_TABLE

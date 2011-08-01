@@ -763,15 +763,8 @@ JS;
                     $listItems = $dataController->getListItems($listItemPath);
                     */
 
-                    /*
-                    if (count($listItems) == 1 && current($listItems) instanceof Placemark) {
-                        $args = $this->args;
-                        $args['featureindex'] = current($listItems)->getId();
-                        $this->redirectTo('detail', $args, true);
-                    }
-                    */
-
                     if (count($listItems) == 1) {
+                        // redirect to a category's children if it only has one item
                         $args = $this->args;
                         if (current($listItems) instanceof Placemark) {
                             $args['featureindex'] = current($listItems)->getId();

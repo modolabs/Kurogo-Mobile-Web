@@ -138,8 +138,20 @@ function debug_dump($variable=null, $message='') {
     $line = $currentCall['line'];
     $function = $lastCall['function'];
     if ($variable !== null) {
-        $varRep = spl_object_hash($variable);
-        $trace = "$file($line):$function [".get_class($variable)." $varRep] $message";
+        if (is_string($variable)) {
+            $varClass = 'string';
+            $varRep = "'$variable'";
+        } elseif (is_int($variable)) {
+            $varClass = 'int';
+            $varRep = $variable;
+        } elseif (is_bool($variable)) {
+            $varClass = 'bool';
+            $varRep = $variable ? 'TRUE' : 'FALSE';
+        } else {
+            $varClass = get_class($variable);
+            $varRep = spl_object_hash($variable);
+        }
+        $trace = "$file($line):$function [$varClass $varRep] $message";
     } else {
         $trace = "$file($line):$function $message";
     }

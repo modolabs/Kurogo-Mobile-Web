@@ -237,13 +237,7 @@ debug_dump($item);
             $folders[$otherCategory->getId()] = $otherCategory;
             $otherCategory->setFeatures($features);
         }
-/*
-        if (count($folders) == 1) {
-debug_dump(null, "auto expanding folder ".$item->getId());
-            // auto expand folder if we only have 1
-            return self::listItemsAtPath(current($folders)->getListItems(), $path);
-        }
-*/
+
         if (count($folders) >= 1) {
             // attempt to drill down if we are given a "subdirectory"
             if (isset($firstItem) && isset($folders[$firstItem])) {
@@ -351,8 +345,9 @@ debug_dump(null, "auto expanding folder ".$item->getId());
         if (count($placemarks)) {
             $lastPlacemark = end($placemarks);
             $imgController->setCenter($lastPlacemark->getGeometry()->getCenterCoordinate());
+        } else {
+            error_log(get_class($this)." was unable to find any matching placemarks");
         }
-else { var_dump(get_class($this)." was unable to find any matching placemarks"); }
         return $imgController;
     }
 
@@ -408,6 +403,15 @@ else { var_dump(get_class($this)." was unable to find any matching placemarks");
     protected function cacheFolder()
     {
         return CACHE_DIR . "/Maps";
+    }
+
+    protected function cacheIsFresh()
+    {
+        // TODO need cleaner way to check this
+        if ($this->parser instanceof ShapefileDataParser) {
+            return true;
+        }
+        return parent::cacheIsFresh();
     }
 
     protected function init($args)

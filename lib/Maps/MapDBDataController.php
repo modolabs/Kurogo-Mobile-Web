@@ -38,6 +38,10 @@ class MapDBDataController extends MapDataController implements MapFolder
         parent::init($args);
         $this->dbParser = new MapDBDataParser();
         $this->dbParser->init($args);
+        if ($this->dbParser->isStored() && $this->dbParser->getCategory()->getListItems()) {
+            // make sure this category was populated before skipping
+            $this->hasDBData = true;
+        }
     }
 
     public function getData() {
@@ -48,10 +52,8 @@ class MapDBDataController extends MapDataController implements MapFolder
     }
 
     protected function getCacheData() {
-        if ($this->dbParser->isStored() && $this->dbParser->getCategory()->getListItems()) {
-            // make sure this category was populated before skipping
-            $this->hasDBData = true;
-        } else {
+        // if data is in db, do nothing
+        if (!$this->hasDBData) {
             return parent::getCacheData();
         }
     }
@@ -63,14 +65,29 @@ class MapDBDataController extends MapDataController implements MapFolder
         }
         if (!$items) {
             $items = parent::parseData($data, $parser);
+            $projection = $this->getProjection();
+
             $category = $this->dbParser->getCategory();
 debug_dump($category, "Parent category");
+debug_dump($projection);
             $category->setTitle($this->getTitle());
             $category->setSubtitle($this->getSubtitle());
-            MapDB::updateCategory($category, $items);
+            MapDB::updateCategory($category, $items, $projection);
             //$items = $category->getListItems();
+            $this->hasDBData = true;
         }
         return $items;
+    }
+
+    public function getProjection()
+    {
+debug_dump();
+        if ($this->cacheIsFresh() && $this->hasDBData) {
+            // features are converted to lat/lon when stored
+            return null;
+        }
+debug_dump($this->hasDBData);
+        return parent::getProjection(); // returns parent's parser's projection
     }
 
     ////// MapDataController methods
