@@ -320,6 +320,7 @@ class PeopleWebModule extends WebModule {
                 } else {
                   $this->redirectTo('index');
                 }
+                $this->assign('placeholder', Kurogo::getLocalizedString("SEARCH"));
                 break;
 
             case 'bookmarks':
@@ -340,6 +341,7 @@ class PeopleWebModule extends WebModule {
                     }
                 }
                 $this->assign('bookmarks', $bookmarks);
+                $this->assign('bookmarksTitle', $this->getLocalizedString('PEOPLE'));
                 break;
                 
             case 'group':
@@ -360,7 +362,8 @@ class PeopleWebModule extends WebModule {
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->generateBookmarkLink();
                 }
-                $this->assign('searchTip', $this->getOptionalModuleVar('SEARCH_TIP'));
+                $this->assign('placeholder', Kurogo::getLocalizedString("SEARCH"));
+                $this->assign('searchTip', $this->getModuleVar('SEARCH_TIP'));
                 break;
         }  
     }

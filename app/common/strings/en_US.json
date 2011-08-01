@@ -6,5 +6,6 @@
     "FOOTER_LOGIN_SIGNED_IN_MULTIPLE":"Signed in with multiple identities",
     "HELP_TEXT":"%s help",
     "HOME_LINK":"%s home",
-    "NO_RESULTS":"No Results"
+    "NO_RESULTS":"No Results",
+    "SEARCH":"Search"
 }
