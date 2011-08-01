@@ -192,12 +192,12 @@ dt, .label, .legend, .legend h2, .legend h3, .searchlegend {
 
 /* Next/previous navigation (e.g., going from day to day in events calendar) and paging navigation (for content or lists spread across multiple pages) */
 
-.sidenav, paging {
+.sidenav, .sidenav2, .paging {
 	font-size: 93%;
 	color: #fff;
 }
 
-.sidenav a, .sidenav a:visited, .paging a:visited {
+.sidenav a, .sidenav a:visited, .sidenav2 a, .sidenav2 a:visited, .paging a:visited {
 	color: #333;
 }
 
