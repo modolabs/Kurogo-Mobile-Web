@@ -105,9 +105,9 @@ class MapsAdmin
 {
     public static function getMapControllerClasses() {
         return array(
-            'KMLDataController'=>'KML',
-            'ArcGISDataController'=>'ArcGIS',
-            'ShapefileDataController'=>'Shapefile'
+            'MapDataController' => 'default',
+            'MapDBDataController' => 'database',
+            //'ArcGISDataController'=>'ArcGIS',
         );
     }
     

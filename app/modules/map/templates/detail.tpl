@@ -42,6 +42,13 @@
 
 {if in_array('nearby', $tabKeys)}
   {capture name="nearbyPane" assign="nearbyPane"}
+    {if $poweredByGoogle}
+      {block name="poweredByGoogle"}
+      <div>
+        <img src="/modules/map/images/powered-by-google-on-white.png"/>
+      </div>
+      {/block}
+    {/if}
     {include file="findInclude:common/templates/navlist.tpl" navlistItems=$nearbyResults boldLabels=true accessKey=false}
   {/capture}
   {$tabBodies['nearby'] = $nearbyPane}

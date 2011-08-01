@@ -6,17 +6,21 @@ class GooglePlacesDataController extends MapDataController
 {
     protected $DEFAULT_PARSER_CLASS = 'GooglePlacesParser';
     private $apiKey;
-    private $defaultCenter = '42.39462,-71.14549';
+    private $defaultCenter;
     private $defaultRadius = 1000;
+
+    protected $useCache = false;
 
     public function init($args)
     {
         parent::init($args);
 
-        $this->apiKey = Kurogo::getSiteVar('GOOGLE_PLACES_API_KEY');
+        $this->apiKey = Kurogo::getSiteVar('GOOGLE_PLACES_API_KEY', 'maps');
+        $this->defaultCenter = Kurogo::getSiteVar('DEFAULT_CENTER', 'maps');
 
         // TODO: grab the following from config
         //   default lat/lon, radius
+
     }
 
     public function search($searchText)
@@ -43,5 +47,22 @@ class GooglePlacesDataController extends MapDataController
         $this->addFilter('sensor', 'false');
 
         return $this->items();
+    }
+
+    public function selectFeature($featureId)
+    {
+        // featureId must be a reference from a previous Google search
+        $this->removeAllFilters();
+        $url = $this->baseURL;
+        $this->setBaseURL('https://maps.googleapis.com/maps/api/place/details/json');
+
+        $this->addFilter('reference', $featureId);
+        $this->addFilter('sensor', 'false');
+        $this->addFilter('key', $this->apiKey);
+
+        $this->selectedFeatures = $this->items();
+        $this->setBaseURL($url);
+
+        return current($this->selectedFeatures);
     }
 }

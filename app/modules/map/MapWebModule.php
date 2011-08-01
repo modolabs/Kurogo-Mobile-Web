@@ -218,17 +218,19 @@ class MapWebModule extends WebModule {
         return $this->buildBreadcrumbURL('index', $args, $addBreadcrumb);
     }
 
+    /*
+    public function detailURLForLatLon(Array $coordinate, $object=null) {
+
+    }
+
+    public function detailURLForAddress($address) {
+
+    }
+    */
+
     private function detailURL($name, $category=null, $addBreadcrumb=true) {
         $args = $this->args;
         $args['featureindex'] = $name;
-        /*
-        if ($category) {
-            if (is_array($category)) {
-                $category = implode(MAP_CATEGORY_DELIMITER, $category);
-            }
-            $args['category'] = $category;
-        }
-        */
         return $this->buildBreadcrumbURL('detail', $args, $addBreadcrumb);
     }
   
@@ -294,6 +296,7 @@ class MapWebModule extends WebModule {
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
         $mapSearch = new $mapSearchClass($this->feeds);
+        $this->assign('poweredByGoogle', $mapSearch instanceof GoogleMapSearch);
         return $mapSearch;
     }
     
@@ -571,7 +574,6 @@ JS;
 
                 $this->assign('displayDetailsAsList', $displayDetailsAsList);
                 $this->assign('details', $details);
-
                 return is_array($details) ? count($details) > 0 : strlen(trim($details));
             }
             case 'categories':

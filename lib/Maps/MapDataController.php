@@ -394,9 +394,6 @@ class MapDataController extends DataController implements MapFolder
         } elseif ($this->parser instanceof ShapefileDataParser) {
             return; // do nothing
 
-        } elseif ($this->parser instanceof GooglePlacesParser) {
-            // FIXME
-            return;
         }
         return parent::getData();
     }

@@ -8,7 +8,7 @@ class MapBasePoint implements MapGeometry {
         $this->coordinates = $coordinates;
         if ($centroid) {
             $this->centroid = $centroid;
-        } else if (count($this->coordinates) == 2) {
+        } else if (isset($this->coordinates['lat'], $this->coordinates['lon'])) {
             $this->centroid = $this->coordinates;
         }
     }
