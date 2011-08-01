@@ -28,7 +28,6 @@ class MapDB
         }
 
         if (!$isStored) {
-debug_dump($category, "inserting category: ".$category->getTitle());
             if ($parentCategoryId === null) {
                 $sql = 'INSERT INTO '.self::CATEGORY_TABLE.' (category_id, name, description) VALUES (?, ?, ?)';
                 $params = array($categoryId, $name, $description);
@@ -55,9 +54,7 @@ debug_dump($category, "inserting category: ".$category->getTitle());
             $projector = new MapProjector();
             $projector->setSrcProj($projection);
         }
-debug_dump($projector);
         foreach ($items as $item) {
-debug_dump($item);
             if ($item instanceof MapFolder) {
                 self::updateCategory($item, $item->getListItems(), $projector, $categoryId);
             } elseif ($item instanceof Placemark) {
@@ -104,7 +101,6 @@ debug_dump($item);
             $placemarkId, $centroid['lat'], $centroid['lon'],
             );
 
-error_log(print_r($params, true));
         if ($isStored) {
             $sql = 'UPDATE '.self::PLACEMARK_TABLE
                   .'   SET name=?, address=?, style_id=?, geometry=?'
@@ -177,20 +173,6 @@ error_log(print_r($params, true));
 
         $result = self::connection()->query($sql, $params);
 
-$sql = 'SELECT p.*, pc.category_id FROM '
-      .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
-      .' WHERE p.placemark_id = \''.$featureId
-      .'\'   AND p.placemark_id = pc.placemark_id'
-      .'   AND p.lat = pc.lat AND p.lon = pc.lon';
-      $orClauses = array();
-      foreach ($categoryIds as $categoryId) {
-          $orClauses[] = ' pc.category_id = \''.$categoryId.'\'';
-      }
-      if ($orClauses) {
-          $sql .= ' AND ('.implode(' OR ', $orClauses).')';
-      }
-var_dump($sql);
-
         $placemark = null;
         $row = $result->fetch();
         if ($row) {
@@ -239,11 +221,13 @@ var_dump($sql);
     }
     
 
-    public static function featuresForCategory($categoryId) {
+    public static function featuresForCategory($categoryId)
+    {
         $sql = 'SELECT p.*, pc.category_id FROM '
               .self::PLACEMARK_TABLE.' p, '.self::PLACEMARK_CATEGORY_TABLE.' pc'
               .' WHERE p.placemark_id = pc.placemark_id'
-              .'   AND pc.category_id = ?';
+              .'   AND pc.category_id = ?'
+              .'   AND p.lat = pc.lat AND p.lon = pc.lon';
         $params = array($categoryId);
         $results = self::connection()->query($sql, $params);
         $features = array();

@@ -5,17 +5,16 @@ includePackage('Maps/MapDB');
 class MapDBSearch extends MapSearch
 {
     // tolerance specified in meters
-    public function searchByProximity($center, $tolerance=1000, $projection=null, $maxItems=0)
+    public function searchByProximity($center, $tolerance=1000, $maxItems=0)
     {
         $this->searchResults = array();
 
-        $bbox = normalizedBoundingBox($center, $tolerance, $projection, null);
+        $bbox = normalizedBoundingBox($center, $tolerance, null, null);
 
         $params = array(
             $bbox['min']['lat'], $bbox['max']['lat'], $bbox['min']['lon'], $bbox['max']['lon'],
             $bbox['center']['lat'], $bbox['center']['lon']
             );
-
 
         $sql = 'SELECT p.*, pc.category_id FROM '
               .MapDB::PLACEMARK_TABLE.' p, '.MapDB::PLACEMARK_CATEGORY_TABLE.' pc'

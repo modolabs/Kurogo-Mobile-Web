@@ -51,7 +51,7 @@ abstract class MapImageController
     {
         if ($proj && $this->dataProjection != $proj) {
             $this->dataProjection = $proj;
-            if (isset($this->dataProjection, $this->mapProjection) && $this->dataProjection !== $this->mapProjection) {
+            if ($this->dataProjection !== $this->mapProjection) {
                 if (!isset($this->mapProjector)) {
                     $this->mapProjector = new MapProjector();
                     $this->mapProjector->setDstProj($this->mapProjection);
@@ -61,10 +61,11 @@ abstract class MapImageController
         }
     }
     
-    public function setMapProjection($proj) {
+    public function setMapProjection($proj)
+    {
         if ($proj && $this->mapProjection != $proj) {
             $this->mapProjection = $proj;
-            if (isset($this->dataProjection, $this->mapProjection) && $this->dataProjection !== $this->mapProjection) {
+            if ($this->dataProjection !== $this->mapProjection) {
                 if (!isset($this->mapProjector)) {
                     $this->mapProjector = new MapProjector();
                     $this->mapProjector->setSrcProj($this->dataProjection);
@@ -140,13 +141,11 @@ abstract class MapImageController
         return in_array($layer, $this->getAvailableLayers());
     }
 
-    public function setCenter($center) {
+    public function setCenter($center)
+    {
+        // subclasses need to watch out for projected points
         if (is_array($center) && isset($center['lat'], $center['lon'])) {
-            if (isset($this->mapProjector)) {
-                $this->center = $this->mapProjector->projectPoint($center);
-            } else {
-                $this->center = $center;
-            }
+            $this->center = $center;
         }
     }
 
@@ -211,23 +210,24 @@ class JavascriptTemplate
     }
 
     public function getScript() {
-        $script = "\n";
-        foreach ($this->values as $values) {
-            $template = $this->template;
-            foreach ($values as $placeholder => $value) {
-                $template = preg_replace('/\[?'.$placeholder.'\]?/', $value, $template);
-            }
+        if (!$this->values) {
+            $script = $this->template;
 
-            while (preg_match('/\[___\w+___\]/', $template, $matches)) {
-                $template = str_replace($matches[0], '', $template);
-            }
+        } else {
+            $script = "\n";
 
-            //if (preg_match('/(___\w+___)/', $template, $matches)) {
-            //    throw new Exception("required placeholder {$matches[1]} not used");
+            foreach ($this->values as $values) {
+                $template = $this->template;
+                foreach ($values as $placeholder => $value) {
+                    $template = preg_replace('/\[?'.$placeholder.'\]?/', $value, $template);
+                }
 
-            //} else {
+                while (preg_match('/\[___\w+___\]/', $template, $matches)) {
+                    $template = str_replace($matches[0], '', $template);
+                }
+
                 $script .= $template;
-            //}
+            }
         }
         return $script;
     }

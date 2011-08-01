@@ -178,7 +178,6 @@ class MapDataController extends DataController implements MapFolder
 
     public function addDisplayFilter($type, $value)
     {
-var_dump("adding display filter for ".print_r($type, true).": ".print_r($value, true));
         if ($type == 'category') {
             if ($value && !is_array($value)) {
                 $value = array($value);
@@ -214,7 +213,6 @@ var_dump("adding display filter for ".print_r($type, true).": ".print_r($value, 
 
     private static function listItemsAtPath(array $items, array $path=array(), $otherCateogryId='something_unique')
     {
-var_dump("getting listItemsAtPath for: (".implode(', ',$path).'), number of candidates: '.count($items));
         if (count($path)) {
             $firstItem = array_shift($path);
         }
@@ -222,7 +220,6 @@ var_dump("getting listItemsAtPath for: (".implode(', ',$path).'), number of cand
         $features = array();
         foreach ($items as $item) {
             if ($item instanceof MapFolder) {
-debug_dump($item);
                 $folders[$item->getId()] = $item;
             } elseif ($item instanceof Placemark) {
                 $features[] = $item;
@@ -344,6 +341,7 @@ debug_dump($item);
         // TODO better way to set default center coordinate
         if (count($placemarks)) {
             $lastPlacemark = end($placemarks);
+debug_dump();
             $imgController->setCenter($lastPlacemark->getGeometry()->getCenterCoordinate());
         } else {
             error_log(get_class($this)." was unable to find any matching placemarks");

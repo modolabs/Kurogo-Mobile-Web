@@ -89,10 +89,10 @@ abstract class StaticMapImageController extends MapImageController
     
     public function setCenter($center)
     {
-        if (is_array($center)
-            && isset($center['lat'])
-            && isset($center['lon']))
-        {
+        if (is_array($center) && isset($center['lat'], $center['lon'])) {
+            if (isset($this->mapProjector)) {
+                $center = $this->mapProjector->projectPoint($center);
+            }
             $xrange = $this->getHorizontalRange();
             $yrange = $this->getVerticalRange();
             $this->center = $center;

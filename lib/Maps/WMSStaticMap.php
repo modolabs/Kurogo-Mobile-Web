@@ -43,7 +43,6 @@ class WMSStaticMap extends StaticMapImageController {
             foreach ($projections as $proj) {
                 $contents = MapProjector::getProjSpecs($proj);
                 if ($contents) {
-                    $this->setDataProjection($proj);
                     $this->setMapProjection($proj);
                 }
             }

@@ -135,6 +135,10 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
     private function getPolygonJS()
     {
+        if (!$this->polygons) {
+            return '';
+        }
+
         $template = $this->prepareJavascriptTemplate('ArcGISPolygons');
         foreach ($this->polygons as $rings) {
             $jsonParams = array(
@@ -165,6 +169,10 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
     private function getPathJS()
     {
+        if (!$this->paths) {
+            return '';
+        }
+
         $template = $this->prepareJavascriptTemplate('ArcGISPaths');
         foreach ($this->paths as $styleString => $paths) {
             // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/polyline.htm
@@ -198,6 +206,10 @@ class ArcGISJSMap extends JavascriptMapImageController {
     
     private function getMarkerJS()
     {
+        if (!$this->markers) {
+            return '';
+        }
+
         $template = $this->prepareJavascriptTemplate('ArcGISPoints');
         foreach ($this->markers as $styleString => $points) {
             $styles = array();

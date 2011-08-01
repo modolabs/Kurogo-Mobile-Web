@@ -68,8 +68,6 @@ class MapDBDataController extends MapDataController implements MapFolder
             $projection = $this->getProjection();
 
             $category = $this->dbParser->getCategory();
-debug_dump($category, "Parent category");
-debug_dump($projection);
             $category->setTitle($this->getTitle());
             $category->setSubtitle($this->getSubtitle());
             MapDB::updateCategory($category, $items, $projection);
@@ -81,12 +79,10 @@ debug_dump($projection);
 
     public function getProjection()
     {
-debug_dump();
         if ($this->cacheIsFresh() && $this->hasDBData) {
             // features are converted to lat/lon when stored
             return null;
         }
-debug_dump($this->hasDBData);
         return parent::getProjection(); // returns parent's parser's projection
     }
 
@@ -94,7 +90,6 @@ debug_dump($this->hasDBData);
 
     public function selectFeature($featureId)
     {
-debug_dump($featureId, "selectFeature");
         $feature = $this->dbParser->getFeatureById($featureId, $this->drillDownPath);
         if ($feature) {
             $this->setSelectedFeatures(array($feature));
