@@ -6,7 +6,6 @@ class VideoWebModule extends WebModule
 {
     protected $id='video';  // this affects which .ini is loaded
     protected $feeds = array();
-    protected $bookmarkLinkTitle = 'Bookmarked Videos';
    
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);

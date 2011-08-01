@@ -12,7 +12,6 @@ Kurogo::includePackage('People');
   */
 class PeopleWebModule extends WebModule {
     protected $id = 'people';
-    protected $bookmarkLinkTitle = 'Bookmarked People';
     protected $detailFields = array();
     protected $detailAttributes = array();
     protected $defaultController = 'LDAPPeopleController';

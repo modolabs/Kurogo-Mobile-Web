@@ -48,9 +48,7 @@ abstract class WebModule extends Module {
 
   private $fontsize = 'medium';
   private $fontsizes = array('small', 'medium', 'large', 'xlarge');
-  
-  protected $bookmarkLinkTitle = 'Bookmarks';
-  
+    
   private $templateEngine = null;
   
   private $htmlPager = null;
@@ -867,7 +865,7 @@ abstract class WebModule extends Module {
         $bookmarkLink = array();
         if ($hasBookmarks) {
             $bookmarkLink = array(array(
-                'title' => $this->bookmarkLinkTitle,
+                'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
                 'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
                 ));
             $this->assign('bookmarkLink', $bookmarkLink);
