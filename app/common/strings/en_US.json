@@ -7,5 +7,6 @@
     "HELP_TEXT":"%s help",
     "HOME_LINK":"%s home",
     "NO_RESULTS":"No Results",
-    "SEARCH":"Search"
+    "SEARCH":"Search",
+    "SEARCH_MODULE":"Search %s"
 }
