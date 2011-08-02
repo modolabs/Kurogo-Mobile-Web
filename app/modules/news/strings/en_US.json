@@ -1,0 +1,12 @@
+{
+    "ERROR_NO_TITLE":"Title not specified",
+    "ERROR_NO_TITLE_DESCRIPTION":"Feed title cannot be blank",
+    "ERROR_INVALID_FEED":"Error getting news feed %s",
+    "ERROR_NOT_CONFIGURED":"News Feed not configured",
+    "ERROR_STORY_NOT_FOUND":"Story %s not found",
+    "ERROR_CONTENT_NOT_FOUND":"No content or link found for story %s",
+    "SHARE_THIS_STORY":"Share this story",
+    "PREVIOUS_STORY_TEXT":"Previous %s stories",
+    "NEXT_STORY_TEXT":"Next %s stories",
+    "SECTION_TEXT":"Section:"
+}
