@@ -1,9 +1,10 @@
 {
     "FOOTER_BACK_TO_TOP":"Back to top",
     "FOOTER_KUROGO":"Powered by Kurogo",
-    "FOOTER_LOGIN_SIGN_IN":"Sign in to %s",
-    "FOOTER_LOGIN_SIGNED_IN_SINGLE":"Signed in via %1$s as %2$s",
-    "FOOTER_LOGIN_SIGNED_IN_MULTIPLE":"Signed in with multiple identities",
+    "LOGIN_SIGN_IN":"Sign in to %s",
+    "LOGIN_SIGNED_IN_SINGLE":"Signed in via %1$s as %2$s",
+    "LOGIN_SIGNED_IN_MULTIPLE":"Signed in with multiple identities",
+    "LOGIN_SIGN_OUT":"Sign out",
     "HELP_TEXT":"%s help",
     "HOME_LINK":"%s home",
     "NO_RESULTS":"No Results",
