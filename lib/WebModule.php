@@ -743,12 +743,18 @@ abstract class WebModule extends Module {
     // Add page Javascript and CSS if any
     $minifyURLs = $this->getMinifyUrls(true);
     
-    $javascript = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['js'], '/'));
+    $context = stream_context_create(array(
+      'http' => array(
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+      ),
+    ));
+    
+    $javascript = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['js'], '/'), false, $context);
     if ($javascript) {
       array_unshift($data['inlineJavascriptBlocks'], $javascript);
     }
 
-    $css = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['css'], '/'));
+    $css = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['css'], '/'), false, $context);
     if ($css) {
       array_unshift($data['inlineCSSBlocks'], $css);
     }
