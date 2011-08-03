@@ -573,7 +573,7 @@ abstract class Module
         foreach ($languages as $language) {
             $val = $this->getStringForLanguage($key, $language, $opts);
             if ($val !== null) {
-                return $val;
+                return Kurogo::getOptionalSiteVar('LOCALIZATION_DEBUG') ? $key : $val;
             }
         }
         

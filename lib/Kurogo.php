@@ -592,7 +592,7 @@ class Kurogo
         foreach ($languages as $language) {
             $val = $this->getStringForLanguage($key, $language, $opts);
             if ($val !== null) {
-                return $val;
+                return self::getOptionalSiteVar('LOCALIZATION_DEBUG') ?  $key : $val;
             }
         }
         

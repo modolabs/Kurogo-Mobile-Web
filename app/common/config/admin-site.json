@@ -1,19 +1,19 @@
 {
     "setup":{
         "titleKey":"ADMIN_SITE_SETUP_TITLE",
-        "description":"The following values affect basic site behavior.",
+        "descriptionKey":"ADMIN_SITE_SETUP_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "SITE_NAME":{"label":"Site name","type":"text","config":"strings","description":"Name of this website as it appears in the website, including in the &quot;Return to [site-name] home&quot; link in the footer","section":"strings"},
-            "ORGANIZATION_NAME":{"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site.","section":"strings"},
-            "LOCAL_TIMEZONE":{"label":"Local time zone","type":"select","config":"site","optionsMethod":["Calendar","getTimeZones"],"section":"site settings"},
-            "LOCAL_AREA_CODE":{"label":"Local area code","type":"text","config":"site","description":"Area code for local phone numbers. Added to phone numbers that are missing an area code.","section":"site settings"},
-            "AUTODETECT_PHONE_NUMBERS":{"label":"Enable auto-detection of phone numbers","type":"checkbox","config":"site","description":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.","section":"site settings"}
+            "SITE_NAME":{"labelKey":"ADMIN_SITE_SETUP_SITE_NAME_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_SETUP_SITE_NAME_DESCRIPTION","section":"strings"},
+            "ORGANIZATION_NAME":{"labelKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_TITLE","type":"text","config":"strings", "descriptionKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_DESCRIPTION","section":"strings"},
+            "LOCAL_TIMEZONE":{"labelKey":"ADMIN_SITE_SETUP_LOCAL_TIMEZONE_TITLE","type":"select","config":"site","optionsMethod":["Calendar","getTimeZones"],"descriptionKey":"ADMIN_SITE_SETUP_LOCAL_TIMEZONE_DESCRIPTION","section":"site settings"},
+            "LOCAL_AREA_CODE":{"labelKey":"ADMIN_SITE_SETUP_LOCAL_AREA_CODE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_SETUP_LOCAL_AREA_CODE_DESCRIPTION","section":"site settings"},
+            "AUTODETECT_PHONE_NUMBERS":{"labelKey":"ADMIN_SITE_SETUP_AUTODETECT_PHONE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_SETUP_AUTODETECT_PHONE_DESCRIPTION","section":"site settings"}
         }
     },
     "modules":{
         "titleKey":"ADMIN_SITE_MODULES_TITLE",
-        "description":"Behavior related to the loading of modules",
+        "descriptionKey":"ADMIN_SITE_MODULES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "DEFAULT":{"label":"Default mobile","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for mobile devices","section":"urls"},
@@ -24,7 +24,7 @@
     },
     "security":{
         "titleKey":"ADMIN_SITE_SECURITY_TITLE",
-        "description":"Configure secure socket layer connections",
+        "descriptionKey":"ADMIN_SITE_SECURITY_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "SECURE_REQUIRED":{"label":"Require https","type":"checkbox","config":"site","description":"Require a secure (https) connection on all requests. It is also possible to configure secure connections on a per module basis. Note: It is the responsibility of the server administrator to ensure this site can handle secure connections.","section":"site settings"},
@@ -34,7 +34,7 @@
     },
     "theme":{
         "titleKey":"ADMIN_SITE_THEME_TITLE",
-        "description":"Select the visual theme for the site. For more information about creating and modifying themes, see the developer documentation.",
+        "descriptionKey":"ADMIN_SITE_THEME_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "ACTIVE_THEME":{"label":"Active Theme","type":"select","config":"site","optionsMethod":["WebModule","getAllThemes"],"description":"Active theme used by this site","section":"themes"},
@@ -43,7 +43,7 @@
     },
     "detection":{
         "titleKey":"ADMIN_SITE_DETECTION_TITLE",
-        "description":"The device detection service recognizes and categorizes each user's web browser so that the appropriate class of web UI can be delivered. You can run this service on your own web server, or use an externally hosted one such as the reference service provided by Modo Labs.",
+        "descriptionKey":"ADMIN_SITE_DETECTION_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "MOBI_SERVICE_VERSION":{"label":"Mobi service version","type":"select","config":"site","options":{"1":"1"},"description":"Version of the Kurogo device detection service","section":"device_detection"},
@@ -55,7 +55,7 @@
     },
     "error":{
         "titleKey":"ADMIN_SITE_ERROR_TITLE",
-        "description":"For optimal runtime performance and security, disable as many types of debugging as possible.",
+        "descriptionKey":"ADMIN_SITE_ERROR_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "DISPLAY_ERRORS":{"label":"Show error messages","type":"checkbox","config":"site","description":"Show error messages generated by PHP scripts","section":"error_handling_and_debugging"},
@@ -71,7 +71,7 @@
     },
     "database":{
         "titleKey":"ADMIN_SITE_DATABASE_TITLE",
-        "description":"",
+        "descriptionKey":"ADMIN_SITE_DATABASE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "DB_TYPE":{"label":"Database type","type":"select","config":"site","optionsMethod":["db","getDBTypes"],"description":"The database backend","section":"database"},
@@ -84,7 +84,7 @@
     },
     "cookies":{
         "titleKey":"ADMIN_SITE_COOKIES_TITLE",
-        "description":" Specify how long different types of cookies will be set to persist in each user's browser. By default these cookies are short lived. For production sites, you should increase the time so users' preferences persist longer.",
+        "descriptionKey":"ADMIN_SITE_COOKIES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "MODULE_ORDER_COOKIE_LIFESPAN":{"label":"Module order","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to remember user's preferences for home screen module order.","section":"cookies"},
@@ -94,7 +94,7 @@
     },
     "authentication": {
         "titleKey":"ADMIN_SITE_AUTHENTICATION_TITLE",
-        "description":"",
+        "descriptionKey":"ADMIN_SITE_AUTHENTICATION_DESCRIPTION",
         "sectiontype":"sections",
         "sections": {
             "authentication":{
@@ -209,7 +209,7 @@
     },
     "analytics":{
         "titleKey":"ADMIN_SITE_ANALYTICS_TITLE",
-        "description":"",
+        "descriptionKey":"ADMIN_SITE_ANALYTICS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "GOOGLE_ANALYTICS_ID":{"label":"Google Analytics ID","type":"text","config":"site","description":"If included, pages will be logged to Google Analytics.","section":"analytics","placeholder":" UA-XXXXXXX-X"},
@@ -219,7 +219,7 @@
     },
     "files":{
         "titleKey":"ADMIN_SITE_FILES_TITLE",
-        "description":"",
+        "descriptionKey":"ADMIN_SITE_FILES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "WEB_LOG_FILE":{"label":"Web log file","type":"file","config":"site","description":"Location of the processedpage view log file","section":"log_files"},
@@ -233,7 +233,7 @@
     },
     "strings":{
         "titleKey":"ADMIN_SITE_STRINGS_TITLE",
-        "description":"These string values are used throughout the site",
+        "descriptionKey":"ADMIN_SITE_STRINGS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "COPYRIGHT_LINK":{"label":"Copyright link","type":"text","config":"strings","description":"Link to copyright notice (optional)","section":"strings"},
@@ -243,7 +243,7 @@
     },
     "maintenance":{
         "titleKey":"ADMIN_SITE_MAINTENANCE_TITLE",
-        "description":"Various site maintenance actions and utilities",
+        "descriptionKey":"ADMIN_SITE_MAINTENANCE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
             "CLEAR_CACHES":{"label":"Clear caches","value":"Clear","type":"action","action":"clearcaches","description":"Clears the smarty, minify and data caches for the site."}

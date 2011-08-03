@@ -74,11 +74,30 @@ class AdminAPIModule extends APIModule
         }
         
         $sectionData['section'] = $section;
+        if (isset($sectionData['titleKey'])) {
+            $sectionData['title'] = $module->getLocalizedString($sectionData['titleKey']);
+            unset($sectionData['titleKey']);
+        }
+
+        if (isset($sectionData['descriptionKey'])) {
+            $sectionData['description'] = $module->getLocalizedString($sectionData['descriptionKey']);
+            unset($sectionData['descriptionKey']);
+        }
 
         switch ($sectionData['sectiontype'])
         {
             case 'fields':
                 foreach ($sectionData['fields'] as $key=>&$field) {
+                    if (isset($field['labelKey'])) {
+                        $field['label'] = $module->getLocalizedString($field['labelKey']);
+                        unset($field['labelKey']);
+                    }
+            
+                    if (isset($field['descriptionKey'])) {
+                        $field['description'] = $module->getLocalizedString($field['descriptionKey']);
+                        unset($field['descriptionKey']);
+                    }
+                
                     if (isset($field['valueMethod'])) {
                         $field['value'] = call_user_func(array($module, $field['valueMethod']));
                     } elseif ($type=='site') {
