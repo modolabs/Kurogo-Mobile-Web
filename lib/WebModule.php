@@ -63,6 +63,7 @@ abstract class WebModule extends Module {
   
   protected $autoPhoneNumberDetection = true;
   protected $canBeAddedToHomeScreen = true;
+  protected $hideFooterLinks = false;
   
   //
   // Tabbed View support
@@ -1185,6 +1186,7 @@ abstract class WebModule extends Module {
     $this->assign('page',         $this->page);
     $this->assign('isModuleHome', $this->page == 'index');
     $this->assign('request_uri' , $_SERVER['REQUEST_URI']);
+    $this->assign('hideFooterLinks' , $this->hideFooterLinks);
     
     // Font size for template
     $this->assign('fontsizes',    $this->fontsizes);

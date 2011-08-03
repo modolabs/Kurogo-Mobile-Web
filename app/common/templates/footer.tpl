@@ -20,7 +20,7 @@
 
   
   {block name="footerNavLinks"}
-    {if $moduleID != 'home'}
+    {if !$hideFooterLinks}
       <div id="footerlinks">
         <a href="#top">Back to top</a> | <a href="../home/">{$strings.SITE_NAME} home</a>
       </div>
