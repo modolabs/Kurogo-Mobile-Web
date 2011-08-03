@@ -1,4 +1,5 @@
 {
+    "ERROR_PARSING_FILE":"Error parsing %s",
     "FOOTER_BACK_TO_TOP":"Back to top",
     "FOOTER_KUROGO":"Powered by Kurogo",
     "LOGIN_SIGN_IN":"Sign in to %s",
@@ -9,5 +10,8 @@
     "HOME_LINK":"%s home",
     "NO_RESULTS":"No Results",
     "SEARCH":"Search",
-    "SEARCH_MODULE":"Search %s"
+    "SEARCH_MODULE":"Search %s",
+    "BUTTON_SAVE":"Save",
+    "BUTTON_DONT_SAVE":"Don't Save",
+    "BUTTON_CANCEL":"Cancel"
 }

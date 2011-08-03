@@ -1,6 +1,6 @@
 {
     "setup":{
-        "title":"Site Setup",
+        "titleKey":"ADMIN_SITE_SETUP_TITLE",
         "description":"The following values affect basic site behavior.",
         "sectiontype":"fields",
         "fields":{
@@ -12,7 +12,7 @@
         }
     },
     "modules":{
-        "title":"Module Behavior", 
+        "titleKey":"ADMIN_SITE_MODULES_TITLE",
         "description":"Behavior related to the loading of modules",
         "sectiontype":"fields",
         "fields":{
@@ -23,7 +23,7 @@
         }
     },
     "security":{
-        "title":"SSL",
+        "titleKey":"ADMIN_SITE_SECURITY_TITLE",
         "description":"Configure secure socket layer connections",
         "sectiontype":"fields",
         "fields":{
@@ -33,7 +33,7 @@
         }
     },
     "theme":{
-        "title":"Theme", 
+        "titleKey":"ADMIN_SITE_THEME_TITLE",
         "description":"Select the visual theme for the site. For more information about creating and modifying themes, see the developer documentation.",
         "sectiontype":"fields",
         "fields":{
@@ -42,7 +42,7 @@
         }
     },
     "detection":{
-        "title":"Device Detection", 
+        "titleKey":"ADMIN_SITE_DETECTION_TITLE",
         "description":"The device detection service recognizes and categorizes each user's web browser so that the appropriate class of web UI can be delivered. You can run this service on your own web server, or use an externally hosted one such as the reference service provided by Modo Labs.",
         "sectiontype":"fields",
         "fields":{
@@ -54,7 +54,7 @@
         }
     },
     "error":{
-        "title":"Error Handling and Debugging", 
+        "titleKey":"ADMIN_SITE_ERROR_TITLE",
         "description":"For optimal runtime performance and security, disable as many types of debugging as possible.",
         "sectiontype":"fields",
         "fields":{
@@ -70,7 +70,7 @@
         }
     },
     "database":{
-        "title":"Database Configuration", 
+        "titleKey":"ADMIN_SITE_DATABASE_TITLE",
         "description":"",
         "sectiontype":"fields",
         "fields":{
@@ -82,9 +82,8 @@
             "DB_FILE":{"label":"File location","type":"file","config":"site","description":"Location of SQLite database file","section":"database","showIf":["DB_TYPE","sqlite"]}
         }
     },
-
     "cookies":{
-        "title":"Cookies", 
+        "titleKey":"ADMIN_SITE_COOKIES_TITLE",
         "description":" Specify how long different types of cookies will be set to persist in each user's browser. By default these cookies are short lived. For production sites, you should increase the time so users' preferences persist longer.",
         "sectiontype":"fields",
         "fields":{
@@ -94,7 +93,7 @@
         }
     },
     "authentication": {
-        "title":"Authentication", 
+        "titleKey":"ADMIN_SITE_AUTHENTICATION_TITLE",
         "description":"",
         "sectiontype":"sections",
         "sections": {
@@ -209,7 +208,7 @@
         }
     },
     "analytics":{
-        "title":"Analytics", 
+        "titleKey":"ADMIN_SITE_ANALYTICS_TITLE",
         "description":"",
         "sectiontype":"fields",
         "fields":{
@@ -219,7 +218,7 @@
         }
     },
     "files":{
-        "title":"File Paths and Locations", 
+        "titleKey":"ADMIN_SITE_FILES_TITLE",
         "description":"",
         "sectiontype":"fields",
         "fields":{
@@ -233,7 +232,7 @@
         }
     },
     "strings":{
-        "title":"Text Strings",
+        "titleKey":"ADMIN_SITE_STRINGS_TITLE",
         "description":"These string values are used throughout the site",
         "sectiontype":"fields",
         "fields":{
@@ -243,12 +242,11 @@
         }
     },
     "maintenance":{
-        "title":"Site Maintenance",
+        "titleKey":"ADMIN_SITE_MAINTENANCE_TITLE",
         "description":"Various site maintenance actions and utilities",
         "sectiontype":"fields",
         "fields":{
             "CLEAR_CACHES":{"label":"Clear caches","value":"Clear","type":"action","action":"clearcaches","description":"Clears the smarty, minify and data caches for the site."}
         }
     }
-    
 }

@@ -1,6 +1,6 @@
 {include file="findInclude:modules/admin/templates/header.tpl"}
 <form method="post" id="adminForm" class="{$section}">
-<input id="adminSubmit" type="submit" value="Save" /> 
+<input id="adminSubmit" type="submit" value="{getLocalizedString key="BUTTON_SAVE" type="site"}" />
 <h1 id="moduleTitle"><img src="/modules/home/images/compliant/{$moduleID}.png" width="50" height="50" alt="{$moduleName|escape}" id="moduleImage" /> {$moduleName}</h1>
 <ul id="adminSections"></ul>
 <p id="moduleDescription" class="preamble">&nbsp;</p>
