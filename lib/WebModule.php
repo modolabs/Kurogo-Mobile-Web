@@ -268,6 +268,25 @@ abstract class WebModule extends Module {
   private function loadTemplateEngineIfNeeded() {
     if (!isset($this->templateEngine)) {
       $this->templateEngine = new TemplateEngine($this->id);
+      $this->templateEngine->registerPlugin('function','getLocalizedString', array($this,'getTemplateLocalizedString'));
+    }
+  }
+  
+  public function getTemplateLocalizedString($params, &$smarty) {
+    $type = isset($params['type']) ? $params['type'] : 'module';
+    $key = isset($params['key']) ? $params['key'] : null;
+    if (empty($key)) {
+        throw new Exception("Invalid string key $key");
+    }
+
+    switch ($type) {
+        case 'module':
+            return $this->getLocalizedString($key);
+        case 'kurogo':
+        case 'site':
+            return Kurogo::getLocalizedString($key);
+        default:
+            throw new Exception("Invalid type $type");
     }
   }
   
