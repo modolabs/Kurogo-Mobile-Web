@@ -16,24 +16,14 @@
     "ADMIN_SITE_SETUP_AUTODETECT_PHONE_DESCRIPTION":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.",
     "ADMIN_SITE_MODULES_TITLE":"Module Behavior",
     "ADMIN_SITE_MODULES_DESCRIPTION":"Behavior related to the loading of modules",
-
-    "ADMIN_SITE_MODULES_DEFAULT_TITLE":"",
-    "ADMIN_SITE_MODULES_DEFAULT_DESCRIPTION":"",
-    "ADMIN_SITE_MODULES_DEFAULT_COMPUTER_TITLE":"",
-    "ADMIN_SITE_MODULES_DEFAULT_COMPUTER_DESCRIPTION":"",
-    "ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_TITLE":"",
-    "ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_DESCRIPTION":"",
-    "ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_TITLE":"",
-    "ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_DESCRIPTION":"",
-    
-    
-                "DEFAULT":{"label":"Default mobile","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for mobile devices","section":"urls"},
-            "DEFAULT-COMPLIANT-COMPUTER":{"label":"Default desktop","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for non-mobile devices","section":"urls"},
-            "DYNAMIC_MODULE_NAV_DATA":{"label":"Dynamic Module Data","type":"checkbox","config":"site","description":"When enabled, module's navigation data can be dynamic by using a subclass method. This only has effect if you have subclassed the built in modules. See Developer's Guide for more information. This is an advanced option and should be left off for performance reasons if you do not utilize this feature.","section":"modules"},
-            "CREATE_DEFAULT_CONFIG":{"label":"Create config files","type":"checkbox","config":"site","description":"When enabled, if a module is loaded and there is no configuration folder, it will be created with the default. This should normally be off to prevent unnecessary creation of unneeded folders by unused modules.","section":"modules"}
-
-    "Default mobile"
-    
+    "ADMIN_SITE_MODULES_DEFAULT_TITLE":"Default mobile",
+    "ADMIN_SITE_MODULES_DEFAULT_DESCRIPTION":"Initial module for mobile devices",
+    "ADMIN_SITE_MODULES_DEFAULT_COMPUTER_TITLE":"Default desktop",
+    "ADMIN_SITE_MODULES_DEFAULT_COMPUTER_DESCRIPTION":"Initial module for non-mobile devices",
+    "ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_TITLE":"Dynamic Module Data",
+    "ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_DESCRIPTION":"When enabled, module's navigation data can be dynamic by using a subclass method. This only has effect if you have subclassed the built in modules. See Developer's Guide for more information. This is an advanced option and should be left off for performance reasons if you do not utilize this feature.",
+    "ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_TITLE":"Create config files",
+    "ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_DESCRIPTION":"When enabled, if a module is loaded and there is no configuration folder, it will be created with the default. This should normally be off to prevent unnecessary creation of unneeded folders by unused modules.",
     "ADMIN_SITE_SECURITY_TITLE":"SSL",
     "ADMIN_SITE_SECURITY_DESCRIPTION":"Configure secure socket layer connections",
     "ADMIN_SITE_THEME_TITLE":"Theme",
