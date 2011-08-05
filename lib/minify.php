@@ -144,16 +144,10 @@ function getMinifyGroupsConfig() {
     $minifyConfig = $cache->read($cacheName);
     
   } else {
-    // CSS includes all in order.  JS prefers theme
-    $cssDirs = array(
+    $dirs = array(
       APP_DIR, 
       SITE_APP_DIR,
       THEME_DIR,
-    );
-    $jsDirs = array(
-      THEME_DIR,
-      SITE_APP_DIR,
-      APP_DIR, 
     );
     
     if ($pageOnly || (($pagetype=='tablet' || $platform=='computer') && in_array($module, array('info', 'admin')))) {
@@ -174,9 +168,9 @@ function getMinifyGroupsConfig() {
 
     $checkFiles = array(
       'css' => getCSSFileConfigForDirs(
-          $page, $pagetype, $platform, $cssDirs, $subDirs, $pageOnly),
+          $page, $pagetype, $platform, $dirs, $subDirs, $pageOnly),
       'js'  => getJSFileConfigForDirs (
-          $page, $pagetype, $platform, $jsDirs, $subDirs, $pageOnly),
+          $page, $pagetype, $platform, $dirs, $subDirs, $pageOnly),
     );
     //error_log(print_r($checkFiles, true));
     
