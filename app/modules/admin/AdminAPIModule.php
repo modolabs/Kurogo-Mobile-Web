@@ -109,7 +109,7 @@ class AdminAPIModule extends APIModule
                             switch ($field['config'])
                             {
                                 case 'site':
-                                    $field['value'] = Kurogo::getOptionalSiteVar($key, $field['section']);
+                                    $field['value'] = Kurogo::getOptionalSiteVar($key, '', $field['section']);
                                     break;
                                 case 'strings':
                                     $field['value'] = Kurogo::getOptionalSiteString($key);

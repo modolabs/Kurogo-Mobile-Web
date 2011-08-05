@@ -78,7 +78,6 @@ class ErrorWebModule extends WebModule {
         $this->assign('linkText', $error['linkText']);
     }
     
-    $this->assign('navImageID', 'about');
     if($this->devError() === false){
       $this->assign('message', $error['message']);
     } else {
