@@ -16,10 +16,10 @@
         "descriptionKey":"ADMIN_SITE_MODULES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "DEFAULT":{"label":"Default mobile","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for mobile devices","section":"urls"},
-            "DEFAULT-COMPLIANT-COMPUTER":{"label":"Default desktop","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for non-mobile devices","section":"urls"},
-            "DYNAMIC_MODULE_NAV_DATA":{"label":"Dynamic Module Data","type":"checkbox","config":"site","description":"When enabled, module's navigation data can be dynamic by using a subclass method. This only has effect if you have subclassed the built in modules. See Developer's Guide for more information. This is an advanced option and should be left off for performance reasons if you do not utilize this feature.","section":"modules"},
-            "CREATE_DEFAULT_CONFIG":{"label":"Create config files","type":"checkbox","config":"site","description":"When enabled, if a module is loaded and there is no configuration folder, it will be created with the default. This should normally be off to prevent unnecessary creation of unneeded folders by unused modules.","section":"modules"}
+            "DEFAULT":{"labelKey":"ADMIN_SITE_MODULES_DEFAULT_TITLE","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","descriptionKey":"ADMIN_SITE_MODULES_DEFAULT_DESCRIPTION","section":"urls"},
+            "DEFAULT-COMPLIANT-COMPUTER":{"labelKey":"ADMIN_SITE_MODULES_DEFAULT_COMPUTER_TITLE","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","descriptionKey":"ADMIN_SITE_MODULES_DEFAULT_COMPUTER_DESCRIPTION","section":"urls"},
+            "DYNAMIC_MODULE_NAV_DATA":{"labelKey":"ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_DESCRIPTION","section":"modules"},
+            "CREATE_DEFAULT_CONFIG":{"labelKey":"ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_DESCRIPTION","section":"modules"}
         }
     },
     "security":{
@@ -27,9 +27,9 @@
         "descriptionKey":"ADMIN_SITE_SECURITY_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "SECURE_REQUIRED":{"label":"Require https","type":"checkbox","config":"site","description":"Require a secure (https) connection on all requests. It is also possible to configure secure connections on a per module basis. Note: It is the responsibility of the server administrator to ensure this site can handle secure connections.","section":"site settings"},
-            "SECURE_HOST":{"label":"Secure host","type":"text","config":"site","description":"Alternate host name to use for secure connections. Default is the server hostname","section":"site settings"},
-            "SECURE_PORT":{"label":"Secure port","type":"text","config":"site","description":"Alternate port to use for secure connections. Default is the standard https port (443)","section":"site settings"}
+            "SECURE_REQUIRED":{"labelKey":"ADMIN_SITE_SECURITY_REQUIRED_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_SECURITY_REQUIRED_DESCRIPTION","section":"site settings"},
+            "SECURE_HOST":{"labelKey":"ADMIN_SITE_SECURITY_HOST_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_SECURITY_HOST_DESCRIPTION","section":"site settings"},
+            "SECURE_PORT":{"labelKey":"ADMIN_SITE_SECURITY_PORT_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_SECURITY_PORT_DESCRIPTION","section":"site settings"}
         }
     },
     "theme":{
@@ -37,8 +37,8 @@
         "descriptionKey":"ADMIN_SITE_THEME_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "ACTIVE_THEME":{"label":"Active Theme","type":"select","config":"site","optionsMethod":["WebModule","getAllThemes"],"description":"Active theme used by this site","section":"themes"},
-            "TABLET_ENABLED":{"label":"Tablet UI Enabled","type":"checkbox","config":"site","description":"If enabled, the Tablet UI will be shown for compatible devices, otherwise tablet devices will use \"compliant\" page types.","section":"themes"}
+            "ACTIVE_THEME":{"labelKey":"ADMIN_SITE_THEME_ACTIVE_TITLE","type":"select","config":"site","optionsMethod":["WebModule","getAllThemes"],"descriptionKey":"ADMIN_SITE_THEME_ACTIVE_DESCRIPTION","section":"themes"},
+            "TABLET_ENABLED":{"labelKey":"ADMIN_SITE_THEME_TABLET_ENABLED_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_THEME_TABLET_ENABLED_DESCRIPTION","section":"themes"}
         }
     },
     "detection":{
@@ -46,11 +46,11 @@
         "descriptionKey":"ADMIN_SITE_DETECTION_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "MOBI_SERVICE_VERSION":{"label":"Mobi service version","type":"select","config":"site","options":{"1":"1"},"description":"Version of the Kurogo device detection service","section":"device_detection"},
-            "MOBI_SERVICE_USE_EXTERNAL":{"label":"Device detection type","type":"select","options":{"0":"Internal","1":"External"},"config":"site","description":"<b>Internal:</b> use the included SQLite database for device detection.<br /><b>External:</b> Use the external version of the Kurogo device detection service hosted by Modo Labs. This introduces a new external dependency for your website but ensures that your system will always be accessing the latest device detection database.","section":"device_detection"},
-            "MOBI_SERVICE_FILE":{"label":"Device detection DB","type":"file","config":"site","description":"Path to the mobi-service device database file within your site","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","0"]},
-            "MOBI_SERVICE_URL":{"label":"Device detection URL","type":"text","config":"site","description":"URL of the externally hosted device-detection service","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]},
-            "MOBI_SERVICE_CACHE_LIFETIME":{"label":"Service cache lifetime","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time that the device detection service should be cached on the server","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]}
+            "MOBI_SERVICE_VERSION":{"labelKey":"ADMIN_SITE_DETECTION_VERSION_TITLE","type":"select","config":"site","options":{"1":"1"},"descriptionKey":"ADMIN_SITE_DETECTION_VERSION_DESCRIPTION","section":"device_detection"},
+            "MOBI_SERVICE_USE_EXTERNAL":{"labelKey":"ADMIN_SITE_DETECTION_EXTERNAL_TITLE","type":"select","options":{"0":"Internal","1":"External"},"config":"site","descriptionKey":"ADMIN_SITE_DETECTION_EXTERNAL_DESCRIPTION","section":"device_detection"},
+            "MOBI_SERVICE_FILE":{"labelKey":"ADMIN_SITE_DETECTION_FILE_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_DETECTION_FILE_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","0"]},
+            "MOBI_SERVICE_URL":{"labelKey":"ADMIN_SITE_DETECTION_URL_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DETECTION_URL_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]},
+            "MOBI_SERVICE_CACHE_LIFETIME":{"labelKey":"ADMIN_SITE_DETECTION_CACHE_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_DETECTION_CACHE_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]}
         }
     },
     "error":{
@@ -58,15 +58,15 @@
         "descriptionKey":"ADMIN_SITE_ERROR_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "DISPLAY_ERRORS":{"label":"Show error messages","type":"checkbox","config":"site","description":"Show error messages generated by PHP scripts","section":"error_handling_and_debugging"},
-            "DEVICE_DEBUG":{"label":"Enable device override","type":"checkbox","config":"site","description":"Allow overriding device classification using /device/xxx prefix urls","section":"error_handling_and_debugging"},
-            "MODULE_DEBUG":{"label":"Enable module-level debugging","type":"checkbox","config":"site","description":"Show debugging messages generated by modules","section":"error_handling_and_debugging"},
-            "MINIFY_DEBUG":{"label":"Enable debugging mode for Minify functions","type":"checkbox","config":"site","description":"Include verbose output in minify CSS and JavaScript data","section":"error_handling_and_debugging"},
-            "DATA_DEBUG":{"label":"Enable data debugging","type":"checkbox","config":"site","description":"Verbose logging of data retrieval and database queries","section":"error_handling_and_debugging"},
-            "TEMPLATE_DEBUG":{"label":"Enable template debugging","type":"checkbox","config":"site","description":"Verbose logging of template processing","section":"error_handling_and_debugging"},
-            "DEVICE_DETECTION_DEBUG":{"label":"Enable debugging of device detection services","type":"checkbox","config":"site","description":"Show device detection in footer","section":"error_handling_and_debugging"},
-            "PRODUCTION_ERROR_HANDLER_ENABLED":{"label":"Enable production exception handler","type":"checkbox","config":"site","description":"When enabled, the production exception handler will email details of code exceptions to the developer email. If disabled, exceptions will be shown in detail on the screen.","section":"error_handling_and_debugging"},
-            "DEVELOPER_EMAIL":{"label":"Developer Email","type":"text","config":"site","description":"Address to which system-generated error messages should be sent when production exception handler is enabled. If blank, no error-message emails will be generated.","section":"error_handling_and_debugging","showIf":["PRODUCTION_ERROR_HANDLER_ENABLED","1"]}
+            "DISPLAY_ERRORS":{"labelKey":"ADMIN_SITE_ERROR_DISPLAY_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DISPLAY_DESCRIPTION","section":"error_handling_and_debugging"},
+            "DEVICE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DEVICE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DEVICE_DESCRIPTION","section":"error_handling_and_debugging"},
+            "MODULE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_MODULE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_MODULE_DESCRIPTION","section":"error_handling_and_debugging"},
+            "MINIFY_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_DESCRIPTION","section":"error_handling_and_debugging"},
+            "DATA_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DATA_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DATA_DESCRIPTION","section":"error_handling_and_debugging"},
+            "TEMPLATE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_TEMPLATE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_TEMPLATE_DESCRIPTION","section":"error_handling_and_debugging"},
+            "DEVICE_DETECTION_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DETECTION_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DETECTION_DESCRIPTION","section":"error_handling_and_debugging"},
+            "PRODUCTION_ERROR_HANDLER_ENABLED":{"labelKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_DESCRIPTION","section":"error_handling_and_debugging"},
+            "DEVELOPER_EMAIL":{"labelKey":"ADMIN_SITE_ERROR_DEVELOPER_EMAIL_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DEVELOPER_EMAIL_DESCRIPTION","section":"error_handling_and_debugging","showIf":["PRODUCTION_ERROR_HANDLER_ENABLED","1"]}
         }
     },
     "database":{
@@ -74,12 +74,12 @@
         "descriptionKey":"ADMIN_SITE_DATABASE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "DB_TYPE":{"label":"Database type","type":"select","config":"site","optionsMethod":["db","getDBTypes"],"description":"The database backend","section":"database"},
-            "DB_HOST":{"label":"Database host","type":"text","config":"site","description":"Host name of the database server","section":"database","showIf":["DB_TYPE","mysql"]},
-            "DB_USER":{"label":"Database user","type":"text","config":"site","description":"User name to access the database server","section":"database","showIf":["DB_TYPE","mysql"]},
-            "DB_PASS":{"label":"Database password","type":"password","config":"site","description":"Password to access the database server","section":"database","showIf":["DB_TYPE","mysql"]},
-            "DB_DBNAME":{"label":"Database","type":"text","config":"site","description":"Name of database to store the tables","section":"database","showIf":["DB_TYPE","mysql"]},
-            "DB_FILE":{"label":"File location","type":"file","config":"site","description":"Location of SQLite database file","section":"database","showIf":["DB_TYPE","sqlite"]}
+            "DB_TYPE":{"labelKey":"ADMIN_SITE_DATABASE_TYPE_TITLE","type":"select","config":"site","optionsMethod":["db","getDBTypes"],"descriptionKey":"ADMIN_SITE_DATABASE_TYPE_DESCRIPTION","section":"database"},
+            "DB_HOST":{"labelKey":"ADMIN_SITE_DATABASE_HOST_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_HOST_DESCRIPTION","section":"database","showIf":["DB_TYPE",["mysql","pgsql","mssql"]]},
+            "DB_USER":{"labelKey":"ADMIN_SITE_DATABASE_USER_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_USER_DESCRIPTION","section":"database","showIf":["DB_TYPE",["mysql","pgsql","mssql"]]},
+            "DB_PASS":{"labelKey":"ADMIN_SITE_DATABASE_PASS_TITLE","type":"password","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_PASS_DESCRIPTION","section":"database","showIf":["DB_TYPE",["mysql","pgsql","mssql"]]},
+            "DB_DBNAME":{"labelKey":"ADMIN_SITE_DATABASE_DBNAME_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_DBNAME_DESCRIPTION","section":"database","showIf":["DB_TYPE",["mysql","pgsql","mssql"]]},
+            "DB_FILE":{"labelKey":"ADMIN_SITE_DATABASE_FILE_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_FILE_DESCRIPTION","section":"database","showIf":["DB_TYPE",["sqlite"]]}
         }
     },
     "cookies":{
@@ -87,9 +87,9 @@
         "descriptionKey":"ADMIN_SITE_COOKIES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "MODULE_ORDER_COOKIE_LIFESPAN":{"label":"Module order","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to remember user's preferences for home screen module order.","section":"cookies"},
-            "LAYOUT_COOKIE_LIFESPAN":{"label":"Device classification","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to save results of device detection.","section":"cookies"},
-            "BOOKMARK_COOKIE_LIFESPAN":{"label":"Bookmark cookie lifespan","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to save user's bookmarks. Used by modules that have bookmarks","section":"cookies"}
+            "MODULE_ORDER_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_MODULE_ORDER_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_MODULE_ORDER_DESCRIPTION","section":"cookies"},
+            "LAYOUT_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_LAYOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_LAYOUT_DESCRIPTION","section":"cookies"},
+            "BOOKMARK_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_BOOKMARK_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_BOOKMARK_DESCRIPTION","section":"cookies"}
         }
     },
     "authentication": {
@@ -102,11 +102,11 @@
                 "description":"If authentication is enabled, you can control access to the site and to individual modules. Authentication is handled through one or more authentication authorities. Controlling access to the site and modules is handled in the <b>Authorization</b> section shown above when authentication is enabled.",
                 "sectiontype":"fields",
                 "fields":{
-                    "AUTHENTICATION_ENABLED":{"label":"Authentication Enabled","type":"checkbox","config":"site","description":"Enable user logins and authentication. Required to protect modules","section":"authentication"},
-                    "AUTHENTIATION_ADMIN_WARNING":{"label":"Warning","type":"label","value":"If you do not use authentication in your site than you should disable the administration module to prevent unauthorized changes.","showIf":["AUTHENTICATION_ENABLED","0"]},
-                    "AUTHENTICATION_IDLE_TIMEOUT":{"label":"Idle Timeout","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time before idle users are logged off. Set to None to disable idle logoff","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
-                    "AUTHENTICATION_SESSION_CLASS":{"label":"Session storage method","type":"select","config":"site","optionsMethod":["Session","getSessionClasses"],"description":"Method used to store data of logged in users. <b>Flat files:</b> data is stored as files in the cache/session folder. <b>Database:</b> session data stored in site database","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
-                    "AUTHENTICATION_REMAIN_LOGGED_IN_TIME":{"label":"Stay logged in time","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time to allow users to be remained logged in, even if closing their browser. Set to none to force users to log in every time.","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]}
+                    "AUTHENTICATION_ENABLED":{"labelKey":"ADMIN_SITE_AUTHENTICATION_ENABLED_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_AUTHENTICATION_ENABLED_DESCRIPTION","section":"authentication"},
+                    "AUTHENTIATION_ADMIN_WARNING":{"labelKey":"ADMIN_SITE_AUTHENTICATION_WARNING_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_WARNING_DESCRIPTION","showIf":["AUTHENTICATION_ENABLED","0"]},
+                    "AUTHENTICATION_IDLE_TIMEOUT":{"labelKey":"ADMIN_SITE_AUTHENTICATION_IDLE_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_AUTHENTICATION_IDLE_DESCRIPTION","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
+                    "AUTHENTICATION_SESSION_CLASS":{"labelKey":"ADMIN_SITE_AUTHENTICATION_SESSION_CLASS_TITLE","type":"select","config":"site","optionsMethod":["Session","getSessionClasses"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_SESSION_CLASS_DESCRIPTION","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
+                    "AUTHENTICATION_REMAIN_LOGGED_IN_TIME":{"labelKey":"ADMIN_SITE_AUTHENTICATION_LOGGED_IN_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_AUTHENTICATION_LOGGED_IN_DESCRIPTION","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]}
                 }
             },
             "authorities": {
@@ -212,9 +212,9 @@
         "descriptionKey":"ADMIN_SITE_ANALYTICS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "GOOGLE_ANALYTICS_ID":{"label":"Google Analytics ID","type":"text","config":"site","description":"If included, pages will be logged to Google Analytics.","section":"analytics","placeholder":" UA-XXXXXXX-X"},
-            "PAGE_VIEWS_TABLE":{"label":"Page Views Table","type":"text","config":"site","description":"Database table used by the internal statistics engine to log web page views","section":"analytics"},
-            "API_STATS_TABLE":{"label":"API Requests Table","type":"text","config":"site","description":"Database table used by the internal statistics engine to log API requests","section":"analytics"}
+            "GOOGLE_ANALYTICS_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_GOOGLE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_GOOGLE_DESCRIPTION","section":"analytics","placeholder":" UA-XXXXXXX-X"},
+            "PAGE_VIEWS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_DESCRIPTION","section":"analytics"},
+            "API_STATS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_API_STATS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_API_STATS_DESCRIPTION","section":"analytics"}
         }
     },
     "files":{
@@ -222,13 +222,13 @@
         "descriptionKey":"ADMIN_SITE_FILES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "WEB_LOG_FILE":{"label":"Web log file","type":"file","config":"site","description":"Location of the processedpage view log file","section":"log_files"},
-            "WEB_CURRENT_LOG_FILE":{"label":"Web current log file","type":"file","config":"site","description":"Location of the active page view log file","section":"log_files"},
-            "API_LOG_FILE":{"label":"API log file","type":"file","config":"site","description":"Location of the processed API log file.","section":"log_files"},
-            "API_CURRENT_LOG_FILE":{"label":"API Current log file","type":"file","config":"site","description":"Location of the active API log file","section":"log_files"},
-            "LOG_DATE_FORMAT":{"label":"Log date format","type":"text","config":"site","description":"Date format for log files","section":"log_files"},
-            "LOG_DATE_PATTERN":{"label":"Log date pattern","type":"text","config":"site","description":"regex pattern of log dates, should match output from Log Date Format","section":"log_files"},
-            "TMP_DIR":{"label":"Temporary Directory","type":"file","config":"site","description":"Temporary Directory. Will use system default if not specified","section":"log_files","omitBlankValue":true}
+            "WEB_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_WEB_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_WEB_LOG_DESCRIPTION","section":"log_files"},
+            "WEB_CURRENT_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_WEB_CURRENT_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_WEB_CURRENT_LOG_DESCRIPTION","section":"log_files"},
+            "API_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_API_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_API_LOG_DESCRIPTION","section":"log_files"},
+            "API_CURRENT_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_API_CURRENT_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_API_CURRENT_LOG_DESCRIPTION","section":"log_files"},
+            "LOG_DATE_FORMAT":{"labelKey":"ADMIN_SITE_FILES_DATE_FORMAT_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_FILES_DATE_FORMAT_DESCRIPTION","section":"log_files"},
+            "LOG_DATE_PATTERN":{"labelKey":"ADMIN_SITE_FILES_DATE_PATTERN_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_FILES_DATE_PATTERN_DESCRIPTION","section":"log_files"},
+            "TMP_DIR":{"labelKey":"ADMIN_SITE_FILES_TMP_DIR_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_TMP_DIR_DESCRIPTION","section":"log_files","omitBlankValue":true}
         }
     },
     "strings":{
@@ -236,9 +236,9 @@
         "descriptionKey":"ADMIN_SITE_STRINGS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "COPYRIGHT_LINK":{"label":"Copyright link","type":"text","config":"strings","description":"Link to copyright notice (optional)","section":"strings"},
-            "COPYRIGHT_NOTICE":{"label":"Copyright notice","type":"text","config":"strings","description":"Copyright notice ","section":"strings"},
-            "FEEDBACK_EMAIL":{"label":"Feedback email","type":"text","config":"strings","description":"Email address where users can send feedback","section":"strings"}
+            "COPYRIGHT_LINK":{"labelKey":"ADMIN_SITE_STRINGS_COPYRIGHT_LINK_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_STRINGS_COPYRIGHT_LINK_DESCRIPTION","section":"strings"},
+            "COPYRIGHT_NOTICE":{"labelKey":"ADMIN_SITE_STRINGS_COPYRIGHT_NOTICE_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_STRINGS_COPYRIGHT_NOTICE_DESCRIPTION","section":"strings"},
+            "FEEDBACK_EMAIL":{"labelKey":"ADMIN_SITE_STRINGS_FEEDBACK_EMAIL_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_STRINGS_FEEDBACK_EMAIL_DESCRIPTION","section":"strings"}
         }
     },
     "maintenance":{
@@ -246,7 +246,7 @@
         "descriptionKey":"ADMIN_SITE_MAINTENANCE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "CLEAR_CACHES":{"label":"Clear caches","value":"Clear","type":"action","action":"clearcaches","description":"Clears the smarty, minify and data caches for the site."}
+            "CLEAR_CACHES":{"labelKey":"ADMIN_SITE_MAINTENANCE_CLEAR_CACHES_TITLE","value":"Clear","type":"action","action":"clearcaches","descriptionKey":"ADMIN_SITE_MAINTENANCE_CLEAR_CACHES_DESCRIPTION"}
         }
     }
 }

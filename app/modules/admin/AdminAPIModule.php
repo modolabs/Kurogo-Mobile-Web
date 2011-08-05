@@ -100,6 +100,10 @@ class AdminAPIModule extends APIModule
                 
                     if (isset($field['valueMethod'])) {
                         $field['value'] = call_user_func(array($module, $field['valueMethod']));
+                        unset($field['valueMethod']);
+                    } elseif (isset($field['valueKey'])) {
+                        $field['value'] = $module->getLocalizedString($field['valueKey']);
+                        unset($field['valueKey']);
                     } elseif ($type=='site') {
                         if (isset($field['config'])) {
                             switch ($field['config'])
