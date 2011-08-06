@@ -170,8 +170,28 @@ class AdminAPIModule extends APIModule
                     $configMode = isset($sectionData['configMode']) ? $sectionData['configMode'] : 0;
                     $sectionData['sections'] = $module->getModuleSections($sectionData['config'], Config::NO_EXPAND_VALUE, $configMode);
                 }
+                
+                if (isset($sectionData['sectionsnoneKey'])) {
+                    $sectionData['sectionsnone'] = $module->getLocalizedString($sectionData['sectionsnoneKey']);
+                    unset($sectionData['sectionsnoneKey']);
+                }
         
                 foreach ($sectionData['fields'] as $key=>&$field) {
+                    if (isset($field['labelKey'])) {
+                        $field['label'] = $module->getLocalizedString($field['labelKey']);
+                        unset($field['labelKey']);
+                    }
+            
+                    if (isset($field['descriptionKey'])) {
+                        $field['description'] = $module->getLocalizedString($field['descriptionKey']);
+                        unset($field['descriptionKey']);
+                    }
+
+                    if (isset($field['valueKey'])) {
+                        $field['value'] = $module->getLocalizedString($field['valueKey']);
+                        unset($field['valueKey']);
+                    }
+                    
                     switch ($field['type']) 
                     {
                         case 'select':
@@ -190,7 +210,6 @@ class AdminAPIModule extends APIModule
                                 unset($field['optionsFirst']);
                             }
                     }
-                    
                 }
                     
                 foreach ($sectionData['sections'] as $section=>&$sectionFields) {
