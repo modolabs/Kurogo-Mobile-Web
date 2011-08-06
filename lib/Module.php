@@ -488,6 +488,11 @@ abstract class Module
                     continue;
                 }
             }
+
+            if (isset($sectionData['titleKey'])) {
+                $sectionData['title'] = $this->getLocalizedString($sectionData['titleKey']);
+                unset($sectionData['titleKey']);
+            }
             
             $sections[$section] = array(
                 'title'=>$sectionData['title'],
@@ -531,6 +536,8 @@ abstract class Module
 
     private function getStringsForLanguage($lang) {
         $stringFiles = array(
+            APP_DIR . "/common/strings/".$lang . '.json',
+            SITE_APP_DIR . "/common/strings/".$lang . '.json',
             MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.json',
             SITE_MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.json'
         );
