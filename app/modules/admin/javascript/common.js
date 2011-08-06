@@ -1,6 +1,26 @@
+var localizedStrings = {}
+
 $(document).ready(function() {
+    getLocalizedString(['BUTTON_ADD','BUTTON_EDIT','BUTTON_DONE','BUTTON_REMOVE']);            
     $('#message').hide();
 });
+
+function getLocalizedString(key) {
+    if (typeof key=='string' && typeof localizedStrings[key] != 'undefined') {
+        return localizedStrings[key];
+    }
+
+    makeAPICall('GET', 'admin','getlocalizedstring', { 'v':1, 'key':key}, function(response) {
+        $.each(response, function(k,v) {   
+            localizedStrings[k] = v;
+        });
+
+        if (typeof key=='string' && typeof localizedStrings[key] != 'undefined') {
+            return localizedStrings[key];
+        }
+    });
+}
+
 
 function createFormFieldListItems(key, fieldData) {
     var items = [createFormFieldListItem(key,fieldData)];
@@ -236,7 +256,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     
         var rowbuttons = $('<div class="rowbuttons" />');
     
-        rowbuttons.append($('<a href="" class="textbutton edit">Edit</a>').click(function() {
+        rowbuttons.append($('<a href="" class="textbutton edit">'+ getLocalizedString('BUTTON_EDIT') + '</a>').click(function() {
             stopSectionEditing(titleField);
             $(this).closest('li').addClass('editing');
             return false;
@@ -246,7 +266,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     rowbuttons.append($("<input />").attr('type','hidden').addClass('sectionorder').attr('name','sectionorder['+section+'][]').attr('value',sectionID));
 
     if (data.sectiondelete) {
-        rowbuttons.append($('<a href="" class="textbutton delete">Remove</a>').click(function() {
+        rowbuttons.append($('<a href="" class="textbutton delete">'+ getLocalizedString('BUTTON_REMOVE') +'</a>').click(function() {
             if ($(this).closest('li').hasClass('notsaved')) {
                 reloadSection();
                 return false;
@@ -326,7 +346,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
         });
         editrow.append(list);
         var div = $('<div class="rowbuttons" />');
-        div.append($('<a href="" class="textbutton save">Done</a>').click(function() {
+        div.append($('<a href="" class="textbutton save">'+getLocalizedString('BUTTON_DONE')+'</a>').click(function() {
             stopSectionEditing(titleField);
             return false;
         }));
@@ -376,7 +396,7 @@ function createFormSectionList(section, data) {
     //add the "Add" button if specified
     if (data.sectionaddnew) {
         var div = $('<div class="tablebuttons" />');
-        div.append($('<a href="" class="textbutton add">Add</span>').click(function() {
+        div.append($('<a href="" class="textbutton add">'+getLocalizedString('BUTTON_ADD') +'</span>').click(function() {
             stopSectionEditing();
             var sectionID;
             if (data.sectionindex =='numeric') {

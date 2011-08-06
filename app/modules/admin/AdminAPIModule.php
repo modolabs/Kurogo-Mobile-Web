@@ -413,6 +413,20 @@ class AdminAPIModule extends APIModule
                 
                 break;
             
+            case 'getlocalizedstring':
+                $key = $this->getArg('key');
+                $data = array();
+                if (is_array($key)) {
+                    foreach ($key as $k) {
+                        $data[$k] = $this->getLocalizedString($k);
+                    }
+                } else {
+                    $data[$key] = $this->getLocalizedString($key);
+                }
+                $this->setResponse($data);
+                $this->setResponseVersion(1);
+                break;
+
             case 'clearcaches':
 
                 $result = Kurogo::sharedInstance()->clearCaches();
