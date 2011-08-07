@@ -1,10 +1,10 @@
 {
     "options": {
-        "title":"Options",
-        "description":"",
+        "titleKey":"HOME_ADMIN_OPTIONS_TITLE",
+        "descriptionKey":"HOME_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "display_type":{"label":"Module Display","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the home screen modules"}
+            "display_type":{"labelKey":"HOME_ADMIN_OPTIONS_DISPLAYTYPE_TITLE","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"descriptionKey":"HOME_ADMIN_OPTIONS_DISPLAYTYPE_DESCRIPTION"}
         }
     }
 }

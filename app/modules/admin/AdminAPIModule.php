@@ -175,6 +175,11 @@ class AdminAPIModule extends APIModule
                     $sectionData['sectionsnone'] = $module->getLocalizedString($sectionData['sectionsnoneKey']);
                     unset($sectionData['sectionsnoneKey']);
                 }
+
+                if (isset($sectionData['sectionaddpromptkey'])) {
+                    $sectionData['sectionaddprompt'] = $module->getLocalizedString($sectionData['sectionaddpromptkey']);
+                    unset($sectionData['sectionaddpromptkey']);
+                }
         
                 foreach ($sectionData['fields'] as $key=>&$field) {
                     if (isset($field['labelKey'])) {
