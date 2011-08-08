@@ -346,8 +346,9 @@ class NewsWebModule extends WebModule {
         $this->assign('hiddenArgs',     $hiddenArgs);
         $this->assign('sections',       $sections);
         $this->assign('sectionText',    $this->getLocalizedString('SECTION_TEXT'));
+        $this->assign('searchText',     $this->getLocalizedString('SEARCH'));
         $this->assign('currentSection', $sections[$this->feedIndex]);
-        $this->assign('placeholder',    Kurogo::getLocalizedString('SEARCH_MODULE', $this->getModuleName()));
+        $this->assign('placeholder',    $this->getLocalizedString('SEARCH_MODULE', $this->getModuleName()));
         $this->assign('stories',        $stories);
         $this->assign('isHome',         true);
         $this->assign('previousURL',    $previousURL);

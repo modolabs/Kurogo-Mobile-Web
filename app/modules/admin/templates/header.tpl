@@ -39,7 +39,7 @@
 		<span id="sitename">{$strings.SITE_NAME}</span>
 	</h1>
 	<div id="utility">
-        {if $session_isLoggedIn}<div id="user">{$footerLoginText} <a id="signout" href="{$session_logout_url}">{getLocalizedString type="site" key="LOGIN_SIGN_OUT"}</a>
+        {if $session_isLoggedIn}<div id="user">{$footerLoginText} <a id="signout" href="{$session_logout_url}">{getLocalizedString key="LOGIN_SIGN_OUT"}</a>
         {/if}
 	</div>
 </header>

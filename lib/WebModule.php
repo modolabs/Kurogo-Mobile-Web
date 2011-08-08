@@ -274,21 +274,8 @@ abstract class WebModule extends Module {
   }
   
   public function getTemplateLocalizedString($params, &$smarty) {
-    $type = isset($params['type']) ? $params['type'] : 'module';
     $key = isset($params['key']) ? $params['key'] : null;
-    if (empty($key)) {
-        throw new Exception("Invalid string key $key");
-    }
-
-    switch ($type) {
-        case 'module':
-            return $this->getLocalizedString($key);
-        case 'kurogo':
-        case 'site':
-            return Kurogo::getLocalizedString($key);
-        default:
-            throw new Exception("Invalid type $type");
-    }
+    return $this->getLocalizedString($key);
   }
   
   //
@@ -1197,10 +1184,10 @@ abstract class WebModule extends Module {
     }
     
     private function assignLocalizedStrings() {
-        $this->assign('footerKurogo', Kurogo::getLocalizedString('FOOTER_KUROGO'));
-        $this->assign('footerBackToTop', Kurogo::getLocalizedString('FOOTER_BACK_TO_TOP'));
-        $this->assign('homeLinkText', Kurogo::getLocalizedString('HOME_LINK', Kurogo::getSiteString('SITE_NAME')));
-        $this->assign('moduleHomeLinkText', Kurogo::getLocalizedString('HOME_LINK', $this->getModuleName()));
+        $this->assign('footerKurogo', $this->getLocalizedString('FOOTER_KUROGO'));
+        $this->assign('footerBackToTop', $this->getLocalizedString('FOOTER_BACK_TO_TOP'));
+        $this->assign('homeLinkText', $this->getLocalizedString('HOME_LINK', Kurogo::getSiteString('SITE_NAME')));
+        $this->assign('moduleHomeLinkText', $this->getLocalizedString('HOME_LINK', $this->getModuleName()));
     }
   
   private function setPageVariables() {
@@ -1286,7 +1273,7 @@ abstract class WebModule extends Module {
     } else {
       $this->assign('hasHelp', isset($moduleStrings['help']));
       $this->assign('helpLink', $this->buildBreadcrumbURL('help',array()));
-      $this->assign('helpLinkText', Kurogo::getLocalizedString('HELP_TEXT', $this->getModuleName()));
+      $this->assign('helpLinkText', $this->getLocalizedString('HELP_TEXT', $this->getModuleName()));
       $template = 'modules/'.$this->templateModule.'/templates/'.$this->templatePage;
     }
     
@@ -1325,13 +1312,13 @@ abstract class WebModule extends Module {
             if (count($session->getUsers())==1) {
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array('authority'=>$user->getAuthenticationAuthorityIndex())));
                 $this->assign('footerLoginLink', $this->buildURLForModule('login', '', array()));
-                $this->assign('footerLoginText', Kurogo::getLocalizedString('LOGIN_SIGNED_IN_SINGLE', array($authority->getAuthorityTitle(), $user->getFullName())));
+                $this->assign('footerLoginText', $this->getLocalizedString('LOGIN_SIGNED_IN_SINGLE', array($authority->getAuthorityTitle(), $user->getFullName())));
                 $this->assign('footerLoginClass', $authority->getAuthorityClass());
             } else {
                 $this->assign('footerLoginClass', 'login_multiple');
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array()));
                 $this->assign('footerLoginLink', $this->buildURLForModule('login', 'logout', array()));
-                $this->assign('footerLoginText', Kurogo::getLocalizedString('LOGIN_SIGNED_IN_MULTIPLE'));
+                $this->assign('footerLoginText', $this->getLocalizedString('LOGIN_SIGNED_IN_MULTIPLE'));
             }
 
             if ($session_max_idle = intval(Kurogo::getOptionalSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0))) {
@@ -1340,7 +1327,7 @@ abstract class WebModule extends Module {
         } else {
             $this->assign('footerLoginClass', 'noauth');
             $this->assign('footerLoginLink', $this->buildURLForModule('login','', array()));
-            $this->assign('footerLoginText', Kurogo::getLocalizedString('LOGIN_SIGN_IN', Kurogo::getSiteString('SITE_NAME')));
+            $this->assign('footerLoginText', $this->getLocalizedString('LOGIN_SIGN_IN', Kurogo::getSiteString('SITE_NAME')));
         }
     }
 

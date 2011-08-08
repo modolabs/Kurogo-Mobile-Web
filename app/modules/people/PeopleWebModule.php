@@ -320,7 +320,7 @@ class PeopleWebModule extends WebModule {
                 } else {
                   $this->redirectTo('index');
                 }
-                $this->assign('placeholder', Kurogo::getLocalizedString("SEARCH"));
+                $this->assign('placeholder', $this->getLocalizedString("SEARCH"));
                 break;
 
             case 'bookmarks':
@@ -362,7 +362,7 @@ class PeopleWebModule extends WebModule {
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->generateBookmarkLink();
                 }
-                $this->assign('placeholder', Kurogo::getLocalizedString("SEARCH"));
+                $this->assign('placeholder', $this->getLocalizedString("SEARCH"));
                 $this->assign('searchTip', $this->getModuleVar('SEARCH_TIP'));
                 break;
         }  

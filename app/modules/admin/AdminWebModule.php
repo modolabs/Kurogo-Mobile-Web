@@ -41,7 +41,7 @@ class AdminWebModule extends WebModule {
         if (!$configData) {
             $file = APP_DIR . "/common/config/admin-site.json";
             if (!$configData = json_decode(file_get_contents($file), true)) {
-                throw new Exception(Kurogo::getLocalizedString("ERROR_PARSING_FILE", $file));
+                throw new Exception($this->getLocalizedString("ERROR_PARSING_FILE", $file));
             }
             
         }

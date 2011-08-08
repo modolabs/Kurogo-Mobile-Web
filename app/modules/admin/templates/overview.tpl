@@ -1,6 +1,6 @@
 {include file="findInclude:modules/admin/templates/header.tpl"}
 <form method="post" id="adminForm" class="{$section}">
-<input id="adminSubmit" type="submit" value="{getLocalizedString key="BUTTON_SAVE" type="site"}" /> 
+<input id="adminSubmit" type="submit" value="{getLocalizedString key="BUTTON_SAVE"}" /> 
 <h1>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_TITLE"}</h1>
 <p id="moduleDescription" class="preamble">{getLocalizedString key="ADMIN_MODULES_OVERVIEW_DESCRIPTION"}</p>
 
