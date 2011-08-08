@@ -316,12 +316,17 @@ class Kurogo
         $urlDeviceDebugPrefix = '/';
         
         // Check for device classification in url and strip it if present
-        if ($this->config->getVar('DEVICE_DEBUG') && 
-            preg_match(';^device/([^/]+)/(.*)$;', $path, $matches)) {
-            $device = $matches[1];  // layout forced by url
-            $path = $matches[2];
-            $urlPrefix .= "device/$device/";
-            $urlDeviceDebugPrefix .= "device/$device/";
+        if ($this->config->getVar('DEVICE_DEBUG')) {
+            if (preg_match(';^device/([^/]+)/(.*)$;', $path, $matches)) {
+                $device = $matches[1];  // layout forced by url
+                $path = $matches[2];
+                $urlPrefix .= "device/$device/";
+                $urlDeviceDebugPrefix .= "device/$device/";
+            } elseif (isset($_GET['_device']) && preg_match(';^device/([^/]+)/$;', $_GET['_device'], $matches)) {
+                $device = $matches[1];
+                $urlPrefix .= "device/$device/";
+                $urlDeviceDebugPrefix .= "device/$device/";
+            }
         }
       
         define('URL_DEVICE_DEBUG_PREFIX', $urlDeviceDebugPrefix);
