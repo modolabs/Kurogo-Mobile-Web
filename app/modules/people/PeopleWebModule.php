@@ -354,6 +354,7 @@ class PeopleWebModule extends WebModule {
                 break;
         
             case 'index':
+            case 'pane':
                 $contacts = $this->getContacts();
                 $this->assign('contacts', $contacts);
                 
