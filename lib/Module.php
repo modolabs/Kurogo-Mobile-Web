@@ -33,7 +33,7 @@ abstract class Module
     }
 
     /**
-      * Sets the id used for config
+      * Sets the id used for configuration
       * @param string $id
       */
     public function setConfigModule($id) {
@@ -55,7 +55,7 @@ abstract class Module
   
     /**
       * Sets the arugments from the incoming request
-      * @param array the array of arguments
+      * @param array $args the array of arguments
       */
     protected function setArgs($args) {
       $this->args = is_array($args) ? $args : array();
@@ -142,6 +142,10 @@ abstract class Module
         }
     }
     
+    /**
+      * Returns whether the module is disabled or not
+      * @return bool
+      */
     protected function isDisabled() {
         return 
             Kurogo::getOptionalSiteVar($this->configModule, false, 'disabled_modules') ||
@@ -212,6 +216,7 @@ abstract class Module
 
     /**
       * Returns the active users
+      * @param bool $returnAnonymous. If true it will always return a user (will return anonymous if not logged in). 
       * @return array 
       */
     public function getUsers($returnAnonymous=false) {
@@ -228,7 +233,6 @@ abstract class Module
   
     /**
       * Returns a config file
-      * @param string $id the module id
       * @param string $type the config file type (module, feeds, pages, etc)
       * @param int $opts bitfield of ConfigFile options
       * @return ConfigFile object
@@ -244,7 +248,12 @@ abstract class Module
         }
         return $config;
     }
-    
+
+    /**
+      * Sets a config file in the cache
+      * @param string $type - the config type (should match the type when creating the config)
+      * @param ConfigFile $config - a ConfigFile object
+      */    
     protected function setConfig($type, ConfigFile $config) {
     	$this->configs[$type] = $config;
     }
