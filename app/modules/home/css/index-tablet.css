@@ -151,6 +151,9 @@ form {
 .dining .blockheader .icon {
   background-image: url(/common/images/title-dining.png);
 }
+.people .blockheader .icon {
+  background-image: url(/common/images/title-people.png);
+}
 .blockheader .nextlink {
   position: absolute;
   right: 8px;
