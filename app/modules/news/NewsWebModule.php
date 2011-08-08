@@ -292,6 +292,11 @@ class NewsWebModule extends WebModule {
             $stories[] = $this->linkForItem($story, $options);
         }
         
+        foreach ($stories as $i => $story) {
+            $stories[$i]['url'] = $this->buildURL('index').
+                '#'.urlencode(FULL_URL_PREFIX.ltrim($story['url'], '/'));
+        }
+        
         $this->assign('stories', $stories);
         break;
       
