@@ -999,7 +999,7 @@ abstract class WebModule extends Module {
   }
   
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
-    return URL_BASE."$id/$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
+    return "/$id/$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
   }
   
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
