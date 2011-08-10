@@ -208,9 +208,7 @@ abstract class OAuthProvider
 		return $sig;
 	}
 	
-	protected function baseURL($url) {
-        $parts = parse_url($url);
-    
+	protected function buildURL($parts) {
         $scheme = (isset($parts['scheme'])) ? $parts['scheme'] : 'http';
         $port = (isset($parts['port'])) ? $parts['port'] : (($scheme == 'https') ? '443' : '80');
         $host = (isset($parts['host'])) ? $parts['host'] : '';
@@ -221,6 +219,11 @@ abstract class OAuthProvider
           $host = "$host:$port";
         }
         return "$scheme://$host$path";
+	}
+	
+	protected function baseURL($url) {
+        $parts = parse_url($url);
+        return $this->buildURL($parts);
 	}
 	
 	protected function parseQueryString($queryString) {
@@ -420,6 +423,13 @@ abstract class OAuthProvider
         //if there is a location header we need to re-sign before redirecting
         if ($redirectURL = $this->response->getHeader("Location")) {
 		    $redirectParts = parse_url($redirectURL);
+		    //if the redirect does not include the host or scheme, use the scheme/host from the original URL
+            if (!isset($redirectParts['scheme']) || !isset($redirectParts['host'])) {
+                $urlParts = parse_url($url);
+                unset($urlParts['path']);
+                unset($urlParts['query']);
+                $redirectURL = $this->buildURL($urlParts) . $redirectURL;
+            }
 		    if (isset($redirectParts['query'])) {
 		        $newParameters = array_merge($parameters, $this->parseQueryString($redirectParts['query']));
 		    }
