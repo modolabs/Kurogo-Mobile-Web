@@ -287,7 +287,7 @@ abstract class OAuthProvider
         );
     }
 
-    public function getAuthorizationHeader($method, $url, $parameters = null, $headers = null) {
+    public function getAuthorizationHeader($method, &$url, &$parameters = null, &$headers = null) {
 		$params = (array) $parameters;
 		$options = array();
 		$headers = (array) $headers;
@@ -310,6 +310,13 @@ abstract class OAuthProvider
 		if ($this->token) {
 		    $oauth['oauth_token'] = $this->token;
 		}
+		
+	    foreach ($params as $param=>$value) {
+	        if (preg_match("/^oauth_/", $param)) {
+	            $oauth[$param] = $value;
+	            unset($params[$param]);
+	        }
+	    }
 		
         switch ($method) {
             case 'POST':
