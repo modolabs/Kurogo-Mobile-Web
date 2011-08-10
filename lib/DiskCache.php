@@ -166,6 +166,14 @@ class DiskCache {
     
     return FALSE;
   }
+  
+  public function flush($filename=NULL) {
+    $path = $this->getFullPath($filename);
+    if (file_exists($path)) {
+        return unlink($path);
+    }
+    return false;
+  }
 
   public function read($filename=NULL) {
     $path = $this->getFullPath($filename);

@@ -149,6 +149,21 @@ function scrollToTop() {
         var self = this;
         
         var links = this.list.getElementsByTagName('a');
+
+        var linkInAnchor = null;
+        var anchor = location.hash;
+        if (anchor.length > 1) {
+            var possibleLinkHref = removeBreadcrumbParameter(decodeURIComponent(anchor.slice(1)));
+            if (possibleLinkHref) {
+              for (var i=0;i<links.length;i++) {
+                  if (possibleLinkHref == removeBreadcrumbParameter(links[i].href)) {
+                     linkInAnchor = links[i];
+                     break;
+                  }
+              }
+            }
+        }
+        
         var first = true;
         for (var i=0;i<links.length;i++) {
             links[i].onclick = function(e) {
@@ -156,10 +171,13 @@ function scrollToTop() {
                 self[action](e, this);
             }
 
-            if (first && this.options.selectFirst && this.actionForLink(links[i])=='linkSelect') {
+            if (!linkInAnchor && first && this.options.selectFirst && this.actionForLink(links[i])=='linkSelect') {
                 links[i].onclick();
                 first = false;
-            }        
+            }
+        }
+        if (linkInAnchor) {
+            linkInAnchor.onclick();
         }
 
         this.updateListScroller();
@@ -168,7 +186,8 @@ function scrollToTop() {
     splitView.prototype = {
         orientation: '',
         options: {
-            selectFirst: true
+            selectFirst: true,
+            selectID: null
         },
         baseActionForLink: function(link) {
             if (link.parentNode.className.match(/pagerlink/)) {
@@ -198,6 +217,16 @@ function scrollToTop() {
             httpRequest.onreadystatechange = function() {
                 if (httpRequest.readyState == 4 && httpRequest.status == 200) {
                     self.content.innerHTML = httpRequest.responseText;
+                    
+                    var hash = '#'+encodeURIComponent(removeBreadcrumbParameter(link.href));
+                    if (window.history && window.history.pushState && window.history.replaceState && // Regexs from history js plugin
+                      !((/ Mobile\/([1-7][a-z]|(8([abcde]|f(1[0-8]))))/i).test(navigator.userAgent) || // disable for versions of iOS < 4.3 (8F190)
+                         (/AppleWebKit\/5([0-2]|3[0-2])/i).test(navigator.userAgent))) { // disable for the mercury iOS browser and older webkit
+                      history.pushState({}, document.title, hash);
+                    } else {
+                      location.hash = hash;
+                    }
+                    
                     self.detailScroller.refresh();
                     moduleHandleWindowResize();
                 }
@@ -256,6 +285,10 @@ function scrollToTop() {
             
             this.listScroller = new iScroll(this.options.list, options);
         }
+    }
+    
+    function removeBreadcrumbParameter(url) {
+        return url.replace(/[?&]_b=[^&]*/, '');
     }
 
     var RESIZE_EVENT = window.addEventListener ? 

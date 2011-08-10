@@ -42,9 +42,11 @@ function loadMapImage(newSrc) {
     var mapImage = document.getElementById("staticmapimage");
     var oldSrc = mapImage.src;
     mapImage.src = newSrc;
-    if (oldSrc != newSrc) {
+    if (oldSrc != mapImage.src) {
         show("loadingimage");
     }
+    mapImage.src = newSrc; // guarentee onload handler gets called at least 
+                           // once after showing the loading image (even for cached images)
 }
 
 // next three functions for compliant

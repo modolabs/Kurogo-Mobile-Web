@@ -11,6 +11,7 @@
 class HomeWebModule extends WebModule {
   protected $id = 'home';
   protected $canBeAddedToHomeScreen = false;
+  protected $hideFooterLinks = true;
 
   protected function showLogin() {
     return $this->getOptionalModuleVar('SHOW_LOGIN', true);
