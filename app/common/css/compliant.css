@@ -223,10 +223,16 @@ select {
   text-align: right;
   margin-right: .5em;
   display: inline-block;
-  width: 6em;
+  width: 6.5em;
 }
-.formlist .formelement input {
-  width: 55%;
+.formlist .formelement input{
+  width: 9em;
+  padding-left: .5em;
+  padding-right: .5em;
+  line-height: 26px;
+}
+.formlist .formelement select {
+  width: 10em;
   line-height: 26px;
 }
 
