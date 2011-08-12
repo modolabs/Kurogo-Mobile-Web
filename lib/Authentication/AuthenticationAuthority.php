@@ -116,6 +116,12 @@ abstract class AuthenticationAuthority
     {
         $args = is_array($args) ? $args : array();
         $this->initArgs = $args;
+        if (isset($args['DEBUG_MODE'])) {
+            $this->setDebugMode($args['DEBUG_MODE']);
+        } else {
+            $this->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
+        }
+                
         if (!isset($args['TITLE']) || empty($args['TITLE'])) {
             throw new Exception("Invalid authority title");
         }

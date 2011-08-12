@@ -287,7 +287,7 @@ abstract class OAuthProvider
         );
     }
 
-    public function getAuthorizationHeader($method, $url, $parameters = null, $headers = null) {
+    public function getAuthorizationHeader($method, &$url, &$parameters = null, &$headers = null) {
 		$params = (array) $parameters;
 		$options = array();
 		$headers = (array) $headers;
@@ -310,6 +310,13 @@ abstract class OAuthProvider
 		if ($this->token) {
 		    $oauth['oauth_token'] = $this->token;
 		}
+		
+	    foreach ($params as $param=>$value) {
+	        if (preg_match("/^oauth_/", $param)) {
+	            $oauth[$param] = $value;
+	            unset($params[$param]);
+	        }
+	    }
 		
         switch ($method) {
             case 'POST':
@@ -411,7 +418,9 @@ abstract class OAuthProvider
         $contextOpts['http']['header'] = implode("\r\n", $requestHeaders) . "\r\n";
         
         $streamContext = stream_context_create($contextOpts);
-        //error_log(sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret));
+        if ($this->debugMode) {
+            error_log(sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret));
+        }
 
         $response = file_get_contents($url, false, $streamContext);
         
@@ -511,6 +520,12 @@ abstract class OAuthProvider
     protected function init($args) {
     
         $args = is_array($args) ? $args : array();
+        if (isset($args['DEBUG_MODE'])) {
+            $this->setDebugMode($args['DEBUG_MODE']);
+        } else {
+            $this->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
+        }
+
         if (!isset($args['TITLE']) || empty($args['TITLE'])) {
             throw new Exception("Invalid OAuth provider title");
         }
