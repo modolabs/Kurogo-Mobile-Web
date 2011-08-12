@@ -1,22 +1,7 @@
-{strip}
-{block name="formlistStart"}
-  <ul class="nav{if $secondary} secondary{/if}"{if $formlistID} id="{$formlistID}"{/if}>
-{/block}
-
-    {foreach $formListItems as $item}     
-      {if !isset($item['separator'])}
-      
-        {block name="navlistItem"}
-          <li{if $item['img']} class="icon"{/if}>
-            {include file="findInclude:common/templates/formListItem.tpl"}
-          </li>
-        {/block}
-      
-      {/if}
-    {/foreach}
-
-{block name="formlistEnd"}
-  </ul>
-{/block}
-
-{/strip}
+<div class="nonfocal formlist"{if $formlistID} id="{$formlistID}"{/if}>
+  {foreach $advancedFields as $item}
+    <p class="formelement">
+      {include file="findInclude:common/templates/formListItem.tpl"}
+    </p>
+  {/foreach}
+</div>
