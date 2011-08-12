@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Maps/ArcGIS');
+includePackage('Maps', 'ArcGIS');
 
 class ArcGISParser extends DataParser implements MapDataParser
 {

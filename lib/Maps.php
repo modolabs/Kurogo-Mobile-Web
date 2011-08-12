@@ -4,8 +4,8 @@ define('GEOGRAPHIC_PROJECTION', 4326);
 define('EARTH_RADIUS_IN_METERS', 6378100);
 define('MAP_CATEGORY_DELIMITER', ':');
 
-includePackage('Maps/Abstract');
-includePackage('Maps/Base');
+includePackage('Maps', 'Abstract');
+includePackage('Maps', 'Base');
 
 // http://en.wikipedia.org/wiki/Great-circle_distance
 // chosen for what the page said about numerical accuracy

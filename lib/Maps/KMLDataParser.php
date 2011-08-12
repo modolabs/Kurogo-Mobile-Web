@@ -3,7 +3,7 @@
 // http://schemas.opengis.net/kml/2.2.0/ogckml22.xsd
 // http://portal.opengeospatial.org/files/?artifact_id=27810
 
-includePackage('Maps/KML');
+includePackage('Maps', 'KML');
 
 class KMLDataParser extends XMLDataParser implements MapDataParser
 {

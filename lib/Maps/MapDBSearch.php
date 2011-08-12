@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Maps/MapDB');
+includePackage('Maps', 'MapDB');
 
 class MapDBSearch extends MapSearch
 {

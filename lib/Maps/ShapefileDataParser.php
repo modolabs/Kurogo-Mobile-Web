@@ -1,6 +1,6 @@
 <?php
 
-includePackage('Maps/Shapefile');
+includePackage('Maps', 'Shapefile');
 
 function ieee64FromLong($arg) {
     $mantissa = 1.0;
