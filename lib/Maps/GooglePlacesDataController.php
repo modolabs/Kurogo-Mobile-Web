@@ -7,7 +7,7 @@ class GooglePlacesDataController extends MapDataController
     protected $DEFAULT_PARSER_CLASS = 'GooglePlacesParser';
     private $apiKey;
     private $defaultCenter;
-    private $defaultRadius = 1000;
+    private $defaultRadius = 5000;
 
     protected $useCache = false;
 

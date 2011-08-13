@@ -28,18 +28,6 @@ class MapWebModule extends WebModule {
     private function getCategory() {
         $category = $this->getArg('category', null);
         return $category;
-
-        /*
-        $result = array();
-        if ($category !== null) {
-            if (strpos($category, BOOKMARK_COOKIE_DELIMITER) !== false) {
-                $result = explode(BOOKMARK_COOKIE_DELIMITER, $category);
-            } else {
-                $result = explode(MAP_CATEGORY_DELIMITER, $category);
-            }
-        }
-        return $result;
-        */
     }
 
     private function getDrillDownPath() {
@@ -53,24 +41,6 @@ class MapWebModule extends WebModule {
         }
         return $path;
     }
-
-    /*
-    private function getCategoriesAsArray() {
-        $category = $this->getArg('category', null);
-        // this is not robust, but we need to figure out what happens
-        // for each instance of MAP_CATEGORY_DELIMITER that we change
-        // to BOOKMARK_COOKIE_DELIMITER
-        $result = array();
-        if ($category !== null) {
-            if (strpos($category, BOOKMARK_COOKIE_DELIMITER) !== false) {
-                $result = explode(BOOKMARK_COOKIE_DELIMITER, $category);
-            } else {
-                $result = explode(MAP_CATEGORY_DELIMITER, $category);
-            }
-        }
-        return $result;
-    }
-    */
 
     protected function sortCategoriesForCurrentLocation($categoriesArray, $currentLat, $currentLon)
     {
@@ -154,11 +124,38 @@ class MapWebModule extends WebModule {
         return $configData;
     }
 
-    public function linkForValue($value, Module $callingModule, KurogoObject $otherValue=null) {
-        return array_merge(
-            parent::linkForValue($value, $callingModule, $otherValue),
-            array('class'=>'map')
+    public function linkForValue($value, Module $callingModule, KurogoObject $otherValue=null)
+    {
+        $external = $callingModule instanceof MapWebModule;
+
+        if (preg_match('/(-?\d+\.\d+),(-?\d+.\d+)/', $value, $matches) == 1) {
+            $page = 'detail';
+            $urlParams = array('lat' => $matches[1], 'lon' => $matches[2]);
+        } else {
+            $page = 'search';
+            $urlParams = array(
+                'filter'   => $value,
+                'external' => $external, // determines which search engine to use
+                );
+        }
+
+        return array(
+            'title' => $value,
+            'class' => 'map', // css class to show map icon in table rows
+            'url'   => $this->buildBreadcrumbURL($page, $urlParams, false),
         );
+    }
+
+    public function linkForItem(KurogoObject $placemark, $options=null)
+    {
+        $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
+        $urlArgs = shortArrayFromMapFeature($placemark);
+        $result = array(
+            'title' => $placemark->getTitle(),
+            'subtitle' => $placemark->getSubtitle(),
+            'url' => $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb),
+            );
+        return $result;
     }
 
     protected function initialize() {
@@ -234,10 +231,6 @@ class MapWebModule extends WebModule {
         return $this->buildBreadcrumbURL('detail', $args, $addBreadcrumb);
     }
   
-    private function detailURLForResult($urlArgs, $addBreadcrumb=true) {
-        return $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
-    }
-  
     private function detailUrlForPan($direction, $imgController) {
         $args = $this->args;
         $center = $imgController->getCenterForPanning($direction);
@@ -251,21 +244,26 @@ class MapWebModule extends WebModule {
         return $this->buildBreadcrumbURL('detail', $args, false);
     }
 
-    public function federatedSearch($searchTerms, $maxCount, &$results) {
-        $mapSearch = $this->getSearchClass();
+    public function searchItems($searchTerms, $limit=null, $options)
+    {
+        $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
+        $mapSearch = $this->getSearchClass($options);
         $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
-        
-        $limit = min($maxCount, count($searchResults));
-        for ($i = 0; $i < $limit; $i++) {
+        $maxCount = count($searchResults);
+        if ($limit && $limit < $maxCount) {
+            $maxCount = $limit;
+        }
+        $results = array();
+        for ($i = 0; $i < $maxCount; $i++) {
             $result = array(
                 'title' => $searchResults[$i]->getTitle(),
                 'url'   => $this->buildBreadcrumbURL('detail',
-                               shortArrayFromMapFeature($searchResults[$i]), false),
-              );
-              $results[] = $result;
+                               shortArrayFromMapFeature($searchResults[$i]), $addBreadcrumb),
+                );
+            $results[] = $result;
         }
     
-        return count($searchResults);
+        return $results;
     }
 
     private function getDataController() {
@@ -291,8 +289,16 @@ class MapWebModule extends WebModule {
         return $controller;
     }
 
-    protected function getSearchClass() {
-        $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
+    protected function getSearchClass($options=array()) {
+        if (isset($options['external']) && $options['external']) {
+            $searchConfigName = 'MAP_EXTERNAL_SEARCH_CLASS';
+            $searchConfigDefault = 'GoogleMapSearch';
+        } else { // includes federatedSearch
+            $searchConfigName = 'MAP_SEARCH_CLASS';
+            $searchConfigDefault = 'MapSearch';
+        }
+
+        $mapSearchClass = $this->getOptionalModuleVar($searchConfigName, $searchConfigDefault);
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
         $mapSearch = new $mapSearchClass($this->feeds);
@@ -503,7 +509,8 @@ JS;
                 if ($feature) {
                     $geometry = $feature->getGeometry();
                     $center = $geometry->getCenterCoordinate();
-                    $dupeTitle = $feature->getTitle();
+                    $currentId = $feature->getId();
+                    $currentTitle = $feature->getTitle();
                 } elseif (isset($this->args['lat'], $this->args['lon'])) {
                     $center = array(
                         'lat' => $this->args['lat'],
@@ -512,21 +519,14 @@ JS;
                     return false;
                 }
 
-                $mapSearch = $this->getSearchClass();
+                $mapSearch = $this->getSearchClass($this->args);
                 $searchResults = $mapSearch->searchByProximity($center, 1000, 10, $dataController);
                 $places = array();
                 if ($searchResults) {
                     foreach ($searchResults as $result) {
-                        // TODO eliminate current feature from results
-                        $urlArgs = shortArrayFromMapFeature($result);
-                        $place = array(
-                            'title' => $result->getTitle(),
-                            'subtitle' => $result->getSubtitle(),
-                            'url' => $this->detailURLForResult($urlArgs, false),
-                            );
-
-                        if ($dupeTitle != $result->getTitle())
-                            $places[] = $place;
+                        if ($result->getId() !== $currentId || $result->getTitle() !== $currentTitle) {
+                            $places[] = $this->linkForItem($result);
+                        }
                     }
                     $this->assign('nearbyResults', $places);
                 }
@@ -722,24 +722,12 @@ JS;
                 if (isset($this->args['filter'])) {
                     $this->feedGroup = null;
                     $searchTerms = $this->args['filter'];
-                    $mapSearch = $this->getSearchClass();
-                    $searchResults = $mapSearch->searchCampusMap($searchTerms);
-        
-                    if (count($searchResults) == 1) {
-                        $this->redirectTo('detail', shortArrayFromMapFeature($searchResults[0]));
-                    } else {
-                        $places = array();
-                        foreach ($searchResults as $result) {
-                            $title = $result->getTitle();
-                            $subtitle = $result->getSubtitle();
-                            $place = array(
-                                'title' => $title,
-                                'subtitle' => $subtitle,
-                                'url' => $this->detailURLForResult(shortArrayFromMapFeature($result)),
-                            );
-                            $places[] = $place;
-                        }
-                    }
+
+                    // TODO: redirect if there is one result
+                    $args = array_merge($this->args, array('addBreadcrumb' => true));
+
+                    // still need a way to show the Google logo if we use their search
+                    $places = $this->searchItems($searchTerms, null, $args);
         
                     $this->assign('searchTerms', $searchTerms);
                     $this->assign('places',      $places);
@@ -751,7 +739,6 @@ JS;
             
             case 'category':
 
-                //$categoryPath = $this->getCategoriesAsArray();
                 $categoryPath = $this->getCategory();
                 if ($categoryPath) {
                     // populate drop-down list at the bottom
@@ -760,10 +747,6 @@ JS;
                     $dataController = $this->getDataController();
                     $dataController->addDisplayFilter('category', $this->getDrillDownPath());
                     $listItems = $dataController->getListItems();
-                    /*
-                    $dataController = $this->getDataController($categoryPath, $listItemPath);
-                    $listItems = $dataController->getListItems($listItemPath);
-                    */
 
                     if (count($listItems) == 1) {
                         // redirect to a category's children if it only has one item
@@ -823,15 +806,27 @@ JS;
                 $tabJavascripts = array();
 
                 $dataController = $this->getDataController();
-                //$dataController = $this->getDataControllerForMap($listItemPath);
-                //$feature = $this->getFeatureForMap($dataController, $listItemPath);
                 $drilldownPath = $this->getDrillDownPath();
                 if ($drilldownPath) {
                     $dataController->addDisplayFilter('category', $drilldownPath);
                 }
-                $feature = $dataController->selectFeature($this->featureIndex);
+                if ($this->featureIndex) {
+                    $feature = $dataController->selectFeature($this->featureIndex);
+                } elseif (isset($this->args['lat'], $this->args['lon'])) {
+                    $lat = $this->args['lat'];
+                    $lon = $this->args['lon'];
+                    $feature = new BasePlacemark(
+                        new MapBasePoint(array(
+                            'lat' => $lat,
+                            'lon' => $lon,
+                            )));
+                    $feature->setTitle($this->getArg('title', "$lat,$lon"));
+                    // hacky
+                    $dataController->setSelectedFeatures(array($feature));
+                }
+
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
-                    if (isset($this->args['featureindex'])) { // this is a regular place
+                    if (isset($this->args['featureindex'])) { // this is a place from a feed
                         $cookieParams = array(
                             'category' => $this->getCategory(),
                             'featureindex' => $this->featureIndex,
@@ -839,7 +834,19 @@ JS;
                         $cookieID = http_build_query($cookieParams);
                         $this->generateBookmarkOptions($cookieID);
     
+                    } elseif (isset($this->args['lat'], $this->args['lon'])) {
+                        $cookieParams = array(
+                            'lat' => $this->args['lat'],
+                            'lon' => $this->args['lon'],
+                            );
+                        if ($feature) {
+                            $cookieParams['title'] = $feature->getTitle();
+                        }
+                        $cookieID = http_build_query($cookieParams);
+                        $this->generateBookmarkOptions($cookieID);
+
                     } elseif (isset($this->args['group'])) {
+                        // TODO: this branch may not be being used
                         $cookieID = http_build_query(array('group' => $this->args['group']));
                         $this->generateBookmarkOptions($cookieID);
                     }
@@ -869,8 +876,6 @@ JS;
                 break;
                 
             case 'fullscreen':
-                //$dataController = $this->getDataControllerForMap($listItemPath);
-                //$feature = $this->getFeatureForMap($dataController, $listItemPath);
                 $dataController = $this->getDataController();
                 $dataController->selectFeature($this->featureIndex);
                 $this->initializeMap($dataController, true);

@@ -46,7 +46,6 @@ class GooglePlacesParser extends DataParser implements MapDataParser
             if (isset($result['formatted_address'])) {
                 $placemark->setAddress($result['formatted_address']);
             }
-
             $this->items[] = $placemark;
         }
 
