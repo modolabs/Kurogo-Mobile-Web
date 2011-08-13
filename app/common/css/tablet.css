@@ -247,6 +247,27 @@ select {
   padding: 0;
 }
 
+.formlist .formelement {
+  text-align: center;
+  margin-bottom: .5em;
+}
+.formlist .formelement label {
+  text-align: right;
+  margin-right: .5em;
+  display: inline-block;
+  width: 6.5em;
+}
+.formlist .formelement input{
+  width: 19em;
+  padding-left: .5em;
+  padding-right: .5em;
+  line-height: 26px;
+}
+.formlist .formelement select {
+  width: 20em;
+  line-height: 26px;
+}
+
 .formbuttons {
 	margin: 16px 0 8px 0;
 	text-align: center;

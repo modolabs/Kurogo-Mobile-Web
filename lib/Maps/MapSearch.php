@@ -32,7 +32,6 @@ class MapSearch {
         $this->searchResults = array();
 
         $resultsByDistance = array();
-
         $controllers = array();
         if ($dataController !== null) {
             $controllers[] = $dataController;
@@ -48,9 +47,15 @@ class MapSearch {
         foreach ($controllers as $controller) {
             try {
                 $results = $controller->searchByProximity($center, $tolerance, $maxItems);
-                // this runs a risk of eliminating search results that are the
-                // same distance away (within 1 meter) in different feeds
-                $resultsByDistance = array_merge($resultsByDistance, $results);
+                // merge arrays manually since keys are numeric
+                foreach($results as $distance => $mapFeature) {
+                    // avoid distance collisions
+                    while(isset($resultsByDistance[$distance])) {
+                        $distance++;
+                    }
+                }
+                $resultsByDistance[$distance] = $mapFeature;
+
             } catch (DataServerException $e) {
                 error_log('encountered DataServerException for feed config:');
                 error_log(print_r($feedData, true));
