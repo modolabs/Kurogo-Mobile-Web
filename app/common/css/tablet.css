@@ -257,10 +257,10 @@ select {
   display: inline-block;
   width: 6.5em;
 }
-.formlist .formelement input{
-  width: 19em;
-  padding-left: .5em;
-  padding-right: .5em;
+.formlist .formelement input {
+  width: 19.5em;
+  padding-left: .25em;
+  padding-right: .25em;
   line-height: 26px;
 }
 .formlist .formelement select {

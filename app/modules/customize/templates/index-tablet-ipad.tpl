@@ -38,7 +38,7 @@
     {/foreach}
   </ul>
   <div class="formbuttons">
-    {include file="findInclude:common/templates/formButtonLink.tpl" title="Return to Home" url="../home/"}
+    {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="Return to Home" buttonURL="../home/"}
   </div>
   <p id="savedMessage">Saved</p>
 {/block}
