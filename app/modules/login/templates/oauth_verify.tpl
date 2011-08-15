@@ -10,7 +10,7 @@
 <p><label for="oauth_verify">Verify Code:</label> <input type="text" name="{$verifierKey}" id="oauth_verify" class="loginFormInput" /> </p>
 
 <div class="formbuttons">
-  {include file="findInclude:common/templates/formButton.tpl" title="Verify"}
+  {include file="findInclude:common/templates/formButtonSubmit.tpl" buttonTitle="Verify"}
 </div>   
 </form>
 

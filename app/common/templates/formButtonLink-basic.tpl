@@ -1,1 +1,1 @@
-<a href="{if $url}{$url}{else}#{/if}" class="formbutton">{$title}</a>
+<a href="{if $buttonURL}{$buttonURL}{else}#{/if}" class="formbutton">{$buttonTitle}</a>
