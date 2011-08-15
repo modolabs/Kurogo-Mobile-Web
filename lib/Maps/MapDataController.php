@@ -43,7 +43,7 @@ class MapDataController extends DataController implements MapFolder
         return $this->searchable;
     }
 
-    private static function featureMatchesTokens(MapFeature $feature, Array $tokens)
+    protected function featureMatchesTokens(MapFeature $feature, Array $tokens)
     {
         $matched = true;
         $title = $feature->getTitle();
@@ -72,7 +72,7 @@ class MapDataController extends DataController implements MapFolder
             }
             if (count($validTokens)) {
                 foreach ($this->getAllLeafNodes() as $item) {
-                    if ( ($item->getTitle()==$searchText) || self::featureMatchesTokens($item, $validTokens)) {
+                    if ( ($item->getTitle()==$searchText) || $this->featureMatchesTokens($item, $validTokens)) {
                         $results[] = $item;
                     }
                 }

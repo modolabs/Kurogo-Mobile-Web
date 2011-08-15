@@ -10,7 +10,10 @@
 	text-align: right;
 }
 
-#loginForm input {
+#loginForm input[type=text],
+#loginForm input[type=password],
+#loginForm input[type=radio],
+#loginForm input[type=checkbox] {
     width: 160px;
 	border: 1px solid #999;
 	padding: 2px 5px;

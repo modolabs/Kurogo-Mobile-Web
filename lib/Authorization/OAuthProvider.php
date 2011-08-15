@@ -208,9 +208,7 @@ abstract class OAuthProvider
 		return $sig;
 	}
 	
-	protected function baseURL($url) {
-        $parts = parse_url($url);
-    
+	protected function buildURL($parts) {
         $scheme = (isset($parts['scheme'])) ? $parts['scheme'] : 'http';
         $port = (isset($parts['port'])) ? $parts['port'] : (($scheme == 'https') ? '443' : '80');
         $host = (isset($parts['host'])) ? $parts['host'] : '';
@@ -221,6 +219,11 @@ abstract class OAuthProvider
           $host = "$host:$port";
         }
         return "$scheme://$host$path";
+	}
+	
+	protected function baseURL($url) {
+        $parts = parse_url($url);
+        return $this->buildURL($parts);
 	}
 	
 	protected function parseQueryString($queryString) {
@@ -284,7 +287,7 @@ abstract class OAuthProvider
         );
     }
 
-    public function getAuthorizationHeader($method, $url, $parameters = null, $headers = null) {
+    public function getAuthorizationHeader($method, &$url, &$parameters = null, &$headers = null) {
 		$params = (array) $parameters;
 		$options = array();
 		$headers = (array) $headers;
@@ -307,6 +310,13 @@ abstract class OAuthProvider
 		if ($this->token) {
 		    $oauth['oauth_token'] = $this->token;
 		}
+		
+	    foreach ($params as $param=>$value) {
+	        if (preg_match("/^oauth_/", $param)) {
+	            $oauth[$param] = $value;
+	            unset($params[$param]);
+	        }
+	    }
 		
         switch ($method) {
             case 'POST':
@@ -408,7 +418,9 @@ abstract class OAuthProvider
         $contextOpts['http']['header'] = implode("\r\n", $requestHeaders) . "\r\n";
         
         $streamContext = stream_context_create($contextOpts);
-        //error_log(sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret));
+        if ($this->debugMode) {
+            error_log(sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret));
+        }
 
         $response = file_get_contents($url, false, $streamContext);
         
@@ -420,6 +432,13 @@ abstract class OAuthProvider
         //if there is a location header we need to re-sign before redirecting
         if ($redirectURL = $this->response->getHeader("Location")) {
 		    $redirectParts = parse_url($redirectURL);
+		    //if the redirect does not include the host or scheme, use the scheme/host from the original URL
+            if (!isset($redirectParts['scheme']) || !isset($redirectParts['host'])) {
+                $urlParts = parse_url($url);
+                unset($urlParts['path']);
+                unset($urlParts['query']);
+                $redirectURL = $this->buildURL($urlParts) . $redirectURL;
+            }
 		    if (isset($redirectParts['query'])) {
 		        $newParameters = array_merge($parameters, $this->parseQueryString($redirectParts['query']));
 		    }
@@ -501,6 +520,12 @@ abstract class OAuthProvider
     protected function init($args) {
     
         $args = is_array($args) ? $args : array();
+        if (isset($args['DEBUG_MODE'])) {
+            $this->setDebugMode($args['DEBUG_MODE']);
+        } else {
+            $this->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
+        }
+
         if (!isset($args['TITLE']) || empty($args['TITLE'])) {
             throw new Exception("Invalid OAuth provider title");
         }

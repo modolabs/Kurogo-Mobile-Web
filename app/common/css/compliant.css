@@ -215,6 +215,27 @@ select {
 	height: 38px;
 }
 
+.formlist .formelement {
+  text-align: center;
+  margin-bottom: .5em;
+}
+.formlist .formelement label {
+  text-align: right;
+  margin-right: .5em;
+  display: inline-block;
+  width: 6.5em;
+}
+.formlist .formelement input {
+  width: 9em;
+  padding-left: .25em;
+  padding-right: .25em;
+  line-height: 26px;
+}
+.formlist .formelement select {
+  width: 10em;
+  line-height: 26px;
+}
+
 .formbuttons {
 	margin: 16px 0 8px 0;
 	text-align: center;
@@ -249,32 +270,34 @@ a.formbutton div {
 
 input.formbutton {
   -webkit-appearance: none;
-  display: inline-block;
+  display: block;
 	color: #fff;
 	font-weight: bold;
 	font-size: 94.12%;
 	line-height: 26px;  /* height minus padding */
 	text-decoration: none;
-	padding: 5px 5px 5px 12px;
-	margin-right: 0;
+	padding: 5px 12px 5px 12px;
+	margin-right: -7px;
 	border: none;
 	height: 36px;
-	background-color: transparent;
-	background-image: url(/common/images/button-sd-l.png);
-	background-repeat: no-repeat;
-	background-position: center left;
-	-webkit-border-radius: 0px;
-	border-radius: 0px;
-}
-.formbuttonclose {
-  display: inline-block;
 	background-color: transparent;
 	background-image: url(/common/images/button-sd-r.png);
 	background-repeat: no-repeat;
 	background-position: center right;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+}
+span.formbuttoncontainer {  /* must be span for winphone7 */
+  display: inline-block;
+	background-color: transparent;
+	background-image: url(/common/images/button-sd-l.png);
+	background-repeat: no-repeat;
+	background-position: center left;
+	padding: 0;
 	margin: 0;
+	margin-right: 7px; /* recenter */
+	overflow: visible;
 	height: 36px;
-	padding-right: 7px;
 }
 
 .radiobutton {

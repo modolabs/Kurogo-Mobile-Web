@@ -9,7 +9,7 @@
     Instructions: {$instructions}
     {block name="downloadLink"}
       <div class="formbuttons">
-        <a class="formbutton" href="{$downloadUrl}"><div>Click here to begin</div></a>
+        {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="Click here to begin" buttonURL=$downloadUrl}
       </div>
     {/block}
   </div>

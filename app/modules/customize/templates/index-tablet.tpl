@@ -22,6 +22,6 @@
     {/foreach}
   </ul>
   <div class="formbuttons">
-    <a class="formbutton" href="../home/"><div>Return to Home</div></a>
+    {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="Return to Home" buttonURL="../home/"}
   </div>
 {/block}

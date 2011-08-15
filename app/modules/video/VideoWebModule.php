@@ -124,6 +124,11 @@ class VideoWebModule extends WebModule
                     $videos[] = $this->linkForItem($video, $data);
                 }
                 
+                foreach ($videos as $i => $video) {
+                    $videos[$i]['url'] = $this->buildURL('index').
+                        '#'.urlencode(FULL_URL_PREFIX.ltrim($video['url'], '/'));
+                }
+
                 $this->assign('videos', $videos);
                 break;
             case 'search':
