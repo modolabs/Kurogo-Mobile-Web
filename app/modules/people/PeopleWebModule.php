@@ -341,7 +341,7 @@ class PeopleWebModule extends WebModule {
                     }
                 }
                 $this->assign('bookmarks', $bookmarks);
-                $this->assign('bookmarksTitle', $this->getLocalizedString('PEOPLE'));
+                $this->assign('bookmarksTitle', $this->getLocalizedString('BOOKMARK_TITLE'));
                 break;
                 
             case 'group':
