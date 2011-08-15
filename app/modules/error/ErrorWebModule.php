@@ -56,6 +56,10 @@ class ErrorWebModule extends WebModule {
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);
       $this->args = $args;
+      try {
+          $this->moduleName = $this->getOptionalModuleVar('title', 'Error', 'module');
+      } catch (Exception $e) {
+      }
       return;
   }
 
