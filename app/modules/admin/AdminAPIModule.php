@@ -408,11 +408,15 @@ class AdminAPIModule extends APIModule
         switch ($this->command) {
             case 'checkversion':
                 $current = Kurogo::sharedInstance()->checkCurrentVersion();
+                $uptodate = version_compare(KUROGO_VERSION, $current,">=");
+                $messageKey = $uptodate ? 'KUROGO_VERSION_MESSAGE_UPTODATE' : 'KUROGO_VERSION_MESSAGE_NOTUPDATED';
                 $data = array(
                     'current'=>$current,
                     'local'  =>KUROGO_VERSION,
-                    'uptodate' =>version_compare(KUROGO_VERSION, $current,">=")
+                    'uptodate' =>$uptodate,
+                    'message'=>$this->getLocalizedString($messageKey, array($current, KUROGO_VERSION))
                 );
+                
                 $this->setResponse($data);
                 $this->setResponseVersion(1);
                 
