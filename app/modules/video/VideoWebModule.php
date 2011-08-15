@@ -182,6 +182,7 @@ class VideoWebModule extends WebModule
           		$this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
           		$this->addOnLoad('setupVideosListing();');
           
+                $this->assign('placeholder', $this->getLocalizedString('SEARCH_MODULE', $this->getModuleName()));
                 $this->assign('start',       $start);
                 $this->assign('previousURL', $previousURL);
                 $this->assign('nextURL',     $nextURL);

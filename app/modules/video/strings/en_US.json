@@ -1,5 +1,11 @@
 {
     "BOOKMARK_TITLE":"Bookmarked Videos",
+    "SECTION_TEXT":"Section:",
+    "PREVIOUS_VIDEO_TEXT":"Previous %s videos",
+    "NEXT_VIDEO_TEXT":"Next %s videos",
+    "NO_RESULTS":"No videos found",
+    "VIDEO_UNSUPPORTED":"This video cannot be played on this device",
+    "VIDEO_DEVICE_UNSUPPORTED":"This device does not support video content",
     "VIDEO_ADMIN_OPTIONS_TITLE":"Options",
     "VIDEO_ADMIN_OPTIONS_DESCRIPTION":"",
     "VIDEO_ADMIN_OPTIONS_MAXRESULTS_TITLE":"Videos per page",
