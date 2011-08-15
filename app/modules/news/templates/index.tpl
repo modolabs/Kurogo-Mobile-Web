@@ -20,7 +20,7 @@
         <form method="get" action="index" id="category-form">
           <table border="0" cellspacing="0" cellpadding="0">
             <tr>
-              <td class="formlabel">{$sectionText}</td>
+              <td class="formlabel">{"SECTION_TEXT"|getLocalizedString}</td>
               <td class="inputfield"><div id="news-category-select">{$categorySelect}</div></td>
               <td class="togglefield">
                 {block name="categoryButton"}
@@ -40,7 +40,7 @@
         <form method="get" action="search" id="search-form">
           <table border="0" cellspacing="0" cellpadding="0">
             <tr>
-              <td class="formlabel">{$searchText}</td>
+              <td class="formlabel">{"SEARCH"|getLocalizedString}</td>
               <td class="inputfield">
                 <input class="newsinput search-field" type="text" id="search_terms" 
                 name="filter" value="{$searchTerms|escape}" 

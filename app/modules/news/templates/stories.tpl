@@ -1,7 +1,7 @@
 <ul class="results">
   {if $previousURL}
     <li class="pagerlink">
-      <a href="{$previousURL}">{$previousText}</a>
+      <a href="{$previousURL}">{"PREVIOUS_STORY_TEXT"|getLocalizedString:$maxPerPage}</a>
     </li>
   {/if}
 
@@ -28,7 +28,7 @@
 
   {if $nextURL}
     <li class="pagerlink">
-      <a href="{$nextURL}">{$nextText}</a>
+      <a href="{$nextURL}">{"NEXT_STORY_TEXT"|getLocalizedString:$maxPerPage}</a>
     </li>
   {/if}
 </ul>

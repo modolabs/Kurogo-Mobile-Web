@@ -350,16 +350,12 @@ class NewsWebModule extends WebModule {
         $this->assign('maxPerPage',     $this->maxPerPage);
         $this->assign('hiddenArgs',     $hiddenArgs);
         $this->assign('sections',       $sections);
-        $this->assign('sectionText',    $this->getLocalizedString('SECTION_TEXT'));
-        $this->assign('searchText',     $this->getLocalizedString('SEARCH'));
         $this->assign('currentSection', $sections[$this->feedIndex]);
         $this->assign('placeholder',    $this->getLocalizedString('SEARCH_MODULE', $this->getModuleName()));
         $this->assign('stories',        $stories);
         $this->assign('isHome',         true);
         $this->assign('previousURL',    $previousURL);
-        $this->assign('previousText',   $this->getLocalizedString('PREVIOUS_STORY_TEXT', $this->maxPerPage));
         $this->assign('nextURL',        $nextURL);
-        $this->assign('nextText',       $this->getLocalizedString('NEXT_STORY_TEXT', $this->maxPerPage));
         $this->assign('showImages',     $this->showImages);
         $this->assign('showPubDate',    $this->showPubDate);
         $this->assign('showAuthor',     $this->showAuthor);
