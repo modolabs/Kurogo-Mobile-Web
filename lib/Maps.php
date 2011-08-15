@@ -42,6 +42,13 @@ function euclideanDistance($fromLat, $fromLon, $toLat, $toLon)
     return sqrt($dx*$dx + $dy*$dy);
 }
 
+function filterLatLon($testString) {
+    if (preg_match('/(-?\d+\.\d+),(-?\d+.\d+)/', $testString, $matches) == 1) {
+        return array('lat' => $matches[1], 'lon' => $matches[2]);
+    }
+    return false;
+}
+
 function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null)
 {
     if ($fromProj !== null || $toProj !== null) {
@@ -85,10 +92,22 @@ function mapIdForFeedData(Array $feedData) {
 
 function shortArrayFromMapFeature(Placemark $feature) {
     $category = current($feature->getCategoryIds());
-    return array(
-        'featureindex' => $feature->getId(),
-        'category' => $category,
-        );
+    $result = array('category' => $category);
+
+    $id = $feature->getId();
+    if ($id) {
+        $result['featureindex'] = $id;
+    } else {
+        $geometry = $feature->getGeometry();
+        if ($geometry) {
+            $coords = $geometry->getCenterCoordinate();
+            $result['lat'] = $coords['lat'];
+            $result['lon'] = $coords['lon'];
+        }
+        $result['title'] = $feature->getTitle();
+    }
+
+    return $result;
 }
 
 function htmlColorForColorString($colorString) {

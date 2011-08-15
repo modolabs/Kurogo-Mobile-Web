@@ -17,31 +17,20 @@ class GooglePlacesParser extends DataParser implements MapDataParser
             $results = array($decodedData['result']);
         }
 
-        $position = 0; // geocode results have no id's
-
         foreach ($results as $result) {
             $coord = $result['geometry']['location'];
             $coord['lon'] = $coord['lng'];
             $centroid = new MapBasePoint($coord);
             $placemark = new BasePlacemark($centroid);
-            if (isset($decodedData['name'])) {
-                $placemark->setTitle($result['name']);
-            } elseif (isset($result['formatted_address'])) {
-                $placemark->setTitle($result['formatted_address']);
-                $placemark->setTitle($this->dataController->getSearchText());
-            }
+            $placemark->setTitle($result['name']);
             if (isset($decodedData['icon'])) {
                 $placemark->setStyleForTypeAndParam(
                     MapStyle::POINT,
                     MapStyle::ICON,
                     $decodedData['icon']);
             }
-            if (isset($result['reference'])) {
-                $placemark->setId($result['reference']);
-            } else {
-                $placemark->setId($position);
-            }
             $placemark->addCategoryId($this->dataController->getCategoryId());
+            $placemark->setId($result['reference']);
 
             // fields returned by detail query
             // http://code.google.com/apis/maps/documentation/places/#PlaceDetails
@@ -58,8 +47,6 @@ class GooglePlacesParser extends DataParser implements MapDataParser
                 $placemark->setAddress($result['formatted_address']);
             }
             $this->items[] = $placemark;
-
-            $position++;
         }
 
         return $this->items;

@@ -216,54 +216,50 @@ function scrollMap(north, east) {
 }
 
 function updateMapImage() {
-    var httpRequest = new XMLHttpRequest();
-    var baseURL = staticMapOptions['baseURL'];
-    var mapClass = staticMapOptions['mapClass'];
-    var objMap = document.getElementById("staticmapimage");
-    var url = apiURL + "?baseURL=" + baseURL + "&mapClass=" + mapClass + "&width=" + mapWidth + "&height=" + mapHeight;
+    var params = {
+        "baseURL": staticMapOptions['baseURL'],
+        "mapClass": staticMapOptions['mapClass'],
+        "width": mapWidth,
+        "height": mapHeight};
+
     if (centerZoomBased) {
-        var lat = staticMapOptions['center']['lat'];
-        var lon = staticMapOptions['center']['lon'];
-        var zoom = staticMapOptions['zoom'];
-        url = url + "&lat=" + lat + "&lon=" + lon + "&zoom=" + zoom;
+        params["lat"] = staticMapOptions['center']['lat'];
+        params["lon"] = staticMapOptions['center']['lon'];
+        params["zoom"] = staticMapOptions['zoom'];
     } else {
         var bbox = staticMapOptions['bbox'];
         var bboxStr = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'];
-        url = url + "&bbox=" + bboxStr;
+        params["bbox"] = bboxStr;
     }
 
     if ("projection" in staticMapOptions) {
-        url = url + "&projection=" + staticMapOptions['projection'];
+        params["projection"] = staticMapOptions['projection'];
     }
     if ('markers' in staticMapOptions && staticMapOptions['markers']) {
-        url += '&markers=' + staticMapOptions['markers'];
+        params["markers"] = staticMapOptions['markers'];
     }
     if ('polygons' in staticMapOptions) {
         for (arg in staticMapOptions['polygons']) {
-            url += '&'+arg+'='+staticMapOptions['polygons'][arg];
+            params[arg] = staticMapOptions['polygons'][arg];
         }
     }
     if ('paths' in staticMapOptions) {
         for (arg in staticMapOptions['paths']) {
-            url += '&'+arg+'='+staticMapOptions['paths'][arg];
+            params[arg] = staticMapOptions['args'][arg];
         }
     }
-    // code snippet from http://en.wikipedia.org/wiki/JSON#Use_in_Ajax
-    httpRequest.open("GET", url, true);
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var obj;
-            if(window.JSON) {
-                obj = JSON.parse(httpRequest.responseText);
-            } else {
-                obj = eval('(' + httpRequest.responseText + ')');
-            }
-            var newSrc = obj['response'];
-            loadMapImage(newSrc);
-        }
-    }
-    httpRequest.send(null);
+
+    apiRequest(apiURL, params, receivedNewMapSrc, failedToReceiveNewMapSrc);
 }
+
+function receivedNewMapSrc(response) {
+    loadMapImage(response);
+}
+
+function failedToReceiveNewMapSrc(code, message) {
+
+}
+
 
 // assuming only one of updateMapDimensions or updateContainerDimensions
 // gets used so they can reference the same id

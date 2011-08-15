@@ -3,9 +3,13 @@
 class GoogleMapSearch extends MapSearch {
 
     protected $feedData = array(
-        'CONTROLLER_CLASS' => 'GooglePlacesDataController',
-        'BASE_URL' => 'https://maps.googleapis.com/maps/api/place/search/json',
+        'CONTROLLER_CLASS' => 'GoogleGeoDataController',
         );
+
+    public function isPlaces()
+    {
+        return Kurogo::getOptionalSiteVar('USE_GOOGLE_PLACES', false, 'maps');
+    }
 
     public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataController=null)
     {
@@ -21,6 +25,4 @@ class GoogleMapSearch extends MapSearch {
         return $this->searchResults;
     }
 }
-
-
 

@@ -283,6 +283,30 @@ class MapAPIModule extends APIModule
                 break;
 
             // ajax calls
+            case 'sortGroupsByDistance':
+                
+                $lat = $this->getArg('lat', 0);
+                $lon = $this->getArg('lon', 0);
+
+                $categories = array();
+
+                if ($lat || $lon) {
+                    foreach ($this->feedGroups as $id => $groupData) {
+                        $categories[] = array(
+                            'title' => $groupData['title'],
+                            'id' => $id,
+                            );
+                        $center = filterLatLon($groupData['center']);
+                        $distances[] = greatCircleDistance($lat, $lon, $center['lat'], $center['lon']);
+                    }
+                    array_multisort($distances, SORT_ASC, $categories);
+                }
+
+                $this->setResponse($categories);
+                $this->setResponseVersion(1);
+
+                break;
+
             case 'staticImageURL':
                 $baseURL = $this->getArg('baseURL');
                 $mapClass = $this->getArg('mapClass');

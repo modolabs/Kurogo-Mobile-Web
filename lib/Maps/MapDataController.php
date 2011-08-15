@@ -373,14 +373,17 @@ class MapDataController extends DataController implements MapFolder
 
     public static function defaultDataController()
     {
+        /*
         $args = array(
+            'STATIC_MAP_CLASS' => 'GoogleStaticMap',
             'JS_MAP_CLASS' => 'GoogleJSMap',
             'DEFAULT_ZOOM_LEVEL' => 10, // need better way to set this value
             'PARSER_CLASS' => 'GooglePlacesParser',
-            'BASE_URL' => 'https://maps.googleapis.com/maps/api/place/search/json', // change this if we search multiple services
+            'BASE_URL' => GoogleGeoDataController::GEOCODE_BASE_URL, // change this if we search multiple services
             );
+        */
         
-        return self::factory('GooglePlacesDataController', $args);
+        return self::factory('GoogleGeoDataController', array());
     }
 
     // DataController overrides

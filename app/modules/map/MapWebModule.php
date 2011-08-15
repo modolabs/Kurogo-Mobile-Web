@@ -41,26 +41,6 @@ class MapWebModule extends WebModule {
         }
         return $path;
     }
-
-    protected function sortCategoriesForCurrentLocation($categoriesArray, $currentLat, $currentLon)
-    {
-        $distanceArray = array();
-        
-        foreach ($categoriesArray as $categoryItem) {
-
-            $lat = $categoryItem['loc'][0];
-            $lon = $categoryItem['loc'][1];
-
-            $distance = greatCircleDistance($currentLat, $currentLon, $lat, $lon);
-
-            $distanceArray[] = $distance;
-        }
-
-        array_multisort($distanceArray, SORT_ASC, $categoriesArray);
-
-        // return the categories array sorted based on distance
-        return $categoriesArray;
-    }
     
     // overrides function in Module.php
     protected function loadFeedData() {
@@ -126,11 +106,12 @@ class MapWebModule extends WebModule {
 
     public function linkForValue($value, Module $callingModule, KurogoObject $otherValue=null)
     {
-        $external = $callingModule instanceof MapWebModule;
+        $external = !$callingModule instanceof MapWebModule;
 
-        if (preg_match('/(-?\d+\.\d+),(-?\d+.\d+)/', $value, $matches) == 1) {
+        $latLon = filterLatLon($value);
+        if ($latLon !== false) {
             $page = 'detail';
-            $urlParams = array('lat' => $matches[1], 'lon' => $matches[2]);
+            $urlParams = $latLon;
         } else {
             $page = 'search';
             $urlParams = array(
@@ -255,10 +236,14 @@ class MapWebModule extends WebModule {
         }
         $results = array();
         for ($i = 0; $i < $maxCount; $i++) {
+            $urlParams = shortArrayFromMapFeature($searchResults[$i]);
+            $external = $this->getArg('external', null);
+            if ($external) {
+                $urlParams['external'] = $external;
+            }
             $result = array(
                 'title' => $searchResults[$i]->getTitle(),
-                'url'   => $this->buildBreadcrumbURL('detail',
-                               shortArrayFromMapFeature($searchResults[$i]), $addBreadcrumb),
+                'url'   => $this->buildBreadcrumbURL('detail', $urlParams, $addBreadcrumb),
                 );
             $results[] = $result;
         }
@@ -302,7 +287,7 @@ class MapWebModule extends WebModule {
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
         $mapSearch = new $mapSearchClass($this->feeds);
-        $this->assign('poweredByGoogle', $mapSearch instanceof GoogleMapSearch);
+        $this->assign('poweredByGoogle', $mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces());
         return $mapSearch;
     }
     
@@ -587,7 +572,6 @@ JS;
         return false;
     }
 
-
     protected function initializeForPage() {
         $this->featureIndex = $this->getArg('featureindex', null);
 
@@ -596,9 +580,6 @@ JS;
                 break;
 
             case 'index':
-
-                $redirectedWithLocation = $this->getArg('redirected');
-
 
                 if ($action = $this->getArg('action', false)) {
                     if ($this->feedGroup && $action == 'add') {
@@ -617,41 +598,19 @@ JS;
                         $categories[] = array(
                             'title' => $groupData['title'],
                             'url' => $this->groupURL($id),
-                            'loc' => explode("," ,$groupData['center'])
+                            'listclass' => $id, // stupid way to sneak the id into the dom
                             );
                     }
-                    
-                    //don't do device detection on older devices
-                    if (!in_array($this->pagetype, array('compliant','tablet'))) {
-                        $_COOKIE['map_lat']='na';
-                        $_COOKIE['map_long']='na';
-                    }
 
-                    // only display categories in a list if the current location attempt has been made
-                    // and a redirection has occured.
-                    // TODO: make this work for browsers that don't give location
-                    if (isset($_COOKIE['map_lat'], $_COOKIE['map_long'])) {
-                        $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS', 'Campus');
-                        $this->assign('browseHint', "Select a $groupAlias");
-                        $this->assign('categories', $categories);
-                        $this->assign('searchTip', NULL);
-                        
-                        
-                        $latitude = $_COOKIE['map_lat'];
-                        $longitude = $_COOKIE['map_long'];
-    
-                        // if current lat/lon were found and valid, sort the categories based on that.
-                        if (is_numeric($latitude) && is_numeric($longitude)) {
-                            $sortedCategories = $this->sortCategoriesForCurrentLocation($categories, $latitude, $longitude);
-                            $this->assign('categories', $sortedCategories);
-                            $this->assign('browseHint', "Select a $groupAlias (Closest first)");
-                        }
-                        if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
-                            $this->generateBookmarkLink();
-                        }
-                    } else {
-                        $this->assign('gettingLocation', true);
-                    }
+                    // TODO there should ba a cleaner way to do this
+                    $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}";
+                    $this->addInlineJavascript("\napiURL = '$apiURL';\n");
+
+                    $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS', 'Campus');
+                    $this->assign('browseHint', "Select a $groupAlias");
+                    $this->assign('categories', $categories);
+
+                    $this->addOnLoad('sortGroupsByDistance();');
                     
                 } else {
                     $groupData = $this->getDataForGroup($this->feedGroup);
@@ -678,9 +637,10 @@ JS;
                     */
                     $this->assign('browseHint', "Browse {$browseBy} by:");
                     $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
-                    if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
-                        $this->generateBookmarkLink();
-                    }
+                }
+
+                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    $this->generateBookmarkLink();
                 }
 
                 break;
@@ -812,6 +772,7 @@ JS;
                 }
                 if ($this->featureIndex) {
                     $feature = $dataController->selectFeature($this->featureIndex);
+
                 } elseif (isset($this->args['lat'], $this->args['lon'])) {
                     $lat = $this->args['lat'];
                     $lon = $this->args['lon'];

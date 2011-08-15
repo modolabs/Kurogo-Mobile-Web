@@ -14,7 +14,7 @@
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$bookmarkLink secondary=true}
 {/if}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories}
+{include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories navlistID="categories"}
 {if $gettingLocation}
 <p class="nonfocal" id="mapMessage">Determining Location...</p>
 {/if}
