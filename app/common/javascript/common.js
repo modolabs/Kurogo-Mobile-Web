@@ -18,26 +18,28 @@ function showTab(strID, objTrigger) {
 	
 	// Set the clicked tab to look current
 	var objTabs = document.getElementById("tabs");
-	var arrTabs = objTabs.getElementsByTagName("li");
-	if(objTrigger) {
-		for(var i=0; i<arrTabs.length; i++) {
-			arrTabs[i].className="";
-		}
-		var objTriggerTab = objTrigger.parentNode;
-		if(objTriggerTab) {
-			objTriggerTab.className="active";
-		}
-	} 
-	
-	// fake resize event in case tab body was resized while hidden 
-  if (document.createEvent) {
-    var e = document.createEvent('HTMLEvents');
-    e.initEvent('resize', true, true);
-    window.dispatchEvent(e);
-  
-  } else if( document.createEventObject ) {
-    var e = document.createEventObject();
-    document.documentElement.fireEvent('onresize', e);
+  if (objTabs) {
+    var arrTabs = objTabs.getElementsByTagName("li");
+    if(objTrigger) {
+      for(var i=0; i<arrTabs.length; i++) {
+        arrTabs[i].className="";
+      }
+      var objTriggerTab = objTrigger.parentNode;
+      if(objTriggerTab) {
+        objTriggerTab.className="active";
+      }
+    }
+
+    // fake resize event in case tab body was resized while hidden 
+    if (document.createEvent) {
+      var e = document.createEvent('HTMLEvents');
+      e.initEvent('resize', true, true);
+      window.dispatchEvent(e);
+    
+    } else if( document.createEventObject ) {
+      var e = document.createEventObject();
+      document.documentElement.fireEvent('onresize', e);
+    }
   }
 	
 	onDOMChange();
@@ -295,3 +297,48 @@ function toggleBookmark(name, item, expireseconds, path) {
   }
   setCookieArrayValue(name, newItems, expireseconds, path);
 }
+
+// TODO this needs to handle encoded strings and parameter separators (&amp;)
+function apiRequest(baseURL, params, successCallback, errorCallback) {
+  var urlParts = [];
+  for (var paramName in params) {
+    urlParts.push(paramName + "=" + params[paramName]);
+  }
+  var url = baseURL + "?" + urlParts.join("&");
+  var httpRequest = new XMLHttpRequest();
+
+  httpRequest.open("GET", url, true);
+  httpRequest.onreadystatechange = function() {
+    // TODO better definition of error conditions below
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      var obj;
+      if (window.JSON) {
+          obj = JSON.parse(httpRequest.responseText);
+          // TODO: catch SyntaxError
+      } else {
+          obj = eval('(' + httpRequest.responseText + ')');
+      }
+      if (obj !== undefined) {
+        if ("error" in obj && obj["error"] !== null) {
+          errorCallback(0, obj["error"]);
+        } else if ("response" in obj) {
+          successCallback(obj["response"]);
+        } else {
+          errorCallback(1, "response not found");
+        }
+      } else {
+        errorCallback(2, "failed to parse response");
+      }
+    }
+  }
+  httpRequest.send(null);
+}
+
+
+
+
+
+
+
+
+

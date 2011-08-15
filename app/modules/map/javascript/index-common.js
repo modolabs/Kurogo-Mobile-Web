@@ -2,12 +2,10 @@ var browseGroups = {};
 var apiURL;
 
 function sortGroupsByDistance() {
-    if (!getCookie('map_lat')) {
-        if ('geolocation' in navigator) {
-            navigator.geolocation.getCurrentPosition(locateSucceeded, locateFailed, {maximumAge:3600000, timeout:5000});
-        } else {
-            errorCallback();
-        }
+    if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(locateSucceeded, locateFailed, {maximumAge:3600000, timeout:5000});
+    } else {
+        errorCallback();
     }
 }
 
