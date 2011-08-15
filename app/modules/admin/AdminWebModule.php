@@ -80,6 +80,7 @@ class AdminWebModule extends WebModule {
                     $subNavSections[$module->getConfigModule()] = array(
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
+                        'img'=>sprintf("/modules/home/images/%s%s", $module->getConfigModule(), $this->imageExt),
                         'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
                     );
                     $modules[$module->getConfigModule()] = array(
