@@ -13,7 +13,7 @@
     {if $allowRemainLoggedIn}<p class="checkitem"><input type="checkbox" id="remember" name="remainLoggedIn"{if $remainLoggedIn} checked{/if} /> <label for="remember">Remember me</label></p>{/if}
 
     <div class="formbuttons">
-      {include file="findInclude:common/templates/formButton.tpl" title="Sign in"}
+      {include file="findInclude:common/templates/formButtonSubmit.tpl" buttonTitle="Sign in"}
     </div>   
 </div>
 {if $FORGET_PASSWORD_URL}<p class="nonfocal smallprint"><a href="{$FORGET_PASSWORD_URL}">{$moduleStrings.FORGET_PASSWORD_TEXT|default:'Forgot your password?'|escape}</a></p>{/if}

@@ -21,7 +21,7 @@
         {/if}
 			</ul>
       <div class="formbuttons">
-        {include file="findInclude:common/templates/formButtonLink.tpl" title="Cancel" onclick="hideShare()"}
+        {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="Cancel" buttonOnclick="hideShare()"}
       </div>
 		</div>
 	</div>
