@@ -1,4 +1,8 @@
 {
+    "ACTION_SUCCESSFUL":"Action Successful",
+    "CONFIG_SAVED":"Configuration saved",
+    "ADMIN_SECTION_REMOVE_PROMPT":"Do you want to remove this item? Removal will occur immediately and cannot be undone.",
+    "ADMIN_SECTION_ADD_PROMPT":"Enter id of new section",
     "ERROR_NOT_DESKTOP":"The administration interface must be run from a desktop computer.",
     "KUROGO_ADMIN_TITLE":"Kurogo&trade; Administration Console",
     "ADMIN_SITE_TITLE":"Site Configuration",

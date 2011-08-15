@@ -1,7 +1,7 @@
 var localizedStrings = {}
 
 $(document).ready(function() {
-    getLocalizedString(['BUTTON_ADD','BUTTON_EDIT','BUTTON_DONE','BUTTON_REMOVE']);            
+    getLocalizedString(['BUTTON_ADD','BUTTON_EDIT','BUTTON_DONE','BUTTON_REMOVE','CONFIG_SAVED','ACTION_SUCCESSFUL','ADMIN_SECTION_REMOVE_PROMPT','ADMIN_SECTION_ADD_PROMPT']);            
     $('#message').hide();
 });
 
@@ -83,6 +83,7 @@ function createFormSectionListItems(section, sectionData) {
             items.push(createFormSectionList(section, sectionData));
             break;
         default:
+            //this represents an error in the admin recipe. Should never happen
             alert('Section type ' + sectionData.sectiontype + ' not handled for section ' + section);
             
     }
@@ -181,11 +182,12 @@ function appendFormField(parent, key, fieldData) {
         case 'action':
             parent.append($('<a class="formbutton"">').append($('<div>').html(fieldData.value)).click(function() {
                 makeAPICall('GET','admin',fieldData.action, fieldData.params, function() { 
-                    showMessage(fieldData.message ? fieldData.message : 'Action Successful'); 
+                    showMessage(fieldData.message ? fieldData.message : getLocalizedString('ACTION_SUCCESSFUL'));
                 });
             }));
             break;
         default:
+            //this represents an error in the admin recipe. Should never happen
             alert("Don't know how to handle field of type '" + fieldData.type + "' for key '" + key +"'");
             break;
     }
@@ -272,7 +274,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
                 return false;
             }
             
-            if (confirm("Do you want to remove this item? Removal will occur immediately and cannot be undone.")) {
+            if (confirm(getLocalizedString('ADMIN_SECTION_REMOVE_PROMPT'))) {
 
                 params = {
                     v: '1',
@@ -402,7 +404,7 @@ function createFormSectionList(section, data) {
             if (data.sectionindex =='numeric') {
                 sectionID = data.sections.length;
             } else {
-                var sectionaddprompt = 'sectionaddprompt' in data ? data.sectionaddprompt : 'Enter id of new section';
+                var sectionaddprompt = 'sectionaddprompt' in data ? data.sectionaddprompt : getLocalizedString('ADMIN_SECTION_ADD_PROMPT');
                 if (!(sectionID = prompt(sectionaddprompt))) {
                     return false;
                 }

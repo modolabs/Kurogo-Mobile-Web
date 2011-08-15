@@ -35,7 +35,7 @@ $(document).ready(function() {
         }
         
         makeAPICall('POST','admin','setconfigdata', params, function() { 
-            showMessage('Configuration saved');
+            showMessage(getLocalizedString('CONFIG_SAVED'));
             reloadSection();
         });
         return false;
