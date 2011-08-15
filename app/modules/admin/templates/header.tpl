@@ -35,11 +35,11 @@
 <header>
 	<a href="{$smarty.const.URL_BASE}"><img src="/modules/admin/images/kurogo-logo.png" alt="Kurogo" width="90" height="90" id="logo" border="0" /></a>
 	<h1>	
-		{getLocalizedString key="KUROGO_ADMIN_TITLE"}
+		{"KUROGO_ADMIN_TITLE"|getLocalizedString}
 		<span id="sitename">{$strings.SITE_NAME}</span>
 	</h1>
 	<div id="utility">
-        {if $session_isLoggedIn}<div id="user">{$footerLoginText} <a id="signout" href="{$session_logout_url}">{getLocalizedString key="LOGIN_SIGN_OUT"}</a>
+        {if $session_isLoggedIn}<div id="user">{$footerLoginText} <a id="signout" href="{$session_logout_url}">{"LOGIN_SIGN_OUT"|getLocalizedString}</a>
         {/if}
 	</div>
 </header>

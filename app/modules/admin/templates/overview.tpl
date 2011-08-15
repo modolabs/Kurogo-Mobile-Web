@@ -1,30 +1,30 @@
 {include file="findInclude:modules/admin/templates/header.tpl"}
 <form method="post" id="adminForm" class="{$section}">
-<input id="adminSubmit" type="submit" value="{getLocalizedString key="BUTTON_SAVE"}" /> 
-<h1>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_TITLE"}</h1>
-<p id="moduleDescription" class="preamble">{getLocalizedString key="ADMIN_MODULES_OVERVIEW_DESCRIPTION"}</p>
+<input id="adminSubmit" type="submit" value="{"BUTTON_SAVE"|getLocalizedString}" /> 
+<h1>{"ADMIN_MODULES_OVERVIEW_TITLE"|getLocalizedString}</h1>
+<p id="moduleDescription" class="preamble">{"ADMIN_MODULES_OVERVIEW_DESCRIPTION"|getLocalizedString}</p>
 
 <dl class="legend">
-    <dt>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_ID_TITLE"}</dt>
-    <dd>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_ID_DESCRIPTION"}</dd>
-    <dt>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_ENABLED_TITLE"}</dt>
-    <dd>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_ENABLED_DESCRIPTION"}</dd>
-    <dt>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_HOME_TITLE"}</dt>
-    <dd>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_HOME_DESCRIPTION"}</dd>
-    <dt>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_SSL_TITLE"}</dt>
-    <dd>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_SSL_DESCRIPTION"}</dd>
-    <dt>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_FEDSEARCH_TITLE"}</dt>
-    <dd>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_FEDSEARCH_DESCRIPTION"}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_ID_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_ID_DESCRIPTION"|getLocalizedString}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_ENABLED_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_ENABLED_DESCRIPTION"|getLocalizedString}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_HOME_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_HOME_DESCRIPTION"|getLocalizedString}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_SSL_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_SSL_DESCRIPTION"|getLocalizedString}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_DESCRIPTION"|getLocalizedString}</dd>
 </dl>
 <table class="configtable" summary="Overview table of modules and their high-level configuration">
 <thead>
     <tr>
-        <th colspan="2">{getLocalizedString key="ADMIN_MODULES_OVERVIEW_MODULENAME_TITLE"}</th>
-        <th>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_ID_TITLE"}</th>
-        <th>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_ENABLED_TITLE"}</th>
-        <th>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_HOME_TITLE"}</th>
-        <th>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_SSL_TITLE"}</th>
-        <th>{getLocalizedString key="ADMIN_MODULES_OVERVIEW_FEDSEARCH_TITLE"}</th>
+        <th colspan="2">{"ADMIN_MODULES_OVERVIEW_MODULENAME_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_ID_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_ENABLED_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_HOME_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_SSL_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_TITLE"|getLocalizedString}</th>
     </tr>
 </thead>
 <tbody>

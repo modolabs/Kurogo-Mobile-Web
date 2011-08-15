@@ -2,7 +2,7 @@
 <form method="post" id="adminForm">
 <input type="hidden" name="section" id="section" value="{$section}" />
 <input type="hidden" name="subsection" id="subsection" value="{$subsection} /">
-<input name="submit" id="adminSubmit" type="submit" value="{getLocalizedString key="BUTTON_SAVE"}" />
+<input name="submit" id="adminSubmit" type="submit" value="{"BUTTON_SAVE"|getLocalizedString}" />
 <h1 id="sectionTitle">&nbsp;</h1>
 <ul id="adminSections"></ul>
 <p id="sectionDescription" class="preamble">&nbsp;</p>

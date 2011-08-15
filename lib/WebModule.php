@@ -269,13 +269,8 @@ abstract class WebModule extends Module {
   private function loadTemplateEngineIfNeeded() {
     if (!isset($this->templateEngine)) {
       $this->templateEngine = new TemplateEngine($this->id);
-      $this->templateEngine->registerPlugin('function','getLocalizedString', array($this,'getTemplateLocalizedString'));
+      $this->templateEngine->registerPlugin('modifier','getLocalizedString', array($this,'getLocalizedString'));
     }
-  }
-  
-  public function getTemplateLocalizedString($params, &$smarty) {
-    $key = isset($params['key']) ? $params['key'] : null;
-    return $this->getLocalizedString($key);
   }
   
   //

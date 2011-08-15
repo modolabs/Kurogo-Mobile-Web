@@ -1,5 +1,5 @@
 {include file="findInclude:modules/admin/templates/header.tpl"}
-<h1>{getLocalizedString key="ADMIN_CREDITS_CREDITS_TITLE"}</h1>
+<h1>{"ADMIN_CREDITS_CREDITS_TITLE"|getLocalizedString}</h1>
 
 <p>This site is built using version {$smarty.const.KUROGO_VERSION} of the <a href="http://modolabs.com/kurogo">Kurogo Framework</a>.</p>
 
