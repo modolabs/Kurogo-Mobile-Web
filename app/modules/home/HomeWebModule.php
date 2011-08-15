@@ -86,7 +86,6 @@ class HomeWebModule extends WebModule {
             }
         }
         //error_log(print_r($federatedResults, true));
-        $this->assign('noResultsText', $this->getLocalizedString('NO_RESULTS'));
         $this->assign('federatedResults', $federatedResults);
         $this->assign('searchTerms',      $searchTerms);
         break;

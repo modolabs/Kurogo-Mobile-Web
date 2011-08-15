@@ -7,7 +7,7 @@
   {$results = $federatedResult['results']}
   {if !count($results)}
     {$noResults = array()}
-    {$noResults['title'] = $noResultsText}
+    {$noResults['title'] = "NO_RESULTS"|getLocalizedString}
     {$results[] = $noResults}
     
   {elseif $federatedResult['total'] > count($results)}
