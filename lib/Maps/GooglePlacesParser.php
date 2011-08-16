@@ -28,6 +28,7 @@ class GooglePlacesParser extends DataParser implements MapDataParser
                 $placemark->setTitle($result['name']);
             } elseif (isset($result['formatted_address'])) {
                 $placemark->setTitle($result['formatted_address']);
+            } else {
                 $placemark->setTitle($this->dataController->getSearchText());
             }
             if (isset($decodedData['icon'])) {
