@@ -24,9 +24,7 @@ class CalendarWebModule extends WebModule {
     array("phrase" => "in the next 15 days",  "offset" => 15),
     array("phrase" => "in the next 30 days",  "offset" => 30),
     array("phrase" => "in the past 15 days",  "offset" => -15),
-    array("phrase" => "in the past 30 days",  "offset" => -30),
-    //array("phrase" => "this school term",     "offset" => "term"),
-    //array("phrase" => "this school year",     "offset" => "year")
+    array("phrase" => "in the past 30 days",  "offset" => -30)
   );
 
     private function getDatesForTimeframe($timeframe) {
@@ -63,12 +61,12 @@ class CalendarWebModule extends WebModule {
   private function timeText($event, $timeOnly=false) {
     if ($timeOnly) {
       if ($event->get_end() - $event->get_start() == -1) {
-        return $event->get_start()->format('g:i a');
+        return DateFormatter::formatDate($event->get_start(), DateFormatter::NO_STYLE, DateFormatter::SHORT_STYLE);
       } else {
-        return date('g:ia', $event->get_start()).' - '.date('g:ia', $event->get_end());
+        return DateFormatter::formatDateRange($event->get_range(), DateFormatter::NO_STYLE, DateFormatter::SHORT_STYLE);
       }
     } else {
-      return strval($event->get_range());
+        return DateFormatter::formatDateRange($event->get_range(), DateFormatter::SHORT_STYLE, DateFormatter::SHORT_STYLE);
     }
   }
 
@@ -90,26 +88,11 @@ class CalendarWebModule extends WebModule {
   
     switch ($type) {
       case 'datetime':
-        if ($value instanceOf DayRange) {
-          $valueForType = strval($value);
-        } else {
-          $valueForType = date("D M j", $value->get_start());
-          if ($value->get_end() && $value->get_end()!=$value->get_start()) {
-            if (date('Ymd', $value->get_start()) != date('Ymd', $value->get_end())) {
-              $valueForType .= date(' g:i', $value->get_start());
-              if (date('a', $value->get_start()) != date('a', $value->get_end())) {
-                $valueForType .= date(' a', $value->get_start());
-              }
-        
-              $valueForType .= date(" - D M j g:i a", $value->get_end());
-            } else {
-              $valueForType .= "<br/>" . date('g:i', $value->get_start()) . date("-g:i a", $value->get_end());
-            }
-          } else {
-            $valueForType .= "<br/>" . date('g:i a', $value->get_start());
-          }
+        $valueForType = DateFormatter::formatDateRange($value, DateFormatter::LONG_STYLE, DateFormatter::NO_STYLE);
+        if ($value instanceOf TimeRange) {
+            $timeString = DateFormatter::formatDateRange($value, DateFormatter::NO_STYLE, DateFormatter::MEDIUM_STYLE);
+            $valueForType .= "<br />\n" . $timeString;
         }
-        
         break;
 
       case 'url':
@@ -120,11 +103,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'phone':
-        // add the local area code if missing
-        if (preg_match('/^\d{3}-\d{4}/', $value)) {
-          $valueForType = Kurogo::getSiteVar('LOCAL_AREA_CODE').$value;
-        }
-        $valueForType = str_replace('-', '-&shy;', str_replace('.', '-', $value));
+        $valueForType = PhoneFormatter::formatPhone($value);
         break;
       
       case 'email':
@@ -151,13 +130,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'phone':
-        // add the local area code if missing
-        if (preg_match('/^\d{3}-\d{4}/', $value)) {
-          $urlForType = Kurogo::getSiteVar('LOCAL_AREA_CODE').$value;
-        }
-    
-        // remove all non-word characters from the number
-        $urlForType = 'tel:1'.preg_replace('/\W/', '', $value);
+        $urlForType = PhoneFormatter::getPhoneURL($value);
         break;
         
       case 'email':
@@ -312,7 +285,7 @@ class CalendarWebModule extends WebModule {
         }
         break;
       default:
-        throw new Exception("Invalid feed type $type");
+        throw new Exception($this->getLocalizedString('ERROR_INVALID_FEED', $type));
     }
     
     if ($feeds) {
@@ -334,7 +307,7 @@ class CalendarWebModule extends WebModule {
     if (isset($feeds[$index])) {
       return $feeds[$index]['TITLE'];
     } else {
-      throw new Exception("Error getting calendar title for index $index");
+      throw new Exception($this->getLocalizedString("ERROR_NO_CALENDAR_TITLE", $index));
     }
   }
   
@@ -348,7 +321,7 @@ class CalendarWebModule extends WebModule {
       $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
       return $controller;
     } else {
-      throw new Exception("Error getting calendar feed for index $index");
+      throw new Exception($this->getLocalizedString("ERROR_NO_CALENDAR_FEED", $index));
     }
   }
  
@@ -393,13 +366,13 @@ class CalendarWebModule extends WebModule {
           foreach ($resourceFeeds as $calendar=>$resource) {
 
             $feed = $this->getFeed($calendar, 'resource');
-            $availability = 'Available';
+            $availability = $this->getLocalizedString('RESOURCE_AVAILABLE');
             if ($event = $feed->getNextEvent()) {
                 $now = time();
                 if ($event->overlaps(new TimeRange($now, $now))) {
-                    $availability = 'In use';
+                    $availability = $this->getLocalizedString('RESOURCE_IN_USE');
                 } elseif ($event->overlaps(new TimeRange($now + 900, $now + 1800))) {
-                    $availability = 'In use at ' . $this->timeText($event, true);
+                    $availability = $this->getLocalizedString('RESOURCE_IN_USE_TIME', $this->timeText($event, true));
                 }
             }
                 
@@ -450,17 +423,17 @@ class CalendarWebModule extends WebModule {
                 ));
             } else {
                 $upcomingEvents[] = array(
-                    'title'=>'No remaining events for today'
+                    'title'=>$this->getLocalizedString('NO_EVENTS_REMAINING')
                 );
             }
             
             $upcomingEvents[] = array(
-                'title'=>'My calendar',
+                'title'=>$this->getLocalizedString('MY_CALENDAR'),
                 'url'=>$this->dayURL(time(), 'user', $userCalendar)
             );
             if (count($feeds)>1) {
                 $upcomingEvents[] = array(
-                    'title'=>'Other calendars',
+                    'title'=>$this->getLocalizedString('OTHER_CALENDARS'),
                     'url'=>$this->buildBreadcrumbURL('user', array())
                 );
             }
@@ -470,7 +443,7 @@ class CalendarWebModule extends WebModule {
         if ($resourceFeeds = $this->getFeeds('resource')) {
             $resources = array(
                 array(
-                    'title'=>'Resources',
+                    'title'=>$this->getLocalizedString('RESOURCES'),
                     'url'  =>$this->buildBreadcrumbURL('resources', array())
                 )
             );
@@ -479,6 +452,8 @@ class CalendarWebModule extends WebModule {
 
         $this->loadPageConfigFile('index','calendarPages');
         $this->assign('today',         mktime(0,0,0));
+        $this->assign('dateFormat', $this->getLocalizedString("LONG_DATE_FORMAT"));
+        $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
         $this->assign('searchOptions', $this->searchOptions);
         $this->assign('feeds',  $this->getFeedsByType());
         break;
@@ -506,8 +481,8 @@ class CalendarWebModule extends WebModule {
         $catid   = $this->getArg('catid', '');
         $name    = $this->getArg('name', '');
         $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
-        $next    = $current + DAY_SECONDS;
-        $prev    = $current - DAY_SECONDS;
+        $next    = strtotime("+1 day", $current);
+        $prev    = strtotime("-1 day", $current);
 
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
@@ -617,6 +592,8 @@ class CalendarWebModule extends WebModule {
         $this->assign('prev',    $prev);
         $this->assign('nextURL', $this->dayURL($next, $type, $calendar, false));
         $this->assign('prevURL', $this->dayURL($prev, $type, $calendar, false));
+        $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
+        $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
         $this->assign('events',  $events);        
         break;
         
@@ -640,7 +617,7 @@ class CalendarWebModule extends WebModule {
         if ($event = $feed->getItem($this->getArg('id'), $time)) {
           $this->assign('event', $event);
         } else {
-          throw new Exception("Event not found");
+          throw new Exception($this->getLocalizedString('ERROR_NOT_FOUND'));
         }
             
         // build the list of attributes
@@ -783,9 +760,10 @@ class CalendarWebModule extends WebModule {
 
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
+            Debug::die_here(iCalEvent);
           $events[] = array(
             'title'    => $iCalEvent->get_summary(),
-            'subtitle' => date('l F j', $iCalEvent->get_start()),
+            'subtitle' => date('l F j', $iCalEvent->get_start()), 
           );
         }
 

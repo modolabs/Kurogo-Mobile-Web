@@ -30,6 +30,6 @@
 
 {include file="findInclude:common/templates/search.tpl" additionalInputs=$selectSection resultCount=$resultCount}
 
-{include file="findInclude:common/templates/results.tpl" results=$events noResultsText="No Events Found"}
+{include file="findInclude:common/templates/results.tpl" results=$events}
 
 {include file="findInclude:common/templates/footer.tpl"}
