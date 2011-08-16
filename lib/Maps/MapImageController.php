@@ -94,6 +94,7 @@ abstract class MapImageController
     {
     }
 
+    // TODO: pass the Placemark object directly instead of breaking it up
     public function addPlacemark(Placemark $placemark)
     {
         $geometry = $placemark->getGeometry();

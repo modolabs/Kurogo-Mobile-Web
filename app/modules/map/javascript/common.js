@@ -249,15 +249,9 @@ function updateMapImage() {
         }
     }
 
-    apiRequest(apiURL, params, receivedNewMapSrc, failedToReceiveNewMapSrc);
-}
-
-function receivedNewMapSrc(response) {
-    loadMapImage(response);
-}
-
-function failedToReceiveNewMapSrc(code, message) {
-
+    apiRequest(apiURL, params, function() {
+        loadMapImage(response);
+    }, function() {});
 }
 
 
@@ -389,6 +383,16 @@ function doUpdateContainerDimensions() {
     }
 }
 
+function updateUserLocation() {
+    if ("geolocation" in navigator && typeof(showUserLocation) != 'undefined') {
+        setInterval(function() {
+            navigator.geolocation.getCurrentPosition(
+                locationUpdated,
+                locationUpdateFailed,
+                {enableHighAccuracy: true});
+        }, 5000);
+    }
+}
 
 
 

@@ -414,6 +414,11 @@ JS;
             $this->addInlineJavascript($imgController->getHeaderScript());
             $this->addInlineJavascriptFooter($imgController->getFooterScript());
         }
+
+        $showUserLocation = $this->getOptionalModuleVar('MAP_SHOWS_USER_LOCATION', false);
+        if ($showUserLocation) {
+            $this->addInlineJavascript("\nshowUserLocation = true;\n");
+        }
     }
     
     private function initializeMap(MapDataController $dataController, $fullscreen=FALSE) {
@@ -770,7 +775,7 @@ JS;
                 if ($drilldownPath) {
                     $dataController->addDisplayFilter('category', $drilldownPath);
                 }
-                if ($this->featureIndex) {
+                if ($this->featureIndex !== null) {
                     $feature = $dataController->selectFeature($this->featureIndex);
 
                 } elseif (isset($this->args['lat'], $this->args['lon'])) {
