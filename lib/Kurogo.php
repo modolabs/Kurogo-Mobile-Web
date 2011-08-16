@@ -212,7 +212,7 @@ class Kurogo
         }
 
         // this is platform dependent.        
-        if (!$return = setLocale(LC_ALL, $locale)) {
+        if (!$return = setLocale(LC_TIME, $locale)) {
             throw new Exception("Unknown locale setting $locale");
         }
         $this->locale = $return;
