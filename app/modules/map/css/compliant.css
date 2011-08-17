@@ -159,16 +159,23 @@
 
 #zoomout {
 	top: 0;
-	left: 25%;
+	left: 28%;
 	margin: 0 0 0 -16px;
 	background-position: -40px 0;
 }
 
 #recenter {
 	top: 0;
-	left: 58%;
+	left: 50%;
 	margin: 0 0 0 -19px;
 	background-position: -120px 0;
+}
+
+#locateMe {
+	top: 0;
+	left: 72%;
+	margin: 0 0 0 -19px;
+	background-position: -160px 0;
 }
 
 #fullscreen {

@@ -115,6 +115,8 @@ function zoomInFromCenter() {
 }
 
 function zoomOutFromCenter() {
+alert("zoomin");
+
     staticMapOptions['zoom'] = parseInt(staticMapOptions['zoom']) - 1;
     updateMapImage();
 }
@@ -143,6 +145,77 @@ function zoomOutFromBBox() {
     updateMapImage();
 }
 
+var mapControls = {
+    recenterMap: function() {},
+    locationUpdated: function(location) {},
+    locationUpdateStopped: function() {},
+    locateMeButton: null,
+    timerId: null,
+    toggleLocationUpdates: function() {
+        if (this.timerId === null) {
+            this.startLocationUpdates();
+        } else {
+            this.stopLocationUpdates();
+            this.recenterMap();
+        }
+    },
+    startLocationUpdates: function() {
+        this.locateMeButton.style.backgroundPosition = "-200px 0";
+        if (this.timerId === null) {
+            var that = this;
+            this.timerId = setInterval(function() {
+                navigator.geolocation.getCurrentPosition(
+                    that.locationUpdated,
+                    that.locationUpdateStopped,
+                    {enableHighAccuracy: true});
+               }, 5000);
+        }
+    },
+    // draggable maps should also call this if user drags the map while updates are on
+    stopLocationUpdates: function() {
+        this.locateMeButton.style.backgroundPosition = "-160px 0";
+        if (this.timerId !== null) {
+            clearInterval(this.timerId);
+            this.timerId = null;
+            this.locationUpdateStopped();
+        }
+    },
+
+    // params: { zoomin:Function,zoomout:Function,recenter:Function,
+    //   ?locationUpdated:Function,?locationUpdateStopped:Function }
+    setup: function(args) {
+        this.recenter = args.recenter;
+        if ("locationUpdated" in args) {
+            this.locationUpdated = args.locationUpdated;
+        }
+        if ("locationUpdateStopped" in args) {
+            this.locationUpdateStopped = args.locationUpdateStopped;
+        }
+
+        var zoominButton = document.getElementById("zoomin");
+        zoominButton.onclick = args.zoomin;
+
+        var zoomoutButton = document.getElementById("zoomout");
+        zoomoutButton.onclick = args.zoomout;
+
+        var recenterButton = document.getElementById("recenter");
+        recenterButton.onclick = this.recenter;
+
+        this.locateMeButton = document.getElementById("locateMe");
+        if ("geolocation" in navigator && typeof(showUserLocation) != 'undefined') {
+            var that = this;
+            this.locateMeButton.onclick = function() {
+                that.toggleLocationUpdates();
+            };
+        } else {
+            this.locateMeButton.parentNode.removeChild(this.locateMeButton);
+            // realign other buttons
+            zoomoutButton.style.left = "35%";
+            recenterButton.style.left = "64%";
+        }
+    }
+}
+
 function addStaticMapControls() {
     if (!staticMapOptions) {
         return;
@@ -152,34 +225,61 @@ function addStaticMapControls() {
     mapWidth = objMap.clientWidth;
     mapHeight = objMap.clientHeight;
 
+    /*
     var zoomIn = document.getElementById("zoomin");
     var zoomOut = document.getElementById("zoomout");
     var recenter = document.getElementById("recenter");
-
+    //var locateMe = document.getElementById("locateMe");
+    */
     centerZoomBased = ("center" in staticMapOptions);
 
     if (centerZoomBased) {
-        zoomIn.onclick = zoomInFromCenter;
-        zoomOut.onclick = zoomOutFromCenter;
+
+
+        //zoomIn.onclick = zoomInFromCenter;
+        //zoomOut.onclick = zoomOutFromCenter;
         
         var initCenterLat = staticMapOptions['center']['lat'];
         var initCenterLon = staticMapOptions['center']['lon'];
         var initZoom = staticMapOptions['zoom'];
+        /*
         recenter.onclick = function() {
             staticMapOptions['center'] = {'lat': initCenterLat, 'lon': initCenterLon};
             staticMapOptions['zoom'] = initZoom;
             updateMapImage();
         }
+        */
+
+        mapControls.setup({
+            zoomin: zoomInFromCenter,
+            zoomout: zoomOutFromCenter,
+            recenter: function() {
+                staticMapOptions['center'] = {'lat': initCenterLat, 'lon': initCenterLon};
+                staticMapOptions['zoom'] = initZoom;
+                updateMapImage();
+            }
+        });
 
     } else {
-        zoomIn.onclick = zoomInFromBBox;
-        zoomOut.onclick = zoomOutFromBBox;
+        //zoomIn.onclick = zoomInFromBBox;
+        //zoomOut.onclick = zoomOutFromBBox;
         
         var initBBox = staticMapOptions['bbox'];
+        /*
         recenter.onclick = function() {
             staticMapOptions['bbox'] = initBBox;
             updateMapImage();
         }
+        */
+
+        mapControls.setup({
+            zoomin: zoomInFromBBox,
+            zoomout: zoomOutFromBBox,
+            recenter: function() {
+                staticMapOptions['bbox'] = initBBox;
+                updateMapImage();
+            }
+        });
     }
 }
 
@@ -249,9 +349,12 @@ function updateMapImage() {
         }
     }
 
-    apiRequest(apiURL, params, function() {
+    apiRequest(apiURL, params, function(response) {
+alert(response);
         loadMapImage(response);
-    }, function() {});
+    }, function(code, message) {
+alert(message);
+    });
 }
 
 
@@ -382,19 +485,6 @@ function doUpdateContainerDimensions() {
         }
     }
 }
-
-function updateUserLocation() {
-    if ("geolocation" in navigator && typeof(showUserLocation) != 'undefined') {
-        setInterval(function() {
-            navigator.geolocation.getCurrentPosition(
-                locationUpdated,
-                locationUpdateFailed,
-                {enableHighAccuracy: true});
-        }, 5000);
-    }
-}
-
-
 
 /*
 function disable(strID) {
