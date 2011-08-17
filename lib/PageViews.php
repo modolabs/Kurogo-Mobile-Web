@@ -145,9 +145,24 @@ class PageViews {
       foreach ($stats as $day => $platforms) {
         foreach ($platforms as $platform => $modules) {
           foreach ($modules as $module => $count) {
-            $sql = "INSERT INTO $table ( day, platform, module, viewcount )
+            // check for pre existing data 
+            $sqlForExistingRows = "SELECT viewcount FROM $table WHERE day=? AND platform=? AND module=?";
+            $result = $conn->query($sqlForExistingRows, array($day, $platform, $module));
+
+            $rowExists = FALSE;
+            while ($row = $result->fetch()) {
+                $count += $row['viewcount'];
+                $rowExists = TRUE;
+            }
+
+            if($rowExists) {
+                $sql = "UPDATE $table SET viewcount=? WHERE day=? AND platform=? AND module=?";
+                $conn->query($sql, array($count, $day, $platform, $module));
+            } else {
+                $sql = "INSERT INTO $table ( day, platform, module, viewcount )
                          VALUES (?,?,?,?)";
-            $conn->query($sql, array($day, $platform, $module,$count));
+                $conn->query($sql, array($day, $platform, $module, $count));
+            }
           }
         }
       }
@@ -242,7 +257,9 @@ class PageViews {
                 day date, 
                 platform char(31) NOT NULL, 
                 module char(31) NOT NULL, 
-                viewcount int NOT NULL)",
+                viewcount int NOT NULL,
+                UNIQUE (day,platform,module)
+            )",
             "CREATE TABLE mobi_api_requests (
                 day date default NULL, 
                 platform char(31) default NULL, 
