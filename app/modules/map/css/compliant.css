@@ -28,6 +28,14 @@
 	overflow: hidden;
 	margin-bottom: 40px;
 }
+
+/* styles formerly in #mapwrapper. "image" class is removed for non-static maps */
+body.landscape #mapimage.image, body.portrait #mapimage.image {
+	min-height: none;
+	width: auto;
+	border: none;
+}
+
 #photoTab {
 	text-align: center;
 }
@@ -35,12 +43,13 @@
 	padding-bottom: 0;
 	height: 100%;
 }
+/*
 #mapwrapper {
 	min-height: none;
 	width: auto;
 	overflow: hidden;
 }
-
+*/
 .fullmap {
     position: absolute;
     top: 0;

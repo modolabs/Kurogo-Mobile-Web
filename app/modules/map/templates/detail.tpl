@@ -8,13 +8,14 @@
   {capture name="mapPane" assign="mapPane"}
     {block name="mapImage"}
       <a name="map"> </a>
-      <div id="mapwrapper" class="image">
+      <!--<div id="mapwrapper" class="image">-->
+      <div id="mapimage" class="image">
         {if $isStatic}
           {include file="findInclude:modules/map/templates/mapscrollers.tpl"}
           <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
         {/if}
       </div>
-      <div id="mapimage" style="display:none"></div>
+      <!--<div id="mapimage" style="display:none"></div>-->
     {/block}
     {include file="findInclude:modules/map/templates/mapcontrols.tpl"}
   {/capture}

@@ -6,20 +6,17 @@ var mapHeight;
 var apiURL;
 
 function hideMapTabChildren() {
-    var mapTab = document.getElementById("mapTab");
-    for (var i = 0; i < mapTab.childNodes.length; i++) {
-        var node = mapTab.childNodes[i];
-        if (node.className == "image") {
-            mapTab.removeChild(node);
-            break;
-        }
+    var mapImage = document.getElementById("mapimage");
+    if (mapImage) {
+        mapImage.className = "";
     }
-    for (var i = 0; i < mapTab.childNodes.length; i++) {
-        var node = mapTab.childNodes[i];
-        if (node.className == "scrollers") {
-            mapTab.removeChild(node);
-            break;
-        }
+    var staticMapImage = document.getElementById("staticmapimage");
+    if (staticMapImage) {
+        staticMapImage.parentNode.removeChild(staticMapImage);
+    }
+    var mapScrollers = document.getElementById("mapscrollers");
+    if (mapScrollers) {
+        mapScrollers.parentNode.removeChild(mapScrollers);
     }
 }
 
@@ -115,8 +112,6 @@ function zoomInFromCenter() {
 }
 
 function zoomOutFromCenter() {
-alert("zoomin");
-
     staticMapOptions['zoom'] = parseInt(staticMapOptions['zoom']) - 1;
     updateMapImage();
 }
@@ -225,30 +220,12 @@ function addStaticMapControls() {
     mapWidth = objMap.clientWidth;
     mapHeight = objMap.clientHeight;
 
-    /*
-    var zoomIn = document.getElementById("zoomin");
-    var zoomOut = document.getElementById("zoomout");
-    var recenter = document.getElementById("recenter");
-    //var locateMe = document.getElementById("locateMe");
-    */
     centerZoomBased = ("center" in staticMapOptions);
 
     if (centerZoomBased) {
-
-
-        //zoomIn.onclick = zoomInFromCenter;
-        //zoomOut.onclick = zoomOutFromCenter;
-        
         var initCenterLat = staticMapOptions['center']['lat'];
         var initCenterLon = staticMapOptions['center']['lon'];
         var initZoom = staticMapOptions['zoom'];
-        /*
-        recenter.onclick = function() {
-            staticMapOptions['center'] = {'lat': initCenterLat, 'lon': initCenterLon};
-            staticMapOptions['zoom'] = initZoom;
-            updateMapImage();
-        }
-        */
 
         mapControls.setup({
             zoomin: zoomInFromCenter,
@@ -261,16 +238,7 @@ function addStaticMapControls() {
         });
 
     } else {
-        //zoomIn.onclick = zoomInFromBBox;
-        //zoomOut.onclick = zoomOutFromBBox;
-        
         var initBBox = staticMapOptions['bbox'];
-        /*
-        recenter.onclick = function() {
-            staticMapOptions['bbox'] = initBBox;
-            updateMapImage();
-        }
-        */
 
         mapControls.setup({
             zoomin: zoomInFromBBox,
@@ -350,11 +318,8 @@ function updateMapImage() {
     }
 
     apiRequest(apiURL, params, function(response) {
-alert(response);
         loadMapImage(response);
-    }, function(code, message) {
-alert(message);
-    });
+    }, function(code, message) {});
 }
 
 
