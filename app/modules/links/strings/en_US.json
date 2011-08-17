@@ -1,4 +1,5 @@
 {
+    "ERROR_LINK_GROUP":"Unable to find link group information for %s",
     "LINKS_ADMIN_OPTIONS_TITLE":"Options",
     "LINKS_ADMIN_OPTIONS_DESCRIPTION":"",
     "LINKS_ADMIN_OPTIONS_DISPLAYTYPE_TITLE":"Link Display",
