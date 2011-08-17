@@ -2,7 +2,7 @@
 
 {block name="customize"}
   <div class="nonfocal smallprint"> 
-    Use the arrow buttons to customize the order of icons on your homepage, and the checkboxes to toggle visibility. Your changes will be automatically saved.
+{"CUSTOMIZE_INSTRUCTIONS_COMPLIANT"|getLocalizedString}
   </div> 
   
   <ul class="nav iconic" id="homepageList">
@@ -22,6 +22,6 @@
     {/foreach}
   </ul>
   <div class="formbuttons">
-    {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="Return to Home" buttonURL="../home/"}
+    {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="RETURN_HOME"|getLocalizedString buttonURL="../home/"}
   </div>
 {/block}
