@@ -308,38 +308,37 @@ class MapAPIModule extends APIModule
                 break;
 
             case 'staticImageURL':
+
                 $baseURL = $this->getArg('baseURL');
                 $mapClass = $this->getArg('mapClass');
+
                 $mapController = MapImageController::factory($mapClass, $baseURL);
-                
-                $projection = $this->getArg('projection');
-                if ($projection) {
-                    $mapController->setMapProjection($projection);
-                }
-                
-                $width = $this->getArg('width');
-                if ($width) {
-                    $mapController->setImageWidth($width);
+                if (!$mapController->isStatic()) {
+                    $error = new KurogoError(0, "staticImageURL must be used with a StaticMapImageController subclass");
+                    $this->throwError($error);
                 }
 
-                $height = $this->getArg('height');
-                if ($height) {
-                    $mapController->setImageHeight($height);
+                $currentQuery = $this->getArg('query');
+                $mapController->parseQuery($currentQuery);
+
+                $overrides = $this->getArg('overrides');
+                $mapController->parseQuery($overrides);
+
+                $zoomDir = $this->getArg('zoom');
+                if ($zoomDir == 1 || $zoomDir == 'in') {
+                    $level = $mapController->getLevelForZooming('in');
+                    $mapController->setZoomLevel($level);
+                } elseif ($zoomDir == -1 || $zoomDir == 'out') {
+                    $level = $mapController->getLevelForZooming('out');
+                    $mapController->setZoomLevel($level);
                 }
 
-                $bbox = $this->getArg('bbox', null);
-                $lat = $this->getArg('lat');
-                $lon = $this->getArg('lon');
-                $zoom = $this->getArg('zoom');
-
-                if ($bbox) {
-                    $mapController->setBoundingBox($bbox);
-
-                } else if ($lat && $lon && $zoom !== null) {
-                    $mapController->setZoomLevel($zoom);
-                    $mapController->setCenter(array('lat' => $lat, 'lon' => $lon));
+                $scrollDir = $this->getArg('scroll');
+                if ($scrollDir) {
+                    $center = $mapController->getCenterForPanning($scrollDir);
+                    $mapController->setCenter($center);
                 }
-                
+
                 $url = $mapController->getImageURL();
                 
                 $this->setResponse($url);

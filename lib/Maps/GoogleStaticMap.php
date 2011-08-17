@@ -306,6 +306,49 @@ class GoogleStaticMap extends StaticMapImageController {
         return count($this->paths) ? $this->paths : null;
     }
 
+    public function parseQuery($query) {
+        // php will only parse the last argument if it isn't specified as an array
+        $query = str_replace('markers=', 'markers[]=', $query);
+        parse_str($query, $args);
+        if (isset($args['center'])) {
+            $this->center = filterLatLon($args['center']);
+        }
+        if (isset($args['zoom'])) {
+            $this->zoomLevel = $args['zoom'];
+        }
+        if (isset($args['sensor'])) {
+            $this->sensor = $args['sensor'] == 'true';
+        }
+        if (isset($args['format'])) {
+            $this->imageFormat = $args['format'];
+        }
+        if (isset($args['mapType'])) {
+            $this->mapType = $args['mapType'];
+        }
+        if (isset($args['size'])) {
+            $sizeParts = explode('x', $args['size']);
+            $this->imageWidth = $sizeParts[0];
+            $this->imageHeight = $sizeParts[1];
+        }
+        if (isset($args['path'])) {
+            $this->paths = $args['path'];
+        }
+        if (isset($args['markers'])) {
+            foreach ($args['markers'] as $markerGroup) {
+                $parts = explode('|', $markerGroup);
+                for ($i = 0; $i < count($parts); $i++) {
+                    if (filterLatLon($parts[$i])) {
+                        $this->markers[implode('|', array_slice($parts, 0, $i))] = array_slice($parts, $i);
+                        break;
+                    }
+                }
+            }
+        }
+        if (isset($args['style'])) {
+            // TODO
+        }
+    }
+
     public function getImageURL() {
         $params = array(
             'center' => $this->center['lat'].','.$this->center['lon'],

@@ -34,12 +34,17 @@ abstract class MapImageController
 
     // query functions
     public function isStatic() {
-        return false;
+        return $this instanceof StaticMapImageController;
     }
 
     public function getCenter()
     {
         return $this->center;
+    }
+
+    public function getZoomLevel()
+    {
+        return $this->zoomLevel;
     }
 
     public function getAvailableLayers()

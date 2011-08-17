@@ -113,6 +113,32 @@ class WMSStaticMap extends StaticMapImageController {
             );
     }
 
+    public function parseQuery($query) {
+        parse_str($query, $args);
+
+        if (isset($args['bbox'])) {
+            $bboxParts = explode(',', $args['bbox']);
+            $this->bbox = array(
+                'xmin' => $bboxParts[0],
+                'ymin' => $bboxParts[1],
+                'xmax' => $bboxParts[2],
+                'ymax' => $bboxParts[3],
+                );
+        }
+
+        if (isset($args['width'])) {       
+            $this->imageWidth = $args['width'];
+        }
+        if (isset($args['height')) {
+            $this->imageHeight = $args['height'];
+        }
+        if ($args['crs']) {
+            $this->mapProjection = $args['crs'];
+        }
+
+        // TODO parse layers and styles
+    }
+
     private function getURLParameters() {
         $bboxStr = $this->bbox['xmin'].','.$this->bbox['ymin'].','
                   .$this->bbox['xmax'].','.$this->bbox['ymax'];

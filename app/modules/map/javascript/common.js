@@ -36,6 +36,9 @@ function loadImage(imageURL,imageID) {
 }
 
 function loadMapImage(newSrc) {
+    var query = newSrc.substring(newSrc.indexOf("?") + 1, newSrc.length);
+    staticMapOptions["query"] = escape(query);
+
     var mapImage = document.getElementById("staticmapimage");
     var oldSrc = mapImage.src;
     mapImage.src = newSrc;
@@ -104,40 +107,6 @@ function pixelsFromString(aString) {
         return aString.substring(0, aString.length - 1);
     }
     return aString;
-}
-
-function zoomInFromCenter() {
-    staticMapOptions['zoom'] = parseInt(staticMapOptions['zoom']) + 1;
-    updateMapImage();
-}
-
-function zoomOutFromCenter() {
-    staticMapOptions['zoom'] = parseInt(staticMapOptions['zoom']) - 1;
-    updateMapImage();
-}
-
-function zoomInFromBBox() {
-    var bbox = staticMapOptions['bbox'];
-    var dLat = (bbox['ymax'] - bbox['ymin']) / 4;
-    var dLon = (bbox['xmax'] - bbox['xmin']) / 4;
-    bbox['ymax'] = bbox['ymax'] - dLat;
-    bbox['xmax'] = bbox['xmax'] - dLon;
-    bbox['ymin'] = bbox['ymin'] + dLat;
-    bbox['xmin'] = bbox['xmin'] + dLon;
-    staticMapOptions['bbox'] = bbox;
-    updateMapImage();
-}
-
-function zoomOutFromBBox() {
-    var bbox = staticMapOptions['bbox'];
-    var dLat = (bbox['ymax'] - bbox['ymin']) / 2;
-    var dLon = (bbox['xmax'] - bbox['xmin']) / 2;
-    bbox['ymax'] = bbox['ymax'] + dLat;
-    bbox['xmax'] = bbox['xmax'] + dLon;
-    bbox['ymin'] = bbox['ymin'] - dLat;
-    bbox['xmin'] = bbox['xmin'] - dLon;
-    staticMapOptions['bbox'] = bbox;
-    updateMapImage();
 }
 
 var mapControls = {
@@ -220,103 +189,68 @@ function addStaticMapControls() {
     mapWidth = objMap.clientWidth;
     mapHeight = objMap.clientHeight;
 
+    var query = objMap.src;
+    query = query.substring(query.indexOf("?") + 1, query.length);
+    staticMapOptions["query"] = escape(query);
+
     centerZoomBased = ("center" in staticMapOptions);
+
+    var recenter;
 
     if (centerZoomBased) {
         var initCenterLat = staticMapOptions['center']['lat'];
         var initCenterLon = staticMapOptions['center']['lon'];
         var initZoom = staticMapOptions['zoom'];
 
-        mapControls.setup({
-            zoomin: zoomInFromCenter,
-            zoomout: zoomOutFromCenter,
-            recenter: function() {
-                staticMapOptions['center'] = {'lat': initCenterLat, 'lon': initCenterLon};
-                staticMapOptions['zoom'] = initZoom;
-                updateMapImage();
-            }
-        });
+        recenter = function() {
+            updateMapImage(null, null, {
+                "center": initCenterLat + "," + initCenterLon,
+                "zoom": initZoom
+            });
+        }
 
     } else {
         var initBBox = staticMapOptions['bbox'];
 
-        mapControls.setup({
-            zoomin: zoomInFromBBox,
-            zoomout: zoomOutFromBBox,
-            recenter: function() {
-                staticMapOptions['bbox'] = initBBox;
-                updateMapImage();
-            }
-        });
-    }
-}
-
-// north and east are sign arguments, e.g.:
-// northeast is (1, 1)
-// northwest is (1, -1)
-// south is (-1, 0)
-function scrollMap(north, east) {
-
-    if (centerZoomBased) {
-        var zoom = staticMapOptions['zoom'];
-        var lat = staticMapOptions['center']['lat'];
-        var lon = staticMapOptions['center']['lon'];
-        var degreesCovered = 360 / Math.pow(2, parseInt(zoom) + 1);
-
-        lat = parseFloat(lat) + degreesCovered * north;
-        lon = parseFloat(lon) + degreesCovered * east;
-
-        // round to 4 decimal places (roughly 10 meters)
-        staticMapOptions['center']['lat'] = Math.round(lat * 10000) / 10000;
-        staticMapOptions['center']['lon'] = Math.round(lon * 10000) / 10000;
-
-    } else {
-        var bbox = staticMapOptions['bbox'];
-        var dLat = (bbox['ymax'] - bbox['ymin']) / 2;
-        var dLon = (bbox['xmax'] - bbox['xmin']) / 2;
-        bbox['ymax'] = bbox['ymax'] + dLat * north;
-        bbox['ymin'] = bbox['ymin'] + dLat * north;
-        bbox['xmax'] = bbox['xmax'] + dLon * east;
-        bbox['xmin'] = bbox['xmin'] + dLon * east;
-        staticMapOptions['bbox'] = bbox;
-    }
-    updateMapImage();
-}
-
-function updateMapImage() {
-    var params = {
-        "baseURL": staticMapOptions['baseURL'],
-        "mapClass": staticMapOptions['mapClass'],
-        "width": mapWidth,
-        "height": mapHeight};
-
-    if (centerZoomBased) {
-        params["lat"] = staticMapOptions['center']['lat'];
-        params["lon"] = staticMapOptions['center']['lon'];
-        params["zoom"] = staticMapOptions['zoom'];
-    } else {
-        var bbox = staticMapOptions['bbox'];
-        var bboxStr = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'];
-        params["bbox"] = bboxStr;
-    }
-
-    if ("projection" in staticMapOptions) {
-        params["projection"] = staticMapOptions['projection'];
-    }
-    if ('markers' in staticMapOptions && staticMapOptions['markers']) {
-        params["markers"] = staticMapOptions['markers'];
-    }
-    if ('polygons' in staticMapOptions) {
-        for (arg in staticMapOptions['polygons']) {
-            params[arg] = staticMapOptions['polygons'][arg];
-        }
-    }
-    if ('paths' in staticMapOptions) {
-        for (arg in staticMapOptions['paths']) {
-            params[arg] = staticMapOptions['args'][arg];
+        recenter = function() {
+            var bboxStr = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'];
+            updateMapImage(null, null, {"bbox": bboxStr});
         }
     }
 
+    mapControls.setup({
+        zoomin: updateMapImage("in", null, null),
+        zoomout: updateMapImage("out", null, null),
+        recenter: recenter
+    });
+}
+
+// n, s, e, w, ne, nw, se, sw
+function scrollMap(direction) {
+    updateMapImage(null, direction, null);
+}
+
+function updateMapImage(zoomDir, scrollDir, overrides) {
+    params = {
+        "baseURL": staticMapOptions["baseURL"],
+        "mapClass": staticMapOptions["mapClass"],
+        "query": staticMapOptions["query"]};
+
+    if (zoomDir) {
+        params["zoom"] = zoomDir;
+    }
+    if (scrollDir) {
+        params["scroll"] = scrollDir;
+    }
+    if (overrides) {
+        overrideParams = [];
+        for (var override in overrides) {
+            overrideParams.push(override + "=" + overrides[override]);
+        }
+        if (overrideParams.length) {
+            params["overrides"] = escape(overrideParams.join("&"));
+        }
+    }
     apiRequest(apiURL, params, function(response) {
         loadMapImage(response);
     }, function(code, message) {});
@@ -344,11 +278,8 @@ function updateMapDimensions() {
 }
 
 function doUpdateMapDimensions() {
-    if (!centerZoomBased) {
-        // if width and height proprotions changed, we need to update the bbox
-        var oldHeight = mapHeight;
-        var oldWidth = mapWidth;
-    }
+    var oldHeight = mapHeight;
+    var oldWidth = mapWidth;
     
     if (window.innerHeight !== undefined) {
         mapHeight = window.innerHeight;
@@ -362,9 +293,11 @@ function doUpdateMapDimensions() {
         mapWidth = document.documentElement.clientWidth; // ie7
     }
 
-    if (!centerZoomBased) {
-        // if width and height changed, we need to update the bbox
-        if ((oldWidth && oldWidth != mapWidth) || (oldHeight && oldHeight != mapHeight)) {
+    var overrides = {};
+
+    if ((oldWidth && oldWidth != mapWidth) || (oldHeight && oldHeight != mapHeight)) {
+        if (!centerZoomBased) {
+            // if width and height changed, we need to update the bbox
             var bbox = staticMapOptions['bbox'];
             var bboxWidth = bbox['xmax'] - bbox['xmin'];
             var bboxHeight = bbox['ymax'] - bbox['ymin'];
@@ -380,6 +313,13 @@ function doUpdateMapDimensions() {
             bbox['ymin'] -= dHeight;
             
             staticMapOptions['bbox'] = bbox;
+
+            overrides["bbox"] = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'];
+            overrides["size"] = newBBoxWidth + "," + newBBoxHeight;
+            overrides["width"] = newBBoxWidth;
+            overrides["height"] = newBBoxHeight;
+        } else {
+            overrides["size"] = newBBoxWidth + "x" + newBBoxHeight;
         }
     }
 
@@ -406,7 +346,7 @@ function doUpdateMapDimensions() {
         }
     }
     
-    updateMapImage();
+    updateMapImage(null, null, overrides);
 }
 
 // resizing counterpart for dynamic maps

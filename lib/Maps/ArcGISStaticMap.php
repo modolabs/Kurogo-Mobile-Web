@@ -125,6 +125,40 @@ class ArcGISStaticMap extends StaticMapImageController {
 
     /////////// query builders ////////////
 
+    public function parseQuery($query) {
+        parse_str($query, $args);
+
+        if (isset($args['bbox'])) {
+            $bboxParts = explode(',', $args['bbox']);
+            $this->bbox = array(
+                'xmin' => $bboxParts[0],
+                'ymin' => $bboxParts[1],
+                'xmax' => $bboxParts[2],
+                'ymax' => $bboxParts[3],
+                );
+        }
+
+        if (isset($args['transparent'])) {
+            $this->transparent = $args['transparent'] == 'true';
+        }
+
+        if (isset($args['imageSR'])) {
+            $this->mapProjection = $args['imageSR'];
+        }
+
+        if (isset($args['format'])) {
+            $this->imageFormat = $args['format'];
+        }
+
+        if (isset($args['size'])) {
+            $sizeParts = explode(',', $args['size']);
+            $this->imageWidth = $sizeParts[0];
+            $this->imageHeight = $sizeParts[1];
+        }
+
+        // TODO read layerDefs and layers
+    }
+
     public function getImageURL() {
         $bboxStr = $this->bbox['xmin'].','.$this->bbox['ymin'].','
                   .$this->bbox['xmax'].','.$this->bbox['ymax'];
