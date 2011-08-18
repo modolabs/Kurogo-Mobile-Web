@@ -41,7 +41,7 @@
 
 /* Pixel-doubled action arrows */
 
-nav a, results a, .secondary a, a.arrow {  
+.nav a, .results a, .secondary a, a.arrow {  
 	background-image: url(/common/images/action-arrow@2x.png); 
 	background-size: 14px 17px;
 }
