@@ -246,7 +246,16 @@ function addStaticMapControls() {
         zoomout: function() {
             updateMapImage("out", null, null);
         },
-        recenter: recenter
+        recenter: recenter,
+        locationUpdated: function(location) {
+            mapControls.stopLocationUpdates();
+            var params = {
+                'userLat': location.coords.latitude,
+                'userLon': location.coords.longitude,
+                'center': location.coords.latitude + "," + location.coords.longitude,
+            };
+            updateMapImage(null, null, params);
+        }
     });
 }
 

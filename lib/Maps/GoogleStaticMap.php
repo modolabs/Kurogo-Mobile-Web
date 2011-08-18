@@ -90,12 +90,21 @@ class GoogleStaticMap extends StaticMapImageController {
 
     ////////////// overlays ///////////////
 
-    // should expand to support addresses
-    public function addAnnotation($marker, $style=null, $title=null)
+    public function addPlacemark(Placemark $placemark)
     {
-        if ($style === null) {
-            $styleArgs = array('color:red');
-        } else {
+        $geometry = $placemark->getGeometry();
+        if ($geometry instanceof MapPolyline) {
+            $this->addPath($placemark);
+        } elseif (!($geometry instanceof MapPolygon)) {
+            $this->addPoint($placemark);
+        }
+    }
+
+    public function addPoint($placemark)
+    {
+        $style = $placemark->getStyle();
+        $center = $placemark->getGeometry()->getCenterCoordinate();
+        if ($style) {
             $styleArgs = array();
             $color = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::COLOR);
             if ($color) $styleArgs[] = 'color:'.htmlColorForColorString($color);
@@ -103,23 +112,26 @@ class GoogleStaticMap extends StaticMapImageController {
             if ($size) $styleArgs[] = 'size:'.$size;
             $icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON);
             if ($icon) $styleArgs[] = 'icon:'.$icon;
-            // also can use label, shadow
+        } else {
+            $styleArgs = array('color:red');
         }
         $styleString = implode('|', $styleArgs);
 
-        if (!array_key_exists($styleString, $this->markers))
+        if (!array_key_exists($styleString, $this->markers)) {
             $this->markers[$styleString] = array();
-        $this->markers[$styleString][] = $marker['lat'] . ',' . $marker['lon'];
+        }
+        $this->markers[$styleString][] = $center['lat'] . ',' . $center['lon'];
     }
 
-    public function addPath($points, $style=null)
+    public function addPath($placemark)
     {
         $pointArr = array();
-        foreach ($points as $point) {
+        foreach ($placemark->getGeometry()->getPoints() as $point) {
             $pointArr[] = array($point['lat'], $point['lon']);
         }
         $polyline = Polyline::encodeFromArray($pointArr);
 
+        $style = $placemark->getStyle();
         if ($style === null) {
             // color can be 0xRRGGBB or
             // {black, brown, green, purple, yellow, blue, gray, orange, red, white}
@@ -134,13 +146,6 @@ class GoogleStaticMap extends StaticMapImageController {
 
         $this->paths[] = implode('|', $styleArgs).'|enc:'.$polyline;
     }
-    
-    /*
-    public function addPolygon($rings, $style=null)
-    {
-    	
-    }
-    */
 
     // google layers can be selectively displayed using geometry,
     // label, or both.  so we use this syntax for modified layers:
@@ -344,14 +349,27 @@ class GoogleStaticMap extends StaticMapImageController {
                 }
             }
         }
+        if (isset($args['userLat'], $args['userLon'])) {
+            $center = array('lat' => $args['userLat'], 'lon' => $args['userLon']);
+            $userLocation = new BasePlacemark(new MapBasePoint($center));
+            $style = new MapBaseStyle();
+            // the following doesn't work from a local server
+            //$style->setStyleForTypeAndParam(
+            //    MapStyle::POINT,
+            //    MapStyle::ICON,
+            //    FULL_URL_BASE.'/modules/map/images/map-location@2x.png');
+            $userLocation->setStyle($style);
+            $this->addPoint($userLocation);
+        }
         if (isset($args['style'])) {
             // TODO
         }
     }
 
     public function getImageURL() {
+        $center = $this->center['lat'].','.$this->center['lon'];
         $params = array(
-            'center' => $this->center['lat'].','.$this->center['lon'],
+            'center' => $center,
             'mapType' => $this->mapType,
             'size' => $this->imageWidth .'x'. $this->imageHeight, // "size=512x512"
             'markers' => $this->getMarkers(),
