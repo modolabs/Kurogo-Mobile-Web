@@ -283,6 +283,23 @@ class MapAPIModule extends APIModule
                 break;
 
             // ajax calls
+            case 'projectPoint':
+
+                $lat = $this->getArg('lat', 0);
+                $lon = $this->getArg('lon', 0);
+
+                $fromProj = $this->getArg('from', 4326);
+                $toProj = $this->getArg('to', 4326);
+
+                $projector = new MapProjector();
+                $projector->setSrcProj($fromProj);
+                $projector->setDstProj($toProj);
+                $result = $projector->projectPoint(array('lat' => $lat, 'lon' => $lon));
+                $this->setResponse($result);
+                $this->setResponseVersion(1);
+
+                break;
+
             case 'sortGroupsByDistance':
                 
                 $lat = $this->getArg('lat', 0);

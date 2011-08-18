@@ -54,6 +54,23 @@ class ArcGISJSMap extends JavascriptMapImageController {
     public function addLayers($moreLayers) {
         $this->moreLayers = array_merge($this->moreLayers, $moreLayers);
     }
+
+    /*
+    public function addPlacemark(Placemark $placemark)
+    {
+        $geometry = $placemark->getGeometry();
+        if ($geometry instanceof MapPolygon) {
+            $this->addPolygon($placemark);
+        } elseif ($geometry instanceof MapPolyline) {
+            $this->addPath($placemark);
+        } else {
+            $this->addPoint($placemark);
+        }
+    }
+    */
+
+    public function addPoint($placemark) {
+    }
     
     // TODO make the following two functions more concise
 
@@ -301,6 +318,7 @@ JS;
 
         $footer = $this->prepareJavascriptTemplate('ArcGISJSMapFooter');
         $footer->setValues(array(
+            '___API_URL___' => FULL_URL_BASE.API_URL_PREFIX."/map/projectPoint", // TODO don't hard code module id
             '___WKID___' => $this->mapProjection,
             '___MAPELEMENT___' => $this->mapElement,
             '___IMAGE_WIDTH___' => $this->imageWidth,
