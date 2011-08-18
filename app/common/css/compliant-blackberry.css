@@ -42,7 +42,25 @@
     float: left;
 }
 
-
+/* blackberry browsers do not support max-width */
+.crumb1 {
+	width: 120px;
+}
+.crumb2a  {
+	width: 45px;
+}
+.crumb2b  {
+	width: 50px;
+}
+.crumb3a {
+	width: 40px;
+}
+.crumb3b {
+	width: 45px;
+}
+.crumb3c {
+	width: 50px;
+}
 
 #tabs {
 	margin: 0 0;
