@@ -1312,13 +1312,13 @@ abstract class WebModule extends Module {
             if (count($session->getUsers())==1) {
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array('authority'=>$user->getAuthenticationAuthorityIndex())));
                 $this->assign('footerLoginLink', $this->buildURLForModule('login', '', array()));
-                $this->assign('footerLoginText', $this->getLocalizedString('LOGIN_SIGNED_IN_SINGLE', array($authority->getAuthorityTitle(), $user->getFullName())));
+                $this->assign('footerLoginText', $this->getLocalizedString('SIGNED_IN_SINGLE', array($authority->getAuthorityTitle(), $user->getFullName())));
                 $this->assign('footerLoginClass', $authority->getAuthorityClass());
             } else {
                 $this->assign('footerLoginClass', 'login_multiple');
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array()));
                 $this->assign('footerLoginLink', $this->buildURLForModule('login', 'logout', array()));
-                $this->assign('footerLoginText', $this->getLocalizedString('LOGIN_SIGNED_IN_MULTIPLE'));
+                $this->assign('footerLoginText', $this->getLocalizedString('SIGNED_IN_MULTIPLE'));
             }
 
             if ($session_max_idle = intval(Kurogo::getOptionalSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0))) {
@@ -1327,7 +1327,7 @@ abstract class WebModule extends Module {
         } else {
             $this->assign('footerLoginClass', 'noauth');
             $this->assign('footerLoginLink', $this->buildURLForModule('login','', array()));
-            $this->assign('footerLoginText', $this->getLocalizedString('LOGIN_SIGN_IN', Kurogo::getSiteString('SITE_NAME')));
+            $this->assign('footerLoginText', $this->getLocalizedString('SIGN_IN_SITE', Kurogo::getSiteString('SITE_NAME')));
         }
     }
 
