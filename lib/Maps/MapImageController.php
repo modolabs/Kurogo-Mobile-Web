@@ -222,12 +222,9 @@ class JavascriptTemplate
     }
 
     public function getScript() {
-        if (!$this->values) {
-            $script = $this->template;
+        $script = "\n";
 
-        } else {
-            $script = "\n";
-
+        if ($this->values) {
             foreach ($this->values as $values) {
                 $template = $this->template;
                 foreach ($values as $placeholder => $value) {
