@@ -5,6 +5,23 @@ var mapWidth;
 var mapHeight;
 var apiURL;
 
+// id7 doesn't understand window.innerWidth and window.innerHeight
+function getWindowHeight() {
+    if (window.innerHeight !== undefined) {
+        return window.innerHeight;
+    } else {
+        return document.documentElement.clientHeight;
+    }
+}
+
+function getWindowWidth() {
+    if (window.innerWidth !== undefined) {
+        return window.innerWidth;
+    } else {
+        return document.documentElement.clientWidth;
+    }
+}
+
 function hideMapTabChildren() {
     var mapImage = document.getElementById("mapimage");
     if (mapImage) {
@@ -47,6 +64,10 @@ function loadMapImage(newSrc) {
     }
     mapImage.src = newSrc; // guarentee onload handler gets called at least 
                            // once after showing the loading image (even for cached images)
+    mapImage.width = mapWidth;
+    mapImage.style.width = mapWidth + "px";
+    mapImage.height = mapHeight;
+    mapImage.style.height = mapHeight + "px";
 }
 
 // next three functions for compliant
@@ -72,7 +93,7 @@ function setHeight() {
         var topoffset = findPosY(document.getElementById("tabbodies"));
         var bottomoffset = 56;
         document.getElementById("mapzoom").style.height=bottomoffset + "px";
-        mapimage.style.height=(window.innerHeight - topoffset- bottomoffset) + "px";
+        mapimage.style.height=(getWindowHeight() - topoffset- bottomoffset) + "px";
     }
     if (maptab) {
         maptab.style.height="auto";
@@ -97,7 +118,7 @@ function findPosY(obj) {
 function setTabsHeight() {
     // Set the height of the tabs container to fill the browser window height
     var tc = document.getElementById("tabscontainer");
-    if(tc) { tc.style.height=(window.innerHeight-56) + "px" }
+    if(tc) { tc.style.height=(getWindowHeight()-56) + "px" }
 }
 
 function pixelsFromString(aString) {
@@ -219,8 +240,12 @@ function addStaticMapControls() {
     }
 
     mapControls.setup({
-        zoomin: updateMapImage("in", null, null),
-        zoomout: updateMapImage("out", null, null),
+        zoomin: function() {
+            updateMapImage("in", null, null);
+        },
+        zoomout: function() {
+            updateMapImage("out", null, null);
+        },
         recenter: recenter
     });
 }
@@ -231,6 +256,10 @@ function scrollMap(direction) {
 }
 
 function updateMapImage(zoomDir, scrollDir, overrides) {
+    if (!("query" in staticMapOptions)) {
+        return;
+    }
+
     params = {
         "baseURL": staticMapOptions["baseURL"],
         "mapClass": staticMapOptions["mapClass"],
@@ -259,6 +288,8 @@ function updateMapImage(zoomDir, scrollDir, overrides) {
 
 // assuming only one of updateMapDimensions or updateContainerDimensions
 // gets used so they can reference the same ids
+// updateMapDimensions is called for static maps
+// updateContainerDimensions is called for dynamic maps
 var updateMapDimensionsTimeoutIds = [];
 function clearUpdateMapDimensionsTimeouts() {
     for(var i = 0; i < updateMapDimensionsTimeoutIds.length; i++) {
@@ -280,23 +311,74 @@ function updateMapDimensions() {
 function doUpdateMapDimensions() {
     var oldHeight = mapHeight;
     var oldWidth = mapWidth;
-    
-    if (window.innerHeight !== undefined) {
-        mapHeight = window.innerHeight;
-    } else {
-        mapHeight = document.documentElement.clientHeight; // ie7
+
+    // TODO google static maps does not generate maps
+    // larger than 1000px in either direction
+    // need to set caps on mapWidth and mapHeight
+    var mapImage = document.getElementById("mapimage");
+    var mapTab = document.getElementById("mapTab");
+    if (mapImage && mapTab) { // not fullscreen
+        mapTab.style.height="auto";
+
+        var topoffset = findPosY(document.getElementById("tabbodies"));
+        var bottomoffset = 56;
+        
+        document.getElementById("mapzoom").style.height = bottomoffset + "px";
+
+        // tablets need to account for bottom nav
+        var tabletFoot = document.getElementById("footernav");
+        if (tabletFoot) {
+            bottomoffset += tabletFoot.clientHeight;
+        }
+
+        // 16 is top + bottom padding of mapimage
+        // TODO don't hard code these numbers
+        mapHeight = (getWindowHeight() - topoffset - bottomoffset - 16);
+        mapWidth = getWindowWidth() - 30;
+
+        mapImage.style.width = (mapWidth + 2) + "px"; // border
+
+    } else { // fullscreen
+        mapHeight = getWindowHeight();
+        mapWidth = getWindowWidth();
+        mapImage.style.width = mapWidth+"px";
+
+        var objContainer = document.getElementById("container");
+        if (objContainer) {
+            objContainer.style.width = mapWidth+"px";
+            objContainer.style.height = mapHeight+"px";
+        }
+    }
+    mapImage.style.height = mapHeight + "px";
+
+    var objScrollers = document.getElementById("mapscrollers");
+    if (objScrollers) {
+        if (mapTab) {
+            objScrollers.style.height = mapHeight+"px";
+            objScrollers.style.width = mapWidth+"px";
+
+        } else {
+            switch (getOrientation()) {
+                case 'portrait':
+                  objScrollers.style.height = (mapHeight-42)+"px";
+                  objScrollers.style.width = mapWidth+"px";
+                 break;
+        
+                case 'landscape':
+                  objScrollers.style.height = mapHeight+"px";
+                  objScrollers.style.width = (mapWidth-42)+"px";
+                break;
+            }
+        }
     }
 
-    if (window.innerWidth !== undefined) {
-        mapWidth = window.innerWidth;
-    } else {
-        mapWidth = document.documentElement.clientWidth; // ie7
-    }
+    // request new map image if needed
 
     var overrides = {};
 
     if ((oldWidth && oldWidth != mapWidth) || (oldHeight && oldHeight != mapHeight)) {
-        if (!centerZoomBased) {
+        // sometimes centerZoomBased gets defined later
+        if (!centerZoomBased && "bbox" in staticMapOptions) {
             // if width and height changed, we need to update the bbox
             var bbox = staticMapOptions['bbox'];
             var bboxWidth = bbox['xmax'] - bbox['xmin'];
@@ -315,38 +397,15 @@ function doUpdateMapDimensions() {
             staticMapOptions['bbox'] = bbox;
 
             overrides["bbox"] = bbox['xmin'] + "," + bbox['ymin'] + "," + bbox['xmax'] + "," + bbox['ymax'];
-            overrides["size"] = newBBoxWidth + "," + newBBoxHeight;
-            overrides["width"] = newBBoxWidth;
-            overrides["height"] = newBBoxHeight;
+            overrides["size"] = mapWidth + "," + mapHeight;
+            overrides["width"] = mapWidth;
+            overrides["height"] = mapHeight;
         } else {
-            overrides["size"] = newBBoxWidth + "x" + newBBoxHeight;
+            overrides["size"] = mapWidth + "x" + mapHeight;
         }
-    }
-
-    var objMap = document.getElementById("mapimage");
-	var objContainer = document.getElementById("container");
-	var objScrollers = document.getElementById("mapscrollers");
-    if (objContainer && objMap.className == "fullmap") {
-        objContainer.style.width = mapWidth+"px";
-        objContainer.style.height = mapHeight+"px";
-        objMap.style.width = mapWidth+"px";
-        objMap.style.height = mapHeight+"px";
-    }
-    if (objScrollers) {
-        switch (getOrientation()) {
-            case 'portrait':
-              objScrollers.style.height = (mapHeight-42)+"px";
-              objScrollers.style.width = mapWidth+"px";
-            break;
-        
-            case 'landscape':
-              objScrollers.style.height = mapHeight+"px";
-              objScrollers.style.width = (mapWidth-42)+"px";
-            break;
-        }
-    }
     
-    updateMapImage(null, null, overrides);
+        updateMapImage(null, null, overrides);
+    }
 }
 
 // resizing counterpart for dynamic maps
@@ -361,18 +420,8 @@ function updateContainerDimensions() {
 function doUpdateContainerDimensions() {
     var container = document.getElementById("container");
     if (container) {
-        var newWidth;
-        if (window.innerWidth !== undefined) {
-            newWidth = window.innerWidth + "px";
-        } else {
-            newWidth = document.documentElement.clientWidth + "px"; // ie7
-        }
-        var newHeight;
-        if (window.innerHeight !== undefined) {
-            newHeight = window.innerHeight + "px";
-        } else {
-            newHeight = document.documentElement.clientHeight + "px"; // ie7
-        }
+        var newWidth = getWindowWidth() + "px";
+        var newHeight = getWindowHeight() + "px";
 
         // check to see if the container height and width actually changed
         if (container.style && container.style.width && container.style.width == newWidth

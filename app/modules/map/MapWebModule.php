@@ -358,7 +358,7 @@ class MapWebModule extends WebModule {
 
     /////// UI functions
     
-    protected function addJavascriptFullscreenStaticMap() {
+    protected function addJavascriptStaticMap() {
         // Let Webkit figure out what the window size is and then hide the address bar
         // and resize the map
         $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
@@ -458,11 +458,13 @@ JS;
         
             if ($imgController->isStatic()) {
                 list($imageWidth, $imageHeight) = $MapDevice->staticMapImageDimensions();
+                //$this->addInlineJavascriptFooter("\n updateMapDimensions();\n");
 
             } else {
                 list($imageWidth, $imageHeight) = $MapDevice->dynamicMapImageDimensions();
                 $this->addInlineJavascriptFooter("\n hideMapTabChildren();\n");
             }
+            $this->addInlineJavascriptFooter("\n setMapHeights();\n");
             
         } else {
             $this->assign('detailURL', $this->buildBreadcrumbURL('detail', $this->args, false));
@@ -481,8 +483,8 @@ JS;
         $this->initializeMapElements('mapimage', $imgController, $imageWidth, $imageHeight);
 
         // call the function that updates the image size        
-        if ($fullscreen && $imgController->isStatic()) {
-            $this->addJavascriptFullscreenStaticMap();
+        if ($imgController->isStatic()) {
+            $this->addJavascriptStaticMap();
         }
     }
 
