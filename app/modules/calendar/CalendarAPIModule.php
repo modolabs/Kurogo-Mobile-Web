@@ -293,14 +293,15 @@ class CalendarAPIModule extends APIModule
                     $end      = $this->getEndArg($start->getTimestamp());
                     $type     = $this->getArg('type', 'static');
                     $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
-
+			
                     $feed     = $this->getFeed($calendar, $type);
 
                     $feed->setStartDate($start);
                     $feed->setEndDate($end);
                     $feed->addFilter('search', $searchTerms);
                     $iCalEvents = $feed->items();
-
+					
+					$events = array();
                     $count = 0;
                     foreach ($iCalEvents as $iCalEvent) {
                         $events[] = $this->apiArrayFromEvent($iCalEvent);
