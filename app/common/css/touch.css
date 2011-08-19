@@ -166,62 +166,43 @@ html>body .submitbutton {
 	padding: 0.4em 0.3em;
 }
 
+.formlist .formelement {
+  text-align: center;
+  margin-bottom: .5em;
+}
+.formlist .formelement label {
+  text-align: right;
+  margin-right: .5em;
+  display: inline-block;
+  width: 6.5em;
+}
+.formlist .formelement input {
+  width: 9.5em;
+  padding-left: .25em;
+  padding-right: .25em;
+  line-height: 26px;
+}
+.formlist .formelement select {
+  width: 10em;
+  line-height: 26px;
+}
+
 .formbuttons {
 	margin: 16px 0 8px 0;
 	text-align: center;
 }
 
-a.formbutton {
-	text-align: center;
-	display: inline-block;
-	padding-right: 7px;
-	background-image: url(/common/images/button-sd-r.gif);
-	background-repeat: no-repeat;
-	background-position: right;
-	margin: 0 5px;
-	height: 36px;
-	text-decoration: none;
-}
-
-a.formbutton div {
-	display: inline-block;
-	color: #fff;
-	font-weight: bold;
-	font-size: 100%;
-	line-height: 1.67em;
-	text-decoration: none;
-	padding: 5px 5px 5px 12px;
-	background-image: url(/common/images/button-sd-l.gif);
-	background-repeat: no-repeat;
-	background-position: left;
-	text-decoration: none;
-}
-
+a.formbutton div,
 input.formbutton {
-  display: inline-block;
+	display: inline-block;
+  font-size: 100%;
+	background-color: #666;
 	color: #fff;
+	border: none;
+	line-height: 1.2em;
 	font-weight: bold;
-	font-size: 100%;
-	line-height: 1.67em;
 	text-decoration: none;
-	padding: 5px 5px 5px 12px;
-	margin-right: 0;
-  border: none;
-	height: 36px; 
-	background-color: transparent;
-	background-image: url(/common/images/button-sd-l.gif);
-	background-repeat: no-repeat;
-	background-position: center left;
-}
-.formbuttonclose {
-  display: inline-block;
-	background-color: transparent;
-	background-image: url(/common/images/button-sd-r.gif);
-	background-repeat: no-repeat;
-	background-position: center right;
-	margin: 0;
-	height: 36px;
-	padding-right: 7px;
+	padding: .5em .75em;
 }
 
 .radiobutton {

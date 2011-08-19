@@ -612,6 +612,11 @@ abstract class WebModule extends Module {
         foreach ($moduleConfig as $type => $modulesOfType) {
 
             foreach ($modulesOfType as $moduleID => $title) {
+                $shortTitle = $title;
+                $moduleConfig = ModuleConfigFile::factory($moduleID, 'module');
+                if ($moduleConfig) {
+                    $shortTitle = $moduleConfig->getOptionalVar('shortTitle', $title);
+                }
             
                 $selected = $this->configModule == $moduleID;
                 $primary = $type == 'primary';
@@ -626,7 +631,7 @@ abstract class WebModule extends Module {
                     'type'        => $type,
                     'selected'    => $selected,
                     'title'       => $title,
-                    'shortTitle'  => $title,
+                    'shortTitle'  => $shortTitle,
                     'url'         => "/$moduleID/",
                     'disableable' => true,
                     'disabled'    => $includeDisabled && in_array($moduleID, $disabledIDs),

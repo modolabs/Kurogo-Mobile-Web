@@ -162,7 +162,6 @@ class LoginWebModule extends WebModule {
             if ($authorityData['USER_LOGIN']=='FORM' && empty($login)) {
                 break;
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
-                $authority->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
                 if ($authorityData['USER_LOGIN']=='LINK') {
                     $options['return_url'] = FULL_URL_BASE . $this->configModule . '/login?' . http_build_query(array_merge($options, array(
                             'authority'=>$authorityIndex

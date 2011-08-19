@@ -215,14 +215,23 @@ function updateMapImage() {
 }
 
 // assuming only one of updateMapDimensions or updateContainerDimensions
-// gets used so they can reference the same id
-var updateMapDimensionsTimeoutId;
+// gets used so they can reference the same ids
+var updateMapDimensionsTimeoutIds = [];
+function clearUpdateMapDimensionsTimeouts() {
+    for(var i = 0; i < updateMapDimensionsTimeoutIds.length; i++) {
+        window.clearTimeout(updateMapDimensionsTimeoutIds[i]);
+    }
+    updateMapDimensionsTimeoutIds = [];
+}
 
 // Prevent firebombing the browser with Ajax calls on browsers which fire lots
 // of resize events
 function updateMapDimensions() {
-    window.clearTimeout(updateMapDimensionsTimeoutId); 
-    updateMapDimensionsTimeoutId = window.setTimeout(doUpdateMapDimensions, 200);
+    clearUpdateMapDimensionsTimeouts();
+    var timeoutId = window.setTimeout(doUpdateMapDimensions, 200);
+    updateMapDimensionsTimeoutIds.push(timeoutId);
+    timeoutId = window.setTimeout(doUpdateMapDimensions, 500);
+    updateMapDimensionsTimeoutIds.push(timeoutId);
 }
 
 function doUpdateMapDimensions() {
@@ -293,28 +302,47 @@ function doUpdateMapDimensions() {
 
 // resizing counterpart for dynamic maps
 function updateContainerDimensions() {
-    window.clearTimeout(updateMapDimensionsTimeoutId); 
-    updateMapDimensionsTimeoutId = window.setTimeout(doUpdateContainerDimensions, 250);
+    clearUpdateMapDimensionsTimeouts();
+    var timeoutId = window.setTimeout(doUpdateContainerDimensions, 200);
+    updateMapDimensionsTimeoutIds.push(timeoutId);
+    timeoutId = window.setTimeout(doUpdateContainerDimensions, 500);
+    updateMapDimensionsTimeoutIds.push(timeoutId);
 }
 
 function doUpdateContainerDimensions() {
     var container = document.getElementById("container");
     if (container) {
+        var newWidth;
         if (window.innerWidth !== undefined) {
-            container.style.width = window.innerWidth + "px";
+            newWidth = window.innerWidth + "px";
         } else {
-            container.style.width = document.documentElement.clientWidth + "px"; // ie7
+            newWidth = document.documentElement.clientWidth + "px"; // ie7
         }
+        var newHeight;
         if (window.innerHeight !== undefined) {
-            container.style.height = window.innerHeight + "px";
+            newHeight = window.innerHeight + "px";
         } else {
-            container.style.height = document.documentElement.clientHeight + "px"; // ie7
+            newHeight = document.documentElement.clientHeight + "px"; // ie7
         }
+
+        // check to see if the container height and width actually changed
+        if (container.style && container.style.width && container.style.width == newWidth
+                            && container.style.height && container.style.height == newHeight) {
+
+           // nothing changed so exit early
+           return;
+        }
+
+        container.style.width = newWidth;
+        container.style.height = newHeight;
+
         if (typeof resizeMapOnContainerResize == 'function') {
             resizeMapOnContainerResize();
         }
     }
 }
+
+
 
 
 /*
