@@ -513,14 +513,14 @@ class Kurogo
 
     private function getStringsForLanguage($lang) {
         $stringFiles = array(
-            APP_DIR . "/common/strings/".$lang . '.json',
-            SITE_APP_DIR . "/common/strings/".$lang . '.json'
+            APP_DIR . "/common/strings/".$lang . '.ini',
+            SITE_APP_DIR . "/common/strings/".$lang . '.ini'
         );
         
         $strings = array();
         foreach ($stringFiles as $stringFile) {
             if (is_file($stringFile)) {
-                $_strings = json_decode(file_get_contents($stringFile), true);
+                $_strings = parse_ini_file($stringFile);
                 $strings = array_merge($strings, $_strings);
             }
         }
