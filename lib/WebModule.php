@@ -1312,7 +1312,7 @@ abstract class WebModule extends Module {
             if (count($session->getUsers())==1) {
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array('authority'=>$user->getAuthenticationAuthorityIndex())));
                 $this->assign('footerLoginLink', $this->buildURLForModule('login', '', array()));
-                $this->assign('footerLoginText', $this->getLocalizedString('SIGNED_IN_SINGLE', array($authority->getAuthorityTitle(), $user->getFullName())));
+                $this->assign('footerLoginText', $this->getLocalizedString('SIGNED_IN_SINGLE', $authority->getAuthorityTitle(), $user->getFullName()));
                 $this->assign('footerLoginClass', $authority->getAuthorityClass());
             } else {
                 $this->assign('footerLoginClass', 'login_multiple');

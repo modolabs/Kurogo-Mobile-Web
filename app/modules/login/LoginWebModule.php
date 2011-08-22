@@ -109,10 +109,10 @@ class LoginWebModule extends WebModule {
             } elseif ($user = $this->getUser($authorityIndex)) {
                 $authority = $user->getAuthenticationAuthority();
                 
-                $this->assign('message', $this->getLocalizedString('LOGIN_SIGNED_IN_SINGLE', array(
+                $this->assign('message', $this->getLocalizedString('LOGIN_SIGNED_IN_SINGLE',
                     Kurogo::getSiteString('SITE_NAME'),
                     $authority->getAuthorityTitle(), 
-                    $user->getFullName())
+                    $user->getFullName()
                 ));
                 
                 $this->assign('url', $this->buildURL('logout', array('authority'=>$authorityIndex)));
@@ -294,8 +294,11 @@ class LoginWebModule extends WebModule {
                     //there's only on logged in user
                     $user = current($sessionUsers);
                     $authority = $user->getAuthenticationAuthority();
-                    $this->assign('LOGIN_SIGNED_IN_MESSAGE', $this->getLocalizedString('LOGIN_SIGNED_IN_SINGLE', array(
-                        Kurogo::getSiteString('SITE_NAME'), $authority->getAuthorityTitle(), $user->getFullName())));
+                    $this->assign('LOGIN_SIGNED_IN_MESSAGE', $this->getLocalizedString('LOGIN_SIGNED_IN_SINGLE',
+                        Kurogo::getSiteString('SITE_NAME'), 
+                        $authority->getAuthorityTitle(), 
+                        $user->getFullName()
+                    ));
                 } else {
                     //there are multiple logged in users
                     $this->assign('LOGIN_SIGNED_IN_MESSAGE', $this->getLocalizedString('LOGIN_SIGNED_IN_MULTIPLE', array(Kurogo::getSiteString('SITE_NAME'))));

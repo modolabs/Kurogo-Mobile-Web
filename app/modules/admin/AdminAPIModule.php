@@ -414,7 +414,7 @@ class AdminAPIModule extends APIModule
                     'current'=>$current,
                     'local'  =>KUROGO_VERSION,
                     'uptodate' =>$uptodate,
-                    'message'=>$this->getLocalizedString($messageKey, array($current, KUROGO_VERSION))
+                    'message'=>$this->getLocalizedString($messageKey, $current, KUROGO_VERSION)
                 );
                 
                 $this->setResponse($data);

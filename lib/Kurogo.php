@@ -535,10 +535,8 @@ class Kurogo
     private function processString($string, $opts) {
         if (is_null($opts)) {
             return $string;
-        } elseif (is_array($opts)) {
-            return vsprintf($string, $opts);
         } else {
-            return sprintf($string, $opts);
+            return vsprintf($string, $opts);
         }
     }
     
@@ -554,10 +552,14 @@ class Kurogo
         if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
             throw new Exception("Invalid string key $key");
         }
+
+        // use any number of args past the first as options
+        $args = func_get_args();
+        array_shift($args);
         
         $languages = $this->getLanguages();
         foreach ($languages as $language) {
-            $val = $this->getStringForLanguage($key, $language, $opts);
+            $val = $this->getStringForLanguage($key, $language, $args);
             if ($val !== null) {
                 return self::getOptionalSiteVar('LOCALIZATION_DEBUG') ?  $key : $val;
             }
