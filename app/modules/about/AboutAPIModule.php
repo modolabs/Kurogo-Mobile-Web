@@ -24,7 +24,11 @@ class AboutAPIModule extends APIModule {
         switch ($this->command) {
 
             case 'index':
-                $response = $this->getModuleSections('api-index');
+                $dictionaryOfSections = $this->getModuleSections('api-index');
+                $response = array();
+                foreach ($dictionaryOfSections as $key => $value){
+                    $response[] = $value;
+                }
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
                 break;

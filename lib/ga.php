@@ -93,9 +93,12 @@
     $options = array(
       "http" => array(
           "method" => "GET",
-          "user_agent" => $_SERVER["HTTP_USER_AGENT"],
-          "header" => ("Accepts-Language: " . $_SERVER["HTTP_ACCEPT_LANGUAGE"]))
+          "user_agent" => $_SERVER["HTTP_USER_AGENT"]
+      )
     );
+    if (isset($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
+      $options["http"]["header"] = "Accepts-Language: " . $_SERVER["HTTP_ACCEPT_LANGUAGE"];
+    }
     if (!empty($_GET["utmdebug"])) {
       $data = file_get_contents(
           $utmUrl, false, stream_context_create($options));
