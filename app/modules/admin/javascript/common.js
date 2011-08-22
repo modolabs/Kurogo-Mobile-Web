@@ -171,6 +171,9 @@ function appendFormField(parent, key, fieldData) {
             break;
         case 'select':
             var options = 'options' in fieldData ? fieldData.options : [];
+            if (!fieldData.value && 'placeholder' in fieldData) {
+                fieldData.value = fieldData.placeholder;
+            }
             parent.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).addClass('changeElement').addClass(inputClass).attr('id',id));
             break;
         case 'paragraph':

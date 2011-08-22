@@ -6,6 +6,7 @@
         "fields":{
             "SITE_NAME":{"labelKey":"ADMIN_SITE_SETUP_SITE_NAME_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_SETUP_SITE_NAME_DESCRIPTION","section":"strings"},
             "ORGANIZATION_NAME":{"labelKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_TITLE","type":"text","config":"strings", "descriptionKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_DESCRIPTION","section":"strings"},
+            "LANGUAGES":{"labelKey":"ADMIN_SITE_SETUP_LANGUAGE_TITLE","type":"select","config":"site","optionsMethod":["Kurogo","getAvailableLanguages"],"descriptionKey":"ADMIN_SITE_SETUP_LANGUAGE_DESCRIPTION","section":"site settings","placeholder":"en_US","optionsFirst":"-- Choose --"},
             "LOCAL_TIMEZONE":{"labelKey":"ADMIN_SITE_SETUP_LOCAL_TIMEZONE_TITLE","type":"select","config":"site","optionsMethod":["Calendar","getTimeZones"],"descriptionKey":"ADMIN_SITE_SETUP_LOCAL_TIMEZONE_DESCRIPTION","section":"site settings"},
             "LOCAL_AREA_CODE":{"labelKey":"ADMIN_SITE_SETUP_LOCAL_AREA_CODE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_SETUP_LOCAL_AREA_CODE_DESCRIPTION","section":"site settings"},
             "AUTODETECT_PHONE_NUMBERS":{"labelKey":"ADMIN_SITE_SETUP_AUTODETECT_PHONE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_SETUP_AUTODETECT_PHONE_DESCRIPTION","section":"site settings"}
