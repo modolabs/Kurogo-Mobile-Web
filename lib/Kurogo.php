@@ -19,7 +19,7 @@ class Kurogo
     protected $deviceClassifier;
     protected $session;
     protected $locale;    
-    protected $languages=array('en_US');
+    protected $languages=array();
 
     public static function getSession() {    
         $Kurogo = self::sharedInstance();
@@ -361,6 +361,10 @@ class Kurogo
     	} else {
 			throw new Exception("Invalid language $languages");
 		}
+		
+		if (!in_array('en_US', $this->languages)) {
+		    $this->languages[] = "en_US"; // always include english US
+		}		
     }
     
     public static function getAvailableLanguages() {
