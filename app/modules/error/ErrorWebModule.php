@@ -78,9 +78,8 @@ class ErrorWebModule extends WebModule {
       header('Status: '.$error['status']);
     }
 
-    if (isset($error['linkText'])) {
-        $this->assign('linkText', $error['linkText']);
-    }
+    $linkText = isset($error['linkText']) ? $error['linkText'] : $this->getLocalizedString('DEFAULT_LINK_TEXT');
+    $this->assign('linkText', $linkText);
     
     if($this->devError() === false){
       $this->assign('message', $error['message']);
