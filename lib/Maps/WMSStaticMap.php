@@ -129,7 +129,7 @@ class WMSStaticMap extends StaticMapImageController {
         if (isset($args['width'])) {       
             $this->imageWidth = $args['width'];
         }
-        if (isset($args['height')) {
+        if (isset($args['height'])) {
             $this->imageHeight = $args['height'];
         }
         if ($args['crs']) {
