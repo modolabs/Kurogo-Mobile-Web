@@ -17,6 +17,13 @@ class DeviceClassifier {
   private function cookieKey() {
     return KUROGO_IS_API ? 'apiDeviceClassification': 'deviceClassification';
   }
+  
+  public static function getDeviceDetectionTypes() {
+    return array(
+        0=>"Internal",
+        1=>"External"
+    );
+  }
 
   public function getDevice() {
     return implode('-', array(

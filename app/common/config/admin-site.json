@@ -47,7 +47,7 @@
         "sectiontype":"fields",
         "fields":{
             "MOBI_SERVICE_VERSION":{"labelKey":"ADMIN_SITE_DETECTION_VERSION_TITLE","type":"select","config":"site","options":{"1":"1"},"descriptionKey":"ADMIN_SITE_DETECTION_VERSION_DESCRIPTION","section":"device_detection"},
-            "MOBI_SERVICE_USE_EXTERNAL":{"labelKey":"ADMIN_SITE_DETECTION_EXTERNAL_TITLE","type":"select","options":{"0":"Internal","1":"External"},"config":"site","descriptionKey":"ADMIN_SITE_DETECTION_EXTERNAL_DESCRIPTION","section":"device_detection"},
+            "MOBI_SERVICE_USE_EXTERNAL":{"labelKey":"ADMIN_SITE_DETECTION_EXTERNAL_TITLE","type":"select","optionsMethod":["DeviceClassifier","getDeviceDetectionTypes"],"config":"site","descriptionKey":"ADMIN_SITE_DETECTION_EXTERNAL_DESCRIPTION","section":"device_detection"},
             "MOBI_SERVICE_FILE":{"labelKey":"ADMIN_SITE_DETECTION_FILE_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_DETECTION_FILE_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","0"]},
             "MOBI_SERVICE_URL":{"labelKey":"ADMIN_SITE_DETECTION_URL_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DETECTION_URL_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]},
             "MOBI_SERVICE_CACHE_LIFETIME":{"labelKey":"ADMIN_SITE_DETECTION_CACHE_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_DETECTION_CACHE_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]}
