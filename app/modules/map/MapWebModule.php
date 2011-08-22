@@ -528,12 +528,11 @@ JS;
             {
                 if (!$feature) {
                     return false;
-                }
 
-                $photoFile = $this->photoFileForPlacemark($feature);
-                if ($photoFile) {
+                // handle embedded photo
+                $photoURL = $feature->getField('PhotoURL'); // embedded photo url
+                if (isset($photoURL) && $photoURL && $photoURL != 'Null') {
                     $tabJavascripts[$tabKey] = "loadImage(photoURL,'photo');";
-                    $photoURL = $photoServer.rawurlencode($photoFile);
                     $this->assign('photoURL', $photoURL);
                     $this->addInlineJavascript("var photoURL = '{$photoURL}';");
                 }
