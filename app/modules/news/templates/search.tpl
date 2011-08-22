@@ -6,7 +6,7 @@
   {include file="findInclude:modules/news/templates/stories.tpl"}
 {else}
   <div class="nonfocal">
-    No stories found
+    {"NO_RESULTS"|getLocalizedString}
   </div>
 {/if}
 
