@@ -20,8 +20,8 @@ class DeviceClassifier {
   
   public static function getDeviceDetectionTypes() {
     return array(
-        0=>"Internal",
-        1=>"External"
+        0=>Kurogo::getLocalizedString('DEVICE_DETECTION_INTERNAL'),
+        1=>Kurogo::getLocalizedString('DEVICE_DETECTION_EXTERNAL')
     );
   }
 
