@@ -533,7 +533,7 @@ class Kurogo
     }
     
     private function processString($string, $opts) {
-        if (is_null($opts)) {
+        if (!is_array($opts)) {
             return $string;
         } else {
             return vsprintf($string, $opts);
@@ -556,6 +556,9 @@ class Kurogo
         // use any number of args past the first as options
         $args = func_get_args();
         array_shift($args);
+        if (count($args)==0 || is_null($args[0])) {
+            $args = null;
+        } 
         
         $languages = $this->getLanguages();
         foreach ($languages as $language) {

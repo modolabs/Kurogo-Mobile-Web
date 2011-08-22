@@ -563,7 +563,7 @@ abstract class Module
     }
     
     private function processString($string, $opts) {
-        if (is_null($opts)) {
+        if (!is_array($opts)) {
             return $string;
         } else {
             return vsprintf($string, $opts);
@@ -586,6 +586,9 @@ abstract class Module
         // use any number of args past the first as options
         $args = func_get_args();
         array_shift($args);
+        if (count($args)==0 || is_null($args[0])) {
+            $args = null;
+        } 
         
         $languages = Kurogo::sharedInstance()->getLanguages();
         foreach ($languages as $language) {
