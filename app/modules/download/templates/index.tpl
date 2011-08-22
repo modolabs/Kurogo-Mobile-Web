@@ -2,20 +2,20 @@
 
 {if isset($instructions) && isset($downloadUrl)}
   <p class="nonfocal">
-    Add a shortcut to your {$deviceName}'s home screen to get one-click access to {$strings.SITE_NAME}.
+    {$introduction}
   </p>
   
   <div class="focal">
-    Instructions: {$instructions}
+    {$instructions}
     {block name="downloadLink"}
       <div class="formbuttons">
-        {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="Click here to begin" buttonURL=$downloadUrl}
+        {include file="findInclude:common/templates/formButtonLink.tpl" buttonTitle="DOWNLOAD"|getLocalizedString buttonURL=$downloadUrl}
       </div>
     {/block}
   </div>
 {else}
   <p class="nonfocal">
-    Sorry, we do not have downloads for {$deviceName} devices yet.
+    {"DOWNLOAD_NOT_AVAILABLE"|getLocalizedString:$deviceName}
   </p>
 {/if}
 
