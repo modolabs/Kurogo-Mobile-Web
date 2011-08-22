@@ -145,9 +145,24 @@ class PageViews {
       foreach ($stats as $day => $platforms) {
         foreach ($platforms as $platform => $modules) {
           foreach ($modules as $module => $count) {
-            $sql = "INSERT INTO $table ( day, platform, module, viewcount )
+            // check for pre existing data 
+            $sqlForExistingRows = "SELECT viewcount FROM $table WHERE day=? AND platform=? AND module=?";
+            $result = $conn->query($sqlForExistingRows, array($day, $platform, $module));
+
+            $rowExists = FALSE;
+            while ($row = $result->fetch()) {
+                $count += $row['viewcount'];
+                $rowExists = TRUE;
+            }
+
+            if($rowExists) {
+                $sql = "UPDATE $table SET viewcount=? WHERE day=? AND platform=? AND module=?";
+                $conn->query($sql, array($count, $day, $platform, $module));
+            } else {
+                $sql = "INSERT INTO $table ( day, platform, module, viewcount )
                          VALUES (?,?,?,?)";
-            $conn->query($sql, array($day, $platform, $module,$count));
+                $conn->query($sql, array($day, $platform, $module, $count));
+            }
           }
         }
       }
@@ -184,7 +199,7 @@ class PageViews {
       else // assume 'api'
         $table = Kurogo::getSiteVar('API_STATS_TABLE');
 
-      if (($end === NULL) || (strtotime($end) - strtotime($start) == 86400)) {
+      if (($end === NULL) || (date('Y-m-d', strtotime("-1 day", strtotime($end))) == $start)) {
         $sql_criteria[] = "day='$start'";
       } else {
         $sql_criteria[] = "day >= '$start' AND day < '$end'";
@@ -242,7 +257,9 @@ class PageViews {
                 day date, 
                 platform char(31) NOT NULL, 
                 module char(31) NOT NULL, 
-                viewcount int NOT NULL)",
+                viewcount int NOT NULL,
+                UNIQUE (day,platform,module)
+            )",
             "CREATE TABLE mobi_api_requests (
                 day date default NULL, 
                 platform char(31) default NULL, 
@@ -319,9 +336,11 @@ class PageViews {
       $sql_start_date = date('Y-m-d', $begin);
       $end = $begin + $increments[$i];
       // never include data from the current day (since it is not complete)
-      $yesterday = strtotime("-1 day", $time);
-      if ($end > $yesterday) {
-        $end = $yesterday;
+      // in self::getTimeSeries we make sure we only load rows where the date
+      // is < $end so make sure $end isn't after today and it will only load
+      // rows from yesterday and earlier
+      if ($end > $time) {
+        $end = $time;
       }
       $sql_end_date = date('Y-m-d', $end);
 
