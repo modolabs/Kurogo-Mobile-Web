@@ -160,6 +160,7 @@ class LoginWebModule extends WebModule {
             $this->assign('authorityTitle', $authorityData['TITLE']);
 
             if ($authorityData['USER_LOGIN']=='FORM' && empty($login)) {
+                $this->assign('url', $url);
                 break;
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
                 if ($authorityData['USER_LOGIN']=='LINK') {
@@ -244,7 +245,7 @@ class LoginWebModule extends WebModule {
                 $this->setTemplatePage('loggedin');
             } else {
                 if (!$multipleAuthorities && count($authenticationAuthorities['direct'])) {
-                    $this->redirectTo('login', array('authority'=>key($authenticationAuthorities['direct'])));
+                    $this->redirectTo('login', array('url'=>$url,'authority'=>key($authenticationAuthorities['direct'])));
                 }
                 $this->assign('multipleAuthorities', $multipleAuthorities);
             }
