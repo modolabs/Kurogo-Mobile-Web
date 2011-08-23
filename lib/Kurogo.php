@@ -203,7 +203,7 @@ class Kurogo
         //
         // Load configuration files
         //    
-        $this->config = new SiteConfig();
+        $this->config = new SiteConfig($path);
         ini_set('display_errors', $this->config->getVar('DISPLAY_ERRORS'));
         if (!ini_get('error_log')) {
             ini_set('error_log', LOG_DIR . DIRECTORY_SEPARATOR . 'php_error.log');
@@ -243,37 +243,6 @@ class Kurogo
         }
         define('SERVER_HOST', $host);
     
-        //
-        // Get URL base
-        //
-        if ($urlBase = self::getOptionalSiteVar('URL_BASE','','urls')) {
-            $foundPath = true;
-            $urlBase = rtrim($urlBase,'/').'/';
-        } else {
-            //extract the path parts from the url
-            $pathParts = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $_SERVER['REQUEST_URI'])));
-            $testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
-            $urlBase = '/';
-            $foundPath = false;
-
-            //once the path equals the WEBROOT_DIR we've found the base. This only works with symlinks
-              if (realpath($testPath) != WEBROOT_DIR) {
-                foreach ($pathParts as $dir) {
-                      $test = $testPath.$dir.DIRECTORY_SEPARATOR;
-                  
-                    if (realpath_exists($test)) {
-                        $testPath = $test;
-                        $urlBase .= $dir.'/';
-                        if (realpath($test) == WEBROOT_DIR) {
-                               $foundPath = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        define('URL_BASE', $foundPath ? $urlBase : '/');
         define('IS_SECURE', isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
         define('FULL_URL_BASE', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_BASE);
         define('COOKIE_PATH', URL_BASE);
@@ -284,18 +253,7 @@ class Kurogo
             header("Location: $url");
             exit();
           }
-              
-        // Strips out the leading part of the url for sites where 
-        // the base is not located at the document root, ie.. /mobile or /m 
-        // Also strips off the leading slash (needed by device debug below)
-        if (isset($path)) {
-            // Strip the URL_BASE off the path
-            $baseLen = strlen(URL_BASE);
-            if ($baseLen && strpos($path, URL_BASE) === 0) {
-                $path = substr($path, $baseLen);
-            }
-        }  
-    
+                  
         //
         // Initialize global device classifier
         //
@@ -305,12 +263,17 @@ class Kurogo
         $urlDeviceDebugPrefix = '/';
         
         // Check for device classification in url and strip it if present
-        if ($this->config->getVar('DEVICE_DEBUG') && 
-            preg_match(';^device/([^/]+)/(.*)$;', $path, $matches)) {
-            $device = $matches[1];  // layout forced by url
-            $path = $matches[2];
-            $urlPrefix .= "device/$device/";
-            $urlDeviceDebugPrefix .= "device/$device/";
+        if ($this->config->getVar('DEVICE_DEBUG')) {
+            if (preg_match(';^device/([^/]+)/(.*)$;', $path, $matches)) {
+                $device = $matches[1];  // layout forced by url
+                $path = $matches[2];
+                $urlPrefix .= "device/$device/";
+                $urlDeviceDebugPrefix .= "device/$device/";
+            } elseif (isset($_GET['_device']) && preg_match(';^device/([^/]+)/$;', $_GET['_device'], $matches)) {
+                $device = $matches[1];
+                $urlPrefix .= "device/$device/";
+                $urlDeviceDebugPrefix .= "device/$device/";
+            }
         }
       
         define('URL_DEVICE_DEBUG_PREFIX', $urlDeviceDebugPrefix);

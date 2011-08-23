@@ -233,7 +233,14 @@ if ($parts[0]==API_URL_PREFIX) {
     PageViews::log_api($id, Kurogo::deviceClassifier()->getPlatform());
     $module->executeCommand();
 
-    
+} elseif ($parts[0]=='min') { //used when minify is loaded when multi-site is on
+    for ($i=1; $i<count($parts);$i++) {
+        if (preg_match("^([a-z])=(.*)^", $parts[$i], $bits)) {
+            $_GET[$bits[1]] = $bits[2];
+        }
+    }
+
+    include('min/index.php');
 } else {
     $id = $parts[0];
     $page = 'index';
