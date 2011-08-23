@@ -19,6 +19,7 @@ class ArcGISPolygon implements MapPolygon
 
     public function getCenterCoordinate()
     {
+        reset($this->rings);
         $outerRing = current($this->rings);
         return $outerRing->getCenterCoordinate();
     }

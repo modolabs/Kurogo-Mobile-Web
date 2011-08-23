@@ -528,6 +528,7 @@ JS;
             {
                 if (!$feature) {
                     return false;
+                }
 
                 // handle embedded photo
                 $photoURL = $feature->getField('PhotoURL'); // embedded photo url

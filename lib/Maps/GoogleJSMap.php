@@ -116,37 +116,36 @@ JS;
     
     public function addPolygon($placemark)
     {
-        if ($style === null) {
-            $style = new EmptyMapStyle();
-        }
-        
         $rings = $placemark->getGeometry()->getRings();
         $polyStrings = array();
         foreach ($rings as $ring) {
-            $polyString[] = '['.$this->coordsToGoogleArray($ring).']';
+            $polyString[] = '['.$this->coordsToGoogleArray($ring->getPoints()).']';
         }
         $multiPathString = implode(',', $polyString);
 
         $properties = array('paths: polypaths');
 
-        if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::COLOR)) !== null) {
-            $properties[] = 'strokeColor: "#'.htmlColorForColorString($color).'"';
-            if (strlen($color) == 8) {
-                $alphaHex = substr($color, 0, 2);
-                $alpha = hexdec($alphaHex) / 256;
-                $properties[] = 'strokeOpacity: '.round($alpha, 2);
+        $style = $placemark->getStyle();
+        if ($style !== null) {
+            if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::COLOR)) !== null) {
+                $properties[] = 'strokeColor: "#'.htmlColorForColorString($color).'"';
+                if (strlen($color) == 8) {
+                    $alphaHex = substr($color, 0, 2);
+                    $alpha = hexdec($alphaHex) / 256;
+                    $properties[] = 'strokeOpacity: '.round($alpha, 2);
+                }
             }
-        }
-        if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::FILLCOLOR)) !== null) {
-            $properties[] = 'fillColor: "#'.htmlColorForColorString($color).'"';
-            if (strlen($color) == 8) {
-                $alphaHex = substr($color, 0, 2);
-                $alpha = hexdec($alphaHex) / 256;
-                $properties[] = 'fillOpacity: '.round($alpha, 2);
+            if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::FILLCOLOR)) !== null) {
+                $properties[] = 'fillColor: "#'.htmlColorForColorString($color).'"';
+                if (strlen($color) == 8) {
+                    $alphaHex = substr($color, 0, 2);
+                    $alpha = hexdec($alphaHex) / 256;
+                    $properties[] = 'fillOpacity: '.round($alpha, 2);
+                }
             }
-        }
-        if (($weight = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::WEIGHT)) !== null) {
-            $properties[] = "strokeWeight: $weight";
+            if (($weight = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::WEIGHT)) !== null) {
+                $properties[] = "strokeWeight: $weight";
+            }
         }
 
         $propString = implode(',', $properties);
@@ -218,7 +217,7 @@ JS;
     }
 
     public function getFooterScript() {
-        $markers = $this->prepareJavascriptTemplate('GoogleJSMapMarkers');
+        $markers = $this->prepareJavascriptTemplate('GoogleJSMapMarkers', true);
         foreach ($this->markers as $index => $marker) {
             $markers->appendValues($marker);
         }

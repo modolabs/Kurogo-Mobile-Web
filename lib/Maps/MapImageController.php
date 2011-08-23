@@ -177,24 +177,25 @@ abstract class MapImageController
     // below is a generic javascript template populating thing
     // that we're putting in maps for now as an experiment
 
-    public function prepareJavascriptTemplate($filename) {
+    public function prepareJavascriptTemplate($filename, $repeating=false) {
         // TODO better way to search for package-specific templates
         $path = __DIR__.'/javascript/'.$filename.'.js';
         $path = realpath_exists($path);
         if ($path) {
-            return new JavascriptTemplate($path);
+            return new JavascriptTemplate($path, $repeating);
         }
     }
 }
 
 class JavascriptTemplate
 {
-    private $repeating = false;
+    private $repeating;
     private $template;
     private $values = array();
 
-    public function __construct($path) {
+    public function __construct($path, $repeating=false) {
         $this->template = file_get_contents($path);
+        $this->repeating = $repeating;
     }
 
     public function setRepeating($repeating) {
@@ -223,6 +224,10 @@ class JavascriptTemplate
 
     public function getScript() {
         $script = "\n";
+
+        if (!$this->repeating && !$this->values) {
+            $this->setValues(array());
+        }
 
         if ($this->values) {
             foreach ($this->values as $values) {
