@@ -288,8 +288,8 @@ class MapAPIModule extends APIModule
                 $lat = $this->getArg('lat', 0);
                 $lon = $this->getArg('lon', 0);
 
-                $fromProj = $this->getArg('from', 4326);
-                $toProj = $this->getArg('to', 4326);
+                $fromProj = $this->getArg('from', GEOGRAPHIC_PROJECTION);
+                $toProj = $this->getArg('to', GEOGRAPHIC_PROJECTION);
 
                 $projector = new MapProjector();
                 $projector->setSrcProj($fromProj);

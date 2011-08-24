@@ -2,8 +2,8 @@
 
 class MapProjector {
 
-    private $srcProjId = 4326;
-    private $dstProjId = 4326;
+    private $srcProjId = GEOGRAPHIC_PROJECTION;
+    private $dstProjId = GEOGRAPHIC_PROJECTION;
     
     private $srcProjSpec;
     private $dstProjSpec;

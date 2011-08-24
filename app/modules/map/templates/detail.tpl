@@ -55,6 +55,13 @@
   {$tabBodies['nearby'] = $nearbyPane}
 {/if}
 
+{if in_array('links', $tabKeys)}
+  {capture name="linksPane" assign="linksPane"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$externalLinks boldLabels=true listItemTemplateFile="findInclude:modules/map/templates/listItemWithID.tpl"}
+  {/capture}
+  {$tabBodies['links'] = $linksPane}
+{/if}
+
 {block name="tabView"}
   <div id="tabscontainer">
     {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}

@@ -449,30 +449,19 @@ function doUpdateContainerDimensions() {
     }
 }
 
-/*
-function disable(strID) {
-// Visually dims and disables the anchor whose id is strID
-	var objA = document.getElementById(strID);
-	if(objA) {
-		if(objA.className.indexOf("disabled") == -1) { // only disable if it's not already disabled!
-			objA.className = objA.className + " disabled";
-		}
-	}
+function addDirectionsLink() {
+    if ("geolocation" in navigator) {
+        var directionsLink = document.getElementById("directionsLink");
+        if (directionsLink) {
+            navigator.geolocation.getCurrentPosition(
+                function(location) {
+                    directionsLink.href += "&saddr=" + location.coords.latitude + "," + location.coords.longitude;
+                },
+                function() {}, {}
+            );
+        }
+    }
 }
 
-function enable(strID) {
-// Visually undims and re-enables the anchor whose id is strID
-	var objA = document.getElementById(strID);
-	if(objA) {
-		objA.className = objA.className.replace("disabled","");
-	}
-}
 
-function cancelOptions(strFormID) {
-// Should cancel map-option changes and hide the form; this is just a stub for future real function
-	var objForm = document.getElementById(strFormID);
-	if(objForm) { objForm.reset() }
-	hide("options"); 
-}
-*/
 

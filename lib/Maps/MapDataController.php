@@ -37,6 +37,9 @@ class MapDataController extends DataController implements MapFolder
     protected $selectedFeatures = array();
     protected $displaySetId = self::SELECTED_FEATURES;
     protected $drillDownPath = array();
+
+    protected $projectorReady = false;
+    protected $projector = null;
     
     ////// default, slow search implementation
     
@@ -81,31 +84,50 @@ class MapDataController extends DataController implements MapFolder
             if (count($validTokens)) {
                 foreach ($this->getAllLeafNodes() as $item) {
                     if ( ($item->getTitle()==$searchText) || $this->featureMatchesTokens($item, $validTokens)) {
-                        $results[] = $item;
+                        $results[] = $this->getProjectedFeature($item);
                     }
                 }
             }
         }
         return $results;
     }
+
+    protected function setupProjector()
+    {
+        if (!$this->projectorReady) {
+            $sourceProjection = $this->getProjection();
+            if (($sourceProjection instanceof MapProjection && !$this->getProjection()->isGeographic())
+                || $sourceProjection != GEOGRAPHIC_PROJECTION)
+            {
+                if ($this->projector === null) {
+                    $this->projector = new MapProjector();
+                    $this->projector->setSrcProj($this->getProjection());//$sourceProjection);
+                }
+            }
+            $this->projectorReady = true;
+        }
+    }
     
     public function searchByProximity($center, $tolerance, $maxItems=null)
     {
-        $bbox = normalizedBoundingBox($center, $tolerance, $maxItems, $this->getProjection());
+        //$bbox = normalizedBoundingBox($center, $tolerance, $maxItems, $this->getProjection());
+        $this->setupProjector();
 
         $results = array();
         foreach ($this->getAllLeafNodes() as $item) {
             $geometry = $item->getGeometry();
             if ($geometry) {
                 $featureCenter = $geometry->getCenterCoordinate();
+                if ($this->projector) {
+                    $featureCenter = $this->projector->projectPoint($featureCenter);
+                }
+
                 if ($featureCenter['lat'] <= $bbox['max']['lat']
                     && $featureCenter['lat'] >= $bbox['min']['lat']
                     && $featureCenter['lon'] <= $bbox['max']['lon']
                     && $featureCenter['lon'] >= $bbox['min']['lon']
                 ) {
-                    // use Euclidean distance since it's hard to tell whether
-                    // we have a distorting projection or not and Euclid
-                    // is alright at small distances
+                    // assume distances are small enough to use Euclidean distance
                     $distance = euclideanDistance(
                         $bbox['center']['lat'], $bbox['center']['lon'],
                         $featureCenter['lat'], $featureCenter['lon']);
@@ -118,7 +140,7 @@ class MapDataController extends DataController implements MapFolder
                     }
                     $item->setField('distance', $distance);
                     $item->addCategoryId($this->categoryId);
-                    $results[$intDist] = $item;
+                    $results[$intDist] = $this->getProjectedFeature($item);
                 }
             }
         }
@@ -150,7 +172,7 @@ class MapDataController extends DataController implements MapFolder
         $result = null;
         foreach ($this->getAllFeatures() as $feature) {
             if ($feature->getId() == $featureId) {
-                $result = $feature;
+                $result = $this->getProjectedFeature($feature);
                 break;
             }
         }
@@ -197,7 +219,7 @@ class MapDataController extends DataController implements MapFolder
             if (!$this->drillDownPath 
                 || in_array($this->drillDownPath, $feature->getCategories()))
             {
-                $features[] = $feature;
+                $features[] = $this->getProjectedFeature($feature);
             }
         }
         return $features;
@@ -206,6 +228,20 @@ class MapDataController extends DataController implements MapFolder
     public function setDisplaySet($set=self::SELECTED_FEATURES)
     {
         $this->displaySetId = $set;
+    }
+
+    protected function getProjectedFeature(Placemark $placemark)
+    {
+        if ($placemark instanceof BasePlacemark) { // generic Placemark does not implement setGeometry
+            $this->setupProjector();
+            if ($this->projector !== null) {
+                $geometry = $placemark->getGeometry();
+                if ($geometry) {
+                    $placemark->setGeometry($this->projector->projectGeometry($geometry));
+                }
+            }
+        }
+        return $placemark;
     }
 
     ////// MapFolder interface
@@ -274,7 +310,7 @@ class MapDataController extends DataController implements MapFolder
 
     // End MapFolder interface
 
-    public function getFeature($name, $categoryPath=array()) {
+    protected function getFeature($name, $categoryPath=array()) {
         $items = $this->getListItems($categoryPath);
         if (isset($items[$name])) {
             return $items[$name];
@@ -316,7 +352,7 @@ class MapDataController extends DataController implements MapFolder
             $imgController = $this->getStaticMapController();
         }
 
-        $imgController->setDataProjection($this->getProjection());
+        //$imgController->setDataProjection($this->getProjection());
         $placemarks = array();
 
         switch ($this->displaySetId) {

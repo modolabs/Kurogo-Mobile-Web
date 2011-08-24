@@ -27,6 +27,11 @@ class BasePlacemark implements Placemark
     public function setAddress($address) {
         $this->address = $address;
     }
+
+    public function setGeometry(MapGeometry $geometry)
+    {
+        $this->geometry = $geometry;
+    }
     
     // MapListElement interface
     

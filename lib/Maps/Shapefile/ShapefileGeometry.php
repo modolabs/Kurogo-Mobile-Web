@@ -2,7 +2,7 @@
 
 class ShapefileGeometry extends BasePlacemark implements MapGeometry
 {
-    protected $geometry;
+    protected $geomSpecs;
     protected $bbox;
     protected $properties;
     protected $category;
@@ -38,11 +38,14 @@ class ShapefileGeometry extends BasePlacemark implements MapGeometry
         $this->properties = $properties;
     }
 
-    public function readGeometry($geometry) {
-        $this->geometry = $geometry;
+    public function readGeometry($geomSpecs) {
+        $this->geomSpecs = $geomSpecs;
     }
 
     public function getGeometry() {
+        if (isset($this->geometry) && $this->geometry instanceof MapGeometry) {
+            return $this->geometry;
+        }
         return $this;
     }
 

@@ -327,10 +327,8 @@ class MapWebModule extends WebModule {
         if (isset($params['featureindex'])) {
             $index = $params['featureindex'];
             $categoryPath = explode(MAP_CATEGORY_DELIMITER, $params['category']);
-            //$dataController = $this->getDataController($categoryPath, $listItemPath);
             $dataController = $this->getDataController();
             $feature = $dataController->selectFeature($index);
-            //$feature = $dataController->getFeature($index, $listItemPath);
             return array($feature->getTitle(), $dataController->getTitle());
         
         } else if (isset($params['group'])) {
@@ -568,9 +566,28 @@ JS;
                 $this->assign('details', $details);
                 return is_array($details) ? count($details) > 0 : strlen(trim($details));
             }
-            case 'categories':
+            case 'links':
             {
-                // TODO generate a list of categories related to this placemark
+                $externalLinks = array();
+                $center = $feature->getGeometry()->getCenterCoordinate();
+                $centerText = $center['lat'].','.$center['lon'];
+
+                $externalLinks[] = array(
+                    'title' => 'View in Google Maps', // TODO put this in strings file
+                    'url' => 'http://maps.google.com?ll='.$centerText,
+                    );
+                
+                $externalLinks[] = array(
+                    'title' => 'Get directions from Google',
+                    'url' => 'http://maps.google.com?daddr='.$centerText,
+                    'urlID' => 'directionsLink',
+                    );
+
+                $directionsText = 'Get directions from Google';
+                $tabJavascripts[$tabKey] = "addDirectionsLink();";
+                
+                $this->assign('externalLinks', $externalLinks);
+                return count($externalLinks) > 0;
             }
             default:
                 break;

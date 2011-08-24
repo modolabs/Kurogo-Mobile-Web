@@ -3,6 +3,6 @@
 class ShapefilePoint extends ShapefileGeometry
 {
     public function getCenterCoordinate() {
-        return $this->geometry;
+        return $this->geomSpecs;
     }
 }

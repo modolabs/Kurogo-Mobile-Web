@@ -49,7 +49,6 @@ class GoogleJSMap extends JavascriptMapImageController {
     {
         $geometry = $placemark->getGeometry();
         $coord = $geometry->getCenterCoordinate();
-
         if (isset($this->mapProjector)) {
             $coord = $this->mapProjector->projectPoint($coord);
         }
