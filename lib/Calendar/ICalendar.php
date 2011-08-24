@@ -136,6 +136,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
   protected $properties=array();
   protected $rrules=array();
   protected $exdates = array();
+  protected $recurrence_exceptions = array();
 
   public function getEventCategories() {
     return array();
@@ -480,6 +481,31 @@ class ICalEvent extends ICalObject implements KurogoObject {
         $string .= sprintf("%s:%s\n", $prop, iCalendar::ical_escape_text($value));
   }
 
+  /**
+   * Add an ICalEvent as an Exception to the recurrence pattern of a repeating
+   * event.
+   */
+  public function addRecurenceException(ICalEvent $recurrence_exception)
+  {
+	$this->recurrence_exceptions[] = $recurrence_exception;
+  }
+
+  /**
+   * Answer an ICalEvent that is an exception to the normal recurrence pattern
+   * if one exists for the start-time given. FALSE if none match.
+   * @param int $time
+   * @return mixed ICalEvent or null
+   */
+  public function getRecurrenceException($time)
+  {
+    $recurrence_id = strftime("%Y%m%dT%H%M%S",$time);
+    foreach ($this->recurrence_exceptions as $exception) {
+        if ($exception->get_recurid() == $recurrence_id)
+            return $exception;
+    }
+    return null;
+  }
+
   public function outputICS()
   {
         $output_string = '';
@@ -683,14 +709,18 @@ class ICalRecurrenceRule extends ICalObject {
   //      echo date('m/d/Y H:i:s', $time) . "<br>\n";
         $occurrence_range = new TimeRange($time, $time+$diff);
         if ($occurrence_range->overlaps($range)) {
-            $occurrence = clone $event;
-            $occurrence->setRange($occurrence_range);
-            $occurrence->clear_rrules();
-            $recurrence_id = strftime("%Y%m%dT%H%M%S",$time);
-            if ($tzid = $occurrence->get_tzid()) {
-                $recurrence_id = sprintf("TZID=%s:%s", $tzid, $recurrence_id);
+            if ($recurrence_exception = $event->getRecurrenceException($time)) {
+                $occurrence = clone $recurrence_exception;
+            } else {
+                $occurrence = clone $event;
+                $occurrence->setRange($occurrence_range);
+                $occurrence->clear_rrules();
+                $recurrence_id = strftime("%Y%m%dT%H%M%S",$time);
+                if ($tzid = $occurrence->get_tzid()) {
+                    $recurrence_id = sprintf("TZID=%s:%s", $tzid, $recurrence_id);
+                }
+                $occurrence->set_attribute('RECURRENCE-ID', $recurrence_id);
             }
-            $occurrence->set_attribute('RECURRENCE-ID', $recurrence_id);
             $occurrences[] = $occurrence;
         }
         if ( ($limitType=='COUNT') && ($count < $limit) ) { break; }
@@ -715,13 +745,36 @@ class ICalendar extends ICalObject implements CalendarInterface {
   public $timezone = NULL;
   protected $events=array();
   protected $eventStartTimes=array();
+  protected $recurrence_exceptions = array();
 
   public function add_event(ICalEvent $event) {
     $uid = $event->get_uid();
-    $this->events[$uid] = $event;
+    if (is_null($event->get_recurid())) {
+      $this->events[$uid] = $event;
 
-    // use event start times so we can return events in starting order
-    $this->eventStartTimes[$uid] = $event->get_start();
+      // use event start times so we can return events in starting order
+      $this->eventStartTimes[$uid] = $event->get_start();
+
+      // Add any stored exceptions to the event.
+      if (isset($this->recurrence_exceptions[$uid])) {
+        foreach ($this->recurrence_exceptions[$uid] as $exception) {
+          $this->events[$uid]->addRecurenceException($exception);
+        }
+      }
+    } else {
+      // If the event already exists, add the exception to it.
+      if (isset($this->events[$uid])) {
+        $this->events[$uid]->addException($event);
+      }
+      // Otherwise, store up a list of exceptions for addition to the event
+      // when its added.
+      else {
+	if (!isset($this->recurrence_exceptions[$uid]))
+		$this->recurrence_exceptions[$uid] = array();
+
+        $this->recurrence_exceptions[$uid][] = $event;
+      }
+    }
   }
   
   public function getEvents() {
