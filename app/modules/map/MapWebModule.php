@@ -158,20 +158,6 @@ class MapWebModule extends WebModule {
             $this->feedGroup = NULL;
         }
     }
-
-    // TODO this is an example implementation based on Harvard.
-    protected function photoFileForPlacemark(Placemark $placemark)
-    {
-        $photoFile = null;
-        $photoServer = $this->getOptionalModuleVar('MAP_PHOTO_SERVER');
-        if ($photoServer) {
-            $photoFile = $feature->getField('Photo');
-            if ($photoFile == 'Null') {
-                $photoFile = null;
-            }
-        }
-        return $photoFile;
-    }
     
     ///////////// url builders
 
