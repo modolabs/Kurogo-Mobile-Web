@@ -707,6 +707,7 @@ class ICalRecurrenceRule extends ICalObject {
     while ($time <= $range->get_end())
     {
   //      echo date('m/d/Y H:i:s', $time) . "<br>\n";
+        if ( ($limitType=='UNTIL') && ($time > $limit) ) { break; }
         $occurrence_range = new TimeRange($time, $time+$diff);
         if ($occurrence_range->overlaps($range)) {
             if ($recurrence_exception = $event->getRecurrenceException($time)) {
@@ -724,7 +725,6 @@ class ICalRecurrenceRule extends ICalObject {
             $occurrences[] = $occurrence;
         }
         if ( ($limitType=='COUNT') && ($count < $limit) ) { break; }
-        if ( ($limitType=='UNTIL') && ($time > $limit) ) { break; }
         if ( $count > ICalRecurrenceRule::MAX_OCCURRENCES) { break; }
         if ( !is_null($max) && count($occurrences)>=$max) { break; }
         $time = $this->nextIncrement($time, $this->type, $this->interval);
