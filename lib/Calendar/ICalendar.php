@@ -577,6 +577,16 @@ class ICalRecurrenceRule extends ICalObject {
         $limitType = 'COUNT';
         $this->limit = $rulevalue;
         break;
+      case 'BYDAY':
+        if ($this->type == 'WEEKLY') {
+            $this->type = 'WEEKLY-BYDAY';
+            $this->occurs_by_day = array();
+            foreach (explode(',', $rulevalue) as $day) {
+                $this->occurs_by_day[self::$dayIndex[$day]] = $day;
+            }
+            ksort($this->occurs_by_day);
+            break;
+        }
       case (substr($rulename, 0, 2) == 'BY'):
         throw new Exception("$rulename rules not handled yet ($rule_string)");
         $occurs_by_list[$rulename] = explode(',', $rulevalue);
@@ -617,6 +627,30 @@ class ICalRecurrenceRule extends ICalObject {
             break;
         case 'WEEKLY':
             $time = self::nextIncrement($time, 'DAILY', 7*$interval);
+            break;
+        case 'WEEKLY-BYDAY':
+            $day = strtoupper(substr(date('D', $time), 0,2));
+
+            // Loop through the days and find the next one.
+            reset($this->occurs_by_day);
+            $a_day = current($this->occurs_by_day);
+            while ($a_day) {
+                if ($a_day == $day) {
+                    $next_day = next($this->occurs_by_day);
+                    if ($next_day) {
+                        $offset = self::$dayIndex[$next_day] - self::$dayIndex[$day];
+                    }
+                    // If we have reached the end of the sequence, use the beginning and add 7
+                    else {
+                        reset($this->occurs_by_day);
+                        $next_day = current($this->occurs_by_day);
+                        $offset = 7 + self::$dayIndex[$next_day] - self::$dayIndex[$day];
+                    }
+                    break;
+                }
+                $a_day = next($this->occurs_by_day);
+            }
+            $time = self::nextIncrement($time, 'DAILY', $offset*$interval);
             break;
         case 'MONTHLY':
             throw new Exception("MONTHLY increment Not handled yet");
