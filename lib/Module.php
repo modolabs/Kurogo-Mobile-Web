@@ -7,6 +7,8 @@
 /**
  * @package Module
  */ 
+ 
+define ('FILTER_SANITIZE_KUROGO_DEFAULT', 'KurogoDefaultSanitizeFilter');
 abstract class Module
 {
     protected $id='none';
@@ -256,7 +258,13 @@ abstract class Module
     protected function setConfig($type, ConfigFile $config) {
     	$this->configs[$type] = $config;
     }
-
+    
+    protected static function sanitizeArgValue($value) {
+        $search = array('@<\s*script[^>]*?>.*?<\s*/\s*script\s*>@si'
+        );  // Strip out javascript 
+        return preg_replace($search, "", $value);
+    }
+    
     /**
       * Convenience method for retrieving a key from an array. It can also optionally apply a filter to the value
       * @param array $args an array to search
@@ -270,6 +278,11 @@ abstract class Module
         if (isset($args[$key])) {
             $value = $args[$key];
             if ($filter) {
+                if ($filter == FILTER_SANITIZE_KUROGO_DEFAULT) {
+                    $filter = FILTER_CALLBACK;
+                    $filterOptions = array('options'=>array('Module','sanitizeArgValue'));
+                }
+                
                 if (($value = filter_var($value, $filter, $filterOptions))===FALSE) {
                     $value = $default;
                 }
@@ -288,7 +301,7 @@ abstract class Module
       * @param mixed $filterOptions options, the options for the filter (see filter_var)
       * @return mixed the value of the or the default 
       */
-    protected function getArg($key, $default='', $filter=null, $filterOptions=null) {
+    protected function getArg($key, $default='', $filter=FILTER_SANITIZE_KUROGO_DEFAULT, $filterOptions=null) {
         return self::argVal($this->args, $key, $default, $filter, $filterOptions);
     }
 
