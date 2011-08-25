@@ -15,9 +15,6 @@ class MapWebModule extends WebModule {
     protected $featureIndex;
     
     private function getDataForGroup($group) {
-        if (!$this->feedGroups) {
-             $this->feedGroups = $this->getFeedGroups();
-        }
         return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
     }
     
@@ -46,34 +43,46 @@ class MapWebModule extends WebModule {
     protected function loadFeedData() {
         $data = array();
         $feedConfigFile = NULL;
-        
+        $category = $this->getCategory();
+
         if ($this->feedGroup !== NULL) {
-            if ($this->numGroups === 1) {
-                $this->feedGroup = key($this->feedGroups);
-            }
-        }
-
-
-        if ($this->numGroups === 0) {
-            $data = $this->getModuleSections('feeds');
-
-        } elseif ($this->feedGroup !== NULL) {
             $configName = "feeds-{$this->feedGroup}";
             foreach ($this->getModuleSections($configName) as $id => $feedData) {
                 $feedId = mapIdForFeedData($feedData);
                 $data[$feedId] = $feedData;
             }
+
         } else {
+            // if no feed group and category are specified, load whole list
             foreach ($this->feedGroups as $groupID => $groupData) {
                 $configName = "feeds-$groupID";
+                $groupData = array();
                 foreach ($this->getModuleSections($configName) as $id => $feedData) {
                     $feedId = mapIdForFeedData($feedData);
-                    $data[$feedId] = $feedData;
+                    $groupData[$feedId] = $feedData;
+                    if ($category == $feedId) {
+                        $this->feedGroup = $groupID;
+                    }
+                }
+
+                if ($this->feedGroup !== null) {
+                    $data = $groupData;
+                    break;
+                } else {
+                    $data = array_merge($data, $groupData);
                 }
             }
         }
 
         return $data;
+    }
+
+    private function getFeedData()
+    {
+        if (!$this->feeds) {
+            $this->feeds = $this->loadFeedData();
+        }
+        return $this->feeds;
     }
 
     protected function getModuleAdminSections() {
@@ -142,16 +151,13 @@ class MapWebModule extends WebModule {
     protected function initialize() {
         // this is in the wrong place
         $this->feedGroup = $this->getArg('group', NULL);
-        /* don't save feed group anymore because it has some flaws
-        if ($this->feedGroup === NULL) {
-            if (isset($_COOKIE[MAP_GROUP_COOKIE])) {
-                $this->feedGroup = $_COOKIE[MAP_GROUP_COOKIE];
-            }
-        }
-        */
 
         $this->feedGroups = $this->getFeedGroups();
         $this->numGroups = count($this->feedGroups);
+        
+        if ($this->numGroups === 1) {
+            $this->feedGroup = key($this->feedGroups);
+        }
 
         // clear out invalid feed group argument
         if ($this->feedGroup !== NULL && $this->getDataForGroup($this->feedGroup) === NULL) {
@@ -237,13 +243,11 @@ class MapWebModule extends WebModule {
         return $results;
     }
 
+    // depends on feeds being loaded
     private function getDataController() {
+        $this->getFeedData();
         $category = $this->getCategory();
         if ($category) {
-            if (!$this->feeds) {
-                $this->feeds = $this->loadFeedData();
-            }
-
             if (isset($this->feeds[$category])) {
                 $feedData = $this->feeds[$category];
                 $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
@@ -260,6 +264,18 @@ class MapWebModule extends WebModule {
         return $controller;
     }
 
+    private function getImageController()
+    {
+        if ($this->feedGroup === null) {
+            error_log("Warning: feed group not set when initializing image controller, using first group");
+            $this->feedGroup = key($this->feedGroups);
+        }
+
+        $groupData = $this->getDataForGroup($this->feedGroup);
+        $mapDevice = new MapDevice($this->pagetype, $this->platform);
+        return MapImageController::factory($groupData, $mapDevice);
+    }
+
     protected function getSearchClass($options=array()) {
         if (isset($options['external']) && $options['external']) {
             $searchConfigName = 'MAP_EXTERNAL_SEARCH_CLASS';
@@ -270,19 +286,14 @@ class MapWebModule extends WebModule {
         }
 
         $mapSearchClass = $this->getOptionalModuleVar($searchConfigName, $searchConfigDefault);
-        if (!$this->feeds)
-            $this->feeds = $this->loadFeedData();
-        $mapSearch = new $mapSearchClass($this->feeds);
+        $mapSearch = new $mapSearchClass($this->getFeedData());
         $this->assign('poweredByGoogle', $mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces());
         return $mapSearch;
     }
     
     private function assignCategories() {
-        if (!$this->feeds)
-            $this->feeds = $this->loadFeedData();
-
         $categories = array();
-        foreach ($this->feeds as $id => $feed) {
+        foreach ($this->getFeedData() as $id => $feed) {
             if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
             $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
             $categories[] = array(
@@ -314,7 +325,7 @@ class MapWebModule extends WebModule {
             $index = $params['featureindex'];
             $categoryPath = explode(MAP_CATEGORY_DELIMITER, $params['category']);
             $dataController = $this->getDataController();
-            $feature = $dataController->selectFeature($index);
+            $feature = $dataController->selectPlacemark($index);
             return array($feature->getTitle(), $dataController->getTitle());
         
         } else if (isset($params['group'])) {
@@ -354,15 +365,9 @@ class MapWebModule extends WebModule {
         $this->addOnOrientationChange('updateContainerDimensions()');
     }
 
-    protected function initializeMapElements($mapElement, $imgController, $imageWidth, $imageHeight) {
-        $imgController->setImageWidth($imageWidth);
-        $imgController->setImageHeight($imageHeight);
-            
+    protected function initializeMapElements($mapElement, $imgController)
+    {
         if ($imgController->isStatic()) {
-            if ($this->pagetype == 'basic' || $this->pagetype == 'touch') {
-                $imgController->setImageFormat('gif');
-            }
-
             $this->assign('imageUrl', $imgController->getImageURL());
 
             $this->assign('scrollNorth', $this->detailUrlForPan('n', $imgController));
@@ -373,14 +378,14 @@ class MapWebModule extends WebModule {
             $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
             $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
 
-            $this->assign('imageWidth',  $imageWidth);
-            $this->assign('imageHeight', $imageHeight);
+            $this->assign('imageWidth',  $imgController->getImageWidth());
+            $this->assign('imageHeight', $imgController->getImageHeight());
 
             if (($this->pagetype == 'compliant' && $this->platform != 'bbplus') || $this->pagetype == 'tablet') {
                 $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}/staticImageURL";
                 $js = <<<JS
-                    mapWidth = {$imageWidth};
-                    mapHeight = {$imageHeight};
+                    mapWidth = {$imgController->getImageWidth()};
+                    mapHeight = {$imgController->getImageHeight()};
                     staticMapOptions = {$imgController->getJavascriptControlOptions()};
                     apiURL = "{$apiURL}";
 JS;
@@ -390,7 +395,6 @@ JS;
             }
 
         } else {
-            $imgController->setImageWidth($imageWidth);
             $imgController->setMapElement($mapElement);
             foreach ($imgController->getIncludeScripts() as $includeScript) {
                 $this->addExternalJavascript($includeScript);
@@ -405,16 +409,21 @@ JS;
         }
     }
     
-    private function initializeMap(MapDataController $dataController, $fullscreen=FALSE) {
-        
-        $MapDevice = new MapDevice($this->pagetype, $this->platform);
-
-        $imgController = $dataController->getMapImageController($MapDevice);
+    private function initializeMap(MapDataController $dataController, $fullscreen=FALSE)
+    {
+        $placemarks = $dataController->getSelectedPlacemarks();
 
         // override point for where annotation should be drawn
         if (isset($this->args['lat'], $this->args['lon'])) {
             $customPlacemark = new MapBasePoint(
                 $this->args['lat'], $this->args['lon']);
+            
+            $placemarks[] = $customPlacemark;
+        }
+
+        $imgController = $this->getImageController();
+        foreach ($placemarks as $placemark) {
+            $imgController->addPlacemark($placemark);
         }
         
         // override point for current zoom level
@@ -435,28 +444,22 @@ JS;
         if (isset($center)) {
             $imgController->setCenter($center);
         }
-        $imgController->setZoomLevel($zoomLevel);
+        if (isset($zoomLevel) && $zoomLevel !== null) {
+            $imgController->setZoomLevel($zoomLevel);
+        }
 
         if (!$fullscreen) {
             $this->assign('fullscreenURL', $this->buildBreadcrumbURL('fullscreen', $this->args, false));
         
-            if ($imgController->isStatic()) {
-                list($imageWidth, $imageHeight) = $MapDevice->staticMapImageDimensions();
-                //$this->addInlineJavascriptFooter("\n updateMapDimensions();\n");
-
-            } else {
-                list($imageWidth, $imageHeight) = $MapDevice->dynamicMapImageDimensions();
+            if (!$imgController->isStatic()) {
                 $this->addInlineJavascriptFooter("\n hideMapTabChildren();\n");
             }
             $this->addInlineJavascriptFooter("\n setMapHeights();\n");
             
         } else {
             $this->assign('detailURL', $this->buildBreadcrumbURL('detail', $this->args, false));
-            if ($imgController->isStatic()) {
-                list($imageWidth, $imageHeight) = $MapDevice->staticMapImageDimensions();
 
-            } else {
-                list($imageWidth, $imageHeight) = $MapDevice->fullscreenMapImageDimensions();
+            if (!$imgController->isStatic()) {
                 $this->addJavascriptFullscreenDynamicMap();
             }
         }
@@ -464,7 +467,7 @@ JS;
         $this->assign('fullscreen', $fullscreen);
         $this->assign('isStatic', $imgController->isStatic());
         
-        $this->initializeMapElements('mapimage', $imgController, $imageWidth, $imageHeight);
+        $this->initializeMapElements('mapimage', $imgController);
 
         // call the function that updates the image size        
         if ($imgController->isStatic()) {
@@ -555,7 +558,17 @@ JS;
             case 'links':
             {
                 $externalLinks = array();
-                $center = $feature->getGeometry()->getCenterCoordinate();
+                if ($feature) {
+                    $geometry = $feature->getGeometry();
+                    $center = $geometry->getCenterCoordinate();
+                } elseif (isset($this->args['lat'], $this->args['lon'])) {
+                    $center = array(
+                        'lat' => $this->args['lat'],
+                        'lon' => $this->args['lon']);
+                } else {
+                    return false;
+                }
+
                 $centerText = $center['lat'].','.$center['lon'];
 
                 $externalLinks[] = array(
@@ -741,7 +754,6 @@ JS;
                             $url = $this->detailURL($listItem->getId(), $categoryPath);
                         } else {
                             // for folder objects, getIndex returns the subcategory ID
-                            //$drilldownPath = array_merge($categoryPath, array($listItem->getId()));
                             $drilldownPath = array_merge($this->getDrillDownPath(), array($listItem->getId()));
                             $url = $this->categoryURL($categoryPath, $drilldownPath, false);
                         }
@@ -784,7 +796,7 @@ JS;
                     $dataController->addDisplayFilter('category', $drilldownPath);
                 }
                 if ($this->featureIndex !== null) {
-                    $feature = $dataController->selectFeature($this->featureIndex);
+                    $feature = $dataController->selectPlacemark($this->featureIndex);
 
                 } elseif (isset($this->args['lat'], $this->args['lon'])) {
                     $lat = $this->args['lat'];
@@ -798,7 +810,7 @@ JS;
                         $title = "$lat,$lon";
                     }
                     // hacky
-                    $dataController->setSelectedFeatures(array($feature));
+                    $dataController->setSelectedPlacemarks(array($feature));
                 }
 
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
@@ -855,7 +867,7 @@ JS;
                 
             case 'fullscreen':
                 $dataController = $this->getDataController();
-                $dataController->selectFeature($this->featureIndex);
+                $dataController->selectPlacemark($this->featureIndex);
                 $this->initializeMap($dataController, true);
                 break;
         }

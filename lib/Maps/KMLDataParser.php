@@ -35,7 +35,7 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
         return null;
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         return $this->features;
     }

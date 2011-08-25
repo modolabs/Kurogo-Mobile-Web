@@ -67,7 +67,7 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         return $this->features;
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         return $this->features;
     }

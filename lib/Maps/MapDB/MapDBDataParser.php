@@ -14,10 +14,10 @@ class MapDBDataParser extends DataParser implements MapDataParser
 
     public function getListItems()
     {
-        return array_merge($this->getChildCategories(), $this->getAllFeatures());
+        return array_merge($this->getChildCategories(), $this->getAllPlacemarks());
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         return MapDB::featuresForCategory($this->categoryId);
     }

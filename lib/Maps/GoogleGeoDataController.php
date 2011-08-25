@@ -99,7 +99,7 @@ class GoogleGeoDataController extends MapDataController
         return $this->items();
     }
 
-    public function selectFeature($featureId)
+    public function selectPlacemark($featureId)
     {
         if (!$this->isPlaces) {
             return null;
@@ -114,9 +114,9 @@ class GoogleGeoDataController extends MapDataController
         $this->addFilter('sensor', 'false');
         $this->signURL();
 
-        $this->selectedFeatures = $this->items();
+        $this->selectedPlacemarks = $this->items();
         $this->setBaseURL($url);
 
-        return current($this->selectedFeatures);
+        return current($this->selectedPlacemarks);
     }
 }

@@ -6,12 +6,6 @@
 
 class MapDataController extends DataController implements MapFolder
 {
-    const SEARCH_RESULTS = -1;
-
-    const SELECTED_FEATURES = 1;
-    const FILTERED_FEATURES = 2;
-    const NO_FEATURES = 3;
-
     // data source config options
     protected $DEFAULT_PARSER_CLASS = 'KMLDataParser';
     protected $parser = null;
@@ -19,23 +13,12 @@ class MapDataController extends DataController implements MapFolder
     protected $title = null;
 
     // base map config options
-    protected $DEFAULT_MAP_CLASS = 'GoogleStaticMap';
-    protected $staticMapClass;
-    protected $staticMapBaseURL = null;
-    protected $dynamicMapClass = null;
-    protected $dynamicMapBaseURL = null;
     protected $defaultZoomLevel = 16;
-
-    // in theory all map images controllers should use the same
-    // zoom level, but if certain image servers (e.g. Harvard ArcGIS)
-    // have different definitions for zoom level, we need another
-    // field to specify this
-    protected $dynamicZoomLevel = null;
 
     // not config variables    
     protected $items = null;
-    protected $selectedFeatures = array();
-    protected $displaySetId = self::SELECTED_FEATURES;
+    protected $selectedPlacemarks = array();
+    //protected $displaySetId = self::SELECTED_FEATURES;
     protected $drillDownPath = array();
 
     protected $projectorReady = false;
@@ -107,10 +90,10 @@ class MapDataController extends DataController implements MapFolder
             $this->projectorReady = true;
         }
     }
-    
+
+    // argument must be lat/lon (not projected)    
     public function searchByProximity($center, $tolerance, $maxItems=null)
     {
-        //$bbox = normalizedBoundingBox($center, $tolerance, $maxItems, $this->getProjection());
         $this->setupProjector();
 
         $results = array();
@@ -167,34 +150,34 @@ class MapDataController extends DataController implements MapFolder
     
     /////// view functions
 
-    public function selectFeature($featureId)
+    public function selectPlacemark($featureId)
     {
         $result = null;
-        foreach ($this->getAllFeatures() as $feature) {
+        foreach ($this->getAllPlacemarks() as $feature) {
             if ($feature->getId() == $featureId) {
                 $result = $this->getProjectedFeature($feature);
                 break;
             }
         }
         if ($result) {
-            $this->selectedFeatures[] = $result;
+            $this->selectedPlacemarks[] = $result;
         }
         return $result;
     }
 
-    public function setSelectedFeatures($features)
+    public function setSelectedPlacemarks($features)
     {
-        $this->selectedFeatures = $features;
+        $this->selectedPlacemarks = $features;
     }
 
-    public function getSelectedFeature()
+    public function getSelectedPlacemark()
     {
-        return end($this->selectedFeatures);
+        return end($this->selectedPlacemarks);
     }
 
-    public function getAllSelectedFeatures()
+    public function getSelectedPlacemarks()
     {
-        return $this->selectedFeatures;
+        return $this->selectedPlacemarks;
     }
 
     public function addDisplayFilter($type, $value)
@@ -212,10 +195,10 @@ class MapDataController extends DataController implements MapFolder
         $this->drillDownPath = null;
     }
 
-    public function getAllFilteredFeatures()
+    public function getFilteredPlacemarks()
     {
         $features = array();
-        foreach ($this->getAllFeatures() as $feature) {
+        foreach ($this->getAllPlacemarks() as $feature) {
             if (!$this->drillDownPath 
                 || in_array($this->drillDownPath, $feature->getCategories()))
             {
@@ -223,11 +206,6 @@ class MapDataController extends DataController implements MapFolder
             }
         }
         return $features;
-    }
-
-    public function setDisplaySet($set=self::SELECTED_FEATURES)
-    {
-        $this->displaySetId = $set;
     }
 
     protected function getProjectedFeature(Placemark $placemark)
@@ -267,7 +245,7 @@ class MapDataController extends DataController implements MapFolder
             $someUniqueId = substr(md5($otherCateogryId.count($folders)), 0, strlen($otherCateogryId)-1);
             $otherCategory = new MapBaseCategory($someUniqueId, 'Other places');
             $folders[$otherCategory->getId()] = $otherCategory;
-            $otherCategory->setFeatures($features);
+            $otherCategory->setPlacemarks($features);
         }
 
         if (count($folders) >= 1) {
@@ -287,10 +265,10 @@ class MapDataController extends DataController implements MapFolder
         return $this->parser->getChildCategories();
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         $this->getListItems(); // make sure we're populated
-        return $this->parser->getAllFeatures();
+        return $this->parser->getAllPlacemarks();
     }
 
     public function getListItems()
@@ -344,81 +322,8 @@ class MapDataController extends DataController implements MapFolder
         return $this->defaultZoomLevel;
     }
 
-    public function getMapImageController(MapDevice $mapDevice)
-    {
-        if ($mapDevice->pageSupportsDynamicMap() && $this->dynamicMapClass !== null) {
-            $imgController = $this->getDynamicMapController();
-        } else {
-            $imgController = $this->getStaticMapController();
-        }
-
-        //$imgController->setDataProjection($this->getProjection());
-        $placemarks = array();
-
-        switch ($this->displaySetId) {
-            case self::SELECTED_FEATURES:
-                // add annotations via selectFeature()
-                $placemarks = $this->getAllSelectedFeatures();
-                break;
-            case self::FILTERED_FEATURES:
-                // add annotations that match displayFilters
-                $placemarks = $this->getAllFilteredFeatures();
-                break;
-            case self::NO_FEATURES:
-            default:
-                // don't add any annotations, this will be done in the view
-                break;
-        }
-
-        foreach ($placemarks as $placemark) {
-            $imgController->addPlacemark($placemark);
-        }
-        // TODO better way to set default center coordinate
-        if (count($placemarks)) {
-            $lastPlacemark = end($placemarks);
-            $imgController->setCenter($lastPlacemark->getGeometry()->getCenterCoordinate());
-        } else {
-            error_log(get_class($this)." was unable to find any matching placemarks");
-        }
-        return $imgController;
-    }
-
-    protected function getStaticMapController() {
-        $controller = MapImageController::factory($this->staticMapClass, $this->staticMapBaseURL);
-        return $controller;
-    }
-
-    protected function getDynamicMapController() {
-        if (is_array($this->dynamicMapBaseURL)) {
-            $baseURL = $this->dynamicMapBaseURL[0];
-            $moreLayers = $this->dynamicMapBaseURL;
-            array_splice($moreLayers, 0, 1);
-        } else {
-            $baseURL = $this->dynamicMapBaseURL;
-            $moreLayers = array();
-        }
-        $controller = MapImageController::factory($this->dynamicMapClass, $baseURL);
-        if ($this->dynamicMapClass == 'ArcGISJSMap') {
-            $controller->addLayers($moreLayers);
-            if ($this->dynamicZoomLevel !== null) {
-                $controller->setPermanentZoomLevel($this->dynamicZoomLevel);
-            }
-        }
-        return $controller;
-    }
-
     public static function defaultDataController()
     {
-        /*
-        $args = array(
-            'STATIC_MAP_CLASS' => 'GoogleStaticMap',
-            'JS_MAP_CLASS' => 'GoogleJSMap',
-            'DEFAULT_ZOOM_LEVEL' => 10, // need better way to set this value
-            'PARSER_CLASS' => 'GooglePlacesParser',
-            'BASE_URL' => GoogleGeoDataController::GEOCODE_BASE_URL, // change this if we search multiple services
-            );
-        */
-        
         return self::factory('GoogleGeoDataController', array());
     }
 
@@ -453,22 +358,7 @@ class MapDataController extends DataController implements MapFolder
     protected function init($args)
     {
         parent::init($args);
-        // static map support required; dynamic optional
-        if (isset($args['STATIC_MAP_CLASS']))
-            $this->staticMapClass = $args['STATIC_MAP_CLASS'];
-        else
-            $this->staticMapClass = $this->DEFAULT_MAP_CLASS;
 
-        // other optional fields
-        if (isset($args['JS_MAP_CLASS']))
-            $this->dynamicMapClass = $args['JS_MAP_CLASS'];
-        
-        if (isset($args['STATIC_MAP_BASE_URL']))
-            $this->staticMapBaseURL = $args['STATIC_MAP_BASE_URL'];
-        
-        if (isset($args['DYNAMIC_MAP_BASE_URL']))
-            $this->dynamicMapBaseURL = $args['DYNAMIC_MAP_BASE_URL'];
-        
         $this->searchable = isset($args['SEARCHABLE']) ? ($args['SEARCHABLE'] == 1) : false;
 
         if (isset($args['DEFAULT_ZOOM_LEVEL']))

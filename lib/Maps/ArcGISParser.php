@@ -147,8 +147,8 @@ class ArcGISParser extends DataParser implements MapDataParser
     
     //// MapFolder interface
 
-    public function getAllFeatures() {
-        return $this->selectedLayer->getAllFeatures();
+    public function getAllPlacemarks() {
+        return $this->selectedLayer->getAllPlacemarks();
     }
 
     public function getChildCategories() {
@@ -157,12 +157,12 @@ class ArcGISParser extends DataParser implements MapDataParser
     
     public function getListItems() {
         if (isset($this->defaultLayerId) || count($this->subLayers) == 1) {
-            return $this->getAllFeatures();
+            return $this->getAllPlacemarks();
 
         } else if ($this->searchFilters) {
             $results = array();
             foreach ($this->subLayers as $id => $layer) {
-                $results = array_merge($results, $layer->getAllFeatures());
+                $results = array_merge($results, $layer->getAllPlacemarks());
             }
             return $results;
         }

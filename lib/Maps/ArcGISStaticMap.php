@@ -60,6 +60,15 @@ class ArcGISStaticMap extends StaticMapImageController {
             );
     }
 
+    public function setCenter($center)
+    {
+        if ($center['lon'] < 180 && $center['lon'] > -180
+            && $center['lat'] < 90 && $center['lat'] > -90 && $this->mapProjector)
+        {
+            $this->center = $this->mapProjector->projectPoint($center);
+        }
+    }
+
     public static function getScaleForEsriUnits($units) {
         switch ($units) {
             case 'esriCentimeters':

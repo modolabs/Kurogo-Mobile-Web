@@ -86,10 +86,12 @@ class MapAPIModule extends APIModule
     
     // overrides function in Module.php
     protected function loadFeedData() {
+        $this->getFeedGroups();
+
         $this->feeds = array();
         $feedConfigFile = NULL;
         
-        if ($this->feedGroup !== NULL) {
+        if ($this->feedGroup === NULL) {
             if ($this->numGroups === 1) {
                 $this->feedGroup = key($this->feedGroups);
             }
@@ -302,7 +304,7 @@ class MapAPIModule extends APIModule
                     $dataController->addDisplayFilter('category', $drilldownPath);
                 }
                 if ($this->featureIndex !== null) {
-                    $feature = $dataController->selectFeature($this->featureIndex);
+                    $feature = $dataController->selectPlacemark($this->featureIndex);
                 }
 
                 $response = $this->arrayFromPlacemark($feature);
@@ -372,7 +374,7 @@ class MapAPIModule extends APIModule
                 $categories = array();
 
                 if ($lat || $lon) {
-                    foreach ($this->feedGroups as $id => $groupData) {
+                    foreach ($this->getFeedGroups() as $id => $groupData) {
                         $categories[] = array(
                             'title' => $groupData['title'],
                             'id' => $id,
@@ -390,10 +392,15 @@ class MapAPIModule extends APIModule
 
             case 'staticImageURL':
 
-                $baseURL = $this->getArg('baseURL');
-                $mapClass = $this->getArg('mapClass');
+                $params = array(
+                    'STATIC_MAP_BASE_URL' => $this->getArg('baseURL'),
+                    'STATIC_MAP_CLASS' => $this->getArg('mapClass'),
+                    );
+                
+                $dc = Kurogo::deviceClassifier();
+                $mapDevice = new MapDevice($dc->getPagetype(), $dc->getPlatform());
 
-                $mapController = MapImageController::factory($mapClass, $baseURL);
+                $mapController = MapImageController::factory($params, $mapDevice);
                 if (!$mapController->isStatic()) {
                     $error = new KurogoError(0, "staticImageURL must be used with a StaticMapImageController subclass");
                     $this->throwError($error);

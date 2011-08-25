@@ -16,9 +16,14 @@ class ArcGISJSMap extends JavascriptMapImageController {
     
     private $permanentZoomLevel = null;
     
+    // TODO: fix zoom level problem
     public function __construct($baseURL)
     {
-        $this->baseURL = $baseURL;
+        if (is_array($baseURL)) {
+            $this->baseURL = array_shift($baseURL);
+        } else {
+            $this->baseURL = $baseURL;
+        }
 
         // TODO find a better way to reuse JSON parsing code for ArcGIS-related data
         $url = $this->baseURL.'?'.http_build_query(array('f' => 'json'));
@@ -27,6 +32,10 @@ class ArcGISJSMap extends JavascriptMapImageController {
         if (isset($data['spatialReference'], $data['spatialReference']['wkid'])) {
             $wkid = $data['spatialReference']['wkid'];
             $this->setMapProjection($wkid);
+        }
+
+        if (is_array($baseURL)) {
+            $this->addLayers($baseURL);
         }
     }
 
@@ -55,20 +64,10 @@ class ArcGISJSMap extends JavascriptMapImageController {
         $this->moreLayers = array_merge($this->moreLayers, $moreLayers);
     }
 
-    public function addPlacemark(Placemark $placemark)
-    {
-        $geometry = $placemark->getGeometry();
-        if ($geometry instanceof MapPolygon) {
-            $this->addPolygon($placemark);
-        } elseif ($geometry instanceof MapPolyline) {
-            $this->addPath($placemark);
-        } else {
-            $this->addPoint($placemark);
-        }
-    }
-
     public function addPoint($placemark)
     {
+        parent::addPoint($placemark);
+
         $point = $placemark->getGeometry()->getCenterCoordinate();
         $style = $placemark->getStyle();
 
@@ -130,6 +129,8 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
     public function addPath($placemark)
     {
+        parent::addPath($placemark);
+
         $polyline = $placemark->getGeometry();
         $style = $placemark->getStyle();
 
@@ -165,7 +166,10 @@ class ArcGISJSMap extends JavascriptMapImageController {
         $this->paths[] = $templateValues;
     }
     
-    public function addPolygon($placemark) {
+    public function addPolygon($placemark)
+    {
+        parent::addPolygon($placemark);
+
         // no style support for now
 
         $collapsedRings = array();

@@ -29,7 +29,7 @@ class KMLFolder extends KMLDocument implements MapListElement, MapFolder
         return $this->folders;
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         return $this->features;
     }

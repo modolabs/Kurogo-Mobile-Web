@@ -90,18 +90,10 @@ class GoogleStaticMap extends StaticMapImageController {
 
     ////////////// overlays ///////////////
 
-    public function addPlacemark(Placemark $placemark)
-    {
-        $geometry = $placemark->getGeometry();
-        if ($geometry instanceof MapPolyline) {
-            $this->addPath($placemark);
-        } elseif (!($geometry instanceof MapPolygon)) {
-            $this->addPoint($placemark);
-        }
-    }
-
     public function addPoint($placemark)
     {
+        parent::addPoint($placemark);
+
         $style = $placemark->getStyle();
         $center = $placemark->getGeometry()->getCenterCoordinate();
         if ($style) {
@@ -125,6 +117,8 @@ class GoogleStaticMap extends StaticMapImageController {
 
     public function addPath($placemark)
     {
+        parent::addPath($placemark);
+
         $pointArr = array();
         foreach ($placemark->getGeometry()->getPoints() as $point) {
             $pointArr[] = array($point['lat'], $point['lon']);

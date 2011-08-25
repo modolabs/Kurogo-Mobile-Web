@@ -88,31 +88,27 @@ class MapDBDataController extends MapDataController implements MapFolder
 
     ////// MapDataController methods
 
-    public function selectFeature($featureId)
+    public function selectPlacemark($featureId)
     {
         $feature = $this->dbParser->getFeatureById($featureId, $this->drillDownPath);
         if ($feature) {
-            $this->setSelectedFeatures(array($feature));
+            $this->setSelectedPlacemarks(array($feature));
         }
         return $feature;
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         $this->getListItems(); // make sure we're populated
         if ($this->hasDBData) {
-            return $this->dbParser->getCategory()->getAllFeatures();
+            return $this->dbParser->getCategory()->getAllPlacemarks();
         }
-        return $this->parser->getAllFeatures();
+        return $this->parser->getAllPlacemarks();
     }
 
     // TODO allow config of searchable fields
     public function search($searchText)
     {
-        /*
-        $this->setSelectedFeatures($this->db->search($searchText));
-        return $this->getAllSelectedFeatures();
-        */
     }
 
     public function searchByProximity($center, $tolerance, $maxItems)

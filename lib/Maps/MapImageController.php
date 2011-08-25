@@ -2,9 +2,12 @@
 
 abstract class MapImageController
 {
+    protected static $DEFAULT_JS_MAP_CLASS = 'GoogleJSMap';
+    protected static $DEFAULT_STATIC_MAP_CLASS = 'GoogleStaticMap';
     protected $baseURL = null;
     
     protected $center = null; // array('lat' => 0.0, 'lon' => 0.0), or address
+    protected $bufferBox;
 
     protected $zoomLevel = 14;
     protected $maxZoomLevel = 20;
@@ -22,14 +25,46 @@ abstract class MapImageController
     protected $mapProjection = GEOGRAPHIC_PROJECTION; // projection to pass to map image generator
     protected $mapProjector;
 
-    public static function factory($imageClass, $baseURL)
+    protected $mapDevice;
+
+    public static function factory($params, MapDevice $mapDevice)
     {
-        if (isset($baseURL)) {
+        $baseURL = null;
+        $baseURLParam = 'STATIC_MAP_BASE_URL';
+
+        if (isset($params['JS_MAP_CLASS']) && $mapDevice->pageSupportsDynamicMap()) {
+            $imageClass = $params['JS_MAP_CLASS'];
+            $baseURLParam = 'DYNAMIC_MAP_BASE_URL';
+
+        } elseif (isset($params['STATIC_MAP_CLASS'])) {
+            $imageClass = $params['STATIC_MAP_CLASS'];
+
+        } elseif ($mapDevice->pageSupportsDynamicMap()) {
+            $imageClass = self::$DEFAULT_JS_MAP_CLASS;
+            $baseURLParam = 'DYNAMIC_MAP_BASE_URL';
+
+        } else {
+            $imageClass = self::$DEFAULT_STATIC_MAP_CLASS;
+        }
+
+        if (isset($params[$baseURLParam])) {
+            $baseURL = $params[$baseURLParam];
+        }
+
+        if ($baseURL !== null) {
             $controller = new $imageClass($baseURL);
         } else {
             $controller = new $imageClass();
         }
+
+        $controller->init();
+
         return $controller;
+    }
+
+    public function init()
+    {
+        $this->bufferBox = array('xmin' => 90, 'ymin' => 180, 'xmax' => -90, 'ymax' => -180);
     }
 
     // query functions
@@ -86,34 +121,76 @@ abstract class MapImageController
         }
     }
 
-    // overlays
-    public function addAnnotation($coord, $style=null, $title=null)
+    protected function addPolygon(Placemark $polygon)
     {
+        $rings = $polygon->getGeometry()->getRings();
+        $this->adjustBufferForPolyline($rings[0]);
     }
 
-    public function addPath($points, $style=null)
+    protected function addPolyline(Placemark $polyline)
     {
+        $geometry = $polyline->getGeometry();
+        $this->adjustBufferForPolyline($geometry);
     }
 
-    public function addPolygon($rings, $style=null)
+    protected function addPoint(Placemark $point)
     {
+        $center = $point->getGeometry()->getCenterCoordinate();
+        $this->adjustBufferForPoint($center);
     }
 
-    // TODO: pass the Placemark object directly instead of breaking it up
+    protected function adjustBufferForPolyline(MapPolyline $polyline)
+    {
+        // just pick a few sample points to calculate buffer
+        $points = $polyline->getPoints();
+        $count = count($points);
+        if ($count < 4) {
+            $sample = $points;
+        } else {
+            $sample = array();
+            $interval = $count / 4;
+            for ($i = 0; $i < $count; $i += $interval) {
+                $index = intval($i);
+                $sample[] = $points[$i];
+            }
+        }
+        foreach ($sample as $point) {
+            $this->adjustBufferForPoint($point);
+        }
+    }
+
+    protected function adjustBufferForPoint($point)
+    {
+        if ($point['lat'] > $this->bufferBox['ymax']) {
+            $this->bufferBox['ymax'] = $point['lat'];
+        }
+        if ($point['lat'] < $this->bufferBox['ymin']) {
+            $this->bufferBox['ymin'] = $point['lat'];
+        }
+        if ($point['lon'] > $this->bufferBox['xmax']) {
+            $this->bufferBox['xmax'] = $point['lon'];
+        }
+        if ($point['lon'] < $this->bufferBox['xmin']) {
+            $this->bufferBox['xmin'] = $point['lon'];
+        }
+
+        $this->setCenter(array(
+            'lat' => ($this->bufferBox['ymin'] + $this->bufferBox['ymax']) / 2,
+            'lon' => ($this->bufferBox['xmin'] + $this->bufferBox['xmax']) / 2,
+            ));
+    }
+
+    // overlays and annotations
     public function addPlacemark(Placemark $placemark)
     {
+        // only GoogleJSMap, ArcGISJSMap, and GoogleStaticMap support overlays
         $geometry = $placemark->getGeometry();
-        $style = $placemark->getStyle();
-
         if ($geometry instanceof MapPolygon) {
-            $this->addPolygon($geometry->getRings(), $style);
+            $this->addPolygon($placemark);
         } elseif ($geometry instanceof MapPolyline) {
-            $this->addPath($geometry->getPoints(), $style);
+            $this->addPath($placemark);
         } else {
-            $this->addAnnotation(
-                $geometry->getCenterCoordinate(),
-                $style,
-                $placemark->getTitle());
+            $this->addPoint($placemark);
         }
     }
 
@@ -161,8 +238,18 @@ abstract class MapImageController
         }
     }
 
+    public function getImageWidth()
+    {
+        return $this->imageWidth;
+    }
+
     public function setImageWidth($width) {
         $this->imageWidth = $width;
+    }
+
+    public function getImageHeight()
+    {
+        return $this->imageHeight;
     }
 
     public function setImageHeight($height) {

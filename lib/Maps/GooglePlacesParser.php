@@ -76,7 +76,7 @@ class GooglePlacesParser extends DataParser implements MapDataParser
         return $this->items;
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         return $this->items;
     }

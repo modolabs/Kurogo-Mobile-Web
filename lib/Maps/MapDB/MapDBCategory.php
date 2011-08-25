@@ -69,7 +69,7 @@ class MapDBCategory extends MapCategory
         return $this->childCategories;
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         return $this->features;
     }

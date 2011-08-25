@@ -3,6 +3,6 @@
 interface MapFolder
 {
     public function getListItems();
-    public function getAllFeatures();
+    public function getAllPlacemarks();
     public function getChildCategories();
 }

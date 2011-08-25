@@ -33,20 +33,10 @@ class GoogleJSMap extends JavascriptMapImageController {
 
     ////////////// overlays ///////////////
 
-    public function addPlacemark(Placemark $placemark)
-    {
-        $geometry = $placemark->getGeometry();
-        if ($geometry instanceof MapPolygon) {
-            $this->addPolygon($placemark);
-        } elseif ($geometry instanceof MapPolyline) {
-            $this->addPath($placemark);
-        } else {
-            $this->addPoint($placemark);
-        }
-    }
-
     public function addPoint($placemark)
     {
+        parent::addPoint($placemark);
+
         $geometry = $placemark->getGeometry();
         $coord = $geometry->getCenterCoordinate();
         if (isset($this->mapProjector)) {
@@ -84,6 +74,8 @@ class GoogleJSMap extends JavascriptMapImageController {
 
     public function addPath($placemark)
     {
+        parent::addPath($placemark);
+
         $geometry = $placemark->getGeometry();
         $coordString = $this->coordsToGoogleArray($geometry->getPoints());
 
@@ -115,6 +107,8 @@ JS;
     
     public function addPolygon($placemark)
     {
+        parent::addPolygon($placemark);
+
         $rings = $placemark->getGeometry()->getRings();
         $polyStrings = array();
         foreach ($rings as $ring) {

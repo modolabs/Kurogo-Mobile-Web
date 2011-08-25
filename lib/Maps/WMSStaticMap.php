@@ -113,6 +113,15 @@ class WMSStaticMap extends StaticMapImageController {
             );
     }
 
+    public function setCenter($center)
+    {
+        if ($center['lon'] < 180 && $center['lon'] > -180
+            && $center['lat'] < 90 && $center['lat'] > -90 && $this->mapProjector)
+        {
+            $this->center = $this->mapProjector->projectPoint($center);
+        }
+    }
+
     public function parseQuery($query) {
         parse_str($query, $args);
 
@@ -132,7 +141,7 @@ class WMSStaticMap extends StaticMapImageController {
         if (isset($args['height'])) {
             $this->imageHeight = $args['height'];
         }
-        if ($args['crs']) {
+        if (isset($args['crs'])) {
             $this->mapProjection = $args['crs'];
         }
 

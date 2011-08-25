@@ -16,12 +16,12 @@ class MapBaseCategory extends MapCategory
         return $this->folders;
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         return $this->features;
     }
 
-    public function setFeatures($features)
+    public function setPlacemarks($features)
     {
         $this->features = $features;
     }

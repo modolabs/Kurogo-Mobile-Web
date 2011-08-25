@@ -67,7 +67,7 @@ class ArcGISLayer implements MapFolder, MapListElement {
         return $this->spatialRef;
     }
 
-    public function getAllFeatures()
+    public function getAllPlacemarks()
     {
         if (!$this->isPopulated) {
             $this->parent->selectSubLayer($this->id);
@@ -84,7 +84,7 @@ class ArcGISLayer implements MapFolder, MapListElement {
     
     public function getListItems() {
         // TODO support arcgis sublayers
-        return $this->getAllFeatures();
+        return $this->getAllPlacemarks();
     }
     
     // end MapFolder interface
