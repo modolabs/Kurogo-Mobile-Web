@@ -8,6 +8,27 @@ class PeopleAPIModule extends APIModule
     protected $vmin = 1;
     protected $vmax = 1;
     private $fieldConfig;
+    protected $contactGroups = array();
+    
+    protected function getContactGroup($group) {
+        if (!$this->contactGroups) {
+            $this->contactGroups = $this->getModuleSections('api-contacts-groups');
+        }
+        
+        if (isset($this->contactGroups[$group])) {
+            if (!isset($this->contactGroups[$group]['contacts'])) {
+                $this->contactGroups[$group]['contacts'] = $this->getModuleSections('api-contacts-' . $group);
+            }
+
+            if (!isset($this->contactGroups[$group]['description'])) {
+                $this->contactGroups[$group]['description'] = '';
+            }
+            
+            return $this->contactGroups[$group];            
+        } else {
+            throw new Exception("Unable to find contact group information for $group");
+        }
+    }
     
     private function formatPerson($person) {
         $result = array();
@@ -125,8 +146,6 @@ class PeopleAPIModule extends APIModule
                 $results = $this->getAPIConfigData('contacts');
                 $response = array(
                     'total'        => count($results),
-                    'returned'     => count($results),
-                    'displayField' => 'title',
                     'results'      => $results,
                     );
 
@@ -134,6 +153,17 @@ class PeopleAPIModule extends APIModule
                 $this->setResponseVersion(1);
 
                 break;
+            case 'group':
+            	$group = $this->getContactGroup($this->getArg('group'));
+            	$response = array(
+                    'total'        => count($group),
+                    'results'      => $group,
+                    );
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+                
+            	break;
             case 'displayfields':
                 //break;
             default:
