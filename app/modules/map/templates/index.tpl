@@ -15,9 +15,6 @@
 {/if}
 
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$categories navlistID="categories"}
-{if $gettingLocation}
-<p class="nonfocal" id="mapMessage">Determining Location...</p>
-{/if}
 
 {if $clearLink}
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$clearLink secondary=true}

@@ -65,8 +65,8 @@
 {block name="tabView"}
   <div id="tabscontainer">
     {include file="findInclude:common/templates/bookmark.tpl" name=$cookieName item=$bookmarkItem exdate=$expireDate}
-    <h2>{$name}</h2>
-    <!--<p class="address">{$address|replace:' ':'&shy; '}</p>-->
+    <h2>{$name|escape}</h2>
+    <p class="address">{$address|escape}</p>
     {include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies}
   </div>
 {/block}

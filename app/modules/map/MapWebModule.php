@@ -225,7 +225,7 @@ class MapWebModule extends WebModule {
             $urlParams = shortArrayFromMapFeature($searchResults[$i]);
             $external = $this->getArg('external', null);
             if ($external) {
-                $urlParams['external'] = $external;
+                $urlParams['external'] = true;
             }
             $result = array(
                 'title' => $searchResults[$i]->getTitle(),
@@ -561,12 +561,14 @@ JS;
                 $externalLinks[] = array(
                     'title' => 'View in Google Maps', // TODO put this in strings file
                     'url' => 'http://maps.google.com?ll='.$centerText,
+                    'class' => 'external',
                     );
                 
                 $externalLinks[] = array(
                     'title' => 'Get directions from Google',
                     'url' => 'http://maps.google.com?daddr='.$centerText,
                     'urlID' => 'directionsLink',
+                    'class' => 'external',
                     );
 
                 $directionsText = 'Get directions from Google';
@@ -688,10 +690,10 @@ JS;
                 break;
             
             case 'search':
-          
-                if (isset($this->args['filter'])) {
+
+                $searchTerms = $this->getArg('filter');
+                if ($searchTerms) {
                     $this->feedGroup = null;
-                    $searchTerms = $this->args['filter'];
 
                     // TODO: redirect if there is one result
                     $args = array_merge($this->args, array('addBreadcrumb' => true));
@@ -774,6 +776,7 @@ JS;
                 $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');        
                 $tabKeys = array();
                 $tabJavascripts = array();
+                $title = $this->getArg('title');
 
                 $dataController = $this->getDataController();
                 $drilldownPath = $this->getDrillDownPath();
@@ -791,7 +794,9 @@ JS;
                             'lat' => $lat,
                             'lon' => $lon,
                             )));
-                    $feature->setTitle($this->getArg('title', "$lat,$lon"));
+                    if (!$title) {
+                        $title = "$lat,$lon";
+                    }
                     // hacky
                     $dataController->setSelectedFeatures(array($feature));
                 }
@@ -824,17 +829,19 @@ JS;
                 }
                 
                 if ($feature) {
-                    $title = $feature->getTitle();
+                    if (!$title) {
+                        $title = $feature->getTitle();
+                    }
                     // prevent infinite loop in smarty_modifier_replace
                     // TODO figure out why smarty gets in an infinite loop
                     $address = str_replace("\n", " ", $feature->getSubtitle());
                 } else {
                     // TODO put something reasonable here
                     $title = '';
-                    $address = '';
+                    $address = $this->getArg('address');
                 }
-                $this->assign('name', $this->getArg('title', $title));
-                $this->assign('address', $this->getArg('address', $address));
+                $this->assign('name', $title);
+                $this->assign('address', $address);
                 $possibleTabs = $detailConfig['tabs']['tabkeys'];
                 foreach ($possibleTabs as $tabKey) {
                     if ($this->generateTabForKey($tabKey, $feature, $dataController, $tabJavascripts)) {
