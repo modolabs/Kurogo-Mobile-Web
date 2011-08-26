@@ -61,9 +61,11 @@ class Sanitizer
             $regexps = array(
                 '/=\s*"\s*javascript:[^"]*"/i',                           // double-quoted attr with value containing js
                 '/=\s*\'\s*javascript:[^\']*\'/i',                        // single-quoted attr with value containing js
+                '/=\s*javascript:[^\s]*/i',                               // quoteless attr with value containing js
                 '/('.$anyJSAttr.')\s*=\s*(["][^"]*["]|[\'][^\']*[\'])/i', // attr that triggers js
             );
             $replacements = array(
+                '=""', // remove js in attr value
                 '=""', // remove js in attr value
                 '=""', // remove js in attr value
                 '',    // remove attr that triggers js
