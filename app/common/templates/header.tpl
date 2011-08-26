@@ -6,7 +6,7 @@
   {if $refreshPage}
     <meta http-equiv="refresh" content="{$refreshPage}" />
   {/if}
-  <title>{if $isModuleHome}{$pageTitle}{else}{$moduleName}: {$pageTitle}{/if}</title>
+  <title>{if !$isModuleHome}{$moduleName}: {/if}{$pageTitle|strip_tags|escape:'htmlall'}</title>
   <link rel="shortcut icon" href="/favicon.ico" />
   <link href="{$minify['css']}" rel="stylesheet" media="all" type="text/css"/>
   {foreach $inlineCSSBlocks as $css}
@@ -118,11 +118,11 @@
           
         {/if}
         {if $moduleID != 'home' || !$breadcrumb@first}
-          <a href="{$breadcrumb['url']}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
+          <a href="{$breadcrumb['url']|sanitize_url}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
             {if $breadcrumb@first}
               <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="28" height="28" alt="" />
             {else}
-              <span>{$breadcrumb['title']}</span>
+              <span>{$breadcrumb['title']|sanitize_html:'inline'}</span>
             {/if}
           </a>
         {/if}
@@ -154,7 +154,7 @@
               {if $isModuleHome}
                 <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="28" height="28" alt="" class="moduleicon" />
               {/if}
-              {$pageTitle}
+              {$pageTitle|sanitize_html:'inline'}
             </span>
           </div>
           {if $hasHelp}

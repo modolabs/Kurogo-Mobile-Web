@@ -16,7 +16,7 @@
         <img src="/common/images/logo.gif" width="35" height="35"/>
       </td>
       <td>
-        <h1 id="header">{$pageTitle}</h1>
+        <h1 id="header">{$pageTitle|sanitize_html:'inline'}</h1>
       </td>
     </tr>
   </table>
