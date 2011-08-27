@@ -655,26 +655,26 @@ class ICalRecurrenceRule extends ICalObject {
             $time = self::nextIncrement($time, 'DAILY', 7*$interval);
             break;
         case 'WEEKLY-BYDAY':
-            $day = strtoupper(substr(date('D', $time), 0,2));
+            $current_day = strtoupper(substr(date('D', $time), 0,2));
 
             // Loop through the days and find the next one.
             reset($this->occurs_by_day);
-            $a_day = current($this->occurs_by_day);
-            while ($a_day) {
-                if ($a_day == $day) {
+            $day = current($this->occurs_by_day);
+            while ($day) {
+                if ($day == $current_day) {
                     $next_day = next($this->occurs_by_day);
                     if ($next_day) {
-                        $offset = self::$dayIndex[$next_day] - self::$dayIndex[$day];
+                        $offset = self::$dayIndex[$next_day] - self::$dayIndex[$current_day];
                     }
                     // If we have reached the end of the sequence, use the beginning and add 7
                     else {
                         reset($this->occurs_by_day);
                         $next_day = current($this->occurs_by_day);
-                        $offset = 7 + self::$dayIndex[$next_day] - self::$dayIndex[$day];
+                        $offset = 7 + self::$dayIndex[$next_day] - self::$dayIndex[$current_day];
                     }
                     break;
                 }
-                $a_day = next($this->occurs_by_day);
+                $day = next($this->occurs_by_day);
             }
             $time = self::nextIncrement($time, 'DAILY', $offset*$interval);
             break;
