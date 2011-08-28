@@ -2,7 +2,7 @@
 
 {block name="customize"}
   <div class="nonfocal smallprint"> 
-{"CUSTOMIZE_INSTRUCTIONS_COMPLIANT"|getLocalizedString}
+{"CUSTOMIZE_INSTRUCTIONS_TABLET"|getLocalizedString}
   </div> 
   
   <ul class="nav iconic" id="homepageList">

@@ -5,7 +5,7 @@
   
   {if isset($url)}
     <p>
-      <a href="{$url|escape}">{$linkText}</a>
+      <a href="{$url|sanitize_url|escape}">{$linkText}</a>
     </p>
   {/if}
 </div>

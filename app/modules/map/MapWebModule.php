@@ -491,19 +491,12 @@ JS;
             }
             case 'info':
             {
-                // embedded photo
-                $photoServer = $this->getOptionalModuleVar('MAP_PHOTO_SERVER');
-                // this method of getting photo url is harvard-specific and
-                // further only works on data for ArcGIS features.
-                // TODO rewrite this if we find an alternate way to server photos
-                if ($photoServer) {
-                    $photoFile = $feature->getField('Photo');
-                    if (isset($photoFile) && $photoFile != 'Null') {
-                        $tabJavascripts[$tabKey] = "loadImage(photoURL,'photo');";
-                        $photoURL = $photoServer.rawurlencode($photoFile);
-                        $this->assign('photoURL', $photoURL);
-                        $this->addInlineJavascript("var photoURL = '{$photoURL}';");
-                    }
+                // handle embedded photo
+                $photoURL = $feature->getField('PhotoURL'); // embedded photo url
+                if (isset($photoURL) && $photoURL && $photoURL != 'Null') {
+                    $tabJavascripts[$tabKey] = "loadImage(photoURL,'photo');";
+                    $this->assign('photoURL', $photoURL);
+                    $this->addInlineJavascript("var photoURL = '{$photoURL}';");
                 }
                 
                 if (is_subclass_of($dataController, 'ArcGISDataController')) {

@@ -198,6 +198,21 @@ class TemplateEngine extends Smarty {
   }
   
   //
+  // Filter to attempt to remove XSS injection attacks without removing HTML
+  //
+  public static function smartyModifierSanitizeHTML($string, $allowedTags='editor') {
+    return Sanitizer::sanitizeHTML($string, $allowedTags);
+  }
+  
+  //
+  // Filter to remove javascript from urls
+  // Assumes URL is dumped into href or src attr as-is
+  //
+  public static function smartyModifierSanitizeURL($string) {
+    return Sanitizer::sanitizeURL($string);
+  }
+  
+  //
   // Postfilter to detect when we are leaving an extends dependency chain
   //
 
@@ -339,6 +354,11 @@ class TemplateEngine extends Smarty {
     $this->setCompileDir (CACHE_DIR.'/smarty/templates');
     $this->setCacheDir   (CACHE_DIR.'/smarty/html');
     $this->setCompileId  ("$pagetype-$platform");
+    
+    $this->registerPlugin('modifier', 'sanitize_html', array('TemplateEngine',
+      'smartyModifierSanitizeHTML'));
+    $this->registerPlugin('modifier', 'sanitize_url', array('TemplateEngine',
+      'smartyModifierSanitizeURL'));
     
     $this->registerFilter('pre', array('TemplateEngine', 
       'smartyPrefilterHandleIncludeAndExtends'));

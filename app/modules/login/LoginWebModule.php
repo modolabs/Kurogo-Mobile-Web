@@ -194,10 +194,12 @@ class LoginWebModule extends WebModule {
 
             //if they haven't submitted the form and it's a direct login show the form
             if ($authorityData['USER_LOGIN']=='FORM' && empty($login)) {
+
                 if (!$loginMessage = $this->getOptionalModuleVar('LOGIN_DIRECT_MESSAGE')) {
                     $loginMessage = $this->getLocalizedString('LOGIN_DIRECT_MESSAGE', Kurogo::getSiteString('SITE_NAME'));
                 }
                 $this->assign('LOGIN_DIRECT_MESSAGE', $loginMessage);
+                $this->assign('url', $url);
                 break;
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
                 //indirect logins handling the login process themselves. Send a return url so the indirect authority can come back here
@@ -310,7 +312,7 @@ class LoginWebModule extends WebModule {
             
                 // if there is only 1 authority then redirect to the login page for that authority
                 if (!$multipleAuthorities && count($authenticationAuthorities['direct'])) {
-                    $this->redirectTo('login', array('authority'=>key($authenticationAuthorities['direct'])));
+                    $this->redirectTo('login', array('url'=>$url,'authority'=>key($authenticationAuthorities['direct'])));
                 }
 
                 // do we have any indirect authorities?

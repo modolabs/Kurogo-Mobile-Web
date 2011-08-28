@@ -221,6 +221,13 @@ abstract class WebModule extends Module {
   //
   private function googleAnalyticsGetImageUrl($gaID) {
     if (isset($gaID) && strlen($gaID)) {
+      // From http://code.google.com/mobile/analytics/docs/web/
+      // "Reminder: Change the prefix on your Analytics web property ID from 
+      // UA- to MO- in the server-side snippets given below. For example, if 
+      // your web property ID is UA-12345-67, you would use MO-12345-67 in your 
+      // server-side snippets."
+      $gaID = str_replace('UA-', 'MO-', $gaID);
+      
       $url = '/ga.php?';
       $url .= "utmac=$gaID";
       $url .= '&utmn=' . rand(0, 0x7fffffff);

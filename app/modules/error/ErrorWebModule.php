@@ -98,7 +98,8 @@ class ErrorWebModule extends WebModule {
       
     // check for development errors
     if(isset($_GET['error'])){
-      $file = $path =  CACHE_DIR . "/errors/" . $_GET['error'] . ".log";
+      $sanitizedFileName = end(explode('/', $_GET['error']));
+      $file = $path =  CACHE_DIR . "/errors/" . $sanitizedFileName . ".log";
       if(file_exists($file) && $handle = fopen($file, "r")) {
         $msg = fread($handle, filesize($file));
         fclose($handle);

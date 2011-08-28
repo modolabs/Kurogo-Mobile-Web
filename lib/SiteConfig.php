@@ -17,7 +17,7 @@ class SiteConfig extends ConfigGroup {
     define('CONFIG_IGNORE_LOCAL', $config->getVar('CONFIG_IGNORE_LOCAL', 'kurogo'));
     
     //multi site currently only works with a url base of root "/"
-    if ($this->getOptionalVar('MULTI_SITE',false, 'kurogo')) {
+    if ($this->getOptionalVar('MULTI_SITE', false, 'kurogo')) {
         $paths = explode("/", $path);
         $sites = array();
         $siteDir = '';
@@ -28,6 +28,7 @@ class SiteConfig extends ConfigGroup {
                 if (in_array($paths[1], $sites)) {
                     $siteDir = ROOT_DIR . "/site/" . $paths[1];
                     $urlBase = '/' . $paths[1] . '/';
+                    $site = $paths[1];
                     $foundPath = true;
                 }
             } else {
@@ -36,6 +37,7 @@ class SiteConfig extends ConfigGroup {
                     if ($paths[1]==$siteName) {
                         $siteDir = $file;
                         $urlBase = '/' . $siteName . '/';
+                        $site = $siteName;
                         $foundPath = true;
                         break;
                     }
@@ -91,7 +93,7 @@ class SiteConfig extends ConfigGroup {
             }
         }
     }
-
+    define('SITE_NAME', $site);
     if (!isset($urlBase)) {
         throw new Exception("URL base not set. Please report the configuration to see why this happened");
     }
