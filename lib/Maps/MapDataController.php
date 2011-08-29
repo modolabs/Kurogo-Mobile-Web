@@ -18,7 +18,6 @@ class MapDataController extends DataController implements MapFolder
     // not config variables    
     protected $items = null;
     protected $selectedPlacemarks = array();
-    //protected $displaySetId = self::SELECTED_FEATURES;
     protected $drillDownPath = array();
 
     protected $projectorReady = false;
