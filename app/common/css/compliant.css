@@ -168,6 +168,14 @@ select {
 	padding: 4px 6px;
 	-webkit-appearance:textfield;
 }
+.searchwrapper {
+    position: absolute;
+    left: 0;
+    right: 51px;
+}
+.searchwrapper input {
+    width: 100%;
+}
 
 *:first-child+html .forminput {
 	/* The return of IE CSS hacks makes me mad */
