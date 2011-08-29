@@ -9,13 +9,9 @@ module id:
 
 :kbd:`http[s]://<host>/rest/hello?`
 
-=========
-Version 1
-=========
-
------
+=======
 hello
------
+=======
 
 :kbd:`/rest/hello?`
 

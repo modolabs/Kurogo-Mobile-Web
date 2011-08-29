@@ -109,7 +109,9 @@ class PeopleAPIModule extends APIModule
                 if ($filter = $this->getArg('q')) {
                     
                     $people = $peopleController->search($filter);
-                    
+                    if(!$people)
+                    	$people = array();
+                    	
                     $errorCode = $peopleController->getErrorNo();
                     if ($errorCode) {
                         // TODO decide on error title
@@ -119,7 +121,7 @@ class PeopleAPIModule extends APIModule
                         $this->setResponseError($error);
                     }
                     
-                    $response = null;
+                    $response[] = null;
                     if ($people !== false) {
                         $results = array();
                         $resultCount = count($people);

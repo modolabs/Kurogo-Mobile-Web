@@ -71,7 +71,7 @@ class SiteConfig extends ConfigGroup {
             $urlBase = rtrim($urlBase,'/').'/';
         } else {
             //extract the path parts from the url
-            $pathParts = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $_SERVER['REQUEST_URI'])));
+            $pathParts = array_values(array_filter(explode("/", $_SERVER['REQUEST_URI'])));
             $testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
             $urlBase = '/';
             $foundPath = false;

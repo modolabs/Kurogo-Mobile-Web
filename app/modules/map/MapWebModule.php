@@ -251,7 +251,6 @@ class MapWebModule extends WebModule {
             if (isset($this->feeds[$category])) {
                 $feedData = $this->feeds[$category];
                 $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-
             } else {
                 error_log("Warning: unable to find feed data for category $category -- loading default controller");
             }

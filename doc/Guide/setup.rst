@@ -20,8 +20,8 @@ System Requirements
 
     * Requires URL Rewrite Module 2.0 - http://www.iis.net/download/URLRewrite
     * Tested using x86 Non Thread Safe version using FastCGI on IIS.
-    * Virtual Directories not supported, must be the site root
-    
+    * Experimental subfolder support using Junctions, see :ref:`setup_subfolder`
+
 * PHP 5.2 or higher with the following extensions:
 
   * xml
@@ -72,12 +72,25 @@ than the root of a domain. Currently this is supported under the following circu
 If these conditions are true, you can create a symbolic link that points to the *www* folder and place
 it in your site's root folder.
 
-From the command line, this command would like similar to this:
+From the command line, this command would be similar to this:
 
 :kbd:`ln -s /path/to/kurogo/www /path/to/documentroot/mobile`
 
 This would assume you want the subfolder to be named "mobile". You could use any valid folder name you wish
 
 Note: Currently, Kurogo does NOT support being installed under an alias (Apache) or Virtual Folder (IIS).
-The method shown above does not work in Windows due to the lack of support for symbolic links.
+
+The method shown above now has experimental support in Windows in the form of Junctions.  The following procedure should work in either IIS or Apache:
+
+Ensure you have the Junction program installed on your server.
+
+* The junction program is distributed by Microsoft, and can be found at the time of this writing at http://technet.microsoft.com/en-us/sysinternals/bb896768
+* The junction program should be located in your PATH, in most circumstances this can be attained by copying the junction.exe file to your System Root folder (C:\Windows)
+* Because a junction is an application of an NTFS reparse point, both the target and the destination folders must be located on the same filesystem, and that filesystem *must* be NTFS
+
+Execute something similar to the following in a Command Prompt:
+
+:kbd:`junction C:\\path\\to\\documentroot\\mobile C:\\path\\to\\kurogo\\www`
+
+This assumes you want the subfolder to be named "mobile". You could use any valid folder name you wish.
 
