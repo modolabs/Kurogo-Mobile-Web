@@ -355,16 +355,19 @@ JS;
         return count($searchResults);
     }
 
+    protected function getDefaultMapController() {
+        return MapDataController::factory('MapDataController', array(
+            'JS_MAP_CLASS' => 'GoogleJSMap',
+            'DEFAULT_ZOOM_LEVEL' => $this->getOptionalModuleVar('DEFAULT_ZOOM_LEVEL', 10)
+        ));
+    }
+
     private function getDataController($categoryPath, &$listItemPath) {
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
 
         if ($categoryPath === NULL) {
-            return MapDataController::factory('MapDataController', array(
-                'JS_MAP_CLASS' => 'GoogleJSMap',
-                'DEFAULT_ZOOM_LEVEL' => $this->getOptionalModuleVar('DEFAULT_ZOOM_LEVEL', 10)
-                ));
-        
+            return $this->getDefaultMapController();
         } else {
             $listItemPath = $categoryPath;
             if ($this->numGroups > 0) {

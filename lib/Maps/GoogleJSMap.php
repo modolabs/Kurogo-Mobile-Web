@@ -243,7 +243,7 @@ JS;
         }
 
         foreach ($this->markers as $index => $marker) {
-            $title = 'marker';
+            $title = json_encode('marker');
             if (isset($marker['title'])) {
                 $title = json_encode($marker['title']);
             }
