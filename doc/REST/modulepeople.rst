@@ -1,38 +1,34 @@
 #################
 People API
 #################
- 
-exceptions include the Info module (desktop preview), which exists only in the 
+
 The People API provides an interface to search the people directory and 
 retrieve static lists of contacts important to your organization.
 
-The examples in this section will use the default module id *people*.  If your 
+The examples in this section assume the module id is *people*.  If your 
 installation has the People module configured under a different URL location, 
 substitute as necessary.
 
-=========
-Version 1
-=========
-
-------
+=======
 search
-------
+=======
+
 
 Returns a list of people matching a user-entered query string.  All fields are 
 returned for each search result, so there is no separate "detail" endpoint.
 
-:kbd:`/rest/people/search?q=<query>`
+:kbd:`/rest/people/search?q=<query>&v=1`
 
 Parameters
 
 * *q* - the query string entered by the user in a search box.
 
-Contents of *response* ::
+Sample *response* ::
 
     {
-        "total":8,
-        "returned":8,
-        "displayField":"name",
+        "total": 8,
+        "returned": 8,
+        "displayField": "name",
         "results": [
             {
                 "name": "John Smith", 
@@ -95,16 +91,16 @@ Entries in *organizations* and *contacts* each have the following fields:
   "address" means the user should be able to find the displayed address on a 
   map.)
 
---------
+==========
 contacts
---------
+==========
 
 Returns a list of static contacts for displaying on the People module home 
 screen.
 
-:kbd:`/rest/people/contacts?`
+:kbd:`/rest/people/contacts?v=1`
 
-Contents of *response* ::
+Sample *response* ::
 
     {
         "displayField": "title", 
@@ -127,6 +123,8 @@ Contents of *response* ::
         ]
     }
 
+Contents:
+
 * *total* - total number of static contacts.
 * *displayField* - number of results returned.
 * *results* - an array of entries with the following fields:
@@ -138,6 +136,37 @@ Contents of *response* ::
 
   * *label* - short description of this contact
   * *value* - the information to be conveyed
+
+========
+group
+========
+
+:kbd:`/rest/people/group?group=group1&v=1`
+
+Sample *response* ::
+
+    {
+        "total": 3, 
+        "results": {
+            "contacts": [
+                {
+                    "url": "tel:6175550003", 
+                    "subtitle": "(617-555-0003)", 
+                    "class": "phone", 
+                    "title": "Static Entry 4"
+                }, 
+                {
+                    "url": "tel:6175550004", 
+                    "subtitle": "(617-555-0004)", 
+                    "class": "phone", 
+                    "title": "Static Entry 5"
+                },
+                // ...
+            ], 
+            "description": "This is a group of contacts", 
+            "title": "Group 1"
+        }
+    }
 
 
 
