@@ -12,11 +12,13 @@
 {block name="navbar"}
   <table cellpadding="0" cellspacing="0" border="0">
     <tr valign="middle">
-      <td>
-        <img src="/common/images/logo.gif" width="35" height="35"/>
+      <td valign="middle">
+        <a href="/home">
+          <img src="/common/images/logo.gif" width="{$homelink_image_width|default:35}" height="{$homelink_image_height|default:35}" />
+        </a>
       </td>
       <td>
-        <h1 id="header">{$pageTitle}</h1>
+        <h1 id="header">{$pageTitle|sanitize_html:'inline'}</h1>
       </td>
     </tr>
   </table>

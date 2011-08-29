@@ -6,16 +6,16 @@
   {if $refreshPage}
     <meta http-equiv="refresh" content="{$refreshPage}" />
   {/if}
-  <title>{if $isModuleHome}{$pageTitle}{else}{$moduleName}: {$pageTitle}{/if}</title>
+  <title>{if !$isModuleHome}{$moduleName}: {/if}{$pageTitle|strip_tags|escape:'htmlall'}</title>
   <link rel="shortcut icon" href="/favicon.ico" />
-  <link href="{$minify['css']}" rel="stylesheet" media="all" type="text/css"/>
+  <link href="{$minify['css']|escape}" rel="stylesheet" media="all" type="text/css"/>
   {foreach $inlineCSSBlocks as $css}
     <style type="text/css" media="screen">
       {$css}
     </style>
   {/foreach}
   {foreach $cssURLs as $cssURL}
-    <link href="{$cssURL}" rel="stylesheet" media="all" type="text/css"/>
+    <link href="{$cssURL|escape}" rel="stylesheet" media="all" type="text/css"/>
   {/foreach}
   
   {block name="javascript"}
@@ -36,10 +36,10 @@
     {/foreach}
     
     {foreach $javascriptURLs as $url}
-      <script src="{$url}" type="text/javascript"></script>
+      <script src="{$url|escape}" type="text/javascript"></script>
     {/foreach}
     
-    <script src="{$minify['js']}" type="text/javascript"></script>
+    <script src="{$minify['js']|escape}" type="text/javascript"></script>
 
     <script type="text/javascript">
       function onOrientationChange() {ldelim}
@@ -118,11 +118,11 @@
           
         {/if}
         {if $moduleID != 'home' || !$breadcrumb@first}
-          <a href="{$breadcrumb['url']}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
+          <a href="{$breadcrumb['url']|sanitize_url}" {if isset($crumbClass)}class="{$crumbClass}{/if}">
             {if $breadcrumb@first}
-              <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="28" height="28" alt="" />
+              <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="{$module_nav_image_width|default:28}" height="{$module_nav_image_height|default:28}" alt="" />
             {else}
-              <span>{$breadcrumb['title']}</span>
+              <span>{$breadcrumb['title']|sanitize_html:'inline'}</span>
             {/if}
           </a>
         {/if}
@@ -146,20 +146,20 @@
         <div id="navbar"{if $hasHelp} class="helpon"{/if}>
           <div class="breadcrumbs{if $isModuleHome} homepage{/if}">
             <a href="/home/" class="homelink">
-              <img src="/common/images/homelink.png" width="57" height="45" alt="Home" />
+              <img src="/common/images/homelink.png" width="{$homelink_image_width|default:57}" height="{$homelink_image_height|default:45}" alt="Home" />
             </a>
             
             {$breadcrumbHTML}
             <span class="pagetitle">
               {if $isModuleHome}
-                <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="28" height="28" alt="" class="moduleicon" />
+                <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="{$module_nav_image_width|default:28}" height="{$module_nav_image_height|default:28}" alt="" class="moduleicon" />
               {/if}
-              {$pageTitle}
+              {$pageTitle|sanitize_html:'inline'}
             </span>
           </div>
           {if $hasHelp}
             <div class="help">
-              <a href="help.php"><img src="/common/images/help.png" width="46" height="45" alt="Help" /></a>
+              <a href="help.php"><img src="/common/images/help.png" width="{$help_image_width|default:46}" height="{$help_image_height|default:45}" alt="Help" /></a>
             </div>
           {/if}
         </div>
