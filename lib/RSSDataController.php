@@ -64,7 +64,9 @@ class RSSDataController extends DataController
             $_items = $items;
             $items = array();
             foreach ($_items as $id=>$item) {
-                if ( (stripos($item->getTitle(), $this->contentFilter)!==FALSE) || (stripos($item->getDescription(), $this->contentFilter)!==FALSE)) {
+                if ( (stripos($item->getTitle(),       $this->contentFilter)!==FALSE) ||
+                     (stripos($item->getDescription(), $this->contentFilter)!==FALSE) ||
+                     (stripos($item->getContent(),     $this->contentFilter)!==FALSE) ) {
                     $items[$id] = $item;
                 }
             }
