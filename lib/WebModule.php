@@ -1375,7 +1375,10 @@ abstract class WebModule extends Module {
         $total = 0;
         $results = array();
       
-        $items = $this->searchItems($searchTerms, $maxCount, array('federatedSearch'=>true));
+        // Ask for one more item than we show so that we can tell if we need to display
+        // the more results link.  This will need to be changed to 0 if we ever
+        // want to show the full number of matched items in the federated search screen
+        $items = $this->searchItems($searchTerms, $maxCount+1, array('federatedSearch'=>true));
         $limit = is_array($items) ? min($maxCount, count($items)) : 0;
 
         for ($i = 0; $i < $limit; $i++) {
