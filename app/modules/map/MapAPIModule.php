@@ -322,7 +322,9 @@ class MapAPIModule extends APIModule
                     $lat = $this->getArg('lat', 0);
                     $lon = $this->getArg('lon', 0);
                     if ($lat || $lon) {
-                        $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
+                        $searchResults = $mapSearch->searchByProximity(
+                            array('lat' => $lat, 'lon' => $lon),
+                            1000, 10);
                     }
 
                 } else {
