@@ -37,7 +37,7 @@ class MapDataController extends DataController implements MapFolder
         return $this->searchable;
     }
 
-    protected function featureMatchesTokens(MapFeature $feature, Array $tokens)
+    protected function featureMatchesTokens(Placemark $feature, Array $tokens)
     {
         $matched = true;
         $title = $feature->getTitle();
@@ -94,6 +94,8 @@ class MapDataController extends DataController implements MapFolder
     public function searchByProximity($center, $tolerance, $maxItems=null)
     {
         $this->setupProjector();
+
+        $bbox = normalizedBoundingBox($center, $tolerance, null, null);
 
         $results = array();
         foreach ($this->getAllLeafNodes() as $item) {

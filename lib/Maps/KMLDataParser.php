@@ -105,10 +105,9 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
             case 'PLACEMARK':
                 $placemark = new KMLPlacemark($name, $attribs);
                 $parent = end($this->elementStack);
+                $placemark->addCategoryId($this->dataController->getCategoryId());
                 if ($parent instanceof KMLFolder) {
                     $placemark->addCategoryId($parent->getId());
-                } else {
-                    $placemark->addCategoryId($this->dataController->getCategoryId());
                 }
                 $this->elementStack[] = $placemark;
                 break;

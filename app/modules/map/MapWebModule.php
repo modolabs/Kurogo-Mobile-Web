@@ -43,7 +43,6 @@ class MapWebModule extends WebModule {
     protected function loadFeedData() {
         $data = array();
         $feedConfigFile = NULL;
-        $category = $this->getCategory();
 
         if ($this->feedGroup !== NULL) {
             $configName = "feeds-{$this->feedGroup}";
@@ -53,6 +52,7 @@ class MapWebModule extends WebModule {
             }
 
         } else {
+            $category = $this->getCategory();
             // if no feed group and category are specified, load whole list
             foreach ($this->feedGroups as $groupID => $groupData) {
                 $configName = "feeds-$groupID";
@@ -244,9 +244,11 @@ class MapWebModule extends WebModule {
     }
 
     // depends on feeds being loaded
-    private function getDataController() {
+    private function getDataController($category=null) {
         $this->getFeedData();
-        $category = $this->getCategory();
+        if ($category === null) {
+            $category = $this->getCategory();
+        }
         if ($category) {
             if (isset($this->feeds[$category])) {
                 $feedData = $this->feeds[$category];
@@ -255,7 +257,6 @@ class MapWebModule extends WebModule {
                 error_log("Warning: unable to find feed data for category $category -- loading default controller");
             }
         }
-
         if (!isset($controller)) {
             $controller = MapDataController::defaultDataController();
         }
@@ -293,13 +294,15 @@ class MapWebModule extends WebModule {
     private function assignCategories() {
         $categories = array();
         foreach ($this->getFeedData() as $id => $feed) {
-            if (isset($feed['HIDDEN']) && $feed['HIDDEN']) continue;
+            if (isset($feed['HIDDEN']) && $feed['HIDDEN']) {
+                continue;
+            }
             $subtitle = isset($feed['SUBTITLE']) ? $feed['SUBTITLE'] : null;
             $categories[] = array(
-                'id'=>$id,
-                'title' => $feed['TITLE'],
+                'id'       => $id,
+                'title'    => $feed['TITLE'],
                 'subtitle' => $subtitle,
-                'url' => $this->categoryURL($id),
+                'url'      => $this->categoryURL($id),
                 );
         }
         
@@ -311,8 +314,6 @@ class MapWebModule extends WebModule {
         parse_str($aBookmark, $params);
         if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
             return $this->buildBreadcrumbURL('detail', $params, true);
-        } else if (isset($params['group'])) {
-            return $this->groupURL($params['group']);
         } else {
             return '#';
         }
@@ -322,15 +323,11 @@ class MapWebModule extends WebModule {
         parse_str($aBookmark, $params);
         if (isset($params['featureindex'])) {
             $index = $params['featureindex'];
-            $categoryPath = explode(MAP_CATEGORY_DELIMITER, $params['category']);
-            $dataController = $this->getDataController();
+            $category = $params['category'];
+            $dataController = $this->getDataController($category);
             $feature = $dataController->selectPlacemark($index);
             return array($feature->getTitle(), $dataController->getTitle());
         
-        } else if (isset($params['group'])) {
-            $groupData = $this->getDataForGroup($params['group']);
-            return array($groupData['title']);
-
         } else if (isset($params['title'])) {
             $result = array($params['title']);
             if (isset($params['address'])) {
@@ -341,13 +338,6 @@ class MapWebModule extends WebModule {
         } else {
             return array($aBookmark);
         }
-    }
-    
-    private function bookmarkType($aBookmark) {
-        parse_str($aBookmark, $params);
-        if (isset($params['group']))
-            return 'group';
-        return 'place';
     }
 
     /////// UI functions
@@ -572,13 +562,13 @@ JS;
 
                 $externalLinks[] = array(
                     'title' => 'View in Google Maps', // TODO put this in strings file
-                    'url' => 'http://maps.google.com?ll='.$centerText,
+                    'url'   => 'http://maps.google.com?ll='.$centerText,
                     'class' => 'external',
                     );
                 
                 $externalLinks[] = array(
                     'title' => 'Get directions from Google',
-                    'url' => 'http://maps.google.com?daddr='.$centerText,
+                    'url'   => 'http://maps.google.com?daddr='.$centerText,
                     'urlID' => 'directionsLink',
                     'class' => 'external',
                     );
@@ -640,9 +630,7 @@ JS;
                     $groupData = $this->getDataForGroup($this->feedGroup);
                     $browseBy = $groupData['title'];
                     if ($this->numGroups > 1) {
-                        $cookieID = http_build_query(array('group' => $this->feedGroup));
-                        $this->generateBookmarkOptions($cookieID);
-
+                        // TODO: use localization framework to get this string
                         $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS_PLURAL', 'Campuses');
                         $clearLink = array(array(
                             'title' => "All $groupAlias",
@@ -673,30 +661,21 @@ JS;
                 if (!$this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->redirectTo('index', array());
                 }
-                $feedGroups = array();
-                $places = array();
 
+                $places = array();
                 foreach ($this->getBookmarks() as $aBookmark) {
                     if ($aBookmark) { // prevent counting empty string
                         $titles = $this->getTitleForBookmark($aBookmark);
                         $subtitle = count($titles) > 1 ? $titles[1] : null;
-                        if ($this->bookmarkType($aBookmark) == 'group') {
-                            $feedGroups[] = array(
-                                'title' => $titles[0],
-                                'subtitle' => $subtitle,
-                                'url' => $this->detailURLForBookmark($aBookmark),
-                                );
-                        } else {
-                            $places[] = array(
-                                'title' => $titles[0],
-                                'subtitle' => $subtitle,
-                                'url' => $this->detailURLForBookmark($aBookmark),
-                                );
-                        }                        
+
+                        // TODO split up bookmarks by category
+                        $places[] = array(
+                            'title' => $titles[0],
+                            'subtitle' => $subtitle,
+                            'url' => $this->detailURLForBookmark($aBookmark),
+                            );
                     }
                 }
-                $this->assign('groupAlias', $this->getOptionalModuleVar('GROUP_ALIAS_PLURAL', 'Campuses'));
-                $this->assign('groups', $feedGroups);
                 $this->assign('places', $places);
             
                 break;
@@ -723,8 +702,8 @@ JS;
             
             case 'category':
 
-                $categoryPath = $this->getCategory();
-                if ($categoryPath) {
+                $category = $this->getCategory();
+                if ($category) {
                     // populate drop-down list at the bottom
                     $this->assignCategories();
                     // build the drill-down list
@@ -750,11 +729,11 @@ JS;
                     $places = array();
                     foreach ($listItems as $listItem) {
                         if ($listItem instanceof Placemark) {
-                            $url = $this->detailURL($listItem->getId(), $categoryPath);
+                            $url = $this->detailURL($listItem->getId(), $category);
                         } else {
                             // for folder objects, getIndex returns the subcategory ID
                             $drilldownPath = array_merge($this->getDrillDownPath(), array($listItem->getId()));
-                            $url = $this->categoryURL($categoryPath, $drilldownPath, false);
+                            $url = $this->categoryURL($category, $drilldownPath, false);
                         }
                         $places[] = array(
                             'title'    => $listItem->getTitle(),
@@ -832,10 +811,6 @@ JS;
                         $cookieID = http_build_query($cookieParams);
                         $this->generateBookmarkOptions($cookieID);
 
-                    } elseif (isset($this->args['group'])) {
-                        // TODO: this branch may not be being used
-                        $cookieID = http_build_query(array('group' => $this->args['group']));
-                        $this->generateBookmarkOptions($cookieID);
                     }
                 }
                 

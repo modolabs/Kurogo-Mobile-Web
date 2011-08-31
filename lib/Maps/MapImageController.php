@@ -127,7 +127,7 @@ abstract class MapImageController
         $this->adjustBufferForPolyline($rings[0]);
     }
 
-    protected function addPolyline(Placemark $polyline)
+    protected function addPath(Placemark $polyline)
     {
         $geometry = $polyline->getGeometry();
         $this->adjustBufferForPolyline($geometry);
