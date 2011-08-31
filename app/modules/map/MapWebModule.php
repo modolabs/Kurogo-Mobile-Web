@@ -245,35 +245,47 @@ class MapWebModule extends WebModule {
 
     // depends on feeds being loaded
     private function getDataController($category=null) {
+        $feedData = $this->getCurrentFeed($category);
+        if ($feedData) {
+            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        }
+        if (!isset($controller)) {
+            $controller = MapDataController::defaultDataController();
+        }
+        return $controller;
+    }
+
+    private function getCurrentFeed($category=null) {
         $this->getFeedData();
         if ($category === null) {
             $category = $this->getCategory();
         }
         if ($category) {
             if (isset($this->feeds[$category])) {
-                $feedData = $this->feeds[$category];
-                $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                return $this->feeds[$category];
             } else {
-                error_log("Warning: unable to find feed data for category $category -- loading default controller");
+                error_log("Warning: unable to find feed data for category $category");
             }
         }
-        if (!isset($controller)) {
-            $controller = MapDataController::defaultDataController();
-        }
-
-        return $controller;
+        return null;
     }
 
     private function getImageController()
     {
-        if ($this->feedGroup === null) {
-            error_log("Warning: feed group not set when initializing image controller, using first group");
-            $this->feedGroup = key($this->feedGroups);
+        // if base map class is specified in individual feeds, override base
+        // map class in feed group.  this takes care of compatibility with v1.2
+        // map feed config.
+        $configData = $this->getCurrentFeed();
+        if (!isset($configData['STATIC_MAP_CLASS']) && !isset($configData['JS_MAP_CLASS'])) {
+            if ($this->feedGroup === null) {
+                error_log("Warning: feed group not set when initializing image controller, using first group");
+                $this->feedGroup = key($this->feedGroups);
+            }
+            $configData = $this->getDataForGroup($this->feedGroup);
         }
-
-        $groupData = $this->getDataForGroup($this->feedGroup);
         $mapDevice = new MapDevice($this->pagetype, $this->platform);
-        return MapImageController::factory($groupData, $mapDevice);
+
+        return MapImageController::factory($configData, $mapDevice);
     }
 
     protected function getSearchClass($options=array()) {
