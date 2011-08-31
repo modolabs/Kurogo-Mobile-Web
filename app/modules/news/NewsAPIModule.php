@@ -35,7 +35,10 @@ class NewsAPIModule extends APIModule {
             case 'categories':
                 $response = array();
                 foreach ($feeds as $index => $feedData) {
-                    $response[] = array('id' => strval($index), 'title' => $feedData['TITLE']);
+                    $response[] = array('id' => strval($index),
+                    					'title' => strip_tags($feedData['TITLE']),
+                    					'time' => time(),
+                    					);
                 }
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
@@ -68,7 +71,7 @@ class NewsAPIModule extends APIModule {
        $item = array(
             'GUID'        => $story->getGUID(),
             'link'        => $story->getLink(),
-            'title'       => $story->getTitle(),
+            'title'       => strip_tags($story->getTitle()),
             'description' => $story->getDescription(),
             'pubDate'     => self::getPubDateUnixtime($story),
        );
