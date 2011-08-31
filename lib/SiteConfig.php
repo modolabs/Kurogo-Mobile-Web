@@ -58,8 +58,10 @@ class SiteConfig extends ConfigGroup {
             die("FATAL ERROR: ACTIVE_SITE not set");
         }
         
-        //make sure site_dir is set and is a valid path
-        if (!($siteDir = $this->getVar('SITE_DIR')) || !($siteDir = realpath_exists($siteDir))) {
+        // make sure site_dir is set and is a valid path
+        // Do not call realpath_exists here because until SITE_DIR define is set
+        // it will not allow files and directories outside ROOT_DIR
+        if (!($siteDir = $this->getVar('SITE_DIR')) || !(($siteDir = realpath($siteDir)) && file_exists($siteDir))) {
             die("FATAL ERROR: Site Directory ". $this->getVar('SITE_DIR') . " not found for site " . $site);
         }
         
