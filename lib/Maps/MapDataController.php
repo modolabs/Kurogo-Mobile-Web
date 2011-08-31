@@ -37,7 +37,7 @@ class MapDataController extends DataController implements MapFolder
         return $this->searchable;
     }
 
-    protected function featureMatchesTokens(Placemark $feature, Array $tokens)
+    protected function featureMatchesTokens(MapFeature $feature, Array $tokens)
     {
         $matched = true;
         $title = $feature->getTitle();
@@ -79,7 +79,7 @@ class MapDataController extends DataController implements MapFolder
         if (!$this->projectorReady) {
             $sourceProjection = $this->getProjection();
             if (($sourceProjection instanceof MapProjection && !$this->getProjection()->isGeographic())
-                || $sourceProjection != GEOGRAPHIC_PROJECTION)
+                || (!$sourceProjection instanceof MapProjection && $sourceProjection != GEOGRAPHIC_PROJECTION))
             {
                 if ($this->projector === null) {
                     $this->projector = new MapProjector();
@@ -334,26 +334,32 @@ class MapDataController extends DataController implements MapFolder
     {
         if ($this->parser instanceof ArcGISParser) {
             $this->addFilter('f', 'json');
-
-        } elseif ($this->parser instanceof ShapefileDataParser) {
-            return; // do nothing
-
         }
         return parent::getData();
     }
 
+    public function getDataFile()
+    {
+        $url = $this->url();
+        if (strpos($url, DATA_DIR) === 0) {
+            return $url;
+        }
+        return parent::getDataFile();
+    }
+    
     protected function cacheFolder()
     {
         return CACHE_DIR . "/Maps";
     }
 
-    protected function cacheIsFresh()
-    {
-        // TODO need cleaner way to check this
+    protected function getCache() {
+        $this->cache = parent::getCache();
         if ($this->parser instanceof ShapefileDataParser) {
-            return true;
+            if (strpos($this->url(), '.zip') !== false) {
+                $this->cache->setSuffix('.zip');
+            }
         }
-        return parent::cacheIsFresh();
+        return $this->cache;
     }
 
     protected function init($args)
@@ -368,17 +374,9 @@ class MapDataController extends DataController implements MapFolder
         $this->categoryId = mapIdForFeedData($args);
     }
 
-    protected function initStreamContext($args)
-    {
-        if ($this->parser instanceof ShapefileDataParser) {
-            return;
-        }
-        parent::initStreamContext($args);
-    }
-    
     protected function retrieveData($url)
     {
-        if (strpos($url, 'kmz') !== false) {
+        if (strpos($url, '.kmz') !== false) {
             if (!class_exists('ZipArchive')) {
                 throw new Exception("class ZipArchive (php-zip) not available");
             }
@@ -394,9 +392,8 @@ class MapDataController extends DataController implements MapFolder
             $contents = $zip->getFromIndex(0);
             unlink($tmpFile);
             return $contents; // this is false on failure, same as file_get_contents
-        } else {
-            return parent::retrieveData($url);
         }
+        return parent::retrieveData($url);
     }
 }
 

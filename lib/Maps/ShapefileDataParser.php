@@ -25,6 +25,10 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     private $bbox; // global bbox for file
     private $category;
     private $mapProjection;
+    private $titleField = null;
+    private $subtitleField = null;
+
+    protected $parseMode = DataParser::PARSE_MODE_FILE;
 
     protected $bigEndian = false;
 
@@ -48,18 +52,74 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     public function init($args) {
         parent::init($args);
 
-        $filename = $args['BASE_URL'];
-
-        $this->setFilename($filename . '.shp');
-        $this->dbfParser = new DBase3FileParser();
-        $this->dbfParser->setFilename($filename . '.dbf');
-        $this->dbfParser->setup();
-
-        $prjFile = $filename . '.prj';
-        if (file_exists($prjFile)) {
-            $prjData = file_get_contents($prjFile);
-            $this->mapProjection = new MapProjection($prjData, 'wkt');
+        if (isset($args['TITLE_FIELD'])) {
+            $this->titleField = $args['TITLE_FIELD'];
         }
+
+        if (isset($args['SUBTITLE_FIELD'])) {
+            $this->subtitleField = $args['SUBTITLE_FIELD'];
+        }
+    }
+
+    public function parseFile($filename)
+    {
+        if (strpos($filename, '.zip') !== false) {
+            if (!class_exists('ZipArchive')) {
+                throw new Exception("class ZipArchive (php-zip) not available");
+            }
+            $zip = new ZipArchive();
+            $zip->open($filename);
+            // locate valid shapefile components
+            $shapeNames = array();
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                if (preg_match('/(.+)\.(shp|dbf|prj)$/', $zip->getNameIndex($i), $matches)) {
+                    $shapeName = $matches[1];
+                    $extension = $matches[2];
+                    if (!isset($shapeNames[$shapeName])) {
+                        $shapeNames[$shapeName] = array();
+                    }
+                    $shapeNames[$shapeName][] = $extension;
+                }
+            }
+            $this->dbfParser = new DBase3FileParser();
+            foreach ($shapeNames as $shapeName => $extensions) {
+                if (in_array('dbf', $extensions) && in_array('shp', $extensions)) {
+                    $this->setContents($zip->getFromName("$shapeName.shp"));
+                    $contents = $zip->getFromName("$shapeName.dbf");
+                    if (!$contents) {
+                        throw new Exception("could not read $shapeName.dbf");
+                    }
+                    $this->dbfParser->setContents($zip->getFromName("$shapeName.dbf"));
+                    $this->dbfParser->setup();
+
+                    if (in_array('prj', $extensions)) {
+                        $prjData = $zip->getFromName("$shapeName.prj");
+                        $this->mapProjection = new MapProjection($prjData);
+                    }
+
+                    $this->doParse();
+                }
+            }
+
+        } elseif (realpath_exists("$filename.shp") && realpath_exists("$filename.dbf")) {
+            $this->setFilename("$filename.shp");
+            $this->dbfParser = new DBase3FileParser();
+            $this->dbfParser->setFilename("$filename.dbf");
+            $this->dbfParser->setup();
+
+            $prjFile = $filename . '.prj';
+            if (realpath_exists($prjFile)) {
+                $prjData = file_get_contents($prjFile);
+                $this->mapProjection = new MapProjection($prjData);
+            }
+
+            $this->doParse();
+
+        } else {
+            throw new Exception("Cannot find $filename");
+        }
+
+        return $this->features;
     }
 
     public function getListItems()
@@ -134,12 +194,21 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         $recordNumber = $this->readWord(null, true);
         $recordLength = $this->readWord(null, true);
         $shapeType = $this->readWord();
+
         if (isset(self::$shapeTypes[$shapeType])) {
             $readFunction = self::$shapeTypes[$shapeType];
             $feature = $this->$readFunction();
+        } else {
+            throw new Exception("geometry $shapeType not currently supported");
         }
         $feature->setId($recordNumber);
         $feature->setFields($this->dbfParser->readRecord());
+        if ($this->titleField) {
+            $feature->setTitleField($this->titleField);
+        }
+        if ($this->subtitleField) {
+            $feature->setSubtitleField($this->subtitleField);
+        }
         //$feature->setCategory($this->category);
 
         return $feature;
@@ -159,6 +228,34 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
             'xmax' => $this->readDouble(),
             'ymax' => $this->readDouble(),
             );
+    }
+
+    private function readPolyStructure() {
+        $numParts = $this->readWord();
+        $numPoints = $this->readWord();
+
+        $paths = array();
+        $pathStarts = array();
+        for ($i = 0; $i < $numParts; $i++) {
+            $pathStarts[] = $this->readWord();
+        }
+
+        $start = $pathStarts[0];
+        for ($i = 1; $i < $numParts; $i++) {
+            $points = array();
+            $nextPartStart = $pathStarts[$i];
+            for ($j = $start; $j < $nextPartStart; $j++) {
+                $points[] = $this->readPoint();
+            }
+            $paths[] = $points;
+            $start = $nextPartStart;
+        }
+        for ($j = $start; $j < $numPoints; $j++) {
+                $points[] = $this->readPoint();
+        }
+        $paths[] = $points;
+
+        return $paths;
     }
 
     private function addPoint() {
@@ -181,50 +278,16 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     }
 
     private function addPolyline() {
-        $bbox = $this->readBBox();
-        $numParts = $this->readWord();
-        $numPoints = $this->readWord();
-
-        $paths = array();
-        $lastPathEnd = 0;
-        for ($i = 0; $i < $numParts; $i++) {
-            $points = array();
-            // indexes of when points belong to next path
-            $pathEnd = $this->readWord();
-            for ($j = $lastPathEnd; $j < $pathEnd; $j++) {
-                $points[] = $this->readPoint();
-            }
-            $paths[] = $points;
-            $lastPathEnd = $pathEnd;
-        }
-
         $polyline = new ShapefilePolyline();
-        $polyline->readGeometry($paths);
-        $polyline->setBBox($bbox);
+        $polyline->setBBox($this->readBBox());
+        $polyline->readGeometry($this->readPolyStructure());
         return $polyline;
     }
 
     private function addPolygon() {
-        $bbox = $this->readBBox();
-        $numRings = $this->readWord();
-        $numPoints = $this->readWord();
-
-        $rings = array();
-        $lastRingEnd = 0;
-        for ($i = 0; $i < $numRings; $i++) {
-            $points = array();
-            // indexes of when points belong to next path
-            $ringEnd = $this->readWord();
-            for ($j = $lastRingEnd; $j < $ringEnd; $j++) {
-                $points[] = $this->readPoint();
-            }
-            $rings[] = $points;
-            $lastPathEnd = $pathEnd;
-        }
-
         $polygon = new ShapefilePolygon();
-        $polygon->readGeometry($polygon);
-        $polygon->setBBox($bbox);
+        $polygon->setBBox($this->readBBox());
+        $polygon->readGeometry($this->readPolyStructure());
         return $polygon;
     }
 
@@ -232,6 +295,11 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
         while ($this->position < $this->fileSize) {
             $this->features[] = $this->readRecord();
         }
+    }
+
+    public function cleanup() {
+        parent::cleanup();
+        $this->dbfParser->cleanup();
     }
 }
 

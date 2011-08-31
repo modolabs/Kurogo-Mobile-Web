@@ -2,13 +2,14 @@
 
 abstract class BinaryFileParser extends DataParser
 {
-    protected $filename;
+    protected $filename = null;
     protected $wordSize = 4;
     protected $fileSize;
     protected $position = 0;
     protected $bigEndian = true;
 
-    protected $handle;
+    protected $handle = null;
+    protected $contentBuffer = null;
     protected $readBuffer = array();
     protected $readCache = array();
 
@@ -20,16 +21,21 @@ abstract class BinaryFileParser extends DataParser
         $this->filename = $filename;
     }
 
+    public function setContents($contents) {
+        $this->contentBuffer = str_split($contents);
+    }
+
     protected function read($length) {
         $readLength = $length - count($this->readBuffer);
 
         $chars = array();
         if ($readLength > 0) {
-            $chars = array_merge(
-                $this->readBuffer,
-                str_split(fread($this->handle, $readLength))
-                );
-
+            if ($this->handle) {
+                $nextChars = str_split(fread($this->handle, $readLength));
+            } elseif ($readLength <= count($this->contentBuffer)) {
+                $nextChars = array_splice($this->contentBuffer, 0, $readLength);
+            }
+            $chars = array_merge($this->readBuffer, $nextChars);
             $this->readBuffer = array();
 
         } else {
@@ -108,7 +114,11 @@ abstract class BinaryFileParser extends DataParser
     protected function skip($length) {
         $this->readCache = array();
         $this->readBuffer = array();
-        fread($this->handle, $length);
+        if ($this->handle) {
+            fread($this->handle, $length);
+        } elseif ($length <= count($this->contentBuffer)) {
+            array_splice($this->contentBuffer, 0, $length);
+        }
         $this->position += $length;
     }
 
@@ -116,21 +126,31 @@ abstract class BinaryFileParser extends DataParser
         $this->skip($position - $this->position);
     }
 
-    public function parseData($data) {
+    public function doParse() {
         $this->setup();
         $this->readHeader();
         $this->readBody();
         $this->cleanup();
     }
 
+    public function parseData($data)
+    {
+        $this->setContents($data);
+        $this->doParse();
+    }
+
     public function setup() {
         $this->position = 0;
-        if (!$this->handle = fopen($this->filename, 'rb')) {
-            throw new Exception("unable to open file {$this->filename}");
+        if ($this->filename) {
+            if (!$this->handle = fopen($this->filename, 'rb')) {
+                throw new Exception("unable to open file {$this->filename}");
+            }
         }
     }
 
     public function cleanup() {
-        fclose($this->handle);
+        if ($this->handle) {
+            fclose($this->handle);
+        }
     }
 }

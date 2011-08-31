@@ -118,4 +118,10 @@ class DBase3FileParser extends BinaryFileParser
         }
     }
 
+    public function cleanup() {
+        $this->dbaseVersionId = null;
+        $this->lastModified = null;
+        $this->numRecords = null;
+        $this->fields = null;
+    }
 }

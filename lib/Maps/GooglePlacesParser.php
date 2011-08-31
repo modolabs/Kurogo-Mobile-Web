@@ -66,6 +66,11 @@ class GooglePlacesParser extends DataParser implements MapDataParser
         return $this->items;
     }
 
+    public function getTitle()
+    {
+        return 'Google Places';
+    }
+
     public function getProjection()
     {
         return null;

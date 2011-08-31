@@ -60,6 +60,10 @@ class GoogleJSMap extends JavascriptMapImageController {
             $subtitle = $placemark->getSubtitle();
         }
 
+        if (!$subtitle) {
+            $subtitle = ''; // "null" will show up on screen
+        }
+
         $values = array(
             '___IDENTIFIER___' => count($this->markers),
             '___LATITUDE___' => $coord['lat'],
