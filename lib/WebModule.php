@@ -707,8 +707,12 @@ abstract class WebModule extends Module {
   protected function addInlineCSS($inlineCSS) {
     $this->inlineCSSBlocks[] = $inlineCSS;
   }
+  protected function getInternalCSSURL($path) {
+    $path = '/min/g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    return $path;
+  }
   protected function addInternalCSS($path) {
-    $this->cssURLs[] = '/min/g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    $this->cssURLs[] = $this->getInternalCSSURL($path);
   }
   protected function addExternalCSS($url) {
     $this->cssURLs[] = $url;
@@ -725,8 +729,12 @@ abstract class WebModule extends Module {
   protected function addOnLoad($onLoad) {
     $this->onLoadBlocks[] = $onLoad;
   }
-  protected function addInternalJavascript($path) {
+  protected function getInternalJavascriptURL($path) {
     $path = '/min/?g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    return $path;
+  }
+  protected function addInternalJavascript($path) {
+    $path = $this->getInternalJavascriptURL($path);
     if (!in_array($path, $this->javascriptURLs)) {
         $this->javascriptURLs[] = $path;
     }
