@@ -205,8 +205,8 @@ JS;
             '___MAPELEMENT___' => $this->mapElement,
             '___CENTER_LATITUDE___' => $center['lat'],
             '___CENTER_LONGITUDE___' => $center['lon'],
-            '___IMAGE_WIDTH___' => $this->imageWidth,
-            '___IMAGE_HEIGHT___' => $this->imageHeight,
+            //'___IMAGE_WIDTH___' => $this->imageWidth,
+            //'___IMAGE_HEIGHT___' => $this->imageHeight,
             '___ZOOMLEVEL___' => $this->zoomLevel,
             ));
         

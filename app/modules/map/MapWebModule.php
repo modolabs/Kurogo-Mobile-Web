@@ -361,7 +361,7 @@ class MapWebModule extends WebModule {
         $this->addOnOrientationChange('updateMapDimensions();');
     }
 
-    protected function addJavascriptFullscreenDynamicMap() {
+    protected function addJavascriptDynamicMap() {
         $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
         $this->addOnOrientationChange('updateContainerDimensions()');
     }
@@ -455,14 +455,10 @@ JS;
             if (!$imgController->isStatic()) {
                 $this->addInlineJavascriptFooter("\n hideMapTabChildren();\n");
             }
-            $this->addInlineJavascriptFooter("\n setMapHeights();\n");
             
         } else {
             $this->assign('detailURL', $this->buildBreadcrumbURL('detail', $this->args, false));
 
-            if (!$imgController->isStatic()) {
-                $this->addJavascriptFullscreenDynamicMap();
-            }
         }
         
         $this->assign('fullscreen', $fullscreen);
@@ -473,6 +469,8 @@ JS;
         // call the function that updates the image size        
         if ($imgController->isStatic()) {
             $this->addJavascriptStaticMap();
+        } else {
+            $this->addJavascriptDynamicMap();
         }
     }
 

@@ -16,14 +16,6 @@
 	min-height: none;
 	padding-bottom: 2em;
 }
-#mapimage {
-	width: 100%;
-	min-height: 200px;
-	border: 1px solid #999;
-	margin: -1px;
-	overflow: hidden;
-	margin-bottom: 40px;
-}
 
 #photoTab {
 	text-align: center;
@@ -56,11 +48,9 @@
 }
 
 #mapzoom {
-	position: absolute;
-	bottom: 0px;
+	position: relative;
 	left: 6px;
 	right: 6px;
-	height: 56px;
 }
 
 #mapzoom a {

@@ -12,6 +12,14 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
     display: inline-block;
 }
 
+#mapimage {
+    width: 100%;
+    min-height: 200px;
+    border: 1px solid #999;
+    margin: -1px;
+    overflow: hidden;
+}
+
 #zoomin {
     top: 0;
     left: 7%;

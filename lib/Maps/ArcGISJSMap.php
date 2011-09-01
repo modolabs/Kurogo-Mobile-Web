@@ -100,9 +100,9 @@ class ArcGISJSMap extends JavascriptMapImageController {
                     or $size = 12;
                 // TODO there isn't yet a good way to get valid values for this from outside
                 $shape = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SHAPE)
-                    or $shape = 'esri.symbol.Simple.STYLE_CIRCLE';
+                    or $shape = 'esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE';
 
-                $templateValues['___SYMBOL_ARGS___'] = "$shape,$size,new dojo.Color(\"#$color\"),new esri.symbol.SimpleLineSymbol()";
+                $templateValues['___SYMBOL_ARGS___'] = "$shape,$size,new esri.symbol.SimpleLineSymbol(),new dojo.Color(\"#$color\")";
             }
         }
 
@@ -119,6 +119,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
             $templateValues['___Y___'] = $point['lon'];
         }
 
+        // TODO use $placemark->getFields to populate Attributes
         $templateValues['___TITLE___'] = $placemark->getTitle();
         $subtitle = $placemark->getSubtitle();
         $templateValues['___DESCRIPTION___'] = $subtitle ? $subtitle : "";

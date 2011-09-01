@@ -15,10 +15,8 @@ h2 {
 
 #mapTab {
   text-align: center;
-  padding-left: 0;
-  padding-right: 0;
 }
-
+/*
 #mapwrapper {
   display: inline-block;
 	width: 602px;
@@ -26,7 +24,7 @@ h2 {
 	position: relative;
 	overflow: hidden;
 }
-
+*/
 .fullmap {
     position: absolute;
     top: 0;

@@ -11,13 +11,13 @@
       <!--<div id="mapwrapper" class="image">-->
       <div id="mapimage" class="image">
         {if $isStatic}
-          {include file="findInclude:modules/map/templates/mapscrollers.tpl"}
+          {include file="findInclude:modules/$moduleID/templates/mapscrollers.tpl"}
           <img id="staticmapimage" onload="hide('loadingimage')" src="{$imageUrl}" width="{$imageWidth}" height="{$imageHeight}" alt="Map" />
         {/if}
       </div>
       <!--<div id="mapimage" style="display:none"></div>-->
     {/block}
-    {include file="findInclude:modules/map/templates/mapcontrols.tpl"}
+    {include file="findInclude:modules/$moduleID/templates/mapcontrols.tpl"}
   {/capture}
   {$tabBodies['map'] = $mapPane}
 {/if}
@@ -57,7 +57,7 @@
 
 {if in_array('links', $tabKeys)}
   {capture name="linksPane" assign="linksPane"}
-    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$externalLinks boldLabels=true listItemTemplateFile="findInclude:modules/map/templates/listItemWithID.tpl"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$externalLinks boldLabels=true listItemTemplateFile="findInclude:modules/$moduleID/templates/listItemWithID.tpl"}
   {/capture}
   {$tabBodies['links'] = $linksPane}
 {/if}

@@ -70,57 +70,6 @@ function loadMapImage(newSrc) {
     mapImage.style.height = mapHeight + "px";
 }
 
-// next three functions for compliant
-
-function setMapHeights() {
-    // Set the height of the tabs container to fill the browser window height
-    var mapimage = document.getElementById("mapimage");
-    var maptab = document.getElementById("mapTab");
-    if (mapimage) { 
-        mapimage.style.height="50%";
-    }
-    if (maptab) {
-        maptab.style.height="1000px";
-    }
-    setTimeout("scrollTo(0,1)",500);
-    setTimeout("setHeight()",600);
-}
-
-function setHeight() {
-    var mapimage = document.getElementById("mapimage");
-    var maptab = document.getElementById("mapTab");
-    if (mapimage) { 
-        var topoffset = findPosY(document.getElementById("tabbodies"));
-        var bottomoffset = 56;
-        document.getElementById("mapzoom").style.height=bottomoffset + "px";
-        mapimage.style.height=(getWindowHeight() - topoffset- bottomoffset) + "px";
-    }
-    if (maptab) {
-        maptab.style.height="auto";
-    }
-}
-
-function findPosY(obj) {
-// Function for finding the y coordinate of the object passed as an argument.
-// Returns the y coordinate as an integer, relative to the top left origin of the document.
-    var intCurlTop = 0;
-    if (obj.offsetParent) {
-        while (obj.offsetParent) {
-            intCurlTop += obj.offsetTop;
-            obj = obj.offsetParent;
-        }
-    }
-    return intCurlTop;
-}
-
-// next function for tablet
-
-function setTabsHeight() {
-    // Set the height of the tabs container to fill the browser window height
-    var tc = document.getElementById("tabscontainer");
-    if(tc) { tc.style.height=(getWindowHeight()-56) + "px" }
-}
-
 function pixelsFromString(aString) {
     if (aString.substring(aString.length - 2, aString.length) == "px") {
         return aString.substring(0, aString.length - 2);
@@ -424,30 +373,11 @@ function updateContainerDimensions() {
     updateMapDimensionsTimeoutIds.push(timeoutId);
     timeoutId = window.setTimeout(doUpdateContainerDimensions, 500);
     updateMapDimensionsTimeoutIds.push(timeoutId);
+    timeoutId = window.setTimeout(doUpdateContainerDimensions, 1000);
+    updateMapDimensionsTimeoutIds.push(timeoutId);
 }
 
-function doUpdateContainerDimensions() {
-    var container = document.getElementById("container");
-    if (container) {
-        var newWidth = getWindowWidth() + "px";
-        var newHeight = getWindowHeight() + "px";
-
-        // check to see if the container height and width actually changed
-        if (container.style && container.style.width && container.style.width == newWidth
-                            && container.style.height && container.style.height == newHeight) {
-
-           // nothing changed so exit early
-           return;
-        }
-
-        container.style.width = newWidth;
-        container.style.height = newHeight;
-
-        if (typeof resizeMapOnContainerResize == 'function') {
-            resizeMapOnContainerResize();
-        }
-    }
-}
+// doUpdateContainerDimensions is split into detail-common.js and fullscreen-common.js
 
 function addDirectionsLink() {
     if ("geolocation" in navigator) {
