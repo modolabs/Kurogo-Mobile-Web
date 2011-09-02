@@ -11,6 +11,10 @@ define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
 define('BOOKMARK_COOKIE_DELIMITER', '@@');
 
+if (!function_exists('gzdeflate')) {
+    die("Kurogo requires the zlib PHP extension.");
+}
+
 abstract class WebModule extends Module {
 
     const INCLUDE_DISABLED_MODULES=true;
