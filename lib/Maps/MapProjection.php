@@ -36,6 +36,8 @@ http://trac.osgeo.org/proj/wiki/GenParms
 class MapProjection
 {
     private $proj;
+    private $specs; // string used to create this object
+    private $format;
 
     // raw cartesian points (-pi, pi), intermediate products between
     // adjustedX, adjustedY and phi, lambda
@@ -85,6 +87,8 @@ class MapProjection
         if (isset($xy['x'], $xy['y'])) {
             $this->adjustedX = $xy['x'];
             $this->adjustedY = $xy['y'];
+            $this->phi = null;
+            $this->lambda = null;
         }
     }
 
@@ -93,6 +97,8 @@ class MapProjection
         if (isset($latlon['lat'], $latlon['lon'])) {
             $this->phi = $latlon['lat'] / 180 * M_PI;
             $this->lambda = $latlon['lon'] / 180 * M_PI;
+            $this->adjustedX = null;
+            $this->adjustedY = null;
         }
     }
     
@@ -209,8 +215,8 @@ class MapProjection
             case 'cea': // 2 SRIDs; http://en.wikipedia.org/wiki/Cylindrical_equal-area_projection
             case 'nzmg': // 1
             case 'krovak': // 1
-            default:
-                throw new Exception("reverse projection not implemented for {$this->proj}");
+            default:die();
+                //throw new Exception("reverse projection not implemented for {$this->proj}");
                 break;
         }
     }
@@ -250,13 +256,19 @@ class MapProjection
             );
     }
 
-    public function __construct($projString, $format='proj4')
+    public function __construct($projString)
     {
+        $this->specs = $projString;
+
         if (preg_match('/^\d+$/', $projString)) {
-            $format = 'wkid';
+            $this->format = 'wkid';
+        } elseif (preg_match('/^\w+\[/', $projString)) {
+            $this->format = 'wkt';
+        } elseif (preg_match('/^\+/', $projString)) {
+            $this->format = 'proj4';
         }
 
-        switch ($format) {
+        switch ($this->format) {
             case 'wkid':
                 $projString = MapProjector::getProjSpecs($projString);
                 $params = self::parseProj4String($projString);
@@ -272,6 +284,11 @@ class MapProjection
                 $this->initFromProj4Params($params);
                 break;
         }
+    }
+
+    public function getSpecs()
+    {
+        return $this->specs;
     }
 
     protected function setSpheroid($spheroid) {
@@ -404,52 +421,58 @@ class MapProjection
     }
 
     private function initFromWKTParams($params) {
+
         if (isset($params['PROJCS'])) {
             $projcs = $params['PROJCS'];
-            if (isset($projcs['GEOGCS'])) {
-                $geogcs = $projcs['GEOGCS'];
-                if (isset($geogcs['DATUM'])) {
-                    $datum = $geogcs['DATUM'];
-                    if (isset($datum['name'])) {
-                        $this->setDatum($datum['name']);
-                    }
-                    if (isset($datum['SPHEROID'], $datum['SPHEROID']['semiMajorAxis'])) {
-                        $this->semiMajorAxis = $datum['SPHEROID']['semiMajorAxis'];
-                    }
+        } else {
+            $projcs = $params;
+        }
+
+
+        if (isset($projcs['GEOGCS'])) {
+            $geogcs = $projcs['GEOGCS'];
+            if (isset($geogcs['DATUM'])) {
+                $datum = $geogcs['DATUM'];
+                if (isset($datum['name'])) {
+                    $this->setDatum($datum['name']);
+                }
+                if (isset($datum['SPHEROID'], $datum['SPHEROID']['semiMajorAxis'])) {
+                    $this->semiMajorAxis = $datum['SPHEROID']['semiMajorAxis'];
                 }
             }
+        }
 
-            if (isset($projcs['PROJECTION'], $projcs['PROJECTION']['name'])) {
-                $projMap = array(
-                    'Lambert_Conformal_Conic' => 'lcc',
-                    );
-                $this->proj = $projMap[$projcs['PROJECTION']['name']];
+        if (isset($projcs['PROJECTION'], $projcs['PROJECTION']['name'])) {
+            $projMap = array(
+                'Lambert_Conformal_Conic' => 'lcc',
+                );
+            $this->proj = $projMap[$projcs['PROJECTION']['name']];
+        } else {
+            $this->proj = 'longlat';
+        }
+        if (isset($projcs['UNIT'], $projcs['UNIT']['unitsPerMeter'])) {
+            $this->unitsPerMeter = $projcs['UNIT']['unitsPerMeter'];
+        }
+
+        if (isset($projcs['PARAMETER'])) {
+            $parameters = $projcs['PARAMETER'];
+            if (isset($parameters['False_Easting'])) {
+                $this->falseEasting = $parameters['False_Easting'];
             }
-
-            if (isset($projcs['UNIT'], $projcs['UNIT']['unitsPerMeter'])) {
-                $this->unitsPerMeter = $projcs['UNIT']['unitsPerMeter'];
+            if (isset($parameters['False_Northing'])) {
+                $this->falseNorthing = $parameters['False_Northing'];
             }
-
-            if (isset($projcs['PARAMETER'])) {
-                $parameters = $projcs['PARAMETER'];
-                if (isset($parameters['False_Easting'])) {
-                    $this->falseEasting = $parameters['False_Easting'];
-                }
-                if (isset($parameters['False_Northing'])) {
-                    $this->falseNorthing = $parameters['False_Northing'];
-                }
-                if (isset($parameters['Central_Meridian'])) {
-                    $this->centralMeridian = $parameters['Central_Meridian'] / 180 * M_PI;
-                }
-                if (isset($parameters['Latitude_Of_Origin'])) {
-                    $this->originLatitude = $parameters['Latitude_Of_Origin'] / 180 * M_PI;
-                }
-                if (isset($parameters['Standard_Parallel_1'])) {
-                    $this->standardParallel1 = $parameters['Standard_Parallel_1'] / 180 * M_PI;
-                }
-                if (isset($parameters['Standard_Parallel_2'])) {
-                    $this->standardParallel2 = $parameters['Standard_Parallel_2'] / 180 * M_PI;
-                }
+            if (isset($parameters['Central_Meridian'])) {
+                $this->centralMeridian = $parameters['Central_Meridian'] / 180 * M_PI;
+            }
+            if (isset($parameters['Latitude_Of_Origin'])) {
+                $this->originLatitude = $parameters['Latitude_Of_Origin'] / 180 * M_PI;
+            }
+            if (isset($parameters['Standard_Parallel_1'])) {
+                $this->standardParallel1 = $parameters['Standard_Parallel_1'] / 180 * M_PI;
+            }
+            if (isset($parameters['Standard_Parallel_2'])) {
+                $this->standardParallel2 = $parameters['Standard_Parallel_2'] / 180 * M_PI;
             }
         }
     }

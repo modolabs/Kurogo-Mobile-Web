@@ -456,7 +456,7 @@ abstract class DataController
                     $cache->write($data, $dataFile);
                 } elseif ($this->useStaleCache) {
                     // return stale cache if the data is unavailable
-                    $data = $this->read($dataFile);
+                    $data = $cache->read($dataFile);
                 }
             }
         } else {

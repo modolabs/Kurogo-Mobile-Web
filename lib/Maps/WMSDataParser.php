@@ -179,6 +179,11 @@ class WMSDataParser extends DataParser
     {
         return $this->layers[$layerName];
     }
+
+    public function getProjections()
+    {
+        return $this->boundingLayer->getProjections();
+    }
     
     public function getLayerNames()
     {

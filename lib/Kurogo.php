@@ -77,17 +77,22 @@ class Kurogo
         return $module->searchItems($searchTerms, $limit, $options);
     }
 
-    public static function includePackage($packageName) {
+    public static function includePackage($packageName, $subpackageName=null) {
         $Kurogo = self::sharedInstance();
-        return $Kurogo->addPackage($packageName);
+        return $Kurogo->addPackage($packageName, $subpackageName);
     }
     
-    public function addPackage($packageName) {
-
+    public function addPackage($packageName, $subpackageName=null) {
         if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
             throw new Exception("Invalid Package name $packageName");
         }
     
+        if ($subpackageName !== null) {
+            if (!preg_match("/^[a-zA-Z0-9]+$/", $subpackageName)) {
+                throw new Exception("Invalid Subpackage name $packageName");
+            }
+            $packageName .= DIRECTORY_SEPARATOR.$subpackageName;
+        }
         $found = false;
         
         $dirs = array(LIB_DIR . "/$packageName");
@@ -630,6 +635,6 @@ interface KurogoObject
 }
 
 /* retained for compatibility */
-function includePackage($packageName) {
-    Kurogo::includePackage($packageName);
+function includePackage($packageName, $subpackageName=null) {
+    Kurogo::includePackage($packageName, $subpackageName);
 }

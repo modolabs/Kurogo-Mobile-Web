@@ -623,6 +623,8 @@ ul.focal li:first-child {
 	border: none;
 	-webkit-border-bottom-right-radius: 8px;	
 	-webkit-border-bottom-left-radius: 8px;	
+	border-bottom-right-radius: 8px;
+	border-bottom-left-radius: 8px;
 }
 
 .tabbody .results {
@@ -1132,6 +1134,8 @@ h2.icon {
 	-webkit-border-top-right-radius: 7px;	
 	-webkit-border-top-left-radius: 7px;	
 	text-align: center;
+	border-top-right-radius: 7px;
+	border-top-left-radius: 7px;
 }
 
 #tabs li .badge {

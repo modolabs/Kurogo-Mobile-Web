@@ -8,6 +8,10 @@
   */
 class SiteConfig extends ConfigGroup {
 
+    private function isValidSiteName($name) {
+        return preg_match("/^[a-z][a-z0-9_-]*$/i", $name);
+    }
+    
   function __construct(&$path) {
     // Load main configuration file
     $config = ConfigFile::factory('kurogo', 'project', ConfigFile::OPTION_IGNORE_MODE | ConfigFile::OPTION_IGNORE_LOCAL);
@@ -18,33 +22,28 @@ class SiteConfig extends ConfigGroup {
     
     //multi site currently only works with a url base of root "/"
     if ($this->getOptionalVar('MULTI_SITE', false, 'kurogo')) {
-        $paths = explode("/", $path);
+        $paths = explode("/", $path); // this is url
         $sites = array();
         $siteDir = '';
     
         if (count($paths)>1) {
-            //save a glob if you want to define the active sites in kurogo.ini
+            $site = $paths[1];
+
             if ($sites = $this->getOptionalVar('ACTIVE_SITES', array(), 'kurogo')) {
-                if (in_array($paths[1], $sites)) {
-                    $siteDir = ROOT_DIR . "/site/" . $paths[1];
-                    $urlBase = '/' . $paths[1] . '/';
-                    $site = $paths[1];
-                    $foundPath = true;
+                //see if the site is in the list of available sites
+                if (in_array($site, $sites)) {
+                    $siteDir = realpath_exists(implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site)));
+                    $urlBase = '/' . $site . '/'; // this is a url
                 }
-            } else {
-                foreach (glob(ROOT_DIR . "/site/*", GLOB_ONLYDIR) as $file) {
-                    $siteName = basename($file);
-                    if ($paths[1]==$siteName) {
-                        $siteDir = $file;
-                        $urlBase = '/' . $siteName . '/';
-                        $site = $siteName;
-                        $foundPath = true;
-                        break;
-                    }
+            } elseif ($this->isValidSiteName($site)) {
+
+                $testPath = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
+                if ($siteDir = realpath_exists($testPath)) {
+                    $urlBase = '/' . $site . '/'; // this is a url
                 }
             }
         }
-        
+                
         if (!$siteDir) {
             $site = $this->getVar('DEFAULT_SITE');
             array_splice($paths, 1, 1, array($site, $paths[1]));
@@ -67,14 +66,12 @@ class SiteConfig extends ConfigGroup {
         // Get URL base
         //
         if ($urlBase = $config->getOptionalVar('URL_BASE','','kurogo')) {
-            $foundPath = true;
             $urlBase = rtrim($urlBase,'/').'/';
         } else {
             //extract the path parts from the url
-            $pathParts = array_values(array_filter(explode(DIRECTORY_SEPARATOR, $_SERVER['REQUEST_URI'])));
+            $pathParts = array_values(array_filter(explode("/", $_SERVER['REQUEST_URI'])));
             $testPath = $_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR;
             $urlBase = '/';
-            $foundPath = false;
     
             //once the path equals the WEBROOT_DIR we've found the base. This only works with symlinks
               if (realpath($testPath) != WEBROOT_DIR) {
@@ -85,7 +82,6 @@ class SiteConfig extends ConfigGroup {
                         $testPath = $test;
                         $urlBase .= $dir.'/';
                         if (realpath($test) == WEBROOT_DIR) {
-                               $foundPath = true;
                             break;
                         }
                     }
@@ -110,17 +106,17 @@ class SiteConfig extends ConfigGroup {
             $path = substr($path, $baseLen);
         }
     }  
-    
+
     // Set up defines relative to SITE_DIR
-    define('SITE_DIR',             $siteDir);
+    define('SITE_DIR',             $siteDir); //already been realpath'd
     define('SITE_KEY',             md5($siteDir));
-    define('SITE_LIB_DIR',         SITE_DIR.'/lib');
-    define('SITE_APP_DIR',         SITE_DIR.'/app');
-    define('SITE_MODULES_DIR',     SITE_DIR.'/app/modules');
-    define('DATA_DIR',             SITE_DIR.'/data');
-    define('CACHE_DIR',            SITE_DIR.'/cache');
-    define('LOG_DIR',              SITE_DIR.'/logs');
-    define('SITE_CONFIG_DIR',      SITE_DIR.'/config');
+    define('SITE_LIB_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'lib');
+    define('SITE_APP_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'app');
+    define('SITE_MODULES_DIR',     SITE_DIR . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'modules');
+    define('DATA_DIR',             SITE_DIR . DIRECTORY_SEPARATOR . 'data');
+    define('CACHE_DIR',            SITE_DIR . DIRECTORY_SEPARATOR . 'cache');
+    define('LOG_DIR',              SITE_DIR . DIRECTORY_SEPARATOR . 'logs');
+    define('SITE_CONFIG_DIR',      SITE_DIR . DIRECTORY_SEPARATOR . 'config');
 
     //load in the site config file (required);
     $config = ConfigFile::factory('site', 'site');
@@ -135,7 +131,7 @@ class SiteConfig extends ConfigGroup {
         die("FATAL ERROR: ACTIVE_THEME not set");
     }
     
-    define('THEME_DIR', SITE_DIR.'/themes/'.$theme);
+    define('THEME_DIR', SITE_DIR . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $theme);
   }
 
 }

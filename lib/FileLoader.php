@@ -1,6 +1,6 @@
 <?php
 
-define('AUTOLOAD_FILE_DIR', CACHE_DIR."/FileLoader");
+define('AUTOLOAD_FILE_DIR', CACHE_DIR. DIRECTORY_SEPARATOR ."FileLoader");
 
 class FileLoader {
     public static function fileDir() {

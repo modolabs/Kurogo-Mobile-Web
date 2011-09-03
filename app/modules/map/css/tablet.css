@@ -15,10 +15,8 @@ h2 {
 
 #mapTab {
   text-align: center;
-  padding-left: 0;
-  padding-right: 0;
 }
-
+/*
 #mapwrapper {
   display: inline-block;
 	width: 602px;
@@ -26,7 +24,7 @@ h2 {
 	position: relative;
 	overflow: hidden;
 }
-
+*/
 .fullmap {
     position: absolute;
     top: 0;
@@ -43,79 +41,10 @@ h2 {
 	background-color: #fff;
 }
 
-#mapscrollers {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	width: 100%;
-	z-index: 10;
-}
-
 .tabbody #mapscrollers {
 	height: 352px;
-}
-
-#mapscrollers div {
-	position: absolute;
-	width: 50px;
-	height: 50px;
-	text-align: center;
-	padding: 0;
-	z-index: 10;
-	background-image: url(/modules/map/images/scrollers.png);
-	background-repeat: no-repeat;
-}
-
-#nw {
-	top: 0;
-	left: 0;
-	background-position: -350px 0px;
-}
-
-#n {
-	top: 0;
-	left: 50%;
-	margin-left: -25px;
-	background-position: 0px 0px;
-}
-
-#ne {
-	top: 0;
-	right: 0;
-	background-position: -200px 0px;
-}
-
-#e {
-	top: 50%;
-	margin-top: -25px;
-	right: 0;
-	background-position: -50px 0px;
-}
-
-#se {
-	bottom: 0;
-	right: 0;
-	background-position: -250px 0px;
-}
-
-#s {
-	bottom: 0;
-	left: 50%;
-	margin-left: -25px;
-	background-position: -100px 0px;
-}
-
-#sw {
-	bottom: 0;
-	left: 0;
-	background-position: -300px 0px;
-}
-
-#w {
-	top: 50%;
-	margin-top: -25px;
-	left: 0;
-	background-position: -150px 0px;
+	top: 8px;
+	left: 8px;
 }
 
 #mapzoom {
@@ -131,35 +60,6 @@ h2 {
 	height: 34px;
 	background-image: url(/modules/map/images/buttons.png);
 	background-repeat: no-repeat;
-}
-
-#zoomin {
-	top: 0;
-	left: 7%;
-	margin: 0 0 0 -19px;
-	background-position: 0 0;
-}
-
-#zoomout {
-	top: 0;
-	left: 25%;
-	margin: 0 0 0 -16px;
-	background-position: -40px 0;
-}
-
-#recenter {
-	top: 0;
-	left: 58%;
-	margin: 0 0 0 -19px;
-	background-position: -120px 0;
-}
-
-#fullscreen {
-	top: 0;
-	bottom: auto;
-	right: 7%;
-	margin: 0 -19px 0 0;
-	background-position: -80px 0;
 }
 
 /* copying the fullscreen style for now */

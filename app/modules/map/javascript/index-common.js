@@ -1,21 +1,51 @@
-if (!getCookie('map_lat')) {
+var browseGroups = {};
+var apiURL;
+
+function sortGroupsByDistance() {
     if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(mapFoundLocation, mapNoLocation, {timeout:5000});
+        navigator.geolocation.getCurrentPosition(locateSucceeded, locateFailed, {maximumAge:3600000, timeout:5000});
     } else {
-        mapNoLocation();
+        errorCallback();
     }
 }
 
-function mapFoundLocation(location) {
-    var curLat = location.coords.latitude;
-    var curLon = location.coords.longitude;
-    setCookie('map_lat', curLat, 3600);
-    setCookie('map_long', curLon, 3600);
-    document.location.reload();
+function locateSucceeded(location) {
+    var navCategories = document.getElementById("categories").children;
+    for (var i = 0; i < navCategories.length; i++) {
+        var category = navCategories[i];
+        var categoryId = category.getAttribute("class");
+        browseGroups[categoryId] = category;
+    }
+
+    var params = {"lat": location.coords.latitude, "lon": location.coords.longitude};
+    apiRequest(apiURL + "/sortGroupsByDistance", params, sortSucceeded, sortFailed);
 }
-    
-function mapNoLocation() {
-    setCookie('map_lat', 'na', 3600);
-    setCookie('map_long', 'na', 3600);
-    document.location.reload();
+
+function locateFailed() {
+    // do nothing; leave content as is
 }
+
+function sortSucceeded(response) {
+    var sortedGroups = [];
+    for (var i = 0; i < response.length; i++) {
+        var id = response[i]["id"];
+        if (id in browseGroups) {
+            sortedGroups.push(browseGroups[id]);
+        }
+    }
+    var navList = document.getElementById("categories");
+    if (navList.children.length == sortedGroups.length) {
+        while (navList.children.length > 0) {
+            navList.removeChild(navList.children[0]);
+        }
+        for (var i = 0; i < sortedGroups.length; i++) {
+            navList.appendChild(sortedGroups[i]);
+        }
+    }
+}
+
+function sortFailed(code, message) {
+    // do nothing; leave content as is
+}
+
+

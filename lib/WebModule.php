@@ -11,6 +11,10 @@ define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
 define('BOOKMARK_COOKIE_DELIMITER', '@@');
 
+if (!function_exists('gzdeflate')) {
+    die("Kurogo requires the zlib PHP extension.");
+}
+
 abstract class WebModule extends Module {
 
     const INCLUDE_DISABLED_MODULES=true;
@@ -706,8 +710,12 @@ abstract class WebModule extends Module {
   protected function addInlineCSS($inlineCSS) {
     $this->inlineCSSBlocks[] = $inlineCSS;
   }
+  protected function getInternalCSSURL($path) {
+    $path = '/min/g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    return $path;
+  }
   protected function addInternalCSS($path) {
-    $this->cssURLs[] = '/min/g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    $this->cssURLs[] = $this->getInternalCSSURL($path);
   }
   protected function addExternalCSS($url) {
     $this->cssURLs[] = $url;
@@ -724,8 +732,12 @@ abstract class WebModule extends Module {
   protected function addOnLoad($onLoad) {
     $this->onLoadBlocks[] = $onLoad;
   }
-  protected function addInternalJavascript($path) {
+  protected function getInternalJavascriptURL($path) {
     $path = '/min/?g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    return $path;
+  }
+  protected function addInternalJavascript($path) {
+    $path = $this->getInternalJavascriptURL($path);
     if (!in_array($path, $this->javascriptURLs)) {
         $this->javascriptURLs[] = $path;
     }
@@ -1392,7 +1404,10 @@ abstract class WebModule extends Module {
         $total = 0;
         $results = array();
       
-        $items = $this->searchItems($searchTerms, $maxCount, array('federatedSearch'=>true));
+        // Ask for one more item than we show so that we can tell if we need to display
+        // the more results link.  This will need to be changed to 0 if we ever
+        // want to show the full number of matched items in the federated search screen
+        $items = $this->searchItems($searchTerms, $maxCount+1, array('federatedSearch'=>true));
         $limit = is_array($items) ? min($maxCount, count($items)) : 0;
 
         for ($i = 0; $i < $limit; $i++) {

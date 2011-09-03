@@ -138,7 +138,7 @@
     {/if}
   {/block}>
   <div id="nonfooternav">
-    <a name="top"></a>
+    <a name="top"> </a>
     {if isset($customHeader)}
       {$customHeader|default:''}
     {else}
