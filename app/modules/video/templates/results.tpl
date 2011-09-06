@@ -2,7 +2,7 @@
   {$ellipsisCount=0}
   {if $previousURL}
     <li class="pagerlink">
-      <a href="{$previousURL}">{"PREVIOUS_VIDEOS_TEXT"|getLocalizedString:$maxPerPage}</a>
+      <a href="{$previousURL}">{"PREVIOUS_VIDEO_TEXT"|getLocalizedString:$maxPerPage}</a>
     </li>
   {/if}
   {foreach $results as $item}
