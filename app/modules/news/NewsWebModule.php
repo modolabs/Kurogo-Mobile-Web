@@ -18,6 +18,7 @@ class NewsWebModule extends WebModule {
   protected $showImages = true;
   protected $showPubDate = false;
   protected $showAuthor = false;
+  protected $showLink = false;
   
   public static function validateFeed($section, $feedData) {
         if (!self::argVal($feedData, 'TITLE')) {
@@ -170,6 +171,7 @@ class NewsWebModule extends WebModule {
         $this->showImages = isset($feedData['SHOW_IMAGES']) ? $feedData['SHOW_IMAGES'] : true;
         $this->showPubDate = isset($feedData['SHOW_PUBDATE']) ? $feedData['SHOW_PUBDATE'] : false;
         $this->showAuthor = isset($feedData['SHOW_AUTHOR']) ? $feedData['SHOW_AUTHOR'] : false;
+        $this->showLink = isset($feedData['SHOW_LINK']) ? $feedData['SHOW_LINK'] : false;
     }    
     
     protected function htmlEncodeFeedString($string) {
@@ -223,7 +225,9 @@ class NewsWebModule extends WebModule {
         $this->assign('title',         $this->htmlEncodeFeedString($story->getTitle()));
         $this->assign('author',        $this->htmlEncodeFeedString($story->getAuthor()));
         $this->assign('image',         $this->getImageForStory($story));
+        $this->assign('link',          $story->getLink());
         $this->assign('ajax',          $this->getArg('ajax'));
+        $this->assign('showLink',      $this->showLink);
         break;
         
       case 'search':
