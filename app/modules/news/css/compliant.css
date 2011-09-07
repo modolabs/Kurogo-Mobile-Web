@@ -1,3 +1,7 @@
+h1.slugline a {
+    text-decoration: none;
+}
+
 li.story {
     height: 5.5em;
 	  margin: 0;

@@ -3,7 +3,7 @@
 {/if}
 
 <div class="news">
-  <h1 class="slugline">{$title}</h1>
+  <h1 class="slugline">{if $showLink}<a href="{$link}">{/if}{$title}{if $showLink}</a>{/if}</h1>
 
   <div id="storysubhead">
     {include file="findInclude:common/templates/share.tpl" shareURL={$storyURL} shareRemark={$shareRemark} shareEmailURL={$shareEmailURL}}
@@ -34,6 +34,11 @@
     <span id="storybody">
       {include file="findInclude:common/templates/pager.tpl"}
     </span>
+    {if $showLink}
+    <div id="showmore">
+    <a href="{$link}">Read more</a>
+    </div>
+    {/if}
   </div><!--story-->
 </div>
 
