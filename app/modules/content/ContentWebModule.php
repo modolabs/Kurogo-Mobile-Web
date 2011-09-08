@@ -2,6 +2,8 @@
 
 class ContentWebModule extends WebModule {
     protected $id = 'content';
+	protected $contentGroups;
+	protected $feedGroups = null;
 
    protected function getContent($feedData) {
    
@@ -55,47 +57,131 @@ class ContentWebModule extends WebModule {
             'rss'=>'External RSS'
         );
     }
-  
-    protected function initializeForPage() {
-    
-        if (!$feeds = $this->loadFeedData()) {
-            $feeds = array();
+
+	private function getDataForGroup($group) {
+        if (!$this->feedGroups) {
+             $this->feedGroups = $this->getFeedGroups();
         }
-        
-        switch ($this->page) {
-            case 'index':
-                if (count($feeds)==1) {
-                    $this->page = key($feeds);
-                } else {
-                
-                    $pages = array();
-                    foreach ($feeds as $page=>$feedData) {
-                        $pages[] = array(
-                            'title'=>$feedData['TITLE'],
-                            'subtitle'=>isset($feedData['SUBTITLE']) ? $feedData['SUBTITLE'] : '',
-                            'url'=>$this->buildBreadCrumbURL($page, array())
-                        );
-                    }
-                    
-                    $this->assign('contentPages', $pages);
-                    break;
-                }
-            default:
-                if (!isset($feeds[$this->page])) {
-                    $this->redirectTo('index');
-                } 
-                
-                $feedData = $feeds[$this->page];
-                
-                $this->setPageTitle($feedData['TITLE']);
-                $this->setTemplatePage('content');
-                $showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
-                if ($showTitle) {
-                    $this->assign('contentTitle', $feedData['TITLE']);
-                }
-                $this->assign('contentBody', $this->getContent($feedData));
-                break;
+		
+		if (isset($this->feedGroups[$group])) {
+
+            if (!isset($this->feedGroups[$group]['DESCRIPTION'])) {
+                $this->feedGroups[$group]['DESCRIPTION'] = $this->getModuleVar('description','strings');
+            }
+            
+            return $this->feedGroups[$group];            
+        } else {
+            throw new Exception("Unable to find link group information for $group");
         }
     }
+    
+    public function getFeedGroups() {
+        return $this->getModuleSections('feedgroups');
+    }
+	
+	public function getItemsForGroup($group){
+		return $this->getModuleSections('feeds-'.$group);
+	}
+		
+	// overrides function in Module.php
+	protected function loadFeedData($group=null) {	
+		if(!$group){
+			$items = $this->getModuleSections('feeds');            
+			foreach ($items as $key => &$item) {
+				if (isset($item['GROUP']) && strlen($item['GROUP'])) {
+					$groupData = $this->getDataForGroup($item['GROUP']);
+					if (!isset($item['TITLE']) && isset($groupData['TITLE'])) {
+						$item['TITLE'] = $groupData['TITLE'];
+					}
+					$item['url'] = $this->buildBreadcrumbURL('group', array('group'=>$item['GROUP']));
+				}else{
+					$item['url'] = $this->buildBreadcrumbURL('page', array('page'=>$key));
+				}
+				$item['title'] = $item['TITLE'];
+			}
+		}else{
+			$items = $this->getItemsForGroup($group);
+			foreach($items as $key => &$item){
+				if (!isset($item['TITLE']) && isset($groupData['TITLE'])) {
+					$item['title'] = $groupData['TITLE'];
+				}else{
+					$item['title'] = $item['TITLE'];
+				}
+				$item['url'] = $this->buildBreadcrumbURL('page', array('group' => $group, 'page'=>$key));
+			}
+		}
+		
+        return $items;
+    }
   
+    protected function initializeForPage() {
+        switch ($this->page) {
+		
+			case 'index':
+				if (!$pages = $this->loadFeedData()) {
+					$pages = array();
+				}
+				
+				if(count($pages)==1){
+					$feedData = reset($pages);
+
+					if(isset($feedData['GROUP'])){
+						$this->redirectTo('group', array('group' => $feedData['GROUP']));
+					}
+					$showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
+					if ($showTitle) {
+						$this->assign('contentTitle', $feedData['TITLE']);
+					}
+					
+					$this->setTemplatePage('content');
+					$this->setPageTitle($feedData['TITLE']);
+					$this->assign('contentBody', $this->getContent($feedData));
+				}else{
+					$this->assign('description', $this->getModuleVar('description','strings'));
+					$this->assign('contentPages', $pages);
+				}
+				
+				break;
+			case 'page':
+				$pageId = $this->getArg('page');
+				$group = $this->getArg('group', false);
+				$items = ($group === false) ? $this->loadFeedData() : $this->loadFeedData($group);
+
+				if (!isset($items[$pageId])){
+					$this->redirectTo('index');
+				}
+				
+				$feedData = $items[$pageId];
+				
+				$showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
+				if ($showTitle) {
+					$this->assign('contentTitle', $feedData['TITLE']);
+				}
+				
+				$this->setTemplatePage('content');
+				$this->setPageTitle($feedData['TITLE']);
+				$this->assign('contentBody', $this->getContent($feedData));
+				
+				break;
+			case 'group':
+				$group = $this->getArg('group');
+				$groupData = $this->getDataForGroup($group);
+				
+                if (isset($groupData['TITLE'])) {
+                    $this->setPageTitles($groupData['TITLE']);
+                }
+				
+				$feedData = $this->loadFeedData($group);
+				if(count($feedData)==1){
+					reset($feedData);
+					$this->redirectTo('page', array('group' => $group, 'page' => key($feedData)));
+				}
+				
+				$this->setTemplatePage('index');
+                $this->assign('contentPages', $feedData);
+                $this->assign('description', $groupData['DESCRIPTION']);
+
+				break;
+        }
+    }
 }
