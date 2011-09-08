@@ -134,7 +134,7 @@ function getMinifyGroupsConfig() {
 
   list($ext, $module, $page, $pagetype, $platform, $pathHash) = explode('-', $key);
 
-  $cache = new DiskCache(CACHE_DIR.'/minify', 30, true);
+  $cache = new DiskCache(CACHE_DIR.'/minify', Kurogo::getOptionalSiteVar('MINIFY_CACHE_TIMEOUT', 30), true);
   $cacheName = "group_$key";
   if ($configModule) {
     $cacheName .= "-$configModule";
