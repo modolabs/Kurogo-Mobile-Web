@@ -308,11 +308,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
   public function set_attribute($attr, $value, $params=NULL) {
     switch ($attr) {
     case 'UID':
-      if (strpos($value, '@') !== FALSE) {
-        $this->setUID(substr($value, 0, strpos($value, '@')));
-      } else {
-        $this->setUID($value);
-      }
+      $this->setUID($value);
       break;
     case 'RECURRENCE-ID':
       $this->recurid = $value;
