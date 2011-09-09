@@ -191,6 +191,15 @@ class CalendarWebModule extends WebModule {
     ), $addBreadcrumb);
   }
   
+  private function listURL($time, $type, $calendar, $limit=20, $addBreadcrumb=true) {
+    return $this->buildBreadcrumbURL('list', array(
+      'time'     => $time,
+      'type'     => $type,
+      'calendar' => $calendar,
+      'limit'    => $limit,
+    ), $addBreadcrumb);
+  }
+  
   private function categoryDayURL($time, $categoryID, $name, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('category', array(
       'time'  => $time,
@@ -355,7 +364,56 @@ class CalendarWebModule extends WebModule {
     protected function initialize() {
         $this->timezone = Kurogo::siteTimezone();
     }
-
+    
+  protected function getFeedUrl($index, $type) {
+    $feeds = $this->getFeeds($type);
+    $currentDate = new DateTime(date('Y-m-d H:i:s', time()), $this->timezone);
+    $url = '';
+    if (isset($feeds[$index])) {
+        $viewType = isset($feeds[$index]['DEFAULT_VIEW']) && in_array($feeds[$index]['DEFAULT_VIEW'], array('day', 'year', 'list')) ? $feeds[$index]['DEFAULT_VIEW'] : '';
+        $viewFunc = $viewType . 'URL';
+        switch ($viewType) {
+            case 'day':
+                $url = $this->dayURL($currentDate->getTimestamp(), $type, $index);
+                break;
+            case 'year':
+                list($year, $month, $day) = explode('-', $currentDate->format('Y-m-d'));
+                $url = $this->yearURL($year, $month, $day, $type, $index);
+                break;
+            case 'list':
+                $limit = isset($feeds[$index]['LIMIT']) ? intval($feeds[$index]['LIMIT']) : 20; 
+                $url = $this->listURL($currentDate->getTimestamp(), $type, $index, $limit);
+                break;
+        }
+    }
+    return $url;
+  }
+  
+  protected function buildViewList(DateTime $dateTime, $type, $calendar, $currentView) {
+    $url = '';
+    $viewlist = array();
+    foreach (array('day', 'year', 'list') as $value) {
+        $view = array();
+        switch ($value) {
+            case 'day':
+                $url = $this->dayURL($dateTime->getTimestamp(), $type, $calendar, false);
+                break;
+            case 'year':
+                list($year, $month, $day) = explode('-', $dateTime->format('Y-m-d'));
+                $url = $this->yearURL($year, $month, $day, $type, $calendar, false);
+                break;
+            case 'list': 
+                $url = $this->listURL($dateTime->getTimestamp(), $type, $calendar, 20, false);
+                break;
+        }
+        $view['title'] = $value;
+        $view['value'] = $url;
+        $view['select'] = $value == $currentView ? ' selected' : '';
+        $viewlist[] = $view;
+    }
+    return $viewlist;
+  }
+  
   protected function initializeForPage() {
     switch ($this->page) {
       case 'help':
@@ -477,7 +535,13 @@ class CalendarWebModule extends WebModule {
             $this->assign('resources', $resources);
         }
 
-        $this->loadPageConfigFile('index','calendarPages');
+        //$this->loadPageConfigFile('index','calendarPages');
+        $calendarPages = $this->getModuleSections('page-index');
+        foreach ($calendarPages as $key => $value) {
+            $calendarPages[$key]['url'] = $this->getFeedUrl($key, 'static');
+        }
+        
+        $this->assign('calendarPages', $calendarPages);
         $this->assign('today',         mktime(0,0,0));
         $this->assign('searchOptions', $this->searchOptions);
         $this->assign('feeds',  $this->getFeedsByType());
@@ -575,7 +639,9 @@ class CalendarWebModule extends WebModule {
                 'type'     =>$type)
             );
         }
-
+        //get viewlist
+        $this->assign('viewlist', $this->buildViewList($start, $type, $calendar, 'list'));
+        
         $this->assign('feedTitle', $this->getFeedTitle($calendar, $type));
         $this->assign('calendar', $calendar);
         $this->assign('current', $current);
@@ -609,6 +675,7 @@ class CalendarWebModule extends WebModule {
             );
         }
 
+        $currentDateTime = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
         $this->assign('feedTitle', $this->getFeedTitle($calendar, $type));
         $this->assign('type',    $type);
         $this->assign('calendar',$calendar);
@@ -617,7 +684,8 @@ class CalendarWebModule extends WebModule {
         $this->assign('prev',    $prev);
         $this->assign('nextURL', $this->dayURL($next, $type, $calendar, false));
         $this->assign('prevURL', $this->dayURL($prev, $type, $calendar, false));
-        $this->assign('events',  $events);        
+        $this->assign('events',  $events);
+        $this->assign('viewlist', $this->buildViewList($currentDateTime, $type, $calendar, 'day'));
         break;
         
       case 'detail':  
@@ -797,6 +865,9 @@ class CalendarWebModule extends WebModule {
         $maxNextYears = $this->getOptionalModuleVar(strtoupper($calendar).'_CALENDAR_MAX_NEXT_YEARS', 1);
         $maxPrevYears = $this->getOptionalModuleVar(strtoupper($calendar).'_CALENDAR_MAX_PREV_YEARS', 1);
 
+        //get viewlist
+        $currentDateTime = new DateTime($year.'-'.$month.'-'.$day, $this->timezone);
+        $this->assign('viewlist', $this->buildViewList($currentDateTime, $type, $calendar, 'year'));
         if ($year < $currentYear + $maxNextYears) {
           $this->assign('next',    $next);
           $this->assign('nextURL', $this->yearURL($year+1, $month, $day, $type, $calendar, false));

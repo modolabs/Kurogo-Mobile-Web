@@ -9,6 +9,8 @@
   </h2>
 </div>
 
+{include file="findInclude:modules/calendar/templates/viewlist.tpl" viewlist=$viewlist}
+
 {capture name="sideNav" assign="sideNav"}
   <div class="{block name='sideNavClass'}sidenav2{/block}">
     <a href="{$prevURL}" class="sidenav-prev">
