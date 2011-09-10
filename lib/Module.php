@@ -76,7 +76,7 @@ abstract class Module
         	//use the ID parameter if it's present, otherwise use the included id
         	$id = $config->getOptionalVar('id', $id);
         } elseif (!Kurogo::getOptionalSiteVar('CREATE_DEFAULT_CONFIG', false, 'modules')) {
-			throw new ModuleNotFound("Module $id not found");
+			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
         }
         
 
@@ -131,7 +131,7 @@ abstract class Module
             }
         }
        
-        throw new ModuleNotFound("Module $id not found");
+        throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
     }
     
     /**
@@ -541,7 +541,7 @@ abstract class Module
             foreach ($files as $type=>$file) {                
                 if (is_file($file)) {
                     if (!$data = json_decode(file_get_contents($file),true)) {
-                        throw new Exception("Error parsing $file");
+                        throw new Exception($this->getLocalizedString('ERROR_PARSING_FILE', $file));
                     }
                     
                     foreach ($data as $section=>&$sectionData) {

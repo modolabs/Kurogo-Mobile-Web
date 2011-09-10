@@ -14,38 +14,36 @@ class ErrorWebModule extends WebModule {
   protected $moduleName = 'Error';
   protected $canBeAddedToHomeScreen = false;
 
-  private $errors = array(
-    'data' => array(
-      'status'  => '504 Gateway Timeout',
-      'message' => 'We are sorry the server is currently experiencing errors. Please try again later.',
-    ),
-    'internal' => array(
-      'status'  => '500 Internal Server Error',
-      'message' => 'Internal server error',
-    ),
-    'notfound' => array(
-      'status'  => '404 Not Found',
-      'message' => 'Page not found',
-    ),
-    'forbidden' => array(
-      'status'  => '403 Forbidden',
-      'message' => 'Not authorized to view this page',
-    ),
-    'device_notsupported' => array(
-      'status'  => null,
-      'message' => 'This functionality is not supported on this device',
-    ),
-    'disabled'  => array(
-      'message' =>  'This module has been disabled'
-    ),
-    'protected' => array(
-      'message' =>  'You are not permitted to use this module'
-    ),
-    'default' => array(
-      'status'  => '500 Internal Server Error',
-      'message' => 'Unknown error',
-    )
-  );
+    protected function getError($code) {
+        static $errors = array(
+            'data' => array(
+              'status'    => '504 Gateway Timeout'
+            ),
+            'internal' => array(
+              'status'  => '500 Internal Server Error',
+            ),
+            'notfound' => array(
+              'status'  => '404 Not Found',
+            ),
+            'forbidden' => array(
+              'status'  => '403 Forbidden',
+            ),
+            'device_notsupported' => array(
+              'status'  => null,
+            ),
+            'disabled'  => array(
+            ),
+            'protected' => array(
+            ),
+            'default' => array(
+              'status'  => '500 Internal Server Error',
+            )
+          );
+          
+        $error = isset($errors[$code]) ? $errors[$code] : $errors['default'];
+        $error['message'] = $this->getLocalizedString(strtoupper('ERROR_' . $code));
+        return $error;
+    }
 
     protected function init($page='', $args=array()) {
       if(!Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
@@ -71,8 +69,7 @@ class ErrorWebModule extends WebModule {
     $code = $this->getArg('code', 'default');
     $url  = $this->getArg('url', '');
     
-    $error = isset($this->errors[$code]) ? 
-      $this->errors[$code] : $this->errors['default'];;
+    $error = $this->getError($code);
     
     if (isset($error['status'])) {
       header('Status: '.$error['status']);
