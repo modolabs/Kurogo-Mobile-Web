@@ -37,7 +37,6 @@ class NewsAPIModule extends APIModule {
                 foreach ($feeds as $index => $feedData) {
                     $response[] = array('id' => strval($index),
                     					'title' => strip_tags($feedData['TITLE']),
-                    					'time' => time(),
                     					);
                 }
                 $this->setResponse($response);
