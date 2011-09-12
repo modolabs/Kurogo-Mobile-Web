@@ -1562,12 +1562,12 @@ html, body, #nonfooternav {
 
 #slideleft {
   left: -4px;
-  background: transparent url(/common/images/footernav-slideleft.png) no-repeat 50% left;  
+  background: transparent url(/common/images/footernav-slideleft.png) no-repeat left 50%;
 }
 
 #slideright {
   right: -4px;
-  background: transparent url(/common/images/footernav-slideright.png) no-repeat 50% right;
+  background: transparent url(/common/images/footernav-slideright.png) no-repeat right 50%;
 }
 
 .results .listSelected {
