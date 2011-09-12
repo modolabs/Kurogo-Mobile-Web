@@ -222,25 +222,7 @@ class MapWebModule extends WebModule {
         $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
         $mapSearch = $this->getSearchClass($options);
         $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
-        $maxCount = count($searchResults);
-        if ($limit && $limit < $maxCount) {
-            $maxCount = $limit;
-        }
-        $results = array();
-        for ($i = 0; $i < $maxCount; $i++) {
-            $urlParams = shortArrayFromMapFeature($searchResults[$i]);
-            $external = $this->getArg('external', null);
-            if ($external) {
-                $urlParams['external'] = true;
-            }
-            $result = array(
-                'title' => $searchResults[$i]->getTitle(),
-                'url'   => $this->buildBreadcrumbURL('detail', $urlParams, $addBreadcrumb),
-                );
-            $results[] = $result;
-        }
-    
-        return $results;
+        return $searchResults;
     }
 
     // depends on feeds being loaded
@@ -700,7 +682,11 @@ JS;
                     $args = array_merge($this->args, array('addBreadcrumb' => true));
 
                     // still need a way to show the Google logo if we use their search
-                    $places = $this->searchItems($searchTerms, null, $args);
+                    $searchResults = $this->searchItems($searchTerms, null, $args);
+                    $places = array();
+                    foreach ($searchResults as $place) {
+                        $places[] = $this->linkForItem($place);
+                    }
         
                     $this->assign('searchTerms', $searchTerms);
                     $this->assign('places',      $places);
