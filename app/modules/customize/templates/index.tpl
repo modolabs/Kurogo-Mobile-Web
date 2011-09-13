@@ -6,7 +6,7 @@
 
 {block name="customize"}
   <div class="focal"> 
-    <p>Use the up and down links to customize the order of icons on your homepage. Use the checkboxes to toggle visibility. Changes are automatically saved, but <strong>you may need to manually refresh your homepage</strong> after you're finished here.</p>
+    <p>{"CUSTOMIZE_INSTRUCTIONS"|getLocalizedString}</p>
   
     <table cellpadding="2" cellspacing="0" border="0" width="100%" id="homepageList">
       {foreach $modules as $id => $info}
@@ -42,7 +42,7 @@
     </table>
     
     <p class="nonfocal centered">
-      <a href="../home/">Return to home</a>
+      <a href="../home/">{"RETURN_HOME"|getLocalizedString}</a>
     </p>
   </div>
 {/block}

@@ -10,6 +10,6 @@
     {/if}
   {/foreach}    
   {if count($results) == 0}
-    <span>{$noResultsText|default:"No results found"}</span>
+    <span>{"NO_RESULTS"|getLocalizedString}</span>
   {/if}
 </div>

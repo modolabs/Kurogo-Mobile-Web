@@ -25,7 +25,7 @@ class LinksWebModule extends WebModule {
             
             return $this->linkGroups[$group];            
         } else {
-            throw new Exception("Unable to find link group information for $group");
+            throw new Exception($this->getLocalizedString('ERROR_LINK_GROUP', $group));
         }
     }
 

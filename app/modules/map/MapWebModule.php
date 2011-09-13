@@ -7,7 +7,6 @@ define('MAP_GROUP_COOKIE', 'mapgroup');
 class MapWebModule extends WebModule {
 
     protected $id = 'map';
-    protected $bookmarkLinkTitle = 'Bookmarked Locations';
     protected $feedGroup = null;
     protected $feedGroups = null;
     protected $numGroups = 1;

@@ -3,6 +3,7 @@ var KUROGO_LOCAL_VERSION;
 var KUROGO_CURRENT_VERSION;
 $(document).ready(function() {
 
+    getLocalizedString(['KUROGO_VERSION_TITLE']);
     reloadSection();    
     
     $('#adminForm').submit(function(e) {
@@ -35,7 +36,7 @@ $(document).ready(function() {
         }
         
         makeAPICall('POST','admin','setconfigdata', params, function() { 
-            showMessage('Configuration saved');
+            showMessage(getLocalizedString('CONFIG_SAVED'));
             reloadSection();
         });
         return false;
@@ -61,15 +62,10 @@ function checkVersion() {
 function processCheckVersion(data) {
     KUROGO_LOCAL_VERSION = data.local;
     KUROGO_CURRENT_VERSION = data.current;
-    var upToDate = data.uptodate;
     
     var li = $('<li />');
-    li.append('<label>Kurogo Version</label>');
-    if (upToDate) {
-        li.append('<div class="infotext">Your version of Kurogo (' + KUROGO_LOCAL_VERSION +') is up to date (' + KUROGO_CURRENT_VERSION +')</div>');
-    } else {
-        li.append('<div class="infotext error">Your version of Kurogo is not the most recent version. The most recent version is <b>' + KUROGO_CURRENT_VERSION +'</b>. Your version is <b>' + KUROGO_LOCAL_VERSION + '</b>. Please visit <a href="http://modolabs.com/kurogo">http://modolabs.com/kurogo</a>.</div>');
-    }
+    li.append('<label>'+ getLocalizedString('KUROGO_VERSION_TITLE') +'</label>');
+    li.append('<div class="infotext'+ (!data.uptodate ? ' error':'')+'">' + data.message + '</div>');
 
     $('#adminFields').append(li);
 }

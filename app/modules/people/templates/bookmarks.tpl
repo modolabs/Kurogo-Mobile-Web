@@ -2,7 +2,7 @@
 
 <div class="nonfocal">
   <a name="people"> </a>
-  <h3>People</h3>
+  <h3>{"BOOKMARK_TITLE"|getLocalizedString}</h3>
 </div>
 {include file="findInclude:common/templates/navlist.tpl" navlistItems=$bookmarks}
 

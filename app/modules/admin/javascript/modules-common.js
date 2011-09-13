@@ -42,7 +42,7 @@ $(document).ready(function() {
             });
 
             makeAPICall('POST','admin','setconfigdata', params, function() { 
-                showMessage('Configuration saved'); 
+                showMessage(getLocalizedString('CONFIG_SAVED'));
                 reloadSection();
 
             });
@@ -74,7 +74,7 @@ $(document).ready(function() {
                 }
             });
   
-            makeAPICall('POST','admin','setmodulelayout', params, function() { showMessage('Configuration saved') });
+            makeAPICall('POST','admin','setmodulelayout', params, function() { showMessage(getLocalizedString('CONFIG_SAVED')) });
             return false;
         });
         
@@ -91,7 +91,7 @@ $(document).ready(function() {
                 }
             });
 
-            makeAPICall('POST','admin','setconfigdata', params, function() { showMessage('Configuration saved') });
+            makeAPICall('POST','admin','setconfigdata', params, function() { showMessage(getLocalizedString('CONFIG_SAVED')) });
             return false;
         });
     }

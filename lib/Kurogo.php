@@ -18,6 +18,8 @@ class Kurogo
     protected $config;
     protected $deviceClassifier;
     protected $session;
+    protected $locale;    
+    protected $languages=array();
 
     public static function getSession() {    
         $Kurogo = self::sharedInstance();
@@ -182,6 +184,45 @@ class Kurogo
     public static function isWindows() {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
+
+    public static function getAvailableLocales() {
+        static $locales=array();
+        if ($locales) {
+            return $locales;
+        }
+        
+        if (file_exists('/usr/bin/locale')) {
+            exec('/usr/bin/locale -a', $locales, $retval);
+            if ($retval!==0) {
+                throw new Exception("Error retrieving locale values");
+            }
+        } else {
+            throw new Exception("Unable to find list of locales on this platform");
+        }
+        
+        return $locales;
+    }
+    
+    public function getLocale() {
+        return $this->locale;
+    }
+
+    public function getSystemLocale() {
+        return setLocale(LC_ALL,"");
+    }
+
+    public function setLocale($locale) {
+        if ($this->isWindows()) {
+            throw new Exception("Setting locale in Windows is not supported at this time");
+        }
+
+        // this is platform dependent.        
+        if (!$return = setLocale(LC_TIME, $locale)) {
+            throw new Exception("Unknown locale setting $locale");
+        }
+        $this->locale = $return;
+        return $this->locale;
+    }
     
     public function initialize(&$path=null) {
         //
@@ -229,7 +270,19 @@ class Kurogo
         $timezone = $this->config->getVar('LOCAL_TIMEZONE');
         date_default_timezone_set($timezone);
         $this->timezone = new DateTimeZone($timezone);
-
+        
+        if ($locale = $this->config->getOptionalVar('LOCALE')) {
+            $this->setLocale($locale);
+        } else {
+            $this->locale = $this->getSystemLocale();
+        }
+        
+        if ($languages = $this->config->getOptionalVar('LANGUAGES')) {
+        	$this->setLanguages($languages);
+        } else {
+        	$this->setLanguages(array('en_US'));
+        }
+        
         //
         // everything after this point only applies to http requests 
         //
@@ -294,11 +347,87 @@ class Kurogo
         $GLOBALS['deviceClassifier'] = $this->deviceClassifier;
     }
     
-    public static function getLanguages() {
-        return array(
-            'en'=>'English'
-        );
+    public function getLanguages() {
+    	return $this->languages;
     }
+
+    public function setLanguages($languages) {
+    	$validLanguages = self::getAvailableLanguages();
+    	if (is_array($languages)) {
+    		$this->languages = array();
+    		foreach ($languages as $language) {
+    			if (!array_key_exists($language, $validLanguages)) {
+    				throw new Exception("Invalid language $language");
+    			}
+    			$this->languages[] = $language;
+    		}
+    	} elseif (array_key_exists($languages, $validLanguages)) {
+			$this->languages[] = $languages;
+    	} else {
+			throw new Exception("Invalid language $languages");
+		}
+		
+		if (!in_array('en_US', $this->languages)) {
+		    $this->languages[] = "en_US"; // always include english US
+		}		
+    }
+    
+    public static function getAvailableLanguages() {
+		return array(
+			'af_ZA'=>'Afrikaans',
+			'am_ET'=>'አማርኛ',
+			'be_BY'=>'Беларуская',
+			'bg_BG'=>'български език',
+			'ca_ES'=>'Català',
+			'cs_CZ'=>'čeština',
+			'da_DK'=>'Dansk',
+			'de_AT'=>'Deutsch (Österreich)',
+			'de_CH'=>'Deutsch (Schweiz)',
+			'de_DE'=>'Deutsch (Deutschland)',
+			'el_GR'=>'Ελληνικά',
+			'en_AU'=>'English (Australia)',
+			'en_CA'=>'English (Canada)',
+			'en_GB'=>'English (United Kingdom)',
+			'en_IE'=>'English (Ireland)',
+			'en_NZ'=>'English (New Zealand)',
+			'en_US'=>'English (United States)',
+			'es_ES'=>'Español',
+			'et_EE'=>'Eesti',
+			'eu_ES'=>'Euskara',
+			'fi_FI'=>'Suomi',
+			'fr_BE'=>'Français (Belgique)',
+			'fr_CA'=>'Français (Canada)',
+			'fr_CH'=>'Français (Suisse)',
+			'fr_FR'=>'Français (France)',
+			'he_IL'=>'עברית',
+			'hr_HR'=>'Hrvatski',
+			'hu_HU'=>'Magyar',
+			'hy_AM'=>'Հայերեն',
+			'is_IS'=>'Íslenska',
+			'it_CH'=>'Italiano (Svizzera)',
+			'it_IT'=>'Italiano (Italia)',
+			'ja_JP'=>'日本語',
+			'kk_KZ'=>'Қазақ тілі',
+			'ko_KR'=>'한국어',
+			'lt_LT'=>'Lietuvių',
+			'nl_BE'=>'Vlaams',
+			'nl_NL'=>'Nederlands',
+			'no_NO'=>'Norsk',
+			'pl_PL'=>'Polski',
+			'pt_BR'=>'Português (Brasil)',
+			'pt_PT'=>'Português',
+			'ro_RO'=>'Română',
+			'ru_RU'=>'Pусский',
+			'sk_SK'=>'Slovenčina',
+			'sl_SI'=>'Slovenščina',
+			'sr_YU'=>'Cрпски',
+			'sv_SE'=>'Svenska',
+			'tr_TR'=>'Türkçe',
+			'uk_UA'=>'Yкраїнська',
+			'zh_CN'=>'简体中文',
+			'zh_TW'=>'繁體中文'
+		);    
+	}
 
     public static function getLifetimeOptions() {
         return array(
@@ -390,6 +519,66 @@ class Kurogo
         
         return $acls;
     }
+
+    private function getStringsForLanguage($lang) {
+        $stringFiles = array(
+            APP_DIR . "/common/strings/".$lang . '.ini',
+            SITE_APP_DIR . "/common/strings/".$lang . '.ini'
+        );
+        
+        $strings = array();
+        foreach ($stringFiles as $stringFile) {
+            if (is_file($stringFile)) {
+                $_strings = parse_ini_file($stringFile);
+                $strings = array_merge($strings, $_strings);
+            }
+        }
+        
+        return $strings;
+    }
+    
+    private function processString($string, $opts) {
+        if (!is_array($opts)) {
+            return $string;
+        } else {
+            return vsprintf($string, $opts);
+        }
+    }
+    
+    private function getStringForLanguage($key, $lang, $opts) {
+        if (!isset($this->strings[$lang])) {
+            $this->strings[$lang] = $this->getStringsForLanguage($lang);
+        }
+        
+        return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
+    }
+    
+    public function localizedString($key, $opts=null) {
+        if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
+            throw new Exception("Invalid string key $key");
+        }
+
+        // use any number of args past the first as options
+        $args = func_get_args();
+        array_shift($args);
+        if (count($args)==0 || is_null($args[0])) {
+            $args = null;
+        } 
+        
+        $languages = $this->getLanguages();
+        foreach ($languages as $language) {
+            $val = $this->getStringForLanguage($key, $language, $args);
+            if ($val !== null) {
+                return self::getOptionalSiteVar('LOCALIZATION_DEBUG') ?  $key : $val;
+            }
+        }
+        
+        throw new Exception("Unable to find site string $key");
+    }
+    
+    public static function getLocalizedString($key, $opts=null) {
+        return Kurogo::sharedInstance()->localizedString($key, $opts);
+    }    
     
     public function checkCurrentVersion() {
         $url = "https://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(
