@@ -291,7 +291,7 @@ input.formbutton {
 	background-color: transparent;
 	background-image: url(/common/images/button-sd-r.png);
 	background-repeat: no-repeat;
-	background-position: center right;
+	background-position: right center;
 	-webkit-border-radius: 0px;
 	border-radius: 0px;
 }
@@ -300,7 +300,7 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
 	background-color: transparent;
 	background-image: url(/common/images/button-sd-l.png);
 	background-repeat: no-repeat;
-	background-position: center left;
+	background-position: left center;
 	padding: 0;
 	margin: 0;
 	margin-right: 7px; /* recenter */
@@ -349,7 +349,7 @@ span.formbuttoncontainer {  /* must be span for winphone7 */
   padding: 0 18px 0 2px; 
   background-image: url(/common/images/drillup-r.png);
 	background-repeat: no-repeat;
-	background-position: top right;
+	background-position: right top;
 	text-decoration: none;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -797,12 +797,12 @@ ul.focal li:first-child {
 }
 a.sidenav-prev {
 	left: 0;
-	background-position: top left;
+	background-position: left top;
 	padding-left: 44px;
 }
 a.sidenav-next {
 	right: 0;
-	background-position: bottom right;
+	background-position: right bottom;
 	padding-right: 44px;
 }
 .sidenav3 {

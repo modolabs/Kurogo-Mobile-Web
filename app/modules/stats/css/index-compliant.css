@@ -33,7 +33,7 @@ table.twelve td {
     height: 18px;
     width: 0;
     background: #6499cb url(/common/images/rowbar.png) repeat-x;
-    background-position: top left;
+    background-position: left top;
     border: none;
     -webkit-border-radius: 2px; 
 }
@@ -54,7 +54,7 @@ table.twelve td {
     width: 100%;
     height: 0;
     background: #6499cb url(/common/images/colbar.png) repeat-y;
-    background-position: bottom left;
+    background-position: left bottom;
     border: none;
     -webkit-border-radius: 2px; 
 }
