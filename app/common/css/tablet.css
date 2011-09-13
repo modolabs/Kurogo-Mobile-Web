@@ -171,7 +171,7 @@ select {
 	-webkit-appearance:textfield;
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
-	background: white url(/common/images/action-search.png) no-repeat 50% right;
+	background: white url(/common/images/action-search.png) no-repeat right 50%;
 }
 
 *:first-child+html .forminput {
@@ -1485,7 +1485,7 @@ html, body, #nonfooternav {
 #footernav {
   height: 75px;
   width: 100%;
-  background: transparent url(/common/images/footernav-bg.png) repeat-x top left;
+  background: transparent url(/common/images/footernav-bg.png) repeat-x left top;
   overflow: hidden;
   position: absolute;
   bottom: 0;
@@ -1513,7 +1513,7 @@ html, body, #nonfooternav {
   float: left;
   width: 83px;
   height: 75px;
-  background: transparent url(/common/images/footernav-spacer.png) no-repeat top left;
+  background: transparent url(/common/images/footernav-spacer.png) no-repeat left top;
   padding-left: 2px;
 }
 #footernav .module:first-child {

@@ -96,7 +96,7 @@ form {
   margin: 1px;
   padding: 0;
   padding-left: 52px;
-  background: transparent url(/modules/home/images/pane-header-bg.png) repeat-x top left;
+  background: transparent url(/modules/home/images/pane-header-bg.png) repeat-x left top;
   color: white;
   font-size: 120%;
   text-align: left;
@@ -161,7 +161,7 @@ form {
   width: 18px;
   height: 18px;
   margin-top: -9px;
-  background: transparent url(/common/images/action-module.png) no-repeat top left;
+  background: transparent url(/common/images/action-module.png) no-repeat left top;
 }
 
 .blockcontent {
