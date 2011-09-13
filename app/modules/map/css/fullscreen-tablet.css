@@ -90,6 +90,16 @@ body.portrait #recenter {
 	margin-left: -19px;
 }
 
+body.portrait #locateMe {
+	position: absolute;
+	top: 5px;
+	bottom: auto;
+	right: auto;
+	left: 70%;
+	margin-left: -19px;
+}
+
+/* this doesn't seem to exist in the DOM */
 body.portrait #viewoptions {
 	position: absolute;
 	top: 5px;
@@ -189,6 +199,15 @@ body.landscape #recenter {
 	margin: -16px 0 0 0;
 }
 
+body.landscape #locateMe {
+  top: 70%;
+	bottom: auto;
+	right: 1px;
+	left: auto;
+  margin: -16px 0 0 0;
+}
+
+/* this doesn't seem to exist in the DOM */
 body.landscape #viewoptions {
 	top: 70%;
 	bottom: auto;
