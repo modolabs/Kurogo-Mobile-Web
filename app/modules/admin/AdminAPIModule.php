@@ -410,7 +410,6 @@ class AdminAPIModule extends APIModule
         }
 
         if (!isset($value['tmp_name']) || !is_uploaded_file($value['tmp_name'])) {
-            Debug::die_here($value);
             throw new Exception("Error locating uploaded file");
         }
         
@@ -456,7 +455,6 @@ class AdminAPIModule extends APIModule
                 }
                 $destination = rtrim($fieldData['destinationFolder'], '/') . '/' . ltrim($fieldData['destinationFile'],'/');
                 
-                Debug::die_here($value);
                 break;
         }
 
