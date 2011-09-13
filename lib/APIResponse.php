@@ -56,6 +56,7 @@ class APIResponse
         }
     
         $json = json_encode($this);
+        header("Content-Type: application/json;charset=utf-8");
         header("Content-Length: " . strlen($json));
         echo $json;
         exit();

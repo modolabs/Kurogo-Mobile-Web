@@ -183,6 +183,9 @@ function exceptionHandlerForProduction($exception) {
         );
     }
 
+    $error = print_r($exception, TRUE);
+    error_log($error);
+
     if ($url = getErrorURL($exception)) {
 		header('Location: ' . $url);
 		die(0);
