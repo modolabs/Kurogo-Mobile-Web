@@ -41,7 +41,7 @@ class AdminAPIModule extends APIModule
         if (!$configData) {
             $file = APP_DIR . "/common/config/admin-site.json";
             if (!$configData = json_decode(file_get_contents($file), true)) {
-                throw new Exception("Error parsing $file");
+                throw new Exception($this->getLocalizedString('ERROR_PARSING_FILE', $file));
             }
             
         }
@@ -402,6 +402,98 @@ class AdminAPIModule extends APIModule
         }
     }
     
+    private function uploadFile($type, $section, $subsection, $key, $value) {
+        $sectionData = $this->getAdminData($type, $section, $subsection);
+
+        if (isset($value['error']) && $value['error'] != UPLOAD_ERR_OK) {
+            throw new Exception(Kurogo::file_upload_error_message($value['error']));
+        }
+
+        if (!isset($value['tmp_name']) || !is_uploaded_file($value['tmp_name'])) {
+            Debug::die_here($value);
+            throw new Exception("Error locating uploaded file");
+        }
+        
+        switch ($sectionData['sectiontype'])
+        {
+            case 'fields':
+                if (!isset($sectionData['fields'][$key])) {
+                    throw new Exception("Invalid key $key for $type section $section");
+                }
+                
+                $fieldData = $sectionData['fields'][$key];
+                break;
+            
+            case 'section':
+                $fieldData = $sectionData;
+                throw new Exception("Code not written for this type of field");
+                break;
+            default:
+                throw new Exception("Unable to handle $type $section. Invalid section type " . $sectionData['sectiontype']);
+        }
+
+        if (!isset($fieldData['destinationType'])) {
+            throw new Exception("Unable to determine destination type");
+        }
+        
+        switch ($fieldData['destinationType'])
+        {
+            case 'file':
+                if (!isset($fieldData['destinationFile'])) {
+                    throw new Exception("Unable to determine destination location");
+                }
+                
+                $destination = $fieldData['destinationFile'];
+                break;
+                
+            case 'folder':
+                if (!isset($fieldData['destinationFile'])) {
+                    throw new Exception("Unable to determine destination location");
+                }
+                
+                if (!isset($fieldData['destinationFolder'])) {
+                    throw new Exception("Unable to determine destination location");
+                }
+                $destination = rtrim($fieldData['destinationFolder'], '/') . '/' . ltrim($fieldData['destinationFile'],'/');
+                
+                Debug::die_here($value);
+                break;
+        }
+
+        $prefix = isset($fieldData['destinationPrefix']) ? $fieldData['destinationPrefix'] : '';
+        if ($prefix && defined($prefix)) {
+            $destination = constant($prefix) . '/' . $destination;
+        }
+                    
+        if (isset($fieldData['fileType'])) {
+            switch ($fieldData['fileType'])
+            {
+                case 'image':
+
+                    $this->setResponseVersion(1);
+                    try {                
+                        $imageData = new ImageProcessor($value['tmp_name']);
+                        $transformer = new ImageTransformer($fieldData);
+                        $imageType = isset($fieldData['imageType']) ? $fieldData['imageType'] : null;
+                        
+                        $result = $imageData->transform($transformer, $imageType, $destination);
+                        if (KurogoError::isError($result)) {
+                            $this->throwError($result);
+                        }
+                    } catch (Exception $e) {
+                        throw new Exception("Uploaded file must be a valid image (" . $e->getMessage() . ")");
+                    }
+                    break;
+                default:
+                    throw new Exception("Unknown fileType " . $fieldData['fileType']);
+            }
+        } else {
+            if (!move_uploaded_file($value['tmp_name'], $destination)) {
+                $this->throwError(new KurogoError(1, "Cannot save file", "Unable to save uploaded file"));
+            }
+        }
+    }
+    
     public function initializeForCommand() {  
         $this->requiresAdmin();
         
@@ -443,8 +535,43 @@ class AdminAPIModule extends APIModule
                     $this->setResponse(true);
                     $this->setResponseVersion(1);
                 } else {
-                    $this->throwError(KurogoError(1, "Error clearing caches", "There was an error ($result) clearing the caches"));
+                    $this->throwError(new KurogoError(1, "Error clearing caches", "There was an error ($result) clearing the caches"));
                 }
+                break;
+                
+            case 'upload':
+                $type = $this->getArg('type');
+                $section = $this->getArg('section','');
+                $subsection = null;
+                
+                switch ($type) 
+                {
+                    case 'module':
+                        $moduleID = $this->getArg('module','');
+                        try {
+                            $module = WebModule::factory($moduleID);
+                        } catch (Exception $e) {
+                			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
+                        }
+
+                        $type = $module;
+                        break;
+                    case 'site':
+                        break;
+                    default:
+                        throw new Exception("Invalid type $type");
+                }
+                
+                if (count($_FILES)==0) {
+                    throw new Exception("No files uploaded");
+                }
+                
+                foreach ($_FILES as $key=>$uploadData) {
+                    $this->uploadFile($type, $section, $subsection, $key, $uploadData);
+                }
+
+                $this->setResponseVersion(1);
+                $this->setResponse(true);
                 break;
                 
             case 'getconfigsections':
@@ -456,7 +583,7 @@ class AdminAPIModule extends APIModule
                         try {
                             $module = WebModule::factory($moduleID);
                         } catch (Exception $e) {
-                            throw new Exception('Module ' . $moduleID . ' not found');
+                			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
                         }
         
                         $sections = $module->getModuleAdminSections();
@@ -480,7 +607,7 @@ class AdminAPIModule extends APIModule
                         try {
                             $module = WebModule::factory($moduleID);
                         } catch (Exception $e) {
-                            throw new Exception('Module ' . $moduleID . ' not found');
+                			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
                         }
         
                         $adminData = $this->getAdminData($module, $section);
@@ -514,7 +641,7 @@ class AdminAPIModule extends APIModule
                                 try {
                                     $module = WebModule::factory($moduleID);
                                 } catch (Exception $e) {
-                                    throw new Exception('Module ' . $moduleID . ' not found');
+                        			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
                                 }
                                 
                                 if (!is_array($props)) {
@@ -544,7 +671,7 @@ class AdminAPIModule extends APIModule
                             try {
                                 $module = WebModule::factory($moduleID);
                             } catch (Exception $e) {
-                                throw new Exception('Module ' . $moduleID . ' not found');
+                    			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
                             }
 
                             $type = $module;
@@ -622,7 +749,7 @@ class AdminAPIModule extends APIModule
                         try {
                             $module = WebModule::factory($moduleID);
                         } catch (Exception $e) {
-                            throw new Exception('Module ' . $moduleID . ' not found');
+                			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
                         }
                         $sectionData = $this->getAdminData($module, $section);
                         $config = $module->getConfig($sectionData['config']);

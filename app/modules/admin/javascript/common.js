@@ -189,6 +189,10 @@ function appendFormField(parent, key, fieldData) {
                 });
             }));
             break;
+        case 'upload':
+            var input = $('<input/>').attr('type','file').attr('name', key).attr('section', section).addClass(inputClass).attr('id',id);
+            parent.append(input);
+            break;
         default:
             //this represents an error in the admin recipe. Should never happen
             alert("Don't know how to handle field of type '" + fieldData.type + "' for key '" + key +"'");

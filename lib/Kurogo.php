@@ -185,6 +185,29 @@ class Kurogo
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
 
+    public static function file_upload_error_message($error_code) {
+        switch ($error_code) { 
+            case UPLOAD_ERR_OK:
+                return self::getLocalizedString('UPLOAD_ERR_OK');
+            case UPLOAD_ERR_INI_SIZE: 
+                return self::getLocalizedString('UPLOAD_ERR_INI_SIZE', ini_get('upload_max_filesize'));
+            case UPLOAD_ERR_FORM_SIZE: 
+                return self::getLocalizedString('UPLOAD_ERR_FORM_SIZE');
+            case UPLOAD_ERR_PARTIAL: 
+                return self::getLocalizedString('UPLOAD_ERR_PARTIAL');
+            case UPLOAD_ERR_NO_FILE: 
+                return self::getLocalizedString('UPLOAD_ERR_NO_FILE');
+            case UPLOAD_ERR_NO_TMP_DIR: 
+                return self::getLocalizedString('UPLOAD_ERR_NO_TMP_DIR');
+            case UPLOAD_ERR_CANT_WRITE: 
+                return self::getLocalizedString('UPLOAD_ERR_CANT_WRITE');
+            case UPLOAD_ERR_EXTENSION: 
+                return self::getLocalizedString('UPLOAD_ERR_EXTENSION');
+            default: 
+                return self::getLocalizedString('UPLOAD_ERR_UNKNOWN');
+        }
+    }
+    
     public static function getAvailableLocales() {
         static $locales=array();
         if ($locales) {
