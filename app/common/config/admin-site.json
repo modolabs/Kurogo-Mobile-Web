@@ -66,6 +66,7 @@
             "DATA_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DATA_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DATA_DESCRIPTION","section":"error_handling_and_debugging"},
             "TEMPLATE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_TEMPLATE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_TEMPLATE_DESCRIPTION","section":"error_handling_and_debugging"},
             "DEVICE_DETECTION_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DETECTION_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DETECTION_DESCRIPTION","section":"error_handling_and_debugging"},
+            "MINIFY_CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_DESCRIPTION","section":"cache"},
             "PRODUCTION_ERROR_HANDLER_ENABLED":{"labelKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_DESCRIPTION","section":"error_handling_and_debugging"},
             "DEVELOPER_EMAIL":{"labelKey":"ADMIN_SITE_ERROR_DEVELOPER_EMAIL_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DEVELOPER_EMAIL_DESCRIPTION","section":"error_handling_and_debugging","showIf":["PRODUCTION_ERROR_HANDLER_ENABLED","1"]}
         }
