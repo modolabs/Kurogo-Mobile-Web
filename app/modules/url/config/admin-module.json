@@ -1,10 +1,10 @@
 {
     "url": {
-        "title":"URL",
-        "description":"",
+        "titleKey":"URL_ADMIN_URL_TITLE",
+        "descriptionKey":"URL_ADMIN_URL_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "url":{"label":"URL","type":"text","config":"module","section":"module","description":"Full url (including http://) of the address to redirect to."}
+            "url":{"labelKey":"URL_ADMIN_URL_URL_TITLE","type":"text","config":"module","section":"module","descriptionKey":"URL_ADMIN_URL_URL_DESCRIPTION"}
       }
     }
 }

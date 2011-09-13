@@ -44,6 +44,7 @@ class MapDBSearch extends MapSearch
         $sql = 'SELECT p.*, pc.category_id FROM '
               .MapDB::PLACEMARK_TABLE.' p, '.MapDB::PLACEMARK_CATEGORY_TABLE.' pc'
               .' WHERE p.placemark_id = pc.placemark_id'
+              .'   AND p.lat = pc.lat AND p.lon = pc.lon'
               // TODO this substring pattern might need tweaking
               .'   AND (p.name like ? OR p.name like ?)';
         $params = array("$query%", "% $query%");

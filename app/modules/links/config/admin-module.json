@@ -1,29 +1,29 @@
 {
     "options": {
-        "title":"Options",
-        "description":"",
+        "titleKey":"LINKS_ADMIN_OPTIONS_TITLE",
+        "descriptionKey":"LINKS_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-             "display_type":{"label":"Link Display","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"description":"Display layout of the links"}
+             "display_type":{"labelKey":"LINKS_ADMIN_OPTIONS_DISPLAYTYPE_TITLE","type":"select","config":"module","section":"module","options":{"springboard":"Icon Grid (Springboard)","list":"List"},"descriptionKey":"LINKS_ADMIN_OPTIONS_DISPLAYTYPE_DESCRIPTION"}
       }
     },
     "strings":{
-        "title":"Text Strings",
-        "description":"",
+        "titleKey":"LINKS_ADMIN_STRINGS_TITLE",
+        "descriptionKey":"LINKS_ADMIN_STRINGS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-             "description":{"label":"Header text","type":"text","config":"module","section":"strings","description":"Text to display in the header of the module"}
+             "description":{"labelKey":"LINKS_ADMIN_STRINGS_HEADERTEXT_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"LINKS_ADMIN_STRINGS_HEADERTEXT_DESCRIPTION"}
       }
     },
     "links": {
-        "title":"Links",
-        "description":"",
+        "titleKey":"LINKS_ADMIN_LINKS_TITLE",
+        "descriptionKey":"LINKS_ADMIN_LINKS_DESCRIPTION",
         "config":"links",
         "sectiontype":"section",
         "fields":{
-            "title":{"label":"Title", "description":"Label for this link", "type":"text"},
-            "url":{"label":"URL","description":"Full URL for the link","type":"text"},
-            "icon":{"label":"Icon","description":"(Optional) Name of icon file (located in links theme folder)","type":"text"}
+            "title":{"labelKey":"LINKS_ADMIN_LINKS_TITLE_TITLE", "descriptionKey":"LINKS_ADMIN_LINKS_TITLE_DESCRIPTION", "type":"text"},
+            "url":{"labelKey":"LINKS_ADMIN_LINKS_URL_TITLE","descriptionKey":"LINKS_ADMIN_LINKS_URL_DESCRIPTION","type":"text"},
+            "icon":{"labelKey":"LINKS_ADMIN_LINKS_ICON_TITLE","descriptionKey":"LINKS_ADMIN_LINKS_ICON_DESCRIPTION","type":"text"}
         },
         "sectiontitlefield":"title",
         "sectionindex":"numeric",

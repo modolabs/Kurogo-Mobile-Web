@@ -48,6 +48,11 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
     background-position: -160px 0;
 }
 
+/* this doesn't seem to exist in the DOM */
+#viewoptions {
+	background-position: -160px 0;
+}
+
 #fullscreen {
     top: 0;
     bottom: auto;

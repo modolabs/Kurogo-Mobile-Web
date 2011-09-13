@@ -1,31 +1,30 @@
 {include file="findInclude:modules/admin/templates/header.tpl"}
 <form method="post" id="adminForm" class="{$section}">
-<input id="adminSubmit" type="submit" value="Save" /> 
-<h1>Modules Overview</h1>
-<p id="moduleDescription" class="preamble">Use this section to view and manage the overall properties of each module.
+<input id="adminSubmit" type="submit" value="{"BUTTON_SAVE"|getLocalizedString}" /> 
+<h1>{"ADMIN_MODULES_OVERVIEW_TITLE"|getLocalizedString}</h1>
+<p id="moduleDescription" class="preamble">{"ADMIN_MODULES_OVERVIEW_DESCRIPTION"|getLocalizedString}</p>
 
-</p>
 <dl class="legend">
-    <dt>ID</dt>
-    <dd>The unique internal module ID. This can only be changed in the source code.</dd>
-    <dt>Enabled</dt>
-    <dd>Module is active for this site.</dd>
-    <dt>Home</dt>
-    <dd>Module is featured on the home screen.</dd>
-    <dt>SSL</dt>
-    <dd>Module requires a secure connection.</dd>
-    <dt>Federated Search</dt>
-    <dd>Module's contents are included in site-wide federated search.</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_ID_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_ID_DESCRIPTION"|getLocalizedString}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_ENABLED_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_ENABLED_DESCRIPTION"|getLocalizedString}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_HOME_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_HOME_DESCRIPTION"|getLocalizedString}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_SSL_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_SSL_DESCRIPTION"|getLocalizedString}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_DESCRIPTION"|getLocalizedString}</dd>
 </dl>
 <table class="configtable" summary="Overview table of modules and their high-level configuration">
 <thead>
     <tr>
-        <th colspan="2">Module name</th>
-        <th>ID</th>
-        <th>Enabled</th>
-        <th>Home</th>
-        <th>SSL</th>
-        <th>Federated<br/>Search</th>
+        <th colspan="2">{"ADMIN_MODULES_OVERVIEW_MODULENAME_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_ID_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_ENABLED_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_HOME_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_SSL_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_TITLE"|getLocalizedString}</th>
     </tr>
 </thead>
 <tbody>

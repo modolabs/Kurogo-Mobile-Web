@@ -16,6 +16,7 @@ abstract class Module
     protected $moduleName = '';
     protected $args = array();
     protected $configs = array();
+    private $strings = array();
 
     /**
       * Returns the module id
@@ -75,7 +76,7 @@ abstract class Module
         	//use the ID parameter if it's present, otherwise use the included id
         	$id = $config->getOptionalVar('id', $id);
         } elseif (!Kurogo::getOptionalSiteVar('CREATE_DEFAULT_CONFIG', false, 'modules')) {
-			throw new ModuleNotFound("Module $id not found");
+			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
         }
         
 
@@ -130,7 +131,7 @@ abstract class Module
             }
         }
        
-        throw new ModuleNotFound("Module $id not found");
+        throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
     }
     
     /**
@@ -509,6 +510,11 @@ abstract class Module
                     continue;
                 }
             }
+
+            if (isset($sectionData['titleKey'])) {
+                $sectionData['title'] = $this->getLocalizedString($sectionData['titleKey']);
+                unset($sectionData['titleKey']);
+            }
             
             $sections[$section] = array(
                 'title'=>$sectionData['title'],
@@ -535,7 +541,7 @@ abstract class Module
             foreach ($files as $type=>$file) {                
                 if (is_file($file)) {
                     if (!$data = json_decode(file_get_contents($file),true)) {
-                        throw new Exception("Error parsing $file");
+                        throw new Exception($this->getLocalizedString('ERROR_PARSING_FILE', $file));
                     }
                     
                     foreach ($data as $section=>&$sectionData) {
@@ -548,6 +554,64 @@ abstract class Module
         }
         
         return $configData;
+    }
+
+    private function getStringsForLanguage($lang) {
+        $stringFiles = array(
+            APP_DIR . "/common/strings/".$lang . '.ini',
+            SITE_APP_DIR . "/common/strings/".$lang . '.ini',
+            MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini',
+            SITE_MODULES_DIR . '/' . $this->id ."/strings/".$lang . '.ini'
+        );
+        
+        $strings = array();
+        foreach ($stringFiles as $stringFile) {
+            if (is_file($stringFile)) {
+                $_strings = parse_ini_file($stringFile);
+                $strings = array_merge($strings, $_strings);
+            }
+        }
+        
+        return $strings;
+    }
+    
+    private function processString($string, $opts) {
+        if (!is_array($opts)) {
+            return $string;
+        } else {
+            return vsprintf($string, $opts);
+        }
+    }
+    
+    private function getStringForLanguage($key, $lang, $opts) {
+        if (!isset($this->strings[$lang])) {
+            $this->strings[$lang] = $this->getStringsForLanguage($lang);
+        }
+        
+        return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
+    }
+    
+    public function getLocalizedString($key, $opts=null) {
+        if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
+            throw new Exception("Invalid string key $key");
+        }
+
+        // use any number of args past the first as options
+        $args = func_get_args();
+        array_shift($args);
+        if (count($args)==0 || is_null($args[0])) {
+            $args = null;
+        } 
+        
+        $languages = Kurogo::sharedInstance()->getLanguages();
+        foreach ($languages as $language) {
+            $val = $this->getStringForLanguage($key, $language, $args);
+            if ($val !== null) {
+                return Kurogo::getOptionalSiteVar('LOCALIZATION_DEBUG') ? $key : $val;
+            }
+        }
+        
+        throw new Exception("Unable to find string $key for Module $this->id");
     }
     
     /**

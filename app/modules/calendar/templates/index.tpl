@@ -1,7 +1,7 @@
 {include file="findInclude:common/templates/header.tpl"}
 
 <div class="nonfocal">
-  <h2>{$today|date_format:"%A %b %e, %Y"}</h2>
+  <h2>{$today|date_format:$dateFormat}</h2>
 </div>
 
 {if $upcomingEvents} 
@@ -25,7 +25,7 @@
   <optgroup label="{$type}">
   {/if}
   {foreach $typeFeeds as $feed=>$title}
-      <option value="{$feed}"{if $selectedFeed==$feed} selected="selected"{/if}>in {$title|escape}</option>
+      <option value="{$feed}"{if $selectedFeed==$feed} selected="selected"{/if}>{"CALENDAR_SEARCH_IN"|getLocalizedString:$title}</option>
   {/foreach}
   {if $feeds|@count>1}
   </optgroup>
@@ -41,6 +41,6 @@
   </select>
 {/capture}
 
-{include file="findInclude:common/templates/search.tpl" additionalInputs=$selectSection placeholder="Search for events"}
+{include file="findInclude:common/templates/search.tpl" additionalInputs=$selectSection}
 
 {include file="findInclude:common/templates/footer.tpl"}

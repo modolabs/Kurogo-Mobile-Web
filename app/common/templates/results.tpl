@@ -10,7 +10,7 @@
   {/foreach}
   {if count($results) == 0}
     {block name="noResults"}
-      <li>{$noResultsText|default:"No results found"}</li>
+      <li>{"NO_RESULTS"|getLocalizedString}</li>
     {/block}
   {/if}
 </ul>

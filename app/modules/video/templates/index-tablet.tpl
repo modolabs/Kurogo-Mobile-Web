@@ -6,7 +6,7 @@
       <tr><td id="categoryformcontainer">
         <form method="get" action="index.php">
           <fieldset>
-            <label for="section" class="formlabel">Section:</label>
+            <label for="section" class="formlabel">{"SECTION_TEXT"|getLocalizedString}</label>
             {$categorySelect}
             
             {foreach $hiddenArgs as $arg => $value}
@@ -19,13 +19,13 @@
         </form>
       </td><td id="searchformcontainer">
         <form method="get" action="search">
-          {include file="findInclude:common/templates/search.tpl" insideForm=true placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
+          {include file="findInclude:common/templates/search.tpl" insideForm=true extraArgs=$hiddenArgs}
         </form>
       </td></tr>
     </table>
   {else}
   <div id="videoHeader">
-    {include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
+    {include file="findInclude:common/templates/search.tpl" extraArgs=$hiddenArgs}
   </div>
   {/if}
 {/block}

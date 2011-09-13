@@ -74,13 +74,36 @@ class AdminAPIModule extends APIModule
         }
         
         $sectionData['section'] = $section;
+        if (isset($sectionData['titleKey'])) {
+            $sectionData['title'] = $module->getLocalizedString($sectionData['titleKey']);
+            unset($sectionData['titleKey']);
+        }
+
+        if (isset($sectionData['descriptionKey'])) {
+            $sectionData['description'] = $module->getLocalizedString($sectionData['descriptionKey']);
+            unset($sectionData['descriptionKey']);
+        }
 
         switch ($sectionData['sectiontype'])
         {
             case 'fields':
                 foreach ($sectionData['fields'] as $key=>&$field) {
+                    if (isset($field['labelKey'])) {
+                        $field['label'] = $module->getLocalizedString($field['labelKey']);
+                        unset($field['labelKey']);
+                    }
+            
+                    if (isset($field['descriptionKey'])) {
+                        $field['description'] = $module->getLocalizedString($field['descriptionKey']);
+                        unset($field['descriptionKey']);
+                    }
+                
                     if (isset($field['valueMethod'])) {
                         $field['value'] = call_user_func(array($module, $field['valueMethod']));
+                        unset($field['valueMethod']);
+                    } elseif (isset($field['valueKey'])) {
+                        $field['value'] = $module->getLocalizedString($field['valueKey']);
+                        unset($field['valueKey']);
                     } elseif ($type=='site') {
                         if (isset($field['config'])) {
                             switch ($field['config'])
@@ -147,8 +170,33 @@ class AdminAPIModule extends APIModule
                     $configMode = isset($sectionData['configMode']) ? $sectionData['configMode'] : 0;
                     $sectionData['sections'] = $module->getModuleSections($sectionData['config'], Config::NO_EXPAND_VALUE, $configMode);
                 }
+                
+                if (isset($sectionData['sectionsnoneKey'])) {
+                    $sectionData['sectionsnone'] = $module->getLocalizedString($sectionData['sectionsnoneKey']);
+                    unset($sectionData['sectionsnoneKey']);
+                }
+
+                if (isset($sectionData['sectionaddpromptkey'])) {
+                    $sectionData['sectionaddprompt'] = $module->getLocalizedString($sectionData['sectionaddpromptkey']);
+                    unset($sectionData['sectionaddpromptkey']);
+                }
         
                 foreach ($sectionData['fields'] as $key=>&$field) {
+                    if (isset($field['labelKey'])) {
+                        $field['label'] = $module->getLocalizedString($field['labelKey']);
+                        unset($field['labelKey']);
+                    }
+            
+                    if (isset($field['descriptionKey'])) {
+                        $field['description'] = $module->getLocalizedString($field['descriptionKey']);
+                        unset($field['descriptionKey']);
+                    }
+
+                    if (isset($field['valueKey'])) {
+                        $field['value'] = $module->getLocalizedString($field['valueKey']);
+                        unset($field['valueKey']);
+                    }
+                    
                     switch ($field['type']) 
                     {
                         case 'select':
@@ -167,7 +215,6 @@ class AdminAPIModule extends APIModule
                                 unset($field['optionsFirst']);
                             }
                     }
-                    
                 }
                     
                 foreach ($sectionData['sections'] as $section=>&$sectionFields) {
@@ -361,16 +408,34 @@ class AdminAPIModule extends APIModule
         switch ($this->command) {
             case 'checkversion':
                 $current = Kurogo::sharedInstance()->checkCurrentVersion();
+                $uptodate = version_compare(KUROGO_VERSION, $current,">=");
+                $messageKey = $uptodate ? 'KUROGO_VERSION_MESSAGE_UPTODATE' : 'KUROGO_VERSION_MESSAGE_NOTUPDATED';
                 $data = array(
                     'current'=>$current,
                     'local'  =>KUROGO_VERSION,
-                    'uptodate' =>version_compare(KUROGO_VERSION, $current,">=")
+                    'uptodate' =>$uptodate,
+                    'message'=>$this->getLocalizedString($messageKey, $current, KUROGO_VERSION)
                 );
+                
                 $this->setResponse($data);
                 $this->setResponseVersion(1);
                 
                 break;
             
+            case 'getlocalizedstring':
+                $key = $this->getArg('key');
+                $data = array();
+                if (is_array($key)) {
+                    foreach ($key as $k) {
+                        $data[$k] = $this->getLocalizedString($k);
+                    }
+                } else {
+                    $data[$key] = $this->getLocalizedString($key);
+                }
+                $this->setResponse($data);
+                $this->setResponseVersion(1);
+                break;
+
             case 'clearcaches':
 
                 $result = Kurogo::sharedInstance()->clearCaches();

@@ -1,16 +1,16 @@
 {
     "strings":{
-        "title":"Text Strings",
-        "description":"",
+        "titleKey":"LOGIN_ADMIN_STRINGS_TITLE",
+        "descriptionKey":"LOGIN_ADMIN_STRINGS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "LOGIN_INDEX_MESSAGE":{"label":"Login header message","type":"text","config":"module","section":"strings","description":"Message to show at the header of the login module. Not shown if there is only 1 direct authority. If blank, a default message will be shown."},
-            "LOGIN_DIRECT_MESSAGE":{"label":"Login message for direct ","type":"text","config":"module","section":"strings","description":"Message to show at the top of the login form for direct logins. If blank, a default message will be shown."},
-            "LOGIN_INDIRECT_MESSAGE":{"label":"Login message for indirect","type":"text","config":"module","section":"strings","description":"Message to show at the top of the list of indirect authorities.  Typically explains that the user will be redirected to another site and then returned. If blank, a default message will be shown."},
-            "LOGIN_LABEL":{"label":"Login label","type":"text","config":"module","section":"strings","description":"Label for the userID/login field"},
-            "PASSWORD_LABEL":{"label":"Password label","type":"text","config":"module","section":"strings","description":"Label for the password field"},
-            "FORGET_PASSWORD_TEXT":{"label":"Forgot password text","type":"text","config":"module","section":"strings","description":"Optional text to show to users to direct them towards a forgotten password page"},
-            "FORGET_PASSWORD_URL":{"label":"Forgot password URL","type":"text","config":"module","section":"strings","description":"Optional URL (include http://) of a url users can go to if they have forgotten their password."}
+            "LOGIN_INDEX_MESSAGE":{"labelKey":"LOGIN_ADMIN_STRINGS_INDEX_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"LOGIN_ADMIN_STRINGS_INDEX_DESCRIPTION"},
+            "LOGIN_DIRECT_MESSAGE":{"labelKey":"LOGIN_ADMIN_STRINGS_DIRECT_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"LOGIN_ADMIN_STRINGS_DIRECT_DESCRIPTION"},
+            "LOGIN_INDIRECT_MESSAGE":{"labelKey":"LOGIN_ADMIN_STRINGS_INDIRECT_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"LOGIN_ADMIN_STRINGS_INDIRECT_DESCRIPTION"},
+            "LOGIN_LABEL":{"labelKey":"LOGIN_ADMIN_STRINGS_LOGIN_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"LOGIN_ADMIN_STRINGS_LOGIN_DESCRIPTION"},
+            "PASSWORD_LABEL":{"labelKey":"LOGIN_ADMIN_STRINGS_PASSWORD_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"LOGIN_ADMIN_STRINGS_PASSWORD_DESCRIPTION"},
+            "FORGET_PASSWORD_TEXT":{"labelKey":"LOGIN_ADMIN_STRINGS_FORGOTTEXT_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"LOGIN_ADMIN_STRINGS_FORGOTTEXTDESCRIPTION"},
+            "FORGET_PASSWORD_URL":{"labelKey":"LOGIN_ADMIN_STRINGS_FORGOTURL_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"LOGIN_ADMIN_STRINGS_FORGOTURL_DESCRIPTION"}
         }
     }
 }

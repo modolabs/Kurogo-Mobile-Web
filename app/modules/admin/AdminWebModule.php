@@ -15,19 +15,19 @@ class AdminWebModule extends WebModule {
         $navSections = array(
             array(
                 'id'=>'site',
-                'title'=>'Site Configuration',
+                'title'=>$this->getLocalizedString('ADMIN_SITE_TITLE'),
                 'description'=>'',
                 'url'=>$this->buildURL('site',array()),
             ),
             array(
                 'id'=>'modules',
-                'title'=>'Module Configuration',
+                'title'=>$this->getLocalizedString('ADMIN_MODULES_TITLE'),
                 'description'=>'',
                 'url'=>$this->buildURL('modules',array()),
             ),
             array(
                 'id'=>'credits',
-                'title'=>'Credits and Licensing',
+                'title'=>$this->getLocalizedString('ADMIN_CREDITS_TITLE'),
                 'description'=>'',
                 'url'=>$this->buildURL('credits',array()),
             ),
@@ -41,7 +41,7 @@ class AdminWebModule extends WebModule {
         if (!$configData) {
             $file = APP_DIR . "/common/config/admin-site.json";
             if (!$configData = json_decode(file_get_contents($file), true)) {
-                throw new Exception("Error parsing $file");
+                throw new Exception($this->getLocalizedString("ERROR_PARSING_FILE", $file));
             }
             
         }
@@ -57,7 +57,7 @@ class AdminWebModule extends WebModule {
                 foreach ($configData as $id=>$data) {
                     $subNavSections[$id] = array(
                         'id'=>$id,
-                        'title'=>$data['title'],
+                        'title'=>isset($data['titleKey']) ?$this->getLocalizedString($data['titleKey']) : $data['title'],
                         'url'=>$this->buildURL($section, array('section'=>$id))
                     );
                 }
@@ -67,12 +67,12 @@ class AdminWebModule extends WebModule {
             case 'modules':
                 $subNavSections['overview'] = array(
                     'id'=>'overview',
-                    'title'=>'Modules Overview',
+                    'title'=>$this->getLocalizedString('ADMIN_MODULES_OVERVIEW_TITLE'),
                     'url'=>$this->buildURL($section, array('section'=>'overview'))
                 );
                 $subNavSections['homescreen'] = array(
                     'id'=>'homescreen',
-                    'title'=>'Home Screen Layout',
+                    'title'=>$this->getLocalizedString("ADMIN_MODULES_HOMESCREEN_TITLE"),
                     'url'=>$this->buildURL($section, array('section'=>'homescreen'))
                 );
                 $modules = array();
@@ -80,6 +80,7 @@ class AdminWebModule extends WebModule {
                     $subNavSections[$module->getConfigModule()] = array(
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
+                        'img'=>sprintf("/modules/home/images/%s%s", $module->getConfigModule(), $this->imageExt),
                         'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
                     );
                     $modules[$module->getConfigModule()] = array(
@@ -209,12 +210,12 @@ class AdminWebModule extends WebModule {
                 $subNavSections =  array(
                     'credits'=>array(
                         'id'=>'credits',
-                        'title'=>'Credits',
+                        'title'=>$this->getLocalizedString("ADMIN_CREDITS_CREDITS_TITLE"),
                         'url'=>$this->buildURL($this->page, array('section'=>'credits'))
                     ),
                     'license'=>array(
                         'id'=>'license',
-                        'title'=>'License',
+                        'title'=>$this->getLocalizedString("ADMIN_CREDITS_LICENSE_TITLE"),
                         'url'=>$this->buildURL($this->page, array('section'=>'license'))
                     )
                 );

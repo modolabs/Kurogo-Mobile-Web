@@ -24,6 +24,7 @@ System Requirements
 
 * PHP 5.2 or higher with the following extensions:
 
+  * zlib
   * xml
   * dom
   * json

@@ -8,6 +8,94 @@ interface CalendarInterface {
     public function getEventsInRange(TimeRange $range=null, $limit=null);
 }
 
+class DateFormatter
+{
+    const NO_STYLE=0;
+    const SHORT_STYLE=1;
+    const MEDIUM_STYLE=2;
+    const LONG_STYLE=3;
+    const FULL_STYLE=4;
+
+    public static function formatDate($date, $dateStyle, $timeStyle) {
+        $dateStyleConstant = self::getDateConstant($dateStyle);
+        $timeStyleConstant = self::getTimeConstant($timeStyle);
+        
+        if ($date instanceOf DateTime) {
+            $date = $date->format('U');
+        }
+        
+        $string = '';
+        if ($dateStyleConstant) {
+            $string .= strftime(Kurogo::getLocalizedString($dateStyleConstant), $date);
+            if ($timeStyleConstant) {
+                $string .= " ";
+            }
+        }
+        
+        if ($timeStyleConstant) {
+            $string .= strftime(Kurogo::getLocalizedString($timeStyleConstant), $date);
+        }
+        
+        return $string;
+    }
+
+    private static function getTimeConstant($timeStyle) {
+        switch ($timeStyle)
+        {
+            case self::NO_STYLE:
+                return '';
+            case self::SHORT_STYLE:
+                return 'SHORT_TIME_FORMAT';
+            case self::MEDIUM_STYLE:
+                return 'SHORT_TIME_FORMAT';
+            case self::LONG_STYLE:
+                return 'LONG_TIME_FORMAT';
+            case self::FULL_STYLE:
+                return 'FULL_TIME_FORMAT';
+        }
+    }
+    
+    private static function getDateConstant($dateStyle) {
+        switch ($dateStyle)
+        {
+            case self::NO_STYLE:
+                return '';
+            case self::SHORT_STYLE:
+                return 'SHORT_DATE_FORMAT';
+            case self::MEDIUM_STYLE:
+                return 'SHORT_DATE_FORMAT';
+            case self::LONG_STYLE:
+                return 'LONG_DATE_FORMAT';
+            case self::FULL_STYLE:
+                return 'FULL_DATE_FORMAT';
+        }
+    }
+
+    public static function formatDateRange(TimeRange $range, $dateStyle, $timeStyle) {
+        $string = '';
+        $dateStyleConstant = self::getDateConstant($dateStyle);
+        $timeStyleConstant = self::getTimeConstant($timeStyle);
+        if ($range instanceOf DayRange) {
+            $timeStyleConstant = null;
+        }
+        
+        $string = self::formatDate($range->get_start(), $dateStyle, $timeStyle);
+        if ($range->get_end()) {
+            if ( date('Ymd', $range->get_start()) == date('Ymd', $range->get_end())) {
+                $dateStyle = self::NO_STYLE;
+                if ($timeStyle == self::NO_STYLE) {
+                    return $string;
+                }
+            }
+            
+            
+            $string .= ($dateStyle ? ' - ' : '-') .self::formatDate($range->get_end(), $dateStyle, $timeStyle);
+        }        
+        
+        return $string;
+    }
+}
+
 /**
   * TimeRange: class describing a time interval.
   * @package ExternalData
@@ -20,22 +108,7 @@ class TimeRange {
   
     public function __toString()
     {
-        $string = date("D M j g:i", $this->get_start());
-        if ( $this->get_end()) {
-            if ( date('a', $this->get_start()) != date('a', $this->get_end())) {
-                $string .= date(' a', $this->get_start());
-            }
-            
-            if ( date('Ymd', $this->get_start()) != date('Ymd', $this->get_end())) {
-                $string .= date(" - D M j g:i a", $this->get_end());
-            } else {
-                $string .= date("-g:i a", $this->get_end());
-            }
-        } else {
-            $string .= date(' a', $this->get_start());
-        }
-        
-        return $string;
+        return DateFormatter::formatDateRange($this, DateFormatter::MEDIUM_STYLE, DateFormatter::MEDIUM_STYLE);
     }
 
   protected static $precedence = Array(
@@ -186,12 +259,7 @@ class TimeRange {
 class DayRange extends TimeRange {
     public function __toString()
     {
-        $string = strftime("%a %b %e", $this->get_start());
-        if ( ($this->get_end() - $this->get_start()) > 86400) {
-            $string .= strftime("- %a %b %e", $this->get_end());
-        }
-        
-        return $string;
+        return DateFormatter::formatDateRange($this, DateFormatter::MEDIUM_STYLE, DateFormatter::NO_STYLE);
     }
   public function __construct($start, $end=null, $tzid=NULL) {
     if (is_null($end)) {

@@ -83,11 +83,13 @@ function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null
 }
 
 function mapIdForFeedData(Array $feedData) {
-    if (!isset($feedData['BASE_URL'])) {
-        throw new Exception("missing BASE_URL for map feed");
+    $identifier = $feedData['TITLE'];
+    if (isset($feedData['BASE_URL'])) {
+        $identifier .= $feedData['BASE_URL'];
+    } else {
+        error_log("Warning: map feed for $identifier has no BASE_URL for map feed");
     }
-    $baseURL = $feedData['BASE_URL'];
-    return substr(md5($baseURL), 0, 10);
+    return substr(md5($identifier), 0, 10);
 }
 
 function shortArrayFromMapFeature(Placemark $feature) {

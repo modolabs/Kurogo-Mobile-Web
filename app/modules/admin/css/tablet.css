@@ -119,12 +119,12 @@ nav a {
 }
 nav a:hover {
 	color: #000;
-	background: url(/modules/admin/images/nav-bullet-hover.png) 14px no-repeat;
+	background: url(/modules/admin/images/nav-bullet-hover.png) no-repeat 14px center;
 }
 nav a.current {
 	color: #000;
 	font-weight: bold;
-	background: url(/modules/admin/images/nav-bullet.png) 14px no-repeat;
+	background: url(/modules/admin/images/nav-bullet.png) no-repeat 14px center;
 }
 nav ul ul a {
 	padding-top: 6px;

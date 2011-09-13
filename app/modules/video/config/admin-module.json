@@ -1,26 +1,27 @@
 {
     "options": {
-        "title":"Options",
-        "description":"",
+        "titleKey":"VIDEO_ADMIN_OPTIONS_TITLE",
+        "descriptionKey":"VIDEO_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "MAX_RESULTS":{"label":"Videos per page","type":"number","config":"module","section":"module","description":"Maximum number of videos to show per page"},
-            "SHARING_ENABLED":{"label":"Sharing Enabled", "description":"Enable sharing of videos","config":"module","section":"module","type":"checkbox","default":1},
-            "BOOKMARKS_ENABLED":{"label":"Bookmarks Enabled", "description":"Enable bookmarking of videos","config":"module","section":"module","type":"checkbox","default":1}
+            "MAX_RESULTS":{"labelKey":"VIDEO_ADMIN_OPTIONS_MAXRESULTS_TITLE","type":"number","config":"module","section":"module","descriptionKey":"VIDEO_ADMIN_OPTIONS_MAXRESULTS_DESCRIPTION"},
+            "SHARING_ENABLED":{"labelKey":"VIDEO_ADMIN_OPTIONS_SHARINGENABLED_TITLE", "descriptionKey":"VIDEO_ADMIN_OPTIONS_SHARINGENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
+            "BOOKMARKS_ENABLED":{"labelKey":"VIDEO_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"VIDEO_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1}
        }
     },
     "feeds": {
-        "title":"Feeds",
-        "description":"Configure the external data feeds from a variety of video sources",
+        "titleKey":"VIDEO_ADMIN_FEEDS_TITLE",
+        "descriptionKey":"VIDEO_ADMIN_FEEDS_DESCRIPTION",
         "config":"feeds",
         "sectiontype":"section",
         "fields":{
-            "section":{"label":"ID", "description":"Programmatic id for this feed", "type":"label"},
-            "TITLE":{"label":"Title","description":"Label for this feed", "type":"text"},
-            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"select","optionsMethod":["VideoDataController","getVideoDataControllers"],"optionsFirst":"-- Choose a video provider --"},
-            "AUTHOR":{"label":"Author","description":"(Optional) Include only videos from this author.","type":"text","omitBlankValue":true},
-            "CHANNEL":{"label":"Channel","description":"(Optional) Include only videos from this channel","type":"text","omitBlankValue":true,"showIf":["CONTROLLER_CLASS",["VimeoVideoController"]]},
-            "TAG":{"label":"Tag","description":"(Optional) Include only videos with this tag","type":"text","omitBlankValue":true}
+            "section":{"labelKey":"VIDEO_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"VIDEO_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
+            "TITLE":{"labelKey":"VIDEO_ADMIN_FEEDS_TITLE_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
+            "CONTROLLER_CLASS":{"labelKey":"VIDEO_ADMIN_FEEDS_CONTROLLER_TITLE", "descriptionKey":"VIDEO_ADMIN_FEEDS_CONTROLLER_DESCRIPTION", "type":"select","optionsMethod":["VideoDataController","getVideoDataControllers"],"optionsFirst":"-- Choose a video provider --"},
+            "AUTHOR":{"labelKey":"VIDEO_ADMIN_FEEDS_AUTHOR_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_AUTHOR_DESCRIPTION","type":"text","omitBlankValue":true},
+            "CHANNEL":{"labelKey":"VIDEO_ADMIN_FEEDS_CHANNEL_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_CHANNEL_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["CONTROLLER_CLASS",["VimeoVideoController"]]},
+            "PLAYLIST":{"labelKey":"VIDEO_ADMIN_FEEDS_PLAYLIST_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_PLAYLIST_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["CONTROLLER_CLASS",["YouTubeVideoController"]]},
+            "TAG":{"labelKey":"VIDEO_ADMIN_FEEDS_TAG_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_TAG_DESCRIPTION","type":"text","omitBlankValue":true}
         },
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",

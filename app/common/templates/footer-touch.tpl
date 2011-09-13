@@ -3,10 +3,9 @@
 {block name="footerNavLinks"}
   {if $moduleID != 'home'}
     <div id="footerlinks">
-      <a href="#top">Back to top</a> 
-      {if $hasHelp} | <a href="help.php">Help</a>{/if}
-       | <a href="../home/">{$strings.SITE_NAME} home</a>
-      {if $session_userID} | <a href="../login">{$session_userID} logged in</a>{/if}
+      <a href="#top">{$footerBackToTop}</a> 
+      {if $hasHelp} | <a href="{$helpLink}">{$helpLinkText}</a>{/if}
+       | <a href="{$homeLink}">{$homeLinkText}</a>
     </div>
   {/if}
 {/block}
