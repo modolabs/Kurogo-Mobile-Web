@@ -251,7 +251,7 @@ class ArcGISParser extends DataParser implements MapDataParser
     }
     
     public function getSelectedLayerId() {
-        return $this->selectedLayer->getIndex();
+        return $this->selectedLayer->getId();
     }
     
     public function getSubLayerNames() {

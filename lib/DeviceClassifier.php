@@ -64,18 +64,11 @@ class DeviceClassifier {
         $this->detectDeviceExternal($this->userAgent) : $this->detectDeviceInternal($this->userAgent) ) {
         
 
-        if ($data['pagetype']=='tablet' && !Kurogo::getOptionalSiteVar('TABLET_ENABLED', 1)) {
+        if ($data['pagetype'] == 'tablet' && !Kurogo::getOptionalSiteVar('TABLET_ENABLED', 1)) {
+            $data['pagetype'] = 'compliant';
             
-            //@TODO make this less hard coded
-            switch ($data['platform'])
-            {
-                case 'android':
-                    $data['pagetype'] = 'compliant';  
-                    break;
-                case 'ipad':
-                    $data['pagetype'] = 'compliant';  
-                    $data['platform'] = 'iphone';
-                    break;
+            if ($data['platform'] == 'ipad') {
+                $data['platform'] = 'iphone'; // currently not used but just in case
             }
         }        
         
