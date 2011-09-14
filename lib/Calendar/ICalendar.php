@@ -760,7 +760,7 @@ class ICalendar extends ICalObject implements CalendarInterface {
     } else {
       // If the event already exists, add the exception to it.
       if (isset($this->events[$uid])) {
-        $this->events[$uid]->addException($event);
+        $this->events[$uid]->addRecurenceException($event);
       }
       // Otherwise, store up a list of exceptions for addition to the event
       // when its added.
