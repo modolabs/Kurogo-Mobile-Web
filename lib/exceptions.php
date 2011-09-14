@@ -18,20 +18,35 @@ class KurogoException extends Exception {
   *  Returned when there is a problem returning data from a server
   * @package Exceptions
   */
+class KurogoDataServerException extends KurogoException {
+    protected $code = 'server';
+}
+
 class DataServerException extends KurogoException {
+    protected $code = 'server';
+}
+
+class KurogoDataException extends KurogoException {
     protected $code = 'data';
+}
+
+class KurogoConfigurationException extends KurogoException {
+    protected $code = 'config';
+}
+
+class KurogoUserException extends KurogoException {
+    protected $code = 'user';
+}
+
+class KurogoUnauthorizedException extends KurogoException {
+    protected $code = 'forbidden';
 }
 
 /**
   * @package Exceptions
   */
-class ModuleNotFound extends KurogoException {
+class KurogoModuleNotFound extends KurogoException {
     protected $code = 'notfound';
-    protected $sendNotification = false;
-}
-
-class ModuleTemplateNotFound extends KurogoException {
-    protected $code = 'templatenotfound';
     protected $sendNotification = false;
 }
 

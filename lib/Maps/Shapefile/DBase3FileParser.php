@@ -114,7 +114,7 @@ class DBase3FileParser extends BinaryFileParser
             $this->records[] = $this->readRecord();
         }
         if ($this->readChar() != "\x1a") {
-            throw new Exception("error finding dBase file terminator");
+            throw new KurogoDataException("error finding dBase file terminator");
         }
     }
 

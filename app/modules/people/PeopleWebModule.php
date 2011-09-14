@@ -178,7 +178,7 @@ class PeopleWebModule extends WebModule {
             $this->controllers[$index] = $controller;
             return $controller;
         } else {
-            throw new Exception("Error getting people feed for index $index");
+            throw new KurogoConfigurationException("Error getting people feed for index $index");
         }
     }
 
@@ -218,7 +218,7 @@ class PeopleWebModule extends WebModule {
             
             return $this->contactGroups[$group];            
         } else {
-            throw new Exception("Unable to find contact group information for $group");
+            throw new KurogoConfigurationException("Unable to find contact group information for $group");
         }
     }
     
@@ -226,7 +226,7 @@ class PeopleWebModule extends WebModule {
         //try version -1.1 page-index version first for backwards compatibility
         try { 
             $contacts = $this->loadPageConfigFile('index', 'contacts');
-        } catch (Exception $e) {
+        } catch (KurogoConfigurationException $e) {
             $contacts = $this->getModuleSections('contacts');
         }
         

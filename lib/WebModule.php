@@ -349,7 +349,7 @@ abstract class WebModule extends Module {
   
     /* This method would be called by other modules to get a valid link from a model object */
     public function linkForItem(KurogoObject $object, $options=null) {
-       throw new Exception("linkForItem must be subclassed if it is going to be used");
+       throw new KurogoException("linkForItem must be subclassed if it is going to be used");
     }
 
     /* default implmentation. Subclasses may wish to override this */
@@ -510,7 +510,7 @@ abstract class WebModule extends Module {
 				if ($module = WebModule::factory($id)) {
 				   $modules[$id] = $module;
 				}
-			} catch (Exception $e) {
+			} catch (KurogoException $e) {
 			}
   		}
   	}

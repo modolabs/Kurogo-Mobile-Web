@@ -62,7 +62,7 @@ class ArcGISParser extends DataParser implements MapDataParser
         $data = json_decode($contents, true);
         if (!$data) {
             error_log("Failed to get JSON response from ArcGIS server at {$this->baseURL}");
-            throw new DataServerException("The map server for this category is temporarily down.  Please try again later.");
+            throw new KurogoDataServerException("The map server for this category is temporarily down.  Please try again later.");
         }
         if (isset($data['error'])) {
             $error = $data['error'];
@@ -73,7 +73,7 @@ class ArcGISParser extends DataParser implements MapDataParser
                       ."Code: $code\n"
                       ."Message: $message\n"
                       ."Details: $details\n");
-            throw new DataServerException("The map server for this category is temporarily down.  Please try again later.");
+            throw new KurogoDataServerException("The map server for this category is temporarily down.  Please try again later.");
         }
 
         $this->serviceDescription = $data['serviceDescription'];

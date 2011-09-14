@@ -41,7 +41,7 @@ class AdminAPIModule extends APIModule
         if (!$configData) {
             $file = APP_DIR . "/common/config/admin-site.json";
             if (!$configData = json_decode(file_get_contents($file), true)) {
-                throw new Exception($this->getLocalizedString('ERROR_PARSING_FILE', $file));
+                throw new KurogoDataException($this->getLocalizedString('ERROR_PARSING_FILE', $file));
             }
             
         }
@@ -57,17 +57,17 @@ class AdminAPIModule extends APIModule
             $configData = $type->getModuleAdminConfig();
             $module = $type;
         } else {
-            throw new Exception("Invalid type $type");
+            throw new KurogoConfigurationException("Invalid type $type");
         }
         
         if (!isset($configData[$section])) {
-            throw new Exception("Invalid section $section");
+            throw new KurogoConfigurationException("Invalid section $section");
         }
         
         $sectionData = $configData[$section];
         if ($subsection) {
             if (!isset($configData[$section]['sections'][$subsection])) {
-                throw new Exception("Invalid subsection $subsection for section $section");
+                throw new KurogoConfigurationException("Invalid subsection $subsection for section $section");
             }
 
            $sectionData = $configData[$section]['sections'][$subsection];
@@ -115,7 +115,7 @@ class AdminAPIModule extends APIModule
                                     $field['value'] = Kurogo::getOptionalSiteString($key);
                                     break;
                                 default: 
-                                    throw new Exception("Unknown config " . $field['config']);
+                                    throw new KurogoConfigurationException("Unknown config " . $field['config']);
                                     break;
                             }
                         }
@@ -165,7 +165,7 @@ class AdminAPIModule extends APIModule
                     }
                     unset($sectionData['sectionsmethod']);
                 } elseif ($type=='site') {
-                    throw new Exception("Can't get sections for site");
+                    throw new KurogoConfigurationException("Getting sections for site is not written yet");
                 } else {
                     $configMode = isset($sectionData['configMode']) ? $sectionData['configMode'] : 0;
                     $sectionData['sections'] = $module->getModuleSections($sectionData['config'], Config::NO_EXPAND_VALUE, $configMode);
@@ -253,7 +253,7 @@ class AdminAPIModule extends APIModule
                 }
                 break;
             default:
-                throw new Exception("Section type " . $sectionData['sectiontype'] . " not understood for section $section");
+                throw new KurogoConfigurationException("Section type " . $sectionData['sectiontype'] . " not understood for section $section");
             
         }         
     
@@ -280,7 +280,7 @@ class AdminAPIModule extends APIModule
                 $this->loadedConfigs[$configKey] = $config;
             }
         } else {
-            throw new Exception("Invalid type $type");
+            throw new KurogoConfigurationException("Invalid type $type");
         }
         
         return $config;
@@ -290,12 +290,12 @@ class AdminAPIModule extends APIModule
 
         $sectionData = $this->getAdminData($type, $section, $subsection);
         if ($sectionData['sectiontype']!='section') {
-            throw new Exception("Cannot set the order of $section $subsection");
+            throw new KurogoConfigurationException("Cannot set the order of $section $subsection");
         }
         
         $config = $this->getAdminConfig($type, $sectionData['config'], ConfigFile::OPTION_CREATE_EMPTY);
         if (!$config->setSectionOrder($order, $changed)) {
-            throw new Exception("Error setting the order of " . $sectionData['config']);
+            throw new KurogoConfigurationException("Error setting the order of " . $sectionData['config']);
         }
         
         if ($changed) {    
@@ -314,7 +314,7 @@ class AdminAPIModule extends APIModule
         {
             case 'fields':
                 if (!isset($sectionData['fields'][$key])) {
-                    throw new Exception("Invalid key $key for $type section $section");
+                    throw new KurogoConfigurationException("Invalid key $key for $type section $section");
                 }
                 
                 $fieldData = $sectionData['fields'][$key];
@@ -324,7 +324,7 @@ class AdminAPIModule extends APIModule
                 $fieldData = $sectionData;
                 break;
             default:
-                throw new Exception("Unable to handle $type $section. Invalid section type " . $sectionData['sectiontype']);
+                throw new KurogoConfigurationException("Unable to handle $type $section. Invalid section type " . $sectionData['sectiontype']);
         }
         
         $config = $this->getAdminConfig($type, $fieldData['config'], ConfigFile::OPTION_CREATE_EMPTY);
@@ -354,7 +354,7 @@ class AdminAPIModule extends APIModule
         if (isset($sectionData['sectionvalidatemethod'])) {
             $result = call_user_func($sectionData['sectionvalidatemethod'], $key, $value);
             if (KurogoError::isError($result)) {
-                throw new Exception($result->getMessage());
+                throw new KurogoException($result->getMessage());
             }
         }
         
@@ -366,7 +366,7 @@ class AdminAPIModule extends APIModule
                 } 
 
                 if (!isset($fieldData['fields'][$k])) {
-                    throw new Exception("Invalid key $k for $type:" . $fieldData['config'] . " section $key");
+                    throw new KurogoConfigurationException("Invalid key $k for $type:" . $fieldData['config'] . " section $key");
                 }
                 
                 $prefix = isset($value[$k . '_prefix']) ? $value[$k . '_prefix'] : '';
@@ -390,7 +390,7 @@ class AdminAPIModule extends APIModule
                 $result = $config->setVar($fieldData['section'], $key, $value, $changed);
 
                 if (!$result) {
-                    throw new Exception("Error setting $config $section $key $value");
+                    throw new KurogoConfigurationException("Error setting $config $section $key $value");
                 }
             }
         }
@@ -406,18 +406,18 @@ class AdminAPIModule extends APIModule
         $sectionData = $this->getAdminData($type, $section, $subsection);
 
         if (isset($value['error']) && $value['error'] != UPLOAD_ERR_OK) {
-            throw new Exception(Kurogo::file_upload_error_message($value['error']));
+            throw new KurogoDataException(Kurogo::file_upload_error_message($value['error']));
         }
 
         if (!isset($value['tmp_name']) || !is_uploaded_file($value['tmp_name'])) {
-            throw new Exception("Error locating uploaded file");
+            throw new KurogoDataException("Error locating uploaded file");
         }
         
         switch ($sectionData['sectiontype'])
         {
             case 'fields':
                 if (!isset($sectionData['fields'][$key])) {
-                    throw new Exception("Invalid key $key for $type section $section");
+                    throw new KurogoConfigurationException("Invalid key $key for $type section $section");
                 }
                 
                 $fieldData = $sectionData['fields'][$key];
@@ -425,21 +425,21 @@ class AdminAPIModule extends APIModule
             
             case 'section':
                 $fieldData = $sectionData;
-                throw new Exception("Code not written for this type of field");
+                throw new KurogoConfigurationException("Code not written for this type of field");
                 break;
             default:
-                throw new Exception("Unable to handle $type $section. Invalid section type " . $sectionData['sectiontype']);
+                throw new KurogoConfigurationException("Unable to handle $type $section. Invalid section type " . $sectionData['sectiontype']);
         }
 
         if (!isset($fieldData['destinationType'])) {
-            throw new Exception("Unable to determine destination type");
+            throw new KurogoConfigurationException("Unable to determine destination type");
         }
         
         switch ($fieldData['destinationType'])
         {
             case 'file':
                 if (!isset($fieldData['destinationFile'])) {
-                    throw new Exception("Unable to determine destination location");
+                    throw new KurogoConfigurationException("Unable to determine destination location");
                 }
                 
                 $destination = $fieldData['destinationFile'];
@@ -447,11 +447,11 @@ class AdminAPIModule extends APIModule
                 
             case 'folder':
                 if (!isset($fieldData['destinationFile'])) {
-                    throw new Exception("Unable to determine destination location");
+                    throw new KurogoConfigurationException("Unable to determine destination location");
                 }
                 
                 if (!isset($fieldData['destinationFolder'])) {
-                    throw new Exception("Unable to determine destination location");
+                    throw new KurogoConfigurationException("Unable to determine destination location");
                 }
                 $destination = rtrim($fieldData['destinationFolder'], '/') . '/' . ltrim($fieldData['destinationFile'],'/');
                 
@@ -478,12 +478,12 @@ class AdminAPIModule extends APIModule
                         if (KurogoError::isError($result)) {
                             $this->throwError($result);
                         }
-                    } catch (Exception $e) {
-                        throw new Exception("Uploaded file must be a valid image (" . $e->getMessage() . ")");
+                    } catch (KurogoException $e) {
+                        throw new KurogoException("Uploaded file must be a valid image (" . $e->getMessage() . ")");
                     }
                     break;
                 default:
-                    throw new Exception("Unknown fileType " . $fieldData['fileType']);
+                    throw new KurogoConfigurationException("Unknown fileType " . $fieldData['fileType']);
             }
         } else {
             if (!move_uploaded_file($value['tmp_name'], $destination)) {
@@ -546,22 +546,17 @@ class AdminAPIModule extends APIModule
                 {
                     case 'module':
                         $moduleID = $this->getArg('module','');
-                        try {
-                            $module = WebModule::factory($moduleID);
-                        } catch (Exception $e) {
-                			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
-                        }
-
+                        $module = WebModule::factory($moduleID);
                         $type = $module;
                         break;
                     case 'site':
                         break;
                     default:
-                        throw new Exception("Invalid type $type");
+                        throw new KurogoConfigurationException("Invalid type $type");
                 }
                 
                 if (count($_FILES)==0) {
-                    throw new Exception("No files uploaded");
+                    throw new KurogoException("No files uploaded");
                 }
                 
                 foreach ($_FILES as $key=>$uploadData) {
@@ -578,16 +573,11 @@ class AdminAPIModule extends APIModule
                 {
                     case 'module':
                         $moduleID = $this->getArg('module','');
-                        try {
-                            $module = WebModule::factory($moduleID);
-                        } catch (Exception $e) {
-                			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
-                        }
-        
+                        $module = WebModule::factory($moduleID);
                         $sections = $module->getModuleAdminSections();
                         break;
                     case 'site':
-                        throw new Exception("getconfigsections for site not handled yet");
+                        throw new KurogoConfigurationException("getconfigsections for site not handled yet");
                 }
                 
                 $this->setResponse($sections);
@@ -602,12 +592,7 @@ class AdminAPIModule extends APIModule
                 {
                     case 'module':
                         $moduleID = $this->getArg('module','');
-                        try {
-                            $module = WebModule::factory($moduleID);
-                        } catch (Exception $e) {
-                			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
-                        }
-        
+                        $module = WebModule::factory($moduleID);
                         $adminData = $this->getAdminData($module, $section);
                         break;
                     case 'site':
@@ -627,7 +612,7 @@ class AdminAPIModule extends APIModule
                 if (empty($data)) {
                     $data = array();
                 } elseif (!is_array($data)) {
-                    throw new Exception("Invalid data for $type $section");
+                    throw new KurogoConfigurationException("Invalid data for $type $section");
                 }
                 
                 switch ($type)
@@ -636,20 +621,16 @@ class AdminAPIModule extends APIModule
                     
                         if ($section == 'overview') {
                             foreach ($data as $moduleID=>$props) {
-                                try {
-                                    $module = WebModule::factory($moduleID);
-                                } catch (Exception $e) {
-                        			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
-                                }
+                                $module = WebModule::factory($moduleID);
                                 
                                 if (!is_array($props)) {
-                                    throw new Exception("Invalid properties for $type $section");
+                                    throw new KurogoConfigurationException("Invalid properties for $type $section");
                                 }
                                 
                                 $valid_props = array('protected','secure','disabled','search');
                                 foreach ($props as $key=>$value) {
                                     if (!in_array($key, $valid_props)) {
-                                        throw new Exception("Invalid property $key for module $module");
+                                        throw new KurogoConfigurationException("Invalid property $key for module $module");
                                     }
                                     
                                     $this->setConfigVar($module, 'general', $subsection, $key, $value);
@@ -666,12 +647,7 @@ class AdminAPIModule extends APIModule
                         } else {
 
                             $moduleID = $this->getArg('module','');
-                            try {
-                                $module = WebModule::factory($moduleID);
-                            } catch (Exception $e) {
-                    			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
-                            }
-
+                            $module = WebModule::factory($moduleID);
                             $type = $module;
                         }
 
@@ -680,7 +656,7 @@ class AdminAPIModule extends APIModule
                     case 'site':
                         break;
                     default:
-                        throw new Exception("Invalid type $type");
+                        throw new KurogoConfigurationException("Invalid type $type");
                 }
                 
                 foreach ($data as $section=>$fields) {
@@ -744,28 +720,24 @@ class AdminAPIModule extends APIModule
                         break;
                     case 'module':
                         $moduleID = $this->getArg('module','');
-                        try {
-                            $module = WebModule::factory($moduleID);
-                        } catch (Exception $e) {
-                			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
-                        }
+                        $module = WebModule::factory($moduleID);
                         $sectionData = $this->getAdminData($module, $section);
                         $config = $module->getConfig($sectionData['config']);
                         break;
                     default:
-                        throw new Exception("Invalid type $type");
+                        throw new KurogoConfigurationException("Invalid type $type");
                 }
                         
                 if (!isset($sectionData['sections']) || (!isset($sectionData['sectiondelete']) || !$sectionData['sectiondelete'])) {
-                    throw new Exception("Config '$section' of module '$moduleID' does not permit removal of items");
+                    throw new KurogoConfigurationException("Config '$section' of module '$moduleID' does not permit removal of items");
                 }
 
                 if (!isset($sectionData['sections'][$key])) {
-                    throw new Exception("Section $key not found in config '$section' of module '$moduleID'");
+                    throw new KurogoConfigurationException("Section $key not found in config '$section' of module '$moduleID'");
                 }
 
                 if (!$result = $config->removeSection($key)) {
-                    throw new Exception("Error removing item $key from config '" . $sectionData['config'] ."'");
+                    throw new KurogoException("Error removing item $key from config '" . $sectionData['config'] ."'");
                 } else {
                     $config->saveFile();
                 }

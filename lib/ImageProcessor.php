@@ -59,7 +59,7 @@ class ImageProcessor
         } 
         
         if (!function_exists('gd_info')) {
-            throw new Exception("Resizing images requires the GD image library");
+            throw new KurogoDataException("Resizing images requires the GD image library");
         }
         
         switch ($this->imagetype)
@@ -74,7 +74,7 @@ class ImageProcessor
                 $src = imagecreatefromgif($this->fileName);
                 break;
             default:
-                throw new Exception("Unable to read files of this type ($this->imagetype)");
+                throw new KurogoDataException("Unable to read files of this type ($this->imagetype)");
         }
 
         switch ($imageType)
@@ -94,7 +94,7 @@ class ImageProcessor
                 $saveFunc = 'ImageGIF';
                 break;
             default:
-                throw new Exception("Unable to save files of this type");
+                throw new KurogoDataException("Unable to save files of this type");
         }
         
         if ($this->width != $width || $this->height != $height) {
@@ -110,13 +110,13 @@ class ImageProcessor
     public function __construct($fileName) {
     
         if (!is_readable($fileName)) {
-            throw new Exception("Unable to read $fileName");
+            throw new KurogoDataException("Unable to read $fileName");
         }
 
 		$this->fileName = $fileName;
 
 		if (!$info = getimagesize($this->fileName)) {
-		    throw new Exception("Not a valid image file");
+		    throw new KurogoDataException("Not a valid image file");
 		}
 		
         $this->width = $info[0];

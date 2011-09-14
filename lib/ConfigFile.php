@@ -52,7 +52,7 @@ class ConfigFile extends Config {
         if ($options & self::OPTION_DO_NOT_CREATE) {
             return false;
         }
-       throw new Exception("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
+       throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
     }
     
     return $config;
@@ -89,7 +89,7 @@ class ConfigFile extends Config {
             $pattern = sprintf('%s/%%s.ini', THEME_DIR);
             break;
         default:
-            throw new Exception("Unknown config type $type");
+            throw new KurogoConfigurationException("Unknown config type $type");
     }
     
     return sprintf($pattern, $file);
@@ -104,12 +104,12 @@ class ConfigFile extends Config {
             if (file_exists($defaultFile)) {
                 $this->createDirIfNotExists(dirname($file));
                 if (!is_writable(dirname($file))) {
-                    throw new Exception("Unable to create file $file, directory not writable");
+                    throw new KurogoConfigurationException("Unable to create file $file, directory not writable");
                 }
                 return copy($defaultFile, $file);
             }
 
-            throw new Exception("Default file $defaultFile ($file/$type) not found");
+            throw new KurogoConfigurationException("Default file $defaultFile ($file/$type) not found");
             break;
             
         default:
@@ -119,12 +119,12 @@ class ConfigFile extends Config {
             if (file_exists($defaultFile)) {
                 $this->createDirIfNotExists(dirname($_file));
                 if (!is_writable(dirname($_file))) {
-                    throw new Exception("Unable to create " . basename($_file) . ", directory " . dirname($_file) . " not writable");
+                    throw new KurogoConfigurationException("Unable to create " . basename($_file) . ", directory " . dirname($_file) . " not writable");
                 }
                 return copy($defaultFile, $_file);
             }
             
-            throw new Exception("Default file $defaultFile ($file/$type) not found");
+            throw new KurogoConfigurationException("Default file $defaultFile ($file/$type) not found");
             break;
     }
   }
@@ -183,7 +183,7 @@ class ConfigFile extends Config {
   {
     if (!is_dir($dir)) {
         if (!@mkdir($dir, 0700, true)) {
-            throw new Exception("Unable to create $dir");
+            throw new KurogoConfigurationException("Unable to create $dir");
         }
         return true;
     }
@@ -262,9 +262,9 @@ class ConfigFile extends Config {
   public function saveFile() {
 
     if (!is_writable($this->filepath)) {
-        throw new Exception("Cannot save config file: $this->filepath Check permissions");
+        throw new KurogoConfigurationException("Cannot save config file: $this->filepath Check permissions");
     } elseif ($this->localFile) {
-        throw new Exception("Safety net. File will not be saved because it was loaded and has local overrides. The code is probably wrong");
+        throw new KurogoConfigurationException("Safety net. File will not be saved because it was loaded and has local overrides. The code is probably wrong");
     }
   
       $string = array();

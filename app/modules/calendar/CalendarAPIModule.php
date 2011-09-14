@@ -44,7 +44,7 @@ class CalendarAPIModule extends APIModule
                 }
                 break;
             default:
-                throw new Exception($this->getLocalizedString('ERROR_INVALID_FEED', $type));
+                throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $type));
         }
 
         if ($feeds) {
@@ -78,7 +78,7 @@ class CalendarAPIModule extends APIModule
             $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
             return $controller;
         } else {
-            throw new Exception($this->getLocalizedString('ERROR_NO_CALENDAR_FEED', $index));
+            throw new KurogoDataException($this->getLocalizedString('ERROR_NO_CALENDAR_FEED', $index));
         }
     }
 

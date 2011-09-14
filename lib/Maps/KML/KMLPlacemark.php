@@ -118,7 +118,7 @@ class KMLPlacemark extends XMLElement implements Placemark
             case 'MODEL':
             case 'GX:TRACK':
             case 'GX:MULTITRACK':
-                throw new Exception("Geometry type $name not implemented yet");
+                throw new KurogoDataException("Geometry type $name not implemented yet");
                 break;
             default:
                 parent::addElement($element);

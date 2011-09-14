@@ -160,7 +160,7 @@ class MapProjection
             case 'nzmg': // 1
             case 'krovak': // 1
             default:
-                throw new Exception("projection not implemented for {$this->proj}");
+                throw new KurogoConfigurationException("projection not implemented for {$this->proj}");
                 break;
         }
     }
@@ -216,7 +216,7 @@ class MapProjection
             case 'nzmg': // 1
             case 'krovak': // 1
             default:die();
-                //throw new Exception("reverse projection not implemented for {$this->proj}");
+                //throw new KurogoConfigurationException("reverse projection not implemented for {$this->proj}");
                 break;
         }
     }
@@ -225,7 +225,7 @@ class MapProjection
     {
         if ($this->adjustedX === NULL || $this->adjustedY === NULL) {
             if ($this->lambda === NULL || $this->phi === NULL) {
-                throw new Exception("source points not set");
+                throw new KurogoConfigurationException("source points not set");
             }
             $this->forwardProject();
             $this->adjustedX = ($this->x + $this->falseEasting) * $this->unitsPerMeter;
@@ -242,7 +242,7 @@ class MapProjection
     {
         if ($this->lambda === NULL || $this->phi === NULL) {
             if ($this->adjustedX === NULL || $this->adjustedY === NULL) {
-                throw new Exception("source points not set");
+                throw new KurogoConfigurationException("source points not set");
             }
             
             $this->x = $this->adjustedX / $this->unitsPerMeter - $this->falseEasting;

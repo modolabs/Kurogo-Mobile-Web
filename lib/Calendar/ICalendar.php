@@ -10,7 +10,7 @@
  * ICalendar
  * @package Exceptions
  */
-class ICalendarException extends Exception {
+class ICalendarException extends KurogoDataException {
 }
 
 /**
@@ -583,7 +583,7 @@ class ICalRecurrenceRule extends ICalObject {
         if (in_array($rulevalue, $this->frequencies)) {
             $this->type = $rulevalue;
         } else {
-            throw new Exception("Invalid frequency $rulevalue");
+            throw new ICalendarException("Invalid frequency $rulevalue");
         }
         
         break;
@@ -610,17 +610,17 @@ class ICalRecurrenceRule extends ICalObject {
             break;
         }
       case (substr($rulename, 0, 2) == 'BY'):
-        throw new Exception("$rulename rules not handled yet ($rule_string)");
+        throw new ICalendarException("$rulename rules not handled yet ($rule_string)");
         $occurs_by_list[$rulename] = explode(',', $rulevalue);
         break;
       default:
-        throw new Exception("Unknown recurrence rule property $rulename found");
+        throw new ICalendarException("Unknown recurrence rule property $rulename found");
         break;
       }
     }
 
     if (empty($this->type)) {
-        throw new Exception("Invalid Frequency");
+        throw new ICalendarException("Invalid Frequency");
     }
   }
   
@@ -675,13 +675,13 @@ class ICalRecurrenceRule extends ICalObject {
             $time = self::nextIncrement($time, 'DAILY', $offset*$interval);
             break;
         case 'MONTHLY':
-            throw new Exception("MONTHLY increment Not handled yet");
+            throw new ICalendarException("MONTHLY increment Not handled yet");
             break;
         case 'YEARLY':
             $time = mktime(date('H', $time), date('i', $time), date('s', $time), date('m', $time), date('d', $time), date('Y', $time)+$interval);
             break;
         default:
-            throw new Exception("Invalid type $type");
+            throw new ICalendarException("Invalid type $type");
       }
       
       return $time;

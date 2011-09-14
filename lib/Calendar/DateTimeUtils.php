@@ -243,7 +243,7 @@ class TimeRange {
     if ($end === NULL) { // instantaneous event
       $end = $start;
     } elseif ($start > $end) {
-      throw new Exception('argument 1 (start time) must be <= argument 2 (end time)');
+      throw new KurogoDataException('argument 1 (start time) must be <= argument 2 (end time)');
     }
 
     $this->start = $start;
@@ -270,7 +270,7 @@ class DayRange extends TimeRange {
         $this->start = mktime(0, 0, 0, date('m', $start), date('d', $start), date('Y', $start));
         $this->end = mktime(23, 59, 59, date('m', $end), date('d', $end), date('Y', $end));
     } else {
-        throw new Exception("Timezone set ($tzid), but is not the same as system time zone (" . date_default_timezone_get() . "). This case needs to be handled");
+        throw new KurogoException("Timezone set ($tzid), but is not the same as system time zone (" . date_default_timezone_get() . "). This case needs to be handled");
     }
   }
 }

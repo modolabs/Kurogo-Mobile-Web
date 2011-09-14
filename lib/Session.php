@@ -40,13 +40,13 @@ abstract class Session
         $args = is_array($args) ? $args : array();
 
         if (!class_exists($sessionClass)) {
-            throw new Exception("Session class $sessionClass not defined");
+            throw new KurogoConfigurationException("Session class $sessionClass not defined");
         }
         
         $session = new $sessionClass;
         
         if (!$session instanceOf Session) {
-            throw new Exception("$sessionClass is not a subclass of Session");
+            throw new KurogoConfigurationException("$sessionClass is not a subclass of Session");
         }
 
         $session->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
@@ -194,7 +194,7 @@ abstract class Session
         } elseif ($authority instanceOf AuthenticationAuthority) {
             $authority = $authority->getAuthorityIndex();
         } elseif (!is_scalar($authority)) {
-            throw new Exception("Invalid authority $authority");
+            throw new KurogoException("Invalid authority $authority");
         }
         
         // will check for the authority index or user or authority class. 

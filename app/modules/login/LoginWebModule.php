@@ -20,7 +20,7 @@ class LoginWebModule extends WebModule {
   protected function initializeForPage() {
   
     if (!Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
-        throw new Exception($this->getLocalizedString("ERROR_AUTHENTICATION_DISABLED"));
+        throw new KurogoConfigurationException($this->getLocalizedString("ERROR_AUTHENTICATION_DISABLED"));
     }
     
     $session = $this->getSession();
@@ -66,7 +66,7 @@ class LoginWebModule extends WebModule {
             } elseif ($USER_LOGIN=='LINK') {
                 $authenticationAuthorities['indirect'][$authorityIndex] = $authorityData;
             }
-        } catch (Exception $e) {
+        } catch (KurogoConfigurationException $e) {
             error_log(sprintf("Invalid authority data for %s: %s", $authorityIndex, $e->getMessage()));
             $invalidAuthorities[$authorityIndex] = $e->getMessage();
         }
@@ -83,7 +83,7 @@ class LoginWebModule extends WebModule {
         }
         
         //we don't
-        throw new Exception($message);
+        throw new KurogoConfigurationException($message);
         
     }
     

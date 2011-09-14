@@ -16,8 +16,17 @@ class ErrorWebModule extends WebModule {
 
     protected function getError($code) {
         static $errors = array(
-            'data' => array(
+            'server' => array(
               'status'    => '504 Gateway Timeout'
+            ),
+            'data' => array(
+              'status'    => '500 Internal Server Error'
+            ),
+            'user'=> array(
+              'status'    => '500 Internal Server Error'
+            ),
+            'config'=> array(
+              'status'    => '500 Internal Server Error'
             ),
             'internal' => array(
               'status'  => '500 Internal Server Error',
@@ -28,9 +37,6 @@ class ErrorWebModule extends WebModule {
             'forbidden' => array(
               'status'  => '403 Forbidden',
             ),
-            'device_notsupported' => array(
-              'status'  => null,
-            ),
             'disabled'  => array(
             ),
             'protected' => array(
@@ -39,8 +45,9 @@ class ErrorWebModule extends WebModule {
               'status'  => '500 Internal Server Error',
             )
           );
-          
-        $error = isset($errors[$code]) ? $errors[$code] : $errors['default'];
+        
+        $code =   isset($errors[$code]) ? $code : 'default';
+        $error = $errors[$code];
         $error['message'] = $this->getLocalizedString(strtoupper('ERROR_' . $code));
         return $error;
     }
@@ -56,7 +63,7 @@ class ErrorWebModule extends WebModule {
       $this->args = $args;
       try {
           $this->moduleName = $this->getOptionalModuleVar('title', 'Error', 'module');
-      } catch (Exception $e) {
+      } catch (KurogoConfigurationException $e) {
       }
       return;
   }

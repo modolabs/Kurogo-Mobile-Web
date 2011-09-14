@@ -117,7 +117,7 @@ class ImageTransformer
             $newWidth = round($newHeight * $aspect);
         } else {
             // probably shouldn't happen
-            throw new Exception("Unable to determine width and height");
+            throw new KurogoException("Unable to determine width and height");
         }
         
         return array($newWidth, $newHeight);

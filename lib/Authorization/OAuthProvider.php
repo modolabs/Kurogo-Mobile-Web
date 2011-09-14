@@ -190,7 +190,7 @@ abstract class OAuthProvider
         	case 'RSA-SHA1':
 
                 if (!$privatekeyid = openssl_get_privatekey($this->cert)) {
-                    throw new Exception("Error getting private key for $this->cert");
+                    throw new KurogoException("Error getting private key for $this->cert");
                 }
 
                 // Sign using the key
@@ -202,7 +202,7 @@ abstract class OAuthProvider
                 $sig = base64_encode($signature);
         	    break;
         	default:
-        	    throw new Exception("Signature method $this->signatureMethod not handled");
+        	    throw new KurogoException("Signature method $this->signatureMethod not handled");
 		}
 		
 		return $sig;
@@ -246,7 +246,7 @@ abstract class OAuthProvider
 	        'RSA-SHA1',
 	        'PLAINTEXT'
             ))) {
-            throw new Exception ("Invalid signature method $signatureMethod");
+            throw new KurogoException ("Invalid signature method $signatureMethod");
         }
         
         $this->signatureMethod = $signatureMethod;
@@ -273,7 +273,7 @@ abstract class OAuthProvider
 
     public function setToken($type, $token, $tokenSecret='') {
         if ($type && !in_array($type, array(self::TOKEN_TYPE_REQUEST, self::TOKEN_TYPE_ACCESS))) {
-            throw new Exception("Invalid token type $type");
+            throw new KurogoException("Invalid token type $type");
         }
         
         $this->tokenType = $type;
@@ -338,7 +338,7 @@ abstract class OAuthProvider
                 $authHeader = $this->calculateHeader($url, $oauth);
                 break;
             default:
-                throw new Exception("Invalid method $method");
+                throw new KurogoException("Invalid method $method");
                 break;
         }        
         
@@ -355,7 +355,7 @@ abstract class OAuthProvider
 
     public static function factory($providerClass, $args) {
         if (!class_exists($providerClass) || !is_subclass_of($providerClass, 'OAuthProvider')) {
-            throw new Exception("Invalid OAuthProvider class $providerClass");
+            throw new KurogoConfigurationException("Invalid OAuthProvider class $providerClass");
         }
         
         $provider = new $providerClass;
@@ -410,7 +410,7 @@ abstract class OAuthProvider
                 break;
                 
             default:
-                throw new Exception("Invalid method $method");
+                throw new KurogoException("Invalid method $method");
         }
 
 	    $requestHeaders[] = 'Authorization: ' . $this->getAuthorizationHeader($method, $url, $requestParameters, $requestHeaders);
@@ -527,13 +527,13 @@ abstract class OAuthProvider
         }
 
         if (!isset($args['TITLE']) || empty($args['TITLE'])) {
-            throw new Exception("Invalid OAuth provider title");
+            throw new KurogoConfigurationException("Invalid OAuth provider title");
         }
 
         $this->setTitle($args['TITLE']);
         
         if (!isset($args['INDEX']) || empty($args['INDEX'])) {
-            throw new Exception("Invalid OAuth provider index");
+            throw new KurogoConfigurationException("Invalid OAuth provider index");
         }
 
         $this->setIndex($args['INDEX']);

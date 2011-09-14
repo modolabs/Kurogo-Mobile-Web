@@ -84,12 +84,12 @@ class Kurogo
     
     public function addPackage($packageName, $subpackageName=null) {
         if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
-            throw new Exception("Invalid Package name $packageName");
+            throw new KurogoConfigurationException("Invalid Package name $packageName");
         }
     
         if ($subpackageName !== null) {
             if (!preg_match("/^[a-zA-Z0-9]+$/", $subpackageName)) {
-                throw new Exception("Invalid Subpackage name $packageName");
+                throw new KurogoConfigurationException("Invalid Subpackage name $packageName");
             }
             $packageName .= DIRECTORY_SEPARATOR.$subpackageName;
         }
@@ -117,7 +117,7 @@ class Kurogo
         }
         
         if (!$found) {
-            throw new Exception("Unable to load package $packageName");
+            throw new KurogoConfigurationException("Unable to load package $packageName");
         }
     }    
     
@@ -217,10 +217,10 @@ class Kurogo
         if (file_exists('/usr/bin/locale')) {
             exec('/usr/bin/locale -a', $locales, $retval);
             if ($retval!==0) {
-                throw new Exception("Error retrieving locale values");
+                throw new KurogoException("Error retrieving locale values");
             }
         } else {
-            throw new Exception("Unable to find list of locales on this platform");
+            throw new KurogoException("Unable to find list of locales on this platform");
         }
         
         return $locales;
@@ -236,12 +236,12 @@ class Kurogo
 
     public function setLocale($locale) {
         if ($this->isWindows()) {
-            throw new Exception("Setting locale in Windows is not supported at this time");
+            throw new KurogoConfigurationException("Setting locale in Windows is not supported at this time");
         }
 
         // this is platform dependent.        
         if (!$return = setLocale(LC_TIME, $locale)) {
-            throw new Exception("Unknown locale setting $locale");
+            throw new KurogoConfigurationException("Unknown locale setting $locale");
         }
         $this->locale = $return;
         return $this->locale;
@@ -265,6 +265,7 @@ class Kurogo
         //
         
         require(LIB_DIR . '/compat.php');
+        require(LIB_DIR.'/exceptions.php');
 
         // add autoloader        
         spl_autoload_register(array($this, "siteLibAutoloader"));
@@ -281,7 +282,6 @@ class Kurogo
         //
         // Install exception handlers
         //
-        require(LIB_DIR.'/exceptions.php');
       
         if ($this->config->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
             set_exception_handler("exceptionHandlerForProduction");
@@ -380,14 +380,14 @@ class Kurogo
     		$this->languages = array();
     		foreach ($languages as $language) {
     			if (!array_key_exists($language, $validLanguages)) {
-    				throw new Exception("Invalid language $language");
+    				throw new KurogoConfigurationException("Invalid language $language");
     			}
     			$this->languages[] = $language;
     		}
     	} elseif (array_key_exists($languages, $validLanguages)) {
 			$this->languages[] = $languages;
     	} else {
-			throw new Exception("Invalid language $languages");
+			throw new KurogoConfigurationException("Invalid language $languages");
 		}
 		
 		if (!in_array('en_US', $this->languages)) {
@@ -578,7 +578,7 @@ class Kurogo
     
     public function localizedString($key, $opts=null) {
         if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
-            throw new Exception("Invalid string key $key");
+            throw new KurogoConfigurationException("Invalid string key $key");
         }
 
         // use any number of args past the first as options
@@ -596,7 +596,7 @@ class Kurogo
             }
         }
         
-        throw new Exception("Unable to find site string $key");
+        throw new KurogoConfigurationException("Unable to find site string $key");
     }
     
     public static function getLocalizedString($key, $opts=null) {
@@ -622,7 +622,7 @@ class Kurogo
                 exec($exec, $output, $retval);
                 return $retval;
             } else {
-                throw new Exception("Cannot find a folder removal tool for this platform. Please report this and include your server operating system and version");
+                throw new KurogoException("Cannot find a folder removal tool for this platform. Please report this and include your server operating system and version");
             }
         } else {
             return 1;

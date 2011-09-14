@@ -30,7 +30,7 @@ class LinksAPIModule extends APIModule {
 
             return $this->linkGroups[$group];
         } else {
-            throw new Exception("Unable to find link group information for $group");
+            throw new KurogoConfigurationException("Unable to find link group information for $group");
         }
     }
 

@@ -25,7 +25,7 @@ class LinksWebModule extends WebModule {
             
             return $this->linkGroups[$group];            
         } else {
-            throw new Exception($this->getLocalizedString('ERROR_LINK_GROUP', $group));
+            throw new KurogoConfigurationException($this->getLocalizedString('ERROR_LINK_GROUP', $group));
         }
     }
 

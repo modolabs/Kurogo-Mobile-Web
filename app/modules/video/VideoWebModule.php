@@ -92,7 +92,7 @@ class VideoWebModule extends WebModule
         }
         
         if (count($this->feeds)==0) {
-            throw new Exception("No video feeds configured");
+            throw new KurogoConfigurationException("No video feeds configured");
         }
     
         // Categories / Sections

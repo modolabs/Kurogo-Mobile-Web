@@ -285,7 +285,7 @@ class CalendarWebModule extends WebModule {
         }
         break;
       default:
-        throw new Exception($this->getLocalizedString('ERROR_INVALID_FEED', $type));
+        throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $type));
     }
     
     if ($feeds) {
@@ -307,7 +307,7 @@ class CalendarWebModule extends WebModule {
     if (isset($feeds[$index])) {
       return $feeds[$index]['TITLE'];
     } else {
-      throw new Exception($this->getLocalizedString("ERROR_NO_CALENDAR_TITLE", $index));
+      throw new KurogoConfigurationException($this->getLocalizedString("ERROR_NO_CALENDAR_TITLE", $index));
     }
   }
   
@@ -321,7 +321,7 @@ class CalendarWebModule extends WebModule {
       $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
       return $controller;
     } else {
-      throw new Exception($this->getLocalizedString("ERROR_NO_CALENDAR_FEED", $index));
+      throw new KurogoConfigurationException($this->getLocalizedString("ERROR_NO_CALENDAR_FEED", $index));
     }
   }
  
@@ -617,7 +617,7 @@ class CalendarWebModule extends WebModule {
         if ($event = $feed->getItem($this->getArg('id'), $time)) {
           $this->assign('event', $event);
         } else {
-          throw new Exception($this->getLocalizedString('ERROR_NOT_FOUND'));
+          throw new KurogoUserException($this->getLocalizedString('ERROR_NOT_FOUND'));
         }
             
         // build the list of attributes

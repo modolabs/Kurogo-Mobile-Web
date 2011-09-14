@@ -47,7 +47,7 @@ class ContentAPIModule extends APIModule {
                 return '';
                 break;
             default:
-                throw new Exception("Invalid content type $content_type");
+                throw new KurogoConfigurationException("Invalid content type $content_type");
         }
     }
 

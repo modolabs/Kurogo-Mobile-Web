@@ -11,7 +11,7 @@ class UrlWebModule extends WebModule {
          header("Location: $url");
          die();
      } else {
-        throw new Exception("URL not specified");
+        throw new KurogoConfigurationException("URL not specified");
      }
   }
 }

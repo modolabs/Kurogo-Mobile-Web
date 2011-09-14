@@ -152,7 +152,7 @@ abstract class APIModule extends Module
                             if ($module = APIModule::factory($entry)) {
                                 $modules[$entry] = $module;
                             }
-                        } catch (Exception $e) {
+                        } catch (KurogoException $e) {
                         }
                     }
                 }
@@ -234,7 +234,7 @@ abstract class APIModule extends Module
    */
   public function executeCommand() {
     if (empty($this->command)) {
-        throw new Exception("Command not specified");
+        throw new KurogoException("Command not specified");
     }
     $this->loadResponseIfNeeded();
     $this->loadSiteConfigFile('strings');

@@ -111,7 +111,7 @@ class SiteConfig extends ConfigGroup {
         define('URL_BASE', null);
     } else {
         if (!isset($urlBase)) {
-            throw new Exception("URL base not set. Please report the configuration to see why this happened");
+            throw new KurogoConfigurationException("URL base not set. Please report the configuration to see why this happened");
         }
         
         define('URL_BASE', $urlBase);

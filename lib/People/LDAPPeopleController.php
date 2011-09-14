@@ -416,7 +416,7 @@ class LDAPCompoundFilter extends LDAPFilter
                 $this->joinType = $joinType;
                 break;
             default:
-                throw new Exception("Invalid join type $joinType");                
+                throw new KurogoConfigurationException("Invalid join type $joinType");                
         }
     
         for ($i=1; $i < func_num_args(); $i++) {
@@ -426,17 +426,17 @@ class LDAPCompoundFilter extends LDAPFilter
             } elseif (is_array($filter)) {
                 foreach ($filter as $_filter) {
                     if (!($_filter instanceOf LDAPFilter)) {
-                        throw new Exception("Invalid filter for in array");
+                        throw new KurogoConfigurationException("Invalid filter for in array");
                     }
                 }
                 $this->filters = $filter;
             } else {
-                throw new Exception("Invalid filter for argument $i");
+                throw new KurogoConfigurationException("Invalid filter for argument $i");
             }
         }
     
         if (count($this->filters)<2) {
-            throw new Exception(sprintf("Only %d filters found (2 minimum)", count($filters)));
+            throw new KurogoConfigurationException(sprintf("Only %d filters found (2 minimum)", count($filters)));
         }
     
     }

@@ -80,7 +80,7 @@ class MapDB
             $wkt = WKTParser::wktFromGeometry($geometry);
         } else {
             // TODO: handle this instead of throwing exception
-            throw new Exception("feature has no geometry");
+            throw new KurogoDataException("feature has no geometry");
         }
 
         $placemarkId = $feature->getId();

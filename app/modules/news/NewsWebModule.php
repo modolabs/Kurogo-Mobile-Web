@@ -31,7 +31,7 @@ class NewsWebModule extends WebModule {
         
         try {
             $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        } catch (Exception $e) {
+        } catch (KurogoConfigurationException $e) {
             return KurogoError::errorFromException($e);
         }
         
@@ -100,7 +100,7 @@ class NewsWebModule extends WebModule {
         $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         return $controller;
     } else {
-        throw new Exception($this->getLocalizedString('ERROR_INVALID_FEED', $index));
+        throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $index));
     }
   }
     public function searchItems($searchTerms, $limit=null, $data=null) {
@@ -180,7 +180,7 @@ class NewsWebModule extends WebModule {
     
     protected function initializeForPage() {
         if (!$this->feed) {
-            throw new Exception($this->getLocalizedString('ERROR_NOT_CONFIGURED'));
+            throw new KurogoConfigurationException($this->getLocalizedString('ERROR_NOT_CONFIGURED'));
         }
 
     switch ($this->page) {
@@ -195,7 +195,7 @@ class NewsWebModule extends WebModule {
         $story     = $this->feed->getItem($storyID);
         
         if (!$story) {
-          throw new Exception($this->getLocalizedString('ERROR_STORY_NOT_FOUND', $storyID));
+          throw new KurogoUserException($this->getLocalizedString('ERROR_STORY_NOT_FOUND', $storyID));
         }
         
         if (!$content = $this->cleanContent($story->getProperty('content'))) {
@@ -203,7 +203,7 @@ class NewsWebModule extends WebModule {
               header("Location: $url");
               exit();
           } else {
-              throw new Exception($this->getLocalizedString('ERROR_CONTENT_NOT_FOUND', $storyID));
+              throw new KurogoDataException($this->getLocalizedString('ERROR_CONTENT_NOT_FOUND', $storyID));
           }
         }
 

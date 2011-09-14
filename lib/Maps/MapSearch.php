@@ -56,8 +56,8 @@ class MapSearch {
                 }
                 $resultsByDistance[$distance] = $mapFeature;
 
-            } catch (DataServerException $e) {
-                error_log('encountered DataServerException for feed config:');
+            } catch (KurogoDataServerException $e) {
+                error_log('encountered KurogoDataServerException for feed config:');
                 error_log(print_r($feedData, true));
                 error_log('message: '.$e->getMessage());
             }
@@ -84,8 +84,8 @@ class MapSearch {
                     $results = $controller->search($query);
                     $this->resultCount += count($results);
                     $this->searchResults = array_merge($this->searchResults, $results);
-                } catch (DataServerException $e) {
-                    error_log('encountered DataServerException for feed config:');
+                } catch (KurogoDataServerException $e) {
+                    error_log('encountered KurogoDataServerException for feed config:');
                     error_log(print_r($feedData, true));
                     error_log('message: '.$e->getMessage());
                 }

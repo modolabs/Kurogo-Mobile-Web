@@ -76,7 +76,7 @@ abstract class Module
         	//use the ID parameter if it's present, otherwise use the included id
         	$id = $config->getOptionalVar('id', $id);
         } elseif (!Kurogo::getOptionalSiteVar('CREATE_DEFAULT_CONFIG', false, 'modules')) {
-			throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
+			throw new KurogoModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
         }
         
 
@@ -91,7 +91,7 @@ abstract class Module
             if (isset($classNames[$type])) {
                 $classNames = array($classNames[$type]);
             } else {
-                throw new Exception("Invalid module type $type");
+                throw new KurogoException("Invalid module type $type");
             }
         }
     
@@ -131,7 +131,7 @@ abstract class Module
             }
         }
        
-        throw new ModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
+        throw new KurogoModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
     }
     
     /**
@@ -541,7 +541,7 @@ abstract class Module
             foreach ($files as $type=>$file) {                
                 if (is_file($file)) {
                     if (!$data = json_decode(file_get_contents($file),true)) {
-                        throw new Exception($this->getLocalizedString('ERROR_PARSING_FILE', $file));
+                        throw new KurogoDataException($this->getLocalizedString('ERROR_PARSING_FILE', $file));
                     }
                     
                     foreach ($data as $section=>&$sectionData) {
@@ -593,7 +593,7 @@ abstract class Module
     
     public function getLocalizedString($key, $opts=null) {
         if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
-            throw new Exception("Invalid string key $key");
+            throw new KurogoConfigurationException("Invalid string key $key");
         }
 
         // use any number of args past the first as options
@@ -611,7 +611,7 @@ abstract class Module
             }
         }
         
-        throw new Exception("Unable to find string $key for Module $this->id");
+        throw new KurogoConfigurationException("Unable to find string $key for Module $this->id");
     }
     
     /**
