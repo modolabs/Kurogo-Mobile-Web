@@ -82,11 +82,12 @@ function pixelsFromString(aString) {
 var mapControls = {
     recenterMap: function() {},
     locationUpdated: function(location) {},
-    locationUpdateStopped: function() {},
+    locationUpdateStopped: function(error) {},
+    locationWatchId: null,
+    locationIsFirstPosition: true,
     locateMeButton: null,
-    timerId: null,
     toggleLocationUpdates: function() {
-        if (this.timerId === null) {
+        if (this.locationWatchId === null) {
             this.startLocationUpdates();
         } else {
             this.stopLocationUpdates();
@@ -94,24 +95,25 @@ var mapControls = {
         }
     },
     startLocationUpdates: function() {
-        this.locateMeButton.style.backgroundPosition = "-200px 0";
-        if (this.timerId === null) {
-            var that = this;
-            this.timerId = setInterval(function() {
-                navigator.geolocation.getCurrentPosition(
-                    that.locationUpdated,
-                    that.locationUpdateStopped,
-                    {enableHighAccuracy: true});
-               }, 5000);
-        }
+        this.locateMeButton.style.backgroundPosition = "-200px 0px";
+
+        var that = this;
+        that.locationIsFirstPosition = true;
+        that.locationWatchId = navigator.geolocation.watchPosition(
+            function (location) {
+                that.locationUpdated(location, that.locationIsFirstPosition);
+                that.locationIsFirstPosition = false;
+            },
+            function (error) {}, // don't really want to stop trying to locate here
+            {enableHighAccuracy: true}
+        );
     },
-    // draggable maps should also call this if user drags the map while updates are on
     stopLocationUpdates: function() {
-        this.locateMeButton.style.backgroundPosition = "-160px 0";
-        if (this.timerId !== null) {
-            clearInterval(this.timerId);
-            this.timerId = null;
-            this.locationUpdateStopped();
+        this.locateMeButton.style.backgroundPosition = "-160px 0px";
+        if (this.locationWatchId != null) {
+            navigator.geolocation.clearWatch(this.locationWatchId);
+            this.locationWatchId = null;
+            this.locationUpdateStopped(null);
         }
     },
 
@@ -196,14 +198,21 @@ function addStaticMapControls() {
             updateMapImage("out", null, null);
         },
         recenter: recenter,
-        locationUpdated: function(location) {
-            mapControls.stopLocationUpdates();
+        locationUpdated: function(location, firstLocation) {
             var params = {
                 'userLat': location.coords.latitude,
-                'userLon': location.coords.longitude,
-                'center': location.coords.latitude + "," + location.coords.longitude,
+                'userLon': location.coords.longitude
             };
+            
+            // only recenter on first location so we don't rubber band on scrolling
+            if (firstLocation) {
+                params['center'] = location.coords.latitude + "," + location.coords.longitude;
+            }
+            
             updateMapImage(null, null, params);
+        },
+        locationUpdateStopped: function(error) {
+            recenter();
         }
     });
 }
