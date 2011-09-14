@@ -852,7 +852,8 @@ class ICalendar extends ICalObject implements CalendarInterface {
 		$events = $this->events;
 
 		// sort event times
-		asort($this->eventStartTimes);
+		// deprecated use usort as follow
+		// asort($this->eventStartTimes);
 
 		$occurrences = array();
 
@@ -870,8 +871,17 @@ class ICalendar extends ICalObject implements CalendarInterface {
 				$occurrences[$uid][$occurrence->get_start()] = $occurrence;
 			}
 		}
+		// bug fix for sort by event start
+		// in some case, it doesn't work properly if we just sort $this->eventStartTimes
+		usort($occurrences, array($this, "sort_keys"));
 
 		return $occurrences;
+	}
+
+	private function sort_keys($a, $b) {
+		$object_a = array_pop($a);
+		$object_b = array_pop($b);
+		return strcmp($object_a->get_start(), $object_b->get_start());
 	}
 
 	public function set_attribute($attr, $value, $params=null) {
