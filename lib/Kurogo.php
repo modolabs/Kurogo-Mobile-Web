@@ -18,6 +18,8 @@ class Kurogo
     protected $config;
     protected $deviceClassifier;
     protected $session;
+    protected $locale;    
+    protected $languages=array();
 
     public static function getSession() {    
         $Kurogo = self::sharedInstance();
@@ -75,17 +77,22 @@ class Kurogo
         return $module->searchItems($searchTerms, $limit, $options);
     }
 
-    public static function includePackage($packageName) {
+    public static function includePackage($packageName, $subpackageName=null) {
         $Kurogo = self::sharedInstance();
-        return $Kurogo->addPackage($packageName);
+        return $Kurogo->addPackage($packageName, $subpackageName);
     }
     
-    public function addPackage($packageName) {
-
+    public function addPackage($packageName, $subpackageName=null) {
         if (!preg_match("/^[a-zA-Z0-9]+$/", $packageName)) {
-            throw new Exception("Invalid Package name $packageName");
+            throw new KurogoConfigurationException("Invalid Package name $packageName");
         }
     
+        if ($subpackageName !== null) {
+            if (!preg_match("/^[a-zA-Z0-9]+$/", $subpackageName)) {
+                throw new KurogoConfigurationException("Invalid Subpackage name $packageName");
+            }
+            $packageName .= DIRECTORY_SEPARATOR.$subpackageName;
+        }
         $found = false;
         
         $dirs = array(LIB_DIR . "/$packageName");
@@ -110,7 +117,7 @@ class Kurogo
         }
         
         if (!$found) {
-            throw new Exception("Unable to load package $packageName");
+            throw new KurogoConfigurationException("Unable to load package $packageName");
         }
     }    
     
@@ -177,6 +184,68 @@ class Kurogo
     public static function isWindows() {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
+
+    public static function file_upload_error_message($error_code) {
+        switch ($error_code) { 
+            case UPLOAD_ERR_OK:
+                return self::getLocalizedString('UPLOAD_ERR_OK');
+            case UPLOAD_ERR_INI_SIZE: 
+                return self::getLocalizedString('UPLOAD_ERR_INI_SIZE', ini_get('upload_max_filesize'));
+            case UPLOAD_ERR_FORM_SIZE: 
+                return self::getLocalizedString('UPLOAD_ERR_FORM_SIZE');
+            case UPLOAD_ERR_PARTIAL: 
+                return self::getLocalizedString('UPLOAD_ERR_PARTIAL');
+            case UPLOAD_ERR_NO_FILE: 
+                return self::getLocalizedString('UPLOAD_ERR_NO_FILE');
+            case UPLOAD_ERR_NO_TMP_DIR: 
+                return self::getLocalizedString('UPLOAD_ERR_NO_TMP_DIR');
+            case UPLOAD_ERR_CANT_WRITE: 
+                return self::getLocalizedString('UPLOAD_ERR_CANT_WRITE');
+            case UPLOAD_ERR_EXTENSION: 
+                return self::getLocalizedString('UPLOAD_ERR_EXTENSION');
+            default: 
+                return self::getLocalizedString('UPLOAD_ERR_UNKNOWN');
+        }
+    }
+    
+    public static function getAvailableLocales() {
+        static $locales=array();
+        if ($locales) {
+            return $locales;
+        }
+        
+        if (file_exists('/usr/bin/locale')) {
+            exec('/usr/bin/locale -a', $locales, $retval);
+            if ($retval!==0) {
+                throw new KurogoException("Error retrieving locale values");
+            }
+        } else {
+            throw new KurogoException("Unable to find list of locales on this platform");
+        }
+        
+        return $locales;
+    }
+    
+    public function getLocale() {
+        return $this->locale;
+    }
+
+    public function getSystemLocale() {
+        return setLocale(LC_ALL,"");
+    }
+
+    public function setLocale($locale) {
+        if ($this->isWindows()) {
+            throw new KurogoConfigurationException("Setting locale in Windows is not supported at this time");
+        }
+
+        // this is platform dependent.        
+        if (!$return = setLocale(LC_TIME, $locale)) {
+            throw new KurogoConfigurationException("Unknown locale setting $locale");
+        }
+        $this->locale = $return;
+        return $this->locale;
+    }
     
     public function initialize(&$path=null) {
         //
@@ -196,6 +265,7 @@ class Kurogo
         //
         
         require(LIB_DIR . '/compat.php');
+        require(LIB_DIR.'/exceptions.php');
 
         // add autoloader        
         spl_autoload_register(array($this, "siteLibAutoloader"));
@@ -212,7 +282,6 @@ class Kurogo
         //
         // Install exception handlers
         //
-        require(LIB_DIR.'/exceptions.php');
       
         if ($this->config->getVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
             set_exception_handler("exceptionHandlerForProduction");
@@ -224,7 +293,19 @@ class Kurogo
         $timezone = $this->config->getVar('LOCAL_TIMEZONE');
         date_default_timezone_set($timezone);
         $this->timezone = new DateTimeZone($timezone);
-
+        
+        if ($locale = $this->config->getOptionalVar('LOCALE')) {
+            $this->setLocale($locale);
+        } else {
+            $this->locale = $this->getSystemLocale();
+        }
+        
+        if ($languages = $this->config->getOptionalVar('LANGUAGES')) {
+        	$this->setLanguages($languages);
+        } else {
+        	$this->setLanguages(array('en_US'));
+        }
+        
         //
         // everything after this point only applies to http requests 
         //
@@ -289,11 +370,87 @@ class Kurogo
         $GLOBALS['deviceClassifier'] = $this->deviceClassifier;
     }
     
-    public static function getLanguages() {
-        return array(
-            'en'=>'English'
-        );
+    public function getLanguages() {
+    	return $this->languages;
     }
+
+    public function setLanguages($languages) {
+    	$validLanguages = self::getAvailableLanguages();
+    	if (is_array($languages)) {
+    		$this->languages = array();
+    		foreach ($languages as $language) {
+    			if (!array_key_exists($language, $validLanguages)) {
+    				throw new KurogoConfigurationException("Invalid language $language");
+    			}
+    			$this->languages[] = $language;
+    		}
+    	} elseif (array_key_exists($languages, $validLanguages)) {
+			$this->languages[] = $languages;
+    	} else {
+			throw new KurogoConfigurationException("Invalid language $languages");
+		}
+		
+		if (!in_array('en_US', $this->languages)) {
+		    $this->languages[] = "en_US"; // always include english US
+		}		
+    }
+    
+    public static function getAvailableLanguages() {
+		return array(
+			'af_ZA'=>'Afrikaans',
+			'am_ET'=>'አማርኛ',
+			'be_BY'=>'Беларуская',
+			'bg_BG'=>'български език',
+			'ca_ES'=>'Català',
+			'cs_CZ'=>'čeština',
+			'da_DK'=>'Dansk',
+			'de_AT'=>'Deutsch (Österreich)',
+			'de_CH'=>'Deutsch (Schweiz)',
+			'de_DE'=>'Deutsch (Deutschland)',
+			'el_GR'=>'Ελληνικά',
+			'en_AU'=>'English (Australia)',
+			'en_CA'=>'English (Canada)',
+			'en_GB'=>'English (United Kingdom)',
+			'en_IE'=>'English (Ireland)',
+			'en_NZ'=>'English (New Zealand)',
+			'en_US'=>'English (United States)',
+			'es_ES'=>'Español',
+			'et_EE'=>'Eesti',
+			'eu_ES'=>'Euskara',
+			'fi_FI'=>'Suomi',
+			'fr_BE'=>'Français (Belgique)',
+			'fr_CA'=>'Français (Canada)',
+			'fr_CH'=>'Français (Suisse)',
+			'fr_FR'=>'Français (France)',
+			'he_IL'=>'עברית',
+			'hr_HR'=>'Hrvatski',
+			'hu_HU'=>'Magyar',
+			'hy_AM'=>'Հայերեն',
+			'is_IS'=>'Íslenska',
+			'it_CH'=>'Italiano (Svizzera)',
+			'it_IT'=>'Italiano (Italia)',
+			'ja_JP'=>'日本語',
+			'kk_KZ'=>'Қазақ тілі',
+			'ko_KR'=>'한국어',
+			'lt_LT'=>'Lietuvių',
+			'nl_BE'=>'Vlaams',
+			'nl_NL'=>'Nederlands',
+			'no_NO'=>'Norsk',
+			'pl_PL'=>'Polski',
+			'pt_BR'=>'Português (Brasil)',
+			'pt_PT'=>'Português',
+			'ro_RO'=>'Română',
+			'ru_RU'=>'Pусский',
+			'sk_SK'=>'Slovenčina',
+			'sl_SI'=>'Slovenščina',
+			'sr_YU'=>'Cрпски',
+			'sv_SE'=>'Svenska',
+			'tr_TR'=>'Türkçe',
+			'uk_UA'=>'Yкраїнська',
+			'zh_CN'=>'简体中文',
+			'zh_TW'=>'繁體中文'
+		);    
+	}
 
     public static function getLifetimeOptions() {
         return array(
@@ -385,6 +542,66 @@ class Kurogo
         
         return $acls;
     }
+
+    private function getStringsForLanguage($lang) {
+        $stringFiles = array(
+            APP_DIR . "/common/strings/".$lang . '.ini',
+            SITE_APP_DIR . "/common/strings/".$lang . '.ini'
+        );
+        
+        $strings = array();
+        foreach ($stringFiles as $stringFile) {
+            if (is_file($stringFile)) {
+                $_strings = parse_ini_file($stringFile);
+                $strings = array_merge($strings, $_strings);
+            }
+        }
+        
+        return $strings;
+    }
+    
+    private function processString($string, $opts) {
+        if (!is_array($opts)) {
+            return $string;
+        } else {
+            return vsprintf($string, $opts);
+        }
+    }
+    
+    private function getStringForLanguage($key, $lang, $opts) {
+        if (!isset($this->strings[$lang])) {
+            $this->strings[$lang] = $this->getStringsForLanguage($lang);
+        }
+        
+        return isset($this->strings[$lang][$key]) ? $this->processString($this->strings[$lang][$key], $opts) : null;
+    }
+    
+    public function localizedString($key, $opts=null) {
+        if (!preg_match("/^[a-z0-9_]+$/i", $key)) {
+            throw new KurogoConfigurationException("Invalid string key $key");
+        }
+
+        // use any number of args past the first as options
+        $args = func_get_args();
+        array_shift($args);
+        if (count($args)==0 || is_null($args[0])) {
+            $args = null;
+        } 
+        
+        $languages = $this->getLanguages();
+        foreach ($languages as $language) {
+            $val = $this->getStringForLanguage($key, $language, $args);
+            if ($val !== null) {
+                return self::getOptionalSiteVar('LOCALIZATION_DEBUG') ?  $key : $val;
+            }
+        }
+        
+        throw new KurogoConfigurationException("Unable to find site string $key");
+    }
+    
+    public static function getLocalizedString($key, $opts=null) {
+        return Kurogo::sharedInstance()->localizedString($key, $opts);
+    }    
     
     public function checkCurrentVersion() {
         $url = "https://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(
@@ -405,7 +622,7 @@ class Kurogo
                 exec($exec, $output, $retval);
                 return $retval;
             } else {
-                throw new Exception("Cannot find a folder removal tool for this platform. Please report this and include your server operating system and version");
+                throw new KurogoException("Cannot find a folder removal tool for this platform. Please report this and include your server operating system and version");
             }
         } else {
             return 1;
@@ -441,6 +658,6 @@ interface KurogoObject
 }
 
 /* retained for compatibility */
-function includePackage($packageName) {
-    Kurogo::includePackage($packageName);
+function includePackage($packageName, $subpackageName=null) {
+    Kurogo::includePackage($packageName, $subpackageName);
 }

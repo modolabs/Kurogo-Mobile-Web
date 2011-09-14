@@ -10,12 +10,23 @@ class MapDevice
         $this->platform = $platform;
     }
     
-    public function pageSupportsDynamicMap() {
+    // TODO: use $mapClass to differentiate 
+    // if we fine Google or ArcGIS works badly for certain browsers
+    public function pageSupportsDynamicMap($mapClass=null)
+    {
         return ($this->pagetype == 'compliant' ||
                 $this->pagetype == 'tablet')
             && $this->platform != 'blackberry'
             && $this->platform != 'bbplus'
             && $this->platform != 'webos';
+    }
+
+    public function staticMapImageFormat()
+    {
+        if ($this->pagetype == 'basic' || $this->pagetype == 'touch') {
+            return 'gif';
+        }
+        return null; // use image controller default (png bit depth may differ)
     }
 
     public function staticMapImageDimensions() {

@@ -1,4 +1,4 @@
-{extends file="findExtends:modules/$moduleID/templates/search.tpl"}
+{extends file="findExtends:modules/news/templates/search.tpl"}
 
 {block name="resultCount"}
   {if count($stories)}

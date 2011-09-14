@@ -4,6 +4,9 @@ define('GEOGRAPHIC_PROJECTION', 4326);
 define('EARTH_RADIUS_IN_METERS', 6378100);
 define('MAP_CATEGORY_DELIMITER', ':');
 
+Kurogo::includePackage('Maps', 'Abstract');
+Kurogo::includePackage('Maps', 'Base');
+
 // http://en.wikipedia.org/wiki/Great-circle_distance
 // chosen for what the page said about numerical accuracy
 // but in practice the other formulas, i.e.
@@ -32,27 +35,100 @@ function greatCircleDistance($fromLat, $fromLon, $toLat, $toLon)
     return $angle * EARTH_RADIUS_IN_METERS;
 }
 
-function shortArrayFromMapFeature(MapFeature $feature) {
-    $category = $feature->getCategory();
-    if (is_array($category)) {
-        $category = implode(MAP_CATEGORY_DELIMITER, $category);
+function euclideanDistance($fromLat, $fromLon, $toLat, $toLon)
+{
+    $dx = $toLon - $fromLon;
+    $dy = $toLat - $fromLat;
+    return sqrt($dx*$dx + $dy*$dy);
+}
+
+function filterLatLon($testString) {
+    if (preg_match('/(-?\d+\.\d+),(-?\d+.\d+)/', $testString, $matches) == 1) {
+        return array('lat' => $matches[1], 'lon' => $matches[2]);
     }
-    return array(
-        'featureindex' => $feature->getIndex(),
-        'category' => $category,
-        );
+    return false;
+}
+
+function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null)
+{
+    if ($fromProj !== null || $toProj !== null) {
+        $projector = new MapProjector();
+    }
+
+    // create the bounding box in lat/lon first
+    if ($fromProj !== null) {
+        $projector->setSrcProj($fromProj);
+        $center = $projector->projectPoint($center);
+    }
+
+    // approximate upper/lower bounds for lat/lon before calculating GCD
+    $dLatRadians = $tolerance / EARTH_RADIUS_IN_METERS;
+    // by haversine formula
+    $dLonRadians = 2 * asin(sin($dLatRadians / 2) / cos($center['lat'] * M_PI / 180));
+
+    $dLatDegrees = $dLatRadians * 180 / M_PI;
+    $dLonDegrees = $dLonRadians * 180 / M_PI;
+
+    $min = array('lat' => $center['lat'] - $dLatDegrees, 'lon' => $center['lon'] - $dLonDegrees);
+    $max = array('lat' => $center['lat'] + $dLatDegrees, 'lon' => $center['lon'] + $dLonDegrees);
+
+    if ($toProj !== null) {
+        $projector->setSrcProj(GEOGRAPHIC_PROJECTION);
+        $projector->setDstProj($toProj);
+        $min = $projector->projectPoint($min);
+        $max = $projector->projectPoint($max);
+    }
+
+    return array('min' => $min, 'max' => $max, 'center' => $center);
+}
+
+function mapIdForFeedData(Array $feedData) {
+    $identifier = $feedData['TITLE'];
+    if (isset($feedData['BASE_URL'])) {
+        $identifier .= $feedData['BASE_URL'];
+    } else {
+        error_log("Warning: map feed for $identifier has no BASE_URL for map feed");
+    }
+    return substr(md5($identifier), 0, 10);
+}
+
+function shortArrayFromMapFeature(Placemark $feature) {
+    $category = current($feature->getCategoryIds());
+    $result = array('category' => $category);
+
+    $id = $feature->getId();
+    if ($id) {
+        $result['featureindex'] = $id;
+    } else {
+        $geometry = $feature->getGeometry();
+        if ($geometry) {
+            $coords = $geometry->getCenterCoordinate();
+            $result['lat'] = $coords['lat'];
+            $result['lon'] = $coords['lon'];
+        }
+        $result['title'] = $feature->getTitle();
+    }
+
+    return $result;
 }
 
 function htmlColorForColorString($colorString) {
     return substr($colorString, strlen($colorString)-6);
 }
 
+function isValidURL($urlString)
+{
+    // There is a bug in some versions of filter_var where it can't handle hyphens in hostnames
+    return filter_var(strtr($urlString, '-', '.'), FILTER_VALIDATE_URL);
+}
+
 class MapsAdmin
 {
     public static function getMapControllerClasses() {
         return array(
-            'KMLDataController'=>'KML',
-            'ArcGISDataController'=>'ArcGIS'
+            'MapDataController' => 'default',
+            'MapDBDataController' => 'database',
+            //'ArcGISDataController'=>'ArcGIS',
         );
     }
     
@@ -74,3 +150,32 @@ class MapsAdmin
 
 $config = ConfigFile::factory('maps', 'site');
 Kurogo::siteConfig()->addConfig($config);
+
+function debug_dump($variable=null, $message='') {
+    $backtrace = debug_backtrace();
+    $currentCall = current($backtrace); // who is calling debug_dump
+    $lastCall = next($backtrace); // what debug_dump is being called in
+    $file = end(explode('/', $currentCall['file']));
+    $line = $currentCall['line'];
+    $function = $lastCall['function'];
+    if ($variable !== null) {
+        if (is_string($variable)) {
+            $varClass = 'string';
+            $varRep = "'$variable'";
+        } elseif (is_int($variable)) {
+            $varClass = 'int';
+            $varRep = $variable;
+        } elseif (is_bool($variable)) {
+            $varClass = 'bool';
+            $varRep = $variable ? 'TRUE' : 'FALSE';
+        } else {
+            $varClass = get_class($variable);
+            $varRep = spl_object_hash($variable);
+        }
+        $trace = "$file($line):$function [$varClass $varRep] $message";
+    } else {
+        $trace = "$file($line):$function $message";
+    }
+    error_log($trace);
+}
+

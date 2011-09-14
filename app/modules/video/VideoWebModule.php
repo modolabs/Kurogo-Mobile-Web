@@ -6,7 +6,6 @@ class VideoWebModule extends WebModule
 {
     protected $id='video';  // this affects which .ini is loaded
     protected $feeds = array();
-    protected $bookmarkLinkTitle = 'Bookmarked Videos';
    
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -93,7 +92,7 @@ class VideoWebModule extends WebModule
         }
         
         if (count($this->feeds)==0) {
-            throw new Exception("No video feeds configured");
+            throw new KurogoConfigurationException("No video feeds configured");
         }
     
         // Categories / Sections
@@ -183,6 +182,7 @@ class VideoWebModule extends WebModule
           		$this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
           		$this->addOnLoad('setupVideosListing();');
           
+                $this->assign('placeholder', $this->getLocalizedString('SEARCH_MODULE', $this->getModuleName()));
                 $this->assign('start',       $start);
                 $this->assign('previousURL', $previousURL);
                 $this->assign('nextURL',     $nextURL);

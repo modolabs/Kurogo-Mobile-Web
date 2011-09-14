@@ -244,7 +244,7 @@ abstract class DataController
 
     public function setMethod($method) {
         if (!in_array($method, array('POST','GET','DELETE','PUT'))) {
-            throw new Exception("Invalid method $method");
+            throw new KurogoConfigurationException("Invalid method $method");
         }
         
         $this->method = $method;
@@ -287,13 +287,13 @@ abstract class DataController
         $args = is_array($args) ? $args : array();
 
         if (!class_exists($controllerClass)) {
-            throw new Exception("Controller class $controllerClass not defined");
+            throw new KurogoConfigurationException("Controller class $controllerClass not defined");
         }
         
         $controller = new $controllerClass;
         
         if (!$controller instanceOf DataController) {
-            throw new Exception("$controllerClass is not a subclass of DataController");
+            throw new KurogoConfigurationException("$controllerClass is not a subclass of DataController");
         }
 
         $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
@@ -376,7 +376,7 @@ abstract class DataController
                 return $this->parseFile($file, $parser);
                 break;
             default:
-                throw new Exception("Unknown parse mode");
+                throw new KurogoConfigurationException("Unknown parse mode");
         }
     }
     
@@ -456,7 +456,7 @@ abstract class DataController
                     $cache->write($data, $dataFile);
                 } elseif ($this->useStaleCache) {
                     // return stale cache if the data is unavailable
-                    $data = $this->read($dataFile);
+                    $data = $cache->read($dataFile);
                 }
             }
         } else {
@@ -477,7 +477,7 @@ abstract class DataController
     public function getData() {
 
         if (!$url = $this->url()) {
-            throw new Exception("URL could not be determined");
+            throw new KurogoDataException("URL could not be determined");
         }
 
         $this->url = $url;
@@ -575,7 +575,7 @@ abstract class DataController
         }
         
         if (!is_array($items)) {
-            throw new Exception("Items list is not an array");
+            throw new KurogoDataException("Items list is not an array");
         }
         
         if ($start>0 || !is_null($limit)) {

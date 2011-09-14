@@ -11,164 +11,337 @@ class MapAPIModule extends APIModule
 
     protected $feedGroup = null;
     protected $feedGroups = null;
-    protected $numGroups = 1;
-    protected $dataController;
+    protected $numGroups;
 
-    protected function arrayFromMapFeature(MapFeature $feature) {
-        $category = $feature->getCategory();
-        if (!is_array($category)) {
-            $category = explode(MAP_CATEGORY_DELIMITER, $category);
-        }
+    protected function shortArrayFromPlacemark(Placemark $placemark)
+    {
         $result = array(
-            'title' => $feature->getTitle(),
-            'subtitle' => $feature->getSubtitle(),
-            'id' => $feature->getIndex(),
-            'category' => $category,
-            'description' => $feature->getDescription(),
+            'title' => $placemark->getTitle(),
+            'subtitle' => $placemark->getSubtitle(),
+            'id' => $placemark->getId(),
+            'categories' => $placemark->getCategoryIds(),
             );
 
-        $geometry = $feature->getGeometry();
+        $geometry = $placemark->getGeometry();
         if ($geometry) {
             $center = $geometry->getCenterCoordinate();
-            if ($geometry instanceof MapPolygon) {
-                $serializedGeometry = $geometry->getRings();
-            } elseif ($geometry instanceof MapPolyline) {
-                $serializedGeometry = $geometry->getPoints();
-            } elseif ($geometry) {
-                $serializedGeometry = $geometry->getCenterCoordinate();
-            }
-            $result['geometry'] = $serializedGeometry;
+
             $result['lat'] = $center['lat'];
             $result['lon'] = $center['lon'];
         }
 
         return $result;
     }
+
+    protected function arrayFromPlacemark(Placemark $placemark)
+    {
+        $result = $this->shortArrayFromPlacemark($placemark);
+        $result['fields'] = $placemark->getFields();
+        $address = $placemark->getAddress();
+        if ($address) {
+            $result['address'] = $address;
+        }
+
+        $geometry = $placemark->getGeometry();
+        if ($geometry) {
+            if ($geometry instanceof MapPolygon) {
+                $serializedGeometry = array();
+                foreach ($geometry->getRings() as $ring) {
+                    $serializedGeometry[] = $ring->getPoints();
+                }
+
+            } elseif ($geometry instanceof MapPolyline) {
+                $serializedGeometry = $geometry->getPoints();
+
+            } elseif ($geometry) {
+                $serializedGeometry = $geometry->getCenterCoordinate();
+            }
+            $result['geometry'] = $serializedGeometry;
+        }
+
+        return $result;
+    }
+
+    // $category should implement MapListElement and MapFolder
+    protected function arrayFromCategory(MapListElement $category)
+    {
+        $result = array(
+            'id' => $category->getId(),
+            'title' => $category->getTitle(),
+            'subtitle' => $category->getSubtitle(),
+            );
+
+        return $result;
+    }
     
     // functions duped from MapWebModule
-
-    protected function getDataController($categoryPath, &$listItemPath) {
-        if (!$this->feeds)
-            $this->feeds = $this->loadFeedData();
-
-        if ($categoryPath === NULL) {
-            return MapDataController::factory('MapDataController', array(
-                'JS_MAP_CLASS' => 'GoogleJSMap',
-                'DEFAULT_ZOOM_LEVEL' => $this->getOptionalModuleVar('DEFAULT_ZOOM_LEVEL', 10)
-                ));
-
-        } else {
-            $listItemPath = $categoryPath;
-            if ($this->numGroups > 0) {
-                if (count($categoryPath) < 2) {
-                    $path = implode(MAP_CATEGORY_DELIMITER, $categoryPath);
-                    throw new Exception("invalid category path $path for multiple feed groups");
-                }
-                $feedIndex = array_shift($listItemPath).MAP_CATEGORY_DELIMITER.array_shift($listItemPath);
-            } else {
-                $feedIndex = array_shift($listItemPath);
-            }
-            $feedData = $this->feeds[$feedIndex];
-            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $controller->setCategory($feedIndex);
-            return $controller;
+    
+    public function getFeedGroups() {
+        if (!$this->feedGroups) {
+            $this->feedGroups = $this->getModuleSections('feedgroups');
+            $this->numGroups = count($this->feedGroups);
         }
+        return $this->feedGroups;
     }
-
-    protected function getFeedGroups() {
-        return $this->getModuleSections('feedgroups');
-    }
-
+    
+    // overrides function in Module.php
     protected function loadFeedData() {
-        $data = array();
-        $feedConfigFile = NULL;
+        $this->getFeedGroups();
 
-        if ($this->feedGroup !== NULL) {
+        $this->feeds = array();
+        $feedConfigFile = NULL;
+        
+        if ($this->feedGroup === NULL) {
             if ($this->numGroups === 1) {
                 $this->feedGroup = key($this->feedGroups);
             }
         }
 
         if ($this->numGroups === 0) {
-            $data = $this->getModuleSections('feeds');
+            foreach ($this->getModuleSections('feeds') as $id => $feedData) {
+                $feedId = mapIdForFeedData($feedData);
+                $this->feeds[$feedId] = $feedData;
+            }
 
         } elseif ($this->feedGroup !== NULL) {
             $configName = "feeds-{$this->feedGroup}";
             foreach ($this->getModuleSections($configName) as $id => $feedData) {
-                $data[$this->feedGroup.MAP_CATEGORY_DELIMITER.$id] = $feedData;;
+                $feedId = mapIdForFeedData($feedData);
+                $this->feeds[$feedId] = $feedData;
             }
 
         } else {
-            foreach ($this->feedGroups as $groupID => $groupData) {
+            foreach ($this->getFeedGroups() as $groupID => $groupData) {
                 $configName = "feeds-$groupID";
                 foreach ($this->getModuleSections($configName) as $id => $feedData) {
-                    $data[$groupID.MAP_CATEGORY_DELIMITER.$id] = $feedData;
+                    $feedId = mapIdForFeedData($feedData);
+                    $this->feeds[$feedId] = $feedData;
                 }
             }
         }
 
-        return $data;
+        return $this->feeds;
     }
 
-    protected function getCategoriesAsArray() {
-        $category = $this->getArg('category', null);
-        if ($category !== null) {
-            return explode(MAP_CATEGORY_DELIMITER, $category);
+    private function getDataController($category=null) {
+        $controller = null;
+        if (!$category) {
+            $category = $this->getArg('category');
         }
-        return array();
+
+        if ($category) {
+
+            $groups = array_keys($this->getFeedGroups());
+            if (count($groups) <= 1) {
+                $groups = array(null);
+            }
+            foreach ($groups as $groupID) {
+                $this->feedGroup = $groupID;
+                $feeds = $this->loadFeedData();
+                if (isset($feeds[$category])) {
+                    $feedData = $feeds[$category];
+                    $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                    break;
+                }
+            }
+        }
+
+        return $controller;
     }
 
-    protected function initializeForSearch() {
-        $this->feedGroup = $this->getArg('group', null);
-        if ($this->feedGroup !== NULL && !isset($this->feedGroups[$this->feedGroup])) {
-            $this->feedGroup = NULL;
+    protected function getSearchClass($options=array()) {
+        if (isset($options['external']) && $options['external']) {
+            $searchConfigName = 'MAP_EXTERNAL_SEARCH_CLASS';
+            $searchConfigDefault = 'GoogleMapSearch';
+        } else { // includes federatedSearch
+            $searchConfigName = 'MAP_SEARCH_CLASS';
+            $searchConfigDefault = 'MapSearch';
         }
 
-        $mapSearchClass = $this->getOptionalModuleVar('MAP_SEARCH_CLASS', 'MapSearch');
+        $mapSearchClass = $this->getOptionalModuleVar($searchConfigName, $searchConfigDefault);
         if (!$this->feeds)
             $this->feeds = $this->loadFeedData();
         $mapSearch = new $mapSearchClass($this->feeds);
+        if ($mapSearch instanceof GoogleMapSearch && $mapSearch->isPlaces()) {
+            // TODO notify client that logo is required
+        }
+        return $mapSearch;
+    }
 
-        $searchType = $this->getArg('type', '');
-        switch ($searchType) {
-            case 'detail':
-                $identifier = $this->getArg('identifier');
-                if ($identifier) {
-                    $feature = $this->dataController->getFeature($identifier, $categoryPath);
+    // end of functions duped from mapwebmodule
 
-                    $response = array(
-                        'total' => 1,
-                        'returned' => 1,
-                        'displayField' => 'title',
-                        'results' => array($this->arrayFromMapFeature($feature)),
-                        );
+    private function getCategoryReferences() {
+        $path = $this->getArg('references', array());
+        if ($path !== array()) {
+            $path = explode(MAP_CATEGORY_DELIMITER, $path);
+        }
+        // remove empty strings from beginning of array
+        while (count($path) && !strlen($path[0])) {
+            array_shift($path);
+        }
+        return $path;
+    }
 
+    public function initializeForCommand() {
+
+        switch ($this->command) {
+            case 'index':
+                $categories = array();
+                $groups = $this->getFeedGroups();
+                if ($groups) {
+                    foreach ($groups as $id => &$groupData) {
+                        if (isset($groupData['center'])) {
+                            $latlon = filterLatLon($groupData['center']);
+                            $groupData['lat'] = $latlon['lat'];
+                            $groupData['lon'] = $latlon['lon'];
+                        }
+                        $groupData['id'] = $id;
+                        $categories[] = $groupData;
+                    }
+                    $response = array('categories' => $categories);
+                } else {
+                    $feeds = $this->loadFeedData();
+                    foreach ($feeds as $id => $feedData) {
+                        $categories[] = array(
+                            'title' => $feedData['TITLE'],
+                            'subtitle' => $feedData['SUBTITLE'],
+                            'id' => $id,
+                            );
+                    }
+                }
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+
+                break;
+            
+            case 'category':
+                $this->loadFeedData();
+                $category = $this->getArg('category');
+                $groups = $this->getFeedGroups();
+
+                if (isset($groups[$category])) {
+                    $this->feedGroup = $category;
+                    $groupData = $this->loadFeedData();
+                    $categories = array();
+                    foreach ($groupData as $id => $feed) {
+                        if (!isset($feed['HIDDEN']) || !$feed['HIDDEN']) {
+                            $category = array(
+                                'id' => $id,
+                                'title' => $feed['TITLE'],
+                                );
+                            if (isset($feed['SUBTITLE'])) {
+                                $category['subtitle'] = $feed['SUBTITLE'];
+                            }
+                            $categories[] = $category;
+                        }
+
+                    }
+                    $response = array('categories' => $categories);
                     $this->setResponse($response);
                     $this->setResponseVersion(1);
 
                 } else {
-                    // TODO return a more informative error
-                    $this->invalidCommand();
+                    $this->loadFeedData();
+
+                    $currentCategory = null;
+                    $drillPath = array();
+                    if (isset($this->feeds[$category])) {
+                        $currentCategory = $category;
+                    } else {
+                        // traces the parent categories that led the user to this category id
+                        $references = $this->getCategoryReferences();
+                        foreach ($references as $reference) {
+                            if ($currentCategory) {
+                                $drillPath[] = $reference;
+                            } elseif (isset($this->feeds[$reference])) {
+                                $currentCategory = $reference;
+                            }
+                        }
+                        $drillPath[] = $category;
+                    }
+                    if ($currentCategory) {
+                        $dataController = $this->getDataController($currentCategory);
+                        if ($dataController) {
+                            if ($drillPath) {
+                                $dataController->addDisplayFilter('category', $drillPath);
+                            }
+
+                            $listItems = $dataController->getListItems();
+
+                            $placemarks = array();
+                            $categories = array();
+                            foreach ($listItems as $listItem) {
+                                if ($listItem instanceof Placemark) {
+                                    $placemarks[] = $this->shortArrayFromPlacemark($listItem);
+
+                                } else {
+                                    $categories[] = $this->arrayFromCategory($listItem);
+                                }
+                            }
+
+                            $response = array();
+                            if ($placemarks) {
+                                $response['placemarks'] = $placemarks;
+                            }
+                            if ($categories) {
+                                $response['categories'] = $categories;
+                            }
+
+                            $this->setResponse($response);
+                            $this->setResponseVersion(1);
+                        }
+                    }
                 }
 
                 break;
 
-            case 'nearby':
-                $lat = $this->getArg('lat', 0);
-                $lon = $this->getArg('lon', 0);
+            case 'detail':
 
-                $center = array('lat' => $lat, 'lon' => $lon);
-                $searchResults = $mapSearch->searchByProximity($center, 1000, 10);
+                $dataController = $this->getDataController();
+                $drilldownPath = $this->getDrillDownPath();
+                if ($drilldownPath) {
+                    $dataController->addDisplayFilter('category', $drilldownPath);
+                }
+                if ($this->featureIndex !== null) {
+                    $feature = $dataController->selectPlacemark($this->featureIndex);
+                }
+
+                $response = $this->arrayFromPlacemark($feature);
+
+                $this->setResponse($response);
+                $this->setResponseVersion(1);
+
+                break;
+
+            case 'search':
+                $mapSearch = $this->getSearchClass($this->args);
+
+                $searchType = $this->getArg('type');
+                if ($searchType == 'nearby') {
+                    $lat = $this->getArg('lat', 0);
+                    $lon = $this->getArg('lon', 0);
+                    if ($lat || $lon) {
+                        $searchResults = $mapSearch->searchByProximity(
+                            array('lat' => $lat, 'lon' => $lon),
+                            1000, 10);
+                    }
+
+                } else {
+                    $searchTerms = $this->getArg('q');
+                    if ($searchTerms) {
+                        $searchResults = $mapSearch->searchCampusMap($searchTerms);
+                    }
+                }
                 
                 $places = array();
                 foreach ($searchResults as $result) {
-                    $places[] = $this->arrayFromMapFeature($result);
+                    $places[] = $this->shortArrayFromPlacemark($result);
                 }
 
                 $response = array(
                     'total' => count($places),
                     'returned' => count($places),
-                    'displayField' => 'title',
                     'results' => $places,
                     );
 
@@ -177,145 +350,85 @@ class MapAPIModule extends APIModule
 
                 break;
 
-            default:
-                $searchTerms = $this->getArg('q');
-                if ($searchTerms) {
+            // ajax calls
+            case 'projectPoint':
 
-                    $searchResults = $mapSearch->searchCampusMap($searchTerms);
+                $lat = $this->getArg('lat', 0);
+                $lon = $this->getArg('lon', 0);
 
-                    $places = array();
-                    foreach ($searchResults as $result) {
-                        $places[] = $this->arrayFromMapFeature($result);
-                    }
+                $fromProj = $this->getArg('from', GEOGRAPHIC_PROJECTION);
+                $toProj = $this->getArg('to', GEOGRAPHIC_PROJECTION);
 
-                    $response = array(
-                        'total' => count($places),
-                        'returned' => count($places),
-                        'displayField' => 'title',
-                        'results' => $places,
-                        );
+                $projector = new MapProjector();
+                $projector->setSrcProj($fromProj);
+                $projector->setDstProj($toProj);
+                $result = $projector->projectPoint(array('lat' => $lat, 'lon' => $lon));
+                $this->setResponse($result);
+                $this->setResponseVersion(1);
 
-                    $this->setResponse($response);
-                    $this->setResponseVersion(1);
-                }
-        }
-    }
+                break;
 
-    // end of functions duped from mapwebmodule
-
-    public function initializeForCommand() {
-
-        $this->feedGroups = $this->getFeedGroups();
-        $this->numGroups = count($this->feedGroups);
-
-        switch ($this->command) {
-            case 'categories':
-                $this->feedGroup = $this->getArg('group', null);
-                if ($this->feedGroup !== NULL && !isset($this->feedGroups[$this->feedGroup])) {
-                    $this->feedGroup = NULL;
-                }
+            case 'sortGroupsByDistance':
+                
+                $lat = $this->getArg('lat', 0);
+                $lon = $this->getArg('lon', 0);
 
                 $categories = array();
-                $this->feeds = $this->loadFeedData();
-                foreach ($this->feeds as $id => $feedData) {
-                    if (isset($feedData['HIDDEN']) && $feedData['HIDDEN']) continue;
-                    $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-                    $controller->setCategory($id);
-                    $category = array(
-                        'id' => $controller->getCategory(),
-                        'title' => self::argVal($feedData, 'TITLE', $controller->getTitle()),
-                        );
-                    $category['subcategories'] = $controller->getAllCategoryNodes();
-                    $categories[] = $category;
+
+                if ($lat || $lon) {
+                    foreach ($this->getFeedGroups() as $id => $groupData) {
+                        $categories[] = array(
+                            'title' => $groupData['title'],
+                            'id' => $id,
+                            );
+                        $center = filterLatLon($groupData['center']);
+                        $distances[] = greatCircleDistance($lat, $lon, $center['lat'], $center['lon']);
+                    }
+                    array_multisort($distances, SORT_ASC, $categories);
                 }
 
                 $this->setResponse($categories);
                 $this->setResponseVersion(1);
-            
-                break;
-            case 'places':
-                $categoryPath = $this->getCategoriesAsArray();
-                if ($categoryPath) {
-                    $this->dataController = $this->getDataController($categoryPath, $listItemPath);
-                    $listItems = $this->dataController->getListItems($listItemPath);
-                    $places = array();
-                    foreach ($listItems as $listItem) {
-                        if ($listItem instanceof MapFeature) {
-                            $aPlace = $this->arrayFromMapFeature($listItem);
-                            $aPlace['category'] = $categoryPath;
-                            $places[] = $aPlace;
-                        }
-                    }
-                
-                    $response = array(
-                        'total' => count($places),
-                        'returned' => count($places),
-                        'displayField' => 'title',
-                        'results' => $places,
-                        );
-                
-                    $this->setResponse($response);
-                    $this->setResponseVersion(1);
-                }
-                break;
-                
-            case 'detail':
-                $categoryPath = $this->getCategoriesAsArray();
-                $identifier = $this->getArg('id', null);
-                if ($categoryPath && $identifier) {
-                    $this->dataController = $this->getDataController($categoryPath, $listItemPath);
-                    $listItem = $this->dataController->getListItem($identifier);
-                    if ($listItem !== null) {
-                        $details = $this->arrayFromMapFeature($listItem);
-                        $this->setResponse($details);
-                    } else {
-                        // TODO define an error code for no results
-                        $error = new KurogoError(0, 'Place not found', null);
-                        $this->setResponseError($error);
-                    }
-                    $this->setResponseVersion(1);
-                }
-                break;
-                
-            case 'search':
-                $this->initializeForSearch();
 
                 break;
 
-            // ajax calls
             case 'staticImageURL':
-                $baseURL = $this->getArg('baseURL');
-                $mapClass = $this->getArg('mapClass');
-                $mapController = MapImageController::factory($mapClass, $baseURL);
+
+                $params = array(
+                    'STATIC_MAP_BASE_URL' => $this->getArg('baseURL'),
+                    'STATIC_MAP_CLASS' => $this->getArg('mapClass'),
+                    );
                 
-                $projection = $this->getArg('projection');
-                if ($projection) {
-                    $mapController->setMapProjection($projection);
-                }
-                
-                $width = $this->getArg('width');
-                if ($width) {
-                    $mapController->setImageWidth($width);
-                }
+                $dc = Kurogo::deviceClassifier();
+                $mapDevice = new MapDevice($dc->getPagetype(), $dc->getPlatform());
 
-                $height = $this->getArg('height');
-                if ($height) {
-                    $mapController->setImageHeight($height);
+                $mapController = MapImageController::factory($params, $mapDevice);
+                if (!$mapController->isStatic()) {
+                    $error = new KurogoError(0, "staticImageURL must be used with a StaticMapImageController subclass");
+                    $this->throwError($error);
                 }
 
-                $bbox = $this->getArg('bbox', null);
-                $lat = $this->getArg('lat');
-                $lon = $this->getArg('lon');
-                $zoom = $this->getArg('zoom');
+                $currentQuery = $this->getArg('query');
+                $mapController->parseQuery($currentQuery);
 
-                if ($bbox) {
-                    $mapController->setBoundingBox($bbox);
+                $overrides = $this->getArg('overrides');
+                $mapController->parseQuery($overrides);
 
-                } else if ($lat && $lon && $zoom !== null) {
-                    $mapController->setZoomLevel($zoom);
-                    $mapController->setCenter(array('lat' => $lat, 'lon' => $lon));
+                $zoomDir = $this->getArg('zoom');
+                if ($zoomDir == 1 || $zoomDir == 'in') {
+                    $level = $mapController->getLevelForZooming('in');
+                    $mapController->setZoomLevel($level);
+                } elseif ($zoomDir == -1 || $zoomDir == 'out') {
+                    $level = $mapController->getLevelForZooming('out');
+                    $mapController->setZoomLevel($level);
                 }
-                
+
+                $scrollDir = $this->getArg('scroll');
+                if ($scrollDir) {
+                    $center = $mapController->getCenterForPanning($scrollDir);
+                    $mapController->setCenter($center);
+                }
+
                 $url = $mapController->getImageURL();
                 
                 $this->setResponse($url);
@@ -323,35 +436,35 @@ class MapAPIModule extends APIModule
             
                 break;
 
-                case 'geocode':
-                    $locationSearchTerms = $this->getArg('q');
-                    
-                    $geocodingDataControllerClass = $this->getOptionalModuleVar('GEOCODING_DATA_CONTROLLER_CLASS');
-                    $geocodingDataParserClass = $this->getOptionalModuleVar('GEOCODING_DATA_PARSER_CLASS');
-                    $geocoding_base_url = $this->getOptionalModuleVar('GEOCODING_BASE_URL');
+            case 'geocode':
+                $locationSearchTerms = $this->getArg('q');
+                
+                $geocodingDataControllerClass = $this->getOptionalModuleVar('GEOCODING_DATA_CONTROLLER_CLASS');
+                $geocodingDataParserClass = $this->getOptionalModuleVar('GEOCODING_DATA_PARSER_CLASS');
+                $geocoding_base_url = $this->getOptionalModuleVar('GEOCODING_BASE_URL');
 
-                    $arguments = array('BASE_URL' => $geocoding_base_url,
-                                  'CACHE_LIFETIME' => 86400,
-                                  'PARSER_CLASS' => $geocodingDataParserClass);
+                $arguments = array('BASE_URL' => $geocoding_base_url,
+                              'CACHE_LIFETIME' => 86400,
+                              'PARSER_CLASS' => $geocodingDataParserClass);
 
-                    $controller = DataController::factory($geocodingDataControllerClass, $arguments);
-                    $controller->addCustomFilters($locationSearchTerms);
-                    $response = $controller->getParsedData();
+                $controller = DataController::factory($geocodingDataControllerClass, $arguments);
+                $controller->addCustomFilters($locationSearchTerms);
+                $response = $controller->getParsedData();
 
-                    // checking for Geocoding service error
-                    if ($response['errorCode'] == 0) {
+                // checking for Geocoding service error
+                if ($response['errorCode'] == 0) {
 
-                        unset($response['errorCode']);
-                        unset($response['errorMessage']);
-                        $this->setResponse($response);
-                        $this->setResponseVersion(1);
-                    }
-                    else {
-                        $kurogoError = new KurogoError($response['errorCode'], "Geocoding service Erroe", $response['errorMessage']);
-                        $this->setResponseError($kurogoError);
-                        $this->setResponseVersion(1);
-                    }
-                    break;
+                    unset($response['errorCode']);
+                    unset($response['errorMessage']);
+                    $this->setResponse($response);
+                    $this->setResponseVersion(1);
+                }
+                else {
+                    $kurogoError = new KurogoError($response['errorCode'], "Geocoding service Erroe", $response['errorMessage']);
+                    $this->setResponseError($kurogoError);
+                    $this->setResponseVersion(1);
+                }
+                break;
                     
             default:
                 $this->invalidCommand();

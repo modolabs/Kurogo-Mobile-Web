@@ -53,7 +53,7 @@ class db {
         $this->lastError = null;
         $db_type = isset($config['DB_TYPE']) ? $config['DB_TYPE'] : null;
         if (!file_exists(LIB_DIR . "/db/db_$db_type.php")) {
-            $e = new Exception("Database type $db_type not found");
+            $e = new KurogoConfigurationException("Database type $db_type not found");
             $this->lastError = KurogoError::errorFromException($e);
             throw $e;
         }
@@ -64,9 +64,9 @@ class db {
         } catch (Exception $e) {
             $this->lastError = KurogoError::errorFromException($e);
             if (Kurogo::getSiteVar('DB_DEBUG')) {
-                throw new Exception("Error connecting to database: " . $e->getMessage(), 0);
+                throw new KurogoDataServerException("Error connecting to database: " . $e->getMessage(), 0);
             } else {
-                throw new Exception("Error connecting to database");
+                throw new KurogoDataServerException("Error connecting to database");
             }
         }
     }
@@ -98,12 +98,25 @@ class db {
         return $result;
     }
     
+  // http://en.wikipedia.org/wiki/Select_%28SQL%29#Limiting_result_rows
+  public function limitQuery($sql, $parameters=array(), $ignoreErrors=false, 
+    $catchErrorCodes=array(), $limit=1)
+  {
+    if ($this instanceof db_mysql || $this instanceof db_sqlite
+      || ($this instanceof db_pgsql && $this->pgVersion() >= 8.4)
+    ) {
+      $sql .= ' LIMIT ?';
+      $parameters[] = $limit;
+    }
+    return $this->query($sql, $parameters, $ignoreErrors, $catchErrorCodes);
+  }
+  
     /*
      * Handle query error
      */
     private function errorHandler($sql, $errorInfo, $ignoreErrors, $catchErrorCodes) {
     
-        $e = new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]), $errorInfo[1]);
+        $e = new KurogoDataException (sprintf("Error with %s: %s", $sql, $errorInfo[2]), $errorInfo[1]);
     
         if ($ignoreErrors) {
             $this->lastError = KurogoError::errorFromException($e);

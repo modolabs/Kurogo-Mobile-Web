@@ -39,7 +39,7 @@ class TrumbaCalendarDataController extends CalendarDataController
     public function url()
     {
         if (empty($this->startDate) || empty($this->endDate)) {
-            throw new Exception('Start or end date cannot be blank');
+            throw new KurogoConfigurationException('Start or end date cannot be blank');
         }
         
         $diff = $this->endTimestamp() - $this->startTimestamp();
@@ -84,7 +84,7 @@ class TrumbaCalendarDataController extends CalendarDataController
             }
         }
     
-        throw new Exception("Can't load event without a time");
+        throw new KurogoConfigurationException("Can't load event without a time");
     }
     
     protected function init($args)

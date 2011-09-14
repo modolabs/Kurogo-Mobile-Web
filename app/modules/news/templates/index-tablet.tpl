@@ -19,13 +19,13 @@
         </form>
       </td><td id="searchformcontainer">
         <form method="get" action="search">
-          {include file="findInclude:common/templates/search.tpl" insideForm=true placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
+          {include file="findInclude:common/templates/search.tpl" insideForm=true extraArgs=$hiddenArgs}
         </form>
       </td></tr>
     </table>
   {else}
   <div id="newsHeader">
-    {include file="findInclude:common/templates/search.tpl" placeholder="Search "|cat:$moduleName extraArgs=$hiddenArgs}
+    {include file="findInclude:common/templates/search.tpl" extraArgs=$hiddenArgs}
   </div>
   {/if}
 {/block}

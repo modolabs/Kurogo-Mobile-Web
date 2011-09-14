@@ -11,6 +11,10 @@ define('DISABLED_MODULES_COOKIE', 'disabledmodules');
 define('MODULE_ORDER_COOKIE', 'moduleorder');
 define('BOOKMARK_COOKIE_DELIMITER', '@@');
 
+if (!function_exists('gzdeflate')) {
+    die("Kurogo requires the zlib PHP extension.");
+}
+
 abstract class WebModule extends Module {
 
     const INCLUDE_DISABLED_MODULES=true;
@@ -48,9 +52,7 @@ abstract class WebModule extends Module {
 
   private $fontsize = 'medium';
   private $fontsizes = array('small', 'medium', 'large', 'xlarge');
-  
-  protected $bookmarkLinkTitle = 'Bookmarks';
-  
+    
   private $templateEngine = null;
   
   private $htmlPager = null;
@@ -278,6 +280,7 @@ abstract class WebModule extends Module {
   private function loadTemplateEngineIfNeeded() {
     if (!isset($this->templateEngine)) {
       $this->templateEngine = new TemplateEngine($this->id);
+      $this->templateEngine->registerPlugin('modifier','getLocalizedString', array($this,'getLocalizedString'));
     }
   }
   
@@ -346,7 +349,7 @@ abstract class WebModule extends Module {
   
     /* This method would be called by other modules to get a valid link from a model object */
     public function linkForItem(KurogoObject $object, $options=null) {
-       throw new Exception("linkForItem must be subclassed if it is going to be used");
+       throw new KurogoException("linkForItem must be subclassed if it is going to be used");
     }
 
     /* default implmentation. Subclasses may wish to override this */
@@ -507,7 +510,7 @@ abstract class WebModule extends Module {
 				if ($module = WebModule::factory($id)) {
 				   $modules[$id] = $module;
 				}
-			} catch (Exception $e) {
+			} catch (KurogoException $e) {
 			}
   		}
   	}
@@ -707,8 +710,12 @@ abstract class WebModule extends Module {
   protected function addInlineCSS($inlineCSS) {
     $this->inlineCSSBlocks[] = $inlineCSS;
   }
+  protected function getInternalCSSURL($path) {
+    $path = '/min/g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    return $path;
+  }
   protected function addInternalCSS($path) {
-    $this->cssURLs[] = '/min/g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    $this->cssURLs[] = $this->getInternalCSSURL($path);
   }
   protected function addExternalCSS($url) {
     $this->cssURLs[] = $url;
@@ -725,8 +732,12 @@ abstract class WebModule extends Module {
   protected function addOnLoad($onLoad) {
     $this->onLoadBlocks[] = $onLoad;
   }
-  protected function addInternalJavascript($path) {
+  protected function getInternalJavascriptURL($path) {
     $path = '/min/?g='.MIN_FILE_PREFIX.$path.$this->getMinifyArgString();
+    return $path;
+  }
+  protected function addInternalJavascript($path) {
+    $path = $this->getInternalJavascriptURL($path);
     if (!in_array($path, $this->javascriptURLs)) {
         $this->javascriptURLs[] = $path;
     }
@@ -886,7 +897,7 @@ abstract class WebModule extends Module {
         $bookmarkLink = array();
         if ($hasBookmarks) {
             $bookmarkLink = array(array(
-                'title' => $this->bookmarkLinkTitle,
+                'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
                 'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
                 ));
             $this->assign('bookmarkLink', $bookmarkLink);
@@ -1190,6 +1201,13 @@ abstract class WebModule extends Module {
         $this->refreshTime = $time;
         $this->assign('refreshPage', $this->refreshTime);
     }
+    
+    private function assignLocalizedStrings() {
+        $this->assign('footerKurogo', $this->getLocalizedString('FOOTER_KUROGO'));
+        $this->assign('footerBackToTop', $this->getLocalizedString('FOOTER_BACK_TO_TOP'));
+        $this->assign('homeLinkText', $this->getLocalizedString('HOME_LINK', Kurogo::getSiteString('SITE_NAME')));
+        $this->assign('moduleHomeLinkText', $this->getLocalizedString('HOME_LINK', $this->getModuleName()));
+    }
   
   private function setPageVariables() {
     $this->loadTemplateEngineIfNeeded();
@@ -1263,6 +1281,9 @@ abstract class WebModule extends Module {
     
     $moduleStrings = $this->getOptionalModuleSection('strings');
     $this->assign('moduleStrings', $moduleStrings);
+    $this->assign('homeLink', $this->buildURLForModule('home','',array()));
+    
+    $this->assignLocalizedStrings();
 
     // Module Help
     if ($this->page == 'help') {
@@ -1270,6 +1291,8 @@ abstract class WebModule extends Module {
       $template = 'common/templates/'.$this->page;
     } else {
       $this->assign('hasHelp', isset($moduleStrings['help']));
+      $this->assign('helpLink', $this->buildBreadcrumbURL('help',array()));
+      $this->assign('helpLinkText', $this->getLocalizedString('HELP_TEXT', $this->getModuleName()));
       $template = 'modules/'.$this->templateModule.'/templates/'.$this->templatePage;
     }
     
@@ -1303,21 +1326,27 @@ abstract class WebModule extends Module {
         if ($this->isLoggedIn()) {
             $user = $session->getUser();
             $authority = $user->getAuthenticationAuthority();
-            $this->assign('session_authority_class', $authority->getAuthorityClass());
-            $this->assign('session_authority_title', $authority->getAuthorityTitle());
             $this->assign('session_userID', $user->getUserID());
             $this->assign('session_fullName', $user->getFullname());
             if (count($session->getUsers())==1) {
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array('authority'=>$user->getAuthenticationAuthorityIndex())));
-                $this->assign('session_multiple_logins', false);
+                $this->assign('footerLoginLink', $this->buildURLForModule('login', '', array()));
+                $this->assign('footerLoginText', $this->getLocalizedString('SIGNED_IN_SINGLE', $authority->getAuthorityTitle(), $user->getFullName()));
+                $this->assign('footerLoginClass', $authority->getAuthorityClass());
             } else {
-                $this->assign('session_multiple_logins', true);
+                $this->assign('footerLoginClass', 'login_multiple');
                 $this->assign('session_logout_url', $this->buildURLForModule('login', 'logout', array()));
+                $this->assign('footerLoginLink', $this->buildURLForModule('login', 'logout', array()));
+                $this->assign('footerLoginText', $this->getLocalizedString('SIGNED_IN_MULTIPLE'));
             }
 
             if ($session_max_idle = intval(Kurogo::getOptionalSiteVar('AUTHENTICATION_IDLE_TIMEOUT', 0))) {
                 $this->setRefresh($session_max_idle+2);
             }
+        } else {
+            $this->assign('footerLoginClass', 'noauth');
+            $this->assign('footerLoginLink', $this->buildURLForModule('login','', array()));
+            $this->assign('footerLoginText', $this->getLocalizedString('SIGN_IN_SITE', Kurogo::getSiteString('SITE_NAME')));
         }
     }
 

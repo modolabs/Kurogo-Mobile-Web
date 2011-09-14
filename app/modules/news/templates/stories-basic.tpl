@@ -13,10 +13,10 @@
 
 <div class="nonfocal">
   {if $previousURL}
-    <a href="{$previousURL}">< Previous {$maxPerPage} stories</a>
+    <a href="{$previousURL}">&lt; {$previousText}</a>
   {/if}
   {if $previousURL && $nextURL}&nbsp;|&nbsp;{/if}
   {if $nextURL}
-    <a href="{$nextURL}">Next {$maxPerPage} stories ></a>
+    <a href="{$nextURL}">{$nextText} &gt;</a>
   {/if}
 </div>

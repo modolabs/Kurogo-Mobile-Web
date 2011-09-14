@@ -65,3 +65,8 @@ a.people {
 	background-image: url(/common/images/action-people@2x.png); 
 	background-size: 19px 19px;
 }
+
+a.external {
+	background-image: url(/common/images/action-external.png); 
+	background-size: 26px 19px;
+}

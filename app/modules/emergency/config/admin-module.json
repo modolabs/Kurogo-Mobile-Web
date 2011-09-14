@@ -1,31 +1,31 @@
 {
     "strings":{
-        "title":"Text Strings",
-        "description":"",
+        "titleKey":"EMERGENCY_ADMIN_STRINGS_TITLE",
+        "descriptionKey":"EMERGENCY_ADMIN_STRINGS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "MORE_CONTACTS":{"label":"More Contacts","type":"text","config":"module","section":"strings","description":"Text to show for &quot;More Emergency Contacts&quot; link"},
-            "NO_EMERGENCY":{"label":"No Emergency","type":"text","config":"module","section":"strings","description":"Text to show when there is no emergency"}
+            "MORE_CONTACTS":{"labelKey":"EMERGENCY_ADMIN_STRINGS_MORECONTACTS_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"EMERGENCY_ADMIN_STRINGS_MORECONTACTS_DESCRIPTION"},
+            "NO_EMERGENCY":{"labelKey":"EMERGENCY_ADMIN_STRINGS_NOEMERGENCY_TITLE","type":"text","config":"module","section":"strings","descriptionKey":"EMERGENCY_ADMIN_STRINGS_NOEMERGENCY_DESCRIPTION"}
         }
     },
     "contacts":{
-        "title":"Contacts",
-        "description":"Configures the source to edit emergency contacts",
+        "titleKey":"EMERGENCY_ADMIN_CONTACTS_TITLE",
+        "descriptionKey":"EMERGENCY_ADMIN_CONTACTS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "CONTROLLER_CLASS":{"label":"Contacts type","description":"Source for contacts list. <b>Drupal Module</b>: Use the included Drupal 6 module (in the add-ons folder) to create contacts on a drupal server. <b>INI File</b> store the contacts in a standard INI file located on this server.","type":"select","optionsMethod":["ContactsListDataController","getContactsListDataControllers"],"config":"feeds","section":"contacts"},
-            "DRUPAL_SERVER_URL":{"label":"Drupal Server URL","description":"URL of Drupal server","type":"text","config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","DrupalContactsListDataController"]},
-            "FEED_VERSION":{"label":"Drupal module version","description":"Version of Drupal Emergency module to use","type":"select","options":{"1":"1"},"config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","DrupalContactsListDataController"]},
-            "BASE_URL":{"label":"Contacts Location","description":"Location of ini file","type":"file","config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","INIFileContactsListDataController"]}
+            "CONTROLLER_CLASS":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_CLASS_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_CLASS_DESCRIPTION","type":"select","optionsMethod":["ContactsListDataController","getContactsListDataControllers"],"config":"feeds","section":"contacts"},
+            "DRUPAL_SERVER_URL":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_DRUPALSERVER_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_DRUPALSERVER_DESCRIPTION","type":"text","config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","DrupalContactsListDataController"]},
+            "FEED_VERSION":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_VERSION_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_VERSION_DESCRIPTION","type":"select","options":{"1":"1"},"config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","DrupalContactsListDataController"]},
+            "BASE_URL":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_BASEURL_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_BASEURL_DESCRIPTION","type":"file","config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","INIFileContactsListDataController"]}
         }
     },
     "notice":{
-        "title":"Notice",
-        "description":"Configures the source to retrieve emergency notices",
+        "titleKey":"EMERGENCY_ADMIN_NOTICE_TITLE",
+        "descriptionKey":"EMERGENCY_ADMIN_NOTICE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "CONTROLLER_CLASS":{"label":"Notice type","description":"Source for emergency notices.","type":"select","optionsMethod":["EmergencyNoticeDataController","getEmergencyNoticeDataControllers"],"config":"feeds","section":"notice"},
-            "BASE_URL":{"label":"Notice Location","description":"URL of Emergency Notice Feed. Should be a standard RSS feed","type":"text","config":"feeds","section":"notice"}
+            "CONTROLLER_CLASS":{"labelKey":"EMERGENCY_ADMIN_NOTICE_CLASS_TITLE","descriptionKey":"EMERGENCY_ADMIN_NOTICE_CLASS_DESCRIPTION","type":"select","optionsMethod":["EmergencyNoticeDataController","getEmergencyNoticeDataControllers"],"config":"feeds","section":"notice"},
+            "BASE_URL":{"labelKey":"EMERGENCY_ADMIN_NOTICE_BASEURL_TITLE","descriptionKey":"EMERGENCY_ADMIN_NOTICE_BASEURL_DESCRIPTION","type":"text","config":"feeds","section":"notice"}
      }
     }
     

@@ -1,0 +1,56 @@
+.story {
+	background-color:#fff;
+}
+
+.portrait #stories .results .pagerlink {
+	width: 120px;
+	height: 100%;
+	padding: 0 0 0 10px;
+}
+
+.portrait #stories .results .pagerlink a {
+	height: 60%;
+	padding: 45px 10px 0 10px;
+}
+
+.portrait #stories {
+	height:113px;
+}
+
+.portrait #stories .results {
+	height:100%;
+}
+
+.portrait #stories .results .story {
+	border-right: 1px dotted #999;
+	height: 100%;
+}
+
+.portrait #stories .results .story a {
+	height: 100%;
+	padding:10px 0 0 10px;
+}
+
+.landscape #stories .results .pagerlink {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.landscape #stories .results .story {
+	height: 6.6em;
+}
+
+.landscape #stories .results .story a {
+	height: 100%;
+	padding: 10px 10px 0 10px;
+}
+
+.landscape #storyDetailWrapper {
+	background-color:#ffffff;
+	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
+}
+
+.portrait #storyDetailWrapper {
+	background-color:#ffffff;
+	background: -webkit-gradient(linear, 0% 0%, 0% 3%, from(#B0B0B0), to(#FFFFFF), color-stop(.3,#E8E8E8), color-stop(.5,#F5F5F5));
+}

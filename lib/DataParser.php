@@ -38,13 +38,13 @@ abstract class DataParser
     public static function factory($parserClass, $args)
     {
         if (!class_exists($parserClass)) {
-            throw new Exception("Parser class $parserClass not defined");
+            throw new KurogoConfigurationException("Parser class $parserClass not defined");
         } 
         
         $parser = new $parserClass;
         
         if (!$parser instanceOf DataParser) {
-            throw new Exception("$parserClass is not a subclass of DataParser");
+            throw new KurogoConfigurationException("$parserClass is not a subclass of DataParser");
         }
         
         $parser->init($args);

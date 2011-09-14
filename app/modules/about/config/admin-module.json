@@ -1,24 +1,24 @@
 {
     "strings":{
-        "title":"Text Strings",
-        "description":"",
+        "titleKey":"ABOUT_ADMIN_STRINGS_TITLE",
+        "descriptionKey":"ABOUT_ADMIN_STRINGS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-         "SITE_ABOUT_HTML":{"label":"About this site","type":"paragraph","config":"module","section":"strings","description":""},
-         "ABOUT_HTML":{"label":"About this organization","type":"paragraph","config":"module","section":"strings","description":""}
+         "SITE_ABOUT_HTML":{"labelKey":"ABOUT_ADMIN_STRINGS_SITE_ABOUT_TITLE","type":"paragraph","config":"module","section":"strings","descriptionKey":"ABOUT_ADMIN_STRINGS_SITE_ABOUT_DESCRIPTION"},
+         "ABOUT_HTML":{"labelKey":"ABOUT_ADMIN_STRINGS_ABOUT_TITLE","type":"paragraph","config":"module","section":"strings","descriptionKey":"ABOUT_ADMIN_STRINGS_ABOUT_DESCRIPTION"}
        }
     },
     "index": {
-        "title":"Index Page",
+        "titleKey":"ABOUT_ADMIN_INDEX_TITLE",
         "config":"page-index",
-        "description":"Entries for about index page",
+        "descriptionKey":"ABOUT_ADMIN_INDEX_DESCRIPTION",
         "sectiontype":"section",
         "fields":{
-            "section":{"label":"Entry","type":"label"},
-            "title":{"label":"Title","description":"The title of the entry","type":"text"},
-            "subtitle":{"label":"Subtitle","description":"The subtitle of the entry","type":"text","omitBlankValue":true},
-            "url":{"label":"URL","description":"URL of entry.","type":"text"},
-            "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
+            "section":{"labelKey":"ABOUT_ADMIN_INDEX_SECTION_TITLE","descriptionKey":"ABOUT_ADMIN_INDEX_SECTION_DESCRIPTION","type":"label"},
+            "title":{"labelKey":"ABOUT_ADMIN_INDEX_TITLE_TITLE","descriptionKey":"ABOUT_ADMIN_INDEX_TITLE_DESCRIPTION","type":"text"},
+            "subtitle":{"labelKey":"ABOUT_ADMIN_INDEX_SUBTITLE_TITLE","descriptionKey":"ABOUT_ADMIN_INDEX_SUBTITLE_DESCRIPTION","type":"text","omitBlankValue":true},
+            "url":{"labelKey":"ABOUT_ADMIN_INDEX_URL_TITLE","descriptionKey":"ABOUT_ADMIN_INDEX_URL_DESCRIPTION","type":"text"},
+            "class":{"labelKey":"ABOUT_ADMIN_INDEX_TYPE_TITLE","descriptionKey":"ABOUT_ADMIN_INDEX_TYPE_DESCRIPTION","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
         },
         "sectiontitlefield":"title",
         "sectionindex":"string",

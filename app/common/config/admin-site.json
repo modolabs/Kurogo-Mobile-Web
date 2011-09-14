@@ -1,185 +1,185 @@
 {
     "setup":{
-        "title":"Site Setup",
-        "description":"The following values affect basic site behavior.",
+        "titleKey":"ADMIN_SITE_SETUP_TITLE",
+        "descriptionKey":"ADMIN_SITE_SETUP_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "SITE_NAME":{"label":"Site name","type":"text","config":"strings","description":"Name of this website as it appears in the website, including in the &quot;Return to [site-name] home&quot; link in the footer","section":"strings"},
-            "ORGANIZATION_NAME":{"label":"Organization name","type":"text","config":"strings", "description":"Name of the organization that owns this site.","section":"strings"},
-            "LANGUAGE":{"label":"Default language","type":"select","config":"site","optionsMethod":["Kurogo","getLanguages"],"description":"Sets the default language used for the entire site","section":"site settings"},
-            "LOCAL_TIMEZONE":{"label":"Local time zone","type":"select","config":"site","optionsMethod":["Calendar","getTimeZones"],"section":"site settings"},
-            "LOCAL_AREA_CODE":{"label":"Local area code","type":"text","config":"site","description":"Area code for local phone numbers. Added to phone numbers that are missing an area code.","section":"site settings"},
-            "AUTODETECT_PHONE_NUMBERS":{"label":"Enable auto-detection of phone numbers","type":"checkbox","config":"site","description":"On some web browsers (e.g., iOS), phone numbers are automatically detected and turned into tappable or clickable links. Uncheck this box to disable this behavior site-wide.","section":"site settings"}
+            "SITE_NAME":{"labelKey":"ADMIN_SITE_SETUP_SITE_NAME_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_SETUP_SITE_NAME_DESCRIPTION","section":"strings"},
+            "ORGANIZATION_NAME":{"labelKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_TITLE","type":"text","config":"strings", "descriptionKey":"ADMIN_SITE_SETUP_ORGANIZATION_NAME_DESCRIPTION","section":"strings"},
+            "LANGUAGES":{"labelKey":"ADMIN_SITE_SETUP_LANGUAGE_TITLE","type":"select","config":"site","optionsMethod":["Kurogo","getAvailableLanguages"],"descriptionKey":"ADMIN_SITE_SETUP_LANGUAGE_DESCRIPTION","section":"site settings","placeholder":"en_US","optionsFirst":"-- Choose --"},
+            "LOCAL_TIMEZONE":{"labelKey":"ADMIN_SITE_SETUP_LOCAL_TIMEZONE_TITLE","type":"select","config":"site","optionsMethod":["Calendar","getTimeZones"],"descriptionKey":"ADMIN_SITE_SETUP_LOCAL_TIMEZONE_DESCRIPTION","section":"site settings"},
+            "LOCAL_AREA_CODE":{"labelKey":"ADMIN_SITE_SETUP_LOCAL_AREA_CODE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_SETUP_LOCAL_AREA_CODE_DESCRIPTION","section":"site settings"},
+            "AUTODETECT_PHONE_NUMBERS":{"labelKey":"ADMIN_SITE_SETUP_AUTODETECT_PHONE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_SETUP_AUTODETECT_PHONE_DESCRIPTION","section":"site settings"}
         }
     },
     "modules":{
-        "title":"Module Behavior", 
-        "description":"Behavior related to the loading of modules",
+        "titleKey":"ADMIN_SITE_MODULES_TITLE",
+        "descriptionKey":"ADMIN_SITE_MODULES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "DEFAULT":{"label":"Default mobile","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for mobile devices","section":"urls"},
-            "DEFAULT-COMPLIANT-COMPUTER":{"label":"Default desktop","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","description":"Initial module for non-mobile devices","section":"urls"},
-            "DYNAMIC_MODULE_NAV_DATA":{"label":"Dynamic Module Data","type":"checkbox","config":"site","description":"When enabled, module's navigation data can be dynamic by using a subclass method. This only has effect if you have subclassed the built in modules. See Developer's Guide for more information. This is an advanced option and should be left off for performance reasons if you do not utilize this feature.","section":"modules"},
-            "CREATE_DEFAULT_CONFIG":{"label":"Create config files","type":"checkbox","config":"site","description":"When enabled, if a module is loaded and there is no configuration folder, it will be created with the default. This should normally be off to prevent unnecessary creation of unneeded folders by unused modules.","section":"modules"}
+            "DEFAULT":{"labelKey":"ADMIN_SITE_MODULES_DEFAULT_TITLE","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","descriptionKey":"ADMIN_SITE_MODULES_DEFAULT_DESCRIPTION","section":"urls"},
+            "DEFAULT-COMPLIANT-COMPUTER":{"labelKey":"ADMIN_SITE_MODULES_DEFAULT_COMPUTER_TITLE","type":"select","optionsMethod":["WebModule","getAllModuleNames"],"config":"site","descriptionKey":"ADMIN_SITE_MODULES_DEFAULT_COMPUTER_DESCRIPTION","section":"urls"},
+            "DYNAMIC_MODULE_NAV_DATA":{"labelKey":"ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_MODULES_DYNAMIC_NAV_DATA_DESCRIPTION","section":"modules"},
+            "CREATE_DEFAULT_CONFIG":{"labelKey":"ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_MODULES_CREATE_DEFAULT_CONFIG_DESCRIPTION","section":"modules"}
         }
     },
     "security":{
-        "title":"SSL",
-        "description":"Configure secure socket layer connections",
+        "titleKey":"ADMIN_SITE_SECURITY_TITLE",
+        "descriptionKey":"ADMIN_SITE_SECURITY_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "SECURE_REQUIRED":{"label":"Require https","type":"checkbox","config":"site","description":"Require a secure (https) connection on all requests. It is also possible to configure secure connections on a per module basis. Note: It is the responsibility of the server administrator to ensure this site can handle secure connections.","section":"site settings"},
-            "SECURE_HOST":{"label":"Secure host","type":"text","config":"site","description":"Alternate host name to use for secure connections. Default is the server hostname","section":"site settings"},
-            "SECURE_PORT":{"label":"Secure port","type":"text","config":"site","description":"Alternate port to use for secure connections. Default is the standard https port (443)","section":"site settings"}
+            "SECURE_REQUIRED":{"labelKey":"ADMIN_SITE_SECURITY_REQUIRED_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_SECURITY_REQUIRED_DESCRIPTION","section":"site settings"},
+            "SECURE_HOST":{"labelKey":"ADMIN_SITE_SECURITY_HOST_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_SECURITY_HOST_DESCRIPTION","section":"site settings"},
+            "SECURE_PORT":{"labelKey":"ADMIN_SITE_SECURITY_PORT_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_SECURITY_PORT_DESCRIPTION","section":"site settings"}
         }
     },
     "theme":{
-        "title":"Theme", 
-        "description":"Select the visual theme for the site. For more information about creating and modifying themes, see the developer documentation.",
+        "titleKey":"ADMIN_SITE_THEME_TITLE",
+        "descriptionKey":"ADMIN_SITE_THEME_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "ACTIVE_THEME":{"label":"Active Theme","type":"select","config":"site","optionsMethod":["WebModule","getAllThemes"],"description":"Active theme used by this site","section":"themes"},
-            "TABLET_ENABLED":{"label":"Tablet UI Enabled","type":"checkbox","config":"site","description":"If enabled, the Tablet UI will be shown for compatible devices, otherwise tablet devices will use \"compliant\" page types.","section":"themes"}
+            "ACTIVE_THEME":{"labelKey":"ADMIN_SITE_THEME_ACTIVE_TITLE","type":"select","config":"site","optionsMethod":["WebModule","getAllThemes"],"descriptionKey":"ADMIN_SITE_THEME_ACTIVE_DESCRIPTION","section":"themes"},
+            "TABLET_ENABLED":{"labelKey":"ADMIN_SITE_THEME_TABLET_ENABLED_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_THEME_TABLET_ENABLED_DESCRIPTION","section":"themes"}
         }
     },
     "detection":{
-        "title":"Device Detection", 
-        "description":"The device detection service recognizes and categorizes each user's web browser so that the appropriate class of web UI can be delivered. You can run this service on your own web server, or use an externally hosted one such as the reference service provided by Modo Labs.",
+        "titleKey":"ADMIN_SITE_DETECTION_TITLE",
+        "descriptionKey":"ADMIN_SITE_DETECTION_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "MOBI_SERVICE_VERSION":{"label":"Mobi service version","type":"select","config":"site","options":{"1":"1"},"description":"Version of the Kurogo device detection service","section":"device_detection"},
-            "MOBI_SERVICE_USE_EXTERNAL":{"label":"Device detection type","type":"select","options":{"0":"Internal","1":"External"},"config":"site","description":"<b>Internal:</b> use the included SQLite database for device detection.<br /><b>External:</b> Use the external version of the Kurogo device detection service hosted by Modo Labs. This introduces a new external dependency for your website but ensures that your system will always be accessing the latest device detection database.","section":"device_detection"},
-            "MOBI_SERVICE_FILE":{"label":"Device detection DB","type":"file","config":"site","description":"Path to the mobi-service device database file within your site","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","0"]},
-            "MOBI_SERVICE_URL":{"label":"Device detection URL","type":"text","config":"site","description":"URL of the externally hosted device-detection service","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]},
-            "MOBI_SERVICE_CACHE_LIFETIME":{"label":"Service cache lifetime","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time that the device detection service should be cached on the server","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]}
+            "MOBI_SERVICE_VERSION":{"labelKey":"ADMIN_SITE_DETECTION_VERSION_TITLE","type":"select","config":"site","options":{"1":"1"},"descriptionKey":"ADMIN_SITE_DETECTION_VERSION_DESCRIPTION","section":"device_detection"},
+            "MOBI_SERVICE_USE_EXTERNAL":{"labelKey":"ADMIN_SITE_DETECTION_EXTERNAL_TITLE","type":"select","optionsMethod":["DeviceClassifier","getDeviceDetectionTypes"],"config":"site","descriptionKey":"ADMIN_SITE_DETECTION_EXTERNAL_DESCRIPTION","section":"device_detection"},
+            "MOBI_SERVICE_FILE":{"labelKey":"ADMIN_SITE_DETECTION_FILE_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_DETECTION_FILE_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","0"]},
+            "MOBI_SERVICE_URL":{"labelKey":"ADMIN_SITE_DETECTION_URL_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DETECTION_URL_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]},
+            "MOBI_SERVICE_CACHE_LIFETIME":{"labelKey":"ADMIN_SITE_DETECTION_CACHE_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_DETECTION_CACHE_DESCRIPTION","section":"device_detection","showIf":["MOBI_SERVICE_USE_EXTERNAL","1"]}
         }
     },
     "error":{
-        "title":"Error Handling and Debugging", 
-        "description":"For optimal runtime performance and security, disable as many types of debugging as possible.",
+        "titleKey":"ADMIN_SITE_ERROR_TITLE",
+        "descriptionKey":"ADMIN_SITE_ERROR_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "DISPLAY_ERRORS":{"label":"Show error messages","type":"checkbox","config":"site","description":"Show error messages generated by PHP scripts","section":"error_handling_and_debugging"},
-            "DEVICE_DEBUG":{"label":"Enable device override","type":"checkbox","config":"site","description":"Allow overriding device classification using /device/xxx prefix urls","section":"error_handling_and_debugging"},
-            "MODULE_DEBUG":{"label":"Enable module-level debugging","type":"checkbox","config":"site","description":"Show debugging messages generated by modules","section":"error_handling_and_debugging"},
-            "MINIFY_DEBUG":{"label":"Enable debugging mode for Minify functions","type":"checkbox","config":"site","description":"Include verbose output in minify CSS and JavaScript data","section":"error_handling_and_debugging"},
-            "DATA_DEBUG":{"label":"Enable data debugging","type":"checkbox","config":"site","description":"Verbose logging of data retrieval and database queries","section":"error_handling_and_debugging"},
-            "TEMPLATE_DEBUG":{"label":"Enable template debugging","type":"checkbox","config":"site","description":"Verbose logging of template processing","section":"error_handling_and_debugging"},
-            "DEVICE_DETECTION_DEBUG":{"label":"Enable debugging of device detection services","type":"checkbox","config":"site","description":"Show device detection in footer","section":"error_handling_and_debugging"},
-            "PRODUCTION_ERROR_HANDLER_ENABLED":{"label":"Enable production exception handler","type":"checkbox","config":"site","description":"When enabled, the production exception handler will email details of code exceptions to the developer email. If disabled, exceptions will be shown in detail on the screen.","section":"error_handling_and_debugging"},
-            "DEVELOPER_EMAIL":{"label":"Developer Email","type":"text","config":"site","description":"Address to which system-generated error messages should be sent when production exception handler is enabled. If blank, no error-message emails will be generated.","section":"error_handling_and_debugging","showIf":["PRODUCTION_ERROR_HANDLER_ENABLED","1"]}
+            "DISPLAY_ERRORS":{"labelKey":"ADMIN_SITE_ERROR_DISPLAY_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DISPLAY_DESCRIPTION","section":"error_handling_and_debugging"},
+            "DEVICE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DEVICE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DEVICE_DESCRIPTION","section":"error_handling_and_debugging"},
+            "MODULE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_MODULE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_MODULE_DESCRIPTION","section":"error_handling_and_debugging"},
+            "MINIFY_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_DESCRIPTION","section":"error_handling_and_debugging"},
+            "DATA_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DATA_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DATA_DESCRIPTION","section":"error_handling_and_debugging"},
+            "TEMPLATE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_TEMPLATE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_TEMPLATE_DESCRIPTION","section":"error_handling_and_debugging"},
+            "DEVICE_DETECTION_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DETECTION_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DETECTION_DESCRIPTION","section":"error_handling_and_debugging"},
+            "MINIFY_CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_DESCRIPTION","section":"cache"},
+            "PRODUCTION_ERROR_HANDLER_ENABLED":{"labelKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_DESCRIPTION","section":"error_handling_and_debugging"},
+            "DEVELOPER_EMAIL":{"labelKey":"ADMIN_SITE_ERROR_DEVELOPER_EMAIL_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DEVELOPER_EMAIL_DESCRIPTION","section":"error_handling_and_debugging","showIf":["PRODUCTION_ERROR_HANDLER_ENABLED","1"]}
         }
     },
     "database":{
-        "title":"Database Configuration", 
-        "description":"",
+        "titleKey":"ADMIN_SITE_DATABASE_TITLE",
+        "descriptionKey":"ADMIN_SITE_DATABASE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "DB_TYPE":{"label":"Database type","type":"select","config":"site","optionsMethod":["db","getDBTypes"],"description":"The database backend","section":"database"},
-            "DB_HOST":{"label":"Database host","type":"text","config":"site","description":"Host name of the database server","section":"database","showIf":["DB_TYPE","mysql"]},
-            "DB_USER":{"label":"Database user","type":"text","config":"site","description":"User name to access the database server","section":"database","showIf":["DB_TYPE","mysql"]},
-            "DB_PASS":{"label":"Database password","type":"password","config":"site","description":"Password to access the database server","section":"database","showIf":["DB_TYPE","mysql"]},
-            "DB_DBNAME":{"label":"Database","type":"text","config":"site","description":"Name of database to store the tables","section":"database","showIf":["DB_TYPE","mysql"]},
-            "DB_FILE":{"label":"File location","type":"file","config":"site","description":"Location of SQLite database file","section":"database","showIf":["DB_TYPE","sqlite"]}
+            "DB_TYPE":{"labelKey":"ADMIN_SITE_DATABASE_TYPE_TITLE","type":"select","config":"site","optionsMethod":["db","getDBTypes"],"descriptionKey":"ADMIN_SITE_DATABASE_TYPE_DESCRIPTION","section":"database"},
+            "DB_HOST":{"labelKey":"ADMIN_SITE_DATABASE_HOST_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_HOST_DESCRIPTION","section":"database","showIf":["DB_TYPE",["mysql","pgsql","mssql"]]},
+            "DB_USER":{"labelKey":"ADMIN_SITE_DATABASE_USER_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_USER_DESCRIPTION","section":"database","showIf":["DB_TYPE",["mysql","pgsql","mssql"]]},
+            "DB_PASS":{"labelKey":"ADMIN_SITE_DATABASE_PASS_TITLE","type":"password","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_PASS_DESCRIPTION","section":"database","showIf":["DB_TYPE",["mysql","pgsql","mssql"]]},
+            "DB_DBNAME":{"labelKey":"ADMIN_SITE_DATABASE_DBNAME_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_DBNAME_DESCRIPTION","section":"database","showIf":["DB_TYPE",["mysql","pgsql","mssql"]]},
+            "DB_FILE":{"labelKey":"ADMIN_SITE_DATABASE_FILE_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_DATABASE_FILE_DESCRIPTION","section":"database","showIf":["DB_TYPE",["sqlite"]]}
         }
     },
-
     "cookies":{
-        "title":"Cookies", 
-        "description":" Specify how long different types of cookies will be set to persist in each user's browser. By default these cookies are short lived. For production sites, you should increase the time so users' preferences persist longer.",
+        "titleKey":"ADMIN_SITE_COOKIES_TITLE",
+        "descriptionKey":"ADMIN_SITE_COOKIES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "MODULE_ORDER_COOKIE_LIFESPAN":{"label":"Module order","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to remember user's preferences for home screen module order.","section":"cookies"},
-            "LAYOUT_COOKIE_LIFESPAN":{"label":"Device classification","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to save results of device detection.","section":"cookies"},
-            "BOOKMARK_COOKIE_LIFESPAN":{"label":"Bookmark cookie lifespan","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Cookie used to save user's bookmarks. Used by modules that have bookmarks","section":"cookies"}
+            "MODULE_ORDER_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_MODULE_ORDER_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_MODULE_ORDER_DESCRIPTION","section":"cookies"},
+            "LAYOUT_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_LAYOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_LAYOUT_DESCRIPTION","section":"cookies"},
+            "BOOKMARK_COOKIE_LIFESPAN":{"labelKey":"ADMIN_SITE_COOKIES_BOOKMARK_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_COOKIES_BOOKMARK_DESCRIPTION","section":"cookies"}
         }
     },
     "authentication": {
-        "title":"Authentication", 
-        "description":"",
+        "titleKey":"ADMIN_SITE_AUTHENTICATION_TITLE",
+        "descriptionKey":"ADMIN_SITE_AUTHENTICATION_DESCRIPTION",
         "sectiontype":"sections",
         "sections": {
             "authentication":{
-                "title":"Authentication", 
-                "description":"If authentication is enabled, you can control access to the site and to individual modules. Authentication is handled through one or more authentication authorities. Controlling access to the site and modules is handled in the <b>Authorization</b> section shown above when authentication is enabled.",
+                "titleKey":"ADMIN_SITE_AUTHENTICATION_AUTH_TITLE",
+                "descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTH_DESCRIPTION",
                 "sectiontype":"fields",
                 "fields":{
-                    "AUTHENTICATION_ENABLED":{"label":"Authentication Enabled","type":"checkbox","config":"site","description":"Enable user logins and authentication. Required to protect modules","section":"authentication"},
-                    "AUTHENTIATION_ADMIN_WARNING":{"label":"Warning","type":"label","value":"If you do not use authentication in your site than you should disable the administration module to prevent unauthorized changes.","showIf":["AUTHENTICATION_ENABLED","0"]},
-                    "AUTHENTICATION_IDLE_TIMEOUT":{"label":"Idle Timeout","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time before idle users are logged off. Set to None to disable idle logoff","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
-                    "AUTHENTICATION_SESSION_CLASS":{"label":"Session storage method","type":"select","config":"site","optionsMethod":["Session","getSessionClasses"],"description":"Method used to store data of logged in users. <b>Flat files:</b> data is stored as files in the cache/session folder. <b>Database:</b> session data stored in site database","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
-                    "AUTHENTICATION_REMAIN_LOGGED_IN_TIME":{"label":"Stay logged in time","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","description":"Time to allow users to be remained logged in, even if closing their browser. Set to none to force users to log in every time.","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]}
+                    "AUTHENTICATION_ENABLED":{"labelKey":"ADMIN_SITE_AUTHENTICATION_ENABLED_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_AUTHENTICATION_ENABLED_DESCRIPTION","section":"authentication"},
+                    "AUTHENTIATION_ADMIN_WARNING":{"labelKey":"ADMIN_SITE_AUTHENTICATION_WARNING_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_WARNING_DESCRIPTION","showIf":["AUTHENTICATION_ENABLED","0"]},
+                    "AUTHENTICATION_IDLE_TIMEOUT":{"labelKey":"ADMIN_SITE_AUTHENTICATION_IDLE_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_AUTHENTICATION_IDLE_DESCRIPTION","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
+                    "AUTHENTICATION_SESSION_CLASS":{"labelKey":"ADMIN_SITE_AUTHENTICATION_SESSION_CLASS_TITLE","type":"select","config":"site","optionsMethod":["Session","getSessionClasses"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_SESSION_CLASS_DESCRIPTION","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]},
+                    "AUTHENTICATION_REMAIN_LOGGED_IN_TIME":{"labelKey":"ADMIN_SITE_AUTHENTICATION_LOGGED_IN_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_AUTHENTICATION_LOGGED_IN_DESCRIPTION","section":"authentication","showIf":["AUTHENTICATION_ENABLED","1"]}
                 }
             },
             "authorities": {
-                "title":"Authentication Authorities",
+                "titleKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_TITLE",
+                "descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DESCRIPTION",
                 "config":"authentication",
                 "sectiontype":"section",
-                "description":"Authentication authorities are backend systems used to authenticate users. Kurogo includes variety of classes to authenticate users to a variety of standards based systems as well as popular external services.",
                 "fields":{
-                    "TITLE":{"label":"Title", "description":"Title for this authority.", "type":"text","placeholder":"Title"},
-                    "CONTROLLER_CLASS":{"label":"Authentication Type", "description":"The type of back end system.", "type":"select","optionsFirst":"-- Choose --","optionsMethod":["AuthenticationAuthority","getInstalledAuthentiationAuthorities"]},
-                    "USER_LOGIN":{"label":"Login type","type":"select","description":"Type of login form. Direct logins (Basic, Database, LDAP, AD) show a login form. Indirect logins (Google, Facebook, Twitter) send the user to an external login screen provided by the service. Choose None if you only want to provide group services.","options":{"FORM":"Direct","LINK":"Indirect","NONE":"None (Group Only)"},"showIf":["CONTROLLER_CLASS","*"]},
-                    "PASSWD_DESCRIPTION":{"label":"Description","type":"label","value":"The basic authority allows you to authenticate users using a custom unix passwd style file located on the server.","showIf":["CONTROLLER_CLASS","PasswdAuthentication"]},
-                    "PASSWD_USER_FILE":{"label":"User file","description":"Location of the passwd style file that contains user data. Consult the documentation for the format of this file","type":"file","showIf":["CONTROLLER_CLASS","PasswdAuthentication"],"omitBlankValue":true},
-                    "PASSWD_GROUP_FILE":{"label":"Group file","type":"file","description":"Location of the file that contains group data. Consult the documentation for the format of this file","showIf":["CONTROLLER_CLASS","PasswdAuthentication"],"omitBlankValue":true},
-                    "DB_DESCRIPTION":{"label":"Description","type":"label","value":"The database authority allows you to authenticate users against a database.","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"]},
-                    "DB_TYPE":{"label":"Database type","type":"select","description":"The type of database system to connect to. If <b>Default</b> then it will use the same values specified in the Site \"Database Configuration\" section","options":{"":"Default","mysql":"MySQL","sqlite":"SQLite"},"showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"omitBlankValue":true},
-                    "DB_HOST":{"label":"Database host","type":"text","description":"The fully qualified hostname of the database server","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","mysql"],"omitBlankValue":true},
-                    "DB_USER":{"label":"Database user","type":"text","description":"The username used to connect to the database server","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","mysql"],"omitBlankValue":true},
-                    "DB_PASS":{"label":"Database password","type":"password","description":"The password used to connect to the database server","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","mysql"],"omitBlankValue":true},
-                    "DB_DBNAME":{"label":"Database","type":"text","description":"The database used to store the user data on the database server","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","mysql"],"placeholder":"default","omitBlankValue":true},
-                    "DB_FILE":{"label":"Database file","type":"file","description":"The location of the SQLite database file.","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","sqlite"],"omitBlankValue":true},
-                    "DB_USER_TABLE":{"label":"User table","type":"text","description":"The table used to store user records. This is optional if you only use this authority for group records","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"users","omitBlankValue":true},
-                    "DB_GROUP_TABLE":{"label":"Group table","type":"text","description":"The table used to store group records. This is optional if you only use this authority for user records ","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"groups","omitBlankValue":true},
-                    "DB_GROUPMEMBERS_TABLE":{"label":"Group members table","type":"text","description":"The table used to store members of each group. This is optional if you only use this authority for user records","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"groupmembers","omitBlankValue":true},
-                    "DB_USER_USERID_FIELD":{"label":"UserID field","type":"text","description":"Field used in the user table that contains usernames","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"userID","omitBlankValue":true},
-                    "DB_USER_PASSWORD_FIELD":{"label":"User password field","description":"Field used in the user table that contains passwords. Passwords should be hashed using the password hash type value.","type":"text","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"password","omitBlankValue":true},
-                    "DB_USER_PASSWORD_HASH":{"label":"Password hash type","type":"select","optionsMethod":["Kurogo","getHashAlgos"],"description":"Method used to hash user passwords.","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"default":"md5","omitBlankValue":true},
-                    "DB_USER_PASSWORD_SALT":{"label":"Password hash salt","type":"text","description":"String value that is prepended to each password before hashing","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"","omitBlankValue":true},
-                    "DB_USER_EMAIL_FIELD":{"label":"User email field","type":"text","description":"Field used in the user table that contains email addresses","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"email","omitBlankValue":true},
-                    "DB_USER_FIRSTNAME_FIELD":{"label":"User first name field","type":"text","description":"Field used in the user table that contains user's first name","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"firstname","omitBlankValue":true},
-                    "DB_USER_LASTNAME_FIELD":{"label":"User last name field","type":"text","description":"Field used in the user table that contains user's last name","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"lastname","omitBlankValue":true},
-                    "DB_USER_FULLNAME_FIELD":{"label":"User full name field","type":"text","description":"Field used in the user table that contains user's full name","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"fullname","omitBlankValue":true},
-                    "DB_GROUP_GROUPNAME_FIELD":{"label":"Group group name field","type":"text","description":"Field used in the group table that contains the group short name","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"group","omitBlankValue":true},
-                    "DB_GROUP_GID_FIELD":{"label":"Group ID field","type":"text","description":"Field used in the group table that contains the group id","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"gid","omitBlankValue":true},
-                    "DB_GROUPMEMBER_GROUP_FIELD":{"label":"Group member group field","type":"text","description":"Field used in the group member table that contains group short name","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"gid","omitBlankValue":true},
-                    "DB_GROUPMEMBER_USER_FIELD":{"label":"Group member user field","type":"text","description":"Field used in the group member table that contains the user id","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"userID","omitBlankValue":true},
-                    "DB_GROUPMEMBER_AUTHORITY_FIELD":{"label":"Group member authority field","type":"text","description":"Field used in the group member table that contains the user's authority. If you store the authority id in your group table, you can reference users from other authorities.","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"","omitBlankValue":true},
-                    "DB_GROUP_GROUPMEMBER_PROPERTY":{"label":"Group member group field","type":"select","options":{"gid":"Group ID","group":"Group short name"},"description":"Which group field is used in the group members table.","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"default":"gid","omitBlankValue":true},
-                    "AD_DESCRIPTION":{"label":"Description","type":"label","value":"The Active Directory authority allows you to authenticate users against a Microsoft Active Directory Domain.","showIf":["CONTROLLER_CLASS","ActiveDirectoryAuthentication"]},
-                    "LDAP_DESCRIPTION":{"label":"Description","type":"label","value":"The LDAP authority allows you to authenticate users against a standard LDAP server.","showIf":["CONTROLLER_CLASS","LDAPAuthentication"]},
-                    "LDAP_HOST":{"label":"Server","description":"The fully qualified hostname for the server.","type":"text","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]]},
-                    "LDAP_POST":{"label":"Port","type":"text","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]],"description":"LDAP Port. 389 or 636 for secure","placeholder":"389","omitBlankValue":true},
-                    "LDAP_SEARCH_BASE":{"label":"Search Base","description":"LDAP Search base used for queries. Contact your LDAP administrator for this value","type":"text","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]],"placeholder":"dc=example,dc=com"},
-                    "LDAP_USER_SEARCH_BASE":{"label":"User Search Base","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"description":"Optional search base to use for user records. Useful if you wish to restrict users to a certain container/OU.","placeholder":""},
-                    "LDAP_USER_UID_FIELD":{"label":"userID Field","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"description":"LDAP field to use for usernames/short names.","placeholder":"uid","omitBlankValue":true},
-                    "LDAP_USER_EMAIL_FIELD":{"label":"email Field","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"description":"LDAP field to user for email data","placeholder":"mail","omitBlankValue":true},
-                    "LDAP_USER_FIRSTNAME_FIELD":{"label":"First name field","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"description":"LDAP field to use for for first name","placeholder":"givenName","omitBlankValue":true},
-                    "LDAP_USER_LASTNAME_FIELD":{"label":"Last name field","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"description":"LDAP field to use for for last name","placeholder":"sn","omitBlankValue":true},
-                    "LDAP_GROUP_SEARCH_BASE":{"label":"Group search base","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"description":"Optional search base to use for group records. Useful if you wish to restrict groups to a certain container/OU","placeholder":"","omitBlankValue":true},
-                    "LDAP_GROUP_GROUPNAME_FIELD":{"label":"Group name field","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"description":"","placeholder":"cn","omitBlankValue":true},
-                    "LDAP_GROUP_GID_FIELD":{"label":"Group id field","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"description":"LDAP field to use for the group id","placeholder":"gidNumber","omitBlankValue":true},
-                    "LDAP_GROUP_MEMBERS_FIELD":{"label":"Group members field","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"description":"Optional LDAP field used in group records that contain the list of users who are members of that group","placeholder":"memberUid","omitBlankValue":true},
-                    "LDAP_ADMIN_DN":{"label":"Admin DN","type":"text","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]],"description":"If you LDAP server does not permit anonymous queries (which is the case for most Active Directory domains), enter a distinguished name of an account that has read access to the containers you will need to authenticate. For best security limit this account to read only and include only the containers needed.","omitBlankValue":true, "placeholder":"uid=serviceaccount,cn=users,dc=example,dc=com"},
-                    "LDAP_ADMIN_PASSWORD":{"label":"Admin Password","type":"password","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]],"description":"(Optional) The password for the service account entered above.","omitBlankValue":true},
-                    "FACEBOOK_DESCRIPTION":{"label":"Description","type":"label","value":"The FaceBook authority allows you to authenticate users using the FaceBook service. The login type <b>must</b> be set to <i>Indirect</i>. Please read the developer documentation about setup instructions for this authority","showIf":["CONTROLLER_CLASS","FacebookAuthentication"]},
-                    "FACEBOOK_API_KEY":{"label":"API Key","type":"text","showIf":["CONTROLLER_CLASS","FacebookAuthentication"],"description":"API Key as provided by FaceBook."},
-                    "FACEBOOK_API_SECRET":{"label":"API Secret","type":"text","showIf":["CONTROLLER_CLASS","FacebookAuthentication"],"description":"API Secret as provided by FaceBook."},
-                    "GOOGLE_DESCRIPTION":{"label":"Description","type":"label","value":"The Google authority allows you to authenticate users using the Google service. The login type <b>must</b> be set to <i>Indirect</i>. Please read the developer documentation about setup instructions for this authority","showIf":["CONTROLLER_CLASS","GoogleAuthentication"]},
-                    "GOOGLEAPPS_DESCRIPTION":{"label":"Description","type":"label","value":"The Google Apps authority allows you to authenticate users your Google Apps domain. The login type <b>must</b> be set to <i>Indirect</i>. Please read the developer documentation about setup instructions for this authority","showIf":["CONTROLLER_CLASS","GoogleAppsAuthentication"]},
-                    "TWITTER_DESCRIPTION":{"label":"Description","type":"label","value":"The Twitter authority allows you to authenticate users using the Twitter service. The login type <b>must</b> be set to <i>Indirect</i>. Please read the developer documentation about setup instructions for this authority","showIf":["CONTROLLER_CLASS","TwitterAuthentication"]},
-                    "GOOGLEAPPS_DOMAIN":{"label":"Domain","type":"text","showIf":["CONTROLLER_CLASS","GoogleAppsAuthentication"],"description":"Your Google Apps Domain","placeholder":"example.com"},
-                    "OPENID_REALM":{"label":"OpenID Realm","type":"text","showIf":["CONTROLLER_CLASS",["GoogleAuthentication","GoogleAppsAuthentication"]],"description":"The OpenID realm to use. This must be the same as the domain name for your site. If you are using OAuth it must match your consumer key. If left blank, then the realm will be determined by the server hostname. Should be in format http://example.com","omitBlankValue":true},
-                    "GOOGLE_REQUIRE_LOGIN":{"label":"Require authentication","type":"text","showIf":["CONTROLLER_CLASS",["GoogleAuthentication","GoogleAppsAuthentication"]],"description":"This setting affects whether users must reauthenticate to Google when logging in, even if they have logged into Google from their browser. If blank then users will not have to reauthenticate. If <b>0</b> then users will <b>always</b> have to authenticate. If greater than 0 then users will have to re-authenticate after the indicated number of seconds since their last authentication.","omitBlankValue":true},
-                    "GOOGLE_OAUTH_DESCRIPTION":{"label":"OAuth","type":"label","value":"If your site will be utilizing Google Data (like calendars) then you will need to setup OAuth. If you are only authenticating users, then it is not necessary","showIf":["CONTROLLER_CLASS",["GoogleAuthentication","GoogleAppsAuthentication"]]},
-                    "OAUTH_CONSUMER_KEY":{"label":"Consumer Key","type":"text","showIf":["CONTROLLER_CLASS",["TwitterAuthentication","GoogleAuthentication","GoogleAppsAuthentication"]],"description":"OAuth Consumer Key.","omitBlankValue":true},
-                    "OAUTH_CONSUMER_SECRET":{"label":"Consumer Secret","type":"text","showIf":["CONTROLLER_CLASS",["TwitterAuthentication","GoogleAuthentication","GoogleAppsAuthentication"]],"description":"OAuth Consumer Secret","omitBlankValue":true},
-                    "GOOGLE_SCOPE":{"label":"Scope","type":"paragraph","showIf":["CONTROLLER_CLASS",["GoogleAuthentication","GoogleAppsAuthentication"]],"description":"A series of urls that represent the Google Data sources you wish to access. Each url should be on a single line. See <a href=\"http://code.google.com/apis/gdata/faq.html#AuthScopes\" target=\"_new\">http://code.google.com/apis/gdata/faq.html#AuthScopes</a> for a list of valid scope urls.","omitBlankValue":true}
+                    "TITLE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_TITLE_TITLE", "descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_TITLE_DESCRIPTION", "type":"text","placeholder":"Title"},
+                    "CONTROLLER_CLASS":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_CONTROLLER_TITLE", "descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_CONTROLLER_DESCRIPTION", "type":"select","optionsFirst":"-- Choose --","optionsMethod":["AuthenticationAuthority","getInstalledAuthentiationAuthorities"]},
+                    "USER_LOGIN":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LOGIN_TITLE","type":"select","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LOGIN_DESCRIPTION","options":{"FORM":"Direct","LINK":"Indirect","NONE":"None (Group Only)"},"showIf":["CONTROLLER_CLASS","*"]},
+                    "PASSWD_DESCRIPTION":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DESCRIPTION_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_PASSWD_DESCRIPTION","showIf":["CONTROLLER_CLASS","PasswdAuthentication"]},
+                    "PASSWD_USER_FILE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_PASSWD_USER_TITLE","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_PASSWD_USER_DESCRIPTION","type":"file","showIf":["CONTROLLER_CLASS","PasswdAuthentication"],"omitBlankValue":true},
+                    "PASSWD_GROUP_FILE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_PASSWD_GROUP_TITLE","type":"file","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_PASSWD_GROUP_DESCRIPTION","showIf":["CONTROLLER_CLASS","PasswdAuthentication"],"omitBlankValue":true},
+                    "DB_DESCRIPTION":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DESCRIPTION_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"]},
+                    "DB_TYPE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_TYPE_TITLE","type":"select","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_TYPE_DESCRIPTION","options":{"":"Default","mysql":"MySQL","sqlite":"SQLite"},"showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"omitBlankValue":true},
+                    "DB_HOST":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_HOST_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_HOST_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","mysql"],"omitBlankValue":true},
+                    "DB_USER":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_USER_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_USER_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","mysql"],"omitBlankValue":true},
+                    "DB_PASS":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_PASS_TITLE","type":"password","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_PASS_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","mysql"],"omitBlankValue":true},
+                    "DB_DBNAME":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_DBNAME_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_DBNAME_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","mysql"],"placeholder":"default","omitBlankValue":true},
+                    "DB_FILE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_FILE_TITLE","type":"file","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_FILE_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication","DB_TYPE","sqlite"],"omitBlankValue":true},
+                    "DB_USER_TABLE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_USER_TABLE_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_USER_TABLE_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"users","omitBlankValue":true},
+                    "DB_GROUP_TABLE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUP_TABLE_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUP_TABLE_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"groups","omitBlankValue":true},
+                    "DB_GROUPMEMBERS_TABLE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPMEMBERS_TABLE_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPMEMBERS_TABLE_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"groupmembers","omitBlankValue":true},
+                    "DB_USER_USERID_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_USERID_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_USERID_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"userID","omitBlankValue":true},
+                    "DB_USER_PASSWORD_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_PASSWORD_FIELD_TITLE","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_PASSWORD_FIELD_DESCRIPTION","type":"text","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"password","omitBlankValue":true},
+                    "DB_USER_PASSWORD_HASH":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_PASSWORD_HASH_TITLE","type":"select","optionsMethod":["Kurogo","getHashAlgos"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_PASSWORD_HASH_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"default":"md5","omitBlankValue":true},
+                    "DB_USER_PASSWORD_SALT":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_PASSWORD_SALT_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_PASSWORD_SALT_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"","omitBlankValue":true},
+                    "DB_USER_EMAIL_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_EMAIL_FIELD_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_EMAIL_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"email","omitBlankValue":true},
+                    "DB_USER_FIRSTNAME_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_FIRSTNAME_FIELD_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_FIRSTNAME_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"firstname","omitBlankValue":true},
+                    "DB_USER_LASTNAME_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_LASTNAME_FIELD_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_LASTNAME_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"lastname","omitBlankValue":true},
+                    "DB_USER_FULLNAME_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_FULLNAME_FIELD_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_FULLNAME_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"fullname","omitBlankValue":true},
+                    "DB_GROUP_GROUPNAME_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPNAME_FIELD_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPNAME_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"group","omitBlankValue":true},
+                    "DB_GROUP_GID_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GID_FIELD_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GID_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"gid","omitBlankValue":true},
+                    "DB_GROUPMEMBER_GROUP_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUP_FIELD_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUP_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"gid","omitBlankValue":true},
+                    "DB_GROUPMEMBER_USER_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPUSER_FIELD_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPUSER_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"userID","omitBlankValue":true},
+                    "DB_GROUPMEMBER_AUTHORITY_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPAUTHORITY_FIELD_TITLE","type":"text","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPAUTHORITY_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"placeholder":"","omitBlankValue":true},
+                    "DB_GROUP_GROUPMEMBER_PROPERTY":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPMEMBER_FIELD_TITLE","type":"select","options":{"gid":"Group ID","group":"Group short name"},"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DB_GROUPMEMBER_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabaseAuthentication"],"default":"gid","omitBlankValue":true},
+                    "AD_DESCRIPTION":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DESCRIPTION_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_AD_DESCRIPTION","showIf":["CONTROLLER_CLASS","ActiveDirectoryAuthentication"]},
+                    "LDAP_DESCRIPTION":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DESCRIPTION_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_DESCRIPTION","showIf":["CONTROLLER_CLASS","LDAPAuthentication"]},
+                    "LDAP_HOST":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_HOST_TITLE","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_HOST_DESCRIPTION","type":"text","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]]},
+                    "LDAP_POST":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_PORT_TITLE","type":"text","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_PORT_DESCRIPTION","placeholder":"389","omitBlankValue":true},
+                    "LDAP_SEARCH_BASE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_SEARCH_BASE_TITLE","descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_SEARCH_BASE_DESCRIPTION","type":"text","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]],"placeholder":"dc=example,dc=com"},
+                    "LDAP_USER_SEARCH_BASE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_USER_SEARCH_BASE_TITLE","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_USER_SEARCH_BASE_DESCRIPTION","placeholder":""},
+                    "LDAP_USER_UID_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_UID_FIELD_TITLE","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_UID_FIELD_DESCRIPTION","placeholder":"uid","omitBlankValue":true},
+                    "LDAP_USER_EMAIL_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_EMAIL_FIELD_TITLE","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_EMAIL_FIELD_DESCRIPTION","placeholder":"mail","omitBlankValue":true},
+                    "LDAP_USER_FIRSTNAME_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_FIRSTNAME_FIELD_TITLE","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_FIRSTNAME_FIELD_DESCRIPTION","placeholder":"givenName","omitBlankValue":true},
+                    "LDAP_USER_LASTNAME_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_LASTNAME_FIELD_TITLE","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_LASTNAME_FIELD_DESCRIPTION","placeholder":"sn","omitBlankValue":true},
+                    "LDAP_GROUP_SEARCH_BASE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_GROUP_SEARCH_BASE_TITLE","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_GROUP_SEARCH_BASE_DESCRIPTION","placeholder":"","omitBlankValue":true},
+                    "LDAP_GROUP_GROUPNAME_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_GROPUNAME_FIELD_TITLE","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_GROUPNAME_FIELD_DESCRIPTION","placeholder":"cn","omitBlankValue":true},
+                    "LDAP_GROUP_GID_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_GID_FIELD_TITLE","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_GID_FIELD_DESCRIPTION","placeholder":"gidNumber","omitBlankValue":true},
+                    "LDAP_GROUP_MEMBERS_FIELD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_MEMBERS_FIELD_TITLE","type":"text","showIf":["CONTROLLER_CLASS","LDAPAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_MEMBERS_FIELD_DESCRIPTION","placeholder":"memberUid","omitBlankValue":true},
+                    "LDAP_ADMIN_DN":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_ADMIN_DN_TITLE","type":"text","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_ADMIN_DN_DESCRIPTION","omitBlankValue":true, "placeholder":"uid=serviceaccount,cn=users,dc=example,dc=com"},
+                    "LDAP_ADMIN_PASSWORD":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_ADMIN_PASSWORD_TITLE","type":"password","showIf":["CONTROLLER_CLASS",["LDAPAuthentication","ActiveDirectoryAuthentication"]],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_LDAP_ADMIN_PASSWORD_DESCRIPTION","omitBlankValue":true},
+                    "FACEBOOK_DESCRIPTION":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DESCRIPTION_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_FACEBOOK_DESCRIPTION","showIf":["CONTROLLER_CLASS","FacebookAuthentication"]},
+                    "FACEBOOK_API_KEY":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_FACEBOOK_API_KEY_TITLE","type":"text","showIf":["CONTROLLER_CLASS","FacebookAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_FACEBOOK_API_KEY_DESCRIPTION"},
+                    "FACEBOOK_API_SECRET":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_FACEBOOK_API_SECRET_TITLE","type":"text","showIf":["CONTROLLER_CLASS","FacebookAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_FACEBOOK_API_SECRET_DESCRIPTION"},
+                    "GOOGLE_DESCRIPTION":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DESCRIPTION_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLE_DESCRIPTION","showIf":["CONTROLLER_CLASS","GoogleAuthentication"]},
+                    "GOOGLEAPPS_DESCRIPTION":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DESCRIPTION_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLEAPPS_DESCRIPTION","showIf":["CONTROLLER_CLASS","GoogleAppsAuthentication"]},
+                    "TWITTER_DESCRIPTION":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_DESCRIPTION_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_TWITTER_DESCRIPTION","showIf":["CONTROLLER_CLASS","TwitterAuthentication"]},
+                    "GOOGLEAPPS_DOMAIN":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLEAPPS_DOMAIN_TITLE","type":"text","showIf":["CONTROLLER_CLASS","GoogleAppsAuthentication"],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLEAPPS_DOMAIN_DESCRIPTION","placeholder":"example.com"},
+                    "OPENID_REALM":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_OPENID_REALM_TITLE","type":"text","showIf":["CONTROLLER_CLASS",["GoogleAuthentication","GoogleAppsAuthentication"]],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_OPENID_REALM_DESCRIPTION","omitBlankValue":true},
+                    "GOOGLE_REQUIRE_LOGIN":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLE_REQLOGIN_TITLE","type":"text","showIf":["CONTROLLER_CLASS",["GoogleAuthentication","GoogleAppsAuthentication"]],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLE_REQLOGIN_DESCRIPTION","omitBlankValue":true},
+                    "GOOGLE_OAUTH_DESCRIPTION":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLE_OAUTH_TITLE","type":"label","valueKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLE_OAUTH_DESCRIPTION","showIf":["CONTROLLER_CLASS",["GoogleAuthentication","GoogleAppsAuthentication"]]},
+                    "OAUTH_CONSUMER_KEY":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_OAUTH_CONSUMER_KEY_TITLE","type":"text","showIf":["CONTROLLER_CLASS",["TwitterAuthentication","GoogleAuthentication","GoogleAppsAuthentication"]],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_OAUTH_CONSUMER_KEY_DESCRIPTION","omitBlankValue":true},
+                    "OAUTH_CONSUMER_SECRET":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_OAUTH_CONSUMER_SECRET_TITLE","type":"text","showIf":["CONTROLLER_CLASS",["TwitterAuthentication","GoogleAuthentication","GoogleAppsAuthentication"]],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_OAUTH_CONSUMER_SECRET_DESCRIPTION","omitBlankValue":true},
+                    "GOOGLE_SCOPE":{"labelKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLE_SCOPE_TITLE","type":"paragraph","showIf":["CONTROLLER_CLASS",["GoogleAuthentication","GoogleAppsAuthentication"]],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_GOOGLE_SCOPE_DESCRIPTION","omitBlankValue":true}
                 },
                 "sectionindex":"string",
                 "sectionsmethod":["AuthenticationAuthority","getDefinedAuthenticationAuthorities"],
-                "sectionsnone":"There are no authorities defined for this site",
+                "sectionsnoneKey":"ADMIN_SITE_AUTHENTICATION_AUTHORITY_NONE",
                 "sectionvalidatemethod":["AuthenticationAuthority","validateAuthority"],
                 "sectionaddprompt":"Enter a short id for this authority. It should contain only alphanumeric characters and no spaces.",
                 "showIfSiteVar":["AUTHENTICATION_ENABLED","1"],
@@ -187,20 +187,20 @@
                 "sectiondelete":true
             },    
             "authorization":{
-                "title":"Access Control",
-                "description":"Once a user’s identity has been established, it is possible to authorize use of the site based on their identity. Authorization is accomplished through access control lists. This section manages access control lists for the entire site. If you want to protect only individual modules, use the Authorization section of that module. If there are no ACL entries then the site is open to anyone without logging in.",
+                "titleKey":"ADMIN_SITE_AUTHENTICATION_ACL_TITLE",
+                "descriptionKey":"ADMIN_SITE_AUTHENTICATION_ACL_DESCRIPTION",
                 "config":"acls",
                 "sectiontype":"section",
                 "fields":  {
-                    "type":{"label":"Type","type":"select","options":{"U":"Access","A":"Admin"}, "description":"<b>Access</b>: restrict access to the site. <b>Admin</b> restrict administrative access to the site"},
-                    "action":{"label":"Action","type":"select","options":{"A":"Allow","D":"Deny"},"description":"<b>Allow</b> grant access to the site. <b>Deny</b> deny access to the site. Any user who matches a deny rule will be denied access."},
-                    "scope":{"label":"Scope","type":"select","options":{"U":"User","G":"Group","E":"Everyone"},"description":"<b>User</b> matches a user with the user name specified in <i>Value</i> below. <b>Group</b> matches a group with the group name specified in <i>Value</i> below. <b>Everyone</b> matches all users, including not logged in users."},
-                    "authority":{"label":"Authority","type":"select","description":"Specify the authority to use for the user/group value. You can either select a specific authority or <i>Any</i> which will match a user/group from any authority.","optionsMethod":["AuthenticationAuthority","getDefinedAuthenticationAuthorityNames"],"optionsFirst":"Any","showIf":["scope",["U","G"]]},
-                    "value":{"label":"Value","type":"text","showIf":["scope",["U","G"]],"description":"The specific user/group to match. To match all users enter *"}
+                    "type":{"labelKey":"ADMIN_SITE_AUTHENTICATION_ACL_TYPE_TITLE","type":"select","options":{"U":"Access","A":"Admin"}, "descriptionKey":"ADMIN_SITE_AUTHENTICATION_ACL_TYPE_DESCRIPTION"},
+                    "action":{"labelKey":"ADMIN_SITE_AUTHENTICATION_ACL_ACTION_TITLE","type":"select","options":{"A":"Allow","D":"Deny"},"descriptionKey":"ADMIN_SITE_AUTHENTICATION_ACL_ACTION_DESCRIPTION"},
+                    "scope":{"labelKey":"ADMIN_SITE_AUTHENTICATION_ACL_SCOPE_TITLE","type":"select","options":{"U":"User","G":"Group","E":"Everyone"},"descriptionKey":"ADMIN_SITE_AUTHENTICATION_ACL_SCOPE_DESCRIPTION"},
+                    "authority":{"labelKey":"ADMIN_SITE_AUTHENTICATION_ACL_AUTHORITY_TITLE","type":"select","descriptionKey":"ADMIN_SITE_AUTHENTICATION_ACL_AUTHORITY_DESCRIPTION","optionsMethod":["AuthenticationAuthority","getDefinedAuthenticationAuthorityNames"],"optionsFirst":"Any","showIf":["scope",["U","G"]]},
+                    "value":{"labelKey":"ADMIN_SITE_AUTHENTICATION_ACL_VALUE_TITLE","type":"text","showIf":["scope",["U","G"]],"descriptionKey":"ADMIN_SITE_AUTHENTICATION_ACL_VALUE_DESCRIPTION"}
                 },
                 "showIfSiteVar":["AUTHENTICATION_ENABLED","1"],
                 "sectionclearvalues":true,
-                "sectionsnone":"There are no ACLs defined for this site.",
+                "sectionsnoneKey":"ADMIN_SITE_AUTHENTICATION_ACL_NONE",
                 "sectionindex":"numeric",
                 "sectionvalidatemethod":["AccessControlList","validateACL"],
                 "sectionsmethod":["Kurogo","getSiteAccessControlListArrays"],
@@ -210,46 +210,45 @@
         }
     },
     "analytics":{
-        "title":"Analytics", 
-        "description":"",
+        "titleKey":"ADMIN_SITE_ANALYTICS_TITLE",
+        "descriptionKey":"ADMIN_SITE_ANALYTICS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "GOOGLE_ANALYTICS_ID":{"label":"Google Analytics ID","type":"text","config":"site","description":"If included, pages will be logged to Google Analytics.","section":"analytics","placeholder":" UA-XXXXXXX-X"},
-            "PAGE_VIEWS_TABLE":{"label":"Page Views Table","type":"text","config":"site","description":"Database table used by the internal statistics engine to log web page views","section":"analytics"},
-            "API_STATS_TABLE":{"label":"API Requests Table","type":"text","config":"site","description":"Database table used by the internal statistics engine to log API requests","section":"analytics"}
+            "GOOGLE_ANALYTICS_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_GOOGLE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_GOOGLE_DESCRIPTION","section":"analytics","placeholder":" UA-XXXXXXX-X"},
+            "PAGE_VIEWS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_DESCRIPTION","section":"analytics"},
+            "API_STATS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_API_STATS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_API_STATS_DESCRIPTION","section":"analytics"}
         }
     },
     "files":{
-        "title":"File Paths and Locations", 
-        "description":"",
+        "titleKey":"ADMIN_SITE_FILES_TITLE",
+        "descriptionKey":"ADMIN_SITE_FILES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "WEB_LOG_FILE":{"label":"Web log file","type":"file","config":"site","description":"Location of the processedpage view log file","section":"log_files"},
-            "WEB_CURRENT_LOG_FILE":{"label":"Web current log file","type":"file","config":"site","description":"Location of the active page view log file","section":"log_files"},
-            "API_LOG_FILE":{"label":"API log file","type":"file","config":"site","description":"Location of the processed API log file.","section":"log_files"},
-            "API_CURRENT_LOG_FILE":{"label":"API Current log file","type":"file","config":"site","description":"Location of the active API log file","section":"log_files"},
-            "LOG_DATE_FORMAT":{"label":"Log date format","type":"text","config":"site","description":"Date format for log files","section":"log_files"},
-            "LOG_DATE_PATTERN":{"label":"Log date pattern","type":"text","config":"site","description":"regex pattern of log dates, should match output from Log Date Format","section":"log_files"},
-            "TMP_DIR":{"label":"Temporary Directory","type":"file","config":"site","description":"Temporary Directory. Will use system default if not specified","section":"log_files","omitBlankValue":true}
+            "WEB_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_WEB_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_WEB_LOG_DESCRIPTION","section":"log_files"},
+            "WEB_CURRENT_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_WEB_CURRENT_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_WEB_CURRENT_LOG_DESCRIPTION","section":"log_files"},
+            "API_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_API_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_API_LOG_DESCRIPTION","section":"log_files"},
+            "API_CURRENT_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_API_CURRENT_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_API_CURRENT_LOG_DESCRIPTION","section":"log_files"},
+            "LOG_DATE_FORMAT":{"labelKey":"ADMIN_SITE_FILES_DATE_FORMAT_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_FILES_DATE_FORMAT_DESCRIPTION","section":"log_files"},
+            "LOG_DATE_PATTERN":{"labelKey":"ADMIN_SITE_FILES_DATE_PATTERN_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_FILES_DATE_PATTERN_DESCRIPTION","section":"log_files"},
+            "TMP_DIR":{"labelKey":"ADMIN_SITE_FILES_TMP_DIR_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_TMP_DIR_DESCRIPTION","section":"log_files","omitBlankValue":true}
         }
     },
     "strings":{
-        "title":"Text Strings",
-        "description":"These string values are used throughout the site",
+        "titleKey":"ADMIN_SITE_STRINGS_TITLE",
+        "descriptionKey":"ADMIN_SITE_STRINGS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "COPYRIGHT_LINK":{"label":"Copyright link","type":"text","config":"strings","description":"Link to copyright notice (optional)","section":"strings"},
-            "COPYRIGHT_NOTICE":{"label":"Copyright notice","type":"text","config":"strings","description":"Copyright notice ","section":"strings"},
-            "FEEDBACK_EMAIL":{"label":"Feedback email","type":"text","config":"strings","description":"Email address where users can send feedback","section":"strings"}
+            "COPYRIGHT_LINK":{"labelKey":"ADMIN_SITE_STRINGS_COPYRIGHT_LINK_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_STRINGS_COPYRIGHT_LINK_DESCRIPTION","section":"strings"},
+            "COPYRIGHT_NOTICE":{"labelKey":"ADMIN_SITE_STRINGS_COPYRIGHT_NOTICE_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_STRINGS_COPYRIGHT_NOTICE_DESCRIPTION","section":"strings"},
+            "FEEDBACK_EMAIL":{"labelKey":"ADMIN_SITE_STRINGS_FEEDBACK_EMAIL_TITLE","type":"text","config":"strings","descriptionKey":"ADMIN_SITE_STRINGS_FEEDBACK_EMAIL_DESCRIPTION","section":"strings"}
         }
     },
     "maintenance":{
-        "title":"Site Maintenance",
-        "description":"Various site maintenance actions and utilities",
+        "titleKey":"ADMIN_SITE_MAINTENANCE_TITLE",
+        "descriptionKey":"ADMIN_SITE_MAINTENANCE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "CLEAR_CACHES":{"label":"Clear caches","value":"Clear","type":"action","action":"clearcaches","description":"Clears the smarty, minify and data caches for the site."}
+            "CLEAR_CACHES":{"labelKey":"ADMIN_SITE_MAINTENANCE_CLEAR_CACHES_TITLE","valueKey":"ADMIN_SITE_MAINTENANCE_CLEAR_CACHES_VALUE","type":"action","action":"clearcaches","descriptionKey":"ADMIN_SITE_MAINTENANCE_CLEAR_CACHES_DESCRIPTION"}
         }
     }
-    
 }

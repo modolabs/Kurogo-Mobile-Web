@@ -34,7 +34,7 @@ class GoogleOAuthProvider extends OAuthProvider
                     if ($request_token = $this->getOpenIDValue('request_token', $ns, $_REQUEST)) {
                         $this->setToken(OAuthProvider::TOKEN_TYPE_REQUEST, $request_token);
                         if (!$this->getAccessToken($options)) {
-                            throw new Exception("Error getting OAuth Access token");
+                            throw new KurogoDataServerException("Error getting OAuth Access token");
                         }
                     }
                 }
@@ -57,20 +57,20 @@ class GoogleOAuthProvider extends OAuthProvider
     public function getAuthURL(array $params) {
     
         if (!$url = $this->getOpenIDEndpoint()) {
-            throw new Exception("Unable to get Google OpenID endpoint.");
+            throw new KurogoDataServerException("Unable to get Google OpenID endpoint.");
         }
         
         $url_parts = parse_url(FULL_URL_BASE);
         
         if (!isset($params['return_url']) || empty($params['return_url'])) {
-            throw new Exception("Return url not specified");
+            throw new KurogoConfigurationException("Return url not specified");
         }
         $return_url = $params['return_url'];
         
         if ($this->realm) {
             $realm = $this->realm;
             if (stripos($realm, $url_parts['host'])===false) {
-                throw new Exception("OpenID Realm $this->realm must match server name " . $url_parts['host']);
+                throw new KurogoConfigurationException("OpenID Realm $this->realm must match server name " . $url_parts['host']);
             }
             
         } else {
@@ -104,7 +104,7 @@ class GoogleOAuthProvider extends OAuthProvider
         
         if ($this->consumerKey) {
             if ($realm != ($url_parts['scheme'].'://'.$this->consumerKey)) {
-                throw new Exception("Google OpenID + OAuth will only work if the realm ($realm) and consumer key ($this->consumerKey) are the same");
+                throw new KurogoConfigurationException("Google OpenID + OAuth will only work if the realm ($realm) and consumer key ($this->consumerKey) are the same");
             }
             
             $parameters = array_merge($parameters, array(
@@ -129,7 +129,7 @@ class GoogleOAuthProvider extends OAuthProvider
 
         if (isset($args['OPENID_REALM'])) {
             if (!preg_match("@^https?://@", $args['OPENID_REALM'])) {
-                throw new Exception("Invalid OpenID realm {$args['OPENID_REALM']}. Realm must be a full url");
+                throw new KurogoConfigurationException("Invalid OpenID realm {$args['OPENID_REALM']}. Realm must be a full url");
             }
 
             $this->realm = $args['OPENID_REALM'];
@@ -137,9 +137,9 @@ class GoogleOAuthProvider extends OAuthProvider
 
         if (isset($args['OAUTH_CONSUMER_KEY'], $args['OAUTH_CONSUMER_SECRET'])) {
             if (!isset($args['GOOGLE_SCOPE'])) {
-                throw new Exception("GOOGLE_SCOPE parameter must be specified");
+                throw new KurogoConfigurationException("GOOGLE_SCOPE parameter must be specified");
             } elseif (!is_array($args['GOOGLE_SCOPE'])) {
-                throw new Exception("GOOGLE_SCOPE parameter is not an array");
+                throw new KurogoConfigurationException("GOOGLE_SCOPE parameter is not an array");
             } 
             
             $this->scope = $args['GOOGLE_SCOPE'];

@@ -211,7 +211,7 @@ class LDAPAuthentication extends AuthenticationAuthority
         }
         
         if (!$this->getField('uid')) {
-            throw new Exception('LDAP uid field not specified');
+            throw new KurogoConfigurationException('LDAP uid field not specified');
         }
         
         /* dn searches don't work so we have to get the uid value */
@@ -294,11 +294,11 @@ class LDAPAuthentication extends AuthenticationAuthority
         }
 
         if (!$this->getField('groupname')) {
-            throw new Exception('LDAP group name field not specified');
+            throw new KurogoConfigurationException('LDAP group name field not specified');
         }
 
         if (!$this->getField('members')) {
-            throw new Exception('LDAP group members field not specified');
+            throw new KurogoConfigurationException('LDAP group members field not specified');
         }
         
         $searchStr = array(
@@ -379,11 +379,11 @@ class LDAPAuthentication extends AuthenticationAuthority
         }
         
         if ( empty($this->ldapServer)) {
-            throw new Exception("Invalid LDAP Server");
+            throw new KurogoConfigurationException("Invalid LDAP Server");
         }
         
         if ( empty($this->ldapPort)) {
-            throw new Exception("Invalid LDAP Port");
+            throw new KurogoConfigurationException("Invalid LDAP Port");
         }
     }
     

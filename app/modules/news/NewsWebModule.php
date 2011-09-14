@@ -18,10 +18,11 @@ class NewsWebModule extends WebModule {
   protected $showImages = true;
   protected $showPubDate = false;
   protected $showAuthor = false;
+  protected $showLink = false;
   
   public static function validateFeed($section, $feedData) {
         if (!self::argVal($feedData, 'TITLE')) {
-            return new KurogoError(1, 'Title not specified','Feed title cannot be blank');
+            return new KurogoError(1, $this->getLocalizedString('ERROR_NO_TITLE'),$this->getLocalizedString('ERROR_NO_TITLE_DESCRIPTION'));
         }
 
         if (!isset($feedData['CONTROLLER_CLASS'])) {
@@ -30,7 +31,7 @@ class NewsWebModule extends WebModule {
         
         try {
             $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        } catch (Exception $e) {
+        } catch (KurogoConfigurationException $e) {
             return KurogoError::errorFromException($e);
         }
         
@@ -99,7 +100,7 @@ class NewsWebModule extends WebModule {
         $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         return $controller;
     } else {
-        throw new Exception("Error getting news feed for index $index");
+        throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $index));
     }
   }
     public function searchItems($searchTerms, $limit=null, $data=null) {
@@ -162,7 +163,7 @@ class NewsWebModule extends WebModule {
         
         $this->feedIndex = $this->getArg('section', 0);
         if (!isset($this->feeds[$this->feedIndex])) {
-          $this->feedIndex = key($this->feeds);
+            $this->feedIndex = key($this->feeds);
         }
 
         $feedData = $this->feeds[$this->feedIndex];
@@ -170,6 +171,7 @@ class NewsWebModule extends WebModule {
         $this->showImages = isset($feedData['SHOW_IMAGES']) ? $feedData['SHOW_IMAGES'] : true;
         $this->showPubDate = isset($feedData['SHOW_PUBDATE']) ? $feedData['SHOW_PUBDATE'] : false;
         $this->showAuthor = isset($feedData['SHOW_AUTHOR']) ? $feedData['SHOW_AUTHOR'] : false;
+        $this->showLink = isset($feedData['SHOW_LINK']) ? $feedData['SHOW_LINK'] : false;
     }    
     
     protected function htmlEncodeFeedString($string) {
@@ -178,7 +180,7 @@ class NewsWebModule extends WebModule {
     
     protected function initializeForPage() {
         if (!$this->feed) {
-            throw new Exception("News Feed not configured");
+            throw new KurogoConfigurationException($this->getLocalizedString('ERROR_NOT_CONFIGURED'));
         }
 
     switch ($this->page) {
@@ -193,7 +195,7 @@ class NewsWebModule extends WebModule {
         $story     = $this->feed->getItem($storyID);
         
         if (!$story) {
-          throw new Exception("Story $storyID not found");
+          throw new KurogoUserException($this->getLocalizedString('ERROR_STORY_NOT_FOUND', $storyID));
         }
         
         if (!$content = $this->cleanContent($story->getProperty('content'))) {
@@ -201,14 +203,14 @@ class NewsWebModule extends WebModule {
               header("Location: $url");
               exit();
           } else {
-              throw new Exception("No content or link found for story $storyID");
+              throw new KurogoDataException($this->getLocalizedString('ERROR_CONTENT_NOT_FOUND', $storyID));
           }
         }
 
         if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
             $body = $story->getDescription()."\n\n".$story->getLink();
             $shareEmailURL = $this->buildMailToLink("", $story->getTitle(), $body);
-            $this->assign('shareTitle','Share this story');
+            $this->assign('shareTitle', $this->getLocalizedString('SHARE_THIS_STORY'));
             $this->assign('shareEmailURL', $shareEmailURL);
             $this->assign('shareRemark',   $story->getTitle());
             $this->assign('storyURL',      $story->getLink());
@@ -223,7 +225,9 @@ class NewsWebModule extends WebModule {
         $this->assign('title',         $this->htmlEncodeFeedString($story->getTitle()));
         $this->assign('author',        $this->htmlEncodeFeedString($story->getAuthor()));
         $this->assign('image',         $this->getImageForStory($story));
+        $this->assign('link',          $story->getLink());
         $this->assign('ajax',          $this->getArg('ajax'));
+        $this->assign('showLink',      $this->showLink);
         break;
         
       case 'search':
@@ -351,6 +355,7 @@ class NewsWebModule extends WebModule {
         $this->assign('hiddenArgs',     $hiddenArgs);
         $this->assign('sections',       $sections);
         $this->assign('currentSection', $sections[$this->feedIndex]);
+        $this->assign('placeholder',    $this->getLocalizedString('SEARCH_MODULE', $this->getModuleName()));
         $this->assign('stories',        $stories);
         $this->assign('isHome',         true);
         $this->assign('previousURL',    $previousURL);

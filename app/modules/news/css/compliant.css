@@ -1,3 +1,7 @@
+h1.slugline a {
+    text-decoration: none;
+}
+
 li.story {
     height: 5.5em;
 	  margin: 0;
@@ -44,7 +48,7 @@ li.noimage {
     margin: 0 8px 0 0;
     width: 5.5em;
     height: 5.5em;
-    background: transparent url('/modules/news/images/news-placeholder.png') no-repeat top left;
+    background: transparent url('/modules/news/images/news-placeholder.png') no-repeat left top;
     background-size: 5.5em;
 }
 

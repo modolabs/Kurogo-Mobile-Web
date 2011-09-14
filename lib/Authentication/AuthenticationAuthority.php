@@ -123,22 +123,22 @@ abstract class AuthenticationAuthority
         }
                 
         if (!isset($args['TITLE']) || empty($args['TITLE'])) {
-            throw new Exception("Invalid authority title");
+            throw new KurogoConfigurationException("Invalid authority title");
         }
         
         if (!isset($args['INDEX']) || empty($args['INDEX'])) {
-            throw new Exception("Invalid authority index");
+            throw new KurogoConfigurationException("Invalid authority index");
         }
         
         $this->setAuthorityIndex($args['INDEX']);
         $this->setAuthorityTitle($args['TITLE']);
 
         if (!isset($args['USER_LOGIN'])) {
-            throw new Exception("USER_LOGIN value not set for " . $this->AuthorityTitle);
+            throw new KurogoConfigurationException("USER_LOGIN value not set for " . $this->AuthorityTitle);
         }
 
         if (!$this->setUserLogin($args['USER_LOGIN'])) {
-            throw new Exception("Invalid USER_LOGIN setting for " . $this->AuthorityTitle);
+            throw new KurogoConfigurationException("Invalid USER_LOGIN setting for " . $this->AuthorityTitle);
         }
         
         
@@ -412,7 +412,7 @@ abstract class AuthenticationAuthority
     public static function factory($authorityClass, $args)
     {
         if (!class_exists($authorityClass) || !is_subclass_of($authorityClass, 'AuthenticationAuthority')) {
-            throw new Exception("Invalid authentication class $authorityClass");
+            throw new KurogoConfigurationException("Invalid authentication class $authorityClass");
         }
         $authority = new $authorityClass;
         $authority->init($args);

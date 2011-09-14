@@ -1,5 +1,5 @@
 function loadSection(select) {
-    window.location = "./index.php?section=" + select.value;
+    window.location = "./index?section=" + select.value;
 }
 
 function toggleSearch() {

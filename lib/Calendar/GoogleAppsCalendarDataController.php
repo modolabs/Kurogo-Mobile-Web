@@ -81,7 +81,7 @@ class GoogleCalendarDataParser extends DataParser
     {
     	if ($eventClass) {
     		if (!class_exists($eventClass)) {
-                throw new Exception("Event class $eventClass not defined");
+                throw new KurogoConfigurationException("Event class $eventClass not defined");
     		}
 			$this->eventClass = $eventClass;
 		}
@@ -118,7 +118,7 @@ class GoogleCalendarDataParser extends DataParser
                 $event->setLocation($item['location']);
             }
             if (count($item['when'])>1) {
-                throw new Exception("Need to handle multiple when values. Please report this as a bug including calendar and event used");
+                throw new KurogoDataException("Need to handle multiple when values. Please report this as a bug including calendar and event used");
             }
 
             $start = new DateTime($item['when'][0]['start']);

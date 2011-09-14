@@ -29,7 +29,7 @@ class GoogleAppsOAuthProvider extends GoogleOAuthProvider
         $args = is_array($args) ? $args : array();
 
         if (!isset($args['GOOGLEAPPS_DOMAIN']) || strlen($args['GOOGLEAPPS_DOMAIN'])==0) {
-            throw new Exception("Google Apps Domain not set");
+            throw new KurogoConfigurationException("Google Apps Domain not set");
         }
 
         $this->domain = $args['GOOGLEAPPS_DOMAIN'];
