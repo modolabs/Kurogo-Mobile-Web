@@ -190,7 +190,17 @@ class CalendarDataController extends DataController
                 }
             }
         }
-
+        // bug fix for sort by event start
+        uasort($events, array($this, "sort_events"));
         return $this->limitItems($events, $start, $limit);
     }
+    
+    private function sort_events($a, $b) {
+        $startA = $a->get_start();
+        $startB = $b->get_start();
+        if ($startA == $startB) {
+            return 0;
+        }
+        return ($startA < $startB) ? -1 : 1;
+	}
 }

@@ -610,22 +610,6 @@ class ICalRecurrenceRule extends ICalObject {
 						ksort($this->occurs_by_day);
 						break;
 					}
-				//case 'BYMONTH':
-					//break;
-				//case 'BYSECOND':
-					//break;
-				//case 'BYMINUTE':
-					//break;
-				//case 'BYHOUR':
-					//break;
-				//case 'BYMONTHDAY':
-					//break;
-				//case 'BYYEARDAY':
-					//break;
-				//case 'BYWEEKNO':
-					//break;
-				//case 'BYSETPOS':
-					//break;
 				case 'WKST':
 				case (substr($rulename, 0, 2) == 'BY'):
 					//throw new Exception("$rulename rules not handled yet ($rule_string)");
@@ -736,10 +720,9 @@ class ICalRecurrenceRule extends ICalObject {
 					$time = strtotime($val . " day", $firstday);
 					break;
 				case 'BYWEEKNO':
-					break;
 				case 'BYSETPOS':
-					break;
 				case 'WKST':
+				    throw new Exception("BYWEEKNO, BYSETPOS, WKST Not handled yet");
 					break;
 				default:
 			}
@@ -853,7 +836,7 @@ class ICalendar extends ICalObject implements CalendarInterface {
 
 		// sort event times
 		// deprecated use usort as follow
-		// asort($this->eventStartTimes);
+		//asort($this->eventStartTimes);
 
 		$occurrences = array();
 
@@ -871,17 +854,9 @@ class ICalendar extends ICalObject implements CalendarInterface {
 				$occurrences[$uid][$occurrence->get_start()] = $occurrence;
 			}
 		}
-		// bug fix for sort by event start
+		
 		// in some case, it doesn't work properly if we just sort $this->eventStartTimes
-		usort($occurrences, array($this, "sort_keys"));
-
 		return $occurrences;
-	}
-
-	private function sort_keys($a, $b) {
-		$object_a = array_pop($a);
-		$object_b = array_pop($b);
-		return strcmp($object_a->get_start(), $object_b->get_start());
 	}
 
 	public function set_attribute($attr, $value, $params=null) {

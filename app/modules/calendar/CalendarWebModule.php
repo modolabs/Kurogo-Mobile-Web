@@ -370,7 +370,7 @@ class CalendarWebModule extends WebModule {
     $currentDate = new DateTime(date('Y-m-d H:i:s', time()), $this->timezone);
     $url = '';
     if (isset($feeds[$index])) {
-        $viewType = isset($feeds[$index]['DEFAULT_VIEW']) && in_array($feeds[$index]['DEFAULT_VIEW'], array('day', 'year', 'list')) ? $feeds[$index]['DEFAULT_VIEW'] : '';
+        $viewType = isset($feeds[$index]['DEFAULT_VIEW']) && in_array($feeds[$index]['DEFAULT_VIEW'], array('day', 'year', 'list')) ? $feeds[$index]['DEFAULT_VIEW'] : 'day';
         $viewFunc = $viewType . 'URL';
         switch ($viewType) {
             case 'day':
@@ -396,11 +396,15 @@ class CalendarWebModule extends WebModule {
         $view = array();
         switch ($value) {
             case 'day':
-                $url = $this->dayURL($dateTime->getTimestamp(), $type, $calendar, false);
+                $currentDate = new DateTime(date('Y-m-d H:i:s', time()), $this->timezone);
+                $year = $dateTime->format('Y');
+                $monthDay = $currentDate->format('m-d');
+                $showDateTime = new DateTime($year . '-' . $monthDay . ' 00:00:00', $this->timezone);;
+                $url = $this->dayURL($showDateTime->getTimestamp(), $type, $calendar, false);
                 break;
             case 'year':
                 list($year, $month, $day) = explode('-', $dateTime->format('Y-m-d'));
-                $url = $this->yearURL($year, $month, $day, $type, $calendar, false);
+                $url = $this->yearURL($year, 1, 1, $type, $calendar, false);
                 break;
             case 'list': 
                 $url = $this->listURL($dateTime->getTimestamp(), $type, $calendar, 20, false);
@@ -639,6 +643,7 @@ class CalendarWebModule extends WebModule {
                 'type'     =>$type)
             );
         }
+
         //get viewlist
         $this->assign('viewlist', $this->buildViewList($start, $type, $calendar, 'list'));
         
