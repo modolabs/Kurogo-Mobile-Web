@@ -699,8 +699,13 @@ class ICalRecurrenceRule extends ICalObject {
 				case 'BYDAY':
 					$n = substr($val, 0, -2);
 					$day = substr($val, -2);
-					$firstday = mktime(date('H', $time), date('i', $time), date('s', $time), date('m', $time), 1, date('Y', $time));
-					$time = strtotime($n . " " . $this->dayString[$day], $firstday);
+					if ($n < 0) {
+					    $firstday = mktime(date('H', $time), date('i', $time), date('s', $time), date('m', $time) + 1, 1, date('Y', $time));
+                        $time = strtotime($n . " " . $this->dayString[$day], $firstday);
+					} else {
+					    $firstday = mktime(date('H', $time), date('i', $time), date('s', $time), date('m', $time), 1, date('Y', $time));
+					    $time = strtotime($n . " " . $this->dayString[$day], $firstday);
+					}
 					break;
 				case 'BYMONTH':
 					$time = mktime(date('H', $time), date('i', $time), date('s', $time), $val, date('d', $time), date('Y', $time));
