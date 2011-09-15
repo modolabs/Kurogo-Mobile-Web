@@ -139,6 +139,9 @@ class MapWebModule extends WebModule {
     {
         $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
         $urlArgs = shortArrayFromMapFeature($placemark);
+        if (isset($options['external']) && $options['external']) {
+            $urlArgs['external'] = true;
+        }
         $result = array(
             'title' => $placemark->getTitle(),
             'subtitle' => $placemark->getSubtitle(),
@@ -221,6 +224,9 @@ class MapWebModule extends WebModule {
         $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
         $mapSearch = $this->getSearchClass($options);
         $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
+        if ($limit) {
+            return array_slice($searchResults, 0, $limit);
+        }
         return $searchResults;
     }
 
@@ -395,14 +401,6 @@ JS;
     {
         $placemarks = $dataController->getSelectedPlacemarks();
 
-        // override point for where annotation should be drawn
-        if (isset($this->args['lat'], $this->args['lon'])) {
-            $customPlacemark = new MapBasePoint(
-                $this->args['lat'], $this->args['lon']);
-            
-            $placemarks[] = $customPlacemark;
-        }
-
         $imgController = $this->getImageController();
         foreach ($placemarks as $placemark) {
             $imgController->addPlacemark($placemark);
@@ -417,10 +415,9 @@ JS;
         
         // override point for where map should be centered
         if (isset($this->args['center'])) {
-            $latlon = explode(",", $this->args['center']);
-            $center = array('lat' => $latlon[0], 'lon' => $latlon[1]);
-        } elseif (isset($customPlacemark)) {
-            $center = $customPlacemark->getCenterCoordinate();
+            $center = filterLatLon($this->getArg('center'));
+        } elseif (isset($this->args['lat'], $this->args['lon'])) {
+            $center = array('lat' => $this->getArg('lat'), 'lon' => $this->getArg('lon'));
         }
 
         if (isset($center)) {
