@@ -308,10 +308,15 @@ class CalendarAPIModule extends APIModule
                         $count++;
                     }
 
+                    $titleField = 'summary';
+                    if (isset($this->fieldConfig['summary'], $this->fieldConfig['summary']['label'])) {
+                        $titleField = $this->fieldConfig['summary']['label'];
+                    }
+
                     $response = array(
                         'total' => $count,
                         'returned' => $count,
-                        'displayField' => 'title',
+                        'displayField' => $titleField,
                         'results' => $events,
                         );
 
