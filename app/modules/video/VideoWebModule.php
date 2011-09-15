@@ -120,7 +120,7 @@ class VideoWebModule extends WebModule
             case 'index':
         
                 $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
-        	    $start = $this->getArg('start', 0);
+                $start = $this->getArg('start', 0);
         	    
                 if ($this->page == 'search') {
                     if ($filter = $this->getArg('filter')) {
@@ -164,8 +164,8 @@ class VideoWebModule extends WebModule
                   'section'=>$section
                 );
           
-          		$this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
-          		$this->addOnLoad('setupVideosListing();');
+                $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                $this->addOnLoad('setupVideosListing();');
           
                 $this->assign('placeholder', $this->getLocalizedString('SEARCH_MODULE', $this->getModuleName()));
                 $this->assign('start',       $start);
@@ -181,18 +181,26 @@ class VideoWebModule extends WebModule
                 break;
  
             case 'bookmarks':
-            	
                 if (!$this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->redirectTo('index');
                 }
                 
+                $controllerCache = array(
+                    $section => $controller,
+                );
                 $videos = array();
 
                 foreach ($this->getBookmarks() as $aBookmark) {
-                    if ($aBookmark) {
-                        parse_str($aBookmark, $params);
-                        if (isset($params['videoid']) && ($video = $controller->getItem($params['videoid']))) {
-                          $videos[] = $this->linkForItem($video, array('section'=>$params['section']));
+                    if (!$aBookmark) { continue; }
+                    
+                    parse_str(stripslashes($aBookmark), $params);
+                    if (isset($params['section'], $this->feeds[$params['section']], $params['videoid'])) {
+                        if (!isset($controllerCache[$params['section']])) {
+                            $controllerCache[$params['section']] = $this->getFeed($params['section']);
+                        }
+                        
+                        if ($video = $controllerCache[$params['section']]->getItem($params['videoid'])) {
+                            $videos[] = $this->linkForItem($video, $params);
                         }
                     }
                 }
@@ -229,7 +237,6 @@ class VideoWebModule extends WebModule
         
                           // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
-                          $videoLink = $this->linkForItem($video, array('section'=>$section));
                           $cookieParams = array(
                             'section'  => $section,
                             'videoid'  => $videoid

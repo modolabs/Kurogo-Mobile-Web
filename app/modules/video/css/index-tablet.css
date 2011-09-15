@@ -35,19 +35,16 @@ table#videoHeader #searchformcontainer fieldset .forminput {
   position: absolute;
   top: 0;
   right: 0;
-  width: 89%;
+  width: 96%;
 }
-
+table#videoHeader #categoryformcontainer + #searchformcontainer fieldset .forminput {
+  width: 92%;
+}
 
 table#videoHeader #bookmarkscontainer {
   width: 44px;
   padding: 0 .5em 0 0;
   vertical-align: middle;
-}
-div#bookmarkscontainer {
-  float: right;
-  padding-top: 2px;
-  margin-left: 0;
 }
 #bookmarkscontainer #bookmarkslink div {
   width: 44px;
