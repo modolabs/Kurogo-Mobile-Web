@@ -21,13 +21,22 @@
         <form method="get" action="search">
           {include file="findInclude:common/templates/search.tpl" insideForm=true extraArgs=$hiddenArgs}
         </form>
+      </td>
+      <td id="bookmarkscontainer"{if !$hasBookmarks} style="display:none"{/if}>
+        <a id="bookmarkslink" href="{$bookmarkLink[0]['url']}"><div></div></a>
       </td></tr>
     </table>
   {else}
   <div id="videoHeader">
     {include file="findInclude:common/templates/search.tpl" extraArgs=$hiddenArgs}
+    <div id="bookmarkscontainer"{if !$hasBookmarks} style="display:none"{/if}>
+      <a id="bookmarkslink" href="{$bookmarkLink[0]['url']}"><div></div></a>
+    </div>
   </div>
   {/if}
+{/block}
+
+{block name="bookmarks"}
 {/block}
 
 {block name="videos"}

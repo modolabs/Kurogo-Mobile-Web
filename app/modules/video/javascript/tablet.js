@@ -12,33 +12,39 @@ function setupVideoSplitView() {
 }
 
 function moduleHandleWindowResize() {
-    document.getElementById('videos').style.height = 'auto';
+    var videos = document.getElementById('videos');
+    var videoDetailWrapper = document.getElementById('videoDetailWrapper');
+    if (!videoDetailWrapper) {
+      return;  // can happen for searches with no results or when feed is down
+    }
+    videoDetailWrapper.style.height = 'auto';
+    
     var wrapperHeight = document.getElementById('wrapper').offsetHeight;
     var headerHeight = document.getElementById('videoHeader').offsetHeight;
     var contentHeight = wrapperHeight - headerHeight;
-
-    switch (getOrientation())
-    {
+    
+    switch (getOrientation()) {
         case 'landscape':
-            document.getElementById('videos').style.height = contentHeight + 'px';
-            document.getElementById('videoDetailWrapper').style.height = contentHeight + 'px';
-            var list = document.getElementById('videos').getElementsByTagName('li')[0].parentNode;
+            videos.style.height = contentHeight + 'px';
+            videoDetailWrapper.style.height = contentHeight + 'px';
+            var list = videos.getElementsByTagName('li')[0].parentNode;
             list.style.width = '';
             break;
+        
         case 'portrait':
-            document.getElementById('videos').style.height = '';
+            videos.style.height = '';
             // this is a hack because for some reason the width isn't being properly set
             var width = 0;
-            var videos = document.getElementById('videos').getElementsByTagName('li');
+            var videoItems = videos.getElementsByTagName('li');
             var list;
-            for (var i=0; i<videos.length;i++) {
-                list = videos[i].parentNode;
-                width+=videos[i].offsetWidth;
+            for (var i = 0; i < videoItems.length; i++) {
+                list = videoItems[i].parentNode;
+                width+=videoItems[i].offsetWidth;
             }
             list.style.width = width+'px';
             
-            var videosHeight = document.getElementById('videos').offsetHeight;
-            document.getElementById('videoDetailWrapper').style.height = (contentHeight-videosHeight) + 'px';
+            var videosHeight = videos.offsetHeight;
+            videoDetailWrapper.style.height = (contentHeight - videosHeight) + 'px';
             break;
     }
 }

@@ -6,22 +6,7 @@ class VideoWebModule extends WebModule
 {
     protected $id='video';  // this affects which .ini is loaded
     protected $feeds = array();
-   
-    protected function detailURLForBookmark($aBookmark) {
-        parse_str($aBookmark, $params);
-        return $this->buildBreadcrumbURL('detail', $params, true);
-    }
-
-    protected function getTitleForBookmark($aBookmark) {
-        parse_str($aBookmark, $params);
-        $titles = array($params['title']);
-        if (isset($params['subtitle'])) {
-            $titles[] = $params['subtitle'];
-        }
-        return $titles;
         
-    }
-    
     protected function initialize() {
         $this->feeds = $this->loadFeedData();
     }
@@ -201,21 +186,20 @@ class VideoWebModule extends WebModule
                     $this->redirectTo('index');
                 }
                 
-                $videos_bkms = array();
+                $videos = array();
 
                 foreach ($this->getBookmarks() as $aBookmark) {
-                    if ($aBookmark) { // prevent counting empty string
-                        $titles = $this->getTitleForBookmark($aBookmark);
-                        $subtitle = count($titles) > 1 ? $titles[1] : null;
-                        $videos_bkms[] = array(
-                                'title' => $titles[0],
-                                'subtitle' => $subtitle,
-                                'url' => $this->detailURLForBookmark($aBookmark),
-                        );
+                    if ($aBookmark) {
+                        parse_str($aBookmark, $params);
+                        if (isset($params['videoid']) && ($video = $controller->getItem($params['videoid']))) {
+                          $videos[] = $this->linkForItem($video, array('section'=>$params['section']));
+                        }
                     }
                 }
-                $this->assign('videos', $videos_bkms);
-            
+                $this->assign('videos', $videos);
+                
+                $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                $this->addOnLoad('setupVideosListing();');
                 break;
                 
             case 'detail':
@@ -245,12 +229,12 @@ class VideoWebModule extends WebModule
         
                           // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                          $videoLink = $this->linkForItem($video, array('section'=>$section));
                           $cookieParams = array(
-                            'section' => $section,
-                            'title'   => $video->getTitle(),
-                            'videoid' => $videoid
+                            'section'  => $section,
+                            'videoid'  => $videoid
                           );
-        
+                          
                           $cookieID = http_build_query($cookieParams);
                           $this->generateBookmarkOptions($cookieID);
                         }

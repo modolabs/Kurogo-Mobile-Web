@@ -71,6 +71,6 @@
 {/block}
 
 {block name="videos"}
-{include file="findInclude:modules/$moduleID/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
+  {include file="findInclude:modules/$moduleID/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
 {/block}
 {include file="findInclude:common/templates/footer.tpl"}

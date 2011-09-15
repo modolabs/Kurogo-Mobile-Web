@@ -20,7 +20,7 @@
           <div class="title">{$story["title"]}</div>
           {if $showAuthor}<div class="author">{$story['author']}</div>{/if}
           {if $showPubDate}<div class="pubdate">{$story['pubDate']}</div>{/if}
-          {$story['subtitle']}
+          {$story['subtitle']|strip_tags}
         </div>
       </a>
     </li>

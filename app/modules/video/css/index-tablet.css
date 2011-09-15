@@ -38,6 +38,18 @@ table#videoHeader #searchformcontainer fieldset .forminput {
   width: 89%;
 }
 
+
+table#videoHeader #bookmarkscontainer {
+  width: 44px;
+  padding: 0 .5em 0 0;
+  vertical-align: middle;
+}
+#bookmarkscontainer #bookmarkslink div {
+  width: 44px;
+  height: 38px;
+  background: url(/common/images/bookmark.png) no-repeat -44px -38px;
+}
+
 form {
 	margin: 0;
 	padding: 0;

@@ -248,33 +248,6 @@ function hideShare() {
 }
 
 // Bookmarks
-function setBookmarkStates(name, item) {
-  var bookmark = document.getElementById("bookmark");
-  var items = getCookieArrayValue(name);
-  for (var i = 0; i < items.length; i++) {
-    if (items[i] == item) {
-      addClass(bookmark, "on");
-      break;
-    }
-  }
-  if (bookmark.addEventListener) {
-    bookmark.addEventListener("touchstart", function() {
-        addClass(bookmark, "pressed");
-    }, false);
-    bookmark.addEventListener("touchend", function() {
-        removeClass(bookmark, "pressed");
-    }, false);
-    
-  } else if (bookmark.attachEvent) {
-    bookmark.attachEvent("ontouchstart", function() {
-        addClass(bookmark, "pressed");
-    });
-    bookmark.attachEvent("ontouchend", function() {
-        removeClass(bookmark, "pressed");
-    });
-  }
-}
-
 function toggleBookmark(name, item, expireseconds, path) {
   var bookmark = document.getElementById("bookmark");
   toggleClass(bookmark, "on");
