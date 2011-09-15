@@ -368,6 +368,13 @@ class ICalEvent extends ICalObject implements KurogoObject {
 				}
 
 				$timestamp = $datetime->format('U');
+				
+                if ($attr=='DTEND') {
+					if (strpos($value, 'T')== FALSE) {
+                        // make all day events end at 11:59:59 so they don't overlap next day
+                        $timestamp -= 1;
+					}
+                }
 
 				if (!$this->range) {
 					if (strpos($value, 'T')!== FALSE) {
@@ -381,10 +388,6 @@ class ICalEvent extends ICalObject implements KurogoObject {
 						unset($this->properties['duration']);
 					}
 				} else {
-					if ($attr=='DTEND' && ($timestamp > $this->get_start()) && (($timestamp - $this->get_start()) % 86400 == 0)) {
-						// make all day events end at 11:59:59 so they don't overlap next day
-						$timestamp -= 1;
-					}
 
 					switch ($attr)
 					{
