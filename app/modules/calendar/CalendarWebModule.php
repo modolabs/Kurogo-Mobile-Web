@@ -576,7 +576,6 @@ class CalendarWebModule extends WebModule {
             );
         }
 
-        //get viewlist
         $this->assign('feedTitle', $this->getFeedTitle($calendar, $type));
         $this->assign('calendar', $calendar);
         $this->assign('current', $current);
