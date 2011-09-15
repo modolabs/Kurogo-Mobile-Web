@@ -1,4 +1,4 @@
-<ul class="results">
+<ul class="results"{if $resultsID} id="{$resultsID}"{/if}>
   {$ellipsisCount=0}
   {if $previousURL}
     <li class="pagerlink">
