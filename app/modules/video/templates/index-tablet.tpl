@@ -28,10 +28,10 @@
     </table>
   {else}
   <div id="videoHeader">
-    {include file="findInclude:common/templates/search.tpl" extraArgs=$hiddenArgs}
-    <div id="bookmarkscontainer"{if !$hasBookmarks} style="display:none"{/if}>
+    <div class="nonfocal" id="bookmarkscontainer"{if !$hasBookmarks} style="display:none"{/if}>
       <a id="bookmarkslink" href="{$bookmarkLink[0]['url']}"><div></div></a>
     </div>
+    {include file="findInclude:common/templates/search.tpl" extraArgs=$hiddenArgs}
   </div>
   {/if}
 {/block}
