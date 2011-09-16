@@ -13,7 +13,38 @@ class CalendarAPIModule extends APIModule
     protected $timezone;
     protected $fieldConfig;
 
+    // modified from CalendarWebModule
+    protected function getFeedsByType() {  
+        $groupTitles = array(
+            'user' => 'Users',
+            'resource' => 'Resources',
+            'static' => 'Other Calendars',
+            );
+
+        $feeds = array();
+        foreach (array('user','resource','static') as $type) {
+            $typeFeedData = $this->getFeeds($type);
+            $typeFeeds = array();
+            foreach ($typeFeedData as $feed => $feedData) {
+                $typeFeeds[] = array(
+                    'id' => $feed,
+                    'title' => $feedData['TITLE'],
+                    'type' => $type,
+                    );
+            }
+            if ($typeFeeds) {
+                $feeds[] = array(
+                    'id' => $type,
+                    'title' => $groupTitles[$type],
+                    'calendars' => $typeFeeds,
+                    );
+            }
+        }
+        return $feeds;
+    }
+
     // from CalendarWebModule
+
     protected function getFeeds($type) {
         if (isset($this->feeds[$type])) {
             return $this->feeds[$type];
@@ -26,21 +57,22 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'user':
-            case 'resource':
-                $typeController = $type=='user' ? 'UserCalendarListController' :'ResourceListController';
-                $sectionData = $this->getOptionalModuleSection('calendar_list');
-                $listController = isset($sectionData[$typeController]) ? $sectionData[$typeController] : '';
+                $sectionData = $this->getOptionalModuleSection('user_calendars');
+                $listController = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : '';
                 if (strlen($listController)) {
                     $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
                     $controller = CalendarListController::factory($listController, $sectionData);
-                    switch ($type) {
-                        case 'resource':
-                            $feeds = $controller->getResources();
-                            break;
-                        case 'user':
-                            $feeds = $controller->getUserCalendars();
-                            break;
-                    }
+                    $feeds = $controller->getUserCalendars();
+                }
+                break;
+
+            case 'resource':
+                $sectionData = $this->getOptionalModuleSection('resources');
+                $listController = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : '';
+                if (strlen($listController)) {
+                    $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
+                    $controller = CalendarListController::factory($listController, $sectionData);
+                    $feeds = $controller->getResources();
                 }
                 break;
             default:
@@ -48,6 +80,10 @@ class CalendarAPIModule extends APIModule
         }
 
         if ($feeds) {
+            foreach ($feeds as $id => &$feed) {
+                $feed['type'] = $type;
+            }
+
             $this->feeds[$type] = $feeds;
         }
 
@@ -69,6 +105,7 @@ class CalendarAPIModule extends APIModule
     }
     
     public function getFeed($index, $type) {
+        $controller = null;
         $feeds = $this->getFeeds($type);
         if (isset($feeds[$index])) {
             $feedData = $feeds[$index];
@@ -76,10 +113,10 @@ class CalendarAPIModule extends APIModule
                 $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
             }
             $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
-            return $controller;
         } else {
             throw new KurogoDataException($this->getLocalizedString('ERROR_NO_CALENDAR_FEED', $index));
         }
+        return $controller;
     }
 
     private function apiArrayFromEvent(ICalEvent $event) {
@@ -132,72 +169,10 @@ class CalendarAPIModule extends APIModule
         $this->fieldConfig = $this->getAPIConfigData('detail');
 
         switch ($this->command) {
+            case 'index':
             case 'groups':
-                // special cases for two configs:
-                // type = group
-                // calendar = __USER__
 
-                $groupConfig = $this->getAPIConfigData('groups');
-                $groups = array();
-                foreach ($groupConfig as $groupID => $groupData) {
-                    $type = $groupData['type'];
-                    $groupResult = array(
-                        'title' => $groupData['title'],
-                        'id'    => $groupData['id'],
-                        );
-
-                    if ($type == 'group') {
-                        // TODO unimplemented API
-
-                        if (isset($groupData['categories'])) {
-                            $categories = $groupData['categories'];
-
-                        } elseif (isset($groupData['all']) && $groupData['all']) {
-                            $categories = array();
-                        }
-
-                        $groupResult['categories'] = $categories;
-
-                    } else {
-                        $calendars = array();
-
-                        if (isset($groupData['calendars'])) {
-                            $calendarIDs = $groupData['calendars'];
-                            foreach ($calendarIDs as $calID) {
-                                if ($calID == '__USER__') {
-                                    $calID = $this->getDefaultFeed('user');
-                                }
-                                $feedData = $this->getFeedData($calID, $groupData['type']);
-                                $calendars[] = array(
-                                    'id'    => $calID,
-                                    'type'  => $groupData['type'],
-                                    'title' => $feedData['TITLE'],
-                                    );
-                            }
-
-                        } elseif (isset($groupData['all']) && $groupData['all']) {
-                            $feeds = $this->getFeeds($type);
-                            foreach ($feeds as $id => $feedData) {
-                                $calendars[] = array(
-                                    'id'    => $id,
-                                    'type'  => $groupData['type'],
-                                    'title' => $feedData['TITLE'],
-                                    );
-                            }
-                        }
-
-                        $groupResult['calendars'] = $calendars;
-                    }
-
-                    $groups[] = $groupResult;
-                }
-
-                $response = array(
-                    'total'        => count($groups),
-                    'returned'     => count($groups),
-                    'displayField' => 'title',
-                    'results'      => $groups,
-                    );
+                $response = $this->getFeedsByType();
 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
@@ -334,25 +309,14 @@ class CalendarAPIModule extends APIModule
 
             case 'calendars':
 
-                $feeds = array();
-                foreach (array('static', 'user', 'resource') as $type) {
-                    $typeFeeds = $this->getFeeds($type);
-                    foreach ($typeFeeds as $feedID=>$feedData) {
-                        $feeds[] = array(
-                            'id'    => $feedID,
-                            'type'  => $type,
-                            'title' => $feedData['TITLE'],
-                            );
-                    }
+                $group = $this->getArg('group');
+                $response = array();
+                foreach ($this->getFeeds($group) as $feedID => $feedData) {
+                    $response[] = array(
+                        'id' => $feedID,
+                        'title' => $feedData['TITLE'],
+                        );
                 }
-
-                $count = count($feeds);
-                $response = array(
-                    'total'        => $count,
-                    'returned'     => $count,
-                    'displayField' => 'title',
-                    'results'      => $feeds,
-                    );
 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);
