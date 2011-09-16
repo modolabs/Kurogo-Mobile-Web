@@ -266,7 +266,7 @@ abstract class MapImageController
 
     public function prepareJavascriptTemplate($filename, $repeating=false) {
         // TODO better way to search for package-specific templates
-        $path = __DIR__.'/javascript/'.$filename.'.js';
+        $path = dirname(__FILE__).'/javascript/'.$filename.'.js';
         $path = realpath_exists($path);
         if ($path) {
             return new JavascriptTemplate($path, $repeating);
