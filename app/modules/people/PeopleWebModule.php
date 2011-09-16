@@ -12,7 +12,6 @@ Kurogo::includePackage('People');
   */
 class PeopleWebModule extends WebModule {
     protected $id = 'people';
-    protected $bookmarkLinkTitle = 'Bookmarked People';
     protected $detailFields = array();
     protected $detailAttributes = array();
     protected $defaultController = 'LDAPPeopleController';
@@ -179,7 +178,7 @@ class PeopleWebModule extends WebModule {
             $this->controllers[$index] = $controller;
             return $controller;
         } else {
-            throw new Exception("Error getting people feed for index $index");
+            throw new KurogoConfigurationException("Error getting people feed for index $index");
         }
     }
 
@@ -219,7 +218,7 @@ class PeopleWebModule extends WebModule {
             
             return $this->contactGroups[$group];            
         } else {
-            throw new Exception("Unable to find contact group information for $group");
+            throw new KurogoConfigurationException("Unable to find contact group information for $group");
         }
     }
     
@@ -227,7 +226,7 @@ class PeopleWebModule extends WebModule {
         //try version -1.1 page-index version first for backwards compatibility
         try { 
             $contacts = $this->loadPageConfigFile('index', 'contacts');
-        } catch (Exception $e) {
+        } catch (KurogoConfigurationException $e) {
             $contacts = $this->getModuleSections('contacts');
         }
         
@@ -321,6 +320,7 @@ class PeopleWebModule extends WebModule {
                 } else {
                   $this->redirectTo('index');
                 }
+                $this->assign('placeholder', $this->getLocalizedString("SEARCH"));
                 break;
 
             case 'bookmarks':
@@ -341,6 +341,7 @@ class PeopleWebModule extends WebModule {
                     }
                 }
                 $this->assign('bookmarks', $bookmarks);
+                $this->assign('bookmarksTitle', $this->getLocalizedString('BOOKMARK_TITLE'));
                 break;
                 
             case 'group':
@@ -362,7 +363,8 @@ class PeopleWebModule extends WebModule {
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->generateBookmarkLink();
                 }
-                $this->assign('searchTip', $this->getOptionalModuleVar('SEARCH_TIP'));
+                $this->assign('placeholder', $this->getLocalizedString("SEARCH"));
+                $this->assign('searchTip', $this->getModuleVar('SEARCH_TIP'));
                 break;
         }  
     }

@@ -180,6 +180,11 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
                 break;
         }
     }
+
+    public function parseData($contents) {
+        $this->features = array();
+        return parent::parseData($contents);
+    }
 }
 
 

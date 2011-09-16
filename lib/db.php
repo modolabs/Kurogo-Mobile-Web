@@ -53,7 +53,7 @@ class db {
         $this->lastError = null;
         $db_type = isset($config['DB_TYPE']) ? $config['DB_TYPE'] : null;
         if (!file_exists(LIB_DIR . "/db/db_$db_type.php")) {
-            $e = new Exception("Database type $db_type not found");
+            $e = new KurogoConfigurationException("Database type $db_type not found");
             $this->lastError = KurogoError::errorFromException($e);
             throw $e;
         }
@@ -64,9 +64,9 @@ class db {
         } catch (Exception $e) {
             $this->lastError = KurogoError::errorFromException($e);
             if (Kurogo::getSiteVar('DB_DEBUG')) {
-                throw new Exception("Error connecting to database: " . $e->getMessage(), 0);
+                throw new KurogoDataServerException("Error connecting to database: " . $e->getMessage(), 0);
             } else {
-                throw new Exception("Error connecting to database");
+                throw new KurogoDataServerException("Error connecting to database");
             }
         }
     }
@@ -116,7 +116,7 @@ class db {
      */
     private function errorHandler($sql, $errorInfo, $ignoreErrors, $catchErrorCodes) {
     
-        $e = new Exception (sprintf("Error with %s: %s", $sql, $errorInfo[2]), $errorInfo[1]);
+        $e = new KurogoDataException (sprintf("Error with %s: %s", $sql, $errorInfo[2]), $errorInfo[1]);
     
         if ($ignoreErrors) {
             $this->lastError = KurogoError::errorFromException($e);

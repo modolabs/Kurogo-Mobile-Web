@@ -118,7 +118,7 @@ class RSSDataParser extends XMLDataParser
     {
     	if ($channelClass) {
     		if (!class_exists($channelClass)) {
-    			throw new Exception("Cannot load class $channelClass");
+    			throw new KurogoConfigurationException("Cannot load class $channelClass");
     		}
 			$this->channelClass = $channelClass;
 		}
@@ -128,7 +128,7 @@ class RSSDataParser extends XMLDataParser
     {
     	if ($itemClass) {
     		if (!class_exists($itemClass)) {
-    			throw new Exception("Cannot load class $itemClass");
+    			throw new KurogoConfigurationException("Cannot load class $itemClass");
     		}
 			$this->itemClass = $itemClass;
 		}
@@ -138,7 +138,7 @@ class RSSDataParser extends XMLDataParser
     {
     	if ($enclosureClass) {
     		if (!class_exists($enclosureClass)) {
-    			throw new Exception("Cannot load class $enclosureClass");
+    			throw new KurogoConfigurationException("Cannot load class $enclosureClass");
     		}
 			$this->enclosureClass = $enclosureClass;
 		}
@@ -148,7 +148,7 @@ class RSSDataParser extends XMLDataParser
     {
     	if ($imageClass) {
     		if (!class_exists($imageClass)) {
-    			throw new Exception("Cannot load class $imageClass");
+    			throw new KurogoConfigurationException("Cannot load class $imageClass");
     		}
 			$this->imageClass = $imageClass;
 		}

@@ -87,7 +87,7 @@ class CalendarDataController extends DataController
         if (!$this->startDate) {
             return;
         } elseif (!preg_match("/^-?(\d+)$/", $duration)) {
-            throw new Exception("Invalid duration $duration");
+            throw new KurogoDataException("Invalid duration $duration");
         }
         
         $this->endDate = clone($this->startDate);
@@ -100,7 +100,7 @@ class CalendarDataController extends DataController
                 $this->clearInternalCache();
                 break;
             default:
-                throw new Exception("Invalid duration unit $duration_units");
+                throw new KurogoDataException("Invalid duration unit $duration_units");
                 break;
             
         }

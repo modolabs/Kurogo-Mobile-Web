@@ -36,7 +36,7 @@ li.noimage {
     margin:-3px 7px -3px 0;
     width: 110px;
     height: 86px;
-    background: transparent url('/modules/video/images/video-placeholder.png') no-repeat top left;
+    background: transparent url('/modules/video/images/video-placeholder.png') no-repeat left top;
     background-size: 110px;
 }
 

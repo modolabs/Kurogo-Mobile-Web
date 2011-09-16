@@ -45,7 +45,7 @@ class ContentWebModule extends WebModule {
                 return '';
                 break;
             default:
-                throw new Exception("Invalid content type $content_type");
+                throw new KurogoConfigurationException("Invalid content type $content_type");
         }
         
     }
@@ -71,7 +71,7 @@ class ContentWebModule extends WebModule {
             
             return $this->feedGroups[$group];            
         } else {
-            throw new Exception("Unable to find link group information for $group");
+            throw new KurogoConfigurationException("Unable to find link group information for $group");
         }
     }
     

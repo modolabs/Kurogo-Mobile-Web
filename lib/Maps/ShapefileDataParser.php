@@ -65,7 +65,7 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
     {
         if (strpos($filename, '.zip') !== false) {
             if (!class_exists('ZipArchive')) {
-                throw new Exception("class ZipArchive (php-zip) not available");
+                throw new KurogoException("class ZipArchive (php-zip) not available");
             }
             $zip = new ZipArchive();
             $zip->open($filename);
@@ -87,7 +87,7 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
                     $this->setContents($zip->getFromName("$shapeName.shp"));
                     $contents = $zip->getFromName("$shapeName.dbf");
                     if (!$contents) {
-                        throw new Exception("could not read $shapeName.dbf");
+                        throw new KurogoDataException("could not read $shapeName.dbf");
                     }
                     $this->dbfParser->setContents($zip->getFromName("$shapeName.dbf"));
                     $this->dbfParser->setup();
@@ -116,7 +116,7 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
             $this->doParse();
 
         } else {
-            throw new Exception("Cannot find $filename");
+            throw new KurogoDataException("Cannot find $filename");
         }
 
         return $this->features;
@@ -172,10 +172,10 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
      ***************************************************************/
     public function readHeader() {
         if ($this->position > 0) {
-            throw new Exception('header already read');
+            throw new KurogoDataException('header already read');
         }
         if ($this->readWord(null, true) != 9994) {
-        	throw new Exception('incorrect header for .shp file');
+        	throw new KurogoDataException('incorrect header for .shp file');
         }
         $this->skipTo(24);
         $this->fileSize = $this->readWord(null, true) * 2;
@@ -199,7 +199,7 @@ class ShapefileDataParser extends BinaryFileParser implements MapDataParser
             $readFunction = self::$shapeTypes[$shapeType];
             $feature = $this->$readFunction();
         } else {
-            throw new Exception("geometry $shapeType not currently supported");
+            throw new KurogoDataException("geometry $shapeType not currently supported");
         }
         $feature->setId($recordNumber);
         $feature->setFields($this->dbfParser->readRecord());

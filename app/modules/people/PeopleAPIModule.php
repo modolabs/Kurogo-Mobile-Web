@@ -26,7 +26,7 @@ class PeopleAPIModule extends APIModule
             
             return $this->contactGroups[$group];            
         } else {
-            throw new Exception("Unable to find contact group information for $group");
+            throw new KurogoConfigurationException("Unable to find contact group information for $group");
         }
     }
     
@@ -95,7 +95,7 @@ class PeopleAPIModule extends APIModule
             //$controller->setAttributes($this->detailAttributes);
             return $controller;
         } else {
-            throw new Exception("Error getting people feed for index $index");
+            throw new KurogoConfigurationException("Error getting people feed for index $index");
         }
     }
 

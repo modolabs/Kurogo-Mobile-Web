@@ -1,16 +1,16 @@
 {
     "download": {
-        "title":"Downloads",
-        "description":"With the download module you can create links to external applications for certain platforms. This could shortcut applications with BlackBerry devices, and native applications for iOS and Android devices.",
+        "titleKey":"DOWNLOAD_ADMIN_DOWNLOAD_TITLE",
+        "descriptionKey":"DOWNLOAD_ADMIN_DOWNLOAD_DESCRIPTION",
         "config":"apps",
         "sectiontype":"section",
         "fields":{
-            "section":{"label":"Platform","type":"label"},
-            "url":{"label":"URL","description":"URL of platform application","type":"text"},
-            "downloadText":{"label":"Download Text","description":"Text shown on the home screen if a download is available for this platform","type":"text"},
-            "instructions":{"label":"Download Instructions","description":"Text shown in the download module to instruct users about the download for this platform","type":"text"}
+            "section":{"labelKey":"DOWNLOAD_ADMIN_DOWNLOAD_SECTION_TITLE","type":"label","descriptionKey":"DOWNLOAD_ADMIN_DOWNLOAD_SECTION_DESCRIPTION"},
+            "url":{"labelKey":"DOWNLOAD_ADMIN_DOWNLOAD_URL_TITLE","descriptionKey":"DOWNLOAD_ADMIN_DOWNLOAD_URL_DESCRIPTION","type":"text"},
+            "downloadText":{"labelKey":"DOWNLOAD_ADMIN_DOWNLOAD_DOWNLOADTEXT_TITLE","descriptionKey":"DOWNLOAD_ADMIN_DOWNLOAD_DOWNLOADTEXT_DESCRIPTION","type":"text"},
+            "instructions":{"labelKey":"DOWNLOAD_ADMIN_DOWNLOAD_INSTRUCTIONS_TITLE","descriptionKey":"DOWNLOAD_ADMIN_DOWNLOAD_INSTRUCTIONS_DESCRIPTION","type":"text"}
         },
-        "sectionaddprompt":"Enter platform to add new download link (blackberry, bbplus, iphone, etc)",
+        "sectionaddpromptkey":"DOWNLOAD_ADMIN_DOWNLOAD_ADD_PROMPT",
         "sectionindex":"string",
         "sectionaddnew":true,
         "sectiondelete":true

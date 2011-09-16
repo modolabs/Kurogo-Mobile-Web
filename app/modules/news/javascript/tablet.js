@@ -27,7 +27,7 @@ function moduleHandleWindowResize() {
         case 'landscape':
             stories.style.height = contentHeight + 'px';
             storyDetailWrapper.style.height = contentHeight + 'px';
-            var list = document.getElementById('stories').getElementsByTagName('li')[0].parentNode;
+            var list = stories.getElementsByTagName('li')[0].parentNode;
             list.style.width = '';
             break;
         

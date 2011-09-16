@@ -63,7 +63,7 @@ abstract class XMLDataParser extends DataParser
         xml_set_character_data_handler($xml_parser, array($this,"characterData"));
         
         if (!xml_parse($xml_parser, $contents)) {
-            throw new Exception(sprintf("XML error: %s at line %d",
+            throw new KurogoDataException(sprintf("XML error: %s at line %d",
                         xml_error_string(xml_get_error_code($xml_parser)),
                         xml_get_current_line_number($xml_parser)));
         }

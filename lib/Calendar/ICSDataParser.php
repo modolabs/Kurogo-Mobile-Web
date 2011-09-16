@@ -59,7 +59,7 @@ class ICSDataParser extends DataParser
     {
     	if ($eventClass) {
     		if (!class_exists($eventClass)) {
-                throw new ICalendarException("Event class $eventClass not defined");
+                throw new KurogoConfigurationException("Event class $eventClass not defined");
     		} 
 			$this->eventClass = $eventClass;
 		}
@@ -146,7 +146,7 @@ class ICSDataParser extends DataParser
             default:
                 try {
                     end($nesting)->set_attribute($contentname, $value, $params);
-                } catch (Exception $e) {
+                } catch (ICalendarException $e) {
                     if ($this->haltOnParseErrors) {
                         throw $e;
                     }

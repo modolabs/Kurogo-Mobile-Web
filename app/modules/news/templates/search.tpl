@@ -10,7 +10,7 @@
   {/block}
 {else}
   <div class="nonfocal">
-    No stories found
+    {"NO_RESULTS"|getLocalizedString}
   </div>
 {/if}
 

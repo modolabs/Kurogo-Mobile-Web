@@ -24,6 +24,8 @@ class GoogleGeoDataController extends MapDataController
 
     public function init($args)
     {
+        $args['TITLE'] = '';
+
         // set BASE_URL first so parent doesn't complain
         $this->isPlaces = Kurogo::getOptionalSiteVar('USE_GOOGLE_PLACES', false, 'maps');
         if ($this->isPlaces) {

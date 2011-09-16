@@ -1,6 +1,26 @@
+var localizedStrings = {}
+
 $(document).ready(function() {
+    getLocalizedString(['BUTTON_ADD','BUTTON_EDIT','BUTTON_DONE','BUTTON_REMOVE','CONFIG_SAVED','ACTION_SUCCESSFUL','ADMIN_SECTION_REMOVE_PROMPT','ADMIN_SECTION_ADD_PROMPT']);            
     $('#message').hide();
 });
+
+function getLocalizedString(key) {
+    if (typeof key=='string' && typeof localizedStrings[key] != 'undefined') {
+        return localizedStrings[key];
+    }
+
+    makeAPICall('GET', 'admin','getlocalizedstring', { 'v':1, 'key':key}, function(response) {
+        $.each(response, function(k,v) {   
+            localizedStrings[k] = v;
+        });
+
+        if (typeof key=='string' && typeof localizedStrings[key] != 'undefined') {
+            return localizedStrings[key];
+        }
+    });
+}
+
 
 function createFormFieldListItems(key, fieldData) {
     var items = [createFormFieldListItem(key,fieldData)];
@@ -63,6 +83,7 @@ function createFormSectionListItems(section, sectionData) {
             items.push(createFormSectionList(section, sectionData));
             break;
         default:
+            //this represents an error in the admin recipe. Should never happen
             alert('Section type ' + sectionData.sectiontype + ' not handled for section ' + section);
             
     }
@@ -150,6 +171,9 @@ function appendFormField(parent, key, fieldData) {
             break;
         case 'select':
             var options = 'options' in fieldData ? fieldData.options : [];
+            if (!fieldData.value && 'placeholder' in fieldData) {
+                fieldData.value = fieldData.placeholder;
+            }
             parent.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).addClass('changeElement').addClass(inputClass).attr('id',id));
             break;
         case 'paragraph':
@@ -161,11 +185,16 @@ function appendFormField(parent, key, fieldData) {
         case 'action':
             parent.append($('<a class="formbutton"">').append($('<div>').html(fieldData.value)).click(function() {
                 makeAPICall('GET','admin',fieldData.action, fieldData.params, function() { 
-                    showMessage(fieldData.message ? fieldData.message : 'Action Successful'); 
+                    showMessage(fieldData.message ? fieldData.message : getLocalizedString('ACTION_SUCCESSFUL'));
                 });
             }));
             break;
+        case 'upload':
+            var input = $('<input/>').attr('type','file').attr('name', key).attr('section', section).addClass(inputClass).attr('id',id);
+            parent.append(input);
+            break;
         default:
+            //this represents an error in the admin recipe. Should never happen
             alert("Don't know how to handle field of type '" + fieldData.type + "' for key '" + key +"'");
             break;
     }
@@ -236,7 +265,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     
         var rowbuttons = $('<div class="rowbuttons" />');
     
-        rowbuttons.append($('<a href="" class="textbutton edit">Edit</a>').click(function() {
+        rowbuttons.append($('<a href="" class="textbutton edit">'+ getLocalizedString('BUTTON_EDIT') + '</a>').click(function() {
             stopSectionEditing(titleField);
             $(this).closest('li').addClass('editing');
             return false;
@@ -246,13 +275,13 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     rowbuttons.append($("<input />").attr('type','hidden').addClass('sectionorder').attr('name','sectionorder['+section+'][]').attr('value',sectionID));
 
     if (data.sectiondelete) {
-        rowbuttons.append($('<a href="" class="textbutton delete">Remove</a>').click(function() {
+        rowbuttons.append($('<a href="" class="textbutton delete">'+ getLocalizedString('BUTTON_REMOVE') +'</a>').click(function() {
             if ($(this).closest('li').hasClass('notsaved')) {
                 reloadSection();
                 return false;
             }
             
-            if (confirm("Do you want to remove this item? Removal will occur immediately and cannot be undone.")) {
+            if (confirm(getLocalizedString('ADMIN_SECTION_REMOVE_PROMPT'))) {
 
                 params = {
                     v: '1',
@@ -326,7 +355,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
         });
         editrow.append(list);
         var div = $('<div class="rowbuttons" />');
-        div.append($('<a href="" class="textbutton save">Done</a>').click(function() {
+        div.append($('<a href="" class="textbutton save">'+getLocalizedString('BUTTON_DONE')+'</a>').click(function() {
             stopSectionEditing(titleField);
             return false;
         }));
@@ -376,13 +405,13 @@ function createFormSectionList(section, data) {
     //add the "Add" button if specified
     if (data.sectionaddnew) {
         var div = $('<div class="tablebuttons" />');
-        div.append($('<a href="" class="textbutton add">Add</span>').click(function() {
+        div.append($('<a href="" class="textbutton add">'+getLocalizedString('BUTTON_ADD') +'</span>').click(function() {
             stopSectionEditing();
             var sectionID;
             if (data.sectionindex =='numeric') {
                 sectionID = data.sections.length;
             } else {
-                var sectionaddprompt = 'sectionaddprompt' in data ? data.sectionaddprompt : 'Enter id of new section';
+                var sectionaddprompt = 'sectionaddprompt' in data ? data.sectionaddprompt : getLocalizedString('ADMIN_SECTION_ADD_PROMPT');
                 if (!(sectionID = prompt(sectionaddprompt))) {
                     return false;
                 }

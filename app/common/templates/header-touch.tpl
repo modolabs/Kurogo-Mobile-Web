@@ -14,8 +14,8 @@
 {block name="navbar"}
   <div id="navbar"{if $hasHelp} class="helpon"{/if}>
     <div class="breadcrumbs{if $isModuleHome} homepage{/if}">
-      <a name="top" href="/home/" class="homelink">
-        <img src="/common/images/homelink.gif" width="{$homelink_image_width|default:40}" height="{$homelink_image_height|default:30}" alt="Home" />
+      <a name="top" href="{$homeLink}" class="homelink">
+        <img src="/common/images/homelink.gif" width="{$homelink_image_width|default:40}" height="{$homelink_image_height|default:30}" alt="{$homeLinkText}" />
       </a>
       {$breadcrumbHTML}
         {if $isModuleHome}

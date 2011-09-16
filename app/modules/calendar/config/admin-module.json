@@ -1,24 +1,24 @@
 {
     "options": {
-        "title":"Options",
-        "description":"",
+        "titleKey":"CALENDAR_ADMIN_OPTIONS_TITLE",
+        "descriptionKey":"CALENDAR_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "UserCalendarListController":{"label":"User Calendars","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getUserCalendarListController"],"description":"Certain services can support personal calendars. If you use an authentication service that has personal calendars, you can use it in the calendar module."},
-            "ResourceListController":{"label":"Resource Calendars","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getResourceListController"],"description":"Certain services can support shared resource calendars. If you use an authentication service that has resources, you can use it in the calendar module."}
+            "UserCalendarListController":{"labelKey":"CALENDAR_ADMIN_OPTIONS_USERCALENDARS_TITLE","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getUserCalendarListController"],"descriptionKey":"CALENDAR_ADMIN_OPTIONS_CALENDARS_DESCRIPTION"},
+            "ResourceListController":{"labelKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_TITLE","type":"select","config":"module","section":"calendar_list","optionsMethod":["Calendar","getResourceListController"],"descriptionKey":"CALENDAR_ADMIN_OPTIONS_RESOURCESCALENDARS_DESCRIPTION"}
        }
     },
     "index": {
-        "title":"Index Page",
+        "titleKey":"CALENDAR_ADMIN_INDEX_TITLE",
         "config":"page-index",
-        "description":"This section contains the items that show up on the main calendar index page. Each entry can a title, url and other information.",
+        "descriptionKey":"CALENDAR_ADMIN_INDEX_DESCRIPTION",
         "sectiontype":"section",
         "fields":{
-            "section":{"label":"Entry","type":"label"},
-            "title":{"label":"Title","description":"The title of the entry","type":"text"},
-            "subtitle":{"label":"Subtitle","description":"The subtitle of the entry","type":"text","omitBlankValue":true},
-            "url":{"label":"URL","description":"URL of entry. For calendar feeds, use either <i>day</i>, <i>list</i> or <i>year</i> followed by a <i>type=static</i> and <i>calendar=calendarID</i> where calendarID is the name of a calendar feed.","type":"text"},
-            "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"description":"You can include different icons that represent various types of data","optionsFirst":"Normal","omitBlankValue":true}
+            "section":{"labelKey":"CALENDAR_ADMIN_INDEX_SECTION_TITLE","type":"label","descriptionKey":"CALENDAR_ADMIN_INDEX_SECTION_DESCRIPTION"},
+            "title":{"labelKey":"CALENDAR_ADMIN_INDEX_TITLE_TITLE","descriptionKey":"CALENDAR_ADMIN_INDEX_TITLE_DESCRIPTION","type":"text"},
+            "subtitle":{"labelKey":"CALENDAR_ADMIN_INDEX_SUBTITLE_TITLE","descriptionKey":"CALENDAR_ADMIN_INDEX_SUBTITLE_DESCRIPTION","type":"text","omitBlankValue":true},
+            "url":{"labelKey":"CALENDAR_ADMIN_INDEX_URL_TITLE","descriptionKey":"CALENDAR_ADMIN_INDEX_URL_DESCRIPTION","type":"text"},
+            "class":{"labelKey":"CALENDAR_ADMIN_INDEX_TYPE_TITLE","descriptionKey":"CALENDAR_ADMIN_INDEX_TYPE_DESCRIPTION","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
         },
         "sectiontitlefield":"title",
         "sectionindex":"string",
@@ -27,18 +27,18 @@
         "sectionreorder":true
     },
     "feeds": {
-        "title":"Calendars",
-        "description":"Use this section to manage external calendar feeds.",
+        "titleKey":"CALENDAR_ADMIN_FEEDS_TITLE",
+        "descriptionKey":"CALENDAR_ADMIN_FEEDS_DESCRIPTION",
         "config":"feeds",
         "sectiontype":"section",
         "fields":{
-            "section":{"label":"ID", "description":"Programmatic id for this calendar", "type":"label"},
-            "TITLE":{"label":"Title", "description":"Label for this feed", "type":"text"},
-            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"text","placeholder":"CalendarDataController","omitBlankValue":true},
-            "BASE_URL":{"label":"URL","description":"The url for the feed or web service","type":"text"},
-            "CACHE_LIFETIME":{"label":"Cache lifetime","description":"The length of time to cache the feed from the server","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"]},
-            "PARSER_CLASS":{"label":"Parser Class","description":"The class used to parse calendar data. Rarely needs to be changed","type":"text","placeholder":"ICSDataParser","omitBlankValue":true},
-            "EVENT_CLASS":{"label":"Event Class","description":"The class used to parse calendar events. Rarely needs to be changed","type":"text","placeholder":"ICalEvent","omitBlankValue":true}
+            "section":{"labelKey":"CALENDAR_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
+            "TITLE":{"labelKey":"CALENDAR_ADMIN_FEEDS_TITLE_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
+            "CONTROLLER_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_CLASS_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_CLASS_DESCRIPTION", "type":"text","placeholder":"CalendarDataController","omitBlankValue":true},
+            "BASE_URL":{"labelKey":"CALENDAR_ADMIN_FEEDS_BASEURL_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_BASEURL_DESCRIPTION","type":"text"},
+            "CACHE_LIFETIME":{"labelKey":"CALENDAR_ADMIN_FEEDS_CACHE_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_CACHE_DESCRIPTION","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"]},
+            "PARSER_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_PARSERCLASS_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_PARSERCLASS_DESCRIPTION","type":"text","placeholder":"ICSDataParser","omitBlankValue":true},
+            "EVENT_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_EVENTCLASS_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_EVENTCLASS_DESCRIPTION","type":"text","placeholder":"ICalEvent","omitBlankValue":true}
         },
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",

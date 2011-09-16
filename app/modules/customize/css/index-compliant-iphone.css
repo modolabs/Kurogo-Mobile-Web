@@ -52,7 +52,7 @@ ul {
     float: right;
     background-image: url(/modules/customize/images/compliant/handle.png);
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: left center;
     padding: 14pt;
 }
 ul.newapps {

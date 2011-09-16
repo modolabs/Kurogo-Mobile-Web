@@ -13,7 +13,7 @@
           {block name="byline"}
               
             {if $author}
-              <span class="credit">by <span class="author">{$author}</span><br /></span>
+              <span class="credit author">{"AUTHOR_CREDIT"|getLocalizedString:$author}</span><br />
             {/if}
     
             <span class="postdate">{$date}</span>
@@ -36,7 +36,7 @@
     </span>
     {if $showLink}
     <div id="showmore">
-    <a href="{$link}">Read more</a>
+    <a href="{$link}">{"READ_MORE"|getLocalizedString}</a>
     </div>
     {/if}
   </div><!--story-->

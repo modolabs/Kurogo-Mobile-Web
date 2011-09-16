@@ -41,10 +41,9 @@ class AboutWebModule extends WebModule {
         $this->assign('devicePhrase', $this->getPhraseForDevice()); // TODO: this should be more generic, not part of this module
         break;
 
+      case 'help':
       case 'credits':
       case 'about':
-        break;
-
       case 'pane':
         break;
 

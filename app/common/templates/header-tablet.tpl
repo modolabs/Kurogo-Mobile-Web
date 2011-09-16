@@ -12,8 +12,8 @@
 {block name="navbar"}
   <div id="navbar">
     <div class="breadcrumbs{if $isModuleHome} homepage{/if}">
-      <a name="top" href="/home/" class="homelink">
-        <img src="/common/images/homelink.png" width="{$homelink_image_width|default:66}" height="{$homelink_image_height|default:50}" width="66" height="50" alt="Home" />
+      <a name="top" href="{$homeLink}" class="homelink">
+        <img src="/common/images/homelink.png" width="{$homelink_image_width|default:66}" height="{$homelink_image_height|default:50}" alt="{$homeLinkText}" />
       </a>
       
       {$breadcrumbHTML}
@@ -26,7 +26,7 @@
     </div>
     {if $hasHelp}
       <div class="help">
-        <a href="help.php"><img src="/common/images/help.png" width="{$help_image_width|default:52}" height="{$help_image_height|default:50}" alt="Help" /></a>
+        <a href="{$helpLink}"><img src="/common/images/help.png" width="{$help_image_width|default:52}" height="{$help_image_height|default:50}" alt="{$helpLinkText}" /></a>
       </div>
     {/if}
   </div>

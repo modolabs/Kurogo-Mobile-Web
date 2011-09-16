@@ -9,7 +9,7 @@ class TwitterOAuthProvider extends OAuthProvider
         parent::init($args);
         if (!isset($args['OAUTH_CONSUMER_KEY'], $args['OAUTH_CONSUMER_SECRET']) || 
             strlen($args['OAUTH_CONSUMER_KEY'])==0 || strlen($args['OAUTH_CONSUMER_SECRET'])==0) {
-            throw new Exception("Twitter Consumer key and secret not set");
+            throw new KurogoConfigurationException("Twitter Consumer key and secret not set");
         }
     }
 

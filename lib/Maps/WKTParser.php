@@ -164,7 +164,7 @@ class WKTParser
                     break;
                 
                 default:
-                    throw new Exception("geometry type $type not supported");
+                    throw new KurogoDataException("geometry type $type not supported");
                     break;
             }
         }

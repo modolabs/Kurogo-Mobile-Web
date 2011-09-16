@@ -7,7 +7,6 @@ define('MAP_GROUP_COOKIE', 'mapgroup');
 class MapWebModule extends WebModule {
 
     protected $id = 'map';
-    protected $bookmarkLinkTitle = 'Bookmarked Locations';
     protected $feedGroup = null;
     protected $feedGroups = null;
     protected $numGroups = 1;
@@ -140,6 +139,9 @@ class MapWebModule extends WebModule {
     {
         $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
         $urlArgs = shortArrayFromMapFeature($placemark);
+        if (isset($options['external']) && $options['external']) {
+            $urlArgs['external'] = true;
+        }
         $result = array(
             'title' => $placemark->getTitle(),
             'subtitle' => $placemark->getSubtitle(),
@@ -222,25 +224,10 @@ class MapWebModule extends WebModule {
         $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
         $mapSearch = $this->getSearchClass($options);
         $searchResults = array_values($mapSearch->searchCampusMap($searchTerms));
-        $maxCount = count($searchResults);
-        if ($limit && $limit < $maxCount) {
-            $maxCount = $limit;
+        if ($limit) {
+            return array_slice($searchResults, 0, $limit);
         }
-        $results = array();
-        for ($i = 0; $i < $maxCount; $i++) {
-            $urlParams = shortArrayFromMapFeature($searchResults[$i]);
-            $external = $this->getArg('external', null);
-            if ($external) {
-                $urlParams['external'] = true;
-            }
-            $result = array(
-                'title' => $searchResults[$i]->getTitle(),
-                'url'   => $this->buildBreadcrumbURL('detail', $urlParams, $addBreadcrumb),
-                );
-            $results[] = $result;
-        }
-    
-        return $results;
+        return $searchResults;
     }
 
     // depends on feeds being loaded
@@ -414,14 +401,6 @@ JS;
     {
         $placemarks = $dataController->getSelectedPlacemarks();
 
-        // override point for where annotation should be drawn
-        if (isset($this->args['lat'], $this->args['lon'])) {
-            $customPlacemark = new MapBasePoint(
-                $this->args['lat'], $this->args['lon']);
-            
-            $placemarks[] = $customPlacemark;
-        }
-
         $imgController = $this->getImageController();
         foreach ($placemarks as $placemark) {
             $imgController->addPlacemark($placemark);
@@ -436,10 +415,9 @@ JS;
         
         // override point for where map should be centered
         if (isset($this->args['center'])) {
-            $latlon = explode(",", $this->args['center']);
-            $center = array('lat' => $latlon[0], 'lon' => $latlon[1]);
-        } elseif (isset($customPlacemark)) {
-            $center = $customPlacemark->getCenterCoordinate();
+            $center = filterLatLon($this->getArg('center'));
+        } elseif (isset($this->args['lat'], $this->args['lon'])) {
+            $center = array('lat' => $this->getArg('lat'), 'lon' => $this->getArg('lon'));
         }
 
         if (isset($center)) {
@@ -700,7 +678,11 @@ JS;
                     $args = array_merge($this->args, array('addBreadcrumb' => true));
 
                     // still need a way to show the Google logo if we use their search
-                    $places = $this->searchItems($searchTerms, null, $args);
+                    $searchResults = $this->searchItems($searchTerms, null, $args);
+                    $places = array();
+                    foreach ($searchResults as $place) {
+                        $places[] = $this->linkForItem($place);
+                    }
         
                     $this->assign('searchTerms', $searchTerms);
                     $this->assign('places',      $places);

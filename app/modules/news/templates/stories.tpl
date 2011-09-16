@@ -1,7 +1,7 @@
 <ul class="results">
   {if $previousURL}
     <li class="pagerlink">
-      <a href="{$previousURL}">Previous {$maxPerPage} stories...</a>
+      <a href="{$previousURL}">{"PREVIOUS_STORY_TEXT"|getLocalizedString:$maxPerPage}</a>
     </li>
   {/if}
 
@@ -20,7 +20,7 @@
           <div class="title">{$story["title"]}</div>
           {if $showAuthor}<div class="author">{$story['author']}</div>{/if}
           {if $showPubDate}<div class="pubdate">{$story['pubDate']}</div>{/if}
-          {$story['subtitle']}
+          {$story['subtitle']|strip_tags}
         </div>
       </a>
     </li>
@@ -28,7 +28,7 @@
 
   {if $nextURL}
     <li class="pagerlink">
-      <a href="{$nextURL}">Next {$maxPerPage} stories...</a>
+      <a href="{$nextURL}">{"NEXT_STORY_TEXT"|getLocalizedString:$maxPerPage}</a>
     </li>
   {/if}
 </ul>

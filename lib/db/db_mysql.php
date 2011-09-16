@@ -13,19 +13,19 @@ class db_mysql extends db
     public static function connection($dsn_data)
     {
         if (!isset($dsn_data['DB_HOST']) || empty($dsn_data['DB_HOST'])) {
-            throw new Exception("MySQL host not specified");
+            throw new KurogoConfigurationException("MySQL host not specified");
         }
 
         if (!isset($dsn_data['DB_USER']) || empty($dsn_data['DB_USER'])) {
-            throw new Exception("MySQL user not specified");
+            throw new KurogoConfigurationException("MySQL user not specified");
         }
 
         if (!isset($dsn_data['DB_PASS']) || empty($dsn_data['DB_PASS'])) {
-            throw new Exception("MySQL password not specified");
+            throw new KurogoConfigurationException("MySQL password not specified");
         }
 
         if (!isset($dsn_data['DB_DBNAME']) || empty($dsn_data['DB_DBNAME'])) {
-            throw new Exception("MySQL database not specified");
+            throw new KurogoConfigurationException("MySQL database not specified");
         }
 
         $dsn = sprintf("%s:host=%s;dbname=%s", 'mysql', $dsn_data['DB_HOST'], $dsn_data['DB_DBNAME']);

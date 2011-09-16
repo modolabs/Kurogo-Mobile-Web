@@ -21,7 +21,7 @@ class DiskCache {
 
     public function __construct($path, $timeout=NULL, $mkdir=FALSE) {
         if (empty($path)) {
-            throw new Exception("Invalid path");
+            throw new KurogoDataException("Invalid path");
         }
     
         $this->path = $path;
@@ -29,13 +29,13 @@ class DiskCache {
         if ($mkdir) {
             if (!file_exists($path)) {
                 if (!mkdir($path, 0700, true)) {
-                    throw new Exception("Could not create $path");
+                    throw new KurogoDataException("Could not create $path");
                 }
             }
         }
         
         if (!is_writable($path)) {
-            throw new Exception("Path $path is not writable");
+            throw new KurogoDataException("Path $path is not writable");
         }
         
         if ($timeout !== NULL) {

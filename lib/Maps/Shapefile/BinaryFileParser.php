@@ -44,7 +44,7 @@ abstract class BinaryFileParser extends DataParser
             }
         }
         if (count($chars) != $length) {
-            throw new Exception("not able to read $length characters");
+            throw new KurogoDataException("not able to read $length characters");
         }
 
         $this->position += $length;
@@ -143,7 +143,7 @@ abstract class BinaryFileParser extends DataParser
         $this->position = 0;
         if ($this->filename) {
             if (!$this->handle = fopen($this->filename, 'rb')) {
-                throw new Exception("unable to open file {$this->filename}");
+                throw new KurogoDataException("unable to open file {$this->filename}");
             }
         }
     }

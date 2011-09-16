@@ -52,7 +52,7 @@ class APIResponse
     
     public function display() {
         if (is_null($this->version)) {
-            throw new Exception('APIResponse version must be set before display');
+            throw new KurogoException('APIResponse version must be set before display');
         }
     
         $json = json_encode($this);

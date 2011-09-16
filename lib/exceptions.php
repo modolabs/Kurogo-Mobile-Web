@@ -4,30 +4,50 @@
   * @package Exceptions
   *
   */
+  
+class KurogoException extends Exception {
+    protected $sendNotification = true;
+    protected $code = 'internal';
+    
+    public function shouldSendNotification() {
+        return $this->sendNotification;
+    }
+}
 
 /**
   *  Returned when there is a problem returning data from a server
   * @package Exceptions
   */
-class DataServerException extends Exception {
+class KurogoDataServerException extends KurogoException {
+    protected $code = 'server';
+}
+
+class DataServerException extends KurogoException {
+    protected $code = 'server';
+}
+
+class KurogoDataException extends KurogoException {
+    protected $code = 'data';
+}
+
+class KurogoConfigurationException extends KurogoException {
+    protected $code = 'config';
+}
+
+class KurogoUserException extends KurogoException {
+    protected $code = 'user';
+}
+
+class KurogoUnauthorizedException extends KurogoException {
+    protected $code = 'forbidden';
 }
 
 /**
   * @package Exceptions
   */
-class DeviceNotSupported extends Exception {
-}
-
-/**
-  * @package Exceptions
-  */
-class ModuleNotFound extends Exception {
-}
-
-/**
-  * @package Exceptions
-  */
-class DisabledModuleException extends Exception {
+class KurogoModuleNotFound extends KurogoException {
+    protected $code = 'notfound';
+    protected $sendNotification = false;
 }
 
 /**
@@ -38,22 +58,9 @@ function getErrorURL($exception, $devError = false) {
 	}
 	
   $args = array(
-    'code' => 'internal',
+    'code' => $exception instanceOf KurogoException ? $exception->getCode() : 'internal',
     'url' => $_SERVER['REQUEST_URI'],
   );
-  
-  if ($exception instanceOf DataServerException) {
-    $args['code'] = 'data';
-  
-  } else if ($exception instanceOf DeviceNotSupported) {
-    $args['code'] = 'device_notsupported';
-    
-  } else if ($exception instanceOf ModuleNotFound) {
-    $args['code'] = 'notfound';
-    
-  } else if ($exception instanceOf DisabledModuleException) {
-    $args['code'] = 'forbidden';
-  }
   
   if($devError){
     $args['error'] = $devError;
@@ -169,18 +176,27 @@ function exceptionHandlerForDevelopment($exception) {
 /**
   * Exception Handler set in Kurogo::initialize()
   */
-function exceptionHandlerForProduction($exception) {
-    $to = Kurogo::getSiteVar('DEVELOPER_EMAIL');
-    if (!Kurogo::deviceClassifier()->isSpider() && $to) {
-        mail($to, 
-          "Mobile web page experiencing problems",
-          "The following page is throwing exceptions:\n\n" .
-          "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
-          "User-Agent: \"{$_SERVER['HTTP_USER_AGENT']}\"\n" .
-          "Referrer URL: \"{$_SERVER['HTTP_REFERER']}\"\n" .
-          "Exception:\n\n" . 
-          var_export($exception, true)
-        );
+function exceptionHandlerForProduction(Exception $exception) {
+
+    if ($exception instanceOf KurogoException) {
+        $sendNotification = $exception->shouldSendNotification();
+    } else {
+        $sendNotification = true;
+    }
+
+    if ($sendNotification) {
+        $to = Kurogo::getSiteVar('DEVELOPER_EMAIL');
+        if (!Kurogo::deviceClassifier()->isSpider() && $to) {
+            mail($to, 
+              "Mobile web page experiencing problems",
+              "The following page is throwing exceptions:\n\n" .
+              "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
+              "User-Agent: \"{$_SERVER['HTTP_USER_AGENT']}\"\n" .
+              "Referrer URL: \"{$_SERVER['HTTP_REFERER']}\"\n" .
+              "Exception:\n\n" . 
+              var_export($exception, true)
+            );
+        }
     }
 
     $error = print_r($exception, TRUE);

@@ -206,13 +206,13 @@ if ($parts[0]==API_URL_PREFIX) {
     switch (count($parts))
     {
         case 1:
-            throw new Exception("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
+            throw new KurogoUserException("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
 
         case 2: 
             $id = 'core';
             $command = $parts[1];
             if (!$module = CoreAPIModule::factory($id, $command, $args)) {
-                throw new Exception("Module $id cannot be loaded");
+                throw new KurogoException("Module $id cannot be loaded");
             }
             break;
             
@@ -220,12 +220,12 @@ if ($parts[0]==API_URL_PREFIX) {
             $id = isset($parts[1]) ? $parts[1] : '';
             $command = isset($parts[2]) ? $parts[2] : '';
             if (!$module = APIModule::factory($id, $command, $args)) {
-                throw new Exception("Module $id cannot be loaded");
+                throw new KurogoException("Module $id cannot be loaded");
             }
             break;
 
         default:
-            throw new Exception("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
+            throw new KurogoUserException("Invalid API request: '{$_SERVER['REQUEST_URI']}'", 1);
             break;
     }    
 
@@ -280,7 +280,7 @@ if ($parts[0]==API_URL_PREFIX) {
         
         $module->displayPage();
     } else {
-        throw new Exception("Module $id cannot be loaded");
+        throw new KurogoException("Module $id cannot be loaded");
     }
 }
 exit;

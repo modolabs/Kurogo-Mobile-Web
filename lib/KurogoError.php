@@ -74,7 +74,7 @@ class KurogoError
     }
     
     public static function errorFromException(Exception $exception) {
-        $error = new KurogoError($exception->getCode(), 'Exception', $exception->getMessage());
+        $error = new KurogoError($exception->getCode(), get_class($exception), $exception->getMessage());
         if(!Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
             $error->file = $exception->getFile();
             $error->line = $exception->getLine();
