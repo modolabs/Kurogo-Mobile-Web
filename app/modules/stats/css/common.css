@@ -1,0 +1,12 @@
+#statsoptions select {
+    width: auto;
+}
+
+#statsoptionscustom {
+    display: none;
+}
+
+
+#statsoptionscustom.custom {
+    display: block;
+}

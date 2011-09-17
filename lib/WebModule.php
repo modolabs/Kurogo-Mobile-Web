@@ -280,10 +280,22 @@ abstract class WebModule extends Module {
   private function loadTemplateEngineIfNeeded() {
     if (!isset($this->templateEngine)) {
       $this->templateEngine = new TemplateEngine($this->id);
+      $this->templateEngine->registerPlugin('function', 'drawChart', array($this, 'drawChart'));
       $this->templateEngine->registerPlugin('modifier','getLocalizedString', array($this,'getLocalizedString'));
     }
   }
   
+  public function drawChart($params) {
+    static $chartDrawn;
+    $result = '';
+    if (!$chartDrawn) {
+        $result .= '<style type="text/css">@import url("' . $this->getInternalCSSURL('/common/css/chart.css') . '");</style>';
+        $result .= '<script type="text/javascript" src="' . $this->getInternalJavascriptURL('/common/javascript/chart.js') . '"></script>';
+        $chartDrawn = true;
+    }
+    $result .= KurogoChart::drawChart($params);
+    return $result;
+  }
   //
   // URL helper functions
   //

@@ -875,6 +875,7 @@ h2.icon {
 	margin-top: 2px;
 }
 
+.tabstrip ,
 #tabstrip {
 	list-style-type: none;
 	height: 32px;
@@ -884,6 +885,7 @@ h2.icon {
 	overflow: hidden;
 }
 
+.tabstrip li ,
 #tabstrip li {
 	float: left;
 	margin: 0;
@@ -891,6 +893,7 @@ h2.icon {
 	height: 33px;
 }
 
+.tabstrip a ,
 #tabstrip a {
 	display: block;
 	height: 32px;
@@ -901,6 +904,7 @@ h2.icon {
 	border-right: 1px solid #9fb8d3;
 }	
 
+.tabstrip li.active a ,
 #tabstrip li.active a {
 	background-image: url(/common/images/tabstrip-active.jpg);
 }

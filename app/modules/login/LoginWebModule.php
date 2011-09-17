@@ -133,6 +133,8 @@ class LoginWebModule extends WebModule {
                 //not logged in
                 $this->redirectTo('index', array());
             } elseif ($authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex)) {
+                $user = $this->getUser($authority);
+
                 //log them out 
                 $result = $session->logout($authority, $hard);
             } else {
@@ -140,7 +142,10 @@ class LoginWebModule extends WebModule {
                 $this->redirectTo('index', array());
             }
                 
-            if ($result) {
+            if ($result) { 
+                $this->setLogData($user, $user->getFullName());
+                $this->logView();
+
                 //if they are still logged in return to the login page, otherwise go home.
                 if ($this->isLoggedIn()) {
                     $this->redirectTo('index', array('logout'=>$authorityIndex));
@@ -218,6 +223,9 @@ class LoginWebModule extends WebModule {
             switch ($result)
             {
                 case AUTH_OK:
+                    $user = $this->getUser($authority);
+                    $this->setLogData($user, $user->getFullName());
+                    $this->logView();
                     if ($url) {
                         header("Location: $url");
                         exit();
