@@ -254,7 +254,8 @@ class Kurogo
         if (!$this->logger && $this->config) {
             require_once(LIB_DIR . '/KurogoLog.php');
             $this->logger = new KurogoLog();
-            $this->logger->setLogFile($this->config->getVar('KUROGO_LOG_FILE'));
+            $logFile = $this->config->getOptionalVar('KUROGO_LOG_FILE', LOG_DIR . "/kurogo.log");
+            $this->logger->setLogFile($logFile);
             $this->logger->setDefaultLogLevel($this->config->getOptionalVar('DEFAULT_LOGGING_LEVEL', LOG_WARNING));
             if (($loggingLevels = $this->config->getOptionalVar('LOGGING_LEVEL')) && is_array($loggingLevels)) {
                 foreach ($loggingLevels as $area=>$level) {
