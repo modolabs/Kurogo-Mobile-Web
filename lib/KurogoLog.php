@@ -31,8 +31,8 @@ class KurogoLog {
         return true;
 	}
 
-	private static function priorityToString($priority) {
-	    $priorities = array(
+    public static function getPriorities() {
+	    return array(
 	        LOG_EMERG   =>'Emergency',  // system is unusable
 	        LOG_ALERT   =>'Alert',      // action must be taken immediately
 	        LOG_CRIT    =>'Critical',   // critical conditions
@@ -42,6 +42,10 @@ class KurogoLog {
 	        LOG_INFO    =>'Info',       // informational message
 	        LOG_DEBUG   =>'Debug'       // debug-level message
 	    );
+    }
+    
+	private static function priorityToString($priority) {
+	    $priorities = self::getPriorities();
 	    return isset($priorities[$priority]) ? $priorities[$priority] : null;
 	}
 
