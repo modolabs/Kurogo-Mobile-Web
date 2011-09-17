@@ -129,7 +129,7 @@ class KurogoStats {
 		        
         $conn = self::connection();
         $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)", 
-            Kurogo::getSiteVar("KUROGO_STATS_TABLE"), 
+            Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1"), 
             implode(",", array_keys($logData)), 
             implode(",", array_fill(0, count($logData), '?'))
         );
