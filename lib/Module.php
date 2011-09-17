@@ -16,6 +16,8 @@ abstract class Module
     protected $moduleName = '';
     protected $args = array();
     protected $configs = array();
+    protected $logData = null;
+    protected $logDataLabel = null;
     private $strings = array();
 
     /**
@@ -62,6 +64,11 @@ abstract class Module
     protected function setArgs($args) {
       $this->args = is_array($args) ? $args : array();
     }
+
+	protected function setLogData($data, $dataLabel='') {
+		$this->logData = strval($data);
+		$this->logDataLabel = strval($dataLabel);
+	}
   
     /**
       * Factory method. Used to instantiate a subclass

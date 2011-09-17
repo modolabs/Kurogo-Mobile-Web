@@ -229,8 +229,6 @@ if ($parts[0]==API_URL_PREFIX) {
             break;
     }    
 
-    /* log the api call */
-    PageViews::log_api($id, Kurogo::deviceClassifier()->getPlatform());
     $module->executeCommand();
 
 } elseif ($parts[0]=='min') { //used when minify is loaded when multi-site is on
@@ -275,9 +273,6 @@ if ($parts[0]==API_URL_PREFIX) {
     }
 
     if ($module = WebModule::factory($id, $page, $args)) {
-        /* log this page view */
-        PageViews::increment($id, Kurogo::deviceClassifier()->getPlatform());
-        
         $module->displayPage();
     } else {
         throw new KurogoException("Module $id cannot be loaded");

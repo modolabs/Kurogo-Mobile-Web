@@ -487,7 +487,9 @@ class CalendarWebModule extends WebModule {
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
 
-        $this->assign('category', $this->ucname($name));
+        $catname = $this->ucname($name);
+        $this->assign('category', $catname);
+        $this->setLogData($catid, $catname);
         
         $dayRange = new DayRange(time());
         
@@ -531,10 +533,11 @@ class CalendarWebModule extends WebModule {
         $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
         $limit    = $this->getArg('limit', 20);
         $feed     = $this->getFeed($calendar, $type);
-        
-        $this->setPageTitle($this->getFeedTitle($calendar, $type));
+        $title    = $this->getFeedTitle($calendar, $type);
+        $this->setLogData($type . ':' . $calendar, $title);
+        $this->setPageTitle($title);
         $this->setBreadcrumbTitle('List');
-        $this->setBreadcrumbLongTitle($this->getFeedTitle($calendar, $type));
+        $this->setBreadcrumbLongTitle($title);
         
         $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
         $start->setTime(0,0,0);
@@ -565,6 +568,8 @@ class CalendarWebModule extends WebModule {
         $prev    = strtotime("-1 day", $current);
         
         $feed = $this->getFeed($calendar, $type);
+        $title    = $this->getFeedTitle($calendar, $type);
+        $this->setLogData($type . ':' . $calendar, $title);
         
         $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
         $start->setTime(0,0,0);
@@ -584,7 +589,7 @@ class CalendarWebModule extends WebModule {
             );
         }
 
-        $this->assign('feedTitle', $this->getFeedTitle($calendar, $type));
+        $this->assign('feedTitle', $title);
         $this->assign('type',    $type);
         $this->assign('calendar',$calendar);
         $this->assign('current', $current);
@@ -619,6 +624,8 @@ class CalendarWebModule extends WebModule {
         } else {
           throw new KurogoUserException($this->getLocalizedString('ERROR_NOT_FOUND'));
         }
+
+        $this->setLogData($event->get_uid(), $event->get_summary());
             
         // build the list of attributes
         $allKeys = array_keys($calendarFields);
@@ -702,6 +709,7 @@ class CalendarWebModule extends WebModule {
             'timeframe'=>$timeframe
           );
           
+          $this->setLogData($searchTerms);
           $iCalEvents = $this->searchItems($searchTerms, null, $options);
           $events = array();
           foreach($iCalEvents as $iCalEvent) {
@@ -757,6 +765,8 @@ class CalendarWebModule extends WebModule {
         $feed->setEndDate($end);
         $feed->addFilter('year', $year);
         $iCalEvents = $feed->items();
+        $title = $this->getFeedTitle($calendar, $type);
+        $this->setLogData($type . ':' . $calendar, $title);
 
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
@@ -786,7 +796,7 @@ class CalendarWebModule extends WebModule {
 
         $this->assign('current', $current);
         $this->assign('events',  $events);        
-        $this->assign('feedTitle', $this->getFeedTitle($calendar, $type));
+        $this->assign('feedTitle', $title);
         break;
     }
   }

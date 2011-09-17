@@ -12,14 +12,23 @@ define('_QQ_', '"');
 class Kurogo
 {
     private static $_instance = NULL;
-    private function __construct() {}
     private function __clone() {}
+    protected $startTime;
     protected $libDirs = array();
     protected $config;
     protected $deviceClassifier;
     protected $session;
     protected $locale;    
     protected $languages=array();
+
+    private function __construct() {
+        $this->startTime = microtime(true);
+    }
+    
+    public static function getElapsed() {
+        $Kurogo = self::sharedInstance();
+        return microtime(true) - $Kurogo->startTime;
+    }
 
     public static function getSession() {    
         $Kurogo = self::sharedInstance();
@@ -183,6 +192,59 @@ class Kurogo
     
     public static function isWindows() {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+    }
+
+    private static function checkIP($ip) {
+        if (!empty($ip) && ip2long($ip)!=-1 && ip2long($ip)!=false) {
+            $private_ips = array (
+                array('0.0.0.0','2.255.255.255'),
+                array('10.0.0.0','10.255.255.255'),
+                array('127.0.0.0','127.255.255.255'),
+                array('169.254.0.0','169.254.255.255'),
+                array('172.16.0.0','172.31.255.255'),
+                array('192.0.2.0','192.0.2.255'),
+                array('192.168.0.0','192.168.255.255'),
+                array('255.255.255.0','255.255.255.255')
+            );
+            
+            foreach ($private_ips as $r) {
+                $min = ip2long($r[0]);
+                $max = ip2long($r[1]);
+                if ((ip2long($ip) >= $min) && (ip2long($ip) <= $max)) return false;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function determineIP() {
+        
+        if (isset($_SERVER['HTTP_CLIENT_IP']) && self::checkIP($_SERVER["HTTP_CLIENT_IP"])) {
+            return $_SERVER["HTTP_CLIENT_IP"];
+        }
+
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            foreach (explode(",",$_SERVER["HTTP_X_FORWARDED_FOR"]) as $ip) {
+                if (self::checkIP(trim($ip))) {
+                    return $ip;
+                }
+            }
+        }
+
+        if (isset($_SERVER['HTTP_X_FORWARDED']) && self::checkIP($_SERVER["HTTP_X_FORWARDED"])) {
+            return $_SERVER["HTTP_X_FORWARDED"];
+        } elseif (isset($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']) && self::checkIP($_SERVER["HTTP_X_CLUSTER_CLIENT_IP"])) {
+            return $_SERVER["HTTP_X_CLUSTER_CLIENT_IP"];
+        } elseif (isset($_SERVER['HTTP_FORWARDED_FOR']) && self::checkIP($_SERVER["HTTP_FORWARDED_FOR"])) {
+            return $_SERVER["HTTP_FORWARDED_FOR"];
+        } elseif (isset($_SERVER['HTTP_FORWARDED']) && self::checkIP($_SERVER["HTTP_FORWARDED"])) {
+            return $_SERVER["HTTP_FORWARDED"];
+        } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+            return $_SERVER["REMOTE_ADDR"];
+        }
+
+        return false;
     }
 
     public static function file_upload_error_message($error_code) {

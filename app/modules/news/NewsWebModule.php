@@ -198,6 +198,8 @@ class NewsWebModule extends WebModule {
         if (!$story) {
           throw new KurogoUserException($this->getLocalizedString('ERROR_STORY_NOT_FOUND', $storyID));
         }
+
+        $this->setLogData($storyID, $story->getTitle());
         
         if (!$content = $this->cleanContent($story->getProperty('content'))) {
           if ($url = $story->getProperty('link')) {
@@ -239,6 +241,7 @@ class NewsWebModule extends WebModule {
 
             $this->feed->addFilter('search', $searchTerms);
             $items = $this->feed->items($start, $this->maxPerPage);
+            $this->setLogData($searchTerms);
             $totalItems = $this->feed->getTotalItems();
             $stories = array();
 
@@ -310,6 +313,7 @@ class NewsWebModule extends WebModule {
       
         $items = $this->feed->items($start, $this->maxPerPage);
         $totalItems = $this->feed->getTotalItems();
+        $this->setLogData($this->feedIndex, $this->feed->getTitle());
        
         $previousURL = null;
         $nextURL = null;

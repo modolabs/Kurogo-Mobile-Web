@@ -1361,7 +1361,16 @@ abstract class WebModule extends Module {
     $template = $this->setPageVariables();
     
     // Load template for page
-    $this->templateEngine->displayForDevice($template);    
+    $output = $this->templateEngine->fetchForDevice($template);
+
+	// log this request
+	$this->logView(strlen($output));
+	echo $output;
+	exit();
+  }
+  
+  protected function logView($size=null) {
+	KurogoStats::logView('web', $this->configModule, $this->page, $this->logData, $this->logDataLabel, $size);
   }
   
   //
