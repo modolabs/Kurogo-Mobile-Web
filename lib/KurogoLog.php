@@ -16,7 +16,7 @@ class KurogoLog {
     
     public function setDefaultLogLevel($level) {
         if (!self::isValidPriority($level)) {
-            throw new Exception("Invalid logging priority $level");
+            throw new Exception("Invalid default logging priority $level");
         }
 
         $this->defaultLevel = $level;
@@ -25,7 +25,7 @@ class KurogoLog {
 
     public function setLogLevel($area, $level) {
         if (!self::isValidPriority($level)) {
-            throw new Exception("Invalid logging priority $priority");
+            throw new Exception("Invalid logging priority $priority for area $area");
         }
         $this->areaLevel[$area] = $level;
         return true;

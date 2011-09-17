@@ -113,6 +113,7 @@ abstract class Module
             foreach ($classNames as $class) {
                 $className = sprintf($className, $class);
                 $path = sprintf($path, $class);
+                Kurogo::log(LOG_DEBUG, "Looking for $path for $id", 'module');
                 
                 // see if it exists
                 $moduleFile = realpath_exists($path);
@@ -120,6 +121,7 @@ abstract class Module
                     //found it
                     $info = new ReflectionClass($className);
                     if (!$info->isAbstract()) {
+                        Kurogo::log(LOG_INFO, "Found $moduleFile for $id", 'module');
                         $module = new $className();
                         $module->setConfigModule($configModule);
                         if ($config) {
@@ -127,6 +129,7 @@ abstract class Module
                         }
                         return $module;
                     }
+                    Kurogo::log(LOG_NOTICE, "$class found at $moduleFile is abstract and cannot be used for $id", 'module');
                     return false;
                 }
             }
@@ -161,12 +164,13 @@ abstract class Module
     protected function init() {
 
         if ($this->isDisabled()) {
-            Kurogo::log(LOG_NOTICE, "Access to $this->configModule disabed", 'module');
+            Kurogo::log(LOG_NOTICE, "Access to $this->configModule is disabled", 'module');
             $this->moduleDisabled();
         }
 
         if ((Kurogo::getOptionalSiteVar('SECURE_REQUIRED') || $this->getModuleVar('secure','module')) && 
             (!isset($_SERVER['HTTPS']) || (strtolower($_SERVER['HTTPS']) !='on'))) { 
+            Kurogo::log(LOG_NOTICE, "$this->configModule requires HTTPS", 'module');
             $this->secureModule();
         }
         
@@ -426,23 +430,29 @@ abstract class Module
       */
     protected function evaluateACLS($type=AccessControlList::RULE_TYPE_ACCESS) {
         $acls = $this->getAccessControlLists($type);
+        Kurogo::log(LOG_DEBUG, count($acls) . " $type ACLs found for $this->configModule", 'module');
         $allow = count($acls) > 0 ? false : true; // if there are no ACLs then access is allowed
         $users = $this->getUsers(true);
-        foreach ($acls as $acl) {
+        foreach ($acls as $index=>$acl) {
             foreach ($users as $user) {
                 $result = $acl->evaluateForUser($user);
                 switch ($result)
                 {
                     case AccessControlList::RULE_ACTION_ALLOW:
+                        Kurogo::log(LOG_INFO, "User $user allowed for ACL $index: $acl for $this->configModule",'module');
                         $allow = true;
                         break;
                     case AccessControlList::RULE_ACTION_DENY:
+                        Kurogo::log(LOG_INFO, "User $user denied for ACL $index: $acl for $this->configModule",'module');
                         return false;
                         break;
                 }
             }
         }
-        
+
+        if (!$allow) {
+            Kurogo::log(LOG_INFO, "User $user did not match any ACLs for $this->configModule",'module');
+        }        
         return $allow;
     }
 
@@ -600,6 +610,7 @@ abstract class Module
             throw new KurogoConfigurationException("Invalid string key $key");
         }
 
+        Kurogo::log(LOG_DEBUG, "Retrieving localized string for $key", 'module');
         // use any number of args past the first as options
         $args = func_get_args();
         array_shift($args);
@@ -611,6 +622,7 @@ abstract class Module
         foreach ($languages as $language) {
             $val = $this->getStringForLanguage($key, $language, $args);
             if ($val !== null) {
+                Kurogo::log(LOG_INFO, "Found localized string \"$val\" for $key in $language", 'module');
                 return Kurogo::getOptionalSiteVar('LOCALIZATION_DEBUG') ? $key : $val;
             }
         }
