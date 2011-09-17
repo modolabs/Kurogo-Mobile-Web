@@ -43,6 +43,7 @@ class ConfigFile extends Config {
 
   // loads a config object from a file/type combination  
   public static function factory($file, $type='file', $options=0) {
+    Kurogo::log(LOG_DEBUG, "Loading config file $file of type $type with options $options", 'config');
     $config = new ConfigFile();
     if (!($options & self::OPTION_DO_NOT_CREATE)) {
         $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
@@ -106,6 +107,7 @@ class ConfigFile extends Config {
                 if (!is_writable(dirname($file))) {
                     throw new KurogoConfigurationException("Unable to create file $file, directory not writable");
                 }
+                Kurogo::log(LOG_DEBUG, "Creating default file $file from $defaultFile", 'config');
                 return copy($defaultFile, $file);
             }
 
@@ -121,6 +123,7 @@ class ConfigFile extends Config {
                 if (!is_writable(dirname($_file))) {
                     throw new KurogoConfigurationException("Unable to create " . basename($_file) . ", directory " . dirname($_file) . " not writable");
                 }
+                Kurogo::log(LOG_DEBUG, "Creating default file $_file from $defaultFile", 'config');
                 return copy($defaultFile, $_file);
             }
             
@@ -141,6 +144,7 @@ class ConfigFile extends Config {
     if ($this->loadFile($_file)) {
         if (!($options & ConfigFile::OPTION_IGNORE_MODE)) {
             if ($modeFile = $this->modeFile()) {
+                 Kurogo::log(LOG_DEBUG, "Found " . CONFIG_MODE . " mode config file $modeFile", 'config');
                  $this->modeFile = $modeFile;
                  $vars = parse_ini_file($modeFile, false);
                  $this->addVars($vars);
@@ -150,6 +154,7 @@ class ConfigFile extends Config {
         }
         if (!($options & ConfigFile::OPTION_IGNORE_LOCAL)) {
             if ($localFile = $this->localFile()) {
+                 Kurogo::log(LOG_DEBUG, "Found local config file $localFile", 'config');
                  $this->localFile = $localFile;
                  $vars = parse_ini_file($localFile, false);
                  $this->addVars($vars);
@@ -166,6 +171,7 @@ class ConfigFile extends Config {
         if (!is_dir(dirname($_file))) {
             @mkdir(dirname($_file), 0700, true);
         }
+        Kurogo::log(LOG_DEBUG, "Creating empty config file $_file", 'config');
          @touch($_file);
          return $this->loadFile($_file);
     } elseif ($options & ConfigFile::OPTION_CREATE_WITH_DEFAULT) {
@@ -185,6 +191,7 @@ class ConfigFile extends Config {
         if (!@mkdir($dir, 0700, true)) {
             throw new KurogoConfigurationException("Unable to create $dir");
         }
+        Kurogo::log(LOG_DEBUG, "Created $dir", 'config');
         return true;
     }
     
@@ -221,6 +228,7 @@ class ConfigFile extends Config {
      $sectionVars = parse_ini_file($file, true);
      $this->addSectionVars($sectionVars);
 
+     Kurogo::log(LOG_DEBUG, "Loaded config file $file", 'config');
      return true;
   }
   

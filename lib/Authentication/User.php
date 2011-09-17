@@ -20,6 +20,10 @@ abstract class User
     
     protected $attributes=array();
     
+    public function __toString() {
+        return $this->getAuthenticationAuthorityIndex() . ':' . $this->getUserID();
+    }
+    
     public function getUserID()
     {
         return $this->userID;

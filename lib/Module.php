@@ -70,6 +70,7 @@ abstract class Module
       */
     public static function factory($id, $type=null) {
   
+        Kurogo::log(LOG_INFO, "Initializing $type module $id", 'module');
 		$configModule = $id;
 		//attempt to load config/$id/module.ini  
         if ($config = ModuleConfigFile::factory($id, 'module', ModuleConfigFile::OPTION_DO_NOT_CREATE)) {
@@ -160,6 +161,7 @@ abstract class Module
     protected function init() {
 
         if ($this->isDisabled()) {
+            Kurogo::log(LOG_NOTICE, "Access to $this->configModule disabed", 'module');
             $this->moduleDisabled();
         }
 
@@ -184,11 +186,13 @@ abstract class Module
 
         if ($this->getModuleVar('protected','module')) {
             if (!$this->isLoggedIn()) {
+                Kurogo::log(LOG_NOTICE, "Access to $this->configModule denied by protected attribute", 'module');
                 return false;
             }
         }
                 
         if (!$this->evaluateACLS(AccessControlList::RULE_TYPE_ACCESS)) {
+            Kurogo::log(LOG_NOTICE, "Access to $this->configModule denied by Access Control List", 'module');
             return false;
         }
     
