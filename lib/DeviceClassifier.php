@@ -89,36 +89,106 @@ class DeviceClassifier {
       time() + Kurogo::getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
   }
   
-  private function detectDeviceInternal($user_agent) {
-    Kurogo::includePackage('db');
-    if (!$user_agent) {
-      return;
-    }
-     
-     if (!$db_file =  Kurogo::getSiteVar('MOBI_SERVICE_FILE')) {
-        error_log('MOBI_SERVICE_FILE not specified in site config.');
-        die("MOBI_SERVICE_FILE not specified in site config.");
-     }
-     
-     try {
-         $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
-         $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
-     } catch (Exception $e) {
-        if (!in_array('sqlite', PDO::getAvailableDrivers())) {
-            die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
-        }
-        error_log("Error with device detection");
-        return false;
-     }
+    private function detectDeviceInternal($user_agent) {
 
-     while ($row = $result->fetch()) {
-        if (preg_match("#" . $row['pattern'] . "#i", $user_agent)) {
-            return $row;
+        if (!$master_file = LIB_DIR."/deviceData.json") {
+            error_log('Device Detection Master File not specified.');
+            die('Device Detection Master File not specified.');
         }
-     }
-     
-     return false;
-  }
+
+        if (!$site_file =  Kurogo::getSiteVar('MOBI_SERVICE_FILE')) {
+            // We don't have a site-specific file.  This means we can only
+            // detect on the master file.
+
+            //error_log('MOBI_SERVICE_FILE not specified in site config.');
+            //die("MOBI_SERVICE_FILE not specified in site config.");
+        }
+
+        try {
+
+
+            if ($site_file = realpath_exists($site_file))
+            {
+                $site_devices = json_decode(file_get_contents($site_file), true);
+                $site_devices = $site_devices['devices'];
+                if(($error_code = json_last_error()) !== JSON_ERROR_NONE)
+                {
+                    error_log("Problem decoding Device Detection Site File. Error code returned was ".$error_code);
+                }
+
+                
+                if(($device = $this->checkDevices($site_devices, $user_agent) !== false))
+                        return $this->translateDevice($device);
+
+            }
+            if($master_file = realpath_exists($master_file))
+            {
+                $master_devices = json_decode(file_get_contents($master_file), true);
+                $master_devices = $master_devices['devices'];
+                if(($error_code = json_last_error()) !== JSON_ERROR_NONE)
+                {
+                    error_log("Problem decoding Device Detection Master File. Error code returned was ".$error_code);
+                }
+
+                if(($device = $this->checkDevices($master_devices, $user_agent)) !== false)
+                        return $this->translateDevice($device);
+            }
+        }
+        catch (Exception $e)
+        {
+            error_log('Error with device detection');
+            return false;
+        }
+    }
+
+    private function checkDevices($devices, $user_agent)
+    {
+        foreach($devices as $device)
+        {
+            foreach($device['match'] as $match)
+            {
+                if(isset($match['regex']))
+                {
+                    if(preg_match('/'.str_replace('/', '\\/', $match['regex']).'/', $user_agent))
+                    {
+                        return $device;
+                    }
+                }
+                elseif (isset($match['partial']))
+                {
+                    if(strpos($user_agent, $match['partial']) !== false)
+                    {
+                        return $device;
+                    }
+                }
+                elseif (isset($match['prefix']))
+                {
+                    if(strpos($user_agent, $match['prefix']) === 0)
+                    {
+                        return $device;
+                    }
+                }
+                elseif (isset($match['suffix']))
+                {
+                    // Because substr_compare is supposedly designed for this purpose...
+                    if(substr_compare($user_agent, $match['partial'], -(strlen($match['partial'])), strlen($match['partial'])) === 0)
+                    {
+                        return $device;
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
+    private function translateDevice($device)
+    {
+        $newDevice = array();
+        $newDevice['pagetype'] = $device['classification'][strval($this->version)]['pagetype'];
+        $newDevice['platform'] = $device['classification'][strval($this->version)]['platform'];
+        $newDevice['supports_certificate'] = $device['classification'][strval($this->version)]['supports_certificate'];
+        return $newDevice;
+    }
   
   private function detectDeviceExternal($user_agent) {
     if (!$user_agent) {
