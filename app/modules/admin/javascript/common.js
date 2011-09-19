@@ -25,15 +25,6 @@ function getLocalizedString(key) {
 function createFormFieldListItems(key, fieldData) {
     var items = [createFormFieldListItem(key,fieldData)];
     
-    if (fieldData.fieldValueGroups) {
-    
-        $.each(fieldData.fieldValueGroups, function(k,v) {
-            $.each(v.fields, function(field, fd) {
-                items.push(createFormFieldListItem(field, fd));
-            })
-        });
-    }
-    
     return items;
 }
 
