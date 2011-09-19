@@ -219,7 +219,7 @@ class MapWebModule extends WebModule {
         return $this->buildBreadcrumbURL('detail', $args, false);
     }
 
-    public function searchItems($searchTerms, $limit=null, $options)
+    public function searchItems($searchTerms, $limit=null, $options=null)
     {
         $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
         $mapSearch = $this->getSearchClass($options);
