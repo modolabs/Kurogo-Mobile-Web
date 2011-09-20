@@ -777,3 +777,31 @@ a.formbutton div {
 	background-position: left;
 	text-decoration: none;
 }
+
+fieldset {
+    background: #eee;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    -webkit-box-shadow: 1px 1px 3px #999;
+    -moz-box-shadow: 1px 1px 3px #999;
+    padding: .5em 0 .5em 0;
+    border: 1px solid #ccc;
+}
+
+.fieldgroup-legend {
+	padding: 0 10px 0 0;
+	margin-left: 150px;		/* same as width plus padding-right of label */
+	font-size: 100%;
+	line-height: 1.6em;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.fieldgroup-description {
+	margin-left: 150px;		/* same as width plus padding-right of label */
+	display: block;
+	padding: 2px 0 0 0px;
+	font-size: 85%;
+	line-height: 1.33em;
+	color: #777;
+}

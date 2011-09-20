@@ -53,7 +53,8 @@ function showIfCheck(element, items, value) {
 function createFormSectionListItems(section, sectionData) {
     var items = [];
     var sectionItems = {};
-    
+    var fieldgroups = {}
+        
     switch (sectionData.sectiontype)
     {
         case 'fields':
@@ -61,7 +62,36 @@ function createFormSectionListItems(section, sectionData) {
                 data.section = section;
                 var _items = createFormFieldListItems(key, data);
                 sectionItems[key] = _items;
-                $.merge(items, _items);
+                
+                if (data.fieldgroup) {
+                    if (sectionData.fieldgroups && typeof sectionData.fieldgroups[data.fieldgroup] != 'undefined') {
+                        var groupdata = sectionData.fieldgroups[data.fieldgroup];
+                        if (!fieldgroups[data.fieldgroup]) {
+                            var fieldgroup = $('<fieldset />');
+                            fieldgroups[data.fieldgroup] = $('<div class="fieldgroup" />');
+                            if (groupdata.label) {
+                                var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>').click(function() {
+                                    fieldgroups[data.fieldgroup].slideToggle();
+                                })
+                                fieldgroup.append(legend);
+                                if (groupdata.description) {
+                                    fieldgroups[data.fieldgroup].append($('<div class="fieldgroup-description">'+groupdata.description+'</div>'));
+                                }
+                            }
+                            fieldgroup.append(fieldgroups[data.fieldgroup]);
+                            if (groupdata.collapsed) {
+                                fieldgroups[data.fieldgroup].hide();
+                            }
+                            $.merge(items, fieldgroup);
+                        }
+                        
+                        fieldgroups[data.fieldgroup].append(_items);
+                    } else {
+                        alert("Fieldgroup " + data.fieldgroup + " not defined.");
+                    }
+                } else {
+                    $.merge(items, _items);
+                }
                 if (data.showIf && data.showIf[0] in sectionData.fields) {
                     $(sectionItems[data.showIf[0]]).find('.changeElement').change(function() {
                         showIfCheck(this, _items, data.showIf[1]);
