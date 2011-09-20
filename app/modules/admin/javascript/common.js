@@ -120,6 +120,7 @@ function createFormFieldListItem(key, fieldData) {
             listClass+=' checkitem';
             break;
         case 'paragraph':
+        case 'textarea':
             listClass+=' tallfield';
             break;
         case 'label':
@@ -198,7 +199,13 @@ function appendFormField(parent, key, fieldData) {
             parent.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).addClass('changeElement').addClass(inputClass).attr('id',id));
             break;
         case 'paragraph':
-            parent.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows','8').attr('section', section).addClass(inputClass).attr('id',id));
+        case 'textarea':
+            if (fieldData.rows) {
+                var rows = fieldData.rows;
+            } else {
+                var rows = fieldData.type == 'textarea' ? 4: 8;
+            }
+            parent.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows',rows).attr('section', section).addClass(inputClass).attr('id',id));
             break;
         case 'label':
             parent.append('<span class="labeltext">'+fieldData.value+'</span>');
