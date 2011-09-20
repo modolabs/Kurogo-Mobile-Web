@@ -59,15 +59,18 @@ class Watchdog {
 
     protected function _getSafePathREs() {
         if (!$this->safePathREs && defined('SITE_DIR') && defined('THEME_DIR')) {
+            $delimiter = ';';
             $this->safePathREs = array(
-                ';^('.preg_quote(realpath(THEME_DIR), ';').'|'.
-                      preg_quote(realpath(SITE_DIR).DIRECTORY_SEPARATOR, ';').'app|'.
-                      preg_quote(realpath(ROOT_DIR).DIRECTORY_SEPARATOR, ';').'app)'.
-                  preg_quote(DIRECTORY_SEPARATOR, ';').
-                  '(common|modules'.preg_quote(DIRECTORY_SEPARATOR, ';').'[^'.preg_quote(DIRECTORY_SEPARATOR, ';').']+)'.
-                  preg_quote(DIRECTORY_SEPARATOR, ';').
+                $delimiter.
+                '^('.preg_quote(realpath(THEME_DIR), $delimiter).'|'.
+                      preg_quote(realpath(SITE_DIR).DIRECTORY_SEPARATOR, $delimiter).'app|'.
+                      preg_quote(realpath(ROOT_DIR).DIRECTORY_SEPARATOR, $delimiter).'app)'.
+                  preg_quote(DIRECTORY_SEPARATOR, $delimiter).
+                  '(common|modules'.preg_quote(DIRECTORY_SEPARATOR, $delimiter).'[^'.preg_quote(DIRECTORY_SEPARATOR, $delimiter).']+)'.
+                  preg_quote(DIRECTORY_SEPARATOR, $delimiter).
                   '(css|images|javascript)'.
-                  preg_quote(DIRECTORY_SEPARATOR, ';').';',
+                  preg_quote(DIRECTORY_SEPARATOR, $delimiter).
+                $delimiter,
             );
             //error_log('Safe REs: '.print_r($this->safePathREs, true));
         }
