@@ -60,14 +60,14 @@ class Watchdog {
     protected function _getSafePathREs() {
         if (!$this->safePathREs && defined('SITE_DIR') && defined('THEME_DIR')) {
             $this->safePathREs = array(
-                ';^('.preg_quote(realpath(THEME_DIR)).'|'.
-                      preg_quote(realpath(SITE_DIR)).DIRECTORY_SEPARATOR.'app|'.
-                      preg_quote(realpath(ROOT_DIR)).DIRECTORY_SEPARATOR.'app)'.
-                  DIRECTORY_SEPARATOR.
-                  '(common|modules'.DIRECTORY_SEPARATOR.'[^'.DIRECTORY_SEPARATOR.']+)'.
-                  DIRECTORY_SEPARATOR.
+                ';^('.preg_quote(realpath(THEME_DIR), ';').'|'.
+                      preg_quote(realpath(SITE_DIR).DIRECTORY_SEPARATOR, ';').'app|'.
+                      preg_quote(realpath(ROOT_DIR).DIRECTORY_SEPARATOR, ';').'app)'.
+                  preg_quote(DIRECTORY_SEPARATOR, ';').
+                  '(common|modules'.preg_quote(DIRECTORY_SEPARATOR, ';').'[^'.preg_quote(DIRECTORY_SEPARATOR, ';').']+)'.
+                  preg_quote(DIRECTORY_SEPARATOR, ';').
                   '(css|images|javascript)'.
-                  DIRECTORY_SEPARATOR.';',
+                  preg_quote(DIRECTORY_SEPARATOR, ';').';',
             );
             //error_log('Safe REs: '.print_r($this->safePathREs, true));
         }
