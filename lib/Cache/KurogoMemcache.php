@@ -90,4 +90,8 @@ class KurogoMemcache extends KurogoCache {
 		}
 		return $this->mem->add($key, $value, $this->compressed, $ttl);
 	}
+
+	public function clear() {
+		return $this->mem->flush();
+	}
 }

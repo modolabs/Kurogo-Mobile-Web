@@ -7,7 +7,7 @@ abstract class KurogoCache {
 	public static function factory($cacheType, $args = array()) {
 		$args = is_array($args) ? $args : array();
 
-		includePackage("Cache/{$cacheType}.php");
+		includePackage("Cache");
         if (!class_exists($cacheType)) {
             throw new KurogoConfigurationException("Cache class $cacheType not defined");
         }
@@ -29,4 +29,6 @@ abstract class KurogoCache {
 	abstract public function set($key, $value, $ttl = 0);
 
 	abstract public function delete($key);
+
+	abstract public function clear();
 }
