@@ -39,12 +39,12 @@ class NewsWebModule extends WebModule {
         return true;
   }
 
-  private function feedURLForFeed($feedIndex) {
+  protected function feedURLForFeed($feedIndex) {
     return isset($this->feeds[$feedIndex]) ? 
       $this->feeds[$feedIndex]['baseURL'] : null;
   }
   
-  private function getImageForStory($story) {
+  protected function getImageForStory($story) {
     if ($this->showImages) {
         $image = $story->getImage();
         
@@ -66,13 +66,13 @@ class NewsWebModule extends WebModule {
     return $this->buildBreadcrumbURL('story', $args, false);
   }
 
-  private function feedURL($feedIndex, $addBreadcrumb=true) {
+  protected function feedURL($feedIndex, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('index', array(
       'section' => $feedIndex
     ), $addBreadcrumb);
   }
 
-    private function cleanContent($content) {
+    protected function cleanContent($content) {
     
         //deal with pre tags. strip out pre tags and add <br> for newlines
         $bits = preg_split( '#(<pre.*?'.'>)(.*?)(</pre>)#s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
