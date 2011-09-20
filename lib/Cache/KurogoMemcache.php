@@ -2,8 +2,9 @@
 class KurogoMemcache extends KurogoCache {
 	private $mem;
 	private $compressed;
+	private $ttl;
 
-	public function init($args) {
+	protected function init($args) {
 		$this->mem = new Memcache;
 		if(!isset($args['HOST'])) {
 			throw new KurogoConfigurationException("Memcache host is not defined");
@@ -40,6 +41,11 @@ class KurogoMemcache extends KurogoCache {
 		}else {
 			$this->setDebug(false);
 		}
+		if(isset($args['TTL'])) {
+			$this->setTTL($args['TTL']);
+		}else {
+			$this->setTTL(0);
+		}
 		$this->mem->addServer($host, $port, $persistent, $weight, $timeout);
 	}
 
@@ -59,11 +65,18 @@ class KurogoMemcache extends KurogoCache {
 		}
 	}
 
+	public function setTTL($ttl) {
+		$this->ttl = (int) $ttl;
+	}
+
 	public function get($key) {
 		return $this->mem->get($key);
 	}
 
-	public function set($key, $value, $ttl = 0) {
+	public function set($key, $value, $ttl = false) {
+		if($ttl === false) {
+			$ttl = $this->ttl;
+		}
 		return $this->mem->set($key, $value, $this->compressed, $ttl);
 	}
 
@@ -71,7 +84,10 @@ class KurogoMemcache extends KurogoCache {
 		return $this->men->delete($key);
 	}
 
-	public function add($key, $value, $ttl = 0) {
+	public function add($key, $value, $ttl = false) {
+		if($ttl === false) {
+			$ttl = $this->ttl;
+		}
 		return $this->mem->add($key, $value, $this->compressed, $ttl);
 	}
 }
