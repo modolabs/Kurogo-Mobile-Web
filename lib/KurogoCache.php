@@ -7,6 +7,7 @@ abstract class KurogoCache {
 	public static function factory($cacheType, $args = array()) {
 		$args = is_array($args) ? $args : array();
 
+		includePackage("Cache/{$cacheType}.php");
         if (!class_exists($cacheType)) {
             throw new KurogoConfigurationException("Cache class $cacheType not defined");
         }
