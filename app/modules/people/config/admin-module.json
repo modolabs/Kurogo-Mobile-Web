@@ -13,7 +13,7 @@
         "descriptionKey":"PEOPLE_ADMIN_FEEDS_DESCRIPTION",
         "sectiontype":"fields",
         "fieldgroups":{
-            "advanced":{"label":"Advanced", "collapsed": true, "description":"The following fields can be used to customize your directory setup"}
+            "advanced":{"label":"Advanced Options", "collapsed": true, "description":"The following fields can be used to customize your directory setup"}
         },
         "fields":{
             "CONTROLLER_CLASS":{"labelKey":"PEOPLE_ADMIN_FEEDS_CONTROLLERCLASS_TITLE", "descriptionKey":"PEOPLE_ADMIN_FEEDS_CONTROLLERCLASS_DESCRIPTION", "type":"select","config":"feeds","section":"people","optionsMethod":["PeopleController","getPeopleControllers"]},

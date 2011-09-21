@@ -31,14 +31,17 @@
         "descriptionKey":"CALENDAR_ADMIN_FEEDS_DESCRIPTION",
         "config":"feeds",
         "sectiontype":"section",
+        "fieldgroups":{
+            "advanced":{"label":"Advanced Options", "collapsed": true, "description":"The following fields can be used to customize the calendar parsing"}
+        },
         "fields":{
             "section":{"labelKey":"CALENDAR_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
             "TITLE":{"labelKey":"CALENDAR_ADMIN_FEEDS_TITLE_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
-            "CONTROLLER_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_CLASS_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_CLASS_DESCRIPTION", "type":"text","placeholder":"CalendarDataController","omitBlankValue":true},
             "BASE_URL":{"labelKey":"CALENDAR_ADMIN_FEEDS_BASEURL_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_BASEURL_DESCRIPTION","type":"text"},
-            "CACHE_LIFETIME":{"labelKey":"CALENDAR_ADMIN_FEEDS_CACHE_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_CACHE_DESCRIPTION","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"]},
-            "PARSER_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_PARSERCLASS_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_PARSERCLASS_DESCRIPTION","type":"text","placeholder":"ICSDataParser","omitBlankValue":true},
-            "EVENT_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_EVENTCLASS_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_EVENTCLASS_DESCRIPTION","type":"text","placeholder":"ICalEvent","omitBlankValue":true}
+            "CONTROLLER_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_CLASS_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_CLASS_DESCRIPTION", "type":"text","placeholder":"CalendarDataController","omitBlankValue":true,"fieldgroup":"advanced"},
+            "CACHE_LIFETIME":{"labelKey":"CALENDAR_ADMIN_FEEDS_CACHE_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_CACHE_DESCRIPTION","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"fieldgroup":"advanced"},
+            "PARSER_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_PARSERCLASS_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_PARSERCLASS_DESCRIPTION","type":"text","placeholder":"ICSDataParser","omitBlankValue":true,"fieldgroup":"advanced"},
+            "EVENT_CLASS":{"labelKey":"CALENDAR_ADMIN_FEEDS_EVENTCLASS_TITLE","descriptionKey":"CALENDAR_ADMIN_FEEDS_EVENTCLASS_DESCRIPTION","type":"text","placeholder":"ICalEvent","omitBlankValue":true,"fieldgroup":"advanced"}
         },
         "sectionindex":"string",
         "sectionsmethod":"loadFeedData",
