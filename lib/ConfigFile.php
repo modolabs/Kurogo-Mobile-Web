@@ -298,7 +298,7 @@ class ConfigFile extends Config {
                         $string[] = sprintf("%s[] = %s", $var, $this->saveValue($_value));
                     }
                 } else {
-                    trigger_error("Error parsing non scalar value for $var in " . $this->filepath, E_USER_ERROR);
+                    Kurogo::log(LOG_WARNING, "Error parsing non scalar value for $var in " . $this->filepath, 'config');
                 }
             }
         } else {
