@@ -853,18 +853,24 @@ class ICalendar extends ICalObject implements CalendarInterface {
 			$eventOccurrences = $event->getOccurrencesInRange($range, $limit);
 
 			foreach ($eventOccurrences as $occurrence) {
-
-				$uid = $occurrence->get_uid();
-				if (!array_key_exists($uid, $occurrences)) {
-					$occurrences[$uid] = array();
-				}
-
-				$occurrences[$uid][$occurrence->get_start()] = $occurrence;
+				$key = count($occurrences);
+				$occurrences[$key] = $occurrence;
 			}
 		}
+
+		uasort($occurrences, array($this, "sort_events"));
 		
 		// in some case, it doesn't work properly if we just sort $this->eventStartTimes
 		return $occurrences;
+	}
+
+    private function sort_events($a, $b) {
+        $startA = $a->get_start();
+        $startB = $b->get_start();
+        if ($startA == $startB) {
+            return 0;
+        }
+        return ($startA < $startB) ? -1 : 1;
 	}
 
 	public function set_attribute($attr, $value, $params=null) {
