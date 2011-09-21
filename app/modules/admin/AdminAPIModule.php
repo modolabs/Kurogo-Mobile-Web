@@ -49,6 +49,16 @@ class AdminAPIModule extends APIModule
         return $configData;
     }
     
+    private function getTypeStr($type) {
+        if ($type=='site') {
+                return 'site';
+        } elseif ($type instanceOf Module) {
+            return $type->configModule;
+        } else {
+            throw new Exception("Invalid type $type");
+        }
+    }
+    
     private function getAdminData($type, $section, $subsection=null) {
         if ($type=='site') {
             $configData = $this->getSiteAdminConfig();
@@ -307,6 +317,8 @@ class AdminAPIModule extends APIModule
     
     private function setConfigVar($type, $section, $subsection, $key, $value) {
 
+        $typeStr = $this->getTypeStr($type);
+        Kurogo::log(LOG_DEBUG, "Setting $key to \"$value\" in $typeStr: $section $subsection", 'admin');
         $sectionData = $this->getAdminData($type, $section, $subsection);
         $changed = false;
             
@@ -366,7 +378,7 @@ class AdminAPIModule extends APIModule
                 } 
 
                 if (!isset($fieldData['fields'][$k])) {
-                    throw new KurogoConfigurationException("Invalid key $k for $type:" . $fieldData['config'] . " section $key");
+                    throw new KurogoConfigurationException("Invalid key $k for $typeStr:" . $fieldData['config'] . " section $key");
                 }
                 
                 $prefix = isset($value[$k . '_prefix']) ? $value[$k . '_prefix'] : '';
@@ -498,8 +510,10 @@ class AdminAPIModule extends APIModule
         switch ($this->command) {
             case 'checkversion':
                 $current = Kurogo::sharedInstance()->checkCurrentVersion();
+                Kurogo::log(LOG_INFO, sprintf("Checking version. This site: %s Current Kurogo Version: %s", $current, KUROGO_VERSION), 'admin');
                 $uptodate = version_compare(KUROGO_VERSION, $current,">=");
                 $messageKey = $uptodate ? 'KUROGO_VERSION_MESSAGE_UPTODATE' : 'KUROGO_VERSION_MESSAGE_NOTUPDATED';
+
                 $data = array(
                     'current'=>$current,
                     'local'  =>KUROGO_VERSION,
@@ -528,6 +542,7 @@ class AdminAPIModule extends APIModule
 
             case 'clearcaches':
 
+                Kurogo::log(LOG_NOTICE, "Clearing Site Caches", 'admin');
                 $result = Kurogo::sharedInstance()->clearCaches();
                 if ($result===0) {
                     $this->setResponse(true);
@@ -736,6 +751,7 @@ class AdminAPIModule extends APIModule
                     throw new KurogoConfigurationException("Section $key not found in config '$section' of module '$moduleID'");
                 }
 
+                Kurogo::log(LOG_NOTICE, "Removing section $section from ". $this->getTypeStr($type) . " $subsection", 'admin');
                 if (!$result = $config->removeSection($key)) {
                     throw new KurogoException("Error removing item $key from config '" . $sectionData['config'] ."'");
                 } else {
@@ -748,6 +764,7 @@ class AdminAPIModule extends APIModule
 
             case 'setmodulelayout':
                 
+                Kurogo::log(LOG_NOTICE, "Updating module layout", 'admin');
                 $data = $this->getArg('data', array());
                 $config = ModuleConfigFile::factory('home', 'module');
                 if (!isset($data['primary_modules'])) {

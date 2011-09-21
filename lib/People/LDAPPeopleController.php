@@ -51,7 +51,7 @@ class LDAPPeopleController extends PeopleController {
                 ldap_set_option($this->ldapResource, LDAP_OPT_PROTOCOL_VERSION, 3);
                 ldap_set_option($this->ldapResource, LDAP_OPT_REFERRALS, 0);
             } else {
-                error_log("Error connecting to LDAP Server $this->host using port $this->port");
+                Kurogo::log(LOG_WARNING, "Error connecting to LDAP Server $this->host using port $this->port", 'data');
             }
         }
 
@@ -166,7 +166,7 @@ class LDAPPeopleController extends PeopleController {
 
         if ($this->adminDN) {
             if (!ldap_bind($ds, $this->adminDN, $this->adminPassword)) {
-                error_log("Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds));
+                Kurogo::log(LOG_WARNING, "Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds), 'data');
                 return false;
             }
         }
@@ -256,7 +256,7 @@ class LDAPPeopleController extends PeopleController {
 
             if ($this->adminDN) {
                 if (!ldap_bind($ds, $this->adminDN, $this->adminPassword)) {
-                    error_log("Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds));
+                    Kurogo::log(LOG_WARNING, "Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds), 'data');
                     return false;
                 }
             }

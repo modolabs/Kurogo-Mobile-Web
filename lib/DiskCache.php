@@ -147,7 +147,7 @@ class DiskCache {
 
     // stop doing this here after users handle error on their own
     if ($this->error)
-      error_log($this->error);
+      Kurogo::log(LOG_WARNING, $this->error, 'data');
 
     umask($umask);
     return FALSE;
@@ -186,7 +186,7 @@ class DiskCache {
         }
       }
       $this->error = "could not get contents of $path";
-      error_log($this->error, 0);
+      Kurogo::log(LOG_WARNING,$this->error, 'data');
     }
     return FALSE;
   }
