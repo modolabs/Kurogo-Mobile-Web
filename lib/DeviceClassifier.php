@@ -90,18 +90,37 @@ class DeviceClassifier {
   }
   
     private function detectDeviceInternal($user_agent) {
+        
+        if (!$user_agent) {
+            return;
+        }
+
+        /*
+         * Two things here:
+         * First off, we now have two files which can be used to classify devices,
+         * the master file, usually at LIB_DIR/deviceData.json, and the custom file,
+         * usually located at DATA_DIR/deviceData.json.
+         *
+         * Second, we're still allowing the use of sqlite databases (despite it
+         * being slower and more difficult to update).  So, if you specify the
+         * format of the custom file as sqlite, it should still work.
+         */
 
         if (!$master_file = LIB_DIR."/deviceData.json") {
             error_log('Device Detection Master File not specified.');
             die('Device Detection Master File not specified.');
         }
 
-        if (!$site_file =  Kurogo::getSiteVar('MOBI_SERVICE_FILE')) {
+        $site_file = Kurogo::getSiteVar('MOBI_SERVICE_SITE_FILE');
+        $site_file_format = Kurogo::getSiteVar('MOBI_SERVICE_SITE_FORMAT');
+        $site_file_format = ($site_file_format ? $site_file_format : 'json');
+        if (!( $site_file && $site_file_format)) {
             // We don't have a site-specific file.  This means we can only
             // detect on the master file.
 
             //error_log('MOBI_SERVICE_FILE not specified in site config.');
             //die("MOBI_SERVICE_FILE not specified in site config.");
+            $site_file = "";
         }
 
         try {
@@ -109,16 +128,44 @@ class DeviceClassifier {
 
             if ($site_file = realpath_exists($site_file))
             {
-                $site_devices = json_decode(file_get_contents($site_file), true);
-                $site_devices = $site_devices['devices'];
-                if(($error_code = json_last_error()) !== JSON_ERROR_NONE)
+                if($site_file_format == 'json')
                 {
-                    error_log("Problem decoding Device Detection Site File. Error code returned was ".$error_code);
-                }
+                    $site_devices = json_decode(file_get_contents($site_file), true);
+                    $site_devices = $site_devices['devices'];
+                    if(($error_code = json_last_error()) !== JSON_ERROR_NONE)
+                    {
+                        error_log("Problem decoding Custom Device Detection File. Error code returned was ".$error_code);
+                    }
 
-                
-                if(($device = $this->checkDevices($site_devices, $user_agent) !== false))
-                        return $this->translateDevice($device);
+
+                    if(($device = $this->checkDevices($site_devices, $user_agent) !== false))
+                            return $this->translateDevice($device);
+                }
+                elseif($site_file_format == 'sqlite')
+                {
+
+                    Kurogo::includePackage('db');
+                    try {
+                        $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$site_file));
+                        $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
+                    } catch (Exception $e) {
+                        if (!in_array('sqlite', PDO::getAvailableDrivers())) {
+                            die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
+                        }
+                        error_log("Error with device detection");
+                        return false;
+                    }
+
+                    while ($row = $result->fetch()) {
+                        if (preg_match("#" . $row['pattern'] . "#i", $user_agent)) {
+                            return $row;
+                        }
+                    }
+                }
+                else
+                {
+                    error_log('Unknown format specified for Custom Device Detection File: '.$site_file_format);
+                }
 
             }
             if($master_file = realpath_exists($master_file))
