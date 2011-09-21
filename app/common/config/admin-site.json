@@ -215,6 +215,7 @@
         "sectiontype":"fields",
         "fields":{
             "GOOGLE_ANALYTICS_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_GOOGLE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_GOOGLE_DESCRIPTION","section":"analytics","placeholder":" UA-XXXXXXX-X"},
+            "PERCENT_MOBILE_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_PERCENT_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_PERCENT_DESCRIPTION","section":"analytics"},
             "PAGE_VIEWS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_DESCRIPTION","section":"analytics"},
             "API_STATS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_API_STATS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_API_STATS_DESCRIPTION","section":"analytics"}
         }
