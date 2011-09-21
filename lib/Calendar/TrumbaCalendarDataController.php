@@ -59,7 +59,7 @@ class TrumbaCalendarDataController extends CalendarDataController
             $this->addFilter('startdate', $this->startDate->format('Ymd'));
             $this->addFilter('days', $diff / 86400);
         } else {
-            trigger_error("Non day integral duration specified $diff", E_USER_ERROR);
+            Kurogo::log(LOG_WARNING, "Non day integral duration specified $diff", 'calendar');
         }
         
         return parent::url();

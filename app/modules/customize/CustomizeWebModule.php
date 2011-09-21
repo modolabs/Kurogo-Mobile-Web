@@ -57,7 +57,7 @@ class CustomizeWebModule extends WebModule {
           break;
         
         default:
-          error_log(__FUNCTION__."(): Unknown action '{$_REQUEST['action']}'");
+          Kurogo::log(LOG_WARNING,__FUNCTION__."(): Unknown action '{$_REQUEST['action']}'",'module');
           break;
       }
     }

@@ -42,7 +42,7 @@ class GoogleOAuthProvider extends OAuthProvider
                 $userArray = $_REQUEST;
                 return AUTH_OK;
             } else {
-                error_log("openid_identity not found");
+                Kurogo::log(LOG_WARNING,"openid_identity not found",'auth');
                 return AUTH_FAILED;
             }
         } else {

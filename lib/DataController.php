@@ -285,6 +285,7 @@ abstract class DataController
      */
     public static function factory($controllerClass, $args=array()) {
         $args = is_array($args) ? $args : array();
+        Kurogo::log(LOG_DEBUG, "Initializing DataController $controllerClass", "data");
 
         if (!class_exists($controllerClass)) {
             throw new KurogoConfigurationException("Controller class $controllerClass not defined");
@@ -485,12 +486,8 @@ abstract class DataController
 
         if ($this->useCache) {
             if ($this->cacheIsFresh()) {
+                Kurogo::log(LOG_DEBUG, "Using cache for $url", 'data');
                 $data = $this->getCacheData();
-
-                if ($this->debugMode) {
-                    error_log(sprintf(__CLASS__ . " Using cache for %s", $url));
-                }
-
             } else {
                 if ($data = $this->retrieveData($url)) {
                     if ($this->response) {
@@ -498,6 +495,7 @@ abstract class DataController
                     }
                 } elseif ($this->useStaleCache) {
                     // return stale cache if the data is unavailable
+                    Kurogo::log(LOG_DEBUG, "Using stale cache for $url", 'data');
                     $data = $this->getCacheData();
                 }
             }
@@ -517,9 +515,7 @@ abstract class DataController
      * @TODO support POST requests and custom headers and perhaps proxy requests
      */
     protected function retrieveData($url) {
-        if ($this->debugMode) {
-            error_log(sprintf(__CLASS__ . " Retrieving %s", $url));
-        }
+        Kurogo::log(LOG_INFO, "Retrieving $url", 'data');
         
         $data = file_get_contents($url, false, $this->streamContext);
         $http_response_header = isset($http_response_header) ? $http_response_header : array();
@@ -528,9 +524,7 @@ abstract class DataController
         $this->response->setRequest($this->method, $url, $this->filters, $this->requestHeaders);
         $this->response->setResponse($data, $http_response_header);
         
-        if ($this->debugMode) {
-            error_log(sprintf(__CLASS__ . " Returned status %d and %d bytes", $this->getResponseCode(), strlen($data)));
-        }
+        Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $this->getResponseCode(), strlen($data)), 'data');
         
         return $data;
     }

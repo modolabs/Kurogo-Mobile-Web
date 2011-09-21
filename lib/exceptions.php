@@ -76,7 +76,7 @@ function developmentErrorLog($exception){
   $path =  CACHE_DIR . "/errors/";
   if (!file_exists($path)) {
     if (!mkdir($path, 0755, true)){
-      error_log("DEV Error: could not create $path");
+      Kurogo::log(LOG_WARNING, "DEV Error: could not create $path", "exception");
       return false;
     }
   } 
@@ -85,7 +85,7 @@ function developmentErrorLog($exception){
   $file = $path . $time . '.log';
   
   if (!$handle = fopen($file, 'w')) {
-    error_log("DEV Error: could open file $file");
+    Kurogo::log(LOG_WARNING, "DEV Error: could not open file $file", "exception");
     return false;
   }
   
@@ -142,7 +142,7 @@ function developmentErrorLog($exception){
   $msg = '<strong>' . $exception->getMessage() . '</strong><br>' . $msg;
   
   if (fwrite($handle, $msg) === FALSE) {
-    error_log("DEV Error: could not write to file $file");
+    Kurogo::log(LOG_WARNING, "DEV Error: could not write to file $file", "exception");
     return false;
   }
   
@@ -155,14 +155,15 @@ function developmentErrorLog($exception){
   * Exception Handler set in Kurogo::initialize()
   */
 function exceptionHandlerForError($exception) {
+    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception");
     $error = print_r($exception, TRUE);
     die("There was a serious error: $error");
 }
 
 function exceptionHandlerForDevelopment($exception) {
+    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception");
     $errtime = developmentErrorLog($exception);
     $error = print_r($exception, TRUE);
-    error_log($error);
 	
 	if ($url = getErrorURL($exception, $errtime)) {
     	header('Location: ' . $url);
@@ -178,6 +179,7 @@ function exceptionHandlerForDevelopment($exception) {
   */
 function exceptionHandlerForProduction(Exception $exception) {
 
+    Kurogo::log(LOG_ALERT, sprintf("A %s has occured: %s", get_class($exception), $exception->getMessage()), "exception");
     if ($exception instanceOf KurogoException) {
         $sendNotification = $exception->shouldSendNotification();
     } else {
@@ -199,9 +201,6 @@ function exceptionHandlerForProduction(Exception $exception) {
         }
     }
 
-    $error = print_r($exception, TRUE);
-    error_log($error);
-
     if ($url = getErrorURL($exception)) {
 		header('Location: ' . $url);
 		die(0);
@@ -211,9 +210,11 @@ function exceptionHandlerForProduction(Exception $exception) {
 }
 
 function exceptionHandlerForAPI($exception) {
+    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception");
     $error = KurogoError::errorFromException($exception);
     $response = new APIResponse();
     $response->setVersion(0);
     $response->setError($error);
     $response->display();
+    exit();
 }

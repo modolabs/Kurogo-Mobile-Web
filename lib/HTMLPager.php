@@ -67,7 +67,7 @@ class HTMLPager {
     libxml_clear_errors(); // clean up any errors belonging to other operations
     $dom->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', $encoding));
     foreach (libxml_get_errors() as $error) {
-      error_log("HTMLPager got loadHTML warning (line {$error->line}; column {$error->column}) {$error->message}");
+      Kurogo::log(LOG_WARNING,"HTMLPager got loadHTML warning (line {$error->line}; column {$error->column}) {$error->message}",'data');
     }
     libxml_clear_errors(); // free up memory associated with the errors
     libxml_use_internal_errors(false);
