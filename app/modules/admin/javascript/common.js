@@ -350,6 +350,8 @@ function createSectionListRow(section, data, sectionID, sectionData) {
         var editrow = $('<div class="editrow" />');
         var list = $('<div class="formfields" />');
         var items = [];
+        var fieldgroups = {}
+        
         $.each(data.fields, function(field, _fieldData) {
             var fieldData = jQuery.extend(true, {}, _fieldData);
     
@@ -372,7 +374,37 @@ function createSectionListRow(section, data, sectionID, sectionData) {
             fieldName = sectionID +'['+field+']';
             var item = createFormFieldListItem(fieldName, fieldData);
             items[field] = item;
-            list.append(item);
+            
+            if (fieldData.fieldgroup) {
+                var groupname = fieldData.fieldgroup;
+                if (data.fieldgroups && typeof data.fieldgroups[groupname] != 'undefined') {
+                    var groupdata = data.fieldgroups[groupname];
+                    if (!fieldgroups[groupname]) {
+                        var fieldgroup = $('<fieldset />');
+                        fieldgroups[groupname] = $('<div class="fieldgroup" />');
+                        if (groupdata.label) {
+                            var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>').click(function() {
+                                fieldgroups[groupname].slideToggle();
+                            })
+                            fieldgroup.append(legend);
+                            if (groupdata.description) {
+                                fieldgroups[groupname].append($('<div class="fieldgroup-description">'+groupdata.description+'</div>'));
+                            }
+                        }
+                        fieldgroup.append(fieldgroups[groupname]);
+                        if (groupdata.collapsed) {
+                            fieldgroups[groupname].hide();
+                        }
+                        list.append(fieldgroup);
+                    }
+                    
+                    fieldgroups[groupname].append(item);
+                } else {
+                    alert("Fieldgroup " + groupname + " not defined.");
+                }
+            }  else {
+                list.append(item);
+            }
             
             if (fieldData.showIf && fieldData.showIf[0] in data.fields) {
                 $(items[fieldData.showIf[0]]).find('.changeElement').change(function() {

@@ -788,6 +788,16 @@ fieldset {
     border: 1px solid #ccc;
 }
 
+.editrow fieldset {
+    background: transparent;
+    border-radius: 0;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+   -moz-border-radius: 0;
+    padding: .5em 0 .5em 0;
+    border: 0;
+}
+
 .fieldgroup-legend {
 	padding: 0 10px 0 0;
 	margin-left: 150px;		/* same as width plus padding-right of label */
