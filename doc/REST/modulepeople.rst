@@ -41,26 +41,26 @@ Sample *response* ::
                             "jobTitle": "Our Favorite Person", 
                             "organization": "Department of Fake People"
                         }, 
-                        "label": "work"
+                        "title": "work"
                     }
                 ], 
                 "contacts": [
                     {
                         "type": "email", 
                         "value": "john.smith@example.com", 
-                        "label": "email"
+                        "title": "email"
                     }, 
                     {
                         "type": "phone", 
                         "value": "+1-617-555-1234", 
-                        "label": "phone"
+                        "title": "phone"
                     }, 
                     {
                         "type": "address", 
                         "value": {
                             "display": "5678 Massachusetts Ave, Cambridge, MA 02140"
                         }, 
-                        "label": "home"
+                        "title": "home"
                     }
                 ]
             }
@@ -84,12 +84,14 @@ typical smartphone address book.
 Entries in *organizations* and *contacts* each have the following fields:
 
 * *value* - the information to be conveyed
-* *label* - a hint to the user about what this value is about
+* *title* - a hint to the user about what this value is about
 * *type* - an indicator of how the field should be treated (e.g. "email" 
   means the user should be able to send an email to the address displayed,
   "phone" means the user should be able to call the number displayed,
   "address" means the user should be able to find the displayed address on a 
   map.)
+
+.. _rest-people-contacts:
 
 ==========
 contacts
@@ -108,16 +110,20 @@ Sample *response* ::
         "returned": 2, 
         "results": [
             {
-                "identifier": "entry1", 
-                "type": "phone", 
-                "value": "6175550001", 
-                "label": "Static Entry 1"
+                "subtitle": "(617-555-0001)",
+                "url": "tel:6175550001",
+                "title": "Static Entry 1",
+                "type": "phone"
             }, 
             {
-                "identifier": "entry2", 
-                "type": "phone", 
-                "value": "6175550002", 
-                "label": "Static Entry 2"
+                "subtitle": "(617-555-0002)",
+                "url": "tel:6175550002",
+                "title": "Static Entry 2",
+                "type": "phone"
+            },
+            {
+                "title": "Contact Group 1",
+                "group": "group1"
             }
             // ...
         ]
@@ -134,8 +140,12 @@ Contents:
     example, both contacts are of type "phone", which means the user should 
     be able to place a phone call with the information provided.
 
-  * *label* - short description of this contact
-  * *value* - the information to be conveyed
+  * *title* - short description of this contact
+  * *url* - the contact's URL, if any.
+
+  * *group* - indicates that this is not an individual contact but a group
+    of contacts. The client must use the *group* endpoint below to fetch
+    the individual contact objects in this group.
 
 ========
 group
@@ -168,6 +178,7 @@ Sample *response* ::
         }
     }
 
-
+Each entry in "contacts" has the same structure as the entries in the *contacts*
+API.
 
 

@@ -22,6 +22,26 @@ class VideoAPIModule extends APIModule {
         return $cleanArray;
     }
 
+    protected static function arrayFromVideo($video) {
+        return array(
+            "id"              => $video->getID(),
+            "title"           => $video->getTitle(),
+            "description"     => strip_tags($video->getDescription()),
+            "author"          => $video->getAuthor(),
+            "published"       => $video->getPublished(),
+            "date"            => $video->getPublished()->format('M n, Y'),
+            "url"             => $video->getURL(),
+            "image"           => $video->getImage(),
+            "width"           => $video->getWidth(),
+            "height"          => $video->getHeight(),
+            "duration"        => $video->getDuration(),
+            "tags"            => $video->getTags(),
+            "mobileURL"       => $video->getMobileURL(),
+            "streamingURL"    => $video->getStreamingURL(),
+            "stillFrameImage" => $video->getStillFrameImage(),
+            );
+    }
+
     protected function getFeed($feed=null) {
         $feed = isset($this->feeds[$feed]) ? $feed : $this->getDefaultSection();
         $feedData = $this->feeds[$feed];
@@ -50,12 +70,11 @@ class VideoAPIModule extends APIModule {
             $section = $this->getArg('section');
             $query = $this->getArg('q');                
 
-            //$feedData = $this->feeds[$section];
-            //$controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $controller = $this->getFeed($section);
             $totalItems = $controller->getTotalItems();
             $videos = array();
 
+            // TODO: this isn't the right place to hard code paging limits
             if ($this->command == 'search') {
                 $items = $controller->search($query, 0, 20);
             }
@@ -64,24 +83,8 @@ class VideoAPIModule extends APIModule {
             }
 
             foreach ($items as $video) {
-                $videos[] = array(
-                    "id"              => $video->getID(),
-                    "title"           => $video->getTitle(),
-                    "description"     => strip_tags($video->getDescription()),
-                    "author"          => $video->getAuthor(),
-                    "published"       => $video->getPublished(),
-                    "date"            => $video->getPublished()->format('M n, Y'),
-                    "url"             => $video->getURL(),
-                    "image"           => $video->getImage(),
-                    "width"           => $video->getWidth(),
-                    "height"          => $video->getHeight(),
-                    "duration"        => $video->getDuration(),
-                    "tags"            => $video->getTags(),
-                    "mobileURL"       => $video->getMobileURL(),
-                    "streamingURL"    => $video->getStreamingURL(),
-                    "stillFrameImage" => $video->getStillFrameImage());
+                $videos[] = self::arrayFromVideo($video);
             }
-
 
             $this->setResponse($videos);
             $this->setResponseVersion(1);                
@@ -89,29 +92,13 @@ class VideoAPIModule extends APIModule {
                 
         case 'detail':
             $section = $this->getArg('section');
-            $feedData = $this->feeds[$section];
-            $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller = $this->getFeed($section);
             $videoid = $this->getArg('videoid');
-                    
+
             if ($video = $controller->getItem($videoid)) {
-                $result = array(
-                    "id"              => $video->getID(),
-                    "title"           => $video->getTitle(),
-                    "description"     => strip_tags($video->getDescription()),
-                    "author"          => $video->getAuthor(),
-                    "published"       => $video->getPublished(),
-                    "date"            => $video->getPublished()->format('M n, Y'),
-                    "url"             => $video->getURL(),
-                    "image"           => $video->getImage(),
-                    "width"           => $video->getWidth(),
-                    "height"          => $video->getHeight(),
-                    "duration"        => $video->getDuration(),
-                    "tags"            => $video->getTags(),
-                    "mobileURL"       => $video->getMobileURL(),
-                    "streamingURL"    => $video->getStreamingURL(),
-                    "stillFrameImage" => $video->getStillFrameImage());
+                $result = self::arrayFromVideo($video);
                 $this->setResponse($result);
-                $this->setResponseVersion(1);    
+                $this->setResponseVersion(1);
             } else {
                 $this->throwError(new KurogoError("Video Not Found"));
             }

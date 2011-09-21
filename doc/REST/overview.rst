@@ -114,6 +114,8 @@ follows: ::
 REST API Conventions
 =====================
 
-
-
+When a list of items is returned, the field *title* is conventionally used as 
+the name of the primary field that should be displayed to the user.  Some API
+output will use a *displayField* parameter beside the list if a different field
+name is used instead of *title*.
 

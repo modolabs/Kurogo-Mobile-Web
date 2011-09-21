@@ -30,7 +30,7 @@ Sample *response* ::
                     }
                     // ...
                 ]
-            },
+            }
             // ...
         ]
     }
@@ -43,7 +43,7 @@ events
 
 Sample *response* ::
 
-    "response": {
+    {
         "displayField": "title", 
         "total": 2, 
         "returned": 2, 
@@ -53,10 +53,13 @@ Sample *response* ::
                 "end": "1314637200", 
                 "id": "http://modolabs.com/kurogo/events/201108291", 
                 "title": "Faculty Meeting"
-            }, 
+            }
             // ...
         ]
     }
+
+Each entry in the *results* list has the same structure as the response of the
+*detail* API.
 
 =========
 detail
@@ -67,12 +70,16 @@ detail
 
 Sample *response* ::
 
-    "response": {
+    {
         "start": "1314626400", 
         "end": "1314631800", 
         "id": "http://modolabs.com/kurogo/events/201108290", 
-        "title": "Concert"
+        "title": "Concert",
+        "description": "Boston Pops concert",
+        "location": "Kresge Oval"
     }
+
+The fields *id*, *start*, and *title* are mandatory.
 
 ======
 search
@@ -96,6 +103,10 @@ Sample *response* ::
             // ...
         ]
     }
+
+Each entry in the *results* list has the same structure as the response of the
+*detail* API.
+
 
 
 
