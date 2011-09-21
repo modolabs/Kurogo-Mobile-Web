@@ -493,7 +493,8 @@ function createFormSectionList(section, data) {
     
     if (data.sectionreorder) {
         body.sortable({
-            opacity: 0.6
+            opacity: 0.6,
+            handle: '.handle'
         });
     }
     
