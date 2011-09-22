@@ -11,10 +11,10 @@
 <form action="">
 <input type="hidden" name="service" value="{$statsService}" />
 <input type="hidden" name="interval" value="custom" />
-<label>start:</label>
-{html_select_date start_year="- 2" field_array="start" prefix="" time=$starttime}
-<label>end:</label>
-{html_select_date start_year="- 2" field_array="end" prefix="" time=$endtime}
+<div><label>From:</label>
+{html_select_date start_year="- 2" field_array="start" prefix="" time=$starttime}</div>
+<div><label>To:</label>
+{html_select_date start_year="- 2" field_array="end" prefix="" time=$endtime}</div>
 <input src="/common/images/search_button.png" type="image" />
 </div>
 {/block}

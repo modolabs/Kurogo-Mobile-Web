@@ -137,7 +137,7 @@ margin-top: 1em;
 /* Vertical (standard) bar charts */
 .barchart-v {
 	height: 100px;
-	margin: 20px 0 20px 20px;
+	margin: 20px 0 20px 30px;
 }
 .barchart-v .ylabel {
 	height: 100px;	/* Should equal height of .barchart-v */
@@ -324,7 +324,7 @@ margin-top: 1em;
 
 .linechart {
 	height: 120px;
-	margin: 20px 15px 20px 20px;
+	margin: 20px 15px 20px 30px;
 }
 .linechart .ylabel {
 	height: 120px;	/* Should equal height of .linechart */

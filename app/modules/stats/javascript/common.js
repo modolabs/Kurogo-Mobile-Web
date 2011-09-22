@@ -4,7 +4,7 @@ function updateIntervalTab(interval) {
         return true;
     }
     
-    var listitems = document.getElementById('tabstrip').getElementsByTagName('li');
+    var listitems = document.getElementById('intervalTabstrip').getElementsByTagName('li');
     for (var i=0; i<listitems.length; i++) {
         var listinterval = listitems[i].getAttribute('interval');
 

@@ -901,7 +901,7 @@ h2.icon {
 	text-decoration: none;
 	color: #fff;
 	background: url(/common/images/tabstrip.jpg) repeat-x;
-	border-right: 1px solid #9fb8d3;
+	border-right: 1px solid #999;
 }	
 
 .tabstrip li.active a ,
