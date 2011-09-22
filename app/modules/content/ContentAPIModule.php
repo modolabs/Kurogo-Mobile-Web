@@ -64,7 +64,7 @@ class ContentAPIModule extends APIModule {
 
                 foreach ($feeds as $page => $feedData) {
                     $pages[] = array(
-                        'key' => key($feeds),
+                        'key' => $page,
                         'title' => $feedData['TITLE'],
                         'subtitle' => isset($feedData['SUBTITLE']) ? $feedData['SUBTITLE'] : '',
                         'showTitle' => isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : false,
