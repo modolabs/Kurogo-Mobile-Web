@@ -214,7 +214,7 @@ class KurogoStats {
         );
     }
     
-    protected function getGroupFields($group) {
+    protected static function getGroupFields($group) {
         $extraFields = array();
         foreach ($group as &$val) {
             switch ($val) 
