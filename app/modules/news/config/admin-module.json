@@ -13,16 +13,19 @@
         "descriptionKey":"NEWS_ADMIN_FEEDS_DESCRIPTION",
         "config":"feeds",
         "sectiontype":"section",
+        "fieldgroups":{
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"NEWS_ADMIN_FEEDS_ADVANCED_DESCRIPTION"}
+        },
         "fields":{
             "TITLE":{"labelKey":"NEWS_ADMIN_FEEDS_TITLE_TITLE", "descriptionKey":"NEWS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
-            "CONTROLLER_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_CONTROLLERCLASS_TITLE", "descriptionKey":"NEWS_ADMIN_FEEDS_CONTROLLERCLASS_DESCRIPTION", "type":"text","placeholder":"RSSDataController","omitBlankValue":true},
             "BASE_URL":{"labelKey":"NEWS_ADMIN_FEEDS_BASEURL_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_BASEURL_DESCRIPTION","type":"text"},
             "SHOW_IMAGES":{"labelKey":"NEWS_ADMIN_FEEDS_SHOWIMAGES_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_SHOWIMAGES_DESCRIPTION","type":"checkbox","default":1},
             "SHOW_PUBDATE":{"labelKey":"NEWS_ADMIN_FEEDS_SHOWPUBDATE_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_SHOWPUBDATE_DESCRIPTION","type":"checkbox"},
             "SHOW_AUTHOR":{"labelKey":"NEWS_ADMIN_FEEDS_SHOWAUTHOR_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_SHOWAUTHOR_DESCRIPTION","type":"checkbox"},
-            "CACHE_LIFETIME":{"labelKey":"NEWS_ADMIN_FEEDS_CACHE_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_CACHE_DESCRIPTION","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"]},
-            "ITEM_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_ITEMCLASS_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_ITEMCLASS_DESCRIPTION","type":"text","placeholder":"RSSItem","omitBlankValue":true},
-            "ENCLOSURE_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_ENCLOSURECLASS_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_ENCLOSURECLASS_DESCRIPTION","type":"text","placeholder":"RSSEnclosure","omitBlankValue":true}
+            "CONTROLLER_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_CONTROLLERCLASS_TITLE", "descriptionKey":"NEWS_ADMIN_FEEDS_CONTROLLERCLASS_DESCRIPTION", "type":"text","placeholder":"RSSDataController","omitBlankValue":true,"fieldgroup":"advanced"},
+            "CACHE_LIFETIME":{"labelKey":"NEWS_ADMIN_FEEDS_CACHE_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_CACHE_DESCRIPTION","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"fieldgroup":"advanced"},
+            "ITEM_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_ITEMCLASS_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_ITEMCLASS_DESCRIPTION","type":"text","placeholder":"RSSItem","omitBlankValue":true,"fieldgroup":"advanced"},
+            "ENCLOSURE_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_ENCLOSURECLASS_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_ENCLOSURECLASS_DESCRIPTION","type":"text","placeholder":"RSSEnclosure","omitBlankValue":true,"fieldgroup":"advanced"}
         },
         "sectionindex":"numeric",
         "sectionsmethod":"loadFeedData",
