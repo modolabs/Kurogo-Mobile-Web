@@ -289,6 +289,7 @@ class MapDataController extends DataController implements MapFolder
 
     // End MapFolder interface
 
+    /*
     protected function getFeature($name, $categoryPath=array()) {
         $items = $this->getListItems($categoryPath);
         if (isset($items[$name])) {
@@ -296,11 +297,13 @@ class MapDataController extends DataController implements MapFolder
         }
         return null;
     }
+    */
 
     // implemented for compatibility with DataController
     public function getItem($name)
     {
-        return $this->getFeature($name);
+        throw new Exception("This function has moved. See getSelectedPlacemark");
+        //return $this->getFeature($name);
     }
 
     // override what the feed says

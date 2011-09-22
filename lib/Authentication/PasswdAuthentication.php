@@ -80,7 +80,7 @@ class PasswdAuthentication extends AuthenticationAuthority
 
         /* some quick validation */        
         if (strlen($user['userID'])==0 | !preg_match("/^[a-f0-9]{32}$/", $user['md5'])) {
-            error_log("Invalid user line: $line");
+            Kurogo::log(LOG_WARNING,"Invalid user line: $line",'auth');
             $user = false;
         }
         
@@ -130,7 +130,7 @@ class PasswdAuthentication extends AuthenticationAuthority
         );
         
         if (strlen($group['group'])==0 || strlen($group['gid'])==0) {
-            error_log("Invalid group line: $line");
+            Kurogo::log(LOG_WARNING,"Invalid group line: $line",'auth');
             $group = false;
         }
 

@@ -19,7 +19,7 @@ class CalendarWebModule extends WebModule {
   protected $timezone;
   protected $defaultSearchOption = 0;
 
-  private $searchOptions = array(
+  protected $searchOptions = array(
     array("phrase" => "in the next 7 days",   "offset" => 7),
     array("phrase" => "in the next 15 days",  "offset" => 15),
     array("phrase" => "in the next 30 days",  "offset" => 30),
@@ -29,11 +29,11 @@ class CalendarWebModule extends WebModule {
     //array("phrase" => "this school year",     "offset" => "year")
   );
 
-    private function getDatesForTimeframe($timeframe) {
-        return $this->getDatesForSearchOption($this->searchOptions[$timeframe]);
-    }
+  protected function getDatesForTimeframe($timeframe) {
+    return $this->getDatesForSearchOption($this->searchOptions[$timeframe]);
+  }
   
-  private function getDatesForSearchOption($option) {
+  protected function getDatesForSearchOption($option) {
     $start = $end = time();
     
     switch ($option['offset']) {
@@ -60,7 +60,7 @@ class CalendarWebModule extends WebModule {
     );
   }
     
-  private function timeText($event, $timeOnly=false) {
+  protected function timeText($event, $timeOnly=false) {
     if ($timeOnly) {
       if ($event->get_end() - $event->get_start() == -1) {
         return $event->get_start()->format('g:i a');
@@ -72,7 +72,7 @@ class CalendarWebModule extends WebModule {
     }
   }
 
-  private function ucname($name) {
+  protected function ucname($name) {
     $new_words = array();
     foreach(explode(' ', $name) as $word) {
       $new_word = array();
@@ -85,7 +85,7 @@ class CalendarWebModule extends WebModule {
     return implode(' ', $new_words);
   }
   
-  private function valueForType($type, $value) {
+  protected function valueForType($type, $value) {
     $valueForType = $value;
   
     switch ($type) {
@@ -139,7 +139,7 @@ class CalendarWebModule extends WebModule {
     return $valueForType;
   }
   
-  private function urlForType($type, $value) {
+  protected function urlForType($type, $value) {
     $urlForType = null;
   
     switch ($type) {
@@ -173,7 +173,7 @@ class CalendarWebModule extends WebModule {
   }
 
   // URL DEFINITIONS
-  private function dayURL($time, $type, $calendar, $addBreadcrumb=true) {
+  protected function dayURL($time, $type, $calendar, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('day', array(
       'time'     => $time,
       'type'     => $type,
@@ -181,7 +181,7 @@ class CalendarWebModule extends WebModule {
     ), $addBreadcrumb);
   }
 
-  private function yearURL($year, $month, $day, $type, $calendar, $addBreadcrumb=true) {
+  protected function yearURL($year, $month, $day, $type, $calendar, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('year', array(
       'year'     => $year,
       'month'    => $month,
@@ -191,7 +191,7 @@ class CalendarWebModule extends WebModule {
     ), $addBreadcrumb);
   }
   
-  private function categoryDayURL($time, $categoryID, $name, $addBreadcrumb=true) {
+  protected function categoryDayURL($time, $categoryID, $name, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('category', array(
       'time'  => $time,
       'catid' => $categoryID,
@@ -199,11 +199,11 @@ class CalendarWebModule extends WebModule {
     ), $addBreadcrumb);
   }
   
-  private function categoriesURL($addBreadcrumb=true) {
+  protected function categoriesURL($addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('categories', array(), $addBreadcrumb);
   }
   
-  private function categoryURL($category, $addBreadcrumb=true) {
+  protected function categoryURL($category, $addBreadcrumb=true) {
     return $this->buildBreadcrumbURL('category', array(
       'catid'   => is_array($category) ? $category['catid'] : $category->get_cat_id(),
       'name' => is_array($category) ? $category['name']  : $this->ucname($category->get_name()),

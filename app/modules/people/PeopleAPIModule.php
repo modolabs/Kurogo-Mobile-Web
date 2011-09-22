@@ -69,7 +69,7 @@ class PeopleAPIModule extends APIModule
                         $result[$section] = array();
                     }
                     $valueArray = array(
-                        'label' => $fieldOptions['label'],
+                        'title' => $fieldOptions['label'],
                         'type' => $fieldOptions['type'],
                         'value' => $value,
                         );
@@ -146,6 +146,13 @@ class PeopleAPIModule extends APIModule
                 break;
             case 'contacts':
                 $results = $this->getAPIConfigData('contacts');
+                foreach ($results as &$aResult) {
+                    if (isset($aResult['class'])) {
+                        $aResult['type'] = $aResult['class'];
+                        unset($aResult['class']);
+                    }
+                }
+
                 $response = array(
                     'total'        => count($results),
                     'results'      => $results,

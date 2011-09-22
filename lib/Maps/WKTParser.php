@@ -168,7 +168,7 @@ class WKTParser
                     break;
             }
         }
-        error_log("failed to handle WKT string: $string");
+        Kurogo::log(LOG_WARNING,"failed to handle WKT string: $string",'maps');
         return null;
     }
 

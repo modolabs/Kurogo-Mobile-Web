@@ -6,6 +6,10 @@
  */
 class AnonymousUser extends User
 {
+    public function __toString() {
+        return 'anonymous';
+    }
+
     public function __construct()
     {
     }

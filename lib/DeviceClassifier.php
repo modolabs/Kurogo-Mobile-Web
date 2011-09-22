@@ -53,9 +53,11 @@ class DeviceClassifier {
     $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
     
     if ($device && strlen($device)) {
+      Kurogo::log(LOG_DEBUG, "Setting device to $device (override)", "deviceDetection");
       $this->setDevice($device); // user override of device detection
       
     } elseif (isset($_COOKIE[$this->cookieKey()])) {
+      Kurogo::log(LOG_DEBUG, "Setting device to " . $_COOKIE[$this->cookieKey()] . " (cookie)", "deviceDetection");
       $this->setDevice($_COOKIE[$this->cookieKey()]);
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
@@ -75,6 +77,7 @@ class DeviceClassifier {
         $this->pagetype = $data['pagetype'];
         $this->platform = $data['platform'];
         $this->certs = $data['supports_certificate'];
+        Kurogo::log(LOG_DEBUG, "Setting device to " . $this->getDevice(), "deviceDetection");
         $this->setDeviceCookie();
       }
     }
@@ -90,13 +93,14 @@ class DeviceClassifier {
   }
   
   private function detectDeviceInternal($user_agent) {
+    Kurogo::log(LOG_INFO, "Detecting device using internal device detection", 'deviceDetection');
     Kurogo::includePackage('db');
     if (!$user_agent) {
       return;
     }
      
      if (!$db_file =  Kurogo::getSiteVar('MOBI_SERVICE_FILE')) {
-        error_log('MOBI_SERVICE_FILE not specified in site config.');
+        Kurogo::log(LOG_EMERG, "MOBI_SERVICE_FILE not specified in site config.", 'deviceDetection');
         die("MOBI_SERVICE_FILE not specified in site config.");
      }
      
@@ -104,10 +108,10 @@ class DeviceClassifier {
          $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
          $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
      } catch (Exception $e) {
+        Kurogo::log(LOG_ALERT, "Error with internal device detection: " . $e->getMessage(), 'deviceDetection');
         if (!in_array('sqlite', PDO::getAvailableDrivers())) {
             die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
         }
-        error_log("Error with device detection");
         return false;
      }
 
@@ -117,6 +121,7 @@ class DeviceClassifier {
         }
      }
      
+     Kurogo::log(LOG_NOTICE, "Could not find a match in the internal device detection database for: $user_agent", 'deviceDetection');
      return false;
   }
   
@@ -131,6 +136,7 @@ class DeviceClassifier {
 
     if ($cache->isFresh($cacheFilename)) {
       $json = $cache->read($cacheFilename);
+      Kurogo::log(LOG_INFO, "Using cached data for external device detection" , 'deviceDetection');
 
     } else {
       $query = http_build_query(array(
@@ -139,6 +145,7 @@ class DeviceClassifier {
       ));
       
       $url = Kurogo::getSiteVar('MOBI_SERVICE_URL').'?'.$query;
+      Kurogo::log(LOG_INFO, "Detecting device using external device detection: $url", 'deviceDetection');
       $json = file_get_contents($url);
 
       $test = json_decode($json, true); // make sure the response is valid
@@ -147,7 +154,7 @@ class DeviceClassifier {
         $cache->write($json, $cacheFilename);
         
       } else {
-        error_log("Device detection server not responding.  Reading expired cache.");
+        Kurogo::log(LOG_WARNING, "Error receiving device detection data from $url.  Reading expired cache.", 'deviceDetection');
         $json = $cache->read($cacheFilename);
       }
     }            

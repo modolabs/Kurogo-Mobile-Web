@@ -57,9 +57,7 @@ class MapSearch {
                 $resultsByDistance[$distance] = $mapFeature;
 
             } catch (KurogoDataServerException $e) {
-                error_log('encountered KurogoDataServerException for feed config:');
-                error_log(print_r($feedData, true));
-                error_log('message: '.$e->getMessage());
+                Kurogo::log(LOG_WARNING, 'encountered KurogoDataServerException for feed config: ' . print_r($feedData, true) . $e->getMessage(), 'maps');
             }
         }
 
@@ -85,9 +83,7 @@ class MapSearch {
                     $this->resultCount += count($results);
                     $this->searchResults = array_merge($this->searchResults, $results);
                 } catch (KurogoDataServerException $e) {
-                    error_log('encountered KurogoDataServerException for feed config:');
-                    error_log(print_r($feedData, true));
-                    error_log('message: '.$e->getMessage());
+                    Kurogo::log(LOG_WARNING,'encountered KurogoDataServerException for feed config: ' . print_r($feedData, true) .  $e->getMessage(), 'maps');
                 }
             }
     	}

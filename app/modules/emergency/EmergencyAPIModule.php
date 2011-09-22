@@ -36,15 +36,23 @@ class EmergencyAPIModule extends APIModule {
         }
     }
 
-
+    // TODO: support other types of contacts besides phone
     protected static function formatContacts($contacts) {
         $formattedContacts = array();
         foreach($contacts as $contact) {
-             $formattedContacts[] = array(
+            $value = $contact->getPhoneDelimitedByPeriods();
+            $subtitle = $contact->getSubtitle();
+            if ($subtitle) {
+                $subtitle = $contact->getSubtitle().' ('.$value.')';
+            } else {
+                $subtitle = '('.$value.')';
+            }
+
+            $formattedContacts[] = array(
                 'title' => $contact->getTitle(),
-                'subtitle' => $contact->getSubtitle(),
-                'formattedPhone' => $contact->getPhoneDelimitedByPeriods(),
-                'dialablePhone' => $contact->getPhoneDialable(),
+                'subtitle' => $subtitle,
+                'type' => 'phone',
+                'url' => 'tel:'.$contact->getPhoneDialable(),
              );
         }
         return $formattedContacts;
