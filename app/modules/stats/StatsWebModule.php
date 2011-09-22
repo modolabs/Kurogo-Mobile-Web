@@ -262,9 +262,7 @@ class StatsWebModule extends WebModule {
                         }
                         $intervals[] = array(
                             'start'=>$time,
-                            'startStr'=>Debug::sprint_date($time),
                             'end'=>$next,
-                            'endStr'=>Debug::sprint_date($next),
                             'title'=>strftime("%m/%d",$time).'-'.strftime('%m/%d', $next)
                         );
                         $time = $next+1;
