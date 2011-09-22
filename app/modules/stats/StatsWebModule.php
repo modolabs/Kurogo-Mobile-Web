@@ -29,16 +29,9 @@ class StatsWebModule extends WebModule {
         $interval_types = array(
           'day' => array('duration' => 7, 'title' => 'Week', 'numdays' => 7),
           'week' => array('duration' => 12, 'title' => '12 Weeks', 'numdays' => 84),
-          'month' => array('duration' => 12, 'title' => 'Year', 'numdays' => 365)
+          'month' => array('duration' => 12, 'title' => 'Year', 'numdays' => 365),
+          'custom' => array('title'=>'Custom')
         );
-        
-        // custom only on tablet and computer
-        $deviceClassifier = Kurogo::deviceClassifier();
-        if ($deviceClassifier->isTablet() || $deviceClassifier->isComputer()) {
-            $interval_types['custom'] = array(
-                'title'=>'Custom'
-            );
-        }
         
         return $interval_types;
     }
