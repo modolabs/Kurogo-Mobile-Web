@@ -125,9 +125,7 @@ class MapProjector {
             return $point;
         }
         list($x, $y, $fmt) = self::getXYFromPoint($point);
-        if (Kurogo::getSiteVar('MODULE_DEBUG')) {
-            error_log("projecting $x, $y");
-        }
+        Kurogo::log(LOG_DEBUG, "projecting $x, $y", 'maps');
 
         if (isset($this->srcProjId, $this->dstProjId)
             && $this->srcProjId == $this->dstProjId
@@ -152,10 +150,8 @@ class MapProjector {
             $result = $this->formatLatLon($this->toProjection->getXY(), $fmt);
         }
 
-        if (Kurogo::getSiteVar('MODULE_DEBUG')) {
-            list($x, $y, $fmt) = self::getXYFromPoint($result);
-            error_log("result: $x, $y");
-        }
+        list($x, $y, $fmt) = self::getXYFromPoint($result);
+        Kurogo::log(LOG_DEBUG, "result: $x, $y", 'maps'):
 
         return $result;
     }
@@ -221,7 +217,7 @@ class MapProjector {
                 $projCache->write($contents, $filename);
             } else {
                 // TODO get config for logging
-                error_log("$wkid is not a known projection");
+                Kurogo::LOG(LOG_WARNING, "$wkid is not a known projection", 'maps');
             }
 
         } else {

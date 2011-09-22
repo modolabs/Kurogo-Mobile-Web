@@ -279,6 +279,7 @@ abstract class WebModule extends Module {
   //
   private function loadTemplateEngineIfNeeded() {
     if (!isset($this->templateEngine)) {
+      Kurogo::log(LOG_DEBUG, "Initializing template engine", 'module');
       $this->templateEngine = new TemplateEngine($this->id);
       $this->templateEngine->registerPlugin('function', 'drawChart', array($this, 'drawChart'));
       $this->templateEngine->registerPlugin('modifier','getLocalizedString', array($this,'getLocalizedString'));
@@ -331,7 +332,7 @@ abstract class WebModule extends Module {
   public function redirectToModule($id, $page, $args=array()) {
     $url = self::buildURLForModule($id, $page, $args);
     //error_log('Redirecting to: '.$url);
-    
+    Kurogo::log(LOG_DEBUG, "Redirecting to module $id at $url",'module');
     header("Location: ". URL_PREFIX . ltrim($url, '/'));
     exit;
   }
@@ -347,6 +348,7 @@ abstract class WebModule extends Module {
     }
     
     //error_log('Redirecting to: '.$url);
+    Kurogo::log(LOG_DEBUG, "Redirecting to page $page at $url",'module');
     header("Location: ". URL_PREFIX . ltrim($url, '/'));
     exit;
   }
@@ -491,6 +493,7 @@ abstract class WebModule extends Module {
         }
 
         $redirect= sprintf("https://%s%s%s", $secure_host, $secure_port == 443 ? '': ":$secure_port", $_SERVER['REQUEST_URI']);
+        Kurogo::log(LOG_DEBUG, "Redirecting to secure url $redirect",'module');
         header("Location: $redirect");          
         exit();
     }
@@ -727,9 +730,11 @@ abstract class WebModule extends Module {
     return $path;
   }
   protected function addInternalCSS($path) {
+    Kurogo::log(LOG_DEBUG, "Adding internal css $path", 'module');
     $this->cssURLs[] = $this->getInternalCSSURL($path);
   }
   protected function addExternalCSS($url) {
+    Kurogo::log(LOG_DEBUG, "Adding external css $url", 'module');
     $this->cssURLs[] = $url;
   }
   protected function addInlineJavascript($inlineJavascript) {
@@ -749,12 +754,14 @@ abstract class WebModule extends Module {
     return $path;
   }
   protected function addInternalJavascript($path) {
+    Kurogo::log(LOG_DEBUG, "Adding internal javascript $path", 'module');
     $path = $this->getInternalJavascriptURL($path);
     if (!in_array($path, $this->javascriptURLs)) {
         $this->javascriptURLs[] = $path;
     }
   }
   protected function addExternalJavascript($url) {
+    Kurogo::log(LOG_DEBUG, "Adding external javascript $url", 'module');
     if (!in_array($url, $this->javascriptURLs)) {
         $this->javascriptURLs[] = $url;
     }
@@ -1037,6 +1044,7 @@ abstract class WebModule extends Module {
   //
   private function loadPageConfig() {
     if (!isset($this->pageConfig)) {
+        Kurogo::log(LOG_DEBUG, "Loading page configuration for $this->configModule - $this->page", 'module');
       $this->setPageTitle($this->moduleName);
 
       // Load site configuration and help text
@@ -1079,6 +1087,7 @@ abstract class WebModule extends Module {
   
   // Programmatic overrides for titles generated from backend data
   protected function setPage($page) {
+    Kurogo::log(LOG_INFO, "Setting page to $page", 'module');
     $this->page = $page;
   }
   protected function getPageTitle() {
@@ -1267,9 +1276,11 @@ abstract class WebModule extends Module {
       $this->assign('moduleNavList', $this->getModuleNavlist());
     }
             
-    // Set variables for each page
-    $this->initializeForPage();
+    Kurogo::log(LOG_DEBUG,"Calling initializeForPage for $this->configModule - $this->page", 'module');
+    $this->initializeForPage(); //subclass behavior
+    Kurogo::log(LOG_DEBUG,"Returned from initializeForPage for $this->configModule - $this->page", 'module');
 
+    // Set variables for each page
     $this->assign('pageTitle', $this->pageTitle);
 
     // Variables which may have been modified by the module subclass
@@ -1303,6 +1314,7 @@ abstract class WebModule extends Module {
       $this->assign('helpLinkText', $this->getLocalizedString('HELP_TEXT', $this->getModuleName()));
       $template = 'modules/'.$this->templateModule.'/templates/'.$this->templatePage;
     }
+    Kurogo::log(LOG_DEBUG,"Template file is $template", 'module');
     
     // Pager support
     if (isset($this->htmlPager)) {

@@ -219,7 +219,7 @@ class MapWebModule extends WebModule {
         return $this->buildBreadcrumbURL('detail', $args, false);
     }
 
-    public function searchItems($searchTerms, $limit=null, $options)
+    public function searchItems($searchTerms, $limit=null, $options=null)
     {
         $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
         $mapSearch = $this->getSearchClass($options);
@@ -251,7 +251,7 @@ class MapWebModule extends WebModule {
             if (isset($this->feeds[$category])) {
                 return $this->feeds[$category];
             } else {
-                error_log("Warning: unable to find feed data for category $category");
+                Kurogo::log(LOG_WARNING,"Warning: unable to find feed data for category $category",'maps');
             }
         }
         return null;
@@ -265,7 +265,7 @@ class MapWebModule extends WebModule {
         $configData = $this->getCurrentFeed();
         if (!isset($configData['STATIC_MAP_CLASS']) && !isset($configData['JS_MAP_CLASS'])) {
             if ($this->feedGroup === null) {
-                error_log("Warning: feed group not set when initializing image controller, using first group");
+                Kurogo::log(LOG_WARNING,"Warning: feed group not set when initializing image controller, using first group",'maps');
                 $this->feedGroup = key($this->feedGroups);
             }
             $configData = $this->getDataForGroup($this->feedGroup);

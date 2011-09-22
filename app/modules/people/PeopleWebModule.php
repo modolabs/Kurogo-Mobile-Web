@@ -368,7 +368,7 @@ class PeopleWebModule extends WebModule {
                     $this->generateBookmarkLink();
                 }
                 $this->assign('placeholder', $this->getLocalizedString("SEARCH"));
-                $this->assign('searchTip', $this->getModuleVar('SEARCH_TIP'));
+                $this->assign('searchTip', $this->getOptionalModuleVar('SEARCH_TIP'));
                 break;
         }  
     }

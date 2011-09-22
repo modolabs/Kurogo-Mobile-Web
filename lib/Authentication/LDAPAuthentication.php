@@ -45,7 +45,7 @@ class LDAPAuthentication extends AuthenticationAuthority
                 ldap_set_option($this->ldapResource, LDAP_OPT_PROTOCOL_VERSION, 3);
                 ldap_set_option($this->ldapResource, LDAP_OPT_REFERRALS, 0);
             } else {
-                error_log("Error connecting to LDAP Server $this->ldadServer using port $this->ldapPort");
+                Kurogo::log(LOG_WARNING, "Error connecting to LDAP Server $this->ldadServer using port $this->ldapPort", 'auth');
                 return false;
             }
         }
@@ -117,12 +117,12 @@ class LDAPAuthentication extends AuthenticationAuthority
                 $this->ldapSearchBase = $result[0]['namingcontexts'][0];
                 return $this->ldapSearchBase;
             } else {
-                error_log("Unable to determine search base for LDAP Server $this->ldapServer: " . ldap_error($ldap));
+                Kurogo::log(LOG_WARNING, "Unable to determine search base for LDAP Server $this->ldapServer: " . ldap_error($ldap), 'auth');
                 return false;
             }
             
         } else {
-            error_log("Error discovering search base for LDAP Server $this->ldapServer: " . ldap_error($ldap));
+            Kurogo::log(LOG_WARNING, "Error discovering search base for LDAP Server $this->ldapServer: " . ldap_error($ldap), 'auth');
             return false;
         }
     }
@@ -141,7 +141,7 @@ class LDAPAuthentication extends AuthenticationAuthority
         */
         if ($this->ldapAdminDN) {
             if (!ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
-                error_log("Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap));
+                Kurogo::log(LOG_WARNING, "Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap), 'auth');
                 return array();
             }
         }
@@ -175,7 +175,7 @@ class LDAPAuthentication extends AuthenticationAuthority
             }
 
         } else {
-            error_log("Error searching LDAP Server $this->ldapServer for $filter");
+            Kurogo::log(LOG_WARNING, "Error searching LDAP Server $this->ldapServer for $filter", 'auth');
         }
         
         return $users;
@@ -205,7 +205,7 @@ class LDAPAuthentication extends AuthenticationAuthority
         */
         if ($this->ldapAdminDN) {
             if (!ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
-                error_log("Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap));
+                Kurogo::log(LOG_WARNING, "Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap), 'auth');
                 return false;
             }
         }
@@ -264,7 +264,7 @@ class LDAPAuthentication extends AuthenticationAuthority
                 return AUTH_USER_NOT_FOUND; // not sure which one is correct yet
             }
         } else {
-            error_log("Error searching LDAP Server $this->ldapServer for uid=$login: " . ldap_error($ldap));
+            Kurogo::log(LOG_WARNING, "Error searching LDAP Server $this->ldapServer for uid=$login: " . ldap_error($ldap), 'auth');
             return false;
         }
     }
@@ -288,7 +288,7 @@ class LDAPAuthentication extends AuthenticationAuthority
         */
         if ($this->ldapAdminDN) {
             if (!ldap_bind($ldap, $this->ldapAdminDN, $this->ldapAdminPassword)) {
-                error_log("Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap));
+                Kurogo::log(LOG_WARNING, "Error binding to LDAP Server $this->ldapServer for $this->ldapAdminDN: " . ldap_error($ldap), 'auth');
                 return false;
             }
         }
@@ -335,7 +335,7 @@ class LDAPAuthentication extends AuthenticationAuthority
                 return false;
             }
         } else {
-            error_log("Error searching LDAP Server $this->ldapServer for group=$group: " . ldap_error($ldap));
+            Kurogo::log(LOG_WARNING,"Error searching LDAP Server $this->ldapServer for group=$group: " . ldap_error($ldap),'auth');
             return false;
         }
     }

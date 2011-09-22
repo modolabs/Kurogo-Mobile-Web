@@ -20,6 +20,7 @@ $path = isset($_GET['_path']) ? $_GET['_path'] : '';
 $Kurogo->initialize($path); 
 
 function _phpFile($_file) {
+    Kurogo::log(LOG_DEBUG, "Output php file $_file", "init");
     if ($file = realpath_exists($_file)) {
         require_once $file;
         exit;
@@ -29,6 +30,7 @@ function _phpFile($_file) {
 }
 
 function _outputFile($_file) {
+    Kurogo::log(LOG_DEBUG, "Output file $_file", "init");
     if ($file = realpath_exists($_file)) {
         CacheHeaders($file);
         header('Content-type: '.mime_type($file));
@@ -91,6 +93,7 @@ function _outputFileLoaderFile($matches) {
 function _404() {
     header("HTTP/1.1 404 Not Found");
     $url = $_SERVER['REQUEST_URI'];
+    Kurogo::log(LOG_WARNING, "URL $url not found", "404");
     echo <<<html
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>
@@ -255,6 +258,7 @@ if ($parts[0]==API_URL_PREFIX) {
           	$url .= "?" . http_build_query($args);
           }
         }
+        Kurogo::log(LOG_NOTICE, "Redirecting to $url", "init");
         header("Location: " . $url);
         exit;
       }
