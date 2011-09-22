@@ -30,6 +30,7 @@ System Requirements
   * json
   * PDO (Used for :doc:`database`)
   * mbstring
+  * Zip (needed if parsing KMZ files)
   
 * Some PHP modules are optional depending on whether you need their backend functionality
 
