@@ -32,7 +32,7 @@
         "config":"feeds",
         "sectiontype":"section",
         "fieldgroups":{
-            "advanced":{"label":"Advanced Options", "collapsed": true, "description":"The following fields can be used to customize the calendar parsing"}
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"CALENDAR_ADMIN_FEEDS_ADVANCED_DESCRIPTION"}
         },
         "fields":{
             "section":{"labelKey":"CALENDAR_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"CALENDAR_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},

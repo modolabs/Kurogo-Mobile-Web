@@ -14,7 +14,7 @@
         "config":"feeds",
         "sectiontype":"section",
         "fieldgroups":{
-            "advanced":{"label":"Advanced Options", "collapsed": true, "description":"The following fields can be used to customize your news feed"}
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"NEWS_ADMIN_FEEDS_ADVANCED_DESCRIPTION"}
         },
         "fields":{
             "TITLE":{"labelKey":"NEWS_ADMIN_FEEDS_TITLE_TITLE", "descriptionKey":"NEWS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
