@@ -760,7 +760,6 @@ class CalendarWebModule extends WebModule {
 
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
-            Debug::die_here(iCalEvent);
           $events[] = array(
             'title'    => $iCalEvent->get_summary(),
             'subtitle' => date('l F j', $iCalEvent->get_start()), 
