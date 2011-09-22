@@ -58,48 +58,23 @@ class ContentAPIModule extends APIModule {
         }
 
         switch ($this->command) {
-            case 'feeds':
+            case 'feeds': // pre 1.0
+            case 'pages': // 1.0
                 $pages = array();
 
-                $feedCounter = 0;
                 foreach ($feeds as $page => $feedData) {
-                    reset($feeds);
-                    $count = 0;
-
-                    while ($count < $feedCounter) {
-                        next($feeds);
-                        $count++;
-                    }
-                    
                     $pages[] = array(
-                        'key' => key($feeds),
+                        'key' => $page,
                         'title' => $feedData['TITLE'],
                         'subtitle' => isset($feedData['SUBTITLE']) ? $feedData['SUBTITLE'] : '',
-                        'url' => isset($feedData['BASE_URL']) ? $feedData['BASE_URL'] : ''//$this->buildBreadCrumbURL($page, array())
+                        'showTitle' => isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : false,
+                        //'url' => isset($feedData['BASE_URL']) ? $feedData['BASE_URL'] : ''//$this->buildBreadCrumbURL($page, array())
                     );
-
-                    $feedCounter++;
-                }
-
-                $feedCount = count($feeds);
-
-                $feedToReturn = array();
-                if ($feedCount != 1) {
-                    // do nothing
-                } else {
-
-                    $feedToReturn['title'] = $feedData['TITLE'];
-                    $showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
-
-                    $feedToReturn['showTitle'] = $showTitle;
-                    $feedToReturn['contentBody'] = $this->getContent($feedData);
-
                 }
 
                 $response = array(
-                    'totalFeeds' => $feedCount,
+                    'totalFeeds' => count($feeds),
                     'pages' => $pages,
-                    'feedData' => $feedToReturn
                 );
 
                 $this->setResponse($response);
@@ -107,21 +82,15 @@ class ContentAPIModule extends APIModule {
 
                 break;
 
-            case 'getFeed':
+            case 'page': // 1.0
+            case 'getFeed': // pre 1.0
 
-                if ($filter = $this->getArg('key')) {
-
+                $filter = $this->getArg('key');
+                if ($filter) {
                     $feedData = $feeds[$filter];
+                    $feedBody = $this->getContent($feedData);
 
-                    $feedToReturn['title'] = $feedData['TITLE'];
-                    $showTitle = isset($feedData['SHOW_TITLE']) ? $feedData['SHOW_TITLE'] : true;
-
-                    $feedToReturn['showTitle'] = $showTitle;
-                    $feedToReturn['contentBody'] = $this->getContent($feedData);
-
-                    $response = array ('feedData' => $feedToReturn);
-
-                    $this->setResponse($response);
+                    $this->setResponse($feedBody);
                     $this->setResponseVersion(1);
                 }
                 else {

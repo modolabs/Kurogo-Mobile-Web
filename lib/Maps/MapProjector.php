@@ -151,7 +151,7 @@ class MapProjector {
         }
 
         list($x, $y, $fmt) = self::getXYFromPoint($result);
-        Kurogo::log(LOG_DEBUG, "result: $x, $y", 'maps'):
+        Kurogo::log(LOG_DEBUG, "result: $x, $y", 'maps');
 
         return $result;
     }
