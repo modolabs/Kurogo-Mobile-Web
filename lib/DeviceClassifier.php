@@ -110,9 +110,17 @@ class DeviceClassifier {
             error_log('Device Detection Master File not specified.');
             die('Device Detection Master File not specified.');
         }
+        $site_file = "";
+        $site_file_format = "";
+        try {
 
-        $site_file = Kurogo::getSiteVar('MOBI_SERVICE_SITE_FILE');
-        $site_file_format = Kurogo::getSiteVar('MOBI_SERVICE_SITE_FORMAT');
+            $site_file = Kurogo::getSiteVar('MOBI_SERVICE_SITE_FILE');
+            $site_file_format = Kurogo::getSiteVar('MOBI_SERVICE_SITE_FORMAT');
+        }
+        catch(KurogoConfigurationException $e)
+        {
+            // Do nothing
+        }
         $site_file_format = ($site_file_format ? $site_file_format : 'json');
         if (!( $site_file && $site_file_format)) {
             // We don't have a site-specific file.  This means we can only
@@ -126,7 +134,7 @@ class DeviceClassifier {
         try {
 
 
-            if ($site_file = realpath_exists($site_file))
+            if (!empty($site_file) && $site_file = realpath_exists($site_file))
             {
                 if($site_file_format == 'json')
                 {
@@ -168,7 +176,7 @@ class DeviceClassifier {
                 }
 
             }
-            if($master_file = realpath_exists($master_file))
+            if(!empty($master_file) && $master_file = realpath_exists($master_file))
             {
                 $master_devices = json_decode(file_get_contents($master_file), true);
                 $master_devices = $master_devices['devices'];
