@@ -33,9 +33,9 @@ are several properties to configure:
     item in the feed. Good for CMS's that expose their content via RSS. Ensure that this feed contains
     the full content and not just a link
 
-=========================
+==========================
 Creating Groups of Content
-=========================
+==========================
 
 * NOTE - Creation of content groups is not supported in the admin console at this time.
 
