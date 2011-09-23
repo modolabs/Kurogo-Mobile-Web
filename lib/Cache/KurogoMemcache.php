@@ -81,7 +81,7 @@ class KurogoMemcache extends KurogoCache {
 	}
 
 	public function delete($key) {
-		return $this->men->delete($key);
+		return $this->mem->delete($key);
 	}
 
 	public function add($key, $value, $ttl = false) {

@@ -89,6 +89,10 @@ class DeviceClassifier {
       time() + Kurogo::getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
   }
   
+  /**
+   * TODO: cache the device database. Perhaps need a perfect logic to check the cache expire
+   * when the database is updated.
+  */
   private function detectDeviceInternal($user_agent) {
     Kurogo::includePackage('db');
     if (!$user_agent) {

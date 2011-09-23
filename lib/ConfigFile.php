@@ -207,6 +207,10 @@ class ConfigFile extends Config {
     return $matches[0];
   }
 
+  /**
+   * TODO add the cache function to save the config data to file path as the key
+   * But if the file modified, need to update the cache
+  */
   protected function loadFile($_file) {
   
      if (!$file = realpath_exists($_file)) {

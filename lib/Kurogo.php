@@ -20,6 +20,7 @@ class Kurogo
     protected $session;
     protected $locale;    
     protected $languages=array();
+    protected $cacher = array();
 
     public static function getSession() {    
         $Kurogo = self::sharedInstance();
@@ -130,6 +131,11 @@ class Kurogo
      * 3. The LIB_DIR 
      * 
      */
+    
+    /**
+     * TODO cache the file path to classname as key. When autoload the class everytime, then can go straight to get
+     * the include path. But need to check the file exists.
+    */
     public function siteLibAutoloader($className) {
         //error_log("Attempting to autoload $className");
         $paths = $this->libDirs;
@@ -245,6 +251,48 @@ class Kurogo
         }
         $this->locale = $return;
         return $this->locale;
+    }
+    
+    private function cacher() {
+        if (!$this->cacher && $this->config) {
+            $cacheConfig = self::getOptionalSiteSection('cache');
+            if ($cacheConfig) {
+                $this->cacher = KurogoCache::factory($cacheConfig['CACHE_CLASS'], $cacheConfig);
+            }
+        }
+        return $this->cacher;
+    }
+    
+    public static function cacheGet($key) {
+        $cacher = Kurogo::sharedInstance()->cacher();
+        if ($cacher && $cacher instanceOf KurogoCache) {
+            return $cacher->get($key);
+        }
+        return false;
+    }
+    
+    public static function cacheSet($key, $value, $ttl = 0) {
+        $cacher = Kurogo::sharedInstance()->cacher();
+        if ($cacher && $cacher instanceOf KurogoCache) {
+            return $cacher->set($key, $value, $ttl);
+        }
+        return false;
+    }
+    
+    public static function cacheDelete($key) {
+        $cacher = Kurogo::sharedInstance()->cacher();
+        if ($cacher && $cacher instanceOf KurogoCache) {
+            return $cacher->delete($key);
+        }
+        return false;
+    }
+    
+    public static function cacheClear() {
+        $cacher = Kurogo::sharedInstance()->cacher();
+        if ($cacher && $cacher instanceOf KurogoCache) {
+            return $cacher->clear();
+        }
+        return false;
     }
     
     public function initialize(&$path=null) {
