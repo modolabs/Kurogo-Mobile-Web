@@ -1,8 +1,8 @@
 Kurogo Developer's Guide
 ************************
 
-The Kurogo Framework is a PHP based web application that can help institutions efficiently deliver
-campus services and information to a wide array of mobile devices. Based on the MIT Framework, this
+The Kurogo Framework is a PHP based web application that can help organizations efficiently deliver
+services and information to a wide array of mobile devices. Based on the MIT Framework, this
 open source project provides a modular way to present mobile versions of various data sources in an
 extendable, customizable fashion.
 
@@ -23,6 +23,7 @@ This guide serves as a tour of the project source code and its features.
    support
    github
    setup
+   multisite
    helloworld
    tour
    devicedetection
