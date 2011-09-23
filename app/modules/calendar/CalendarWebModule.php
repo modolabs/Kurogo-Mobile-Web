@@ -588,6 +588,8 @@ class CalendarWebModule extends WebModule {
             );
         }
 
+        $dayRange = new DayRange(time());
+
         $this->assign('feedTitle', $this->getFeedTitle($calendar, $type));
         $this->assign('type',    $type);
         $this->assign('calendar',$calendar);
