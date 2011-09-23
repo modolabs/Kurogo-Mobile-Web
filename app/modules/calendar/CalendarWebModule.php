@@ -598,6 +598,7 @@ class CalendarWebModule extends WebModule {
         $this->assign('prevURL', $this->dayURL($prev, $type, $calendar, false));
         $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
         $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
+        $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
         $this->assign('events',  $events);        
         break;
         
