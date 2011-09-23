@@ -496,6 +496,8 @@ class CalendarWebModule extends WebModule {
         $this->assign('prev',    $prev);
         $this->assign('nextURL', $this->categoryDayURL($next, $catid, $name, false));
         $this->assign('prevURL', $this->categoryDayURL($prev, $catid, $name, false));
+        $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
+        $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
         $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
 
         $events = array();
@@ -555,6 +557,8 @@ class CalendarWebModule extends WebModule {
         $this->assign('calendar', $calendar);
         $this->assign('current', $current);
         $this->assign('events',  $events);        
+        $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
+        $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
         break;
         
       case 'day':  
