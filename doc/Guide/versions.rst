@@ -19,21 +19,20 @@ Version 1.3
 
 Version 1.2 (July 19, 2011)
 ===========================
-* Added support for grouping contacts and links
-* Added support for IIS
-* Streamlined theme development
-* Created protocol for data sharing between modules
-* Support for alternate methods and custom request headers in DataController
-* Admin interface can be used on tablets
-
+* Added support for grouping :doc:`contacts <modulepeople>` and :doc:`links <modulelinks>`
+* Added :doc:`support for IIS <setup>`
+* Streamlined :doc:`theme <themes>` development
+* Created protocol for :doc:`data sharing between modules <moduleinteraction>`
+* Support for alternate methods and custom request headers in :doc:`DataController <datacontroller>`
+* :ref:`Admin console <admin-module>` can be used on tablets
 
 Version 1.1 (June 1, 2011)
 ==========================
 
-* Added reordering of feeds in the admin console
-* Added support for Vimeo
-* Added bookmarks to the people module
-* Added HTTP proxy support
+* Added reordering of feeds in the :ref:`admin console <admin-module>`
+* Added support for Vimeo in the :doc:`Video Module <modulevideo>`
+* Added bookmarks to the :doc:`people module <modulepeople>`
+* Added HTTP proxy support to :doc:`DataController <datacontroller>`
 
 Version 1.0 (April 8, 2011)
 ===========================
