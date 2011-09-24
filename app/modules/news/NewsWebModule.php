@@ -9,9 +9,9 @@
   * @subpackage News
   */
 class NewsWebModule extends WebModule {
+  const defaultController = 'RSSDataController';
   protected $id = 'news';
   protected $feeds = array();
-  protected $defaultController = 'RSSDataController';
   protected $feedIndex = 0;
   protected $feed;
   protected $maxPerPage = 10;
@@ -27,7 +27,7 @@ class NewsWebModule extends WebModule {
         }
 
         if (!isset($feedData['CONTROLLER_CLASS'])) {
-            $feedData['CONTROLLER_CLASS'] = $this->defaultController;
+            $feedData['CONTROLLER_CLASS'] = self::defaultController;
         }
         
         try {
@@ -96,7 +96,7 @@ class NewsWebModule extends WebModule {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
         if (!isset($feedData['CONTROLLER_CLASS'])) {
-            $feedData['CONTROLLER_CLASS'] = $this->defaultController;
+            $feedData['CONTROLLER_CLASS'] = self::defaultController;
         }
         $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         return $controller;

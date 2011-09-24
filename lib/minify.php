@@ -139,6 +139,9 @@ function getMinifyGroupsConfig() {
   if ($configModule) {
     $cacheName .= "-$configModule";
   }
+  if ($pageOnly) {
+    $cacheName .= "-pageOnly";
+  }
   
   if ($cache->isFresh($cacheName)) {
     $minifyConfig = $cache->read($cacheName);

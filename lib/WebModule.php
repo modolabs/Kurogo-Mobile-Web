@@ -768,37 +768,48 @@ abstract class WebModule extends Module {
   }
   
   public function exportCSSAndJavascript() {
-    $memberArrays = array(
-      'inlineCSSBlocks',
-      'cssURLs',
-      'inlineJavascriptBlocks',
-      'inlineJavascriptFooterBlocks',
-      'onOrientationChangeBlocks',
-      'onLoadBlocks',
-      'javascriptURLs',
-    );
-    $data = array();
-    foreach ($memberArrays as $memberName) {
-      $data[$memberName] = $this->$memberName;
-    }
-
-    // Add page Javascript and CSS if any
     $minifyURLs = $this->getMinifyUrls(true);
-    
-    $context = stream_context_create(array(
-      'http' => array(
-        'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-      ),
-    ));
-    
-    $javascript = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['js'], '/'), false, $context);
-    if ($javascript) {
-      array_unshift($data['inlineJavascriptBlocks'], $javascript);
-    }
 
-    $css = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['css'], '/'), false, $context);
-    if ($css) {
-      array_unshift($data['inlineCSSBlocks'], $css);
+    $cache = new DiskCache(CACHE_DIR.'/minify', Kurogo::getOptionalSiteVar('MINIFY_CACHE_TIMEOUT', 30), true);
+    $cacheName = "export_{$this->configModule}-{$this->page}-{$this->pagetype}-{$this->platform}-".
+        md5($minifyURLs['js'].$minifyURLs['css']);
+
+    if ($cache->isFresh($cacheName)) {
+      $data = $cache->read($cacheName);
+      
+    } else {
+      $memberArrays = array(
+        'inlineCSSBlocks',
+        'cssURLs',
+        'inlineJavascriptBlocks',
+        'inlineJavascriptFooterBlocks',
+        'onOrientationChangeBlocks',
+        'onLoadBlocks',
+        'javascriptURLs',
+      );
+      $data = array();
+      foreach ($memberArrays as $memberName) {
+        $data[$memberName] = $this->$memberName;
+      }
+  
+      // Add page Javascript and CSS if any
+      $context = stream_context_create(array(
+        'http' => array(
+          'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+        ),
+      ));
+      
+      $javascript = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['js'], '/'), false, $context);
+      if ($javascript) {
+        array_unshift($data['inlineJavascriptBlocks'], $javascript);
+      }
+  
+      $css = @file_get_contents(FULL_URL_PREFIX.ltrim($minifyURLs['css'], '/'), false, $context);
+      if ($css) {
+        array_unshift($data['inlineCSSBlocks'], $css);
+      }
+      
+      $cache->write($data, $cacheName);
     }
     
     return $data;

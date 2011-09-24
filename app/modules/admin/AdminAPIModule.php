@@ -93,7 +93,21 @@ class AdminAPIModule extends APIModule
             $sectionData['description'] = $module->getLocalizedString($sectionData['descriptionKey']);
             unset($sectionData['descriptionKey']);
         }
+        
+        if (isset($sectionData['fieldgroups'])) {
+            foreach ($sectionData['fieldgroups'] as $fieldgroup=>&$fieldgroupData) {
+                if (isset($fieldgroupData['labelKey'])) {
+                    $fieldgroupData['label'] = $module->getLocalizedString($fieldgroupData['labelKey']);
+                    unset($fieldgroupData['labelKey']);
+                }
 
+                if (isset($fieldgroupData['descriptionKey'])) {
+                    $fieldgroupData['description'] = $module->getLocalizedString($fieldgroupData['descriptionKey']);
+                    unset($fieldgroupData['descriptionKey']);
+                }
+            }
+        }
+        
         switch ($sectionData['sectiontype'])
         {
             case 'fields':

@@ -498,6 +498,8 @@ class CalendarWebModule extends WebModule {
         $this->assign('prev',    $prev);
         $this->assign('nextURL', $this->categoryDayURL($next, $catid, $name, false));
         $this->assign('prevURL', $this->categoryDayURL($prev, $catid, $name, false));
+        $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
+        $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
         $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
 
         $events = array();
@@ -558,6 +560,8 @@ class CalendarWebModule extends WebModule {
         $this->assign('calendar', $calendar);
         $this->assign('current', $current);
         $this->assign('events',  $events);        
+        $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
+        $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
         break;
         
       case 'day':  
@@ -589,6 +593,8 @@ class CalendarWebModule extends WebModule {
             );
         }
 
+        $dayRange = new DayRange(time());
+
         $this->assign('feedTitle', $title);
         $this->assign('type',    $type);
         $this->assign('calendar',$calendar);
@@ -599,6 +605,7 @@ class CalendarWebModule extends WebModule {
         $this->assign('prevURL', $this->dayURL($prev, $type, $calendar, false));
         $this->assign('titleDateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
         $this->assign('linkDateFormat', $this->getLocalizedString('SHORT_DATE_FORMAT'));
+        $this->assign('isToday', $dayRange->contains(new TimeRange($current)));
         $this->assign('events',  $events);        
         break;
         
@@ -770,7 +777,6 @@ class CalendarWebModule extends WebModule {
 
         $events = array();
         foreach($iCalEvents as $iCalEvent) {
-            Debug::die_here(iCalEvent);
           $events[] = array(
             'title'    => $iCalEvent->get_summary(),
             'subtitle' => date('l F j', $iCalEvent->get_start()), 

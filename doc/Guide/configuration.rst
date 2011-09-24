@@ -188,7 +188,9 @@ Modules
   a config folder with the default values, but should be turned off for production to ensure
   modules that you don't use don't create configuration folders.
   
-  
+
+.. _analytics:
+
 ---------
 Analytics
 ---------
