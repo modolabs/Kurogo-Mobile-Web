@@ -132,6 +132,8 @@ Conditionally displays content::
 Smarty uses the same conventions as PHP to determine the truth value of an expression. 
 See more in the `Smarty Documentation <http://www.smarty.net/docs/en/language.function.foreach.tpl>`_
 
+.. _templates:
+
 ===========================
 Standard Template Fragments
 ===========================

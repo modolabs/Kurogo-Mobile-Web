@@ -35,9 +35,4 @@ To setup Multisite, you must first enable it in the config/kurogo.ini file.
     ACTIVE_SITES[] = "en"
     ACTIVE_SITES[] = "es"
 
-This would enable only the *en* and *es* sites on this server.    
-  
-  
-  
-
-
+This would enable only the *en* and *es* sites on this server.

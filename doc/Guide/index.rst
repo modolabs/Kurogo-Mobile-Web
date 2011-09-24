@@ -20,6 +20,7 @@ This guide serves as a tour of the project source code and its features.
    :maxdepth: 1
 
    overview
+   versions
    support
    github
    setup
@@ -28,6 +29,7 @@ This guide serves as a tour of the project source code and its features.
    tour
    devicedetection
    configuration
+   localization
    requests
    modules
    moduleslist
@@ -43,3 +45,4 @@ This guide serves as a tour of the project source code and its features.
    authentication
    authorization
    credits
+   languages
