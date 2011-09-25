@@ -9,6 +9,8 @@ Version 1.3
 ===========================
 * Support for :doc:`localization <localization>`
 * :doc:`MultiSite <multisite>`
+* New :doc:`logging <logging>` facility
+* Updated :doc:`Statistics module <modulestats>`
 * Updated :doc:`Map module <modulemap>`
 * Improved support for recurring events in the :doc:`calendar module <modulecalendar>`
 * Added support for grouping :doc:`content <modulecontent>` pages
