@@ -11,16 +11,19 @@ class StatsAPIModule extends APIModule {
     protected $vmax = 1;
 
     protected function getServiceTypes() {
-        return array('web' => 'Website', 'api' => 'REST API');
+        return array(
+            'web' => $this->getLocalizedString('SERVICE_WEB'), 
+            'api' => $this->getLocalizedString('SERVICE_API')
+        );
     }
     
     /* return interval types depends on pagetype */
     protected function getIntervalTypes() {
         $interval_types = array(
-          'day' => array('duration' => 7, 'title' => 'Week', 'numdays' => 7),
-          'week' => array('duration' => 12, 'title' => '12 Weeks', 'numdays' => 84),
-          'month' => array('duration' => 12, 'title' => 'Year', 'numdays' => 365),
-          'custom' => array('title'=>'Custom')
+          'day' => array('duration' => 7, 'title' => $this->getLocalizedString('INTERVAL_DAY'), 'numdays' => 7),
+          'week' => array('duration' => 12, 'title' => $this->getLocalizedString('INTERVAL_WEEK'), 'numdays' => 84),
+          'month' => array('duration' => 12, 'title' => $this->getLocalizedString('INTERVAL_MONTH'), 'numdays' => 365),
+          'custom' => array('title'=> $this->getLocalizedString('INTERVAL_CUSTOM'))
         );
         
         return $interval_types;

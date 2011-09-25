@@ -11,9 +11,9 @@
 <form action="">
 <input type="hidden" name="service" value="{$statsService}" />
 <input type="hidden" name="interval" value="custom" />
-<div><label>From:</label>
+<div><label>{"CUSTOM_FROM"|getLocalizedString}</label>
 {html_select_date start_year="- 2" field_array="start" prefix="" time=$starttime}</div>
-<div><label>To:</label>
+<div><label>{"CUSTOM_TO"|getLocalizedString}</label>
 {html_select_date start_year="- 2" field_array="end" prefix="" time=$endtime}</div>
 <input src="/common/images/search_button.png" type="image" />
 </div>
