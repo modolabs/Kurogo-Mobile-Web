@@ -64,7 +64,7 @@ abstract class MapImageController
 
     public function init()
     {
-        $this->bufferBox = array('xmin' => 90, 'ymin' => 180, 'xmax' => -90, 'ymax' => -180);
+        $this->bufferBox = array('xmin' => 180, 'ymin' => 90, 'xmax' => -180, 'ymax' => -90);
     }
 
     // query functions
