@@ -131,7 +131,7 @@ class db {
             return $errorInfo;
         }
     
-        Kurogo::log(LOG_WARNING, sprintf("%s error with %s: %s", $this->dbType, $sql, $errorInfo[2]), get_class());
+        Kurogo::log(LOG_WARNING, sprintf("%s error with %s: %s", $this->dbType, $sql, $errorInfo[2]), 'db');
         if (Kurogo::getSiteVar('DB_DEBUG')) {
             throw $e;
         }
