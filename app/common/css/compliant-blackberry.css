@@ -114,6 +114,7 @@
 	margin-top: 2px;
 }
 
+.tabstrip ,
 #tabstrip {
 	list-style-type: none;
 	height: 32px;
@@ -124,6 +125,7 @@
 	overflow: hidden;
 }
 
+.tabstrip li ,
 #tabstrip li {
 	float: left;
 	margin: 0;
@@ -131,6 +133,7 @@
 	height: 33px;
 }
 
+.tabstrip a ,
 #tabstrip a {
 	display: block;
 	height: 32px;
@@ -142,15 +145,18 @@
 	border-radius: 1px;
 }	
 
+.tabstrip li.active a ,
 #tabstrip li.active a {
 	background-image: url(/common/images/tabstrip-active.jpg);
 }
 
+.tabstrip li:first-child a ,
 #tabstrip li:first-child a {
 	-webkit-border-bottom-left-radius: 10px;	
 	-webkit-border-top-left-radius: 10px;	
 }
 
+.tabstrip li:last-child a ,
 #tabstrip li:last-child a {
 	-webkit-border-bottom-right-radius: 10px;	
 	-webkit-border-top-right-radius: 10px;	

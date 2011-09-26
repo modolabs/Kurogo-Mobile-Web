@@ -5,6 +5,9 @@
   */
 Kurogo::includePackage('People');
 
+if (!function_exists('mb_convert_encoding')) {
+    die('Multibyte String Functions not available (mbstring)');
+}
 
 /**
   * @package Module
@@ -259,6 +262,8 @@ class PeopleWebModule extends WebModule {
                     $person = $PeopleController->lookupUser($uid);
           
                     if ($person) {
+                    
+                        $this->setLogData($uid, $person->getName());
                         $personDetails =  $this->formatPersonDetails($person);
                         // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
@@ -286,6 +291,7 @@ class PeopleWebModule extends WebModule {
           
                     $this->assign('searchTerms', $searchTerms);
           
+                    $this->setLogData($searchTerms);
                     $people = $this->searchItems($searchTerms);
                     $this->assign('searchError', $PeopleController->getError());
 
@@ -296,6 +302,7 @@ class PeopleWebModule extends WebModule {
                         {
                             case 1:
                                 $person = $people[0];
+                                $this->logView();
                                 $this->redirectTo('detail', array(
                                     'uid'=>$person->getId()
                                     )

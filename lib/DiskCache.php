@@ -126,6 +126,7 @@ class DiskCache {
 
     $path = $this->getFullPath($filename);
     $umask = umask(0077);
+    Kurogo::log(LOG_DEBUG, "Saving cache to $path", 'cache');
     $fh = fopen($path, 'w');
     if ($fh !== FALSE) {
       if ($this->serialize) {
@@ -170,6 +171,7 @@ class DiskCache {
   public function flush($filename=NULL) {
     $path = $this->getFullPath($filename);
     if (file_exists($path)) {
+        Kurogo::log(LOG_DEBUG, "Flushing cache $path", 'cache');
         return unlink($path);
     }
     return false;
@@ -179,6 +181,7 @@ class DiskCache {
     $path = $this->getFullPath($filename);
     if (file_exists($path)) {
       if ($contents = file_get_contents($path)) {
+        Kurogo::log(LOG_DEBUG, "Reading cache $path", 'cache');
         if ($this->serialize) {
           return unserialize($contents);
         } else {

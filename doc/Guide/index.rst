@@ -24,6 +24,7 @@ This guide serves as a tour of the project source code and its features.
    support
    github
    setup
+   upgrade
    multisite
    helloworld
    tour
@@ -31,6 +32,7 @@ This guide serves as a tour of the project source code and its features.
    configuration
    localization
    requests
+   logging
    modules
    moduleslist
    kurogoobject

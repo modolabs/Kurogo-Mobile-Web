@@ -1,0 +1,36 @@
+#statsoptionscustom {
+    display: none;
+    font-size: 15px;
+}
+
+#statsoptions select {
+    width: auto;
+	font-size: 15px
+}
+
+#statsoptionscustom.custom {
+    display: block;
+}
+
+#statsoptionscustom label {
+	display: inline-block;
+	width: 3em;
+	font-size: 15px
+}
+
+#statsoptionscustom div {
+	margin: 6px 0;
+}
+
+#statsoptionscustom #submit {
+	background: #888 url("/common/images/tabstrip.jpg") repeat-x;
+	border: none;
+	height: 28px;
+	padding: 0 12px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	font: 15px/28px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: bold;
+	color: #fff
+}

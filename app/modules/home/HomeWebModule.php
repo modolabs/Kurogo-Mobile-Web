@@ -85,9 +85,10 @@ class HomeWebModule extends WebModule {
               }
             }
         }
-        //error_log(print_r($federatedResults, true));
+
         $this->assign('federatedResults', $federatedResults);
         $this->assign('searchTerms',      $searchTerms);
+        $this->setLogData($searchTerms);
         break;
     }
   }
