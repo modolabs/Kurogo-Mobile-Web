@@ -309,25 +309,21 @@ class KurogoStats {
                 $sql .= " LIMIT " . $OptionObject->getLimit();
             }
         }
-        
+
         //prime the results as necessary
         $result = self::initStatsResult($OptionObject);
 
         //query 
 		$conn = self::connection();
-        
-        if (!$data = $conn->query($sql, $params, true)) {
-            Debug::plain_text();
-            print_r($conn);
-            print_r($OptionObject);
-            echo $sql;
-            print_r($params);
-            die();
-        }
+        $data = $conn->query($sql, $params);
         
         while ($row = $data->fetch()) {
             if ($groupString && isset($row[$groupString])) {
-                $result[$row[$groupString]] = $row[$type];;
+                if ($groupString=='data') {
+                    $result[$row[$groupString]] = array('label'=>$row['dataLabel'] ? $row['dataLabel'] : $row[$groupString], $type=>$row[$type]);
+                } else {
+                    $result[$row[$groupString]] = $row[$type];
+                }
             } else {
                 return $row[$type] ? $row[$type] : 0;
             }

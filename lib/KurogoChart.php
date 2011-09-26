@@ -151,55 +151,59 @@ class KurogoChartBarHorizontal extends KurogoChart {
     
     public function render() {
         $datacount = $this->formatChartData();
-        if ($datacount <= 0) {
-            return false;
-        }
-        
-        $boundaries = $this->computeBoundaries(array_values($this->getChartOption('data')), true);
-        $yaxis = '';
-        $xaxis = '';
-        
-        for($value=$boundaries['min']; $value<=$boundaries['max'];$value+=$boundaries['step']) {
-            $class = '';
-            $percent = min(100, intval(100 * ($value - $boundaries['min']) / $boundaries['delta']));
-            if ($percent == 0) {
-                $class = ' gridmin';
-            } elseif ($percent == 100) {
-                $class = ' gridmax';
-            }
-            $style = ($percent == 100 || $value == 0) ? '' : ' style="left: '. $percent .'%"';
-            $valueText = $value;
-            if ($valueFunction = $this->getChartOption('valueFunction')) {
-                $valueText = call_user_func($valueFunction, $value);
-            }
-            $xaxis .= '<div class="gridline-x'. $class .'"'. $style .'><div class="graphlabel">'. $valueText .'</div></div>';
-        }
-        
-        $urlList = $this->getChartOption('URL');
-        foreach ($this->getChartOption('data') as $label => $data) {
-            $class = '';
-            if ($data < 0) {
-                $percent = min(100, intval(100 * (abs($data) - $boundaries['min']) / $boundaries['delta']));
-                $class = ' bar-negative';
-            } else {
-                $percent = min(100, intval(100 * ($data - $boundaries['min']) / $boundaries['delta']));
-            }
-            $label = (isset($urlList[$label]) && $urlList[$label]) ? '<a href="'. $urlList[$label] .'">' . $label . '</a>' : $label;
-            $dataText = $data;
-            if ($valueFunction = $this->getChartOption('valueFunction')) {
-                $dataText = call_user_func($valueFunction, $data);
-            }
 
-            $yaxis .= '<div class="chartbar"><div class="barval'. $class .'" style="width: '. $percent .'%"><div class="valuelabel">'. $dataText .'</div><div class="barlabel">'. $label .'</div></div></div>';
-        }
-        
         $containClass = 'graph barchart-h';
         $containClass .= $this->getContainClass();
         $html = '';
         $html .= $this->getChartOption('title') ? '<h2>' . $this->getChartOption('title') . '</h2>' : '';
         $html .= '<div class="'. $containClass .'">';
-        $html .= $xaxis;
-        $html .= $yaxis;
+
+        if ($datacount > 0) {
+            $boundaries = $this->computeBoundaries(array_values($this->getChartOption('data')), true);
+            $yaxis = '';
+            $xaxis = '';
+            
+            for($value=$boundaries['min']; $value<=$boundaries['max'];$value+=$boundaries['step']) {
+                $class = '';
+                $percent = min(100, intval(100 * ($value - $boundaries['min']) / $boundaries['delta']));
+                if ($percent == 0) {
+                    $class = ' gridmin';
+                } elseif ($percent == 100) {
+                    $class = ' gridmax';
+                }
+                $style = ($percent == 100 || $value == 0) ? '' : ' style="left: '. $percent .'%"';
+                $valueText = $value;
+                if ($valueFunction = $this->getChartOption('valueFunction')) {
+                    $valueText = call_user_func($valueFunction, $value);
+                }
+                $xaxis .= '<div class="gridline-x'. $class .'"'. $style .'><div class="graphlabel">'. $valueText .'</div></div>';
+            }
+            
+            $urlList = $this->getChartOption('URL');
+            $labels = $this->getChartOption('labels');
+            foreach ($this->getChartOption('data') as $label => $data) {
+                $class = '';
+                if ($data < 0) {
+                    $percent = min(100, intval(100 * (abs($data) - $boundaries['min']) / $boundaries['delta']));
+                    $class = ' bar-negative';
+                } else {
+                    $percent = min(100, intval(100 * ($data - $boundaries['min']) / $boundaries['delta']));
+                }
+                
+                $labelText = isset($labels[$label]) ? $labels[$label] : $label;
+                $label = (isset($urlList[$label]) && $urlList[$label]) ? '<a href="'. $urlList[$label] .'">' . $labelText . '</a>' : $labelText;
+                $dataText = $data;
+                if ($valueFunction = $this->getChartOption('valueFunction')) {
+                    $dataText = call_user_func($valueFunction, $data);
+                }
+    
+                $yaxis .= '<div class="chartbar"><div class="barval'. $class .'" style="width: '. $percent .'%"><div class="valuelabel">'. $dataText .'</div><div class="barlabel">'. $label .'</div></div></div>';
+            }
+        
+            $html .= $xaxis;
+            $html .= $yaxis;
+        }
+        
         $html .= $this->getChartOption('yaxis') ? '<div class="graphaxis ylabel">'. $this->getChartOption('yaxis') .'</div>' : '';
         $html .= $this->getChartOption('xaxis') ? '<div class="graphaxis xlabel">'. $this->getChartOption('xaxis') .'</div>' : '';
         $html .= '</div>';
@@ -215,46 +219,6 @@ class KurogoChartBarVertical extends KurogoChart {
     
     public function render() {
         $datacount = $this->formatChartData();
-        if ($datacount <= 0) {
-            return false;
-        }
-        
-        $boundaries = $this->computeBoundaries(array_values($this->getChartOption('data')), true);
-        $yaxis = '';
-        $xaxis = '';
-        for($value=$boundaries['max']; $value>=$boundaries['min'];$value-=$boundaries['step']) {
-            $class = '';
-            $percent = 100 - min(100, 100 * ($value - $boundaries['min']) / $boundaries['delta']);
-            if ($percent == 0) {
-                $class = ' gridmax';
-            } elseif ($percent == 100) {
-                $class = ' gridmin';
-            }
-            $style = ($percent == 100 || $percent == 0) ? '' : ' style="top: '. $percent .'%"';
-            $valueText = $value;
-            if ($valueFunction = $this->getChartOption('valueFunction')) {
-                $valueText = call_user_func($valueFunction, $value);
-            }
-            
-            $yaxis .= '<div class="gridline-y'. $class .'"'. $style .'><div class="graphlabel">'. $valueText .'</div></div>';
-        }
-        
-        $urlList = $this->getChartOption('URL');
-        foreach ($this->getChartOption('data') as $label => $data) {
-            $class = '';
-            if ($data < 0) {
-                $percent = min(100, intval(100 * (abs($data) - $boundaries['min']) / $boundaries['delta']));
-                $class .= ' bar-negative';
-            } else {
-                $percent = min(100, intval(100 * ($data - $boundaries['min']) / $boundaries['delta']));
-            }
-            $label = (isset($urlList[$label]) && $urlList[$label]) ? '<a href="'. $urlList[$label] .'">' . $label . '</a>' : $label;
-            $dataText = $data;
-            if ($valueFunction = $this->getChartOption('valueFunction')) {
-                $dataText = call_user_func($valueFunction, $data);
-            }
-            $xaxis .= '<div class="chartbar"><div class="barval'. $class .'" style="height: '. $percent .'%"><div class="valuelabel">'. $dataText .'</div><div class="barlabel">'. $label .'</div></div></div>';
-        }
         
         $containClass = 'graph barchart-v bars' . $datacount;
         $containClass .= $this->getContainClass();
@@ -262,8 +226,52 @@ class KurogoChartBarVertical extends KurogoChart {
         $html = '';
         $html .= $this->getChartOption('title') ? '<h2>' . $this->getChartOption('title') . '</h2>' : '';
         $html .= '<div class="'. $containClass .'">';
-        $html .= $yaxis;
-        $html .= $xaxis;
+        
+        
+        if ($datacount > 0) {
+            $boundaries = $this->computeBoundaries(array_values($this->getChartOption('data')), true);
+            $yaxis = '';
+            $xaxis = '';
+            for($value=$boundaries['max']; $value>=$boundaries['min'];$value-=$boundaries['step']) {
+                $class = '';
+                $percent = 100 - min(100, 100 * ($value - $boundaries['min']) / $boundaries['delta']);
+                if ($percent == 0) {
+                    $class = ' gridmax';
+                } elseif ($percent == 100) {
+                    $class = ' gridmin';
+                }
+                $style = ($percent == 100 || $percent == 0) ? '' : ' style="top: '. $percent .'%"';
+                $valueText = $value;
+                if ($valueFunction = $this->getChartOption('valueFunction')) {
+                    $valueText = call_user_func($valueFunction, $value);
+                }
+                
+                $yaxis .= '<div class="gridline-y'. $class .'"'. $style .'><div class="graphlabel">'. $valueText .'</div></div>';
+            }
+            
+            $urlList = $this->getChartOption('URL');
+            $labels = $this->getChartOption('labels');
+            foreach ($this->getChartOption('data') as $label => $data) {
+                $class = '';
+                if ($data < 0) {
+                    $percent = min(100, intval(100 * (abs($data) - $boundaries['min']) / $boundaries['delta']));
+                    $class .= ' bar-negative';
+                } else {
+                    $percent = min(100, intval(100 * ($data - $boundaries['min']) / $boundaries['delta']));
+                }
+                $labelText = isset($labels[$label]) ? $labels[$label] : $label;
+                $label = (isset($urlList[$label]) && $urlList[$label]) ? '<a href="'. $urlList[$label] .'">' . $labelText . '</a>' : $labelText;
+                $dataText = $data;
+                if ($valueFunction = $this->getChartOption('valueFunction')) {
+                    $dataText = call_user_func($valueFunction, $data);
+                }
+                $xaxis .= '<div class="chartbar"><div class="barval'. $class .'" style="height: '. $percent .'%"><div class="valuelabel">'. $dataText .'</div><div class="barlabel">'. $label .'</div></div></div>';
+            }
+
+            $html .= $yaxis;
+            $html .= $xaxis;
+        }
+        
         $html .= $this->getChartOption('yaxis') ? '<div class="graphaxis ylabel">'. $this->getChartOption('yaxis') .'</div>' : '';
         $html .= $this->getChartOption('xaxis') ? '<div class="graphaxis xlabel">'. $this->getChartOption('xaxis') .'</div>' : '';
         $html .= '</div>';
