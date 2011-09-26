@@ -186,6 +186,21 @@ class CASAuthentication
     {
         return array('LINK', 'NONE');
     }
+
+    /***
+     * Resets the authority and returns it to a fresh state.
+     * Called by the logout method to clean up any authority specific data (caches etc). Not all authorities will need this
+     * @param bool $hard if true a hard reset is done
+     */
+    protected function reset($hard=false)
+    {
+        // Log out from the CAS server
+        if (phpCAS::isAuthenticated()) {
+            $service = "http".(IS_SECURE ? 's' : '')."://".SERVER_HOST.$_SERVER['REQUEST_URI'];
+            phpCAS::logoutWithRedirectServiceAndUrl($service, $service);
+        }
+        return true;
+    }
 }
 
 /**
