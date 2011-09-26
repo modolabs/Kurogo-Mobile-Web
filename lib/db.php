@@ -11,6 +11,7 @@ define('DB_NOT_SUPPORTED', 1);
  * @package Database
  */
 class db {
+    protected $dbType;
     protected $connection;
     protected $lastError;
     const IGNORE_ERRORS=true;
@@ -23,6 +24,10 @@ class db {
      */
     public function getLastError() {
         return $this->lastError;
+    }
+    
+    public function getDBType() {
+        return $this->dbType;
     }
   
     /*
@@ -51,23 +56,21 @@ class db {
     
     protected function init($config=null) {
         $this->lastError = null;
-        $db_type = isset($config['DB_TYPE']) ? $config['DB_TYPE'] : null;
-        if (!file_exists(LIB_DIR . "/db/db_$db_type.php")) {
-            $e = new KurogoConfigurationException("Database type $db_type not found");
+        $this->dbType = isset($config['DB_TYPE']) ? $config['DB_TYPE'] : null;
+        Kurogo::log(LOG_DEBUG, "Initializing $this->dbType", 'db');
+        if (!file_exists(LIB_DIR . "/db/db_$this->dbType.php")) {
+            $e = new KurogoConfigurationException("Database type $this->dbType not found");
             $this->lastError = KurogoError::errorFromException($e);
             throw $e;
         }
     
-        require_once(LIB_DIR . "/db/db_$db_type.php");
+        require_once(LIB_DIR . "/db/db_$this->dbType.php");
         try {
-            $this->connection = call_user_func(array("db_$db_type", 'connection'), $config);
+            $this->connection = call_user_func(array("db_$this->dbType", 'connection'), $config);
         } catch (Exception $e) {
             $this->lastError = KurogoError::errorFromException($e);
-            if (Kurogo::getSiteVar('DB_DEBUG')) {
-                throw new KurogoDataServerException("Error connecting to database: " . $e->getMessage(), 0);
-            } else {
-                throw new KurogoDataServerException("Error connecting to database");
-            }
+            Kurogo::log(LOG_ALERT, "Error connecting to $this->dbType database: " . $e->getMessage(), 'db');
+            throw new KurogoDataServerException("Error connecting to database");
         }
     }
     
@@ -81,9 +84,7 @@ class db {
      */
     public function query($sql, $parameters=array(), $ignoreErrors=false, $catchErrorCodes=array()) {
         $this->lastError = null;
-        if (Kurogo::getSiteVar('DB_DEBUG')) {
-            error_log("Query Log: $sql");
-        }
+        Kurogo::log(LOG_INFO, $this->dbType . " query log: $sql", 'db');
     
         if (!$result = $this->connection->prepare($sql)) {
             return $this->errorHandler($sql, $this->connection->errorInfo(), $ignoreErrors, $catchErrorCodes);
@@ -130,10 +131,9 @@ class db {
             return $errorInfo;
         }
     
+        Kurogo::log(LOG_WARNING, sprintf("%s error with %s: %s", $this->dbType, $sql, $errorInfo[2]), get_class());
         if (Kurogo::getSiteVar('DB_DEBUG')) {
             throw $e;
-        } else {
-            error_log(sprintf("Error with %s: %s", $sql, $errorInfo[2]));
         }
     }
     

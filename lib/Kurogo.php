@@ -18,6 +18,7 @@ class Kurogo
     protected $config;
     protected $deviceClassifier;
     protected $session;
+    protected $logger;
     protected $locale;    
     protected $languages=array();
     protected $cacher = array();
@@ -108,6 +109,7 @@ class Kurogo
             }
     
             if (is_dir($dir)) {
+                self::log(LOG_INFO, "Adding package $packageName", "autoLoader");
                 $found = true;
                 $this->libDirs[] = $dir;
     
@@ -133,7 +135,6 @@ class Kurogo
      */
      
     public function siteLibAutoloader($className) {
-        //error_log("Attempting to autoload $className");
         $paths = $this->libDirs;
         
         // If the className has Module in it then use the modules dir
@@ -148,12 +149,14 @@ class Kurogo
         
         $paths[] = LIB_DIR;
         
+        self::log(LOG_DEBUG, "Autoloader loading $className", "autoLoader"); 
         foreach ($paths as $path) {
             $file = "$path/$className.php";
+            self::log(LOG_DEBUG, "Autoloader looking for $file for $className", "autoLoader");
             if (file_exists($file)) {
-              //error_log("Autoloader found $file for $className");
-              include($file);
-              return;
+                self::log(LOG_INFO, "Autoloader found $file for $className", "autoLoader");
+                include($file);
+                return;
             }
         }
         return;
@@ -248,6 +251,23 @@ class Kurogo
         $this->locale = $return;
         return $this->locale;
     }
+        
+    private function logger() {
+        if (!$this->logger && $this->config) {
+            require_once(LIB_DIR . '/KurogoLog.php');
+            $this->logger = new KurogoLog();
+            $logFile = $this->config->getOptionalVar('KUROGO_LOG_FILE', LOG_DIR . "/kurogo.log");
+            $this->logger->setLogFile($logFile);
+            $this->logger->setDefaultLogLevel($this->config->getOptionalVar('DEFAULT_LOGGING_LEVEL', LOG_WARNING));
+            if (($loggingLevels = $this->config->getOptionalVar('LOGGING_LEVEL')) && is_array($loggingLevels)) {
+                foreach ($loggingLevels as $area=>$level) {
+                    $this->logger->setLogLevel($area, $level);
+                }
+            }
+        }
+        
+        return $this->logger;
+    }
     
     private function cacher() {
         if (!$this->cacher && $this->config) {
@@ -312,6 +332,30 @@ class Kurogo
         );
         return Kurogo::cacheSet($key, serialize($data));
     }
+
+    public static function log($priority, $message, $area) {
+        static $deferredLogs = array();
+        $logger = Kurogo::sharedInstance()->logger();
+        
+        if (!$logger) {
+            //this is a really early log before we have setup the config environment
+            $args = func_get_args();
+            $args[] = debug_backtrace();
+            $deferredLogs[] = $args;
+            return;
+        }
+            
+        // replay the deferred logs. 
+        if ($deferredLogs) {
+            foreach ($deferredLogs as $args) {
+                $logger->log($args[0], $args[1], $args[2], $args[3]);
+            }
+            $deferredLogs = array();
+        }
+
+        return $logger->log($priority, $message, $area);
+    }
+        
     public function initialize(&$path=null) {
         //
         // Constants which cannot be set by config file
@@ -339,6 +383,7 @@ class Kurogo
         // Load configuration files
         //    
         $this->config = new SiteConfig($path);
+        
         ini_set('display_errors', $this->config->getVar('DISPLAY_ERRORS'));
         if (!ini_get('error_log')) {
             ini_set('error_log', LOG_DIR . DIRECTORY_SEPARATOR . 'php_error.log');
@@ -358,7 +403,8 @@ class Kurogo
         $timezone = $this->config->getVar('LOCAL_TIMEZONE');
         date_default_timezone_set($timezone);
         $this->timezone = new DateTimeZone($timezone);
-        
+        self::log(LOG_DEBUG, "Setting timezone to $timezone", "kurogo");
+
         if ($locale = $this->config->getOptionalVar('LOCALE')) {
             $this->setLocale($locale);
         } else {
@@ -388,6 +434,7 @@ class Kurogo
               $host .= ":{$_SERVER['SERVER_PORT']}";
         }
         define('SERVER_HOST', $host);
+        self::log(LOG_DEBUG, "Setting server host to $host", "kurogo");
     
         define('IS_SECURE', isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
         define('FULL_URL_BASE', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_BASE);
@@ -396,6 +443,7 @@ class Kurogo
         // make sure host is all lower case
         if ($host != strtolower($host)) {
             $url = 'http'.(IS_SECURE ? 's' : '').'://' . strtolower($host) . $path;
+            self::log(LOG_INFO, "Redirecting to lowercase url $url", 'kurogo');
             header("Location: $url");
             exit();
           }
@@ -424,6 +472,7 @@ class Kurogo
       
         define('URL_DEVICE_DEBUG_PREFIX', $urlDeviceDebugPrefix);
         define('URL_PREFIX', $urlPrefix);
+        self::log(LOG_DEBUG, "Setting URL_PREFIX to " . URL_PREFIX, "kurogo");
         define('FULL_URL_PREFIX', 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].URL_PREFIX);
         define('KUROGO_IS_API', preg_match("#^" .API_URL_PREFIX . "/#", $path));
           
@@ -695,6 +744,8 @@ class Kurogo
     }
     
     public function clearCaches($type=null) {
+
+        self::log(LOG_NOTICE, "Clearing site caches", "kurogo");
 
         if (strlen($type)>0) {
             return $this->rmdir(CACHE_DIR . "/" . $type);

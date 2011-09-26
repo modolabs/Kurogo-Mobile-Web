@@ -2,7 +2,7 @@
 Setup and Installation
 ######################
 
-Kurogo is a PHP web application. As such it must be installed on a web server. In version 1.2, there
+Kurogo is a PHP web application. As such it must be installed on a web server. In this version, there
 are 2 supported web servers.
 
 ===================
@@ -20,6 +20,7 @@ System Requirements
 
     * Requires URL Rewrite Module 2.0 - http://www.iis.net/download/URLRewrite
     * Tested using x86 Non Thread Safe version using FastCGI on IIS.
+    * Support for virtual folders requires a manual configuration change
     * Experimental subfolder support using Junctions, see :ref:`setup_subfolder`
 
 * PHP 5.2 or higher with the following extensions:
@@ -30,6 +31,7 @@ System Requirements
   * json
   * PDO (Used for :doc:`database`)
   * mbstring
+  * Zip (needed if parsing KMZ files)
   
 * Some PHP modules are optional depending on whether you need their backend functionality
 
@@ -65,29 +67,60 @@ Using Kurogo in a subfolder of a domain
 =======================================
 
 It is possible under certain circumstances to have Kurogo appear to be installed in a URL location other
-than the root of a domain. Currently this is supported under the following circumstances:
+than the root of a domain. There are several approaches that are supported depending on your environment.
+
+* Using symbolic links in a Unix environment
+* Using Virtual Folders in IIS (requires manual configuration change)
+* Using Junctions in Windows
+
+*Note* that using Apache aliases is NOT supported to do the execution order of aliases and mod_rewrite.
+
+------------------------------------------
+Using Symbolic Links in a Unix environment
+------------------------------------------
+
+In a unix environment you can place Kurogo in a subpath by using a symbolic link. 
+Currently this is supported under the following circumstances:
 
 * Using the Apache webserver in a unix based environment (Linux, Mac OS X, etc)
 * Apache is enabled to follow symbolic links (Options FollowSymlinks)
 
 If these conditions are true, you can create a symbolic link that points to the *www* folder and place
-it in your site's root folder.
+it in your site's root folder (or subfolder).
 
 From the command line, this command would be similar to this:
 
 :kbd:`ln -s /path/to/kurogo/www /path/to/documentroot/mobile`
 
-This would assume you want the subfolder to be named "mobile". You could use any valid folder name you wish
+This would assume you want the subfolder to be named "mobile". 
+You could use any valid folder name you wish. Kurogo is designed to detect this condition
+automatically and will function without further configuration.
 
-Note: Currently, Kurogo does NOT support being installed under an alias (Apache) or Virtual Folder (IIS).
+----------------------------
+Using Virtual Folders in IIS
+----------------------------
 
-The method shown above now has experimental support in Windows in the form of Junctions.  The following procedure should work in either IIS or Apache:
+If you are using the IIS webserver in the Windows environment, you can install Kurogo in a virtual
+folder. This permits you to use Kurogo in a path that is not the document root. To use this
+setup you should:
 
-Ensure you have the Junction program installed on your server.
+* Create a virtual folder and point it to the kurogo *www* folder. 
+* In the Kurogo project folder open  *config/kurogo.ini*. If this file does not exist, you should copy kurogo-default.ini to kurogo.ini
+* In the *[kurogo]* section, uncomment the *URL_BASE* option and set it to the appropriate path. For example
+  if your site is installed at */kurogo* then you should set *URL_BASE="/kurogo"*
 
-* The junction program is distributed by Microsoft, and can be found at the time of this writing at http://technet.microsoft.com/en-us/sysinternals/bb896768
+
+--------------------------
+Using Junctions in Windows
+--------------------------
+
+The following procedure should work in either IIS or Apache, however it is recommended to use Virtual Folders
+in IIS
+
+* Ensure you have the Junction program installed on your server. It is distributed by Microsoft, and can be found at the time of this writing at http://technet.microsoft.com/en-us/sysinternals/bb896768
 * The junction program should be located in your PATH, in most circumstances this can be attained by copying the junction.exe file to your System Root folder (C:\Windows)
-* Because a junction is an application of an NTFS reparse point, both the target and the destination folders must be located on the same filesystem, and that filesystem *must* be NTFS
+* You can only create junctions between 2 paths *on the same NTFS filesystem*. You cannot create
+  junctions between volumes or on volumes that are formatted FAT32.
 
 Execute something similar to the following in a Command Prompt:
 

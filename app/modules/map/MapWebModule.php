@@ -219,7 +219,7 @@ class MapWebModule extends WebModule {
         return $this->buildBreadcrumbURL('detail', $args, false);
     }
 
-    public function searchItems($searchTerms, $limit=null, $options)
+    public function searchItems($searchTerms, $limit=null, $options=null)
     {
         $addBreadcrumb = isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
         $mapSearch = $this->getSearchClass($options);
@@ -251,7 +251,7 @@ class MapWebModule extends WebModule {
             if (isset($this->feeds[$category])) {
                 return $this->feeds[$category];
             } else {
-                error_log("Warning: unable to find feed data for category $category");
+                Kurogo::log(LOG_WARNING,"Warning: unable to find feed data for category $category",'maps');
             }
         }
         return null;
@@ -265,7 +265,7 @@ class MapWebModule extends WebModule {
         $configData = $this->getCurrentFeed();
         if (!isset($configData['STATIC_MAP_CLASS']) && !isset($configData['JS_MAP_CLASS'])) {
             if ($this->feedGroup === null) {
-                error_log("Warning: feed group not set when initializing image controller, using first group");
+                Kurogo::log(LOG_WARNING,"Warning: feed group not set when initializing image controller, using first group",'maps');
                 $this->feedGroup = key($this->feedGroups);
             }
             $configData = $this->getDataForGroup($this->feedGroup);
@@ -549,13 +549,13 @@ JS;
                 $centerText = $center['lat'].','.$center['lon'];
 
                 $externalLinks[] = array(
-                    'title' => 'View in Google Maps', // TODO put this in strings file
+                    'title' => $this->getLocalizedString('VIEW_IN_GOOGLE_MAPS'),
                     'url'   => 'http://maps.google.com?ll='.$centerText,
                     'class' => 'external',
                     );
                 
                 $externalLinks[] = array(
-                    'title' => 'Get directions from Google',
+                    'title' => $this->getLocalizedString('GET_DIRECTIONS_FROM_GOOGLE'),
                     'url'   => 'http://maps.google.com?daddr='.$centerText,
                     'urlID' => 'directionsLink',
                     'class' => 'external',
@@ -594,7 +594,13 @@ JS;
                     }
                 }
 
-                if ($this->feedGroup === null && $this->numGroups > 1) {
+                if ($this->numGroups == 0) {
+                    $categories = array(array(
+                        'title' => $this->getLocalizedString('NO_MAPS_FOUND'),
+                        ));
+                    $this->assign('categories', $categories);
+
+                } else if ($this->feedGroup === null && $this->numGroups > 1) {
                     // show the list of groups
                     foreach ($this->feedGroups as $id => $groupData) {
                         $categories[] = array(
@@ -608,18 +614,17 @@ JS;
                     $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}";
                     $this->addInlineJavascript("\napiURL = '$apiURL';\n");
 
-                    $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS', 'Campus');
-                    $this->assign('browseHint', "Select a $groupAlias");
+                    $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS');
+                    $this->assign('browseHint', $this->getLocalizedString('SELECT_A_MAP_GROUP', $groupAlias));
                     $this->assign('categories', $categories);
 
                     $this->addOnLoad('sortGroupsByDistance();');
                     
                 } else {
                     $groupData = $this->getDataForGroup($this->feedGroup);
-                    $browseBy = $groupData['title'];
+                    $this->assign('browseBy', $groupData['title']);
                     if ($this->numGroups > 1) {
-                        // TODO: use localization framework to get this string
-                        $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS_PLURAL', 'Campuses');
+                        $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS_PLURAL');
                         $clearLink = array(array(
                             'title' => "All $groupAlias",
                             'url' => $this->groupURL(''),
@@ -635,9 +640,10 @@ JS;
                         $this->redirectTo('category', array('category'=>$category['id']));
                     }
                     */
-                    $this->assign('browseHint', "Browse {$browseBy} by:");
-                    $this->assign('searchTip', "You can search by any category shown in the 'Browse by' list below.");
                 }
+
+                $this->assign('placeholder', $this->getLocalizedString('MAP_SEARCH_PLACEHOLDER'));
+                $this->assign('tip', $this->getLocalizedString('MAP_SEARCH_TIP'));
 
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->generateBookmarkLink();
@@ -739,7 +745,7 @@ JS;
                     if ($this->numGroups > 1) {
                         $categories = $this->assignCategories();
                         if (count($categories)==1) {
-                            $groupAlias = $this->getOptionalModuleVar('GROUP_ALIAS_PLURAL', 'Campuses');
+                            $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS_PLURAL');
                             $clearLink = array(array(
                                 'title' => "All $groupAlias",
                                 'url' => $this->groupURL(''),

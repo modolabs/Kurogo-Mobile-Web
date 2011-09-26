@@ -41,7 +41,7 @@ must be at least one entry that looks like the following: ::
 * *STATIC_MAP_BASE_URL* (required if *STATIC_MAP_CLASS* is ArcGISStaticMap or
   WMSStaticMap) - the base URL where the static base map service is hosted.
 
-.. _section-base-map-types::
+.. _section-base-map-types:
 
 =====================
 Configuring Base Maps

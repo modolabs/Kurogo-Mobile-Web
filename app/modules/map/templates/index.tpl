@@ -1,6 +1,6 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{include file="findInclude:common/templates/search.tpl" placeholder="Search Map" tip=$searchTip}
+{include file="findInclude:common/templates/search.tpl"}
 
 <div class="nonfocal">
   <h3>{$browseHint}</h3>

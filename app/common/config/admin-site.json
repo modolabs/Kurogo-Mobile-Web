@@ -59,12 +59,12 @@
         "descriptionKey":"ADMIN_SITE_ERROR_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
+            "KUROGO_LOG_FILE":{"labelKey":"ADMIN_SITE_ERROR_LOGFILE_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_ERROR_LOGFILE_DESCRIPTION","section":"log_files"},
+            "DEFAULT_LOGGING_LEVEL":{"labelKey":"ADMIN_SITE_ERROR_LOGGING_LEVEL_TITLE","type":"select","optionsMethod":["KurogoLog","getPriorities"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_LOGGING_LEVEL_DESCRIPTION","section":"error_handling_and_debugging"},
             "DISPLAY_ERRORS":{"labelKey":"ADMIN_SITE_ERROR_DISPLAY_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DISPLAY_DESCRIPTION","section":"error_handling_and_debugging"},
             "DEVICE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DEVICE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DEVICE_DESCRIPTION","section":"error_handling_and_debugging"},
             "MODULE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_MODULE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_MODULE_DESCRIPTION","section":"error_handling_and_debugging"},
             "MINIFY_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_DESCRIPTION","section":"error_handling_and_debugging"},
-            "DATA_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DATA_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DATA_DESCRIPTION","section":"error_handling_and_debugging"},
-            "TEMPLATE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_TEMPLATE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_TEMPLATE_DESCRIPTION","section":"error_handling_and_debugging"},
             "DEVICE_DETECTION_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DETECTION_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DETECTION_DESCRIPTION","section":"error_handling_and_debugging"},
             "MINIFY_CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_DESCRIPTION","section":"cache"},
             "PRODUCTION_ERROR_HANDLER_ENABLED":{"labelKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_DESCRIPTION","section":"error_handling_and_debugging"},
@@ -215,6 +215,7 @@
         "sectiontype":"fields",
         "fields":{
             "GOOGLE_ANALYTICS_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_GOOGLE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_GOOGLE_DESCRIPTION","section":"analytics","placeholder":" UA-XXXXXXX-X"},
+            "PERCENT_MOBILE_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_PERCENT_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_PERCENT_DESCRIPTION","section":"analytics"},
             "PAGE_VIEWS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_DESCRIPTION","section":"analytics"},
             "API_STATS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_API_STATS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_API_STATS_DESCRIPTION","section":"analytics"}
         }

@@ -67,7 +67,7 @@ class LoginWebModule extends WebModule {
                 $authenticationAuthorities['indirect'][$authorityIndex] = $authorityData;
             }
         } catch (KurogoConfigurationException $e) {
-            error_log(sprintf("Invalid authority data for %s: %s", $authorityIndex, $e->getMessage()));
+            Kurogo::log(LOG_WARNING, "Invalid authority data for %s: %s", $authorityIndex, $e->getMessage(), 'auth');
             $invalidAuthorities[$authorityIndex] = $e->getMessage();
         }
     }

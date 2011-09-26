@@ -18,6 +18,7 @@ class SiteConfig extends ConfigGroup {
     $this->addConfig($config);
 
     define('CONFIG_MODE', $config->getVar('CONFIG_MODE', 'kurogo'));
+    Kurogo::log(LOG_DEBUG,"Setting config mode to " . (CONFIG_MODE ?  CONFIG_MODE : '<empty>'), 'config');
     define('CONFIG_IGNORE_LOCAL', $config->getVar('CONFIG_IGNORE_LOCAL', 'kurogo'));
     
     //multi site currently only works with a url base of root "/"
@@ -115,6 +116,7 @@ class SiteConfig extends ConfigGroup {
         }
         
         define('URL_BASE', $urlBase);
+        Kurogo::log(LOG_DEBUG,"Setting site to $site with a base of $urlBase", 'kurogo');
     
         // Strips out the leading part of the url for sites where 
         // the base is not located at the document root, ie.. /mobile or /m 
@@ -151,6 +153,8 @@ class SiteConfig extends ConfigGroup {
     if (!$theme = $this->getVar('ACTIVE_THEME')) {
         die("FATAL ERROR: ACTIVE_THEME not set");
     }
+
+    Kurogo::log(LOG_DEBUG,"Setting theme to $theme", 'kurogo');
     
     define('THEME_DIR', SITE_DIR . DIRECTORY_SEPARATOR . 'themes' . DIRECTORY_SEPARATOR . $theme);
   }

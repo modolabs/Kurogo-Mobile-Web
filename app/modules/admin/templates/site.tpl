@@ -7,9 +7,9 @@
 <h1 id="sectionTitle">&nbsp;</h1>
 <ul id="adminSections"></ul>
 <p id="sectionDescription" class="preamble">&nbsp;</p>
-<ul id="adminFields" class="formfields">
+<div id="adminFields" class="formfields">
 
-</ul>
+</div>
 </form>
 <script type="text/javascript">
     var adminSection = '{$section}';
