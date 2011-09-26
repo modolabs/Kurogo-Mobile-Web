@@ -106,7 +106,7 @@ function processCheckVersion(data) {
     KUROGO_LOCAL_VERSION = data.local;
     KUROGO_CURRENT_VERSION = data.current;
     
-    var li = $('<li />');
+    var li = $('<div />');
     li.append('<label>'+ getLocalizedString('KUROGO_VERSION_TITLE') +'</label>');
     li.append('<div class="infotext'+ (!data.uptodate ? ' error':'')+'">' + data.message + '</div>');
 

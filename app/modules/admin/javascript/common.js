@@ -25,15 +25,6 @@ function getLocalizedString(key) {
 function createFormFieldListItems(key, fieldData) {
     var items = [createFormFieldListItem(key,fieldData)];
     
-    if (fieldData.fieldValueGroups) {
-    
-        $.each(fieldData.fieldValueGroups, function(k,v) {
-            $.each(v.fields, function(field, fd) {
-                items.push(createFormFieldListItem(field, fd));
-            })
-        });
-    }
-    
     return items;
 }
 
@@ -62,7 +53,8 @@ function showIfCheck(element, items, value) {
 function createFormSectionListItems(section, sectionData) {
     var items = [];
     var sectionItems = {};
-    
+    var fieldgroups = {}
+        
     switch (sectionData.sectiontype)
     {
         case 'fields':
@@ -70,7 +62,36 @@ function createFormSectionListItems(section, sectionData) {
                 data.section = section;
                 var _items = createFormFieldListItems(key, data);
                 sectionItems[key] = _items;
-                $.merge(items, _items);
+                
+                if (data.fieldgroup) {
+                    if (sectionData.fieldgroups && typeof sectionData.fieldgroups[data.fieldgroup] != 'undefined') {
+                        var groupdata = sectionData.fieldgroups[data.fieldgroup];
+                        if (!fieldgroups[data.fieldgroup]) {
+                            var fieldgroup = $('<fieldset />');
+                            fieldgroups[data.fieldgroup] = $('<div class="fieldgroup" />');
+                            if (groupdata.label) {
+                                var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>').click(function() {
+                                    fieldgroups[data.fieldgroup].slideToggle();
+                                })
+                                fieldgroup.append(legend);
+                                if (groupdata.description) {
+                                    fieldgroups[data.fieldgroup].append($('<div class="fieldgroup-description">'+groupdata.description+'</div>'));
+                                }
+                            }
+                            fieldgroup.append(fieldgroups[data.fieldgroup]);
+                            if (groupdata.collapsed) {
+                                fieldgroups[data.fieldgroup].hide();
+                            }
+                            $.merge(items, fieldgroup);
+                        }
+                        
+                        fieldgroups[data.fieldgroup].append(_items);
+                    } else {
+                        alert("Fieldgroup " + data.fieldgroup + " not defined.");
+                    }
+                } else {
+                    $.merge(items, _items);
+                }
                 if (data.showIf && data.showIf[0] in sectionData.fields) {
                     $(sectionItems[data.showIf[0]]).find('.changeElement').change(function() {
                         showIfCheck(this, _items, data.showIf[1]);
@@ -92,21 +113,22 @@ function createFormSectionListItems(section, sectionData) {
 }
 
 function createFormFieldListItem(key, fieldData) {
-    var listClass='';
+    var listClass='formfield';
     switch (fieldData.type) {
         case 'checkbox':
         case 'inversecheckbox':
-            listClass='checkitem';
+            listClass+=' checkitem';
             break;
         case 'paragraph':
-            listClass='tallfield';
+        case 'textarea':
+            listClass+=' tallfield';
             break;
         case 'label':
-            listClass='labelfield';
+            listClass+=' labelfield';
             break;
     }
 
-    var li = $('<li>').attr('class', listClass);
+    var li = $('<div>').attr('class', listClass);
 
     if (fieldData.label) {
         li.append('<label>' + fieldData.label + '</label>');
@@ -177,7 +199,13 @@ function appendFormField(parent, key, fieldData) {
             parent.append(createSelectBox(options, fieldData.value).attr('name',key).attr('section', section).addClass('changeElement').addClass(inputClass).attr('id',id));
             break;
         case 'paragraph':
-            parent.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows','8').attr('section', section).addClass(inputClass).attr('id',id));
+        case 'textarea':
+            if (fieldData.rows) {
+                var rows = fieldData.rows;
+            } else {
+                var rows = fieldData.type == 'textarea' ? 4: 8;
+            }
+            parent.append($('<textarea>'+(fieldData.value ? fieldData.value : '')+'</textarea>').attr('name',key).attr('rows',rows).attr('section', section).addClass(inputClass).attr('id',id));
             break;
         case 'label':
             parent.append('<span class="labeltext">'+fieldData.value+'</span>');
@@ -249,7 +277,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     
     } else {
     
-        var row = $('<li />').attr('sectionID',sectionID); 
+        var row = $('<li />').attr('sectionID',sectionID).addClass('formfield');
         var listhead = $('<div class="edithead" />');
         row.append(listhead);
 
@@ -267,7 +295,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     
         rowbuttons.append($('<a href="" class="textbutton edit">'+ getLocalizedString('BUTTON_EDIT') + '</a>').click(function() {
             stopSectionEditing(titleField);
-            $(this).closest('li').addClass('editing');
+            $(this).closest('.formfield').addClass('editing');
             return false;
         }));
     }
@@ -276,7 +304,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
 
     if (data.sectiondelete) {
         rowbuttons.append($('<a href="" class="textbutton delete">'+ getLocalizedString('BUTTON_REMOVE') +'</a>').click(function() {
-            if ($(this).closest('li').hasClass('notsaved')) {
+            if ($(this).closest('.formfield').hasClass('notsaved')) {
                 reloadSection();
                 return false;
             }
@@ -320,8 +348,10 @@ function createSectionListRow(section, data, sectionID, sectionData) {
     } else {
         listhead.append(rowbuttons);
         var editrow = $('<div class="editrow" />');
-        var list = $('<ul class="formfields" />');
+        var list = $('<div class="formfields" />');
         var items = [];
+        var fieldgroups = {}
+        
         $.each(data.fields, function(field, _fieldData) {
             var fieldData = jQuery.extend(true, {}, _fieldData);
     
@@ -344,7 +374,37 @@ function createSectionListRow(section, data, sectionID, sectionData) {
             fieldName = sectionID +'['+field+']';
             var item = createFormFieldListItem(fieldName, fieldData);
             items[field] = item;
-            list.append(item);
+            
+            if (fieldData.fieldgroup) {
+                var groupname = fieldData.fieldgroup;
+                if (data.fieldgroups && typeof data.fieldgroups[groupname] != 'undefined') {
+                    var groupdata = data.fieldgroups[groupname];
+                    if (!fieldgroups[groupname]) {
+                        var fieldgroup = $('<fieldset />');
+                        fieldgroups[groupname] = $('<div class="fieldgroup" />');
+                        if (groupdata.label) {
+                            var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>').click(function() {
+                                fieldgroups[groupname].slideToggle();
+                            })
+                            fieldgroup.append(legend);
+                            if (groupdata.description) {
+                                fieldgroups[groupname].append($('<div class="fieldgroup-description">'+groupdata.description+'</div>'));
+                            }
+                        }
+                        fieldgroup.append(fieldgroups[groupname]);
+                        if (groupdata.collapsed) {
+                            fieldgroups[groupname].hide();
+                        }
+                        list.append(fieldgroup);
+                    }
+                    
+                    fieldgroups[groupname].append(item);
+                } else {
+                    alert("Fieldgroup " + groupname + " not defined.");
+                }
+            }  else {
+                list.append(item);
+            }
             
             if (fieldData.showIf && fieldData.showIf[0] in data.fields) {
                 $(items[fieldData.showIf[0]]).find('.changeElement').change(function() {
@@ -368,7 +428,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
 
 function createFormSectionList(section, data) {
     //create main list item
-    var li = $('<li>').attr('class', 'tallfield');
+    var li = $('<div>').attr('class', 'tallfield');
     
     if (data.sectiontable) {
         var table = $('<table />').attr('id', section).addClass('subtable');
@@ -433,7 +493,8 @@ function createFormSectionList(section, data) {
     
     if (data.sectionreorder) {
         body.sortable({
-            opacity: 0.6
+            opacity: 0.6,
+            handle: '.handle'
         });
     }
     
