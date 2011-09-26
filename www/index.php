@@ -20,7 +20,7 @@ $path = isset($_GET['_path']) ? $_GET['_path'] : '';
 $Kurogo->initialize($path); 
 
 function _phpFile($_file) {
-    Kurogo::log(LOG_DEBUG, "Output php file $_file", "init");
+    Kurogo::log(LOG_DEBUG, "Output php file $_file", 'kurogo');
     if ($file = realpath_exists($_file)) {
         require_once $file;
         exit;
@@ -30,7 +30,7 @@ function _phpFile($_file) {
 }
 
 function _outputFile($_file) {
-    Kurogo::log(LOG_DEBUG, "Output file $_file", "init");
+    Kurogo::log(LOG_DEBUG, "Output file $_file", 'kurogo');
     if ($file = realpath_exists($_file)) {
         CacheHeaders($file);
         header('Content-type: '.mime_type($file));
@@ -93,7 +93,7 @@ function _outputFileLoaderFile($matches) {
 function _404() {
     header("HTTP/1.1 404 Not Found");
     $url = $_SERVER['REQUEST_URI'];
-    Kurogo::log(LOG_WARNING, "URL $url not found", "404");
+    Kurogo::log(LOG_WARNING, "URL $url not found", 'kurogo');
     echo <<<html
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>
@@ -232,8 +232,6 @@ if ($parts[0]==API_URL_PREFIX) {
             break;
     }    
 
-    /* log the api call */
-    PageViews::log_api($id, Kurogo::deviceClassifier()->getPlatform());
     $module->executeCommand();
 
 } elseif ($parts[0]=='min') { //used when minify is loaded when multi-site is on
@@ -260,7 +258,7 @@ if ($parts[0]==API_URL_PREFIX) {
           	$url .= "?" . http_build_query($args);
           }
         }
-        Kurogo::log(LOG_NOTICE, "Redirecting to $url", "init");
+        Kurogo::log(LOG_NOTICE, "Redirecting to $url", 'kurogo');
         header("Location: " . $url);
         exit;
       }
@@ -279,9 +277,6 @@ if ($parts[0]==API_URL_PREFIX) {
     }
 
     if ($module = WebModule::factory($id, $page, $args)) {
-        /* log this page view */
-        PageViews::increment($id, Kurogo::deviceClassifier()->getPlatform());
-        
         $module->displayPage();
     } else {
         throw new KurogoException("Module $id cannot be loaded");

@@ -96,6 +96,7 @@ abstract class APIModule extends Module
         $this->setResponseVersion(0);
     }
     $this->response->display();
+    exit();
   }
 
   protected function redirectTo($command, $args=array()) {
@@ -240,7 +241,19 @@ abstract class APIModule extends Module
     $this->loadSiteConfigFile('strings');
 
     $this->initializeForCommand();
-    $this->response->display();
+
+    $json = $this->response->getJSONOutput();
+    $size = strlen($json);
+    if ($this->logView) {
+        $this->logCommand($size);
+    }
+    header("Content-Length: " . $size);
+    echo $json;
+    exit();
+  }
+  
+  protected function logCommand($size=null) {
+	  KurogoStats::logView('api', $this->configModule, $this->command, $this->logData, $this->logDataLabel, $size);
   }
     
  /**

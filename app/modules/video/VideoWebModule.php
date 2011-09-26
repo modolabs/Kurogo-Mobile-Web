@@ -125,12 +125,14 @@ class VideoWebModule extends WebModule
                 if ($this->page == 'search') {
                     if ($filter = $this->getArg('filter')) {
                         $searchTerms = trim($filter);
+                        $this->setLogData($searchTerms);
                         $items = $controller->search($searchTerms, $start, $maxPerPage);
                         $this->assign('searchTerms', $searchTerms);
                     } else {
                         $this->redirectTo('index', array('section'=>$section), false);
                     }
                 } else {
+                     $this->setLogData($section, $controller->getTitle());
                      $items = $controller->items($start, $maxPerPage);
                 }
                              
@@ -215,6 +217,7 @@ class VideoWebModule extends WebModule
                 $videoid = $this->getArg('videoid');
             
                 if ($video = $controller->getItem($videoid)) {
+                    $this->setLogData($videoid, $video->getTitle());
                     $this->setTemplatePage('detail-' . $video->getType());
                     if ($video->canPlay(Kurogo::deviceClassifier())) {
                         $this->assign('ajax'      ,       $this->getArg('ajax', null));

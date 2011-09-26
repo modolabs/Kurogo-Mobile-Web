@@ -103,7 +103,7 @@ function mapIdForFeedData(Array $feedData) {
     if (isset($feedData['BASE_URL'])) {
         $identifier .= $feedData['BASE_URL'];
     } else {
-        Kurogo::log(LOG_WARNING, "Warning: map feed for $identifier has no BASE_URL for map feed");
+        Kurogo::log(LOG_WARNING, "Warning: map feed for $identifier has no BASE_URL for map feed", 'maps');
     }
     return substr(md5($identifier), 0, 10);
 }

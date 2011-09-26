@@ -1,0 +1,29 @@
+#statsoptionscustom {
+	margin-top: 5px;
+}
+
+#statsoptionscustom label {
+	display: inline-block;
+	width: auto;
+	padding: 0 2px;
+}
+
+#statsoptionscustom div {
+	float: left;
+	margin-right: 0.5em;
+}
+
+#statsoptionscustom select {
+	font-size: 17px;
+}
+
+#statsoptionscustom #submit {
+	font-size: 14px;
+	float: left;
+	margin-top: 6px;
+	height: 24px;
+	line-height: 24px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+}

@@ -1,281 +1,377 @@
 <?php
 /**
-  * @package Module
-  * @subpackage Stats
-  */
+ * @package Module
+ * @subpackage Stats
+ */
 
-/**
-  * @package Module
-  * @subpackage Stats
-  */
 class StatsWebModule extends WebModule {
-  protected $id = 'stats';
-  protected $platforms = Array(
-    'iphone' => 'iPhone',
-    'android' => 'Android',
-    'webos' => 'webOS',
-    'winmo' => 'Windows Mobile',
-    'blackberry' => 'BlackBerry',
-    'bbplus' => 'Advanced BlackBerry',
-    'symbian' => 'Symbian',
-    'palmos' => 'Palm OS',
-    'featurephone' => 'Other Phone',
-    'computer' => 'Computer',
-  );
-  
-  protected function nameForService($service)
-  {
-    $serviceTypes = Array('web' => 'Website', 'api' => 'Native App');
-    return $serviceTypes[$service];
-  }
+	protected $id = 'stats';
 
-  
-  protected function getDurationForInterval($interval)
-  {
-    switch ($interval)
-    {
-        case 'day':
-            return 7;
-        case 'month':
-        case 'quarter':
-        case 'week':
-            return 12;
+    protected function getServiceTypes() {
+        return array(
+            'web' => $this->getLocalizedString('SERVICE_WEB'), 
+            'api' => $this->getLocalizedString('SERVICE_API')
+        );
     }
-  }
-  
-protected function compare_content($content1, $content2) {
-  if($content1['count'] < $content2['count']) {
-    return 1;
-  }
-  if($content1['count'] > $content2['count']) {
-    return -1;
-  }
-  return 0;
-}
-
-protected function generate_popular_content($system, $data) {
-  $viewcounts = array();
-  $modules = array();
-
-  if ($system == 'web') {
-    $moduleData = $this->getAllModules();
-  } else { // api
-    $moduleData = APIModule::getAllModules();
-  }
-
-    foreach ($moduleData as $moduleID => $module) {
-      $modules[$moduleID] = $module->getModuleName();
-      $viewcounts[$moduleID] = 0;
+    
+    /* return interval types depends on pagetype */
+    protected function getIntervalTypes() {
+        $interval_types = array(
+          'day' => array('duration' => 7, 'title' => $this->getLocalizedString('INTERVAL_DAY'), 'numdays' => 7),
+          'week' => array('duration' => 12, 'title' => $this->getLocalizedString('INTERVAL_WEEK'), 'numdays' => 84),
+          'month' => array('duration' => 12, 'title' => $this->getLocalizedString('INTERVAL_MONTH'), 'numdays' => 365),
+          'custom' => array('title'=> $this->getLocalizedString('INTERVAL_CUSTOM'))
+        );
+        
+        return $interval_types;
     }
+   
+	protected function initializeForPage() {
+	
+	    $serviceTypes = $this->getServiceTypes();
+	    $service = $this->getArg('service', 'web');
+	    if (!array_key_exists($service, $serviceTypes)) {
+	        $service = 'web';
+	    }
 
-  foreach($data as $datum) {
-    foreach ($datum as $field => $count) {
-      if (array_key_exists($field, $viewcounts))
-	$viewcounts[$field] += $count;
-    }
-  }
+        $interval_types = $this->getIntervalTypes();
+        $interval = $this->getArg('interval', 'day');
+        if (!array_key_exists($interval, $interval_types)) {
+	        $interval = 'day';
+	    }
 
-  $popular_pages = Array();
-  foreach ($viewcounts as $module => $count) {
-    $module_stats = array(
-      'name' => $modules[$module],
-      'count' => $count,
-      );
-    if ($system == 'web') {
-      $module_stats['name'] = $moduleData[$module]->getModuleName();
-      $module_stats['link'] = sprintf("%s%s/", URL_BASE, $module);
-    }
-
-    $popular_pages[] = $module_stats;
-  }
-  return $popular_pages;
-}
-
-protected function list_items($data, $title, $label) {
-  usort($data, array($this,'compare_content'));
-  $data = array_slice($data, 0, 10);
-  return array("type"=>"list", "data"=>$data, "title"=>$title, "label"=>$label);
-}
-
-protected function platform_data($data) {
-
-  // views by device
-  $traffic = Array();
-  foreach ($this->platforms as $platform => $title) {
-    $traffic[$platform] = 0;
-  }
-  foreach($data as $datum) {
-    foreach ($datum as $field => $count) {
-      if (array_key_exists($field, $traffic))
-	$traffic[$field] += $count;
-    }
-  }
-  return $traffic;
-}
-
-protected function bar_percentage($data, $title) {
-  $new_data = array();
-  $total = array_sum(array_values($data));
-  foreach($data as $key => $count) {
-    $new_data[$key] = $this->per_cent($count, $total);
-  }
-
-  return array(
-    "type" => "bar_percentage",
-    "data" => $new_data,
-    "title" => $title,
-  );
-}
-
-protected function per_cent($part, $total) {
-  return $total > 0 ? round(100 * $part / $total) : 0;
-}
-
-protected function format_intervals($data, $max_scale, $field, $interval_type) {
-  $intervals = array();
-  foreach($data as $datum) {
-    $new_interval = Array();
-    $new_interval['day'] = date('D', $datum['date']);
-    if (($interval_type != 'day') && ($max_scale > 1000)) {
-      $num_digits = min(2, max(0, 6 - strlen($datum[$field])));
-     $new_interval['count'] = number_format($datum[$field]/1000, $num_digits);
-     } else {
-      $new_interval['count'] = $datum[$field];
-    }
-    $new_interval['percent'] = $this->per_cent($datum[$field], $max_scale);
-    switch ($interval_type) {
-    case 'day':
-      $new_interval['date'] = date('n/j', $datum['date']);
-      break;
-    case 'week':
-      $new_interval['date'] = date('n/j/Y', $datum['date']);
-      break;
-    case 'month':
-      $new_interval['date'] = date('M', $datum['date']);
-      break;
-    case 'quarter':
-      $new_interval['date'] = 'Q' . ((date('n', $datum['date']) + 2) / 3) . date("\ny", $datum['date']);
-      break;
-    }
-
-    $intervals[] = $new_interval;
-  }
-  return $intervals;
-}
-
- protected function summary_total($data, $field, $title) { 
-  $total = 0;
-  foreach($data as $datum) {
-    if (is_array($datum)) {
-      $total += $datum[$field];
-    } else {
-      $total += (int)$datum;
-    }
-  }
-  return array("type"=>"total", "title"=>$title, "total"=>$total);
-}
-
-protected function trend($data, $field, $title, $interval_type) {
-  $max_scale = $this->determine_scale($data, $field);
-  if (($interval_type != 'day') && ($max_scale > 1000)) {
-    $title = '1000s of ' . $title;
-  }
-  return array(
-    "type" => "trend",
-    "days" => $this->format_intervals($data, $max_scale, $field, $interval_type),
-    "title" => $title,
-  );
-}
-
-protected function determine_scale($values, $field) {
-  // find the largest number of views in the days
-  $max_views = 0;
-  foreach($values as $datum) {
-    if($datum[$field] > $max_views) {
-      $max_views = $datum[$field];
-    }
-  }
-
-  // determine the maximum to use for the bar graph
-  $limits = array(1, 2, 4, 5);
-
-  $found = False;
-  $scale = 10;
-  while(!$found) {
-    foreach($limits as $limit) {
-      if($limit * $scale > $max_views) {
-        $max_scale = $limit * $scale;
-        $found = True;
-        break;
-      }
-    }
-    $scale *= 10;
-  }  
-  return $max_scale;
-}
-  
-  protected function initializeForPage() {
-  
-    switch ($this->page) {
-      case 'index':
-
-         $service = $this->getArg('service', 'web');       
-         $interval = $this->getArg('interval', 'day');       
-         $duration = $this->getDurationForInterval($interval);
-         
-         $statData = PageViews::view_past($service, $interval, $duration);
-         
-        if ($service=='web') {
-          $statItems = array(
-            'total'=>$this->summary_total($statData, "total", "total page views"),
-            'trend'=>$this->trend($statData, "total", 
-                'Page Views by ' . ucfirst($interval), 
-                $interval),
-            'bar_percentage'=>$this->bar_percentage( $this->platform_data($statData), "Traffic by Platform"),
-            'list'=>$this->list_items($this->generate_popular_content('web', $statData), "Most Popular Content", "page views"),
-            );
-        } else { // api
-          $statItems = array(
-            'total'=>$this->summary_total($statData, "total", "total API requests"),
-            'trend'=>$this->trend($statData, "total", 
-                'API Requests by ' . ucfirst($interval), 
-                $interval),
-            'list'=>$this->list_items($this->generate_popular_content('api', $statData), "Most Popular Modules", "requests"),
+        if ($interval == 'custom') {
+            $start = $this->getArg('start');
+            $startTime = $start ? mktime(0,0,0, $start['Month'], $start['Day'], $start['Year']) : mktime(0,0,0);
+            $end = $this->getArg('end', array());
+            $endTime = $end ? mktime(23,59,59, $end['Month'], $end['Day'], $end['Year']) : mktime(23,59,59);
+            if ($endTime < $startTime) {
+                $endTime = $startTime;
+            }
+        } else {
+            $times = $this->getTimesForInterval($interval, $interval_types[$interval]['duration']);
+            $startTime = $times['start'];
+            $endTime = $times['end'];
+        }
+        
+        $intervalOptions = array();
+        $args = $this->args;
+        $args['service'] = $service;
+        $args['interval'] = $interval;
+        
+        foreach ($interval_types as $interval_type=>$type) {
+            $args['interval'] = $interval_type;
+            $intervalOptions[$interval_type] = array(
+                'title'=>$type['title'],
+                'selected'=>$interval_type == $interval,
+                'url'=>$this->buildbreadcrumbURL($this->page, $args, false)
             );
         }
 
-        $serviceTypes = Array('web' => 'Website', 'api' => 'Native App');
-        $interval_types = Array(
-          'day' => Array('duration' => 7, 'title' => 'Week', 'numdays' => 7),
-          'week' => Array('duration' => 12, 'title' => '12 Weeks', 'numdays' => 84),
-          'month' => Array('duration' => 12, 'title' => 'Year', 'numdays' => 365),
-          'quarter' => Array('duration' => 12, 'title' => '3 Years', 'numdays' => 1095),
-          );
+        $args = $this->args;
+        $args['service'] = $service;
+        $args['interval'] = $interval;
+        foreach ($serviceTypes as $serviceType=>$serviceTypeTitle) {
+            $args['service'] = $serviceType;
+            $serviceOptions[$serviceType] = array(
+                'title'=>$serviceTypeTitle,
+                'selected'=>$service == $serviceType,
+                'url'=>$this->buildbreadcrumbURL($this->page, $args, false)
+            );
+        }
+
+        $this->assign('starttime', $startTime);
+        $this->assign('endtime', $endTime);
+        $this->assign('statsService', $service);
+        $this->assign('interval', $interval);
+        $this->assign('intervalOptions', $intervalOptions);
+        $this->assign('serviceOptions', $serviceOptions);
+        $this->assign('intervalTabclass', count($interval_types)==4 ? 'fourtabs': 'threetabs');
+        $this->assign('serviceTabclass', 'twotabs');
+
+        $commonData = array(
+            'service'=> $service,
+            'start'=>$startTime,
+            'end'=>$endTime
+        );
         
-        $statclasses = Array();
-        foreach ($interval_types as $type => $attrs) {
-          $stclass = Array();
-          $stclass['interval'] = $type;
-          if ($interval == $type) {
-            $stclass['active'] = ' class="active"';
-          } else {
-            $stclass['active'] = '';
-          }
-          $stclass['title'] = $attrs['title'];
-          $statclasses[$type] = $stclass;
+		switch ($this->page) {
+			case 'index':
+			    //get config
+			    $chartsConfig = $this->getModuleSections('stats-index');
+			        
+			    $charts = array();
+			    foreach ($chartsConfig as $chartIndex=>$chartData) {
+			        $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);
+			    }
+
+                $this->assign('charts', $charts);
+                break;
+                
+            case 'detail':
+                if (!$group = $this->getArg('group')) {
+                    $this->redirectTo('index');
+                }
+                
+                if (!$$group = $this->getArg($group)) {
+                    $this->redirectTo('index');
+                }
+                
+                if (!$chartsConfig = $this->getChartsConfig($group, $$group)) {
+                    $this->redirectTo('index');
+                }
+
+			    $charts = array();
+			    $commonData[$group] = $$group;
+			    foreach ($chartsConfig as $chartIndex=>$chartData) {
+			        $charts[] = $this->prepareChart(array_merge($chartData, $commonData), $interval);
+			    }
+
+                $this->setPageTitle(sprintf("Stats for %s", $$group));
+                $this->assign('charts', $charts);
+                break;
+		}
+	}
+	
+	protected function prepareChart($chartData, $interval) {
+        if (isset($chartData['interval'])) {
+            
+            $intervals = $this->getIntervalTimesForInterval($interval, $chartData);
+            $data = array();
+            foreach ($intervals as $intervalData) {
+                $data[$intervalData['title']] = $this->getStatsData(
+                    array_merge($chartData, $intervalData)
+                );
+            }
+                        
+        } else {
+            $data = $this->getStatsData($chartData);
         }
         
-         $this->assign('statsItems', $statItems);
-         $this->assign('statsName', $this->nameForService($service)); //not really
-         $this->assign('statsService', $service);
-         $this->assign('statsInterval', $interval);
-         $this->assign('statsDuration', $duration);
-         $this->assign('statclasses', $statclasses);
-         $this->assign('serviceTypes', $serviceTypes);
-     
-  }
+        if (isset($chartData['group']) && $chartData['group']=='data') {
+            $labels = array();
+            $values = array();
+            foreach ($data as $k=>$v) {
+                $labels[$k] = $v['label'];
+                $values[$k] = $v['count'];
+            }
+            $data = $values;
+            $chartData['labels'] = $labels;
+        }
+        
+        $chartData['data'] = $data;
+        
+        if (isset($chartData['detailurl']) && strlen($chartData['detailurl'])) {
+            $chartData['URL'] = array();
+            foreach ($chartData['data'] as $key=>$val) {
+                $chartData['URL'][$key] = $this->buildbreadcrumbURL($chartData['detailurl'], 
+                    array_merge($this->args, array('group'=>$chartData['group'],$chartData['group']=>$key)));
+            }
+        }
 
+        return $chartData;
+    }
+        
+    /* retrieves the stats data based on the array */
+    protected function getStatsData($chartData) {
+		$kurogoOption = new KurogoStatsOption();
+		$type = isset($chartData['stattype']) ? $chartData['stattype'] : 'count';
+        $kurogoOption->setType($type);
+
+        if ($chartData['service']) {
+            $kurogoOption->setService($chartData['service']);
+            unset($chartData['service']);
+        }
+
+        if ($chartData['start']) {
+            $kurogoOption->addFilter('timestamp', 'GT', $chartData['start']);
+        }
+
+        if ($chartData['end']) {
+            $kurogoOption->addFilter('timestamp', 'LT', $chartData['end']);
+        }
+
+        if (isset($chartData['sort'])) {
+            $kurogoOption->setSortField($chartData['sort']);
+        }
+
+        if (isset($chartData['sort_dir'])) {
+            $kurogoOption->setSortDir($chartData['sort_dir']);
+        }
+
+        if (isset($chartData['group'])) {        
+            $kurogoOption->setGroup($chartData['group']);
+        }
+
+        if (isset($chartData['field'])) {        
+            $kurogoOption->setField($chartData['field']);
+        }
+        
+        if (isset($chartData['top'])) {
+            $kurogoOption->setLimit($chartData['top']);
+        }
+
+        foreach (KurogoStats::validFields() as $field) {
+            if (isset($chartData[$field])) {
+                $kurogoOption->addFilter($field, 'EQ', $chartData[$field]);
+            }
+        }
+
+        return KurogoStats::retrieveStats($kurogoOption);
+	}
+
+    protected function getIntervalTimesForInterval($interval, $data=null) {
+        $times = $this->getTimesForInterval($interval, $data);
+        $intervals = array();
+        $interval_types = $this->getIntervalTypes();
+        $step = 1;
+        
+        switch ($interval)
+        {
+            case 'day':
+            case 'week':
+                $duration = $interval_types[$interval]['duration'];
+                $format = '%m/%d';
+                break;
+            case 'month':
+                $duration = $interval_types[$interval]['duration'];
+                $format = '%h %Y';
+                break;
+            case 'custom':
+                $diff = $times['end'] - $times['start'];
+                $interval = 'day';
+                $format = '%m/%d';
+                if ($diff < 90001) { //one day (use 25 hours+1 second to avoid DST issues)
+                    $duration = 1;
+                } elseif ($diff < 864000) { // 10 days
+                    $duration = ceil($diff / 86400);
+                } else {
+                    $step = $diff / 10;
+                    $time = $times['start'];
+                    while ($time < $times['end']) {
+                        $next = $time + $step;
+                        $next = mktime(23,59,59, date('m', $next), date('d', $next), date('Y', $next));
+                        if ($next > $times['end']) {
+                            $next = $times['end'];
+                        }
+                        $intervals[] = array(
+                            'start'=>$time,
+                            'end'=>$next,
+                            'title'=>strftime("%m/%d",$time).'-'.strftime('%m/%d', $next)
+                        );
+                        $time = $next+1;
+                    }
+                    return $intervals;
+                }
+                break;
+            default:            
+                throw new exception("Invalid interval $interval");
+                break;
+        }
+        
+        $time = $times['start'];
+        for ($i=0; $i<$duration; $i++) {
+            $next = strtotime("+$step $interval", $time);
+            $intervals[] = array(
+                'start'=>$time,
+                'end'=>$next-1,
+                'title'=>strftime($format, $time)
+            );
+            $time = $next;
+        }
+
+        return $intervals;
+        
+    }
+    
+    protected function getTimesForInterval($interval, $data=null) {
+        switch ($interval)
+        {
+            case 'day':
+                //includes today
+                $time = mktime(0,0,0);
+                break;
+            case 'week':
+                //includes this week
+                $time = time();
+                $time = $time - (86400 * (date('w', $time)));
+                $time = mktime(0,0,0,date('m', $time),date('d', $time),date('Y', $time));
+                break;
+            case 'month':
+                //includes this month
+                $time = mktime(0,0,0,date('m'),1,date('Y'));
+                break;
+            case 'custom':
+                return array(
+                    'start'=>$data['start'],
+                    'end'=>$data['end']
+                );
+                break;
+            default:
+                throw new exception("Invalid interval $interval");
+                break;
+        }
+
+        $interval_types = $this->getIntervalTypes();
+        $duration = $interval_types[$interval]['duration'];
+        $startTime = strtotime("-". ($duration-1) . "{$interval}s", $time);
+        $endTime = strtotime("+1 {$interval}", $time)-1;
+        
+        return array(
+            'start'=>$startTime,
+            'end'=>$endTime,
+        );
+        
+    }
+    
+    protected function getChartsConfig($group, $groupValue) {
+    
+        switch ($group)
+        {
+            case 'moduleID':
+                $chartsConfig = $this->getModuleSections('stats-module-detail');
+                try {
+                    $module = Webmodule::factory($groupValue);
+                    $moduleChartsConfig = $module->getModuleSections('stats-detail');
+                    
+                } catch (ModuleNotFound $e) {
+                    return false;
+                } catch (Exception $e) {
+                    $moduleChartsConfig = array();
+                }
+                $chartsConfig = array_merge($chartsConfig, $moduleChartsConfig);
+                break;
+            case 'platform':
+                $chartsConfig = $this->getModuleSections("stats-platform-detail");
+                break;
+            case 'pagetype':
+                $chartsConfig = $this->getModuleSections("stats-pagetype-detail");
+                break;
+            default:
+                throw new Exception("No config for group $group $groupValue");
+        }
+        
+        return $chartsConfig;
+    }
+
+    public static function formatBytes($value) {
+		//needs integer
+		if (!preg_match('/^\d+$/', $value)) {
+			return $value;
+		}
+		
+		//less than 10,000 bytes return bytes
+		if ($value < 10000) {
+			return $value;
+		//less than 1,000,000 bytes return KB
+		} elseif ($value < 1000000) {
+			return sprintf("%.2f KB", $value/1024);
+		} elseif ($value < 1000000000) {
+			return sprintf("%.2f MB", $value/(1048576));
+		} elseif ($value < 1000000000000) {
+			return sprintf("%.2f GB", $value/(1073741824));
+		} else {
+			return sprintf("%.2f TB", $value/(1099511627776));
+		}
+	}
 }
-}
-
-
