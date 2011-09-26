@@ -8,6 +8,11 @@
   * @package Module
   * @subpackage News
   */
+
+if (!function_exists('mb_convert_encoding')) {
+    die('Multibyte String Functions not available (mbstring)');
+}
+
 class NewsWebModule extends WebModule {
   const defaultController = 'RSSDataController';
   protected $id = 'news';
