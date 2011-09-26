@@ -71,7 +71,23 @@ class CASAuthentication
 		if (!empty($args['ATTRA_FULL_NAME']))
 			CASUser::mapAttribute('FullName', $args['ATTRA_FULL_NAME']);
 	}
-
+	
+	/**
+	 * Login a user based on supplied credentials
+	 * @param string $login 
+	 * @param string $password
+	 * @param Module $module 
+	 * @see AuthenticationAuthority::reset()
+	 * 
+	 */
+	public function login($login, $password, Session $session, $options)
+	{
+		phpCAS::forceAuthentication();
+		$user = new $this->userClass($this);
+		$session->login($user);
+		return AUTH_OK;
+	}
+	
 	/**
 	 * Attempts to authenticate the user using the included credentials
 	 * @param string $login the userid to login (this will be blank for OAUTH based authorities)
@@ -80,11 +96,7 @@ class CASAuthentication
 	 * @return int should return one of the AUTH_ constants
 	 */
 	protected function auth($login, $password, &$user) {
-		phpCAS::forceAuthentication();
-	
-		$user = new $this->userClass($this);
-	
-		return AUTH_OK;
+		return AUTH_FAILED;
 	}
 
 	/**
