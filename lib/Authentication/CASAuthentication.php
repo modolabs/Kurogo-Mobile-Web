@@ -60,6 +60,16 @@ class CASAuthentication
 			phpCAS::setNoCasServerValidation();
 		else
 			phpCAS::setCasServerCACert($args['CAS_CA_CERT']);
+		
+		// Record any attribute mapping configured.
+		if (!empty($args['ATTRA_EMAIL']))
+			CASUser::mapAttribute('Email', $args['ATTRA_EMAIL']);
+		if (!empty($args['ATTRA_FIRST_NAME']))
+			CASUser::mapAttribute('FirstName', $args['ATTRA_FIRST_NAME']);
+		if (!empty($args['ATTRA_LAST_NAME']))
+			CASUser::mapAttribute('LastName', $args['ATTRA_LAST_NAME']);
+		if (!empty($args['ATTRA_FULL_NAME']))
+			CASUser::mapAttribute('FullName', $args['ATTRA_FULL_NAME']);
 	}
 
 	/**
@@ -130,6 +140,32 @@ class CASUser
 	extends User
 {
 	/**
+	 * An array of the attribute mapping.
+	 * 
+	 * @var array $attributeMap
+	 */
+	private static $attributeMap = array();
+	
+	/**
+	 * Configure attribute mappings.
+	 * 
+	 * @param string $userProperty
+	 * @return string $remoteAttribute
+	 */
+	public static function mapAttribute ($userProperty, $remoteAttribute) {
+		if (empty($userProperty))
+			throw new Exception('$userProperty must not be empty.');
+		if (isset(self::$attributeMap[$userProperty]))
+			throw new Exception('User property '.$userProperty.' is already mapped.');
+		if (!method_exists('User', 'set'.$userProperty))
+			throw new Exception('Unknown User property '.$userProperty.'.');
+		if (empty($remoteAttribute))
+			throw new Exception('$remoteAttribute must not be empty.');
+
+		self::$attributeMap[$userProperty] = $remoteAttribute;
+	}
+	
+	/**
 	 * Constructor
 	 *
 	 * @param AuthenticationAuthority $AuthenticationAuthority
@@ -143,8 +179,14 @@ class CASUser
 
 		$this->setUserID(phpCAS::getUser());
 		
-		$this->setEmail(phpCAS::getAttribute('EMail'));
-		$this->setFirstName(phpCAS::getAttribute('FirstName'));
-		$this->setLastName(phpCAS::getAttribute('LastName'));
+		if (!method_exists('phpCAS', 'getAttribute'))
+			throw new Exception('CASAuthentication attribute mapping requires phpCAS 1.2.0 or greater.');
+		
+		foreach (self::$attributeMap as $property => $attribute) {
+			if (phpCAS::hasAttribute($attribute)) {
+				$method = 'set'.$property;
+				$this->$method(phpCAS::getAttribute($property));
+			}
+		}
 	}
 }
