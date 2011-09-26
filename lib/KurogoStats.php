@@ -126,8 +126,12 @@ class KurogoStats {
 		    'size'      => $size,
 		    'elapsed'   => Kurogo::getElapsed()
 		);
-		        
-        $conn = self::connection();
+	
+	    try {
+            $conn = self::connection();
+        } catch (KurogoDataServerException $e) {
+            throw new KurogoConfigurationException("Database not configured for statistics. To disable stats, set STATS_ENABLED=0 in site.ini");
+        }
         $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)", 
             Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1"), 
             implode(",", array_keys($logData)), 

@@ -1405,7 +1405,9 @@ abstract class WebModule extends Module {
   }
   
   protected function logView($size=null) {
-	KurogoStats::logView('web', $this->configModule, $this->page, $this->logData, $this->logDataLabel, $size);
+    if ($this->logView) {
+        KurogoStats::logView('web', $this->configModule, $this->page, $this->logData, $this->logDataLabel, $size);
+    }
   }
   
   //

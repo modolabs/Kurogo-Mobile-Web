@@ -16,6 +16,7 @@ abstract class Module
     protected $moduleName = '';
     protected $args = array();
     protected $configs = array();
+    protected $logView = true;
     protected $logData = null;
     protected $logDataLabel = null;
     private $strings = array();
@@ -187,6 +188,7 @@ abstract class Module
                 $this->unauthorizedAccess();
             }
         }
+        $this->logView = Kurogo::getOptionalSiteVar('STATS_ENABLED', true) ? true : false;
     }
     
     /**

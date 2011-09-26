@@ -244,7 +244,9 @@ abstract class APIModule extends Module
 
     $json = $this->response->getJSONOutput();
     $size = strlen($json);
-    $this->logCommand($size);
+    if ($this->logView) {
+        $this->logCommand($size);
+    }
     header("Content-Length: " . $size);
     echo $json;
     exit();
