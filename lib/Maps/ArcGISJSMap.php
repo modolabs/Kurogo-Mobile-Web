@@ -11,7 +11,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
 	private $moreLayers = array();
     
-    private $apiVersion = '2.1';
+    private $apiVersion = '2.4';
     private $themeName = 'claro'; // claro, tundra, soria, nihilo
 
     protected $levelsOfDetail = array();    
