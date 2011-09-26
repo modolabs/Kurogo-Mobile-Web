@@ -18,6 +18,7 @@ class ConfigFile extends Config {
   protected $type;
   protected $filepath;
   protected $localFile = false;
+  protected $useCache = true;
 
   protected function fileVariant($variant) 
   {
@@ -207,23 +208,49 @@ class ConfigFile extends Config {
     return $matches[0];
   }
 
-  /**
-   * TODO add the cache function to save the config data to file path as the key
-   * But if the file modified, need to update the cache
-  */
+  //added the cache function
+  
+  private function cacheKey($file, $type = 'var') {
+    return md5($type . '-' . $file);
+  }
+  
+  private function parseIniFileForVar($file) {
+    $key = $this->cacheKey($file, 'var');
+    if ($vars = Kurogo::getFileCacheData($key, $file)) {
+    } else {
+        $vars = parse_ini_file($file, false);
+        Kurogo::writeFileCacheData($key, $vars, $file);
+    }
+    $this->addVars($vars);
+    return true;
+  }
+  
+  private function parseIniFileForSection($file) {
+    $key = $this->cacheKey($file, 'section');
+    if ($sectionVars = Kurogo::getFileCacheData($key, $file)) {
+    } else {
+        $sectionVars = parse_ini_file($file, true);
+        Kurogo::writeFileCacheData($key, $sectionVars, $file);
+    }
+    $this->addSectionVars($sectionVars);
+    return true;
+  }
+  
   protected function loadFile($_file) {
   
      if (!$file = realpath_exists($_file)) {
         return false;
      }
-     
      $this->filepath = $file;
-     
+     $this->parseIniFileForVar($file);
+     $this->parseIniFileForSection($file);
+     /*
      $vars = parse_ini_file($file, false);
      $this->addVars($vars);
 
      $sectionVars = parse_ini_file($file, true);
      $this->addSectionVars($sectionVars);
+     */
 
      return true;
   }

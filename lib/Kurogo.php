@@ -131,11 +131,7 @@ class Kurogo
      * 3. The LIB_DIR 
      * 
      */
-    
-    /**
-     * TODO cache the file path to classname as key. When autoload the class everytime, then can go straight to get
-     * the include path. But need to check the file exists.
-    */
+     
     public function siteLibAutoloader($className) {
         //error_log("Attempting to autoload $className");
         $paths = $this->libDirs;
@@ -295,6 +291,27 @@ class Kurogo
         return false;
     }
     
+    //if cache file data, need to check the last modify time
+    public static function getFileCacheData($key, $filepath) {
+        if ($cacheData = self::cacheGet($key)) {
+            if ($data = @unserialize($cacheData)) {
+                if ($data['last_modify_time'] < filemtime($filepath)) {
+                    return false;
+                } else {
+                    return $data['data'];
+                }
+            }
+        }
+        return false;
+    }
+    
+    public static function writeFileCacheData($key, $data, $filepath) {
+        $data = array(
+            'last_modify_time' => filemtime($filepath),
+            'data' => $data,    
+        );
+        return Kurogo::cacheSet($key, serialize($data));
+    }
     public function initialize(&$path=null) {
         //
         // Constants which cannot be set by config file

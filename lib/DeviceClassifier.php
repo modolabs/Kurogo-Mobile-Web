@@ -93,34 +93,48 @@ class DeviceClassifier {
    * TODO: cache the device database. Perhaps need a perfect logic to check the cache expire
    * when the database is updated.
   */
+  
   private function detectDeviceInternal($user_agent) {
     Kurogo::includePackage('db');
     if (!$user_agent) {
       return;
     }
-     
+    
      if (!$db_file =  Kurogo::getSiteVar('MOBI_SERVICE_FILE')) {
         error_log('MOBI_SERVICE_FILE not specified in site config.');
         die("MOBI_SERVICE_FILE not specified in site config.");
      }
-     
-     try {
-         $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
-         $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
-     } catch (Exception $e) {
-        if (!in_array('sqlite', PDO::getAvailableDrivers())) {
-            die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
-        }
-        error_log("Error with device detection");
-        return false;
-     }
 
+     if ($devices = Kurogo::getFileCacheData(md5($db_file), $db_file)) {
+     } else {
+        try {
+             $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
+             $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
+        } catch (Exception $e) {
+            if (!in_array('sqlite', PDO::getAvailableDrivers())) {
+                die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
+            }
+            error_log("Error with device detection");
+            return false;
+        }
+        $devices = array();
+        while ($row = $result->fetch()) {
+            $devices[] = $row;
+        }
+        Kurogo::writeFileCacheData(md5($db_file), $devices, $db_file);
+     }
+     foreach ($devices as $row) {
+        if (preg_match("#" . $row['pattern'] . "#i", $user_agent)) {
+            return $row;
+        }
+     }
+     /*
      while ($row = $result->fetch()) {
         if (preg_match("#" . $row['pattern'] . "#i", $user_agent)) {
             return $row;
         }
      }
-     
+     */
      return false;
   }
   
