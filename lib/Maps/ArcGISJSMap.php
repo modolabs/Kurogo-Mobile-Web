@@ -272,6 +272,9 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
     function getHeaderScript() {
         $header = $this->prepareJavascriptTemplate('ArcGISJSMapHeader');
+        $header->setValues(array(
+            '___MAPELEMENT___' => $this->mapElement,
+            ));
         return $header->getScript();
     }
     
