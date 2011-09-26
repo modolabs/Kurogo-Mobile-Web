@@ -155,13 +155,17 @@ function developmentErrorLog($exception){
   * Exception Handler set in Kurogo::initialize()
   */
 function exceptionHandlerForError($exception) {
-    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception");
+    $bt = $exception->getTrace();
+    array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
+    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
     $error = print_r($exception, TRUE);
     die("There was a serious error: $error");
 }
 
 function exceptionHandlerForDevelopment($exception) {
-    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception");
+    $bt = $exception->getTrace();
+    array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
+    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
     $errtime = developmentErrorLog($exception);
     $error = print_r($exception, TRUE);
 	
@@ -178,8 +182,9 @@ function exceptionHandlerForDevelopment($exception) {
   * Exception Handler set in Kurogo::initialize()
   */
 function exceptionHandlerForProduction(Exception $exception) {
-
-    Kurogo::log(LOG_ALERT, sprintf("A %s has occured: %s", get_class($exception), $exception->getMessage()), "exception");
+    $bt = $exception->getTrace();
+    array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
+    Kurogo::log(LOG_ALERT, sprintf("A %s has occured: %s", get_class($exception), $exception->getMessage()), "exception", $bt);
     if ($exception instanceOf KurogoException) {
         $sendNotification = $exception->shouldSendNotification();
     } else {
@@ -210,7 +215,9 @@ function exceptionHandlerForProduction(Exception $exception) {
 }
 
 function exceptionHandlerForAPI($exception) {
-    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception");
+    $bt = $exception->getTrace();
+    array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
+    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
     $error = KurogoError::errorFromException($exception);
     $response = new APIResponse();
     $response->setVersion(0);

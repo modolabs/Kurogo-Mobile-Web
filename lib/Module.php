@@ -77,6 +77,7 @@ abstract class Module
         	//use the ID parameter if it's present, otherwise use the included id
         	$id = $config->getOptionalVar('id', $id);
         } elseif (!Kurogo::getOptionalSiteVar('CREATE_DEFAULT_CONFIG', false, 'modules')) {
+            Kurogo::log(LOG_ERR, "Module config file not found for module $id", 'module');
 			throw new KurogoModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
         }
         
@@ -135,6 +136,7 @@ abstract class Module
             }
         }
        
+        Kurogo::log(LOG_ERR, "No valid class found for module $id", 'module');
         throw new KurogoModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
     }
     

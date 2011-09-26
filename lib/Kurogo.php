@@ -267,7 +267,7 @@ class Kurogo
         return $this->logger;
     }
     
-    public static function log($priority, $message, $area) {
+    public static function log($priority, $message, $area, $backtrace=null) {
         static $deferredLogs = array();
         $logger = Kurogo::sharedInstance()->logger();
         
@@ -287,7 +287,7 @@ class Kurogo
             $deferredLogs = array();
         }
 
-        return $logger->log($priority, $message, $area);
+        return $logger->log($priority, $message, $area, $backtrace);
     }
         
     public function initialize(&$path=null) {
