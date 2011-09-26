@@ -50,15 +50,20 @@ class APIResponse
         $this->response = $response;
     }
     
-    public function display() {
+    public function getJSONOutput() {
         if (is_null($this->version)) {
             throw new KurogoException('APIResponse version must be set before display');
         }
     
-        $json = json_encode($this);
+        return json_encode($this);
+    }
+
+    public function display() {
+        $json = $this->getJSONOutput();
+        $size = strlen($json);
         header("Content-Type: application/json;charset=utf-8");
-        header("Content-Length: " . strlen($json));
+        header("Content-Length: " . $size);
         echo $json;
-        exit();
+        return $json;
     }
 }

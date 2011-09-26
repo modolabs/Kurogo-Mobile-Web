@@ -1,0 +1,354 @@
+/* General chart & graph styles */
+.graph {
+    border-left: 1px solid #888;
+    border-bottom: 1px solid #888;
+			position: relative;
+			overflow: visible;
+}
+.graphaxis {
+    font-size: 75%;
+    font-weight: bold;
+    color: #333;
+}
+.ylabel {
+    position: absolute;
+    left: -46px;
+    padding: 0;
+    text-align: center;
+    -webkit-transform:rotate(-90deg);
+    transform:rotate(-90deg);
+}
+.xlabel {
+    position: absolute;
+    left: 0%;
+    bottom: -40px;
+    width: 100%;
+    text-align: center;
+}
+.barlabel, .valuelabel, .graphlabel {
+    position: absolute;
+    font-size: 64.7%;
+    line-height: 1.2em;
+    text-align: center;
+    width: 100%;
+    whitespace: no-wrap;
+}
+.graphlabel {
+	width: auto;
+}
+.noscale {
+    margin-left: 0!important;
+	border-left: none!important;
+	padding: 0 0.5em;
+}
+.novalue {
+margin-top: 1em;
+}
+.noscale .gridline-y, .noscale .gridline-x {
+	display: none;
+}
+.novalue .valuelabel {
+	display: none;
+}
+.gridline-y, .gridline-x {
+	position: absolute;
+	z-index: 10;
+	opacity: 0.6;
+	filter:alpha(opacity=40);
+	color: #000;
+}
+.gridline-y {
+	width: 100%;
+	border-top: 1px solid rgba(50,50,50,0.18);
+}
+.gridline-y.gridmax {
+    top: 0;
+}
+.gridline-y.gridmin {
+	bottom: -1px;
+	border-color: transparent;
+}
+.gridline-y .graphlabel {
+	text-align: right;
+	left: -3.5em;
+	min-width: 3.2em;
+	line-height: 1.2em;
+	height: 1.2em;
+	top: -0.7em;
+}
+.gridline-x {
+	height: 100%;
+	border-right: 1px solid rgba(50,50,50,0.16);
+}
+.gridline-x.gridmax {
+	right: 0;
+}
+.gridline-x.gridmin {
+	left: -1px;
+	border-color: transparent;
+}
+.gridaxis {
+	border-color: #888;
+	z-index: 0;
+}
+.gridline-x .graphlabel {
+	text-align: center;
+	top: 100%;
+	left: -1.5em;
+	margin-top: 0.25em;
+	text-align: center;
+	min-width: 3em;
+}
+.nogridline .gridline-y, .nogridline .gridline-x {
+	border: none;
+}
+
+
+/* Bar charts */
+
+.chartbar:last-child {
+	margin-right: 0;
+}
+.barval, .barval2, .barval3, .barval4 {
+	background-color: #0058a5;
+	position: absolute;
+}
+.barval2 {
+	background-color: #55a90c;
+	opacity: 1;
+}
+.barval3 {
+	background-color: #f90;
+	opacity: 1;
+}
+.barval4 {
+	background-color: #ffc30c;
+	opacity: 1;
+}
+.bar-negative {
+	background-color: #d30;
+}
+.bargroup {
+	position: relative;
+	padding: 0 2px;
+	height: 100%;
+}
+
+/* Vertical (standard) bar charts */
+.barchart-v {
+	height: 100px;
+	margin: 20px 0 20px 30px;
+}
+.barchart-v .ylabel {
+	height: 100px;	/* Should equal height of .barchart-v */
+	width: 100px; /* Should equal height */
+}
+.barchart-v.novalue {
+	margin-top: 1em;
+}
+.barchart-v .barlabel {
+	top: 100%;
+	margin-top: 0.25em;
+}
+.barchart-v .chartbar {
+	float: left;
+	margin: 0 0 0 .99%;
+	position: relative;
+	height: 100%;
+}
+.barchart-v .barval {
+	width: 100%;
+	bottom: 0;
+}
+.barchart-v .valuelabel {
+	top: 0%;
+	margin-top: -1.3em;
+}
+.barchart-v .bar-negative {
+	bottom: auto;
+	top: 100%;
+}
+.bars1 .chartbar {
+	width: 100%;
+	margin-left: 0%;
+}
+.bars2 .chartbar {
+	width: 47%;
+	margin-left: 1.95%;
+}
+.bars3 .chartbar {
+	width: 31.33%;
+	margin-left: 1.95%;
+}
+.bars4 .chartbar {
+	width: 23%;
+	margin-left: 1.95%;
+}
+.bars5 .chartbar {
+	width: 18%;
+	margin-left: 1.95%;
+}
+.bars6 .chartbar {
+	width: 15.66%;
+}
+.bars7 .chartbar {
+    width: 13.28%;
+}
+.bars8 .chartbar {
+	width: 11.5%;
+}
+.bars9 .chartbar {
+	width: 10.11%;
+}
+.bars10 .chartbar {
+	width: 9.25%;
+	margin-left: 0.75%;
+}
+.bars11 .chartbar {
+	width: 8.35%;
+	margin-left: 0.75%;
+}
+.bars12 .chartbar {
+	width: 7.58%;
+	margin-left: 0.75%;
+}
+.bars13 .chartbar {
+	width: 7.2%;
+	margin-left: 0.5%;
+}
+.bars14 .chartbar {
+	width: 6.64%;
+	margin-left: 0.5%;
+}
+.bars15 .chartbar {
+	width: 6.17%;
+	margin-left: 0.5%;
+}
+.bars16 .chartbar {
+	width: 6%;
+	margin-left: 0.2%;
+}
+.bars17 .chartbar {
+	width: 5.65%;
+	margin-left: 0.2%;
+}
+.bars18 .chartbar {
+	width: 5.36%;
+	margin-left: 0.2%;
+}
+.bars19 .chartbar {
+	width: 5.06%;
+	margin-left: 0.2%;
+}
+.bars20 .chartbar {
+    width: 4.75%;
+	margin-left: 0.2%;
+}
+
+.bars21 .chartbar {
+    width: 4.56%;
+	margin-left: 0.2%;
+}
+
+.bars22 .chartbar {
+    width: 4.36%;
+	margin-left: 0.18%;
+}
+
+.bars23 .chartbar {
+    width: 4.16%;
+	margin-left: 0.18%;
+}
+
+.bars24 .chartbar {
+    width: 4.0%;
+	margin-left: 0.15%;
+}
+
+/* Horizontal bar charts */
+.barchart-h {
+	margin: 0 40px 20px 70px;
+	padding: 5px 0;
+}
+.barchart-h .chartbar, .barchart-h .barval, .barchart-h .barlabel, .barchart-h .valuelabel {
+	height: 22px;
+	line-height: 22px;
+}
+.compact .chartbar, .compact .barval, .compact .barlabel, .compact .valuelabel {
+    height: 16px;
+	line-height: 15px;
+}
+.barchart-h .barlabel {
+	left: -70px;
+	width: 66px;
+	text-align: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.barchart-h .chartbar {
+	margin: 3px 0;
+}
+.compact .chartbar {
+	margin: 2px 0;
+}
+.barchart-h .barval {
+	left: 0;
+}
+.barchart-h .valuelabel {
+	left: 100%;
+	margin-left: 4px;
+	width: auto;
+	white-space: nowrap;
+	text-align: left;
+}
+.barchart-h.novalue {
+	margin-right: 15px;
+}
+.barchart-h.shortbarlabel {
+	margin-left: 30px; 
+}
+.barchart-h.nobarlabel {
+	margin-left: 15px;
+}
+.barchart-h.nobarlabel .barlabel {
+	display: none;
+}
+.barchart-h .bar-negative {
+	right: 100%; 
+	left: auto;
+}
+
+
+/* Line graphs */
+
+.linechart {
+	height: 120px;
+	margin: 20px 15px 20px 30px;
+}
+.linechart .ylabel {
+	height: 120px;	/* Should equal height of .linechart */
+	width: 120px; /* Should equal height */
+}
+.graph canvas {
+	position: absolute;
+	width:100%; 
+    height:100%; 
+	top: 0;
+	left: 0;
+}
+
+/* Quadrant graphs */
+
+.quadchart {
+	height: 200px;
+	margin: 20px 15px 70px 40px;
+	border-color: #e6e6e6;
+}
+.quadchart .ylabel {
+	height: 200px;	/* Should equal height of .quadchart */
+	width: 200px; /* Should equal height */
+}
+.quadchart .gridaxis {
+	border-color: #333;
+}

@@ -216,8 +216,8 @@
         "fields":{
             "GOOGLE_ANALYTICS_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_GOOGLE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_GOOGLE_DESCRIPTION","section":"analytics","placeholder":" UA-XXXXXXX-X"},
             "PERCENT_MOBILE_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_PERCENT_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_PERCENT_DESCRIPTION","section":"analytics"},
-            "PAGE_VIEWS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_PAGE_VIEWS_DESCRIPTION","section":"analytics"},
-            "API_STATS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_API_STATS_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_API_STATS_DESCRIPTION","section":"analytics"}
+            "KUROGO_STATS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_TABLE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_TABLE_DESCRIPTION","section":"analytics","placeholder":"kurogo_stats_v1"},
+            "KUROGO_VISIT_LIFESPAN":{"labelKey":"ADMIN_SITE_ANALYTICS_VISIT_LIFESPAN_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_VISIT_LIFESPAN_DESCRIPTION","section":"analytics","placeholder":1800}
         }
     },
     "files":{
@@ -225,10 +225,6 @@
         "descriptionKey":"ADMIN_SITE_FILES_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "WEB_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_WEB_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_WEB_LOG_DESCRIPTION","section":"log_files"},
-            "WEB_CURRENT_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_WEB_CURRENT_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_WEB_CURRENT_LOG_DESCRIPTION","section":"log_files"},
-            "API_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_API_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_API_LOG_DESCRIPTION","section":"log_files"},
-            "API_CURRENT_LOG_FILE":{"labelKey":"ADMIN_SITE_FILES_API_CURRENT_LOG_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_API_CURRENT_LOG_DESCRIPTION","section":"log_files"},
             "LOG_DATE_FORMAT":{"labelKey":"ADMIN_SITE_FILES_DATE_FORMAT_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_FILES_DATE_FORMAT_DESCRIPTION","section":"log_files"},
             "LOG_DATE_PATTERN":{"labelKey":"ADMIN_SITE_FILES_DATE_PATTERN_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_FILES_DATE_PATTERN_DESCRIPTION","section":"log_files"},
             "TMP_DIR":{"labelKey":"ADMIN_SITE_FILES_TMP_DIR_TITLE","type":"file","config":"site","descriptionKey":"ADMIN_SITE_FILES_TMP_DIR_DESCRIPTION","section":"log_files","omitBlankValue":true}

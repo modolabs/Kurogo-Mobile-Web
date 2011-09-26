@@ -98,7 +98,6 @@ Core / Support Files
 * minify - interface between the framework and the included open source minify library
 * *DeviceClassifier* - An interface between the framework and the :doc:`Device Detection Service <devicedetection>`
 * *deviceData.db* - A SQLite database that contains browser entries used by the internal device detection system.
-* *PageViews* - A class to log and retrieve page view information for statistics
 * *Validator* - A utility class to validate certain types of data
 
 --------------------
