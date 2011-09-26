@@ -75,7 +75,7 @@ are free to use any area they wish to log their own messages:
 Logging in your module or library
 ---------------------------------
 
-The Kurogo::log($priority, $message, $area ) method is used to send a message to the log. The 
+The *Kurogo::log($priority, $message, $area)* method is used to send a message to the log. The 
 $priority parameter should be on of the priority level constants, the message should be a
 string and the area should be a string of the area you wish to log. You could use LOGGING_LEVEL[area]
 to set the logging for your area as necessary.
