@@ -14,4 +14,7 @@
       </div><!-- videoDetail -->
     </div><!-- videoDetailWrapper -->
   </div><!-- tabletVideos -->
+  <div id="noBookmarks" class="nonfocal" style="display:none">
+    No bookmarked videos
+  </div>
 {/block}
