@@ -143,7 +143,7 @@ class KurogoStats {
     }
 
     private static function createStatsTables() {
-        $table = Kurogo::getSiteVar('KUROGO_STATS_TABLE');
+        $table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
         $createSQL = "CREATE TABLE $table (
                 timestamp int(11),
                 date datetime,
@@ -286,7 +286,7 @@ class KurogoStats {
         }
         
         // build the query
-        $table = Kurogo::getSiteVar('KUROGO_STATS_TABLE');
+        $table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
         $sql = "SELECT " . implode(',', $fields) . " FROM " . $table;
         $sql .= $filters ? " WHERE " . implode(' AND ', $filters) : '';
         $sql .= $group ? " GROUP BY " . implode(', ', $group) : '';
