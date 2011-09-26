@@ -4,11 +4,38 @@ includePackage('Maps', 'MapDB');
 
 class MapDBSearch extends MapSearch
 {
+    private function getSearchResultsForQuery($sql, $params, $maxItems=0)
+    {
+        if ($maxItems) {
+            $result = MapDB::connection()->limitQuery(
+                $sql, $params, false, array(), $maxItems);
+        } else {
+            $result = MapDB::connection()->query($sql, $params);
+        }
+
+        $displayableCategories = MapDB::getAllCategoryIds();
+        // eliminate dupe placemarks if they appear in multiple categories
+        $uniqueResults = array();
+        while ($row = $result->fetch()) {
+            if (in_array($row['category_id'], $displayableCategories)) {
+                $ukey = $row['placemark_id'].$row['lat'].$row['lon'];
+                if (isset($uniqueResults[$ukey])) {
+                    $uniqueResults[$ukey]->addCategoryId($row['category_id']);
+                } else {
+                    $placemark = new MapDBPlacemark($row, true);
+                    $placemark->addCategoryId($row['category_id']);
+                    $uniqueResults[$ukey] = $placemark;
+                }
+            }
+        }
+        $this->searchResults = array_values($uniqueResults);
+        $this->resultCount = count($this->searchResults);
+        return $this->searchResults;
+    }
+
     // tolerance specified in meters
     public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataController=null)
     {
-        $this->searchResults = array();
-
         $bbox = normalizedBoundingBox($center, $tolerance, null, null);
 
         $params = array(
@@ -22,19 +49,7 @@ class MapDBSearch extends MapSearch
               .'   AND p.lat >= ? AND p.lat < ? AND p.lon >= ? AND p.lon < ?'
               .' ORDER BY (p.lat - ?)*(p.lat - ?) + (p.lon - ?)*(p.lon - ?)';
 
-        if ($maxItems) {
-            $result = MapDB::connection()->limitQuery(
-                $sql, $params, false, array(), $maxItems);
-        } else {
-            $result = MapDB::connection()->query($sql, $params);
-        }
-
-        while ($row = $result->fetch()) {
-            $placemark = new MapDBPlacemark($row, true);
-            $placemark->addCategoryId($row['category_id']);
-            $this->searchResults[] = $placemark;
-        }
-        return $this->searchResults;
+        return $this->getSearchResultsForQuery($sql, $params, $maxItems);
     }
 
     public function searchCampusMap($query)
@@ -49,16 +64,7 @@ class MapDBSearch extends MapSearch
               .'   AND (p.name like ? OR p.name like ?)';
         $params = array("$query%", "% $query%");
 
-        $result = MapDB::connection()->query($sql, $params);
-
-        while ($row = $result->fetch()) {
-            $placemark = new MapDBPlacemark($row, true);
-            $placemark->addCategoryId($row['category_id']);
-            $this->searchResults[] = $placemark;
-        }
-        $this->resultCount = count($this->searchResults);
-
-        return $this->searchResults;
+        return $this->getSearchResultsForQuery($sql, $params);
     }
 }
 

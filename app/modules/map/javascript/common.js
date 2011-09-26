@@ -91,7 +91,6 @@ var mapControls = {
             this.startLocationUpdates();
         } else {
             this.stopLocationUpdates();
-            this.recenterMap();
         }
     },
     startLocationUpdates: function() {
@@ -120,7 +119,7 @@ var mapControls = {
     // params: { zoomin:Function,zoomout:Function,recenter:Function,
     //   ?locationUpdated:Function,?locationUpdateStopped:Function }
     setup: function(args) {
-        this.recenter = args.recenter;
+        this.recenterMap = args.recenter;
         if ("locationUpdated" in args) {
             this.locationUpdated = args.locationUpdated;
         }
@@ -135,7 +134,7 @@ var mapControls = {
         zoomoutButton.onclick = args.zoomout;
 
         var recenterButton = document.getElementById("recenter");
-        recenterButton.onclick = this.recenter;
+        recenterButton.onclick = this.recenterMap;
 
         this.locateMeButton = document.getElementById("locateMe");
         if ("geolocation" in navigator && typeof(showUserLocation) != 'undefined') {

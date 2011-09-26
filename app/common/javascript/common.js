@@ -11,7 +11,7 @@ function showTab(strID, objTrigger) {
 		show(strID);
 		if(currentTab && (currentTab != objTab)) {
 			hide(currentTab.id);
-			currentTab.style.display = "none";
+			//currentTab.style.display = "none";
 		}
 	}
 	currentTab = objTab; // Remember which is the currently displayed tab
