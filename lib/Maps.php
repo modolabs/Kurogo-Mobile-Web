@@ -49,6 +49,22 @@ function filterLatLon($testString) {
     return false;
 }
 
+// the following two functions are based on the scale, i.e. the number of 
+// ground inches represented per inch on the computer screen, using the old
+// pixel size of 0.28 millimeters.
+// the number 559082264 is this ratio at a zoom level of 0 (showing full map).
+// http://wiki.openstreetmap.org/wiki/MinScaleDenominator
+// it currently works for WMS and ArcGIS maps
+function oldPixelScaleForZoomLevel($zoomLevel)
+{
+    return 559082264 / pow(2, $zoomLevel);
+}
+
+function oldPixelZoomLevelForScale($scale)
+{
+    return ceil(log(559082264 / $scale, 2));
+}
+
 function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null)
 {
     if ($fromProj !== null || $toProj !== null) {

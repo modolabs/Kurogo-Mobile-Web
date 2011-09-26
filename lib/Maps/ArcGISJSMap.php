@@ -13,8 +13,8 @@ class ArcGISJSMap extends JavascriptMapImageController {
     
     private $apiVersion = '2.1';
     private $themeName = 'claro'; // claro, tundra, soria, nihilo
-    
-    private $permanentZoomLevel = null;
+
+    protected $levelsOfDetail = array();    
     
     // TODO: fix zoom level problem
     public function __construct($baseURL)
@@ -34,14 +34,13 @@ class ArcGISJSMap extends JavascriptMapImageController {
             $this->setMapProjection($wkid);
         }
 
+        if (isset($data['tileInfo'], $data['tileInfo']['lods'])) {
+            $this->levelsOfDetail = $data['tileInfo']['lods'];
+        }
+
         if (is_array($baseURL)) {
             $this->addLayers($baseURL);
         }
-    }
-
-    public function setPermanentZoomLevel($zoomLevel)
-    {
-        $this->permanentZoomLevel = $zoomLevel;
     }
     
     public function setImageWidth($width) {
@@ -279,8 +278,19 @@ class ArcGISJSMap extends JavascriptMapImageController {
     function getFooterScript() {
         // put dojo stuff in the footer since the header script
         // gets loaded before the included script
+
+        $zoomLevel = $this->zoomLevel;
+        $targetScale = oldPixelScaleForZoomLevel($zoomLevel);
+        if ($this->levelsOfDetail) {
+            foreach ($this->levelsOfDetail as $levelData) {
+                if ($levelData['scale'] < $targetScale) {
+                    break;
+                } else {
+                    $zoomLevel = $levelData['level'];
+                }
+            }
+        }
         
-        $zoomLevel = $this->permanentZoomLevel ? $this->permanentZoomLevel : $this->zoomLevel;
         $moreLayersJS = '';
         foreach ($this->moreLayers as $anotherLayer) {
             $moreLayersJS .= <<<JS
