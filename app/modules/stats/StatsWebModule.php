@@ -148,6 +148,17 @@ class StatsWebModule extends WebModule {
             $data = $this->getStatsData($chartData);
         }
         
+        if (isset($chartData['group']) && $chartData['group']=='data') {
+            $labels = array();
+            $values = array();
+            foreach ($data as $k=>$v) {
+                $labels[$k] = $v['label'];
+                $values[$k] = $v['count'];
+            }
+            $data = $values;
+            $chartData['labels'] = $labels;
+        }
+        
         $chartData['data'] = $data;
         
         if (isset($chartData['detailurl']) && strlen($chartData['detailurl'])) {
