@@ -8,6 +8,7 @@ class UrlWebModule extends WebModule {
   
   protected function initializeForPage() {
      if ($url = $this->getModuleVar('url')) {
+         $this->logView();
          header("Location: $url");
          die();
      } else {

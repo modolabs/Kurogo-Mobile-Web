@@ -269,6 +269,11 @@ function toggleBookmark(name, item, expireseconds, path) {
     }
   }
   setCookieArrayValue(name, newItems, expireseconds, path);
+  
+  // facility for module to respond to bookmark state change
+  if (typeof moduleBookmarkToggled != 'undefined') {
+    moduleBookmarkToggled(name, item, expireseconds, path);
+  }
 }
 
 // TODO this needs to handle encoded strings and parameter separators (&amp;)

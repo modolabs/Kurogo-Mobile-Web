@@ -49,6 +49,22 @@ function filterLatLon($testString) {
     return false;
 }
 
+// the following two functions are based on the scale, i.e. the number of 
+// ground inches represented per inch on the computer screen, using the old
+// pixel size of 0.28 millimeters.
+// the number 559082264 is this ratio at a zoom level of 0 (showing full map).
+// http://wiki.openstreetmap.org/wiki/MinScaleDenominator
+// it currently works for WMS and ArcGIS maps
+function oldPixelScaleForZoomLevel($zoomLevel)
+{
+    return 559082264 / pow(2, $zoomLevel);
+}
+
+function oldPixelZoomLevelForScale($scale)
+{
+    return ceil(log(559082264 / $scale, 2));
+}
+
 function normalizedBoundingBox($center, $tolerance, $fromProj=null, $toProj=null)
 {
     if ($fromProj !== null || $toProj !== null) {
@@ -87,7 +103,7 @@ function mapIdForFeedData(Array $feedData) {
     if (isset($feedData['BASE_URL'])) {
         $identifier .= $feedData['BASE_URL'];
     } else {
-        Kurogo::log(LOG_WARNING, "Warning: map feed for $identifier has no BASE_URL for map feed");
+        Kurogo::log(LOG_WARNING, "Warning: map feed for $identifier has no BASE_URL for map feed", 'maps');
     }
     return substr(md5($identifier), 0, 10);
 }

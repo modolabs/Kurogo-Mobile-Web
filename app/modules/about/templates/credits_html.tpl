@@ -13,8 +13,10 @@ Cambridge, MA 02140<br />
 <ul>
     <li>Pete Akins (Lead Developer, Mobile Web)</li>
     <li>Muhammad Amjad</li>
+    <li>Dario Baldoni</li>
     <li>Alexis Ellwood</li>
     <li>Ian Gavalakis</li>
+    <li>Wesley Hirsch</li>
     <li>Sonya Huang (Lead Developer, iOS)</li>
     <li>Jim Kang</li>
     <li>David Ormsbee</li>
@@ -85,18 +87,4 @@ Cambridge, MA 02140<br />
     <li>Copyright: Stig Brautaset</li>
     <li><a href="http://stig.github.com/json-framework">http://stig.github.com/json-framework</a>
 </ul>    
-
-
-<em>MGTwitterEngine</em>
-<ul>
-    <li>License: Custom (see source in Kurogo-iOS/Contrib/MGTwitterEngine)</li>
-    <li>Copyright: Matt Gemmell</li>
-    <li><a href="https://github.com/mattgemmell/MGTwitterEngine">https://github.com/mattgemmell/MGTwitterEngine</a></li>
-</ul>    
-
-<em>Sci-Fi Hi-Fi iPhone</em>
-<ul>
-    <li>License: MIT</li>
-    <li>Copyright: Buzz Anderson (Based partly on code by Jonathan Wight, Jon Crosby, and Mike Malone)</li>
-    <li><a href="https://github.com/ldandersen/scifihifi-iphone">https://github.com/ldandersen/scifihifi-iphone</a></li>
-</ul>    
+   

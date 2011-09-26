@@ -462,7 +462,7 @@ abstract class OAuthProvider
 
 		// validate
 		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
-            Kurogo::log(LOG_WARNING, 'oauth_token not found in getRequestToken');
+            Kurogo::log(LOG_WARNING, 'oauth_token not found in getRequestToken', 'auth');
 		    return false;
 		}
 		
@@ -502,7 +502,7 @@ abstract class OAuthProvider
 		parse_str($response, $return);
 
 		if (!isset($return['oauth_token'], $return['oauth_token_secret'])) {
-            Kurogo::log(LOG_WARNING, 'oauth_token not found in getAccessToken');
+            Kurogo::log(LOG_WARNING, 'oauth_token not found in getAccessToken', 'auth');
 		    return false;
 		}
 		

@@ -113,8 +113,7 @@ class ArcGISStaticMap extends StaticMapImageController {
             $range = $this->getHorizontalRange();
             return ceil(log(360 / $range, 2));
         } else {
-            // http://wiki.openstreetmap.org/wiki/MinScaleDenominator
-            return ceil(log(559082264 / $scale, 2));
+            return oldPixelZoomLevelForScale($scale);
         }
     }
 

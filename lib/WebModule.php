@@ -281,10 +281,22 @@ abstract class WebModule extends Module {
     if (!isset($this->templateEngine)) {
       Kurogo::log(LOG_DEBUG, "Initializing template engine", 'module');
       $this->templateEngine = new TemplateEngine($this->id);
+      $this->templateEngine->registerPlugin('function', 'drawChart', array($this, 'drawChart'));
       $this->templateEngine->registerPlugin('modifier','getLocalizedString', array($this,'getLocalizedString'));
     }
   }
   
+  public function drawChart($params) {
+    static $chartDrawn;
+    $result = '';
+    if (!$chartDrawn) {
+        $result .= '<style type="text/css">@import url("' . $this->getInternalCSSURL('/common/css/chart.css') . '");</style>';
+        $result .= '<script type="text/javascript" src="' . $this->getInternalJavascriptURL('/common/javascript/chart.js') . '"></script>';
+        $chartDrawn = true;
+    }
+    $result .= KurogoChart::drawChart($params);
+    return $result;
+  }
   //
   // URL helper functions
   //
@@ -1384,7 +1396,18 @@ abstract class WebModule extends Module {
     $template = $this->setPageVariables();
     
     // Load template for page
-    $this->templateEngine->displayForDevice($template);    
+    $output = $this->templateEngine->fetchForDevice($template);
+
+	// log this request
+	$this->logView(strlen($output));
+	echo $output;
+	exit();
+  }
+  
+  protected function logView($size=null) {
+    if ($this->logView) {
+        KurogoStats::logView('web', $this->configModule, $this->page, $this->logData, $this->logDataLabel, $size);
+    }
   }
   
   //
