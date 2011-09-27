@@ -111,7 +111,7 @@ class MapDBDataController extends MapDataController implements MapFolder
     {
     }
 
-    public function searchByProximity($center, $tolerance, $maxItems)
+    public function searchByProximity($center, $tolerance, $maxItems=null)
     {
         $mapSearch = new MapDBSearch();
         return $mapSearch->searchByProximity($center, $tolerance, $maxItems, $this);

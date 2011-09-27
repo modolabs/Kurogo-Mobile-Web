@@ -4,7 +4,7 @@ class MapDBPlacemark extends BasePlacemark
 {
     private $centroid = null;
 
-    public function setStyle($style)
+    public function setStyle(MapStyle $style)
     {
         $this->style = $style;
     }
