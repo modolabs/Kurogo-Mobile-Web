@@ -35,7 +35,7 @@ function videoPaneResizeHandler() {
 }
 
 function videoPaneSwitchVideo(elem, direction) {
-  if (elem.className.match(/disabled/)) { return false; }
+  if (hasClass(elem, 'disabled')) { return false; }
 
   var videos = document.getElementById('videos').childNodes;
   
@@ -44,18 +44,26 @@ function videoPaneSwitchVideo(elem, direction) {
   var next = document.getElementById('videoNext');
   
   for (var i = 0; i < videos.length; i++) {
-    if (videos[i].className == 'current') {
+    if (hasClass(videos[i], 'current')) {
       var j = direction == 'next' ? i+1 : i-1;
       
       if (j >= 0 || j < videos.length) {
-        videos[i].className = '';
-        videos[j].className = 'current';
+        removeClass(videos[i], 'current');
+        addClass(videos[j], 'current');
         
-        dots[i].className = '';
-        dots[j].className = 'current';
+        removeClass(dots[i], 'current');
+        addClass(dots[j], 'current');
         
-        prev.className = (j == 0) ? 'disabled' : '';
-        next.className = (j == (videos.length-1)) ? 'disabled' : '';
+        if (j == 0) {
+          addClass(prev, 'disabled');
+        } else {
+          removeClass(prev, 'disabled');
+        }
+        if (j == (videos.length-1)) {
+          addClass(next, 'disabled');
+        } else {
+          removeClass(next, 'disabled');
+        }
 
         videoEllipsizer.refresh();
         
