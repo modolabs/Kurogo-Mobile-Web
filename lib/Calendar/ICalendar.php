@@ -530,13 +530,14 @@ class ICalEvent extends ICalObject implements KurogoObject {
         return $output_string;
     }
 
-  public function __construct($summary=NULL, TimeRange $range=NULL) {
-    $this->classname = 'VEVENT';
-    if ($summary !== NULL) {
-      $this->summary = $summary;
-    }
-    if ($range !== NULL) {
-      $this->range = $range;
+    public function __construct($summary=NULL, TimeRange $range=NULL) {
+        $this->classname = 'VEVENT';
+        if ($summary !== NULL) {
+            $this->summary = $summary;
+        }
+        if ($range !== NULL) {
+            $this->range = $range;
+        }
     }
 }
 
