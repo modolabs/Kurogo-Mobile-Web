@@ -16,6 +16,12 @@ class CASAuthentication
 	 * @var string
 	 */
 	protected $userClass='CASUser';
+	
+	/** 
+	  * Class for group objects. Most subclasses will override this
+	  * @var string
+	  */
+	protected $groupClass='CASUserGroup';
 
 	/**
 	 * Initializes the authority objects based on an associative array of arguments
@@ -46,6 +52,8 @@ class CASAuthentication
 	 *   ATTRA_LAST_NAME => Attribute name for the user's last name, e.g. "surname". This only applies if your 
 	 *                      CAS server returns attributes in a SAML-1.1 or CAS-2.0 response.
 	 *   ATTRA_FULL_NAME => Attribute name for the user's full name, e.g. "displayname". This only applies if your 
+	 *                      CAS server returns attributes in a SAML-1.1 or CAS-2.0 response.
+	 *   ATTRA_MEMBER_OF => Attribute name for the user's groups, e.g. "memberof". This only applies if your 
 	 *                      CAS server returns attributes in a SAML-1.1 or CAS-2.0 response.
 	 *
 	 * NOTE: Any subclass MUST call parent::init($args) to ensure proper operation
@@ -88,6 +96,9 @@ class CASAuthentication
 			CASUser::mapAttribute('LastName', $args['ATTRA_LAST_NAME']);
 		if (!empty($args['ATTRA_FULL_NAME']))
 			CASUser::mapAttribute('FullName', $args['ATTRA_FULL_NAME']);
+		// Store an attribute for group membership if configured.
+		if (!empty($args['ATTRA_MEMBER_OF']))
+			CASUser::mapAttribute('MemberOf', $args['ATTRA_MEMBER_OF']);
 	}
 	
 	/**
@@ -142,7 +153,15 @@ class CASAuthentication
 	 * @see UserGroup object
 	 */
 	public function getGroup($group) {
-		return false;
+		if (empty($this->initArgs['ATTRA_MEMBER_OF']))
+			return false;
+		if (empty($group))
+			return false;
+		if (!phpCAS::isAuthenticated())
+			return false;
+		
+		// Create an empty group
+		return new $this->groupClass($this, $group);
 	}
 
 	/**
@@ -187,7 +206,7 @@ class CASUser
 			throw new Exception('$userProperty must not be empty.');
 		if (isset(self::$attributeMap[$userProperty]))
 			throw new Exception('User property '.$userProperty.' is already mapped.');
-		if (!method_exists('User', 'set'.$userProperty))
+		if (!method_exists('CASUser', 'set'.$userProperty))
 			throw new Exception('Unknown User property '.$userProperty.'.');
 		if (empty($remoteAttribute))
 			throw new Exception('$remoteAttribute must not be empty.');
@@ -218,5 +237,69 @@ class CASUser
 				$this->$method(phpCAS::getAttribute($property));
 			}
 		}
+	}
+	
+	/**
+	 * An array of groups the user is a member of.
+	 * 
+	 * @var array $memberOf
+	 */
+	private $memberOf = array();
+	
+	/**
+	 * Set the memberOf attribute
+	 * 
+	 * @param mixed array or string $memberOf
+	 * @return void
+	 */
+	public function setMemberOf ($memberOf) {
+		if (is_array($memberOf))
+			$this->memberOf = $memberOf;
+		else
+			$this->memberOf = array($memberOf);
+	}
+	
+	/**
+	 * Answer the memberOf attribute
+	 * 
+	 * @return array
+	 */
+	public function getMemberOf () {
+		return $this->memberOf;
+	}
+}
+
+/**
+  * @package Authentication
+  */
+class CASUserGroup
+	extends UserGroup
+{
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param string $groupName
+	 * @return void
+	 */
+	public function __construct (AuthenticationAuthority $AuthenticationAuthority, $groupName) {
+		parent::__construct($AuthenticationAuthority);
+		if (empty($groupName))
+			throw new Exception('$groupName must not be empty.');
+		$this->setGroupName($groupName);
+	}
+	
+	public function userIsMember (User $user) {
+		if (!$user instanceof CASUser)
+			return false;
+		
+		if ($user->getUserID() != phpCAS::getUser())
+			return false;
+		
+		$memberOf = $user->getMemberOf();
+		if (!is_array($memberOf))
+			return false;
+		
+		return in_array($this->getGroupName(), $memberOf);
 	}
 }
