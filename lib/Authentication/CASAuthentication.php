@@ -21,14 +21,32 @@ class CASAuthentication
 	 * Initializes the authority objects based on an associative array of arguments
 	 * @param array $args an associate array of arguments. The argument list is dependent on the authority
 	 *
-	 * Required keys:
-	 * TITLE => The human readable title of the AuthorityImage
-	 * INDEX => The tag used to identify this authority @see AuthenticationAuthority::getAuthenticationAuthority
+	 * General - Required keys:
+	 *   TITLE => The human readable title of the AuthorityImage
+	 *   INDEX => The tag used to identify this authority @see AuthenticationAuthority::getAuthenticationAuthority
 	 *
-	 * Optional keys:
-	 * LOGGEDIN_IMAGE_URL => a url to an image/badge that is placed next to the user name when logged in
+	 * General - Optional keys:
+	 *   LOGGEDIN_IMAGE_URL => a url to an image/badge that is placed next to the user name when logged in
 	 *
-	 * Specific authorities might have other required or optional keys
+	 * CAS - Required keys:
+	 *   CAS_PROTOCOL => The protocol to use. Should be equivalent to one of the phpCAS constants, e.g. "2.0":
+	 *                   CAS_VERSION_1_0 => '1.0', CAS_VERSION_2_0 => '2.0', SAML_VERSION_1_1 => 'S1'
+	 *   CAS_HOST => The host name of the CAS server, e.g. "cas.example.edu"
+	 *   CAS_PORT => The port the CAS server is listening on, e.g. "443"
+	 *   CAS_PATH => The path of the CAS application, e.g. "/cas/"
+	 *   CAS_CA_CERT => The filesystem path to a CA certificate that will be used to validate the authenticity
+	 *                  of the CAS server, e.g. "/etc/tls/pki/certs/my_ca_cert.crt". If empty, no certificate
+	 *                  validation will be performed (not recommended for production).
+	 *
+	 * CAS - Optional keys:
+	 *   ATTRA_EMAIL => Attribute name for the user's email adress, e.g. "email". This only applies if your 
+	 *                  CAS server returns attributes in a SAML-1.1 or CAS-2.0 response.
+	 *   ATTRA_FIRST_NAME => Attribute name for the user's first name, e.g. "givename". This only applies if your 
+	 *                       CAS server returns attributes in a SAML-1.1 or CAS-2.0 response.
+	 *   ATTRA_LAST_NAME => Attribute name for the user's last name, e.g. "surname". This only applies if your 
+	 *                      CAS server returns attributes in a SAML-1.1 or CAS-2.0 response.
+	 *   ATTRA_FULL_NAME => Attribute name for the user's full name, e.g. "displayname". This only applies if your 
+	 *                      CAS server returns attributes in a SAML-1.1 or CAS-2.0 response.
 	 *
 	 * NOTE: Any subclass MUST call parent::init($args) to ensure proper operation
 	 *
