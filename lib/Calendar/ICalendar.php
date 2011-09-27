@@ -538,6 +538,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
     if ($range !== NULL) {
       $this->range = $range;
     }
+  }
 }
 
 /**

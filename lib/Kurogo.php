@@ -21,7 +21,7 @@ class Kurogo
     protected $logger;
     protected $locale;    
     protected $languages=array();
-    protected $cacher = array();
+    protected $cacher;
 
     private function __construct() {
         $this->startTime = microtime(true);
@@ -144,6 +144,10 @@ class Kurogo
      */
      
     public function siteLibAutoloader($className) {
+        if ($classPath = Kurogo::getCache('autoload-' . $className)) {
+            include($classPath);
+            return ;
+        }
         $paths = $this->libDirs;
         
         // If the className has Module in it then use the modules dir
@@ -157,13 +161,13 @@ class Kurogo
         }
         
         $paths[] = LIB_DIR;
-        
         self::log(LOG_DEBUG, "Autoloader loading $className", "autoLoader"); 
         foreach ($paths as $path) {
             $file = "$path/$className.php";
             self::log(LOG_DEBUG, "Autoloader looking for $file for $className", "autoLoader");
             if (file_exists($file)) {
                 self::log(LOG_INFO, "Autoloader found $file for $className", "autoLoader");
+                Kurogo::setCache('autoload-' . $className, $file);
                 include($file);
                 return;
             }
@@ -333,15 +337,14 @@ class Kurogo
     
     private function cacher() {
         if (!$this->cacher && $this->config) {
-            $cacheConfig = self::getOptionalSiteSection('cache');
-            if ($cacheConfig) {
-                $this->cacher = KurogoCache::factory($cacheConfig['CACHE_CLASS'], $cacheConfig);
-            }
+            require_once(LIB_DIR . '/KurogoCache.php');
+            $cacheClass = $this->config->getOptionalVar('CACHE_CLASS');
+            $this->cacher = KurogoCache::factory($cacheClass);
         }
         return $this->cacher;
     }
     
-    public static function cacheGet($key) {
+    public static function getCache($key) {
         $cacher = Kurogo::sharedInstance()->cacher();
         if ($cacher && $cacher instanceOf KurogoCache) {
             return $cacher->get($key);
@@ -349,7 +352,7 @@ class Kurogo
         return false;
     }
     
-    public static function cacheSet($key, $value, $ttl = 0) {
+    public static function setCache($key, $value, $ttl = 0) {
         $cacher = Kurogo::sharedInstance()->cacher();
         if ($cacher && $cacher instanceOf KurogoCache) {
             return $cacher->set($key, $value, $ttl);
@@ -357,7 +360,7 @@ class Kurogo
         return false;
     }
     
-    public static function cacheDelete($key) {
+    public static function deleteCache($key) {
         $cacher = Kurogo::sharedInstance()->cacher();
         if ($cacher && $cacher instanceOf KurogoCache) {
             return $cacher->delete($key);
@@ -365,34 +368,12 @@ class Kurogo
         return false;
     }
     
-    public static function cacheClear() {
+    public static function clearCache() {
         $cacher = Kurogo::sharedInstance()->cacher();
         if ($cacher && $cacher instanceOf KurogoCache) {
             return $cacher->clear();
         }
         return false;
-    }
-    
-    //if cache file data, need to check the last modify time
-    public static function getFileCacheData($key, $filepath) {
-        if ($cacheData = self::cacheGet($key)) {
-            if ($data = @unserialize($cacheData)) {
-                if ($data['last_modify_time'] < filemtime($filepath)) {
-                    return false;
-                } else {
-                    return $data['data'];
-                }
-            }
-        }
-        return false;
-    }
-    
-    public static function writeFileCacheData($key, $data, $filepath) {
-        $data = array(
-            'last_modify_time' => filemtime($filepath),
-            'data' => $data,    
-        );
-        return Kurogo::cacheSet($key, serialize($data));
     }
 
     public static function log($priority, $message, $area, $backtrace=null) {

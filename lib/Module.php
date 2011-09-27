@@ -71,6 +71,9 @@ abstract class Module
 		$this->logDataLabel = strval($dataLabel);
 	}
   
+    private function cacheKey($id, $type) {
+        return 'module-factory-' . md5($id . '-' . $type);
+    }
     /**
       * Factory method. Used to instantiate a subclass
       * @param string $id, the module id to load
@@ -78,6 +81,9 @@ abstract class Module
       */
     public static function factory($id, $type=null) {
   
+        if ($module = Kurogo::getCache(self::cacheKey($id, $type))) {
+            return $module;
+        }
         Kurogo::log(LOG_INFO, "Initializing $type module $id", 'module');
 		$configModule = $id;
 		//attempt to load config/$id/module.ini  
@@ -136,6 +142,7 @@ abstract class Module
                         if ($config) {
                         	$module->setConfig('module', $config);
                         }
+                        Kurogo::setCache(self::cacheKey($id, $type), $module);
                         return $module;
                     }
                     Kurogo::log(LOG_NOTICE, "$class found at $moduleFile is abstract and cannot be used for $id", 'module');

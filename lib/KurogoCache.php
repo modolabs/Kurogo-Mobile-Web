@@ -1,17 +1,23 @@
 <?php
 abstract class KurogoCache {
 
+    static $DEFAULT_CACHE_CLASS='KurogoNoCache';
+    
 	public function __construct() {
 	}
 
-	public static function factory($cacheType, $args = array()) {
+	public static function factory($cacheType = '', $args = array()) {
 		$args = is_array($args) ? $args : array();
 
 		includePackage("Cache");
+        
+        $cacheType = $cacheType ? $cacheType : self::$DEFAULT_CACHE_CLASS;
+        $cacheController = LIB_DIR . "/Cache/%s.php";
+        require_once(sprintf($cacheController, $cacheType));
+        
         if (!class_exists($cacheType)) {
             throw new KurogoConfigurationException("Cache class $cacheType not defined");
         }
-        
         $cacheClass = new $cacheType;
         
         if (!$cacheClass instanceOf KurogoCache) {

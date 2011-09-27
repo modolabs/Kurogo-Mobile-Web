@@ -45,6 +45,9 @@ class ConfigFile extends Config {
   // loads a config object from a file/type combination  
   public static function factory($file, $type='file', $options=0) {
     Kurogo::log(LOG_DEBUG, "Loading config file $file of type $type with options $options", 'config');
+    if ($cache = Kurogo::getCache(self::cacheKey($file, $type))) {
+        return $cache;
+    }
     $config = new ConfigFile();
     if (!($options & self::OPTION_DO_NOT_CREATE)) {
         $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
@@ -56,10 +59,14 @@ class ConfigFile extends Config {
         }
        throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
     }
-    
+    Kurogo::setCache(self::cacheKey($file, $type), $config);
     return $config;
   }
 
+  private function cacheKey($file, $type) {
+    return 'config-' . md5($type . '-' . $file);
+  }
+  
   protected function getFileByType($file, $type)
   {
     switch ($type)
@@ -214,34 +221,6 @@ class ConfigFile extends Config {
     }
     return $matches[0];
   }
-
-  //added the cache function
-  
-  private function cacheKey($file, $type = 'var') {
-    return md5($type . '-' . $file);
-  }
-  
-  private function parseIniFileForVar($file) {
-    $key = $this->cacheKey($file, 'var');
-    if ($vars = Kurogo::getFileCacheData($key, $file)) {
-    } else {
-        $vars = parse_ini_file($file, false);
-        Kurogo::writeFileCacheData($key, $vars, $file);
-    }
-    $this->addVars($vars);
-    return true;
-  }
-  
-  private function parseIniFileForSection($file) {
-    $key = $this->cacheKey($file, 'section');
-    if ($sectionVars = Kurogo::getFileCacheData($key, $file)) {
-    } else {
-        $sectionVars = parse_ini_file($file, true);
-        Kurogo::writeFileCacheData($key, $sectionVars, $file);
-    }
-    $this->addSectionVars($sectionVars);
-    return true;
-  }
   
   protected function loadFile($_file) {
   
@@ -249,15 +228,12 @@ class ConfigFile extends Config {
         return false;
      }
      $this->filepath = $file;
-     $this->parseIniFileForVar($file);
-     $this->parseIniFileForSection($file);
-     /*
+
      $vars = parse_ini_file($file, false);
      $this->addVars($vars);
 
      $sectionVars = parse_ini_file($file, true);
      $this->addSectionVars($sectionVars);
-     */
 
      Kurogo::log(LOG_DEBUG, "Loaded config file $file", 'config');
      return true;
