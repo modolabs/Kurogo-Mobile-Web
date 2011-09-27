@@ -204,20 +204,51 @@ class DeviceClassifier {
             {
                 if(isset($match['regex']))
                 {
-                    if(preg_match('/'.str_replace('/', '\\/', $match['regex']).'/', $user_agent))
+                    $mods = "";
+                    if(isset($match['options']))
+                    {
+                        if(isset($match['options']['DOT_ALL']) && $match['options']['DOT_ALL'] === true)
+                        {
+                            $mods .= "s";
+                        }
+                        if(isset($match['options']['CASE_INSENSITIVE']) && $match['options']['CASE_INSENSITIVE'] === true)
+                        {
+                            $mods .= "i";
+                        }
+
+                    }
+                    if(preg_match('/'.str_replace('/', '\\/'.$mods, $match['regex']).'/', $user_agent))
                     {
                         return $device;
                     }
                 }
-                elseif (isset($match['partial']))
+                elseif(isset($match['partial']))
                 {
+                    if(isset($match['options']) && isset($match['options']['CASE_INSENSITIVE']) && $match['options']['CASE_INSENSITIVE'] === true)
+                    {
+                        if(stripos($user_agent, $match['partial']) !== false)
+                        {
+                            return $device;
+                        }
+                    }
+
+                    // Case insensitive either isn't set, or is set to false.
                     if(strpos($user_agent, $match['partial']) !== false)
                     {
                         return $device;
                     }
                 }
-                elseif (isset($match['prefix']))
+                elseif(isset($match['prefix']))
                 {
+                    if(isset($match['options']) && isset($match['options']['CASE_INSENSITIVE']) && $match['options']['CASE_INSENSITIVE'] === true)
+                    {
+                        if(stripos($user_agent, $match['partial']) === 0)
+                        {
+                            return $device;
+                        }
+                    }
+
+                    // Case insensitive either isn't set, or is set to false.
                     if(strpos($user_agent, $match['prefix']) === 0)
                     {
                         return $device;
@@ -225,8 +256,12 @@ class DeviceClassifier {
                 }
                 elseif (isset($match['suffix']))
                 {
+                    if(isset($match['options']) && isset($match['options']['CASE_INSENSITIVE']) && $match['options']['CASE_INSENSITIVE'] === true)
+                        $case_insens = true;
+                    else
+                        $case_insens = false;
                     // Because substr_compare is supposedly designed for this purpose...
-                    if(substr_compare($user_agent, $match['partial'], -(strlen($match['partial'])), strlen($match['partial'])) === 0)
+                    if(substr_compare($user_agent, $match['partial'], -(strlen($match['partial'])), strlen($match['partial']), $case_insens) === 0)
                     {
                         return $device;
                     }
