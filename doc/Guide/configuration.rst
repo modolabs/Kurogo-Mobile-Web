@@ -253,7 +253,8 @@ See :doc:`devicedetection` for more details
 
 * *MOBI_SERVICE_VERSION* - Includes the version of device detection to use. Provided for compatibility.
 * *MOBI_SERVICE_USE_EXTERNAL* - Boolean. If 0, Kurogo will use the internal device detection server. If 1 it will use an external server
-* *MOBI_SERVICE_FILE* - Location of device detection SQLite database if using internal detection. (typically located in LIB_DIR/deviceData.db)
+* *MOBI_SERVICE_SITE_FILE* - Location of site-specific device detection data if using internal detection. (typically located in *DATA_DIR/deviceData.json*)
+* *MOBI_SERVICE_SITE_FORMAT* - Format of site-specific device detection data if using internal detection.  Currently *json* is supported and *sqlite* is deprecated. Defaults to *json* if not specified.
 * *MOBI_SERVICE_URL* - Url of device detection server if using external detection
 
   * (Development) https://modolabs-device-test.appspot.com/api/
@@ -342,7 +343,7 @@ it is a part of. These include:
 * *ORGANIZATION_NAME* - The name of the organization. Used in the about module.
 * *COPYRIGHT_LINK* - Link to copyright notice (optional)
 * *COPYRIGHT_NOTICE* - Copyright notice 
-* *FEEDBACK_EMAIL* - email address where user's can send feedback.
+* *FEEDBACK_EMAIL* - email address where users can send feedback.
 
 .. _admin-module:
 
