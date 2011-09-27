@@ -24,6 +24,8 @@ must be at least one entry that looks like the following: ::
     DYNAMIC_MAP_BASE_URL = "http://myhost/MapServer"
     STATIC_MAP_CLASS     = ArcGISStaticMap
     STATIC_MAP_BASE_URL  = "http://myhost/MapServer"
+    NEARBY_THRESHOLD     = 1609
+    NEARBY_ITEMS         = 12
 
 
 * *[groupID]* is a short, alphanumeric identifier for the group, e.g. "boston",
@@ -40,6 +42,15 @@ must be at least one entry that looks like the following: ::
   do not support JavaScript maps, see :ref:`section-base-map-types`.
 * *STATIC_MAP_BASE_URL* (required if *STATIC_MAP_CLASS* is ArcGISStaticMap or
   WMSStaticMap) - the base URL where the static base map service is hosted.
+* *NEARBY_THRESHOLD* (optional, defaults to 1000) - distance threshold in 
+  meters to use when performing searches for nearby locations
+* *NEARBY_ITEMS* (optional, defaults to 0) - maximum number of items to return
+  from a nearby search. If the value is 0, there is no limit.
+
+The options JS_MAP_CLASS, DYNAMIC_MAP_BASE_URL, STATIC_MAP_CLASS,
+STATIC_MAP_BASE_URL, NEARBY_THRESHOLD, and NEARBY_ITEMS may be set by indiviual
+feeds in the feeds-GROUP.ini files, in which case they will override options
+set in the feed group.
 
 .. _section-base-map-types:
 
