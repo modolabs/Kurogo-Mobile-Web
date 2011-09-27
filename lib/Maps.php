@@ -2,6 +2,7 @@
 
 define('GEOGRAPHIC_PROJECTION', 4326);
 define('EARTH_RADIUS_IN_METERS', 6378100);
+define('EARTH_METERS_PER_DEGREE', 111319); // very very rough
 define('MAP_CATEGORY_DELIMITER', ':');
 
 Kurogo::includePackage('Maps', 'Abstract');
@@ -39,7 +40,7 @@ function euclideanDistance($fromLat, $fromLon, $toLat, $toLon)
 {
     $dx = $toLon - $fromLon;
     $dy = $toLat - $fromLat;
-    return sqrt($dx*$dx + $dy*$dy);
+    return sqrt($dx*$dx + $dy*$dy) * EARTH_METERS_PER_DEGREE;
 }
 
 function filterLatLon($testString) {
