@@ -98,7 +98,7 @@ class Watchdog {
                     return $test;
                 }
             }
-            error_log("WARNING! Blocking attempt from ".$_SERVER['REMOTE_ADDR']." to access unsafe path '$test'");
+            Kurogo::log(LOG_WARNING, "WARNING! Blocking attempt from ".$_SERVER['REMOTE_ADDR']." to access unsafe path '$test'", 'security');
        }
         
         // path is invalid or refers to an unsafe file
@@ -114,7 +114,7 @@ class Watchdog {
                     return $test;
                 }
             }
-            error_log("WARNING! Blocking attempt from ".$_SERVER['REMOTE_ADDR']." to access non-Kurogo path '$test'");
+            Kurogo::log(LOG_WARNING, "WARNING! Blocking attempt from ".$_SERVER['REMOTE_ADDR']." to access non-Kurogo path '$test'", 'security');
         }
         
         // path is invalid or outside Kurogo directories
