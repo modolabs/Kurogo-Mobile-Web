@@ -100,17 +100,19 @@ class db {
     }
     
   // http://en.wikipedia.org/wiki/Select_%28SQL%29#Limiting_result_rows
-  public function limitQuery($sql, $parameters=array(), $ignoreErrors=false, 
-    $catchErrorCodes=array(), $limit=1)
-  {
-    if ($this instanceof db_mysql || $this instanceof db_sqlite
-      || ($this instanceof db_pgsql && $this->pgVersion() >= 8.4)
-    ) {
-      $sql .= ' LIMIT ?';
-      $parameters[] = $limit;
+    public function limitQuery($sql, $parameters=array(), $ignoreErrors=false, 
+        $catchErrorCodes=array(), $limit=1)
+    {
+        if (intval($limit) && (
+                $this->dbType == 'sqlite' ||
+                $this->dbType == 'mysql' ||
+                $this->dbType == 'pgsql' // TODO: this doens't work for pg < v8.4
+                ))
+        {
+            $sql .= " LIMIT $limit";
+        }
+        return $this->query($sql, $parameters, $ignoreErrors, $catchErrorCodes);
     }
-    return $this->query($sql, $parameters, $ignoreErrors, $catchErrorCodes);
-  }
   
     /*
      * Handle query error
