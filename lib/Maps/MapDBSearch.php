@@ -6,17 +6,13 @@ class MapDBSearch extends MapSearch
 {
     private function getSearchResultsForQuery($sql, $params, $maxItems=0)
     {
-        if ($maxItems) {
-            $result = MapDB::connection()->limitQuery(
-                $sql, $params, false, array(), $maxItems);
-        } else {
-            $result = MapDB::connection()->query($sql, $params);
-        }
+        $result = MapDB::connection()->query($sql, $params);
 
         $displayableCategories = MapDB::getAllCategoryIds();
         // eliminate dupe placemarks if they appear in multiple categories
+        $this->resultCount = 0;
         $uniqueResults = array();
-        while ($row = $result->fetch()) {
+        while (($row = $result->fetch()) && (!$maxItems || $this->resultCount <= $maxItems)) {
             if (in_array($row['category_id'], $displayableCategories)) {
                 $ukey = $row['placemark_id'].$row['lat'].$row['lon'];
                 if (isset($uniqueResults[$ukey])) {
@@ -25,11 +21,11 @@ class MapDBSearch extends MapSearch
                     $placemark = new MapDBPlacemark($row, true);
                     $placemark->addCategoryId($row['category_id']);
                     $uniqueResults[$ukey] = $placemark;
+                    $this->resultCount++;
                 }
             }
         }
         $this->searchResults = array_values($uniqueResults);
-        $this->resultCount = count($this->searchResults);
         return $this->searchResults;
     }
 

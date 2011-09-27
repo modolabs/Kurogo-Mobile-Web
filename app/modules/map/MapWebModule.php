@@ -476,7 +476,32 @@ JS;
                 }
 
                 $mapSearch = $this->getSearchClass($this->args);
-                $searchResults = $mapSearch->searchByProximity($center, 1000, 10, $dataController);
+
+                // defaults values for proximity search
+                $tolerance = 1000;
+                $maxItems = 0;
+
+                // check for settings in feedgroup config
+                $configData = $this->getDataForGroup($this->feedGroup);
+                if ($configData) {
+                    if (isset($configData['NEARBY_THRESHOLD'])) {
+                        $tolerance = $configData['NEARBY_THRESHOLD'];
+                    }
+                    if (isset($configData['NEARBY_ITEMS'])) {
+                        $maxItems = $configData['NEARBY_ITEMS'];
+                    }
+                }
+
+                // check for override settings in feeds
+                $configData = $this->getCurrentFeed();
+                if (isset($configData['NEARBY_THRESHOLD'])) {
+                    $tolerance = $configData['NEARBY_THRESHOLD'];
+                }
+                if (isset($configData['NEARBY_ITEMS'])) {
+                    $maxItems = $configData['NEARBY_ITEMS'];
+                }
+
+                $searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems, $dataController);
                 $places = array();
                 if ($searchResults) {
                     foreach ($searchResults as $result) {

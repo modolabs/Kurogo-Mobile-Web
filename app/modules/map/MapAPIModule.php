@@ -13,6 +13,8 @@ class MapAPIModule extends APIModule
     protected $feedGroups = null;
     protected $numGroups;
 
+    protected $currentFeedData;
+
     protected function shortArrayFromPlacemark(Placemark $placemark)
     {
         $result = array(
@@ -76,6 +78,11 @@ class MapAPIModule extends APIModule
     
     // functions duped from MapWebModule
     
+    private function getDataForGroup($group) {
+        $this->getFeedGroups();
+        return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
+    }
+    
     public function getFeedGroups() {
         if (!$this->feedGroups) {
             $this->feedGroups = $this->getModuleSections('feedgroups');
@@ -125,12 +132,19 @@ class MapAPIModule extends APIModule
 
     private function getDataController($category=null) {
         $controller = null;
+        if (($feedData = $this->getCurrentFeed())) {
+            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        }
+        return $controller;
+    }
+
+    private function getCurrentFeed($category=null)
+    {
         if (!$category) {
             $category = $this->getArg('category');
         }
 
         if ($category) {
-
             $groups = array_keys($this->getFeedGroups());
             if (count($groups) <= 1) {
                 $groups = array(null);
@@ -139,14 +153,12 @@ class MapAPIModule extends APIModule
                 $this->feedGroup = $groupID;
                 $feeds = $this->loadFeedData();
                 if (isset($feeds[$category])) {
-                    $feedData = $feeds[$category];
-                    $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                    $this->currentFeedData = $feeds[$category];
                     break;
                 }
             }
         }
-
-        return $controller;
+        return $this->currentFeedData;
     }
 
     protected function getSearchClass($options=array()) {
@@ -322,6 +334,31 @@ class MapAPIModule extends APIModule
                     $lat = $this->getArg('lat', 0);
                     $lon = $this->getArg('lon', 0);
                     if ($lat || $lon) {
+
+                        // defaults values for proximity search
+                        $tolerance = 1000;
+                        $maxItems = 0;
+
+                        // check for settings in feedgroup config
+                        $configData = $this->getDataForGroup($this->feedGroup);
+                        if ($configData) {
+                            if (isset($configData['NEARBY_THRESHOLD'])) {
+                                $tolerance = $configData['NEARBY_THRESHOLD'];
+                            }
+                            if (isset($configData['NEARBY_ITEMS'])) {
+                                $maxItems = $configData['NEARBY_ITEMS'];
+                            }
+                        }
+
+                        // check for override settings in feeds
+                        $configData = $this->getCurrentFeed();
+                        if (isset($configData['NEARBY_THRESHOLD'])) {
+                            $tolerance = $configData['NEARBY_THRESHOLD'];
+                        }
+                        if (isset($configData['NEARBY_ITEMS'])) {
+                            $maxItems = $configData['NEARBY_ITEMS'];
+                        }
+
                         $searchResults = $mapSearch->searchByProximity(
                             array('lat' => $lat, 'lon' => $lon),
                             1000, 10);
