@@ -1,3 +1,25 @@
+1.3 (Yet to be released)
+* IMPORTANT NOTE: After upgrading to 1.3, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
+* The REST API has now reached 1.0 status
+* Kurogo is now localized. version 1.3 only includes English values. See user guide for more information on localization
+* Kurogo can now host multiple sites. The Multi-site option allows for multiple sites to be hosted on the same server. See user guide for more information.
+* An updated logging facility has been created to include logging messages in Kurogo. Please see the documentation for more information.
+* The internal statistics engine has been overhauled. Kurogo requires a database to log page views. See the documentation for more information.
+* The Map module has been significantly updated. Support for directions, arbitrary addresses and UI improvements among other improvements
+* includePackage now has a "subpackage" parameter for further organization
+* Added formButton and formSubmitbutton templates
+* (Calendar) Support for more types of recurring events (Thanks to Adam Franco)
+* (Content) Added support for grouping pages (Thanks to Ebrahim Kobeissi)
+* (News) If your news feed does not have full content, you can add a "read more" link by setting SHOW_LINK=1 in your feed configuration
+* By setting URL_BASE you can now host Kurogo in any location (including virtual directories in IIS)
+* You can now change the module id that gets located by including the "id" parameter in the module.ini file. Does not require creating an empty class file
+* Fixed an issue in RSS parsing when there is no GUID is the feed (#24)
+* Fix bug where inline css and javascript were being loaded with the wrong user agent (#25)
+* It is possible to provide another template file for results and navlist templates (set $listItemTemplate)
+* Added suport for Percent Mobile Analytics
+* You can now use a YouTube playlist as a source for video entries
+* Many other minor bug fixes and improvements
+
 1.2 (July 19)
 * IMPORTANT NOTE: After upgrading to 1.2, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
 * (People) Added support for categorizing static contacts into groups 

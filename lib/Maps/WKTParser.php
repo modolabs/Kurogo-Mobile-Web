@@ -1,12 +1,24 @@
 <?php
 
 /* very partial implementation of 
- * http://www.opengeospatial.org/docs/01-009.pdf
- * Chapter 7
+ * http://www.opengeospatial.org/docs/01-009.pdf, Chapter 7
+ * http://portal.opengeospatial.org/files/?artifact_id=25355, end of Chapter 7
  */
+
+// more documentation links
+// projections:
+// http://www.geoapi.org/2.0/javadoc/org/opengis/referencing/doc-files/WKT.html
+// geometry:
+// http://en.wikipedia.org/wiki/Well-known_text#Geometric_objects
+// http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/opt/rsbp4120.htm
 
 class WKTParser
 {
+    // WKT for geometry and tranformations don't seem to really
+    // have much syntax in common, so we just have separate
+    // functions
+
+    ////// transformations
 
     public static function parseWKTString($string) {
         $chars = str_split($string);
@@ -97,6 +109,95 @@ class WKTParser
         return $result;
     }
 
+    ////// geometry
+
+    public static function parseWKTGeometry($string) {
+        if (preg_match("/^([\w ]+) *\((.+)\)$/", $string, $matches)) {
+            $type = $matches[1];
+            switch ($type) {
+                case 'POINT':
+                    $parts = explode(' ', $matches[2]);
+                    if (count($parts) == 2) {
+                        return new MapBasePoint(array(
+                            'lat' => $parts[1],
+                            'lon' => $parts[0]));
+                    }
+                    break;
+
+                case 'LINESTRING':
+                    $result = array();
+                    $parts = explode(',', $matches[2]);
+                    foreach ($parts as $point) {
+                        $pointParts = explode(' ', $point);
+                        if (count($pointParts) == 2) {
+                            $result[] = array(
+                                'lat' => $pointParts[1],
+                                'lon' => $pointParts[0]);
+                        }
+                    }
+                    if ($result) {
+                        return new MapBasePolyline($result);
+                    }
+                    break;
+                
+                case 'POLYGON':
+                    $result = array();
+                    $arg = $matches[2];
+                    if (preg_match_all("/\((.+)\)/", $arg, $matches)) {
+                        foreach ($matches[1] as $ring) {
+                            $ringArray = array();
+                            $ringParts = explode(',', $ring);
+                            foreach ($ringParts as $point) {
+                                $pointParts = explode(' ', $point);
+                                if (count($pointParts) == 2) {
+                                    $ringArray[] = array(
+                                        'lat' => $pointParts[1],
+                                        'lon' => $pointParts[0]);
+                                }
+                            }
+                            $result[] = $ringArray;
+                        }
+                    }
+                    if ($result) {
+                        return new MapBasePolygon($result);
+                    }
+                    break;
+                
+                default:
+                    throw new KurogoDataException("geometry type $type not supported");
+                    break;
+            }
+        }
+        Kurogo::log(LOG_WARNING,"failed to handle WKT string: $string",'maps');
+        return null;
+    }
+
+    // (x y)
+    public static function wktFromGeometry(MapGeometry $geometry) {
+        $wkt = null;
+        if ($geometry instanceof MapPolygon) {
+            $ringStrings = array();
+            $rings = $geometry->getRings();
+            foreach ($rings as $ring) {
+                $points = array_map(array('WKTParser', 'implodeLatLon'), $ring->getPoints());
+                $ringStrings[] = '('.implode(',', $points).')';
+            }
+            return 'POLYGON('.implode(',', $ringStrings).')';
+
+        } elseif ($geometry instanceof MapPolyline) {
+            $points = array_map(array('WKTParser', 'implodeLatLon'), $geometry->getPoints());
+            return 'LINESTRING('.implode(',', $points).')';
+
+        } else { // this should be a point, but it will work for any MapGeometry
+            $point = $geometry->getCenterCoordinate();
+            return 'POINT('.self::implodeLatLon($point).')';
+        }
+        return $wkt;
+    }
+
+    private static function implodeLatLon($point) {
+        return $point['lon'].' '.$point['lat'];
+    }
 
 }
 

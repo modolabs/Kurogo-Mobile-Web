@@ -1,13 +1,13 @@
 {include file="findInclude:common/templates/header.tpl" scalable=false}
 
-{include file="findInclude:common/templates/search.tpl" emphasized=false placeholder="Search "|cat:$strings.SITE_NAME}
+{include file="findInclude:common/templates/search.tpl" emphasized=false}
 
 {foreach $federatedResults as $federatedResult}
   <h3 class="nonfocal">{$federatedResult['title']}</h3>
   {$results = $federatedResult['results']}
   {if !count($results)}
     {$noResults = array()}
-    {$noResults['title'] = "No results"}
+    {$noResults['title'] = "NO_RESULTS"|getLocalizedString}
     {$results[] = $noResults}
     
   {elseif $federatedResult['total'] > count($results)}

@@ -13,7 +13,7 @@ class INIFileParser extends DataParser
         } else {
             $file = tempnam(CACHE_DIR, 'INIFileParser');
             if (file_put_contents($file, $data, LOCK_EX)===false) {
-                throw new Exception("Error saving temporary INI file");
+                throw new KurogoDataException("Error saving temporary INI file");
             }
             $data = parse_ini_file($file, true);
             unlink($file);

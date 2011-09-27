@@ -281,7 +281,7 @@ class AccessControlList
     {
         try {
             $AccessControlList = new AccessControlList($ruleType, $ruleAction, $ruleScope, $ruleAuthority, $ruleValue);
-        } catch (Exception $e) {
+        } catch (KurogoConfigurationException $e) {
             $AccessControlList = false;
         }
         return $AccessControlList;
@@ -299,23 +299,23 @@ class AccessControlList
     public function __construct($ruleType, $ruleAction, $ruleScope, $ruleAuthority, $ruleValue)
     {
         if (!in_array($ruleType, self::ruleTypes())) {
-            throw new Exception("Invalid rule type $ruleType");
+            throw new KurogoConfigurationException("Invalid rule type $ruleType");
         }
 
         if (!in_array($ruleAction, self::ruleActions())) {
-            throw new Exception("Invalid rule action $ruleAction");
+            throw new KurogoConfigurationException("Invalid rule action $ruleAction");
         }
 
         if (!in_array($ruleScope, self::ruleScopes())) {
-            throw new Exception("Invalid rule scope $ruleScope");
+            throw new KurogoConfigurationException("Invalid rule scope $ruleScope");
         }
 
         if ($ruleScope==self::RULE_SCOPE_GROUP && $ruleValue == self::RULE_VALUE_ALL) {
-            throw new Exception("Rule of type Group cannot contain ALL");
+            throw new KurogoConfigurationException("Rule of type Group cannot contain ALL");
         }
         
         if ($ruleScope != self::RULE_SCOPE_EVERYONE && empty($ruleValue)) {
-            throw new Exception("Rule value cannot be empty");
+            throw new KurogoConfigurationException("Rule value cannot be empty");
         }
 
         $this->ruleType = $ruleType;

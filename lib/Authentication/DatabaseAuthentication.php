@@ -136,7 +136,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
                 {
                     case 'DB_USER_PASSWORD_HASH':
                         if (!in_array($value, hash_algos())) {
-                            throw new Exception ("Hashing algorithm $value not available");
+                            throw new KurogoConfigurationException ("Hashing algorithm $value not available");
                         }
                         $this->hashAlgo = $value;
                         break;
@@ -145,7 +145,7 @@ class DatabaseAuthentication extends AuthenticationAuthority
                         break;
                     case 'DB_GROUP_GROUPMEMBER_PROPERTY':
                         if (!in_array($value, array('group','gid'))) {
-                            throw new Exception("Invalid value for DB_GROUP_GROUPMEMBER_PROPERTY $value. Should be gid or group");
+                            throw new KurogoConfigurationException("Invalid value for DB_GROUP_GROUPMEMBER_PROPERTY $value. Should be gid or group");
                         }
                         $this->fieldMap['group_groupmember'] = $value;
                         break;

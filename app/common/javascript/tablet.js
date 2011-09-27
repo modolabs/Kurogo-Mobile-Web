@@ -69,7 +69,7 @@ function tabletInit() {
   var resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize';
   window.addEventListener(resizeEvent, function() {setTimeout(handleWindowResize,0)}, false);
 
-  document.addEventListener('touchmove', function(e) { e.preventDefault(); });
+  document.addEventListener('touchmove', function(e) { e.preventDefault(); }, false);
   
   containerScroller = new iScroll('wrapper', { 
     checkDOMChanges: false, 

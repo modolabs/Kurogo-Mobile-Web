@@ -58,7 +58,7 @@ abstract class OAuthProvider
         
         if (!$this->getToken(self::TOKEN_TYPE_REQUEST)) {
             if (!$this->getRequestToken($options)) {
-                error_log("Error getting request token");
+                Kurogo::log(LOG_WARNING, "Error getting request token", 'auth');
                 return AUTH_FAILED;
             }
         }
@@ -70,7 +70,7 @@ abstract class OAuthProvider
             if ($userArray = $this->getAccessToken($options)) {
                 return AUTH_OK;
             } else {
-                error_log("Error getting Access token");
+                Kurogo::log(LOG_WARNING, "Error getting access token", 'auth');
                 return AUTH_FAILED;
             }
         } elseif ($this->manualVerify && !$startOver) {
@@ -79,6 +79,7 @@ abstract class OAuthProvider
         
             //redirect to auth page
             $url = $this->getAuthURL($options);
+            Kurogo::log(LOG_DEBUG, "Redirecting to AuthURL $url", 'auth');
             header("Location: " . $url);
             exit();
         }
@@ -190,7 +191,7 @@ abstract class OAuthProvider
         	case 'RSA-SHA1':
 
                 if (!$privatekeyid = openssl_get_privatekey($this->cert)) {
-                    throw new Exception("Error getting private key for $this->cert");
+                    throw new KurogoException("Error getting private key for $this->cert");
                 }
 
                 // Sign using the key
@@ -202,7 +203,7 @@ abstract class OAuthProvider
                 $sig = base64_encode($signature);
         	    break;
         	default:
-        	    throw new Exception("Signature method $this->signatureMethod not handled");
+        	    throw new KurogoException("Signature method $this->signatureMethod not handled");
 		}
 		
 		return $sig;
@@ -246,7 +247,7 @@ abstract class OAuthProvider
 	        'RSA-SHA1',
 	        'PLAINTEXT'
             ))) {
-            throw new Exception ("Invalid signature method $signatureMethod");
+            throw new KurogoException ("Invalid signature method $signatureMethod");
         }
         
         $this->signatureMethod = $signatureMethod;
@@ -273,15 +274,13 @@ abstract class OAuthProvider
 
     public function setToken($type, $token, $tokenSecret='') {
         if ($type && !in_array($type, array(self::TOKEN_TYPE_REQUEST, self::TOKEN_TYPE_ACCESS))) {
-            throw new Exception("Invalid token type $type");
+            throw new KurogoException("Invalid token type $type");
         }
         
         $this->tokenType = $type;
         $this->token = $token;
         $this->tokenSecret = $tokenSecret;
-        if ($this->debugMode) {
-            error_log("Setting $this->index $type to $token - $tokenSecret");
-        }
+        Kurogo::log(LOG_DEBUG, "Setting $this->index $type to $token - $tokenSecret", 'auth');
         $_SESSION[$this->tokenSessionVar()] = array(
             $type, $token, $tokenSecret
         );
@@ -338,7 +337,7 @@ abstract class OAuthProvider
                 $authHeader = $this->calculateHeader($url, $oauth);
                 break;
             default:
-                throw new Exception("Invalid method $method");
+                throw new KurogoException("Invalid method $method");
                 break;
         }        
         
@@ -355,7 +354,7 @@ abstract class OAuthProvider
 
     public static function factory($providerClass, $args) {
         if (!class_exists($providerClass) || !is_subclass_of($providerClass, 'OAuthProvider')) {
-            throw new Exception("Invalid OAuthProvider class $providerClass");
+            throw new KurogoConfigurationException("Invalid OAuthProvider class $providerClass");
         }
         
         $provider = new $providerClass;
@@ -410,7 +409,7 @@ abstract class OAuthProvider
                 break;
                 
             default:
-                throw new Exception("Invalid method $method");
+                throw new KurogoException("Invalid method $method");
         }
 
 	    $requestHeaders[] = 'Authorization: ' . $this->getAuthorizationHeader($method, $url, $requestParameters, $requestHeaders);
@@ -418,9 +417,7 @@ abstract class OAuthProvider
         $contextOpts['http']['header'] = implode("\r\n", $requestHeaders) . "\r\n";
         
         $streamContext = stream_context_create($contextOpts);
-        if ($this->debugMode) {
-            error_log(sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret));
-        }
+        Kurogo::log(LOG_INFO, sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret), 'auth');
 
         $response = file_get_contents($url, false, $streamContext);
         
@@ -428,9 +425,11 @@ abstract class OAuthProvider
         $this->response = new DataResponse();
         $this->response->setRequest($method, $url, $parameters, $headers);
         $this->response->setResponse($response, $http_response_header);
+        Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $this->response->getCode(), strlen($response)), 'auth');
 
         //if there is a location header we need to re-sign before redirecting
         if ($redirectURL = $this->response->getHeader("Location")) {
+            Kurogo::log(LOG_DEBUG, "Found Location Header", 'auth');
 		    $redirectParts = parse_url($redirectURL);
 		    //if the redirect does not include the host or scheme, use the scheme/host from the original URL
             if (!isset($redirectParts['scheme']) || !isset($redirectParts['host'])) {
@@ -444,6 +443,7 @@ abstract class OAuthProvider
 		    }
 		    $newURL = $this->baseURL($redirectURL);
 		    //error_log("Redirecting to $newURL");
+            Kurogo::log(LOG_DEBUG, "Redirecting to $newURL", 'auth');
     		return $this->oauthRequest($method, $newURL, $newParameters, $headers);
         }
         
@@ -462,7 +462,7 @@ abstract class OAuthProvider
 
 		// validate
 		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
-		    error_log('oauth_token not found in getRequestToken');
+            Kurogo::log(LOG_WARNING, 'oauth_token not found in getRequestToken', 'auth');
 		    return false;
 		}
 		
@@ -502,7 +502,7 @@ abstract class OAuthProvider
 		parse_str($response, $return);
 
 		if (!isset($return['oauth_token'], $return['oauth_token_secret'])) {
-		    error_log('oauth_token not found in getAccessToken');
+            Kurogo::log(LOG_WARNING, 'oauth_token not found in getAccessToken', 'auth');
 		    return false;
 		}
 		
@@ -527,13 +527,13 @@ abstract class OAuthProvider
         }
 
         if (!isset($args['TITLE']) || empty($args['TITLE'])) {
-            throw new Exception("Invalid OAuth provider title");
+            throw new KurogoConfigurationException("Invalid OAuth provider title");
         }
 
         $this->setTitle($args['TITLE']);
         
         if (!isset($args['INDEX']) || empty($args['INDEX'])) {
-            throw new Exception("Invalid OAuth provider index");
+            throw new KurogoConfigurationException("Invalid OAuth provider index");
         }
 
         $this->setIndex($args['INDEX']);

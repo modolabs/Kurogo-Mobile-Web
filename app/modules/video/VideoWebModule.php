@@ -6,23 +6,7 @@ class VideoWebModule extends WebModule
 {
     protected $id='video';  // this affects which .ini is loaded
     protected $feeds = array();
-    protected $bookmarkLinkTitle = 'Bookmarked Videos';
-   
-    protected function detailURLForBookmark($aBookmark) {
-        parse_str($aBookmark, $params);
-        return $this->buildBreadcrumbURL('detail', $params, true);
-    }
-
-    protected function getTitleForBookmark($aBookmark) {
-        parse_str($aBookmark, $params);
-        $titles = array($params['title']);
-        if (isset($params['subtitle'])) {
-            $titles[] = $params['subtitle'];
-        }
-        return $titles;
         
-    }
-    
     protected function initialize() {
         $this->feeds = $this->loadFeedData();
     }
@@ -93,7 +77,7 @@ class VideoWebModule extends WebModule
         }
         
         if (count($this->feeds)==0) {
-            throw new Exception("No video feeds configured");
+            throw new KurogoConfigurationException("No video feeds configured");
         }
     
         // Categories / Sections
@@ -136,17 +120,19 @@ class VideoWebModule extends WebModule
             case 'index':
         
                 $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
-        	    $start = $this->getArg('start', 0);
+                $start = $this->getArg('start', 0);
         	    
                 if ($this->page == 'search') {
                     if ($filter = $this->getArg('filter')) {
                         $searchTerms = trim($filter);
+                        $this->setLogData($searchTerms);
                         $items = $controller->search($searchTerms, $start, $maxPerPage);
                         $this->assign('searchTerms', $searchTerms);
                     } else {
                         $this->redirectTo('index', array('section'=>$section), false);
                     }
                 } else {
+                     $this->setLogData($section, $controller->getTitle());
                      $items = $controller->items($start, $maxPerPage);
                 }
                              
@@ -180,9 +166,10 @@ class VideoWebModule extends WebModule
                   'section'=>$section
                 );
           
-          		$this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
-          		$this->addOnLoad('setupVideosListing();');
+                $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                $this->addOnLoad('setupVideosListing();');
           
+                $this->assign('placeholder', $this->getLocalizedString('SEARCH_MODULE', $this->getModuleName()));
                 $this->assign('start',       $start);
                 $this->assign('previousURL', $previousURL);
                 $this->assign('nextURL',     $nextURL);
@@ -196,26 +183,33 @@ class VideoWebModule extends WebModule
                 break;
  
             case 'bookmarks':
-            	
                 if (!$this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     $this->redirectTo('index');
                 }
                 
-                $videos_bkms = array();
+                $controllerCache = array(
+                    $section => $controller,
+                );
+                $videos = array();
 
                 foreach ($this->getBookmarks() as $aBookmark) {
-                    if ($aBookmark) { // prevent counting empty string
-                        $titles = $this->getTitleForBookmark($aBookmark);
-                        $subtitle = count($titles) > 1 ? $titles[1] : null;
-                        $videos_bkms[] = array(
-                                'title' => $titles[0],
-                                'subtitle' => $subtitle,
-                                'url' => $this->detailURLForBookmark($aBookmark),
-                        );
+                    if (!$aBookmark) { continue; }
+                    
+                    parse_str(stripslashes($aBookmark), $params);
+                    if (isset($params['section'], $this->feeds[$params['section']], $params['videoid'])) {
+                        if (!isset($controllerCache[$params['section']])) {
+                            $controllerCache[$params['section']] = $this->getFeed($params['section']);
+                        }
+                        
+                        if ($video = $controllerCache[$params['section']]->getItem($params['videoid'])) {
+                            $videos[] = $this->linkForItem($video, $params);
+                        }
                     }
                 }
-                $this->assign('videos', $videos_bkms);
-            
+                $this->assign('videos', $videos);
+                
+                $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
+                $this->addOnLoad('setupVideosListing();');
                 break;
                 
             case 'detail':
@@ -223,6 +217,7 @@ class VideoWebModule extends WebModule
                 $videoid = $this->getArg('videoid');
             
                 if ($video = $controller->getItem($videoid)) {
+                    $this->setLogData($videoid, $video->getTitle());
                     $this->setTemplatePage('detail-' . $video->getType());
                     if ($video->canPlay(Kurogo::deviceClassifier())) {
                         $this->assign('ajax'      ,       $this->getArg('ajax', null));
@@ -246,11 +241,10 @@ class VideoWebModule extends WebModule
                           // Bookmark
                         if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                           $cookieParams = array(
-                            'section' => $section,
-                            'title'   => $video->getTitle(),
-                            'videoid' => $videoid
+                            'section'  => $section,
+                            'videoid'  => $videoid
                           );
-        
+                          
                           $cookieID = http_build_query($cookieParams);
                           $this->generateBookmarkOptions($cookieID);
                         }

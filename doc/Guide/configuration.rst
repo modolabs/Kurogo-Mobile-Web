@@ -188,7 +188,9 @@ Modules
   a config folder with the default values, but should be turned off for production to ensure
   modules that you don't use don't create configuration folders.
   
-  
+
+.. _analytics:
+
 ---------
 Analytics
 ---------
@@ -251,7 +253,8 @@ See :doc:`devicedetection` for more details
 
 * *MOBI_SERVICE_VERSION* - Includes the version of device detection to use. Provided for compatibility.
 * *MOBI_SERVICE_USE_EXTERNAL* - Boolean. If 0, Kurogo will use the internal device detection server. If 1 it will use an external server
-* *MOBI_SERVICE_FILE* - Location of device detection SQLite database if using internal detection. (typically located in LIB_DIR/deviceData.db)
+* *MOBI_SERVICE_SITE_FILE* - Location of site-specific device detection data if using internal detection. (typically located in *DATA_DIR/deviceData.json*)
+* *MOBI_SERVICE_SITE_FORMAT* - Format of site-specific device detection data if using internal detection.  Currently *json* is supported and *sqlite* is deprecated. Defaults to *json* if not specified.
 * *MOBI_SERVICE_URL* - Url of device detection server if using external detection
 
   * (Development) https://modolabs-device-test.appspot.com/api/
@@ -288,10 +291,6 @@ Authentication
 Log Files
 ---------
 
-* *API_LOG_FILE* - Location of the processed API log file
-* *API_CURRENT_LOG_FILE* - Location of the active API log file
-* *WEB_LOG_FILE* - Location of the processed page view log file
-* *WEB_CURRENT_LOG_FILE* - Location of the active page view log file
 * *LOG_DATE_FORMAT* - Date format for log files
 * *LOG_DATE_PATTERN* - regex pattern of log dates, should match output from LOG_DATE_FORMAT
 
@@ -344,7 +343,7 @@ it is a part of. These include:
 * *ORGANIZATION_NAME* - The name of the organization. Used in the about module.
 * *COPYRIGHT_LINK* - Link to copyright notice (optional)
 * *COPYRIGHT_NOTICE* - Copyright notice 
-* *FEEDBACK_EMAIL* - email address where user's can send feedback.
+* *FEEDBACK_EMAIL* - email address where users can send feedback.
 
 .. _admin-module:
 

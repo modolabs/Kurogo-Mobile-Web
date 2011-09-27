@@ -28,30 +28,36 @@ class MapSearch {
     }
 
     // tolerance specified in meters
-    public function searchByProximity($center, $tolerance=1000, $maxItems=0) {
+    public function searchByProximity($center, $tolerance=1000, $maxItems=0, $dataController=null) {
         $this->searchResults = array();
 
         $resultsByDistance = array();
-        foreach ($this->feeds as $categoryID => $feedData) {
-            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $controller->setCategory($categoryID);
-            if ($controller->canSearch()) { // respect config settings
-                try {
-                    $results = $controller->searchByProximity($center, $tolerance, $maxItems);
-                    // can't use array_merge because the keys are numeric
-                    // so we do a manual array_merge
-                    foreach($results as $distance => $mapFeature) {
-                        // avoid distance collisions
-                        while(isset($resultsByDistance[$distance])) {
-                            $distance++;
-                        }
-                        $resultsByDistance[$distance] = $mapFeature;
-                    }
-                } catch (DataServerException $e) {
-                    error_log('encountered DataServerException for feed config:');
-                    error_log(print_r($feedData, true));
-                    error_log('message: '.$e->getMessage());
+        $controllers = array();
+        if ($dataController !== null) {
+            $controllers[] = $dataController;
+        } else {
+            foreach ($this->feeds as $categoryID => $feedData) {
+                $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                if ($controller->canSearch()) { // respect config settings
+                    $controllers[] = $controller;
                 }
+            }
+        }
+
+        foreach ($controllers as $controller) {
+            try {
+                $results = $controller->searchByProximity($center, $tolerance, $maxItems);
+                // merge arrays manually since keys are numeric
+                foreach($results as $distance => $mapFeature) {
+                    // avoid distance collisions
+                    while(isset($resultsByDistance[$distance])) {
+                        $distance++;
+                    }
+                }
+                $resultsByDistance[$distance] = $mapFeature;
+
+            } catch (KurogoDataServerException $e) {
+                Kurogo::log(LOG_WARNING, 'encountered KurogoDataServerException for feed config: ' . print_r($feedData, true) . $e->getMessage(), 'maps');
             }
         }
 
@@ -70,17 +76,14 @@ class MapSearch {
     
     	foreach ($this->feeds as $id => $feedData) {
             $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $controller->setCategory($id);
             
             if ($controller->canSearch()) {
                 try {
                     $results = $controller->search($query);
                     $this->resultCount += count($results);
                     $this->searchResults = array_merge($this->searchResults, $results);
-                } catch (DataServerException $e) {
-                    error_log('encountered DataServerException for feed config:');
-                    error_log(print_r($feedData, true));
-                    error_log('message: '.$e->getMessage());
+                } catch (KurogoDataServerException $e) {
+                    Kurogo::log(LOG_WARNING,'encountered KurogoDataServerException for feed config: ' . print_r($feedData, true) .  $e->getMessage(), 'maps');
                 }
             }
     	}

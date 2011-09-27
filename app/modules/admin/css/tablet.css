@@ -119,12 +119,12 @@ nav a {
 }
 nav a:hover {
 	color: #000;
-	background: url(/modules/admin/images/nav-bullet-hover.png) 14px no-repeat;
+	background: url(/modules/admin/images/nav-bullet-hover.png) no-repeat 14px center;
 }
 nav a.current {
 	color: #000;
 	font-weight: bold;
-	background: url(/modules/admin/images/nav-bullet.png) 14px no-repeat;
+	background: url(/modules/admin/images/nav-bullet.png) no-repeat 14px center;
 }
 nav ul ul a {
 	padding-top: 6px;
@@ -158,12 +158,12 @@ fieldset {
 	padding: 0;
 	border: none;
 }
-ul.formfields {
+.formfields {
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
 }
-ul.formfields li {
+.formfields .formfield {
 	margin: 1.67em 0;
 	padding: 0;
 	position: relative;
@@ -251,7 +251,7 @@ ul.sublist {
     padding: 0;
 }
 
-ul.sublist>li {
+ul.sublist>li.formfield {
     border: 1px solid #e0e0e0;
     border-top: none;
     list-style:none;
@@ -261,6 +261,7 @@ ul.sublist>li {
     min-height: 36px;
 }
 
+ul.ui-sortable li.ui-sortable-helper,
 ul.sublist>li:first-child {
     border-top: 1px solid #e0e0e0;
 }
@@ -422,7 +423,7 @@ td:first-child {
 table.subtable td:first-child {
 	padding-left: 5px;
 }
-table.subtable ul.formfields li {
+table.subtable .formfields .formfield {
 	margin: 6px 0 12px 0;
 }
 table.subtable label {

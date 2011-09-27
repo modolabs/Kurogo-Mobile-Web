@@ -11,33 +11,35 @@ function showTab(strID, objTrigger) {
 		show(strID);
 		if(currentTab && (currentTab != objTab)) {
 			hide(currentTab.id);
-			currentTab.style.display = "none";
+			//currentTab.style.display = "none";
 		}
 	}
 	currentTab = objTab; // Remember which is the currently displayed tab
 	
 	// Set the clicked tab to look current
 	var objTabs = document.getElementById("tabs");
-	var arrTabs = objTabs.getElementsByTagName("li");
-	if(objTrigger) {
-		for(var i=0; i<arrTabs.length; i++) {
-			arrTabs[i].className="";
-		}
-		var objTriggerTab = objTrigger.parentNode;
-		if(objTriggerTab) {
-			objTriggerTab.className="active";
-		}
-	} 
-	
-	// fake resize event in case tab body was resized while hidden 
-  if (document.createEvent) {
-    var e = document.createEvent('HTMLEvents');
-    e.initEvent('resize', true, true);
-    window.dispatchEvent(e);
-  
-  } else if( document.createEventObject ) {
-    var e = document.createEventObject();
-    document.documentElement.fireEvent('onresize', e);
+  if (objTabs) {
+    var arrTabs = objTabs.getElementsByTagName("li");
+    if(objTrigger) {
+      for(var i=0; i<arrTabs.length; i++) {
+        arrTabs[i].className="";
+      }
+      var objTriggerTab = objTrigger.parentNode;
+      if(objTriggerTab) {
+        objTriggerTab.className="active";
+      }
+    }
+
+    // fake resize event in case tab body was resized while hidden 
+    if (document.createEvent) {
+      var e = document.createEvent('HTMLEvents');
+      e.initEvent('resize', true, true);
+      window.dispatchEvent(e);
+    
+    } else if( document.createEventObject ) {
+      var e = document.createEventObject();
+      document.documentElement.fireEvent('onresize', e);
+    }
   }
 	
 	onDOMChange();
@@ -246,34 +248,13 @@ function hideShare() {
 }
 
 // Bookmarks
-function setBookmarkStates(name, item) {
-  var bookmark = document.getElementById("bookmark");
-  var items = getCookieArrayValue(name);
-  for (var i = 0; i < items.length; i++) {
-    if (items[i] == item) {
-      addClass(bookmark, "on");
-      break;
-    }
-  }
-  if (bookmark.addEventListener) {
-    bookmark.addEventListener("touchstart", function() {
-        addClass(bookmark, "pressed");
-    }, false);
-    bookmark.addEventListener("touchend", function() {
-        removeClass(bookmark, "pressed");
-    }, false);
-    
-  } else if (bookmark.attachEvent) {
-    bookmark.attachEvent("ontouchstart", function() {
-        addClass(bookmark, "pressed");
-    });
-    bookmark.attachEvent("ontouchend", function() {
-        removeClass(bookmark, "pressed");
-    });
-  }
-}
-
 function toggleBookmark(name, item, expireseconds, path) {
+  // facility for module to respond to bookmark state change
+  if (typeof moduleBookmarkWillToggle != 'undefined') {
+    $result = moduleBookmarkWillToggle(name, item, expireseconds, path);
+    if ($result === false) { return; }
+  }
+
   var bookmark = document.getElementById("bookmark");
   toggleClass(bookmark, "on");
   var items = getCookieArrayValue(name);
@@ -294,4 +275,54 @@ function toggleBookmark(name, item, expireseconds, path) {
     }
   }
   setCookieArrayValue(name, newItems, expireseconds, path);
+  
+  // facility for module to respond to bookmark state change
+  if (typeof moduleBookmarkToggled != 'undefined') {
+    moduleBookmarkToggled(name, item, expireseconds, path);
+  }
 }
+
+// TODO this needs to handle encoded strings and parameter separators (&amp;)
+function apiRequest(baseURL, params, successCallback, errorCallback) {
+  var urlParts = [];
+  for (var paramName in params) {
+    urlParts.push(paramName + "=" + params[paramName]);
+  }
+  var url = baseURL + "?" + urlParts.join("&");
+  var httpRequest = new XMLHttpRequest();
+
+  httpRequest.open("GET", url, true);
+  httpRequest.onreadystatechange = function() {
+    // TODO better definition of error conditions below
+    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+      var obj;
+      if (window.JSON) {
+          obj = JSON.parse(httpRequest.responseText);
+          // TODO: catch SyntaxError
+      } else {
+          obj = eval('(' + httpRequest.responseText + ')');
+      }
+      if (obj !== undefined) {
+        if ("error" in obj && obj["error"] !== null) {
+          errorCallback(0, obj["error"]);
+        } else if ("response" in obj) {
+          successCallback(obj["response"]);
+        } else {
+          errorCallback(1, "response not found");
+        }
+      } else {
+        errorCallback(2, "failed to parse response");
+      }
+    }
+  }
+  httpRequest.send(null);
+}
+
+
+
+
+
+
+
+
+

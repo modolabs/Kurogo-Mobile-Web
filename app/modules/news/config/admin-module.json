@@ -1,28 +1,31 @@
 {
     "options": {
-        "title":"Options",
-        "description":"",
+        "titleKey":"NEWS_ADMIN_OPTIONS_TITLE",
+        "descriptionKey":"NEWS_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "MAX_RESULTS":{"label":"Stories per page","type":"number","config":"module","section":"module","description":"Maximum number of news stories to show per page","placeholder":10},
-            "SHARING_ENABLED":{"label":"Sharing Enabled", "description":"Enable sharing of items","config":"module","section":"module","type":"checkbox","default":1}
+            "MAX_RESULTS":{"labelKey":"NEWS_ADMIN_OPTIONS_MAXRESULTS_TITLE","type":"number","config":"module","section":"module","descriptionKey":"NEWS_ADMIN_OPTIONS_MAXRESULTS_DESCRIPTION","placeholder":10},
+            "SHARING_ENABLED":{"labelKey":"NEWS_ADMIN_OPTIONS_SHARING_TITLE", "descriptionKey":"NEWS_ADMIN_OPTIONS_SHARING_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1}
        }
     },
     "feeds": {
-        "title":"Feeds",
-        "description":"You can have as many external data feeds as you need",
+        "titleKey":"NEWS_ADMIN_FEEDS_TITLE",
+        "descriptionKey":"NEWS_ADMIN_FEEDS_DESCRIPTION",
         "config":"feeds",
         "sectiontype":"section",
+        "fieldgroups":{
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"NEWS_ADMIN_FEEDS_ADVANCED_DESCRIPTION"}
+        },
         "fields":{
-            "TITLE":{"label":"Title", "description":"Label for this feed", "type":"text"},
-            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of data feed", "type":"text","placeholder":"RSSDataController","omitBlankValue":true},
-            "BASE_URL":{"label":"URL","description":"The url for the feed or web service","type":"text"},
-            "SHOW_IMAGES":{"label":"Show Images","description":"Show images from feed or placeholder image if no image is available in news list.","type":"checkbox","default":1},
-            "SHOW_PUBDATE":{"label":"Show Date","description":"Show date in news list","type":"checkbox"},
-            "SHOW_AUTHOR":{"label":"Show Author","description":"Show author in news list.","type":"checkbox"},
-            "CACHE_LIFETIME":{"label":"Cache lifetime","description":"The length of time to cache the feed from the server","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"]},
-            "ITEM_CLASS":{"label":"Item Class","description":"The class used to parse RSS items. Rarely needs to be changed","type":"text","placeholder":"RSSItem","omitBlankValue":true},
-            "ENCLOSURE_CLASS":{"label":"Enclosure Class","description":"The class used to parse RSS enclosures. Rarely needs to be changed","type":"text","placeholder":"RSSEnclosure","omitBlankValue":true}
+            "TITLE":{"labelKey":"NEWS_ADMIN_FEEDS_TITLE_TITLE", "descriptionKey":"NEWS_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
+            "BASE_URL":{"labelKey":"NEWS_ADMIN_FEEDS_BASEURL_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_BASEURL_DESCRIPTION","type":"text"},
+            "SHOW_IMAGES":{"labelKey":"NEWS_ADMIN_FEEDS_SHOWIMAGES_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_SHOWIMAGES_DESCRIPTION","type":"checkbox","default":1},
+            "SHOW_PUBDATE":{"labelKey":"NEWS_ADMIN_FEEDS_SHOWPUBDATE_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_SHOWPUBDATE_DESCRIPTION","type":"checkbox"},
+            "SHOW_AUTHOR":{"labelKey":"NEWS_ADMIN_FEEDS_SHOWAUTHOR_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_SHOWAUTHOR_DESCRIPTION","type":"checkbox"},
+            "CONTROLLER_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_CONTROLLERCLASS_TITLE", "descriptionKey":"NEWS_ADMIN_FEEDS_CONTROLLERCLASS_DESCRIPTION", "type":"text","placeholder":"RSSDataController","omitBlankValue":true,"fieldgroup":"advanced"},
+            "CACHE_LIFETIME":{"labelKey":"NEWS_ADMIN_FEEDS_CACHE_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_CACHE_DESCRIPTION","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"fieldgroup":"advanced"},
+            "ITEM_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_ITEMCLASS_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_ITEMCLASS_DESCRIPTION","type":"text","placeholder":"RSSItem","omitBlankValue":true,"fieldgroup":"advanced"},
+            "ENCLOSURE_CLASS":{"labelKey":"NEWS_ADMIN_FEEDS_ENCLOSURECLASS_TITLE","descriptionKey":"NEWS_ADMIN_FEEDS_ENCLOSURECLASS_DESCRIPTION","type":"text","placeholder":"RSSEnclosure","omitBlankValue":true,"fieldgroup":"advanced"}
         },
         "sectionindex":"numeric",
         "sectionsmethod":"loadFeedData",

@@ -12,21 +12,21 @@
 {block name="navbar"}
   <div id="navbar">
     <div class="breadcrumbs{if $isModuleHome} homepage{/if}">
-      <a name="top" href="/home/" class="homelink">
-        <img src="/common/images/homelink.png" width="66" height="50" alt="Home" />
+      <a name="top" href="{$homeLink}" class="homelink">
+        <img src="/common/images/homelink.png" width="{$homelink_image_width|default:66}" height="{$homelink_image_height|default:50}" alt="{$homeLinkText}" />
       </a>
       
       {$breadcrumbHTML}
       <span class="pagetitle">
         {if $isModuleHome}
-          <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="28" height="28" alt="" class="moduleicon" />
+          <img src="/common/images/title-{$navImageID|default:$configModule}.png" width="{$module_nav_image_width|default:28}" height="{$module_nav_image_height|default:28}" alt="" class="moduleicon" />
         {/if}
-        {$pageTitle}
+        {$pageTitle|sanitize_html:'inline'}
       </span>
     </div>
     {if $hasHelp}
       <div class="help">
-        <a href="help.php"><img src="/common/images/help.png" width="52" height="50" alt="Help" /></a>
+        <a href="{$helpLink}"><img src="/common/images/help.png" width="{$help_image_width|default:52}" height="{$help_image_height|default:50}" alt="{$helpLinkText}" /></a>
       </div>
     {/if}
   </div>

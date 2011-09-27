@@ -4,30 +4,50 @@
   * @package Exceptions
   *
   */
+  
+class KurogoException extends Exception {
+    protected $sendNotification = true;
+    protected $code = 'internal';
+    
+    public function shouldSendNotification() {
+        return $this->sendNotification;
+    }
+}
 
 /**
   *  Returned when there is a problem returning data from a server
   * @package Exceptions
   */
-class DataServerException extends Exception {
+class KurogoDataServerException extends KurogoException {
+    protected $code = 'server';
+}
+
+class DataServerException extends KurogoException {
+    protected $code = 'server';
+}
+
+class KurogoDataException extends KurogoException {
+    protected $code = 'data';
+}
+
+class KurogoConfigurationException extends KurogoException {
+    protected $code = 'config';
+}
+
+class KurogoUserException extends KurogoException {
+    protected $code = 'user';
+}
+
+class KurogoUnauthorizedException extends KurogoException {
+    protected $code = 'forbidden';
 }
 
 /**
   * @package Exceptions
   */
-class DeviceNotSupported extends Exception {
-}
-
-/**
-  * @package Exceptions
-  */
-class ModuleNotFound extends Exception {
-}
-
-/**
-  * @package Exceptions
-  */
-class DisabledModuleException extends Exception {
+class KurogoModuleNotFound extends KurogoException {
+    protected $code = 'notfound';
+    protected $sendNotification = false;
 }
 
 /**
@@ -38,22 +58,9 @@ function getErrorURL($exception, $devError = false) {
 	}
 	
   $args = array(
-    'code' => 'internal',
+    'code' => $exception instanceOf KurogoException ? $exception->getCode() : 'internal',
     'url' => $_SERVER['REQUEST_URI'],
   );
-  
-  if ($exception instanceOf DataServerException) {
-    $args['code'] = 'data';
-  
-  } else if ($exception instanceOf DeviceNotSupported) {
-    $args['code'] = 'device_notsupported';
-    
-  } else if ($exception instanceOf ModuleNotFound) {
-    $args['code'] = 'notfound';
-    
-  } else if ($exception instanceOf DisabledModuleException) {
-    $args['code'] = 'forbidden';
-  }
   
   if($devError){
     $args['error'] = $devError;
@@ -69,7 +76,7 @@ function developmentErrorLog($exception){
   $path =  CACHE_DIR . "/errors/";
   if (!file_exists($path)) {
     if (!mkdir($path, 0755, true)){
-      error_log("DEV Error: could not create $path");
+      Kurogo::log(LOG_WARNING, "DEV Error: could not create $path", "exception");
       return false;
     }
   } 
@@ -78,7 +85,7 @@ function developmentErrorLog($exception){
   $file = $path . $time . '.log';
   
   if (!$handle = fopen($file, 'w')) {
-    error_log("DEV Error: could open file $file");
+    Kurogo::log(LOG_WARNING, "DEV Error: could not open file $file", "exception");
     return false;
   }
   
@@ -135,7 +142,7 @@ function developmentErrorLog($exception){
   $msg = '<strong>' . $exception->getMessage() . '</strong><br>' . $msg;
   
   if (fwrite($handle, $msg) === FALSE) {
-    error_log("DEV Error: could not write to file $file");
+    Kurogo::log(LOG_WARNING, "DEV Error: could not write to file $file", "exception");
     return false;
   }
   
@@ -148,14 +155,19 @@ function developmentErrorLog($exception){
   * Exception Handler set in Kurogo::initialize()
   */
 function exceptionHandlerForError($exception) {
+    $bt = $exception->getTrace();
+    array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
+    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
     $error = print_r($exception, TRUE);
     die("There was a serious error: $error");
 }
 
 function exceptionHandlerForDevelopment($exception) {
+    $bt = $exception->getTrace();
+    array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
+    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
     $errtime = developmentErrorLog($exception);
     $error = print_r($exception, TRUE);
-    error_log($error);
 	
 	if ($url = getErrorURL($exception, $errtime)) {
     	header('Location: ' . $url);
@@ -169,18 +181,29 @@ function exceptionHandlerForDevelopment($exception) {
 /**
   * Exception Handler set in Kurogo::initialize()
   */
-function exceptionHandlerForProduction($exception) {
-    $to = Kurogo::getSiteVar('DEVELOPER_EMAIL');
-    if (!Kurogo::deviceClassifier()->isSpider() && $to) {
-        mail($to, 
-          "Mobile web page experiencing problems",
-          "The following page is throwing exceptions:\n\n" .
-          "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
-          "User-Agent: \"{$_SERVER['HTTP_USER_AGENT']}\"\n" .
-          "Referrer URL: \"{$_SERVER['HTTP_REFERER']}\"\n" .
-          "Exception:\n\n" . 
-          var_export($exception, true)
-        );
+function exceptionHandlerForProduction(Exception $exception) {
+    $bt = $exception->getTrace();
+    array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
+    Kurogo::log(LOG_ALERT, sprintf("A %s has occured: %s", get_class($exception), $exception->getMessage()), "exception", $bt);
+    if ($exception instanceOf KurogoException) {
+        $sendNotification = $exception->shouldSendNotification();
+    } else {
+        $sendNotification = true;
+    }
+
+    if ($sendNotification) {
+        $to = Kurogo::getSiteVar('DEVELOPER_EMAIL');
+        if (!Kurogo::deviceClassifier()->isSpider() && $to) {
+            mail($to, 
+              "Mobile web page experiencing problems",
+              "The following page is throwing exceptions:\n\n" .
+              "URL: http".(IS_SECURE ? 's' : '')."://".SERVER_HOST."{$_SERVER['REQUEST_URI']}\n" .
+              "User-Agent: \"{$_SERVER['HTTP_USER_AGENT']}\"\n" .
+              "Referrer URL: \"{$_SERVER['HTTP_REFERER']}\"\n" .
+              "Exception:\n\n" . 
+              var_export($exception, true)
+            );
+        }
     }
 
     if ($url = getErrorURL($exception)) {
@@ -192,9 +215,13 @@ function exceptionHandlerForProduction($exception) {
 }
 
 function exceptionHandlerForAPI($exception) {
+    $bt = $exception->getTrace();
+    array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
+    Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
     $error = KurogoError::errorFromException($exception);
     $response = new APIResponse();
     $response->setVersion(0);
     $response->setError($error);
     $response->display();
+    exit();
 }

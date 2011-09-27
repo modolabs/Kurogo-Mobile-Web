@@ -50,7 +50,6 @@ ul.iconic li:last-child .movedown {
 }
 
 ul.iconic span.nolink { 
-  position: relative;
   padding-left: 37px;
   background-position: 3px 3px;
   font-size: 94.112%;

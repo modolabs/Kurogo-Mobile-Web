@@ -9,189 +9,224 @@ Places may be grouped by feed groups, category, and subcategory.
 Configuring Feed Groups
 ========================
 
-Feed groups are a way to organize map sources logically (i.e. by campus/location)
+Each feed group corresponds to a base map, characterized by center location
+and background appearance.  For organizations with multiple campuses, feed
+groups are a logical way to split up maps by campus.
 
-Groups are configured in the *SITE_DIR/config/map/feedgroups.ini* file. Each separate group has an section as follows:::
+Groups are configured in the *SITE_DIR/config/map/feedgroups.ini* file.  There
+must be at least one entry that looks like the following: ::
 
-    [boston]
-    title = "Boston Maps"
-    center = "42.3584308,-71.0597732"
-    address = "1 Massachusetts Ave., Boston MA 02115"
-    description = "Description"
+    [groupID]
+    title                = "Title of my map"
+    subtitle             = "Subtitle of my map"
+    center               = "42.3584308,-71.0597732"
+    JS_MAP_CLASS         = "ArcGISJSMap"
+    DYNAMIC_MAP_BASE_URL = "http://myhost/MapServer"
+    STATIC_MAP_CLASS     = ArcGISStaticMap
+    STATIC_MAP_BASE_URL  = "http://myhost/MapServer"
 
-* The section title is the *id*, a short string to identify the campus. 
-* *center* is the representative latitude and longitude of the campus.
-* You can also include *address* and *description*
 
-==============
-Base Map Types
-==============
+* *[groupID]* is a short, alphanumeric identifier for the group, e.g. "boston",
+  "newyork", "daytime", etc.
+* *title* (required) - a short description of this group, e.g. "Boston Campus"
+* *subtitle* (optional) - more explanatory text if title is not sufficient.
+* *center* (required) - the latitude, longitude point that represents the 
+  center of this group
+* *JS_MAP_CLASS* (optional) - the type of base map to use for devices that 
+  support JavaScript maps, see :ref:`section-base-map-types`.
+* *DYNAMIC_MAP_BASE_URL* (required if *JS_MAP_CLASS* is ArcGISJSMap) - the base 
+  URL where the base map JavaScript API is hosted.
+* *STATIC_MAP_CLASS* (optional) - the type of base map to use for devices that
+  do not support JavaScript maps, see :ref:`section-base-map-types`.
+* *STATIC_MAP_BASE_URL* (required if *STATIC_MAP_CLASS* is ArcGISStaticMap or
+  WMSStaticMap) - the base URL where the static base map service is hosted.
 
-The map module currently supports five types of base maps.
+.. _section-base-map-types:
 
-JavaScript based maps (compliant and tablet only)
+=====================
+Configuring Base Maps
+=====================
+
+Kurogo selects the base map following the configuration and these default 
+rules:
+
+If both JS_MAP_CLASS and STATIC_MAP_CLASS are left unspecified, Kurogo by 
+default will select Google Static Maps for basic/touch devices and Google Maps
+for compliant/tablet devices.  If both are specified, JS_MAP_CLASS will be used
+for compliant/tablet and STATIC_MAP_CLASS for touch/basic.
+
+If **only** STATIC_MAP_CLASS is specified, both compliant/tablet and 
+basic/touch devices will use the base map specified by STATIC_MAP_CLASS.  If 
+**only** JS_MAP_CLASS is specified, Google Static Maps will be chosen for 
+basic/touch devices.
+
+JavaScript base maps (compliant and tablet only)
 -------------------------------------------------
 
-* `Google Maps <http://code.google.com/apis/maps/documentation/javascript/reference.html>`_
-* `ArcGIS JavaScript <http://help.arcgis.com/en/webapi/javascript/arcgis/help/jsapi_start.htm>`_
+Acceptable options for JS_MAP_CLASS are as follows.
 
-Static image based maps
+Google Maps
+^^^^^^^^^^^^^^
+
+To use Google Maps, enter the configuration: ::
+
+    JS_MAP_CLASS = "GoogleJSMap"
+
+
+`Google Maps documentation <http://code.google.com/apis/maps/documentation/javascript/reference.html>`_
+
+
+ArcGIS Tiled Service Maps
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To use tiles from an ArcGIS tile server, enter the configuration: ::
+
+    JS_MAP_CLASS = "ArcGISJSMap"
+    DYNAMIC_MAP_BASE_URL = "http://..."
+
+We may shortly be adding support for ArcGIS dynamic maps.
+
+`ArcGIS JavaScript documentation <http://help.arcgis.com/en/webapi/javascript/arcgis/help/jsapi_start.htm>`_
+
+
+Static image base maps
 -----------------------
-* `Google Static Maps <http://code.google.com/apis/maps/documentation/staticmaps/>`_ 
-* `WMS <http://portal.opengeospatial.org/files/?artifact_id=14416>`_
-* `ArcGIS *export* API <http://help.arcgis.com/en/arcgisserver/10.0/apis/rest/exportimage.html>`_
+
+Acceptable options for STATIC_MAP_CLASS are as follows.
 
 
-================
-Map Data Sources
-================
+Google Static Maps
+^^^^^^^^^^^^^^^^^^^
 
-The map module currently supports three types of geo data formats:
+To use Google Static Maps, enter the configuration: ::
 
-* `KML <http://code.google.com/apis/kml/documentation/kmlreference.html>`_ 
-* `ArcGIS Server <http://resources.esri.com/help/9.3/arcgisserver/apis/rest/>`_ 
-* `Shapefiles <http://en.wikipedia.org/wiki/Shapefile>`_
+    STATIC_MAP_CLASS = "GoogleStaticMap"
 
-Any of these sources may be used with any of the base maps listed above.
+Google Static Maps does not currently have support for polygon overlays.
+
+`Google Static Maps documentation <http://code.google.com/apis/maps/documentation/staticmaps/>`_ 
+
+Web Map Service (WMS)
+^^^^^^^^^^^^^^^^^^^^^^
+
+To use images from a WMS service, enter the configuration: ::
+
+    STATIC_MAP_CLASS = "WMSStaticMap"
+    STATIC_MAP_BASE_URL = "http://..."
+
+Note that it is not possible to add overlays to WMS maps.
+
+`WMS documentation <http://portal.opengeospatial.org/files/?artifact_id=14416>`_
+
+ArcGIS exported images
+^^^^^^^^^^^^^^^^^^^^^^^
+
+To use exported images from an ArcGIS server, enter the configuration: ::
+
+    STATIC_MAP_CLASS = "ArcGISStaticMap"
+    STATIC_MAP_BASE_URL = "http://..."
+
+Note that it is not possible to add overlays to an exported image.
+
+`ArcGIS export API documentation <http://help.arcgis.com/en/arcgisserver/10.0/apis/rest/exportimage.html>`_
+
+
 
 ==========================
 Configuring Map Data Feeds
 ==========================
 
-Each data feed is represented as a *category* that a user may browse by from the home screen or within a campus.
+Each data feed is represented as a *category* that a user may browse by from 
+the home screen or within a campus.
 
-The feed configuration file is in *SITE_DIR/config/map/feeds-CAMPUS.ini* (where CAMPUS is the name of the campus section
-in the feedgroups.ini file). Each feed has the following fields:
+The feed configuration file is in *SITE_DIR/config/map/feeds-GROUP.ini* (where 
+GROUP is the id of the group from feedgroups.ini). Each feed has the following
+fields:
 
-* *TITLE* is a descriptive name of the category that shows up on the map home screen (for single campuses) 
-  or in the campus home screen
-* *SUBTITLE* is an optional brief description that appears in small text alongside the title
-* *BASE_URL* is the URL location of the data source.  This may be a file URL. (i.e. a path)
-* *CONTROLLER_CLASS* is the data controller class associated with the type of data source.
-  If the data source is KML, you should use *KMLDataController*.  For ArcGIS Server, you should use *ArcGISDataController*.
-* *STATIC_MAP_CLASS* is the type of static map image used to display the map.
-  This field is required as lower-end devices can only use static maps. Acceptable values are:
+* *TITLE* (required) - descriptive name of the category that shows up in the 
+  list of categories
+* *SUBTITLE* (optional) - brief description that appears in small text 
+  alongside the title
+* *BASE_URL* (required) - URL location of the data source.
+* *CONTROLLER_CLASS* - data controller class associated with the type of
+  data source.  It is recomended that you set to to *MapDBDataController*
+* *PARSER_CLASS* (required) - data parser to use for the feed, see below for 
+  options.
+* *SEARCHABLE* - boolean value that indicates whether or not this data
+  source should be included in internal search results.
+* *DEFAULT_ZOOM_LEVEL* - default zoom level that the base map should use
+  when displaying items from this feed.
 
-  * GoogleStaticMap
-  * ArcGISStaticMap
-  * WMSStaticMap
-  
-* *STATIC_MAP_BASE_URL* is the base URL of the map image server. This is not required for Google Static Maps.
-* *JS_MAP_CLASS* is optional and refers to the type of JavaScript map to use on compliant/tablet devices.
-  Acceptable values:
+KML/KMZ
+--------
 
-  * GoogleJSMap
-  * ArcGISJSMap
-  
-* *DYNAMIC_MAP_BASE_URL* is the base URL of the map image server. This is not required for Google JavaScript Maps.
-* *SEARCHABLE* is a boolean value that indicates whether or not this data source should be included in search results.
-* *DEFAULT_ZOOM_LEVEL* is the default zoom level of the map image.
-* If your insitution has multiple campuses, the *CAMPUS* field specifies which campus this data feed belongs to.
-* If you want your data feed to be included in search results, but do not wish to make it a browseable category,
-  you may set the optional *HIDDEN* value to 1
+KML (.kml) and zipped KML (.kmz) are both supported by Kurogo.  To use KML, 
+specify the following in feeds-<group>.ini: ::
 
-======================
-Example Configurations
-======================
+    DATA_PARSER_CLASS = "KMLDataParser"
 
-Data Sources
-------------
+KML files can easily be created using `Google Earth <http://earth.google.com>`_.
 
+* `KML documentation <http://code.google.com/apis/kml/documentation/kmlreference.html>`_ 
 
-**KML Data Source**
+ArcGIS Server
+---------------
 
-::
+To use ArcGIS Server, specify the following in feeds-<group>.ini: ::
 
-  TITLE              = "My Placemarks"
-  BASE_URL           = "http://example.com/feed.kml"
-  CONTROLLER_CLASS   = KMLDataController
+    DATA_PARSER_CLASS = "ArcGISDataParser"
 
-**ArcGIS Server Data Source**
+If the service has multiple layers, Kurogo only uses one layer at a time.  You
+may specify different layers for different feeds by specifying
 
-When working with an ArcGIS Server instance with multiple layers, an *ARCGIS_LAYER_ID* may be specified.  The default layer is 0.
+    ARCGIS_LAYER_ID = <number>
 
-::
+where <number> is the numeric ID of the layer.  Sublayers are not currently
+supported.
 
-  TITLE                = "My ArcGIS Data"
-  BASE_URL             = "http://path/to/service/MapServer"
-  ARCGIS_LAYER_ID      = 2
-  CONTROLLER_CLASS     = ArcGISDataController
+* `ArcGIS Server documentation <http://resources.esri.com/help/9.3/arcgisserver/apis/rest/>`_
 
-**Shapefile Data Source**
+Shapefile 
+-----------
 
-Currently, shapefiles must be saved locally on the machine.
-Due to the multi-file naming scheme of shapefiles, we require that the
-path be specified without an extension.  In the following example, the
-shapefile from http://www.mass.gov/mgis/biketrails.htm was unarchived
-and the files biketrails_arc.shp, biketrails_arc.dbf, and biketrails_arc.prj
-were placed in the directory DATA_DIR"/biketrails".  Only the .shp, .dbf,
-and .prj (if any) files are required.
+To use shapefiles, specify the following in feeds-<group>.ini: ::
 
-::
+    DATA_PARSER_CLASS = "ShapefileDataParser"
 
-  TITLE              = "Massachusetts Bike Trails"
-  BASE_URL           = DATA_DIR"/biketrails/biketrails_arc"
-  CONTROLLER_CLASS   = ShapefileDataController
+Shapefiles located across the network must be in a zip folder containing no
+directories (i.e. the contents are all .shp, .dbf, .shx, and .prj files).
 
-Static Base Maps
-----------------
+Larger shapefiles may be unzipped and stored locally in a subdirectory of 
+DATA_DIR.  In this case, the BASE_URL must be specified without the extension,
+e.g. the shapefile consisting of DATA_DIR"/myshapefile.shp" and 
+DATA_DIR"/myshapefile.dbf" must be specified as::
 
-If a dynamic map is used for compliant/tablet devices, these 
-configurations determine the appearance of maps on touch and basic 
-devices.  If no dynamic map is specified, they determine the 
-appearance of maps on all devices.
+    BASE_URL = DATA_DIR"/myshapefile"
 
-**Google Static Maps**
-
-This is the default base map.  If you do not specify anything for 
-*STATIC_MAP_CLASS*, this is equivalent to specifying GoogleStaticMap
-for basic and touch devices.  Additionally, if *JS_MAP_CLASS* is also
-omitted, Google Static Maps will used for compliant/tablet devices.
-
-**Web Map Service (WMS)**
-
-::
-
-  STATIC_MAP_CLASS      = WMSStaticMap
-  STATIC_MAP_BASE_URL   = "http://path/to/WMS/server"
-
-Note that it is not possible to add annotations to WMS maps.
-
-**ArcGIS Exported Maps**
-
-::
-
-  STATIC_MAP_CLASS     = ArcGISStaticMap
-  STATIC_MAP_BASE_URL  = "http://path/to/service/MapServer"
-
-Note that it is not possible to add annotations to exported images.
-
-JavaScript Base Maps
---------------------
-
-If specified, these configurations determine the appearance of maps
-on tablet and compliant devices.
-
-**Google Maps**
-
-::
-
-  JS_MAP_CLASS       = GoogleJSMap
-
-**ArcGIS**
-
-::
-
-  JS_MAP_CLASS         = ArcGISJSMap
-  DYNAMIC_MAP_BASE_URL = "http://path/to/service/MapServer"
+* `Shapefile documentation <http://en.wikipedia.org/wiki/Shapefile>`_
 
 
 ======================
 Configuring Map Search
 ======================
 
-The default map search traverses all feeds that have SEARCHABLE set to 1 and finds all Placemarks with a matching
-title (or location for the "nearby" search that occurs on detail pages).
-If you have an external search engine, you may override this behavior by subclassing MapSearch in your site lib directory
-and specifying your class as MAP_SEARCH_CLASS in *SITE_DIR/config/map/module.ini*
+Map search is configured in module.ini.  The map module has two types of 
+search, externally-initiated (e.g. a link from the people module) and 
+internally-initiated (using the map module search bar).  The search classes
+used for these are specified in the configuration parameters 
+MAP_EXTERNAL_SEARCH_CLASS and MAP_SEARCH_CLASS.
+
+The search classes available are MapSearch, MapDBSearch, and GoogleMapSearch.
+MapSearch simply dispatches the search function to every feed.  MapDBSearch
+searches a database that replicates data in the feeds.  GoogleMapSearch
+geocodes addresses.
+
+The recommended setup is ::
+
+    MAP_EXTERNAL_SEARCH_CLASS = "GoogleMapSearch"
+    MAP_SEARCH_CLASS          = "MapDBSearch"
+
+Note that at any time you use GoogleMapSearch, the base map displaying the 
+search results must be a Google map (static or JavaScript).  Kurogo will 
+automatically choose a Google map if the search is done externally.
 

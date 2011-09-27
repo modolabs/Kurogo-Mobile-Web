@@ -1,13 +1,12 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{if isset($showUnsupported)}
- Sorry, unsupported device.
-{else}
+{block name="videoHeader"}
+  {include file="findInclude:common/templates/search.tpl" resultCount=$resultCount extraArgs=$hiddenArgs}
+{/block}
 
-{include file="findInclude:common/templates/search.tpl" placeholder="Search" resultCount=$resultCount extraArgs=$hiddenArgs}
-{include file="findInclude:modules/$moduleID/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
-
-{/if}
+{block name="videos"}
+  {include file="findInclude:modules/$moduleID/templates/results.tpl" results=$videos resultsID="videoList" titleTruncate=40}
+{/block}
 
 {include file="findInclude:common/templates/footer.tpl"}
 

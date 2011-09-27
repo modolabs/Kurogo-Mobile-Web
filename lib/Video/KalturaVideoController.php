@@ -70,12 +70,12 @@
         parent::init($args);
         
         if (!isset($args['PartnerID'])) {
-            throw new Exception('Kaltura PartnerID not included');
+            throw new KurogoConfigurationException('Kaltura PartnerID not included');
         }
         $this->token = $args['token'];
 
         if (!isset($args['PartnerSecret'])) {
-            throw new Exception('Kaltura PartnerSecret not included');
+            throw new KurogoConfigurationException('Kaltura PartnerSecret not included');
         }        
         
         define("KALTURA_PARTNER_ID", PartnerID);

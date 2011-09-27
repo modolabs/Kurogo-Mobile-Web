@@ -15,11 +15,11 @@
 /* Tablet-specific bottom nav bar */
 
 #footernav {
-  background: transparent url(/common/images/footernav-bg.png) repeat-x top left;
+  background: transparent url(/common/images/footernav-bg.png) repeat-x left top;
 }
 
 #footernav .module {
-  background: transparent url(/common/images/footernav-spacer.png) no-repeat top left;
+  background: transparent url(/common/images/footernav-spacer.png) no-repeat left top;
 }
 
 #footernav {
@@ -37,7 +37,7 @@
 
 #footernav .selected a {
   /* Background and label text color of selected module icon */
-  background: transparent url(/common/images/footernav-selected.png) repeat-x top left;
+  background: transparent url(/common/images/footernav-selected.png) repeat-x left top;
   color: #404355;
 }
 

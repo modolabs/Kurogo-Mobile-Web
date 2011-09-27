@@ -41,7 +41,7 @@
 
 /* Pixel-doubled action arrows */
 
-nav a, results a, .secondary a, a.arrow {  
+.nav a, .results a, .secondary a, a.arrow {  
 	background-image: url(/common/images/action-arrow@2x.png); 
 	background-size: 14px 17px;
 }
@@ -64,4 +64,9 @@ a.map {
 a.people {  
 	background-image: url(/common/images/action-people@2x.png); 
 	background-size: 19px 19px;
+}
+
+a.external {
+	background-image: url(/common/images/action-external.png); 
+	background-size: 26px 19px;
 }

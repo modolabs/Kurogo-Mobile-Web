@@ -2,8 +2,8 @@
 
 class MapProjector {
 
-    private $srcProjId = 4326;
-    private $dstProjId = 4326;
+    private $srcProjId = GEOGRAPHIC_PROJECTION;
+    private $dstProjId = GEOGRAPHIC_PROJECTION;
     
     private $srcProjSpec;
     private $dstProjSpec;
@@ -53,17 +53,17 @@ class MapProjector {
                  }
                  $projectedRings[] = $this->projectPoints($ring);
              }
-             return new EmptyMapPolygon($projectedRings);
+             return new MapBasePolygon($projectedRings);
             
         } elseif ($geometry instanceof MapPolyline) {
              $points = $geometry->getPoints();
              $projectedPoints = $this->projectPoints($points);
-             return new EmptyMapPolyline($projectedPoints);
+             return new MapBasePolyline($projectedPoints);
 
         } else { // point
              $point = $geometry->getCenterCoordinate();
              $projectedPoint = $this->projectPoint($point);
-             return new EmptyMapPoint($projectedPoint['lat'], $projectedPoint['lon']);
+             return new MapBasePoint($projectedPoint);
         }
     }
 
@@ -124,11 +124,8 @@ class MapProjector {
         if ($this->srcProjSpec === $this->dstProjSpec) {
             return $point;
         }
-
         list($x, $y, $fmt) = self::getXYFromPoint($point);
-        if (Kurogo::getSiteVar('MODULE_DEBUG')) {
-            error_log("projecting $x, $y");
-        }
+        Kurogo::log(LOG_DEBUG, "projecting $x, $y", 'maps');
 
         if (isset($this->srcProjId, $this->dstProjId)
             && $this->srcProjId == $this->dstProjId
@@ -144,7 +141,6 @@ class MapProjector {
             $this->fromProjection->setXY(array('x' => $x, 'y' => $y));
             $result = $this->formatLatLon($this->fromProjection->getLatLon(), $fmt);
         }
-
         if ($this->dstProjSpec && !isset($this->toProjection)) {
             $this->toProjection = new MapProjection($this->dstProjSpec);
         }
@@ -154,10 +150,8 @@ class MapProjector {
             $result = $this->formatLatLon($this->toProjection->getXY(), $fmt);
         }
 
-        if (Kurogo::getSiteVar('MODULE_DEBUG')) {
-            list($x, $y, $fmt) = self::getXYFromPoint($result);
-            error_log("result: $x, $y");
-        }
+        list($x, $y, $fmt) = self::getXYFromPoint($result);
+        Kurogo::log(LOG_DEBUG, "result: $x, $y", 'maps');
 
         return $result;
     }
@@ -169,6 +163,7 @@ class MapProjector {
     public function setSrcProj($proj) {
         if ($proj instanceof MapProjection) {
             $this->fromProjection = $proj;
+            $this->srcProjSpec = $proj->getSpecs();
             $this->srcProjId = null;
 
         } else {
@@ -187,6 +182,7 @@ class MapProjector {
     public function setDstProj($proj) {
         if ($proj instanceof MapProjection) {
             $this->toProjection = $proj;
+            $this->dstProjSpec = $proj->getSpecs();
             $this->dstProjId = null;
 
         } else {
@@ -199,6 +195,7 @@ class MapProjector {
     }
     
     public static function getProjSpecs($wkid) {
+        $contents = null;
         $projCache = new DiskCache(Kurogo::getSiteVar('PROJ_CACHE','maps'), null, true);
         $projCache->setSuffix('.proj4');
         $projCache->preserveFormat();
@@ -216,8 +213,13 @@ class MapProjector {
             }
             fclose($file);
 
-            if ($contents)
+            if ($contents) {
                 $projCache->write($contents, $filename);
+            } else {
+                // TODO get config for logging
+                Kurogo::LOG(LOG_WARNING, "$wkid is not a known projection", 'maps');
+            }
+
         } else {
             $contents = $projCache->read($filename);
         }

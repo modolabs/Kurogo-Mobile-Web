@@ -36,6 +36,7 @@ class EmergencyWebModule extends WebModule
                         $this->assign('title', $emergencyNotice['title']);
                         $this->assign('content', $emergencyNotice['text']);
                         $this->assign('date', $emergencyNotice['date']);
+                        $this->assign('dateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
                     } else {
                         $this->assign('emergencyFeedEmpty', TRUE);
                     }

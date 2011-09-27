@@ -20,7 +20,7 @@ class ModuleConfigFile extends ConfigFile {
             if ($options & self::OPTION_DO_NOT_CREATE) {
                 return false;
             }
-            throw new Exception("FATAL ERROR: cannot load $type configuration file for module $id: " . self::getfileByType($id, $type));
+            throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file for module $id: " . self::getfileByType($id, $type));
         }
     
         return $config;
@@ -41,7 +41,7 @@ class ModuleConfigFile extends ConfigFile {
                 }
             }
             
-            throw new Exception("Unable to find $type config file for module $id");
+            throw new KurogoConfigurationException("Unable to find $type config file for module $id");
         } else {
             $file = sprintf('%s/%s/%s.ini', SITE_CONFIG_DIR, $id, $type);
         }

@@ -1,56 +1,59 @@
 {
     "options": {
-        "title":"Options",
-        "description":"",
+        "titleKey":"PEOPLE_ADMIN_OPTIONS_TITLE",
+        "descriptionKey":"PEOPLE_ADMIN_OPTIONS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "BOOKMARKS_ENABLED":{"label":"Bookmarks Enabled", "description":"Enable bookmarking of people","config":"module","section":"module","type":"checkbox","default":1},
-            "SEARCH_TIP":{"label":"Search tip","type":"text","config":"module","section":"strings","description":"The text to show as the search tip"}
+            "BOOKMARKS_ENABLED":{"labelKey":"PEOPLE_ADMIN_OPTIONS_BOOKMARKSENABLED_TITLE", "descriptionKey":"PEOPLE_ADMIN_OPTIONS_BOOKMARKSENABLED_DESCRIPTION","config":"module","section":"module","type":"checkbox","default":1},
+            "SEARCH_TIP":{"labelKey":"PEOPLE_ADMIN_OPTIONS_SEARCHTIP_TITLE","type":"textarea","rows":2,"config":"module","section":"strings","descriptionKey":"PEOPLE_ADMIN_OPTIONS_SEARCHTIP_DESCRIPTION"}
        }
     },
     "feeds": {
-        "title":"Data Configuration",
-        "description":"You can configure the source of your directory information.",
+        "titleKey":"PEOPLE_ADMIN_FEEDS_TITLE",
+        "descriptionKey":"PEOPLE_ADMIN_FEEDS_DESCRIPTION",
         "sectiontype":"fields",
+        "fieldgroups":{
+            "advanced":{"labelKey":"ADMIN_ADVANCED_OPTIONS", "collapsed": true, "descriptionKey":"PEOPLE_ADMIN_FEEDS_ADVANCED_DESCRIPTION"}
+        },
         "fields":{
-            "CONTROLLER_CLASS":{"label":"Controller class", "description":"The type of directory service. Should be a PeopleController class", "type":"select","config":"feeds","section":"people","optionsMethod":["PeopleController","getPeopleControllers"]},
-            "HOST":{"label":"Host","description":"LDAP Server host name","type":"text","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
-            "PORT":{"label":"Port","description":"LDAP port. Default is 389. Use 636 for SSL","type":"number","omitBlankValue": true, "placeholder":"389","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
-            "SEARCH_BASE":{"label":"Search Base","description":"LDAP search base","type":"text","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
-            "ADMIN_DN":{"label":"Admin DN","description":"Some LDAP servers do not permit anonymous access. If necessary, provide an full DN for an administrative service account that has read-only access.","type":"text","config":"feeds","section":"people","omitBlankValue": true,"showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
-            "ADMIN_PASSWORD":{"label":"Admin Password","type":"password", "description":"If using a admin service account, include the password", "omitBlankValue": true,"config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
-            "SEARCH_TIMELIMIT":{"label":"Search timeout","type":"number","description":"Timeout (in seconds) for search queries","omitBlankValue": true,"placeholder":"30","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
-            "READ_TIMELIMIT":{"label":"Read timeout","type":"text", "description":"Timeout (in seconds) for read operations (operations that read the data from a specific record","omitBlankValue": true,"placeholder":"30","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
-            "DB_TYPE":{"label":"Database type","type":"select","description":"The type of database system to connect to. If <b>Default</b> then it will use the same values specified in the Site \"Database Configuration\" section","config":"feeds","section":"people","options":{"":"Default","mysql":"MySQL","sqlite":"SQLite"},"showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"omitBlankValue":true},
-            "DB_HOST":{"label":"Database host","type":"text","description":"The fully qualified hostname of the database server","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_USER":{"label":"Database user","type":"text","description":"The username used to connect to the database server","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_PASS":{"label":"Database password","type":"password","description":"The password used to connect to the database server","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_DBNAME":{"label":"Database","type":"text","description":"The database used to store the user data on the database server","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"placeholder":"default","omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_FILE":{"label":"Database file","type":"file","description":"The location of the SQLite database file.","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","sqlite"],"omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_USER_TABLE":{"label":"User table","type":"text","description":"The table used to store user records.","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"users","omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_USERID_FIELD":{"label":"UserID field","type":"text","description":"Field used in the user table that contains usernames","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"userID","omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_EMAIL_FIELD":{"label":"User email field","type":"text","description":"Field used in the user table that contains email addresses","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"email","omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_FIRSTNAME_FIELD":{"label":"User first name field","type":"text","description":"Field used in the user table that contains user's first name","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"firstname","omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_LASTNAME_FIELD":{"label":"User last name field","type":"text","description":"Field used in the user table that contains user's last name","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"lastname","omitBlankValue":true,"config":"feeds","section":"people"},
-            "DB_PHONE_FIELD":{"label":"User phone number field","type":"text","description":"Field used in the user table that contains user's phone number. Used for searching only. Leave blank if there is no phone number field.","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"","omitBlankValue":true,"config":"feeds","section":"people"},
-            "LDAP_USERID_FIELD":{"label":"UserID field","type":"text","description":"Field used in the LDAP server that contains the unique user name. Used for searching only.","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"uid","omitBlankValue":true,"config":"feeds","section":"people"},
-            "LDAP_EMAIL_FIELD":{"label":"Email field","type":"text","description":"Field used in the LDAP server that contains email addresses. Used for searching only.","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"mail","omitBlankValue":true,"config":"feeds","section":"people"},
-            "LDAP_FIRSTNAME_FIELD":{"label":"First name field","type":"text","description":"Field used in the LDAP server that contains user's first name. Used for searching only.","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"givenname","omitBlankValue":true,"config":"feeds","section":"people"},
-            "LDAP_LASTNAME_FIELD":{"label":"Last name field","type":"text","description":"Field used in the LDAP server that contains user's last name. Used for searching only.","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"sn","omitBlankValue":true,"config":"feeds","section":"people"},
-            "LDAP_PHONE_FIELD":{"label":"Phone number","type":"text","description":"Field used in the LDAP server that contains user's phone number. Used for searching only.","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"telephonenumber","omitBlankValue":true,"config":"feeds","section":"people"}
+            "CONTROLLER_CLASS":{"labelKey":"PEOPLE_ADMIN_FEEDS_CONTROLLERCLASS_TITLE", "descriptionKey":"PEOPLE_ADMIN_FEEDS_CONTROLLERCLASS_DESCRIPTION", "type":"select","config":"feeds","section":"people","optionsMethod":["PeopleController","getPeopleControllers"]},
+            "HOST":{"labelKey":"PEOPLE_ADMIN_FEEDS_HOST_TITLE","descriptionKey":"PEOPLE_ADMIN_FEEDS_HOST_DESCRIPTION","type":"text","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
+            "SEARCH_BASE":{"labelKey":"PEOPLE_ADMIN_FEEDS_SEARCHBASE_TITLE","descriptionKey":"PEOPLE_ADMIN_FEEDS_SEARCHBASE_DESCRIPTION","type":"text","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"]},
+            "PORT":{"labelKey":"PEOPLE_ADMIN_FEEDS_PORT_TITLE","descriptionKey":"PEOPLE_ADMIN_FEEDS_PORT_DESCRIPTION","type":"number","omitBlankValue": true, "placeholder":"389","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"], "fieldgroup":"advanced"},
+            "ADMIN_DN":{"labelKey":"PEOPLE_ADMIN_FEEDS_ADMINDN_TITLE","descriptionKey":"PEOPLE_ADMIN_FEEDS_ADMINDN_DESCRIPTION","type":"text","config":"feeds","section":"people","omitBlankValue": true,"showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"fieldgroup":"advanced"},
+            "ADMIN_PASSWORD":{"labelKey":"PEOPLE_ADMIN_FEEDS_ADMINPASSWORD_TITLE","type":"password", "descriptionKey":"PEOPLE_ADMIN_FEEDS_ADMINPASSWORD_DESCRIPTION", "omitBlankValue": true,"config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"fieldgroup":"advanced"},
+            "SEARCH_TIMELIMIT":{"labelKey":"PEOPLE_ADMIN_FEEDS_SEARCHTIMELIMIT_TITLE","type":"number","descriptionKey":"PEOPLE_ADMIN_FEEDS_SEARCHTIMELIMIT_DESCRIPTION","omitBlankValue": true,"placeholder":"30","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"fieldgroup":"advanced"},
+            "READ_TIMELIMIT":{"labelKey":"PEOPLE_ADMIN_FEEDS_READTIMELIMIT_TITLE","type":"text", "descriptionKey":"PEOPLE_ADMIN_FEEDS_READTIMELIMIT_DESCRIPTION","omitBlankValue": true,"placeholder":"30","config":"feeds","section":"people","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"fieldgroup":"advanced"},
+            "DB_TYPE":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBTYPE_TITLE","type":"select","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBTYPE_DESCRIPTION","config":"feeds","section":"people","options":{"":"Default","mysql":"MySQL","sqlite":"SQLite"},"showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"omitBlankValue":true,"fieldgroup":"advanced"},
+            "DB_HOST":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBHOST_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBHOST_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_USER":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBUSER_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBUSER_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_PASS":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBPASS_TITLE","type":"password","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBPASS_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_DBNAME":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBDB_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBDB_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","mysql"],"placeholder":"default","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_FILE":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBFILE_TITLE","type":"file","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBFILE_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController","DB_TYPE","sqlite"],"omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_USER_TABLE":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBUSERTABLE_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBUSERTABLE_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"users","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_USERID_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBUSERID_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBUSERID_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"userID","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_EMAIL_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBEMAIL_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBEMAIL_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"email","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_FIRSTNAME_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBFIRSTNAME_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBFIRSTNAME_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"firstname","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_LASTNAME_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBLASTNAME_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBLASTNAME_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"lastname","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "DB_PHONE_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_DBPHONE_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_DBPHONE_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","DatabasePeopleController"],"placeholder":"","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "LDAP_USERID_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_LDAPUSERID_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_LDAPUSERID_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"uid","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "LDAP_EMAIL_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_LDAPEMAIL_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_LDAPEMAIL_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"mail","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "LDAP_FIRSTNAME_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_LDAPFIRSTNAME_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_LDAPFIRSTNAME_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"givenname","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "LDAP_LASTNAME_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_LDAPLASTNAME_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_LDAPLASTNAME_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"sn","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"},
+            "LDAP_PHONE_FIELD":{"labelKey":"PEOPLE_ADMIN_FEEDS_LDAPPHONE_FIELD_TITLE","type":"text","descriptionKey":"PEOPLE_ADMIN_FEEDS_LDAPPHONE_FIELD_DESCRIPTION","showIf":["CONTROLLER_CLASS","LDAPPeopleController"],"placeholder":"telephonenumber","omitBlankValue":true,"config":"feeds","section":"people","fieldgroup":"advanced"}
         }
     },
     "index": {
-        "title":"Index Page",
+        "titleKey":"PEOPLE_ADMIN_INDEX_TITLE",
         "config":"contacts",
-        "description":"Static contact entries for the index page",
+        "descriptionKey":"PEOPLE_ADMIN_INDEX_DESCRIPTION",
         "sectiontype":"section",
         "fields":{
-            "section":{"label":"Entry","type":"label"},
-            "title":{"label":"Title","description":"The title of the entry","type":"text"},
-            "subtitle":{"label":"Subtitle","description":"The subtitle of the entry","type":"text","omitBlankValue":true},
-            "url":{"label":"URL","description":"URL of entry.","type":"text"},
-            "class":{"label":"Type","description":"Type of link","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
+            "section":{"labelKey":"PEOPLE_ADMIN_SECTION_INDEX_TITLE","type":"label","descriptionKey":"PEOPLE_ADMIN_SECTION_INDEX_DESCRIPTION"},
+            "title":{"labelKey":"PEOPLE_ADMIN_TITLE_INDEX_TITLE","descriptionKey":"PEOPLE_ADMIN_TITLE_INDEX_DESCRIPTION","type":"text"},
+            "subtitle":{"labelKey":"PEOPLE_ADMIN_SUBTITLE_INDEX_TITLE","descriptionKey":"PEOPLE_ADMIN_SUBTITLE_INDEX_DESCRIPTION","type":"text","omitBlankValue":true},
+            "url":{"labelKey":"PEOPLE_ADMIN_URL_INDEX_TITLE","descriptionKey":"PEOPLE_ADMIN_URL_INDEX_DESCRIPTION","type":"text"},
+            "class":{"labelKey":"PEOPLE_ADMIN_CLASS_INDEX_TITLE","descriptionKey":"PEOPLE_ADMIN_CLASS_INDEX_DESCRIPTION","type":"select","optionsMethod":["WebModule","getListItemClasses"],"optionsFirst":"Normal","omitBlankValue":true}
         },
         "sectiontitlefield":"title",
         "sectionindex":"numeric",
@@ -59,4 +62,3 @@
         "sectionreorder":true
     }
 }
-

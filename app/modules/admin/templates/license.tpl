@@ -1,5 +1,5 @@
 {include file="findInclude:modules/admin/templates/header.tpl"}
-<h1>License</h1>
+<h1>{"ADMIN_CREDITS_LICENSE_TITLE"|getLocalizedString}</h1>
 
 <p>
  Copyright (c) 2010 Massachusetts Institute of Technology<br />

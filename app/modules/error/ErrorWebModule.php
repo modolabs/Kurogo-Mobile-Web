@@ -14,38 +14,43 @@ class ErrorWebModule extends WebModule {
   protected $moduleName = 'Error';
   protected $canBeAddedToHomeScreen = false;
 
-  private $errors = array(
-    'data' => array(
-      'status'  => '504 Gateway Timeout',
-      'message' => 'We are sorry the server is currently experiencing errors. Please try again later.',
-    ),
-    'internal' => array(
-      'status'  => '500 Internal Server Error',
-      'message' => 'Internal server error',
-    ),
-    'notfound' => array(
-      'status'  => '404 Not Found',
-      'message' => 'Page not found',
-    ),
-    'forbidden' => array(
-      'status'  => '403 Forbidden',
-      'message' => 'Not authorized to view this page',
-    ),
-    'device_notsupported' => array(
-      'status'  => null,
-      'message' => 'This functionality is not supported on this device',
-    ),
-    'disabled'  => array(
-      'message' =>  'This module has been disabled'
-    ),
-    'protected' => array(
-      'message' =>  'You are not permitted to use this module'
-    ),
-    'default' => array(
-      'status'  => '500 Internal Server Error',
-      'message' => 'Unknown error',
-    )
-  );
+    protected function getError($code) {
+        static $errors = array(
+            'server' => array(
+              'status'    => '504 Gateway Timeout'
+            ),
+            'data' => array(
+              'status'    => '500 Internal Server Error'
+            ),
+            'user'=> array(
+              'status'    => '500 Internal Server Error'
+            ),
+            'config'=> array(
+              'status'    => '500 Internal Server Error'
+            ),
+            'internal' => array(
+              'status'  => '500 Internal Server Error',
+            ),
+            'notfound' => array(
+              'status'  => '404 Not Found',
+            ),
+            'forbidden' => array(
+              'status'  => '403 Forbidden',
+            ),
+            'disabled'  => array(
+            ),
+            'protected' => array(
+            ),
+            'default' => array(
+              'status'  => '500 Internal Server Error',
+            )
+          );
+        
+        $code =   isset($errors[$code]) ? $code : 'default';
+        $error = $errors[$code];
+        $error['message'] = $this->getLocalizedString(strtoupper('ERROR_' . $code));
+        return $error;
+    }
 
     protected function init($page='', $args=array()) {
       if(!Kurogo::getSiteVar('PRODUCTION_ERROR_HANDLER_ENABLED')) {
@@ -56,6 +61,11 @@ class ErrorWebModule extends WebModule {
       $this->page = 'index';
       $this->setTemplatePage($this->page, $this->id);
       $this->args = $args;
+      $this->logView = Kurogo::getOptionalSiteVar('STATS_ENABLED', true) ? true : false;
+      try {
+          $this->moduleName = $this->getOptionalModuleVar('title', 'Error', 'module');
+      } catch (KurogoConfigurationException $e) {
+      }
       return;
   }
 
@@ -67,16 +77,14 @@ class ErrorWebModule extends WebModule {
     $code = $this->getArg('code', 'default');
     $url  = $this->getArg('url', '');
     
-    $error = isset($this->errors[$code]) ? 
-      $this->errors[$code] : $this->errors['default'];;
+    $error = $this->getError($code);
     
     if (isset($error['status'])) {
       header('Status: '.$error['status']);
     }
 
-    if (isset($error['linkText'])) {
-        $this->assign('linkText', $error['linkText']);
-    }
+    $linkText = isset($error['linkText']) ? $error['linkText'] : $this->getLocalizedString('DEFAULT_LINK_TEXT');
+    $this->assign('linkText', $linkText);
     
     if($this->devError() === false){
       $this->assign('message', $error['message']);
@@ -95,7 +103,9 @@ class ErrorWebModule extends WebModule {
       
     // check for development errors
     if(isset($_GET['error'])){
-      $file = $path =  CACHE_DIR . "/errors/" . $_GET['error'] . ".log";
+      $path = explode('/', $_GET['error']);
+      $sanitizedFileName = end($path);
+      $file = $path =  CACHE_DIR . "/errors/" . $sanitizedFileName . ".log";
       if(file_exists($file) && $handle = fopen($file, "r")) {
         $msg = fread($handle, filesize($file));
         fclose($handle);

@@ -9,38 +9,42 @@ class ArcGISStaticMap extends StaticMapImageController {
     const LIFE_SIZE_METERS_PER_PIXEL = 0.00028; // standard definition at 1:1 scale
     const NO_PROJECTION = -1;
     
-    private $parser;
     private $layerFilters = array();
-
-    protected $canAddAnnotations = false;
-    protected $canaddPaths = false;
-    protected $canAddLayers = true;
-    protected $supportsProjections = true;
 
     protected $availableLayers = null;
     protected $unitsPerMeter = null;
     
-    private $mapProjector;
-    
     private $transparent = false;
+
     public function setTransparent($tranparent) {
         $this->transparent = ($transparent == true);
     }
 
     public function __construct($baseURL, $parser=null) {
         $this->baseURL = $baseURL;
-        $this->parser = ArcGISDataController::parserFactory($this->baseURL);
-        $this->mapProjector = new MapProjector();
-        
-        $this->supportedImageFormats = $this->parser->getSupportedImageFormats();
+
+        // TODO find a better way to reuse JSON parsing code for ArcGIS-related data
+        $url = $this->baseURL.'?'.http_build_query(array('f' => 'json'));
+        $content = file_get_contents($url);
+        $data = json_decode($content, true);
+        if (isset($data['spatialReference'], $data['spatialReference']['wkid'])) {
+            $this->setMapProjection($data['spatialReference']['wkid']);
+        }
+
+        $this->unitsPerMeter = self::getScaleForEsriUnits($data['units']);
+
+        if (isset($data['supportedImageFormatTypes'])) {
+            $this->supportedImageFormats = $data['supportedImageFormatTypes'];
+        }
+
+        foreach ($data['layers'] as $layerData) {
+            $id = $layerData['id'];
+            $this->availableLayers[] = $id;
+        }
         $this->enableAllLayers();
 
-        // permanently set projection based on associated parser        
-        $this->mapProjection = $this->parser->getProjection();
-        $this->mapProjector->setDstProj($this->mapProjection);
-        $this->unitsPerMeter = null;
-
-        $bbox = $this->parser->getInitialExtent();
+        $bbox = $data['initialExtent'];
+        unset($bbox['spatialReference']);
 
         $xrange = $bbox['xmax'] - $bbox['xmin'];
         $yrange = $bbox['ymax'] - $bbox['ymin'];
@@ -56,55 +60,50 @@ class ArcGISStaticMap extends StaticMapImageController {
             );
     }
 
+    public function setCenter($center)
+    {
+        if ($center['lon'] < 180 && $center['lon'] > -180
+            && $center['lat'] < 90 && $center['lat'] > -90 && $this->mapProjector)
+        {
+            $this->center = $this->mapProjector->projectPoint($center);
+        }
+    }
+
+    public static function getScaleForEsriUnits($units) {
+        switch ($units) {
+            case 'esriCentimeters':
+                return 100;
+            case 'esriDecimeters':
+                return 0.1;
+            case 'esriFeet':
+                return 3.2808399;
+            case 'esriInches':
+                return 39.3700787;
+            case 'esriKilometers':
+                return 0.001;
+            case 'esriMeters':
+                return 1;
+            case 'esriMiles':
+                return 0.000621371192;
+            case 'esriMillimeters':
+                return 1000;
+            case 'esriNauticalMiles':
+                return 0.000539956803;
+            case 'esriYards':
+                return 1.0936133;
+            default:
+                return self::NO_PROJECTION;
+        }
+    }
+
     // http://wiki.openstreetmap.org/wiki/MinScaleDenominator
     protected function getCurrentScale()
     {
-        if ($this->unitsPerMeter === null) {
-            switch ($this->parser->getUnits()) {
-            case 'esriCentimeters':
-                $this->unitsPerMeter = 100;
-                break;
-            case 'esriDecimeters':
-                $this->unitsPerMeter = 0.1;
-                break;
-            case 'esriFeet':
-                $this->unitsPerMeter = 3.2808399;
-                break;
-            case 'esriInches':
-                $this->unitsPerMeter = 39.3700787;
-                break;
-            case 'esriKilometers':
-                $this->unitsPerMeter = 0.001;
-                break;
-            case 'esriMeters':
-                $this->unitsPerMeter = 1;
-                break;
-            case 'esriMiles':
-                $this->unitsPerMeter = 0.000621371192;
-                break;
-            case 'esriMillimeters':
-                $this->unitsPerMeter = 1000;
-                break;
-            case 'esriNauticalMiles':
-                $this->unitsPerMeter = 0.000539956803;
-                break;
-            case 'esriYards':
-                $this->unitsPerMeter = 1.0936133;
-                break;
-            default:
-                $this->unitsPerMeter = self::NO_PROJECTION;
-                break;
-            }
-        }
-        
         if ($this->unitsPerMeter != self::NO_PROJECTION) {
             $metersPerPixel = $this->getHorizontalRange() / $this->imageWidth / $this->unitsPerMeter;
             return $metersPerPixel / self::LIFE_SIZE_METERS_PER_PIXEL;
-        } else {
-            // TODO this isn't quite right, this won't allow us to use
-            // maxScaleDenom and minScaleDenom in any layers
-            return self::NO_PROJECTION;
         }
+        return null;
     }
     
     protected function zoomLevelForScale($scale)
@@ -114,29 +113,13 @@ class ArcGISStaticMap extends StaticMapImageController {
             $range = $this->getHorizontalRange();
             return ceil(log(360 / $range, 2));
         } else {
-            // http://wiki.openstreetmap.org/wiki/MinScaleDenominator
-            return ceil(log(559082264 / $scale, 2));
+            return oldPixelZoomLevelForScale($scale);
         }
-    }
-    
-    public function setDataProjection($proj) {
-        $this->mapProjector->setSrcProj($proj);
-    }
-    
-    // do conversion here since this and ArcGISJSMap are the
-    // only map image controllers that can project input
-    // features from other coordinate systems
-    public function setCenter($center) {
-        $newCenter = $this->mapProjector->projectPoint($center);
-        parent::setCenter($newCenter);
     }
 
     ////////////// overlays ///////////////
     
     public function getAvailableLayers() {
-        if ($this->availableLayers === null) {
-            $this->availableLayers = $this->parser->getSubLayerIds();
-        }
         return $this->availableLayers;
     }
     
@@ -149,6 +132,40 @@ class ArcGISStaticMap extends StaticMapImageController {
     }
 
     /////////// query builders ////////////
+
+    public function parseQuery($query) {
+        parse_str($query, $args);
+
+        if (isset($args['bbox'])) {
+            $bboxParts = explode(',', $args['bbox']);
+            $this->bbox = array(
+                'xmin' => $bboxParts[0],
+                'ymin' => $bboxParts[1],
+                'xmax' => $bboxParts[2],
+                'ymax' => $bboxParts[3],
+                );
+        }
+
+        if (isset($args['transparent'])) {
+            $this->transparent = $args['transparent'] == 'true';
+        }
+
+        if (isset($args['imageSR'])) {
+            $this->mapProjection = $args['imageSR'];
+        }
+
+        if (isset($args['format'])) {
+            $this->imageFormat = $args['format'];
+        }
+
+        if (isset($args['size'])) {
+            $sizeParts = explode(',', $args['size']);
+            $this->imageWidth = $sizeParts[0];
+            $this->imageHeight = $sizeParts[1];
+        }
+
+        // TODO read layerDefs and layers
+    }
 
     public function getImageURL() {
         $bboxStr = $this->bbox['xmin'].','.$this->bbox['ymin'].','

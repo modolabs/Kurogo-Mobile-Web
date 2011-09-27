@@ -38,7 +38,7 @@
         } elseif ($this->channel) {
             $url .= 'channel/' . $this->channel;
         } else {
-            throw new Exception("Unable to determine type of request");
+            throw new KurogoConfigurationException("Unable to determine type of request");
         }
         
         $url .= "/videos.json";
