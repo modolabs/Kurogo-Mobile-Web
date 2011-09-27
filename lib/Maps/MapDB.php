@@ -133,11 +133,6 @@ class MapDB
         }
 
         // categories
-        $sql = 'DELETE FROM '.self::PLACEMARK_CATEGORY_TABLE
-              .' WHERE placemark_id=? and lat =? and lon=?';
-        $params = array($placemarkId, $centroid['lat'], $centroid['lon']);
-        self::connection()->query($sql, $params);
-
         $categories = $feature->getCategoryIds();
         if (!is_array($categories)) {
             $categories = array();
