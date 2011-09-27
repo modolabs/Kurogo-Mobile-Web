@@ -70,16 +70,16 @@ class CASAuthentication
             require_once($args['CAS_PHPCAS_PATH'].'/CAS.php');
     
         if (empty($args['CAS_PROTOCOL']))
-            throw new Exception('CAS_PROTOCOL value not set for ' . $this->AuthorityTitle);
+            throw new KurogoConfigurationException('CAS_PROTOCOL value not set for ' . $this->AuthorityTitle);
     
         if (empty($args['CAS_HOST']))
-            throw new Exception('CAS_HOST value not set for ' . $this->AuthorityTitle);
+            throw new KurogoConfigurationException('CAS_HOST value not set for ' . $this->AuthorityTitle);
     
         if (empty($args['CAS_PORT']))
-            throw new Exception('CAS_PORT value not set for ' . $this->AuthorityTitle);
+            throw new KurogoConfigurationException('CAS_PORT value not set for ' . $this->AuthorityTitle);
     
         if (empty($args['CAS_PATH']))
-            throw new Exception('CAS_PATH value not set for ' . $this->AuthorityTitle);
+            throw new KurogoConfigurationException('CAS_PATH value not set for ' . $this->AuthorityTitle);
     
         phpCAS::client($args['CAS_PROTOCOL'], $args['CAS_HOST'], intval($args['CAS_PORT']), $args['CAS_PATH'], false);
     
@@ -210,13 +210,13 @@ class CASUser
     public static function mapAttribute ($userProperty, $remoteAttribute)
     {
         if (empty($userProperty))
-            throw new Exception('$userProperty must not be empty.');
+            throw new KurogoConfigurationException('$userProperty must not be empty.');
         if (isset(self::$attributeMap[$userProperty]))
-            throw new Exception('User property '.$userProperty.' is already mapped.');
+            throw new KurogoConfigurationException('User property '.$userProperty.' is already mapped.');
         if (!method_exists('CASUser', 'set'.$userProperty))
-            throw new Exception('Unknown User property '.$userProperty.'.');
+            throw new KurogoConfigurationException('Unknown User property '.$userProperty.'.');
         if (empty($remoteAttribute))
-            throw new Exception('$remoteAttribute must not be empty.');
+            throw new KurogoConfigurationException('$remoteAttribute must not be empty.');
 
         self::$attributeMap[$userProperty] = $remoteAttribute;
     }
@@ -237,7 +237,7 @@ class CASUser
         $this->setUserID(phpCAS::getUser());
         
         if (!method_exists('phpCAS', 'getAttribute'))
-            throw new Exception('CASAuthentication attribute mapping requires phpCAS 1.2.0 or greater.');
+            throw new KurogoConfigurationException('CASAuthentication attribute mapping requires phpCAS 1.2.0 or greater.');
         
         foreach (self::$attributeMap as $property => $attribute) {
             if (phpCAS::hasAttribute($attribute)) {
@@ -296,7 +296,7 @@ class CASUserGroup
     {
         parent::__construct($AuthenticationAuthority);
         if (empty($groupName))
-            throw new Exception('$groupName must not be empty.');
+            throw new KurogoException('$groupName must not be empty.');
         $this->setGroupName($groupName);
     }
     
