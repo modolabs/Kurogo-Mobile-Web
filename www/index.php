@@ -28,7 +28,7 @@ function _phpFile($_file) {
 }
 
 function _outputFile($_file) {
-    if ($file = realpath_exists($_file)) {
+    if ($file = Watchdog::safePath($_file)) {
         CacheHeaders($file);
         header('Content-type: '.mime_type($file));
         readfile($file);
@@ -72,16 +72,7 @@ function _outputTypeFile($matches) {
 }
 
 function _outputFileLoaderFile($matches) {
-  $fullPath = FileLoader::load($matches[1]);
-  
-  if ($fullPath) {
-    CacheHeaders($fullPath);    
-    header('Content-type: '.mime_type($fullPath));
-    echo file_get_contents($fullPath);
-    exit;
-  }
-
-  _404();
+  _outputFile(FileLoader::load($matches[1]));
 }
 
 //

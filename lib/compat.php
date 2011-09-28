@@ -3,7 +3,9 @@
   * Compatibility Functions
   * @package Compatability
   */
-  
+
+require_once(LIB_DIR . '/Watchdog.php');
+
 /**
   * Returns a mime type for a given extension
   */
@@ -96,11 +98,5 @@ if(!function_exists('json_decode')) {
   * Simulate PHP 5.3 behavior on 5.2
   */
 function realpath_exists($path) {
-  $test = realpath($path);
-  if (version_compare(PHP_VERSION, '5.3.0') >= 0 || 
-      ($test && file_exists($test))) {
-    return $test;
-  } else {
-    return false;
-  }
+  return Watchdog::kurogoPath($path);
 }
