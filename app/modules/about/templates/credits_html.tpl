@@ -81,12 +81,6 @@ Cambridge, MA 02140<br />
     <li><a href="https://github.com/facebook/facebook-ios-sdk">https://github.com/facebook/facebook-ios-sdk</a></li>
 </ul>    
 
-<em>Google Analytics iPhone SDK</em>
-<ul>
-    <li>Copyright: Google</li>
-    <li><a href="http://code.google.com/mobile/analytics/docs/iphone/">http://code.google.com/mobile/analytics/docs/iphone/</a></li>
-</ul>
-
 <em>JSON</em>
 <ul>
     <li>License: BSD</li>
