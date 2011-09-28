@@ -8,21 +8,7 @@ class VideoAPIModule extends APIModule {
     protected $vmax = 1;
     protected $feeds = array();
 
-    public static function cleanVideoArray($videoArray) {
-
-        $cleanArray = array();
-        foreach ($videoArray as $key => $value) {
-            $cleanKey = ltrim($key, "\0*");
-            $cleanArray[$cleanKey] = $value;
-            if ($cleanKey == 'published') {
-                $cleanArray['publishedTimestamp'] = intval($value->format('U'));
-            }
-        }
-        //error_log(print_r($cleanArray, true));
-        return $cleanArray;
-    }
-
-    protected static function arrayFromVideo($video) {
+    protected function arrayFromVideo($video) {
         return array(
             "id"              => $video->getID(),
             "title"           => $video->getTitle(),
@@ -59,7 +45,6 @@ class VideoAPIModule extends APIModule {
 
         switch ($this->command) {
         case 'sections':
-            error_log(print_r(VideoModuleUtils::getSectionsFromFeeds($this->feeds), true));
             $this->setResponse(VideoModuleUtils::getSectionsFromFeeds($this->feeds));
             $this->setResponseVersion(1);                
             break;
@@ -83,7 +68,7 @@ class VideoAPIModule extends APIModule {
             }
 
             foreach ($items as $video) {
-                $videos[] = self::arrayFromVideo($video);
+                $videos[] = $this->arrayFromVideo($video);
             }
 
             $this->setResponse($videos);
@@ -96,7 +81,7 @@ class VideoAPIModule extends APIModule {
             $videoid = $this->getArg('videoid');
 
             if ($video = $controller->getItem($videoid)) {
-                $result = self::arrayFromVideo($video);
+                $result = $this->arrayFromVideo($video);
                 $this->setResponse($result);
                 $this->setResponseVersion(1);
             } else {
