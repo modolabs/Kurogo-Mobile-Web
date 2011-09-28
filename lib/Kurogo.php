@@ -1,6 +1,6 @@
 <?php
 
-define('KUROGO_VERSION', '1.0');
+define('KUROGO_VERSION', '1.0.1');
 
 class Kurogo
 {
