@@ -58,3 +58,10 @@
 .crumb3c span {
   max-width: 50px;
 }
+/* IE search boxes have different padding */
+.searchwrapper {
+    right: 23px;
+}
+.emphasized .searchwrapper {
+    right: 25px;
+}
