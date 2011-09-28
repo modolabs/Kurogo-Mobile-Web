@@ -301,6 +301,16 @@ class ICalEvent extends ICalObject implements KurogoObject {
     public function setLocation($location) {
         $this->location = $location;
     }
+    
+    private static function getTimezoneForID($tzid) {
+        try {
+            $timezone = new DateTimeZone($tzid);
+        } catch (Exception $e) {
+            Kurogo::log(LOG_WARNING, "Invalid timezone $tzid found when processing calendar", 'data');
+            $timezone = null;
+        }
+        return $timezone;
+    }
 
     public function set_attribute($attr, $value, $params=NULL) {
         switch ($attr) {
@@ -337,7 +347,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'CREATED':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
@@ -345,7 +356,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'LAST-MODIFIED':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
@@ -353,7 +365,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'DTSTAMP':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
@@ -362,7 +375,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
             case 'DTSTART':
             case 'DTEND':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
@@ -435,7 +449,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'EXDATE':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
