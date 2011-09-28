@@ -21,6 +21,8 @@ Cambridge, MA 02140<br />
     <li>Jim Kang</li>
     <li>David Ormsbee</li>
     <li>Brian Patt</li>
+    <li>Brent Wang</li>
+    <li>Jeffery You</li>
 </ul>
 
 <h3>Designers:</h3>
@@ -47,7 +49,11 @@ Cambridge, MA 02140<br />
 <p>The Kurogo Framework is based on the MIT Mobile Framework, and incorporates contributions from:</p>
 <ul>
     <li>Harvard University</li>
-    <li>University of Central Florida</li>
+    <li>Doug Beck (University of Central Florida)</li>
+    <li>Jared Lang (University of Central Florida)</li>
+    <li>Chris Conover (University of Central Florida)</li>
+    <li>Ebrahim Kobeissi (University of Vermont)</li>
+    <li>Adam Franco (Middlebury College)</li>
 </ul>
 
 <h2>Third Party Libraries (Mobile Web)</h2>
