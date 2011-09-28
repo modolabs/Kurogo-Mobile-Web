@@ -9,6 +9,8 @@ class MapDBDataController extends MapDataController implements MapFolder
     private $dbParser;
     private $subtitle;
 
+    protected $cacheLifetime = 60;
+
     public function getCategoryId()
     {
         return $this->dbParser->getCategoryId();
