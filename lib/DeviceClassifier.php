@@ -109,62 +109,47 @@ class DeviceClassifier {
          * format of the custom file as sqlite, it should still work.
          */
 
-        if (!$master_file = LIB_DIR."/deviceData.json") {
-            error_log('Device Detection Master File not specified.');
-            die('Device Detection Master File not specified.');
-        }
-        $site_file = "";
-        $site_file_format = "";
-        try {
+        $master_file = LIB_DIR."/deviceData.json";
 
-            $site_file = Kurogo::getSiteVar('MOBI_SERVICE_SITE_FILE');
-            $site_file_format = Kurogo::getSiteVar('MOBI_SERVICE_SITE_FORMAT');
-        }
-        catch(KurogoConfigurationException $e)
-        {
-            // Do nothing
-        }
-        $site_file_format = ($site_file_format ? $site_file_format : 'json');
+        $site_file = Kurogo::getOptionalSiteVar('MOBI_SERVICE_SITE_FILE');
+        $site_file_format = Kurogo::getOptionalSiteVar('MOBI_SERVICE_SITE_FORMAT', 'json');
+
         if (!( $site_file && $site_file_format)) {
             // We don't have a site-specific file.  This means we can only
             // detect on the master file.
 
-            //error_log('MOBI_SERVICE_FILE not specified in site config.');
-            //die("MOBI_SERVICE_FILE not specified in site config.");
             $site_file = "";
         }
 
-        try {
-
-
-            if (!empty($site_file) && $site_file = realpath_exists($site_file))
+        if (!empty($site_file) && $site_file = realpath_exists($site_file))
+        {
+            switch ($site_file_format)
             {
-                if($site_file_format == 'json')
-                {
+                case 'json':
                     $site_devices = json_decode(file_get_contents($site_file), true);
                     $site_devices = $site_devices['devices'];
-                    if(($error_code = json_last_error()) !== JSON_ERROR_NONE)
+                    if(($error_code = json_last_error()) !== JSON_ERROR_NONE) 
                     {
-                        error_log("Problem decoding Custom Device Detection File. Error code returned was ".$error_code);
+                        throw new KurogoConfigurationException("Problem decoding Custom Device Detection File. Error code returned was ".$error_code);
                     }
 
 
-                    if(($device = $this->checkDevices($site_devices, $user_agent) !== false))
-                            return $this->translateDevice($device);
-                }
-                elseif($site_file_format == 'sqlite')
-                {
-
+                    if(($device = $this->checkDevices($site_devices, $user_agent) !== false)) {
+                        return $this->translateDevice($device);
+                    }
+                    break;
+                    
+                case 'sqlite':
+                
                     Kurogo::includePackage('db');
                     try {
                         $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$site_file));
                         $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
                     } catch (Exception $e) {
-        Kurogo::log(LOG_ALERT, "Error with internal device detection: " . $e->getMessage(), 'deviceDetection');
+                        Kurogo::log(LOG_ALERT, "Error with internal device detection: " . $e->getMessage(), 'deviceDetection');
                         if (!in_array('sqlite', PDO::getAvailableDrivers())) {
                             die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
                         }
-                        error_log("Error with device detection");
                         return false;
                     }
 
@@ -173,32 +158,30 @@ class DeviceClassifier {
                             return $row;
                         }
                     }
-                }
-                else
-                {
-                    error_log('Unknown format specified for Custom Device Detection File: '.$site_file_format);
-                }
-
+                    break;
+                    
+                default:
+                    throw new KurogoConfigurationException('Unknown format specified for Custom Device Detection File: '.$site_file_format);
             }
-            if(!empty($master_file) && $master_file = realpath_exists($master_file))
-            {
-                $master_devices = json_decode(file_get_contents($master_file), true);
-                $master_devices = $master_devices['devices'];
-                if(($error_code = json_last_error()) !== JSON_ERROR_NONE)
-                {
-                    error_log("Problem decoding Device Detection Master File. Error code returned was ".$error_code);
-                }
 
-                if(($device = $this->checkDevices($master_devices, $user_agent)) !== false)
-                        return $this->translateDevice($device);
-            }
         }
-        catch (Exception $e)
+        
+        if(!empty($master_file) && $master_file = realpath_exists($master_file))
         {
-            error_log('Error with device detection');
-            return false;
+            $master_devices = json_decode(file_get_contents($master_file), true);
+            $master_devices = $master_devices['devices'];
+            if(($error_code = json_last_error()) !== JSON_ERROR_NONE)
+            {
+                Kurogo::log(LOG_ALERT, "Error with JSON internal device detection: " . $error_code, 'deviceDetection');
+                die("Problem decoding Device Detection Master File. Error code returned was ".$error_code);
+            }
+
+            if(($device = $this->checkDevices($master_devices, $user_agent)) !== false) {
+                return $this->translateDevice($device);
+            }
         }
-        Kurogo::log(LOG_NOTICE, "Could not find a match in the internal device detection database for: $user_agent", 'deviceDetection');
+        
+        Kurogo::log(LOG_WARNING, "Could not find a match in the internal device detection database for: $user_agent", 'deviceDetection');
     }
 
     private function checkDevices($devices, $user_agent)
