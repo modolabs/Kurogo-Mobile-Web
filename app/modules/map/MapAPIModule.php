@@ -194,6 +194,49 @@ class MapAPIModule extends APIModule
         return $path;
     }
 
+    protected function displayTextFromMeters($meters)
+    {
+        $result = null;
+        $system = $this->getOptionalModuleVar('DISTANCE_MEASUREMENT_UNITS', 'Metric');
+        switch ($system) {
+            case 'Imperial':
+                $miles = $meters * MILES_PER_METER;
+                if ($miles < 0.1) {
+                    $feet = $meters * FEET_PER_METER;
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_FEET',
+                         number_format($feet, 0));
+
+                } elseif ($miles < 15) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_MILES',
+                         number_format($miles, 1));
+                } else {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_MILES',
+                         number_format($miles, 0));
+                }
+                break;
+            case 'Metric':
+            default:
+                if ($meters < 100) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_METERS',
+                         number_format($meters, 0));
+                } elseif ($meters < 15000) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_KILOMETERS',
+                         number_format($meters / 1000, 1));
+                } else {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_KILOMETERS',
+                         number_format($meters / 1000, 0));
+                }
+                break;
+        }
+        return $result;
+    }
+
     public function initializeForCommand() {
 
         switch ($this->command) {
@@ -412,14 +455,21 @@ class MapAPIModule extends APIModule
 
                 $categories = array();
 
+                $showDistances = $this->getOptionalModuleVar('SHOW_DISTANCES', true);
+
                 if ($lat || $lon) {
                     foreach ($this->getFeedGroups() as $id => $groupData) {
-                        $categories[] = array(
+                        $center = filterLatLon($groupData['center']);
+                        $distance = greatCircleDistance($lat, $lon, $center['lat'], $center['lon']);
+                        $category = array(
                             'title' => $groupData['title'],
                             'id' => $id,
                             );
-                        $center = filterLatLon($groupData['center']);
-                        $distances[] = greatCircleDistance($lat, $lon, $center['lat'], $center['lon']);
+                        if ($showDistances && ($displayText = $this->displayTextFromMeters($distance))) {
+                            $category['distance'] = $displayText;
+                        }
+                        $categories[] = $category;
+                        $distances[] = $distance;
                     }
                     array_multisort($distances, SORT_ASC, $categories);
                 }
