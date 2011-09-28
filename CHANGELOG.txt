@@ -1,3 +1,4 @@
+
 1.3 (Yet to be released)
 * IMPORTANT NOTE: After upgrading to 1.3, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
 * The REST API has now reached 1.0 status
@@ -6,6 +7,7 @@
 * An updated logging facility has been created to include logging messages in Kurogo. Please see the documentation for more information.
 * The internal statistics engine has been overhauled. Kurogo requires a database to log page views. See the documentation for more information.
 * The Map module has been significantly updated. Support for directions, arbitrary addresses and UI improvements among other improvements
+* The internal device detection system now uses a JSON formatted file. The SQLite database has been deprecated.
 * includePackage now has a "subpackage" parameter for further organization
 * Added formButton and formSubmitbutton templates
 * (Calendar) Support for more types of recurring events (Thanks to Adam Franco)
@@ -19,6 +21,8 @@
 * Added suport for Percent Mobile Analytics
 * You can now use a YouTube playlist as a source for video entries
 * Many other minor bug fixes and improvements
+Since 1.3RC1
+* Fixed an issue when using the admin module while being logged in
 
 1.2 (July 19)
 * IMPORTANT NOTE: After upgrading to 1.2, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
