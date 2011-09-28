@@ -1674,6 +1674,11 @@ html, body, #nonfooternav {
 }
 
 
+
+#share {
+	margin-top: -2px;
+}
+
 #bookmarkContainer {
     float: right;
 	margin: -44px 0 0 8px;
@@ -1692,3 +1697,194 @@ html, body, #nonfooternav {
 #bookmark.pressed.on {
     background-position: -44px 1px;
 }
+
+
+/* Tablet version of section-switcher + search control (e.g., News and Video) */
+
+table.section-search {
+  width: 100%;
+  border: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+table.section-search fieldset {
+  display: block;
+  padding: 0;
+  margin: 0;
+  height: auto;
+}
+
+table.section-search tr td {
+  padding: 1em .5em 0 0;
+  height: 40px;
+  line-height: 40px;
+}
+
+table.section-search tr #categoryformcontainer {
+  width: 19em;
+  padding-left: .5em;
+}
+
+table.section-search #categoryformcontainer label {
+  padding-right: .25em;
+  font-size: 89%;
+}
+table.section-search #categoryformcontainer select {
+  width: auto;
+  min-width: 250px;
+}
+
+table.section-search tr #searchformcontainer form,
+table.section-search #searchformcontainer fieldset {
+  height: 40px;
+  width: 100%;
+  position: relative;
+}
+table.section-search #searchformcontainer fieldset .forminput {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 89%;
+}
+
+table.section-search form {
+	margin: -8px 0 0 0;
+	padding: 0;
+}
+
+#category-switcher .formlabel {
+	width: 62px;
+    text-align: right;
+	font-size: 89%;
+}
+
+
+
+
+/* Tablet split view */
+
+.splitview ul.results {
+    margin: 0;
+}
+
+.splitview ul.results li {
+    height: 105px;
+	margin: 0;
+    padding: 1px;
+    overflow: hidden;
+    position: relative;
+}
+.splitview ul.results li a {
+    overflow: hidden;
+    position: relative;
+    margin: 0;
+    padding: 9px;
+}
+.splitview ul.results .ellipsis {
+    overflow: hidden;
+    margin: 0;
+    margin: 4px 20px 4px 0;
+    font-size: 82.35%;
+    line-height: 19px;
+    height: 87px;
+}
+
+.splitview ul.results .title {
+    padding: 0 0 2px 0;
+    font-size: 16px;
+    line-height: 19px;
+}
+
+.splitview ul.results li .thumbnail {
+    float:left;
+    margin: -3px 9px -3px -3px;
+    width: 93px;
+    height: 93px;
+}
+
+.splitview .listcontainer {
+    position: relative;
+    width: 342px;
+    border: 1px solid;
+    border-left: none;
+    border-bottom: none;
+}
+
+.splitview .results li.pagerlink a {
+  font-weight: bold;
+  background-image: none;
+  font-size: 90%;
+}
+
+.splitview-detailwrapper {
+    position: relative;
+}
+
+.portrait .splitview .listcontainer {
+    width: auto;
+    height: 107px;
+    white-space: nowrap;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
+}
+
+.portrait .splitview ul.results {
+    white-space: nowrap;
+    position: absolute;
+    overflow: visible;
+    width: auto;
+    height: 107px;
+    margin: 0;
+    top: 0;
+    left: 0;
+}
+
+.portrait .splitview ul.results li {
+    white-space: normal;
+    width: 200px;
+    display: block;
+    float: left;
+    border: none;
+    padding: 0;
+    border-right: 1px dotted;
+}
+
+.portrait .splitview ul.results .thumbnail {
+    display: none;
+}
+
+.portrait .splitview ul.results li a {
+    background-image: none;
+}
+
+.portrait .splitview ul.results .ellipsis {
+    margin: 4px;
+}
+
+.portrait .splitview ul.results li.pagerlink {
+	height: auto;
+	width: auto;
+	text-align: center;
+	padding: 36px 9px;
+}
+
+.landscape .splitview {
+    -webkit-box-orient: horizontal;
+    display: -webkit-box;
+    height: 400px;
+    position: relative;
+}
+
+.landscape .splitview-detailwrapper {
+    border-top: 1px solid;
+	-webkit-box-flex:1;
+}
+
+.landscape .splitview ul.results li.pagerlink {
+	height: auto;
+	padding: 12px 6px;
+}
+

@@ -12,6 +12,21 @@
 
 
 
+/* Content titles e.g., news and video */
+
+h1.slugline {
+	font-size: 150%;
+	margin-bottom: 0.5em;
+}
+
+.byline {
+	font-size: 70.59%;
+	line-height: 1.5em;
+	padding-bottom: 0.67em;
+}
+
+
+
 /* Tablet-specific bottom nav bar */
 
 #footernav {
@@ -46,7 +61,11 @@
 /* Tablet-specific split-view styles, e.g., News and Video */
 /* Note: only the selected list item is styled here. The normal/unselected list item styles inherit from the overall theme */
 
-.results .listSelected {
+.splitview ul.results .title {
+    color: #333;
+}
+
+.splitview .listSelected {
 	/* Selected item in the master pane in the split view */
 	background-color:#2f3133;
 	-webkit-box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
@@ -54,12 +73,17 @@
 	box-shadow: 5px 5px 10px rgba(0,0,0,0.8) inset;
 }
 
-.results li a.listSelected .ellipsis {
+.splitview ul.results .ellipsis {
    /* Description/dek within the selected item in the master pane in the split view */
-   color: #999;
+   color: #777;
 }
 
-.results li a.listSelected .title {
+.splitview ul.results .listSelected .ellipsis {
+   /* Description/dek within the selected item in the master pane in the split view */
+   color: #aaa;
+}
+
+.splitview ul.results .listSelected .title {
     /* Title within the selected item in the master pane in the split view */
 	color: #ddd;
 }
