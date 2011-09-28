@@ -12,8 +12,8 @@ class ArcGISDataController extends MapDataController
 
     public function search($searchText)
     {
-        $this->parser->addSearchFilter('text', $searchText);
         $this->parser->clearSearchFilters();
+        $this->parser->addSearchFilter('text', $searchText);
         return $this->items();
     }
     
