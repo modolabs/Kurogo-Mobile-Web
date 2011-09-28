@@ -81,7 +81,7 @@ function buildFileList($checkFiles) {
   foreach ($checkFiles['files'] as $entry) {
     if (is_array($entry)) {
       $foundFiles = array_merge($foundFiles, buildFileList($entry));
-    } else if (realpath_exists($entry)) { 
+    } else if ($entry && Watchdog::safePath($entry)) {
       $foundFiles[] = $entry;
     }
     if ($checkFiles['include'] == 'any' && count($foundFiles)) {
