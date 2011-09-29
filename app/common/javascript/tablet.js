@@ -22,13 +22,13 @@ function updateNavSlider() {
 
 function navSliderScrollLeft() {
   if (navScroller) {
-    navScroller.scrollTo(0, navScroller.y, 100);
+    navScroller.scrollTo(0, navScroller.y, 500);
   }
 }
 
 function navSliderScrollRight() {
   if (navScroller) {
-    navScroller.scrollTo(navScroller.maxScrollX, navScroller.y, 100);
+    navScroller.scrollTo(navScroller.maxScrollX, navScroller.y, 500);
   }
 }
 
