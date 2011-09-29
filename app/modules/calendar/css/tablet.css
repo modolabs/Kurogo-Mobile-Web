@@ -23,6 +23,9 @@
 .landscape #searchformcontainer fieldset + fieldset {
   width: 15.5em;
 }
+.inputcombo .forminput {
+	width: 90%;
+}
 
 .sidenavHeader {
   position: relative;

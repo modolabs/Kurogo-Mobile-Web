@@ -1,160 +1,26 @@
-.thumbnail {
-    float:left;
-    padding:0 8px 0 0;
-    width: 5.5em;
-    height: 5.5em;
-}
-
-li.noimage {
-    padding-left: .4em;
-}
-
-li.video {
-    height: 5.5em;
-    margin: 0;
-    padding: 1px;
-    overflow: hidden;
-    position: relative;
-}
-.results li.video a {
-    overflow: hidden;
-    position: relative;
-    margin: 0;
-    padding: 0;
-    height: 5.5em;
-}
-.results li.video a .ellipsis {
-    overflow: hidden;
-    margin: 0;
-    margin: .4em 25px .4em 0;
-    font-size: 82.35%;
-    line-height: 1.36em;
-    height: 5.9em;
-}
-
-.results li.video a .title {
-    font-size: 114.29%;
-	  color: #000;
-    padding: 0 0 .25em 0;
-}
-
-.results li.pagerlink {
-	padding: 9px;
-}
-
-.results li.pagerlink a {
-  color: #1A1611;
-  font-weight: bold;
-  background-image: none;
-  font-size: 90%;
-}
-
-.videoplayer {
-	margin: 1em 0;
-}
-
-.videobuttons #share, .videobuttons #bookmarkContainer {
-	float: right;
-	margin: 0 0 0 0.5em;
-}
-
-#videoHeader {
-  width: 100%;
-  border: none;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.landscape #tabletVideos {
-    -webkit-box-orient: horizontal;
-    display: -webkit-box;
-    height: 400px;
-    position: relative;
-}
-
-#videos {
-    position: relative;
-    width: 342px;
-    border: 1px solid;
-    border-left: none;
-    border-bottom: none;
-}
-
-.portrait #videos {
-    width: auto;
-    height: 93px;
-    white-space: nowrap;
-    border: none;
-    border-bottom: 1px solid;
-}
-
-.portrait #videos .results {
-    white-space: nowrap;
-    position: absolute;
-    overflow: visible;
-    width: auto;
-    height: 93px;
-    margin: 0;
-    top: 0;
-    left: 0;
-}
-
-#videoDetailWrapper {
-    position: relative;
-}
-
-.landscape #videoDetailWrapper {
-    border-top: 1px solid;
-	-webkit-box-flex:1;
-}
-
-.portrait #videos .thumbnail {
-    display: none;
-}
-
-.portrait #videos li {
-    white-space: normal;
-    width: 200px;
-    display: block;
-    float: left;
-    border: none;
-    padding: 0;
-    border-right: 1px dotted;
-}
-
-.portrait #videos li a {
-    background-image: none;
-}
-
-.portrait #videos li .title {
-    padding: 0;
-}
-
-.portrait #videos li .ellipsis {
-    margin: .4em;
-}
-
-#videos .results {
-    margin: 0;
-    margin-top: -1px;
+body.VideoModule #navbar, .video {
+	/* Background color for video listing and detail; should be white in most cases */
+    background-color: #fff;
 }
 
 .video {
     padding: 12px;
 }
 
-.slugline {
-    margin: 0;
-    margin-bottom: 20px;
-    padding: 0;
+.splitview ul.results li.video .thumbnail {
+	width: 120px;
 }
 
-.byline {
-    min-height:40px;
-	margin-top: -6px;
-	padding-bottom: 0.33em;
-	margin-bottom: 1.33em;
-    border-bottom: 1px dotted #999;
+li.noimage {
+    padding-left: .4em;
+}
+
+.videobuttons {
+	float: right;
+	margin: -2px 2px 6px 12px;
+}
+
+.videobuttons #bookmarkContainer, .videobuttons #share {
+	float: right;
+	margin: 0 0 0 12px;
 }

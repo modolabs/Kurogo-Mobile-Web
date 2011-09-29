@@ -20,6 +20,18 @@ function updateNavSlider() {
   document.getElementById('slideright').style.display = canScrollRight ? 'block' : 'none';
 }
 
+function navSliderScrollLeft() {
+  if (navScroller) {
+    navScroller.scrollTo(0, navScroller.y, 500);
+  }
+}
+
+function navSliderScrollRight() {
+  if (navScroller) {
+    navScroller.scrollTo(navScroller.maxScrollX, navScroller.y, 500);
+  }
+}
+
 // Change wrapper height based on device orientation.
 function setContainerWrapperHeight() {
   document.getElementById('container').style.height = 'auto';
