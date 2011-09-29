@@ -30,6 +30,9 @@ function sortSucceeded(response) {
     for (var i = 0; i < response.length; i++) {
         var id = response[i]["id"];
         if (id in browseGroups) {
+            if ("distance" in response[i]) {
+                browseGroups[id].innerHTML = browseGroups[id].innerHTML + "<div class=\"smallprint\">" + response[i]["distance"] + "</div>";
+            }
             sortedGroups.push(browseGroups[id]);
         }
     }

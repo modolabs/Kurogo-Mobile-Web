@@ -7,7 +7,6 @@ class MapDBSearch extends MapSearch
     private function getSearchResultsForQuery($sql, $params, $maxItems=0)
     {
         $result = MapDB::connection()->query($sql, $params);
-
         $displayableCategories = MapDB::getAllCategoryIds();
         // eliminate dupe placemarks if they appear in multiple categories
         $this->resultCount = 0;
@@ -45,7 +44,26 @@ class MapDBSearch extends MapSearch
               .'   AND p.lat >= ? AND p.lat < ? AND p.lon >= ? AND p.lon < ?'
               .' ORDER BY (p.lat - ?)*(p.lat - ?) + (p.lon - ?)*(p.lon - ?)';
 
-        return $this->getSearchResultsForQuery($sql, $params, $maxItems);
+        $this->getSearchResultsForQuery($sql, $params, $maxItems);
+
+        $resultsByDistance = array();
+        foreach ($this->searchResults as $result) {
+            $rCenter = $result->getGeometry()->getCenterCoordinate();
+            $distance = greatCircleDistance(
+                $center['lat'], $center['lon'], 
+                $rCenter['lat'], $rCenter['lon']);
+            $result->setField('distance', $distance);
+
+            // avoid distance collisions
+            while(isset($resultsByDistance[$distance])) {
+                $distance++;
+            }
+            $resultsByDistance[$distance] = $result;
+        }
+        ksort($resultsByDistance);
+
+        $this->searchResults = array_values($resultsByDistance);
+        return $this->searchResults;
     }
 
     public function searchCampusMap($query)

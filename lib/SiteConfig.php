@@ -30,7 +30,7 @@ class SiteConfig extends ConfigGroup {
             $site = strlen($path)>0 ? $path : $this->getVar('DEFAULT_SITE');
 
             $siteDir = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
-            if (!realpath_exists($siteDir)) {
+            if (!file_exists(realpath($siteDir))) {
                 die("FATAL ERROR: Site Directory $siteDir not found for site $path");
             }
         } else {        
@@ -45,13 +45,15 @@ class SiteConfig extends ConfigGroup {
                 if ($sites = $this->getOptionalVar('ACTIVE_SITES', array(), 'kurogo')) {
                     //see if the site is in the list of available sites
                     if (in_array($site, $sites)) {
-                        $siteDir = realpath_exists(implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site)));
-                        $urlBase = '/' . $site . '/'; // this is a url
+                        $testPath = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
+                        if (($siteDir = realpath($testPath)) && file_exists($siteDir)) {
+                            $urlBase = '/' . $site . '/'; // this is a url
+                        }
                     }
                 } elseif ($this->isValidSiteName($site)) {
-    
+                    
                     $testPath = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
-                    if ($siteDir = realpath_exists($testPath)) {
+                    if (($siteDir = realpath($testPath)) && file_exists($siteDir)) {
                         $urlBase = '/' . $site . '/'; // this is a url
                     }
                 }
