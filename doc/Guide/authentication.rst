@@ -96,6 +96,7 @@ aware of important requirements for development and deployment.
    DatabaseAuthentication
    LDAPAuthentication
    ActiveDirectoryAuthentication
+   CASAuthentication
    FacebookAuthentication
    TwitterAuthentication
    GoogleAuthentication
