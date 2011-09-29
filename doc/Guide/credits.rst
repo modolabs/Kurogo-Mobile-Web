@@ -22,12 +22,16 @@ Modo Team
 
 * Pete Akins (Lead Developer, Mobile Web)
 * Muhammad Amjad
+* Dario Baldoni
 * Alexis Ellwood
 * Ian Gavalakis
+* Wesley Hirsch
 * Sonya Huang (Lead Developer, iOS)
 * Jim Kang
 * David Ormsbee
 * Brian Patt
+* Brent Wang
+* Jeffrey You
 
 **Designers**
 
@@ -39,6 +43,7 @@ Modo Team
 **Project Management & QA**
 
 * Yuki Nagatoshi
+* Marshall Vale
 * Andrew Yu
 
 ==============
@@ -51,7 +56,11 @@ Special Thanks
 The Kurogo Framework is based on the MIT Mobile Framework, and incorporates contributions from:
 
 * Harvard University
-* University of Central Florida
+* Doug Beck (University of Central Florida)
+* Jared Lang (University of Central Florida)
+* Chris Conover (University of Central Florida)
+* Ebrahim Kobeissi (University of Vermont)
+* Adam Franco (Middlebury College)
 
 ==================================
 Third Party Libraries (Mobile Web)
@@ -76,24 +85,10 @@ Facebook iOS SDK
   | Copyright: Facebook
   | Link: https://github.com/facebook/facebook-ios-sdk
 
-Google Analytics iPhone SDK
-  | Copyright: Google
-  | Link: http://code.google.com/mobile/analytics/docs/iphone/
-
 JSON
   | License: BSD
   | Copyright: Stig Brautaset
   | Link: http://stig.github.com/json-framework
-
-MGTwitterEngine
-  | License: Custom (see source in Kurogo-iOS/Contrib/MGTwitterEngine)
-  | Copyright: Matt Gemmell
-  | Link: https://github.com/mattgemmell/MGTwitterEngine
-
-Sci-Fi Hi-Fi iPhone
-  | License: MIT
-  | Copyright: Buzz Anderson (Based partly on code by Jonathan Wight, Jon Crosby, and Mike Malone)
-  | Link: https://github.com/ldandersen/scifihifi-iphone
 
 .. _license:
 
