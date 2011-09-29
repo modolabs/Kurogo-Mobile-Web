@@ -28,6 +28,10 @@ class StatsWebModule extends WebModule {
    
 	protected function initializeForPage() {
 	
+	    if (!Kurogo::getOptionalSiteVar('STATS_ENABLED', true)) {
+	        throw new KurogoException($this->getLocalizedString('STATS_DISABLED'));
+	    }
+	
 	    $serviceTypes = $this->getServiceTypes();
 	    $service = $this->getArg('service', 'web');
 	    if (!array_key_exists($service, $serviceTypes)) {

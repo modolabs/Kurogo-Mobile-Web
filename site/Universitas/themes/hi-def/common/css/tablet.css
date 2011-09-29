@@ -56,6 +56,12 @@ h1.slugline {
   color: #404355;
 }
 
+#slideleft,
+#slideright {
+  /* make transparent indicators tap-through (remove this style if they are opaque) */
+  pointer-events: none;
+}
+
 
 
 /* Tablet-specific split-view styles, e.g., News and Video */
