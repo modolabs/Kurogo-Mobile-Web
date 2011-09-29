@@ -34,8 +34,10 @@ class MapDBSearch extends MapSearch
         $bbox = normalizedBoundingBox($center, $tolerance, null, null);
 
         $params = array(
-            $bbox['min']['lat'], $bbox['max']['lat'], $bbox['min']['lon'], $bbox['max']['lon'],
-            $bbox['center']['lat'], $bbox['center']['lon']
+            $bbox['min']['lat'], $bbox['max']['lat'],
+            $bbox['min']['lon'], $bbox['max']['lon'],
+            $bbox['center']['lat'], $bbox['center']['lat'],
+            $bbox['center']['lon'], $bbox['center']['lon'],
             );
 
         $sql = 'SELECT p.*, pc.category_id FROM '
@@ -43,7 +45,6 @@ class MapDBSearch extends MapSearch
               .' WHERE p.placemark_id = pc.placemark_id'
               .'   AND p.lat >= ? AND p.lat < ? AND p.lon >= ? AND p.lon < ?'
               .' ORDER BY (p.lat - ?)*(p.lat - ?) + (p.lon - ?)*(p.lon - ?)';
-
         $this->getSearchResultsForQuery($sql, $params, $maxItems);
 
         $resultsByDistance = array();
