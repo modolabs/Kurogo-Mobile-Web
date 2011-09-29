@@ -12,13 +12,19 @@ class ArcGISDataController extends MapDataController
 
     public function search($searchText)
     {
-        $this->parser->addSearchFilter('text', $searchText);
         $this->parser->clearSearchFilters();
-        return $this->items();
+
+        $this->parser->addSearchFilter('text', $searchText);
+        
+        $items = $this->items();
+        $this->parser->clearSearchFilters();
+        return $items;
     }
     
     public function searchByProximity($center, $tolerance, $maxItems)
     {
+        $this->parser->clearSearchFilters();
+
         // TODO: these units are completely wrong (but work for harvard b/c
         // their units are in feet); we should use MapProjector to get
         // a decent range
@@ -37,7 +43,6 @@ class ArcGISDataController extends MapDataController
 
         $items = $this->items();
         $this->parser->clearSearchFilters();
-
         return $items;
     }
 }

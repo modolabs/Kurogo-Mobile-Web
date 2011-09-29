@@ -36,6 +36,7 @@ Cambridge, MA 02140<br />
 <h3>Project Management & QA:</h3>
 <ul>
     <li>Yuki Nagatoshi</li>
+    <li>Marshall Vale</li>
     <li>Andrew Yu</li>
 </ul>
 
