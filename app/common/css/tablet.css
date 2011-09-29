@@ -166,12 +166,13 @@ select {
 }
 
 .forminput {
-	height: 30px;
-	padding: 4px 6px;
+	height: 18px;
+	font-size: 88.24%; 
+	padding: 6px 0 6px 6px;
 	-webkit-appearance:textfield;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	background: white url(/common/images/action-search.png) no-repeat right 50%;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	background: white url(/common/images/search-button.png) no-repeat right;
 }
 
 *:first-child+html .forminput {
@@ -187,7 +188,7 @@ select {
 	height: 24px;
 	line-height: 24px;
 	vertical-align: top;
-	width: 90%;
+	width: 98%;
 }
 
 .inputcombo .hiddensubmit {
@@ -208,7 +209,7 @@ select {
 }
 
 .emphasized .forminput {
-	padding: 6px 4px 8px 7px;
+	padding: 6px 0 6px 6px;
 	height: 18px;
 }
 
@@ -1696,7 +1697,15 @@ html, body, #nonfooternav {
 #bookmark.pressed.on {
     background-position: -44px 1px;
 }
-
+#bookmarkscontainer {
+	width: 44px;
+	padding: 0.5em 0.5em 0 0;
+}
+#bookmarkscontainer #bookmarkslink div {
+width: 44px;
+height: 38px;
+background: url(/common/images/bookmark.png) no-repeat -44px -38px;
+}
 
 /* Tablet version of section-switcher + search control (e.g., News and Video) */
 

@@ -1,7 +1,11 @@
-body.NewsModule #navbar, .news {
+body.NewsModule #navbar, #storyDetailWrapper {
 	/* Background color for news listing and story; should be white in most cases */
     background-color: #fff;
 }
+.portrait #storyDetailWrapper {
+	background: -webkit-gradient(linear, 0% 0%, 0% 1.6%, from(#ccc), to(#fff));
+}
+
 .news {
     padding: 12px;
 }
