@@ -30,7 +30,7 @@ class ModuleConfigFile extends ConfigFile {
     }
   
     private static function cacheKey($id, $type) {
-        return 'module-config-' . md5($id . '-' . $type);
+        return "module-config-{$id}-{$type}";
     }
     
     protected function getFileByType($id, $type)

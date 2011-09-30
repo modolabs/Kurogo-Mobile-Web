@@ -88,7 +88,7 @@ class DeviceClassifier {
   }
   
   private function cacheKey($userAgent) {
-    return 'deviceDectection-' . $userAgent;
+    return 'deviceDectection-' . md5($userAgent);
   }
   
   public function getUserAgent() {

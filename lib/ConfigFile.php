@@ -64,7 +64,11 @@ class ConfigFile extends Config {
   }
 
   private static function cacheKey($file, $type) {
-    return 'config-' . md5($type . '-' . $file);
+    if ($type=='file') {
+        return "config-{$type}-" . md5($file);
+    } else {
+        return "config-{$type}-{$file}";
+    }
   }
   
   protected function getFileByType($file, $type)
