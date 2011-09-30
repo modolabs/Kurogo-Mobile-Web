@@ -334,43 +334,35 @@ class Kurogo
         
         return $this->logger;
     }
-    
+
     private function cacher() {
-        if (!$this->cacher && $this->config) {
-            require_once(LIB_DIR . '/KurogoCache.php');
-            $cacheClass = $this->config->getOptionalVar('CACHE_CLASS');
-            $this->cacher = KurogoCache::factory($cacheClass);
-        }
         return $this->cacher;
     }
     
     public static function getCache($key) {
-        $cacher = Kurogo::sharedInstance()->cacher();
-        if ($cacher && $cacher instanceOf KurogoCache) {
+        if ($cacher = Kurogo::sharedInstance()->cacher()) {
             return $cacher->get($key);
         }
+//        echo "Cacher not available for $key\n";
         return false;
     }
     
-    public static function setCache($key, $value, $ttl = 0) {
-        $cacher = Kurogo::sharedInstance()->cacher();
-        if ($cacher && $cacher instanceOf KurogoCache) {
+    public static function setCache($key, $value, $ttl = null) {
+        if ($cacher = Kurogo::sharedInstance()->cacher()) {
             return $cacher->set($key, $value, $ttl);
         }
         return false;
     }
     
     public static function deleteCache($key) {
-        $cacher = Kurogo::sharedInstance()->cacher();
-        if ($cacher && $cacher instanceOf KurogoCache) {
+        if ($cacher = Kurogo::sharedInstance()->cacher()) {
             return $cacher->delete($key);
         }
         return false;
     }
     
     public static function clearCache() {
-        $cacher = Kurogo::sharedInstance()->cacher();
-        if ($cacher && $cacher instanceOf KurogoCache) {
+        if ($cacher = Kurogo::sharedInstance()->cacher()) {
             return $cacher->clear();
         }
         return false;
@@ -426,6 +418,10 @@ class Kurogo
         // Load configuration files
         //    
         $this->config = new SiteConfig($path);
+        if ($cacheClass = $this->config->getOptionalVar('CACHE_CLASS')) {
+            includePackage('Cache');
+            $this->cacher = KurogoCache::factory($cacheClass, $this->config->getOptionalSection('cache'));
+        }
         
         ini_set('display_errors', $this->config->getVar('DISPLAY_ERRORS'));
         if (!ini_get('error_log')) {
