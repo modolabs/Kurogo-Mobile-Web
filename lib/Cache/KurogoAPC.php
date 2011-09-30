@@ -1,4 +1,9 @@
 <?php
+
+if (!function_exists('apc_fetch')) {
+    die('KurogoAPC requires the APC Extension');
+}
+
 class KurogoAPC extends KurogoCache {
 	private $apc;
 	private $compressed;

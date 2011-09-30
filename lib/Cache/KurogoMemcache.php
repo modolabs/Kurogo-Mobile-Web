@@ -1,4 +1,9 @@
 <?php
+
+if (!function_exists('memcache_connect')) {
+    die('KurogoMemcache requires the Memcache Extension');
+}
+
 class KurogoMemcache extends KurogoCache {
 	private $mem;
 	private $compressed;
