@@ -170,7 +170,7 @@ class DeviceClassifier {
         {
             $master_devices = json_decode(file_get_contents($master_file), true);
             $master_devices = $master_devices['devices'];
-            if(($error_code = json_last_error()) !== JSON_ERROR_NONE)
+            if(function_exists('json_last_error') && ($error_code = json_last_error()) !== JSON_ERROR_NONE)
             {
                 Kurogo::log(LOG_ALERT, "Error with JSON internal device detection: " . $error_code, 'deviceDetection');
                 die("Problem decoding Device Detection Master File. Error code returned was ".$error_code);
