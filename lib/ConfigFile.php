@@ -63,7 +63,7 @@ class ConfigFile extends Config {
     return $config;
   }
 
-  private function cacheKey($file, $type) {
+  private static function cacheKey($file, $type) {
     return 'config-' . md5($type . '-' . $file);
   }
   

@@ -71,7 +71,7 @@ abstract class Module
 		$this->logDataLabel = strval($dataLabel);
 	}
   
-    private function cacheKey($id, $type) {
+    private static function cacheKey($id, $type) {
         return 'module-factory-' . md5($id . '-' . $type);
     }
     /**

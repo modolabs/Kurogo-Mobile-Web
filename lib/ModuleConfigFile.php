@@ -29,7 +29,7 @@ class ModuleConfigFile extends ConfigFile {
         return $config;
     }
   
-    private function cacheKey($id, $type) {
+    private static function cacheKey($id, $type) {
         return 'module-config-' . md5($id . '-' . $type);
     }
     
