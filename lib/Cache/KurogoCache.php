@@ -2,20 +2,27 @@
 
 abstract class KurogoCache {
 
-    static $DEFAULT_CACHE_CLASS='KurogoNoCache';
+    // master default should be short
+	protected $ttl=60; 
     
-	public function __construct() {
+	public function setTTL($ttl) {
+		$this->ttl = (int) $ttl;
 	}
 
-	public static function factory($cacheType = '', $args = array()) {
+	protected function init($args) {
+		if(isset($args['CACHE_TTL'])) {
+			$this->setTTL($args['CACHE_TTL']);
+		}
+	}
+
+	public static function factory($cacheType, $args = array()) {
 		$args = is_array($args) ? $args : array();
 
-        $cacheType = $cacheType ? $cacheType : self::$DEFAULT_CACHE_CLASS;
-        
         if (!class_exists($cacheType)) {
             die("Cache class $cacheType not defined");
             throw new KurogoConfigurationException("Cache class $cacheType not defined");
         }
+
         $cacheClass = new $cacheType;
         
         if (!$cacheClass instanceOf KurogoCache) {
@@ -29,7 +36,11 @@ abstract class KurogoCache {
 
 	abstract public function get($key);
 
-	abstract public function set($key, $value, $ttl = 0);
+    /* only store the value if it does not exist */
+	abstract public function add($key, $value, $ttl = null);
+
+    /* store unconditionally */
+	abstract public function set($key, $value, $ttl = null);
 
 	abstract public function delete($key);
 
