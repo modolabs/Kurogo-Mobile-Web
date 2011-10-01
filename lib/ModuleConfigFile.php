@@ -11,9 +11,6 @@ class ModuleConfigFile extends ConfigFile {
 
     // loads a config object from a file/type combination  
     public static function factory($id, $type='file', $options=0) {
-        if ($cache = Kurogo::getCache(self::cacheKey($id, $type))) {
-            return $cache;
-        }
         $config = new ModuleConfigFile();
         if (!($options & self::OPTION_DO_NOT_CREATE)) {
             $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
@@ -25,12 +22,12 @@ class ModuleConfigFile extends ConfigFile {
             }
             throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file for module $id: " . self::getfileByType($id, $type));
         }
-        Kurogo::setCache(self::cacheKey($id, $type), $config);
+        
         return $config;
     }
   
-    private static function cacheKey($id, $type) {
-        return "module-config-{$id}-{$type}";
+    protected function cacheKey() {
+        return "config-module-{$this->file}-{$this->type}";
     }
     
     protected function getFileByType($id, $type)

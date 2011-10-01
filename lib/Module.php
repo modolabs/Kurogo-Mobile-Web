@@ -72,7 +72,7 @@ abstract class Module
 	}
   
     private static function cacheKey($id, $type) {
-        return 'module-factory-' . md5($id . '-' . $type);
+        return "module-factory-{$id}-{$type}";
     }
     /**
       * Factory method. Used to instantiate a subclass
@@ -81,9 +81,6 @@ abstract class Module
       */
     public static function factory($id, $type=null) {
   
-        if ($module = Kurogo::getCache(self::cacheKey($id, $type))) {
-            return $module;
-        }
         Kurogo::log(LOG_INFO, "Initializing $type module $id", 'module');
 		$configModule = $id;
 		//attempt to load config/$id/module.ini  
@@ -93,6 +90,18 @@ abstract class Module
         } elseif (!Kurogo::getOptionalSiteVar('CREATE_DEFAULT_CONFIG', false, 'modules')) {
             Kurogo::log(LOG_ERR, "Module config file not found for module $id", 'module');
 			throw new KurogoModuleNotFound(Kurogo::getLocalizedString('ERROR_MODULE_NOT_FOUND', $id));
+        }
+
+        // see if the class location has been cached 
+        if ($moduleFile = Kurogo::getCache(self::cacheKey($id, $type))) {
+            $className = basename($moduleFile,'.php');
+            include_once($moduleFile);
+            $module = new $className();
+            $module->setConfigModule($configModule);
+            if ($config) {
+                $module->setConfig('module', $config);
+            }
+            return $module;
         }
         
 
@@ -142,7 +151,9 @@ abstract class Module
                         if ($config) {
                         	$module->setConfig('module', $config);
                         }
-                        Kurogo::setCache(self::cacheKey($id, $type), $module);
+                
+                        // cache the location of the class (which also includes the classname)
+                        Kurogo::setCache(self::cacheKey($id, $type), $moduleFile);
                         return $module;
                     }
                     Kurogo::log(LOG_NOTICE, "$class found at $moduleFile is abstract and cannot be used for $id", 'module');
