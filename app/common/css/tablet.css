@@ -1790,6 +1790,7 @@ table.section-search form {
     position: relative;
     margin: 0;
     padding: 9px;
+    height: 87px;
 }
 .splitview ul.results .ellipsis {
     overflow: hidden;
@@ -1837,6 +1838,7 @@ table.section-search form {
     white-space: nowrap;
     border-top: 1px solid #999;
     border-bottom: 1px solid #999;
+    border-right: none;
 }
 
 .portrait .splitview ul.results {

@@ -7,11 +7,11 @@
 {/block}
 
 {block name="stories"}
-  <div id="tabletNews">
-    <div id="stories">
+  <div id="tabletNews" class="splitview">
+    <div id="stories" class="listcontainer">
       {include file="findInclude:modules/news/templates/stories.tpl"}
     </div>
-    <div id="storyDetailWrapper">
+    <div id="storyDetailWrapper" class="splitview-detailwrapper">
       <div id="storyDetail">
       </div><!-- storyDetail -->
     </div><!-- storyDetailWrapper -->
