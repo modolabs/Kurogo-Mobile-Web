@@ -43,6 +43,7 @@ class MapDBSearch extends MapSearch
         $sql = 'SELECT p.*, pc.category_id FROM '
               .MapDB::PLACEMARK_TABLE.' p, '.MapDB::PLACEMARK_CATEGORY_TABLE.' pc'
               .' WHERE p.placemark_id = pc.placemark_id'
+              .'   AND p.lat = pc.lat AND p.lon = pc.lon'
               .'   AND p.lat >= ? AND p.lat < ? AND p.lon >= ? AND p.lon < ?'
               .' ORDER BY (p.lat - ?)*(p.lat - ?) + (p.lon - ?)*(p.lon - ?)';
         $this->getSearchResultsForQuery($sql, $params, $maxItems);
