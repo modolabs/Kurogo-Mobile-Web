@@ -91,7 +91,6 @@ $(document).ready(function() {
             adminSubsection = '';
             $('nav ul li a[class=current]').attr('class','');
             $(this).attr('class','current');
-            clearMessage();
             reloadSection();
         }
         return false;
