@@ -312,3 +312,55 @@ function scrollToTop() {
     window.splitView = splitView;
 
 })(window)
+
+// Used by news and video modules for news article listings
+function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId, detailId) {
+    splitView = new splitView({
+        list: listWrapperId,
+        detail: detailWrapperId,
+        content: detailId
+    });
+
+    containerScroller.destroy();
+    containerScroller = null;
+    
+    moduleHandleWindowResize = function () {
+        var listWrapper = document.getElementById(listWrapperId);
+        var detailWrapper = document.getElementById(detailWrapperId);
+        if (!detailWrapper) {
+          return;  // can happen for searches with no results or when feed is down
+        }
+        detailWrapper.style.height = 'auto';
+        
+        var wrapperHeight = document.getElementById('containerinset').offsetHeight;
+        var headerHeight = document.getElementById(headerId).offsetHeight;
+        var contentHeight = wrapperHeight - headerHeight;
+        
+        switch (getOrientation()) {
+            case 'landscape':
+                listWrapper.style.height = contentHeight + 'px';
+                detailWrapper.style.height = contentHeight + 'px';
+                var list = listWrapper.getElementsByTagName('li')[0].parentNode;
+                list.style.width = '';
+                break;
+            
+            case 'portrait':
+                listWrapper.style.height = '';
+                // this is a hack because for some reason the width isn't being properly set
+                var width = 0;
+                var listItems = listWrapper.getElementsByTagName('li');
+                var list;
+                for (var i = 0; i < listItems.length; i++) {
+                    list = listItems[i].parentNode;
+                    width+=listItems[i].offsetWidth;
+                }
+                list.style.width = width+'px';
+                
+                var listWrapperHeight = listWrapper.offsetHeight;
+                detailWrapper.style.height = (contentHeight - listWrapperHeight) + 'px';
+                break;
+        }
+    }
+    
+    moduleHandleWindowResize();
+}
