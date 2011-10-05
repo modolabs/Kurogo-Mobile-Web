@@ -1,7 +1,7 @@
 {extends file="findExtends:modules/video/templates/search.tpl"}
 
 {block name="videoHeader"}
-  <div id="videoHeader">
+  <div id="videoHeader" class="splitview-header">
     {$smarty.block.parent}
   </div>
 {/block}

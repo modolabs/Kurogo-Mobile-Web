@@ -1,7 +1,7 @@
 {extends file="findExtends:modules/news/templates/search.tpl"}
 
 {block name="newsHeader"}
-  <div id="newsHeader">
+  <div id="newsHeader" class="splitview-header">
     {include file="findInclude:common/templates/search.tpl" extraArgs=$extraArgs}
   </div>
 {/block}

@@ -1774,6 +1774,10 @@ table.section-search form {
 
 /* Tablet split view */
 
+.splitview-header {
+    overflow: hidden;
+}
+
 .splitview ul.results {
     margin: 0;
 }

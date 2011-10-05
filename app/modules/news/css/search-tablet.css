@@ -43,6 +43,6 @@ form {
 	width: 200px;
 }
 
-.search-field, select {
+#footer {
+    display:none;
 }
-

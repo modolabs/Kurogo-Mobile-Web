@@ -1,7 +1,7 @@
 {extends file="findExtends:modules/video/templates/bookmarks.tpl"}
 
 {block name="bookmarkHeader"}
-  <div id="videoHeader"></div>
+  <div id="videoHeader" class="splitview-header"></div>
 {/block}
 
 {block name="bookmarks"}
