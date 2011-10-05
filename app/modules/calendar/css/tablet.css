@@ -2,10 +2,16 @@
   padding: 0;
   margin: 0;
 }
+#searchformcontainer + ul {
+  margin-top: 0;
+}
 #searchformcontainer form {
   position: relative;
   padding: 18px 12px 12px 12px;
   margin: 0;
+}
+#searchformcontainer form p {
+  margin: 0.75em 0 0 0;
 }
 #searchformcontainer fieldset + fieldset {
   margin: 0 4px;
@@ -17,7 +23,10 @@
 #searchformcontainer fieldset select + select {
   float: right;
 }
-.inputcombo .forminput {
+#searchformcontainer .inputcombo  {
+  margin-bottom: 6px;
+}
+#searchformcontainer .inputcombo .forminput {
   width: auto;
   position: absolute;
   top: 0;
