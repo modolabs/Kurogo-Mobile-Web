@@ -353,19 +353,20 @@ class MapAPIModule extends APIModule
 
             case 'detail':
 
-                $dataController = $this->getDataController();
-                $drilldownPath = $this->getDrillDownPath();
-                if ($drilldownPath) {
-                    $dataController->addDisplayFilter('category', $drilldownPath);
-                }
-                if ($this->featureIndex !== null) {
-                    $feature = $dataController->selectPlacemark($this->featureIndex);
-                }
+                $this->loadFeedData();                                                                      
+                $category = $this->getArg('category');                                                      
+                $dataController = $this->getDataController($category);                                      
+                $placemark = $dataController->selectPlacemark($this->getArg('id'));                         
 
-                $response = $this->arrayFromPlacemark($feature);
+                $response = array(
+                    'title' => $placemark->getTitle(),
+                    'subtitle' => $placemark->getSubtitle(),
+                    'address' => $placemark->getAddress(),
+                    'extraFields' => $placemark->getFields(),
+                );                                                                                          
 
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponse($response);                                                              
+                $this->setResponseVersion(1);                                                               
 
                 break;
 
