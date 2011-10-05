@@ -7,24 +7,22 @@
   padding: 18px 12px 12px 12px;
   margin: 0;
 }
-#searchformcontainer fieldset:first-child {
-  margin: 0 12em 0 0;
-}
 #searchformcontainer fieldset + fieldset {
-  position: absolute;
-  top: 0;
-  right: 12px;
-  width: 14em;
-  margin: 0;
-  text-align: right;
-  height: 40px;
-  line-height: 36px;
+  margin: 0 4px;
 }
-.landscape #searchformcontainer fieldset + fieldset {
-  width: 15.5em;
+#searchformcontainer fieldset select {
+  float: left;
+  width: 49%;
+}
+#searchformcontainer fieldset select + select {
+  float: right;
 }
 .inputcombo .forminput {
-	width: 90%;
+  width: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .sidenavHeader {
