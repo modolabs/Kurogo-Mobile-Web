@@ -1826,6 +1826,7 @@ table.section-search form {
   font-weight: bold;
   background-image: none;
   font-size: 90%;
+  height: auto;
 }
 
 .splitview-detailwrapper {
