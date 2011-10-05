@@ -136,7 +136,6 @@ class SiteConfig extends ConfigGroup {
 
     // Set up defines relative to SITE_DIR
     define('SITE_DIR',             $siteDir); //already been realpath'd
-    define('SITE_KEY',             md5($siteDir));
     define('SITE_LIB_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'lib');
     define('SITE_APP_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'app');
     define('SITE_MODULES_DIR',     SITE_DIR . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'modules');
@@ -148,6 +147,10 @@ class SiteConfig extends ConfigGroup {
     //load in the site config file (required);
     $config = ConfigFile::factory('site', 'site');
     $this->addConfig($config);
+
+    // attempt to load site key    
+    $siteKey = $config->getOptionalVar('SITE_KEY', md5($siteDir));
+    define('SITE_KEY', $siteKey);
     
     if ($config->getOptionalVar('SITE_DISABLED')) {
         die("FATAL ERROR: Site disabled");
