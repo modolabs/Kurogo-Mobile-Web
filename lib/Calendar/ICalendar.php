@@ -499,9 +499,9 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
     /**
      * Answer an ICalEvent that is an exception to the normal recurrence pattern
-     * if one exists for the start-time given. FALSE if none match.
+     * if one exists for the start-time given. null if none match.
      * @param int $time
-     * @return mixed ICalEvent or false
+     * @return mixed ICalEvent or null
      */
     public function getRecurrenceException($time) {
         $recurrence_id = strftime("%Y%m%dT%H%M%S",$time);
@@ -512,7 +512,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 return $exception;
             }
         }
-        return false;
+        return null;
     }
 
     public function outputICS() {
