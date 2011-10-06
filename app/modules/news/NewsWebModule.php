@@ -251,6 +251,7 @@ class NewsWebModule extends WebModule {
             $stories = array();
 
             $options = array(
+                'filter' => $searchTerms,
                 'section' => $this->feedIndex
             );
 
