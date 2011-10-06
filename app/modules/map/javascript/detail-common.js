@@ -12,8 +12,8 @@ function doUpdateContainerDimensions() {
             bottomoffset = 75;
         }
         var tabHeight = getWindowHeight() - topoffset - bottomoffset;
-        maptab.style.height = tabHeight + "px";
         var tabPadding = 8 * 2;
+        maptab.style.height = (tabHeight - tabPadding) + "px";
         mapimage.style.height = (tabHeight - zoomControlsHeight - tabPadding) + "px";
     }
 
