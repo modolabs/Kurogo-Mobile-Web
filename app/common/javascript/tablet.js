@@ -240,7 +240,9 @@ function scrollToTop() {
                     }
                     
                     self.detailScroller.refresh();
-                    moduleHandleWindowResize();
+                    if (typeof moduleHandleWindowResize != 'undefined') {
+                        moduleHandleWindowResize(e);
+                    }
                 }
             }
             showLoadingMsg(this.options.content);
@@ -257,6 +259,9 @@ function scrollToTop() {
                     if (this.orientation != getOrientation()) {
                         this.orientation = getOrientation();
                         this.updateListScroller();
+                        if (typeof moduleHandleWindowResize != 'undefined') {
+                            moduleHandleWindowResize(e);
+                        }
                     }
                     break;
             }
@@ -293,9 +298,9 @@ function scrollToTop() {
                     }
                 },0);
                 return;
+            } else {
+              this.listScroller = new iScroll(this.options.list, options);
             }
-            
-            this.listScroller = new iScroll(this.options.list, options);
         }
     }
     
