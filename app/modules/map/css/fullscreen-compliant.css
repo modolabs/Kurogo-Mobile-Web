@@ -161,7 +161,6 @@ body.landscape #mapzoom {
 
 body.landscape #mapzoom a {
 	background-image: url(/modules/map/images/buttons-reverse.png);
-	margin-top: 0;
 }
 
 body.landscape #zoomin {
