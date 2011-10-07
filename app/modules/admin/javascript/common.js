@@ -73,8 +73,9 @@ function createFormSectionListItems(section, sectionData) {
                                 var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>');
                                 
                                 if (groupdata.collapsable || groupdata.collapsed) {
-                                    legend.addClass('collapsable').click(function() {
-                                        legend.toggleClass('collapsed');
+                                    fieldgroup.addClass('collapsable')
+                                    legend.click(function() {
+                                        fieldgroup.toggleClass('collapsed');
                                         fieldgroups[data.fieldgroup].slideToggle();
                                     });
                                 }
@@ -85,7 +86,7 @@ function createFormSectionListItems(section, sectionData) {
                             }
                             fieldgroup.append(fieldgroups[data.fieldgroup]);
                             if (groupdata.collapsed) {
-                                legend.addClass('collapsed');
+                                fieldgroup.addClass('collapsed');
                                 fieldgroups[data.fieldgroup].hide();
                             }
                             $.merge(items, fieldgroup);
@@ -395,8 +396,9 @@ function createSectionListRow(section, data, sectionID, sectionData) {
                         if (groupdata.label) {
                             var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>');
                             if (groupdata.collapsable || groupdata.collapsed) {
-                                legend.addClass('collapsable').click(function() {
-                                    legend.toggleClass('collapsed');
+                                fieldgroup.addClass('collapsable')
+                                legend.click(function() {
+                                    fieldgroup.toggleClass('collapsed');
                                     fieldgroups[fieldData.fieldgroup].slideToggle();
                                 });
                             }
@@ -408,7 +410,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
                         }
                         fieldgroup.append(fieldgroups[groupname]);
                         if (groupdata.collapsed) {
-                            legend.addClass('collapsed');
+                            fieldgroup.addClass('collapsed');
                             fieldgroups[groupname].hide();
                         }
                         list.append(fieldgroup);
@@ -530,13 +532,18 @@ function fileListTypes() {
     return {'':'-','FULL_URL_BASE':'FULL_URL_BASE','LOG_DIR':'LOG_DIR','LIB_DIR':'LIB_DIR','CACHE_DIR':'CACHE_DIR','DATA_DIR':'DATA_DIR','SITE_DIR':'SITE_DIR','ROOT_DIR':'ROOT_DIR'};
 }
 
-function showMessage(message, error) {
+function showMessage(message, error, keep) {
     if (error) {
-        $('#message').addClass('error');
+        $('#message').addClass('errormessage');
     } else {
-        $('#message').removeClass('error');
+        $('#message').removeClass('errormessage');
     }
-    $('#message').html(message).slideDown('fast').delay(3000).slideUp('slow');
+
+    $('#message').html(message).slideDown('fast');
+    
+    if (!error && !keep) {
+        $('#message').delay(3000).slideUp('slow');
+    }
 }
 
 function makeAPICall(type, module, command, data, callback) {
