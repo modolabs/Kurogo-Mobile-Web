@@ -328,7 +328,7 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
         }
         detailWrapper.style.height = 'auto';
         
-        var wrapperHeight = document.getElementById('containerinset').offsetHeight;
+        var wrapperHeight = document.getElementById('wrapper').offsetHeight;
         var headerHeight = document.getElementById(headerId).offsetHeight;
         var contentHeight = wrapperHeight - headerHeight;
         
