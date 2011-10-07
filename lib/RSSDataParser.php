@@ -34,6 +34,10 @@ class RSSDataParser extends XMLDataParser
     {
         return $this->items;
     }
+    
+    public function getTitle() {
+        return $this->channel->getTitle();
+    }
 
     public function init($args)
     {
