@@ -320,15 +320,6 @@ function scrollToTop() {
 
 // Used by news and video modules for news article listings
 function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId, detailId) {
-    splitView = new splitView({
-        list: listWrapperId,
-        detail: detailWrapperId,
-        content: detailId
-    });
-
-    containerScroller.destroy();
-    containerScroller = null;
-    
     moduleHandleWindowResize = function () {
         var listWrapper = document.getElementById(listWrapperId);
         var detailWrapper = document.getElementById(detailWrapperId);
@@ -367,5 +358,14 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
         }
     }
     
+    containerScroller.destroy();
+    containerScroller = null;
+    
     moduleHandleWindowResize();
+    
+    splitView = new splitView({
+        list: listWrapperId,
+        detail: detailWrapperId,
+        content: detailId
+    });
 }
