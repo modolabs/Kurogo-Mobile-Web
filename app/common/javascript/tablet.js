@@ -261,6 +261,17 @@ function scrollToTop() {
                         this.updateListScroller();
                         if (typeof moduleHandleWindowResize != 'undefined') {
                             moduleHandleWindowResize(e);
+                            if (navigator.userAgent.match(/(Android 3\.\d)/)) {
+                                // Android 3 browsers don't reliably set client and offset heights
+                                // before calling orientationchange or resize handlers.
+                                var self = this;
+                                setTimeout(function() {
+                                    setContainerWrapperHeight();
+                                    moduleHandleWindowResize(e);
+                                    self.detailScroller.refresh();
+                                    if (self.listScroller) { self.listScroller.refresh(); }
+                                }, 600); // approx. how long after the event before the offsetHeights are correct
+                            }
                         }
                     }
                     break;
