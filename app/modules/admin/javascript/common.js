@@ -67,12 +67,17 @@ function createFormSectionListItems(section, sectionData) {
                     if (sectionData.fieldgroups && typeof sectionData.fieldgroups[data.fieldgroup] != 'undefined') {
                         var groupdata = sectionData.fieldgroups[data.fieldgroup];
                         if (!fieldgroups[data.fieldgroup]) {
-                            var fieldgroup = $('<fieldset />');
+                            var fieldgroup = $('<fieldset />').attr('id','fieldgroup_' + data.fieldgroup);
                             fieldgroups[data.fieldgroup] = $('<div class="fieldgroup" />');
                             if (groupdata.label) {
-                                var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>').click(function() {
-                                    fieldgroups[data.fieldgroup].slideToggle();
-                                })
+                                var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>');
+                                
+                                if (groupdata.collapsable || groupdata.collapsed) {
+                                    legend.addClass('collapsable').click(function() {
+                                        legend.toggleClass('collapsed');
+                                        fieldgroups[data.fieldgroup].slideToggle();
+                                    });
+                                }
                                 fieldgroup.append(legend);
                                 if (groupdata.description) {
                                     fieldgroups[data.fieldgroup].append($('<div class="fieldgroup-description">'+groupdata.description+'</div>'));
@@ -80,6 +85,7 @@ function createFormSectionListItems(section, sectionData) {
                             }
                             fieldgroup.append(fieldgroups[data.fieldgroup]);
                             if (groupdata.collapsed) {
+                                legend.addClass('collapsed');
                                 fieldgroups[data.fieldgroup].hide();
                             }
                             $.merge(items, fieldgroup);
@@ -210,6 +216,10 @@ function appendFormField(parent, key, fieldData) {
         case 'label':
             parent.append('<span class="labeltext">'+fieldData.value+'</span>');
             break;
+        case 'hidden':
+            parent.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', fieldData.value).addClass(inputClass).attr('id',id)).addClass('hidden');
+            break;
+            
         case 'action':
             parent.append($('<a class="formbutton"">').append($('<div>').html(fieldData.value)).click(function() {
                 makeAPICall('GET','admin',fieldData.action, fieldData.params, function() { 
@@ -383,9 +393,14 @@ function createSectionListRow(section, data, sectionID, sectionData) {
                         var fieldgroup = $('<fieldset />');
                         fieldgroups[groupname] = $('<div class="fieldgroup" />');
                         if (groupdata.label) {
-                            var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>').click(function() {
-                                fieldgroups[groupname].slideToggle();
-                            })
+                            var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>');
+                            if (groupdata.collapsable || groupdata.collapsed) {
+                                legend.addClass('collapsable').click(function() {
+                                    legend.toggleClass('collapsed');
+                                    fieldgroups[fieldData.fieldgroup].slideToggle();
+                                });
+                            }
+
                             fieldgroup.append(legend);
                             if (groupdata.description) {
                                 fieldgroups[groupname].append($('<div class="fieldgroup-description">'+groupdata.description+'</div>'));
@@ -393,6 +408,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
                         }
                         fieldgroup.append(fieldgroups[groupname]);
                         if (groupdata.collapsed) {
+                            legend.addClass('collapsed');
                             fieldgroups[groupname].hide();
                         }
                         list.append(fieldgroup);
