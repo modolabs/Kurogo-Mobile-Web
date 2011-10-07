@@ -731,6 +731,10 @@ h1 img {
 /*    display: none; */
 }
 
+#adminFields li.hidden {
+    margin: 0;
+    visibility: hidden;
+}
 
 #adminSections li a {
     text-decoration:none;
@@ -781,7 +785,7 @@ a.formbutton div {
 fieldset {
 }
 
-.fieldgroup-legend {
+.fieldgroup-legend.collapsable {
     cursor: pointer;
 	display: inline-block;
 	text-align: center;
