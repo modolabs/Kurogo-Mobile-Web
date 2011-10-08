@@ -48,6 +48,7 @@ body.portrait #mapzoom {
 
 body.portrait #mapzoom a {
 	background-image: url(/modules/map/images/buttons-reverse.png);
+	margin-top: 0;
 }
 
 body.portrait #zoomin {

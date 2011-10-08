@@ -60,11 +60,23 @@ function handleWindowResize(e) {
     }
     setContainerWrapperHeight();
   
-  setTimeout(updateNavSlider, 0);
-  
-  if (typeof moduleHandleWindowResize != 'undefined') {
-    moduleHandleWindowResize(e);
-  }
+    setTimeout(updateNavSlider, 0);
+    
+    if (typeof moduleHandleWindowResize != 'undefined') {
+        moduleHandleWindowResize(e);
+    }
+    if (navigator.userAgent.match(/(Android 3\.\d)/)) {
+        // Android 3 browsers don't reliably set client and offset heights
+        // before calling orientationchange or resize handlers.
+        var self = this;
+        setTimeout(function() {
+            setContainerWrapperHeight();
+            setTimeout(updateNavSlider, 0);
+            if (typeof moduleHandleWindowResize != 'undefined') {
+                moduleHandleWindowResize(e);
+            }
+        }, 600); // approx. how long after the event before the offsetHeights are correct
+    }
 } 
 
 function tabletInit() {
@@ -261,17 +273,6 @@ function scrollToTop() {
                         this.updateListScroller();
                         if (typeof moduleHandleWindowResize != 'undefined') {
                             moduleHandleWindowResize(e);
-                            if (navigator.userAgent.match(/(Android 3\.\d)/)) {
-                                // Android 3 browsers don't reliably set client and offset heights
-                                // before calling orientationchange or resize handlers.
-                                var self = this;
-                                setTimeout(function() {
-                                    setContainerWrapperHeight();
-                                    moduleHandleWindowResize(e);
-                                    self.detailScroller.refresh();
-                                    if (self.listScroller) { self.listScroller.refresh(); }
-                                }, 600); // approx. how long after the event before the offsetHeights are correct
-                            }
                         }
                     }
                     break;
@@ -312,7 +313,15 @@ function scrollToTop() {
             } else {
               this.listScroller = new iScroll(this.options.list, options);
             }
-        }
+        },
+        refreshScrollers: function () {
+            if (self.detailScroller) {
+                self.detailScroller.refresh();
+            }
+            if (self.listScroller) {
+                self.listScroller.refresh();
+            }
+        },
     }
     
     function removeBreadcrumbParameter(url) {
@@ -331,6 +340,8 @@ function scrollToTop() {
 
 // Used by news and video modules for news article listings
 function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId, detailId) {
+    var aSplitView = null;
+
     moduleHandleWindowResize = function () {
         var listWrapper = document.getElementById(listWrapperId);
         var detailWrapper = document.getElementById(detailWrapperId);
@@ -367,6 +378,10 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
                 detailWrapper.style.height = (contentHeight - listWrapperHeight) + 'px';
                 break;
         }
+        
+        if (aSplitView) {
+            aSplitView.refreshScrollers();
+        }
     }
     
     containerScroller.destroy();
@@ -374,7 +389,7 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
     
     moduleHandleWindowResize();
     
-    splitView = new splitView({
+    aSplitView = new splitView({
         list: listWrapperId,
         detail: detailWrapperId,
         content: detailId
