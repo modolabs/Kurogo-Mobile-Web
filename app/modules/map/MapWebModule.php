@@ -147,6 +147,11 @@ class MapWebModule extends WebModule {
             'subtitle' => $placemark->getSubtitle(),
             'url' => $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb),
             );
+
+        if (($distance = $placemark->getField('distance')) && $this->getOptionalModuleVar('SHOW_DISTANCES', true)) {
+            $result['subtitle'] = $this->displayTextFromMeters($distance);
+        }
+
         return $result;
     }
 
@@ -339,6 +344,50 @@ class MapWebModule extends WebModule {
         }
     }
 
+    protected function displayTextFromMeters($meters)
+    {
+        $result = null;
+        $system = $this->getOptionalModuleVar('DISTANCE_MEASUREMENT_UNITS', 'Metric');
+        switch ($system) {
+            case 'Imperial':
+                $miles = $meters * MILES_PER_METER;
+                if ($miles < 0.1) {
+                    $feet = $meters * FEET_PER_METER;
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_FEET',
+                         number_format($feet, 0));
+
+                } elseif ($miles < 15) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_MILES',
+                         number_format($miles, 1));
+                } else {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_MILES',
+                         number_format($miles, 0));
+                }
+                break;
+            case 'Metric':
+            default:
+                if ($meters < 100) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_METERS',
+                         number_format($meters, 0));
+                } elseif ($meters < 15000) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_KILOMETERS',
+                         number_format($meters / 1000, 1));
+                } else {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_KILOMETERS',
+                         number_format($meters / 1000, 0));
+                }
+                
+                break;
+        }
+        return $result;
+    }
+
     /////// UI functions
     
     protected function addJavascriptStaticMap() {
@@ -476,12 +525,38 @@ JS;
                 }
 
                 $mapSearch = $this->getSearchClass($this->args);
-                $searchResults = $mapSearch->searchByProximity($center, 1000, 10, $dataController);
+
+                // defaults values for proximity search
+                $tolerance = 1000;
+                $maxItems = 0;
+
+                // check for settings in feedgroup config
+                $configData = $this->getDataForGroup($this->feedGroup);
+                if ($configData) {
+                    if (isset($configData['NEARBY_THRESHOLD'])) {
+                        $tolerance = $configData['NEARBY_THRESHOLD'];
+                    }
+                    if (isset($configData['NEARBY_ITEMS'])) {
+                        $maxItems = $configData['NEARBY_ITEMS'];
+                    }
+                }
+
+                // check for override settings in feeds
+                $configData = $this->getCurrentFeed();
+                if (isset($configData['NEARBY_THRESHOLD'])) {
+                    $tolerance = $configData['NEARBY_THRESHOLD'];
+                }
+                if (isset($configData['NEARBY_ITEMS'])) {
+                    $maxItems = $configData['NEARBY_ITEMS'];
+                }
+
+                $searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems, $dataController);
                 $places = array();
                 if ($searchResults) {
                     foreach ($searchResults as $result) {
                         if ($result->getId() !== $currentId || $result->getTitle() !== $currentTitle) {
-                            $places[] = $this->linkForItem($result);
+                            $aPlace = $this->linkForItem($result);
+                            $places[] = $aPlace;
                         }
                     }
                     $this->assign('nearbyResults', $places);

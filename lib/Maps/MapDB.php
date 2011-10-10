@@ -12,6 +12,21 @@ class MapDB
 
     private static $db = null;
 
+    private static $categoryIds = null;
+
+    public static function getAllCategoryIds()
+    {
+        if (self::$categoryIds === null) {
+            $sql = 'SELECT * FROM '.self::CATEGORY_TABLE
+                  .' WHERE parent_category_id IS NULL';
+            $results = self::connection()->query($sql);
+            while (($row = $results->fetch(PDO::FETCH_ASSOC))) {
+                self::$categoryIds[] = $row['category_id'];
+            }
+        }
+        return self::$categoryIds;
+    }
+
     public static function updateCategory(MapFolder $category, $items, $projection=null, $parentCategoryId=null) {
         $categoryId = $category->getId();
         $name = $category->getTitle();
@@ -118,11 +133,6 @@ class MapDB
         }
 
         // categories
-        $sql = 'DELETE FROM '.self::PLACEMARK_CATEGORY_TABLE
-              .' WHERE placemark_id=? and lat =? and lon=?';
-        $params = array($placemarkId, $centroid['lat'], $centroid['lon']);
-        self::connection()->query($sql, $params);
-
         $categories = $feature->getCategoryIds();
         if (!is_array($categories)) {
             $categories = array();

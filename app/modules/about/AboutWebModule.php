@@ -14,13 +14,16 @@ class AboutWebModule extends WebModule {
   private function getPhraseForDevice() {
     switch($this->platform) {
       case 'iphone':
-        return 'iPhone';
+        return $this->pagetype == 'tablet' ? 'iPad' : 'iPhone';
         
       case 'android':
-        return 'Android phones';
+        return 'Android '.($this->pagetype == 'tablet' ? 'tablets' : 'phones');
         
       default:
         switch ($this->pagetype) {
+          case 'tablet':
+            return 'tablet computers';
+          
           case 'compliant':
             return 'touchscreen phones';
           

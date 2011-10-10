@@ -75,9 +75,18 @@ There are other values that affect the method of password hashing
 * *DB_USER_PASSWORD_HASH* (md5) - This is a string that represents a valid hashing function. It indicates what
    hashing algorithm is used to store the password. See `hash_algos() <http://www.php.net/manual/en/function.hash-algos.php>`_
    for a list of valid hashing algorithms. Keep in mind that available algorithms may differ by PHP
-   version and platform.
-* *DB_USER_PASSWORD_SALT* (empty) - If present this string will be *prepended* to any string as a salt
-  value before hashing.
+   version and platform. You can also use the *hmac_* prefix to use the hmac signing method (i.e. hmac_sha1). This requires setting
+   the *DB_USER_PASSWORD_KEY* value.
+* *DB_USER_PASSWORD_KEY* (empty) - Necessary if you use the more secure *hmac* variant hashing algorithms. This uses a
+  shared key to sign the value using *hash_hmac*
+* *DB_USER_PASSWORD_SALT_BEFORE* (empty) - If present this string will be *prepended* to any string as a salt
+  value before hashing. This is useful if you are using fixed salts.
+* *DB_USER_PASSWORD_SALT_AFTER* (empty) - If present this string will be *appended* to any string as a salt
+  value before hashing. This is useful if you are using fixed salts.
+* *DB_USER_PASSWORD_SALT_FIELD_BEFORE* (empty) - If present the value of this field for the user will be *prepended*
+  to any string as a salt value before hashing. This is useful if you are using variable salts.
+* *DB_USER_PASSWORD_SALT_FIELD_AFTER* (empty) - If present the value of this field for the user will be *appended*
+  to any string as a salt value before hashing. This is useful if you are using variable salts.
    
 ============
 How it Works

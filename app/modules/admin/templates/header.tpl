@@ -39,7 +39,7 @@
 		<span id="sitename">{$strings.SITE_NAME}</span>
 	</h1>
 	<div id="utility">
-        {if $session_isLoggedIn}<div id="user">{$footerLoginText} <a id="signout" href="{$session_logout_url}">{"LOGIN_SIGN_OUT"|getLocalizedString}</a>
+        {if $session_isLoggedIn}<div id="user">{$footerLoginText} <a id="signout" href="{$session_logout_url}">{"SIGN_OUT"|getLocalizedString}</a>
         {/if}
 	</div>
 </header>
@@ -49,7 +49,7 @@
 		<ul>
 		{foreach $navSections as $navSection}
         <li><a href="{$navSection.url}" title="{$navSection.description|escape}">{$navSection.title|escape}</a>
-        {if $page==$navSection.id}
+        {if $page==$navSection.id && $subNavSections}
         <ul>
 		{foreach $subNavSections as $subNavSection}
             <li><a{if $subNavSection.id==$section} class="current"{/if} href="{$subNavSection.url}" section="{$subNavSection.id}">{if $subNavSection.img}<img src="{$subNavSection.img}" height="16" /> {/if}{$subNavSection.title|escape}</a></li>

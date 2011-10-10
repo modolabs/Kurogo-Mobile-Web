@@ -77,9 +77,9 @@ class TrumbaCalendarDataController extends CalendarDataController
             $this->setEndDate($end);
             
             $items = $this->events();
-            if (array_key_exists($id, $items)) {
-                if (array_key_exists($time, $items[$id])) {
-                    return $items[$id][$time];
+            foreach ($items as $key => $item) {
+                if ($id == $item->get_uid()) {
+                    return $item;
                 }
             }
         }

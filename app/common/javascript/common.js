@@ -11,7 +11,7 @@ function showTab(strID, objTrigger) {
 		show(strID);
 		if(currentTab && (currentTab != objTab)) {
 			hide(currentTab.id);
-			currentTab.style.display = "none";
+			//currentTab.style.display = "none";
 		}
 	}
 	currentTab = objTab; // Remember which is the currently displayed tab
@@ -249,6 +249,12 @@ function hideShare() {
 
 // Bookmarks
 function toggleBookmark(name, item, expireseconds, path) {
+  // facility for module to respond to bookmark state change
+  if (typeof moduleBookmarkWillToggle != 'undefined') {
+    $result = moduleBookmarkWillToggle(name, item, expireseconds, path);
+    if ($result === false) { return; }
+  }
+
   var bookmark = document.getElementById("bookmark");
   toggleClass(bookmark, "on");
   var items = getCookieArrayValue(name);

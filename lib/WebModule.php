@@ -475,7 +475,14 @@ abstract class WebModule extends Module {
         $d = dir(SITE_DIR . "/themes");
         while (false !== ($entry = $d->read())) {
             if ($entry[0]!='.' && is_dir(SITE_DIR . "/themes/$entry")) {
-                $themes[$entry] = $entry;
+                
+                $configFile = SITE_DIR . "/themes/$entry/config.ini";
+                try {
+                    $config = ConfigFile::factory($configFile, 'file');
+                    $themes[$entry] = $config->getOptionalVar('theme_name', $entry, 'general');
+                    
+                } catch (KurogoException $e) {
+                }
             }
         }
         $d->close();
@@ -920,14 +927,11 @@ abstract class WebModule extends Module {
     
     protected function generateBookmarkLink() {
         $hasBookmarks = count($this->getBookmarks()) > 0;
-        $bookmarkLink = array();
-        if ($hasBookmarks) {
-            $bookmarkLink = array(array(
-                'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
-                'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
-                ));
-            $this->assign('bookmarkLink', $bookmarkLink);
-        }
+        $bookmarkLink = array(array(
+            'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
+            'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
+        ));
+        $this->assign('bookmarkLink', $bookmarkLink);
         $this->assign('hasBookmarks', $hasBookmarks);
         return $bookmarkLink;
     }    

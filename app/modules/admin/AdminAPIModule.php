@@ -35,23 +35,33 @@ class AdminAPIModule extends APIModule
         
         return $value;
     }
-
-    private function getSiteAdminConfig() {
+    
+    private function getSiteAdminConfig($type) {
         static $configData;
-        if (!$configData) {
-            $file = APP_DIR . "/common/config/admin-site.json";
-            if (!$configData = json_decode(file_get_contents($file), true)) {
-                throw new KurogoDataException($this->getLocalizedString('ERROR_PARSING_FILE', $file));
+        if (!isset($configData[$type])) {
+            $files = array(
+                APP_DIR . "/common/config/admin-{$type}.json",
+                SITE_APP_DIR . "/common/config/admin-{$type}.json"
+            );
+            $data = array();
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    if ($json = json_decode(file_get_contents($file), true)) {
+                        $data = self::mergeConfigData($data, $json);
+                    } else {
+                        throw new KurogoDataException($this->getLocalizedString('ERROR_PARSING_FILE', $file));
+                    }
+                }
             }
-            
+            $configData[$type] = $data;
         }
         
-        return $configData;
+        return $configData[$type];
     }
     
     private function getTypeStr($type) {
-        if ($type=='site') {
-                return 'site';
+        if (in_array($type, array('site'))) {
+            return $type;
         } elseif ($type instanceOf Module) {
             return $type->configModule;
         } else {
@@ -60,9 +70,12 @@ class AdminAPIModule extends APIModule
     }
     
     private function getAdminData($type, $section, $subsection=null) {
-        if ($type=='site') {
-            $configData = $this->getSiteAdminConfig();
+        if (in_array($type, array('site'))) {
+            $configData = $this->getSiteAdminConfig($type);
             $module = $this;
+            if (is_null($section)) {
+                $section = key ($configData);
+            }
         } elseif ($type instanceOf Module) {
             $configData = $type->getModuleAdminConfig();
             $module = $type;
@@ -122,13 +135,15 @@ class AdminAPIModule extends APIModule
                         unset($field['descriptionKey']);
                     }
                 
-                    if (isset($field['valueMethod'])) {
+                    if (isset($field['value'])) {
+                        // value is set. used typically for hidden fields
+                    } elseif (isset($field['valueMethod'])) {
                         $field['value'] = call_user_func(array($module, $field['valueMethod']));
                         unset($field['valueMethod']);
                     } elseif (isset($field['valueKey'])) {
                         $field['value'] = $module->getLocalizedString($field['valueKey']);
                         unset($field['valueKey']);
-                    } elseif ($type=='site') {
+                    } elseif (in_array($type, array('site'))) {
                         if (isset($field['config'])) {
                             switch ($field['config'])
                             {
@@ -188,8 +203,8 @@ class AdminAPIModule extends APIModule
                         $sectionData['sections'] = $module->$sectionData['sectionsmethod']();
                     }
                     unset($sectionData['sectionsmethod']);
-                } elseif ($type=='site') {
-                    throw new KurogoConfigurationException("Getting sections for site is not written yet");
+                } elseif (in_array($type, array('site'))) {
+                    throw new KurogoConfigurationException("Getting sections for $type is not written yet");
                 } else {
                     $configMode = isset($sectionData['configMode']) ? $sectionData['configMode'] : 0;
                     $sectionData['sections'] = $module->getModuleSections($sectionData['config'], Config::NO_EXPAND_VALUE, $configMode);
@@ -288,7 +303,7 @@ class AdminAPIModule extends APIModule
 
         $opts = $opts | ConfigFile::OPTION_IGNORE_LOCAL | ConfigFile::OPTION_IGNORE_MODE;
 
-        if ($type=='site') {
+        if (in_array($type, array('site'))) {
             $configKey = "site-$config";
             if (isset($this->loadedConfigs[$configKey])) {
                 $config = $this->loadedConfigs[$configKey];
@@ -335,7 +350,7 @@ class AdminAPIModule extends APIModule
         Kurogo::log(LOG_DEBUG, "Setting $key to \"$value\" in $typeStr: $section $subsection", 'admin');
         $sectionData = $this->getAdminData($type, $section, $subsection);
         $changed = false;
-            
+
         switch ($sectionData['sectiontype'])
         {
             case 'fields':
@@ -351,6 +366,25 @@ class AdminAPIModule extends APIModule
                 break;
             default:
                 throw new KurogoConfigurationException("Unable to handle $type $section. Invalid section type " . $sectionData['sectiontype']);
+        }
+        
+        if (isset($fieldData['valueSaveMethod'])) {
+            if (isset($fieldData['module'])) {
+                $module = WebModule::factory($fieldData['module']);
+                $result = call_user_func(array($module, $fieldData['valueSaveMethod']), $key, $value);
+            } else {
+                $result = call_user_func($fieldData['valueSaveMethod'], $key, $value);
+            }
+
+            if ($result instanceOf Config) {
+                $this->changedConfigs[] = $result;                
+            } 
+            
+            if (KurogoError::isError($result)) {
+                throw new Exception($result->getMessage());
+            }
+            
+            return;            
         }
         
         $config = $this->getAdminConfig($type, $fieldData['config'], ConfigFile::OPTION_CREATE_EMPTY);
@@ -627,6 +661,8 @@ class AdminAPIModule extends APIModule
                     case 'site':
                         $adminData = $this->getAdminData('site', $section);
                         break;
+                    default:
+                        throw new KurogoConfigurationException("Invalid config type $type");
                 }
                 
                 $this->setResponse($adminData);

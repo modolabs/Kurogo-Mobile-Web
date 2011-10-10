@@ -1,0 +1,38 @@
+{
+    "devices" : [
+        {
+            "groupName" : "exampleDevice",
+            "description" : "Both revisions of the Example Device produced by Example Company, Inc.",
+            "classification" : {
+                "2" : {
+                    "pagetype"     : "compliant",
+                    "platform"     : "android",
+                    "supports_certificate" : true
+                },
+                "1" : {
+                    "pagetype"     : "webkit",
+                    "platform"     : "android",
+                    "supports_certificate" : true
+                }
+            },
+            "match" : [
+                {
+                    "prefix" : "Mozilla/5.0 (exampleDevice-v1"
+                },
+                {
+                    "suffix" : "exampleDevice-v2)"
+                },
+                {
+                	"partial" : "exampleDevice"
+                },
+                {
+                    "regex" : "exampleDevice-v(1|2)",
+                    "options" : {
+                        "GLOBAL" : true,
+                        "CASE_INSENSITIVE" : true
+                    }
+                }
+            ]
+        }
+    ]
+}

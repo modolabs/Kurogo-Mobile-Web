@@ -1,3 +1,3 @@
 function moduleInit() {
-    setupNewsSplitView();
+    setupSplitViewForListAndDetail('newsHeader', 'stories', 'storyDetailWrapper', 'storyDetail');
 }

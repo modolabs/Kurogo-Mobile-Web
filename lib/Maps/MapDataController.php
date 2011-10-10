@@ -18,6 +18,7 @@ class MapDataController extends DataController implements MapFolder
     // not config variables    
     protected $items = null;
     protected $selectedPlacemarks = array();
+    protected $allPlacemarks = array();
     protected $drillDownPath = array();
 
     protected $projectorReady = false;
@@ -111,8 +112,7 @@ class MapDataController extends DataController implements MapFolder
                     && $featureCenter['lon'] <= $bbox['max']['lon']
                     && $featureCenter['lon'] >= $bbox['min']['lon']
                 ) {
-                    // assume distances are small enough to use Euclidean distance
-                    $distance = euclideanDistance(
+                    $distance = greatCircleDistance(
                         $bbox['center']['lat'], $bbox['center']['lon'],
                         $featureCenter['lat'], $featureCenter['lon']);
                     if ($distance > $tolerance) continue;
@@ -268,8 +268,11 @@ class MapDataController extends DataController implements MapFolder
 
     public function getAllPlacemarks()
     {
-        $this->getListItems(); // make sure we're populated
-        return $this->parser->getAllPlacemarks();
+        if (!$this->allPlacemarks) {
+            $this->getListItems(); // make sure we're populated
+            $this->allPlacemarks = $this->parser->getAllPlacemarks();
+        }
+        return $this->allPlacemarks;
     }
 
     public function getListItems()

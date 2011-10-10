@@ -13,6 +13,8 @@ class MapAPIModule extends APIModule
     protected $feedGroups = null;
     protected $numGroups;
 
+    protected $currentFeedData;
+
     protected function shortArrayFromPlacemark(Placemark $placemark)
     {
         $result = array(
@@ -76,6 +78,11 @@ class MapAPIModule extends APIModule
     
     // functions duped from MapWebModule
     
+    private function getDataForGroup($group) {
+        $this->getFeedGroups();
+        return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
+    }
+    
     public function getFeedGroups() {
         if (!$this->feedGroups) {
             $this->feedGroups = $this->getModuleSections('feedgroups');
@@ -125,12 +132,19 @@ class MapAPIModule extends APIModule
 
     private function getDataController($category=null) {
         $controller = null;
+        if (($feedData = $this->getCurrentFeed())) {
+            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        }
+        return $controller;
+    }
+
+    private function getCurrentFeed($category=null)
+    {
         if (!$category) {
             $category = $this->getArg('category');
         }
 
         if ($category) {
-
             $groups = array_keys($this->getFeedGroups());
             if (count($groups) <= 1) {
                 $groups = array(null);
@@ -139,14 +153,12 @@ class MapAPIModule extends APIModule
                 $this->feedGroup = $groupID;
                 $feeds = $this->loadFeedData();
                 if (isset($feeds[$category])) {
-                    $feedData = $feeds[$category];
-                    $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                    $this->currentFeedData = $feeds[$category];
                     break;
                 }
             }
         }
-
-        return $controller;
+        return $this->currentFeedData;
     }
 
     protected function getSearchClass($options=array()) {
@@ -180,6 +192,49 @@ class MapAPIModule extends APIModule
             array_shift($path);
         }
         return $path;
+    }
+
+    protected function displayTextFromMeters($meters)
+    {
+        $result = null;
+        $system = $this->getOptionalModuleVar('DISTANCE_MEASUREMENT_UNITS', 'Metric');
+        switch ($system) {
+            case 'Imperial':
+                $miles = $meters * MILES_PER_METER;
+                if ($miles < 0.1) {
+                    $feet = $meters * FEET_PER_METER;
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_FEET',
+                         number_format($feet, 0));
+
+                } elseif ($miles < 15) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_MILES',
+                         number_format($miles, 1));
+                } else {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_MILES',
+                         number_format($miles, 0));
+                }
+                break;
+            case 'Metric':
+            default:
+                if ($meters < 100) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_METERS',
+                         number_format($meters, 0));
+                } elseif ($meters < 15000) {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_KILOMETERS',
+                         number_format($meters / 1000, 1));
+                } else {
+                    $result = $this->getLocalizedString(
+                        'DISTANCE_IN_KILOMETERS',
+                         number_format($meters / 1000, 0));
+                }
+                break;
+        }
+        return $result;
     }
 
     public function initializeForCommand() {
@@ -298,19 +353,20 @@ class MapAPIModule extends APIModule
 
             case 'detail':
 
-                $dataController = $this->getDataController();
-                $drilldownPath = $this->getDrillDownPath();
-                if ($drilldownPath) {
-                    $dataController->addDisplayFilter('category', $drilldownPath);
-                }
-                if ($this->featureIndex !== null) {
-                    $feature = $dataController->selectPlacemark($this->featureIndex);
-                }
+                $this->loadFeedData();                                                                      
+                $category = $this->getArg('category');                                                      
+                $dataController = $this->getDataController($category);                                      
+                $placemark = $dataController->selectPlacemark($this->getArg('id'));                         
 
-                $response = $this->arrayFromPlacemark($feature);
+                $response = array(
+                    'title' => $placemark->getTitle(),
+                    'subtitle' => $placemark->getSubtitle(),
+                    'address' => $placemark->getAddress(),
+                    'extraFields' => $placemark->getFields(),
+                );                                                                                          
 
-                $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponse($response);                                                              
+                $this->setResponseVersion(1);                                                               
 
                 break;
 
@@ -322,6 +378,31 @@ class MapAPIModule extends APIModule
                     $lat = $this->getArg('lat', 0);
                     $lon = $this->getArg('lon', 0);
                     if ($lat || $lon) {
+
+                        // defaults values for proximity search
+                        $tolerance = 1000;
+                        $maxItems = 0;
+
+                        // check for settings in feedgroup config
+                        $configData = $this->getDataForGroup($this->feedGroup);
+                        if ($configData) {
+                            if (isset($configData['NEARBY_THRESHOLD'])) {
+                                $tolerance = $configData['NEARBY_THRESHOLD'];
+                            }
+                            if (isset($configData['NEARBY_ITEMS'])) {
+                                $maxItems = $configData['NEARBY_ITEMS'];
+                            }
+                        }
+
+                        // check for override settings in feeds
+                        $configData = $this->getCurrentFeed();
+                        if (isset($configData['NEARBY_THRESHOLD'])) {
+                            $tolerance = $configData['NEARBY_THRESHOLD'];
+                        }
+                        if (isset($configData['NEARBY_ITEMS'])) {
+                            $maxItems = $configData['NEARBY_ITEMS'];
+                        }
+
                         $searchResults = $mapSearch->searchByProximity(
                             array('lat' => $lat, 'lon' => $lon),
                             1000, 10);
@@ -375,14 +456,21 @@ class MapAPIModule extends APIModule
 
                 $categories = array();
 
+                $showDistances = $this->getOptionalModuleVar('SHOW_DISTANCES', true);
+
                 if ($lat || $lon) {
                     foreach ($this->getFeedGroups() as $id => $groupData) {
-                        $categories[] = array(
+                        $center = filterLatLon($groupData['center']);
+                        $distance = greatCircleDistance($lat, $lon, $center['lat'], $center['lon']);
+                        $category = array(
                             'title' => $groupData['title'],
                             'id' => $id,
                             );
-                        $center = filterLatLon($groupData['center']);
-                        $distances[] = greatCircleDistance($lat, $lon, $center['lat'], $center['lon']);
+                        if ($showDistances && ($displayText = $this->displayTextFromMeters($distance))) {
+                            $category['distance'] = $displayText;
+                        }
+                        $categories[] = $category;
+                        $distances[] = $distance;
                     }
                     array_multisort($distances, SORT_ASC, $categories);
                 }

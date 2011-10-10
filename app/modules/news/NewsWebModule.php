@@ -251,6 +251,7 @@ class NewsWebModule extends WebModule {
             $stories = array();
 
             $options = array(
+                'filter' => $searchTerms,
                 'section' => $this->feedIndex
             );
 
@@ -273,12 +274,16 @@ class NewsWebModule extends WebModule {
               $nextURL = $this->buildBreadcrumbURL($this->page, $args, false);
             }
           }
+          
+          $extraArgs = array(
+              'section' => $this->feedIndex
+          );
 
           $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
           $this->addOnLoad('setupNewsListing();');
 
           $this->assign('maxPerPage',  $this->maxPerPage);
-          $this->assign('extraArgs',   $options);
+          $this->assign('extraArgs',   $extraArgs);
           $this->assign('searchTerms', $searchTerms);
           $this->assign('stories',     $stories);
           $this->assign('previousURL', $previousURL);

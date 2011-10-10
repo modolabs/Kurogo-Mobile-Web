@@ -145,11 +145,19 @@ class PeopleAPIModule extends APIModule
                 }
                 break;
             case 'contacts':
+                $convertTags = array(
+                    'class' => 'type',
+                    'label' => 'title',
+                    'value' => 'subtitle',
+                    );
+
                 $results = $this->getAPIConfigData('contacts');
                 foreach ($results as &$aResult) {
-                    if (isset($aResult['class'])) {
-                        $aResult['type'] = $aResult['class'];
-                        unset($aResult['class']);
+                    foreach ($convertTags as $from => $to) {
+                        if (isset($aResult[$from])) {
+                            $aResult[$to] = $aResult[$from];
+                            unset($aResult[$from]);
+                        }
                     }
                 }
 

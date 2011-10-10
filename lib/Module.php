@@ -567,7 +567,63 @@ abstract class Module
                 
         return $sections;
     }
+
+    /* used by mergeConfigData */
+    private function mergeArrays($base, $new) {
+        foreach ($new as $field=>$data) {
+            
+            if ($data) {
+                //add it all if it's not there
+                $base[$field] = $data;
+            } elseif (isset($base[$field])) {
+                //remove the section if it's false
+                unset($base[$field]);
+            }
+        }
+        
+        return $base;
+                
+    }
     
+    protected function mergeConfigData($baseData, $newData) {
+
+        foreach ($newData as $field=>$data) {
+            
+            /* sections */
+            if (!isset($baseData[$field])) {
+                //add it all if it's not there
+                $baseData[$field] = $data;
+            } elseif (!$data) {
+                //remove the section if it's false
+                unset($baseData[$field]);
+            } else {
+            
+                switch ($baseData[$field]['sectiontype'])
+                {
+                    case 'fields':
+                    case 'section':
+                        $baseData[$field]['fields'] = self::mergeArrays($baseData[$field]['fields'], $data['fields']);
+                        break;
+                        
+                    case 'sections':
+                        foreach ($data['sections'] as $section=>$sectionData) {
+                            if (!isset($baseData[$field]['sections'][$section])) {
+                                $baseData[$field]['sections'][$section] = $sectionData;
+                            } elseif (!$sectionData) {
+                                unset($baseData[$field]['sections'][$section]);
+                            } else {
+                                $baseData[$field]['sections'][$section]['fields'] = self::mergeArrays($baseData[$field]['sections'][$section]['fields'], $sectionData['fields']);
+                            }
+                        }
+                        break;
+                }
+
+            }
+        }
+    
+        return $baseData;
+    }
+
     /**
       * Returns the admin console definitions.
       * @return array
@@ -578,7 +634,9 @@ abstract class Module
             $configData = array();
             $files = array(
                 'common'=>sprintf("%s/common/config/admin-module.json", APP_DIR),
-                'module'=>sprintf("%s/%s/config/admin-module.json", MODULES_DIR, $this->id)
+                'module'=>sprintf("%s/%s/config/admin-module.json", MODULES_DIR, $this->id),
+                'sitecommon'=>sprintf("%s/common/config/admin-module.json", SITE_APP_DIR),
+                'sitemodule'=>sprintf("%s/%s/config/admin-module.json", SITE_MODULES_DIR, $this->id)
             );
 
             foreach ($files as $type=>$file) {                
@@ -591,7 +649,7 @@ abstract class Module
                         $sectionData['type'] = $type;
                     }
                     
-                    $configData = array_merge_recursive($configData, $data);
+                    $configData = self::mergeConfigData($configData, $data);
                 }
             }
         }

@@ -30,7 +30,7 @@ class SiteConfig extends ConfigGroup {
             $site = strlen($path)>0 ? $path : $this->getVar('DEFAULT_SITE');
 
             $siteDir = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
-            if (!realpath_exists($siteDir)) {
+            if (!file_exists(realpath($siteDir))) {
                 die("FATAL ERROR: Site Directory $siteDir not found for site $path");
             }
         } else {        
@@ -45,13 +45,15 @@ class SiteConfig extends ConfigGroup {
                 if ($sites = $this->getOptionalVar('ACTIVE_SITES', array(), 'kurogo')) {
                     //see if the site is in the list of available sites
                     if (in_array($site, $sites)) {
-                        $siteDir = realpath_exists(implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site)));
-                        $urlBase = '/' . $site . '/'; // this is a url
+                        $testPath = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
+                        if (($siteDir = realpath($testPath)) && file_exists($siteDir)) {
+                            $urlBase = '/' . $site . '/'; // this is a url
+                        }
                     }
                 } elseif ($this->isValidSiteName($site)) {
-    
+                    
                     $testPath = implode(DIRECTORY_SEPARATOR, array(ROOT_DIR, 'site', $site));
-                    if ($siteDir = realpath_exists($testPath)) {
+                    if (($siteDir = realpath($testPath)) && file_exists($siteDir)) {
                         $urlBase = '/' . $site . '/'; // this is a url
                     }
                 }
@@ -71,8 +73,10 @@ class SiteConfig extends ConfigGroup {
             die("FATAL ERROR: ACTIVE_SITE not set");
         }
         
-        //make sure site_dir is set and is a valid path
-        if (!($siteDir = $this->getVar('SITE_DIR')) || !($siteDir = realpath_exists($siteDir))) {
+        // make sure site_dir is set and is a valid path
+        // Do not call realpath_exists here because until SITE_DIR define is set
+        // it will not allow files and directories outside ROOT_DIR
+        if (!($siteDir = $this->getVar('SITE_DIR')) || !(($siteDir = realpath($siteDir)) && file_exists($siteDir))) {
             die("FATAL ERROR: Site Directory ". $this->getVar('SITE_DIR') . " not found for site " . $site);
         }
         
@@ -132,7 +136,6 @@ class SiteConfig extends ConfigGroup {
 
     // Set up defines relative to SITE_DIR
     define('SITE_DIR',             $siteDir); //already been realpath'd
-    define('SITE_KEY',             md5($siteDir));
     define('SITE_LIB_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'lib');
     define('SITE_APP_DIR',         SITE_DIR . DIRECTORY_SEPARATOR . 'app');
     define('SITE_MODULES_DIR',     SITE_DIR . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'modules');
@@ -144,6 +147,10 @@ class SiteConfig extends ConfigGroup {
     //load in the site config file (required);
     $config = ConfigFile::factory('site', 'site');
     $this->addConfig($config);
+
+    // attempt to load site key    
+    $siteKey = $config->getOptionalVar('SITE_KEY', md5($siteDir));
+    define('SITE_KEY', $siteKey);
     
     if ($config->getOptionalVar('SITE_DISABLED')) {
         die("FATAL ERROR: Site disabled");

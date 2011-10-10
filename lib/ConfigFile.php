@@ -248,13 +248,13 @@ class ConfigFile extends Config {
   
   protected function saveValue($value) {
     $constCheck = array(
-        'FULL_URL_BASE'=>FULL_URL_BASE,
-        'LOG_DIR'=>LOG_DIR,
-        'CACHE_DIR'=>CACHE_DIR,
-        'LIB_DIR'=>LIB_DIR,
-        'DATA_DIR'=>DATA_DIR,
-        'SITE_DIR'=>SITE_DIR,
-        'ROOT_DIR'=>ROOT_DIR
+        'FULL_URL_BASE',
+        'LOG_DIR',
+        'CACHE_DIR',
+        'LIB_DIR',
+        'DATA_DIR',
+        'SITE_DIR',
+        'ROOT_DIR'
     );
         
     if (preg_match("/^\d+$/", $value)) {
@@ -268,11 +268,14 @@ class ConfigFile extends Config {
         $return = sprintf('"%s"', $value);
 
         //replace constants if they are there
-        foreach ($constCheck as $const=>$constValue) {
-            $i = strpos($return, $constValue);
-            if ($i !== false) {
-                if ($i==1) {
-                    $return = $const . '"' . substr($return, $i+strlen($constValue));
+        foreach ($constCheck as $const) {
+            if (defined($const)) {
+                $constValue = constant($const);
+                $i = strpos($return, $constValue);
+                if ($i !== false) {
+                    if ($i==1) {
+                        $return = $const . '"' . substr($return, $i+strlen($constValue));
+                    }
                 }
             }
         }

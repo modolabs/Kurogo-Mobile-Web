@@ -11,7 +11,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
 	private $moreLayers = array();
     
-    private $apiVersion = '2.1';
+    private $apiVersion = '2.4';
     private $themeName = 'claro'; // claro, tundra, soria, nihilo
 
     protected $levelsOfDetail = array();    
@@ -63,7 +63,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
         $this->moreLayers = array_merge($this->moreLayers, $moreLayers);
     }
 
-    public function addPoint($placemark)
+    public function addPoint(Placemark $placemark)
     {
         parent::addPoint($placemark);
 
@@ -127,7 +127,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
         $this->markers[] = $templateValues;
     }
 
-    public function addPath($placemark)
+    public function addPath(Placemark $placemark)
     {
         parent::addPath($placemark);
 
@@ -166,7 +166,7 @@ class ArcGISJSMap extends JavascriptMapImageController {
         $this->paths[] = $templateValues;
     }
     
-    public function addPolygon($placemark)
+    public function addPolygon(Placemark $placemark)
     {
         parent::addPolygon($placemark);
 
@@ -272,6 +272,9 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
     function getHeaderScript() {
         $header = $this->prepareJavascriptTemplate('ArcGISJSMapHeader');
+        $header->setValues(array(
+            '___MAPELEMENT___' => $this->mapElement,
+            ));
         return $header->getScript();
     }
     
