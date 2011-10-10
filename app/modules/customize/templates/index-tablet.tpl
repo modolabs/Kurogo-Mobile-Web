@@ -12,11 +12,11 @@
           <input type="checkbox" onclick="toggle(this);"{if !$info['disabled']} checked="checked"{/if} />
         {/if}
         <span class="nolinkbuttons"> 
-          <a href="#" onclick="moveUp(this); return false;" class="moveup"><img src="/modules/{$moduleID}/images/button-up.png" border="0" alt="Up"></a>
-          <a href="#" onclick="moveDown(this); return false;" class="movedown"><img src="/modules/{$moduleID}/images/button-down.png" border="0" alt="Down"></a> 
+          <a href="#" onclick="moveUp(this); return false;" class="moveup"><img src="/modules/{$moduleID}/images/button-up.png" border="0" alt="Up" /></a>
+          <a href="#" onclick="moveDown(this); return false;" class="movedown"><img src="/modules/{$moduleID}/images/button-down.png" border="0" alt="Down" /></a> 
         </span> 
         <span class="nolink">
-          <img src="/modules/home/images/{$id}.png" width="30" height="30" class="homeicon">{$info['title']}
+          <img src="/modules/home/images/{$id}{$customize_icon_suffix}.png" width="30" height="30" class="homeicon" />{$info['title']}
         </span>                   
       </li>
     {/foreach}

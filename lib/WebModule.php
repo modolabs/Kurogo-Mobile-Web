@@ -927,14 +927,11 @@ abstract class WebModule extends Module {
     
     protected function generateBookmarkLink() {
         $hasBookmarks = count($this->getBookmarks()) > 0;
-        $bookmarkLink = array();
-        if ($hasBookmarks) {
-            $bookmarkLink = array(array(
-                'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
-                'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
-                ));
-            $this->assign('bookmarkLink', $bookmarkLink);
-        }
+        $bookmarkLink = array(array(
+            'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
+            'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
+        ));
+        $this->assign('bookmarkLink', $bookmarkLink);
         $this->assign('hasBookmarks', $hasBookmarks);
         return $bookmarkLink;
     }    

@@ -49,7 +49,7 @@
 		<ul>
 		{foreach $navSections as $navSection}
         <li><a href="{$navSection.url}" title="{$navSection.description|escape}">{$navSection.title|escape}</a>
-        {if $page==$navSection.id}
+        {if $page==$navSection.id && $subNavSections}
         <ul>
 		{foreach $subNavSections as $subNavSection}
             <li><a{if $subNavSection.id==$section} class="current"{/if} href="{$subNavSection.url}" section="{$subNavSection.id}">{if $subNavSection.img}<img src="{$subNavSection.img}" height="16" /> {/if}{$subNavSection.title|escape}</a></li>

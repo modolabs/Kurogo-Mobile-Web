@@ -1,5 +1,5 @@
 function moduleInit() {
-    setupVideoSplitView();
+    setupSplitViewForListAndDetail('videoHeader', 'videos', 'videoDetailWrapper', 'videoDetail');
 }
 
 function moduleBookmarkWillToggle(name, item, expireseconds, path) {
