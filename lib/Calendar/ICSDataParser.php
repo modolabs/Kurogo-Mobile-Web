@@ -39,7 +39,7 @@ class ICSDataParser extends DataParser
             'params'=>array()
         );
 
-        if (preg_match('/(.*?)(?!<\\\):(.*)/', $line, $parts)) {
+        if (preg_match('/([^":]*(?:"[^"]*"[^":]*)*):(.*)/', $line, $parts)) {
             $params = explode(';', $parts[1]);
             $contentline['name'] = array_shift($params);
             $contentline['value'] = trim(ICalendar::ical_unescape_text($parts[2]));
