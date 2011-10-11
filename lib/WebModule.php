@@ -658,6 +658,9 @@ abstract class WebModule extends Module {
                 if (!$primary) { $classes[] = 'utility'; }
         
                 $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '-selected' : '';
+
+                //this is fixed for now
+                $modulesThatCannotBeDisabled = array('customize');
     
                 $moduleNavData = array(
                     'type'        => $type,
@@ -665,7 +668,7 @@ abstract class WebModule extends Module {
                     'title'       => $title,
                     'shortTitle'  => $shortTitle,
                     'url'         => "/$moduleID/",
-                    'disableable' => true,
+                    'disableable' => !in_array($moduleID, $modulesThatCannotBeDisabled),
                     'disabled'    => $includeDisabled && in_array($moduleID, $disabledIDs),
                     'img'         => "/modules/home/images/{$moduleID}{$imgSuffix}".$this->imageExt,
                     'class'       => implode(' ', $classes),
