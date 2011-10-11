@@ -31,7 +31,7 @@ class CoreAPIModule extends APIModule
                         if ( ($key = array_search($moduleID, $homeModules['primary'])) !== FALSE) {
                             $home = array('type'=>'primary', 'order'=>$key);
                         } elseif (($key = array_search($moduleID, $homeModules['secondary'])) !== FALSE) {
-                            $home = array('secondary', $key);
+                            $home = array('type'=>'secondary', 'order'=>$key);
                         }
                         
                     
