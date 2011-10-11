@@ -349,7 +349,7 @@ class Kurogo
     
     public static function setCache($key, $value, $ttl = null) {
         if ($cacher = Kurogo::sharedInstance()->cacher()) {
-            return $cacher->set($key, $value, $ttl);
+            return $cacher->set(SITE_NAME.'-'.$key, $value, $ttl);
         }
         return false;
     }
