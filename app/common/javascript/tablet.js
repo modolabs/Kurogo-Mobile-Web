@@ -60,11 +60,23 @@ function handleWindowResize(e) {
     }
     setContainerWrapperHeight();
   
-  setTimeout(updateNavSlider, 0);
-  
-  if (typeof moduleHandleWindowResize != 'undefined') {
-    moduleHandleWindowResize(e);
-  }
+    setTimeout(updateNavSlider, 0);
+    
+    if (typeof moduleHandleWindowResize != 'undefined') {
+        moduleHandleWindowResize(e);
+    }
+    if (navigator.userAgent.match(/(Android 3\.\d)/)) {
+        // Android 3 browsers don't reliably set client and offset heights
+        // before calling orientationchange or resize handlers.
+        var self = this;
+        setTimeout(function() {
+            setContainerWrapperHeight();
+            setTimeout(updateNavSlider, 0);
+            if (typeof moduleHandleWindowResize != 'undefined') {
+                moduleHandleWindowResize(e);
+            }
+        }, 600); // approx. how long after the event before the offsetHeights are correct
+    }
 } 
 
 function tabletInit() {
@@ -301,7 +313,15 @@ function scrollToTop() {
             } else {
               this.listScroller = new iScroll(this.options.list, options);
             }
-        }
+        },
+        refreshScrollers: function () {
+            if (self.detailScroller) {
+                self.detailScroller.refresh();
+            }
+            if (self.listScroller) {
+                self.listScroller.refresh();
+            }
+        },
     }
     
     function removeBreadcrumbParameter(url) {
@@ -320,15 +340,8 @@ function scrollToTop() {
 
 // Used by news and video modules for news article listings
 function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId, detailId) {
-    splitView = new splitView({
-        list: listWrapperId,
-        detail: detailWrapperId,
-        content: detailId
-    });
+    var aSplitView = null;
 
-    containerScroller.destroy();
-    containerScroller = null;
-    
     moduleHandleWindowResize = function () {
         var listWrapper = document.getElementById(listWrapperId);
         var detailWrapper = document.getElementById(detailWrapperId);
@@ -337,7 +350,7 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
         }
         detailWrapper.style.height = 'auto';
         
-        var wrapperHeight = document.getElementById('containerinset').offsetHeight;
+        var wrapperHeight = document.getElementById('wrapper').offsetHeight;
         var headerHeight = document.getElementById(headerId).offsetHeight;
         var contentHeight = wrapperHeight - headerHeight;
         
@@ -365,7 +378,20 @@ function setupSplitViewForListAndDetail(headerId, listWrapperId, detailWrapperId
                 detailWrapper.style.height = (contentHeight - listWrapperHeight) + 'px';
                 break;
         }
+        
+        if (aSplitView) {
+            aSplitView.refreshScrollers();
+        }
     }
     
+    containerScroller.destroy();
+    containerScroller = null;
+    
     moduleHandleWindowResize();
+    
+    aSplitView = new splitView({
+        list: listWrapperId,
+        detail: detailWrapperId,
+        content: detailId
+    });
 }

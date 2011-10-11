@@ -319,8 +319,7 @@ class KurogoChartLine extends KurogoChart {
         if ($this->getChartOption('xstep')) {
             $xaxisStep = $this->getChartOption('xstep');
         } else {
-            $xboundaries = $this->computeBoundaries(range(0,$dataCount-1));
-            $xaxisStep = $xboundaries['step'];
+            $xaxisStep = 1;
         }
         
         for($i=0;$i<$dataCount;$i=$i+$xaxisStep) {
@@ -334,11 +333,13 @@ class KurogoChartLine extends KurogoChart {
             $style = ($percent == 100 || $value == 0) ? '' : ' style="left: '. $percent .'%"';
             $xaxis .= '<div class="gridline-x'. $class .'"'. $style .'><div class="graphlabel">'. $chartLabelList[$i] .'</div></div>';
             //if this is the last one, see if we need to add the "end"
+            /*
             if ( ($i+$xaxisStep) >= $dataCount) {
                 if ($i != $dataCount - 1) {
                     $i = $dataCount - $xaxisStep - 1;
                 }
             }
+            */
         }
 
         $containClass = 'graph linechart';
