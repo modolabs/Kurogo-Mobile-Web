@@ -567,14 +567,6 @@ abstract class WebModule extends Module {
   //
   // Module list control functions
   //
-  protected function getModuleNavigationConfig() {
-    static $moduleNavConfig;
-    if (!$moduleNavConfig) {
-        $moduleNavConfig = ModuleConfigFile::factory('home', 'module');
-    }
-    
-    return $moduleNavConfig;
-  }
 
   protected function getModuleNavlist() {
     $navModules = $this->getAllModuleNavigationData(self::EXCLUDE_DISABLED_MODULES);
