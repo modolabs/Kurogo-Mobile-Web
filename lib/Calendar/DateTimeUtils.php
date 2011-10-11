@@ -73,10 +73,8 @@ class DateFormatter
 
     public static function formatDateRange(TimeRange $range, $dateStyle, $timeStyle) {
         $string = '';
-        $dateStyleConstant = self::getDateConstant($dateStyle);
-        $timeStyleConstant = self::getTimeConstant($timeStyle);
         if ($range instanceOf DayRange) {
-            $timeStyleConstant = null;
+            $timeStyle = self::NO_STYLE;
         }
         
         $string = self::formatDate($range->get_start(), $dateStyle, $timeStyle);
