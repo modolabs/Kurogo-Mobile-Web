@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * @package ExternalData
  */
@@ -13,9 +13,13 @@ class SOAPDataRetriever extends DataRetriever {
 
     protected $wsdl;
     protected $soapClient;
-    protected $soapOptions = array(); //use it and wsdl to instantiate SoapClient
-    protected $method = ''; //soapclient call the method to retrieve data
+    protected $soapOptions = array('trace' => 1); //use it and wsdl to instantiate SoapClient
+    protected $method = ''; //soapclient use the method to retrieve data
     protected $methodParams = array();
+    protected $soapHeaders = array();
+    protected $cookies = array();
+    protected $location = '';
+    protected $soapFunctions = array();
     
     public function setWSDL($wsdl) {
         $this->wsdl = $wsdl;
@@ -34,13 +38,92 @@ class SOAPDataRetriever extends DataRetriever {
 	}
 	
 	public function setMethodParams($params) {
+	    $this->methodParams = $params;
+	}
+	
+	public function getMethodParams() {
 	    return $this->methodParams;
 	}
 	
+	public function getSoapFunctions() {
+	    return $this->soapFunctions;
+	}
 	public function getSoapClient() {
-	    return $this->soapClient;
+		if (!$this->soapClient) {
+		    try {
+		        $this->soapClient = new SoapClient($this->wsdl, $this->soapOptions);
+		        if ($functions = $this->soapClient->__getFunctions()) {
+		            $this->parseSoapFunctions($functions);
+		        }
+		        //Sets the location of the Web service to use
+                if ($this->location) {
+                    $soapClient->__setLocation($this->location);
+                }
+        
+                //defines a cookie to be sent along with the SOAP requests
+                if ($this->cookies) {
+                    foreach ($this->cookies as $name => $value) {
+                        $soapClient->__setCookie($name, $value);
+                    }
+                }
+        
+                //Defines headers to be sent along with the SOAP requests
+                if ($this->soapHeaders) {
+                    $soapClient->__setSoapHeaders($this->soapHeaders);
+                }
+		    } catch (SoapFault $fault) {
+		        Kurogo::log(LOG_WARNING, "Instantiate SoapClient failed", 'soap_retriever');
+		        throw new KurogoDataException("Instantiate SoapClient failed");
+		    }
+		}
+		return $this->soapClient;
 	}
 	
+	protected function parseSoapFunctions($functions) {
+	    foreach ($functions as $function) {
+	        if (preg_match("/(.*?) (.*?)\(.*/", $function, $matches)) {
+	            if (isset($matches[2]) && $matches[2]) {
+	                $this->soapFunctions[] = $matches[2];
+	            }
+                
+            }
+	    }
+    }
+    
+	public function addSoapHeaders($namespace, $name, $data) {
+	    $this->soapHeaders[] = new SOAPHeader($namespace, $name, $data);
+    }
+    
+    public function removeAllSoapHeaders() {
+        $this->soapHeaders = array();
+    }
+    
+    public function setCookies($name, $value = '') {
+        if ($name) {
+            $this->cookies[$name] = $value;
+        }
+    }
+    
+    public function clearCookies($name) {
+        if (isset($this->cookies[$name])) {
+            unset($this->cookies[$name]);
+        }
+    }
+    
+    public function clearAllCookies() {
+        $this->cookies = array();
+    }
+    
+    public function setLocation($location) {
+        if ($location) {
+            $this->location = $location;
+        }
+    }
+    
+    public function clearLocation() {
+        $this->location = '';
+    }
+    
     public function init($args) {
         //get global options from the site soap section
         $args = array_merge(Kurogo::getOptionalSiteSection('soap'), $args);
@@ -48,9 +131,7 @@ class SOAPDataRetriever extends DataRetriever {
             throw new KurogoConfigurationException("wsdl for SOAP not defined");
         }
         $this->setWSDL($args['WSDL']);
-        $this->initSoapOptions($args);
-        $this->initSoapClient();
-        
+
         if (isset($args['method'])) {
             $this->setMethod($args['method']);
         }
@@ -58,6 +139,8 @@ class SOAPDataRetriever extends DataRetriever {
         if (isset($args['methodParams'])) {
             $this->setMethodParams($args['methodParams']);
         }
+        
+        $this->initSoapOptions($args);
     }
 
     protected function initSoapOptions($args) {
@@ -76,7 +159,6 @@ class SOAPDataRetriever extends DataRetriever {
         return array(
              'soap_version' => array(SOAP_1_1, SOAP_1_2),
              'encoding' => '',
-             'trace' => 0,
              'exceptions' => false,
              'proxy_host' => '',
              'proxy_port' => '',
@@ -104,40 +186,48 @@ class SOAPDataRetriever extends DataRetriever {
         return '';
     }
     
-    public function initSoapClient() {
-		if (!$this->soapClient) {
-		    try {
-		        $this->soapClient = new SoapClient($this->wsdl, $this->soapOptions);
-		        if ($functions = $this->soapClient->__getFunctions()) {
-		            $this->parseSoapFunctions($functions);
-		        }
-		    } catch (Exception $e) {
-		        Kurogo::log(LOG_WARNING, sprintf("instantiate SoapClient failed for %s", $e->getMessage()), 'soap_retriever');
-		    }
-		}
-		return $this->soapClient;
-	}
-    
-    protected function parseSoapFunctions($functions) {
-        exit;
-    }
     /**
      * Returns a base filename for the cache file that will be used. The default implementation uses
-     * a hash of the value returned from the url
+     * a hash of the value returned from the method and the methodParams
      * @return string
      */
     public function getCacheKey() {
         return 1;
     }
-    
-    /**
-     * Retrieves the data using the config url. The default implementation uses the file_get_content()
-     * function to retrieve the request. Subclasses would need to implement this if a simple GET request
-     * is not sufficient (i.e. you need POST or custom headers). 
-     * @return string the response from the server
-     * @TODO support POST requests and custom headers and perhaps proxy requests
-     */
+
     public function retrieveData() {
+
+        $data = $this->call($this->method, $this->methodParams);
+        if (!$lastResponseHeaders = $this->getSoapClient()->__getLastResponseHeaders()) {
+            $lastResponseHeaders = array();
+        }
+        
+        //@TODO need a SOAPDataResponse to cache the retrieve data
+        Kurogo::log(LOG_DEBUG, sprintf("Retrieving soap api of wsdl:%s,method:%s,params:%s", $this->getWSDL(), $this->getMethod(), var_export($this->getMethodParams(), true)), 'soap_retriever');
+        print_r($data);
+        exit;
         return array();
+    }
+    
+    protected function call($method, $params = array()) {
+        $result = array();
+        $soapClient = $this->getSoapClient();
+        if (!$method) {
+            throw new KurogoDataException("function not defined");
+        }
+        $functions = $this->getSoapFunctions();
+        if (!in_array($method, $functions)) {
+            throw new KurogoDataException("Function $method not exists in soap function");
+        }
+        try {
+            $data = $soapClient->{$method}($params);
+        } catch (SoapFault $fault) {
+            throw new Exception('Retrieving data error');
+        }
+        return $data;
+    }
+
+    public function __call($name, $arguments) {
+        
     }
 }
