@@ -1,3 +1,5 @@
+.. _apimodule:
+
 ####################
 The APIModule Object
 ####################
