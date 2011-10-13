@@ -70,22 +70,6 @@ class URLDataRetriever extends DataRetriever {
         $this->initStreamContext($args);
     }
 
-    public function getResponseHeaders() {
-        return $this->response->getHeaders();
-    }
-
-    public function getResponseStatus() {
-        return $this->response->getStatus();
-    }
-
-    public function getResponseCode() {
-        return $this->response->getCode();
-    }
-
-    public function getResponseHeader($header) {
-        return $this->response->getHeader($header);
-    }
-
     public function addHeader($header, $value) {
         $this->requestHeaders[$header] = $value;
         $headers = array();
@@ -160,7 +144,7 @@ class URLDataRetriever extends DataRetriever {
         if (!$url = $this->url()) {
             throw new KurogoDataException("URL could not be determined");
         }
-        return md5($url);
+        return 'url_' . md5($url);
     }
     
     /**
@@ -178,12 +162,12 @@ class URLDataRetriever extends DataRetriever {
         $this->url = $url;
         
         Kurogo::log(LOG_INFO, "Retrieving $url", 'url_retriever');
-        
         $data = file_get_contents($url, false, $this->streamContext);
         $http_response_header = isset($http_response_header) ? $http_response_header : array();
 
-        $this->response = new DataResponse();
+        $this->response = new URLDataResponse();
         $this->response->setRequest($this->method, $url, $this->filters, $this->requestHeaders);
+
         $this->response->setResponse($data, $http_response_header);
         
         Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $this->getResponseCode(), strlen($data)), 'url_retriever');

@@ -19,6 +19,10 @@ abstract class DataRetriever {
         $this->dataController = $dataController;
     }
     
+    public function getDataController() {
+        return $this->dataController;
+    }
+    
     public static function factory($retrieverClass, $args) {
         Kurogo::log(LOG_DEBUG, "Initializing DataRetriever $retrieverClass", "data");
         if (!class_exists($retrieverClass)) {
@@ -37,5 +41,21 @@ abstract class DataRetriever {
     
     public function getResponse() {
         return $this->response;
+    }
+    
+    public function getResponseHeaders() {
+        return $this->response->getHeaders();
+    }
+
+    public function getResponseStatus() {
+        return $this->response->getStatus();
+    }
+
+    public function getResponseCode() {
+        return $this->response->getCode();
+    }
+
+    public function getResponseHeader($header) {
+        return $this->response->getHeader($header);
     }
 }

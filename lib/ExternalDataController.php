@@ -13,7 +13,7 @@
 abstract class ExternalDataController {
     
     protected $DEFAULT_PARSER_CLASS='PassthroughDataParser';
-    protected $DEFAULT_RETRIEVE_CLASS='SOAPDataRetriever';
+    protected $DEFAULT_RETRIEVE_CLASS='URLDataRetriever';
     protected $initArgs=array();
     protected $cacheFolder='Data';
     protected $parser;
@@ -22,7 +22,7 @@ abstract class ExternalDataController {
     protected $title;
     protected $totalItems = null;
     protected $debugMode=false;
-    protected $useCache=true;
+    protected $useCache=false;
     protected $useStaleCache=true;
     protected $cacheLifetime=900;
     
@@ -266,7 +266,7 @@ abstract class ExternalDataController {
      */
     protected function cacheIsFresh() {
         $cache = $this->getCache();
-        return $cache->isFresh($this->retriever->getCacheKey());
+        return $cache->isFresh($this->cacheFilename());
     }
 
     /**
@@ -441,6 +441,17 @@ abstract class ExternalDataController {
     public function items($start=0, $limit=null) {
         $items = $this->getParsedData();
         return $this->limitItems($items,$start, $limit);
+    }
+    
+    /**
+     * Interceptor. router the method that not exists in this class to the retriverDataController.
+     */
+    public function __call($method, $arguments) {
+        if ($this->retriever && $this->retriever instanceOf DataRetriever) {
+            return call_user_func_array(array($this->retriever, $method), $arguments);
+        } else {
+            throw new KurogoDataException("Call of unknown function '$method'.");
+        }
     }
 }
 

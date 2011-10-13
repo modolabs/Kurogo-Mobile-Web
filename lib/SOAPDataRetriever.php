@@ -14,8 +14,8 @@ class SOAPDataRetriever extends DataRetriever {
     protected $wsdl;
     protected $soapClient;
     protected $soapOptions = array('trace' => 1); //use it and wsdl to instantiate SoapClient
-    protected $method = ''; //soapclient use the method to retrieve data
-    protected $methodParams = array();
+    protected $soapApi = ''; //soapclient use the method to retrieve data
+    protected $soapApiParams = array();
     protected $soapHeaders = array();
     protected $cookies = array();
     protected $location = '';
@@ -29,25 +29,26 @@ class SOAPDataRetriever extends DataRetriever {
         return $this->wsdl;
     }
 	
-	public function setMethod($method) {
-	    $this->method = $method;
+	public function setSoapApi($api) {
+	    $this->soapApi = $api;
 	}
 	
-	public function getMethod() {
-	    return $this->method;
+	public function getSoapApi() {
+	    return $this->soapApi;
 	}
 	
-	public function setMethodParams($params) {
-	    $this->methodParams = $params;
+	public function setSoapApiParams($params) {
+	    $this->soapApiParams = $params;
 	}
 	
-	public function getMethodParams() {
-	    return $this->methodParams;
+	public function getSoapApiParams() {
+	    return $this->soapApiParams;
 	}
 	
 	public function getSoapFunctions() {
 	    return $this->soapFunctions;
 	}
+	
 	public function getSoapClient() {
 		if (!$this->soapClient) {
 		    try {
@@ -85,7 +86,6 @@ class SOAPDataRetriever extends DataRetriever {
 	            if (isset($matches[2]) && $matches[2]) {
 	                $this->soapFunctions[] = $matches[2];
 	            }
-                
             }
 	    }
     }
@@ -132,12 +132,12 @@ class SOAPDataRetriever extends DataRetriever {
         }
         $this->setWSDL($args['WSDL']);
 
-        if (isset($args['method'])) {
-            $this->setMethod($args['method']);
+        if (isset($args['api'])) {
+            $this->setSoapApi($args['api']);
         }
         
-        if (isset($args['methodParams'])) {
-            $this->setMethodParams($args['methodParams']);
+        if (isset($args['apiParams'])) {
+            $this->setSoapApiParams($args['apiParams']);
         }
         
         $this->initSoapOptions($args);
@@ -192,32 +192,45 @@ class SOAPDataRetriever extends DataRetriever {
      * @return string
      */
     public function getCacheKey() {
-        return 1;
+        $wsdl = $this->getWSDL();
+        $api = $this->getSoapApi();
+        $apiParams = $this->getSoapApiParams();
+        
+        if (!$wsdl || !$api) {
+            throw new KurogoDataException("soap wsdl or api could not be determined");
+        }
+        
+        return 'soap_' . md5($wsdl. $api . var_export($this->getSoapApiParams(), true));
     }
 
     public function retrieveData() {
 
-        $data = $this->call($this->method, $this->methodParams);
+        Kurogo::log(LOG_DEBUG, sprintf("Retrieving soap api of wsdl:%s,api:%s,params:%s", $this->getWSDL(), $this->getSoapApi(), var_export($this->getSoapApiParams(), true)), 'soap_retriever');
+        
+        $data = $this->call($this->soapApi, $this->soapApiParams);
         if (!$lastResponseHeaders = $this->getSoapClient()->__getLastResponseHeaders()) {
             $lastResponseHeaders = array();
         }
+
+        $this->response = new SOAPDataResponse();
+        $this->response->setRequest($this->wsdl, $this->soapOptions, $this->soapApi, $this->soapApiParams, $this->cookies, $this->location, $this->soapFunctions, $this->soapHeaders);
+
+        $this->response->setResponse($data, $lastResponseHeaders);
         
-        //@TODO need a SOAPDataResponse to cache the retrieve data
-        Kurogo::log(LOG_DEBUG, sprintf("Retrieving soap api of wsdl:%s,method:%s,params:%s", $this->getWSDL(), $this->getMethod(), var_export($this->getMethodParams(), true)), 'soap_retriever');
-        print_r($data);
-        exit;
-        return array();
+        Kurogo::log(LOG_DEBUG, sprintf("Returned status %d", $this->getResponseCode()), 'soap_retriever');
+        
+        return $data;
     }
     
     protected function call($method, $params = array()) {
         $result = array();
         $soapClient = $this->getSoapClient();
         if (!$method) {
-            throw new KurogoDataException("function not defined");
+            throw new KurogoDataException("soap api not defined");
         }
         $functions = $this->getSoapFunctions();
         if (!in_array($method, $functions)) {
-            throw new KurogoDataException("Function $method not exists in soap function");
+            throw new KurogoDataException("Soap api $method not exists in soap api");
         }
         try {
             $data = $soapClient->{$method}($params);
@@ -226,8 +239,19 @@ class SOAPDataRetriever extends DataRetriever {
         }
         return $data;
     }
-
-    public function __call($name, $arguments) {
-        
+    
+    /**
+     * Interceptor. router the method that not exists in this class to the soapClient.
+     * if the method exists in soap functions, then will call the api to retrieve data.
+     */
+    public function __call($method, $arguments) {
+        $soapClient = $this->getSoapClient();
+        if (in_array($method, $this->getSoapFunctions()) && count($arguments) <= 1) {
+            $this->setSoapApi($method);
+            $this->setSoapApiParams(current($arguments));
+            return $this->getDataController()->getParsedData();
+        } else {
+            throw new KurogoDataException("Call of unknown function '$method'.");
+        }
     }
 }
