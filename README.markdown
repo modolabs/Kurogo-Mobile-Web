@@ -21,14 +21,14 @@ to early generation smart phones, to modern devices and tablets. It currently in
 
 We strongly recommend developers read the developer's guide:
 
-* [HTML](http://modolabs.com/kurogo/guide)
-* [PDF](http://modolabs.com/kurogo/guide.pdf)
+* [HTML](http://kurogo.org/docs/mw/)
 
 Please contact kurogo@modolabs.com for more information.
 
 ## Quick Setup and Requirements
 
 Kurogo is a PHP application. It is currently qualified for use with
+
 * Apache 2.x
     * mod_rewrite, and .htaccess support (AllowOverride)
 * IIS 7.5
@@ -42,12 +42,14 @@ folder. For more detailed setup information, please see the developer's guide.
 ## Version 1.3
 
 This version includes a number of fixes and improvements, including:
+
 * The REST API has now reached 1.0 status. 
 * Kurogo is now localized. Version 1.3 only includes English values. 
 * Kurogo can now host multiple sites. The Multi-site option allows for multiple sites to be hosted on the same server. 
 * An updated logging facility has been created to include logging messages in Kurogo. 
 * The internal statistics engine and stats module has been overhauled. 
 * The Map module has been significantly updated. Support for directions, arbitrary addresses and UI improvements among other improvements.
+* Improved support for recurring events
 * Many other bug fixes and improvements.
 
 ## History
