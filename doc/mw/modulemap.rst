@@ -84,7 +84,9 @@ To use Google Maps, enter the configuration: ::
     JS_MAP_CLASS = "GoogleJSMap"
 
 
-`Google Maps documentation <http://code.google.com/apis/maps/documentation/javascript/reference.html>`_
+See Google's
+`Maps documentation <http://code.google.com/apis/maps/documentation/javascript/reference.html>`_
+for more information.
 
 
 ArcGIS Tiled Service Maps
@@ -95,9 +97,18 @@ To use tiles from an ArcGIS tile server, enter the configuration: ::
     JS_MAP_CLASS = "ArcGISJSMap"
     DYNAMIC_MAP_BASE_URL = "http://..."
 
-We may shortly be adding support for ArcGIS dynamic maps.
+Additional dynamic layers from an ArcGIS Dynamic Service Map may be added on
+top of the base map by specifying DYNAMIC_MAP_BASE_URL as an array, e.g. ::
 
+    DYNAMIC_MAP_BASE_URL[] = "http://my.tiled.service/MapServer"
+    DYNAMIC_MAP_BASE_URL[] = "http://my.dynamic.service/MapServer"
+
+The first element of DYNAMIC_MAP_BASE_URL must be a tiled service. There must
+be one and only one tiled service.
+
+See Esri's 
 `ArcGIS JavaScript documentation <http://help.arcgis.com/en/webapi/javascript/arcgis/help/jsapi_start.htm>`_
+for more information.
 
 
 Static image base maps
@@ -115,7 +126,9 @@ To use Google Static Maps, enter the configuration: ::
 
 Google Static Maps does not currently have support for polygon overlays.
 
-`Google Static Maps documentation <http://code.google.com/apis/maps/documentation/staticmaps/>`_ 
+See Google's
+`Static Maps documentation <http://code.google.com/apis/maps/documentation/staticmaps/>`_ 
+for more information
 
 Web Map Service (WMS)
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -127,7 +140,9 @@ To use images from a WMS service, enter the configuration: ::
 
 Note that it is not possible to add overlays to WMS maps.
 
+See the Open Geospatial Consortium's
 `WMS documentation <http://portal.opengeospatial.org/files/?artifact_id=14416>`_
+for more information.
 
 ArcGIS exported images
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -139,8 +154,9 @@ To use exported images from an ArcGIS server, enter the configuration: ::
 
 Note that it is not possible to add overlays to an exported image.
 
-`ArcGIS export API documentation <http://help.arcgis.com/en/arcgisserver/10.0/apis/rest/exportimage.html>`_
-
+See Esri's
+`export API documentation <http://help.arcgis.com/en/arcgisserver/10.0/apis/rest/exportimage.html>`_
+for more information.
 
 
 ==========================
@@ -163,10 +179,15 @@ fields:
   data source.  It is recomended that you set to to *MapDBDataController*
 * *PARSER_CLASS* (required) - data parser to use for the feed, see below for 
   options.
-* *SEARCHABLE* - boolean value that indicates whether or not this data
-  source should be included in internal search results.
-* *DEFAULT_ZOOM_LEVEL* - default zoom level that the base map should use
-  when displaying items from this feed.
+* *SEARCHABLE* (recommended) - boolean value that indicates whether or not this 
+  data source should be included in internal search results. The default is 
+  false.
+* *DEFAULT_ZOOM_LEVEL* (recommended) - default zoom level that the base map 
+  should use when displaying items from this feed. If unspecified, the default 
+  value is 16 (shows several street blocks).
+* *HIDDEN* (optional) - if true, this feed will not show up in the list of
+  browsable categories. This may be used if a site wants to have a different
+  set of placemarks show up in search results from the ones users can browse.
 
 KML/KMZ
 --------
@@ -178,7 +199,11 @@ specify the following in feeds-<group>.ini: ::
 
 KML files can easily be created using `Google Earth <http://earth.google.com>`_.
 
-* `KML documentation <http://code.google.com/apis/kml/documentation/kmlreference.html>`_ 
+Note that to use KMZ files, the ZipArchive extension must be enabled in PHP.
+
+See Google's
+`KML documentation <http://code.google.com/apis/kml/documentation/kmlreference.html>`_ 
+for more information.
 
 ArcGIS Server
 ---------------
@@ -195,7 +220,9 @@ may specify different layers for different feeds by specifying
 where <number> is the numeric ID of the layer.  Sublayers are not currently
 supported.
 
-* `ArcGIS Server documentation <http://resources.esri.com/help/9.3/arcgisserver/apis/rest/>`_
+See Esri's
+`ArcGIS Server documentation <http://resources.esri.com/help/9.3/arcgisserver/apis/rest/>`_
+for more information.
 
 Shapefile 
 -----------
@@ -205,7 +232,8 @@ To use shapefiles, specify the following in feeds-<group>.ini: ::
     DATA_PARSER_CLASS = "ShapefileDataParser"
 
 Shapefiles located across the network must be in a zip folder containing no
-directories (i.e. the contents are all .shp, .dbf, .shx, and .prj files).
+directories (i.e. the contents are all .shp, .dbf, .shx, and .prj files). Note 
+that to use zipped shapefiles, the ZipArchive extension must be enabled in PHP.
 
 Larger shapefiles may be unzipped and stored locally in a subdirectory of 
 DATA_DIR.  In this case, the BASE_URL must be specified without the extension,
@@ -214,8 +242,9 @@ DATA_DIR"/myshapefile.dbf" must be specified as::
 
     BASE_URL = DATA_DIR"/myshapefile"
 
-* `Shapefile documentation <http://en.wikipedia.org/wiki/Shapefile>`_
-
+See Wikipedia's entry on the
+`Shapefile specification <http://en.wikipedia.org/wiki/Shapefile>`_
+for more information.
 
 ======================
 Configuring Map Search
