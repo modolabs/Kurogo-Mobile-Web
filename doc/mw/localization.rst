@@ -105,3 +105,15 @@ and are part of your site. These include things like:
 
 Please see the appropriate :doc:`module <moduleslist>` or :doc:`configuration <configuration>` documentation for 
 details about setting these values.
+
+=======
+Summary
+=======
+
+.. image:: images/localization.png
+
+#. String key in template or module
+#. Kurogo chooses the appropriate string table
+#. If there is a value, it replaces any %s
+#. Display string
+
