@@ -43,7 +43,7 @@ folder. For more detailed setup information, please see the developer's guide.
 
 This version includes a number of fixes and improvements, including:
 
-* The REST API has now reached 1.0 status. 
+* The REST API has now reached 1.0 status. [Documentation](http://kurogo.org/docs/rest/)
 * Kurogo is now localized. Version 1.3 only includes English values. 
 * Kurogo can now host multiple sites. The Multi-site option allows for multiple sites to be hosted on the same server. 
 * An updated logging facility has been created to include logging messages in Kurogo. 

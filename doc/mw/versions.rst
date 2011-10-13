@@ -5,7 +5,7 @@ Version History
 Kurogo continues to be improved. The following are significant improvements in each version.
 For more detailed release notes, see the included CHANGELOG file
 
-Version 1.3 
+Version 1.3 (October 13, 2011)
 ===========================
 * Support for :doc:`localization <localization>`
 * :doc:`MultiSite <multisite>`
