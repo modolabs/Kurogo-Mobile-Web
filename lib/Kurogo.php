@@ -714,7 +714,7 @@ class Kurogo
     }    
     
     public function checkCurrentVersion() {
-        $url = "https://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(
+        $url = "http://kurogo.org/checkversion.php?" . http_build_query(array(
             'version'=>KUROGO_VERSION,
             'base'=>FULL_URL_BASE,
             'site'=>SITE_KEY,
