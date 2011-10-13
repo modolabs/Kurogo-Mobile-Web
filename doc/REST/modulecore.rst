@@ -29,7 +29,8 @@ The *response* parameter of the Core API module has the following form: ::
                 "title":"About",
                 "access":true,
                 "vmin":1,
-                "vmax":1
+                "vmax":1,
+                "home":false
             },
             {
                 "id":"video",
@@ -37,7 +38,8 @@ The *response* parameter of the Core API module has the following form: ::
                 "title":"Video",
                 "access":true,
                 "vmin":1,
-                "vmax":1
+                "vmax":1,
+                "home":{"type":"primary","order":3}
             }
             // ...
         ]
@@ -58,7 +60,9 @@ where
     multiple times in the same session).
   * *vmin*: minimum version of the REST API supported by the server for this module
   * *vmax*: maximum version of the REST API supported by the server for this module
-
+  * *home*: whether the module is located on the mobile web home screen. the *type* parameter
+    is either primary or secondary, and the order is a 0 based number for its order on the
+    home screen. If home is false then it does not appear on the home screen.
 
 
 

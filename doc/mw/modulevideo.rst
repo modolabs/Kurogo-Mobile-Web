@@ -27,6 +27,22 @@ Within each feed you use the following options:
 * *AUTHOR* - optional, used to limit the results by author
 * *TAG* - optional, used to limit the results by tag
 
+----------------------
+YouTubeVideoController
+----------------------
+
+There are additional options for YouTube feeds:
+
+* *PLAYLIST* - optional, used to limit the results by a particular playlist
+
+----------------------
+VimeoVideoController
+----------------------
+
+There are additional options for Vimeo feeds:
+
+* *CHANNEL* - optional, used to limit the results by a particular channel
+
 -------------------------
 BrightcoveVideoController
 -------------------------

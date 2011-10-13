@@ -710,6 +710,15 @@ abstract class Module
         return $this->moduleName;
     }
     
+    protected function getModuleNavigationConfig() {
+        static $moduleNavConfig;
+        if (!$moduleNavConfig) {
+            $moduleNavConfig = ModuleConfigFile::factory('home', 'module');
+        }
+        
+        return $moduleNavConfig;
+    }
+ 
 
     /**
       * Action to take when the module is disabled

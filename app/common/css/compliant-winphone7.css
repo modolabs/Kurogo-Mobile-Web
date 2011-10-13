@@ -58,10 +58,23 @@
 .crumb3c span {
   max-width: 50px;
 }
-/* IE search boxes have different padding */
-.searchwrapper {
-    right: 23px;
+
+/* IE does not like position:absolute so do without */
+.searchwrapper,
+.emphasized .searchwrapper {
+    position: relative;
+    width: auto;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin-right: 51px;
+    height: 38px;
 }
 .emphasized .searchwrapper {
-    right: 25px;
+    margin-right: 54px;
+}
+*:first-child+html .searchwrapper .forminput,
+.searchwrapper .forminput, 
+.emphasized .searchwrapper .forminput {
+  width: 100%;
 }

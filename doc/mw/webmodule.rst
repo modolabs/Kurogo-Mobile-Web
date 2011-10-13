@@ -50,11 +50,11 @@ The following methods handle the templates and titles for pages
 
 * *setTemplatePage($page)* - Sets the name of the page template file to use. Normally the template is derived from the url, but you can
   use this method to set it dynamically. This will cause $page.tpl to be loaded.
-* *setPageTitle($title)* - Sets the page title for this page. Normally this value comes from the *SITE_DIR/config/page/MODULE.ini*
+* *setPageTitle($title)* - Sets the page title for this page. Normally this value comes from the *SITE_DIR/config/MODULE/pages.ini*
   file, but you can use this method to set it dynamically.
-* *setBreadcrumbTitle($title)* - Sets the breadcrumb title for this page. Normally this value comes from the *SITE_DIR/config/page/MODULE.ini*
+* *setBreadcrumbTitle($title)* - Sets the breadcrumb title for this page. Normally this value comes from the *SITE_DIR/config/MODULE/pages.ini*
   file, but you can use this method to set it dynamically.
-* *setBreadcrumbLongTitle($title)* - Sets the breadcrumb long title for this page. Normally this value comes from the *SITE_DIR/config/page/MODULE.ini*
+* *setBreadcrumbLongTitle($title)* - Sets the breadcrumb long title for this page. Normally this value comes from the *SITE_DIR/config/MODULE/pages.ini*
   file, but you can use this method to set it dynamically.
 * *setPageTitles($title)* - Sets all 3 titles (pageTitle, breadcrumbTitle and breadcrumbLongTitle) to the same value
 

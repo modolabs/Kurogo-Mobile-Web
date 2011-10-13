@@ -1,4 +1,5 @@
 {capture name="sideNav" assign="sideNav"}
+{if $prevURL || $nextURL}
   <div class="{block name='sideNavClass'}sidenav2{/block}">
     {if $prevURL && $prev}
       <a href="{$prevURL}" class="sidenav-prev">
@@ -21,6 +22,7 @@
       </a>
     {/if}
   </div>
+{/if}
 {/capture}
 
 {capture name="fullTitle" assign="fullTitle"}

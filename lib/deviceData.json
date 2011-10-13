@@ -19,7 +19,7 @@
                 {
                     "regex": "Windows Phone OS 7.",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -41,9 +41,9 @@
             },
             "match": [
                 {
-                    "regex": "/(Boopsie|Kratylos|MiniRedir|Jumpbot)/",
+                    "regex": "(Boopsie|Kratylos|MiniRedir|Jumpbot)",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -67,7 +67,7 @@
                 {
                     "regex": "iPhone",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -91,7 +91,7 @@
                 {
                     "regex": "iPod",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -115,7 +115,7 @@
                 {
                     "regex": "iPad",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -139,7 +139,7 @@
                 {
                     "regex": "Aspen Simulator",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -161,9 +161,9 @@
             },
             "match": [
                 {
-                    "regex": "/PlayBook.+RIM Tablet/",
+                    "regex": "PlayBook.+RIM Tablet",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -185,9 +185,9 @@
             },
             "match": [
                 {
-                    "regex": "/Android 3\\.\\d/",
+                    "regex": "Android 3\\.\\d",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -211,7 +211,7 @@
                 {
                     "regex": "Android",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -235,7 +235,7 @@
                 {
                     "regex": "webOS",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -257,9 +257,9 @@
             },
             "match": [
                 {
-                    "regex": "/BlackBerry\\s*95/",
+                    "regex": "BlackBerry\\s*95",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -281,9 +281,9 @@
             },
             "match": [
                 {
-                    "regex": "/BlackBerry\\s*98/",
+                    "regex": "BlackBerry\\s*98",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -305,9 +305,9 @@
             },
             "match": [
                 {
-                    "regex": "/BlackBerry\\s*(89|90|96|97)/",
+                    "regex": "BlackBerry\\s*(89|90|96|97)",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -331,7 +331,7 @@
                 {
                     "regex": "BlackBerry8100",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -355,7 +355,7 @@
                 {
                     "regex": "BlackBerry",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -379,7 +379,7 @@
                 {
                     "regex": "Dash",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -401,9 +401,9 @@
             },
             "match": [
                 {
-                    "regex": "/Opera.*T\\-Mobile\\_Rhodium/",
+                    "regex": "Opera.*T\\-Mobile\\_Rhodium",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -425,9 +425,9 @@
             },
             "match": [
                 {
-                    "regex": "/T\\-Mobile\\_Rhodium/",
+                    "regex": "T\\-Mobile\\_Rhodium",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -449,9 +449,9 @@
             },
             "match": [
                 {
-                    "regex": "/PPC68[05]0/",
+                    "regex": "PPC68[05]0",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -475,7 +475,7 @@
                 {
                     "regex": "MP6950",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -497,9 +497,9 @@
             },
             "match": [
                 {
-                    "regex": "/HTC[_ ](Touch|Diamond|Elf).+IEMobile|IEMobile.+HTC[_ ](Touch|Diamond|Elf)/",
+                    "regex": "HTC[_ ](Touch|Diamond|Elf).+IEMobile|IEMobile.+HTC[_ ](Touch|Diamond|Elf)",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -521,9 +521,9 @@
             },
             "match": [
                 {
-                    "regex": "/HTC[_ ](Touch|Diamond|Elf)/",
+                    "regex": "HTC[_ ](Touch|Diamond|Elf)",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -545,9 +545,9 @@
             },
             "match": [
                 {
-                    "regex": "/HTC[\\-_ ]P\\d{4}/",
+                    "regex": "HTC[\\-_ ]P\\d{4}",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -569,9 +569,9 @@
             },
             "match": [
                 {
-                    "regex": "/dopod [A-Z]?8/",
+                    "regex": "dopod [A-Z]?8",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -593,9 +593,9 @@
             },
             "match": [
                 {
-                    "regex": "/HTC[\\-_ ]T/",
+                    "regex": "HTC[\\-_ ]T",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -617,9 +617,9 @@
             },
             "match": [
                 {
-                    "regex": "/8900.+IEMobile/",
+                    "regex": "8900.+IEMobile",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -641,9 +641,9 @@
             },
             "match": [
                 {
-                    "regex": "/HTC[\\-_ ]S\\d{3}/",
+                    "regex": "HTC[\\-_ ]S\\d{3}",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -667,7 +667,7 @@
                 {
                     "regex": "T-Mobile_Atlas",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -691,7 +691,7 @@
                 {
                     "regex": "XV6950",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -713,9 +713,9 @@
             },
             "match": [
                 {
-                    "regex": "/Opera.*XV6875/",
+                    "regex": "Opera.*XV6875",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -737,9 +737,9 @@
             },
             "match": [
                 {
-                    "regex": "/XV6875/",
+                    "regex": "XV6875",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -761,9 +761,9 @@
             },
             "match": [
                 {
-                    "regex": "/\\sT7380/",
+                    "regex": "\\sT7380",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -785,9 +785,9 @@
             },
             "match": [
                 {
-                    "regex": "/HTC[\\-_ ]ST/",
+                    "regex": "HTC[\\-_ ]ST",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -809,9 +809,9 @@
             },
             "match": [
                 {
-                    "regex": "/Opera.+S[CG]H\\-i9/",
+                    "regex": "Opera.+S[CG]H\\-i9",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -835,7 +835,7 @@
                 {
                     "regex": "SCH-U940",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -859,7 +859,7 @@
                 {
                     "regex": "SPH-M800",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -883,7 +883,7 @@
                 {
                     "regex": "Teleca/Q05A/INT",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -905,9 +905,9 @@
             },
             "match": [
                 {
-                    "regex": "/S[CG]H\\-i[79]/",
+                    "regex": "S[CG]H\\-i[79]",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -929,9 +929,9 @@
             },
             "match": [
                 {
-                    "regex": "/S[CG]H\\-i6/i",
+                    "regex": "S[CG]H\\-i6",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": true 
                     }
                 }
             ]
@@ -953,9 +953,9 @@
             },
             "match": [
                 {
-                    "regex": "/(SAMSUNG|GT|S[CGP]H)\\-(M7600|M8800|A8[67]7|T9[12]9|R8[012]0|S5230|S8300)/",
+                    "regex": "(SAMSUNG|GT|S[CGP]H)\\-(M7600|M8800|A8[67]7|T9[12]9|R8[012]0|S5230|S8300)",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -977,9 +977,9 @@
             },
             "match": [
                 {
-                    "regex": "/(SAMSUNG|GT|S[CGP]H)\\-(\\w?\\d+)/",
+                    "regex": "(SAMSUNG|GT|S[CGP]H)\\-(\\w?\\d+)",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1001,9 +1001,9 @@
             },
             "match": [
                 {
-                    "regex": "/LGE?[\\- ][A-Z]+\\d+.+Teleca|Teleca.+LGE?[\\- ][A-Z]+\\d+/",
+                    "regex": "LGE?[\\- ][A-Z]+\\d+.+Teleca|Teleca.+LGE?[\\- ][A-Z]+\\d+",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1025,9 +1025,9 @@
             },
             "match": [
                 {
-                    "regex": "/VX10(000|k)/i",
+                    "regex": "VX10(000|k)",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": true
                     }
                 }
             ]
@@ -1051,7 +1051,7 @@
                 {
                     "regex": "LG-CU9",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1073,9 +1073,9 @@
             },
             "match": [
                 {
-                    "regex": "/\\bLGE?[\\- ][A-Z]*\\d+/",
+                    "regex": "\\bLGE?[\\- ][A-Z]*\\d+",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1099,7 +1099,7 @@
                 {
                     "regex": "UTStar-XV6800",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1121,9 +1121,9 @@
             },
             "match": [
                 {
-                    "regex": "/MOTO?(|rola)\\-?Q/i",
+                    "regex": "MOTO?(|rola)\\-?Q",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": true
                     }
                 }
             ]
@@ -1147,7 +1147,7 @@
                 {
                     "regex": "Palm-D0",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1169,9 +1169,9 @@
             },
             "match": [
                 {
-                    "regex": "/240x320.+Opera/",
+                    "regex": "240x320.+Opera",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1193,9 +1193,9 @@
             },
             "match": [
                 {
-                    "regex": "/320x240.+Opera/",
+                    "regex": "320x240.+Opera",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1217,9 +1217,9 @@
             },
             "match": [
                 {
-                    "regex": "/(Smartphone|SP|PPC); 176x/",
+                    "regex": "(Smartphone|SP|PPC); 176x",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1241,9 +1241,9 @@
             },
             "match": [
                 {
-                    "regex": "/(Smartphone|SP|PPC); 240x/",
+                    "regex": "(Smartphone|SP|PPC); 240x",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1265,9 +1265,9 @@
             },
             "match": [
                 {
-                    "regex": "/(Smartphone|SP|PPC); 320x/",
+                    "regex": "(Smartphone|SP|PPC); 320x",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1291,7 +1291,7 @@
                 {
                     "regex": "Symbian",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1315,7 +1315,7 @@
                 {
                     "regex": "Palm",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1339,7 +1339,7 @@
                 {
                     "regex": "IEMobile",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1363,7 +1363,7 @@
                 {
                     "regex": "Opera Mobi",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1385,9 +1385,9 @@
             },
             "match": [
                 {
-                    "regex": "/Windows CE.+Opera/",
+                    "regex": "Windows CE.+Opera",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1409,9 +1409,9 @@
             },
             "match": [
                 {
-                    "regex": "/Nokia|SonyEricsson|Motorola|\\bMOT|DoCoMo/",
+                    "regex": "Nokia|SonyEricsson|Motorola|\\bMOT|DoCoMo",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1433,9 +1433,9 @@
             },
             "match": [
                 {
-                    "regex": "/Opera Mini|NetFront|Novarra|UP.Browser|Blazer|Fennec/",
+                    "regex": "Opera Mini|NetFront|Novarra|UP.Browser|Blazer|Fennec",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1457,9 +1457,9 @@
             },
             "match": [
                 {
-                    "regex": "/BREW|hiptop|Maemo|J2ME/i",
+                    "regex": "BREW|hiptop|Maemo|J2ME",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": true
                     }
                 }
             ]
@@ -1481,9 +1481,9 @@
             },
             "match": [
                 {
-                    "regex": "/[Cc]rawle?r?|[Ss]pider|\\b\\w*[Bb]ot/",
+                    "regex": "[Cc]rawle?r?|[Ss]pider|\\b\\w*[Bb]ot",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1505,9 +1505,9 @@
             },
             "match": [
                 {
-                    "regex": "/Google Wireless Transcoder|Yahoo!|urllib|libwww|Wget|curl|integrity|internetVista|DownScout/",
+                    "regex": "Google Wireless Transcoder|Yahoo!|urllib|libwww|Wget|curl|integrity|internetVista|DownScout",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1529,9 +1529,9 @@
             },
             "match": [
                 {
-                    "regex": "/MSIE|Firefox|Safari/",
+                    "regex": "MSIE|Firefox|Safari",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]
@@ -1555,7 +1555,7 @@
                 {
                     "regex": "Opera",
                     "options": {
-                        "GLOBAL": true
+                        "CASE_INSENSITIVE": false
                     }
                 }
             ]

@@ -140,24 +140,31 @@ abstract class APIModule extends Module
         $config = $this->getAPIConfig($name);
         return $config->getSectionVars(Config::EXPAND_VALUE);
     }
+
+    protected function getModuleNavigationIDs() {
+        $moduleNavConfig = $this->getModuleNavigationConfig();
+        
+        $modules = array(
+            'primary'  => array_keys($moduleNavConfig->getOptionalSection('primary_modules')),
+            'secondary'=> array_keys($moduleNavConfig->getOptionalSection('secondary_modules'))
+        );
+
+        return $modules;
+    }
    
     public static function getAllModules() {
-        $dirs = array(MODULES_DIR, SITE_MODULES_DIR);
-        $modules = array('core'=>CoreAPIModule::factory());
-        foreach ($dirs as $dir) {
-            if (is_dir($dir)) {
-                $d = dir($dir);
-                while (false !== ($entry = $d->read())) {
-                    if ($entry[0]!='.' && is_dir(sprintf("%s/%s", $dir, $entry))) {
-                        try {
-                            if ($module = APIModule::factory($entry)) {
-                                $modules[$entry] = $module;
-                            }
-                        } catch (KurogoException $e) {
-                        }
+        $configFiles = glob(SITE_CONFIG_DIR . "/*/module.ini");
+        $modules = array();
+    
+        foreach ($configFiles as $file) {
+            if (preg_match("#" . preg_quote(SITE_CONFIG_DIR,"#") . "/([^/]+)/module.ini$#", $file, $bits)) {
+                $id = $bits[1];
+                try {
+                    if ($module = APIModule::factory($id)) {
+                       $modules[$id] = $module;
                     }
+                } catch (KurogoException $e) {
                 }
-                $d->close();
             }
         }
         ksort($modules);    

@@ -20,7 +20,7 @@ a module that utilizes its features you should :ref:`copy the module <copy-modul
 Configuring Content Feeds
 =========================
 
-You can specify any number of pages to show in the *SITE_DIR/config/content/feeds.ini* file. Each
+You can specify any number of pages to show in the *SITE_DIR/config/MODULE/feeds.ini* file. Each
 feed is represented by a section, the name of that section represents the "page" of the module. There
 are several properties to configure:
 
@@ -42,12 +42,12 @@ Creating Groups of Content
 You can create groups of content in order to organize similar content into categories. Creating content
 groups involves the following steps:
 
-#. If it does not exist, create a file named *SITE_DIR/config/content/feedgroups.ini*
+#. If it does not exist, create a file named *SITE_DIR/config/MODULE/feedgroups.ini*
 #. Add a section to feedgroups.ini with a short name of your group. This should be a lowercase
    alpha numeric value without spaces or special characters.
 #. This section should contain a *TITLE* option that represents the title of the group. Optionally
    you can include a *DESCRIPTION* value that will show at the top of the content list for the group.
-#. Create a file named *SITE_DIR/config/content/feeds-groupname.ini* where *groupname* is the short name
+#. Create a file named *SITE_DIR/config/MODULE/feeds-groupname.ini* where *groupname* is the short name
    of the group you created in *feedgroups.ini*. This file should be formatted like feeds.ini with
    each entry being a uniquely indexed section.
 #. To use this group, assign it to a entry in *feeds.ini*. Add a value *GROUP* with a value of the
@@ -58,7 +58,7 @@ The *feeds.ini* file may contain both groups and content entries. They will be d
 sections appear in the *feeds.ini* file. If only one group is added, that group will be displayed. If only
 one content entry exists in either a group or in *feeds.ini* it will be displayed.
 
-This is an example *SITE_DIR/config/content/feedgroups.ini*. Each group is a section that contains title
+This is an example *SITE_DIR/config/MODULE/feedgroups.ini*. Each group is a section that contains title
 (and optional description). You can have any number of groups:
 
 .. code-block:: ini
@@ -71,7 +71,7 @@ This is an example *SITE_DIR/config/content/feedgroups.ini*. Each group is a sec
   TITLE = "Visiting"
   DESCRIPTION = ""
 
-*SITE_DIR/config/content/feeds-applying.ini*. This is an example file for the *applying* group. It is
+*SITE_DIR/config/MODULE/feeds-applying.ini*. This is an example file for the *applying* group. It is
 formatted like the *feeds.ini* file:
 
 .. code-block:: ini
@@ -84,7 +84,7 @@ formatted like the *feeds.ini* file:
   BASE_URL = "http://universitas.modolabs.com/admissions"
   HTML_ID = "node-2"
 
-*SITE_DIR/config/content/feeds.ini*. Include a *group* value to show a group:
+*SITE_DIR/config/MODULE/feeds.ini*. Include a *group* value to show a group:
 
 .. code-block:: ini
 
