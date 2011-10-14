@@ -1,5 +1,5 @@
 
-1.3 (Yet to be released)
+1.3 (Oct 13, 2011)
 * IMPORTANT NOTE: After upgrading to 1.3, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
 * The REST API has now reached 1.0 status
 * Kurogo is now localized. version 1.3 only includes English values. See user guide for more information on localization
@@ -23,6 +23,17 @@
 * Many other minor bug fixes and improvements
 Since 1.3RC1
 * Fixed an issue when using the admin module while being logged in
+* Non standard timezones in calendar feeds are handled better
+* There is now an option to show the distance to nearby points
+* Do not permit stats module when stats is disabled
+* Added support for CAS authentication
+* Various fixes for PHP 5.2
+* Many tablet improvements
+* Ability to use HMAC style password hashes in database auth
+* Fixed an issue with formatting events that are all day events
+* Fixed some issues with device detection patterns
+* You can use LDAP fields (like cn) for fullname
+* Fixed a visual issue with calendar list style
 
 1.2 (July 19)
 * IMPORTANT NOTE: After upgrading to 1.2, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
