@@ -8,7 +8,7 @@
   * @package ExternalData
   * @subpackage RSS
   */
-class RSSDataController extends DataController
+class RSSDataController extends ExternalDataController
 {
     protected $DEFAULT_PARSER_CLASS='RSSDataParser';
     protected $items;

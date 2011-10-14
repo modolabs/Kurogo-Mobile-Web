@@ -22,7 +22,7 @@ abstract class ExternalDataController {
     protected $title;
     protected $totalItems = null;
     protected $debugMode=false;
-    protected $useCache=false;
+    protected $useCache=true;
     protected $useStaleCache=true;
     protected $cacheLifetime=900;
     

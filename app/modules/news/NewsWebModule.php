@@ -36,7 +36,7 @@ class NewsWebModule extends WebModule {
         }
         
         try {
-            $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller = ExternalDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         } catch (KurogoConfigurationException $e) {
             return KurogoError::errorFromException($e);
         }
@@ -103,7 +103,7 @@ class NewsWebModule extends WebModule {
         if (!isset($feedData['CONTROLLER_CLASS'])) {
             $feedData['CONTROLLER_CLASS'] = self::defaultController;
         }
-        $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        $controller = ExternalDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         return $controller;
     } else {
         throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $index));
