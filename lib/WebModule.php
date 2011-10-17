@@ -1136,7 +1136,26 @@ abstract class WebModule extends Module {
   // Config files
   //
   
+    protected function getThemeVar($key) {
+        static $vars = $this->getThemeVars();
+        if (!isset($vars[$key])) {
+            throw new KurogoConfigurationException("Config variable '$key' not set");
+        }
+        
+        return $vars[$key];
+    }
+
+    protected function getOptionalThemeVar($var, $default='') {
+        $vars = $this->getThemeVars();
+        return isset($vars[$var]) ? $vars[$var] : $default;
+    }
+    
     protected function getThemeVars() {
+        static $vars = array();
+        if ($vars) {
+            return $vars;
+        }
+        
         $config = ConfigFile::factory('config', 'theme', ConfigFile::OPTION_CREATE_EMPTY);
         $sections = array(
             'common',
@@ -1144,7 +1163,6 @@ abstract class WebModule extends Module {
             $this->pagetype . '-' . $this->platform
         );
         
-        $vars = array();
         foreach ($sections as $section) {
             if ($sectionVars = $config->getOptionalSection($section)) {
                 $vars = array_merge($vars, $sectionVars);
