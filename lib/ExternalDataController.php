@@ -72,7 +72,7 @@ abstract class ExternalDataController {
      * but certain subclasses might need to determine the parser dynamically.
      * @param DataParser a instantiated DataParser object
      */
-    public function setRetiever(DataRetriever $retriever) {
+    public function setRetriever(DataRetriever $retriever) {
         $this->retriever = $retriever;
     }
     
@@ -144,7 +144,7 @@ abstract class ExternalDataController {
         $args['RETRIEVER_CLASS'] = isset($args['RETRIEVER_CLASS']) ? $args['RETRIEVER_CLASS'] : $this->DEFAULT_RETRIEVE_CLASS;
         //instantiate the retriever class and add it to the controller
         $retriever = DataRetriever::factory($args['RETRIEVER_CLASS'], $args);
-        $this->setRetiever($retriever);
+        $this->setRetriever($retriever);
         $retriever->setDataController($this);
 
         if (isset($args['TITLE'])) {
