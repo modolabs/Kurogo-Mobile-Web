@@ -104,15 +104,33 @@ html;
   */
 function CacheHeaders($file)
 {
-    $mtime = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
-    if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-        if ($_SERVER['HTTP_IF_MODIFIED_SINCE'] == $mtime) {
-            header('HTTP/1.1 304 Not Modified');
-            exit();
+    $fs = stat($file);
+    $mtime = gmdate('D, d M Y H:i:s', $fs['mtime']) . ' GMT';
+
+    //if we have inode then use etag. Windows does not have inodes.
+    if (isset($fs['ino']) && $fs['ino'] > 0) {
+        //use apache style etag 
+        $etag = sprintf('%x-%x-%s', $fs['ino'], $fs['size'],base_convert(str_pad($fs['mtime'],16,"0"),10,16));
+        if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
+            if (str_replace('"','', $_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
+                header('HTTP/1.1 304 Not Modified');
+                exit();
+            }
         }
-    }
     
-    header("Last-Modified: $mtime");
+        header("ETag: \"$etag\"");
+
+    } else {
+
+        if(isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
+            if ($_SERVER['HTTP_IF_MODIFIED_SINCE'] == $mtime) {
+                header('HTTP/1.1 304 Not Modified');
+                exit();
+            }
+        }
+        
+        header("Last-Modified: $mtime");
+    }    
     return;
 }
 
