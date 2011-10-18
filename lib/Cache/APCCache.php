@@ -1,10 +1,10 @@
 <?php
 
 if (!function_exists('apc_fetch')) {
-    die('KurogoAPC requires the APC Extension');
+    die('APCCache requires the APC Extension');
 }
 
-class KurogoAPC extends KurogoCache {
+class APCCache extends KurogoCache {
 
 	public function get($key) {
 		return apc_fetch($key);
