@@ -187,6 +187,41 @@ function getMinifyGroupsConfig() {
   return $minifyConfig;
 }
 
+function minifyGetThemeVars() {
+  static $themeVars = null;
+  
+  if (!isset($themeVars)) {
+    $config = ConfigFile::factory('config', 'theme', ConfigFile::OPTION_CREATE_EMPTY);
+    
+    $pagetype = Kurogo::deviceClassifier()->getPagetype();
+    $platform = Kurogo::deviceClassifier()->getPlatform();
+    $sections = array(
+      'common',
+      $pagetype,
+      $pagetype . '-' . $platform
+    );
+    
+    $themeVars = array();
+    foreach ($sections as $section) {
+      if ($sectionVars = $config->getOptionalSection($section)) {
+        $themeVars = array_merge($themeVars, $sectionVars);
+      }
+    }
+  }
+  
+  return $themeVars;
+}
+
+function minifyThemeVarReplace($matches) {
+  $themeVars = minifyGetThemeVars();
+  if (isset($themeVars, $themeVars[$matches[1]])) {
+    return $themeVars[$matches[1]];
+  } else {
+    Kurogo::log(LOG_WARNING, "theme variable '{$matches[1]}' not set", 'minify');
+    return $matches[0]; // variable not set, do nothing
+  }
+}
+
 function minifyPostProcess($content, $type) {
   if ($type === Minify::TYPE_CSS) {
     $urlPrefix = URL_PREFIX;
@@ -194,6 +229,11 @@ function minifyPostProcess($content, $type) {
     if (Kurogo::getSiteVar('DEVICE_DEBUG') && URL_PREFIX == URL_BASE) {
       // if device debugging is on, always append device classification
       $urlPrefix .= 'device/'.Kurogo::deviceClassifier()->getDevice().'/';
+    }
+    // Theme variable replacement
+    $themeVars = minifyGetThemeVars();
+    if ($themeVars) {
+      $content = preg_replace_callback(';@@@([^@]+)@@@;', 'minifyThemeVarReplace', $content);
     }
 
     $content = "/* Adding url prefix '".$urlPrefix."' */\n\n".

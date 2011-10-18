@@ -1137,7 +1137,7 @@ abstract class WebModule extends Module {
   //
   
     protected function getThemeVar($key) {
-        static $vars = $this->getThemeVars();
+        $vars = $this->getThemeVars();
         if (!isset($vars[$key])) {
             throw new KurogoConfigurationException("Config variable '$key' not set");
         }
