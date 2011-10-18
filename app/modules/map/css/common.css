@@ -14,7 +14,7 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
 
 #mapimage {
     width: 100%;
-    min-height: 200px;
+    min-height: 100px;
     border: 1px solid #999;
     margin: -1px;
     overflow: hidden;

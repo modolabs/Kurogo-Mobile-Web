@@ -24,10 +24,10 @@ language codes supported by Kurogo. For example:
 .. code-block:: ini
 
     LANGUAGES[] = "es_ES"
-    LANGUAGES[] = "pt_PT"
+    LANGUAGES[] = "ko_KR"
     LANGUAGES[] = "en_US"
 
-Would use Spanish, followed by Portugese followed by English. Note that it is not necessary to include
+Would use Spanish, followed by Korean followed by English. Note that it is not necessary to include
 US English as it is always included at the end of not specified. Language order is specified by
 the server, and cannot be influenced by the user. If you wish to host a site with different 
 languages, than you can create a duplicate site with different language settings and host 
@@ -105,3 +105,15 @@ and are part of your site. These include things like:
 
 Please see the appropriate :doc:`module <moduleslist>` or :doc:`configuration <configuration>` documentation for 
 details about setting these values.
+
+=======
+Summary
+=======
+
+.. image:: images/localization.png
+
+#. String key in template or module
+#. Kurogo chooses the appropriate string table
+#. If there is a value, it replaces any %s
+#. Display string
+

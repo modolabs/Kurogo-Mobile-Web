@@ -48,3 +48,5 @@ is 1, etc). The following values are required:
   a placeholder image. If the entire feed does not have images, you may wish to set SHOW_IMAGES=0 
 * *SHOW_PUBDATE* - Show the publish date in the news list (the published date is always showed in the detail page)
 * *SHOW_AUTHOR* - Show the author in the news list (the author is always showed in the detail page)
+* *SHOW_LINK* - Show a link to the full article. This is useful for feeds that only contain an
+  introductory paragraph.

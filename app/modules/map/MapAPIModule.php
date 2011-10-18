@@ -130,12 +130,40 @@ class MapAPIModule extends APIModule
         return $this->feeds;
     }
 
-    private function getDataController($category=null) {
-        $controller = null;
-        if (($feedData = $this->getCurrentFeed())) {
-            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+    private function getDataController($currentCategory=null)
+    {
+        if (!$this->feeds) {
+            $this->loadFeedData();
         }
-        return $controller;
+
+        if ($currentCategory === null) {
+            $drillPath = array();
+            $category = $this->getArg('category');
+            if (isset($this->feeds[$category])) {
+                 $currentCategory = $category;
+            } else {
+                // traces the parent categories that led the user to this category id
+                $references = $this->getCategoryReferences();
+                foreach ($references as $reference) {
+                    if ($currentCategory) {
+                        $drillPath[] = $reference;
+                    } elseif (isset($this->feeds[$reference])) {
+                        $currentCategory = $reference;
+                    }
+                }
+                $drillPath[] = $category;
+            }
+        }
+
+        $dataController = null;
+        if (($feedData = $this->getCurrentFeed($currentCategory))) {
+            $dataController = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+            if ($drillPath) {
+                $dataController->addDisplayFilter('category', $drillPath);
+            }
+        }
+        return $dataController;
     }
 
     private function getCurrentFeed($category=null)
@@ -297,55 +325,36 @@ class MapAPIModule extends APIModule
                     $this->setResponseVersion(1);
 
                 } else {
-                    $this->loadFeedData();
+                    $dataController = $this->getDataController();
 
-                    $currentCategory = null;
-                    $drillPath = array();
-                    if (isset($this->feeds[$category])) {
-                        $currentCategory = $category;
+                    if ($dataController) {
+
+                        $listItems = $dataController->getListItems();
+
+                        $placemarks = array();
+                        $categories = array();
+                        foreach ($listItems as $listItem) {
+                            if ($listItem instanceof Placemark) {
+                                $placemarks[] = $this->shortArrayFromPlacemark($listItem);
+
+                            } else {
+                                $categories[] = $this->arrayFromCategory($listItem);
+                            }
+                        }
+
+                        $response = array();
+                        if ($placemarks) {
+                            $response['placemarks'] = $placemarks;
+                        }
+                        if ($categories) {
+                            $response['categories'] = $categories;
+                        }
+
+                        $this->setResponse($response);
+                        $this->setResponseVersion(1);
                     } else {
-                        // traces the parent categories that led the user to this category id
-                        $references = $this->getCategoryReferences();
-                        foreach ($references as $reference) {
-                            if ($currentCategory) {
-                                $drillPath[] = $reference;
-                            } elseif (isset($this->feeds[$reference])) {
-                                $currentCategory = $reference;
-                            }
-                        }
-                        $drillPath[] = $category;
-                    }
-                    if ($currentCategory) {
-                        $dataController = $this->getDataController($currentCategory);
-                        if ($dataController) {
-                            if ($drillPath) {
-                                $dataController->addDisplayFilter('category', $drillPath);
-                            }
-
-                            $listItems = $dataController->getListItems();
-
-                            $placemarks = array();
-                            $categories = array();
-                            foreach ($listItems as $listItem) {
-                                if ($listItem instanceof Placemark) {
-                                    $placemarks[] = $this->shortArrayFromPlacemark($listItem);
-
-                                } else {
-                                    $categories[] = $this->arrayFromCategory($listItem);
-                                }
-                            }
-
-                            $response = array();
-                            if ($placemarks) {
-                                $response['placemarks'] = $placemarks;
-                            }
-                            if ($categories) {
-                                $response['categories'] = $categories;
-                            }
-
-                            $this->setResponse($response);
-                            $this->setResponseVersion(1);
-                        }
+                        $error = new KurogoError("Could not find data source for requested category");
+                        $this->throwError($error);
                     }
                 }
 
@@ -353,20 +362,23 @@ class MapAPIModule extends APIModule
 
             case 'detail':
 
-                $this->loadFeedData();                                                                      
-                $category = $this->getArg('category');                                                      
-                $dataController = $this->getDataController($category);                                      
-                $placemark = $dataController->selectPlacemark($this->getArg('id'));                         
+                $dataController = $this->getDataController();
+                $placemarkId = $this->getArg('id', null);
+                if ($dataController && $placemarkId !== null) {
+                    $placemark = $dataController->selectPlacemark($placemarkId);
 
-                $response = array(
-                    'title' => $placemark->getTitle(),
-                    'subtitle' => $placemark->getSubtitle(),
-                    'address' => $placemark->getAddress(),
-                    'extraFields' => $placemark->getFields(),
-                );                                                                                          
+                    $fields = $placemark->getFields();
 
-                $this->setResponse($response);                                                              
-                $this->setResponseVersion(1);                                                               
+                    $response = array(
+                        'title' => $placemark->getTitle(),
+                        'subtitle' => $placemark->getSubtitle(),
+                        'address' => $placemark->getAddress(),
+                        'extraFields' => $placemark->getFields(),
+                    );
+
+                    $this->setResponse($response);                                                              
+                    $this->setResponseVersion(1);                                                               
+                }
 
                 break;
 

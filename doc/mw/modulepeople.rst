@@ -51,6 +51,7 @@ need to be altered if the values differ from the defaults in parentheses.
 * *LDAP_EMAIL_FIELD* (mail) - The attribute of the user's email address
 * *LDAP_FIRSTNAME_FIELD* (givenname) - The attribute of the user's first name
 * *LDAP_LASTNAME_FIELD* (sn) - The attribute of the user's last name
+* *LDAP_FULLNAME_FIELD* (blank) - If you wish to use a single field for name (like cn), include this here. 
 * *LDAP_PHONE_FIELD* (telephonenumber) - The attribute of the user's phone number
 
 ------------------------------------

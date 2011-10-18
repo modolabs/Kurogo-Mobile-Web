@@ -38,7 +38,7 @@ class MapDataController extends DataController implements MapFolder
         return $this->searchable;
     }
 
-    protected function featureMatchesTokens(MapFeature $feature, Array $tokens)
+    protected function featureMatchesTokens(Placemark $feature, Array $tokens)
     {
         $matched = true;
         $title = $feature->getTitle();

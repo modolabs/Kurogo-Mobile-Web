@@ -140,6 +140,8 @@ Error handling and debugging
 
 The properties in this section are used during development. Most of them are boolean values (0 is off, 1 is on)
 
+* *DEFAULT_LOGGING_LEVEL* - See :doc:`logging` for more information.
+* *LOGGING_LEVEL[area]* - See :doc:`logging` for more information.
 * *DISPLAY_ERRORS* - Display PHP errors. This can make discovering bugs more easy. You should turn this
   off on a production site.
 * *DEVICE_DEBUG* - When the framework is running in device debugging mode, you can prepend any framework 
@@ -166,8 +168,12 @@ with an appropriate developer email address.
 Site settings
 -------------
 
+* *SITE_DISABLED* - When set to 1 this site is disabled. Useful for :doc:`multisite`
 * *SECURE_HOST* - Alternate hostname to use for secure (https) connections. If not included it will use the same host name.
 * *SECURE_PORT* - Alternate port to use for secure connections. Typically you should leave it at the default of 443
+* *LOCALE* - Locales are used for date/time formatting. If you wish to use a locale other than the server default, then you should set this. 
+  Note that valid values are dependent on the operating system of the server.
+* *LANGUAGES[]* - A list of language priorities. See :doc:`localization` for more info.
 * *LOCAL_TIMEZONE* - Set this to your environment's time zone. See http://php.net/manual/en/timezones.php
   for a list of valid time zones
 * *LOCAL_AREA_CODE* - Set this to your environment's primary area code
@@ -188,6 +194,12 @@ Modules
   a config folder with the default values, but should be turned off for production to ensure
   modules that you don't use don't create configuration folders.
   
+-----
+Cache
+-----
+
+* *MINIFY_CACHE_TIMEOUT* - The timeout for saving the minify cache. This determines how often
+  to look for new templates or css/js files. It should be set high for production sites.
 
 .. _analytics:
 
@@ -197,8 +209,11 @@ Analytics
 
 * *GOOGLE_ANALYTICS_ID* - set this to your google analytics id and the framework will utilize the google 
   analytics server
-* *PAGE_VIEWS_TABLE* - Used by the stats module to store page view summaries
-* *API_STATS_TABLE* - Used by the stats module to store API request summaries
+* *PERCENT_MOBILE_ID* - set this to your percent mobile analytics id and the framework will utilize the percent
+  mobile analytics server
+* *STATS_ENABLED* - if set to 0 then the internal statistics engine will be disabled
+* *KUROGO_STATS_TABLE* (kurogo_stats_v1) - The name of the table to use for internal statistics gathering
+* *KUROGO_VISIT_LIFESPAN* (1800) - The timeout (in seconds) for tracking visits
 
 --------------
 Temp Directory
@@ -211,6 +226,7 @@ Themes
 ------
 * *ACTIVE_THEME* - This is set to the active theme. It should be a valid folder inside the *SITE_DIR/themes* 
   directory. 
+* *TABLET_ENABLED* - If set to 0 then the tablet devices will receive the compliant page type templates.
   
 .. _url-rewriting:
 
@@ -249,26 +265,17 @@ This allows you to customize the front door experience for your users.
 Device Detection
 ----------------
 
-See :doc:`devicedetection` for more details
-
-* *MOBI_SERVICE_VERSION* - Includes the version of device detection to use. Provided for compatibility.
-* *MOBI_SERVICE_USE_EXTERNAL* - Boolean. If 0, Kurogo will use the internal device detection server. If 1 it will use an external server
-* *MOBI_SERVICE_SITE_FILE* - Location of site-specific device detection data if using internal detection. (typically located in *DATA_DIR/deviceData.json*)
-* *MOBI_SERVICE_SITE_FORMAT* - Format of site-specific device detection data if using internal detection.  Currently *json* is supported and *sqlite* is deprecated. Defaults to *json* if not specified.
-* *MOBI_SERVICE_URL* - Url of device detection server if using external detection
-
-  * (Development) https://modolabs-device-test.appspot.com/api/
-  * (Production) https://modolabs-device.appspot.com/api/
-
-* *MOBI_SERVICE_CACHE_LIFETIME* - Time (in seconds) to keep cached results from the external device detection service
+See :doc:`devicedetection` for more information on configuration values.
 
 -------
 Cookies
 -------
 * *MODULE_ORDER_COOKIE_LIFESPAN* - How long (in seconds) to remember the module order customization. In production
   sites this should be set to a long time, like 15552000 (180 days)
-* *LAYOUT_COOKIE_LIFESPAN* = How long to remember the device detection results for pagetype and platform.
+* *LAYOUT_COOKIE_LIFESPAN* - How long to remember the device detection results for pagetype and platform.
   In production sites this should be set to a long time, like 1209600 (14 days)
+* *BOOKMARK_COOKIE_LIFESPAN* - How long to remember the saved bookmarks for a user. In production 
+  sites this should be set to a long time, like 15552000 (180 days)
 
 --------
 Database
@@ -290,7 +297,8 @@ Authentication
 ---------
 Log Files
 ---------
-
+* *KUROGO_LOG_FILE* - The location of the Kurogo log file. This is where all Kurogo log statements
+  will be placed depending on the value of DEFAULT_LOG_LEVEL
 * *LOG_DATE_FORMAT* - Date format for log files
 * *LOG_DATE_PATTERN* - regex pattern of log dates, should match output from LOG_DATE_FORMAT
 
@@ -340,7 +348,6 @@ There are a number of strings that are used throughout the framework to identify
 it is a part of. These include:
 
 * *SITE_NAME* - The name of the site. Used in the footer and other places. 
-* *ORGANIZATION_NAME* - The name of the organization. Used in the about module.
 * *COPYRIGHT_LINK* - Link to copyright notice (optional)
 * *COPYRIGHT_NOTICE* - Copyright notice 
 * *FEEDBACK_EMAIL* - email address where users can send feedback.

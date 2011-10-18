@@ -111,6 +111,7 @@ class MapDBDataController extends MapDataController implements MapFolder
     // TODO allow config of searchable fields
     public function search($searchText)
     {
+        return array();
     }
 
     public function searchByProximity($center, $tolerance, $maxItems=null)

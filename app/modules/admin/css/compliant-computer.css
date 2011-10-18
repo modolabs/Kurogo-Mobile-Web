@@ -1,6 +1,7 @@
 body {
 	background-color: #eee; 
-	text-align: center
+	text-align: center;
+	margin: 0;
 }
 body, select, input, option, textarea {
 	font: 13px/1.333em 'Helvetica Neue', Helvetica, Arial, sans-serif;

@@ -1,7 +1,7 @@
 <?php
 
 define('ROOT_DIR', realpath(dirname(__FILE__).'/..'));
-define('KUROGO_VERSION', '1.3RC1');
+define('KUROGO_VERSION', '1.3');
 
 //
 // And a double quote define for ini files (php 5.1 can't escape them)
@@ -779,27 +779,27 @@ class Kurogo
 
     public static function getLifetimeOptions() {
         return array(
-            ""    =>'Default',
-            0     =>'None',
-            10    =>'10 seconds',
-            30    =>'30 seconds',
-            60    =>'1 minute',
-            120   =>'2 minutes',
-            300   =>'5 minutes',
-            600   =>'10 minutes',
-            900   =>'15 minutes',
-            1800  =>'30 minutes',
-            3600  =>'1 hour',
-            7200  =>'2 hours',
-            10800 =>'3 hours',
-            21600 =>'6 hours',
-            43200 =>'12 hours',
-            86400 =>'1 day',
-            604800 =>'1 week',
-            1209600=>'2 weeks',
-            2419200=>'4 weeks',
-            15552000=>'180 days',
-            31536000=>'1 year'
+            ""    => self::getLocalizedString('TIMEOUT_DEFAULT'),
+            0     => self::getLocalizedString('TIMEOUT_NONE'),
+            10    => self::getLocalizedString('TIMEOUT_SECONDS', 10),
+            30    => self::getLocalizedString('TIMEOUT_SECONDS', 30),
+            60    => self::getLocalizedString('TIMEOUT_MINUTE', 1),
+            120   => self::getLocalizedString('TIMEOUT_MINUTES', 2),
+            300   => self::getLocalizedString('TIMEOUT_MINUTES', 5),
+            600   => self::getLocalizedString('TIMEOUT_MINUTES', 10),
+            900   => self::getLocalizedString('TIMEOUT_MINUTES', 15),
+            1800  => self::getLocalizedString('TIMEOUT_MINUTES', 30),
+            3600  => self::getLocalizedString('TIMEOUT_HOUR', 1),
+            7200  => self::getLocalizedString('TIMEOUT_HOURS', 2),
+            10800 => self::getLocalizedString('TIMEOUT_HOURS', 3),
+            21600 => self::getLocalizedString('TIMEOUT_HOURS', 6),
+            43200 => self::getLocalizedString('TIMEOUT_HOURS', 12),
+            86400 => self::getLocalizedString('TIMEOUT_DAY', 1),
+            604800 => self::getLocalizedString('TIMEOUT_WEEK', 1),
+            1209600=> self::getLocalizedString('TIMEOUT_WEEKS', 2),
+            2419200=> self::getLocalizedString('TIMEOUT_WEEKS', 4),
+            15552000=> self::getLocalizedString('TIMEOUT_DAYS', 180),
+            31536000=> self::getLocalizedString('TIMEOUT_YEAR', 1)
         );
     }
     
@@ -929,7 +929,7 @@ class Kurogo
     }    
     
     public function checkCurrentVersion() {
-        $url = "https://modolabs.com/kurogo/checkversion.php?" . http_build_query(array(
+        $url = "http://kurogo.org/checkversion.php?" . http_build_query(array(
             'version'=>KUROGO_VERSION,
             'base'=>FULL_URL_BASE,
             'site'=>SITE_KEY,

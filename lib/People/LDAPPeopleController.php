@@ -327,6 +327,7 @@ class LDAPPeopleController extends PeopleController {
         $this->fieldMap = array(
             'userid'=>isset($args['LDAP_USERID_FIELD']) ? $args['LDAP_USERID_FIELD'] : 'uid',
             'email'=>isset($args['LDAP_EMAIL_FIELD']) ? $args['LDAP_EMAIL_FIELD'] : 'mail',
+            'fullname'=>isset($args['LDAP_FULLNAME_FIELD']) ? $args['LDAP_FULLNAME_FIELD'] : '',
             'firstname'=>isset($args['LDAP_FIRSTNAME_FIELD']) ? $args['LDAP_FIRSTNAME_FIELD'] : 'givenname',
             'lastname'=>isset($args['LDAP_LASTNAME_FIELD']) ? $args['LDAP_LASTNAME_FIELD'] : 'sn',
             'phone'=>isset($args['LDAP_PHONE_FIELD']) ? $args['LDAP_PHONE_FIELD'] : 'telephonenumber'
@@ -462,9 +463,13 @@ class LDAPPerson extends Person {
     }
     
     public function getName() {
-    	return sprintf("%s %s", 
-    			$this->getFieldSingle($this->fieldMap['firstname']), 
-    			$this->getFieldSingle($this->fieldMap['lastname']));
+        if ($this->fieldMap['fullname']) {
+            return $this->getFieldSingle($this->fieldMap['fullname']);
+        } else {
+            return sprintf("%s %s", 
+                    $this->getFieldSingle($this->fieldMap['firstname']), 
+                    $this->getFieldSingle($this->fieldMap['lastname']));
+        }
     }
     
     public function getId() {
