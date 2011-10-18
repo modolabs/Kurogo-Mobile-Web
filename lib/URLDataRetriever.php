@@ -63,6 +63,7 @@ class URLDataRetriever extends DataRetriever {
     }
     
     public function init($args) {
+        parent::init($args);
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
         }
@@ -134,7 +135,87 @@ class URLDataRetriever extends DataRetriever {
         
         return $url;
     }
+     
+    /**
+     * Parse the data. This method will also attempt to set the total items in a request by calling the
+     * data parser's getTotalItems() method
+     * @param string $data the data from a request (could be from the cache)
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    protected function parseData($data, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        $parsedData = $parser->parseData($data);
+        // jeffery
+        // what's the meaning of using setTotalItems?
+        //$this->dataController->setTotalItems($parser->getTotalItems());
+        return $parsedData;
+    }
+
+    /**
+     * Parse a file. This method will also attempt to set the total items in a request by calling the
+     * data parser's getTotalItems() method
+     * @param string $file a file containing the contents of the data
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    protected function parseFile($file, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        $parsedData = $parser->parseFile($file);
+        //$this->dataController->setTotalItems($parser->getTotalItems());
+        return $parsedData;
+    }
     
+    /**
+     * Return the parsed data. The default implementation will retrive the data and return value of
+     * parseData()
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    public function getParsedData(DataParser $parser=null) {
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+
+        switch ($parser->getParseMode()) {
+            case DataParser::PARSE_MODE_STRING:
+                $data = $this->getData();
+                return $this->parseData($data, $parser);
+                break;
+        
+           case DataParser::PARSE_MODE_FILE:
+                $file = $this->getDataFile();
+                return $this->parseFile($file, $parser);
+                break;
+            default:
+                throw new KurogoConfigurationException("Unknown parse mode");
+        }
+    }
+    
+    /**
+     * Sets the target encoding of the result. Defaults to utf-8.
+     * @param string
+     */
+    public function setEncoding($encoding) {
+        $this->parser->setEncoding($encoding);
+    }
+
+    /**
+     * Returns the target encoding of the result.
+     * @return string. Default is utf-8
+     */
+    public function getEncoding() {
+        return $this->parser->getEncoding();
+    }
+
+    public function getData() {
+        return $this->retrieveData();
+    }
+
     /**
      * Returns a base filename for the cache file that will be used. The default implementation uses
      * a hash of the value returned from the url

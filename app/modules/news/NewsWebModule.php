@@ -15,6 +15,7 @@ if (!function_exists('mb_convert_encoding')) {
 
 class NewsWebModule extends WebModule {
   const defaultController = 'RSSDataController';
+  const defaultParser = 'RSSDataParser';
   protected $id = 'news';
   protected $feeds = array();
   protected $feedIndex = 0;
@@ -33,6 +34,9 @@ class NewsWebModule extends WebModule {
 
         if (!isset($feedData['CONTROLLER_CLASS'])) {
             $feedData['CONTROLLER_CLASS'] = self::defaultController;
+        }
+        if (!isset($feedData['PARSER_CLASS'])) {
+            $feedData['PARSER_CLASS'] = self::defaultParser;
         }
         
         try {
@@ -102,6 +106,9 @@ class NewsWebModule extends WebModule {
         $feedData = $this->feeds[$index];
         if (!isset($feedData['CONTROLLER_CLASS'])) {
             $feedData['CONTROLLER_CLASS'] = self::defaultController;
+        }
+        if (!isset($feedData['PARSER_CLASS'])) {
+            $feedData['PARSER_CLASS'] = self::defaultParser;
         }
         $controller = ExternalDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         return $controller;

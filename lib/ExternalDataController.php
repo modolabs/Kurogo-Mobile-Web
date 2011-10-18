@@ -16,7 +16,6 @@ abstract class ExternalDataController {
     protected $DEFAULT_RETRIEVE_CLASS='URLDataRetriever';
     protected $initArgs=array();
     protected $cacheFolder='Data';
-    protected $parser;
     protected $retriever;
     protected $cache;
     protected $title;
@@ -56,15 +55,6 @@ abstract class ExternalDataController {
      */
     protected function cacheFilename() {
         return $this->retriever->getCacheKey();
-    }
-    
-   /**
-     * Sets the data parser to use for this request. Typically this is set at initialization automatically,
-     * but certain subclasses might need to determine the parser dynamically.
-     * @param DataParser a instantiated DataParser object
-     */
-    public function setParser(DataParser $parser) {
-        $this->parser = $parser;
     }
 
     /**
@@ -106,7 +96,7 @@ abstract class ExternalDataController {
      * the value of getTotalItems() from the DataParser.
      * @param int
      */
-    protected function setTotalItems($totalItems) {
+    public function setTotalItems($totalItems) {
         $this->totalItems = $totalItems;
     }
     
@@ -132,20 +122,13 @@ abstract class ExternalDataController {
             $this->setDebugMode($args['DEBUG_MODE']);
         }
 
-        // use a parser class if set, otherwise use the default parser class from the controller
-        $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
-        
-        // instantiate the parser class and add it to the controller
-        $parser = DataParser::factory($args['PARSER_CLASS'], $args);
-        $this->setParser($parser);
-        $parser->setDataController($this);
-        
         // use a retriever class if set, otherwise use the default retrieve class from the controller
         $args['RETRIEVER_CLASS'] = isset($args['RETRIEVER_CLASS']) ? $args['RETRIEVER_CLASS'] : $this->DEFAULT_RETRIEVE_CLASS;
         //instantiate the retriever class and add it to the controller
         $retriever = DataRetriever::factory($args['RETRIEVER_CLASS'], $args);
-        $this->setRetriever($retriever);
+        $retriever->init($args);
         $retriever->setDataController($this);
+        $this->setRetriever($retriever);
 
         if (isset($args['TITLE'])) {
             $this->setTitle($args['TITLE']);
@@ -189,66 +172,7 @@ abstract class ExternalDataController {
 
         return $controller;
     }
-    
-    /**
-     * Parse the data. This method will also attempt to set the total items in a request by calling the
-     * data parser's getTotalItems() method
-     * @param string $data the data from a request (could be from the cache)
-     * @param DataParser $parser optional, a alternative data parser to use. 
-     * @return mixed the parsed data. This value is data dependent
-     */
-    protected function parseData($data, DataParser $parser=null) {       
-        if (!$parser) {
-            $parser = $this->parser;
-        }
-        $parsedData = $parser->parseData($data);
-        $this->setTotalItems($parser->getTotalItems());
-        return $parsedData;
-    }
 
-    /**
-     * Parse a file. This method will also attempt to set the total items in a request by calling the
-     * data parser's getTotalItems() method
-     * @param string $file a file containing the contents of the data
-     * @param DataParser $parser optional, a alternative data parser to use. 
-     * @return mixed the parsed data. This value is data dependent
-     */
-    protected function parseFile($file, DataParser $parser=null) {       
-        if (!$parser) {
-            $parser = $this->parser;
-        }
-        $parsedData = $parser->parseFile($file);
-        $this->setTotalItems($parser->getTotalItems());
-        return $parsedData;
-    }
-    
-    /**
-     * Return the parsed data. The default implementation will retrive the data and return value of
-     * parseData()
-     * @param DataParser $parser optional, a alternative data parser to use. 
-     * @return mixed the parsed data. This value is data dependent
-     */
-    public function getParsedData(DataParser $parser=null) {
-        if (!$parser) {
-            $parser = $this->parser;
-        }
-
-        switch ($parser->getParseMode()) 
-        {
-            case DataParser::PARSE_MODE_STRING:
-                $data = $this->getData();
-                return $this->parseData($data, $parser);
-                break;
-        
-           case DataParser::PARSE_MODE_FILE:
-                $file = $this->getDataFile();
-                return $this->parseFile($file, $parser);
-                break;
-            default:
-                throw new KurogoConfigurationException("Unknown parse mode");
-        }
-    }
-    
     /**
      * Returns a unix timestamp to use for the cache file. Return null to use the current time. Subclasses
      * can override this method to use a timestamp based on the returning data if appropriate.
@@ -377,22 +301,6 @@ abstract class ExternalDataController {
     }
 
     /**
-     * Sets the target encoding of the result. Defaults to utf-8.
-     * @param string
-     */
-    public function setEncoding($encoding) {
-        $this->parser->setEncoding($encoding);
-    }
-
-    /**
-     * Returns the target encoding of the result.
-     * @return string. Default is utf-8
-     */
-    public function getEncoding() {
-        return $this->parser->getEncoding();
-    }
-    
-    /**
      * Utility function to return a subset of items. Essentially is a robust version of array_slice.
      * @param array items
      * @param int $start 0 indexed value to start
@@ -440,6 +348,9 @@ abstract class ExternalDataController {
      */
     public function items($start=0, $limit=null) {
         $items = $this->getParsedData();
+        var_dump($items);
+        var_dump("k");
+        exit;
         return $this->limitItems($items,$start, $limit);
     }
     

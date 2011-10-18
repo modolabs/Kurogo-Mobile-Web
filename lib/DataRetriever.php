@@ -8,6 +8,8 @@
  * @package ExternalData
  */
 abstract class DataRetriever {
+    protected $parser;
+    protected $DEFAULT_PARSER_CLASS = 'PassthroughDataParser';
 
     abstract public function retrieveData();
     abstract public function getCacheKey();
@@ -22,12 +24,18 @@ abstract class DataRetriever {
     public function getDataController() {
         return $this->dataController;
     }
+
+    public function init($args) {
+        // use a parser class if set, otherwise use the default parser class from the controller
+        $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
+        $this->parser = DataParser::factory($args['PARSER_CLASS'], $args);
+    }
     
     public static function factory($retrieverClass, $args) {
         Kurogo::log(LOG_DEBUG, "Initializing DataRetriever $retrieverClass", "data");
         if (!class_exists($retrieverClass)) {
             throw new KurogoConfigurationException("Parser class $retrieverClass not defined");
-        } 
+        }
         
         $retriever = new $retrieverClass;
         

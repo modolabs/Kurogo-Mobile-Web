@@ -8,17 +8,14 @@
   * @package ExternalData
   * @subpackage RSS
   */
-class RSSDataController extends ExternalDataController
-{
+class RSSDataController extends ExternalDataController {
     protected $DEFAULT_PARSER_CLASS='RSSDataParser';
     protected $items;
     protected $contentFilter;
     protected $cacheFolder = 'RSS';
 
-    public function addFilter($var, $value)
-    {
-        switch ($var)
-        {
+    public function addFilter($var, $value) {
+        switch ($var) {
             case 'search': 
             //sub classes should override this if there is a more direct way to search. Default implementation is to iterate through each item
                 $this->contentFilter = $value;
@@ -28,8 +25,7 @@ class RSSDataController extends ExternalDataController
         }
     }
     
-    public function getItem($id)
-    {
+    public function getItem($id) {
         if (!$id) {
             return null;
         }
@@ -45,15 +41,13 @@ class RSSDataController extends ExternalDataController
         return null;
     }
 
-    protected function clearInternalCache()
-    {
+    protected function clearInternalCache() {
         $this->items = null;
         $this->parser->clearInternalCache();
         parent::clearInternalCache();
     }
 
-    public function items($start=0,$limit=null)
-    {
+    public function items($start = 0,$limit = null) {
         if (!$this->items) {
             $this->items = $this->getParsedData();
         }
