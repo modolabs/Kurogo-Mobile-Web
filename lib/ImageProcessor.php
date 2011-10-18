@@ -33,7 +33,7 @@ class ImageProcessor
         }
        
         if (is_null($imageType)) {
-            $imageType = $this->imageType;
+            $imageType = $this->imagetype;
         } else {
             switch ($imageType)
             {
@@ -54,8 +54,8 @@ class ImageProcessor
         }
         $width = $boundingBox[0]; $height = $boundingBox[1];
         
-        if ($this->width == $width && $this->height == $height && $imageType == $this->imageType) {
-            return copy($this->file, $file) ? true : new KurogoError(1, "Error copying", "Error saving file");
+        if ($this->width == $width && $this->height == $height && $imageType == $this->imagetype) {
+            return copy($this->fileName, $file) ? true : new KurogoError(1, "Error copying", "Error saving file");
         } 
         
         if (!function_exists('gd_info')) {
