@@ -49,7 +49,9 @@ class RSSDataController extends ExternalDataController {
 
     public function items($start = 0,$limit = null) {
         if (!$this->items) {
-            $this->items = $this->getParsedData();
+            // changed from DataRetrieve::getParsedData to ExternalDataController::getData
+            // this function will include cache functions
+            $this->items = $this->getData();
         }
         
         $items = $this->items;

@@ -9,6 +9,7 @@
  * Handles retrieval, caching and parsing of data. 
  * @package ExternalData
  */
+Kurogo::includePackage("DataController");
  
 abstract class ExternalDataController {
     
@@ -139,9 +140,6 @@ abstract class ExternalDataController {
         }
     }
     
-    public function getResponse() {
-        return $this->retriever->getResponse();
-    }
     /**
      * Public factory method. This is the designated way to instantiated data controllers. Takes a string
      * for the classname to load and an array of arguments. Subclasses should generally not override this
@@ -201,9 +199,10 @@ abstract class ExternalDataController {
     protected function getCacheData() {
         $cache = $this->getCache();
         $data = $cache->read($this->cacheFilename());
-        if ($response = @unserialize($data)) {
+        if ($result = @unserialize($data)) {
+            return $result;
             //$this->response = $response;
-            return $response->getResponse();
+            //return $response->getResponse();
         }
         return null;
     }
@@ -276,10 +275,13 @@ abstract class ExternalDataController {
                 //Kurogo::log(LOG_DEBUG, "Using cache for $url", 'data');
                 $data = $this->getCacheData();
             } else {
-                if ($data = $this->retriever->retrieveData()) {
-                    if ($this->getResponse()) {
-                        $this->writeCache(serialize($this->getResponse()));
-                    }
+                if ($data = $this->retriever->getParsedData()) {
+                    //if ($this->getResponse()) {
+                        //$this->writeCache(serialize($this->getResponse()));
+                    //}
+                    // why the response was cached not the final result?
+                    // by jeffery
+                    $this->writeCache(serialize($data));
                 } elseif ($this->useStaleCache) {
                     // return stale cache if the data is unavailable
                     //Kurogo::log(LOG_DEBUG, "Using stale cache for $url", 'data');
@@ -287,7 +289,7 @@ abstract class ExternalDataController {
                 }
             }
         } else {
-            $data = $this->retriever->retrieveData();
+            $data = $this->retriever->getParsedData();
         }
         return $data;
     }
@@ -347,10 +349,7 @@ abstract class ExternalDataController {
      * @limit int $limit number of items to return
      */
     public function items($start=0, $limit=null) {
-        $items = $this->getParsedData();
-        var_dump($items);
-        var_dump("k");
-        exit;
+        $items = $this->getData();
         return $this->limitItems($items,$start, $limit);
     }
     
