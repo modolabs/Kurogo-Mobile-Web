@@ -113,6 +113,16 @@ class KurogoStats {
         return $time;
     }
     
+    private static function listSources() {
+        static $tables;
+        
+        if (!$tables) {
+            $conn = self::connection();
+            $tables = $conn->listSources();
+        }
+        return $tables;
+    }
+    
     private static function getStatsTables($chartData) {
         $tableSharding = Kurogo::getOptionalSiteVar('KUROGO_STATS_SHARDING_TYPE', self::$tableSharding);
         $tableName = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
@@ -125,8 +135,8 @@ class KurogoStats {
         
         //parse all tables of databases
         $timeForTables = array();
-        $conn = self::connection();
-        if ($allTables = $conn->listSources()) {
+        //$conn = self::connection();
+        if ($allTables = self::listSources()) {
             foreach ($allTables as $key => $table) {
                 if (preg_match('/^'.preg_quote($tableName, '/').'_(.*)$/is', $table, $matches)) {
                     if (isset($matches[1]) && $matches[1]) {
@@ -180,7 +190,6 @@ class KurogoStats {
             
             return '(' . implode(' UNION ALL ', $tablesString) . ') AS kurogo_stats';
         }
-
     }
     
     public static function logView($service, $id, $page, $data, $dataLabel, $size=0) {
@@ -255,9 +264,42 @@ class KurogoStats {
         return $result;
     }
 
-    private static function createStatsTables($table) {
-        //$table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+    private static function createSQLForMysql($table) {
         $createSQL = "CREATE TABLE $table (
+                id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+                timestamp int(11),
+                date datetime,
+                service char(3),
+                site char(32),
+                requestURI varchar(256),
+                referrer varchar(512),
+                referredSite bool,
+                referredModule bool,
+                userAgent varchar(256),
+                ip varchar(16),
+                user varchar(64),
+                authority varchar(32),
+                visitID char(32),
+                pagetype varchar(16),
+                platform varchar(16),
+                moduleID varchar(32),
+                page varchar(32),
+                data varchar(256),
+                dataLabel varchar(256),
+                size int(11),
+                elapsed int(11),
+                PRIMARY KEY (`id`),
+                KEY `service` (`service`),
+                KEY `moduleID` (`moduleID`),
+                KEY `visitID` (`visitID`),
+                KEY `timestamp` (`timestamp`)
+            )";
+        return array($createSQL);
+    }
+    
+    private static function createSQLForSqlite($table) {
+        $createSQL = "CREATE TABLE $table (
+                id integer PRIMARY KEY autoincrement,
                 timestamp int(11),
                 date datetime,
                 service char(3),
@@ -280,11 +322,38 @@ class KurogoStats {
                 size int(11),
                 elapsed int(11)
             )";
-        
+        $createIndex = array(
+            "CREATE INDEX key_service ON $table (service)",
+            "CREATE INDEX key_moduleID ON $table (moduleID)",
+            "CREATE INDEX key_visitID ON $table (visitID)",
+            "CREATE INDEX key_timestamp ON $table (timestamp)",
+        );
+        array_unshift($createIndex, $createSQL);
+        return $createIndex;
+    }
+    
+    private static function createStatsTables($table) {
+        //$table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
+        $createSQL = array();
+        $conn = self::connection();
+        switch($conn->getDBType()) {
+            case 'sqlite':
+                $createSQL = self::createSQLForSqlite($table);
+                break;
+            case 'mysql':
+                $createSQL = self::createSQLForMysql($table);
+                break;
+            default:
+                throw new Exception("Stats module do not support " . $conn->getDBType());
+        }
+
         $checkSql = "SELECT 1 FROM $table";
         $conn = self::connection();
         if (!$result = $conn->query($checkSql, array(), db::IGNORE_ERRORS)) {
-            return $conn->query($createSQL);
+            foreach ($createSQL as $sql) {
+                $conn->query($sql);
+            }
+            //return $conn->query($createSQL);
         }        
         
         return true;
@@ -410,6 +479,7 @@ class KurogoStats {
                 return 0;
             }
         }
+
         $sql = "SELECT " . implode(',', $fields) . " FROM " . $tables;
         $sql .= $filters ? " WHERE " . implode(' AND ', $filters) : '';
         $sql .= $group ? " GROUP BY " . implode(', ', $group) : '';
@@ -431,9 +501,7 @@ class KurogoStats {
 
         //query 
 		$conn = self::connection();
-		
         $data = $conn->query($sql, $params);
-        
         while ($row = $data->fetch()) {
             if ($groupString && isset($row[$groupString])) {
                 if ($groupString=='data') {
