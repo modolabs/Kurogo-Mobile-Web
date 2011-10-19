@@ -23,15 +23,11 @@ class MemcacheCache extends KurogoCache {
 			$port = $args['PORT'];
 		}
 		if(!isset($args['PERSISTENT'])) {
-			$persistent = true;
+			$persistent = false;
 		}else {
 			$persistent = (boolean) $args['PERSISTENT'];
 		}
-		if(!isset($args['WEIGHT'])) {
-			$weight = 10;
-		}else {
-			$weight = (int) $args['WEIGHT'];
-		}
+
 		if(!isset($args['TIMEOUT'])) {
 			$timeout = 1;
 		}else {
@@ -48,7 +44,16 @@ class MemcacheCache extends KurogoCache {
 			$this->setDebug(false);
 		}
 
-		$this->mem->addServer($host, $port, $persistent, $weight, $timeout);
+        if ($persistent) {
+            $result = @$this->mem->pconnect($host, $port, $timeout);
+        }  else {
+            $result = @$this->mem->connect($host, $port, $timeout);
+        }
+        
+        if (!$result) {
+            throw new KurogoConfigurationException("Memcache server $host not available");
+        }
+        
 	}
 
 	public function setDebug($debug) {
