@@ -98,16 +98,6 @@ $min_serveOptions['bubbleCssImports'] = true;
 $min_serveOptions['postprocessorRequire'] = LIB_DIR.'/minify.php';
 $min_serveOptions['postprocessor'] = 'minifyPostProcess';
 
-
-$themeVarsFile = THEME_DIR.'/config.ini';
-if (file_exists(THEME_DIR.'/config.ini')) {
-  $max = 0;
-  if (isset($min_serveOptions['lastModifiedTime'])) {
-    $max = $min_serveOptions['lastModifiedTime'];
-  }
-  $min_serveOptions['lastModifiedTime'] = max($max, filemtime(THEME_DIR.'/config.ini'));
-}
-
 /**
  * Maximum age of browser cache in seconds. After this period, the browser
  * will send another conditional GET. Use a longer period for lower traffic

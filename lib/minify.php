@@ -183,8 +183,26 @@ function getMinifyGroupsConfig() {
     $cache->write($minifyConfig, $cacheName);
   }
   
+  // Add minify source object for the theme config.ini
+  if ($ext == 'css') {
+    $themeVarsFile = realpath_exists(THEME_DIR.'/config.ini');
+    if ($themeVarsFile) {
+      $minifyConfig[$key][] = new Minify_Source(array(
+        'id' => 'themeConfigModTimeChecker',
+        'getContentFunc' => 'minifyThemeConfigModTimeCheckerContent',
+        'minifier' => '', // don't compress
+        'contentType' => Minify::TYPE_CSS,
+        'lastModified' => filemtime($themeVarsFile),
+      ));
+    }
+  }
+  
   //error_log(__FUNCTION__."($pagetype-$platform) returning: ".print_r($minifyConfig, true));
   return $minifyConfig;
+}
+
+function minifyThemeConfigModTimeCheckerContent() {
+  return '';
 }
 
 function minifyGetThemeVars() {
