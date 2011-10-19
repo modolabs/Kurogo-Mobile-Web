@@ -18,7 +18,7 @@ class MemcacheCache extends KurogoCache {
 			$host = $args['HOST'];
 		}
 		if(!isset($args['PORT'])) {
-			throw new KurogoConfigurationException("Memcache port is not defined");
+			$port = 11211;
 		}else {
 			$port = $args['PORT'];
 		}
