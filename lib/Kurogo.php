@@ -344,6 +344,11 @@ class Kurogo
     }
     
     public static function getCache($key) {
+        if (!defined('SITE_NAME')) {
+            return false;
+        }
+        
+        $key = SITE_NAME . '-' . $key;
         if ($cacher = Kurogo::sharedInstance()->cacher()) {
             return $cacher->get($key);
         }
@@ -354,13 +359,24 @@ class Kurogo
     }
     
     public static function setCache($key, $value, $ttl = null) {
+        if (!defined('SITE_NAME')) {
+            return false;
+        }
+        
+        $key = SITE_NAME . '-' . $key;
         if ($cacher = Kurogo::sharedInstance()->cacher()) {
-            return $cacher->set(SITE_NAME.'-'.$key, $value, $ttl);
+            Kurogo::log(LOG_DEBUG, "Setting $key to $value", 'cache');
+            return $cacher->set($key, $value, $ttl);
         }
         return false;
     }
     
     public static function deleteCache($key) {
+        if (!defined('SITE_NAME')) {
+            return false;
+        }
+
+        $key = SITE_NAME . '-' . $key;
         if ($cacher = Kurogo::sharedInstance()->cacher()) {
             return $cacher->delete($key);
         }
@@ -589,6 +605,9 @@ class Kurogo
                     die();
                 }
             }
+
+            define('SITE_NAME', $site);
+
         } else {
             //make sure active site is set    
             if (!$site = $siteConfig->getVar('ACTIVE_SITE')) {
@@ -602,16 +621,19 @@ class Kurogo
                 die("FATAL ERROR: Site Directory ". $siteConfig->getVar('SITE_DIR') . " not found for site " . $site);
             }
             
+            define('SITE_NAME', $site);
             if (PHP_SAPI != 'cli') {
     
                 //
                 // Get URL base
                 //
+                $saveCache = true;
                 if ($urlBase = $siteConfig->getOptionalVar('URL_BASE','','kurogo')) {
                     $urlBase = rtrim($urlBase,'/').'/';
                 } elseif ($urlBase = Kurogo::getCache('URL_BASE')) {
                     //@TODO this won't work yet because the cache hasn't initialized
                     $urlBase = rtrim($urlBase,'/').'/';
+                    $saveCache = false;
                 } else {
                     //extract the path parts from the url
                     $pathParts = array_values(array_filter(explode("/", $_SERVER['REQUEST_URI'])));
@@ -635,7 +657,6 @@ class Kurogo
                 }
             }
         }
-        define('SITE_NAME', $site);
     
         if (PHP_SAPI == 'cli') {
             define('URL_BASE', null);
@@ -645,9 +666,10 @@ class Kurogo
             }
             
             define('URL_BASE', $urlBase);
-    
-            //@TODO this won't work yet because the cache hasn't initialized
-            Kurogo::setCache('URL_BASE', $urlBase);
+
+            if ($saveCache) {    
+                Kurogo::setCache('URL_BASE', $urlBase);
+            }
             Kurogo::log(LOG_DEBUG,"Setting site to $site with a base of $urlBase", 'kurogo');
         
             // Strips out the leading part of the url for sites where 
