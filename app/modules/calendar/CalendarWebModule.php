@@ -27,36 +27,74 @@ class CalendarWebModule extends WebModule {
     array("phrase" => "in the past 30 days",  "offset" => -30)
   );
 
-  protected function getDatesForTimeframe($timeframe) {
-    return $this->getDatesForSearchOption($this->searchOptions[$timeframe]);
-  }
-  
-  protected function getDatesForSearchOption($option) {
-    $start = $end = time();
-    
-    switch ($option['offset']) {
-      case 'term':
-        // TODO
-        break;
-        
-      case 'year':
-        // TODO
-        break;
-        
-      default: // day counts TODO: This is not daylight saving time safe
-        if ($option['offset'] >= 0) {
-          $end = $start + ($option['offset']*DAY_SECONDS);
-        } else {
-          $start = $end + ($option['offset']*DAY_SECONDS);
-        }
-        break;
+  protected function getTitleForSearchOptions($intervalType, $offset, $forward=true) {
+    if ($offset < 0) {
+      $relation = $this->getLocalizedString("SEARCH_RANGE_PREVIOUS");
+      $offset = -$offset;
+    } else {
+      $relation = $this->getLocalizedString("SEARCH_RANGE_NEXT");
     }
 
-    return array (
-      new DateTime(date('Y-m-d H:i:s', $start), $this->timezone), 
-      new DateTime(date('Y-m-d H:i:s', $end  ), $this->timezone),
-    );
+    switch ($intervalType) {
+      case 'day':
+          if ($offset == 1) {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_DAY", $relation);
+          } else {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MULTIDAY", $relation, strval($offset));
+          }
+          break;
+      case 'week':
+          if ($offset == 1) {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_WEEK", $relation);
+          } else {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MULTIWEEK", $relation, strval($offset));
+          }
+          break;
+      case 'month':
+          if ($offset == 1) {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MONTH", $relation);
+          } else {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MULTIMONTH", $relation, strval($offset));
+          }
+          break;
+      case 'year':
+          if ($offset == 1) {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_YEAR", $relation);
+          } else {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MULTIYEAR", $relation, strval($offset));
+          }
+          break;
+    }
+    return $result;
   }
+
+  protected function getDatesForSearchOptions($intervalType, $offset) {
+    $now = time();
+    $day = intval(date('j', $now));
+    $month = intval(date('n', $now));
+    $year = intval(date('Y', $now));
+
+    $startDT = new DateTime();
+    $endDT = new DateTime();
+
+    $dayInterval = $monthInterval = $yearInterval = 0;
+    switch ($intervalType) {
+      case 'day':   $dayInterval = $offset; break;
+      case 'week':  $dayInterval = $offset * 7; break;
+      case 'month': $monthInterval = $offset; break;
+      case 'year':  $yearInterval = $offset; break;
+    }
+
+    if ($offset >= 0) { // searching future events
+      $startDT->setDate($year, $month, $day);
+      $endDT->setDate($year + $yearInterval, $month + $monthInterval, $day + $dayInterval);
+    } else {
+      $startDT->setDate($year + $yearInterval, $month + $monthInterval, $day + $dayInterval);
+      $endDT->setDate($year, $month, $day);
+    }
+
+    return array($startDT, $endDT);
+  }  
     
   protected function timeText($event, $timeOnly=false) {
     if ($timeOnly) {
@@ -190,9 +228,12 @@ class CalendarWebModule extends WebModule {
         $feed     = $this->getFeed($calendar, $type);
         
         if (isset($options['timeframe'])) {
-            list($start, $end) = $this->getDatesForTimeFrame($options['timeframe']);
-            $options['start'] = $start;
-            $options['end'] = $end;
+          $searchRanges = $this->getModuleSections('searchranges');
+          $selectedRange = $searchRanges[$options['timeframe']];
+          list($start, $end) = $this->getDatesForSearchOptions($selectedRange['type'], $selectedRange['offset']);
+
+          $options['start'] = $start;
+          $options['end'] = $end;
         }
         
         if (isset($options['start'])) {
@@ -450,11 +491,18 @@ class CalendarWebModule extends WebModule {
             $this->assign('resources', $resources);
         }
 
+        $searchOptions = array();
+        $searchRanges = $this->getModuleSections('searchranges');
+        foreach ($searchRanges as $rangeConfig) {
+          $searchOptions[] = array(
+            'phrase' => $this->getTitleForSearchOptions($rangeConfig['type'], $rangeConfig['offset']));
+        }
+
         $this->loadPageConfigFile('index','calendarPages');
         $this->assign('today',         mktime(0,0,0));
         $this->assign('dateFormat', $this->getLocalizedString("LONG_DATE_FORMAT"));
         $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
-        $this->assign('searchOptions', $this->searchOptions);
+        $this->assign('searchOptions', $searchOptions);
         $this->assign('feeds',  $this->getFeedsByType());
         break;
       
