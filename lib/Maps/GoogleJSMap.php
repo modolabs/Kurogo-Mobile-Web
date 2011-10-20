@@ -200,6 +200,7 @@ JS;
         }
         $template = $this->prepareJavascriptTemplate('GoogleJSMapHeader');
         $template->setValues(array(
+            '___FULL_URL_PREFIX___' => FULL_URL_PREFIX,
             '___INITIAL_LATITUDE___' => $center['lat'],
             '___INITIAL_LONGITUDE___' => $center['lon'],
             '___MAPELEMENT___' => $this->mapElement,
