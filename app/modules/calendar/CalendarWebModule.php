@@ -109,17 +109,14 @@ class CalendarWebModule extends WebModule {
     }
   }
 
-  protected function ucname($name) {
+  // TODO: this appears to be a harvard relic
+  // this kind of formatting should be done downstream, not here
+  protected function formatTitle($name) {
     $new_words = array();
-    foreach(explode(' ', $name) as $word) {
-      $new_word = array();
-      foreach(explode('/', $word) as $sub_word) {
-        $new_word[] = ucwords($sub_word);
-      }
-      $new_word = implode('/', $new_word);
-      $new_words[] = $new_word;
+    foreach(explode('/', $name) as $word) {
+      $new_words[] = ucwords($word);
     } 
-    return implode(' ', $new_words);
+    return implode('/', $new_words);
   }
   
   protected function valueForType($type, $value) {
@@ -150,7 +147,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'category':
-        $valueForType = $this->ucname($value);
+        $valueForType = $this->formatTitle($value);
         break;
     }
     
@@ -216,10 +213,11 @@ class CalendarWebModule extends WebModule {
   }
   
   protected function categoryURL($category, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('category', array(
-      'catid'   => is_array($category) ? $category['catid'] : $category->get_cat_id(),
-      'name' => is_array($category) ? $category['name']  : $this->ucname($category->get_name()),
-    ), $addBreadcrumb);
+    $options = array();
+    if ($addBreadcrumb) {
+      $options['addBreadcrumb'] = true;
+    }
+    return $this->linkForCategory($category, $options);
   }
   
     public function searchItems($searchTerms, $limit=null, $options=null) {  
@@ -252,38 +250,62 @@ class CalendarWebModule extends WebModule {
         return $feed->items();
     }
 
+    public function linkForCategory($category, $data=null) {
+      $addBreadcrumb = isset($data['addBreadcrumb']) ? $data['addBreadcrumb'] : true;
+
+      if (is_array($category)) {
+        $title = $category['name'];
+        $catid = $category['catid'];
+      } elseif ($category instanceof CalendarCategory) {
+        $title = $category->getName();
+        $catid = $category->getId();
+      } else {
+        // downstream compatibility
+        // these methods are implemented by harvard's Harvard_Event_Category class
+        $title = $category->get_name();
+        $catid = $category->get_cat_id();
+      }
+      $options = array('name' => $title, 'catid' => $catid);
+      $url = $this->buildBreadcrumbURL('category', $options, $addBreadcrumb);
+
+      $title = $this->formatTitle($title);
+      return array(
+        'title' => $title,
+        'url' => $url,
+        );
+    }
+
     public function linkforItem(KurogoObject $event, $data=null) {
-    
-        $subtitle = $this->timeText($event);
-        if ($briefLocation = $event->get_location()) {
-          $subtitle .= " | $briefLocation";
-        }
-        
-        $options = array(
-          'id'   => $event->get_uid(),
-          'time' => $event->get_start()
-        );
-        
-        foreach (array('type','calendar','searchTerms','timeframe','catid','filter') as $field) {
-            if (isset($data[$field])) {
-                $options[$field] = $data[$field];
-            }
-        }
-        
-        $addBreadcrumb = isset($data['addBreadcrumb']) ? $data['addBreadcrumb'] : true;
-        $noBreadcrumbs = isset($data['noBreadcrumbs']) ? $data['noBreadcrumbs'] : false;
+      $subtitle = $this->timeText($event);
+      if ($briefLocation = $event->get_location()) {
+        $subtitle .= " | $briefLocation";
+      }
+      
+      $options = array(
+        'id'   => $event->get_uid(),
+        'time' => $event->get_start()
+      );
+      
+      foreach (array('type','calendar','searchTerms','timeframe','catid','filter') as $field) {
+          if (isset($data[$field])) {
+              $options[$field] = $data[$field];
+          }
+      }
 
-        if ($noBreadcrumbs) {
-          $url = $this->buildURL('detail', $options);
-        } else {
-          $url = $this->buildBreadcrumbURL('detail', $options, $addBreadcrumb);
-        }
+      $addBreadcrumb = isset($data['addBreadcrumb']) ? $data['addBreadcrumb'] : true;
+      $noBreadcrumbs = isset($data['noBreadcrumbs']) ? $data['noBreadcrumbs'] : false;
 
-        return array(
-          'url'       => $url,
-          'title'     => $event->get_summary(),
-          'subtitle'  => $subtitle
-        );
+      if ($noBreadcrumbs) {
+        $url = $this->buildURL('detail', $options);
+      } else {
+        $url = $this->buildBreadcrumbURL('detail', $options, $addBreadcrumb);
+      }
+
+      return array(
+        'url'       => $url,
+        'title'     => $event->get_summary(),
+        'subtitle'  => $subtitle
+      );
     }
 
     protected function getFeedsByType() {  
@@ -508,10 +530,7 @@ class CalendarWebModule extends WebModule {
         $categoryObjects = $feed->getEventCategories();
 
         foreach ($categoryObjects as $categoryObject) {
-          $categories[] = array(
-            'title'   => $this->ucname($categoryObject->get_name()),
-            'url'     => $this->categoryURL($categoryObject),
-          );
+          $categories[] = $this->linkForCategory($categoryObject);
         }
         
         $this->assign('categories', $categories);
@@ -529,7 +548,8 @@ class CalendarWebModule extends WebModule {
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
 
-        $catname = $this->ucname($name);
+        // wouldn't this already be formatted from the url building stage?
+        $catname = $this->formatTitle($name);
         $this->assign('category', $catname);
         $this->setLogData($catid, $catname);
         
