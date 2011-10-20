@@ -13,7 +13,6 @@ Kurogo::includePackage("DataController");
  
 abstract class ExternalDataController {
     
-    protected $DEFAULT_PARSER_CLASS='PassthroughDataParser';
     protected $DEFAULT_RETRIEVE_CLASS='URLDataRetriever';
     protected $initArgs=array();
     protected $cacheFolder='Data';
@@ -25,13 +24,6 @@ abstract class ExternalDataController {
     protected $useCache=true;
     protected $useStaleCache=true;
     protected $cacheLifetime=900;
-    
-    /**
-     * This method should return a single item based on the id
-     * @param mixed $id the id to retrieve. The value of this id is data dependent.
-	 * @return mixed The return value is data dependent. Subclasses should return false or null if the item could not be found
-     */
-    abstract public function getItem($id);
 
     /**
      * Returns the folder used to store caches. Subclasses should simply set the $cacheFolder property
@@ -92,27 +84,9 @@ abstract class ExternalDataController {
     }
     
     /**
-     * Sets the total number of items in the request. If subclasses override parseData() this method
-     * should be called when the number of items is known. The value is usually set by retrieving the
-     * the value of getTotalItems() from the DataParser.
-     * @param int
-     */
-    public function setTotalItems($totalItems) {
-        $this->totalItems = $totalItems;
-    }
-    
-    /**
-     * Returns the total number of items in the request
-     * @return int
-     */
-    public function getTotalItems() {
-        return $this->totalItems;
-    }
-    
-    /**
      * The initialization function. Sets the common parameters based on the $args. This method is
      * called by the public factory method. Subclasses can override this method, but must call parent::init()
-     * FIRST. Optional parameters include PARSER_CLASS, BASE_URL, TITLE and CACHE_LIFETIME. Arguments
+     * FIRST. Optional parameters include TITLE and CACHE_LIFETIME. Arguments
      * are also passed to the data parser object and the data retieve object
      * @param array $args an associative array of arguments and paramters
      */
@@ -145,7 +119,7 @@ abstract class ExternalDataController {
      * for the classname to load and an array of arguments. Subclasses should generally not override this
      * method, but instead override init() to provide initialization behavior
      * @param string $controllerClass the classname to instantiate
-     * @param array $args an associative array of arguments that get passed to init() and the data parser
+     * @param array $args an associative array of arguments that get passed to init()
      * @return DataController a data controller object
      */
     public static function factory($controllerClass, $args=array()) {
@@ -233,33 +207,6 @@ abstract class ExternalDataController {
     }
     
     /**
-     * Retrieves the data and saves it to a file. 
-     * @return string a file containing the data
-     */
-    public function getDataFile() {
-        $dataFile = $this->cacheFilename() . '-data';
-        $cache = $this->getCache();
-        if ($this->useCache) {
-            if ($cache->isFresh($dataFile)) {
-                $data = $cache->read($dataFile);
-
-            } else {
-                if ($data = $this->getData()) {
-                    $cache->write($data, $dataFile);
-                } elseif ($this->useStaleCache) {
-                    // return stale cache if the data is unavailable
-                    $data = $cache->read($dataFile);
-                }
-            }
-        } else {
-            $data = $this->getData();
-            $cache->write($data, $dataFile);
-        }
-        
-        return $cache->getFullPath($dataFile);
-    }
-    
-    /**
      * Retrieves the data.  The default implementation will use the url returned by the url() 
      * function. If the cache is still fresh than it will return the data saved in the cache,
      * otherwise it will retrieve the data using the retrieveData() method and save the cache.
@@ -275,12 +222,7 @@ abstract class ExternalDataController {
                 //Kurogo::log(LOG_DEBUG, "Using cache for $url", 'data');
                 $data = $this->getCacheData();
             } else {
-                if ($data = $this->retriever->getParsedData()) {
-                    //if ($this->getResponse()) {
-                        //$this->writeCache(serialize($this->getResponse()));
-                    //}
-                    // why the response was cached not the final result?
-                    // by jeffery
+                if ($data = $this->retriever->getData()) {
                     $this->writeCache(serialize($data));
                 } elseif ($this->useStaleCache) {
                     // return stale cache if the data is unavailable
@@ -289,68 +231,17 @@ abstract class ExternalDataController {
                 }
             }
         } else {
-            $data = $this->retriever->getParsedData();
+            $data = $this->retriever->getData();
         }
         return $data;
     }
-    
+
     /**
      * Sets the cache lifetime in seconds. Will be called if the initialization args contains CACHE_LIFETIME
      * @param int seconds to cache results (default for base class is 900 seconds / 15 minutes)
      */
     public function setCacheLifetime($seconds) {
         $this->cacheLifetime = intval($seconds);
-    }
-
-    /**
-     * Utility function to return a subset of items. Essentially is a robust version of array_slice.
-     * @param array items
-     * @param int $start 0 indexed value to start
-     * @param int $limit how many items to return (use null to return all items beginning at $start)
-     * @return array
-     */
-    protected function limitItems($items, $start=0, $limit=null) {
-        $start = intval($start);
-        $limit = is_null($limit) ? null : intval($limit);
-
-        if ($limit && $start % $limit != 0) {
-            $start = floor($start/$limit)*$limit;
-        }
-        
-        if (!is_array($items)) {
-            throw new KurogoDataException("Items list is not an array");
-        }
-        
-        if ($start>0 || !is_null($limit)) {
-            $items = array_slice($items, $start, $limit);
-        }
-        
-        return $items;
-        
-    }
-
-    /**
-     * Returns an item at a particular index
-     * @param int index
-     * @return mixed the item or false if it's not there
-     */
-    public function getItemByIndex($index) {
-        if ($items = $this->items($index,1)) {
-            return current($items); 
-        } else {
-            return false;
-        }
-    }
-    
-    /**
-     * Default implementation of items. Will retrieve the parsed items based on the current settings
-     * and return a filtered list of items
-     * @param int $start 0 based index to start
-     * @limit int $limit number of items to return
-     */
-    public function items($start=0, $limit=null) {
-        $items = $this->getData();
-        return $this->limitItems($items,$start, $limit);
     }
     
     /**

@@ -17,6 +17,9 @@ class URLDataRetriever extends DataRetriever {
     protected $filters=array();
     protected $requestHeaders=array();
     protected $streamContext = null;
+    protected $parser;
+    protected $DEFAULT_PARSER_CLASS = 'PassthroughDataParser';
+    protected $response;
     
     /**
      * Sets the base url for the request. This value will be set automatically if the BASE_URL argument
@@ -62,11 +65,25 @@ class URLDataRetriever extends DataRetriever {
         $this->filters = array();
     }
     
+    /**
+     * Sets the data parser to use for this request. Typically this is set at initialization automatically,
+     * but certain subclasses might need to determine the parser dynamically.
+     * @param DataParser a instantiated DataParser object
+     */
+    public function setParser(DataParser $parser) {
+        $this->parser = $parser;
+    }
+    
     public function init($args) {
-        parent::init($args);
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
         }
+        
+        // use a parser class if set, otherwise use the default parser class from the controller
+        $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
+        // instantiate the parser class and add it to the retriever
+        $parser = DataParser::factory($args['PARSER_CLASS'], $args);
+        $this->setParser($parser);
         
         $this->initStreamContext($args);
     }
@@ -148,9 +165,6 @@ class URLDataRetriever extends DataRetriever {
             $parser = $this->parser;
         }
         $parsedData = $parser->parseData($data);
-        // jeffery
-        // what's the meaning of using setTotalItems?
-        //$this->dataController->setTotalItems($parser->getTotalItems());
         return $parsedData;
     }
 
@@ -166,7 +180,7 @@ class URLDataRetriever extends DataRetriever {
             $parser = $this->parser;
         }
         $parsedData = $parser->parseFile($file);
-        //$this->dataController->setTotalItems($parser->getTotalItems());
+        $this->dataController->setTotalItems($parser->getTotalItems());
         return $parsedData;
     }
     
@@ -183,7 +197,7 @@ class URLDataRetriever extends DataRetriever {
 
         switch ($parser->getParseMode()) {
             case DataParser::PARSE_MODE_STRING:
-                $data = $this->getData();
+                $data = $this->retrieveData();
                 return $this->parseData($data, $parser);
                 break;
         
@@ -194,6 +208,22 @@ class URLDataRetriever extends DataRetriever {
             default:
                 throw new KurogoConfigurationException("Unknown parse mode");
         }
+    }
+    
+    /**
+     * Retrieves the data and saves it to a file. 
+     * @return string a file containing the data
+     */
+    public function getDataFile() {
+        $dataFile = $this->cacheFilename() . '-data';
+        $data = $this->retrieveData();
+        $cache = $this->getCache();
+        $cache->write($data, $dataFile);
+        return $cache->getFullPath($dataFile);
+    }
+
+    public function getData() {
+        return $this->getParsedData();
     }
     
     /**
@@ -212,10 +242,6 @@ class URLDataRetriever extends DataRetriever {
         return $this->parser->getEncoding();
     }
 
-    public function getData() {
-        return $this->retrieveData();
-    }
-
     /**
      * Returns a base filename for the cache file that will be used. The default implementation uses
      * a hash of the value returned from the url
@@ -226,6 +252,14 @@ class URLDataRetriever extends DataRetriever {
             throw new KurogoDataException("URL could not be determined");
         }
         return 'url_' . md5($url);
+    }
+    
+    /**
+     * Returns the a DiskCache object for datacontroller.
+     * @return DiskCache object
+    */
+    protected function getCache() {
+        return $this->getDataController()->getCache();
     }
     
     /**
@@ -254,5 +288,25 @@ class URLDataRetriever extends DataRetriever {
         Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $this->getResponseCode(), strlen($data)), 'url_retriever');
         
         return $data;
+    }
+    
+    public function getResponse() {
+        return $this->response;
+    }
+    
+    public function getResponseHeaders() {
+        return $this->response->getHeaders();
+    }
+
+    public function getResponseStatus() {
+        return $this->response->getStatus();
+    }
+
+    public function getResponseCode() {
+        return $this->response->getCode();
+    }
+
+    public function getResponseHeader($header) {
+        return $this->response->getHeader($header);
     }
 }
