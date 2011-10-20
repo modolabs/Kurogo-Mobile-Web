@@ -17,15 +17,6 @@ class CalendarWebModule extends WebModule {
   protected $id = 'calendar';
   protected $feeds = array();
   protected $timezone;
-  protected $defaultSearchOption = 0;
-
-  protected $searchOptions = array(
-    array("phrase" => "in the next 7 days",   "offset" => 7),
-    array("phrase" => "in the next 15 days",  "offset" => 15),
-    array("phrase" => "in the next 30 days",  "offset" => 30),
-    array("phrase" => "in the past 15 days",  "offset" => -15),
-    array("phrase" => "in the past 30 days",  "offset" => -30)
-  );
 
   protected function getTitleForSearchOptions($intervalType, $offset, $forward=true) {
     if ($offset < 0) {
@@ -66,6 +57,16 @@ class CalendarWebModule extends WebModule {
           break;
     }
     return $result;
+  }
+
+  protected function searchOptions() {
+    $searchOptions = array();
+    $searchRanges = $this->getModuleSections('searchranges');
+    foreach ($searchRanges as $rangeConfig) {
+      $searchOptions[] = array(
+        'phrase' => $this->getTitleForSearchOptions($rangeConfig['type'], $rangeConfig['offset']));
+    }
+    return $searchOptions;
   }
 
   protected function getDatesForSearchOptions($intervalType, $offset) {
@@ -491,18 +492,11 @@ class CalendarWebModule extends WebModule {
             $this->assign('resources', $resources);
         }
 
-        $searchOptions = array();
-        $searchRanges = $this->getModuleSections('searchranges');
-        foreach ($searchRanges as $rangeConfig) {
-          $searchOptions[] = array(
-            'phrase' => $this->getTitleForSearchOptions($rangeConfig['type'], $rangeConfig['offset']));
-        }
-
         $this->loadPageConfigFile('index','calendarPages');
         $this->assign('today',         mktime(0,0,0));
         $this->assign('dateFormat', $this->getLocalizedString("LONG_DATE_FORMAT"));
         $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
-        $this->assign('searchOptions', $searchOptions);
+        $this->assign('searchOptions', $this->searchOptions());
         $this->assign('feeds',  $this->getFeedsByType());
         break;
       
@@ -781,7 +775,7 @@ class CalendarWebModule extends WebModule {
           $this->assign('events'        , $events);        
           $this->assign('searchTerms'   , $searchTerms);        
           $this->assign('selectedOption', $timeframe);
-          $this->assign('searchOptions' , $this->searchOptions);
+          $this->assign('searchOptions' , $this->searchOptions());
           $this->assign('feeds'         , $this->getFeedsByType());
           $this->assign('searchCalendar', $searchCalendar);
 
