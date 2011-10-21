@@ -52,6 +52,7 @@ class SOAPDataRetriever extends DataRetriever {
 	public function getSoapClient() {
 		if (!$this->soapClient) {
 		    try {
+                $this->soapOptions = array("login" => "brent.wang", "password" => "symbio");
 		        $this->soapClient = new SoapClient($this->wsdl, $this->soapOptions);
 		        if ($functions = $this->soapClient->__getFunctions()) {
 		            $this->parseSoapFunctions($functions);
@@ -139,7 +140,7 @@ class SOAPDataRetriever extends DataRetriever {
         if (isset($args['apiParams'])) {
             $this->setSoapApiParams($args['apiParams']);
         }
-        
+
         $this->initSoapOptions($args);
     }
 
@@ -160,6 +161,8 @@ class SOAPDataRetriever extends DataRetriever {
              'soap_version' => array(SOAP_1_1, SOAP_1_2),
              'encoding' => '',
              'exceptions' => false,
+             'login' => '',
+             'password' => '',
              'proxy_host' => '',
              'proxy_port' => '',
              'proxy_login' => '',
@@ -203,6 +206,10 @@ class SOAPDataRetriever extends DataRetriever {
         return 'soap_' . md5($wsdl. $api . var_export($this->getSoapApiParams(), true));
     }
 
+    public function getData() {
+        return $this->retrieveData();
+    }
+    
     public function retrieveData() {
 
         Kurogo::log(LOG_DEBUG, sprintf("Retrieving soap api of wsdl:%s,api:%s,params:%s", $this->getWSDL(), $this->getSoapApi(), var_export($this->getSoapApiParams(), true)), 'soap_retriever');
@@ -212,13 +219,14 @@ class SOAPDataRetriever extends DataRetriever {
             $lastResponseHeaders = array();
         }
 
+        /*
         $this->response = new SOAPDataResponse();
         $this->response->setRequest($this->wsdl, $this->soapOptions, $this->soapApi, $this->soapApiParams, $this->cookies, $this->location, $this->soapFunctions, $this->soapHeaders);
 
         $this->response->setResponse($data, $lastResponseHeaders);
         
         Kurogo::log(LOG_DEBUG, sprintf("Returned status %d", $this->getResponseCode()), 'soap_retriever');
-        
+        */
         return $data;
     }
     
@@ -249,7 +257,7 @@ class SOAPDataRetriever extends DataRetriever {
         if (in_array($method, $this->getSoapFunctions()) && count($arguments) <= 1) {
             $this->setSoapApi($method);
             $this->setSoapApiParams(current($arguments));
-            return $this->getDataController()->getParsedData();
+            return $this->getData();
         } else {
             throw new KurogoDataException("Call of unknown function '$method'.");
         }

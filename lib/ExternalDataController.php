@@ -59,6 +59,9 @@ abstract class ExternalDataController {
         $this->retriever = $retriever;
     }
     
+    public function getRetriever() {
+        return $this->retriever;
+    }
     /**
      * Turns on or off using cache. You could also set cacheLifetime to 0
      * @param bool
