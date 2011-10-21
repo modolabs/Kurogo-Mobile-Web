@@ -159,7 +159,8 @@ function exceptionHandlerForError($exception) {
     array_unshift($bt, array('line'=>$exception->getLine(), 'file'=>$exception->getFile()));
     Kurogo::log(LOG_ALERT, "A ". get_class($exception) . " has occured: " . $exception->getMessage(), "exception", $bt);
     $error = print_r($exception, TRUE);
-    die("There was a serious error: $error");
+    header('Content-type: text/plain');
+    die("There was a serious error: " . $exception->getMessage());
 }
 
 function exceptionHandlerForDevelopment($exception) {
@@ -225,3 +226,5 @@ function exceptionHandlerForAPI($exception) {
     $response->display();
     exit();
 }
+
+set_exception_handler('exceptionHandlerForError');
