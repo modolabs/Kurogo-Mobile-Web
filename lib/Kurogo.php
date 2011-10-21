@@ -353,7 +353,7 @@ class Kurogo
             return $cacher->get($key);
         }
 
-        // in the early stages the cacher is not available. Ideally this should only be for kurogo.ini and the cacher class
+        // in the early stages the cacher is not available.
         // Kurogo::log(LOG_DEBUG, "Cacher not available for $key", 'cache');
         return false;
     }
