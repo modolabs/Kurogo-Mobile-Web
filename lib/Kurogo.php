@@ -480,6 +480,30 @@ class Kurogo
         $GLOBALS['deviceClassifier'] = $this->deviceClassifier;
     }
     
+    public static function encrypt($string, $key=SITE_KEY) {
+        if (strlen($string)==0) {
+            return $string;
+        }
+        
+        if (!function_exists('mcrypt_encrypt')) {
+            throw new KurogoException("mcrypt functions not available");
+        }
+        
+        return base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, md5($key), $string, MCRYPT_MODE_CBC, md5(md5($key))));
+    }
+
+    public static function decrypt($encrypted, $key=SITE_KEY) {
+        if (strlen($encrypted)==0) {
+            return $encrypted;
+        }
+
+        if (!function_exists('mcrypt_decrypt')) {
+            throw new KurogoException("mcrypt functions not available");
+        }
+        
+        return rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, md5($key), base64_decode($encrypted), MCRYPT_MODE_CBC, md5(md5($key))), "\0");    
+    }
+    
     public function getLanguages() {
     	return $this->languages;
     }
