@@ -17,6 +17,8 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
     protected $title;
     protected $category;
 
+    protected $lastParseSignature = null;
+
     // whitelists
     protected static $startElements=array(
         'DOCUMENT', 'FOLDER',
@@ -181,9 +183,16 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
         }
     }
 
+    // avoid parsing the same data twice
     public function parseData($contents) {
-        $this->features = array();
-        return parent::parseData($contents);
+        $newSignature = strlen($contents);
+        if (!$this->features || $newSignature != $this->lastParseSignature) {
+            $this->features = array();
+            $this->folders = array();
+            $this->lastParseSignature = $newSignature;
+            return parent::parseData($contents);
+        }
+        return $this->features;
     }
 }
 
