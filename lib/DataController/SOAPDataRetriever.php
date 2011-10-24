@@ -53,8 +53,8 @@ class SOAPDataRetriever extends DataRetriever {
 		if (!$this->soapClient) {
 		    try {
                 $this->soapOptions = array("login" => "brent.wang", "password" => "symbio");
-		        $this->soapClient = new SoapClient($this->wsdl, $this->soapOptions);
-		        if ($functions = $this->soapClient->__getFunctions()) {
+		        $this->soapClient = new KurogoSoapClient($this->wsdl, $this->soapOptions);
+		        if ($functions = $this->soapClient->    ()) {
 		            $this->parseSoapFunctions($functions);
 		        }
 		        //Sets the location of the Web service to use
