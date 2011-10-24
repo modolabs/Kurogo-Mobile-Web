@@ -165,6 +165,73 @@ Sample *response* ::
     }
 
 
+========
+detail
+========
+
+:kbd:`/rest/map/detail?id=1&category=05bc9c448&references=1e61bad385:boston&v=1
+
+Parameters:
+
+* *id*: placemark ID
+* *category*: ID of parent category, returned either by the *index* API or a 
+  previous request to *category*
+* *references*: if requesting subcategories of a subcategory, this is a 
+  colon-separated list of category IDs of all this subcategory's ancestors.
+
+Sample *response* ::
+
+    {
+        "id": "0",
+        "title": "Watson Hall",
+        "subtitle": null,
+        "address": "88 Main Street",
+        "details": {
+            "description": "some descriptive string...",
+            "custom_field": "some custom value",
+            "number of floor plans": "6"
+        },
+        "lat": 43.083768777778,
+        "lon": -77.669150888889,
+        "geometryType": "polygon",
+        "geometry": [
+            [
+                {
+                    "lon": -77.668855,
+                    "lat": 43.083847,
+                    "altitude": 0
+                },
+                {
+                    "lon": -77.669024,
+                    "lat": 43.083853,
+                    "altitude": 0
+                },
+                {
+                    "lon": -77.668855,
+                    "lat": 43.083847,
+                    "altitude": 0
+                }
+                // ...
+            ]
+        ]
+    }
+
+Contents:
+
+* *id* - placemark ID within the requested category.
+* *title* - placemark display title.
+* *subtitle* - placemark display subtitle. May be null.
+* *address* - placemark street address. May be null.
+* *details* - a dictionary of arbitrary string fields and values describing the
+  placemark's attributes.
+* *lat* - latitude.
+* *lon* - longitude.
+* *geometryType* - "point", "polyline", or "polygon".
+* *geometry* - coordinates of the placemark's geometry. If *geometryType* is
+  "point", the coordinates will be a dictionary containing "lat" and "lon"
+  keys. If *geometryType* is "polyline", the coordinates will be an array of
+  such dictionaries. If *geometryType* is "polygon", the coordinates will be
+  an array of arrays of point dictionaries, from outermost to innermost rings.
 
 =============
 projectPoint
