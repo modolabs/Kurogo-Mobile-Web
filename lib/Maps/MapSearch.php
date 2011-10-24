@@ -53,8 +53,8 @@ class MapSearch {
                     while(isset($resultsByDistance[$distance])) {
                         $distance++;
                     }
+                    $resultsByDistance[$distance] = $mapFeature;
                 }
-                $resultsByDistance[$distance] = $mapFeature;
 
             } catch (KurogoDataServerException $e) {
                 Kurogo::log(LOG_WARNING, 'encountered KurogoDataServerException for feed config: ' . print_r($feedData, true) . $e->getMessage(), 'maps');

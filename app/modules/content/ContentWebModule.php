@@ -58,7 +58,7 @@ class ContentWebModule extends WebModule {
         );
     }
 
-	private function getDataForGroup($group) {
+	protected function getDataForGroup($group) {
         if (!$this->feedGroups) {
              $this->feedGroups = $this->getFeedGroups();
         }

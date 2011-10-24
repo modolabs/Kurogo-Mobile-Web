@@ -214,7 +214,7 @@ Used on mobile web by compliant browsers to zoom and pan static maps.
 
 :kbd:`/rest/map/staticImageURL?baseURL=<base-url>&mapClass=<map-class>&query=<query>&overrides=<overrides>&zoom=<zoom>`
 
-:kbd:`/rest/map/staticImageURL?baseURL=<base-url>&mapClass=<map-class>&query=<query>&scroll=<scroll>
+:kbd:`/rest/map/staticImageURL?baseURL=<base-url>&mapClass=<map-class>&query=<query>&scroll=<scroll>`
 
 Parameters
 

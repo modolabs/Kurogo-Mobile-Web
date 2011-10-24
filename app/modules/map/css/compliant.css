@@ -49,8 +49,7 @@
 
 #mapzoom {
 	position: relative;
-	left: 6px;
-	right: 6px;
+	height: 50px;
 }
 
 #mapzoom a {
@@ -58,7 +57,7 @@
 	position: absolute;
 	width: 40px;
 	height: 34px;
-	margin-top: 16px;
+	margin-top: 8px;
 	background-image: url(/modules/map/images/buttons.png);
 	background-repeat: no-repeat;
 }

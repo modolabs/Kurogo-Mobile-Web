@@ -1,3 +1,3 @@
 function moduleInit() {
-    setupVideoSplitView();
+    setupSplitViewForListAndDetail('videoHeader', 'videos', 'videoDetailWrapper', 'videoDetail');
 }

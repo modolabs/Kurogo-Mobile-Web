@@ -1,4 +1,5 @@
-1.3 (Yet to be released)
+
+1.3 (Oct 13, 2011)
 * IMPORTANT NOTE: After upgrading to 1.3, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 
 * The REST API has now reached 1.0 status
 * Kurogo is now localized. version 1.3 only includes English values. See user guide for more information on localization
@@ -6,6 +7,7 @@
 * An updated logging facility has been created to include logging messages in Kurogo. Please see the documentation for more information.
 * The internal statistics engine has been overhauled. Kurogo requires a database to log page views. See the documentation for more information.
 * The Map module has been significantly updated. Support for directions, arbitrary addresses and UI improvements among other improvements
+* The internal device detection system now uses a JSON formatted file. The SQLite database has been deprecated.
 * includePackage now has a "subpackage" parameter for further organization
 * Added formButton and formSubmitbutton templates
 * (Calendar) Support for more types of recurring events (Thanks to Adam Franco)
@@ -19,6 +21,19 @@
 * Added suport for Percent Mobile Analytics
 * You can now use a YouTube playlist as a source for video entries
 * Many other minor bug fixes and improvements
+Since 1.3RC1
+* Fixed an issue when using the admin module while being logged in
+* Non standard timezones in calendar feeds are handled better
+* There is now an option to show the distance to nearby points
+* Do not permit stats module when stats is disabled
+* Added support for CAS authentication
+* Various fixes for PHP 5.2
+* Many tablet improvements
+* Ability to use HMAC style password hashes in database auth
+* Fixed an issue with formatting events that are all day events
+* Fixed some issues with device detection patterns
+* You can use LDAP fields (like cn) for fullname
+* Fixed a visual issue with calendar list style
 
 1.2 (July 19)
 * IMPORTANT NOTE: After upgrading to 1.2, please clear your SITE_DIR/cache folder. It is critical to remove at least the minify and smarty folders so they can get rebuilt. 

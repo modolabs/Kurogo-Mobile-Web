@@ -475,7 +475,14 @@ abstract class WebModule extends Module {
         $d = dir(SITE_DIR . "/themes");
         while (false !== ($entry = $d->read())) {
             if ($entry[0]!='.' && is_dir(SITE_DIR . "/themes/$entry")) {
-                $themes[$entry] = $entry;
+                
+                $configFile = SITE_DIR . "/themes/$entry/config.ini";
+                try {
+                    $config = ConfigFile::factory($configFile, 'file');
+                    $themes[$entry] = $config->getOptionalVar('theme_name', $entry, 'general');
+                    
+                } catch (KurogoException $e) {
+                }
             }
         }
         $d->close();
@@ -560,14 +567,6 @@ abstract class WebModule extends Module {
   //
   // Module list control functions
   //
-  protected function getModuleNavigationConfig() {
-    static $moduleNavConfig;
-    if (!$moduleNavConfig) {
-        $moduleNavConfig = ModuleConfigFile::factory('home', 'module');
-    }
-    
-    return $moduleNavConfig;
-  }
 
   protected function getModuleNavlist() {
     $navModules = $this->getAllModuleNavigationData(self::EXCLUDE_DISABLED_MODULES);
@@ -651,6 +650,9 @@ abstract class WebModule extends Module {
                 if (!$primary) { $classes[] = 'utility'; }
         
                 $imgSuffix = ($this->pagetype == 'tablet' && $selected) ? '-selected' : '';
+
+                //this is fixed for now
+                $modulesThatCannotBeDisabled = array('customize');
     
                 $moduleNavData = array(
                     'type'        => $type,
@@ -658,7 +660,7 @@ abstract class WebModule extends Module {
                     'title'       => $title,
                     'shortTitle'  => $shortTitle,
                     'url'         => "/$moduleID/",
-                    'disableable' => true,
+                    'disableable' => !in_array($moduleID, $modulesThatCannotBeDisabled),
                     'disabled'    => $includeDisabled && in_array($moduleID, $disabledIDs),
                     'img'         => "/modules/home/images/{$moduleID}{$imgSuffix}".$this->imageExt,
                     'class'       => implode(' ', $classes),
@@ -920,14 +922,11 @@ abstract class WebModule extends Module {
     
     protected function generateBookmarkLink() {
         $hasBookmarks = count($this->getBookmarks()) > 0;
-        $bookmarkLink = array();
-        if ($hasBookmarks) {
-            $bookmarkLink = array(array(
-                'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
-                'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
-                ));
-            $this->assign('bookmarkLink', $bookmarkLink);
-        }
+        $bookmarkLink = array(array(
+            'title' => $this->getLocalizedString('BOOKMARK_TITLE'),
+            'url' => $this->buildBreadcrumbURL('bookmarks', $this->args, true),
+        ));
+        $this->assign('bookmarkLink', $bookmarkLink);
         $this->assign('hasBookmarks', $hasBookmarks);
         return $bookmarkLink;
     }    
@@ -1137,7 +1136,26 @@ abstract class WebModule extends Module {
   // Config files
   //
   
+    protected function getThemeVar($key) {
+        $vars = $this->getThemeVars();
+        if (!isset($vars[$key])) {
+            throw new KurogoConfigurationException("Config variable '$key' not set");
+        }
+        
+        return $vars[$key];
+    }
+
+    protected function getOptionalThemeVar($var, $default='') {
+        $vars = $this->getThemeVars();
+        return isset($vars[$var]) ? $vars[$var] : $default;
+    }
+    
     protected function getThemeVars() {
+        static $vars = array();
+        if ($vars) {
+            return $vars;
+        }
+        
         $config = ConfigFile::factory('config', 'theme', ConfigFile::OPTION_CREATE_EMPTY);
         $sections = array(
             'common',
@@ -1145,7 +1163,6 @@ abstract class WebModule extends Module {
             $this->pagetype . '-' . $this->platform
         );
         
-        $vars = array();
         foreach ($sections as $section) {
             if ($sectionVars = $config->getOptionalSection($section)) {
                 $vars = array_merge($vars, $sectionVars);

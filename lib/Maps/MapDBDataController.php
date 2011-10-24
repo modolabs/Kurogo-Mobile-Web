@@ -9,6 +9,8 @@ class MapDBDataController extends MapDataController implements MapFolder
     private $dbParser;
     private $subtitle;
 
+    protected $cacheLifetime = 60;
+
     public function getCategoryId()
     {
         return $this->dbParser->getCategoryId();
@@ -109,9 +111,10 @@ class MapDBDataController extends MapDataController implements MapFolder
     // TODO allow config of searchable fields
     public function search($searchText)
     {
+        return array();
     }
 
-    public function searchByProximity($center, $tolerance, $maxItems)
+    public function searchByProximity($center, $tolerance, $maxItems=null)
     {
         $mapSearch = new MapDBSearch();
         return $mapSearch->searchByProximity($center, $tolerance, $maxItems, $this);

@@ -67,12 +67,18 @@ function createFormSectionListItems(section, sectionData) {
                     if (sectionData.fieldgroups && typeof sectionData.fieldgroups[data.fieldgroup] != 'undefined') {
                         var groupdata = sectionData.fieldgroups[data.fieldgroup];
                         if (!fieldgroups[data.fieldgroup]) {
-                            var fieldgroup = $('<fieldset />');
+                            var fieldgroup = $('<fieldset />').attr('id','fieldgroup_' + data.fieldgroup);
                             fieldgroups[data.fieldgroup] = $('<div class="fieldgroup" />');
                             if (groupdata.label) {
-                                var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>').click(function() {
-                                    fieldgroups[data.fieldgroup].slideToggle();
-                                })
+                                var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>');
+                                
+                                if (groupdata.collapsable || groupdata.collapsed) {
+                                    fieldgroup.addClass('collapsable')
+                                    legend.click(function() {
+                                        fieldgroup.toggleClass('collapsed');
+                                        fieldgroups[data.fieldgroup].slideToggle();
+                                    });
+                                }
                                 fieldgroup.append(legend);
                                 if (groupdata.description) {
                                     fieldgroups[data.fieldgroup].append($('<div class="fieldgroup-description">'+groupdata.description+'</div>'));
@@ -80,6 +86,7 @@ function createFormSectionListItems(section, sectionData) {
                             }
                             fieldgroup.append(fieldgroups[data.fieldgroup]);
                             if (groupdata.collapsed) {
+                                fieldgroup.addClass('collapsed');
                                 fieldgroups[data.fieldgroup].hide();
                             }
                             $.merge(items, fieldgroup);
@@ -210,6 +217,10 @@ function appendFormField(parent, key, fieldData) {
         case 'label':
             parent.append('<span class="labeltext">'+fieldData.value+'</span>');
             break;
+        case 'hidden':
+            parent.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', fieldData.value).addClass(inputClass).attr('id',id)).addClass('hidden');
+            break;
+            
         case 'action':
             parent.append($('<a class="formbutton"">').append($('<div>').html(fieldData.value)).click(function() {
                 makeAPICall('GET','admin',fieldData.action, fieldData.params, function() { 
@@ -383,9 +394,15 @@ function createSectionListRow(section, data, sectionID, sectionData) {
                         var fieldgroup = $('<fieldset />');
                         fieldgroups[groupname] = $('<div class="fieldgroup" />');
                         if (groupdata.label) {
-                            var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>').click(function() {
-                                fieldgroups[groupname].slideToggle();
-                            })
+                            var legend = $('<div class="fieldgroup-legend">'+ groupdata.label + '</div>');
+                            if (groupdata.collapsable || groupdata.collapsed) {
+                                fieldgroup.addClass('collapsable')
+                                legend.click(function() {
+                                    fieldgroup.toggleClass('collapsed');
+                                    fieldgroups[fieldData.fieldgroup].slideToggle();
+                                });
+                            }
+
                             fieldgroup.append(legend);
                             if (groupdata.description) {
                                 fieldgroups[groupname].append($('<div class="fieldgroup-description">'+groupdata.description+'</div>'));
@@ -393,6 +410,7 @@ function createSectionListRow(section, data, sectionID, sectionData) {
                         }
                         fieldgroup.append(fieldgroups[groupname]);
                         if (groupdata.collapsed) {
+                            fieldgroup.addClass('collapsed');
                             fieldgroups[groupname].hide();
                         }
                         list.append(fieldgroup);
@@ -514,13 +532,18 @@ function fileListTypes() {
     return {'':'-','FULL_URL_BASE':'FULL_URL_BASE','LOG_DIR':'LOG_DIR','LIB_DIR':'LIB_DIR','CACHE_DIR':'CACHE_DIR','DATA_DIR':'DATA_DIR','SITE_DIR':'SITE_DIR','ROOT_DIR':'ROOT_DIR'};
 }
 
-function showMessage(message, error) {
+function showMessage(message, error, keep) {
     if (error) {
-        $('#message').addClass('error');
+        $('#message').addClass('errormessage');
     } else {
-        $('#message').removeClass('error');
+        $('#message').removeClass('errormessage');
     }
-    $('#message').html(message).slideDown('fast').delay(3000).slideUp('slow');
+
+    $('#message').html(message).slideDown('fast');
+    
+    if (!error && !keep) {
+        $('#message').delay(3000).slideUp('slow');
+    }
 }
 
 function makeAPICall(type, module, command, data, callback) {

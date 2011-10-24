@@ -35,25 +35,35 @@ class AdminWebModule extends WebModule {
         
         return $navSections;
     }
-    
-    private function getSiteAdminConfig() {
+
+    private function getSiteAdminConfig($type) {
         static $configData;
-        if (!$configData) {
-            $file = APP_DIR . "/common/config/admin-site.json";
-            if (!$configData = json_decode(file_get_contents($file), true)) {
-                throw new KurogoDataException($this->getLocalizedString("ERROR_PARSING_FILE", $file));
+        if (!isset($configData[$type])) {
+            $files = array(
+                APP_DIR . "/common/config/admin-{$type}.json",
+                SITE_APP_DIR . "/common/config/admin-{$type}.json"
+            );
+            $data = array();
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    if ($json = json_decode(file_get_contents($file), true)) {
+                        $data = self::mergeConfigData($data, $json);
+                    } else {
+                        throw new KurogoDataException($this->getLocalizedString('ERROR_PARSING_FILE', $file));
+                    }
+                }
             }
-            
+            $configData[$type] = $data;
         }
         
-        return $configData;
+        return $configData[$type];
     }
     
     private function getSubNavSections($section) {
         $subNavSections = array();
         switch ($section) {
             case 'site':
-                $configData = $this->getSiteAdminConfig();
+                $configData = $this->getSiteAdminConfig($section);
                 foreach ($configData as $id=>$data) {
                     $subNavSections[$id] = array(
                         'id'=>$id,

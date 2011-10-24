@@ -19,20 +19,61 @@ class DatabaseAuthentication extends AuthenticationAuthority
     protected $connection;
     protected $tableMap=array();
     protected $fieldMap=array();
+    protected $hmac = false;
     protected $hashAlgo='md5';
-    protected $hashSalt='';
+    protected $hashSaltBefore='';
+    protected $hashSaltFieldBefore='';
+    protected $hashSaltAfter='';
+    protected $hashSaltFieldAfter='';
 
     protected function validUserLogins()
     {
         return array('FORM', 'NONE');
     }
+    
+    protected function hashPassword($password) {
+        return $this->hmac ? hash_hmac($this->hashAlgo, $password, $this->hashKey) : hash($this->hashAlgo, $password);
+    }
+    
+    protected function getSaltedValue($password, $data) {
+        $hashSaltBefore = '';
+        $hashSaltAfter = '';
+        if ($this->hashSaltBefore) {
+            $hashSaltBefore = $this->hashSaltBefore;
+        } elseif ($this->hashSaltFieldBefore) {
+            $hashSaltBefore = $data[$this->hashSaltFieldBefore];
+        }
+
+        if ($this->hashSaltAfter) {
+            $hashSaltAfter = $this->hashSaltAfter;
+        } elseif ($this->hashSaltFieldAfter) {
+            $hashSaltAfter = $data[$this->hashSaltFieldAfter];
+        }
+        
+        return $hashSaltBefore . $password . $hashSaltAfter;
+    }
 
     public function auth($login, $password, &$user)
     {
-        $sql = sprintf("SELECT `%s` FROM `%s` WHERE (`%s`=? OR `%s`=?)", $this->getField('user_password'), $this->getTable('user'), $this->getField('user_userid'), $this->getField('user_email'));
+        $fields = array(
+            '`'.$this->getField('user_password').'`',
+        );
+        
+        if ($this->hashSaltFieldAfter) {
+            $fields[] = $this->hashSaltFieldAfter;
+        }
+
+        if ($this->hashSaltFieldBefore) {
+            $fields[] = $this->hashSaltFieldBefore;
+        }
+        
+        $sql = sprintf("SELECT %s FROM `%s` WHERE (`%s`=? OR `%s`=?)", implode(',',$fields), $this->getTable('user'), $this->getField('user_userid'), $this->getField('user_email'));
         $result = $this->connection->query($sql, array($login, $login));
         if ($row = $result->fetch()) {
-            if (hash($this->hashAlgo, $this->hashSalt . $password) == $row[$this->getField('user_password')]) {
+        
+            $pwd = $this->getSaltedValue($password, $row);
+
+            if ($this->hashPassword($pwd) == $row[$this->getField('user_password')]) {
                 $user = $this->getUser($login);
                 return AUTH_OK;
             } else {
@@ -135,14 +176,41 @@ class DatabaseAuthentication extends AuthenticationAuthority
                 switch ($arg)
                 {
                     case 'DB_USER_PASSWORD_HASH':
+                        if (preg_match("/^hmac_(.+)$/", $value, $bits)) {
+                            if (!isset($args['DB_USER_PASSWORD_KEY'])) {
+                                throw new KurogoConfigurationException ("HMAC hash requires DB_USER_PASSWORD_KEY");
+                            }
+
+                            $this->hmac = true;
+                            $value = $bits[1];
+                        }
+                        
                         if (!in_array($value, hash_algos())) {
                             throw new KurogoConfigurationException ("Hashing algorithm $value not available");
                         }
                         $this->hashAlgo = $value;
                         break;
-                    case 'DB_USER_PASSWORD_SALT':
-                        $this->hashSalt = $value;
+                    case 'DB_USER_PASSWORD_KEY':
+                        $this->hashKey = $value;
                         break;
+
+                    case 'DB_USER_PASSWORD_SALT':
+                    case 'DB_USER_PASSWORD_SALT_BEFORE':
+                        $this->hashSaltBefore = $value;
+                        break;
+                    
+                    case 'DB_USER_PASSWORD_SALT_AFTER':
+                        $this->hashSaltAfter = $value;
+                        break;
+
+                    case 'DB_USER_PASSWORD_SALT_FIELD_BEFORE':
+                        $this->hashSaltFieldBefore = $value;
+                        break;
+                        
+                    case 'DB_USER_PASSWORD_SALT_FIELD_AFTER':
+                        $this->hashSaltFieldAfter = $value;
+                        break;
+
                     case 'DB_GROUP_GROUPMEMBER_PROPERTY':
                         if (!in_array($value, array('group','gid'))) {
                             throw new KurogoConfigurationException("Invalid value for DB_GROUP_GROUPMEMBER_PROPERTY $value. Should be gid or group");

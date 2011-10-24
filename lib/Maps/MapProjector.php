@@ -166,7 +166,7 @@ class MapProjector {
             $this->srcProjSpec = $proj->getSpecs();
             $this->srcProjId = null;
 
-        } else {
+        } else if ($proj) {
             $projspecs = self::getProjSpecs($proj);
             if ($projspecs) {
                 $this->srcProjSpec = trim($projspecs);
@@ -185,7 +185,7 @@ class MapProjector {
             $this->dstProjSpec = $proj->getSpecs();
             $this->dstProjId = null;
 
-        } else {
+        } else if ($proj) {
             $projspecs = self::getProjSpecs($proj);
             if ($projspecs) {
                 $this->dstProjSpec = trim($projspecs);

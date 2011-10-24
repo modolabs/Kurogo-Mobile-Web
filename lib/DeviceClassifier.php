@@ -92,38 +92,181 @@ class DeviceClassifier {
       time() + Kurogo::getSiteVar('LAYOUT_COOKIE_LIFESPAN'), COOKIE_PATH);
   }
   
-  private function detectDeviceInternal($user_agent) {
+    private function detectDeviceInternal($user_agent) {
     Kurogo::log(LOG_INFO, "Detecting device using internal device detection", 'deviceDetection');
-    Kurogo::includePackage('db');
-    if (!$user_agent) {
-      return;
+        if (!$user_agent) {
+            return;
+        }
+
+        /*
+         * Two things here:
+         * First off, we now have two files which can be used to classify devices,
+         * the master file, usually at LIB_DIR/deviceData.json, and the custom file,
+         * usually located at DATA_DIR/deviceData.json.
+         *
+         * Second, we're still allowing the use of sqlite databases (despite it
+         * being slower and more difficult to update).  So, if you specify the
+         * format of the custom file as sqlite, it should still work.
+         */
+
+        $master_file = LIB_DIR."/deviceData.json";
+
+        $site_file = Kurogo::getOptionalSiteVar('MOBI_SERVICE_SITE_FILE');
+        $site_file_format = Kurogo::getOptionalSiteVar('MOBI_SERVICE_SITE_FORMAT', 'json');
+
+        if (!( $site_file && $site_file_format)) {
+            // We don't have a site-specific file.  This means we can only
+            // detect on the master file.
+
+            $site_file = "";
+        }
+
+        if (!empty($site_file) && $site_file = realpath_exists($site_file))
+        {
+            switch ($site_file_format)
+            {
+                case 'json':
+                    $site_devices = json_decode(file_get_contents($site_file), true);
+                    $site_devices = $site_devices['devices'];
+                    if(($error_code = json_last_error()) !== JSON_ERROR_NONE) 
+                    {
+                        throw new KurogoConfigurationException("Problem decoding Custom Device Detection File. Error code returned was ".$error_code);
+                    }
+
+
+                    if(($device = $this->checkDevices($site_devices, $user_agent) !== false)) {
+                        return $this->translateDevice($device);
+                    }
+                    break;
+                    
+                case 'sqlite':
+                
+                    Kurogo::includePackage('db');
+                    try {
+                        $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$site_file));
+                        $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
+                    } catch (Exception $e) {
+                        Kurogo::log(LOG_ALERT, "Error with internal device detection: " . $e->getMessage(), 'deviceDetection');
+                        if (!in_array('sqlite', PDO::getAvailableDrivers())) {
+                            die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
+                        }
+                        return false;
+                    }
+
+                    while ($row = $result->fetch()) {
+                        if (preg_match("#" . $row['pattern'] . "#i", $user_agent)) {
+                            return $row;
+                        }
+                    }
+                    break;
+                    
+                default:
+                    throw new KurogoConfigurationException('Unknown format specified for Custom Device Detection File: '.$site_file_format);
+            }
+
+        }
+        
+        if(!empty($master_file) && $master_file = realpath_exists($master_file))
+        {
+            $master_devices = json_decode(file_get_contents($master_file), true);
+            $master_devices = $master_devices['devices'];
+            if(function_exists('json_last_error') && ($error_code = json_last_error()) !== JSON_ERROR_NONE)
+            {
+                Kurogo::log(LOG_ALERT, "Error with JSON internal device detection: " . $error_code, 'deviceDetection');
+                die("Problem decoding Device Detection Master File. Error code returned was ".$error_code);
+            }
+
+            if(($device = $this->checkDevices($master_devices, $user_agent)) !== false) {
+                return $this->translateDevice($device);
+            }
+        }
+        
+        Kurogo::log(LOG_WARNING, "Could not find a match in the internal device detection database for: $user_agent", 'deviceDetection');
     }
-     
-     if (!$db_file =  Kurogo::getSiteVar('MOBI_SERVICE_FILE')) {
-        Kurogo::log(LOG_EMERG, "MOBI_SERVICE_FILE not specified in site config.", 'deviceDetection');
-        die("MOBI_SERVICE_FILE not specified in site config.");
-     }
-     
-     try {
-         $db = new db(array('DB_TYPE'=>'sqlite', 'DB_FILE'=>$db_file));
-         $result = $db->query('SELECT * FROM userAgentPatterns WHERE version<=? ORDER BY patternorder,version DESC', array($this->version));
-     } catch (Exception $e) {
-        Kurogo::log(LOG_ALERT, "Error with internal device detection: " . $e->getMessage(), 'deviceDetection');
-        if (!in_array('sqlite', PDO::getAvailableDrivers())) {
-            die("SQLite PDO drivers not available. You should switch to external device detection by changing MOBI_SERVICE_USE_EXTERNAL to 1 in " . SITE_CONFIG_DIR . "/site.ini");
+
+    private function checkDevices($devices, $user_agent)
+    {
+        foreach($devices as $device)
+        {
+            foreach($device['match'] as $match)
+            {
+                if(isset($match['regex']))
+                {
+                    $mods = "";
+                    if(isset($match['options']))
+                    {
+                        if(isset($match['options']['DOT_ALL']) && $match['options']['DOT_ALL'] === true)
+                        {
+                            $mods .= "s";
+                        }
+                        if(isset($match['options']['CASE_INSENSITIVE']) && $match['options']['CASE_INSENSITIVE'] === true)
+                        {
+                            $mods .= "i";
+                        }
+
+                    }
+                    if(preg_match('/'.str_replace('/', '\\/'.$mods, $match['regex']).'/', $user_agent))
+                    {
+                        return $device;
+                    }
+                }
+                elseif(isset($match['partial']))
+                {
+                    if(isset($match['options']) && isset($match['options']['CASE_INSENSITIVE']) && $match['options']['CASE_INSENSITIVE'] === true)
+                    {
+                        if(stripos($user_agent, $match['partial']) !== false)
+                        {
+                            return $device;
+                        }
+                    }
+
+                    // Case insensitive either isn't set, or is set to false.
+                    if(strpos($user_agent, $match['partial']) !== false)
+                    {
+                        return $device;
+                    }
+                }
+                elseif(isset($match['prefix']))
+                {
+                    if(isset($match['options']) && isset($match['options']['CASE_INSENSITIVE']) && $match['options']['CASE_INSENSITIVE'] === true)
+                    {
+                        if(stripos($user_agent, $match['partial']) === 0)
+                        {
+                            return $device;
+                        }
+                    }
+
+                    // Case insensitive either isn't set, or is set to false.
+                    if(strpos($user_agent, $match['prefix']) === 0)
+                    {
+                        return $device;
+                    }
+                }
+                elseif (isset($match['suffix']))
+                {
+                    if(isset($match['options']) && isset($match['options']['CASE_INSENSITIVE']) && $match['options']['CASE_INSENSITIVE'] === true)
+                        $case_insens = true;
+                    else
+                        $case_insens = false;
+                    // Because substr_compare is supposedly designed for this purpose...
+                    if(substr_compare($user_agent, $match['partial'], -(strlen($match['partial'])), strlen($match['partial']), $case_insens) === 0)
+                    {
+                        return $device;
+                    }
+                }
+            }
+
         }
         return false;
-     }
-
-     while ($row = $result->fetch()) {
-        if (preg_match("#" . $row['pattern'] . "#i", $user_agent)) {
-            return $row;
-        }
-     }
-     
-     Kurogo::log(LOG_NOTICE, "Could not find a match in the internal device detection database for: $user_agent", 'deviceDetection');
-     return false;
-  }
+    }
+    private function translateDevice($device)
+    {
+        $newDevice = array();
+        $newDevice['pagetype'] = $device['classification'][strval($this->version)]['pagetype'];
+        $newDevice['platform'] = $device['classification'][strval($this->version)]['platform'];
+        $newDevice['supports_certificate'] = $device['classification'][strval($this->version)]['supports_certificate'];
+        return $newDevice;
+    }
   
   private function detectDeviceExternal($user_agent) {
     if (!$user_agent) {

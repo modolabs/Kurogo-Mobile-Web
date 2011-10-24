@@ -301,6 +301,16 @@ class ICalEvent extends ICalObject implements KurogoObject {
     public function setLocation($location) {
         $this->location = $location;
     }
+    
+    private static function getTimezoneForID($tzid) {
+        try {
+            $timezone = new DateTimeZone($tzid);
+        } catch (Exception $e) {
+            Kurogo::log(LOG_WARNING, "Invalid timezone $tzid found when processing calendar", 'data');
+            $timezone = null;
+        }
+        return $timezone;
+    }
 
     public function set_attribute($attr, $value, $params=NULL) {
         switch ($attr) {
@@ -337,7 +347,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'CREATED':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
@@ -345,7 +356,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'LAST-MODIFIED':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
@@ -353,7 +365,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'DTSTAMP':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
@@ -362,7 +375,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
             case 'DTSTART':
             case 'DTEND':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
@@ -435,7 +449,8 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'EXDATE':
                 if (array_key_exists('TZID', $params)) {
-                    $datetime = new DateTime($value, new DateTimeZone($params['TZID']));
+                    $timezone = self::getTimezoneForID($params['TZID']);
+                    $datetime = new DateTime($value, $timezone);
                 } else {
                     $datetime = new DateTime($value);
                 }
@@ -484,15 +499,18 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
     /**
      * Answer an ICalEvent that is an exception to the normal recurrence pattern
-     * if one exists for the start-time given. FALSE if none match.
+     * if one exists for the start-time given. null if none match.
      * @param int $time
      * @return mixed ICalEvent or null
      */
     public function getRecurrenceException($time) {
         $recurrence_id = strftime("%Y%m%dT%H%M%S",$time);
         foreach ($this->recurrence_exceptions as $exception) {
-            if ($exception->get_recurid() == $recurrence_id)
+            // Some ical feeds only have the %Y%m%d portion for DTSTART/DTEND (Google Calendar feeds),
+            // so first check for an exact match, then try adding a T000000 time and check again.
+            if (($exception->get_recurid() == $recurrence_id) || ($exception->get_recurid().'T000000' == $recurrence_id)){
                 return $exception;
+            }
         }
         return null;
     }

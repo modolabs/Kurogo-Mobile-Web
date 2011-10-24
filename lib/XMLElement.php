@@ -41,6 +41,7 @@ class XMLElement
     public function setValue($value, $strip_tags=false)
     {
         $encoding = ($this->encoding !== null) ? $this->encoding : 'UTF-8';
+        $value = trim($value);
         $this->value = $strip_tags ? strip_tags($value) : html_entity_decode($value, ENT_COMPAT, $encoding);
     }
 

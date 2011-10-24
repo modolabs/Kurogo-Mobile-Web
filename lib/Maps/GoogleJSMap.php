@@ -33,7 +33,7 @@ class GoogleJSMap extends JavascriptMapImageController {
 
     ////////////// overlays ///////////////
 
-    public function addPoint($placemark)
+    public function addPoint(Placemark $placemark)
     {
         parent::addPoint($placemark);
 
@@ -76,7 +76,7 @@ class GoogleJSMap extends JavascriptMapImageController {
         $this->markers[] = $values;
     }
 
-    public function addPath($placemark)
+    public function addPath(Placemark $placemark)
     {
         parent::addPath($placemark);
 
@@ -109,7 +109,7 @@ path.setMap(map);
 JS;
     }
     
-    public function addPolygon($placemark)
+    public function addPolygon(Placemark $placemark)
     {
         parent::addPolygon($placemark);
 
@@ -200,6 +200,7 @@ JS;
         }
         $template = $this->prepareJavascriptTemplate('GoogleJSMapHeader');
         $template->setValues(array(
+            '___FULL_URL_PREFIX___' => FULL_URL_PREFIX,
             '___INITIAL_LATITUDE___' => $center['lat'],
             '___INITIAL_LONGITUDE___' => $center['lon'],
             '___MAPELEMENT___' => $this->mapElement,

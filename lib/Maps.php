@@ -1,7 +1,10 @@
 <?php
 
+define('MILES_PER_METER', 0.000621371192);
+define('FEET_PER_METER', 3.2808399);
 define('GEOGRAPHIC_PROJECTION', 4326);
 define('EARTH_RADIUS_IN_METERS', 6378100);
+define('EARTH_METERS_PER_DEGREE', 111319); // very very rough
 define('MAP_CATEGORY_DELIMITER', ':');
 
 Kurogo::includePackage('Maps', 'Abstract');
@@ -39,7 +42,7 @@ function euclideanDistance($fromLat, $fromLon, $toLat, $toLon)
 {
     $dx = $toLon - $fromLon;
     $dy = $toLat - $fromLat;
-    return sqrt($dx*$dx + $dy*$dy);
+    return sqrt($dx*$dx + $dy*$dy) * EARTH_METERS_PER_DEGREE;
 }
 
 function filterLatLon($testString) {
@@ -167,31 +170,4 @@ class MapsAdmin
 $config = ConfigFile::factory('maps', 'site');
 Kurogo::siteConfig()->addConfig($config);
 
-function debug_dump($variable=null, $message='') {
-    $backtrace = debug_backtrace();
-    $currentCall = current($backtrace); // who is calling debug_dump
-    $lastCall = next($backtrace); // what debug_dump is being called in
-    $file = end(explode('/', $currentCall['file']));
-    $line = $currentCall['line'];
-    $function = $lastCall['function'];
-    if ($variable !== null) {
-        if (is_string($variable)) {
-            $varClass = 'string';
-            $varRep = "'$variable'";
-        } elseif (is_int($variable)) {
-            $varClass = 'int';
-            $varRep = $variable;
-        } elseif (is_bool($variable)) {
-            $varClass = 'bool';
-            $varRep = $variable ? 'TRUE' : 'FALSE';
-        } else {
-            $varClass = get_class($variable);
-            $varRep = spl_object_hash($variable);
-        }
-        $trace = "$file($line):$function [$varClass $varRep] $message";
-    } else {
-        $trace = "$file($line):$function $message";
-    }
-    error_log($trace);
-}
 
