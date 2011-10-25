@@ -2,7 +2,13 @@
 
 {capture name="categorySelect" assign="categorySelect"}
   <select class="newsinput" id="section" name="section" onchange="loadSection(this);">
-    {include file="findInclude:modules/news/templates/sections.tpl"}
+    {foreach $sections as $section}
+      {if $section['selected']}
+        <option value="{$section['value']}" selected="true">{$section['title']|escape}</option>
+      {else}
+        <option value="{$section['value']}">{$section['title']|escape}</option>
+      {/if}
+    {/foreach}
   </select>
 {/capture}
 

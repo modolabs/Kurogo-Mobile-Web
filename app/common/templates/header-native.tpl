@@ -2,7 +2,12 @@
 
 {block name="javascript"}
   {$smarty.const.URL_BASE = ''}
-  <script type="text/javascript">var KUROGO_SERVER='__KUROGO_SERVER_URL_BASE__';</script>
+  <script type="text/javascript">
+    var KUROGO_SERVER_URL='__KUROGO_SERVER_URL_BASE__';
+    var MODULE_ID='{$configModule}';
+    var MODULE_PAGE='{$page}';
+    var MODULE_ARGS='__KUROGO_MODULE_ARGS__';
+  </script>
   {$GOOGLE_ANALYTICS_ID = ''}
   {$PERCENT_MOBILE_ID = ''}
   {$smarty.block.parent}
