@@ -1,0 +1,49 @@
+#searchformcontainer {
+  margin-top: 1em;
+}
+form {
+	margin: -8px 0 0 0;
+	padding: 0;
+}
+.formlabel {
+	width: 62px;
+	text-align: right;
+	font-size: 89%;
+    padding-right: 0.25em;
+}
+.header form {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+.header form input {
+    line-height: normal;
+}
+.header form select {
+    line-height: normal;
+    padding: 4px 6px;
+    font-size: 88.23%;
+}
+#search-form .toggle-search-button {
+}
+.header {
+    padding: 0;
+}
+
+.header button {
+    display: inline;
+}
+.pagerlink a {
+  background-image: none;
+  color: #1A1611;
+  font-weight: bold;
+  font-size: 90%;
+}
+
+.newsinput  {
+	width: 200px;
+}
+
+.search-field, select {
+}
+

@@ -308,19 +308,37 @@ abstract class APIModule extends Module
     if ($scanForAssets) {
       $prefix = URL_BASE.'device/'.$device.'/';
       $fullPrefix = 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].$prefix;
-    
-      $re = ';([\'\"\(])(('.preg_quote($fullPrefix).'|'.preg_quote($prefix).')([^\'\"\)]+))([\'\"\)]);';
-      $contents = preg_replace_callback($re, 
+           
+      $contents = preg_replace_callback(
+        ';(\'|\\\"|\"|\()(('.preg_quote($fullPrefix).'|'.preg_quote($prefix).'|\.\./)([^\'\"\\\)]+))(\'|\\\"|\"|\)]);', 
         function ($matches) use ($that, $page, $path) {
-          $file = preg_replace(
-            array(';images/;', ';modules/;'),
-            array('',          ''),
-            $matches[4]
-          );
-          $file = strtr($file, '/', '_');
+          $urlSuffix = html_entity_decode($matches[4]);
+          $file = strtr(preg_replace(
+            array(
+              '@^min/\?g=file:/([^&]+)(&.+|)$@', 
+              '@^min/g=([^-]+)-([^&]+)(&.+|)$@', 
+              '@/(images|javascript|css)/@', 
+              '@^modules/([^/]+)/@',
+              '@^common/@',
+            ), 
+            array(
+              '$1', 
+              $page.'-min.$1', 
+              '/', 
+              '$1_', 
+              '', 
+            ),
+            $urlSuffix
+          ), '/', '-');
+          
           $scanForAssets = false;
-          // TODO detect css files
-          $that->saveContentAndAssets($that, $page, $matches[4], $scanForAssets, $path, $file);
+          $parts = explode('.', $file);
+          $ext = strtolower(end($parts));
+          $scanForAssets = count($parts) > 1 && in_array($ext, array('html', 'css', 'js'));
+          //error_log($matches[4]);
+          
+          $that->saveContentAndAssets($that, $page, $urlSuffix, $scanForAssets, $path, $file);
+          
           return $matches[1].$file.$matches[5];
         }, 
         $contents

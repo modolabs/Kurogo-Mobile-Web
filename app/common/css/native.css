@@ -1,0 +1,1555 @@
+/* Redefinition of basic elements */
+
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+body {
+	-webkit-text-size-adjust: none; 
+}
+
+#nonfooternav {
+  position: relative;
+}
+
+h1, h2, h3 {
+	margin: 0 0 0.5em 0;
+	line-height: 1.2em;
+	color: #000;
+}
+
+h3.nonfocal {
+	margin-bottom: -0.25em;
+}
+
+h4 {
+	margin: 0 0 6px 0;
+	padding: 0;
+}
+
+a img {
+	border: none
+}
+
+p {
+	margin: 0 0 0.75em 0;
+}
+
+table {
+	width: 100%;
+	margin: 0 0 0.75em 0;
+}
+
+th, td {
+	padding: 4px 6px 5px 2px; 
+	line-height: 1em;
+	vertical-align: top;
+}
+
+th {
+	font-weight: normal;
+	text-align: left;
+	color: #666;
+}
+
+ol, ul {
+	margin: 0 0 0.75em 0;
+	padding-left: 1.2em;
+}
+
+dl {	
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+
+dt {
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+
+dd {
+	display: block;
+	padding: 0;
+	margin: 0 0 1em 0;
+}
+
+div, p, li, a {
+	word-wrap: break-word;
+}
+
+strong {
+	font-weight: bold;
+}
+
+
+/* Major layout blocks */
+
+#container {
+	min-height: 550px;
+}
+
+#footer {
+	clear: both;
+	min-height: 22px;
+	padding-top: 10px;
+	margin: 20px 12px 14px 12px;
+	font-weight: normal;
+}
+
+#footerlinks {
+	clear: both;
+	margin: 3em 6px 2em 6px; 
+	font-size: 70.589%;
+}
+
+#footerlinks a {
+	text-decoration: none;
+	padding: 4px;
+}
+
+.leftfoot {
+	float: left;
+}
+
+.rightfoot {
+	float: right;
+}
+
+/* Forms */
+
+form {	
+	margin: 18px 0 12px 0;
+	padding: 0;
+	border: none;
+	position: relative;
+}
+
+fieldset {
+	margin: 6px 0;
+	padding: 0;
+	border: none;
+	position: relative;
+}
+
+input, textarea, select {
+	color: #333;
+	font-size: 100%;
+	line-height: 30px;
+}
+
+textarea {
+	padding: 3px;
+}
+
+select {
+	width: 100%;
+	padding: 4px 2px;
+	line-height: normal;
+}
+
+#searchformcontainer h3 {
+	margin: 0 0 0.2em 0;
+}
+
+#searchformcontainer td {
+	padding: 0;
+}
+
+.forminput {
+	border: 1px solid #666;
+	position: absolute;
+	left: 0;
+	right: 34px;
+	height: 30px;
+	padding: 4px 6px;
+	-webkit-appearance:textfield;
+}
+.searchwrapper {
+    position: absolute;
+    left: 0;
+    right: 51px;
+}
+.searchwrapper input {
+    width: 100%;
+}
+
+*:first-child+html .forminput {
+	/* The return of IE CSS hacks makes me mad */
+	width: 90%;	
+}
+
+.inputcombo {
+	height: 38px;
+	position: relative;
+}
+
+.inputcombo .forminput {
+	height: 24px;
+	padding: 4px 4px 8px 7px;
+	line-height: 24px;
+	border: 1px 0 1px 1px solid #666;
+	border-bottom-left-radius: 11px;	
+	border-top-left-radius: 11px;	
+	border-bottom-right-radius: 0;	
+	border-top-right-radius: 0;
+}
+
+.inputcombo .combobutton {
+	position: absolute;
+	z-index: 10;
+	top: 0;
+	right: 0;
+	width: 38px;
+	height: 38px;
+}
+
+.emphasized {
+	margin: 14px 0;
+}
+
+
+.emphasized  .forminput {
+	border: 3px solid #666;
+	padding: 6px 4px 8px 7px;
+	height: 18px;
+}
+
+.emphasized .combobutton {
+	width: 38px;
+	height: 38px;
+}
+
+.formlist .formelement {
+  text-align: center;
+  margin-bottom: .5em;
+}
+.formlist .formelement label {
+  text-align: right;
+  margin-right: .5em;
+  display: inline-block;
+  width: 6.5em;
+}
+.formlist .formelement input {
+  width: 9.5em;
+  padding-left: .25em;
+  padding-right: .25em;
+  line-height: 26px;
+}
+.formlist .formelement select {
+  width: 10em;
+  line-height: 26px;
+}
+
+.formbuttons {
+	margin: 16px 0 8px 0;
+	text-align: center;
+}
+
+a.formbutton {
+  cursor: default;
+	text-align: center;
+	display: inline-block;
+	padding-right: 7px;
+	background-image: url(/common/images/button-sd-r.png);
+	background-repeat: no-repeat;
+	background-position: right;
+	margin: 0 5px;
+	height: 36px;
+	text-decoration: none;
+}
+
+a.formbutton div {
+	display: inline-block;
+	color: #fff;
+	font-weight: bold;
+	font-size: 94.12%;
+	line-height: 26px;  /* height minus padding */
+	text-decoration: none;
+	padding: 5px 5px 5px 12px;
+	background-image: url(/common/images/button-sd-l.png);
+	background-repeat: no-repeat;
+	background-position: left;
+	text-decoration: none;
+}
+
+input.formbutton {
+  -webkit-appearance: none;
+  display: block;
+	color: #fff;
+	font-weight: bold;
+	font-size: 94.12%;
+	line-height: 26px;  /* height minus padding */
+	text-decoration: none;
+	padding: 5px 12px 5px 12px;
+	margin-right: -7px;
+	border: none;
+	height: 36px;
+	background-color: transparent;
+	background-image: url(/common/images/button-sd-r.png);
+	background-repeat: no-repeat;
+	background-position: right center;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+}
+span.formbuttoncontainer {  /* must be span for winphone7 */
+  display: inline-block;
+	background-color: transparent;
+	background-image: url(/common/images/button-sd-l.png);
+	background-repeat: no-repeat;
+	background-position: left center;
+	padding: 0;
+	margin: 0;
+	margin-right: 7px; /* recenter */
+	overflow: visible;
+	height: 36px;
+}
+
+.radiobutton {
+	width: 24px;
+	height: 24px;
+	margin-right: 5px;
+	margin-left: 0;
+	margin-bottom: 8px;
+	vertical-align: -12%;
+	-webkit-border-radius: 12px;
+	border-radius: 12px;
+}
+
+.required {
+	font-weight: bold;
+	color: #900;
+}
+
+/* Top navigation/titlebar */
+
+#navbar {
+	height: 48px;
+	margin: 0 0 9px 0;
+	line-height: 44px;
+	overflow: hidden;
+}
+
+.breadcrumbs {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+	height: 100%;
+}
+
+.breadcrumbs a {
+	display: inline-block;
+	height: 100%;
+	line-height: 44px;
+	vertical-align: top;
+  margin-left: -4px; /* overlap by the width of the drillup art */
+  padding: 0 18px 0 2px; 
+  background-image: url(/common/images/drillup-r.png);
+	background-repeat: no-repeat;
+	background-position: right top;
+	text-decoration: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+*:first-child+html .breadcrumbs a {
+	/* The return of IE CSS hacks makes me mad */
+    margin-left: -5px; 	/* +3px vs normal */
+	padding-right: 16px;
+}
+
+a.homelink {
+    background-image: none;
+    margin-left: 0;
+    margin-right: -5px;
+    padding: 0!important;	/* !important necessitated by IE for WP7 grrr */
+    width: 62px;
+}
+
+.breadcrumbs a.homelink img {
+    padding: 0;
+}
+
+a.module img {
+	padding: 8px 2px 8px 0px;
+}
+
+.homepage .moduleicon {
+    padding: 8px 5px 8px 6px;
+    vertical-align: top; /* for firefox */
+}
+
+*:first-child+html .homepage .moduleicon {
+	/* The return of IE CSS hacks makes me mad */
+	padding-left: 3px;
+	float: left;
+}
+
+.crumb1 {
+	max-width: 120px;
+}
+
+.crumb2a  {
+	max-width: 45px;
+}
+
+.crumb2b  {
+	max-width: 50px;
+}
+
+.crumb3a {
+	max-width: 40px;
+  	display: none !important; /* hidden for now because it doesn't fit */
+}
+
+.crumb3b {
+	max-width: 45px;
+}
+
+.crumb3c {
+	max-width: 50px;
+}
+
+.pagetitle {
+	display: inline-block;
+	font-weight: bold;
+	margin-left: -4px;	
+	vertical-align: top;
+	line-height: 44px;
+	height: 44px;
+}
+
+*:first-child+html .pagetitle {
+	/* The return of IE CSS hacks makes me cry */
+	margin-left: -3px;	
+}
+
+.homelink + .pagetitle {
+  margin-left: 0px;
+}
+
+.homepage .pagetitle {
+	display: inline;
+	max-width: 210px;
+	margin-left: -8px;	
+}
+
+.homepage .pagetitle {
+	max-width: 210px;
+}
+
+.help {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 46px;
+}
+
+#navbar.helpon {
+    padding-right: 46px;
+}
+
+/* Springboards */
+
+.springboard {
+	margin: 0;
+	padding: 6px;
+	clear: both;
+}
+
+.springboard div {
+	position: relative;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	float: left;
+	text-align: center;		
+	vertical-align: top;
+}
+
+.springboard a {
+	display: block;
+	text-decoration: none;
+	padding: 8px 5px;
+	word-wrap: normal;
+}
+
+.springboard a img {
+	height: 60px;
+	width: 60px;
+	margin-bottom: 1px;
+}
+
+.springboard .separator {
+	display: block;
+	width: 100%;
+	height: 18px;
+	clear:both;
+	margin: 0;
+	padding: 0;
+	float: none;
+}
+.springboard .badge img {
+	position: absolute;
+	right: 12px;
+	top: 5px;
+	width: 24px;
+	height: 24px;
+	padding-top: 5px;
+	text-align: center;
+	color: #fff;
+	font-size:70.59%;
+	font-weight: bold;
+	background-image: url(/common/images/badge.png);
+	background-repeat: no-repeat;
+}
+
+.springboard .secured {
+	position: absolute;
+	z-index: 100;
+	top: 45px;
+	right: 4px;
+	width: 18px;
+	height: 22px;
+	background: url(/common/images/secured.png) no-repeat;
+}
+
+.springboard .utility .secured {
+	top: 28px;
+	right: 14px;
+}
+
+/* Navigation and results listings */
+
+.nav {	   
+	padding: 0;	   
+	margin: 9px; 
+	border: 1px solid #ccc;
+	-webkit-border-radius: 9px;	
+	border-radius: 9px;	
+}
+
+.nav li {	
+	list-style-type: none;	
+	border-top: 1px solid #ccc;
+	padding: 11px;
+	position: relative;
+}
+
+.nav li:first-child {
+	border-top:0; 
+}
+
+.nav li div.smallprint {
+  padding-top: 2px;
+}
+
+.nav span.nolink {
+	display: block;
+	padding: 8px;
+	margin: -8px;	 
+	background-repeat: no-repeat;
+	background-position: right; 
+	line-height: 1.2em;
+	text-decoration: none;
+	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
+}
+
+.nav a  {
+	display: block;
+	padding: 8px 24px 10px 8px;
+	margin: -8px;	 
+	background-image: url(/common/images/action-arrow.png); 
+	background-repeat: no-repeat;
+	background-position: right; 
+	line-height: 1.2em;
+	text-decoration: none;
+	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
+}
+
+.nav li.icon {
+  padding: 0 11px;
+  min-height: 72px;
+}
+.nav li.icon img {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 50px;
+  width: 50px;
+}
+.nav li.icon a {
+  position: relative;
+  margin: 0 -7px 0 0;
+  padding: 11px 4px 11px 57px;
+  line-height: 30px;
+}
+
+.nav h2, .nav h3 {
+	margin-bottom: 0;
+}
+
+.focal .nav {
+	margin: 10px -13px;
+	-webkit-border-radius: 0px;	
+	border-radius: 0px;	
+}
+
+ul.focal {
+	list-style-type: none;
+	padding: 0;
+}
+
+ul.focal li {
+	list-style-type: none;
+	padding: 11px;
+	position: relative;
+	border-top: 1px solid #ccc; 
+}
+
+ul.focal li:first-child {
+	border-top:0; 
+}
+
+.tabbody .nav {
+	margin: 0 -8px;
+	border: none;
+	-webkit-border-bottom-right-radius: 8px;	
+	-webkit-border-bottom-left-radius: 8px;	
+	bottom-right-radius: 8px;	
+	bottom-left-radius: 8px;	
+}
+
+.tabbody .results {
+	margin: 8px 4px 0 4px;
+	border-width: 1px 0 0 0;
+	-webkit-border-bottom-right-radius: 8px;	
+	-webkit-border-bottom-left-radius: 8px;	
+	border-bottom-right-radius: 8px;	
+	border-bottom-left-radius: 8px;	
+}
+
+.tabbody .nested {
+	margin: 0px;
+	border: 1px solid #ccc;
+}
+
+.tabbody .nested li {
+	padding: 10px;
+}
+
+.results {	   
+	padding: 0;	   
+	margin: 10px 0; 
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+.results li {	
+	list-style-type: none;		
+	border-top: 1px solid #ccc;
+	padding: 10px;
+}
+
+.results li:first-child {
+	border-top:0; 
+}
+
+.results a  {
+	display: block;
+	padding: 9px 25px 9px 7px;
+	margin: -7px;	 
+	background-image: url(/common/images/action-arrow.png); 
+	background-repeat: no-repeat;
+	background-position: right; 
+	line-height: 1.2em;
+	text-decoration: none;
+	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
+}
+
+.results a:visited {
+	color: #333;
+}
+
+.results li ul {
+	margin: 0 0 -8px 0;
+	padding: 0;
+}
+
+.results li div.smallprint {
+  padding-top: .25em;
+}
+
+.results li ul li {
+	list-style-type: none;
+	background-image: url(/common/images/bullet.png);
+	background-repeat: no-repeat;
+	background-position: 0 2px;
+	padding: 0 0 0 19px;
+	margin: 0 0 8px -4px;
+	border: none;
+}
+
+.results li.icon {
+  padding: 0 10px;
+  min-height: 54px;
+}
+.results li.icon a {
+  position: relative;
+  margin: 0 -7px 0 0;
+  padding: 13px 18px 13px 58px;
+  line-height: 30px;
+}
+.results li.icon img {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 50px;
+  width: 50px;
+}
+
+.secondary {
+	margin: 10px; 
+	padding: 0;	   
+	border: 1px solid #ccc;
+	-webkit-border-radius: 8px;	
+	border-radius: 8px;	
+}
+
+.secondary li {
+	list-style-type: none;		
+	border-top: 1px solid #ccc;
+	position: relative;
+	padding: 9px;
+}
+
+.secondary li:first-child {
+	border-top: none;
+}
+
+.secondary a {
+	display: block;
+	padding: 8px 25px 8px 7px;
+	margin: -6px;	 
+	background-image: url(/common/images/action-arrow.png); 
+	background-repeat: no-repeat;
+	background-position: right; 
+	line-height: 1.2em;
+	text-decoration: none;
+	color: #333;
+	-webkit-border-radius: 5px;	
+	border-radius: 5px;	
+}
+
+.secondary a:visited {
+	color: #333;
+}
+
+.bottomnav {
+	clear: both;
+	margin: 32px 10px;
+	position: relative;
+}
+
+.nav .badge {
+	display: inline-block;
+	position: relative;
+	top: -1px;
+	margin-left: 4px;
+	margin-bottom: -4px;
+	font-size: 83.353%;
+	line-height: 1em;
+	padding: 4px 9px 4px 7px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+.sidenav {
+	margin: 12px 8px;
+}
+
+.sidenav a {
+	padding: 6px 2px;
+	text-decoration: none;
+}
+
+.sidenav2 {
+	margin: 0;
+	position: relative;
+	height: 29px;
+}
+.sidenav2 a {
+	display: block;
+	position: absolute;
+	top: 0;
+	background: transparent url(/common/images/sidenav-arrows.png) no-repeat;
+	height: 29px;
+	line-height: 29px;
+	padding: 0 10px;
+	text-decoration: none;
+	font-size: 88.3%;
+}
+a.sidenav-prev {
+	left: 0;
+	background-position: left top;
+	padding-left: 44px;
+}
+a.sidenav-next {
+	right: 0;
+	background-position: right bottom;
+	padding-right: 44px;
+}
+.sidenav3 {
+	float: right;
+	width: 90px;
+	height: 34px;
+	margin: -4px 0 4px 5px;
+}
+.sidenav3 a {
+	display: block;
+	position: absolute;
+	background: transparent url(/common/images/sidenav-segmented.png) no-repeat;
+	height: 34px;
+	width: 45px;
+}
+.sidenav3 a.sidenav-prev {
+	right: 45px;
+	left: auto;
+	background-position: left;
+	padding: 0;
+}
+.sidenav3 a.sidenav-next {
+	right: 0;
+	background-position: right;
+	padding: 0;
+}
+
+
+/* Specific content formatting */
+
+.focal {   
+	position: relative;
+	padding: 12px;	   
+	margin: 10px; 
+	font-weight:normal;
+	line-height: 1.33em;
+	border: 1px solid #ccc;
+	border-radius: 9px;	
+}
+
+.nonfocal {
+	margin: 12px;
+}
+
+.nonfocal form {
+	margin-left: -4px;
+	margin-right: -4px;
+}
+
+.shaded {
+	border: 1px solid #e0e0e0;
+	padding-bottom: 0;
+}
+
+.legend {
+	margin: 7px 0;
+	font-size: 82.353%;
+	line-height: 1.214em;
+}
+
+.legend.nonfocal {
+	margin: 0 0 24px 0;
+	padding: 0 12px;
+}
+
+.legend div {
+	display: inline;
+	margin-right: 0px;
+	padding: 1px 0;
+}
+
+.legend .icon {
+	background-position: 10px 0;
+	padding-left: 31px;
+}
+
+.smallprint {
+	font-weight: normal;
+	font-size: 82.353%;
+	line-height: 1.214em;
+}
+
+.fineprint {
+	font-weight: normal;
+	font-size: 70.589%;
+	line-height: 1.1167em;
+}
+
+.label {
+    display: block;
+    width: 6em;
+    position: relative;
+    font-size: 76.471%;
+    line-height: 1.3em;
+    font-weight: bold;
+    text-align: right;
+}
+
+.value {
+    display: block;
+    margin-top: -1.2em;
+    margin-left: 5em;
+    font-size: 100%;
+    min-height: 1.3em;
+    line-height: 1.3em;
+    word-wrap: break-word;
+}
+
+.longlabel {
+	display: block;
+	font-size: 76.471%;
+	line-height: 1.154em;
+	font-weight: bold;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.longlabel + .value {
+  margin-left: 0px;
+  margin-top: 0px;
+}
+
+.more {
+	/* Inline links for "Show more..." */
+	color: #933;
+}
+
+.tight {
+	padding: 0;
+	margin: 0;
+}
+
+.clear {
+	clear: both;
+}
+
+.invisible {
+	display: none;
+}
+
+.disabled {
+	opacity: 0.22;
+}
+
+.collapsed .summary {
+	display: inline;
+}
+
+.collapsed .fulltext {
+	display: none;
+}
+
+.expanded .summary {
+	display: none;
+}
+
+.expanded .fulltext {
+	display: inline;
+}
+
+.foundat {
+	font-size: 83.353%;
+	line-height: 1.214em;
+	font-weight: normal;
+	color: #444;
+}
+
+p.foundat {
+	margin: 0 0 4px 0;
+}
+
+.address {
+	font-size: 83.353%;
+	line-height: 1.214em;
+	font-weight: normal;
+}
+
+.nowrap {
+	white-space: nowrap;
+}
+
+
+
+/* Action links (dial phone, launch map, compose email, etc.) */
+
+.actionlink {
+	background-repeat: no-repeat;
+	background-position: right; 
+	padding-right: 38px;
+	padding-left: 0;
+}
+
+a.arrow {  
+	background-image: url(/common/images/action-arrow.png); 
+	padding-right: 25px;
+}
+
+a.phone {  
+	background-image: url(/common/images/action-phone.png); 
+	padding-right: 36px;
+}
+
+a.email {  
+	background-image: url(/common/images/action-email.png); 
+	padding-right: 38px;
+}
+
+a.map {  
+	background-image: url(/common/images/action-map.png); 
+	padding-right: 38px;
+}
+
+a.search {  
+	background-image: url(/common/images/action-search.png); 
+	padding-right: 36px;
+}
+
+a.people {  
+	background-image: url(/common/images/action-people.png); 
+	padding-right: 36px;
+}
+
+a.external {  
+	background-image: url(/common/images/action-external.png); 
+	padding-right: 34px;
+}
+
+a.secure {  
+	background-image: url(/common/images/action-secure.png); 
+	padding-right: 34px;
+}
+
+a.pdf {  
+	background-image: url(/common/images/action-pdf.png); 
+	padding-right: 34px;
+}
+
+a.noaction {
+	background-image: none;
+	padding-right: 7px;
+}
+
+
+
+/* Iconically coded links - e.g., Shuttle Schedule, 3DOWN, etc. */
+
+.icon {
+	background-repeat: no-repeat;
+	background-position: 11px 14px;
+}
+
+.icon a {
+	padding-left: 32px;
+}
+
+h2.icon {
+	background-position: right;
+	padding-right: 24px;
+}
+
+.inset {
+	padding-left: 32px;
+	padding-top: 3px;
+	margin-left: -7px;
+}
+
+.gps {
+	background-image: url(/common/images/gps.png);
+}
+
+.sch {
+	background-image: url(/common/images/schedule.png);
+}
+
+.ok {
+	background-image: url(/common/images/ok.png);
+}
+
+.alert {
+	background-image: url(/common/images/alert.png);
+}
+
+.warning {
+	background-image: url(/common/images/warning.png);
+}
+
+.critical {
+	background-image: url(/common/images/critical.png);
+}
+
+.available {
+	background-image: url(/common/images/available.png);
+}
+
+.full {
+	background-image: url(/common/images/donotenter.png);
+}
+
+.running {
+	background-image: url(/common/images/shuttle.png);
+	background-position: 11px 12px;
+}
+
+.nonrunning {
+	background-image: url(/common/images/shuttle-off.png);
+	background-position: 11px 12px;
+}
+
+.running a {
+	padding-left: 28px;
+}
+
+.nonrunning a {
+	padding-left: 28px;
+}
+
+
+
+/* Tabs (e.g., Shuttle Schedule route pages) */
+
+#tabs {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#tabs li {
+	position: relative;
+	float: left;
+	margin-bottom: -1px;
+	margin-right: 4px;
+	-webkit-border-top-right-radius: 7px;	
+	-webkit-border-top-left-radius: 7px;	
+	border-top-right-radius: 7px;	
+	border-top-left-radius: 7px;	
+	text-align: center;
+}
+
+#tabs li .badge {
+	position: absolute;
+	top: -8px;
+	right: -6px;
+	width: 24px;
+	height: 24px;
+	line-height: 24px;
+	text-align: center;
+	color: #fff;
+	font-size:70.59%;
+	font-weight: bold;
+	background-image: url(/common/images/badge.png);
+	background-repeat: no-repeat;
+}
+ 
+#tabs li a {
+	display: block;
+	text-decoration: none;
+	min-width: 30px;
+	padding: 7px 10px 8px 10px;
+}
+
+#tabs.smalltabs li {
+	font-size: 88.26%;
+	margin-right: 3px;
+}
+
+#tabs.smalltabs li a {
+	padding-right: 7px;
+	padding-left: 7px;
+}
+
+#tabs li.active {
+	margin-top: -1px;
+}
+
+#tabs li.active a {
+	padding-top: 8px;
+	padding-bottom: 9px;
+}
+
+#tabbodies {
+	margin: 0 -12px 0 -12px;
+	clear: both;
+	border-top: 1px solid #bbb;
+	-webkit-border-bottom-right-radius: 8px;	
+	-webkit-border-bottom-left-radius: 8px;	
+	border-bottom-right-radius: 8px;	
+	border-bottom-left-radius: 8px;	
+}
+
+.shaded #tabbodies {
+	margin-top: -11px;
+}
+
+.tabbody {
+	position: relative;
+	min-height: 230px;
+	padding: 8px;
+}
+
+.tabbody h3 {
+	margin-top: 16px;
+	padding-top: 4px;
+}
+
+.tabbody h3:first-child {
+    margin-top: 8px;
+}
+
+.tabbody li:first-child h3 {
+	margin-top: 2px;
+}
+
+.tabstrip ,
+#tabstrip {
+	list-style-type: none;
+	height: 32px;
+	-webkit-border-radius: 10px;	
+	border-radius: 10px;	
+	margin: 0;
+	padding: 0;
+	left: 0;
+	overflow: hidden;
+	font-size: 88.23%;
+}
+
+.tabstrip li ,
+#tabstrip li {
+	float: left;
+	margin: 0;
+	text-align: center;
+	height: 33px;
+}
+
+.tabstrip a,
+#tabstrip a {
+	display: block;
+	height: 32px;
+	line-height: 32px;
+	text-decoration: none;
+	color: #fff !important;
+	background: url(/common/images/tabstrip.jpg) repeat-x;
+	-webkit-background-origin: padding-box; -webkit-background-clip: content-box; 
+	border-right: 1px solid #999;
+	-webkit-border-radius: 1px;	
+	border-radius: 1px;	
+}	
+
+.tabstrip li.active a ,
+#tabstrip li.active a {
+	background-image: url(/common/images/tabstrip-active.jpg);
+}
+
+.tabstrip li:first-child a ,
+#tabstrip li:first-child a {
+	-webkit-border-bottom-left-radius: 10px;	
+	-webkit-border-top-left-radius: 10px;	
+	border-bottom-left-radius: 10px;	
+	border-top-left-radius: 10px;	
+}
+
+.tabstrip li:last-child a ,
+#tabstrip li:last-child a {
+	-webkit-border-bottom-right-radius: 10px;	
+	-webkit-border-top-right-radius: 10px;	
+	border-bottom-right-radius: 10px;	
+	border-top-right-radius: 10px;	
+}
+
+.twotabs li {
+	width: 50%;
+}
+
+.threetabs li {
+	width: 33.333%;
+}
+
+.fourtabs li {
+	width: 25%;
+}
+
+.fivetabs li {
+	width: 20%;
+}
+
+.columns2 {
+	margin-bottom: 0.5em;
+}
+
+.columns2 .col {
+	float: left;
+	width: 49%;
+}
+
+.iconlegend {
+	list-style-type: none;
+	padding: 0;
+	font-size: 70%;
+	margin: 0;
+	line-height: 1em;
+}
+
+.iconlegend img {
+	position: relative;
+	top: 4px;
+	margin-right: 3px;
+}
+
+.iconlabel {
+	display: block;
+	float: right;
+	white-space: nowrap;
+	margin-top: 3px;
+}
+
+
+
+
+/* "Loading content" (for AJAX data pulls) */
+
+.loading {
+	margin: 16px 0;
+	font-size: 83.353%;
+	line-height: 1.5em;
+	font-weight: normal;
+	color: #888;
+	text-align: center;
+}
+
+#modalmessage {
+	position: absolute;
+	z-index: 99999;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+}
+
+
+.devicedetection {
+  border: none;
+  margin: 1.5em .5em;
+  width: auto;
+}
+.devicedetection th,
+.devicedetection td {
+  font-size: 65.71%;
+  line-height: 1.2em;
+  padding: 0 .25em;
+  margin: 0;
+  text-align: left;
+}
+.devicedetection th {
+  font-weight: bold;
+  text-align: right;
+  white-space: nowrap;
+}
+
+#share {
+	float: right;
+	margin: -12px 0 0 8px;
+}
+#sharesheet {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10000;
+}
+#shareback {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	padding-bottom: 20px;
+	background-color: #333;
+	opacity: 0.5;
+	-webkit-opacity: 0.5;
+	-moz-opacity: 0.5;
+	filter: alpha(opacity=67); /* IE */
+}
+#sharedialog {
+	position: absolute;
+	top: 80px;
+	left: 50%;
+	width: 220px;
+	margin-left: -130px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+	padding: 10px 20px;
+	background: #eee; /* Non-CSS3 browsers */
+	/* This doesn't work with the Palm Pre: 
+	background: -webkit-gradient(linear, left top, left bottom, from(#f9f9f9), to(#d0d0d0)); /* Webkit browsers */
+	background: -moz-linear-gradient(top,  #f9f9f9,  #d0d0d0); /* Firefox 3.6+ */
+	-moz-box-shadow: 0px 3px 7px #333;
+	-webkit-box-shadow: 0px 3px 7px #333;
+	box-shadow: 0px 3px 7px #333;
+}
+#sharedialog h1 {
+	color: #333;
+	font: 16pt/1.33em sans-serif;
+	margin-bottom: 6px
+}
+#sharedialog ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+#sharedialog a.sharelink {
+	display: block;
+	text-decoration: none;
+	padding: 6px 0;
+	line-height: 32px;
+	color: #000;
+}
+#sharedialog a img {
+	float: left;
+	margin-right: 6px;
+	border: none;
+}
+
+#bookmarkContainer {
+    float: right;
+	margin: -44px 0 0 8px;
+}
+#bookmark {
+    width: 44px;
+    height: 38px;
+    background: url(/common/images/bookmark.png) no-repeat 0 -38px;
+}
+#bookmark.pressed {
+    background-position: 0 1px;
+}
+#bookmark.on {
+    background-position: -44px -38px;
+}
+#bookmark.pressed.on {
+    background-position: -44px 1px;
+}
+
+
+/* Freeform content module - basic styles to format unstyled raw HTML */
+
+.staticContentBody {
+	margin: 10px;
+	border-radius: 10px;
+	background-color: #fff;
+	padding: 10px;
+}
+
+.staticContentBody h2 {
+	font-size: 123%;
+	font-weight: normal;
+	color: #000;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody h3 {
+	font-size: 100%;
+	font-weight: bold;
+	color: #000;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody h4 {
+	font-size: 100%;
+	font-weight: bold;
+	color: #333;
+	margin: 0 0 1em 0;
+}
+
+.staticContentBody ul {
+	margin-bottom: 1.5em;
+}
+
+.loginstatus {
+    clear: both;
+    font-size: 80%;
+    padding-top: 5px;
+}
+
+
+/* Login-related buttons */
+
+.loginbuttons {
+	margin-top: 0.75em;
+	margin-bottom: 0.75em;
+}
+
+.loginbuttons li {
+	padding-left: 42px;
+	background-size: 24px;
+	background-position: 10px;
+	background-repeat: no-repeat;
+}
+
+.loginbuttons a {
+	margin-left: -39px;
+	padding-left: 39px;
+}
+
+.loginbuttons li.facebook {
+	background-image: url(/common/images/button-facebook-24.png);
+}
+
+.loginbuttons li.google {
+	background-image: url(/common/images/button-google-24.png);
+}
+
+.loginbuttons li.oauth {
+	background-image: url(/common/images/button-oauth-24.png);
+}
+
+.loginbuttons li.openid {
+	background-image: url(/common/images/button-openid-24.png);
+}
+
+.loginbuttons li.twitter {
+	background-image: url(/common/images/button-twitter-24.png);
+}
+
+.loginbuttons li.windows {
+	background-image: url(/common/images/button-windows-24.png);
+}
+
+.loginbuttons li.noauth {
+	background-image: none;
+	padding-left: 10px;
+}
+
+.loginbuttons li.noauth a {
+	margin-left: -8px;
+	padding-left: 8px;
+}
+
+
+
+/* firefox adds these a tags when you edit the dom */
+.ellipsis a[xmlns] {
+	display: inline !important;
+	padding: 0 !important;
+	margin: 0 !important;	 
+	background: none !important; 
+	line-height: inherit !important;
+	text-decoration: none !important;
+	font-size: inherit !important;
+}

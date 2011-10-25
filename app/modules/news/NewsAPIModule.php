@@ -123,6 +123,6 @@ class NewsAPIModule extends APIModule {
     }
     
     protected function getNativePagelist() {
-        return array('index');
+        return array('index', 'search', 'story');
     }
 }

@@ -30,6 +30,9 @@ abstract class WebModule extends Module {
   protected $platform = 'unknown';
   protected $supportsCerts = false;
   
+  protected $ajaxPagetype = false;
+  protected $ajaxContentLoad = false;
+  
   protected $imageExt = '.png';
   
   private $pageConfig = null;
@@ -301,12 +304,7 @@ abstract class WebModule extends Module {
   // URL helper functions
   //
   protected function buildURL($page, $args=array()) {
-    if ($this->pagetype == 'native') {
-      if (!$page) { $page = 'index'; }
-      return "$page.html".($args ? '?'.http_build_query($args) : '');
-    } else {
-      return self::buildURLForModule($this->configModule, $page, $args);
-    }
+    return self::buildURLForModule($this->configModule, $page, $args);
   }
 
   public static function buildURLForModule($id, $page, $args=array()) {
@@ -439,6 +437,9 @@ abstract class WebModule extends Module {
         $this->pagetype      = $this->getPagetype();
         $this->platform      = $this->getPlatform();
         $this->supportsCerts = $this->getSupportsCerts();
+        
+        $this->ajaxPagetype    = $this->pagetype == 'native';
+        $this->ajaxContentLoad = $this->getArg('ajax', false);
 
         switch ($this->getPagetype()) {
             case 'compliant':
@@ -1054,11 +1055,7 @@ abstract class WebModule extends Module {
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
     if ($this->pagetype == 'native') {
       if (!$page) { $page = 'index'; }
-      if ($id == $this->configModule) {
-        return "$page.html".($args ? '?'.http_build_query($args) : '');
-      } else {
-        return "kurogo://$id/$page".($args ? '?'.http_build_query($args) : '');
-      }
+      return "kurogo://$id/$page".($args ? '?'.http_build_query($args) : '');
     } else {
       return "/$id/$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
     }

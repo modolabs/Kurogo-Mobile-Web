@@ -1,0 +1,54 @@
+/* Springboards */
+
+/* Overall size of one cell in a springboard (grid of icons) */
+.springboard div {	
+	font-size: 76.5%;	/* Font size of text label below icon */
+	line-height: 1.1em;
+	/* width: 102px; */   	/* For springboard grid that is 3 icons wide */
+	/* height: 90px; */   	/* For springboard grid that is 3 icons wide */
+	width: 77px;	/* For springboard grid that is 4 icons wide */
+	height: 96px;	/* For springboard grid that is 4 icons wide */
+}
+
+.springboard a img {
+	/* Size of each standard icon image in a springboard */
+	width: 60px;
+	height: 60px;
+}
+
+.springboard .separator {
+	/* Height of extra gap between main and utility-class springboard items */
+	height: 10px;
+}
+
+/* Overall size of one cell in the springboard's utility-type items */
+/* Utility-class modules are typically shown smaller and at the bottom of the springboard */
+.springboard div.utility {
+	/* width: 102px; */ /* For a 3-wide row of utility icons */
+	width: 76px; /* For a 4-wide row of utility icons */
+	/* width: 61px; */ /* For a 5-wide row of utility icons */
+	height: 86px;
+	font-size: 70.6%;
+	line-height: 1.1em;
+}
+
+.springboard div.utility a img {
+	/* Size of each utility-class icon in a springboard */
+	width: 36px;
+	height: 36px;
+}
+
+.springboard .secured {
+	/* Overlay image to indicate that a module is password-protected */
+	/* Adjust size to fit /common/images/secured.png, and adjust position to fit springboard icon size */
+	top: 45px;
+	right: 4px;
+	width: 18px;
+	height: 22px;
+}
+
+.springboard .utility .secured {
+	/* Adjust position to fit springboard icon size for utility-class module icons */
+	top: 26px;
+	right: 12px;
+}
