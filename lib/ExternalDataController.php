@@ -13,7 +13,7 @@ Kurogo::includePackage("DataController");
  
 abstract class ExternalDataController {
     
-    protected $DEFAULT_RETRIEVE_CLASS='URLDataRetriever';
+    protected $DEFAULT_RETRIEVER_CLASS='URLDataRetriever';
     protected $initArgs=array();
     protected $cacheFolder='Data';
     protected $retriever;
@@ -101,7 +101,7 @@ abstract class ExternalDataController {
         }
 
         // use a retriever class if set, otherwise use the default retrieve class from the controller
-        $args['RETRIEVER_CLASS'] = isset($args['RETRIEVER_CLASS']) ? $args['RETRIEVER_CLASS'] : $this->DEFAULT_RETRIEVE_CLASS;
+        $args['RETRIEVER_CLASS'] = isset($args['RETRIEVER_CLASS']) ? $args['RETRIEVER_CLASS'] : $this->DEFAULT_RETRIEVER_CLASS;
         //instantiate the retriever class and add it to the controller
         $retriever = DataRetriever::factory($args['RETRIEVER_CLASS'], $args);
         $retriever->init($args);
