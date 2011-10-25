@@ -94,7 +94,6 @@ abstract class ItemsDataController extends ExternalDataController {
      * @limit int $limit number of items to return
      */
     public function items($start=0, $limit=null) {
-        Debug::die_here();
         $items = $this->getParsedData();
         return $this->limitItems($items,$start, $limit);
     }
