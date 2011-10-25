@@ -243,11 +243,7 @@ class CalendarWebModule extends WebModule {
             $feed->setEndDate($options['end']);
         }
     
-        if ($searchTerms) {
-            $feed->addFilter('search', $searchTerms);
-        }
-
-        return $feed->items();
+        return $feed->search($searchTerms);
     }
 
     public function linkForCategory($category, $data=null) {
@@ -832,7 +828,6 @@ class CalendarWebModule extends WebModule {
         $feed = $this->getFeed($calendar, $type);
         $feed->setStartDate($start);
         $feed->setEndDate($end);
-        $feed->addFilter('year', $year);
         $iCalEvents = $feed->items();
         $title = $this->getFeedTitle($calendar, $type);
         $this->setLogData($type . ':' . $calendar, $title);
