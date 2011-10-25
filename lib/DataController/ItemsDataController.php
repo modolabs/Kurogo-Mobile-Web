@@ -9,7 +9,7 @@
  * @package ExternalData
  */
  
-abstract class MasterDetailExternalDataController extends ExternalDataController {
+abstract class ItemsDataController extends ExternalDataController {
     
     protected $totalItems = null;
     
@@ -93,6 +93,7 @@ abstract class MasterDetailExternalDataController extends ExternalDataController
      * @limit int $limit number of items to return
      */
     public function items($start=0, $limit=null) {
+        Debug::die_here();
         $items = $this->getParsedData();
         return $this->limitItems($items,$start, $limit);
     }
