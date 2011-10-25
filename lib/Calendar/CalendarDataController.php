@@ -10,7 +10,8 @@
  * @package ExternalData
  * @subpackage Calendar
  */
-class CalendarDataController extends DataController
+includePackage('DataController');
+class CalendarDataController extends MasterDetailExternalDataController
 {
     protected $DEFAULT_PARSER_CLASS='ICSDataParser';
     const DEFAULT_EVENT_CLASS='ICalEvent';

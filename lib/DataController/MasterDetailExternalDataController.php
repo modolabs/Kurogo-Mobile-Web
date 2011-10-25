@@ -39,6 +39,14 @@ abstract class MasterDetailExternalDataController extends ExternalDataController
     }
 
     /**
+     * Clears the internal cache of data. Subclasses can override this method to clean up any necessary
+     * state, if necessary. Subclasses should call parent::clearInteralCache()
+     */
+    protected function clearInternalCache() {
+        $this->setTotalItems(null);
+    }
+
+    /**
      * Utility function to return a subset of items. Essentially is a robust version of array_slice.
      * @param array items
      * @param int $start 0 indexed value to start

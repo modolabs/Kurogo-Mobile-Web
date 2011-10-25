@@ -41,12 +41,6 @@ class RSSDataController extends MasterDetailExternalDataController {
         return null;
     }
 
-    protected function clearInternalCache() {
-        $this->items = null;
-        $this->parser->clearInternalCache();
-        parent::clearInternalCache();
-    }
-    
     public function getTitle() {
         if (!$this->title) {
             if ($this->parser) {

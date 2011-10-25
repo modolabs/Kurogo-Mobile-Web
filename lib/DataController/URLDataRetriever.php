@@ -34,8 +34,7 @@ class URLDataRetriever extends DataRetriever {
     
     /**
      * Adds a parameter to the url request. In the subclass has not overwritten url() then it will be added to the
-     * url as a query string. Note that you can only have 1 value per parameter at this time. This method
-     * will call clearInternalCache() since this will cause any previous data to be invalid.
+     * url as a query string. Note that you can only have 1 value per parameter at this time. 
      * @param string $var the parameter to add
      * @param mixed $value the value to assign. Must be a scalar value
      */
@@ -44,8 +43,7 @@ class URLDataRetriever extends DataRetriever {
     }
     
     /**
-     * Removes a parameter from the url request. This method will call clearInternalCache() since this 
-     * will cause any previous data to be invalid.
+     * Removes a parameter from the url request. 
      * @param string $var the parameter to remove
      */
     public function removeFilter($var) {
@@ -55,8 +53,7 @@ class URLDataRetriever extends DataRetriever {
     }
     
     /**
-     * Remove all parameters from the url request. This method will call clearInternalCache() since 
-     * this will cause any previous data to be invalid.
+     * Remove all parameters from the url request. 
      */
     public function removeAllFilters() {
         $this->filters = array();
