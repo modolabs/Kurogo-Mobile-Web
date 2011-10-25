@@ -422,7 +422,7 @@ abstract class OAuthProvider
         $response = file_get_contents($url, false, $streamContext);
         
         //parse the response
-        $this->response = new DataResponse();
+        $this->response = new HTTPDataResponse();
         $this->response->setRequest($method, $url, $parameters, $headers);
         $this->response->setResponse($response, $http_response_header);
         Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $this->response->getCode(), strlen($response)), 'auth');
