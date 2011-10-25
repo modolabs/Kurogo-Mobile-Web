@@ -361,7 +361,7 @@ abstract class ExternalDataController {
      * Interceptor. router the method that not exists in this class to the retriverDataController.
      */
     public function __call($method, $arguments) {
-        if ($this->retriever && $this->retriever instanceOf DataRetriever) {
+        if (is_callable(array($this->retriever, $method))) {
             return call_user_func_array(array($this->retriever, $method), $arguments);
         } else {
             throw new KurogoDataException("Call of unknown function '$method'.");
