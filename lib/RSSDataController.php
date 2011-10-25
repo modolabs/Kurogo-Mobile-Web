@@ -59,9 +59,7 @@ class RSSDataController extends MasterDetailExternalDataController {
 
     public function items($start = 0,$limit = null) {
         if (!$this->items) {
-            // changed from DataRetrieve::getParsedData to ExternalDataController::getData
-            // this function will include cache functions
-            $this->items = $this->getData();
+            $this->items = $this->getParsedData();
         }
         
         $items = $this->items;

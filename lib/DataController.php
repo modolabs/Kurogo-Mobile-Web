@@ -520,7 +520,7 @@ abstract class DataController
         $data = file_get_contents($url, false, $this->streamContext);
         $http_response_header = isset($http_response_header) ? $http_response_header : array();
 
-        $this->response = new DataResponse();
+        $this->response = new HTTPDataResponse();
         $this->response->setRequest($this->method, $url, $this->filters, $this->requestHeaders);
         $this->response->setResponse($data, $http_response_header);
         
