@@ -179,6 +179,22 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
     }
 
+    /* subclasses should override this for custom filtering */    
+    public function filterEvent($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'category': //case insensitive
+                    if (!in_array(strtolower($value), array_map('strtolower', $this->categories))) {
+                        return false;
+                    }
+                    break;
+            }
+        }   
+        
+        return true;     
+    }
+
     public function get_tzid() {
         return $this->tzid;
     }
@@ -856,22 +872,14 @@ class ICalendar extends ICalObject implements CalendarInterface {
     }
 
     /* returns an array of events keyed by uid containing an array of occurrences keyed by start time */
-    public function getEventsInRange(TimeRange $range=null, $limit=null) {
-        $events = $this->events;
-
-        // sort event times
-        // deprecated use usort as follow
-        //asort($this->eventStartTimes);
+    public function getEventsInRange(TimeRange $range=null, $limit=null, $filters=null) {
 
         $occurrences = array();
 
         foreach ($this->eventStartTimes as $id => $startTime) {
             $event = $this->events[$id];
-            $eventOccurrences = $event->getOccurrencesInRange($range, $limit);
-
-            foreach ($eventOccurrences as $occurrence) {
-                $key = count($occurrences);
-                $occurrences[$key] = $occurrence;
+            if ($event->filterEvent($filters)) {
+                $occurrences = array_merge($occurrences, $event->getOccurrencesInRange($range, $limit));
             }
         }
 

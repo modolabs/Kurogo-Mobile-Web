@@ -22,9 +22,7 @@ class CalendarDataController extends ItemsDataController
     protected $startDate;
     protected $endDate;
     protected $calendar;
-    protected $requiresDateFilter=true;
-    protected $contentFilter;
-    protected $supportsSearch = false;
+    protected $filters=array();
     
     public function setRequiresDateFilter($bool)
     {
@@ -35,16 +33,12 @@ class CalendarDataController extends ItemsDataController
     {
         switch ($var)
         {
-            case 'search': 
-                if ($this->supportsSearch) {
-                    return parent::addFilter($var, $value);
-                } else {
-                    $this->contentFilter = $value;
-                }
+            case 'category':
+                $this->filters[$var] = $value;
                 break;
-            default:
-                return parent::addFilter($var, $value);
         }
+        
+        $this->retriever->addFilter($var, $value);
     }
     
     public function setStartDate(DateTime $time)
@@ -140,7 +134,7 @@ class CalendarDataController extends ItemsDataController
             $this->setEndDate($end);
         }
         
-        $items = $this->events();
+        $items = $this->items();
 		foreach($items as $key => $item) {
 			if($id == $item->get_uid()) {
 				return $item;
@@ -158,7 +152,7 @@ class CalendarDataController extends ItemsDataController
         return $this->calendar->getEvent($id);
     }
     
-    protected function events($limit=null)
+    public function items($start=0, $limit=null)
     {
         if (!$this->calendar) {
             $this->calendar = $this->getParsedData();
@@ -168,7 +162,8 @@ class CalendarDataController extends ItemsDataController
         $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : CalendarDataController::END_TIME_LIMIT;
         $range = new TimeRange($startTimestamp, $endTimestamp);
         
-        return $this->calendar->getEventsInRange($range, $limit);
+        $events = $this->calendar->getEventsInRange($range, $limit, $this->filters);
+        return $this->limitItems($events, $start, $limit);
     }
     
     protected function clearInternalCache()
@@ -176,19 +171,14 @@ class CalendarDataController extends ItemsDataController
         $this->calendar = null;
         parent::clearInternalCache();
     }
-    
-    public function items($start=0, $limit=null) 
-    {
-        $items = $this->events($limit);
+
+    public function search($searchTerms, $start=0, $limit=null) {
+        $items = $this->items($start, $limit);
         $events = array();
 		foreach ($items as $occurrence) {
-			if ($this->contentFilter) {
-				if ( (stripos($occurrence->get_description(), $this->contentFilter)!==FALSE) || (stripos($occurrence->get_summary(), $this->contentFilter)!==FALSE)) {
-					$events[] = $occurrence;
-				}
-			} else {
-				$events[] = $occurrence;
-			}
+            if ( (stripos($occurrence->get_description(), $searchTerms)!==FALSE) || (stripos($occurrence->get_summary(), $searchTerms)!==FALSE)) {
+                $events[] = $occurrence;
+            }
 		}
         return $this->limitItems($events, $start, $limit);
     }
