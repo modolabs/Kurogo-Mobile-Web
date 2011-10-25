@@ -14,9 +14,12 @@ Kurogo::includePackage("DataController");
 abstract class ExternalDataController {
     
     protected $DEFAULT_RETRIEVER_CLASS='URLDataRetriever';
+    protected $DEFAULT_PARSER_CLASS = 'PassthroughDataParser';
     protected $initArgs=array();
     protected $cacheFolder='Data';
     protected $retriever;
+    protected $parser;
+    protected $response;
     protected $cache;
     protected $title;
     protected $totalItems = null;
@@ -30,7 +33,7 @@ abstract class ExternalDataController {
 	 * @return string
      */
     protected function cacheFolder() {
-        return CACHE_DIR . "/" . $this->cacheFolder;
+        return CACHE_DIR . DIRECTORY_SEPARATOR . $this->cacheFolder;
     }
     
     /**
@@ -52,16 +55,21 @@ abstract class ExternalDataController {
 
     /**
      * Sets the data retriever to use for this request. Typically this is set at initialization automatically,
-     * but certain subclasses might need to determine the parser dynamically.
-     * @param DataParser a instantiated DataParser object
+     * but certain subclasses might need to determine the retriever dynamically.
+     * @param retriever a instantiated DataRetriever object
      */
     public function setRetriever(DataRetriever $retriever) {
         $this->retriever = $retriever;
     }
     
+    /**
+     * Returns the data retriever
+     * @return DataRetriever
+     */
     public function getRetriever() {
         return $this->retriever;
     }
+    
     /**
      * Turns on or off using cache. You could also set cacheLifetime to 0
      * @param bool
@@ -102,11 +110,19 @@ abstract class ExternalDataController {
 
         // use a retriever class if set, otherwise use the default retrieve class from the controller
         $args['RETRIEVER_CLASS'] = isset($args['RETRIEVER_CLASS']) ? $args['RETRIEVER_CLASS'] : $this->DEFAULT_RETRIEVER_CLASS;
+
         //instantiate the retriever class and add it to the controller
         $retriever = DataRetriever::factory($args['RETRIEVER_CLASS'], $args);
         $retriever->init($args);
         $retriever->setDataController($this);
         $this->setRetriever($retriever);
+
+        // use a parser class if set, otherwise use the default parser class from the controller
+        $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
+        // instantiate the parser class and add it to the retriever
+        $parser = DataParser::factory($args['PARSER_CLASS'], $args);
+        $parser->setDataController($this);
+        $this->setParser($parser);
 
         if (isset($args['TITLE'])) {
             $this->setTitle($args['TITLE']);
@@ -116,6 +132,95 @@ abstract class ExternalDataController {
             $this->setCacheLifetime($args['CACHE_LIFETIME']);
         }
     }
+
+   /**
+     * Sets the data parser to use for this request. Typically this is set at initialization automatically,
+     * but certain subclasses might need to determine the parser dynamically.
+     * @param DataParser a instantiated DataParser object
+     */
+    public function setParser(DataParser $parser) {
+        $this->parser = $parser;
+    }
+    
+    /**
+     * Parse the data. This method will also attempt to set the total items in a request by calling the
+     * data parser's getTotalItems() method
+     * @param string $data the data from a request (could be from the cache)
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    protected function parseData($data, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        $parsedData = $parser->parseData($data);
+        return $parsedData;
+    }
+
+    /**
+     * Parse a file. This method will also attempt to set the total items in a request by calling the
+     * data parser's getTotalItems() method
+     * @param string $file a file containing the contents of the data
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    protected function parseFile($file, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        $parsedData = $parser->parseFile($file);
+        $this->dataController->setTotalItems($parser->getTotalItems());
+        return $parsedData;
+    }
+    
+    /**
+     * Return the parsed data. The default implementation will retrive the data and return value of
+     * parseData()
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    public function getParsedData(DataParser $parser=null) {
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+
+        switch ($parser->getParseMode()) {
+            case DataParser::PARSE_MODE_STRING:
+                $data = $this->getData();
+                return $this->parseData($data, $parser);
+                break;
+        
+           case DataParser::PARSE_MODE_FILE:
+                $file = $this->getDataFile();
+                return $this->parseFile($file, $parser);
+                break;
+            default:
+                throw new KurogoConfigurationException("Unknown parse mode");
+        }
+    }
+    
+    /**
+     * Returns the target encoding of the result.
+     * @return string. Default is utf-8
+     */
+    public function getEncoding() {
+        return $this->parser->getEncoding();
+    }
+    
+    
+    /**
+     * Retrieves the data and saves it to a file. 
+     * @return string a file containing the data
+     */
+    public function getDataFile() {
+        $dataFile = $this->cacheFilename() . '-data';
+        $data = $this->retrieveData();
+        $cache = $this->getCache();
+        $cache->write($data, $dataFile);
+        return $cache->getFullPath($dataFile);
+    }
+
+    
     
     /**
      * Public factory method. This is the designated way to instantiated data controllers. Takes a string
@@ -173,15 +278,17 @@ abstract class ExternalDataController {
      * this if they implement custom caching 
      * @return string 
      */
-    protected function getCacheData() {
+    protected function getCachedResponse() {
         $cache = $this->getCache();
         $data = $cache->read($this->cacheFilename());
-        if ($result = @unserialize($data)) {
-            return $result;
-            //$this->response = $response;
-            //return $response->getResponse();
+        if ($response = @unserialize($data)) {
+            return $response;
         }
         return null;
+    }
+    
+    public function getResponse() {
+        return $this->response;
     }
 
     /**
@@ -189,8 +296,16 @@ abstract class ExternalDataController {
      * this if they implement custom caching 
      * @param string the data to cache
      */
-    protected function writeCache($data) {
+    protected function writeCache($response) {
         $cache = $this->getCache();
+        $data = $response;
+        if ($response instanceOf DataResponse) {
+            $data = serialize($response);
+        } elseif (!is_scalar($response)) {
+            Debug::die_here($response);
+            throw new KurogoException("Invalid response while attempting to save cache");
+        }
+        
         $cache->write($data, $this->cacheFilename(), $this->cacheTimestamp($data));
     }
     
@@ -210,10 +325,7 @@ abstract class ExternalDataController {
     }
     
     /**
-     * Retrieves the data.  The default implementation will use the url returned by the url() 
-     * function. If the cache is still fresh than it will return the data saved in the cache,
-     * otherwise it will retrieve the data using the retrieveData() method and save the cache.
-     * Subclasses should only need to override this method if an alternative caching scheme is needed.
+     * Retrieves the data from the retriever
      * @return string the data
      */
     public function getData() {
@@ -222,21 +334,19 @@ abstract class ExternalDataController {
 
         if ($this->useCache) {
             if ($this->cacheIsFresh()) {
-                //Kurogo::log(LOG_DEBUG, "Using cache for $url", 'data');
-                $data = $this->getCacheData();
+                $response = $this->getCachedResponse();
             } else {
-                if ($data = $this->retriever->getData()) {
-                    $this->writeCache(serialize($data));
+                if ($response = $this->retriever->retrieveData()) {
+                    $this->writeCache($response);
                 } elseif ($this->useStaleCache) {
-                    // return stale cache if the data is unavailable
-                    //Kurogo::log(LOG_DEBUG, "Using stale cache for $url", 'data');
-                    $data = $this->getCacheData();
+                    $response = $this->getCachedResponse();
                 }
             }
         } else {
-            $data = $this->retriever->getData();
+            $response = $this->retriever->retrieveData();
         }
-        return $data;
+
+        return $response->getResponse();
     }
 
     /**

@@ -27,7 +27,7 @@ abstract class DataParser
         return $this->totalItems;
     }
 
-    public function setDataController(ExternalDataController $dataController) {
+    public function setDataController($dataController) {
         $this->dataController = $dataController;
     }
 

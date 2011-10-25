@@ -9,9 +9,8 @@
  */
 abstract class DataRetriever {
 
-    abstract public function retrieveData();
     abstract public function getCacheKey();
-    abstract public function getData();
+    abstract public function retrieveData();
     
     protected $dataController;
     
@@ -21,6 +20,10 @@ abstract class DataRetriever {
     
     public function getDataController() {
         return $this->dataController;
+    }
+    
+    public function init($args) {
+    
     }
     
     public static function factory($retrieverClass, $args) {
