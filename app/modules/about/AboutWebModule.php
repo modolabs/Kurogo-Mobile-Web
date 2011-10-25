@@ -11,7 +11,7 @@
 class AboutWebModule extends WebModule {
   protected $id = 'about';
 
-  private function getPhraseForDevice() {
+  protected function getPhraseForDevice() {
     switch($this->platform) {
       case 'iphone':
         return $this->pagetype == 'tablet' ? 'iPad' : 'iPhone';

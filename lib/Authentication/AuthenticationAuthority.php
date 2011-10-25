@@ -65,6 +65,12 @@ abstract class AuthenticationAuthority
     protected $debugMode = false;
     
     /**
+      * Save user credentials. Needed for web services that require username/password. Only works with direct authorities
+      * @var $bool
+      */
+    protected $saveCredentials = false;
+    
+    /**
      * Attempts to authenticate the user using the included credentials
      * @param string $login the userid to login (this will be blank for OAUTH based authorities)
      * @param string $password password (this will be blank for OAUTH based authorities)
@@ -141,6 +147,9 @@ abstract class AuthenticationAuthority
             throw new KurogoConfigurationException("Invalid USER_LOGIN setting for " . $this->AuthorityTitle);
         }
         
+        if (isset($args['SAVE_CREDENTIALS'])) {
+            $this->setSaveCredentials($args['SAVE_CREDENTIALS']);
+        }
         
         if (isset($args['LOGGEDIN_IMAGE_URL']) && strlen($args['LOGGEDIN_IMAGE_URL'])) {
             $this->setAuthorityImage($args['LOGGEDIN_IMAGE_URL']);
@@ -170,6 +179,13 @@ abstract class AuthenticationAuthority
         }
         
         return false;
+    }
+    
+    public function setSaveCredentials($bool) {
+        $this->saveCredentials = $bool ? true : false;
+        if ($this->saveCredentials && $this->userLogin != 'FORM') {
+            throw new KruogoConfigurationException("Credentials can only be saved when using USER_LOGIN=FORM");
+        }
     }
 
     /**
@@ -453,6 +469,9 @@ abstract class AuthenticationAuthority
         $result = $this->auth($login, $password, $user);
         
         if ($result == AUTH_OK) {
+            if ($this->saveCredentials) {
+                $user->setCredentials($password);
+            }
             $session->login($user);
         }
         

@@ -17,46 +17,85 @@ class CalendarWebModule extends WebModule {
   protected $id = 'calendar';
   protected $feeds = array();
   protected $timezone;
-  protected $defaultSearchOption = 0;
 
-  protected $searchOptions = array(
-    array("phrase" => "in the next 7 days",   "offset" => 7),
-    array("phrase" => "in the next 15 days",  "offset" => 15),
-    array("phrase" => "in the next 30 days",  "offset" => 30),
-    array("phrase" => "in the past 15 days",  "offset" => -15),
-    array("phrase" => "in the past 30 days",  "offset" => -30)
-  );
-
-  protected function getDatesForTimeframe($timeframe) {
-    return $this->getDatesForSearchOption($this->searchOptions[$timeframe]);
-  }
-  
-  protected function getDatesForSearchOption($option) {
-    $start = $end = time();
-    
-    switch ($option['offset']) {
-      case 'term':
-        // TODO
-        break;
-        
-      case 'year':
-        // TODO
-        break;
-        
-      default: // day counts TODO: This is not daylight saving time safe
-        if ($option['offset'] >= 0) {
-          $end = $start + ($option['offset']*DAY_SECONDS);
-        } else {
-          $start = $end + ($option['offset']*DAY_SECONDS);
-        }
-        break;
+  protected function getTitleForSearchOptions($intervalType, $offset, $forward=true) {
+    if ($offset < 0) {
+      $relation = $this->getLocalizedString("SEARCH_RANGE_PREVIOUS");
+      $offset = -$offset;
+    } else {
+      $relation = $this->getLocalizedString("SEARCH_RANGE_NEXT");
     }
 
-    return array (
-      new DateTime(date('Y-m-d H:i:s', $start), $this->timezone), 
-      new DateTime(date('Y-m-d H:i:s', $end  ), $this->timezone),
-    );
+    switch ($intervalType) {
+      case 'day':
+          if ($offset == 1) {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_DAY", $relation);
+          } else {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MULTIDAY", $relation, strval($offset));
+          }
+          break;
+      case 'week':
+          if ($offset == 1) {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_WEEK", $relation);
+          } else {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MULTIWEEK", $relation, strval($offset));
+          }
+          break;
+      case 'month':
+          if ($offset == 1) {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MONTH", $relation);
+          } else {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MULTIMONTH", $relation, strval($offset));
+          }
+          break;
+      case 'year':
+          if ($offset == 1) {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_YEAR", $relation);
+          } else {
+            $result = $this->getLocalizedString("SEARCH_RANGE_TITLE_MULTIYEAR", $relation, strval($offset));
+          }
+          break;
+    }
+    return $result;
   }
+
+  protected function searchOptions() {
+    $searchOptions = array();
+    $searchRanges = $this->getModuleSections('searchranges');
+    foreach ($searchRanges as $rangeConfig) {
+      $searchOptions[] = array(
+        'phrase' => $this->getTitleForSearchOptions($rangeConfig['type'], $rangeConfig['offset']));
+    }
+    return $searchOptions;
+  }
+
+  protected function getDatesForSearchOptions($intervalType, $offset) {
+    $now = time();
+    $day = intval(date('j', $now));
+    $month = intval(date('n', $now));
+    $year = intval(date('Y', $now));
+
+    $startDT = new DateTime();
+    $endDT = new DateTime();
+
+    $dayInterval = $monthInterval = $yearInterval = 0;
+    switch ($intervalType) {
+      case 'day':   $dayInterval = $offset; break;
+      case 'week':  $dayInterval = $offset * 7; break;
+      case 'month': $monthInterval = $offset; break;
+      case 'year':  $yearInterval = $offset; break;
+    }
+
+    if ($offset >= 0) { // searching future events
+      $startDT->setDate($year, $month, $day);
+      $endDT->setDate($year + $yearInterval, $month + $monthInterval, $day + $dayInterval);
+    } else {
+      $startDT->setDate($year + $yearInterval, $month + $monthInterval, $day + $dayInterval);
+      $endDT->setDate($year, $month, $day);
+    }
+
+    return array($startDT, $endDT);
+  }  
     
   protected function timeText($event, $timeOnly=false) {
     if ($timeOnly) {
@@ -70,17 +109,14 @@ class CalendarWebModule extends WebModule {
     }
   }
 
-  protected function ucname($name) {
+  // TODO: this appears to be a harvard relic
+  // this kind of formatting should be done downstream, not here
+  protected function formatTitle($name) {
     $new_words = array();
-    foreach(explode(' ', $name) as $word) {
-      $new_word = array();
-      foreach(explode('/', $word) as $sub_word) {
-        $new_word[] = ucwords($sub_word);
-      }
-      $new_word = implode('/', $new_word);
-      $new_words[] = $new_word;
+    foreach(explode('/', $name) as $word) {
+      $new_words[] = ucwords($word);
     } 
-    return implode(' ', $new_words);
+    return implode('/', $new_words);
   }
   
   protected function valueForType($type, $value) {
@@ -111,7 +147,7 @@ class CalendarWebModule extends WebModule {
         break;
         
       case 'category':
-        $valueForType = $this->ucname($value);
+        $valueForType = $this->formatTitle($value);
         break;
     }
     
@@ -177,10 +213,11 @@ class CalendarWebModule extends WebModule {
   }
   
   protected function categoryURL($category, $addBreadcrumb=true) {
-    return $this->buildBreadcrumbURL('category', array(
-      'catid'   => is_array($category) ? $category['catid'] : $category->get_cat_id(),
-      'name' => is_array($category) ? $category['name']  : $this->ucname($category->get_name()),
-    ), $addBreadcrumb);
+    $options = array();
+    if ($addBreadcrumb) {
+      $options['addBreadcrumb'] = true;
+    }
+    return $this->linkForCategory($category, $options);
   }
   
     public function searchItems($searchTerms, $limit=null, $options=null) {  
@@ -190,9 +227,12 @@ class CalendarWebModule extends WebModule {
         $feed     = $this->getFeed($calendar, $type);
         
         if (isset($options['timeframe'])) {
-            list($start, $end) = $this->getDatesForTimeFrame($options['timeframe']);
-            $options['start'] = $start;
-            $options['end'] = $end;
+          $searchRanges = $this->getModuleSections('searchranges');
+          $selectedRange = $searchRanges[$options['timeframe']];
+          list($start, $end) = $this->getDatesForSearchOptions($selectedRange['type'], $selectedRange['offset']);
+
+          $options['start'] = $start;
+          $options['end'] = $end;
         }
         
         if (isset($options['start'])) {
@@ -210,38 +250,62 @@ class CalendarWebModule extends WebModule {
         return $feed->items();
     }
 
+    public function linkForCategory($category, $data=null) {
+      $addBreadcrumb = isset($data['addBreadcrumb']) ? $data['addBreadcrumb'] : true;
+
+      if (is_array($category)) {
+        $title = $category['name'];
+        $catid = $category['catid'];
+      } elseif ($category instanceof CalendarCategory) {
+        $title = $category->getName();
+        $catid = $category->getId();
+      } else {
+        // downstream compatibility
+        // these methods are implemented by harvard's Harvard_Event_Category class
+        $title = $category->get_name();
+        $catid = $category->get_cat_id();
+      }
+      $options = array('name' => $title, 'catid' => $catid);
+      $url = $this->buildBreadcrumbURL('category', $options, $addBreadcrumb);
+
+      $title = $this->formatTitle($title);
+      return array(
+        'title' => $title,
+        'url' => $url,
+        );
+    }
+
     public function linkforItem(KurogoObject $event, $data=null) {
-    
-        $subtitle = $this->timeText($event);
-        if ($briefLocation = $event->get_location()) {
-          $subtitle .= " | $briefLocation";
-        }
-        
-        $options = array(
-          'id'   => $event->get_uid(),
-          'time' => $event->get_start()
-        );
-        
-        foreach (array('type','calendar','searchTerms','timeframe','catid','filter') as $field) {
-            if (isset($data[$field])) {
-                $options[$field] = $data[$field];
-            }
-        }
-        
-        $addBreadcrumb = isset($data['addBreadcrumb']) ? $data['addBreadcrumb'] : true;
-        $noBreadcrumbs = isset($data['noBreadcrumbs']) ? $data['noBreadcrumbs'] : false;
+      $subtitle = $this->timeText($event);
+      if ($briefLocation = $event->get_location()) {
+        $subtitle .= " | $briefLocation";
+      }
+      
+      $options = array(
+        'id'   => $event->get_uid(),
+        'time' => $event->get_start()
+      );
+      
+      foreach (array('type','calendar','searchTerms','timeframe','catid','filter') as $field) {
+          if (isset($data[$field])) {
+              $options[$field] = $data[$field];
+          }
+      }
 
-        if ($noBreadcrumbs) {
-          $url = $this->buildURL('detail', $options);
-        } else {
-          $url = $this->buildBreadcrumbURL('detail', $options, $addBreadcrumb);
-        }
+      $addBreadcrumb = isset($data['addBreadcrumb']) ? $data['addBreadcrumb'] : true;
+      $noBreadcrumbs = isset($data['noBreadcrumbs']) ? $data['noBreadcrumbs'] : false;
 
-        return array(
-          'url'       => $url,
-          'title'     => $event->get_summary(),
-          'subtitle'  => $subtitle
-        );
+      if ($noBreadcrumbs) {
+        $url = $this->buildURL('detail', $options);
+      } else {
+        $url = $this->buildBreadcrumbURL('detail', $options, $addBreadcrumb);
+      }
+
+      return array(
+        'url'       => $url,
+        'title'     => $event->get_summary(),
+        'subtitle'  => $subtitle
+      );
     }
 
     protected function getFeedsByType() {  
@@ -454,7 +518,7 @@ class CalendarWebModule extends WebModule {
         $this->assign('today',         mktime(0,0,0));
         $this->assign('dateFormat', $this->getLocalizedString("LONG_DATE_FORMAT"));
         $this->assign('placeholder', $this->getLocalizedString('SEARCH_TEXT'));
-        $this->assign('searchOptions', $this->searchOptions);
+        $this->assign('searchOptions', $this->searchOptions());
         $this->assign('feeds',  $this->getFeedsByType());
         break;
       
@@ -466,10 +530,7 @@ class CalendarWebModule extends WebModule {
         $categoryObjects = $feed->getEventCategories();
 
         foreach ($categoryObjects as $categoryObject) {
-          $categories[] = array(
-            'title'   => $this->ucname($categoryObject->get_name()),
-            'url'     => $this->categoryURL($categoryObject),
-          );
+          $categories[] = $this->linkForCategory($categoryObject);
         }
         
         $this->assign('categories', $categories);
@@ -487,7 +548,8 @@ class CalendarWebModule extends WebModule {
         $this->setBreadcrumbTitle($name);
         $this->setBreadcrumbLongTitle($name);
 
-        $catname = $this->ucname($name);
+        // wouldn't this already be formatted from the url building stage?
+        $catname = $this->formatTitle($name);
         $this->assign('category', $catname);
         $this->setLogData($catid, $catname);
         
@@ -733,7 +795,7 @@ class CalendarWebModule extends WebModule {
           $this->assign('events'        , $events);        
           $this->assign('searchTerms'   , $searchTerms);        
           $this->assign('selectedOption', $timeframe);
-          $this->assign('searchOptions' , $this->searchOptions);
+          $this->assign('searchOptions' , $this->searchOptions());
           $this->assign('feeds'         , $this->getFeedsByType());
           $this->assign('searchCalendar', $searchCalendar);
 

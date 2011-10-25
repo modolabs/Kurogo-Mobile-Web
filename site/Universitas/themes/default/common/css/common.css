@@ -11,7 +11,7 @@ body {
 
 body, th, td, li, option, select, input {
 	/* Primary text color */
-	color: #333;
+	color: @@@primary_text_color@@@;
 }
 
 a, a:visited, .focal a, .focal a:visited, .tabbody a, .tabbody a:visited {

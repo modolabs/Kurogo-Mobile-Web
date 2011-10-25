@@ -12,32 +12,49 @@ class CalendarAPIModule extends APIModule
 
     protected $timezone;
     protected $fieldConfig;
+    protected $feeds = array();
 
-    // modified from CalendarWebModule
-    protected function getFeedsByType() {  
-        $groupTitles = array(
-            'user' => 'Users',
-            'resource' => 'Resources',
-            'static' => 'Other Calendars',
-            );
+    protected function getCalendarsForGroup($groupConfig) {
+        $calendars = array();
+        $type = $groupConfig['type'];
+        if (isset($groupConfig['calendars'])) {
+            foreach ($groupConfig['calendars'] as $calendarId) {
+                $feedsForType = $this->getFeeds($type);
+                if (isset($feedsForType[$calendarId])) {
+                    $calendarData = $feedsForType[$calendarId];
+                    $calendars[] = array(
+                        'id' => strval($calendarId),
+                        'title' => $calendarData['TITLE'],
+                        'type' => $type,
+                        );
+                }
+            }
 
-        $feeds = array();
-        foreach (array('user','resource','static') as $type) {
-            $typeFeedData = $this->getFeeds($type);
-            $typeFeeds = array();
-            foreach ($typeFeedData as $feed => $feedData) {
-                $typeFeeds[] = array(
-                    'id' => $feed,
+        } elseif (isset($groupConfig['all'])) {
+            foreach ($this->getFeeds($type) as $feedId => $feedData) {
+                $calendars[] = array(
+                    'id' => strval($feedId),
                     'title' => $feedData['TITLE'],
                     'type' => $type,
                     );
             }
-            if ($typeFeeds) {
-                $feeds[] = array(
-                    'id' => $type,
-                    'title' => $groupTitles[$type],
-                    'calendars' => $typeFeeds,
-                    );
+        }
+        return $calendars;
+    }
+
+    // modified from CalendarWebModule
+    protected function getFeedsByType() {
+        $groups = $this->getAPIConfigData('groups');
+        $feeds = array();
+        foreach ($groups as $groupConfig) {
+            $feedGroup = array(
+                'id' => strval($groupConfig['id']),
+                'title' => $groupConfig['title'],
+                'calendars' => $this->getCalendarsForGroup($groupConfig),
+                );
+
+            if (count($feedGroup['calendars'])) {
+                $feeds[] = $feedGroup;
             }
         }
         return $feeds;
@@ -75,6 +92,23 @@ class CalendarAPIModule extends APIModule
                     $feeds = $controller->getResources();
                 }
                 break;
+                
+            case 'category':
+                $sectionData = $this->getOptionalModuleSection('categories');
+                $controllerClass = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : '';
+                if (strlen($controllerClass)) {
+                    $controller = DataController::factory($controllerClass, $sectionData);
+                    foreach ($controller->items() as $category) {
+                        $feeds[$category->getId()] = array(
+                            'TITLE' => $category->getName(),
+                            'CATEGORY' => $category->getId(),
+                            'BASE_URL' => $sectionData['EVENT_BASE_URL'],
+                            'CONTROLLER_CLASS' => $sectionData['EVENT_CONTROLLER_CLASS'],
+                            );
+                    }
+                }
+                break;
+
             default:
                 throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $type));
         }
@@ -311,12 +345,23 @@ class CalendarAPIModule extends APIModule
 
                 $group = $this->getArg('group');
                 $response = array();
+
+                $groups = $this->getAPIConfigData('groups');
+                foreach ($groups as $groupData) {
+                    if ($groupData['id'] == $group) {
+                        $response = $this->getCalendarsForGroup($groupData);
+                        break;
+                    }
+                }
+
+                /*
                 foreach ($this->getFeeds($group) as $feedID => $feedData) {
                     $response[] = array(
                         'id' => $feedID,
                         'title' => $feedData['TITLE'],
                         );
                 }
+                */
 
                 $this->setResponse($response);
                 $this->setResponseVersion(1);

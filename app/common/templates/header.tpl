@@ -43,10 +43,18 @@
 
     <script type="text/javascript">
       function onOrientationChange() {ldelim}
-        rotateScreen();
-        {foreach $onOrientationChangeBlocks as $script}
-          {$script}
-        {/foreach}
+        {* the galaxy tab sends orientation change events constantly *}
+        if (typeof onOrientationChange.lastOrientation == 'undefined') {ldelim}
+          onOrientationChange.lastOrientation = null;
+        {rdelim}
+        var newOrientation = getOrientation();
+        if (newOrientation != onOrientationChange.lastOrientation) {ldelim}
+          rotateScreen();
+          {foreach $onOrientationChangeBlocks as $script}
+            {$script}
+          {/foreach}
+        {rdelim}
+        onOrientationChange.lastOrientation = newOrientation;
       {rdelim}
       if (window.addEventListener) {ldelim}
         window.addEventListener("orientationchange", onOrientationChange, false);
