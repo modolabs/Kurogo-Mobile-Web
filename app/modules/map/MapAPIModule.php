@@ -222,6 +222,32 @@ class MapAPIModule extends APIModule
         return $path;
     }
 
+    protected function getGeometryType(MapGeometry $geometry) {
+        if ($geometry instanceof MapPolygon) {
+            return 'polygon';
+        }
+        if ($geometry instanceof MapPolyline) {
+            return 'polyline';
+        }
+        return 'point';
+    }
+
+    protected function formatGeometry(MapGeometry $geometry) {
+        $result = array();
+        if ($geometry instanceof MapPolygon) {
+            foreach ($geometry->getRings() as $aRing) {
+                $result[] = $aRing->getPoints();
+            }
+
+        } elseif ($geometry instanceof MapPolyline) {
+            $result = $geometry->getPoints();
+
+        } else {
+            $result = $geometry->getCenterCoordinate();
+        }
+        return $result;
+    }
+
     protected function displayTextFromMeters($meters)
     {
         $result = null;
@@ -368,13 +394,23 @@ class MapAPIModule extends APIModule
                     $placemark = $dataController->selectPlacemark($placemarkId);
 
                     $fields = $placemark->getFields();
+                    $geometry = $placemark->getGeometry();
 
                     $response = array(
-                        'title' => $placemark->getTitle(),
+                        'id'       => $placemarkId,
+                        'title'    => $placemark->getTitle(),
                         'subtitle' => $placemark->getSubtitle(),
-                        'address' => $placemark->getAddress(),
-                        'extraFields' => $placemark->getFields(),
+                        'address'  => $placemark->getAddress(),
+                        'details'  => $placemark->getFields(),
                     );
+
+                    if ($geometry) {
+                        $center = $geometry->getCenterCoordinate();
+                        $response['lat'] = $center['lat'];
+                        $response['lon'] = $center['lon'];
+                        $response['geometryType'] = $this->getGeometryType($geometry);
+                        $response['geometry'] = $this->formatGeometry($geometry);
+                    }
 
                     $this->setResponse($response);                                                              
                     $this->setResponseVersion(1);                                                               

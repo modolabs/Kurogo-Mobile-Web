@@ -329,6 +329,17 @@ class Kurogo
         return $this->logger;
     }
     
+    public function setDefaultLogLevel($level) {
+        $logger = $this->logger();
+        $logger->setDefaultLogLevel($level);
+    }
+    
+    public function setLogLevel($area, $level) {
+        $logger = $this->logger();
+        $logger->setLogLevel($area, $level);
+    }
+
+    
     public static function log($priority, $message, $area, $backtrace=null) {
         static $deferredLogs = array();
         $logger = Kurogo::sharedInstance()->logger();

@@ -66,7 +66,7 @@ class ContentWebModule extends WebModule {
 		if (isset($this->feedGroups[$group])) {
 
             if (!isset($this->feedGroups[$group]['DESCRIPTION'])) {
-                $this->feedGroups[$group]['DESCRIPTION'] = $this->getModuleVar('description','strings');
+                $this->feedGroups[$group]['DESCRIPTION'] = $this->getOptionalModuleVar('description','','strings');
             }
             
             return $this->feedGroups[$group];            
@@ -137,7 +137,7 @@ class ContentWebModule extends WebModule {
 					$this->setPageTitle($feedData['TITLE']);
 					$this->assign('contentBody', $this->getContent($feedData));
 				}else{
-					$this->assign('description', $this->getModuleVar('description','strings'));
+					$this->assign('description', $this->getOptionalModuleVar('description','','strings'));
 					$this->assign('contentPages', $pages);
 				}
 				
