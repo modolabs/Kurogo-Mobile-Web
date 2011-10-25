@@ -19,6 +19,7 @@ abstract class ItemsDataController extends ExternalDataController {
 	 * @return mixed The return value is data dependent. Subclasses should return false or null if the item could not be found
      */
     abstract public function getItem($id);
+    abstract public function search($searchTerms, $start=0, $limit=null);
     
     /**
      * Sets the total number of items in the request. If subclasses override parseData() this method
