@@ -8,7 +8,7 @@
   * @package ExternalData
   * @subpackage Calendar
   */
-class TrumbaCalendarDataController extends CalendarDataController
+class TrumbaCalendarDataController extends LegacyCalendarDataController
 {
     const DEFAULT_EVENT_CLASS='TrumbaEvent';
     protected $trumbaFilters=array();
