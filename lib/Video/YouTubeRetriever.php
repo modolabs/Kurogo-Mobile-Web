@@ -1,9 +1,10 @@
 <?php
 
- class YouTubeVideoController extends LegacyVideoDataController
+ class YouTubeRetriever extends URLDataRetriever
  {
     protected $DEFAULT_PARSER_CLASS='YouTubeDataParser';
     protected $playlist;
+    protected $supportsSearch = true;
     
  	private function setStandardFilters() {
  		if ($this->playlist) {
@@ -11,51 +12,45 @@
  		} else {
 			$this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
 		}
+		
         $this->addFilter('alt', 'jsonc'); //set the output format to json
         $this->addFilter('format', 6); //only return mobile videos
         $this->addFilter('v', 2); // version 2
         $this->addFilter('orderby', 'published');
-        if ($this->tag) {
-            $this->addFilter('category', $this->tag);
-        }
-
-        if ($this->author) {
-            $this->addFilter('author', $this->author);
-        }
     }
     
-    public function search($q, $start=0, $limit=null) {
-    
+    public function search($searchTerms) {
         $this->setStandardFilters();
-    	
-        $this->addFilter('q', $q); //set the query
-        $this->addFilter('max-results', $limit);
-        $this->addFilter('start-index', $start+1);
+        $this->addFilter('q', $searchTerms); //set the query
         $this->addFilter('orderby', 'relevance');
-    
-        $items = parent::items(0, $limit);
-        return $items;
+        return $this->retrieveData();
     }
     
     protected function init($args) {
+        $this->setStandardFilters();
         parent::init($args);
 
         if (isset($args['PLAYLIST']) && strlen($args['PLAYLIST'])) {
             $this->playlist = $args['PLAYLIST'];
         }
-
-        $this->setStandardFilters();
-    }
-    
-    public function items($start=0, $limit=null) {
-    
-        $this->addFilter('max-results', $limit);
-        $this->addFilter('start-index', $start+1);
-                
-        $items = parent::items(0, $limit);
-        return $items;
     }
 
+    public function url() {
+        if ($tag = $this->dataController->getTag()) {
+            $this->addFilter('category', $tag);
+        }
+
+        if ($author = $this->dataController->getAuthor()) {
+            $this->addFilter('author', $author);
+        }
+
+        if ($limit = $this->dataController->getLimit()) {
+            $this->addFilter('max-results', $this->dataController->getLimit());
+        }
+        $this->addFilter('start-index', $this->dataController->getStart()+1);
+        return parent::url();
+    }
+    
     protected function isValidID($id) {
         return preg_match("/^[A-Za-z0-9_-]+$/", $id);
     }

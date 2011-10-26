@@ -1,6 +1,6 @@
 <?php
 
- class VimeoVideoController extends LegacyVideoDataController
+ class VimeoRetriever extends URLDataRetriever
  {
     protected $DEFAULT_PARSER_CLASS='VimeoDataParser';
     protected $channel;
@@ -12,29 +12,12 @@
             $this->channel = $args['CHANNEL'];
         }
     }
-    
-    public function search($q, $start=0, $limit=null) {
-    
-        $this->setBaseURL($this->getVimeoBaseURL());
-        $_items = parent::items($start, $limit);
-        $items = array();
-        //vimeo does not have a search api in its "standard" api
-        foreach ($_items as $video) {
-            if ( (stripos($video->getDescription(), $q)!==FALSE) || (stripos($video->getTitle(), $q)!==FALSE)) {
-                $items[] = $video;
-            }
-        }
-        
-        $this->setTotalItems(count($items));
-        
-        return $this->limitItems($items, $start, $limit);
-    }
-    
-    private function getVimeoBaseURL() {
+
+    public function url() {
         $url = 'http://vimeo.com/api/v2/';
         
-        if ($this->author) {
-            $url .= $this->author;
+        if ($author = $this->dataController->getAuthor()) {
+            $url .= $author;
         } elseif ($this->channel) {
             $url .= 'channel/' . $this->channel;
         } else {
@@ -45,13 +28,6 @@
         return $url;
     }
     
-    public function items($start=0, $limit=null) {
-    
-        $this->setBaseURL($this->getVimeoBaseURL());
-        $items = parent::items($start, $limit);
-        return $items;
-    }
-        
     protected function isValidID($id) {
         return preg_match("/^[0-9]+$/", $id);
     }

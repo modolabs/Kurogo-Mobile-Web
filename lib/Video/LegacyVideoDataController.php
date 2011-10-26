@@ -1,7 +1,6 @@
 <?php
 
-includePackage('DataController');
-class VideoDataController extends ItemsDataController
+abstract class LegacyVideoDataController extends DataController
 {
     protected $cacheFolder='Video';
     protected $tag;
@@ -15,14 +14,6 @@ class VideoDataController extends ItemsDataController
         );
     }
     
-    public function getTag() {
-        return $this->tag;
-    }
-
-    public function getAuthor() {
-        return $this->author;
-    }
-    
     protected function init($args) {
         parent::init($args);
 
@@ -34,4 +25,6 @@ class VideoDataController extends ItemsDataController
             $this->author = $args['AUTHOR'];
         }
     }
+
+    abstract public function search($q, $start=0, $limit=null);
 }

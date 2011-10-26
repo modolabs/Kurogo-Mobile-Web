@@ -4,6 +4,7 @@ Kurogo::includePackage('Video');
 
 class VideoWebModule extends WebModule
 {
+    const defaultController = 'VideoDataController';
     protected $id='video';  // this affects which .ini is loaded
     protected $feeds = array();
         
@@ -65,8 +66,12 @@ class VideoWebModule extends WebModule
     protected function getFeed($feed=null) {
         $feed = isset($this->feeds[$feed]) ? $feed : $this->getDefaultSection();
         $feedData = $this->feeds[$feed];
+
+        if (!isset($feedData['CONTROLLER_CLASS'])) {
+            $feedData['CONTROLLER_CLASS'] = self::defaultController;
+        }
         
-        $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         return $controller;
     }
     
@@ -91,6 +96,7 @@ class VideoWebModule extends WebModule
         $this->assign('sections'      , VideoModuleUtils::getSectionsFromFeeds($this->feeds));
         
         $controller = $this->getFeed($section);
+        $this->assign('feedData', $this->feeds[$section]);
         
         switch ($this->page)
         {  
@@ -121,19 +127,21 @@ class VideoWebModule extends WebModule
         
                 $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
                 $start = $this->getArg('start', 0);
+                $controller->setStart($start);
+                $controller->setLimit($maxPerPage);
         	    
                 if ($this->page == 'search') {
                     if ($filter = $this->getArg('filter')) {
                         $searchTerms = trim($filter);
                         $this->setLogData($searchTerms);
-                        $items = $controller->search($searchTerms, $start, $maxPerPage);
+                        $items = $controller->search($searchTerms);
                         $this->assign('searchTerms', $searchTerms);
                     } else {
                         $this->redirectTo('index', array('section'=>$section), false);
                     }
                 } else {
                      $this->setLogData($section, $controller->getTitle());
-                     $items = $controller->items($start, $maxPerPage);
+                     $items = $controller->items();
                 }
                              
                 $totalItems = $controller->getTotalItems();
