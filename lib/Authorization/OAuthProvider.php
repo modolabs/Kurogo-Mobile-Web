@@ -419,16 +419,16 @@ abstract class OAuthProvider
         $streamContext = stream_context_create($contextOpts);
         Kurogo::log(LOG_INFO, sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret), 'auth');
 
-        $response = file_get_contents($url, false, $streamContext);
+        $data = file_get_contents($url, false, $streamContext);
         
         //parse the response
-        $this->response = new HTTPDataResponse();
-        $this->response->setRequest($method, $url, $parameters, $headers);
-        $this->response->setResponse($response, $http_response_header);
-        Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $this->response->getCode(), strlen($response)), 'auth');
+        $response = new HTTPDataResponse();
+        $response->setRequest($method, $url, $parameters, $headers);
+        $response->setResponse($data, $http_response_header);
+        Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'auth');
 
         //if there is a location header we need to re-sign before redirecting
-        if ($redirectURL = $this->response->getHeader("Location")) {
+        if ($redirectURL = $response->getHeader("Location")) {
             Kurogo::log(LOG_DEBUG, "Found Location Header", 'auth');
 		    $redirectParts = parse_url($redirectURL);
 		    //if the redirect does not include the host or scheme, use the scheme/host from the original URL
@@ -450,15 +450,11 @@ abstract class OAuthProvider
         return $response;
 	}
 	
-	public function getResponse() {
-	    return $this->response;
-	}
-
     protected function getRequestToken(array $options) {
     
         list($method, $url, $parameters) = $this->getRequestTokenURL($options);
         $response = $this->oauthRequest($method, $url, $parameters);
-		parse_str($response, $return);
+		parse_str($response->getResponse(), $return);
 
 		// validate
 		if(!isset($return['oauth_token'], $return['oauth_token_secret'])) {
@@ -499,7 +495,7 @@ abstract class OAuthProvider
 
         list($method, $url, $parameters) = $this->getAccessTokenURL($options);
 		$response = $this->oauthRequest($method, $url,  $parameters);
-		parse_str($response, $return);
+		parse_str($response->getResponse(), $return);
 
 		if (!isset($return['oauth_token'], $return['oauth_token_secret'])) {
             Kurogo::log(LOG_WARNING, 'oauth_token not found in getAccessToken', 'auth');

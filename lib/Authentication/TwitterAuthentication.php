@@ -55,7 +55,8 @@ class TwitterAuthentication extends OAuthAuthentication
             } else {
                 $oauth = $this->oauth();
                 //cache isn't fresh, load the data
-                if ($data = $oauth->oauthRequest('GET', $this->API_URL .'/users/show.json', array('screen_name'=>$login))) {
+                $response = $oauth->oauthRequest('GET', $this->API_URL .'/users/show.json', array('screen_name'=>$login));
+                if ($data = $response->getResponse()) {
                     $this->cache->write($data, $cacheFilename);
                 }
                 
@@ -63,7 +64,8 @@ class TwitterAuthentication extends OAuthAuthentication
         } else {
             //load the data
             $oauth = $this->oauth();
-            $data = $oauth->oauthRequest('GET', $this->API_URL . '/users/show.json', array('screen_name'=>$login));
+            $response = $oauth->oauthRequest('GET', $this->API_URL . '/users/show.json', array('screen_name'=>$login));
+            $data = $response->getResponse();
         }
         
 		// make the call

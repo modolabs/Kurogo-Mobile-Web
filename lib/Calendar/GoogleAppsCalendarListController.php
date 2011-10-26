@@ -104,10 +104,10 @@ class GoogleAppsCalendarListController extends CalendarListController
             $oauth = $this->oauth();
             $method = 'GET';        
         
-            if ($data = $oauth->oAuthRequest($method, $url, $parameters, $headers)) {
-                $response = $oauth->getResponse();
+            if ($response = $oauth->oAuthRequest($method, $url, $parameters, $headers)) {
                 $cache->write(serialize($response), $cacheFilename);
             }
+            $data = $response->getResponse();
         }
         
         return $data;
