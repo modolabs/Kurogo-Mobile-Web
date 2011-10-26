@@ -23,6 +23,14 @@ class GoogleAppsCalendarDataRetriever extends URLDataRetriever
     
     public function search($searchTerms) {
         $this->addFilter('q', $searchTerms);
+        if ($start = $this->dataController->getStart()) {
+            $this->addFilter('start-index', $start+1);
+        }
+        
+        if ($limit = $this->dataController->getLimit()) {
+            $this->addFilter('max-results', $limit);
+        }
+
         return $this->retrieveData();
     }
 
