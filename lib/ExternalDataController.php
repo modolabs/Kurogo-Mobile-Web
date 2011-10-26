@@ -113,7 +113,6 @@ abstract class ExternalDataController {
 
         //instantiate the retriever class and add it to the controller
         $retriever = DataRetriever::factory($args['RETRIEVER_CLASS'], $args);
-        $retriever->init($args);
         $retriever->setDataController($this);
         $this->setRetriever($retriever);
 
