@@ -22,7 +22,7 @@ abstract class DataRetriever {
         return $this->dataController;
     }
     
-    public function init($args) {
+    protected function init($args) {
     
     }
     

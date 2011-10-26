@@ -125,7 +125,7 @@ class SOAPDataRetriever extends DataRetriever {
         $this->location = '';
     }
     
-    public function init($args) {
+    protected function init($args) {
         //get global options from the site soap section
         $args = array_merge(Kurogo::getOptionalSiteSection('soap'), $args);
         if (!isset($args['WSDL']) && $args['WSDL']) {

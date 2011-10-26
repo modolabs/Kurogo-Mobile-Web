@@ -59,7 +59,7 @@ class URLDataRetriever extends DataRetriever {
         $this->filters = array();
     }
     
-    public function init($args) {
+    protected function init($args) {
         parent::init($args);
         if (isset($args['BASE_URL'])) {
             $this->setBaseURL($args['BASE_URL']);
