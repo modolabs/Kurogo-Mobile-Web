@@ -802,6 +802,7 @@ class Kurogo
 
 interface KurogoObject 
 {
+    public function getID();
 }
 
 /* retained for compatibility */

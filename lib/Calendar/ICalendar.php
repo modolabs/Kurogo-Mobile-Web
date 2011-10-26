@@ -198,6 +198,10 @@ class ICalEvent extends ICalObject implements KurogoObject {
     public function get_tzid() {
         return $this->tzid;
     }
+    
+    public function getID() {
+        return $this->uid;
+    }
 
     public function get_uid() {
         return $this->uid;

@@ -144,7 +144,7 @@ class CalendarDataController extends ItemsDataController
         
         $items = $this->items();
 		foreach($items as $key => $item) {
-			if($id == $item->get_uid()) {
+			if($id == $item->getID()) {
 				return $item;
 			}
 		}

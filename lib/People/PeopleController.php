@@ -99,7 +99,6 @@ abstract class PeopleController
 abstract class Person implements KurogoObject
 {
     protected $attributes = array();
-    abstract public function getId();
     abstract public function getName();
         
     public function getField($field) {
