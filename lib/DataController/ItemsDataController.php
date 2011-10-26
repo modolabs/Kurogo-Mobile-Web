@@ -12,14 +12,32 @@
 abstract class ItemsDataController extends ExternalDataController {
     
     protected $totalItems = null;
+    protected $items = array();
     
+    public function search($searchTerms, $start=0, $limit=null) {
+        if ($this->retriever->supportsSearch()) {
+            $response = $this->retriever->search($searchTerms);
+            $items = $this->parseData($response->getResponse());
+        } else {
+        
+            $items = $this->items();
+            $events = array();
+            foreach ($items as $item) {
+                if ($item->filterItem(array('search'=>$searchTerms))) {
+                    $events[] = $item;
+                }
+            }
+        }
+        
+        $this->totalItems = count($items);
+        return $this->limitItems($events, $start, $limit);
+    }
+
     /**
      * This method should return a single item based on the id
      * @param mixed $id the id to retrieve. The value of this id is data dependent.
-	 * @return mixed The return value is data dependent. Subclasses should return false or null if the item could not be found
+	 * @return KurogoObject The return value is data dependent. Subclasses should return false or null if the item could not be found
      */
-    abstract public function search($searchTerms, $start=0, $limit=null);
-
     public function getItem($id) {
 
         if (!$id) {
@@ -70,7 +88,7 @@ abstract class ItemsDataController extends ExternalDataController {
      * @param int $limit how many items to return (use null to return all items beginning at $start)
      * @return array
      */
-    protected function limitItems($items, $start=0, $limit=null) {
+    public function limitItems($items, $start=0, $limit=null) {
         $start = intval($start);
         $limit = is_null($limit) ? null : intval($limit);
 

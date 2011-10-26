@@ -803,6 +803,8 @@ class Kurogo
 interface KurogoObject 
 {
     public function getID();
+    public function getTitle();
+    public function filterItem($filters);
 }
 
 /* retained for compatibility */

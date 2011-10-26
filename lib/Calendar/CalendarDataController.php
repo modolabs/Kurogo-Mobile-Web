@@ -184,18 +184,10 @@ class CalendarDataController extends ItemsDataController
         if ($this->retriever->supportsSearch()) {
             $response = $this->retriever->search($searchTerms);
             $calendar = $this->parseData($response->getResponse(), $this->parser);
-            $events = $calendar->getEvents();
+            $items = $calendar->getEvents();
+            return $this->limitItems($events, $start, $limit);
         } else {
-        
-            $items = $this->items($start, $limit);
-            $events = array();
-            foreach ($items as $occurrence) {
-                if ( (stripos($occurrence->get_description(), $searchTerms)!==FALSE) || (stripos($occurrence->get_summary(), $searchTerms)!==FALSE)) {
-                    $events[] = $occurrence;
-                }
-            }
+            return parent::search($searchTerms, $start, $limit);
         }
-        
-        return $this->limitItems($events, $start, $limit);
     }
 }

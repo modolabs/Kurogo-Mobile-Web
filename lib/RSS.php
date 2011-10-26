@@ -122,6 +122,21 @@ class RSSItem extends XMLElement implements KurogoObject
     protected $enclosure;
     protected $images=array();
     
+    public function filterItem($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'search':
+                    return  (stripos($this->getTitle(), $value)!==FALSE) ||
+                         (stripos($this->getDescription(), $value)!==FALSE) ||
+                         (stripos($this->getContent(),     $value)!==FALSE);
+                    break;
+            }
+        }
+        
+        return true;
+    }
+    
     public function getContent()
     {
         return $this->content;

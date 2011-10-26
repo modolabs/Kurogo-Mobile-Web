@@ -179,11 +179,13 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
     }
 
-    /* subclasses should override this for custom filtering */    
-    public function filterEvent($filters) {
+    public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
             switch ($filter)
             {
+                case 'search': //case insensitive
+                    return  (stripos($this->getTitle(), $value)!==FALSE);
+                    break;
                 case 'category': //case insensitive
                     if (!in_array(strtolower($value), array_map('strtolower', $this->categories))) {
                         return false;
@@ -228,6 +230,10 @@ class ICalEvent extends ICalObject implements KurogoObject {
     }
 
     public function get_summary() {
+        return $this->summary;
+    }
+    
+    public function getTitle() {
         return $this->summary;
     }
 
@@ -882,7 +888,7 @@ class ICalendar extends ICalObject implements CalendarInterface {
 
         foreach ($this->eventStartTimes as $id => $startTime) {
             $event = $this->events[$id];
-            if ($event->filterEvent($filters)) {
+            if ($event->filterItem($filters)) {
                 $occurrences = array_merge($occurrences, $event->getOccurrencesInRange($range, $limit));
             }
         }
