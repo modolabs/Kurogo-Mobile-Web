@@ -160,8 +160,8 @@ class CalendarDataController extends ItemsDataController
         return $this->calendar->getEvent($id);
     }
     
-    public function items($start=0, $limit=null)
-    {
+    public function items() {
+
         if (!$this->calendar) {
             $this->calendar = $this->getParsedData();
         }
@@ -170,8 +170,8 @@ class CalendarDataController extends ItemsDataController
         $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : CalendarDataController::END_TIME_LIMIT;
         $range = new TimeRange($startTimestamp, $endTimestamp);
         
-        $events = $this->calendar->getEventsInRange($range, $limit, $this->filters);
-        return $this->limitItems($events, $start, $limit);
+        $events = $this->calendar->getEventsInRange($range, $this->getLimit(), $this->filters);
+        return $this->limitItems($events, $this->getStart(), $this->getLimit());
     }
     
     protected function clearInternalCache()
@@ -180,14 +180,15 @@ class CalendarDataController extends ItemsDataController
         parent::clearInternalCache();
     }
 
-    public function search($searchTerms, $start=0, $limit=null) {
+    public function search($searchTerms) {
         if ($this->retriever->supportsSearch()) {
             $response = $this->retriever->search($searchTerms);
-            $calendar = $this->parseData($response->getResponse(), $this->parser);
+            $calendar = $this->parseData($response->getResponse());
             $items = $calendar->getEvents();
-            return $this->limitItems($events, $start, $limit);
+            $this->totalItems = $this->parser->getTotalItems();
+            return $items;
         } else {
-            return parent::search($searchTerms, $start, $limit);
+            return parent::search($searchTerms);
         }
     }
 }
