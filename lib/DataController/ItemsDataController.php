@@ -13,24 +13,62 @@ abstract class ItemsDataController extends ExternalDataController {
     
     protected $totalItems = null;
     protected $items = array();
+    protected $start = 0;
+    protected $limit = null;
     
-    public function search($searchTerms, $start=0, $limit=null) {
+    public function setStart($start) {
+        $this->start = $start;
+    }
+
+    public function getStart() {
+        return $this->start;
+    }
+
+    public function setLimit($limit) {
+        $this->limit = $limit;
+    }
+    
+    public function getLimit() {
+        return $this->limit;
+    }
+    
+    public function search($searchTerms) {
         if ($this->retriever->supportsSearch()) {
             $response = $this->retriever->search($searchTerms);
             $items = $this->parseData($response->getResponse());
+            $this->setTotalItems($this->parser->getTotalItems());
+            
         } else {
-        
-            $items = $this->items();
-            $events = array();
-            foreach ($items as $item) {
+            //save the start/limit settings, we have to get back all the entries before filtering
+            $start = $this->start;
+            $limit = $this->limit;
+            $this->start = 0;
+            $this->limit = null;
+            
+            // get all the items
+            $_items = $this->items();
+            
+            //restore start/limit settings
+            $this->start = $start;
+            $this->limit = $limit;
+            
+            $items = array();
+            foreach ($_items as $item) {
                 if ($item->filterItem(array('search'=>$searchTerms))) {
-                    $events[] = $item;
+                    $items[] = $item;
                 }
             }
+            
+            $this->setTotalItems(count($items));
         }
-        
-        $this->totalItems = count($items);
-        return $this->limitItems($events, $start, $limit);
+
+        // the result has not been limited        
+        if (count($items) == $this->getTotalItems()) {
+            $items = $this->limitItems($items, $this->start, $this->limit);
+        }
+
+        return $items;
+
     }
 
     /**
@@ -108,6 +146,26 @@ abstract class ItemsDataController extends ExternalDataController {
         
     }
 
+    protected function parseFile($file, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        $data = parent::parseFile($file, $parser);
+        $this->setTotalItems($parser->getTotalItems());
+        return $data;
+    }
+    
+    protected function parseData($data, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+
+        $data = parent::parseData($data, $parser);
+        $this->setTotalItems($parser->getTotalItems());
+        return $data;
+    }
+
+
     /**
      * Returns an item at a particular index
      * @param int index
@@ -124,12 +182,16 @@ abstract class ItemsDataController extends ExternalDataController {
     /**
      * Default implementation of items. Will retrieve the parsed items based on the current settings
      * and return a filtered list of items
-     * @param int $start 0 based index to start
-     * @limit int $limit number of items to return
      */
-    public function items($start=0, $limit=null) {
+    public function items() {
         $items = $this->getParsedData();
-        return $this->limitItems($items,$start, $limit);
+        
+        // the result has not been limited        
+        if (count($items)== $this->getTotalItems()) {
+            $items = $this->limitItems($items, $this->start, $this->limit);
+        }
+        
+        return $items;
     }
 }
 

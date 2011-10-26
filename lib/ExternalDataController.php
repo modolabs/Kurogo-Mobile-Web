@@ -115,10 +115,17 @@ abstract class ExternalDataController {
         $retriever = DataRetriever::factory($args['RETRIEVER_CLASS'], $args);
         $retriever->setDataController($this);
         $this->setRetriever($retriever);
+        
+        if (!isset($args['PARSER_CLASS'])) {
+            //use the retriever parser class if it has a default
+            if (!$args['PARSER_CLASS'] = $retriever->getDefaultParserClass()) {
 
-        // use a parser class if set, otherwise use the default parser class from the controller
-        $args['PARSER_CLASS'] = isset($args['PARSER_CLASS']) ? $args['PARSER_CLASS'] : $this->DEFAULT_PARSER_CLASS;
-        // instantiate the parser class and add it to the retriever
+                // otherwise use the controll parser class
+                $args['PARSER_CLASS'] = $this->DEFAULT_PARSER_CLASS;
+            }
+        }
+        
+        // instantiate the parser class
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
         $parser->setDataController($this);
         $this->setParser($parser);
@@ -142,8 +149,7 @@ abstract class ExternalDataController {
     }
     
     /**
-     * Parse the data. This method will also attempt to set the total items in a request by calling the
-     * data parser's getTotalItems() method
+     * Parse the data.
      * @param string $data the data from a request (could be from the cache)
      * @param DataParser $parser optional, a alternative data parser to use. 
      * @return mixed the parsed data. This value is data dependent
@@ -157,8 +163,7 @@ abstract class ExternalDataController {
     }
 
     /**
-     * Parse a file. This method will also attempt to set the total items in a request by calling the
-     * data parser's getTotalItems() method
+     * Parse a file. 
      * @param string $file a file containing the contents of the data
      * @param DataParser $parser optional, a alternative data parser to use. 
      * @return mixed the parsed data. This value is data dependent
@@ -168,7 +173,6 @@ abstract class ExternalDataController {
             $parser = $this->parser;
         }
         $parsedData = $parser->parseFile($file);
-        $this->dataController->setTotalItems($parser->getTotalItems());
         return $parsedData;
     }
     

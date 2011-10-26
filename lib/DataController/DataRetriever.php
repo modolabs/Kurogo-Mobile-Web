@@ -9,6 +9,7 @@
  */
 abstract class DataRetriever {
 
+    protected $DEFAULT_PARSER_CLASS=null; 
     abstract public function getCacheKey();
     abstract public function retrieveData();
     
@@ -29,6 +30,10 @@ abstract class DataRetriever {
     
     protected function init($args) {
     
+    }
+    
+    public function getDefaultParserClass() {
+        return $this->DEFAULT_PARSER_CLASS;
     }
     
     public static function factory($retrieverClass, $args) {
