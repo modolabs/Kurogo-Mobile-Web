@@ -421,40 +421,36 @@ class MapAPIModule extends APIModule
             case 'search':
                 $mapSearch = $this->getSearchClass($this->args);
 
-                $searchType = $this->getArg('type');
-                if ($searchType == 'nearby') {
-                    $lat = $this->getArg('lat', 0);
-                    $lon = $this->getArg('lon', 0);
-                    if ($lat || $lon) {
+                $lat = $this->getArg('lat', 0);
+                $lon = $this->getArg('lon', 0);
+                if ($lat || $lon) {
+                    // defaults values for proximity search
+                    $tolerance = 1000;
+                    $maxItems = 0;
 
-                        // defaults values for proximity search
-                        $tolerance = 1000;
-                        $maxItems = 0;
-
-                        // check for settings in feedgroup config
-                        $configData = $this->getDataForGroup($this->feedGroup);
-                        if ($configData) {
-                            if (isset($configData['NEARBY_THRESHOLD'])) {
-                                $tolerance = $configData['NEARBY_THRESHOLD'];
-                            }
-                            if (isset($configData['NEARBY_ITEMS'])) {
-                                $maxItems = $configData['NEARBY_ITEMS'];
-                            }
-                        }
-
-                        // check for override settings in feeds
-                        $configData = $this->getCurrentFeed();
+                    // check for settings in feedgroup config
+                    $configData = $this->getDataForGroup($this->feedGroup);
+                    if ($configData) {
                         if (isset($configData['NEARBY_THRESHOLD'])) {
                             $tolerance = $configData['NEARBY_THRESHOLD'];
                         }
                         if (isset($configData['NEARBY_ITEMS'])) {
                             $maxItems = $configData['NEARBY_ITEMS'];
                         }
-
-                        $searchResults = $mapSearch->searchByProximity(
-                            array('lat' => $lat, 'lon' => $lon),
-                            1000, 10);
                     }
+
+                    // check for override settings in feeds
+                    $configData = $this->getCurrentFeed();
+                    if (isset($configData['NEARBY_THRESHOLD'])) {
+                        $tolerance = $configData['NEARBY_THRESHOLD'];
+                    }
+                    if (isset($configData['NEARBY_ITEMS'])) {
+                        $maxItems = $configData['NEARBY_ITEMS'];
+                    }
+
+                    $searchResults = $mapSearch->searchByProximity(
+                        array('lat' => $lat, 'lon' => $lon),
+                        1000, 10);
 
                 } else {
                     $searchTerms = $this->getArg('q');
