@@ -1,35 +1,29 @@
 <?php
 
-class GoogleAppsCalendarDataController extends CalendarDataController
+class GoogleAppsCalendarDataRetriever extends URLDataRetriever
 {
-    protected $DEFAULT_PARSER_CLASS='GoogleCalendarDataParser';
-    protected $cacheFolder = 'GoogleCalendar';
     protected $authority;
-    
-    public function addFilter($var, $value) {
-        switch ($var)
-        {
-            case 'search':
-                return parent::addFilter('q', $value);
-            default:
-                return parent::addFilter($var, $value);
-        }
-    }
+    protected $supportsSearch = true;
     
     protected function url() {
         $this->addFilter('orderby', 'starttime');
         $this->addFilter('sortorder', 'a');
         $this->addFilter('singleevents', 'true');
-
-        if ($this->startDate) {
-            $this->addFilter('start-min', $this->startDate->format('c'));
+        
+        if ($startDate = $this->dataController->getStartDate()) {
+            $this->addFilter('start-min', $startDate->format('c'));
         }
 
-        if ($this->endDate) {
-            $this->addFilter('start-max', $this->endDate->format('c'));
+        if ($endDate = $this->dataController->getEndDate()) {
+            $this->addFilter('start-max', $endDate->format('c'));
         }
 
         return parent::url();
+    }
+    
+    public function search($searchTerms) {
+        $this->addFilter('q', $searchTerms);
+        return $this->retrieveData();
     }
 
     protected function cacheFolder() {
@@ -38,14 +32,13 @@ class GoogleAppsCalendarDataController extends CalendarDataController
         return CACHE_DIR . "/" . $this->cacheFolder . ($token ? "/" . md5($token) : '');
     }
     
-    protected function retrieveData($url) {
+    public function retrieveData() {
+        $url = $this->url();
     
         $oauth = $this->oauth();
         $parameters = array(); //set in query string
         $headers = $this->getHeaders();
-        $result = $oauth->oauthRequest('GET', $url, $parameters, $headers);
-        $this->response = $oauth->getResponse();
-        return $result;
+        return $oauth->oauthRequest('GET', $url, $parameters, $headers);
     }
     
     protected function addStandardFilters() {

@@ -25,7 +25,8 @@ class GoogleAppsCalendarListController extends CalendarListController
 
             foreach ($data['feed']['entry'] as $resource) {
                 $feed = array(
-                    'CONTROLLER_CLASS'=>'GoogleAppsCalendarDataController',
+                    'PARSER_CLASS'=>'GoogleCalendarDataParser',
+                    'RETRIEVER_CLASS'=>'GoogleAppsCalendarDataRetriever',
                     'AUTHORITY'=>$authority
                 );
 
@@ -71,7 +72,8 @@ class GoogleAppsCalendarListController extends CalendarListController
             $authority = $this->authority->getAuthorityIndex();
             foreach ($data['data']['items'] as $calendar) {
                 $feeds[$calendar['id']] = array(
-                    'CONTROLLER_CLASS'=>'GoogleAppsCalendarDataController',
+                    'PARSER_CLASS'=>'GoogleCalendarDataParser',
+                    'RETRIEVER_CLASS'=>'GoogleAppsCalendarDataRetriever',
                     'AUTHORITY'=>$authority,
                     'BASE_URL'=>$calendar['eventFeedLink'],
                     'TITLE'=>$calendar['title']

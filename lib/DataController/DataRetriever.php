@@ -13,6 +13,7 @@ abstract class DataRetriever {
     abstract public function retrieveData();
     
     protected $dataController;
+    protected $supportsSearch = false;
     
     public function setDataController(ExternalDataController $dataController) {
         $this->dataController = $dataController;
@@ -20,6 +21,10 @@ abstract class DataRetriever {
     
     public function getDataController() {
         return $this->dataController;
+    }
+    
+    public function supportsSearch() {
+        return $this->supportsSearch;
     }
     
     protected function init($args) {

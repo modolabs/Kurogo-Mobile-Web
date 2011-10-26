@@ -56,6 +56,14 @@ class CalendarDataController extends ItemsDataController
     {
         return $this->startDate ? $this->startDate->format('U') : false;
     }
+    
+    public function getStartDate() {
+        return $this->startDate;
+    }
+
+    public function getEndDate() {
+        return $this->endDate;
+    }
 
     public function setEndDate(DateTime $time)
     {
@@ -173,13 +181,21 @@ class CalendarDataController extends ItemsDataController
     }
 
     public function search($searchTerms, $start=0, $limit=null) {
-        $items = $this->items($start, $limit);
-        $events = array();
-		foreach ($items as $occurrence) {
-            if ( (stripos($occurrence->get_description(), $searchTerms)!==FALSE) || (stripos($occurrence->get_summary(), $searchTerms)!==FALSE)) {
-                $events[] = $occurrence;
+        if ($this->retriever->supportsSearch()) {
+            $response = $this->retriever->search($searchTerms);
+            $calendar = $this->parseData($response->getResponse(), $this->parser);
+            $events = $calendar->getEvents();
+        } else {
+        
+            $items = $this->items($start, $limit);
+            $events = array();
+            foreach ($items as $occurrence) {
+                if ( (stripos($occurrence->get_description(), $searchTerms)!==FALSE) || (stripos($occurrence->get_summary(), $searchTerms)!==FALSE)) {
+                    $events[] = $occurrence;
+                }
             }
-		}
+        }
+        
         return $this->limitItems($events, $start, $limit);
     }
 }
