@@ -373,7 +373,7 @@ class Kurogo
         define('MASTER_CONFIG_DIR', ROOT_DIR . DIRECTORY_SEPARATOR . 'config');
         define('APP_DIR',           ROOT_DIR . DIRECTORY_SEPARATOR . 'app');
         define('MODULES_DIR',       APP_DIR  . DIRECTORY_SEPARATOR . 'modules');
-        define('MIN_FILE_PREFIX',  'file:');
+        define('MIN_FILE_PREFIX',  'file-');
         define('API_URL_PREFIX',   'rest');
         
         //
