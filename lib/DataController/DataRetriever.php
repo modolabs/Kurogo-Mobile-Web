@@ -10,6 +10,7 @@
 abstract class DataRetriever {
 
     protected $DEFAULT_PARSER_CLASS=null; 
+    protected $authority;
     abstract public function getCacheKey();
     abstract public function retrieveData();
     
@@ -28,8 +29,22 @@ abstract class DataRetriever {
         return $this->supportsSearch;
     }
     
-    protected function init($args) {
+    public function getUser() {
+        if ($this->authority) {
+            return $this->authority->getCurrentUser();
+        } else {
+            $session = Kurogo::getSession();
+            return $session->getUser();
+        }
+    }
     
+    protected function init($args) {
+
+        if (isset($args['AUTHORITY'])) {
+            if ($authority = AuthenticationAuthority::getAuthenticationAuthority($args['AUTHORITY'])) {
+                $this->authority = $authority;
+            }
+        }
     }
     
     public function getDefaultParserClass() {
