@@ -39,7 +39,7 @@ abstract class DataRetriever {
     public static function factory($retrieverClass, $args) {
         Kurogo::log(LOG_DEBUG, "Initializing DataRetriever $retrieverClass", "data");
         if (!class_exists($retrieverClass)) {
-            throw new KurogoConfigurationException("Parser class $retrieverClass not defined");
+            throw new KurogoConfigurationException("Retriever class $retrieverClass not defined");
         }
         
         $retriever = new $retrieverClass;
