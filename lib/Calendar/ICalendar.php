@@ -512,7 +512,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
         }
 
         if ($this->description) {
-            $this->addLine($output_string, "DECRIPTION", $this->description);
+            $this->addLine($output_string, "DESCRIPTION", $this->description);
         }
 
         if ($this->range) {
