@@ -33,7 +33,24 @@ class DateFormatter
         }
         
         if ($timeStyleConstant) {
-            $string .= strftime(Kurogo::getLocalizedString($timeStyleConstant), $date);
+            // Work around lack of %P support in Mac OS X
+            $format = Kurogo::getLocalizedString($timeStyleConstant);
+            $lowercase = false;
+            if (strpos($format, '%P') !== false) {
+                $format = str_replace('%P', '%p', $format);
+                $lowercase = true;
+            }
+            $formatted = strftime($format, $date);
+            if ($lowercase) {
+                $formatted = strtolower($formatted);
+            }
+            
+            // Work around leading spaces that come from use of %l (but don't exist in date())
+            if (strpos($format, '%l') !== false) {
+                $formatted = trim($formatted);
+            }
+            
+            $string .= $formatted;
         }
         
         return $string;
@@ -78,17 +95,15 @@ class DateFormatter
         }
         
         $string = self::formatDate($range->get_start(), $dateStyle, $timeStyle);
-        if ($range->get_end()) {
-            if ( date('Ymd', $range->get_start()) == date('Ymd', $range->get_end())) {
+        if ($range->get_end() && $range->get_end() != $range->get_start()) {
+            if (date('Ymd', $range->get_start()) == date('Ymd', $range->get_end())) {
                 $dateStyle = self::NO_STYLE;
-                if ($timeStyle == self::NO_STYLE) {
-                    return $string;
-                }
             }
             
-            
-            $string .= ($dateStyle ? ' - ' : '-') .self::formatDate($range->get_end(), $dateStyle, $timeStyle);
-        }        
+            if ($dateStyle != self::NO_STYLE || $timeStyle != self::NO_STYLE) {
+              $string .= ($dateStyle ? ' - ' : '-') .self::formatDate($range->get_end(), $dateStyle, $timeStyle);
+            }
+        }
         
         return $string;
     }
