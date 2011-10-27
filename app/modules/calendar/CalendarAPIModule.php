@@ -165,7 +165,6 @@ class CalendarAPIModule extends APIModule
                 'allday' => ($datetime instanceOf DayRange),
                 'start'  => $datetime->get_start(),
                 'end'    => $datetime->get_end(),
-                'date'   => DateFormatter::formatDateRange($datetime, DateFormatter::MEDIUM_STYLE, DateFormatter::MEDIUM_STYLE),
                 'fields' => array(),
             );
         }
