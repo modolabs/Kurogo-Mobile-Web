@@ -153,25 +153,44 @@ class CalendarAPIModule extends APIModule
         return $controller;
     }
 
-    private function apiArrayFromEvent(ICalEvent $event) {
+    protected function apiArrayFromEvent(ICalEvent $event, $version) {
+        $v2SkipFields = array('datetime', 'start', 'end', 'uid', 'summary');
+        
+        $result = array();
+        if ($version >= 2) {
+            $datetime = $event->get_attribute('datetime');
+            $result = array(
+                'uid'    => $event->get_uid(),
+                'title'  => $event->get_summary(),
+                'allday' => ($datetime instanceOf DayRange),
+                'start'  => $datetime->get_start(),
+                'end'    => $datetime->get_end(),
+                'date'   => DateFormatter::formatDateRange($datetime, DateFormatter::MEDIUM_STYLE, DateFormatter::MEDIUM_STYLE),
+                'fields' => array(),
+            );
+        }
+        
         foreach ($this->fieldConfig as $aField => $fieldInfo) {
-            $fieldName = isset($fieldInfo['label']) ? $fieldInfo['label'] : $aField;
-            $attribute = $event->get_attribute($aField);
-
-            if ($attribute) {
-                if (isset($fieldInfo['section'])) {
-                    $section = $fieldInfo['section'];
-                    if (!isset($result[$section])) {
-                        $result[$section] = array();
-                    }
-                    $result[$section][$fieldName] = $attribute;
-
-                } else {
-                    $result[$fieldName] = $attribute;
+            $id = self::argVal($fieldInfo, 'id', $aField);
+            $value = $event->get_attribute($aField);
+            $title = self::argVal($fieldInfo, 'label', $id);
+            $section = self::argVal($fieldInfo, 'section', '');
+            
+            if ($value) {
+                if ($version < 2) {
+                    $result[$title] = $value;
+                    
+                } else if (!in_array($aField, $v2SkipFields)) { // v2 handles these separately
+                    $result['fields'][] = array(
+                      'id'      => $id,
+                      'section' => $section,
+                      'title'   => $title,
+                      'value'   => $value,
+                    );
                 }
             }
         }
-
+        
         return $result;
     }
 
@@ -202,6 +221,8 @@ class CalendarAPIModule extends APIModule
         $this->timezone = Kurogo::siteTimezone();
         $this->fieldConfig = $this->getAPIConfigData('detail');
 
+        $responseVersion = $this->requestedVersion < 2 ? 1 : 2;
+
         switch ($this->command) {
             case 'index':
             case 'groups':
@@ -209,7 +230,7 @@ class CalendarAPIModule extends APIModule
                 $response = $this->getFeedsByType();
 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($responseVersion);
                 
                 break;
 
@@ -232,7 +253,7 @@ class CalendarAPIModule extends APIModule
                 $count  = 0;
 
                 foreach ($iCalEvents as $iCalEvent) {
-                    $events[] = $this->apiArrayFromEvent($iCalEvent);
+                    $events[] = $this->apiArrayFromEvent($iCalEvent, $responseVersion);
                     $count++;
                 }
 
@@ -244,7 +265,7 @@ class CalendarAPIModule extends APIModule
                     );
 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($responseVersion);
 
                 break;
 
@@ -278,9 +299,9 @@ class CalendarAPIModule extends APIModule
                 }
 
                 if ($event = $feed->getEvent($this->getArg('id'))) {
-                    $eventArray = $this->apiArrayFromEvent($event);
+                    $eventArray = $this->apiArrayFromEvent($event, $responseVersion);
                     $this->setResponse($eventArray);
-                    $this->setResponseVersion(1);
+                    $this->setResponseVersion($responseVersion);
 
                 } else {
                     $error = new KurogoError(
@@ -289,7 +310,6 @@ class CalendarAPIModule extends APIModule
                             "The event $eventID cannot be found");
                     $this->throwError($error);
                 }
-
                 break;
 
             case 'search':
@@ -310,7 +330,7 @@ class CalendarAPIModule extends APIModule
                     $feed->addFilter('search', $searchTerms);
                     $iCalEvents = $feed->items();
 					
-					$events = array();
+                    $events = array();
                     $count = 0;
                     foreach ($iCalEvents as $iCalEvent) {
                         $events[] = $this->apiArrayFromEvent($iCalEvent);
@@ -330,7 +350,7 @@ class CalendarAPIModule extends APIModule
                         );
 
                     $this->setResponse($response);
-                    $this->setResponseVersion(1);
+                    $this->setResponseVersion($responseVersion);
 
                 } else {
                     $error = new KurogoError(
@@ -342,7 +362,6 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'calendars':
-
                 $group = $this->getArg('group');
                 $response = array();
 
@@ -354,18 +373,8 @@ class CalendarAPIModule extends APIModule
                     }
                 }
 
-                /*
-                foreach ($this->getFeeds($group) as $feedID => $feedData) {
-                    $response[] = array(
-                        'id' => $feedID,
-                        'title' => $feedData['TITLE'],
-                        );
-                }
-                */
-
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
-
+                $this->setResponseVersion($responseVersion);
                 break;
 
             case 'resources':
@@ -387,5 +396,3 @@ class CalendarAPIModule extends APIModule
     }
 
 }
-
-
