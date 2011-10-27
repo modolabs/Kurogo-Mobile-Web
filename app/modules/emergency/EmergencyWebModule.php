@@ -12,17 +12,19 @@ class EmergencyWebModule extends WebModule
         $config = $this->loadFeedData();
         
         if(isset($config['contacts'])) {
-          $this->contactsController = DataController::factory($config['contacts']['CONTROLLER_CLASS'], $config['contacts']);
+            $controllerClass = isset($config['contacts']['CONTROLLER_CLASS']) ? $config['contacts']['CONTROLLER_CLASS'] :'EmergencyContactsListDataController';
+            $this->contactsController = EmergencyContactsListDataController::factory($controllerClass, $config['contacts']);
         }
         
         if(isset($config['notice'])) {
-          $this->emergencyNoticeController = DataController::factory('EmergencyNoticeDataController', $config['notice']);
+            $controllerClass = isset($config['notice']['CONTROLLER_CLASS']) ? $config['notice']['CONTROLLER_CLASS'] :'EmergencyNoticeDataController';
+            $this->emergencyNoticeController = EmergencyNoticeDataController::factory($controllerClass, $config['notice']);
         }        
+        
     }
 
     protected function initializeForPage() {
         // construct controllers
-
 
         switch($this->page) {
             case 'pane':
