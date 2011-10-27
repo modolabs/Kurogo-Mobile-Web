@@ -175,6 +175,9 @@ class CalendarAPIModule extends APIModule
             
             if ($value) {
                 if ($version < 2) {
+                    if ($aField == 'description') {
+                        $title = $aField;  // native v1 api looks for this key, ignore label
+                    }
                     $result[$title] = $value;
                     
                 } else {
