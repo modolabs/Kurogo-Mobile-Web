@@ -133,6 +133,33 @@ class TimeRange {
   public function get_end() {
     return $this->end;
   }
+  
+  public function set_icalendar_duration($duration) {
+    $time = $this->start;
+    
+    if (preg_match('/^P([0-9]{1,2}[W])?([0-9]{1,3}[D])?([T]{0,1})?([0-9]{1,2}[H])?([0-9]{1,2}[M])?([0-9]{1,2}[S])?/', $duration, $bits)) {
+        switch (count($bits)) {
+            case 7:
+                $time += intval($bits[6]); //seconds
+            case 6:
+                $time += (60*intval($bits[5])); //minutes
+            case 5:
+                $time += (3600*intval($bits[4])); // hours
+            case 4:
+            case 3:
+                $time = strtotime("+" . intval($bits[2]) . " days", $time);
+            case 2:
+                $time = strtotime("+" . intval($bits[1]) . " weeks", $time);
+        }
+    }
+
+    // if it ends on midnight and is a different day then use 11:59:59
+    if ($this->start != $time && date('His', $time)=='000000') {
+        $time -= 1;
+    }
+    
+    $this->set_end($time);
+  }
 
   public function set_end($end) {
     $this->end = $end;

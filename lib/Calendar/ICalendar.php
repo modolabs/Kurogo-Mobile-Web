@@ -398,7 +398,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
                     }
 
                     if (isset($this->properties['duration'])) {
-                        $this->range->set_end($this->get_start() + $this->properties['duration']);
+                        $this->range->set_icalendar_duration($this->properties['duration']);
                         unset($this->properties['duration']);
                     }
                 } else {
@@ -419,28 +419,9 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 $this->transparency = $value;
                 break;
             case 'DURATION':
-                // todo:
-                // if this tag comes before DTSTART we will break
-                if (preg_match('/^P([0-9]{1,2}[W])?([0-9]{1,3}[D])?([T]{0,1})?([0-9]{1,2}[H])?([0-9]{1,2}[M])?([0-9]{1,2}[S])?/', $value, $bits)) {
-                    $value = 0;
-                    switch (count($bits)) {
-                        case 7:
-                            $value += $bits[6]; //seconds
-                        case 6:
-                            $value += (60*$bits[5]); //minutes
-                        case 5:
-                            $value += (3600*$bits[4]); //hours
-                        case 4:
-                        case 3:
-                            $value += (86400*$bits[2]); //days
-                        case 2:
-                            $value += (604800*$bits[1]);  //weeks
-                    }
-                }
-
                 if ($this->range) {
-                    $this->range->set_end($this->get_start() + $value);
-                } else {      
+                    $this->range->set_icalendar_duration($value);
+                } else {
                     $this->properties['duration'] = $value;
                 }
                 break;
