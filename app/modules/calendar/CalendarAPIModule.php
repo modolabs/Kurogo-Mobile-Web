@@ -154,22 +154,20 @@ class CalendarAPIModule extends APIModule
     }
 
     protected function apiArrayFromEvent(ICalEvent $event, $version) {
-        $v2SkipFields = array('datetime', 'start', 'end', 'uid', 'summary');
+        $skipFields = array('datetime', 'start', 'end', 'uid');
         
-        $result = array();
-        if ($version >= 2) {
-            $datetime = $event->get_attribute('datetime');
-            $result = array(
-                'id'     => $event->get_uid(),
-                'title'  => $event->get_summary(),
-                'allday' => ($datetime instanceOf DayRange),
-                'start'  => $datetime->get_start(),
-                'end'    => $datetime->get_end(),
-                'fields' => array(),
-            );
-        }
+        $datetime = $event->get_attribute('datetime');
+        $result = array(
+            'id'     => $event->get_uid(),
+            'title'  => $event->get_summary(),
+            'allday' => ($datetime instanceOf DayRange),
+            'start'  => $datetime->get_start(),
+            'end'    => $datetime->get_end(),
+        );
         
         foreach ($this->fieldConfig as $aField => $fieldInfo) {
+            if (in_array($aField, $skipFields)) { continue; } // Handled these above
+            
             $id = self::argVal($fieldInfo, 'id', $aField);
             $value = $event->get_attribute($aField);
             $title = self::argVal($fieldInfo, 'label', $id);
@@ -179,12 +177,15 @@ class CalendarAPIModule extends APIModule
                 if ($version < 2) {
                     $result[$title] = $value;
                     
-                } else if (!in_array($aField, $v2SkipFields)) { // v2 handles these separately
+                } else {
+                    if (!isset($result['fields'])) {
+                        $result['fields'] = array();
+                    }
                     $result['fields'][] = array(
-                      'id'      => $id,
-                      'section' => $section,
-                      'title'   => $title,
-                      'value'   => $value,
+                        'id'      => $id,
+                        'section' => $section,
+                        'title'   => $title,
+                        'value'   => $value,
                     );
                 }
             }
