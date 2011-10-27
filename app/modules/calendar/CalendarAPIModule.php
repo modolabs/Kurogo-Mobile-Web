@@ -160,7 +160,7 @@ class CalendarAPIModule extends APIModule
         if ($version >= 2) {
             $datetime = $event->get_attribute('datetime');
             $result = array(
-                'uid'    => $event->get_uid(),
+                'id'     => $event->get_uid(),
                 'title'  => $event->get_summary(),
                 'allday' => ($datetime instanceOf DayRange),
                 'start'  => $datetime->get_start(),
