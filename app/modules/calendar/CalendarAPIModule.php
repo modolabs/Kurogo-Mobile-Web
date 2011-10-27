@@ -154,7 +154,7 @@ class CalendarAPIModule extends APIModule
     }
 
     protected function apiArrayFromEvent(ICalEvent $event, $version) {
-        $skipFields = array('datetime', 'start', 'end', 'uid');
+        $skipFields = array('datetime', 'start', 'end', 'uid', 'summary');
         
         $datetime = $event->get_attribute('datetime');
         $result = array(
