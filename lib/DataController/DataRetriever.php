@@ -12,6 +12,7 @@ abstract class DataRetriever {
     protected $DEFAULT_PARSER_CLASS=null; 
     protected $authority;
     protected $dataController;
+    protected $debugMode = false;
     protected $supportsSearch = false;
 
     abstract public function getCacheKey();
@@ -20,6 +21,10 @@ abstract class DataRetriever {
     /* allows the retriever to override the cache folder */
     public function cacheFolder($baseCacheFolder) {
         return $baseCacheFolder;
+    }
+
+    public function setDebugMode($debugMode) {
+        $this->debugMode = $debugMode ? true : false;
     }
 
     public function setAction($action, $actionArgs) {
@@ -41,7 +46,7 @@ abstract class DataRetriever {
         return $this->supportsSearch;
     }
     
-    public function getUser() {
+    public function getCurrentUser() {
         if ($this->authority) {
             return $this->authority->getCurrentUser();
         } else {
@@ -55,6 +60,10 @@ abstract class DataRetriever {
     }
     
     protected function init($args) {
+
+        if (isset($args['DEBUG_MODE'])) {
+            $this->setDebugMode($args['DEBUG_MODE']);
+        }
 
         if (isset($args['AUTHORITY'])) {
             if ($authority = AuthenticationAuthority::getAuthenticationAuthority($args['AUTHORITY'])) {
@@ -78,6 +87,8 @@ abstract class DataRetriever {
         if (!$retriever instanceOf DataRetriever) {
             throw new KurogoConfigurationException("$retriever is not a subclass of DataRetriever");
         }
+
+        $retriever->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
         
         $retriever->init($args);
         return $retriever;
