@@ -34,8 +34,8 @@ abstract class ItemsDataController extends ExternalDataController {
     
     public function search($searchTerms) {
         if ($this->retriever->supportsSearch()) {
-            $response = $this->retriever->search($searchTerms);
-            $items = $this->parseData($response->getResponse());
+            $this->response = $this->retriever->search($searchTerms);
+            $items = $this->parseResponse($this->response);
             $this->setTotalItems($this->parser->getTotalItems());
             
         } else {
