@@ -44,10 +44,6 @@ class HTTPDataResponse extends DataResponse
         }
     }
     
-    public function getStatus() {
-        return $this->responseStatus;
-    }
-
     public function getHeaders() {
         return $this->responseHeaders;
     }
