@@ -182,6 +182,20 @@ abstract class ExternalDataController {
         $parsedData = $parser->parseFile($file);
         return $parsedData;
     }
+
+    /**
+     * Parse the response
+     * @param DataResponse $response the DataResponse from a request (could be from the cache)
+     * @param DataParser $parser optional, a alternative data parser to use. 
+     * @return mixed the parsed data. This value is data dependent
+     */
+    protected function parseResponse(DataResponse $response, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        $parsedData = $parser->parseResponse($response);
+        return $parsedData;
+    }
     
     /**
      * Return the parsed data. The default implementation will retrive the data and return value of
@@ -203,6 +217,11 @@ abstract class ExternalDataController {
            case DataParser::PARSE_MODE_FILE:
                 $file = $this->getDataFile();
                 return $this->parseFile($file, $parser);
+                break;
+
+           case DataParser::PARSE_MODE_RESPONSE:
+                $response = $this->getResponse();
+                return $this->parseResponse($response, $parser);
                 break;
             default:
                 throw new KurogoConfigurationException("Unknown parse mode");
@@ -280,7 +299,10 @@ abstract class ExternalDataController {
      */
     protected function cacheIsFresh() {
         $cache = $this->getCache();
-        return $cache->isFresh($this->cacheFilename());
+        if (!$cacheFilename = $this->cacheFilename()) {
+            return false;
+        }
+        return $cache->isFresh($cacheFilename);
     }
 
     /**
@@ -298,7 +320,36 @@ abstract class ExternalDataController {
     }
     
     public function getResponse() {
+
+        if (!$this->response) {
+            if ($this->useCache) {
+                if ($this->cacheIsFresh()) {
+                    $this->response = $this->getCachedResponse();
+                } else {
+                    if ($this->response = $this->retriever->retrieveData()) {
+                        $this->writeCache($response);
+                    } elseif ($this->useStaleCache) {
+                        $this->response = $this->getCachedResponse();
+                    }
+                }
+            } else {
+                $this->response = $this->retriever->retrieveData();
+            }
+        }
+        
         return $this->response;
+    }
+    
+    public function getResponseError() {
+        if ($response = $this->getResponse()) {
+            return $response->getResponseError();
+        }
+    }
+
+    public function getResponseCode() {
+        if ($response = $this->getResponse()) {
+            return $response->getCode();
+        }
     }
 
     /**
@@ -312,11 +363,12 @@ abstract class ExternalDataController {
         if ($response instanceOf DataResponse) {
             $data = serialize($response);
         } elseif (!is_scalar($response)) {
-            Debug::die_here($response);
             throw new KurogoException("Invalid response while attempting to save cache");
         }
         
-        $cache->write($data, $this->cacheFilename(), $this->cacheTimestamp($data));
+        if ($cacheFilename = $this->cacheFilename()) {
+            $cache->write($data, $cacheFilename, $this->cacheTimestamp($data));
+        }
     }
     
     /**
@@ -340,20 +392,7 @@ abstract class ExternalDataController {
      */
     public function getData() {
 
-        if ($this->useCache) {
-            if ($this->cacheIsFresh()) {
-                $response = $this->getCachedResponse();
-            } else {
-                if ($response = $this->retriever->retrieveData()) {
-                    $this->writeCache($response);
-                } elseif ($this->useStaleCache) {
-                    $response = $this->getCachedResponse();
-                }
-            }
-        } else {
-            $response = $this->retriever->retrieveData();
-        }
-
+        $response = $this->getResponse();
         return $response->getResponse();
     }
 
