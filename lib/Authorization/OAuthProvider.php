@@ -1,5 +1,6 @@
 <?php
 
+includePackage('DataController');
 abstract class OAuthProvider
 {
     const TOKEN_TYPE_REQUEST='R';
@@ -24,6 +25,8 @@ abstract class OAuthProvider
     protected $verifierErrorKey = '';
     protected $manualVerify=false;
     
+    protected $retriever;
+    
     abstract protected function getAuthURL(array $options);
     
     public function getToken($tokenType=self::TOKEN_TYPE_ACCESS) {
@@ -44,6 +47,22 @@ abstract class OAuthProvider
 
     public function canPost() {
         return strlen($this->getToken(self::TOKEN_TYPE_ACCESS))>0;
+    }
+    
+    public function getConsumerKey() {
+        return $this->consumerKey;
+    }
+
+    public function getConsumerSecret() {
+        return $this->consumerSecret;
+    }
+
+    public function getSignatureMethod() {
+        return $this->signatureMethod;
+    }
+
+    public function getCert() {
+        return $this->cert;
     }
 
     public function reset() {
@@ -84,159 +103,7 @@ abstract class OAuthProvider
             exit();
         }
     }
-    
-	protected function buildQuery(array $parameters) {
 
-		if(empty($parameters)) return '';
-
-		// encode the keys
-		$keys = self::urlencode(array_keys($parameters));
-
-		// encode the values
-		$values = self::urlencode(array_values($parameters));
-
-		// combine the key/value array
-		$parameters = array_combine($keys, $values);
-
-		// sort parameters as required by oauth
-		uksort($parameters, 'strcmp');
-
-		$params = array();
-		foreach($parameters as $key => $value) {
-			// sort by value
-			if (is_array($value)) {
-			    $value = natsort($value);
-			}
-		    $params[] = $key .'='. str_replace('%25', '%', $value);
-		}
-		
-		// return
-		return implode('&', $params);
-	}
-
-	protected function calculateHeader($url, $parameters) {
-
-		// init var
-		$params = array();
-
-		// encode each parameter
-		foreach($parameters as $key => $value) {
-		    $params[] = self::urlencode($key) .'="'. self::urlencode($value) .'"';
-		}
-
-		// build return
-		$return = 'OAuth ' . implode(',', $params);
-
-		return $return;
-	}
-
-    /* Builds the base string according to 3.4.1 of RFC 5849 */
-	protected function calculateBaseString($method, $url, $parameters) {
-
-		$parameters = is_array($parameters) ? $parameters : array();
-
-		// init var
-		$pairs = array();
-		$params = array();
-
-		// sort parameters by key
-		uksort($parameters, 'strcmp');
-
-		foreach($parameters as $key => $value) {
-			// sort by value
-			if(is_array($value)) { 
-			    $value = natsort($value);
-            }
-
-			$params[] = self::urlencode($key) .'='. self::urlencode($value);
-		}
-		
-		// builds base
-		$parts = array(
-		    strtoupper($method),
-		    $url,
-		    implode('&', $params)
-        );
-        
-        $parts = self::urlencode($parts);
-        $base = implode('&', $parts);
-        return $base;
-	}
-
-    /* Encodes urls. This attempts to conform to 3.6 of RFC 5849 
-       If there is a problem with an OAuth provider, likely it's going to be here 
-    */
-	protected static function urlencode($value) {
-		if (is_array($value)) {
-		    return array_map(array(__CLASS__, 'urlencode'), $value);
-		}
-
-        return str_replace('+',' ', str_replace('%7E', '~', rawurlencode($value)));
-	}
-
-    /* sign the request according to 3.1 of RFC 5849 */
-	protected function oauthSignature($method, $url, $parameters) {
-		// calculate the base string
-		$baseString = $this->calculateBaseString($method, $url, $parameters);
-		$key = self::urlencode($this->consumerSecret) .'&' . self::urlencode($this->tokenSecret);
-		
-		switch ($this->signatureMethod)
-		{
-		    case 'PLAINTEXT':
-		        $sig = $key;
-		        break;
-		    case 'HMAC-SHA1':
-        		$sig = base64_encode(hash_hmac('SHA1', $baseString, $key, true));
-        		break;
-        	case 'RSA-SHA1':
-
-                if (!$privatekeyid = openssl_get_privatekey($this->cert)) {
-                    throw new KurogoException("Error getting private key for $this->cert");
-                }
-
-                // Sign using the key
-                $ok = openssl_sign($this->base_string, $signature, $privatekeyid);
-
-                // Release the key resource
-                openssl_free_key($privatekeyid);
-
-                $sig = base64_encode($signature);
-        	    break;
-        	default:
-        	    throw new KurogoException("Signature method $this->signatureMethod not handled");
-		}
-		
-		return $sig;
-	}
-	
-	protected function buildURL($parts) {
-        $scheme = (isset($parts['scheme'])) ? $parts['scheme'] : 'http';
-        $port = (isset($parts['port'])) ? $parts['port'] : (($scheme == 'https') ? '443' : '80');
-        $host = (isset($parts['host'])) ? $parts['host'] : '';
-        $path = (isset($parts['path'])) ? $parts['path'] : '';
-    
-        if (($scheme == 'https' && $port != '443')
-            || ($scheme == 'http' && $port != '80')) {
-          $host = "$host:$port";
-        }
-        return "$scheme://$host$path";
-	}
-	
-	protected function baseURL($url) {
-        $parts = parse_url($url);
-        return $this->buildURL($parts);
-	}
-	
-	protected function parseQueryString($queryString) {
-	    $return = array();
-	    $vars = explode('&', $queryString);
-	    foreach ($vars as $value) {
-	        $bits = explode("=", $value);
-	        $return[$bits[0]] = urldecode($bits[1]);
-	    }
-	    return $return;
-	}
-	
 	public function setCertificate($cert) {
 	    $this->cert = $cert;
 	}
@@ -286,63 +153,6 @@ abstract class OAuthProvider
         );
     }
 
-    public function getAuthorizationHeader($method, &$url, &$parameters = null, &$headers = null) {
-		$params = (array) $parameters;
-		$options = array();
-		$headers = (array) $headers;
-
-        /* strip out query string and add it to parameters */
-        $urlParts = parse_url($url);
-        if (isset($urlParts['query'])) {
-            $params = array_merge($params, $this->parseQueryString($urlParts['query']));
-        }
-
-        $fragment = isset($urlParts['fragment']) ? '#' . $urlParts['fragment'] : '';
-
-		// append default parameters
-		$oauth['oauth_consumer_key'] = $this->consumerKey;
-		$oauth['oauth_nonce'] = md5(microtime() . rand());
-		$oauth['oauth_signature_method'] = $this->signatureMethod;
-		$oauth['oauth_timestamp'] = time();
-		$oauth['oauth_version'] = $this->oauthVersion;
-		
-		if ($this->token) {
-		    $oauth['oauth_token'] = $this->token;
-		}
-		
-	    foreach ($params as $param=>$value) {
-	        if (preg_match("/^oauth_/", $param)) {
-	            $oauth[$param] = $value;
-	            unset($params[$param]);
-	        }
-	    }
-		
-        switch ($method) {
-            case 'POST':
-                $params = array_merge($params, $oauth);
-                $url = $this->baseURL($url);
-        		$params['oauth_signature'] = $this->oauthSignature($method, $url, $params);
-                $authHeader =  $this->calculateHeader($url, $params);
-                break;
-                
-            case 'GET':
-                $data = $oauth;
-                $base_url = $url = $this->baseURL($url);
-                if(count($params)>0) {
-                    $data = array_merge($data, $params);
-                    $url .= '?'. $this->buildQuery($params);
-                }
-
-        		$oauth['oauth_signature'] = $this->oauthSignature($method, $base_url, $data);
-                $authHeader = $this->calculateHeader($url, $oauth);
-                break;
-            default:
-                throw new KurogoException("Invalid method $method");
-                break;
-        }        
-        
-        return $authHeader;
-    }
     
     public function setIndex($index) {
         $this->index = (string) $index;
@@ -382,76 +192,30 @@ abstract class OAuthProvider
 	}
 	
     public function oauthRequest($method, $url, $parameters = null, $headers = null) {
-        $contextOpts = array(
-            'http'=>array(
-                'method'=>$method,
-                'follow_location'=>false,
-                'max_redirects'=>0
-            )
-        );
-        
-        $requestParameters = $parameters;
-        $requestHeaders = $headers;
-        
-        switch ($method) 
-        {
-            case 'GET':
-                if (count($parameters)>0) {
-                    $glue = strpos($url, '?') !== false ? '&' : '?';
-                    $url .= $glue . http_build_query($parameters);
-                    $requestParameters = array();
-                }
-                break;
-                
-            case 'POST':
-                $requestHeaders[] = "Content-type: application/x-www-form-urlencoded";
-                $contextOpts['http']['content'] = '';
-                break;
-                
-            default:
-                throw new KurogoException("Invalid method $method");
-        }
-
-	    $requestHeaders[] = 'Authorization: ' . $this->getAuthorizationHeader($method, $url, $requestParameters, $requestHeaders);
-	    $requestHeaders[] = 'Expect:';
-        $contextOpts['http']['header'] = implode("\r\n", $requestHeaders) . "\r\n";
-        
-        $streamContext = stream_context_create($contextOpts);
-        Kurogo::log(LOG_INFO, sprintf("Making %s request to %s. Using %s %s %s %s", $method, $url, $this->consumerKey, $this->consumerSecret, $this->token, $this->tokenSecret), 'auth');
-
-        $data = file_get_contents($url, false, $streamContext);
-        
-        //parse the response
-        $response = new HTTPDataResponse();
-        $response->setRequest($method, $url, $parameters, $headers);
-        $response->setResponse($data, $http_response_header);
-        Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'auth');
-
-        //if there is a location header we need to re-sign before redirecting
-        if ($redirectURL = $response->getHeader("Location")) {
-            Kurogo::log(LOG_DEBUG, "Found Location Header", 'auth');
-		    $redirectParts = parse_url($redirectURL);
-		    //if the redirect does not include the host or scheme, use the scheme/host from the original URL
-            if (!isset($redirectParts['scheme']) || !isset($redirectParts['host'])) {
-                $urlParts = parse_url($url);
-                unset($urlParts['path']);
-                unset($urlParts['query']);
-                $redirectURL = $this->buildURL($urlParts) . $redirectURL;
-            }
-		    if (isset($redirectParts['query'])) {
-		        $newParameters = array_merge($parameters, $this->parseQueryString($redirectParts['query']));
-		    }
-		    $newURL = $this->baseURL($redirectURL);
-		    //error_log("Redirecting to $newURL");
-            Kurogo::log(LOG_DEBUG, "Redirecting to $newURL", 'auth');
-    		return $this->oauthRequest($method, $newURL, $newParameters, $headers);
-        }
-        
-        return $response;
+        $retriever = $this->getRetriever();
+        $retriever->setToken($this->token);
+        $retriever->setTokenSecret($this->tokenSecret);
+        $retriever->setMethod($method);        
+        $retriever->setBaseURL($url);
+        $retriever->setFilters($parameters);
+        $retriever->setHeaders($headers);
+        return $retriever->retrieveData();
+	}
+	
+	protected function getRetriever() {
+	    if (!$this->retriever) {
+	        $this->retriever = DataRetriever::factory('OAuthDataRetriever', array(
+	            'consumerKey'    => $this->consumerKey,
+	            'consumerSecret' => $this->consumerSecret,
+	            'signatureMethod'=> $this->signatureMethod,
+	            'cert'           => $this->cert
+	        ));
+	    }
+	    
+	    return $this->retriever;
 	}
 	
     protected function getRequestToken(array $options) {
-    
         list($method, $url, $parameters) = $this->getRequestTokenURL($options);
         $response = $this->oauthRequest($method, $url, $parameters);
 		parse_str($response->getResponse(), $return);

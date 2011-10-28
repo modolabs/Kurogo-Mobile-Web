@@ -42,6 +42,10 @@ class URLDataRetriever extends DataRetriever {
         $this->filters[$var] = $value;
     }
     
+    public function setFilters($filters) {
+        $this->filters = $filters;
+    }
+    
     /**
      * Removes a parameter from the url request. 
      * @param string $var the parameter to remove
@@ -67,16 +71,17 @@ class URLDataRetriever extends DataRetriever {
         
         $this->initStreamContext($args);
     }
+    
+    public function setHeaders($headers) {
+        if (is_array($headers)) {
+            $this->requestHeaders = $headers;
+            $this->setContextHeaders();
+        }
+    }
 
     public function addHeader($header, $value) {
         $this->requestHeaders[$header] = $value;
-        $headers = array();
-        //@TODO: Might need to escape this
-        foreach ($this->requestHeaders as $header=>$value) {
-            $headers[] = "$header: $value";
-        }
-            
-        stream_context_set_option($this->streamContext, 'http', 'header', implode("\r\n", $headers));
+        $this->setContextHeaders();
     }
     
     public function getHeaders() {
@@ -92,11 +97,21 @@ class URLDataRetriever extends DataRetriever {
         stream_context_set_option($this->streamContext, 'http', 'method', $method);
     }
 
+    private function setContextHeaders() {
+        $headers = array();
+        //@TODO: Might need to escape this
+        foreach ($this->requestHeaders as $header=>$value) {
+            $headers[] = "$header: $value";
+        }
+            
+        stream_context_set_option($this->streamContext, 'http', 'header', implode("\r\n", $headers));
+    }
+
     public function setTimeout($timeout) {
         stream_context_set_option($this->streamContext, 'http', 'timeout', $timeout);
     }
     
-    protected function initStreamContext($args) {
+    protected function streamContextOpts($args) {
         $streamContextOpts = array();
         
         if (isset($args['HTTP_PROXY_URL'])) {
@@ -112,8 +127,12 @@ class URLDataRetriever extends DataRetriever {
                 'request_fulluri'=> TRUE
             );
         }
-        
-        $this->streamContext = stream_context_create($streamContextOpts);
+
+        return $streamContextOpts;        
+    }
+    
+    protected function initStreamContext($args) {
+        $this->streamContext = stream_context_create($this->streamContextOpts($args));
     }
     
     
@@ -152,6 +171,7 @@ class URLDataRetriever extends DataRetriever {
      * @return HTTPDataResponse a DataResponse object
      */
     public function retrieveData() {
+
         if (!$url = $this->url()) {
             throw new KurogoDataException("URL could not be determined");
         }

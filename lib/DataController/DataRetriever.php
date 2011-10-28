@@ -11,18 +11,30 @@ abstract class DataRetriever {
 
     protected $DEFAULT_PARSER_CLASS=null; 
     protected $authority;
+    protected $dataController;
+    protected $supportsSearch = false;
+
     abstract public function getCacheKey();
     abstract public function retrieveData();
     
-    protected $dataController;
-    protected $supportsSearch = false;
-    
+    /* allows the retriever to override the cache folder */
+    public function cacheFolder($baseCacheFolder) {
+        return $baseCacheFolder;
+    }
+
+    public function setAction($action, $actionArgs) {
+    }
+
     public function setDataController(ExternalDataController $dataController) {
         $this->dataController = $dataController;
     }
     
     public function getDataController() {
         return $this->dataController;
+    }
+    
+    public function getAuthority() {
+        return $this->authority;
     }
     
     public function supportsSearch() {
@@ -38,11 +50,15 @@ abstract class DataRetriever {
         }
     }
     
+    protected function setAuthority(AuthenticationAuthority $authority) {
+        $this->authority = $authority;
+    }
+    
     protected function init($args) {
 
         if (isset($args['AUTHORITY'])) {
             if ($authority = AuthenticationAuthority::getAuthenticationAuthority($args['AUTHORITY'])) {
-                $this->authority = $authority;
+                $this->setAuthority($authority);
             }
         }
     }
