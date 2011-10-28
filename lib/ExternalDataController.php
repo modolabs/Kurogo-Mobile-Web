@@ -15,14 +15,16 @@ abstract class ExternalDataController {
     
     protected $DEFAULT_RETRIEVER_CLASS='URLDataRetriever';
     protected $DEFAULT_PARSER_CLASS = 'PassthroughDataParser';
+    protected $RETRIEVER_INTERFACE = 'DataRetriever';
     protected $initArgs=array();
     protected $cacheFolder='Data';
     protected $retriever;
     protected $parser;
     protected $response;
+    protected $action;
+    protected $actionArgs=array();
     protected $cache;
     protected $title;
-    protected $totalItems = null;
     protected $debugMode=false;
     protected $useCache=true;
     protected $useStaleCache=true;
@@ -33,7 +35,7 @@ abstract class ExternalDataController {
 	 * @return string
      */
     protected function cacheFolder() {
-        return CACHE_DIR . DIRECTORY_SEPARATOR . $this->cacheFolder;
+        return $this->retriever->cacheFolder(CACHE_DIR . DIRECTORY_SEPARATOR . $this->cacheFolder);
     }
     
     /**
@@ -59,7 +61,11 @@ abstract class ExternalDataController {
      * @param retriever a instantiated DataRetriever object
      */
     public function setRetriever(DataRetriever $retriever) {
-        $this->retriever = $retriever;
+        if ($retriever instanceOf $this->RETRIEVER_INTERFACE) {
+            $this->retriever = $retriever;
+        } else {
+            throw new KurogoException("Data Retriever " . get_class($retriever) . " must conform to $this->RETRIEVER_INTERFACE");
+        }
     }
     
     /**
@@ -128,6 +134,7 @@ abstract class ExternalDataController {
         // instantiate the parser class
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
         $parser->setDataController($this);
+        $parser->setDataRetriever($retriever);
         $this->setParser($parser);
 
         if (isset($args['TITLE'])) {
@@ -333,8 +340,6 @@ abstract class ExternalDataController {
      */
     public function getData() {
 
-        $this->totalItems = 0;
-
         if ($this->useCache) {
             if ($this->cacheIsFresh()) {
                 $response = $this->getCachedResponse();
@@ -358,6 +363,20 @@ abstract class ExternalDataController {
      */
     public function setCacheLifetime($seconds) {
         $this->cacheLifetime = intval($seconds);
+    }
+    
+    public function setAction($action, $args=null) {
+        $this->action = $action;
+        $this->actionArgs = $args;
+        $this->retriever->setAction($action, $args);
+    }
+    
+    public function getAction() {
+        return $this->action;
+    }
+
+    public function getActionArgs() {
+        return $this->actionArgs;
     }
     
     /**
