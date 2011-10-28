@@ -18,6 +18,7 @@ abstract class DataParser
     protected $totalItems = null;
     protected $haltOnParseErrors = true;
     protected $dataController;
+    protected $dataRetriever;
     
     public function getParseMode() {
         return $this->parseMode;
@@ -29,6 +30,10 @@ abstract class DataParser
 
     public function setDataController($dataController) {
         $this->dataController = $dataController;
+    }
+
+    public function setDataRetriever($dataRetriever) {
+        $this->dataRetriever = $dataRetriever;
     }
 
     protected function setTotalItems($total) {
