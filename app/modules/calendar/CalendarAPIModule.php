@@ -154,30 +154,38 @@ class CalendarAPIModule extends APIModule
     }
 
     protected function apiArrayFromEvent(ICalEvent $event, $version) {
-        $skipFields = array('datetime', 'start', 'end', 'uid', 'summary');
+        $standardAttributes = array(
+          'datetime', 'start', 'end', 'uid', 'summary', 'description', 'location', 'geo');
         
-        $datetime = $event->get_attribute('datetime');
         $result = array(
-            'id'     => $event->get_uid(),
-            'title'  => $event->get_summary(),
-            'allday' => ($datetime instanceOf DayRange),
-            'start'  => $datetime->get_start(),
-            'end'    => $datetime->get_end(),
+            'id'            => $event->get_uid(),
+            'title'         => $event->get_summary(),
+            'description'   => $event->get_description(),
+            'start'         => $event->get_start(),
+            'end'           => $event->get_end(),
+            'allday'        => ($event->get_range() instanceOf DayRange),
+            'location'      => $event->get_location(),
+            'locationLabel' => 'Location', // subclass to add dynamic title to location
         );
+
+        // iCal GEO property -- subclass if event lat/lon comes from somewhere else
+        $coords = $event->get_location_coordinates();
+        if ($coords) {
+          $result['latitude'] = $coords['lat'];
+          $result['longitude'] = $coords['lon'];
+        }
         
         foreach ($this->fieldConfig as $aField => $fieldInfo) {
-            if (in_array($aField, $skipFields)) { continue; } // Handled these above
+            if (in_array($aField, $standardAttributes)) { continue; } // Handled these above
             
-            $id = self::argVal($fieldInfo, 'id', $aField);
-            $value = $event->get_attribute($aField);
-            $title = self::argVal($fieldInfo, 'label', $id);
+            $id      = self::argVal($fieldInfo, 'id', $aField);
+            $title   = self::argVal($fieldInfo, 'label', $id);
             $section = self::argVal($fieldInfo, 'section', '');
+            $type    = self::argVal($fieldInfo, 'type', '');
+            $value   = $event->get_attribute($aField);
             
             if ($value) {
                 if ($version < 2) {
-                    if ($aField == 'description') {
-                        $title = $aField;  // native v1 api looks for this key, ignore label
-                    }
                     $result[$title] = $value;
                     
                 } else {
@@ -187,6 +195,7 @@ class CalendarAPIModule extends APIModule
                     $result['fields'][] = array(
                         'id'      => $id,
                         'section' => $section,
+                        'type'    => $type,
                         'title'   => $title,
                         'value'   => $value,
                     );

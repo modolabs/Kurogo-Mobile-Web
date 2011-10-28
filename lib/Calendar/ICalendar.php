@@ -125,6 +125,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
     protected $summary;
     protected $description;
     protected $location;
+    protected $geo;
     protected $tzid;
     protected $url;
     protected $created;
@@ -146,6 +147,7 @@ class ICalEvent extends ICalObject implements KurogoObject {
         return array(
             'summary', 
             'location', 
+            'geo',
             'description', 
             'uid', 
             'start', 
@@ -154,29 +156,6 @@ class ICalEvent extends ICalObject implements KurogoObject {
             'categories',
             'datetime',
         );
-    }
-
-    public function apiArray() {
-
-        $arr= array (
-            'id'=>crc32($this->get_uid()) >>1,
-            'title'=>$this->get_summary(),
-            'start'=>$this->get_start(),
-            'end'=>$this->get_end()
-        );
-
-        if ($urlLink = $this->get_url()) {
-            $arr['url'] = $urlLink;
-        }
-        if ($location = $this->get_location()) {
-            $arr['location'] = $location;
-        }
-        if ($description = $this->get_description()) {
-            $arr['description'] = $description;
-        }
-
-        return $arr;
-
     }
 
     public function get_tzid() {
@@ -221,6 +200,18 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
     public function get_location() {
         return $this->location;
+    }
+    
+    public function get_location_coordinates() {
+        $coords = false;
+        $parts = explode(';', $this->geo);
+        if (count($parts) == 2) {
+            $coords = array(
+                'lat' => floatval($parts[0]),
+                'lon' => floatval($parts[1]),
+            );
+        }
+        return $coords;
     }
 
     public function get_categories() {
@@ -302,6 +293,12 @@ class ICalEvent extends ICalObject implements KurogoObject {
         $this->location = $location;
     }
     
+    public function setLocationCoordinates($coordinates) {
+        if (count($coordinates) == 2) {
+            $this->geo = implode(';', array_values($coordinates));
+        }
+    }
+    
     private static function getTimezoneForID($tzid) {
         try {
             $timezone = new DateTimeZone($tzid);
@@ -325,6 +322,13 @@ class ICalEvent extends ICalObject implements KurogoObject {
                 break;
             case 'LOCATION':
                 $this->setLocation(iCalendar::ical_unescape_text($value));
+                break;
+            case 'GEO':
+                if (is_array($value)) {
+                    $this->setLocationCoordinates($value);
+                } else if (is_string($value)) {
+                    $this->geo = $value;
+                }
                 break;
             case 'SUMMARY':
                 $this->setSummary(iCalendar::ical_unescape_text($value));
@@ -509,6 +513,10 @@ class ICalEvent extends ICalObject implements KurogoObject {
 
         if ($this->location) {
             $this->addLine($output_string, "LOCATION", $this->location);
+        }
+
+        if ($this->geo) {
+            $this->addLine($output_string, "GEO", $this->geo);
         }
 
         if ($this->description) {
