@@ -336,7 +336,7 @@ class CalendarAPIModule extends APIModule
                     $events = array();
                     $count = 0;
                     foreach ($iCalEvents as $iCalEvent) {
-                        $events[] = $this->apiArrayFromEvent($iCalEvent);
+                        $events[] = $this->apiArrayFromEvent($iCalEvent, $responseVersion);
                         $count++;
                     }
 
