@@ -1,7 +1,8 @@
 <?php
 
-class GoogleAppsCalendarDataRetriever extends URLDataRetriever
+class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
 {
+    protected $DEFAULT_PARSER_CLASS = 'GoogleCalendarDataParser';
     protected $authority;
     protected $supportsSearch = true;
     
@@ -34,42 +35,14 @@ class GoogleAppsCalendarDataRetriever extends URLDataRetriever
         return $this->retrieveData();
     }
 
-    protected function cacheFolder() {
-        $oauth = $this->oauth();
-        $token = $oauth->getToken();
-        return CACHE_DIR . "/" . $this->cacheFolder . ($token ? "/" . md5($token) : '');
-    }
-    
-    public function retrieveData() {
-        $url = $this->url();
-    
-        $oauth = $this->oauth();
-        $parameters = array(); //set in query string
-        $headers = $this->getHeaders();
-        return $oauth->oauthRequest('GET', $url, $parameters, $headers);
-    }
-    
     protected function addStandardFilters() {
         $this->addFilter('alt','jsonc');
         $this->addHeader('GData-Version', '2');
     }
     
-    protected function oauth() {
-        return $this->authority->oauth();
-    }
-    
     protected function init($args)
     {
         parent::init($args);
-        //either get the specified authority or attempt to get a GoogleApps authority
-        $authorityIndex = isset($args['AUTHORITY']) ? $args['AUTHORITY'] : 'GoogleAppsAuthentication';
-        $authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex);
-        
-        //make sure we're getting a google apps authority
-        if ($authority instanceOf GoogleAppsAuthentication) {
-            $this->authority = $authority;
-        }
-        
         $this->addStandardFilters();
     }
 }
