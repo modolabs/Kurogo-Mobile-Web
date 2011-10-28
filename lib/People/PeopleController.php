@@ -6,17 +6,19 @@
 /**
   * @package Directory
   */
-abstract class PeopleController
+includePackage('DataController');
+class PeopleController extends ItemsDataController
 {
-    abstract public function lookupUser($id);
-    abstract public function search($searchTerms);
-    
-    protected $debugMode=false;
+    protected $DEFAULT_RETRIEVER_CLASS = 'LDAPPeopleRetriever';
     protected $personClass = 'Person';
     protected $capabilities=0;
-    protected $errorNo;
-    protected $errorMsg;
+    protected $attributes=array();
 
+    public function getUser($id) {
+        $this->response = $this->retriever->getUser($id);
+        return $this->parseResponse($this->response);
+    }
+        
     public static function getPeopleControllers() {
         return array(
             ''=>'-',
@@ -30,14 +32,6 @@ abstract class PeopleController
         return '';
     }
 
-    public function getErrorNo() {
-        return $this->errorNo;
-    }
-
-    public function getError() {
-        return $this->errorMsg;
-    }
-
     public function setAttributes($attribs) {
         if (is_array($attribs)) {
             $this->attributes =$attribs;
@@ -46,15 +40,19 @@ abstract class PeopleController
         } else {
             $this->attributes = array();
         }
+        
+        $this->retriever->setAttributes($this->attributes);
     }
 
     public function getCapabilities() {
         return $this->capabilities;
     }
 
-    public function setDebugMode($debugMode) {
-        $this->debugMode = $debugMode ? true : false;
-    }
+}
+
+abstract class PeopleDataParser extends DataParser
+{
+    protected $personClass = 'Person';
     
     public function setPersonClass($className) {
     	if ($className) {
@@ -70,29 +68,11 @@ abstract class PeopleController
 		}
     }
     
-    protected function init($args) {
-
+    public function init($args) {
+        parent::init($args);
         if (isset($args['PERSON_CLASS'])) {
             $this->setPersonClass($args['PERSON_CLASS']);
         }
-    }
-
-    public static function factory($controllerClass, $args) {
-
-        if (!class_exists($controllerClass)) {
-            throw new KurogoConfigurationException("Controller class $controllerClass not defined");
-        }
-        
-        $controller = new $controllerClass;
-        $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
-
-        if (!$controller instanceOf PeopleController) {
-            throw new KurogoConfigurationException("$controller class is not a subclass of PeopleController");
-        }
-        
-        $controller->init($args);
-        
-        return $controller;
     }
 }
 
@@ -124,4 +104,11 @@ abstract class Person implements KurogoObject
         }
         return NULL;
     }
+}
+
+interface PeopleRetriever
+{
+    public function search($searchTerms);
+    public function getUser($id);
+    public function setAttributes($attributes);
 }

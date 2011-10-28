@@ -17,7 +17,7 @@ class PeopleWebModule extends WebModule {
     protected $id = 'people';
     protected $detailFields = array();
     protected $detailAttributes = array();
-    protected $defaultController = 'LDAPPeopleController';
+    protected $defaultController = 'PeopleController';
     protected $encoding = 'UTF-8';
     protected $feeds=array();
     protected $contactGroups = array();
@@ -259,7 +259,7 @@ class PeopleWebModule extends WebModule {
         
             case 'detail':
                 if ($uid = $this->getArg('uid')) {
-                    $person = $PeopleController->lookupUser($uid);
+                    $person = $PeopleController->getUser($uid);
           
                     if ($person) {
                     
@@ -278,7 +278,7 @@ class PeopleWebModule extends WebModule {
                         $this->assign('personDetails', $personDetails);
                         break;
                     } else {
-                        $this->assign('searchError', $PeopleController->getError());
+                        $this->assign('searchError', $PeopleController->getResponseError());
                     }          
                 } else {
                     $this->assign('searchError', 'No username specified');
@@ -293,7 +293,7 @@ class PeopleWebModule extends WebModule {
           
                     $this->setLogData($searchTerms);
                     $people = $this->searchItems($searchTerms);
-                    $this->assign('searchError', $PeopleController->getError());
+                    $this->assign('searchError', $PeopleController->getResponseError());
 
                     if ($people !== false) {
                         $resultCount = count($people);
@@ -322,7 +322,7 @@ class PeopleWebModule extends WebModule {
                         }
                       
                     } else {
-                        $this->assign('searchError', $PeopleController->getError());
+                        $this->assign('searchError', $PeopleController->getResponseError());
                     }
                 } else {
                   $this->redirectTo('index');

@@ -7,7 +7,9 @@ class PeopleAPIModule extends APIModule
     protected $id = 'people';
     protected $vmin = 1;
     protected $vmax = 1;
+    protected $defaultController = 'PeopleController';
     private $fieldConfig;
+    private $detailAttributes = array();
     protected $contactGroups = array();
     
     protected function getContactGroup($group) {
@@ -89,16 +91,19 @@ class PeopleAPIModule extends APIModule
         return $result;
     }
     
-    // from PeopleWebModule
-    protected function getFeed($index)
-    {
+    protected function getFeed($index) {
+        if (isset($this->controllers[$index])) {
+            return $this->controllers[$index];
+        }
+        
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
             if (!isset($feedData['CONTROLLER_CLASS'])) {
-                $feedData['CONTROLLER_CLASS'] = 'LDAPPeopleController';
+                $feedData['CONTROLLER_CLASS'] = $this->defaultController;
             }
             $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            //$controller->setAttributes($this->detailAttributes);
+            $controller->setAttributes($this->detailAttributes);
+            $this->controllers[$index] = $controller;
             return $controller;
         } else {
             throw new KurogoConfigurationException("Error getting people feed for index $index");
@@ -109,20 +114,25 @@ class PeopleAPIModule extends APIModule
         $this->feeds = $this->loadFeedData();
         $peopleController = $this->getFeed('people');
         $this->fieldConfig = $this->getAPIConfigData('detail');
+        $this->fieldConfig = $this->getAPIConfigData('detail');
+        foreach($this->fieldConfig as $field => $info) {
+            $this->detailAttributes = array_merge($this->detailAttributes, $info['attributes']);
+        }
+        $this->detailAttributes = array_values(array_unique($this->detailAttributes));
         
         switch ($this->command) {
             case 'search':
                 if ($filter = $this->getArg('q')) {
-                    
+
                     $people = $peopleController->search($filter);
                     if(!$people)
                     	$people = array();
                     	
-                    $errorCode = $peopleController->getErrorNo();
+                    $errorCode = $peopleController->getResponseCode();
                     if ($errorCode) {
                         // TODO decide on error title
                         $errorTitle = 'Warning';
-                        $errorMsg = $peopleController->getError();
+                        $errorMsg = $peopleController->getResponseError();
                         $error = new KurogoError($errorCode, $errorTitle, $errorMsg);
                         $this->setResponseError($error);
                     }
