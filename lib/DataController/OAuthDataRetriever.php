@@ -296,7 +296,6 @@ class OAuthDataRetriever extends URLDataRetriever
 		    $this->setHeaders($headers);
             Kurogo::log(LOG_DEBUG, "Redirecting to $this->baseURL", 'auth');
             $data =  $this->retrieveData();
-            Debug::die_here($data);
         }
         
         return $response;
