@@ -10,8 +10,10 @@
 abstract class DataParser
 {
     abstract public function parseData($data);
+    
     const PARSE_MODE_STRING=1;
     const PARSE_MODE_FILE=2;
+    const PARSE_MODE_RESPONSE=3;
     protected $encoding='utf-8';
     protected $parseMode=self::PARSE_MODE_STRING;
     protected $debugMode=false;
@@ -19,6 +21,10 @@ abstract class DataParser
     protected $haltOnParseErrors = true;
     protected $dataController;
     protected $dataRetriever;
+    
+    public function parseResponse(DataResponse $response) {
+        return $this->parseData($response->getResponse());
+    }
     
     public function getParseMode() {
         return $this->parseMode;
