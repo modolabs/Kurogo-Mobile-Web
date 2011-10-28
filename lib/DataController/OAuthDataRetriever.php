@@ -8,8 +8,9 @@ class OAuthDataRetriever extends URLDataRetriever
     protected $consumerKey;
     protected $consumerSecret;
     protected $signatureMethod = 'HMAC-SHA1';
+    protected $requiresToken = false;
     protected $cert;
-
+    
 	protected function buildQuery(array $parameters) {
 
 		if(empty($parameters)) return '';
@@ -189,7 +190,7 @@ class OAuthDataRetriever extends URLDataRetriever
 		if ($this->token) {
 		    $oauth['oauth_token'] = $this->token;
 		}
-		
+
 	    foreach ($params as $param=>$value) {
 	        if (preg_match("/^oauth_/", $param)) {
 	            $oauth[$param] = $value;
@@ -237,6 +238,10 @@ class OAuthDataRetriever extends URLDataRetriever
     }
     
     public function retrieveData() {
+    
+        if ($this->requiresToken && !$this->token) {
+            return new HTTPDataResponse();
+        }
             
         $url = $this->url();
         $parameters = $this->filters;

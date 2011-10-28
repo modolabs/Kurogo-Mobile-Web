@@ -5,7 +5,8 @@ class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
     protected $DEFAULT_PARSER_CLASS = 'GoogleCalendarDataParser';
     protected $authority;
     protected $supportsSearch = true;
-    
+    protected $requiresToken = true;
+ 
     protected function url() {
         $this->addFilter('orderby', 'starttime');
         $this->addFilter('sortorder', 'a');

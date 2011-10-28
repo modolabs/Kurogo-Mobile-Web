@@ -4,6 +4,7 @@ class GoogleAppsCalendarListRetriever extends OAuthDataRetriever implements Cale
 {
     protected $DEFAULT_PARSER_CLASS = 'GoogleAppsCalendarListParser';
     protected $cacheLifetime = 900;
+    protected $requiresToken = true;
     
     protected function getDomain() {
         return $this->authority ? $this->authority->getDomain() : false;
