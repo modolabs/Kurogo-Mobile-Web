@@ -330,8 +330,8 @@ class CalendarWebModule extends WebModule {
       case 'resource':
         $section = $type=='user' ?  'user_calendars' :'resources';
         $sectionData = $this->getOptionalModuleSection($section);
-        $listController = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : '';
-        if (strlen($listController)) {
+        if (isset($sectionData['RETRIEVER_CLASS'])) {
+            $listController = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : 'CalendarListController';
             $controller = CalendarListController::factory($listController, $sectionData);
             switch ($type)
             {

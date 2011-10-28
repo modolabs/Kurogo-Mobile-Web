@@ -1,29 +1,22 @@
 <?php
 
-abstract class CalendarListController
+includePackage('DataController');
+class CalendarListController extends ExternalDataController
 {
-    abstract public function getUserCalendars();
-    abstract public function getResources(); 
+    protected $cacheFolder = 'Calendar';
+    protected $RETRIEVER_INTERFACE = 'CalendarListRetriever';
     
-    public static function factory($controllerClass, $args=array()) {
-        $args = is_array($args) ? $args : array();
-
-        if (!class_exists($controllerClass)) {
-            throw new KurogoConfigurationException("Class $controllerClass not defined");
-        }
-        
-        $controller = new $controllerClass;
-        
-        if (!$controller instanceOf CalendarListController) {
-            throw new KurogoConfigurationException("$controllerClass is not a subclass of CalendarListController");
-        }
-        
-        $controller->init($args);
-        
-        return $controller;
+    public function getUserCalendars() {
+        $this->setAction('userCalendars');
+        return $this->getParsedData();
     }
     
-    protected function init($args) {
+    public function getResources() {
+        $this->setAction('resources');
+        return $this->getParsedData();
     }
+    
 }
 
+interface CalendarListRetriever {
+}
