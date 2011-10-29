@@ -13,14 +13,18 @@ class EmergencyWebModule extends WebModule
         
         if(isset($config['contacts'])) {
             $controllerClass = isset($config['contacts']['CONTROLLER_CLASS']) ? $config['contacts']['CONTROLLER_CLASS'] :'EmergencyContactsListDataController';
-            $this->contactsController = EmergencyContactsListDataController::factory($controllerClass, $config['contacts']);
+            try {
+                $this->contactsController = EmergencyContactsListDataController::factory($controllerClass, $config['contacts']);
+            } catch (KurogoException $e) {
+                $this->contactsController = ContactsListDataController::factory($controllerClass, $config['contacts']);
+            }
         }
         
         if(isset($config['notice'])) {
             $controllerClass = isset($config['notice']['CONTROLLER_CLASS']) ? $config['notice']['CONTROLLER_CLASS'] :'EmergencyNoticeDataController';
             $this->emergencyNoticeController = EmergencyNoticeDataController::factory($controllerClass, $config['notice']);
-        }        
-        
+        }    
+                
     }
 
     protected function initializeForPage() {

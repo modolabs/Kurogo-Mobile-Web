@@ -1,25 +1,17 @@
 <?php
 
-class EmergencyNoticeDataController extends DataController
+class EmergencyNoticeDataController extends ExternalDataController
 {
+    protected $DEFAULT_RETRIEVER_CLASS = 'URLDataRetriever';
     protected $DEFAULT_PARSER_CLASS = 'RSSDataParser';
     protected $emergencyNotice = NULL;
     protected $cacheFolder = "Emergency";
-
     protected $cacheLifetime = 60; // emergency notice should have a short cache time
 
     public static function getEmergencyNoticeDataControllers() {
         return array(
             'EmergencyNoticeDataController'=>'Default'
         );
-    }
-
-    /*
-     *   Not sure this should be used
-     */
-    public function getItem($id) 
-    {
-        return NULL;
     }
 
     public function getLatestEmergencyNotice()
