@@ -7,6 +7,7 @@ class VideoWebModule extends WebModule
     const defaultController = 'VideoDataController';
     protected $id='video';  // this affects which .ini is loaded
     protected $feeds = array();
+    protected $legacyController = false;
         
     protected function initialize() {
         $this->feeds = $this->loadFeedData();
@@ -59,7 +60,12 @@ class VideoWebModule extends WebModule
         $section = isset($options['section']) ? $options['section'] : $this->getDefaultSection();
         $controller = $this->getFeed($section);
                 
-      	$items = $controller->search($searchTerms, 0, $limit);
+        if ($this->legacyController) {
+            $items = $controller->search($searchTerms, 0, $limit);
+        } else {
+            $controller->setLimit($limit);
+            $items = $controller->search($searchTerms);
+        }
       	return $items;
     }
     
@@ -71,7 +77,12 @@ class VideoWebModule extends WebModule
             $feedData['CONTROLLER_CLASS'] = self::defaultController;
         }
         
-        $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        try {
+            $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        } catch (KurogoException $e) {
+            $controller = LegacyVideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $this->legacyController = true;
+        }
         return $controller;
     }
     
@@ -108,7 +119,13 @@ class VideoWebModule extends WebModule
                     'section'=>$section
                 );
 
-                $items = $controller->items($start, $maxPerPage);
+                if ($this->legacyController) {
+                    $items = $controller->items($start, $maxPerPage);
+                } else {
+                    $controller->setStart($start);
+                    $controller->setLimit($maxPerPage);
+                    $items = $controller->items();
+                }
                 $videos = array();
 
                 foreach ($items as $video) {
@@ -127,21 +144,31 @@ class VideoWebModule extends WebModule
         
                 $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
                 $start = $this->getArg('start', 0);
-                $controller->setStart($start);
-                $controller->setLimit($maxPerPage);
+                if (!$this->legacyController) {
+                    $controller->setStart($start);
+                    $controller->setLimit($maxPerPage);
+                }
         	    
                 if ($this->page == 'search') {
                     if ($filter = $this->getArg('filter')) {
                         $searchTerms = trim($filter);
                         $this->setLogData($searchTerms);
-                        $items = $controller->search($searchTerms);
+                        if ($this->legacyController) {
+                            $items = $controller->search($searchTerms, $start, $maxPerPage);
+                        } else {
+                            $items = $controller->search($searchTerms);
+                        }
                         $this->assign('searchTerms', $searchTerms);
                     } else {
                         $this->redirectTo('index', array('section'=>$section), false);
                     }
                 } else {
-                     $this->setLogData($section, $controller->getTitle());
-                     $items = $controller->items();
+                    $this->setLogData($section, $controller->getTitle());
+                    if ($this->legacyController) {
+                        $items = $controller->items($start, $maxPerPage);
+                    } else {
+                        $items = $controller->items();
+                    }
                 }
                              
                 $totalItems = $controller->getTotalItems();
