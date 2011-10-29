@@ -98,10 +98,13 @@ class PeopleAPIModule extends APIModule
         
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
-            if (!isset($feedData['CONTROLLER_CLASS'])) {
+            if (isset($feedData['CONTROLLER_CLASS'])) {
+                $controller = LegacyPeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            } else {
                 $feedData['CONTROLLER_CLASS'] = $this->defaultController;
+                $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             }
-            $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            
             $controller->setAttributes($this->detailAttributes);
             $this->controllers[$index] = $controller;
             return $controller;

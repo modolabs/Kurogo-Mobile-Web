@@ -180,11 +180,6 @@ class PeopleWebModule extends WebModule {
                 $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             }
             
-            try {
-            } catch (KurogoException $e) {
-                Debug::die_here ($e);
-            }
-
             $controller->setAttributes($this->detailAttributes);
             $this->controllers[$index] = $controller;
             return $controller;

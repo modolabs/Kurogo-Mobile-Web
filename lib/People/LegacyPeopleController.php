@@ -38,6 +38,10 @@ abstract class LegacyPeopleController
         return $this->getError();
     }
 
+    public function getResponseCode() {
+        return $this->getErrorNo();
+    }
+
     public function getErrorNo() {
         return $this->errorNo;
     }
