@@ -316,7 +316,7 @@ abstract class ExternalDataController {
         if ($response = @unserialize($data)) {
             return $response;
         }
-        return null;
+        return new DataResponse();
     }
     
     public function getResponse() {
@@ -326,8 +326,9 @@ abstract class ExternalDataController {
                 if ($this->cacheIsFresh()) {
                     $this->response = $this->getCachedResponse();
                 } else {
-                    if ($this->response = $this->retriever->retrieveData()) {
-                        $this->writeCache($response);
+                    $this->response = $this->retriever->retrieveData();
+                    if ($this->response->getResponse()) {
+                        $this->writeCache($this->response);
                     } elseif ($this->useStaleCache) {
                         $this->response = $this->getCachedResponse();
                     }
@@ -335,6 +336,10 @@ abstract class ExternalDataController {
             } else {
                 $this->response = $this->retriever->retrieveData();
             }
+        }
+        
+        if (!$this->response instanceOf DataResponse) {
+            throw new KurogoDataException("Response must be instance of DataResponse");
         }
         
         return $this->response;
