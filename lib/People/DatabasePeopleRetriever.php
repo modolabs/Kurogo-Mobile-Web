@@ -15,6 +15,7 @@ class DatabasePeopleRetriever extends DataRetriever implements PeopleRetriever {
     protected $sortFields=array('lastname','firstname');
     protected $attributes = array();
     protected $supportsSearch = true;
+    protected $query;
 
     public function debugInfo() {
         return sprintf("Using Database");
@@ -25,6 +26,17 @@ class DatabasePeopleRetriever extends DataRetriever implements PeopleRetriever {
     }
     
     public function retrieveData() {
+
+        $response = new DataResponse();
+        $response->setContext('fieldMap',$this->fieldMap);
+
+        if ($this->query) {
+            list($sql, $parameters) = $this->query;
+            $result = $this->connection->query($sql, $parameters);
+            $response->setResponse($result);
+        }        
+
+        return $response;
     }
     
     protected function buildSearchQuery($searchString) {
@@ -103,16 +115,10 @@ class DatabasePeopleRetriever extends DataRetriever implements PeopleRetriever {
     
     public function search($searchString) {
 
-        $response = new DataResponse();
+        $this->query = $this->buildSearchQuery($searchString);
+        $response = $this->retrieveData();
         $response->setContext('mode','search');
         $response->setContext('value', $searchString);
-        $response->setContext('fieldMap',$this->fieldMap);
-        
-        if ($query = $this->buildSearchQuery($searchString)) {
-            list($sql, $parameters) = $query;
-            $result = $this->connection->query($sql, $parameters);
-            $response->setResponse($result);
-        }        
         return $response;
     }
     
@@ -135,15 +141,10 @@ class DatabasePeopleRetriever extends DataRetriever implements PeopleRetriever {
     * FALSE on failure
     */
     public function getUser($id) {
-        $response = new DataResponse();
+        $this->query = $this->buildUserQuery($id);
+        $response = $this->retrieveData();
         $response->setContext('mode','user');
-        $response->setContext('fieldMap',$this->fieldMap);
-        
-        if ($query = $this->buildUserQuery($id)) {
-            list($sql, $parameters) = $query;
-            $result = $this->connection->query($sql, $parameters);
-            $response->setResponse($result);
-        }        
+        $response->setContext('value', $id);
         return $response;
     }
 
@@ -184,49 +185,6 @@ class DatabasePeopleParser extends PeopleDataParser
     public function parseData($data) {
         throw new KurogoException("Parse data not supported");
     }
-    
-    protected function parseSearch($data, $ds, $fieldMap) {
-    
-        $entry = ldap_first_entry($ds, $data);
-        
-        if (!$entry) {
-            return FALSE;
-        }
-        
-        $results = array();
-        $person = new $this->personClass($ds, $entry);
-        $person->setFieldMap($fieldMap);
-        $results[] = $person;
-
-        while ($entry = ldap_next_entry($ds, $entry)) {
-			$person = new $this->personClass($ds, $entry);
-			$person->setFieldMap($fieldMap);
-			$results[] = $person;
-        }
-
-        //sort results by sort fields        
-        if (count($results)>1) {
-            $sprintf = implode(" ", array_fill(0, count($this->sortFields), '%s'));
-            $sortTemp = array();
-            foreach ($results as $key=>$person) {
-                $sortFields = $this->sortFields;
-                foreach ($sortFields as &$field) {
-                    $field = $person->getFieldSingle($field);
-                }
-                $sortValue = vsprintf($sprintf, $sortFields);
-                $sortTemp[$key] = $sortValue;
-            }
-            
-            asort($sortTemp);
-            
-            foreach ($sortTemp as $key=>$sort) {
-                $return[] = $results[$key];
-            }
-            $results = $return;
-        }
-                    
-        return $results;
-    }
         
     public function parseResponse(DataResponse $response) {
 
@@ -257,7 +215,9 @@ class DatabasePeopleParser extends PeopleDataParser
                     $person->setFieldMap($fieldMap);
                     $person->setAttributes($row);
                 }
-                        
+                
+                $result->closeCursor();
+                            
                 return $person;
         }
 
