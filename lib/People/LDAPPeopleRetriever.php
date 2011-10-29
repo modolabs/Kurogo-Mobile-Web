@@ -28,6 +28,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $adminPassword;
     protected $errorNo;
     protected $errorMsg;
+    protected $filter;
     protected $searchTimelimit=30;
     protected $readTimelimit=30;
     protected $supportsSearch = true;
@@ -37,6 +38,58 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     }
     
     public function retrieveData() {
+        $response = new DataResponse();
+        $response->setCode($this->errorNo);
+        $response->setResponseError($this->errorMsg);
+        if (!$this->filter) {
+            return $response;
+        }
+
+        $ds = $this->connectToServer();
+        if (!$ds) {
+            $response->setResponseError("Could not connect to LDAP server");
+            return $response;
+        }
+
+        if ($this->adminDN) {
+            if (!ldap_bind($ds, $this->adminDN, $this->adminPassword)) {
+                Kurogo::log(LOG_WARNING, "Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds), 'data');
+                $response->setResponseError("Could not connect to LDAP server");
+                return $response;
+            }
+        }
+
+        // suppress warnings on non-dev servers
+        // about searches that go over the result limit
+        if (!$this->debugMode) {
+            $error_reporting = ini_get('error_reporting');
+            error_reporting($error_reporting & ~E_WARNING);
+        }
+        
+        if ($this->filter instanceOf LDAPFilter) {
+            $result = ldap_search($ds, $this->searchBase,
+                strval($this->filter), $this->getAttributes(), 0, 0, 
+                $this->searchTimelimit);
+        } else {
+            $result = ldap_read($ds, $this->filter, "(objectclass=*)", $this->getAttributes(), 
+                0, 0, $this->readTimelimit);
+        }
+        
+        $error_code = ldap_errno($ds);
+        $response->setResponse($result);
+        $response->setCode($error_code);
+        $response->setContext('ldap', $ds);
+        $response->setContext('fieldMap', $this->fieldMap);
+
+        if ($error_code) {
+            $response->setResponseError($this->generateErrorMessage($error_code));
+        }
+        
+        if (!$this->debugMode) {
+            error_reporting($error_reporting);
+        }    
+        
+        return $response;
     }
   
     public function debugInfo() {
@@ -65,8 +118,10 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     }
 
     public function search($searchString) {
-        $filter = $this->buildSearchFilter($searchString);
-        return $this->doQuery($filter);
+        $this->filter = $this->buildSearchFilter($searchString);
+        $response = $this->retrieveData();
+        $response->setContext('mode', 'search');
+        return $response;
     }
     
     public function setAttributes($attributes) {
@@ -159,105 +214,17 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
         return $filter;
     }
     
-    /* return results, or FALSE on error.
-    */
-    protected function doQuery($filter) {
-
-        $response = new DataResponse();
-        $response->setCode($this->errorNo);
-        $response->setResponseError($this->errorMsg);
-        if (!$filter) {
-            return $response;
-        }
-
-        $ds = $this->connectToServer();
-        if (!$ds) {
-            $this->errorMsg = "Could not connect to LDAP server";
-            return FALSE;
-        }
-
-        if ($this->adminDN) {
-            if (!ldap_bind($ds, $this->adminDN, $this->adminPassword)) {
-                Kurogo::log(LOG_WARNING, "Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds), 'data');
-                return false;
-            }
-        }
-
-        // suppress warnings on non-dev servers
-        // about searches that go over the result limit
-        if (!$this->debugMode) {
-            $error_reporting = ini_get('error_reporting');
-            error_reporting($error_reporting & ~E_WARNING);
-        }
-        
-        $sr = ldap_search($ds, $this->searchBase,
-            strval($filter), $this->getAttributes(), 0, 0, 
-            $this->searchTimelimit);
-
-        $error_code = ldap_errno($ds);
-        $response->setResponse($sr);
-        $response->setCode($error_code);
-        $response->setContext('ldap', $ds);
-        $response->setContext('mode', 'search');
-        $response->setContext('fieldMap', $this->fieldMap);
-
-        if ($error_code) {
-            $response->setResponseError($this->generateErrorMessage($error_code));
-        }
-        
-        if (!$this->debugMode) {
-            error_reporting($error_reporting);
-        }
-
-        return $response;
-    } 
-    
-    /* returns a response object on success
-    * FALSE on failure
-    */
     public function getUser($id) {
         if (strstr($id, '=')) { 
             // assume we're looking up person by "dn" (distinct ldap name)
-
-            $ds = $this->connectToServer();
-            if (!$ds) {
-                $this->errorMsg = "Could not connect to LDAP server";
-                return FALSE;
-            }
-
-            if ($this->adminDN) {
-                if (!ldap_bind($ds, $this->adminDN, $this->adminPassword)) {
-                    Kurogo::log(LOG_WARNING, "Error binding to LDAP Server $this->host for $this->adminDN: " . ldap_error($ds), 'data');
-                    return false;
-                }
-            }
-
-            // get all attributes of the person identified by $id
-            $sr = ldap_read($ds, $id, "(objectclass=*)", $this->getAttributes(), 0, 0, $this->readTimelimit);
-
-            $error_code = ldap_errno($ds);
-    
-            $response = new DataResponse();
-            $response->setResponse($sr);
-            $response->setContext('ldap', $ds);
-            $response->setContext('mode', 'user');
-            $response->setContext('fieldMap', $this->fieldMap);
-            $response->setCode($error_code);
-            if ($error_code) {
-                $response->setResponseError($this->generateErrorMessage($error_code));
-            }
-
-            return $response;
-
+            $this->filter = $id;
         } else {
-
-            $filter = $this->buildUserFilter($id);
-            if ($response = $this->doQuery($filter)) {
-                $response->setContext('mode', 'user');
-            }
-            
-            return $response;
+            $this->filter = $this->buildUserFilter($id);
         }
+
+        $response = $this->retrieveData();
+        $response->setContext('mode', 'user');
+        return $response;
 
     }
     
