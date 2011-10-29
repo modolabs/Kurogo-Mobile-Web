@@ -6,7 +6,7 @@
 /**
   * @package Directory
   */
-class DatabasePeopleController extends PeopleController {
+class DatabasePeopleController extends LegacyPeopleController {
     protected $conn;
     protected $table;
     protected $fieldMap=array();

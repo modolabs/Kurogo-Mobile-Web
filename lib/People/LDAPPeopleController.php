@@ -16,7 +16,7 @@ define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 /**
   * @package Directory
   */
-class LDAPPeopleController extends PeopleController {
+class LDAPPeopleController extends LegacyPeopleController {
     protected $personClass = 'LDAPPerson';
     protected $host;
     protected $port=389;
