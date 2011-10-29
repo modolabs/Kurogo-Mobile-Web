@@ -1,5 +1,7 @@
 <?php
 
+/********* RETAINED FOR COMPATIBILITY *******/
+
 abstract class LegacyVideoDataController extends DataController
 {
     protected $cacheFolder='Video';

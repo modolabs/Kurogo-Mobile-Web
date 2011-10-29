@@ -1,15 +1,7 @@
 <?php
-/**
- * CalendarDataController
- * @package ExternalData
- * @subpackage Calendar
- */
 
-/**
- * Retrieves and parses calendar data
- * @package ExternalData
- * @subpackage Calendar
- */
+/********* RETAINED FOR COMPATIBILITY WITH EXISTING DATA CONTROLLERS *******/
+
 class LegacyCalendarDataController extends DataController
 {
     protected $DEFAULT_PARSER_CLASS='ICSDataParser';
