@@ -25,6 +25,7 @@ class NewsWebModule extends WebModule {
   protected $showPubDate = false;
   protected $showAuthor = false;
   protected $showLink = false;
+  protected $legacy = false;
   
   public static function validateFeed($section, $feedData) {
         if (!self::argVal($feedData, 'TITLE')) {
@@ -104,7 +105,12 @@ class NewsWebModule extends WebModule {
             $feedData['CONTROLLER_CLASS'] = self::defaultController;
         }
 
-        $controller = NewsDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        try {
+            $controller = NewsDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        } catch (KurogoException $e) {
+            $controller = LegacyDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $this->legacy = true;
+        }
         return $controller;
     } else {
         throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $index));
@@ -114,9 +120,14 @@ class NewsWebModule extends WebModule {
     public function searchItems($searchTerms, $limit=null, $options=null) {  
         
         $start = isset($options['start']) ? $options['start'] : 0;
-        $this->feed->setStart($start);
-        $this->feed->setLimit($limit);
-        return $this->feed->search($searchTerms);
+        if ($this->legacy) {
+            $this->feed->addFilter('search', $searchTerms);
+            return $this->feed->items(0, $limit);
+        } else {
+            $this->feed->setStart($start);
+            $this->feed->setLimit($limit);
+            return $this->feed->search($searchTerms);
+        }
     }
 
     public function linkForItem(KurogoObject $story, $data=null) {
@@ -304,9 +315,13 @@ class NewsWebModule extends WebModule {
         
       case 'pane':
         $start = 0;
-        $this->feed->setStart(0);
-        $this->feed->setLimit($this->maxPerPane);
-        $items = $this->feed->items();
+        if ($this->legacy) {
+            $items = $this->feed->items($start, $this->maxPerPane);
+        } else {
+            $this->feed->setStart(0);
+            $this->feed->setLimit($this->maxPerPane);
+            $items = $this->feed->items();
+        }
         $stories = array();
         $options = array(
             'noBreadcrumbs'=>true,
@@ -327,9 +342,13 @@ class NewsWebModule extends WebModule {
       
       case 'index':
         $start = $this->getArg('start', 0);
-        $this->feed->setStart($start);
-        $this->feed->setLimit($this->maxPerPage);
-        $items = $this->feed->items();
+        if ($this->legacy) {
+            $items = $this->feed->items($start, $this->maxPerPage);
+        } else {
+            $this->feed->setStart($start);
+            $this->feed->setLimit($this->maxPerPage);
+            $items = $this->feed->items();
+        }
         $totalItems = $this->feed->getTotalItems();
         $this->setLogData($this->feedIndex, $this->feed->getTitle());
        

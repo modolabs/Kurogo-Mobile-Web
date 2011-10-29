@@ -9,7 +9,7 @@
  * Handles retrieval, caching and parsing of data. 
  * @package ExternalData
  */
-abstract class DataController
+abstract class LegacyDataController
 {
     protected $DEFAULT_PARSER_CLASS='PassthroughDataParser';
     protected $initArgs=array();
@@ -285,7 +285,7 @@ abstract class DataController
      */
     public static function factory($controllerClass, $args=array()) {
         $args = is_array($args) ? $args : array();
-        Kurogo::log(LOG_DEBUG, "Initializing DataController $controllerClass", "data");
+        Kurogo::log(LOG_DEBUG, "Initializing LegacyDataController $controllerClass", "data");
 
         if (!class_exists($controllerClass)) {
             throw new KurogoConfigurationException("Controller class $controllerClass not defined");
@@ -293,8 +293,8 @@ abstract class DataController
         
         $controller = new $controllerClass;
         
-        if (!$controller instanceOf DataController) {
-            throw new KurogoConfigurationException("$controllerClass is not a subclass of DataController");
+        if (!$controller instanceOf LegacyDataController) {
+            throw new KurogoConfigurationException("$controllerClass is not a subclass of LegacyDataController");
         }
 
         $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
