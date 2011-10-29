@@ -5,6 +5,8 @@ class NewsAPIModule extends APIModule {
     protected $id = 'news';
     protected $vmin = 1;
     protected $vmax = 1;
+    protected $legacyController = false;
+    const defaultController = 'NewsDataController';
     
     protected function initializeForCommand() {
         $feeds = $this->loadFeedData();
@@ -17,7 +19,13 @@ class NewsAPIModule extends APIModule {
                 $mode = $this->getArg('mode');
 
                 $feed = $this->getFeed($categoryID);
-                $items = $feed->items($start, $limit);
+                if ($this->legacyController) {
+                    $items = $feed->items($start, $limit);
+                } else {
+                    $feed->setStart($start);
+                    $feed->setLimit($limit);
+                    $items = $feed->items($start, $limit);
+                }
                 $totalItems = $feed->getTotalItems();
 
                 $stories = array();
@@ -48,10 +56,14 @@ class NewsAPIModule extends APIModule {
                 $categoryID = $this->getArg('categoryID');
                 $searchTerms = $this->getArg('q');
                 $feed = $this->getFeed($categoryID);
-                $feed->addFilter('search', $searchTerms);
+                if ($this->legacyController) {
+                    $feed->addFilter('search', $searchTerms);
+                    $start = 0;
+                    $items = $feed->items($start);
+                } else {
+                    $items = $feed->search($searchTerms);
+                }
 
-                $start = 0;
-                $items = $feed->items($start);
                 $stories = array();
                 foreach ($items as $story) {
                     $stories[] = $this->formatStory($story, 'full');
@@ -104,19 +116,26 @@ class NewsAPIModule extends APIModule {
     }
 
     // copied from NewsWebModule.php
-    public function getFeed($index) {
-        $feeds = $this->loadFeedData();
-        if(isset($feeds[$index])) {
-            $feedData = $feeds[$index];
-            if (!isset($feedData['CONTROLLER_CLASS'])) {
-                $feedData['CONTROLLER_CLASS'] = 'RSSDataController';
-            }
-            $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            return $controller;
-        } else {
-            throw new KurogoConfigurationException("Error getting news feed for index $index");
+  public function getFeed($index) {
+      $feeds = $this->loadFeedData();
+      if (isset($feeds[$index])) {
+        
+        $feedData = $feeds[$index];
+        if (!isset($feedData['CONTROLLER_CLASS'])) {
+            $feedData['CONTROLLER_CLASS'] = self::defaultController;
         }
+
+        try {
+            $controller = NewsDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        } catch (KurogoException $e) {
+            $controller = LegacyDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $this->legacyController = true;
+        }
+        return $controller;
+    } else {
+        throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $index));
     }
+  }
 
     private static function getPubDateUnixtime($story) {
         return strtotime($story->getPubDate());

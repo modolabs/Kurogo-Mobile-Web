@@ -25,7 +25,7 @@ class NewsWebModule extends WebModule {
   protected $showPubDate = false;
   protected $showAuthor = false;
   protected $showLink = false;
-  protected $legacy = false;
+  protected $legacyController = false;
   
   public static function validateFeed($section, $feedData) {
         if (!self::argVal($feedData, 'TITLE')) {
@@ -109,7 +109,7 @@ class NewsWebModule extends WebModule {
             $controller = NewsDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
         } catch (KurogoException $e) {
             $controller = LegacyDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $this->legacy = true;
+            $this->legacyController = true;
         }
         return $controller;
     } else {
@@ -120,7 +120,7 @@ class NewsWebModule extends WebModule {
     public function searchItems($searchTerms, $limit=null, $options=null) {  
         
         $start = isset($options['start']) ? $options['start'] : 0;
-        if ($this->legacy) {
+        if ($this->legacyController) {
             $this->feed->addFilter('search', $searchTerms);
             return $this->feed->items(0, $limit);
         } else {
@@ -315,7 +315,7 @@ class NewsWebModule extends WebModule {
         
       case 'pane':
         $start = 0;
-        if ($this->legacy) {
+        if ($this->legacyController) {
             $items = $this->feed->items($start, $this->maxPerPane);
         } else {
             $this->feed->setStart(0);
@@ -342,7 +342,7 @@ class NewsWebModule extends WebModule {
       
       case 'index':
         $start = $this->getArg('start', 0);
-        if ($this->legacy) {
+        if ($this->legacyController) {
             $items = $this->feed->items($start, $this->maxPerPage);
         } else {
             $this->feed->setStart($start);
