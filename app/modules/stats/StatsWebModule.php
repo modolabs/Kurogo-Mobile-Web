@@ -62,11 +62,12 @@ class StatsWebModule extends WebModule {
     }
     
 	protected function initializeForPage() {
-	
 	    if ($this->page == 'migrating') {
 	        $this->migratingData();
             return;
 	    }
+	    
+	    KurogoStats::exportStatsData();
 	    
 	    if (!Kurogo::getOptionalSiteVar('STATS_ENABLED', true)) {
 	        throw new KurogoException($this->getLocalizedString('STATS_DISABLED'));
@@ -228,11 +229,11 @@ class StatsWebModule extends WebModule {
         }
 
         if ($chartData['start']) {
-            $kurogoOption->addFilter('timestamp', 'GT', $chartData['start']);
+            $kurogoOption->addFilter('timestamp', 'GTE', $chartData['start']);
         }
 
         if ($chartData['end']) {
-            $kurogoOption->addFilter('timestamp', 'LT', $chartData['end']);
+            $kurogoOption->addFilter('timestamp', 'LTE', $chartData['end']);
         }
 
         if (isset($chartData['sort'])) {

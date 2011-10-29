@@ -126,9 +126,14 @@ class KurogoStats {
     private static function getStatsTables($chartData) {
         $tableSharding = Kurogo::getOptionalSiteVar('KUROGO_STATS_SHARDING_TYPE', self::$tableSharding);
         $tableName = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
-        
+        $summaryTable = Kurogo::getOptionalSiteVar("KUROGO_STATS_SUMMARY_TABLE", "kurogo_stats_module_v1");
+
         if (!$tableSharding) {
-            return $table;
+            return $tableName;
+        }
+        
+        if (isset($chartData['summarytable']) && $chartData['summarytable']) {
+            return $summaryTable;
         }
         
         $statsTables = array();
@@ -250,6 +255,24 @@ class KurogoStats {
                 break;
             case 'sqlite':
                 //$createSQL = self::createSQLForMysql($table);
+                $createSQL[] = "CREATE TABLE $table (
+                                    id integer PRIMARY KEY autoincrement,
+                                    timestamp int(11),
+                                    date datetime,
+                                    service char(3),
+                                    site char(32),
+                                    moduleID varchar(32),
+                                    pagetype varchar(16),
+                                    platform varchar(16),
+                                    viewCount int(11),
+                                    sizeCount int(11),
+                                    elapsedAvg int(11),
+                                )";
+                $createSQL[] = "CREATE INDEX key_service ON $table (service)";
+                $createSQL[] = "CREATE INDEX key_moduleID ON $table (moduleID)";
+                $createSQL[] = "CREATE INDEX key_pagetype ON $table (pagetype)";
+                $createSQL[] = "CREATE INDEX key_platform ON $table (platform)";
+                $createSQL[] = "CREATE INDEX key_timestamp ON $table (timestamp)";
                 break;
             default:
                 throw new Exception("Stats module do not support " . $conn->getDBType());
@@ -339,9 +362,12 @@ class KurogoStats {
     }
     */
     
+    /**
+     * summary the stats data. the data should be updated to the summary stats table
+    */
     protected static function summaryStatsData(&$statsData, $data) {
         $day = date('Y-m-d', $data['timestamp']);
-        $statsKey = $day.'-'.$data['service'].'-'.$data['site'].'-'.$data['moduleID'].'-'.$data['pagetype'].'-'.$data['platform'];
+        $statsKey = $day.'@@'.$data['service'].'@@'.$data['site'].'@@'.$data['moduleID'].'@@'.$data['pagetype'].'@@'.$data['platform'];
         if (!isset($statsData[$statsKey])) {
             $statsData[$statsKey] = array(
                 'viewCount' => 1,
@@ -356,6 +382,7 @@ class KurogoStats {
             $statsData[$statsKey]['summaryTimes'] += 1;
         }
     }
+    
     /**
      * export the stats data to the database
      */
@@ -438,18 +465,19 @@ class KurogoStats {
     }
     
     protected static function updateStatsToSummaryTable($statsKey, $statsValue) {
-        $statsArray = explode('-', $statsKey);
-        $statsDate = $statsArray[0] . '-' . $statsArray[1] . '-' . $statsArray[2] . ' 00:00:00';
-        $statsDateTime = mktime(0, 0, 0, $statsArray[1], $statsArray[2], $statsArray[0]);
+        $statsArray = explode('@@', $statsKey);
+        list($year, $month, $day) = explode('-', $statsArray[0]);
+        $statsDate = $year . '-' . $month . '-' . $day . ' 00:00:00';
+        $statsDateTime = mktime(0, 0, 0, $month, $day, $year);
 
         $insertData = array(
             'timestamp' => $statsDateTime,
             'date'      => $statsDate,
-            'service'   => $statsArray[3],
-            'site'      => $statsArray[4],
-            'moduleID'  => $statsArray[5],
-            'pagetype'  => $statsArray[6],
-            'platform'  => $statsArray[7]
+            'service'   => $statsArray[1],
+            'site'      => $statsArray[2],
+            'moduleID'  => $statsArray[3],
+            'pagetype'  => $statsArray[4],
+            'platform'  => $statsArray[5]
         );
         
         $filters = array();
@@ -681,7 +709,7 @@ class KurogoStats {
     }
     
     public static function isValidField($field) {
-        return in_array($field, self::validFields());
+        return in_array($field, self::validFields()) || in_array($field, self::validSummaryFields());
     }
     
     public static function validFields() {
@@ -707,6 +735,21 @@ class KurogoStats {
             'dataLabel',
             'size',
             'elapsed'
+        );
+    }
+
+    public static function validSummaryFields() {
+        return array(
+            'timestamp',
+            'date',
+            'service',
+            'site',
+            'moduleID',
+            'pagetype',
+            'platform',
+            'viewCount',
+            'sizeCount',
+            'elapsedAvg'
         );
     }
     
@@ -742,7 +785,6 @@ class KurogoStats {
         $group = $OptionObject->getGroup();
         $fields = $OptionObject->getFields();
         
-
         switch ($type) {
             case 'count':
                 if (count($fields)==0) {
@@ -807,12 +849,15 @@ class KurogoStats {
         if ($type =='count' && $OptionObject->getSortField()=='count') {
             $dir = $OptionObject->getSortDir() == SORT_ASC ? "ASC" : "DESC";
             $sql .= " ORDER BY count $dir, $groupString";
-    
-            if ($OptionObject->getLimit()) {
-                $sql .= " LIMIT " . $OptionObject->getLimit();
-            }
+        } elseif ($type =='sum' && $OptionObject->getSortField()=='sum') {
+            $dir = $OptionObject->getSortDir() == SORT_ASC ? "ASC" : "DESC";
+            $sql .= " ORDER BY sum $dir, $groupString";
         }
-
+        
+        if ($OptionObject->getLimit()) {
+            $sql .= " LIMIT " . $OptionObject->getLimit();
+        }
+        
         //query 
 		$conn = self::connection();
         $data = $conn->query($sql, $params);
@@ -828,7 +873,7 @@ class KurogoStats {
             }
         }
         
-        if ($type=='count' && $OptionObject->getSortField()=='count') {
+        if (($type=='count' && $OptionObject->getSortField()=='count') || ($type=='sum' && $OptionObject->getSortField()=='sum')) {
             if ($OptionObject->getSortDir()==SORT_ASC) {
                 asort($result);
             } else {
@@ -874,6 +919,29 @@ class KurogoStats {
         return $result;
     }
     
+    public static function isValidModuleID($service, $moduleID) {
+        static $allModuleData = array(
+            'web' => array(),
+            'api' => array()
+        );
+        $moduleData = array();
+        
+        if (isset($allModuleData[$service]) && !empty($allModuleData[$service])) {
+            $moduleData = $allModuleData[$service];
+        }
+        if (!$moduleData) {
+            if ($service == 'web') {
+                $allModuleData['web'] = WebModule::getAllModules();
+                $moduleData = $allModuleData['web'];
+            } else {
+                $allModuleData['api'] = APIModule::getAllModules();
+                $moduleData = $allModuleData['api'];
+            }
+        }
+        
+        return isset($moduleData[$moduleID]) ? true : false;
+    }
+    
     public static function migratingData($table, $start = 0, $limit = 0) {
     
         $fields = self::validFields();
@@ -888,12 +956,19 @@ class KurogoStats {
             $isHaveData = true;
             if ($row['timestamp'] > 0) {
                 $newTable = self::getStatsTable($row['timestamp']);
-                //insert the raw data to the database
-                $logData = array_combine($fields, $row);
-                self::insertStatsToMainTable($logData);
                 
-                //summary the stats data
-                self::summaryStatsData($statsData, $logData);
+                $logData = array_combine($fields, $row);
+                //if (isset($logData['moduleID']) && $logData['moduleID'] && isset($logData['service']) && $logData['service']) {
+                    //if (self::isValidModuleID($logData['service'], $logData['moduleID'])) {
+                        //insert the raw data to the database
+                        self::insertStatsToMainTable($logData);
+                
+                        //summary the stats data
+                        self::summaryStatsData($statsData, $logData);
+                    //}
+                    
+                //}
+                
             }
         }
 
