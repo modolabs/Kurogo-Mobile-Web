@@ -522,7 +522,8 @@ abstract class DataController
 
         $this->response = new HTTPDataResponse();
         $this->response->setRequest($this->method, $url, $this->filters, $this->requestHeaders);
-        $this->response->setResponse($data, $http_response_header);
+        $this->response->setResponse($data);
+        $this->response->setResponseHeaders($http_response_header);
         
         Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $this->getResponseCode(), strlen($data)), 'data');
         

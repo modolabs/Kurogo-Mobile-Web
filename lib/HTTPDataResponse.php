@@ -16,8 +16,11 @@ class HTTPDataResponse extends DataResponse
         $this->requestHeaders = $headers;
     }
     
-    public function setResponse($response, $http_response_header) {
+    public function setResponse($response) {
         $this->response = $response;
+    }
+    
+    public function setResponseHeaders($http_response_header) {
         if (is_array($http_response_header)) {
             $this->parseHTTPResponseHeaders($http_response_header);
         }

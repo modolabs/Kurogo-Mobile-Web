@@ -185,7 +185,8 @@ class URLDataRetriever extends DataRetriever {
         $response = new HTTPDataResponse();
         $response->setRequest($this->method, $url, $this->filters, $this->requestHeaders);
 
-        $response->setResponse($data, $http_response_header);
+        $response->setResponse($data);
+        $response->setResponseHeaders($http_response_header);
         
         Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $response->getCode(), strlen($data)), 'url_retriever');
         
