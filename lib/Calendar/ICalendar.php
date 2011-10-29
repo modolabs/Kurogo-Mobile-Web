@@ -885,6 +885,7 @@ class ICalendar extends ICalObject implements CalendarInterface {
     public function getEventsInRange(TimeRange $range=null, $limit=null, $filters=null) {
 
         $occurrences = array();
+        $filters = is_array($filters) ? $filters : array();
 
         foreach ($this->eventStartTimes as $id => $startTime) {
             $event = $this->events[$id];

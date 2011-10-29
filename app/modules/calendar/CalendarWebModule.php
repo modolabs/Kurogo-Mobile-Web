@@ -17,6 +17,7 @@ class CalendarWebModule extends WebModule {
   protected $id = 'calendar';
   protected $feeds = array();
   protected $timezone;
+  protected $legacyController = false;
 
   protected function getTitleForSearchOptions($intervalType, $offset, $forward=true) {
     if ($offset < 0) {
@@ -242,8 +243,16 @@ class CalendarWebModule extends WebModule {
         if (isset($options['end'])) {
             $feed->setEndDate($options['end']);
         }
+        
+        if ($this->legacyController) {
+            if ($searchTerms) {
+                $feed->addFilter('search', $searchTerms);
+            }
     
-        return $feed->search($searchTerms);
+            return $feed->items();
+        } else {
+            return $feed->search($searchTerms);
+        }
     }
 
     public function linkForCategory($category, $data=null) {
@@ -330,9 +339,12 @@ class CalendarWebModule extends WebModule {
       case 'resource':
         $section = $type=='user' ?  'user_calendars' :'resources';
         $sectionData = $this->getOptionalModuleSection($section);
-        if (isset($sectionData['RETRIEVER_CLASS'])) {
+        $controller = false;
+        
+        if (isset($sectionData['RETRIEVER_CLASS']) || isset($sectionData['CONTROLLER_CLASS'])) {
             $listController = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : 'CalendarListController';
             $controller = CalendarListController::factory($listController, $sectionData);
+            
             switch ($type)
             {
                 case 'resource':
@@ -378,7 +390,12 @@ class CalendarWebModule extends WebModule {
       if (!isset($feedData['CONTROLLER_CLASS'])) {
         $feedData['CONTROLLER_CLASS'] = 'CalendarDataController';
       }
-      $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
+      try {
+          $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
+      } catch (KurogoException $e) {
+          $controller = LegacyCalendarDataController::factory($feedData['CONTROLLER_CLASS'],$feedData);
+          $this->legacyController = true;
+      }
       return $controller;
     } else {
       throw new KurogoConfigurationException($this->getLocalizedString("ERROR_NO_CALENDAR_FEED", $index));
@@ -603,7 +620,13 @@ class CalendarWebModule extends WebModule {
         $start->setTime(0,0,0);
 
         $feed->setStartDate($start);
-        $iCalEvents = $feed->items(0, $limit);
+        
+        if ($this->legacyController) {
+            $iCalEvents = $feed->items(0, $limit);
+        } else {
+            $feed->setLimit($limit);
+            $iCalEvents = $feed->items();
+        } 
                         
         $events = array();
         foreach($iCalEvents as $iCalEvent) {

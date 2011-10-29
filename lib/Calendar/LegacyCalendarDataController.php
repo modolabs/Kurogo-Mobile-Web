@@ -166,7 +166,7 @@ class LegacyCalendarDataController extends DataController
         $endTimestamp = $this->endTimestamp() ? $this->endTimestamp() : CalendarDataController::END_TIME_LIMIT;
         $range = new TimeRange($startTimestamp, $endTimestamp);
         
-        return $this->calendar->getEventsInRange($range, $limit);
+        return $this->calendar->getEventsInRange($range, $limit, array());
     }
     
     protected function clearInternalCache()
