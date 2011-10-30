@@ -3,14 +3,11 @@
  class BrightCoveRetriever extends URLDataRetriever
  {
     protected $DEFAULT_PARSER_CLASS='BrightCoveDataParser';
-    protected $token;
-    protected $playerKey;
-    protected $playerId;
     protected $supportsSearch = true;
     
     private function setStandardFilters() {
 	    $this->setBaseURL("http://api.brightcove.com/services/library");
-	    $this->addFilter('token', $this->token);
+	    $this->addFilter('token', $this->getOption('token'));
 	    $this->addFilter('output', 'json');
 	    $this->addFilter('video_fields', 'id,name,shortDescription,longDescription,thumbnailURL,length,FLVURL,publishedDate,tags');
 	    $this->addFilter('get_item_count', 'true');
@@ -32,29 +29,29 @@
         if (!isset($args['token'])) {
             throw new KurogoConfigurationException('Brightcove token not included');
         }
-        $this->token = $args['token'];
+        $this->setOption('token', $args['token']);
 
         if (!isset($args['playerKey'])) {
             throw new KurogoConfigurationException('Brightcove playerKey not included');
         }
-        $this->playerKey = $args['playerKey'];
+        $this->setOption('playerKey', $args['playerKey']);
 
         if (!isset($args['playerId'])) {
             throw new KurogoConfigurationException('Brightcove playerId not included');
         }
-        $this->playerId = $args['playerId'];
+        $this->setOption('playerId', $args['playerId']);
         $this->setStandardFilters();
     }
     
     public function url() {
 	    $this->addFilter('command', 'find_all_videos');
 
-	    if ($tag = $this->dataController->getTag()) {
+	    if ($tag = $this->getOption('tag')) {
 	        $this->addFilter('all', 'tag:' . $tag);
 	    }
 
-        $start = $this->dataController->getStart();
-        $limit = $this->dataController->getLimit();
+        $start = $this->getOption('start');
+        $limit = $this->getOption('limit');
 
 	    if ($limit) {
             $this->addFilter('page_size', $limit) ;

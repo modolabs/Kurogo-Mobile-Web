@@ -4,8 +4,6 @@ includePackage('DataController');
 class VideoDataController extends ItemsDataController
 {
     protected $cacheFolder='Video';
-    protected $tag;
-    protected $author;
 
     public static function getVideoDataControllers() {
         return array(
@@ -27,11 +25,11 @@ class VideoDataController extends ItemsDataController
         parent::init($args);
 
         if (isset($args['TAG']) && strlen($args['TAG'])) {
-            $this->tag = $args['TAG'];
+            $this->setOption('tag', $args['TAG']);
         }
         
         if (isset($args['AUTHOR']) && strlen($args['AUTHOR'])) {
-            $this->author = $args['AUTHOR'];
+            $this->setOption('author', $args['AUTHOR']);
         }
     }
 }

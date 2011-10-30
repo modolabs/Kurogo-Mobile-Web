@@ -3,23 +3,22 @@
  class VimeoRetriever extends URLDataRetriever
  {
     protected $DEFAULT_PARSER_CLASS='VimeoDataParser';
-    protected $channel;
     
     protected function init($args) {
         parent::init($args);
 
         if (isset($args['CHANNEL']) && strlen($args['CHANNEL'])) {
-            $this->channel = $args['CHANNEL'];
+            $this->setOption('channel', $args['CHANNEL']);
         }
     }
 
     public function url() {
         $url = 'http://vimeo.com/api/v2/';
         
-        if ($author = $this->dataController->getAuthor()) {
+        if ($author = $this->getOption('author')) {
             $url .= $author;
-        } elseif ($this->channel) {
-            $url .= 'channel/' . $this->channel;
+        } elseif ($channel = $this->getOption('channel')) {
+            $url .= 'channel/' . $channel;
         } else {
             throw new KurogoConfigurationException("Unable to determine type of request");
         }

@@ -79,7 +79,7 @@ class VideoWebModule extends WebModule
         
         try {
             $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        } catch (KurogoException $e) {
+        } catch (KurogoConfigurationException $e) {
             $controller = LegacyVideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $this->legacyController = true;
         }

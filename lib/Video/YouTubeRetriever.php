@@ -3,12 +3,11 @@
  class YouTubeRetriever extends URLDataRetriever
  {
     protected $DEFAULT_PARSER_CLASS='YouTubeDataParser';
-    protected $playlist;
     protected $supportsSearch = true;
     
  	private function setStandardFilters() {
- 		if ($this->playlist) {
-			$this->setBaseUrl('http://gdata.youtube.com/feeds/api/playlists/' . $this->playlist);
+ 		if ($playlist = $this->getOption('playlist')) {
+			$this->setBaseUrl('http://gdata.youtube.com/feeds/api/playlists/' . $playlist);
  		} else {
 			$this->setBaseUrl('http://gdata.youtube.com/feeds/mobile/videos');
 		}
@@ -31,23 +30,23 @@
         parent::init($args);
 
         if (isset($args['PLAYLIST']) && strlen($args['PLAYLIST'])) {
-            $this->playlist = $args['PLAYLIST'];
+            $this->setOption('playlist', $args['PLAYLIST']);
         }
     }
 
     public function url() {
-        if ($tag = $this->dataController->getTag()) {
+        if ($tag = $this->getOption('tag')) {
             $this->addFilter('category', $tag);
         }
 
-        if ($author = $this->dataController->getAuthor()) {
+        if ($author = $this->getOption('author')) {
             $this->addFilter('author', $author);
         }
 
-        if ($limit = $this->dataController->getLimit()) {
-            $this->addFilter('max-results', $this->dataController->getLimit());
+        if ($limit = $this->getOption('limit')) {
+            $this->addFilter('max-results', $limit);
         }
-        $this->addFilter('start-index', $this->dataController->getStart()+1);
+        $this->addFilter('start-index', $this->getOption('start')+1);
         return parent::url();
     }
     
