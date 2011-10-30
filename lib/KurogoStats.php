@@ -197,36 +197,6 @@ class KurogoStats {
         }
     }
     
-    private static function summaryTables() {
-        return array(
-            'mysql' => array(
-                'kurogo_stats_module' => "
-                    CREATE TABLE $table (
-                        id int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-                        timestamp int(11),
-                        date datetime,
-                        service char(3),
-                        site char(32),
-                        moduleID varchar(32),
-                        pagetype varchar(16),
-                        platform varchar(16),
-                        viewCount int(11),
-                        sizeCount int(11),
-                        elapsedAvg int(11),
-                        PRIMARY KEY (`id`),
-                        KEY `service` (`service`),
-                        KEY `moduleID` (`moduleID`),
-                        KEY `pagetype` (`pagetype`),
-                        KEY `platform` (`platform`),
-                        KEY `timestamp` (`timestamp`)
-                    )",
-            ),
-            'sqlite' => array(
-            
-            )
-        );
-    }
-    
     private static function createSummaryTables($table) {
         //$table = Kurogo::getOptionalSiteVar("KUROGO_STATS_TABLE","kurogo_stats_v1");
         $createSQL = array();
