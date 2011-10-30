@@ -6,16 +6,14 @@
 /**
   * @package Directory
   */
-class DatabasePeopleRetriever extends DataRetriever implements PeopleRetriever {
+class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRetriever {
     protected $DEFAULT_PARSER_CLASS = 'DatabasePeopleParser';
-    protected $conn;
     protected $table;
     protected $fieldMap=array();
     protected $personClass = 'DatabasePerson';
     protected $sortFields=array('lastname','firstname');
     protected $attributes = array();
     protected $supportsSearch = true;
-    protected $query;
 
     public function debugInfo() {
         return sprintf("Using Database");
@@ -23,20 +21,6 @@ class DatabasePeopleRetriever extends DataRetriever implements PeopleRetriever {
     
     public function getCacheKey() {
         return false;
-    }
-    
-    public function retrieveData() {
-
-        $response = new DataResponse();
-        $response->setContext('fieldMap',$this->fieldMap);
-
-        if ($this->query) {
-            list($sql, $parameters) = $this->query;
-            $result = $this->connection->query($sql, $parameters);
-            $response->setResponse($result);
-        }        
-
-        return $response;
     }
     
     protected function buildSearchQuery($searchString) {
@@ -115,8 +99,9 @@ class DatabasePeopleRetriever extends DataRetriever implements PeopleRetriever {
     
     public function search($searchString) {
 
-        $this->query = $this->buildSearchQuery($searchString);
+        $this->setQuery($this->buildSearchQuery($searchString));
         $response = $this->retrieveData();
+        $response->setContext('fieldMap',$this->fieldMap);
         $response->setContext('mode','search');
         $response->setContext('value', $searchString);
         return $response;
@@ -141,8 +126,9 @@ class DatabasePeopleRetriever extends DataRetriever implements PeopleRetriever {
     * FALSE on failure
     */
     public function getUser($id) {
-        $this->query = $this->buildUserQuery($id);
+        $this->setQuery($this->buildUserQuery($id));
         $response = $this->retrieveData();
+        $response->setContext('fieldMap',$this->fieldMap);
         $response->setContext('mode','user');
         $response->setContext('value', $id);
         return $response;
@@ -155,12 +141,6 @@ class DatabasePeopleRetriever extends DataRetriever implements PeopleRetriever {
     protected function init($args) {
         parent::init($args);
         
-        $args = is_array($args) ? $args : array();
-        if (!isset($args['DB_TYPE'])) {
-            $args = array_merge(Kurogo::getSiteSection('database'), $args);
-        }
-        
-        $this->connection = new db($args);                
         if (isset($args['SORTFIELDS']) && is_array($args['SORTFIELDS'])) {
             $this->sortFields = $args['SORTFIELDS'];
         }
