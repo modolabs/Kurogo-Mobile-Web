@@ -50,6 +50,8 @@ class CalendarDataController extends ItemsDataController
         if ($clearCache) {
           $this->clearInternalCache();
         }
+        
+        $this->setOption('startDate', $this->startDate);        
     }
     
     public function startTimestamp()
@@ -74,6 +76,8 @@ class CalendarDataController extends ItemsDataController
         if ($clearCache) {
           $this->clearInternalCache();
         }
+
+        $this->setOption('endDate', $this->endDate);        
     }
 
     public function endTimestamp()
@@ -94,20 +98,21 @@ class CalendarDataController extends ItemsDataController
             throw new KurogoDataException("Invalid duration $duration");
         }
         
-        $this->endDate = clone($this->startDate);
+        $endDate = clone($this->startDate);
         switch ($duration_units)
         {
             case 'year':
             case 'day':
             case 'month':
-                $this->endDate->modify(sprintf("%s%s %s", $duration>=0 ? '+' : '', $duration, $duration_units));
-                $this->clearInternalCache();
+                $endDate->modify(sprintf("%s%s %s", $duration>=0 ? '+' : '', $duration, $duration_units));
                 break;
             default:
                 throw new KurogoDataException("Invalid duration unit $duration_units");
                 break;
             
         }
+        
+        $this->setEndDate($endDate);
     }
     
     protected function init($args)
