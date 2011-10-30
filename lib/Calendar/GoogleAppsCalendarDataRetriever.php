@@ -12,24 +12,24 @@ class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
         $this->addFilter('sortorder', 'a');
         $this->addFilter('singleevents', 'true');
         
-        if ($startDate = $this->dataController->getStartDate()) {
+        if ($startDate = $this->getOption('startDate')) {
             $this->addFilter('start-min', $startDate->format('c'));
         }
 
-        if ($endDate = $this->dataController->getEndDate()) {
+        if ($endDate = $this->getOption('endDate')) {
             $this->addFilter('start-max', $endDate->format('c'));
         }
-
+        
         return parent::url();
     }
     
     public function search($searchTerms) {
         $this->addFilter('q', $searchTerms);
-        if ($start = $this->dataController->getStart()) {
+        if ($start = $this->getOption('start')) {
             $this->addFilter('start-index', $start+1);
         }
         
-        if ($limit = $this->dataController->getLimit()) {
+        if ($limit = $this->getOption('limit')) {
             $this->addFilter('max-results', $limit);
         }
 
