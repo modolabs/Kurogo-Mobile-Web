@@ -16,6 +16,7 @@ abstract class ExternalDataController {
     protected $DEFAULT_RETRIEVER_CLASS='URLDataRetriever';
     protected $DEFAULT_PARSER_CLASS = 'PassthroughDataParser';
     protected $RETRIEVER_INTERFACE = 'DataRetriever';
+    protected $PARSER_INTERFACE = 'DataParser';
     protected $initArgs=array();
     protected $cacheFolder='Data';
     protected $retriever;
@@ -57,6 +58,7 @@ abstract class ExternalDataController {
     protected function setOption($option, $value) {
         $this->options[$option] = $value;
         $this->retriever->setOption($option, $value);
+        $this->parser->setOption($option, $value);
     }
 
     protected function getOption($option) {
@@ -159,7 +161,11 @@ abstract class ExternalDataController {
      * @param DataParser a instantiated DataParser object
      */
     public function setParser(DataParser $parser) {
-        $this->parser = $parser;
+        if ($parser instanceOf $this->PARSER_INTERFACE) {
+            $this->parser = $parser;
+        } else {
+            throw new KurogoException("Data Parser " . get_class($parser) . " must conform to $this->PARSER_INTERFACE");
+        }
     }
     
     /**
