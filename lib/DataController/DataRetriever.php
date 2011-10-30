@@ -11,9 +11,9 @@ abstract class DataRetriever {
 
     protected $DEFAULT_PARSER_CLASS=null; 
     protected $authority;
-    protected $dataController;
     protected $debugMode = false;
     protected $supportsSearch = false;
+    protected $options = array();
 
     abstract public function getCacheKey();
     abstract public function retrieveData();
@@ -27,17 +27,6 @@ abstract class DataRetriever {
         $this->debugMode = $debugMode ? true : false;
     }
 
-    public function setAction($action, $actionArgs) {
-    }
-
-    public function setDataController(ExternalDataController $dataController) {
-        $this->dataController = $dataController;
-    }
-    
-    public function getDataController() {
-        return $this->dataController;
-    }
-    
     public function getAuthority() {
         return $this->authority;
     }
@@ -57,6 +46,14 @@ abstract class DataRetriever {
     
     protected function setAuthority(AuthenticationAuthority $authority) {
         $this->authority = $authority;
+    }
+    
+    public function setOption($option, $value) {
+        $this->options[$option] = $value;
+    }
+
+    public function getOption($option) {
+        return isset($this->options[$option]) ? $this->options[$option] : null;
     }
     
     protected function init($args) {

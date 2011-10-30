@@ -13,23 +13,21 @@ abstract class ItemsDataController extends ExternalDataController {
     
     protected $totalItems = null;
     protected $items = array();
-    protected $start = 0;
-    protected $limit = null;
     
     public function setStart($start) {
-        $this->start = $start;
+        $this->setOption('start', $start);
     }
 
     public function getStart() {
-        return $this->start;
+        return $this->getOption('start');
     }
 
     public function setLimit($limit) {
-        $this->limit = $limit;
+        $this->setOption('limit', $limit);
     }
     
     public function getLimit() {
-        return $this->limit;
+        return $this->getOption('limit');
     }
     
     public function search($searchTerms) {
@@ -40,17 +38,17 @@ abstract class ItemsDataController extends ExternalDataController {
             
         } else {
             //save the start/limit settings, we have to get back all the entries before filtering
-            $start = $this->start;
-            $limit = $this->limit;
-            $this->start = 0;
-            $this->limit = null;
+            $start = $this->getOption('start');
+            $limit = $this->getOption('limit');
+            $this->setStart(0);
+            $this->setLimit(null);
             
             // get all the items
             $_items = $this->items();
             
             //restore start/limit settings
-            $this->start = $start;
-            $this->limit = $limit;
+            $this->setStart($start);
+            $this->setLimit($limit);
             
             $items = array();
             foreach ($_items as $item) {
@@ -64,7 +62,7 @@ abstract class ItemsDataController extends ExternalDataController {
 
         // the result has not been limited        
         if (count($items) == $this->getTotalItems()) {
-            $items = $this->limitItems($items, $this->start, $this->limit);
+            $items = $this->limitItems($items, $this->getStart(), $this->getLimit());
         }
 
         return $items;
@@ -188,7 +186,7 @@ abstract class ItemsDataController extends ExternalDataController {
         
         // the result has not been limited        
         if (count($items)== $this->getTotalItems()) {
-            $items = $this->limitItems($items, $this->start, $this->limit);
+            $items = $this->limitItems($items, $this->getStart(), $this->getLimit());
         }
         
         return $items;

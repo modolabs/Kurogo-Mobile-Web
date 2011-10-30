@@ -7,12 +7,12 @@ class CalendarListController extends ExternalDataController
     protected $RETRIEVER_INTERFACE = 'CalendarListRetriever';
     
     public function getUserCalendars() {
-        $this->setAction('userCalendars');
+        $this->setOption('action', 'userCalendars');
         return $this->getParsedData();
     }
     
     public function getResources() {
-        $this->setAction('resources');
+        $this->setOption('action', 'resources');
         return $this->getParsedData();
     }
     

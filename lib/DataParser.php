@@ -21,6 +21,15 @@ abstract class DataParser
     protected $haltOnParseErrors = true;
     protected $dataController;
     protected $dataRetriever;
+    protected $options = array();
+
+    public function setOption($option, $value) {
+        $this->options[$option] = $value;
+    }
+
+    public function getOption($option) {
+        return isset($this->options[$option]) ? $this->options[$option] : null;
+    }
     
     public function parseResponse(DataResponse $response) {
         return $this->parseData($response->getResponse());

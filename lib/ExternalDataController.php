@@ -21,13 +21,12 @@ abstract class ExternalDataController {
     protected $retriever;
     protected $parser;
     protected $response;
-    protected $action;
-    protected $actionArgs=array();
     protected $cache;
     protected $title;
     protected $debugMode=false;
     protected $useCache=true;
     protected $useStaleCache=true;
+    protected $options = array();
     protected $cacheLifetime=900;
 
     /**
@@ -53,6 +52,15 @@ abstract class ExternalDataController {
      */
     protected function cacheFilename() {
         return $this->retriever->getCacheKey();
+    }
+
+    protected function setOption($option, $value) {
+        $this->options[$option] = $value;
+        $this->retriever->setOption($option, $value);
+    }
+
+    protected function getOption($option) {
+        return isset($this->options[$option]) ? $this->options[$option] : null;
     }
 
     /**
@@ -119,7 +127,6 @@ abstract class ExternalDataController {
 
         //instantiate the retriever class and add it to the controller
         $retriever = DataRetriever::factory($args['RETRIEVER_CLASS'], $args);
-        $retriever->setDataController($this);
         $this->setRetriever($retriever);
         
         if (!isset($args['PARSER_CLASS'])) {
@@ -407,20 +414,6 @@ abstract class ExternalDataController {
      */
     public function setCacheLifetime($seconds) {
         $this->cacheLifetime = intval($seconds);
-    }
-    
-    public function setAction($action, $args=null) {
-        $this->action = $action;
-        $this->actionArgs = $args;
-        $this->retriever->setAction($action, $args);
-    }
-    
-    public function getAction() {
-        return $this->action;
-    }
-
-    public function getActionArgs() {
-        return $this->actionArgs;
     }
     
     /**
