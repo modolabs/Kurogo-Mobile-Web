@@ -173,11 +173,11 @@ class PeopleWebModule extends WebModule {
         
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
-            if (isset($feedData['CONTROLLER_CLASS'])) {
-                $controller = LegacyPeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            } else {
-                $feedData['CONTROLLER_CLASS'] = $this->defaultController;
+            $controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : $this->defaultController;
+            try {
                 $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            } catch (KurogoException $e) {
+                $controller = LegacyPeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             }
             
             $controller->setAttributes($this->detailAttributes);
