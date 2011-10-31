@@ -192,5 +192,23 @@ class URLDataRetriever extends DataRetriever {
         
         return $response;
     }
+
+	protected function buildURL($parts) {
+        $scheme = (isset($parts['scheme'])) ? $parts['scheme'] : 'http';
+        $port = (isset($parts['port'])) ? $parts['port'] : (($scheme == 'https') ? '443' : '80');
+        $host = (isset($parts['host'])) ? $parts['host'] : '';
+        $path = (isset($parts['path'])) ? $parts['path'] : '';
+    
+        if (($scheme == 'https' && $port != '443')
+            || ($scheme == 'http' && $port != '80')) {
+          $host = "$host:$port";
+        }
+        return "$scheme://$host$path";
+	}
+	
+	protected function canonicalURL($url) {
+        $parts = parse_url($url);
+        return $this->buildURL($parts);
+	}
     
 }
