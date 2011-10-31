@@ -58,8 +58,7 @@ abstract class XMLDataParser extends DataParser
         $this->items = array();
     }
     
-    public function parseData($contents) {
-        $this->clearInternalCache();
+    protected function parseXML($xml) {
         $xml_parser = xml_parser_create();
         // use case-folding so we are sure to find the tag in $map_array
         xml_parser_set_option($xml_parser, XML_OPTION_CASE_FOLDING, true);
@@ -70,12 +69,17 @@ abstract class XMLDataParser extends DataParser
         xml_set_element_handler($xml_parser, array($this,"startElement"), array($this,"endElement"));
         xml_set_character_data_handler($xml_parser, array($this,"characterData"));
         
-        if (!xml_parse($xml_parser, $contents)) {
+        if (!xml_parse($xml_parser, $xml)) {
             throw new KurogoDataException(sprintf("XML error: %s at line %d",
                         xml_error_string(xml_get_error_code($xml_parser)),
                         xml_get_current_line_number($xml_parser)));
         }
         xml_parser_free($xml_parser);
+    }
+    
+    public function parseData($contents) {
+        $this->clearInternalCache();
+        $this->parseXML($contents);
         $this->setTotalItems(count($this->items));
         return $this->items;
     }

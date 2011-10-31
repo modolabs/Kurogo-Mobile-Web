@@ -329,7 +329,7 @@ abstract class ExternalDataController {
         if ($response = @unserialize($data)) {
             return $response;
         }
-        return new DataResponse();
+        return false;
     }
     
     public function getResponse() {
@@ -340,10 +340,11 @@ abstract class ExternalDataController {
                     $this->response = $this->getCachedResponse();
                 } else {
                     $this->response = $this->retriever->retrieveData();
+                    $this->response->setCacheLifetime($this->cacheLifetime);
                     if ($this->response->getResponse()) {
                         $this->writeCache($this->response);
-                    } elseif ($this->useStaleCache) {
-                        $this->response = $this->getCachedResponse();
+                    } elseif ($this->useStaleCache && ($response = $this->getCachedResponse())) {
+                        $this->response = $response;
                     }
                 }
             } else {
