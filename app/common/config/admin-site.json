@@ -215,6 +215,7 @@
         "sectiontype":"fields",
         "fields":{
             "GOOGLE_ANALYTICS_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_GOOGLE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_GOOGLE_DESCRIPTION","section":"analytics","placeholder":" UA-XXXXXXX-X"},
+            "GOOGLE_ANALYTICS_DOMAIN":{"labelKey":"ADMIN_SITE_ANALYTICS_GOOGLE_DOMAIN_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_GOOGLE_DOMAIN_DESCRIPTION","section":"analytics"},
             "PERCENT_MOBILE_ID":{"labelKey":"ADMIN_SITE_ANALYTICS_PERCENT_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_PERCENT_DESCRIPTION","section":"analytics"},
             "KUROGO_STATS_TABLE":{"labelKey":"ADMIN_SITE_ANALYTICS_TABLE_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_TABLE_DESCRIPTION","section":"analytics","placeholder":"kurogo_stats_v1"},
             "KUROGO_VISIT_LIFESPAN":{"labelKey":"ADMIN_SITE_ANALYTICS_VISIT_LIFESPAN_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ANALYTICS_VISIT_LIFESPAN_DESCRIPTION","section":"analytics","placeholder":1800}

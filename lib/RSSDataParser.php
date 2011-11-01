@@ -173,10 +173,5 @@ class RSSDataParser extends XMLDataParser
         return $strip_tags;
     }
     
-    public function clearInternalCache()
-    {
-        $this->items = array();
-    }
-
 }
 

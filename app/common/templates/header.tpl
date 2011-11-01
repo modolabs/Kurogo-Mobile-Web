@@ -24,6 +24,9 @@
       <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', '{$GOOGLE_ANALYTICS_ID}']);
+        {if $GOOGLE_ANALYTICS_DOMAIN}
+        _gaq.push(['_setDomainName', '{$GOOGLE_ANALYTICS_DOMAIN}']);
+        {/if}
         _gaq.push(['_trackPageview']);
       </script>
     {/if}
