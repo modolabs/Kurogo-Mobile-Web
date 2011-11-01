@@ -197,7 +197,7 @@ abstract class OAuthProvider
         $retriever->setTokenSecret($this->tokenSecret);
         $retriever->setMethod($method);        
         $retriever->setBaseURL($url);
-        $retriever->setFilters($parameters);
+        $retriever->setParameters($parameters);
         $retriever->setHeaders($headers);
         return $retriever->retrieveData();
 	}

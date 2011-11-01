@@ -146,12 +146,12 @@ class OAuthDataRetriever extends URLDataRetriever
 	}
 	
     protected function getAuthorizationHeader() {
-		$params = $this->filters;
+		$params = $this->parameters();
 		$options = array();
-		$headers = $this->requestHeaders;
 
         /* strip out query string and add it to parameters */
-        $urlParts = parse_url($this->baseURL);
+        $url = $this->url();
+        $urlParts = parse_url($url);
         if (isset($urlParts['query'])) {
             $params = array_merge($params, $this->parseQueryString($urlParts['query']));
         }
@@ -180,23 +180,23 @@ class OAuthDataRetriever extends URLDataRetriever
 	        }
 	    }
 		
-        switch ($this->method) {
+        switch ($this->method()) {
             case 'POST':
                 $params = array_merge($params, $oauth);
-                $url = $this->canonicalURL($this->baseURL);
-        		$params['oauth_signature'] = $this->oauthSignature($this->method, $url, $params);
+                $url = $this->canonicalURL($url);
+        		$params['oauth_signature'] = $this->oauthSignature($this->requestMethod, $url, $params);
                 $authHeader =  $this->calculateHeader($url, $params);
                 break;
                 
             case 'GET':
                 $data = $oauth;
-                $base_url = $url = $this->canonicalURL($this->baseURL);
+                $base_url = $url = $this->canonicalURL($url);
                 if(count($params)>0) {
                     $data = array_merge($data, $params);
                     $url .= '?'. $this->buildQuery($params);
                 }
 
-        		$oauth['oauth_signature'] = $this->oauthSignature($this->method, $base_url, $data);
+        		$oauth['oauth_signature'] = $this->oauthSignature($this->requestMethod, $base_url, $data);
                 $authHeader = $this->calculateHeader($url, $oauth);
                 break;
             default:
@@ -219,46 +219,33 @@ class OAuthDataRetriever extends URLDataRetriever
         return $baseCacheFolder . DIRECTORY_SEPARATOR . md5($this->token);
     }
     
+    protected function headers() {
+        $headers = parent::headers();
+        
+        switch ($this->method()) {
+            case 'GET':
+                break;
+            case 'POST':
+                $headers['Content-type'] = 'application/x-www-form-urlencoded';
+                break;
+        }
+        
+	    $headers['Authorization'] = $this->getAuthorizationHeader();
+	    $headers['Expect'] = '';
+        return $headers;        
+    }
+    
     public function retrieveData() {
     
         if ($this->requiresToken && !$this->token) {
             return new HTTPDataResponse();
         }
-            
-        $url = $this->url();
-        $parameters = $this->filters;
-        $headers = $this->requestHeaders;
         
-        $requestParameters = $this->filters;
-        $requestHeaders = $this->requestHeaders;
+        $response = parent::retrieveData();
         
-        switch ($this->method) 
-        {
-            case 'GET':
-                if (count($parameters)>0) {
-                    $glue = strpos($url, '?') !== false ? '&' : '?';
-                    $url .= $glue . http_build_query($parameters);
-                    $requestParameters = array();
-                }
-                break;
-                
-            case 'POST':
-                $this->addHeader('Content-type','application/x-www-form-urlencoded');
-                stream_context_set_option($this->streamContext, 'http', 'content', '');
-                break;
-                
-            default:
-                throw new KurogoException("Invalid method $method");
-        }
-
-	    $this->addHeader('Authorization', $this->getAuthorizationHeader());
-	    $this->addHeader('Expect', '');
-	    
-	    $response = parent::retrieveData();
-	    
         //if there is a location header we need to re-sign before redirecting
         if ($redirectURL = $response->getHeader("Location")) {
-            Kurogo::log(LOG_DEBUG, "Found Location Header", 'auth');
+            Kurogo::log(LOG_WARNING, "Found Location Header", 'oauth');
 		    $redirectParts = parse_url($redirectURL);
 		    //if the redirect does not include the host or scheme, use the scheme/host from the original URL
             if (!isset($redirectParts['scheme']) || !isset($redirectParts['host'])) {
@@ -276,7 +263,7 @@ class OAuthDataRetriever extends URLDataRetriever
 
 		    //reset headers
 		    $this->setHeaders($headers);
-            Kurogo::log(LOG_DEBUG, "Redirecting to $this->baseURL", 'auth');
+            Kurogo::log(LOG_DEBUG, "Redirecting to $this->baseURL", 'oauth');
             $data =  $this->retrieveData();
         }
         

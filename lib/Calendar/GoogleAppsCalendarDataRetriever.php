@@ -6,23 +6,25 @@ class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
     protected $authority;
     protected $supportsSearch = true;
     protected $requiresToken = true;
- 
-    protected function url() {
-        $this->addFilter('orderby', 'starttime');
-        $this->addFilter('sortorder', 'a');
-        $this->addFilter('singleevents', 'true');
+    
+    protected function parameters() {
+        $parameters = array_merge(parent::parameters(), array(
+            'orderby'=>'starttime',
+            'sortorder'=>'a',
+            'singleevents'=>'true'
+        );
         
         if ($startDate = $this->getOption('startDate')) {
-            $this->addFilter('start-min', $startDate->format('c'));
+            $parameters['start-min'] = $startDate->format('c');
         }
 
         if ($endDate = $this->getOption('endDate')) {
-            $this->addFilter('start-max', $endDate->format('c'));
+            $parameters['start-max'], $endDate->format('c'));
         }
         
-        return parent::url();
+        return $parameters;
     }
-    
+ 
     public function search($searchTerms) {
         $this->addFilter('q', $searchTerms);
         if ($start = $this->getOption('start')) {
