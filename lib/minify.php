@@ -100,10 +100,6 @@ function buildFileList($checkFiles) {
   return $foundFiles;
 }
 
-/**
- * TODO: It had cached the file lists use the DiskCache, but i think whether use the memcache or apc
- * to cache the data.
-*/
 function getMinifyGroupsConfig() {
   $minifyConfig = array();
   
