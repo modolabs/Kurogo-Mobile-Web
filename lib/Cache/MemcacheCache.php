@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('memcache_connect')) {
-    die('KurogoMemcache requires the Memcache Extension');
+    throw new KurogoException('MemcacheCache requires the Memcache Extension');
 }
 
 class MemcacheCache extends KurogoCache {

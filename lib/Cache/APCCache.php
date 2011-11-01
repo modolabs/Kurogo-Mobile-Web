@@ -1,7 +1,7 @@
 <?php
 
 if (!function_exists('apc_fetch')) {
-    die('APCCache requires the APC Extension');
+    throw new KurogoException('APCCache requires the APC Extension');
 }
 
 class APCCache extends KurogoCache {
