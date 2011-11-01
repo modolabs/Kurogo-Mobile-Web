@@ -8,11 +8,11 @@ class KurogoSoapClient extends SoapClient
     protected $cred;
     protected $ssl_verify = true;
 
-	protected function buildURL($parts) {
+	protected function buildURL($parts, $include_resource=false) {
         $scheme = (isset($parts['scheme'])) ? $parts['scheme'] : 'http';
         $port = (isset($parts['port'])) ? $parts['port'] : (($scheme == 'https') ? '443' : '80');
         $host = (isset($parts['host'])) ? $parts['host'] : '';
-        $path = (isset($parts['path'])) ? dirname($parts['path'])  : '';
+        $path = (isset($parts['path'])) ? ($include_resource ? $parts['path'] : dirname($parts['path']))  : '';
     
         if (($scheme == 'https' && $port != '443')
             || ($scheme == 'http' && $port != '80')) {
@@ -34,7 +34,7 @@ class KurogoSoapClient extends SoapClient
         $cacheFolder = CACHE_DIR . '/WSDL/' . md5($baseURL);
         
         //save the filename as is
-        $cacheFile = basename($wsdl);
+        $cacheFile = basename($this->buildURL($parts, true));
         
         if (!$wsdl_cache = ini_get('soap.wsdl_cache_ttl')) {
             $wsdl_cache = 86400; // one day
