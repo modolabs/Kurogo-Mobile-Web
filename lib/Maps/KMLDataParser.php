@@ -28,7 +28,7 @@ class KMLDataParser extends XMLDataParser implements MapDataParser
     protected static $endElements=array(
         'DOCUMENT', 'FOLDER',
         'STYLE','STYLEMAP','STYLEURL',
-        'PLACEMARK'
+        'PLACEMARK', 'NAME'
         );
 
     /////// MapDataParser

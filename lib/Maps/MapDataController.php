@@ -292,21 +292,11 @@ class MapDataController extends DataController implements MapFolder
 
     // End MapFolder interface
 
-    /*
-    protected function getFeature($name, $categoryPath=array()) {
-        $items = $this->getListItems($categoryPath);
-        if (isset($items[$name])) {
-            return $items[$name];
-        }
-        return null;
-    }
-    */
-
     // implemented for compatibility with DataController
     public function getItem($name)
     {
-        throw new Exception("This function has moved. See getSelectedPlacemark");
-        //return $this->getFeature($name);
+        $this->selectPlacemark($name);
+        return $this->getSelectedPlacemark();
     }
 
     // override what the feed says
