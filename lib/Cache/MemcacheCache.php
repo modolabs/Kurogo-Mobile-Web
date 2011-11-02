@@ -7,6 +7,7 @@ if (!function_exists('memcache_connect')) {
 class MemcacheCache extends KurogoCache {
 	private $mem;
 	private $compressed;
+    protected $description = 'Memcache';
 
 	protected function init($args) {
 	    parent::init($args);

@@ -5,7 +5,7 @@ if (!function_exists('apc_fetch')) {
 }
 
 class APCCache extends KurogoCache {
-
+    protected $description = 'APC';
 	public function get($key) {
 		return apc_fetch($key);
 	}

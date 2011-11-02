@@ -1037,10 +1037,9 @@ class Kurogo
     }
     
     public static function getCacheClasses() {
-        return array(
-            'APCCache'=>'APC (Requires APC Extension)',
-            'MemcacheCache'=>'Memcache (Requires Memcache Extension)'
-        );
+        includePackage('Cache');
+        return KurogoCache::getCacheClasses();
+        
     }
 }
 
