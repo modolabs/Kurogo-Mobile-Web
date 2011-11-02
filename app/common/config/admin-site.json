@@ -215,7 +215,13 @@
         "fields":{
             "MINIFY_CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_DESCRIPTION","section":"cache"},
             "CACHE_CLASS":{"labelKey":"ADMIN_SITE_CACHE_CLASS_TITLE","type":"select","optionsMethod":["Kurogo","getCacheClasses"],"optionsFirst":"None","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_CLASS_DESCRIPTION","section":"cache"},
-            "CACHE_TTL":{"labelKey":"ADMIN_SITE_CACHE_TTL_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_TTL_DESCRIPTION","section":"cache","placeholder":60}
+            "CACHE_TTL":{"labelKey":"ADMIN_SITE_CACHE_TTL_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_TTL_DESCRIPTION","section":"cache","placeholder":60},
+            "CACHE_HOST":{"labelKey":"ADMIN_SITE_CACHE_HOST_TITLE","type":"text","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_HOST_DESCRIPTION","section":"cache","placeholder":"localhost","showIf":["CACHE_CLASS","MemcacheCache"]},
+            "CACHE_PORT":{"labelKey":"ADMIN_SITE_CACHE_PORT_TITLE","type":"text","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_PORT_DESCRIPTION","section":"cache","placeholder":"11211","showIf":["CACHE_CLASS","MemcacheCache"]},
+            "CACHE_PERSISTENT":{"labelKey":"ADMIN_SITE_CACHE_PERSISTENT_TITLE","type":"checkbox","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_PERSISTENT_DESCRIPTION","section":"cache","placeholder":"localhost","showIf":["CACHE_CLASS","MemcacheCache"]},
+            "CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_CACHE_TIMEOUT_TITLE","type":"text","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_TIMEOUT_DESCRIPTION","section":"cache","placeholder":"1","showIf":["CACHE_CLASS","MemcacheCache"]},
+            "CACHE_COMPRESSED":{"labelKey":"ADMIN_SITE_CACHE_COMPRESSED_TITLE","type":"checkbox","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_COMPRESSED_DESCRIPTION","section":"cache","placeholder":"1","showIf":["CACHE_CLASS","MemcacheCache"]},
+            "CACHE_DEBUG":{"labelKey":"ADMIN_SITE_CACHE_DEBUG_TITLE","type":"checkbox","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_DEBUG_DESCRIPTION","section":"cache","placeholder":"0","showIf":["CACHE_CLASS","MemcacheCache"]}
         }
     },
     
