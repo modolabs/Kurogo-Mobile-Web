@@ -113,8 +113,9 @@ abstract class ItemsDataController extends ExternalDataController {
      * Clears the internal cache of data. Subclasses can override this method to clean up any necessary
      * state, if necessary. Subclasses should call parent::clearInteralCache()
      */
-    protected function clearInternalCache() {
+    public function clearInternalCache() {
         $this->setTotalItems(null);
+        parent::clearInternalCache();
     }
 
     /**

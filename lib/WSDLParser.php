@@ -39,7 +39,7 @@ class WSDLParser extends XMLDataParser
         }
     }
     
-    protected function clearInternalCache() {
+    public function clearInternalCache() {
         parent::clearInternalCache();
         $this->wsdl = new WSDLData();
     }

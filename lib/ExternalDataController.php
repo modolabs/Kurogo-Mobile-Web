@@ -37,6 +37,18 @@ abstract class ExternalDataController {
     protected function cacheFolder() {
         return $this->retriever->cacheFolder(CACHE_DIR . DIRECTORY_SEPARATOR . $this->cacheFolder);
     }
+
+    /**
+      * Clears the internal cache for a new request. All responses and options are erased and 
+      * clearInteralCache is called on the retriever and parser
+      */
+    public function clearInternalCache() {
+        $this->response = null;
+        $this->options = array();
+        $this->retriever->clearInternalCache();
+        $this->parser->clearInternalCache();
+    }
+    
     
     /**
      * Turns on or off debug mode. In debug mode, URL requests and information are logged to the php error log

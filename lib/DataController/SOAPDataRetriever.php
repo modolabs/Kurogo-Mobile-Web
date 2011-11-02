@@ -155,7 +155,7 @@ class SOAPDataRetriever extends DataRetriever {
         return $response;
     }
     
-    protected function clearInternalCache() {
+    public function clearInternalCache() {
         parent::clearInternalCache();
         $this->soapClient = null;
     }

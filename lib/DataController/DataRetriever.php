@@ -73,6 +73,9 @@ abstract class DataRetriever {
         return $this->DEFAULT_PARSER_CLASS;
     }
     
+    public function clearInternalCache() {
+    }
+    
     public static function factory($retrieverClass, $args) {
         Kurogo::log(LOG_DEBUG, "Initializing DataRetriever $retrieverClass", "data");
         if (!class_exists($retrieverClass)) {

@@ -179,7 +179,7 @@ class CalendarDataController extends ItemsDataController
         return $this->limitItems($events, $this->getStart(), $this->getLimit());
     }
     
-    protected function clearInternalCache()
+    public function clearInternalCache()
     {
         $this->calendar = null;
         parent::clearInternalCache();

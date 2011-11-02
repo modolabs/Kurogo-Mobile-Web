@@ -99,5 +99,8 @@ abstract class DataParser
     public function parseFile($filename) {
         return $this->parseData(file_get_contents($filename));
     }
+
+    public function clearInternalCache() {
+    }
     
 }

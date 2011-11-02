@@ -51,7 +51,8 @@ abstract class XMLDataParser extends DataParser
         $this->data .= $data;
     }
     
-    protected function clearInternalCache() {
+    public function clearInternalCache() {
+        parent::clearInternalCache();
         $this->root = null;
         $this->elementStack = array();
         $this->data='';
