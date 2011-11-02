@@ -13,34 +13,34 @@ class MemcacheCache extends KurogoCache {
 	    parent::init($args);
 	    
 		$this->mem = new Memcache;
-		if(!isset($args['HOST'])) {
+		if(!isset($args['CACHE_HOST'])) {
 			throw new KurogoConfigurationException("Memcache host is not defined");
 		}else {
-			$host = $args['HOST'];
+			$host = $args['CACHE_HOST'];
 		}
-		if(!isset($args['PORT'])) {
+		if(!isset($args['CACHE_PORT'])) {
 			$port = 11211;
 		}else {
-			$port = $args['PORT'];
+			$port = $args['CACHE_PORT'];
 		}
-		if(!isset($args['PERSISTENT'])) {
+		if(!isset($args['CACHE_PERSISTENT'])) {
 			$persistent = false;
 		}else {
-			$persistent = (boolean) $args['PERSISTENT'];
+			$persistent = (boolean) $args['CACHE_PERSISTENT'];
 		}
 
-		if(!isset($args['TIMEOUT'])) {
+		if(!isset($args['CACHE_TIMEOUT'])) {
 			$timeout = 1;
 		}else {
-			$timeout = (int) $args['TIMEOUT'];
+			$timeout = (int) $args['CACHE_TIMEOUT'];
 		}
-		if(isset($args['COMPRESSED'])) {
-			$this->setCompressed($args['COMPRESSED']);
+		if(isset($args['CACHE_COMPRESSED'])) {
+			$this->setCompressed($args['CACHE_COMPRESSED']);
 		}else {
 			$this->setCompressed(true);
 		}
-		if(isset($args['DEBUG'])) {
-			$this->setDebug($args['DEBUG']);
+		if(isset($args['CACHE_DEBUG'])) {
+			$this->setDebug($args['CACHE_DEBUG']);
 		}else {
 			$this->setDebug(false);
 		}
