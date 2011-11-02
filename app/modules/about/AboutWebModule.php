@@ -46,6 +46,7 @@ class AboutWebModule extends WebModule {
 
       case 'help':
       case 'credits':
+      case 'credits_html':
       case 'about':
       case 'pane':
         break;
