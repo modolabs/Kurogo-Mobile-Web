@@ -1035,6 +1035,13 @@ class Kurogo
         
         return 0;
     }
+    
+    public static function getCacheClasses() {
+        return array(
+            'APCCache'=>'APC (Requires APC Extension)',
+            'MemcacheCache'=>'Memcache (Requires Memcache Extension)'
+        );
+    }
 }
 
 interface KurogoObject 

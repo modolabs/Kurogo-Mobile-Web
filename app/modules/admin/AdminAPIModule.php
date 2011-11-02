@@ -148,6 +148,7 @@ class AdminAPIModule extends APIModule
                             switch ($field['config'])
                             {
                                 case 'site':
+                                case 'kurogo':
                                     $field['value'] = Kurogo::getOptionalSiteVar($key, '', $field['section']);
                                     break;
                                 case 'strings':
@@ -303,14 +304,20 @@ class AdminAPIModule extends APIModule
 
         $opts = $opts | ConfigFile::OPTION_IGNORE_LOCAL | ConfigFile::OPTION_IGNORE_MODE;
 
-        if (in_array($type, array('site'))) {
+        if ($config=='kurogo') {
+            $configKey = "kurogo";
+            if (isset($this->loadedConfigs[$configKey])) {
+                $config = $this->loadedConfigs[$configKey];
+            } elseif ($config = ConfigFile::factory('kurogo', 'project', $opts)) {
+                $this->loadedConfigs[$configKey] = $config;
+            }
+        } elseif (in_array($type, array('site'))) {
             $configKey = "site-$config";
             if (isset($this->loadedConfigs[$configKey])) {
                 $config = $this->loadedConfigs[$configKey];
             } elseif ($config = ConfigFile::factory($config, 'site', $opts)) {
                 $this->loadedConfigs[$configKey] = $config;
             }
-            
         } elseif ($type instanceOf Module) {
             $configKey = 'module-' . $type->getConfigModule() . '-' . $config;
             if (isset($this->loadedConfigs[$configKey])) {

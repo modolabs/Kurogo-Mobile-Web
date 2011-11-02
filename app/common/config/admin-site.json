@@ -66,7 +66,6 @@
             "MODULE_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_MODULE_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_MODULE_DESCRIPTION","section":"error_handling_and_debugging"},
             "MINIFY_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_DESCRIPTION","section":"error_handling_and_debugging"},
             "DEVICE_DETECTION_DEBUG":{"labelKey":"ADMIN_SITE_ERROR_DETECTION_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DETECTION_DESCRIPTION","section":"error_handling_and_debugging"},
-            "MINIFY_CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_DESCRIPTION","section":"cache"},
             "PRODUCTION_ERROR_HANDLER_ENABLED":{"labelKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_TITLE","type":"checkbox","config":"site","descriptionKey":"ADMIN_SITE_ERROR_PRODUCTION_HANDLER_DESCRIPTION","section":"error_handling_and_debugging"},
             "DEVELOPER_EMAIL":{"labelKey":"ADMIN_SITE_ERROR_DEVELOPER_EMAIL_TITLE","type":"text","config":"site","descriptionKey":"ADMIN_SITE_ERROR_DEVELOPER_EMAIL_DESCRIPTION","section":"error_handling_and_debugging","showIf":["PRODUCTION_ERROR_HANDLER_ENABLED","1"]}
         }
@@ -209,6 +208,17 @@
             }
         }
     },
+    "cache":{
+        "titleKey":"ADMIN_SITE_CACHE_TITLE",
+        "descriptionKey":"ADMIN_SITE_CACHE_DESCRIPTION",
+        "sectiontype":"fields",
+        "fields":{
+            "MINIFY_CACHE_TIMEOUT":{"labelKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"site","descriptionKey":"ADMIN_SITE_ERROR_MINIFY_CACHE_TIMEOUT_DESCRIPTION","section":"cache"},
+            "CACHE_CLASS":{"labelKey":"ADMIN_SITE_CACHE_CLASS_TITLE","type":"select","optionsMethod":["Kurogo","getCacheClasses"],"optionsFirst":"None","config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_CLASS_DESCRIPTION","section":"cache"},
+            "CACHE_TTL":{"labelKey":"ADMIN_SITE_CACHE_TTL_TITLE","type":"select","optionsMethod":["Kurogo","getLifetimeOptions"],"config":"kurogo","descriptionKey":"ADMIN_SITE_CACHE_TTL_DESCRIPTION","section":"cache","placeholder":60}
+        }
+    },
+    
     "analytics":{
         "titleKey":"ADMIN_SITE_ANALYTICS_TITLE",
         "descriptionKey":"ADMIN_SITE_ANALYTICS_DESCRIPTION",
