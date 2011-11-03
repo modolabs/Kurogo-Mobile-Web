@@ -143,9 +143,18 @@
     // Try and get visitor cookie from the request.
     $cookie = isset($_COOKIE[COOKIE_NAME]) ? $_COOKIE[COOKIE_NAME] : '';
 
-    $dcmguid = isset($_SERVER["HTTP_X_DCMGUID"]) ? $_SERVER["HTTP_X_DCMGUID"] : '';
-    $visitorId = getVisitorId(
-        $dcmguid, $account, $userAgent, $cookie);
+    $guidHeader = isset($_SERVER["HTTP_X_DCMGUID"]) ? $_SERVER["HTTP_X_DCMGUID"] : '';
+    if (empty($guidHeader) && isset($_SERVER["HTTP_X_UP_SUBNO"])) {
+      $guidHeader = $_SERVER["HTTP_X_UP_SUBNO"];
+    }
+    if (empty($guidHeader) && isset($_SERVER["HTTP_X_JPHONE_UID"])) {
+      $guidHeader = $_SERVER["HTTP_X_JPHONE_UID"];
+    }
+    if (empty($guidHeader) && isset($_SERVER["HTTP_X_EM_UID"])) {
+      $guidHeader = $_SERVER["HTTP_X_EM_UID"];
+    }
+
+    $visitorId = getVisitorId($guidHeader, $account, $userAgent, $cookie);
 
     // Always try and add the cookie to the response.
     setrawcookie(
