@@ -14,4 +14,8 @@ class SOAPDataResponse extends DataResponse {
         $this->requestHeaders = $headers;
         $this->requestOptions = $options;
     }
+
+    public function getRequestMethod() {
+        return $this->requestMethod;
+    }
 }
