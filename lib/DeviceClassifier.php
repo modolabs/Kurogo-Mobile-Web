@@ -61,7 +61,10 @@ class DeviceClassifier {
       $this->setDevice($_COOKIE[$this->cookieKey()]);
       
     } elseif (isset($_SERVER['HTTP_USER_AGENT'])) {
-      
+      if ($cache = Kurogo::getCache($this->cacheKey($this->userAgent))) {
+        $this->setDevice($cache);
+        return $cache;
+      }
       if ($data = Kurogo::getSiteVar('MOBI_SERVICE_USE_EXTERNAL') ? 
         $this->detectDeviceExternal($this->userAgent) : $this->detectDeviceInternal($this->userAgent) ) {
         
@@ -79,8 +82,13 @@ class DeviceClassifier {
         $this->certs = $data['supports_certificate'];
         Kurogo::log(LOG_DEBUG, "Setting device to " . $this->getDevice(), "deviceDetection");
         $this->setDeviceCookie();
+        Kurogo::setCache($this->cacheKey($this->userAgent), $this->getDevice());
       }
     }
+  }
+  
+  private function cacheKey($userAgent) {
+    return 'deviceDectection-' . md5($userAgent);
   }
   
   public function getUserAgent() {

@@ -189,6 +189,10 @@ function appendFormField(parent, key, fieldData) {
             parent.append($('<input/>').attr('type','checkbox').attr('name', key).attr('section', section).attr('value', '0').addClass('changeElement').addClass(inputClass).attr('checked', !parseInt(fieldData.value) ? 'checked':'').attr('id',id));
             break;
         case 'checkbox':
+            if (fieldData.value.length==0 && fieldData.placeholder) {
+                fieldData.value = fieldData.placeholder;
+            }
+
             parent.append($('<input/>').attr('type','hidden').attr('name', key).attr('section', section).attr('value', '0'));
             parent.append($('<input/>').attr('type',fieldData.type).attr('name', key).attr('section', section).attr('value', '1').addClass('changeElement').addClass(inputClass).attr('checked', parseInt(fieldData.value) ? 'checked':'').attr('id',id));
             break;

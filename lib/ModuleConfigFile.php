@@ -22,10 +22,14 @@ class ModuleConfigFile extends ConfigFile {
             }
             throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file for module $id: " . self::getfileByType($id, $type));
         }
-    
+        
         return $config;
     }
   
+    protected function cacheKey() {
+        return "config-module-{$this->file}-{$this->type}";
+    }
+    
     protected function getFileByType($id, $type)
     {
         if (preg_match("/-default$/", $type)) {

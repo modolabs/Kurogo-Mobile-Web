@@ -18,6 +18,7 @@ class ConfigFile extends Config {
   protected $type;
   protected $filepath;
   protected $localFile = false;
+  protected $modeFile = false;
 
   protected function fileVariant($variant) 
   {
@@ -26,9 +27,7 @@ class ConfigFile extends Config {
         return false;
       }
       
-      if (preg_match("/^(.*?)\.ini$/", $this->filepath, $bits)) {      
-         return realpath_exists(sprintf("%s-%s.ini", $bits[1], $variant));
-      }
+      return $this->filepath ? substr($this->filepath, 0, -4) . '-' . $variant . substr($this->filepath, -4) : null;
   }
   
   public function modeFile()
@@ -55,7 +54,7 @@ class ConfigFile extends Config {
         }
        throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file: " . self::getfileByType($file, $type));
     }
-    
+
     return $config;
   }
 
@@ -141,27 +140,23 @@ class ConfigFile extends Config {
         return false;
     }
     
-    if ($this->loadFile($_file)) {
+    if ($filepath = $this->loadFile($_file)) {
+        $this->filepath = $filepath;
+        
         if (!($options & ConfigFile::OPTION_IGNORE_MODE)) {
-            if ($modeFile = $this->modeFile()) {
-                 Kurogo::log(LOG_DEBUG, "Found " . CONFIG_MODE . " mode config file $modeFile", 'config');
-                 $this->modeFile = $modeFile;
-                 $vars = parse_ini_file($modeFile, false);
-                 $this->addVars($vars);
-                 $sectionVars = parse_ini_file($modeFile, true);
-                 $this->addSectionVars($sectionVars);
+            if ($modeFile = $this->loadFile($this->modeFile())) {
+                Kurogo::log(LOG_DEBUG, "Found " . CONFIG_MODE . " mode config file $modeFile", 'config');
+                $this->moodeFile = $modeFile;
             }
         }
+
         if (!($options & ConfigFile::OPTION_IGNORE_LOCAL)) {
-            if ($localFile = $this->localFile()) {
+            if ($localFile = $this->loadFile($this->localFile())) {
                  Kurogo::log(LOG_DEBUG, "Found local config file $localFile", 'config');
                  $this->localFile = $localFile;
-                 $vars = parse_ini_file($localFile, false);
-                 $this->addVars($vars);
-                 $sectionVars = parse_ini_file($localFile, true);
-                 $this->addSectionVars($sectionVars);
             }
         }
+
         return true;
     } 
     
@@ -213,23 +208,42 @@ class ConfigFile extends Config {
     }
     return $matches[0];
   }
-
-  protected function loadFile($_file) {
   
-     if (!$file = realpath_exists($_file)) {
+  /* load the actual file */
+  protected function loadFile($_file) {
+     if (empty($_file)) {
         return false;
      }
      
-     $this->filepath = $file;
+     $cacheKey = 'configfile-' . md5($_file);
      
+     if ($cache = Kurogo::getCache($cacheKey)) {
+        // a little sanity in case we update the structure
+        if (isset($cache['vars'],$cache['sectionVars'], $cache['file'])) {
+             $this->addVars($cache['vars']);
+             $this->addSectionVars($cache['sectionVars']);
+             return $cache['file'];
+        }
+     }
+    
+     if (!$file = realpath_exists($_file)) {
+        return false;
+     }
+  
      $vars = parse_ini_file($file, false);
      $this->addVars($vars);
 
      $sectionVars = parse_ini_file($file, true);
      $this->addSectionVars($sectionVars);
+     
+     Kurogo::setCache($cacheKey, array(
+        'vars'       => $vars,
+        'sectionVars'=> $sectionVars,
+        'file'       => $file
+    ));
 
      Kurogo::log(LOG_DEBUG, "Loaded config file $file", 'config');
-     return true;
+     return $file;
   }
   
   protected function saveValue($value) {
