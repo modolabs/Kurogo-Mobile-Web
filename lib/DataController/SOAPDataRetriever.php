@@ -141,7 +141,12 @@ class SOAPDataRetriever extends DataRetriever {
         try {
             $data = $soapClient->{$method}($parameters);
         } catch (SoapFault $fault) {
-            throw new KurogoDataException('Retrieving data error');
+            if(isset($fault->detail)) {
+                $message = $fault->detail->errorstring;
+            }else if(isset($fault->faultstring)) {
+                $message = $fault->faultstring;
+            }
+            throw new KurogoDataException("Retrieving data error: $message");
         }
 
         if (!$lastResponseHeaders = $this->getSoapClient()->__getLastResponseHeaders()) {
