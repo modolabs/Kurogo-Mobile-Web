@@ -135,11 +135,12 @@ class KurogoSoapClient extends SoapClient
             curl_setopt($ch, CURLOPT_HTTPAUTH, $this->auth);
             curl_setopt($ch, CURLOPT_USERPWD, $this->cred);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); 
-            curl_setopt($ch, CURLOPT_POST, true );
+            curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
     		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            
-            return curl_exec($ch);
+            $result = curl_exec($ch);
+            Kurogo::log(LOG_WARNING, "SOAP result: $result, $location", 'soap'); 
+            return $result;
         } else {
             return parent::__doRequest($request, $location, $action, $version, $one_way);
         }
