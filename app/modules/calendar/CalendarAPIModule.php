@@ -165,7 +165,7 @@ class CalendarAPIModule extends APIModule
             'end'           => $event->get_end(),
             'allday'        => ($event->get_range() instanceOf DayRange),
             'location'      => $event->get_location(),
-            'locationLabel' => 'Location', // subclass to add dynamic title to location
+            'locationLabel' => '', // subclass to add dynamic title to location
         );
 
         // iCal GEO property -- subclass if event lat/lon comes from somewhere else
