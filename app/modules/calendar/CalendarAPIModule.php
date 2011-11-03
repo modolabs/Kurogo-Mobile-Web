@@ -254,7 +254,7 @@ class CalendarAPIModule extends APIModule
                 // default to the full day that includes current time
                 $current = $this->getArg('time', time());
                 $start   = $this->getStartArg($current);
-                $end     = $this->getEndArg($start->getTimestamp());
+                $end     = $this->getEndArg($start->format('U'));
                 $feed    = $this->getFeed($calendar, $type);
 
                 $feed->setStartDate($start);
@@ -294,7 +294,7 @@ class CalendarAPIModule extends APIModule
                 // default to the full day that includes current time
                 $current  = $this->getArg('time', time());
                 $start    = $this->getStartArg($current);
-                $end      = $this->getEndArg($start->getTimestamp());
+                $end      = $this->getEndArg($start->format('U'));
                 $type     = $this->getArg('type', 'static');
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
@@ -331,7 +331,7 @@ class CalendarAPIModule extends APIModule
 
                     $current  = $this->getArg('time', time());
                     $start    = $this->getStartArg($current);
-                    $end      = $this->getEndArg($start->getTimestamp());
+                    $end      = $this->getEndArg($start->format('U'));
                     $type     = $this->getArg('type', 'static');
                     $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 			
