@@ -67,7 +67,7 @@ class SOAPDataRetriever extends DataRetriever {
 	    return $soapFunctions;
     }
     
-	public function addSoapHeaders($namespace, $name, $data) {
+	public function addSoapHeader($namespace, $name, $data) {
 	    $this->soapHeaders[] = new SOAPHeader($namespace, $name, $data);
     }
     
@@ -84,9 +84,17 @@ class SOAPDataRetriever extends DataRetriever {
             $this->setSoapOption('ssl_verify', $args['SSL_VERIFY']);
         }
     }
+
+    protected function setMethod($method) {
+        $this->method = $method;
+    }
     
     protected function method() {
         return $this->method;
+    }
+
+    protected function setParameters($parameters) {
+        $this->parameters = $parameters;    
     }
     
     protected function parameters() {
