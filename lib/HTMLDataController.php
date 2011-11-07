@@ -1,6 +1,6 @@
 <?php
 
-class HTMLDataController extends DataController
+class HTMLDataController extends LegacyDataController
 {
     protected $DEFAULT_PARSER_CLASS='DOMDataParser';
     public function getItem($id)
