@@ -7,7 +7,7 @@
   * @package Directory
   */
 includePackage('DataController');
-class PeopleController extends ItemsDataController
+class PeopleDataController extends ItemsDataController
 {
     protected $DEFAULT_RETRIEVER_CLASS = 'LDAPPeopleRetriever';
     protected $personClass = 'Person';

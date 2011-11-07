@@ -17,7 +17,7 @@ class PeopleWebModule extends WebModule {
     protected $id = 'people';
     protected $detailFields = array();
     protected $detailAttributes = array();
-    protected $defaultController = 'PeopleController';
+    protected $defaultController = 'PeopleDataController';
     protected $encoding = 'UTF-8';
     protected $feeds=array();
     protected $contactGroups = array();
@@ -175,7 +175,7 @@ class PeopleWebModule extends WebModule {
             $feedData = $this->feeds[$index];
             $controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : $this->defaultController;
             try {
-                $controller = PeopleController::factory($controllerClass, $feedData);
+                $controller = PeopleDataController::factory($controllerClass, $feedData);
             } catch (KurogoException $e) {
                 $controller = LegacyPeopleController::factory($controllerClass, $feedData);
             }

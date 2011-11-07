@@ -7,7 +7,7 @@ class PeopleAPIModule extends APIModule
     protected $id = 'people';
     protected $vmin = 1;
     protected $vmax = 1;
-    protected $defaultController = 'PeopleController';
+    protected $defaultController = 'PeopleDataController';
     private $fieldConfig;
     private $detailAttributes = array();
     protected $contactGroups = array();
@@ -102,7 +102,7 @@ class PeopleAPIModule extends APIModule
                 $controller = LegacyPeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             } else {
                 $feedData['CONTROLLER_CLASS'] = $this->defaultController;
-                $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                $controller = PeopleDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             }
             
             $controller->setAttributes($this->detailAttributes);
