@@ -85,7 +85,7 @@ abstract class DataRetriever {
         $retriever = new $retrieverClass;
         
         if (!$retriever instanceOf DataRetriever) {
-            throw new KurogoConfigurationException("$retriever is not a subclass of DataRetriever");
+            throw new KurogoConfigurationException(get_class($retriever) . " is not a subclass of DataRetriever");
         }
 
         $retriever->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
