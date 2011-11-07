@@ -33,6 +33,10 @@ class URLDataRetriever extends DataRetriever {
             $this->removeAllFilters();
         }
     }
+
+    public function setURL($baseURL, $clearFilters=true) {
+        $this->setBaseURL($baseURL, $clearFilters);
+    }
     
     /**
      * Adds a parameter to the url request. In the subclass has not overwritten url() then it will be added to the
@@ -42,6 +46,10 @@ class URLDataRetriever extends DataRetriever {
      */
     public function addFilter($var, $value) {
         $this->filters[$var] = $value;
+    }
+    
+    public function addParameter($var, $value) {
+        $this->addFilter($var, $value);
     }
     
     public function setFilters($filters) {
@@ -98,6 +106,10 @@ class URLDataRetriever extends DataRetriever {
     
     protected function method() {
         return $this->requestMethod;
+    }
+    
+    protected function setData($data) {
+        $this->data = $data;
     }
 
     protected function data() {
