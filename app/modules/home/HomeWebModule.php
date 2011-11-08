@@ -52,6 +52,11 @@ class HomeWebModule extends WebModule {
         } else {
           $this->assign('modules', $this->getModuleNavList());
           $this->assign('hideImages', $this->getOptionalModuleVar('HIDE_IMAGES', false));
+          
+          $bannerConfig = $this->getModuleSection('banner');
+          if (isset($bannerConfig['module']) && $bannerConfig['module']) {
+            
+          }
         }
         
         if ($this->getOptionalModuleVar('SHOW_FEDERATED_SEARCH', true)) {
