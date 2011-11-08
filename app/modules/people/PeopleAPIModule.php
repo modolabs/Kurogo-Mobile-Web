@@ -7,8 +7,8 @@ class PeopleAPIModule extends APIModule
     protected $id = 'people';
     protected $vmin = 1;
     protected $vmax = 1;
-    protected $defaultModel = 'PeopleDataModel';
-    protected $defaultController = 'LDAPPeopleController'; //legacy
+    protected static $defaultModel = 'PeopleDataModel';
+    protected static $defaultController = 'LDAPPeopleController'; //legacy
     private $fieldConfig;
     private $detailAttributes = array();
     protected $contactGroups = array();
@@ -100,10 +100,10 @@ class PeopleAPIModule extends APIModule
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
             try {
-				$modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : $this->defaultModel;
+				$modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
                 $controller = PeopleDataModel::factory($modelClass, $feedData);
             } catch (KurogoException $e) {
-				$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : $this->defaultController;
+				$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
                 $controller = PeopleController::factory($controllerClass, $feedData);
             }
             

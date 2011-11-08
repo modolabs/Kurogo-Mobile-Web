@@ -14,11 +14,11 @@ if (!function_exists('mb_convert_encoding')) {
   * @subpackage People
   */
 class PeopleWebModule extends WebModule {
+    protected static $defaultModel = 'PeopleDataModel';
+    protected static $defaultController = 'LDAPPeopleController'; //legacy
     protected $id = 'people';
     protected $detailFields = array();
     protected $detailAttributes = array();
-    protected $defaultModel = 'PeopleDataModel';
-    protected $defaultController = 'LDAPPeopleController'; //legacy
     protected $encoding = 'UTF-8';
     protected $feeds=array();
     protected $contactGroups = array();
@@ -175,10 +175,10 @@ class PeopleWebModule extends WebModule {
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
             try {
-				$modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : $this->defaultModel;
+				$modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
                 $controller = PeopleDataModel::factory($modelClass, $feedData);
             } catch (KurogoException $e) {
-				$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : $this->defaultController;
+				$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
                 $controller = PeopleController::factory($controllerClass, $feedData);
             }
             
