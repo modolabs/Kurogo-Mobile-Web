@@ -12,6 +12,7 @@ class PeopleAPIModule extends APIModule
     private $fieldConfig;
     private $detailAttributes = array();
     protected $contactGroups = array();
+    protected $legacyController;
     
     protected function getContactGroup($group) {
         if (!$this->contactGroups) {
@@ -105,6 +106,7 @@ class PeopleAPIModule extends APIModule
             } catch (KurogoException $e) {
 				$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
                 $controller = PeopleController::factory($controllerClass, $feedData);
+                $this->legacyController = true;
             }
             
             $controller->setAttributes($this->detailAttributes);

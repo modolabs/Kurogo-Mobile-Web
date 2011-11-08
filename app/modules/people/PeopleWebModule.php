@@ -23,6 +23,7 @@ class PeopleWebModule extends WebModule {
     protected $feeds=array();
     protected $contactGroups = array();
     protected $controllers = array();
+    protected $legacyController = true;
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -180,6 +181,7 @@ class PeopleWebModule extends WebModule {
             } catch (KurogoException $e) {
 				$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
                 $controller = PeopleController::factory($controllerClass, $feedData);
+                $this->legacyController = true;
             }
             
             $controller->setAttributes($this->detailAttributes);
