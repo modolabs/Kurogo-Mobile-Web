@@ -1,7 +1,7 @@
 <?php
 
 includePackage('DataModel');
-class CalendarListController extends ExternalDataController
+class CalendarListController extends DataModel
 {
     protected $cacheFolder = 'Calendar';
     protected $RETRIEVER_INTERFACE = 'CalendarListRetriever';

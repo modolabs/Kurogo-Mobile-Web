@@ -1,17 +1,16 @@
 <?php
 /**
- * @package ExternalData
+ * @package DataModel
  */
 
 /**
  * A generic class to handle the retrieval of external data
  * 
  * Handles retrieval, caching and parsing of data. 
- * @package ExternalData
+ * @package DataModel
  */
-Kurogo::includePackage('DataModel');
- 
-abstract class ExternalDataController {
+includePackage('DataModel'); 
+abstract class DataModel {
     
     protected $DEFAULT_RETRIEVER_CLASS='URLDataRetriever';
     protected $DEFAULT_PARSER_CLASS = 'PassthroughDataParser';
@@ -286,16 +285,16 @@ abstract class ExternalDataController {
      */
     public static function factory($controllerClass, $args=array()) {
         $args = is_array($args) ? $args : array();
-        Kurogo::log(LOG_DEBUG, "Initializing ExternalDataController $controllerClass", "data");
+        Kurogo::log(LOG_DEBUG, "Initializing DataModel $controllerClass", "data");
 
         if (!class_exists($controllerClass)) {
-            throw new KurogoConfigurationException("ExternalDataController class $controllerClass not defined");
+            throw new KurogoConfigurationException("DataModel class $controllerClass not defined");
         }
         
         $controller = new $controllerClass;
         
-        if (!$controller instanceOf ExternalDataController) {
-            throw new KurogoConfigurationException("$controllerClass is not a subclass of ExternalDataController");
+        if (!$controller instanceOf DataModel) {
+            throw new KurogoConfigurationException("$controllerClass is not a subclass of DataModel");
         }
 
         $controller->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));

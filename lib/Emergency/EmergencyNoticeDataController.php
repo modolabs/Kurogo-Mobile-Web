@@ -1,6 +1,6 @@
 <?php
 
-class EmergencyNoticeDataController extends ExternalDataController
+class EmergencyNoticeDataController extends DataModel
 {
     protected $DEFAULT_RETRIEVER_CLASS = 'URLDataRetriever';
     protected $DEFAULT_PARSER_CLASS = 'RSSDataParser';

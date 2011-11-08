@@ -1,15 +1,15 @@
 <?php
 /**
- * @package ExternalDataController
+ * @package DataModel
  */
 
 /**
- * A subclass of ExternalDataController to handle the general data.
+ * A subclass of DataModel to handle the general data.
  *
  * @package ExternalData
  */
  
-abstract class ItemsDataController extends ExternalDataController {
+abstract class ItemsDataController extends DataModel {
     
     protected $totalItems = null;
     protected $items = array();
