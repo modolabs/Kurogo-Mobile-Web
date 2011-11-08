@@ -1,22 +1,29 @@
 <?php
 
-includePackage('DataModel');
-class CalendarListController extends DataModel
+abstract class CalendarListController
 {
-    protected $cacheFolder = 'Calendar';
-    protected $RETRIEVER_INTERFACE = 'CalendarListRetriever';
+    abstract public function getUserCalendars();
+    abstract public function getResources(); 
     
-    public function getUserCalendars() {
-        $this->setOption('action', 'userCalendars');
-        return $this->getParsedData();
+    public static function factory($controllerClass, $args=array()) {
+        $args = is_array($args) ? $args : array();
+
+        if (!class_exists($controllerClass)) {
+            throw new KurogoConfigurationException("Class $controllerClass not defined");
+        }
+        
+        $controller = new $controllerClass;
+        
+        if (!$controller instanceOf CalendarListController) {
+            throw new KurogoConfigurationException("$controllerClass is not a subclass of CalendarListController");
+        }
+        
+        $controller->init($args);
+        
+        return $controller;
     }
     
-    public function getResources() {
-        $this->setOption('action', 'resources');
-        return $this->getParsedData();
+    protected function init($args) {
     }
-    
 }
 
-interface CalendarListRetriever {
-}
