@@ -1,6 +1,6 @@
 <?php
 
-includePackage('DataController');
+includePackage('DataModel');
 class CalendarListController extends ExternalDataController
 {
     protected $cacheFolder = 'Calendar';

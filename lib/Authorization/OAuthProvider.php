@@ -1,6 +1,6 @@
 <?php
 
-includePackage('DataController');
+includePackage('DataModel');
 abstract class OAuthProvider
 {
     const TOKEN_TYPE_REQUEST='R';

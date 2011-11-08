@@ -1,6 +1,6 @@
 <?php
 
-includePackage('DataController');
+includePackage('DataModel');
 class ContentWebModule extends WebModule {
     protected $id = 'content';
 	protected $contentGroups;

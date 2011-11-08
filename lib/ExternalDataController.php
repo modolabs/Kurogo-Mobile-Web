@@ -9,7 +9,7 @@
  * Handles retrieval, caching and parsing of data. 
  * @package ExternalData
  */
-Kurogo::includePackage("DataController");
+Kurogo::includePackage('DataModel');
  
 abstract class ExternalDataController {
     

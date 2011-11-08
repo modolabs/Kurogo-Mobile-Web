@@ -10,7 +10,7 @@
  * @package ExternalData
  * @subpackage Calendar
  */
-includePackage('DataController');
+includePackage('DataModel');
 
 class CalendarDataController extends ItemsDataController
 {

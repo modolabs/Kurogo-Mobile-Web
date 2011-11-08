@@ -1,6 +1,6 @@
 <?php
 
-includePackage('DataController');
+includePackage('DataModel');
 class ContentDataController extends ItemsDataController
 {
     protected $cacheFolder = 'Content';
