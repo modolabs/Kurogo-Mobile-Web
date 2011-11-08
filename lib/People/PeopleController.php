@@ -1,10 +1,10 @@
 <?php
 /**
-  * @package Directory
+  * @package People
   */
   
 /**
-  * @package Directory
+  * @package People
   */
 abstract class PeopleController
 {

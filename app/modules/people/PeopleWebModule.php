@@ -178,13 +178,9 @@ class PeopleWebModule extends WebModule {
 				$modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : $this->defaultModel;
                 $controller = PeopleDataModel::factory($modelClass, $feedData);
             } catch (KurogoException $e) {
-            	Debug::die_here($e);
 				$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : $this->defaultController;
                 $controller = PeopleController::factory($controllerClass, $feedData);
-            } catch (KurogoException $e) {
-            	Debug::die_here($e);
             }
-
             
             $controller->setAttributes($this->detailAttributes);
             $this->controllers[$index] = $controller;
