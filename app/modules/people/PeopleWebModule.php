@@ -17,7 +17,8 @@ class PeopleWebModule extends WebModule {
     protected $id = 'people';
     protected $detailFields = array();
     protected $detailAttributes = array();
-    protected $defaultController = 'PeopleDataController';
+    protected $defaultModel = 'PeopleDataModel';
+    protected $defaultController = 'LDAPPeopleController'; //legacy
     protected $encoding = 'UTF-8';
     protected $feeds=array();
     protected $contactGroups = array();
@@ -173,12 +174,17 @@ class PeopleWebModule extends WebModule {
         
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
-            $controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : $this->defaultController;
             try {
-                $controller = PeopleDataController::factory($controllerClass, $feedData);
+				$modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : $this->defaultModel;
+                $controller = PeopleDataModel::factory($modelClass, $feedData);
             } catch (KurogoException $e) {
-                $controller = LegacyPeopleController::factory($controllerClass, $feedData);
+            	Debug::die_here($e);
+				$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : $this->defaultController;
+                $controller = PeopleController::factory($controllerClass, $feedData);
+            } catch (KurogoException $e) {
+            	Debug::die_here($e);
             }
+
             
             $controller->setAttributes($this->detailAttributes);
             $this->controllers[$index] = $controller;

@@ -6,10 +6,10 @@
 /**
  * A subclass of DataModel to handle the general data.
  *
- * @package ExternalData
+ * @package DataModel
  */
  
-abstract class ItemsDataController extends DataModel {
+abstract class ItemListDataModel extends DataModel {
     
     protected $totalItems = null;
     protected $items = array();
