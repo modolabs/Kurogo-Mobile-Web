@@ -14,7 +14,8 @@ if (!function_exists('mb_convert_encoding')) {
 }
 
 class NewsWebModule extends WebModule {
-  const defaultController = 'NewsDataController';
+  protected static $defaultModel = 'NewsDataModel';
+  protected static $defaultController = 'RSSDataController'; // legacy
   protected $id = 'news';
   protected $feeds = array();
   protected $feedIndex = 0;
@@ -32,12 +33,12 @@ class NewsWebModule extends WebModule {
             return new KurogoError(1, $this->getLocalizedString('ERROR_NO_TITLE'),$this->getLocalizedString('ERROR_NO_TITLE_DESCRIPTION'));
         }
 
-        if (!isset($feedData['CONTROLLER_CLASS'])) {
-            $feedData['CONTROLLER_CLASS'] = self::defaultController;
+        if (!isset($feedData['MODEL_CLASS'])) {
+			$feedData['MODEL_CLASS'] = self::$defaultModel;
         }
 
         try {
-            $controller = NewsDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller = NewsDataModel::factory($feedData['MODEL_CLASS'], $feedData);
         } catch (KurogoConfigurationException $e) {
             return KurogoError::errorFromException($e);
         }
@@ -101,16 +102,16 @@ class NewsWebModule extends WebModule {
   public function getFeed($index) {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
-        if (!isset($feedData['CONTROLLER_CLASS'])) {
-            $feedData['CONTROLLER_CLASS'] = self::defaultController;
-        }
 
-        try {
-            $controller = NewsDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        } catch (KurogoException $e) {
-            $controller = LegacyDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-            $this->legacyController = true;
-        }
+		try {
+			$modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+			$controller = NewsDataModel::factory($modelClass, $feedData);
+		} catch (KurogoException $e) {
+			$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
+			$controller = DataController::factory($controllerClass, $feedData);
+			$this->legacyController = true;
+		}
+
         return $controller;
     } else {
         throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $index));

@@ -1,7 +1,7 @@
 <?php
 
 includePackage('DataModel');
-class NewsDataController extends ItemsDataController
+class NewsDataModel extends ItemListDataModel
 {
     protected $DEFAULT_PARSER_CLASS='RSSDataParser';
     protected $cacheFolder = 'News';
