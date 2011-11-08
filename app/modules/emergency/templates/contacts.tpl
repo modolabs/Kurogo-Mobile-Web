@@ -3,6 +3,6 @@
 {include file="findInclude:common/templates/results.tpl"
      results=$contactNavListItems
      accessKey=false
-     subTitleNewLine=false}
+     subTitleNewline=true}
 
 {include file="findInclude:common/templates/footer.tpl"}

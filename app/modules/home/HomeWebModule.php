@@ -8,6 +8,9 @@
   * @package Module
   * @subpackage Home
   */
+
+Kurogo::includePackage('Emergency');
+
 class HomeWebModule extends WebModule {
   protected $id = 'home';
   protected $canBeAddedToHomeScreen = false;
@@ -45,13 +48,32 @@ class HomeWebModule extends WebModule {
               
       case 'index':
         if ($this->pagetype == 'tablet') {
-          
           $this->assign('modulePanes', $this->getTabletModulePanes($this->getModuleSection('tablet_panes')));
           $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
           $this->addOnOrientationChange('moduleHandleWindowResize();');
+          
         } else {
           $this->assign('modules', $this->getModuleNavList());
           $this->assign('hideImages', $this->getOptionalModuleVar('HIDE_IMAGES', false));
+          
+          if ($this->getOptionalModuleVar('SHOW_BANNER_ALERT', false)) {
+            $config = $this->loadFeedData();
+            
+            if (isset($config['notice'])) {
+              $bannerController = DataController::factory($config['notice']['CONTROLLER_CLASS'], $config['notice']);
+              if ($bannerController) {
+                $bannerNotice = $bannerController->getLatestEmergencyNotice();
+                if ($bannerNotice) {
+                  $this->assign('bannerNotice', $bannerNotice);
+                  
+                  $bannerModule = $this->getOptionalModuleVar('BANNER_ALERT_MODULE_LINK', false);
+                  if ($bannerModule) {
+                    $this->assign('bannerURL', $this->buildURLForModule($bannerModule, 'index'));
+                  }
+                }
+              }
+            }
+          }
         }
         
         if ($this->getOptionalModuleVar('SHOW_FEDERATED_SEARCH', true)) {
