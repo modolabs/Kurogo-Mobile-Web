@@ -1,9 +1,10 @@
 <?php
 
-includePackage('DataModel');
-class VideoDataController extends ItemsDataController
+abstract class VideoDataController extends DataController
 {
     protected $cacheFolder='Video';
+    protected $tag;
+    protected $author;
 
     public static function getVideoDataControllers() {
         return array(
@@ -13,23 +14,17 @@ class VideoDataController extends ItemsDataController
         );
     }
     
-    public function getTag() {
-        return $this->tag;
-    }
-
-    public function getAuthor() {
-        return $this->author;
-    }
-    
     protected function init($args) {
         parent::init($args);
 
         if (isset($args['TAG']) && strlen($args['TAG'])) {
-            $this->setOption('tag', $args['TAG']);
+            $this->tag = $args['TAG'];
         }
         
         if (isset($args['AUTHOR']) && strlen($args['AUTHOR'])) {
-            $this->setOption('author', $args['AUTHOR']);
+            $this->author = $args['AUTHOR'];
         }
     }
+
+    abstract public function search($q, $start=0, $limit=null);
 }

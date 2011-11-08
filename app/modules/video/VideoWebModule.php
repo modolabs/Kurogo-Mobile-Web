@@ -4,7 +4,8 @@ Kurogo::includePackage('Video');
 
 class VideoWebModule extends WebModule
 {
-    const defaultController = 'VideoDataController';
+    protected static $defaultModel = 'VideoDataModel';
+    protected static $defaultController = 'VideoDataController';
     protected $id='video';  // this affects which .ini is loaded
     protected $feeds = array();
     protected $legacyController = false;
@@ -73,16 +74,15 @@ class VideoWebModule extends WebModule
         $feed = isset($this->feeds[$feed]) ? $feed : $this->getDefaultSection();
         $feedData = $this->feeds[$feed];
 
-        if (!isset($feedData['CONTROLLER_CLASS'])) {
-            $feedData['CONTROLLER_CLASS'] = self::defaultController;
-        }
-        
         try {
-            $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        } catch (KurogoConfigurationException $e) {
-            $controller = LegacyVideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            $controller = VideoDataModel::factory($modelClass, $feedData);
+        } catch (KurogoException $e) {
+            $controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
+            $controller = VideoDataController::factory($controllerClass, $feedData);
             $this->legacyController = true;
         }
+        
         return $controller;
     }
     

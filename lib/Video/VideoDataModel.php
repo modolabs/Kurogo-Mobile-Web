@@ -1,12 +1,9 @@
 <?php
 
-/********* RETAINED FOR COMPATIBILITY *******/
-
-abstract class LegacyVideoDataController extends DataController
+includePackage('DataModel');
+class VideoDataModel extends ItemListDataModel
 {
     protected $cacheFolder='Video';
-    protected $tag;
-    protected $author;
 
     public static function getVideoDataControllers() {
         return array(
@@ -16,17 +13,23 @@ abstract class LegacyVideoDataController extends DataController
         );
     }
     
+    public function getTag() {
+        return $this->tag;
+    }
+
+    public function getAuthor() {
+        return $this->author;
+    }
+    
     protected function init($args) {
         parent::init($args);
 
         if (isset($args['TAG']) && strlen($args['TAG'])) {
-            $this->tag = $args['TAG'];
+            $this->setOption('tag', $args['TAG']);
         }
         
         if (isset($args['AUTHOR']) && strlen($args['AUTHOR'])) {
-            $this->author = $args['AUTHOR'];
+            $this->setOption('author', $args['AUTHOR']);
         }
     }
-
-    abstract public function search($q, $start=0, $limit=null);
 }

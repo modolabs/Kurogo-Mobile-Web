@@ -2,7 +2,7 @@
 
 /********* RETAINED FOR COMPATIBILITY *******/
 
- class BrightCoveVideoController extends VideoDataController
+ class BrightCoveVideoController extends VideoDataModel
  {
     protected $DEFAULT_RETRIEVER_CLASS='BrightcoveRetriever';
  }
