@@ -12,14 +12,14 @@ class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
             'orderby'=>'starttime',
             'sortorder'=>'a',
             'singleevents'=>'true'
-        );
+        ));
         
         if ($startDate = $this->getOption('startDate')) {
             $parameters['start-min'] = $startDate->format('c');
         }
 
         if ($endDate = $this->getOption('endDate')) {
-            $parameters['start-max'], $endDate->format('c'));
+            $parameters['start-max'] =  $endDate->format('c');
         }
         
         return $parameters;

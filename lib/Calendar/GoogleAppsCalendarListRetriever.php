@@ -10,15 +10,35 @@ class GoogleAppsCalendarListRetriever extends OAuthDataRetriever implements Cale
         return $this->authority ? $this->authority->getDomain() : false;
     }
     
-    public function url() {
+    public function parameters() {
+        $parameters = parent::parameters();
         switch ($this->getOption('action')) {
             case 'userCalendars':
-                return 'https://www.google.com/calendar/feeds/default?alt=jsonc';
+                $parameters['alt'] = 'jsonc';
+                break;
             case 'resources':
-                return 'https://apps-apis.google.com/a/feeds/calendar/resource/2.0/' . $this->getDomain() .'/?alt=json';
+                $parameters['alt'] = 'json';
+                break;
             default:
                 throw new KurogoException("Unknown action " . $this->getOption('action'));
         }
+        
+        return $parameters;
+    }
+    
+    public function baseURL() {
+        switch ($this->getOption('action')) {
+            case 'userCalendars':
+                $url = 'https://www.google.com/calendar/feeds/default';
+                break;
+            case 'resources':
+                $url = 'https://apps-apis.google.com/a/feeds/calendar/resource/2.0/' . $this->getDomain() .'/';
+                break;
+            default:
+                throw new KurogoException("Unknown action " . $this->getOption('action'));
+        }
+        
+        return $url;
     }
     
     public function init($args) {
