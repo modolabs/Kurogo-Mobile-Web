@@ -180,11 +180,12 @@ class OAuthDataRetriever extends URLDataRetriever
 	        }
 	    }
 		
-        switch ($this->method()) {
+		$method = $this->method();
+        switch ($method) {
             case 'POST':
                 $params = array_merge($params, $oauth);
                 $url = $this->canonicalURL($url);
-        		$params['oauth_signature'] = $this->oauthSignature($this->requestMethod, $url, $params);
+        		$params['oauth_signature'] = $this->oauthSignature($method, $url, $params);
                 $authHeader =  $this->calculateHeader($url, $params);
                 break;
                 
@@ -196,7 +197,7 @@ class OAuthDataRetriever extends URLDataRetriever
                     $url .= '?'. $this->buildQuery($params);
                 }
 
-        		$oauth['oauth_signature'] = $this->oauthSignature($this->requestMethod, $base_url, $data);
+        		$oauth['oauth_signature'] = $this->oauthSignature($method, $base_url, $data);
                 $authHeader = $this->calculateHeader($url, $oauth);
                 break;
             default:
@@ -222,6 +223,12 @@ class OAuthDataRetriever extends URLDataRetriever
     protected function headers() {
         $headers = parent::headers();
         
+        //if the first parameter is true then exclude the authorization headers
+        $args = func_get_args();
+        if (isset($args[0]) && $args[0]) {
+            return $headers;
+        }
+                
         switch ($this->method()) {
             case 'GET':
                 break;
@@ -240,7 +247,8 @@ class OAuthDataRetriever extends URLDataRetriever
         if ($this->requiresToken && !$this->token) {
             return new HTTPDataResponse();
         }
-        
+
+        $headers = $this->headers(true);
         $response = parent::retrieveData();
         
         //if there is a location header we need to re-sign before redirecting
@@ -256,15 +264,16 @@ class OAuthDataRetriever extends URLDataRetriever
             }
 
 		    $this->setBaseURL($this->canonicalURL($redirectURL));
-		    if (isset($redirectParts['query'])) {
+            $parameters = $this->parameters();
+            if (isset($redirectParts['query'])) {
 		        $parameters = array_merge($parameters, $this->parseQueryString($redirectParts['query']));
 		    }
-		    $this->setFilters($parameters);
+		    $this->setParameters($parameters);
 
 		    //reset headers
 		    $this->setHeaders($headers);
             Kurogo::log(LOG_DEBUG, "Redirecting to $this->baseURL", 'oauth');
-            $data =  $this->retrieveData();
+            $response =  $this->retrieveData();
         }
         
         return $response;

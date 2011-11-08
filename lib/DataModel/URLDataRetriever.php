@@ -126,23 +126,29 @@ class URLDataRetriever extends DataRetriever {
     }
 
     private function setContextMethod() {
-        stream_context_set_option($this->streamContext, 'http', 'method', $this->method());
+        $method = $this->method();
+        stream_context_set_option($this->streamContext, 'http', 'method', $method);
+        return $method;
+        
     }
 
     private function setContextHeaders() {
-        $headers = array();
+        $_headers = array();
+        $headers = $this->headers();
         //@TODO: Might need to escape this
-        foreach ($this->headers() as $header=>$value) {
-            $headers[] = "$header: $value";
+        foreach ($headers as $header=>$value) {
+            $_headers[] = "$header: $value";
         }
             
-        stream_context_set_option($this->streamContext, 'http', 'header', implode("\r\n", $headers));
+        stream_context_set_option($this->streamContext, 'http', 'header', implode("\r\n", $_headers));
+        return $headers;
     }
     
     private function setContextData() {
         if ($requestData = $this->data()) {
             stream_context_set_option($this->streamContext, 'http', 'content', $requestData);
         }
+        return $requestData;
     }
 
     public function setTimeout($timeout) {
@@ -180,7 +186,7 @@ class URLDataRetriever extends DataRetriever {
      * @return string
      */
     protected function url() {
-        $url = $this->baseURL;
+        $url = $this->baseURL();
         $parameters = $this->parameters();
         if (count($parameters)>0) {
             $glue = strpos($this->baseURL, '?') !== false ? '&' : '?';
@@ -188,6 +194,10 @@ class URLDataRetriever extends DataRetriever {
         }
         
         return $url;
+    }
+    
+    protected function baseURL() {
+        return $this->baseURL;
     }
          
     /**
@@ -215,21 +225,21 @@ class URLDataRetriever extends DataRetriever {
      */
     public function retrieveData() {
 
-        if (!$url = $this->url()) {
+        if (!$this->requestURL = $this->url()) {
             throw new KurogoDataException("URL could not be determined");
         }
-
-        $this->requestURL = $url;
-        $this->setContextMethod();
-        $this->setContextHeaders();
-        $this->setContextData();
                 
+        $this->requestParameters = $this->parameters();
+        $this->requestMethod = $this->setContextMethod();
+        $this->requestHeaders = $this->setContextHeaders();
+        $this->requestData = $this->setContextData();
+        
         Kurogo::log(LOG_INFO, "Retrieving $this->requestURL", 'url_retriever');
         $data = file_get_contents($this->requestURL, false, $this->streamContext);
         $http_response_header = isset($http_response_header) ? $http_response_header : array();
 
         $response = new HTTPDataResponse();
-        $response->setRequest($this->requestMethod, $this->requestURL, $this->filters, $this->requestHeaders);
+        $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders);
 
         $response->setResponse($data);
         $response->setResponseHeaders($http_response_header);
