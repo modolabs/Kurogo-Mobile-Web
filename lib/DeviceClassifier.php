@@ -46,13 +46,21 @@ class DeviceClassifier {
   private function cacheLifetime() {
     return Kurogo::getSiteVar('MOBI_SERVICE_CACHE_LIFETIME');
   }
-  
+
   function __construct($device = null) {
   
     $this->version = intval(Kurogo::getSiteVar('MOBI_SERVICE_VERSION'));
     $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-    
-    if ($device && strlen($device)) {
+    error_log($this->userAgent);
+    if (KurogoNativeTemplates::isNativeUserAgent($this->userAgent, $platform)) {
+      error_log("Is native user agent");
+      $this->setDevice("native-$platform");
+      
+    } else if (KurogoNativeTemplates::isNativeContentCall($platform)) {
+      error_log("Is native content call");
+      $this->setDevice("native-$platform");
+      
+    } else if ($device && strlen($device)) {
       Kurogo::log(LOG_DEBUG, "Setting device to $device (override)", "deviceDetection");
       $this->setDevice($device); // user override of device detection
       

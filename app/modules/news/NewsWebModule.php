@@ -383,9 +383,5 @@ class NewsWebModule extends WebModule {
         $this->assign('showAuthor',     $this->showAuthor);
         break;
     }
-    
-    if ($this->ajaxPagetype && !$this->ajaxContentLoad) {
-      $this->setTemplatePage('ajaxwrapper');
-    }
   }
 }

@@ -8,8 +8,4 @@
 
 {block name="deviceDetection"}{/block}
 
-{block name="footerJavascript"}
-  {$GOOGLE_ANALYTICS_ID = ''}
-  {$PERCENT_MOBILE_ID = ''}
-  {$smarty.block.parent}
-{/block}
+{block name="footerJavascript"}{/block}

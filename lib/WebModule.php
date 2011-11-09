@@ -1373,11 +1373,16 @@ abstract class WebModule extends Module {
     $this->assign('homeLink', $this->buildURLForModule('home','',array()));
     
     $this->assignLocalizedStrings();
-
-    // Module Help
+    
     if ($this->page == 'help') {
+      // Module Help
       $this->assign('hasHelp', false);
       $template = 'common/templates/'.$this->page;
+      
+    } else if ($this->pagetype == 'native' && !$this->ajaxContentLoad) {
+      // Native page wrapper
+      $template = 'common/templates/nativeTemplate';
+      
     } else {
       $this->assign('hasHelp', isset($moduleStrings['help']));
       $this->assign('helpLink', $this->buildBreadcrumbURL('help',array()));

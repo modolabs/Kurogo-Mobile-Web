@@ -267,94 +267,23 @@ abstract class APIModule extends Module
     if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1') {
       throw new KurogoConfigurationException("{$this->command} command can only be run from localhost");
     }
-    if (PHP_VERSION_ID < 50300) {
-      throw new KurogoConfigurationException("{$this->command} command requires PHP 5.3 or later");
-    }
-    if (!Kurogo::getSiteVar('DEVICE_DEBUG')) {
-      throw new KurogoConfigurationException("{$this->command} command requires DEVICE_DEBUG set to 1 in site.ini");
-    }
-    
+
     $pages = $this->getNativePagelist();
     if (!$pages) {
       throw new KurogoConfigurationException("getNativePagelist did not return any pages");
     }
     
-    $path = rtrim($this->getArg('path', CACHE_DIR.'/nativeBuild'), '/')."/{$this->configModule}";
-    if (!file_exists($path)) {
-      if (!mkdir($path, 0700, true)) {
-        throw new KurogoDataException("Could not create $path");
-      }
-    }
+    $platform = $this->getArg('platform', 'unknown');
+    $path = $this->getArg('path', null);
     
+    $rewriter = new KurogoNativeTemplates($platform, $this->configModule, $path);
     foreach ($pages as $page) {
-      $this->saveContentAndAssets($this, $page, "{$this->configModule}/$page", true, $path, "$page.html");
+      $rewriter->setPage($page);
+      $rewriter->saveContentAndAssets();
     }
 
     $this->setResponse(1);
     $this->setResponseVersion(1);
-  }
-  
-  public function saveContentAndAssets($that, $page, $urlSuffix, $scanForAssets, $path, $file) {
-    $device = 'native-'.$this->getArg('platform', 'unknown');
-    $filePath = "$path/$file";
-    
-    $url = FULL_URL_PREFIX."device/$device/$urlSuffix";
-    $contents = @file_get_contents($url);
-    if (!$contents) {
-      Kurogo::log(LOG_NOTICE, "Failed to load asset $url", 'api');
-      return;
-    }
-    
-    if ($scanForAssets) {
-      $prefix = URL_BASE.'device/'.$device.'/';
-      $fullPrefix = 'http'.(IS_SECURE ? 's' : '').'://'.$_SERVER['HTTP_HOST'].$prefix;
-           
-      $contents = preg_replace_callback(
-        ';(\'|\\\"|\"|\()(('.preg_quote($fullPrefix).'|'.preg_quote($prefix).'|\.\./)([^\'\"\\\)]+))(\'|\\\"|\"|\)]);', 
-        function ($matches) use ($that, $page, $path) {
-          $urlSuffix = html_entity_decode($matches[4]);
-          $file = strtr(preg_replace(
-            array(
-              '@^min/\?g=file:/([^&]+)(&.+|)$@', 
-              '@^min/g=([^-]+)-([^&]+)(&.+|)$@', 
-              '@/(images|javascript|css)/@', 
-              '@^modules/([^/]+)/@',
-              '@^common/@',
-            ), 
-            array(
-              '$1', 
-              $page.'-min.$1', 
-              '/', 
-              '$1_', 
-              '', 
-            ),
-            $urlSuffix
-          ), '/', '-');
-          
-          $scanForAssets = false;
-          $parts = explode('.', $file);
-          $ext = strtolower(end($parts));
-          $scanForAssets = count($parts) > 1 && in_array($ext, array('html', 'css', 'js'));
-          //error_log($matches[4]);
-          
-          $that->saveContentAndAssets($that, $page, $urlSuffix, $scanForAssets, $path, $file);
-          
-          return $matches[1].$file.$matches[5];
-        }, 
-        $contents
-      );
-    }
-    
-    $dir = dirname($filePath);
-    if (!file_exists($dir)) {
-      if (!mkdir($dir, 0700, true)) {
-        throw new KurogoDataException("Could not create $dir");
-      }
-    }
-    
-    if (!file_put_contents($filePath, $contents)) {
-      throw new KurogoDataException("Unable to write to $filePath");
-    }
   }
   
   protected function logCommand($size=null) {

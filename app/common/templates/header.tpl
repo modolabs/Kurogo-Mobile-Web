@@ -18,8 +18,9 @@
     <link href="{$cssURL|escape}" rel="stylesheet" media="all" type="text/css"/>
   {/foreach}
   
+  {$URL_BASE = $smarty.const.URL_BASE}{* Allow native to override this *}
   {block name="javascript"}
-      <script type="text/javascript">var URL_BASE='{$smarty.const.URL_BASE}';</script>
+      <script type="text/javascript">var URL_BASE='{$URL_BASE}';</script>
     {if strlen($GOOGLE_ANALYTICS_ID)}
       <script type="text/javascript">
         var _gaq = _gaq || [];
