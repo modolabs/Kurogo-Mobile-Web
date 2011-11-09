@@ -100,12 +100,17 @@ class PeopleAPIModule extends APIModule
         
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
+
             try {
-				$modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+                if (isset($feedData['CONTROLLER_CLASS'])) {
+                    $modelClass = $feedData['CONTROLLER_CLASS'];
+                } else {
+                    $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+                }
+                
                 $controller = PeopleDataModel::factory($modelClass, $feedData);
-            } catch (KurogoException $e) {
-				$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
-                $controller = PeopleController::factory($controllerClass, $feedData);
+            } catch (KurogoException $e) { 
+                $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
                 $this->legacyController = true;
             }
             
