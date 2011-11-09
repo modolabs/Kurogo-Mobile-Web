@@ -8,6 +8,8 @@ class VideoAPIModule extends APIModule {
     protected $vmax = 1;
     protected $feeds = array();
     protected $legacyController = false;
+    protected static $defaultModel = 'VideoDataModel';
+    protected static $defaultController = 'VideoDataController';
 
     protected function arrayFromVideo($video) {
         return array(
