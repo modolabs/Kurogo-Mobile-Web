@@ -1,10 +1,10 @@
 <?php
 /**
-  * @package Directory
+  * @package People
   */
 
 /**
-  * @package Directory
+  * @package People
   */
 class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRetriever {
     protected $DEFAULT_PARSER_CLASS = 'DatabasePeopleParser';

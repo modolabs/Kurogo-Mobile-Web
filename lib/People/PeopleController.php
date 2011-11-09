@@ -30,6 +30,18 @@ abstract class PeopleController
         return '';
     }
 
+    public function getUser($id) {
+        return $this->lookupUser($id);
+    }
+    
+    public function getResponseError() {
+        return $this->getError();
+    }
+
+    public function getResponseCode() {
+        return $this->getErrorNo();
+    }
+
     public function getErrorNo() {
         return $this->errorNo;
     }
@@ -99,8 +111,20 @@ abstract class PeopleController
 abstract class Person implements KurogoObject
 {
     protected $attributes = array();
-    abstract public function getId();
     abstract public function getName();
+
+    public function filterItem($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'search':
+                    return  (stripos($this->getName(), $value)!==FALSE);
+                    break;
+            }
+        }
+        
+        return true;
+    }
         
     public function getField($field) {
         if (array_key_exists($field, $this->attributes)) {

@@ -1,6 +1,6 @@
 <?php
 /**
-  * @package Directory
+  * @package People
   */
 
 if (!function_exists('ldap_connect')) {
@@ -14,7 +14,7 @@ define("LDAP_PARTIAL_RESULTS", 0x09);
 define("LDAP_INSUFFICIENT_ACCESS", 0x32);
 
 /**
-  * @package Directory
+  * @package People
   */
 class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
 {
@@ -274,7 +274,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
 }
 
 /**
-* @package Directory
+* @package People
 */
 class LDAPFilter
 {
@@ -333,7 +333,7 @@ class LDAPFilter
 }
     
 /**
-* @package Directory
+* @package People
 */
 class LDAPCompoundFilter extends LDAPFilter
 {
