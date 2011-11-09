@@ -5,11 +5,12 @@ class ContentWebModule extends WebModule {
     protected $id = 'content';
 	protected $contentGroups;
 	protected $feedGroups = null;
+	protected static $defaultModel = 'ContentDataModel';
 
    protected function getContent($feedData) {
    
         $content_type = isset($feedData['CONTENT_TYPE']) ? $feedData['CONTENT_TYPE'] : '';
-        $controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : 'ContentDataController';
+        $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
         
         switch ($content_type)
         {
@@ -25,7 +26,8 @@ class ContentWebModule extends WebModule {
                 if (!isset($feedData['PARSER_CLASS'])) {
                     $feedData['PARSER_CLASS'] = 'DOMDataParser';
                 }
-                $controller = ContentDataController::factory($controllerClass, $feedData);
+                
+                $controller = ContentDataModel::factory($modelClass, $feedData);
                 
                 if (isset($feedData['HTML_ID']) && strlen($feedData['HTML_ID'])>0) {
                     $content = $controller->getContentById($feedData['HTML_ID']);
@@ -42,7 +44,7 @@ class ContentWebModule extends WebModule {
                     $feedData['PARSER_CLASS'] = 'RSSDataParser';
                 }
 
-                $controller = ContentDataController::factory($controllerClass, $feedData);
+                $controller = ContentDataModel::factory($controllerClass, $feedData);
                 if ($item = $controller->getItemByIndex(0)) {
                     return $item->getContent();
                 }
