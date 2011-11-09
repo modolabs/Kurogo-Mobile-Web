@@ -352,12 +352,36 @@ abstract class WebModule extends Module {
     header("Location: ". URL_PREFIX . ltrim($url, '/'));
     exit;
   }
+
+    protected function buildURLFromArray($params) {
+        $id = isset($params['id']) ? $params['id'] : '';
+        $page = isset($params['page']) ? $params['page'] : '';
+        $args = isset($params['args']) ? $params['args'] : array();
+        
+        if ($id) {
+            return self::buildURLForModule($id, $page, $args);
+        } elseif ($page) {
+            return self::buildURL($page, $args);
+        }
+        
+        return false;
+    }
+  
+    public function getArrayForRequest() {
+        $params = array(
+            'id'=>$this->configModule,
+            'page'=>$this->page,
+            'args'=>$this->args
+        );
+        
+        return $params;
+    }
     
   protected function unauthorizedAccess() {
         if ($this->isLoggedIn()) {  
-            $this->redirectToModule('error', '', array('url'=>$_SERVER['REQUEST_URI'], 'code'=>'protected'));
+            $this->redirectToModule('error', '', array_merge($this->getArrayForRequest(), array('code'=>'protected')));
         } else {
-            $this->redirectToModule('login', '', array('url'=>$_SERVER['REQUEST_URI']));
+            $this->redirectToModule('login', '', $this->getArrayForRequest());
         }
   }
   
@@ -418,13 +442,14 @@ abstract class WebModule extends Module {
         
     protected function init($page='', $args=array()) {
       
+        $this->setArgs($args);
         //Don't call parent if we don't have a page. This is a work around.
         if ($page) {
+            $this->setPage($page);
             parent::init();
         }
 
         $this->moduleName    = $this->getModuleVar('title','module');
-        $this->setArgs($args);
 
         $this->pagetype      = $this->getPagetype();
         $this->platform      = $this->getPlatform();
@@ -451,7 +476,6 @@ abstract class WebModule extends Module {
               $this->fontsize = $_COOKIE['fontsize'];
             }
             
-            $this->setPage($page);
             $this->setTemplatePage($this->page, $this->id);
             $this->setAutoPhoneNumberDetection(Kurogo::getSiteVar('AUTODETECT_PHONE_NUMBERS'));
         }
@@ -467,7 +491,7 @@ abstract class WebModule extends Module {
   }
         
   protected function moduleDisabled() {
-    $this->redirectToModule('error', '', array('code'=>'disabled', 'url'=>$_SERVER['REQUEST_URI']));
+    $this->redirectToModule('error', '', array_merge($this->getArrayForRequest(), array('code'=>'disabled')));
   }
   
     public static function getAllThemes() {

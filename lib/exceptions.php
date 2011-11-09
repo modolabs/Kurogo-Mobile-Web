@@ -57,9 +57,9 @@ function getErrorURL($exception, $devError = false) {
 		return false; //the error occurred VERY early in the init process
 	}
 	
-  $args = array(
+  $args = array_merge(array(
     'code' => $exception instanceOf KurogoException ? $exception->getCode() : 'internal',
-    'url' => $_SERVER['REQUEST_URI'],
+    ), Kurogo::getArrayForRequest()
   );
   
   if($devError){
