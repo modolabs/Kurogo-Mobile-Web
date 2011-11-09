@@ -122,14 +122,18 @@ class NewsAPIModule extends APIModule {
       if (isset($feeds[$index])) {
         
         $feedData = $feeds[$index];
-		try {
-			$modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
-			$controller = NewsDataModel::factory($modelClass, $feedData);
-		} catch (KurogoException $e) {
-			$controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
-			$controller = DataController::factory($controllerClass, $feedData);
-			$this->legacyController = true;
-		}
+        try {
+            if (isset($feedData['CONTROLLER_CLASS'])) {
+                $modelClass = $feedData['CONTROLLER_CLASS'];
+            } else {
+                $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            }
+            
+            $controller = NewsDataModel::factory($modelClass, $feedData);
+        } catch (KurogoException $e) { 
+            $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $this->legacyController = true;
+        }
 		
         return $controller;
     } else {
