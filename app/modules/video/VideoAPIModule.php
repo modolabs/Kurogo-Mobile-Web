@@ -33,16 +33,19 @@ class VideoAPIModule extends APIModule {
         $feed = isset($this->feeds[$feed]) ? $feed : $this->getDefaultSection();
         $feedData = $this->feeds[$feed];
 
-        if (!isset($feedData['CONTROLLER_CLASS'])) {
-            $feedData['CONTROLLER_CLASS'] = self::defaultController;
-        }
-        
         try {
+            if (isset($feedData['CONTROLLER_CLASS'])) {
+                $modelClass = $feedData['CONTROLLER_CLASS'];
+            } else {
+                $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            }
+            
+            $controller = VideoDataModel::factory($modelClass, $feedData);
+        } catch (KurogoException $e) { 
             $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
-        } catch (KurogoException $e) {
-            $controller = LegacyVideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
             $this->legacyController = true;
         }
+
         return $controller;
     }
 
