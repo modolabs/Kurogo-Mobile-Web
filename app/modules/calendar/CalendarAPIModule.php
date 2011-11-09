@@ -76,25 +76,37 @@ class CalendarAPIModule extends APIModule
                 $feeds = $this->loadFeedData();
                 break;
 
-            case 'user':
-                $sectionData = $this->getOptionalModuleSection('user_calendars');
-                $listController = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : '';
-                if (strlen($listController)) {
-                    $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
-                    $controller = CalendarListModel::factory($listController, $sectionData);
-                    $feeds = $controller->getUserCalendars();
+          case 'user':
+          case 'resource':
+            $section = $type=='user' ?  'user_calendars' :'resources';
+            $sectionData = $this->getOptionalModuleSection($section);
+            $controller = false;
+    
+            if (isset($sectionData['MODEL_CLASS']) || isset($sectionData['RETRIEVER_CLASS']) || isset($sectionData['CONTROLLER_CLASS'])) {
+    
+                try {
+                    if (isset($sectionData['CONTROLLER_CLASS'])) {
+                        $modelClass = $sectionData['CONTROLLER_CLASS'];
+                    } else {
+                        $modelClass = isset($sectionData['MODEL_CLASS']) ? $sectionData['MODEL_CLASS'] : 'CalendarListModel';
+                    }
+                    
+                    $controller = CalendarDataModel::factory($modelClass, $sectionData);
+                } catch (KurogoException $e) { 
+                    $controller = CalendarListController::factory($sectionData['CONTROLLER_CLASS'], $sectionData);
                 }
-                break;
-
-            case 'resource':
-                $sectionData = $this->getOptionalModuleSection('resources');
-                $listController = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : '';
-                if (strlen($listController)) {
-                    $sectionData = array_merge($sectionData, array('SESSION'=>$this->getSession()));
-                    $controller = CalendarListController::factory($listController, $sectionData);
-                    $feeds = $controller->getResources();
+    
+                switch ($type)
+                {
+                    case 'resource':
+                        $feeds = $controller->getResources();
+                        break;
+                    case 'user':
+                        $feeds = $controller->getUserCalendars();
+                        break;
                 }
-                break;
+            }
+            break;
                 
             case 'category':
                 $sectionData = $this->getOptionalModuleSection('categories');
@@ -146,11 +158,15 @@ class CalendarAPIModule extends APIModule
         if (isset($feeds[$index])) {
             $feedData = $feeds[$index];
             try {
-                $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+                if (isset($feedData['CONTROLLER_CLASS'])) {
+                    $modelClass = $feedData['CONTROLLER_CLASS'];
+                } else {
+                    $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+                }
+                
                 $controller = CalendarDataModel::factory($modelClass, $feedData);
-            } catch (KurogoException $e) {
-                $controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
-                $controller = CalendarDataController::factory($controllerClass, $feedData);
+            } catch (KurogoException $e) { 
+                $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
                 $this->legacyController = true;
             }
             return $controller;

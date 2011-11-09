@@ -1,5 +1,6 @@
 <?php
 
+includePackage('Authentication');
 class GoogleAppsCalendarListRetriever extends OAuthDataRetriever implements CalendarListRetriever
 {
     protected $DEFAULT_PARSER_CLASS = 'GoogleAppsCalendarListParser';
@@ -44,7 +45,9 @@ class GoogleAppsCalendarListRetriever extends OAuthDataRetriever implements Cale
     public function init($args) {
         parent::init($args);
         if (!$this->authority) {
-            $this->setAuthority(AuthenticationAuthority::getAuthenticationAuthority('GoogleAppsAuthentication'));
+            if ($authority = AuthenticationAuthority::getAuthenticationAuthority('GoogleAppsAuthentication')) {
+                $this->setAuthority($authority);
+            }
         }
     }
 }

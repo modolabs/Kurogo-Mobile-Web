@@ -344,14 +344,19 @@ class CalendarWebModule extends WebModule {
         $controller = false;
 
         if (isset($sectionData['MODEL_CLASS']) || isset($sectionData['RETRIEVER_CLASS']) || isset($sectionData['CONTROLLER_CLASS'])) {
+
             try {
-                $modelClass = isset($sectionData['MODEL_CLASS']) ? $sectionData['MODEL_CLASS'] : 'CalendarListModel';
-                $controller = CalendarListModel::factory($modelClass, $sectionData);
-            } catch (KurogoException $e) {
-                $controllerClass = isset($sectionData['CONTROLLER_CLASS']) ? $sectionData['CONTROLLER_CLASS'] : 'CalendarListController';
-                $controller = CalendarListController::factory($controllerClass, $sectionData);
+                if (isset($sectionData['CONTROLLER_CLASS'])) {
+                    $modelClass = $sectionData['CONTROLLER_CLASS'];
+                } else {
+                    $modelClass = isset($sectionData['MODEL_CLASS']) ? $sectionData['MODEL_CLASS'] : 'CalendarListModel';
+                }
+                
+                $controller = CalendarDataModel::factory($modelClass, $sectionData);
+            } catch (KurogoException $e) { 
+                $controller = CalendarListController::factory($sectionData['CONTROLLER_CLASS'], $sectionData);
             }
-            
+
             switch ($type)
             {
                 case 'resource':
@@ -396,13 +401,18 @@ class CalendarWebModule extends WebModule {
             $feedData = $feeds[$index];
 
             try {
-                $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+                if (isset($feedData['CONTROLLER_CLASS'])) {
+                    $modelClass = $feedData['CONTROLLER_CLASS'];
+                } else {
+                    $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+                }
+                
                 $controller = CalendarDataModel::factory($modelClass, $feedData);
-            } catch (KurogoException $e) {
-                $controllerClass = isset($feedData['CONTROLLER_CLASS']) ? $feedData['CONTROLLER_CLASS'] : self::$defaultController;
-                $controller = CalendarDataController::factory($controllerClass, $feedData);
+            } catch (KurogoException $e) { 
+                $controller = CalendarDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
                 $this->legacyController = true;
             }
+
             return $controller;
         } else {
             throw new KurogoConfigurationException($this->getLocalizedString("ERROR_NO_CALENDAR_FEED", $index));
