@@ -15,6 +15,12 @@ if (!isset($Kurogo)) {
     $Kurogo->initialize($path);
 }
 
+// Minify cache ids for groups contain the list of source files, not the group id.
+// However Minify's cache ids do contain a serialized copy of the 'minifierOptions' field.
+// Use this to make sure there is a unique cache entry for each device class
+// allowing us to put device-specific content inside javascript and css files
+$min_serveOptions['minifierOptions']['kurogo']['device'] = Kurogo::deviceClassifier()->getDevice();
+
 require_once LIB_DIR.'/minify.php';
 
 /**

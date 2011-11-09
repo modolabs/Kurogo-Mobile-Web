@@ -142,7 +142,7 @@ class DeviceClassifier {
                     }
 
 
-                    if(($device = $this->checkDevices($site_devices, $user_agent) !== false)) {
+                    if((($device = $this->checkDevices($site_devices, $user_agent)) !== false)) {
                         return $this->translateDevice($device);
                     }
                     break;
