@@ -1,6 +1,6 @@
 <?php
 
-class EmergencyContactsListDataController extends DataModel
+class EmergencyContactsDataModel extends DataModel
 {
     protected $cacheFolder = 'ContactsList';
     protected $primaryContacts = NULL;

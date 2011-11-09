@@ -12,17 +12,33 @@ class EmergencyWebModule extends WebModule
         $config = $this->loadFeedData();
         
         if(isset($config['contacts'])) {
-            $controllerClass = isset($config['contacts']['CONTROLLER_CLASS']) ? $config['contacts']['CONTROLLER_CLASS'] :'EmergencyContactsListDataController';
+
             try {
-                $this->contactsController = EmergencyContactsListDataController::factory($controllerClass, $config['contacts']);
-            } catch (KurogoException $e) {
-                $this->contactsController = ContactsListDataController::factory($controllerClass, $config['contacts']);
+                if (isset($config['contacts']['CONTROLLER_CLASS'])) {
+                    $modelClass = $config['contacts']['CONTROLLER_CLASS'];
+                } else {
+                    $modelClass = isset($config['contacts']['MODEL_CLASS']) ? $config['contacts']['MODEL_CLASS'] : 'EmergencyContactsDataModel';
+                }
+                
+                $this->contactsController = EmergencyContactsDataModel::factory($modelClass, $config['contacts']);
+            } catch (KurogoException $e) { 
+                $this->contactsController = DataController::factory($config['contacts']['CONTROLLER_CLASS'], $config['contacts']);
             }
+            
         }
         
         if(isset($config['notice'])) {
-            $controllerClass = isset($config['notice']['CONTROLLER_CLASS']) ? $config['notice']['CONTROLLER_CLASS'] :'EmergencyNoticeDataController';
-            $this->emergencyNoticeController = EmergencyNoticeDataController::factory($controllerClass, $config['notice']);
+            try {
+                if (isset($config['notice']['CONTROLLER_CLASS'])) {
+                    $modelClass = $config['notice']['CONTROLLER_CLASS'];
+                } else {
+                    $modelClass = isset($config['notice']['MODEL_CLASS']) ? $config['notice']['MODEL_CLASS'] : 'EmergencyNoticeDataModel';
+                }
+            
+                $this->emergencyNoticeController = EmergencyNoticeDataModel::factory($modelClass, $config['notice']);
+            } catch (KurogoException $e) { 
+                $this->emergencyNoticeController = DataController::factory($config['notice']['CONTROLLER_CLASS'], $config['notice']);
+            }
         }    
                 
     }

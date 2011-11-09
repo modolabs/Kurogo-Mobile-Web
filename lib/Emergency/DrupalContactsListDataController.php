@@ -1,5 +1,5 @@
 <?php
 
-class DrupalContactsListDataController extends EmergencyContactsListDataController
+class DrupalContactsListDataController extends EmergencyContactsDataModel
 {
     protected $DEFAULT_RETRIEVER_CLASS = 'DrupalContactsDataRetriever';
