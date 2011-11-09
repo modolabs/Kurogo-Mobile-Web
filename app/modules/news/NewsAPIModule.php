@@ -121,8 +121,4 @@ class NewsAPIModule extends APIModule {
     private static function getPubDateUnixtime($story) {
         return strtotime($story->getPubDate());
     }
-    
-    protected function getNativePagelist() {
-        return array('index', 'search', 'story');
-    }
 }

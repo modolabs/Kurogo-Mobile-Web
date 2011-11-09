@@ -191,9 +191,6 @@ class NewsWebModule extends WebModule {
 
     switch ($this->page) {
       case 'story':
-        if ($this->ajaxPagetype && !$this->ajaxContentLoad) {
-          break;
-        }
         $searchTerms = $this->getArg('filter', false);
         if ($searchTerms) {
           $this->feed->addFilter('search', $searchTerms);
@@ -295,7 +292,7 @@ class NewsWebModule extends WebModule {
           $this->assign('showPubDate', $this->showPubDate);
           $this->assign('showAuthor',  $this->showAuthor);
           
-        } else if ($this->pagetype != 'native') {error_log($this->pagetype);
+        } else {
           $this->redirectTo('index'); // search was blank
         }
         break;
