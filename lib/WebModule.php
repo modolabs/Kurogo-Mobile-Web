@@ -1281,6 +1281,7 @@ abstract class WebModule extends Module {
     // Google Analytics. This probably needs to be moved
     if ($gaID = Kurogo::getOptionalSiteVar('GOOGLE_ANALYTICS_ID')) {
         $this->assign('GOOGLE_ANALYTICS_ID', $gaID);
+        $this->assign('GOOGLE_ANALYTICS_DOMAIN', Kurogo::getOptionalSiteVar('GOOGLE_ANALYTICS_DOMAIN'));
         $this->assign('gaImageURL', $this->googleAnalyticsGetImageUrl($gaID));
     }
 

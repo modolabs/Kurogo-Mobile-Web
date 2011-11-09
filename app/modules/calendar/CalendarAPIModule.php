@@ -175,25 +175,56 @@ class CalendarAPIModule extends APIModule
         }
     }
 
-    private function apiArrayFromEvent(ICalEvent $event) {
+    protected function apiArrayFromEvent(ICalEvent $event, $version) {
+        $standardAttributes = array(
+          'datetime', 'start', 'end', 'uid', 'summary', 'description', 'location', 'geo');
+        
+        $result = array(
+            'id'            => $event->get_uid(),
+            'title'         => $event->get_summary(),
+            'description'   => $event->get_description(),
+            'start'         => $event->get_start(),
+            'end'           => $event->get_end(),
+            'allday'        => ($event->get_range() instanceOf DayRange),
+            'location'      => $event->get_location(),
+            'locationLabel' => '', // subclass to add dynamic title to location
+        );
+
+        // iCal GEO property -- subclass if event lat/lon comes from somewhere else
+        $coords = $event->get_location_coordinates();
+        if ($coords) {
+          $result['latitude'] = $coords['lat'];
+          $result['longitude'] = $coords['lon'];
+        }
+        
         foreach ($this->fieldConfig as $aField => $fieldInfo) {
-            $fieldName = isset($fieldInfo['label']) ? $fieldInfo['label'] : $aField;
-            $attribute = $event->get_attribute($aField);
-
-            if ($attribute) {
-                if (isset($fieldInfo['section'])) {
-                    $section = $fieldInfo['section'];
-                    if (!isset($result[$section])) {
-                        $result[$section] = array();
-                    }
-                    $result[$section][$fieldName] = $attribute;
-
+            if (in_array($aField, $standardAttributes)) { continue; } // Handled these above
+            
+            $id      = self::argVal($fieldInfo, 'id', $aField);
+            $title   = self::argVal($fieldInfo, 'label', $id);
+            $section = self::argVal($fieldInfo, 'section', '');
+            $type    = self::argVal($fieldInfo, 'type', '');
+            $value   = $event->get_attribute($aField);
+            
+            if ($value) {
+                if ($version < 2) {
+                    $result[$title] = $value;
+                    
                 } else {
-                    $result[$fieldName] = $attribute;
+                    if (!isset($result['fields'])) {
+                        $result['fields'] = array();
+                    }
+                    $result['fields'][] = array(
+                        'id'      => $id,
+                        'section' => $section,
+                        'type'    => $type,
+                        'title'   => $title,
+                        'value'   => $value,
+                    );
                 }
             }
         }
-
+        
         return $result;
     }
 
@@ -224,6 +255,8 @@ class CalendarAPIModule extends APIModule
         $this->timezone = Kurogo::siteTimezone();
         $this->fieldConfig = $this->getAPIConfigData('detail');
 
+        $responseVersion = $this->requestedVersion < 2 ? 1 : 2;
+
         switch ($this->command) {
             case 'index':
             case 'groups':
@@ -231,7 +264,7 @@ class CalendarAPIModule extends APIModule
                 $response = $this->getFeedsByType();
 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($responseVersion);
                 
                 break;
 
@@ -243,7 +276,7 @@ class CalendarAPIModule extends APIModule
                 // default to the full day that includes current time
                 $current = $this->getArg('time', time());
                 $start   = $this->getStartArg($current);
-                $end     = $this->getEndArg($start->getTimestamp());
+                $end     = $this->getEndArg($start->format('U'));
                 $feed    = $this->getFeed($calendar, $type);
 
                 $feed->setStartDate($start);
@@ -254,7 +287,7 @@ class CalendarAPIModule extends APIModule
                 $count  = 0;
 
                 foreach ($iCalEvents as $iCalEvent) {
-                    $events[] = $this->apiArrayFromEvent($iCalEvent);
+                    $events[] = $this->apiArrayFromEvent($iCalEvent, $responseVersion);
                     $count++;
                 }
 
@@ -266,7 +299,7 @@ class CalendarAPIModule extends APIModule
                     );
 
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
+                $this->setResponseVersion($responseVersion);
 
                 break;
 
@@ -283,7 +316,7 @@ class CalendarAPIModule extends APIModule
                 // default to the full day that includes current time
                 $current  = $this->getArg('time', time());
                 $start    = $this->getStartArg($current);
-                $end      = $this->getEndArg($start->getTimestamp());
+                $end      = $this->getEndArg($start->format('U'));
                 $type     = $this->getArg('type', 'static');
                 $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 
@@ -300,9 +333,9 @@ class CalendarAPIModule extends APIModule
                 }
 
                 if ($event = $feed->getEvent($this->getArg('id'))) {
-                    $eventArray = $this->apiArrayFromEvent($event);
+                    $eventArray = $this->apiArrayFromEvent($event, $responseVersion);
                     $this->setResponse($eventArray);
-                    $this->setResponseVersion(1);
+                    $this->setResponseVersion($responseVersion);
 
                 } else {
                     $error = new KurogoError(
@@ -311,7 +344,6 @@ class CalendarAPIModule extends APIModule
                             "The event $eventID cannot be found");
                     $this->throwError($error);
                 }
-
                 break;
 
             case 'search':
@@ -321,7 +353,7 @@ class CalendarAPIModule extends APIModule
 
                     $current  = $this->getArg('time', time());
                     $start    = $this->getStartArg($current);
-                    $end      = $this->getEndArg($start->getTimestamp());
+                    $end      = $this->getEndArg($start->format('U'));
                     $type     = $this->getArg('type', 'static');
                     $calendar = $this->getArg('calendar', $this->getDefaultFeed($type));
 			
@@ -337,10 +369,10 @@ class CalendarAPIModule extends APIModule
                         $iCalEvents = $feed->search($searchTerms);
                     }
 					
-					$events = array();
+                    $events = array();
                     $count = 0;
                     foreach ($iCalEvents as $iCalEvent) {
-                        $events[] = $this->apiArrayFromEvent($iCalEvent);
+                        $events[] = $this->apiArrayFromEvent($iCalEvent, $responseVersion);
                         $count++;
                     }
 
@@ -357,7 +389,7 @@ class CalendarAPIModule extends APIModule
                         );
 
                     $this->setResponse($response);
-                    $this->setResponseVersion(1);
+                    $this->setResponseVersion($responseVersion);
 
                 } else {
                     $error = new KurogoError(
@@ -369,7 +401,6 @@ class CalendarAPIModule extends APIModule
                 break;
 
             case 'calendars':
-
                 $group = $this->getArg('group');
                 $response = array();
 
@@ -381,18 +412,8 @@ class CalendarAPIModule extends APIModule
                     }
                 }
 
-                /*
-                foreach ($this->getFeeds($group) as $feedID => $feedData) {
-                    $response[] = array(
-                        'id' => $feedID,
-                        'title' => $feedData['TITLE'],
-                        );
-                }
-                */
-
                 $this->setResponse($response);
-                $this->setResponseVersion(1);
-
+                $this->setResponseVersion($responseVersion);
                 break;
 
             case 'resources':
@@ -414,5 +435,3 @@ class CalendarAPIModule extends APIModule
     }
 
 }
-
-

@@ -636,7 +636,6 @@ JS;
                     'class' => 'external',
                     );
 
-                $directionsText = 'Get directions from Google';
                 $tabJavascripts[$tabKey] = "addDirectionsLink();";
                 
                 $this->assign('externalLinks', $externalLinks);

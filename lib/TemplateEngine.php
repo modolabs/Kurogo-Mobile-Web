@@ -295,7 +295,7 @@ class TemplateEngine extends Smarty {
       if (isset($params['id'])) {
         $html .= " id=\"{$params['id']}\"";
       }
-      if (self::$accessKey < 10) {
+      if (self::$accessKey < 10 && Kurogo::deviceClassifier()->getPlatform() != "blackberry") {
         $html .= ' accesskey="'.self::$accessKey.'">'.self::$accessKey.': ';
         self::$accessKey++;
       } else {
