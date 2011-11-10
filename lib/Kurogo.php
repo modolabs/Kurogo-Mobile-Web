@@ -23,6 +23,7 @@ class Kurogo
     protected $languages=array();
     protected $cacher;
     protected $module;
+    protected $request;
 
     private function __construct() {
         $this->startTime = microtime(true);
@@ -31,6 +32,14 @@ class Kurogo
     public function setCurrentModule(Module $module) {
         $this->module = $module;
     }
+    
+    public function setRequest($id, $page, $args) {
+        $this->request = array(
+            'id'=>$id,
+            'page'=>$page,
+            'args'=>$args
+        );
+    }
 
     public function getCurrentModule() {
         return $this->module;
@@ -38,8 +47,7 @@ class Kurogo
     
     public static function getArrayForRequest() {
         $Kurogo = Kurogo::sharedInstance();
-        $module = $Kurogo->getCurrentModule();
-        return $module->getArrayForRequest();
+        return $Kurogo->request;
     }
     
     public static function getElapsed() {
