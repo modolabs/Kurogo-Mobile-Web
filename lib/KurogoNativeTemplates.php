@@ -295,7 +295,7 @@ class KurogoNativeTemplates
     
     // This is used to check template pages for inline images
     public static function isNativeInlineAssetCall() {
-        return Kurogo::deviceClassifier()->getPageType() == 'native' && 
+        return //Kurogo::deviceClassifier()->getPageType() == 'native' && 
             isset($_GET['nativeAssetCheck']) && $_GET['nativeAssetCheck'];
     }
 }

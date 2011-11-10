@@ -1,5 +1,7 @@
 {extends file="findExtends:common/templates/header.tpl"}
 
+{block name="pageTitle"}{$pageTitle|strip_tags|escape:'htmlall'}{/block}
+
 {block name="javascript"}
   <script type="text/javascript">
     //
