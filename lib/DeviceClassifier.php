@@ -51,13 +51,11 @@ class DeviceClassifier {
   
     $this->version = intval(Kurogo::getSiteVar('MOBI_SERVICE_VERSION'));
     $this->userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
-    error_log($this->userAgent);
+    
     if (KurogoNativeTemplates::isNativeUserAgent($this->userAgent, $platform)) {
-      error_log("Is native user agent");
       $this->setDevice("native-$platform");
       
     } else if (KurogoNativeTemplates::isNativeContentCall($platform)) {
-      error_log("Is native content call");
       $this->setDevice("native-$platform");
       
     } else if ($device && strlen($device)) {

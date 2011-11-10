@@ -71,19 +71,30 @@ class KurogoNativeTemplates
         );
     }
     
-    protected function rewriteURLsToFilePathsCallback($matches) {
+    // Avoid code duplication between rewriteURLsToFilePathsCallback and saveContentAndAssetsCallback
+    protected static function getPartsForMatches($matches) {
+        $urlSuffix = html_entity_decode($matches[4]);
+        
         $file = strtr(preg_replace(
             self::$currentInstance->preg_replace_patterns,
             self::$currentInstance->preg_replace_replacements,
-            html_entity_decode($matches[4])
+            $urlSuffix
         ), '/', '-');
         
         if ($file) {
-            return $matches[1].$file.$matches[5];
+            $replacement = $matches[1].'modules/'.self::$currentInstance->module.'/'.$file.$matches[5];
+        } else {
+            Kurogo::log(LOG_NOTICE, "Unable to determine file name for '{$matches[0]}'", 'api');
+            $replacement = $matches[0];
         }
         
-        Kurogo::log(LOG_NOTICE, "Unable to determine file name for '{$matches[0]}'", 'api');
-        return $matches[0];
+        return array($urlSuffix, $file, $replacement);
+    }
+    
+    protected static function rewriteURLsToFilePathsCallback($matches) {
+        list($urlSuffix, $file, $replacement) = self::getPartsForMatches($matches);
+
+        return $replacement;
     }
 
     public function rewriteURLsToFilePaths($contents) {
@@ -97,14 +108,9 @@ class KurogoNativeTemplates
         );
     }
     
-    protected function saveContentAndAssetsCallback($matches) {
-        $urlSuffix = html_entity_decode($matches[4]);
-        $file = strtr(preg_replace(
-            self::$currentInstance->preg_replace_patterns,
-            self::$currentInstance->preg_replace_replacements,
-            $urlSuffix
-        ), '/', '-');
-        
+    protected static function saveContentAndAssetsCallback($matches) {
+        list($urlSuffix, $file, $replacement) = self::getPartsForMatches($matches);
+
         if ($file) {
             $scanForAssets = false;
             $parts = explode('.', $file);
@@ -112,12 +118,9 @@ class KurogoNativeTemplates
             $scanForAssets = count($parts) > 1 && in_array($ext, array('html', 'css', 'js'));
             
             self::$currentInstance->saveContentAndAssets($urlSuffix, $file, $scanForAssets);
-            
-            return $matches[1].$file.$matches[5];
         }
         
-        Kurogo::log(LOG_NOTICE, "Unable to determine file name for '{$matches[0]}'", 'api');
-        return $matches[0];
+        return $replacement;
     }
     
     public function saveContentAndAssets($urlSuffix=null, $file=null, $scanForAssets=true) {
@@ -130,7 +133,7 @@ class KurogoNativeTemplates
         
         $filePath = "{$this->path}/$file";
         $url = FULL_URL_PREFIX.$urlSuffix;
-        error_log($url);
+        //error_log($url);
         $contents = @file_get_contents($url, false, $this->streamContext);
         if (!$contents) {
             Kurogo::log(LOG_NOTICE, "Failed to load asset $url", 'api');
