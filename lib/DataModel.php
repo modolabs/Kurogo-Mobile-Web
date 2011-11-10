@@ -153,8 +153,6 @@ abstract class DataModel {
         
         // instantiate the parser class
         $parser = DataParser::factory($args['PARSER_CLASS'], $args);
-        $parser->setDataController($this);
-        $parser->setDataRetriever($retriever);
         $this->setParser($parser);
 
         if (isset($args['TITLE'])) {

@@ -339,6 +339,15 @@ abstract class DataController
         return $parsedData;
     }
 
+    protected function parseResponse(DataResponse $response, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        $parsedData = $parser->parseResponse($response);
+        $this->setTotalItems($parser->getTotalItems());
+        return $parsedData;
+    }
+
     /**
      * Parse a file. This method will also attempt to set the total items in a request by calling the
      * data parser's getTotalItems() method

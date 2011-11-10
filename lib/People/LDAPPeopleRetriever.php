@@ -385,7 +385,6 @@ class LDAPCompoundFilter extends LDAPFilter
 
 class LDAPPeopleParser extends PeopleDataParser
 {
-    protected $parseMode=self::PARSE_MODE_RESPONSE;
     protected $personClass = 'LDAPPerson';
     protected $sortFields=array('sn','givenname');
     

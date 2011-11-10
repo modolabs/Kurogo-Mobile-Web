@@ -15,12 +15,11 @@ abstract class DataParser
     const PARSE_MODE_FILE=2;
     const PARSE_MODE_RESPONSE=3;
     protected $encoding='utf-8';
-    protected $parseMode=self::PARSE_MODE_STRING;
+    protected $parseMode=self::PARSE_MODE_RESPONSE;
     protected $debugMode=false;
     protected $totalItems = null;
     protected $haltOnParseErrors = true;
     protected $dataController;
-    protected $dataRetriever;
     protected $options = array();
 
     public function setOption($option, $value) {
@@ -45,10 +44,6 @@ abstract class DataParser
 
     public function setDataController($dataController) {
         $this->dataController = $dataController;
-    }
-
-    public function setDataRetriever($dataRetriever) {
-        $this->dataRetriever = $dataRetriever;
     }
 
     protected function setTotalItems($total) {

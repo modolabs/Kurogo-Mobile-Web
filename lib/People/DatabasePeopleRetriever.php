@@ -159,7 +159,6 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
 
 class DatabasePeopleParser extends PeopleDataParser
 {
-    protected $parseMode=self::PARSE_MODE_RESPONSE;
     protected $personClass = 'DatabasePerson';
     
     public function parseData($data) {
