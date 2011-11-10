@@ -268,9 +268,9 @@ abstract class APIModule extends Module
       throw new KurogoConfigurationException("{$this->command} command can only be run from localhost");
     }
 
-    $pages = $this->getNativePagelist();
+    $pages = array_keys($this->getModuleSections('pages'));
     if (!$pages) {
-      throw new KurogoConfigurationException("getNativePagelist did not return any pages");
+      throw new KurogoConfigurationException("module does not have any pages defined in pages.ini");
     }
     
     $platform = $this->getArg('platform', 'unknown');
@@ -278,8 +278,12 @@ abstract class APIModule extends Module
     
     $rewriter = new KurogoNativeTemplates($platform, $this->configModule, $path);
     foreach ($pages as $page) {
-      $rewriter->setPage($page);
-      $rewriter->saveContentAndAssets();
+      $rewriter->saveTemplatePage($page);
+    }
+    
+    $nativeConfig = $this->getOptionalModuleSection('native_template');
+    if ($nativeConfig && $nativeConfig['additional_assets']) {
+        $rewriter->saveAssets($nativeConfig['additional_assets']);
     }
 
     $this->setResponse(1);

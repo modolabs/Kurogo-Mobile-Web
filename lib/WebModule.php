@@ -313,9 +313,9 @@ abstract class WebModule extends Module {
       $argString = http_build_query($args);
     }
   
-    if (Kurogo::deviceClassifier()->getPagetype() == 'native') {
+    if (KurogoNativeTemplates::isNativeCall()) {
       if (!$page) { $page = 'index'; }
-      return "kurogo://$id/$page".(strlen($argString) ? "?$argString" : '');
+      return KurogoNativeTemplates::INTERNAL_LINK_SCHEME."$id/$page".(strlen($argString) ? "?$argString" : '');
     } else {
       return "/$id/$page".(strlen($argString) ? "?$argString" : '');
     }
@@ -1046,6 +1046,10 @@ abstract class WebModule extends Module {
   }
   
   private function getBreadcrumbString($addBreadcrumb=true) {
+    if (KurogoNativeTemplates::isNativeCall()) {
+        return $addBreadcrumb ? 'new' : 'same'; // Adding a new breadcrumb means adding a new page
+    }
+  
     $breadcrumbs = $this->breadcrumbs;
     
     $this->cleanBreadcrumbs($breadcrumbs);
@@ -1077,12 +1081,14 @@ abstract class WebModule extends Module {
   }
   
   protected function buildBreadcrumbURLForModule($id, $page, $args, $addBreadcrumb=true) {
-    if ($this->pagetype == 'native') {
+    if (KurogoNativeTemplates::isNativeCall()) {
       if (!$page) { $page = 'index'; }
-      return "kurogo://$id/$page".($args ? '?'.http_build_query($args) : '');
+      $url = KurogoNativeTemplates::INTERNAL_LINK_SCHEME."$id/$page?";
     } else {
-      return "/$id/$page?".http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
+      $url = "/$id/$page?";
     }
+    
+    return $url.http_build_query(array_merge($args, $this->getBreadcrumbArgs($addBreadcrumb)));
   }
   
   protected function getBreadcrumbArgString($prefix='?', $addBreadcrumb=true) {
@@ -1345,9 +1351,13 @@ abstract class WebModule extends Module {
       $this->addInternalJavascript('/common/javascript/lib/iscroll-4.0.js');
       $this->assign('moduleNavList', $this->getModuleNavlist());
     }
-            
+    
     Kurogo::log(LOG_DEBUG,"Calling initializeForPage for $this->configModule - $this->page", 'module');
-    $this->initializeForPage(); //subclass behavior
+    if (KurogoNativeTemplates::isNativeTemplateCall() || KurogoNativeTemplates::isNativeInlineAssetCall()) {
+        $this->initializeForNativeTemplatePage(); //subclass behavior
+    } else {
+        $this->initializeForPage(); //subclass behavior
+    }
     Kurogo::log(LOG_DEBUG,"Returned from initializeForPage for $this->configModule - $this->page", 'module');
 
     // Set variables for each page
@@ -1494,6 +1504,13 @@ abstract class WebModule extends Module {
   //
   abstract protected function initializeForPage();
 
+    //
+    // Subclass this function to set up variables for each native template page
+    // Native template pages are called with no arguments
+    //
+    protected function initializeForNativeTemplatePage() {
+    }
+    
     //
     // Subclass this function and return an array of items for a given search term and feed
     //
