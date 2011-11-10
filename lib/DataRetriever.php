@@ -7,6 +7,7 @@
  * A generic class to handle the retrieval of external data
  * @package ExternalData
  */
+includePackage('DataRetriever');
 abstract class DataRetriever {
 
     protected $DEFAULT_RESPONSE_CLASS = 'DataResponse';
@@ -15,12 +16,13 @@ abstract class DataRetriever {
     protected $debugMode = false;
     protected $supportsSearch = false;
     protected $options = array();
+    protected $cache;
 
     abstract public function getCacheKey();
     abstract public function retrieveData();
     
     protected function initResponse() {
-        $response = new $this->DEFAULT_RESPONSE_CLASS();
+        $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, array());
         if ($this->authority) {
             $response->setContext('authority', $this->authority);
         }
@@ -77,6 +79,9 @@ abstract class DataRetriever {
                 $this->setAuthority($authority);
             }
         }
+        
+        $cacheClass = isset($args['CACHE_CLASS']) ? $args['CACHE_CLASS'] : 'DataCache';
+        $this->cache = DataCache::factory($cacheClass, $args);
     }
     
     public function getDefaultParserClass() {

@@ -1,5 +1,6 @@
 <?php
 
+includePackage('DataResponse');
 class DataResponse
 {
     protected $cacheLifeTime=0;
@@ -9,6 +10,24 @@ class DataResponse
     protected $responseStatus;
     protected $responseError;
     protected $context=array(); // response defined.
+    
+    public static function factory($responseClass, $args) {
+        if (!class_exists($responseClass)) {
+            throw new KurogoConfigurationException("Response class $responseClass not defined");
+        }
+        
+        $response = new $responseClass;
+        
+        if (!$response instanceOf DataResponse) {
+            throw new KurogoConfigurationException(get_class($response) . " is not a subclass of DataResponse");
+        }
+
+        $response->init($args);
+        return $response;
+    }
+    
+    public function init($args) {
+    }
     
     public function getResponse() {
         return $this->response;

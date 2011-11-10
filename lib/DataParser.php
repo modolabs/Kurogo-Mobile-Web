@@ -7,6 +7,7 @@
  * A generic class to handle the parsing of external data
  * @package ExternalData
  */
+includePackage('DataParser');
 abstract class DataParser
 {
     abstract public function parseData($data);
@@ -77,6 +78,9 @@ abstract class DataParser
         }
         
         $this->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
+
+        $cacheClass = isset($args['CACHE_CLASS']) ? $args['CACHE_CLASS'] : 'DataCache';
+        $this->cache = DataCache::factory($cacheClass, $args);
     }
 
     public function setDebugMode($debugMode) {
