@@ -17,25 +17,12 @@ abstract class DataModel {
     protected $RETRIEVER_INTERFACE = 'DataRetriever';
     protected $PARSER_INTERFACE = 'DataParser';
     protected $initArgs=array();
-    protected $cacheFolder='Data';
     protected $retriever;
     protected $parser;
     protected $response;
-    protected $cache;
     protected $title;
     protected $debugMode=false;
-    protected $useCache=true;
-    protected $useStaleCache=true;
     protected $options = array();
-    protected $cacheLifetime=900;
-
-    /**
-     * Returns the folder used to store caches. Subclasses should simply set the $cacheFolder property
-	 * @return string
-     */
-    protected function cacheFolder() {
-        return $this->retriever->cacheFolder(CACHE_DIR . DIRECTORY_SEPARATOR . $this->cacheFolder);
-    }
 
     /**
       * Clears the internal cache for a new request. All responses and options are erased and 
@@ -57,15 +44,6 @@ abstract class DataModel {
         $this->debugMode = $debugMode ? true : false;
     }
    
-    /**
-     * Returns a base filename for the cache file that will be used. it will call getCacheKey method 
-     * of retriever
-     * @return string
-     */
-    protected function cacheFilename() {
-        return $this->retriever->getCacheKey();
-    }
-
     protected function setOption($option, $value) {
         $this->options[$option] = $value;
         $this->retriever->setOption($option, $value);
@@ -98,14 +76,6 @@ abstract class DataModel {
     }
     
     /**
-     * Turns on or off using cache. You could also set cacheLifetime to 0
-     * @param bool
-     */
-    public function setUseCache($useCache) {
-        $this->useCache = $useCache ? true : false;
-    }
-    
-    /**
      * Sets the title of the controller. Subclasses could use this if the title is dynamic.
      * @param string
      */
@@ -124,8 +94,7 @@ abstract class DataModel {
     /**
      * The initialization function. Sets the common parameters based on the $args. This method is
      * called by the public factory method. Subclasses can override this method, but must call parent::init()
-     * FIRST. Optional parameters include TITLE and CACHE_LIFETIME. Arguments
-     * are also passed to the data parser object and the data retieve object
+     * FIRST. Arguments are also passed to the data parser object and the data retiever object
      * @param array $args an associative array of arguments and paramters
      */
     protected function init($args) {
@@ -137,7 +106,8 @@ abstract class DataModel {
 
         // use a retriever class if set, otherwise use the default retrieve class from the controller
         $args['RETRIEVER_CLASS'] = isset($args['RETRIEVER_CLASS']) ? $args['RETRIEVER_CLASS'] : $this->DEFAULT_RETRIEVER_CLASS;
-
+        $args['CACHE_FOLDER'] = isset($args['CACHE_FOLDER']) ? $args['CACHE_FOLDER'] : get_class($this);
+        
         //instantiate the retriever class and add it to the controller
         $retriever = DataRetriever::factory($args['RETRIEVER_CLASS'], $args);
         $this->setRetriever($retriever);
@@ -158,10 +128,6 @@ abstract class DataModel {
         if (isset($args['TITLE'])) {
             $this->setTitle($args['TITLE']);
         }
-
-        if (isset($args['CACHE_LIFETIME'])) {
-            $this->setCacheLifetime($args['CACHE_LIFETIME']);
-        }
     }
 
    /**
@@ -179,7 +145,7 @@ abstract class DataModel {
     
     /**
      * Parse the data.
-     * @param string $data the data from a request (could be from the cache)
+     * @param string $data the data from a request
      * @param DataParser $parser optional, a alternative data parser to use. 
      * @return mixed the parsed data. This value is data dependent
      */
@@ -207,7 +173,7 @@ abstract class DataModel {
 
     /**
      * Parse the response
-     * @param DataResponse $response the DataResponse from a request (could be from the cache)
+     * @param DataResponse $response the DataResponse from a request
      * @param DataParser $parser optional, a alternative data parser to use. 
      * @return mixed the parsed data. This value is data dependent
      */
@@ -264,6 +230,7 @@ abstract class DataModel {
      * @return string a file containing the data
      */
     public function getDataFile() {
+        Debug::die_here();
         $dataFile = $this->cacheFilename() . '-data';
         $data = $this->retrieveData();
         $cache = $this->getCache();
@@ -304,64 +271,14 @@ abstract class DataModel {
         return $controller;
     }
 
-    /**
-     * Returns a unix timestamp to use for the cache file. Return null to use the current time. Subclasses
-     * can override this method to use a timestamp based on the returning data if appropriate.
-     * @param string $data the unparsed data included by the request
-     * @return int a unix timestamp or null to use the current time
-     */
-    protected function cacheTimestamp($data) {
-        return null;
-    }
-    
-    /**
-     * Returns whether the cache is fresh or not. Subclasses could override this if they implement
-     * custom caching 
-     * @return bool 
-     */
-    protected function cacheIsFresh() {
-        $cache = $this->getCache();
-        if (!$cacheFilename = $this->cacheFilename()) {
-            return false;
-        }
-        return $cache->isFresh($cacheFilename);
-    }
-
-    /**
-     * Returns the cached data based on the cacheFilename() custom caching. Subclasses could override 
-     * this if they implement custom caching 
-     * @return string 
-     */
-    protected function getCachedResponse() {
-        $cache = $this->getCache();
-        $data = $cache->read($this->cacheFilename());
-        if ($response = @unserialize($data)) {
-            return $response;
-        }
-        return false;
-    }
-    
     public function getResponse() {
 
         if (!$this->response) {
-            if ($this->useCache) {
-                if ($this->cacheIsFresh()) {
-                    $this->response = $this->getCachedResponse();
-                } else {
-                    $this->response = $this->retriever->retrieveData();
-                    $this->response->setCacheLifetime($this->cacheLifetime);
-                    if ($this->response->getResponse()) {
-                        $this->writeCache($this->response);
-                    } elseif ($this->useStaleCache && ($response = $this->getCachedResponse())) {
-                        $this->response = $response;
-                    }
-                }
-            } else {
-                $this->response = $this->retriever->retrieveData();
-            }
+            $this->response = $this->retriever->getData();
         }
         
         if (!$this->response instanceOf DataResponse) {
+            $this->response = null;
             throw new KurogoDataException("Response must be instance of DataResponse");
         }
         
@@ -381,40 +298,6 @@ abstract class DataModel {
     }
 
     /**
-     * Writes the included data to the file based on cacheFilename(). Subclasses could override 
-     * this if they implement custom caching 
-     * @param string the data to cache
-     */
-    protected function writeCache($response) {
-        $cache = $this->getCache();
-        $data = $response;
-        if ($response instanceOf DataResponse) {
-            $data = serialize($response);
-        } elseif (!is_scalar($response)) {
-            throw new KurogoException("Invalid response while attempting to save cache");
-        }
-        
-        if ($cacheFilename = $this->cacheFilename()) {
-            $cache->write($data, $cacheFilename, $this->cacheTimestamp($data));
-        }
-    }
-    
-    /**
-     * Returns the a DiskCache object for this controller. Subclasses could override this if they
-     * need to provide a custom object for caching. It should implement the DiskCache interface
-     * @return DiskCache object
-    */
-    protected function getCache() {
-        if ($this->cache === NULL) {
-              $this->cache = new DiskCache($this->cacheFolder(), $this->cacheLifetime, TRUE);
-              $this->cache->setSuffix('.cache');
-              $this->cache->preserveFormat();
-        }
-        
-        return $this->cache;
-    }
-    
-    /**
      * Retrieves the data from the retriever
      * @return string the data
      */
@@ -422,25 +305,6 @@ abstract class DataModel {
 
         $response = $this->getResponse();
         return $response->getResponse();
-    }
-
-    /**
-     * Sets the cache lifetime in seconds. Will be called if the initialization args contains CACHE_LIFETIME
-     * @param int seconds to cache results (default for base class is 900 seconds / 15 minutes)
-     */
-    public function setCacheLifetime($seconds) {
-        $this->cacheLifetime = intval($seconds);
-    }
-    
-    /**
-     * Interceptor. router the method that not exists in this class to the retriverDataController.
-     */
-    public function __call($method, $arguments) {
-        if (is_callable(array($this->retriever, $method))) {
-            return call_user_func_array(array($this->retriever, $method), $arguments);
-        } else {
-            throw new KurogoDataException("Call of unknown function '$method'.");
-        }
     }
 }
 

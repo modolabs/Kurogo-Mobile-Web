@@ -246,7 +246,6 @@ class DataCache
             $this->cacheLifetime = intval($args['CACHE_LIFETIME']);
         }
 
-//        $this->useMemoryCache = false;
     }
     
         
