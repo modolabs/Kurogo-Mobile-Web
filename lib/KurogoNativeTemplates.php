@@ -145,8 +145,14 @@ class KurogoNativeTemplates
         
         // rewrite form action urls
         $contents = preg_replace(
-            '@(<form\s+[^>]*action=")([^"]+)(")@',
-            '$1'.self::INTERNAL_LINK_SCHEME.$this->module.'/$2$3',
+            array(
+              '@(<form\s+[^>]*action=")('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).')([^"]+)(")@',
+              '@(<form\s+[^>]*action=")([^"/]+)(")@',
+            ),
+            array(
+                '$1'.self::INTERNAL_LINK_SCHEME.'$3$4',
+                '$1'.self::INTERNAL_LINK_SCHEME.$this->module.'/$2$3',
+            ),
             $contents
         );
         
