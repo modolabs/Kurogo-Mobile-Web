@@ -339,7 +339,7 @@ class Kurogo
         return $this->logger;
     }
 
-    private function cacher() {
+    public function cacher() {
         return $this->cacher;
     }
     
@@ -365,7 +365,8 @@ class Kurogo
         
         $key = SITE_NAME . '-' . $key;
         if ($cacher = Kurogo::sharedInstance()->cacher()) {
-            Kurogo::log(LOG_DEBUG, "Setting $key to $value", 'cache');
+            $logValue = is_scalar($value) ? $value : gettype($value);
+            Kurogo::log(LOG_DEBUG, "Setting $key to $logValue", 'cache');
             return $cacher->set($key, $value, $ttl);
         }
         return false;
