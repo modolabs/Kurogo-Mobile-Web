@@ -554,6 +554,7 @@ class Kurogo
 
     private function initSite(&$path) {
     
+        includePackage('Cache');
         includePackage('Config');
         $siteConfig = new ConfigGroup();    
         // Load main configuration file
@@ -565,8 +566,7 @@ class Kurogo
         define('CONFIG_IGNORE_LOCAL', $siteConfig->getVar('CONFIG_IGNORE_LOCAL', 'kurogo'));
         
         if ($cacheClass = $siteConfig->getOptionalVar('CACHE_CLASS','', 'cache')) {
-            includePackage('Cache');
-            $this->cacher = KurogoCache::factory($cacheClass, $siteConfig->getOptionalSection('cache'));
+            $this->cacher = KurogoMemoryCache::factory($cacheClass, $siteConfig->getOptionalSection('cache'));
         }
         
         

@@ -4,7 +4,7 @@ if (!function_exists('memcache_connect')) {
     throw new KurogoException('MemcacheCache requires the Memcache Extension');
 }
 
-class MemcacheCache extends KurogoCache {
+class MemcacheCache extends KurogoMemoryCache {
 	private $mem;
 	private $compressed;
     protected $description = 'Memcache';
