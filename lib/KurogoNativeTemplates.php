@@ -12,6 +12,8 @@ class KurogoNativeTemplates
     protected $preg_replace_patterns = null;
     protected $preg_replace_replacements = null;
     
+    const INTERNAL_LINK_SCHEME = 'kurogo://';
+    
     // This global could be removed by using closures (ie php 5.3+)
     static protected $currentInstance = null;
     
@@ -30,35 +32,31 @@ class KurogoNativeTemplates
             ),
         ));
 
+        $this->preg_replace_callback_re = 
+            ';'.
+                '(\'|\\\"|\"|\()'.
+                '('.
+                    '('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).'|\.\./)'.
+                    '([^\'\"\\\)]+)'.
+                ')'.
+                '(\'|\\\"|\"|\))'.
+            ';';
+
+        $this->preg_replace_patterns = array(
+            '@device/native-[^/]+/@',
+            '@^min/\?g=file-/([^&]+)(&.+|)$@',
+            '@^min/g=([^-]+)-([^&]+)(&.+|)$@',
+            '@/(images|javascript|css)/@',
+            '@^modules/([^/]+)/@',
+            '@^common/@',
+        );
+
+        // Sets preg_replace_replacements
         $this->setPage($this->page);
     }
     
     public function setPage($page) {
         $this->page = $page;
-        
-        // Set regular expressions, some of which contain the page name
-        if (!$this->preg_replace_callback_re) {
-            $this->preg_replace_callback_re = 
-                ';'.
-                    '(\'|\\\"|\"|\()'.
-                    '('.
-                        '('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).'|\.\./)'.
-                        '([^\'\"\\\)]+)'.
-                    ')'.
-                    '(\'|\\\"|\"|\))'.
-                ';';
-        }
-        
-        if (!$this->preg_replace_patterns) {
-            $this->preg_replace_patterns = array(
-                '@device/native-[^/]+/@',
-                '@^min/\?g=file-/([^&]+)(&.+|)$@',
-                '@^min/g=([^-]+)-([^&]+)(&.+|)$@',
-                '@/(images|javascript|css)/@',
-                '@^modules/([^/]+)/@',
-                '@^common/@',
-            );
-        }
         
         // Always overwrite because it depends on the page
         $this->preg_replace_replacements = array(
@@ -71,15 +69,36 @@ class KurogoNativeTemplates
         );
     }
     
+    protected static function isFileAsset($file) {
+        $parts = explode('.', $file);
+        $ext = strtolower(end($parts));
+        return count($parts) > 1 && in_array($ext, array('png', 'gif', 'jpg', 'jpeg'));
+    }
+    
     // Avoid code duplication between rewriteURLsToFilePathsCallback and saveContentAndAssetsCallback
     protected static function getPartsForMatches($matches) {
         $urlSuffix = html_entity_decode($matches[4]);
         
         $file = strtr(preg_replace(
-            self::$currentInstance->preg_replace_patterns,
-            self::$currentInstance->preg_replace_replacements,
+            array(
+                '@device/native-[^/]+/@',
+                '@^min/\?g=file-/([^&]+)(&.+|)$@',
+                '@^min/g=([^-]+)-([^&]+)(&.+|)$@',
+                '@/(images|javascript|css)/@',
+                '@^modules/([^/]+)/@',
+                '@^common/@',
+            ),
+            array(
+                '',
+                '$1',
+                self::$currentInstance->page.'-min.$1',
+                '/',
+                '$1_',
+                '',
+            ),
             $urlSuffix
         ), '/', '-');
+        
         
         if ($file) {
             $replacement = $matches[1].'modules/'.self::$currentInstance->module.'/'.$file.$matches[5];
@@ -96,34 +115,59 @@ class KurogoNativeTemplates
 
         return $replacement;
     }
-
-    public function rewriteURLsToFilePaths($contents) {
-        // This global could be removed by using closures (ie php 5.3+)
-        self::$currentInstance = $this;
-
-        return preg_replace_callback(
-            $this->preg_replace_callback_re, 
-            array(get_class(), 'rewriteURLsToFilePathsCallback'), 
-            $contents
-        );
-    }
     
     protected static function saveContentAndAssetsCallback($matches) {
         list($urlSuffix, $file, $replacement) = self::getPartsForMatches($matches);
 
         if ($file) {
-            $scanForAssets = false;
-            $parts = explode('.', $file);
-            $ext = strtolower(end($parts));
-            $scanForAssets = count($parts) > 1 && in_array($ext, array('html', 'css', 'js'));
-            
-            self::$currentInstance->saveContentAndAssets($urlSuffix, $file, $scanForAssets);
+            self::$currentInstance->saveContentAndAssets($urlSuffix, $file);
         }
         
         return $replacement;
     }
+
+    public function rewriteURLsToFilePaths($contents, $preg_replace_callback='rewriteURLsToFilePathsCallback') {
+        // This global could be removed by using closures (ie php 5.3+)
+        self::$currentInstance = $this;
+
+        // rewrite javascript url rewrites
+        $contents = preg_replace(
+            array(
+              '@(window.location\s*=\s*[\'\"])\.\./([^\'\"]+)([\'\"])@',
+              '@(window.location\s*=\s*[\'\"])\./([^\'\"]+)([\'\"])@',
+            ),
+            array(
+              '$1'.self::INTERNAL_LINK_SCHEME.'$2$3',
+              '$1'.self::INTERNAL_LINK_SCHEME.$this->module.'/$2$3',
+            ),
+            $contents
+        );
+        
+        // rewrite form action urls
+        $contents = preg_replace(
+            '@(<form\s+[^>]*action=")([^"]+)(")@',
+            '$1'.self::INTERNAL_LINK_SCHEME.$this->module.'/$2$3',
+            $contents
+        );
+        
+
+        // rewrite all other internal urls
+        $contents = preg_replace_callback(
+            ';'.
+                '(\'|\\\"|\"|\()'.
+                '('.
+                    '('.preg_quote(FULL_URL_PREFIX).'|'.preg_quote(URL_PREFIX).')'.
+                    '([^\'\"\\\)]+)'.
+                ')'.
+                '(\'|\\\"|\"|\))'.
+            ';', 
+            array(get_class(), $preg_replace_callback), 
+            $contents
+        );
+        return $contents;
+    }
     
-    public function saveContentAndAssets($urlSuffix=null, $file=null, $scanForAssets=true) {
+    public function saveContentAndAssets($urlSuffix=null, $file=null) {
         if (!$urlSuffix) {
             $urlSuffix = "{$this->module}/{$this->page}";
         }
@@ -140,15 +184,11 @@ class KurogoNativeTemplates
             return;
         }
         
-        if ($scanForAssets) {
+        if (!self::isFileAsset($file)) {
             // This global could be removed by using closures (ie php 5.3+)
             self::$currentInstance = $this;
     
-            $contents = preg_replace_callback(
-                $this->preg_replace_callback_re, 
-                array(get_class(), 'saveContentAndAssetsCallback'), 
-                $contents
-            );
+            $contents = $this->rewriteURLsToFilePaths($contents, 'saveContentAndAssetsCallback');
         }
         
         $dir = dirname($filePath);

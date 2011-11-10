@@ -274,7 +274,7 @@ class TemplateEngine extends Smarty {
     
     if (KurogoNativeTemplates::isNativeContentCall($platform)) {
       // Need to rewrite Kurogo assets to use filenames used in native templates
-      $rewriter = new KurogoNativeTemplates($platform, $smarty->getTemplateVars('moduleID'));
+      $rewriter = new KurogoNativeTemplates($platform, $smarty->getTemplateVars('configModule'));
       $source = $rewriter->rewriteURLsToFilePaths($source);
     }
     
