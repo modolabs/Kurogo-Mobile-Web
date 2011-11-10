@@ -22,7 +22,7 @@
         $this->setStandardFilters();
         $this->addFilter('q', $searchTerms); //set the query
         $this->addFilter('orderby', 'relevance');
-        return $this->retrieveData();
+        return $this->getData();
     }
     
     protected function init($args) {

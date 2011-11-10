@@ -35,7 +35,7 @@ class SOAPDataRetriever extends DataRetriever {
 	    return $this->soapFunctions;
 	}
 	
-	public function getSoapClient() {
+	protected function getSoapClient() {
 		if (!$this->soapClient) {
 		    try {
 		        $this->soapClient = new KurogoSoapClient($this->wsdl(), $this->soapOptions);
@@ -118,7 +118,7 @@ class SOAPDataRetriever extends DataRetriever {
      * a hash of the value returned from the method and the methodParams
      * @return string
      */
-    public function getCacheKey() {
+    protected function cacheKey() {
     
         $wsdl = $this->wsdl();
         $method = $this->method();
@@ -138,7 +138,7 @@ class SOAPDataRetriever extends DataRetriever {
         return 'soap_' . md5($wsdl) . '-' . md5($method) . '-' . md5(serialize($parameters));
     }
 
-    public function retrieveData() {
+    protected function retrieveData() {
     
         $wsdl = $this->wsdl();
         $method = $this->method();

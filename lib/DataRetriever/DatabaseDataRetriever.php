@@ -16,15 +16,11 @@ class DatabaseDataRetriever extends DataRetriever
         $this->connection = new db($args);                
     }
 
-    public function getCacheKey() {
-        return false;
-    }
-    
     public function setSQL($sql) {
         $this->sql = $sql;
     }
     
-    protected sql() {
+    public sql() {
         return $this->sql;
     }
 
@@ -42,7 +38,7 @@ class DatabaseDataRetriever extends DataRetriever
         $this->setParameters($parameters);
     }
 
-    public function retrieveData() {
+    protected function retrieveData() {
 
         $response = $this->initResponse();
 

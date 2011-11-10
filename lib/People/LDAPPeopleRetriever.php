@@ -33,11 +33,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     protected $readTimelimit=30;
     protected $supportsSearch = true;
     
-    public function getCacheKey() {
-        return false;
-    }
-    
-    public function retrieveData() {
+    protected function retrieveData() {
         $response = $this->initResponse();
         $response->setCode($this->errorNo);
         $response->setResponseError($this->errorMsg);
@@ -119,7 +115,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
 
     public function search($searchString) {
         $this->filter = $this->buildSearchFilter($searchString);
-        $response = $this->retrieveData();
+        $response = $this->getData();
         $response->setContext('mode', 'search');
         return $response;
     }
@@ -222,7 +218,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
             $this->filter = $this->buildUserFilter($id);
         }
 
-        $response = $this->retrieveData();
+        $response = $this->getData();
         $response->setContext('mode', 'user');
         return $response;
 

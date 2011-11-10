@@ -215,9 +215,9 @@ class OAuthDataRetriever extends URLDataRetriever
 
         return $streamContextOpts;
     }
-    
-    public function cacheFolder($baseCacheFolder) {
-        return $baseCacheFolder . DIRECTORY_SEPARATOR . md5($this->token);
+
+    public function cacheGroup() {
+        return md5($this->token);
     }
     
     protected function headers() {
@@ -242,7 +242,7 @@ class OAuthDataRetriever extends URLDataRetriever
         return $headers;        
     }
     
-    public function retrieveData() {
+    protected function retrieveData() {
     
         if ($this->requiresToken && !$this->token) {
             $response = $this->initResponse();

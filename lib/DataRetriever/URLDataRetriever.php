@@ -206,7 +206,7 @@ class URLDataRetriever extends DataRetriever {
      * a hash of the value returned from the url
      * @return string
      */
-    public function getCacheKey() {
+    protected function cacheKey() {
         if ($this->requestMethod == 'GET') {
             if (!$url = $this->url()) {
                 throw new KurogoDataException("URL could not be determined");
@@ -224,7 +224,7 @@ class URLDataRetriever extends DataRetriever {
      * is not sufficient (i.e. you need POST or custom headers). 
      * @return HTTPDataResponse a DataResponse object
      */
-    public function retrieveData() {
+    protected function retrieveData() {
 
         if (!$this->requestURL = $this->url()) {
             throw new KurogoDataException("URL could not be determined");

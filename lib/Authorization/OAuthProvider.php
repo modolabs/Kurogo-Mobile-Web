@@ -199,7 +199,7 @@ abstract class OAuthProvider
         $retriever->setBaseURL($url);
         $retriever->setParameters($parameters);
         $retriever->setHeaders($headers);
-        return $retriever->retrieveData();
+        return $retriever->getData();
 	}
 	
 	protected function getRetriever() {

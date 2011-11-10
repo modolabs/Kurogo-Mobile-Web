@@ -35,7 +35,7 @@ class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
             $this->addFilter('max-results', $limit);
         }
 
-        return $this->retrieveData();
+        return $this->getData();
     }
 
     protected function addStandardFilters() {

@@ -21,7 +21,7 @@
 	    $this->addFilter('command', 'search_videos');
 	    $this->addFilter('all',$q); // uh oh. if there is a tag, then we have a problem since "all" will be overwritten
 	    
-	    return $this->retrieveData();
+	    return $this->getData();
     }
     
     protected function init($args) {

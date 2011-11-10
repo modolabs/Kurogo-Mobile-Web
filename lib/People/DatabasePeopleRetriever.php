@@ -100,7 +100,7 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
     public function search($searchString) {
 
         $this->setQuery($this->buildSearchQuery($searchString));
-        $response = $this->retrieveData();
+        $response = $this->getData();
         $response->setContext('fieldMap',$this->fieldMap);
         $response->setContext('mode','search');
         $response->setContext('value', $searchString);
@@ -127,7 +127,7 @@ class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRet
     */
     public function getUser($id) {
         $this->setQuery($this->buildUserQuery($id));
-        $response = $this->retrieveData();
+        $response = $this->getData();
         $response->setContext('fieldMap',$this->fieldMap);
         $response->setContext('mode','user');
         $response->setContext('value', $id);
