@@ -9,6 +9,7 @@
  */
 abstract class DataRetriever {
 
+    protected $DEFAULT_RESPONSE_CLASS = 'DataResponse';
     protected $DEFAULT_PARSER_CLASS=null; 
     protected $authority;
     protected $debugMode = false;
@@ -17,6 +18,15 @@ abstract class DataRetriever {
 
     abstract public function getCacheKey();
     abstract public function retrieveData();
+    
+    protected function initResponse() {
+        $response = new $this->DEFAULT_RESPONSE_CLASS();
+        if ($this->authority) {
+            $response->setContext('authority', $this->authority);
+        }
+        
+        return $response;
+    }
     
     /* allows the retriever to override the cache folder */
     public function cacheFolder($baseCacheFolder) {

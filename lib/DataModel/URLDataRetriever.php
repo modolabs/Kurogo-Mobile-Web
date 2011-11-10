@@ -11,6 +11,7 @@
  
 class URLDataRetriever extends DataRetriever {
 
+    protected $DEFAULT_RESPONSE_CLASS = 'HTTPDataResponse';
     protected $baseURL;
     protected $filters=array();
     protected $requestURL;
@@ -238,7 +239,7 @@ class URLDataRetriever extends DataRetriever {
         $data = file_get_contents($this->requestURL, false, $this->streamContext);
         $http_response_header = isset($http_response_header) ? $http_response_header : array();
 
-        $response = new HTTPDataResponse();
+        $response = $this->initResponse();
         $response->setRequest($this->requestMethod, $this->requestURL, $this->requestParameters, $this->requestHeaders);
 
         $response->setResponse($data);

@@ -386,6 +386,11 @@ abstract class DataController
                 $file = $this->getDataFile();
                 return $this->parseFile($file, $parser);
                 break;
+
+           case DataParser::PARSE_MODE_RESPONSE:
+                $this->getData();
+                return $this->parseResponse($this->response, $parser);
+                break;
             default:
                 throw new KurogoConfigurationException("Unknown parse mode");
         }

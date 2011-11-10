@@ -44,7 +44,7 @@ class DatabaseDataRetriever extends DataRetriever
 
     public function retrieveData() {
 
-        $response = new DataResponse();
+        $response = $this->initResponse();
 
         if ($sql = $this->sql()) {
             $result = $this->connection->query($sql, $this->parameters());

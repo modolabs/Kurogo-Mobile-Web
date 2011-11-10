@@ -38,7 +38,7 @@ class LDAPPeopleRetriever extends DataRetriever implements PeopleRetriever
     }
     
     public function retrieveData() {
-        $response = new DataResponse();
+        $response = $this->initResponse();
         $response->setCode($this->errorNo);
         $response->setResponseError($this->errorMsg);
         if (!$this->filter) {

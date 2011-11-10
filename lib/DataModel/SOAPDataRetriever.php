@@ -11,6 +11,7 @@
  
 class SOAPDataRetriever extends DataRetriever {
 
+    protected $DEFAULT_RESPONSE_CLASS = 'SOAPDataResponse';
     protected $wsdl;
     protected $soapClient;
     protected $soapOptions = array('trace' => 1); //use it and wsdl to instantiate SoapClient
@@ -161,7 +162,10 @@ class SOAPDataRetriever extends DataRetriever {
             $lastResponseHeaders = array();
         }
         
-        $response = new SOAPDataResponse();
+        $response = $this->initResponse();
+        if ($this->authority) {
+            $response->setContext('authority', $this->authority);
+        }
         $response->setRequest($wsdl, $method, $parameters, $this->soapHeaders, $this->soapOptions);
         $response->setResponse($data);
 

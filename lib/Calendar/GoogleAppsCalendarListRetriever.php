@@ -54,6 +54,7 @@ class GoogleAppsCalendarListRetriever extends OAuthDataRetriever implements Cale
 
 class GoogleAppsCalendarListParser extends DataParser
 {
+    protected $authority;
     private function parseCalendarFeeds($data) {
         $feeds = array();
         
@@ -76,8 +77,8 @@ class GoogleAppsCalendarListParser extends DataParser
             'RETRIEVER_CLASS'=>'GoogleAppsCalendarDataRetriever',
         );
         
-        if ($authority = $this->dataRetriever->getAuthority()){
-            $baseFeed['AUTHORITY'] = $authority->getAuthorityIndex();
+        if ($this->authority) {
+            $baseFeed['AUTHORITY'] = $this->authority->getAuthorityIndex();
         }
         
         return $baseFeed;
@@ -114,6 +115,14 @@ class GoogleAppsCalendarListParser extends DataParser
                 
         return $feeds;
     }    
+
+    public function parseResponse(DataResponse $response) {
+        if ($authority = $response->getContext('authority')) {
+            $this->authority = $authority;
+        }
+        
+        return parent::parseResponse($response);
+    }
     
     public function parseData($data) {
         $data = json_decode($data, true);

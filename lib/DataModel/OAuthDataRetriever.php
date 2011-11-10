@@ -245,7 +245,8 @@ class OAuthDataRetriever extends URLDataRetriever
     public function retrieveData() {
     
         if ($this->requiresToken && !$this->token) {
-            return new HTTPDataResponse();
+            $response = $this->initResponse();
+            return $response;
         }
 
         $headers = $this->headers(true);
