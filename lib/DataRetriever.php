@@ -8,18 +8,75 @@
  * @package ExternalData
  */
 includePackage('DataRetriever');
+includePackage('DataResponse');
 abstract class DataRetriever {
 
     protected $DEFAULT_RESPONSE_CLASS = 'DataResponse';
     protected $DEFAULT_PARSER_CLASS=null; 
+    protected $DEFAULT_CACHE_LIFETIME = 900; // 15 min
     protected $authority;
     protected $debugMode = false;
     protected $supportsSearch = false;
     protected $options = array();
     protected $cache;
+    protected $cacheKey;
+    protected $cacheGroup;
+    protected $cacheLifetime = null; //if null it will use cache default.
 
-    abstract public function getCacheKey();
-    abstract public function retrieveData();
+    abstract protected function retrieveData();
+    
+    protected function cacheKey() {
+        return $this->cacheKey;
+    }
+    
+    protected function cacheGroup() {
+        return $this->cacheGroup;
+    }
+
+    protected function cacheLifetime() {
+        return $this->cacheLifetime ? $this->cacheLifetime : $this->DEFAULT_CACHE_LIFETIME;
+    }
+    
+    protected function getCachedResponse($cacheKey, $cacheGroup) {
+        if ($cacheKey) {
+            $this->cache->setCacheGroup($cacheGroup);
+            $this->cache->setCacheLifetime($this->cacheLifetime());
+            return $this->cache->get($cacheKey);
+        } else {
+            Kurogo::log(LOG_DEBUG, "Not getting cache since cacheKey is empty", 'dataRetriever');
+        }
+        
+        return null;
+    }
+    
+    protected function cacheResponse($cacheKey, $cacheGroup, DataResponse $response) {
+        if ($cacheKey) {
+            $this->cache->setCacheGroup($cacheGroup);
+            $this->cache->setCacheLifetime($this->cacheLifetime());
+            return $this->cache->set($cacheKey, $response);
+        } else {
+            Kurogo::log(LOG_DEBUG, "Not caching since cacheKey is empty", 'dataRetriever');
+        }
+        
+    }
+    
+    public function getData() {
+        $cacheKey = $this->cacheKey();
+        $cacheGroup = $this->cacheGroup();
+        
+        if (!$response = $this->getCachedResponse($cacheKey, $cacheGroup)) {
+
+            $response = $this->retrieveData();
+            if (!$response instanceOf DataResponse) {
+                throw new KurogoDataException("Response must be instance of DataResponse");
+            }
+            if (!$response->getResponseError()) {
+                $this->cacheResponse($cacheKey, $cacheGroup, $response);
+            }
+        }
+        
+        return $response;
+    }
     
     protected function initResponse() {
         $response = DataResponse::factory($this->DEFAULT_RESPONSE_CLASS, array());
@@ -30,16 +87,11 @@ abstract class DataRetriever {
         return $response;
     }
     
-    /* allows the retriever to override the cache folder */
-    public function cacheFolder($baseCacheFolder) {
-        return $baseCacheFolder;
-    }
-
     public function setDebugMode($debugMode) {
         $this->debugMode = $debugMode ? true : false;
     }
 
-    public function getAuthority() {
+    protected function getAuthority() {
         return $this->authority;
     }
     
