@@ -10,6 +10,8 @@
  * @package DataModel
  */
 includePackage('DataModel'); 
+includePackage('DataRetriever');
+includePackage('DataParser');
 abstract class DataModel {
     
     protected $DEFAULT_RETRIEVER_CLASS='URLDataRetriever';
