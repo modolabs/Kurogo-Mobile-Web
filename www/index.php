@@ -286,6 +286,8 @@ if ($parts[0]==API_URL_PREFIX) {
       exit;
     }
 
+    $Kurogo->setRequest($id, $page, $args);
+
     if ($module = WebModule::factory($id, $page, $args)) {
         $Kurogo->setCurrentModule($module);
         $module->displayPage();
