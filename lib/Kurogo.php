@@ -22,9 +22,32 @@ class Kurogo
     protected $locale;    
     protected $languages=array();
     protected $cacher;
+    protected $module;
+    protected $request;
 
     private function __construct() {
         $this->startTime = microtime(true);
+    }
+    
+    public function setCurrentModule(Module $module) {
+        $this->module = $module;
+    }
+    
+    public function setRequest($id, $page, $args) {
+        $this->request = array(
+            'id'=>$id,
+            'page'=>$page,
+            'args'=>$args
+        );
+    }
+
+    public function getCurrentModule() {
+        return $this->module;
+    }
+    
+    public static function getArrayForRequest() {
+        $Kurogo = Kurogo::sharedInstance();
+        return $Kurogo->request;
     }
     
     public static function getElapsed() {

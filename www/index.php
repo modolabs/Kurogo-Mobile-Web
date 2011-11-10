@@ -241,6 +241,7 @@ if ($parts[0]==API_URL_PREFIX) {
             break;
     }    
 
+    $Kurogo->setCurrentModule($module);
     $module->executeCommand();
 
 } elseif ($parts[0]=='min') { //used when minify is loaded when multi-site is on
@@ -285,7 +286,10 @@ if ($parts[0]==API_URL_PREFIX) {
       exit;
     }
 
+    $Kurogo->setRequest($id, $page, $args);
+
     if ($module = WebModule::factory($id, $page, $args)) {
+        $Kurogo->setCurrentModule($module);
         $module->displayPage();
     } else {
         throw new KurogoException("Module $id cannot be loaded");

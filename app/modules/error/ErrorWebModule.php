@@ -75,7 +75,7 @@ class ErrorWebModule extends WebModule {
 
   protected function initializeForPage() {
     $code = $this->getArg('code', 'default');
-    $url  = $this->getArg('url', '');
+    $url = $this->buildURLFromArray($this->args);
     
     $error = $this->getError($code);
     
