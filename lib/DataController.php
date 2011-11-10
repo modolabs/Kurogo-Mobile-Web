@@ -10,6 +10,7 @@
  * @package DataController
  */
 includePackage('DataController');
+includePackage('DataResponse');
 abstract class DataController
 {
     protected $DEFAULT_PARSER_CLASS='PassthroughDataParser';
