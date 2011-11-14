@@ -5,21 +5,12 @@ class AthleticsWebModule extends WebModule {
     protected $id = 'athletics';
     protected static $defaultModel = 'AthleticsDataModel';
     protected $feeds = array();
-    protected $feedIndex = 0;
     protected $maxPerPage = 10;
     protected $showImages = true;
     protected $showPubDate = false;
     protected $showAuthor = false;
     protected $showLink = false;
     
-    public function linkForItem($section, $sport, $options = array()) {
-        $title = isset($sport['GENDERS']) && $sport['GENDERS'] ? $sport['SPORT_NAME'] . '|' . $sport['GENDERS'] : $sport['SPORT_NAME'];
-        $options['section'] = $section;
-        return array(
-        'url'       => $this->buildBreadcrumbURL('sport', $options, true),
-        'title'     => $title
-        );
-    }
     
     protected function htmlEncodeFeedString($string) {
         return mb_convert_encoding($string, 'HTML-ENTITIES', $this->feed->getEncoding());
@@ -41,107 +32,89 @@ class AthleticsWebModule extends WebModule {
         return $link;
     }
     
-    protected function urlForFeatures($sport, $type, $options, $data = array()) {
-        $url = '';
-        $addBreadcrumb = isset($data['addBreadcrumb']) ? $data['addBreadcrumb'] : true;
-        $page = strtolower($type);
-        $url = isset($sport[$type]) && $sport[$type] ? $this->buildBreadcrumbURL($page, $options, $addBreadcrumb) : '';
-        return $url;
+    protected function getSportData($section) {
+    
+        $data = isset($this->feeds[$section]) ? $this->feeds[$section] : '';
+        if (!$data) {
+            throw new KurogoDataException('Unable to load data for sport '. $section);
+        }
+        
+        return $data;
+        
     }
     
-    protected function linkForSport($sport, $options) {
-        $result = array();
-        $result[] = array(
-            'title' => 'Sport Name:' . $sport['SPORT_NAME']
-        );
-        $result[] = array(
-            'title' => 'Genders:' . $sport['GENDERS']
-        );
-        $result[] = array(
-            'title' => 'News',
-            'url'   => $this->urlForFeatures($sport, 'NEWS', $options)
-        );
-        $result[] = array(
-            'title' => 'Schedule',
-            'url'   => $this->urlForFeatures($sport, 'SCHEDULE', $options)
-        );
-        $result[] = array(
-            'title' => 'Scores',
-            'url'   => $this->urlForFeatures($sport, 'SCORES', $options)
-        );
-        return $result;
+    protected function getSportLinks($section) {
+
+        $links = array();
+        
+        //each section in the sport config is used. This permits easy extension
+        $feedData = $this->getModuleSections($section);
+        foreach ($feedData as $type=>$data) {
+            $links[$type] = array(
+                'title' => $this->getLocalizedString(strtoupper($type) . '_TITLE'),
+                'url'   => $this->buildBreadcrumbURL($type, array('section'=>$section))
+            );
+        }
+
+        return $links;        
     }
+    
     
     protected function getFeed($section, $type = '') {
-        $feeds = $this->loadFeedData();
-        if ($type && isset($feeds[$section]) && $feeds[$section] && isset($feeds[$section][$type]) && $feeds[$section][$type]) {
-            $feed = $feeds[$section];
-            $feedData = array();
+        $sportData = $this->getSportData($section);
+        $feedData = $this->getModuleSections($section);
+
+        //make sure the type (section) is there in the config
+        if ($type && isset($feedData[$type])) {
+            $feedData = $feedData[$type];
+            if (!isset($feedData['TITLE'])) {
+                $feedData['TITLE'] = $sportData['TITLE'];
+            }
             
-            $feedData['TITLE'] = $feeds[$section]['SPORT_NAME'];
             switch ($type) {
                 case 'NEWS':
-                    $feedData['BASE_URL'] = $feeds[$section][$type];
-                    $feedData['RETRIEVER_CLASS'] = 'URLDataRetriever';
-                    $feedData['PARSER_CLASS'] = 'RSSDataParser';
+                    if (!isset($feedData['PARSER_CLASS'])) {
+                        $feedData['PARSER_CLASS'] = 'RSSDataParser';
+                    }
                     break;
                 case 'SCHEDULE':
+                    includePackage('Calendar');
+                    if (!isset($feedData['PARSER_CLASS'])) {
+                        $feedData['PARSER_CLASS'] = 'ICSDataParser';
+                    }
                     break;
                 case 'SCORES':
                     break;
             }
             
-            $controller = AthleticsDataModel::factory('AthleticsDataModel', $feedData);
-            return $controller;
+            $this->feed = AthleticsDataModel::factory('AthleticsDataModel', $feedData);
+            return $this->feed;
         }
+        
         return null;
     }
     
     protected function initialize() {
 
         $this->feeds      = $this->loadFeedData();
-        $this->maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
         
-        if (count($this->feeds)==0) {
-            return;
-        }
-        
-        if (in_array($this->page, array('news', 'scores', 'schedule'))) {
-            $this->feedIndex = $this->getArg('section', 0);
-            $feedData = $this->feeds[$this->feedIndex];
-            $this->showImages = isset($feedData['SHOW_IMAGES']) ? $feedData['SHOW_IMAGES'] : true;
-            $this->showPubDate = isset($feedData['SHOW_PUBDATE']) ? $feedData['SHOW_PUBDATE'] : false;
-            $this->showAuthor = isset($feedData['SHOW_AUTHOR']) ? $feedData['SHOW_AUTHOR'] : false;
-            $this->showLink = isset($feedData['SHOW_LINK']) ? $feedData['SHOW_LINK'] : false;
-            switch ($this->page) {
-                case 'news':
-                    $this->feed = $this->getFeed($this->feedIndex, 'NEWS');
-                    break;
-                case 'scores':
-                    $this->feed = $this->getFeed($this->feedIndex, 'SCORES');
-                    break;
-                case 'schedule':
-                    $this->feed = $this->getFeed($this->feedIndex, 'SCHEDULE');
-                    break;
-                default:
-                    break;
-            }
-        }
     }    
 
     protected function initializeForPage() {
         
         switch($this->page) {
             case 'news':
+                $this->maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
+                $section = $this->getArg('section');
                 $start = $this->getArg('start', 0);
-                if (!$this->feed) {
-                    throw new KurogoDataException('sport:'. $section .' not found');
-                }
-                $this->feed->setStart($start);
-                $this->feed->setLimit($this->maxPerPage);
-                $items = $this->feed->items();
-                $totalItems = $this->feed->getTotalItems();
-                $this->setLogData($this->feedIndex, $this->feed->getTitle());
+                
+                $feed = $this->getFeed($section, $this->page);
+                $feed->setStart($start);
+                $feed->setLimit($this->maxPerPage);
+
+                $items = $feed->items();
+                $totalItems = $feed->getTotalItems();
+                $this->setLogData($section, $feed->getTitle());
                 
                 $previousURL = null;
                 $nextURL = null;
@@ -162,7 +135,7 @@ class AthleticsWebModule extends WebModule {
                 foreach ($items as $story) {
                     $stories[] = $this->linkForNewsItem($story);
                 }
-                $this->setPageTitle('News');
+
                 $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
                 $this->addOnLoad('setupNewsListing();');
         
@@ -175,26 +148,30 @@ class AthleticsWebModule extends WebModule {
                 $this->assign('showPubDate',    $this->showPubDate);
                 $this->assign('showAuthor',     $this->showAuthor);
                 break;
+                
             case 'scores':
                 break;
+                
             case 'schedule':
                 break;
-            case 'sport':
-                $section = $this->getArg('section', 0);
-                $feed = isset($this->feeds[$section]) ? $this->feeds[$section] : '';
-                if (!$feed) {
-                    throw new KurogoDataException('sport:'. $section .' not found');
-                }
-                $options['section'] = $section;
-                $sport = $this->linkForSport($feed, $options);
                 
-                $this->setPageTitle($feed['SPORT_NAME']);
-                $this->assign('sport', $sport);
+            case 'sport':
+                $section = $this->getArg('section');
+                $sportData = $this->getSportData($section);
+                
+                $this->setPageTitles($sportData['TITLE']);
+                $this->assign('sportLinks', $this->getSportLinks($section));
                 break;
+
             case "index":
                 $sports = array();
-                foreach ($this->feeds as $section => $sport) {
-                    $sports[] = $this->linkForItem($section, $sport);
+
+                foreach ($this->feeds as $section => $sportData) {
+                    $sport = array(
+                        'title' =>$sportData['TITLE'],
+                        'url'   =>$this->buildBreadcrumbURL('sport', array('section'=>$section))
+                    );
+                    $sports[] = $sport;
                 }
                 $this->assign('sports', $sports);
                 break;
