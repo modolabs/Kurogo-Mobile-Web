@@ -569,6 +569,11 @@ class MapAPIModule extends APIModule
                 break;
 
             case 'geocode':
+            {
+                // TODO: this is not fully implemented. do not use this API.
+
+                includePackage('Maps', 'Geocoding');
+
                 $locationSearchTerms = $this->getArg('q');
                 
                 $geocodingDataControllerClass = $this->getOptionalModuleVar('GEOCODING_DATA_CONTROLLER_CLASS');
@@ -597,7 +602,7 @@ class MapAPIModule extends APIModule
                     $this->setResponseVersion(1);
                 }
                 break;
-                    
+            }
             default:
                 $this->invalidCommand();
                 break;

@@ -210,9 +210,25 @@ class MapWebModule extends WebModule {
     private function detailURL($name, $category=null, $addBreadcrumb=true) {
         $args = $this->args;
         $args['featureindex'] = $name;
+        if ($this->isMapDrivenUI()) {
+            return $this->buildURL('index', $args);
+        }
         return $this->buildBreadcrumbURL('detail', $args, $addBreadcrumb);
     }
   
+    protected function detailURLForBookmark($aBookmark) {
+        parse_str($aBookmark, $params);
+        if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
+            if ($this->isMapDrivenUI()) {
+                return $this->buildURL('index', $params);
+            }
+            return $this->buildBreadcrumbURL('detail', $params, true);
+        } else {
+            return '#';
+        }
+    }
+
+    // static maps only
     private function detailUrlForPan($direction, $imgController) {
         $args = $this->args;
         $center = $imgController->getCenterForPanning($direction);
@@ -220,6 +236,7 @@ class MapWebModule extends WebModule {
         return $this->buildBreadcrumbURL('detail', $args, false);
     }
 
+    // static maps only
     private function detailUrlForZoom($direction, $imgController) {
         $args = $this->args;
         $args['zoom'] = $imgController->getLevelForZooming($direction);
@@ -237,16 +254,25 @@ class MapWebModule extends WebModule {
         return $searchResults;
     }
 
-    // depends on feeds being loaded
-    private function getDataController($category=null) {
+    // assumes feeds are loaded
+    private function getDataModel($category=null) {
         $feedData = $this->getCurrentFeed($category);
-        if ($feedData) {
-            $controller = MapDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+        if (isset($feedData['CONTROLLER_CLASS'])) { // legacy
+            $modelClass = $feedData['CONTROLLER_CLASS'];
         }
-        if (!isset($controller)) {
-            $controller = MapDataController::defaultDataController();
+        elseif (isset($feedData['MODEL_CLASS'])) {
+            $modelClass = $feedData['MODEL_CLASS'];
         }
-        return $controller;
+        else {
+            $modelClass = 'MapDataModel';
+        }
+        $dataModel = MapDataModel::factory($modelClass, $feedData);
+
+        $drilldownPath = $this->getDrillDownPath();
+        if ($drilldownPath) {
+            $dataModel->addDisplayFilter('category', $drilldownPath);
+        }
+        return $dataModel;
     }
 
     private function getCurrentFeed($category=null) {
@@ -344,21 +370,12 @@ class MapWebModule extends WebModule {
         return $categories;
     }
 
-    protected function detailURLForBookmark($aBookmark) {
-        parse_str($aBookmark, $params);
-        if (isset($params['featureindex']) || isset($params['lat'], $params['lon'])) {
-            return $this->buildBreadcrumbURL('detail', $params, true);
-        } else {
-            return '#';
-        }
-    }
-
     protected function getTitleForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
         if (isset($params['featureindex'])) {
             $index = $params['featureindex'];
             $category = $params['category'];
-            $dataController = $this->getDataController($category);
+            $dataController = $this->getDataModel($category);
             $feature = $dataController->selectPlacemark($index);
             return array($feature->getTitle(), $dataController->getTitle());
         
@@ -418,118 +435,11 @@ class MapWebModule extends WebModule {
         return $result;
     }
 
-    /////// UI functions
-    
-    protected function addJavascriptStaticMap() {
-        // Let Webkit figure out what the window size is and then hide the address bar
-        // and resize the map
-        $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
-        $this->addOnOrientationChange('updateMapDimensions();');
-    }
-
-    protected function addJavascriptDynamicMap() {
-        $this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
-        $this->addOnOrientationChange('updateContainerDimensions()');
-    }
-
-    protected function initializeMapElements($mapElement, $imgController)
-    {
-        if ($imgController->isStatic()) {
-            $this->assign('imageUrl', $imgController->getImageURL());
-
-            $this->assign('scrollNorth', $this->detailUrlForPan('n', $imgController));
-            $this->assign('scrollEast', $this->detailUrlForPan('e', $imgController));
-            $this->assign('scrollSouth', $this->detailUrlForPan('s', $imgController));
-            $this->assign('scrollWest', $this->detailUrlForPan('w', $imgController));
-
-            $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
-            $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
-
-            $this->assign('imageWidth',  $imgController->getImageWidth());
-            $this->assign('imageHeight', $imgController->getImageHeight());
-
-            if (($this->pagetype == 'compliant' && $this->platform != 'bbplus') || $this->pagetype == 'tablet') {
-                $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}/staticImageURL";
-                $js = <<<JS
-                    mapWidth = {$imgController->getImageWidth()};
-                    mapHeight = {$imgController->getImageHeight()};
-                    staticMapOptions = {$imgController->getJavascriptControlOptions()};
-                    apiURL = "{$apiURL}";
-JS;
-
-                $this->addInlineJavascript($js);
-                $this->addOnLoad('addStaticMapControls();');
-            }
-
-        } else {
-            $imgController->setMapElement($mapElement);
-            foreach ($imgController->getIncludeScripts() as $includeScript) {
-                $this->addExternalJavascript($includeScript);
-            }
-            $this->addInlineJavascript($imgController->getHeaderScript());
-            $this->addInlineJavascriptFooter($imgController->getFooterScript());
-        }
-
+    protected function configureUserLocation() {
+        // extra javascript
         $showUserLocation = $this->getOptionalModuleVar('MAP_SHOWS_USER_LOCATION', false);
         if ($showUserLocation) {
             $this->addInlineJavascript("\nshowUserLocation = true;\n");
-        }
-    }
-    
-    private function initializeMap(MapDataController $dataController, $fullscreen=FALSE)
-    {
-        $placemarks = $dataController->getSelectedPlacemarks();
-
-        $imgController = $this->getImageController();
-        foreach ($placemarks as $placemark) {
-            $imgController->addPlacemark($placemark);
-        }
-        
-        // override point for current zoom level
-        if (isset($this->args['zoom'])) {
-            $zoomLevel = $this->args['zoom'];
-        } else {
-            $zoomLevel = $dataController->getDefaultZoomLevel();
-        }
-        
-        // override point for where map should be centered
-        if (isset($this->args['center'])) {
-            $center = filterLatLon($this->getArg('center'));
-        } elseif (isset($this->args['lat'], $this->args['lon'])) {
-            $center = array('lat' => $this->getArg('lat'), 'lon' => $this->getArg('lon'));
-        }
-
-        if (isset($center)) {
-            $imgController->setCenter($center);
-        }
-        if (isset($zoomLevel) && $zoomLevel !== null) {
-            $imgController->setZoomLevel($zoomLevel);
-        }
-
-        /*
-        if (!$fullscreen) {
-            $this->assign('fullscreenURL', $this->buildBreadcrumbURL('fullscreen', $this->args, false));
-        
-            if (!$imgController->isStatic()) {
-                $this->addInlineJavascriptFooter("\n hideMapTabChildren();\n");
-            }
-            
-        } else {
-            $this->assign('detailURL', $this->buildBreadcrumbURL('detail', $this->args, false));
-
-        }
-        
-        $this->assign('fullscreen', $fullscreen);
-        */
-        $this->assign('isStatic', $imgController->isStatic());
-        
-        $this->initializeMapElements('mapimage', $imgController);
-
-        // call the function that updates the image size        
-        if ($imgController->isStatic()) {
-            $this->addJavascriptStaticMap();
-        } else {
-            $this->addJavascriptDynamicMap();
         }
     }
 
@@ -690,43 +600,13 @@ JS;
 
             case 'index':
 
-                /*
-                if ($action = $this->getArg('action', false)) {
-                    if ($this->feedGroup && $action == 'add') {
-                        // TODO have config for different types of cookie expiration times
-                        $expireTime = time() + 897298;
-                        setcookie(MAP_GROUP_COOKIE, $this->feedGroup, $expireTime, COOKIE_PATH);
-                    } else if ($action == 'remove') {
-                        $expireTime = time() - 4096;
-                        setcookie(MAP_GROUP_COOKIE, '', $expireTime, COOKIE_PATH);
-                    }
-                }
-                */
-
                 if ($this->feedGroup !== null) {
-                    $urlArgs = array('group' => $this->feedGroup);
 
                     if ($this->isMapDrivenUI()) {
-                        $browseURL = $this->buildBreadcrumbURL('campus', $urlArgs, true);
-                        $this->assign('browseURL', $browseURL);
-
-                        $baseMap = $this->getImageController();
-
-                        $baseMap->setMapElement('mapimage');
-                        foreach ($baseMap->getIncludeScripts() as $includeScript) {
-                            $this->addExternalJavascript($includeScript);
-                        }
-                        $this->addInlineJavascript($baseMap->getHeaderScript());
-                        $this->addInlineJavascriptFooter($baseMap->getFooterScript());
-
-                        $showUserLocation = $this->getOptionalModuleVar('MAP_SHOWS_USER_LOCATION', false);
-                        if ($showUserLocation) {
-                            $this->addInlineJavascript("\nshowUserLocation = true;\n");
-                        }
-
-                        $this->addJavascriptDynamicMap();
+                        $this->initializeDynamicMap();
 
                     } else {
+                        $urlArgs = array('group' => $this->feedGroup);
                         $this->redirectTo('campus', $urlArgs);
                     }
                 }
@@ -838,9 +718,8 @@ JS;
                     // populate drop-down list at the bottom
                     $this->assignCategories();
                     // build the drill-down list
-                    $dataController = $this->getDataController();
-                    $dataController->addDisplayFilter('category', $this->getDrillDownPath());
-                    $listItems = $dataController->getListItems();
+                    $dataModel = $this->getDataModel();
+                    $listItems = $dataModel->getListItems();
 
                     if (count($listItems) == 1) {
                         // redirect to a category's children if it only has one item
@@ -872,7 +751,7 @@ JS;
                             'url'      => $url,
                             );
                     }
-                    $this->assign('title',  $dataController->getTitle());
+                    $this->assign('title',  $dataModel->getTitle());
                     $this->assign('places', $places);          
                     
                     if ($this->numGroups > 1) {
@@ -898,29 +777,12 @@ JS;
                 $tabKeys = array();
                 $tabJavascripts = array();
                 $title = $this->getArg('title');
-
-                $dataController = $this->getDataController();
-                $drilldownPath = $this->getDrillDownPath();
-                if ($drilldownPath) {
-                    $dataController->addDisplayFilter('category', $drilldownPath);
+                if (!$title && isset($this->args['lat'], $this->args['lon'])) {
+                    $title = "$lat,$lon";
                 }
-                if ($this->featureIndex !== null) {
-                    $feature = $dataController->selectPlacemark($this->featureIndex);
 
-                } elseif (isset($this->args['lat'], $this->args['lon'])) {
-                    $lat = $this->args['lat'];
-                    $lon = $this->args['lon'];
-                    $feature = new BasePlacemark(
-                        new MapBasePoint(array(
-                            'lat' => $lat,
-                            'lon' => $lon,
-                            )));
-                    if (!$title) {
-                        $title = "$lat,$lon";
-                    }
-                    // hacky
-                    $dataController->setSelectedPlacemarks(array($feature));
-                }
+                $features = $this->getSelectedPlacemarks();
+                $feature = end($features);
 
                 if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
                     if (isset($this->args['featureindex'])) { // this is a place from a feed
@@ -969,13 +831,126 @@ JS;
                 $this->assign('tabKeys', $tabKeys);
                 $this->enableTabs($tabKeys, null, $tabJavascripts);
                 break;
-            /*
-            case 'fullscreen':
-                $dataController = $this->getDataController();
-                $dataController->selectPlacemark($this->featureIndex);
-                $this->initializeMap($dataController, true);
-                break;
-            */
         }
+    }
+
+    protected function getSelectedPlacemarks()
+    {
+        // check if any placemarks were passed from another page
+        if ($this->featureIndex !== null) {
+            $dataModel = $this->getDataModel();
+            $dataModel->selectPlacemark($this->featureIndex);
+
+        } elseif (isset($this->args['lat'], $this->args['lon'])) {
+            $dataModel = $this->getDataModel();
+            $lat = $this->args['lat'];
+            $lon = $this->args['lon'];
+            $feature = new BasePlacemark(
+                new MapBasePoint(array(
+                    'lat' => $lat,
+                    'lon' => $lon,
+                    )));
+            if (!$title) {
+                $title = "$lat,$lon";
+            }
+            // hacky
+            $dataModel->setSelectedPlacemarks(array($feature));
+        }
+
+        // TODO: add ways to show all bookmarks,
+        // all campuses, all placemarks within a category
+
+        if (isset($dataModel)) {
+            return $dataModel->getSelectedPlacemarks();
+        }
+        return array();
+    }
+
+    protected function initializeDynamicMap()
+    {
+        $urlArgs = array('group' => $this->feedGroup);
+        $browseURL = $this->buildBreadcrumbURL('campus', $urlArgs, true);
+        $this->assign('browseURL', $browseURL); // browse button
+
+        // set up base map
+        $baseMap = $this->getImageController();
+
+        // add data
+        foreach ($this->getSelectedPlacemarks() as $aPlacemark) {
+            $baseMap->addPlacemark($aPlacemark);
+        }
+
+        // code for embedding base map
+        $baseMap->setMapElement('mapimage');
+        foreach ($baseMap->getIncludeScripts() as $includeScript) {
+            $this->addExternalJavascript($includeScript);
+        }
+        $this->addInlineJavascript($baseMap->getHeaderScript());
+        $this->addInlineJavascriptFooter($baseMap->getFooterScript());
+
+        //$this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
+        $this->addOnOrientationChange('updateContainerDimensions()');
+    }
+
+    protected function initializeStaticMap()
+    {
+        $baseMap = $this->getImageController();
+        foreach ($this->getSelectedPlacemarks() as $placemark) {
+            $baseMap->addPlacemark($placemark);
+        }
+        
+        // override point for current zoom level
+        if (isset($this->args['zoom'])) {
+            $zoomLevel = $this->args['zoom'];
+        } else {
+            $zoomLevel = $dataModel->getDefaultZoomLevel();
+        }
+        
+        // override point for where map should be centered
+        if (isset($this->args['center'])) {
+            $center = filterLatLon($this->getArg('center'));
+        } elseif (isset($this->args['lat'], $this->args['lon'])) {
+            $center = array('lat' => $this->getArg('lat'), 'lon' => $this->getArg('lon'));
+        }
+
+        if (isset($center)) {
+            $imgController->setCenter($center);
+        }
+        if (isset($zoomLevel) && $zoomLevel !== null) {
+            $imgController->setZoomLevel($zoomLevel);
+        }
+        
+        $this->assign('imageUrl', $imgController->getImageURL());
+
+        $this->assign('scrollNorth', $this->detailUrlForPan('n', $imgController));
+        $this->assign('scrollEast', $this->detailUrlForPan('e', $imgController));
+        $this->assign('scrollSouth', $this->detailUrlForPan('s', $imgController));
+        $this->assign('scrollWest', $this->detailUrlForPan('w', $imgController));
+
+        // this may not be needed for devices that get the ajax options
+        $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
+        $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
+
+        $this->assign('imageWidth',  $imgController->getImageWidth());
+        $this->assign('imageHeight', $imgController->getImageHeight());
+
+        // ajax options for static maps
+        // devices like bbplus will load a new page for each zoom/scroll
+        if ($this->getMapDevice()->pageSupportsDynamicMap()) {
+            $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}/staticImageURL";
+            $js = <<<JS
+                mapWidth = {$imgController->getImageWidth()};
+                mapHeight = {$imgController->getImageHeight()};
+                staticMapOptions = {$imgController->getJavascriptControlOptions()};
+                apiURL = "{$apiURL}";
+JS;
+
+            $this->addInlineJavascript($js);
+            $this->addOnLoad('addStaticMapControls();');
+        }
+
+        // javascript for all static maps
+        $this->addOnLoad('setTimeout(function () { window.scrollTo(0, 1); updateMapDimensions(); }, 1000);');
+        $this->addOnOrientationChange('updateMapDimensions();');
     }
 }
