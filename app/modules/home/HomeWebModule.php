@@ -40,7 +40,17 @@ class HomeWebModule extends WebModule {
    
     return $modulePanes;
   }
-     
+
+  protected function runFederatedSearchForModule($module, $searchTerms) {
+      $results = array();
+      $total = $module->federatedSearch($searchTerms, 2, $results);
+      return array(
+          'items' => $results,
+          'total' => $total,
+          'url'   => $module->urlForFederatedSearch($searchTerms),
+      );
+  }
+
   protected function initializeForPage() {
     switch ($this->page) {
       case 'help':
@@ -86,31 +96,52 @@ class HomeWebModule extends WebModule {
         
      case 'search':
         $searchTerms = $this->getArg('filter');
+        $useAjax = ($this->pagetype != 'basic') && ($this->pagetype != 'touch');
         
-        $federatedResults = array();
-     
+        $searchModules = array();
+        
         foreach ($this->getAllModuleNavigationData(self::EXCLUDE_DISABLED_MODULES) as $type=>$modules) {
         
             foreach ($modules as $id => $info) {
             
-              $module = self::factory($id);
-              if ($module->getModuleVar('search')) {
-                $results = array();
-                $total = $module->federatedSearch($searchTerms, 2, $results);
-                $federatedResults[] = array(
-                  'title'   => $info['title'],
-                  'results' => $results,
-                  'total'   => $total,
-                  'url'     => $module->urlForFederatedSearch($searchTerms),
-                );
-                unset($module);
-              }
+                $module = self::factory($id);
+                if ($module->getModuleVar('search')) {
+                    $searchModule = array(
+                        'id'        => $id,
+                        'elementId' => 'federatedSearchModule_'.$id,
+                        'title'     => $info['title'],
+                    );
+
+                    if ($useAjax) {
+                        $searchModule['ajaxURL'] = FULL_URL_PREFIX.ltrim($this->buildURL('searchResult', array(
+                            'id'     => $id,
+                            'filter' => $searchTerms,
+                        )), '/');
+                        
+                    } else {
+                        $searchModule['results'] = $this->runFederatedSearchForModule($module, $searchTerms);
+                    }
+                    $searchModules[] = $searchModule;
+                }
             }
         }
+        
+        if ($useAjax) {
+            $this->addInlineJavascript('var federatedSearchModules = '.json_encode($searchModules).";\n");
+            $this->addOnLoad('runFederatedSearch(federatedSearchModules);');
+        }
 
-        $this->assign('federatedResults', $federatedResults);
-        $this->assign('searchTerms',      $searchTerms);
+        $this->assign('federatedSearchModules', $searchModules);
+        $this->assign('searchTerms',            $searchTerms);
         $this->setLogData($searchTerms);
+        break;
+      
+      case 'searchResult':
+        $moduleID = $this->getArg('id');
+        $searchTerms = $this->getArg('filter');
+        
+        $module = self::factory($moduleID);
+        $this->assign('federatedSearchResults', $this->runFederatedSearchForModule($module, $searchTerms));
         break;
     }
   }
