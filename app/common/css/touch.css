@@ -377,7 +377,12 @@ a.module img {
   position: relative;
   margin: 0 -7px 0 0;
   padding: 11px 4px 11px 57px;
+  min-height: 50px;
   line-height: 30px;
+}
+
+.nav li.icon a img {
+  top: 11px;
 }
 
 .nav h2, .nav h3 {
