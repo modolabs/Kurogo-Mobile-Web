@@ -7,11 +7,13 @@ define('MAP_GROUP_COOKIE', 'mapgroup');
 class MapWebModule extends WebModule {
 
     protected $id = 'map';
+
     protected $feedGroup = null;
     protected $feedGroups = null;
-    protected $numGroups = 1;
+    protected $numGroups;
     protected $feeds;
     protected $featureIndex;
+    protected $mapDevice = null;
     
     private function getDataForGroup($group) {
         return isset($this->feedGroups[$group]) ? $this->feedGroups[$group] : null;
@@ -262,22 +264,50 @@ class MapWebModule extends WebModule {
         return null;
     }
 
+    private function getMergedConfigData() {
+        // allow individual feeds to override values in the feed group
+        if ($this->feedGroup === null) {
+            // putting this to see if/when this happens
+            throw new Exception("feed group not set");
+
+            Kurogo::log(LOG_WARNING,"Warning: feed group not set when initializing image controller, using first group",'maps');
+            $this->feedGroup = key($this->feedGroups);
+        }
+
+        $configData = $this->getDataForGroup($this->feedGroup);
+
+        // allow individual feeds to override group value
+        $feedData = $this->getCurrentFeed();
+        if ($feedData) {
+            foreach ($feedData as $key => $value) {
+                $configData[$key] = $value;
+            }
+        }
+
+        return $configData;
+    }
+
+    private function getMapDevice()
+    {
+        if (!$this->mapDevice) {
+            $this->mapDevice = new MapDevice($this->pagetype, $this->platform);
+        }
+        return $this->mapDevice;
+    }
+
+    protected function isMapDrivenUI()
+    {
+        list($class, $static) = MapImageController::basemapClassForDevice(
+            $this->getMapDevice(),
+            $this->getMergedConfigData());
+        return !$static;
+    }
+
     private function getImageController()
     {
-        // if base map class is specified in individual feeds, override base
-        // map class in feed group.  this takes care of compatibility with v1.2
-        // map feed config.
-        $configData = $this->getCurrentFeed();
-        if (!isset($configData['STATIC_MAP_CLASS']) && !isset($configData['JS_MAP_CLASS'])) {
-            if ($this->feedGroup === null) {
-                Kurogo::log(LOG_WARNING,"Warning: feed group not set when initializing image controller, using first group",'maps');
-                $this->feedGroup = key($this->feedGroups);
-            }
-            $configData = $this->getDataForGroup($this->feedGroup);
-        }
-        $mapDevice = new MapDevice($this->pagetype, $this->platform);
-
-        return MapImageController::factory($configData, $mapDevice);
+        return MapImageController::factory(
+            $this->getMergedConfigData(),
+            $this->getMapDevice());
     }
 
     protected function getSearchClass($options=array()) {
@@ -476,6 +506,7 @@ JS;
             $imgController->setZoomLevel($zoomLevel);
         }
 
+        /*
         if (!$fullscreen) {
             $this->assign('fullscreenURL', $this->buildBreadcrumbURL('fullscreen', $this->args, false));
         
@@ -489,6 +520,7 @@ JS;
         }
         
         $this->assign('fullscreen', $fullscreen);
+        */
         $this->assign('isStatic', $imgController->isStatic());
         
         $this->initializeMapElements('mapimage', $imgController);
@@ -649,6 +681,7 @@ JS;
     }
 
     protected function initializeForPage() {
+
         $this->featureIndex = $this->getArg('featureindex', null);
 
         switch ($this->page) {
@@ -657,6 +690,7 @@ JS;
 
             case 'index':
 
+                /*
                 if ($action = $this->getArg('action', false)) {
                     if ($this->feedGroup && $action == 'add') {
                         // TODO have config for different types of cookie expiration times
@@ -667,14 +701,43 @@ JS;
                         setcookie(MAP_GROUP_COOKIE, '', $expireTime, COOKIE_PATH);
                     }
                 }
+                */
 
-                if ($this->numGroups == 0) {
+                if ($this->feedGroup !== null) {
+                    $urlArgs = array('group' => $this->feedGroup);
+
+                    if ($this->isMapDrivenUI()) {
+                        $browseURL = $this->buildBreadcrumbURL('campus', $urlArgs, true);
+                        $this->assign('browseURL', $browseURL);
+
+                        $baseMap = $this->getImageController();
+
+                        $baseMap->setMapElement('mapimage');
+                        foreach ($baseMap->getIncludeScripts() as $includeScript) {
+                            $this->addExternalJavascript($includeScript);
+                        }
+                        $this->addInlineJavascript($baseMap->getHeaderScript());
+                        $this->addInlineJavascriptFooter($baseMap->getFooterScript());
+
+                        $showUserLocation = $this->getOptionalModuleVar('MAP_SHOWS_USER_LOCATION', false);
+                        if ($showUserLocation) {
+                            $this->addInlineJavascript("\nshowUserLocation = true;\n");
+                        }
+
+                        $this->addJavascriptDynamicMap();
+
+                    } else {
+                        $this->redirectTo('campus', $urlArgs);
+                    }
+                }
+                elseif ($this->numGroups == 0) {
                     $categories = array(array(
                         'title' => $this->getLocalizedString('NO_MAPS_FOUND'),
                         ));
                     $this->assign('categories', $categories);
 
-                } else if ($this->feedGroup === null && $this->numGroups > 1) {
+                }
+                else if ($this->feedGroup === null && $this->numGroups > 1) {
                     // show the list of groups
                     foreach ($this->feedGroups as $id => $groupData) {
                         $categories[] = array(
@@ -694,26 +757,6 @@ JS;
 
                     $this->addOnLoad('sortGroupsByDistance();');
                     
-                } else {
-                    $groupData = $this->getDataForGroup($this->feedGroup);
-                    $this->assign('browseBy', $groupData['title']);
-                    if ($this->numGroups > 1) {
-                        $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS_PLURAL');
-                        $clearLink = array(array(
-                            'title' => "All $groupAlias",
-                            'url' => $this->groupURL(''),
-                            ));
-                        $this->assign('clearLink', $clearLink);
-                    }
-                    
-                    $categories = $this->assignCategories();
-                    
-                    /*
-                    if (count($categories)==1) {
-                        $category = current($categories);
-                        $this->redirectTo('category', array('category'=>$category['id']));
-                    }
-                    */
                 }
 
                 $this->assign('placeholder', $this->getLocalizedString('MAP_SEARCH_PLACEHOLDER'));
@@ -724,6 +767,22 @@ JS;
                 }
 
                 break;
+            
+            case 'campus':
+                
+                $groupData = $this->getDataForGroup($this->feedGroup);
+                $this->assign('browseBy', $groupData['title']);
+                if ($this->numGroups > 1) {
+                    $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS_PLURAL');
+                    $clearLink = array(array(
+                        'title' => "All $groupAlias",
+                        'url' => $this->groupURL(''),
+                        ));
+                    $this->assign('clearLink', $clearLink);
+                }
+                
+                $categories = $this->assignCategories();
+                
             
             case 'bookmarks':
                 if (!$this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
@@ -910,12 +969,13 @@ JS;
                 $this->assign('tabKeys', $tabKeys);
                 $this->enableTabs($tabKeys, null, $tabJavascripts);
                 break;
-                
+            /*
             case 'fullscreen':
                 $dataController = $this->getDataController();
                 $dataController->selectPlacemark($this->featureIndex);
                 $this->initializeMap($dataController, true);
                 break;
+            */
         }
     }
 }

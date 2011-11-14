@@ -25,41 +25,51 @@ abstract class MapImageController
     protected $mapProjection = GEOGRAPHIC_PROJECTION; // projection to pass to map image generator
     protected $mapProjector;
 
-    protected $mapDevice;
+    public static function basemapClassForDevice(MapDevice $mapDevice, $params=array())
+    {
+        $isStatic = false;
+
+        if (isset($params['JS_MAP_CLASS']) && $mapDevice->pageSupportsDynamicMap()) {
+            $mapClass = $params['JS_MAP_CLASS'];
+
+        } elseif (isset($params['STATIC_MAP_CLASS'])) {
+            $mapClass = $params['STATIC_MAP_CLASS'];
+            $isStatic = true;
+
+        } elseif ($mapDevice->pageSupportsDynamicMap()) {
+            $mapClass = self::$DEFAULT_JS_MAP_CLASS;
+
+        } else {
+            $mapClass = self::$DEFAULT_STATIC_MAP_CLASS;
+            $isStatic = true;
+        }
+
+        return array($mapClass, $isStatic);
+    }
 
     public static function factory($params, MapDevice $mapDevice)
     {
         $baseURL = null;
-        $baseURLParam = 'STATIC_MAP_BASE_URL';
-
-        if (isset($params['JS_MAP_CLASS']) && $mapDevice->pageSupportsDynamicMap()) {
-            $imageClass = $params['JS_MAP_CLASS'];
-            $baseURLParam = 'DYNAMIC_MAP_BASE_URL';
-
-        } elseif (isset($params['STATIC_MAP_CLASS'])) {
-            $imageClass = $params['STATIC_MAP_CLASS'];
-
-        } elseif ($mapDevice->pageSupportsDynamicMap()) {
-            $imageClass = self::$DEFAULT_JS_MAP_CLASS;
-            $baseURLParam = 'DYNAMIC_MAP_BASE_URL';
-
-        } else {
-            $imageClass = self::$DEFAULT_STATIC_MAP_CLASS;
-        }
+        list($mapClass, $isStatic) = self::basemapClassForDevice($mapDevice, $params);
+        $baseURLParam = $isStatic ? 'STATIC_MAP_BASE_URL' : 'DYNAMIC_MAP_BASE_URL';
 
         if (isset($params[$baseURLParam])) {
             $baseURL = $params[$baseURLParam];
         }
 
         if ($baseURL !== null) {
-            $controller = new $imageClass($baseURL);
+            $baseMap = new $mapClass($baseURL);
         } else {
-            $controller = new $imageClass();
+            $baseMap = new $mapClass();
         }
 
-        $controller->init();
+        $baseMap->init();
 
-        return $controller;
+        if (isset($params['center'])) {
+            $baseMap->setCenter(filterLatLon($params['center']));
+        }
+
+        return $baseMap;
     }
 
     public function init()

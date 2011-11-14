@@ -128,25 +128,33 @@ var mapControls = {
         }
 
         var zoominButton = document.getElementById("zoomin");
-        zoominButton.onclick = args.zoomin;
+        if (zoominButton) {
+            zoominButton.onclick = args.zoomin;
+        }
 
         var zoomoutButton = document.getElementById("zoomout");
-        zoomoutButton.onclick = args.zoomout;
+        if (zoomoutButton) {
+            zoomoutButton.onclick = args.zoomout;
+        }
 
         var recenterButton = document.getElementById("recenter");
-        recenterButton.onclick = this.recenterMap;
+        if (recenterButton) {
+            recenterButton.onclick = this.recenterMap;
+        }
 
         this.locateMeButton = document.getElementById("locateMe");
-        if ("geolocation" in navigator && typeof(showUserLocation) != 'undefined') {
-            var that = this;
-            this.locateMeButton.onclick = function() {
-                that.toggleLocationUpdates();
-            };
-        } else {
-            this.locateMeButton.parentNode.removeChild(this.locateMeButton);
-            // realign other buttons
-            zoomoutButton.style.left = "35%";
-            recenterButton.style.left = "64%";
+        if (this.locateMeButton) {
+            if ("geolocation" in navigator && typeof(showUserLocation) != 'undefined') {
+                var that = this;
+                this.locateMeButton.onclick = function() {
+                    that.toggleLocationUpdates();
+                };
+            } else {
+                this.locateMeButton.parentNode.removeChild(this.locateMeButton);
+                // realign other buttons
+                zoomoutButton.style.left = "35%";
+                recenterButton.style.left = "64%";
+            }
         }
     }
 }
@@ -262,6 +270,31 @@ function clearUpdateMapDimensionsTimeouts() {
         window.clearTimeout(updateMapDimensionsTimeoutIds[i]);
     }
     updateMapDimensionsTimeoutIds = [];
+}
+
+function doUpdateContainerDimensions() {
+    var mapimage = document.getElementById("mapimage");
+    if (mapimage) {
+        var topoffset = findPosY(mapimage);
+        mapimage.style.height = (getWindowHeight() - topoffset) + "px";
+    }
+
+    if (typeof resizeMapOnContainerResize == 'function') {
+        resizeMapOnContainerResize();
+    }
+}
+
+function findPosY(obj) {
+// Function for finding the y coordinate of the object passed as an argument.
+// Returns the y coordinate as an integer, relative to the top left origin of the document.
+    var intCurlTop = 0;
+    if (obj.offsetParent) {
+        while (obj.offsetParent) {
+            intCurlTop += obj.offsetTop;
+            obj = obj.offsetParent;
+        }
+    }
+    return intCurlTop;
 }
 
 // Prevent firebombing the browser with Ajax calls on browsers which fire lots

@@ -50,5 +50,3 @@ function sortSucceeded(response) {
 function sortFailed(code, message) {
     // do nothing; leave content as is
 }
-
-
