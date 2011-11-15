@@ -11,24 +11,70 @@ class AthleticsWebModule extends WebModule {
     protected $showAuthor = false;
     protected $showLink = false;
     
+    protected function cleanContent($content) {
+        //deal with pre tags. strip out pre tags and add <br> for newlines
+        $bits = preg_split( '#(<pre.*?'.'>)(.*?)(</pre>)#s', $content, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $content = array_shift($bits);
+        $i=0;
+        while ($i<count($bits)) {
+            $tag = $bits[$i++];
+            $content .= nl2br($bits[$i++]);
+            $close = $bits[$i++];
+            $i++;
+        }
+    
+        return $content;
+    }
     
     protected function htmlEncodeFeedString($string) {
         return mb_convert_encoding($string, 'HTML-ENTITIES', $this->feed->getEncoding());
     }
     
-    public function linkForNewsItem($story) {
+    protected function getImageForStory($story) {
+        if ($this->showImages) {
+            $image = $story->getImage();
+            if ($image = $story->getImage()) {
+                return array(
+                    'src'    => $image->getURL(),
+                    'width'  => $image->getProperty('width'),
+                    'height' => $image->getProperty('height'),
+                );
+            } elseif ($image = $story->getChildElement('MEDIA:CONTENT')) {
+                return array(
+                    'src'    => $image->getAttrib('URL'),
+                    'width'  => $image->getAttrib('WIDTH'),
+                    'height' => $image->getAttrib('HEIGHT'),
+                );
+            }
+        }
+        return null;
+    }
+    
+    public function linkForNewsItem($story, $data = array()) {
         $pubDate = strtotime($story->getProperty("pubDate"));
         $date = date("M d, Y", $pubDate);
-        $image = $this->showImages ? $story->getImage() : false;
-        
+        $image = $this->getImageForStory($story);
+
         $link = array(
             'title'   => $this->htmlEncodeFeedString($story->getTitle()),
             'pubDate' => $date,
             'author'  => $this->htmlEncodeFeedString($story->getAuthor()),
             'subtitle'=> $this->htmlEncodeFeedString($story->getDescription()),
-            'img'     => $image ? $image->getURL() : ''
+            'img'     => $image && isset($image['src']) && $image['src'] ? $image['src'] : '',
         );
-        $link['url'] = $story->getProperty('link');
+        
+        if ($storyID = $story->getGUID()) {
+            $options = array(
+                'storyID'=>$storyID
+            );    
+            if (isset($data['section'])) {
+                $options['section'] = $data['section'];
+            }
+    
+            $link['url'] = $this->buildBreadcrumbURL('news_detail', $options, true);
+        } elseif ($url = $story->getProperty('link')) {
+            $link['url'] = $url;
+        }
         return $link;
     }
     
@@ -71,7 +117,7 @@ class AthleticsWebModule extends WebModule {
                 $feedData['TITLE'] = $sportData['TITLE'];
             }
             
-            switch ($type) {
+            switch (strtoupper($type)) {
                 case 'NEWS':
                     if (!isset($feedData['PARSER_CLASS'])) {
                         $feedData['PARSER_CLASS'] = 'RSSDataParser';
@@ -86,7 +132,6 @@ class AthleticsWebModule extends WebModule {
                 case 'SCORES':
                     break;
             }
-            
             $this->feed = AthleticsDataModel::factory('AthleticsDataModel', $feedData);
             return $this->feed;
         }
@@ -131,9 +176,12 @@ class AthleticsWebModule extends WebModule {
                     }
                 }
                 
+                $options = array(
+                    'section' => $section
+                );
                 $stories = array();
                 foreach ($items as $story) {
-                    $stories[] = $this->linkForNewsItem($story);
+                    $stories[] = $this->linkForNewsItem($story, $options);
                 }
 
                 $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
@@ -148,11 +196,51 @@ class AthleticsWebModule extends WebModule {
                 $this->assign('showPubDate',    $this->showPubDate);
                 $this->assign('showAuthor',     $this->showAuthor);
                 break;
+            case 'news_detail':
+                $section = $this->getArg('section');
+                $storyID = $this->getArg('storyID', false);
+                $storyPage = $this->getArg('storyPage', '0');
+                $feed = $this->getFeed($section, 'news');
                 
+                if (!$story = $feed->getItem($storyID)) {
+                    throw new KurogoUserException($this->getLocalizedString('ERROR_STORY_NOT_FOUND', $storyID));
+                }
+                $this->setLogData($storyID, $story->getTitle());
+        
+                if (!$content = $this->cleanContent($story->getProperty('content'))) {
+                  if ($url = $story->getProperty('link')) {
+                      header("Location: $url");
+                      exit();
+                  } else {
+                      throw new KurogoDataException($this->getLocalizedString('ERROR_CONTENT_NOT_FOUND', $storyID));
+                  }
+                }
+
+                if ($this->getOptionalModuleVar('SHARING_ENABLED', 1)) {
+                    $body = $story->getDescription()."\n\n".$story->getLink();
+                    $shareEmailURL = $this->buildMailToLink("", $story->getTitle(), $body);
+                    $this->assign('shareTitle', $this->getLocalizedString('SHARE_THIS_STORY'));
+                    $this->assign('shareEmailURL', $shareEmailURL);
+                    $this->assign('shareRemark',   $story->getTitle());
+                    $this->assign('storyURL',      $story->getLink());
+                }
+        
+                $pubDate = strtotime($story->getProperty("pubDate"));
+                $date = date("M d, Y", $pubDate);
+                
+                $this->enablePager($content, $this->feed->getEncoding(), $storyPage);
+                $this->assign('date',   $date);
+                $this->assign('title',  $this->htmlEncodeFeedString($story->getTitle()));
+                $this->assign('author', $this->htmlEncodeFeedString($story->getAuthor()));
+                $this->assign('image',  $this->getImageForStory($story));
+                $this->assign('link',   $story->getLink());
+                $this->assign('showLink', $this->showLink);
+                break;
             case 'scores':
                 break;
                 
             case 'schedule':
+                
                 break;
                 
             case 'sport':
