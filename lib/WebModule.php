@@ -1549,14 +1549,10 @@ abstract class WebModule extends Module {
     //
     // Subclass this function to set up variables for each native template page
     // Native template pages are called with no arguments
-    // Defaults to initializeForPage behavior
+    // Since initializeForPage usually fails when called with no arguments 
+    // this is empty by default
     //
     protected function initializeForNativeTemplatePage() {
-        try {
-            $this->initializeForPage();
-        } catch (Exception $e) {
-            // ignore errors from this since args won't be set
-        }
     }
     
     //
