@@ -1,6 +1,6 @@
 <?php
 /**
- * PhotoWebModule 
+ * PhotosWebModule 
  * 
  * @uses WebModule
  * @package 
@@ -11,7 +11,7 @@
 
 includePackage('Photo');
 
-class PhotoWebModule extends WebModule {
+class PhotosWebModule extends WebModule {
     protected static $defaultModel = 'PhotoDataModel';
     protected static $defaultController = 'PhotoDataController';
     protected $id = 'photo'; 
