@@ -5,17 +5,17 @@ require_once(LIB_DIR . '/Calendar/ICalendar.php');
 
 class Calendar 
 {
-    public static function getUserCalendarListController() {
+    public static function getUserCalendarListRetrievers() {
         return array(
             ''=>'-',
-            'GoogleAppsCalendarListController'=>'Google Apps'
+            'GoogleAppsCalendarListRetriever'=>'Google Apps'
         );
     }
 
-    public static function getResourceListController() {
+    public static function getResourceListRetrievers() {
         return array(
             ''=>'-',
-            'GoogleAppsCalendarListController'=>'Google Apps (Business or Education)'
+            'GoogleAppsCalendarListRetriever'=>'Google Apps (Business or Education)'
         );
     }
     
