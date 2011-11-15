@@ -11,8 +11,9 @@ class FlickrRetriever extends URLDataRetriever {
          * return feed type
          * available values:
          * rss2, atom, rss, rss091, rss_200_enc, rdf
+         * json, php_serial, php, csv are also available
          */
-        $this->addFilter('format', 'rss2');
+        $this->addFilter('format', 'php_serial');
     }
 
     public function search($searchTerms) {
@@ -26,18 +27,9 @@ class FlickrRetriever extends URLDataRetriever {
     }
 
     public function url() {
-        if ($tag = $this->getOption('tag')) {
-            $this->addFilter('category', $tag);
+        if ($id = $this->getOption('id')) {
+            $this->addFilter('id', $id);
         }
-
-        if ($author = $this->getOption('author')) {
-            $this->addFilter('author', $author);
-        }
-
-        if ($limit = $this->getOption('limit')) {
-            $this->addFilter('max-results', $limit);
-        }
-        $this->addFilter('start-index', $this->getOption('start')+1);
         return parent::url();
     }
 
@@ -61,64 +53,51 @@ class FlickrRetriever extends URLDataRetriever {
 
 class FlickrDataParser extends DataParser {
     protected function parseEntry($entry) {
-        if (isset($entry['video']['id'])) {
-            $entry = array_merge($entry, $entry['video']);
-        }
-        $video = new FlickrPhotoObject();
-        $video->setURL($entry['player']['default']);
-        if (isset($entry['content'][6])) {
-            $video->setStreamingURL($entry['content'][6]);
-        }
-        $video->setMobileURL($entry['content']['1']);
-        $video->setTitle($entry['title']);
-        $video->setDescription($entry['description']);
-        $video->setDuration($entry['duration']);
-        $video->setID($entry['id']);
-        $video->setImage($entry['thumbnail']['sqDefault']);
-        $video->setStillFrameImage($entry['thumbnail']['hqDefault']);
-
-        if (isset($entry['tags'])) {
-            $video->setTags($entry['tags']);
-        }
-        $video->setAuthor($entry['uploader']);
-        $published = new DateTime($entry['uploaded']);
-        $video->setPublished($published);
-        return $video;
+        $photo = new FlickrPhotoObject();
+        $photo->setID($entry['guid']);
+        $photo->setTitle($entry['title']);
+        $photo->setUrl($entry['url']);
+        $photo->setDescription($entry['description']);
+        $photo->setMUrl($entry['m_url']);
+        $photo->setTUrl($entry['t_url']);
+        $photo->setLUrl($entry['l_url']);
+        $photo->setPhotoUrl($entry['photo_url']);
+        $published = new DateTime();
+        $published->setTimestamp($entry['date']);
+        $photo->setPublished($published);
+        $photo->setDateTaken(new DateTime($entry['date_taken']));
+        $photo->setAuthorName($entry['author_name']);
+        $photo->setAuthorUrl($entry['author_url']);
+        $photo->setAuthorId($entry['author_nsid']);
+        $photo->setAuthorIcon($entry['author_icon']);
+        $photo->setHeight($entry['height']);
+        $photo->setWidth($entry['width']);
+        $photo->setTags($entry['tags']);
+        $photo->setMimeType($entry['photo_mime']);
+        return $photo;
     }
 
     public function parseData($data) {
-        if ($data = json_decode($data, true)) {
+        if ($data = unserialize($data)) {
 
-            if (isset($data['data']['items'])) {
-                $videos = array();  
-                $this->setTotalItems($data['data']['totalItems']);
+            if (isset($data['items'])) {
+                $photos = array();
+                $totalItems = count($data['items']);
+                $this->setTotalItems($totalItems);
 
-                foreach ($data['data']['items'] as $entry) {
-                    $videos[] = $this->parseEntry($entry);
+                foreach ($data['items'] as $entry) {
+                    $photos[] = $this->parseEntry($entry);
                 }
-
-                return $videos;
-            } elseif (isset($data['data']['id'])) {
-                $video = $this->parseEntry($data['data']);
-                return $video;
+                return $photos;
             } else {
                 return array();
             }
-        } 
+        }
 
         return array();
-
     }
 }
 
 class FlickrPhotoObject extends PhotoObject {
     protected $type = 'flickr';
-
-    public function canPlay(DeviceClassifier $deviceClassifier) {
-        if (in_array($deviceClassifier->getPlatform(), array('blackberry','bbplus'))) {
-            return $this->getStreamingURL();
-        }
-
-        return true;
-    }
 }

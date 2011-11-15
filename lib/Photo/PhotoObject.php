@@ -1,154 +1,158 @@
 <?php
 
 class PhotoObject implements KurogoObject {
-    protected $type;
     protected $id;
     protected $title;
-    protected $description;
-    protected $author;
-    protected $published;
+    /**
+     * url 
+     * photo url
+     * 
+     * @var mixed
+     * @access protected
+     */
     protected $url;
-    protected $image;
+    protected $description;
+    /**
+     * type 
+     * privider type name
+     * eg: flickr, picasa
+     * 
+     * @var string
+     * @access protected
+     */
+    protected $type;
+    protected $mime_type;
+    /**
+     * m_url 
+     * middle image url
+     * 
+     * @var string
+     * @access protected
+     */
+    protected $m_url;
+    /**
+     * t_url 
+     * small/thumb image url
+     * 
+     * @var string
+     * @access protected
+     */
+    protected $t_url;
+    /**
+     * l_url 
+     * large image url
+     * 
+     * @var string
+     * @access protected
+     */
+    protected $l_url;
+    /**
+     * photo_url 
+     * origin image url
+     *
+     * @var string
+     * @access protected
+     */
+    protected $photo_url;
+    /**
+     * date_taken 
+     * photo taken datetime
+     * 
+     * @var datetime
+     * @access protected
+     */
+    protected $date_taken;
+    protected $author_name;
+    protected $author_url;
+    protected $author_id;
+    protected $author_icon;
+    /**
+     * published 
+     * publish photo datetime
+     * 
+     * @var datetime
+     * @access protected
+     */
+    protected $published;
     protected $width;
     protected $height;
-    protected $duration;
     protected $tags;
-    protected $mobileURL;
-    protected $streamingURL;
-    protected $stillFrameImage;
     
-    public function getType() {
-        return $this->type;
+    /**
+     * __call 
+     * handle all standard set/get functions
+     * 
+     * @param mixed $name 
+     * @param mixed $args 
+     * @access public
+     * @return mixed
+     */
+    public function __call($name, $args) {
+        $action = substr($name, 0, 3);
+        $do = $this->camelDown(substr($name, 3));
+        if(!$do) {
+            return false;
+        }
+        if($action == 'get') {
+            if($this->$do === null) {
+                return '';
+            }
+            return $this->$do;
+        }
+        if($action == 'set') {
+            $this->$do = $args[0];
+        }
+        return false;
     }
-    
-    public function setID($id) {
-        $this->id = $id;
+
+    protected function camelDown($name) {
+        $lowercase = strtolower($name);
+        if(property_exists($this, $lowercase)) {
+            return $lowercase;
+        }
+        $words = array();
+        $word = '';
+        for($i = 0;$i < strlen($name);$i ++) {
+            // if upper case, previous is a word
+            if(ord($name[$i]) < 97) {
+                if(strlen($word)) {
+                    $words[] = strtolower($word);
+                }
+                $word = $name[$i];
+            }else {
+                // new word starts
+                $word .= $name[$i];
+            }
+            // if this is the last character, it is a word too
+            if($i == (strlen($name) - 1)) {
+                $words[] = strtolower($word);
+            }
+        }
+        return implode($words, '_');
     }
 
     public function getID() {
         return $this->id;
     }
-    
+
+    public function setDateTaken(DateTime $date) {
+        $this->date_taken = $date;
+    }
+
+    public function setPublished(DateTime $date) {
+        $this->published = $date;
+    }
+
     public function filterItem($filters) {
         foreach ($filters as $filter=>$value) {
-            switch ($filter)
-            {
+            switch ($filter) {
                 case 'search':
-                    return  (stripos($this->getTitle(), $value)!==FALSE) ||
-                            (stripos($this->getDescription(), $value)!==FALSE);
+                    return (stripos($this->getTitle(), $value)!==FALSE) ||
+                        (stripos($this->getDescription(), $value)!==FALSE);
                     break;
             }
-        }   
-        
-        return true;     
-    }
-    
-    public function setTitle($title) {
-        $this->title = $title;
-    }
-    
-    public function getTitle() {
-        return $this->title;
-    }
-    
-    public function getAuthor() {
-        return $this->author;
-    }
+        }
 
-    public function setAuthor($author) {
-        $this->author = $author;
-    }
-    
-    public function setDescription($description) {
-        $this->description = $description;
-    }
-    
-    public function getDescription() {
-        return $this->description;
-    }
-
-    public function setPublished(DateTime $published) {
-        $this->published = $published;
-    }
-
-    public function getPublished() {
-        return $this->published;
-    }
-
-    public function setURL($url) {
-        $this->url = $url;
-    }
-    
-    public function getURL() {
-        return $this->url;
-    }
-
-    public function setMobileURL($url) {
-        $this->mobileURL = $url;
-    }
-    
-    public function getMobileURL() {
-        return $this->mobileURL;
-    }
-
-    public function setStreamingURL($url) {
-        $this->streamingURL = $url;
-    }
-
-    public function getStreamingURL() {
-        return $this->streamingURL;
-    }
-
-    public function setImage($image) {
-        $this->image = $image;
-    }
-    
-    public function getImage() {
-        return $this->image;
-    }
-
-    public function setWidth($width) {
-        $this->width = $width;
-    }
-    
-    public function getWidth() {
-        return $this->width;
-    }
-
-    public function setHeight($height) {
-        $this->height = $height;
-    }
-    
-    public function getHeight() {
-        return $this->height;
-    }
-
-    public function setDuration($duration) {
-        $this->duration = $duration;
-    }
-    
-    public function getDuration() {
-        return $this->duration;
-    }
-
-    public function setTags($tags) {
-        $this->tags = $tags;
-    }
-    
-    public function getTags() {
-        return $this->tags;
-    }
-    
-    public function setStillFrameImage($imageURL) {
-        $this->stillFrameImage = $imageURL;
-    }
-        
-    public function getStillFrameImage() {
-        return $this->stillFrameImage;
-    }
-
-    /* subclasses should return true or false based on pagetype, platform */    
-    public function canPlay(DeviceClassifier $deviceClassifier) {
         return true;
     }
 }

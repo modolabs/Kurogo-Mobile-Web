@@ -63,8 +63,9 @@ class PhotoWebModule extends WebModule {
          * get controller based on $section
          */
         $controller = $this->getFeed($section);
-
-        var_dump($controller);
+        $title = $controller->getTitle();
+        $items = $controller->items();
+        var_dump($items);
         exit;
 
         switch($this->page) {

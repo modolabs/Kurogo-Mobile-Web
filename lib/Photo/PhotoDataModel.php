@@ -14,13 +14,12 @@ class PhotoDataModel extends ItemListDataModel {
     
     protected function init($args) {
         parent::init($args);
-
         if (isset($args['TAG']) && strlen($args['TAG'])) {
             $this->setOption('tag', $args['TAG']);
         }
         
-        if (isset($args['AUTHOR']) && strlen($args['AUTHOR'])) {
-            $this->setOption('author', $args['AUTHOR']);
+        if (isset($args['ID']) && strlen($args['ID'])) {
+            $this->setOption('id', $args['ID']);
         }
     }
 }
