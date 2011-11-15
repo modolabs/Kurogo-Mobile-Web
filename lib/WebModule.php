@@ -1352,13 +1352,28 @@ abstract class WebModule extends Module {
       $this->assign('moduleNavList', $this->getModuleNavlist());
     }
     
-    Kurogo::log(LOG_DEBUG,"Calling initializeForPage for $this->configModule - $this->page", 'module');
-    if (KurogoNativeTemplates::isNativeTemplateCall() || KurogoNativeTemplates::isNativeInlineAssetCall()) {
+    if ($this->page == '__nativeWebTemplates') {
+        $title = 'Success!';
+        $message = 'Generated native web templates';
+        try {
+            $this->buildNativeWebTemplates();
+        } catch (Exception $e) {
+            $title = 'Error!';
+            $message = $e->getMessage();
+        }
+        $this->assign('contentTitle', $title);
+        $this->assign('contentBody', $message);
+      
+    } else if (KurogoNativeTemplates::isNativeTemplateCall() || KurogoNativeTemplates::isNativeInlineAssetCall()) {
+        Kurogo::log(LOG_DEBUG,"Calling initializeForNativeTemplatePage for $this->configModule - $this->page", 'module');
         $this->initializeForNativeTemplatePage(); //subclass behavior
+        Kurogo::log(LOG_DEBUG,"Returned from initializeForNativeTemplatePage for $this->configModule - $this->page", 'module');
+        
     } else {
+        Kurogo::log(LOG_DEBUG,"Calling initializeForPage for $this->configModule - $this->page", 'module');
         $this->initializeForPage(); //subclass behavior
+        Kurogo::log(LOG_DEBUG,"Returned from initializeForPage for $this->configModule - $this->page", 'module');
     }
-    Kurogo::log(LOG_DEBUG,"Returned from initializeForPage for $this->configModule - $this->page", 'module');
 
     // Set variables for each page
     $this->assign('pageTitle', $this->pageTitle);
@@ -1389,6 +1404,9 @@ abstract class WebModule extends Module {
       $this->assign('hasHelp', false);
       $template = 'common/templates/'.$this->page;
       
+    } else if ($this->page == '__nativeWebTemplates') {
+        $template = 'common/templates/staticContent';
+    
     } else if ($this->pagetype == 'native' && !$this->ajaxContentLoad) {
       // Native page wrapper
       $template = 'common/templates/nativeTemplate';
@@ -1463,6 +1481,30 @@ abstract class WebModule extends Module {
     return $template;
   }
 
+  protected function buildNativeWebTemplates() {
+    if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1') {
+      throw new KurogoConfigurationException("{$this->page} command can only be run from localhost");
+    }
+
+    $pages = array_keys($this->getModuleSections('pages'));
+    if (!$pages) {
+      throw new KurogoConfigurationException("module does not have any pages defined in pages.ini");
+    }
+    
+    $platform = $this->getArg('platform', 'unknown');
+    $path = $this->getArg('path', null);
+    
+    $rewriter = new KurogoNativeTemplates($platform, $this->configModule, $path);
+    foreach ($pages as $page) {
+      $rewriter->saveTemplatePage($page);
+    }
+    
+    $nativeConfig = $this->getOptionalModuleSection('native_template');
+    if ($nativeConfig && $nativeConfig['additional_assets']) {
+        $rewriter->saveAssets($nativeConfig['additional_assets']);
+    }
+  }
+
   //
   // Display page
   //
@@ -1507,8 +1549,14 @@ abstract class WebModule extends Module {
     //
     // Subclass this function to set up variables for each native template page
     // Native template pages are called with no arguments
+    // Defaults to initializeForPage behavior
     //
     protected function initializeForNativeTemplatePage() {
+        try {
+            $this->initializeForPage();
+        } catch (Exception $e) {
+            // ignore errors from this since args won't be set
+        }
     }
     
     //

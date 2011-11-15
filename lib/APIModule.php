@@ -247,11 +247,7 @@ abstract class APIModule extends Module
     $this->loadResponseIfNeeded();
     $this->loadSiteConfigFile('strings');
 
-    if ($this->command == 'nativeBuild') {
-      $this->initializeForNativeBuild();
-    } else {
-      $this->initializeForCommand();
-    }
+    $this->initializeForCommand();
     
     $json = $this->response->getJSONOutput();
     $size = strlen($json);
@@ -261,33 +257,6 @@ abstract class APIModule extends Module
     header("Content-Length: " . $size);
     echo $json;
     exit();
-  }
-  
-  protected function initializeForNativeBuild() {
-    if ($_SERVER['REMOTE_ADDR'] != '127.0.0.1' && $_SERVER['REMOTE_ADDR'] != '::1') {
-      throw new KurogoConfigurationException("{$this->command} command can only be run from localhost");
-    }
-
-    $pages = array_keys($this->getModuleSections('pages'));
-    if (!$pages) {
-      throw new KurogoConfigurationException("module does not have any pages defined in pages.ini");
-    }
-    
-    $platform = $this->getArg('platform', 'unknown');
-    $path = $this->getArg('path', null);
-    
-    $rewriter = new KurogoNativeTemplates($platform, $this->configModule, $path);
-    foreach ($pages as $page) {
-      $rewriter->saveTemplatePage($page);
-    }
-    
-    $nativeConfig = $this->getOptionalModuleSection('native_template');
-    if ($nativeConfig && $nativeConfig['additional_assets']) {
-        $rewriter->saveAssets($nativeConfig['additional_assets']);
-    }
-
-    $this->setResponse(1);
-    $this->setResponseVersion(1);
   }
   
   protected function logCommand($size=null) {
