@@ -22,6 +22,10 @@ class PhotosDataModel extends ItemListDataModel {
             $this->setOption('id', $args['ID']);
         }
 
+        if (isset($args['SETID']) && strlen($args['SETID'])) {
+            $this->setOption('setid', $args['SETID']);
+        }
+
         /**
          * use type to let retriever know which api will be use
          */

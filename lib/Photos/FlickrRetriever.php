@@ -14,11 +14,28 @@ class FlickrRetriever extends URLDataRetriever {
 
     public function url() {
         $type = $this->getOption('type');
-        if($type == 'user') {
-            $this->setBaseUrl('http://api.flickr.com/services/feeds/photos_public.gne');
-        }
-        if($type == 'group') {
-            $this->setBaseUrl('http://api.flickr.com/services/feeds/groups_pool.gne');
+        switch($type) {
+            case 'user':
+                $this->setBaseUrl('http://api.flickr.com/services/feeds/photos_public.gne');
+                if ($id = $this->getOption('id')) {
+                    $this->addFilter('id', $id);
+                }
+                break;
+            case 'group':
+                $this->setBaseUrl('http://api.flickr.com/services/feeds/groups_pool.gne');
+                if ($id = $this->getOption('id')) {
+                    $this->addFilter('id', $id);
+                }
+                break;
+            case 'set':
+                $this->setBaseUrl('http://api.flickr.com/services/feeds/photoset.gne');
+                if ($id = $this->getOption('id')) {
+                    $this->addFilter('nsid', $id);
+                }
+                if ($setid = $this->getOption('setid')) {
+                    $this->addFilter('set', $setid);
+                }
+                break;
         }
 
         /**
@@ -28,9 +45,6 @@ class FlickrRetriever extends URLDataRetriever {
          * json, php_serial, php, csv are also available
          */
         $this->addFilter('format', 'php_serial');
-        if ($id = $this->getOption('id')) {
-            $this->addFilter('id', $id);
-        }
         return parent::url();
     }
 }
