@@ -1,6 +1,6 @@
 <?php
 
-abstract class KurogoCache {
+abstract class KurogoMemoryCache {
 
     // master default should be short
 	protected $ttl=60; 
@@ -26,8 +26,8 @@ abstract class KurogoCache {
 
         $cacheClass = new $cacheType;
         
-        if (!$cacheClass instanceOf KurogoCache) {
-            throw new KurogoConfigurationException("$cacheType is not a subclass of KurogoCache");
+        if (!$cacheClass instanceOf KurogoMemoryCache) {
+            throw new KurogoConfigurationException("$cacheType is not a subclass of KurogoMemoryCache");
         }
 
         $cacheClass->init($args);

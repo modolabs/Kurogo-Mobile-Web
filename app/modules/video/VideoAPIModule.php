@@ -7,6 +7,9 @@ class VideoAPIModule extends APIModule {
     protected $vmin = 1;
     protected $vmax = 1;
     protected $feeds = array();
+    protected $legacyController = false;
+    protected static $defaultModel = 'VideoDataModel';
+    protected static $defaultController = 'VideoDataController';
 
     protected function arrayFromVideo($video) {
         return array(
@@ -31,11 +34,23 @@ class VideoAPIModule extends APIModule {
     protected function getFeed($feed=null) {
         $feed = isset($this->feeds[$feed]) ? $feed : $this->getDefaultSection();
         $feedData = $this->feeds[$feed];
-        
-        $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+        try {
+            if (isset($feedData['CONTROLLER_CLASS'])) {
+                $modelClass = $feedData['CONTROLLER_CLASS'];
+            } else {
+                $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            }
+            
+            $controller = VideoDataModel::factory($modelClass, $feedData);
+        } catch (KurogoException $e) { 
+            $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $this->legacyController = true;
+        }
+
         return $controller;
     }
-    
+
     protected function getDefaultSection() {
         return key($this->feeds);
     }
@@ -53,18 +68,30 @@ class VideoAPIModule extends APIModule {
             // videos commands requires one argument: section.
             // search requires two arguments: section and q (query).
             $section = $this->getArg('section');
-            $query = $this->getArg('q');                
 
             $controller = $this->getFeed($section);
-            $totalItems = $controller->getTotalItems();
             $videos = array();
 
             // TODO: this isn't the right place to hard code paging limits
+
             if ($this->command == 'search') {
-                $items = $controller->search($query, 0, 20);
+                $limit = 20;
+                $query = $this->getArg('q');                
+                if ($this->legacyController) {
+                    $items = $controller->search($query, 0, $limit);
+                } else {
+                    $controller->setLimit($limit);
+                    $items = $controller->search($query);
+                }
             }
             else {
-                $items = $controller->items(0, 50);
+                $limit = 50;
+                if ($this->legacyController) {
+                    $items = $controller->items(0, 50);
+                } else {
+                    $controller->setLimit($limit);
+                    $items = $controller->items();
+                }
             }
 
             foreach ($items as $video) {

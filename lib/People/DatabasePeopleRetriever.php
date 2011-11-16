@@ -1,0 +1,230 @@
+<?php
+/**
+  * @package People
+  */
+
+/**
+  * @package People
+  */
+class DatabasePeopleRetriever extends DatabaseDataRetriever implements PeopleRetriever {
+    protected $DEFAULT_PARSER_CLASS = 'DatabasePeopleParser';
+    protected $table;
+    protected $fieldMap=array();
+    protected $personClass = 'DatabasePerson';
+    protected $sortFields=array('lastname','firstname');
+    protected $attributes = array();
+    protected $supportsSearch = true;
+
+    public function debugInfo() {
+        return sprintf("Using Database");
+    }
+    
+    public function getCacheKey() {
+        return false;
+    }
+    
+    protected function buildSearchQuery($searchString) {
+        $sql = "";
+        $parameters = array();
+
+        if (empty($searchString)) {
+            $this->errorMsg = "Query was blank";
+            return;
+        } elseif (Validator::isValidEmail($searchString)) {
+            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('email'));
+            $parameters = array('%'.$searchString.'%');
+        } elseif ($this->getField('phone') && Validator::isValidPhone($searchString, $phone_bits)) {
+            array_shift($phone_bits);
+            $searchString = implode("", $phone_bits); // remove any separators. This might be an issue for people with formatted numbers in their directory
+            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('phone'));
+            $parameters = array($searchString.'%');
+        } elseif ($this->getField('phone') && preg_match('/^[0-9]+/', $searchString)) { //partial phone number
+            $sql = sprintf("SELECT %s FROM %s WHERE %s LIKE ?", '*', $this->table, $this->getField('phone'));
+            $parameters = array($searchString.'%');
+        } elseif (preg_match('/[A-Za-z]+/', $searchString)) { // assume search by name
+
+            $names = preg_split("/\s+/", $searchString);
+            $nameCount = count($names);
+            $where = array();
+
+            switch ($nameCount)
+            {
+                case 1:
+                    //try first name, last name and email
+                    $where = sprintf("(%s LIKE ? OR %s LIKE ? OR %s LIKE ?)", $this->getField('firstname'), $this->getField('lastname'), $this->getField('email'));
+                    $parameters = array($searchString.'%', $searchString.'%', '%'.$searchString.'%');
+                    break;
+                case 2:
+                    $where = sprintf("((%s LIKE ? AND %s LIKE ?) OR (%s LIKE ? AND %s LIKE ?))",
+                        $this->getField('firstname'), $this->getField('lastname'),
+                        $this->getField('lastname'), $this->getField('firstname')
+                    );
+                        
+                    $parameters = array($names[0].'%', $names[1].'%', $names[0].'%', $names[1].'%');
+                    break;                
+                    
+                default:
+                    // Either the first word is the first name, or it's a title and the 
+                    // second word is the first name.
+                    $possibleFirstNames = array($names[0], $names[1]);
+                    
+                    // Either the last word is the last name, or the last two words taken
+                    // together are the last name.
+                    $possibleLastNames = array($names[$nameCount - 1],
+                                               $names[$nameCount - 2] . " " . $names[$nameCount - 1]);
+
+                    
+                    $parameters = array();
+                    foreach ($possibleFirstNames as $i => $firstName) {
+                        foreach ($possibleLastNames as $j => $lastName) {
+                            $where[] = sprintf("(%s LIKE ? AND %s LIKE ?)", $this->getField('firstname'), $this->getField('lastname'));
+                            $parameters[] = $firstName;
+                            $parameters[] = $lastName;
+                        }
+                    }
+
+                    $where = implode(" OR ", $where);
+            }
+
+            $sql = sprintf("SELECT %s FROM %s WHERE %s ORDER BY %s", '*', $this->table, $where, implode(",", array_map(array($this,'getField'),$this->sortFields)));
+            
+
+        } else {
+            $this->errorMsg = "Invalid query";
+            return false;
+        }    
+
+        return array($sql, $parameters);
+    }
+    
+    public function search($searchString) {
+
+        $this->setQuery($this->buildSearchQuery($searchString));
+        $response = $this->getData();
+        $response->setContext('fieldMap',$this->fieldMap);
+        $response->setContext('mode','search');
+        $response->setContext('value', $searchString);
+        return $response;
+    }
+    
+    protected function getField($_field) {
+        if (array_key_exists($_field, $this->fieldMap)) {
+            return $this->fieldMap[$_field];
+        }
+
+        return $_field;
+    }
+    
+    protected function buildUserQuery($id) {
+        $sql = sprintf("SELECT %s FROM %s WHERE %s=?", '*', $this->table, $this->getField('userid'));
+        $parameters = array($id);
+        
+        return array($sql, $parameters);
+    }
+
+    /* returns a person object on success
+    * FALSE on failure
+    */
+    public function getUser($id) {
+        $this->setQuery($this->buildUserQuery($id));
+        $response = $this->getData();
+        $response->setContext('fieldMap',$this->fieldMap);
+        $response->setContext('mode','user');
+        $response->setContext('value', $id);
+        return $response;
+    }
+
+    public function setAttributes($attributes) {
+        $this->attributes = $attributes;
+    }
+
+    protected function init($args) {
+        parent::init($args);
+        
+        if (isset($args['SORTFIELDS']) && is_array($args['SORTFIELDS'])) {
+            $this->sortFields = $args['SORTFIELDS'];
+        }
+                        
+        $this->table = isset($args['DB_USER_TABLE']) ? $args['DB_USER_TABLE'] : 'users';
+
+        $this->fieldMap = array(
+            'userid'=>isset($args['DB_USERID_FIELD']) ? $args['DB_USERID_FIELD'] : 'userID',
+            'email'=>isset($args['DB_EMAIL_FIELD']) ? $args['DB_EMAIL_FIELD'] : 'email',
+            'firstname'=>isset($args['DB_FIRSTNAME_FIELD']) ? $args['DB_FIRSTNAME_FIELD'] : 'firstname',
+            'lastname'=>isset($args['DB_LASTNAME_FIELD']) ? $args['DB_LASTNAME_FIELD'] : 'lastname',
+            'phone'=>isset($args['DB_PHONE_FIELD']) ? $args['DB_PHONE_FIELD'] : ''
+        );
+    }
+}
+
+class DatabasePeopleParser extends PeopleDataParser
+{
+    protected $personClass = 'DatabasePerson';
+    
+    public function parseData($data) {
+        throw new KurogoException("Parse data not supported");
+    }
+        
+    public function parseResponse(DataResponse $response) {
+
+        $result = $response->getResponse();    
+        if (!$result instanceOf PDOStatement) {
+            return false;
+        }
+
+        $fieldMap = $response->getContext('fieldMap');
+        
+        switch ($response->getContext('mode')) {
+            case 'search':
+                $results = array();
+                while ($row = $result->fetch()) {
+                    $person = new $this->personClass();
+                    $person->setFieldMap($fieldMap);
+                    $person->setAttributes($row);
+                    $results[] = $person;
+                }
+                
+                return $results;
+                break;
+                
+            case 'user':
+                $person = false;
+                if ($row = $result->fetch()) {
+                    $person = new $this->personClass();
+                    $person->setFieldMap($fieldMap);
+                    $person->setAttributes($row);
+                }
+                
+                $result->closeCursor();
+                            
+                return $person;
+        }
+
+    }
+}
+
+class DatabasePerson extends Person 
+{
+    protected $fieldMap = array();
+    
+    public function setFieldMap(array $fieldMap) {
+        $this->fieldMap = $fieldMap;
+    }
+    
+    public function getName() {
+    	return sprintf("%s %s", 
+    			$this->getField($this->fieldMap['firstname']), 
+    			$this->getField($this->fieldMap['lastname']));
+    }
+
+    public function getId() {
+        return $this->getField(strtolower($this->fieldMap['userid']));
+    }
+
+    public function setAttributes($data) {
+        foreach ($data as $field=>$value) {
+            $this->attributes[strtolower($field)] = $value;
+        }
+    }    
+
+}

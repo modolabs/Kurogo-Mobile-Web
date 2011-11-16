@@ -11,17 +11,41 @@ class EmergencyWebModule extends WebModule
     protected function initialize() {
         $config = $this->loadFeedData();
         
-        if (isset($config['contacts'])) {
-          $this->contactsController = DataController::factory($config['contacts']['CONTROLLER_CLASS'], $config['contacts']);
+        if(isset($config['contacts'])) {
+
+            try {
+                if (isset($config['contacts']['CONTROLLER_CLASS'])) {
+                    $modelClass = $config['contacts']['CONTROLLER_CLASS'];
+                } else {
+                    $modelClass = isset($config['contacts']['MODEL_CLASS']) ? $config['contacts']['MODEL_CLASS'] : 'EmergencyContactsDataModel';
+                }
+                
+                $this->contactsController = EmergencyContactsDataModel::factory($modelClass, $config['contacts']);
+            } catch (KurogoException $e) { 
+                $this->contactsController = DataController::factory($config['contacts']['CONTROLLER_CLASS'], $config['contacts']);
+            }
+            
         }
         
-        if (isset($config['notice'])) {
-          $this->emergencyNoticeController = DataController::factory($config['notice']['CONTROLLER_CLASS'], $config['notice']);
-        }        
+        if(isset($config['notice'])) {
+            try {
+                if (isset($config['notice']['CONTROLLER_CLASS'])) {
+                    $modelClass = $config['notice']['CONTROLLER_CLASS'];
+                } else {
+                    $modelClass = isset($config['notice']['MODEL_CLASS']) ? $config['notice']['MODEL_CLASS'] : 'EmergencyNoticeDataModel';
+                }
+            
+                $this->emergencyNoticeController = EmergencyNoticeDataModel::factory($modelClass, $config['notice']);
+            } catch (KurogoException $e) { 
+                $this->emergencyNoticeController = DataController::factory($config['notice']['CONTROLLER_CLASS'], $config['notice']);
+            }
+        }    
+                
     }
 
     protected function initializeForPage() {
-        
+        // construct controllers
+
         switch($this->page) {
             case 'pane':
                 $hasEmergencyFeed = ($this->emergencyNoticeController !== NULL);

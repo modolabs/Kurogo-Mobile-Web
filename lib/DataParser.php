@@ -7,17 +7,33 @@
  * A generic class to handle the parsing of external data
  * @package ExternalData
  */
+includePackage('DataParser');
 abstract class DataParser
 {
     abstract public function parseData($data);
+    
     const PARSE_MODE_STRING=1;
     const PARSE_MODE_FILE=2;
+    const PARSE_MODE_RESPONSE=3;
     protected $encoding='utf-8';
-    protected $parseMode=self::PARSE_MODE_STRING;
+    protected $parseMode=self::PARSE_MODE_RESPONSE;
     protected $debugMode=false;
     protected $totalItems = null;
     protected $haltOnParseErrors = true;
     protected $dataController;
+    protected $options = array();
+
+    public function setOption($option, $value) {
+        $this->options[$option] = $value;
+    }
+
+    public function getOption($option) {
+        return isset($this->options[$option]) ? $this->options[$option] : null;
+    }
+    
+    public function parseResponse(DataResponse $response) {
+        return $this->parseData($response->getResponse());
+    }
     
     public function getParseMode() {
         return $this->parseMode;
@@ -27,7 +43,7 @@ abstract class DataParser
         return $this->totalItems;
     }
 
-    public function setDataController(DataController $dataController) {
+    public function setDataController($dataController) {
         $this->dataController = $dataController;
     }
 
@@ -62,6 +78,9 @@ abstract class DataParser
         }
         
         $this->setDebugMode(Kurogo::getSiteVar('DATA_DEBUG'));
+
+        $cacheClass = isset($args['CACHE_CLASS']) ? $args['CACHE_CLASS'] : 'DataCache';
+        $this->cache = DataCache::factory($cacheClass, $args);
     }
 
     public function setDebugMode($debugMode) {
@@ -78,6 +97,9 @@ abstract class DataParser
 
     public function parseFile($filename) {
         return $this->parseData(file_get_contents($filename));
+    }
+
+    public function clearInternalCache() {
     }
     
 }

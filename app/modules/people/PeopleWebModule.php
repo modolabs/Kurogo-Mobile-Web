@@ -14,14 +14,16 @@ if (!function_exists('mb_convert_encoding')) {
   * @subpackage People
   */
 class PeopleWebModule extends WebModule {
+    protected static $defaultModel = 'PeopleDataModel';
+    protected static $defaultController = 'LDAPPeopleController'; //legacy
     protected $id = 'people';
     protected $detailFields = array();
     protected $detailAttributes = array();
-    protected $defaultController = 'LDAPPeopleController';
     protected $encoding = 'UTF-8';
     protected $feeds=array();
     protected $contactGroups = array();
     protected $controllers = array();
+    protected $legacyController = true;
 
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -173,10 +175,20 @@ class PeopleWebModule extends WebModule {
         
         if (isset($this->feeds[$index])) {
             $feedData = $this->feeds[$index];
-            if (!isset($feedData['CONTROLLER_CLASS'])) {
-                $feedData['CONTROLLER_CLASS'] = $this->defaultController;
+            
+            try {
+                if (isset($feedData['CONTROLLER_CLASS'])) {
+                    $modelClass = $feedData['CONTROLLER_CLASS'];
+                } else {
+                    $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+                }
+                
+                $controller = PeopleDataModel::factory($modelClass, $feedData);
+            } catch (KurogoException $e) { 
+                $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+                $this->legacyController = true;
             }
-            $controller = PeopleController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            
             $controller->setAttributes($this->detailAttributes);
             $this->controllers[$index] = $controller;
             return $controller;
@@ -259,7 +271,7 @@ class PeopleWebModule extends WebModule {
         
             case 'detail':
                 if ($uid = $this->getArg('uid')) {
-                    $person = $PeopleController->lookupUser($uid);
+                    $person = $PeopleController->getUser($uid);
           
                     if ($person) {
                     
@@ -278,7 +290,7 @@ class PeopleWebModule extends WebModule {
                         $this->assign('personDetails', $personDetails);
                         break;
                     } else {
-                        $this->assign('searchError', $PeopleController->getError());
+                        $this->assign('searchError', $PeopleController->getResponseError());
                     }          
                 } else {
                     $this->assign('searchError', 'No username specified');
@@ -293,7 +305,7 @@ class PeopleWebModule extends WebModule {
           
                     $this->setLogData($searchTerms);
                     $people = $this->searchItems($searchTerms);
-                    $this->assign('searchError', $PeopleController->getError());
+                    $this->assign('searchError', $PeopleController->getResponseError());
 
                     if ($people !== false) {
                         $resultCount = count($people);
@@ -322,7 +334,7 @@ class PeopleWebModule extends WebModule {
                         }
                       
                     } else {
-                        $this->assign('searchError', $PeopleController->getError());
+                        $this->assign('searchError', $PeopleController->getResponseError());
                     }
                 } else {
                   $this->redirectTo('index');
