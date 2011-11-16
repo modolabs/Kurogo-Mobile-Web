@@ -4,8 +4,22 @@ class FlickrRetriever extends URLDataRetriever {
     protected $DEFAULT_PARSER_CLASS = 'FlickrDataParser';
     protected $supportsSearch = true;
 
-    private function setStandardFilters() {
-        $this->setBaseUrl('http://api.flickr.com/services/feeds/photos_public.gne');
+    public function search($searchTerms) {
+        return $this->getData();
+    }
+
+    protected function init($args) {
+        parent::init($args);
+    }
+
+    public function url() {
+        $type = $this->getOption('type');
+        if($type == 'user') {
+            $this->setBaseUrl('http://api.flickr.com/services/feeds/photos_public.gne');
+        }
+        if($type == 'group') {
+            $this->setBaseUrl('http://api.flickr.com/services/feeds/groups_pool.gne');
+        }
 
         /**
          * return feed type
@@ -14,72 +28,67 @@ class FlickrRetriever extends URLDataRetriever {
          * json, php_serial, php, csv are also available
          */
         $this->addFilter('format', 'php_serial');
-    }
-
-    public function search($searchTerms) {
-        $this->setStandardFilters();
-        return $this->getData();
-    }
-
-    protected function init($args) {
-        $this->setStandardFilters();
-        parent::init($args);
-    }
-
-    public function url() {
         if ($id = $this->getOption('id')) {
             $this->addFilter('id', $id);
         }
         return parent::url();
     }
-
-    protected function isValidID($id) {
-        return preg_match("/^[A-Za-z0-9_-]+$/", $id);
-    }
-
-    // retrieves photo
-    public function getItem($id) {
-        if (!$this->isValidID($id)) {
-            return false;
-        }
-        $this->setBaseUrl("http://gdata.youtube.com/feeds/mobile/videos/$id");
-        $this->addFilter('alt', 'jsonc'); //set the output format to json
-        $this->addFilter('format', 6); //only return mobile videos
-        $this->addFilter('v', 2); // version 2
-
-        return $this->getParsedData();
-    }
 }
 
 class FlickrDataParser extends DataParser {
+    /**
+     * fillWith 
+     * fill object with array value
+     * the purpose is to make sure the array has the specified key
+     * 
+     * @param mixed $object 
+     * @param mixed $func 
+     * @param mixed $array 
+     * @param mixed $key 
+     * @access protected
+     * @return void
+     */
+    protected function fillWith($object, $func, $value, $key = false) {
+        if($key) {
+            if(!array_key_exists($key, $value)) {
+                return false;
+            }
+            return $object->$func($value[$key]);
+        }else {
+            return $object->$func($value);
+        }
+    }
     protected function parseEntry($entry) {
         $photo = new FlickrPhotoObject();
-        $photo->setID($entry['guid']);
-        $photo->setTitle($entry['title']);
-        $photo->setUrl($entry['url']);
-        $photo->setDescription($entry['description']);
-        $photo->setMUrl($entry['m_url']);
-        $photo->setTUrl($entry['t_url']);
-        $photo->setLUrl($entry['l_url']);
-        $photo->setPhotoUrl($entry['photo_url']);
-        $published = new DateTime();
-        $published->setTimestamp($entry['date']);
-        $photo->setPublished($published);
-        $photo->setDateTaken(new DateTime($entry['date_taken']));
-        $photo->setAuthorName($entry['author_name']);
-        $photo->setAuthorUrl($entry['author_url']);
-        $photo->setAuthorId($entry['author_nsid']);
-        $photo->setAuthorIcon($entry['author_icon']);
-        $photo->setHeight($entry['height']);
-        $photo->setWidth($entry['width']);
-        $photo->setTags($entry['tags']);
-        $photo->setMimeType($entry['photo_mime']);
+        $this->fillWith($photo, 'setID', $entry, 'guid');
+        $this->fillWith($photo, 'setTitle', $entry, 'title');
+        $this->fillWith($photo, 'setUrl', $entry, 'url');
+        $this->fillWith($photo, 'setDescription', $entry, 'description');
+        $this->fillWith($photo, 'setMUrl', $entry, 'm_url');
+        $this->fillWith($photo, 'setTUrl', $entry, 't_url');
+        $this->fillWith($photo, 'setLUrl', $entry, 'l_url');
+        $this->fillWith($photo, 'setPhotoUrl', $entry, 'photo_url');
+        if(isset($entry['date'])) {
+            $published = new DateTime();
+            $published->setTimestamp($entry['date']);
+            $this->fillWith($photo, 'setPublished', $published);
+        }
+        if(isset($entry['date_taken'])) {
+            $this->fillWith($photo, 'setDateTaken', new DateTime($entry['date_taken']));
+        }
+        $this->fillWith($photo, 'setAuthorName', $entry, 'author_name');
+        $this->fillWith($photo, 'setAuthorUrl', $entry, 'author_url');
+        $this->fillWith($photo, 'setAuthorId', $entry, 'author_nsid');
+        $this->fillWith($photo, 'setAuthorIcon', $entry, 'author_icon');
+        $this->fillWith($photo, 'setHeight', $entry, 'height');
+        $this->fillWith($photo, 'setWidth', $entry, 'width');
+        $this->fillWith($photo, 'setTags', $entry, 'tags');
+        $this->fillWith($photo, 'setMimeType', $entry, 'photo_mime');
         return $photo;
     }
 
     public function parseData($data) {
         if ($data = unserialize($data)) {
-
             if (isset($data['items'])) {
                 $photos = array();
                 $totalItems = count($data['items']);

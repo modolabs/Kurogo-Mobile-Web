@@ -34,6 +34,17 @@ class PhotosWebModule extends WebModule {
         return $controller;
     }
 
+    private function getSectionsFromFeeds($feeds) {
+        $sections = array();
+        foreach ($feeds as $index => $feedData) {
+            $sections[] = array(
+                'value' => $index,
+                'title' => $feedData['TITLE']
+            );
+        }         
+        return $sections;
+    }
+
     protected function initializeForPage() {
         /**
          * no feed, throw exception
@@ -47,6 +58,7 @@ class PhotosWebModule extends WebModule {
             $section = $this->getDefaultSection();
         }
 
+        $this->assign('currentSection', $section);
         /**
          * get controller based on $section
          */
@@ -61,11 +73,12 @@ class PhotosWebModule extends WebModule {
                 foreach($items as $item) {
                     $photo = array();
                     $photo['title'] = $item->getTitle();
-                    $photo['url'] = $this->buildBreadcrumbURL('show', array('id' => $item->getID()), true);
+                    $photo['url'] = $this->buildBreadcrumbURL('show', array('id' => $item->getID(), 'section' => $section), true);
                     $photo['img'] = $item->getTUrl();
                     $photos[] = $photo;
                 }
                 $this->assign('photos', $photos);
+                $this->assign('sections', $this->getSectionsFromFeeds($this->feeds));
                 break;
             case 'show':
                 $id = $this->getArg('id');
