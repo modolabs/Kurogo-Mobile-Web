@@ -9,12 +9,11 @@
  * @author Jeffery You <jianfeng.you@symbio.com> 
  */
 
-includePackage('Photo');
+includePackage('Photos');
 
 class PhotosWebModule extends WebModule {
-    protected static $defaultModel = 'PhotoDataModel';
-    protected static $defaultController = 'PhotoDataController';
-    protected $id = 'photo'; 
+    protected static $defaultModel = 'PhotosDataModel';
+    protected $id = 'photos'; 
     protected $feeds = array();
         
     protected function initialize() {

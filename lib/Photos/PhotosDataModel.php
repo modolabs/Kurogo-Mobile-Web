@@ -1,7 +1,7 @@
 <?php
 
 includePackage('DataModel');
-class PhotoDataModel extends ItemListDataModel {
+class PhotosDataModel extends ItemListDataModel {
     protected $cacheFolder = 'Photo';
 
     public function getTag() {
