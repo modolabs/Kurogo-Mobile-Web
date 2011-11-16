@@ -51,12 +51,28 @@ class PhotosWebModule extends WebModule {
          * get controller based on $section
          */
         $controller = $this->getFeed($section);
-        $title = $controller->getTitle();
-        $items = $controller->items();
-        var_dump($items);
-        exit;
 
         switch($this->page) {
+            case 'index':
+                $title = $controller->getTitle();
+                $this->setPageTitles($title);
+                $items = $controller->items();
+                $photos = array();
+                foreach($items as $item) {
+                    $photo = array();
+                    $photo['title'] = $item->getTitle();
+                    $photo['url'] = $this->buildBreadcrumbURL('show', array('id' => $item->getID()), true);
+                    $photo['img'] = $item->getTUrl();
+                    $photos[] = $photo;
+                }
+                $this->assign('photos', $photos);
+                break;
+            case 'show':
+                $id = $this->getArg('id');
+                $photo = $controller->getItem($id);
+                $this->setPageTitles($photo->getTitle());
+                $this->assign('photo', $photo);
+                break;
         }
     }
 }
