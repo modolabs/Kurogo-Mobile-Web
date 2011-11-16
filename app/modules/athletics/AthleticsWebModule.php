@@ -5,6 +5,7 @@ class AthleticsWebModule extends WebModule {
     protected $id = 'athletics';
     protected static $defaultModel = 'AthleticsDataModel';
     protected $feeds = array();
+    protected $timezone;
     protected $maxPerPage = 10;
     protected $showImages = true;
     protected $showPubDate = false;
@@ -50,7 +51,7 @@ class AthleticsWebModule extends WebModule {
         return null;
     }
     
-    public function linkForNewsItem($story, $data = array()) {
+    protected function linkForNewsItem($story, $data = array()) {
         $pubDate = strtotime($story->getProperty("pubDate"));
         $date = date("M d, Y", $pubDate);
         $image = $this->getImageForStory($story);
@@ -76,6 +77,129 @@ class AthleticsWebModule extends WebModule {
             $link['url'] = $url;
         }
         return $link;
+    }
+    
+    protected function timeText($event, $timeOnly=false) {
+        if ($timeOnly) {
+            if ($event->get_end() - $event->get_start() == -1) {
+                return DateFormatter::formatDate($event->get_start(), DateFormatter::NO_STYLE, DateFormatter::SHORT_STYLE);
+            } else {
+                return DateFormatter::formatDateRange($event->get_range(), DateFormatter::NO_STYLE, DateFormatter::SHORT_STYLE);
+            }
+        } else {
+            return DateFormatter::formatDateRange($event->get_range(), DateFormatter::SHORT_STYLE, DateFormatter::SHORT_STYLE);
+        }
+    }
+    
+    protected function linkForScheduleItem(KurogoObject $event, $data=null) {
+        $subtitle = $this->timeText($event);
+        if ($briefLocation = $event->get_location()) {
+            $subtitle .= " | $briefLocation";
+        }
+      
+        $options = array(
+            'id'   => $event->get_uid(),
+            'time' => $event->get_start()
+        );
+        if (isset($data['section'])) {
+            $options['section'] = $data['section'];
+        }
+        $url = $this->buildBreadcrumbURL('schedule_detail', $options, true);
+
+        return array(
+            'url'       => $url,
+            'title'     => $event->get_summary(),
+            'subtitle'  => $subtitle
+        );
+    }
+    
+    protected function valueForType($type, $value) {
+        $valueForType = $value;
+  
+        switch ($type) {
+            case 'datetime':
+                $valueForType = DateFormatter::formatDateRange($value, DateFormatter::LONG_STYLE, DateFormatter::NO_STYLE);
+                if ($value instanceOf TimeRange) {
+                    $timeString = DateFormatter::formatDateRange($value, DateFormatter::NO_STYLE, DateFormatter::MEDIUM_STYLE);
+                    $valueForType .= "<br />\n" . $timeString;
+                }
+            break;
+
+        case 'url':
+            $valueForType = str_replace("http://http://", "http://", $value);
+            if (strlen($valueForType) && !preg_match('/^http\:\/\//', $valueForType)) {
+                $valueForType = 'http://'.$valueForType;
+            }
+            break;
+        
+        case 'phone':
+            $valueForType = PhoneFormatter::formatPhone($value);
+            break;
+      
+        case 'email':
+            $valueForType = str_replace('@', '@&shy;', $value);
+            break;
+        
+        case 'category':
+            $valueForType = $this->formatTitle($value);
+            break;
+        }
+        return $valueForType;
+    }
+  
+    protected function urlForType($type, $value) {
+        $urlForType = null;
+  
+        switch ($type) {
+            case 'url':
+                $urlForType = str_replace("http://http://", "http://", $value);
+                if (strlen($urlForType) && !preg_match('/^http\:\/\//', $urlForType)) {
+                    $urlForType = 'http://'.$urlForType;
+                }
+                break;
+        
+            case 'phone':
+                $urlForType = PhoneFormatter::getPhoneURL($value);
+                break;
+        
+            case 'email':
+                $urlForType = "mailto:$value";
+                break;
+        
+            case 'category':
+                $urlForType = $this->categoryURL($value, false);
+                break;
+        }
+    
+        return $urlForType;
+    }
+    
+    protected function formatEventDetail(ICalEvent $event) {
+        $calendarFields = $this->getModuleSections('schedule-detail');
+        $fields = array();
+
+        foreach ($calendarFields as $key => $info) {
+            $field = array();
+            $value = $event->get_attribute($key);
+            if (!$value) {
+                continue;
+            }
+            if (isset($info['label'])) {
+                $field['label'] = $info['label'];
+            }
+            
+            if (isset($info['class'])) {
+                $field['class'] = $info['class'];
+            }
+            if (isset($info['type'])) {
+                $field['title'] = $this->valueForType($info['type'], $value);
+                $field['url']   = $this->urlForType($info['type'], $value);
+            } else {
+                $field['title'] = nl2br($value);
+            }
+            $fields[] = $field;
+        }
+        return $fields;
     }
     
     protected function getSportData($section) {
@@ -142,6 +266,7 @@ class AthleticsWebModule extends WebModule {
     protected function initialize() {
 
         $this->feeds      = $this->loadFeedData();
+        $this->timezone = Kurogo::siteTimezone();
         
     }    
 
@@ -237,10 +362,50 @@ class AthleticsWebModule extends WebModule {
                 $this->assign('showLink', $this->showLink);
                 break;
             case 'scores':
+                
                 break;
                 
             case 'schedule':
+                $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
+                $limit    = $this->getArg('limit', 20);
+                $section = $this->getArg('section');
+                $feed = $this->getFeed($section, $this->page);
                 
+                $this->setLogData($section, $feed->getTitle());
+                $start = new DateTime(date('Y-m-d H:i:s', $current), $this->timezone);
+                $start->setTime(0,0,0);
+                
+                $feed->setStartDate($start);
+                $feed->setLimit($limit);
+                $iCalEvents = $feed->itemsForSchedule();
+                
+                $options = array(
+                    'section' => $section
+                );
+                $events = array();
+                foreach($iCalEvents as $iCalEvent) {
+                    $events[] = $this->linkForScheduleItem($iCalEvent, $options);
+                }
+                
+                $this->assign('events', $events);
+                break;
+             
+            case 'schedule_detail':
+                $id = $this->getArg('id');
+                $section = $this->getArg('section');
+                $time = $this->getArg('time', time(), FILTER_VALIDATE_INT);
+                
+                $feed = $this->getFeed($section, 'schedule');
+                if ($event = $feed->getItemForSchedule($id, $time)) {
+                    $this->assign('event', $event);
+                } else {
+                    throw new KurogoDataException($this->getLocalizedString('ERROR_EVENT_NOT_FOUND'));
+                }
+                
+                $this->setLogData($section . ':' . $event->get_uid(), $event->get_summary());
+
+                $fields = $this->formatEventDetail($event);
+                $this->assign('fields', $fields);
                 break;
                 
             case 'sport':
