@@ -8,7 +8,7 @@
   * @package ExternalData
   * @subpackage RSS
   */
-class RSSDataController extends DataController
+class RSSDataController extends LegacyDataController
 {
     protected $DEFAULT_PARSER_CLASS='RSSDataParser';
     protected $items;
@@ -61,7 +61,8 @@ class RSSDataController extends DataController
         return $this->title;
     }
 
-    public function items($start=0,$limit=null)
+
+    protected function _items($start=0,$limit=null)
     {
         if (!$this->items) {
             $this->items = $this->getParsedData();

@@ -158,8 +158,30 @@ class ICalEvent extends ICalObject implements KurogoObject {
         );
     }
 
+    public function filterItem($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'search': //case insensitive
+                    return  (stripos($this->getTitle(), $value)!==FALSE);
+                    break;
+                case 'category': //case insensitive
+                    if (!in_array(strtolower($value), array_map('strtolower', $this->categories))) {
+                        return false;
+                    }
+                    break;
+            }
+        }   
+        
+        return true;     
+    }
+
     public function get_tzid() {
         return $this->tzid;
+    }
+    
+    public function getID() {
+        return $this->uid;
     }
 
     public function get_uid() {
@@ -187,6 +209,10 @@ class ICalEvent extends ICalObject implements KurogoObject {
     }
 
     public function get_summary() {
+        return $this->summary;
+    }
+    
+    public function getTitle() {
         return $this->summary;
     }
 
@@ -845,22 +871,15 @@ class ICalendar extends ICalObject implements CalendarInterface {
     }
 
     /* returns an array of events keyed by uid containing an array of occurrences keyed by start time */
-    public function getEventsInRange(TimeRange $range=null, $limit=null) {
-        $events = $this->events;
-
-        // sort event times
-        // deprecated use usort as follow
-        //asort($this->eventStartTimes);
+    public function getEventsInRange(TimeRange $range=null, $limit=null, $filters=null) {
 
         $occurrences = array();
+        $filters = is_array($filters) ? $filters : array();
 
         foreach ($this->eventStartTimes as $id => $startTime) {
             $event = $this->events[$id];
-            $eventOccurrences = $event->getOccurrencesInRange($range, $limit);
-
-            foreach ($eventOccurrences as $occurrence) {
-                $key = count($occurrences);
-                $occurrences[$key] = $occurrence;
+            if ($event->filterItem($filters)) {
+                $occurrences = array_merge($occurrences, $event->getOccurrencesInRange($range, $limit));
             }
         }
 

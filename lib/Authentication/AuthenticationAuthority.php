@@ -86,6 +86,16 @@ abstract class AuthenticationAuthority
 	 * @see User object
      */
     abstract public function getUser($login);
+    
+    public function getCurrentUser() {
+        $session = Kurogo::getSession();
+        return $session->getUser($this);
+    }
+
+    public function isLoggedIn() {
+        $session = Kurogo::getSession();
+        return $session->isLoggedIn($this);
+    }
 
     /**
      * Retrieves a group object from this authority. Authorities which do not provide group information

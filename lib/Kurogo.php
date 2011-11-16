@@ -362,7 +362,7 @@ class Kurogo
         return $this->logger;
     }
 
-    private function cacher() {
+    public function cacher() {
         return $this->cacher;
     }
     
@@ -388,7 +388,8 @@ class Kurogo
         
         $key = SITE_NAME . '-' . $key;
         if ($cacher = Kurogo::sharedInstance()->cacher()) {
-            Kurogo::log(LOG_DEBUG, "Setting $key to $value", 'cache');
+            $logValue = is_scalar($value) ? $value : gettype($value);
+            Kurogo::log(LOG_DEBUG, "Setting $key to $logValue", 'cache');
             return $cacher->set($key, $value, $ttl);
         }
         return false;
@@ -577,6 +578,7 @@ class Kurogo
 
     private function initSite(&$path) {
     
+        includePackage('Cache');
         includePackage('Config');
         $siteConfig = new ConfigGroup();    
         // Load main configuration file
@@ -588,8 +590,7 @@ class Kurogo
         define('CONFIG_IGNORE_LOCAL', $siteConfig->getVar('CONFIG_IGNORE_LOCAL', 'kurogo'));
         
         if ($cacheClass = $siteConfig->getOptionalVar('CACHE_CLASS','', 'cache')) {
-            includePackage('Cache');
-            $this->cacher = KurogoCache::factory($cacheClass, $siteConfig->getOptionalSection('cache'));
+            $this->cacher = KurogoMemoryCache::factory($cacheClass, $siteConfig->getOptionalSection('cache'));
         }
         
         
@@ -1068,6 +1069,8 @@ class Kurogo
 
 interface KurogoObject 
 {
+    public function getID();
+    public function filterItem($filters);
 }
 
 /* retained for compatibility */

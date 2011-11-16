@@ -17,10 +17,10 @@
         "fields":{
             "section":{"labelKey":"VIDEO_ADMIN_FEEDS_SECTION_TITLE", "descriptionKey":"VIDEO_ADMIN_FEEDS_SECTION_DESCRIPTION", "type":"label"},
             "TITLE":{"labelKey":"VIDEO_ADMIN_FEEDS_TITLE_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_TITLE_DESCRIPTION", "type":"text"},
-            "CONTROLLER_CLASS":{"labelKey":"VIDEO_ADMIN_FEEDS_CONTROLLER_TITLE", "descriptionKey":"VIDEO_ADMIN_FEEDS_CONTROLLER_DESCRIPTION", "type":"select","optionsMethod":["VideoDataController","getVideoDataControllers"],"optionsFirst":"-- Choose a video provider --"},
+            "RETRIEVER_CLASS":{"labelKey":"VIDEO_ADMIN_FEEDS_CONTROLLER_TITLE", "descriptionKey":"VIDEO_ADMIN_FEEDS_CONTROLLER_DESCRIPTION", "type":"select","optionsMethod":["VideoDataModel","getVideoDataRetrievers"],"optionsFirst":"-- Choose a video provider --"},
             "AUTHOR":{"labelKey":"VIDEO_ADMIN_FEEDS_AUTHOR_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_AUTHOR_DESCRIPTION","type":"text","omitBlankValue":true},
-            "CHANNEL":{"labelKey":"VIDEO_ADMIN_FEEDS_CHANNEL_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_CHANNEL_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["CONTROLLER_CLASS",["VimeoVideoController"]]},
-            "PLAYLIST":{"labelKey":"VIDEO_ADMIN_FEEDS_PLAYLIST_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_PLAYLIST_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["CONTROLLER_CLASS",["YouTubeVideoController"]]},
+            "CHANNEL":{"labelKey":"VIDEO_ADMIN_FEEDS_CHANNEL_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_CHANNEL_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS",["VimeoVideoRetriever"]]},
+            "PLAYLIST":{"labelKey":"VIDEO_ADMIN_FEEDS_PLAYLIST_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_PLAYLIST_DESCRIPTION","type":"text","omitBlankValue":true,"showIf":["RETRIEVER_CLASS",["YouTubeVideoRetriever"]]},
             "TAG":{"labelKey":"VIDEO_ADMIN_FEEDS_TAG_TITLE","descriptionKey":"VIDEO_ADMIN_FEEDS_TAG_DESCRIPTION","type":"text","omitBlankValue":true}
         },
         "sectionindex":"string",

@@ -9,7 +9,7 @@
 	    <param name="bgcolor" value="#FFFFFF" />
 	    <param name="width" value="300" />
 	    <param name="height" value="250" />
-	    <param name="playerID" value="{$feedData.playerid}" />
+	    <param name="playerID" value="{$feedData.playerId}" />
 	    <param name="playerKey" value="{$feedData.playerKey}" />  
 	    <param name="@videoPlayer" value="{$videoid}" />
 	    <param name="isVid" value="true" />

@@ -28,6 +28,19 @@ class BasePlacemark implements Placemark
         $this->address = $address;
     }
 
+    public function filterItem($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'search': //case insensitive
+                    return  (stripos($this->getTitle(), $value)!==FALSE) || (stripos($this->getSubTitle(), $value)!==FALSE);
+                    break;
+            }
+        }   
+        
+        return true;     
+    }
+
     public function setGeometry(MapGeometry $geometry)
     {
         $this->geometry = $geometry;

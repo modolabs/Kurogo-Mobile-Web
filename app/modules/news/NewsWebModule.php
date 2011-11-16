@@ -14,7 +14,8 @@ if (!function_exists('mb_convert_encoding')) {
 }
 
 class NewsWebModule extends WebModule {
-  const defaultController = 'RSSDataController';
+  protected static $defaultModel = 'NewsDataModel';
+  protected static $defaultController = 'RSSDataController'; // legacy
   protected $id = 'news';
   protected $feeds = array();
   protected $feedIndex = 0;
@@ -25,18 +26,19 @@ class NewsWebModule extends WebModule {
   protected $showPubDate = false;
   protected $showAuthor = false;
   protected $showLink = false;
+  protected $legacyController = false;
   
   public static function validateFeed($section, $feedData) {
         if (!self::argVal($feedData, 'TITLE')) {
             return new KurogoError(1, $this->getLocalizedString('ERROR_NO_TITLE'),$this->getLocalizedString('ERROR_NO_TITLE_DESCRIPTION'));
         }
 
-        if (!isset($feedData['CONTROLLER_CLASS'])) {
-            $feedData['CONTROLLER_CLASS'] = self::defaultController;
+        if (!isset($feedData['MODEL_CLASS'])) {
+			$feedData['MODEL_CLASS'] = self::$defaultModel;
         }
-        
+
         try {
-            $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $controller = NewsDataModel::factory($feedData['MODEL_CLASS'], $feedData);
         } catch (KurogoConfigurationException $e) {
             return KurogoError::errorFromException($e);
         }
@@ -100,21 +102,37 @@ class NewsWebModule extends WebModule {
   public function getFeed($index) {
     if (isset($this->feeds[$index])) {
         $feedData = $this->feeds[$index];
-        if (!isset($feedData['CONTROLLER_CLASS'])) {
-            $feedData['CONTROLLER_CLASS'] = self::defaultController;
+        
+        try {
+            if (isset($feedData['CONTROLLER_CLASS'])) {
+                $modelClass = $feedData['CONTROLLER_CLASS'];
+            } else {
+                $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            }
+            
+            $controller = NewsDataModel::factory($modelClass, $feedData);
+        } catch (KurogoException $e) { 
+            $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $this->legacyController = true;
         }
-        $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
         return $controller;
     } else {
         throw new KurogoConfigurationException($this->getLocalizedString('ERROR_INVALID_FEED', $index));
     }
   }
-    public function searchItems($searchTerms, $limit=null, $data=null) {
-    
-        $this->feed->addFilter('search', $searchTerms);
-        $items = $this->feed->items(0, $limit);
+
+    public function searchItems($searchTerms, $limit=null, $options=null) {  
         
-        return $items;
+        $start = isset($options['start']) ? $options['start'] : 0;
+        if ($this->legacyController) {
+            $this->feed->addFilter('search', $searchTerms);
+            return $this->feed->items(0, $limit);
+        } else {
+            $this->feed->setStart($start);
+            $this->feed->setLimit($limit);
+            return $this->feed->search($searchTerms);
+        }
     }
 
     public function linkForItem(KurogoObject $story, $data=null) {
@@ -244,8 +262,11 @@ class NewsWebModule extends WebModule {
         
         if ($searchTerms) {
 
-            $this->feed->addFilter('search', $searchTerms);
-            $items = $this->feed->items($start, $this->maxPerPage);
+            $options = array(
+                'start'=>$start
+            );
+
+            $items = $this->searchItems($searchTerms, $this->maxPerPage, $options);
             $this->setLogData($searchTerms);
             $totalItems = $this->feed->getTotalItems();
             $stories = array();
@@ -299,7 +320,13 @@ class NewsWebModule extends WebModule {
         
       case 'pane':
         $start = 0;
-        $items = $this->feed->items($start, $this->maxPerPane);
+        if ($this->legacyController) {
+            $items = $this->feed->items($start, $this->maxPerPane);
+        } else {
+            $this->feed->setStart(0);
+            $this->feed->setLimit($this->maxPerPane);
+            $items = $this->feed->items();
+        }
         $stories = array();
         $options = array(
             'noBreadcrumbs'=>true,
@@ -320,8 +347,13 @@ class NewsWebModule extends WebModule {
       
       case 'index':
         $start = $this->getArg('start', 0);
-      
-        $items = $this->feed->items($start, $this->maxPerPage);
+        if ($this->legacyController) {
+            $items = $this->feed->items($start, $this->maxPerPage);
+        } else {
+            $this->feed->setStart($start);
+            $this->feed->setLimit($this->maxPerPage);
+            $items = $this->feed->items();
+        }
         $totalItems = $this->feed->getTotalItems();
         $this->setLogData($this->feedIndex, $this->feed->getTitle());
        
