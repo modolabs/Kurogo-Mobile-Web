@@ -452,6 +452,8 @@ class LDAPPeopleParser extends PeopleDataParser
     }
     
     public function init($args) {
+        parent::init($args);
+        
         if (isset($args['SORTFIELDS']) && is_array($args['SORTFIELDS'])) {
             $this->sortFields = $args['SORTFIELDS'];
         }
