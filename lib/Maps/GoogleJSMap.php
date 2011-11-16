@@ -171,12 +171,7 @@ JS;
                 ));
         }
 
-        $calloutScript = '';
-        if (count($this->markers) + count($this->paths) + count($this->polygons) == 1) {
-            // FIXME: this will break if there are no markers
-            $calloutScript = "\nshowCalloutForPlacemark(placemark0);\n";
-        }
-        return $template->getScript() . $calloutScript;
+        return $template->getScript();
     }
     
     private function getPolygonJS() {

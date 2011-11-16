@@ -10,6 +10,7 @@ class MapWebModule extends WebModule {
 
     protected $feedGroup = null;
     protected $feedGroups = null;
+    protected $dataModel = null;
     protected $numGroups;
     protected $feeds;
     protected $featureIndex;
@@ -255,24 +256,38 @@ class MapWebModule extends WebModule {
     }
 
     // assumes feeds are loaded
-    private function getDataModel($category=null) {
-        $feedData = $this->getCurrentFeed($category);
-        if (isset($feedData['CONTROLLER_CLASS'])) { // legacy
-            $modelClass = $feedData['CONTROLLER_CLASS'];
+    private function getDataModel($category=null)
+    {
+        // re-instantiate DataModel if the category has changed
+        // since categories are usually representations of feeds.
+        if ($category !== $this->getCategory()) {
+            $this->dataModel = null;
         }
-        elseif (isset($feedData['MODEL_CLASS'])) {
-            $modelClass = $feedData['MODEL_CLASS'];
+
+        if ($this->dataModel === null) {
+            $feedData = $this->getCurrentFeed($category);
+            if (isset($feedData['CONTROLLER_CLASS'])) { // legacy
+                $modelClass = $feedData['CONTROLLER_CLASS'];
+            }
+            elseif (isset($feedData['MODEL_CLASS'])) {
+                $modelClass = $feedData['MODEL_CLASS'];
+            }
+            else {
+                $modelClass = 'MapDataModel';
+            }
+
+            try {
+                $this->dataModel = MapDataModel::factory($modelClass, $feedData);
+            } catch (KurogoConfigurationException $e) {
+                $this->dataModel = DataController::factory($modelClass, $feedData);
+            }
         }
-        else {
-            $modelClass = 'MapDataModel';
-        }
-        $dataModel = MapDataModel::factory($modelClass, $feedData);
 
         $drilldownPath = $this->getDrillDownPath();
         if ($drilldownPath) {
-            $dataModel->addDisplayFilter('category', $drilldownPath);
+            $this->dataModel->addDisplayFilter('category', $drilldownPath);
         }
-        return $dataModel;
+        return $this->dataModel;
     }
 
     private function getCurrentFeed($category=null) {
@@ -444,12 +459,16 @@ class MapWebModule extends WebModule {
     }
 
     // return true on success, false on failure
-    protected function generateTabForKey($tabKey, $feature, $dataController, &$tabJavascripts) {
+    protected function generateTabForKey($tabKey, $feature, &$tabJavascripts) {
         switch ($tabKey) {
             case 'map':
             {
-                $this->initializeMap($dataController);
-                return true;
+                if ($this->isMapDrivenUI()) {
+                    return false;
+                } else {
+                    $this->initializeStaticMap();
+                    return true;
+                }
             }
             case 'nearby':
             {
@@ -492,7 +511,7 @@ class MapWebModule extends WebModule {
                     $maxItems = $configData['NEARBY_ITEMS'];
                 }
 
-                $searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems, $dataController);
+                $searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems, $this->getDataModel());
                 $places = array();
                 if ($searchResults) {
                     foreach ($searchResults as $result) {
@@ -903,7 +922,7 @@ class MapWebModule extends WebModule {
         if (isset($this->args['zoom'])) {
             $zoomLevel = $this->args['zoom'];
         } else {
-            $zoomLevel = $dataModel->getDefaultZoomLevel();
+            $zoomLevel = $this->getDataModel()->getDefaultZoomLevel();
         }
         
         // override point for where map should be centered
@@ -914,25 +933,25 @@ class MapWebModule extends WebModule {
         }
 
         if (isset($center)) {
-            $imgController->setCenter($center);
+            $baseMap->setCenter($center);
         }
         if (isset($zoomLevel) && $zoomLevel !== null) {
-            $imgController->setZoomLevel($zoomLevel);
+            $baseMap->setZoomLevel($zoomLevel);
         }
         
-        $this->assign('imageUrl', $imgController->getImageURL());
+        $this->assign('imageUrl', $baseMap->getImageURL());
 
-        $this->assign('scrollNorth', $this->detailUrlForPan('n', $imgController));
-        $this->assign('scrollEast', $this->detailUrlForPan('e', $imgController));
-        $this->assign('scrollSouth', $this->detailUrlForPan('s', $imgController));
-        $this->assign('scrollWest', $this->detailUrlForPan('w', $imgController));
+        $this->assign('scrollNorth', $this->detailUrlForPan('n', $baseMap));
+        $this->assign('scrollEast', $this->detailUrlForPan('e', $baseMap));
+        $this->assign('scrollSouth', $this->detailUrlForPan('s', $baseMap));
+        $this->assign('scrollWest', $this->detailUrlForPan('w', $baseMap));
 
         // this may not be needed for devices that get the ajax options
-        $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $imgController));
-        $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $imgController));
+        $this->assign('zoomInUrl', $this->detailUrlForZoom('in', $baseMap));
+        $this->assign('zoomOutUrl', $this->detailUrlForZoom('out', $baseMap));
 
-        $this->assign('imageWidth',  $imgController->getImageWidth());
-        $this->assign('imageHeight', $imgController->getImageHeight());
+        $this->assign('imageWidth',  $baseMap->getImageWidth());
+        $this->assign('imageHeight', $baseMap->getImageHeight());
 
         // ajax options for static maps
         // devices like bbplus will load a new page for each zoom/scroll

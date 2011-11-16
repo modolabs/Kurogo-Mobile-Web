@@ -4,22 +4,11 @@
     padding: 0 12px;
 }
 
-/* styles formerly in #mapwrapper. "image" class is removed for non-static maps */
-body.landscape #mapimage.image, body.portrait #mapimage.image {
-    min-height: none;
-    width: 100%;
-    border: none;
-    display: block !important;
-    overflow: hidden;
-}
-
-/*
 #mapimage {
     border: 1px solid #999;
     margin: -1px;
     overflow: hidden;
 }
-*/
 
 #mapcontrols {
 }
@@ -52,20 +41,6 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
     background-position: -160px 0;
 }
 
-/* this doesn't seem to exist in the DOM */
-/*
-#viewoptions {
-	background-position: -160px 0;
-}
-
-#fullscreen {
-    top: 0;
-    bottom: auto;
-    right: 7%;
-    margin: 0 -19px 0 0;
-    background-position: -80px 0;
-}
-*/
 #mapscrollers {
     position: absolute;
     top: 0px;
@@ -137,39 +112,4 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
     background-position: -150px 0px;
 }
 
-/* remove default margin between navbar and content */
-#navbar {
-    margin: 0;
-}
-
-/* shorter min-height than default to prevent scrolling on short devices*/
-#container {
-    min-height: 200px;
-}
-
-#header {
-    height: 44px;
-    padding: 5px;
-    background-color: #369;
-}
-
-#searchbar {
-    float: left;
-}
-
-#search-form {
-    margin: 10px;
-}
-
-.searchBarButton {
-    width: 36px;
-    height: 32px;
-    float: right;
-    margin-right: 5px;
-    background-image: url(/modules/map/images/button-background.png);
-}
-
-.searchBarButton a {
-    margin: 2px;
-}
 
