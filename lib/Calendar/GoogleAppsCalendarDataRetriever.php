@@ -1,74 +1,51 @@
 <?php
 
-class GoogleAppsCalendarDataController extends CalendarDataController
+class GoogleAppsCalendarDataRetriever extends OAuthDataRetriever
 {
-    protected $DEFAULT_PARSER_CLASS='GoogleCalendarDataParser';
-    protected $cacheFolder = 'GoogleCalendar';
+    protected $DEFAULT_PARSER_CLASS = 'GoogleCalendarDataParser';
     protected $authority;
+    protected $supportsSearch = true;
+    protected $requiresToken = true;
     
-    public function addFilter($var, $value) {
-        switch ($var)
-        {
-            case 'search':
-                return parent::addFilter('q', $value);
-            default:
-                return parent::addFilter($var, $value);
-        }
-    }
-    
-    protected function url() {
-        $this->addFilter('orderby', 'starttime');
-        $this->addFilter('sortorder', 'a');
-        $this->addFilter('singleevents', 'true');
-
-        if ($this->startDate) {
-            $this->addFilter('start-min', $this->startDate->format('c'));
+    protected function parameters() {
+        $parameters = array_merge(parent::parameters(), array(
+            'orderby'=>'starttime',
+            'sortorder'=>'a',
+            'singleevents'=>'true'
+        ));
+        
+        if ($startDate = $this->getOption('startDate')) {
+            $parameters['start-min'] = $startDate->format('c');
         }
 
-        if ($this->endDate) {
-            $this->addFilter('start-max', $this->endDate->format('c'));
+        if ($endDate = $this->getOption('endDate')) {
+            $parameters['start-max'] =  $endDate->format('c');
+        }
+        
+        return $parameters;
+    }
+ 
+    public function search($searchTerms) {
+        $this->addFilter('q', $searchTerms);
+        if ($start = $this->getOption('start')) {
+            $this->addFilter('start-index', $start+1);
+        }
+        
+        if ($limit = $this->getOption('limit')) {
+            $this->addFilter('max-results', $limit);
         }
 
-        return parent::url();
+        return $this->getData();
     }
 
-    protected function cacheFolder() {
-        $oauth = $this->oauth();
-        $token = $oauth->getToken();
-        return CACHE_DIR . "/" . $this->cacheFolder . ($token ? "/" . md5($token) : '');
-    }
-    
-    protected function retrieveData($url) {
-    
-        $oauth = $this->oauth();
-        $parameters = array(); //set in query string
-        $headers = $this->getHeaders();
-        $result = $oauth->oauthRequest('GET', $url, $parameters, $headers);
-        $this->response = $oauth->getResponse();
-        return $result;
-    }
-    
     protected function addStandardFilters() {
         $this->addFilter('alt','jsonc');
         $this->addHeader('GData-Version', '2');
     }
     
-    protected function oauth() {
-        return $this->authority->oauth();
-    }
-    
     protected function init($args)
     {
         parent::init($args);
-        //either get the specified authority or attempt to get a GoogleApps authority
-        $authorityIndex = isset($args['AUTHORITY']) ? $args['AUTHORITY'] : 'GoogleAppsAuthentication';
-        $authority = AuthenticationAuthority::getAuthenticationAuthority($authorityIndex);
-        
-        //make sure we're getting a google apps authority
-        if ($authority instanceOf GoogleAppsAuthentication) {
-            $this->authority = $authority;
-        }
-        
         $this->addStandardFilters();
     }
 }

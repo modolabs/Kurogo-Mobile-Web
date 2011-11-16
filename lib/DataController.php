@@ -1,14 +1,16 @@
 <?php
 /**
- * @package ExternalData
+ * @package DataController
  */
 
 /**
  * A generic class to handle the retrieval of external data
  * 
  * Handles retrieval, caching and parsing of data. 
- * @package ExternalData
+ * @package DataController
  */
+includePackage('DataController');
+includePackage('DataResponse');
 abstract class DataController
 {
     protected $DEFAULT_PARSER_CLASS='PassthroughDataParser';
@@ -338,6 +340,15 @@ abstract class DataController
         return $parsedData;
     }
 
+    protected function parseResponse(DataResponse $response, DataParser $parser=null) {       
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+        $parsedData = $parser->parseResponse($response);
+        $this->setTotalItems($parser->getTotalItems());
+        return $parsedData;
+    }
+
     /**
      * Parse a file. This method will also attempt to set the total items in a request by calling the
      * data parser's getTotalItems() method
@@ -375,6 +386,11 @@ abstract class DataController
            case DataParser::PARSE_MODE_FILE:
                 $file = $this->getDataFile();
                 return $this->parseFile($file, $parser);
+                break;
+
+           case DataParser::PARSE_MODE_RESPONSE:
+                $this->getData();
+                return $this->parseResponse($this->response, $parser);
                 break;
             default:
                 throw new KurogoConfigurationException("Unknown parse mode");
@@ -520,9 +536,10 @@ abstract class DataController
         $data = file_get_contents($url, false, $this->streamContext);
         $http_response_header = isset($http_response_header) ? $http_response_header : array();
 
-        $this->response = new DataResponse();
+        $this->response = DataResponse::factory('HTTPDataResponse', array());
         $this->response->setRequest($this->method, $url, $this->filters, $this->requestHeaders);
-        $this->response->setResponse($data, $http_response_header);
+        $this->response->setResponse($data);
+        $this->response->setResponseHeaders($http_response_header);
         
         Kurogo::log(LOG_DEBUG, sprintf("Returned status %d and %d bytes", $this->getResponseCode(), strlen($data)), 'data');
         

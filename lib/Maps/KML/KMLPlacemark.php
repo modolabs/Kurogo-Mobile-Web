@@ -16,6 +16,19 @@ class KMLPlacemark extends XMLElement implements Placemark
     protected $categories;
 
     private $fields = array();
+    
+    public function filterItem($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'search': //case insensitive
+                    return  (stripos($this->getTitle(), $value)!==FALSE) || (stripos($this->getSubTitle(), $value)!==FALSE);
+                    break;
+            }
+        }   
+        
+        return true;     
+    }
 
     private static $elementMap = array(
         'NAME' => 'title',

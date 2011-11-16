@@ -12,8 +12,6 @@ interface Placemark extends MapListElement, KurogoObject
     public function getCategoryIds();
     public function addCategoryId($id);
 
-    public function getId();
-
     public function getField($fieldName);
     public function setField($fieldName, $value);
     public function getFields();

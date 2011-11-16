@@ -13,6 +13,11 @@ class db_pgsql extends db
     public static function connection($dsn_data)
     {
         $dsn = sprintf("%s:host=%s;dbname=%s", 'pgsql', $dsn_data['DB_HOST'], $dsn_data['DB_DBNAME']);
+
+        if (isset($dsn_data['DB_PORT']) && !empty($dsn_data['DB_PORT'])) {
+            $dsn .= ';port='. $dsn_data['DB_PORT'];
+        }
+
         $connection = new PDO($dsn, $dsn_data['DB_USER'], $dsn_data['DB_PASS']);
         return $connection;
     }

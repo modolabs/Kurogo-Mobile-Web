@@ -4,8 +4,11 @@ Kurogo::includePackage('Video');
 
 class VideoWebModule extends WebModule
 {
-    protected $id='video';  // this affects which .ini is loaded
+    protected static $defaultModel = 'VideoDataModel';
+    protected static $defaultController = 'VideoDataController';
+    protected $id='video'; 
     protected $feeds = array();
+    protected $legacyController = false;
         
     protected function initialize() {
         $this->feeds = $this->loadFeedData();
@@ -58,15 +61,32 @@ class VideoWebModule extends WebModule
         $section = isset($options['section']) ? $options['section'] : $this->getDefaultSection();
         $controller = $this->getFeed($section);
                 
-      	$items = $controller->search($searchTerms, 0, $limit);
+        if ($this->legacyController) {
+            $items = $controller->search($searchTerms, 0, $limit);
+        } else {
+            $controller->setLimit($limit);
+            $items = $controller->search($searchTerms);
+        }
       	return $items;
     }
     
     protected function getFeed($feed=null) {
         $feed = isset($this->feeds[$feed]) ? $feed : $this->getDefaultSection();
         $feedData = $this->feeds[$feed];
-        
-        $controller = DataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+
+        try {
+            if (isset($feedData['CONTROLLER_CLASS'])) {
+                $modelClass = $feedData['CONTROLLER_CLASS'];
+            } else {
+                $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : self::$defaultModel;
+            }
+            
+            $controller = VideoDataModel::factory($modelClass, $feedData);
+        } catch (KurogoException $e) { 
+            $controller = VideoDataController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $this->legacyController = true;
+        }
+
         return $controller;
     }
     
@@ -91,6 +111,7 @@ class VideoWebModule extends WebModule
         $this->assign('sections'      , VideoModuleUtils::getSectionsFromFeeds($this->feeds));
         
         $controller = $this->getFeed($section);
+        $this->assign('feedData', $this->feeds[$section]);
         
         switch ($this->page)
         {  
@@ -102,7 +123,13 @@ class VideoWebModule extends WebModule
                     'section'=>$section
                 );
 
-                $items = $controller->items($start, $maxPerPage);
+                if ($this->legacyController) {
+                    $items = $controller->items($start, $maxPerPage);
+                } else {
+                    $controller->setStart($start);
+                    $controller->setLimit($maxPerPage);
+                    $items = $controller->items();
+                }
                 $videos = array();
 
                 foreach ($items as $video) {
@@ -121,19 +148,31 @@ class VideoWebModule extends WebModule
         
                 $maxPerPage = $this->getOptionalModuleVar('MAX_RESULTS', 10);
                 $start = $this->getArg('start', 0);
+                if (!$this->legacyController) {
+                    $controller->setStart($start);
+                    $controller->setLimit($maxPerPage);
+                }
         	    
                 if ($this->page == 'search') {
                     if ($filter = $this->getArg('filter')) {
                         $searchTerms = trim($filter);
                         $this->setLogData($searchTerms);
-                        $items = $controller->search($searchTerms, $start, $maxPerPage);
+                        if ($this->legacyController) {
+                            $items = $controller->search($searchTerms, $start, $maxPerPage);
+                        } else {
+                            $items = $controller->search($searchTerms);
+                        }
                         $this->assign('searchTerms', $searchTerms);
                     } else {
                         $this->redirectTo('index', array('section'=>$section), false);
                     }
                 } else {
-                     $this->setLogData($section, $controller->getTitle());
-                     $items = $controller->items($start, $maxPerPage);
+                    $this->setLogData($section, $controller->getTitle());
+                    if ($this->legacyController) {
+                        $items = $controller->items($start, $maxPerPage);
+                    } else {
+                        $items = $controller->items();
+                    }
                 }
                              
                 $totalItems = $controller->getTotalItems();
