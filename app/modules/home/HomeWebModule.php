@@ -67,21 +67,34 @@ class HomeWebModule extends WebModule {
           $this->assign('hideImages', $this->getOptionalModuleVar('HIDE_IMAGES', false));
           
           if ($this->getOptionalModuleVar('SHOW_BANNER_ALERT', false)) {
-            $config = $this->loadFeedData();
-            
-            if (isset($config['notice'])) {
-              $bannerController = DataController::factory($config['notice']['CONTROLLER_CLASS'], $config['notice']);
-              if ($bannerController) {
-                $bannerNotice = $bannerController->getLatestEmergencyNotice();
+            $notice = $this->getOptionalModuleSection('notice');
+            if ($notice) {
+                $bannerNotice = null;
+                // notice can either take a module or data model class or retriever class. The section is passed on. It must implement the HomeAlertInterface interface
+                if (isset($notice['MODULE'])) {
+                    $moduleID = $notice['MODULE'];
+                    $controller = WebModule::factory($moduleID);
+                } elseif (isset($notice['MODEL_CLASS'])) {
+                    $controller = DataModel::factory($notice['MODEL_CLASS'], $notice);
+                } elseif (isset($notice['RETRIEVER_CLASS'])) {
+                    $controller = DataRetriever::factory($notice['RETRIEVER_CLASS'], $notice);
+                }
+
+                if (!$controller instanceOf HomeAlertInterface) {
+                    throw new KurogoConfigurationException("Module $moduleID does not implement HomeAlertModule interface");
+                } 
+
+                $bannerNotice = $controller->getHomeScreenAlert();
+                
                 if ($bannerNotice) {
                   $this->assign('bannerNotice', $bannerNotice);
-                  
+
+                  // is this necessary?                  
                   $bannerModule = $this->getOptionalModuleVar('BANNER_ALERT_MODULE_LINK', false);
                   if ($bannerModule) {
-                    $this->assign('bannerURL', $this->buildURLForModule($bannerModule, 'index'));
+                    $this->assign('bannerURL', $this->buildURLForModule($moduleID, 'index'));
                   }
                 }
-              }
             }
           }
         }
