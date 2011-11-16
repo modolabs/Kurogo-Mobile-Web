@@ -131,8 +131,20 @@ function shortArrayFromMapFeature(Placemark $feature) {
     return $result;
 }
 
+// $colorString must be 6 or 8 digit hex color
 function htmlColorForColorString($colorString) {
     return substr($colorString, strlen($colorString)-6);
+}
+
+// returns a value between 0 and 1
+// $colorString must be valid hex color
+function alphaFromColorString($colorString) {
+    if (strlen($color) == 8) {
+        $alphaHex = substr($color, 0, 2);
+        $alpha = hexdec($alphaHex) / 256;
+        return round($alpha, 2);
+    }
+    return 1;
 }
 
 function isValidURL($urlString)

@@ -22,21 +22,6 @@ function getWindowWidth() {
     }
 }
 
-function hideMapTabChildren() {
-    var mapImage = document.getElementById("mapimage");
-    if (mapImage) {
-        mapImage.className = "";
-    }
-    var staticMapImage = document.getElementById("staticmapimage");
-    if (staticMapImage) {
-        staticMapImage.parentNode.removeChild(staticMapImage);
-    }
-    var mapScrollers = document.getElementById("mapscrollers");
-    if (mapScrollers) {
-        mapScrollers.parentNode.removeChild(mapScrollers);
-    }
-}
-
 function loadImage(imageURL,imageID) {
     if (!loadedImages[imageID]) {
         // Loads an image from the given URL into the image with the specified ID

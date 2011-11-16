@@ -150,7 +150,6 @@ class MapWebModule extends WebModule {
             'subtitle' => $placemark->getSubtitle(),
             'url' => $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb),
             );
-
         if (($distance = $placemark->getField('distance')) && $this->getOptionalModuleVar('SHOW_DISTANCES', true)) {
             $result['subtitle'] = $this->displayTextFromMeters($distance);
         }
@@ -721,7 +720,6 @@ class MapWebModule extends WebModule {
                     foreach ($searchResults as $place) {
                         $places[] = $this->linkForItem($place);
                     }
-        
                     $this->assign('searchTerms', $searchTerms);
                     $this->assign('places',      $places);
                   
@@ -858,7 +856,7 @@ class MapWebModule extends WebModule {
         // check if any placemarks were passed from another page
         if ($this->featureIndex !== null) {
             $dataModel = $this->getDataModel();
-            $dataModel->selectPlacemark($this->featureIndex);
+            $a = $dataModel->selectPlacemark($this->featureIndex);
 
         } elseif (isset($this->args['lat'], $this->args['lon'])) {
             $dataModel = $this->getDataModel();
@@ -893,6 +891,7 @@ class MapWebModule extends WebModule {
 
         // set up base map
         $baseMap = $this->getImageController();
+        $baseMap->setWebModule($this);
 
         // add data
         foreach ($this->getSelectedPlacemarks() as $aPlacemark) {

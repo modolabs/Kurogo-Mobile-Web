@@ -1,0 +1,53 @@
+body.landscape #mapimage.image, body.portrait #mapimage.image {
+    min-height: none;
+    width: 100%;
+    border: none;
+    display: block !important;
+    overflow: hidden;
+}
+
+/* remove default margin between navbar and content */
+#navbar {
+    margin: 0;
+}
+
+/* shorter min-height than default to prevent scrolling on short devices*/
+#container {
+    min-height: 200px;
+}
+
+#header {
+    height: 44px;
+    padding: 5px;
+    background-color: #369;
+}
+
+#searchbar {
+    float: left;
+}
+
+#search-form {
+    margin: 10px;
+}
+
+.searchBarButton {
+    width: 36px;
+    height: 32px;
+    float: right;
+    margin-right: 5px;
+    background-image: url(/modules/map/images/button-background.png);
+}
+
+.searchBarButton a {
+    margin: 2px;
+}
+
+.calloutMain {
+    margin: 2px;
+}
+
+.calloutDisclosure {
+    margin: 2px;
+}
+
+
