@@ -70,6 +70,10 @@ abstract class OAuthProvider
     }
     
     public function auth($options, &$userArray) {
+        if (!Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
+            throw new KurogoConfigurationException($this->getLocalizedString("ERROR_AUTHENTICATION_DISABLED"));
+        }
+        
         $startOver = isset($options['startOver']) && $options['startOver'];
         if ($startOver) {
             $this->reset();
@@ -191,7 +195,7 @@ abstract class OAuthProvider
         );
 	}
 	
-    public function oauthRequest($method, $url, $parameters = null, $headers = null) {
+    public function oauthRequest($method, $url, $parameters = null, $headers = null, $cacheLifetime = null) {
         $retriever = $this->getRetriever();
         $retriever->setToken($this->token);
         $retriever->setTokenSecret($this->tokenSecret);
@@ -199,6 +203,7 @@ abstract class OAuthProvider
         $retriever->setBaseURL($url);
         $retriever->setParameters($parameters);
         $retriever->setHeaders($headers);
+        $retriever->setCacheLifetime($cacheLifetime);
         return $retriever->getData();
 	}
 	
@@ -217,7 +222,7 @@ abstract class OAuthProvider
 	
     protected function getRequestToken(array $options) {
         list($method, $url, $parameters) = $this->getRequestTokenURL($options);
-        $response = $this->oauthRequest($method, $url, $parameters);
+        $response = $this->oauthRequest($method, $url, $parameters, null, 0);
 		parse_str($response->getResponse(), $return);
 
 		// validate
@@ -258,7 +263,7 @@ abstract class OAuthProvider
 	protected function getAccessToken($options) {
 
         list($method, $url, $parameters) = $this->getAccessTokenURL($options);
-		$response = $this->oauthRequest($method, $url,  $parameters);
+		$response = $this->oauthRequest($method, $url,  $parameters, null, 0);
 		parse_str($response->getResponse(), $return);
 
 		if (!isset($return['oauth_token'], $return['oauth_token_secret'])) {

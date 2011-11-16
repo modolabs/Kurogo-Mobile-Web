@@ -10,6 +10,15 @@ class OAuthDataRetriever extends URLDataRetriever
     protected $signatureMethod = 'HMAC-SHA1';
     protected $requiresToken = false;
     protected $cert;
+    protected $OAuthProvider;
+    protected $OAuthProviderClass;
+    
+    public function getOAuthProvider() {
+        if (!$this->OAuthProvider) {
+            $this->OAuthProvider = OAuthProvider::factory($this->OAuthProviderClass, $this->initArgs);
+        }
+        return $this->OAuthProvider;
+    }
     
 	protected function buildQuery(array $parameters) {
 
@@ -234,6 +243,15 @@ class OAuthDataRetriever extends URLDataRetriever
         $streamContextOpts['http']['max_redirects'] = 0;
 
         return $streamContextOpts;
+    }
+    
+    public function cacheKey() {
+        //only return a cacheKey when there is a token
+        if ($this->token) {
+            return parent::cacheKey();
+        } 
+        
+        return null;
     }
 
     public function cacheGroup() {
