@@ -144,9 +144,29 @@ class OAuthDataRetriever extends URLDataRetriever
 	    }
 	    return $return;
 	}
-	
+
+	protected function parameters() {
+	    
+        $parameters = parent::parameters();
+        
+        //don't include the oauth_* parameters if the first argument is true
+        $args = func_get_args();
+        if (isset($args[0]) && $args[0]) {
+            return $parameters;
+        }
+        
+        $_parameters = array();
+        foreach ($parameters as $parameter=>$value) {
+            if (substr($parameter, 0, 6) !== 'oauth_') {
+                $_parameters[$parameter] = $value;
+            }
+        }
+        
+        return $_parameters;
+	}
+
     protected function getAuthorizationHeader() {
-		$params = $this->parameters();
+		$params = $this->parameters(true);
 		$options = array();
 
         /* strip out query string and add it to parameters */
@@ -290,7 +310,7 @@ class OAuthDataRetriever extends URLDataRetriever
     
     protected function setAuthority(AuthenticationAuthority $authority) {
         if ($authority instanceOf OAuthAuthentication) {
-            $oauth = $authority->oauth();
+            $oauth = $authority->getOAuthProvider();
             $this->consumerKey = $oauth->getConsumerKey();
             $this->consumerSecret = $oauth->getConsumerSecret();
             $this->token = $oauth->getToken();
@@ -304,12 +324,12 @@ class OAuthDataRetriever extends URLDataRetriever
     protected function init($args) {
         parent::init($args);
         
-        if (isset($args['consumerKey'])) {
-            $this->consumerKey = $args['consumerKey'];
+        if (isset($args['OAUTH_CONSUMER_KEY'])) {
+            $this->consumerKey = $args['OAUTH_CONSUMER_KEY'];
         }
 
-        if (isset($args['consumerSecret'])) {
-            $this->consumerSecret = $args['consumerSecret'];
+        if (isset($args['OAUTH_CONSUMER_SECRET'])) {
+            $this->consumerSecret = $args['OAUTH_CONSUMER_SECRET'];
         }        
 
         if (isset($args['token'])) {

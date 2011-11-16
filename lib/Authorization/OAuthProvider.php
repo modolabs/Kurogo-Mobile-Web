@@ -205,8 +205,8 @@ abstract class OAuthProvider
 	protected function getRetriever() {
 	    if (!$this->retriever) {
 	        $this->retriever = DataRetriever::factory('OAuthDataRetriever', array(
-	            'consumerKey'    => $this->consumerKey,
-	            'consumerSecret' => $this->consumerSecret,
+	            'OAUTH_CONSUMER_KEY'    => $this->consumerKey,
+	            'OAUTH_CONSUMER_SECRET' => $this->consumerSecret,
 	            'signatureMethod'=> $this->signatureMethod,
 	            'cert'           => $this->cert
 	        ));
