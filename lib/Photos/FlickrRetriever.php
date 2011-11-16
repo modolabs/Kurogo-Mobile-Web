@@ -23,7 +23,7 @@ class FlickrRetriever extends URLDataRetriever {
                 break;
             case 'group':
                 $this->setBaseUrl('http://api.flickr.com/services/feeds/groups_pool.gne');
-                if ($id = $this->getOption('id')) {
+                if ($id = $this->getOption('group_id')) {
                     $this->addFilter('id', $id);
                 }
                 break;
@@ -32,7 +32,7 @@ class FlickrRetriever extends URLDataRetriever {
                 if ($id = $this->getOption('id')) {
                     $this->addFilter('nsid', $id);
                 }
-                if ($setid = $this->getOption('setid')) {
+                if ($setid = $this->getOption('set_id')) {
                     $this->addFilter('set', $setid);
                 }
                 break;

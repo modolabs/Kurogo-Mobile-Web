@@ -68,7 +68,7 @@ class PhotosWebModule extends WebModule {
             case 'index':
                 $title = $controller->getTitle();
                 $this->setPageTitles($title);
-                $items = $controller->items();
+                $items = $controller->getPhotos();
                 $photos = array();
                 foreach($items as $item) {
                     $photo = array();
@@ -82,7 +82,7 @@ class PhotosWebModule extends WebModule {
                 break;
             case 'show':
                 $id = $this->getArg('id');
-                $photo = $controller->getItem($id);
+                $photo = $controller->getPhoto($id);
                 $this->setPageTitles($photo->getTitle());
                 $this->assign('photo', $photo);
                 break;
