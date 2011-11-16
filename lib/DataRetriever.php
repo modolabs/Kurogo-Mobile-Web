@@ -25,6 +25,18 @@ abstract class DataRetriever {
 
     abstract protected function retrieveData();
     
+    public function setCacheLifeTime($cacheLifetime) {
+        $this->cacheLifetime = $cacheLifetime;
+    }
+
+    public function setCacheKey($cacheKey) {
+        $this->cacheKey = $cacheKey;
+    }
+
+    public function setCacheGroup($cacheGroup) {
+        $this->cacheGroup = $cacheGroup;
+    }
+    
     protected function cacheKey() {
         return $this->cacheKey;
     }
@@ -34,7 +46,7 @@ abstract class DataRetriever {
     }
 
     protected function cacheLifetime() {
-        return $this->cacheLifetime ? $this->cacheLifetime : $this->DEFAULT_CACHE_LIFETIME;
+        return is_null($this->cacheLifetime) ? $this->DEFAULT_CACHE_LIFETIME : $this->cacheLifetime;
     }
     
     protected function getCachedResponse($cacheKey, $cacheGroup) {
