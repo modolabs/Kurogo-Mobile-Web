@@ -220,7 +220,8 @@ class CalendarWebModule extends WebModule {
     if ($addBreadcrumb) {
       $options['addBreadcrumb'] = true;
     }
-    return $this->linkForCategory($category, $options);
+    $link = $this->linkForCategory($category, $options);
+    return $link['url'];
   }
   
     public function searchItems($searchTerms, $limit=null, $options=null) {  
