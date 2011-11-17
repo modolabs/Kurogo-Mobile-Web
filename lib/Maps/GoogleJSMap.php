@@ -138,7 +138,10 @@ class GoogleJSMap extends JavascriptMapImageController {
                 $subtitle = ''; // "null" will show up on screen
             }
 
+            $coord = $polygon->getGeometry()->getCenterCoordinate();
             $template->appendValues(array(
+                '___LATITUDE___' => $coord['lat'],
+                '___LONGITUDE___' => $coord['lon'],
                 '___MULTIPATHSTRING___' => implode(',', $polyString),
                 '___TITLE___' => json_encode($polygon->getTitle()),
                 '___OPTIONS___' => implode(',', $options),
@@ -174,7 +177,10 @@ class GoogleJSMap extends JavascriptMapImageController {
                 $subtitle = ''; // "null" will show up on screen
             }
 
+            $coord = $geometry->getCenterCoordinate();
             $template->appendValues(array(
+                '___LATITUDE___' => $coord['lat'],
+                '___LONGITUDE___' => $coord['lon'],
                 '___PATHSTRING___' => $coordString,
                 '___TITLE___' => json_encode($path->getTitle()),
                 '___OPTIONS___' => implode(',', $options),
