@@ -41,6 +41,8 @@ class RSSDataParser extends XMLDataParser
 
     public function init($args)
     {
+        parent::init($args);
+        
         if (isset($args['CHANNEL_CLASS'])) {
             $this->setChannelClass($args['CHANNEL_CLASS']);
         }
