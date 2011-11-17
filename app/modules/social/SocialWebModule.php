@@ -44,8 +44,10 @@ class SocialWebModule extends WebModule
         }
 
         $subtitle = $this->elapsedTime($post->getCreated()->format('U'));
+        $author = false;
         if (isset($data['feed'])) {
             $subtitle = $this->feeds[$data['feed']]->getTitle() .' ' . $subtitle;
+            $author = $this->feeds[$data['feed']]->getUser($post->getAuthor());
         }
         
         $link = array(
@@ -55,7 +57,7 @@ class SocialWebModule extends WebModule
             'sort'    =>$post->getCreated()->format('U')
         );
         
-        if ($author = $post->getAuthorUser()) {
+        if ($author) {
             $link['label'] = $author->getName();
             $link['img'] = $author->getImageURL();
         }
