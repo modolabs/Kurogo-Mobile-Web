@@ -209,14 +209,17 @@ class ConfigFile extends Config {
     return $matches[0];
   }
   
+  protected function cacheKeyForFile($file) {
+     return 'configfile-' . md5($file);
+  }
+  
   /* load the actual file */
   protected function loadFile($_file) {
      if (empty($_file)) {
         return false;
      }
      
-     $cacheKey = 'configfile-' . md5($_file);
-     
+     $cacheKey = $this->cacheKeyForFile($_file);
      if ($cache = Kurogo::getCache($cacheKey)) {
         // a little sanity in case we update the structure
         if (isset($cache['vars'],$cache['sectionVars'], $cache['file'])) {
@@ -325,6 +328,9 @@ class ConfigFile extends Config {
       }
       
       file_put_contents($this->filepath, implode(PHP_EOL, $string));
+      
+      $cacheKey = $this->cacheKeyForFile($this->filepath);
+      Kurogo::deleteCache($cacheKey);
       return true;
   }
 

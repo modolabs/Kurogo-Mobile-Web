@@ -14,6 +14,7 @@ abstract class DataRetriever {
     protected $DEFAULT_RESPONSE_CLASS = 'DataResponse';
     protected $DEFAULT_PARSER_CLASS=null; 
     protected $DEFAULT_CACHE_LIFETIME = 900; // 15 min
+    protected $initArgs=array();
     protected $authority;
     protected $debugMode = false;
     protected $supportsSearch = false;
@@ -25,6 +26,18 @@ abstract class DataRetriever {
 
     abstract protected function retrieveData();
     
+    public function setCacheLifeTime($cacheLifetime) {
+        $this->cacheLifetime = $cacheLifetime;
+    }
+
+    public function setCacheKey($cacheKey) {
+        $this->cacheKey = $cacheKey;
+    }
+
+    public function setCacheGroup($cacheGroup) {
+        $this->cacheGroup = $cacheGroup;
+    }
+    
     protected function cacheKey() {
         return $this->cacheKey;
     }
@@ -34,7 +47,7 @@ abstract class DataRetriever {
     }
 
     protected function cacheLifetime() {
-        return $this->cacheLifetime ? $this->cacheLifetime : $this->DEFAULT_CACHE_LIFETIME;
+        return is_null($this->cacheLifetime) ? $this->DEFAULT_CACHE_LIFETIME : $this->cacheLifetime;
     }
     
     protected function getCachedResponse($cacheKey, $cacheGroup) {
@@ -121,7 +134,7 @@ abstract class DataRetriever {
     }
     
     protected function init($args) {
-
+        $this->initArgs = $args;
         if (isset($args['DEBUG_MODE'])) {
             $this->setDebugMode($args['DEBUG_MODE']);
         }

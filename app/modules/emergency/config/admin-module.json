@@ -13,10 +13,10 @@
         "descriptionKey":"EMERGENCY_ADMIN_CONTACTS_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "CONTROLLER_CLASS":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_CLASS_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_CLASS_DESCRIPTION","type":"select","optionsMethod":["ContactsListDataController","getContactsListDataControllers"],"config":"feeds","section":"contacts"},
-            "DRUPAL_SERVER_URL":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_DRUPALSERVER_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_DRUPALSERVER_DESCRIPTION","type":"text","config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","DrupalContactsListDataController"]},
-            "FEED_VERSION":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_VERSION_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_VERSION_DESCRIPTION","type":"select","options":{"1":"1"},"config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","DrupalContactsListDataController"]},
-            "BASE_URL":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_BASEURL_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_BASEURL_DESCRIPTION","type":"file","config":"feeds","section":"contacts","showIf":["CONTROLLER_CLASS","INIFileContactsListDataController"]}
+            "RETRIEVER_CLASS":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_CLASS_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_CLASS_DESCRIPTION","type":"select","optionsMethod":["EmergencyContactsDataModel","getContactsListDataRetrievers"],"config":"feeds","section":"contacts"},
+            "DRUPAL_SERVER_URL":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_DRUPALSERVER_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_DRUPALSERVER_DESCRIPTION","type":"text","config":"feeds","section":"contacts","showIf":["RETRIEVER_CLASS","DrupalContactsDataRetriever"]},
+            "FEED_VERSION":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_VERSION_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_VERSION_DESCRIPTION","type":"select","options":{"1":"1"},"config":"feeds","section":"contacts","showIf":["RETRIEVER_CLASS","DrupalContactsDataRetriever"]},
+            "BASE_URL":{"labelKey":"EMERGENCY_ADMIN_CONTACTS_BASEURL_TITLE","descriptionKey":"EMERGENCY_ADMIN_CONTACTS_BASEURL_DESCRIPTION","type":"file","config":"feeds","section":"contacts","showIf":["RETRIEVER_CLASS","INIFileContactsListRetriever"]}
         }
     },
     "notice":{
@@ -24,7 +24,6 @@
         "descriptionKey":"EMERGENCY_ADMIN_NOTICE_DESCRIPTION",
         "sectiontype":"fields",
         "fields":{
-            "CONTROLLER_CLASS":{"labelKey":"EMERGENCY_ADMIN_NOTICE_CLASS_TITLE","descriptionKey":"EMERGENCY_ADMIN_NOTICE_CLASS_DESCRIPTION","type":"select","optionsMethod":["EmergencyNoticeDataController","getEmergencyNoticeDataControllers"],"config":"feeds","section":"notice"},
             "BASE_URL":{"labelKey":"EMERGENCY_ADMIN_NOTICE_BASEURL_TITLE","descriptionKey":"EMERGENCY_ADMIN_NOTICE_BASEURL_DESCRIPTION","type":"text","config":"feeds","section":"notice"}
      }
     }

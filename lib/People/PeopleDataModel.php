@@ -19,12 +19,12 @@ class PeopleDataModel extends ItemListDataModel
         return $this->parseResponse($this->response);
     }
         
-    public static function getPeopleControllers() {
+    public static function getPeopleRetrievers() {
         return array(
             ''=>'-',
-            'LDAPPeopleController'=>'LDAP',
-            'ADPeopleController'=>'Active Directory',
-            'DatabasePeopleController'=>'Database'
+            'LDAPPeopleRetriever'=>'LDAP',
+            'ADPeopleRetriever'=>'Active Directory',
+            'DatabasePeopleRetriever'=>'Database'
         );
     }
 

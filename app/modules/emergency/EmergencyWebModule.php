@@ -2,11 +2,15 @@
 
 Kurogo::includePackage('Emergency');
 
-class EmergencyWebModule extends WebModule 
+class EmergencyWebModule extends WebModule implements HomeAlertInterface
 {
     protected $id='emergency';
     protected $contactsController;
     protected $emergencyNoticeController;
+    
+    public function getHomeScreenAlert() {
+        $this->emergencyNoticeController->getLatestEmergencyNotice();        
+    }
 
     protected function initialize() {
         $config = $this->loadFeedData();
@@ -50,18 +54,16 @@ class EmergencyWebModule extends WebModule
             case 'pane':
                 $hasEmergencyFeed = ($this->emergencyNoticeController !== NULL);
                 $this->assign('hasEmergencyFeed', $hasEmergencyFeed);
-                if ($hasEmergencyFeed) {
-                    $emergencyNotice = $this->emergencyNoticeController->getLatestEmergencyNotice();
-                    if ($emergencyNotice) {
-                        $this->assign('emergencyFeedEmpty', FALSE);             
-                        $this->assign('title', $emergencyNotice['title']);
-                        $this->assign('text', $emergencyNotice['text']);
-                        $this->assign('date', $emergencyNotice['date']);
-                        $this->assign('timeFormat', $this->getLocalizedString('MEDIUM_TIME_FORMAT'));
-                        $this->assign('dateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
-                    } else {
-                        $this->assign('emergencyFeedEmpty', TRUE);
-                    }
+                $emergencyNotice = $this->getHomeScreenAlert();
+                if ($emergencyNotice) {
+                    $this->assign('emergencyFeedEmpty', FALSE);             
+                    $this->assign('title', $emergencyNotice['title']);
+                    $this->assign('text', $emergencyNotice['text']);
+                    $this->assign('date', $emergencyNotice['date']);
+                    $this->assign('timeFormat', $this->getLocalizedString('MEDIUM_TIME_FORMAT'));
+                    $this->assign('dateFormat', $this->getLocalizedString('MEDIUM_DATE_FORMAT'));
+                } else {
+                    $this->assign('emergencyFeedEmpty', TRUE);
                 }
                 break;
                 

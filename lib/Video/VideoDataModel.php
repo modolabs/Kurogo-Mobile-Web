@@ -5,11 +5,11 @@ class VideoDataModel extends ItemListDataModel
 {
     protected $cacheFolder='Video';
 
-    public static function getVideoDataControllers() {
+    public static function getVideoDataRetrievers() {
         return array(
-            'BrightcoveVideoController'=>'Brightcove',
-            'VimeoVideoController'=>'Vimeo',
-            'YouTubeVideoController'=>'YouTube'
+            'BrightcoveRetriever'=>'Brightcove',
+            'VimeoRetriever'=>'Vimeo',
+            'YouTubeRetriever'=>'YouTube'
         );
     }
     

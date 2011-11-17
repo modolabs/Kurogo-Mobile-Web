@@ -10,12 +10,6 @@ class EmergencyNoticeDataModel extends DataModel
 
     protected $cacheLifetime = 60; // emergency notice should have a short cache time
 
-    public static function getEmergencyNoticeDataControllers() {
-        return array(
-            'EmergencyNoticeDataController'=>'Default'
-        );
-    }
-
     protected function init($args) {
         parent::init($args);
 

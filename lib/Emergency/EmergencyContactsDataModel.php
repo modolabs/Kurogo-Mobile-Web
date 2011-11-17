@@ -7,10 +7,10 @@ class EmergencyContactsDataModel extends DataModel
     protected $secondaryContects = NULL;
     protected $contactsLoaded = false;
 
-    public static function getContactsListDataControllers() {
+    public static function getContactsListDataRetrievers() {
         return array(
-            'DrupalContactsListDataController'=>'Drupal Module',
-            'INIFileContactsListDataController'=>'INI File'
+            'DrupalContactsDataRetriever'=>'Drupal Module',
+            'INIFileContactsListRetriever'=>'INI File'
         );
     }
 
