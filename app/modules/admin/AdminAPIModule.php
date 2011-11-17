@@ -125,6 +125,8 @@ class AdminAPIModule extends APIModule
         {
             case 'fields':
                 foreach ($sectionData['fields'] as $key=>&$field) {
+                    $_key = isset($field['key']) ? $field['key'] : $key;
+
                     if (isset($field['labelKey'])) {
                         $field['label'] = $module->getLocalizedString($field['labelKey']);
                         unset($field['labelKey']);
@@ -149,10 +151,10 @@ class AdminAPIModule extends APIModule
                             {
                                 case 'site':
                                 case 'kurogo':
-                                    $field['value'] = Kurogo::getOptionalSiteVar($key, '', $field['section']);
+                                    $field['value'] = Kurogo::getOptionalSiteVar($_key, '', $field['section']);
                                     break;
                                 case 'strings':
-                                    $field['value'] = Kurogo::getOptionalSiteString($key);
+                                    $field['value'] = Kurogo::getOptionalSiteString($_key);
                                     break;
                                 default: 
                                     throw new KurogoConfigurationException("Unknown config " . $field['config']);
@@ -160,7 +162,7 @@ class AdminAPIModule extends APIModule
                             }
                         }
                     } elseif (isset($field['config'], $field['section'])) {
-                        $field['value'] = $module->getOptionalModuleVar($key, isset($field['default']) ? $field['default'] : '', $field['section'], $field['config']);
+                        $field['value'] = $module->getOptionalModuleVar($_key, isset($field['default']) ? $field['default'] : '', $field['section'], $field['config']);
                     }
                     
                     switch ($field['type']) 
@@ -375,6 +377,11 @@ class AdminAPIModule extends APIModule
                 throw new KurogoConfigurationException("Unable to handle $type $section. Invalid section type " . $sectionData['sectiontype']);
         }
         
+        /* if there is a key value then save it, otherwise use the value from the dictionary */
+        if (!isset($fieldData['key'])) {
+            $fieldData['key'] = $key;
+        }
+        
         if (isset($fieldData['valueSaveMethod'])) {
             if (isset($fieldData['module'])) {
                 $module = WebModule::factory($fieldData['module']);
@@ -408,7 +415,7 @@ class AdminAPIModule extends APIModule
                 }
 
                 if (isset($fieldData['fields'][$k]['omitBlankValue']) && $fieldData['fields'][$k]['omitBlankValue'] && strlen($v)==0) {
-                    $changed = $changed || $config->clearVar($key, $k);
+                    $changed = $changed || $config->clearVar($fieldData['key'], $k);
                     unset($value[$k]);
                 }
 
@@ -441,20 +448,20 @@ class AdminAPIModule extends APIModule
                     $v = constant($prefix) . '/' . $v;
                 }
                 
-                if (!$config->setVar($key, $k, $v, $c)) {
+                if (!$config->setVar($fieldData['key'], $k, $v, $c)) {
                     $result = false;
                 }
                 $changed = $changed || $c;
             }
         } else {
             if (isset($fieldData['omitBlankValue']) && $fieldData['omitBlankValue'] && strlen($value)==0) {
-                $changed = $config->clearVar($fieldData['section'], $key);
+                $changed = $config->clearVar($fieldData['section'], $fieldData['key']);
             } else {
                 if ($fieldData['type']=='paragraph') {
                     $value = explode("\n\n", str_replace(array("\r\n","\r"), array("\n","\n"), $value));
                 }
             
-                $result = $config->setVar($fieldData['section'], $key, $value, $changed);
+                $result = $config->setVar($fieldData['section'], $fieldData['key'], $value, $changed);
 
                 if (!$result) {
                     throw new KurogoConfigurationException("Error setting $config $section $key $value");

@@ -10,6 +10,43 @@ class OAuthDataRetriever extends URLDataRetriever
     protected $signatureMethod = 'HMAC-SHA1';
     protected $requiresToken = false;
     protected $cert;
+    protected $OAuthProvider;
+    protected $OAuthProviderClass;
+    
+    protected function initOAuthProvider(OAuthProvider $provider) {
+        $this->oauthVersion = $provider->getOAuthVersion();
+        $this->consumerKey = $provider->getConsumerKey();
+        $this->consumerSecret = $provider->getConsumerSecret();
+        $this->token = $provider->getToken();
+        $this->tokenSecret = $provider->getTokenSecret();
+        $this->signatureMethod = $provider->getSignatureMethod();
+        $this->cert = $provider->getCert();
+    }
+    
+    public function getOAuthProvider() {
+        if (!$this->OAuthProvider) {
+            if ($this->OAuthProviderClass) {
+                $this->OAuthProvider = OAuthProvider::factory($this->OAuthProviderClass, $this->initArgs);
+            }
+        }
+        return $this->OAuthProvider;
+    }
+    
+    public function auth(array $options) {
+        $provider = $this->getOAuthProvider();
+        return $provider->auth($options, $userData);
+    }
+    
+    /**
+     * Interceptor. forward the method that not exist in this class to the OAuthProvider
+     */
+    public function __call($method, $arguments) {
+        if ($this->OAuthProvider && is_callable(array($this->OAuthProvider, $method))) {
+            return call_user_func_array(array($this->OAuthProvider, $method), $arguments);
+        } else {
+            throw new KurogoDataException("Call of unknown function '$method'.");
+        }
+    }
     
 	protected function buildQuery(array $parameters) {
 
@@ -144,9 +181,29 @@ class OAuthDataRetriever extends URLDataRetriever
 	    }
 	    return $return;
 	}
-	
+
+	protected function parameters() {
+	    
+        $parameters = parent::parameters();
+        
+        //don't include the oauth_* parameters if the first argument is true
+        $args = func_get_args();
+        if (isset($args[0]) && $args[0]) {
+            return $parameters;
+        }
+        
+        $_parameters = array();
+        foreach ($parameters as $parameter=>$value) {
+            if (substr($parameter, 0, 6) !== 'oauth_') {
+                $_parameters[$parameter] = $value;
+            }
+        }
+        
+        return $_parameters;
+	}
+
     protected function getAuthorizationHeader() {
-		$params = $this->parameters();
+		$params = $this->parameters(true);
 		$options = array();
 
         /* strip out query string and add it to parameters */
@@ -214,6 +271,15 @@ class OAuthDataRetriever extends URLDataRetriever
         $streamContextOpts['http']['max_redirects'] = 0;
 
         return $streamContextOpts;
+    }
+    
+    public function cacheKey() {
+        //only return a cacheKey when there is a token
+        if ($this->token) {
+            return parent::cacheKey();
+        } 
+        
+        return null;
     }
 
     public function cacheGroup() {
@@ -290,13 +356,8 @@ class OAuthDataRetriever extends URLDataRetriever
     
     protected function setAuthority(AuthenticationAuthority $authority) {
         if ($authority instanceOf OAuthAuthentication) {
-            $oauth = $authority->oauth();
-            $this->consumerKey = $oauth->getConsumerKey();
-            $this->consumerSecret = $oauth->getConsumerSecret();
-            $this->token = $oauth->getToken();
-            $this->tokenSecret = $oauth->getTokenSecret();
-            $this->signatureMethod = $oauth->getSignatureMethod();
-            $this->cert = $oauth->getCert();
+            $this->OAuthProvider = $authority->getOAuthProvider();
+            $this->initOAuthProvider($this->OAuthProvider);
         } 
         parent::setAuthority($authority); 
     } 
@@ -304,12 +365,16 @@ class OAuthDataRetriever extends URLDataRetriever
     protected function init($args) {
         parent::init($args);
         
-        if (isset($args['consumerKey'])) {
-            $this->consumerKey = $args['consumerKey'];
+        if ($provider = $this->getOAuthProvider()) {
+            $this->initOAuthProvider($provider);
+        }
+                
+        if (isset($args['OAUTH_CONSUMER_KEY'])) {
+            $this->consumerKey = $args['OAUTH_CONSUMER_KEY'];
         }
 
-        if (isset($args['consumerSecret'])) {
-            $this->consumerSecret = $args['consumerSecret'];
+        if (isset($args['OAUTH_CONSUMER_SECRET'])) {
+            $this->consumerSecret = $args['OAUTH_CONSUMER_SECRET'];
         }        
 
         if (isset($args['token'])) {

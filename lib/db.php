@@ -47,7 +47,8 @@ class db {
                 'DB_PASS'=>$config->getVar('DB_PASS'),
                 'DB_DBNAME'=>$config->getVar('DB_DBNAME'),   
                 'DB_FILE'=>$config->getVar('DB_FILE'),
-                'DB_CREATE'=>$config->getOptionalVar('DB_CREATE')
+                'DB_CREATE'=>$config->getOptionalVar('DB_CREATE'),
+                'DB_PORT'=>$config->getOptionalVar('DB_PORT')
             );
         }
     

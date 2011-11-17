@@ -164,16 +164,16 @@ abstract class ItemListDataModel extends DataModel {
         return $data;
     }
 
-    protected function parseResponse(DataResponse $response, DataParser $parser=null) {       
+    protected function parseResponse(DataResponse $response, DataParser $parser=null) {
         if (!$parser) {
             $parser = $this->parser;
         }
-
         $data = parent::parseResponse($response, $parser);
         $this->setTotalItems($parser->getTotalItems());
         return $data;
     }
-    
+
+
     /**
      * Returns an item at a particular index
      * @param int index
