@@ -1,7 +1,7 @@
 <?php
 
 // implemented by map data elements that can be displayed on a map
-interface Placemark extends MapListElement, KurogoObject
+interface Placemark extends MapListElement
 {
     public function getGeometry();
     public function getStyle();

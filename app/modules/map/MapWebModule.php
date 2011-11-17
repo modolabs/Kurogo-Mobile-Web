@@ -138,20 +138,36 @@ class MapWebModule extends WebModule {
         );
     }
 
-    public function linkForItem(KurogoObject $placemark, $options=null)
+    public function linkForItem(KurogoObject $mapItem, $options=null)
     {
+        $urlArgs = $this->args;
         $addBreadcrumb = $options && isset($options['addBreadcrumb']) && $options['addBreadcrumb'];
-        $urlArgs = shortArrayFromMapFeature($placemark);
         if (isset($options['external']) && $options['external']) {
             $urlArgs['external'] = true;
         }
+
         $result = array(
-            'title' => $placemark->getTitle(),
-            'subtitle' => $placemark->getSubtitle(),
-            'url' => $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb),
+            'title'    => $mapItem->getTitle(),
+            'subtitle' => $mapItem->getSubtitle(),
             );
-        if (($distance = $placemark->getField('distance')) && $this->getOptionalModuleVar('SHOW_DISTANCES', true)) {
-            $result['subtitle'] = $this->displayTextFromMeters($distance);
+
+        if ($mapItem instanceof Placemark) {
+            $urlArgs = array_merge($urlArgs, shortArrayFromMapFeature($mapItem));
+            // for map driven UI we want placemarks to show up on the full screen map
+            if ($this->isMapDrivenUI() && $this->page != 'index') {
+                $result['url'] = $this->buildURL('index', $urlArgs);
+            } else {
+                $result['url'] = $this->buildBreadcrumbURL('detail', $urlArgs, $addBreadcrumb);
+            }
+
+            if (($distance = $mapItem->getField('distance')) && $this->getOptionalModuleVar('SHOW_DISTANCES', true)) {
+                $result['subtitle'] = $this->displayTextFromMeters($distance);
+            }
+
+        } else {
+            // for folder objects, getId returns the subcategory ID
+            $drilldownPath = array_merge($this->getDrillDownPath(), array($mapItem->getId()));
+            $result['url'] = $this->categoryURL($category, $drilldownPath, $urlArgs['external']);
         }
 
         return $result;
@@ -206,15 +222,6 @@ class MapWebModule extends WebModule {
 
     }
     */
-
-    private function detailURL($name, $category=null, $addBreadcrumb=true) {
-        $args = $this->args;
-        $args['featureindex'] = $name;
-        if ($this->isMapDrivenUI()) {
-            return $this->buildURL('index', $args);
-        }
-        return $this->buildBreadcrumbURL('detail', $args, $addBreadcrumb);
-    }
   
     protected function detailURLForBookmark($aBookmark) {
         parse_str($aBookmark, $params);
@@ -756,18 +763,7 @@ class MapWebModule extends WebModule {
 
                     $places = array();
                     foreach ($listItems as $listItem) {
-                        if ($listItem instanceof Placemark) {
-                            $url = $this->detailURL($listItem->getId(), $category);
-                        } else {
-                            // for folder objects, getIndex returns the subcategory ID
-                            $drilldownPath = array_merge($this->getDrillDownPath(), array($listItem->getId()));
-                            $url = $this->categoryURL($category, $drilldownPath, false);
-                        }
-                        $places[] = array(
-                            'title'    => $listItem->getTitle(),
-                            'subtitle' => $listItem->getSubtitle(),
-                            'url'      => $url,
-                            );
+                        $places[] = $this->linkForItem($listItem);
                     }
                     $this->assign('title',  $dataModel->getTitle());
                     $this->assign('places', $places);          

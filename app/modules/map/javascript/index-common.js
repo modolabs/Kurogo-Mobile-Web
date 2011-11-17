@@ -53,7 +53,11 @@ function sortFailed(code, message) {
 
 function search(form) {
     if (form.filter.value.length > 0 && typeof addMarker == 'function') {
+        clearMarkers();
         apiRequest(apiURL + '/search', {'q': form.filter.value}, function(response) {
+            hideSearchFormButtons();
+            // TODO: make the "browse" button bring up results in a list
+
             var minLat = 90;
             var maxLat = -90;
             var minLon = 180;

@@ -20,6 +20,19 @@ abstract class MapCategory implements MapFolder, MapListElement
     {
         return $this->id;
     }
+
+    public function filterItem($filters)
+    {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter) {
+                case 'search': //case insensitive
+                    return  (stripos($this->getTitle(), $value)!==FALSE) || (stripos($this->getSubTitle(), $value)!==FALSE);
+                    break;
+            }
+        }   
+        
+        return true;     
+    }
 }
 
 
