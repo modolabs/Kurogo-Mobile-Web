@@ -4,6 +4,7 @@ var staticMapOptions;
 var mapWidth;
 var mapHeight;
 var apiURL;
+var map;
 
 // id7 doesn't understand window.innerWidth and window.innerHeight
 function getWindowHeight() {

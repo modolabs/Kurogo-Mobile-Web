@@ -50,3 +50,58 @@ function sortSucceeded(response) {
 function sortFailed(code, message) {
     // do nothing; leave content as is
 }
+
+function search(form) {
+    if (form.filter.value.length > 0 && typeof addMarker == 'function') {
+        apiRequest(apiURL + '/search', {'q': form.filter.value}, function(response) {
+            var minLat = 90;
+            var maxLat = -90;
+            var minLon = 180;
+            var maxLon = -180;
+            for (var i = 0; i < response['results'].length; i++) {
+                var markerData = response['results'][i];
+                createMarker(markerData['title'], markerData['subtitle'],
+                    markerData['lat'], markerData['lon'], markerData['url']);
+                if (minLat > markerData['lat']) {
+                    minLat = markerData['lat'];
+                }
+                if (minLon > markerData['lon']) {
+                    minLon = markerData['lon'];
+                }
+                if (maxLat < markerData['lat']) {
+                    maxLat = markerData['lat'];
+                }
+                if (maxLon < markerData['lon']) {
+                    maxLon = markerData['lon'];
+                }
+            }
+            setMapBounds(minLat, minLon, maxLat, maxLon);
+
+        }, function(errorCode, errorMessage) {
+            // TODO
+        });
+    }
+}
+
+function clearSearch(form) {
+    form.filter.value = '';
+}
+
+function showSearchFormButtons() {
+    addClass(document.getElementById("header"), "expanded");
+    addClass(document.getElementById("searchbar"), "expanded");
+    document.getElementById("searchFormButtons").style.display = "block";
+    document.getElementById("searchBarButtons").style.display = "none";
+    doUpdateContainerDimensions();
+}
+
+function hideSearchFormButtons() {
+    removeClass(document.getElementById("header"), "expanded");
+    removeClass(document.getElementById("searchbar"), "expanded");
+    document.getElementById("searchFormButtons").style.display = "none";
+    document.getElementById("searchBarButtons").style.display = "block";
+    doUpdateContainerDimensions();
+}
+
+
+

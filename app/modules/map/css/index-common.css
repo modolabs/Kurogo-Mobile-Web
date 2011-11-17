@@ -24,17 +24,45 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
 }
 
 #searchbar {
-    height: 48px;
     margin: 0;
     padding: 0;
     float: left;
+}
+
+#header.expanded {
+    height: 92px;
+}
+
+#searchbar.expanded {
+    width: 99%;
 }
 
 #search-form {
     margin: 4px;
 }
 
-#search-form input {
+#search-form input[type="text"] {
+    width: 100%;
+    height: 30px;
+}
+
+#searchFormButtons {
+    display: none;
+    margin: 4px 0 0 0;
+    padding: 0;
+}
+
+#searchFormButtons input {
+   margin: 4px;
+   height: 30px;
+   border-radius: 5px;
+   float: left;
+   width: 32%;
+   background-image: linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -o-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -moz-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -webkit-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
+   background-image: -ms-linear-gradient(bottom, rgb(171,171,171) 21%, rgb(219,219,219) 69%);
 }
 
 .searchBarButton {

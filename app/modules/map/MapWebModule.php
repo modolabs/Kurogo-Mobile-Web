@@ -612,6 +612,11 @@ class MapWebModule extends WebModule {
 
         $this->featureIndex = $this->getArg('featureindex', null);
 
+        // pass the REST API URL to javascript so we can make queries
+        // TODO there should ba a cleaner way to do this
+        $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}";
+        $this->addInlineJavascript("\napiURL = '$apiURL';\n");
+
         switch ($this->page) {
             case 'help':
                 break;
@@ -644,10 +649,6 @@ class MapWebModule extends WebModule {
                             'listclass' => $id, // stupid way to sneak the id into the dom
                             );
                     }
-
-                    // TODO there should ba a cleaner way to do this
-                    $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}";
-                    $this->addInlineJavascript("\napiURL = '$apiURL';\n");
 
                     $groupAlias = $this->getLocalizedString('MAP_GROUP_ALIAS');
                     $this->assign('browseHint', $this->getLocalizedString('SELECT_A_MAP_GROUP', $groupAlias));
@@ -906,7 +907,7 @@ class MapWebModule extends WebModule {
         $this->addInlineJavascript($baseMap->getHeaderScript());
         $this->addInlineJavascriptFooter($baseMap->getFooterScript());
 
-        //$this->addInlineJavascriptFooter("\n hide('loadingimage');\n");
+        $this->configureUserLocation();
         $this->addOnOrientationChange('updateContainerDimensions()');
     }
 
@@ -955,12 +956,10 @@ class MapWebModule extends WebModule {
         // ajax options for static maps
         // devices like bbplus will load a new page for each zoom/scroll
         if ($this->getMapDevice()->pageSupportsDynamicMap()) {
-            $apiURL = FULL_URL_BASE.API_URL_PREFIX."/{$this->configModule}/staticImageURL";
             $js = <<<JS
                 mapWidth = {$imgController->getImageWidth()};
                 mapHeight = {$imgController->getImageHeight()};
                 staticMapOptions = {$imgController->getJavascriptControlOptions()};
-                apiURL = "{$apiURL}";
 JS;
 
             $this->addInlineJavascript($js);
