@@ -17,7 +17,8 @@ class SocialWebModule extends WebModule
         }
         
         foreach ($feeds as $feed=>$feedData) {
-            $this->feeds[$feed] = SocialMediaController::factory($feedData['CONTROLLER_CLASS'], $feedData);
+            $modelClass = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : 'SocialDataModel';
+            $this->feeds[$feed] = SocialDataModel::factory($modelClass, $feedData);
         }
 
     }
@@ -76,7 +77,7 @@ class SocialWebModule extends WebModule
                 
                 foreach ($this->feeds as $feed=>$controller) {                                
                     if ($controller->canRetrieve()) {
-                        $items = $controller->items();
+                        $items = $controller->getPosts();
                         foreach ($items as $post) {
                             $item = $this->linkForItem($post, array('feed'=>$feed));
                             $sort[] = $item['sort'];
@@ -116,6 +117,10 @@ class SocialWebModule extends WebModule
                 }
                 break;
             case 'auth':
+                if (!Kurogo::getSiteVar('AUTHENTICATION_ENABLED')) {
+                    throw new KurogoConfigurationException($this->getLocalizedString("ERROR_AUTHENTICATION_DISABLED"));
+                }
+
                 if (count($this->feeds)!=1) {
                     $this->redirectTo('index');
                 }
