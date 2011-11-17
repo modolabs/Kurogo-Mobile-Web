@@ -12,10 +12,11 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
 }
 
 /* shorter min-height than default to prevent scrolling on short devices*/
+/*
 #container {
     min-height: 200px;
 }
-
+*/
 #header {
     height: 48px;
     margin: 0;
@@ -34,7 +35,7 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
 }
 
 #searchbar.expanded {
-    width: 99%;
+    width: 98%;
 }
 
 #search-form {
@@ -53,7 +54,7 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
 }
 
 #searchFormButtons input {
-   margin: 4px;
+   margin: 0.5%;
    height: 30px;
    border-radius: 5px;
    float: left;

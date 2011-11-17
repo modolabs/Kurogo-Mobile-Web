@@ -240,7 +240,7 @@ function updateMapImage(zoomDir, scrollDir, overrides) {
             params["overrides"] = escape(overrideParams.join("&"));
         }
     }
-    apiRequest(apiURL, params, function(response) {
+    apiRequest(apiURL + '/staticImageURL', params, function(response) {
         loadMapImage(response);
     }, function(code, message) {});
 }

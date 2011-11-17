@@ -100,6 +100,7 @@ function hideSearchFormButtons() {
     removeClass(document.getElementById("searchbar"), "expanded");
     document.getElementById("searchFormButtons").style.display = "none";
     document.getElementById("searchBarButtons").style.display = "block";
+    scrollTo(0, 1);
     doUpdateContainerDimensions();
 }
 
