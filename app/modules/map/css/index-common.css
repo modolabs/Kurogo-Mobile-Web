@@ -17,24 +17,31 @@ body.landscape #mapimage.image, body.portrait #mapimage.image {
 }
 
 #header {
-    height: 44px;
-    padding: 5px;
+    height: 48px;
+    margin: 0;
+    padding: 0;
     background-color: #369;
 }
 
 #searchbar {
+    height: 48px;
+    margin: 0;
+    padding: 0;
     float: left;
 }
 
 #search-form {
-    margin: 10px;
+    margin: 4px;
+}
+
+#search-form input {
 }
 
 .searchBarButton {
     width: 36px;
     height: 32px;
     float: right;
-    margin-right: 5px;
+    margin: 7px 6px 0 0;
     background-image: url(/modules/map/images/button-background.png);
 }
 
