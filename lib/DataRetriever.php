@@ -14,6 +14,7 @@ abstract class DataRetriever {
     protected $DEFAULT_RESPONSE_CLASS = 'DataResponse';
     protected $DEFAULT_PARSER_CLASS=null; 
     protected $DEFAULT_CACHE_LIFETIME = 900; // 15 min
+    protected $initArgs=array();
     protected $authority;
     protected $debugMode = false;
     protected $supportsSearch = false;
@@ -133,7 +134,7 @@ abstract class DataRetriever {
     }
     
     protected function init($args) {
-
+        $this->initArgs = $args;
         if (isset($args['DEBUG_MODE'])) {
             $this->setDebugMode($args['DEBUG_MODE']);
         }
