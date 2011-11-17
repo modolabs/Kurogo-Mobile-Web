@@ -73,7 +73,8 @@ class PhotosWebModule extends WebModule {
                 foreach($items as $item) {
                     $photo = array();
                     $photo['title'] = $item->getTitle();
-                    $photo['url'] = $this->buildBreadcrumbURL('show', array('id' => $item->getID(), 'section' => $section), true);
+                    // use base64_encode to make sure it will not be blocked by GFW
+                    $photo['url'] = $this->buildBreadcrumbURL('show', array('id' => base64_encode($item->getID()), 'section' => $section), true);
                     $photo['img'] = $item->getTUrl();
                     $photos[] = $photo;
                 }
@@ -81,7 +82,7 @@ class PhotosWebModule extends WebModule {
                 $this->assign('sections', $this->getSectionsFromFeeds($this->feeds));
                 break;
             case 'show':
-                $id = $this->getArg('id');
+                $id = base64_decode($this->getArg('id'));
                 $photo = $controller->getPhoto($id);
                 $this->setPageTitles($photo->getTitle());
                 $this->assign('photo', $photo);

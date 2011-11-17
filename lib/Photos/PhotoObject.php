@@ -5,7 +5,7 @@ class PhotoObject implements KurogoObject {
     protected $title;
     /**
      * url 
-     * photo url
+     * alternate photo url
      * 
      * @var mixed
      * @access protected

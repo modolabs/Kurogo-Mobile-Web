@@ -9,6 +9,7 @@ class PhotosDataModel extends ItemListDataModel {
         $this->setUser($args);
         $this->setGroup($args);
         $this->setSet($args);
+        $this->setAlbum($args);
         /**
          * use type to let retriever know which api will be use
          */
@@ -32,6 +33,12 @@ class PhotosDataModel extends ItemListDataModel {
     protected function setSet($args) {
         if (isset($args['SID']) && strlen($args['SID'])) {
             $this->setOption('set_id', $args['SID']);
+        }
+    }
+
+    protected function setAlbum($args) {
+        if (isset($args['ALBUM_ID']) && strlen($args['ALBUM_ID'])) {
+            $this->setOption('album_id', $args['ALBUM_ID']);
         }
     }
 
