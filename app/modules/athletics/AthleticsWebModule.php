@@ -241,22 +241,33 @@ class AthleticsWebModule extends WebModule {
                 $feedData['TITLE'] = $sportData['TITLE'];
             }
             
+            $handelDataModel = ''; //chose the multiple types of dataModel
+            
             switch (strtoupper($type)) {
                 case 'NEWS':
                     if (!isset($feedData['PARSER_CLASS'])) {
                         $feedData['PARSER_CLASS'] = 'RSSDataParser';
                     }
+                    $handelDataModel = 'NewsDataModel';
+                    
                     break;
+                    
                 case 'SCHEDULE':
                     includePackage('Calendar');
                     if (!isset($feedData['PARSER_CLASS'])) {
                         $feedData['PARSER_CLASS'] = 'ICSDataParser';
                     }
+                    $handelDataModel = 'CalendarDataModel';
+                    
                     break;
+                    
                 case 'SCORES':
                     break;
             }
-            $this->feed = AthleticsDataModel::factory('AthleticsDataModel', $feedData);
+            if (!$handelDataModel) {
+                $handelDataModel = self::$defaultModel;
+            }
+            $this->feed = $handelDataModel::factory($handelDataModel, $feedData);
             return $this->feed;
         }
         
@@ -305,10 +316,25 @@ class AthleticsWebModule extends WebModule {
                     'section' => $section
                 );
                 $stories = array();
+                /*
                 foreach ($items as $story) {
                     $stories[] = $this->linkForNewsItem($story, $options);
                 }
-
+                */
+                
+                foreach ($items as $event) {
+                    $subtitle = '';
+                    $eventTime = $event->getDateTime();
+                    $subtitle .= $eventTime ? $eventTime->format('Y-n-j H:i:s') : '';
+                    $subtitle .= $event->getAllDay() ? ' All Day' : '';
+                    $subtitle .= $event->getTBA() ? ' TBA' : '';
+                    $subtitle .= $event->getLocation() ? ' | Location:' . $event->getLocation() : '';
+                    $stories[] = array(
+                        'title' => $event->getSport(),
+                        'subtitle' => $subtitle,
+                    );
+                }
+                
                 $this->addInternalJavascript('/common/javascript/lib/ellipsizer.js');
                 $this->addOnLoad('setupNewsListing();');
         
@@ -377,7 +403,7 @@ class AthleticsWebModule extends WebModule {
                 
                 $feed->setStartDate($start);
                 $feed->setLimit($limit);
-                $iCalEvents = $feed->itemsForSchedule();
+                $iCalEvents = $feed->items();
                 
                 $options = array(
                     'section' => $section
@@ -396,7 +422,7 @@ class AthleticsWebModule extends WebModule {
                 $time = $this->getArg('time', time(), FILTER_VALIDATE_INT);
                 
                 $feed = $this->getFeed($section, 'schedule');
-                if ($event = $feed->getItemForSchedule($id, $time)) {
+                if ($event = $feed->getItem($id, $time)) {
                     $this->assign('event', $event);
                 } else {
                     throw new KurogoDataException($this->getLocalizedString('ERROR_EVENT_NOT_FOUND'));
