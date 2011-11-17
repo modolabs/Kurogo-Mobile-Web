@@ -37,7 +37,8 @@ class SocialDataModel extends ItemListDataModel
     }
     
     public function getUser($userID) {
-        Debug::Die_here(func_get_Args());
+        $response = $this->retriever->getUser($userID);
+        return $this->parseResponse($response);
     }
     
     /*
