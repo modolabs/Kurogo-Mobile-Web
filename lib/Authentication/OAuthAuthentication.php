@@ -6,7 +6,6 @@ abstract class OAuthAuthentication extends AuthenticationAuthority
 {
     protected $OAuthProviderClass;
     protected $OAuthProvider;
-    protected $initArgs;
     abstract protected function getUserFromArray(array $array);
 
     protected function validUserLogins() { 
