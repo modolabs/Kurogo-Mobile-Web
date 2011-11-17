@@ -281,6 +281,10 @@ abstract class OAuthProvider
 	        return $tokenSessionData;
 	    }
 	}
+	
+	public function getOAuthVersion() {
+	    return $this->oauthVersion;
+	}
 
     protected function init($args) {
     

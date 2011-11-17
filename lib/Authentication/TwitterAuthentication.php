@@ -63,8 +63,8 @@ class TwitterAuthentication extends OAuthAuthentication
             }
         } else {
             //load the data
-            $oauth = $this->oauth();
-            $response = $oauth->oauthRequest('GET', $this->API_URL . '/users/show.json', array('screen_name'=>$login));
+            $provider = $this->getOAuthProvider();
+            $response = $provider->oauthRequest('GET', $this->API_URL . '/users/show.json', array('screen_name'=>$login));
             $data = $response->getResponse();
         }
         
