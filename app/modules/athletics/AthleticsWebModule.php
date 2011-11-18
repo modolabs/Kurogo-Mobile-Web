@@ -5,6 +5,7 @@ class AthleticsWebModule extends WebModule {
     protected $id = 'athletics';
     protected static $defaultModel = 'AthleticsDataModel';
     protected $feeds = array();
+    protected $navFeeds = array();
     protected $timezone;
     protected $maxPerPage = 10;
     protected $showImages = true;
@@ -202,6 +203,7 @@ class AthleticsWebModule extends WebModule {
         return $fields;
     }
     
+    /*
     protected function getSportData($section) {
     
         $data = isset($this->feeds[$section]) ? $this->feeds[$section] : '';
@@ -212,6 +214,7 @@ class AthleticsWebModule extends WebModule {
         return $data;
         
     }
+    */
     
     protected function getSportLinks($section) {
 
@@ -229,7 +232,7 @@ class AthleticsWebModule extends WebModule {
         return $links;        
     }
     
-    
+    /*
     protected function getFeed($section, $type = '') {
         $sportData = $this->getSportData($section);
         $feedData = $this->getModuleSections($section);
@@ -273,10 +276,109 @@ class AthleticsWebModule extends WebModule {
         
         return null;
     }
+    */
+    
+    //get my favroite
+    protected function getMyFavorites() {
+        return array();
+    }
+    
+    //get sport detail for gender and sport name
+    protected function getSportData($section, $sport = '') {
+        $navData = $this->getNavData($section);
+        $sportDatas = $this->getModuleSections('feeds-' . $section);
+        
+        $data =  isset($sportDatas[$sport]) ? $sportDatas[$sport] : array();
+        if (!$data) {
+            throw new KurogoDataException('Unable to load data for sport '. $section . ' '. $sport);
+        }
+        
+        return $data;
+    }
+    
+    protected function getNavData($tab) {
+    
+        $data = isset($this->navFeeds[$tab]) ? $this->navFeeds[$tab] : '';
+        if (!$data) {
+            throw new KurogoDataException('Unable to load data for nav '. $tab);
+        }
+        
+        return $data;
+        
+    }
+    
+    //get the sechedule about most recent and next 
+    protected function getRangeSechedule($sechedules, $time = '') {
+        $time = $time ? $time : time();
+        
+        $recent = array();
+        $next   = array();
+        foreach ($sechedules as $key => $item) {
+            if ((!$dateTime = $item->getDateTime()) || $item->getTBA()) {
+                continue;
+            }
+            if ($dateTime->format('U') >= $time) {
+                $next[$key] = $dateTime->format('U');
+            } else {
+                $recent[$key] = $dateTime->format('U');
+            }
+        }
+        
+        $result = array();
+        if ($recent) {
+            arsort($recent);
+            $recentIndex = key($recent);
+            $result['recent'] = isset($sechedules[$recentIndex]) ? $sechedules[$recentIndex] : null;
+        }
+        if ($next) {
+            asort($next);
+            $nextIndex = key($next);
+            $result['next'] = isset($sechedules[$nextIndex]) ? $sechedules[$nextIndex] : null;
+        }
+        
+        return $result;
+    }
+    
+    protected function getFeed($gender, $sport) {
+        $handleDataModel = '';
+        $navData = $this->getNavData($gender);
+        
+        if ($feedData = $this->getSportData($gender, $sport)) {
+            if (!isset($feedData['TITLE'])) {
+                $feedData['TITLE'] = $navData['TITLE'];
+            }
+            if (!isset($feedData['PARSER_CLASS'])) {
+                $feedData['PARSER_CLASS'] = 'CSTVDataParser';
+            }
+            
+            if (!$handleDataModel) {
+                $handleDataModel = self::$defaultModel;
+            }
+            
+            $this->feed = $handleDataModel::factory($handleDataModel, $feedData);
+            return $this->feed;
+        }
+        
+        return null;
+    }
+    
+    protected function getTopNewsFeed() {
+        if ($feedData = $this->getNavData('topnews')) {
+            $handleDataModel = 'NewsDataModel';
+            if (!isset($feedData['PARSER_CLASS'])) {
+                $feedData['PARSER_CLASS'] = 'RSSDataParser';
+            }
+            $this->feed = $handleDataModel::factory($handleDataModel, $feedData);
+            return $this->feed;
+        }
+        
+        return null;
+    }
     
     protected function initialize() {
 
-        $this->feeds      = $this->loadFeedData();
+        //$this->feeds      = $this->loadFeedData();
+        $this->navFeeds = $this->getModuleSections('feeds-index');
         $this->timezone = Kurogo::siteTimezone();
         
     }    
@@ -435,24 +537,120 @@ class AthleticsWebModule extends WebModule {
                 break;
                 
             case 'sport':
+                $gender = $this->getArg('gender', '');
+                $sport = $this->getArg('sport', '');
+                
+                $navData = $this->getNavData($gender);
+                $sportData = $this->getSportData($gender, $sport);
+                
+                $scheduleFeed = $this->getFeed($gender, $sport);
+                $schedules = $scheduleFeed->items();
+                
+                $rangeSechedule = $this->getRangeSechedule($schedules, time());
+                $recent = array();
+                $next = array();
+                
+                if ($rangeSechedule['recent']) {
+                    $recent['sport'] = $rangeSechedule['recent']->getSport();
+                }
+                if ($rangeSechedule['next']) {
+                    $next['sport'] = $rangeSechedule['next']->getSport();
+                }
+                $this->assign('sportTitle', $sportData['TITLE']);
+                $this->assign('recent', $recent);
+                $this->assign('next', $next);
+                /*
                 $section = $this->getArg('section');
                 $sportData = $this->getSportData($section);
                 
                 $this->setPageTitles($sportData['TITLE']);
                 $this->assign('sportLinks', $this->getSportLinks($section));
+                */
                 break;
 
             case "index":
+                //get the Favorites
+                $favorites = $this->getMyFavorites();
+                
+                //get top news
+                $topNews = array();
+                if ($newsFeedData = $this->getNavData('topnews')) {
+                    $limit = isset($newsFeedData['LIMIT']) ? $newsFeedData['LIMIT'] : $this->maxPerPage;
+                    
+                    $newsFeed = $this->getTopNewsFeed();
+                    $newsFeed->setLimit($this->maxPerPage);
+
+                    $options = array();
+                    $items = $newsFeed->items();
+                    foreach ($items as $story) {
+                        $topNews[] = $this->linkForNewsItem($story, $options);
+                    }
+                }
+                
+                //get man sports
+                $sportDatas = $this->getModuleSections('feeds-men');
+                $menSports = array();
+                foreach ($sportDatas as $key => $sportData) {
+                    $sport = array(
+                        'title' =>$sportData['TITLE'],
+                        'url'   =>$this->buildURL('sport', array('gender'=>'men', 'sport' => $key))
+                    );
+                    $menSports[] = $sport;
+                }
+                
+                //get women sports
+                $sportDatas = $this->getModuleSections('feeds-women');
+                $womenSports = array();
+                foreach ($sportDatas as $key => $sportData) {
+                    $sport = array(
+                        'title' =>$sportData['TITLE'],
+                        'url'   =>$this->buildURL('sport', array('gender'=>'men', 'sport' => $key))
+                    );
+                    $womenSports[] = $sport;
+                }
+                
+                //check the default tab
+                if ($favorites) {
+                    $tab = 'favorites';
+                } elseif ($topNews) {
+                    $tab = 'topnews';
+                } else {
+                    $tab = count($menSports) >= count($womenSports) ? 'men' : 'women';
+                }
+                
+                //format the nav list
+                $navs = array();
+                foreach ($this->navFeeds as $key => $value) {
+                    $isSelect = $key == $tab ? true : false;
+                    $nav = array(
+                        'title' => $value['TITLE'],
+                        'select'   => $isSelect
+                    );
+                    $navs[] = $nav;
+                }
+
+                $this->assign('favorites', $favorites);
+                $this->assign('topNews', $topNews);
+                $this->assign('menSports', $menSports);
+                $this->assign('womenSports', $womenSports);
+                $this->assign('navs', $navs);
+                $this->assign('tab', $tab);
+                /*
+                $navTabs = $this->linkForNavTabs($tab);
+                
+                print_r($navTab);
+                exit;
                 $sports = array();
 
                 foreach ($this->feeds as $section => $sportData) {
                     $sport = array(
                         'title' =>$sportData['TITLE'],
-                        'url'   =>$this->buildBreadcrumbURL('sport', array('section'=>$section))
+                        'url'   =>$this->buildURL('index', array('tab'=>$section))
                     );
                     $sports[] = $sport;
                 }
                 $this->assign('sports', $sports);
+                */
                 break;
         }
     }

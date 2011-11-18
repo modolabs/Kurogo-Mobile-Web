@@ -24,22 +24,6 @@ class CSTVDataParser extends XMLDataParser {
         return $this->items;
     }
 
-    protected function setEventClass($eventClass) {
-        if ($eventClass) {
-    		if (!class_exists($eventClass)) {
-    			throw new KurogoConfigurationException("Cannot load class $eventClass");
-    		}
-			$this->eventClass = $eventClass;
-		}
-    }
-    
-    public function init($args) {
-    
-        if (isset($args['EVENT_CLASS'])) {
-            $this->setEventClass($args['EVENT_CLASS']);
-        }
-    }
-
     protected function shouldHandleStartElement($name) {
         return in_array($name, self::$startElements);
     }
@@ -86,6 +70,14 @@ class CSTVDataParser extends XMLDataParser {
         $event->setLocation($entry->getProperty('LOCATION'));
         $event->setScore($entry->getProperty('OUTCOME_SCORE'));
         $event->setLinkToRecap($entry->getProperty('RECAP'));
+        
+        //set the gender
+        if ($sportName = $entry->getProperty('SPORT')) {
+            $prefix = strtoupper(substr($sportName, 0, 1));
+            if ($prefix == 'W' || $prefix == 'M') {
+                $event->setGender($prefix);
+            }
+        }
         
         //convert the sport datetime
         $sportDate = $entry->getProperty('EVENT_DATE');

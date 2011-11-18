@@ -5,6 +5,7 @@ class AthleticEvent {
     protected $ID;
     protected $sport;
     protected $sportFullName;
+    protected $gender;
     protected $datetime;
     protected $opponent;
     protected $homeAway;
@@ -37,6 +38,14 @@ class AthleticEvent {
     
     public function getSportFullName() {
         return $this->sportFullName;
+    }
+    
+    public function setGender($gender) {
+        $this->gender = $gender;
+    }
+    
+    public function getGender() {
+        return $this->gender;
     }
     
     public function getDateTime() {
