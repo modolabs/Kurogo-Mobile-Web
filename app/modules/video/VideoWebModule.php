@@ -259,7 +259,6 @@ class VideoWebModule extends WebModule
                     $this->setLogData($videoid, $video->getTitle());
                     $this->setTemplatePage('detail-' . $video->getType());
                     if ($video->canPlay(Kurogo::deviceClassifier())) {
-                        $this->assign('ajax'      ,       $this->getArg('ajax', null));
                         $this->assign('videoTitle',       $video->getTitle());
                         $this->assign('videoid',          $video->getID());
                         $this->assign('videoStreamingURL',$video->getStreamingURL());

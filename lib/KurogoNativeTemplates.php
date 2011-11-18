@@ -9,7 +9,8 @@ class KurogoNativeTemplates
     protected $pathExists = false;
     protected $streamContext = null;
     
-    const INTERNAL_LINK_SCHEME = 'kurogo://';
+    const INTERNAL_LINK_SCHEME = 'kgolink://';
+    const CONFIG_LINK_SCHEME = 'kgoconfig://';
     
     // This global could be removed by using closures (ie php 5.3+)
     static protected $currentInstance = null;
@@ -76,25 +77,29 @@ class KurogoNativeTemplates
     }
     
     protected function urlSuffixToFile($urlSuffix) {
-        return strtr(preg_replace(
-            array(
-                '@device/native-[^/]+/@',
-                '@^min/\?g=file-/([^&]+)(&.+|)$@',
-                '@^min/g=([^-]+)-([^&]+)(&.+|)$@',
-                '@/(images|javascript|css)/@',
-                '@^modules/([^/]+)/@',
-                '@^common/@',
-            ),
-            array(
-                '',
-                '$1',
-                $this->page.'-min.$1',
-                '/',
-                '$1_',
-                '',
-            ),
-            ltrim($urlSuffix, '/')
-        ), '/', '-');
+        return str_replace(
+            array('/', '-'), // Android does not support hyphens in asset filenames
+            array('_', '__'),
+            preg_replace(
+                array(
+                    '@device/native-[^/]+/@',
+                    '@^min/\?g=file-/([^&]+)(&.+|)$@',
+                    '@^min/g=([^-]+)-([^&]+)(&.+|)$@',
+                    '@/(images|javascript|css)/@',
+                    '@^modules/([^/]+)/@',
+                    '@^common/@',
+                ),
+                array(
+                    '',
+                    '$1',
+                    $this->page.'_min.$1',
+                    '/',
+                    '$1_',
+                    '',
+                ),
+                ltrim($urlSuffix, '/')
+            )
+        );
     }
     
     protected static function getPartsForMatches($matches) {
@@ -233,6 +238,21 @@ class KurogoNativeTemplates
             self::$currentInstance = $this;
             $contents = $this->_rewriteURLsToFilePaths($contents, true, 'saveContentAndAssetsCallback');
         }
+        
+        $this->saveAssets(array('/common/images/blank.png')); // loader image used by all pages
+    }
+    
+    public static function getNativePageConfigURL($pageTitle, $backTitle, $hasRefresh) {
+        $params = array(
+          'pagetitle' => $pageTitle,
+        );
+        if ($backTitle) {
+          $params['backtitle'] = $backTitle;
+        }
+        if ($hasRefresh) {
+          $params['refresh'] = 1;
+        }
+        return self::CONFIG_LINK_SCHEME.'navbar/?'.http_build_query($params);
     }
     
     //

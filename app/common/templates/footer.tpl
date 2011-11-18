@@ -1,4 +1,6 @@
-{if !$ajaxContentLoad}
+{if $ajaxContentLoad}
+  {block name="ajaxContentFooter"}{/block}
+{else}
   {if $moduleDebug && count($moduleDebugStrings)}
     <p class="legend nonfocal">
       {foreach $moduleDebugStrings as $string}

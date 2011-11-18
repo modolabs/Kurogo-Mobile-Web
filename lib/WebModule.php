@@ -32,6 +32,7 @@ abstract class WebModule extends Module {
   
   protected $ajaxPagetype = false;
   protected $ajaxContentLoad = false;
+  protected $hasNativePageRefresh = false;
   
   protected $imageExt = '.png';
   
@@ -1047,10 +1048,13 @@ abstract class WebModule extends Module {
   
   private function getBreadcrumbString($addBreadcrumb=true) {
     if (KurogoNativeTemplates::isNativeCall()) {
-        return $addBreadcrumb ? 'new' : 'same'; // Adding a new breadcrumb means adding a new page
+      if (!$addBreadcrumb) {
+        return 'same'; // Don't create a new page
+      }
+      $breadcrumbs = array(); // Only need current page breadcrumb on native nav stack
+    } else {
+      $breadcrumbs = $this->breadcrumbs;
     }
-  
-    $breadcrumbs = $this->breadcrumbs;
     
     $this->cleanBreadcrumbs($breadcrumbs);
     
@@ -1115,13 +1119,16 @@ abstract class WebModule extends Module {
         if (isset($pageConfig['pageTitle']) && strlen($pageConfig['pageTitle'])) {
           $this->pageTitle = $pageConfig['pageTitle'];
         }
+        
+        if ($this->pagetype == 'native' && self::argVal($pageConfig, 'nativeBreadcrumbTitle', '')) {
+          $this->breadcrumbTitle = $pageConfig['nativeBreadcrumbTitle'];
           
-        if (isset($pageConfig['breadcrumbTitle'])  && strlen($pageConfig['breadcrumbTitle'])) {
+        } else if (isset($pageConfig['breadcrumbTitle'])  && strlen($pageConfig['breadcrumbTitle'])) {
           $this->breadcrumbTitle = $pageConfig['breadcrumbTitle'];
         } else {
           $this->breadcrumbTitle = $this->pageTitle;
         }
-          
+        
         if (isset($pageConfig['breadcrumbLongTitle']) && strlen($pageConfig['breadcrumbLongTitle'])) {
           $this->breadcrumbLongTitle = $pageConfig['breadcrumbLongTitle'];
         } else {
@@ -1171,6 +1178,15 @@ abstract class WebModule extends Module {
     $this->breadcrumbLongTitle = $title;
   }
 
+  protected function setNativePageRefresh($nativePageRefresh) {
+    $this->hasNativePageRefresh = $nativePageRefresh;
+  }
+
+  protected function getNativePageConfigURL() {
+    return KurogoNativeTemplates::getNativePageConfigURL(
+      $this->pageTitle, $this->breadcrumbTitle, $this->hasNativePageRefresh);
+  }
+  
   //
   // Module debugging
   //
@@ -1391,6 +1407,8 @@ abstract class WebModule extends Module {
     $this->assign('breadcrumbArgs',         $this->getBreadcrumbArgs());
     $this->assign('breadcrumbSamePageArgs', $this->getBreadcrumbArgs(false));
 
+    $this->assign('nativePageConfigURL', $this->getNativePageConfigURL());
+    
     $this->assign('moduleDebugStrings',     $this->moduleDebugStrings);
     
     $moduleStrings = $this->getOptionalModuleSection('strings');
