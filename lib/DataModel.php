@@ -308,5 +308,16 @@ abstract class DataModel {
         $response = $this->getResponse();
         return $response->getResponse();
     }
+    
+    /**
+     * Interceptor. forward the method that not exist in this class to the retriever 
+     */
+    public function __call($method, $arguments) {
+        if (is_callable(array($this->retriever, $method))) {
+            return call_user_func_array(array($this->retriever, $method), $arguments);
+        } else {
+            throw new KurogoDataException("Call of unknown function '$method'.");
+        }
+    }    
 }
 

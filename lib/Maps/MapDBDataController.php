@@ -60,6 +60,11 @@ class MapDBDataController extends MapDataController implements MapFolder
         }
     }
 
+    protected function parseResponse(DataResponse $response, DataParser $parser=null)
+    {
+        return $this->parseData($response->getResponse(), $parser);
+    }
+
     protected function parseData($data, DataParser $parser=null) {
         $items = null;
         if ($this->cacheIsFresh() && $this->hasDBData) {
