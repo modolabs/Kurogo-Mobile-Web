@@ -1,9 +1,8 @@
 <?php
 
-class AthleticEvent extends XMLElement {
+class AthleticEvent {
 
-    protected $name = 'event';
-    protected $eventID;
+    protected $ID;
     protected $sport;
     protected $sportFullName;
     protected $datetime;
@@ -15,16 +14,25 @@ class AthleticEvent extends XMLElement {
     
     protected $allday = false; //follow the time attrib
     protected $tba = false; //follow the time attrib
+        
+    public function setID($id) {
+        $this->ID = $id;
+    }
     
     public function getID() {
-        return $this->getEventID();
+        return $this->ID;
     }
     
-    public function getEventID() {
-        return $this->eventID;
+    public function setSport($sport) {
+        $this->sport = $sport;
     }
+    
     public function getSport() {
         return $this->sport;
+    }
+    
+    public function setSportFullName($fullName) {
+        $this->sportFullName = $fullName;
     }
     
     public function getSportFullName() {
@@ -39,24 +47,44 @@ class AthleticEvent extends XMLElement {
         $this->datetime = $time;
     }
     
+    public function setOpponent($opponent) {
+        $this->opponent = $opponent;
+    }
+    
     public function getOpponent() {
         return $this->opponent;
+    }
+    
+    public function setHomeAway($home_away) {
+        $this->homeAway = $home_away;
     }
     
     public function getHomeAway() {
         return $this->homeAway;
     }
     
+    public function setLocation($location) {
+        $this->location = $location;
+    }
+    
     public function getLocation() {
         return $this->location;
+    }
+    
+    public function setScore($score) {
+        $this->score = $score;
     }
     
     public function getScore() {
         return $this->score;
     }
     
+    public function setLinkToRecap($recap) {
+        $this->recap = $recap;
+    }
+    
     public function getLinkToRecap() {
-        return $this->linkToRecap;
+        return $this->recap;
     }
     
     public function setAllDay($result) {
@@ -73,24 +101,5 @@ class AthleticEvent extends XMLElement {
     
     public function getTBA() {
         return $this->tba;
-    }
-    
-    protected function elementMap() {
-        return array(
-            'SPORT'=>'sport',
-            'SPORT_FULLNAME'=>'sportFullName',
-            'OPPONENT'=>'opponent',
-            'HOME_VISITOR'=>'homeAway',
-            'LOCATION'=>'location',
-            'OUTCOME_SCORE'=>'score',
-            'RECAP'=>'recap'
-        );
-    }
-    
-    function __construct($attribs) {
-        if (isset($attribs['ID']) && $attribs['ID']) {
-            $this->eventID = $attribs['ID'];
-        }
-        $this->setAttribs($attribs);
     }
 }

@@ -13,10 +13,10 @@ if (!function_exists('xml_parser_create')) {
   * @subpackage DataParser
   */
 class CSTVDataParser extends XMLDataParser {
-    protected $eventClass='AthleticEvent';
+
     protected $items=array();
 
-    protected static $startElements=array('EVENT_INFO', 'EVENT');
+    protected static $startElements=array();
     protected static $endElements=array('EVENT');
     
     public function items()
@@ -45,14 +45,7 @@ class CSTVDataParser extends XMLDataParser {
     }
 
     protected function handleStartElement($name, $attribs) {
-        switch ($name)
-        {
-            case 'EVENT_INFO':
-                break;
-            case 'EVENT':
-                $this->elementStack[] = new $this->eventClass($attribs);
-                break;
-        }
+        return false;
     }
 
     protected function shouldHandleEndElement($name) {
@@ -62,21 +55,44 @@ class CSTVDataParser extends XMLDataParser {
     protected function handleEndElement($name, $element, $parent) {
         switch ($name) {
             case 'EVENT':
-                $element = $this->convertEventDateTime($element);
-                $this->items[] = $element;
+                $this->items[] = $this->parseEntry($element);
                 break;
         }
     }
+
+    protected function timeZoneMap() {
+        return array(
+            'ET' => 'America/New_York',
+            'CT' => 'America/Chicago',
+            'MT' => 'America/Denver',
+            'PT' => 'America/Los_Angeles'
+        );
+    }
     
-    protected function convertEventDateTime(AthleticEvent $event) {
-        $strtime = '';
-        if (!$date = $event->getProperty('event_date')) {
-            return '';
+    protected function transformTimeZone($timezone) {
+        $timeZoneMap = $this->timeZoneMap();
+        return $timezone && isset($timeZoneMap[$timezone]) ? $timeZoneMap[$timezone] : '';
+    }
+    
+    protected function parseEntry($entry) {
+        $event = new AthleticEvent();
+        if ($id = $entry->getAttrib('ID')) {
+            $event->setID($id);
         }
-        $strtime = $date;
+        $event->setSport($entry->getProperty('SPORT'));
+        $event->setSportFullName($entry->getProperty('SPORT_FULLNAME'));
+        $event->setOpponent($entry->getProperty('OPPONENT'));
+        $event->setHomeAway($entry->getProperty('HOME_VISITOR'));
+        $event->setLocation($entry->getProperty('LOCATION'));
+        $event->setScore($entry->getProperty('OUTCOME_SCORE'));
+        $event->setLinkToRecap($entry->getProperty('RECAP'));
         
-        if ($time = $event->getProperty('time')) {
-            //need to check time format in feed (1:30 PM,All Day, TBA)
+        //convert the sport datetime
+        $sportDate = $entry->getProperty('EVENT_DATE');
+        $time = $entry->getProperty('TIME');
+        $curtimeZone = $entry->getProperty('TIME_ZONE');
+        if ($sportDate) {
+            //format the time data
             switch ($time) {
                 case 'All Day':
                     $event->setAllDay(true);
@@ -86,26 +102,17 @@ class CSTVDataParser extends XMLDataParser {
                     $event->setTBA(true);
                     $time = '';
                     break;
-                default:
-                    break;
             }
-        } else {
-            return '';
+            
+            $strDate = $time ? $sportDate . ' ' . $time : $sportDate;
+            if ($timeZoneData = $this->transformTimeZone($curtimeZone)) {
+                $timeZone = new DateTimeZone($timeZoneData);
+            } else {
+                $timeZone = Kurogo::siteTimezone();;
+            }
+            //save the event time to datetime object
+            $event->setDateTime(new DateTime($strDate, $timeZone));
         }
-        
-        if ($time) {
-            $strtime .= ' ' . $time;
-        }
-        //TODO not understand the timezone for United States(CT ET ..)
-        /*
-        if ($timeZoneData = $event->getProperty('time_zone')) {
-            $timeZone = new DateTimeZone($timeZone);
-        } else {
-            $timeZone = Kurogo::siteTimezone();
-        }
-        */
-        $timeZone = Kurogo::siteTimezone();
-        $event->setDateTime(new DateTime($strtime, $timeZone));
         
         return $event;
     }
