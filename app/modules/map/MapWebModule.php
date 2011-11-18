@@ -608,7 +608,7 @@ class MapWebModule extends WebModule {
     }
 
     protected function bookmarkIDForPlacemark($placemark) {
-        if (!$placemark) {
+        if ($placemark) {
             $category = current($placemark->getCategoryIds());
             $cookieParams = array(
                 'category' => $category,
