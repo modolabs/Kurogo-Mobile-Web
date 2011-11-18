@@ -102,11 +102,11 @@ class PicasaDataParser extends DataParser {
         $this->fillWith($photo, 'setAuthorName', $this->getOption('author')->name);
         $this->fillWith($photo, 'setAuthorUrl', $this->getOption('author')->uri);
         $this->fillWith($photo, 'setAuthorId', $this->getOption('author_id'));
+        $this->fillWith($photo, 'setTags', $entry->{'media$group'}->{'media$keywords'});
         //if(isset($entry['date_taken'])) {
             //$this->fillWith($photo, 'setDateTaken', new DateTime($entry['date_taken']));
         //}
         //$this->fillWith($photo, 'setAuthorIcon', $entry, 'author_icon');
-        //$this->fillWith($photo, 'setTags', $entry, 'tags');
         return $photo;
     }
 }
