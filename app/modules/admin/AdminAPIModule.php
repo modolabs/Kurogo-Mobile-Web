@@ -63,7 +63,7 @@ class AdminAPIModule extends APIModule
         if (in_array($type, array('site'))) {
             return $type;
         } elseif ($type instanceOf Module) {
-            return $type->configModule;
+            return $type->getConfigModule();
         } else {
             throw new Exception("Invalid type $type");
         }
