@@ -28,11 +28,12 @@ class PicasaRetriever extends URLDataRetriever {
         $this->setBaseUrl(sprintf("https://picasaweb.google.com/data/feed/api/%s", $path));
 
         $this->addFilter('kind', 'photo');
+        $this->addFilter('alt', 'json');
         return parent::url();
     }
 }
 
-class PicasaDataParser extends RSSDataParser {
+class PicasaDataParser extends DataParser {
     /**
      * fillWith 
      * fill object with array value
@@ -46,62 +47,66 @@ class PicasaDataParser extends RSSDataParser {
      * @return void
      */
     protected function fillWith($object, $func, $value, $key = false) {
-        if($key) {
-            if(is_array($value)) {
-                if(!array_key_exists($key, $value)) {
-                    return false;
-                }else {
-                    return $object->$func($value[$key]);
-                }
+        if(is_object($value)) {
+            if(!$key) {
+                $key = '$t';
             }
-            if(is_object($value)) {
-                if(!method_exists($value, $key)) {
-                    return false;
-                }else {
-                    return $object->$func($value->$key());
-                }
+            if(property_exists($value, $key)) {
+                return $object->$func($value->$key);
+            }else {
+                return false;
             }
         }else {
             return $object->$func($value);
         }
     }
 
-    public function parseData($contents) {
-        $items = parent::parseData($contents);
-        $photos = array();
-        foreach($items as $item) {
-            $photos[] = $this->parseEntry($item);
+    public function parseData($data) {
+        if($data = json_decode($data)) {
+            if(property_exists($data, 'feed') && property_exists($data->feed, 'entry') && is_array($data->feed->entry)) {
+                $photos = array();
+                if (property_exists($data->feed, 'author')) {
+                    $this->setOption('author', $data->feed->author{0});
+                }
+                if (property_exists($data->feed, 'gphoto$user')) {
+                    $this->setOption('author_id', $data->feed->{'gphoto$user'});
+                }
+                foreach($data->feed->entry as $entry) {
+                    $photos[] = $this->parseEntry($entry);
+                }
+                return $photos;
+            }
         }
-        return $photos;
+
+        return array();
     }
 
     protected function parseEntry($entry) {
         $photo = new PicasaPhotoObject();
-        //var_dump($entry);
-        $this->fillWith($photo, 'setID', $entry, 'getGUID');
-        $this->fillWith($photo, 'setTitle', $entry, 'getTitle');
-        //$this->fillWith($photo, 'setUrl', );
-        $this->fillWith($photo, 'setDescription', $entry, 'description');
-        $thumbnails = $entry->getChildElement('MEDIA:GROUP')->getChildElement('MEDIA:THUMBNAIL');
-        $this->fillWith($photo, 'setMUrl', $thumbnails[1]->getAttrib('URL'));
-        $this->fillWith($photo, 'setTUrl', $thumbnails[0]->getAttrib('URL'));
-        $this->fillWith($photo, 'setLUrl', $thumbnails[2]->getAttrib('URL'));
-        $this->fillWith($photo, 'setPhotoUrl', $entry->getChildElement('MEDIA:GROUP')->getChildElement('MEDIA:CONTENT')->getAttrib('URL'));
-        if($date = $entry->getPubDate()) {
+        $this->fillWith($photo, 'setID', $entry->id);
+        $this->fillWith($photo, 'setTitle', $entry->title);
+        $this->fillWith($photo, 'setUrl', $entry->link{1}, 'href');
+        $this->fillWith($photo, 'setDescription', $entry->{'media$group'}->{'media$description'});
+        $thumbnails = $entry->{'media$group'}->{'media$thumbnail'};
+        $this->fillWith($photo, 'setMUrl', $thumbnails[1], 'url');
+        $this->fillWith($photo, 'setTUrl', $thumbnails[0], 'url');
+        $this->fillWith($photo, 'setLUrl', $thumbnails[2], 'url');
+        $this->fillWith($photo, 'setPhotoUrl', $entry->content, 'src');
+        $this->fillWith($photo, 'setMimeType', $entry->content, 'type');
+        $this->fillWith($photo, 'setHeight', $entry->{'gphoto$height'});
+        $this->fillWith($photo, 'setWidth', $entry->{'gphoto$width'});
+        if($date = $entry->published->{'$t'}) {
             $published = new DateTime($date);
-            $this->fillWith($photo, 'setPublished', $published);
+            $photo->setPublished($published);
         }
+        $this->fillWith($photo, 'setAuthorName', $this->getOption('author')->name);
+        $this->fillWith($photo, 'setAuthorUrl', $this->getOption('author')->uri);
+        $this->fillWith($photo, 'setAuthorId', $this->getOption('author_id'));
         //if(isset($entry['date_taken'])) {
             //$this->fillWith($photo, 'setDateTaken', new DateTime($entry['date_taken']));
         //}
-        //$this->fillWith($photo, 'setAuthorName', $entry, 'author_name');
-        //$this->fillWith($photo, 'setAuthorUrl', $entry, 'author_url');
-        //$this->fillWith($photo, 'setAuthorId', $entry, 'author_nsid');
         //$this->fillWith($photo, 'setAuthorIcon', $entry, 'author_icon');
-        $this->fillWith($photo, 'setHeight', $entry->getChildElement('GPHOTO:HEIGHT')->value());
-        $this->fillWith($photo, 'setWidth', $entry->getChildElement('GPHOTO:WIDTH')->value());
-        $this->fillWith($photo, 'setTags', $entry, 'tags');
-        $this->fillWith($photo, 'setMimeType', $entry->getChildElement('MEDIA:GROUP')->getChildElement('MEDIA:CONTENT')->getAttrib('TYPE'));
+        //$this->fillWith($photo, 'setTags', $entry, 'tags');
         return $photo;
     }
 }
