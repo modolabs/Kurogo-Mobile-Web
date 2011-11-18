@@ -10,6 +10,7 @@
   */
 class AdminWebModule extends WebModule {
     protected $id = 'admin';
+    protected $canBeRemoved = false;
   
     private function getNavSections() {
         $navSections = array(
@@ -94,6 +95,7 @@ class AdminWebModule extends WebModule {
                         'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
                     );
                     $modules[$module->getConfigModule()] = array(
+                        'type'=>$module->getID(),
                         'id'=>$module->getConfigModule(),
                         'title'=>$module->getModuleName(),
                         'home'=>$module->isOnHomeScreen(),
@@ -101,6 +103,8 @@ class AdminWebModule extends WebModule {
                         'protected'=>$module->getModuleVar('protected'),
                         'secure'=>$module->getModuleVar('secure'),
                         'search'=>$module->getModuleVar('search'),
+                        'canDisable'=>$module->canBeDisabled(), 
+                        'canRemove'=>$module->canBeRemoved(), 
                         'url'=>$this->buildURL('modules', array('module'=>$module->getConfigModule()))
                     );
                     

@@ -65,6 +65,9 @@ abstract class WebModule extends Module {
   
   protected $autoPhoneNumberDetection = true;
   protected $canBeAddedToHomeScreen = true;
+  protected $canBeRemoved = true;
+  protected $canBeDisabled = true;
+  protected $canBeHidden = true;
   protected $hideFooterLinks = false;
   
   //
@@ -545,6 +548,18 @@ abstract class WebModule extends Module {
         return $this->canBeAddedToHomeScreen;
     }
   
+    public function canBeRemoved() {
+        return $this->canBeRemoved;
+    }
+
+    public function canBeDisabled() {
+        return $this->canBeDisabled;
+    }
+
+    public function canBeHidden() {
+        return $this->canBeHidden;
+    }
+
   public static function getAllModules() {
   	$configFiles = glob(SITE_CONFIG_DIR . "/*/module.ini");
     $modules = array();
