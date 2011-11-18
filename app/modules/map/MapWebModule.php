@@ -2,8 +2,6 @@
 
 Kurogo::includePackage('Maps');
 
-define('MAP_GROUP_COOKIE', 'mapgroup');
-
 class MapWebModule extends WebModule {
 
     protected $id = 'map';
@@ -167,7 +165,8 @@ class MapWebModule extends WebModule {
         } else {
             // for folder objects, getId returns the subcategory ID
             $drilldownPath = array_merge($this->getDrillDownPath(), array($mapItem->getId()));
-            $result['url'] = $this->categoryURL($category, $drilldownPath, $urlArgs['external']);
+            $external = isset($urlArgs['external']) ? $urlArgs['external'] : false;
+            $result['url'] = $this->categoryURL($this->getCategory(), $drilldownPath, $external);
         }
 
         return $result;
@@ -304,10 +303,9 @@ class MapWebModule extends WebModule {
         if ($category) {
             if (isset($this->feeds[$category])) {
                 return $this->feeds[$category];
-            } else {
-                Kurogo::log(LOG_WARNING,"Warning: unable to find feed data for category $category",'maps');
             }
         }
+        Kurogo::log(LOG_WARNING,"Warning: unable to find feed data for category $category",'maps');
         return null;
     }
 
@@ -497,24 +495,18 @@ class MapWebModule extends WebModule {
                 $tolerance = 1000;
                 $maxItems = 0;
 
-                // check for settings in feedgroup config
-                $configData = $this->getDataForGroup($this->feedGroup);
-                if ($configData) {
-                    if (isset($configData['NEARBY_THRESHOLD'])) {
-                        $tolerance = $configData['NEARBY_THRESHOLD'];
-                    }
-                    if (isset($configData['NEARBY_ITEMS'])) {
-                        $maxItems = $configData['NEARBY_ITEMS'];
-                    }
+                // feed settings override group settings
+                $groupData = $this->getDataForGroup($this->feedGroup);
+                $feedData = $this->getCurrentFeed();
+                if (isset($feedData['NEARBY_THRESHOLD'])) {
+                    $tolerance = $feedData['NEARBY_THRESHOLD'];
+                } elseif ($groupData && isset($groupData['NEARBY_THRESHOLD'])) {
+                    $tolerance = $groupData['NEARBY_THRESHOLD'];
                 }
-
-                // check for override settings in feeds
-                $configData = $this->getCurrentFeed();
-                if (isset($configData['NEARBY_THRESHOLD'])) {
-                    $tolerance = $configData['NEARBY_THRESHOLD'];
-                }
-                if (isset($configData['NEARBY_ITEMS'])) {
-                    $maxItems = $configData['NEARBY_ITEMS'];
+                if (isset($feedData['NEARBY_ITEMS'])) {
+                    $maxItems = $feedData['NEARBY_ITEMS'];
+                } elseif ($groupData && isset($groupData['NEARBY_ITEMS'])) {
+                    $maxItems = $groupData['NEARBY_ITEMS'];
                 }
 
                 $searchResults = $mapSearch->searchByProximity($center, $tolerance, $maxItems, $this->getDataModel());
@@ -613,6 +605,26 @@ class MapWebModule extends WebModule {
         }
         
         return false;
+    }
+
+    protected function bookmarkIDForPlacemark($placemark) {
+        if (!$placemark) {
+            $category = current($placemark->getCategoryIds());
+            $cookieParams = array(
+                'category' => $category,
+                'featureindex' => $placemark->getId(),
+                );
+        } elseif (isset($this->args['lat'], $this->args['lon'])) {
+            $cookieParams = array(
+                'lat' => $this->args['lat'],
+                'lon' => $this->args['lon'],
+                );
+        }
+        $title = $this->getArg('title');
+        if ($title) {
+            $cookieParams['title'] = $title;
+        }
+        return http_build_query($cookieParams);
     }
 
     protected function initializeForPage() {
@@ -790,49 +802,30 @@ class MapWebModule extends WebModule {
                 $detailConfig = $this->loadPageConfigFile('detail', 'detailConfig');        
                 $tabKeys = array();
                 $tabJavascripts = array();
-                $title = $this->getArg('title');
-                if (!$title && isset($this->args['lat'], $this->args['lon'])) {
-                    $title = "$lat,$lon";
-                }
-
                 $features = $this->getSelectedPlacemarks();
                 $feature = end($features);
 
-                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
-                    if (isset($this->args['featureindex'])) { // this is a place from a feed
-                        $cookieParams = array(
-                            'category' => $this->getCategory(),
-                            'featureindex' => $this->featureIndex,
-                            );
-                        $cookieID = http_build_query($cookieParams);
-                        $this->generateBookmarkOptions($cookieID);
-    
-                    } elseif (isset($this->args['lat'], $this->args['lon'])) {
-                        $cookieParams = array(
-                            'lat' => $this->args['lat'],
-                            'lon' => $this->args['lon'],
-                            );
-                        if ($feature) {
-                            $cookieParams['title'] = $feature->getTitle();
-                        }
-                        $cookieID = http_build_query($cookieParams);
-                        $this->generateBookmarkOptions($cookieID);
-
-                    }
+                $title = '';
+                if ($this->getArg('title')) {
+                    $title = $this->getArg('title');
+                } elseif ($feature) {
+                    $title = $feature->getTitle();
+                } elseif (isset($this->args['lat'], $this->args['lon'])) {
+                    $title = "$lat,$lon";
                 }
                 
                 if ($feature) {
-                    if (!$title) {
-                        $title = $feature->getTitle();
-                    }
                     // prevent infinite loop in smarty_modifier_replace
                     // TODO figure out why smarty gets in an infinite loop
                     $address = str_replace("\n", " ", $feature->getSubtitle());
                 } else {
-                    // TODO put something reasonable here
-                    $title = '';
                     $address = $this->getArg('address');
                 }
+
+                if ($this->getOptionalModuleVar('BOOKMARKS_ENABLED', 1)) {
+                    $this->generateBookmarkOptions($this->bookmarkIDForPlacemark($feature));
+                }
+
                 $this->assign('name', $title);
                 $this->assign('address', $address);
                 $possibleTabs = $detailConfig['tabs']['tabkeys'];
@@ -859,14 +852,16 @@ class MapWebModule extends WebModule {
             $dataModel = $this->getDataModel();
             $lat = $this->args['lat'];
             $lon = $this->args['lon'];
+            $title = $this->getArg('title');
+            if (!$title) {
+                $title = "$lat,$lon";
+            }
             $feature = new BasePlacemark(
                 new MapBasePoint(array(
                     'lat' => $lat,
                     'lon' => $lon,
+                    'title' => $title,
                     )));
-            if (!$title) {
-                $title = "$lat,$lon";
-            }
             // hacky
             $dataModel->setSelectedPlacemarks(array($feature));
         }

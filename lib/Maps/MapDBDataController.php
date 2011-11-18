@@ -47,6 +47,7 @@ class MapDBDataController extends MapDataController implements MapFolder
     }
 
     public function getData() {
+        // TODO: this should be taken care of by PARSE_MODE_FILE
         if ($this->parser instanceof ShapefileDataParser) {
             return;
         }
@@ -60,9 +61,18 @@ class MapDBDataController extends MapDataController implements MapFolder
         }
     }
 
-    protected function parseResponse(DataResponse $response, DataParser $parser=null)
-    {
-        return $this->parseData($response->getResponse(), $parser);
+    public function getParsedData(DataParser $parser=null) {
+        if (!$parser) {
+            $parser = $this->parser;
+        }
+
+        switch ($parser->getParseMode()) {
+            case DataParser::PARSE_MODE_FILE:
+                break;
+            default:
+                $data = $this->getData();
+                return $this->parseData($data, $parser);
+        }
     }
 
     protected function parseData($data, DataParser $parser=null) {
