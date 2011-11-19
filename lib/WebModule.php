@@ -560,6 +560,39 @@ abstract class WebModule extends Module {
         return $this->canBeHidden;
     }
 
+    /* return a list of all available module id's based on their class. This will include both site and Kurogo modules */    
+    public static function getAllModuleClasses() {
+     	
+        $modulePaths = array(
+          SITE_MODULES_DIR,
+          MODULES_DIR
+        );
+
+        $moduleClasses = array();        
+        foreach ($modulePaths as $path) {
+            $moduleFiles = glob($path . "/*/*WebModule.php");
+            foreach ($moduleFiles as $file) {
+                $moduleFile = realpath_exists($file);
+                if ($moduleFile && include_once($moduleFile)) {
+                    if (preg_match("/(Site)?([A-Za-z]+WebModule)\.php$/", $file, $bits)) {
+                        $className = $bits[1] . $bits[2];
+                        $info = new ReflectionClass($className);
+                        if (!$info->isAbstract()) {
+                            try {
+                                $module = new $className();
+                                $moduleClasses[] = $module->getID();
+                            } catch (Exception $e) {}
+                        }
+                    }
+                }
+            }
+        }
+        $moduleClasses = array_unique($moduleClasses);
+        sort($moduleClasses);
+        return $moduleClasses;        
+    }
+  
+
   public static function getAllModules() {
   	$configFiles = glob(SITE_CONFIG_DIR . "/*/module.ini");
     $modules = array();
@@ -619,10 +652,52 @@ abstract class WebModule extends Module {
     return array_merge($navModules['home'], $navModules['primary'], $separator, $navModules['secondary']);
   }
   
-    protected function isOnHomeScreen() {
+    public function isOnHomeScreen() {
         $navModules = $this->getAllModuleNavigationData(self::INCLUDE_DISABLED_MODULES);
         $allModules = array_merge(array_keys($navModules['primary']), array_keys($navModules['secondary']));
         return in_array($this->configModule, $allModules);    
+    }
+    
+    public function isOnTabletHome() {
+        $config = $this->getModuleNavigationConfig();
+        $tabletPanes = $config->getOptionalSection('tablet_panes');
+        return array_search($this->configModule, $tabletPanes);
+    }
+    
+    public function removeFromHomeScreen() {
+        $config = $this->getModuleNavigationConfig();
+        $config->clearVar('primary_modules', $this->configModule);
+        $config->clearVar('secondary_modules', $this->configModule);
+        $config->saveFile();
+    }
+
+    public function removeFromTabletPane() {
+        $config = $this->getModuleNavigationConfig();
+        if ($pane = $this->isOnTabletHome()) {
+            $config->setVar('tablet_panes', $pane, '', $changed);
+            $config->saveFile();
+        }
+    }
+    
+    public function removeModule($removeFromHome=false) {
+    
+        if ($this->isOnHomeScreen()) {
+            if ($removeFromHome) {
+                $this->removeFromHomeScreen();
+            } else {
+                throw new KurogoConfigurationException("Module must first be removed from home screen");
+            }
+        }
+
+        if ($this->isOnTabletHome()) {
+            if ($removeFromHome) {
+                $this->removeFromTabletPane();
+            } else {
+                throw new KurogoConfigurationException("Module must first be removed from tablet pane");
+            }
+        }
+        
+        return parent::removeModule();
     }
   
     protected function getUserDisabledModuleIDs() {

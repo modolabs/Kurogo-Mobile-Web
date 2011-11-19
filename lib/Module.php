@@ -753,4 +753,23 @@ abstract class Module
       */
     abstract protected function unauthorizedAccess();
 
+    public function removeModule() {
+        $source_dir = SITE_CONFIG_DIR . DIRECTORY_SEPARATOR . $this->getConfigModule();
+        $base_target_dir = $target_dir = SITE_DISABLED_DIR . DIRECTORY_SEPARATOR . $this->getConfigModule() . '-' . date('Y-m-d');
+        $start = 1;
+        
+        if (!is_dir(SITE_DISABLED_DIR)) {
+            mkdir(SITE_DISABLED_DIR, 0700, true);
+        }
+        
+        while (is_dir($target_dir)) {
+            $target_dir = $base_target_dir . '-' . $start++;
+        }
+        
+        rename($source_dir, $target_dir);
+        Kurogo::clearCache();
+        clearstatcache();
+    }
+    
+
 }

@@ -476,6 +476,37 @@ class AdminAPIModule extends APIModule
         }
     }
     
+    protected function addNewModule($moduleData) {
+        if (!isset($moduleData['title']) || empty($moduleData['title'])) {
+            throw new KurogoConfigurationException("Choose a module title");
+        }
+        
+        if (!isset($moduleData['config']) || !preg_match("/^[a-z0-9_-]+$/i", $moduleData['config'])) {
+            throw new KurogoConfigurationException("Choose a url. It must contain only letters and numbers");
+        }
+        
+        $moduleClasses = WebModule::getAllModuleClasses();
+        if (!isset($moduleData['id']) || !in_array($moduleData['id'], $moduleClasses)) {
+            throw new KurogoConfigurationException("Choose a module type");
+        }
+        
+        $modules = WebModule::getAllModules();
+        if (in_array($moduleData['config'], $modules)) {
+            throw new KurogoConfigurationException("Module " . $moduleData['config'] . " already exists");
+        }
+        
+        $config = ModuleConfigFile::factory($moduleData['config'], 'module', ModuleConfigFile::OPTION_CREATE_WITH_DEFAULT);
+
+        $valid_props = array('id','title','protected','secure','disabled','search');
+        foreach ($valid_props as $key) {
+            if (isset($moduleData[$key])) {
+                $config->setVar('module', $key, $moduleData[$key], $changed);
+            }
+        }
+
+        $config->saveFile();
+    }    
+    
     private function uploadFile($type, $section, $subsection, $key, $value) {
         $sectionData = $this->getAdminData($type, $section, $subsection);
 
@@ -824,6 +855,27 @@ class AdminAPIModule extends APIModule
                 
                 $this->setResponse(true);
                 $this->setResponseVersion(1);
+                break;
+
+            case 'addNewModule':
+                $moduleData = $this->getArg('newModule');
+                $module = $this->addNewModule($moduleData);
+                $this->setResponseVersion(1);
+                $this->setResponse(true);
+                break;
+                
+            case 'removeModule':
+                $moduleID = $this->getArg('configModule');
+                
+                try {
+                    $module = WebModule::factory($moduleID);
+                } catch (KurogoException $e) {
+                    throw new KurogoException($this->getLocalizedString('ERROR_MODULE_NOT_FOUND', $moduleID));
+                }
+
+                $module->removeModule(true);
+                $this->setResponseVersion(1);
+                $this->setResponse(true);
                 break;
 
             case 'setmodulelayout':

@@ -193,11 +193,12 @@ class AdminWebModule extends WebModule {
                     }
                 
                 } elseif ($section == $defaultSubNavSection) {
+                    $moduleClasses = WebModule::getAllModuleClasses();
+                    $this->assign('moduleClasses', $moduleClasses);
                     $this->setTemplatePage($section);
                 } elseif ($section == 'homescreen') {
                     $this->setTemplatePage($section);
                     
-                    $homeModule = WebModule::factory('home');
                     $modules = $this->getModules();
                     $this->assign('modules', $modules);                    
                     
