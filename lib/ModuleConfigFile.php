@@ -20,7 +20,7 @@ class ModuleConfigFile extends ConfigFile {
             if ($options & self::OPTION_DO_NOT_CREATE) {
                 return false;
             }
-            throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file for module $id: " . self::getfileByType($id, $type));
+            throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file for module $id");
         }
         
         return $config;
@@ -33,6 +33,7 @@ class ModuleConfigFile extends ConfigFile {
     protected function getFileByType($id, $type)
     {
         if (preg_match("/-default$/", $type)) {
+            /* TODO this does not address copied module default files */
             $files = array( 
                 sprintf('%s/%s/config/%s.ini', SITE_MODULES_DIR, $id, $type),
                 sprintf('%s/%s/config/%s.ini', MODULES_DIR, $id, $type),
