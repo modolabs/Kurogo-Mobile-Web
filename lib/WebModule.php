@@ -676,7 +676,7 @@ abstract class WebModule extends Module {
 
             foreach ($modulesOfType as $moduleID => $title) {
                 $shortTitle = $title;
-                $moduleConfig = ModuleConfigFile::factory($moduleID, 'module');
+                $moduleConfig = ModuleConfigFile::factory($moduleID, 'module', ModuleConfigFile::OPTION_DO_NOT_CREATE);
                 if ($moduleConfig) {
                     $shortTitle = $moduleConfig->getOptionalVar('shortTitle', $title);
                 }
