@@ -13,6 +13,8 @@ class AthleticsWebModule extends WebModule {
     protected $showPubDate = false;
     protected $showAuthor = false;
     protected $showLink = false;
+    protected $newsFeed;
+    protected $scheduleFeed;
     
     protected function cleanContent($content) {
         //deal with pre tags. strip out pre tags and add <br> for newlines
@@ -30,7 +32,7 @@ class AthleticsWebModule extends WebModule {
     }
     
     protected function htmlEncodeFeedString($string) {
-        return mb_convert_encoding($string, 'HTML-ENTITIES', $this->feed->getEncoding());
+        return mb_convert_encoding($string, 'HTML-ENTITIES', $this->newsFeed->getEncoding());
     }
     
     protected function getImageForStory($story) {
@@ -114,6 +116,11 @@ class AthleticsWebModule extends WebModule {
             'subtitle'  => $subtitle
         );
     }
+
+    /*
+    protected function linkForItem(KurogoObject $event, $data=null) {
+    }
+    */
     
     protected function valueForType($type, $value) {
         $valueForType = $value;
@@ -205,18 +212,6 @@ class AthleticsWebModule extends WebModule {
     }
     
     /*
-    protected function getSportData($section) {
-    
-        $data = isset($this->feeds[$section]) ? $this->feeds[$section] : '';
-        if (!$data) {
-            throw new KurogoDataException('Unable to load data for sport '. $section);
-        }
-        
-        return $data;
-        
-    }
-    */
-    
     protected function getSportLinks($section) {
 
         $links = array();
@@ -232,8 +227,8 @@ class AthleticsWebModule extends WebModule {
 
         return $links;        
     }
-    
-    /*
+    */
+/*    
     protected function getFeed($section, $type = '') {
         $sportData = $this->getSportData($section);
         $feedData = $this->getModuleSections($section);
@@ -277,24 +272,25 @@ class AthleticsWebModule extends WebModule {
         
         return null;
     }
-    */
-    
-    //get my favroite
-    protected function getMyFavorites() {
-        return array();
+  */  
+    protected function getSportsForGender($gender) {
+        $feeds = array();
+        foreach ($this->feeds as $key=>$feed) {
+            if (isset($feed['GENDER']) && $feed['GENDER'] == $gender) {
+                $feeds[$key] = $feed;
+            }
+        }
+        return $feeds;
+        
     }
     
-    //get sport detail for gender and sport name
-    protected function getSportData($section, $sport = '') {
-        $navData = $this->getNavData($section);
-        $sportDatas = $this->getModuleSections('feeds-' . $section);
-        
-        $data =  isset($sportDatas[$sport]) ? $sportDatas[$sport] : array();
-        if (!$data) {
-            throw new KurogoDataException('Unable to load data for sport '. $section . ' '. $sport);
+    //get sport detail 
+    protected function getSportData($sport) {
+        if (isset($this->feeds[$sport])) {
+            return $this->feeds[$sport];
+        } else {  
+            throw new KurogoDataException('Unable to load data for sport '. $sport);
         }
-        
-        return $data;
     }
     
     protected function getNavData($tab) {
@@ -340,34 +336,28 @@ class AthleticsWebModule extends WebModule {
         return $result;
     }
     
-    protected function getScheduleFeed($gender, $sport) {
-        $handleDataModel = '';
-        $navData = $this->getNavData($gender);
-        
-        if ($feedData = $this->getSportData($gender, $sport)) {
-            if (!isset($feedData['TITLE'])) {
-                $feedData['TITLE'] = $navData['TITLE'];
-            }
-            
-            if (!$handleDataModel) {
-                $handleDataModel = self::$defaultEventModel;
-            }
-            
-            $this->feed = $handleDataModel::factory($handleDataModel, $feedData);
-            return $this->feed;
+    protected function getScheduleFeed($sport) {
+    
+        if ($feedData = $this->getOptionalModuleSection($sport, 'schedule')) {
+            $dataModel = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : 'AthleticEventsDataModel';
+            $this->scheduleFeed = AthleticEventsDataModel::factory($dataModel, $feedData);
+            return $this->scheduleFeed;
         }
         
         return null;
     }
     
-    protected function getTopNewsFeed() {
-        if ($feedData = $this->getNavData('topnews')) {
-            $handleDataModel = 'NewsDataModel';
-            if (!isset($feedData['PARSER_CLASS'])) {
-                $feedData['PARSER_CLASS'] = 'RSSDataParser';
-            }
-            $this->feed = $handleDataModel::factory($handleDataModel, $feedData);
-            return $this->feed;
+    protected function getNewsFeed($sport, $gender=null) {
+        if ($sport=='topnews') {
+            $feedData = $this->getNavData('topnews');
+        } else {
+            $feedData = $this->getOptionalModuleSection($sport, 'feeds');
+        }
+        
+        if (isset($feedData['DATA_RETRIEVER']) || isset($feedData['BASE_URL'])) {
+            $dataModel = isset($feedData['MODEL_CLASS']) ? $feedData['MODEL_CLASS'] : 'NewsDataModel';
+            $this->newsFeed = DataModel::factory($dataModel, $feedData);
+            return $this->newsFeed;
         }
         
         return null;
@@ -375,8 +365,8 @@ class AthleticsWebModule extends WebModule {
     
     protected function initialize() {
 
-        //$this->feeds      = $this->loadFeedData();
-        $this->navFeeds = $this->getModuleSections('feeds-index');
+        $this->feeds = $this->loadFeedData();
+        $this->navFeeds = $this->getModuleSections('page-index');
         $this->timezone = Kurogo::siteTimezone();
         
     }    
@@ -389,7 +379,7 @@ class AthleticsWebModule extends WebModule {
                 $section = $this->getArg('section');
                 $start = $this->getArg('start', 0);
                 
-                $feed = $this->getFeed($section, $this->page);
+                $feed = $this->getFeed();
                 $feed->setStart($start);
                 $feed->setLimit($this->maxPerPage);
 
@@ -448,10 +438,13 @@ class AthleticsWebModule extends WebModule {
                 $this->assign('showAuthor',     $this->showAuthor);
                 break;
             case 'news_detail':
+                
                 $section = $this->getArg('section');
+                $gender = $this->getArg('gender');
                 $storyID = $this->getArg('storyID', false);
                 $storyPage = $this->getArg('storyPage', '0');
-                $feed = $this->getFeed($section, 'news');
+                
+                $feed = $this->getNewsFeed($section, $gender);
                 
                 if (!$story = $feed->getItem($storyID)) {
                     throw new KurogoUserException($this->getLocalizedString('ERROR_STORY_NOT_FOUND', $storyID));
@@ -479,7 +472,7 @@ class AthleticsWebModule extends WebModule {
                 $pubDate = strtotime($story->getProperty("pubDate"));
                 $date = date("M d, Y", $pubDate);
                 
-                $this->enablePager($content, $this->feed->getEncoding(), $storyPage);
+                $this->enablePager($content, $this->newsFeed->getEncoding(), $storyPage);
                 $this->assign('date',   $date);
                 $this->assign('title',  $this->htmlEncodeFeedString($story->getTitle()));
                 $this->assign('author', $this->htmlEncodeFeedString($story->getAuthor()));
@@ -532,30 +525,31 @@ class AthleticsWebModule extends WebModule {
                 break;
                 
             case 'sport':
-                $gender = $this->getArg('gender', '');
                 $sport = $this->getArg('sport', '');
                 
-                $navData = $this->getNavData($gender);
-                $sportData = $this->getSportData($gender, $sport);
-                
-                $scheduleFeed = $this->getScheduleFeed($gender, $sport);
-                
-                $schedules = $scheduleFeed->items();
-                
-                
-                $rangeSchedule = $this->getRangeSchedule($schedules, time());
-                $recent = array();
-                $next = array();
-                
-                if ($rangeSchedule['recent']) {
-                    $recent['sport'] = $rangeSchedule['recent']->getSport();
+                $sportData = $this->getSportData($sport);
+                if ($scheduleFeed = $this->getScheduleFeed($sport)) {
+                    $schedules = $scheduleFeed->items();
+                    
+                    
+                    $rangeSchedule = $this->getRangeSchedule($schedules, time());
+                    $recent = array();
+                    $next = array();
+                    
+                    if ($rangeSchedule['recent']) {
+                        $recent['sport'] = $rangeSchedule['recent']->getSport();
+                    }
+                    if ($rangeSchedule['next']) {
+                        $next['sport'] = $rangeSchedule['next']->getSport();
+                    }
+                    $this->assign('sportTitle', $sportData['TITLE']);
+                    $this->assign('recent', $recent);
+                    $this->assign('next', $next);
                 }
-                if ($rangeSchedule['next']) {
-                    $next['sport'] = $rangeSchedule['next']->getSport();
+                
+                if ($newsFeed = $this->getNewsFeed($sport)) {
+                    Debug::die_here($newsFeed);
                 }
-                $this->assign('sportTitle', $sportData['TITLE']);
-                $this->assign('recent', $recent);
-                $this->assign('next', $next);
                 /*
                 $section = $this->getArg('section');
                 $sportData = $this->getSportData($section);
@@ -566,8 +560,6 @@ class AthleticsWebModule extends WebModule {
                 break;
 
             case "index":
-                //get the Favorites
-                $favorites = $this->getMyFavorites();
                 $tabs = array();
                 
                 //get top news
@@ -575,10 +567,12 @@ class AthleticsWebModule extends WebModule {
                     $topNews = array();
                     $limit = isset($newsFeedData['LIMIT']) ? $newsFeedData['LIMIT'] : $this->maxPerPage;
                     
-                    $newsFeed = $this->getTopNewsFeed();
+                    $newsFeed = $this->getNewsFeed('topnews');
                     $newsFeed->setLimit($this->maxPerPage);
 
-                    $options = array();
+                    $options = array(
+                        'section'=>'topnews'
+                    );
                     $items = $newsFeed->items();
                     foreach ($items as $story) {
                         $topNews[] = $this->linkForNewsItem($story, $options);
@@ -588,41 +582,29 @@ class AthleticsWebModule extends WebModule {
                     $this->assign('topNews', $topNews);
                 }
                 
-                //get men's sports
-                $menSportsData = $this->getNavData('men');
-                if ($sports = $this->getModuleSections('feeds-men')) {
-                    $menSports = array();
-                    foreach ($sports as $key => $sportData) {
-                        $sport = array(
-                            'title' =>$sportData['TITLE'],
-                            'url'   =>$this->buildURL('sport', array('gender'=>'men', 'sport' => $key))
-                        );
-                        $menSports[] = $sport;
-                    }
-                
-                    $tabs[] = $menSportsData['TITLE'];
-                    $this->assign('menSportsTitle', $menSportsData['TITLE']);
-                    $this->assign('menSports', $menSports);
-                }
-                
-                //get women's sports
-                $womenSportsData = $this->getNavData('women');
-                if ($sports = $this->getModuleSections('feeds-women')) {
-                    $womenSports = array();
-                    foreach ($sports as $key => $sportData) {
-                        $sport = array(
-                            'title' =>$sportData['TITLE'],
-                            'url'   =>$this->buildURL('sport', array('gender'=>'women', 'sport' => $key))
-                        );
-                        $womenSports[] = $sport;
-                    }
+                //get sports for each gender
+                foreach (array('men','women') as $gender) {
+                    $sportsData = $this->getNavData($gender);
+                    if ($sportsConfig = $this->getSportsForGender($gender)) {
+                        $sports = array();
+                        foreach ($sportsConfig as $key => $sportData) {
+                            $sport = array(
+                                'title' =>$sportData['TITLE'],
+                                'url'   =>$this->buildURL('sport', array('sport' => $key))
+                            );
+                            $sports[] = $sport;
+                        }
                     
-                    $tabs[] = $womenSportsData['TITLE'];
-                    $this->assign('womenSportsTitle', $womenSportsData['TITLE']);
-                    $this->assign('womenSports', $womenSports);
+                        $tabs[] = $sportsData['TITLE'];
+                        $this->assign($gender. 'SportsTitle', $sportsData['TITLE']);
+                        $this->assign($gender.'Sports', $sports);
+                    }
                 }
                 
                 $bookmarkData = $this->getNavData('bookmarks');
+                /*
+                $bookmarks = $this->getBookmarks();
+                */
                 $tabs[] = $bookmarkData['TITLE'];
                 
                 $this->assign('bookmarksTitle', $bookmarkData['TITLE']);
