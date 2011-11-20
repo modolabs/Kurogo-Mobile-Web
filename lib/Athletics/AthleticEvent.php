@@ -1,6 +1,6 @@
 <?php
 
-class AthleticEvent {
+class AthleticEvent implements KurogoObject {
 
     protected $ID;
     protected $sport;

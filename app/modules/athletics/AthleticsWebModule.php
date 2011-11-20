@@ -1,5 +1,6 @@
 <?php
 
+includePackage('Athletics');
 class AthleticsWebModule extends WebModule {
 
     protected $id = 'athletics';
