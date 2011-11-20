@@ -1287,7 +1287,7 @@ abstract class WebModule extends Module {
     }
   
   protected function getPageConfig($name, $opts=0) {
-    $config = ModuleConfigFile::factory($this->configModule, "page-$name", $opts);
+    $config = $this->getConfig("page-$name", $opts);
     Kurogo::siteConfig()->addConfig($config);
     return $config;
   }

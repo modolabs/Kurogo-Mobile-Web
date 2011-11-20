@@ -8,19 +8,26 @@
  * @package Config
  */
 class ModuleConfigFile extends ConfigFile {
+    protected $module;
 
     // loads a config object from a file/type combination  
-    public static function factory($id, $type='file', $options=0) {
+    public static function factory($configModule, $type='file', $options=0) {
+        $args = func_get_args();
+        $module = isset($args[3]) ? $args[3] : null;
         $config = new ModuleConfigFile();
+        if ($module) {
+            $config->setModule($module);
+        }
+        
         if (!($options & self::OPTION_DO_NOT_CREATE)) {
             $options = $options | self::OPTION_CREATE_WITH_DEFAULT;
         }
         
-        if (!$result = $config->loadFileType($id, $type, $options)) {
+        if (!$result = $config->loadFileType($configModule, $type, $options)) {
             if ($options & self::OPTION_DO_NOT_CREATE) {
                 return false;
             }
-            throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file for module $id");
+            throw new KurogoConfigurationException("FATAL ERROR: cannot load $type configuration file for module $configModule");
         }
         
         return $config;
@@ -30,10 +37,18 @@ class ModuleConfigFile extends ConfigFile {
         return "config-module-{$this->file}-{$this->type}";
     }
     
+    public function setModule(Module $module) {
+        $this->module = $module;
+    }
+    
     protected function getFileByType($id, $type)
     {
         if (preg_match("/-default$/", $type)) {
-            /* TODO this does not address copied module default files */
+
+            /* Make sure we use the id of the parent module */
+            if ($this->module) {
+                $id = $this->module->getID();
+            }
             $files = array( 
                 sprintf('%s/%s/config/%s.ini', SITE_MODULES_DIR, $id, $type),
                 sprintf('%s/%s/config/%s.ini', MODULES_DIR, $id, $type),

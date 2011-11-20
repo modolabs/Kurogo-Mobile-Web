@@ -281,7 +281,7 @@ abstract class Module
     		return $this->configs[$type];
     	}
     	
-        if ($config = ModuleConfigFile::factory($this->configModule, $type, $opts)) {
+        if ($config = ModuleConfigFile::factory($this->configModule, $type, $opts, $this)) {
             Kurogo::siteConfig()->addConfig($config);
             $this->setConfig($type, $config);
         }
