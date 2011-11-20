@@ -548,7 +548,18 @@ class AthleticsWebModule extends WebModule {
                 }
                 
                 if ($newsFeed = $this->getNewsFeed($sport)) {
-                    Debug::die_here($newsFeed);
+                    $newsFeed->setLimit($this->maxPerPage);
+
+                    $options = array(
+                        'section'=>$sport
+                    );
+                    $newsItems = array();
+                    $items = $newsFeed->items();
+                    foreach ($items as $story) {
+                        $newsItems[] = $this->linkForNewsItem($story, $options);
+                    }
+                    
+                    $this->assign('newsItems', $newsItems);
                 }
                 /*
                 $section = $this->getArg('section');
