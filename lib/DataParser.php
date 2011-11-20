@@ -22,6 +22,7 @@ abstract class DataParser
     protected $haltOnParseErrors = true;
     protected $dataController;
     protected $options = array();
+    protected $response;
 
     public function setOption($option, $value) {
         $this->options[$option] = $value;
@@ -31,8 +32,13 @@ abstract class DataParser
         return isset($this->options[$option]) ? $this->options[$option] : null;
     }
     
+    public function setResponse(DataResponse $response) {
+        $this->response = $response;
+    }
+        
     public function parseResponse(DataResponse $response) {
-        return $this->parseData($response->getResponse());
+        $this->setResponse($response);
+        return $this->parseData($this->response->getResponse());
     }
     
     public function getParseMode() {
