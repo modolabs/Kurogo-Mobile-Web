@@ -15,6 +15,20 @@ class AthleticEvent implements KurogoObject {
     
     protected $allday = false; //follow the time attrib
     protected $tba = false; //follow the time attrib
+    
+    public function filterItem($filters) {
+        foreach ($filters as $filter=>$value) {
+            switch ($filter)
+            {
+                case 'search': //case insensitive
+                    return  (stripos($this->getSportFullName(), $value)!==FALSE) ||
+                    (stripos($this->getOpponent(), $value)!==FALSE);
+                    break;
+            }
+        }   
+        
+        return true;     
+    }
         
     public function setID($id) {
         $this->ID = $id;

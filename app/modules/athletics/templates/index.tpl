@@ -1,11 +1,39 @@
 {include file="findInclude:common/templates/header.tpl"}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$navs}
+{$tabBodies = array()}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$topNews}
+{if $topNews}
+  {capture name="topnewsTab" assign="topnewsTab"}
+    {include file="findInclude:common/templates/search.tpl"}
+     
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$topNews}  
+  {/capture}
+  {$tabBodies[$topNewsTitle] = $topnewsTab}
+{/if}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$menSports}
+{if $menSports}
+  {capture name="menTab" assign="menTab"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$menSports}
+  {/capture}
+  {$tabBodies[$menSportsTitle] = $menTab}
+{/if}
 
-{include file="findInclude:common/templates/navlist.tpl" navlistItems=$womenSports}
+{if $womenSports}
+  {capture name="womenTab" assign="womenTab"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$womenSports}
+  {/capture}
+  {$tabBodies[$womenSportsTitle] = $womenTab}
+{/if}
+
+{if $bookmarksTitle} 
+  {capture name="bookmarksTab" assign="bookmarksTab"}
+    {include file="findInclude:common/templates/navlist.tpl" navlistItems=$bookmarks}
+  {/capture}
+  {$tabBodies[$bookmarksTitle] = $bookmarksTab}
+{/if}
+
+<div id="tabscontainer">
+{include file="findInclude:common/templates/tabs.tpl" tabBodies=$tabBodies}
+</div>
 
 {include file="findInclude:common/templates/footer.tpl"}

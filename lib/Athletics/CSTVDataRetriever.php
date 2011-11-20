@@ -1,17 +1,25 @@
 <?php
-/**
-  * @package ExternalData
-  * @subpackage DataParser
-  */
 
-if (!function_exists('xml_parser_create')) {
-    die('XML Parser commands not available.');
+class CSTVDataRetriever extends URLDataRetriever
+{
+    protected $sport;
+    protected $DEFAULT_PARSER_CLASS='CSTVDataParser';
+    
+    protected function initResponse() {
+        $response = parent::initResponse();
+        $response->setContext('sport', $this->sport);
+        return $response;
+    }
+    
+    protected function init($args) {
+        parent::init($args);
+        if (!isset($args['SPORT'])) {
+            throw new KurogoConfigurationException("Sport must be defined");
+        }
+        $this->sport = $args['SPORT'];
+    }
 }
 
-/**
-  * @package ExternalData
-  * @subpackage DataParser
-  */
 class CSTVDataParser extends XMLDataParser {
 
     protected $items=array();
@@ -121,4 +129,3 @@ class CSTVDataParser extends XMLDataParser {
         return $strip_tags;
     }
 }
-

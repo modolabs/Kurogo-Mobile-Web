@@ -4,7 +4,7 @@ includePackage('Athletics');
 class AthleticsWebModule extends WebModule {
 
     protected $id = 'athletics';
-    protected static $defaultModel = 'AthleticsDataModel';
+    protected static $defaultEventModel = 'AthleticEventsDataModel';
     protected $feeds = array();
     protected $navFeeds = array();
     protected $timezone;
@@ -308,13 +308,13 @@ class AthleticsWebModule extends WebModule {
         
     }
     
-    //get the sechedule about most recent and next 
-    protected function getRangeSechedule($sechedules, $time = '') {
+    //get the schedule about most recent and next 
+    protected function getRangeSchedule($schedules, $time = '') {
         $time = $time ? $time : time();
         
         $recent = array();
         $next   = array();
-        foreach ($sechedules as $key => $item) {
+        foreach ($schedules as $key => $item) {
             if ((!$dateTime = $item->getDateTime()) || $item->getTBA()) {
                 continue;
             }
@@ -329,18 +329,18 @@ class AthleticsWebModule extends WebModule {
         if ($recent) {
             arsort($recent);
             $recentIndex = key($recent);
-            $result['recent'] = isset($sechedules[$recentIndex]) ? $sechedules[$recentIndex] : null;
+            $result['recent'] = isset($schedules[$recentIndex]) ? $schedules[$recentIndex] : null;
         }
         if ($next) {
             asort($next);
             $nextIndex = key($next);
-            $result['next'] = isset($sechedules[$nextIndex]) ? $sechedules[$nextIndex] : null;
+            $result['next'] = isset($schedules[$nextIndex]) ? $schedules[$nextIndex] : null;
         }
         
         return $result;
     }
     
-    protected function getFeed($gender, $sport) {
+    protected function getScheduleFeed($gender, $sport) {
         $handleDataModel = '';
         $navData = $this->getNavData($gender);
         
@@ -348,12 +348,9 @@ class AthleticsWebModule extends WebModule {
             if (!isset($feedData['TITLE'])) {
                 $feedData['TITLE'] = $navData['TITLE'];
             }
-            if (!isset($feedData['PARSER_CLASS'])) {
-                $feedData['PARSER_CLASS'] = 'CSTVDataParser';
-            }
             
             if (!$handleDataModel) {
-                $handleDataModel = self::$defaultModel;
+                $handleDataModel = self::$defaultEventModel;
             }
             
             $this->feed = $handleDataModel::factory($handleDataModel, $feedData);
@@ -490,9 +487,6 @@ class AthleticsWebModule extends WebModule {
                 $this->assign('link',   $story->getLink());
                 $this->assign('showLink', $this->showLink);
                 break;
-            case 'scores':
-                
-                break;
                 
             case 'schedule':
                 $current = $this->getArg('time', time(), FILTER_VALIDATE_INT);
@@ -544,18 +538,20 @@ class AthleticsWebModule extends WebModule {
                 $navData = $this->getNavData($gender);
                 $sportData = $this->getSportData($gender, $sport);
                 
-                $scheduleFeed = $this->getFeed($gender, $sport);
+                $scheduleFeed = $this->getScheduleFeed($gender, $sport);
+                
                 $schedules = $scheduleFeed->items();
                 
-                $rangeSechedule = $this->getRangeSechedule($schedules, time());
+                
+                $rangeSchedule = $this->getRangeSchedule($schedules, time());
                 $recent = array();
                 $next = array();
                 
-                if ($rangeSechedule['recent']) {
-                    $recent['sport'] = $rangeSechedule['recent']->getSport();
+                if ($rangeSchedule['recent']) {
+                    $recent['sport'] = $rangeSchedule['recent']->getSport();
                 }
-                if ($rangeSechedule['next']) {
-                    $next['sport'] = $rangeSechedule['next']->getSport();
+                if ($rangeSchedule['next']) {
+                    $next['sport'] = $rangeSchedule['next']->getSport();
                 }
                 $this->assign('sportTitle', $sportData['TITLE']);
                 $this->assign('recent', $recent);
@@ -572,10 +568,11 @@ class AthleticsWebModule extends WebModule {
             case "index":
                 //get the Favorites
                 $favorites = $this->getMyFavorites();
+                $tabs = array();
                 
                 //get top news
-                $topNews = array();
                 if ($newsFeedData = $this->getNavData('topnews')) {
+                    $topNews = array();
                     $limit = isset($newsFeedData['LIMIT']) ? $newsFeedData['LIMIT'] : $this->maxPerPage;
                     
                     $newsFeed = $this->getTopNewsFeed();
@@ -586,72 +583,52 @@ class AthleticsWebModule extends WebModule {
                     foreach ($items as $story) {
                         $topNews[] = $this->linkForNewsItem($story, $options);
                     }
+                    $tabs[] = $newsFeedData['TITLE'];
+                    $this->assign('topNewsTitle', $newsFeedData['TITLE']);
+                    $this->assign('topNews', $topNews);
                 }
                 
-                //get man sports
-                $sportDatas = $this->getModuleSections('feeds-men');
-                $menSports = array();
-                foreach ($sportDatas as $key => $sportData) {
-                    $sport = array(
-                        'title' =>$sportData['TITLE'],
-                        'url'   =>$this->buildURL('sport', array('gender'=>'men', 'sport' => $key))
-                    );
-                    $menSports[] = $sport;
+                //get men's sports
+                $menSportsData = $this->getNavData('men');
+                if ($sports = $this->getModuleSections('feeds-men')) {
+                    $menSports = array();
+                    foreach ($sports as $key => $sportData) {
+                        $sport = array(
+                            'title' =>$sportData['TITLE'],
+                            'url'   =>$this->buildURL('sport', array('gender'=>'men', 'sport' => $key))
+                        );
+                        $menSports[] = $sport;
+                    }
+                
+                    $tabs[] = $menSportsData['TITLE'];
+                    $this->assign('menSportsTitle', $menSportsData['TITLE']);
+                    $this->assign('menSports', $menSports);
                 }
                 
-                //get women sports
-                $sportDatas = $this->getModuleSections('feeds-women');
-                $womenSports = array();
-                foreach ($sportDatas as $key => $sportData) {
-                    $sport = array(
-                        'title' =>$sportData['TITLE'],
-                        'url'   =>$this->buildURL('sport', array('gender'=>'men', 'sport' => $key))
-                    );
-                    $womenSports[] = $sport;
+                //get women's sports
+                $womenSportsData = $this->getNavData('women');
+                if ($sports = $this->getModuleSections('feeds-women')) {
+                    $womenSports = array();
+                    foreach ($sports as $key => $sportData) {
+                        $sport = array(
+                            'title' =>$sportData['TITLE'],
+                            'url'   =>$this->buildURL('sport', array('gender'=>'women', 'sport' => $key))
+                        );
+                        $womenSports[] = $sport;
+                    }
+                    
+                    $tabs[] = $womenSportsData['TITLE'];
+                    $this->assign('womenSportsTitle', $womenSportsData['TITLE']);
+                    $this->assign('womenSports', $womenSports);
                 }
                 
-                //check the default tab
-                if ($favorites) {
-                    $tab = 'favorites';
-                } elseif ($topNews) {
-                    $tab = 'topnews';
-                } else {
-                    $tab = count($menSports) >= count($womenSports) ? 'men' : 'women';
-                }
+                $bookmarkData = $this->getNavData('bookmarks');
+                $tabs[] = $bookmarkData['TITLE'];
                 
-                //format the nav list
-                $navs = array();
-                foreach ($this->navFeeds as $key => $value) {
-                    $isSelect = $key == $tab ? true : false;
-                    $nav = array(
-                        'title' => $value['TITLE'],
-                        'select'   => $isSelect
-                    );
-                    $navs[] = $nav;
-                }
-
-                $this->assign('favorites', $favorites);
-                $this->assign('topNews', $topNews);
-                $this->assign('menSports', $menSports);
-                $this->assign('womenSports', $womenSports);
-                $this->assign('navs', $navs);
-                $this->assign('tab', $tab);
-                /*
-                $navTabs = $this->linkForNavTabs($tab);
+                $this->assign('bookmarksTitle', $bookmarkData['TITLE']);
+                $this->assign('tabs', $tabs);
+                $this->enableTabs($tabs);
                 
-                print_r($navTab);
-                exit;
-                $sports = array();
-
-                foreach ($this->feeds as $section => $sportData) {
-                    $sport = array(
-                        'title' =>$sportData['TITLE'],
-                        'url'   =>$this->buildURL('index', array('tab'=>$section))
-                    );
-                    $sports[] = $sport;
-                }
-                $this->assign('sports', $sports);
-                */
                 break;
         }
     }
