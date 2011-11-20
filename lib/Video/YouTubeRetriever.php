@@ -26,12 +26,12 @@
     }
     
     protected function init($args) {
-        $this->setStandardFilters();
-        parent::init($args);
-
         if (isset($args['PLAYLIST']) && strlen($args['PLAYLIST'])) {
             $this->setOption('playlist', $args['PLAYLIST']);
         }
+        $this->setStandardFilters();
+        parent::init($args);
+
     }
 
     public function url() {

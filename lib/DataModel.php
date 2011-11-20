@@ -232,7 +232,6 @@ abstract class DataModel {
      * @return string a file containing the data
      */
     public function getDataFile() {
-        Debug::die_here();
         $dataFile = $this->cacheFilename() . '-data';
         $data = $this->retrieveData();
         $cache = $this->getCache();

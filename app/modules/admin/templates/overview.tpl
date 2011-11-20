@@ -7,6 +7,8 @@
 <dl class="legend">
     <dt>{"ADMIN_MODULES_OVERVIEW_ID_TITLE"|getLocalizedString}</dt>
     <dd>{"ADMIN_MODULES_OVERVIEW_ID_DESCRIPTION"|getLocalizedString}</dd>
+    <dt>{"ADMIN_MODULES_OVERVIEW_TYPE_TITLE"|getLocalizedString}</dt>
+    <dd>{"ADMIN_MODULES_OVERVIEW_TYPE_DESCRIPTION"|getLocalizedString}</dd>
     <dt>{"ADMIN_MODULES_OVERVIEW_ENABLED_TITLE"|getLocalizedString}</dt>
     <dd>{"ADMIN_MODULES_OVERVIEW_ENABLED_DESCRIPTION"|getLocalizedString}</dd>
     <dt>{"ADMIN_MODULES_OVERVIEW_HOME_TITLE"|getLocalizedString}</dt>
@@ -16,27 +18,45 @@
     <dt>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_TITLE"|getLocalizedString}</dt>
     <dd>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_DESCRIPTION"|getLocalizedString}</dd>
 </dl>
-<table class="configtable" summary="Overview table of modules and their high-level configuration">
+<table id="overviewTable" class="configtable" summary="Overview table of modules and their high-level configuration">
 <thead>
     <tr>
-        <th colspan="2">{"ADMIN_MODULES_OVERVIEW_MODULENAME_TITLE"|getLocalizedString}</th>
+        <th></th>
+        <th>{"ADMIN_MODULES_OVERVIEW_MODULENAME_TITLE"|getLocalizedString}</th>
         <th>{"ADMIN_MODULES_OVERVIEW_ID_TITLE"|getLocalizedString}</th>
+        <th>{"ADMIN_MODULES_OVERVIEW_TYPE_TITLE"|getLocalizedString}</th>
         <th>{"ADMIN_MODULES_OVERVIEW_ENABLED_TITLE"|getLocalizedString}</th>
         <th>{"ADMIN_MODULES_OVERVIEW_HOME_TITLE"|getLocalizedString}</th>
         <th>{"ADMIN_MODULES_OVERVIEW_SSL_TITLE"|getLocalizedString}</th>
         <th>{"ADMIN_MODULES_OVERVIEW_FEDSEARCH_TITLE"|getLocalizedString}</th>
+        <th></th>
     </tr>
 </thead>
 <tbody>
+<tr>
+    <td>Add</td>
+    <td><input type="input" id="newModuleTitle" size="10" /></td>
+    <td><input type="input" id="newModuleConfig" size="10" /></td>
+    <td><select id="newModuleID"><option value="">-</option>{html_options values=$moduleClasses output=$moduleClasses first="-"}</select></td>
+    <td><input type="checkbox" id="newModuleDisabled" value="0" /></td>
+    <td></td>
+    <td><input type="checkbox" id="newModuleSecure" value="1" /></td>
+    <td><input type="checkbox" id="newModuleSearch" value="1" /></td>
+    <td><input type="submit" id="addNewModule" value="+" /></td>
+</tr>
 {foreach $modules as $moduleData}
 <tr>
     <td><img src="/modules/home/images/compliant/{$moduleData.id}.png" width="30" height="30" alt="{$moduleData.title|escape}" /></td>
     <td><a href="{$moduleData.url}">{$moduleData.title|escape}</a></td>
     <td>{$moduleData.id}</td>
-    <td><input type="hidden" name="{$moduleData.id}[disabled]" value="1" /> <input type="checkbox" name="{$moduleData.id}[disabled]" value="0"{if !$moduleData.disabled} checked{/if} /></td>
+    <td>{$moduleData.type}</td>
+    <td>{if $moduleData.canDisable}<input type="hidden" name="{$moduleData.id}[disabled]" value="1" /> <input type="checkbox" name="{$moduleData.id}[disabled]" value="0"{if !$moduleData.disabled} checked{/if} />{else}
+    <img src="/common/images/available.png" alt="Yes" />{/if}
+    </td>
     <td>{if $moduleData.home}<img src="/common/images/available.png" alt="Yes" />{/if}</td>
     <td><input type="hidden" name="{$moduleData.id}[secure]" value="0" /> <input type="checkbox" name="{$moduleData.id}[secure]" value="1"{if $moduleData.secure} checked{/if} /></td>
     <td><input type="hidden" name="{$moduleData.id}[search]" value="0" /> <input type="checkbox" name="{$moduleData.id}[search]" value="1"{if $moduleData.search} checked{/if} /></td>
+    <td>{if $moduleData.canRemove}<input type="submit" id="removeModule_{$moduleData.id}" class="removeModule" value="-" />{/if}</td>
 </tr>
 {/foreach}
 </tbody>

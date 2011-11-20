@@ -57,8 +57,36 @@ $(document).ready(function() {
                 updateModuleLayoutSections();
             }
         }).disableSelection();
+
+        $('#addNewModule').click(function(e) {
+            e.preventDefault();
+            var params = { 'v':1 }
+            
+            params.newModule = {
+                title: $('#newModuleTitle').val(),
+                id: $('#newModuleID').val(),
+                config: $('#newModuleConfig').val(),
+                disabled: $('#newModuleDisabled').checked ? 1 : 0,
+                secure: $('#newModuleSecure').checked ? 1 : 0,
+                search: $('#newModuleSearch').checked ? 1 : 0
+            }
+            
+            makeAPICall('POST','admin','addNewModule', params, function() { window.location = 'modules?module=' + params.newModule.config});
+            return false;
+        });
         
-        
+        $('.removeModule').click(function(e) {
+            e.preventDefault();
+            var re;
+            var params = { 'v':1 }
+            if (re = e.currentTarget.id.match(/removeModule_(.*)/)) {
+                params.configModule = re[1];
+                if (confirm('Are you sure you want to remove all configuration for ' + re[1] + '? This will make this module completely unavailable.')) {
+                    makeAPICall('POST','admin','removeModule', params, function() { window.location.reload()});
+                }
+            }
+        });
+    
         $('#adminForm.homescreen').submit(function(e) {
             var params = { 'v':1, 'data':{}};
             var re;
