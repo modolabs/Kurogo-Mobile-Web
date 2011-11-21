@@ -51,7 +51,7 @@ function sortFailed(code, message) {
     // do nothing; leave content as is
 }
 
-function search(form) {
+function submitMapSearch(form) {
     if (form.filter.value.length > 0 && typeof addMarker == 'function') {
         clearMarkers();
         apiRequest(apiURL + '/search', {'q': form.filter.value}, function(response) {
