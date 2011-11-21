@@ -43,6 +43,7 @@ class MapDBDataController extends MapDataController implements MapFolder
         if ($this->dbParser->isStored() && $this->dbParser->getCategory()->getListItems()) {
             // make sure this category was populated before skipping
             $this->hasDBData = true;
+            $this->useCache = false;
         }
     }
 

@@ -168,11 +168,17 @@ class ConfigFile extends Config {
         }
         Kurogo::log(LOG_DEBUG, "Creating empty config file $_file", 'config');
          @touch($_file);
-         return $this->loadFile($_file);
+         if ($filepath = $this->loadFile($_file)) {
+            $this->filepath = $filepath;
+            return $filepath;
+         }
     } elseif ($options & ConfigFile::OPTION_CREATE_WITH_DEFAULT) {
         //attempt to create a file with default options
         if ($this->createDefaultFile($file, $type)) {
-            return $this->loadFile($_file);
+             if ($filepath = $this->loadFile($_file)) {
+                $this->filepath = $filepath;
+                return $filepath;
+             }
         }
     }
     
