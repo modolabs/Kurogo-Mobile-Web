@@ -180,4 +180,6 @@
     {block name="containerStart"}
       <div id="container">
     {/block}
+{else}
+  {block name="ajaxContentHeader"}{/block}
 {/if}

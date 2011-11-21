@@ -9,9 +9,3 @@
 {block name="deviceDetection"}{/block}
 
 {block name="footerJavascript"}{/block}
-
-{block name="ajaxContentFooter"}
-  {if $nativePageConfigURL}
-    <img src="/common/images/blank.png" onload="window.location = '{$nativePageConfigURL}';" style="display:none" />
-  {/if}
-{/block}

@@ -21,36 +21,41 @@
         httpRequest.open("GET", url, true);
         httpRequest.onreadystatechange = function() {ldelim}
             if (httpRequest.readyState == 4 && httpRequest.status == 200) {ldelim}
-                document.getElementById('container').innerHTML = httpRequest.responseText;
-                onAjaxLoad();
+                var container = document.getElementById("container");
+                container.innerHTML = httpRequest.responseText;
+                
+                // Grab script tags and appendChild them so they get evaluated
+                var scripts = container.getElementsByTagName("script");
+                var count = scripts.length; // scripts.length will change as we add elements
+                
+                for (var i = 0; i < count; i++) {ldelim}
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.text = scripts[i].text;
+                    container.appendChild(script);
+                {rdelim}
+                
+                if (typeof onAjaxLoad != 'undefined') {ldelim}
+                    onAjaxLoad();
+                {rdelim} else {ldelim}
+                    console.log("Warning! onAjaxLoad is not defined by the page content");
+                {rdelim}
             {rdelim}
         {rdelim}
         httpRequest.send(null);
     {rdelim}
-    
-    function onAjaxLoad() {ldelim}
-      {foreach $inlineJavascriptBlocks as $script}
-        {$script}
-      {/foreach}
-      
-      {foreach $inlineJavascriptFooterBlocks as $script}
-        {$script}
-      {/foreach}
-      
-      {foreach $onLoadBlocks as $script}
-        {$script}
-      {/foreach}
-      
-      onOrientationChange();
-    {rdelim}
   </script>
   
   {$URL_BASE = '__KUROGO_URL_BASE__'}
+  
+  {* Native has its own analytics *}
   {$GOOGLE_ANALYTICS_ID = ''}
   {$PERCENT_MOBILE_ID = ''}
-  {$inlineJavascriptBlocks = null}
+  
+  {* will be loaded below by content *}
   {$inlineJavascriptFooterBlocks = null}
   {$onLoadBlocks = null}
+  
   {$smarty.block.parent}
 {/block}
 
@@ -66,3 +71,24 @@
 {/block}
 
 {block name="navbar"}{/block}
+
+{block name="ajaxContentHeader"}
+  <script type="text/javascript">
+    function onAjaxLoad() {ldelim}
+      // These can all have per-content page behavior
+      {foreach $inlineJavascriptFooterBlocks as $script}
+        {$script}
+      {/foreach}
+      
+      {foreach $onLoadBlocks as $script}
+        {$script}
+      {/foreach}
+      
+      onOrientationChange();
+      
+      {if $nativePageConfigURL}
+        window.location = "{$nativePageConfigURL}";
+      {/if}
+    {rdelim}
+  </script>
+{/block}
