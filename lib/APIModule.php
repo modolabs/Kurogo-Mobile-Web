@@ -132,7 +132,7 @@ abstract class APIModule extends Module
 
     protected function getAPIConfig($name, $opts=0) {
         $opts = $opts | ConfigFile::OPTION_CREATE_WITH_DEFAULT;
-        $config = ModuleConfigFile::factory($this->configModule, "api-$name", $opts);
+        $config = ModuleConfigFile::factory($this->configModule, "api-$name", $opts, $this);
         return $config;
     }
 

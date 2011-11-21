@@ -728,6 +728,7 @@ class Kurogo
         define('CACHE_DIR',            SITE_DIR . DIRECTORY_SEPARATOR . 'cache');
         define('LOG_DIR',              SITE_DIR . DIRECTORY_SEPARATOR . 'logs');
         define('SITE_CONFIG_DIR',      SITE_DIR . DIRECTORY_SEPARATOR . 'config');
+        define('SITE_DISABLED_DIR',    SITE_DIR . DIRECTORY_SEPARATOR . 'config_disabled');
     
         //load in the site config file (required);
         $config = ConfigFile::factory('site', 'site');
