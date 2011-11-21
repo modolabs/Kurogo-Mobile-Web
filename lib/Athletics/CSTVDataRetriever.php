@@ -49,12 +49,13 @@ class CSTVDataParser extends XMLDataParser {
     protected function handleEndElement($name, $element, $parent) {
         switch ($name) {
             case 'EVENT':
+                $event = $this->parseEntry($element);
+                
                 $filters = array();
                 if ($sport = $this->response->getContext('sport')) {
                     $filters['sport'] = $sport;
                 }
-
-                $event = $this->parseEntry($element);
+                
                 if ($event->filterItem($filters)) {
                     $this->items[] = $event;
                 }
@@ -77,12 +78,19 @@ class CSTVDataParser extends XMLDataParser {
     }
     
     protected function parseEntry($entry) {
+        static $eventNum;
+        
+        $eventNum++;
         $event = new AthleticEvent();
         if ($id = $entry->getAttrib('ID')) {
             $event->setID($id);
+        } else {
+            $event->setID($eventNum);
         }
+        
         $event->setSport($entry->getProperty('SPORT'));
         $event->setSportFullName($entry->getProperty('SPORT_FULLNAME'));
+        $event->setSchool($entry->getProperty('SCHOOL'));
         $event->setOpponent($entry->getProperty('OPPONENT'));
         $event->setHomeAway($entry->getProperty('HOME_VISITOR'));
         $event->setLocation($entry->getProperty('LOCATION'));

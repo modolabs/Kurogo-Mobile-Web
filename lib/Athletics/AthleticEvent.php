@@ -7,6 +7,7 @@ class AthleticEvent implements KurogoObject {
     protected $sportFullName;
     protected $gender;
     protected $datetime;
+    protected $school;
     protected $opponent;
     protected $homeAway;
     protected $location;
@@ -71,6 +72,14 @@ class AthleticEvent implements KurogoObject {
     
     public function setDateTime(DateTime $time) {
         $this->datetime = $time;
+    }
+    
+    public function setSchool($school) {
+        $this->school = $school;
+    }
+    
+    public function getSchool() {
+        return $this->school;
     }
     
     public function setOpponent($opponent) {
