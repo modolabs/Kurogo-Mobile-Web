@@ -549,25 +549,3 @@ function showMessage(message, error, keep) {
         $('#message').delay(3000).slideUp('slow');
     }
 }
-
-function makeAPICall(type, module, command, data, callback) {
-    var url = URL_BASE + 'rest/' + module + '/' + command;
-    $.ajax({
-        type: type,
-        url: url,
-        data: data, 
-        dataType: 'json',
-        success: function(data, textStatus, jqXHR) {
-            if (data.error) {
-                alert(data.error.message);
-               return;
-            }
-                    
-            if (callback) {
-                callback(data.response);
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-        }
-    });
-}

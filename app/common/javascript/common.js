@@ -282,41 +282,28 @@ function toggleBookmark(name, item, expireseconds, path) {
   }
 }
 
-// TODO this needs to handle encoded strings and parameter separators (&amp;)
-function apiRequest(baseURL, params, successCallback, errorCallback) {
-  var urlParts = [];
-  for (var paramName in params) {
-    urlParts.push(paramName + "=" + params[paramName]);
-  }
-  var url = baseURL + "?" + urlParts.join("&");
-  var httpRequest = new XMLHttpRequest();
-
-  httpRequest.open("GET", url, true);
-  httpRequest.onreadystatechange = function() {
-    // TODO better definition of error conditions below
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      var obj;
-      if (window.JSON) {
-          obj = JSON.parse(httpRequest.responseText);
-          // TODO: catch SyntaxError
-      } else {
-          obj = eval('(' + httpRequest.responseText + ')');
-      }
-      if (obj !== undefined) {
-        if ("error" in obj && obj["error"] !== null) {
-          errorCallback(0, obj["error"]);
-        } else if ("response" in obj) {
-          successCallback(obj["response"]);
-        } else {
-          errorCallback(1, "response not found");
+function makeAPICall(type, module, command, data, callback) {
+    var url = URL_BASE + API_URL_PREFIX + '/' + module + '/' + command;
+    $.ajax({
+        type: type,
+        url: url,
+        data: data, 
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR) {
+            if (data.error) {
+                alert(data.error.message);
+               return;
+            }
+                    
+            if (callback) {
+                callback(data.response);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
         }
-      } else {
-        errorCallback(2, "failed to parse response");
-      }
-    }
-  }
-  httpRequest.send(null);
+    });
 }
+
 
 
 
