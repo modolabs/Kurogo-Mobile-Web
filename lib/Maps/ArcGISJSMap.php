@@ -66,137 +66,71 @@ class ArcGISJSMap extends JavascriptMapImageController {
     public function addPoint(Placemark $placemark)
     {
         parent::addPoint($placemark);
-
-        $point = $placemark->getGeometry()->getCenterCoordinate();
-        $style = $placemark->getStyle();
-
-        // defaults
-        $templateValues = array(
-            '___SYMBOL_TYPE___' => 'SimpleMarkerSymbol'
-            );
-
-        if ($style !== null) {
-            // two ways to style markers:
-            if (($icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON)) !== null) {
-                // 1. icon image
-                // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/picturemarkersymbol.htm
-                $templateValues = array(
-                    '___SYMBOL_TYPE___' => 'PictureMarkerSymbol',
-                    '___SYMBOL_ARGS___' => '"'.$icon.'",20,20'
-                    ); // TODO allow size (20, 20) above to be set
-
-            } else {
-                // 2. either all four of (color, size, outline, style) are set or zero
-                // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/simplemarkersymbol.htm
-                $color = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::COLOR);
-                if ($color) {
-                    $color = htmlColorForColorString($color);
-                } else {
-                    $color = 'FF0000';
-                }
-
-                $size = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SIZE)
-                    or $size = 12;
-                // TODO there isn't yet a good way to get valid values for this from outside
-                $shape = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SHAPE)
-                    or $shape = 'esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE';
-
-                $templateValues['___SYMBOL_ARGS___'] = "$shape,$size,new esri.symbol.SimpleLineSymbol(),new dojo.Color(\"#$color\")";
-            }
-        }
-
-        if (isset($this->mapProjector)) {
-            $point = $this->mapProjector->projectPoint($point);
-            list($x, $y) = MapProjector::getXYFromPoint($point);
-            $templateValues['___X___'] = $x;
-            $templateValues['___Y___'] = $y;
-
-        } else {
-            // TODO this might be reversed
-            // if it is then we can get rid of some code
-            $templateValues['___X___'] = $point['lat'];
-            $templateValues['___Y___'] = $point['lon'];
-        }
-
-        // TODO use $placemark->getFields to populate Attributes
-        $templateValues['___TITLE___'] = $placemark->getTitle();
-        $subtitle = $placemark->getSubtitle();
-        $templateValues['___DESCRIPTION___'] = $subtitle ? $subtitle : "";
-        $templateValues['___IDENTIFIER___'] = count($this->markers);
-
-        $this->markers[] = $templateValues;
+        $this->markers[] = $placemark;
     }
 
     public function addPath(Placemark $placemark)
     {
         parent::addPath($placemark);
-
-        $polyline = $placemark->getGeometry();
-        $style = $placemark->getStyle();
-
-        // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/polyline.htm
-        $jsonObj = array(
-            'paths' => array($this->collapseAssociativePoints($polyline->getPoints())),
-            'spatialReference' => array('wkid' => $this->mapProjection)
-            );
-
-        $templateValues = array(
-            '___POLYLINE_SPEC___' => json_encode($jsonObj),
-            );
-
-        if ($style !== null) {
-            // either three or zero parameters are all set
-
-            // TODO there isn't yet a good way to get valid values for this from outside
-            $consistency = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::CONSISTENCY)
-                or $consistency = 'esri.symbol.SimpleFillSymbol.STYLE_SOLID';
-
-            $color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR);
-            if ($color) {
-                $color = htmlColorForColorString($color);
-            } else {
-                $color = 'FF0000';
-            }
-
-            $weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT)
-                or $weight = 4;
-
-            $templateValues['___SYMBOL_SPEC___'] = "$consistency,new dojo.Color(\"#$color\"),$weight";
-        }
-        $this->paths[] = $templateValues;
+        $this->paths[] = $placemark;
     }
     
     public function addPolygon(Placemark $placemark)
     {
         parent::addPolygon($placemark);
-
-        // no style support for now
-
-        $collapsedRings = array();
-        $polygon = $placemark->getGeometry();
-        foreach ($polygon->getRings() as $ring) {
-            $collapsedRings[] = $this->collapseAssociativePoints($ring->getPoints());
-        }
-
-        $jsonParams = array(
-            'rings' => $collapsedRings,
-            'spatialReference' => array('wkid' => $this->mapProjection),
-            );
-        $json = json_encode($jsonParams);
-        $this->polygons[] = array('___POLYGON_SPEC___' => $json);
+        $this->polygons[] = $placemark;
     }
 
     ////////////// output ///////////////
 
+    private function dojoColorFromHex($hex) {
+        $colorParts = array();
+        foreach (str_split($hex) as $colorPart) {
+            $colorParts[] = hexdec($colorPart);
+        }
+        if (count($colorParts) == 4) {
+            // move alpha to the end
+            array_unshift($colorParts, array_pop($colorParts));
+        }
+        return implode(',', $colorParts);
+    }
+
     private function getPolygonJS()
     {
-        if (!$this->polygons) {
-            return '';
-        }
-
         $template = $this->prepareJavascriptTemplate('ArcGISPolygons', true);
+
         foreach ($this->polygons as $polygon) {
-            $template->appendValues($polygon);
+
+            $style = $polygon->getStyle();
+            if ($style !== null) {
+                if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::COLOR)) !== null) {
+                    $strokeColor = $this->dojoColorFromHex($color);
+                }
+                if (($color = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::FILLCOLOR)) !== null) {
+                    $fillColor = $this->dojoColorFromHex($color);
+                }
+                if (($weight = $style->getStyleForTypeAndParam(MapStyle::POLYGON, MapStyle::WEIGHT)) !== null) {
+                    $strokeWeight = $weight;
+                }
+            }
+
+            $collapsedRings = array();
+            $polygon = $placemark->getGeometry();
+            foreach ($polygon->getRings() as $ring) {
+                $collapsedRings[] = $this->collapseAssociativePoints($ring->getPoints());
+            }
+
+            $jsonParams = array(
+                'rings' => $collapsedRings,
+                'spatialReference' => array('wkid' => $this->mapProjection),
+                );
+            $json = json_encode($jsonParams);
+            $template->appendValues(array(
+                '___POLYGON_SPEC___' => $json,
+                '___FILL_COLOR___' => $fillColor,
+                '___STROKE_COLOR___' => $strokeColor,
+                '___STROKE_WEIGHT___' => $strokeWeight,
+                ));
         }
 
         return $template->getScript();
@@ -219,30 +153,111 @@ class ArcGISJSMap extends JavascriptMapImageController {
 
     private function getPathJS()
     {
-        if (!$this->paths) {
-            return '';
-        }
-
         $template = $this->prepareJavascriptTemplate('ArcGISPaths', true);
-        foreach ($this->paths as $templateValues) {
-            $template->appendValues($templateValues);
+        foreach ($this->paths as $placemark) {
+            $polyline = $placemark->getGeometry();
+            $style = $placemark->getStyle();
+
+            // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/polyline.htm
+            $jsonObj = array(
+                'paths' => array($this->collapseAssociativePoints($polyline->getPoints())),
+                'spatialReference' => array('wkid' => $this->mapProjection)
+                );
+
+            $templateValues = array(
+                '___POLYLINE_SPEC___' => json_encode($jsonObj),
+                );
+
+            if ($style !== null) {
+                // either three or zero parameters are all set
+
+                // TODO there isn't yet a good way to get valid values for this from outside
+                $consistency = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::CONSISTENCY)
+                    or $consistency = 'esri.symbol.SimpleFillSymbol.STYLE_SOLID';
+
+                $color = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::COLOR);
+                if ($color) {
+                    $color = htmlColorForColorString($color);
+                } else {
+                    $color = 'FF0000';
+                }
+
+                $weight = $style->getStyleForTypeAndParam(MapStyle::LINE, MapStyle::WEIGHT)
+                    or $weight = 4;
+
+                $templateValues['___SYMBOL_SPEC___'] = "$consistency,new dojo.Color(\"#$color\"),$weight";
+            }
+            $tempalte->appendValues($templateValues);
         }
 
-        return "var lineSymbol;\nvar polyline;\n".$template->getScript();
+        return $template->getScript();
     }
     
     private function getMarkerJS()
     {
-        if (!$this->markers) {
-            return '';
-        }
-
         $template = $this->prepareJavascriptTemplate('ArcGISPoints', true);
-        foreach ($this->markers as $templateValues) {
+        foreach ($this->markers as $placemark) {
+            $point = $placemark->getGeometry()->getCenterCoordinate();
+            $style = $placemark->getStyle();
+
+            // defaults
+            $templateValues = array(
+                '___SYMBOL_TYPE___' => 'SimpleMarkerSymbol'
+                );
+
+            if ($style !== null) {
+                // two ways to style markers:
+                if (($icon = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::ICON)) !== null) {
+                    // 1. icon image
+                    // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/picturemarkersymbol.htm
+                    $templateValues = array(
+                        '___SYMBOL_TYPE___' => 'PictureMarkerSymbol',
+                        '___SYMBOL_ARGS___' => '"'.$icon.'",20,20'
+                        ); // TODO allow size (20, 20) above to be set
+
+                } else {
+                    // 2. either all four of (color, size, outline, style) are set or zero
+                    // http://resources.esri.com/help/9.3/arcgisserver/apis/javascript/arcgis/help/jsapi/simplemarkersymbol.htm
+                    $color = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::COLOR);
+                    if ($color) {
+                        $color = htmlColorForColorString($color);
+                    } else {
+                        $color = 'FF0000';
+                    }
+
+                    $size = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SIZE)
+                        or $size = 12;
+                    // TODO there isn't yet a good way to get valid values for this from outside
+                    $shape = $style->getStyleForTypeAndParam(MapStyle::POINT, MapStyle::SHAPE)
+                        or $shape = 'esri.symbol.SimpleMarkerSymbol.STYLE_CIRCLE';
+
+                    $templateValues['___SYMBOL_ARGS___'] = "$shape,$size,new esri.symbol.SimpleLineSymbol(),new dojo.Color(\"#$color\")";
+                }
+            }
+
+            if (isset($this->mapProjector)) {
+                $point = $this->mapProjector->projectPoint($point);
+                list($x, $y) = MapProjector::getXYFromPoint($point);
+                $templateValues['___X___'] = $x;
+                $templateValues['___Y___'] = $y;
+
+            } else {
+                // TODO this might be reversed
+                // if it is then we can get rid of some code
+                $templateValues['___X___'] = $point['lat'];
+                $templateValues['___Y___'] = $point['lon'];
+            }
+
+            // TODO use $placemark->getFields to populate Attributes
+            $templateValues['___TITLE___'] = $placemark->getTitle();
+            $subtitle = $placemark->getSubtitle();
+            $templateValues['___DESCRIPTION___'] = $subtitle ? $subtitle : "";
+            $templateValues['___IDENTIFIER___'] = count($this->markers);
+            
             $template->appendValues($templateValues);
         }
 
-        return "var point;\nvar pointSymbol;\nvar infoTemplate;\n".$template->getScript();
+        return $template->getScript();
     }
     
     private function getCenterJS() {
@@ -268,14 +283,6 @@ class ArcGISJSMap extends JavascriptMapImageController {
         return 'http://serverapi.arcgisonline.com/jsapi/arcgis/'
                .$this->apiVersion.'/js/dojo/dijit/themes/'
                .$this->themeName.'/'.$this->themeName.'.css';
-    }
-
-    function getHeaderScript() {
-        $header = $this->prepareJavascriptTemplate('ArcGISJSMapHeader');
-        $header->setValues(array(
-            '___MAPELEMENT___' => $this->mapElement,
-            ));
-        return $header->getScript();
     }
     
     function getFooterScript() {

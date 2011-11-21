@@ -199,27 +199,18 @@ class GoogleJSMap extends JavascriptMapImageController {
              . ($this->locatesUser ? 'true' : 'false'));
     }
 
-    public function getHeaderScript() {
+    public function getFooterScript() {
+        $footer = $this->prepareJavascriptTemplate('GoogleJSMapFooter');
         if (isset($this->mapProjector)) {
             $center = $this->mapProjector->projectPoint($this->center);
         } else {
             $center = $this->center;
         }
-        $template = $this->prepareJavascriptTemplate('GoogleJSMapHeader');
-        $template->setValues(array(
-            '___FULL_URL_PREFIX___' => FULL_URL_PREFIX,
+        $footer->setValues(array(
             '___MAPELEMENT___' => $this->mapElement,
             '___CENTER_LATITUDE___' => $center['lat'],
             '___CENTER_LONGITUDE___' => $center['lon'],
             '___ZOOMLEVEL___' => $this->zoomLevel,
-            ));
-        
-        return $template->getScript();
-    }
-
-    public function getFooterScript() {
-        $footer = $this->prepareJavascriptTemplate('GoogleJSMapFooter');
-        $footer->setValues(array(
             '___FULL_URL_PREFIX___' => FULL_URL_PREFIX,
             '___MARKER_SCRIPT___' => $this->getMarkerJS(),
             '___POLYGON_SCRIPT___' => $this->getPolygonJS(),

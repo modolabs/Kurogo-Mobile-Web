@@ -6,8 +6,6 @@ abstract class JavascriptMapImageController extends MapImageController
     protected $webModule; // optional, used to generate URLs via linkForItem
 
     abstract public function getIncludeScripts();
-    abstract public function getHeaderScript();
-    abstract public function getFooterScript();
 
     public function setMapElement($mapElement) {
         $this->mapElement = $mapElement;
@@ -27,6 +25,14 @@ abstract class JavascriptMapImageController extends MapImageController
             }
         }
         return $url;
+    }
+
+    public function getHeaderScript() {
+        return '';
+    }
+
+    public function getFooterScript() {
+        return '';
     }
 }
 
